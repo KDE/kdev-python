@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2006 Alexander Dymo <adymo@kdevelop.org>                    *
+ * Copyright (c) 2006 Andreas Pakulat <apaku@gmx.de>                         *
  *                                                                           *
  * Permission is hereby granted, free of charge, to any person obtaining     *
  * a copy of this software and associated documentation files (the           *

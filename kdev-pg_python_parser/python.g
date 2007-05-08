@@ -1,5 +1,6 @@
 -------------------------------------------------------------------------------
 -- Copyright (c) 2006 Andreas Pakulat <apaku@gmx.de>                         
+-- Copyright (c) 2007 Piyush Verma <piyush.verma@gmail.com>                  
 --                                                                           
 -- Permission is hereby granted, free of charge, to any person obtaining     
 -- a copy of this software and associated documentation files (the           
@@ -107,7 +108,7 @@ namespace ruby
 
 -- The actual grammar starts here.
 
-   ( LINEBREAK | stmt )* EOF
+   (#klass= LINEBREAK | stmt )*
 -> project ;;
 
    AT dotted_name ( LPAREN ( arglist | 0) RPAREN | 0 ) LINEBREAK
@@ -116,26 +117,24 @@ namespace ruby
    decorator*
 -> decorators ;;
 
-   ( decorators | 0 ) DEF IDENTIFIER parameters COLON suite
+   ( decorators | 0 ) DEF IDENTIFIER LPAREN (#vargs = varargslist | 0) RPAREN COLON suite
 -> funcdef ;;
 
-   LPAREN ( varargslist | 0 ) RPAREN
--> parameters ;;
 
+   fpdef ( EQUAL test | 0 ) ( COMMA fpdef ( EQUAL test | 0 ) )* |
    ( fpdef ( EQUAL test | 0 ) COMMA )* ( STAR IDENTIFIER ( COMMA DOUBLESTAR IDENTIFIER | 0 ) | DOUBLESTAR IDENTIFIER )
-    | fpdef ( EQUAL test | 0 ) ( COMMA fpdef ( EQUAL test | 0 ) )* ( COMMA | 0 )
 -> varargslist ;;
 
-   IDENTIFIER | LPAREN fplist RPAREN
+   IDENTIFIER | LPAREN (list = fplist) RPAREN
 -> fpdef ;;
 
-   fpdef ( COMMA fpdef )* ( COMMA | 0 )
+    fpdef (COMMA fpdef)* (COMMA | 0)  
 -> fplist ;;
 
    simple_stmt | compound_stmt
 -> stmt ;;
 
-   small_stmt ( SEMICOLON small_stmt )* ( SEMICOLON | 0 ) LINEBREAK
+   small_stmt ( SEMICOLON (small_stmt | 0))*  LINEBREAK
 -> simple_stmt ;;
 
      expr_stmt
@@ -166,7 +165,7 @@ namespace ruby
    | DOUBLESLASHEQ
 -> augassign ;;
 
-   PRINT ( ( test ( COMMA test )* ( COMMA | 0 ) | 0 ) | RSHIFT test ( ( COMMA test )+ ( COMMA | 0 ) | 0 ) )
+   PRINT ( ( test (COMMA test COMMA)* | (COMMA test)*) | RSHIFT test ( ( COMMA test COMMA )+ ( COMMA test )+ ))
 -> print_stmt ;;
 
    DEL exprlist
@@ -208,7 +207,7 @@ namespace ruby
    dotted_name ( IDENTIFIER IDENTIFIER | 0 )
 -> dotted_as_name ;;
 
-   import_as_name ( COMMA import_as_name )* ( COMMA | 0 )
+   import_as_name ( COMMA import_as_name COMMA)* | ( COMMA import_as_name )*
 -> import_as_names ;;
 
    dotted_as_name ( COMMA dotted_as_name )*
@@ -250,7 +249,7 @@ namespace ruby
    EXCEPT ( test ( COMMA test | 0 ) | 0 )
 -> except_clause ;;
 
-   simple_stmt | LINEBREAK stmt+
+   simple_stmt | LINEBREAK INDENT stmt+ DEDENT
 -> suite ;;
 
    and_test ( OR and_test )* | lambda_def
@@ -273,8 +272,7 @@ namespace ruby
    | UNEQUAL
    | IN
    | NOT IN
-   | IS
-   | IS NOT
+   | IS (NOT | 0)
 -> comp_op ;;
 
    xor_expr ( OR xor_expr )*
@@ -394,23 +392,70 @@ namespace python
 void parser::tokenize( char *contents )
 {
     Lexer lexer( this, contents );
-
     int kind = parser::Token_EOF;
+    
     do
     {
         kind = lexer.yylex();
-        //std::cerr << lexer.YYText() << std::endl; //" "; // debug output
-
+	if( kind == parser::Token_DEDENT)
+    	{
+			int x = kind;
+			kind = parser::Token_LINEBREAK;
+			parser::token_type &t = this->token_stream->next();
+	
+	        	t.kind = kind;
+        		t.begin = lexer.tokenBegin();
+        		t.end = lexer.tokenEnd();
+        		t.text = contents;
+			std::cerr<<t.kind<<std::endl;
+			if(lexer.m_indent.top() == 0 && lexer.indent_level > 0)
+			{
+				while(lexer.indent_level>0)
+				{
+					parser::token_type &t = this->token_stream->next();
+	        			t.kind = parser::Token_DEDENT;
+        				t.begin = lexer.tokenBegin();
+        				t.end = lexer.tokenEnd();
+        				t.text = contents;
+					std::cerr<<t.kind<<std::endl;	
+					lexer.indent_level--;
+				}
+			}
+			kind = x;
+    	}
+	else if( kind == parser::Token_INDENT)
+    	{
+		int x = kind;
+		kind = parser::Token_LINEBREAK;
+		parser::token_type &t = this->token_stream->next();
+	
+        	t.kind = kind;
+        	t.begin = lexer.tokenBegin();
+        	t.end = lexer.tokenEnd();
+        	t.text = contents;
+		std::cerr<<t.kind<<std::endl;
+		kind = x;
+    	}
+	
+	std::cerr << kind;
+        std::cerr << lexer.YYText() << std::endl; //" "; // debug output
+	
+	
         if ( !kind ) // when the lexer returns 0, the end of file is reached
             kind = parser::Token_EOF;
 
-        parser::token_type &t = this->token_stream->next();
+	
+	parser::token_type &t = this->token_stream->next();
+	
         t.kind = kind;
         t.begin = lexer.tokenBegin();
         t.end = lexer.tokenEnd();
         t.text = contents;
+	
+	
     }
     while ( kind != parser::Token_EOF );
+    	
     this->yylex(); // produce the look ahead token
 }
 

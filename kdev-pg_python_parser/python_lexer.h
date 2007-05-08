@@ -1,6 +1,6 @@
 /*****************************************************************************
  * Copyright (c) 2006 Andreas Pakulat <apaku@gmx.de>                         *
- *                                                                           *
+ * Copyright (c) 2007 Piyush verma <piyush.verma@gmail.com>                  *                                                                                *
  * Permission is hereby granted, free of charge, to any person obtaining     *
  * a copy of this software and associated documentation files (the           *
  * "Software"), to deal in the Software without restriction, including       *
@@ -22,8 +22,10 @@
  *****************************************************************************/
 
 #include <iostream>
-
+#include <stack>
+#include <string>
 #include "python_parser.h"
+
 
 #ifndef DONT_INCLUDE_FLEXLEXER
 #include <FlexLexer.h>
@@ -40,11 +42,15 @@ namespace python
 class Lexer : public yyFlexLexer
 {
 public:
-    Lexer( python::parser *parser, char *contents );
+    Lexer( python::parser *parser, char *contents  );
     void restart( python::parser *parser, char *contents );
-
+    void indent( int a);
+    void indent_tab(int a);
+    int dedent();		
     int yylex();
+    int indent_level;
     char *contents()         { return m_contents;   }
+    std::stack<int> m_indent;	
     std::size_t tokenBegin() { return m_tokenBegin; }
     std::size_t tokenEnd()   { return m_tokenEnd;   }
 
@@ -59,8 +65,11 @@ protected:
 private:
     python::parser* m_parser;
     char *m_contents;
+    int  white_count;
+    int dedent_level;
     std::size_t m_tokenBegin, m_tokenEnd;
     std::size_t m_currentOffset;
+    	
     kdev_pg_location_table *m_locationTable;
 };
 

@@ -1,28 +1,3 @@
-%{
-/*****************************************************************************
- * Copyright (c) 2006 Andreas Pakulat <apaku@gmx.de>                         *
- *                                                                           *
- * Permission is hereby granted, free of charge, to any person obtaining     *
- * a copy of this software and associated documentation files (the           *
- * "Software"), to deal in the Software without restriction, including       *
- * without limitation the rights to use, copy, modify, merge, publish,       *
- * distribute, sublicense, and/or sell copies of the Software, and to        *
- * permit persons to whom the Software is furnished to do so, subject to     *
- * the following conditions:                                                 *
- *                                                                           *
- * The above copyright notice and this permission notice shall be            *
- * included in all copies or substantial portions of the Software.           *
- *                                                                           *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,           *
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF        *
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND                     *
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE    *
- * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION    *
- * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION     *
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
- *****************************************************************************/
-}%
-
 %option c++
 %option yyclass="python::Lexer"
 %option debug
@@ -31,8 +6,7 @@
 %{
 
 #define DONT_INCLUDE_FLEXLEXER
-#include <python_lexer.h>
-
+#include "python_lexer.h"
 %}
 
  /* UTF-8 sequences, generated with the Unicode.hs script from
@@ -117,8 +91,8 @@ FloatingPoint   {Float1}|{Float2}|{Float3}
 
 ImagNumber      ({FloatingPoint}|{Digit}+)[fF]
 
-Whitespace      [ \t\v\f]+
-
+Whitespace      [ \v\f]+
+Tab		[\t]
 LineBreak       [\n]
 
 Identifier      [a-zA-Z_][a-zA-Z0-9_]*
@@ -134,15 +108,83 @@ LongString      {LongString1}|{LongString2}
 
 StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 
+%x IN_INDENT
+%x IN_CHECK
+
 %%%%
 
  /* whitespace, comments, linebreak */
 
-^{Whitespace}    return parser::Token_INDENT;
-{Whitespace}     /* skip */
+
+{LineBreak}	{	
+		int d = m_currentOffset;
+		if( m_contents[ d ] != ' ' && m_contents[ d]  != '\t' && m_contents[ d ]  != '\v' && m_contents[ d ] != '\f' )
+		{
+			if( m_indent.top() > 0 )
+			{
+				while( m_indent.top() != 0) 
+				{
+					m_indent.pop();
+				}	
+				indent_level--;
+				return parser::Token_DEDENT;
+			}	
+			else
+			{
+				return parser::Token_LINEBREAK;
+			}
+		}
+		
+}
+
+{LineBreak}{Tab}	{
+			white_count = 8;
+			indent_tab(white_count);
+			if( white_count > (m_indent.top()) )
+			{
+				m_indent.push(white_count);
+				indent_level++;
+				return parser::Token_INDENT;
+			}
+			else if( white_count < (m_indent.top()) )
+			{	
+				m_indent.pop();
+				indent_level--;
+				return parser::Token_DEDENT;
+			}
+			else
+			{
+				return parser::Token_LINEBREAK;
+			}	
+}		
+
+{Tab}*
+^[ \v\f] {
+		white_count = 1;
+		indent(white_count);
+		
+		if( white_count > (m_indent.top()) )
+		{	
+			std::cerr<<std::endl<<"Stack Top "<<m_indent.top()<<" Whitespaces= "<<white_count<<std::endl;
+			m_indent.push(white_count);
+			std::cerr<<std::endl<<"Stack Top "<<m_indent.top()<<" Whitespaces= "<<white_count<<std::endl;
+			return  parser::Token_INDENT;
+		}
+		else if( white_count < (m_indent.top()) )
+		{
+			m_indent.pop();
+			return parser::Token_DEDENT;
+		}
+		else
+		{
+			std::cerr<<"Nothing To do"<<std::endl;
+		}
+}
+
+{Whitespace}	 /* skip */
 {Comment}        /* skip */
 ^{Whitespace}{LineBreak} /* skip */
-{LineBreak}      return parser::Token_LINEBREAK;
+
 
  /* reserved keywords */
 "and"            return parser::Token_AND;
@@ -238,12 +280,22 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 "=="             return parser::Token_ISEQUAL;
 
  /* End of file */
-<<EOF>>          return parser::Token_EOF;
-
+<<EOF>>         {
+		if( m_indent.top() > 0 )
+		{
+			while( m_indent.top() != 0) 
+			{
+				m_indent.pop();
+			}
+			return parser::Token_DEDENT;
+		}	
+		return parser::Token_EOF;
+}
  /* Everything that is not handled up to now is not part of the language. */
 .                return parser::Token_INVALID;
 
 %%%%
+
 
 namespace python
 {
@@ -253,14 +305,15 @@ Lexer::Lexer( parser* parser, char* contents)
     restart( parser, contents );
 }
 
-void Lexer::restart( parser *parser, char *contents )
+void Lexer::restart( parser *parser, char *contents  )
 {
     m_parser = parser;
     m_locationTable = parser->token_stream->location_table();
     m_contents = contents;
     m_tokenBegin = m_tokenEnd = 0;
     m_currentOffset = 0;
-
+    m_indent.push(0);
+    indent_level = dedent_level = 0;	
     // check for and ignore the UTF-8 byte order mark
     unsigned char *ucontents = (unsigned char *) m_contents;
     if ( ucontents[0] == 0xEF && ucontents[1] == 0xBB && ucontents[2] == 0xBF )
@@ -272,6 +325,30 @@ void Lexer::restart( parser *parser, char *contents )
     yyrestart(NULL);
     BEGIN(INITIAL); // is not set automatically by yyrestart()
 }
+void Lexer::indent(int a)
+{
+	int d = m_currentOffset;
+	while( m_contents[d ] == ' ')
+	{	
+		white_count++;	
+		d++;
+		
+	}
+	
+}
+void Lexer::indent_tab(int a)
+{
+	int d = m_currentOffset;
+	while( m_contents[ d ] == '\t')
+	{	
+		white_count=white_count+8;	
+		d++;
+		
+	}
+	
+}
+
+
 // reads a character, and returns 1 as the number of characters read
 // (or 0 when the end of the string is reached)
 int Lexer::LexerInput( char *buf, int /*max_size*/ )
@@ -284,7 +361,7 @@ int Lexer::LexerInput( char *buf, int /*max_size*/ )
         c = '\n'; // only have one single line break character: '\n'
         if ( m_contents[m_currentOffset + 1] == '\n' )
         {
-            m_currentOffset++;
+	    m_currentOffset++;
             m_tokenEnd++;
         }
 
@@ -301,5 +378,3 @@ int Lexer::LexerInput( char *buf, int /*max_size*/ )
 }
 
 } // end of namespace python
-
-

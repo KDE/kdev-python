@@ -8,6 +8,7 @@ find_program(KDEVPG_EXECUTABLE
 	NAMES kdev-pg
 	PATHS /usr/bin/
 	     /home/andreas/kdev-pg/bin
+	     /home/piyush/soc/kdev-pg/build/kdev-pg/
 	DOC "KDev-Pg")
 
 

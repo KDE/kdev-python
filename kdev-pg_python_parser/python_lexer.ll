@@ -140,73 +140,74 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 
 
 {LineBreak}	{	
-		int d = m_currentOffset;
-		if( m_contents[ d ] != ' ' && m_contents[ d]  != '\t' && m_contents[ d ]  != '\v' && m_contents[ d ] != '\f' )
+	int d = m_currentOffset;
+	if( m_contents[ d ] != ' ' && m_contents[ d]  != '\t' && m_contents[ d ]  != '\v' && m_contents[ d ] != '\f' )
+	{
+		if( m_indent.top() > 0 )
 		{
-			if( m_indent.top() > 0 )
+			while( m_indent.top() != 0) 
 			{
-				while( m_indent.top() != 0) 
-				{
-					m_indent.pop();
-				}	
-				indent_level--;
-				return parser::Token_DEDENT;
-			}	
-			else
-			{
-				return parser::Token_LINEBREAK;
-			}
-		}
-		
-}
-
-{LineBreak}{Tab}	{
-			white_count = 1;
-			indent_tab(white_count);
-			if( white_count > (m_indent.top()) )
-			{
-				m_indent.push(white_count);
-				indent_level++;
-				return parser::Token_INDENT;
-			}
-			else if( white_count < (m_indent.top()) )
-			{	
 				m_indent.pop();
-				indent_level--;
-				return parser::Token_DEDENT;
-			}
-			else
-			{
-				return parser::Token_LINEBREAK;
 			}	
-}		
-
-{Tab}*
-{LineBreak}{Whitespace} {
-		white_count = 1;
-		indent(white_count);
-		if( white_count > (m_indent.top()) )
-		{	
-			m_indent.push(white_count);
-			indent_level++;
-			return  parser::Token_INDENT;
-		}
-		else if( white_count < (m_indent.top()) )
-		{
-			m_indent.pop();
 			indent_level--;
 			return parser::Token_DEDENT;
-		}
+		}	
 		else
 		{
 			return parser::Token_LINEBREAK;
 		}
+	}
+}
+
+{LineBreak}{Tab} {
+	white_count = 8;
+	space_count = 0;
+	indent();
+	if( white_count > (m_indent.top()) )
+	{
+		m_indent.push(white_count);
+		indent_level++;
+		return parser::Token_INDENT;
+	}
+	else if( white_count < (m_indent.top()) )
+	{	
+		m_indent.pop();
+		indent_level--;
+		return parser::Token_DEDENT;
+	}
+	else
+	{
+		return parser::Token_LINEBREAK;
+	}	
+}		
+
+{Tab}*
+{LineBreak}{Whitespace} {
+	white_count = 0;
+	space_count = 1;
+	indent();
+	if( white_count > (m_indent.top()) )
+	{	
+		m_indent.push(white_count);
+		indent_level++;
+		return  parser::Token_INDENT;
+	}
+	else if( white_count < (m_indent.top()) )
+	{
+		m_indent.pop();
+		indent_level--;
+		return parser::Token_DEDENT;
+	}
+	else
+	{
+		return parser::Token_LINEBREAK;
+	}
 }
 
 {Whitespace}*	 /* skip */
 {Comment}        /* skip */
-^{Whitespace}{LineBreak} /* skip */
-
+^{Whitespace}*{LineBreak} /* skip */
+^{Tab}*{LineBreak}	  /* skip */ 
 
  /* reserved keywords */
 "and"            return parser::Token_AND;
@@ -302,17 +303,18 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 "=="             return parser::Token_ISEQUAL;
 
  /* End of file */
-<<EOF>>         {
-		if( m_indent.top() > 0 )
+<<EOF>> {
+	if( m_indent.top() > 0 )
+	{
+		while( m_indent.top() != 0) 
 		{
-			while( m_indent.top() != 0) 
-			{
-				m_indent.pop();
-			}
-			return parser::Token_DEDENT;
-		}	
-		return parser::Token_EOF;
+			m_indent.pop();
+		}
+		return parser::Token_DEDENT;
+	}	
+	return parser::Token_EOF;
 }
+ 
  /* Everything that is not handled up to now is not part of the language. */
 .                return parser::Token_INVALID;
 
@@ -334,6 +336,7 @@ void Lexer::restart( parser *parser, char *contents  )
     m_contents = contents;
     m_tokenBegin = m_tokenEnd = 0;
     m_currentOffset = 0;
+	
     m_indent.push(0);
     indent_level = dedent_level = 0;	
     // check for and ignore the UTF-8 byte order mark
@@ -347,28 +350,29 @@ void Lexer::restart( parser *parser, char *contents  )
     yyrestart(NULL);
     BEGIN(INITIAL); // is not set automatically by yyrestart()
 }
-void Lexer::indent(int a)
-{
-	int d = m_currentOffset;
-	while( m_contents[ d ] == ' ' || m_contents[ d ] == '\f' || m_contents[ d ] == '\v' ) 
-	{	
-		white_count=white_count+1;	
-		d++;
-		
-	}
-	
-}
 
-void Lexer::indent_tab(int a)
+void Lexer::indent()
 {
 	int d = m_currentOffset;
-	while( m_contents[ d ] == '\t')
+	for(;;)
 	{	
-		white_count=white_count+1;
-		d++;
-		
+		if( m_contents[ d ] == '\t')
+		{
+			white_count=white_count+8;
+			space_count = 0;
+			d++;
+		}
+		else if( m_contents[ d ] == ' ')
+		{
+			space_count = space_count + 1;
+			d++;
+		}
+		else
+		{
+			white_count = white_count + space_count;
+			break;			
+		}
 	}
-	
 }
 
 
@@ -384,7 +388,7 @@ int Lexer::LexerInput( char *buf, int /*max_size*/ )
         c = '\n'; // only have one single line break character: '\n'
         if ( m_contents[m_currentOffset + 1] == '\n' )
         {
-	    m_currentOffset++;
+	    	m_currentOffset++;
             m_tokenEnd++;
         }
 

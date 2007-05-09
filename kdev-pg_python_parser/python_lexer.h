@@ -1,6 +1,7 @@
 /*****************************************************************************
  * Copyright (c) 2006 Andreas Pakulat <apaku@gmx.de>                         *
  * Copyright (c) 2007 Piyush verma <piyush.verma@gmail.com>                  *                                                                                *
+ *                                                                           *
  * Permission is hereby granted, free of charge, to any person obtaining     *
  * a copy of this software and associated documentation files (the           *
  * "Software"), to deal in the Software without restriction, including       *
@@ -69,7 +70,7 @@ private:
     int dedent_level;
     std::size_t m_tokenBegin, m_tokenEnd;
     std::size_t m_currentOffset;
-    	
+    int m_white_count;	
     kdev_pg_location_table *m_locationTable;
 };
 

@@ -114,7 +114,7 @@ FloatingPoint   {Float1}|{Float2}|{Float3}
 
 ImagNumber      ({FloatingPoint}|{Digit}+)[fF]
 
-Whitespace      [ \v\f]+
+Whitespace      [ \v\f]
 Tab		[\t]
 LineBreak       [\n]
 
@@ -161,7 +161,7 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 }
 
 {LineBreak}{Tab}	{
-			white_count = 8;
+			white_count = 1;
 			indent_tab(white_count);
 			if( white_count > (m_indent.top()) )
 			{
@@ -182,29 +182,28 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 }		
 
 {Tab}*
-^[ \v\f] {
+{LineBreak}{Whitespace} {
 		white_count = 1;
 		indent(white_count);
-		
 		if( white_count > (m_indent.top()) )
 		{	
-			std::cerr<<std::endl<<"Stack Top "<<m_indent.top()<<" Whitespaces= "<<white_count<<std::endl;
 			m_indent.push(white_count);
-			std::cerr<<std::endl<<"Stack Top "<<m_indent.top()<<" Whitespaces= "<<white_count<<std::endl;
+			indent_level++;
 			return  parser::Token_INDENT;
 		}
 		else if( white_count < (m_indent.top()) )
 		{
 			m_indent.pop();
+			indent_level--;
 			return parser::Token_DEDENT;
 		}
 		else
 		{
-			std::cerr<<"Nothing To do"<<std::endl;
+			return parser::Token_LINEBREAK;
 		}
 }
 
-{Whitespace}	 /* skip */
+{Whitespace}*	 /* skip */
 {Comment}        /* skip */
 ^{Whitespace}{LineBreak} /* skip */
 
@@ -351,20 +350,21 @@ void Lexer::restart( parser *parser, char *contents  )
 void Lexer::indent(int a)
 {
 	int d = m_currentOffset;
-	while( m_contents[d ] == ' ')
+	while( m_contents[ d ] == ' ' || m_contents[ d ] == '\f' || m_contents[ d ] == '\v' ) 
 	{	
-		white_count++;	
+		white_count=white_count+1;	
 		d++;
 		
 	}
 	
 }
+
 void Lexer::indent_tab(int a)
 {
 	int d = m_currentOffset;
 	while( m_contents[ d ] == '\t')
 	{	
-		white_count=white_count+8;	
+		white_count=white_count+1;
 		d++;
 		
 	}
@@ -390,6 +390,7 @@ int Lexer::LexerInput( char *buf, int /*max_size*/ )
 
         // fall through
     case '\n':
+	
         m_locationTable->newline( m_currentOffset );
         break;
 

@@ -69,6 +69,7 @@ private:
     int dedent_level;
     std::size_t m_tokenBegin, m_tokenEnd;
     std::size_t m_currentOffset;
+	int m_paren;
     int space_count;	
     kdev_pg_location_table *m_locationTable;
 };

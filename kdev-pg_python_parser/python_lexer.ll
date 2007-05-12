@@ -131,9 +131,6 @@ LongString      {LongString1}|{LongString2}
 
 StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 
-%x IN_INDENT
-%x IN_CHECK
-
 %%%%
 
  /* whitespace, comments, linebreak */
@@ -160,50 +157,55 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 }
 
 {LineBreak}{Tab} {
-	white_count = 8;
-	space_count = 0;
-	indent();
-	if( white_count > (m_indent.top()) )
+	if( m_paren )
 	{
-		m_indent.push(white_count);
-		indent_level++;
-		return parser::Token_INDENT;
+		white_count = 8;
+		space_count = 0;
+		indent();
+		if( white_count > (m_indent.top()) )
+		{
+			m_indent.push(white_count);
+			indent_level++;
+			return parser::Token_INDENT;
+		}
+		else if( white_count < (m_indent.top()) )
+		{	
+			m_indent.pop();
+			indent_level--;
+			return parser::Token_DEDENT;
+		}
+		else
+		{
+			return parser::Token_LINEBREAK;
+		}	
 	}
-	else if( white_count < (m_indent.top()) )
-	{	
-		m_indent.pop();
-		indent_level--;
-		return parser::Token_DEDENT;
-	}
-	else
-	{
-		return parser::Token_LINEBREAK;
-	}	
 }		
 
 {Tab}*
 {LineBreak}{Whitespace} {
-	white_count = 0;
-	space_count = 1;
-	indent();
-	if( white_count > (m_indent.top()) )
-	{	
-		m_indent.push(white_count);
-		indent_level++;
-		return  parser::Token_INDENT;
-	}
-	else if( white_count < (m_indent.top()) )
+	if( m_paren)
 	{
-		m_indent.pop();
-		indent_level--;
-		return parser::Token_DEDENT;
-	}
-	else
-	{
-		return parser::Token_LINEBREAK;
+		white_count = 0;
+		space_count = 1;
+		indent();
+		if( white_count > (m_indent.top()) )
+		{	
+			m_indent.push(white_count);
+			indent_level++;
+			return  parser::Token_INDENT;
+		}
+		else if( white_count < (m_indent.top()) )
+		{
+			m_indent.pop();
+			indent_level--;
+			return parser::Token_DEDENT;
+		}
+		else
+		{
+			return parser::Token_LINEBREAK;
+		}
 	}
 }
-
 {Whitespace}*	 /* skip */
 {Comment}        /* skip */
 ^{Whitespace}*{LineBreak} /* skip */
@@ -252,8 +254,14 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
  /* Separators */
 "("              return parser::Token_LPAREN;
 ")"              return parser::Token_RPAREN;
-"{"              return parser::Token_LBRACE;
-"}"              return parser::Token_RBRACE;
+"{"				{
+	m_paren = m_paren + 1;
+	return parser::Token_LBRACE;
+	}
+"}"              {
+	m_paren = m_paren - 1;
+	return parser::Token_RBRACE;
+	}
 "["              return parser::Token_LBRACKET;
 "]"              return parser::Token_RBRACKET;
 ","              return parser::Token_COMMA;

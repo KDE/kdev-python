@@ -49,6 +49,7 @@ public:
     int dedent();		
     int yylex();
     int indent_level;
+	int dedent_level;
     char *contents()         { return m_contents;   }
     std::vector<int> m_indent;
 	std::vector<int>::iterator element;
@@ -67,7 +68,6 @@ private:
     python::parser* m_parser;
     char *m_contents;
     int  white_count;
-    int dedent_level;
     std::size_t m_tokenBegin, m_tokenEnd;
     std::size_t m_currentOffset;
 	int m_paren;

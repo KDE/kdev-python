@@ -398,33 +398,30 @@ void parser::tokenize( char *contents )
     do
     {
         kind = lexer.yylex();
-	if( kind == parser::Token_DEDENT)
+		if( kind == parser::Token_DEDENT)
     	{
 			int x = kind;
-			kind = parser::Token_LINEBREAK;
 			parser::token_type &t = this->token_stream->next();
-	
-	        	t.kind = kind;
+			kind = parser::Token_LINEBREAK;
+			t.kind = kind;
+        	t.begin = lexer.tokenBegin();
+        	t.end = lexer.tokenEnd();
+        	t.text = contents;
+			std::cerr<<t.kind<<std::endl;
+			while(lexer.dedent_level>1)
+			{
+				parser::token_type &t = this->token_stream->next();
+	        	t.kind = parser::Token_DEDENT;
         		t.begin = lexer.tokenBegin();
         		t.end = lexer.tokenEnd();
         		t.text = contents;
-			std::cerr<<t.kind<<std::endl;
-			if(lexer.m_indent.back() == 0 && lexer.indent_level > 0)
-			{
-				while(lexer.indent_level>0)
-				{
-					parser::token_type &t = this->token_stream->next();
-	        			t.kind = parser::Token_DEDENT;
-        				t.begin = lexer.tokenBegin();
-        				t.end = lexer.tokenEnd();
-        				t.text = contents;
-					std::cerr<<t.kind<<std::endl;	
-					lexer.indent_level--;
-				}
+				std::cerr<<t.kind<<std::endl;	
+				lexer.dedent_level--;
 			}
-			kind = x;
-    	}
-	else if( kind == parser::Token_INDENT)
+			lexer.dedent_level=0;
+			kind = x;    	
+		}
+		else if( kind == parser::Token_INDENT)
     	{
 		int x = kind;
 		kind = parser::Token_LINEBREAK;
@@ -438,7 +435,7 @@ void parser::tokenize( char *contents )
 		kind = x;
     	}
 	
-	std::cerr << kind;
+		std::cerr << kind;
         std::cerr << lexer.YYText() << std::endl; //" "; // debug output
 	
 	
@@ -446,7 +443,7 @@ void parser::tokenize( char *contents )
             kind = parser::Token_EOF;
 
 	
-	parser::token_type &t = this->token_stream->next();
+		parser::token_type &t = this->token_stream->next();
 	
         t.kind = kind;
         t.begin = lexer.tokenBegin();

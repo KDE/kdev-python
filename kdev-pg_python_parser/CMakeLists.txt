@@ -9,6 +9,7 @@ find_program(KDEVPG_EXECUTABLE
 	PATHS /usr/bin/
 	     /home/andreas/kdev-pg/bin
 	     /home/piyush/soc/kdev-pg/build/kdev-pg/
+	     /root/soc/kdevelop/build/kdev-pg
 	DOC "KDev-Pg")
 
 

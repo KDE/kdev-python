@@ -144,9 +144,10 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 		{
 			while( m_indent.back() != 0) 
 			{
+				dedent_level++;
 				m_indent.pop_back();
 			}	
-			indent_level--;
+			
 			return parser::Token_DEDENT;
 		}	
 		else
@@ -165,7 +166,6 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 		if( white_count > (m_indent.back()) )
 		{
 			m_indent.push_back(white_count);
-			indent_level++;
 			return parser::Token_INDENT;
 		}
 		else if( white_count < (m_indent.back()) )
@@ -173,8 +173,11 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 			element = find( m_indent.begin(),m_indent.end(),white_count);
 			if( * element )
 			{
-				m_indent.pop_back();
-				indent_level--;
+				while( m_indent.back() != white_count)
+				{
+					dedent_level++;
+					m_indent.pop_back();
+				}
 				return parser::Token_DEDENT;	
 			}
 			else
@@ -202,7 +205,6 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 		if( white_count > (m_indent.back()) )
 		{	
 			m_indent.push_back(white_count);
-			indent_level++;
 			return  parser::Token_INDENT;
 		}
 		else if( white_count < (m_indent.back()) )

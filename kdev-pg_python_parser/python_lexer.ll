@@ -140,11 +140,11 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 	int d = m_currentOffset;
 	if( m_contents[ d ] != ' ' && m_contents[ d]  != '\t' && m_contents[ d ]  != '\v' && m_contents[ d ] != '\f' )
 	{
-		if( m_indent.top() > 0 )
+		if( m_indent.back() > 0 )
 		{
-			while( m_indent.top() != 0) 
+			while( m_indent.back() != 0) 
 			{
-				m_indent.pop();
+				m_indent.pop_back();
 			}	
 			indent_level--;
 			return parser::Token_DEDENT;
@@ -162,21 +162,32 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 		white_count = 8;
 		space_count = 0;
 		indent();
-		if( white_count > (m_indent.top()) )
+		if( white_count > (m_indent.back()) )
 		{
-			m_indent.push(white_count);
+			m_indent.push_back(white_count);
 			indent_level++;
 			return parser::Token_INDENT;
 		}
-		else if( white_count < (m_indent.top()) )
+		else if( white_count < (m_indent.back()) )
 		{	
-			m_indent.pop();
-			indent_level--;
-			return parser::Token_DEDENT;
+			element = find( m_indent.begin(),m_indent.end(),white_count);
+			if( * element )
+			{
+				m_indent.pop_back();
+				indent_level--;
+				return parser::Token_DEDENT;	
+			}
+			else
+			{
+				std::cerr<<"Inconsistent Spacing";
+			}
 		}
 		else
 		{
-			return parser::Token_LINEBREAK;
+			if(white_count>0)
+			{
+				return parser::Token_LINEBREAK;
+			}
 		}	
 	}
 }		
@@ -188,26 +199,38 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 		white_count = 0;
 		space_count = 1;
 		indent();
-		if( white_count > (m_indent.top()) )
+		if( white_count > (m_indent.back()) )
 		{	
-			m_indent.push(white_count);
+			m_indent.push_back(white_count);
 			indent_level++;
 			return  parser::Token_INDENT;
 		}
-		else if( white_count < (m_indent.top()) )
+		else if( white_count < (m_indent.back()) )
 		{
-			m_indent.pop();
-			indent_level--;
-			return parser::Token_DEDENT;
+			element = find( m_indent.begin(),m_indent.end(),white_count);
+			if( *element)
+			{
+				m_indent.pop_back();
+				indent_level--;
+				return parser::Token_DEDENT;
+			}
+			else
+			{
+				std::cerr<<"Inconsistent Spacing";
+			}
 		}
 		else
 		{
-			return parser::Token_LINEBREAK;
+			if(white_count>0)
+			{
+				return parser::Token_LINEBREAK;
+			}
 		}
 	}
 }
+{LineBreak}{Comment}
 {Whitespace}*	 /* skip */
-{Comment}        /* skip */
+{Comment}      /* skip */
 ^{Whitespace}*{LineBreak} /* skip */
 ^{Tab}*{LineBreak}	  /* skip */ 
 
@@ -312,11 +335,11 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 
  /* End of file */
 <<EOF>> {
-	if( m_indent.top() > 0 )
+	if( m_indent.back() > 0 )
 	{
-		while( m_indent.top() != 0) 
+		while( m_indent.back() != 0) 
 		{
-			m_indent.pop();
+			m_indent.pop_back();
 		}
 		return parser::Token_DEDENT;
 	}	
@@ -345,7 +368,7 @@ void Lexer::restart( parser *parser, char *contents  )
     m_tokenBegin = m_tokenEnd = 0;
     m_currentOffset = 0;
 	
-    m_indent.push(0);
+    m_indent.push_back(0);
     indent_level = dedent_level = 0;	
     // check for and ignore the UTF-8 byte order mark
     unsigned char *ucontents = (unsigned char *) m_contents;
@@ -375,6 +398,11 @@ void Lexer::indent()
 			space_count = space_count + 1;
 			d++;
 		}
+		else if( m_contents[ d ] == '#')
+		{
+			white_count = 0;
+			break;
+		}	
 		else
 		{
 			white_count = white_count + space_count;

@@ -137,6 +137,7 @@ namespace ruby
    small_stmt ( SEMICOLON (small_stmt | 0))*  LINEBREAK
 -> simple_stmt ;;
 
+
      expr_stmt
    | print_stmt
    | del_stmt
@@ -249,7 +250,7 @@ namespace ruby
    EXCEPT ( test ( COMMA test | 0 ) | 0 )
 -> except_clause ;;
 
-   simple_stmt | LINEBREAK INDENT stmt+ DEDENT
+   simple_stmt | (LINEBREAK)* INDENT stmt+ DEDENT
 -> suite ;;
 
    and_test ( OR and_test )* | lambda_def
@@ -408,7 +409,7 @@ void parser::tokenize( char *contents )
         		t.end = lexer.tokenEnd();
         		t.text = contents;
 			std::cerr<<t.kind<<std::endl;
-			if(lexer.m_indent.top() == 0 && lexer.indent_level > 0)
+			if(lexer.m_indent.back() == 0 && lexer.indent_level > 0)
 			{
 				while(lexer.indent_level>0)
 				{

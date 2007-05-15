@@ -23,7 +23,7 @@
  *****************************************************************************/
 
 #include <iostream>
-#include <stack>
+#include <vector>
 #include <string>
 #include "python_parser.h"
 
@@ -50,7 +50,8 @@ public:
     int yylex();
     int indent_level;
     char *contents()         { return m_contents;   }
-    std::stack<int> m_indent;	
+    std::vector<int> m_indent;
+	std::vector<int>::iterator element;
     std::size_t tokenBegin() { return m_tokenBegin; }
     std::size_t tokenEnd()   { return m_tokenEnd;   }
 

@@ -33,6 +33,15 @@ add_custom_command(
 	        "${CMAKE_CURRENT_SOURCE_DIR}/python.g"
 	WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
 	)
+add_custom_target( debuginfo
+	        ${KDEVPG_EXECUTABLE} --terminals
+	        "${CMAKE_CURRENT_SOURCE_DIR}/python.g" ">terminals"
+	COMMAND  ${KDEVPG_EXECUTABLE} --symbols
+	        "${CMAKE_CURRENT_SOURCE_DIR}/python.g" ">symbols"
+	COMMAND  ${KDEVPG_EXECUTABLE} --rules
+	        "${CMAKE_CURRENT_SOURCE_DIR}/python.g" ">rules" "2>errors"
+	WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+	)
 
 set( parser_srcs
 	"${CMAKE_CURRENT_BINARY_DIR}/python_parser.cpp"
@@ -49,7 +58,7 @@ set_source_files_properties(
 	GENERATED
 	)
 
-    ADD_CUSTOM_COMMAND(
+    add_custom_command(
         OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp"
         DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/python_lexer.ll"
                 "${CMAKE_CURRENT_SOURCE_DIR}/python_lexer.h"
@@ -61,9 +70,9 @@ set_source_files_properties(
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         )
 
-    SET(parser_srcs ${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp ${parser_srcs})
+    set(parser_srcs ${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp ${parser_srcs})
 
-    SET_SOURCE_FILES_PROPERTIES(
+    set_source_files_properties(
         ${CMAKE_CURRENT_BINARY_DIR}/cool_lexer.cpp
         GENERATED
         )

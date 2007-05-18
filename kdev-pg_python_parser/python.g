@@ -113,7 +113,7 @@ namespace ruby
 
    AT dotted_name ( LPAREN ( arglist | 0) RPAREN | 0 ) LINEBREAK
 -> decorator ;;
-   
+
    decorator*
 -> decorators ;;
 
@@ -128,7 +128,7 @@ namespace ruby
    IDENTIFIER | LPAREN (list = fplist) RPAREN
 -> fpdef ;;
 
-    fpdef (COMMA fpdef)* (COMMA | 0)  
+    fpdef (COMMA fpdef)*  
 -> fplist ;;
 
    simple_stmt | compound_stmt
@@ -151,7 +151,7 @@ namespace ruby
 
    testlist ( augassign testlist | ( EQUAL testlist )* )
 -> expr_stmt ;;
-   
+
    PLUSEQ
    | MINUSEQ
    | STAREQ
@@ -246,7 +246,7 @@ namespace ruby
    ( TRY COLON suite ( except_clause COLON suite )+ ( ELSE COLON suite | 0 )
    | TRY COLON suite FINALLY COLON suite )
 -> try_stmt ;;
-   
+
    EXCEPT ( test ( COMMA test | 0 ) | 0 )
 -> except_clause ;;
 
@@ -316,7 +316,7 @@ namespace ruby
 
    test ( list_for | ( COMMA test )* ( COMMA | 0 ) )
 -> listmaker ;;
-   
+
    test ( gen_for | ( COMMA test )* ( COMMA | 0 ) )
 -> testlist_gexp ;;
 
@@ -328,7 +328,7 @@ namespace ruby
 
    subscript ( COMMA subscript )* ( COMMA | 0 )
 -> subscriptlist ;;
-   
+
    ELLIPSIS | test |  ( test | 0 ) COLON ( test | 0 ) ( sliceop | 0 )
 -> subscript ;;
 
@@ -392,69 +392,62 @@ namespace python
 
 void parser::tokenize( char *contents )
 {
-    Lexer lexer( this, contents );
-    int kind = parser::Token_EOF;
-    
-    do
+	Lexer lexer( this, contents );
+	int kind = parser::Token_EOF;
+
+	do
     {
-        kind = lexer.yylex();
+		kind = lexer.yylex();
 		if( kind == parser::Token_DEDENT)
-    	{
+		{
 			int x = kind;
 			parser::token_type &t = this->token_stream->next();
 			kind = parser::Token_LINEBREAK;
 			t.kind = kind;
-        	t.begin = lexer.tokenBegin();
-        	t.end = lexer.tokenEnd();
-        	t.text = contents;
+			t.begin = lexer.tokenBegin();
+			t.end = lexer.tokenEnd();
+			t.text = contents;
 			std::cerr<<t.kind<<std::endl;
 			while(lexer.dedent_level>1)
 			{
 				parser::token_type &t = this->token_stream->next();
-	        	t.kind = parser::Token_DEDENT;
-        		t.begin = lexer.tokenBegin();
-        		t.end = lexer.tokenEnd();
-        		t.text = contents;
-				std::cerr<<t.kind<<std::endl;	
+				t.kind = parser::Token_DEDENT;
+				t.begin = lexer.tokenBegin();
+				t.end = lexer.tokenEnd();
+				t.text = contents;
+				std::cerr<<t.kind<<std::endl;
 				lexer.dedent_level--;
 			}
 			lexer.dedent_level=0;
-			kind = x;    	
+			kind = x;
 		}
 		else if( kind == parser::Token_INDENT)
-    	{
-		int x = kind;
-		kind = parser::Token_LINEBREAK;
-		parser::token_type &t = this->token_stream->next();
-	
-        	t.kind = kind;
-        	t.begin = lexer.tokenBegin();
-        	t.end = lexer.tokenEnd();
-        	t.text = contents;
-		std::cerr<<t.kind<<std::endl;
-		kind = x;
+		{
+			int x = kind;
+			kind = parser::Token_LINEBREAK;
+			parser::token_type &t = this->token_stream->next();
+			t.kind = kind;
+			t.begin = lexer.tokenBegin();
+			t.end = lexer.tokenEnd();
+			t.text = contents;
+			std::cerr<<t.kind<<std::endl;
+			kind = x;
     	}
-	
 		std::cerr << kind;
-        std::cerr << lexer.YYText() << std::endl; //" "; // debug output
-	
-	
-        if ( !kind ) // when the lexer returns 0, the end of file is reached
-            kind = parser::Token_EOF;
+		std::cerr << lexer.YYText() << std::endl; //" "; // debug output
 
+		if ( !kind ) // when the lexer returns 0, the end of file is reached
+			kind = parser::Token_EOF;
 	
 		parser::token_type &t = this->token_stream->next();
-	
-        t.kind = kind;
-        t.begin = lexer.tokenBegin();
-        t.end = lexer.tokenEnd();
-        t.text = contents;
-	
-	
+		t.kind = kind;
+		t.begin = lexer.tokenBegin();
+		t.end = lexer.tokenEnd();
+		t.text = contents;
     }
-    while ( kind != parser::Token_EOF );
-    	
-    this->yylex(); // produce the look ahead token
+	while ( kind != parser::Token_EOF );
+
+	this->yylex(); // produce the look ahead token
 }
 
 } // end of namespace cool

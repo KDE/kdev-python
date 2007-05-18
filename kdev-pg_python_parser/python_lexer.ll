@@ -30,6 +30,7 @@
 
 #define DONT_INCLUDE_FLEXLEXER
 #include "python_lexer.h"
+
 %}
 
  /* UTF-8 sequences, generated with the Unicode.hs script from
@@ -120,7 +121,6 @@ LineBreak       [\n]
 
 Identifier      [a-zA-Z_][a-zA-Z0-9_]*
 
-Comment         "#"[^\n]*
 StringPrefix    "r"|"u"|"U"|"R"|"ur"|"UR"|"Ur"|"uR"
 ShortString1    "'"([^\n\\']|{AsciiEscape})*"'"
 ShortString2    "\""([^\n\\"]|{AsciiEscape})*"\""
@@ -129,27 +129,27 @@ LongString1     "'''"([^\\]|{AsciiEscape})"'''"
 LongString2     "\"\"\""([^\\]|{AsciiEscape})*"\"\"\""
 LongString      {LongString1}|{LongString2}
 
+Comment         ("#"[^\n]*)|(^[\n][\t\v\f]*"\"")
 StringLiteral   {StringPrefix}?({ShortString}|{LongString})
+
 
 %%%%
 
  /* whitespace, comments, linebreak */
 
-
-{LineBreak}	{	
+{LineBreak}	{
 	int d = m_currentOffset;
 	if( m_contents[ d ] != ' ' && m_contents[ d]  != '\t' && m_contents[ d ]  != '\v' && m_contents[ d ] != '\f' )
 	{
 		if( m_indent.back() > 0 )
 		{
-			while( m_indent.back() != 0) 
+			while( m_indent.back() != 0)
 			{
 				dedent_level++;
 				m_indent.pop_back();
 			}	
-			
 			return parser::Token_DEDENT;
-		}	
+		}
 		else
 		{
 			return parser::Token_LINEBREAK;
@@ -191,10 +191,9 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 			{
 				return parser::Token_LINEBREAK;
 			}
-		}	
+		}
 	}
-}		
-
+}
 {Tab}*
 {LineBreak}{Whitespace} {
 	if( m_paren)
@@ -210,11 +209,14 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 		else if( white_count < (m_indent.back()) )
 		{
 			element = find( m_indent.begin(),m_indent.end(),white_count);
-			if( *element)
+			if( * element )
 			{
-				m_indent.pop_back();
-				indent_level--;
-				return parser::Token_DEDENT;
+				while( m_indent.back() != white_count)
+				{
+					dedent_level++;
+					m_indent.pop_back();
+				}
+				return parser::Token_DEDENT;	
 			}
 			else
 			{
@@ -230,11 +232,8 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 		}
 	}
 }
-{LineBreak}{Comment}
+{Comment}		/*skip*/
 {Whitespace}*	 /* skip */
-{Comment}      /* skip */
-^{Whitespace}*{LineBreak} /* skip */
-^{Tab}*{LineBreak}	  /* skip */ 
 
  /* reserved keywords */
 "and"            return parser::Token_AND;
@@ -268,6 +267,7 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 "print"          return parser::Token_PRINT;
 
  /* String literals */
+
 {StringLiteral}  return parser::Token_STRINGLITERAL;
 
  /* Identifiers and Numbers */
@@ -283,7 +283,7 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 	m_paren = m_paren + 1;
 	return parser::Token_LBRACE;
 	}
-"}"              {
+"}"				{
 	m_paren = m_paren - 1;
 	return parser::Token_RBRACE;
 	}
@@ -364,21 +364,20 @@ Lexer::Lexer( parser* parser, char* contents)
 
 void Lexer::restart( parser *parser, char *contents  )
 {
-    m_parser = parser;
-    m_locationTable = parser->token_stream->location_table();
-    m_contents = contents;
-    m_tokenBegin = m_tokenEnd = 0;
-    m_currentOffset = 0;
-	
-    m_indent.push_back(0);
-    indent_level = dedent_level = 0;	
-    // check for and ignore the UTF-8 byte order mark
-    unsigned char *ucontents = (unsigned char *) m_contents;
-    if ( ucontents[0] == 0xEF && ucontents[1] == 0xBB && ucontents[2] == 0xBF )
-    {
-        m_tokenBegin = m_tokenEnd = 3;
-        m_currentOffset = 3;
-    }
+	m_parser = parser;
+	m_locationTable = parser->token_stream->location_table();
+	m_contents = contents;
+	m_tokenBegin = m_tokenEnd = 0;
+	m_currentOffset = 0;
+	m_indent.push_back(0);
+	indent_level = dedent_level = 0;	
+	// check for and ignore the UTF-8 byte order mark
+	unsigned char *ucontents = (unsigned char *) m_contents;
+	if ( ucontents[0] == 0xEF && ucontents[1] == 0xBB && ucontents[2] == 0xBF )
+	{
+		m_tokenBegin = m_tokenEnd = 3;
+		m_currentOffset = 3;
+	}
 
     yyrestart(NULL);
     BEGIN(INITIAL); // is not set automatically by yyrestart()
@@ -388,7 +387,7 @@ void Lexer::indent()
 {
 	int d = m_currentOffset;
 	for(;;)
-	{	
+	{
 		if( m_contents[ d ] == '\t')
 		{
 			white_count=white_count+8;
@@ -402,17 +401,23 @@ void Lexer::indent()
 		}
 		else if( m_contents[ d ] == '#')
 		{
+			std::cerr<<"Comment"<<std::endl;
 			white_count = 0;
 			break;
-		}	
+		}
+		else if( m_contents[ d ] == '\n' )
+		{
+			std::cerr<<"Blank Line"<<std::endl;
+			white_count = 0;
+			break;
+		}
 		else
 		{
 			white_count = white_count + space_count;
-			break;			
+			break;
 		}
 	}
 }
-
 
 // reads a character, and returns 1 as the number of characters read
 // (or 0 when the end of the string is reached)
@@ -426,8 +431,8 @@ int Lexer::LexerInput( char *buf, int /*max_size*/ )
         c = '\n'; // only have one single line break character: '\n'
         if ( m_contents[m_currentOffset + 1] == '\n' )
         {
-	    	m_currentOffset++;
-            m_tokenEnd++;
+			m_currentOffset++;
+			m_tokenEnd++;
         }
 
         // fall through

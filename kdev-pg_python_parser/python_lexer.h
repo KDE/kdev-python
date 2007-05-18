@@ -46,7 +46,7 @@ public:
     Lexer( python::parser *parser, char *contents  );
     void restart( python::parser *parser, char *contents );
     void indent();
-    int dedent();		
+    void quote_check();
     int yylex();
     int indent_level;
 	int dedent_level;

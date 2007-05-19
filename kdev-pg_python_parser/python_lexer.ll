@@ -116,7 +116,7 @@ FloatingPoint   {Float1}|{Float2}|{Float3}
 ImagNumber      ({FloatingPoint}|{Digit}+)[fF]
 
 Whitespace      [ \v\f]
-Tab		[\t]
+Tab				[\t]
 LineBreak       [\n]
 
 Identifier      [a-zA-Z_][a-zA-Z0-9_]*
@@ -156,9 +156,11 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 		}
 	}
 }
-
+[\\]	{
+		m_currentOffset++;
+	}
 {LineBreak}{Tab} {
-	if( m_paren )
+	if( !m_paren )
 	{
 		white_count = 8;
 		space_count = 0;
@@ -196,7 +198,7 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 }
 {Tab}*
 {LineBreak}{Whitespace} {
-	if( m_paren)
+	if( !m_paren)
 	{
 		white_count = 0;
 		space_count = 1;
@@ -369,6 +371,7 @@ void Lexer::restart( parser *parser, char *contents  )
 	m_contents = contents;
 	m_tokenBegin = m_tokenEnd = 0;
 	m_currentOffset = 0;
+	m_paren = 0;
 	m_indent.push_back(0);
 	indent_level = dedent_level = 0;	
 	// check for and ignore the UTF-8 byte order mark
@@ -418,6 +421,7 @@ void Lexer::indent()
 		}
 	}
 }
+
 
 // reads a character, and returns 1 as the number of characters read
 // (or 0 when the end of the string is reached)

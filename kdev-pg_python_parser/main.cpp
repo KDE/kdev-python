@@ -51,7 +51,7 @@ void print_token_environment(parser* parser)
         if (i == current_index)
           std::cerr << ">>";
 
-	std::cerr << dec.decode_string(i);
+        std::cerr << dec.decode_string(i);
 
         if (i == current_index)
           std::cerr << "<<";

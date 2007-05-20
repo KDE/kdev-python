@@ -48,10 +48,10 @@ public:
     void indent();
     int yylex();
     int indent_level;
-	int dedent_level;
+    int dedent_level;
     char *contents()         { return m_contents;   }
     std::vector<int> m_indent;
-	std::vector<int>::iterator element;
+    std::vector<int>::iterator element;
     std::size_t tokenBegin() { return m_tokenBegin; }
     std::size_t tokenEnd()   { return m_tokenEnd;   }
 
@@ -59,7 +59,7 @@ protected:
     // custom input, replacing the Flex default input stdin
     virtual int LexerInput( char *buf, int max_size );
 
-    // dismisses any lexer output (which should not happen anyways)
+    // dismisses  any lexer output (which should not happen anyways)
     virtual void LexerOutput( const char * /*buf*/, int /*max_size*/ ) { return; }
     virtual void LexerError( const char */*msg*/ ) { return; }
 
@@ -69,7 +69,7 @@ private:
     int  white_count;
     std::size_t m_tokenBegin, m_tokenEnd;
     std::size_t m_currentOffset;
-	int m_paren;
+    int m_paren;
     int space_count;
     kdev_pg_location_table *m_locationTable;
 };

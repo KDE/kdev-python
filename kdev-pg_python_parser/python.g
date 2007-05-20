@@ -32,7 +32,7 @@
 -----------------------------------------------------------
 
 -----------------------------------------------------------
--- Global declarations
+-- Global  declarations
 -----------------------------------------------------------
 
 [:
@@ -392,62 +392,62 @@ namespace python
 
 void parser::tokenize( char *contents )
 {
-	Lexer lexer( this, contents );
-	int kind = parser::Token_EOF;
+    Lexer lexer( this, contents );
+    int kind = parser::Token_EOF;
 
-	do
+    do
     {
-		kind = lexer.yylex();
-		if( kind == parser::Token_DEDENT)
-		{
-			int x = kind;
-			parser::token_type &t = this->token_stream->next();
-			kind = parser::Token_LINEBREAK;
-			t.kind = kind;
-			t.begin = lexer.tokenBegin();
-			t.end = lexer.tokenEnd();
-			t.text = contents;
-			std::cerr<<t.kind<<std::endl;
-			while(lexer.dedent_level>1)
-			{
-				parser::token_type &t = this->token_stream->next();
-				t.kind = parser::Token_DEDENT;
-				t.begin = lexer.tokenBegin();
-				t.end = lexer.tokenEnd();
-				t.text = contents;
-				std::cerr<<t.kind<<std::endl;
-				lexer.dedent_level--;
-			}
-			lexer.dedent_level=0;
-			kind = x;
-		}
-		else if( kind == parser::Token_INDENT)
-		{
-			int x = kind;
-			kind = parser::Token_LINEBREAK;
-			parser::token_type &t = this->token_stream->next();
-			t.kind = kind;
-			t.begin = lexer.tokenBegin();
-			t.end = lexer.tokenEnd();
-			t.text = contents;
-			std::cerr<<t.kind<<std::endl;
-			kind = x;
-    	}
-		std::cerr << kind;
-		std::cerr << lexer.YYText() << std::endl; //" "; // debug output
+        kind = lexer.yylex();
+        if( kind == parser::Token_DEDENT)
+        {
+            int x = kind;
+            parser::token_type &t = this->token_stream->next();
+            kind = parser::Token_LINEBREAK;
+            t.kind = kind;
+            t.begin = lexer.tokenBegin();
+            t.end = lexer.tokenEnd();
+            t.text = contents;
+            std::cerr<<t.kind<<std::endl;
+            while(lexer.dedent_level>1)
+            {
+                parser::token_type &t = this->token_stream->next();
+                t.kind = parser::Token_DEDENT;
+                t.begin = lexer.tokenBegin();
+                t.end = lexer.tokenEnd();
+                t.text = contents;
+                std::cerr<<t.kind<<std::endl;
+                lexer.dedent_level--;
+            }
+            lexer.dedent_level=0;
+            kind = x;
+        }
+        else if( kind == parser::Token_INDENT)
+        {
+            int x = kind;
+            kind = parser::Token_LINEBREAK;
+            parser::token_type &t = this->token_stream->next();
+            t.kind = kind;
+            t.begin = lexer.tokenBegin();
+            t.end = lexer.tokenEnd();
+            t.text = contents;
+            std::cerr<<t.kind<<std::endl;
+            kind = x;
+        }
+        std::cerr << kind;
+        std::cerr << lexer.YYText() << std::endl; //" "; // debug output
 
-		if ( !kind ) // when the lexer returns 0, the end of file is reached
-			kind = parser::Token_EOF;
+        if ( !kind ) // when the lexer returns 0, the end of file is reached
+            kind = parser::Token_EOF;
 
-		parser::token_type &t = this->token_stream->next();
-		t.kind = kind;
-		t.begin = lexer.tokenBegin();
-		t.end = lexer.tokenEnd();
-		t.text = contents;
+        parser::token_type &t = this->token_stream->next();
+        t.kind = kind;
+        t.begin = lexer.tokenBegin();
+        t.end = lexer.tokenEnd();
+        t.text = contents;
     }
-	while ( kind != parser::Token_EOF );
+    while ( kind != parser::Token_EOF );
 
-	this->yylex(); // produce the look ahead token
+    this->yylex(); // produce the look ahead token
 }
 
 } // end of namespace cool

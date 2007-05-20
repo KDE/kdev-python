@@ -70,10 +70,10 @@ private:
     std::size_t m_tokenBegin, m_tokenEnd;
     std::size_t m_currentOffset;
 	int m_paren;
-    int space_count;	
+    int space_count;
     kdev_pg_location_table *m_locationTable;
 };
 
 } // end of namespace python
 
-
+// kate: space-indent on; indent-width 4; tab-width: 4; replace-tabs on; auto-insert-doxygen on

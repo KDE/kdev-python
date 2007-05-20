@@ -1,30 +1,30 @@
 -------------------------------------------------------------------------------
--- Copyright (c) 2006 Andreas Pakulat <apaku@gmx.de>                         
--- Copyright (c) 2007 Piyush Verma  <piyush.verma@gmail.com>                 
---                                                                           
--- Permission is hereby granted, free of charge, to any person obtaining     
--- a copy of this software and associated documentation files (the           
--- "Software"), to deal in the Software without restriction, including       
--- without limitation the rights to use, copy, modify, merge, publish,       
--- distribute, sublicense, and/or sell copies of the Software, and to        
--- permit persons to whom the Software is furnished to do so, subject to     
--- the following conditions:                                                 
---                                                                           
--- The above copyright notice and this permission notice shall be            
--- included in all copies or substantial portions of the Software.           
---                                                                           
--- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,           
--- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF        
--- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND                     
--- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE    
--- LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION    
--- OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION     
--- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           
+-- Copyright (c) 2006 Andreas Pakulat <apaku@gmx.de>
+-- Copyright (c) 2007 Piyush Verma  <piyush.verma@gmail.com>
+--
+-- Permission is hereby granted, free of charge, to any person obtaining
+-- a copy of this software and associated documentation files (the
+-- "Software"), to deal in the Software without restriction, including
+-- without limitation the rights to use, copy, modify, merge, publish,
+-- distribute, sublicense, and/or sell copies of the Software, and to
+-- permit persons to whom the Software is furnished to do so, subject to
+-- the following conditions:
+--
+-- The above copyright notice and this permission notice shall be
+-- included in all copies or substantial portions of the Software.
+--
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+-- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+-- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+-- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+-- LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+-- OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+-- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -------------------------------------------------------------------------------
 
 -----------------------------------------------------------
 -- Grammar for Python2.4
--- Modelled after the Grammar files shipped with Python2.4 
+-- Modelled after the Grammar files shipped with Python2.4
 -- source, the Python Language Reference documentation,
 -- also included with Python
 -- And after the Python 2.3.3 Antlr grammar found on the
@@ -75,7 +75,7 @@ namespace ruby
        ASSERT ("assert"), ELIF ("elif"), FROM ("from"), LAMBDA ("lambda"),
        RETURN ("returns"), BREAK ("break"), ELSE ("else"), GLOBAL ("global"),
        NOT ("not"), TRY ("try"), CLASS ("class"), EXCEPT ("except"), IF ("if"),
-       OR ("or"), WHILE ("while"), CONTINUE ("continue"), EXEC ("exec"), 
+       OR ("or"), WHILE ("while"), CONTINUE ("continue"), EXEC ("exec"),
        IMPORT ("import"), PASS ("pass"), YIELD ("yield"), DEF ("def"), IN ("in"),
        PRINT ("print"), FINALLY ("finally") ;;
 
@@ -93,10 +93,10 @@ namespace ruby
 
 -- operators
 %token ELLIPSIS ("ellipsis"), STAR ("star"), DOUBLESTAR ("doublestar"), EQUAL ("equal"),
-       PLUS ("plus"), MINUS ("minus"), TILDE ("tilde"), SLASH ("slash"), 
+       PLUS ("plus"), MINUS ("minus"), TILDE ("tilde"), SLASH ("slash"),
        DOUBLESLASH ("doubleslash"), MODULO ("modulo"), AND ("and"), LSHIFT ("lshift"),
        RSHIFT ("rshift"), PLUSEQ ("pluseq"), MINUSEQ ("minuseq"), SLASHEQ ("slasheq"),
-       DOUBLESLASHEQ ("doubleslasheq"), MODULOEQ ("moduloeq"), ANDEQ ("andeq"), 
+       DOUBLESLASHEQ ("doubleslasheq"), MODULOEQ ("moduloeq"), ANDEQ ("andeq"),
        STAREQ ("stareq"), DOUBLESTAREQ ("doublestareq"), LSHIFTEQ ("lshifteq"),
        RSHIFTEQ ("rshifteq"), LESS ("less"), GREATER ("greater"), GREATEREQ ("greatereq"),
        LESSEQ ("lesseq"), UNEQUAL ("unequal"), OR ("or"), HAT ("hat"), ISEQUAL ("isequal"),
@@ -128,7 +128,7 @@ namespace ruby
    IDENTIFIER | LPAREN (list = fplist) RPAREN
 -> fpdef ;;
 
-    fpdef (COMMA fpdef)*  
+    fpdef (COMMA fpdef)*
 -> fplist ;;
 
    simple_stmt | compound_stmt
@@ -300,9 +300,9 @@ namespace ruby
    atom trailer* ( DOUBLESTAR factor | 0 )
 -> power ;;
 
-   LPAREN ( testlist_gexp | 0 ) RPAREN 
-   | LBRACKET listmaker RPAREN 
-   | LBRACE dictmaker RBRACE 
+   LPAREN ( testlist_gexp | 0 ) RPAREN
+   | LBRACKET listmaker RPAREN
+   | LBRACE dictmaker RBRACE
    | BACKTICK testlist1 BACKTICK
    | IDENTIFIER
    | number
@@ -438,7 +438,7 @@ void parser::tokenize( char *contents )
 
 		if ( !kind ) // when the lexer returns 0, the end of file is reached
 			kind = parser::Token_EOF;
-	
+
 		parser::token_type &t = this->token_stream->next();
 		t.kind = kind;
 		t.begin = lexer.tokenBegin();
@@ -454,4 +454,5 @@ void parser::tokenize( char *contents )
 
 :]
 
+-- kate: space-indent on; indent-width 4; tab-width: 4; replace-tabs on; auto-insert-doxygen on
 

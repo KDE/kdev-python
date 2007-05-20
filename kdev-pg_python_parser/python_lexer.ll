@@ -147,7 +147,7 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 			{
 				dedent_level++;
 				m_indent.pop_back();
-			}	
+			}
 			return parser::Token_DEDENT;
 		}
 		else
@@ -171,7 +171,7 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 			return parser::Token_INDENT;
 		}
 		else if( white_count < (m_indent.back()) )
-		{	
+		{
 			element = find( m_indent.begin(),m_indent.end(),white_count);
 			if( * element )
 			{
@@ -180,7 +180,7 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 					dedent_level++;
 					m_indent.pop_back();
 				}
-				return parser::Token_DEDENT;	
+				return parser::Token_DEDENT;
 			}
 			else
 			{
@@ -204,7 +204,7 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 		space_count = 1;
 		indent();
 		if( white_count > (m_indent.back()) )
-		{	
+		{
 			m_indent.push_back(white_count);
 			return  parser::Token_INDENT;
 		}
@@ -218,7 +218,7 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 					dedent_level++;
 					m_indent.pop_back();
 				}
-				return parser::Token_DEDENT;	
+				return parser::Token_DEDENT;
 			}
 			else
 			{
@@ -341,15 +341,15 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 <<EOF>> {
 	if( m_indent.back() > 0 )
 	{
-		while( m_indent.back() != 0) 
+		while( m_indent.back() != 0)
 		{
 			m_indent.pop_back();
 		}
 		return parser::Token_DEDENT;
-	}	
+	}
 	return parser::Token_EOF;
 }
- 
+
  /* Everything that is not handled up to now is not part of the language. */
 .                return parser::Token_INVALID;
 
@@ -373,7 +373,7 @@ void Lexer::restart( parser *parser, char *contents  )
 	m_currentOffset = 0;
 	m_paren = 0;
 	m_indent.push_back(0);
-	indent_level = dedent_level = 0;	
+	indent_level = dedent_level = 0;
 	// check for and ignore the UTF-8 byte order mark
 	unsigned char *ucontents = (unsigned char *) m_contents;
 	if ( ucontents[0] == 0xEF && ucontents[1] == 0xBB && ucontents[2] == 0xBF )
@@ -441,7 +441,7 @@ int Lexer::LexerInput( char *buf, int /*max_size*/ )
 
         // fall through
     case '\n':
-	
+
         m_locationTable->newline( m_currentOffset );
         break;
 
@@ -453,3 +453,5 @@ int Lexer::LexerInput( char *buf, int /*max_size*/ )
 }
 
 } // end of namespace python
+
+// kate: space-indent on; indent-width 4; tab-width: 4; replace-tabs on; auto-insert-doxygen on

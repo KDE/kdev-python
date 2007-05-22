@@ -8,4 +8,3 @@ class cd:
 	pass
 
 print "hello World!"
-

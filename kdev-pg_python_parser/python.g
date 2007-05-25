@@ -121,14 +121,22 @@ namespace ruby
 -> funcdef ;;
 
 
-   fpdef ( EQUAL test | 0 ) ( COMMA fpdef ( EQUAL test | 0 ) )* |
+   fpdef ( EQUAL test | 0 )
+    ( COMMA [: if (yytoken == Token_RPAREN)
+                { break;} :]
+        fpdef ( EQUAL test | 0 ) )*
+    |
    ( fpdef ( EQUAL test | 0 ) COMMA )* ( STAR IDENTIFIER ( COMMA DOUBLESTAR IDENTIFIER | 0 ) | DOUBLESTAR IDENTIFIER )
 -> varargslist ;;
 
-   IDENTIFIER | LPAREN (list = fplist) RPAREN
+   LPAREN (list = fplist) RPAREN
+    | IDENTIFIER
 -> fpdef ;;
 
-    fpdef (COMMA fpdef)*
+    fpdef
+    ( COMMA [: if ( yytoken == Token_RPAREN )
+                  { break; } :]
+            fpdef )*
 -> fplist ;;
 
    simple_stmt | compound_stmt

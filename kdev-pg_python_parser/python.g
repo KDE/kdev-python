@@ -117,22 +117,28 @@ namespace ruby
    decorator*
 -> decorators ;;
 
-   ( decorators | 0 ) DEF IDENTIFIER LPAREN (#vargs = varargslist | 0) RPAREN COLON suite
+
+-- Function Definition
+   ( decorators | 0 ) DEF IDENTIFIER LPAREN ( #vargs = varargslist )
+    | 0
+    RPAREN COLON suite
 -> funcdef ;;
 
-
-   fpdef ( EQUAL test | 0 )
-    ( COMMA [: if (yytoken == Token_RPAREN)
-                { break;} :]
-        fpdef ( EQUAL test | 0 ) )*
-    |
-   ( fpdef ( EQUAL test | 0 ) COMMA )* ( STAR IDENTIFIER ( COMMA DOUBLESTAR IDENTIFIER | 0 ) | DOUBLESTAR IDENTIFIER )
+-- Function variable Arguement List
+   fpdef ( EQUAL test | 0 )    
+   (COMMA) 
+	( ?[: yytoken == Token_STAR :] STAR IDENTIFIER ( COMMA DOUBLESTAR IDENTIFIER | 0 ) 
+	| DOUBLESTAR IDENTIFIER )
 -> varargslist ;;
 
+
+-- Function Parameter Definition
    LPAREN (list = fplist) RPAREN
-    | IDENTIFIER
+    |  IDENTIFIER
 -> fpdef ;;
 
+
+-- Function parameter List
     fpdef
     ( COMMA [: if ( yytoken == Token_RPAREN )
                   { break; } :]

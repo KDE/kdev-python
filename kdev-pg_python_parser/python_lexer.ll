@@ -184,6 +184,7 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
             }
             else
             {
+                if ( ! blank_line)
                 std::cerr<<"Inconsistent Spacing";
             }
         }
@@ -222,6 +223,7 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
             }
             else
             {
+                if( ! blank_line )
                 std::cerr<<"Inconsistent Spacing";
             }
         }
@@ -413,6 +415,7 @@ void Lexer::indent()
         {
             std::cerr<<"Blank Line"<<std::endl;
             white_count = 0;
+            blank_line = 1;
             break;
         }
         else

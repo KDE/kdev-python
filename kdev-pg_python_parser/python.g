@@ -119,16 +119,17 @@ namespace ruby
 
 
 -- Function Definition
-   ( decorators | 0 ) DEF IDENTIFIER LPAREN ( #vargs = varargslist )
-    | 0
+   ( decorators | 0 ) DEF IDENTIFIER LPAREN ( ?[: LA(1).kind != Token_RPAREN :] (vargs = varargslist )*
+    | 0 )
     RPAREN COLON suite
 -> funcdef ;;
 
 -- Function variable Arguement List
-   fpdef ( EQUAL test | 0 )    
-   (COMMA) 
-	( ?[: yytoken == Token_STAR :] STAR IDENTIFIER ( COMMA DOUBLESTAR IDENTIFIER | 0 ) 
-	| DOUBLESTAR IDENTIFIER )
+   fpdef (EQUAL test | 0 )
+   (COMMA)
+    (( ?[: yytoken == Token_STAR :] STAR IDENTIFIER ( COMMA DOUBLESTAR IDENTIFIER | 0 ) 
+    | DOUBLESTAR IDENTIFIER )
+    | 0)
 -> varargslist ;;
 
 
@@ -311,7 +312,8 @@ namespace ruby
    ( PLUS | MINUS | TILDE ) factor | power
 -> factor ;;
 
-   atom trailer* ( DOUBLESTAR factor | 0 )
+   atom [: std::cerr<<yytoken; :]
+	(#trailer = trailer)* ( DOUBLESTAR factor | 0 )
 -> power ;;
 
    LPAREN ( testlist_gexp | 0 ) RPAREN

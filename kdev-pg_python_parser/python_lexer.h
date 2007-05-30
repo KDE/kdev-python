@@ -49,6 +49,7 @@ public:
     int yylex();
     int indent_level;
     int dedent_level;
+    bool blank_line;
     char *contents()         { return m_contents;   }
     std::vector<int> m_indent;
     std::vector<int>::iterator element;

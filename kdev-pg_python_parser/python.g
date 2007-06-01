@@ -126,7 +126,7 @@ namespace ruby
 
 -- Function variable Arguement List
    fpdef (EQUAL test | 0 )
-   (COMMA)
+   ( ?[: yytoken == Token_COMMA :] COMMA )
     (( ?[: yytoken == Token_STAR :] STAR IDENTIFIER ( COMMA DOUBLESTAR IDENTIFIER | 0 ) 
     | DOUBLESTAR IDENTIFIER )
     | 0)
@@ -312,8 +312,8 @@ namespace ruby
    ( PLUS | MINUS | TILDE ) factor | power
 -> factor ;;
 
-   atom [: std::cerr<<yytoken; :]
-	(#trailer = trailer)* ( DOUBLESTAR factor | 0 )
+   atom
+    (?[: yytoken == Token_LPAREN || yytoken == Token_LBRACKET || yytoken == Token_DOT :] #trailer = trailer)* ( DOUBLESTAR factor | 0 )
 -> power ;;
 
    LPAREN ( testlist_gexp | 0 ) RPAREN
@@ -330,10 +330,12 @@ namespace ruby
    | IMAGNUM
 -> number ;;
 
-   test ( list_for | ( COMMA test )* ( COMMA | 0 ) )
+   test ( list_for | ( COMMA [: if (yytoken == Token_RBRACE) { break; } :]
+    test )* )
 -> listmaker ;;
 
-   test ( gen_for | ( COMMA test )* ( COMMA | 0 ) )
+   test ( gen_for | ( COMMA [: if (yytoken == Token_RBRACE) { break; } :]
+    test )*)
 -> testlist_gexp ;;
 
    LAMBDA ( varargslist | 0 ) COLON test
@@ -342,7 +344,8 @@ namespace ruby
    LPAREN ( arglist | 0 ) RPAREN | LBRACKET subscriptlist RBRACKET | DOT IDENTIFIER
 -> trailer ;;
 
-   subscript ( COMMA subscript )* ( COMMA | 0 )
+   subscript ( COMMA [: if (yytoken == Token_RBRACKET) { break; } :]
+    subscript )*
 -> subscriptlist ;;
 
    ELLIPSIS | test |  ( test | 0 ) COLON ( test | 0 ) ( sliceop | 0 )
@@ -351,7 +354,8 @@ namespace ruby
    COLON ( test | 0 )
 -> sliceop ;;
 
-   expr ( COMMA expr )* ( COMMA | 0 )
+   expr
+    ( COMMA [: if (yytoken == Token_IN) { break; } :] expr )*
 -> exprlist ;;
 
    test ( COMMA test )* ( COMMA | 0 )
@@ -360,7 +364,8 @@ namespace ruby
    test ( ( COMMA test )+ ( COMMA | 0 ) | 0 )
 -> testlist_safe ;;
 
-   test COLON test ( COMMA test COLON test )* ( COMMA | 0 )
+   test COLON test ( COMMA [: if (yytoken == Token_RBRACE) { break; } :]
+    test COLON test )*
 -> dictmaker ;;
 
    CLASS IDENTIFIER ( ( LPAREN testlist RPAREN ) | 0 ) COLON suite

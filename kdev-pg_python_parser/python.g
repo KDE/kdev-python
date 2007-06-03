@@ -124,14 +124,21 @@ namespace ruby
     RPAREN COLON suite
 -> funcdef ;;
 
+-- Function Defintion
+    fpdef ( EQUAL test | 0 )
+-> fp_def ;;
+
+    fp_def ( COMMA [:if(yytoken == Token_RPAREN  || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR ) { break; } :] fp_def )*
+-> func_def ;;
+
 -- Function variable Arguement List
-   fpdef (EQUAL test | 0 )
-   ( ?[: yytoken == Token_COMMA :] COMMA )
-    (( ?[: yytoken == Token_STAR :] STAR IDENTIFIER ( COMMA DOUBLESTAR IDENTIFIER | 0 ) 
-    | DOUBLESTAR IDENTIFIER )
-    | 0)
+    func_def (?[: yytoken != Token_RPAREN  && LA(2).kind == Token_IDENTIFIER:] #argparam = argparam | 0 )
 -> varargslist ;;
 
+-- The Vararguement trailer, defines *args and **args
+    ( STAR IDENTIFIER ( COMMA DOUBLESTAR IDENTIFIER | 0 )
+        | DOUBLESTAR IDENTIFIER )
+-> argparam;;
 
 -- Function Parameter Definition
    LPAREN (list = fplist) RPAREN
@@ -355,7 +362,8 @@ namespace ruby
 -> sliceop ;;
 
    expr
-    ( COMMA [: if (yytoken == Token_IN) { break; } :] expr )*
+    ( COMMA [: if (yytoken == Token_IN) { break; } :]
+    expr )*
 -> exprlist ;;
 
    test ( COMMA test )* ( COMMA | 0 )

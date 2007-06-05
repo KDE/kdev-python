@@ -372,7 +372,7 @@ namespace ruby
     expr )*
 -> exprlist ;;
 
-   test ( COMMA test )* ( COMMA | 0 )
+   test ( ( COMMA test )+ ( COMMA | 0 ) | 0 )
 -> testlist ;;
 
    test ( ( COMMA test )+ ( COMMA | 0 ) | 0 )
@@ -385,7 +385,7 @@ namespace ruby
    CLASS IDENTIFIER ( ( LPAREN testlist RPAREN ) | 0 ) COLON suite
 -> classdef ;;
 
-   ( argument COMMA )* ( argument ( COMMA | 0 ) | STAR test ( COMMA DOUBLESTAR test | 0 ) | DOUBLESTAR test )
+   argument ( ( COMMA argument)* |  STAR test ( COMMA DOUBLESTAR test | 0 ) | DOUBLESTAR test )
 -> arglist ;;
 
    test ( ( gen_for | 0 ) | EQUAL test ( LPAREN gen_for RPAREN | 0 ) )

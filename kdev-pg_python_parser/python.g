@@ -265,8 +265,8 @@ namespace ruby
    FOR exprlist IN testlist COLON suite ( ELSE COLON suite | 0 )
 -> for_stmt ;;
 
-   ( TRY COLON suite ( except_clause COLON suite )+ ( ELSE COLON suite | 0 )
-   | TRY COLON suite FINALLY COLON suite )
+   TRY COLON suite 
+    ( ( except_clause COLON suite )+ ( ELSE COLON suite | 0 ) | FINALLY COLON suite )
 -> try_stmt ;;
 
    EXCEPT ( test ( COMMA test | 0 ) | 0 )
@@ -355,7 +355,13 @@ namespace ruby
     subscript )*
 -> subscriptlist ;;
 
-   ELLIPSIS | test |  ( test | 0 ) COLON ( test | 0 ) ( sliceop | 0 )
+-- Sub Scripts Check if the curent token is not a COLON it should be a test
+-- If a COLON it skips the 'test'. if the next token is not RBRACKET or COMMA after test it can be a COLON.
+-- Else it ends.
+   ELLIPSIS
+    | ( ?[: yytoken != Token_COLON :] test )
+    ( ?[: yytoken == Token_RBRACKET || yytoken == Token_COMMA :] 0
+        | COLON ( test | 0 ) ( sliceop | 0 ) )
 -> subscript ;;
 
    COLON ( test | 0 )
@@ -382,7 +388,7 @@ namespace ruby
    ( argument COMMA )* ( argument ( COMMA | 0 ) | STAR test ( COMMA DOUBLESTAR test | 0 ) | DOUBLESTAR test )
 -> arglist ;;
 
-   test ( gen_for | 0 ) | test EQUAL test ( LPAREN gen_for RPAREN | 0 )
+   test ( ( gen_for | 0 ) | EQUAL test ( LPAREN gen_for RPAREN | 0 ) )
 -> argument ;;
 
    list_for | list_if

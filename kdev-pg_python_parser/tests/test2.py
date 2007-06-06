@@ -1,10 +1,5 @@
-class a:
-	class b:
-		class c:
-			pass
-class ab:
-	pass
-class cd:
-	pass
-
-print "hello World!"
+def a(b):
+	print "hello"
+if __name__ == "__main__":
+	print "Main"
+	print a('x')

@@ -263,9 +263,9 @@ namespace ruby
 -> while_stmt ;;
 
    FOR exprlist IN testlist COLON suite ( ELSE COLON suite | 0 )
--> for_stmt [: std::cerr<<"For " ; :];;
+-> for_stmt ;;
 
-   TRY COLON suite 
+   TRY COLON suite
     ( ( except_clause COLON suite )+ ( ELSE COLON suite | 0 ) | FINALLY COLON suite )
 -> try_stmt ;;
 
@@ -319,8 +319,8 @@ namespace ruby
    ( PLUS | MINUS | TILDE ) factor | power
 -> factor ;;
 
-   atom
-    (trailer = trailer)* ( DOUBLESTAR factor | 0 )
+   ( atom )
+    (trailer)* ( DOUBLESTAR factor | 0 )
 -> power ;;
 
    LPAREN ( testlist_gexp | 0 ) RPAREN
@@ -337,12 +337,14 @@ namespace ruby
    | IMAGNUM
 -> number ;;
 
-   test ( list_for | ( COMMA [: if (yytoken == Token_RBRACKET) { break; } :]
-    test )* )
+   test ( COMMA [: if (yytoken == Token_RBRACKET) { break; } :] test )*
+-> list_maker ;;
+    list_maker (list_for | 0)
 -> listmaker ;;
 
-   test ( gen_for | ( COMMA [: if (yytoken == Token_RBRACE) { break; } :]
-    test )*)
+   test ( COMMA [: if (yytoken == Token_RBRACE) { break; } :] test )*
+-> test_list_gexp ;;
+    test_list_gexp ( gen_for | 0 )
 -> testlist_gexp ;;
 
    LAMBDA ( varargslist | 0 ) COLON test
@@ -385,10 +387,13 @@ namespace ruby
    CLASS IDENTIFIER ( ( LPAREN testlist RPAREN ) | 0 ) COLON suite
 -> classdef ;;
 
-   (argument)
-    ( ( COMMA [: if ( yytoken == Token_RBRACE || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR ) { break;} :] argument)*
-    | STAR test ( COMMA DOUBLESTAR test | 0 )
-    | DOUBLESTAR test )
+   argument
+    ( COMMA [: if(yytoken == Token_RPAREN || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR) { break; } :] argument)*
+-> arg_list ;;
+
+    arg_list
+    ( STAR test ( ?[: LA(2).kind == Token_DOUBLESTAR :] COMMA DOUBLESTAR test )
+    | DOUBLESTAR test | 0)
 -> arglist ;;
 
    test ( ( gen_for | 0 ) | EQUAL test ( LPAREN gen_for RPAREN | 0 ) )

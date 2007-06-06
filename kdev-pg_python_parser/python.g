@@ -263,7 +263,7 @@ namespace ruby
 -> while_stmt ;;
 
    FOR exprlist IN testlist COLON suite ( ELSE COLON suite | 0 )
--> for_stmt ;;
+-> for_stmt [: std::cerr<<"For " ; :];;
 
    TRY COLON suite 
     ( ( except_clause COLON suite )+ ( ELSE COLON suite | 0 ) | FINALLY COLON suite )
@@ -298,33 +298,33 @@ namespace ruby
    | IS (NOT | 0)
 -> comp_op ;;
 
-   xor_expr ( OR xor_expr )*
+   xor_expr (( OR xor_expr )+ | 0)
 -> expr ;;
 
-   and_expr ( HAT and_expr )*
+   and_expr (( HAT and_expr )+ | 0)
 -> xor_expr ;;
 
-   shift_expr ( AND shift_expr )*
+   shift_expr (( AND shift_expr )+ | 0)
 -> and_expr ;;
 
-   arith_expr ( ( LSHIFT | RSHIFT ) arith_expr )*
+   arith_expr (( ( LSHIFT | RSHIFT ) arith_expr )+ | 0)
 -> shift_expr ;;
 
-   term ( ( PLUS | MINUS ) term )*
+   term (( ( PLUS | MINUS ) term )+ | 0)
 -> arith_expr ;;
 
-   factor ( ( STAR | SLASH | MODULO | DOUBLESLASH ) factor )*
+   factor (( ( STAR | SLASH | MODULO | DOUBLESLASH ) factor )+ | 0)
 -> term ;;
 
    ( PLUS | MINUS | TILDE ) factor | power
 -> factor ;;
 
    atom
-    (?[: yytoken == Token_LPAREN || yytoken == Token_LBRACKET || yytoken == Token_DOT :] #trailer = trailer)* ( DOUBLESTAR factor | 0 )
+    (trailer = trailer)* ( DOUBLESTAR factor | 0 )
 -> power ;;
 
    LPAREN ( testlist_gexp | 0 ) RPAREN
-   | LBRACKET listmaker RPAREN
+   | LBRACKET listmaker RBRACKET
    | LBRACE dictmaker RBRACE
    | BACKTICK testlist1 BACKTICK
    | IDENTIFIER
@@ -337,7 +337,7 @@ namespace ruby
    | IMAGNUM
 -> number ;;
 
-   test ( list_for | ( COMMA [: if (yytoken == Token_RBRACE) { break; } :]
+   test ( list_for | ( COMMA [: if (yytoken == Token_RBRACKET) { break; } :]
     test )* )
 -> listmaker ;;
 
@@ -385,7 +385,10 @@ namespace ruby
    CLASS IDENTIFIER ( ( LPAREN testlist RPAREN ) | 0 ) COLON suite
 -> classdef ;;
 
-   argument ( ( COMMA argument)* |  STAR test ( COMMA DOUBLESTAR test | 0 ) | DOUBLESTAR test )
+   (argument)
+    ( ( COMMA [: if ( yytoken == Token_RBRACE || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR ) { break;} :] argument)*
+    | STAR test ( COMMA DOUBLESTAR test | 0 )
+    | DOUBLESTAR test )
 -> arglist ;;
 
    test ( ( gen_for | 0 ) | EQUAL test ( LPAREN gen_for RPAREN | 0 ) )

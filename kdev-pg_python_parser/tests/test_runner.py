@@ -33,7 +33,7 @@ class Error(Exception): pass
 class TestResults:
     __doc__="The Class is the Engine of the test Suite"
     _re_test = re.compile('\S*(.py$)')
-
+    _re_pass = re.compile('[\S\s]*\nMatched')
     def __init__(self):
         """Initiates the variables"""
         self.dir = "./"
@@ -71,9 +71,14 @@ class TestResults:
             error = "File: "+log_file+" IOError: ReGenerating the Token Stram File"
             self.Errors.append(error)
     def __parser_token_check(self,data,x,i):
-        if( data == x ):
+        parse = re.match(self._re_pass,x)
+        if(parse):
+            if( data == x ):
                 y = "OK"
                 self.success = self.success + 1
+            else:
+                self.failure = self.failure + 1
+                y = "FAILED"
         else:
             self.failure = self.failure + 1
             y = "FAILED"

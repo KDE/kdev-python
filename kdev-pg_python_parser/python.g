@@ -339,8 +339,9 @@ namespace ruby
    | IMAGNUM
 -> number ;;
 
-   test ( COMMA [: if (yytoken == Token_RBRACKET) { break; } :] test )*
+   ( test ( COMMA [: if (yytoken == Token_RBRACKET) { break; } :] test )* | 0)
 -> list_maker ;;
+
     list_maker (list_for | 0)
 -> listmaker ;;
 

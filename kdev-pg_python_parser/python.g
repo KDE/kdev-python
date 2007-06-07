@@ -171,7 +171,9 @@ namespace ruby
    | assert_stmt
 -> small_stmt ;;
 
-   testlist ( augassign testlist | ( EQUAL testlist )* )
+   testlist ( augassign testlist
+    | ( EQUAL testlist )+
+    | ?[: yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK :] 0 )
 -> expr_stmt ;;
 
    PLUSEQ

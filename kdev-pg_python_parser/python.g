@@ -156,7 +156,7 @@ namespace ruby
    simple_stmt | compound_stmt
 -> stmt ;;
 
-   small_stmt ( SEMICOLON (small_stmt | 0))*  LINEBREAK
+   small_stmt ( SEMICOLON [: if( yytoken == Token_LINEBREAK) { break;} :]small_stmt )*  LINEBREAK
 -> simple_stmt ;;
 
 
@@ -274,7 +274,7 @@ namespace ruby
    EXCEPT ( test ( COMMA test | 0 ) | 0 )
 -> except_clause ;;
 
-   simple_stmt | (LINEBREAK)* INDENT stmt+ DEDENT
+   simple_stmt | (LINEBREAK)+ INDENT stmt+ DEDENT
 -> suite ;;
 
    and_test ( OR and_test )* | lambda_def
@@ -377,7 +377,7 @@ namespace ruby
     expr )*
 -> exprlist ;;
 
-   test ( ( COMMA test )+ ( COMMA | 0 ) | 0 )
+   test ( COMMA test )*
 -> testlist ;;
 
    test ( ( COMMA test )+ ( COMMA | 0 ) | 0 )

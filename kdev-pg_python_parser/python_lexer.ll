@@ -249,7 +249,7 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 "elif"           return parser::Token_ELIF;
 "from"           return parser::Token_FROM;
 "lambda"         return parser::Token_LAMBDA;
-" return"        return parser::Token_RETURN;
+"return"        return parser::Token_RETURN;
 "break"          return parser::Token_BREAK;
 "else"           return parser::Token_ELSE;
 "global"         return parser::Token_GLOBAL;

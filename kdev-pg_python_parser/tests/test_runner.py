@@ -1,3 +1,4 @@
+#! /usr/bin/python
 #-------------------------------------------------------------------------------
 #-- Copyright (c) 2007 Piyush Verma  <piyush.verma@gmail.com>
 #--

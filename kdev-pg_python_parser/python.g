@@ -383,7 +383,7 @@ namespace ruby
    test ( ( COMMA test )+ ( COMMA | 0 ) | 0 )
 -> testlist_safe ;;
 
-   test COLON test ( COMMA [: if (yytoken == Token_RBRACE) { break; } :]
+   (test COLON test | 0) ( COMMA [: if (yytoken == Token_RBRACE) { break; } :]
     test COLON test )*
 -> dictmaker ;;
 

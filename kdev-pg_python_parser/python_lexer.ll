@@ -138,21 +138,24 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
  /* whitespace, comments, linebreak */
 
 {LineBreak}	{
-    int d = m_currentOffset;
-    if( m_contents[ d ] != ' ' && m_contents[ d]  != '\t' && m_contents[ d ]  != '\v' && m_contents[ d ] != '\f' )
+    if( !m_paren )
     {
-        if( m_indent.back() > 0 )
+        int d = m_currentOffset;
+        if( m_contents[ d ] != ' ' && m_contents[ d]  != '\t' && m_contents[ d ]  != '\v' && m_contents[ d ] != '\f' )
         {
-            while( m_indent.back() != 0)
+            if( m_indent.back() > 0 )
             {
-                dedent_level++;
-                m_indent.pop_back();
+                while( m_indent.back() != 0)
+                {
+                    dedent_level++;
+                    m_indent.pop_back();
+                }
+                return parser::Token_DEDENT;
             }
-            return parser::Token_DEDENT;
-        }
-        else
-        {
-            return parser::Token_LINEBREAK;
+            else
+            {
+                return parser::Token_LINEBREAK;
+            }
         }
     }
 }

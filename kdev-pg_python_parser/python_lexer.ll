@@ -126,9 +126,9 @@ ShortString1    "'"([^\n\\']|{AsciiEscape})*"'"
 ShortString2    "\""([^\n\\"]|{AsciiEscape})*"\""
 ShortString     {ShortString1}|{ShortString2}
 LongString1     "'''"([^\\]|{AsciiEscape})"'''"
-LongString2     "\"\"\""([^\\\"]|{AsciiEscape})*"\"\"\""
-LongString      {LongString1}|{LongString2}
-
+LongString2     "\"\"\""
+StringDoc       {LongString2}([^\\]|{AsciiEscape})*{LongString2}
+LongString      {LongString1}|{StringDoc}
 Comment         ("#"[^\n]*)|(^[\n][\t\v\f]*"\"")
 StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 

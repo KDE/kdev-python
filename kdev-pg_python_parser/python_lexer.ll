@@ -126,17 +126,17 @@ StringPrefix    "r"|"u"|"U"|"R"|"ur"|"UR"|"Ur"|"uR"
 ShortString1    "'"([^\n\\']|{AsciiEscape})*"'"
 ShortString2    "\""([^\n\\"]|{AsciiEscape})*"\""
 ShortString     {ShortString1}|{ShortString2}
-LongString1     "'''"([^\\]|{AsciiEscape})"'''"
+LongString1     "'''"
 LongString2     "\"\"\""
-LongString      {LongString1}
+LongStringBegin {LongString1}|{LongString2}
 Comment         ("#"[^\n]*)|(^[\n][\t\v\f]*"\"")
-StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 
 
+%x longstringlex
 %%%%
 
  /* whitespace, comments, linebreak */
-{LongString2}(.)*{LongString2} return parser::Token_STRINGLITERAL;
+
 {LineBreak}	{
     if( !m_paren )
     {
@@ -275,7 +275,16 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 
  /* String literals */
 
-{StringLiteral}  return parser::Token_STRINGLITERAL;
+{ShortString}  return parser::Token_STRINGLITERAL;
+<INITIAL>{LongStringBegin} {
+    BEGIN(longstringlex);
+    return parser::Token_LONGSTRING;
+}
+<longstringlex>{LongStringBegin} {
+    BEGIN(INITIAL);
+    return parser::Token_LONGSTRING;
+}
+<longstringlex>(.|\n)   return parser::Token_STRINGBODY;
 
  /* Identifiers and Numbers */
 {Identifier}     return parser::Token_IDENTIFIER;

@@ -122,13 +122,13 @@ LineBreak       [\n]
 Identifier      [a-zA-Z_][a-zA-Z0-9_]*
 
 StringPrefix    "r"|"u"|"U"|"R"|"ur"|"UR"|"Ur"|"uR"
+
 ShortString1    "'"([^\n\\']|{AsciiEscape})*"'"
 ShortString2    "\""([^\n\\"]|{AsciiEscape})*"\""
 ShortString     {ShortString1}|{ShortString2}
 LongString1     "'''"([^\\]|{AsciiEscape})"'''"
 LongString2     "\"\"\""
-StringDoc       {LongString2}([^\\]|{AsciiEscape})*{LongString2}
-LongString      {LongString1}|{StringDoc}
+LongString      {LongString1}
 Comment         ("#"[^\n]*)|(^[\n][\t\v\f]*"\"")
 StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 
@@ -136,7 +136,7 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 %%%%
 
  /* whitespace, comments, linebreak */
-
+{LongString2}(.)*{LongString2} return parser::Token_STRINGLITERAL;
 {LineBreak}	{
     if( !m_paren )
     {
@@ -252,7 +252,7 @@ StringLiteral   {StringPrefix}?({ShortString}|{LongString})
 "elif"           return parser::Token_ELIF;
 "from"           return parser::Token_FROM;
 "lambda"         return parser::Token_LAMBDA;
-"return"        return parser::Token_RETURN;
+"return"         return parser::Token_RETURN;
 "break"          return parser::Token_BREAK;
 "else"           return parser::Token_ELSE;
 "global"         return parser::Token_GLOBAL;

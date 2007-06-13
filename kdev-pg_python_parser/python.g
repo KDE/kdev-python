@@ -157,7 +157,7 @@ namespace ruby
    simple_stmt | compound_stmt
 -> stmt ;;
 
-   small_stmt ( SEMICOLON [: if( yytoken == Token_LINEBREAK) { break;} :]small_stmt )*  LINEBREAK
+   small_stmt ( SEMICOLON [: if( yytoken == Token_LINEBREAK || yytoken == Token_DEDENT) { break;} :]small_stmt )*  LINEBREAK
 -> simple_stmt ;;
 
 

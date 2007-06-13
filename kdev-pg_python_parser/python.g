@@ -236,7 +236,8 @@ namespace ruby
    dotted_name ( IDENTIFIER IDENTIFIER | 0 )
 -> dotted_as_name ;;
 
-   import_as_name ( COMMA import_as_name COMMA)* | ( COMMA import_as_name )*
+   import_as_name 
+    ( COMMA [: if( yytoken == Token_RPAREN || yytoken == Token_LINEBREAK || yytoken == Token_SEMICOLON ) { break;} :] import_as_name)*
 -> import_as_names ;;
 
    dotted_as_name ( COMMA dotted_as_name )*

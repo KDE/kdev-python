@@ -382,7 +382,7 @@ namespace ruby
 -> sliceop ;;
 
    expr
-    ( COMMA [: if (yytoken == Token_IN) { break; } :]
+    ( COMMA [: if (yytoken == Token_IN || yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK ) { break; } :]
     expr )*
 -> exprlist ;;
 

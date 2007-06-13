@@ -386,7 +386,8 @@ namespace ruby
     expr )*
 -> exprlist ;;
 
-   test ( COMMA test )*
+   test ( COMMA [: if( yytoken == Token_COLON || yytoken == Token_SEMICOLON || yytoken == Token_RPAREN || yytoken == Token_LINEBREAK) {break;} :]
+    test )*
 -> testlist ;;
 
    test ( ( COMMA test )+ ( COMMA | 0 ) | 0 )

@@ -125,10 +125,10 @@ StringPrefix    "r"|"u"|"U"|"R"|"ur"|"UR"|"Ur"|"uR"
 
 ShortString1    "'"([^\n\\']|{AsciiEscape})*"'"
 ShortString2    "\""([^\n\\"]|{AsciiEscape})*"\""
-ShortString     {ShortString1}|{ShortString2}
+ShortString     {StringPrefix}?({ShortString1}|{ShortString2})
 LongString1     "'''"
 LongString2     "\"\"\""
-LongStringBegin {LongString1}|{LongString2}
+LongStringBegin {StringPrefix}?({LongString1}|{LongString2})
 Comment         ("#"[^\n]*)|(^[\n][\t\v\f]*"\"")
 
 

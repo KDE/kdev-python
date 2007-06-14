@@ -85,7 +85,7 @@ namespace ruby
 -- Identifiers, Strings and numbers
 %token STRINGLITERAL ("stringliteral"), IDENTIFIER ("identifier"),
        INTEGER ("integer"), FLOAT ("float"), IMAGNUM ("imagnum"),
-        LONGSTRING ("longstring"), STRINGBODY ("stringbody") ;;
+        LONGSTRING ("longstring"), STRINGBODY ("stringbody"), SHORTSTRING ("shrtstring") ;;
 
 -- separators
 %token LPAREN ("lparen"), RPAREN ("rparen"), LBRACE ("lbrace"), RBRACE ("rbrace"),
@@ -336,7 +336,11 @@ namespace ruby
    | number
    | STRINGLITERAL
    | longstringliteral
+   | shortstringliteral
 -> atom ;;
+
+   SHORTSTRING ( STRINGBODY )+ SHORTSTRING
+-> shortstringliteral ;;
 
    LONGSTRING ( STRINGBODY )+ LONGSTRING
 -> longstringliteral ;;

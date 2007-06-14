@@ -191,10 +191,8 @@ namespace ruby
    | DOUBLESLASHEQ
 -> augassign ;;
 
-   PRINT ( ( test ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]test )*
-    | 0 )
-    | RSHIFT test ( ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]test )+
-    | 0 ) )
+   PRINT (test ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]test )*
+    | RSHIFT test ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]test )*)
 -> print_stmt ;;
 
    DEL exprlist

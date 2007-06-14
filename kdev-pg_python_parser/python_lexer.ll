@@ -138,7 +138,7 @@ Comment         ("#"[^\n]*)|(^[\n][\t\v\f]*"\"")
  /* whitespace, comments, linebreak */
 
 {LineBreak}	{
-    if( !m_paren )
+    if( !m_paren && !m_bracket && !m_brace )
     {
         int d = m_currentOffset;
         if( m_contents[ d ] != ' ' && m_contents[ d]  != '\t' && m_contents[ d ]  != '\v' && m_contents[ d ] != '\f' )
@@ -163,7 +163,7 @@ Comment         ("#"[^\n]*)|(^[\n][\t\v\f]*"\"")
         m_currentOffset++;
     }
 {LineBreak}{Tab} {
-    if( !m_paren )
+    if( !m_paren && !m_bracket && !m_brace )
     {
         white_count = 8;
         space_count = 0;
@@ -202,7 +202,7 @@ Comment         ("#"[^\n]*)|(^[\n][\t\v\f]*"\"")
 }
 {Tab}*
 {LineBreak}{Whitespace} {
-    if( !m_paren)
+    if( !m_paren && !m_bracket && !m_brace )
     {
         white_count = 0;
         space_count = 1;
@@ -293,18 +293,30 @@ Comment         ("#"[^\n]*)|(^[\n][\t\v\f]*"\"")
 {ImagNumber}     return parser::Token_IMAGNUM;
 
  /* Separators */
-"("              return parser::Token_LPAREN;
-")"              return parser::Token_RPAREN;
-"{"             {
+"("              {
     m_paren = m_paren + 1;
+    return parser::Token_LPAREN;
+    }
+")"              {
+    m_paren = m_paren - 1;
+    return parser::Token_RPAREN;
+    }
+"{"             {
+    m_brace = m_brace + 1;
     return parser::Token_LBRACE;
     }
 "}"             {
-    m_paren = m_paren - 1;
+    m_brace = m_brace - 1;
     return parser::Token_RBRACE;
     }
-"["              return parser::Token_LBRACKET;
-"]"              return parser::Token_RBRACKET;
+"["              {
+    m_bracket = m_bracket + 1;
+    return parser::Token_LBRACKET;
+    }
+"]"              {
+    m_bracket = m_bracket - 1;
+    return parser::Token_RBRACKET;
+}
 ","              return parser::Token_COMMA;
 ";"              return parser::Token_SEMICOLON;
 ":"              return parser::Token_COLON;
@@ -387,6 +399,8 @@ void Lexer::restart( parser *parser, char *contents  )
     m_tokenBegin = m_tokenEnd = 0;
     m_currentOffset = 0;
     m_paren = 0;
+    m_brace = 0;
+    m_bracket = 0;
     m_indent.push_back(0);
     indent_level = dedent_level = 0;
     // check for and ignore the UTF-8 byte order mark

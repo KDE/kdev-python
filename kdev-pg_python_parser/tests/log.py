@@ -1,40 +1,46 @@
-#!/usr/bin/env python
+###########################################################################
+#    Copyright (C) 2007 by Piyush Verma,Sapphire Mobile Systems,0091-11-41553035,0091-981261908                                      
+#    <piyush@survived>                                                             
+#
+# Copyright: See COPYING file that comes with this distribution
+#
+###########################################################################
 import logging
-import auxillary
+import logging.handlers
+import sys
 
-# Create Logger with "spam_application"
-logger = logging.getLogger("spam_application")
-logger.setLevel(logging.DEBUG)
-
-# Create File Handler and set leevl to DEBUG
-fh = logging.FileHandler("spam.log")
-fh.setLevel(logging.DEBUG)
-
-# Create Console Handler and set level to DEBUG
-ch = logging.StreamHandler()
-ch.setLevel(logging.ERROR)
-
-# Create Formatter
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-
-#Add formatter to ch
-ch.setFormatter(formatter)
-
-#Add formatter to fh
-fh.setFormatter(formatter)
-
-#add fh to logger
-logger.addHandler(fh)
-
-#Add ch to logger
-logger.addHandler(ch)
-
-logger.info("Creating an Instance of auxillary.Auxillary")
-a= auxillary.Auxillary()
-logger.info("Created an Instance of auxillary.Auxillary")
-logger.info("Calling _add")
-a._add()
-logger.info("Called _add")
-logger.info("Calling function")
-auxillary.function()
-logger.info("Called function")
+def logger_factory(logtype='syslog', logfile=None, level='WARNING',
+                   logid='logg'):
+    logger = logging.getLogger(logid)
+    logtype = logtype.lower()
+    if logtype == 'file':
+        hdlr = logging.FileHandler(logfile)
+    elif logtype in ['syslog', 'unix']:
+        hdlr = logging.handlers.SysLogHandler('/dev/log')
+    elif logtype in ['stderr']:
+        hdlr = logging.StreamHandler(sys.stderr)
+    else:
+        print "No worthy LogType Found In the Arguements, pLease Check the Parameter: %s" % logtype
+    format = ' [%(module)s] %(levelname)s: %(message)s'
+    if logtype in ['file', 'stderr']:
+        format = '%(asctime)s ' + format 
+    datefmt = ''
+    if logtype == 'stderr':
+        datefmt = '%X'
+    level = level.upper()
+    if level in ['ALL']:
+        logger.setLevel(logging.DEBUG)
+    elif level == 'INFO':
+        logger.setLevel(logging.INFO)
+    elif level == 'ERROR':
+        logger.setLevel(logging.ERROR)
+    elif level == 'CRITICAL':
+        logger.setLevel(logging.CRITICAL)
+    elif level == 'WARNING':
+        logger.setLevel(logging.WARNING)
+    else:
+        logger.setLevel(logging.DEBUG)
+    formatter = logging.Formatter(format,datefmt)
+    hdlr.setFormatter(formatter)
+    logger.addHandler(hdlr)
+    return logger

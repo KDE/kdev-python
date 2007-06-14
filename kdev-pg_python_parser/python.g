@@ -411,7 +411,9 @@ namespace ruby
     | DOUBLESTAR test | 0)
 -> arglist ;;
 
-   test ( ( gen_for | 0 ) | EQUAL test ( LPAREN gen_for RPAREN | 0 ) )
+   test ( EQUAL test ( ?[: LA(2).kind == Token_FOR :] LPAREN gen_for RPAREN | 0 )
+    | ?[: yytoken == Token_FOR :] gen_for
+    | ?[: yytoken == Token_RPAREN || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR || yytoken == Token_COMMA :] 0 )
 -> argument ;;
 
    list_for | list_if

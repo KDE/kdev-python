@@ -30,12 +30,42 @@
 
 #include "python_parser.h"
 #include "python_lexer.h"
-
+#include "decoder.h"
 #include <iostream>
 #include <string>
 #include <sstream>
 
-void print_token_environment(python::parser* parser);
+using namespace python;
+
+void print_token_environment(parser* parser)
+{
+    static bool done = false;
+    if (done)
+      return; // don't print with each call when going up the error path
+
+    decoder dec(parser->token_stream);
+
+    int current_index = parser->token_stream->index() - 1;
+    for (int i = current_index - 5; i < current_index + 5; i++)
+      {
+        if (i < 0 || i >= parser->token_stream->size())
+          continue;
+
+        if (i == current_index)
+          std::cerr << ">>";
+
+        std::cerr << dec.decode_string(i);
+
+        if (i == current_index)
+          std::cerr << "<<";
+
+        std::cerr << " ";
+      }
+    std::cerr << std::endl;
+
+    done = true;
+}
+
 std::string int2string(int);
 
 namespace python

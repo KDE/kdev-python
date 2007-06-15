@@ -44,15 +44,15 @@ class Lexer : public yyFlexLexer
 {
 public:
     Lexer( python::parser *parser, char *contents  );
+    ~Lexer();
     void restart( python::parser *parser, char *contents );
     void indent();
     int yylex();
-    int indent_level;
-    int dedent_level;
-    bool blank_line;
+    int indentationLevel();
+    int dedentationLevel();
+    void setIndentationLevel(int);
+    void setDedentationLevel(int);
     char *contents()         { return m_contents;   }
-    std::vector<int> m_indent;
-    std::vector<int>::iterator element;
     std::size_t tokenBegin() { return m_tokenBegin; }
     std::size_t tokenEnd()   { return m_tokenEnd;   }
 
@@ -68,6 +68,8 @@ private:
     python::parser* m_parser;
     char *m_contents;
     int  white_count;
+    std::vector<int> m_indent;
+    std::vector<int>::iterator element;
     std::size_t m_tokenBegin, m_tokenEnd;
     std::size_t m_currentOffset;
     int m_paren;
@@ -75,6 +77,9 @@ private:
     int m_brace;
     int quote_count;
     int space_count;
+    int indent_level;
+    int dedent_level;
+    bool blank_line;
     kdev_pg_location_table *m_locationTable;
 };
 

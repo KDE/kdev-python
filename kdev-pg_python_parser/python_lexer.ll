@@ -485,6 +485,29 @@ int Lexer::LexerInput( char *buf, int /*max_size*/ )
     return (c == 0) ? 0 : (buf[0] = c, 1);
 }
 
+Lexer::~Lexer()
+{
+}
+
+int Lexer::indentationLevel()
+{
+    return indent_level;
+}
+
+int Lexer::dedentationLevel()
+{
+    return dedent_level;
+}
+
+void Lexer::setIndentationLevel(int l)
+{
+    indent_level = l;
+}
+
+void Lexer::setDedentationLevel(int l)
+{
+    dedent_level = l;
+}
 } // end  of namespace python
 
 // kate: space-indent on; indent-width 4; tab-width: 4; replace-tabs on; auto-insert-doxygen on

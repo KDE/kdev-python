@@ -334,7 +334,7 @@ namespace ruby
    | BACKTICK testlist1 BACKTICK
    | IDENTIFIER
    | number
-   | STRINGLITERAL
+   | (STRINGLITERAL)+
    | longstringliteral
    | shortstringliteral
 -> atom ;;

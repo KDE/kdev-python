@@ -137,6 +137,8 @@ Comment         ("#"[^\n]*)|(^[\n][\t\v\f]*"\"")
 
  /* whitespace, comments, linebreak */
 
+{ShortString}([\\]){LineBreak}{ShortString} return parser::Token_STRINGLITERAL;
+
 {LineBreak}	{
     if( !m_paren && !m_bracket && !m_brace )
     {
@@ -275,7 +277,8 @@ Comment         ("#"[^\n]*)|(^[\n][\t\v\f]*"\"")
 
  /* String literals */
 
-{ShortString}  return parser::Token_STRINGLITERAL;
+{ShortString}   return parser::Token_STRINGLITERAL;
+
 <INITIAL>{LongStringBegin} {
     BEGIN(longstringlex);
     return parser::Token_LONGSTRING;

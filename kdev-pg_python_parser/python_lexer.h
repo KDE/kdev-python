@@ -75,6 +75,7 @@ private:
     int m_paren;
     int m_bracket;
     int m_brace;
+    int m_suite;
     int quote_count;
     int space_count;
     int indent_level;

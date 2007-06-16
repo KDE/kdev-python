@@ -167,7 +167,18 @@ Comment         ("#"[^\n]*)|(^[\n][\t\v\f]*"\"")
     }
 {LineBreak}{Comment}
 {LineBreak}{Tab} {
-    if( !m_paren && !m_bracket && !m_brace )
+    if (m_suite == 0)
+    {
+        white_count = 8;
+        space_count = 0;
+        indent();
+        if( white_count > 0)
+        {
+            std::cerr<<"Unexpected Indent";
+            return parser::Token_INVALID;
+        }
+    }
+    if( !m_paren && !m_bracket && !m_brace && m_suite>0)
     {
         white_count = 8;
         space_count = 0;
@@ -324,7 +335,10 @@ Comment         ("#"[^\n]*)|(^[\n][\t\v\f]*"\"")
 }
 ","              return parser::Token_COMMA;
 ";"              return parser::Token_SEMICOLON;
-":"              return parser::Token_COLON;
+":"              {
+    m_suite = 1;
+    return parser::Token_COLON;
+}
 "."              return parser::Token_DOT;
 "`"              return parser::Token_BACKTICK;
 "@"              return parser::Token_AT;
@@ -406,6 +420,7 @@ void Lexer::restart( parser *parser, char *contents  )
     m_paren = 0;
     m_brace = 0;
     m_bracket = 0;
+    m_suite = 0;
     m_indent.push_back(0);
     indent_level = dedent_level = 0;
     // check for and ignore the UTF-8 byte order mark

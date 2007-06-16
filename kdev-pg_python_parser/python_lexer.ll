@@ -161,6 +161,7 @@ Comment         ("#"[^\n]*)|(^[\n][\t\v\f]*"\"")
         }
     }
 }
+[\\]{LineBreak} /*skip */
 [\\]    {
         m_currentOffset++;
     }

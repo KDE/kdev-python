@@ -143,7 +143,7 @@ Comment         ("#"[^\n]*)|(^[\n][\t\v\f]*"\"")
     if( !m_paren && !m_bracket && !m_brace )
     {
         int d = m_currentOffset;
-        if( m_contents[ d ] != ' ' && m_contents[ d]  != '\t' && m_contents[ d ]  != '\v' && m_contents[ d ] != '\f' )
+        if( m_contents[ d ] != ' ' && m_contents[ d]  != '\t' && m_contents[ d ]  != '\v' && m_contents[ d ] != '\f' && m_contents[ d ] != '#')
         {
             if( m_indent.back() > 0 )
             {
@@ -165,6 +165,7 @@ Comment         ("#"[^\n]*)|(^[\n][\t\v\f]*"\"")
 [\\]    {
         m_currentOffset++;
     }
+{LineBreak}{Comment}
 {LineBreak}{Tab} {
     if( !m_paren && !m_bracket && !m_brace )
     {
@@ -439,6 +440,7 @@ void Lexer::indent()
         {
             std::cerr<<"Comment"<<std::endl;
             white_count = 0;
+            blank_line = 1;
             break;
         }
         else if( m_contents[ d ] == '\n' )

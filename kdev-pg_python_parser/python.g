@@ -32,6 +32,37 @@
 -----------------------------------------------------------
 
 -----------------------------------------------------------
+-- TODO: Error recovery
+-- %parserclass (private declaration)
+-- [:
+--   parser::java_compatibility_mode _M_compatibility_mode;
+--
+--   struct parser_state {
+--       // ltCounter stores the amount of currently open type arguments rules,
+--       // all of which are beginning with a less than ("<") character.
+--       // This way, also SIGNED_RSHIFT (">>") and UNSIGNED_RSHIFT (">>>") can be used
+--       // to close type arguments rules, in addition to GREATER_THAN (">").
+--       int ltCounter;
+--   };
+--   parser_state _M_state;
+-- :]
+-- parser::parser_state *parser::copy_current_state()
+-- {
+--     parser_state *state = new parser_state();
+--     state->ltCounter = _M_state.ltCounter;
+--     return state;
+-- }
+--
+-- void parser::restore_state( parser::parser_state *state )
+-- {
+--     _M_state.ltCounter = state->ltCounter;
+-- }
+--
+-- Then a rule like (stmt)* -> project can be written
+-- as try/recover(stmt)* -> project and the parser
+-- will skip any errornous statements
+
+-----------------------------------------------------------
 -- Global  declarations
 -----------------------------------------------------------
 
@@ -109,13 +140,13 @@ namespace ruby
 
 -- The actual grammar starts here.
 
-   (#klass= stmt )*
+   ( #stmt = stmt )*
 -> project ;;
 
-   AT dotted_name ( LPAREN ( arglist | 0) RPAREN | 0 ) LINEBREAK
+   AT decorator_name=dotted_name ( LPAREN ( #arguments=arglist | 0) RPAREN | 0 ) LINEBREAK
 -> decorator ;;
 
-   decorator*
+   (#decorator = decorator )*
 -> decorators ;;
 
 
@@ -510,6 +541,7 @@ void parser::tokenize( char *contents )
 
     this->yylex(); // produce the look ahead token
 }
+
 
 } // end of namespace cool
 

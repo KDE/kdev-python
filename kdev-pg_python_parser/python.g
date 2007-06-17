@@ -154,7 +154,7 @@ namespace ruby
             fpdef )*
 -> fplist ;;
 
-   simple_stmt | compound_stmt
+   simple_stmt | compound_stmt | LINEBREAK
 -> stmt ;;
 
    small_stmt ( SEMICOLON [: if( yytoken == Token_LINEBREAK || yytoken == Token_DEDENT) { break;} :]small_stmt )*  LINEBREAK

@@ -376,7 +376,7 @@ namespace ruby
 -- If a COLON it skips the 'test'. if the next token is not RBRACKET or COMMA after test it can be a COLON.
 -- Else it ends.
    ELLIPSIS
-    | ( ?[: yytoken != Token_COLON :] test )
+    | ( ?[: yytoken != Token_COLON :] test | 0 )
     ( ?[: yytoken == Token_RBRACKET || yytoken == Token_COMMA :] 0
         | COLON ( test | 0 ) ( sliceop | 0 ) )
 -> subscript ;;

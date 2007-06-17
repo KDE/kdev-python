@@ -101,7 +101,7 @@ namespace ruby
        STAREQ ("stareq"), DOUBLESTAREQ ("doublestareq"), LSHIFTEQ ("lshifteq"),
        RSHIFTEQ ("rshifteq"), LESS ("less"), GREATER ("greater"), GREATEREQ ("greatereq"),
        LESSEQ ("lesseq"), UNEQUAL ("unequal"), OR ("or"), HAT ("hat"), ISEQUAL ("isequal"),
-       TILDEEQ ("tildeeq"), OREQ ("oreq") ;;
+       TILDEEQ ("tildeeq"), OREQ ("oreq"), ANDD ("andd") , ORR ("orr");;
 
 
 -- token that makes the parser fail in any case:
@@ -303,16 +303,16 @@ namespace ruby
    | IS (NOT | 0)
 -> comp_op ;;
 
-   xor_expr (( OR xor_expr )+ | 0)
+   xor_expr ( ORR xor_expr )*
 -> expr ;;
 
-   and_expr (( HAT and_expr )+ | 0)
+   and_expr ( HAT and_expr )*
 -> xor_expr ;;
 
-   shift_expr (( AND shift_expr )+ | 0)
+   shift_expr ( ANDD shift_expr )*
 -> and_expr ;;
 
-   arith_expr (( ( LSHIFT | RSHIFT ) arith_expr )+ | 0)
+   arith_expr ( ( LSHIFT | RSHIFT ) arith_expr )*
 -> shift_expr ;;
 
    term (( ( PLUS | MINUS ) term )+ | 0)

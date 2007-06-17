@@ -358,7 +358,7 @@ Comment         ("#"[^\n]*)|(^[\n][\t\v\f]*"\"")
 "/"              return parser::Token_SLASH;
 "//"             return parser::Token_DOUBLESLASH;
 "%"              return parser::Token_MODULO;
-"&"              return parser::Token_AND;
+"&"              return parser::Token_ANDD;
 "<<"             return parser::Token_LSHIFT;
 ">>"             return parser::Token_RSHIFT;
 "+="             return parser::Token_PLUSEQ;
@@ -382,7 +382,7 @@ Comment         ("#"[^\n]*)|(^[\n][\t\v\f]*"\"")
 "<="             return parser::Token_LESSEQ;
 "<>"             return parser::Token_UNEQUAL;
 "!="             return parser::Token_UNEQUAL;
-"|"              return parser::Token_OR;
+"|"              return parser::Token_ORR;
 "^"              return parser::Token_HAT;
 "=="             return parser::Token_ISEQUAL;
 

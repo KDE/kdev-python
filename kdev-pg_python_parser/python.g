@@ -109,7 +109,7 @@ namespace ruby
 
 -- The actual grammar starts here.
 
-   (#klass= LINEBREAK | stmt )*
+   (#klass= stmt )*
 -> project ;;
 
    AT dotted_name ( LPAREN ( arglist | 0) RPAREN | 0 ) LINEBREAK

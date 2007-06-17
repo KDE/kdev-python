@@ -234,7 +234,7 @@ namespace ruby
    dotted_name ( IDENTIFIER IDENTIFIER | 0 )
 -> dotted_as_name ;;
 
-   import_as_name 
+   import_as_name
     ( COMMA [: if( yytoken == Token_RPAREN || yytoken == Token_LINEBREAK || yytoken == Token_SEMICOLON ) { break;} :] import_as_name)*
 -> import_as_names ;;
 
@@ -358,6 +358,7 @@ namespace ruby
 
    test ( COMMA [: if (yytoken == Token_RBRACE) { break; } :] test )*
 -> test_list_gexp ;;
+
     test_list_gexp ( gen_for | 0 )
 -> testlist_gexp ;;
 

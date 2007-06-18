@@ -251,81 +251,81 @@ namespace ruby
    YIELD testlist=testlist
 -> yield_stmt ;;
 
-   RAISE ( test=test ( test=COMMA test ( COMMA test=test | 0 ) | 0 ) | 0 )
+   RAISE ( test=test ( COMMA test=test ( COMMA test=test | 0 ) | 0 ) | 0 )
 -> raise_stmt ;;
 
    import_name=import_name 
     | import_from=import_from
 -> import_stmt ;;
 
-   IMPORT dotted_as_names
+   IMPORT dotted_as_names=dotted_as_names
 -> import_name ;;
 
-   FROM dotted_name IMPORT ( STAR | LPAREN import_as_names RPAREN | import_as_names )
+   FROM dotted_name=dotted_name IMPORT ( STAR | LPAREN import_as_names=import_as_names RPAREN | import_as_names=import_as_names )
 -> import_from ;;
 
    IDENTIFIER ( IDENTIFIER IDENTIFIER | 0 )
 -> import_as_name ;;
 
-   dotted_name ( IDENTIFIER IDENTIFIER | 0 )
+   dotted_name=dotted_name ( IDENTIFIER IDENTIFIER | 0 )
 -> dotted_as_name ;;
 
-   import_as_name
-    ( COMMA [: if( yytoken == Token_RPAREN || yytoken == Token_LINEBREAK || yytoken == Token_SEMICOLON ) { break;} :] import_as_name)*
+   #import_as_name=import_as_name
+    ( COMMA [: if( yytoken == Token_RPAREN || yytoken == Token_LINEBREAK || yytoken == Token_SEMICOLON ) { break;} :] #import_as_name=import_as_name)*
 -> import_as_names ;;
 
-   dotted_as_name ( COMMA dotted_as_name )*
+   #dotted_as_name=dotted_as_name ( COMMA #dotted_as_name=dotted_as_name )*
 -> dotted_as_names ;;
 
    IDENTIFIER ( DOT IDENTIFIER )*
 -> dotted_name ;;
 
-   GLOBAL IDENTIFIER ( COMMA IDENTIFIER )*
+   GLOBAL #global_name=IDENTIFIER ( COMMA #global_name=IDENTIFIER )*
 -> global_stmt ;;
 
-   EXEC expr ( IN test ( COMMA test | 0 ) | 0 )
+   EXEC expr=expr ( IN test=test ( COMMA test=test | 0 ) | 0 )
 -> exec_stmt ;;
 
-   ASSERT test ( COMMA test | 0 )
+   ASSERT test=test ( COMMA test=test | 0 )
 -> assert_stmt ;;
 
-   if_stmt
-   | while_stmt
-   | for_stmt
-   | try_stmt
-   | funcdef
-   | classdef
+   if_stmt=if_stmt
+   | while_stmt=while_stmt
+   | for_stmt=for_stmt
+   | try_stmt=try_stmt
+   | fucdef=funcdef
+   | classdef=classdef
 -> compound_stmt ;;
 
-   IF test COLON suite ( ELIF test COLON suite )* ( ELSE COLON suite | 0 )
+   IF #test=test COLON suite ( ELIF #test=test COLON suite )* ( ELSE COLON suite | 0 )
 -> if_stmt ;;
 
-   WHILE test COLON suite ( ELSE COLON suite | 0 )
+   WHILE test=test COLON suite ( ELSE COLON suite | 0 )
 -> while_stmt ;;
 
-   FOR exprlist IN testlist COLON suite ( ELSE COLON suite | 0 )
+   FOR exprlist=exprlist IN testlist=testlist COLON suite ( ELSE COLON suite | 0 )
 -> for_stmt ;;
 
    TRY COLON suite
-    ( ( except_clause COLON suite )+ ( ELSE COLON suite | 0 ) | FINALLY COLON suite )
+    ( ( except_clause=except_clause COLON suite )+ ( ELSE COLON suite | 0 ) | FINALLY COLON suite )
 -> try_stmt ;;
 
-   EXCEPT ( test ( COMMA test | 0 ) | 0 )
+   EXCEPT ( test=test ( COMMA test=test | 0 ) | 0 )
 -> except_clause ;;
 
-   simple_stmt | (LINEBREAK)+ INDENT stmt+ DEDENT
+   simple_stmt=simple_stmt | (LINEBREAK)+ INDENT stmt+ DEDENT
 -> suite ;;
 
-   and_test ( OR and_test )* | lambda_def
+   #and_test=and_test ( OR #and_test=and_test )* | lambda_def=lambda_def
 -> test ;;
 
-   not_test ( AND not_test )*
+   #note_test=not_test ( AND #not_test=not_test )*
 -> and_test ;;
 
-   NOT not_test | comparison
+   NOT not_test=not_test | comparison=comparison
 -> not_test ;;
 
-   expr ( comp_op expr )*
+   #expr=expr ( #comp_op=comp_op #expr=expr )*
 -> comparison ;;
 
    LESS

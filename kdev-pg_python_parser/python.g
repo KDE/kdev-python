@@ -136,18 +136,24 @@ namespace ruby
    ( #stmt = stmt )*
 -> project ;;
 
-   AT decorator_name=dotted_name ( LPAREN ( #arguments=arglist | 0) RPAREN | 0 ) LINEBREAK
+   AT decorator_name = dotted_name ( LPAREN ( arguments=arglist | 0) RPAREN | 0 ) LINEBREAK
 -> decorator ;;
 
    (#decorator = decorator )*
 -> decorators ;;
 
+   ident = IDENTIFIER
+-> identifier ;;
 
 -- Function Definition
-   ( decorators | 0 ) DEF IDENTIFIER LPAREN ( ?[: LA(1).kind != Token_RPAREN :] (vargs = varargslist )*
+   ( decorators [: (*yynode)->fun_decorators = true; :]
+    | 0 [: (*yynode)->fun_decorators = true; :] )
+    DEF func_name=identifier LPAREN ( ?[: LA(1).kind != Token_RPAREN :] ( #fun_args = varargslist )*
     | 0 )
     RPAREN COLON suite
--> funcdef ;;
+-> funcdef [
+    member variable fun_decorators:bool;
+] ;;
 
 -- Function Defintion
     fpdef ( EQUAL test | 0 )
@@ -157,13 +163,16 @@ namespace ruby
 -> func_def ;;
 
 -- Function variable Arguement List
-    func_def (?[: yytoken != Token_RPAREN  && LA(2).kind == Token_IDENTIFIER:] #argparam = argparam | 0 )
+    func_def (
+    ?[: yytoken != Token_RPAREN  && LA(2).kind == Token_IDENTIFIER:] (fun_pos_param = fun_pos_param )
+    | 0 
+    )
 -> varargslist ;;
 
 -- The Vararguement trailer, defines *args and **args
     ( STAR IDENTIFIER ( COMMA DOUBLESTAR IDENTIFIER | 0 )
         | DOUBLESTAR IDENTIFIER )
--> argparam;;
+-> fun_pos_param;;
 
 -- Function Parameter Definition
    LPAREN (list = fplist) RPAREN
@@ -178,10 +187,14 @@ namespace ruby
             fpdef )*
 -> fplist ;;
 
-   simple_stmt | compound_stmt | LINEBREAK
+-- A statement could be simple statement/ a compont statement OR just a Linebreak
+    simple_stmt = simple_stmt 
+    | compound_stmt = compound_stmt 
+    | LINEBREAK
 -> stmt ;;
 
-   small_stmt ( SEMICOLON [: if( yytoken == Token_LINEBREAK || yytoken == Token_DEDENT) { break;} :]small_stmt )*  LINEBREAK
+   #small_stmt = small_stmt 
+    ( SEMICOLON [: if( yytoken == Token_LINEBREAK || yytoken == Token_DEDENT) { break;} :] #small_stmt = small_stmt )*  LINEBREAK
 -> simple_stmt ;;
 
 

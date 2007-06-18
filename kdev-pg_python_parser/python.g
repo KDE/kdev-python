@@ -142,18 +142,12 @@ namespace ruby
    (#decorator = decorator )*
 -> decorators ;;
 
-   ident = IDENTIFIER
--> identifier ;;
-
 -- Function Definition
-   ( decorators [: (*yynode)->fun_decorators = true; :]
-    | 0 [: (*yynode)->fun_decorators = true; :] )
-    DEF func_name=identifier LPAREN ( ?[: LA(1).kind != Token_RPAREN :] ( #fun_args = varargslist )*
+   ( decorators = decorators | 0 )
+    DEF func_name=IDENTIFIER LPAREN ( ?[: LA(1).kind != Token_RPAREN :] ( #fun_args = varargslist )*
     | 0 )
     RPAREN COLON suite
--> funcdef [
-    member variable fun_decorators:bool;
-] ;;
+-> funcdef ;;
 
 -- Function Defintion
     fpdef ( EQUAL test | 0 )
@@ -198,19 +192,19 @@ namespace ruby
 -> simple_stmt ;;
 
 
-     expr_stmt
-   | print_stmt
-   | del_stmt
-   | pass_stmt
-   | flow_stmt
-   | import_stmt
-   | global_stmt
-   | exec_stmt
-   | assert_stmt
+     expr_stmt = expr_stmt
+   | print_stmt = print_stmt
+   | del_stmt = del_stmt
+   | pass_stmt = pass_stmt
+   | flow_stmt = flow_stmt
+   | import_stmt = import_stmt
+   | global_stmt= global_stmt
+   | exec_stmt = exec_stmt
+   | assert_stmt = assert_stmt
 -> small_stmt ;;
 
-   testlist ( augassign testlist
-    | ( EQUAL testlist )+
+   (#testlist = testlist) ( augassign = augassign #testlist = testlist
+    | ( EQUAL #testlist = testlist )+
     | ?[: yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK :] 0 )
 -> expr_stmt ;;
 
@@ -228,17 +222,21 @@ namespace ruby
    | DOUBLESLASHEQ
 -> augassign ;;
 
-   PRINT (test ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]test )*
-    | RSHIFT test ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]test )*)
+   PRINT (#test=test ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]#test=test )*
+    | RSHIFT #test=test ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]#test=test )*)
 -> print_stmt ;;
 
-   DEL exprlist
+   DEL exprlist=exprlist
 -> del_stmt ;;
 
    PASS
 -> pass_stmt ;;
 
-   break_stmt | continue_stmt | return_stmt | raise_stmt | yield_stmt
+   break_stmt=break_stmt 
+    | continue_stmt=continue_stmt 
+    | return_stmt=return_stmt 
+    | raise_stmt=raise_stmt 
+    | yield_stmt=yield_stmt
 -> flow_stmt ;;
 
    BREAK
@@ -247,16 +245,17 @@ namespace ruby
    CONTINUE
 -> continue_stmt ;;
 
-   RETURN ( testlist | 0 )
+   RETURN ( testlist=testlist | 0 )
 -> return_stmt ;;
 
-   YIELD testlist
+   YIELD testlist=testlist
 -> yield_stmt ;;
 
-   RAISE ( test ( COMMA test ( COMMA test | 0 ) | 0 ) | 0 )
+   RAISE ( test=test ( test=COMMA test ( COMMA test=test | 0 ) | 0 ) | 0 )
 -> raise_stmt ;;
 
-   import_name | import_from
+   import_name=import_name 
+    | import_from=import_from
 -> import_stmt ;;
 
    IMPORT dotted_as_names

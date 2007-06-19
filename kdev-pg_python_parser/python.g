@@ -339,40 +339,40 @@ namespace ruby
    | IS (NOT | 0)
 -> comp_op ;;
 
-   xor_expr ( ORR xor_expr )*
+   #xor_expr=xor_expr ( ORR #xor_expr=xor_expr )*
 -> expr ;;
 
-   and_expr ( HAT and_expr )*
+   #and_expr=and_expr ( HAT #and_expr=and_expr )*
 -> xor_expr ;;
 
-   shift_expr ( ANDD shift_expr )*
+   #shift_expr=shift_expr ( ANDD #shif_expr=shift_expr )*
 -> and_expr ;;
 
-   arith_expr ( ( LSHIFT | RSHIFT ) arith_expr )*
+   #arith_expr=arith_expr ( ( LSHIFT | RSHIFT ) #arith_expr=arith_expr )*
 -> shift_expr ;;
 
-   term (( ( PLUS | MINUS ) term )+ | 0)
+   term=term (( ( PLUS | MINUS ) term )+ | 0)
 -> arith_expr ;;
 
-   factor (( ( STAR | SLASH | MODULO | DOUBLESLASH ) factor )+ | 0)
+   #factor=factor (( ( STAR | SLASH | MODULO | DOUBLESLASH ) #factor=factor )+ | 0)
 -> term ;;
 
-   ( PLUS | MINUS | TILDE ) factor | power
+   ( PLUS | MINUS | TILDE ) #factor=factor | #power=power
 -> factor ;;
 
-   ( atom )
-    (trailer)* ( DOUBLESTAR factor | 0 )
+   ( atom=atom )
+    (#trailer=trailer)* ( DOUBLESTAR factor=factor | 0 )
 -> power ;;
 
-   LPAREN ( testlist_gexp | 0 ) RPAREN
-   | LBRACKET listmaker RBRACKET
-   | LBRACE dictmaker RBRACE
-   | BACKTICK testlist1 BACKTICK
+   LPAREN ( testlist_gexp=testlist_gexp | 0 ) RPAREN
+   | LBRACKET listmaker=listmaker RBRACKET
+   | LBRACE dictmaker=dictmaker RBRACE
+   | BACKTICK testlist1=testlist1 BACKTICK
    | IDENTIFIER
-   | number
+   | number=number
    | (STRINGLITERAL)+
-   | longstringliteral
-   | shortstringliteral
+   | longstringliteral=longstringliteral
+   | shortstringliteral=shortstringliteral
 -> atom ;;
 
    SHORTSTRING ( STRINGBODY )+ SHORTSTRING
@@ -386,92 +386,93 @@ namespace ruby
    | IMAGNUM
 -> number ;;
 
-   ( test ( COMMA [: if (yytoken == Token_RBRACKET) { break; } :] test )* | 0)
+   ( #test=test ( COMMA [: if (yytoken == Token_RBRACKET) { break; } :] #test=test )* | 0)
 -> list_maker ;;
 
-    list_maker (list_for | 0)
+    list_maker=list_maker (list_for=list_for | 0)
 -> listmaker ;;
 
-   test ( COMMA [: if (yytoken == Token_RBRACE) { break; } :] test )*
+   #test=test ( COMMA [: if (yytoken == Token_RBRACE) { break; } :] #test=test )*
 -> test_list_gexp ;;
 
-    test_list_gexp ( gen_for | 0 )
+    test_list_gexp=test_list_gexp ( gen_for=gen_for | 0 )
 -> testlist_gexp ;;
 
-   LAMBDA ( varargslist | 0 ) COLON test
+   LAMBDA ( varargslist=varargslist | 0 ) COLON test=test
 -> lambda_def ;;
 
-   LPAREN ( arglist | 0 ) RPAREN | LBRACKET subscriptlist RBRACKET | DOT IDENTIFIER
+   LPAREN ( arglist=arglist | 0 ) RPAREN | LBRACKET subsciptlist=subscriptlist RBRACKET | DOT IDENTIFIER
 -> trailer ;;
 
-   subscript ( COMMA [: if (yytoken == Token_RBRACKET) { break; } :]
-    subscript )*
+   #subscript=subscript ( COMMA [: if (yytoken == Token_RBRACKET) { break; } :]
+    #subscript=subscript )*
 -> subscriptlist ;;
 
 -- Sub Scripts Check if the curent token is not a COLON it should be a test
 -- If a COLON it skips the 'test'. if the next token is not RBRACKET or COMMA after test it can be a COLON.
 -- Else it ends.
    ELLIPSIS
-    | ( ?[: yytoken != Token_COLON :] test | 0 )
+    | ( ?[: yytoken != Token_COLON :] test=test | 0 )
     ( ?[: yytoken == Token_RBRACKET || yytoken == Token_COMMA :] 0
-        | COLON ( test | 0 ) ( sliceop | 0 ) )
+        | COLON ( test=test | 0 ) ( sliceop=sliceop | 0 ) )
 -> subscript ;;
 
-   COLON ( test | 0 )
+   COLON ( test=test | 0 )
 -> sliceop ;;
 
-   expr
+   #expr=expr
     ( COMMA [: if (yytoken == Token_IN || yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK ) { break; } :]
-    expr )*
+    #expr=expr )*
 -> exprlist ;;
 
-   test ( COMMA [: if( yytoken == Token_COLON || yytoken == Token_SEMICOLON || yytoken == Token_RPAREN || yytoken == Token_LINEBREAK) {break;} :]
-    test )*
+   #test=test ( COMMA [: if( yytoken == Token_COLON || yytoken == Token_SEMICOLON || yytoken == Token_RPAREN || yytoken == Token_LINEBREAK) {break;} :]
+    #test=test )*
 -> testlist ;;
 
-   test ( ( COMMA test )+ ( COMMA | 0 ) | 0 )
+   #test=test ( ( COMMA #test=test )+ ( COMMA | 0 ) | 0 )
 -> testlist_safe ;;
 
-   (test COLON test | 0) ( COMMA [: if (yytoken == Token_RBRACE) { break; } :]
-    test COLON test )*
+   (#test=test COLON #test=test | 0) ( COMMA [: if (yytoken == Token_RBRACE) { break; } :]
+    #test=test COLON #test=test )*
 -> dictmaker ;;
 
-   CLASS IDENTIFIER ( ( LPAREN testlist RPAREN ) | 0 ) COLON suite
+   CLASS class_name=IDENTIFIER ( ( LPAREN testlist=testlist RPAREN ) | 0 ) COLON suite
 -> classdef ;;
 
-   argument
-    ( COMMA [: if(yytoken == Token_RPAREN || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR) { break; } :] argument)*
+   #arguement=argument
+    ( COMMA [: if(yytoken == Token_RPAREN || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR) { break; } :] #arguement=argument)*
 -> arg_list ;;
 
     arg_list
-    ( STAR test ( ?[: LA(2).kind == Token_DOUBLESTAR :] COMMA DOUBLESTAR test )
-    | DOUBLESTAR test | 0)
+    ( STAR test=test ( ?[: LA(2).kind == Token_DOUBLESTAR :] COMMA DOUBLESTAR test=test )
+    | DOUBLESTAR test=test | 0)
 -> arglist ;;
 
-   test ( EQUAL test ( ?[: LA(2).kind == Token_FOR :] LPAREN gen_for RPAREN | 0 )
-    | ?[: yytoken == Token_FOR :] gen_for
+   test=test ( EQUAL test ( ?[: LA(2).kind == Token_FOR :] LPAREN gen_for=gen_for RPAREN | 0 )
+    | ?[: yytoken == Token_FOR :] gen_for=gen_for
     | ?[: yytoken == Token_RPAREN || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR || yytoken == Token_COMMA :] 0 )
 -> argument ;;
 
-   list_for | list_if
+   list_for=list_for | list_if=list_if
 -> list_iter ;;
 
-   FOR exprlist IN testlist_safe ( list_iter | 0 )
+   FOR exprlist=exprlist IN testlist_safe=testlist_safe ( list_iter=list_iter | 0 )
 -> list_for ;;
 
-   IF test ( list_iter | 0 )
+   IF test=test ( list_iter=list_iter | 0 )
 -> list_if ;;
 
-   gen_for | gen_if
+   gen_for=gen_for
+    | gen_if=gen_if
 -> gen_iter ;;
 
-   FOR exprlist IN test ( gen_iter | 0 )
+   FOR exprlist=exprlist IN test=test ( gen_iter=gen_iter | 0 )
 -> gen_for ;;
 
-   IF test ( gen_iter | 0 )
+   IF test=test ( gen_iter=gen_iter | 0 )
 -> gen_if ;;
 
-   test ( COMMA test )*
+   #test=test ( COMMA #test=test )*
 -> testlist1 ;;
 
 -----------------------------------------------------------------

@@ -101,7 +101,7 @@ namespace ruby
        NOT ("not"), TRY ("try"), CLASS ("class"), EXCEPT ("except"), IF ("if"),
        OR ("or"), WHILE ("while"), CONTINUE ("continue"), EXEC ("exec"),
        IMPORT ("import"), PASS ("pass"), YIELD ("yield"), DEF ("def"), IN ("in"),
-       PRINT ("print"), FINALLY ("finally") ;;
+       PRINT ("print"), FINALLY ("finally"), AS ("as") ;;
 
 -- indentation which is important in python and linebreak
 %token INDENT ("indent"), DEDENT ("dedent"), LINEBREAK ("linebreak") ;;
@@ -264,10 +264,10 @@ namespace ruby
    FROM dotted_name=dotted_name IMPORT ( STAR | LPAREN import_as_names=import_as_names RPAREN | import_as_names=import_as_names )
 -> import_from ;;
 
-   IDENTIFIER ( IDENTIFIER IDENTIFIER | 0 )
+   IDENTIFIER ( AS IDENTIFIER | 0 )
 -> import_as_name ;;
 
-   dotted_name=dotted_name ( IDENTIFIER IDENTIFIER | 0 )
+   dotted_name=dotted_name ( AS IDENTIFIER | 0 )
 -> dotted_as_name ;;
 
    #import_as_name=import_as_name

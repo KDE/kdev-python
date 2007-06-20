@@ -291,6 +291,8 @@ Comment         ("#"[^\n]*)|(^[\n][\t\v\f]*"\"")
 "finally"        return parser::Token_FINALLY;
 "in"             return parser::Token_IN;
 "print"          return parser::Token_PRINT;
+"as"             return parser::Token_AS;
+
 
  /* String literals */
 

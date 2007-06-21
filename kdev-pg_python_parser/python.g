@@ -90,6 +90,42 @@ namespace ruby
 
 :]
 
+%namespace shift_expression
+[: 
+    enum shift_operator_enum {
+        op_lshift,
+        op_rshift,
+    };
+:]
+
+%namespace arith_expression
+[:
+    enum arith_operator_enum {
+        op_plus,
+        op_minus,
+    };
+:]
+
+%namespace term
+[:
+    enum term_operator_enum {
+        op_star,
+        op_slash,
+        op_modulo,
+        op_doubleslash,
+    };
+:]
+
+%namespace factor
+[:
+    enum factor_operator_enum {
+        op_factor_plus,
+        op_factor_minus,
+        op_factor_tilde,
+    };
+:]
+
+
 -----------------------------------------------------------
 -- List of defined tokens
 -----------------------------------------------------------
@@ -146,7 +182,7 @@ namespace ruby
    ( decorators = decorators | 0 )
     DEF func_name=IDENTIFIER LPAREN ( ?[: LA(1).kind != Token_RPAREN :] ( #fun_args = varargslist )*
     | 0 )
-    RPAREN COLON suite
+    RPAREN COLON fun_suite=suite
 -> funcdef ;;
 
 -- Function Defintion
@@ -169,16 +205,16 @@ namespace ruby
 -> fun_pos_param;;
 
 -- Function Parameter Definition
-   LPAREN (list = fplist) RPAREN
+   LPAREN (fplist = fplist) RPAREN
     |  IDENTIFIER
 -> fpdef ;;
 
 
 -- Function parameter List
-    fpdef
+    #fpdef=fpdef
     ( COMMA [: if ( yytoken == Token_RPAREN )
                   { break; } :]
-            fpdef )*
+            #fpdef=fpdef )*
 -> fplist ;;
 
 -- A statement could be simple statement/ a compont statement OR just a Linebreak
@@ -222,11 +258,11 @@ namespace ruby
    | DOUBLESLASHEQ
 -> augassign ;;
 
-   PRINT (#test=test ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]#test=test )*
-    | RSHIFT #test=test ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]#test=test )*)
+   PRINT (#print_args=test ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]#print_args=test )*
+    | RSHIFT #rshift_args=test ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]#rshift_test=test )*)
 -> print_stmt ;;
 
-   DEL exprlist=exprlist
+   DEL del_list=exprlist
 -> del_stmt ;;
 
    PASS
@@ -245,29 +281,29 @@ namespace ruby
    CONTINUE
 -> continue_stmt ;;
 
-   RETURN ( testlist=testlist | 0 )
+   RETURN ( return_expr=testlist | 0 )
 -> return_stmt ;;
 
-   YIELD testlist=testlist
+   YIELD yield_expr=testlist
 -> yield_stmt ;;
 
-   RAISE ( test=test ( COMMA test=test ( COMMA test=test | 0 ) | 0 ) | 0 )
+   RAISE ( raise_type=test ( COMMA raise_type=test ( COMMA raise_type=test | 0 ) | 0 ) | 0 )
 -> raise_stmt ;;
 
    import_name=import_name 
     | import_from=import_from
 -> import_stmt ;;
 
-   IMPORT dotted_as_names=dotted_as_names
+   IMPORT import_name=dotted_as_names
 -> import_name ;;
 
-   FROM dotted_name=dotted_name IMPORT ( STAR | LPAREN import_as_names=import_as_names RPAREN | import_as_names=import_as_names )
+   FROM import_from_name=dotted_name IMPORT ( STAR | LPAREN import_as_names=import_as_names RPAREN | import_as_names=import_as_names )
 -> import_from ;;
 
-   IDENTIFIER ( AS IDENTIFIER | 0 )
+   imported_name=IDENTIFIER ( AS imported_as=IDENTIFIER | 0 )
 -> import_as_name ;;
 
-   dotted_name=dotted_name ( AS IDENTIFIER | 0 )
+   import_dotted_name=dotted_name ( AS imported_as=IDENTIFIER | 0 )
 -> dotted_as_name ;;
 
    #import_as_name=import_as_name
@@ -277,16 +313,16 @@ namespace ruby
    #dotted_as_name=dotted_as_name ( COMMA #dotted_as_name=dotted_as_name )*
 -> dotted_as_names ;;
 
-   IDENTIFIER ( DOT IDENTIFIER )*
+   dotted_name=IDENTIFIER ( DOT dotted_name=IDENTIFIER )*
 -> dotted_name ;;
 
    GLOBAL #global_name=IDENTIFIER ( COMMA #global_name=IDENTIFIER )*
 -> global_stmt ;;
 
-   EXEC expr=expr ( IN test=test ( COMMA test=test | 0 ) | 0 )
+   EXEC exec_expr=expr ( IN exec_test=test ( COMMA exec_test=test | 0 ) | 0 )
 -> exec_stmt ;;
 
-   ASSERT test=test ( COMMA test=test | 0 )
+   ASSERT assert_test=test ( COMMA assert_test=test | 0 )
 -> assert_stmt ;;
 
    if_stmt=if_stmt
@@ -297,29 +333,29 @@ namespace ruby
    | classdef=classdef
 -> compound_stmt ;;
 
-   IF #test=test COLON suite ( ELIF #test=test COLON suite )* ( ELSE COLON suite | 0 )
+   IF #if_test=test COLON if_suite=suite ( ELIF #elif_test=test COLON elif_suite=suite )* ( ELSE COLON if_else_suite=suite | 0 )
 -> if_stmt ;;
 
-   WHILE test=test COLON suite ( ELSE COLON suite | 0 )
+   WHILE while_test=test COLON while_suite=suite ( ELSE COLON while_else_suite=suite | 0 )
 -> while_stmt ;;
 
-   FOR exprlist=exprlist IN testlist=testlist COLON suite ( ELSE COLON suite | 0 )
+   FOR for_expr=exprlist IN for_testlist=testlist COLON for_suite=suite ( ELSE COLON for_else_suite=suite | 0 )
 -> for_stmt ;;
 
-   TRY COLON suite
-    ( ( except_clause=except_clause COLON suite )+ ( ELSE COLON suite | 0 ) | FINALLY COLON suite )
+   TRY COLON try_suite=suite
+    ( ( except_clause=except_clause COLON except_suite=suite )+ ( ELSE COLON try_else_suite=suite | 0 ) | FINALLY COLON finally_suite=suite )
 -> try_stmt ;;
 
-   EXCEPT ( test=test ( COMMA test=test | 0 ) | 0 )
+   EXCEPT ( except_test=test ( COMMA except_test=test | 0 ) | 0 )
 -> except_clause ;;
 
-   simple_stmt=simple_stmt | (LINEBREAK)+ INDENT stmt+ DEDENT
+   simple_stmt=simple_stmt | (LINEBREAK)+ INDENT (#stmt=stmt)+ DEDENT
 -> suite ;;
 
    #and_test=and_test ( OR #and_test=and_test )* | lambda_def=lambda_def
 -> test ;;
 
-   #note_test=not_test ( AND #not_test=not_test )*
+   #not_test=not_test ( AND #not_test=not_test )*
 -> and_test ;;
 
    NOT not_test=not_test | comparison=comparison
@@ -348,17 +384,36 @@ namespace ruby
    #shift_expr=shift_expr ( ANDD #shif_expr=shift_expr )*
 -> and_expr ;;
 
-   #arith_expr=arith_expr ( ( LSHIFT | RSHIFT ) #arith_expr=arith_expr )*
--> shift_expr ;;
+   #arith_expr=arith_expr 
+    ( ( LSHIFT  [: (*yynode)->shift_operator = shift_expression::op_lshift; :]
+    | RSHIFT    [: (*yynode)->shift_operator = shift_expression::op_rshift; :]
+    ) #arith_expr=arith_expr )*
+-> shift_expr [ 
+    member variable shift_operator: shift_expression::shift_operator_enum; ];;
 
-   term=term (( ( PLUS | MINUS ) term )+ | 0)
--> arith_expr ;;
+   #arith_term=term (( 
+    ( PLUS      [: (*yynode)->arith_operator = arith_expression::op_plus;   :]
+    | MINUS     [: (*yynode)->arith_operator = arith_expression::op_minus;  :]
+    ) #arith_term=term )+ | 0)
+-> arith_expr [ 
+    member variable arith_operator: arith_expression::arith_operator_enum; ];;
 
-   #factor=factor (( ( STAR | SLASH | MODULO | DOUBLESLASH ) #factor=factor )+ | 0)
--> term ;;
+   #factor=factor (( 
+    ( STAR      [: (*yynode)->term_operator = term::op_star;                :]
+    | SLASH     [: (*yynode)->term_operator = term::op_slash;               :]
+    | MODULO    [: (*yynode)->term_operator = term::op_modulo;              :]
+    | DOUBLESLASH [: (*yynode)->term_operator = term::op_doubleslash;       :]
+    ) #factor=factor )+ | 0)
+-> term [ 
+    member variable term_operator: term::term_operator_enum; ];;
 
-   ( PLUS | MINUS | TILDE ) #factor=factor | #power=power
--> factor ;;
+   ( 
+    PLUS        [: (*yynode)->factor_operator = factor::op_factor_plus;     :]
+    | MINUS     [: (*yynode)->factor_operator = factor::op_factor_minus;    :]
+    | TILDE     [: (*yynode)->factor_operator = factor::op_factor_tilde ;   :]
+    ) #factor=factor | #power=power
+-> factor [ 
+    member variable factor_operator: factor::factor_operator_enum;   ];;
 
    ( atom=atom )
     (#trailer=trailer)* ( DOUBLESTAR factor=factor | 0 )
@@ -368,9 +423,9 @@ namespace ruby
    | LBRACKET listmaker=listmaker RBRACKET
    | LBRACE dictmaker=dictmaker RBRACE
    | BACKTICK testlist1=testlist1 BACKTICK
-   | IDENTIFIER
+   | atom_identifier_name=IDENTIFIER
    | number=number
-   | (STRINGLITERAL)+
+   | (#stringliteral=STRINGLITERAL)+
    | longstringliteral=longstringliteral
    | shortstringliteral=shortstringliteral
 -> atom ;;
@@ -386,7 +441,7 @@ namespace ruby
    | IMAGNUM
 -> number ;;
 
-   ( #test=test ( COMMA [: if (yytoken == Token_RBRACKET) { break; } :] #test=test )* | 0)
+   ( #list_test=test ( COMMA [: if (yytoken == Token_RBRACKET) { break; } :] #list_test=test )* | 0)
 -> list_maker ;;
 
     list_maker=list_maker (list_for=list_for | 0)
@@ -398,10 +453,10 @@ namespace ruby
     test_list_gexp=test_list_gexp ( gen_for=gen_for | 0 )
 -> testlist_gexp ;;
 
-   LAMBDA ( varargslist=varargslist | 0 ) COLON test=test
+   LAMBDA ( lambda_varargslist=varargslist | 0 ) COLON lambda_test=test
 -> lambda_def ;;
 
-   LPAREN ( arglist=arglist | 0 ) RPAREN | LBRACKET subsciptlist=subscriptlist RBRACKET | DOT IDENTIFIER
+   LPAREN ( trailer_arglist=arglist | 0 ) RPAREN | LBRACKET subscriptlist=subscriptlist RBRACKET | DOT tariler_dot_name=IDENTIFIER
 -> trailer ;;
 
    #subscript=subscript ( COMMA [: if (yytoken == Token_RBRACKET) { break; } :]
@@ -411,13 +466,13 @@ namespace ruby
 -- Sub Scripts Check if the curent token is not a COLON it should be a test
 -- If a COLON it skips the 'test'. if the next token is not RBRACKET or COMMA after test it can be a COLON.
 -- Else it ends.
-   ELLIPSIS
+   subcript_ellipsis=ELLIPSIS
     | ( ?[: yytoken != Token_COLON :] test=test | 0 )
     ( ?[: yytoken == Token_RBRACKET || yytoken == Token_COMMA :] 0
         | COLON ( test=test | 0 ) ( sliceop=sliceop | 0 ) )
 -> subscript ;;
 
-   COLON ( test=test | 0 )
+   COLON ( slice_test=test | 0 )
 -> sliceop ;;
 
    #expr=expr
@@ -436,19 +491,19 @@ namespace ruby
     #test=test COLON #test=test )*
 -> dictmaker ;;
 
-   CLASS class_name=IDENTIFIER ( ( LPAREN testlist=testlist RPAREN ) | 0 ) COLON suite
+   CLASS class_name=IDENTIFIER ( ( LPAREN testlist=testlist RPAREN ) | 0 ) COLON class_suite=suite
 -> classdef ;;
 
    #arguement=argument
     ( COMMA [: if(yytoken == Token_RPAREN || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR) { break; } :] #arguement=argument)*
 -> arg_list ;;
 
-    arg_list
-    ( STAR test=test ( ?[: LA(2).kind == Token_DOUBLESTAR :] COMMA DOUBLESTAR test=test )
-    | DOUBLESTAR test=test | 0)
+    arg_list=arg_list
+    ( STAR test=test ( ?[: LA(2).kind == Token_DOUBLESTAR :] COMMA arglist_star_doublestar=DOUBLESTAR test=test )
+    | arglist_doublestar=DOUBLESTAR test=test | 0)
 -> arglist ;;
 
-   test=test ( EQUAL test ( ?[: LA(2).kind == Token_FOR :] LPAREN gen_for=gen_for RPAREN | 0 )
+   test=test ( EQUAL test=test ( ?[: LA(2).kind == Token_FOR :] LPAREN gen_for=gen_for RPAREN | 0 )
     | ?[: yytoken == Token_FOR :] gen_for=gen_for
     | ?[: yytoken == Token_RPAREN || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR || yytoken == Token_COMMA :] 0 )
 -> argument ;;

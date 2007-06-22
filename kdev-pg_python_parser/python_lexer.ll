@@ -124,7 +124,7 @@ Identifier      [a-zA-Z_][a-zA-Z0-9_]*
 StringPrefix    "r"|"u"|"U"|"R"|"ur"|"UR"|"Ur"|"uR"
 
 ShortString1    "'"([^\n\\']|{AsciiEscape})*"'"
-ShortString2    "\""([^\n\\"]|{AsciiEscape})*"\""
+ShortString2    "\""([^"]|{AsciiEscape})*"\""
 ShortString     {StringPrefix}?({ShortString1}|{ShortString2})
 LongString1     "'''"
 LongString2     "\"\"\""
@@ -137,7 +137,6 @@ Comment         ("#"[^\n]*)|(^[\n][\t\v\f]*"\"")
 
  /* whitespace, comments, linebreak */
 
-{ShortString}([\\]){LineBreak}{ShortString} return parser::Token_STRINGLITERAL;
 
 {LineBreak}	{
     if( !m_paren && !m_bracket && !m_brace )

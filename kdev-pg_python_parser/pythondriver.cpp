@@ -122,6 +122,7 @@ bool PythonDriver::parse_file(char const *filename)
     bool matched = python_parser.parse_project(&ast);
     if (matched)
     {
+        std::cerr<<"Matched";
     }
     else
     {

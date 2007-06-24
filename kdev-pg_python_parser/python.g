@@ -258,7 +258,7 @@ namespace python
    | assert_stmt = assert_stmt
 -> small_stmt ;;
 
-   (#testlist = testlist) ( augassign = augassign #anugassign_testlist = testlist
+   (testlist = testlist) ( augassign = augassign anugassign_testlist = testlist
     | ( EQUAL #equal_testlist = testlist )+
     | ?[: yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK :] 0 )
 -> expr_stmt ;;
@@ -279,7 +279,7 @@ namespace python
     member variable augassign_eq: python::augassign_eq_enum; ];;
 
    PRINT (#print_args=test ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]#print_args=test )*
-    | RSHIFT #rshift_args=test ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]#rshift_args=test )*)
+    | RSHIFT #rshift_args=test ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]#rshift_args=test )+)
 -> print_stmt ;;
 
    DEL del_list=exprlist
@@ -398,17 +398,17 @@ namespace python
 -> comp_op [
         member variable comp_operator: python::comp_operator_enum; ];;
 
-   #expr=xor_expr ( ORR #orr_expr=xor_expr )*
+   expr=xor_expr ( ORR #orr_expr=xor_expr )*
 -> expr ;;
 
-   #xor_expr=and_expr ( HAT #hat_xor_expr=and_expr )*
+   xor_expr=and_expr ( HAT #hat_xor_expr=and_expr )*
 -> xor_expr ;;
 
-   #and_expr=shift_expr ( ANDD #andd_shif_expr=shift_expr )*
+   and_expr=shift_expr ( ANDD #andd_shif_expr=shift_expr )*
 -> and_expr ;;
 
-   #arith_expr=arith_expr
-    ( ( #shift_op_list=shift_op ) #arith_expr_list=arith_expr )*
+   arith_expr=arith_expr
+    ( #shift_op_list=shift_op #arith_expr_list=arith_expr )*
 -> shift_expr ;;
 
     LSHIFT      [: (*yynode)->shift_operator = python::op_lshift;   :]
@@ -416,8 +416,8 @@ namespace python
 -> shift_op [ 
     member variable shift_operator: python::shift_operator_enum; ];;
 
-   #arith_term=term 
-    (( (#arith_op_list = arith_op) #arith_term_list=term )+ | 0)
+   arith_term=term 
+    ((#arith_op_list = arith_op #arith_term_list=term )+ | 0)
 -> arith_expr ;;
 
     PLUS        [: (*yynode)->arith_operator = python::op_plus;     :]
@@ -425,8 +425,8 @@ namespace python
 -> arith_op [ 
     member variable arith_operator: python::arith_operator_enum; ] ;;
 
-   #factor=factor 
-    (((#term_op_list = term_op) #factor_list=factor )+ | 0)
+   factor=factor 
+    ((#term_op_list = term_op #factor_list=factor )+ | 0)
 -> term ;;
 
     STAR        [: (*yynode)->term_operator = python::op_star;      :]
@@ -436,7 +436,7 @@ namespace python
 -> term_op [ 
     member variable term_operator: python::term_operator_enum; ];;
 
-   ( #fact_op=fact_op) #factor=factor | #power=power
+   ( fact_op=fact_op) factor=factor | power=power
 -> factor ;;
 
     PLUS        [: (*yynode)->factor_operator = python::op_factor_plus;     :]
@@ -518,7 +518,7 @@ namespace python
    #test=test ( ( COMMA #test=test )+ ( COMMA | 0 ) | 0 )
 -> testlist_safe ;;
 
-   (key=test COLON value=test | 0) ( COMMA [: if (yytoken == Token_RBRACE) { break; } :]
+   (#key_list=test COLON #value_list=test | 0) ( COMMA [: if (yytoken == Token_RBRACE) { break; } :]
     #key_list=test COLON #value_list=test )*
 -> dictmaker ;;
 

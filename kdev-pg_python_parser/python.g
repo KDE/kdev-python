@@ -60,9 +60,60 @@
 -----------------------------------------------------------
 
 [:
-namespace ruby
+namespace python
 {
-  class Lexer;
+    class Lexer;
+
+    enum shift_operator_enum {
+        op_lshift,
+        op_rshift,
+    };
+    enum arith_operator_enum {
+        op_plus,
+        op_minus,
+    };
+    enum term_operator_enum {
+        op_star,
+        op_slash,
+        op_modulo,
+        op_doubleslash,
+    };
+    enum factor_operator_enum {
+        op_factor_plus,
+        op_factor_minus,
+        op_factor_tilde,
+    };
+    enum augassign_eq_enum  {
+        eq_plus,
+        eq_minus,
+        eq_star,
+        eq_slash,
+        eq_modulo,
+        eq_and,
+        eq_or,
+        eq_tilde,
+        eq_lshift,
+        eq_rshift,
+        eq_doublestar,
+        eq_doubleslash,
+    };
+    enum comp_operator_enum   {
+        op_less,
+        op_greater,
+        op_isequal,
+        op_greatereq,
+        op_lesseq,
+        op_unequal,
+        op_in,
+        op_not_in,
+        op_is,
+        op_is_not,
+    };
+    enum num_type_enum  {
+        type_int,
+        type_float,
+        type_imagnum,
+    };
 }
 :]
 
@@ -89,42 +140,6 @@ namespace ruby
   void report_problem( parser::problem_type type, std::string message );
 
 :]
-
-%namespace shift_expression
-[: 
-    enum shift_operator_enum {
-        op_lshift,
-        op_rshift,
-    };
-:]
-
-%namespace arith_expression
-[:
-    enum arith_operator_enum {
-        op_plus,
-        op_minus,
-    };
-:]
-
-%namespace term
-[:
-    enum term_operator_enum {
-        op_star,
-        op_slash,
-        op_modulo,
-        op_doubleslash,
-    };
-:]
-
-%namespace factor
-[:
-    enum factor_operator_enum {
-        op_factor_plus,
-        op_factor_minus,
-        op_factor_tilde,
-    };
-:]
-
 
 -----------------------------------------------------------
 -- List of defined tokens
@@ -178,31 +193,34 @@ namespace ruby
    (#decorator = decorator )*
 -> decorators ;;
 
--- Function Definition
+-- Function Definition: Can start with Decorators.
+-- varargslist defines the Function Variable Arguements
    ( decorators = decorators | 0 )
     DEF func_name=IDENTIFIER LPAREN ( ?[: LA(1).kind != Token_RPAREN :] ( #fun_args = varargslist )*
     | 0 )
     RPAREN COLON fun_suite=suite
 -> funcdef ;;
 
--- Function Defintion
-    fpdef ( EQUAL test | 0 )
--> fp_def ;;
-
-    fp_def ( COMMA [:if(yytoken == Token_RPAREN  || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR ) { break; } :] fp_def )*
--> func_def ;;
-
 -- Function variable Arguement List
-    func_def (
+    func_def=func_def (
     ?[: yytoken != Token_RPAREN  && LA(2).kind == Token_IDENTIFIER:] (fun_pos_param = fun_pos_param )
     | 0 
     )
 -> varargslist ;;
 
 -- The Vararguement trailer, defines *args and **args
-    ( STAR IDENTIFIER ( COMMA DOUBLESTAR IDENTIFIER | 0 )
-        | DOUBLESTAR IDENTIFIER )
+    ( STAR star_id=IDENTIFIER ( COMMA DOUBLESTAR double_star_id=IDENTIFIER | 0 )
+        | DOUBLESTAR double_star_id=IDENTIFIER )
 -> fun_pos_param;;
+
+-- Function Definition
+    #fp_def=fp_def ( COMMA [:if(yytoken == Token_RPAREN  || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR ) { break; } :] #fp_def=fp_def )*
+-> func_def ;;
+
+
+-- Function parameter Defintion 
+    fpdef=fpdef ( EQUAL fp_def_test=test | 0 )
+-> fp_def ;;
 
 -- Function Parameter Definition
    LPAREN (fplist = fplist) RPAREN
@@ -211,10 +229,10 @@ namespace ruby
 
 
 -- Function parameter List
-    #fpdef=fpdef
+    #fplist_fpdef=fpdef
     ( COMMA [: if ( yytoken == Token_RPAREN )
                   { break; } :]
-            #fpdef=fpdef )*
+            #fplist_fpdef=fpdef )*
 -> fplist ;;
 
 -- A statement could be simple statement/ a compont statement OR just a Linebreak
@@ -223,11 +241,12 @@ namespace ruby
     | LINEBREAK
 -> stmt ;;
 
+-- simple statement
    #small_stmt = small_stmt 
     ( SEMICOLON [: if( yytoken == Token_LINEBREAK || yytoken == Token_DEDENT) { break;} :] #small_stmt = small_stmt )*  LINEBREAK
 -> simple_stmt ;;
 
-
+-- a small statement could be of any such kinds
      expr_stmt = expr_stmt
    | print_stmt = print_stmt
    | del_stmt = del_stmt
@@ -239,27 +258,28 @@ namespace ruby
    | assert_stmt = assert_stmt
 -> small_stmt ;;
 
-   (#testlist = testlist) ( augassign = augassign #testlist = testlist
-    | ( EQUAL #testlist = testlist )+
+   (#testlist = testlist) ( augassign = augassign #anugassign_testlist = testlist
+    | ( EQUAL #equal_testlist = testlist )+
     | ?[: yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK :] 0 )
 -> expr_stmt ;;
 
-   PLUSEQ
-   | MINUSEQ
-   | STAREQ
-   | SLASHEQ
-   | MODULOEQ
-   | ANDEQ
-   | OREQ
-   | TILDEEQ
-   | LSHIFTEQ
-   | RSHIFTEQ
-   | DOUBLESTAREQ
-   | DOUBLESLASHEQ
--> augassign ;;
+   PLUSEQ           [: (*yynode)->augassign_eq = python::eq_plus;   :]
+   | MINUSEQ        [: (*yynode)->augassign_eq = python::eq_minus;  :]
+   | STAREQ         [: (*yynode)->augassign_eq = python::eq_star;   :]
+   | SLASHEQ        [: (*yynode)->augassign_eq = python::eq_slash;  :]
+   | MODULOEQ       [: (*yynode)->augassign_eq = python::eq_modulo; :]
+   | ANDEQ          [: (*yynode)->augassign_eq = python::eq_and;    :]
+   | OREQ           [: (*yynode)->augassign_eq = python::eq_or;     :]
+   | TILDEEQ        [: (*yynode)->augassign_eq = python::eq_tilde;  :]
+   | LSHIFTEQ       [: (*yynode)->augassign_eq = python::eq_lshift; :]
+   | RSHIFTEQ       [: (*yynode)->augassign_eq = python::eq_rshift; :]
+   | DOUBLESTAREQ   [: (*yynode)->augassign_eq = python::eq_doublestar; :]
+   | DOUBLESLASHEQ  [: (*yynode)->augassign_eq = python::eq_doubleslash;:]
+-> augassign [ 
+    member variable augassign_eq: python::augassign_eq_enum; ];;
 
    PRINT (#print_args=test ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]#print_args=test )*
-    | RSHIFT #rshift_args=test ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]#rshift_test=test )*)
+    | RSHIFT #rshift_args=test ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]#rshift_args=test )*)
 -> print_stmt ;;
 
    DEL del_list=exprlist
@@ -287,17 +307,17 @@ namespace ruby
    YIELD yield_expr=testlist
 -> yield_stmt ;;
 
-   RAISE ( raise_type=test ( COMMA raise_type=test ( COMMA raise_type=test | 0 ) | 0 ) | 0 )
+   RAISE ( type=test ( COMMA value=test ( COMMA traceback=test | 0 ) | 0 ) | 0 )
 -> raise_stmt ;;
 
-   import_name=import_name 
+   import_import=import_name 
     | import_from=import_from
 -> import_stmt ;;
 
    IMPORT import_name=dotted_as_names
 -> import_name ;;
 
-   FROM import_from_name=dotted_name IMPORT ( STAR | LPAREN import_as_names=import_as_names RPAREN | import_as_names=import_as_names )
+   FROM import_from_name=dotted_name IMPORT ( STAR | LPAREN import_as_names=import_as_names RPAREN | import_from_as_name=import_as_name )
 -> import_from ;;
 
    imported_name=IDENTIFIER ( AS imported_as=IDENTIFIER | 0 )
@@ -319,10 +339,10 @@ namespace ruby
    GLOBAL #global_name=IDENTIFIER ( COMMA #global_name=IDENTIFIER )*
 -> global_stmt ;;
 
-   EXEC exec_expr=expr ( IN exec_test=test ( COMMA exec_test=test | 0 ) | 0 )
+   EXEC exec_code=expr ( IN global_dict_exec=test ( COMMA local_dict_exec=test | 0 ) | 0 )
 -> exec_stmt ;;
 
-   ASSERT assert_test=test ( COMMA assert_test=test | 0 )
+   ASSERT assert_not_test=test ( COMMA assert_raise_test=test | 0 )
 -> assert_stmt ;;
 
    if_stmt=if_stmt
@@ -333,7 +353,7 @@ namespace ruby
    | classdef=classdef
 -> compound_stmt ;;
 
-   IF #if_test=test COLON if_suite=suite ( ELIF #elif_test=test COLON elif_suite=suite )* ( ELSE COLON if_else_suite=suite | 0 )
+   IF #if_test=test COLON if_suite=suite ( ELIF #elif_test=test COLON #elif_suite=suite )* ( ELSE COLON if_else_suite=suite | 0 )
 -> if_stmt ;;
 
    WHILE while_test=test COLON while_suite=suite ( ELSE COLON while_else_suite=suite | 0 )
@@ -343,10 +363,10 @@ namespace ruby
 -> for_stmt ;;
 
    TRY COLON try_suite=suite
-    ( ( except_clause=except_clause COLON except_suite=suite )+ ( ELSE COLON try_else_suite=suite | 0 ) | FINALLY COLON finally_suite=suite )
+    ( ( #except_clause=except_clause COLON #except_suite=suite )+ ( ELSE COLON try_else_suite=suite | 0 ) | FINALLY COLON finally_suite=suite )
 -> try_stmt ;;
 
-   EXCEPT ( except_test=test ( COMMA except_test=test | 0 ) | 0 )
+   EXCEPT ( except_test=test ( COMMA except_target_test=test | 0 ) | 0 )
 -> except_clause ;;
 
    simple_stmt=simple_stmt | (LINEBREAK)+ INDENT (#stmt=stmt)+ DEDENT
@@ -361,59 +381,69 @@ namespace ruby
    NOT not_test=not_test | comparison=comparison
 -> not_test ;;
 
-   #expr=expr ( #comp_op=comp_op #expr=expr )*
+   comp_expr=expr ( #comp_op=comp_op #comp_op_expr=expr )*
 -> comparison ;;
 
-   LESS
-   | GREATER
-   | ISEQUAL
-   | GREATEREQ
-   | LESSEQ
-   | UNEQUAL
-   | IN
-   | NOT IN
-   | IS (NOT | 0)
--> comp_op ;;
+   LESS         [: (*yynode)->comp_operator = python::op_less;      :]
+   | GREATER    [: (*yynode)->comp_operator = python::op_greater;   :]
+   | ISEQUAL    [: (*yynode)->comp_operator = python::op_isequal;   :]
+   | GREATEREQ  [: (*yynode)->comp_operator = python::op_greatereq; :]
+   | LESSEQ     [: (*yynode)->comp_operator = python::op_lesseq;    :]
+   | UNEQUAL    [: (*yynode)->comp_operator = python::op_unequal;   :]
+   | IN         [: (*yynode)->comp_operator = python::op_in;        :]
+   | NOT IN     [: (*yynode)->comp_operator = python::op_not_in;    :]
+   | IS (NOT    [: (*yynode)->comp_operator = python::op_is_not;    :] 
+        | 0     [: (*yynode)->comp_operator = python::op_is;        :]
+    )
+-> comp_op [
+        member variable comp_operator: python::comp_operator_enum; ];;
 
-   #xor_expr=xor_expr ( ORR #xor_expr=xor_expr )*
+   #expr=xor_expr ( ORR #orr_expr=xor_expr )*
 -> expr ;;
 
-   #and_expr=and_expr ( HAT #and_expr=and_expr )*
+   #xor_expr=and_expr ( HAT #hat_xor_expr=and_expr )*
 -> xor_expr ;;
 
-   #shift_expr=shift_expr ( ANDD #shif_expr=shift_expr )*
+   #and_expr=shift_expr ( ANDD #andd_shif_expr=shift_expr )*
 -> and_expr ;;
 
-   #arith_expr=arith_expr 
-    ( ( LSHIFT  [: (*yynode)->shift_operator = shift_expression::op_lshift; :]
-    | RSHIFT    [: (*yynode)->shift_operator = shift_expression::op_rshift; :]
-    ) #arith_expr=arith_expr )*
--> shift_expr [ 
-    member variable shift_operator: shift_expression::shift_operator_enum; ];;
+   #arith_expr=arith_expr
+    ( ( #shift_op_list=shift_op ) #arith_expr_list=arith_expr )*
+-> shift_expr ;;
 
-   #arith_term=term (( 
-    ( PLUS      [: (*yynode)->arith_operator = arith_expression::op_plus;   :]
-    | MINUS     [: (*yynode)->arith_operator = arith_expression::op_minus;  :]
-    ) #arith_term=term )+ | 0)
--> arith_expr [ 
-    member variable arith_operator: arith_expression::arith_operator_enum; ];;
+    LSHIFT      [: (*yynode)->shift_operator = python::op_lshift;   :]
+    | RSHIFT    [: (*yynode)->shift_operator = python::op_rshift;   :]
+-> shift_op [ 
+    member variable shift_operator: python::shift_operator_enum; ];;
 
-   #factor=factor (( 
-    ( STAR      [: (*yynode)->term_operator = term::op_star;                :]
-    | SLASH     [: (*yynode)->term_operator = term::op_slash;               :]
-    | MODULO    [: (*yynode)->term_operator = term::op_modulo;              :]
-    | DOUBLESLASH [: (*yynode)->term_operator = term::op_doubleslash;       :]
-    ) #factor=factor )+ | 0)
--> term [ 
-    member variable term_operator: term::term_operator_enum; ];;
+   #arith_term=term 
+    (( (#arith_op_list = arith_op) #arith_term_list=term )+ | 0)
+-> arith_expr ;;
 
-   ( 
-    PLUS        [: (*yynode)->factor_operator = factor::op_factor_plus;     :]
-    | MINUS     [: (*yynode)->factor_operator = factor::op_factor_minus;    :]
-    | TILDE     [: (*yynode)->factor_operator = factor::op_factor_tilde ;   :]
-    ) #factor=factor | #power=power
--> factor [ 
-    member variable factor_operator: factor::factor_operator_enum;   ];;
+    PLUS        [: (*yynode)->arith_operator = python::op_plus;     :]
+    | MINUS     [: (*yynode)->arith_operator = python::op_minus;    :]
+-> arith_op [ 
+    member variable arith_operator: python::arith_operator_enum; ] ;;
+
+   #factor=factor 
+    (((#term_op_list = term_op) #factor_list=factor )+ | 0)
+-> term ;;
+
+    STAR        [: (*yynode)->term_operator = python::op_star;      :]
+    | SLASH     [: (*yynode)->term_operator = python::op_slash;     :]
+    | MODULO    [: (*yynode)->term_operator = python::op_modulo;    :]
+    | DOUBLESLASH [: (*yynode)->term_operator = python::op_doubleslash; :]
+-> term_op [ 
+    member variable term_operator: python::term_operator_enum; ];;
+
+   ( #fact_op=fact_op) #factor=factor | #power=power
+-> factor ;;
+
+    PLUS        [: (*yynode)->factor_operator = python::op_factor_plus;     :]
+    | MINUS     [: (*yynode)->factor_operator = python::op_factor_minus;    :]
+    | TILDE     [: (*yynode)->factor_operator = python::op_factor_tilde ;   :]
+-> fact_op [ 
+    member variable factor_operator: python::factor_operator_enum;   ];;
 
    ( atom=atom )
     (#trailer=trailer)* ( DOUBLESTAR factor=factor | 0 )
@@ -433,13 +463,14 @@ namespace ruby
    SHORTSTRING ( STRINGBODY )+ SHORTSTRING
 -> shortstringliteral ;;
 
-   LONGSTRING ( STRINGBODY )+ LONGSTRING
+   LONGSTRING ( #string_body = STRINGBODY )+ LONGSTRING
 -> longstringliteral ;;
 
-   INTEGER
-   | FLOAT
-   | IMAGNUM
--> number ;;
+   INTEGER      [: (*yynode)->num_type = python::type_int;      :]
+   | FLOAT      [: (*yynode)->num_type = python::type_float;    :]
+   | IMAGNUM    [: (*yynode)->num_type = python::type_imagnum;  :]
+-> number [
+    member variable num_type: python::num_type_enum; ];;
 
    ( #list_test=test ( COMMA [: if (yytoken == Token_RBRACKET) { break; } :] #list_test=test )* | 0)
 -> list_maker ;;
@@ -467,9 +498,9 @@ namespace ruby
 -- If a COLON it skips the 'test'. if the next token is not RBRACKET or COMMA after test it can be a COLON.
 -- Else it ends.
    subcript_ellipsis=ELLIPSIS
-    | ( ?[: yytoken != Token_COLON :] test=test | 0 )
+    | ( ?[: yytoken != Token_COLON :] sub_test=test | 0 )
     ( ?[: yytoken == Token_RBRACKET || yytoken == Token_COMMA :] 0
-        | COLON ( test=test | 0 ) ( sliceop=sliceop | 0 ) )
+        | COLON ( sub_colon_test=test | 0 ) ( sliceop=sliceop | 0 ) )
 -> subscript ;;
 
    COLON ( slice_test=test | 0 )
@@ -477,33 +508,33 @@ namespace ruby
 
    #expr=expr
     ( COMMA [: if (yytoken == Token_IN || yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK ) { break; } :]
-    #expr=expr )*
+    #exprlist=expr )*
 -> exprlist ;;
 
    #test=test ( COMMA [: if( yytoken == Token_COLON || yytoken == Token_SEMICOLON || yytoken == Token_RPAREN || yytoken == Token_LINEBREAK) {break;} :]
-    #test=test )*
+    #testlist=test )*
 -> testlist ;;
 
    #test=test ( ( COMMA #test=test )+ ( COMMA | 0 ) | 0 )
 -> testlist_safe ;;
 
-   (#test=test COLON #test=test | 0) ( COMMA [: if (yytoken == Token_RBRACE) { break; } :]
-    #test=test COLON #test=test )*
+   (key=test COLON value=test | 0) ( COMMA [: if (yytoken == Token_RBRACE) { break; } :]
+    #key_list=test COLON #value_list=test )*
 -> dictmaker ;;
 
    CLASS class_name=IDENTIFIER ( ( LPAREN testlist=testlist RPAREN ) | 0 ) COLON class_suite=suite
 -> classdef ;;
 
-   #arguement=argument
-    ( COMMA [: if(yytoken == Token_RPAREN || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR) { break; } :] #arguement=argument)*
+   #argument=argument
+    ( COMMA [: if(yytoken == Token_RPAREN || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR) { break; } :] #argument=argument)*
 -> arg_list ;;
 
     arg_list=arg_list
-    ( STAR test=test ( ?[: LA(2).kind == Token_DOUBLESTAR :] COMMA arglist_star_doublestar=DOUBLESTAR test=test )
-    | arglist_doublestar=DOUBLESTAR test=test | 0)
+    ( STAR arglist_star=test ( ?[: LA(2).kind == Token_DOUBLESTAR :] COMMA DOUBLESTAR arglist_doublestar=test )
+    | DOUBLESTAR arglist_doublestar=test | 0)
 -> arglist ;;
 
-   test=test ( EQUAL test=test ( ?[: LA(2).kind == Token_FOR :] LPAREN gen_for=gen_for RPAREN | 0 )
+   argument_test=test ( EQUAL argument_equal_test=test ( ?[: LA(2).kind == Token_FOR :] LPAREN gen_for=gen_for RPAREN | 0 )
     | ?[: yytoken == Token_FOR :] gen_for=gen_for
     | ?[: yytoken == Token_RPAREN || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR || yytoken == Token_COMMA :] 0 )
 -> argument ;;

@@ -123,8 +123,8 @@ Identifier      [a-zA-Z_][a-zA-Z0-9_]*
 
 StringPrefix    "r"|"u"|"U"|"R"|"ur"|"UR"|"Ur"|"uR"
 
-ShortString1    "'"([^\n\\']|{AsciiEscape})*"'"
-ShortString2    "\""([^"]|{AsciiEscape})*"\""
+ShortString1    "'"([^\n\\']|[\\]{LineBreak}|{AsciiEscape})*"'"
+ShortString2    "\""([^\n\\"]|[\\]{LineBreak}|{AsciiEscape})*"\""
 ShortString     {StringPrefix}?({ShortString1}|{ShortString2})
 LongString1     "'''"
 LongString2     "\"\"\""

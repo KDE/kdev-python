@@ -1,0 +1,3 @@
+print "Foo
+Bar
+Fun"

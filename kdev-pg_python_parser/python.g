@@ -317,7 +317,7 @@ namespace python
    IMPORT import_name=dotted_as_names
 -> import_name ;;
 
-   FROM import_from_name=dotted_name IMPORT ( STAR | LPAREN import_as_names=import_as_names RPAREN | import_from_as_name=import_as_name )
+   FROM import_from_name=dotted_name IMPORT ( STAR | LPAREN import_as_names=import_as_names RPAREN | import_from_as_name=import_as_names )
 -> import_from ;;
 
    imported_name=IDENTIFIER ( AS imported_as=IDENTIFIER | 0 )

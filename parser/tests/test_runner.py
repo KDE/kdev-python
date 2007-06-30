@@ -23,6 +23,7 @@
 #-------------------------------------------------------------------------------
 
 """Test Runner for Parser"""
+from optparse import OptionParser
 import os
 import re
 import commands
@@ -34,52 +35,34 @@ class Error(Exception): pass
 class TestResults:
     __doc__="The Class is the Engine of the test Suite"
     _re_test = re.compile('\S*(.py$)')
-    _re_pass = re.compile('[\S\s]*\nMatched')
-    def __init__(self):
+    _re_fail = re.compile('.*fail.py')
+    def __init__(self,parserexec,sourcedir):
         """Initiates the variables"""
-        self.dir = "./"
-        self.x = Dir_Content(self.dir).files
+	self.sourcedir = sourcedir
+	self.parserexec = parserexec
         self.tests = []
         self.success = self.failure = self.no =0
         self.Errors = []
     def __file_check(self):
         """Checks for the test cases in directory and calls a check for each test"""
-        for i in self.x:
+        for i in Dir_Content(self.sourcedir).files:
                         match = re.match(self._re_test, i)
                         if match:
                                 self.tests.append(i)
         for i in self.tests:
                         if i <> 'test_runner.py':
                             self.no = self.no + 1
-                            string = ("../build/python-parser "+i).strip()
-                            x = commands.getoutput(string)
-                            self.__check(x,i)
-    def __check(self,x,i):
+                            string = (self.parserexec+" "+self.sourcedir+"/"+i).strip()
+                            (status,out) = commands.getstatusoutput(string)
+                            self.__check(status,i)
+    def __check(self,parse,i):
         """checks if the new token stream matches the ideal token stream"""
-        log_file = self.dir+i+".result" 
-        try:
-            file = open(log_file, 'r')
-            try:
-                data = file.read()
-                self.__parser_token_check(data,x,i)
-            finally:
-                file.close()
-        except IOError:
-            y = open(log_file, 'w')
-            y.write( x )
-            y.close()
-            self.failure = self.failure + 1
-            error = "File: "+log_file+" IOError: ReGenerating the Token Stram File"
-            self.Errors.append(error)
-    def __parser_token_check(self,data,x,i):
-        parse = re.match(self._re_pass,x)
-        if(parse):
-            if( data == x ):
-                y = "OK"
-                self.success = self.success + 1
-            else:
-                self.failure = self.failure + 1
-                y = "FAILED"
+        if(parse == 0):
+            y = "OK"
+            self.success = self.success + 1
+        elif(re.match(self._re_fail,i)):
+	    self.success = self.success + 1
+	    y = "FAILED - Fail expected"
         else:
             self.failure = self.failure + 1
             y = "FAILED"
@@ -115,4 +98,8 @@ class Dir_Content:
         return self.files
 
 if __name__ == "__main__":
-    TestResults().main()
+    parser = OptionParser()
+    parser.add_option("-p","--parser", dest="parserexec")
+    parser.add_option("-s","--source", dest="sourcedir")
+    (options,args) = parser.parse_args()
+    TestResults(options.parserexec,options.sourcedir).main()

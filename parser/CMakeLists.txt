@@ -30,6 +30,7 @@ endif (CMAKE_COMPILER_IS_GNUCXX)
 
 
 if(KDEVPG_FOUND AND FLEX_FOUND)
+    include_directories(${KDEVPG_INCLUDE_DIR})
     add_custom_command(
         OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/python_ast.h"
                 "${CMAKE_CURRENT_BINARY_DIR}/python_parser.h"

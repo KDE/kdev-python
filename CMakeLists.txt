@@ -8,9 +8,36 @@ if( KDEVPG_DATA_DIR )
 else( KDEVPG_DATA_DIR )
     set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_INSTALL_PREFIX}/share/cmake/modules )
 endif( KDEVPG_DATA_DIR )
-if( FLEX_DATA_DIR )
-    set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${FLEX_DATA_DIR}/cmake/modules )
-endif( FLEX_DATA_DIR )
-
-
+FIND_PACKAGE(KDE4 REQUIRED)
+FIND_PACKAGE(KDevPlatform REQUIRED)
 add_subdirectory(parser)
+
+INCLUDE_DIRECTORIES(
+    ${KDEVPLATFORM_INCLUDE_DIR}
+    ${KDEVPLATFORM_INCLUDE_DIR}/language/interfaces
+    ${KDEVPLATFORM_INCLUDE_DIR}/interfaces
+    ${KDEVPLATFORM_INCLUDE_DIR}/language
+    ${KDEVPLATFORM_INCLUDE_DIR}/language/backgroundparser
+    ${KDE4_INCLUDES}
+    ${KDE4_INCLUDE_DIR}/threadweaver
+    ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+set(kdevpythonlanguagesupport_PART_SRCS
+    pythonlanguagesupport.cpp
+)
+
+KDE4_AUTOMOC(${kdevpythonlanguagesupport_PART_SRCS})
+
+kde4_add_plugin(kdevpythonlanguagesupport ${kdevpythonlanguagesupport_PART_SRCS})
+
+TARGET_LINK_LIBRARIES(kdevpythonlanguagesupport
+    ${KDE4_KDEUI_LIBS}
+    ${KDEVPLATFORM_INTERFACES_LIBRARY}
+    ${KDEVPLATFORM_LANGUAGE_LIBRARY}
+)
+
+install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})
+
+install(FILES kdevpythonsupport.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+

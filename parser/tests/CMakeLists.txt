@@ -5,6 +5,7 @@ include_directories(
     ${QT_QTTEST_INCLUDE_DIR}
     ${QT_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}/parser
+    ${KDE4_INCLUDE_DIR}
     )
 
 set(parsetest_SRCS parsetest.cpp)

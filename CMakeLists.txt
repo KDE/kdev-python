@@ -20,11 +20,14 @@ INCLUDE_DIRECTORIES(
     ${KDE4_INCLUDES}
     ${KDE4_INCLUDE_DIR}/threadweaver
     ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/parser
+    ${CMAKE_CURRENT_SOURCE_DIR}/parser/generated
 )
 
 set(kdevpythonlanguagesupport_PART_SRCS
     pythonlanguagesupport.cpp
     pythonparsejob.cpp
+    parser/parsesession.cpp
 )
 
 KDE4_AUTOMOC(${kdevpythonlanguagesupport_PART_SRCS})
@@ -36,6 +39,7 @@ TARGET_LINK_LIBRARIES(kdevpythonlanguagesupport
     ${KDEVPLATFORM_INTERFACES_LIBRARY}
     ${KDEVPLATFORM_LANGUAGE_LIBRARY}
     ${KDE4_THREADWEAVER_LIBRARIES}
+
 )
 
 install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})

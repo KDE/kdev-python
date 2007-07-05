@@ -33,7 +33,6 @@ namespace KDevelop
     class ParseJob;
     class IDocument;
 }
-
 class PythonLanguageSupport : public KDevelop::IPlugin, public KDevelop::ILanguageSupport
 {
 Q_OBJECT

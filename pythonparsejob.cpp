@@ -23,16 +23,18 @@
  *****************************************************************************/
 #include "pythonparsejob.h"
 #include <kdebug.h>
+#include <cassert>
 #include "Thread.h"
 #include "pythonlanguagesupport.h"
 #include <parsejob.h>
+#include "parsesession.h"
+#include <python_parser.h>
 
 PythonParseJob::PythonParseJob( const KUrl &url,PythonLanguageSupport *parent)
             : KDevelop::ParseJob( url, parent )
+            , m_session( new ParseSession )
+            , m_AST( 0 )
 {
-    kDebug() << "########Parsing ########"
-             << url
-             << endl;
 }
 
 PythonParseJob::~PythonParseJob()
@@ -42,5 +44,16 @@ PythonLanguageSupport *PythonParseJob::python() const
 {
     return qobject_cast<PythonLanguageSupport*>(const_cast<QObject*>(parent()));
 }
-#include "pythonparsejob.moc"
 
+ParseSession *PythonParseJob::parseSession() const
+{
+    return m_session;
+}
+
+void PythonParseJob::run()
+{
+    kDebug() << "===-- PARSING --===> "
+             << endl;
+}
+
+#include "pythonparsejob.moc"

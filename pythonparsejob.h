@@ -25,8 +25,12 @@
 #define PARSEJOB_H
 
 #include <parsejob.h>
-
+#include "python_ast.h"
 class PythonLanguageSupport;
+
+class ParseSession;
+
+using namespace python;
 
 class PythonParseJob : public KDevelop::ParseJob
 {
@@ -35,6 +39,12 @@ public:
     PythonParseJob( const KUrl &url, PythonLanguageSupport* parent);
     virtual ~PythonParseJob();
     PythonLanguageSupport* python() const;
+    ParseSession* parseSession() const;
+protected:
+    virtual void run();
+private:
+    ParseSession *m_session;
+    project_ast *m_AST;
 };
-#endif
 
+#endif

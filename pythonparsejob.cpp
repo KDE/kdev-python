@@ -28,7 +28,9 @@
 #include "pythonlanguagesupport.h"
 #include <parsejob.h>
 #include "parsesession.h"
-#include <python_parser.h>
+#include "python_parser.h"
+
+using namespace python;
 
 PythonParseJob::PythonParseJob( const KUrl &url,PythonLanguageSupport *parent)
             : KDevelop::ParseJob( url, parent )
@@ -50,10 +52,43 @@ ParseSession *PythonParseJob::parseSession() const
     return m_session;
 }
 
+project_ast *PythonParseJob::AST() const
+{
+    Q_ASSERT(isFinished() && m_AST);
+    return m_AST;
+}
+
+// void PythonParseJob::setAST(project_ast * ast)
+// {
+//     m_AST = ast;
+// }
 void PythonParseJob::run()
 {
-    kDebug() << "===-- PARSING --===> "
+     kDebug() << "===-- PARSING --===> "
+             << m_document.fileName()
+             << " size: " << m_session->size()
              << endl;
+
+    // 0) setup
+    parser python_parser;
+    python_parser.set_token_stream( m_session->token_stream );
+    python_parser.set_memory_pool( m_session->memory_pool );
+
+    // 1) tokenize
+    python_parser.tokenize( (char*) m_session->contents() );
+
+    // 2) parse
+    bool matched = python_parser.parse_project( &m_AST );
+//     m_AST->language = python();
+
+    if ( matched )
+    {
+        kDebug() << "----Parsing Succeded---"<<endl;//TODO: bind declarations to the code model
+    }
+    else
+    {
+        python_parser.yy_expected_symbol(ast_node::Kind_project, "project");
+    }
 }
 
 #include "pythonparsejob.moc"

@@ -1,4 +1,4 @@
-
+add_definitions(-fPIC)
 add_subdirectory(tests)
 
 ## Is this really supported on all architectures??

@@ -38,6 +38,10 @@ class PythonParseJob : public KDevelop::ParseJob
 public:
     PythonParseJob( const KUrl &url, PythonLanguageSupport* parent);
     virtual ~PythonParseJob();
+
+    void setAST(project_ast* ast);
+    virtual project_ast *AST() const;
+
     PythonLanguageSupport* python() const;
     ParseSession* parseSession() const;
 protected:

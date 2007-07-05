@@ -1,33 +1,16 @@
-project( python_parser )
-
-find_package(Qt4 REQUIRED)
-
-find_package(KDevelop-PG)
-find_package(Flex)
 
 add_subdirectory(tests)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${QT_INCLUDES})
+include_directories(${KDE4_INCLUDE_DIR})
 
 set(parser_STAT_SRCS
     decoder.cpp
     python_io.cpp
     pythondriver.cpp
     )
-
-if (CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS_DEBUGFULL  "-g3 -O0 -fno-inline")
-    set(CMAKE_C_FLAGS_DEBUGFULL  "-g3 -O0 -fno-inline")
-endif (CMAKE_COMPILER_IS_GNUCXX)
-
-
-#find_package(KDE4 REQUIRED)
-#include (KDE4Defaults)
-#include (MacroLibrary)
-
-
 
 if(KDEVPG_FOUND AND FLEX_FOUND)
     include_directories(${KDEVPG_INCLUDE_DIR})
@@ -104,14 +87,13 @@ else(KDEVPG_FOUND AND FLEX_FOUND)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/generated)
 endif(KDEVPG_FOUND AND FLEX_FOUND)
 
-include_directories(${KDE4_INCLUDE_DIR})
 
-add_library(kdevpythonparser SHARED ${parser_STAT_SRCS} ${parser_SRCS} ${lexer_SRCS})
+kde4_add_library(kdevpythonparser STATIC ${parser_STAT_SRCS} ${parser_SRCS} ${lexer_SRCS})
 target_link_libraries(kdevpythonparser ${QT_QTCORE_LIBRARY})
-set_target_properties(kdevpythonparser PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 
-add_executable( python-parser main.cpp )
+kde4_add_executable( python-parser main.cpp )
 target_link_libraries(python-parser ${QT_QTCORE_LIBRARY} kdevpythonparser)
+install(TARGETS python-parser DESTINATION ${BIN_INSTALL_DIR})
 
 add_custom_target( copy-generated
     COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/python_parser.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/generated/python_parser.cpp"

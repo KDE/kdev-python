@@ -9,16 +9,19 @@ include_directories(
     )
 
 set(parsetest_SRCS parsetest.cpp)
-qt4_automoc(${parsetest_SRCS})
-add_executable(python-parsetest ${parsetest_SRCS})
+kde4_automoc(${parsetest_SRCS})
+kde4_add_unit_test(python-parsetest ${parsetest_SRCS})
 target_link_libraries(python-parsetest
     ${QT_QTTEST_LIBRARY}
     ${QT_QTCORE_LIBRARY}
     kdevpythonparser
 )
 
+if(KDE4_BUILD_TESTS)
 add_custom_target( run_py_test 
 	COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/test_runner.py -p ${CMAKE_BINARY_DIR}/parser/python-parser -s ${CMAKE_CURRENT_SOURCE_DIR}
 	DEPENDS python-parser
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
+endif(KDE4_BUILD_TESTS)
+

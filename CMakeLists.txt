@@ -13,7 +13,6 @@ FIND_PACKAGE(KDevPlatform REQUIRED)
 add_subdirectory(parser)
 
 INCLUDE_DIRECTORIES(
-    ${KDEVPLATFORM_INCLUDE_DIR}
     ${KDEVPLATFORM_INCLUDE_DIR}/language/interfaces
     ${KDEVPLATFORM_INCLUDE_DIR}/interfaces
     ${KDEVPLATFORM_INCLUDE_DIR}/language
@@ -25,6 +24,7 @@ INCLUDE_DIRECTORIES(
 
 set(kdevpythonlanguagesupport_PART_SRCS
     pythonlanguagesupport.cpp
+    pythonparsejob.cpp
 )
 
 KDE4_AUTOMOC(${kdevpythonlanguagesupport_PART_SRCS})
@@ -35,6 +35,7 @@ TARGET_LINK_LIBRARIES(kdevpythonlanguagesupport
     ${KDE4_KDEUI_LIBS}
     ${KDEVPLATFORM_INTERFACES_LIBRARY}
     ${KDEVPLATFORM_LANGUAGE_LIBRARY}
+    ${KDE4_THREADWEAVER_LIBRARIES}
 )
 
 install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})

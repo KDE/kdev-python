@@ -25,18 +25,24 @@
 
 #include "pythonlanguagesupport.h"
 
+
 #include <kdebug.h>
 #include <kcomponentdata.h>
 #include <kstandarddirs.h>
 #include <kgenericfactory.h>
-#include <icore.h>
+
 #include <QExtensionFactory>
+
+#include <icore.h>
 #include <ilanguagecontroller.h>
 #include <ilanguage.h>
 #include <idocument.h>
 #include <backgroundparser.h>
 #include <idocumentcontroller.h>
-#include <QExtensionFactory>
+
+#include "pythonparsejob.h"
+
+using namespace KDevelop;
 
 typedef KGenericFactory<PythonLanguageSupport> KDevPythonSupportFactory;
 K_EXPORT_COMPONENT_FACTORY( kdevpythonlanguagesupport, KDevPythonSupportFactory( "kdevpythonsupport" ) )
@@ -59,7 +65,7 @@ PythonLanguageSupport::PythonLanguageSupport( QObject* parent, const QStringList
 
 void PythonLanguageSupport::documentChanged( KDevelop::IDocument* doc )
 {
-        kDebug() << "-------------Adding document to parser--------------" << endl;
+        kDebug() << "###########--Adding document to parser--################" << endl;
         language()->backgroundParser()->addDocument(doc->url());
 }
 PythonLanguageSupport::~PythonLanguageSupport()
@@ -68,10 +74,7 @@ PythonLanguageSupport::~PythonLanguageSupport()
 
 KDevelop::ParseJob *PythonLanguageSupport::createParseJob(const KUrl &url)
 {
-    kDebug() << ">>>>>>>>>Parsing<<<<<<<<<"
-             << url
-             << endl;
-    return 0;
+    return new PythonParseJob( url, this );
 }
 
 QString PythonLanguageSupport::name() const

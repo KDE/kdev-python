@@ -30,6 +30,7 @@
 
 namespace KDevelop
 {
+    class ParseJob;
     class IDocument;
 }
 
@@ -40,14 +41,15 @@ Q_INTERFACES( KDevelop::ILanguageSupport )
 public:
     PythonLanguageSupport( QObject *parent, const QStringList& args = QStringList() );
     virtual ~PythonLanguageSupport();
-    virtual QString name() const;
+    QString name() const;
     /*Name Of the Language*/
-    virtual KDevelop::ParseJob *createParseJob(const KUrl &url);
+    KDevelop::ParseJob *createParseJob( const KUrl &url );
     /*Parsejob used by background parser to parse given Url*/
-    virtual KDevelop::ILanguage *language();
+    KDevelop::ILanguage *language();
     /*The Language*/
 private slots:
     void documentChanged( KDevelop::IDocument*);
 };
 
 #endif
+

@@ -1,6 +1,9 @@
 
 add_subdirectory(tests)
 
+## Is this really supported on all architectures??
+add_definitions(-fPIC)
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${QT_INCLUDES})

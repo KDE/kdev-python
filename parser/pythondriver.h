@@ -23,10 +23,12 @@
 
 #include <QtCore/QString>
 
+#include "pythonparserexport.h"
+
 /**
  * Class to parse a Python source file or a string containing python source code
  */
-class PythonDriver
+class KDEVPYTHONPARSER_EXPORT PythonDriver
 {
 public:
     /**

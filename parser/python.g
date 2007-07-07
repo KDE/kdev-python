@@ -60,6 +60,9 @@
 -----------------------------------------------------------
 
 [:
+
+#include "pythonparserexport.h"
+
 namespace python
 {
     class Lexer;

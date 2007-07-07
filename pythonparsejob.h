@@ -44,11 +44,14 @@ public:
 
     PythonLanguageSupport* python() const;
     ParseSession* parseSession() const;
+    bool wasReadFromDisk() const;
+
 protected:
     virtual void run();
 private:
     ParseSession *m_session;
     project_ast *m_AST;
+    bool m_readFromDisk;
 };
 
 #endif

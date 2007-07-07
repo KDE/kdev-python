@@ -24,6 +24,12 @@
 #include "pythonparsejob.h"
 #include <kdebug.h>
 #include <cassert>
+#include <QFile>
+#include <QByteArray>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
+#include <klocale.h>
 #include "Thread.h"
 #include "pythonlanguagesupport.h"
 #include <parsejob.h>
@@ -36,6 +42,7 @@ PythonParseJob::PythonParseJob( const KUrl &url,PythonLanguageSupport *parent)
             : KDevelop::ParseJob( url, parent )
             , m_session( new ParseSession )
             , m_AST( 0 )
+            , m_readFromDisk( false )
 {
 }
 
@@ -47,24 +54,41 @@ PythonLanguageSupport *PythonParseJob::python() const
     return qobject_cast<PythonLanguageSupport*>(const_cast<QObject*>(parent()));
 }
 
-ParseSession *PythonParseJob::parseSession() const
-{
-    return m_session;
-}
-
 project_ast *PythonParseJob::AST() const
 {
     Q_ASSERT(isFinished() && m_AST);
     return m_AST;
 }
 
-// void PythonParseJob::setAST(project_ast * ast)
-// {
-//     m_AST = ast;
-// }
+bool PythonParseJob::wasReadFromDisk() const
+{
+    return m_readFromDisk;
+}
 void PythonParseJob::run()
 {
-     kDebug() << "===-- PARSING --===> "
+
+    m_readFromDisk = !contentsAvailableFromEditor();
+
+    if ( m_readFromDisk )
+    {
+        QFile file( m_document.path() );
+        if ( !file.open( QIODevice::ReadOnly ) )
+        {
+            m_errorMessage = i18n( "Could not open file '%1'", m_document.path() );
+            kWarning( 9007 ) << k_funcinfo << "Could not open file " << m_document
+                             << " (path " << m_document.path() << ")" << endl;
+            return ;
+        }
+
+        m_session->setContents( file.readAll() );
+        Q_ASSERT ( m_session->size() > 0 );
+        file.close();
+    }
+    else
+    {
+        m_session->setContents( contentsFromEditor().toAscii() );
+    }
+    kDebug() << "===-- PARSING --===> "
              << m_document.fileName()
              << " size: " << m_session->size()
              << endl;
@@ -79,7 +103,6 @@ void PythonParseJob::run()
 
     // 2) parse
     bool matched = python_parser.parse_project( &m_AST );
-//     m_AST->language = python();
 
     if ( matched )
     {
@@ -88,7 +111,13 @@ void PythonParseJob::run()
     else
     {
         python_parser.yy_expected_symbol(ast_node::Kind_project, "project");
+        kDebug() << "===Failed===<<endl";
+        return;
     }
 }
 
+ParseSession *PythonParseJob::parseSession() const
+{
+    return m_session;
+}
 #include "pythonparsejob.moc"

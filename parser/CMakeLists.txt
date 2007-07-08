@@ -92,6 +92,7 @@ endif(KDEVPG_FOUND AND FLEX_FOUND)
 
 kde4_add_library(kdevpythonparser SHARED ${parser_STAT_SRCS} ${parser_SRCS} ${lexer_SRCS})
 target_link_libraries(kdevpythonparser ${QT_QTCORE_LIBRARY})
+install(TARGETS kdevpythonparser DESTINATION ${LIB_INSTALL_DIR})
 
 kde4_add_executable( python-parser main.cpp )
 target_link_libraries(python-parser ${QT_QTCORE_LIBRARY} kdevpythonparser)

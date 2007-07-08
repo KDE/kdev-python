@@ -34,28 +34,28 @@ namespace python
 
 class decoder
 {
-  parser::token_stream_type *_M_token_stream;
+  parser* _M_parser;
 
 public:
-  decoder(parser::token_stream_type *token_stream)
-    : _M_token_stream(token_stream) {}
+  decoder(parser *parser)
+    : _M_parser(parser) {}
 
   int decode_kind(std::size_t index) const
   {
-    parser::token_type const &tk = _M_token_stream->token(index);
+    parser::token_type const &tk = _M_parser->token_stream->token(index);
     return tk.kind;
   }
 
   std::string decode_string(std::size_t index) const
   {
-    parser::token_type const &tk = _M_token_stream->token(index);
-    return std::string(&tk.text[tk.begin], tk.end - tk.begin);
+    parser::token_type const &tk = _M_parser->token_stream->token(index);
+    return std::string(_M_parser->tokenText(tk.begin), tk.end - tk.begin);
   }
 
   long decode_number(std::size_t index) const
   {
-    parser::token_type const &tk = _M_token_stream->token(index);
-    return ::strtol(&tk.text[tk.begin], 0, 0);
+    parser::token_type const &tk = _M_parser->token_stream->token(index);
+    return ::strtol(_M_parser->tokenText(tk.begin), 0, 0);
   }
 };
 

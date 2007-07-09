@@ -61,30 +61,28 @@
 
 [:
 
-#include "pythonparserexport.h"
-
 namespace python
 {
     class Lexer;
 
     enum shift_operator_enum {
         op_lshift,
-        op_rshift,
+        op_rshift
     };
     enum arith_operator_enum {
         op_plus,
-        op_minus,
+        op_minus
     };
     enum term_operator_enum {
         op_star,
         op_slash,
         op_modulo,
-        op_doubleslash,
+        op_doubleslash
     };
     enum factor_operator_enum {
         op_factor_plus,
         op_factor_minus,
-        op_factor_tilde,
+        op_factor_tilde
     };
     enum augassign_eq_enum  {
         eq_plus,
@@ -98,7 +96,7 @@ namespace python
         eq_lshift,
         eq_rshift,
         eq_doublestar,
-        eq_doubleslash,
+        eq_doubleslash
     };
     enum comp_operator_enum   {
         op_less,
@@ -110,12 +108,12 @@ namespace python
         op_in,
         op_not_in,
         op_is,
-        op_is_not,
+        op_is_not
     };
     enum num_type_enum  {
         type_int,
         type_float,
-        type_imagnum,
+        type_imagnum
     };
 }
 :]

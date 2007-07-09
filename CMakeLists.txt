@@ -8,7 +8,6 @@ find_package(KDE4 REQUIRED)
 exec_program(kde4-config ARGS --path data OUTPUT_VARIABLE _data_DIR)
 file(TO_CMAKE_PATH "${_data_DIR}" _data_DIR)
 foreach(dir ${_data_DIR})
-    message("Adding ${dir} to CMAKE_MODULE_PATH")
     set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${dir}/share/cmake/modules)
 endforeach(dir)
 

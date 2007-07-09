@@ -111,7 +111,7 @@ void PythonParseJob::run()
     else
     {
         python_parser.yy_expected_symbol(ast_node::Kind_project, "project");
-        kDebug() << "===Failed===<<endl";
+        kDebug() << "===Failed===" << endl;
         return;
     }
 }

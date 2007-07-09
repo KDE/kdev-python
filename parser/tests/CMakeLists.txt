@@ -4,17 +4,15 @@ include_directories(
     ${QT_QTCORE_INCLUDE_DIR}
     ${QT_QTTEST_INCLUDE_DIR}
     ${QT_INCLUDE_DIR}
-    ${CMAKE_SOURCE_DIR}/parser
     ${KDE4_INCLUDE_DIR}
     )
 
-set(parsetest_SRCS parsetest.cpp)
+set(parsetest_SRCS parsetest.cpp ${parser_STAT_SRCS} ${lexer_SRCS} ${parser_SRCS})
 kde4_automoc(${parsetest_SRCS})
 kde4_add_unit_test(python-parsetest ${parsetest_SRCS})
 target_link_libraries(python-parsetest
     ${QT_QTTEST_LIBRARY}
     ${QT_QTCORE_LIBRARY}
-    kdevpythonparser
 )
 
 if(KDE4_BUILD_TESTS)

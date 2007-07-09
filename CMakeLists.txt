@@ -15,7 +15,6 @@ find_package(KDevPlatform REQUIRED)
 find_package(KDevelop-PG)
 find_package(Flex)
 
-add_subdirectory(parser)
 
 INCLUDE_DIRECTORIES(
     ${KDEVPLATFORM_INCLUDE_DIR}/language/interfaces
@@ -25,22 +24,99 @@ INCLUDE_DIRECTORIES(
     ${KDE4_INCLUDES}
     ${KDE4_INCLUDE_DIR}/threadweaver
     ${CMAKE_CURRENT_BINARY_DIR}
-    ${CMAKE_SOURCE_DIR}/parser
+    parser
 )
 
-if(KDEVPG_FOUND)
-    include_directorieS(${CMAKE_CURRENT_BINARY_DIR}/parser
-        ${KDEVPG_INCLUDE_DIR}
+
+set(parser_STAT_SRCS
+    ${CMAKE_CURRENT_SOURCE_DIR}/parser/decoder.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/parser/python_io.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/parser/pythondriver.cpp
     )
-else(KDEVPG_FOUND)
+
+if(KDEVPG_FOUND AND FLEX_FOUND)
+    include_directories(${KDEVPG_INCLUDE_DIR})
+    add_custom_command(
+        OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/python_ast.h"
+                "${CMAKE_CURRENT_BINARY_DIR}/python_parser.h"
+                "${CMAKE_CURRENT_BINARY_DIR}/python_parser.cpp"
+                "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.h"
+                "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.cpp"
+                "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.h"
+                "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.cpp"
+        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/parser/python.g"
+                "${CMAKE_CURRENT_SOURCE_DIR}/parser/python_lexer.h"
+        COMMAND ${KDEVPG_EXECUTABLE}
+        ARGS    --output=python
+                "${CMAKE_CURRENT_SOURCE_DIR}/parser/python.g"
+        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+    )
+    
+    add_custom_target( debuginfo
+                ${KDEVPG_EXECUTABLE} --terminals
+                "${CMAKE_CURRENT_SOURCE_DIR}/parser/python.g" ">terminals"
+        COMMAND  ${KDEVPG_EXECUTABLE} --symbols
+                "${CMAKE_CURRENT_SOURCE_DIR}/parser/python.g" ">symbols"
+        COMMAND  ${KDEVPG_EXECUTABLE} --rules
+                "${CMAKE_CURRENT_SOURCE_DIR}/parser/python.g" ">rules" "2>errors"
+        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+    )
+    
+    set( parser_SRCS
+        "${CMAKE_CURRENT_BINARY_DIR}/python_parser.cpp"
+        "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.cpp"
+        "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.cpp")
+    
+    set_source_files_properties(
+        "${CMAKE_CURRENT_BINARY_DIR}/python_parser.cpp"
+        "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.cpp"
+        "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.cpp"
+        "${CMAKE_CURRENT_BINARY_DIR}/python_parser.h"
+        "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.h"
+        "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.h"
+        GENERATED
+        )
+    add_custom_command(
+        OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp"
+        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/parser/python_lexer.ll"
+                "${CMAKE_CURRENT_SOURCE_DIR}/parser/python_lexer.h"
+                "${CMAKE_CURRENT_BINARY_DIR}/python_parser.h"
+        COMMAND ${FLEX_EXECUTABLE}
+        ARGS    -o"${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp"
+                -d
+                "${CMAKE_CURRENT_SOURCE_DIR}/parser/python_lexer.ll"
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        )
+    
+    set(lexer_SRCS ${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp)
+    
+    set_source_files_properties(
+        ${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp
+        GENERATED
+        )
+
+else(KDEVPG_FOUND AND FLEX_FOUND)
     include_directories(${CMAKE_SOURCE_DIR}/parser/generated)
-endif(KDEVPG_FOUND)
+    message(STATUS "Assuming existence of generated parser files")
+    set(parser_SRCS
+        ${CMAKE_CURRENT_SOURCE_DIR}/parser/generated/python_parser.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/parser/generated/python_visitor.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/parser/generated/python_default_visitor.cpp
+    )
+    message( STATUS "Assuming existence of generated lexer files")
+    set(lexer_SRCS
+        ${CMAKE_CURRENT_SOURCE_DIR}/parser/generated/python_lexer.cpp )
+
+endif(KDEVPG_FOUND AND FLEX_FOUND)
+
+add_subdirectory(parser)
 
 
 set(kdevpythonlanguagesupport_PART_SRCS
     pythonlanguagesupport.cpp
     pythonparsejob.cpp
     parser/parsesession.cpp
+    ${lexer_SRCS} ${parser_SRCS} ${parser_STAT_SRCS}
 )
 
 kde4_automoc(${kdevpythonlanguagesupport_PART_SRCS})
@@ -52,10 +128,30 @@ target_link_libraries(kdevpythonlanguagesupport
     ${KDEVPLATFORM_INTERFACES_LIBRARY}
     ${KDEVPLATFORM_LANGUAGE_LIBRARY}
     ${KDE4_THREADWEAVER_LIBRARIES}
-    kdevpythonparser
 )
 
 install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES kdevpythonsupport.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+
+add_custom_target( copy-generated
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/python_parser.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/parser/generated/python_parser.cpp"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/python_parser.h" "${CMAKE_CURRENT_SOURCE_DIR}/parser/generated/python_parser.h"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/python_ast.h" "${CMAKE_CURRENT_SOURCE_DIR}/parser/generated/python_ast.h"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.h" "${CMAKE_CURRENT_SOURCE_DIR}/parser/generated/python_visitor.h"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/parser/generated/python_visitor.cpp"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.h" "${CMAKE_CURRENT_SOURCE_DIR}/parser/generated/python_default_visitor.h"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/parser/generated/python_default_visitor.cpp"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/parser/generated/python_lexer.cpp"
+    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/python_parser.cpp"
+    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/python_parser.h"
+    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.cpp"
+    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.h"
+    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.cpp"
+    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.h"
+    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/python_ast.h"
+    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp"
+    )
+
+
 

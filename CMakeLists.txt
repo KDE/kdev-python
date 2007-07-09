@@ -34,6 +34,11 @@ set(parser_STAT_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/parser/pythondriver.cpp
     )
 
+set(parser_gen_SRCS)
+set(lexer_gen_SRCS)
+set(parser_SRCS)
+set(lexer_SRCS)
+
 if(KDEVPG_FOUND AND FLEX_FOUND)
     include_directories(${KDEVPG_INCLUDE_DIR})
     add_custom_command(
@@ -62,15 +67,13 @@ if(KDEVPG_FOUND AND FLEX_FOUND)
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
     )
     
-    set( parser_SRCS
+    set( parser_gen_SRCS
         "${CMAKE_CURRENT_BINARY_DIR}/python_parser.cpp"
         "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.cpp"
         "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.cpp")
     
     set_source_files_properties(
-        "${CMAKE_CURRENT_BINARY_DIR}/python_parser.cpp"
-        "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.cpp"
-        "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.cpp"
+        ${parser_gen_SRCS}
         "${CMAKE_CURRENT_BINARY_DIR}/python_parser.h"
         "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.h"
         "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.h"
@@ -88,10 +91,10 @@ if(KDEVPG_FOUND AND FLEX_FOUND)
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         )
     
-    set(lexer_SRCS ${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp)
+    set(lexer_gen_SRCS ${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp)
     
     set_source_files_properties(
-        ${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp
+        ${lexer_gen_SRCS}
         GENERATED
         )
 
@@ -116,6 +119,7 @@ set(kdevpythonlanguagesupport_PART_SRCS
     pythonlanguagesupport.cpp
     pythonparsejob.cpp
     parser/parsesession.cpp
+    ${lexer_gen_SRCS} ${parser_gen_SRCS} 
     ${lexer_SRCS} ${parser_SRCS} ${parser_STAT_SRCS}
 )
 

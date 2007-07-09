@@ -3,15 +3,16 @@
 #cmake run if you installed it in a different directory than this plugin
 #TODO: a cmake run is needed after changing one of the CMakeLists.txt, make will
 #complain about the FindKDevelop-PG.cmake file not findable.
-if( KDEVPG_DATA_DIR )
-    set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${KDEVPG_DATA_DIR}/cmake/modules )
-else( KDEVPG_DATA_DIR )
-    set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_INSTALL_PREFIX}/share/cmake/modules )
-endif( KDEVPG_DATA_DIR )
-
 find_package(KDE4 REQUIRED)
-find_package(KDevPlatform REQUIRED)
 
+exec_program(kde4-config ARGS --path data OUTPUT_VARIABLE _data_DIR)
+file(TO_CMAKE_PATH "${_data_DIR}" _data_DIR)
+foreach(dir ${_data_DIR})
+    message("Adding ${dir} to CMAKE_MODULE_PATH")
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${dir}/share/cmake/modules)
+endforeach(dir)
+
+find_package(KDevPlatform REQUIRED)
 find_package(KDevelop-PG)
 find_package(Flex)
 

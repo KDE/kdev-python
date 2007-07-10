@@ -7,11 +7,10 @@ include_directories(
     ${KDE4_INCLUDE_DIR}
     )
 
-set_source_files_properties(${lexer_gen_SRCS} ${parser_gen_SRCS} GENERATED)
+get_parser_srcs(parser_SRCS)
 
 set(parsetest_SRCS parsetest.cpp
-    ${lexer_gen_SRCS} ${parser_gen_SRCS} 
-    ${lexer_SRCS} ${parser_SRCS} ${parser_STAT_SRCS} )
+    ${parser_SRCS} ${parser_STAT_SRCS} )
 
 kde4_add_unit_test(python-parsetest ${parsetest_SRCS})
 target_link_libraries(python-parsetest

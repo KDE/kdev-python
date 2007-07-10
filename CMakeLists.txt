@@ -5,15 +5,11 @@
 #complain about the FindKDevelop-PG.cmake file not findable.
 find_package(KDE4 REQUIRED)
 
-exec_program(kde4-config ARGS --path data OUTPUT_VARIABLE _data_DIR)
-file(TO_CMAKE_PATH "${_data_DIR}" _data_DIR)
-foreach(dir ${_data_DIR})
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${dir}/share/cmake/modules)
-endforeach(dir)
-
 find_package(KDevPlatform REQUIRED)
-find_package(KDevelop-PG)
-find_package(Flex)
+
+#Don't error out if the FindXXX are missing for these two
+find_package(KDevelop-PG QUIET)
+find_package(Flex QUIET)
 
 
 INCLUDE_DIRECTORIES(
@@ -37,7 +33,7 @@ set(parser_STAT_SRCS
 macro(GET_PARSER_SRCS _srcsList)
     if(KDEVPG_FOUND AND FLEX_FOUND)
         include_directories(${KDEVPG_INCLUDE_DIR})
-	kdevpg_generate(_srcsList 
+	kdevpg_generate(_kdevpgList python
             "${CMAKE_SOURCE_DIR}/parser/python.g"
             "${CMAKE_SOURCE_DIR}/parser/python_lexer.h"
         )
@@ -64,10 +60,7 @@ macro(GET_PARSER_SRCS _srcsList)
                     "${CMAKE_SOURCE_DIR}/parser/python_lexer.ll"
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             )
-         set( ${_srcsList}
-            "${CMAKE_CURRENT_BINARY_DIR}/python_parser.cpp"
-            "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.cpp"
-            "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.cpp"
+         set( ${_srcsList} ${_kdevpgList}
 	    "${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp")
     else(KDEVPG_FOUND AND FLEX_FOUND)
         include_directories(${CMAKE_SOURCE_DIR}/parser/generated)

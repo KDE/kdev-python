@@ -47,17 +47,25 @@ macro(GET_PARSER_SRCS _srcsList)
                     "${CMAKE_CURRENT_SOURCE_DIR}/parser/python.g" ">rules" "2>errors"
             WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
         )
-        
-       
+        # Copy ruby_lexer.ll to the builddir, so that flex doesn't write out
+        # absolute paths in the generated file when we pass them as arguments.
+        # In short, I don't want stuff like
+        # '#line 2 "/home/kde/build/.../ruby_lexer.cpp" in SVN.
+        add_custom_command(
+            OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/python_lexer.ll"
+            MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/parser/python_lexer.ll"
+            COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different 
+                   "${CMAKE_SOURCE_DIR}/parser/python_lexer.ll"
+                   "${CMAKE_CURRENT_BINARY_DIR}/python_lexer.ll"
+            )
         add_custom_command(
             OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp"
-            DEPENDS "${CMAKE_SOURCE_DIR}/parser/python_lexer.ll"
-                    "${CMAKE_SOURCE_DIR}/parser/python_lexer.h"
+            MAIN_DEPENDENCY "${CMAKE_CURRENT_BINARY_DIR}/python_lexer.ll"
+            DEPENDS "${CMAKE_SOURCE_DIR}/parser/python_lexer.h"
                     "${CMAKE_CURRENT_BINARY_DIR}/python_parser.h"
             COMMAND ${FLEX_EXECUTABLE}
-            ARGS    -o"${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp"
-                    -d
-                    "${CMAKE_SOURCE_DIR}/parser/python_lexer.ll"
+            ARGS    -o"python_lexer.cpp"
+                    -d python_lexer.ll
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             )
          set( ${_srcsList} ${_kdevpgList}

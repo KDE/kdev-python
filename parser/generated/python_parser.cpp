@@ -12,6 +12,7 @@ namespace python
 
   void parser::tokenize( char *contents )
   {
+    m_contents =  contents;
     Lexer lexer( this,  contents );
     int kind =  parser::Token_EOF;
 
@@ -27,7 +28,6 @@ namespace python
             t.kind =  kind;
             t.begin =  lexer.tokenBegin();
             t.end =  lexer.tokenEnd();
-            t.text =  contents;
             std::cerr << t.kind << std::endl;
 
             while (lexer.dedentationLevel() > 1)
@@ -36,7 +36,6 @@ namespace python
                 t.kind =  parser::Token_DEDENT;
                 t.begin =  lexer.tokenBegin();
                 t.end =  lexer.tokenEnd();
-                t.text =  contents;
                 std::cerr << t.kind << std::endl;
                 lexer.setDedentationLevel(lexer.dedentationLevel() - 1);
               }
@@ -53,7 +52,6 @@ namespace python
             t.kind =  kind;
             t.begin =  lexer.tokenBegin();
             t.end =  lexer.tokenEnd();
-            t.text =  contents;
             std::cerr << t.kind << std::endl;
             kind =  x;
           }
@@ -68,12 +66,17 @@ namespace python
         t.kind =  kind;
         t.begin =  lexer.tokenBegin();
         t.end =  lexer.tokenEnd();
-        t.text =  contents;
       }
 
     while  ( kind !=  parser::Token_EOF );
 
     this->yylex(); // produce the look ahead token
+  }
+
+
+  char* parser::tokenText(std::size_t begin)
+  {
+    return  &m_contents[begin];
   }
 
 

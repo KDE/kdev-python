@@ -1,9 +1,6 @@
 add_subdirectory(tests)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories(${QT_INCLUDES})
-include_directories(${KDE4_INCLUDE_DIR})
 
 get_parser_srcs(parser_SRCS)
 

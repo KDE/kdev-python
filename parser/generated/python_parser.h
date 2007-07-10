@@ -183,7 +183,12 @@ namespace python
       };
       void report_problem( parser::problem_type type,  const char* message );
       void report_problem( parser::problem_type type,  std::string message );
+      char* tokenText(std::size_t begin);
 
+
+    private:
+
+      char* m_contents;
 
 
     public:

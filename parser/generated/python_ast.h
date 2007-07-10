@@ -7,29 +7,29 @@
 #include <kdev-pg-list.h>
 
 
+
 namespace python
   {
-
   class Lexer;
 
   enum shift_operator_enum {
     op_lshift,
-    op_rshift,
+    op_rshift
   };
   enum arith_operator_enum {
     op_plus,
-    op_minus,
+    op_minus
   };
   enum term_operator_enum {
     op_star,
     op_slash,
     op_modulo,
-    op_doubleslash,
+    op_doubleslash
   };
   enum factor_operator_enum {
     op_factor_plus,
     op_factor_minus,
-    op_factor_tilde,
+    op_factor_tilde
   };
   enum augassign_eq_enum  {
     eq_plus,
@@ -43,7 +43,7 @@ namespace python
     eq_lshift,
     eq_rshift,
     eq_doublestar,
-    eq_doubleslash,
+    eq_doubleslash
   };
   enum comp_operator_enum   {
     op_less,
@@ -55,12 +55,12 @@ namespace python
     op_in,
     op_not_in,
     op_is,
-    op_is_not,
+    op_is_not
   };
   enum num_type_enum  {
     type_int,
     type_float,
-    type_imagnum,
+    type_imagnum
   };
 }
 
@@ -68,177 +68,91 @@ namespace python
   {
 
   struct and_expr_ast;
-
   struct and_test_ast;
-
   struct arg_list_ast;
-
   struct arglist_ast;
-
   struct argument_ast;
-
   struct arith_expr_ast;
-
   struct arith_op_ast;
-
   struct assert_stmt_ast;
-
   struct atom_ast;
-
   struct augassign_ast;
-
   struct break_stmt_ast;
-
   struct classdef_ast;
-
   struct comp_op_ast;
-
   struct comparison_ast;
-
   struct compound_stmt_ast;
-
   struct continue_stmt_ast;
-
   struct decorator_ast;
-
   struct decorators_ast;
-
   struct del_stmt_ast;
-
   struct dictmaker_ast;
-
   struct dotted_as_name_ast;
-
   struct dotted_as_names_ast;
-
   struct dotted_name_ast;
-
   struct except_clause_ast;
-
   struct exec_stmt_ast;
-
   struct expr_ast;
-
   struct expr_stmt_ast;
-
   struct exprlist_ast;
-
   struct fact_op_ast;
-
   struct factor_ast;
-
   struct flow_stmt_ast;
-
   struct for_stmt_ast;
-
   struct fp_def_ast;
-
   struct fpdef_ast;
-
   struct fplist_ast;
-
   struct fun_pos_param_ast;
-
   struct func_def_ast;
-
   struct funcdef_ast;
-
   struct gen_for_ast;
-
   struct gen_if_ast;
-
   struct gen_iter_ast;
-
   struct global_stmt_ast;
-
   struct if_stmt_ast;
-
   struct import_as_name_ast;
-
   struct import_as_names_ast;
-
   struct import_from_ast;
-
   struct import_name_ast;
-
   struct import_stmt_ast;
-
   struct lambda_def_ast;
-
   struct list_for_ast;
-
   struct list_if_ast;
-
   struct list_iter_ast;
-
   struct list_maker_ast;
-
   struct listmaker_ast;
-
   struct longstringliteral_ast;
-
   struct not_test_ast;
-
   struct number_ast;
-
   struct pass_stmt_ast;
-
   struct power_ast;
-
   struct print_stmt_ast;
-
   struct project_ast;
-
   struct raise_stmt_ast;
-
   struct return_stmt_ast;
-
   struct shift_expr_ast;
-
   struct shift_op_ast;
-
   struct shortstringliteral_ast;
-
   struct simple_stmt_ast;
-
   struct sliceop_ast;
-
   struct small_stmt_ast;
-
   struct stmt_ast;
-
   struct subscript_ast;
-
   struct subscriptlist_ast;
-
   struct suite_ast;
-
   struct term_ast;
-
   struct term_op_ast;
-
   struct test_ast;
-
   struct test_list_gexp_ast;
-
   struct testlist_ast;
-
   struct testlist1_ast;
-
   struct testlist_gexp_ast;
-
   struct testlist_safe_ast;
-
   struct trailer_ast;
-
   struct try_stmt_ast;
-
   struct varargslist_ast;
-
   struct while_stmt_ast;
-
   struct xor_expr_ast;
-
   struct yield_stmt_ast;
 
 

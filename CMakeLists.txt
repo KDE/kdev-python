@@ -86,8 +86,6 @@ set(kdevpythonlanguagesupport_PART_SRCS
     ${parser_SRCS} ${parser_STAT_SRCS}
 )
 
-kde4_automoc(${kdevpythonlanguagesupport_PART_SRCS})
-
 kde4_add_plugin(kdevpythonlanguagesupport ${kdevpythonlanguagesupport_PART_SRCS})
 
 target_link_libraries(kdevpythonlanguagesupport

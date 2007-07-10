@@ -29,98 +29,68 @@ INCLUDE_DIRECTORIES(
 
 
 set(parser_STAT_SRCS
-    ${CMAKE_CURRENT_SOURCE_DIR}/parser/decoder.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/parser/python_io.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/parser/pythondriver.cpp
+    ${CMAKE_SOURCE_DIR}/parser/decoder.cpp
+    ${CMAKE_SOURCE_DIR}/parser/python_io.cpp
+    ${CMAKE_SOURCE_DIR}/parser/pythondriver.cpp
     )
 
-set(parser_gen_SRCS)
-set(lexer_gen_SRCS)
-set(parser_SRCS)
-set(lexer_SRCS)
-
-if(KDEVPG_FOUND AND FLEX_FOUND)
-    include_directories(${KDEVPG_INCLUDE_DIR})
-    add_custom_command(
-        OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/python_ast.h"
-                "${CMAKE_CURRENT_BINARY_DIR}/python_parser.h"
-                "${CMAKE_CURRENT_BINARY_DIR}/python_parser.cpp"
-                "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.h"
-                "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.cpp"
-                "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.h"
-                "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.cpp"
-        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/parser/python.g"
-                "${CMAKE_CURRENT_SOURCE_DIR}/parser/python_lexer.h"
-        COMMAND ${KDEVPG_EXECUTABLE}
-        ARGS    --output=python
-                "${CMAKE_CURRENT_SOURCE_DIR}/parser/python.g"
-        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-    )
-    
-    add_custom_target( debuginfo
-                ${KDEVPG_EXECUTABLE} --terminals
-                "${CMAKE_CURRENT_SOURCE_DIR}/parser/python.g" ">terminals"
-        COMMAND  ${KDEVPG_EXECUTABLE} --symbols
-                "${CMAKE_CURRENT_SOURCE_DIR}/parser/python.g" ">symbols"
-        COMMAND  ${KDEVPG_EXECUTABLE} --rules
-                "${CMAKE_CURRENT_SOURCE_DIR}/parser/python.g" ">rules" "2>errors"
-        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-    )
-    
-    set( parser_gen_SRCS
-        "${CMAKE_CURRENT_BINARY_DIR}/python_parser.cpp"
-        "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.cpp"
-        "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.cpp")
-    
-    set_source_files_properties(
-        ${parser_gen_SRCS}
-        "${CMAKE_CURRENT_BINARY_DIR}/python_parser.h"
-        "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.h"
-        "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.h"
-        GENERATED
-        )
-    add_custom_command(
-        OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp"
-        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/parser/python_lexer.ll"
-                "${CMAKE_CURRENT_SOURCE_DIR}/parser/python_lexer.h"
-                "${CMAKE_CURRENT_BINARY_DIR}/python_parser.h"
-        COMMAND ${FLEX_EXECUTABLE}
-        ARGS    -o"${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp"
-                -d
-                "${CMAKE_CURRENT_SOURCE_DIR}/parser/python_lexer.ll"
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        )
-    
-    set(lexer_gen_SRCS ${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp)
-    
-    set_source_files_properties(
-        ${lexer_gen_SRCS}
-        GENERATED
+macro(GET_PARSER_SRCS _srcsList)
+    if(KDEVPG_FOUND AND FLEX_FOUND)
+        include_directories(${KDEVPG_INCLUDE_DIR})
+	kdevpg_generate(_srcsList 
+            "${CMAKE_SOURCE_DIR}/parser/python.g"
+            "${CMAKE_SOURCE_DIR}/parser/python_lexer.h"
         )
 
-else(KDEVPG_FOUND AND FLEX_FOUND)
-    include_directories(${CMAKE_SOURCE_DIR}/parser/generated)
-    message(STATUS "Assuming existence of generated parser files")
-    set(parser_SRCS
-        ${CMAKE_CURRENT_SOURCE_DIR}/parser/generated/python_parser.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/parser/generated/python_visitor.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/parser/generated/python_default_visitor.cpp
-    )
-    message( STATUS "Assuming existence of generated lexer files")
-    set(lexer_SRCS
-        ${CMAKE_CURRENT_SOURCE_DIR}/parser/generated/python_lexer.cpp )
-
-endif(KDEVPG_FOUND AND FLEX_FOUND)
+        add_custom_target( debuginfo
+                    ${KDEVPG_EXECUTABLE} --terminals
+                    "${CMAKE_CURRENT_SOURCE_DIR}/parser/python.g" ">terminals"
+            COMMAND  ${KDEVPG_EXECUTABLE} --symbols
+                    "${CMAKE_CURRENT_SOURCE_DIR}/parser/python.g" ">symbols"
+            COMMAND  ${KDEVPG_EXECUTABLE} --rules
+                    "${CMAKE_CURRENT_SOURCE_DIR}/parser/python.g" ">rules" "2>errors"
+            WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+        )
+        
+       
+        add_custom_command(
+            OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp"
+            DEPENDS "${CMAKE_SOURCE_DIR}/parser/python_lexer.ll"
+                    "${CMAKE_SOURCE_DIR}/parser/python_lexer.h"
+                    "${CMAKE_CURRENT_BINARY_DIR}/python_parser.h"
+            COMMAND ${FLEX_EXECUTABLE}
+            ARGS    -o"${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp"
+                    -d
+                    "${CMAKE_SOURCE_DIR}/parser/python_lexer.ll"
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            )
+         set( ${_srcsList}
+            "${CMAKE_CURRENT_BINARY_DIR}/python_parser.cpp"
+            "${CMAKE_CURRENT_BINARY_DIR}/python_visitor.cpp"
+            "${CMAKE_CURRENT_BINARY_DIR}/python_default_visitor.cpp"
+	    "${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp")
+    else(KDEVPG_FOUND AND FLEX_FOUND)
+        include_directories(${CMAKE_SOURCE_DIR}/parser/generated)
+        message(STATUS "Assuming existence of generated parser files")
+        message( STATUS "Assuming existence of generated lexer files")
+        set(${_srcsList}
+            ${CMAKE_SOURCE_DIR}/parser/generated/python_parser.cpp
+            ${CMAKE_SOURCE_DIR}/parser/generated/python_visitor.cpp
+            ${CMAKE_SOURCE_DIR}/parser/generated/python_default_visitor.cpp
+            ${CMAKE_SOURCE_DIR}/parser/generated/python_lexer.cpp )
+    
+    endif(KDEVPG_FOUND AND FLEX_FOUND)
+endmacro(GET_PARSER_SRCS)
 
 add_subdirectory(parser)
 
+get_parser_srcs(parser_SRCS)
 
 set(kdevpythonlanguagesupport_PART_SRCS
     pythonlanguagesupport.cpp
     pythonparsejob.cpp
     parser/parsesession.cpp
-    ${lexer_gen_SRCS} ${parser_gen_SRCS} 
-    ${lexer_SRCS} ${parser_SRCS} ${parser_STAT_SRCS}
+    ${parser_SRCS} ${parser_STAT_SRCS}
 )
 
 kde4_automoc(${kdevpythonlanguagesupport_PART_SRCS})

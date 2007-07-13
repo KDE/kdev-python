@@ -108,8 +108,8 @@ void parser::yy_expected_token(int expected, std::size_t /*where*/, char const *
 
 void parser::yy_expected_symbol(int expected_symbol, char const *name)
 {
-    int line;
-    int col;
+    std::size_t line;
+    std::size_t col;
     size_t index = token_stream->index();
     token_type &token = token_stream->token(index);
     token_stream->start_position(index, &line, &col);

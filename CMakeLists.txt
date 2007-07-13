@@ -71,7 +71,7 @@ macro(GET_PARSER_SRCS _srcsList)
          set( ${_srcsList} ${_kdevpgList}
 	    "${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp")
     else(KDEVPG_FOUND AND FLEX_FOUND)
-        include_directories(${CMAKE_SOURCE_DIR}/parser/generated)
+        include_directories(${CMAKE_SOURCE_DIR}/parser/generated ${CMAKE_SOURCE_DIR}/parser/generated/kdevelop-pg  )
         message(STATUS "Assuming existence of generated parser files")
         message( STATUS "Assuming existence of generated lexer files")
         set(${_srcsList}

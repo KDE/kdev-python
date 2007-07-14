@@ -1,6 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2007 Andreas Pakulat <apaku@gmx.de>                         *
- * Copyright (c) 2007 Piyush verma <piyush.verma@gmail.com>                  *
+ * Copyright (c) 2007 Piyush verma < piyush.verma@gmail.com>                 *
  *                                                                           *
  * Permission is hereby granted, free of charge, to any person obtaining     *
  * a copy of this software and associated documentation files (the           *
@@ -21,49 +20,64 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION     *
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
-#ifndef PARSEJOB_H
-#define PARSEJOB_H
+#ifndef CONTEXTBUILDER_H
+#define CONTEXTBUILDER_H
 
-#include <parsejob.h>
-#include "python_ast.h"
+#include "python_default_visitor.h"
 
+#include <QSet>
 
-class PythonLanguageSupport;
+#include <identifier.h>
+#include <ducontext.h>
+
+namespace KDevelop
+{
+class DUChain;
+class KDevelop::DUChainBase;
+class DUContext;
+class TopDUContext;
+}
 
 class ParseSession;
 
-using namespace python;
-
-namespace KDevelop {
-    class TopDUContext;
+namespace Python {
+    class LexedFile;
+    typedef KSharedPtr<LexedFile> LexedFilePointer;
 }
 
-
-class PythonParseJob : public KDevelop::ParseJob
+class ContextBuilder: public python::default_visitor
 {
-    Q_OBJECT
+
 public:
-    PythonParseJob( const KUrl &url, PythonLanguageSupport* parent);
-    virtual ~PythonParseJob();
+    ContextBuilder(ParseSession* session);
 
-    void setAST(project_ast* ast);
-    virtual project_ast *AST() const;
+    virtual ~ContextBuilder ();
 
-    void setDUChain(KDevelop::TopDUContext* duChain);
-
-    void addIncludedFile(KDevelop::TopDUContext* duChain);
-
-    PythonLanguageSupport* python() const;
-    ParseSession* parseSession() const;
-    bool wasReadFromDisk() const;
+    KDevelop::TopDUContext* buildContexts(const Python::LexedFilePointer& file, ast_node *node, QList<KDevelop::DUContext*>* includes = 0);
 
 protected:
-    virtual void run();
-private:
-    ParseSession *m_session;
-    project_ast *m_AST;
-    bool m_readFromDisk;
-    KDevelop::TopDUContext* m_duContext;
+    inline KDevelop::DUContext* currentContext() { return m_contextStack.top(); }
+
+    void setEncountered( KDevelop::DUChainBase* item )
+    {
+        m_encountered.insert(item);
+    }
+
+    bool wasEncountered( KDevelop::DUChainBase* item )
+    {
+        return m_encountered.contains(item);
+    }
+
+    virtual void openContext(KDevelop::DUContext* newContext);
+
+    virtual void closeContext();
+
+    QSet<KDevelop::DUChainBase*> m_encountered;
+    QStack<KDevelop::DUContext*> m_contextStack;
+    int m_nextContextIndex;
+
+    QStack<int> m_nextContextStack;
+    inline int& nextContextIndex() { return m_nextContextStack.top(); }
 };
 
 #endif

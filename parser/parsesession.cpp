@@ -36,7 +36,7 @@ ParseSession::~ParseSession()
     delete memory_pool;
     delete token_stream;
 }
-void ParseSession::positionAt( std::size_t offset, int *line, int *column ) const
+void ParseSession::positionAt( std::size_t offset, std::size_t *line, std::size_t *column ) const
 {
     token_stream->location_table()->position_at( offset, line, column );
 }

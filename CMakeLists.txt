@@ -16,10 +16,12 @@ INCLUDE_DIRECTORIES(
     ${KDEVPLATFORM_INCLUDE_DIR}/language/interfaces
     ${KDEVPLATFORM_INCLUDE_DIR}/interfaces
     ${KDEVPLATFORM_INCLUDE_DIR}/language
+    ${KDEVPLATFORM_INCLUDE_DIR}/editor
     ${KDEVPLATFORM_INCLUDE_DIR}/language/backgroundparser
     ${KDE4_INCLUDES}
     ${KDE4_INCLUDE_DIR}/threadweaver
     ${CMAKE_CURRENT_BINARY_DIR}
+    ${KDEVPLATFORM_INCLUDE_DIR}/language/duchain
     parser
 )
 

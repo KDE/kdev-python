@@ -36,6 +36,11 @@
 #include "parsesession.h"
 #include "python_parser.h"
 
+#include <duchain.h>
+#include <topducontext.h>
+
+#include "contextbuilder.h"
+
 using namespace python;
 
 PythonParseJob::PythonParseJob( const KUrl &url,PythonLanguageSupport *parent)
@@ -43,6 +48,7 @@ PythonParseJob::PythonParseJob( const KUrl &url,PythonLanguageSupport *parent)
             , m_session( new ParseSession )
             , m_AST( 0 )
             , m_readFromDisk( false )
+            , m_duContext( 0 )
 {
 }
 

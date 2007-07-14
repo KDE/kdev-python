@@ -35,7 +35,7 @@ public:
     ParseSession();
     ~ParseSession();
 
-    void positionAt( std::size_t offset, int *line, int *column ) const;
+    void positionAt( std::size_t offset, std::size_t *line, std::size_t *column ) const;
     void setContents( const QByteArray& contents );
     const char *contents() const;
     std::size_t size() const;

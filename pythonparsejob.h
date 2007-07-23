@@ -27,6 +27,10 @@
 #include <parsejob.h>
 #include "python_ast.h"
 
+#include <QStringList>
+
+#include <ksharedptr.h>
+#include <ktexteditor/range.h>
 
 class PythonLanguageSupport;
 
@@ -38,6 +42,11 @@ namespace KDevelop {
     class TopDUContext;
 }
 
+namespace Python {
+    class LexedFile;
+}
+
+typedef QList<KDevelop::TopDUContext*> IncludeFileList;
 
 class PythonParseJob : public KDevelop::ParseJob
 {
@@ -50,12 +59,15 @@ public:
     virtual project_ast *AST() const;
 
     void setDUChain(KDevelop::TopDUContext* duChain);
+    virtual KDevelop::TopDUContext* duChain() const;
 
     void addIncludedFile(KDevelop::TopDUContext* duChain);
 
     PythonLanguageSupport* python() const;
     ParseSession* parseSession() const;
     bool wasReadFromDisk() const;
+    void setLexedFile( Python::LexedFile* file );
+    Python::LexedFile* lexedFile();
 
 protected:
     virtual void run();

@@ -22,6 +22,7 @@ INCLUDE_DIRECTORIES(
     ${KDE4_INCLUDE_DIR}/threadweaver
     ${CMAKE_CURRENT_BINARY_DIR}
     ${KDEVPLATFORM_INCLUDE_DIR}/language/duchain
+    ${KDEVPLATFORM_INCLUDE_DIR}/language/duchain/viewer
     parser
 )
 
@@ -49,10 +50,10 @@ macro(GET_PARSER_SRCS _srcsList)
                     "${CMAKE_CURRENT_SOURCE_DIR}/parser/python.g" ">rules" "2>errors"
             WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
         )
-        # Copy ruby_lexer.ll to the builddir, so that flex doesn't write out
+        # Copy python_lexer.ll to the builddir, so that flex doesn't write out
         # absolute paths in the generated file when we pass them as arguments.
         # In short, I don't want stuff like
-        # '#line 2 "/home/kde/build/.../ruby_lexer.cpp" in SVN.
+        # '#line 2 "/home/kde/build/.../python_lexer.cpp" in SVN.
         add_custom_command(
             OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/python_lexer.ll"
             MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/parser/python_lexer.ll"
@@ -93,6 +94,7 @@ set(kdevpythonlanguagesupport_PART_SRCS
     pythonlanguagesupport.cpp
     pythonparsejob.cpp
     parser/parsesession.cpp
+    parser/contextbuilder.cpp
     ${parser_SRCS} ${parser_STAT_SRCS}
 )
 

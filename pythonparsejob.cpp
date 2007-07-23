@@ -26,6 +26,10 @@
 #include <cassert>
 #include <QFile>
 #include <QByteArray>
+
+#include <ktexteditor/document.h>
+#include <ktexteditor/smartinterface.h>
+
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
@@ -42,6 +46,8 @@
 #include "contextbuilder.h"
 
 using namespace python;
+using namespace KDevelop;
+
 
 PythonParseJob::PythonParseJob( const KUrl &url,PythonLanguageSupport *parent)
             : KDevelop::ParseJob( url, parent )
@@ -64,6 +70,11 @@ project_ast *PythonParseJob::AST() const
 {
     Q_ASSERT(isFinished() && m_AST);
     return m_AST;
+}
+
+TopDUContext* PythonParseJob::duChain() const
+{
+    return m_duContext;
 }
 
 bool PythonParseJob::wasReadFromDisk() const
@@ -112,6 +123,7 @@ void PythonParseJob::run()
 
     if ( matched )
     {
+        new ContextBuilder(m_session);
         kDebug() << "----Parsing Succeded---"<<endl;//TODO: bind declarations to the code model
     }
     else

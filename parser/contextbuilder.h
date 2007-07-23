@@ -29,6 +29,7 @@
 
 #include <identifier.h>
 #include <ducontext.h>
+#include <ksharedptr.h>
 
 namespace KDevelop
 {
@@ -38,6 +39,7 @@ class DUContext;
 class TopDUContext;
 }
 
+class PythonEditorIntegrator;
 class ParseSession;
 
 namespace Python {
@@ -45,15 +47,17 @@ namespace Python {
     typedef KSharedPtr<LexedFile> LexedFilePointer;
 }
 
+using namespace python;
+
 class ContextBuilder: public python::default_visitor
 {
 
 public:
     ContextBuilder(ParseSession* session);
-
+    ParseSession* parseSession() const;
     virtual ~ContextBuilder ();
 
-    KDevelop::TopDUContext* buildContexts(const Python::LexedFilePointer& file, ast_node *node, QList<KDevelop::DUContext*>* includes = 0);
+    KDevelop::TopDUContext* buildContexts();
 
 protected:
     inline KDevelop::DUContext* currentContext() { return m_contextStack.top(); }
@@ -68,9 +72,9 @@ protected:
         return m_encountered.contains(item);
     }
 
-    virtual void openContext(KDevelop::DUContext* newContext);
-
-    virtual void closeContext();
+//     virtual void openContext(KDevelop::DUContext* newContext);
+// 
+//     virtual void closeContext();
 
     QSet<KDevelop::DUChainBase*> m_encountered;
     QStack<KDevelop::DUContext*> m_contextStack;
@@ -78,6 +82,8 @@ protected:
 
     QStack<int> m_nextContextStack;
     inline int& nextContextIndex() { return m_nextContextStack.top(); }
+private:
+    ParseSession* m_session;
 };
 
 #endif

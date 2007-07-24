@@ -22,7 +22,6 @@ INCLUDE_DIRECTORIES(
     ${KDE4_INCLUDE_DIR}/threadweaver
     ${CMAKE_CURRENT_BINARY_DIR}
     ${KDEVPLATFORM_INCLUDE_DIR}/language/duchain
-    ${KDEVPLATFORM_INCLUDE_DIR}/language/duchain/viewer
     parser
 )
 

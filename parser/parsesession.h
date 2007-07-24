@@ -47,7 +47,7 @@ public:
 
 private:
     QByteArray m_contents;
-
+    KUrl* url;
 };
 
 #endif

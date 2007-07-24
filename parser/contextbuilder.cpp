@@ -19,5 +19,9 @@ ContextBuilder::~ContextBuilder ()
 
 TopDUContext* ContextBuilder::buildContexts()
 {
-    
+    TopDUContext* topLevelContext = 0;
+    {
+        DUChainWriteLocker lock(DUChain::lock());
+//         topLevelContext = DUChain::self()->chainForDocument(m_document);
+    }
 }

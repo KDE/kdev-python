@@ -55,6 +55,7 @@ PythonParseJob::PythonParseJob( const KUrl &url,PythonLanguageSupport *parent)
             , m_AST( 0 )
             , m_readFromDisk( false )
             , m_duContext( 0 )
+            , m_url(url)
 {
 }
 
@@ -65,6 +66,7 @@ PythonLanguageSupport *PythonParseJob::python() const
 {
     return qobject_cast<PythonLanguageSupport*>(const_cast<QObject*>(parent()));
 }
+
 
 project_ast *PythonParseJob::AST() const
 {
@@ -80,6 +82,10 @@ TopDUContext* PythonParseJob::duChain() const
 bool PythonParseJob::wasReadFromDisk() const
 {
     return m_readFromDisk;
+}
+void PythonParseJob::setDUChain(TopDUContext * duChain)
+{
+    m_duContext = duChain;
 }
 void PythonParseJob::run()
 {
@@ -123,6 +129,7 @@ void PythonParseJob::run()
 
     if ( matched )
     {
+        kDebug() << m_document<<endl;
         new ContextBuilder(m_session);
         kDebug() << "----Parsing Succeded---"<<endl;//TODO: bind declarations to the code model
     }

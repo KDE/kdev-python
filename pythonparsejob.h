@@ -46,7 +46,7 @@ namespace Python {
     class LexedFile;
 }
 
-typedef QList<KDevelop::TopDUContext*> IncludeFileList;
+typedef QList<KDevelop::TopDUContext*> ImportedFileList;
 
 class PythonParseJob : public KDevelop::ParseJob
 {
@@ -76,6 +76,7 @@ private:
     project_ast *m_AST;
     bool m_readFromDisk;
     KDevelop::TopDUContext* m_duContext;
+    KUrl m_url;
 };
 
 #endif

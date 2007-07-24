@@ -53,7 +53,7 @@ class ContextBuilder: public python::default_visitor
 {
 
 public:
-    ContextBuilder(ParseSession* session);
+    ContextBuilder(ParseSession* session, const KUrl &url);
     ParseSession* parseSession() const;
     virtual ~ContextBuilder ();
 
@@ -80,10 +80,14 @@ protected:
     QStack<KDevelop::DUContext*> m_contextStack;
     int m_nextContextIndex;
 
-    QStack<int> m_nextContextStack;
-    inline int& nextContextIndex() { return m_nextContextStack.top(); }
 private:
     ParseSession* m_session;
+    KUrl m_url;
+    bool m_compilingContexts: 1;
+    bool m_recompiling : 1;
+
+    QStack<int> m_nextContextStack;
+    inline int& nextContextIndex() { return m_nextContextStack.top(); }
 };
 
 #endif

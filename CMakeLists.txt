@@ -106,6 +106,7 @@ target_link_libraries(kdevpythonlanguagesupport
     ${KDEVPLATFORM_LANGUAGE_LIBRARY}
     ${KDE4_THREADWEAVER_LIBRARIES}
     ${KDEVPLATFORM_EDITOR_LIBRARY}
+    ${KDE4_KTEXTEDITOR_LIBS}
 )
 
 install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})

@@ -25,10 +25,12 @@
 
 #include "kdev-pg-memory-pool.h"
 #include "kdev-pg-token-stream.h"
+//#include "python_parser.h"
 
 ParseSession::ParseSession()
         : memory_pool( new parser::memory_pool_type )
         , token_stream( new parser::token_stream_type )
+        , m_parser( new parser)
 {
 }
 ParseSession::~ParseSession()
@@ -54,4 +56,9 @@ const char *ParseSession::contents() const
 void ParseSession::setContents( const QByteArray & contents )
 {
     m_contents = contents;
+}
+
+parser *ParseSession::Parser() const
+{
+    return m_parser;
 }

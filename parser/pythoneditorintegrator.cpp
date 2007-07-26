@@ -41,8 +41,8 @@ PythonEditorIntegrator::PythonEditorIntegrator( ParseSession* session )
 
 Cursor PythonEditorIntegrator::findPosition( std::size_t token, Edge edge ) const
 {
-  parser::token_type const & t = m_session->token_stream->token(token);
-  return findPosition(t, edge);
+    parser::token_type const & t = m_session->token_stream->token(token);
+    return findPosition(t, edge);
 }
 
 Cursor PythonEditorIntegrator::findPosition( parser::token_type const & token, Edge edge ) const
@@ -59,24 +59,23 @@ Cursor PythonEditorIntegrator::findPosition( parser::token_type const & token, E
 
 Range PythonEditorIntegrator::findRange( ast_node * node, RangeEdge edge )
 {
-  Q_UNUSED(edge);
-  return Range(findPosition(node->start_token, FrontEdge), findPosition(node->end_token - 1, BackEdge));
+    Q_UNUSED(edge);
+    return Range(findPosition(node->start_token, FrontEdge), findPosition(node->end_token - 1, BackEdge));
 }
 
 Range PythonEditorIntegrator::findRange(ast_node* from, ast_node* to)
 {
-  return Range(findPosition(from->start_token, FrontEdge), findPosition(to->end_token - 1, BackEdge));
+    return Range(findPosition(from->start_token, FrontEdge), findPosition(to->end_token - 1, BackEdge));
 }
 
 Range PythonEditorIntegrator::findRange( parser::token_type const & token )
 {
-  return Range(findPosition(token, FrontEdge), findPosition(token, BackEdge));
+    return Range(findPosition(token, FrontEdge), findPosition(token, BackEdge));
 }
 
-/*QString PythonEditorIntegrator::tokenToString(std::size_t token) const
+QString PythonEditorIntegrator::tokenToString(std::size_t token) const
 {
-  return m_session->token_stream->token(token).text();
-}*/
+}
 
 
 ParseSession * PythonEditorIntegrator::parseSession() const

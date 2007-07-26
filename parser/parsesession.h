@@ -29,6 +29,10 @@
 #include <ktexteditor/cursor.h>
 
 class LexedFile;
+namespace python
+{
+    class parser;
+}
 
 using namespace python;
 
@@ -38,15 +42,19 @@ public:
     ParseSession();
     ~ParseSession();
 
+    parser* Parser() const;
+
     void positionAt( std::size_t offset, std::size_t *line, std::size_t *column ) const;
     void setContents( const QByteArray& contents );
     const char *contents() const;
     std::size_t size() const;
     parser::memory_pool_type *memory_pool;
     parser::token_stream_type *token_stream;
+    parser* m_parser;
 
 private:
     QByteArray m_contents;
+
 };
 
 #endif

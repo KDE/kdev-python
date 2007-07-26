@@ -117,15 +117,15 @@ void PythonParseJob::run()
              << endl;
 
     // 0) setup
-    parser python_parser;
-    python_parser.set_token_stream( m_session->token_stream );
-    python_parser.set_memory_pool( m_session->memory_pool );
+    //parser python_parser;
+    m_session->m_parser->set_token_stream( m_session->token_stream );
+    m_session->m_parser->set_memory_pool( m_session->memory_pool );
 
     // 1) tokenize
-    python_parser.tokenize( (char*) m_session->contents() );
+    m_session->m_parser->tokenize( (char*) m_session->contents() );
 
     // 2) parse
-    bool matched = python_parser.parse_project( &m_AST );
+    bool matched = m_session->m_parser->parse_project( &m_AST );
 
     if ( matched )
     {
@@ -135,7 +135,7 @@ void PythonParseJob::run()
     }
     else
     {
-        python_parser.yy_expected_symbol(ast_node::Kind_project, "project");
+        m_session->m_parser->yy_expected_symbol(ast_node::Kind_project, "project");
         kDebug() << "===Failed===" << endl;
         return;
     }

@@ -35,7 +35,7 @@ using namespace KTextEditor;
 using namespace python;
 
 PythonEditorIntegrator::PythonEditorIntegrator( ParseSession* session )
-  : m_session(session)
+    : m_session(session)
 {
 }
 
@@ -75,6 +75,12 @@ Range PythonEditorIntegrator::findRange( parser::token_type const & token )
 
 QString PythonEditorIntegrator::tokenToString(std::size_t token) const
 {
+    parser::token_type const & t = m_session->token_stream->token(token);
+    size_t tokenLength = t.end - t.begin;
+    char *tokenValue = new char[tokenLength+1];
+    strncpy(tokenValue, m_session->m_parser->tokenText(t.begin), tokenLength);
+    tokenValue[tokenLength] = 0;
+    return tokenValue;
 }
 
 

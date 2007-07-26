@@ -25,13 +25,14 @@
 #include <duchainlock.h>
 #include <parsesession.h>
 #include <topducontext.h>
+#include "pythoneditorintegrator.h"
 
 using namespace KDevelop;
 using namespace python;
 using namespace KTextEditor;
 
 ContextBuilder::ContextBuilder(ParseSession* session, const KUrl &url)
-    :m_session(session)
+    :m_editor(new PythonEditorIntegrator(session))
     ,m_url(url)
     ,m_compilingContexts(false)
     ,m_recompiling(false)
@@ -39,6 +40,15 @@ ContextBuilder::ContextBuilder(ParseSession* session, const KUrl &url)
     kDebug() << "=====Building Contexts for===="<<m_url<<endl;
 
 }
+ContextBuilder::ContextBuilder (PythonEditorIntegrator* editor, const KUrl &url)
+    : m_editor(editor)
+    , m_url(url)
+    , m_compilingContexts(false)
+    , m_recompiling(false)
+{
+    kDebug() << "=====Building Contexts for===="<<m_url<<endl;
+}
+
 
 ContextBuilder::~ContextBuilder ()
 {

@@ -54,7 +54,7 @@ class ContextBuilder: public python::default_visitor
 
 public:
     ContextBuilder(ParseSession* session, const KUrl &url);
-    ParseSession* parseSession() const;
+    ContextBuilder(PythonEditorIntegrator* editor, const KUrl &url);
     virtual ~ContextBuilder ();
 
     KDevelop::TopDUContext* buildContexts();
@@ -72,16 +72,20 @@ protected:
         return m_encountered.contains(item);
     }
 
+
+
 //     virtual void openContext(KDevelop::DUContext* newContext);
 // 
 //     virtual void closeContext();
+    PythonEditorIntegrator* m_editor;
+    inline bool recompiling() const { return m_recompiling; }
 
     QSet<KDevelop::DUChainBase*> m_encountered;
     QStack<KDevelop::DUContext*> m_contextStack;
     int m_nextContextIndex;
 
 private:
-    ParseSession* m_session;
+
     KUrl m_url;
     bool m_compilingContexts: 1;
     bool m_recompiling : 1;

@@ -57,6 +57,8 @@ ContextBuilder::~ContextBuilder ()
 TopDUContext* ContextBuilder::buildContexts()
 {
     m_compilingContexts = true;
+    m_editor->setCurrentUrl(m_url);
+
     TopDUContext* topLevelContext = 0;
     {
         DUChainWriteLocker lock(DUChain::lock());
@@ -69,6 +71,8 @@ TopDUContext* ContextBuilder::buildContexts()
 
             if (m_compilingContexts) {
             Q_ASSERT(topLevelContext->textRangePtr());
+            if (!topLevelContext->smartRange() && m_editor->smart())
+                topLevelContext->setTextRange(m_editor->topRange(PythonEditorIntegrator::DefinitionUseChain));
             }
 
         }
@@ -77,6 +81,10 @@ TopDUContext* ContextBuilder::buildContexts()
             kDebug() << "ContextBuilder::buildContexts: compiling" << endl;
             m_recompiling = false;
             Q_ASSERT(m_compilingContexts);
+            Range* range = m_editor->topRange(PythonEditorIntegrator::DefinitionUseChain);
+            topLevelContext = new TopDUContext(range);
+            topLevelContext->setType(DUContext::Global);
+            
         }
     }
 }

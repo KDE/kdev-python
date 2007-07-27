@@ -61,6 +61,7 @@ public:
 
     KDevelop::TopDUContext* buildContexts(ast_node* node);
 
+    void supportBuild(ast_node *node, KDevelop::DUContext* context = 0);
 protected:
     inline KDevelop::DUContext* currentContext() { return m_contextStack.top(); }
 
@@ -75,9 +76,8 @@ protected:
     }
 
 
-//     virtual void openContext(KDevelop::DUContext* newContext);
-// 
-//     virtual void closeContext();
+    virtual void openContext(KDevelop::DUContext* newContext);
+    virtual void closeContext();
     PythonEditorIntegrator* m_editor;
     inline bool recompiling() const { return m_recompiling; }
 

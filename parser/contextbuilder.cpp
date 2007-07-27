@@ -91,6 +91,39 @@ TopDUContext* ContextBuilder::buildContexts(ast_node* node)
         setEncountered(topLevelContext);
         m_session->put(node,topLevelContext);
     }
+    {
+        DUChainReadLocker lock(DUChain::lock());
+        kDebug() << "built top-level context with " << topLevelContext->allDeclarations(KTextEditor::Cursor()).size() << " declarations";
+    }
+    return topLevelContext;
+}
+
+void ContextBuilder::supportBuild(ast_node *node, DUContext* context)
+{
+    //openContext( context ? context : node->ducontext );
+    m_editor->setCurrentUrl(currentContext()->url());
+    m_editor->setCurrentRange(currentContext()->textRangePtr());
+    visit_node(node);
+    closeContext();
+    Q_ASSERT(m_contextStack.isEmpty());
+}
+
+void ContextBuilder::openContext(DUContext* newContext)
+{
+    m_contextStack.push(newContext);
+    m_nextContextStack.push(0);
+}
+
+void ContextBuilder::closeContext()
+{
+  {
+    DUChainWriteLocker lock(DUChain::lock());
+    currentContext()->cleanIfNotEncountered(m_encountered, m_compilingContexts);
+    setEncountered( currentContext() );
+}
+    m_contextStack.pop();
+    m_nextContextStack.pop();
+    m_editor->exitCurrentRange();
 }
 
 ParseSession *ContextBuilder::parseSession() const

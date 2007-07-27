@@ -26,7 +26,7 @@
 #include "python_default_visitor.h"
 
 #include <QSet>
-
+#include <QHash>
 #include <identifier.h>
 #include <ducontext.h>
 #include <ksharedptr.h>
@@ -57,7 +57,9 @@ public:
     ContextBuilder(PythonEditorIntegrator* editor, const KUrl &url);
     virtual ~ContextBuilder ();
 
-    KDevelop::TopDUContext* buildContexts();
+    ParseSession* parseSession() const;
+
+    KDevelop::TopDUContext* buildContexts(ast_node* node);
 
 protected:
     inline KDevelop::DUContext* currentContext() { return m_contextStack.top(); }
@@ -73,7 +75,6 @@ protected:
     }
 
 
-
 //     virtual void openContext(KDevelop::DUContext* newContext);
 // 
 //     virtual void closeContext();
@@ -85,7 +86,7 @@ protected:
     int m_nextContextIndex;
 
 private:
-
+    ParseSession* m_session;
     KUrl m_url;
     bool m_compilingContexts: 1;
     bool m_recompiling : 1;
@@ -93,5 +94,6 @@ private:
     QStack<int> m_nextContextStack;
     inline int& nextContextIndex() { return m_nextContextStack.top(); }
 };
+
 
 #endif

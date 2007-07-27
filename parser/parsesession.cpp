@@ -48,6 +48,10 @@ std::size_t ParseSession::size() const
     return m_contents.size();
 }
 
+void ParseSession::put(ast_node* ast_node, KDevelop::DUContext* topducontext)
+{
+    ducontext[ast_node]=topducontext;
+}
 const char *ParseSession::contents() const
 {
     return m_contents.constData();

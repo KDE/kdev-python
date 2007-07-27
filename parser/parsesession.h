@@ -27,7 +27,7 @@
 #include <python_parser.h>
 #include <ksharedptr.h>
 #include <ktexteditor/cursor.h>
-
+#include <ducontext.h>
 class LexedFile;
 namespace python
 {
@@ -51,8 +51,10 @@ public:
     parser::memory_pool_type *memory_pool;
     parser::token_stream_type *token_stream;
     parser* m_parser;
+    void put(ast_node* ast_node, KDevelop::DUContext* topducontext);
 
 private:
+    QHash<ast_node*, KDevelop::DUContext*> ducontext;
     QByteArray m_contents;
 
 };

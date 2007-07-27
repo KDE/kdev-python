@@ -33,6 +33,7 @@ using namespace KTextEditor;
 
 ContextBuilder::ContextBuilder(ParseSession* session, const KUrl &url)
     :m_editor(new PythonEditorIntegrator(session))
+    ,m_session(session)
     ,m_url(url)
     ,m_compilingContexts(false)
     ,m_recompiling(false)
@@ -54,7 +55,7 @@ ContextBuilder::~ContextBuilder ()
 {
 }
 
-TopDUContext* ContextBuilder::buildContexts()
+TopDUContext* ContextBuilder::buildContexts(ast_node* node)
 {
     m_compilingContexts = true;
     m_editor->setCurrentUrl(m_url);
@@ -84,7 +85,15 @@ TopDUContext* ContextBuilder::buildContexts()
             Range* range = m_editor->topRange(PythonEditorIntegrator::DefinitionUseChain);
             topLevelContext = new TopDUContext(range);
             topLevelContext->setType(DUContext::Global);
-            
+            //DUChain::self()->addDocumentChain(IdentifiedFile(m_url,0), topLevelContext);
         }
+
+        setEncountered(topLevelContext);
+        m_session->put(node,topLevelContext);
     }
+}
+
+ParseSession *ContextBuilder::parseSession() const
+{
+    return m_session;
 }

@@ -54,4 +54,4 @@ public:
 private:
     ParseSession* m_session;
 };
-#endif 
+#endif

@@ -52,6 +52,10 @@ void ParseSession::put(ast_node* ast_node, KDevelop::DUContext* topducontext)
 {
     ducontext[ast_node]=topducontext;
 }
+KDevelop::DUContext* ParseSession::get(ast_node* ast_node)
+{
+    return ducontext[ast_node];
+}
 const char *ParseSession::contents() const
 {
     return m_contents.constData();

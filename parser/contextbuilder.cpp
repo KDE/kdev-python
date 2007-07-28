@@ -100,7 +100,7 @@ TopDUContext* ContextBuilder::buildContexts(ast_node* node)
 
 void ContextBuilder::supportBuild(ast_node *node, DUContext* context)
 {
-    //openContext( context ? context : node->ducontext );
+    openContext( context ? context : m_session->get(node) );
     m_editor->setCurrentUrl(currentContext()->url());
     m_editor->setCurrentRange(currentContext()->textRangePtr());
     visit_node(node);

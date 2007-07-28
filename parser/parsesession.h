@@ -52,7 +52,7 @@ public:
     parser::token_stream_type *token_stream;
     parser* m_parser;
     void put(ast_node* ast_node, KDevelop::DUContext* topducontext);
-
+    KDevelop::DUContext* get(ast_node* ast_node);
 private:
     QHash<ast_node*, KDevelop::DUContext*> ducontext;
     QByteArray m_contents;

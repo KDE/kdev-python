@@ -60,7 +60,7 @@ public:
     ParseSession* parseSession() const;
 
     KDevelop::TopDUContext* buildContexts(ast_node* node);
-
+    KDevelop::DUContext* buildSubContexts(const KUrl& url, ast_node *node, KDevelop::DUContext* parent = 0);
     void supportBuild(ast_node *node, KDevelop::DUContext* context = 0);
 protected:
     inline KDevelop::DUContext* currentContext() { return m_contextStack.top(); }
@@ -103,6 +103,8 @@ private:
     inline int& nextContextIndex() { return m_nextContextStack.top(); }
     KDevelop::Identifier m_identifier;
     KDevelop::QualifiedIdentifier m_qidentifier;
+    QList<KDevelop::DUContext*> m_importedParentContexts;
+
 };
 
 

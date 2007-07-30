@@ -26,6 +26,7 @@
 #include <parsesession.h>
 #include <topducontext.h>
 #include "pythoneditorintegrator.h"
+#include <parsingenvironment.h>
 
 using namespace KDevelop;
 using namespace python;
@@ -69,15 +70,14 @@ TopDUContext* ContextBuilder::buildContexts(ast_node* node)
             kDebug() << "ContextBuilder::buildContexts: recompiling" << endl;
             m_recompiling = true;
             Q_ASSERT(topLevelContext->textRangePtr());
-
-            if (m_compilingContexts) {
-            Q_ASSERT(topLevelContext->textRangePtr());
-            if (!topLevelContext->smartRange() && m_editor->smart())
-                topLevelContext->setTextRange(m_editor->topRange(PythonEditorIntegrator::DefinitionUseChain));
+            if (m_compilingContexts) 
+            {
+                Q_ASSERT(topLevelContext->textRangePtr());
+                if (!topLevelContext->smartRange() && m_editor->smart())
+                    topLevelContext->setTextRange(m_editor->topRange(PythonEditorIntegrator::DefinitionUseChain));
             }
-
         }
-        else 
+        else
         {
             kDebug() << "ContextBuilder::buildContexts: compiling" << endl;
             m_recompiling = false;
@@ -85,17 +85,42 @@ TopDUContext* ContextBuilder::buildContexts(ast_node* node)
             Range* range = m_editor->topRange(PythonEditorIntegrator::DefinitionUseChain);
             topLevelContext = new TopDUContext(range);
             topLevelContext->setType(DUContext::Global);
-            //DUChain::self()->addDocumentChain(IdentifiedFile(m_url,0), topLevelContext);
+            DUChain::self()->addDocumentChain(IdentifiedFile(m_url,0), topLevelContext);
         }
 
         setEncountered(topLevelContext);
         m_session->put(node,topLevelContext);
     }
+    supportBuild(node);
     {
         DUChainReadLocker lock(DUChain::lock());
         kDebug() << "built top-level context with " << topLevelContext->allDeclarations(KTextEditor::Cursor()).size() << " declarations";
     }
+    m_compilingContexts = false;
     return topLevelContext;
+}
+
+KDevelop::DUContext* ContextBuilder::buildSubContexts(const KUrl& url, ast_node *node, KDevelop::DUContext* parent) 
+{
+    m_compilingContexts = true;
+    m_recompiling = false;
+    m_editor->setCurrentUrl(url);
+    m_session->put(node,parent);
+    {
+        openContext(m_session->get(node));
+        m_editor->setCurrentRange(m_editor->topRange(EditorIntegrator::DefinitionUseChain ));
+        visit_node (node);
+        closeContext();
+    }
+    m_compilingContexts = false;
+    if( m_session->get(node) == parent ) 
+    {
+        kDebug() << "Error in ContextBuilder::buildSubContexts(...): du-context was not replaced with new one" << endl;
+        DUChainWriteLocker lock(DUChain::lock());
+        m_session->remove(node);
+        m_session->put(node,0);
+    }
+    return m_session->get(node);
 }
 
 void ContextBuilder::supportBuild(ast_node *node, DUContext* context)
@@ -132,7 +157,7 @@ void ContextBuilder::visit_funcdef(funcdef_ast *node)
     {
         QualifiedIdentifier functionName = identifierForName(node->func_name);
         DUChainReadLocker lock(DUChain::lock());
-        QList<DUContext*> functionContexts = currentContext()->findContexts(DUContext::Function, functionName);
+        QList<DUContext*> functionContext = currentContext()->findContexts(DUContext::Function, functionName);
     }
 }
 

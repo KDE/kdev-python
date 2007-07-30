@@ -56,6 +56,10 @@ KDevelop::DUContext* ParseSession::get(ast_node* ast_node)
 {
     return ducontext[ast_node];
 }
+void ParseSession::remove(ast_node* ast_node)
+{
+    ducontext.remove(ast_node);
+}
 const char *ParseSession::contents() const
 {
     return m_contents.constData();

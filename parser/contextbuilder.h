@@ -85,8 +85,7 @@ protected:
     QStack<KDevelop::DUContext*> m_contextStack;
     int m_nextContextIndex;
 
-    const KDevelop::QualifiedIdentifier& identifierForName(std::size_t id) const;
-    virtual void symbolToIdentifier(std::size_t id);
+    const KDevelop::QualifiedIdentifier& identifierForName(std::size_t id);
 
     virtual void visit_funcdef(funcdef_ast *node);
     //virtual void visit_name(name_ast *node);
@@ -102,8 +101,8 @@ private:
 
     QStack<int> m_nextContextStack;
     inline int& nextContextIndex() { return m_nextContextStack.top(); }
-    KDevelop::Identifier m_Identifier;
-    KDevelop::QualifiedIdentifier _M_name;
+    KDevelop::Identifier m_identifier;
+    KDevelop::QualifiedIdentifier m_qidentifier;
 };
 
 

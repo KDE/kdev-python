@@ -130,10 +130,9 @@ void ContextBuilder::visit_funcdef(funcdef_ast *node)
 {
     if(m_compilingContexts && node->func_name && node->fun_suite)
     {
-        //QualifiedIdentifier functionName = identifierForName(node->func_name);
-        //functionName = node->func_name;
+        QualifiedIdentifier functionName = identifierForName(node->func_name);
         DUChainReadLocker lock(DUChain::lock());
-        //QList<DUContext*> functionContexts = currentContext()->findContexts(DUContext::Function, functionName);
+        QList<DUContext*> functionContexts = currentContext()->findContexts(DUContext::Function, functionName);
     }
 }
 
@@ -142,14 +141,11 @@ ParseSession *ContextBuilder::parseSession() const
     return m_session;
 }
 
-void ContextBuilder::symbolToIdentifier(std::size_t id)
+const QualifiedIdentifier& ContextBuilder::identifierForName(std::size_t id)
 {
     QString name;
-    name+=m_editor->tokenToString(id);
-    m_Identifier = Identifier(name);
+    name = m_editor->tokenToString(id);
+    m_identifier = Identifier(name);
+    m_qidentifier.push(m_identifier);
+    return m_qidentifier;
 }
-
-const QualifiedIdentifier& ContextBuilder::identifierForName(std::size_t id) const
-{
-}
-

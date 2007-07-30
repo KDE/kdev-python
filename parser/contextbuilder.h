@@ -85,6 +85,15 @@ protected:
     QStack<KDevelop::DUContext*> m_contextStack;
     int m_nextContextIndex;
 
+    const KDevelop::QualifiedIdentifier& identifierForName(std::size_t id) const;
+    virtual void symbolToIdentifier(std::size_t id);
+
+    virtual void visit_funcdef(funcdef_ast *node);
+    //virtual void visit_name(name_ast *node);
+    /*virtual void visit_classdef(classdef_ast *node);
+    virtual void visit_for_stmt(for_stmt_ast *node);
+    virtual void visit_while_stmt(while_stmt_ast *node);*/
+
 private:
     ParseSession* m_session;
     KUrl m_url;
@@ -93,6 +102,8 @@ private:
 
     QStack<int> m_nextContextStack;
     inline int& nextContextIndex() { return m_nextContextStack.top(); }
+    KDevelop::Identifier m_Identifier;
+    KDevelop::QualifiedIdentifier _M_name;
 };
 
 

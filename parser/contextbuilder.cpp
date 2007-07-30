@@ -116,17 +116,40 @@ void ContextBuilder::openContext(DUContext* newContext)
 
 void ContextBuilder::closeContext()
 {
-  {
-    DUChainWriteLocker lock(DUChain::lock());
-    currentContext()->cleanIfNotEncountered(m_encountered, m_compilingContexts);
-    setEncountered( currentContext() );
-}
+    {
+        DUChainWriteLocker lock(DUChain::lock());
+        currentContext()->cleanIfNotEncountered(m_encountered, m_compilingContexts);
+        setEncountered( currentContext() );
+    }
     m_contextStack.pop();
     m_nextContextStack.pop();
     m_editor->exitCurrentRange();
+}
+
+void ContextBuilder::visit_funcdef(funcdef_ast *node)
+{
+    if(m_compilingContexts && node->func_name && node->fun_suite)
+    {
+        //QualifiedIdentifier functionName = identifierForName(node->func_name);
+        //functionName = node->func_name;
+        DUChainReadLocker lock(DUChain::lock());
+        //QList<DUContext*> functionContexts = currentContext()->findContexts(DUContext::Function, functionName);
+    }
 }
 
 ParseSession *ContextBuilder::parseSession() const
 {
     return m_session;
 }
+
+void ContextBuilder::symbolToIdentifier(std::size_t id)
+{
+    QString name;
+    name+=m_editor->tokenToString(id);
+    m_Identifier = Identifier(name);
+}
+
+const QualifiedIdentifier& ContextBuilder::identifierForName(std::size_t id) const
+{
+}
+

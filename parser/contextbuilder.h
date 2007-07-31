@@ -33,16 +33,17 @@
 
 namespace KDevelop
 {
-class DUChain;
-class KDevelop::DUChainBase;
-class DUContext;
-class TopDUContext;
+    class DUChain;
+    class KDevelop::DUChainBase;
+    class DUContext;
+    class TopDUContext;
 }
 
 class PythonEditorIntegrator;
 class ParseSession;
 
-namespace Python {
+namespace Python 
+{
     class LexedFile;
     typedef KSharedPtr<LexedFile> LexedFilePointer;
 }

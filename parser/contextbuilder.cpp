@@ -27,6 +27,9 @@
 #include <topducontext.h>
 #include "pythoneditorintegrator.h"
 #include <parsingenvironment.h>
+#include <ktexteditor/smartrange.h>
+#include <ktexteditor/smartinterface.h>
+#include <symboltable.h>
 
 using namespace KDevelop;
 using namespace python;
@@ -139,6 +142,102 @@ void ContextBuilder::openContext(DUContext* newContext)
     m_nextContextStack.push(0);
 }
 
+DUContext* ContextBuilder::openContext(ast_node* rangeNode, DUContext::ContextType type, std::size_t identifier)
+{
+    if (m_compilingContexts) 
+    {
+        DUContext* ret = openContextInternal(m_editor->findRange(rangeNode), type, identifier ? identifierForName(identifier) : QualifiedIdentifier());
+        m_session->put(rangeNode,ret);
+        return ret;
+    }
+    else
+    {
+        openContext(m_session->get(rangeNode));
+        m_editor->setCurrentRange(currentContext()->textRangePtr());
+        return currentContext();
+    }
+}
+
+DUContext* ContextBuilder::openContext(ast_node* rangeNode, DUContext::ContextType type, const QualifiedIdentifier& identifier)
+{
+    if (m_compilingContexts) 
+    {
+        DUContext* ret = openContextInternal(m_editor->findRange(rangeNode), type, identifier);
+        m_session->put(rangeNode,ret);
+        return ret;
+    }
+    else 
+    {
+        openContext(m_session->get(rangeNode));
+        m_editor->setCurrentRange(currentContext()->textRangePtr());
+        return currentContext();
+    }
+}
+
+DUContext* ContextBuilder::openContext(ast_node* fromRange, ast_node* toRange, DUContext::ContextType type, std::size_t identifier)
+{
+    if (m_compilingContexts) 
+    {
+        DUContext* ret = openContextInternal(m_editor->findRange(fromRange, toRange), type, identifier ? identifierForName(identifier) : QualifiedIdentifier());
+        m_session->put(fromRange,ret);
+        return ret;
+    }
+    else 
+    {
+        openContext(m_session->get(fromRange));
+        m_editor->setCurrentRange(currentContext()->textRangePtr());
+        return currentContext();
+    }
+}
+
+DUContext* ContextBuilder::openContextInternal(const Range& range, DUContext::ContextType type, const QualifiedIdentifier& identifier)
+{
+    Q_ASSERT(m_compilingContexts);
+    DUContext* ret = 0L;
+    {
+        DUChainReadLocker readLock(DUChain::lock());
+        if (recompiling())
+        {
+            const QList<DUContext*>& childContexts = currentContext()->childContexts();
+            Range translated = range;
+            if (m_editor->smart())
+                translated = m_editor->smart()->translateFromRevision(translated);
+            for (; nextContextIndex() < childContexts.count(); ++nextContextIndex()) 
+            {
+                DUContext* child = childContexts.at(nextContextIndex());
+                if (child->textRange().start() > translated.end() && child->smartRange())
+                break;
+                if (child->type() == type && child->localScopeIdentifier() == identifier && child->textRange() == translated) 
+                {
+                    ret = child;
+                    readLock.unlock();
+                    DUChainWriteLocker writeLock(DUChain::lock());
+                    ret->clearUsingNamespaces();
+                    ret->clearImportedParentContexts();
+                    m_editor->setCurrentRange(ret->textRangePtr());
+                    break;
+                }
+            }
+        }
+        if (!ret) 
+        {
+            readLock.unlock();
+            DUChainWriteLocker writeLock(DUChain::lock());
+            ret = new DUContext(m_editor->createRange(range), m_contextStack.isEmpty() ? 0 : currentContext());
+            ret->setType(type);
+            if (!identifier.isEmpty()) 
+            {
+                ret->setLocalScopeIdentifier(identifier);
+                if (type == DUContext::Class || type == DUContext::Namespace)
+                SymbolTable::self()->addContext(ret);
+            }
+        }
+    }
+    setEncountered(ret);
+    openContext(ret);
+    return ret;
+}
+
 void ContextBuilder::closeContext()
 {
     {
@@ -158,6 +257,7 @@ void ContextBuilder::visit_funcdef(funcdef_ast *node)
         QualifiedIdentifier functionName = identifierForName(node->func_name);
         DUChainReadLocker lock(DUChain::lock());
         QList<DUContext*> functionContext = currentContext()->findContexts(DUContext::Function, functionName);
+
     }
 }
 

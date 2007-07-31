@@ -87,6 +87,11 @@ protected:
 
     const KDevelop::QualifiedIdentifier& identifierForName(std::size_t id);
 
+    KDevelop::DUContext* openContext(ast_node* range, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier);
+    KDevelop::DUContext* openContext(ast_node* range, KDevelop::DUContext::ContextType type, std::size_t identifier = 0);
+    KDevelop::DUContext* openContext(ast_node* fromRange, ast_node* toRange, KDevelop::DUContext::ContextType type, std::size_t identifier = 0);
+    KDevelop::DUContext* openContextInternal(const KTextEditor::Range& range, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier);
+
     virtual void visit_funcdef(funcdef_ast *node);
     //virtual void visit_name(name_ast *node);
     /*virtual void visit_classdef(classdef_ast *node);

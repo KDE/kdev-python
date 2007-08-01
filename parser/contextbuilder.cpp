@@ -266,7 +266,7 @@ ParseSession *ContextBuilder::parseSession() const
     return m_session;
 }
 
-const QualifiedIdentifier& ContextBuilder::identifierForName(std::size_t id)
+QualifiedIdentifier ContextBuilder::identifierForName(std::size_t id)
 {
     QString name;
     name = m_editor->tokenToString(id);

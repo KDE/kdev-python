@@ -130,7 +130,8 @@ void PythonParseJob::run()
     if ( matched )
     {
         kDebug() << m_url<<endl;
-        new ContextBuilder(m_session,m_url);
+        ContextBuilder contextBuilder(m_session,m_url);
+        m_duContext = contextBuilder.buildContexts(m_AST);
         kDebug() << "----Parsing Succeded---"<<endl;//TODO: bind declarations to the code model
     }
     else

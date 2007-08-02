@@ -47,12 +47,12 @@ int main(int argc, char *argv[])
           char const* option = arg + 9;
 
           std::cerr << "--option=" << option
-                    << " has been given!" << std::endl;
+                    << "has been given!" << std::endl;
         }
       else */
       if (!strncmp(arg, "--", 2))
         {
-          std::cerr << "Unknown option: " << arg << std::endl;
+          std::cerr << "Unknown option:" << arg << std::endl;
           usage(argv[0]);
           exit(EXIT_FAILURE);
         }
@@ -66,11 +66,11 @@ int main(int argc, char *argv[])
 
 static void usage(char const* argv0)
 {
-  std::cerr << "usage: " << argv0 /*<< " [options]"*/ << " file1.py [file2.py...]"
+  std::cerr << "usage:" << argv0 /*<< "[options]"*/ << "file1.py [file2.py...]"
     << std::endl; /*<< std::endl
     << "Options:" << std::endl
-    << "  --option=BLA: Do BLAH while parsing." << std::endl
-    << "                BLAH is one of FOO, BAR or KUNG, default is FOO."
+    << " --option=BLA: Do BLAH while parsing." << std::endl
+    << "               BLAH is one of FOO, BAR or KUNG, default is FOO."
     << std::endl;
     */
 }

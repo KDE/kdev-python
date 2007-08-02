@@ -70,7 +70,7 @@ TopDUContext* ContextBuilder::buildContexts(ast_node* node)
         topLevelContext = DUChain::self()->chainForDocument(m_url);
         if (topLevelContext)
         {
-            kDebug() << "ContextBuilder::buildContexts: recompiling" << endl;
+            kDebug() << "ContextBuilder::buildContexts: recompiling";
             m_recompiling = true;
             Q_ASSERT(topLevelContext->textRangePtr());
             if (m_compilingContexts) 
@@ -82,7 +82,7 @@ TopDUContext* ContextBuilder::buildContexts(ast_node* node)
         }
         else
         {
-            kDebug() << "ContextBuilder::buildContexts: compiling" << endl;
+            kDebug() << "ContextBuilder::buildContexts: compiling";
             m_recompiling = false;
             Q_ASSERT(m_compilingContexts);
             Range* range = m_editor->topRange(PythonEditorIntegrator::DefinitionUseChain);
@@ -97,7 +97,7 @@ TopDUContext* ContextBuilder::buildContexts(ast_node* node)
     supportBuild(node);
     {
         DUChainReadLocker lock(DUChain::lock());
-        kDebug() << "built top-level context with " << topLevelContext->allDeclarations(KTextEditor::Cursor()).size() << " declarations";
+        kDebug() << "built top-level context with" << topLevelContext->allDeclarations(KTextEditor::Cursor()).size() << "declarations";
     }
     m_compilingContexts = false;
     return topLevelContext;
@@ -118,7 +118,7 @@ KDevelop::DUContext* ContextBuilder::buildSubContexts(const KUrl& url, ast_node 
     m_compilingContexts = false;
     if( m_session->get(node) == parent ) 
     {
-        kDebug() << "Error in ContextBuilder::buildSubContexts(...): du-context was not replaced with new one" << endl;
+        kDebug() << "Error in ContextBuilder::buildSubContexts(...): du-context was not replaced with new one";
         DUChainWriteLocker lock(DUChain::lock());
         m_session->remove(node);
         m_session->put(node,0);

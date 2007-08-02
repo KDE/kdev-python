@@ -98,8 +98,8 @@ void PythonParseJob::run()
         if ( !file.open( QIODevice::ReadOnly ) )
         {
             m_errorMessage = i18n( "Could not open file '%1'", m_document.path() );
-            kWarning( 9007 ) << k_funcinfo << "Could not open file " << m_document
-                             << " (path " << m_document.path() << ")" << endl;
+            kWarning( 9007 ) << k_funcinfo << "Could not open file" << m_document
+                             << "(path" << m_document.path() << ")" << endl;
             return ;
         }
 
@@ -113,7 +113,7 @@ void PythonParseJob::run()
     }
     kDebug() << "===-- PARSING --===> "
              << m_document.fileName()
-             << " size: " << m_session->size()
+             << "size:" << m_session->size()
              << endl;
 
     // 0) setup
@@ -137,7 +137,7 @@ void PythonParseJob::run()
     else
     {
         m_session->m_parser->yy_expected_symbol(ast_node::Kind_project, "project");
-        kDebug() << "===Failed===" << endl;
+        kDebug() << "===Failed===";
         return;
     }
 }

@@ -1227,14 +1227,14 @@ do_action:	/* This label is used only to access EOF actions. */
 			if ( yy_act == 0 )
 				std::cerr << "--scanner backing up\n";
 			else if ( yy_act < 95 )
-				std::cerr << "--accepting rule at line " << yy_rule_linenum[yy_act] <<
+				std::cerr << "--accepting rule at line" << yy_rule_linenum[yy_act] <<
 				         "(\"" << yytext << "\")\n";
 			else if ( yy_act == 95 )
 				std::cerr << "--accepting default rule (\"" << yytext << "\")\n";
 			else if ( yy_act == 96 )
 				std::cerr << "--(end of buffer or a NUL)\n";
 			else
-				std::cerr << "--EOF (start condition " << YY_START << ")\n";
+				std::cerr << "--EOF (start condition" << YY_START << ")\n";
 			}
 
 		switch ( yy_act )

@@ -59,7 +59,7 @@ void print_token_environment(parser* parser)
         if (i == current_index)
           std::cerr << "<<";
 
-        std::cerr << " ";
+        std::cerr << "";
       }
     std::cerr << std::endl;
 
@@ -80,11 +80,11 @@ void parser::report_problem( parser::problem_type type, std::string message )
 void parser::report_problem( parser::problem_type type, const char* message )
 {
   if (type == error)
-    std::cerr << "** ERROR: " << message << std::endl;
+    std::cerr << "** ERROR:" << message << std::endl;
   else if (type == warning)
-    std::cerr << "** WARNING: " << message << std::endl;
+    std::cerr << "** WARNING:" << message << std::endl;
   else if (type == info)
-    std::cerr << "** Info: " << message << std::endl;
+    std::cerr << "** Info:" << message << std::endl;
 }
 
 std::string int2string( int in )
@@ -118,8 +118,8 @@ void parser::yy_expected_symbol(int expected_symbol, char const *name)
     strncpy(tokenValue, tokenText(token.begin), tokenLength);
     tokenValue[tokenLength] = 0;
     std::stringstream s;
-    s << " (current token: \"" << (token.kind != 0 ? tokenValue : "EOF") <<
-        "\" [" << token.kind << "] at line: " << line+1 << " col: " << col+1 << ")";
+    s << "(current token: \"" << (token.kind != 0 ? tokenValue : "EOF") <<
+        "\" [" << token.kind << "] at line:" << line+1 << "col:" << col+1 << ")";
     report_problem(
         parser::error,
         std::string("Expected symbol ``") + name

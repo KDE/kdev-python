@@ -95,8 +95,8 @@ protected:
 
     virtual void visit_funcdef(funcdef_ast *node);
     //virtual void visit_name(name_ast *node);
-    /*virtual void visit_classdef(classdef_ast *node);
-    virtual void visit_for_stmt(for_stmt_ast *node);
+    virtual void visit_classdef(classdef_ast *node);
+    /*virtual void visit_for_stmt(for_stmt_ast *node);
     virtual void visit_while_stmt(while_stmt_ast *node);*/
 
 private:

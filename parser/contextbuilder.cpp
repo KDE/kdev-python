@@ -136,6 +136,13 @@ void ContextBuilder::supportBuild(ast_node *node, DUContext* context)
     Q_ASSERT(m_contextStack.isEmpty());
 }
 
+void ContextBuilder::visit_classdef(classdef_ast* node)
+{
+    kDebug() << "Visiting Class Declaration";
+    openContext(node, DUContext::Class, identifierForName(node->class_name));
+    visit_node(node->class_suite);
+    closeContext();
+}
 void ContextBuilder::openContext(DUContext* newContext)
 {
     m_contextStack.push(newContext);
@@ -144,7 +151,7 @@ void ContextBuilder::openContext(DUContext* newContext)
 
 DUContext* ContextBuilder::openContext(ast_node* rangeNode, DUContext::ContextType type, std::size_t identifier)
 {
-    if (m_compilingContexts) 
+    if (m_compilingContexts)
     {
         DUContext* ret = openContextInternal(m_editor->findRange(rangeNode), type, identifier ? identifierForName(identifier) : QualifiedIdentifier());
         m_session->put(rangeNode,ret);
@@ -160,14 +167,19 @@ DUContext* ContextBuilder::openContext(ast_node* rangeNode, DUContext::ContextTy
 
 DUContext* ContextBuilder::openContext(ast_node* rangeNode, DUContext::ContextType type, const QualifiedIdentifier& identifier)
 {
-    if (m_compilingContexts) 
+    if (m_compilingContexts)
     {
-        DUContext* ret = openContextInternal(m_editor->findRange(rangeNode), type, identifier);
+        kDebug() << "Creating ret"<<endl;
+        const Range& m_range = m_editor->findRange(rangeNode);
+        kDebug() << "Opening ContextInternal";
+        DUContext* ret = openContextInternal(m_range, type, identifier);
+        kDebug() << "Associating context" << endl;
         m_session->put(rangeNode,ret);
         return ret;
     }
     else 
     {
+        kDebug() << "Opening Context associated with node";
         openContext(m_session->get(rangeNode));
         m_editor->setCurrentRange(currentContext()->textRangePtr());
         return currentContext();
@@ -192,6 +204,7 @@ DUContext* ContextBuilder::openContext(ast_node* fromRange, ast_node* toRange, D
 
 DUContext* ContextBuilder::openContextInternal(const Range& range, DUContext::ContextType type, const QualifiedIdentifier& identifier)
 {
+    kDebug() << "OpenContextInternal"<<endl;
     Q_ASSERT(m_compilingContexts);
     DUContext* ret = 0L;
     {
@@ -252,13 +265,10 @@ void ContextBuilder::closeContext()
 
 void ContextBuilder::visit_funcdef(funcdef_ast *node)
 {
-    if(m_compilingContexts && node->func_name && node->fun_suite)
-    {
-        QualifiedIdentifier functionName = identifierForName(node->func_name);
-        DUChainReadLocker lock(DUChain::lock());
-        QList<DUContext*> functionContext = currentContext()->findContexts(DUContext::Function, functionName);
-
-    }
+    kDebug() << "Visiting Function Definition";
+    openContext(node, DUContext::Function, identifierForName(node->func_name));
+    visit_node(node->fun_suite);
+    closeContext();
 }
 
 ParseSession *ContextBuilder::parseSession() const

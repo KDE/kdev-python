@@ -52,20 +52,22 @@ Cursor PythonEditorIntegrator::findPosition( parser::token_type const & token, E
 
     m_session->token_stream->start_position(index, &line, &column);
     size_t tokenLength = token.end - token.begin;
-    m_session->positionAt((edge == BackEdge) ? token.begin + tokenLength : token.end,
-                       &line, &column);
+    //m_session->positionAt((edge == BackEdge) ? token.begin + tokenLength : token.end, &line, &column);
     return Cursor(line, column);
 }
 
 Range PythonEditorIntegrator::findRange( ast_node * node, RangeEdge edge )
 {
+    kDebug() << "Finding Range"<<endl;
     Q_UNUSED(edge);
-    return Range(findPosition(node->start_token, FrontEdge), findPosition(node->end_token - 1, BackEdge));
+    kDebug() << tokenToString(node->start_token) <<endl;
+    kDebug() << tokenToString(node->end_token) << endl;
+    return Range(findPosition(node->start_token, FrontEdge), findPosition(node->end_token, BackEdge));
 }
 
 Range PythonEditorIntegrator::findRange(ast_node* from, ast_node* to)
 {
-    return Range(findPosition(from->start_token, FrontEdge), findPosition(to->end_token - 1, BackEdge));
+    return Range(findPosition(from->start_token, FrontEdge), findPosition(to->end_token, BackEdge));
 }
 
 Range PythonEditorIntegrator::findRange( parser::token_type const & token )

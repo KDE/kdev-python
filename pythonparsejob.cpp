@@ -99,7 +99,7 @@ void PythonParseJob::run()
         {
             m_errorMessage = i18n( "Could not open file '%1'", m_document.path() );
             kWarning( 9007 ) << k_funcinfo << "Could not open file" << m_document
-                             << "(path" << m_document.path() << ")" << endl;
+                             << "(path" << m_document.path() << ")";
             return ;
         }
 
@@ -111,10 +111,9 @@ void PythonParseJob::run()
     {
         m_session->setContents( contentsFromEditor().toAscii() );
     }
-    kDebug() << "===-- PARSING --===> "
+    kDebug() << "===-- PARSING --===>"
              << m_document.fileName()
-             << "size:" << m_session->size()
-             << endl;
+             << "size:" << m_session->size();
 
     // 0) setup
     //parser python_parser;
@@ -129,10 +128,10 @@ void PythonParseJob::run()
 
     if ( matched )
     {
-        kDebug() << m_url<<endl;
+        kDebug() << m_url;
         ContextBuilder contextBuilder(m_session,m_url);
         m_duContext = contextBuilder.buildContexts(m_AST);
-        kDebug() << "----Parsing Succeded---"<<endl;//TODO: bind declarations to the code model
+        kDebug() << "----Parsing Succeded---";//TODO: bind declarations to the code model
     }
     else
     {

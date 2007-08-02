@@ -42,7 +42,7 @@ ContextBuilder::ContextBuilder(ParseSession* session, const KUrl &url)
     ,m_compilingContexts(false)
     ,m_recompiling(false)
 {
-    kDebug() << "=====Building Contexts for===="<<m_url<<endl;
+    kDebug() << "=====Building Contexts for===="<<m_url;
 
 }
 ContextBuilder::ContextBuilder (PythonEditorIntegrator* editor, const KUrl &url)
@@ -51,7 +51,7 @@ ContextBuilder::ContextBuilder (PythonEditorIntegrator* editor, const KUrl &url)
     , m_compilingContexts(false)
     , m_recompiling(false)
 {
-    kDebug() << "=====Building Contexts for===="<<m_url<<endl;
+    kDebug() << "=====Building Contexts for===="<<m_url;
 }
 
 

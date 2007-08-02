@@ -169,11 +169,11 @@ DUContext* ContextBuilder::openContext(ast_node* rangeNode, DUContext::ContextTy
 {
     if (m_compilingContexts)
     {
-        kDebug() << "Creating ret"<<endl;
+        kDebug() << "Creating ret";
         const Range& m_range = m_editor->findRange(rangeNode);
         kDebug() << "Opening ContextInternal";
         DUContext* ret = openContextInternal(m_range, type, identifier);
-        kDebug() << "Associating context" << endl;
+        kDebug() << "Associating context" ;
         m_session->put(rangeNode,ret);
         return ret;
     }
@@ -204,7 +204,7 @@ DUContext* ContextBuilder::openContext(ast_node* fromRange, ast_node* toRange, D
 
 DUContext* ContextBuilder::openContextInternal(const Range& range, DUContext::ContextType type, const QualifiedIdentifier& identifier)
 {
-    kDebug() << "OpenContextInternal"<<endl;
+    kDebug() << "OpenContextInternal";
     Q_ASSERT(m_compilingContexts);
     DUContext* ret = 0L;
     {

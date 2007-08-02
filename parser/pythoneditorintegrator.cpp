@@ -50,9 +50,7 @@ Cursor PythonEditorIntegrator::findPosition( parser::token_type const & token, E
     std::size_t line, column;
     size_t index = m_session->token_stream->index();
 
-    m_session->token_stream->start_position(index, &line, &column);
-    size_t tokenLength = token.end - token.begin;
-    //m_session->positionAt((edge == BackEdge) ? token.begin + tokenLength : token.end, &line, &column);
+    m_session->positionAt((edge == BackEdge) ? token.end : token.begin, &line, &column);
     return Cursor(line, column);
 }
 

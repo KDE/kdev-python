@@ -63,7 +63,6 @@ public:
     KDevelop::TopDUContext* buildContexts(ast_node* node);
     KDevelop::DUContext* buildSubContexts(const KUrl& url, ast_node *node, KDevelop::DUContext* parent = 0);
     void supportBuild(ast_node *node, KDevelop::DUContext* context = 0);
-protected:
     inline KDevelop::DUContext* currentContext() { return m_contextStack.top(); }
 
     void setEncountered( KDevelop::DUChainBase* item )
@@ -102,6 +101,7 @@ protected:
 private:
     ParseSession* m_session;
     KUrl m_url;
+    bool m_ownsEditorIntegrator: 1;
     bool m_compilingContexts: 1;
     bool m_recompiling : 1;
 
@@ -109,6 +109,9 @@ private:
     inline int& nextContextIndex() { return m_nextContextStack.top(); }
     KDevelop::Identifier m_identifier;
     KDevelop::QualifiedIdentifier m_qidentifier;
+
+    KDevelop::DUContext* m_lastContext;
+
     QList<KDevelop::DUContext*> m_importedParentContexts;
 
 };

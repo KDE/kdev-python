@@ -39,17 +39,21 @@ ContextBuilder::ContextBuilder(ParseSession* session, const KUrl &url)
     :m_editor(new PythonEditorIntegrator(session))
     ,m_session(session)
     ,m_url(url)
+    ,m_ownsEditorIntegrator(true)
     ,m_compilingContexts(false)
     ,m_recompiling(false)
+    ,m_lastContext(0)
 {
     kDebug() << "=====Building Contexts for===="<<m_url;
 
 }
 ContextBuilder::ContextBuilder (PythonEditorIntegrator* editor, const KUrl &url)
-    : m_editor(editor)
-    , m_url(url)
-    , m_compilingContexts(false)
-    , m_recompiling(false)
+    :m_editor(editor)
+    ,m_url(url)
+    ,m_ownsEditorIntegrator(false)
+    ,m_compilingContexts(false)
+    ,m_recompiling(false)
+    ,m_lastContext(0)
 {
     kDebug() << "=====Building Contexts for===="<<m_url;
 }
@@ -57,6 +61,8 @@ ContextBuilder::ContextBuilder (PythonEditorIntegrator* editor, const KUrl &url)
 
 ContextBuilder::~ContextBuilder ()
 {
+    if (m_ownsEditorIntegrator)
+        delete m_editor;
 }
 
 TopDUContext* ContextBuilder::buildContexts(ast_node* node)
@@ -258,6 +264,7 @@ void ContextBuilder::closeContext()
         currentContext()->cleanIfNotEncountered(m_encountered, m_compilingContexts);
         setEncountered( currentContext() );
     }
+    m_lastContext=currentContext();
     m_contextStack.pop();
     m_nextContextStack.pop();
     m_editor->exitCurrentRange();

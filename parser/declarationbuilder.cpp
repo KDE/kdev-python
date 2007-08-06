@@ -21,12 +21,12 @@ using namespace KDevelop;
 using namespace python;
 
 
-// DeclarationBuilder::DeclarationBuilder (ParseSession* session, const KUrl &url):DeclarationBuilderBase(session,url)
-// {
-// }
-// DeclarationBuilder::DeclarationBuilder (PythonEditorIntegrator* editor, const KUrl &url):DeclarationBuilderBase(editor,url)
-// {
-// }
+DeclarationBuilder::DeclarationBuilder (ParseSession* session, const KUrl &url):DeclarationBuilderBase(session,url)
+{
+}
+DeclarationBuilder::DeclarationBuilder (PythonEditorIntegrator* editor, const KUrl &url):DeclarationBuilderBase(editor,url)
+{
+}
 
 TopDUContext* DeclarationBuilder::buildDeclarations(ast_node *node)
 {
@@ -56,6 +56,20 @@ Declaration* DeclarationBuilder::openDefinition(std::size_t name, ast_node* rang
   return openDeclaration(name, rangeNode, isFunction, false, true);
 }
 
+void DeclarationBuilder::visit_funcdef(funcdef_ast *node)
+{
+    openDefinition(node->func_name, node);
+    m_functionDefinedStack.push(node->start_token);
+    DeclarationBuilderBase::visit_funcdef(node);
+    m_functionDefinedStack.pop();
+}
+
+void DeclarationBuilder::visit_classdef(classdef_ast *node)
+{
+    openDefinition(node->class_name, node);
+    DeclarationBuilderBase::visit_classdef(node);
+    closeDeclaration();
+}
 template<class DeclarationType>
 DeclarationType* DeclarationBuilder::specialDeclaration( KTextEditor::Range* range )
 {
@@ -92,9 +106,6 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
 //             visitSimpleTypeSpecifier( static_cast<SimpleTypeSpecifierAST*>( typeSpecifier ) );
 //         }
 //     }
-    Identifier lastId;
-    if( !id.isEmpty() )
-        lastId = id.last();
     Declaration* declaration = 0;
     if (recompiling())
     {
@@ -108,8 +119,7 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
             if (dec->textRange().start() > translated.end() && dec->smartRange()) 
                 break;
             if (dec->textRange() == translated && dec->scope() == scope &&
-                (id.isEmpty() && dec->identifier().toString().isEmpty()) || (!id.isEmpty() && lastId == dec->identifier()) &&
-                dec->isDefinition() == isDefinition)
+                (id.isEmpty() && dec->identifier().toString().isEmpty()) && dec->isDefinition() == isDefinition)
             {
                 if (isForward)
                 {
@@ -134,10 +144,6 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
                         break;
                 }
                 declaration = dec;
-                //If the declaration does not have a smart-range, upgrade it if possible
-                /*if( m_editor->smart() && !declaration->smartRange() ) {
-                declaration->setTextRange( m_editor->createRange( newRange ) );
-                }*/
                 if (currentContext()->type() == DUContext::Class) 
                 {
                     ClassMemberDeclaration* classDeclaration = static_cast<ClassMemberDeclaration*>(declaration);
@@ -188,7 +194,6 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
         switch (currentContext()->type()) 
         {
         case DUContext::Global:
-        case DUContext::Namespace:
         case DUContext::Class:
             SymbolTable::self()->addDeclaration(declaration);
             break;
@@ -201,3 +206,36 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
     return declaration;
 }
 
+void DeclarationBuilder::closeDeclaration()
+{
+    if (m_lastContext)
+    {
+        DUChainWriteLocker lock(DUChain::lock());
+        currentDeclaration()->setKind(Declaration::Type);
+    }
+    if(m_lastContext && (m_lastContext->type() == DUContext::Class || m_lastContext->type() == DUContext::Other ) )
+    {
+        currentDeclaration()->setInternalContext(m_lastContext);
+        m_lastContext = 0;
+    }
+    m_declarationStack.pop();
+}
+
+void DeclarationBuilder::abortDeclaration()
+{
+    m_declarationStack.pop();
+}
+
+void DeclarationBuilder::openContext(DUContext * newContext)
+{
+  DeclarationBuilderBase::openContext(newContext);
+
+  m_nextDeclarationStack.push(0);
+}
+
+void DeclarationBuilder::closeContext()
+{
+  DeclarationBuilderBase::closeContext();
+
+  m_nextDeclarationStack.pop();
+}

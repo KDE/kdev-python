@@ -98,7 +98,7 @@ public:
     /*virtual void visit_for_stmt(for_stmt_ast *node);
     virtual void visit_while_stmt(while_stmt_ast *node);*/
 
-private:
+protected:
     ParseSession* m_session;
     KUrl m_url;
     bool m_ownsEditorIntegrator: 1;

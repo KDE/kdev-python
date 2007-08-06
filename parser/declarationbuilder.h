@@ -43,7 +43,7 @@ class DeclarationBuilder: public DeclarationBuilderBase
 public:
     DeclarationBuilder(ParseSession* session, const KUrl &url);
     DeclarationBuilder(PythonEditorIntegrator* editor, const KUrl &url);
-    KDevelop::TopDUContext* buildDeclarations(ast_node *node,QList<KDevelop::DUContext*>* includes = 0);
+    KDevelop::TopDUContext* buildDeclarations(ast_node *node);
     KDevelop::DUContext* buildSubDeclarations(const KUrl& url, ast_node *node, KDevelop::DUContext* parent = 0);
     virtual void visit_classdef(classdef_ast *node);
     virtual void visit_funcdef(funcdef_ast *node);

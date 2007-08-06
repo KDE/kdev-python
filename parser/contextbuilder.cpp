@@ -218,6 +218,7 @@ DUContext* ContextBuilder::openContextInternal(const Range& range, DUContext::Co
         if (recompiling())
         {
             const QList<DUContext*>& childContexts = currentContext()->childContexts();
+            QMutexLocker lock(m_editor->smart() ? m_editor->smart()->smartMutex() : 0);
             Range translated = range;
             if (m_editor->smart())
                 translated = m_editor->smart()->translateFromRevision(translated);

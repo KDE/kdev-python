@@ -23,27 +23,25 @@ using namespace python;
 
 DeclarationBuilder::DeclarationBuilder (ParseSession* session, const KUrl &url):DeclarationBuilderBase(session,url)
 {
+    kDebug()<<"Building Declarations";
 }
 DeclarationBuilder::DeclarationBuilder (PythonEditorIntegrator* editor, const KUrl &url):DeclarationBuilderBase(editor,url)
 {
+    kDebug()<<"Building Declarations";
 }
 
 TopDUContext* DeclarationBuilder::buildDeclarations(ast_node *node)
 {
-  TopDUContext* top = buildContexts(node);
-
-  Q_ASSERT(m_accessPolicyStack.isEmpty());
-  Q_ASSERT(m_functionDefinedStack.isEmpty());
-
-  return top;
+    TopDUContext* top = buildContexts(node);
+    Q_ASSERT(m_accessPolicyStack.isEmpty());
+    Q_ASSERT(m_functionDefinedStack.isEmpty());
+    return top;
 }
 DUContext* DeclarationBuilder::buildSubDeclarations(const KUrl& url, ast_node *node, KDevelop::DUContext* parent) {
-  DUContext* top = buildSubContexts(url, node, parent);
-
-  Q_ASSERT(m_accessPolicyStack.isEmpty());
-  Q_ASSERT(m_functionDefinedStack.isEmpty());
-
-  return top;
+    DUContext* top = buildSubContexts(url, node, parent);
+    Q_ASSERT(m_accessPolicyStack.isEmpty());
+    Q_ASSERT(m_functionDefinedStack.isEmpty());
+    return top;
 }
 
 ForwardDeclaration * DeclarationBuilder::openForwardDeclaration(std::size_t name, ast_node * range)
@@ -58,7 +56,7 @@ Declaration* DeclarationBuilder::openDefinition(std::size_t name, ast_node* rang
 
 void DeclarationBuilder::visit_funcdef(funcdef_ast *node)
 {
-    openDefinition(node->func_name, node);
+    //openDefinition(node->func_name, node);
     m_functionDefinedStack.push(node->start_token);
     DeclarationBuilderBase::visit_funcdef(node);
     m_functionDefinedStack.pop();

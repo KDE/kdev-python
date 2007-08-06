@@ -33,30 +33,30 @@ DeclarationBuilder::DeclarationBuilder (PythonEditorIntegrator* editor, const KU
 TopDUContext* DeclarationBuilder::buildDeclarations(ast_node *node)
 {
     TopDUContext* top = buildContexts(node);
-    Q_ASSERT(m_accessPolicyStack.isEmpty());
     Q_ASSERT(m_functionDefinedStack.isEmpty());
     return top;
 }
 DUContext* DeclarationBuilder::buildSubDeclarations(const KUrl& url, ast_node *node, KDevelop::DUContext* parent) {
     DUContext* top = buildSubContexts(url, node, parent);
-    Q_ASSERT(m_accessPolicyStack.isEmpty());
     Q_ASSERT(m_functionDefinedStack.isEmpty());
     return top;
 }
 
 ForwardDeclaration * DeclarationBuilder::openForwardDeclaration(std::size_t name, ast_node * range)
 {
-  return static_cast<ForwardDeclaration*>(openDeclaration(name, range, false, true));
+    return static_cast<ForwardDeclaration*>(openDeclaration(name, range, false, true));
 }
 
 Declaration* DeclarationBuilder::openDefinition(std::size_t name, ast_node* rangeNode, bool isFunction)
 {
-  return openDeclaration(name, rangeNode, isFunction, false, true);
+    kDebug()<< isFunction;
+    return openDeclaration(name, rangeNode, isFunction, false, true);
 }
 
 void DeclarationBuilder::visit_funcdef(funcdef_ast *node)
 {
-    //openDefinition(node->func_name, node);
+    kDebug()<<"Opening definiton for function";
+    openDefinition(node->func_name, node, true);
     m_functionDefinedStack.push(node->start_token);
     DeclarationBuilderBase::visit_funcdef(node);
     m_functionDefinedStack.pop();
@@ -64,7 +64,7 @@ void DeclarationBuilder::visit_funcdef(funcdef_ast *node)
 
 void DeclarationBuilder::visit_classdef(classdef_ast *node)
 {
-    openDefinition(node->class_name, node);
+    openDefinition(node->class_name, node, false);
     DeclarationBuilderBase::visit_classdef(node);
     closeDeclaration();
 }
@@ -145,10 +145,6 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
                 if (currentContext()->type() == DUContext::Class) 
                 {
                     ClassMemberDeclaration* classDeclaration = static_cast<ClassMemberDeclaration*>(declaration);
-                    if (classDeclaration->accessPolicy() != currentAccessPolicy()) 
-                    {
-                        classDeclaration->setAccessPolicy(currentAccessPolicy());
-                    }
                 }
                 break;
             }
@@ -184,11 +180,6 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
 
         if (isDefinition)
         declaration->setDeclarationIsDefinition(true);
-        if (currentContext()->type() == DUContext::Class) 
-        {
-            if(dynamic_cast<ClassMemberDeclaration*>(declaration)) //It may also be a forward-declaration, not based on ClassMemberDeclaration!
-                static_cast<ClassMemberDeclaration*>(declaration)->setAccessPolicy(currentAccessPolicy());
-        }
         switch (currentContext()->type()) 
         {
         case DUContext::Global:

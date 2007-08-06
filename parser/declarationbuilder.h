@@ -68,14 +68,7 @@ private:
     {
         return dynamic_cast<DeclarationType*>(m_declarationStack.top());
     }
-    inline KDevelop::Declaration::AccessPolicy currentAccessPolicy()
-    {
-        return m_accessPolicyStack.top();
-    }
-    inline void setAccessPolicy(KDevelop::Declaration::AccessPolicy policy)
-    {
-        m_accessPolicyStack.top() = policy;
-    }
+
     template<class DeclarationType>
     DeclarationType* specialDeclaration( KTextEditor::Range* range );
     template<class DeclarationType>
@@ -85,7 +78,6 @@ private:
         return m_nextDeclarationStack.top();
     }
     QStack<KDevelop::Declaration*> m_declarationStack;
-    QStack<KDevelop::Declaration::AccessPolicy> m_accessPolicyStack;
     QStack<int> m_nextDeclarationStack;
     QStack<std::size_t> m_functionDefinedStack;
     bool m_inTypedef;

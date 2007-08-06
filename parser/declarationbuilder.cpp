@@ -49,7 +49,6 @@ ForwardDeclaration * DeclarationBuilder::openForwardDeclaration(std::size_t name
 
 Declaration* DeclarationBuilder::openDefinition(std::size_t name, ast_node* rangeNode, bool isFunction)
 {
-    kDebug()<< isFunction;
     return openDeclaration(name, rangeNode, isFunction, false, true);
 }
 
@@ -82,17 +81,25 @@ DeclarationType* DeclarationBuilder::specialDeclaration( KTextEditor::Range* ran
 
 Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* rangeNode, bool isFunction, bool isForward, bool isDefinition)
 {
+    kDebug()<<"Is Function:"<<isFunction;
     DUChainWriteLocker lock(DUChain::lock());
     Declaration::Scope scope = Declaration::GlobalScope;
-    switch (currentContext()->type()) 
+    switch (currentContext()->type())
     {
         case DUContext::Class:
-        scope = Declaration::ClassScope;
-        break;
+            kDebug()<<"In a Class Context";
+            scope = Declaration::ClassScope;
+            break;
         case DUContext::Function:
-        scope = Declaration::FunctionScope;
+            kDebug()<<"In a Function Context";
+            scope = Declaration::FunctionScope;
+            break;
+        case DUContext::Global:
+            kDebug()<<"Context is of type Global";
+            break;
         default:
-        break;
+            kDebug()<<"Context is Neithea Class Nor a Function";
+            break;
     }
     Range newRange = m_editor->findRange(rangeNode);
     QualifiedIdentifier id;
@@ -107,25 +114,28 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
     Declaration* declaration = 0;
     if (recompiling())
     {
+        kDebug()<<"Is Function While Recompiling:"<<isFunction;
         QMutexLocker lock(m_editor->smart() ? m_editor->smart()->smartMutex() : 0);
         Range translated = newRange;
         if (m_editor->smart())
             translated = m_editor->smart()->translateFromRevision(translated);
+        kDebug()<<"Recompiling:"<<currentContext()->localDeclarations().count()<<"declarations found.";
         for (; nextDeclaration() < currentContext()->localDeclarations().count(); ++nextDeclaration()) 
         {
             Declaration* dec = currentContext()->localDeclarations().at(nextDeclaration());
             if (dec->textRange().start() > translated.end() && dec->smartRange()) 
                 break;
             if (dec->textRange() == translated && dec->scope() == scope &&
-                (id.isEmpty() && dec->identifier().toString().isEmpty()) && dec->isDefinition() == isDefinition)
+                (dec->identifier().toString().isEmpty()) && dec->isDefinition() == isDefinition)
             {
                 if (isForward)
                 {
                     if (!dynamic_cast<ForwardDeclaration*>(dec))
                         break;
                 }
-                else if (isFunction) 
+                else if (isFunction)
                 {
+                    kDebug()<<"A Function Declaration";
                     if (scope == Declaration::ClassScope)
                     {
                         if (!dynamic_cast<ClassFunctionDeclaration*>(dec))
@@ -152,6 +162,7 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
     }
     if (!declaration)
     {
+        kDebug()<<"No Declarations";
         Range* prior = m_editor->currentRange();
         Range* range = m_editor->createRange(newRange);
         m_editor->exitCurrentRange();

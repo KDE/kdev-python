@@ -79,7 +79,7 @@ TopDUContext* ContextBuilder::buildContexts(ast_node* node)
             kDebug() << "ContextBuilder::buildContexts: recompiling";
             m_recompiling = true;
             Q_ASSERT(topLevelContext->textRangePtr());
-            if (m_compilingContexts) 
+            if (m_compilingContexts)
             {
                 Q_ASSERT(topLevelContext->textRangePtr());
                 if (!topLevelContext->smartRange() && m_editor->smart())

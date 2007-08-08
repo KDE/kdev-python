@@ -49,16 +49,13 @@ public:
     virtual void visit_funcdef(funcdef_ast *node);
     virtual void openContext(KDevelop::DUContext* newContext);
     virtual void closeContext();
+    virtual ~DeclarationBuilder();
 private:
     KDevelop::ForwardDeclaration* openForwardDeclaration(std::size_t name, ast_node* range);
     KDevelop::Declaration* openDeclaration(std::size_t name, ast_node* range, bool isFunction = false, bool isForward = false, bool isDefinition = false);
     KDevelop::Declaration* openDefinition(std::size_t name, ast_node* range, bool isFunction = false);
     void closeDeclaration();
     void abortDeclaration();
-    inline bool hasCurrentDeclaration() const
-    {
-        return !m_declarationStack.isEmpty();
-    }
     inline KDevelop::Declaration* currentDeclaration() const
     {
         return m_declarationStack.top();
@@ -80,6 +77,5 @@ private:
     QStack<KDevelop::Declaration*> m_declarationStack;
     QStack<int> m_nextDeclarationStack;
     QStack<std::size_t> m_functionDefinedStack;
-    bool m_inTypedef;
 };
 #endif

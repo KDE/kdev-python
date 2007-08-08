@@ -42,12 +42,6 @@ namespace KDevelop
 class PythonEditorIntegrator;
 class ParseSession;
 
-namespace Python 
-{
-    class LexedFile;
-    typedef KSharedPtr<LexedFile> LexedFilePointer;
-}
-
 using namespace python;
 
 class ContextBuilder: public python::default_visitor
@@ -93,10 +87,9 @@ public:
     KDevelop::DUContext* openContextInternal(const KTextEditor::Range& range, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier);
 
     virtual void visit_funcdef(funcdef_ast *node);
-    //virtual void visit_name(name_ast *node);
     virtual void visit_classdef(classdef_ast *node);
-    /*virtual void visit_for_stmt(for_stmt_ast *node);
-    virtual void visit_while_stmt(while_stmt_ast *node);*/
+    //virtual void visit_for_stmt(for_stmt_ast *node);
+    //virtual void visit_while_stmt(while_stmt_ast *node);
 
 protected:
     ParseSession* m_session;

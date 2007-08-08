@@ -1,3 +1,25 @@
+/*****************************************************************************
+ * Copyright (c) 2007 Piyush verma <piyush.verma@gmail.com>                  *
+ *                                                                           *
+ * Permission is hereby granted, free of charge, to any person obtaining     *
+ * a copy of this software and associated documentation files (the           *
+ * "Software"), to deal in the Software without restriction, including       *
+ * without limitation the rights to use, copy, modify, merge, publish,       *
+ * distribute, sublicense, and/or sell copies of the Software, and to        *
+ * permit persons to whom the Software is furnished to do so, subject to     *
+ * the following conditions:                                                 *
+ *                                                                           *
+ * The above copyright notice and this permission notice shall be            *
+ * included in all copies or substantial portions of the Software.           *
+ *                                                                           *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,           *
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF        *
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND                     *
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE    *
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION    *
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION     *
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
+ *****************************************************************************/
 #include "declarationbuilder.h"
 
 #include <QByteArray>
@@ -28,6 +50,10 @@ DeclarationBuilder::DeclarationBuilder (ParseSession* session, const KUrl &url):
 DeclarationBuilder::DeclarationBuilder (PythonEditorIntegrator* editor, const KUrl &url):DeclarationBuilderBase(editor,url)
 {
     kDebug()<<"Building Declarations";
+}
+
+DeclarationBuilder:: ~DeclarationBuilder()
+{
 }
 
 TopDUContext* DeclarationBuilder::buildDeclarations(ast_node *node)
@@ -65,7 +91,7 @@ void DeclarationBuilder::visit_classdef(classdef_ast *node)
 {
     openDefinition(node->class_name, node, false);
     DeclarationBuilderBase::visit_classdef(node);
-    closeDeclaration();
+    //closeDeclaration();
 }
 template<class DeclarationType>
 DeclarationType* DeclarationBuilder::specialDeclaration( KTextEditor::Range* range )
@@ -103,14 +129,8 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
     }
     Range newRange = m_editor->findRange(rangeNode);
     QualifiedIdentifier id;
-//     if (name) {
-//         TypeSpecifierAST* typeSpecifier = 0; //Additional type-specifier for example the return-type of a cast operator
-//         id = identifierForName(name);
-//         if( typeSpecifier && id == QualifiedIdentifier("operator{...cast...}") ) {
-//         if( typeSpecifier->kind == AST::Kind_SimpleTypeSpecifier )
-//             visitSimpleTypeSpecifier( static_cast<SimpleTypeSpecifierAST*>( typeSpecifier ) );
-//         }
-//     }
+    id = identifierForName(name);
+    kDebug()<<"ID:"<<id;
     Declaration* declaration = 0;
     if (recompiling())
     {
@@ -123,7 +143,7 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
         for (; nextDeclaration() < currentContext()->localDeclarations().count(); ++nextDeclaration()) 
         {
             Declaration* dec = currentContext()->localDeclarations().at(nextDeclaration());
-            if (dec->textRange().start() > translated.end() && dec->smartRange()) 
+            if (dec->textRange().start() > translated.end() && dec->smartRange())
                 break;
             if (dec->textRange() == translated && dec->scope() == scope &&
                 (dec->identifier().toString().isEmpty()) && dec->isDefinition() == isDefinition)
@@ -135,7 +155,6 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
                 }
                 else if (isFunction)
                 {
-                    kDebug()<<"A Function Declaration";
                     if (scope == Declaration::ClassScope)
                     {
                         if (!dynamic_cast<ClassFunctionDeclaration*>(dec))
@@ -152,10 +171,6 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
                         break;
                 }
                 declaration = dec;
-                if (currentContext()->type() == DUContext::Class) 
-                {
-                    ClassMemberDeclaration* classDeclaration = static_cast<ClassMemberDeclaration*>(declaration);
-                }
                 break;
             }
         }
@@ -164,8 +179,10 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
     {
         kDebug()<<"No Declarations";
         Range* prior = m_editor->currentRange();
+//Seems some Issue here, in Class declraations
         Range* range = m_editor->createRange(newRange);
         m_editor->exitCurrentRange();
+//Issues is Assert as well.
         Q_ASSERT(m_editor->currentRange() == prior);
         if (isForward)
         {
@@ -173,16 +190,17 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
         }
         else if (isFunction) 
         {
+            kDebug()<<"Is a Function";
             if (scope == Declaration::ClassScope) 
             {
-               declaration = specialDeclaration<ClassFunctionDeclaration>( range );
+                declaration = specialDeclaration<ClassFunctionDeclaration>( range );
             }
             else
             {
                 declaration = specialDeclaration<FunctionDeclaration>(range, scope );
             }
             if (!m_functionDefinedStack.isEmpty())
-               declaration->setDeclarationIsDefinition(m_functionDefinedStack.top());
+                declaration->setDeclarationIsDefinition(m_functionDefinedStack.top());
         }
         else if (scope == Declaration::ClassScope) 
         {
@@ -191,9 +209,12 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
 
         if (isDefinition)
         declaration->setDeclarationIsDefinition(true);
-        switch (currentContext()->type()) 
+        switch (currentContext()->type())
         {
         case DUContext::Global:
+            kDebug()<<"Global Context";
+            SymbolTable::self()->addDeclaration(declaration);
+            break;
         case DUContext::Class:
             SymbolTable::self()->addDeclaration(declaration);
             break;
@@ -203,6 +224,7 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
     }
     setEncountered(declaration);
     m_declarationStack.push(declaration);
+    kDebug()<<m_declarationStack.top();
     return declaration;
 }
 
@@ -236,6 +258,5 @@ void DeclarationBuilder::openContext(DUContext * newContext)
 void DeclarationBuilder::closeContext()
 {
   DeclarationBuilderBase::closeContext();
-
   m_nextDeclarationStack.pop();
 }

@@ -134,7 +134,7 @@ KDevelop::DUContext* ContextBuilder::buildSubContexts(const KUrl& url, ast_node 
 
 void ContextBuilder::supportBuild(ast_node *node, DUContext* context)
 {
-    openContext( context ? context : m_session->get(node) );
+    openContext( context ? context : m_session->get(node));
     m_editor->setCurrentUrl(currentContext()->url());
     m_editor->setCurrentRange(currentContext()->textRangePtr());
     visit_node(node);
@@ -149,6 +149,7 @@ void ContextBuilder::visit_classdef(classdef_ast* node)
     visit_node(node->class_suite);
     closeContext();
 }
+
 void ContextBuilder::openContext(DUContext* newContext)
 {
     m_contextStack.push(newContext);
@@ -183,7 +184,7 @@ DUContext* ContextBuilder::openContext(ast_node* rangeNode, DUContext::ContextTy
         m_session->put(rangeNode,ret);
         return ret;
     }
-    else 
+    else
     {
         kDebug() << "Opening Context associated with node";
         openContext(m_session->get(rangeNode));

@@ -898,16 +898,16 @@ static yyconst flex_int16_t yy_chk[1354] =
 
 static yyconst flex_int16_t yy_rule_linenum[95] =
     {   0,
-      141,  167,  168,  171,  172,  221,  222,  260,  261,  264,
-      265,  266,  267,  268,  269,  270,  271,  272,  273,  274,
-      275,  276,  277,  278,  279,  280,  281,  282,  283,  284,
-      285,  286,  287,  288,  289,  290,  291,  292,  293,  298,
-      300,  304,  308,  311,  312,  313,  314,  317,  321,  325,
-      329,  333,  337,  341,  342,  343,  347,  348,  349,  352,
-      353,  354,  355,  356,  357,  358,  359,  360,  361,  362,
-      363,  364,  365,  366,  367,  368,  369,  370,  371,  372,
-      373,  374,  375,  376,  380,  381,  382,  383,  384,  385,
-      386,  387,  388,  405
+      140,  166,  167,  170,  171,  220,  221,  259,  260,  263,
+      264,  265,  266,  267,  268,  269,  270,  271,  272,  273,
+      274,  275,  276,  277,  278,  279,  280,  281,  282,  283,
+      284,  285,  286,  287,  288,  289,  290,  291,  292,  297,
+      299,  303,  307,  310,  311,  312,  313,  316,  320,  324,
+      328,  332,  336,  340,  341,  342,  346,  347,  348,  351,
+      352,  353,  354,  355,  356,  357,  358,  359,  360,  361,
+      362,  363,  364,  365,  366,  367,  368,  369,  370,  371,
+      372,  373,  374,  375,  379,  380,  381,  382,  383,  384,
+      385,  386,  387,  404
 
     } ;
 
@@ -939,7 +939,7 @@ static yyconst flex_int16_t yy_rule_linenum[95] =
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,      *
  * Boston, MA 02110-1301, USA.                                               *
  *****************************************************************************/
-#line 30 "python_lexer.ll"
+#line 29 "python_lexer.ll"
 
 #define DONT_INCLUDE_FLEXLEXER
 #include "python_lexer.h"
@@ -1128,7 +1128,7 @@ YY_DECL
 	register int yy_act;
     
 /* %% [7.0] user's declarations go here */
-#line 136 "python_lexer.ll"
+#line 135 "python_lexer.ll"
 
 
  /* whitespace, comments, linebreak */
@@ -1227,14 +1227,14 @@ do_action:	/* This label is used only to access EOF actions. */
 			if ( yy_act == 0 )
 				std::cerr << "--scanner backing up\n";
 			else if ( yy_act < 95 )
-				std::cerr << "--accepting rule at line" << yy_rule_linenum[yy_act] <<
+				std::cerr << "--accepting rule at line " << yy_rule_linenum[yy_act] <<
 				         "(\"" << yytext << "\")\n";
 			else if ( yy_act == 95 )
 				std::cerr << "--accepting default rule (\"" << yytext << "\")\n";
 			else if ( yy_act == 96 )
 				std::cerr << "--(end of buffer or a NUL)\n";
 			else
-				std::cerr << "--EOF (start condition" << YY_START << ")\n";
+				std::cerr << "--EOF (start condition " << YY_START << ")\n";
 			}
 
 		switch ( yy_act )
@@ -1250,7 +1250,7 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 141 "python_lexer.ll"
+#line 140 "python_lexer.ll"
 {
     if( !m_paren && !m_bracket && !m_brace )
     {
@@ -1281,12 +1281,12 @@ YY_RULE_SETUP
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 167 "python_lexer.ll"
+#line 166 "python_lexer.ll"
 /*skip */
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 168 "python_lexer.ll"
+#line 167 "python_lexer.ll"
 {
         m_currentOffset++;
     }
@@ -1294,13 +1294,13 @@ YY_RULE_SETUP
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 171 "python_lexer.ll"
+#line 170 "python_lexer.ll"
 
 	YY_BREAK
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 172 "python_lexer.ll"
+#line 171 "python_lexer.ll"
 {
     if (m_suite == 0)
     {
@@ -1353,13 +1353,13 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 221 "python_lexer.ll"
+#line 220 "python_lexer.ll"
 
 	YY_BREAK
 case 7:
 /* rule 7 can match eol */
 YY_RULE_SETUP
-#line 222 "python_lexer.ll"
+#line 221 "python_lexer.ll"
 {
     if( !m_paren && !m_bracket && !m_brace )
     {
@@ -1402,175 +1402,175 @@ YY_RULE_SETUP
 case 8:
 /* rule 8 can match eol */
 YY_RULE_SETUP
-#line 260 "python_lexer.ll"
+#line 259 "python_lexer.ll"
 /*skip*/
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 261 "python_lexer.ll"
+#line 260 "python_lexer.ll"
 /* skip */
 	YY_BREAK
 /* reserved keywords */
 case 10:
 YY_RULE_SETUP
-#line 264 "python_lexer.ll"
+#line 263 "python_lexer.ll"
 return parser::Token_AND;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 265 "python_lexer.ll"
+#line 264 "python_lexer.ll"
 return parser::Token_DEL;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 266 "python_lexer.ll"
+#line 265 "python_lexer.ll"
 return parser::Token_FOR;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 267 "python_lexer.ll"
+#line 266 "python_lexer.ll"
 return parser::Token_IS;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 268 "python_lexer.ll"
+#line 267 "python_lexer.ll"
 return parser::Token_RAISE;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 269 "python_lexer.ll"
+#line 268 "python_lexer.ll"
 return parser::Token_ASSERT;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 270 "python_lexer.ll"
+#line 269 "python_lexer.ll"
 return parser::Token_ELIF;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 271 "python_lexer.ll"
+#line 270 "python_lexer.ll"
 return parser::Token_FROM;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 272 "python_lexer.ll"
+#line 271 "python_lexer.ll"
 return parser::Token_LAMBDA;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 273 "python_lexer.ll"
+#line 272 "python_lexer.ll"
 return parser::Token_RETURN;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 274 "python_lexer.ll"
+#line 273 "python_lexer.ll"
 return parser::Token_BREAK;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 275 "python_lexer.ll"
+#line 274 "python_lexer.ll"
 return parser::Token_ELSE;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 276 "python_lexer.ll"
+#line 275 "python_lexer.ll"
 return parser::Token_GLOBAL;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 277 "python_lexer.ll"
+#line 276 "python_lexer.ll"
 return parser::Token_NOT;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 278 "python_lexer.ll"
+#line 277 "python_lexer.ll"
 return parser::Token_TRY;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 279 "python_lexer.ll"
+#line 278 "python_lexer.ll"
 return parser::Token_CLASS;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 280 "python_lexer.ll"
+#line 279 "python_lexer.ll"
 return parser::Token_EXCEPT;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 281 "python_lexer.ll"
+#line 280 "python_lexer.ll"
 return parser::Token_IF;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 282 "python_lexer.ll"
+#line 281 "python_lexer.ll"
 return parser::Token_OR;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 283 "python_lexer.ll"
+#line 282 "python_lexer.ll"
 return parser::Token_WHILE;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 284 "python_lexer.ll"
+#line 283 "python_lexer.ll"
 return parser::Token_CONTINUE;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 285 "python_lexer.ll"
+#line 284 "python_lexer.ll"
 return parser::Token_EXEC;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 286 "python_lexer.ll"
+#line 285 "python_lexer.ll"
 return parser::Token_IMPORT;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 287 "python_lexer.ll"
+#line 286 "python_lexer.ll"
 return parser::Token_PASS;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 288 "python_lexer.ll"
+#line 287 "python_lexer.ll"
 return parser::Token_YIELD;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 289 "python_lexer.ll"
+#line 288 "python_lexer.ll"
 return parser::Token_DEF;
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 290 "python_lexer.ll"
+#line 289 "python_lexer.ll"
 return parser::Token_FINALLY;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 291 "python_lexer.ll"
+#line 290 "python_lexer.ll"
 return parser::Token_IN;
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 292 "python_lexer.ll"
+#line 291 "python_lexer.ll"
 return parser::Token_PRINT;
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 293 "python_lexer.ll"
+#line 292 "python_lexer.ll"
 return parser::Token_AS;
 	YY_BREAK
 /* String literals */
 case 40:
 /* rule 40 can match eol */
 YY_RULE_SETUP
-#line 298 "python_lexer.ll"
+#line 297 "python_lexer.ll"
 return parser::Token_STRINGLITERAL;
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 300 "python_lexer.ll"
+#line 299 "python_lexer.ll"
 {
     BEGIN(longstringlex);
     return parser::Token_LONGSTRING;
@@ -1578,7 +1578,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 304 "python_lexer.ll"
+#line 303 "python_lexer.ll"
 {
     BEGIN(INITIAL);
     return parser::Token_LONGSTRING;
@@ -1587,34 +1587,34 @@ YY_RULE_SETUP
 case 43:
 /* rule 43 can match eol */
 YY_RULE_SETUP
-#line 308 "python_lexer.ll"
+#line 307 "python_lexer.ll"
 return parser::Token_STRINGBODY;
 	YY_BREAK
 /* Identifiers and Numbers */
 case 44:
 YY_RULE_SETUP
-#line 311 "python_lexer.ll"
+#line 310 "python_lexer.ll"
 return parser::Token_IDENTIFIER;
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 312 "python_lexer.ll"
+#line 311 "python_lexer.ll"
 return parser::Token_INTEGER;
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 313 "python_lexer.ll"
+#line 312 "python_lexer.ll"
 return parser::Token_FLOAT;
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 314 "python_lexer.ll"
+#line 313 "python_lexer.ll"
 return parser::Token_IMAGNUM;
 	YY_BREAK
 /* Separators */
 case 48:
 YY_RULE_SETUP
-#line 317 "python_lexer.ll"
+#line 316 "python_lexer.ll"
 {
     m_paren = m_paren + 1;
     return parser::Token_LPAREN;
@@ -1622,7 +1622,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 321 "python_lexer.ll"
+#line 320 "python_lexer.ll"
 {
     m_paren = m_paren - 1;
     return parser::Token_RPAREN;
@@ -1630,7 +1630,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 325 "python_lexer.ll"
+#line 324 "python_lexer.ll"
 {
     m_brace = m_brace + 1;
     return parser::Token_LBRACE;
@@ -1638,7 +1638,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 329 "python_lexer.ll"
+#line 328 "python_lexer.ll"
 {
     m_brace = m_brace - 1;
     return parser::Token_RBRACE;
@@ -1646,7 +1646,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 333 "python_lexer.ll"
+#line 332 "python_lexer.ll"
 {
     m_bracket = m_bracket + 1;
     return parser::Token_LBRACKET;
@@ -1654,7 +1654,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 337 "python_lexer.ll"
+#line 336 "python_lexer.ll"
 {
     m_bracket = m_bracket - 1;
     return parser::Token_RBRACKET;
@@ -1662,17 +1662,17 @@ YY_RULE_SETUP
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 341 "python_lexer.ll"
+#line 340 "python_lexer.ll"
 return parser::Token_COMMA;
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 342 "python_lexer.ll"
+#line 341 "python_lexer.ll"
 return parser::Token_SEMICOLON;
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 343 "python_lexer.ll"
+#line 342 "python_lexer.ll"
 {
     m_suite = 1;
     return parser::Token_COLON;
@@ -1680,195 +1680,195 @@ YY_RULE_SETUP
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 347 "python_lexer.ll"
+#line 346 "python_lexer.ll"
 return parser::Token_DOT;
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 348 "python_lexer.ll"
+#line 347 "python_lexer.ll"
 return parser::Token_BACKTICK;
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 349 "python_lexer.ll"
+#line 348 "python_lexer.ll"
 return parser::Token_AT;
 	YY_BREAK
 /* operators */
 case 60:
 YY_RULE_SETUP
-#line 352 "python_lexer.ll"
+#line 351 "python_lexer.ll"
 return parser::Token_ELLIPSIS;
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 353 "python_lexer.ll"
+#line 352 "python_lexer.ll"
 return parser::Token_STAR;
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 354 "python_lexer.ll"
+#line 353 "python_lexer.ll"
 return parser::Token_DOUBLESTAR;
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 355 "python_lexer.ll"
+#line 354 "python_lexer.ll"
 return parser::Token_EQUAL;
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 356 "python_lexer.ll"
+#line 355 "python_lexer.ll"
 return parser::Token_PLUS;
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 357 "python_lexer.ll"
+#line 356 "python_lexer.ll"
 return parser::Token_MINUS;
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 358 "python_lexer.ll"
+#line 357 "python_lexer.ll"
 return parser::Token_TILDE;
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 359 "python_lexer.ll"
+#line 358 "python_lexer.ll"
 return parser::Token_SLASH;
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 360 "python_lexer.ll"
+#line 359 "python_lexer.ll"
 return parser::Token_DOUBLESLASH;
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 361 "python_lexer.ll"
+#line 360 "python_lexer.ll"
 return parser::Token_MODULO;
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 362 "python_lexer.ll"
+#line 361 "python_lexer.ll"
 return parser::Token_ANDD;
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 363 "python_lexer.ll"
+#line 362 "python_lexer.ll"
 return parser::Token_LSHIFT;
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 364 "python_lexer.ll"
+#line 363 "python_lexer.ll"
 return parser::Token_RSHIFT;
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 365 "python_lexer.ll"
+#line 364 "python_lexer.ll"
 return parser::Token_PLUSEQ;
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 366 "python_lexer.ll"
+#line 365 "python_lexer.ll"
 return parser::Token_MINUSEQ;
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 367 "python_lexer.ll"
+#line 366 "python_lexer.ll"
 return parser::Token_SLASHEQ;
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 368 "python_lexer.ll"
+#line 367 "python_lexer.ll"
 return parser::Token_DOUBLESLASHEQ;
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 369 "python_lexer.ll"
+#line 368 "python_lexer.ll"
 return parser::Token_MODULOEQ;
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 370 "python_lexer.ll"
+#line 369 "python_lexer.ll"
 return parser::Token_ANDEQ;
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 371 "python_lexer.ll"
+#line 370 "python_lexer.ll"
 return parser::Token_STAREQ;
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 372 "python_lexer.ll"
+#line 371 "python_lexer.ll"
 return parser::Token_TILDEEQ;
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 373 "python_lexer.ll"
+#line 372 "python_lexer.ll"
 return parser::Token_OREQ;
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 374 "python_lexer.ll"
+#line 373 "python_lexer.ll"
 return parser::Token_DOUBLESTAREQ;
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 375 "python_lexer.ll"
+#line 374 "python_lexer.ll"
 return parser::Token_LSHIFTEQ;
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 376 "python_lexer.ll"
+#line 375 "python_lexer.ll"
 return parser::Token_RSHIFTEQ;
 	YY_BREAK
 /* comparison */
 case 85:
 YY_RULE_SETUP
-#line 380 "python_lexer.ll"
+#line 379 "python_lexer.ll"
 return parser::Token_LESS;
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 381 "python_lexer.ll"
+#line 380 "python_lexer.ll"
 return parser::Token_GREATER;
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 382 "python_lexer.ll"
+#line 381 "python_lexer.ll"
 return parser::Token_GREATEREQ;
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 383 "python_lexer.ll"
+#line 382 "python_lexer.ll"
 return parser::Token_LESSEQ;
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 384 "python_lexer.ll"
+#line 383 "python_lexer.ll"
 return parser::Token_UNEQUAL;
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 385 "python_lexer.ll"
+#line 384 "python_lexer.ll"
 return parser::Token_UNEQUAL;
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 386 "python_lexer.ll"
+#line 385 "python_lexer.ll"
 return parser::Token_ORR;
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 387 "python_lexer.ll"
+#line 386 "python_lexer.ll"
 return parser::Token_HAT;
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 388 "python_lexer.ll"
+#line 387 "python_lexer.ll"
 return parser::Token_ISEQUAL;
 	YY_BREAK
 /* End of file */
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(longstringlex):
-#line 391 "python_lexer.ll"
+#line 390 "python_lexer.ll"
 {
     if( m_indent.back() > 0 )
     {
@@ -1884,12 +1884,12 @@ case YY_STATE_EOF(longstringlex):
 /* Everything that is not handled up to now is not part of the language. */
 case 94:
 YY_RULE_SETUP
-#line 405 "python_lexer.ll"
+#line 404 "python_lexer.ll"
 return parser::Token_INVALID;
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 407 "python_lexer.ll"
+#line 406 "python_lexer.ll"
 ECHO;
 	YY_BREAK
 #line 1896 "python_lexer.cpp"
@@ -2939,7 +2939,7 @@ void yyfree (void * ptr )
 
 /* %ok-for-header */
 
-#line 407 "python_lexer.ll"
+#line 406 "python_lexer.ll"
 
 
 
@@ -3020,13 +3020,13 @@ void Lexer::indent()
 // (or 0 when the end of the string is reached)
 int Lexer::LexerInput( char *buf, int /*max_size*/ )
 {
-    int c = m_contents[ m_currentOffset++ ];
+    int c = m_contents[ m_currentOffset ];
 
     switch(c)
     {
     case '\r':
         c = '\n'; // only have one single line break character: '\n'
-        if ( m_contents[m_currentOffset + 1] == '\n' )
+        if ( m_contents[m_currentOffset+1] == '\n' )
         {
             m_currentOffset++;
             m_tokenEnd++;
@@ -3034,13 +3034,14 @@ int Lexer::LexerInput( char *buf, int /*max_size*/ )
 
         // fall through
     case '\n':
-
         m_locationTable->newline( m_currentOffset );
         break;
 
     default:
         break;
     }
+
+    m_currentOffset++;
 
     return (c == 0) ? 0 : (buf[0] = c, 1);
 }

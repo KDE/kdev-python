@@ -20,7 +20,6 @@
  *****************************************************************************/
 %}
 
-
 %option c++
 %option yyclass="python::Lexer"
 %option debug
@@ -483,13 +482,13 @@ void Lexer::indent()
 // (or 0 when the end of the string is reached)
 int Lexer::LexerInput( char *buf, int /*max_size*/ )
 {
-    int c = m_contents[ m_currentOffset++ ];
+    int c = m_contents[ m_currentOffset ];
 
     switch(c)
     {
     case '\r':
         c = '\n'; // only have one single line break character: '\n'
-        if ( m_contents[m_currentOffset + 1] == '\n' )
+        if ( m_contents[m_currentOffset+1] == '\n' )
         {
             m_currentOffset++;
             m_tokenEnd++;
@@ -497,13 +496,14 @@ int Lexer::LexerInput( char *buf, int /*max_size*/ )
 
         // fall through
     case '\n':
-
         m_locationTable->newline( m_currentOffset );
         break;
 
     default:
         break;
     }
+
+    m_currentOffset++;
 
     return (c == 0) ? 0 : (buf[0] = c, 1);
 }

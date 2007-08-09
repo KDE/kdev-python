@@ -106,8 +106,11 @@ TopDUContext* ContextBuilder::buildContexts(ast_node* node)
     }
     supportBuild(node);
     {
+        // allDeclarations always returned Zero as it looks for the Total Number Of definitions, as Depicted here.
+        // Currently it simply dispalys the localdeclarations in the topcontext, 
+        // def a():\n\tpass\ndef b():\n\tpass returns 2 Declarations.
         DUChainReadLocker lock(DUChain::lock());
-        kDebug() << "built top-level context with" << topLevelContext->allDeclarations(KTextEditor::Cursor()).size() << "declarations and" << topLevelContext->childContexts().size() << "Contexts";
+        kDebug() << "built top-level context with" << topLevelContext->localDeclarations().count() << "declarations,"<<topLevelContext->localDefinitions().count()<<" Definitions and" << topLevelContext->childContexts().size() << "Contexts";
     }
     m_compilingContexts = false;
     return topLevelContext;

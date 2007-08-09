@@ -178,10 +178,8 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
     {
         kDebug()<<"No Declarations";
         Range* prior = m_editor->currentRange();
-//Seems some Issue here, in Class declraations
         Range* range = m_editor->createRange(newRange);
         m_editor->exitCurrentRange();
-//Issues is Assert as well.
         Q_ASSERT(m_editor->currentRange() == prior);
         if (isForward)
         {
@@ -209,7 +207,10 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
         {
             declaration = specialDeclaration<Declaration>(range, scope );
         }
-
+        if(name)
+        {
+            declaration->setIdentifier(id.last());
+        }
         if (isDefinition)
             declaration->setDeclarationIsDefinition(true);
 

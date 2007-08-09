@@ -74,6 +74,10 @@ TopDUContext* ContextBuilder::buildContexts(ast_node* node)
     {
         DUChainWriteLocker lock(DUChain::lock());
         topLevelContext = DUChain::self()->chainForDocument(m_url);
+        //Counts the Number Of Chains in the Given document.
+        /*QList< TopDUContext * > toplevelcontextchains;
+        toplevelcontextchains = DUChain::self()->chainsForDocument(m_url);
+        kDebug()<<toplevelcontextchains.count();*/
         if (topLevelContext)
         {
             kDebug() << "ContextBuilder::buildContexts: recompiling";
@@ -134,6 +138,10 @@ KDevelop::DUContext* ContextBuilder::buildSubContexts(const KUrl& url, ast_node 
 
 void ContextBuilder::supportBuild(ast_node *node, DUContext* context)
 {
+    if(!m_session->get(node))
+    {
+        kDebug()<<"No Context Found matching with the node";
+    }
     openContext( context ? context : m_session->get(node));
     m_editor->setCurrentUrl(currentContext()->url());
     m_editor->setCurrentRange(currentContext()->textRangePtr());
@@ -144,7 +152,7 @@ void ContextBuilder::supportBuild(ast_node *node, DUContext* context)
 
 void ContextBuilder::visit_classdef(classdef_ast* node)
 {
-    kDebug() << "Visiting Class Declaration";
+    kDebug()<<"Visiting Class Declaration";
     openContext(node, DUContext::Class, identifierForName(node->class_name));
     visit_node(node->class_suite);
     closeContext();

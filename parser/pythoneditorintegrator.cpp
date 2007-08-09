@@ -53,15 +53,13 @@ Cursor PythonEditorIntegrator::findPosition( parser::token_type const & token, E
     kDebug() << "Finding position for offset:" << offset  << m_session->contents()[offset];
     m_session->positionAt((edge == BackEdge) ? token.end : token.begin, &line, &column);
     kDebug() << "Found position:" << line << column;
-    return Cursor(line+1, column+1);
+    return Cursor(line, column);
 }
 
 Range PythonEditorIntegrator::findRange( ast_node * node, RangeEdge edge )
 {
     kDebug() << "Finding Range";
     Q_UNUSED(edge);
-    kDebug() << tokenToString(node->start_token) ;
-    kDebug() << tokenToString(node->end_token) ;
     return Range(findPosition(node->start_token, FrontEdge), findPosition(node->end_token, BackEdge));
 }
 

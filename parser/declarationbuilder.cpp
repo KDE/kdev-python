@@ -130,7 +130,6 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
     Range newRange = m_editor->findRange(rangeNode);
     QualifiedIdentifier id;
     id = identifierForName(name);
-    kDebug()<<"ID:"<<id;
     Declaration* declaration = 0;
     if (recompiling())
     {
@@ -206,9 +205,14 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
         {
             declaration = specialDeclaration<ClassMemberDeclaration>(range );
         }
+        else
+        {
+            declaration = specialDeclaration<Declaration>(range, scope );
+        }
 
         if (isDefinition)
-        declaration->setDeclarationIsDefinition(true);
+            declaration->setDeclarationIsDefinition(true);
+
         switch (currentContext()->type())
         {
         case DUContext::Global:

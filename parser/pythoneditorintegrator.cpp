@@ -48,10 +48,11 @@ Cursor PythonEditorIntegrator::findPosition( std::size_t token, Edge edge ) cons
 Cursor PythonEditorIntegrator::findPosition( parser::token_type const & token, Edge edge ) const
 {
     std::size_t line, column;
-    size_t index = m_session->token_stream->index();
 
+    std::size_t offset = ( (edge == BackEdge) ? token.end : token.begin );
+    kDebug() << "Finding position for offset:" << offset  << m_session->contents()[offset];
     m_session->positionAt((edge == BackEdge) ? token.end : token.begin, &line, &column);
-    return Cursor(line, column);
+    return Cursor(line+1, column+1);
 }
 
 Range PythonEditorIntegrator::findRange( ast_node * node, RangeEdge edge )
@@ -76,7 +77,7 @@ Range PythonEditorIntegrator::findRange( parser::token_type const & token )
 QString PythonEditorIntegrator::tokenToString(std::size_t token) const
 {
     parser::token_type const & t = m_session->token_stream->token(token);
-    size_t tokenLength = t.end - t.begin;
+    size_t tokenLength = t.end - t.begin + 1;
     char *tokenValue = new char[tokenLength+1];
     strncpy(tokenValue, m_session->m_parser->tokenText(t.begin), tokenLength);
     tokenValue[tokenLength] = 0;

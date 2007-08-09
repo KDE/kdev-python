@@ -211,7 +211,7 @@ namespace python
 -- Function variable Arguement List
     func_def=func_def (
     ?[: yytoken != Token_RPAREN  && LA(2).kind == Token_IDENTIFIER:] (fun_pos_param = fun_pos_param )
-    | 0 
+    | 0
     )
 -> varargslist ;;
 
@@ -225,7 +225,7 @@ namespace python
 -> func_def ;;
 
 
--- Function parameter Defintion 
+-- Function parameter Defintion
     fpdef=fpdef ( EQUAL fp_def_test=test | 0 )
 -> fp_def ;;
 
@@ -243,13 +243,13 @@ namespace python
 -> fplist ;;
 
 -- A statement could be simple statement/ a compont statement OR just a Linebreak
-    simple_stmt = simple_stmt 
-    | compound_stmt = compound_stmt 
+    simple_stmt = simple_stmt
+    | compound_stmt = compound_stmt
     | LINEBREAK
 -> stmt ;;
 
 -- simple statement
-   #small_stmt = small_stmt 
+   #small_stmt = small_stmt
     ( SEMICOLON [: if( yytoken == Token_LINEBREAK || yytoken == Token_DEDENT) { break;} :] #small_stmt = small_stmt )*  LINEBREAK
 -> simple_stmt ;;
 
@@ -282,7 +282,7 @@ namespace python
    | RSHIFTEQ       [: (*yynode)->augassign_eq = python::eq_rshift; :]
    | DOUBLESTAREQ   [: (*yynode)->augassign_eq = python::eq_doublestar; :]
    | DOUBLESLASHEQ  [: (*yynode)->augassign_eq = python::eq_doubleslash;:]
--> augassign [ 
+-> augassign [
     member variable augassign_eq: python::augassign_eq_enum; ];;
 
    PRINT (#print_args=test ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]#print_args=test )*
@@ -295,10 +295,10 @@ namespace python
    PASS
 -> pass_stmt ;;
 
-   break_stmt=break_stmt 
-    | continue_stmt=continue_stmt 
-    | return_stmt=return_stmt 
-    | raise_stmt=raise_stmt 
+   break_stmt=break_stmt
+    | continue_stmt=continue_stmt
+    | return_stmt=return_stmt
+    | raise_stmt=raise_stmt
     | yield_stmt=yield_stmt
 -> flow_stmt ;;
 
@@ -317,7 +317,7 @@ namespace python
    RAISE ( type=test ( COMMA value=test ( COMMA traceback=test | 0 ) | 0 ) | 0 )
 -> raise_stmt ;;
 
-   import_import=import_name 
+   import_import=import_name
     | import_from=import_from
 -> import_stmt ;;
 
@@ -399,7 +399,7 @@ namespace python
    | UNEQUAL    [: (*yynode)->comp_operator = python::op_unequal;   :]
    | IN         [: (*yynode)->comp_operator = python::op_in;        :]
    | NOT IN     [: (*yynode)->comp_operator = python::op_not_in;    :]
-   | IS (NOT    [: (*yynode)->comp_operator = python::op_is_not;    :] 
+   | IS (NOT    [: (*yynode)->comp_operator = python::op_is_not;    :]
         | 0     [: (*yynode)->comp_operator = python::op_is;        :]
     )
 -> comp_op [
@@ -420,19 +420,19 @@ namespace python
 
     LSHIFT      [: (*yynode)->shift_operator = python::op_lshift;   :]
     | RSHIFT    [: (*yynode)->shift_operator = python::op_rshift;   :]
--> shift_op [ 
+-> shift_op [
     member variable shift_operator: python::shift_operator_enum; ];;
 
-   arith_term=term 
+   arith_term=term
     ((#arith_op_list = arith_op #arith_term_list=term )+ | 0)
 -> arith_expr ;;
 
     PLUS        [: (*yynode)->arith_operator = python::op_plus;     :]
     | MINUS     [: (*yynode)->arith_operator = python::op_minus;    :]
--> arith_op [ 
+-> arith_op [
     member variable arith_operator: python::arith_operator_enum; ] ;;
 
-   factor=factor 
+   factor=factor
     ((#term_op_list = term_op #factor_list=factor )+ | 0)
 -> term ;;
 
@@ -440,7 +440,7 @@ namespace python
     | SLASH     [: (*yynode)->term_operator = python::op_slash;     :]
     | MODULO    [: (*yynode)->term_operator = python::op_modulo;    :]
     | DOUBLESLASH [: (*yynode)->term_operator = python::op_doubleslash; :]
--> term_op [ 
+-> term_op [
     member variable term_operator: python::term_operator_enum; ];;
 
    ( fact_op=fact_op) factor=factor | power=power
@@ -449,7 +449,7 @@ namespace python
     PLUS        [: (*yynode)->factor_operator = python::op_factor_plus;     :]
     | MINUS     [: (*yynode)->factor_operator = python::op_factor_minus;    :]
     | TILDE     [: (*yynode)->factor_operator = python::op_factor_tilde ;   :]
--> fact_op [ 
+-> fact_op [
     member variable factor_operator: python::factor_operator_enum;   ];;
 
    ( atom=atom )
@@ -598,7 +598,7 @@ void parser::tokenize( char *contents )
             t.kind = kind;
             t.begin = lexer.tokenBegin();
             t.end = lexer.tokenEnd();
-            std::cerr<<t.kind<<std::endl;
+            std::cerr<<t.kind<<  std::endl;
             while(lexer.dedentationLevel()>1)
             {
                 parser::token_type &t = this->token_stream->next();
@@ -622,9 +622,6 @@ void parser::tokenize( char *contents )
             std::cerr<<t.kind<<std::endl;
             kind = x;
         }
-        std::cerr << kind;
-        std::cerr << lexer.YYText() << std::endl; //" "; // debug output
-
         if ( !kind ) // when the lexer returns 0, the end of file is reached
             kind = parser::Token_EOF;
 
@@ -632,6 +629,7 @@ void parser::tokenize( char *contents )
         t.kind = kind;
         t.begin = lexer.tokenBegin();
         t.end = lexer.tokenEnd();
+        std::cerr << kind << "|" << lexer.YYText() << "|" << lexer.tokenBegin() << "|" << m_contents[lexer.tokenBegin()] << "|" << lexer.tokenEnd() << "|" << m_contents[lexer.tokenEnd()] << std::endl; //" "; // debug output
     }
     while ( kind != parser::Token_EOF );
 

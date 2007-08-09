@@ -56,7 +56,7 @@ macro(GET_PARSER_SRCS _srcsList)
         add_custom_command(
             OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/python_lexer.ll"
             MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/parser/python_lexer.ll"
-            COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different 
+            COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
                    "${CMAKE_SOURCE_DIR}/parser/python_lexer.ll"
                    "${CMAKE_CURRENT_BINARY_DIR}/python_lexer.ll"
             )
@@ -81,7 +81,7 @@ macro(GET_PARSER_SRCS _srcsList)
             ${CMAKE_SOURCE_DIR}/parser/generated/python_visitor.cpp
             ${CMAKE_SOURCE_DIR}/parser/generated/python_default_visitor.cpp
             ${CMAKE_SOURCE_DIR}/parser/generated/python_lexer.cpp )
-    
+
     endif(KDEVPG_FOUND AND FLEX_FOUND)
 endmacro(GET_PARSER_SRCS)
 
@@ -95,7 +95,7 @@ set(kdevpythonlanguagesupport_PART_SRCS
     parser/parsesession.cpp
     parser/contextbuilder.cpp
     parser/pythoneditorintegrator.cpp
-    parser/declarationbuilder.cpp
+
     ${parser_SRCS} ${parser_STAT_SRCS}
 )
 

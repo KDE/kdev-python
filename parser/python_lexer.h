@@ -54,7 +54,7 @@ public:
     void setDedentationLevel(int);
     char *contents()         { return m_contents;   }
     std::size_t tokenBegin() { return m_tokenBegin; }
-    std::size_t tokenEnd()   { return m_tokenEnd;   }
+    std::size_t tokenEnd()   { return m_tokenEnd-1;   }
 
 protected:
     // custom input, replacing the Flex default input stdin

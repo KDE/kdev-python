@@ -103,13 +103,13 @@ TopDUContext* ContextBuilder::buildContexts(ast_node* node)
     supportBuild(node);
     {
         DUChainReadLocker lock(DUChain::lock());
-        kDebug() << "built top-level context with" << topLevelContext->allDeclarations(KTextEditor::Cursor()).size() << "declarations";
+        kDebug() << "built top-level context with" << topLevelContext->allDeclarations(KTextEditor::Cursor()).size() << "declarations and" << topLevelContext->childContexts().size() << "Contexts";
     }
     m_compilingContexts = false;
     return topLevelContext;
 }
 
-KDevelop::DUContext* ContextBuilder::buildSubContexts(const KUrl& url, ast_node *node, KDevelop::DUContext* parent) 
+KDevelop::DUContext* ContextBuilder::buildSubContexts(const KUrl& url, ast_node *node, KDevelop::DUContext* parent)
 {
     m_compilingContexts = true;
     m_recompiling = false;
@@ -122,7 +122,7 @@ KDevelop::DUContext* ContextBuilder::buildSubContexts(const KUrl& url, ast_node 
         closeContext();
     }
     m_compilingContexts = false;
-    if( m_session->get(node) == parent ) 
+    if( m_session->get(node) == parent )
     {
         kDebug() << "Error in ContextBuilder::buildSubContexts(...): du-context was not replaced with new one";
         DUChainWriteLocker lock(DUChain::lock());
@@ -158,6 +158,7 @@ void ContextBuilder::openContext(DUContext* newContext)
 
 DUContext* ContextBuilder::openContext(ast_node* rangeNode, DUContext::ContextType type, std::size_t identifier)
 {
+    kDebug() << "Compiling contexts?" << m_compilingContexts;
     if (m_compilingContexts)
     {
         DUContext* ret = openContextInternal(m_editor->findRange(rangeNode), type, identifier ? identifierForName(identifier) : QualifiedIdentifier());
@@ -195,13 +196,13 @@ DUContext* ContextBuilder::openContext(ast_node* rangeNode, DUContext::ContextTy
 
 DUContext* ContextBuilder::openContext(ast_node* fromRange, ast_node* toRange, DUContext::ContextType type, std::size_t identifier)
 {
-    if (m_compilingContexts) 
+    if (m_compilingContexts)
     {
         DUContext* ret = openContextInternal(m_editor->findRange(fromRange, toRange), type, identifier ? identifierForName(identifier) : QualifiedIdentifier());
         m_session->put(fromRange,ret);
         return ret;
     }
-    else 
+    else
     {
         openContext(m_session->get(fromRange));
         m_editor->setCurrentRange(currentContext()->textRangePtr());
@@ -223,12 +224,12 @@ DUContext* ContextBuilder::openContextInternal(const Range& range, DUContext::Co
             Range translated = range;
             if (m_editor->smart())
                 translated = m_editor->smart()->translateFromRevision(translated);
-            for (; nextContextIndex() < childContexts.count(); ++nextContextIndex()) 
+            for (; nextContextIndex() < childContexts.count(); ++nextContextIndex())
             {
                 DUContext* child = childContexts.at(nextContextIndex());
                 if (child->textRange().start() > translated.end() && child->smartRange())
                 break;
-                if (child->type() == type && child->localScopeIdentifier() == identifier && child->textRange() == translated) 
+                if (child->type() == type && child->localScopeIdentifier() == identifier && child->textRange() == translated)
                 {
                     ret = child;
                     readLock.unlock();
@@ -240,13 +241,13 @@ DUContext* ContextBuilder::openContextInternal(const Range& range, DUContext::Co
                 }
             }
         }
-        if (!ret) 
+        if (!ret)
         {
             readLock.unlock();
             DUChainWriteLocker writeLock(DUChain::lock());
             ret = new DUContext(m_editor->createRange(range), m_contextStack.isEmpty() ? 0 : currentContext());
             ret->setType(type);
-            if (!identifier.isEmpty()) 
+            if (!identifier.isEmpty())
             {
                 ret->setLocalScopeIdentifier(identifier);
                 if (type == DUContext::Class || type == DUContext::Namespace)

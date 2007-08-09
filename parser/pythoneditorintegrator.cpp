@@ -52,6 +52,7 @@ Cursor PythonEditorIntegrator::findPosition( parser::token_type const & token, E
     std::size_t offset = ( (edge == BackEdge) ? token.end : token.begin );
     kDebug() << "Finding position for offset:" << offset  << m_session->contents()[offset];
     m_session->positionAt((edge == BackEdge) ? token.end : token.begin, &line, &column);
+    kDebug() << "Found position:" << line << column;
     return Cursor(line+1, column+1);
 }
 

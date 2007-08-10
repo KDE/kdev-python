@@ -35,6 +35,7 @@
 
 #include <icore.h>
 #include <ilanguagecontroller.h>
+#include <iplugincontroller.h>
 #include <ilanguage.h>
 #include <idocument.h>
 #include <backgroundparser.h>
@@ -52,6 +53,7 @@ PythonLanguageSupport::PythonLanguageSupport( QObject* parent, const QStringList
         KDevelop::ILanguageSupport()
 {
     KDEV_USE_EXTENSION_INTERFACE( KDevelop::ILanguageSupport )
+    core()->pluginController()->loadPlugin("kdevduchainview");
     connect( core()->documentController(),
              SIGNAL( documentStateChanged( KDevelop::IDocument* ) ),
              this, SLOT( documentChanged( KDevelop::IDocument* ) ) );

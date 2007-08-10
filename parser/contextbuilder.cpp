@@ -110,7 +110,8 @@ TopDUContext* ContextBuilder::buildContexts(ast_node* node)
         // Currently it simply dispalys the localdeclarations in the topcontext, 
         // def a():\n\tpass\ndef b():\n\tpass returns 2 Declarations.
         DUChainReadLocker lock(DUChain::lock());
-        kDebug() << "built top-level context with" << topLevelContext->localDeclarations().count() << "declarations,"<<topLevelContext->localDefinitions().count()<<" Definitions and" << topLevelContext->childContexts().size() << "Contexts";
+        foreach(DUContext* context, topLevelContext->childContexts());
+        kDebug() << "built top-level context with" << topLevelContext->localDeclarations().count() << "declarations,"<<topLevelContext->localDefinitions().count()<<" Definitions and" << topLevelContext->childContexts().size() << "Child-Contexts";
     }
     m_compilingContexts = false;
     return topLevelContext;

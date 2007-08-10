@@ -96,6 +96,7 @@ set(kdevpythonlanguagesupport_PART_SRCS
     parser/contextbuilder.cpp
     parser/pythoneditorintegrator.cpp
     parser/declarationbuilder.cpp
+    parser/usebuilder.cpp
     ${parser_SRCS} ${parser_STAT_SRCS}
 )
 

@@ -1,0 +1,28 @@
+#ifndef DUMPCHAIN_H
+#define DUMPCHAIN_H
+
+#include "python_default_visitor.h"
+
+class ParseSession;
+
+namespace KDevelop
+{
+    class DUContext;
+}
+
+using namespace python;
+
+class DumpChain: public dafault_visitor
+{
+public:
+    DumpChain();
+    virtual ~DumpChain();
+    void dump(ast_node *node, ParseSession* session = 0);
+    void dump(KDevelop::DUContext* context, bool imported = false);
+    virtual void visit_node(ast_node *node);
+
+private:
+    class PythonEditorIntegrator* m_editor;
+};
+
+#endif

@@ -4,6 +4,7 @@
 #include "python_default_visitor.h"
 
 class ParseSession;
+class PythonEditorIntegrator;
 
 namespace KDevelop
 {
@@ -12,17 +13,17 @@ namespace KDevelop
 
 using namespace python;
 
-class DumpChain: public dafault_visitor
+class DumpChain: public default_visitor
 {
 public:
     DumpChain();
     virtual ~DumpChain();
     void dump(ast_node *node, ParseSession* session = 0);
     void dump(KDevelop::DUContext* context, bool imported = false);
-    virtual void visit_node(ast_node *node);
+    //virtual void visit_node(ast_node *node);
 
 private:
-    class PythonEditorIntegrator* m_editor;
+    PythonEditorIntegrator* m_editor;
 };
 
 #endif

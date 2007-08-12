@@ -64,7 +64,7 @@ void DumpChain::visit_node(ast_node *node)
                 parser::token_type const &tok( m_editor->parseSession()->token_stream->token((int) a) );
                 if( !nodeText.isEmpty() )
                     nodeText += ' ';
-                //nodeText += QByteArray( tok.text+tok.position, tok.size );
+                nodeText += QByteArray( m_editor->parseSession()->m_parser->tokenText(a) , tok.end - tok.begin );
             }
             if( !nodeText.isEmpty() ) nodeText = "\"" + nodeText + "\"";
             kDebug() <<names[node->kind]
@@ -94,16 +94,16 @@ void DumpChain::dump( DUContext * context, bool imported )
 {
     if( !context )
         return;
-    if (!imported) 
+    if (!imported)
     {
-        foreach (Declaration* dec, context->localDeclarations()) 
+        foreach (Declaration* dec, context->localDeclarations())
         {
             kDebug()<<dec->toString()<<" ["<<dec->qualifiedIdentifier()<< "]  "<<dec->textRange()<< ", "<< (dec->isDefinition() ? "defined, " : (dec->definition() ? "" : "no definition, "));
             if (dec->definition())
                 kDebug()<<"Definition: " << dec->definition()->textRange() << endl;
         }
     }
-    if (!imported) 
+    if (!imported)
     {
         foreach (DUContextPointer parent, context->importedParentContexts()) 
         {

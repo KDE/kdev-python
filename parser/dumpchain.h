@@ -43,10 +43,8 @@ public:
     void dump(ast_node *node, ParseSession* session = 0);
     void dump(KDevelop::DUContext* context, bool imported = false);
     virtual void visit_node(ast_node *node);
-    ParseSession* parseSession() const;
 
 private:
-    ParseSession* m_session;
     PythonEditorIntegrator* m_editor;
 };
 

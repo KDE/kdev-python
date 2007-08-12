@@ -195,17 +195,17 @@ DUContext* ContextBuilder::openContext(ast_node* rangeNode, DUContext::ContextTy
 {
     if (m_compilingContexts)
     {
-        kDebug() << "Creating ret";
+        //kDebug() << "Creating ret";
         const Range& m_range = m_editor->findRange(rangeNode);
-        kDebug() << "Opening ContextInternal";
+        //kDebug() << "Opening ContextInternal";
         DUContext* ret = openContextInternal(m_range, type, identifier);
-        kDebug() << "Associating context" ;
+        //kDebug() << "Associating context" ;
         m_session->put(rangeNode,ret);
         return ret;
     }
     else
     {
-        kDebug() << "Opening Context associated with node";
+        //kDebug() << "Opening Context associated with node";
         openContext(m_session->get(rangeNode));
         m_editor->setCurrentRange(currentContext()->textRangePtr());
         return currentContext();
@@ -230,7 +230,7 @@ DUContext* ContextBuilder::openContext(ast_node* fromRange, ast_node* toRange, D
 
 DUContext* ContextBuilder::openContextInternal(const Range& range, DUContext::ContextType type, const QualifiedIdentifier& identifier)
 {
-    kDebug() << "OpenContextInternal";
+    //kDebug() << "OpenContextInternal";
     Q_ASSERT(m_compilingContexts);
     DUContext* ret = 0L;
     {
@@ -294,6 +294,8 @@ void ContextBuilder::closeContext()
 void ContextBuilder::visit_funcdef(funcdef_ast *node)
 {
     kDebug() << "Visiting Function Definition";
+    if(currentContext())
+        kDebug()<<"*******Existing Contexts Cited******";
     openContext(node, DUContext::Function, identifierForName(node->func_name));
     visit_node(node->fun_suite);
     closeContext();

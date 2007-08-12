@@ -58,7 +58,7 @@ Cursor PythonEditorIntegrator::findPosition( parser::token_type const & token, E
 
 Range PythonEditorIntegrator::findRange( ast_node * node, RangeEdge edge )
 {
-    kDebug() << "Finding Range";
+    //kDebug() << "Finding Range";
     Q_UNUSED(edge);
     return Range(findPosition(node->start_token, FrontEdge), findPosition(node->end_token, BackEdge));
 }

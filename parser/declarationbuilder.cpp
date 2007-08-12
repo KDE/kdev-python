@@ -176,7 +176,7 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
     }
     if (!declaration)
     {
-        kDebug()<<"No Declarations";
+        //kDebug()<<"No Declarations";
         Range* prior = m_editor->currentRange();
         Range* range = m_editor->createRange(newRange);
         m_editor->exitCurrentRange();
@@ -187,7 +187,7 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
         }
         else if (isFunction) 
         {
-            kDebug()<<"Is a Function";
+            //kDebug()<<"Is a Function";
             if (scope == Declaration::ClassScope) 
             {
                 declaration = specialDeclaration<ClassFunctionDeclaration>( range );
@@ -217,10 +217,11 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
         switch (currentContext()->type())
         {
         case DUContext::Global:
-            kDebug()<<"Global Context";
+            kDebug()<<"Found Declaration::Global Context";
             SymbolTable::self()->addDeclaration(declaration);
             break;
         case DUContext::Class:
+            kDebug()<<"Found Declaration::Class Context";
             SymbolTable::self()->addDeclaration(declaration);
             break;
         default:
@@ -229,7 +230,7 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
     }
     setEncountered(declaration);
     m_declarationStack.push(declaration);
-    kDebug()<<m_declarationStack.top();
+    //kDebug()<<m_declarationStack.top();
     return declaration;
 }
 

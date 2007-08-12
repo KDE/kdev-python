@@ -26,6 +26,7 @@
 #include <parsesession.h>
 #include <topducontext.h>
 #include "pythoneditorintegrator.h"
+#include "dumpchain.h"
 #include <parsingenvironment.h>
 #include <ktexteditor/smartrange.h>
 #include <ktexteditor/smartinterface.h>
@@ -110,8 +111,13 @@ TopDUContext* ContextBuilder::buildContexts(ast_node* node)
         // Currently it simply dispalys the localdeclarations in the topcontext, 
         // def a():\n\tpass\ndef b():\n\tpass returns 2 Declarations.
         DUChainReadLocker lock(DUChain::lock());
-        foreach(DUContext* context, topLevelContext->childContexts());
+        //foreach(DUContext* context, topLevelContext->childContexts());
         kDebug() << "built top-level context with" << topLevelContext->localDeclarations().count() << "declarations,"<<topLevelContext->localDefinitions().count()<<" Definitions and" << topLevelContext->childContexts().size() << "Child-Contexts";
+        if( m_recompiling )
+        {
+            DumpChain dump;
+            dump.dump(topLevelContext);
+        }
     }
     m_compilingContexts = false;
     return topLevelContext;

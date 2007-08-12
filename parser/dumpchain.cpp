@@ -53,6 +53,36 @@ void DumpChain::dump( ast_node* node, ParseSession* session)
     visit_node(node);
 }
 
+void DumpChain::dump( DUContext * context, bool imported )
+{
+    if( !context )
+        return;
+    if (!imported)
+    {
+        if(!context->localDeclarations().count())
+            kDebug()<<"No Declarations in the context";
+        foreach (Declaration* dec, context->localDeclarations())
+        {
+            kDebug()<<dec->toString()<<" ["<<dec->qualifiedIdentifier()<< "]  "<<dec->textRange()<< ", "<< (dec->isDefinition() ? "defined, " : (dec->definition() ? "" : "no definition, "));
+            if (dec->definition())
+                kDebug()<<"Definition: " << dec->definition()->textRange() << endl;
+        }
+    }
+    if (!imported)
+    {
+        foreach (DUContextPointer parent, context->importedParentContexts()) 
+        {
+            kDebug()<<"===Dumping Parent Contexts===";
+            dump(parent.data(), true);
+        }
+        foreach (DUContext* child, context->childContexts())
+        {
+            kDebug()<<"===Dumping Child Contexts===";
+            dump(child);
+        }
+    }
+}
+
 void DumpChain::visit_node(ast_node *node)
 {
     if (node)
@@ -88,28 +118,4 @@ void DumpChain::visit_node(ast_node *node)
 DumpChain::~ DumpChain( )
 {
     delete m_editor;
-}
-
-void DumpChain::dump( DUContext * context, bool imported )
-{
-    if( !context )
-        return;
-    if (!imported)
-    {
-        foreach (Declaration* dec, context->localDeclarations())
-        {
-            kDebug()<<dec->toString()<<" ["<<dec->qualifiedIdentifier()<< "]  "<<dec->textRange()<< ", "<< (dec->isDefinition() ? "defined, " : (dec->definition() ? "" : "no definition, "));
-            if (dec->definition())
-                kDebug()<<"Definition: " << dec->definition()->textRange() << endl;
-        }
-    }
-    if (!imported)
-    {
-        foreach (DUContextPointer parent, context->importedParentContexts()) 
-        {
-            dump(parent.data(), true);
-        }
-        foreach (DUContext* child, context->childContexts())
-            dump(child);
-    }
 }

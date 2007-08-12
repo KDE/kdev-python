@@ -79,7 +79,7 @@ public:
     QStack<KDevelop::DUContext*> m_contextStack;
     int m_nextContextIndex;
 
-    KDevelop::QualifiedIdentifier identifierForName(std::size_t id);
+    const KDevelop::QualifiedIdentifier identifierForName(std::size_t id);
 
     KDevelop::DUContext* openContext(ast_node* range, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier);
     KDevelop::DUContext* openContext(ast_node* range, KDevelop::DUContext::ContextType type, std::size_t identifier = 0);

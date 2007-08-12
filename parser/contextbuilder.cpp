@@ -242,11 +242,13 @@ DUContext* ContextBuilder::openContextInternal(const Range& range, DUContext::Co
             Range translated = range;
             if (m_editor->smart())
                 translated = m_editor->smart()->translateFromRevision(translated);
+            if(!childContexts.count())
+                kDebug()<<"------No Child Contexts while Recompiling-----";
             for (; nextContextIndex() < childContexts.count(); ++nextContextIndex())
             {
                 DUContext* child = childContexts.at(nextContextIndex());
                 if (child->textRange().start() > translated.end() && child->smartRange())
-                break;
+                    break;
                 if (child->type() == type && child->localScopeIdentifier() == identifier && child->textRange() == translated)
                 {
                     ret = child;
@@ -263,12 +265,14 @@ DUContext* ContextBuilder::openContextInternal(const Range& range, DUContext::Co
         {
             readLock.unlock();
             DUChainWriteLocker writeLock(DUChain::lock());
+            if(currentContext())
+                kDebug()<<"Current Context is Empty, need to Create a New One";
             ret = new DUContext(m_editor->createRange(range), m_contextStack.isEmpty() ? 0 : currentContext());
             ret->setType(type);
             if (!identifier.isEmpty())
             {
                 ret->setLocalScopeIdentifier(identifier);
-                if (type == DUContext::Class || type == DUContext::Namespace)
+                if (type == DUContext::Class)
                 SymbolTable::self()->addContext(ret);
             }
         }
@@ -293,7 +297,7 @@ void ContextBuilder::closeContext()
 
 void ContextBuilder::visit_funcdef(funcdef_ast *node)
 {
-    kDebug() << "Visiting Function Definition";
+    kDebug() << "Visiting Function Definition for "<<identifierForName(node->func_name);
     if(currentContext())
         kDebug()<<"*******Existing Contexts Cited******";
     openContext(node, DUContext::Function, identifierForName(node->func_name));
@@ -306,11 +310,12 @@ ParseSession *ContextBuilder::parseSession() const
     return m_session;
 }
 
-QualifiedIdentifier ContextBuilder::identifierForName(std::size_t id)
+const QualifiedIdentifier ContextBuilder::identifierForName(std::size_t id)
 {
     QString name;
     name = m_editor->tokenToString(id);
     m_identifier = Identifier(name);
+    m_qidentifier.clear();
     m_qidentifier.push(m_identifier);
     return m_qidentifier;
 }

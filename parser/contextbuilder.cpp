@@ -265,7 +265,7 @@ DUContext* ContextBuilder::openContextInternal(const Range& range, DUContext::Co
         {
             readLock.unlock();
             DUChainWriteLocker writeLock(DUChain::lock());
-            if(currentContext())
+            if(!currentContext())
                 kDebug()<<"Current Context is Empty, need to Create a New One";
             ret = new DUContext(m_editor->createRange(range), m_contextStack.isEmpty() ? 0 : currentContext());
             ret->setType(type);
@@ -298,9 +298,14 @@ void ContextBuilder::closeContext()
 void ContextBuilder::visit_funcdef(funcdef_ast *node)
 {
     kDebug() << "Visiting Function Definition for "<<identifierForName(node->func_name);
-    if(currentContext())
-        kDebug()<<"*******Existing Contexts Cited******";
+    QualifiedIdentifier functionName = identifierForName(node->func_name);
+    if (functionName.count() >= 2) 
+    {
+        kDebug()<<"This is a Class Function";
+    }
+    m_importedParentContexts.append(currentContext());
     openContext(node, DUContext::Function, identifierForName(node->func_name));
+    addImportedContexts();
     visit_node(node->fun_suite);
     closeContext();
 }
@@ -318,4 +323,17 @@ const QualifiedIdentifier ContextBuilder::identifierForName(std::size_t id)
     m_qidentifier.clear();
     m_qidentifier.push(m_identifier);
     return m_qidentifier;
+}
+
+void ContextBuilder::addImportedContexts()
+{
+    if (m_compilingContexts && !m_importedParentContexts.isEmpty())
+    {
+        kDebug()<<"Adding Imported Contexts";
+        DUChainWriteLocker lock(DUChain::lock());
+        foreach (DUContext* imported, m_importedParentContexts)
+            currentContext()->addImportedParentContext(imported);
+
+        m_importedParentContexts.clear();
+    }
 }

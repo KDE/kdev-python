@@ -308,8 +308,10 @@ void ContextBuilder::visit_funcdef(funcdef_ast *node)
         m_importedParentContexts.append(currentContext());
     }
     openContext(node, DUContext::Function, identifierForName(node->func_name));
-    visit_node(node->fun_suite);
     addImportedContexts();
+    closeContext();
+    openContext(node,node->fun_suite, DUContext::Other );
+    visit_node(node->fun_suite);
     closeContext();
 }
 

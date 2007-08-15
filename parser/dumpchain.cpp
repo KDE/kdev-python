@@ -56,7 +56,7 @@ void DumpChain::dump( ast_node* node, ParseSession* session)
 
 void DumpChain::dump( DUContext * context, bool imported )
 {
-    kDebug()<<(imported ? "==import==> Context " : "New Context ") << context << "\"" <<  context->localScopeIdentifier() << "\" [" << context->scopeIdentifier() << "]" << context->textRange() << " " << (dynamic_cast<TopDUContext*>(context) ? "top-context" : "");
+    kDebug()<<(imported ? "==import==> Context " : "New Context ") << context << context->textRange() << " " << (dynamic_cast<TopDUContext*>(context) ? "top-context" : "");
     if( !context )
         return;
     if (!imported)

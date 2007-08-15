@@ -305,7 +305,6 @@ void ContextBuilder::visit_funcdef(funcdef_ast *node)
         //Locker Should be implemneted Before working on currentContext()
         // And Locker can only be called when m_compilingContexts.is set.
         DUChainReadLocker lock(DUChain::lock());
-        QList<DUContext*> parentContexts = currentContext()->findContexts(DUContext::Class, identifierForName(node->func_name));
         m_importedParentContexts.append(currentContext());
     }
     openContext(node, DUContext::Function, identifierForName(node->func_name));

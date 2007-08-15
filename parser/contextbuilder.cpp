@@ -118,6 +118,8 @@ TopDUContext* ContextBuilder::buildContexts(ast_node* node)
             DumpChain dump;
             dump.dump(topLevelContext);
         }
+        foreach(DUContext* contexts, topLevelContext->childContexts())
+                kDebug()<<"CHILD:"<<contexts->scopeIdentifier(true)<<contexts->textRange()<<"Parent:"<<(dynamic_cast<TopDUContext*>(contexts->parentContext()) ? "top-context" : "");
     }
     m_compilingContexts = false;
     return topLevelContext;
@@ -162,11 +164,16 @@ void ContextBuilder::supportBuild(ast_node *node, DUContext* context)
 
 void ContextBuilder::visit_classdef(classdef_ast* node)
 {
-    kDebug()<<"Visiting Class Declaration";
+    //kDebug()<<"Visiting Class Declaration";
     m_importedParentContexts.append(currentContext());
+    addImportedContexts();
+    if(m_compilingContexts)
+    {
+        DUChainReadLocker lock(DUChain::lock());
+        kDebug() << "Current Context " << currentContext()->scopeIdentifier(true) << " range " << currentContext()->textRange() << " in " << currentContext()->url() << endl;
+    }
     openContext(node, DUContext::Class, identifierForName(node->class_name));
     visit_node(node->class_suite);
-    addImportedContexts();
     closeContext();
 }
 
@@ -178,7 +185,6 @@ void ContextBuilder::openContext(DUContext* newContext)
 
 DUContext* ContextBuilder::openContext(ast_node* rangeNode, DUContext::ContextType type, std::size_t identifier)
 {
-    kDebug() << "Compiling contexts?" << m_compilingContexts;
     if (m_compilingContexts)
     {
         DUContext* ret = openContextInternal(m_editor->findRange(rangeNode), type, identifier ? identifierForName(identifier) : QualifiedIdentifier());
@@ -300,19 +306,20 @@ void ContextBuilder::closeContext()
 void ContextBuilder::visit_funcdef(funcdef_ast *node)
 {
     kDebug() << "Visiting Function Definition for "<<identifierForName(node->func_name);
+    m_importedParentContexts.append(currentContext());
+    addImportedContexts();
     if(m_compilingContexts)
     {
         //Locker Should be implemneted Before working on currentContext()
         // And Locker can only be called when m_compilingContexts.is set.
         DUChainReadLocker lock(DUChain::lock());
-        m_importedParentContexts.append(currentContext());
+        kDebug() << "Current Context " << currentContext()->scopeIdentifier(true) << " range " << currentContext()->textRange() << " in " << currentContext()->url() << endl;
     }
-    openContext(node, DUContext::Function, identifierForName(node->func_name));
-    addImportedContexts();
+    openContext(node, DUContext::Function, /*identifierForName(*/node->func_name/*)*/);
     closeContext();
-    openContext(node,node->fun_suite, DUContext::Other );
-    visit_node(node->fun_suite);
-    closeContext();
+//     openContext(node,node->fun_suite, DUContext::Other );
+//     visit_node(node->fun_suite);
+//     closeContext();
 }
 
 ParseSession *ContextBuilder::parseSession() const
@@ -334,7 +341,7 @@ void ContextBuilder::addImportedContexts()
 {
     if (m_compilingContexts && !m_importedParentContexts.isEmpty())
     {
-        kDebug()<<"Adding Imported Contexts";
+        //kDebug()<<"Adding Imported Contexts";
         DUChainWriteLocker lock(DUChain::lock());
         foreach (DUContext* imported, m_importedParentContexts)
             currentContext()->addImportedParentContext(imported);

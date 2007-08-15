@@ -80,7 +80,7 @@ Declaration* DeclarationBuilder::openDefinition(std::size_t name, ast_node* rang
 
 void DeclarationBuilder::visit_funcdef(funcdef_ast *node)
 {
-    kDebug()<<"Opening definiton for function";
+    //kDebug()<<"Opening definiton for function";
     openDefinition(node->func_name, node, true);
     m_functionDefinedStack.push(node->start_token);
     DeclarationBuilderBase::visit_funcdef(node);
@@ -89,7 +89,7 @@ void DeclarationBuilder::visit_funcdef(funcdef_ast *node)
 
 void DeclarationBuilder::visit_classdef(classdef_ast *node)
 {
-    openDefinition(node->class_name, node, false);
+    openDefinition(node->class_name, node);
     DeclarationBuilderBase::visit_classdef(node);
     //closeDeclaration();
 }
@@ -107,21 +107,21 @@ DeclarationType* DeclarationBuilder::specialDeclaration( KTextEditor::Range* ran
 
 Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* rangeNode, bool isFunction, bool isForward, bool isDefinition)
 {
-    kDebug()<<"Is Function:"<<isFunction;
+    //kDebug()<<"Is Function:"<<isFunction;
     DUChainWriteLocker lock(DUChain::lock());
-    Declaration::Scope scope = Declaration::GlobalScope;
+    Declaration::Scope scope /*= Declaration::GlobalScope*/;
     switch (currentContext()->type())
     {
         case DUContext::Class:
-            kDebug()<<"In a Class Context";
+            //kDebug()<<"In a Class Context";
             scope = Declaration::ClassScope;
             break;
         case DUContext::Function:
-            kDebug()<<"In a Function Context";
+            //kDebug()<<"In a Function Context";
             scope = Declaration::FunctionScope;
             break;
         case DUContext::Global:
-            kDebug()<<"Context is of type Global";
+            //kDebug()<<"Context is of type Global";
             break;
         default:
             kDebug()<<"Context is Neithea Class Nor a Function";
@@ -133,7 +133,7 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
     Declaration* declaration = 0;
     if (recompiling())
     {
-        kDebug()<<"Is Function While Recompiling:"<<isFunction;
+//         kDebug()<<"Is Function While Recompiling:"<<isFunction;
         QMutexLocker lock(m_editor->smart() ? m_editor->smart()->smartMutex() : 0);
         Range translated = newRange;
         if (m_editor->smart())
@@ -224,6 +224,10 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
             kDebug()<<"Found Declaration::Class Context";
             SymbolTable::self()->addDeclaration(declaration);
             break;
+        case DUContext::Function:
+            kDebug()<<"Found Declaration::Function Context";
+            SymbolTable::self()->addDeclaration(declaration);
+            break;
         default:
             break;
         }
@@ -231,6 +235,7 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
     setEncountered(declaration);
     m_declarationStack.push(declaration);
     //kDebug()<<m_declarationStack.top();
+    //kDebug()<<declaration->textRange();
     return declaration;
 }
 

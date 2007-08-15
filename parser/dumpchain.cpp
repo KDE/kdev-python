@@ -26,6 +26,7 @@
 
 #include <identifiedtype.h>
 #include <ducontext.h>
+#include <topducontext.h>
 #include <declaration.h>
 #include <definition.h>
 #include <duchainpointer.h>
@@ -55,6 +56,7 @@ void DumpChain::dump( ast_node* node, ParseSession* session)
 
 void DumpChain::dump( DUContext * context, bool imported )
 {
+    kDebug()<<(imported ? "==import==> Context " : "New Context ") << context << "\"" <<  context->localScopeIdentifier() << "\" [" << context->scopeIdentifier() << "]" << context->textRange() << " " << (dynamic_cast<TopDUContext*>(context) ? "top-context" : "");
     if( !context )
         return;
     if (!imported)

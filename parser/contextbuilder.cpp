@@ -163,8 +163,10 @@ void ContextBuilder::supportBuild(ast_node *node, DUContext* context)
 void ContextBuilder::visit_classdef(classdef_ast* node)
 {
     kDebug()<<"Visiting Class Declaration";
+    m_importedParentContexts.append(currentContext());
     openContext(node, DUContext::Class, identifierForName(node->class_name));
     visit_node(node->class_suite);
+    addImportedContexts();
     closeContext();
 }
 
@@ -298,15 +300,17 @@ void ContextBuilder::closeContext()
 void ContextBuilder::visit_funcdef(funcdef_ast *node)
 {
     kDebug() << "Visiting Function Definition for "<<identifierForName(node->func_name);
-    QualifiedIdentifier functionName = identifierForName(node->func_name);
-    if (functionName.count() >= 2) 
+    if(m_compilingContexts)
     {
-        kDebug()<<"This is a Class Function";
+        //Locker Should be implemneted Before working on currentContext()
+        // And Locker can only be called when m_compilingContexts.is set.
+        DUChainReadLocker lock(DUChain::lock());
+        QList<DUContext*> parentContexts = currentContext()->findContexts(DUContext::Class, identifierForName(node->func_name));
+        m_importedParentContexts.append(currentContext());
     }
-    m_importedParentContexts.append(currentContext());
     openContext(node, DUContext::Function, identifierForName(node->func_name));
-    addImportedContexts();
     visit_node(node->fun_suite);
+    addImportedContexts();
     closeContext();
 }
 

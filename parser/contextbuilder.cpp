@@ -262,7 +262,7 @@ DUContext* ContextBuilder::openContextInternal(const Range& range, DUContext::Co
                     ret = child;
                     readLock.unlock();
                     DUChainWriteLocker writeLock(DUChain::lock());
-                    ret->clearNamespaceAliases();
+                    //ret->clearNamespaceAliases();
                     ret->clearImportedParentContexts();
                     m_editor->setCurrentRange(ret->textRangePtr());
                     break;

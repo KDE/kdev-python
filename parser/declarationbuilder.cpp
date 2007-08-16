@@ -81,7 +81,7 @@ Declaration* DeclarationBuilder::openDefinition(std::size_t name, ast_node* rang
 void DeclarationBuilder::visit_funcdef(funcdef_ast *node)
 {
     //kDebug()<<"Opening definiton for function";
-    openDefinition(node->func_name, node, true);
+//     openDefinition(node->func_name, node, true);
     m_functionDefinedStack.push(node->start_token);
     DeclarationBuilderBase::visit_funcdef(node);
     m_functionDefinedStack.pop();

@@ -115,8 +115,8 @@ TopDUContext* ContextBuilder::buildContexts(ast_node* node)
         kDebug() << "built top-level context with" << topLevelContext->localDeclarations().count() << "declarations,"<<topLevelContext->localDefinitions().count()<<" Definitions and" << topLevelContext->childContexts().size() << "Child-Contexts";
         if( m_recompiling )
         {
-            DumpChain dump;
-            dump.dump(topLevelContext);
+/*            DumpChain dump;
+            dump.dump(topLevelContext);*/
         }
         foreach(DUContext* contexts, topLevelContext->childContexts())
                 kDebug()<<"CHILD:"<<contexts->scopeIdentifier(true)<<contexts->textRange()<<"Parent:"<<(dynamic_cast<TopDUContext*>(contexts->parentContext()) ? "top-context" : "");

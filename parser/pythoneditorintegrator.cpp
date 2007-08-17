@@ -60,12 +60,12 @@ Range PythonEditorIntegrator::findRange( ast_node * node, RangeEdge edge )
 {
     //kDebug() << "Finding Range";
     Q_UNUSED(edge);
-    return Range(findPosition(node->start_token, FrontEdge), findPosition(node->end_token, BackEdge));
+    return Range(findPosition(node->start_token, FrontEdge), findPosition(node->end_token -1, BackEdge));
 }
 
 Range PythonEditorIntegrator::findRange(ast_node* from, ast_node* to)
 {
-    return Range(findPosition(from->start_token, FrontEdge), findPosition(to->end_token, BackEdge));
+    return Range(findPosition(from->start_token, FrontEdge), findPosition(to->end_token - 1, BackEdge));
 }
 
 Range PythonEditorIntegrator::findRange( parser::token_type const & token )

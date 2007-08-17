@@ -36,11 +36,11 @@ public:
     UseBuilder(PythonEditorIntegrator* editor, const KUrl &url);
     ParseSession* parseSession() const;
     void buildUses(ast_node *node);
-    //virtual void openContext(KDevelop::DUContext* newContext);
-    //virtual void closeContext();
+    virtual void openContext(KDevelop::DUContext* newContext);
+    virtual void closeContext();
 private:
     ParseSession* m_session;
-    void newUse(std::size_t name);
+    void newUse(std::size_t name,ast_node* rangenode);
     inline int& nextUseIndex() 
     {
         return m_nextUseStack.top(); 

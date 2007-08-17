@@ -23,6 +23,7 @@ INCLUDE_DIRECTORIES(
     ${CMAKE_CURRENT_BINARY_DIR}
     ${KDEVPLATFORM_INCLUDE_DIR}/language/duchain
     parser
+    duchain
 )
 
 
@@ -86,6 +87,7 @@ macro(GET_PARSER_SRCS _srcsList)
 endmacro(GET_PARSER_SRCS)
 
 add_subdirectory(parser)
+add_subdirectory(duchain)
 
 get_parser_srcs(parser_SRCS)
 
@@ -93,11 +95,11 @@ set(kdevpythonlanguagesupport_PART_SRCS
     pythonlanguagesupport.cpp
     pythonparsejob.cpp
     parser/parsesession.cpp
-    parser/contextbuilder.cpp
-    parser/pythoneditorintegrator.cpp
-    parser/declarationbuilder.cpp
-    parser/usebuilder.cpp
-    parser/dumpchain.cpp
+    duchain/contextbuilder.cpp
+    duchain/pythoneditorintegrator.cpp
+    duchain/declarationbuilder.cpp
+    duchain/usebuilder.cpp
+    duchain/dumpchain.cpp
     ${parser_SRCS} ${parser_STAT_SRCS}
 )
 

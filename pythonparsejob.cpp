@@ -87,6 +87,15 @@ void PythonParseJob::setDUChain(TopDUContext * duChain)
 {
     m_duContext = duChain;
 }
+
+void PythonParseJob::setUpdatingContext( const TopDUContextPointer& context ) {
+    m_updatingContext = context;
+}
+
+TopDUContextPointer PythonParseJob::updatingContext() const {
+    return m_updatingContext;
+}
+
 void PythonParseJob::run()
 {
 

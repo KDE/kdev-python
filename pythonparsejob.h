@@ -32,6 +32,8 @@
 #include <ksharedptr.h>
 #include <ktexteditor/range.h>
 
+#include <duchainpointer.h>
+
 class PythonLanguageSupport;
 
 class ParseSession;
@@ -61,7 +63,10 @@ public:
     void setDUChain(KDevelop::TopDUContext* duChain);
     virtual KDevelop::TopDUContext* duChain() const;
 
-    void addIncludedFile(KDevelop::TopDUContext* duChain);
+    const KTextEditor::Range& textRangeToParse() const;
+
+    void setUpdatingContext( const KDevelop::TopDUContextPointer& context );
+    KDevelop::TopDUContextPointer updatingContext() const;
 
     PythonLanguageSupport* python() const;
     ParseSession* parseSession() const;
@@ -77,6 +82,8 @@ private:
     bool m_readFromDisk;
     KDevelop::TopDUContext* m_duContext;
     KUrl m_url;
+    KDevelop::TopDUContextPointer m_updatingContext;
+    KTextEditor::Range m_textRangeToParse;
 };
 
 #endif

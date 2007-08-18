@@ -30,6 +30,8 @@
 #include <parsingenvironment.h>
 #include <ktexteditor/smartrange.h>
 #include <ktexteditor/smartinterface.h>
+#include <ktexteditor/document.h>
+#include <smartconverter.h>
 #include <symboltable.h>
 
 using namespace KDevelop;
@@ -79,6 +81,14 @@ TopDUContext* ContextBuilder::buildContexts(ast_node* node)
         /*QList< TopDUContext * > toplevelcontextchains;
         toplevelcontextchains = DUChain::self()->chainsForDocument(m_url);
         kDebug()<<toplevelcontextchains.count();*/
+        if( topLevelContext && !topLevelContext->smartRange() && m_editor->smart() ) 
+        {
+            lock.unlock();
+            SmartConverter conv(m_editor, 0);
+            conv.convertDUChain(topLevelContext);
+            lock.lock();
+        }
+
         if (topLevelContext)
         {
             kDebug() << "ContextBuilder::buildContexts: recompiling";
@@ -89,6 +99,10 @@ TopDUContext* ContextBuilder::buildContexts(ast_node* node)
                 Q_ASSERT(topLevelContext->textRangePtr());
                 if (!topLevelContext->smartRange() && m_editor->smart())
                     topLevelContext->setTextRange(m_editor->topRange(PythonEditorIntegrator::DefinitionUseChain));
+                if (m_editor->currentDocument() && m_editor->smart() && topLevelContext->textRange() != m_editor->currentDocument()->documentRange()) {
+                    kDebug(9007) << "WARNING: Top-level context has wrong size: " << topLevelContext->textRange() << " should be: " << m_editor->currentDocument()->documentRange();
+                    Q_ASSERT(0);
+                }
             }
         }
         else
@@ -165,13 +179,13 @@ void ContextBuilder::supportBuild(ast_node *node, DUContext* context)
 void ContextBuilder::visit_classdef(classdef_ast* node)
 {
     //kDebug()<<"Visiting Class Declaration";
-    m_importedParentContexts.append(currentContext());
-    addImportedContexts();
     if(m_compilingContexts)
     {
         DUChainReadLocker lock(DUChain::lock());
         kDebug() << "Current Context " << currentContext()->scopeIdentifier(true) << " range " << currentContext()->textRange() << " in " << currentContext()->url() << endl;
     }
+    m_importedParentContexts.append(currentContext());
+    addImportedContexts();
     openContext(node, DUContext::Class, identifierForName(node->class_name));
     visit_node(node->class_suite);
     closeContext();
@@ -305,9 +319,7 @@ void ContextBuilder::closeContext()
 
 void ContextBuilder::visit_funcdef(funcdef_ast *node)
 {
-    kDebug() << "Visiting Function Definition for "<<identifierForName(node->func_name);
-    m_importedParentContexts.append(currentContext());
-    addImportedContexts();
+    //kDebug() << "Visiting Function Definition for "<<identifierForName(node->func_name);
     if(m_compilingContexts)
     {
         //Locker Should be implemneted Before working on currentContext()
@@ -315,8 +327,9 @@ void ContextBuilder::visit_funcdef(funcdef_ast *node)
         DUChainReadLocker lock(DUChain::lock());
         kDebug() << "Current Context " << currentContext()->scopeIdentifier(true) << " range " << currentContext()->textRange() << " in " << currentContext()->url() << endl;
     }
-    openContext(node, DUContext::Function, /*identifierForName(*/node->func_name/*)*/);
-    closeContext();
+    //openContext(node, DUContext::Function, identifierForName(node->func_name));
+    visit_node(node->fun_suite);
+    //closeContext();
 //     openContext(node,node->fun_suite, DUContext::Other );
 //     visit_node(node->fun_suite);
 //     closeContext();

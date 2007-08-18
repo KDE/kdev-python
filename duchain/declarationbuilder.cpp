@@ -81,9 +81,11 @@ Declaration* DeclarationBuilder::openDefinition(std::size_t name, ast_node* rang
 void DeclarationBuilder::visit_funcdef(funcdef_ast *node)
 {
     //kDebug()<<"Opening definiton for function";
-//     openDefinition(node->func_name, node, true);
     m_functionDefinedStack.push(node->start_token);
+    kDebug()<<"*****************ADDing Function Definition************************************";
+    openDefinition(node->func_name, node, true);
     DeclarationBuilderBase::visit_funcdef(node);
+    //closeDeclaration();
     m_functionDefinedStack.pop();
 }
 
@@ -109,7 +111,7 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
 {
     //kDebug()<<"Is Function:"<<isFunction;
     DUChainWriteLocker lock(DUChain::lock());
-    Declaration::Scope scope /*= Declaration::GlobalScope*/;
+    Declaration::Scope scope = Declaration::GlobalScope;
     switch (currentContext()->type())
     {
         case DUContext::Class:
@@ -122,14 +124,20 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
             break;
         case DUContext::Global:
             //kDebug()<<"Context is of type Global";
+            scope = Declaration::GlobalScope;
             break;
         default:
             kDebug()<<"Context is Neithea Class Nor a Function";
             break;
     }
     Range newRange = m_editor->findRange(rangeNode);
+    Q_ASSERT(newRange.start() != newRange.end());
+
     QualifiedIdentifier id;
     id = identifierForName(name);
+    Identifier lastId;
+    if( !id.isEmpty() )
+        lastId = id.last();
     Declaration* declaration = 0;
     if (recompiling())
     {
@@ -138,14 +146,17 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
         Range translated = newRange;
         if (m_editor->smart())
             translated = m_editor->smart()->translateFromRevision(translated);
+        Q_ASSERT(translated.start() != translated.end());
         kDebug()<<"Recompiling:"<<currentContext()->localDeclarations().count()<<"declarations found.";
         for (; nextDeclaration() < currentContext()->localDeclarations().count(); ++nextDeclaration()) 
         {
             Declaration* dec = currentContext()->localDeclarations().at(nextDeclaration());
-            if (dec->textRange().start() > translated.end() && dec->smartRange())
-                break;
-            if (dec->textRange() == translated && dec->scope() == scope &&
-                (dec->identifier().toString().isEmpty()) && dec->isDefinition() == isDefinition)
+//             if (dec->textRange().start() > translated.end() && dec->smartRange())
+//                 break;
+            if (dec->textRange() == translated &&
+          dec->scope() == scope &&
+          ((id.isEmpty() && dec->identifier().toString().isEmpty()) || (!id.isEmpty() && lastId == dec->identifier())) &&
+           dec->isDefinition() == isDefinition)
             {
                 if (isForward)
                 {
@@ -180,6 +191,7 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
         Range* prior = m_editor->currentRange();
         Range* range = m_editor->createRange(newRange);
         m_editor->exitCurrentRange();
+        Q_ASSERT(range->start() != range->end());
         Q_ASSERT(m_editor->currentRange() == prior);
         if (isForward)
         {

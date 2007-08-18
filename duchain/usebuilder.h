@@ -41,7 +41,7 @@ public:
 private:
     ParseSession* m_session;
     void newUse(std::size_t name,ast_node* rangenode);
-    inline int& nextUseIndex() 
+    inline int& nextUseIndex()
     {
         return m_nextUseStack.top(); 
     }

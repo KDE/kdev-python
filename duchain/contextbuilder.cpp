@@ -184,14 +184,27 @@ void ContextBuilder::visit_classdef(classdef_ast* node)
         DUChainReadLocker lock(DUChain::lock());
         kDebug() << "Current Context " << currentContext()->scopeIdentifier(true) << " range " << currentContext()->textRange() << " in " << currentContext()->url() << endl;
     }
-    m_importedParentContexts.append(currentContext());
-    addImportedContexts();
     openContext(node, DUContext::Class, identifierForName(node->class_name));
+    addImportedContexts();
     visit_node(node->testlist);
     visit_node(node->class_suite);
     closeContext();
 }
 
+void ContextBuilder::visit_compound_stmt(compound_stmt_ast *node)
+{
+    if(!node->classdef && !node->fucdef)
+    {
+        openContext(node, DUContext::Other);
+        addImportedContexts();
+        default_visitor::visit_compound_stmt(node);
+        closeContext();
+    }
+    else
+    {
+        default_visitor::visit_compound_stmt(node);
+    }
+}
 void ContextBuilder::openContext(DUContext* newContext)
 {
     m_contextStack.push(newContext);

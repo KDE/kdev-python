@@ -187,6 +187,7 @@ void ContextBuilder::visit_classdef(classdef_ast* node)
     m_importedParentContexts.append(currentContext());
     addImportedContexts();
     openContext(node, DUContext::Class, identifierForName(node->class_name));
+    visit_node(node->testlist);
     visit_node(node->class_suite);
     closeContext();
 }

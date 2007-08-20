@@ -72,6 +72,7 @@ void PythonLanguageSupport::documentChanged( KDevelop::IDocument* doc )
 }
 PythonLanguageSupport::~PythonLanguageSupport()
 {
+    core()->languageController()->backgroundParser()->clear(this);
 }
 
 KDevelop::ParseJob *PythonLanguageSupport::createParseJob(const KUrl &url)

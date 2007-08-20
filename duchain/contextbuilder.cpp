@@ -188,7 +188,7 @@ void ContextBuilder::visit_classdef(classdef_ast* node)
 
 void ContextBuilder::visit_compound_stmt(compound_stmt_ast *node)
 {
-    if(!node->classdef)
+    if(!node->classdef && !node->fucdef)
     {
         openContext(node, DUContext::Other);
         addImportedContexts();
@@ -197,10 +197,10 @@ void ContextBuilder::visit_compound_stmt(compound_stmt_ast *node)
     }
     else if(node->fucdef)
     {
-        openContext(node, DUContext::Function);
-        addImportedContexts();
+        //openContext(node, DUContext::Function);
+        //addImportedContexts();
         default_visitor::visit_compound_stmt(node);
-        closeContext();
+        //closeContext();
     }
     else
     {
@@ -210,10 +210,10 @@ void ContextBuilder::visit_compound_stmt(compound_stmt_ast *node)
 
 void ContextBuilder::visit_funcdef(funcdef_ast *node)
 {
-    //openContext(node->fun_suite,DUContext::Function,identifierForName(node->func_name));
-    //addImportedContexts();
+    openContext(node->fun_suite,DUContext::Function,identifierForName(node->func_name));
+    addImportedContexts();
     default_visitor::visit_funcdef(node);
-    //closeContext();
+    closeContext();
 }
 
 void ContextBuilder::visit_varargslist(varargslist_ast *node)

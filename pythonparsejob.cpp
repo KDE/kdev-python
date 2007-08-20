@@ -34,6 +34,8 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <klocale.h>
+#include "pythonhighlighting.h"
+#include "pythoneditorintegrator.h"
 #include "Thread.h"
 #include "pythonlanguagesupport.h"
 #include <parsejob.h>
@@ -143,6 +145,11 @@ void PythonParseJob::run()
 /*        ContextBuilder contextBuilder(m_session,m_url);
         m_duContext = contextBuilder.buildContexts(m_AST);*/
         kDebug() << "----Parsing Succeded---";//TODO: bind declarations to the code model
+        if( python() && declarationBuilder.m_editor->smart() )
+	{
+            QMutexLocker lock(declarationBuilder.m_editor->smart()->smartMutex());
+	    python()->codeHighlighting()->highlightDUChain( m_duContext );
+	}
     }
     else
     {

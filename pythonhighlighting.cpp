@@ -97,17 +97,24 @@ void PythonHighlighting::highlightDUChain(KDevelop::TopDUContext* context) const
 
 void PythonHighlighting::highlightDUChain(DUContext* context) const
 {
+
+    kDebug() << "Highlighting duchain";
     if (!context->smartRange())
+    {
+        kDebug() << "Ooops, no smart range, somethings broken";
         return;
+    }
+    kDebug() << "Highlighting declarations:" << context->localDeclarations();
     foreach (Declaration* dec, context->localDeclarations())
         highlightDeclaration(dec);
+    kDebug() << "Highlighting definitions:" << context->localDefinitions();
     foreach (Definition* def, context->localDefinitions())
         highlightDefinition(def);
+    kDebug() << "Highlighting child contexts:" << context->childContexts();
     foreach (DUContext* child, context->childContexts())
         highlightDUChain(child);
 }
 
-#include "pythonhighlighting.moc"
 
 PythonHighlighting::Types PythonHighlighting::typeForDeclaration(Declaration * dec) const
 {
@@ -138,3 +145,10 @@ void PythonHighlighting::highlightDeclaration(Declaration * declaration) const
     if (SmartRange* range = declaration->smartRange())
         range->setAttribute(attributeForType(typeForDeclaration(declaration), DeclarationContext));
 }
+
+void PythonHighlighting::highlightUse(KDevelop::Use* ) const
+{
+}
+
+#include "pythonhighlighting.moc"
+

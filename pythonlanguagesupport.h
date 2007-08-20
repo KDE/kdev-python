@@ -32,7 +32,10 @@ namespace KDevelop
 {
     class ParseJob;
     class IDocument;
+    class ICodeHighlighting;
 }
+class PythonHighlighting;
+
 class PythonLanguageSupport : public KDevelop::IPlugin, public KDevelop::ILanguageSupport
 {
 Q_OBJECT
@@ -46,8 +49,11 @@ public:
     /*Parsejob used by background parser to parse given Url*/
     KDevelop::ILanguage *language();
     /*The Language*/
+    KDevelop::ICodeHighlighting* codeHighlighting() const;
 private slots:
     void documentChanged( KDevelop::IDocument*);
+private:
+    PythonHighlighting* m_highlighting;
 };
 
 #endif

@@ -42,6 +42,7 @@
 #include <idocumentcontroller.h>
 
 #include "pythonparsejob.h"
+#include "pythonhighlighting.h"
 
 using namespace KDevelop;
 
@@ -54,6 +55,7 @@ PythonLanguageSupport::PythonLanguageSupport( QObject* parent, const QStringList
 {
     KDEV_USE_EXTENSION_INTERFACE( KDevelop::ILanguageSupport )
     core()->pluginController()->loadPlugin("kdevduchainview");
+    m_highlighting = new PythonHighlighting(this);
     connect( core()->documentController(),
              SIGNAL( documentStateChanged( KDevelop::IDocument* ) ),
              this, SLOT( documentChanged( KDevelop::IDocument* ) ) );
@@ -89,4 +91,10 @@ KDevelop::ILanguage *PythonLanguageSupport::language()
 {
     return core()->languageController()->language(name());
 }
+
+KDevelop::ICodeHighlighting* PythonLanguageSupport::codeHighlighting() const
+{
+    return m_highlighting;
+}
+
 #include "pythonlanguagesupport.moc"

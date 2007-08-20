@@ -109,7 +109,7 @@ void PythonParseJob::run()
         if ( !file.open( QIODevice::ReadOnly ) )
         {
             m_errorMessage = i18n( "Could not open file '%1'", m_document.path() );
-            kWarning() << k_funcinfo << "Could not open file" << m_document
+            kWarning() << "Could not open file" << m_document
                              << "(path" << m_document.path() << ")";
             return ;
         }

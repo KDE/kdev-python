@@ -94,6 +94,7 @@ get_parser_srcs(parser_SRCS)
 set(kdevpythonlanguagesupport_PART_SRCS
     pythonlanguagesupport.cpp
     pythonparsejob.cpp
+    pythonhighlighting.cpp
     parser/parsesession.cpp
     duchain/contextbuilder.cpp
     duchain/pythoneditorintegrator.cpp

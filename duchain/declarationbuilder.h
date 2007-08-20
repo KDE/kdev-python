@@ -52,7 +52,7 @@ public:
     virtual ~DeclarationBuilder();
 private:
     KDevelop::ForwardDeclaration* openForwardDeclaration(std::size_t name, ast_node* range);
-    KDevelop::Declaration* openDeclaration(std::size_t name, ast_node* range, bool isFunction = false, bool isForward = false, bool isDefinition = false);
+    KDevelop::Declaration* openDeclaration(std::size_t name, ast_node* range, bool isFunction = false);
     KDevelop::Declaration* openDefinition(std::size_t name, ast_node* range, bool isFunction = false);
     void closeDeclaration();
     void abortDeclaration();

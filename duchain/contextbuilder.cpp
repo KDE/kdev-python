@@ -179,11 +179,6 @@ void ContextBuilder::supportBuild(ast_node *node, DUContext* context)
 void ContextBuilder::visit_classdef(classdef_ast* node)
 {
     //kDebug()<<"Visiting Class Declaration";
-    if(m_compilingContexts)
-    {
-        DUChainReadLocker lock(DUChain::lock());
-        kDebug() << "Current Context " << currentContext()->scopeIdentifier(true) << " range " << currentContext()->textRange() << " in " << currentContext()->url() << endl;
-    }
     openContext(node, DUContext::Class, identifierForName(node->class_name));
     addImportedContexts();
     visit_node(node->testlist);
@@ -193,9 +188,16 @@ void ContextBuilder::visit_classdef(classdef_ast* node)
 
 void ContextBuilder::visit_compound_stmt(compound_stmt_ast *node)
 {
-    if(!node->classdef && !node->fucdef)
+    if(!node->classdef)
     {
         openContext(node, DUContext::Other);
+        addImportedContexts();
+        default_visitor::visit_compound_stmt(node);
+        closeContext();
+    }
+    else if(node->fucdef)
+    {
+        openContext(node, DUContext::Function);
         addImportedContexts();
         default_visitor::visit_compound_stmt(node);
         closeContext();
@@ -205,6 +207,23 @@ void ContextBuilder::visit_compound_stmt(compound_stmt_ast *node)
         default_visitor::visit_compound_stmt(node);
     }
 }
+
+void ContextBuilder::visit_funcdef(funcdef_ast *node)
+{
+    //openContext(node->fun_suite,DUContext::Function,identifierForName(node->func_name));
+    //addImportedContexts();
+    default_visitor::visit_funcdef(node);
+    //closeContext();
+}
+
+void ContextBuilder::visit_varargslist(varargslist_ast *node)
+{
+    openContext(node,DUContext::Other);
+    addImportedContexts();
+    default_visitor::visit_varargslist(node);
+    closeContext();
+}
+
 void ContextBuilder::openContext(DUContext* newContext)
 {
     m_contextStack.push(newContext);
@@ -329,24 +348,6 @@ void ContextBuilder::closeContext()
     m_contextStack.pop();
     m_nextContextStack.pop();
     m_editor->exitCurrentRange();
-}
-
-void ContextBuilder::visit_funcdef(funcdef_ast *node)
-{
-    //kDebug() << "Visiting Function Definition for "<<identifierForName(node->func_name);
-    if(m_compilingContexts)
-    {
-        //Locker Should be implemneted Before working on currentContext()
-        // And Locker can only be called when m_compilingContexts.is set.
-        DUChainReadLocker lock(DUChain::lock());
-        kDebug() << "Current Context " << currentContext()->scopeIdentifier(true) << " range " << currentContext()->textRange() << " in " << currentContext()->url() << endl;
-    }
-    //openContext(node, DUContext::Function, identifierForName(node->func_name));
-    visit_node(node->fun_suite);
-    //closeContext();
-//     openContext(node,node->fun_suite, DUContext::Other );
-//     visit_node(node->fun_suite);
-//     closeContext();
 }
 
 ParseSession *ContextBuilder::parseSession() const

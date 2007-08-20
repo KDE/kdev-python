@@ -68,25 +68,16 @@ DUContext* DeclarationBuilder::buildSubDeclarations(const KUrl& url, ast_node *n
     return top;
 }
 
-ForwardDeclaration * DeclarationBuilder::openForwardDeclaration(std::size_t name, ast_node * range)
-{
-    return static_cast<ForwardDeclaration*>(openDeclaration(name, range, false, true));
-}
-
 Declaration* DeclarationBuilder::openDefinition(std::size_t name, ast_node* rangeNode, bool isFunction)
 {
-    return openDeclaration(name, rangeNode, isFunction, false, true);
+    return openDeclaration(name, rangeNode, isFunction);
 }
 
 void DeclarationBuilder::visit_funcdef(funcdef_ast *node)
 {
     //kDebug()<<"Opening definiton for function";
-    m_functionDefinedStack.push(node->start_token);
-    kDebug()<<"*****************ADDing Function Definition************************************";
     openDefinition(node->func_name, node, true);
     DeclarationBuilderBase::visit_funcdef(node);
-    //closeDeclaration();
-    m_functionDefinedStack.pop();
 }
 
 void DeclarationBuilder::visit_classdef(classdef_ast *node)
@@ -107,7 +98,7 @@ DeclarationType* DeclarationBuilder::specialDeclaration( KTextEditor::Range* ran
     return new DeclarationType(range, (KDevelop::Declaration::Scope)scope, currentContext());
 }
 
-Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* rangeNode, bool isFunction, bool isForward, bool isDefinition)
+Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* rangeNode, bool isFunction)
 {
     //kDebug()<<"Is Function:"<<isFunction;
     DUChainWriteLocker lock(DUChain::lock());
@@ -142,6 +133,7 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
     if (recompiling())
     {
 //         kDebug()<<"Is Function While Recompiling:"<<isFunction;
+        //dec->isDefinition() == true;
         QMutexLocker lock(m_editor->smart() ? m_editor->smart()->smartMutex() : 0);
         Range translated = newRange;
         if (m_editor->smart())
@@ -155,15 +147,9 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
 //                 break;
             if (dec->textRange() == translated &&
           dec->scope() == scope &&
-          ((id.isEmpty() && dec->identifier().toString().isEmpty()) || (!id.isEmpty() && lastId == dec->identifier())) &&
-           dec->isDefinition() == isDefinition)
+          ((id.isEmpty() && dec->identifier().toString().isEmpty()) || (!id.isEmpty() && lastId == dec->identifier())))
             {
-                if (isForward)
-                {
-                    if (!dynamic_cast<ForwardDeclaration*>(dec))
-                        break;
-                }
-                else if (isFunction)
+                if (isFunction)
                 {
                     if (scope == Declaration::ClassScope)
                     {
@@ -193,11 +179,7 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
         m_editor->exitCurrentRange();
         Q_ASSERT(range->start() != range->end());
         Q_ASSERT(m_editor->currentRange() == prior);
-        if (isForward)
-        {
-            declaration = new ForwardDeclaration(range, scope, currentContext());
-        }
-        else if (isFunction) 
+        if (isFunction) 
         {
             //kDebug()<<"Is a Function";
             if (scope == Declaration::ClassScope) 
@@ -223,8 +205,8 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
         {
             declaration->setIdentifier(id.last());
         }
-        if (isDefinition)
-            declaration->setDeclarationIsDefinition(true);
+
+        declaration->setDeclarationIsDefinition(true);
 
         switch (currentContext()->type())
         {
@@ -246,8 +228,6 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
     }
     setEncountered(declaration);
     m_declarationStack.push(declaration);
-    //kDebug()<<m_declarationStack.top();
-    //kDebug()<<declaration->textRange();
     return declaration;
 }
 

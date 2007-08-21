@@ -28,6 +28,9 @@
 #include <ksharedptr.h>
 #include <ktexteditor/cursor.h>
 #include <ducontext.h>
+
+#include "parserexport.h"
+
 class LexedFile;
 namespace python
 {
@@ -36,7 +39,7 @@ namespace python
 
 using namespace python;
 
-class ParseSession
+class KDEVPYTHONPARSER_EXPORT ParseSession
 {
 public:
     ParseSession();

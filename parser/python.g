@@ -120,6 +120,12 @@ namespace python
 
 
 ------------------------------------------------------------
+-- Export macro to use the parser in a shared lib
+------------------------------------------------------------
+%export_macro "KDEVPYTHONPARSER_EXPORT"
+%export_macro_header "parserexport.h"
+
+------------------------------------------------------------
 -- Parser class members
 ------------------------------------------------------------
 

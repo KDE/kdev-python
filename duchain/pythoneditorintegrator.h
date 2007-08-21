@@ -22,6 +22,7 @@
  *****************************************************************************/
 #ifndef PYTHONEDITORINTEGRATOR_H
 #define PYTHONEDITORINTEGRATOR_H
+
 #include <editorintegrator.h>
 #include "python_lexer.h"
 #include "python_parser.h"
@@ -35,7 +36,7 @@ class ParseSession;
 
 using namespace python;
 
-class PythonEditorIntegrator : public KDevelop::EditorIntegrator
+class KDEVPYTHONDUCHAIN_EXPORT PythonEditorIntegrator : public KDevelop::EditorIntegrator
 {
 public:
     PythonEditorIntegrator(ParseSession* session);

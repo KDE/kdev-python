@@ -17,7 +17,7 @@ INCLUDE_DIRECTORIES(
     ${KDE4_INCLUDE_DIR}/threadweaver
     ${CMAKE_CURRENT_BINARY_DIR}
     ${KDEVPLATFORM_INCLUDE_DIR}/language/duchain
-    duchain
+    ${CMAKE_SOURCE_DIR}/duchain
     ${CMAKE_SOURCE_DIR}/parser
 )
 
@@ -26,9 +26,15 @@ find_package(KDevelop-PG QUIET)
 find_package(Flex QUIET)
 
 if(KDEVPG_FOUND AND FLEX_FOUND)
-    include_directories(${CMAKE_CURRENT_BINARY_DIR}/parser ${KDEVPG_INCLUDE_DIR})
+    include_directories(
+        ${CMAKE_BINARY_DIR}/parser
+        ${KDEVPG_INCLUDE_DIR}
+    )
 else(KDEVPG_FOUND AND FLEX_FOUND)
-    include_directories(parser/generated parser/generated/kdevelop-pg)
+    include_directories(
+        ${CMAKE_SOURCE_DIR}/parser/generated
+        ${CMAKE_SOURCE_DIR}/parser/generated/kdevelop-pg
+    )
 endif(KDEVPG_FOUND AND FLEX_FOUND)
 
 
@@ -39,11 +45,6 @@ set(kdevpythonlanguagesupport_PART_SRCS
     pythonlanguagesupport.cpp
     pythonparsejob.cpp
     pythonhighlighting.cpp
-    duchain/contextbuilder.cpp
-    duchain/pythoneditorintegrator.cpp
-    duchain/declarationbuilder.cpp
-    duchain/usebuilder.cpp
-    duchain/dumpchain.cpp
 )
 
 kde4_add_plugin(kdevpythonlanguagesupport ${kdevpythonlanguagesupport_PART_SRCS})
@@ -56,6 +57,7 @@ target_link_libraries(kdevpythonlanguagesupport
     ${KDEVPLATFORM_EDITOR_LIBRARY}
     ${KDE4_KTEXTEDITOR_LIBS}
     kdev4pythonparser
+    kdev4pythonduchain
 )
 
 install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})

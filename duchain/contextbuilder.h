@@ -44,7 +44,7 @@ class ParseSession;
 
 using namespace python;
 
-class ContextBuilder: public python::default_visitor
+class KDEVPYTHONDUCHAIN_EXPORT ContextBuilder: public python::default_visitor
 {
 
 public:

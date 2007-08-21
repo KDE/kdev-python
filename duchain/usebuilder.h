@@ -29,7 +29,7 @@ class ParseSession;
 
 typedef ContextBuilder UseBuilderBase;
 
-class UseBuilder: public UseBuilderBase
+class KDEVPYTHONDUCHAIN_EXPORT UseBuilder: public UseBuilderBase
 {
 public:
     UseBuilder(ParseSession* session, const KUrl &url);
@@ -43,7 +43,7 @@ private:
     void newUse(std::size_t name,ast_node* rangenode);
     inline int& nextUseIndex()
     {
-        return m_nextUseStack.top(); 
+        return m_nextUseStack.top();
     }
     QStack<int> m_nextUseStack;
 };

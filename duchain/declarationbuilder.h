@@ -38,7 +38,7 @@ typedef ContextBuilder DeclarationBuilderBase;
 using namespace python;
 using namespace KDevelop;
 
-class DeclarationBuilder: public DeclarationBuilderBase
+class KDEVPYTHONDUCHAIN_EXPORT DeclarationBuilder: public DeclarationBuilderBase
 {
 public:
     DeclarationBuilder(ParseSession* session, const KUrl &url);

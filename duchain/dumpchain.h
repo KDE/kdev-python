@@ -35,7 +35,7 @@ namespace KDevelop
 
 using namespace python;
 
-class DumpChain: public default_visitor
+class KDEVPYTHONDUCHAIN_EXPORT DumpChain: public default_visitor
 {
 public:
     DumpChain();

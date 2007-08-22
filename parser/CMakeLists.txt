@@ -66,7 +66,7 @@ endif(KDEVPG_FOUND AND FLEX_FOUND)
 
 add_subdirectory(tests)
 
-kde4_add_library( kdev4pythonparser ${parser_SRCS} ${parser_STAT_SRCS} )
+kde4_add_library( kdev4pythonparser SHARED ${parser_SRCS} ${parser_STAT_SRCS} )
 target_link_libraries( kdev4pythonparser ${KDE4_KDECORE_LIBS} )
 
 kde4_add_executable( python-parser main.cpp )

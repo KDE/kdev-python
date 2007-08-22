@@ -9,10 +9,12 @@
 #include <kdev-pg-allocator.h>
 #include <kdev-pg-token-stream.h>
 
+#include <parserexport.h>
+
 namespace python
   {
 
-  class parser
+  class KDEVPYTHONPARSER_EXPORT parser
     {
 
     public:

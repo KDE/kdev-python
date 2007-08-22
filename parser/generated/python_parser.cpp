@@ -28,7 +28,7 @@ namespace python
             t.kind =  kind;
             t.begin =  lexer.tokenBegin();
             t.end =  lexer.tokenEnd();
-            std::cerr << t.kind << std::endl;
+            std::cerr << t.kind <<   std::endl;
 
             while (lexer.dedentationLevel() > 1)
               {
@@ -56,9 +56,6 @@ namespace python
             kind =  x;
           }
 
-        std::cerr <<  kind;
-        std::cerr <<  lexer.YYText() <<  std::endl; //" "; // debug output
-
         if  ( !kind ) // when the lexer returns 0, the end of file is reached
           kind =  parser::Token_EOF;
 
@@ -66,6 +63,7 @@ namespace python
         t.kind =  kind;
         t.begin =  lexer.tokenBegin();
         t.end =  lexer.tokenEnd();
+        std::cerr <<  kind <<  "|" <<  lexer.YYText() <<  "|" <<  lexer.tokenBegin() <<  "|" <<  m_contents[lexer.tokenBegin()] <<  "|" <<  lexer.tokenEnd() <<  "|" <<  m_contents[lexer.tokenEnd()] <<  std::endl; //" "; // debug output
       }
 
     while  ( kind !=  parser::Token_EOF );

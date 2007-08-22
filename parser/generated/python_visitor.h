@@ -6,10 +6,12 @@
 
 #include "python_ast.h"
 
+#include <parserexport.h>
+
 namespace python
   {
 
-  class visitor
+  class KDEVPYTHONPARSER_EXPORT visitor
     {
       typedef void (visitor::*parser_fun_t)(ast_node *);
       static parser_fun_t _S_parser_table[];

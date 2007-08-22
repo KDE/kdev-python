@@ -6,10 +6,12 @@
 
 #include "python_visitor.h"
 
+#include <parserexport.h>
+
 namespace python
   {
 
-  class default_visitor:  public visitor
+  class KDEVPYTHONPARSER_EXPORT default_visitor:  public visitor
     {
 
     public:

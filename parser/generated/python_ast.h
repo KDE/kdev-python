@@ -6,6 +6,7 @@
 
 #include <kdev-pg-list.h>
 
+#include <parserexport.h>
 
 
 namespace python
@@ -67,96 +68,96 @@ namespace python
 namespace python
   {
 
-  struct and_expr_ast;
-  struct and_test_ast;
-  struct arg_list_ast;
-  struct arglist_ast;
-  struct argument_ast;
-  struct arith_expr_ast;
-  struct arith_op_ast;
-  struct assert_stmt_ast;
-  struct atom_ast;
-  struct augassign_ast;
-  struct break_stmt_ast;
-  struct classdef_ast;
-  struct comp_op_ast;
-  struct comparison_ast;
-  struct compound_stmt_ast;
-  struct continue_stmt_ast;
-  struct decorator_ast;
-  struct decorators_ast;
-  struct del_stmt_ast;
-  struct dictmaker_ast;
-  struct dotted_as_name_ast;
-  struct dotted_as_names_ast;
-  struct dotted_name_ast;
-  struct except_clause_ast;
-  struct exec_stmt_ast;
-  struct expr_ast;
-  struct expr_stmt_ast;
-  struct exprlist_ast;
-  struct fact_op_ast;
-  struct factor_ast;
-  struct flow_stmt_ast;
-  struct for_stmt_ast;
-  struct fp_def_ast;
-  struct fpdef_ast;
-  struct fplist_ast;
-  struct fun_pos_param_ast;
-  struct func_def_ast;
-  struct funcdef_ast;
-  struct gen_for_ast;
-  struct gen_if_ast;
-  struct gen_iter_ast;
-  struct global_stmt_ast;
-  struct if_stmt_ast;
-  struct import_as_name_ast;
-  struct import_as_names_ast;
-  struct import_from_ast;
-  struct import_name_ast;
-  struct import_stmt_ast;
-  struct lambda_def_ast;
-  struct list_for_ast;
-  struct list_if_ast;
-  struct list_iter_ast;
-  struct list_maker_ast;
-  struct listmaker_ast;
-  struct longstringliteral_ast;
-  struct not_test_ast;
-  struct number_ast;
-  struct pass_stmt_ast;
-  struct power_ast;
-  struct print_stmt_ast;
-  struct project_ast;
-  struct raise_stmt_ast;
-  struct return_stmt_ast;
-  struct shift_expr_ast;
-  struct shift_op_ast;
-  struct shortstringliteral_ast;
-  struct simple_stmt_ast;
-  struct sliceop_ast;
-  struct small_stmt_ast;
-  struct stmt_ast;
-  struct subscript_ast;
-  struct subscriptlist_ast;
-  struct suite_ast;
-  struct term_ast;
-  struct term_op_ast;
-  struct test_ast;
-  struct test_list_gexp_ast;
-  struct testlist_ast;
-  struct testlist1_ast;
-  struct testlist_gexp_ast;
-  struct testlist_safe_ast;
-  struct trailer_ast;
-  struct try_stmt_ast;
-  struct varargslist_ast;
-  struct while_stmt_ast;
-  struct xor_expr_ast;
-  struct yield_stmt_ast;
+  struct KDEVPYTHONPARSER_EXPORT and_expr_ast;
+  struct KDEVPYTHONPARSER_EXPORT and_test_ast;
+  struct KDEVPYTHONPARSER_EXPORT arg_list_ast;
+  struct KDEVPYTHONPARSER_EXPORT arglist_ast;
+  struct KDEVPYTHONPARSER_EXPORT argument_ast;
+  struct KDEVPYTHONPARSER_EXPORT arith_expr_ast;
+  struct KDEVPYTHONPARSER_EXPORT arith_op_ast;
+  struct KDEVPYTHONPARSER_EXPORT assert_stmt_ast;
+  struct KDEVPYTHONPARSER_EXPORT atom_ast;
+  struct KDEVPYTHONPARSER_EXPORT augassign_ast;
+  struct KDEVPYTHONPARSER_EXPORT break_stmt_ast;
+  struct KDEVPYTHONPARSER_EXPORT classdef_ast;
+  struct KDEVPYTHONPARSER_EXPORT comp_op_ast;
+  struct KDEVPYTHONPARSER_EXPORT comparison_ast;
+  struct KDEVPYTHONPARSER_EXPORT compound_stmt_ast;
+  struct KDEVPYTHONPARSER_EXPORT continue_stmt_ast;
+  struct KDEVPYTHONPARSER_EXPORT decorator_ast;
+  struct KDEVPYTHONPARSER_EXPORT decorators_ast;
+  struct KDEVPYTHONPARSER_EXPORT del_stmt_ast;
+  struct KDEVPYTHONPARSER_EXPORT dictmaker_ast;
+  struct KDEVPYTHONPARSER_EXPORT dotted_as_name_ast;
+  struct KDEVPYTHONPARSER_EXPORT dotted_as_names_ast;
+  struct KDEVPYTHONPARSER_EXPORT dotted_name_ast;
+  struct KDEVPYTHONPARSER_EXPORT except_clause_ast;
+  struct KDEVPYTHONPARSER_EXPORT exec_stmt_ast;
+  struct KDEVPYTHONPARSER_EXPORT expr_ast;
+  struct KDEVPYTHONPARSER_EXPORT expr_stmt_ast;
+  struct KDEVPYTHONPARSER_EXPORT exprlist_ast;
+  struct KDEVPYTHONPARSER_EXPORT fact_op_ast;
+  struct KDEVPYTHONPARSER_EXPORT factor_ast;
+  struct KDEVPYTHONPARSER_EXPORT flow_stmt_ast;
+  struct KDEVPYTHONPARSER_EXPORT for_stmt_ast;
+  struct KDEVPYTHONPARSER_EXPORT fp_def_ast;
+  struct KDEVPYTHONPARSER_EXPORT fpdef_ast;
+  struct KDEVPYTHONPARSER_EXPORT fplist_ast;
+  struct KDEVPYTHONPARSER_EXPORT fun_pos_param_ast;
+  struct KDEVPYTHONPARSER_EXPORT func_def_ast;
+  struct KDEVPYTHONPARSER_EXPORT funcdef_ast;
+  struct KDEVPYTHONPARSER_EXPORT gen_for_ast;
+  struct KDEVPYTHONPARSER_EXPORT gen_if_ast;
+  struct KDEVPYTHONPARSER_EXPORT gen_iter_ast;
+  struct KDEVPYTHONPARSER_EXPORT global_stmt_ast;
+  struct KDEVPYTHONPARSER_EXPORT if_stmt_ast;
+  struct KDEVPYTHONPARSER_EXPORT import_as_name_ast;
+  struct KDEVPYTHONPARSER_EXPORT import_as_names_ast;
+  struct KDEVPYTHONPARSER_EXPORT import_from_ast;
+  struct KDEVPYTHONPARSER_EXPORT import_name_ast;
+  struct KDEVPYTHONPARSER_EXPORT import_stmt_ast;
+  struct KDEVPYTHONPARSER_EXPORT lambda_def_ast;
+  struct KDEVPYTHONPARSER_EXPORT list_for_ast;
+  struct KDEVPYTHONPARSER_EXPORT list_if_ast;
+  struct KDEVPYTHONPARSER_EXPORT list_iter_ast;
+  struct KDEVPYTHONPARSER_EXPORT list_maker_ast;
+  struct KDEVPYTHONPARSER_EXPORT listmaker_ast;
+  struct KDEVPYTHONPARSER_EXPORT longstringliteral_ast;
+  struct KDEVPYTHONPARSER_EXPORT not_test_ast;
+  struct KDEVPYTHONPARSER_EXPORT number_ast;
+  struct KDEVPYTHONPARSER_EXPORT pass_stmt_ast;
+  struct KDEVPYTHONPARSER_EXPORT power_ast;
+  struct KDEVPYTHONPARSER_EXPORT print_stmt_ast;
+  struct KDEVPYTHONPARSER_EXPORT project_ast;
+  struct KDEVPYTHONPARSER_EXPORT raise_stmt_ast;
+  struct KDEVPYTHONPARSER_EXPORT return_stmt_ast;
+  struct KDEVPYTHONPARSER_EXPORT shift_expr_ast;
+  struct KDEVPYTHONPARSER_EXPORT shift_op_ast;
+  struct KDEVPYTHONPARSER_EXPORT shortstringliteral_ast;
+  struct KDEVPYTHONPARSER_EXPORT simple_stmt_ast;
+  struct KDEVPYTHONPARSER_EXPORT sliceop_ast;
+  struct KDEVPYTHONPARSER_EXPORT small_stmt_ast;
+  struct KDEVPYTHONPARSER_EXPORT stmt_ast;
+  struct KDEVPYTHONPARSER_EXPORT subscript_ast;
+  struct KDEVPYTHONPARSER_EXPORT subscriptlist_ast;
+  struct KDEVPYTHONPARSER_EXPORT suite_ast;
+  struct KDEVPYTHONPARSER_EXPORT term_ast;
+  struct KDEVPYTHONPARSER_EXPORT term_op_ast;
+  struct KDEVPYTHONPARSER_EXPORT test_ast;
+  struct KDEVPYTHONPARSER_EXPORT test_list_gexp_ast;
+  struct KDEVPYTHONPARSER_EXPORT testlist_ast;
+  struct KDEVPYTHONPARSER_EXPORT testlist1_ast;
+  struct KDEVPYTHONPARSER_EXPORT testlist_gexp_ast;
+  struct KDEVPYTHONPARSER_EXPORT testlist_safe_ast;
+  struct KDEVPYTHONPARSER_EXPORT trailer_ast;
+  struct KDEVPYTHONPARSER_EXPORT try_stmt_ast;
+  struct KDEVPYTHONPARSER_EXPORT varargslist_ast;
+  struct KDEVPYTHONPARSER_EXPORT while_stmt_ast;
+  struct KDEVPYTHONPARSER_EXPORT xor_expr_ast;
+  struct KDEVPYTHONPARSER_EXPORT yield_stmt_ast;
 
 
-  struct ast_node
+  struct KDEVPYTHONPARSER_EXPORT ast_node
     {
       enum ast_node_kind_enum {
         Kind_and_expr = 1000,
@@ -254,7 +255,7 @@ namespace python
       std::size_t end_token;
     };
 
-  struct and_expr_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT and_expr_ast: public ast_node
     {
       enum
       {
@@ -265,7 +266,7 @@ namespace python
       const list_node<shift_expr_ast *> *andd_shif_expr_sequence;
     };
 
-  struct and_test_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT and_test_ast: public ast_node
     {
       enum
       {
@@ -275,7 +276,7 @@ namespace python
       const list_node<not_test_ast *> *not_test_sequence;
     };
 
-  struct arg_list_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT arg_list_ast: public ast_node
     {
       enum
       {
@@ -285,7 +286,7 @@ namespace python
       const list_node<argument_ast *> *argument_sequence;
     };
 
-  struct arglist_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT arglist_ast: public ast_node
     {
       enum
       {
@@ -297,7 +298,7 @@ namespace python
       test_ast *arglist_doublestar;
     };
 
-  struct argument_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT argument_ast: public ast_node
     {
       enum
       {
@@ -309,7 +310,7 @@ namespace python
       gen_for_ast *gen_for;
     };
 
-  struct arith_expr_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT arith_expr_ast: public ast_node
     {
       enum
       {
@@ -321,7 +322,7 @@ namespace python
       const list_node<term_ast *> *arith_term_list_sequence;
     };
 
-  struct arith_op_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT arith_op_ast: public ast_node
     {
       enum
       {
@@ -331,7 +332,7 @@ namespace python
       python::arith_operator_enum arith_operator;
     };
 
-  struct assert_stmt_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT assert_stmt_ast: public ast_node
     {
       enum
       {
@@ -342,7 +343,7 @@ namespace python
       test_ast *assert_raise_test;
     };
 
-  struct atom_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT atom_ast: public ast_node
     {
       enum
       {
@@ -360,7 +361,7 @@ namespace python
       shortstringliteral_ast *shortstringliteral;
     };
 
-  struct augassign_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT augassign_ast: public ast_node
     {
       enum
       {
@@ -370,7 +371,7 @@ namespace python
       python::augassign_eq_enum augassign_eq;
     };
 
-  struct break_stmt_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT break_stmt_ast: public ast_node
     {
       enum
       {
@@ -379,7 +380,7 @@ namespace python
 
     };
 
-  struct classdef_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT classdef_ast: public ast_node
     {
       enum
       {
@@ -391,7 +392,7 @@ namespace python
       suite_ast *class_suite;
     };
 
-  struct comp_op_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT comp_op_ast: public ast_node
     {
       enum
       {
@@ -401,7 +402,7 @@ namespace python
       python::comp_operator_enum comp_operator;
     };
 
-  struct comparison_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT comparison_ast: public ast_node
     {
       enum
       {
@@ -413,7 +414,7 @@ namespace python
       const list_node<expr_ast *> *comp_op_expr_sequence;
     };
 
-  struct compound_stmt_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT compound_stmt_ast: public ast_node
     {
       enum
       {
@@ -428,7 +429,7 @@ namespace python
       classdef_ast *classdef;
     };
 
-  struct continue_stmt_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT continue_stmt_ast: public ast_node
     {
       enum
       {
@@ -437,7 +438,7 @@ namespace python
 
     };
 
-  struct decorator_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT decorator_ast: public ast_node
     {
       enum
       {
@@ -448,7 +449,7 @@ namespace python
       arglist_ast *arguments;
     };
 
-  struct decorators_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT decorators_ast: public ast_node
     {
       enum
       {
@@ -458,7 +459,7 @@ namespace python
       const list_node<decorator_ast *> *decorator_sequence;
     };
 
-  struct del_stmt_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT del_stmt_ast: public ast_node
     {
       enum
       {
@@ -468,7 +469,7 @@ namespace python
       exprlist_ast *del_list;
     };
 
-  struct dictmaker_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT dictmaker_ast: public ast_node
     {
       enum
       {
@@ -479,7 +480,7 @@ namespace python
       const list_node<test_ast *> *value_list_sequence;
     };
 
-  struct dotted_as_name_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT dotted_as_name_ast: public ast_node
     {
       enum
       {
@@ -490,7 +491,7 @@ namespace python
       std::size_t imported_as;
     };
 
-  struct dotted_as_names_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT dotted_as_names_ast: public ast_node
     {
       enum
       {
@@ -500,7 +501,7 @@ namespace python
       const list_node<dotted_as_name_ast *> *dotted_as_name_sequence;
     };
 
-  struct dotted_name_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT dotted_name_ast: public ast_node
     {
       enum
       {
@@ -510,7 +511,7 @@ namespace python
       std::size_t dotted_name;
     };
 
-  struct except_clause_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT except_clause_ast: public ast_node
     {
       enum
       {
@@ -521,7 +522,7 @@ namespace python
       test_ast *except_target_test;
     };
 
-  struct exec_stmt_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT exec_stmt_ast: public ast_node
     {
       enum
       {
@@ -533,7 +534,7 @@ namespace python
       test_ast *local_dict_exec;
     };
 
-  struct expr_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT expr_ast: public ast_node
     {
       enum
       {
@@ -544,7 +545,7 @@ namespace python
       const list_node<xor_expr_ast *> *orr_expr_sequence;
     };
 
-  struct expr_stmt_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT expr_stmt_ast: public ast_node
     {
       enum
       {
@@ -557,7 +558,7 @@ namespace python
       const list_node<testlist_ast *> *equal_testlist_sequence;
     };
 
-  struct exprlist_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT exprlist_ast: public ast_node
     {
       enum
       {
@@ -568,7 +569,7 @@ namespace python
       const list_node<expr_ast *> *exprlist_sequence;
     };
 
-  struct fact_op_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT fact_op_ast: public ast_node
     {
       enum
       {
@@ -578,7 +579,7 @@ namespace python
       python::factor_operator_enum factor_operator;
     };
 
-  struct factor_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT factor_ast: public ast_node
     {
       enum
       {
@@ -590,7 +591,7 @@ namespace python
       power_ast *power;
     };
 
-  struct flow_stmt_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT flow_stmt_ast: public ast_node
     {
       enum
       {
@@ -604,7 +605,7 @@ namespace python
       yield_stmt_ast *yield_stmt;
     };
 
-  struct for_stmt_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT for_stmt_ast: public ast_node
     {
       enum
       {
@@ -617,7 +618,7 @@ namespace python
       suite_ast *for_else_suite;
     };
 
-  struct fp_def_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT fp_def_ast: public ast_node
     {
       enum
       {
@@ -628,7 +629,7 @@ namespace python
       test_ast *fp_def_test;
     };
 
-  struct fpdef_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT fpdef_ast: public ast_node
     {
       enum
       {
@@ -638,7 +639,7 @@ namespace python
       fplist_ast *fplist;
     };
 
-  struct fplist_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT fplist_ast: public ast_node
     {
       enum
       {
@@ -648,7 +649,7 @@ namespace python
       const list_node<fpdef_ast *> *fplist_fpdef_sequence;
     };
 
-  struct fun_pos_param_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT fun_pos_param_ast: public ast_node
     {
       enum
       {
@@ -659,7 +660,7 @@ namespace python
       std::size_t double_star_id;
     };
 
-  struct func_def_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT func_def_ast: public ast_node
     {
       enum
       {
@@ -669,7 +670,7 @@ namespace python
       const list_node<fp_def_ast *> *fp_def_sequence;
     };
 
-  struct funcdef_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT funcdef_ast: public ast_node
     {
       enum
       {
@@ -682,7 +683,7 @@ namespace python
       suite_ast *fun_suite;
     };
 
-  struct gen_for_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT gen_for_ast: public ast_node
     {
       enum
       {
@@ -694,7 +695,7 @@ namespace python
       gen_iter_ast *gen_iter;
     };
 
-  struct gen_if_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT gen_if_ast: public ast_node
     {
       enum
       {
@@ -705,7 +706,7 @@ namespace python
       gen_iter_ast *gen_iter;
     };
 
-  struct gen_iter_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT gen_iter_ast: public ast_node
     {
       enum
       {
@@ -716,7 +717,7 @@ namespace python
       gen_if_ast *gen_if;
     };
 
-  struct global_stmt_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT global_stmt_ast: public ast_node
     {
       enum
       {
@@ -726,7 +727,7 @@ namespace python
       const list_node<std::size_t > *global_name_sequence;
     };
 
-  struct if_stmt_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT if_stmt_ast: public ast_node
     {
       enum
       {
@@ -740,7 +741,7 @@ namespace python
       suite_ast *if_else_suite;
     };
 
-  struct import_as_name_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT import_as_name_ast: public ast_node
     {
       enum
       {
@@ -751,7 +752,7 @@ namespace python
       std::size_t imported_as;
     };
 
-  struct import_as_names_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT import_as_names_ast: public ast_node
     {
       enum
       {
@@ -761,7 +762,7 @@ namespace python
       const list_node<import_as_name_ast *> *import_as_name_sequence;
     };
 
-  struct import_from_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT import_from_ast: public ast_node
     {
       enum
       {
@@ -773,7 +774,7 @@ namespace python
       import_as_names_ast *import_from_as_name;
     };
 
-  struct import_name_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT import_name_ast: public ast_node
     {
       enum
       {
@@ -783,7 +784,7 @@ namespace python
       dotted_as_names_ast *import_name;
     };
 
-  struct import_stmt_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT import_stmt_ast: public ast_node
     {
       enum
       {
@@ -794,7 +795,7 @@ namespace python
       import_from_ast *import_from;
     };
 
-  struct lambda_def_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT lambda_def_ast: public ast_node
     {
       enum
       {
@@ -805,7 +806,7 @@ namespace python
       test_ast *lambda_test;
     };
 
-  struct list_for_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT list_for_ast: public ast_node
     {
       enum
       {
@@ -817,7 +818,7 @@ namespace python
       list_iter_ast *list_iter;
     };
 
-  struct list_if_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT list_if_ast: public ast_node
     {
       enum
       {
@@ -828,7 +829,7 @@ namespace python
       list_iter_ast *list_iter;
     };
 
-  struct list_iter_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT list_iter_ast: public ast_node
     {
       enum
       {
@@ -839,7 +840,7 @@ namespace python
       list_if_ast *list_if;
     };
 
-  struct list_maker_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT list_maker_ast: public ast_node
     {
       enum
       {
@@ -849,7 +850,7 @@ namespace python
       const list_node<test_ast *> *list_test_sequence;
     };
 
-  struct listmaker_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT listmaker_ast: public ast_node
     {
       enum
       {
@@ -860,7 +861,7 @@ namespace python
       list_for_ast *list_for;
     };
 
-  struct longstringliteral_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT longstringliteral_ast: public ast_node
     {
       enum
       {
@@ -870,7 +871,7 @@ namespace python
       const list_node<std::size_t > *string_body_sequence;
     };
 
-  struct not_test_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT not_test_ast: public ast_node
     {
       enum
       {
@@ -881,7 +882,7 @@ namespace python
       comparison_ast *comparison;
     };
 
-  struct number_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT number_ast: public ast_node
     {
       enum
       {
@@ -891,7 +892,7 @@ namespace python
       python::num_type_enum num_type;
     };
 
-  struct pass_stmt_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT pass_stmt_ast: public ast_node
     {
       enum
       {
@@ -900,7 +901,7 @@ namespace python
 
     };
 
-  struct power_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT power_ast: public ast_node
     {
       enum
       {
@@ -912,7 +913,7 @@ namespace python
       factor_ast *factor;
     };
 
-  struct print_stmt_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT print_stmt_ast: public ast_node
     {
       enum
       {
@@ -923,7 +924,7 @@ namespace python
       const list_node<test_ast *> *rshift_args_sequence;
     };
 
-  struct project_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT project_ast: public ast_node
     {
       enum
       {
@@ -933,7 +934,7 @@ namespace python
       const list_node<stmt_ast *> *stmt_sequence;
     };
 
-  struct raise_stmt_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT raise_stmt_ast: public ast_node
     {
       enum
       {
@@ -945,17 +946,17 @@ namespace python
       test_ast *traceback;
     };
 
-  struct return_stmt_ast: public ast_node
-                 {
-                   enum
-                   {
-                     KIND = Kind_return_stmt
-                   };
+  struct KDEVPYTHONPARSER_EXPORT return_stmt_ast: public ast_node
+                                         {
+                                           enum
+                                           {
+                                             KIND = Kind_return_stmt
+                                           };
 
-                   testlist_ast *return_expr;
-                 };
+                                           testlist_ast *return_expr;
+                                         };
 
-  struct shift_expr_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT shift_expr_ast: public ast_node
     {
       enum
       {
@@ -967,7 +968,7 @@ namespace python
       const list_node<arith_expr_ast *> *arith_expr_list_sequence;
     };
 
-  struct shift_op_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT shift_op_ast: public ast_node
     {
       enum
       {
@@ -977,7 +978,7 @@ namespace python
       python::shift_operator_enum shift_operator;
     };
 
-  struct shortstringliteral_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT shortstringliteral_ast: public ast_node
     {
       enum
       {
@@ -986,7 +987,7 @@ namespace python
 
     };
 
-  struct simple_stmt_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT simple_stmt_ast: public ast_node
     {
       enum
       {
@@ -996,7 +997,7 @@ namespace python
       const list_node<small_stmt_ast *> *small_stmt_sequence;
     };
 
-  struct sliceop_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT sliceop_ast: public ast_node
     {
       enum
       {
@@ -1006,7 +1007,7 @@ namespace python
       test_ast *slice_test;
     };
 
-  struct small_stmt_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT small_stmt_ast: public ast_node
     {
       enum
       {
@@ -1024,7 +1025,7 @@ namespace python
       assert_stmt_ast *assert_stmt;
     };
 
-  struct stmt_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT stmt_ast: public ast_node
     {
       enum
       {
@@ -1035,7 +1036,7 @@ namespace python
       compound_stmt_ast *compound_stmt;
     };
 
-  struct subscript_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT subscript_ast: public ast_node
     {
       enum
       {
@@ -1048,7 +1049,7 @@ namespace python
       sliceop_ast *sliceop;
     };
 
-  struct subscriptlist_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT subscriptlist_ast: public ast_node
     {
       enum
       {
@@ -1058,7 +1059,7 @@ namespace python
       const list_node<subscript_ast *> *subscript_sequence;
     };
 
-  struct suite_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT suite_ast: public ast_node
     {
       enum
       {
@@ -1069,7 +1070,7 @@ namespace python
       const list_node<stmt_ast *> *stmt_sequence;
     };
 
-  struct term_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT term_ast: public ast_node
     {
       enum
       {
@@ -1081,7 +1082,7 @@ namespace python
       const list_node<factor_ast *> *factor_list_sequence;
     };
 
-  struct term_op_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT term_op_ast: public ast_node
     {
       enum
       {
@@ -1091,7 +1092,7 @@ namespace python
       python::term_operator_enum term_operator;
     };
 
-  struct test_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT test_ast: public ast_node
     {
       enum
       {
@@ -1102,7 +1103,7 @@ namespace python
       lambda_def_ast *lambda_def;
     };
 
-  struct test_list_gexp_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT test_list_gexp_ast: public ast_node
     {
       enum
       {
@@ -1112,7 +1113,7 @@ namespace python
       const list_node<test_ast *> *test_sequence;
     };
 
-  struct testlist_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT testlist_ast: public ast_node
     {
       enum
       {
@@ -1123,7 +1124,7 @@ namespace python
       const list_node<test_ast *> *testlist_sequence;
     };
 
-  struct testlist1_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT testlist1_ast: public ast_node
     {
       enum
       {
@@ -1133,7 +1134,7 @@ namespace python
       const list_node<test_ast *> *test_sequence;
     };
 
-  struct testlist_gexp_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT testlist_gexp_ast: public ast_node
     {
       enum
       {
@@ -1144,7 +1145,7 @@ namespace python
       gen_for_ast *gen_for;
     };
 
-  struct testlist_safe_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT testlist_safe_ast: public ast_node
     {
       enum
       {
@@ -1154,7 +1155,7 @@ namespace python
       const list_node<test_ast *> *test_sequence;
     };
 
-  struct trailer_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT trailer_ast: public ast_node
     {
       enum
       {
@@ -1166,7 +1167,7 @@ namespace python
       std::size_t tariler_dot_name;
     };
 
-  struct try_stmt_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT try_stmt_ast: public ast_node
     {
       enum
       {
@@ -1180,7 +1181,7 @@ namespace python
       suite_ast *finally_suite;
     };
 
-  struct varargslist_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT varargslist_ast: public ast_node
     {
       enum
       {
@@ -1191,7 +1192,7 @@ namespace python
       fun_pos_param_ast *fun_pos_param;
     };
 
-  struct while_stmt_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT while_stmt_ast: public ast_node
     {
       enum
       {
@@ -1203,7 +1204,7 @@ namespace python
       suite_ast *while_else_suite;
     };
 
-  struct xor_expr_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT xor_expr_ast: public ast_node
     {
       enum
       {
@@ -1214,7 +1215,7 @@ namespace python
       const list_node<and_expr_ast *> *hat_xor_expr_sequence;
     };
 
-  struct yield_stmt_ast: public ast_node
+  struct KDEVPYTHONPARSER_EXPORT yield_stmt_ast: public ast_node
     {
       enum
       {

@@ -99,9 +99,9 @@ TopDUContext* ContextBuilder::buildContexts(ast_node* node)
                 Q_ASSERT(topLevelContext->textRangePtr());
                 if (!topLevelContext->smartRange() && m_editor->smart())
                     topLevelContext->setTextRange(m_editor->topRange(PythonEditorIntegrator::DefinitionUseChain));
-                if (m_editor->currentDocument() && m_editor->smart() && topLevelContext->textRange() != m_editor->currentDocument()->documentRange()) {
-                    kDebug(9007) << "WARNING: Top-level context has wrong size: " << topLevelContext->textRange() << " should be: " << m_editor->currentDocument()->documentRange();
-                    Q_ASSERT(0);
+                if (m_editor->currentDocument() && m_editor->smart() && topLevelContext->textRange() != m_editor->currentDocument()->documentRange()) 
+                {
+                    kDebug() << "WARNING: Top-level context has Changed Ranges.";
                 }
             }
         }

@@ -7,3 +7,5 @@ This are known bugs of the parser that should be fixed but are not easy to fix o
 	j=i"
 
 - crash sometimes (hard to reproduce) when a file has no newline before EOF
+
+- crash On editing a small file the one described above. try put a newline before def a().

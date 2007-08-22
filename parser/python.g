@@ -607,6 +607,7 @@ void parser::tokenize( char *contents )
             std::cerr<<t.kind<<  std::endl;
             while(lexer.dedentationLevel()>1)
             {
+                std::cerr<<"Lexer Dedents > 1";
                 parser::token_type &t = this->token_stream->next();
                 t.kind = parser::Token_DEDENT;
                 t.begin = lexer.tokenBegin();

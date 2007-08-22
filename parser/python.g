@@ -209,7 +209,7 @@ namespace python
 -- Function Definition: Can start with Decorators.
 -- varargslist defines the Function Variable Arguements
    ( decorators = decorators | 0 )
-    DEF func_name=IDENTIFIER LPAREN ( ?[: LA(1).kind != Token_RPAREN :] ( #fun_args = varargslist )*
+    DEF func_name=IDENTIFIER LPAREN ( ?[: LA(1).kind != Token_RPAREN :] ( fun_args = varargslist )
     | 0 )
     RPAREN COLON fun_suite=suite
 -> funcdef ;;

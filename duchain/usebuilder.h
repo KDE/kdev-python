@@ -24,6 +24,7 @@
 #define USEBUILDER_H
 
 #include "contextbuilder.h"
+#include "pythonduchainexport.h"
 
 class ParseSession;
 

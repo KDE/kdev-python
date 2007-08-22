@@ -31,6 +31,8 @@
 #include <ducontext.h>
 #include <ksharedptr.h>
 
+#include "pythonduchainexport.h"
+
 namespace KDevelop
 {
     class DUChain;

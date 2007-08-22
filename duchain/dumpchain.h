@@ -24,6 +24,7 @@
 #define DUMPCHAIN_H
 
 #include "python_default_visitor.h"
+#include "pythonduchainexport.h"
 
 class ParseSession;
 class PythonEditorIntegrator;

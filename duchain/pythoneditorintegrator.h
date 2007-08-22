@@ -26,6 +26,7 @@
 #include <editorintegrator.h>
 #include "python_lexer.h"
 #include "python_parser.h"
+#include "pythonduchainexport.h"
 
 namespace python
 {

@@ -26,6 +26,7 @@
 #include <declaration.h>
 #include <classfunctiondeclaration.h>
 #include "contextbuilder.h"
+#include "pythonduchainexport.h"
 
 
 namespace KDevelop

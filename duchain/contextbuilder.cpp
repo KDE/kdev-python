@@ -188,19 +188,23 @@ void ContextBuilder::visit_classdef(classdef_ast* node)
 
 void ContextBuilder::visit_compound_stmt(compound_stmt_ast *node)
 {
-    if(!node->classdef && !node->fucdef)
+    if(!node->classdef && !node->fucdef && !node->try_stmt)
     {
         openContext(node, DUContext::Other);
         addImportedContexts();
         default_visitor::visit_compound_stmt(node);
         closeContext();
     }
-    else if(node->fucdef)
+    else if(node->try_stmt)
     {
-        //openContext(node, DUContext::Function);
-        //addImportedContexts();
+        QString name = "try";
+        m_identifier = Identifier(name);
+        m_qidentifier.clear();
+        m_qidentifier.push(m_identifier);
+        openContext(node, DUContext::Other, m_qidentifier);
+        addImportedContexts();
         default_visitor::visit_compound_stmt(node);
-        //closeContext();
+        closeContext();
     }
     else
     {

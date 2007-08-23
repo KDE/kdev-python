@@ -199,12 +199,13 @@ void ContextBuilder::visit_compound_stmt(compound_stmt_ast *node)
     {
         QString name = "try";
         m_identifier = Identifier(name);
-        m_qidentifier.clear();
-        m_qidentifier.push(m_identifier);
-        openContext(node, DUContext::Other, m_qidentifier);
+        KDevelop::QualifiedIdentifier x;
+        x.push(m_identifier);
+        openContext(node, DUContext::Other, x);
         addImportedContexts();
         default_visitor::visit_compound_stmt(node);
         closeContext();
+        x.clear();
     }
     else
     {

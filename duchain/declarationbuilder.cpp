@@ -86,6 +86,15 @@ void DeclarationBuilder::visit_classdef(classdef_ast *node)
     DeclarationBuilderBase::visit_classdef(node);
     //closeDeclaration();
 }
+
+void DeclarationBuilder::visit_fun_pos_param(fun_pos_param_ast *node)
+{
+    if(node->star_id)
+        openDefinition(node->star_id,node,false);
+    if(node->double_star_id)
+        openDefinition(node->double_star_id,node,false);
+    DeclarationBuilderBase::visit_fun_pos_param(node);
+}
 template<class DeclarationType>
 DeclarationType* DeclarationBuilder::specialDeclaration( KTextEditor::Range* range )
 {
@@ -102,7 +111,7 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
 {
     //kDebug()<<"Is Function:"<<isFunction;
     DUChainWriteLocker lock(DUChain::lock());
-    Declaration::Scope scope = Declaration::GlobalScope;
+    Declaration::Scope scope;
     switch (currentContext()->type())
     {
         case DUContext::Class:
@@ -122,7 +131,6 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
             break;
     }
     Range newRange = m_editor->findRange(rangeNode);
-    Q_ASSERT(newRange.start() != newRange.end());
 
     QualifiedIdentifier id;
     id = identifierForName(name);
@@ -156,7 +164,7 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
                         if (!dynamic_cast<ClassFunctionDeclaration*>(dec))
                             break;
                     }
-                    else if (!dynamic_cast<AbstractFunctionDeclaration*>(dec)) 
+                    else if (!dynamic_cast<AbstractFunctionDeclaration*>(dec))
                     {
                         break;
                     }
@@ -179,10 +187,10 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
         m_editor->exitCurrentRange();
         Q_ASSERT(range->start() != range->end());
         Q_ASSERT(m_editor->currentRange() == prior);
-        if (isFunction) 
+        if (isFunction)
         {
             //kDebug()<<"Is a Function";
-            if (scope == Declaration::ClassScope) 
+            if (scope == Declaration::ClassScope)
             {
                 declaration = specialDeclaration<ClassFunctionDeclaration>( range );
             }
@@ -238,7 +246,7 @@ void DeclarationBuilder::closeDeclaration()
         DUChainWriteLocker lock(DUChain::lock());
         currentDeclaration()->setKind(Declaration::Type);
     }
-    if(m_lastContext && (m_lastContext->type() == DUContext::Class || m_lastContext->type() == DUContext::Other ) )
+    if(m_lastContext && (m_lastContext->type() == DUContext::Class || m_lastContext->type() == DUContext::Other || m_lastContext->type() == DUContext::Function) )
     {
         currentDeclaration()->setInternalContext(m_lastContext);
         m_lastContext = 0;

@@ -248,7 +248,7 @@ namespace python
             #fplist_fpdef=fpdef )*
 -> fplist ;;
 
--- A statement could be simple statement/ a compont statement OR just a Linebreak
+-- A statement could be simple statement/ a compound statement OR just a Linebreak
     simple_stmt = simple_stmt
     | compound_stmt = compound_stmt
     | LINEBREAK

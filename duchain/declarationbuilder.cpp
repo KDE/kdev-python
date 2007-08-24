@@ -95,6 +95,16 @@ void DeclarationBuilder::visit_fun_pos_param(fun_pos_param_ast *node)
         openDefinition(node->double_star_id,node,false);
     DeclarationBuilderBase::visit_fun_pos_param(node);
 }
+
+void DeclarationBuilder::visit_atom(atom_ast *node)
+{
+    if(node->atom_identifier_name)
+    {
+        openDefinition(node->atom_identifier_name, node, false);
+    }
+    DeclarationBuilderBase::visit_atom(node);
+}
+
 template<class DeclarationType>
 DeclarationType* DeclarationBuilder::specialDeclaration( KTextEditor::Range* range )
 {
@@ -185,7 +195,7 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
         Range* prior = m_editor->currentRange();
         Range* range = m_editor->createRange(newRange);
         m_editor->exitCurrentRange();
-        Q_ASSERT(range->start() != range->end());
+        //(range->start() != range->end());
         Q_ASSERT(m_editor->currentRange() == prior);
         if (isFunction)
         {

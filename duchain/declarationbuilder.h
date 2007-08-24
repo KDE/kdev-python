@@ -47,6 +47,7 @@ public:
     KDevelop::TopDUContext* buildDeclarations(ast_node *node);
     KDevelop::DUContext* buildSubDeclarations(const KUrl& url, ast_node *node, KDevelop::DUContext* parent = 0);
     virtual void visit_fun_pos_param(fun_pos_param_ast *node);
+    virtual void visit_atom(atom_ast *node);
     virtual void visit_classdef(classdef_ast *node);
     virtual void visit_funcdef(funcdef_ast *node);
     virtual void openContext(KDevelop::DUContext* newContext);

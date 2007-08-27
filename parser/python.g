@@ -215,7 +215,7 @@ namespace python
 -> funcdef ;;
 
 -- Function variable Arguement List
-    func_def=func_def (
+    (func_def=func_def | 0 ) (
     ?[: yytoken != Token_RPAREN  && LA(2).kind == Token_IDENTIFIER:] (fun_pos_param = fun_pos_param )
     | 0
     )

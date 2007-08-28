@@ -100,7 +100,12 @@ void DeclarationBuilder::visit_atom(atom_ast *node)
 {
     if(node->atom_identifier_name)
     {
-        openDefinition(node->atom_identifier_name, node, false);
+        DUChainWriteLocker lock(DUChain::lock());
+        QList<Declaration*> decls = currentContext()->findDeclarations(identifierForName(node->atom_identifier_name), m_editor->findPosition(node->start_token, KDevelop::EditorIntegrator::FrontEdge) );
+        if(!decls.count())
+        {
+            openDefinition(node->atom_identifier_name, node, false);
+        }
     }
     DeclarationBuilderBase::visit_atom(node);
 }

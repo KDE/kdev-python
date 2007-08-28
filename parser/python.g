@@ -491,7 +491,7 @@ namespace python
     list_maker=list_maker (list_for=list_for | 0)
 -> listmaker ;;
 
-   #test=test ( COMMA [: if (yytoken == Token_RBRACE) { break; } :] #test=test )*
+   #test=test ( COMMA [: if( yytoken == Token_COLON || yytoken == Token_SEMICOLON || yytoken == Token_RPAREN || yytoken == Token_LINEBREAK) { break; } :] #test=test )*
 -> test_list_gexp ;;
 
     test_list_gexp=test_list_gexp ( gen_for=gen_for | 0 )

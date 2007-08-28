@@ -542,7 +542,7 @@ namespace python
     ( COMMA [: if(yytoken == Token_RPAREN || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR) { break; } :] #argument=argument)*
 -> arg_list ;;
 
-    arg_list=arg_list
+    (arg_list=arg_list | 0)
     ( STAR arglist_star=test ( ?[: LA(2).kind == Token_DOUBLESTAR :] COMMA DOUBLESTAR arglist_doublestar=test )
     | DOUBLESTAR arglist_doublestar=test | 0)
 -> arglist ;;

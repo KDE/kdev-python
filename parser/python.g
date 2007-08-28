@@ -547,8 +547,10 @@ namespace python
 -> arg_list ;;
 
     (arg_list=arg_list | 0)
-    ( STAR arglist_star=test ( ?[: LA(2).kind == Token_DOUBLESTAR :] COMMA DOUBLESTAR arglist_doublestar=test )
-    | DOUBLESTAR arglist_doublestar=test | 0)
+    (
+        ( STAR arglist_star=test (?[: LA(1).kind != Token_RPAREN :] COMMA DOUBLESTAR arglist_doublestar=test | 0)
+        | DOUBLESTAR arglist_doublestar=test)
+    | 0 )
 -> arglist ;;
 
    argument_test=test ( EQUAL argument_equal_test=test ( ?[: LA(2).kind == Token_FOR :] LPAREN gen_for=gen_for RPAREN | 0 )

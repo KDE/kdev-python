@@ -294,7 +294,7 @@ namespace python
    PRINT
     (
     (#print_args=test ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]#print_args=test )*)
-    | RSHIFT #rshift_args=test ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]#rshift_args=test )+
+    | RSHIFT #rshift_args=test ( ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]#rshift_args=test )+ | 0)
     | 0
     )
 -> print_stmt ;;

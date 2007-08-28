@@ -29,7 +29,8 @@
 #include <kdebug.h>
 #include <kcomponentdata.h>
 #include <kstandarddirs.h>
-#include <kgenericfactory.h>
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
 
 #include <QExtensionFactory>
 
@@ -46,10 +47,10 @@
 
 using namespace KDevelop;
 
-typedef KGenericFactory<PythonLanguageSupport> KDevPythonSupportFactory;
-K_EXPORT_COMPONENT_FACTORY( kdevpythonlanguagesupport, KDevPythonSupportFactory( "kdevpythonsupport" ) )
+K_PLUGIN_FACTORY(KDevPythonSupportFactory, registerPlugin<PythonLanguageSupport>(); )
+K_EXPORT_PLUGIN(KDevPythonSupportFactory("kdevpythonsupport"))
 
-PythonLanguageSupport::PythonLanguageSupport( QObject* parent, const QStringList& /*args*/ )
+PythonLanguageSupport::PythonLanguageSupport( QObject* parent, const QVariantList& /*args*/ )
         : KDevelop::IPlugin( KDevPythonSupportFactory::componentData(), parent ),
         KDevelop::ILanguageSupport()
 {

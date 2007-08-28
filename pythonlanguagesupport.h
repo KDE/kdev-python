@@ -27,6 +27,7 @@
 
 #include <iplugin.h>
 #include <ilanguagesupport.h>
+#include <QtCore/QVariant>
 
 namespace KDevelop
 {
@@ -41,7 +42,7 @@ class PythonLanguageSupport : public KDevelop::IPlugin, public KDevelop::ILangua
 Q_OBJECT
 Q_INTERFACES( KDevelop::ILanguageSupport )
 public:
-    PythonLanguageSupport( QObject *parent, const QStringList& args = QStringList() );
+    PythonLanguageSupport( QObject *parent, const QVariantList& args = QVariantList() );
     virtual ~PythonLanguageSupport();
     QString name() const;
     /*Name Of the Language*/

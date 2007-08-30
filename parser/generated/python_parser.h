@@ -11,7 +11,7 @@
 
 #include <parserexport.h>
 
-namespace python
+namespace Python
   {
 
   class KDEVPYTHONPARSER_EXPORT parser
@@ -127,43 +127,40 @@ namespace python
         Token_LESS =  1048,
         Token_LESSEQ =  1049,
         Token_LINEBREAK =  1050,
-        Token_LONGSTRING =  1051,
-        Token_LPAREN =  1052,
-        Token_LSHIFT =  1053,
-        Token_LSHIFTEQ =  1054,
-        Token_MINUS =  1055,
-        Token_MINUSEQ =  1056,
-        Token_MODULO =  1057,
-        Token_MODULOEQ =  1058,
-        Token_NOT =  1059,
-        Token_OR =  1060,
-        Token_OREQ =  1061,
-        Token_ORR =  1062,
-        Token_PASS =  1063,
-        Token_PLUS =  1064,
-        Token_PLUSEQ =  1065,
-        Token_PRINT =  1066,
-        Token_RAISE =  1067,
-        Token_RBRACE =  1068,
-        Token_RBRACKET =  1069,
-        Token_RETURN =  1070,
-        Token_RPAREN =  1071,
-        Token_RSHIFT =  1072,
-        Token_RSHIFTEQ =  1073,
-        Token_SEMICOLON =  1074,
-        Token_SHORTSTRING =  1075,
-        Token_SLASH =  1076,
-        Token_SLASHEQ =  1077,
-        Token_STAR =  1078,
-        Token_STAREQ =  1079,
-        Token_STRINGBODY =  1080,
-        Token_STRINGLITERAL =  1081,
-        Token_TILDE =  1082,
-        Token_TILDEEQ =  1083,
-        Token_TRY =  1084,
-        Token_UNEQUAL =  1085,
-        Token_WHILE =  1086,
-        Token_YIELD =  1087,
+        Token_LPAREN =  1051,
+        Token_LSHIFT =  1052,
+        Token_LSHIFTEQ =  1053,
+        Token_MINUS =  1054,
+        Token_MINUSEQ =  1055,
+        Token_MODULO =  1056,
+        Token_MODULOEQ =  1057,
+        Token_NOT =  1058,
+        Token_OR =  1059,
+        Token_OREQ =  1060,
+        Token_ORR =  1061,
+        Token_PASS =  1062,
+        Token_PLUS =  1063,
+        Token_PLUSEQ =  1064,
+        Token_PRINT =  1065,
+        Token_RAISE =  1066,
+        Token_RBRACE =  1067,
+        Token_RBRACKET =  1068,
+        Token_RETURN =  1069,
+        Token_RPAREN =  1070,
+        Token_RSHIFT =  1071,
+        Token_RSHIFTEQ =  1072,
+        Token_SEMICOLON =  1073,
+        Token_SLASH =  1074,
+        Token_SLASHEQ =  1075,
+        Token_STAR =  1076,
+        Token_STAREQ =  1077,
+        Token_STRINGLITERAL =  1078,
+        Token_TILDE =  1079,
+        Token_TILDEEQ =  1080,
+        Token_TRY =  1081,
+        Token_UNEQUAL =  1082,
+        Token_WHILE =  1083,
+        Token_YIELD =  1084,
         token_type_size
       }; // token_type_enum
 
@@ -176,21 +173,22 @@ namespace python
        * When this method returns, the parser's token stream has been filled
        * and any parse_*() method can be called.
        */
-      void tokenize( char *contents );
+      void tokenize( const QString& contents );
 
-      enum problem_type {
-        error,
-        warning,
-        info
+      enum ProblemType {
+        Error,
+        Warning,
+        Info
       };
-      void report_problem( parser::problem_type type,  const char* message );
-      void report_problem( parser::problem_type type,  std::string message );
-      char* tokenText(std::size_t begin);
+      void reportProblem( parser::ProblemType type,  const QString& message );
+      QString tokenText(std::size_t begin,  std::size_t end);
+      void setDebug(bool debug);
 
 
     private:
 
-      char* m_contents;
+      QString m_contents;
+      bool m_debug;
 
 
     public:
@@ -259,7 +257,6 @@ namespace python
       bool parse_list_iter(list_iter_ast **yynode);
       bool parse_list_maker(list_maker_ast **yynode);
       bool parse_listmaker(listmaker_ast **yynode);
-      bool parse_longstringliteral(longstringliteral_ast **yynode);
       bool parse_not_test(not_test_ast **yynode);
       bool parse_number(number_ast **yynode);
       bool parse_pass_stmt(pass_stmt_ast **yynode);
@@ -270,7 +267,6 @@ namespace python
       bool parse_return_stmt(return_stmt_ast **yynode);
       bool parse_shift_expr(shift_expr_ast **yynode);
       bool parse_shift_op(shift_op_ast **yynode);
-      bool parse_shortstringliteral(shortstringliteral_ast **yynode);
       bool parse_simple_stmt(simple_stmt_ast **yynode);
       bool parse_sliceop(sliceop_ast **yynode);
       bool parse_small_stmt(small_stmt_ast **yynode);
@@ -294,7 +290,7 @@ namespace python
       bool parse_yield_stmt(yield_stmt_ast **yynode);
     };
 
-} // end of namespace python
+} // end of namespace Python
 
 #endif
 

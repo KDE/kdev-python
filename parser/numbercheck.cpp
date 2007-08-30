@@ -1,4 +1,4 @@
-/* Python Parser Test
+/* KDevelop Python Support
  *
  * Copyright 2007 Andreas Pakulat <apaku@gmx.de>
  *
@@ -18,44 +18,33 @@
  * 02110-1301, USA.
  */
 
-#ifndef PYTHONDRIVER_H
-#define PYTHONDRIVER_H
+#include "numbercheck.h"
+#include "python_parser.h"
 
+#include <QtCore/QRegExp>
 #include <QtCore/QString>
-#include "parserexport.h"
-
-class kdev_pg_token_stream;
-class kdev_pg_memory_pool;
+#include <QtCore/QDebug>
 
 namespace Python
 {
+QRegExp intnum("((0|[1-9][0-9]*)|0[0-7]+|0(x|X)[0-9a-fA-F]+)(l|L)?");
+QRegExp floatnum("(([0-9]+)?\\.[0-9]+|[0-9]+\\.)|(([0-9]+|(([0-9]+)?\\.[0-9]+|[0-9]+\\.))(e|E)[-+]?[0-9]+)");
+QRegExp imagnum("("+floatnum.pattern()+"|[0-9]+)(j|J)");
 
-class project_ast;
-
-
-/**
- * Class to parse a Python source file or a string containing python source code
- */
-class KDEVPYTHONPARSER_EXPORT Driver
+int getTokenForNumberString( const QString& s )
 {
-public:
-    Driver();
-    bool readFile( const QString&, const char* = 0 );
-    void setContent( const QString& );
-    void setDebug( bool );
-    bool parse( project_ast** ast );
-    void setTokenStream( kdev_pg_token_stream* );
-    void setMemoryPool( kdev_pg_memory_pool* );
-private:
-    QString m_content;
-    bool m_debug;
-    kdev_pg_memory_pool* m_pool;
-    kdev_pg_token_stream* m_tokenstream;
-
-};
-
+    if( intnum.exactMatch( s ) )
+    {
+        return parser::Token_INTEGER;
+    }else if( floatnum.exactMatch( s ) )
+    {
+        return parser::Token_FLOAT;
+    }else  if( imagnum.exactMatch( s ) )
+    {
+        return parser::Token_IMAGNUM;
+    }
+    return parser::Token_INVALID;
 }
-
-#endif
+}
 
 // kate: space-indent on; indent-width 4; tab-width: 4; replace-tabs on; auto-insert-doxygen on

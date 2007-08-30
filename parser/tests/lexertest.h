@@ -1,4 +1,4 @@
-/* Python Parser Test
+/* Python Lexer Test
  *
  * Copyright 2007 Andreas Pakulat <apaku@gmx.de>
  *
@@ -18,43 +18,33 @@
  * 02110-1301, USA.
  */
 
-#ifndef PYTHONDRIVER_H
-#define PYTHONDRIVER_H
+#ifndef PARSETEST_H
+#define PARSETEST_H
 
-#include <QtCore/QString>
-#include "parserexport.h"
+#include <QtCore/QObject>
+#include <QtTest/QtTest>
 
-class kdev_pg_token_stream;
-class kdev_pg_memory_pool;
-
-namespace Python
+class LexerTest : public QObject
 {
-
-class project_ast;
-
-
-/**
- * Class to parse a Python source file or a string containing python source code
- */
-class KDEVPYTHONPARSER_EXPORT Driver
-{
-public:
-    Driver();
-    bool readFile( const QString&, const char* = 0 );
-    void setContent( const QString& );
-    void setDebug( bool );
-    bool parse( project_ast** ast );
-    void setTokenStream( kdev_pg_token_stream* );
-    void setMemoryPool( kdev_pg_memory_pool* );
-private:
-    QString m_content;
-    bool m_debug;
-    kdev_pg_memory_pool* m_pool;
-    kdev_pg_token_stream* m_tokenstream;
-
+        Q_OBJECT
+    public:
+        LexerTest( QObject* parent = 0 );
+        ~LexerTest();
+    private slots:
+        void init();
+        void cleanup();
+        void lexNumberLiteral();
+        void lexNumberLiteral_data();
+        void lexKeywordAndIdentifier();
+        void lexKeywordAndIdentifier_data();
+        void lexSeparatorsAndOperators();
+        void lexSeparatorsAndOperators_data();
+        void lexIndentation();
+        void lexIndentation_data();
+        void lexStringLiteral();
+        void lexStringLiteral_data();
+    private:
 };
-
-}
 
 #endif
 

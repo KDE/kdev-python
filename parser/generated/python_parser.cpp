@@ -4,13 +4,13 @@
 #include "python_parser.h"
 
 
-#include "python_lexer.h"
+#include "pythonlexer.h"
+#include <QtCore/QDebug>
 
-
-namespace python
+namespace Python
   {
 
-  void parser::tokenize( char *contents )
+  void parser::tokenize( const QString& contents )
   {
     m_contents =  contents;
     Lexer lexer( this,  contents );
@@ -18,52 +18,23 @@ namespace python
 
     do
       {
-        kind =  lexer.yylex();
-
-        if ( kind ==  parser::Token_DEDENT)
-          {
-            int x =  kind;
-            parser::token_type &t =  this->token_stream->next();
-            kind =  parser::Token_LINEBREAK;
-            t.kind =  kind;
-            t.begin =  lexer.tokenBegin();
-            t.end =  lexer.tokenEnd();
-            std::cerr << t.kind <<   std::endl;
-
-            while (lexer.dedentationLevel() > 1)
-              {
-                parser::token_type &t =  this->token_stream->next();
-                t.kind =  parser::Token_DEDENT;
-                t.begin =  lexer.tokenBegin();
-                t.end =  lexer.tokenEnd();
-                std::cerr << t.kind << std::endl;
-                lexer.setDedentationLevel(lexer.dedentationLevel() - 1);
-              }
-
-            lexer.setDedentationLevel(0);
-            kind =  x;
-          }
-
-        else if ( kind ==  parser::Token_INDENT)
-          {
-            int x =  kind;
-            kind =  parser::Token_LINEBREAK;
-            parser::token_type &t =  this->token_stream->next();
-            t.kind =  kind;
-            t.begin =  lexer.tokenBegin();
-            t.end =  lexer.tokenEnd();
-            std::cerr << t.kind << std::endl;
-            kind =  x;
-          }
+        kind =  lexer.nextTokenKind();
 
         if  ( !kind ) // when the lexer returns 0, the end of file is reached
-          kind =  parser::Token_EOF;
-
+          {
+            parser::token_type &tt =  this->token_stream->next();
+            tt.kind =  parser::Token_LINEBREAK;
+            tt.begin =  lexer.tokenBegin();
+            tt.end =  lexer.tokenEnd();
+            kind =  parser::Token_EOF;
+          }
         parser::token_type &t =  this->token_stream->next();
-        t.kind =  kind;
         t.begin =  lexer.tokenBegin();
         t.end =  lexer.tokenEnd();
-        std::cerr <<  kind <<  "|" <<  lexer.YYText() <<  "|" <<  lexer.tokenBegin() <<  "|" <<  m_contents[lexer.tokenBegin()] <<  "|" <<  lexer.tokenEnd() <<  "|" <<  m_contents[lexer.tokenEnd()] <<  std::endl; //" "; // debug output
+        t.kind =  kind;
+
+        if ( m_debug )
+          qDebug() <<  kind <<  tokenText(t.begin, t.end) <<  t.begin <<  t.end;
       }
 
     while  ( kind !=  parser::Token_EOF );
@@ -72,16 +43,59 @@ namespace python
   }
 
 
-  char* parser::tokenText(std::size_t begin)
+  QString parser::tokenText(std::size_t begin,  std::size_t end)
   {
-    return  &m_contents[begin];
+    return  m_contents.mid(begin, end - begin + 1);
   }
+
+
+  void parser::reportProblem( parser::ProblemType type,  const QString& message )
+  {
+    if  (type ==  Error)
+      qDebug() <<  "** ERROR:" <<  message;
+    else if  (type ==  Warning)
+      qDebug() <<  "** WARNING:" <<  message;
+    else if  (type ==  Info)
+      qDebug() <<  "** Info:" <<  message;
+  }
+
+
+  // custom error recovery
+  void parser::yy_expected_token(int /*expected*/,  std::size_t /*where*/,  char const *name)
+  {
+    reportProblem( parser::Error,  QString("Expected token \"%1\"").arg(name));
+  }
+
+  void parser::yy_expected_symbol(int /*expected_symbol*/,  char const *name)
+  {
+    std::size_t line;
+    std::size_t col;
+    size_t index =  token_stream->index() - 1;
+    token_type &token =  token_stream->token(index);
+    qDebug() <<  "token starts at:" <<  token.begin;
+    qDebug() <<  "index is:" <<  index;
+    token_stream->start_position(index,  &line,  &col);
+    QString tokenValue =  tokenText(token.begin,  token.end);
+    reportProblem( parser::Error,
+                   QString("Expected symbol \"%1\" (current token: \"%2\" [%3] at line: %4 col: %5)")
+                   .arg(name)
+                   .arg(token.kind !=  0 ?  tokenValue :  "EOF")
+                   .arg(token.kind)
+                   .arg(line)
+                   .arg(col));
+  }
+
+  void parser::setDebug( bool debug )
+  {
+    m_debug =  debug;
+  }
+
 
 
 } // end of namespace cool
 
 
-namespace python
+namespace Python
   {
 
   bool parser::parse_and_expr(and_expr_ast **yynode)
@@ -95,8 +109,6 @@ namespace python
          ||  yytoken ==  Token_INTEGER
          ||  yytoken ==  Token_FLOAT
          ||  yytoken ==  Token_IMAGNUM
-         ||  yytoken ==  Token_LONGSTRING
-         ||  yytoken ==  Token_SHORTSTRING
          ||  yytoken ==  Token_LPAREN
          ||  yytoken ==  Token_LBRACE
          ||  yytoken ==  Token_LBRACKET
@@ -160,8 +172,6 @@ namespace python
          ||  yytoken ==  Token_INTEGER
          ||  yytoken ==  Token_FLOAT
          ||  yytoken ==  Token_IMAGNUM
-         ||  yytoken ==  Token_LONGSTRING
-         ||  yytoken ==  Token_SHORTSTRING
          ||  yytoken ==  Token_LPAREN
          ||  yytoken ==  Token_LBRACE
          ||  yytoken ==  Token_LBRACKET
@@ -226,8 +236,6 @@ namespace python
          ||  yytoken ==  Token_INTEGER
          ||  yytoken ==  Token_FLOAT
          ||  yytoken ==  Token_IMAGNUM
-         ||  yytoken ==  Token_LONGSTRING
-         ||  yytoken ==  Token_SHORTSTRING
          ||  yytoken ==  Token_LPAREN
          ||  yytoken ==  Token_LBRACE
          ||  yytoken ==  Token_LBRACKET
@@ -297,8 +305,6 @@ namespace python
          ||  yytoken ==  Token_INTEGER
          ||  yytoken ==  Token_FLOAT
          ||  yytoken ==  Token_IMAGNUM
-         ||  yytoken ==  Token_LONGSTRING
-         ||  yytoken ==  Token_SHORTSTRING
          ||  yytoken ==  Token_LPAREN
          ||  yytoken ==  Token_LBRACE
          ||  yytoken ==  Token_LBRACKET
@@ -418,8 +424,6 @@ namespace python
          ||  yytoken ==  Token_INTEGER
          ||  yytoken ==  Token_FLOAT
          ||  yytoken ==  Token_IMAGNUM
-         ||  yytoken ==  Token_LONGSTRING
-         ||  yytoken ==  Token_SHORTSTRING
          ||  yytoken ==  Token_LPAREN
          ||  yytoken ==  Token_LBRACE
          ||  yytoken ==  Token_LBRACKET
@@ -539,8 +543,6 @@ namespace python
          ||  yytoken ==  Token_INTEGER
          ||  yytoken ==  Token_FLOAT
          ||  yytoken ==  Token_IMAGNUM
-         ||  yytoken ==  Token_LONGSTRING
-         ||  yytoken ==  Token_SHORTSTRING
          ||  yytoken ==  Token_LPAREN
          ||  yytoken ==  Token_LBRACE
          ||  yytoken ==  Token_LBRACKET
@@ -627,7 +629,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->arith_operator =  python::op_plus;
+            (*yynode)->arith_operator =  Python::op_plus;
           }
 
         else if  (yytoken ==  Token_MINUS)
@@ -640,7 +642,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->arith_operator =  python::op_minus;
+            (*yynode)->arith_operator =  Python::op_minus;
           }
 
         else
@@ -736,8 +738,6 @@ namespace python
          ||  yytoken ==  Token_INTEGER
          ||  yytoken ==  Token_FLOAT
          ||  yytoken ==  Token_IMAGNUM
-         ||  yytoken ==  Token_LONGSTRING
-         ||  yytoken ==  Token_SHORTSTRING
          ||  yytoken ==  Token_LPAREN
          ||  yytoken ==  Token_LBRACE
          ||  yytoken ==  Token_LBRACKET
@@ -760,8 +760,6 @@ namespace python
                  ||  yytoken ==  Token_INTEGER
                  ||  yytoken ==  Token_FLOAT
                  ||  yytoken ==  Token_IMAGNUM
-                 ||  yytoken ==  Token_LONGSTRING
-                 ||  yytoken ==  Token_SHORTSTRING
                  ||  yytoken ==  Token_LPAREN
                  ||  yytoken ==  Token_LBRACE
                  ||  yytoken ==  Token_LBRACKET
@@ -936,34 +934,6 @@ namespace python
             while  (yytoken ==  Token_STRINGLITERAL);
           }
 
-        else if  (yytoken ==  Token_LONGSTRING)
-          {
-            longstringliteral_ast *__node_24 =  0;
-
-            if  (!parse_longstringliteral(&__node_24))
-              {
-                yy_expected_symbol(ast_node::Kind_longstringliteral,  "longstringliteral");
-                return  false;
-              }
-
-            (*yynode)->longstringliteral =  __node_24;
-
-          }
-
-        else if  (yytoken ==  Token_SHORTSTRING)
-          {
-            shortstringliteral_ast *__node_25 =  0;
-
-            if  (!parse_shortstringliteral(&__node_25))
-              {
-                yy_expected_symbol(ast_node::Kind_shortstringliteral,  "shortstringliteral");
-                return  false;
-              }
-
-            (*yynode)->shortstringliteral =  __node_25;
-
-          }
-
         else
           {
             return  false;
@@ -1009,7 +979,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->augassign_eq =  python::eq_plus;
+            (*yynode)->augassign_eq =  Python::eq_plus;
           }
 
         else if  (yytoken ==  Token_MINUSEQ)
@@ -1022,7 +992,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->augassign_eq =  python::eq_minus;
+            (*yynode)->augassign_eq =  Python::eq_minus;
           }
 
         else if  (yytoken ==  Token_STAREQ)
@@ -1035,7 +1005,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->augassign_eq =  python::eq_star;
+            (*yynode)->augassign_eq =  Python::eq_star;
           }
 
         else if  (yytoken ==  Token_SLASHEQ)
@@ -1048,7 +1018,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->augassign_eq =  python::eq_slash;
+            (*yynode)->augassign_eq =  Python::eq_slash;
           }
 
         else if  (yytoken ==  Token_MODULOEQ)
@@ -1061,7 +1031,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->augassign_eq =  python::eq_modulo;
+            (*yynode)->augassign_eq =  Python::eq_modulo;
           }
 
         else if  (yytoken ==  Token_ANDEQ)
@@ -1074,7 +1044,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->augassign_eq =  python::eq_and;
+            (*yynode)->augassign_eq =  Python::eq_and;
           }
 
         else if  (yytoken ==  Token_OREQ)
@@ -1087,7 +1057,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->augassign_eq =  python::eq_or;
+            (*yynode)->augassign_eq =  Python::eq_or;
           }
 
         else if  (yytoken ==  Token_TILDEEQ)
@@ -1100,7 +1070,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->augassign_eq =  python::eq_tilde;
+            (*yynode)->augassign_eq =  Python::eq_tilde;
           }
 
         else if  (yytoken ==  Token_LSHIFTEQ)
@@ -1113,7 +1083,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->augassign_eq =  python::eq_lshift;
+            (*yynode)->augassign_eq =  Python::eq_lshift;
           }
 
         else if  (yytoken ==  Token_RSHIFTEQ)
@@ -1126,7 +1096,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->augassign_eq =  python::eq_rshift;
+            (*yynode)->augassign_eq =  Python::eq_rshift;
           }
 
         else if  (yytoken ==  Token_DOUBLESTAREQ)
@@ -1139,7 +1109,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->augassign_eq =  python::eq_doublestar;
+            (*yynode)->augassign_eq =  Python::eq_doublestar;
           }
 
         else if  (yytoken ==  Token_DOUBLESLASHEQ)
@@ -1152,7 +1122,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->augassign_eq =  python::eq_doubleslash;
+            (*yynode)->augassign_eq =  Python::eq_doubleslash;
           }
 
         else
@@ -1234,15 +1204,15 @@ namespace python
 
             yylex();
 
-            testlist_ast *__node_26 =  0;
+            testlist_ast *__node_24 =  0;
 
-            if  (!parse_testlist(&__node_26))
+            if  (!parse_testlist(&__node_24))
               {
                 yy_expected_symbol(ast_node::Kind_testlist,  "testlist");
                 return  false;
               }
 
-            (*yynode)->testlist =  __node_26;
+            (*yynode)->testlist =  __node_24;
 
             if  (yytoken !=  Token_RPAREN)
               {
@@ -1269,15 +1239,15 @@ namespace python
 
         yylex();
 
-        suite_ast *__node_27 =  0;
+        suite_ast *__node_25 =  0;
 
-        if  (!parse_suite(&__node_27))
+        if  (!parse_suite(&__node_25))
           {
             yy_expected_symbol(ast_node::Kind_suite,  "suite");
             return  false;
           }
 
-        (*yynode)->class_suite =  __node_27;
+        (*yynode)->class_suite =  __node_25;
 
       }
 
@@ -1317,7 +1287,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->comp_operator =  python::op_less;
+            (*yynode)->comp_operator =  Python::op_less;
           }
 
         else if  (yytoken ==  Token_GREATER)
@@ -1330,7 +1300,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->comp_operator =  python::op_greater;
+            (*yynode)->comp_operator =  Python::op_greater;
           }
 
         else if  (yytoken ==  Token_ISEQUAL)
@@ -1343,7 +1313,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->comp_operator =  python::op_isequal;
+            (*yynode)->comp_operator =  Python::op_isequal;
           }
 
         else if  (yytoken ==  Token_GREATEREQ)
@@ -1356,7 +1326,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->comp_operator =  python::op_greatereq;
+            (*yynode)->comp_operator =  Python::op_greatereq;
           }
 
         else if  (yytoken ==  Token_LESSEQ)
@@ -1369,7 +1339,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->comp_operator =  python::op_lesseq;
+            (*yynode)->comp_operator =  Python::op_lesseq;
           }
 
         else if  (yytoken ==  Token_UNEQUAL)
@@ -1382,7 +1352,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->comp_operator =  python::op_unequal;
+            (*yynode)->comp_operator =  Python::op_unequal;
           }
 
         else if  (yytoken ==  Token_IN)
@@ -1395,7 +1365,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->comp_operator =  python::op_in;
+            (*yynode)->comp_operator =  Python::op_in;
           }
 
         else if  (yytoken ==  Token_NOT)
@@ -1416,7 +1386,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->comp_operator =  python::op_not_in;
+            (*yynode)->comp_operator =  Python::op_not_in;
           }
 
         else if  (yytoken ==  Token_IS)
@@ -1439,12 +1409,12 @@ namespace python
 
                 yylex();
 
-                (*yynode)->comp_operator =  python::op_is_not;
+                (*yynode)->comp_operator =  Python::op_is_not;
               }
 
             else if  (true /*epsilon*/)
               {
-                (*yynode)->comp_operator =  python::op_is;
+                (*yynode)->comp_operator =  Python::op_is;
               }
 
             else
@@ -1480,8 +1450,6 @@ namespace python
          ||  yytoken ==  Token_INTEGER
          ||  yytoken ==  Token_FLOAT
          ||  yytoken ==  Token_IMAGNUM
-         ||  yytoken ==  Token_LONGSTRING
-         ||  yytoken ==  Token_SHORTSTRING
          ||  yytoken ==  Token_LPAREN
          ||  yytoken ==  Token_LBRACE
          ||  yytoken ==  Token_LBRACKET
@@ -1490,15 +1458,15 @@ namespace python
          ||  yytoken ==  Token_MINUS
          ||  yytoken ==  Token_TILDE)
       {
-        expr_ast *__node_28 =  0;
+        expr_ast *__node_26 =  0;
 
-        if  (!parse_expr(&__node_28))
+        if  (!parse_expr(&__node_26))
           {
             yy_expected_symbol(ast_node::Kind_expr,  "expr");
             return  false;
           }
 
-        (*yynode)->comp_expr =  __node_28;
+        (*yynode)->comp_expr =  __node_26;
 
         while  (yytoken ==  Token_IS
                 ||  yytoken ==  Token_NOT
@@ -1510,25 +1478,25 @@ namespace python
                 ||  yytoken ==  Token_UNEQUAL
                 ||  yytoken ==  Token_ISEQUAL)
           {
-            comp_op_ast *__node_29 =  0;
+            comp_op_ast *__node_27 =  0;
 
-            if  (!parse_comp_op(&__node_29))
+            if  (!parse_comp_op(&__node_27))
               {
                 yy_expected_symbol(ast_node::Kind_comp_op,  "comp_op");
                 return  false;
               }
 
-            (*yynode)->comp_op_sequence =  snoc((*yynode)->comp_op_sequence,  __node_29,  memory_pool);
+            (*yynode)->comp_op_sequence =  snoc((*yynode)->comp_op_sequence,  __node_27,  memory_pool);
 
-            expr_ast *__node_30 =  0;
+            expr_ast *__node_28 =  0;
 
-            if  (!parse_expr(&__node_30))
+            if  (!parse_expr(&__node_28))
               {
                 yy_expected_symbol(ast_node::Kind_expr,  "expr");
                 return  false;
               }
 
-            (*yynode)->comp_op_expr_sequence =  snoc((*yynode)->comp_op_expr_sequence,  __node_30,  memory_pool);
+            (*yynode)->comp_op_expr_sequence =  snoc((*yynode)->comp_op_expr_sequence,  __node_28,  memory_pool);
 
           }
       }
@@ -1559,86 +1527,86 @@ namespace python
       {
         if  (yytoken ==  Token_IF)
           {
-            if_stmt_ast *__node_31 =  0;
+            if_stmt_ast *__node_29 =  0;
 
-            if  (!parse_if_stmt(&__node_31))
+            if  (!parse_if_stmt(&__node_29))
               {
                 yy_expected_symbol(ast_node::Kind_if_stmt,  "if_stmt");
                 return  false;
               }
 
-            (*yynode)->if_stmt =  __node_31;
+            (*yynode)->if_stmt =  __node_29;
 
           }
 
         else if  (yytoken ==  Token_WHILE)
           {
-            while_stmt_ast *__node_32 =  0;
+            while_stmt_ast *__node_30 =  0;
 
-            if  (!parse_while_stmt(&__node_32))
+            if  (!parse_while_stmt(&__node_30))
               {
                 yy_expected_symbol(ast_node::Kind_while_stmt,  "while_stmt");
                 return  false;
               }
 
-            (*yynode)->while_stmt =  __node_32;
+            (*yynode)->while_stmt =  __node_30;
 
           }
 
         else if  (yytoken ==  Token_FOR)
           {
-            for_stmt_ast *__node_33 =  0;
+            for_stmt_ast *__node_31 =  0;
 
-            if  (!parse_for_stmt(&__node_33))
+            if  (!parse_for_stmt(&__node_31))
               {
                 yy_expected_symbol(ast_node::Kind_for_stmt,  "for_stmt");
                 return  false;
               }
 
-            (*yynode)->for_stmt =  __node_33;
+            (*yynode)->for_stmt =  __node_31;
 
           }
 
         else if  (yytoken ==  Token_TRY)
           {
-            try_stmt_ast *__node_34 =  0;
+            try_stmt_ast *__node_32 =  0;
 
-            if  (!parse_try_stmt(&__node_34))
+            if  (!parse_try_stmt(&__node_32))
               {
                 yy_expected_symbol(ast_node::Kind_try_stmt,  "try_stmt");
                 return  false;
               }
 
-            (*yynode)->try_stmt =  __node_34;
+            (*yynode)->try_stmt =  __node_32;
 
           }
 
         else if  (yytoken ==  Token_DEF
                   ||  yytoken ==  Token_AT)
           {
-            funcdef_ast *__node_35 =  0;
+            funcdef_ast *__node_33 =  0;
 
-            if  (!parse_funcdef(&__node_35))
+            if  (!parse_funcdef(&__node_33))
               {
                 yy_expected_symbol(ast_node::Kind_funcdef,  "funcdef");
                 return  false;
               }
 
-            (*yynode)->fucdef =  __node_35;
+            (*yynode)->fucdef =  __node_33;
 
           }
 
         else if  (yytoken ==  Token_CLASS)
           {
-            classdef_ast *__node_36 =  0;
+            classdef_ast *__node_34 =  0;
 
-            if  (!parse_classdef(&__node_36))
+            if  (!parse_classdef(&__node_34))
               {
                 yy_expected_symbol(ast_node::Kind_classdef,  "classdef");
                 return  false;
               }
 
-            (*yynode)->classdef =  __node_36;
+            (*yynode)->classdef =  __node_34;
 
           }
 
@@ -1702,15 +1670,15 @@ namespace python
 
         yylex();
 
-        dotted_name_ast *__node_37 =  0;
+        dotted_name_ast *__node_35 =  0;
 
-        if  (!parse_dotted_name(&__node_37))
+        if  (!parse_dotted_name(&__node_35))
           {
             yy_expected_symbol(ast_node::Kind_dotted_name,  "dotted_name");
             return  false;
           }
 
-        (*yynode)->decorator_name =  __node_37;
+        (*yynode)->decorator_name =  __node_35;
 
         if  (yytoken ==  Token_LPAREN)
           {
@@ -1729,8 +1697,6 @@ namespace python
                  ||  yytoken ==  Token_INTEGER
                  ||  yytoken ==  Token_FLOAT
                  ||  yytoken ==  Token_IMAGNUM
-                 ||  yytoken ==  Token_LONGSTRING
-                 ||  yytoken ==  Token_SHORTSTRING
                  ||  yytoken ==  Token_LPAREN
                  ||  yytoken ==  Token_LBRACE
                  ||  yytoken ==  Token_LBRACKET
@@ -1739,15 +1705,15 @@ namespace python
                  ||  yytoken ==  Token_MINUS
                  ||  yytoken ==  Token_TILDE)
               {
-                arglist_ast *__node_38 =  0;
+                arglist_ast *__node_36 =  0;
 
-                if  (!parse_arglist(&__node_38))
+                if  (!parse_arglist(&__node_36))
                   {
                     yy_expected_symbol(ast_node::Kind_arglist,  "arglist");
                     return  false;
                   }
 
-                (*yynode)->arguments =  __node_38;
+                (*yynode)->arguments =  __node_36;
 
               }
 
@@ -1805,15 +1771,15 @@ namespace python
       {
         while  (yytoken ==  Token_AT)
           {
-            decorator_ast *__node_39 =  0;
+            decorator_ast *__node_37 =  0;
 
-            if  (!parse_decorator(&__node_39))
+            if  (!parse_decorator(&__node_37))
               {
                 yy_expected_symbol(ast_node::Kind_decorator,  "decorator");
                 return  false;
               }
 
-            (*yynode)->decorator_sequence =  snoc((*yynode)->decorator_sequence,  __node_39,  memory_pool);
+            (*yynode)->decorator_sequence =  snoc((*yynode)->decorator_sequence,  __node_37,  memory_pool);
 
           }
       }
@@ -1844,15 +1810,15 @@ namespace python
 
         yylex();
 
-        exprlist_ast *__node_40 =  0;
+        exprlist_ast *__node_38 =  0;
 
-        if  (!parse_exprlist(&__node_40))
+        if  (!parse_exprlist(&__node_38))
           {
             yy_expected_symbol(ast_node::Kind_exprlist,  "exprlist");
             return  false;
           }
 
-        (*yynode)->del_list =  __node_40;
+        (*yynode)->del_list =  __node_38;
 
       }
 
@@ -1879,8 +1845,6 @@ namespace python
          ||  yytoken ==  Token_INTEGER
          ||  yytoken ==  Token_FLOAT
          ||  yytoken ==  Token_IMAGNUM
-         ||  yytoken ==  Token_LONGSTRING
-         ||  yytoken ==  Token_SHORTSTRING
          ||  yytoken ==  Token_LPAREN
          ||  yytoken ==  Token_LBRACE
          ||  yytoken ==  Token_LBRACKET
@@ -1897,8 +1861,6 @@ namespace python
              ||  yytoken ==  Token_INTEGER
              ||  yytoken ==  Token_FLOAT
              ||  yytoken ==  Token_IMAGNUM
-             ||  yytoken ==  Token_LONGSTRING
-             ||  yytoken ==  Token_SHORTSTRING
              ||  yytoken ==  Token_LPAREN
              ||  yytoken ==  Token_LBRACE
              ||  yytoken ==  Token_LBRACKET
@@ -1907,6 +1869,58 @@ namespace python
              ||  yytoken ==  Token_MINUS
              ||  yytoken ==  Token_TILDE)
           {
+            test_ast *__node_39 =  0;
+
+            if  (!parse_test(&__node_39))
+              {
+                yy_expected_symbol(ast_node::Kind_test,  "test");
+                return  false;
+              }
+
+            (*yynode)->key_list_sequence =  snoc((*yynode)->key_list_sequence,  __node_39,  memory_pool);
+
+            if  (yytoken !=  Token_COLON)
+              {
+                yy_expected_token(yytoken,  Token_COLON,  "colon");
+                return  false;
+              }
+
+            yylex();
+
+            test_ast *__node_40 =  0;
+
+            if  (!parse_test(&__node_40))
+              {
+                yy_expected_symbol(ast_node::Kind_test,  "test");
+                return  false;
+              }
+
+            (*yynode)->value_list_sequence =  snoc((*yynode)->value_list_sequence,  __node_40,  memory_pool);
+
+          }
+
+        else if  (true /*epsilon*/)
+        {}
+        else
+          {
+            return  false;
+          }
+
+        while  (yytoken ==  Token_COMMA)
+          {
+            if  (yytoken !=  Token_COMMA)
+              {
+                yy_expected_token(yytoken,  Token_COMMA,  "comma");
+                return  false;
+              }
+
+            yylex();
+
+            if  (yytoken ==  Token_RBRACE)
+              {
+                break;
+              }
+
             test_ast *__node_41 =  0;
 
             if  (!parse_test(&__node_41))
@@ -1936,58 +1950,6 @@ namespace python
             (*yynode)->value_list_sequence =  snoc((*yynode)->value_list_sequence,  __node_42,  memory_pool);
 
           }
-
-        else if  (true /*epsilon*/)
-        {}
-        else
-          {
-            return  false;
-          }
-
-        while  (yytoken ==  Token_COMMA)
-          {
-            if  (yytoken !=  Token_COMMA)
-              {
-                yy_expected_token(yytoken,  Token_COMMA,  "comma");
-                return  false;
-              }
-
-            yylex();
-
-            if  (yytoken ==  Token_RBRACE)
-              {
-                break;
-              }
-
-            test_ast *__node_43 =  0;
-
-            if  (!parse_test(&__node_43))
-              {
-                yy_expected_symbol(ast_node::Kind_test,  "test");
-                return  false;
-              }
-
-            (*yynode)->key_list_sequence =  snoc((*yynode)->key_list_sequence,  __node_43,  memory_pool);
-
-            if  (yytoken !=  Token_COLON)
-              {
-                yy_expected_token(yytoken,  Token_COLON,  "colon");
-                return  false;
-              }
-
-            yylex();
-
-            test_ast *__node_44 =  0;
-
-            if  (!parse_test(&__node_44))
-              {
-                yy_expected_symbol(ast_node::Kind_test,  "test");
-                return  false;
-              }
-
-            (*yynode)->value_list_sequence =  snoc((*yynode)->value_list_sequence,  __node_44,  memory_pool);
-
-          }
       }
 
     else
@@ -2008,15 +1970,15 @@ namespace python
 
     if  (yytoken ==  Token_IDENTIFIER)
       {
-        dotted_name_ast *__node_45 =  0;
+        dotted_name_ast *__node_43 =  0;
 
-        if  (!parse_dotted_name(&__node_45))
+        if  (!parse_dotted_name(&__node_43))
           {
             yy_expected_symbol(ast_node::Kind_dotted_name,  "dotted_name");
             return  false;
           }
 
-        (*yynode)->import_dotted_name =  __node_45;
+        (*yynode)->import_dotted_name =  __node_43;
 
         if  (yytoken ==  Token_AS)
           {
@@ -2065,15 +2027,15 @@ namespace python
 
     if  (yytoken ==  Token_IDENTIFIER)
       {
-        dotted_as_name_ast *__node_46 =  0;
+        dotted_as_name_ast *__node_44 =  0;
 
-        if  (!parse_dotted_as_name(&__node_46))
+        if  (!parse_dotted_as_name(&__node_44))
           {
             yy_expected_symbol(ast_node::Kind_dotted_as_name,  "dotted_as_name");
             return  false;
           }
 
-        (*yynode)->dotted_as_name_sequence =  snoc((*yynode)->dotted_as_name_sequence,  __node_46,  memory_pool);
+        (*yynode)->dotted_as_name_sequence =  snoc((*yynode)->dotted_as_name_sequence,  __node_44,  memory_pool);
 
         while  (yytoken ==  Token_COMMA)
           {
@@ -2085,15 +2047,15 @@ namespace python
 
             yylex();
 
-            dotted_as_name_ast *__node_47 =  0;
+            dotted_as_name_ast *__node_45 =  0;
 
-            if  (!parse_dotted_as_name(&__node_47))
+            if  (!parse_dotted_as_name(&__node_45))
               {
                 yy_expected_symbol(ast_node::Kind_dotted_as_name,  "dotted_as_name");
                 return  false;
               }
 
-            (*yynode)->dotted_as_name_sequence =  snoc((*yynode)->dotted_as_name_sequence,  __node_47,  memory_pool);
+            (*yynode)->dotted_as_name_sequence =  snoc((*yynode)->dotted_as_name_sequence,  __node_45,  memory_pool);
 
           }
       }
@@ -2180,8 +2142,6 @@ namespace python
              ||  yytoken ==  Token_INTEGER
              ||  yytoken ==  Token_FLOAT
              ||  yytoken ==  Token_IMAGNUM
-             ||  yytoken ==  Token_LONGSTRING
-             ||  yytoken ==  Token_SHORTSTRING
              ||  yytoken ==  Token_LPAREN
              ||  yytoken ==  Token_LBRACE
              ||  yytoken ==  Token_LBRACKET
@@ -2190,15 +2150,15 @@ namespace python
              ||  yytoken ==  Token_MINUS
              ||  yytoken ==  Token_TILDE)
           {
-            test_ast *__node_48 =  0;
+            test_ast *__node_46 =  0;
 
-            if  (!parse_test(&__node_48))
+            if  (!parse_test(&__node_46))
               {
                 yy_expected_symbol(ast_node::Kind_test,  "test");
                 return  false;
               }
 
-            (*yynode)->except_test =  __node_48;
+            (*yynode)->except_test =  __node_46;
 
             if  (yytoken ==  Token_COMMA)
               {
@@ -2210,15 +2170,15 @@ namespace python
 
                 yylex();
 
-                test_ast *__node_49 =  0;
+                test_ast *__node_47 =  0;
 
-                if  (!parse_test(&__node_49))
+                if  (!parse_test(&__node_47))
                   {
                     yy_expected_symbol(ast_node::Kind_test,  "test");
                     return  false;
                   }
 
-                (*yynode)->except_target_test =  __node_49;
+                (*yynode)->except_target_test =  __node_47;
 
               }
 
@@ -2264,15 +2224,15 @@ namespace python
 
         yylex();
 
-        expr_ast *__node_50 =  0;
+        expr_ast *__node_48 =  0;
 
-        if  (!parse_expr(&__node_50))
+        if  (!parse_expr(&__node_48))
           {
             yy_expected_symbol(ast_node::Kind_expr,  "expr");
             return  false;
           }
 
-        (*yynode)->exec_code =  __node_50;
+        (*yynode)->exec_code =  __node_48;
 
         if  (yytoken ==  Token_IN)
           {
@@ -2284,15 +2244,15 @@ namespace python
 
             yylex();
 
-            test_ast *__node_51 =  0;
+            test_ast *__node_49 =  0;
 
-            if  (!parse_test(&__node_51))
+            if  (!parse_test(&__node_49))
               {
                 yy_expected_symbol(ast_node::Kind_test,  "test");
                 return  false;
               }
 
-            (*yynode)->global_dict_exec =  __node_51;
+            (*yynode)->global_dict_exec =  __node_49;
 
             if  (yytoken ==  Token_COMMA)
               {
@@ -2304,15 +2264,15 @@ namespace python
 
                 yylex();
 
-                test_ast *__node_52 =  0;
+                test_ast *__node_50 =  0;
 
-                if  (!parse_test(&__node_52))
+                if  (!parse_test(&__node_50))
                   {
                     yy_expected_symbol(ast_node::Kind_test,  "test");
                     return  false;
                   }
 
-                (*yynode)->local_dict_exec =  __node_52;
+                (*yynode)->local_dict_exec =  __node_50;
 
               }
 
@@ -2353,8 +2313,6 @@ namespace python
          ||  yytoken ==  Token_INTEGER
          ||  yytoken ==  Token_FLOAT
          ||  yytoken ==  Token_IMAGNUM
-         ||  yytoken ==  Token_LONGSTRING
-         ||  yytoken ==  Token_SHORTSTRING
          ||  yytoken ==  Token_LPAREN
          ||  yytoken ==  Token_LBRACE
          ||  yytoken ==  Token_LBRACKET
@@ -2363,15 +2321,15 @@ namespace python
          ||  yytoken ==  Token_MINUS
          ||  yytoken ==  Token_TILDE)
       {
-        xor_expr_ast *__node_53 =  0;
+        xor_expr_ast *__node_51 =  0;
 
-        if  (!parse_xor_expr(&__node_53))
+        if  (!parse_xor_expr(&__node_51))
           {
             yy_expected_symbol(ast_node::Kind_xor_expr,  "xor_expr");
             return  false;
           }
 
-        (*yynode)->expr =  __node_53;
+        (*yynode)->expr =  __node_51;
 
         while  (yytoken ==  Token_ORR)
           {
@@ -2383,15 +2341,15 @@ namespace python
 
             yylex();
 
-            xor_expr_ast *__node_54 =  0;
+            xor_expr_ast *__node_52 =  0;
 
-            if  (!parse_xor_expr(&__node_54))
+            if  (!parse_xor_expr(&__node_52))
               {
                 yy_expected_symbol(ast_node::Kind_xor_expr,  "xor_expr");
                 return  false;
               }
 
-            (*yynode)->orr_expr_sequence =  snoc((*yynode)->orr_expr_sequence,  __node_54,  memory_pool);
+            (*yynode)->orr_expr_sequence =  snoc((*yynode)->orr_expr_sequence,  __node_52,  memory_pool);
 
           }
       }
@@ -2419,8 +2377,6 @@ namespace python
          ||  yytoken ==  Token_INTEGER
          ||  yytoken ==  Token_FLOAT
          ||  yytoken ==  Token_IMAGNUM
-         ||  yytoken ==  Token_LONGSTRING
-         ||  yytoken ==  Token_SHORTSTRING
          ||  yytoken ==  Token_LPAREN
          ||  yytoken ==  Token_LBRACE
          ||  yytoken ==  Token_LBRACKET
@@ -2429,15 +2385,15 @@ namespace python
          ||  yytoken ==  Token_MINUS
          ||  yytoken ==  Token_TILDE)
       {
-        testlist_ast *__node_55 =  0;
+        testlist_ast *__node_53 =  0;
 
-        if  (!parse_testlist(&__node_55))
+        if  (!parse_testlist(&__node_53))
           {
             yy_expected_symbol(ast_node::Kind_testlist,  "testlist");
             return  false;
           }
 
-        (*yynode)->testlist =  __node_55;
+        (*yynode)->testlist =  __node_53;
 
         if  (yytoken ==  Token_PLUSEQ
              ||  yytoken ==  Token_MINUSEQ
@@ -2452,25 +2408,25 @@ namespace python
              ||  yytoken ==  Token_TILDEEQ
              ||  yytoken ==  Token_OREQ)
           {
-            augassign_ast *__node_56 =  0;
+            augassign_ast *__node_54 =  0;
 
-            if  (!parse_augassign(&__node_56))
+            if  (!parse_augassign(&__node_54))
               {
                 yy_expected_symbol(ast_node::Kind_augassign,  "augassign");
                 return  false;
               }
 
-            (*yynode)->augassign =  __node_56;
+            (*yynode)->augassign =  __node_54;
 
-            testlist_ast *__node_57 =  0;
+            testlist_ast *__node_55 =  0;
 
-            if  (!parse_testlist(&__node_57))
+            if  (!parse_testlist(&__node_55))
               {
                 yy_expected_symbol(ast_node::Kind_testlist,  "testlist");
                 return  false;
               }
 
-            (*yynode)->anugassign_testlist =  __node_57;
+            (*yynode)->anugassign_testlist =  __node_55;
 
           }
 
@@ -2486,15 +2442,15 @@ namespace python
 
                 yylex();
 
-                testlist_ast *__node_58 =  0;
+                testlist_ast *__node_56 =  0;
 
-                if  (!parse_testlist(&__node_58))
+                if  (!parse_testlist(&__node_56))
                   {
                     yy_expected_symbol(ast_node::Kind_testlist,  "testlist");
                     return  false;
                   }
 
-                (*yynode)->equal_testlist_sequence =  snoc((*yynode)->equal_testlist_sequence,  __node_58,  memory_pool);
+                (*yynode)->equal_testlist_sequence =  snoc((*yynode)->equal_testlist_sequence,  __node_56,  memory_pool);
 
               }
 
@@ -2530,8 +2486,6 @@ namespace python
          ||  yytoken ==  Token_INTEGER
          ||  yytoken ==  Token_FLOAT
          ||  yytoken ==  Token_IMAGNUM
-         ||  yytoken ==  Token_LONGSTRING
-         ||  yytoken ==  Token_SHORTSTRING
          ||  yytoken ==  Token_LPAREN
          ||  yytoken ==  Token_LBRACE
          ||  yytoken ==  Token_LBRACKET
@@ -2540,15 +2494,15 @@ namespace python
          ||  yytoken ==  Token_MINUS
          ||  yytoken ==  Token_TILDE)
       {
-        expr_ast *__node_59 =  0;
+        expr_ast *__node_57 =  0;
 
-        if  (!parse_expr(&__node_59))
+        if  (!parse_expr(&__node_57))
           {
             yy_expected_symbol(ast_node::Kind_expr,  "expr");
             return  false;
           }
 
-        (*yynode)->expr_sequence =  snoc((*yynode)->expr_sequence,  __node_59,  memory_pool);
+        (*yynode)->expr_sequence =  snoc((*yynode)->expr_sequence,  __node_57,  memory_pool);
 
         while  (yytoken ==  Token_COMMA)
           {
@@ -2565,15 +2519,15 @@ namespace python
                 break;
               }
 
-            expr_ast *__node_60 =  0;
+            expr_ast *__node_58 =  0;
 
-            if  (!parse_expr(&__node_60))
+            if  (!parse_expr(&__node_58))
               {
                 yy_expected_symbol(ast_node::Kind_expr,  "expr");
                 return  false;
               }
 
-            (*yynode)->exprlist_sequence =  snoc((*yynode)->exprlist_sequence,  __node_60,  memory_pool);
+            (*yynode)->exprlist_sequence =  snoc((*yynode)->exprlist_sequence,  __node_58,  memory_pool);
 
           }
       }
@@ -2608,7 +2562,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->factor_operator =  python::op_factor_plus;
+            (*yynode)->factor_operator =  Python::op_factor_plus;
           }
 
         else if  (yytoken ==  Token_MINUS)
@@ -2621,7 +2575,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->factor_operator =  python::op_factor_minus;
+            (*yynode)->factor_operator =  Python::op_factor_minus;
           }
 
         else if  (yytoken ==  Token_TILDE)
@@ -2634,7 +2588,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->factor_operator =  python::op_factor_tilde ;
+            (*yynode)->factor_operator =  Python::op_factor_tilde ;
           }
 
         else
@@ -2664,8 +2618,6 @@ namespace python
          ||  yytoken ==  Token_INTEGER
          ||  yytoken ==  Token_FLOAT
          ||  yytoken ==  Token_IMAGNUM
-         ||  yytoken ==  Token_LONGSTRING
-         ||  yytoken ==  Token_SHORTSTRING
          ||  yytoken ==  Token_LPAREN
          ||  yytoken ==  Token_LBRACE
          ||  yytoken ==  Token_LBRACKET
@@ -2678,25 +2630,25 @@ namespace python
              ||  yytoken ==  Token_MINUS
              ||  yytoken ==  Token_TILDE)
           {
-            fact_op_ast *__node_61 =  0;
+            fact_op_ast *__node_59 =  0;
 
-            if  (!parse_fact_op(&__node_61))
+            if  (!parse_fact_op(&__node_59))
               {
                 yy_expected_symbol(ast_node::Kind_fact_op,  "fact_op");
                 return  false;
               }
 
-            (*yynode)->fact_op =  __node_61;
+            (*yynode)->fact_op =  __node_59;
 
-            factor_ast *__node_62 =  0;
+            factor_ast *__node_60 =  0;
 
-            if  (!parse_factor(&__node_62))
+            if  (!parse_factor(&__node_60))
               {
                 yy_expected_symbol(ast_node::Kind_factor,  "factor");
                 return  false;
               }
 
-            (*yynode)->factor =  __node_62;
+            (*yynode)->factor =  __node_60;
 
           }
 
@@ -2705,22 +2657,20 @@ namespace python
                   ||  yytoken ==  Token_INTEGER
                   ||  yytoken ==  Token_FLOAT
                   ||  yytoken ==  Token_IMAGNUM
-                  ||  yytoken ==  Token_LONGSTRING
-                  ||  yytoken ==  Token_SHORTSTRING
                   ||  yytoken ==  Token_LPAREN
                   ||  yytoken ==  Token_LBRACE
                   ||  yytoken ==  Token_LBRACKET
                   ||  yytoken ==  Token_BACKTICK)
           {
-            power_ast *__node_63 =  0;
+            power_ast *__node_61 =  0;
 
-            if  (!parse_power(&__node_63))
+            if  (!parse_power(&__node_61))
               {
                 yy_expected_symbol(ast_node::Kind_power,  "power");
                 return  false;
               }
 
-            (*yynode)->power =  __node_63;
+            (*yynode)->power =  __node_61;
 
           }
 
@@ -2754,71 +2704,71 @@ namespace python
       {
         if  (yytoken ==  Token_BREAK)
           {
-            break_stmt_ast *__node_64 =  0;
+            break_stmt_ast *__node_62 =  0;
 
-            if  (!parse_break_stmt(&__node_64))
+            if  (!parse_break_stmt(&__node_62))
               {
                 yy_expected_symbol(ast_node::Kind_break_stmt,  "break_stmt");
                 return  false;
               }
 
-            (*yynode)->break_stmt =  __node_64;
+            (*yynode)->break_stmt =  __node_62;
 
           }
 
         else if  (yytoken ==  Token_CONTINUE)
           {
-            continue_stmt_ast *__node_65 =  0;
+            continue_stmt_ast *__node_63 =  0;
 
-            if  (!parse_continue_stmt(&__node_65))
+            if  (!parse_continue_stmt(&__node_63))
               {
                 yy_expected_symbol(ast_node::Kind_continue_stmt,  "continue_stmt");
                 return  false;
               }
 
-            (*yynode)->continue_stmt =  __node_65;
+            (*yynode)->continue_stmt =  __node_63;
 
           }
 
         else if  (yytoken ==  Token_RETURN)
           {
-            return_stmt_ast *__node_66 =  0;
+            return_stmt_ast *__node_64 =  0;
 
-            if  (!parse_return_stmt(&__node_66))
+            if  (!parse_return_stmt(&__node_64))
               {
                 yy_expected_symbol(ast_node::Kind_return_stmt,  "return_stmt");
                 return  false;
               }
 
-            (*yynode)->return_stmt =  __node_66;
+            (*yynode)->return_stmt =  __node_64;
 
           }
 
         else if  (yytoken ==  Token_RAISE)
           {
-            raise_stmt_ast *__node_67 =  0;
+            raise_stmt_ast *__node_65 =  0;
 
-            if  (!parse_raise_stmt(&__node_67))
+            if  (!parse_raise_stmt(&__node_65))
               {
                 yy_expected_symbol(ast_node::Kind_raise_stmt,  "raise_stmt");
                 return  false;
               }
 
-            (*yynode)->raise_stmt =  __node_67;
+            (*yynode)->raise_stmt =  __node_65;
 
           }
 
         else if  (yytoken ==  Token_YIELD)
           {
-            yield_stmt_ast *__node_68 =  0;
+            yield_stmt_ast *__node_66 =  0;
 
-            if  (!parse_yield_stmt(&__node_68))
+            if  (!parse_yield_stmt(&__node_66))
               {
                 yy_expected_symbol(ast_node::Kind_yield_stmt,  "yield_stmt");
                 return  false;
               }
 
-            (*yynode)->yield_stmt =  __node_68;
+            (*yynode)->yield_stmt =  __node_66;
 
           }
 
@@ -2854,15 +2804,15 @@ namespace python
 
         yylex();
 
-        exprlist_ast *__node_69 =  0;
+        exprlist_ast *__node_67 =  0;
 
-        if  (!parse_exprlist(&__node_69))
+        if  (!parse_exprlist(&__node_67))
           {
             yy_expected_symbol(ast_node::Kind_exprlist,  "exprlist");
             return  false;
           }
 
-        (*yynode)->for_expr =  __node_69;
+        (*yynode)->for_expr =  __node_67;
 
         if  (yytoken !=  Token_IN)
           {
@@ -2872,15 +2822,15 @@ namespace python
 
         yylex();
 
-        testlist_ast *__node_70 =  0;
+        testlist_ast *__node_68 =  0;
 
-        if  (!parse_testlist(&__node_70))
+        if  (!parse_testlist(&__node_68))
           {
             yy_expected_symbol(ast_node::Kind_testlist,  "testlist");
             return  false;
           }
 
-        (*yynode)->for_testlist =  __node_70;
+        (*yynode)->for_testlist =  __node_68;
 
         if  (yytoken !=  Token_COLON)
           {
@@ -2890,15 +2840,15 @@ namespace python
 
         yylex();
 
-        suite_ast *__node_71 =  0;
+        suite_ast *__node_69 =  0;
 
-        if  (!parse_suite(&__node_71))
+        if  (!parse_suite(&__node_69))
           {
             yy_expected_symbol(ast_node::Kind_suite,  "suite");
             return  false;
           }
 
-        (*yynode)->for_suite =  __node_71;
+        (*yynode)->for_suite =  __node_69;
 
         if  (yytoken ==  Token_ELSE)
           {
@@ -2918,15 +2868,15 @@ namespace python
 
             yylex();
 
-            suite_ast *__node_72 =  0;
+            suite_ast *__node_70 =  0;
 
-            if  (!parse_suite(&__node_72))
+            if  (!parse_suite(&__node_70))
               {
                 yy_expected_symbol(ast_node::Kind_suite,  "suite");
                 return  false;
               }
 
-            (*yynode)->for_else_suite =  __node_72;
+            (*yynode)->for_else_suite =  __node_70;
 
           }
 
@@ -2957,15 +2907,15 @@ namespace python
     if  (yytoken ==  Token_IDENTIFIER
          ||  yytoken ==  Token_LPAREN)
       {
-        fpdef_ast *__node_73 =  0;
+        fpdef_ast *__node_71 =  0;
 
-        if  (!parse_fpdef(&__node_73))
+        if  (!parse_fpdef(&__node_71))
           {
             yy_expected_symbol(ast_node::Kind_fpdef,  "fpdef");
             return  false;
           }
 
-        (*yynode)->fpdef =  __node_73;
+        (*yynode)->fpdef =  __node_71;
 
         if  (yytoken ==  Token_EQUAL)
           {
@@ -2977,15 +2927,15 @@ namespace python
 
             yylex();
 
-            test_ast *__node_74 =  0;
+            test_ast *__node_72 =  0;
 
-            if  (!parse_test(&__node_74))
+            if  (!parse_test(&__node_72))
               {
                 yy_expected_symbol(ast_node::Kind_test,  "test");
                 return  false;
               }
 
-            (*yynode)->fp_def_test =  __node_74;
+            (*yynode)->fp_def_test =  __node_72;
 
           }
 
@@ -3026,15 +2976,15 @@ namespace python
 
             yylex();
 
-            fplist_ast *__node_75 =  0;
+            fplist_ast *__node_73 =  0;
 
-            if  (!parse_fplist(&__node_75))
+            if  (!parse_fplist(&__node_73))
               {
                 yy_expected_symbol(ast_node::Kind_fplist,  "fplist");
                 return  false;
               }
 
-            (*yynode)->fplist =  __node_75;
+            (*yynode)->fplist =  __node_73;
 
             if  (yytoken !=  Token_RPAREN)
               {
@@ -3083,15 +3033,15 @@ namespace python
     if  (yytoken ==  Token_IDENTIFIER
          ||  yytoken ==  Token_LPAREN)
       {
-        fpdef_ast *__node_76 =  0;
+        fpdef_ast *__node_74 =  0;
 
-        if  (!parse_fpdef(&__node_76))
+        if  (!parse_fpdef(&__node_74))
           {
             yy_expected_symbol(ast_node::Kind_fpdef,  "fpdef");
             return  false;
           }
 
-        (*yynode)->fplist_fpdef_sequence =  snoc((*yynode)->fplist_fpdef_sequence,  __node_76,  memory_pool);
+        (*yynode)->fplist_fpdef_sequence =  snoc((*yynode)->fplist_fpdef_sequence,  __node_74,  memory_pool);
 
         while  (yytoken ==  Token_COMMA)
           {
@@ -3108,15 +3058,15 @@ namespace python
                 break;
               }
 
-            fpdef_ast *__node_77 =  0;
+            fpdef_ast *__node_75 =  0;
 
-            if  (!parse_fpdef(&__node_77))
+            if  (!parse_fpdef(&__node_75))
               {
                 yy_expected_symbol(ast_node::Kind_fpdef,  "fpdef");
                 return  false;
               }
 
-            (*yynode)->fplist_fpdef_sequence =  snoc((*yynode)->fplist_fpdef_sequence,  __node_77,  memory_pool);
+            (*yynode)->fplist_fpdef_sequence =  snoc((*yynode)->fplist_fpdef_sequence,  __node_75,  memory_pool);
 
           }
       }
@@ -3242,15 +3192,15 @@ namespace python
     if  (yytoken ==  Token_IDENTIFIER
          ||  yytoken ==  Token_LPAREN)
       {
-        fp_def_ast *__node_78 =  0;
+        fp_def_ast *__node_76 =  0;
 
-        if  (!parse_fp_def(&__node_78))
+        if  (!parse_fp_def(&__node_76))
           {
             yy_expected_symbol(ast_node::Kind_fp_def,  "fp_def");
             return  false;
           }
 
-        (*yynode)->fp_def_sequence =  snoc((*yynode)->fp_def_sequence,  __node_78,  memory_pool);
+        (*yynode)->fp_def_sequence =  snoc((*yynode)->fp_def_sequence,  __node_76,  memory_pool);
 
         while  (yytoken ==  Token_COMMA)
           {
@@ -3267,15 +3217,15 @@ namespace python
                 break;
               }
 
-            fp_def_ast *__node_79 =  0;
+            fp_def_ast *__node_77 =  0;
 
-            if  (!parse_fp_def(&__node_79))
+            if  (!parse_fp_def(&__node_77))
               {
                 yy_expected_symbol(ast_node::Kind_fp_def,  "fp_def");
                 return  false;
               }
 
-            (*yynode)->fp_def_sequence =  snoc((*yynode)->fp_def_sequence,  __node_79,  memory_pool);
+            (*yynode)->fp_def_sequence =  snoc((*yynode)->fp_def_sequence,  __node_77,  memory_pool);
 
           }
       }
@@ -3301,15 +3251,15 @@ namespace python
       {
         if  (yytoken ==  Token_AT)
           {
-            decorators_ast *__node_80 =  0;
+            decorators_ast *__node_78 =  0;
 
-            if  (!parse_decorators(&__node_80))
+            if  (!parse_decorators(&__node_78))
               {
                 yy_expected_symbol(ast_node::Kind_decorators,  "decorators");
                 return  false;
               }
 
-            (*yynode)->decorators =  __node_80;
+            (*yynode)->decorators =  __node_78;
 
           }
 
@@ -3346,22 +3296,20 @@ namespace python
         yylex();
 
         if  ((yytoken ==  Token_IDENTIFIER
-              ||  yytoken ==  Token_LPAREN) &&  ( LA(1).kind !=  Token_RPAREN ))
+              ||  yytoken ==  Token_LPAREN
+              ||  yytoken ==  Token_STAR
+              ||  yytoken ==  Token_DOUBLESTAR) &&  ( LA(1).kind !=  Token_RPAREN ))
           {
-            while  (yytoken ==  Token_IDENTIFIER
-                    ||  yytoken ==  Token_LPAREN)
+            varargslist_ast *__node_79 =  0;
+
+            if  (!parse_varargslist(&__node_79))
               {
-                varargslist_ast *__node_81 =  0;
-
-                if  (!parse_varargslist(&__node_81))
-                  {
-                    yy_expected_symbol(ast_node::Kind_varargslist,  "varargslist");
-                    return  false;
-                  }
-
-                (*yynode)->fun_args_sequence =  snoc((*yynode)->fun_args_sequence,  __node_81,  memory_pool);
-
+                yy_expected_symbol(ast_node::Kind_varargslist,  "varargslist");
+                return  false;
               }
+
+            (*yynode)->fun_args =  __node_79;
+
           }
 
         else if  (true /*epsilon*/)
@@ -3387,15 +3335,15 @@ namespace python
 
         yylex();
 
-        suite_ast *__node_82 =  0;
+        suite_ast *__node_80 =  0;
 
-        if  (!parse_suite(&__node_82))
+        if  (!parse_suite(&__node_80))
           {
             yy_expected_symbol(ast_node::Kind_suite,  "suite");
             return  false;
           }
 
-        (*yynode)->fun_suite =  __node_82;
+        (*yynode)->fun_suite =  __node_80;
 
       }
 
@@ -3425,19 +3373,78 @@ namespace python
 
         yylex();
 
-        exprlist_ast *__node_83 =  0;
+        exprlist_ast *__node_81 =  0;
 
-        if  (!parse_exprlist(&__node_83))
+        if  (!parse_exprlist(&__node_81))
           {
             yy_expected_symbol(ast_node::Kind_exprlist,  "exprlist");
             return  false;
           }
 
-        (*yynode)->exprlist =  __node_83;
+        (*yynode)->exprlist =  __node_81;
 
         if  (yytoken !=  Token_IN)
           {
             yy_expected_token(yytoken,  Token_IN,  "in");
+            return  false;
+          }
+
+        yylex();
+
+        test_ast *__node_82 =  0;
+
+        if  (!parse_test(&__node_82))
+          {
+            yy_expected_symbol(ast_node::Kind_test,  "test");
+            return  false;
+          }
+
+        (*yynode)->test =  __node_82;
+
+        if  (yytoken ==  Token_FOR
+             ||  yytoken ==  Token_IF)
+          {
+            gen_iter_ast *__node_83 =  0;
+
+            if  (!parse_gen_iter(&__node_83))
+              {
+                yy_expected_symbol(ast_node::Kind_gen_iter,  "gen_iter");
+                return  false;
+              }
+
+            (*yynode)->gen_iter =  __node_83;
+
+          }
+
+        else if  (true /*epsilon*/)
+        {}
+        else
+          {
+            return  false;
+          }
+      }
+
+    else
+      {
+        return  false;
+      }
+
+    (*yynode)->end_token =  token_stream->index() -  1;
+
+    return  true;
+  }
+
+  bool parser::parse_gen_if(gen_if_ast **yynode)
+  {
+    *yynode =  create<gen_if_ast>();
+
+    (*yynode)->start_token =  token_stream->index() -  1;
+
+    if  (yytoken ==  Token_IF)
+      {
+        if  (yytoken !=  Token_IF)
+          {
+            yy_expected_token(yytoken,  Token_IF,  "if");
             return  false;
           }
 
@@ -3486,65 +3493,6 @@ namespace python
     return  true;
   }
 
-  bool parser::parse_gen_if(gen_if_ast **yynode)
-  {
-    *yynode =  create<gen_if_ast>();
-
-    (*yynode)->start_token =  token_stream->index() -  1;
-
-    if  (yytoken ==  Token_IF)
-      {
-        if  (yytoken !=  Token_IF)
-          {
-            yy_expected_token(yytoken,  Token_IF,  "if");
-            return  false;
-          }
-
-        yylex();
-
-        test_ast *__node_86 =  0;
-
-        if  (!parse_test(&__node_86))
-          {
-            yy_expected_symbol(ast_node::Kind_test,  "test");
-            return  false;
-          }
-
-        (*yynode)->test =  __node_86;
-
-        if  (yytoken ==  Token_FOR
-             ||  yytoken ==  Token_IF)
-          {
-            gen_iter_ast *__node_87 =  0;
-
-            if  (!parse_gen_iter(&__node_87))
-              {
-                yy_expected_symbol(ast_node::Kind_gen_iter,  "gen_iter");
-                return  false;
-              }
-
-            (*yynode)->gen_iter =  __node_87;
-
-          }
-
-        else if  (true /*epsilon*/)
-        {}
-        else
-          {
-            return  false;
-          }
-      }
-
-    else
-      {
-        return  false;
-      }
-
-    (*yynode)->end_token =  token_stream->index() -  1;
-
-    return  true;
-  }
-
   bool parser::parse_gen_iter(gen_iter_ast **yynode)
   {
     *yynode =  create<gen_iter_ast>();
@@ -3556,29 +3504,29 @@ namespace python
       {
         if  (yytoken ==  Token_FOR)
           {
-            gen_for_ast *__node_88 =  0;
+            gen_for_ast *__node_86 =  0;
 
-            if  (!parse_gen_for(&__node_88))
+            if  (!parse_gen_for(&__node_86))
               {
                 yy_expected_symbol(ast_node::Kind_gen_for,  "gen_for");
                 return  false;
               }
 
-            (*yynode)->gen_for =  __node_88;
+            (*yynode)->gen_for =  __node_86;
 
           }
 
         else if  (yytoken ==  Token_IF)
           {
-            gen_if_ast *__node_89 =  0;
+            gen_if_ast *__node_87 =  0;
 
-            if  (!parse_gen_if(&__node_89))
+            if  (!parse_gen_if(&__node_87))
               {
                 yy_expected_symbol(ast_node::Kind_gen_if,  "gen_if");
                 return  false;
               }
 
-            (*yynode)->gen_if =  __node_89;
+            (*yynode)->gen_if =  __node_87;
 
           }
 
@@ -3671,15 +3619,15 @@ namespace python
 
         yylex();
 
-        test_ast *__node_90 =  0;
+        test_ast *__node_88 =  0;
 
-        if  (!parse_test(&__node_90))
+        if  (!parse_test(&__node_88))
           {
             yy_expected_symbol(ast_node::Kind_test,  "test");
             return  false;
           }
 
-        (*yynode)->if_test_sequence =  snoc((*yynode)->if_test_sequence,  __node_90,  memory_pool);
+        (*yynode)->if_test_sequence =  snoc((*yynode)->if_test_sequence,  __node_88,  memory_pool);
 
         if  (yytoken !=  Token_COLON)
           {
@@ -3689,15 +3637,15 @@ namespace python
 
         yylex();
 
-        suite_ast *__node_91 =  0;
+        suite_ast *__node_89 =  0;
 
-        if  (!parse_suite(&__node_91))
+        if  (!parse_suite(&__node_89))
           {
             yy_expected_symbol(ast_node::Kind_suite,  "suite");
             return  false;
           }
 
-        (*yynode)->if_suite =  __node_91;
+        (*yynode)->if_suite =  __node_89;
 
         while  (yytoken ==  Token_ELIF)
           {
@@ -3709,15 +3657,15 @@ namespace python
 
             yylex();
 
-            test_ast *__node_92 =  0;
+            test_ast *__node_90 =  0;
 
-            if  (!parse_test(&__node_92))
+            if  (!parse_test(&__node_90))
               {
                 yy_expected_symbol(ast_node::Kind_test,  "test");
                 return  false;
               }
 
-            (*yynode)->elif_test_sequence =  snoc((*yynode)->elif_test_sequence,  __node_92,  memory_pool);
+            (*yynode)->elif_test_sequence =  snoc((*yynode)->elif_test_sequence,  __node_90,  memory_pool);
 
             if  (yytoken !=  Token_COLON)
               {
@@ -3727,15 +3675,15 @@ namespace python
 
             yylex();
 
-            suite_ast *__node_93 =  0;
+            suite_ast *__node_91 =  0;
 
-            if  (!parse_suite(&__node_93))
+            if  (!parse_suite(&__node_91))
               {
                 yy_expected_symbol(ast_node::Kind_suite,  "suite");
                 return  false;
               }
 
-            (*yynode)->elif_suite_sequence =  snoc((*yynode)->elif_suite_sequence,  __node_93,  memory_pool);
+            (*yynode)->elif_suite_sequence =  snoc((*yynode)->elif_suite_sequence,  __node_91,  memory_pool);
 
           }
 
@@ -3757,15 +3705,15 @@ namespace python
 
             yylex();
 
-            suite_ast *__node_94 =  0;
+            suite_ast *__node_92 =  0;
 
-            if  (!parse_suite(&__node_94))
+            if  (!parse_suite(&__node_92))
               {
                 yy_expected_symbol(ast_node::Kind_suite,  "suite");
                 return  false;
               }
 
-            (*yynode)->if_else_suite =  __node_94;
+            (*yynode)->if_else_suite =  __node_92;
 
           }
 
@@ -3851,15 +3799,15 @@ namespace python
 
     if  (yytoken ==  Token_IDENTIFIER)
       {
-        import_as_name_ast *__node_95 =  0;
+        import_as_name_ast *__node_93 =  0;
 
-        if  (!parse_import_as_name(&__node_95))
+        if  (!parse_import_as_name(&__node_93))
           {
             yy_expected_symbol(ast_node::Kind_import_as_name,  "import_as_name");
             return  false;
           }
 
-        (*yynode)->import_as_name_sequence =  snoc((*yynode)->import_as_name_sequence,  __node_95,  memory_pool);
+        (*yynode)->import_as_name_sequence =  snoc((*yynode)->import_as_name_sequence,  __node_93,  memory_pool);
 
         while  (yytoken ==  Token_COMMA)
           {
@@ -3876,15 +3824,15 @@ namespace python
                 break;
               }
 
-            import_as_name_ast *__node_96 =  0;
+            import_as_name_ast *__node_94 =  0;
 
-            if  (!parse_import_as_name(&__node_96))
+            if  (!parse_import_as_name(&__node_94))
               {
                 yy_expected_symbol(ast_node::Kind_import_as_name,  "import_as_name");
                 return  false;
               }
 
-            (*yynode)->import_as_name_sequence =  snoc((*yynode)->import_as_name_sequence,  __node_96,  memory_pool);
+            (*yynode)->import_as_name_sequence =  snoc((*yynode)->import_as_name_sequence,  __node_94,  memory_pool);
 
           }
       }
@@ -3915,15 +3863,15 @@ namespace python
 
         yylex();
 
-        dotted_name_ast *__node_97 =  0;
+        dotted_name_ast *__node_95 =  0;
 
-        if  (!parse_dotted_name(&__node_97))
+        if  (!parse_dotted_name(&__node_95))
           {
             yy_expected_symbol(ast_node::Kind_dotted_name,  "dotted_name");
             return  false;
           }
 
-        (*yynode)->import_from_name =  __node_97;
+        (*yynode)->import_from_name =  __node_95;
 
         if  (yytoken !=  Token_IMPORT)
           {
@@ -3955,15 +3903,15 @@ namespace python
 
             yylex();
 
-            import_as_names_ast *__node_98 =  0;
+            import_as_names_ast *__node_96 =  0;
 
-            if  (!parse_import_as_names(&__node_98))
+            if  (!parse_import_as_names(&__node_96))
               {
                 yy_expected_symbol(ast_node::Kind_import_as_names,  "import_as_names");
                 return  false;
               }
 
-            (*yynode)->import_as_names =  __node_98;
+            (*yynode)->import_as_names =  __node_96;
 
             if  (yytoken !=  Token_RPAREN)
               {
@@ -3977,15 +3925,15 @@ namespace python
 
         else if  (yytoken ==  Token_IDENTIFIER)
           {
-            import_as_names_ast *__node_99 =  0;
+            import_as_names_ast *__node_97 =  0;
 
-            if  (!parse_import_as_names(&__node_99))
+            if  (!parse_import_as_names(&__node_97))
               {
                 yy_expected_symbol(ast_node::Kind_import_as_names,  "import_as_names");
                 return  false;
               }
 
-            (*yynode)->import_from_as_name =  __node_99;
+            (*yynode)->import_from_as_name =  __node_97;
 
           }
 
@@ -4021,15 +3969,15 @@ namespace python
 
         yylex();
 
-        dotted_as_names_ast *__node_100 =  0;
+        dotted_as_names_ast *__node_98 =  0;
 
-        if  (!parse_dotted_as_names(&__node_100))
+        if  (!parse_dotted_as_names(&__node_98))
           {
             yy_expected_symbol(ast_node::Kind_dotted_as_names,  "dotted_as_names");
             return  false;
           }
 
-        (*yynode)->import_name =  __node_100;
+        (*yynode)->import_name =  __node_98;
 
       }
 
@@ -4054,29 +4002,29 @@ namespace python
       {
         if  (yytoken ==  Token_IMPORT)
           {
-            import_name_ast *__node_101 =  0;
+            import_name_ast *__node_99 =  0;
 
-            if  (!parse_import_name(&__node_101))
+            if  (!parse_import_name(&__node_99))
               {
                 yy_expected_symbol(ast_node::Kind_import_name,  "import_name");
                 return  false;
               }
 
-            (*yynode)->import_import =  __node_101;
+            (*yynode)->import_import =  __node_99;
 
           }
 
         else if  (yytoken ==  Token_FROM)
           {
-            import_from_ast *__node_102 =  0;
+            import_from_ast *__node_100 =  0;
 
-            if  (!parse_import_from(&__node_102))
+            if  (!parse_import_from(&__node_100))
               {
                 yy_expected_symbol(ast_node::Kind_import_from,  "import_from");
                 return  false;
               }
 
-            (*yynode)->import_from =  __node_102;
+            (*yynode)->import_from =  __node_100;
 
           }
 
@@ -4113,17 +4061,19 @@ namespace python
         yylex();
 
         if  (yytoken ==  Token_IDENTIFIER
-             ||  yytoken ==  Token_LPAREN)
+             ||  yytoken ==  Token_LPAREN
+             ||  yytoken ==  Token_STAR
+             ||  yytoken ==  Token_DOUBLESTAR)
           {
-            varargslist_ast *__node_103 =  0;
+            varargslist_ast *__node_101 =  0;
 
-            if  (!parse_varargslist(&__node_103))
+            if  (!parse_varargslist(&__node_101))
               {
                 yy_expected_symbol(ast_node::Kind_varargslist,  "varargslist");
                 return  false;
               }
 
-            (*yynode)->lambda_varargslist =  __node_103;
+            (*yynode)->lambda_varargslist =  __node_101;
 
           }
 
@@ -4142,15 +4092,15 @@ namespace python
 
         yylex();
 
-        test_ast *__node_104 =  0;
+        test_ast *__node_102 =  0;
 
-        if  (!parse_test(&__node_104))
+        if  (!parse_test(&__node_102))
           {
             yy_expected_symbol(ast_node::Kind_test,  "test");
             return  false;
           }
 
-        (*yynode)->lambda_test =  __node_104;
+        (*yynode)->lambda_test =  __node_102;
 
       }
 
@@ -4180,15 +4130,15 @@ namespace python
 
         yylex();
 
-        exprlist_ast *__node_105 =  0;
+        exprlist_ast *__node_103 =  0;
 
-        if  (!parse_exprlist(&__node_105))
+        if  (!parse_exprlist(&__node_103))
           {
             yy_expected_symbol(ast_node::Kind_exprlist,  "exprlist");
             return  false;
           }
 
-        (*yynode)->exprlist =  __node_105;
+        (*yynode)->exprlist =  __node_103;
 
         if  (yytoken !=  Token_IN)
           {
@@ -4198,28 +4148,28 @@ namespace python
 
         yylex();
 
-        testlist_safe_ast *__node_106 =  0;
+        testlist_safe_ast *__node_104 =  0;
 
-        if  (!parse_testlist_safe(&__node_106))
+        if  (!parse_testlist_safe(&__node_104))
           {
             yy_expected_symbol(ast_node::Kind_testlist_safe,  "testlist_safe");
             return  false;
           }
 
-        (*yynode)->testlist_safe =  __node_106;
+        (*yynode)->testlist_safe =  __node_104;
 
         if  (yytoken ==  Token_FOR
              ||  yytoken ==  Token_IF)
           {
-            list_iter_ast *__node_107 =  0;
+            list_iter_ast *__node_105 =  0;
 
-            if  (!parse_list_iter(&__node_107))
+            if  (!parse_list_iter(&__node_105))
               {
                 yy_expected_symbol(ast_node::Kind_list_iter,  "list_iter");
                 return  false;
               }
 
-            (*yynode)->list_iter =  __node_107;
+            (*yynode)->list_iter =  __node_105;
 
           }
 
@@ -4257,28 +4207,28 @@ namespace python
 
         yylex();
 
-        test_ast *__node_108 =  0;
+        test_ast *__node_106 =  0;
 
-        if  (!parse_test(&__node_108))
+        if  (!parse_test(&__node_106))
           {
             yy_expected_symbol(ast_node::Kind_test,  "test");
             return  false;
           }
 
-        (*yynode)->test =  __node_108;
+        (*yynode)->test =  __node_106;
 
         if  (yytoken ==  Token_FOR
              ||  yytoken ==  Token_IF)
           {
-            list_iter_ast *__node_109 =  0;
+            list_iter_ast *__node_107 =  0;
 
-            if  (!parse_list_iter(&__node_109))
+            if  (!parse_list_iter(&__node_107))
               {
                 yy_expected_symbol(ast_node::Kind_list_iter,  "list_iter");
                 return  false;
               }
 
-            (*yynode)->list_iter =  __node_109;
+            (*yynode)->list_iter =  __node_107;
 
           }
 
@@ -4311,29 +4261,29 @@ namespace python
       {
         if  (yytoken ==  Token_FOR)
           {
-            list_for_ast *__node_110 =  0;
+            list_for_ast *__node_108 =  0;
 
-            if  (!parse_list_for(&__node_110))
+            if  (!parse_list_for(&__node_108))
               {
                 yy_expected_symbol(ast_node::Kind_list_for,  "list_for");
                 return  false;
               }
 
-            (*yynode)->list_for =  __node_110;
+            (*yynode)->list_for =  __node_108;
 
           }
 
         else if  (yytoken ==  Token_IF)
           {
-            list_if_ast *__node_111 =  0;
+            list_if_ast *__node_109 =  0;
 
-            if  (!parse_list_if(&__node_111))
+            if  (!parse_list_if(&__node_109))
               {
                 yy_expected_symbol(ast_node::Kind_list_if,  "list_if");
                 return  false;
               }
 
-            (*yynode)->list_if =  __node_111;
+            (*yynode)->list_if =  __node_109;
 
           }
 
@@ -4366,8 +4316,6 @@ namespace python
          ||  yytoken ==  Token_INTEGER
          ||  yytoken ==  Token_FLOAT
          ||  yytoken ==  Token_IMAGNUM
-         ||  yytoken ==  Token_LONGSTRING
-         ||  yytoken ==  Token_SHORTSTRING
          ||  yytoken ==  Token_LPAREN
          ||  yytoken ==  Token_LBRACE
          ||  yytoken ==  Token_LBRACKET
@@ -4384,8 +4332,6 @@ namespace python
              ||  yytoken ==  Token_INTEGER
              ||  yytoken ==  Token_FLOAT
              ||  yytoken ==  Token_IMAGNUM
-             ||  yytoken ==  Token_LONGSTRING
-             ||  yytoken ==  Token_SHORTSTRING
              ||  yytoken ==  Token_LPAREN
              ||  yytoken ==  Token_LBRACE
              ||  yytoken ==  Token_LBRACKET
@@ -4394,15 +4340,15 @@ namespace python
              ||  yytoken ==  Token_MINUS
              ||  yytoken ==  Token_TILDE)
           {
-            test_ast *__node_112 =  0;
+            test_ast *__node_110 =  0;
 
-            if  (!parse_test(&__node_112))
+            if  (!parse_test(&__node_110))
               {
                 yy_expected_symbol(ast_node::Kind_test,  "test");
                 return  false;
               }
 
-            (*yynode)->list_test_sequence =  snoc((*yynode)->list_test_sequence,  __node_112,  memory_pool);
+            (*yynode)->list_test_sequence =  snoc((*yynode)->list_test_sequence,  __node_110,  memory_pool);
 
             while  (yytoken ==  Token_COMMA)
               {
@@ -4419,15 +4365,15 @@ namespace python
                     break;
                   }
 
-                test_ast *__node_113 =  0;
+                test_ast *__node_111 =  0;
 
-                if  (!parse_test(&__node_113))
+                if  (!parse_test(&__node_111))
                   {
                     yy_expected_symbol(ast_node::Kind_test,  "test");
                     return  false;
                   }
 
-                (*yynode)->list_test_sequence =  snoc((*yynode)->list_test_sequence,  __node_113,  memory_pool);
+                (*yynode)->list_test_sequence =  snoc((*yynode)->list_test_sequence,  __node_111,  memory_pool);
 
               }
           }
@@ -4464,8 +4410,6 @@ namespace python
          ||  yytoken ==  Token_INTEGER
          ||  yytoken ==  Token_FLOAT
          ||  yytoken ==  Token_IMAGNUM
-         ||  yytoken ==  Token_LONGSTRING
-         ||  yytoken ==  Token_SHORTSTRING
          ||  yytoken ==  Token_LPAREN
          ||  yytoken ==  Token_LBRACE
          ||  yytoken ==  Token_LBRACKET
@@ -4474,27 +4418,27 @@ namespace python
          ||  yytoken ==  Token_MINUS
          ||  yytoken ==  Token_TILDE ||  yytoken ==  Token_RBRACKET)
       {
-        list_maker_ast *__node_114 =  0;
+        list_maker_ast *__node_112 =  0;
 
-        if  (!parse_list_maker(&__node_114))
+        if  (!parse_list_maker(&__node_112))
           {
             yy_expected_symbol(ast_node::Kind_list_maker,  "list_maker");
             return  false;
           }
 
-        (*yynode)->list_maker =  __node_114;
+        (*yynode)->list_maker =  __node_112;
 
         if  (yytoken ==  Token_FOR)
           {
-            list_for_ast *__node_115 =  0;
+            list_for_ast *__node_113 =  0;
 
-            if  (!parse_list_for(&__node_115))
+            if  (!parse_list_for(&__node_113))
               {
                 yy_expected_symbol(ast_node::Kind_list_for,  "list_for");
                 return  false;
               }
 
-            (*yynode)->list_for =  __node_115;
+            (*yynode)->list_for =  __node_113;
 
           }
 
@@ -4504,56 +4448,6 @@ namespace python
           {
             return  false;
           }
-      }
-
-    else
-      {
-        return  false;
-      }
-
-    (*yynode)->end_token =  token_stream->index() -  1;
-
-    return  true;
-  }
-
-  bool parser::parse_longstringliteral(longstringliteral_ast **yynode)
-  {
-    *yynode =  create<longstringliteral_ast>();
-
-    (*yynode)->start_token =  token_stream->index() -  1;
-
-    if  (yytoken ==  Token_LONGSTRING)
-      {
-        if  (yytoken !=  Token_LONGSTRING)
-          {
-            yy_expected_token(yytoken,  Token_LONGSTRING,  "longstring");
-            return  false;
-          }
-
-        yylex();
-
-        do
-          {
-            if  (yytoken !=  Token_STRINGBODY)
-              {
-                yy_expected_token(yytoken,  Token_STRINGBODY,  "stringbody");
-                return  false;
-              }
-
-            (*yynode)->string_body_sequence =  snoc((*yynode)->string_body_sequence,  token_stream->index() -  1,  memory_pool);
-            yylex();
-
-          }
-
-        while  (yytoken ==  Token_STRINGBODY);
-        if  (yytoken !=  Token_LONGSTRING)
-          {
-            yy_expected_token(yytoken,  Token_LONGSTRING,  "longstring");
-            return  false;
-          }
-
-        yylex();
-
       }
 
     else
@@ -4578,8 +4472,6 @@ namespace python
          ||  yytoken ==  Token_INTEGER
          ||  yytoken ==  Token_FLOAT
          ||  yytoken ==  Token_IMAGNUM
-         ||  yytoken ==  Token_LONGSTRING
-         ||  yytoken ==  Token_SHORTSTRING
          ||  yytoken ==  Token_LPAREN
          ||  yytoken ==  Token_LBRACE
          ||  yytoken ==  Token_LBRACKET
@@ -4598,15 +4490,15 @@ namespace python
 
             yylex();
 
-            not_test_ast *__node_116 =  0;
+            not_test_ast *__node_114 =  0;
 
-            if  (!parse_not_test(&__node_116))
+            if  (!parse_not_test(&__node_114))
               {
                 yy_expected_symbol(ast_node::Kind_not_test,  "not_test");
                 return  false;
               }
 
-            (*yynode)->not_test =  __node_116;
+            (*yynode)->not_test =  __node_114;
 
           }
 
@@ -4615,8 +4507,6 @@ namespace python
                   ||  yytoken ==  Token_INTEGER
                   ||  yytoken ==  Token_FLOAT
                   ||  yytoken ==  Token_IMAGNUM
-                  ||  yytoken ==  Token_LONGSTRING
-                  ||  yytoken ==  Token_SHORTSTRING
                   ||  yytoken ==  Token_LPAREN
                   ||  yytoken ==  Token_LBRACE
                   ||  yytoken ==  Token_LBRACKET
@@ -4625,15 +4515,15 @@ namespace python
                   ||  yytoken ==  Token_MINUS
                   ||  yytoken ==  Token_TILDE)
           {
-            comparison_ast *__node_117 =  0;
+            comparison_ast *__node_115 =  0;
 
-            if  (!parse_comparison(&__node_117))
+            if  (!parse_comparison(&__node_115))
               {
                 yy_expected_symbol(ast_node::Kind_comparison,  "comparison");
                 return  false;
               }
 
-            (*yynode)->comparison =  __node_117;
+            (*yynode)->comparison =  __node_115;
 
           }
 
@@ -4673,7 +4563,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->num_type =  python::type_int;
+            (*yynode)->num_type =  Python::type_int;
           }
 
         else if  (yytoken ==  Token_FLOAT)
@@ -4686,7 +4576,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->num_type =  python::type_float;
+            (*yynode)->num_type =  Python::type_float;
           }
 
         else if  (yytoken ==  Token_IMAGNUM)
@@ -4699,7 +4589,7 @@ namespace python
 
             yylex();
 
-            (*yynode)->num_type =  python::type_imagnum;
+            (*yynode)->num_type =  Python::type_imagnum;
           }
 
         else
@@ -4757,36 +4647,34 @@ namespace python
          ||  yytoken ==  Token_INTEGER
          ||  yytoken ==  Token_FLOAT
          ||  yytoken ==  Token_IMAGNUM
-         ||  yytoken ==  Token_LONGSTRING
-         ||  yytoken ==  Token_SHORTSTRING
          ||  yytoken ==  Token_LPAREN
          ||  yytoken ==  Token_LBRACE
          ||  yytoken ==  Token_LBRACKET
          ||  yytoken ==  Token_BACKTICK)
       {
-        atom_ast *__node_118 =  0;
+        atom_ast *__node_116 =  0;
 
-        if  (!parse_atom(&__node_118))
+        if  (!parse_atom(&__node_116))
           {
             yy_expected_symbol(ast_node::Kind_atom,  "atom");
             return  false;
           }
 
-        (*yynode)->atom =  __node_118;
+        (*yynode)->atom =  __node_116;
 
         while  (yytoken ==  Token_LPAREN
                 ||  yytoken ==  Token_LBRACKET
                 ||  yytoken ==  Token_DOT)
           {
-            trailer_ast *__node_119 =  0;
+            trailer_ast *__node_117 =  0;
 
-            if  (!parse_trailer(&__node_119))
+            if  (!parse_trailer(&__node_117))
               {
                 yy_expected_symbol(ast_node::Kind_trailer,  "trailer");
                 return  false;
               }
 
-            (*yynode)->trailer_sequence =  snoc((*yynode)->trailer_sequence,  __node_119,  memory_pool);
+            (*yynode)->trailer_sequence =  snoc((*yynode)->trailer_sequence,  __node_117,  memory_pool);
 
           }
 
@@ -4800,15 +4688,15 @@ namespace python
 
             yylex();
 
-            factor_ast *__node_120 =  0;
+            factor_ast *__node_118 =  0;
 
-            if  (!parse_factor(&__node_120))
+            if  (!parse_factor(&__node_118))
               {
                 yy_expected_symbol(ast_node::Kind_factor,  "factor");
                 return  false;
               }
 
-            (*yynode)->factor =  __node_120;
+            (*yynode)->factor =  __node_118;
 
           }
 
@@ -4853,8 +4741,6 @@ namespace python
              ||  yytoken ==  Token_INTEGER
              ||  yytoken ==  Token_FLOAT
              ||  yytoken ==  Token_IMAGNUM
-             ||  yytoken ==  Token_LONGSTRING
-             ||  yytoken ==  Token_SHORTSTRING
              ||  yytoken ==  Token_LPAREN
              ||  yytoken ==  Token_LBRACE
              ||  yytoken ==  Token_LBRACKET
@@ -4863,6 +4749,54 @@ namespace python
              ||  yytoken ==  Token_MINUS
              ||  yytoken ==  Token_TILDE)
           {
+            test_ast *__node_119 =  0;
+
+            if  (!parse_test(&__node_119))
+              {
+                yy_expected_symbol(ast_node::Kind_test,  "test");
+                return  false;
+              }
+
+            (*yynode)->print_args_sequence =  snoc((*yynode)->print_args_sequence,  __node_119,  memory_pool);
+
+            while  (yytoken ==  Token_COMMA)
+              {
+                if  (yytoken !=  Token_COMMA)
+                  {
+                    yy_expected_token(yytoken,  Token_COMMA,  "comma");
+                    return  false;
+                  }
+
+                yylex();
+
+                if (yytoken ==  Token_SEMICOLON ||  yytoken ==  Token_LINEBREAK)
+                  {
+                    break;
+                  }
+
+                test_ast *__node_120 =  0;
+
+                if  (!parse_test(&__node_120))
+                  {
+                    yy_expected_symbol(ast_node::Kind_test,  "test");
+                    return  false;
+                  }
+
+                (*yynode)->print_args_sequence =  snoc((*yynode)->print_args_sequence,  __node_120,  memory_pool);
+
+              }
+          }
+
+        else if  (yytoken ==  Token_RSHIFT)
+          {
+            if  (yytoken !=  Token_RSHIFT)
+              {
+                yy_expected_token(yytoken,  Token_RSHIFT,  "rshift");
+                return  false;
+              }
+
+            yylex();
+
             test_ast *__node_121 =  0;
 
             if  (!parse_test(&__node_121))
@@ -4871,9 +4805,9 @@ namespace python
                 return  false;
               }
 
-            (*yynode)->print_args_sequence =  snoc((*yynode)->print_args_sequence,  __node_121,  memory_pool);
+            (*yynode)->rshift_args_sequence =  snoc((*yynode)->rshift_args_sequence,  __node_121,  memory_pool);
 
-            while  (yytoken ==  Token_COMMA)
+            do
               {
                 if  (yytoken !=  Token_COMMA)
                   {
@@ -4896,55 +4830,7 @@ namespace python
                     return  false;
                   }
 
-                (*yynode)->print_args_sequence =  snoc((*yynode)->print_args_sequence,  __node_122,  memory_pool);
-
-              }
-          }
-
-        else if  (yytoken ==  Token_RSHIFT)
-          {
-            if  (yytoken !=  Token_RSHIFT)
-              {
-                yy_expected_token(yytoken,  Token_RSHIFT,  "rshift");
-                return  false;
-              }
-
-            yylex();
-
-            test_ast *__node_123 =  0;
-
-            if  (!parse_test(&__node_123))
-              {
-                yy_expected_symbol(ast_node::Kind_test,  "test");
-                return  false;
-              }
-
-            (*yynode)->rshift_args_sequence =  snoc((*yynode)->rshift_args_sequence,  __node_123,  memory_pool);
-
-            do
-              {
-                if  (yytoken !=  Token_COMMA)
-                  {
-                    yy_expected_token(yytoken,  Token_COMMA,  "comma");
-                    return  false;
-                  }
-
-                yylex();
-
-                if (yytoken ==  Token_SEMICOLON ||  yytoken ==  Token_LINEBREAK)
-                  {
-                    break;
-                  }
-
-                test_ast *__node_124 =  0;
-
-                if  (!parse_test(&__node_124))
-                  {
-                    yy_expected_symbol(ast_node::Kind_test,  "test");
-                    return  false;
-                  }
-
-                (*yynode)->rshift_args_sequence =  snoc((*yynode)->rshift_args_sequence,  __node_124,  memory_pool);
+                (*yynode)->rshift_args_sequence =  snoc((*yynode)->rshift_args_sequence,  __node_122,  memory_pool);
 
               }
 
@@ -5000,8 +4886,6 @@ namespace python
          ||  yytoken ==  Token_INTEGER
          ||  yytoken ==  Token_FLOAT
          ||  yytoken ==  Token_IMAGNUM
-         ||  yytoken ==  Token_LONGSTRING
-         ||  yytoken ==  Token_SHORTSTRING
          ||  yytoken ==  Token_LPAREN
          ||  yytoken ==  Token_LBRACE
          ||  yytoken ==  Token_LBRACKET
@@ -5038,8 +4922,6 @@ namespace python
                 ||  yytoken ==  Token_INTEGER
                 ||  yytoken ==  Token_FLOAT
                 ||  yytoken ==  Token_IMAGNUM
-                ||  yytoken ==  Token_LONGSTRING
-                ||  yytoken ==  Token_SHORTSTRING
                 ||  yytoken ==  Token_LPAREN
                 ||  yytoken ==  Token_LBRACE
                 ||  yytoken ==  Token_LBRACKET
@@ -5049,15 +4931,15 @@ namespace python
                 ||  yytoken ==  Token_MINUS
                 ||  yytoken ==  Token_TILDE)
           {
-            stmt_ast *__node_125 =  0;
+            stmt_ast *__node_123 =  0;
 
-            if  (!parse_stmt(&__node_125))
+            if  (!parse_stmt(&__node_123))
               {
                 yy_expected_symbol(ast_node::Kind_stmt,  "stmt");
                 return  false;
               }
 
-            (*yynode)->stmt_sequence =  snoc((*yynode)->stmt_sequence,  __node_125,  memory_pool);
+            (*yynode)->stmt_sequence =  snoc((*yynode)->stmt_sequence,  __node_123,  memory_pool);
 
           }
 
@@ -5100,8 +4982,6 @@ namespace python
              ||  yytoken ==  Token_INTEGER
              ||  yytoken ==  Token_FLOAT
              ||  yytoken ==  Token_IMAGNUM
-             ||  yytoken ==  Token_LONGSTRING
-             ||  yytoken ==  Token_SHORTSTRING
              ||  yytoken ==  Token_LPAREN
              ||  yytoken ==  Token_LBRACE
              ||  yytoken ==  Token_LBRACKET
@@ -5110,15 +4990,15 @@ namespace python
              ||  yytoken ==  Token_MINUS
              ||  yytoken ==  Token_TILDE)
           {
-            test_ast *__node_126 =  0;
+            test_ast *__node_124 =  0;
 
-            if  (!parse_test(&__node_126))
+            if  (!parse_test(&__node_124))
               {
                 yy_expected_symbol(ast_node::Kind_test,  "test");
                 return  false;
               }
 
-            (*yynode)->type =  __node_126;
+            (*yynode)->type =  __node_124;
 
             if  (yytoken ==  Token_COMMA)
               {
@@ -5130,15 +5010,15 @@ namespace python
 
                 yylex();
 
-                test_ast *__node_127 =  0;
+                test_ast *__node_125 =  0;
 
-                if  (!parse_test(&__node_127))
+                if  (!parse_test(&__node_125))
                   {
                     yy_expected_symbol(ast_node::Kind_test,  "test");
                     return  false;
                   }
 
-                (*yynode)->value =  __node_127;
+                (*yynode)->value =  __node_125;
 
                 if  (yytoken ==  Token_COMMA)
                   {
@@ -5150,15 +5030,15 @@ namespace python
 
                     yylex();
 
-                    test_ast *__node_128 =  0;
+                    test_ast *__node_126 =  0;
 
-                    if  (!parse_test(&__node_128))
+                    if  (!parse_test(&__node_126))
                       {
                         yy_expected_symbol(ast_node::Kind_test,  "test");
                         return  false;
                       }
 
-                    (*yynode)->traceback =  __node_128;
+                    (*yynode)->traceback =  __node_126;
 
                   }
 
@@ -5219,8 +5099,6 @@ namespace python
                                       ||  yytoken ==  Token_INTEGER
                                       ||  yytoken ==  Token_FLOAT
                                       ||  yytoken ==  Token_IMAGNUM
-                                      ||  yytoken ==  Token_LONGSTRING
-                                      ||  yytoken ==  Token_SHORTSTRING
                                       ||  yytoken ==  Token_LPAREN
                                       ||  yytoken ==  Token_LBRACE
                                       ||  yytoken ==  Token_LBRACKET
@@ -5229,15 +5107,15 @@ namespace python
                                       ||  yytoken ==  Token_MINUS
                                       ||  yytoken ==  Token_TILDE)
                                    {
-                                     testlist_ast *__node_129 =  0;
+                                     testlist_ast *__node_127 =  0;
 
-                                     if  (!parse_testlist(&__node_129))
+                                     if  (!parse_testlist(&__node_127))
                                        {
                                          yy_expected_symbol(ast_node::Kind_testlist,  "testlist");
                                          return  false;
                                        }
 
-                                     (*yynode)->return_expr =  __node_129;
+                                     (*yynode)->return_expr =  __node_127;
 
                                    }
 
@@ -5270,8 +5148,6 @@ namespace python
                                   ||  yytoken ==  Token_INTEGER
                                   ||  yytoken ==  Token_FLOAT
                                   ||  yytoken ==  Token_IMAGNUM
-                                  ||  yytoken ==  Token_LONGSTRING
-                                  ||  yytoken ==  Token_SHORTSTRING
                                   ||  yytoken ==  Token_LPAREN
                                   ||  yytoken ==  Token_LBRACE
                                   ||  yytoken ==  Token_LBRACKET
@@ -5280,38 +5156,38 @@ namespace python
                                   ||  yytoken ==  Token_MINUS
                                   ||  yytoken ==  Token_TILDE)
                                {
-                                 arith_expr_ast *__node_130 =  0;
+                                 arith_expr_ast *__node_128 =  0;
 
-                                 if  (!parse_arith_expr(&__node_130))
+                                 if  (!parse_arith_expr(&__node_128))
                                    {
                                      yy_expected_symbol(ast_node::Kind_arith_expr,  "arith_expr");
                                      return  false;
                                    }
 
-                                 (*yynode)->arith_expr =  __node_130;
+                                 (*yynode)->arith_expr =  __node_128;
 
                                  while  (yytoken ==  Token_LSHIFT
                                          ||  yytoken ==  Token_RSHIFT)
                                    {
-                                     shift_op_ast *__node_131 =  0;
+                                     shift_op_ast *__node_129 =  0;
 
-                                     if  (!parse_shift_op(&__node_131))
+                                     if  (!parse_shift_op(&__node_129))
                                        {
                                          yy_expected_symbol(ast_node::Kind_shift_op,  "shift_op");
                                          return  false;
                                        }
 
-                                     (*yynode)->shift_op_list_sequence =  snoc((*yynode)->shift_op_list_sequence,  __node_131,  memory_pool);
+                                     (*yynode)->shift_op_list_sequence =  snoc((*yynode)->shift_op_list_sequence,  __node_129,  memory_pool);
 
-                                     arith_expr_ast *__node_132 =  0;
+                                     arith_expr_ast *__node_130 =  0;
 
-                                     if  (!parse_arith_expr(&__node_132))
+                                     if  (!parse_arith_expr(&__node_130))
                                        {
                                          yy_expected_symbol(ast_node::Kind_arith_expr,  "arith_expr");
                                          return  false;
                                        }
 
-                                     (*yynode)->arith_expr_list_sequence =  snoc((*yynode)->arith_expr_list_sequence,  __node_132,  memory_pool);
+                                     (*yynode)->arith_expr_list_sequence =  snoc((*yynode)->arith_expr_list_sequence,  __node_130,  memory_pool);
 
                                    }
                                }
@@ -5345,7 +5221,7 @@ namespace python
 
                                      yylex();
 
-                                     (*yynode)->shift_operator =  python::op_lshift;
+                                     (*yynode)->shift_operator =  Python::op_lshift;
                                    }
 
                                  else if  (yytoken ==  Token_RSHIFT)
@@ -5358,62 +5234,13 @@ namespace python
 
                                      yylex();
 
-                                     (*yynode)->shift_operator =  python::op_rshift;
+                                     (*yynode)->shift_operator =  Python::op_rshift;
                                    }
 
                                  else
                                    {
                                      return  false;
                                    }
-                               }
-
-                             else
-                               {
-                                 return  false;
-                               }
-
-                             (*yynode)->end_token =  token_stream->index() -  1;
-
-                             return  true;
-                           }
-
-                           bool parser::parse_shortstringliteral(shortstringliteral_ast **yynode)
-                           {
-                             *yynode =  create<shortstringliteral_ast>();
-
-                             (*yynode)->start_token =  token_stream->index() -  1;
-
-                             if  (yytoken ==  Token_SHORTSTRING)
-                               {
-                                 if  (yytoken !=  Token_SHORTSTRING)
-                                   {
-                                     yy_expected_token(yytoken,  Token_SHORTSTRING,  "shrtstring");
-                                     return  false;
-                                   }
-
-                                 yylex();
-
-                                 do
-                                   {
-                                     if  (yytoken !=  Token_STRINGBODY)
-                                       {
-                                         yy_expected_token(yytoken,  Token_STRINGBODY,  "stringbody");
-                                         return  false;
-                                       }
-
-                                     yylex();
-
-                                   }
-
-                                 while  (yytoken ==  Token_STRINGBODY);
-                                 if  (yytoken !=  Token_SHORTSTRING)
-                                   {
-                                     yy_expected_token(yytoken,  Token_SHORTSTRING,  "shrtstring");
-                                     return  false;
-                                   }
-
-                                 yylex();
-
                                }
 
                              else
@@ -5452,8 +5279,6 @@ namespace python
                                   ||  yytoken ==  Token_INTEGER
                                   ||  yytoken ==  Token_FLOAT
                                   ||  yytoken ==  Token_IMAGNUM
-                                  ||  yytoken ==  Token_LONGSTRING
-                                  ||  yytoken ==  Token_SHORTSTRING
                                   ||  yytoken ==  Token_LPAREN
                                   ||  yytoken ==  Token_LBRACE
                                   ||  yytoken ==  Token_LBRACKET
@@ -5462,15 +5287,15 @@ namespace python
                                   ||  yytoken ==  Token_MINUS
                                   ||  yytoken ==  Token_TILDE)
                                {
-                                 small_stmt_ast *__node_133 =  0;
+                                 small_stmt_ast *__node_131 =  0;
 
-                                 if  (!parse_small_stmt(&__node_133))
+                                 if  (!parse_small_stmt(&__node_131))
                                    {
                                      yy_expected_symbol(ast_node::Kind_small_stmt,  "small_stmt");
                                      return  false;
                                    }
 
-                                 (*yynode)->small_stmt_sequence =  snoc((*yynode)->small_stmt_sequence,  __node_133,  memory_pool);
+                                 (*yynode)->small_stmt_sequence =  snoc((*yynode)->small_stmt_sequence,  __node_131,  memory_pool);
 
                                  while  (yytoken ==  Token_SEMICOLON)
                                    {
@@ -5487,15 +5312,15 @@ namespace python
                                          break;
                                        }
 
-                                     small_stmt_ast *__node_134 =  0;
+                                     small_stmt_ast *__node_132 =  0;
 
-                                     if  (!parse_small_stmt(&__node_134))
+                                     if  (!parse_small_stmt(&__node_132))
                                        {
                                          yy_expected_symbol(ast_node::Kind_small_stmt,  "small_stmt");
                                          return  false;
                                        }
 
-                                     (*yynode)->small_stmt_sequence =  snoc((*yynode)->small_stmt_sequence,  __node_134,  memory_pool);
+                                     (*yynode)->small_stmt_sequence =  snoc((*yynode)->small_stmt_sequence,  __node_132,  memory_pool);
 
                                    }
 
@@ -5542,8 +5367,6 @@ namespace python
                                       ||  yytoken ==  Token_INTEGER
                                       ||  yytoken ==  Token_FLOAT
                                       ||  yytoken ==  Token_IMAGNUM
-                                      ||  yytoken ==  Token_LONGSTRING
-                                      ||  yytoken ==  Token_SHORTSTRING
                                       ||  yytoken ==  Token_LPAREN
                                       ||  yytoken ==  Token_LBRACE
                                       ||  yytoken ==  Token_LBRACKET
@@ -5552,15 +5375,15 @@ namespace python
                                       ||  yytoken ==  Token_MINUS
                                       ||  yytoken ==  Token_TILDE)
                                    {
-                                     test_ast *__node_135 =  0;
+                                     test_ast *__node_133 =  0;
 
-                                     if  (!parse_test(&__node_135))
+                                     if  (!parse_test(&__node_133))
                                        {
                                          yy_expected_symbol(ast_node::Kind_test,  "test");
                                          return  false;
                                        }
 
-                                     (*yynode)->slice_test =  __node_135;
+                                     (*yynode)->slice_test =  __node_133;
 
                                    }
 
@@ -5608,8 +5431,6 @@ namespace python
                                   ||  yytoken ==  Token_INTEGER
                                   ||  yytoken ==  Token_FLOAT
                                   ||  yytoken ==  Token_IMAGNUM
-                                  ||  yytoken ==  Token_LONGSTRING
-                                  ||  yytoken ==  Token_SHORTSTRING
                                   ||  yytoken ==  Token_LPAREN
                                   ||  yytoken ==  Token_LBRACE
                                   ||  yytoken ==  Token_LBRACKET
@@ -5625,8 +5446,6 @@ namespace python
                                       ||  yytoken ==  Token_INTEGER
                                       ||  yytoken ==  Token_FLOAT
                                       ||  yytoken ==  Token_IMAGNUM
-                                      ||  yytoken ==  Token_LONGSTRING
-                                      ||  yytoken ==  Token_SHORTSTRING
                                       ||  yytoken ==  Token_LPAREN
                                       ||  yytoken ==  Token_LBRACE
                                       ||  yytoken ==  Token_LBRACKET
@@ -5635,57 +5454,57 @@ namespace python
                                       ||  yytoken ==  Token_MINUS
                                       ||  yytoken ==  Token_TILDE)
                                    {
-                                     expr_stmt_ast *__node_136 =  0;
+                                     expr_stmt_ast *__node_134 =  0;
 
-                                     if  (!parse_expr_stmt(&__node_136))
+                                     if  (!parse_expr_stmt(&__node_134))
                                        {
                                          yy_expected_symbol(ast_node::Kind_expr_stmt,  "expr_stmt");
                                          return  false;
                                        }
 
-                                     (*yynode)->expr_stmt =  __node_136;
+                                     (*yynode)->expr_stmt =  __node_134;
 
                                    }
 
                                  else if  (yytoken ==  Token_PRINT)
                                    {
-                                     print_stmt_ast *__node_137 =  0;
+                                     print_stmt_ast *__node_135 =  0;
 
-                                     if  (!parse_print_stmt(&__node_137))
+                                     if  (!parse_print_stmt(&__node_135))
                                        {
                                          yy_expected_symbol(ast_node::Kind_print_stmt,  "print_stmt");
                                          return  false;
                                        }
 
-                                     (*yynode)->print_stmt =  __node_137;
+                                     (*yynode)->print_stmt =  __node_135;
 
                                    }
 
                                  else if  (yytoken ==  Token_DEL)
                                    {
-                                     del_stmt_ast *__node_138 =  0;
+                                     del_stmt_ast *__node_136 =  0;
 
-                                     if  (!parse_del_stmt(&__node_138))
+                                     if  (!parse_del_stmt(&__node_136))
                                        {
                                          yy_expected_symbol(ast_node::Kind_del_stmt,  "del_stmt");
                                          return  false;
                                        }
 
-                                     (*yynode)->del_stmt =  __node_138;
+                                     (*yynode)->del_stmt =  __node_136;
 
                                    }
 
                                  else if  (yytoken ==  Token_PASS)
                                    {
-                                     pass_stmt_ast *__node_139 =  0;
+                                     pass_stmt_ast *__node_137 =  0;
 
-                                     if  (!parse_pass_stmt(&__node_139))
+                                     if  (!parse_pass_stmt(&__node_137))
                                        {
                                          yy_expected_symbol(ast_node::Kind_pass_stmt,  "pass_stmt");
                                          return  false;
                                        }
 
-                                     (*yynode)->pass_stmt =  __node_139;
+                                     (*yynode)->pass_stmt =  __node_137;
 
                                    }
 
@@ -5695,72 +5514,72 @@ namespace python
                                            ||  yytoken ==  Token_CONTINUE
                                            ||  yytoken ==  Token_YIELD)
                                    {
-                                     flow_stmt_ast *__node_140 =  0;
+                                     flow_stmt_ast *__node_138 =  0;
 
-                                     if  (!parse_flow_stmt(&__node_140))
+                                     if  (!parse_flow_stmt(&__node_138))
                                        {
                                          yy_expected_symbol(ast_node::Kind_flow_stmt,  "flow_stmt");
                                          return  false;
                                        }
 
-                                     (*yynode)->flow_stmt =  __node_140;
+                                     (*yynode)->flow_stmt =  __node_138;
 
                                    }
 
                                  else if  (yytoken ==  Token_FROM
                                            ||  yytoken ==  Token_IMPORT)
                                    {
-                                     import_stmt_ast *__node_141 =  0;
+                                     import_stmt_ast *__node_139 =  0;
 
-                                     if  (!parse_import_stmt(&__node_141))
+                                     if  (!parse_import_stmt(&__node_139))
                                        {
                                          yy_expected_symbol(ast_node::Kind_import_stmt,  "import_stmt");
                                          return  false;
                                        }
 
-                                     (*yynode)->import_stmt =  __node_141;
+                                     (*yynode)->import_stmt =  __node_139;
 
                                    }
 
                                  else if  (yytoken ==  Token_GLOBAL)
                                    {
-                                     global_stmt_ast *__node_142 =  0;
+                                     global_stmt_ast *__node_140 =  0;
 
-                                     if  (!parse_global_stmt(&__node_142))
+                                     if  (!parse_global_stmt(&__node_140))
                                        {
                                          yy_expected_symbol(ast_node::Kind_global_stmt,  "global_stmt");
                                          return  false;
                                        }
 
-                                     (*yynode)->global_stmt =  __node_142;
+                                     (*yynode)->global_stmt =  __node_140;
 
                                    }
 
                                  else if  (yytoken ==  Token_EXEC)
                                    {
-                                     exec_stmt_ast *__node_143 =  0;
+                                     exec_stmt_ast *__node_141 =  0;
 
-                                     if  (!parse_exec_stmt(&__node_143))
+                                     if  (!parse_exec_stmt(&__node_141))
                                        {
                                          yy_expected_symbol(ast_node::Kind_exec_stmt,  "exec_stmt");
                                          return  false;
                                        }
 
-                                     (*yynode)->exec_stmt =  __node_143;
+                                     (*yynode)->exec_stmt =  __node_141;
 
                                    }
 
                                  else if  (yytoken ==  Token_ASSERT)
                                    {
-                                     assert_stmt_ast *__node_144 =  0;
+                                     assert_stmt_ast *__node_142 =  0;
 
-                                     if  (!parse_assert_stmt(&__node_144))
+                                     if  (!parse_assert_stmt(&__node_142))
                                        {
                                          yy_expected_symbol(ast_node::Kind_assert_stmt,  "assert_stmt");
                                          return  false;
                                        }
 
-                                     (*yynode)->assert_stmt =  __node_144;
+                                     (*yynode)->assert_stmt =  __node_142;
 
                                    }
 
@@ -5813,8 +5632,6 @@ namespace python
                                   ||  yytoken ==  Token_INTEGER
                                   ||  yytoken ==  Token_FLOAT
                                   ||  yytoken ==  Token_IMAGNUM
-                                  ||  yytoken ==  Token_LONGSTRING
-                                  ||  yytoken ==  Token_SHORTSTRING
                                   ||  yytoken ==  Token_LPAREN
                                   ||  yytoken ==  Token_LBRACE
                                   ||  yytoken ==  Token_LBRACKET
@@ -5844,8 +5661,6 @@ namespace python
                                       ||  yytoken ==  Token_INTEGER
                                       ||  yytoken ==  Token_FLOAT
                                       ||  yytoken ==  Token_IMAGNUM
-                                      ||  yytoken ==  Token_LONGSTRING
-                                      ||  yytoken ==  Token_SHORTSTRING
                                       ||  yytoken ==  Token_LPAREN
                                       ||  yytoken ==  Token_LBRACE
                                       ||  yytoken ==  Token_LBRACKET
@@ -5854,15 +5669,15 @@ namespace python
                                       ||  yytoken ==  Token_MINUS
                                       ||  yytoken ==  Token_TILDE)
                                    {
-                                     simple_stmt_ast *__node_145 =  0;
+                                     simple_stmt_ast *__node_143 =  0;
 
-                                     if  (!parse_simple_stmt(&__node_145))
+                                     if  (!parse_simple_stmt(&__node_143))
                                        {
                                          yy_expected_symbol(ast_node::Kind_simple_stmt,  "simple_stmt");
                                          return  false;
                                        }
 
-                                     (*yynode)->simple_stmt =  __node_145;
+                                     (*yynode)->simple_stmt =  __node_143;
 
                                    }
 
@@ -5874,15 +5689,15 @@ namespace python
                                            ||  yytoken ==  Token_DEF
                                            ||  yytoken ==  Token_AT)
                                    {
-                                     compound_stmt_ast *__node_146 =  0;
+                                     compound_stmt_ast *__node_144 =  0;
 
-                                     if  (!parse_compound_stmt(&__node_146))
+                                     if  (!parse_compound_stmt(&__node_144))
                                        {
                                          yy_expected_symbol(ast_node::Kind_compound_stmt,  "compound_stmt");
                                          return  false;
                                        }
 
-                                     (*yynode)->compound_stmt =  __node_146;
+                                     (*yynode)->compound_stmt =  __node_144;
 
                                    }
 
@@ -5927,8 +5742,6 @@ namespace python
                                   ||  yytoken ==  Token_INTEGER
                                   ||  yytoken ==  Token_FLOAT
                                   ||  yytoken ==  Token_IMAGNUM
-                                  ||  yytoken ==  Token_LONGSTRING
-                                  ||  yytoken ==  Token_SHORTSTRING
                                   ||  yytoken ==  Token_LPAREN
                                   ||  yytoken ==  Token_LBRACE
                                   ||  yytoken ==  Token_LBRACKET
@@ -5960,8 +5773,6 @@ namespace python
                                            ||  yytoken ==  Token_INTEGER
                                            ||  yytoken ==  Token_FLOAT
                                            ||  yytoken ==  Token_IMAGNUM
-                                           ||  yytoken ==  Token_LONGSTRING
-                                           ||  yytoken ==  Token_SHORTSTRING
                                            ||  yytoken ==  Token_LPAREN
                                            ||  yytoken ==  Token_LBRACE
                                            ||  yytoken ==  Token_LBRACKET
@@ -5978,8 +5789,6 @@ namespace python
                                            ||  yytoken ==  Token_INTEGER
                                            ||  yytoken ==  Token_FLOAT
                                            ||  yytoken ==  Token_IMAGNUM
-                                           ||  yytoken ==  Token_LONGSTRING
-                                           ||  yytoken ==  Token_SHORTSTRING
                                            ||  yytoken ==  Token_LPAREN
                                            ||  yytoken ==  Token_LBRACE
                                            ||  yytoken ==  Token_LBRACKET
@@ -5988,15 +5797,15 @@ namespace python
                                            ||  yytoken ==  Token_MINUS
                                            ||  yytoken ==  Token_TILDE) &&  ( yytoken !=  Token_COLON ))
                                        {
-                                         test_ast *__node_147 =  0;
+                                         test_ast *__node_145 =  0;
 
-                                         if  (!parse_test(&__node_147))
+                                         if  (!parse_test(&__node_145))
                                            {
                                              yy_expected_symbol(ast_node::Kind_test,  "test");
                                              return  false;
                                            }
 
-                                         (*yynode)->sub_test =  __node_147;
+                                         (*yynode)->sub_test =  __node_145;
 
                                        }
 
@@ -6026,8 +5835,6 @@ namespace python
                                               ||  yytoken ==  Token_INTEGER
                                               ||  yytoken ==  Token_FLOAT
                                               ||  yytoken ==  Token_IMAGNUM
-                                              ||  yytoken ==  Token_LONGSTRING
-                                              ||  yytoken ==  Token_SHORTSTRING
                                               ||  yytoken ==  Token_LPAREN
                                               ||  yytoken ==  Token_LBRACE
                                               ||  yytoken ==  Token_LBRACKET
@@ -6036,15 +5843,15 @@ namespace python
                                               ||  yytoken ==  Token_MINUS
                                               ||  yytoken ==  Token_TILDE)
                                            {
-                                             test_ast *__node_148 =  0;
+                                             test_ast *__node_146 =  0;
 
-                                             if  (!parse_test(&__node_148))
+                                             if  (!parse_test(&__node_146))
                                                {
                                                  yy_expected_symbol(ast_node::Kind_test,  "test");
                                                  return  false;
                                                }
 
-                                             (*yynode)->sub_colon_test =  __node_148;
+                                             (*yynode)->sub_colon_test =  __node_146;
 
                                            }
 
@@ -6057,15 +5864,15 @@ namespace python
 
                                          if  (yytoken ==  Token_COLON)
                                            {
-                                             sliceop_ast *__node_149 =  0;
+                                             sliceop_ast *__node_147 =  0;
 
-                                             if  (!parse_sliceop(&__node_149))
+                                             if  (!parse_sliceop(&__node_147))
                                                {
                                                  yy_expected_symbol(ast_node::Kind_sliceop,  "sliceop");
                                                  return  false;
                                                }
 
-                                             (*yynode)->sliceop =  __node_149;
+                                             (*yynode)->sliceop =  __node_147;
 
                                            }
 
@@ -6112,8 +5919,6 @@ namespace python
                                   ||  yytoken ==  Token_INTEGER
                                   ||  yytoken ==  Token_FLOAT
                                   ||  yytoken ==  Token_IMAGNUM
-                                  ||  yytoken ==  Token_LONGSTRING
-                                  ||  yytoken ==  Token_SHORTSTRING
                                   ||  yytoken ==  Token_LPAREN
                                   ||  yytoken ==  Token_LBRACE
                                   ||  yytoken ==  Token_LBRACKET
@@ -6125,15 +5930,15 @@ namespace python
                                   ||  yytoken ==  Token_MINUS
                                   ||  yytoken ==  Token_TILDE ||  yytoken ==  Token_RBRACKET)
                                {
-                                 subscript_ast *__node_150 =  0;
+                                 subscript_ast *__node_148 =  0;
 
-                                 if  (!parse_subscript(&__node_150))
+                                 if  (!parse_subscript(&__node_148))
                                    {
                                      yy_expected_symbol(ast_node::Kind_subscript,  "subscript");
                                      return  false;
                                    }
 
-                                 (*yynode)->subscript_sequence =  snoc((*yynode)->subscript_sequence,  __node_150,  memory_pool);
+                                 (*yynode)->subscript_sequence =  snoc((*yynode)->subscript_sequence,  __node_148,  memory_pool);
 
                                  while  (yytoken ==  Token_COMMA)
                                    {
@@ -6150,15 +5955,15 @@ namespace python
                                          break;
                                        }
 
-                                     subscript_ast *__node_151 =  0;
+                                     subscript_ast *__node_149 =  0;
 
-                                     if  (!parse_subscript(&__node_151))
+                                     if  (!parse_subscript(&__node_149))
                                        {
                                          yy_expected_symbol(ast_node::Kind_subscript,  "subscript");
                                          return  false;
                                        }
 
-                                     (*yynode)->subscript_sequence =  snoc((*yynode)->subscript_sequence,  __node_151,  memory_pool);
+                                     (*yynode)->subscript_sequence =  snoc((*yynode)->subscript_sequence,  __node_149,  memory_pool);
 
                                    }
                                }
@@ -6200,8 +6005,6 @@ namespace python
                                   ||  yytoken ==  Token_INTEGER
                                   ||  yytoken ==  Token_FLOAT
                                   ||  yytoken ==  Token_IMAGNUM
-                                  ||  yytoken ==  Token_LONGSTRING
-                                  ||  yytoken ==  Token_SHORTSTRING
                                   ||  yytoken ==  Token_LPAREN
                                   ||  yytoken ==  Token_LBRACE
                                   ||  yytoken ==  Token_LBRACKET
@@ -6230,8 +6033,6 @@ namespace python
                                       ||  yytoken ==  Token_INTEGER
                                       ||  yytoken ==  Token_FLOAT
                                       ||  yytoken ==  Token_IMAGNUM
-                                      ||  yytoken ==  Token_LONGSTRING
-                                      ||  yytoken ==  Token_SHORTSTRING
                                       ||  yytoken ==  Token_LPAREN
                                       ||  yytoken ==  Token_LBRACE
                                       ||  yytoken ==  Token_LBRACKET
@@ -6240,15 +6041,15 @@ namespace python
                                       ||  yytoken ==  Token_MINUS
                                       ||  yytoken ==  Token_TILDE)
                                    {
-                                     simple_stmt_ast *__node_152 =  0;
+                                     simple_stmt_ast *__node_150 =  0;
 
-                                     if  (!parse_simple_stmt(&__node_152))
+                                     if  (!parse_simple_stmt(&__node_150))
                                        {
                                          yy_expected_symbol(ast_node::Kind_simple_stmt,  "simple_stmt");
                                          return  false;
                                        }
 
-                                     (*yynode)->simple_stmt =  __node_152;
+                                     (*yynode)->simple_stmt =  __node_150;
 
                                    }
 
@@ -6277,15 +6078,15 @@ namespace python
 
                                      do
                                        {
-                                         stmt_ast *__node_153 =  0;
+                                         stmt_ast *__node_151 =  0;
 
-                                         if  (!parse_stmt(&__node_153))
+                                         if  (!parse_stmt(&__node_151))
                                            {
                                              yy_expected_symbol(ast_node::Kind_stmt,  "stmt");
                                              return  false;
                                            }
 
-                                         (*yynode)->stmt_sequence =  snoc((*yynode)->stmt_sequence,  __node_153,  memory_pool);
+                                         (*yynode)->stmt_sequence =  snoc((*yynode)->stmt_sequence,  __node_151,  memory_pool);
 
                                        }
 
@@ -6316,8 +6117,6 @@ namespace python
                                              ||  yytoken ==  Token_INTEGER
                                              ||  yytoken ==  Token_FLOAT
                                              ||  yytoken ==  Token_IMAGNUM
-                                             ||  yytoken ==  Token_LONGSTRING
-                                             ||  yytoken ==  Token_SHORTSTRING
                                              ||  yytoken ==  Token_LPAREN
                                              ||  yytoken ==  Token_LBRACE
                                              ||  yytoken ==  Token_LBRACKET
@@ -6363,8 +6162,6 @@ namespace python
                                   ||  yytoken ==  Token_INTEGER
                                   ||  yytoken ==  Token_FLOAT
                                   ||  yytoken ==  Token_IMAGNUM
-                                  ||  yytoken ==  Token_LONGSTRING
-                                  ||  yytoken ==  Token_SHORTSTRING
                                   ||  yytoken ==  Token_LPAREN
                                   ||  yytoken ==  Token_LBRACE
                                   ||  yytoken ==  Token_LBRACKET
@@ -6373,15 +6170,15 @@ namespace python
                                   ||  yytoken ==  Token_MINUS
                                   ||  yytoken ==  Token_TILDE)
                                {
-                                 factor_ast *__node_154 =  0;
+                                 factor_ast *__node_152 =  0;
 
-                                 if  (!parse_factor(&__node_154))
+                                 if  (!parse_factor(&__node_152))
                                    {
                                      yy_expected_symbol(ast_node::Kind_factor,  "factor");
                                      return  false;
                                    }
 
-                                 (*yynode)->factor =  __node_154;
+                                 (*yynode)->factor =  __node_152;
 
                                  if  (yytoken ==  Token_STAR
                                       ||  yytoken ==  Token_SLASH
@@ -6390,25 +6187,25 @@ namespace python
                                    {
                                      do
                                        {
-                                         term_op_ast *__node_155 =  0;
+                                         term_op_ast *__node_153 =  0;
 
-                                         if  (!parse_term_op(&__node_155))
+                                         if  (!parse_term_op(&__node_153))
                                            {
                                              yy_expected_symbol(ast_node::Kind_term_op,  "term_op");
                                              return  false;
                                            }
 
-                                         (*yynode)->term_op_list_sequence =  snoc((*yynode)->term_op_list_sequence,  __node_155,  memory_pool);
+                                         (*yynode)->term_op_list_sequence =  snoc((*yynode)->term_op_list_sequence,  __node_153,  memory_pool);
 
-                                         factor_ast *__node_156 =  0;
+                                         factor_ast *__node_154 =  0;
 
-                                         if  (!parse_factor(&__node_156))
+                                         if  (!parse_factor(&__node_154))
                                            {
                                              yy_expected_symbol(ast_node::Kind_factor,  "factor");
                                              return  false;
                                            }
 
-                                         (*yynode)->factor_list_sequence =  snoc((*yynode)->factor_list_sequence,  __node_156,  memory_pool);
+                                         (*yynode)->factor_list_sequence =  snoc((*yynode)->factor_list_sequence,  __node_154,  memory_pool);
 
                                        }
 
@@ -6457,7 +6254,7 @@ namespace python
 
                                      yylex();
 
-                                     (*yynode)->term_operator =  python::op_star;
+                                     (*yynode)->term_operator =  Python::op_star;
                                    }
 
                                  else if  (yytoken ==  Token_SLASH)
@@ -6470,7 +6267,7 @@ namespace python
 
                                      yylex();
 
-                                     (*yynode)->term_operator =  python::op_slash;
+                                     (*yynode)->term_operator =  Python::op_slash;
                                    }
 
                                  else if  (yytoken ==  Token_MODULO)
@@ -6483,7 +6280,7 @@ namespace python
 
                                      yylex();
 
-                                     (*yynode)->term_operator =  python::op_modulo;
+                                     (*yynode)->term_operator =  Python::op_modulo;
                                    }
 
                                  else if  (yytoken ==  Token_DOUBLESLASH)
@@ -6496,7 +6293,7 @@ namespace python
 
                                      yylex();
 
-                                     (*yynode)->term_operator =  python::op_doubleslash;
+                                     (*yynode)->term_operator =  Python::op_doubleslash;
                                    }
 
                                  else
@@ -6528,8 +6325,6 @@ namespace python
                                   ||  yytoken ==  Token_INTEGER
                                   ||  yytoken ==  Token_FLOAT
                                   ||  yytoken ==  Token_IMAGNUM
-                                  ||  yytoken ==  Token_LONGSTRING
-                                  ||  yytoken ==  Token_SHORTSTRING
                                   ||  yytoken ==  Token_LPAREN
                                   ||  yytoken ==  Token_LBRACE
                                   ||  yytoken ==  Token_LBRACKET
@@ -6544,8 +6339,6 @@ namespace python
                                       ||  yytoken ==  Token_INTEGER
                                       ||  yytoken ==  Token_FLOAT
                                       ||  yytoken ==  Token_IMAGNUM
-                                      ||  yytoken ==  Token_LONGSTRING
-                                      ||  yytoken ==  Token_SHORTSTRING
                                       ||  yytoken ==  Token_LPAREN
                                       ||  yytoken ==  Token_LBRACE
                                       ||  yytoken ==  Token_LBRACKET
@@ -6554,15 +6347,15 @@ namespace python
                                       ||  yytoken ==  Token_MINUS
                                       ||  yytoken ==  Token_TILDE)
                                    {
-                                     and_test_ast *__node_157 =  0;
+                                     and_test_ast *__node_155 =  0;
 
-                                     if  (!parse_and_test(&__node_157))
+                                     if  (!parse_and_test(&__node_155))
                                        {
                                          yy_expected_symbol(ast_node::Kind_and_test,  "and_test");
                                          return  false;
                                        }
 
-                                     (*yynode)->and_test_sequence =  snoc((*yynode)->and_test_sequence,  __node_157,  memory_pool);
+                                     (*yynode)->and_test_sequence =  snoc((*yynode)->and_test_sequence,  __node_155,  memory_pool);
 
                                      while  (yytoken ==  Token_OR)
                                        {
@@ -6574,30 +6367,30 @@ namespace python
 
                                          yylex();
 
-                                         and_test_ast *__node_158 =  0;
+                                         and_test_ast *__node_156 =  0;
 
-                                         if  (!parse_and_test(&__node_158))
+                                         if  (!parse_and_test(&__node_156))
                                            {
                                              yy_expected_symbol(ast_node::Kind_and_test,  "and_test");
                                              return  false;
                                            }
 
-                                         (*yynode)->and_test_sequence =  snoc((*yynode)->and_test_sequence,  __node_158,  memory_pool);
+                                         (*yynode)->and_test_sequence =  snoc((*yynode)->and_test_sequence,  __node_156,  memory_pool);
 
                                        }
                                    }
 
                                  else if  (yytoken ==  Token_LAMBDA)
                                    {
-                                     lambda_def_ast *__node_159 =  0;
+                                     lambda_def_ast *__node_157 =  0;
 
-                                     if  (!parse_lambda_def(&__node_159))
+                                     if  (!parse_lambda_def(&__node_157))
                                        {
                                          yy_expected_symbol(ast_node::Kind_lambda_def,  "lambda_def");
                                          return  false;
                                        }
 
-                                     (*yynode)->lambda_def =  __node_159;
+                                     (*yynode)->lambda_def =  __node_157;
 
                                    }
 
@@ -6630,8 +6423,75 @@ namespace python
                                   ||  yytoken ==  Token_INTEGER
                                   ||  yytoken ==  Token_FLOAT
                                   ||  yytoken ==  Token_IMAGNUM
-                                  ||  yytoken ==  Token_LONGSTRING
-                                  ||  yytoken ==  Token_SHORTSTRING
+                                  ||  yytoken ==  Token_LPAREN
+                                  ||  yytoken ==  Token_LBRACE
+                                  ||  yytoken ==  Token_LBRACKET
+                                  ||  yytoken ==  Token_BACKTICK
+                                  ||  yytoken ==  Token_PLUS
+                                  ||  yytoken ==  Token_MINUS
+                                  ||  yytoken ==  Token_TILDE)
+                               {
+                                 test_ast *__node_158 =  0;
+
+                                 if  (!parse_test(&__node_158))
+                                   {
+                                     yy_expected_symbol(ast_node::Kind_test,  "test");
+                                     return  false;
+                                   }
+
+                                 (*yynode)->test_sequence =  snoc((*yynode)->test_sequence,  __node_158,  memory_pool);
+
+                                 while  (yytoken ==  Token_COMMA)
+                                   {
+                                     if  (yytoken !=  Token_COMMA)
+                                       {
+                                         yy_expected_token(yytoken,  Token_COMMA,  "comma");
+                                         return  false;
+                                       }
+
+                                     yylex();
+
+                                     if  (yytoken ==  Token_RBRACE)
+                                       {
+                                         break;
+                                       }
+
+                                     test_ast *__node_159 =  0;
+
+                                     if  (!parse_test(&__node_159))
+                                       {
+                                         yy_expected_symbol(ast_node::Kind_test,  "test");
+                                         return  false;
+                                       }
+
+                                     (*yynode)->test_sequence =  snoc((*yynode)->test_sequence,  __node_159,  memory_pool);
+
+                                   }
+                               }
+
+                             else
+                               {
+                                 return  false;
+                               }
+
+                             (*yynode)->end_token =  token_stream->index() -  1;
+
+                             return  true;
+                           }
+
+                           bool parser::parse_testlist(testlist_ast **yynode)
+                           {
+                             *yynode =  create<testlist_ast>();
+
+                             (*yynode)->start_token =  token_stream->index() -  1;
+
+                             if  (yytoken ==  Token_LAMBDA
+                                  ||  yytoken ==  Token_NOT
+                                  ||  yytoken ==  Token_STRINGLITERAL
+                                  ||  yytoken ==  Token_IDENTIFIER
+                                  ||  yytoken ==  Token_INTEGER
+                                  ||  yytoken ==  Token_FLOAT
+                                  ||  yytoken ==  Token_IMAGNUM
                                   ||  yytoken ==  Token_LPAREN
                                   ||  yytoken ==  Token_LBRACE
                                   ||  yytoken ==  Token_LBRACKET
@@ -6660,7 +6520,7 @@ namespace python
 
                                      yylex();
 
-                                     if  (yytoken ==  Token_RBRACE)
+                                     if ( yytoken ==  Token_COLON ||  yytoken ==  Token_SEMICOLON ||  yytoken ==  Token_RPAREN ||  yytoken ==  Token_LINEBREAK)
                                        {
                                          break;
                                        }
@@ -6673,7 +6533,7 @@ namespace python
                                          return  false;
                                        }
 
-                                     (*yynode)->test_sequence =  snoc((*yynode)->test_sequence,  __node_161,  memory_pool);
+                                     (*yynode)->testlist_sequence =  snoc((*yynode)->testlist_sequence,  __node_161,  memory_pool);
 
                                    }
                                }
@@ -6688,9 +6548,9 @@ namespace python
                              return  true;
                            }
 
-                           bool parser::parse_testlist(testlist_ast **yynode)
+                           bool parser::parse_testlist1(testlist1_ast **yynode)
                            {
-                             *yynode =  create<testlist_ast>();
+                             *yynode =  create<testlist1_ast>();
 
                              (*yynode)->start_token =  token_stream->index() -  1;
 
@@ -6701,8 +6561,6 @@ namespace python
                                   ||  yytoken ==  Token_INTEGER
                                   ||  yytoken ==  Token_FLOAT
                                   ||  yytoken ==  Token_IMAGNUM
-                                  ||  yytoken ==  Token_LONGSTRING
-                                  ||  yytoken ==  Token_SHORTSTRING
                                   ||  yytoken ==  Token_LPAREN
                                   ||  yytoken ==  Token_LBRACE
                                   ||  yytoken ==  Token_LBRACKET
@@ -6731,11 +6589,6 @@ namespace python
 
                                      yylex();
 
-                                     if ( yytoken ==  Token_COLON ||  yytoken ==  Token_SEMICOLON ||  yytoken ==  Token_RPAREN ||  yytoken ==  Token_LINEBREAK)
-                                       {
-                                         break;
-                                       }
-
                                      test_ast *__node_163 =  0;
 
                                      if  (!parse_test(&__node_163))
@@ -6744,73 +6597,7 @@ namespace python
                                          return  false;
                                        }
 
-                                     (*yynode)->testlist_sequence =  snoc((*yynode)->testlist_sequence,  __node_163,  memory_pool);
-
-                                   }
-                               }
-
-                             else
-                               {
-                                 return  false;
-                               }
-
-                             (*yynode)->end_token =  token_stream->index() -  1;
-
-                             return  true;
-                           }
-
-                           bool parser::parse_testlist1(testlist1_ast **yynode)
-                           {
-                             *yynode =  create<testlist1_ast>();
-
-                             (*yynode)->start_token =  token_stream->index() -  1;
-
-                             if  (yytoken ==  Token_LAMBDA
-                                  ||  yytoken ==  Token_NOT
-                                  ||  yytoken ==  Token_STRINGLITERAL
-                                  ||  yytoken ==  Token_IDENTIFIER
-                                  ||  yytoken ==  Token_INTEGER
-                                  ||  yytoken ==  Token_FLOAT
-                                  ||  yytoken ==  Token_IMAGNUM
-                                  ||  yytoken ==  Token_LONGSTRING
-                                  ||  yytoken ==  Token_SHORTSTRING
-                                  ||  yytoken ==  Token_LPAREN
-                                  ||  yytoken ==  Token_LBRACE
-                                  ||  yytoken ==  Token_LBRACKET
-                                  ||  yytoken ==  Token_BACKTICK
-                                  ||  yytoken ==  Token_PLUS
-                                  ||  yytoken ==  Token_MINUS
-                                  ||  yytoken ==  Token_TILDE)
-                               {
-                                 test_ast *__node_164 =  0;
-
-                                 if  (!parse_test(&__node_164))
-                                   {
-                                     yy_expected_symbol(ast_node::Kind_test,  "test");
-                                     return  false;
-                                   }
-
-                                 (*yynode)->test_sequence =  snoc((*yynode)->test_sequence,  __node_164,  memory_pool);
-
-                                 while  (yytoken ==  Token_COMMA)
-                                   {
-                                     if  (yytoken !=  Token_COMMA)
-                                       {
-                                         yy_expected_token(yytoken,  Token_COMMA,  "comma");
-                                         return  false;
-                                       }
-
-                                     yylex();
-
-                                     test_ast *__node_165 =  0;
-
-                                     if  (!parse_test(&__node_165))
-                                       {
-                                         yy_expected_symbol(ast_node::Kind_test,  "test");
-                                         return  false;
-                                       }
-
-                                     (*yynode)->test_sequence =  snoc((*yynode)->test_sequence,  __node_165,  memory_pool);
+                                     (*yynode)->test_sequence =  snoc((*yynode)->test_sequence,  __node_163,  memory_pool);
 
                                    }
                                }
@@ -6838,8 +6625,6 @@ namespace python
                                   ||  yytoken ==  Token_INTEGER
                                   ||  yytoken ==  Token_FLOAT
                                   ||  yytoken ==  Token_IMAGNUM
-                                  ||  yytoken ==  Token_LONGSTRING
-                                  ||  yytoken ==  Token_SHORTSTRING
                                   ||  yytoken ==  Token_LPAREN
                                   ||  yytoken ==  Token_LBRACE
                                   ||  yytoken ==  Token_LBRACKET
@@ -6848,27 +6633,27 @@ namespace python
                                   ||  yytoken ==  Token_MINUS
                                   ||  yytoken ==  Token_TILDE)
                                {
-                                 test_list_gexp_ast *__node_166 =  0;
+                                 test_list_gexp_ast *__node_164 =  0;
 
-                                 if  (!parse_test_list_gexp(&__node_166))
+                                 if  (!parse_test_list_gexp(&__node_164))
                                    {
                                      yy_expected_symbol(ast_node::Kind_test_list_gexp,  "test_list_gexp");
                                      return  false;
                                    }
 
-                                 (*yynode)->test_list_gexp =  __node_166;
+                                 (*yynode)->test_list_gexp =  __node_164;
 
                                  if  (yytoken ==  Token_FOR)
                                    {
-                                     gen_for_ast *__node_167 =  0;
+                                     gen_for_ast *__node_165 =  0;
 
-                                     if  (!parse_gen_for(&__node_167))
+                                     if  (!parse_gen_for(&__node_165))
                                        {
                                          yy_expected_symbol(ast_node::Kind_gen_for,  "gen_for");
                                          return  false;
                                        }
 
-                                     (*yynode)->gen_for =  __node_167;
+                                     (*yynode)->gen_for =  __node_165;
 
                                    }
 
@@ -6903,8 +6688,6 @@ namespace python
                                   ||  yytoken ==  Token_INTEGER
                                   ||  yytoken ==  Token_FLOAT
                                   ||  yytoken ==  Token_IMAGNUM
-                                  ||  yytoken ==  Token_LONGSTRING
-                                  ||  yytoken ==  Token_SHORTSTRING
                                   ||  yytoken ==  Token_LPAREN
                                   ||  yytoken ==  Token_LBRACE
                                   ||  yytoken ==  Token_LBRACKET
@@ -6913,15 +6696,15 @@ namespace python
                                   ||  yytoken ==  Token_MINUS
                                   ||  yytoken ==  Token_TILDE)
                                {
-                                 test_ast *__node_168 =  0;
+                                 test_ast *__node_166 =  0;
 
-                                 if  (!parse_test(&__node_168))
+                                 if  (!parse_test(&__node_166))
                                    {
                                      yy_expected_symbol(ast_node::Kind_test,  "test");
                                      return  false;
                                    }
 
-                                 (*yynode)->test_sequence =  snoc((*yynode)->test_sequence,  __node_168,  memory_pool);
+                                 (*yynode)->test_sequence =  snoc((*yynode)->test_sequence,  __node_166,  memory_pool);
 
                                  if  (yytoken ==  Token_COMMA)
                                    {
@@ -6935,15 +6718,15 @@ namespace python
 
                                          yylex();
 
-                                         test_ast *__node_169 =  0;
+                                         test_ast *__node_167 =  0;
 
-                                         if  (!parse_test(&__node_169))
+                                         if  (!parse_test(&__node_167))
                                            {
                                              yy_expected_symbol(ast_node::Kind_test,  "test");
                                              return  false;
                                            }
 
-                                         (*yynode)->test_sequence =  snoc((*yynode)->test_sequence,  __node_169,  memory_pool);
+                                         (*yynode)->test_sequence =  snoc((*yynode)->test_sequence,  __node_167,  memory_pool);
 
                                        }
 
@@ -7013,8 +6796,6 @@ namespace python
                                           ||  yytoken ==  Token_INTEGER
                                           ||  yytoken ==  Token_FLOAT
                                           ||  yytoken ==  Token_IMAGNUM
-                                          ||  yytoken ==  Token_LONGSTRING
-                                          ||  yytoken ==  Token_SHORTSTRING
                                           ||  yytoken ==  Token_LPAREN
                                           ||  yytoken ==  Token_LBRACE
                                           ||  yytoken ==  Token_LBRACKET
@@ -7023,15 +6804,15 @@ namespace python
                                           ||  yytoken ==  Token_MINUS
                                           ||  yytoken ==  Token_TILDE)
                                        {
-                                         arglist_ast *__node_170 =  0;
+                                         arglist_ast *__node_168 =  0;
 
-                                         if  (!parse_arglist(&__node_170))
+                                         if  (!parse_arglist(&__node_168))
                                            {
                                              yy_expected_symbol(ast_node::Kind_arglist,  "arglist");
                                              return  false;
                                            }
 
-                                         (*yynode)->trailer_arglist =  __node_170;
+                                         (*yynode)->trailer_arglist =  __node_168;
 
                                        }
 
@@ -7062,15 +6843,15 @@ namespace python
 
                                      yylex();
 
-                                     subscriptlist_ast *__node_171 =  0;
+                                     subscriptlist_ast *__node_169 =  0;
 
-                                     if  (!parse_subscriptlist(&__node_171))
+                                     if  (!parse_subscriptlist(&__node_169))
                                        {
                                          yy_expected_symbol(ast_node::Kind_subscriptlist,  "subscriptlist");
                                          return  false;
                                        }
 
-                                     (*yynode)->subscriptlist =  __node_171;
+                                     (*yynode)->subscriptlist =  __node_169;
 
                                      if  (yytoken !=  Token_RBRACKET)
                                        {
@@ -7143,29 +6924,29 @@ namespace python
 
                                  yylex();
 
-                                 suite_ast *__node_172 =  0;
+                                 suite_ast *__node_170 =  0;
 
-                                 if  (!parse_suite(&__node_172))
+                                 if  (!parse_suite(&__node_170))
                                    {
                                      yy_expected_symbol(ast_node::Kind_suite,  "suite");
                                      return  false;
                                    }
 
-                                 (*yynode)->try_suite =  __node_172;
+                                 (*yynode)->try_suite =  __node_170;
 
                                  if  (yytoken ==  Token_EXCEPT)
                                    {
                                      do
                                        {
-                                         except_clause_ast *__node_173 =  0;
+                                         except_clause_ast *__node_171 =  0;
 
-                                         if  (!parse_except_clause(&__node_173))
+                                         if  (!parse_except_clause(&__node_171))
                                            {
                                              yy_expected_symbol(ast_node::Kind_except_clause,  "except_clause");
                                              return  false;
                                            }
 
-                                         (*yynode)->except_clause_sequence =  snoc((*yynode)->except_clause_sequence,  __node_173,  memory_pool);
+                                         (*yynode)->except_clause_sequence =  snoc((*yynode)->except_clause_sequence,  __node_171,  memory_pool);
 
                                          if  (yytoken !=  Token_COLON)
                                            {
@@ -7175,15 +6956,15 @@ namespace python
 
                                          yylex();
 
-                                         suite_ast *__node_174 =  0;
+                                         suite_ast *__node_172 =  0;
 
-                                         if  (!parse_suite(&__node_174))
+                                         if  (!parse_suite(&__node_172))
                                            {
                                              yy_expected_symbol(ast_node::Kind_suite,  "suite");
                                              return  false;
                                            }
 
-                                         (*yynode)->except_suite_sequence =  snoc((*yynode)->except_suite_sequence,  __node_174,  memory_pool);
+                                         (*yynode)->except_suite_sequence =  snoc((*yynode)->except_suite_sequence,  __node_172,  memory_pool);
 
                                        }
 
@@ -7206,15 +6987,15 @@ namespace python
 
                                          yylex();
 
-                                         suite_ast *__node_175 =  0;
+                                         suite_ast *__node_173 =  0;
 
-                                         if  (!parse_suite(&__node_175))
+                                         if  (!parse_suite(&__node_173))
                                            {
                                              yy_expected_symbol(ast_node::Kind_suite,  "suite");
                                              return  false;
                                            }
 
-                                         (*yynode)->try_else_suite =  __node_175;
+                                         (*yynode)->try_else_suite =  __node_173;
 
                                        }
 
@@ -7244,15 +7025,15 @@ namespace python
 
                                      yylex();
 
-                                     suite_ast *__node_176 =  0;
+                                     suite_ast *__node_174 =  0;
 
-                                     if  (!parse_suite(&__node_176))
+                                     if  (!parse_suite(&__node_174))
                                        {
                                          yy_expected_symbol(ast_node::Kind_suite,  "suite");
                                          return  false;
                                        }
 
-                                     (*yynode)->finally_suite =  __node_176;
+                                     (*yynode)->finally_suite =  __node_174;
 
                                    }
 
@@ -7279,30 +7060,45 @@ namespace python
                              (*yynode)->start_token =  token_stream->index() -  1;
 
                              if  (yytoken ==  Token_IDENTIFIER
-                                  ||  yytoken ==  Token_LPAREN)
+                                  ||  yytoken ==  Token_LPAREN
+                                  ||  yytoken ==  Token_STAR
+                                  ||  yytoken ==  Token_DOUBLESTAR ||  yytoken ==  Token_RPAREN
+                                  ||  yytoken ==  Token_COLON)
                                {
-                                 func_def_ast *__node_177 =  0;
-
-                                 if  (!parse_func_def(&__node_177))
+                                 if  (yytoken ==  Token_IDENTIFIER
+                                      ||  yytoken ==  Token_LPAREN)
                                    {
-                                     yy_expected_symbol(ast_node::Kind_func_def,  "func_def");
-                                     return  false;
+                                     func_def_ast *__node_175 =  0;
+
+                                     if  (!parse_func_def(&__node_175))
+                                       {
+                                         yy_expected_symbol(ast_node::Kind_func_def,  "func_def");
+                                         return  false;
+                                       }
+
+                                     (*yynode)->func_def =  __node_175;
+
                                    }
 
-                                 (*yynode)->func_def =  __node_177;
+                                 else if  (true /*epsilon*/)
+                                 {}
+                                 else
+                                   {
+                                     return  false;
+                                   }
 
                                  if  ((yytoken ==  Token_STAR
                                        ||  yytoken ==  Token_DOUBLESTAR) &&  ( yytoken !=  Token_RPAREN  &&  LA(2).kind ==  Token_IDENTIFIER))
                                    {
-                                     fun_pos_param_ast *__node_178 =  0;
+                                     fun_pos_param_ast *__node_176 =  0;
 
-                                     if  (!parse_fun_pos_param(&__node_178))
+                                     if  (!parse_fun_pos_param(&__node_176))
                                        {
                                          yy_expected_symbol(ast_node::Kind_fun_pos_param,  "fun_pos_param");
                                          return  false;
                                        }
 
-                                     (*yynode)->fun_pos_param =  __node_178;
+                                     (*yynode)->fun_pos_param =  __node_176;
 
                                    }
 
@@ -7340,15 +7136,15 @@ namespace python
 
                                  yylex();
 
-                                 test_ast *__node_179 =  0;
+                                 test_ast *__node_177 =  0;
 
-                                 if  (!parse_test(&__node_179))
+                                 if  (!parse_test(&__node_177))
                                    {
                                      yy_expected_symbol(ast_node::Kind_test,  "test");
                                      return  false;
                                    }
 
-                                 (*yynode)->while_test =  __node_179;
+                                 (*yynode)->while_test =  __node_177;
 
                                  if  (yytoken !=  Token_COLON)
                                    {
@@ -7358,15 +7154,15 @@ namespace python
 
                                  yylex();
 
-                                 suite_ast *__node_180 =  0;
+                                 suite_ast *__node_178 =  0;
 
-                                 if  (!parse_suite(&__node_180))
+                                 if  (!parse_suite(&__node_178))
                                    {
                                      yy_expected_symbol(ast_node::Kind_suite,  "suite");
                                      return  false;
                                    }
 
-                                 (*yynode)->while_suite =  __node_180;
+                                 (*yynode)->while_suite =  __node_178;
 
                                  if  (yytoken ==  Token_ELSE)
                                    {
@@ -7386,15 +7182,15 @@ namespace python
 
                                      yylex();
 
-                                     suite_ast *__node_181 =  0;
+                                     suite_ast *__node_179 =  0;
 
-                                     if  (!parse_suite(&__node_181))
+                                     if  (!parse_suite(&__node_179))
                                        {
                                          yy_expected_symbol(ast_node::Kind_suite,  "suite");
                                          return  false;
                                        }
 
-                                     (*yynode)->while_else_suite =  __node_181;
+                                     (*yynode)->while_else_suite =  __node_179;
 
                                    }
 
@@ -7427,8 +7223,6 @@ namespace python
                                   ||  yytoken ==  Token_INTEGER
                                   ||  yytoken ==  Token_FLOAT
                                   ||  yytoken ==  Token_IMAGNUM
-                                  ||  yytoken ==  Token_LONGSTRING
-                                  ||  yytoken ==  Token_SHORTSTRING
                                   ||  yytoken ==  Token_LPAREN
                                   ||  yytoken ==  Token_LBRACE
                                   ||  yytoken ==  Token_LBRACKET
@@ -7437,15 +7231,15 @@ namespace python
                                   ||  yytoken ==  Token_MINUS
                                   ||  yytoken ==  Token_TILDE)
                                {
-                                 and_expr_ast *__node_182 =  0;
+                                 and_expr_ast *__node_180 =  0;
 
-                                 if  (!parse_and_expr(&__node_182))
+                                 if  (!parse_and_expr(&__node_180))
                                    {
                                      yy_expected_symbol(ast_node::Kind_and_expr,  "and_expr");
                                      return  false;
                                    }
 
-                                 (*yynode)->xor_expr =  __node_182;
+                                 (*yynode)->xor_expr =  __node_180;
 
                                  while  (yytoken ==  Token_HAT)
                                    {
@@ -7457,15 +7251,15 @@ namespace python
 
                                      yylex();
 
-                                     and_expr_ast *__node_183 =  0;
+                                     and_expr_ast *__node_181 =  0;
 
-                                     if  (!parse_and_expr(&__node_183))
+                                     if  (!parse_and_expr(&__node_181))
                                        {
                                          yy_expected_symbol(ast_node::Kind_and_expr,  "and_expr");
                                          return  false;
                                        }
 
-                                     (*yynode)->hat_xor_expr_sequence =  snoc((*yynode)->hat_xor_expr_sequence,  __node_183,  memory_pool);
+                                     (*yynode)->hat_xor_expr_sequence =  snoc((*yynode)->hat_xor_expr_sequence,  __node_181,  memory_pool);
 
                                    }
                                }
@@ -7496,15 +7290,15 @@ namespace python
 
                                  yylex();
 
-                                 testlist_ast *__node_184 =  0;
+                                 testlist_ast *__node_182 =  0;
 
-                                 if  (!parse_testlist(&__node_184))
+                                 if  (!parse_testlist(&__node_182))
                                    {
                                      yy_expected_symbol(ast_node::Kind_testlist,  "testlist");
                                      return  false;
                                    }
 
-                                 (*yynode)->yield_expr =  __node_184;
+                                 (*yynode)->yield_expr =  __node_182;
 
                                }
 
@@ -7519,6 +7313,6 @@ namespace python
                            }
 
 
-                         } // end of namespace python
+                         } // end of namespace Python
 
 

@@ -36,8 +36,11 @@ ParseTest::~ParseTest()
 void ParseTest::successSimpleSource()
 {
     QFETCH( QString, project );
-    bool ret = PythonDriver::parse_string( project );
-    QVERIFY( ret == true );
+    Python::Driver d;
+    d.setContent( project );
+    Python::project_ast* ast = 0;
+    bool ret = d.parse( &ast );
+    QVERIFY( ret );
 }
 
 void ParseTest::successSimpleSource_data()
@@ -50,8 +53,11 @@ void ParseTest::successSimpleSource_data()
 void ParseTest::successSimpleSourceIndent()
 {
     QFETCH( QString, project );
-    bool ret = PythonDriver::parse_string( project );
-    QVERIFY( ret == true );
+    Python::Driver d;
+    d.setContent( project );
+    Python::project_ast* ast = 0;
+    bool ret = d.parse( &ast );
+    QVERIFY( ret );
 }
 
 void ParseTest::successSimpleSourceIndent_data()

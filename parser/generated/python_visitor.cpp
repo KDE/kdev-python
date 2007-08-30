@@ -3,7 +3,7 @@
 
 #include "python_visitor.h"
 
-namespace python
+namespace Python
   {
 
   visitor::parser_fun_t visitor::_S_parser_table[] =  {
@@ -61,7 +61,6 @@ namespace python
         reinterpret_cast<parser_fun_t>(&visitor::visit_list_iter),
         reinterpret_cast<parser_fun_t>(&visitor::visit_list_maker),
         reinterpret_cast<parser_fun_t>(&visitor::visit_listmaker),
-        reinterpret_cast<parser_fun_t>(&visitor::visit_longstringliteral),
         reinterpret_cast<parser_fun_t>(&visitor::visit_not_test),
         reinterpret_cast<parser_fun_t>(&visitor::visit_number),
         reinterpret_cast<parser_fun_t>(&visitor::visit_pass_stmt),
@@ -72,7 +71,6 @@ namespace python
         reinterpret_cast<parser_fun_t>(&visitor::visit_return_stmt),
         reinterpret_cast<parser_fun_t>(&visitor::visit_shift_expr),
         reinterpret_cast<parser_fun_t>(&visitor::visit_shift_op),
-        reinterpret_cast<parser_fun_t>(&visitor::visit_shortstringliteral),
         reinterpret_cast<parser_fun_t>(&visitor::visit_simple_stmt),
         reinterpret_cast<parser_fun_t>(&visitor::visit_sliceop),
         reinterpret_cast<parser_fun_t>(&visitor::visit_small_stmt),
@@ -96,6 +94,6 @@ namespace python
         reinterpret_cast<parser_fun_t>(&visitor::visit_yield_stmt)
       }; // _S_parser_table[]
 
-} // end of namespace python
+} // end of namespace Python
 
 

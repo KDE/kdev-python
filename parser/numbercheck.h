@@ -1,4 +1,4 @@
-/* Python Parser Test
+/* KDevelop Python Support
  *
  * Copyright 2007 Andreas Pakulat <apaku@gmx.de>
  *
@@ -18,41 +18,15 @@
  * 02110-1301, USA.
  */
 
-#ifndef PYTHONDRIVER_H
-#define PYTHONDRIVER_H
+#ifndef NUMBERCHECK_H
+#define NUMBERCHECK_H
 
-#include <QtCore/QString>
-#include "parserexport.h"
-
-class kdev_pg_token_stream;
-class kdev_pg_memory_pool;
+class QString;
 
 namespace Python
 {
 
-class project_ast;
-
-
-/**
- * Class to parse a Python source file or a string containing python source code
- */
-class KDEVPYTHONPARSER_EXPORT Driver
-{
-public:
-    Driver();
-    bool readFile( const QString&, const char* = 0 );
-    void setContent( const QString& );
-    void setDebug( bool );
-    bool parse( project_ast** ast );
-    void setTokenStream( kdev_pg_token_stream* );
-    void setMemoryPool( kdev_pg_memory_pool* );
-private:
-    QString m_content;
-    bool m_debug;
-    kdev_pg_memory_pool* m_pool;
-    kdev_pg_token_stream* m_tokenstream;
-
-};
+int getTokenForNumberString( const QString& );
 
 }
 

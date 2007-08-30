@@ -20,119 +20,90 @@
 
 
 #include "pythondriver.h"
-#include <iostream>
-#include <fstream>
-#include <sstream>
 #include "python_parser.h"
 
-#include <QtCore/QByteArray>
-#include <QtCore/QStack>
+#include <QtCore/QFile>
+#include <QtCore/QDebug>
+#include <QtCore/QTextStream>
+#include <QtCore/QTextCodec>
 
-using namespace python;
-
-bool PythonDriver::parse_string(const QString& content)
+namespace Python
 {
-    QByteArray qba = content.toLocal8Bit();
-    std::cerr << "'" << qba.data() << "'\n";
-    return PythonDriver::parse_string(qba.data());
+
+Driver::Driver()
+    : m_debug(false), m_pool(0), m_tokenstream(0)
+{
 }
 
-bool PythonDriver::parse_string(char const *content)
+bool Driver::readFile( const QString& filename, const char* codec )
 {
-    char* contents = const_cast<char*>(content) ;
-    parser::token_stream_type token_stream;
-    parser::memory_pool_type memory_pool;
-
-    std::cerr << "Parsing string\n";
-
-    // 0) setup
-    parser python_parser;
-    python_parser.set_token_stream(&token_stream);
-    python_parser.set_memory_pool(&memory_pool);
-
-    // 1) tokenize
-    python_parser.tokenize(contents);
-
-    // 2) parse
-    project_ast *ast = 0;
-    bool matched = python_parser.parse_project(&ast);
-    if (matched)
+    QFile f(filename);
+    if( !f.open( QIODevice::ReadOnly | QIODevice::Text ) )
     {
-        std::cerr<<"Matched";
+        qDebug() << "Couldn't open project file:" << filename;
+        return false;
     }
-    else
-    {
-        python_parser.yy_expected_symbol(ast_node::Kind_project, "project"); // ### remove me
-    }
+    QTextStream s(&f);
+    if( codec )
+        s.setCodec( QTextCodec::codecForName(codec) );
+    m_content = s.readAll();
+    return true;
+}
+void Driver::setContent( const QString& content )
+{
+    m_content = content;
+}
+void Driver::setDebug( bool debug )
+{
+    m_debug = debug;
+}
 
+bool Driver::parse( project_ast** ast )
+{
+    if(!m_tokenstream)
+        m_tokenstream = new kdev_pg_token_stream();
+    if(!m_pool)
+        m_pool = new kdev_pg_memory_pool();
+
+    parser pythonparser;
+    pythonparser.set_token_stream(m_tokenstream);
+    pythonparser.set_memory_pool(m_pool);
+    pythonparser.setDebug( m_debug );
+
+    pythonparser.tokenize(m_content);
+    bool matched = pythonparser.parse_project(ast);
+    if( matched )
+    {
+        qDebug() << "Sucessfully parsed";
+//         if( m_debug )
+//         {
+//             DebugVisitor d(&pythonparser);
+//             d.visit_project(ast);
+//         }
+//         *qmast = new ProjectAST();
+//         BuildASTVisitor d( &qmakeparser, *qmast );
+//         d.visit_project(ast);
+//         kDebug(9024) << "Found" << (*qmast)->statements().count() << "Statements";
+    }else
+    {
+        *ast = 0;
+        pythonparser.yy_expected_symbol(ast_node::Kind_project, "project");
+        qDebug() << "Couldn't parse content";
+    }
     return matched;
 }
 
-bool PythonDriver::parse_file(const QString& filename)
+
+void Driver::setTokenStream( parser::token_stream_type* ts )
 {
-    QByteArray qba = filename.toLocal8Bit();
-    return PythonDriver::parse_file(qba.data());
+    m_tokenstream = ts;
 }
 
-bool PythonDriver::parse_file(char const *filename)
+void Driver::setMemoryPool( parser::memory_pool_type* pool )
 {
-    std::cerr << "Parsing FILE\n";
-    char *contents;
-    std::ifstream filestr(filename);
+    m_pool = pool;
+}
 
-    if (filestr.is_open())
-    {
-      std::filebuf *pbuf;
-      long size;
-
-      // get pointer to associated buffer object
-      pbuf=filestr.rdbuf();
-
-      // get file size using buffer's members
-      size=pbuf->pubseekoff(0,std::ios::end,std::ios::in);
-      pbuf->pubseekpos(0,std::ios::in);
-
-      // allocate memory to contain file data
-      contents=new char[size+1];
-
-      // get file data
-      pbuf->sgetn(contents, size);
-
-      filestr.close();
-    }
-    else
-    {
-      std::cerr << filename << ": file not found" << std::endl;
-      return false;
-    }
-
-    parser::token_stream_type token_stream;
-    parser::memory_pool_type memory_pool;
-
-    // 0) setup
-    parser python_parser;
-    python_parser.set_token_stream(&token_stream);
-    python_parser.set_memory_pool(&memory_pool);
-
-    // 1) tokenize
-    python_parser.tokenize(contents);
-
-    // 2) parse
-    project_ast *ast = 0;
-    bool matched = python_parser.parse_project(&ast);
-    if (matched)
-    {
-        std::cerr<<"Matched";
-    }
-    else
-    {
-        python_parser.yy_expected_symbol(ast_node::Kind_project, "project"); // ### remove me
-    }
-
-    //This needs to be done, unfortunately it currently crashes the parser when it encounters an eof without newline
-    //delete contents;
-
-    return matched;
 }
 
 // kate: space-indent on; indent-width 4; tab-width: 4; replace-tabs on; auto-insert-doxygen on

@@ -8,7 +8,7 @@
 
 #include <parserexport.h>
 
-namespace python
+namespace Python
   {
 
   class KDEVPYTHONPARSER_EXPORT visitor
@@ -188,9 +188,6 @@ namespace python
       virtual void visit_listmaker(listmaker_ast *)
       {}
 
-      virtual void visit_longstringliteral(longstringliteral_ast *)
-      {}
-
       virtual void visit_not_test(not_test_ast *)
       {}
 
@@ -219,9 +216,6 @@ namespace python
                                {}
 
                                virtual void visit_shift_op(shift_op_ast *)
-                               {}
-
-                               virtual void visit_shortstringliteral(shortstringliteral_ast *)
                                {}
 
                                virtual void visit_simple_stmt(simple_stmt_ast *)
@@ -291,7 +285,7 @@ namespace python
 
                            ;
 
-} // end of namespace python
+} // end of namespace Python
 
 #endif
 

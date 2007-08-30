@@ -22,57 +22,52 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
 
+// #include <cstdlib>
+// #include <iostream>
+// #include <stdio.h>
 #include "pythondriver.h"
-#include "decoder.h"
 
-#include <cstdlib>
-#include <iostream>
-#include <fstream>
+#include <QtGlobal>
+#include <QtCore/QString>
 
-using namespace python;
+#include <kdebug.h>
+#include <kcmdlineargs.h>
+#include <kurl.h>
 
-static void usage(char const* arg0);
-
-int main(int argc, char *argv[])
+int main( int argc, char* argv[] )
 {
-  if (argc == 1)
+    KCmdLineArgs::init( argc, argv, "QMake Parser", 0, ki18n("qmake-parser"), "4.0.0", ki18n("Parse QMake project files"));
+
+    KCmdLineOptions options;
+    options.add("!debug", ki18n("Enable output of the debug AST"));
+    options.add("!+files", ki18n("QMake project files"));
+    KCmdLineArgs::addCmdLineOptions(options);
+
+    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+
+    if( args->count() < 1 )
     {
-      usage(argv[0]);
-      exit(EXIT_FAILURE);
+        KCmdLineArgs::usage(0);
     }
-  while (char const *arg = *++argv)
+
+    int debug = 0;
+    if( args->isSet("debug") )
+        debug = 1;
+    for( int i = 0 ; i < args->count() ; i++ )
     {
-      /*if (!strncmp(arg, "--option=", 9))
-        {
-          char const* option = arg + 9;
+        Python::Driver d;
+        if( !d.readFile( args->url(i).toLocalFile() ) )
+            exit( EXIT_FAILURE );
+        d.setDebug( debug );
 
-          std::cerr << "--option=" << option
-                    << "has been given!" << std::endl;
-        }
-      else */
-      if (!strncmp(arg, "--", 2))
+        Python::project_ast* ast = 0;
+        if ( !d.parse( &ast ) ) {
+            exit( EXIT_FAILURE );
+        }else
         {
-          std::cerr << "Unknown option:" << arg << std::endl;
-          usage(argv[0]);
-          exit(EXIT_FAILURE);
-        }
-      else if(!PythonDriver::parse_file(arg))
-        {
-          exit(EXIT_FAILURE);
         }
     }
-}
-
-
-static void usage(char const* argv0)
-{
-  std::cerr << "usage:" << argv0 /*<< "[options]"*/ << "file1.py [file2.py...]"
-    << std::endl; /*<< std::endl
-    << "Options:" << std::endl
-    << " --option=BLA: Do BLAH while parsing." << std::endl
-    << "               BLAH is one of FOO, BAR or KUNG, default is FOO."
-    << std::endl;
-    */
+    return EXIT_SUCCESS;
 }
 
 // kate: space-indent on; indent-width 4; tab-width: 4; replace-tabs on; auto-insert-doxygen on

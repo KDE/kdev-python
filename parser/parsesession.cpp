@@ -25,52 +25,64 @@
 
 #include "kdev-pg-memory-pool.h"
 #include "kdev-pg-token-stream.h"
-//#include "python_parser.h"
+#include "pythondriver.h"
+#include <ducontext.h>
 
 ParseSession::ParseSession()
-        : memory_pool( new parser::memory_pool_type )
-        , token_stream( new parser::token_stream_type )
-        , m_parser( new parser)
+        : m_memoryPool( new kdev_pg_memory_pool )
+        , m_tokenStream( new kdev_pg_token_stream )
 {
 }
 ParseSession::~ParseSession()
 {
-    delete memory_pool;
-    delete token_stream;
+    delete m_memoryPool;
+    delete m_tokenStream;
 }
 void ParseSession::positionAt( std::size_t offset, std::size_t *line, std::size_t *column ) const
 {
-    token_stream->location_table()->position_at( offset, line, column );
+    m_tokenStream->location_table()->position_at( offset, line, column );
 }
 
-std::size_t ParseSession::size() const
+void ParseSession::putNode( Python::ast_node* ast_node, KDevelop::DUContext* topducontext )
 {
-    return m_contents.size();
+    m_nodeHash[ast_node] = topducontext;
+}
+KDevelop::DUContext* ParseSession::getNode( Python::ast_node* ast_node )
+{
+    return m_nodeHash[ast_node];
+}
+void ParseSession::removeNode( Python::ast_node* ast_node )
+{
+    m_nodeHash.remove(ast_node);
+}
+QString ParseSession::contents() const
+{
+    return m_contents;
 }
 
-void ParseSession::put(ast_node* ast_node, KDevelop::DUContext* topducontext)
-{
-    ducontext[ast_node]=topducontext;
-}
-KDevelop::DUContext* ParseSession::get(ast_node* ast_node)
-{
-    return ducontext[ast_node];
-}
-void ParseSession::remove(ast_node* ast_node)
-{
-    ducontext.remove(ast_node);
-}
-const char *ParseSession::contents() const
-{
-    return m_contents.constData();
-}
-
-void ParseSession::setContents( const QByteArray & contents )
+void ParseSession::setContents( const QString& contents )
 {
     m_contents = contents;
 }
 
-parser *ParseSession::Parser() const
+bool ParseSession::parse( Python::project_ast** ast )
 {
-    return m_parser;
+    Python::Driver d;
+    d.setTokenStream( m_tokenStream );
+    d.setMemoryPool( m_memoryPool );
+    d.setContent( m_contents );
+    return d.parse( ast );
 }
+
+QString ParseSession::tokenText( std::size_t begin, std::size_t end )
+{
+    return m_contents.mid(begin,end-begin+1);
+}
+
+
+kdev_pg_token_stream* ParseSession::tokenStream() const
+{
+    return m_tokenStream;
+}
+
+// kate: space-indent on; indent-width 4; tab-width: 4; replace-tabs on; auto-insert-doxygen on

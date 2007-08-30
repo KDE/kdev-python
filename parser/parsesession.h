@@ -23,21 +23,24 @@
  *****************************************************************************/
 #ifndef PYTHON_PARSESESSION_H
 #define PYTHON_PARSESESSION_H
-#include <QtCore/QByteArray>
-#include <python_parser.h>
-#include <ksharedptr.h>
-#include <ktexteditor/cursor.h>
-#include <ducontext.h>
-
+#include <QtCore/QString>
+#include <QtCore/QHash>
 #include "parserexport.h"
 
 class LexedFile;
-namespace python
+namespace Python
 {
-    class parser;
+    class project_ast;
+    class ast_node;
 }
 
-using namespace python;
+class kdev_pg_token_stream;
+class kdev_pg_memory_pool;
+
+namespace KDevelop
+{
+    class DUContext;
+}
 
 class KDEVPYTHONPARSER_EXPORT ParseSession
 {
@@ -45,22 +48,25 @@ public:
     ParseSession();
     ~ParseSession();
 
-    parser* Parser() const;
-
     void positionAt( std::size_t offset, std::size_t *line, std::size_t *column ) const;
-    void setContents( const QByteArray& contents );
-    const char *contents() const;
-    std::size_t size() const;
-    parser::memory_pool_type *memory_pool;
-    parser::token_stream_type *token_stream;
-    parser* m_parser;
-    void put(ast_node* ast_node, KDevelop::DUContext* topducontext);
-    void remove(ast_node* ast_node);
-    KDevelop::DUContext* get(ast_node* ast_node);
+    void setContents( const QString& contents );
+    QString contents() const;
+
+    void putNode( Python::ast_node* ast_node, KDevelop::DUContext* topducontext );
+    void removeNode( Python::ast_node* ast_node );
+    KDevelop::DUContext* getNode( Python::ast_node* ast_node );
+
+    bool parse( Python::project_ast** );
+    QString tokenText( std::size_t, std::size_t);
+    kdev_pg_token_stream* tokenStream() const;
 private:
-    QHash<ast_node*, KDevelop::DUContext*> ducontext;
-    QByteArray m_contents;
+    QHash<Python::ast_node*, KDevelop::DUContext*> m_nodeHash;
+    QString m_contents;
+    kdev_pg_memory_pool* m_memoryPool;
+    kdev_pg_token_stream* m_tokenStream;
 
 };
 
 #endif
+
+// kate: space-indent on; indent-width 4; tab-width: 4; replace-tabs on; auto-insert-doxygen on

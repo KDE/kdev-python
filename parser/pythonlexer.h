@@ -1,4 +1,4 @@
-/* Python Parser Test
+/* KDevelop Python Support
  *
  * Copyright 2007 Andreas Pakulat <apaku@gmx.de>
  *
@@ -18,39 +18,58 @@
  * 02110-1301, USA.
  */
 
-#ifndef PYTHONDRIVER_H
-#define PYTHONDRIVER_H
+#ifndef PYTHONLEXER_H
+#define PYTHONLEXER_H
 
+#include <cstddef>
+#include <QtCore/QStack>
 #include <QtCore/QString>
-#include "parserexport.h"
 
-class kdev_pg_token_stream;
-class kdev_pg_memory_pool;
+class QString;
 
 namespace Python
 {
 
-class project_ast;
+class parser;
 
-
-/**
- * Class to parse a Python source file or a string containing python source code
- */
-class KDEVPYTHONPARSER_EXPORT Driver
-{
+class Lexer {
 public:
-    Driver();
-    bool readFile( const QString&, const char* = 0 );
-    void setContent( const QString& );
-    void setDebug( bool );
-    bool parse( project_ast** ast );
-    void setTokenStream( kdev_pg_token_stream* );
-    void setMemoryPool( kdev_pg_memory_pool* );
+    Lexer(parser* _parser, const QString& contents);
+
+    int nextTokenKind();
+    std::size_t tokenBegin() const;
+    std::size_t tokenEnd() const;
+
 private:
     QString m_content;
-    bool m_debug;
-    kdev_pg_memory_pool* m_pool;
-    kdev_pg_token_stream* m_tokenstream;
+    parser* m_parser;
+    int m_curpos;
+    int m_contentSize;
+    std::size_t m_tokenBegin;
+    std::size_t m_tokenEnd;
+    unsigned int m_openParenNum;
+
+    int state() const;
+    void pushState(int state);
+    void popState();
+
+    int indentation() const;
+    void pushIndentation( int indentation );
+    void popIndentation();
+
+    QChar* ignoreWhitespaceAndComments( QChar* it );
+    void createNewline( int curpos );
+    bool isStringStart( QChar* );
+
+    QStack<int> m_state;
+    QStack<int> m_indentation;
+    enum State
+    {
+        ErrorState = -1,
+        DefaultState = 0,
+        IndentState = 1
+    };
+
 
 };
 

@@ -6,16 +6,17 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
     )
 
 set(parser_STAT_SRCS
-    decoder.cpp
-    python_io.cpp
     pythondriver.cpp
     parsesession.cpp
+    pythonlexer.cpp
+    kwcheck.cpp
+    numbercheck.cpp
     )
 
-if(KDEVPG_FOUND AND FLEX_FOUND)
-    kdevpg_generate(_kdevpgList python
+if(KDEVPG_FOUND)
+    kdevpg_generate(_kdevpgList python NAMESPACE Python
         "${CMAKE_SOURCE_DIR}/parser/python.g"
-        "${CMAKE_SOURCE_DIR}/parser/python_lexer.h"
+        "${CMAKE_SOURCE_DIR}/parser/pythonlexer.h"
     )
 
     add_custom_target( debuginfo
@@ -27,42 +28,18 @@ if(KDEVPG_FOUND AND FLEX_FOUND)
                 "${CMAKE_CURRENT_SOURCE_DIR}/parser/python.g" ">rules" "2>errors"
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
     )
-    # Copy python_lexer.ll to the builddir, so that flex doesn't write out
-    # absolute paths in the generated file when we pass them as arguments.
-    # In short, I don't want stuff like
-    # '#line 2 "/home/kde/build/.../python_lexer.cpp" in SVN.
-    add_custom_command(
-        OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/python_lexer.ll"
-        MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/parser/python_lexer.ll"
-        COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
-                "${CMAKE_SOURCE_DIR}/parser/python_lexer.ll"
-                "${CMAKE_CURRENT_BINARY_DIR}/python_lexer.ll"
-        )
-    add_custom_command(
-        OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp"
-        MAIN_DEPENDENCY "${CMAKE_CURRENT_BINARY_DIR}/python_lexer.ll"
-        DEPENDS "${CMAKE_SOURCE_DIR}/parser/python_lexer.h"
-                "${CMAKE_CURRENT_BINARY_DIR}/python_parser.h"
-        COMMAND ${FLEX_EXECUTABLE}
-        ARGS    -o"python_lexer.cpp"
-                -d python_lexer.ll
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        )
-
     set( parser_SRCS
         ${_kdevpgList}
-        "${CMAKE_CURRENT_BINARY_DIR}/python_lexer.cpp"
     )
-else(KDEVPG_FOUND AND FLEX_FOUND)
+else(KDEVPG_FOUND)
     message(STATUS "Assuming existence of generated parser files")
     message( STATUS "Assuming existence of generated lexer files")
     set(parser_SRCS
         generated/python_parser.cpp
         generated/python_visitor.cpp
-        generated/python_default_visitor.cpp
-        generated/python_lexer.cpp )
+        generated/python_default_visitor.cpp )
 
-endif(KDEVPG_FOUND AND FLEX_FOUND)
+endif(KDEVPG_FOUND)
 
 add_subdirectory(tests)
 
@@ -85,7 +62,6 @@ add_custom_target( copy-generated
     COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/python_visitor.cpp" "${CMAKE_SOURCE_DIR}/parser/generated/python_visitor.cpp"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/python_default_visitor.h" "${CMAKE_SOURCE_DIR}/parser/generated/python_default_visitor.h"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/python_default_visitor.cpp" "${CMAKE_SOURCE_DIR}/parser/generated/python_default_visitor.cpp"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/python_lexer.cpp" "${CMAKE_SOURCE_DIR}/parser/generated/python_lexer.cpp"
     DEPENDS "${CMAKE_BINARY_DIR}/parser/python_parser.cpp"
     DEPENDS "${CMAKE_BINARY_DIR}/parser/python_parser.h"
     DEPENDS "${CMAKE_BINARY_DIR}/parser/python_visitor.cpp"
@@ -93,6 +69,5 @@ add_custom_target( copy-generated
     DEPENDS "${CMAKE_BINARY_DIR}/parser/python_default_visitor.cpp"
     DEPENDS "${CMAKE_BINARY_DIR}/parser/python_default_visitor.h"
     DEPENDS "${CMAKE_BINARY_DIR}/parser/python_ast.h"
-    DEPENDS "${CMAKE_BINARY_DIR}/parser/python_lexer.cpp"
     )
 

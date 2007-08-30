@@ -3,7 +3,7 @@
 
 #include "python_default_visitor.h"
 
-namespace python
+namespace Python
   {
 
   void default_visitor::visit_and_expr(and_expr_ast *node)
@@ -117,8 +117,6 @@ namespace python
     visit_node(node->dictmaker);
     visit_node(node->testlist1);
     visit_node(node->number);
-    visit_node(node->longstringliteral);
-    visit_node(node->shortstringliteral);
   }
 
   void default_visitor::visit_augassign(augassign_ast *)
@@ -416,20 +414,7 @@ namespace python
   void default_visitor::visit_funcdef(funcdef_ast *node)
   {
     visit_node(node->decorators);
-
-    if  (node->fun_args_sequence)
-      {
-        const list_node<varargslist_ast*> *__it =  node->fun_args_sequence->to_front(),  *__end =  __it;
-
-        do
-          {
-            visit_node(__it->element);
-            __it =  __it->next;
-          }
-
-        while  (__it !=  __end);
-      }
-
+    visit_node(node->fun_args);
     visit_node(node->fun_suite);
   }
 
@@ -585,9 +570,6 @@ namespace python
     visit_node(node->list_for);
   }
 
-  void default_visitor::visit_longstringliteral(longstringliteral_ast *)
-  {}
-
   void default_visitor::visit_not_test(not_test_ast *node)
   {
     visit_node(node->not_test);
@@ -710,9 +692,6 @@ namespace python
 
                                     void default_visitor::visit_shift_op(shift_op_ast *)
                                   {}
-
-                                    void default_visitor::visit_shortstringliteral(shortstringliteral_ast *)
-                                    {}
 
                                     void default_visitor::visit_simple_stmt(simple_stmt_ast *node)
                                     {
@@ -1007,6 +986,6 @@ namespace python
                                     }
 
 
-                                  } // end of namespace python
+                                  } // end of namespace Python
 
 

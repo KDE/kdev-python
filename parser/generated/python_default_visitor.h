@@ -8,7 +8,7 @@
 
 #include <parserexport.h>
 
-namespace python
+namespace Python
   {
 
   class KDEVPYTHONPARSER_EXPORT default_visitor:  public visitor
@@ -69,7 +69,6 @@ namespace python
       virtual void visit_list_iter(list_iter_ast *node);
       virtual void visit_list_maker(list_maker_ast *node);
       virtual void visit_listmaker(listmaker_ast *node);
-      virtual void visit_longstringliteral(longstringliteral_ast *node);
       virtual void visit_not_test(not_test_ast *node);
       virtual void visit_number(number_ast *node);
       virtual void visit_pass_stmt(pass_stmt_ast *node);
@@ -80,7 +79,6 @@ namespace python
       virtual void visit_return_stmt(return_stmt_ast *node);
       virtual void visit_shift_expr(shift_expr_ast *node);
       virtual void visit_shift_op(shift_op_ast *node);
-      virtual void visit_shortstringliteral(shortstringliteral_ast *node);
       virtual void visit_simple_stmt(simple_stmt_ast *node);
       virtual void visit_sliceop(sliceop_ast *node);
       virtual void visit_small_stmt(small_stmt_ast *node);
@@ -104,7 +102,7 @@ namespace python
       virtual void visit_yield_stmt(yield_stmt_ast *node);
     };
 
-} // end of namespace python
+} // end of namespace Python
 
 #endif
 

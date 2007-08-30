@@ -61,7 +61,9 @@
 
 [:
 
-namespace python
+#include <QtCore/QString>
+
+namespace Python
 {
     class Lexer;
 
@@ -136,22 +138,23 @@ namespace python
    * When this method returns, the parser's token stream has been filled
    * and any parse_*() method can be called.
    */
-  void tokenize( char *contents );
+  void tokenize( const QString& contents );
 
-  enum problem_type {
-      error,
-      warning,
-      info
+  enum ProblemType {
+      Error,
+      Warning,
+      Info
   };
-  void report_problem( parser::problem_type type, const char* message );
-  void report_problem( parser::problem_type type, std::string message );
-  char* tokenText(std::size_t begin);
+  void reportProblem( parser::ProblemType type, const QString& message );
+  QString tokenText(std::size_t begin, std::size_t end);
+  void setDebug(bool debug);
 
 :]
 
 %parserclass (private declaration)
 [:
-   char* m_contents;
+   QString m_contents;
+   bool m_debug;
 :]
 
 -----------------------------------------------------------
@@ -172,8 +175,7 @@ namespace python
 
 -- Identifiers, Strings and numbers
 %token STRINGLITERAL ("stringliteral"), IDENTIFIER ("identifier"),
-       INTEGER ("integer"), FLOAT ("float"), IMAGNUM ("imagnum"),
-        LONGSTRING ("longstring"), STRINGBODY ("stringbody"), SHORTSTRING ("shrtstring") ;;
+       INTEGER ("integer"), FLOAT ("float"), IMAGNUM ("imagnum") ;;
 
 -- separators
 %token LPAREN ("lparen"), RPAREN ("rparen"), LBRACE ("lbrace"), RBRACE ("rbrace"),
@@ -276,20 +278,20 @@ namespace python
     | ?[: yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK :] 0 )
 -> expr_stmt ;;
 
-   PLUSEQ           [: (*yynode)->augassign_eq = python::eq_plus;   :]
-   | MINUSEQ        [: (*yynode)->augassign_eq = python::eq_minus;  :]
-   | STAREQ         [: (*yynode)->augassign_eq = python::eq_star;   :]
-   | SLASHEQ        [: (*yynode)->augassign_eq = python::eq_slash;  :]
-   | MODULOEQ       [: (*yynode)->augassign_eq = python::eq_modulo; :]
-   | ANDEQ          [: (*yynode)->augassign_eq = python::eq_and;    :]
-   | OREQ           [: (*yynode)->augassign_eq = python::eq_or;     :]
-   | TILDEEQ        [: (*yynode)->augassign_eq = python::eq_tilde;  :]
-   | LSHIFTEQ       [: (*yynode)->augassign_eq = python::eq_lshift; :]
-   | RSHIFTEQ       [: (*yynode)->augassign_eq = python::eq_rshift; :]
-   | DOUBLESTAREQ   [: (*yynode)->augassign_eq = python::eq_doublestar; :]
-   | DOUBLESLASHEQ  [: (*yynode)->augassign_eq = python::eq_doubleslash;:]
+   PLUSEQ           [: (*yynode)->augassign_eq = Python::eq_plus;   :]
+   | MINUSEQ        [: (*yynode)->augassign_eq = Python::eq_minus;  :]
+   | STAREQ         [: (*yynode)->augassign_eq = Python::eq_star;   :]
+   | SLASHEQ        [: (*yynode)->augassign_eq = Python::eq_slash;  :]
+   | MODULOEQ       [: (*yynode)->augassign_eq = Python::eq_modulo; :]
+   | ANDEQ          [: (*yynode)->augassign_eq = Python::eq_and;    :]
+   | OREQ           [: (*yynode)->augassign_eq = Python::eq_or;     :]
+   | TILDEEQ        [: (*yynode)->augassign_eq = Python::eq_tilde;  :]
+   | LSHIFTEQ       [: (*yynode)->augassign_eq = Python::eq_lshift; :]
+   | RSHIFTEQ       [: (*yynode)->augassign_eq = Python::eq_rshift; :]
+   | DOUBLESTAREQ   [: (*yynode)->augassign_eq = Python::eq_doublestar; :]
+   | DOUBLESLASHEQ  [: (*yynode)->augassign_eq = Python::eq_doubleslash;:]
 -> augassign [
-    member variable augassign_eq: python::augassign_eq_enum; ];;
+    member variable augassign_eq: Python::augassign_eq_enum; ];;
 
    PRINT
     (
@@ -401,19 +403,19 @@ namespace python
    comp_expr=expr ( #comp_op=comp_op #comp_op_expr=expr )*
 -> comparison ;;
 
-   LESS         [: (*yynode)->comp_operator = python::op_less;      :]
-   | GREATER    [: (*yynode)->comp_operator = python::op_greater;   :]
-   | ISEQUAL    [: (*yynode)->comp_operator = python::op_isequal;   :]
-   | GREATEREQ  [: (*yynode)->comp_operator = python::op_greatereq; :]
-   | LESSEQ     [: (*yynode)->comp_operator = python::op_lesseq;    :]
-   | UNEQUAL    [: (*yynode)->comp_operator = python::op_unequal;   :]
-   | IN         [: (*yynode)->comp_operator = python::op_in;        :]
-   | NOT IN     [: (*yynode)->comp_operator = python::op_not_in;    :]
-   | IS (NOT    [: (*yynode)->comp_operator = python::op_is_not;    :]
-        | 0     [: (*yynode)->comp_operator = python::op_is;        :]
+   LESS         [: (*yynode)->comp_operator = Python::op_less;      :]
+   | GREATER    [: (*yynode)->comp_operator = Python::op_greater;   :]
+   | ISEQUAL    [: (*yynode)->comp_operator = Python::op_isequal;   :]
+   | GREATEREQ  [: (*yynode)->comp_operator = Python::op_greatereq; :]
+   | LESSEQ     [: (*yynode)->comp_operator = Python::op_lesseq;    :]
+   | UNEQUAL    [: (*yynode)->comp_operator = Python::op_unequal;   :]
+   | IN         [: (*yynode)->comp_operator = Python::op_in;        :]
+   | NOT IN     [: (*yynode)->comp_operator = Python::op_not_in;    :]
+   | IS (NOT    [: (*yynode)->comp_operator = Python::op_is_not;    :]
+        | 0     [: (*yynode)->comp_operator = Python::op_is;        :]
     )
 -> comp_op [
-        member variable comp_operator: python::comp_operator_enum; ];;
+        member variable comp_operator: Python::comp_operator_enum; ];;
 
    expr=xor_expr ( ORR #orr_expr=xor_expr )*
 -> expr ;;
@@ -428,39 +430,39 @@ namespace python
     ( #shift_op_list=shift_op #arith_expr_list=arith_expr )*
 -> shift_expr ;;
 
-    LSHIFT      [: (*yynode)->shift_operator = python::op_lshift;   :]
-    | RSHIFT    [: (*yynode)->shift_operator = python::op_rshift;   :]
+    LSHIFT      [: (*yynode)->shift_operator = Python::op_lshift;   :]
+    | RSHIFT    [: (*yynode)->shift_operator = Python::op_rshift;   :]
 -> shift_op [
-    member variable shift_operator: python::shift_operator_enum; ];;
+    member variable shift_operator: Python::shift_operator_enum; ];;
 
    arith_term=term
     ((#arith_op_list = arith_op #arith_term_list=term )+ | 0)
 -> arith_expr ;;
 
-    PLUS        [: (*yynode)->arith_operator = python::op_plus;     :]
-    | MINUS     [: (*yynode)->arith_operator = python::op_minus;    :]
+    PLUS        [: (*yynode)->arith_operator = Python::op_plus;     :]
+    | MINUS     [: (*yynode)->arith_operator = Python::op_minus;    :]
 -> arith_op [
-    member variable arith_operator: python::arith_operator_enum; ] ;;
+    member variable arith_operator: Python::arith_operator_enum; ] ;;
 
    factor=factor
     ((#term_op_list = term_op #factor_list=factor )+ | 0)
 -> term ;;
 
-    STAR        [: (*yynode)->term_operator = python::op_star;      :]
-    | SLASH     [: (*yynode)->term_operator = python::op_slash;     :]
-    | MODULO    [: (*yynode)->term_operator = python::op_modulo;    :]
-    | DOUBLESLASH [: (*yynode)->term_operator = python::op_doubleslash; :]
+    STAR        [: (*yynode)->term_operator = Python::op_star;      :]
+    | SLASH     [: (*yynode)->term_operator = Python::op_slash;     :]
+    | MODULO    [: (*yynode)->term_operator = Python::op_modulo;    :]
+    | DOUBLESLASH [: (*yynode)->term_operator = Python::op_doubleslash; :]
 -> term_op [
-    member variable term_operator: python::term_operator_enum; ];;
+    member variable term_operator: Python::term_operator_enum; ];;
 
    ( fact_op=fact_op) factor=factor | power=power
 -> factor ;;
 
-    PLUS        [: (*yynode)->factor_operator = python::op_factor_plus;     :]
-    | MINUS     [: (*yynode)->factor_operator = python::op_factor_minus;    :]
-    | TILDE     [: (*yynode)->factor_operator = python::op_factor_tilde ;   :]
+    PLUS        [: (*yynode)->factor_operator = Python::op_factor_plus;     :]
+    | MINUS     [: (*yynode)->factor_operator = Python::op_factor_minus;    :]
+    | TILDE     [: (*yynode)->factor_operator = Python::op_factor_tilde ;   :]
 -> fact_op [
-    member variable factor_operator: python::factor_operator_enum;   ];;
+    member variable factor_operator: Python::factor_operator_enum;   ];;
 
    ( atom=atom )
     (#trailer=trailer)* ( DOUBLESTAR factor=factor | 0 )
@@ -473,21 +475,14 @@ namespace python
    | atom_identifier_name=IDENTIFIER
    | number=number
    | (#stringliteral=STRINGLITERAL)+
-   | longstringliteral=longstringliteral
-   | shortstringliteral=shortstringliteral
 -> atom ;;
 
-   SHORTSTRING ( STRINGBODY )+ SHORTSTRING
--> shortstringliteral ;;
 
-   LONGSTRING ( #string_body = STRINGBODY )+ LONGSTRING
--> longstringliteral ;;
-
-   INTEGER      [: (*yynode)->num_type = python::type_int;      :]
-   | FLOAT      [: (*yynode)->num_type = python::type_float;    :]
-   | IMAGNUM    [: (*yynode)->num_type = python::type_imagnum;  :]
+   INTEGER      [: (*yynode)->num_type = Python::type_int;      :]
+   | FLOAT      [: (*yynode)->num_type = Python::type_float;    :]
+   | IMAGNUM    [: (*yynode)->num_type = Python::type_imagnum;  :]
 -> number [
-    member variable num_type: python::num_type_enum; ];;
+    member variable num_type: Python::num_type_enum; ];;
 
    ( #list_test=test ( COMMA [: if (yytoken == Token_RBRACKET) { break; } :] #list_test=test )* | 0)
 -> list_maker ;;
@@ -587,13 +582,13 @@ namespace python
 -----------------------------------------------------------------
 
 [:
-#include "python_lexer.h"
+#include "pythonlexer.h"
+#include <QtCore/QDebug>
 
-
-namespace python
+namespace Python
 {
 
-void parser::tokenize( char *contents )
+void parser::tokenize( const QString& contents )
 {
     m_contents = contents;
     Lexer lexer( this, contents );
@@ -601,48 +596,21 @@ void parser::tokenize( char *contents )
 
     do
     {
-        kind = lexer.yylex();
-        if( kind == parser::Token_DEDENT)
-        {
-            int x = kind;
-            parser::token_type &t = this->token_stream->next();
-            kind = parser::Token_LINEBREAK;
-            t.kind = kind;
-            t.begin = lexer.tokenBegin();
-            t.end = lexer.tokenEnd();
-            std::cerr<<t.kind<<  std::endl;
-            while(lexer.dedentationLevel()>1)
-            {
-                std::cerr<<"Lexer Dedents > 1";
-                parser::token_type &t = this->token_stream->next();
-                t.kind = parser::Token_DEDENT;
-                t.begin = lexer.tokenBegin();
-                t.end = lexer.tokenEnd();
-                std::cerr<<t.kind<<std::endl;
-                lexer.setDedentationLevel(lexer.dedentationLevel()-1);
-            }
-            lexer.setDedentationLevel(0);
-            kind = x;
-        }
-        else if( kind == parser::Token_INDENT)
-        {
-            int x = kind;
-            kind = parser::Token_LINEBREAK;
-            parser::token_type &t = this->token_stream->next();
-            t.kind = kind;
-            t.begin = lexer.tokenBegin();
-            t.end = lexer.tokenEnd();
-            std::cerr<<t.kind<<std::endl;
-            kind = x;
-        }
+        kind = lexer.nextTokenKind();
         if ( !kind ) // when the lexer returns 0, the end of file is reached
+        {
+            parser::token_type &tt = this->token_stream->next();
+            tt.kind = parser::Token_LINEBREAK;
+            tt.begin = lexer.tokenBegin();
+            tt.end = lexer.tokenEnd();
             kind = parser::Token_EOF;
-
+        }
         parser::token_type &t = this->token_stream->next();
-        t.kind = kind;
         t.begin = lexer.tokenBegin();
         t.end = lexer.tokenEnd();
-        std::cerr << kind << "|" << lexer.YYText() << "|" << lexer.tokenBegin() << "|" << m_contents[lexer.tokenBegin()] << "|" << lexer.tokenEnd() << "|" << m_contents[lexer.tokenEnd()] << std::endl; //" "; // debug output
+        t.kind = kind;
+        if( m_debug )
+            qDebug() << kind << tokenText(t.begin,t.end) << t.begin << t.end;
     }
     while ( kind != parser::Token_EOF );
 
@@ -650,10 +618,53 @@ void parser::tokenize( char *contents )
 }
 
 
-char* parser::tokenText(std::size_t begin)
+QString parser::tokenText(std::size_t begin, std::size_t end)
 {
-    return &m_contents[begin];
+    return m_contents.mid(begin,end-begin+1);
 }
+
+
+void parser::reportProblem( parser::ProblemType type, const QString& message )
+{
+    if (type == Error)
+            qDebug() << "** ERROR:" << message;
+    else if (type == Warning)
+        qDebug() << "** WARNING:" << message;
+    else if (type == Info)
+        qDebug() << "** Info:" << message;
+}
+
+
+// custom error recovery
+void parser::yy_expected_token(int /*expected*/, std::size_t /*where*/, char const *name)
+{
+    reportProblem( parser::Error, QString("Expected token \"%1\"").arg(name));
+}
+
+void parser::yy_expected_symbol(int /*expected_symbol*/, char const *name)
+{
+    std::size_t line;
+    std::size_t col;
+    size_t index = token_stream->index()-1;
+    token_type &token = token_stream->token(index);
+    qDebug() << "token starts at:" << token.begin;
+    qDebug() << "index is:" << index;
+    token_stream->start_position(index, &line, &col);
+    QString tokenValue = tokenText(token.begin, token.end);
+    reportProblem( parser::Error,
+                   QString("Expected symbol \"%1\" (current token: \"%2\" [%3] at line: %4 col: %5)")
+                  .arg(name)
+                  .arg(token.kind != 0 ? tokenValue : "EOF")
+                  .arg(token.kind)
+                  .arg(line)
+                  .arg(col));
+}
+
+void parser::setDebug( bool debug )
+{
+    m_debug = debug;
+}
+
 
 
 } // end of namespace cool

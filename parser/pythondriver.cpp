@@ -94,12 +94,12 @@ bool Driver::parse( project_ast** ast )
 }
 
 
-void Driver::setTokenStream( parser::token_stream_type* ts )
+void Driver::setTokenStream( kdev_pg_token_stream* ts )
 {
     m_tokenstream = ts;
 }
 
-void Driver::setMemoryPool( parser::memory_pool_type* pool )
+void Driver::setMemoryPool( kdev_pg_memory_pool* pool )
 {
     m_pool = pool;
 }

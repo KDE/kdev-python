@@ -73,7 +73,7 @@ void DumpChain::dump( DUContext * context, bool imported )
     }
     if (!imported)
     {
-        foreach (DUContextPointer parent, context->importedParentContexts()) 
+        foreach (DUContextPointer parent, context->importedParentContexts())
         {
             kDebug()<<"===Dumping Parent Contexts===";
             dump(parent.data(), true);
@@ -92,12 +92,12 @@ void DumpChain::visit_node(ast_node *node)
         if (m_editor)
         {
             QString nodeText;
-            for( std::size_t a = node->start_token; a != node->end_token; a++ ) 
+            for( std::size_t a = node->start_token; a != node->end_token; a++ )
             {
-                parser::token_type const &tok( m_editor->parseSession()->token_stream->token((int) a) );
+                kdev_pg_token_stream::token_type const &tok( m_editor->parseSession()->tokenStream()->token((int) a) );
                 if( !nodeText.isEmpty() )
                     nodeText += ' ';
-                nodeText += QByteArray( m_editor->parseSession()->m_parser->tokenText(a) , tok.end - tok.begin );
+                nodeText += m_editor->parseSession()->tokenText(tok.begin, tok.end);
             }
             if( !nodeText.isEmpty() ) nodeText = "\"" + nodeText + "\"";
             kDebug() <<names[node->kind]
@@ -122,3 +122,4 @@ DumpChain::~ DumpChain( )
 {
     delete m_editor;
 }
+// kate: space-indent on; indent-width 4; tab-width: 4; replace-tabs on; auto-insert-doxygen on

@@ -34,7 +34,7 @@ namespace KDevelop
     class DUContext;
 }
 
-using namespace python;
+using namespace Python;
 
 class KDEVPYTHONDUCHAIN_EXPORT DumpChain: public default_visitor
 {
@@ -50,3 +50,4 @@ private:
 };
 
 #endif
+// kate: space-indent on; indent-width 4; tab-width: 4; replace-tabs on; auto-insert-doxygen on

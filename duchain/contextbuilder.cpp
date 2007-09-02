@@ -35,7 +35,7 @@
 #include <symboltable.h>
 
 using namespace KDevelop;
-using namespace python;
+using namespace Python;
 using namespace KTextEditor;
 
 ContextBuilder::ContextBuilder(ParseSession* session, const KUrl &url)
@@ -81,7 +81,7 @@ TopDUContext* ContextBuilder::buildContexts(ast_node* node)
         /*QList< TopDUContext * > toplevelcontextchains;
         toplevelcontextchains = DUChain::self()->chainsForDocument(m_url);
         kDebug()<<toplevelcontextchains.count();*/
-        if( topLevelContext && !topLevelContext->smartRange() && m_editor->smart() ) 
+        if( topLevelContext && !topLevelContext->smartRange() && m_editor->smart() )
         {
             lock.unlock();
             SmartConverter conv(m_editor, 0);
@@ -99,7 +99,7 @@ TopDUContext* ContextBuilder::buildContexts(ast_node* node)
                 Q_ASSERT(topLevelContext->textRangePtr());
                 if (!topLevelContext->smartRange() && m_editor->smart())
                     topLevelContext->setTextRange(m_editor->topRange(PythonEditorIntegrator::DefinitionUseChain));
-                if (m_editor->currentDocument() && m_editor->smart() && topLevelContext->textRange() != m_editor->currentDocument()->documentRange()) 
+                if (m_editor->currentDocument() && m_editor->smart() && topLevelContext->textRange() != m_editor->currentDocument()->documentRange())
                 {
                     kDebug() << "WARNING: Top-level context has Changed Ranges.";
                 }
@@ -117,12 +117,12 @@ TopDUContext* ContextBuilder::buildContexts(ast_node* node)
         }
 
         setEncountered(topLevelContext);
-        m_session->put(node,topLevelContext);
+        m_session->putNode(node,topLevelContext);
     }
     supportBuild(node);
     {
         // allDeclarations always returned Zero as it looks for the Total Number Of definitions, as Depicted here.
-        // Currently it simply dispalys the localdeclarations in the topcontext, 
+        // Currently it simply dispalys the localdeclarations in the topcontext,
         // def a():\n\tpass\ndef b():\n\tpass returns 2 Declarations.
         DUChainReadLocker lock(DUChain::lock());
         //foreach(DUContext* context, topLevelContext->childContexts());
@@ -144,31 +144,31 @@ KDevelop::DUContext* ContextBuilder::buildSubContexts(const KUrl& url, ast_node 
     m_compilingContexts = true;
     m_recompiling = false;
     m_editor->setCurrentUrl(url);
-    m_session->put(node,parent);
+    m_session->putNode(node,parent);
     {
-        openContext(m_session->get(node));
+        openContext(m_session->getNode(node));
         m_editor->setCurrentRange(m_editor->topRange(EditorIntegrator::DefinitionUseChain ));
         visit_node (node);
         closeContext();
     }
     m_compilingContexts = false;
-    if( m_session->get(node) == parent )
+    if( m_session->getNode(node) == parent )
     {
         kDebug() << "Error in ContextBuilder::buildSubContexts(...): du-context was not replaced with new one";
         DUChainWriteLocker lock(DUChain::lock());
-        m_session->remove(node);
-        m_session->put(node,0);
+        m_session->removeNode(node);
+        m_session->putNode(node,0);
     }
-    return m_session->get(node);
+    return m_session->getNode(node);
 }
 
 void ContextBuilder::supportBuild(ast_node *node, DUContext* context)
 {
-    if(!m_session->get(node))
+    if(!m_session->getNode(node))
     {
         kDebug()<<"No Context Found matching with the node";
     }
-    openContext( context ? context : m_session->get(node));
+    openContext( context ? context : m_session->getNode(node));
     m_editor->setCurrentUrl(currentContext()->url());
     m_editor->setCurrentRange(currentContext()->textRangePtr());
     visit_node(node);
@@ -240,12 +240,12 @@ DUContext* ContextBuilder::openContext(ast_node* rangeNode, DUContext::ContextTy
     if (m_compilingContexts)
     {
         DUContext* ret = openContextInternal(m_editor->findRange(rangeNode), type, identifier ? identifierForName(identifier) : QualifiedIdentifier());
-        m_session->put(rangeNode,ret);
+        m_session->putNode(rangeNode,ret);
         return ret;
     }
     else
     {
-        openContext(m_session->get(rangeNode));
+        openContext(m_session->getNode(rangeNode));
         m_editor->setCurrentRange(currentContext()->textRangePtr());
         return currentContext();
     }
@@ -260,13 +260,13 @@ DUContext* ContextBuilder::openContext(ast_node* rangeNode, DUContext::ContextTy
         //kDebug() << "Opening ContextInternal";
         DUContext* ret = openContextInternal(m_range, type, identifier);
         //kDebug() << "Associating context" ;
-        m_session->put(rangeNode,ret);
+        m_session->putNode(rangeNode,ret);
         return ret;
     }
     else
     {
         //kDebug() << "Opening Context associated with node";
-        openContext(m_session->get(rangeNode));
+        openContext(m_session->getNode(rangeNode));
         m_editor->setCurrentRange(currentContext()->textRangePtr());
         return currentContext();
     }
@@ -277,12 +277,12 @@ DUContext* ContextBuilder::openContext(ast_node* fromRange, ast_node* toRange, D
     if (m_compilingContexts)
     {
         DUContext* ret = openContextInternal(m_editor->findRange(fromRange, toRange), type, identifier ? identifierForName(identifier) : QualifiedIdentifier());
-        m_session->put(fromRange,ret);
+        m_session->putNode(fromRange,ret);
         return ret;
     }
     else
     {
-        openContext(m_session->get(fromRange));
+        openContext(m_session->getNode(fromRange));
         m_editor->setCurrentRange(currentContext()->textRangePtr());
         return currentContext();
     }
@@ -382,3 +382,4 @@ void ContextBuilder::addImportedContexts()
         m_importedParentContexts.clear();
     }
 }
+// kate: space-indent on; indent-width 4; tab-width: 4; replace-tabs on; auto-insert-doxygen on

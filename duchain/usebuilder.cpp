@@ -50,13 +50,13 @@ UseBuilder::UseBuilder (PythonEditorIntegrator* editor, const KUrl &url)
 void UseBuilder::buildUses(ast_node *node)
 {
     supportBuild(node);
-    if (TopDUContext* top = dynamic_cast<TopDUContext*>(m_session->get(node)))
+    if (TopDUContext* top = dynamic_cast<TopDUContext*>(m_session->getNode(node)))
         top->setHasUses(true);
 }
 
 void UseBuilder::newUse(std::size_t name, ast_node* rangenode)
 {
-    //CPP calls it with a NameAst* name, But python doesnt have NameAST* and 
+    //CPP calls it with a NameAst* name, But python doesnt have NameAST* and
     //Long cannot be used to find a Range so, a additional parameter rangenode is being passed.
     Range newRange = m_editor->findRange(rangenode);
     QualifiedIdentifier id = identifierForName(name);
@@ -64,21 +64,21 @@ void UseBuilder::newUse(std::size_t name, ast_node* rangenode)
     DUChainWriteLocker lock(DUChain::lock());
     QList<Declaration*> declarations = currentContext()->findDeclarations(id, newRange.start());
     foreach (Declaration* declaration, declarations)
-        if (!declaration->isForwardDeclaration()) 
+        if (!declaration->isForwardDeclaration())
         {
             declarations.clear();
             declarations.append(declaration);
             break;
         }
     Use* ret = 0;
-    if (recompiling()) 
+    if (recompiling())
     {
         const QList<Use*>& uses = currentContext()->uses();
         QMutexLocker smartLock(m_editor->smart() ? m_editor->smart()->smartMutex() : 0);
         Range translated = newRange;
         if (m_editor->smart())
         translated = m_editor->smart()->translateFromRevision(translated);
-        for (; nextUseIndex() < uses.count(); ++nextUseIndex()) 
+        for (; nextUseIndex() < uses.count(); ++nextUseIndex())
         {
             Use* use = uses.at(nextUseIndex());
             if (use->textRange().start() > translated.end() && use->smartRange() )
@@ -92,7 +92,7 @@ void UseBuilder::newUse(std::size_t name, ast_node* rangenode)
             }
         }
     }
-    if (!ret) 
+    if (!ret)
     {
         Range* prior = m_editor->currentRange();
         Range* use = m_editor->createRange(newRange);
@@ -124,3 +124,4 @@ ParseSession *UseBuilder::parseSession() const
 {
     return m_session;
 }
+// kate: space-indent on; indent-width 4; tab-width: 4; replace-tabs on; auto-insert-doxygen on

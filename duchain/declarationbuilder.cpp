@@ -40,7 +40,7 @@
 
 using namespace KTextEditor;
 using namespace KDevelop;
-using namespace python;
+using namespace Python;
 
 
 DeclarationBuilder::DeclarationBuilder (ParseSession* session, const KUrl &url):DeclarationBuilderBase(session,url)
@@ -163,7 +163,7 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
             translated = m_editor->smart()->translateFromRevision(translated);
         Q_ASSERT(translated.start() != translated.end());
         kDebug()<<"Recompiling:"<<currentContext()->localDeclarations().count()<<"declarations found.";
-        for (; nextDeclaration() < currentContext()->localDeclarations().count(); ++nextDeclaration()) 
+        for (; nextDeclaration() < currentContext()->localDeclarations().count(); ++nextDeclaration())
         {
             Declaration* dec = currentContext()->localDeclarations().at(nextDeclaration());
 //             if (dec->textRange().start() > translated.end() && dec->smartRange())
@@ -184,7 +184,7 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
                         break;
                     }
                 }
-                else if (scope == Declaration::ClassScope) 
+                else if (scope == Declaration::ClassScope)
                 {
                     if (!dynamic_cast<ClassMemberDeclaration*>(dec))
                         break;
@@ -216,7 +216,7 @@ Declaration* DeclarationBuilder::openDeclaration(std::size_t name, ast_node* ran
             if (!m_functionDefinedStack.isEmpty())
                 declaration->setDeclarationIsDefinition(m_functionDefinedStack.top());
         }
-        else if (scope == Declaration::ClassScope) 
+        else if (scope == Declaration::ClassScope)
         {
             declaration = specialDeclaration<ClassMemberDeclaration>(range );
         }
@@ -276,13 +276,14 @@ void DeclarationBuilder::abortDeclaration()
 
 void DeclarationBuilder::openContext(DUContext * newContext)
 {
-  DeclarationBuilderBase::openContext(newContext);
+    DeclarationBuilderBase::openContext(newContext);
 
-  m_nextDeclarationStack.push(0);
+    m_nextDeclarationStack.push(0);
 }
 
 void DeclarationBuilder::closeContext()
 {
-  DeclarationBuilderBase::closeContext();
-  m_nextDeclarationStack.pop();
+    DeclarationBuilderBase::closeContext();
+    m_nextDeclarationStack.pop();
 }
+// kate: space-indent on; indent-width 4; tab-width: 4; replace-tabs on; auto-insert-doxygen on

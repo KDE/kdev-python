@@ -44,9 +44,9 @@ namespace KDevelop
 class PythonEditorIntegrator;
 class ParseSession;
 
-using namespace python;
+using namespace Python;
 
-class KDEVPYTHONDUCHAIN_EXPORT ContextBuilder: public python::default_visitor
+class KDEVPYTHONDUCHAIN_EXPORT ContextBuilder: public Python::default_visitor
 {
 
 public:
@@ -116,3 +116,4 @@ protected:
 
 
 #endif
+// kate: space-indent on; indent-width 4; tab-width: 4; replace-tabs on; auto-insert-doxygen on

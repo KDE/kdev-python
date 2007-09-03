@@ -47,7 +47,7 @@ class PythonHighlighting : public QObject, public KDevelop::ICodeHighlighting
     Q_INTERFACES(KDevelop::ICodeHighlighting)
 public:
 
-    enum Types 
+    enum Types
     {
         FunctionType,
         ClassType,
@@ -55,7 +55,7 @@ public:
         FunctionVariableType,
         ClassVariableType
     };
-    enum Contexts 
+    enum Contexts
     {
         DefinitionContext,
         DeclarationContext
@@ -81,3 +81,4 @@ private:
 };
 
 #endif
+// kate: space-indent on; indent-width 4; tab-width: 4; replace-tabs on; auto-insert-doxygen on

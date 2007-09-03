@@ -119,7 +119,7 @@ void PythonHighlighting::highlightDUChain(DUContext* context) const
 PythonHighlighting::Types PythonHighlighting::typeForDeclaration(Declaration * dec) const
 {
     Types type;
-    switch (dec->context()->type()) 
+    switch (dec->context()->type())
     {
       case DUContext::Class:
         type = ClassVariableType;
@@ -151,4 +151,5 @@ void PythonHighlighting::highlightUse(KDevelop::Use* ) const
 }
 
 #include "pythonhighlighting.moc"
+// kate: space-indent on; indent-width 4; tab-width: 4; replace-tabs on; auto-insert-doxygen on
 

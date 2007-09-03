@@ -40,29 +40,29 @@
 #include "pythonlanguagesupport.h"
 #include <parsejob.h>
 #include "parsesession.h"
-#include "python_parser.h"
 
 #include <duchain.h>
 #include <topducontext.h>
 
 #include "contextbuilder.h"
 #include "declarationbuilder.h"
-using namespace python;
+using namespace Python;
 using namespace KDevelop;
 
 
 PythonParseJob::PythonParseJob( const KUrl &url,PythonLanguageSupport *parent)
-            : KDevelop::ParseJob( url, parent )
-            , m_session( new ParseSession )
-            , m_AST( 0 )
-            , m_readFromDisk( false )
-            , m_duContext( 0 )
-            , m_url(url)
+        : KDevelop::ParseJob( url, parent )
+        , m_session( new ParseSession )
+        , m_AST( 0 )
+        , m_readFromDisk( false )
+        , m_duContext( 0 )
+        , m_url(url)
 {
 }
 
 PythonParseJob::~PythonParseJob()
-{}
+{
+}
 
 PythonLanguageSupport *PythonParseJob::python() const
 {
@@ -106,16 +106,18 @@ void PythonParseJob::run()
     if ( m_readFromDisk )
     {
         QFile file( m_document.path() );
-        if ( !file.open( QIODevice::ReadOnly ) )
+        if ( !file.open( QIODevice::ReadOnly | QIODevice::Text ) )
         {
             m_errorMessage = i18n( "Could not open file '%1'", m_document.path() );
             kWarning() << "Could not open file" << m_document
-                             << "(path" << m_document.path() << ")";
+                        << "(path" << m_document.path() << ")";
             return ;
         }
-
-        m_session->setContents( file.readAll() );
-        Q_ASSERT ( m_session->size() > 0 );
+        QTextStream s(&file);
+//         if( codec )
+//             s.setCodec( QTextCodec::codecForName(codec) );
+        m_session->setContents( s.readAll() );
+        Q_ASSERT ( m_session->contents().size() > 0 );
         file.close();
     }
     else
@@ -124,36 +126,26 @@ void PythonParseJob::run()
     }
     kDebug() << "===-- PARSING --===>"
              << m_document.fileName()
-             << "size:" << m_session->size();
+             << "size:" << m_session->contents().size();
 
-    // 0) setup
-    //parser python_parser;
-    m_session->m_parser->set_token_stream( m_session->token_stream );
-    m_session->m_parser->set_memory_pool( m_session->memory_pool );
-
-    // 1) tokenize
-    m_session->m_parser->tokenize( (char*) m_session->contents() );
 
     // 2) parse
-    bool matched = m_session->m_parser->parse_project( &m_AST );
+    bool matched = m_session->parse( &m_AST );
 
     if ( matched )
     {
         kDebug() << m_url;
         DeclarationBuilder declarationBuilder(m_session,m_url);
         m_duContext = declarationBuilder.buildDeclarations(m_AST);
-/*        ContextBuilder contextBuilder(m_session,m_url);
-        m_duContext = contextBuilder.buildContexts(m_AST);*/
         kDebug() << "----Parsing Succeded---";//TODO: bind declarations to the code model
         if( python() && declarationBuilder.m_editor->smart() )
-	{
+        {
             QMutexLocker lock(declarationBuilder.m_editor->smart()->smartMutex());
-	    python()->codeHighlighting()->highlightDUChain( m_duContext );
-	}
+            python()->codeHighlighting()->highlightDUChain( m_duContext );
+        }
     }
     else
     {
-        m_session->m_parser->yy_expected_symbol(ast_node::Kind_project, "project");
         kDebug() << "===Failed===";
         return;
     }
@@ -164,3 +156,4 @@ ParseSession *PythonParseJob::parseSession() const
     return m_session;
 }
 #include "pythonparsejob.moc"
+// kate: space-indent on; indent-width 4; tab-width: 4; replace-tabs on; auto-insert-doxygen on

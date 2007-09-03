@@ -23,19 +23,18 @@ INCLUDE_DIRECTORIES(
 
 #Don't error out if the FindXXX are missing for these two
 find_package(KDevelop-PG QUIET)
-find_package(Flex QUIET)
 
-if(KDEVPG_FOUND AND FLEX_FOUND)
+if(KDEVPG_FOUND)
     include_directories(
         ${CMAKE_BINARY_DIR}/parser
         ${KDEVPG_INCLUDE_DIR}
     )
-else(KDEVPG_FOUND AND FLEX_FOUND)
+else(KDEVPG_FOUND)
     include_directories(
         ${CMAKE_SOURCE_DIR}/parser/generated
         ${CMAKE_SOURCE_DIR}/parser/generated/kdevelop-pg
     )
-endif(KDEVPG_FOUND AND FLEX_FOUND)
+endif(KDEVPG_FOUND)
 
 
 add_subdirectory(parser)

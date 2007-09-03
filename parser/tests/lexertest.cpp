@@ -50,9 +50,9 @@ void LexerTest::lexNumberLiteral()
     QFETCH( std::size_t, expectedend );
     Python::Lexer l(0, project);
     int token = l.nextTokenKind();
-    std::size_t begin = l.tokenBegin();
-    std::size_t end = l.tokenEnd();
-//     qDebug() << project << token << expectedtoken << l.tokenBegin() << l.tokenEnd();
+    std::size_t begin = qulonglong(l.tokenBegin());
+    std::size_t end = qulonglong(l.tokenEnd());
+//     qDebug() << project << token << expectedtoken << l.tokenBegin() << qulonglong(l.tokenEnd());
     QVERIFY( token == expectedtoken );
     QVERIFY( begin == expectedbegin );
     QVERIFY( end == expectedend );
@@ -143,9 +143,9 @@ void LexerTest::lexKeywordAndIdentifier()
     QFETCH( std::size_t, expectedend );
     Python::Lexer l(0, project);
     int token = l.nextTokenKind();
-    std::size_t begin = l.tokenBegin();
-    std::size_t end = l.tokenEnd();
-//     qDebug() << project << token << expectedtoken << l.tokenBegin() << l.tokenEnd();
+    std::size_t begin = qulonglong(l.tokenBegin());
+    std::size_t end = qulonglong(l.tokenEnd());
+//     qDebug() << project << token << expectedtoken << l.tokenBegin() << qulonglong(l.tokenEnd());
     QVERIFY( token == expectedtoken );
     QVERIFY( begin == expectedbegin );
     QVERIFY( end == expectedend );
@@ -233,9 +233,9 @@ void LexerTest::lexSeparatorsAndOperators()
     QFETCH( std::size_t, expectedend );
     Python::Lexer l(0, project);
     int token = l.nextTokenKind();
-    std::size_t begin = l.tokenBegin();
-    std::size_t end = l.tokenEnd();
-//     qDebug() << project << token << expectedtoken << l.tokenBegin() << l.tokenEnd();
+    std::size_t begin = qulonglong(l.tokenBegin());
+    std::size_t end = qulonglong(l.tokenEnd());
+//     qDebug() << project << token << expectedtoken << l.tokenBegin() << qulonglong(l.tokenEnd());
     QVERIFY( token == expectedtoken );
     QVERIFY( begin == expectedbegin );
     QVERIFY( end == expectedend );
@@ -358,8 +358,8 @@ void LexerTest::lexIndentation()
     {
         token = l.nextTokenKind();
         tokens << token;
-        begins << l.tokenBegin();
-        ends << l.tokenEnd();
+        begins << qulonglong(l.tokenBegin());
+        ends << qulonglong(l.tokenEnd());
     }while( token != 0 );
     tokens.removeLast();
     begins.removeLast();
@@ -580,8 +580,8 @@ void LexerTest::lexStringLiteral()
     {
         token = l.nextTokenKind();
         tokens << token;
-        begins << l.tokenBegin();
-        ends << l.tokenEnd();
+        begins << qulonglong(l.tokenBegin());
+        ends << qulonglong(l.tokenEnd());
     }while( token != 0 );
     tokens.removeLast();
     begins.removeLast();

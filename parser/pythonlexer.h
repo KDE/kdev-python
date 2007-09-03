@@ -25,6 +25,8 @@
 #include <QtCore/QStack>
 #include <QtCore/QString>
 
+#include "parserexport.h"
+
 class QString;
 
 namespace Python
@@ -32,7 +34,7 @@ namespace Python
 
 class parser;
 
-class Lexer {
+class KDEVPYTHONPARSER_EXPORT Lexer {
 public:
     Lexer(parser* _parser, const QString& contents);
 

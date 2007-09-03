@@ -25,7 +25,7 @@
 
 #include <QDebug>
 
-#define MAX_SIZE_T std::numeric_limits<std::size_t>::max()
+#define MAX_SIZE_T qulonglong(std::numeric_limits<std::size_t>::max())
 
 #define MAKETESTROW(str,token,begin,end) \
     str \
@@ -392,8 +392,8 @@ void LexerTest::lexIndentation_data()
     expectedtokens << Python::parser::Token_DEDENT;
     QList<QVariant> expectedbegins;
     QList<QVariant> expectedends;
-    expectedbegins << 0 << 2 << 5 << 6 << 10 << 13 << 14 << 16 << MAX_SIZE_T;
-    expectedends << 1 << 4 << 5 << 9 << 12 << 13 << 15 << 18 << MAX_SIZE_T;
+    expectedbegins << qulonglong(0) << qulonglong(2) << qulonglong(5) << qulonglong(6) << qulonglong(10) << qulonglong(13) << qulonglong(14) << qulonglong(16) << MAX_SIZE_T;
+    expectedends << qulonglong(1) << qulonglong(4) << qulonglong(5) << qulonglong(9) << qulonglong(12) << qulonglong(13) << qulonglong(15) << qulonglong(18) << MAX_SIZE_T;
     QTest::newRow( "row1" )
             << "  foo\n    bar\n  baz" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
@@ -405,8 +405,8 @@ void LexerTest::lexIndentation_data()
     expectedtokens << Python::parser::Token_LINEBREAK;
     expectedtokens << Python::parser::Token_IDENTIFIER;
     expectedtokens << Python::parser::Token_DEDENT;
-    expectedbegins << 0 << 2 << 5 << 14 << 17 << MAX_SIZE_T;
-    expectedends << 1 << 4 << 5 << 14 << 19 << MAX_SIZE_T;
+    expectedbegins << qulonglong(0) << qulonglong(2) << qulonglong(5) << qulonglong(14) << qulonglong(17) << MAX_SIZE_T;
+    expectedends << qulonglong(1) << qulonglong(4) << qulonglong(5) << qulonglong(14) << qulonglong(19) << MAX_SIZE_T;
     QTest::newRow( "row2" )
             << "  foo\n#    bar\n  baz" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
@@ -421,8 +421,8 @@ void LexerTest::lexIndentation_data()
     expectedtokens << Python::parser::Token_DEDENT;
     expectedtokens << Python::parser::Token_DEDENT;
     expectedtokens << Python::parser::Token_IDENTIFIER;
-    expectedbegins << 0 << 2 << 5 << 6 << 10 << 13 << MAX_SIZE_T << MAX_SIZE_T << 14;
-    expectedends << 1 << 4 << 5 << 9 << 12 << 13 << MAX_SIZE_T << MAX_SIZE_T << 16;
+    expectedbegins << qulonglong(0) << qulonglong(2) << qulonglong(5) << qulonglong(6) << qulonglong(10) << qulonglong(13) << MAX_SIZE_T << MAX_SIZE_T << qulonglong(14);
+    expectedends << qulonglong(1) << qulonglong(4) << qulonglong(5) << qulonglong(9) << qulonglong(12) << qulonglong(13) << MAX_SIZE_T << MAX_SIZE_T << qulonglong(16);
     QTest::newRow( "row3" )
             << "  foo\n    bar\nbaz" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
@@ -434,8 +434,8 @@ void LexerTest::lexIndentation_data()
     expectedtokens << Python::parser::Token_LINEBREAK;
     expectedtokens << Python::parser::Token_DEDENT;
     expectedtokens << Python::parser::Token_IDENTIFIER;
-    expectedbegins << 0 << 2 << 5 << 14 << MAX_SIZE_T << 15;
-    expectedends << 1 << 4 << 5 << 14 << MAX_SIZE_T << 17;
+    expectedbegins << qulonglong(0) << qulonglong(2) << qulonglong(5) << qulonglong(14) << MAX_SIZE_T << qulonglong(15);
+    expectedends << qulonglong(1) << qulonglong(4) << qulonglong(5) << qulonglong(14) << MAX_SIZE_T << qulonglong(17);
     QTest::newRow( "row4" )
             << "  foo\n    #bar\nbaz" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
@@ -448,8 +448,8 @@ void LexerTest::lexIndentation_data()
     expectedtokens << Python::parser::Token_LINEBREAK;
     expectedtokens << Python::parser::Token_DEDENT;
     expectedtokens << Python::parser::Token_IDENTIFIER;
-    expectedbegins << 0 << 3 << 4 << 8 << 11 << 12 << 14;
-    expectedends << 2 << 3 << 7 << 10 << 11 << 13 << 16;
+    expectedbegins << qulonglong(0) << qulonglong(3) << qulonglong(4) << qulonglong(8) << qulonglong(11) << qulonglong(12) << qulonglong(14);
+    expectedends << qulonglong(2) << qulonglong(3) << qulonglong(7) << qulonglong(10) << qulonglong(11) << qulonglong(13) << qulonglong(16);
     QTest::newRow( "row5" )
             << "foo\n    bar\n  baz" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
@@ -470,8 +470,8 @@ void LexerTest::lexIndentation_data()
     expectedtokens << Python::parser::Token_DEDENT;
     expectedtokens << Python::parser::Token_DEDENT;
     expectedtokens << Python::parser::Token_IDENTIFIER;
-    expectedbegins << 0 << 3 << 4 << 8 << 11 << 12 << 18 << 21 << 22 << 30 << 33 << MAX_SIZE_T << MAX_SIZE_T << MAX_SIZE_T << 34;
-    expectedends << 2 << 3 << 7 << 10 << 11 << 17 << 20 << 21 << 29 << 32 << 33 << MAX_SIZE_T << MAX_SIZE_T << MAX_SIZE_T << 36;
+    expectedbegins << qulonglong(0) << qulonglong(3) << qulonglong(4) << qulonglong(8) << qulonglong(11) << qulonglong(12) << qulonglong(18) << qulonglong(21) << qulonglong(22) << qulonglong(30) << qulonglong(33) << MAX_SIZE_T << MAX_SIZE_T << MAX_SIZE_T << qulonglong(34);
+    expectedends << qulonglong(2) << qulonglong(3) << qulonglong(7) << qulonglong(10) << qulonglong(11) << qulonglong(17) << qulonglong(20) << qulonglong(21) << qulonglong(29) << qulonglong(32) << qulonglong(33) << MAX_SIZE_T << MAX_SIZE_T << MAX_SIZE_T << qulonglong(36);
     QTest::newRow( "row6" )
             << "foo\n    bar\n      baz\n        bak\nbor" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
@@ -485,8 +485,8 @@ void LexerTest::lexIndentation_data()
     expectedtokens << Python::parser::Token_LINEBREAK;
     expectedtokens << Python::parser::Token_DEDENT;
     expectedtokens << Python::parser::Token_IDENTIFIER;
-    expectedbegins << 0 << 2 << 5 << 6 << 17 << 18 << MAX_SIZE_T << 19;
-    expectedends << 1 << 4 << 5 << 6 << 17 << 18 << MAX_SIZE_T << 21;
+    expectedbegins << qulonglong(0) << qulonglong(2) << qulonglong(5) << qulonglong(6) << qulonglong(17) << qulonglong(18) << MAX_SIZE_T << qulonglong(19);
+    expectedends << qulonglong(1) << qulonglong(4) << qulonglong(5) << qulonglong(6) << qulonglong(17) << qulonglong(18) << MAX_SIZE_T << qulonglong(21);
     QTest::newRow( "row7" )
             << "  foo=[\n    #bar\n]\nbaz" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
@@ -502,8 +502,8 @@ void LexerTest::lexIndentation_data()
     expectedtokens << Python::parser::Token_LINEBREAK;
     expectedtokens << Python::parser::Token_DEDENT;
     expectedtokens << Python::parser::Token_IDENTIFIER;
-    expectedbegins << 0 << 2 << 5 << 6 << 9 << 12 << 21 << 22 << MAX_SIZE_T << 23;
-    expectedends << 1 << 4 << 5 << 6 << 9 << 12 << 21 << 22 << MAX_SIZE_T << 25;
+    expectedbegins << qulonglong(0) << qulonglong(2) << qulonglong(5) << qulonglong(6) << qulonglong(9) << qulonglong(12) << qulonglong(21) << qulonglong(22) << MAX_SIZE_T << qulonglong(23);
+    expectedends << qulonglong(1) << qulonglong(4) << qulonglong(5) << qulonglong(6) << qulonglong(9) << qulonglong(12) << qulonglong(21) << qulonglong(22) << MAX_SIZE_T << qulonglong(25);
     QTest::newRow( "row8" )
             << "  foo=[\n {  }   #bar\n]\nbaz" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
@@ -515,8 +515,8 @@ void LexerTest::lexIndentation_data()
     expectedtokens << Python::parser::Token_LINEBREAK;
     expectedtokens << Python::parser::Token_IDENTIFIER;
     expectedtokens << Python::parser::Token_DEDENT;
-    expectedbegins << 0 << 2 << 5 << 10 << 13 << MAX_SIZE_T;
-    expectedends << 1 << 4 << 5 << 10 << 15 << MAX_SIZE_T;
+    expectedbegins << qulonglong(0) << qulonglong(2) << qulonglong(5) << qulonglong(10) << qulonglong(13) << MAX_SIZE_T;
+    expectedends << qulonglong(1) << qulonglong(4) << qulonglong(5) << qulonglong(10) << qulonglong(15) << MAX_SIZE_T;
     QTest::newRow( "row9" )
             << "  foo\n    \n  baz" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
@@ -529,8 +529,8 @@ void LexerTest::lexIndentation_data()
     expectedtokens << Python::parser::Token_LINEBREAK;
     expectedtokens << Python::parser::Token_IDENTIFIER;
     expectedtokens << Python::parser::Token_DEDENT;
-    expectedbegins << 0 << 3 << 6 << 15 << 18 << 26 << MAX_SIZE_T;
-    expectedends << 2 << 5 << 6 << 17 << 18 << 28 << MAX_SIZE_T;
+    expectedbegins << qulonglong(0) << qulonglong(3) << qulonglong(6) << qulonglong(15) << qulonglong(18) << qulonglong(26) << MAX_SIZE_T;
+    expectedends << qulonglong(2) << qulonglong(5) << qulonglong(6) << qulonglong(17) << qulonglong(18) << qulonglong(28) << MAX_SIZE_T;
     QTest::newRow( "row10" )
             << "  \tfoo\n        boo\n      \tbaz" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
@@ -545,8 +545,8 @@ void LexerTest::lexIndentation_data()
     expectedtokens << Python::parser::Token_DEDENT;
     expectedtokens << Python::parser::Token_IDENTIFIER;
     expectedtokens << Python::parser::Token_DEDENT;
-    expectedbegins << 0 << 3 << 6 << 7 << 16 << 19 << 20 << 23 << MAX_SIZE_T;
-    expectedends << 2 << 5 << 6 << 15 << 18 << 19 << 22 << 25 << MAX_SIZE_T;
+    expectedbegins << qulonglong(0) << qulonglong(3) << qulonglong(6) << qulonglong(7) << qulonglong(16) << qulonglong(19) << qulonglong(20) << qulonglong(23) << MAX_SIZE_T;
+    expectedends << qulonglong(2) << qulonglong(5) << qulonglong(6) << qulonglong(15) << qulonglong(18) << qulonglong(19) << qulonglong(22) << qulonglong(25) << MAX_SIZE_T;
     QTest::newRow( "row11" )
             << "  \tfoo\n        \tboo\n  \tbaz" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
@@ -559,8 +559,8 @@ void LexerTest::lexIndentation_data()
     expectedtokens << Python::parser::Token_IDENTIFIER;
     expectedtokens << Python::parser::Token_RBRACKET;
     expectedtokens << Python::parser::Token_DEDENT;
-    expectedbegins << 0 << 2 << 5 << 6 << 14 << 18 << MAX_SIZE_T;
-    expectedends << 1 << 4 << 5 << 6 << 16 << 18 << MAX_SIZE_T;
+    expectedbegins << qulonglong(0) << qulonglong(2) << qulonglong(5) << qulonglong(6) << qulonglong(14) << qulonglong(18) << MAX_SIZE_T;
+    expectedends << qulonglong(1) << qulonglong(4) << qulonglong(5) << qulonglong(6) << qulonglong(16) << qulonglong(18) << MAX_SIZE_T;
     QTest::newRow( "row7" )
             << "  foo=[\n  \\\n  bar\n]" << expectedtokens << expectedbegins << expectedends;
 }
@@ -606,48 +606,48 @@ void LexerTest::lexStringLiteral_data()
     expectedtokens << Python::parser::Token_STRINGLITERAL;
     QList<QVariant> expectedbegins;
     QList<QVariant> expectedends;
-    expectedbegins << 0;
-    expectedends << 22;
+    expectedbegins << qulonglong(0);
+    expectedends << qulonglong(22);
     QTest::newRow( "row1" )
             << "'''foo\n    bar\n  baz'''" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
     expectedbegins.clear();
     expectedends.clear();
     expectedtokens << Python::parser::Token_STRINGLITERAL;
-    expectedbegins << 0;
-    expectedends << 23;
+    expectedbegins << qulonglong(0);
+    expectedends << qulonglong(23);
     QTest::newRow( "row2" )
             << "\"\"\"foo\n#    bar\n  baz\"\"\"" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
     expectedbegins.clear();
     expectedends.clear();
     expectedtokens << Python::parser::Token_STRINGLITERAL;
-    expectedbegins << 0;
-    expectedends << 27;
+    expectedbegins << qulonglong(0);
+    expectedends << qulonglong(27);
     QTest::newRow( "row3" )
             << "\"\"\"foo\n#  ''''  bar\n  baz\"\"\"" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
     expectedbegins.clear();
     expectedends.clear();
     expectedtokens << Python::parser::Token_STRINGLITERAL;
-    expectedbegins << 0;
-    expectedends << 27;
+    expectedbegins << qulonglong(0);
+    expectedends << qulonglong(27);
     QTest::newRow( "row4" )
             << "'''foo\n# \"\"\"\"   bar\n  baz'''" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
     expectedbegins.clear();
     expectedends.clear();
     expectedtokens << Python::parser::Token_STRINGLITERAL;
-    expectedbegins << 0;
-    expectedends << 20;
+    expectedbegins << qulonglong(0);
+    expectedends << qulonglong(20);
     QTest::newRow( "row5" )
             << "\"\"\"foo\n#    bar\n  baz" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
     expectedbegins.clear();
     expectedends.clear();
     expectedtokens << Python::parser::Token_STRINGLITERAL;
-    expectedbegins << 0;
-    expectedends << 27;
+    expectedbegins << qulonglong(0);
+    expectedends << qulonglong(27);
     QTest::newRow( "row6" )
             << "\"\"\"foo\n#   \\\"\"\" bar\n  baz\"\"\"" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
@@ -655,24 +655,24 @@ void LexerTest::lexStringLiteral_data()
     expectedends.clear();
     expectedtokens << Python::parser::Token_STRINGLITERAL;
     expectedtokens << Python::parser::Token_STRINGLITERAL;
-    expectedbegins << 0 << 17;
-    expectedends << 13 << 25;
+    expectedbegins << qulonglong(0) << qulonglong(17);
+    expectedends << qulonglong(13) << qulonglong(25);
     QTest::newRow( "row7" )
             << "\"\"\"foo\n#   \"\"\"\n  \"\"\"baz\"\"\"" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
     expectedbegins.clear();
     expectedends.clear();
     expectedtokens << Python::parser::Token_STRINGLITERAL;
-    expectedbegins << 0;
-    expectedends << 18;
+    expectedbegins << qulonglong(0);
+    expectedends << qulonglong(18);
     QTest::newRow( "row8" )
             << "\"foo#    bar6  baz\"" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
     expectedbegins.clear();
     expectedends.clear();
     expectedtokens << Python::parser::Token_STRINGLITERAL;
-    expectedbegins << 0;
-    expectedends << 17;
+    expectedbegins << qulonglong(0);
+    expectedends << qulonglong(17);
     QTest::newRow( "row9" )
             << "'foo#    bar  baz'" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
@@ -680,8 +680,8 @@ void LexerTest::lexStringLiteral_data()
     expectedends.clear();
     expectedtokens << Python::parser::Token_STRINGLITERAL;
     expectedtokens << Python::parser::Token_LINEBREAK;
-    expectedbegins << 0 << 4;
-    expectedends << 3 << 4;
+    expectedbegins << qulonglong(0) << qulonglong(4);
+    expectedends << qulonglong(3) << qulonglong(4);
     QTest::newRow( "row10" )
             << "'foo\n" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
@@ -689,8 +689,8 @@ void LexerTest::lexStringLiteral_data()
     expectedends.clear();
     expectedtokens << Python::parser::Token_STRINGLITERAL;
     expectedtokens << Python::parser::Token_STRINGLITERAL;
-    expectedbegins << 0 << 10;
-    expectedends << 4 << 14;
+    expectedbegins << qulonglong(0) << qulonglong(10);
+    expectedends << qulonglong(4) << qulonglong(14);
     QTest::newRow( "row11" )
             << "'foo'\n    'bar'" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
@@ -698,48 +698,48 @@ void LexerTest::lexStringLiteral_data()
     expectedends.clear();
     expectedtokens << Python::parser::Token_STRINGLITERAL;
     expectedtokens << Python::parser::Token_STRINGLITERAL;
-    expectedbegins << 0 << 17;
-    expectedends << 13 << 21;
+    expectedbegins << qulonglong(0) << qulonglong(17);
+    expectedends << qulonglong(13) << qulonglong(21);
     QTest::newRow( "row12" )
             << "\"\"\"foo\n#   \"\"\"\n  'baz'" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
     expectedbegins.clear();
     expectedends.clear();
     expectedtokens << Python::parser::Token_STRINGLITERAL;
-    expectedbegins << 0;
-    expectedends << 5;
+    expectedbegins << qulonglong(0);
+    expectedends << qulonglong(5);
     QTest::newRow( "row13" )
             << "u'foo'" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
     expectedbegins.clear();
     expectedends.clear();
     expectedtokens << Python::parser::Token_STRINGLITERAL;
-    expectedbegins << 0;
-    expectedends << 5;
+    expectedbegins << qulonglong(0);
+    expectedends << qulonglong(5);
     QTest::newRow( "row14" )
             << "r'foo'" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
     expectedbegins.clear();
     expectedends.clear();
     expectedtokens << Python::parser::Token_STRINGLITERAL;
-    expectedbegins << 0;
-    expectedends << 5;
+    expectedbegins << qulonglong(0);
+    expectedends << qulonglong(5);
     QTest::newRow( "row15" )
             << "R'foo'" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
     expectedbegins.clear();
     expectedends.clear();
     expectedtokens << Python::parser::Token_STRINGLITERAL;
-    expectedbegins << 0;
-    expectedends << 6;
+    expectedbegins << qulonglong(0);
+    expectedends << qulonglong(6);
     QTest::newRow( "row16" )
             << "uR'foo'" << expectedtokens << expectedbegins << expectedends;
     expectedtokens.clear();
     expectedbegins.clear();
     expectedends.clear();
     expectedtokens << Python::parser::Token_STRINGLITERAL;
-    expectedbegins << 0;
-    expectedends << 1;
+    expectedbegins << qulonglong(0);
+    expectedends << qulonglong(1);
     QTest::newRow( "row17" )
             << "''" << expectedtokens << expectedbegins << expectedends;
 }

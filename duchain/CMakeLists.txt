@@ -9,6 +9,7 @@ set(duchain_SRCS
     declarationbuilder.cpp
     usebuilder.cpp
     dumpchain.cpp
+    typebuilder.cpp
     )
 
 

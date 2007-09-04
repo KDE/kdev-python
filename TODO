@@ -1,0 +1,14 @@
+- new AST (in the works) mostly for simplification of some parts and more expressiveness on others
+- Design for handling imports, probably needs to be similar to include-file handling in C++, but we're assigning new names to modules too sometimes
+	-> maybe Namespaces can help with that, i.e. have a global Namespace and create a new name
+- Typesystem and Typebuilder, probably also needs an Expression parser already to work well (so we know which type an assignment creates).
+- handling of eval()
+- finally write some code-completion and improve the syntax highlighting code
+- TESTS, TESTS and more TESTS
+
+A note from David Nolde (one of the authors of C++ Language support):
+[2007-09-04 23:38] <dnolden> apaku: Btw. I have thought a bit about python code-completion. I think to make it really good, you need the following:
+[2007-09-04 23:38] <dnolden> 1. An expression-parser, that is able to determine the type of any python expression (maybe could be integrated in type-builder)
+[2007-09-04 23:39] <dnolden> 2. A specialized PythonDeclaration class that can hold an arbitrarily sized list of types
+[2007-09-04 23:39] <dnolden> 3. Whenever assigning something to a value, evaluate that somethings type, and add it to the declarations type-list
+[2007-09-04 23:40] <dnolden> However expression-parsing was a lot of work for c++, I don't know how much it would be for python

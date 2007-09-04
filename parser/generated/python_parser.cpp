@@ -309,19 +309,45 @@ namespace Python
          ||  yytoken ==  Token_LBRACE
          ||  yytoken ==  Token_LBRACKET
          ||  yytoken ==  Token_BACKTICK
+         ||  yytoken ==  Token_STAR
+         ||  yytoken ==  Token_DOUBLESTAR
          ||  yytoken ==  Token_PLUS
          ||  yytoken ==  Token_MINUS
-         ||  yytoken ==  Token_TILDE)
+         ||  yytoken ==  Token_TILDE ||  yytoken ==  Token_RPAREN)
       {
-        arg_list_ast *__node_6 =  0;
-
-        if  (!parse_arg_list(&__node_6))
+        if  (yytoken ==  Token_LAMBDA
+             ||  yytoken ==  Token_NOT
+             ||  yytoken ==  Token_STRINGLITERAL
+             ||  yytoken ==  Token_IDENTIFIER
+             ||  yytoken ==  Token_INTEGER
+             ||  yytoken ==  Token_FLOAT
+             ||  yytoken ==  Token_IMAGNUM
+             ||  yytoken ==  Token_LPAREN
+             ||  yytoken ==  Token_LBRACE
+             ||  yytoken ==  Token_LBRACKET
+             ||  yytoken ==  Token_BACKTICK
+             ||  yytoken ==  Token_PLUS
+             ||  yytoken ==  Token_MINUS
+             ||  yytoken ==  Token_TILDE)
           {
-            yy_expected_symbol(ast_node::Kind_arg_list,  "arg_list");
-            return  false;
+            arg_list_ast *__node_6 =  0;
+
+            if  (!parse_arg_list(&__node_6))
+              {
+                yy_expected_symbol(ast_node::Kind_arg_list,  "arg_list");
+                return  false;
+              }
+
+            (*yynode)->arg_list =  __node_6;
+
           }
 
-        (*yynode)->arg_list =  __node_6;
+        else if  (true /*epsilon*/)
+        {}
+        else
+          {
+            return  false;
+          }
 
         if  (yytoken ==  Token_STAR)
           {
@@ -343,32 +369,42 @@ namespace Python
 
             (*yynode)->arglist_star =  __node_7;
 
-            if  (yytoken !=  Token_COMMA)
+            if  ((yytoken ==  Token_COMMA) &&  ( LA(1).kind !=  Token_RPAREN ))
               {
-                yy_expected_token(yytoken,  Token_COMMA,  "comma");
-                return  false;
+                if  (yytoken !=  Token_COMMA)
+                  {
+                    yy_expected_token(yytoken,  Token_COMMA,  "comma");
+                    return  false;
+                  }
+
+                yylex();
+
+                if  (yytoken !=  Token_DOUBLESTAR)
+                  {
+                    yy_expected_token(yytoken,  Token_DOUBLESTAR,  "doublestar");
+                    return  false;
+                  }
+
+                yylex();
+
+                test_ast *__node_8 =  0;
+
+                if  (!parse_test(&__node_8))
+                  {
+                    yy_expected_symbol(ast_node::Kind_test,  "test");
+                    return  false;
+                  }
+
+                (*yynode)->arglist_doublestar =  __node_8;
+
               }
 
-            yylex();
-
-            if  (yytoken !=  Token_DOUBLESTAR)
+            else if  (true /*epsilon*/)
+            {}
+            else
               {
-                yy_expected_token(yytoken,  Token_DOUBLESTAR,  "doublestar");
                 return  false;
               }
-
-            yylex();
-
-            test_ast *__node_8 =  0;
-
-            if  (!parse_test(&__node_8))
-              {
-                yy_expected_symbol(ast_node::Kind_test,  "test");
-                return  false;
-              }
-
-            (*yynode)->arglist_doublestar =  __node_8;
-
           }
 
         else if  (yytoken ==  Token_DOUBLESTAR)
@@ -1701,6 +1737,8 @@ namespace Python
                  ||  yytoken ==  Token_LBRACE
                  ||  yytoken ==  Token_LBRACKET
                  ||  yytoken ==  Token_BACKTICK
+                 ||  yytoken ==  Token_STAR
+                 ||  yytoken ==  Token_DOUBLESTAR
                  ||  yytoken ==  Token_PLUS
                  ||  yytoken ==  Token_MINUS
                  ||  yytoken ==  Token_TILDE)
@@ -4807,7 +4845,7 @@ namespace Python
 
             (*yynode)->rshift_args_sequence =  snoc((*yynode)->rshift_args_sequence,  __node_121,  memory_pool);
 
-            do
+            while  (yytoken ==  Token_COMMA)
               {
                 if  (yytoken !=  Token_COMMA)
                   {
@@ -4833,10 +4871,10 @@ namespace Python
                 (*yynode)->rshift_args_sequence =  snoc((*yynode)->rshift_args_sequence,  __node_122,  memory_pool);
 
               }
-
-            while  (yytoken ==  Token_COMMA);
           }
 
+        else if  (true /*epsilon*/)
+        {}
         else
           {
             return  false;
@@ -6451,7 +6489,7 @@ namespace Python
 
                                      yylex();
 
-                                     if  (yytoken ==  Token_RBRACE)
+                                     if ( yytoken ==  Token_COLON ||  yytoken ==  Token_SEMICOLON ||  yytoken ==  Token_RPAREN ||  yytoken ==  Token_LINEBREAK)
                                        {
                                          break;
                                        }
@@ -6800,6 +6838,8 @@ namespace Python
                                           ||  yytoken ==  Token_LBRACE
                                           ||  yytoken ==  Token_LBRACKET
                                           ||  yytoken ==  Token_BACKTICK
+                                          ||  yytoken ==  Token_STAR
+                                          ||  yytoken ==  Token_DOUBLESTAR
                                           ||  yytoken ==  Token_PLUS
                                           ||  yytoken ==  Token_MINUS
                                           ||  yytoken ==  Token_TILDE)

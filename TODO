@@ -1,6 +1,21 @@
 - new AST (in the works) mostly for simplification of some parts and more expressiveness on others
 - Design for handling imports, probably needs to be similar to include-file handling in C++, but we're assigning new names to modules too sometimes
 	-> maybe Namespaces can help with that, i.e. have a global Namespace and create a new name
+		[2007-09-04 23:46] <apaku> dnolden: just thinking for a bit: from foo import bar, IMHO that should "create" a new namespace declaration and then have all content from module "foo.bar' in that namespace. Does that make sense?
+		[2007-09-04 23:46] <apaku> dnolden: and for stuff like from foo import * you import "foo.*" into the "global" namespace...
+		[2007-09-04 23:47] <apaku> dnolden: I'm also wondering how to handle eval()...
+		[2007-09-04 23:48] <dnolden> apaku: Hmm for the second you can simply import foo into global, using NamespaceAliasDeclaration.
+		[2007-09-04 23:48] <dnolden> apaku: For the first, it probably depends on what bar actually is
+		[2007-09-04 23:49] <dnolden> apaku: If it is just a module(equivalent to a namespace), then you can simply implement it as a namespace-alias
+		[2007-09-04 23:49] <dnolden> apaku: But if it is a class/function, then there is not ready to use mechanism yet.
+		[2007-09-04 23:50] <dnolden> apaku: Maybe copying the declaration of that class to that place would work
+		[2007-09-04 23:51] <dnolden> apaku: So you would consider "from module import myFunction" as a declaration of myFunction
+		[2007-09-04 23:51] <apaku> dnolden: hmm, if bar is a class, its visible in the global namespace, i.e. its imported in the global namespace.
+		[2007-09-04 23:51] <dnolden> apaku: Hmm I'm thinking whether the duplicated declaration would hurt, it would not be ideal I think
+		[2007-09-04 23:51] <apaku> dnolden: yeah, maybe we need a special declaration for that, so it knows where it comes from (i.e. its from a different file/ast/position)
+		[2007-09-04 23:52] <dnolden> apaku: Yep that's better. I think ForwardDeclaration would fit technically, although not logically. :)
+		[2007-09-04 23:53] <apaku> dnolden: I was just thinking the same thing :)
+	-> for C-Modules (i.e. implemented in C, provided as shared object), maybe the C-API from python can help so we can have at least a listing of the module's content and some type information
 - Typesystem and Typebuilder, probably also needs an Expression parser already to work well (so we know which type an assignment creates).
 - handling of eval()
 - finally write some code-completion and improve the syntax highlighting code

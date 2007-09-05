@@ -26,14 +26,14 @@
 #include "contextbuilder.h"
 #include <typesystem.h>
 #include <declaration.h>
-#include "pythonduchainbuilderexport.h"
+#include "pythonduchainexport.h"
 
 class ClassType;
 class FunctionType;
 
 typedef ContextBuilder TypeBuilderBase;
 
-class KDEVPYTHONDUCHAINBUILDER_EXPORT TypeBuilder: public TypeBuilderBase
+class KDEVPYTHONDUCHAIN_EXPORT TypeBuilder: public TypeBuilderBase
 {
 public:
     TypeBuilder(ParseSession* session, const KUrl &url);

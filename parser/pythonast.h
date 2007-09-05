@@ -25,7 +25,7 @@ namespace Python
 {
 class Ast
 {
-private:
+public:
     int m_startingColumn;
     int m_startingRow;
     int m_startingPos;
@@ -38,24 +38,37 @@ class StatementAst : public Ast
 {
 };
 
+class ValueAst : public Ast
+{
+public:
+    QString value;
+};
+
 class SuiteAst : public Ast
 {
-private:
+public:
     QList<StatementAst*> m_statements;
+};
+
+class ElseIfAst : public StatementAst
+{
+public:
+    ExpressionAst* m_expression;
+    SuiteAst* m_suite;
 };
 
 class IfAst : public StatementAst
 {
-private:
+public:
     ExpressionAst* m_ifExpression;
     SuiteAst* m_ifSuite;
-    QList<QPair<ExpressionAst*, SuiteAst*> > m_elseIfSuites;
+    QList<ElseIfAst* > m_elseIfSuites;
     SuiteAst* m_elseSuite;
 };
 
 class WhileAst : public StatementAst
 {
-private:
+public:
     ExpressionAst* m_whileExpression;
     SuiteAst* m_whileSuite;
     SuiteAst* m_elseSuite;
@@ -63,25 +76,33 @@ private:
 
 class ForAst : public StatementAst
 {
-private:
-    QList<AssignmentTargetAst*> m_forTargets;
+public:
+    QList<TargetAst*> m_forTargets;
     ExpressionListAst* m_expressions;
     SuiteAst* m_forSuite;
     SuiteAst* m_elseSuite;
 };
 
+class ExceptAst : public Ast
+{
+public:
+    ExpressionAst* m_exception;
+    AssignmentAst* m_target;
+    SuiteAst* m_suite
+};
+
 class TryAst : public StatementAst
 {
-private:
+public:
     SuiteAst* m_trySuite;
     SuiteAst* m_elseSuite;
     SuiteAst* m_finallySuite;
-    QList<QPair<QPair< ExpressionAst*, AssignmentTargetAst* >, SuiteAst* > > m_exceptions;
+    QList<ExceptAst*> m_exceptions;
 };
 
 class ClassAst : public StatementAst
 {
-private:
+public:
     IdentifierAst* m_identifier;
     ExpressionListAst* m_inheritance;
     SuiteAst* m_suite;
@@ -89,7 +110,7 @@ private:
 
 class DecoratorAst : public Ast
 {
-private:
+public:
     QList<IdentifierAst*> m_name;
     QList<ArgumentAst*> m_arguments;
 };
@@ -104,7 +125,7 @@ public:
         KeywordParameter
     };
 
-private:
+public:
     IdentifierAst* m_identifier;
     QList<ParameterAst*> m_sublist;
     ExpressionAst* m_expression;
@@ -113,7 +134,7 @@ private:
 
 class FunctionAst : public StatementAst
 {
-private:
+public:
     QList<DecoratorAst*> m_decorators;
     IdentifierAst* m_identifier;
     QList<ParameterAst*> m_parameters;
@@ -122,13 +143,13 @@ private:
 
 class ExpressionListAst : StatementAst
 {
-private:
+public:
     QList<ExpressionAst*> m_expressions;
 };
 
 class AssertAst : StatementAst
 {
-private:
+public:
     ExpressionAst* m_assertOnExpression;
     ExpressionAst* m_raiseExpression;
 };
@@ -152,13 +173,13 @@ public:
         OrAssignment
     };
 
-private:
-    QList< AssignmentTargetAst*> m_targetList;
+public:
+    QList< TargetAst*> m_targetList;
     AssignmentType m_type;
     ExpressionListAst* m_expressionList;
 };
 
-class AssignmentTargetAst : public Ast
+class TargetAst : public Ast
 {
 public:
     enum TargetType
@@ -169,8 +190,8 @@ public:
         SubscriptionTarget,
         SliceTarget
     };
-private:
-    QList< AssignmentTargetAst* > m_targetList;
+public:
+    QList< TargetAst* > m_targetList;
     //This is either a atribute reference, a subscription or a slice
     PrimaryAst* m_primary;
     TargetType m_type;
@@ -193,41 +214,47 @@ class KeywordStatementAst : public StatementAst
         GlobalKeyword,
         ExecKeyword
     };
-private:
+public:
     KeywordType m_type;
 };
 
 class DelKeywordAst : public KeywordStatementAst
 {
-private:
-    QList<AssignmentTargetAst*> m_targetList;
+public:
+    QList<TargetAst*> m_targetList;
 };
 
 class PrintKeywordAst : public KeywordStatementAst
 {
-private:
+public:
     ExpressionListAst* m_expressionList;
 };
 
 class ReturnKeywordAst : public KeywordStatementAst
 {
-private:
+public:
     ExpressionListAst* m_expressionList;
 };
 
 class YieldKeywordAst : public KeywordStatementAst
 {
-private:
+public:
     ExpressionListAst* m_expressionList;
 };
 
 class RaiseKeywordAst : public KeywordStatementAst
 {
-private:
+public:
     ExpressionAst* m_typeExpression;
     ExpressionAst* m_valueExpression;
     ExpressionAst* m_tracebackExpression;
 };
+
+class ImportAst : public Ast
+{
+public:
+    IdentifierAst* m_import;
+    ValueAst* m_alias;
 
 class ImportKeywordAst : public KeywordStatementAst
 {
@@ -238,21 +265,21 @@ public:
         StarImport,
         SimpleImport
     };
-private:
+public:
     ImportType m_type;
-    QMap<IdentifierAst*, QString> m_modules;
-    QMap<IdentifierAst*, QString> m_imports;
+    QList<ImportAst*> m_modules;
+    QList<ImportAst*> m_imports;
 };
 
 class GlobalKeywordAst : public KeywordStatementAst
 {
-private:
+public:
     QList<IdentifierAst*> m_globals;
 };
 
 class ExecKeywordAst : public KeywordStatementAst
 {
-private:
+public:
     ExpressionAst* m_executeExpression;
     ExpressionAst* m_globalDictionary;
     ExpressionAst* m_localDictionary;
@@ -264,7 +291,7 @@ class PrimaryAst : public Ast
 
 class AtomAst : public PrimaryAst
 {
-private:
+public:
     QString m_value;
 };
 
@@ -284,7 +311,7 @@ public:
         ImaginaryLiteral
     };
 
-private:
+public:
     LiteralType m_type;
 };
 
@@ -293,53 +320,53 @@ class ParenthesisFormAst : public AtomAst
 public:
     bool isTuple();
 
-private:
+public:
     ExpressionListAst* m_expressionList;
 };
 
 class ListAst : public AtomAst
 {
-private:
+public:
     ExpressionListAst* m_expressionList;
     ForAst* m_listComprehension;
 };
 
 class GeneratorAst : public AtomAst
 {
-private:
+public:
     ExpressionAst* m_generatorExpression;
     ForAst* m_generatorLoop;
 };
 
 class StringConversionAst : public AtomAst
 {
-private:
+public:
     ExpressionListAst* m_expressionList;
 };
 
 class DictionaryAst : public AtomAst
 {
-private:
+public:
     QMap< ExpressionAst*, ExpressionAst* > m_dictionary;
 };
 
 class AttributeReferenceAst : public PrimaryAst
 {
-private:
+public:
     PrimaryAst* m_primary;
     IdentifierAst* m_identifier;
 };
 
 class SubscriptionAst : public PrimaryAst
 {
-private:
+public:
     PrimaryAst* m_primary;
     ExpressionListAst* m_expressionList;
 };
 
 class SliceAst : public PrimaryAst
 {
-private:
+public:
     PrimaryAst* m_primary;
     QList<SliceItemAst*> m_slices;
 };
@@ -355,7 +382,7 @@ public:
         Expression
     };
 
-private:
+public:
     ExpressionAst* m_lowerBound;
     ExpressionAst* m_upperBound;
     ExpressionAst* m_plainExpression;
@@ -365,7 +392,7 @@ private:
 
 class CallAst : public PrimaryAst
 {
-private:
+public:
     PrimaryAst* m_primary;
     QList<ArgumentAst*> m_arguments;
 };
@@ -381,14 +408,14 @@ public:
         DictionaryArgument,
     };
 
-private:
+public:
     ExpressionAst* m_expression;
     ArgumentType m_type;
 };
 
 class KeywordArgumentAst : public ArgumentAst
 {
-private:
+public:
     IdentifierAst* m_identifier;
 };
 
@@ -431,60 +458,60 @@ public:
         BooleanNotOperator
     };
 
-private:
+public:
     OperatorType m_type;
 };
 
 class UnaryOperatorAst : public OperatorAst
 {
-private:
+public:
     UnaryOperatorAst* m_expression;
 };
 
 class PowerAst : public UnaryOperatorAst
 {
-private:
+public:
     PrimaryAst* m_primary;
 };
 
 class BinaryOperatorAst : public OperatorAst
 {
-private:
+public:
     UnaryOperatorAst* m_unaryExpression;
     BinaryOperatorAst* m_binaryExpression;
 };
 
 class ShiftOperatorAst : public OperatorAst
 {
-private:
+public:
     BinaryOperatorAst* m_binaryExpression;
     ShiftOperatorAst* m_shiftExpression;
 };
 
 class BitWiseOperatorAst : public OperatorAst
 {
-private:
+public:
     ShiftOperatorAst* m_shiftExpression;
     BitWiseOperatorAst* m_bitwiseExpression;
 };
 
 class ComparisonAst : public OperatorAst
 {
-private:
+public:
     BooleanAst* m_firstExpression;
     ComparisonAst* m_secondExpression;
 };
 
 class BooleanAst : public OperatorAst
 {
-private:
+public:
     BooleanAst* m_firstTest;
     BooleanAst* m_secondTest;
 };
 
 class LambdaAst : public ExpressionAst
 {
-private:
+public:
     ParameterListAst* m_parameters;
     ExpressionAst* m_expression;
 };

@@ -30,7 +30,6 @@ namespace Python
 {
 
 class ExpressionAst;
-class SuiteAst;
 class ValueAst;
 class StatementAst;
 class ElseIfAst;
@@ -89,56 +88,105 @@ namespace KDevelop
 class DUContext;
 }
 
+/**
+ * This is the base class of all Ast nodes, it provides information about
+ * the start and end of the Ast node - as column/row and also absolute offset.
+ *
+ * Also allows to set the active DUChain context for the Ast
+ */
 class KDEVPYTHONPARSER_EXPORT Ast
 {
 public:
+    /**
+     * The column in which the first part of this node starts
+     */
     int m_startingColumn;
+
+    /**
+     * The row in which the first part of this node starts
+     */
     int m_startingRow;
-    int m_startingPos;
+
+    /**
+     * The offset in which the first part of this node starts
+     */
+    int m_startingOffset;
+
+    /**
+     * The column in which the last part of this node starts
+     */
     int m_endingColumn;
+
+    /**
+     * The row in which the last part of this node starts
+     */
     int m_endingRow;
-    int m_endingPos;
+
+    /**
+     * The pffset in which the last part of this node starts
+     */
+    int m_endingOffset;
+
+    /**
+     * The DUChain Context to which this Ast belongs
+     */
     KDevelop::DUContext* m_context;
 };
 
+/**
+ * Abstract base for all statements in the language, this Ast doesn't differ
+ * betwen compound and simple statement as there's no need to do so
+ */
 class KDEVPYTHONPARSER_EXPORT StatementAst : public Ast
 {
 };
 
+/**
+ * Simple values, like aliases for imports, plain QString is
+ * not sufficient because we need the context and also the
+ * position information
+ */
 class KDEVPYTHONPARSER_EXPORT ValueAst : public Ast
 {
 public:
+    /**
+     * the value of the underlying token
+     */
     QString value;
 };
 
-class KDEVPYTHONPARSER_EXPORT SuiteAst : public Ast
-{
-public:
-    QList<StatementAst*> m_statements;
-};
-
+/**
+ * Encapsulates the expression and the statements of an elif
+ * This is a bit nicer than a QPair<>
+ */
 class KDEVPYTHONPARSER_EXPORT ElseIfAst : public StatementAst
 {
 public:
     ExpressionAst* m_expression;
-    SuiteAst* m_suite;
+    QList<StatementAst*> m_statements;;
 };
 
+/**
+ * An if statement
+ *
+ * the members m_elseIfList and m_elseStatements may be empty lists
+ * Neither the m_ifExpression nor the m_ifStatements can be 0 or empty
+ */
 class KDEVPYTHONPARSER_EXPORT IfAst : public StatementAst
 {
 public:
     ExpressionAst* m_ifExpression;
-    SuiteAst* m_ifSuite;
-    QList<ElseIfAst* > m_elseIfSuites;
-    SuiteAst* m_elseSuite;
+    QList<StatementAst*> m_ifStatements;
+    QList<ElseIfAst* > m_elseIfList;
+    QList<StatementAst*> m_elseStatements;
 };
 
 class KDEVPYTHONPARSER_EXPORT WhileAst : public StatementAst
 {
 public:
     ExpressionAst* m_whileExpression;
-    SuiteAst* m_whileSuite;
-    SuiteAst* m_elseSuite;
+    QList<StatementAst*> m_whileStatements;
+    QList<StatementAst*> m_elseStatements;
 };
 
 class KDEVPYTHONPARSER_EXPORT ForAst : public StatementAst
@@ -146,8 +194,8 @@ class KDEVPYTHONPARSER_EXPORT ForAst : public StatementAst
 public:
     QList<TargetAst*> m_forTargets;
     ExpressionListAst* m_expressions;
-    SuiteAst* m_forSuite;
-    SuiteAst* m_elseSuite;
+    QList<StatementAst*> m_forStatements;
+    QList<StatementAst*> m_elseStatements;
 };
 
 class KDEVPYTHONPARSER_EXPORT ExceptAst : public Ast
@@ -155,15 +203,15 @@ class KDEVPYTHONPARSER_EXPORT ExceptAst : public Ast
 public:
     ExpressionAst* m_exception;
     AssignmentAst* m_target;
-    SuiteAst* m_suite;
+    QList<StatementAst*> m_statements;
 };
 
 class KDEVPYTHONPARSER_EXPORT TryAst : public StatementAst
 {
 public:
-    SuiteAst* m_trySuite;
-    SuiteAst* m_elseSuite;
-    SuiteAst* m_finallySuite;
+    QList<StatementAst*> m_tryStatements;
+    QList<StatementAst*> m_elseStatements;
+    QList<StatementAst*> m_finallyStatements;
     QList<ExceptAst*> m_exceptions;
 };
 
@@ -172,7 +220,7 @@ class KDEVPYTHONPARSER_EXPORT ClassAst : public StatementAst
 public:
     IdentifierAst* m_identifier;
     ExpressionListAst* m_inheritance;
-    SuiteAst* m_suite;
+    QList<StatementAst*> m_statements;
 };
 
 class KDEVPYTHONPARSER_EXPORT DecoratorAst : public Ast
@@ -203,7 +251,7 @@ public:
     QList<DecoratorAst*> m_decorators;
     IdentifierAst* m_identifier;
     QList<ParameterAst*> m_parameters;
-    SuiteAst* m_suite;
+    QList<StatementAst*> m_statements;
 };
 
 class KDEVPYTHONPARSER_EXPORT ExpressionListAst : StatementAst

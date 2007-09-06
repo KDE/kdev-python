@@ -21,9 +21,75 @@
 #ifndef PYTHONAST_H
 #define PYTHONAST_H
 
+#include "parserexport.h"
+#include <QList>
+#include <QMap>
+#include <QString>
+
 namespace Python
 {
-class Ast
+
+class ExpressionAst;
+class SuiteAst;
+class ValueAst;
+class StatementAst;
+class ElseIfAst;
+class IfAst;
+class WhileAst;
+class ForAst;
+class ExceptAst;
+class TryAst;
+class OperatorAst;
+class ClassAst;
+class DecoratorAst;
+class ParameterAst;
+class FunctionAst;
+class ExpressionListAst;
+class AssignmentAst;
+class AssertAst;
+class KeywordStatementAst;
+class TargetAst;
+class DelKeywordAst;
+class PrintKeywordAst;
+class ReturnKeywordAst;
+class YieldKeywordAst;
+class RaiseKeywordAst;
+class ImportAst;
+class ImportKeywordAst;
+class ExecKeywordAst;
+class PrimaryAst;
+class GlobalKeywordAst;
+class AtomAst;
+class LiteralAst;
+class TupleAst;
+class ListAst;
+class GeneratorAst;
+class StringConversionAst;
+class AttributeReferenceAst;
+class DictionaryAst;
+class SubscriptionAst;
+class LambdaAst;
+class KeywordArgumentAst;
+class ArgumentAst;
+class CallAst;
+class ExpressionAst;
+class UnaryOperatorAst;
+class PowerAst;
+class BinaryOperatorAst ;
+class ShiftOperatorAst;
+class BitWiseOperatorAst;
+class ComparisonAst;
+class BooleanAst;
+class SliceAst;
+class SliceItemAst;
+class IdentifierAst;
+
+namespace KDevelop
+{
+class DUContext;
+}
+
+class KDEVPYTHONPARSER_EXPORT Ast
 {
 public:
     int m_startingColumn;
@@ -32,32 +98,33 @@ public:
     int m_endingColumn;
     int m_endingRow;
     int m_endingPos;
+    KDevelop::DUContext* m_context;
 };
 
-class StatementAst : public Ast
+class KDEVPYTHONPARSER_EXPORT StatementAst : public Ast
 {
 };
 
-class ValueAst : public Ast
+class KDEVPYTHONPARSER_EXPORT ValueAst : public Ast
 {
 public:
     QString value;
 };
 
-class SuiteAst : public Ast
+class KDEVPYTHONPARSER_EXPORT SuiteAst : public Ast
 {
 public:
     QList<StatementAst*> m_statements;
 };
 
-class ElseIfAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT ElseIfAst : public StatementAst
 {
 public:
     ExpressionAst* m_expression;
     SuiteAst* m_suite;
 };
 
-class IfAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT IfAst : public StatementAst
 {
 public:
     ExpressionAst* m_ifExpression;
@@ -66,7 +133,7 @@ public:
     SuiteAst* m_elseSuite;
 };
 
-class WhileAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT WhileAst : public StatementAst
 {
 public:
     ExpressionAst* m_whileExpression;
@@ -74,7 +141,7 @@ public:
     SuiteAst* m_elseSuite;
 };
 
-class ForAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT ForAst : public StatementAst
 {
 public:
     QList<TargetAst*> m_forTargets;
@@ -83,15 +150,15 @@ public:
     SuiteAst* m_elseSuite;
 };
 
-class ExceptAst : public Ast
+class KDEVPYTHONPARSER_EXPORT ExceptAst : public Ast
 {
 public:
     ExpressionAst* m_exception;
     AssignmentAst* m_target;
-    SuiteAst* m_suite
+    SuiteAst* m_suite;
 };
 
-class TryAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT TryAst : public StatementAst
 {
 public:
     SuiteAst* m_trySuite;
@@ -100,7 +167,7 @@ public:
     QList<ExceptAst*> m_exceptions;
 };
 
-class ClassAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT ClassAst : public StatementAst
 {
 public:
     IdentifierAst* m_identifier;
@@ -108,14 +175,14 @@ public:
     SuiteAst* m_suite;
 };
 
-class DecoratorAst : public Ast
+class KDEVPYTHONPARSER_EXPORT DecoratorAst : public Ast
 {
 public:
     QList<IdentifierAst*> m_name;
     QList<ArgumentAst*> m_arguments;
 };
 
-class ParameterAst : public Ast
+class KDEVPYTHONPARSER_EXPORT ParameterAst : public Ast
 {
 public:
     enum ParameterType
@@ -124,15 +191,13 @@ public:
         PositionalParameter,
         KeywordParameter
     };
-
-public:
     IdentifierAst* m_identifier;
     QList<ParameterAst*> m_sublist;
     ExpressionAst* m_expression;
     ParameterType m_type;
 };
 
-class FunctionAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT FunctionAst : public StatementAst
 {
 public:
     QList<DecoratorAst*> m_decorators;
@@ -141,20 +206,20 @@ public:
     SuiteAst* m_suite;
 };
 
-class ExpressionListAst : StatementAst
+class KDEVPYTHONPARSER_EXPORT ExpressionListAst : StatementAst
 {
 public:
     QList<ExpressionAst*> m_expressions;
 };
 
-class AssertAst : StatementAst
+class KDEVPYTHONPARSER_EXPORT AssertAst : StatementAst
 {
 public:
     ExpressionAst* m_assertOnExpression;
     ExpressionAst* m_raiseExpression;
 };
 
-class AssignmentAst : StatementAst
+class KDEVPYTHONPARSER_EXPORT AssignmentAst : StatementAst
 {
 public:
     enum AssignmentType
@@ -172,14 +237,12 @@ public:
         XorAssignment,
         OrAssignment
     };
-
-public:
     QList< TargetAst*> m_targetList;
     AssignmentType m_type;
     ExpressionListAst* m_expressionList;
 };
 
-class TargetAst : public Ast
+class KDEVPYTHONPARSER_EXPORT TargetAst : public Ast
 {
 public:
     enum TargetType
@@ -190,15 +253,14 @@ public:
         SubscriptionTarget,
         SliceTarget
     };
-public:
     QList< TargetAst* > m_targetList;
-    //This is either a atribute reference, a subscription or a slice
+    //This is either a attribute reference, a subscription or a slice
     PrimaryAst* m_primary;
     TargetType m_type;
 };
 
 // This class is for things like del, pass, continue, better name would be appreciated
-class KeywordStatementAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT KeywordStatementAst : public StatementAst
 {
     enum KeywordType
     {
@@ -214,35 +276,34 @@ class KeywordStatementAst : public StatementAst
         GlobalKeyword,
         ExecKeyword
     };
-public:
     KeywordType m_type;
 };
 
-class DelKeywordAst : public KeywordStatementAst
+class KDEVPYTHONPARSER_EXPORT DelKeywordAst : public KeywordStatementAst
 {
 public:
     QList<TargetAst*> m_targetList;
 };
 
-class PrintKeywordAst : public KeywordStatementAst
+class KDEVPYTHONPARSER_EXPORT PrintKeywordAst : public KeywordStatementAst
 {
 public:
     ExpressionListAst* m_expressionList;
 };
 
-class ReturnKeywordAst : public KeywordStatementAst
+class KDEVPYTHONPARSER_EXPORT ReturnKeywordAst : public KeywordStatementAst
 {
 public:
     ExpressionListAst* m_expressionList;
 };
 
-class YieldKeywordAst : public KeywordStatementAst
+class KDEVPYTHONPARSER_EXPORT YieldKeywordAst : public KeywordStatementAst
 {
 public:
     ExpressionListAst* m_expressionList;
 };
 
-class RaiseKeywordAst : public KeywordStatementAst
+class KDEVPYTHONPARSER_EXPORT RaiseKeywordAst : public KeywordStatementAst
 {
 public:
     ExpressionAst* m_typeExpression;
@@ -250,13 +311,14 @@ public:
     ExpressionAst* m_tracebackExpression;
 };
 
-class ImportAst : public Ast
+class KDEVPYTHONPARSER_EXPORT ImportAst : public Ast
 {
 public:
     IdentifierAst* m_import;
     ValueAst* m_alias;
+};
 
-class ImportKeywordAst : public KeywordStatementAst
+class KDEVPYTHONPARSER_EXPORT ImportKeywordAst : public KeywordStatementAst
 {
 public:
     enum ImportType
@@ -265,19 +327,18 @@ public:
         StarImport,
         SimpleImport
     };
-public:
     ImportType m_type;
     QList<ImportAst*> m_modules;
     QList<ImportAst*> m_imports;
 };
 
-class GlobalKeywordAst : public KeywordStatementAst
+class KDEVPYTHONPARSER_EXPORT GlobalKeywordAst : public KeywordStatementAst
 {
 public:
     QList<IdentifierAst*> m_globals;
 };
 
-class ExecKeywordAst : public KeywordStatementAst
+class KDEVPYTHONPARSER_EXPORT ExecKeywordAst : public KeywordStatementAst
 {
 public:
     ExpressionAst* m_executeExpression;
@@ -285,21 +346,21 @@ public:
     ExpressionAst* m_localDictionary;
 };
 
-class PrimaryAst : public Ast
+class KDEVPYTHONPARSER_EXPORT PrimaryAst : public Ast
 {
 };
 
-class AtomAst : public PrimaryAst
+class KDEVPYTHONPARSER_EXPORT AtomAst : public PrimaryAst
 {
 public:
     QString m_value;
 };
 
-class IdentifierAst : public AtomAst
+class KDEVPYTHONPARSER_EXPORT IdentifierAst : public AtomAst
 {
 };
 
-class LiteralAst : public AtomAst
+class KDEVPYTHONPARSER_EXPORT LiteralAst : public AtomAst
 {
 public:
     enum LiteralType
@@ -310,68 +371,63 @@ public:
         FloatLiteral,
         ImaginaryLiteral
     };
-
-public:
     LiteralType m_type;
 };
 
-class ParenthesisFormAst : public AtomAst
+class KDEVPYTHONPARSER_EXPORT TupleAst : public AtomAst
 {
-public:
-    bool isTuple();
-
 public:
     ExpressionListAst* m_expressionList;
 };
 
-class ListAst : public AtomAst
+class KDEVPYTHONPARSER_EXPORT ListAst : public AtomAst
 {
 public:
     ExpressionListAst* m_expressionList;
     ForAst* m_listComprehension;
 };
 
-class GeneratorAst : public AtomAst
+class KDEVPYTHONPARSER_EXPORT GeneratorAst : public AtomAst
 {
 public:
     ExpressionAst* m_generatorExpression;
     ForAst* m_generatorLoop;
 };
 
-class StringConversionAst : public AtomAst
+class KDEVPYTHONPARSER_EXPORT StringConversionAst : public AtomAst
 {
 public:
     ExpressionListAst* m_expressionList;
 };
 
-class DictionaryAst : public AtomAst
+class KDEVPYTHONPARSER_EXPORT DictionaryAst : public AtomAst
 {
 public:
     QMap< ExpressionAst*, ExpressionAst* > m_dictionary;
 };
 
-class AttributeReferenceAst : public PrimaryAst
+class KDEVPYTHONPARSER_EXPORT AttributeReferenceAst : public PrimaryAst
 {
 public:
     PrimaryAst* m_primary;
     IdentifierAst* m_identifier;
 };
 
-class SubscriptionAst : public PrimaryAst
+class KDEVPYTHONPARSER_EXPORT SubscriptionAst : public PrimaryAst
 {
 public:
     PrimaryAst* m_primary;
     ExpressionListAst* m_expressionList;
 };
 
-class SliceAst : public PrimaryAst
+class KDEVPYTHONPARSER_EXPORT SliceAst : public PrimaryAst
 {
 public:
     PrimaryAst* m_primary;
     QList<SliceItemAst*> m_slices;
 };
 
-class SliceItemAst : public Ast
+class KDEVPYTHONPARSER_EXPORT SliceItemAst : public Ast
 {
 public:
     enum SliceItemType
@@ -381,8 +437,6 @@ public:
         ShortSlice,
         Expression
     };
-
-public:
     ExpressionAst* m_lowerBound;
     ExpressionAst* m_upperBound;
     ExpressionAst* m_plainExpression;
@@ -390,14 +444,14 @@ public:
     SliceItemType m_type;
 };
 
-class CallAst : public PrimaryAst
+class KDEVPYTHONPARSER_EXPORT CallAst : public PrimaryAst
 {
 public:
     PrimaryAst* m_primary;
     QList<ArgumentAst*> m_arguments;
 };
 
-class ArgumentAst : public Ast
+class KDEVPYTHONPARSER_EXPORT ArgumentAst : public Ast
 {
 public:
     enum ArgumentType
@@ -405,25 +459,23 @@ public:
         PositionalArgument,
         KeywordArgument,
         SequenceArgument,
-        DictionaryArgument,
+        DictionaryArgument
     };
-
-public:
     ExpressionAst* m_expression;
     ArgumentType m_type;
 };
 
-class KeywordArgumentAst : public ArgumentAst
+class KDEVPYTHONPARSER_EXPORT KeywordArgumentAst : public ArgumentAst
 {
 public:
     IdentifierAst* m_identifier;
 };
 
-class ExpressionAst : public Ast
+class KDEVPYTHONPARSER_EXPORT ExpressionAst : public Ast
 {
 };
 
-class OperatorAst : public ExpressionAst
+class KDEVPYTHONPARSER_EXPORT OperatorAst : public ExpressionAst
 {
 public:
     enum OperatorType
@@ -457,62 +509,60 @@ public:
         BooleanOrOperator,
         BooleanNotOperator
     };
-
-public:
     OperatorType m_type;
 };
 
-class UnaryOperatorAst : public OperatorAst
+class KDEVPYTHONPARSER_EXPORT UnaryOperatorAst : public OperatorAst
 {
 public:
     UnaryOperatorAst* m_expression;
 };
 
-class PowerAst : public UnaryOperatorAst
+class KDEVPYTHONPARSER_EXPORT PowerAst : public UnaryOperatorAst
 {
 public:
     PrimaryAst* m_primary;
 };
 
-class BinaryOperatorAst : public OperatorAst
+class KDEVPYTHONPARSER_EXPORT BinaryOperatorAst : public OperatorAst
 {
 public:
     UnaryOperatorAst* m_unaryExpression;
     BinaryOperatorAst* m_binaryExpression;
 };
 
-class ShiftOperatorAst : public OperatorAst
+class KDEVPYTHONPARSER_EXPORT ShiftOperatorAst : public OperatorAst
 {
 public:
     BinaryOperatorAst* m_binaryExpression;
     ShiftOperatorAst* m_shiftExpression;
 };
 
-class BitWiseOperatorAst : public OperatorAst
+class KDEVPYTHONPARSER_EXPORT BitWiseOperatorAst : public OperatorAst
 {
 public:
     ShiftOperatorAst* m_shiftExpression;
     BitWiseOperatorAst* m_bitwiseExpression;
 };
 
-class ComparisonAst : public OperatorAst
+class KDEVPYTHONPARSER_EXPORT ComparisonAst : public OperatorAst
 {
 public:
     BooleanAst* m_firstExpression;
     ComparisonAst* m_secondExpression;
 };
 
-class BooleanAst : public OperatorAst
+class KDEVPYTHONPARSER_EXPORT BooleanAst : public OperatorAst
 {
 public:
     BooleanAst* m_firstTest;
     BooleanAst* m_secondTest;
 };
 
-class LambdaAst : public ExpressionAst
+class KDEVPYTHONPARSER_EXPORT LambdaAst : public ExpressionAst
 {
 public:
-    ParameterListAst* m_parameters;
+    QList<ParameterAst*> m_parameters;
     ExpressionAst* m_expression;
 };
 }

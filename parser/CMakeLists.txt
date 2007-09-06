@@ -12,6 +12,7 @@ set(parser_STAT_SRCS
     kwcheck.cpp
     numbercheck.cpp
     buildsimpleastvisitor.cpp
+    simpleastdefaultvisitor.cpp
     )
 
 if(KDEVPG_FOUND)

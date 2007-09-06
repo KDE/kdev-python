@@ -23,8 +23,14 @@
 
 #include "python_default_visitor.h"
 
+#include <QStack>
+#include <QList>
+
 namespace Python
 {
+
+class Ast;
+class StatementAst;
 
 class BuildSimpleAstVisitor : default_visitor
 {
@@ -114,6 +120,9 @@ public:
     virtual void visit_while_stmt(while_stmt_ast *node);
     virtual void visit_xor_expr(xor_expr_ast *node);
     virtual void visit_yield_stmt(yield_stmt_ast *node);
+private:
+    QStack<Ast*> m_stack;
+    QList<StatementAst*> m_statements;
 };
 
 }

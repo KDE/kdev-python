@@ -19,6 +19,7 @@
 - Typesystem and Typebuilder, probably also needs an Expression parser already to work well (so we know which type an assignment creates).
 - handling of eval()
 - finally write some code-completion and improve the syntax highlighting code
+- support for different Python versions, including maybe 3.0
 - TESTS, TESTS and more TESTS
 
 A note from David Nolde (one of the authors of C++ Language support):

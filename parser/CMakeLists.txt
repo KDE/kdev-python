@@ -11,8 +11,6 @@ set(parser_STAT_SRCS
     pythonlexer.cpp
     kwcheck.cpp
     numbercheck.cpp
-    buildsimpleastvisitor.cpp
-    simpleastdefaultvisitor.cpp
     )
 
 if(KDEVPG_FOUND)

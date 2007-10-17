@@ -70,7 +70,6 @@ PythonLanguageSupport::PythonLanguageSupport( QObject* parent, const QVariantLis
 
 void PythonLanguageSupport::documentChanged( KDevelop::IDocument* doc )
 {
-        kDebug() << "###########--Adding document to parser--################";
         core()->languageController()->backgroundParser()->addDocument(doc->url());
 }
 PythonLanguageSupport::~PythonLanguageSupport()

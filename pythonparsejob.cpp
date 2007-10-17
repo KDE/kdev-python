@@ -25,14 +25,10 @@
 #include <kdebug.h>
 #include <cassert>
 #include <QFile>
-#include <QByteArray>
 
 #include <ktexteditor/document.h>
 #include <ktexteditor/smartinterface.h>
 
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
 #include <klocale.h>
 #include "pythonhighlighting.h"
 #include "pythoneditorintegrator.h"
@@ -124,9 +120,6 @@ void PythonParseJob::run()
     {
         m_session->setContents( contentsFromEditor().toAscii() );
     }
-    kDebug() << "===-- PARSING --===>"
-             << m_document.fileName()
-             << "size:" << m_session->contents().size();
 
 
     // 2) parse

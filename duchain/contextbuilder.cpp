@@ -77,10 +77,6 @@ TopDUContext* ContextBuilder::buildContexts(ast_node* node)
     {
         DUChainWriteLocker lock(DUChain::lock());
         topLevelContext = DUChain::self()->chainForDocument(m_url);
-        //Counts the Number Of Chains in the Given document.
-        /*QList< TopDUContext * > toplevelcontextchains;
-        toplevelcontextchains = DUChain::self()->chainsForDocument(m_url);
-        kDebug()<<toplevelcontextchains.count();*/
         if( topLevelContext && !topLevelContext->smartRange() && m_editor->smart() )
         {
             lock.unlock();
@@ -183,6 +179,12 @@ void ContextBuilder::visit_classdef(classdef_ast* node)
     addImportedContexts();
     visit_node(node->testlist);
     visit_node(node->class_suite);
+    closeContext();
+}
+void ContextBuilder::visit_import_as_name(import_as_name_ast *node)
+{
+    openContext(node, DUContext::Namespace , identifierForName(node->imported_name));
+    addImportedContexts();
     closeContext();
 }
 

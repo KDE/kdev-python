@@ -92,6 +92,7 @@ public:
     virtual void visit_classdef(classdef_ast *node);
     virtual void visit_compound_stmt(compound_stmt_ast *node);
     virtual void visit_varargslist(varargslist_ast *node);
+    virtual void visit_import_as_name(import_as_name_ast *node);
     //virtual void visit_for_stmt(for_stmt_ast *node);
     //virtual void visit_while_stmt(while_stmt_ast *node);
     void addImportedContexts();

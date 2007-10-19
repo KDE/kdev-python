@@ -65,9 +65,6 @@ public:
 
     const KTextEditor::Range& textRangeToParse() const;
 
-    void setUpdatingContext( const KDevelop::TopDUContextPointer& context );
-    KDevelop::TopDUContextPointer updatingContext() const;
-
     PythonLanguageSupport* python() const;
     ParseSession* parseSession() const;
     bool wasReadFromDisk() const;
@@ -82,7 +79,6 @@ private:
     bool m_readFromDisk;
     KDevelop::TopDUContext* m_duContext;
     KUrl m_url;
-    KDevelop::TopDUContextPointer m_updatingContext;
     KTextEditor::Range m_textRangeToParse;
 };
 

@@ -47,7 +47,7 @@ ContextBuilder::ContextBuilder(ParseSession* session, const KUrl &url)
     ,m_recompiling(false)
     ,m_lastContext(0)
 {
-    kDebug() << "=====Building Contexts for===="<<m_url;
+    kDebug() << "*********Building Contexts for*******"<<m_url;
 
 }
 ContextBuilder::ContextBuilder (PythonEditorIntegrator* editor, const KUrl &url)
@@ -58,7 +58,7 @@ ContextBuilder::ContextBuilder (PythonEditorIntegrator* editor, const KUrl &url)
     ,m_recompiling(false)
     ,m_lastContext(0)
 {
-    kDebug() << "=====Building Contexts for===="<<m_url;
+    kDebug() << "*********Building Contexts for********"<<m_url;
 }
 
 
@@ -183,7 +183,7 @@ void ContextBuilder::visit_classdef(classdef_ast* node)
 }
 void ContextBuilder::visit_import_as_name(import_as_name_ast *node)
 {
-    openContext(node, DUContext::Namespace , identifierForName(node->imported_name));
+    openContext(node, DUContext::Namespace , identifierForName(node->imported_as));
     addImportedContexts();
     closeContext();
 }
@@ -225,10 +225,15 @@ void ContextBuilder::visit_funcdef(funcdef_ast *node)
 
 void ContextBuilder::visit_varargslist(varargslist_ast *node)
 {
-    openContext(node,DUContext::Other);
+    QString name = "arguements";
+    m_identifier = Identifier(name);
+    KDevelop::QualifiedIdentifier x;
+    x.push(m_identifier);
+    openContext(node,DUContext::Other, x);
     addImportedContexts();
     default_visitor::visit_varargslist(node);
     closeContext();
+    x.clear();
 }
 
 void ContextBuilder::openContext(DUContext* newContext)

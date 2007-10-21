@@ -122,7 +122,7 @@ void PythonParseJob::run()
         kDebug() << m_url;
         DeclarationBuilder declarationBuilder(m_session,m_url);
         m_duContext = declarationBuilder.buildDeclarations(m_AST);
-        kDebug() << "----Parsing Succeded---";//TODO: bind declarations to the code model
+        kDebug() << "----Parsing Succeded---***";//TODO: bind declarations to the code model
         if( python() && declarationBuilder.m_editor->smart() )
         {
             QMutexLocker lock(declarationBuilder.m_editor->smart()->smartMutex());

@@ -54,20 +54,26 @@ KTextEditor::Attribute::Ptr PythonHighlighting::attributeForType( Types type, Co
         m_definitionAttributes.insert(type, a);
         switch (type)
         {
-            case ArgumentType:
-                a->setBackground(QColor(Qt::green).light(175));
+            case NamespaceType:
+                a->setBackground(QColor(Qt::green).light(170));
                 break;
             case ClassType:
-                a->setForeground(Qt::blue);
-                break;
-            case FunctionType:
                 a->setBackground(QColor(Qt::blue).light(175));
                 break;
+            case FunctionType:
+                a->setBackground(QColor(Qt::green).light(175));
+                break;
             case FunctionVariableType:
-                a->setForeground(QColor(0x1F88A7));
+                a->setBackground(QColor(Qt::blue).light(175));
+                break;
+             case NamespaceVariableType:
+                a->setBackground(QColor(Qt::red).light(175));
                 break;
             case ClassVariableType:
-                a->setForeground(QColor(0xFF800D));
+                a->setBackground(QColor(Qt::green).light(165));
+                break;
+            default:
+                a->setBackground(QColor(Qt::green).light(175));
                 break;
         }
         a->setFontBold();
@@ -126,6 +132,9 @@ PythonHighlighting::Types PythonHighlighting::typeForDeclaration(Declaration * d
         break;
       case DUContext::Function:
         type = FunctionVariableType;
+        break;
+      case DUContext::Namespace:
+        type = NamespaceVariableType;
         break;
       default:
         break;

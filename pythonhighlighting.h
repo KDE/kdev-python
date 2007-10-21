@@ -51,14 +51,16 @@ public:
     {
         FunctionType,
         ClassType,
-        ArgumentType,
+        NamespaceType,
         FunctionVariableType,
-        ClassVariableType
+        ClassVariableType,
+        NamespaceVariableType,
     };
     enum Contexts
     {
         DefinitionContext,
-        DeclarationContext
+        DeclarationContext,
+        NamespaceContext
     };
     PythonHighlighting(QObject* parent);
     virtual ~PythonHighlighting();

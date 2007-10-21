@@ -11,6 +11,7 @@ set(parser_STAT_SRCS
     pythonlexer.cpp
     kwcheck.cpp
     numbercheck.cpp
+    python_new_ast.cpp
     )
 
 if(KDEVPG_FOUND)
@@ -57,7 +58,7 @@ install(TARGETS kdev4pythonparser DESTINATION ${LIB_INSTALL_DIR})
 add_custom_target( copy-generated
     COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/python_parser.cpp" "${CMAKE_SOURCE_DIR}/parser/generated/python_parser.cpp"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/python_parser.h" "${CMAKE_SOURCE_DIR}/parser/generated/python_parser.h"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/python_ast.h" "${CMAKE_SOURCE_DIR}/parser/generated/python_ast.h"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/python_new_ast.h" "${CMAKE_SOURCE_DIR}/parser/generated/python_new_ast.h"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/python_visitor.h" "${CMAKE_SOURCE_DIR}/parser/generated/python_visitor.h"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/python_visitor.cpp" "${CMAKE_SOURCE_DIR}/parser/generated/python_visitor.cpp"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/python_default_visitor.h" "${CMAKE_SOURCE_DIR}/parser/generated/python_default_visitor.h"
@@ -68,6 +69,6 @@ add_custom_target( copy-generated
     DEPENDS "${CMAKE_BINARY_DIR}/parser/python_visitor.h"
     DEPENDS "${CMAKE_BINARY_DIR}/parser/python_default_visitor.cpp"
     DEPENDS "${CMAKE_BINARY_DIR}/parser/python_default_visitor.h"
-    DEPENDS "${CMAKE_BINARY_DIR}/parser/python_ast.h"
+    DEPENDS "${CMAKE_BINARY_DIR}/parser/python_new_ast.h"
     )
 

@@ -49,14 +49,15 @@ Cursor PythonEditorIntegrator::findPosition( kdev_pg_token_stream::token_type co
     std::size_t line, column;
 
     //kDebug() << "Finding position for offset:" << offset  << m_session->contents()[offset];
+    kDebug()<<"Finding Position**********"<<token.end<<"******"<<token.begin;
     m_session->positionAt((edge == BackEdge) ? token.end : token.begin, &line, &column);
-    //kDebug() << "Found position:" << line << column;
+    kDebug() << "Found position:*************************" << line << column;
     return Cursor(line, column);
 }
 
 Range PythonEditorIntegrator::findRange( Python::ast_node * node, RangeEdge edge )
 {
-    //kDebug() << "Finding Range";
+    kDebug() << "Finding Range ==================";
     Q_UNUSED(edge);
     return Range(findPosition(node->start_token, FrontEdge), findPosition(node->end_token -1, BackEdge));
 }

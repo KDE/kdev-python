@@ -54,7 +54,7 @@ public:
         NamespaceType,
         FunctionVariableType,
         ClassVariableType,
-        NamespaceVariableType,
+        NamespaceVariableType
     };
     enum Contexts
     {

@@ -114,7 +114,7 @@ namespace Python
 %token AND ("and"), AS ("as"), ASSERT ("assert"), BREAK ("break"), CLASS ("class"),
        CONTINUE ("continue"), DEF ("DEF"), DEL ("del"), ELIF ("elif"), ELSE ("else"),
        EXCEPT ("except"), EXEC ("exec"), FINALLY ("finally"), FOR ("for"),
-       FROM ("from"), FUTURE ("future"), GLOBAL ("global"), IF ("if"),
+       FROM ("from"), GLOBAL ("global"), IF ("if"),
        IMPORT ("import"), IN ("in"), IS ("is"), LAMBDA ("lambda"), NOT ("not"),
        OR ("or"), PASS ("pass"), PRINT ("print"), RAISE ("raise"),
        RETURN ("return"), TRY ("try"), WHILE ("while"), WITH ("with"), YIELD ("yield") ;;
@@ -199,7 +199,7 @@ namespace Python
    LBRACE ( key_datum_list | 0 ) RBRACE
 -> dict_display ;;
 
-   key_datum ( COMMA key_datum )* ( COMMA | 0 )
+   key_datum ( ( COMMA key_datum )+ | 0 ) ( COMMA | 0 )
 -> key_datum_list ;;
 
    expression COLON expression
@@ -232,7 +232,7 @@ namespace Python
    primary LBRACKET slice_list RBRACKET
 -> extended_slicing ;;
 
-   slice_item ( COMMA slice_item )* ( COMMA | 0 )
+   slice_item ( ( COMMA slice_item )+ | 0 ) ( COMMA | 0 )
 -> slice_list ;;
 
    expression | proper_slice | ELLIPSIS
@@ -268,10 +268,10 @@ namespace Python
    ( COMMA DOUBLESTAR expression | 0 ) ) | COMMA DOUBLESTAR expression
 -> argument_list ;;
 
-   expression ( COMMA expression )*
+   expression ( ( COMMA expression )+ | 0 )
 -> positional_arguments ;;
 
-   keyword_item ( COMMA keyword_item )*
+   keyword_item ( ( COMMA keyword_item )+ | 0 )
 -> keyword_arguments ;;
 
    IDENTIFIER EQUAL expression
@@ -334,7 +334,7 @@ namespace Python
    LAMBDA ( parameter_list | 0 ) COLON old_expression
 -> old_lambda_form ;;
 
-   expression ( COMMA expression )* ( COMMA | 0 )
+   expression ( ( COMMA expression )+ | 0 ) ( COMMA | 0 )
 -> expression_list ;;
 
    expression_stmt | assert_stmt | assignment_stmt | augmented_assignment_stmt
@@ -348,7 +348,7 @@ namespace Python
    ( target_list EQUAL )+ ( expression_list | yield_expression )
 -> assignment_stmt ;;
 
-   target ( COMMA target )* ( COMMA | 0 )
+   target ( ( COMMA target )+ | 0 ) ( COMMA | 0 )
 -> target_list ;;
 
    IDENTIFIER | LPAREN target_list RPAREN | LBRACKET target_list RBRACKET
@@ -371,7 +371,7 @@ namespace Python
    DEL target_list
 -> del_stmt ;;
 
-   PRINT ( ( expression ( COMMA expression )* ( COMMA | 0 ) | 0 )
+   PRINT ( ( expression ( ( COMMA expression )+ | 0 ) ( COMMA | 0 ) | 0 )
    | RSHIFT expression ( ( COMMA expression )+ ( COMMA | 0 ) | 0 ) )
 -> print_stmt ;;
 
@@ -391,29 +391,24 @@ namespace Python
 -> continue_stmt ;;
 
    IMPORT module ( AS name | 0 ) ( COMMA module ( AS name | 0 ) )*
-   | FROM relative_module IMPORT IDENTIFIER ( AS name | 0 )
-     ( COMMA IDENTIFIER ( AS name | 0 ) )*
-   | FROM relative_module IMPORT LPAREN IDENTIFIER ( AS name | 0 )
-     ( COMMA IDENTIFIER ( AS name | 0 ) )* ( COMMA | 0 ) RPAREN
-   | FROM module IMPORT STAR
+   | FROM (
+       relative_module IMPORT identifier_as_name
+       | relative_module IMPORT LPAREN identifier_as_name ( COMMA | 0 ) RPAREN
+       | module IMPORT STAR
+     )
 -> import_stmt ;;
 
-   ( IDENTIFIER DOT )* IDENTIFIER
+   IDENTIFIER ( AS name | 0 ) ( ( COMMA IDENTIFIER ( AS name | 0 ) )+ | 0 )
+-> identifier_as_name ;;
+
+   ( ( IDENTIFIER DOT )+ | 0 ) IDENTIFIER
 -> module ;;
 
-   ( DOT )* module | ( DOT )+
+   module | DOT ( 0 | ( DOT )* module )
 -> relative_module ;;
 
    IDENTIFIER
 -> name ;;
-
-   FROM FUTURE IMPORT feature ( AS name | 0 ) ( COMMA feature ( AS name | 0 ) )*
-   | FROM FUTURE IMPORT LPAREN feature ( AS name | 0 )
-     ( COMMA feature ( AS name | 0 ) )* ( COMMA | 0 ) RPAREN
--> future_stmt ;;
-
-   IDENTIFIER
--> feature ;;
 
    GLOBAL IDENTIFIER ( COMMA IDENTIFIER )*
 -> global_stmt ;;
@@ -430,7 +425,7 @@ namespace Python
    stmt_list LINEBREAK | compount_stmt
 -> statement ;;
 
-   simple_stmt ( SEMICOLON simple_stmt )* SEMICOLON
+   simple_stmt ( ( SEMICOLON simple_stmt )+ | 0 ) SEMICOLON
 -> stmt_list ;;
 
    IF expression COLON suite ( ELIF expression COLON suite )* ( ELSE COLON suite | 0 )
@@ -442,14 +437,14 @@ namespace Python
    FOR target_list IN expression_list COLON suite ( ELSE COLON suite | 0 )
 -> for_stmt ;;
 
-   try1_stmt | try2_stmt
+   TRY COLON suite ( try1_stmt | try2_stmt )
 -> try_stmt ;;
 
-   TRY COLON suite ( EXCEPT ( expression ( COMMA target | 0 ) | 0 ) COLON suite )+
+   ( EXCEPT ( expression ( COMMA target | 0 ) | 0 ) COLON suite )+
    ( ELSE COLON suite | 0 ) ( FINALLY COLON suite | 0 )
 -> try1_stmt ;;
 
-   TRY COLON suite FINALLY COLON suite
+   FINALLY COLON suite
 -> try2_stmt ;;
 
    WITH expression ( AS target | 0 ) COLON suite
@@ -467,14 +462,14 @@ namespace Python
    IDENTIFIER ( DOT IDENTIFIER )*
 -> dotted_name ;;
 
-   ( defparameter COMMA )* ( STAR IDENTIFIER ( COMMA DOUBLESTAR IDENTIFIER | 0 )
+   ( ( defparameter COMMA )+ | 0 ) ( STAR IDENTIFIER ( COMMA DOUBLESTAR IDENTIFIER | 0 )
      | DOUBLESTAR IDENTIFIER | defparameter ( COMMA | 0 ) )
 -> parameter_list ;;
 
    parameter ( EQUAL expression | 0 )
 -> defparameter ;;
 
-   parameter ( COMMA parameter )* ( COMMA | 0 )
+   parameter ( ( COMMA parameter )+ | 0 ) ( COMMA | 0 )
 -> sublist ;;
 
    IDENTIFIER | LPAREN sublist RPAREN

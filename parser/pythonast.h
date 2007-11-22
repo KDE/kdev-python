@@ -30,63 +30,102 @@ class Ast
 {
     enum AstType
     {
-        CodeAst,
-        ClassDefinitionAst,
-        FunctionDefinitionAst,
-        SuiteAst,
-        DecoratorAst,
-        ParameterAst,
         ArgumentAst,
-        StatementAst,
-        ExpressionAst,
-        WhileAst,
-        IfAst,
-        ForAst,
-        ImportAst,
-        ContinueAst,
-        BreakAst,
-        PassAst,
-        GlobalAst,
-        WithAst,
-        ExecAst,
-        TryAst,
-        RaiseAst,
-        ReturnAst,
-        PrintAst,
-        YieldAst,
-        AssignmentAst,
-        DelAst,
         AssertAst,
-        ExpressionStatementAst,
-        LambdaAst,
-        ExpressionAst,
-        BooleanAst,
-        ComparisonAst,
-        BinaryExpressionAst,
-        UnaryExpressionAst,
-        ArithmeticExpressionAst,
-        CallAst,
-        SliceItemAst,
-        SliceAst,
-        SubscriptAst,
-        AttributeReferenceAst,
-        PrimaryAst,
-        TargetAst,
+        AssignmentAst,
         AtomAst,
+        AttributeReferenceAst,
+        BinaryExpressionAst,
+        BooleanAst,
+        BooleanExpressionAst,
+        CallAst,
+        ClassDefinitionAst,
+        CodeAst,
+        ComparisonAst,
+        DecoratorAst,
+        DelAst,
+        DictionaryAst,
+        EllipsisSliceAst,
         EnclosureAst,
-        ListAst,
-        ListForAst,
-        ListIfAst,
+        ExceptAst,
+        ExecAst,
+        ExpressionSliceAst,
+        ExpressionStatementAst,
+        ExtendedSliceAst,
+        ForAst,
+        FromImportAst,
+        FunctionDefinitionAst,
         GeneratorAst,
         GeneratorForAst,
         GeneratorIfAst,
-        DictionaryAst
+        GlobalAst,
+        IfAst,
+        LambdaAst,
+        ListAst,
+        ListForAst,
+        ListIfAst,
+        ParameterAst,
+        PlainImportAst,
+        PrintAst,
+        ProperSliceItemAst,
+        RaiseAst,
+        ReturnAst,
+        SimpleSliceAst,
+        StarImportAst,
+        SubscriptAst,
+        TargetAst,
+        TryAst,
+        UnaryExpressionAst,
+        WhileAst,
+        WithAst,
+        YieldAst
     };
 
 public:
     Ast( Ast* parent );
     AstType astType;
     Ast* parent;
+    /**
+     * This is the absolute position in the file that this Ast node starts at.
+     *
+     * Counting starts with 0.
+     */
+    int start;
+
+    /**
+     * This is the absolute position in the file that this Ast node ends at.
+     *
+     * Counting starts with 0.
+     */
+    int end;
+
+    /**
+     * This is the column in the starting line where this Ast node starts.
+     *
+     * Counting starts with 0.
+     */
+    int startCol;
+
+    /**
+     * This is the line where this Ast node starts.
+     *
+     * Counting starts with 0.
+     */
+    int startLine;
+
+    /**
+     * This is the column in the ending line where this Ast node ends.
+     *
+     * Counting starts with 0.
+     */
+    int endCol;
+
+    /**
+     * This is the line where this Ast node ends.
+     *
+     * Counting starts with 0.
+     */
+    int endLine;
 };
 
 class CodeAst : public Ast
@@ -105,7 +144,7 @@ public:
     QString functionName;
     QList<ParameterAst*> parameters;
     QList<DecoratorAst*> decorators;
-    SuiteAst* suite;
+    QList<StatementAst*> functionBody;
 };
 
 class DecoratorAst : public Ast
@@ -113,7 +152,7 @@ class DecoratorAst : public Ast
 
 public:
     DecoratorAst( Ast* parent );
-    QStringList names;
+    QStringList dottedName;
     QList<ArgumentAst*> arguments;
 };
 
@@ -131,7 +170,7 @@ public:
     ArgumentAst( Ast* );
     QList<ExpressionAst*> positionalArguments;
     QMap<QString, ExpressionAst*> keywordArguments;
-    ExpressionAst* expression;
+    ExpressionAst* listOrDictName;
     ArgumentType argumentType;
 };
 
@@ -147,50 +186,47 @@ class ParameterAst : public Ast
 
 public:
     ParameterAst( Ast* parent );
-    QList<ParameterAst*> sublist;
-    ExpressionAst* expression;
+    QList<ParameterAst*> parameterList;
+    ExpressionAst* defaultValue;
     QString parameterName;
     ParameterType parameterType;
 };
 
-class SuiteAst : public Ast
-{
-    public:
-        SuiteAst( Ast* );
-        QList<StatementAst*> statements;
-};
-
 class StatementAst : public Ast
 {
-    public:
-        StatementAst( Ast* );
+
+public:
+    StatementAst( Ast* );
 };
 
 class IfAst : public StatementAst
 {
-    public:
-        IfAst( Ast* );
-        QMap<ExpressionAst*, SuiteAst*> expressionSuites;
-        SuiteAst* elseSuite;
+
+public:
+    IfAst( Ast* );
+    QMap<ExpressionAst*, QList<StatementAst*> > ifElseIfList;
+    QList<StatementAst*> elseBody;
 };
 
 class WhileAst : public StatementAst
 {
-    public:
-        WhileAst( Ast* );
-        ExpressionAst* expression;
-        SuiteAst* whileSuite;
-        SuiteAst* elseSuite;
+
+public:
+    WhileAst( Ast* );
+    ExpressionAst* condition;
+    QList<StatementAst*> whileBody;
+    QList<StatementAst*> elseBody;
 };
 
 class ForAst : public StatementAst
 {
-    public:
-        ForAst( Ast* );
-        QList<TargetAst*> targets;
-        QList<ExpressionAst*> expressions;
-        SuiteAst* forSuite;
-        SuiteAst* elseSuite;
+
+public:
+    ForAst( Ast* );
+    QList<TargetAst*> assignedTargets;
+    QList<ExpressionAst*> iterable;
+    QList<StatementAst*> forBody;
+    QList<StatementAst*> elseBody;
 };
 
 class ClassDefinitionAst : public StatementAst
@@ -200,140 +236,149 @@ public:
     ClassDefinitionAst( Ast* parent );
     QString className;
     QList<ExpressionAst*> inheritance;
-    SuiteAst* suite;
+    QList<StatementAst*> classBody;
 };
 
 class TryAst : public StatementAst
 {
-    public:
-        TryAst( Ast* );
-        SuiteAst* trySuite;
-        SuiteAst* elseSuite;
-        SuiteAst* finallySuite;
-        QList<ExceptAst*> exceptions;
+
+public:
+    TryAst( Ast* );
+    QList<StatementAst*> tryBody;
+    QList<StatementAst*> elseBody;
+    QList<StatementAst*> finallyBody;
+    QList<ExceptAst*> exceptions;
 };
 
 class ExceptAst : public Ast
 {
-    public:
-        ExceptAst( Ast* );
-        ExpressionAst* expression;
-        TargetAst* target;
-        SuiteAst* suite;
+
+public:
+    ExceptAst( Ast* );
+    ExpressionAst* exceptionDeclaration;
+    TargetAst* exceptionValue;
+    QList<StatementAst*> exceptionBody;
 };
 
 class WithAst : public StatementAst
 {
-    public:
-        WithAst( Ast* );
-        ExpressionAst* expression;
-        TargetAst* target;
-        SuiteAst* suite;
+
+public:
+    WithAst( Ast* );
+    ExpressionAst* context;
+    TargetAst* name;
+    QList<StatementAst*> body;
 };
 
 class ExecAst : public StatementAst
 {
-    public:
-        ExecAst( Ast* );
-        ArithmeticExpressionAst* expression;
-        DictionaryAst* globalsAndLocals;
-        ExpressionAst* localsOnly;
+
+public:
+    ExecAst( Ast* );
+    ArithmeticExpressionAst* executable;
+    DictionaryAst* globalsAndLocals;
+    ExpressionAst* localsOnly;
 };
 
 class GlobalAst : public StatementAst
 {
-    public:
-        GlobalAst( Ast* );
-        QList<QString> identifiers;
+
+public:
+    GlobalAst( Ast* );
+    QList<QString> identifiers;
 };
 
 class ImportAst : public StatementAst
 {
-    enum ImportType
-    {
-        FromImport,
-        PlainImport,
-        StarImport
-    };
-    public:
-        ImportAst( Ast* );
-        ImportType importType;
+
+public:
+    ImportAst( Ast* );
 };
 
 class PlainImportAst : public ImportAst
 {
-    public:
-        PlainImportAst( Ast* );
-        QMap<QStringList,QString> modulesAsName;
+
+public:
+    PlainImportAst( Ast* );
+    QMap<QStringList, QString> modulesAsName;
 };
 
 class StarImportAst : public ImportAst
 {
-    public:
-        StarImportAst( Ast* );
-        QStringList modulepath;
+
+public:
+    StarImportAst( Ast* );
+    QStringList modulePath;
 };
 
 class FromImportAst : public ImportAst
 {
-    public:
-        FromImportAst( Ast* );
-        QList<QString> modulepath;
-        int numLeadingDots;
-        QMap<QString,QString> identifierAsName;
+
+public:
+    FromImportAst( Ast* );
+    QList<QString> modulePath;
+    int numLeadingDots;
+    QMap<QString, QString> identifierAsName;
 };
 
 class RaiseAst : public StatementAst
 {
-    public:
-        RaiseAst( Ast* );
-        ExpressionAst* type;
-        ExpressionAst* value;
-        ExpressionAst* traceback;
+
+public:
+    RaiseAst( Ast* );
+    ExpressionAst* exceptionType;
+    ExpressionAst* exceptionValue;
+    ExpressionAst* traceback;
 };
 
 class PrintAst : public StatementAst
 {
-    public:
-        PrintAst( Ast* );
-        QList<ExpressionAst*> printables;
-        ExpressionAst* outfile;
+
+public:
+    PrintAst( Ast* );
+    QList<ExpressionAst*> printables;
+    ExpressionAst* outfile;
 };
 
 class ReturnAst : public StatementAst
 {
-    public:
-        ReturnAst( Ast* );
-        QList<ExpressionAst*> expressions;
+
+public:
+    ReturnAst( Ast* );
+    QList<ExpressionAst*> returnValues;
 };
 
 class YieldAst : public StatementAst
 {
-    public:
-        YieldAst( Ast* );
-        QList<ExpressionAst*> expressions;
+
+public:
+    YieldAst( Ast* );
+    QList<ExpressionAst*> yieldValue;
 };
 
 class DelAst : public StatementAst
 {
-    public:
-        DelAst( Ast* );
-        QList<TargetAst*> targets;
+
+public:
+    DelAst( Ast* );
+    QList<TargetAst*> deleteObjects;
 };
 
 class AssertAst : public StatementAst
 {
-    public:
-        AssertAst( Ast* );
-        ExpressionAst* assertTest;
-        ExpressionAst* exceptionValue;
+
+public:
+    AssertAst( Ast* );
+    ExpressionAst* assertTest;
+    ExpressionAst* exceptionValue;
 };
 
 class ExpressionStatementAst : public StatementAst
 {
-    public:
-        ExpressionStatementAst( Ast* );
-        QList<ExpressionAst*> expressions;
+
+public:
+    ExpressionStatementAst( Ast* );
+    QList<ExpressionAst*> expressions;
 };
 
 class AssignmentAst : public StatementAst
@@ -354,173 +399,216 @@ class AssignmentAst : public StatementAst
         AssignmentOp
     };
 
-    public:
-        AssignmentAst( Ast* );
-        OpType operation;
-        QList<QList<TargetAst*> > targetlists;
-        QList<ExpressionAst*> expressions;
-        YieldAst* yield;
+public:
+    AssignmentAst( Ast* );
+    OpType operation;
+    QList<QList<TargetAst*> > targets;
+    QList<ExpressionAst*> value;
+    YieldAst* yieldValue;
 };
 
 class TargetAst : public Ast
 {
-    enum ListType
+    enum TargetType
     {
-        TupleList,
-        NormalList
+        TupleTarget,
+        ListTarget,
+        AttributeReferenceTarget,
+        SubscriptTarget,
+        SliceTarget
     };
-    public:
-        TargetAst( Ast* );
-        QString identifier;
-        QList<TargetAst*> targets;
-        ListType listType;
-        AttributeReferenceAst* attributeReference;
-        SubscriptAst* subscript;
-        SliceAst* slice;
+
+public:
+    TargetAst( Ast* );
+    QString identifier;
+    QList<TargetAst*> listItems;
+    TargetType targetType;
+    AttributeReferenceAst* attributeReference;
+    SubscriptAst* subscript;
+    SliceAst* slice;
 };
 
-class AtomAst : public Ast
+class AtomAst : public PrimaryAst
 {
-    public:
-        AtomAst( Ast* );
-        QString identifier;
-        QString literal;
-        EnclosureAst* enclosure;
+
+public:
+    AtomAst( Ast* );
+    QString identifier;
+    QString literal;
+    EnclosureAst* enclosure;
 };
 
 class EnclosureAst : public Ast
 {
-    public:
-        EnclosureAst( Ast* );
-        QList<ExpressionAst*> parenthesizedform;
-        ListAst* list;
-        GeneratorAst* generator;
-        DictionaryAst* dict;
-        QList<ExpressionAst*> stringconversion;
-        YieldAst* yield;
+
+public:
+    EnclosureAst( Ast* );
+    QList<ExpressionAst*> parenthesizedform;
+    ListAst* list;
+    GeneratorAst* generator;
+    DictionaryAst* dict;
+    QList<ExpressionAst*> stringConversion;
+    YieldAst* yield;
 };
 
 class ListAst : public Ast
 {
-    public:
-        ListAst( Ast* );
-        QList<ExpressionAst*> expressions;
-        ListForAst* listGenerator;
+
+public:
+    ListAst( Ast* );
+    QList<ExpressionAst*> plainList;
+    ListForAst* listGenerator;
 };
 
 class ListForAst : public Ast
 {
-    public:
-        ListForAst( Ast* );
-        QList<TargetAst*> targets;
-        QList<ExpressionAst*> oldExpressions;
-        ListForAst* nextGenerator;
-        ListIfAst* nextCondition;
+
+public:
+    ListForAst( Ast* );
+    QList<TargetAst*> assignedTargets;
+    QList<ExpressionAst*> iterableObject;
+    ListForAst* nextGenerator;
+    ListIfAst* nextCondition;
 };
 
 class ListIfAst : public Ast
 {
-    public:
-        ListIfAst( Ast* );
-        ExpressionAst* expression;
-        ListForAst* nextGenerator;
-        ListIfAst* nextCondition;
+
+public:
+    ListIfAst( Ast* );
+    ExpressionAst* condition;
+    ListForAst* nextGenerator;
+    ListIfAst* nextCondition;
 };
 
 class GeneratorAst : public Ast
 {
-    public:
-        GeneratorAst( Ast* );
-        ExpressionAst* expression;
-        GeneratorForAst* generator;
+
+public:
+    GeneratorAst( Ast* );
+    ExpressionAst* generatedValue;
+    GeneratorForAst* generator;
 };
 
 class GeneratorForAst : public Ast
 {
-    public:
-        GeneratorForAst( Ast* );
-        QList<TargetAst*> targets;
-        OrTestAst* inList;
-        GeneratorForAst* nextGenerator;
-        GeneratorIfAst* nextCondition;
+
+public:
+    GeneratorForAst( Ast* );
+    QList<TargetAst*> assignedTargets;
+    OrTestAst* iterableObject;
+    GeneratorForAst* nextGenerator;
+    GeneratorIfAst* nextCondition;
 };
 
 class GeneratorIfAst : public Ast
 {
-    public:
-        GeneratorIfAst( Ast* );
-        ExpressionAst* expression;
-        GeneratorForAst* nextGenerator;
-        GeneratorIfAst* nextCondition;
+
+public:
+    GeneratorIfAst( Ast* );
+    ExpressionAst* condition;
+    GeneratorForAst* nextGenerator;
+    GeneratorIfAst* nextCondition;
 };
 
 class DictionaryAst : public Ast
 {
-    public:
-        DictionaryAst( Ast* );
-        QList<QMap<ExpressionAst*, ExpressionAst*> > dictionary;
+
+public:
+    DictionaryAst( Ast* );
+    QMap<ExpressionAst*, ExpressionAst*> dictionary;
 };
 
 class PrimaryAst : public Ast
 {
-    public:
-        PrimaryAst( Ast* );
-        AtomAst* atom;
-        AttributeReferenceAst* attributeReference;
-        SubscriptAst* subscript;
-        SliceAst* slice;
-        CallAst* call;
+
+public:
+    PrimaryAst( Ast* );
 };
 
-class AttributeReferenceAst : public Ast
+class AttributeReferenceAst : public PrimaryAst
 {
-    public:
-        AttributeReferenceAst( Ast* );
-        PrimaryAst* primary;
-        QString identifier;
+
+public:
+    AttributeReferenceAst( Ast* );
+    PrimaryAst* primary;
+    QString identifier;
 };
 
-class SubscriptAst : public Ast
+class SubscriptAst : public PrimaryAst
 {
-    public:
-        SubscriptAst( Ast* );
-        PrimaryAst* primary;
-        QList<ExpressionAst*> expressions;
+
+public:
+    SubscriptAst( Ast* );
+    PrimaryAst* primary;
+    QList<ExpressionAst*> subscription;
 };
 
-class SliceAst : public Ast
+class SliceAst : public PrimaryAst
 {
-    public:
-        SliceAst( Ast* );
-        PrimaryAst* primary;
-        QPair<ExpressionAst*,ExpressionAst*> simpleSliceBounds;
-        QList<SliceItemAst*> extendedSliceList;
+
+public:
+    SliceAst( Ast* );
+    PrimaryAst* primary;
+};
+
+class ExtendedSliceAst : public SliceAst
+{
+
+public:
+    ExtendedSliceAst( Ast* );
+    QList<SliceItemAst*> extendedSliceList;
+};
+
+class SimpleSliceAst : public SliceAst
+{
+
+public:
+    SimpleSliceAst( Ast* );
+    QPair<ExpressionAst*, ExpressionAst*> simpleSliceBounds;
 };
 
 class SliceItemAst : public Ast
 {
-    enum SliceItemType
-    {
-        EllipsisSlice,
-        ProperSlice,
-        ExpressionSlice
-    };
-    public:
-        SliceItemAst( Ast* );
-        ExpressionAst* expression;
-        SliceItemType itemType;
-        QPair<ExpressionAst*,ExpressionAst*> bounds;
-        ExpressionAst* stride;
+
+public:
+    SliceItemAst( Ast* );
 };
 
-class CallAst : public Ast
+
+class ProperSliceItemAst : public SliceItemAst
 {
-    public:
-        CallAst( Ast* );
-        PrimaryAst* callable;
-        QList<ArgumentAst*> arguments;
-        ExpressionAst* expression;
-        GeneratorForAst* generator;
+
+public:
+    ProperSliceItemAst( Ast* );
+    QPair<ExpressionAst*, ExpressionAst*> bounds;
+    ExpressionAst* stride;
+};
+
+class ExpressionSliceAst : public SliceItemAst
+{
+
+public:
+    ExpressionSliceAst( Ast* );
+    ExpressionAst* sliceExpression;
+};
+
+class EllipsisSliceAst : public SliceItemAst
+{
+
+public:
+    EllipsisSliceAst( Ast* );
+};
+
+class CallAst : public PrimaryAst
+{
+
+public:
+    CallAst( Ast* );
+    PrimaryAst* callable;
+    QList<ArgumentAst*> arguments;
+    ExpressionAst* callValue;
+    GeneratorForAst* callGenerator;
 };
 
 class ArithmeticExpressionAst : public Ast
@@ -544,24 +632,28 @@ class ArithmeticExpressionAst : public Ast
         BinaryXor,
         NoOp
     };
-    public:
-        ArithmeticExpressionAst( Ast* );
+
+public:
+    ArithmeticExpressionAst( Ast* );
+    ArithmeticOperation opType;
 };
 
 class UnaryExpressionAst : public ArithmeticExpressionAst
 {
-    public:
-        UnaryExpressionAst( Ast* );
-        PrimaryAst* primary;
-        UnaryExpressionAst* nextExpression;
+
+public:
+    UnaryExpressionAst( Ast* );
+    PrimaryAst* primary;
+    UnaryExpressionAst* operand;
 };
 
 class BinaryExpressionAst : public ArithmeticExpressionAst
 {
-    public:
-        BinaryExpressionAst( Ast* );
-        BinaryExpressionAst* lhs;
-        UnaryExpressionAst* rhs;
+
+public:
+    BinaryExpressionAst( Ast* );
+    BinaryExpressionAst* lhs;
+    UnaryExpressionAst* rhs;
 };
 
 class ComparisonAst : public Ast
@@ -579,10 +671,11 @@ class ComparisonAst : public Ast
         InOp,
         NotInOp
     };
-    public:
-        ComparisonAst( Ast* );
-        BinaryExpressionAst* firstComparator;
-        QMap<ComparisonOperator,BinaryExpressionAst*> comparatorList;
+
+public:
+    ComparisonAst( Ast* );
+    BinaryExpressionAst* firstComparator;
+    QMap<ComparisonOperator, BinaryExpressionAst*> comparatorList;
 };
 
 class BooleanAst : public Ast
@@ -593,35 +686,38 @@ class BooleanAst : public Ast
         AndOp,
         OrOp
     };
-    public:
-        BooleanAst( Ast* );
-        BooleanOperationAst* lhs;
-        BooleanOperation opType;
-        ComparisonAst* rhs;
+
+public:
+    BooleanAst( Ast* );
+    BooleanOperationAst* lhs;
+    BooleanOperation opType;
+    ComparisonAst* rhs;
 };
 
 class ExpressionAst : public Ast
 {
-    enum ExpressionType
-    {
-        BooleanExpression,
-        IfElseExpression,
-        LambdaExpression
-    };
-    public:
-        ExpressionAst( Ast* );
-        ExpressionType expressionType;
-        BooleanAst* booleanExpression;
-        ExpressionAst* elseExpression;
-        LambdaAst* lambda;
+
+public:
+    ExpressionAst( Ast* );
 };
 
-class LambdaAst : public Ast
+class BooleanExpressionAst : ExpressionAst
 {
-    public:
-        LambdaAst( Ast* );
-        QList<ParameterAst*> parameters;
-        ExpressionAst* expression;
+
+public:
+    BooleanExpressionAst( Ast* );
+    BooleanAst* mainExpression;
+    BooleanAst* condition;
+    ExpressionAst* elseExpression;
+};
+
+class LambdaAst : public ExpressionAst
+{
+
+public:
+    LambdaAst( Ast* );
+    QList<ParameterAst*> parameters;
+    ExpressionAst* expression;
 };
 
 }

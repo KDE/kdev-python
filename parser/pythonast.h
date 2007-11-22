@@ -435,13 +435,6 @@ class GeneratorAst : public Ast
         GeneratorForAst* generator;
 };
 
-AtomAst
-        EnclosureAst
-        ListAst
-        ListForAst
-        ListIfAst
-        GeneratorAst
-        GeneratorForAst
 class GeneratorForAst : public Ast
 {
     public:

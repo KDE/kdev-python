@@ -11,6 +11,7 @@ set(parser_STAT_SRCS
     pythonlexer.cpp
     kwcheck.cpp
     numbercheck.cpp
+    pythonast.cpp
     )
 
 if(KDEVPG_FOUND)

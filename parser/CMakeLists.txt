@@ -12,6 +12,7 @@ set(parser_STAT_SRCS
     kwcheck.cpp
     numbercheck.cpp
     pythonast.cpp
+    pythonastdefaultvisitor.cpp
     )
 
 if(KDEVPG_FOUND)

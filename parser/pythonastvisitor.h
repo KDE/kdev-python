@@ -31,6 +31,9 @@ class AstVisitor
 public:
     virtual ~AstVisitor() {}
 
+    typedef void (AstVisitor::*visitFunc)(Ast *);
+
+    void visitNode( Ast* );
 
     virtual void visitCode( CodeAst* ) = 0;
     virtual void visitStatement( StatementAst* ) = 0;

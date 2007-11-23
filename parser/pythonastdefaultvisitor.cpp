@@ -23,8 +23,21 @@
 namespace Python
 {
 
-void AstDefaultVisitor::visitCode( CodeAst* )
+AstDefaultVisitor::AstDefaultVisitor()
+    : AstVisitor()
 {
+}
+
+AstDefaultVisitor::~AstDefaultVisitor()
+{
+}
+
+void AstDefaultVisitor::visitCode( CodeAst* code )
+{
+    foreach( StatementAst* stmt, code->statements )
+    {
+        visitStatement( stmt );
+    }
 }
 
 void AstDefaultVisitor::visitStatement( StatementAst* )

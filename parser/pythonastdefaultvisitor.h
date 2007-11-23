@@ -95,6 +95,8 @@ public:
     virtual void visitBooleanExpression( BooleanExpressionAst* );
     virtual void visitLambda( LambdaAst* );
 
+    void visitNode( Ast* );
+
 };
 
 }

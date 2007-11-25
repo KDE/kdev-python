@@ -22,19 +22,19 @@ INCLUDE_DIRECTORIES(
 )
 
 #Don't error out if the FindXXX are missing for these two
-find_package(KDevelop-PG QUIET)
+find_package(KDevelop-PG-Qt QUIET)
 
-if(KDEVPG_FOUND)
+if(KDEVPGQT_FOUND)
     include_directories(
         ${CMAKE_BINARY_DIR}/parser
-        ${KDEVPG_INCLUDE_DIR}
+        ${KDEVPGQT_INCLUDE_DIR}
     )
-else(KDEVPG_FOUND)
+else(KDEVPGQT_FOUND)
     include_directories(
         ${CMAKE_SOURCE_DIR}/parser/generated
         ${CMAKE_SOURCE_DIR}/parser/generated/kdevelop-pg
     )
-endif(KDEVPG_FOUND)
+endif(KDEVPGQT_FOUND)
 
 
 add_subdirectory(parser)

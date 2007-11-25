@@ -69,8 +69,8 @@ add_custom_target( copy-generated
     DEPENDS "${CMAKE_BINARY_DIR}/parser/pythonparser.h"
     DEPENDS "${CMAKE_BINARY_DIR}/parser/pythonvisitor.cpp"
     DEPENDS "${CMAKE_BINARY_DIR}/parser/pythonvisitor.h"
-    DEPENDS "${CMAKE_BINARY_DIR}/parser/pythondefault_visitor.cpp"
-    DEPENDS "${CMAKE_BINARY_DIR}/parser/pythondefault_visitor.h"
+    DEPENDS "${CMAKE_BINARY_DIR}/parser/pythondefaultvisitor.cpp"
+    DEPENDS "${CMAKE_BINARY_DIR}/parser/pythondefaultvisitor.h"
     DEPENDS "${CMAKE_BINARY_DIR}/parser/pythonast.h"
     )
 

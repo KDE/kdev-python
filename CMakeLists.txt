@@ -32,7 +32,7 @@ if(KDEVPGQT_FOUND)
 else(KDEVPGQT_FOUND)
     include_directories(
         ${CMAKE_SOURCE_DIR}/parser/generated
-        ${CMAKE_SOURCE_DIR}/parser/generated/kdevelop-pg
+        ${CMAKE_SOURCE_DIR}/parser/generated/kdevelop-pg-qt
     )
 endif(KDEVPGQT_FOUND)
 

@@ -529,9 +529,9 @@ namespace PythonParser
 
    #argument=argument
     ( COMMA [: if(yytoken == Token_RPAREN || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR) { break; } :] #argument=argument)*
--> argList ;;
+-> plainArgumentsList ;;
 
-    (argList=argList | 0)
+    (argListBegin=plainArgumentsList | 0)
     (
         ( STAR arglistStar=test (?[: LA(1).kind != Token_RPAREN :] COMMA DOUBLESTAR arglistDoublestar=test | 0)
         | DOUBLESTAR arglistDoublestar=test)

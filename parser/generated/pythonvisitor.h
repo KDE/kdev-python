@@ -23,7 +23,6 @@ public:
     }
     virtual void visitAndExpr(AndExprAst *) {}
     virtual void visitAndTest(AndTestAst *) {}
-    virtual void visitArgList(ArgListAst *) {}
     virtual void visitArglist(ArglistAst *) {}
     virtual void visitArgument(ArgumentAst *) {}
     virtual void visitArithExpr(ArithExprAst *) {}
@@ -78,6 +77,7 @@ public:
     virtual void visitNotTest(NotTestAst *) {}
     virtual void visitNumber(NumberAst *) {}
     virtual void visitPassStmt(PassStmtAst *) {}
+    virtual void visitPlainArgumentsList(PlainArgumentsListAst *) {}
     virtual void visitPower(PowerAst *) {}
     virtual void visitPrintStmt(PrintStmtAst *) {}
     virtual void visitProject(ProjectAst *) {}

@@ -35,23 +35,9 @@ void DefaultVisitor::visitAndTest(AndTestAst *node)
     }
 }
 
-void DefaultVisitor::visitArgList(ArgListAst *node)
-{
-    if (node->argumentSequence)
-    {
-        const KDevPG::ListNode<ArgumentAst*> *__it = node->argumentSequence->front(), *__end = __it;
-        do
-        {
-            visitNode(__it->element);
-            __it = __it->next;
-        }
-        while (__it != __end);
-    }
-}
-
 void DefaultVisitor::visitArglist(ArglistAst *node)
 {
-    visitNode(node->argList);
+    visitNode(node->argListBegin);
     visitNode(node->arglistStar);
     visitNode(node->arglistDoublestar);
 }
@@ -535,6 +521,20 @@ void DefaultVisitor::visitNumber(NumberAst *)
 
 void DefaultVisitor::visitPassStmt(PassStmtAst *)
 {
+}
+
+void DefaultVisitor::visitPlainArgumentsList(PlainArgumentsListAst *node)
+{
+    if (node->argumentSequence)
+    {
+        const KDevPG::ListNode<ArgumentAst*> *__it = node->argumentSequence->front(), *__end = __it;
+        do
+        {
+            visitNode(__it->element);
+            __it = __it->next;
+        }
+        while (__it != __end);
+    }
 }
 
 void DefaultVisitor::visitPower(PowerAst *node)

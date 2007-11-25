@@ -15,7 +15,6 @@ class KDEVPYTHONPARSER_EXPORT DefaultVisitor: public Visitor
 public:
     virtual void visitAndExpr(AndExprAst *node);
     virtual void visitAndTest(AndTestAst *node);
-    virtual void visitArgList(ArgListAst *node);
     virtual void visitArglist(ArglistAst *node);
     virtual void visitArgument(ArgumentAst *node);
     virtual void visitArithExpr(ArithExprAst *node);
@@ -70,6 +69,7 @@ public:
     virtual void visitNotTest(NotTestAst *node);
     virtual void visitNumber(NumberAst *node);
     virtual void visitPassStmt(PassStmtAst *node);
+    virtual void visitPlainArgumentsList(PlainArgumentsListAst *node);
     virtual void visitPower(PowerAst *node);
     virtual void visitPrintStmt(PrintStmtAst *node);
     virtual void visitProject(ProjectAst *node);

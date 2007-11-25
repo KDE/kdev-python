@@ -65,7 +65,6 @@ namespace PythonParser
 
 struct AndExprAst;
 struct AndTestAst;
-struct ArgListAst;
 struct ArglistAst;
 struct ArgumentAst;
 struct ArithExprAst;
@@ -120,6 +119,7 @@ struct ListmakerAst;
 struct NotTestAst;
 struct NumberAst;
 struct PassStmtAst;
+struct PlainArgumentsListAst;
 struct PowerAst;
 struct PrintStmtAst;
 struct ProjectAst;
@@ -156,61 +156,61 @@ struct KDEVPYTHONPARSER_EXPORT AstNode
     {
         AndExprKind = 1000,
         AndTestKind = 1001,
-        ArgListKind = 1002,
-        ArglistKind = 1003,
-        ArgumentKind = 1004,
-        ArithExprKind = 1005,
-        ArithOpKind = 1006,
-        AssertStmtKind = 1007,
-        AtomKind = 1008,
-        AugassignKind = 1009,
-        BreakStmtKind = 1010,
-        ClassdefKind = 1011,
-        CompOpKind = 1012,
-        ComparisonKind = 1013,
-        CompoundStmtKind = 1014,
-        ContinueStmtKind = 1015,
-        DecoratorKind = 1016,
-        DecoratorsKind = 1017,
-        DelStmtKind = 1018,
-        DictmakerKind = 1019,
-        DottedAsNameKind = 1020,
-        DottedAsNamesKind = 1021,
-        DottedNameKind = 1022,
-        ExceptClauseKind = 1023,
-        ExecStmtKind = 1024,
-        ExprKind = 1025,
-        ExprStmtKind = 1026,
-        ExprlistKind = 1027,
-        FactOpKind = 1028,
-        FactorKind = 1029,
-        FlowStmtKind = 1030,
-        ForStmtKind = 1031,
-        FpDefKind = 1032,
-        FpdefKind = 1033,
-        FplistKind = 1034,
-        FunPosParamKind = 1035,
-        FuncDefKind = 1036,
-        FuncdefKind = 1037,
-        GenForKind = 1038,
-        GenIfKind = 1039,
-        GenIterKind = 1040,
-        GlobalStmtKind = 1041,
-        IfStmtKind = 1042,
-        ImportAsNameKind = 1043,
-        ImportAsNamesKind = 1044,
-        ImportFromKind = 1045,
-        ImportNameKind = 1046,
-        ImportStmtKind = 1047,
-        LambdaDefKind = 1048,
-        ListForKind = 1049,
-        ListIfKind = 1050,
-        ListIterKind = 1051,
-        ListMakerKind = 1052,
-        ListmakerKind = 1053,
-        NotTestKind = 1054,
-        NumberKind = 1055,
-        PassStmtKind = 1056,
+        ArglistKind = 1002,
+        ArgumentKind = 1003,
+        ArithExprKind = 1004,
+        ArithOpKind = 1005,
+        AssertStmtKind = 1006,
+        AtomKind = 1007,
+        AugassignKind = 1008,
+        BreakStmtKind = 1009,
+        ClassdefKind = 1010,
+        CompOpKind = 1011,
+        ComparisonKind = 1012,
+        CompoundStmtKind = 1013,
+        ContinueStmtKind = 1014,
+        DecoratorKind = 1015,
+        DecoratorsKind = 1016,
+        DelStmtKind = 1017,
+        DictmakerKind = 1018,
+        DottedAsNameKind = 1019,
+        DottedAsNamesKind = 1020,
+        DottedNameKind = 1021,
+        ExceptClauseKind = 1022,
+        ExecStmtKind = 1023,
+        ExprKind = 1024,
+        ExprStmtKind = 1025,
+        ExprlistKind = 1026,
+        FactOpKind = 1027,
+        FactorKind = 1028,
+        FlowStmtKind = 1029,
+        ForStmtKind = 1030,
+        FpDefKind = 1031,
+        FpdefKind = 1032,
+        FplistKind = 1033,
+        FunPosParamKind = 1034,
+        FuncDefKind = 1035,
+        FuncdefKind = 1036,
+        GenForKind = 1037,
+        GenIfKind = 1038,
+        GenIterKind = 1039,
+        GlobalStmtKind = 1040,
+        IfStmtKind = 1041,
+        ImportAsNameKind = 1042,
+        ImportAsNamesKind = 1043,
+        ImportFromKind = 1044,
+        ImportNameKind = 1045,
+        ImportStmtKind = 1046,
+        LambdaDefKind = 1047,
+        ListForKind = 1048,
+        ListIfKind = 1049,
+        ListIterKind = 1050,
+        ListMakerKind = 1051,
+        ListmakerKind = 1052,
+        NotTestKind = 1053,
+        NumberKind = 1054,
+        PassStmtKind = 1055,
+        PlainArgumentsListKind = 1056,
         PowerKind = 1057,
         PrintStmtKind = 1058,
         ProjectKind = 1059,
@@ -262,18 +262,11 @@ struct KDEVPYTHONPARSER_EXPORT AndTestAst: public AstNode
     const KDevPG::ListNode<NotTestAst *> *notTestSequence;
 };
 
-struct KDEVPYTHONPARSER_EXPORT ArgListAst: public AstNode
-{
-    enum { KIND = ArgListKind };
-
-    const KDevPG::ListNode<ArgumentAst *> *argumentSequence;
-};
-
 struct KDEVPYTHONPARSER_EXPORT ArglistAst: public AstNode
 {
     enum { KIND = ArglistKind };
 
-    ArgListAst *argList;
+    PlainArgumentsListAst *argListBegin;
     TestAst *arglistStar;
     TestAst *arglistDoublestar;
 };
@@ -708,6 +701,13 @@ struct KDEVPYTHONPARSER_EXPORT PassStmtAst: public AstNode
 {
     enum { KIND = PassStmtKind };
 
+};
+
+struct KDEVPYTHONPARSER_EXPORT PlainArgumentsListAst: public AstNode
+{
+    enum { KIND = PlainArgumentsListKind };
+
+    const KDevPG::ListNode<ArgumentAst *> *argumentSequence;
 };
 
 struct KDEVPYTHONPARSER_EXPORT PowerAst: public AstNode

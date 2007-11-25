@@ -198,7 +198,6 @@ public:
 
     bool parseAndExpr(AndExprAst **yynode);
     bool parseAndTest(AndTestAst **yynode);
-    bool parseArgList(ArgListAst **yynode);
     bool parseArglist(ArglistAst **yynode);
     bool parseArgument(ArgumentAst **yynode);
     bool parseArithExpr(ArithExprAst **yynode);
@@ -253,6 +252,7 @@ public:
     bool parseNotTest(NotTestAst **yynode);
     bool parseNumber(NumberAst **yynode);
     bool parsePassStmt(PassStmtAst **yynode);
+    bool parsePlainArgumentsList(PlainArgumentsListAst **yynode);
     bool parsePower(PowerAst **yynode);
     bool parsePrintStmt(PrintStmtAst **yynode);
     bool parseProject(ProjectAst **yynode);

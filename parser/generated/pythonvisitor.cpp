@@ -10,7 +10,6 @@ Visitor::ParserFuncType Visitor::sParserTable[] =
 {
     reinterpret_cast<ParserFuncType>(&Visitor::visitAndExpr),
     reinterpret_cast<ParserFuncType>(&Visitor::visitAndTest),
-    reinterpret_cast<ParserFuncType>(&Visitor::visitArgList),
     reinterpret_cast<ParserFuncType>(&Visitor::visitArglist),
     reinterpret_cast<ParserFuncType>(&Visitor::visitArgument),
     reinterpret_cast<ParserFuncType>(&Visitor::visitArithExpr),
@@ -65,6 +64,7 @@ Visitor::ParserFuncType Visitor::sParserTable[] =
     reinterpret_cast<ParserFuncType>(&Visitor::visitNotTest),
     reinterpret_cast<ParserFuncType>(&Visitor::visitNumber),
     reinterpret_cast<ParserFuncType>(&Visitor::visitPassStmt),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitPlainArgumentsList),
     reinterpret_cast<ParserFuncType>(&Visitor::visitPower),
     reinterpret_cast<ParserFuncType>(&Visitor::visitPrintStmt),
     reinterpret_cast<ParserFuncType>(&Visitor::visitProject),

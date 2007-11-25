@@ -35,19 +35,19 @@
 -- TODO: Error recovery
 -- %parserclass (private declaration)
 -- [:
---   parser::java_compatibility_mode _M_compatibility_mode;
+--   parser::javaCompatibilityMode _MCompatibilityMode;
 --
---   struct parser_state {
+--   struct parserState {
 --   };
---   parser_state _M_state;
+--   parserState _MState;
 -- :]
--- parser::parser_state *parser::copy_current_state()
+-- parser::parserState *parser::copyCurrentState()
 -- {
---     parser_state *state = new parser_state();
+--     parserState *state = new parserState();
 --     return state;
 -- }
 --
--- void parser::restore_state( parser::parser_state *state )
+-- void parser::restoreState( parser::parserState *state )
 -- {
 -- }
 --
@@ -67,55 +67,45 @@ namespace Python
 {
     class Lexer;
 
-    enum shift_operator_enum {
-        op_lshift,
-        op_rshift
+    enum OperatorType {
+        LeftShiftOp,
+        RightShiftOp,
+        PlusOp,
+        MinusOp,
+        StarOp,
+        SlashOp,
+        ModuloOp,
+        DoubleSlashOp,
+        BinaryPlusOp,
+        BinaryMinusOp,
+        BinaryTildeOp,
+        PlusEqOp,
+        MinusEqOp,
+        StarEqOp,
+        SlashEqOp,
+        ModuloEqOp,
+        AndEqOp,
+        OrEqOp,
+        TildeEqOp,
+        LeftShiftEqOp,
+        RightShiftEqOp,
+        DoublestarEqOp,
+        DoubleslashEqOp,
+        LessOp,
+        GreaterOp,
+        IsEqualOp,
+        GreaterEqOp,
+        LessEqOp,
+        UnEqualOp,
+        InOp,
+        NotInOp,
+        IsOp,
+        IsNotOp
     };
-    enum arith_operator_enum {
-        op_plus,
-        op_minus
-    };
-    enum term_operator_enum {
-        op_star,
-        op_slash,
-        op_modulo,
-        op_doubleslash
-    };
-    enum factor_operator_enum {
-        op_factor_plus,
-        op_factor_minus,
-        op_factor_tilde
-    };
-    enum augassign_eq_enum  {
-        eq_plus,
-        eq_minus,
-        eq_star,
-        eq_slash,
-        eq_modulo,
-        eq_and,
-        eq_or,
-        eq_tilde,
-        eq_lshift,
-        eq_rshift,
-        eq_doublestar,
-        eq_doubleslash
-    };
-    enum comp_operator_enum   {
-        op_less,
-        op_greater,
-        op_isequal,
-        op_greatereq,
-        op_lesseq,
-        op_unequal,
-        op_in,
-        op_not_in,
-        op_is,
-        op_is_not
-    };
-    enum num_type_enum  {
-        type_int,
-        type_float,
-        type_imagnum
+    enum NumericType  {
+        IntegerNumeric,
+        FloatNumeric,
+        ImaginaryNumeric
     };
 }
 :]
@@ -153,8 +143,8 @@ namespace Python
 
 %parserclass (private declaration)
 [:
-   QString m_contents;
-   bool m_debug;
+   QString mContents;
+   bool mDebug;
 :]
 
 -----------------------------------------------------------
@@ -202,7 +192,7 @@ namespace Python
    ( #stmt = stmt )*
 -> project ;;
 
-   AT decorator_name = dotted_name ( LPAREN ( arguments=arglist | 0) RPAREN | 0 ) LINEBREAK
+   AT decoratorName = dottedName ( LPAREN ( arguments=arglist | 0) RPAREN | 0 ) LINEBREAK
 -> decorator ;;
 
    (#decorator = decorator )*
@@ -211,31 +201,31 @@ namespace Python
 -- Function Definition: Can start with Decorators.
 -- varargslist defines the Function Variable Arguements
    ( decorators = decorators | 0 )
-    DEF func_name=IDENTIFIER LPAREN ( ?[: LA(1).kind != Token_RPAREN :] ( fun_args = varargslist )
+    DEF funcName=IDENTIFIER LPAREN ( ?[: LA(1).kind != Token_RPAREN :] ( funArgs = varargslist )
     | 0 )
-    RPAREN COLON fun_suite=suite
+    RPAREN COLON funSuite=suite
 -> funcdef ;;
 
 -- Function variable Arguement List
-    (func_def=func_def | 0 ) (
-    ?[: yytoken != Token_RPAREN  && LA(2).kind == Token_IDENTIFIER:] (fun_pos_param = fun_pos_param )
+    (funcDef=funcDef | 0 ) (
+    ?[: yytoken != Token_RPAREN  && LA(2).kind == Token_IDENTIFIER:] (funPosParam = funPosParam )
     | 0
     )
 -> varargslist ;;
 
 -- The Vararguement trailer, defines *args and **args
-    ( STAR star_id=IDENTIFIER ( COMMA DOUBLESTAR double_star_id=IDENTIFIER | 0 )
-        | DOUBLESTAR double_star_id=IDENTIFIER )
--> fun_pos_param;;
+    ( STAR starId=IDENTIFIER ( COMMA DOUBLESTAR doubleStarId=IDENTIFIER | 0 )
+        | DOUBLESTAR doubleStarId=IDENTIFIER )
+-> funPosParam;;
 
 -- Function Definition
-    #fp_def=fp_def ( COMMA [:if(yytoken == Token_RPAREN  || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR ) { break; } :] #fp_def=fp_def )*
--> func_def ;;
+    #fpDef=fpDef ( COMMA [:if(yytoken == Token_RPAREN  || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR ) { break; } :] #fpDef=fpDef )*
+-> funcDef ;;
 
 
 -- Function parameter Defintion
-    fpdef=fpdef ( EQUAL fp_def_test=test | 0 )
--> fp_def ;;
+    fpdef=fpdef ( EQUAL fpDefTest=test | 0 )
+-> fpDef ;;
 
 -- Function Parameter Definition
    LPAREN (fplist = fplist) RPAREN
@@ -244,262 +234,262 @@ namespace Python
 
 
 -- Function parameter List
-    #fplist_fpdef=fpdef
+    #fplistFpdef=fpdef
     ( COMMA [: if ( yytoken == Token_RPAREN )
                   { break; } :]
-            #fplist_fpdef=fpdef )*
+            #fplistFpdef=fpdef )*
 -> fplist ;;
 
 -- A statement could be simple statement, a compound statement OR just a Linebreak
-    simple_stmt = simple_stmt
-    | compound_stmt = compound_stmt
+    simpleStmt = simpleStmt
+    | compoundStmt = compoundStmt
     | LINEBREAK
 -> stmt ;;
 
--- simple statement, TODO this needs more work for simple_stmts at the enf of files
-   #small_stmt = small_stmt
-    ( SEMICOLON [: if( yytoken == Token_LINEBREAK || yytoken == Token_DEDENT) { break;} :] #small_stmt = small_stmt )*  LINEBREAK
--> simple_stmt ;;
+-- simple statement, TODO this needs more work for simpleStmts at the enf of files
+   #smallStmt = smallStmt
+    ( SEMICOLON [: if( yytoken == Token_LINEBREAK || yytoken == Token_DEDENT) { break;} :] #smallStmt = smallStmt )*  LINEBREAK
+-> simpleStmt ;;
 
 -- a small statement could be of any such kinds
-     expr_stmt = expr_stmt
-   | print_stmt = print_stmt
-   | del_stmt = del_stmt
-   | pass_stmt = pass_stmt
-   | flow_stmt = flow_stmt
-   | import_stmt = import_stmt
-   | global_stmt= global_stmt
-   | exec_stmt = exec_stmt
-   | assert_stmt = assert_stmt
--> small_stmt ;;
+     exprStmt = exprStmt
+   | printStmt = printStmt
+   | delStmt = delStmt
+   | passStmt = passStmt
+   | flowStmt = flowStmt
+   | importStmt = importStmt
+   | globalStmt= globalStmt
+   | execStmt = execStmt
+   | assertStmt = assertStmt
+-> smallStmt ;;
 
-   (testlist = testlist) ( augassign = augassign anugassign_testlist = testlist
-    | ( EQUAL #equal_testlist = testlist )+
+   (testlist = testlist) ( augassign = augassign anugassignTestlist = testlist
+    | ( EQUAL #equalTestlist = testlist )+
     | ?[: yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK :] 0 )
--> expr_stmt ;;
+-> exprStmt ;;
 
-   PLUSEQ           [: (*yynode)->augassign_eq = Python::eq_plus;   :]
-   | MINUSEQ        [: (*yynode)->augassign_eq = Python::eq_minus;  :]
-   | STAREQ         [: (*yynode)->augassign_eq = Python::eq_star;   :]
-   | SLASHEQ        [: (*yynode)->augassign_eq = Python::eq_slash;  :]
-   | MODULOEQ       [: (*yynode)->augassign_eq = Python::eq_modulo; :]
-   | ANDEQ          [: (*yynode)->augassign_eq = Python::eq_and;    :]
-   | OREQ           [: (*yynode)->augassign_eq = Python::eq_or;     :]
-   | TILDEEQ        [: (*yynode)->augassign_eq = Python::eq_tilde;  :]
-   | LSHIFTEQ       [: (*yynode)->augassign_eq = Python::eq_lshift; :]
-   | RSHIFTEQ       [: (*yynode)->augassign_eq = Python::eq_rshift; :]
-   | DOUBLESTAREQ   [: (*yynode)->augassign_eq = Python::eq_doublestar; :]
-   | DOUBLESLASHEQ  [: (*yynode)->augassign_eq = Python::eq_doubleslash;:]
+   PLUSEQ           [: (*yynode)->assignOp = Python::PlusEqOp;   :]
+   | MINUSEQ        [: (*yynode)->assignOp = Python::MinusEqOp;  :]
+   | STAREQ         [: (*yynode)->assignOp = Python::StarEqOp;   :]
+   | SLASHEQ        [: (*yynode)->assignOp = Python::SlashEqOp;  :]
+   | MODULOEQ       [: (*yynode)->assignOp = Python::ModuloEqOp; :]
+   | ANDEQ          [: (*yynode)->assignOp = Python::AndEqOp;    :]
+   | OREQ           [: (*yynode)->assignOp = Python::OrEqOp;     :]
+   | TILDEEQ        [: (*yynode)->assignOp = Python::TildeEqOp;  :]
+   | LSHIFTEQ       [: (*yynode)->assignOp = Python::LeftShiftEqOp; :]
+   | RSHIFTEQ       [: (*yynode)->assignOp = Python::RightShiftEqOp; :]
+   | DOUBLESTAREQ   [: (*yynode)->assignOp = Python::DoublestarEqOp; :]
+   | DOUBLESLASHEQ  [: (*yynode)->assignOp = Python::DoubleslashEqOp;:]
 -> augassign [
-    member variable augassign_eq: Python::augassign_eq_enum; ];;
+    member variable assignOp : Python::OperatorType; ];;
 
    PRINT
     (
-    (#print_args=test ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]#print_args=test )*)
-    | RSHIFT #rshift_args=test ( ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]#rshift_args=test )*)
+    (#printArgs=test ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]#printArgs=test )*)
+    | RSHIFT #rshiftArgs=test ( ( COMMA [: if(yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK) {break; } :]#rshiftArgs=test )*)
     | 0
     )
--> print_stmt ;;
+-> printStmt ;;
 
-   DEL del_list=exprlist
--> del_stmt ;;
+   DEL delList=exprlist
+-> delStmt ;;
 
    PASS
--> pass_stmt ;;
+-> passStmt ;;
 
-   break_stmt=break_stmt
-    | continue_stmt=continue_stmt
-    | return_stmt=return_stmt
-    | raise_stmt=raise_stmt
-    | yield_stmt=yield_stmt
--> flow_stmt ;;
+   breakStmt=breakStmt
+    | continueStmt=continueStmt
+    | returnStmt=returnStmt
+    | raiseStmt=raiseStmt
+    | yieldStmt=yieldStmt
+-> flowStmt ;;
 
    BREAK
--> break_stmt ;;
+-> breakStmt ;;
 
    CONTINUE
--> continue_stmt ;;
+-> continueStmt ;;
 
-   RETURN ( return_expr=testlist | 0 )
--> return_stmt ;;
+   RETURN ( returnExpr=testlist | 0 )
+-> returnStmt ;;
 
-   YIELD yield_expr=testlist
--> yield_stmt ;;
+   YIELD yieldExpr=testlist
+-> yieldStmt ;;
 
    RAISE ( type=test ( COMMA value=test ( COMMA traceback=test | 0 ) | 0 ) | 0 )
--> raise_stmt ;;
+-> raiseStmt ;;
 
-   import_import=import_name
-    | import_from=import_from
--> import_stmt ;;
+   importImport=importName
+    | importFrom=importFrom
+-> importStmt ;;
 
-   IMPORT import_name=dotted_as_names
--> import_name ;;
+   IMPORT importName=dottedAsNames
+-> importName ;;
 
-   FROM import_from_name=dotted_name IMPORT ( STAR | LPAREN import_as_names=import_as_names RPAREN | import_from_as_name=import_as_names )
--> import_from ;;
+   FROM importFromName=dottedName IMPORT ( STAR | LPAREN importAsNames=importAsNames RPAREN | importFromAsName=importAsNames )
+-> importFrom ;;
 
-   imported_name=IDENTIFIER ( AS imported_as=IDENTIFIER | 0 )
--> import_as_name ;;
+   importedName=IDENTIFIER ( AS importedAs=IDENTIFIER | 0 )
+-> importAsName ;;
 
-   import_dotted_name=dotted_name ( AS imported_as=IDENTIFIER | 0 )
--> dotted_as_name ;;
+   importDottedName=dottedName ( AS importedAs=IDENTIFIER | 0 )
+-> dottedAsName ;;
 
-   #import_as_name=import_as_name
-    ( COMMA [: if( yytoken == Token_RPAREN || yytoken == Token_LINEBREAK || yytoken == Token_SEMICOLON ) { break;} :] #import_as_name=import_as_name)*
--> import_as_names ;;
+   #importAsName=importAsName
+    ( COMMA [: if( yytoken == Token_RPAREN || yytoken == Token_LINEBREAK || yytoken == Token_SEMICOLON ) { break;} :] #importAsName=importAsName)*
+-> importAsNames ;;
 
-   #dotted_as_name=dotted_as_name ( COMMA #dotted_as_name=dotted_as_name )*
--> dotted_as_names ;;
+   #dottedAsName=dottedAsName ( COMMA #dottedAsName=dottedAsName )*
+-> dottedAsNames ;;
 
-   dotted_name=IDENTIFIER ( DOT dotted_name=IDENTIFIER )*
--> dotted_name ;;
+   dottedName=IDENTIFIER ( DOT dottedName=IDENTIFIER )*
+-> dottedName ;;
 
-   GLOBAL #global_name=IDENTIFIER ( COMMA #global_name=IDENTIFIER )*
--> global_stmt ;;
+   GLOBAL #globalName=IDENTIFIER ( COMMA #globalName=IDENTIFIER )*
+-> globalStmt ;;
 
-   EXEC exec_code=expr ( IN global_dict_exec=test ( COMMA local_dict_exec=test | 0 ) | 0 )
--> exec_stmt ;;
+   EXEC execCode=expr ( IN globalDictExec=test ( COMMA localDictExec=test | 0 ) | 0 )
+-> execStmt ;;
 
-   ASSERT assert_not_test=test ( COMMA assert_raise_test=test | 0 )
--> assert_stmt ;;
+   ASSERT assertNotTest=test ( COMMA assertRaiseTest=test | 0 )
+-> assertStmt ;;
 
-   if_stmt=if_stmt
-   | while_stmt=while_stmt
-   | for_stmt=for_stmt
-   | try_stmt=try_stmt
+   ifStmt=ifStmt
+   | whileStmt=whileStmt
+   | forStmt=forStmt
+   | tryStmt=tryStmt
    | fucdef=funcdef
    | classdef=classdef
--> compound_stmt ;;
+-> compoundStmt ;;
 
-   IF #if_test=test COLON if_suite=suite ( ELIF #elif_test=test COLON #elif_suite=suite )* ( ELSE COLON if_else_suite=suite | 0 )
--> if_stmt ;;
+   IF #ifTest=test COLON ifSuite=suite ( ELIF #elifTest=test COLON #elifSuite=suite )* ( ELSE COLON ifElseSuite=suite | 0 )
+-> ifStmt ;;
 
-   WHILE while_test=test COLON while_suite=suite ( ELSE COLON while_else_suite=suite | 0 )
--> while_stmt ;;
+   WHILE whileTest=test COLON whileSuite=suite ( ELSE COLON whileElseSuite=suite | 0 )
+-> whileStmt ;;
 
-   FOR for_expr=exprlist IN for_testlist=testlist COLON for_suite=suite ( ELSE COLON for_else_suite=suite | 0 )
--> for_stmt ;;
+   FOR forExpr=exprlist IN forTestlist=testlist COLON forSuite=suite ( ELSE COLON forElseSuite=suite | 0 )
+-> forStmt ;;
 
-   TRY COLON try_suite=suite
-    ( ( #except_clause=except_clause COLON #except_suite=suite )+ ( ELSE COLON try_else_suite=suite | 0 ) | FINALLY COLON finally_suite=suite )
--> try_stmt ;;
+   TRY COLON trySuite=suite
+    ( ( #exceptClause=exceptClause COLON #exceptSuite=suite )+ ( ELSE COLON tryElseSuite=suite | 0 ) | FINALLY COLON finallySuite=suite )
+-> tryStmt ;;
 
-   EXCEPT ( except_test=test ( COMMA except_target_test=test | 0 ) | 0 )
--> except_clause ;;
+   EXCEPT ( exceptTest=test ( COMMA exceptTargetTest=test | 0 ) | 0 )
+-> exceptClause ;;
 
-   simple_stmt=simple_stmt | (LINEBREAK)+ INDENT (#stmt=stmt)+ DEDENT
+   simpleStmt=simpleStmt | (LINEBREAK)+ INDENT (#stmt=stmt)+ DEDENT
 -> suite ;;
 
-   #and_test=and_test ( OR #and_test=and_test )* | lambda_def=lambda_def
+   #andTest=andTest ( OR #andTest=andTest )* | lambdaDef=lambdaDef
 -> test ;;
 
-   #not_test=not_test ( AND #not_test=not_test )*
--> and_test ;;
+   #notTest=notTest ( AND #notTest=notTest )*
+-> andTest ;;
 
-   NOT not_test=not_test | comparison=comparison
--> not_test ;;
+   NOT notTest=notTest | comparison=comparison
+-> notTest ;;
 
-   comp_expr=expr ( #comp_op=comp_op #comp_op_expr=expr )*
+   compExpr=expr ( #compOp=compOp #compOpExpr=expr )*
 -> comparison ;;
 
-   LESS         [: (*yynode)->comp_operator = Python::op_less;      :]
-   | GREATER    [: (*yynode)->comp_operator = Python::op_greater;   :]
-   | ISEQUAL    [: (*yynode)->comp_operator = Python::op_isequal;   :]
-   | GREATEREQ  [: (*yynode)->comp_operator = Python::op_greatereq; :]
-   | LESSEQ     [: (*yynode)->comp_operator = Python::op_lesseq;    :]
-   | UNEQUAL    [: (*yynode)->comp_operator = Python::op_unequal;   :]
-   | IN         [: (*yynode)->comp_operator = Python::op_in;        :]
-   | NOT IN     [: (*yynode)->comp_operator = Python::op_not_in;    :]
-   | IS (NOT    [: (*yynode)->comp_operator = Python::op_is_not;    :]
-        | 0     [: (*yynode)->comp_operator = Python::op_is;        :]
+   LESS         [: (*yynode)->compOp = Python::LessOp;      :]
+   | GREATER    [: (*yynode)->compOp = Python::GreaterOp;   :]
+   | ISEQUAL    [: (*yynode)->compOp = Python::IsEqualOp;   :]
+   | GREATEREQ  [: (*yynode)->compOp = Python::GreaterEqOp; :]
+   | LESSEQ     [: (*yynode)->compOp = Python::LessEqOp;    :]
+   | UNEQUAL    [: (*yynode)->compOp = Python::UnEqualOp;   :]
+   | IN         [: (*yynode)->compOp = Python::InOp;        :]
+   | NOT IN     [: (*yynode)->compOp = Python::NotInOp;    :]
+   | IS (NOT    [: (*yynode)->compOp = Python::IsNotOp;    :]
+        | 0     [: (*yynode)->compOp = Python::IsOp;        :]
     )
--> comp_op [
-        member variable comp_operator: Python::comp_operator_enum; ];;
+-> compOp [
+        member variable compOp : Python::OperatorType; ];;
 
-   expr=xor_expr ( ORR #orr_expr=xor_expr )*
+   expr=xorExpr ( ORR #orrExpr=xorExpr )*
 -> expr ;;
 
-   xor_expr=and_expr ( HAT #hat_xor_expr=and_expr )*
--> xor_expr ;;
+   xorExpr=andExpr ( HAT #hatXorExpr=andExpr )*
+-> xorExpr ;;
 
-   and_expr=shift_expr ( ANDD #andd_shif_expr=shift_expr )*
--> and_expr ;;
+   andExpr=shiftExpr ( ANDD #anddShifExpr=shiftExpr )*
+-> andExpr ;;
 
-   arith_expr=arith_expr
-    ( #shift_op_list=shift_op #arith_expr_list=arith_expr )*
--> shift_expr ;;
+   arithExpr=arithExpr
+    ( #shiftOpList=shiftOp #arithExprList=arithExpr )*
+-> shiftExpr ;;
 
-    LSHIFT      [: (*yynode)->shift_operator = Python::op_lshift;   :]
-    | RSHIFT    [: (*yynode)->shift_operator = Python::op_rshift;   :]
--> shift_op [
-    member variable shift_operator: Python::shift_operator_enum; ];;
+    LSHIFT      [: (*yynode)->shiftOp = Python::LeftShiftOp;   :]
+    | RSHIFT    [: (*yynode)->shiftOp = Python::RightShiftOp;   :]
+-> shiftOp [
+    member variable shiftOp : Python::OperatorType; ];;
 
-   arith_term=term
-    ((#arith_op_list = arith_op #arith_term_list=term )+ | 0)
--> arith_expr ;;
+   arithTerm=term
+    ((#arithOpList = arithOp #arithTermList=term )+ | 0)
+-> arithExpr ;;
 
-    PLUS        [: (*yynode)->arith_operator = Python::op_plus;     :]
-    | MINUS     [: (*yynode)->arith_operator = Python::op_minus;    :]
--> arith_op [
-    member variable arith_operator: Python::arith_operator_enum; ] ;;
+    PLUS        [: (*yynode)->arithOp = Python::PlusOp;     :]
+    | MINUS     [: (*yynode)->arithOp = Python::MinusOp;    :]
+-> arithOp [
+    member variable arithOp: Python::OperatorType; ] ;;
 
    factor=factor
-    ((#term_op_list = term_op #factor_list=factor )+ | 0)
+    ((#termOpList = termOp #factorList=factor )+ | 0)
 -> term ;;
 
-    STAR        [: (*yynode)->term_operator = Python::op_star;      :]
-    | SLASH     [: (*yynode)->term_operator = Python::op_slash;     :]
-    | MODULO    [: (*yynode)->term_operator = Python::op_modulo;    :]
-    | DOUBLESLASH [: (*yynode)->term_operator = Python::op_doubleslash; :]
--> term_op [
-    member variable term_operator: Python::term_operator_enum; ];;
+    STAR        [: (*yynode)->termOp = Python::StarOp;      :]
+    | SLASH     [: (*yynode)->termOp = Python::SlashOp;     :]
+    | MODULO    [: (*yynode)->termOp = Python::ModuloOp;    :]
+    | DOUBLESLASH [: (*yynode)->termOp = Python::DoubleSlashOp; :]
+-> termOp [
+    member variable termOp : Python::OperatorType; ];;
 
-   ( fact_op=fact_op) factor=factor | power=power
+   ( factOp=factOp) factor=factor | power=power
 -> factor ;;
 
-    PLUS        [: (*yynode)->factor_operator = Python::op_factor_plus;     :]
-    | MINUS     [: (*yynode)->factor_operator = Python::op_factor_minus;    :]
-    | TILDE     [: (*yynode)->factor_operator = Python::op_factor_tilde ;   :]
--> fact_op [
-    member variable factor_operator: Python::factor_operator_enum;   ];;
+    PLUS        [: (*yynode)->facOp = Python::BinaryPlusOp;     :]
+    | MINUS     [: (*yynode)->facOp = Python::BinaryMinusOp;    :]
+    | TILDE     [: (*yynode)->facOp = Python::BinaryTildeOp ;   :]
+-> factOp [
+    member variable facOp : Python::OperatorType;   ];;
 
    ( atom=atom )
     (#trailer=trailer)* ( DOUBLESTAR factor=factor | 0 )
 -> power ;;
 
-   LPAREN ( testlist_gexp=testlist_gexp | 0 ) RPAREN
+   LPAREN ( testlistGexp=testlistGexp | 0 ) RPAREN
    | LBRACKET listmaker=listmaker RBRACKET
    | LBRACE dictmaker=dictmaker RBRACE
    | BACKTICK testlist1=testlist1 BACKTICK
-   | atom_identifier_name=IDENTIFIER
+   | atomIdentifierName=IDENTIFIER
    | number=number
    | (#stringliteral=STRINGLITERAL)+
 -> atom ;;
 
 
-   INTEGER      [: (*yynode)->num_type = Python::type_int;      :]
-   | FLOAT      [: (*yynode)->num_type = Python::type_float;    :]
-   | IMAGNUM    [: (*yynode)->num_type = Python::type_imagnum;  :]
+   INTEGER      [: (*yynode)->numType = Python::IntegerNumeric;      :]
+   | FLOAT      [: (*yynode)->numType = Python::FloatNumeric;    :]
+   | IMAGNUM    [: (*yynode)->numType = Python::ImaginaryNumeric;  :]
 -> number [
-    member variable num_type: Python::num_type_enum; ];;
+    member variable numType: Python::NumericType; ];;
 
-   ( #list_test=test ( COMMA [: if (yytoken == Token_RBRACKET) { break; } :] #list_test=test )* | 0)
--> list_maker ;;
+   ( #listTest=test ( COMMA [: if (yytoken == Token_RBRACKET) { break; } :] #listTest=test )* | 0)
+-> listMaker ;;
 
-    list_maker=list_maker (list_for=list_for | 0)
+    listMaker=listMaker (listFor=listFor | 0)
 -> listmaker ;;
 
    #test=test ( COMMA [: if( yytoken == Token_COLON || yytoken == Token_SEMICOLON || yytoken == Token_RPAREN || yytoken == Token_LINEBREAK) { break; } :] #test=test )*
--> test_list_gexp ;;
+-> testListGexp ;;
 
-    test_list_gexp=test_list_gexp ( gen_for=gen_for | 0 )
--> testlist_gexp ;;
+    testListGexp=testListGexp ( genFor=genFor | 0 )
+-> testlistGexp ;;
 
-   LAMBDA ( lambda_varargslist=varargslist | 0 ) COLON lambda_test=test
--> lambda_def ;;
+   LAMBDA ( lambdaVarargslist=varargslist | 0 ) COLON lambdaTest=test
+-> lambdaDef ;;
 
-   LPAREN ( trailer_arglist=arglist | 0 ) RPAREN | LBRACKET subscriptlist=subscriptlist RBRACKET | DOT tariler_dot_name=IDENTIFIER
+   LPAREN ( trailerArglist=arglist | 0 ) RPAREN | LBRACKET subscriptlist=subscriptlist RBRACKET | DOT tarilerDotName=IDENTIFIER
 -> trailer ;;
 
    #subscript=subscript ( COMMA [: if (yytoken == Token_RBRACKET) { break; } :]
@@ -509,13 +499,13 @@ namespace Python
 -- Sub Scripts Check if the curent token is not a COLON it should be a test
 -- If a COLON it skips the 'test'. if the next token is not RBRACKET or COMMA after test it can be a COLON.
 -- Else it ends.
-   subcript_ellipsis=ELLIPSIS
-    | ( ?[: yytoken != Token_COLON :] sub_test=test | 0 )
+   subcriptEllipsis=ELLIPSIS
+    | ( ?[: yytoken != Token_COLON :] subTest=test | 0 )
     ( ?[: yytoken == Token_RBRACKET || yytoken == Token_COMMA :] 0
-        | COLON ( sub_colon_test=test | 0 ) ( sliceop=sliceop | 0 ) )
+        | COLON ( subColonTest=test | 0 ) ( sliceop=sliceop | 0 ) )
 -> subscript ;;
 
-   COLON ( slice_test=test | 0 )
+   COLON ( sliceTest=test | 0 )
 -> sliceop ;;
 
    #expr=expr
@@ -528,49 +518,49 @@ namespace Python
 -> testlist ;;
 
    #test=test ( ( COMMA #test=test )+ ( COMMA | 0 ) | 0 )
--> testlist_safe ;;
+-> testlistSafe ;;
 
-   (#key_list=test COLON #value_list=test | 0) ( COMMA [: if (yytoken == Token_RBRACE) { break; } :]
-    #key_list=test COLON #value_list=test )*
+   (#keyList=test COLON #valueList=test | 0) ( COMMA [: if (yytoken == Token_RBRACE) { break; } :]
+    #keyList=test COLON #valueList=test )*
 -> dictmaker ;;
 
-   CLASS class_name=IDENTIFIER ( ( LPAREN testlist=testlist RPAREN ) | 0 ) COLON class_suite=suite
+   CLASS className=IDENTIFIER ( ( LPAREN testlist=testlist RPAREN ) | 0 ) COLON classSuite=suite
 -> classdef ;;
 
    #argument=argument
     ( COMMA [: if(yytoken == Token_RPAREN || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR) { break; } :] #argument=argument)*
--> arg_list ;;
+-> argList ;;
 
-    (arg_list=arg_list | 0)
+    (argList=argList | 0)
     (
-        ( STAR arglist_star=test (?[: LA(1).kind != Token_RPAREN :] COMMA DOUBLESTAR arglist_doublestar=test | 0)
-        | DOUBLESTAR arglist_doublestar=test)
+        ( STAR arglistStar=test (?[: LA(1).kind != Token_RPAREN :] COMMA DOUBLESTAR arglistDoublestar=test | 0)
+        | DOUBLESTAR arglistDoublestar=test)
     | 0 )
 -> arglist ;;
 
-   argument_test=test ( EQUAL argument_equal_test=test ( ?[: LA(2).kind == Token_FOR :] LPAREN gen_for=gen_for RPAREN | 0 )
-    | ?[: yytoken == Token_FOR :] gen_for=gen_for
+   argumentTest=test ( EQUAL argumentEqualTest=test ( ?[: LA(2).kind == Token_FOR :] LPAREN genFor=genFor RPAREN | 0 )
+    | ?[: yytoken == Token_FOR :] genFor=genFor
     | ?[: yytoken == Token_RPAREN || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR || yytoken == Token_COMMA :] 0 )
 -> argument ;;
 
-   list_for=list_for | list_if=list_if
--> list_iter ;;
+   listFor=listFor | listIf=listIf
+-> listIter ;;
 
-   FOR exprlist=exprlist IN testlist_safe=testlist_safe ( list_iter=list_iter | 0 )
--> list_for ;;
+   FOR exprlist=exprlist IN testlistSafe=testlistSafe ( listIter=listIter | 0 )
+-> listFor ;;
 
-   IF test=test ( list_iter=list_iter | 0 )
--> list_if ;;
+   IF test=test ( listIter=listIter | 0 )
+-> listIf ;;
 
-   gen_for=gen_for
-    | gen_if=gen_if
--> gen_iter ;;
+   genFor=genFor
+    | genIf=genIf
+-> genIter ;;
 
-   FOR exprlist=exprlist IN test=test ( gen_iter=gen_iter | 0 )
--> gen_for ;;
+   FOR exprlist=exprlist IN test=test ( genIter=genIter | 0 )
+-> genFor ;;
 
-   IF test=test ( gen_iter=gen_iter | 0 )
--> gen_if ;;
+   IF test=test ( genIter=genIter | 0 )
+-> genIf ;;
 
    #test=test ( COMMA #test=test )*
 -> testlist1 ;;
@@ -590,7 +580,7 @@ namespace Python
 
 void Parser::tokenize( const QString& contents )
 {
-    m_contents = contents;
+    mContents = contents;
     Lexer lexer( this, contents );
     int kind = Parser::Token_EOF;
 
@@ -609,7 +599,7 @@ void Parser::tokenize( const QString& contents )
         t.begin = lexer.tokenBegin();
         t.end = lexer.tokenEnd();
         t.kind = kind;
-        if( m_debug )
+        if( mDebug )
             qDebug() << kind << tokenText(t.begin,t.end) << t.begin << t.end;
     }
     while ( kind != Parser::Token_EOF );
@@ -620,7 +610,7 @@ void Parser::tokenize( const QString& contents )
 
 QString Parser::tokenText(qint64 begin, qint64 end)
 {
-    return m_contents.mid(begin,end-begin+1);
+    return mContents.mid(begin,end-begin+1);
 }
 
 
@@ -641,7 +631,7 @@ void Parser::expectedToken(int /*expected*/, qint64 /*where*/, const QString& na
     reportProblem( Parser::Error, QString("Expected token \"%1\"").arg(name));
 }
 
-void Parser::expectedSymbol(int /*expected_symbol*/, const QString& name)
+void Parser::expectedSymbol(int /*expectedSymbol*/, const QString& name)
 {
     qint64 line;
     qint64 col;
@@ -662,7 +652,7 @@ void Parser::expectedSymbol(int /*expected_symbol*/, const QString& name)
 
 void Parser::setDebug( bool debug )
 {
-    m_debug = debug;
+    mDebug = debug;
 }
 
 

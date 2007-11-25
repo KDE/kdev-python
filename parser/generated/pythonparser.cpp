@@ -7,7 +7,7 @@
 #include "pythonlexer.h"
 #include <QtCore/QDebug>
 
-namespace Python
+namespace PythonParser
 {
 
 void Parser::tokenize( const QString& contents )
@@ -92,7 +92,7 @@ void Parser::setDebug( bool debug )
 } // end of namespace cool
 
 
-namespace Python
+namespace PythonParser
 {
 
 bool Parser::parseAndExpr(AndExprAst **yynode)
@@ -607,7 +607,7 @@ bool Parser::parseArithOp(ArithOpAst **yynode)
             }
             yylex();
 
-            (*yynode)->arithOp = Python::PlusOp;
+            (*yynode)->arithOp = PythonParser::PlusOp;
         }
         else if (yytoken == Token_MINUS)
         {
@@ -618,7 +618,7 @@ bool Parser::parseArithOp(ArithOpAst **yynode)
             }
             yylex();
 
-            (*yynode)->arithOp = Python::MinusOp;
+            (*yynode)->arithOp = PythonParser::MinusOp;
         }
         else
         {
@@ -915,7 +915,7 @@ bool Parser::parseAugassign(AugassignAst **yynode)
             }
             yylex();
 
-            (*yynode)->assignOp = Python::PlusEqOp;
+            (*yynode)->assignOp = PythonParser::PlusEqOp;
         }
         else if (yytoken == Token_MINUSEQ)
         {
@@ -926,7 +926,7 @@ bool Parser::parseAugassign(AugassignAst **yynode)
             }
             yylex();
 
-            (*yynode)->assignOp = Python::MinusEqOp;
+            (*yynode)->assignOp = PythonParser::MinusEqOp;
         }
         else if (yytoken == Token_STAREQ)
         {
@@ -937,7 +937,7 @@ bool Parser::parseAugassign(AugassignAst **yynode)
             }
             yylex();
 
-            (*yynode)->assignOp = Python::StarEqOp;
+            (*yynode)->assignOp = PythonParser::StarEqOp;
         }
         else if (yytoken == Token_SLASHEQ)
         {
@@ -948,7 +948,7 @@ bool Parser::parseAugassign(AugassignAst **yynode)
             }
             yylex();
 
-            (*yynode)->assignOp = Python::SlashEqOp;
+            (*yynode)->assignOp = PythonParser::SlashEqOp;
         }
         else if (yytoken == Token_MODULOEQ)
         {
@@ -959,7 +959,7 @@ bool Parser::parseAugassign(AugassignAst **yynode)
             }
             yylex();
 
-            (*yynode)->assignOp = Python::ModuloEqOp;
+            (*yynode)->assignOp = PythonParser::ModuloEqOp;
         }
         else if (yytoken == Token_ANDEQ)
         {
@@ -970,7 +970,7 @@ bool Parser::parseAugassign(AugassignAst **yynode)
             }
             yylex();
 
-            (*yynode)->assignOp = Python::AndEqOp;
+            (*yynode)->assignOp = PythonParser::AndEqOp;
         }
         else if (yytoken == Token_OREQ)
         {
@@ -981,7 +981,7 @@ bool Parser::parseAugassign(AugassignAst **yynode)
             }
             yylex();
 
-            (*yynode)->assignOp = Python::OrEqOp;
+            (*yynode)->assignOp = PythonParser::OrEqOp;
         }
         else if (yytoken == Token_TILDEEQ)
         {
@@ -992,7 +992,7 @@ bool Parser::parseAugassign(AugassignAst **yynode)
             }
             yylex();
 
-            (*yynode)->assignOp = Python::TildeEqOp;
+            (*yynode)->assignOp = PythonParser::TildeEqOp;
         }
         else if (yytoken == Token_LSHIFTEQ)
         {
@@ -1003,7 +1003,7 @@ bool Parser::parseAugassign(AugassignAst **yynode)
             }
             yylex();
 
-            (*yynode)->assignOp = Python::LeftShiftEqOp;
+            (*yynode)->assignOp = PythonParser::LeftShiftEqOp;
         }
         else if (yytoken == Token_RSHIFTEQ)
         {
@@ -1014,7 +1014,7 @@ bool Parser::parseAugassign(AugassignAst **yynode)
             }
             yylex();
 
-            (*yynode)->assignOp = Python::RightShiftEqOp;
+            (*yynode)->assignOp = PythonParser::RightShiftEqOp;
         }
         else if (yytoken == Token_DOUBLESTAREQ)
         {
@@ -1025,7 +1025,7 @@ bool Parser::parseAugassign(AugassignAst **yynode)
             }
             yylex();
 
-            (*yynode)->assignOp = Python::DoublestarEqOp;
+            (*yynode)->assignOp = PythonParser::DoublestarEqOp;
         }
         else if (yytoken == Token_DOUBLESLASHEQ)
         {
@@ -1036,7 +1036,7 @@ bool Parser::parseAugassign(AugassignAst **yynode)
             }
             yylex();
 
-            (*yynode)->assignOp = Python::DoubleslashEqOp;
+            (*yynode)->assignOp = PythonParser::DoubleslashEqOp;
         }
         else
         {
@@ -1185,7 +1185,7 @@ bool Parser::parseCompOp(CompOpAst **yynode)
             }
             yylex();
 
-            (*yynode)->compOp = Python::LessOp;
+            (*yynode)->compOp = PythonParser::LessOp;
         }
         else if (yytoken == Token_GREATER)
         {
@@ -1196,7 +1196,7 @@ bool Parser::parseCompOp(CompOpAst **yynode)
             }
             yylex();
 
-            (*yynode)->compOp = Python::GreaterOp;
+            (*yynode)->compOp = PythonParser::GreaterOp;
         }
         else if (yytoken == Token_ISEQUAL)
         {
@@ -1207,7 +1207,7 @@ bool Parser::parseCompOp(CompOpAst **yynode)
             }
             yylex();
 
-            (*yynode)->compOp = Python::IsEqualOp;
+            (*yynode)->compOp = PythonParser::IsEqualOp;
         }
         else if (yytoken == Token_GREATEREQ)
         {
@@ -1218,7 +1218,7 @@ bool Parser::parseCompOp(CompOpAst **yynode)
             }
             yylex();
 
-            (*yynode)->compOp = Python::GreaterEqOp;
+            (*yynode)->compOp = PythonParser::GreaterEqOp;
         }
         else if (yytoken == Token_LESSEQ)
         {
@@ -1229,7 +1229,7 @@ bool Parser::parseCompOp(CompOpAst **yynode)
             }
             yylex();
 
-            (*yynode)->compOp = Python::LessEqOp;
+            (*yynode)->compOp = PythonParser::LessEqOp;
         }
         else if (yytoken == Token_UNEQUAL)
         {
@@ -1240,7 +1240,7 @@ bool Parser::parseCompOp(CompOpAst **yynode)
             }
             yylex();
 
-            (*yynode)->compOp = Python::UnEqualOp;
+            (*yynode)->compOp = PythonParser::UnEqualOp;
         }
         else if (yytoken == Token_IN)
         {
@@ -1251,7 +1251,7 @@ bool Parser::parseCompOp(CompOpAst **yynode)
             }
             yylex();
 
-            (*yynode)->compOp = Python::InOp;
+            (*yynode)->compOp = PythonParser::InOp;
         }
         else if (yytoken == Token_NOT)
         {
@@ -1269,7 +1269,7 @@ bool Parser::parseCompOp(CompOpAst **yynode)
             }
             yylex();
 
-            (*yynode)->compOp = Python::NotInOp;
+            (*yynode)->compOp = PythonParser::NotInOp;
         }
         else if (yytoken == Token_IS)
         {
@@ -1289,11 +1289,11 @@ bool Parser::parseCompOp(CompOpAst **yynode)
                 }
                 yylex();
 
-                (*yynode)->compOp = Python::IsNotOp;
+                (*yynode)->compOp = PythonParser::IsNotOp;
             }
             else if (true /*epsilon*/)
             {
-                (*yynode)->compOp = Python::IsOp;
+                (*yynode)->compOp = PythonParser::IsOp;
             }
             else
             {
@@ -2324,7 +2324,7 @@ bool Parser::parseFactOp(FactOpAst **yynode)
             }
             yylex();
 
-            (*yynode)->facOp = Python::BinaryPlusOp;
+            (*yynode)->facOp = PythonParser::BinaryPlusOp;
         }
         else if (yytoken == Token_MINUS)
         {
@@ -2335,7 +2335,7 @@ bool Parser::parseFactOp(FactOpAst **yynode)
             }
             yylex();
 
-            (*yynode)->facOp = Python::BinaryMinusOp;
+            (*yynode)->facOp = PythonParser::BinaryMinusOp;
         }
         else if (yytoken == Token_TILDE)
         {
@@ -2346,7 +2346,7 @@ bool Parser::parseFactOp(FactOpAst **yynode)
             }
             yylex();
 
-            (*yynode)->facOp = Python::BinaryTildeOp ;
+            (*yynode)->facOp = PythonParser::BinaryTildeOp ;
         }
         else
         {
@@ -4097,7 +4097,7 @@ bool Parser::parseNumber(NumberAst **yynode)
             }
             yylex();
 
-            (*yynode)->numType = Python::IntegerNumeric;
+            (*yynode)->numType = PythonParser::IntegerNumeric;
         }
         else if (yytoken == Token_FLOAT)
         {
@@ -4108,7 +4108,7 @@ bool Parser::parseNumber(NumberAst **yynode)
             }
             yylex();
 
-            (*yynode)->numType = Python::FloatNumeric;
+            (*yynode)->numType = PythonParser::FloatNumeric;
         }
         else if (yytoken == Token_IMAGNUM)
         {
@@ -4119,7 +4119,7 @@ bool Parser::parseNumber(NumberAst **yynode)
             }
             yylex();
 
-            (*yynode)->numType = Python::ImaginaryNumeric;
+            (*yynode)->numType = PythonParser::ImaginaryNumeric;
         }
         else
         {
@@ -4696,7 +4696,7 @@ bool Parser::parseShiftOp(ShiftOpAst **yynode)
             }
             yylex();
 
-            (*yynode)->shiftOp = Python::LeftShiftOp;
+            (*yynode)->shiftOp = PythonParser::LeftShiftOp;
         }
         else if (yytoken == Token_RSHIFT)
         {
@@ -4707,7 +4707,7 @@ bool Parser::parseShiftOp(ShiftOpAst **yynode)
             }
             yylex();
 
-            (*yynode)->shiftOp = Python::RightShiftOp;
+            (*yynode)->shiftOp = PythonParser::RightShiftOp;
         }
         else
         {
@@ -5636,7 +5636,7 @@ bool Parser::parseTermOp(TermOpAst **yynode)
             }
             yylex();
 
-            (*yynode)->termOp = Python::StarOp;
+            (*yynode)->termOp = PythonParser::StarOp;
         }
         else if (yytoken == Token_SLASH)
         {
@@ -5647,7 +5647,7 @@ bool Parser::parseTermOp(TermOpAst **yynode)
             }
             yylex();
 
-            (*yynode)->termOp = Python::SlashOp;
+            (*yynode)->termOp = PythonParser::SlashOp;
         }
         else if (yytoken == Token_MODULO)
         {
@@ -5658,7 +5658,7 @@ bool Parser::parseTermOp(TermOpAst **yynode)
             }
             yylex();
 
-            (*yynode)->termOp = Python::ModuloOp;
+            (*yynode)->termOp = PythonParser::ModuloOp;
         }
         else if (yytoken == Token_DOUBLESLASH)
         {
@@ -5669,7 +5669,7 @@ bool Parser::parseTermOp(TermOpAst **yynode)
             }
             yylex();
 
-            (*yynode)->termOp = Python::DoubleSlashOp;
+            (*yynode)->termOp = PythonParser::DoubleSlashOp;
         }
         else
         {
@@ -6584,5 +6584,5 @@ bool Parser::parseYieldStmt(YieldStmtAst **yynode)
 }
 
 
-} // end of namespace Python
+} // end of namespace PythonParser
 

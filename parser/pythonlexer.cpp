@@ -31,7 +31,7 @@
 #include "kwcheck.h"
 #include "numbercheck.h"
 
-namespace Python
+namespace PythonParser
 {
 
 /*

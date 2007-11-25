@@ -10,7 +10,7 @@
 #include <kdev-pg-token-stream.h>
 
 #include <parserexport.h>
-namespace Python
+namespace PythonParser
 {
 
 class KDEVPYTHONPARSER_EXPORT Parser
@@ -283,7 +283,7 @@ public:
     bool parseYieldStmt(YieldStmtAst **yynode);
 };
 
-} // end of namespace Python
+} // end of namespace PythonParser
 
 #endif
 

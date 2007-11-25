@@ -57,7 +57,7 @@ int main( int argc, char* argv[] )
             exit( EXIT_FAILURE );
         d.setDebug( debug );
 
-        Python::ProjectAst* ast = 0;
+        PythonParser::ProjectAst* ast = 0;
         if ( !d.parse( &ast ) ) {
             exit( EXIT_FAILURE );
         }else

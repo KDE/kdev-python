@@ -23,7 +23,7 @@
 
 class QString;
 
-namespace Python
+namespace PythonParser
 {
 
 int getTokenForNumberString( const QString& );

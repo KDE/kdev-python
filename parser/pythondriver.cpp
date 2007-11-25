@@ -58,14 +58,14 @@ void Driver::setDebug( bool debug )
     m_debug = debug;
 }
 
-bool Driver::parse( ProjectAst** ast )
+bool Driver::parse( PythonParser::ProjectAst** ast )
 {
     if(!m_tokenstream)
         m_tokenstream = new KDevPG::TokenStream();
     if(!m_pool)
         m_pool = new KDevPG::MemoryPool();
 
-    Parser pythonparser;
+    PythonParser::Parser pythonparser;
     pythonparser.setTokenStream(m_tokenstream);
     pythonparser.setMemoryPool(m_pool);
     pythonparser.setDebug( m_debug );
@@ -87,7 +87,7 @@ bool Driver::parse( ProjectAst** ast )
     }else
     {
         *ast = 0;
-        pythonparser.expectedSymbol(AstNode::ProjectKind, "project");
+        pythonparser.expectedSymbol(PythonParser::AstNode::ProjectKind, "project");
         qDebug() << "Couldn't parse content";
     }
     return matched;

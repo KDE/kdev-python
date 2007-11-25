@@ -3,7 +3,7 @@
 
 #include "pythondefaultvisitor.h"
 
-namespace Python
+namespace PythonParser
 {
 
 void DefaultVisitor::visitAndExpr(AndExprAst *node)
@@ -889,5 +889,5 @@ void DefaultVisitor::visitYieldStmt(YieldStmtAst *node)
 }
 
 
-} // end of namespace Python
+} // end of namespace PythonParser
 

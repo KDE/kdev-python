@@ -28,7 +28,7 @@
 
 class QString;
 
-namespace Python
+namespace PythonParser
 {
 
 class Parser;

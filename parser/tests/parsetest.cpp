@@ -38,7 +38,7 @@ void ParseTest::successSimpleSource()
     QFETCH( QString, project );
     Python::Driver d;
     d.setContent( project );
-    Python::ProjectAst* ast = 0;
+    PythonParser::ProjectAst* ast = 0;
     bool ret = d.parse( &ast );
     QVERIFY( ret );
 }
@@ -55,7 +55,7 @@ void ParseTest::simpleStmtAtEndOfFile()
     QFETCH( QString, project );
     Python::Driver d;
     d.setContent( project );
-    Python::ProjectAst* ast = 0;
+    PythonParser::ProjectAst* ast = 0;
     bool ret = d.parse( &ast );
     QVERIFY( ret );
 }
@@ -72,7 +72,7 @@ void ParseTest::successSimpleSourceIndent()
     QFETCH( QString, project );
     Python::Driver d;
     d.setContent( project );
-    Python::ProjectAst* ast = 0;
+    PythonParser::ProjectAst* ast = 0;
     bool ret = d.parse( &ast );
     QVERIFY( ret );
 }

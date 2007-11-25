@@ -11,13 +11,13 @@ set(parser_STAT_SRCS
     pythonlexer.cpp
     kwcheck.cpp
     numbercheck.cpp
-    pythonast.cpp
-    pythonastdefaultvisitor.cpp
-    pythonastvisitor.cpp
+    ast.cpp
+    astdefaultvisitor.cpp
+    astvisitor.cpp
     )
 
 if(KDEVPGQT_FOUND)
-    kdevpgqt_generate(_kdevpgList python NAMESPACE Python
+    kdevpgqt_generate(_kdevpgList python NAMESPACE PythonParser
         "${CMAKE_SOURCE_DIR}/parser/python.g"
         "${CMAKE_SOURCE_DIR}/parser/pythonlexer.h"
     )

@@ -12,7 +12,7 @@
 
 #include <QtCore/QString>
 
-namespace Python
+namespace PythonParser
 {
 class Lexer;
 
@@ -60,7 +60,7 @@ enum NumericType
 };
 }
 
-namespace Python
+namespace PythonParser
 {
 
 struct AndExprAst;
@@ -300,7 +300,7 @@ struct KDEVPYTHONPARSER_EXPORT ArithOpAst: public AstNode
 {
     enum { KIND = ArithOpKind };
 
-    Python::OperatorType arithOp;
+    PythonParser::OperatorType arithOp;
 };
 
 struct KDEVPYTHONPARSER_EXPORT AssertStmtAst: public AstNode
@@ -328,7 +328,7 @@ struct KDEVPYTHONPARSER_EXPORT AugassignAst: public AstNode
 {
     enum { KIND = AugassignKind };
 
-    Python::OperatorType assignOp;
+    PythonParser::OperatorType assignOp;
 };
 
 struct KDEVPYTHONPARSER_EXPORT BreakStmtAst: public AstNode
@@ -350,7 +350,7 @@ struct KDEVPYTHONPARSER_EXPORT CompOpAst: public AstNode
 {
     enum { KIND = CompOpKind };
 
-    Python::OperatorType compOp;
+    PythonParser::OperatorType compOp;
 };
 
 struct KDEVPYTHONPARSER_EXPORT ComparisonAst: public AstNode
@@ -479,7 +479,7 @@ struct KDEVPYTHONPARSER_EXPORT FactOpAst: public AstNode
 {
     enum { KIND = FactOpKind };
 
-    Python::OperatorType facOp;
+    PythonParser::OperatorType facOp;
 };
 
 struct KDEVPYTHONPARSER_EXPORT FactorAst: public AstNode
@@ -701,7 +701,7 @@ struct KDEVPYTHONPARSER_EXPORT NumberAst: public AstNode
 {
     enum { KIND = NumberKind };
 
-    Python::NumericType numType;
+    PythonParser::NumericType numType;
 };
 
 struct KDEVPYTHONPARSER_EXPORT PassStmtAst: public AstNode
@@ -763,7 +763,7 @@ struct KDEVPYTHONPARSER_EXPORT ShiftOpAst: public AstNode
 {
     enum { KIND = ShiftOpKind };
 
-    Python::OperatorType shiftOp;
+    PythonParser::OperatorType shiftOp;
 };
 
 struct KDEVPYTHONPARSER_EXPORT SimpleStmtAst: public AstNode
@@ -841,7 +841,7 @@ struct KDEVPYTHONPARSER_EXPORT TermOpAst: public AstNode
 {
     enum { KIND = TermOpKind };
 
-    Python::OperatorType termOp;
+    PythonParser::OperatorType termOp;
 };
 
 struct KDEVPYTHONPARSER_EXPORT TestAst: public AstNode
@@ -943,7 +943,7 @@ struct KDEVPYTHONPARSER_EXPORT YieldStmtAst: public AstNode
 
 
 
-} // end of namespace Python
+} // end of namespace PythonParser
 
 #endif
 

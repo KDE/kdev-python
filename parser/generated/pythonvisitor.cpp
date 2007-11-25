@@ -3,7 +3,7 @@
 
 #include "pythonvisitor.h"
 
-namespace Python
+namespace PythonParser
 {
 
 Visitor::ParserFuncType Visitor::sParserTable[] =
@@ -95,5 +95,5 @@ Visitor::ParserFuncType Visitor::sParserTable[] =
     reinterpret_cast<ParserFuncType>(&Visitor::visitYieldStmt)
 }; // sParserTable[]
 
-} // end of namespace Python
+} // end of namespace PythonParser
 

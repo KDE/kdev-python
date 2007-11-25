@@ -23,7 +23,7 @@
 
 class QChar;
 
-namespace Python
+namespace PythonParser
 {
 
 int kwcheck2( const QChar* s );

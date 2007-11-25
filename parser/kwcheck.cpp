@@ -21,7 +21,7 @@
 #include "kwcheck.h"
 #include "pythonparser.h"
 
-namespace Python
+namespace PythonParser
 {
 
 int checkForKeyword( const QChar* txt, int len )

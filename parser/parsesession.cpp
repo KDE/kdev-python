@@ -43,15 +43,15 @@ void ParseSession::positionAt( qint64 offset, qint64 *line, qint64 *column ) con
     m_tokenStream->locationTable()->positionAt( offset, line, column );
 }
 
-void ParseSession::putNode( Python::AstNode* ast_node, KDevelop::DUContext* topducontext )
+void ParseSession::putNode( PythonParser::AstNode* ast_node, KDevelop::DUContext* topducontext )
 {
     m_nodeHash[ast_node] = topducontext;
 }
-KDevelop::DUContext* ParseSession::getNode( Python::AstNode* ast_node )
+KDevelop::DUContext* ParseSession::getNode( PythonParser::AstNode* ast_node )
 {
     return m_nodeHash[ast_node];
 }
-void ParseSession::removeNode( Python::AstNode* ast_node )
+void ParseSession::removeNode( PythonParser::AstNode* ast_node )
 {
     m_nodeHash.remove(ast_node);
 }
@@ -65,7 +65,7 @@ void ParseSession::setContents( const QString& contents )
     m_contents = contents;
 }
 
-bool ParseSession::parse( Python::ProjectAst** ast )
+bool ParseSession::parse( PythonParser::ProjectAst** ast )
 {
     Python::Driver d;
     d.setTokenStream( m_tokenStream );

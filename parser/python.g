@@ -63,7 +63,7 @@
 
 #include <QtCore/QString>
 
-namespace Python
+namespace PythonParser
 {
     class Lexer;
 
@@ -268,20 +268,20 @@ namespace Python
     | ?[: yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK :] 0 )
 -> exprStmt ;;
 
-   PLUSEQ           [: (*yynode)->assignOp = Python::PlusEqOp;   :]
-   | MINUSEQ        [: (*yynode)->assignOp = Python::MinusEqOp;  :]
-   | STAREQ         [: (*yynode)->assignOp = Python::StarEqOp;   :]
-   | SLASHEQ        [: (*yynode)->assignOp = Python::SlashEqOp;  :]
-   | MODULOEQ       [: (*yynode)->assignOp = Python::ModuloEqOp; :]
-   | ANDEQ          [: (*yynode)->assignOp = Python::AndEqOp;    :]
-   | OREQ           [: (*yynode)->assignOp = Python::OrEqOp;     :]
-   | TILDEEQ        [: (*yynode)->assignOp = Python::TildeEqOp;  :]
-   | LSHIFTEQ       [: (*yynode)->assignOp = Python::LeftShiftEqOp; :]
-   | RSHIFTEQ       [: (*yynode)->assignOp = Python::RightShiftEqOp; :]
-   | DOUBLESTAREQ   [: (*yynode)->assignOp = Python::DoublestarEqOp; :]
-   | DOUBLESLASHEQ  [: (*yynode)->assignOp = Python::DoubleslashEqOp;:]
+   PLUSEQ           [: (*yynode)->assignOp = PythonParser::PlusEqOp;   :]
+   | MINUSEQ        [: (*yynode)->assignOp = PythonParser::MinusEqOp;  :]
+   | STAREQ         [: (*yynode)->assignOp = PythonParser::StarEqOp;   :]
+   | SLASHEQ        [: (*yynode)->assignOp = PythonParser::SlashEqOp;  :]
+   | MODULOEQ       [: (*yynode)->assignOp = PythonParser::ModuloEqOp; :]
+   | ANDEQ          [: (*yynode)->assignOp = PythonParser::AndEqOp;    :]
+   | OREQ           [: (*yynode)->assignOp = PythonParser::OrEqOp;     :]
+   | TILDEEQ        [: (*yynode)->assignOp = PythonParser::TildeEqOp;  :]
+   | LSHIFTEQ       [: (*yynode)->assignOp = PythonParser::LeftShiftEqOp; :]
+   | RSHIFTEQ       [: (*yynode)->assignOp = PythonParser::RightShiftEqOp; :]
+   | DOUBLESTAREQ   [: (*yynode)->assignOp = PythonParser::DoublestarEqOp; :]
+   | DOUBLESLASHEQ  [: (*yynode)->assignOp = PythonParser::DoubleslashEqOp;:]
 -> augassign [
-    member variable assignOp : Python::OperatorType; ];;
+    member variable assignOp : PythonParser::OperatorType; ];;
 
    PRINT
     (
@@ -393,19 +393,19 @@ namespace Python
    compExpr=expr ( #compOp=compOp #compOpExpr=expr )*
 -> comparison ;;
 
-   LESS         [: (*yynode)->compOp = Python::LessOp;      :]
-   | GREATER    [: (*yynode)->compOp = Python::GreaterOp;   :]
-   | ISEQUAL    [: (*yynode)->compOp = Python::IsEqualOp;   :]
-   | GREATEREQ  [: (*yynode)->compOp = Python::GreaterEqOp; :]
-   | LESSEQ     [: (*yynode)->compOp = Python::LessEqOp;    :]
-   | UNEQUAL    [: (*yynode)->compOp = Python::UnEqualOp;   :]
-   | IN         [: (*yynode)->compOp = Python::InOp;        :]
-   | NOT IN     [: (*yynode)->compOp = Python::NotInOp;    :]
-   | IS (NOT    [: (*yynode)->compOp = Python::IsNotOp;    :]
-        | 0     [: (*yynode)->compOp = Python::IsOp;        :]
+   LESS         [: (*yynode)->compOp = PythonParser::LessOp;      :]
+   | GREATER    [: (*yynode)->compOp = PythonParser::GreaterOp;   :]
+   | ISEQUAL    [: (*yynode)->compOp = PythonParser::IsEqualOp;   :]
+   | GREATEREQ  [: (*yynode)->compOp = PythonParser::GreaterEqOp; :]
+   | LESSEQ     [: (*yynode)->compOp = PythonParser::LessEqOp;    :]
+   | UNEQUAL    [: (*yynode)->compOp = PythonParser::UnEqualOp;   :]
+   | IN         [: (*yynode)->compOp = PythonParser::InOp;        :]
+   | NOT IN     [: (*yynode)->compOp = PythonParser::NotInOp;    :]
+   | IS (NOT    [: (*yynode)->compOp = PythonParser::IsNotOp;    :]
+        | 0     [: (*yynode)->compOp = PythonParser::IsOp;        :]
     )
 -> compOp [
-        member variable compOp : Python::OperatorType; ];;
+        member variable compOp : PythonParser::OperatorType; ];;
 
    expr=xorExpr ( ORR #orrExpr=xorExpr )*
 -> expr ;;
@@ -420,39 +420,39 @@ namespace Python
     ( #shiftOpList=shiftOp #arithExprList=arithExpr )*
 -> shiftExpr ;;
 
-    LSHIFT      [: (*yynode)->shiftOp = Python::LeftShiftOp;   :]
-    | RSHIFT    [: (*yynode)->shiftOp = Python::RightShiftOp;   :]
+    LSHIFT      [: (*yynode)->shiftOp = PythonParser::LeftShiftOp;   :]
+    | RSHIFT    [: (*yynode)->shiftOp = PythonParser::RightShiftOp;   :]
 -> shiftOp [
-    member variable shiftOp : Python::OperatorType; ];;
+    member variable shiftOp : PythonParser::OperatorType; ];;
 
    arithTerm=term
     ((#arithOpList = arithOp #arithTermList=term )+ | 0)
 -> arithExpr ;;
 
-    PLUS        [: (*yynode)->arithOp = Python::PlusOp;     :]
-    | MINUS     [: (*yynode)->arithOp = Python::MinusOp;    :]
+    PLUS        [: (*yynode)->arithOp = PythonParser::PlusOp;     :]
+    | MINUS     [: (*yynode)->arithOp = PythonParser::MinusOp;    :]
 -> arithOp [
-    member variable arithOp: Python::OperatorType; ] ;;
+    member variable arithOp: PythonParser::OperatorType; ] ;;
 
    factor=factor
     ((#termOpList = termOp #factorList=factor )+ | 0)
 -> term ;;
 
-    STAR        [: (*yynode)->termOp = Python::StarOp;      :]
-    | SLASH     [: (*yynode)->termOp = Python::SlashOp;     :]
-    | MODULO    [: (*yynode)->termOp = Python::ModuloOp;    :]
-    | DOUBLESLASH [: (*yynode)->termOp = Python::DoubleSlashOp; :]
+    STAR        [: (*yynode)->termOp = PythonParser::StarOp;      :]
+    | SLASH     [: (*yynode)->termOp = PythonParser::SlashOp;     :]
+    | MODULO    [: (*yynode)->termOp = PythonParser::ModuloOp;    :]
+    | DOUBLESLASH [: (*yynode)->termOp = PythonParser::DoubleSlashOp; :]
 -> termOp [
-    member variable termOp : Python::OperatorType; ];;
+    member variable termOp : PythonParser::OperatorType; ];;
 
    ( factOp=factOp) factor=factor | power=power
 -> factor ;;
 
-    PLUS        [: (*yynode)->facOp = Python::BinaryPlusOp;     :]
-    | MINUS     [: (*yynode)->facOp = Python::BinaryMinusOp;    :]
-    | TILDE     [: (*yynode)->facOp = Python::BinaryTildeOp ;   :]
+    PLUS        [: (*yynode)->facOp = PythonParser::BinaryPlusOp;     :]
+    | MINUS     [: (*yynode)->facOp = PythonParser::BinaryMinusOp;    :]
+    | TILDE     [: (*yynode)->facOp = PythonParser::BinaryTildeOp ;   :]
 -> factOp [
-    member variable facOp : Python::OperatorType;   ];;
+    member variable facOp : PythonParser::OperatorType;   ];;
 
    ( atom=atom )
     (#trailer=trailer)* ( DOUBLESTAR factor=factor | 0 )
@@ -468,11 +468,11 @@ namespace Python
 -> atom ;;
 
 
-   INTEGER      [: (*yynode)->numType = Python::IntegerNumeric;      :]
-   | FLOAT      [: (*yynode)->numType = Python::FloatNumeric;    :]
-   | IMAGNUM    [: (*yynode)->numType = Python::ImaginaryNumeric;  :]
+   INTEGER      [: (*yynode)->numType = PythonParser::IntegerNumeric;      :]
+   | FLOAT      [: (*yynode)->numType = PythonParser::FloatNumeric;    :]
+   | IMAGNUM    [: (*yynode)->numType = PythonParser::ImaginaryNumeric;  :]
 -> number [
-    member variable numType: Python::NumericType; ];;
+    member variable numType: PythonParser::NumericType; ];;
 
    ( #listTest=test ( COMMA [: if (yytoken == Token_RBRACKET) { break; } :] #listTest=test )* | 0)
 -> listMaker ;;
@@ -575,7 +575,7 @@ namespace Python
 #include "pythonlexer.h"
 #include <QtCore/QDebug>
 
-namespace Python
+namespace PythonParser
 {
 
 void Parser::tokenize( const QString& contents )

@@ -25,7 +25,7 @@
 #include <QtCore/QString>
 #include <QtCore/QDebug>
 
-namespace Python
+namespace PythonParser
 {
 QRegExp intnum("((0|[1-9][0-9]*)|0[0-7]+|0(x|X)[0-9a-fA-F]+)(l|L)?");
 QRegExp floatnum("(([0-9]+)?\\.[0-9]+|[0-9]+\\.)|(([0-9]+|(([0-9]+)?\\.[0-9]+|[0-9]+\\.))(e|E)[-+]?[0-9]+)");

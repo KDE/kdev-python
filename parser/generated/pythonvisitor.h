@@ -7,7 +7,7 @@
 #include "pythonast.h"
 
 #include <parserexport.h>
-namespace Python
+namespace PythonParser
 {
 
 class KDEVPYTHONPARSER_EXPORT Visitor
@@ -108,7 +108,7 @@ public:
     virtual void visitYieldStmt(YieldStmtAst *) {}
 };
 
-} // end of namespace Python
+} // end of namespace PythonParser
 
 #endif
 

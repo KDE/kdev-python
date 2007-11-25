@@ -28,12 +28,14 @@ namespace KDevPG
 class MemoryPool;
 class TokenStream;
 }
-namespace Python
+namespace PythonParser
 {
 
 class ProjectAst;
+}
 
-
+namespace Python
+{
 /**
  * Class to parse a Python source file or a string containing python source code
  */
@@ -44,7 +46,7 @@ public:
     bool readFile( const QString&, const char* = 0 );
     void setContent( const QString& );
     void setDebug( bool );
-    bool parse( ProjectAst** ast );
+    bool parse( PythonParser::ProjectAst** ast );
     void setTokenStream( KDevPG::TokenStream* );
     void setMemoryPool( KDevPG::MemoryPool* );
 private:

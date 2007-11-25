@@ -21,7 +21,7 @@
 #ifndef PYTHONASTDEFAULTVISITOR_H
 #define PYTHONASTDEFAULTVISITOR_H
 
-#include "pythonastvisitor.h"
+#include "astvisitor.h"
 
 namespace Python
 {

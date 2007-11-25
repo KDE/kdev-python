@@ -7,7 +7,7 @@
 #include "pythonvisitor.h"
 
 #include <parserexport.h>
-namespace Python
+namespace PythonParser
 {
 
 class KDEVPYTHONPARSER_EXPORT DefaultVisitor: public Visitor
@@ -100,7 +100,7 @@ public:
     virtual void visitYieldStmt(YieldStmtAst *node);
 };
 
-} // end of namespace Python
+} // end of namespace PythonParser
 
 #endif
 

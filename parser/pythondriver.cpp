@@ -20,7 +20,7 @@
 
 
 #include "pythondriver.h"
-#include "python_parser.h"
+#include "pythonparser.h"
 
 #include <QtCore/QFile>
 #include <QtCore/QDebug>
@@ -58,20 +58,20 @@ void Driver::setDebug( bool debug )
     m_debug = debug;
 }
 
-bool Driver::parse( project_ast** ast )
+bool Driver::parse( ProjectAst** ast )
 {
     if(!m_tokenstream)
-        m_tokenstream = new kdev_pg_token_stream();
+        m_tokenstream = new KDevPG::TokenStream();
     if(!m_pool)
-        m_pool = new kdev_pg_memory_pool();
+        m_pool = new KDevPG::MemoryPool();
 
-    parser pythonparser;
-    pythonparser.set_token_stream(m_tokenstream);
-    pythonparser.set_memory_pool(m_pool);
+    Parser pythonparser;
+    pythonparser.setTokenStream(m_tokenstream);
+    pythonparser.setMemoryPool(m_pool);
     pythonparser.setDebug( m_debug );
 
     pythonparser.tokenize(m_content);
-    bool matched = pythonparser.parse_project(ast);
+    bool matched = pythonparser.parseProject(ast);
     if( matched )
     {
         qDebug() << "Sucessfully parsed";
@@ -87,19 +87,19 @@ bool Driver::parse( project_ast** ast )
     }else
     {
         *ast = 0;
-        pythonparser.yy_expected_symbol(ast_node::Kind_project, "project");
+        pythonparser.expectedSymbol(AstNode::ProjectKind, "project");
         qDebug() << "Couldn't parse content";
     }
     return matched;
 }
 
 
-void Driver::setTokenStream( kdev_pg_token_stream* ts )
+void Driver::setTokenStream( KDevPG::TokenStream* ts )
 {
     m_tokenstream = ts;
 }
 
-void Driver::setMemoryPool( kdev_pg_memory_pool* pool )
+void Driver::setMemoryPool( KDevPG::MemoryPool* pool )
 {
     m_pool = pool;
 }

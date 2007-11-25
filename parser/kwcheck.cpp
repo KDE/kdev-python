@@ -19,7 +19,7 @@
  */
 
 #include "kwcheck.h"
-#include "python_parser.h"
+#include "pythonparser.h"
 
 namespace Python
 {
@@ -43,7 +43,7 @@ int checkForKeyword( const QChar* txt, int len )
         case 8:
             return kwcheck8(txt);
         default:
-            return parser::Token_IDENTIFIER;
+            return Parser::Token_IDENTIFIER;
     }
 }
 
@@ -53,26 +53,26 @@ int kwcheck2( const QChar* s )
     {
         if( s[1] == 's' )
         {
-            return parser::Token_AS;
+            return Parser::Token_AS;
         }
     }else if( s[0] == 'i' )
     {
         if( s[1] == 's' )
         {
-            return parser::Token_IS;
+            return Parser::Token_IS;
         }else if( s[1] == 'n' )
         {
-            return parser::Token_IN;
+            return Parser::Token_IN;
         }else if( s[1] == 'f' )
         {
-            return parser::Token_IF;
+            return Parser::Token_IF;
         }
     }else if( s[0] == 'o' )
     {
         if( s[1] == 'r' )
-            return parser::Token_OR;
+            return Parser::Token_OR;
     }
-    return parser::Token_IDENTIFIER;
+    return Parser::Token_IDENTIFIER;
 }
 
 int kwcheck3( const QChar* s )
@@ -83,7 +83,7 @@ int kwcheck3( const QChar* s )
         {
             if( s[2]  == 'd' )
             {
-                return parser::Token_AND;
+                return Parser::Token_AND;
             }
         }
     } else if( s[0] == 'd' )
@@ -92,10 +92,10 @@ int kwcheck3( const QChar* s )
         {
             if( s[2] == 'l' )
             {
-                return parser::Token_DEL;
+                return Parser::Token_DEL;
             }else if( s[2] == 'f' )
             {
-                return parser::Token_DEF;
+                return Parser::Token_DEF;
             }
         }
     } else if( s[0] == 'f' )
@@ -104,7 +104,7 @@ int kwcheck3( const QChar* s )
         {
             if( s[2] == 'r' )
             {
-                return parser::Token_FOR;
+                return Parser::Token_FOR;
             }
         }
     }else if( s[0] == 'n' )
@@ -113,7 +113,7 @@ int kwcheck3( const QChar* s )
         {
             if( s[2] == 't' )
             {
-                return parser::Token_NOT;
+                return Parser::Token_NOT;
             }
         }
     }else if( s[0] == 't' )
@@ -122,11 +122,11 @@ int kwcheck3( const QChar* s )
         {
             if( s[2] == 'y' )
             {
-                return parser::Token_TRY;
+                return Parser::Token_TRY;
             }
         }
     }
-    return parser::Token_IDENTIFIER;
+    return Parser::Token_IDENTIFIER;
 }
 
 
@@ -140,13 +140,13 @@ int kwcheck4( const QChar* s )
             {
                 if( s[3] == 'e' )
                 {
-                    return parser::Token_ELSE;
+                    return Parser::Token_ELSE;
                 }
             }else if( s[2] == 'i' )
             {
                 if( s[3] == 'f' )
                 {
-                    return parser::Token_ELIF;
+                    return Parser::Token_ELIF;
                 }
             }
         }else if( s[1] == 'x' )
@@ -155,7 +155,7 @@ int kwcheck4( const QChar* s )
             {
                 if( s[3] == 'c' )
                 {
-                    return parser::Token_EXEC;
+                    return Parser::Token_EXEC;
                 }
             }
         }
@@ -167,7 +167,7 @@ int kwcheck4( const QChar* s )
             {
                 if( s[3] == 'm' )
                 {
-                    return parser::Token_FROM;
+                    return Parser::Token_FROM;
                 }
             }
         }
@@ -179,12 +179,12 @@ int kwcheck4( const QChar* s )
             {
                 if( s[3] == 's' )
                 {
-                    return parser::Token_PASS;
+                    return Parser::Token_PASS;
                 }
             }
         }
     }
-    return parser::Token_IDENTIFIER;
+    return Parser::Token_IDENTIFIER;
 }
 
 int kwcheck5( const QChar* s )
@@ -199,7 +199,7 @@ int kwcheck5( const QChar* s )
                 {
                     if( s[4] == 'k' )
                     {
-                        return parser::Token_BREAK;
+                        return Parser::Token_BREAK;
                     }
                 }
             }
@@ -214,7 +214,7 @@ int kwcheck5( const QChar* s )
                 {
                     if( s[4] == 's' )
                     {
-                        return parser::Token_CLASS;
+                        return Parser::Token_CLASS;
                     }
                 }
             }
@@ -229,7 +229,7 @@ int kwcheck5( const QChar* s )
                 {
                     if( s[4] == 't' )
                     {
-                        return parser::Token_PRINT;
+                        return Parser::Token_PRINT;
                     }
                 }
             }
@@ -244,7 +244,7 @@ int kwcheck5( const QChar* s )
                 {
                     if( s[4] == 'e' )
                     {
-                        return parser::Token_RAISE;
+                        return Parser::Token_RAISE;
                     }
                 }
             }
@@ -259,7 +259,7 @@ int kwcheck5( const QChar* s )
                 {
                     if( s[4] == 'e' )
                     {
-                        return parser::Token_WHILE;
+                        return Parser::Token_WHILE;
                     }
                 }
             }
@@ -274,13 +274,13 @@ int kwcheck5( const QChar* s )
                 {
                     if( s[4] == 'd' )
                     {
-                        return parser::Token_YIELD;
+                        return Parser::Token_YIELD;
                     }
                 }
             }
         }
     }
-    return parser::Token_IDENTIFIER;
+    return Parser::Token_IDENTIFIER;
 }
 
 int kwcheck6( const QChar* s )
@@ -297,7 +297,7 @@ int kwcheck6( const QChar* s )
                     {
                         if( s[5] == 't' )
                         {
-                            return parser::Token_ASSERT;
+                            return Parser::Token_ASSERT;
                         }
                     }
                 }
@@ -315,7 +315,7 @@ int kwcheck6( const QChar* s )
                     {
                         if( s[5] == 't' )
                         {
-                            return parser::Token_EXCEPT;
+                            return Parser::Token_EXCEPT;
                         }
                     }
                 }
@@ -333,7 +333,7 @@ int kwcheck6( const QChar* s )
                     {
                         if( s[5] == 'l' )
                         {
-                            return parser::Token_GLOBAL;
+                            return Parser::Token_GLOBAL;
                         }
                     }
                 }
@@ -351,7 +351,7 @@ int kwcheck6( const QChar* s )
                     {
                         if( s[5] == 't' )
                         {
-                            return parser::Token_IMPORT;
+                            return Parser::Token_IMPORT;
                         }
                     }
                 }
@@ -369,7 +369,7 @@ int kwcheck6( const QChar* s )
                     {
                         if( s[5] == 'a' )
                         {
-                            return parser::Token_LAMBDA;
+                            return Parser::Token_LAMBDA;
                         }
                     }
                 }
@@ -387,14 +387,14 @@ int kwcheck6( const QChar* s )
                     {
                         if( s[5] == 'n' )
                         {
-                            return parser::Token_RETURN;
+                            return Parser::Token_RETURN;
                         }
                     }
                 }
             }
         }
     }
-    return parser::Token_IDENTIFIER;
+    return Parser::Token_IDENTIFIER;
 }
 
 int kwcheck7( const QChar* s )
@@ -413,7 +413,7 @@ int kwcheck7( const QChar* s )
                         {
                             if( s[6] == 'y' )
                             {
-                                return parser::Token_FINALLY;
+                                return Parser::Token_FINALLY;
                             }
                         }
                     }
@@ -421,7 +421,7 @@ int kwcheck7( const QChar* s )
             }
         }
     }
-    return parser::Token_IDENTIFIER;
+    return Parser::Token_IDENTIFIER;
 }
 
 int kwcheck8( const QChar* s )
@@ -442,7 +442,7 @@ int kwcheck8( const QChar* s )
                             {
                                 if( s[7] == 'e' )
                                 {
-                                    return parser::Token_CONTINUE;
+                                    return Parser::Token_CONTINUE;
                                 }
                             }
                         }
@@ -451,7 +451,7 @@ int kwcheck8( const QChar* s )
             }
         }
     }
-    return parser::Token_IDENTIFIER;
+    return Parser::Token_IDENTIFIER;
 }
 
 }

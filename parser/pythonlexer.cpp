@@ -24,7 +24,7 @@
 #include <QtCore/QStringList>
 #include <QtCore/QRegExp>
 #include <QtCore/QDebug>
-#include "python_parser.h"
+#include "pythonparser.h"
 #include <kdev-pg-location-table.h>
 #include <kdev-pg-token-stream.h>
 
@@ -38,7 +38,7 @@ namespace Python
  * @TODO: COMMENT all the stuff, really needed
  */
 
-Lexer::Lexer( parser* _parser, const QString& content ):
+Lexer::Lexer( Parser* _parser, const QString& content ):
         m_content( content ), m_parser( _parser ),
         m_curpos( 0 ), m_contentSize( m_content.size() ),
         m_tokenBegin( 0 ), m_tokenEnd( 0 ), m_openParenNum( 0 )
@@ -81,15 +81,15 @@ void Lexer::popIndentation()
 
 int Lexer::nextTokenKind()
 {
-    int token = parser::Token_INVALID;
+    int token = Parser::Token_INVALID;
     if ( m_curpos >= m_contentSize )
     {
-        m_tokenBegin = std::numeric_limits<std::size_t>::max();
-        m_tokenEnd = std::numeric_limits<std::size_t>::max();
+        m_tokenBegin = -1;
+        m_tokenEnd = -1;
         if( indentation() > 0 )
         {
             popIndentation();
-            return parser::Token_DEDENT;
+            return Parser::Token_DEDENT;
         }
         return 0;
     }
@@ -104,10 +104,9 @@ int Lexer::nextTokenKind()
         {
             // No whitespace at the start of the line, so we need to create
             // as many DEDENT tokens as we have indenations in the stack
-            token = parser::Token_DEDENT;
-            // use maximum of std::size_t to indicate a useles begin/end value
-            m_tokenBegin = std::numeric_limits<std::size_t>::max();
-            m_tokenEnd = std::numeric_limits<std::size_t>::max();
+            token = Parser::Token_DEDENT;
+            m_tokenBegin = -1;
+            m_tokenEnd = -1;
             popIndentation();
             return token;
         }else if( it->isSpace() )
@@ -135,7 +134,7 @@ int Lexer::nextTokenKind()
                     m_tokenEnd = m_curpos;
                     createNewline( m_curpos );
                     m_curpos++;
-                    return parser::Token_LINEBREAK;
+                    return Parser::Token_LINEBREAK;
                 }
                 it++;
                 m_curpos++;
@@ -153,14 +152,14 @@ int Lexer::nextTokenKind()
                 m_tokenEnd = m_curpos;
                 createNewline( m_curpos );
                 m_curpos++;
-                return parser::Token_LINEBREAK;
+                return Parser::Token_LINEBREAK;
             }else if( it->unicode() == '\n' )
             {
                 m_tokenBegin = m_curpos;
                 m_tokenEnd = m_curpos;
                 createNewline( m_curpos );
                 m_curpos++;
-                return parser::Token_LINEBREAK;
+                return Parser::Token_LINEBREAK;
             }
             it--;
             m_tokenEnd = m_curpos-1;
@@ -170,7 +169,7 @@ int Lexer::nextTokenKind()
                 // We have more indentation, so we need to create an INDENT token
                 pushIndentation( spacecount );
                 popState();
-                token = parser::Token_INDENT;
+                token = Parser::Token_INDENT;
                 return token;
             }else if( spacecount == indentation() )
             {
@@ -185,7 +184,7 @@ int Lexer::nextTokenKind()
                 // counted we'll do another try on the next call, else we'll go into
                 // usual parsing next time we enter this function
                 popIndentation();
-                token = parser::Token_DEDENT;
+                token = Parser::Token_DEDENT;
                 if( spacecount < indentation() )
                 {
                     m_curpos = m_tokenBegin;
@@ -253,7 +252,7 @@ int Lexer::nextTokenKind()
                     // or they're the closing '' or "" and thus we always consume them too
                     it += 2;
                     m_curpos += 2;
-                    token = parser::Token_STRINGLITERAL;
+                    token = Parser::Token_STRINGLITERAL;
                 }else
                 {
                     // single quote so read until the end of line or closing quote
@@ -275,7 +274,7 @@ int Lexer::nextTokenKind()
                         // We've read to the newline, now return to the last string character
                         m_curpos--;
                     }
-                    token = parser::Token_STRINGLITERAL;
+                    token = Parser::Token_STRINGLITERAL;
                 }
                 //Go to the next character, it still points to the end of the literal
                 it++;
@@ -344,211 +343,211 @@ int Lexer::nextTokenKind()
                     case '\n':
                         pushState( IndentState );
                         createNewline( m_curpos );
-                        token = parser::Token_LINEBREAK;
+                        token = Parser::Token_LINEBREAK;
                         break;
                     case '(':
                         m_openParenNum++;
-                        token = parser::Token_LPAREN;
+                        token = Parser::Token_LPAREN;
                         break;
                     case ')':
                         m_openParenNum--;
-                        token = parser::Token_RPAREN;
+                        token = Parser::Token_RPAREN;
                         break;
                     case '{':
                         m_openParenNum++;
-                        token = parser::Token_LBRACE;
+                        token = Parser::Token_LBRACE;
                         break;
                     case '}':
                         m_openParenNum--;
-                        token = parser::Token_RBRACE;
+                        token = Parser::Token_RBRACE;
                         break;
                     case '[':
                         m_openParenNum++;
-                        token = parser::Token_LBRACKET;
+                        token = Parser::Token_LBRACKET;
                         break;
                     case ']':
                         m_openParenNum--;
-                        token = parser::Token_RBRACKET;
+                        token = Parser::Token_RBRACKET;
                         break;
                     case ',':
-                        token = parser::Token_COMMA;
+                        token = Parser::Token_COMMA;
                         break;
                     case ';':
-                        token = parser::Token_SEMICOLON;
+                        token = Parser::Token_SEMICOLON;
                         break;
                     case ':':
-                        token = parser::Token_COLON;
+                        token = Parser::Token_COLON;
                         break;
                     case '.':
                         if( ch2 && ch3 && ch2->unicode() == '.' && ch3->unicode() == '.' )
                         {
                             m_curpos += 2;
-                            token = parser::Token_ELLIPSIS;
+                            token = Parser::Token_ELLIPSIS;
                         }else
                         {
-                            token = parser::Token_DOT;
+                            token = Parser::Token_DOT;
                         }
                         break;
                     case '`':
-                        token = parser::Token_BACKTICK;
+                        token = Parser::Token_BACKTICK;
                         break;
                     case '@':
-                        token = parser::Token_AT;
+                        token = Parser::Token_AT;
                         break;
                     case '*':
                         if( ch2 && ch3 && ch2->unicode() == '*' && ch3->unicode() == '=')
                         {
                             m_curpos += 2;
-                            token = parser::Token_DOUBLESTAREQ;
+                            token = Parser::Token_DOUBLESTAREQ;
                         }else if( ch2 && ch2->unicode() == '*' )
                         {
                             m_curpos++;
-                            token = parser::Token_DOUBLESTAR;
+                            token = Parser::Token_DOUBLESTAR;
                         }else if( ch2 && ch2->unicode() == '=')
                         {
                             m_curpos++;
-                            token = parser::Token_STAREQ;
+                            token = Parser::Token_STAREQ;
                         }else
                         {
-                            token = parser::Token_STAR;
+                            token = Parser::Token_STAR;
                         }
                         break;
                     case '=':
                         if( ch2 && ch2->unicode() == '=' )
                         {
                             m_curpos++;
-                            token = parser::Token_ISEQUAL;
+                            token = Parser::Token_ISEQUAL;
                         }else
                         {
-                            token = parser::Token_EQUAL;
+                            token = Parser::Token_EQUAL;
                         }
                         break;
                     case '+':
                         if( ch2 && ch2->unicode() == '=' )
                         {
                             m_curpos++;
-                            token = parser::Token_PLUSEQ;
+                            token = Parser::Token_PLUSEQ;
                         }else
                         {
-                            token = parser::Token_PLUS;
+                            token = Parser::Token_PLUS;
                         }
                         break;
                     case '-':
                         if( ch2 && ch2->unicode() == '=' )
                         {
                             m_curpos++;
-                            token = parser::Token_MINUSEQ;
+                            token = Parser::Token_MINUSEQ;
                         }else
                         {
-                            token = parser::Token_MINUS;
+                            token = Parser::Token_MINUS;
                         }
                         break;
                     case '~':
                         if( ch2 && ch2->unicode() == '=' )
                         {
                             m_curpos++;
-                            token = parser::Token_TILDEEQ;
+                            token = Parser::Token_TILDEEQ;
                         }else
                         {
-                            token = parser::Token_TILDE;
+                            token = Parser::Token_TILDE;
                         }
                         break;
                     case '/':
                         if( ch2 && ch2->unicode() == '=' )
                         {
                             m_curpos++;
-                            token = parser::Token_SLASHEQ;
+                            token = Parser::Token_SLASHEQ;
                         }else if( ch2 && ch3 && ch2->unicode() == '/' && ch3->unicode() == '=' )
                         {
                             m_curpos += 2;
-                            token = parser::Token_DOUBLESLASHEQ;
+                            token = Parser::Token_DOUBLESLASHEQ;
                         }else if( ch2 && ch2->unicode() == '/' )
                         {
                             m_curpos++;
-                            token = parser::Token_DOUBLESLASH;
+                            token = Parser::Token_DOUBLESLASH;
                         }else
                         {
-                            token = parser::Token_SLASH;
+                            token = Parser::Token_SLASH;
                         }
                         break;
                     case '%':
                         if( ch2 && ch2->unicode() == '=' )
                         {
                             m_curpos++;
-                            token = parser::Token_MODULOEQ;
+                            token = Parser::Token_MODULOEQ;
                         }else
                         {
-                            token = parser::Token_MODULO;
+                            token = Parser::Token_MODULO;
                         }
                         break;
                     case '&':
                         if( ch2 && ch2->unicode() == '=' )
                         {
                             m_curpos++;
-                            token = parser::Token_ANDEQ;
+                            token = Parser::Token_ANDEQ;
                         }else
                         {
-                            token = parser::Token_ANDD;
+                            token = Parser::Token_ANDD;
                         }
                         break;
                     case '<':
                         if( ch2 && ch2->unicode() == '=' )
                         {
                             m_curpos++;
-                            token = parser::Token_LESSEQ;
+                            token = Parser::Token_LESSEQ;
                         }else if( ch2 && ch3 && ch2->unicode() == '<' && ch3->unicode() == '=' )
                         {
                             m_curpos += 2;
-                            token = parser::Token_LSHIFTEQ;
+                            token = Parser::Token_LSHIFTEQ;
                         }else if( ch2 && ch2->unicode() == '<' )
                         {
                             m_curpos++;
-                            token = parser::Token_LSHIFT;
+                            token = Parser::Token_LSHIFT;
                         }else if( ch2 && ch2->unicode() == '>' )
                         {
                             m_curpos++;
-                            token = parser::Token_UNEQUAL;
+                            token = Parser::Token_UNEQUAL;
                         }else
                         {
-                            token = parser::Token_LESS;
+                            token = Parser::Token_LESS;
                         }
                         break;
                     case '>':
                         if( ch2 && ch2->unicode() == '=' )
                         {
                             m_curpos++;
-                            token = parser::Token_GREATEREQ;
+                            token = Parser::Token_GREATEREQ;
                         }else if( ch2 && ch3 && ch2->unicode() == '>' && ch3->unicode() == '=' )
                         {
                             m_curpos += 2;
-                            token = parser::Token_RSHIFTEQ;
+                            token = Parser::Token_RSHIFTEQ;
                         }else if( ch2 && ch2->unicode() == '>' )
                         {
                             m_curpos++;
-                            token = parser::Token_RSHIFT;
+                            token = Parser::Token_RSHIFT;
                         }else
                         {
-                            token = parser::Token_GREATER;
+                            token = Parser::Token_GREATER;
                         }
                         break;
                     case '|':
                         if( ch2 && ch2->unicode() == '=' )
                         {
                             m_curpos++;
-                            token = parser::Token_OREQ;
+                            token = Parser::Token_OREQ;
                         }else
                         {
-                            token = parser::Token_ORR;
+                            token = Parser::Token_ORR;
                         };
                         break;
                     case '^':
-                        token = parser::Token_HAT;
+                        token = Parser::Token_HAT;
                         break;
                     case '!':
                         if( ch2 && ch2->unicode() == '=' )
                         {
                             m_curpos++;
-                            token = parser::Token_UNEQUAL;
+                            token = Parser::Token_UNEQUAL;
                         }
                         break;
                     default:
@@ -557,17 +556,17 @@ int Lexer::nextTokenKind()
             }
             break;
         default:
-            token = parser::Token_INVALID;
+            token = Parser::Token_INVALID;
             break;
     }
     if ( m_curpos >= m_contentSize )
     {
-        m_tokenBegin = std::numeric_limits<std::size_t>::max();
-        m_tokenEnd = std::numeric_limits<std::size_t>::max();
+        m_tokenBegin = -1;
+        m_tokenEnd = -1;
         if( indentation() > 0 )
         {
             popIndentation();
-            return parser::Token_DEDENT;
+            return Parser::Token_DEDENT;
         }
         return 0;
     }
@@ -576,12 +575,12 @@ int Lexer::nextTokenKind()
     return token;
 }
 
-std::size_t Lexer::tokenBegin() const
+qint64 Lexer::tokenBegin() const
 {
     return m_tokenBegin;
 }
 
-std::size_t Lexer::tokenEnd() const
+qint64 Lexer::tokenEnd() const
 {
     return m_tokenEnd;
 }
@@ -613,7 +612,7 @@ QChar* Lexer::ignoreWhitespaceAndComments( QChar* it )
 void Lexer::createNewline( int curpos )
 {
     if( m_parser )
-        m_parser->token_stream->location_table()->newline( curpos );
+        m_parser->tokenStream->locationTable()->newline( curpos );
 }
 
 bool Lexer::isStringStart( QChar* it )
@@ -646,5 +645,3 @@ bool Lexer::isStringStart( QChar* it )
 }
 
 }
-
-// kate: space-indent on; indent-width 4; tab-width 4; replace-tabs on; auto-insert-doxygen on

@@ -19,7 +19,7 @@
  */
 
 #include "numbercheck.h"
-#include "python_parser.h"
+#include "pythonparser.h"
 
 #include <QtCore/QRegExp>
 #include <QtCore/QString>
@@ -35,15 +35,15 @@ int getTokenForNumberString( const QString& s )
 {
     if( intnum.exactMatch( s ) )
     {
-        return parser::Token_INTEGER;
+        return Parser::Token_INTEGER;
     }else if( floatnum.exactMatch( s ) )
     {
-        return parser::Token_FLOAT;
+        return Parser::Token_FLOAT;
     }else  if( imagnum.exactMatch( s ) )
     {
-        return parser::Token_IMAGNUM;
+        return Parser::Token_IMAGNUM;
     }
-    return parser::Token_INVALID;
+    return Parser::Token_INVALID;
 }
 }
 

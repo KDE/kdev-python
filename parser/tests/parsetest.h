@@ -37,6 +37,8 @@ class ParseTest : public QObject
         void successSimpleSource_data();
         void successSimpleSourceIndent();
         void successSimpleSourceIndent_data();
+        void simpleStmtAtEndOfFile();
+        void simpleStmtAtEndOfFile_data();
     private:
 };
 

@@ -29,8 +29,8 @@
 #include <ducontext.h>
 
 ParseSession::ParseSession()
-        : m_memoryPool( new kdev_pg_memory_pool )
-        , m_tokenStream( new kdev_pg_token_stream )
+        : m_memoryPool( new KDevPG::MemoryPool )
+        , m_tokenStream( new KDevPG::TokenStream )
 {
 }
 ParseSession::~ParseSession()
@@ -38,20 +38,20 @@ ParseSession::~ParseSession()
     delete m_memoryPool;
     delete m_tokenStream;
 }
-void ParseSession::positionAt( std::size_t offset, std::size_t *line, std::size_t *column ) const
+void ParseSession::positionAt( qint64 offset, qint64 *line, qint64 *column ) const
 {
-    m_tokenStream->location_table()->position_at( offset, line, column );
+    m_tokenStream->locationTable()->positionAt( offset, line, column );
 }
 
-void ParseSession::putNode( Python::ast_node* ast_node, KDevelop::DUContext* topducontext )
+void ParseSession::putNode( Python::AstNode* ast_node, KDevelop::DUContext* topducontext )
 {
     m_nodeHash[ast_node] = topducontext;
 }
-KDevelop::DUContext* ParseSession::getNode( Python::ast_node* ast_node )
+KDevelop::DUContext* ParseSession::getNode( Python::AstNode* ast_node )
 {
     return m_nodeHash[ast_node];
 }
-void ParseSession::removeNode( Python::ast_node* ast_node )
+void ParseSession::removeNode( Python::AstNode* ast_node )
 {
     m_nodeHash.remove(ast_node);
 }
@@ -65,7 +65,7 @@ void ParseSession::setContents( const QString& contents )
     m_contents = contents;
 }
 
-bool ParseSession::parse( Python::project_ast** ast )
+bool ParseSession::parse( Python::ProjectAst** ast )
 {
     Python::Driver d;
     d.setTokenStream( m_tokenStream );
@@ -74,15 +74,14 @@ bool ParseSession::parse( Python::project_ast** ast )
     return d.parse( ast );
 }
 
-QString ParseSession::tokenText( std::size_t begin, std::size_t end )
+QString ParseSession::tokenText( qint64 begin, qint64 end )
 {
     return m_contents.mid(begin,end-begin+1);
 }
 
 
-kdev_pg_token_stream* ParseSession::tokenStream() const
+KDevPG::TokenStream* ParseSession::tokenStream() const
 {
     return m_tokenStream;
 }
 
-// kate: space-indent on; indent-width 4; tab-width 4; replace-tabs on; auto-insert-doxygen on

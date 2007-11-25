@@ -22,9 +22,6 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
 
-// #include <cstdlib>
-// #include <iostream>
-// #include <stdio.h>
 #include "pythondriver.h"
 
 #include <QtGlobal>
@@ -60,7 +57,7 @@ int main( int argc, char* argv[] )
             exit( EXIT_FAILURE );
         d.setDebug( debug );
 
-        Python::project_ast* ast = 0;
+        Python::ProjectAst* ast = 0;
         if ( !d.parse( &ast ) ) {
             exit( EXIT_FAILURE );
         }else

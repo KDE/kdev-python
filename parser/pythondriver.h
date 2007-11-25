@@ -23,14 +23,15 @@
 
 #include <QtCore/QString>
 #include "parserexport.h"
-
-class kdev_pg_token_stream;
-class kdev_pg_memory_pool;
-
+namespace KDevPG
+{
+class MemoryPool;
+class TokenStream;
+}
 namespace Python
 {
 
-class project_ast;
+class ProjectAst;
 
 
 /**
@@ -43,14 +44,14 @@ public:
     bool readFile( const QString&, const char* = 0 );
     void setContent( const QString& );
     void setDebug( bool );
-    bool parse( project_ast** ast );
-    void setTokenStream( kdev_pg_token_stream* );
-    void setMemoryPool( kdev_pg_memory_pool* );
+    bool parse( ProjectAst** ast );
+    void setTokenStream( KDevPG::TokenStream* );
+    void setMemoryPool( KDevPG::MemoryPool* );
 private:
     QString m_content;
     bool m_debug;
-    kdev_pg_memory_pool* m_pool;
-    kdev_pg_token_stream* m_tokenstream;
+    KDevPG::MemoryPool* m_pool;
+    KDevPG::TokenStream* m_tokenstream;
 
 };
 

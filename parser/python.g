@@ -23,7 +23,7 @@
 -------------------------------------------------------------------------------
 
 -----------------------------------------------------------
--- Grammar for Python2.4
+-- Grammar for Python2.5
 -- Modelled after the Grammar files shipped with Python2.4
 -- source, the Python Language Reference documentation,
 -- also included with Python
@@ -145,8 +145,8 @@ namespace Python
       Warning,
       Info
   };
-  void reportProblem( parser::ProblemType type, const QString& message );
-  QString tokenText(std::size_t begin, std::size_t end);
+  void reportProblem( Parser::ProblemType type, const QString& message );
+  QString tokenText(qint64 begin, qint64 end);
   void setDebug(bool debug);
 
 :]
@@ -250,13 +250,13 @@ namespace Python
             #fplist_fpdef=fpdef )*
 -> fplist ;;
 
--- A statement could be simple statement/ a compound statement OR just a Linebreak
+-- A statement could be simple statement, a compound statement OR just a Linebreak
     simple_stmt = simple_stmt
     | compound_stmt = compound_stmt
     | LINEBREAK
 -> stmt ;;
 
--- simple statement
+-- simple statement, TODO this needs more work for simple_stmts at the enf of files
    #small_stmt = small_stmt
     ( SEMICOLON [: if( yytoken == Token_LINEBREAK || yytoken == Token_DEDENT) { break;} :] #small_stmt = small_stmt )*  LINEBREAK
 -> simple_stmt ;;
@@ -588,43 +588,43 @@ namespace Python
 namespace Python
 {
 
-void parser::tokenize( const QString& contents )
+void Parser::tokenize( const QString& contents )
 {
     m_contents = contents;
     Lexer lexer( this, contents );
-    int kind = parser::Token_EOF;
+    int kind = Parser::Token_EOF;
 
     do
     {
         kind = lexer.nextTokenKind();
         if ( !kind ) // when the lexer returns 0, the end of file is reached
         {
-            parser::token_type &tt = this->token_stream->next();
-            tt.kind = parser::Token_LINEBREAK;
+            Parser::Token &tt = tokenStream->next();
+            tt.kind = Parser::Token_LINEBREAK;
             tt.begin = lexer.tokenBegin();
             tt.end = lexer.tokenEnd();
-            kind = parser::Token_EOF;
+            kind = Parser::Token_EOF;
         }
-        parser::token_type &t = this->token_stream->next();
+        Parser::Token &t = tokenStream->next();
         t.begin = lexer.tokenBegin();
         t.end = lexer.tokenEnd();
         t.kind = kind;
         if( m_debug )
             qDebug() << kind << tokenText(t.begin,t.end) << t.begin << t.end;
     }
-    while ( kind != parser::Token_EOF );
+    while ( kind != Parser::Token_EOF );
 
-    this->yylex(); // produce the look ahead token
+    yylex(); // produce the look ahead token
 }
 
 
-QString parser::tokenText(std::size_t begin, std::size_t end)
+QString Parser::tokenText(qint64 begin, qint64 end)
 {
     return m_contents.mid(begin,end-begin+1);
 }
 
 
-void parser::reportProblem( parser::ProblemType type, const QString& message )
+void Parser::reportProblem( Parser::ProblemType type, const QString& message )
 {
     if (type == Error)
             qDebug() << "** ERROR:" << message;
@@ -636,22 +636,22 @@ void parser::reportProblem( parser::ProblemType type, const QString& message )
 
 
 // custom error recovery
-void parser::yy_expected_token(int /*expected*/, std::size_t /*where*/, char const *name)
+void Parser::expectedToken(int /*expected*/, qint64 /*where*/, const QString& name)
 {
-    reportProblem( parser::Error, QString("Expected token \"%1\"").arg(name));
+    reportProblem( Parser::Error, QString("Expected token \"%1\"").arg(name));
 }
 
-void parser::yy_expected_symbol(int /*expected_symbol*/, char const *name)
+void Parser::expectedSymbol(int /*expected_symbol*/, const QString& name)
 {
-    std::size_t line;
-    std::size_t col;
-    size_t index = token_stream->index()-1;
-    token_type &token = token_stream->token(index);
+    qint64 line;
+    qint64 col;
+    qint64 index = tokenStream->index()-1;
+    Token &token = tokenStream->token(index);
     qDebug() << "token starts at:" << token.begin;
     qDebug() << "index is:" << index;
-    token_stream->start_position(index, &line, &col);
+    tokenStream->startPosition(index, &line, &col);
     QString tokenValue = tokenText(token.begin, token.end);
-    reportProblem( parser::Error,
+    reportProblem( Parser::Error,
                    QString("Expected symbol \"%1\" (current token: \"%2\" [%3] at line: %4 col: %5)")
                   .arg(name)
                   .arg(token.kind != 0 ? tokenValue : "EOF")
@@ -660,7 +660,7 @@ void parser::yy_expected_symbol(int /*expected_symbol*/, char const *name)
                   .arg(col));
 }
 
-void parser::setDebug( bool debug )
+void Parser::setDebug( bool debug )
 {
     m_debug = debug;
 }

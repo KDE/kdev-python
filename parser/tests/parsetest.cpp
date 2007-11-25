@@ -38,7 +38,7 @@ void ParseTest::successSimpleSource()
     QFETCH( QString, project );
     Python::Driver d;
     d.setContent( project );
-    Python::project_ast* ast = 0;
+    Python::ProjectAst* ast = 0;
     bool ret = d.parse( &ast );
     QVERIFY( ret );
 }
@@ -49,13 +49,30 @@ void ParseTest::successSimpleSource_data()
     QTest::newRow( "row1" ) << "class b:\n  pass\n";
 }
 
+void ParseTest::simpleStmtAtEndOfFile()
+{
+    // @TODO: Fails currently, needs fixing in the grammar, but not easy
+    QFETCH( QString, project );
+    Python::Driver d;
+    d.setContent( project );
+    Python::ProjectAst* ast = 0;
+    bool ret = d.parse( &ast );
+    QVERIFY( ret );
+}
+
+void ParseTest::simpleStmtAtEndOfFile_data()
+{
+    QTest::addColumn<QString>( "project" );
+    QTest::newRow( "row1" ) << "class b:\n  pass";
+}
+
 
 void ParseTest::successSimpleSourceIndent()
 {
     QFETCH( QString, project );
     Python::Driver d;
     d.setContent( project );
-    Python::project_ast* ast = 0;
+    Python::ProjectAst* ast = 0;
     bool ret = d.parse( &ast );
     QVERIFY( ret );
 }

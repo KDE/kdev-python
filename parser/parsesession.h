@@ -30,12 +30,15 @@
 class LexedFile;
 namespace Python
 {
-    class project_ast;
-    class ast_node;
+    class ProjectAst;
+    class AstNode;
 }
 
-class kdev_pg_token_stream;
-class kdev_pg_memory_pool;
+namespace KDevPG
+{
+class TokenStream;
+class MemoryPool;
+}
 
 namespace KDevelop
 {
@@ -48,22 +51,22 @@ public:
     ParseSession();
     ~ParseSession();
 
-    void positionAt( std::size_t offset, std::size_t *line, std::size_t *column ) const;
+    void positionAt( qint64 offset, qint64 *line, qint64 *column ) const;
     void setContents( const QString& contents );
     QString contents() const;
 
-    void putNode( Python::ast_node* ast_node, KDevelop::DUContext* topducontext );
-    void removeNode( Python::ast_node* ast_node );
-    KDevelop::DUContext* getNode( Python::ast_node* ast_node );
+    void putNode( Python::AstNode* ast_node, KDevelop::DUContext* topducontext );
+    void removeNode( Python::AstNode* ast_node );
+    KDevelop::DUContext* getNode( Python::AstNode* ast_node );
 
-    bool parse( Python::project_ast** );
-    QString tokenText( std::size_t, std::size_t);
-    kdev_pg_token_stream* tokenStream() const;
+    bool parse( Python::ProjectAst** );
+    QString tokenText( qint64, qint64);
+    KDevPG::TokenStream* tokenStream() const;
 private:
-    QHash<Python::ast_node*, KDevelop::DUContext*> m_nodeHash;
+    QHash<Python::AstNode*, KDevelop::DUContext*> m_nodeHash;
     QString m_contents;
-    kdev_pg_memory_pool* m_memoryPool;
-    kdev_pg_token_stream* m_tokenStream;
+    KDevPG::MemoryPool* m_memoryPool;
+    KDevPG::TokenStream* m_tokenStream;
 
 };
 

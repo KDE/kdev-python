@@ -16,8 +16,8 @@ set(parser_STAT_SRCS
     pythonastvisitor.cpp
     )
 
-if(KDEVPG_FOUND)
-    kdevpg_generate(_kdevpgList python NAMESPACE Python
+if(KDEVPGQT_FOUND)
+    kdevpgqt_generate(_kdevpgList python NAMESPACE Python
         "${CMAKE_SOURCE_DIR}/parser/python.g"
         "${CMAKE_SOURCE_DIR}/parser/pythonlexer.h"
     )
@@ -34,15 +34,15 @@ if(KDEVPG_FOUND)
     set( parser_SRCS
         ${_kdevpgList}
     )
-else(KDEVPG_FOUND)
+else(KDEVPGQT_FOUND)
     message(STATUS "Assuming existence of generated parser files")
     message( STATUS "Assuming existence of generated lexer files")
     set(parser_SRCS
-        generated/python_parser.cpp
-        generated/python_visitor.cpp
-        generated/python_default_visitor.cpp )
+        generated/pythonparser.cpp
+        generated/pythonvisitor.cpp
+        generated/pythondefaultvisitor.cpp )
 
-endif(KDEVPG_FOUND)
+endif(KDEVPGQT_FOUND)
 
 add_subdirectory(tests)
 
@@ -58,19 +58,19 @@ install(TARGETS kdev4pythonparser DESTINATION ${LIB_INSTALL_DIR})
 
 
 add_custom_target( copy-generated
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/python_parser.cpp" "${CMAKE_SOURCE_DIR}/parser/generated/python_parser.cpp"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/python_parser.h" "${CMAKE_SOURCE_DIR}/parser/generated/python_parser.h"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/python_new_ast.h" "${CMAKE_SOURCE_DIR}/parser/generated/python_new_ast.h"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/python_visitor.h" "${CMAKE_SOURCE_DIR}/parser/generated/python_visitor.h"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/python_visitor.cpp" "${CMAKE_SOURCE_DIR}/parser/generated/python_visitor.cpp"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/python_default_visitor.h" "${CMAKE_SOURCE_DIR}/parser/generated/python_default_visitor.h"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/python_default_visitor.cpp" "${CMAKE_SOURCE_DIR}/parser/generated/python_default_visitor.cpp"
-    DEPENDS "${CMAKE_BINARY_DIR}/parser/python_parser.cpp"
-    DEPENDS "${CMAKE_BINARY_DIR}/parser/python_parser.h"
-    DEPENDS "${CMAKE_BINARY_DIR}/parser/python_visitor.cpp"
-    DEPENDS "${CMAKE_BINARY_DIR}/parser/python_visitor.h"
-    DEPENDS "${CMAKE_BINARY_DIR}/parser/python_default_visitor.cpp"
-    DEPENDS "${CMAKE_BINARY_DIR}/parser/python_default_visitor.h"
-    DEPENDS "${CMAKE_BINARY_DIR}/parser/python_new_ast.h"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/pythonparser.cpp" "${CMAKE_SOURCE_DIR}/parser/generated/python_parser.cpp"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/pythonparser.h" "${CMAKE_SOURCE_DIR}/parser/generated/python_parser.h"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/pythonast.h" "${CMAKE_SOURCE_DIR}/parser/generated/pythonast.h"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/pythonvisitor.h" "${CMAKE_SOURCE_DIR}/parser/generated/pythonvisitor.h"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/pythonvisitor.cpp" "${CMAKE_SOURCE_DIR}/parser/generated/pythonvisitor.cpp"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/pythondefaultvisitor.h" "${CMAKE_SOURCE_DIR}/parser/generated/pythondefaultvisitor.h"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/pythondefaultvisitor.cpp" "${CMAKE_SOURCE_DIR}/parser/generated/pythondefaultvisitor.cpp"
+    DEPENDS "${CMAKE_BINARY_DIR}/parser/pythonparser.cpp"
+    DEPENDS "${CMAKE_BINARY_DIR}/parser/pythonparser.h"
+    DEPENDS "${CMAKE_BINARY_DIR}/parser/pythonvisitor.cpp"
+    DEPENDS "${CMAKE_BINARY_DIR}/parser/pythonvisitor.h"
+    DEPENDS "${CMAKE_BINARY_DIR}/parser/pythondefault_visitor.cpp"
+    DEPENDS "${CMAKE_BINARY_DIR}/parser/pythondefault_visitor.h"
+    DEPENDS "${CMAKE_BINARY_DIR}/parser/pythonast.h"
     )
 

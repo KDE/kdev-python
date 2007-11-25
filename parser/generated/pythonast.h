@@ -74,6 +74,7 @@ struct AtomAst;
 struct AugassignAst;
 struct BreakStmtAst;
 struct ClassdefAst;
+struct CodeexprAst;
 struct CompOpAst;
 struct ComparisonAst;
 struct CompoundStmtAst;
@@ -139,7 +140,6 @@ struct TermOpAst;
 struct TestAst;
 struct TestListGexpAst;
 struct TestlistAst;
-struct Testlist1Ast;
 struct TestlistGexpAst;
 struct TestlistSafeAst;
 struct TrailerAst;
@@ -165,72 +165,72 @@ struct KDEVPYTHONPARSER_EXPORT AstNode
         AugassignKind = 1008,
         BreakStmtKind = 1009,
         ClassdefKind = 1010,
-        CompOpKind = 1011,
-        ComparisonKind = 1012,
-        CompoundStmtKind = 1013,
-        ContinueStmtKind = 1014,
-        DecoratorKind = 1015,
-        DecoratorsKind = 1016,
-        DelStmtKind = 1017,
-        DictmakerKind = 1018,
-        DottedAsNameKind = 1019,
-        DottedAsNamesKind = 1020,
-        DottedNameKind = 1021,
-        ExceptClauseKind = 1022,
-        ExecStmtKind = 1023,
-        ExprKind = 1024,
-        ExprStmtKind = 1025,
-        ExprlistKind = 1026,
-        FactOpKind = 1027,
-        FactorKind = 1028,
-        FlowStmtKind = 1029,
-        ForStmtKind = 1030,
-        FpDefKind = 1031,
-        FpdefKind = 1032,
-        FplistKind = 1033,
-        FunPosParamKind = 1034,
-        FuncDefKind = 1035,
-        FuncdefKind = 1036,
-        GenForKind = 1037,
-        GenIfKind = 1038,
-        GenIterKind = 1039,
-        GlobalStmtKind = 1040,
-        IfStmtKind = 1041,
-        ImportAsNameKind = 1042,
-        ImportAsNamesKind = 1043,
-        ImportFromKind = 1044,
-        ImportNameKind = 1045,
-        ImportStmtKind = 1046,
-        LambdaDefKind = 1047,
-        ListForKind = 1048,
-        ListIfKind = 1049,
-        ListIterKind = 1050,
-        ListMakerKind = 1051,
-        ListmakerKind = 1052,
-        NotTestKind = 1053,
-        NumberKind = 1054,
-        PassStmtKind = 1055,
-        PlainArgumentsListKind = 1056,
-        PowerKind = 1057,
-        PrintStmtKind = 1058,
-        ProjectKind = 1059,
-        RaiseStmtKind = 1060,
-        ReturnStmtKind = 1061,
-        ShiftExprKind = 1062,
-        ShiftOpKind = 1063,
-        SimpleStmtKind = 1064,
-        SliceopKind = 1065,
-        SmallStmtKind = 1066,
-        StmtKind = 1067,
-        SubscriptKind = 1068,
-        SubscriptlistKind = 1069,
-        SuiteKind = 1070,
-        TermKind = 1071,
-        TermOpKind = 1072,
-        TestKind = 1073,
-        TestListGexpKind = 1074,
-        TestlistKind = 1075,
-        Testlist1Kind = 1076,
+        CodeexprKind = 1011,
+        CompOpKind = 1012,
+        ComparisonKind = 1013,
+        CompoundStmtKind = 1014,
+        ContinueStmtKind = 1015,
+        DecoratorKind = 1016,
+        DecoratorsKind = 1017,
+        DelStmtKind = 1018,
+        DictmakerKind = 1019,
+        DottedAsNameKind = 1020,
+        DottedAsNamesKind = 1021,
+        DottedNameKind = 1022,
+        ExceptClauseKind = 1023,
+        ExecStmtKind = 1024,
+        ExprKind = 1025,
+        ExprStmtKind = 1026,
+        ExprlistKind = 1027,
+        FactOpKind = 1028,
+        FactorKind = 1029,
+        FlowStmtKind = 1030,
+        ForStmtKind = 1031,
+        FpDefKind = 1032,
+        FpdefKind = 1033,
+        FplistKind = 1034,
+        FunPosParamKind = 1035,
+        FuncDefKind = 1036,
+        FuncdefKind = 1037,
+        GenForKind = 1038,
+        GenIfKind = 1039,
+        GenIterKind = 1040,
+        GlobalStmtKind = 1041,
+        IfStmtKind = 1042,
+        ImportAsNameKind = 1043,
+        ImportAsNamesKind = 1044,
+        ImportFromKind = 1045,
+        ImportNameKind = 1046,
+        ImportStmtKind = 1047,
+        LambdaDefKind = 1048,
+        ListForKind = 1049,
+        ListIfKind = 1050,
+        ListIterKind = 1051,
+        ListMakerKind = 1052,
+        ListmakerKind = 1053,
+        NotTestKind = 1054,
+        NumberKind = 1055,
+        PassStmtKind = 1056,
+        PlainArgumentsListKind = 1057,
+        PowerKind = 1058,
+        PrintStmtKind = 1059,
+        ProjectKind = 1060,
+        RaiseStmtKind = 1061,
+        ReturnStmtKind = 1062,
+        ShiftExprKind = 1063,
+        ShiftOpKind = 1064,
+        SimpleStmtKind = 1065,
+        SliceopKind = 1066,
+        SmallStmtKind = 1067,
+        StmtKind = 1068,
+        SubscriptKind = 1069,
+        SubscriptlistKind = 1070,
+        SuiteKind = 1071,
+        TermKind = 1072,
+        TermOpKind = 1073,
+        TestKind = 1074,
+        TestListGexpKind = 1075,
+        TestlistKind = 1076,
         TestlistGexpKind = 1077,
         TestlistSafeKind = 1078,
         TrailerKind = 1079,
@@ -311,7 +311,7 @@ struct KDEVPYTHONPARSER_EXPORT AtomAst: public AstNode
     TestlistGexpAst *testlistGexp;
     ListmakerAst *listmaker;
     DictmakerAst *dictmaker;
-    Testlist1Ast *testlist1;
+    CodeexprAst *codeexpr;
     qint64 atomIdentifierName;
     NumberAst *number;
     const KDevPG::ListNode<qint64 > *stringliteralSequence;
@@ -337,6 +337,13 @@ struct KDEVPYTHONPARSER_EXPORT ClassdefAst: public AstNode
     qint64 className;
     TestlistAst *testlist;
     SuiteAst *classSuite;
+};
+
+struct KDEVPYTHONPARSER_EXPORT CodeexprAst: public AstNode
+{
+    enum { KIND = CodeexprKind };
+
+    const KDevPG::ListNode<TestAst *> *testSequence;
 };
 
 struct KDEVPYTHONPARSER_EXPORT CompOpAst: public AstNode
@@ -865,13 +872,6 @@ struct KDEVPYTHONPARSER_EXPORT TestlistAst: public AstNode
 
     const KDevPG::ListNode<TestAst *> *testSequence;
     const KDevPG::ListNode<TestAst *> *testlistSequence;
-};
-
-struct KDEVPYTHONPARSER_EXPORT Testlist1Ast: public AstNode
-{
-    enum { KIND = Testlist1Kind };
-
-    const KDevPG::ListNode<TestAst *> *testSequence;
 };
 
 struct KDEVPYTHONPARSER_EXPORT TestlistGexpAst: public AstNode

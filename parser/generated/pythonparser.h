@@ -207,6 +207,7 @@ public:
     bool parseAugassign(AugassignAst **yynode);
     bool parseBreakStmt(BreakStmtAst **yynode);
     bool parseClassdef(ClassdefAst **yynode);
+    bool parseCodeexpr(CodeexprAst **yynode);
     bool parseCompOp(CompOpAst **yynode);
     bool parseComparison(ComparisonAst **yynode);
     bool parseCompoundStmt(CompoundStmtAst **yynode);
@@ -272,7 +273,6 @@ public:
     bool parseTest(TestAst **yynode);
     bool parseTestListGexp(TestListGexpAst **yynode);
     bool parseTestlist(TestlistAst **yynode);
-    bool parseTestlist1(Testlist1Ast **yynode);
     bool parseTestlistGexp(TestlistGexpAst **yynode);
     bool parseTestlistSafe(TestlistSafeAst **yynode);
     bool parseTrailer(TrailerAst **yynode);

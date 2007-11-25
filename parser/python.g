@@ -461,7 +461,7 @@ namespace PythonParser
    LPAREN ( testlistGexp=testlistGexp | 0 ) RPAREN
    | LBRACKET listmaker=listmaker RBRACKET
    | LBRACE dictmaker=dictmaker RBRACE
-   | BACKTICK testlist1=testlist1 BACKTICK
+   | BACKTICK codeexpr=codeexpr BACKTICK
    | atomIdentifierName=IDENTIFIER
    | number=number
    | (#stringliteral=STRINGLITERAL)+
@@ -563,7 +563,7 @@ namespace PythonParser
 -> genIf ;;
 
    #test=test ( COMMA #test=test )*
--> testlist1 ;;
+-> codeexpr ;;
 
 -----------------------------------------------------------------
 -- Code segments copied to the implementation (.cpp) file.

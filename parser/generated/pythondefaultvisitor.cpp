@@ -89,7 +89,7 @@ void DefaultVisitor::visitAtom(AtomAst *node)
     visitNode(node->testlistGexp);
     visitNode(node->listmaker);
     visitNode(node->dictmaker);
-    visitNode(node->testlist1);
+    visitNode(node->codeexpr);
     visitNode(node->number);
 }
 
@@ -105,6 +105,20 @@ void DefaultVisitor::visitClassdef(ClassdefAst *node)
 {
     visitNode(node->testlist);
     visitNode(node->classSuite);
+}
+
+void DefaultVisitor::visitCodeexpr(CodeexprAst *node)
+{
+    if (node->testSequence)
+    {
+        const KDevPG::ListNode<TestAst*> *__it = node->testSequence->front(), *__end = __it;
+        do
+        {
+            visitNode(__it->element);
+            __it = __it->next;
+        }
+        while (__it != __end);
+    }
 }
 
 void DefaultVisitor::visitCompOp(CompOpAst *)
@@ -779,20 +793,6 @@ void DefaultVisitor::visitTestlist(TestlistAst *node)
     if (node->testlistSequence)
     {
         const KDevPG::ListNode<TestAst*> *__it = node->testlistSequence->front(), *__end = __it;
-        do
-        {
-            visitNode(__it->element);
-            __it = __it->next;
-        }
-        while (__it != __end);
-    }
-}
-
-void DefaultVisitor::visitTestlist1(Testlist1Ast *node)
-{
-    if (node->testSequence)
-    {
-        const KDevPG::ListNode<TestAst*> *__it = node->testSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);

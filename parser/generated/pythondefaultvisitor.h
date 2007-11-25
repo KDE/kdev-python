@@ -24,6 +24,7 @@ public:
     virtual void visitAugassign(AugassignAst *node);
     virtual void visitBreakStmt(BreakStmtAst *node);
     virtual void visitClassdef(ClassdefAst *node);
+    virtual void visitCodeexpr(CodeexprAst *node);
     virtual void visitCompOp(CompOpAst *node);
     virtual void visitComparison(ComparisonAst *node);
     virtual void visitCompoundStmt(CompoundStmtAst *node);
@@ -89,7 +90,6 @@ public:
     virtual void visitTest(TestAst *node);
     virtual void visitTestListGexp(TestListGexpAst *node);
     virtual void visitTestlist(TestlistAst *node);
-    virtual void visitTestlist1(Testlist1Ast *node);
     virtual void visitTestlistGexp(TestlistGexpAst *node);
     virtual void visitTestlistSafe(TestlistSafeAst *node);
     virtual void visitTrailer(TrailerAst *node);

@@ -32,6 +32,7 @@ public:
     virtual void visitAugassign(AugassignAst *) {}
     virtual void visitBreakStmt(BreakStmtAst *) {}
     virtual void visitClassdef(ClassdefAst *) {}
+    virtual void visitCodeexpr(CodeexprAst *) {}
     virtual void visitCompOp(CompOpAst *) {}
     virtual void visitComparison(ComparisonAst *) {}
     virtual void visitCompoundStmt(CompoundStmtAst *) {}
@@ -97,7 +98,6 @@ public:
     virtual void visitTest(TestAst *) {}
     virtual void visitTestListGexp(TestListGexpAst *) {}
     virtual void visitTestlist(TestlistAst *) {}
-    virtual void visitTestlist1(Testlist1Ast *) {}
     virtual void visitTestlistGexp(TestlistGexpAst *) {}
     virtual void visitTestlistSafe(TestlistSafeAst *) {}
     virtual void visitTrailer(TrailerAst *) {}

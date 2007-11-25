@@ -6,12 +6,12 @@
 namespace Python
 {
 
-void DefaultVisitor::visitAnd_expr(And_exprAst *node)
+void DefaultVisitor::visitAndExpr(AndExprAst *node)
 {
-    visitNode(node->and_expr);
-    if (node->andd_shif_exprSequence)
+    visitNode(node->andExpr);
+    if (node->anddShifExprSequence)
     {
-        const KDevPG::ListNode<Shift_exprAst*> *__it = node->andd_shif_exprSequence->front(), *__end = __it;
+        const KDevPG::ListNode<ShiftExprAst*> *__it = node->anddShifExprSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -21,11 +21,11 @@ void DefaultVisitor::visitAnd_expr(And_exprAst *node)
     }
 }
 
-void DefaultVisitor::visitAnd_test(And_testAst *node)
+void DefaultVisitor::visitAndTest(AndTestAst *node)
 {
-    if (node->not_testSequence)
+    if (node->notTestSequence)
     {
-        const KDevPG::ListNode<Not_testAst*> *__it = node->not_testSequence->front(), *__end = __it;
+        const KDevPG::ListNode<NotTestAst*> *__it = node->notTestSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -35,7 +35,7 @@ void DefaultVisitor::visitAnd_test(And_testAst *node)
     }
 }
 
-void DefaultVisitor::visitArg_list(Arg_listAst *node)
+void DefaultVisitor::visitArgList(ArgListAst *node)
 {
     if (node->argumentSequence)
     {
@@ -51,24 +51,24 @@ void DefaultVisitor::visitArg_list(Arg_listAst *node)
 
 void DefaultVisitor::visitArglist(ArglistAst *node)
 {
-    visitNode(node->arg_list);
-    visitNode(node->arglist_star);
-    visitNode(node->arglist_doublestar);
+    visitNode(node->argList);
+    visitNode(node->arglistStar);
+    visitNode(node->arglistDoublestar);
 }
 
 void DefaultVisitor::visitArgument(ArgumentAst *node)
 {
-    visitNode(node->argument_test);
-    visitNode(node->argument_equal_test);
-    visitNode(node->gen_for);
+    visitNode(node->argumentTest);
+    visitNode(node->argumentEqualTest);
+    visitNode(node->genFor);
 }
 
-void DefaultVisitor::visitArith_expr(Arith_exprAst *node)
+void DefaultVisitor::visitArithExpr(ArithExprAst *node)
 {
-    visitNode(node->arith_term);
-    if (node->arith_op_listSequence)
+    visitNode(node->arithTerm);
+    if (node->arithOpListSequence)
     {
-        const KDevPG::ListNode<Arith_opAst*> *__it = node->arith_op_listSequence->front(), *__end = __it;
+        const KDevPG::ListNode<ArithOpAst*> *__it = node->arithOpListSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -76,9 +76,9 @@ void DefaultVisitor::visitArith_expr(Arith_exprAst *node)
         }
         while (__it != __end);
     }
-    if (node->arith_term_listSequence)
+    if (node->arithTermListSequence)
     {
-        const KDevPG::ListNode<TermAst*> *__it = node->arith_term_listSequence->front(), *__end = __it;
+        const KDevPG::ListNode<TermAst*> *__it = node->arithTermListSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -88,19 +88,19 @@ void DefaultVisitor::visitArith_expr(Arith_exprAst *node)
     }
 }
 
-void DefaultVisitor::visitArith_op(Arith_opAst *)
+void DefaultVisitor::visitArithOp(ArithOpAst *)
 {
 }
 
-void DefaultVisitor::visitAssert_stmt(Assert_stmtAst *node)
+void DefaultVisitor::visitAssertStmt(AssertStmtAst *node)
 {
-    visitNode(node->assert_not_test);
-    visitNode(node->assert_raise_test);
+    visitNode(node->assertNotTest);
+    visitNode(node->assertRaiseTest);
 }
 
 void DefaultVisitor::visitAtom(AtomAst *node)
 {
-    visitNode(node->testlist_gexp);
+    visitNode(node->testlistGexp);
     visitNode(node->listmaker);
     visitNode(node->dictmaker);
     visitNode(node->testlist1);
@@ -111,26 +111,26 @@ void DefaultVisitor::visitAugassign(AugassignAst *)
 {
 }
 
-void DefaultVisitor::visitBreak_stmt(Break_stmtAst *)
+void DefaultVisitor::visitBreakStmt(BreakStmtAst *)
 {
 }
 
 void DefaultVisitor::visitClassdef(ClassdefAst *node)
 {
     visitNode(node->testlist);
-    visitNode(node->class_suite);
+    visitNode(node->classSuite);
 }
 
-void DefaultVisitor::visitComp_op(Comp_opAst *)
+void DefaultVisitor::visitCompOp(CompOpAst *)
 {
 }
 
 void DefaultVisitor::visitComparison(ComparisonAst *node)
 {
-    visitNode(node->comp_expr);
-    if (node->comp_opSequence)
+    visitNode(node->compExpr);
+    if (node->compOpSequence)
     {
-        const KDevPG::ListNode<Comp_opAst*> *__it = node->comp_opSequence->front(), *__end = __it;
+        const KDevPG::ListNode<CompOpAst*> *__it = node->compOpSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -138,9 +138,9 @@ void DefaultVisitor::visitComparison(ComparisonAst *node)
         }
         while (__it != __end);
     }
-    if (node->comp_op_exprSequence)
+    if (node->compOpExprSequence)
     {
-        const KDevPG::ListNode<ExprAst*> *__it = node->comp_op_exprSequence->front(), *__end = __it;
+        const KDevPG::ListNode<ExprAst*> *__it = node->compOpExprSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -150,23 +150,23 @@ void DefaultVisitor::visitComparison(ComparisonAst *node)
     }
 }
 
-void DefaultVisitor::visitCompound_stmt(Compound_stmtAst *node)
+void DefaultVisitor::visitCompoundStmt(CompoundStmtAst *node)
 {
-    visitNode(node->if_stmt);
-    visitNode(node->while_stmt);
-    visitNode(node->for_stmt);
-    visitNode(node->try_stmt);
+    visitNode(node->ifStmt);
+    visitNode(node->whileStmt);
+    visitNode(node->forStmt);
+    visitNode(node->tryStmt);
     visitNode(node->fucdef);
     visitNode(node->classdef);
 }
 
-void DefaultVisitor::visitContinue_stmt(Continue_stmtAst *)
+void DefaultVisitor::visitContinueStmt(ContinueStmtAst *)
 {
 }
 
 void DefaultVisitor::visitDecorator(DecoratorAst *node)
 {
-    visitNode(node->decorator_name);
+    visitNode(node->decoratorName);
     visitNode(node->arguments);
 }
 
@@ -184,16 +184,16 @@ void DefaultVisitor::visitDecorators(DecoratorsAst *node)
     }
 }
 
-void DefaultVisitor::visitDel_stmt(Del_stmtAst *node)
+void DefaultVisitor::visitDelStmt(DelStmtAst *node)
 {
-    visitNode(node->del_list);
+    visitNode(node->delList);
 }
 
 void DefaultVisitor::visitDictmaker(DictmakerAst *node)
 {
-    if (node->key_listSequence)
+    if (node->keyListSequence)
     {
-        const KDevPG::ListNode<TestAst*> *__it = node->key_listSequence->front(), *__end = __it;
+        const KDevPG::ListNode<TestAst*> *__it = node->keyListSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -201,28 +201,9 @@ void DefaultVisitor::visitDictmaker(DictmakerAst *node)
         }
         while (__it != __end);
     }
-    if (node->value_listSequence)
+    if (node->valueListSequence)
     {
-        const KDevPG::ListNode<TestAst*> *__it = node->value_listSequence->front(), *__end = __it;
-        do
-        {
-            visitNode(__it->element);
-            __it = __it->next;
-        }
-        while (__it != __end);
-    }
-}
-
-void DefaultVisitor::visitDotted_as_name(Dotted_as_nameAst *node)
-{
-    visitNode(node->import_dotted_name);
-}
-
-void DefaultVisitor::visitDotted_as_names(Dotted_as_namesAst *node)
-{
-    if (node->dotted_as_nameSequence)
-    {
-        const KDevPG::ListNode<Dotted_as_nameAst*> *__it = node->dotted_as_nameSequence->front(), *__end = __it;
+        const KDevPG::ListNode<TestAst*> *__it = node->valueListSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -232,29 +213,48 @@ void DefaultVisitor::visitDotted_as_names(Dotted_as_namesAst *node)
     }
 }
 
-void DefaultVisitor::visitDotted_name(Dotted_nameAst *)
+void DefaultVisitor::visitDottedAsName(DottedAsNameAst *node)
+{
+    visitNode(node->importDottedName);
+}
+
+void DefaultVisitor::visitDottedAsNames(DottedAsNamesAst *node)
+{
+    if (node->dottedAsNameSequence)
+    {
+        const KDevPG::ListNode<DottedAsNameAst*> *__it = node->dottedAsNameSequence->front(), *__end = __it;
+        do
+        {
+            visitNode(__it->element);
+            __it = __it->next;
+        }
+        while (__it != __end);
+    }
+}
+
+void DefaultVisitor::visitDottedName(DottedNameAst *)
 {
 }
 
-void DefaultVisitor::visitExcept_clause(Except_clauseAst *node)
+void DefaultVisitor::visitExceptClause(ExceptClauseAst *node)
 {
-    visitNode(node->except_test);
-    visitNode(node->except_target_test);
+    visitNode(node->exceptTest);
+    visitNode(node->exceptTargetTest);
 }
 
-void DefaultVisitor::visitExec_stmt(Exec_stmtAst *node)
+void DefaultVisitor::visitExecStmt(ExecStmtAst *node)
 {
-    visitNode(node->exec_code);
-    visitNode(node->global_dict_exec);
-    visitNode(node->local_dict_exec);
+    visitNode(node->execCode);
+    visitNode(node->globalDictExec);
+    visitNode(node->localDictExec);
 }
 
 void DefaultVisitor::visitExpr(ExprAst *node)
 {
     visitNode(node->expr);
-    if (node->orr_exprSequence)
+    if (node->orrExprSequence)
     {
-        const KDevPG::ListNode<Xor_exprAst*> *__it = node->orr_exprSequence->front(), *__end = __it;
+        const KDevPG::ListNode<XorExprAst*> *__it = node->orrExprSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -264,14 +264,14 @@ void DefaultVisitor::visitExpr(ExprAst *node)
     }
 }
 
-void DefaultVisitor::visitExpr_stmt(Expr_stmtAst *node)
+void DefaultVisitor::visitExprStmt(ExprStmtAst *node)
 {
     visitNode(node->testlist);
     visitNode(node->augassign);
-    visitNode(node->anugassign_testlist);
-    if (node->equal_testlistSequence)
+    visitNode(node->anugassignTestlist);
+    if (node->equalTestlistSequence)
     {
-        const KDevPG::ListNode<TestlistAst*> *__it = node->equal_testlistSequence->front(), *__end = __it;
+        const KDevPG::ListNode<TestlistAst*> *__it = node->equalTestlistSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -305,38 +305,38 @@ void DefaultVisitor::visitExprlist(ExprlistAst *node)
     }
 }
 
-void DefaultVisitor::visitFact_op(Fact_opAst *)
+void DefaultVisitor::visitFactOp(FactOpAst *)
 {
 }
 
 void DefaultVisitor::visitFactor(FactorAst *node)
 {
-    visitNode(node->fact_op);
+    visitNode(node->factOp);
     visitNode(node->factor);
     visitNode(node->power);
 }
 
-void DefaultVisitor::visitFlow_stmt(Flow_stmtAst *node)
+void DefaultVisitor::visitFlowStmt(FlowStmtAst *node)
 {
-    visitNode(node->break_stmt);
-    visitNode(node->continue_stmt);
-    visitNode(node->return_stmt);
-    visitNode(node->raise_stmt);
-    visitNode(node->yield_stmt);
+    visitNode(node->breakStmt);
+    visitNode(node->continueStmt);
+    visitNode(node->returnStmt);
+    visitNode(node->raiseStmt);
+    visitNode(node->yieldStmt);
 }
 
-void DefaultVisitor::visitFor_stmt(For_stmtAst *node)
+void DefaultVisitor::visitForStmt(ForStmtAst *node)
 {
-    visitNode(node->for_expr);
-    visitNode(node->for_testlist);
-    visitNode(node->for_suite);
-    visitNode(node->for_else_suite);
+    visitNode(node->forExpr);
+    visitNode(node->forTestlist);
+    visitNode(node->forSuite);
+    visitNode(node->forElseSuite);
 }
 
-void DefaultVisitor::visitFp_def(Fp_defAst *node)
+void DefaultVisitor::visitFpDef(FpDefAst *node)
 {
     visitNode(node->fpdef);
-    visitNode(node->fp_def_test);
+    visitNode(node->fpDefTest);
 }
 
 void DefaultVisitor::visitFpdef(FpdefAst *node)
@@ -346,9 +346,9 @@ void DefaultVisitor::visitFpdef(FpdefAst *node)
 
 void DefaultVisitor::visitFplist(FplistAst *node)
 {
-    if (node->fplist_fpdefSequence)
+    if (node->fplistFpdefSequence)
     {
-        const KDevPG::ListNode<FpdefAst*> *__it = node->fplist_fpdefSequence->front(), *__end = __it;
+        const KDevPG::ListNode<FpdefAst*> *__it = node->fplistFpdefSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -358,15 +358,15 @@ void DefaultVisitor::visitFplist(FplistAst *node)
     }
 }
 
-void DefaultVisitor::visitFun_pos_param(Fun_pos_paramAst *)
+void DefaultVisitor::visitFunPosParam(FunPosParamAst *)
 {
 }
 
-void DefaultVisitor::visitFunc_def(Func_defAst *node)
+void DefaultVisitor::visitFuncDef(FuncDefAst *node)
 {
-    if (node->fp_defSequence)
+    if (node->fpDefSequence)
     {
-        const KDevPG::ListNode<Fp_defAst*> *__it = node->fp_defSequence->front(), *__end = __it;
+        const KDevPG::ListNode<FpDefAst*> *__it = node->fpDefSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -379,38 +379,38 @@ void DefaultVisitor::visitFunc_def(Func_defAst *node)
 void DefaultVisitor::visitFuncdef(FuncdefAst *node)
 {
     visitNode(node->decorators);
-    visitNode(node->fun_args);
-    visitNode(node->fun_suite);
+    visitNode(node->funArgs);
+    visitNode(node->funSuite);
 }
 
-void DefaultVisitor::visitGen_for(Gen_forAst *node)
+void DefaultVisitor::visitGenFor(GenForAst *node)
 {
     visitNode(node->exprlist);
     visitNode(node->test);
-    visitNode(node->gen_iter);
+    visitNode(node->genIter);
 }
 
-void DefaultVisitor::visitGen_if(Gen_ifAst *node)
+void DefaultVisitor::visitGenIf(GenIfAst *node)
 {
     visitNode(node->test);
-    visitNode(node->gen_iter);
+    visitNode(node->genIter);
 }
 
-void DefaultVisitor::visitGen_iter(Gen_iterAst *node)
+void DefaultVisitor::visitGenIter(GenIterAst *node)
 {
-    visitNode(node->gen_for);
-    visitNode(node->gen_if);
+    visitNode(node->genFor);
+    visitNode(node->genIf);
 }
 
-void DefaultVisitor::visitGlobal_stmt(Global_stmtAst *)
+void DefaultVisitor::visitGlobalStmt(GlobalStmtAst *)
 {
 }
 
-void DefaultVisitor::visitIf_stmt(If_stmtAst *node)
+void DefaultVisitor::visitIfStmt(IfStmtAst *node)
 {
-    if (node->if_testSequence)
+    if (node->ifTestSequence)
     {
-        const KDevPG::ListNode<TestAst*> *__it = node->if_testSequence->front(), *__end = __it;
+        const KDevPG::ListNode<TestAst*> *__it = node->ifTestSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -418,10 +418,10 @@ void DefaultVisitor::visitIf_stmt(If_stmtAst *node)
         }
         while (__it != __end);
     }
-    visitNode(node->if_suite);
-    if (node->elif_testSequence)
+    visitNode(node->ifSuite);
+    if (node->elifTestSequence)
     {
-        const KDevPG::ListNode<TestAst*> *__it = node->elif_testSequence->front(), *__end = __it;
+        const KDevPG::ListNode<TestAst*> *__it = node->elifTestSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -429,9 +429,9 @@ void DefaultVisitor::visitIf_stmt(If_stmtAst *node)
         }
         while (__it != __end);
     }
-    if (node->elif_suiteSequence)
+    if (node->elifSuiteSequence)
     {
-        const KDevPG::ListNode<SuiteAst*> *__it = node->elif_suiteSequence->front(), *__end = __it;
+        const KDevPG::ListNode<SuiteAst*> *__it = node->elifSuiteSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -439,18 +439,18 @@ void DefaultVisitor::visitIf_stmt(If_stmtAst *node)
         }
         while (__it != __end);
     }
-    visitNode(node->if_else_suite);
+    visitNode(node->ifElseSuite);
 }
 
-void DefaultVisitor::visitImport_as_name(Import_as_nameAst *)
+void DefaultVisitor::visitImportAsName(ImportAsNameAst *)
 {
 }
 
-void DefaultVisitor::visitImport_as_names(Import_as_namesAst *node)
+void DefaultVisitor::visitImportAsNames(ImportAsNamesAst *node)
 {
-    if (node->import_as_nameSequence)
+    if (node->importAsNameSequence)
     {
-        const KDevPG::ListNode<Import_as_nameAst*> *__it = node->import_as_nameSequence->front(), *__end = __it;
+        const KDevPG::ListNode<ImportAsNameAst*> *__it = node->importAsNameSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -460,54 +460,54 @@ void DefaultVisitor::visitImport_as_names(Import_as_namesAst *node)
     }
 }
 
-void DefaultVisitor::visitImport_from(Import_fromAst *node)
+void DefaultVisitor::visitImportFrom(ImportFromAst *node)
 {
-    visitNode(node->import_from_name);
-    visitNode(node->import_as_names);
-    visitNode(node->import_from_as_name);
+    visitNode(node->importFromName);
+    visitNode(node->importAsNames);
+    visitNode(node->importFromAsName);
 }
 
-void DefaultVisitor::visitImport_name(Import_nameAst *node)
+void DefaultVisitor::visitImportName(ImportNameAst *node)
 {
-    visitNode(node->import_name);
+    visitNode(node->importName);
 }
 
-void DefaultVisitor::visitImport_stmt(Import_stmtAst *node)
+void DefaultVisitor::visitImportStmt(ImportStmtAst *node)
 {
-    visitNode(node->import_import);
-    visitNode(node->import_from);
+    visitNode(node->importImport);
+    visitNode(node->importFrom);
 }
 
-void DefaultVisitor::visitLambda_def(Lambda_defAst *node)
+void DefaultVisitor::visitLambdaDef(LambdaDefAst *node)
 {
-    visitNode(node->lambda_varargslist);
-    visitNode(node->lambda_test);
+    visitNode(node->lambdaVarargslist);
+    visitNode(node->lambdaTest);
 }
 
-void DefaultVisitor::visitList_for(List_forAst *node)
+void DefaultVisitor::visitListFor(ListForAst *node)
 {
     visitNode(node->exprlist);
-    visitNode(node->testlist_safe);
-    visitNode(node->list_iter);
+    visitNode(node->testlistSafe);
+    visitNode(node->listIter);
 }
 
-void DefaultVisitor::visitList_if(List_ifAst *node)
+void DefaultVisitor::visitListIf(ListIfAst *node)
 {
     visitNode(node->test);
-    visitNode(node->list_iter);
+    visitNode(node->listIter);
 }
 
-void DefaultVisitor::visitList_iter(List_iterAst *node)
+void DefaultVisitor::visitListIter(ListIterAst *node)
 {
-    visitNode(node->list_for);
-    visitNode(node->list_if);
+    visitNode(node->listFor);
+    visitNode(node->listIf);
 }
 
-void DefaultVisitor::visitList_maker(List_makerAst *node)
+void DefaultVisitor::visitListMaker(ListMakerAst *node)
 {
-    if (node->list_testSequence)
+    if (node->listTestSequence)
     {
-        const KDevPG::ListNode<TestAst*> *__it = node->list_testSequence->front(), *__end = __it;
+        const KDevPG::ListNode<TestAst*> *__it = node->listTestSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -519,13 +519,13 @@ void DefaultVisitor::visitList_maker(List_makerAst *node)
 
 void DefaultVisitor::visitListmaker(ListmakerAst *node)
 {
-    visitNode(node->list_maker);
-    visitNode(node->list_for);
+    visitNode(node->listMaker);
+    visitNode(node->listFor);
 }
 
-void DefaultVisitor::visitNot_test(Not_testAst *node)
+void DefaultVisitor::visitNotTest(NotTestAst *node)
 {
-    visitNode(node->not_test);
+    visitNode(node->notTest);
     visitNode(node->comparison);
 }
 
@@ -533,7 +533,7 @@ void DefaultVisitor::visitNumber(NumberAst *)
 {
 }
 
-void DefaultVisitor::visitPass_stmt(Pass_stmtAst *)
+void DefaultVisitor::visitPassStmt(PassStmtAst *)
 {
 }
 
@@ -553,11 +553,11 @@ void DefaultVisitor::visitPower(PowerAst *node)
     visitNode(node->factor);
 }
 
-void DefaultVisitor::visitPrint_stmt(Print_stmtAst *node)
+void DefaultVisitor::visitPrintStmt(PrintStmtAst *node)
 {
-    if (node->print_argsSequence)
+    if (node->printArgsSequence)
     {
-        const KDevPG::ListNode<TestAst*> *__it = node->print_argsSequence->front(), *__end = __it;
+        const KDevPG::ListNode<TestAst*> *__it = node->printArgsSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -565,9 +565,9 @@ void DefaultVisitor::visitPrint_stmt(Print_stmtAst *node)
         }
         while (__it != __end);
     }
-    if (node->rshift_argsSequence)
+    if (node->rshiftArgsSequence)
     {
-        const KDevPG::ListNode<TestAst*> *__it = node->rshift_argsSequence->front(), *__end = __it;
+        const KDevPG::ListNode<TestAst*> *__it = node->rshiftArgsSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -591,24 +591,24 @@ void DefaultVisitor::visitProject(ProjectAst *node)
     }
 }
 
-void DefaultVisitor::visitRaise_stmt(Raise_stmtAst *node)
+void DefaultVisitor::visitRaiseStmt(RaiseStmtAst *node)
 {
     visitNode(node->type);
     visitNode(node->value);
     visitNode(node->traceback);
 }
 
-void DefaultVisitor::visitReturn_stmt(Return_stmtAst *node)
+void DefaultVisitor::visitReturnStmt(ReturnStmtAst *node)
 {
-    visitNode(node->return_expr);
+    visitNode(node->returnExpr);
 }
 
-void DefaultVisitor::visitShift_expr(Shift_exprAst *node)
+void DefaultVisitor::visitShiftExpr(ShiftExprAst *node)
 {
-    visitNode(node->arith_expr);
-    if (node->shift_op_listSequence)
+    visitNode(node->arithExpr);
+    if (node->shiftOpListSequence)
     {
-        const KDevPG::ListNode<Shift_opAst*> *__it = node->shift_op_listSequence->front(), *__end = __it;
+        const KDevPG::ListNode<ShiftOpAst*> *__it = node->shiftOpListSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -616,9 +616,9 @@ void DefaultVisitor::visitShift_expr(Shift_exprAst *node)
         }
         while (__it != __end);
     }
-    if (node->arith_expr_listSequence)
+    if (node->arithExprListSequence)
     {
-        const KDevPG::ListNode<Arith_exprAst*> *__it = node->arith_expr_listSequence->front(), *__end = __it;
+        const KDevPG::ListNode<ArithExprAst*> *__it = node->arithExprListSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -628,15 +628,15 @@ void DefaultVisitor::visitShift_expr(Shift_exprAst *node)
     }
 }
 
-void DefaultVisitor::visitShift_op(Shift_opAst *)
+void DefaultVisitor::visitShiftOp(ShiftOpAst *)
 {
 }
 
-void DefaultVisitor::visitSimple_stmt(Simple_stmtAst *node)
+void DefaultVisitor::visitSimpleStmt(SimpleStmtAst *node)
 {
-    if (node->small_stmtSequence)
+    if (node->smallStmtSequence)
     {
-        const KDevPG::ListNode<Small_stmtAst*> *__it = node->small_stmtSequence->front(), *__end = __it;
+        const KDevPG::ListNode<SmallStmtAst*> *__it = node->smallStmtSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -648,32 +648,32 @@ void DefaultVisitor::visitSimple_stmt(Simple_stmtAst *node)
 
 void DefaultVisitor::visitSliceop(SliceopAst *node)
 {
-    visitNode(node->slice_test);
+    visitNode(node->sliceTest);
 }
 
-void DefaultVisitor::visitSmall_stmt(Small_stmtAst *node)
+void DefaultVisitor::visitSmallStmt(SmallStmtAst *node)
 {
-    visitNode(node->expr_stmt);
-    visitNode(node->print_stmt);
-    visitNode(node->del_stmt);
-    visitNode(node->pass_stmt);
-    visitNode(node->flow_stmt);
-    visitNode(node->import_stmt);
-    visitNode(node->global_stmt);
-    visitNode(node->exec_stmt);
-    visitNode(node->assert_stmt);
+    visitNode(node->exprStmt);
+    visitNode(node->printStmt);
+    visitNode(node->delStmt);
+    visitNode(node->passStmt);
+    visitNode(node->flowStmt);
+    visitNode(node->importStmt);
+    visitNode(node->globalStmt);
+    visitNode(node->execStmt);
+    visitNode(node->assertStmt);
 }
 
 void DefaultVisitor::visitStmt(StmtAst *node)
 {
-    visitNode(node->simple_stmt);
-    visitNode(node->compound_stmt);
+    visitNode(node->simpleStmt);
+    visitNode(node->compoundStmt);
 }
 
 void DefaultVisitor::visitSubscript(SubscriptAst *node)
 {
-    visitNode(node->sub_test);
-    visitNode(node->sub_colon_test);
+    visitNode(node->subTest);
+    visitNode(node->subColonTest);
     visitNode(node->sliceop);
 }
 
@@ -693,7 +693,7 @@ void DefaultVisitor::visitSubscriptlist(SubscriptlistAst *node)
 
 void DefaultVisitor::visitSuite(SuiteAst *node)
 {
-    visitNode(node->simple_stmt);
+    visitNode(node->simpleStmt);
     if (node->stmtSequence)
     {
         const KDevPG::ListNode<StmtAst*> *__it = node->stmtSequence->front(), *__end = __it;
@@ -709,9 +709,9 @@ void DefaultVisitor::visitSuite(SuiteAst *node)
 void DefaultVisitor::visitTerm(TermAst *node)
 {
     visitNode(node->factor);
-    if (node->term_op_listSequence)
+    if (node->termOpListSequence)
     {
-        const KDevPG::ListNode<Term_opAst*> *__it = node->term_op_listSequence->front(), *__end = __it;
+        const KDevPG::ListNode<TermOpAst*> *__it = node->termOpListSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -719,9 +719,9 @@ void DefaultVisitor::visitTerm(TermAst *node)
         }
         while (__it != __end);
     }
-    if (node->factor_listSequence)
+    if (node->factorListSequence)
     {
-        const KDevPG::ListNode<FactorAst*> *__it = node->factor_listSequence->front(), *__end = __it;
+        const KDevPG::ListNode<FactorAst*> *__it = node->factorListSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -731,15 +731,15 @@ void DefaultVisitor::visitTerm(TermAst *node)
     }
 }
 
-void DefaultVisitor::visitTerm_op(Term_opAst *)
+void DefaultVisitor::visitTermOp(TermOpAst *)
 {
 }
 
 void DefaultVisitor::visitTest(TestAst *node)
 {
-    if (node->and_testSequence)
+    if (node->andTestSequence)
     {
-        const KDevPG::ListNode<And_testAst*> *__it = node->and_testSequence->front(), *__end = __it;
+        const KDevPG::ListNode<AndTestAst*> *__it = node->andTestSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -747,10 +747,10 @@ void DefaultVisitor::visitTest(TestAst *node)
         }
         while (__it != __end);
     }
-    visitNode(node->lambda_def);
+    visitNode(node->lambdaDef);
 }
 
-void DefaultVisitor::visitTest_list_gexp(Test_list_gexpAst *node)
+void DefaultVisitor::visitTestListGexp(TestListGexpAst *node)
 {
     if (node->testSequence)
     {
@@ -802,13 +802,13 @@ void DefaultVisitor::visitTestlist1(Testlist1Ast *node)
     }
 }
 
-void DefaultVisitor::visitTestlist_gexp(Testlist_gexpAst *node)
+void DefaultVisitor::visitTestlistGexp(TestlistGexpAst *node)
 {
-    visitNode(node->test_list_gexp);
-    visitNode(node->gen_for);
+    visitNode(node->testListGexp);
+    visitNode(node->genFor);
 }
 
-void DefaultVisitor::visitTestlist_safe(Testlist_safeAst *node)
+void DefaultVisitor::visitTestlistSafe(TestlistSafeAst *node)
 {
     if (node->testSequence)
     {
@@ -824,16 +824,16 @@ void DefaultVisitor::visitTestlist_safe(Testlist_safeAst *node)
 
 void DefaultVisitor::visitTrailer(TrailerAst *node)
 {
-    visitNode(node->trailer_arglist);
+    visitNode(node->trailerArglist);
     visitNode(node->subscriptlist);
 }
 
-void DefaultVisitor::visitTry_stmt(Try_stmtAst *node)
+void DefaultVisitor::visitTryStmt(TryStmtAst *node)
 {
-    visitNode(node->try_suite);
-    if (node->except_clauseSequence)
+    visitNode(node->trySuite);
+    if (node->exceptClauseSequence)
     {
-        const KDevPG::ListNode<Except_clauseAst*> *__it = node->except_clauseSequence->front(), *__end = __it;
+        const KDevPG::ListNode<ExceptClauseAst*> *__it = node->exceptClauseSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -841,9 +841,9 @@ void DefaultVisitor::visitTry_stmt(Try_stmtAst *node)
         }
         while (__it != __end);
     }
-    if (node->except_suiteSequence)
+    if (node->exceptSuiteSequence)
     {
-        const KDevPG::ListNode<SuiteAst*> *__it = node->except_suiteSequence->front(), *__end = __it;
+        const KDevPG::ListNode<SuiteAst*> *__it = node->exceptSuiteSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -851,29 +851,29 @@ void DefaultVisitor::visitTry_stmt(Try_stmtAst *node)
         }
         while (__it != __end);
     }
-    visitNode(node->try_else_suite);
-    visitNode(node->finally_suite);
+    visitNode(node->tryElseSuite);
+    visitNode(node->finallySuite);
 }
 
 void DefaultVisitor::visitVarargslist(VarargslistAst *node)
 {
-    visitNode(node->func_def);
-    visitNode(node->fun_pos_param);
+    visitNode(node->funcDef);
+    visitNode(node->funPosParam);
 }
 
-void DefaultVisitor::visitWhile_stmt(While_stmtAst *node)
+void DefaultVisitor::visitWhileStmt(WhileStmtAst *node)
 {
-    visitNode(node->while_test);
-    visitNode(node->while_suite);
-    visitNode(node->while_else_suite);
+    visitNode(node->whileTest);
+    visitNode(node->whileSuite);
+    visitNode(node->whileElseSuite);
 }
 
-void DefaultVisitor::visitXor_expr(Xor_exprAst *node)
+void DefaultVisitor::visitXorExpr(XorExprAst *node)
 {
-    visitNode(node->xor_expr);
-    if (node->hat_xor_exprSequence)
+    visitNode(node->xorExpr);
+    if (node->hatXorExprSequence)
     {
-        const KDevPG::ListNode<And_exprAst*> *__it = node->hat_xor_exprSequence->front(), *__end = __it;
+        const KDevPG::ListNode<AndExprAst*> *__it = node->hatXorExprSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -883,9 +883,9 @@ void DefaultVisitor::visitXor_expr(Xor_exprAst *node)
     }
 }
 
-void DefaultVisitor::visitYield_stmt(Yield_stmtAst *node)
+void DefaultVisitor::visitYieldStmt(YieldStmtAst *node)
 {
-    visitNode(node->yield_expr);
+    visitNode(node->yieldExpr);
 }
 
 

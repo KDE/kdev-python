@@ -16,244 +16,229 @@ namespace Python
 {
 class Lexer;
 
-enum shift_operator_enum
+enum OperatorType
 {
-    op_lshift,
-    op_rshift
+    LeftShiftOp,
+    RightShiftOp,
+    PlusOp,
+    MinusOp,
+    StarOp,
+    SlashOp,
+    ModuloOp,
+    DoubleSlashOp,
+    BinaryPlusOp,
+    BinaryMinusOp,
+    BinaryTildeOp,
+    PlusEqOp,
+    MinusEqOp,
+    StarEqOp,
+    SlashEqOp,
+    ModuloEqOp,
+    AndEqOp,
+    OrEqOp,
+    TildeEqOp,
+    LeftShiftEqOp,
+    RightShiftEqOp,
+    DoublestarEqOp,
+    DoubleslashEqOp,
+    LessOp,
+    GreaterOp,
+    IsEqualOp,
+    GreaterEqOp,
+    LessEqOp,
+    UnEqualOp,
+    InOp,
+    NotInOp,
+    IsOp,
+    IsNotOp
 };
-enum arith_operator_enum
+enum NumericType
 {
-    op_plus,
-    op_minus
-};
-enum term_operator_enum
-{
-    op_star,
-    op_slash,
-    op_modulo,
-    op_doubleslash
-};
-enum factor_operator_enum
-{
-    op_factor_plus,
-    op_factor_minus,
-    op_factor_tilde
-};
-enum augassign_eq_enum
-{
-    eq_plus,
-    eq_minus,
-    eq_star,
-    eq_slash,
-    eq_modulo,
-    eq_and,
-    eq_or,
-    eq_tilde,
-    eq_lshift,
-    eq_rshift,
-    eq_doublestar,
-    eq_doubleslash
-};
-enum comp_operator_enum
-{
-    op_less,
-    op_greater,
-    op_isequal,
-    op_greatereq,
-    op_lesseq,
-    op_unequal,
-    op_in,
-    op_not_in,
-    op_is,
-    op_is_not
-};
-enum num_type_enum
-{
-    type_int,
-    type_float,
-    type_imagnum
+    IntegerNumeric,
+    FloatNumeric,
+    ImaginaryNumeric
 };
 }
 
 namespace Python
 {
 
-struct And_exprAst;
-struct And_testAst;
-struct Arg_listAst;
+struct AndExprAst;
+struct AndTestAst;
+struct ArgListAst;
 struct ArglistAst;
 struct ArgumentAst;
-struct Arith_exprAst;
-struct Arith_opAst;
-struct Assert_stmtAst;
+struct ArithExprAst;
+struct ArithOpAst;
+struct AssertStmtAst;
 struct AtomAst;
 struct AugassignAst;
-struct Break_stmtAst;
+struct BreakStmtAst;
 struct ClassdefAst;
-struct Comp_opAst;
+struct CompOpAst;
 struct ComparisonAst;
-struct Compound_stmtAst;
-struct Continue_stmtAst;
+struct CompoundStmtAst;
+struct ContinueStmtAst;
 struct DecoratorAst;
 struct DecoratorsAst;
-struct Del_stmtAst;
+struct DelStmtAst;
 struct DictmakerAst;
-struct Dotted_as_nameAst;
-struct Dotted_as_namesAst;
-struct Dotted_nameAst;
-struct Except_clauseAst;
-struct Exec_stmtAst;
+struct DottedAsNameAst;
+struct DottedAsNamesAst;
+struct DottedNameAst;
+struct ExceptClauseAst;
+struct ExecStmtAst;
 struct ExprAst;
-struct Expr_stmtAst;
+struct ExprStmtAst;
 struct ExprlistAst;
-struct Fact_opAst;
+struct FactOpAst;
 struct FactorAst;
-struct Flow_stmtAst;
-struct For_stmtAst;
-struct Fp_defAst;
+struct FlowStmtAst;
+struct ForStmtAst;
+struct FpDefAst;
 struct FpdefAst;
 struct FplistAst;
-struct Fun_pos_paramAst;
-struct Func_defAst;
+struct FunPosParamAst;
+struct FuncDefAst;
 struct FuncdefAst;
-struct Gen_forAst;
-struct Gen_ifAst;
-struct Gen_iterAst;
-struct Global_stmtAst;
-struct If_stmtAst;
-struct Import_as_nameAst;
-struct Import_as_namesAst;
-struct Import_fromAst;
-struct Import_nameAst;
-struct Import_stmtAst;
-struct Lambda_defAst;
-struct List_forAst;
-struct List_ifAst;
-struct List_iterAst;
-struct List_makerAst;
+struct GenForAst;
+struct GenIfAst;
+struct GenIterAst;
+struct GlobalStmtAst;
+struct IfStmtAst;
+struct ImportAsNameAst;
+struct ImportAsNamesAst;
+struct ImportFromAst;
+struct ImportNameAst;
+struct ImportStmtAst;
+struct LambdaDefAst;
+struct ListForAst;
+struct ListIfAst;
+struct ListIterAst;
+struct ListMakerAst;
 struct ListmakerAst;
-struct Not_testAst;
+struct NotTestAst;
 struct NumberAst;
-struct Pass_stmtAst;
+struct PassStmtAst;
 struct PowerAst;
-struct Print_stmtAst;
+struct PrintStmtAst;
 struct ProjectAst;
-struct Raise_stmtAst;
-struct Return_stmtAst;
-struct Shift_exprAst;
-struct Shift_opAst;
-struct Simple_stmtAst;
+struct RaiseStmtAst;
+struct ReturnStmtAst;
+struct ShiftExprAst;
+struct ShiftOpAst;
+struct SimpleStmtAst;
 struct SliceopAst;
-struct Small_stmtAst;
+struct SmallStmtAst;
 struct StmtAst;
 struct SubscriptAst;
 struct SubscriptlistAst;
 struct SuiteAst;
 struct TermAst;
-struct Term_opAst;
+struct TermOpAst;
 struct TestAst;
-struct Test_list_gexpAst;
+struct TestListGexpAst;
 struct TestlistAst;
 struct Testlist1Ast;
-struct Testlist_gexpAst;
-struct Testlist_safeAst;
+struct TestlistGexpAst;
+struct TestlistSafeAst;
 struct TrailerAst;
-struct Try_stmtAst;
+struct TryStmtAst;
 struct VarargslistAst;
-struct While_stmtAst;
-struct Xor_exprAst;
-struct Yield_stmtAst;
+struct WhileStmtAst;
+struct XorExprAst;
+struct YieldStmtAst;
 
 
 struct KDEVPYTHONPARSER_EXPORT AstNode
 {
     enum AstNodeKind
     {
-        And_exprKind = 1000,
-        And_testKind = 1001,
-        Arg_listKind = 1002,
+        AndExprKind = 1000,
+        AndTestKind = 1001,
+        ArgListKind = 1002,
         ArglistKind = 1003,
         ArgumentKind = 1004,
-        Arith_exprKind = 1005,
-        Arith_opKind = 1006,
-        Assert_stmtKind = 1007,
+        ArithExprKind = 1005,
+        ArithOpKind = 1006,
+        AssertStmtKind = 1007,
         AtomKind = 1008,
         AugassignKind = 1009,
-        Break_stmtKind = 1010,
+        BreakStmtKind = 1010,
         ClassdefKind = 1011,
-        Comp_opKind = 1012,
+        CompOpKind = 1012,
         ComparisonKind = 1013,
-        Compound_stmtKind = 1014,
-        Continue_stmtKind = 1015,
+        CompoundStmtKind = 1014,
+        ContinueStmtKind = 1015,
         DecoratorKind = 1016,
         DecoratorsKind = 1017,
-        Del_stmtKind = 1018,
+        DelStmtKind = 1018,
         DictmakerKind = 1019,
-        Dotted_as_nameKind = 1020,
-        Dotted_as_namesKind = 1021,
-        Dotted_nameKind = 1022,
-        Except_clauseKind = 1023,
-        Exec_stmtKind = 1024,
+        DottedAsNameKind = 1020,
+        DottedAsNamesKind = 1021,
+        DottedNameKind = 1022,
+        ExceptClauseKind = 1023,
+        ExecStmtKind = 1024,
         ExprKind = 1025,
-        Expr_stmtKind = 1026,
+        ExprStmtKind = 1026,
         ExprlistKind = 1027,
-        Fact_opKind = 1028,
+        FactOpKind = 1028,
         FactorKind = 1029,
-        Flow_stmtKind = 1030,
-        For_stmtKind = 1031,
-        Fp_defKind = 1032,
+        FlowStmtKind = 1030,
+        ForStmtKind = 1031,
+        FpDefKind = 1032,
         FpdefKind = 1033,
         FplistKind = 1034,
-        Fun_pos_paramKind = 1035,
-        Func_defKind = 1036,
+        FunPosParamKind = 1035,
+        FuncDefKind = 1036,
         FuncdefKind = 1037,
-        Gen_forKind = 1038,
-        Gen_ifKind = 1039,
-        Gen_iterKind = 1040,
-        Global_stmtKind = 1041,
-        If_stmtKind = 1042,
-        Import_as_nameKind = 1043,
-        Import_as_namesKind = 1044,
-        Import_fromKind = 1045,
-        Import_nameKind = 1046,
-        Import_stmtKind = 1047,
-        Lambda_defKind = 1048,
-        List_forKind = 1049,
-        List_ifKind = 1050,
-        List_iterKind = 1051,
-        List_makerKind = 1052,
+        GenForKind = 1038,
+        GenIfKind = 1039,
+        GenIterKind = 1040,
+        GlobalStmtKind = 1041,
+        IfStmtKind = 1042,
+        ImportAsNameKind = 1043,
+        ImportAsNamesKind = 1044,
+        ImportFromKind = 1045,
+        ImportNameKind = 1046,
+        ImportStmtKind = 1047,
+        LambdaDefKind = 1048,
+        ListForKind = 1049,
+        ListIfKind = 1050,
+        ListIterKind = 1051,
+        ListMakerKind = 1052,
         ListmakerKind = 1053,
-        Not_testKind = 1054,
+        NotTestKind = 1054,
         NumberKind = 1055,
-        Pass_stmtKind = 1056,
+        PassStmtKind = 1056,
         PowerKind = 1057,
-        Print_stmtKind = 1058,
+        PrintStmtKind = 1058,
         ProjectKind = 1059,
-        Raise_stmtKind = 1060,
-        Return_stmtKind = 1061,
-        Shift_exprKind = 1062,
-        Shift_opKind = 1063,
-        Simple_stmtKind = 1064,
+        RaiseStmtKind = 1060,
+        ReturnStmtKind = 1061,
+        ShiftExprKind = 1062,
+        ShiftOpKind = 1063,
+        SimpleStmtKind = 1064,
         SliceopKind = 1065,
-        Small_stmtKind = 1066,
+        SmallStmtKind = 1066,
         StmtKind = 1067,
         SubscriptKind = 1068,
         SubscriptlistKind = 1069,
         SuiteKind = 1070,
         TermKind = 1071,
-        Term_opKind = 1072,
+        TermOpKind = 1072,
         TestKind = 1073,
-        Test_list_gexpKind = 1074,
+        TestListGexpKind = 1074,
         TestlistKind = 1075,
         Testlist1Kind = 1076,
-        Testlist_gexpKind = 1077,
-        Testlist_safeKind = 1078,
+        TestlistGexpKind = 1077,
+        TestlistSafeKind = 1078,
         TrailerKind = 1079,
-        Try_stmtKind = 1080,
+        TryStmtKind = 1080,
         VarargslistKind = 1081,
-        While_stmtKind = 1082,
-        Xor_exprKind = 1083,
-        Yield_stmtKind = 1084,
+        WhileStmtKind = 1082,
+        XorExprKind = 1083,
+        YieldStmtKind = 1084,
         AST_NODE_KIND_COUNT
     };
 
@@ -262,24 +247,24 @@ struct KDEVPYTHONPARSER_EXPORT AstNode
     qint64 endToken;
 };
 
-struct KDEVPYTHONPARSER_EXPORT And_exprAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT AndExprAst: public AstNode
 {
-    enum { KIND = And_exprKind };
+    enum { KIND = AndExprKind };
 
-    Shift_exprAst *and_expr;
-    const KDevPG::ListNode<Shift_exprAst *> *andd_shif_exprSequence;
+    ShiftExprAst *andExpr;
+    const KDevPG::ListNode<ShiftExprAst *> *anddShifExprSequence;
 };
 
-struct KDEVPYTHONPARSER_EXPORT And_testAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT AndTestAst: public AstNode
 {
-    enum { KIND = And_testKind };
+    enum { KIND = AndTestKind };
 
-    const KDevPG::ListNode<Not_testAst *> *not_testSequence;
+    const KDevPG::ListNode<NotTestAst *> *notTestSequence;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Arg_listAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT ArgListAst: public AstNode
 {
-    enum { KIND = Arg_listKind };
+    enum { KIND = ArgListKind };
 
     const KDevPG::ListNode<ArgumentAst *> *argumentSequence;
 };
@@ -288,53 +273,53 @@ struct KDEVPYTHONPARSER_EXPORT ArglistAst: public AstNode
 {
     enum { KIND = ArglistKind };
 
-    Arg_listAst *arg_list;
-    TestAst *arglist_star;
-    TestAst *arglist_doublestar;
+    ArgListAst *argList;
+    TestAst *arglistStar;
+    TestAst *arglistDoublestar;
 };
 
 struct KDEVPYTHONPARSER_EXPORT ArgumentAst: public AstNode
 {
     enum { KIND = ArgumentKind };
 
-    TestAst *argument_test;
-    TestAst *argument_equal_test;
-    Gen_forAst *gen_for;
+    TestAst *argumentTest;
+    TestAst *argumentEqualTest;
+    GenForAst *genFor;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Arith_exprAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT ArithExprAst: public AstNode
 {
-    enum { KIND = Arith_exprKind };
+    enum { KIND = ArithExprKind };
 
-    TermAst *arith_term;
-    const KDevPG::ListNode<Arith_opAst *> *arith_op_listSequence;
-    const KDevPG::ListNode<TermAst *> *arith_term_listSequence;
+    TermAst *arithTerm;
+    const KDevPG::ListNode<ArithOpAst *> *arithOpListSequence;
+    const KDevPG::ListNode<TermAst *> *arithTermListSequence;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Arith_opAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT ArithOpAst: public AstNode
 {
-    enum { KIND = Arith_opKind };
+    enum { KIND = ArithOpKind };
 
-    Python::arith_operator_enum arith_operator;
+    Python::OperatorType arithOp;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Assert_stmtAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT AssertStmtAst: public AstNode
 {
-    enum { KIND = Assert_stmtKind };
+    enum { KIND = AssertStmtKind };
 
-    TestAst *assert_not_test;
-    TestAst *assert_raise_test;
+    TestAst *assertNotTest;
+    TestAst *assertRaiseTest;
 };
 
 struct KDEVPYTHONPARSER_EXPORT AtomAst: public AstNode
 {
     enum { KIND = AtomKind };
 
-    Testlist_gexpAst *testlist_gexp;
+    TestlistGexpAst *testlistGexp;
     ListmakerAst *listmaker;
     DictmakerAst *dictmaker;
     Testlist1Ast *testlist1;
-    qint64 atom_identifier_name;
+    qint64 atomIdentifierName;
     NumberAst *number;
     const KDevPG::ListNode<qint64 > *stringliteralSequence;
 };
@@ -343,12 +328,12 @@ struct KDEVPYTHONPARSER_EXPORT AugassignAst: public AstNode
 {
     enum { KIND = AugassignKind };
 
-    Python::augassign_eq_enum augassign_eq;
+    Python::OperatorType assignOp;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Break_stmtAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT BreakStmtAst: public AstNode
 {
-    enum { KIND = Break_stmtKind };
+    enum { KIND = BreakStmtKind };
 
 };
 
@@ -356,42 +341,42 @@ struct KDEVPYTHONPARSER_EXPORT ClassdefAst: public AstNode
 {
     enum { KIND = ClassdefKind };
 
-    qint64 class_name;
+    qint64 className;
     TestlistAst *testlist;
-    SuiteAst *class_suite;
+    SuiteAst *classSuite;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Comp_opAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT CompOpAst: public AstNode
 {
-    enum { KIND = Comp_opKind };
+    enum { KIND = CompOpKind };
 
-    Python::comp_operator_enum comp_operator;
+    Python::OperatorType compOp;
 };
 
 struct KDEVPYTHONPARSER_EXPORT ComparisonAst: public AstNode
 {
     enum { KIND = ComparisonKind };
 
-    ExprAst *comp_expr;
-    const KDevPG::ListNode<Comp_opAst *> *comp_opSequence;
-    const KDevPG::ListNode<ExprAst *> *comp_op_exprSequence;
+    ExprAst *compExpr;
+    const KDevPG::ListNode<CompOpAst *> *compOpSequence;
+    const KDevPG::ListNode<ExprAst *> *compOpExprSequence;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Compound_stmtAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT CompoundStmtAst: public AstNode
 {
-    enum { KIND = Compound_stmtKind };
+    enum { KIND = CompoundStmtKind };
 
-    If_stmtAst *if_stmt;
-    While_stmtAst *while_stmt;
-    For_stmtAst *for_stmt;
-    Try_stmtAst *try_stmt;
+    IfStmtAst *ifStmt;
+    WhileStmtAst *whileStmt;
+    ForStmtAst *forStmt;
+    TryStmtAst *tryStmt;
     FuncdefAst *fucdef;
     ClassdefAst *classdef;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Continue_stmtAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT ContinueStmtAst: public AstNode
 {
-    enum { KIND = Continue_stmtKind };
+    enum { KIND = ContinueStmtKind };
 
 };
 
@@ -399,7 +384,7 @@ struct KDEVPYTHONPARSER_EXPORT DecoratorAst: public AstNode
 {
     enum { KIND = DecoratorKind };
 
-    Dotted_nameAst *decorator_name;
+    DottedNameAst *decoratorName;
     ArglistAst *arguments;
 };
 
@@ -410,76 +395,76 @@ struct KDEVPYTHONPARSER_EXPORT DecoratorsAst: public AstNode
     const KDevPG::ListNode<DecoratorAst *> *decoratorSequence;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Del_stmtAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT DelStmtAst: public AstNode
 {
-    enum { KIND = Del_stmtKind };
+    enum { KIND = DelStmtKind };
 
-    ExprlistAst *del_list;
+    ExprlistAst *delList;
 };
 
 struct KDEVPYTHONPARSER_EXPORT DictmakerAst: public AstNode
 {
     enum { KIND = DictmakerKind };
 
-    const KDevPG::ListNode<TestAst *> *key_listSequence;
-    const KDevPG::ListNode<TestAst *> *value_listSequence;
+    const KDevPG::ListNode<TestAst *> *keyListSequence;
+    const KDevPG::ListNode<TestAst *> *valueListSequence;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Dotted_as_nameAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT DottedAsNameAst: public AstNode
 {
-    enum { KIND = Dotted_as_nameKind };
+    enum { KIND = DottedAsNameKind };
 
-    Dotted_nameAst *import_dotted_name;
-    qint64 imported_as;
+    DottedNameAst *importDottedName;
+    qint64 importedAs;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Dotted_as_namesAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT DottedAsNamesAst: public AstNode
 {
-    enum { KIND = Dotted_as_namesKind };
+    enum { KIND = DottedAsNamesKind };
 
-    const KDevPG::ListNode<Dotted_as_nameAst *> *dotted_as_nameSequence;
+    const KDevPG::ListNode<DottedAsNameAst *> *dottedAsNameSequence;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Dotted_nameAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT DottedNameAst: public AstNode
 {
-    enum { KIND = Dotted_nameKind };
+    enum { KIND = DottedNameKind };
 
-    qint64 dotted_name;
+    qint64 dottedName;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Except_clauseAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT ExceptClauseAst: public AstNode
 {
-    enum { KIND = Except_clauseKind };
+    enum { KIND = ExceptClauseKind };
 
-    TestAst *except_test;
-    TestAst *except_target_test;
+    TestAst *exceptTest;
+    TestAst *exceptTargetTest;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Exec_stmtAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT ExecStmtAst: public AstNode
 {
-    enum { KIND = Exec_stmtKind };
+    enum { KIND = ExecStmtKind };
 
-    ExprAst *exec_code;
-    TestAst *global_dict_exec;
-    TestAst *local_dict_exec;
+    ExprAst *execCode;
+    TestAst *globalDictExec;
+    TestAst *localDictExec;
 };
 
 struct KDEVPYTHONPARSER_EXPORT ExprAst: public AstNode
 {
     enum { KIND = ExprKind };
 
-    Xor_exprAst *expr;
-    const KDevPG::ListNode<Xor_exprAst *> *orr_exprSequence;
+    XorExprAst *expr;
+    const KDevPG::ListNode<XorExprAst *> *orrExprSequence;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Expr_stmtAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT ExprStmtAst: public AstNode
 {
-    enum { KIND = Expr_stmtKind };
+    enum { KIND = ExprStmtKind };
 
     TestlistAst *testlist;
     AugassignAst *augassign;
-    TestlistAst *anugassign_testlist;
-    const KDevPG::ListNode<TestlistAst *> *equal_testlistSequence;
+    TestlistAst *anugassignTestlist;
+    const KDevPG::ListNode<TestlistAst *> *equalTestlistSequence;
 };
 
 struct KDEVPYTHONPARSER_EXPORT ExprlistAst: public AstNode
@@ -490,49 +475,49 @@ struct KDEVPYTHONPARSER_EXPORT ExprlistAst: public AstNode
     const KDevPG::ListNode<ExprAst *> *exprlistSequence;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Fact_opAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT FactOpAst: public AstNode
 {
-    enum { KIND = Fact_opKind };
+    enum { KIND = FactOpKind };
 
-    Python::factor_operator_enum factor_operator;
+    Python::OperatorType facOp;
 };
 
 struct KDEVPYTHONPARSER_EXPORT FactorAst: public AstNode
 {
     enum { KIND = FactorKind };
 
-    Fact_opAst *fact_op;
+    FactOpAst *factOp;
     FactorAst *factor;
     PowerAst *power;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Flow_stmtAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT FlowStmtAst: public AstNode
 {
-    enum { KIND = Flow_stmtKind };
+    enum { KIND = FlowStmtKind };
 
-    Break_stmtAst *break_stmt;
-    Continue_stmtAst *continue_stmt;
-    Return_stmtAst *return_stmt;
-    Raise_stmtAst *raise_stmt;
-    Yield_stmtAst *yield_stmt;
+    BreakStmtAst *breakStmt;
+    ContinueStmtAst *continueStmt;
+    ReturnStmtAst *returnStmt;
+    RaiseStmtAst *raiseStmt;
+    YieldStmtAst *yieldStmt;
 };
 
-struct KDEVPYTHONPARSER_EXPORT For_stmtAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT ForStmtAst: public AstNode
 {
-    enum { KIND = For_stmtKind };
+    enum { KIND = ForStmtKind };
 
-    ExprlistAst *for_expr;
-    TestlistAst *for_testlist;
-    SuiteAst *for_suite;
-    SuiteAst *for_else_suite;
+    ExprlistAst *forExpr;
+    TestlistAst *forTestlist;
+    SuiteAst *forSuite;
+    SuiteAst *forElseSuite;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Fp_defAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT FpDefAst: public AstNode
 {
-    enum { KIND = Fp_defKind };
+    enum { KIND = FpDefKind };
 
     FpdefAst *fpdef;
-    TestAst *fp_def_test;
+    TestAst *fpDefTest;
 };
 
 struct KDEVPYTHONPARSER_EXPORT FpdefAst: public AstNode
@@ -546,22 +531,22 @@ struct KDEVPYTHONPARSER_EXPORT FplistAst: public AstNode
 {
     enum { KIND = FplistKind };
 
-    const KDevPG::ListNode<FpdefAst *> *fplist_fpdefSequence;
+    const KDevPG::ListNode<FpdefAst *> *fplistFpdefSequence;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Fun_pos_paramAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT FunPosParamAst: public AstNode
 {
-    enum { KIND = Fun_pos_paramKind };
+    enum { KIND = FunPosParamKind };
 
-    qint64 star_id;
-    qint64 double_star_id;
+    qint64 starId;
+    qint64 doubleStarId;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Func_defAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT FuncDefAst: public AstNode
 {
-    enum { KIND = Func_defKind };
+    enum { KIND = FuncDefKind };
 
-    const KDevPG::ListNode<Fp_defAst *> *fp_defSequence;
+    const KDevPG::ListNode<FpDefAst *> *fpDefSequence;
 };
 
 struct KDEVPYTHONPARSER_EXPORT FuncdefAst: public AstNode
@@ -569,146 +554,146 @@ struct KDEVPYTHONPARSER_EXPORT FuncdefAst: public AstNode
     enum { KIND = FuncdefKind };
 
     DecoratorsAst *decorators;
-    qint64 func_name;
-    VarargslistAst *fun_args;
-    SuiteAst *fun_suite;
+    qint64 funcName;
+    VarargslistAst *funArgs;
+    SuiteAst *funSuite;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Gen_forAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT GenForAst: public AstNode
 {
-    enum { KIND = Gen_forKind };
+    enum { KIND = GenForKind };
 
     ExprlistAst *exprlist;
     TestAst *test;
-    Gen_iterAst *gen_iter;
+    GenIterAst *genIter;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Gen_ifAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT GenIfAst: public AstNode
 {
-    enum { KIND = Gen_ifKind };
+    enum { KIND = GenIfKind };
 
     TestAst *test;
-    Gen_iterAst *gen_iter;
+    GenIterAst *genIter;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Gen_iterAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT GenIterAst: public AstNode
 {
-    enum { KIND = Gen_iterKind };
+    enum { KIND = GenIterKind };
 
-    Gen_forAst *gen_for;
-    Gen_ifAst *gen_if;
+    GenForAst *genFor;
+    GenIfAst *genIf;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Global_stmtAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT GlobalStmtAst: public AstNode
 {
-    enum { KIND = Global_stmtKind };
+    enum { KIND = GlobalStmtKind };
 
-    const KDevPG::ListNode<qint64 > *global_nameSequence;
+    const KDevPG::ListNode<qint64 > *globalNameSequence;
 };
 
-struct KDEVPYTHONPARSER_EXPORT If_stmtAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT IfStmtAst: public AstNode
 {
-    enum { KIND = If_stmtKind };
+    enum { KIND = IfStmtKind };
 
-    const KDevPG::ListNode<TestAst *> *if_testSequence;
-    SuiteAst *if_suite;
-    const KDevPG::ListNode<TestAst *> *elif_testSequence;
-    const KDevPG::ListNode<SuiteAst *> *elif_suiteSequence;
-    SuiteAst *if_else_suite;
+    const KDevPG::ListNode<TestAst *> *ifTestSequence;
+    SuiteAst *ifSuite;
+    const KDevPG::ListNode<TestAst *> *elifTestSequence;
+    const KDevPG::ListNode<SuiteAst *> *elifSuiteSequence;
+    SuiteAst *ifElseSuite;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Import_as_nameAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT ImportAsNameAst: public AstNode
 {
-    enum { KIND = Import_as_nameKind };
+    enum { KIND = ImportAsNameKind };
 
-    qint64 imported_name;
-    qint64 imported_as;
+    qint64 importedName;
+    qint64 importedAs;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Import_as_namesAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT ImportAsNamesAst: public AstNode
 {
-    enum { KIND = Import_as_namesKind };
+    enum { KIND = ImportAsNamesKind };
 
-    const KDevPG::ListNode<Import_as_nameAst *> *import_as_nameSequence;
+    const KDevPG::ListNode<ImportAsNameAst *> *importAsNameSequence;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Import_fromAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT ImportFromAst: public AstNode
 {
-    enum { KIND = Import_fromKind };
+    enum { KIND = ImportFromKind };
 
-    Dotted_nameAst *import_from_name;
-    Import_as_namesAst *import_as_names;
-    Import_as_namesAst *import_from_as_name;
+    DottedNameAst *importFromName;
+    ImportAsNamesAst *importAsNames;
+    ImportAsNamesAst *importFromAsName;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Import_nameAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT ImportNameAst: public AstNode
 {
-    enum { KIND = Import_nameKind };
+    enum { KIND = ImportNameKind };
 
-    Dotted_as_namesAst *import_name;
+    DottedAsNamesAst *importName;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Import_stmtAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT ImportStmtAst: public AstNode
 {
-    enum { KIND = Import_stmtKind };
+    enum { KIND = ImportStmtKind };
 
-    Import_nameAst *import_import;
-    Import_fromAst *import_from;
+    ImportNameAst *importImport;
+    ImportFromAst *importFrom;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Lambda_defAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT LambdaDefAst: public AstNode
 {
-    enum { KIND = Lambda_defKind };
+    enum { KIND = LambdaDefKind };
 
-    VarargslistAst *lambda_varargslist;
-    TestAst *lambda_test;
+    VarargslistAst *lambdaVarargslist;
+    TestAst *lambdaTest;
 };
 
-struct KDEVPYTHONPARSER_EXPORT List_forAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT ListForAst: public AstNode
 {
-    enum { KIND = List_forKind };
+    enum { KIND = ListForKind };
 
     ExprlistAst *exprlist;
-    Testlist_safeAst *testlist_safe;
-    List_iterAst *list_iter;
+    TestlistSafeAst *testlistSafe;
+    ListIterAst *listIter;
 };
 
-struct KDEVPYTHONPARSER_EXPORT List_ifAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT ListIfAst: public AstNode
 {
-    enum { KIND = List_ifKind };
+    enum { KIND = ListIfKind };
 
     TestAst *test;
-    List_iterAst *list_iter;
+    ListIterAst *listIter;
 };
 
-struct KDEVPYTHONPARSER_EXPORT List_iterAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT ListIterAst: public AstNode
 {
-    enum { KIND = List_iterKind };
+    enum { KIND = ListIterKind };
 
-    List_forAst *list_for;
-    List_ifAst *list_if;
+    ListForAst *listFor;
+    ListIfAst *listIf;
 };
 
-struct KDEVPYTHONPARSER_EXPORT List_makerAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT ListMakerAst: public AstNode
 {
-    enum { KIND = List_makerKind };
+    enum { KIND = ListMakerKind };
 
-    const KDevPG::ListNode<TestAst *> *list_testSequence;
+    const KDevPG::ListNode<TestAst *> *listTestSequence;
 };
 
 struct KDEVPYTHONPARSER_EXPORT ListmakerAst: public AstNode
 {
     enum { KIND = ListmakerKind };
 
-    List_makerAst *list_maker;
-    List_forAst *list_for;
+    ListMakerAst *listMaker;
+    ListForAst *listFor;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Not_testAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT NotTestAst: public AstNode
 {
-    enum { KIND = Not_testKind };
+    enum { KIND = NotTestKind };
 
-    Not_testAst *not_test;
+    NotTestAst *notTest;
     ComparisonAst *comparison;
 };
 
@@ -716,12 +701,12 @@ struct KDEVPYTHONPARSER_EXPORT NumberAst: public AstNode
 {
     enum { KIND = NumberKind };
 
-    Python::num_type_enum num_type;
+    Python::NumericType numType;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Pass_stmtAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT PassStmtAst: public AstNode
 {
-    enum { KIND = Pass_stmtKind };
+    enum { KIND = PassStmtKind };
 
 };
 
@@ -734,12 +719,12 @@ struct KDEVPYTHONPARSER_EXPORT PowerAst: public AstNode
     FactorAst *factor;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Print_stmtAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT PrintStmtAst: public AstNode
 {
-    enum { KIND = Print_stmtKind };
+    enum { KIND = PrintStmtKind };
 
-    const KDevPG::ListNode<TestAst *> *print_argsSequence;
-    const KDevPG::ListNode<TestAst *> *rshift_argsSequence;
+    const KDevPG::ListNode<TestAst *> *printArgsSequence;
+    const KDevPG::ListNode<TestAst *> *rshiftArgsSequence;
 };
 
 struct KDEVPYTHONPARSER_EXPORT ProjectAst: public AstNode
@@ -749,82 +734,82 @@ struct KDEVPYTHONPARSER_EXPORT ProjectAst: public AstNode
     const KDevPG::ListNode<StmtAst *> *stmtSequence;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Raise_stmtAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT RaiseStmtAst: public AstNode
 {
-    enum { KIND = Raise_stmtKind };
+    enum { KIND = RaiseStmtKind };
 
     TestAst *type;
     TestAst *value;
     TestAst *traceback;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Return_stmtAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT ReturnStmtAst: public AstNode
 {
-    enum { KIND = Return_stmtKind };
+    enum { KIND = ReturnStmtKind };
 
-    TestlistAst *return_expr;
+    TestlistAst *returnExpr;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Shift_exprAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT ShiftExprAst: public AstNode
 {
-    enum { KIND = Shift_exprKind };
+    enum { KIND = ShiftExprKind };
 
-    Arith_exprAst *arith_expr;
-    const KDevPG::ListNode<Shift_opAst *> *shift_op_listSequence;
-    const KDevPG::ListNode<Arith_exprAst *> *arith_expr_listSequence;
+    ArithExprAst *arithExpr;
+    const KDevPG::ListNode<ShiftOpAst *> *shiftOpListSequence;
+    const KDevPG::ListNode<ArithExprAst *> *arithExprListSequence;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Shift_opAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT ShiftOpAst: public AstNode
 {
-    enum { KIND = Shift_opKind };
+    enum { KIND = ShiftOpKind };
 
-    Python::shift_operator_enum shift_operator;
+    Python::OperatorType shiftOp;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Simple_stmtAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT SimpleStmtAst: public AstNode
 {
-    enum { KIND = Simple_stmtKind };
+    enum { KIND = SimpleStmtKind };
 
-    const KDevPG::ListNode<Small_stmtAst *> *small_stmtSequence;
+    const KDevPG::ListNode<SmallStmtAst *> *smallStmtSequence;
 };
 
 struct KDEVPYTHONPARSER_EXPORT SliceopAst: public AstNode
 {
     enum { KIND = SliceopKind };
 
-    TestAst *slice_test;
+    TestAst *sliceTest;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Small_stmtAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT SmallStmtAst: public AstNode
 {
-    enum { KIND = Small_stmtKind };
+    enum { KIND = SmallStmtKind };
 
-    Expr_stmtAst *expr_stmt;
-    Print_stmtAst *print_stmt;
-    Del_stmtAst *del_stmt;
-    Pass_stmtAst *pass_stmt;
-    Flow_stmtAst *flow_stmt;
-    Import_stmtAst *import_stmt;
-    Global_stmtAst *global_stmt;
-    Exec_stmtAst *exec_stmt;
-    Assert_stmtAst *assert_stmt;
+    ExprStmtAst *exprStmt;
+    PrintStmtAst *printStmt;
+    DelStmtAst *delStmt;
+    PassStmtAst *passStmt;
+    FlowStmtAst *flowStmt;
+    ImportStmtAst *importStmt;
+    GlobalStmtAst *globalStmt;
+    ExecStmtAst *execStmt;
+    AssertStmtAst *assertStmt;
 };
 
 struct KDEVPYTHONPARSER_EXPORT StmtAst: public AstNode
 {
     enum { KIND = StmtKind };
 
-    Simple_stmtAst *simple_stmt;
-    Compound_stmtAst *compound_stmt;
+    SimpleStmtAst *simpleStmt;
+    CompoundStmtAst *compoundStmt;
 };
 
 struct KDEVPYTHONPARSER_EXPORT SubscriptAst: public AstNode
 {
     enum { KIND = SubscriptKind };
 
-    qint64 subcript_ellipsis;
-    TestAst *sub_test;
-    TestAst *sub_colon_test;
+    qint64 subcriptEllipsis;
+    TestAst *subTest;
+    TestAst *subColonTest;
     SliceopAst *sliceop;
 };
 
@@ -839,7 +824,7 @@ struct KDEVPYTHONPARSER_EXPORT SuiteAst: public AstNode
 {
     enum { KIND = SuiteKind };
 
-    Simple_stmtAst *simple_stmt;
+    SimpleStmtAst *simpleStmt;
     const KDevPG::ListNode<StmtAst *> *stmtSequence;
 };
 
@@ -848,28 +833,28 @@ struct KDEVPYTHONPARSER_EXPORT TermAst: public AstNode
     enum { KIND = TermKind };
 
     FactorAst *factor;
-    const KDevPG::ListNode<Term_opAst *> *term_op_listSequence;
-    const KDevPG::ListNode<FactorAst *> *factor_listSequence;
+    const KDevPG::ListNode<TermOpAst *> *termOpListSequence;
+    const KDevPG::ListNode<FactorAst *> *factorListSequence;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Term_opAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT TermOpAst: public AstNode
 {
-    enum { KIND = Term_opKind };
+    enum { KIND = TermOpKind };
 
-    Python::term_operator_enum term_operator;
+    Python::OperatorType termOp;
 };
 
 struct KDEVPYTHONPARSER_EXPORT TestAst: public AstNode
 {
     enum { KIND = TestKind };
 
-    const KDevPG::ListNode<And_testAst *> *and_testSequence;
-    Lambda_defAst *lambda_def;
+    const KDevPG::ListNode<AndTestAst *> *andTestSequence;
+    LambdaDefAst *lambdaDef;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Test_list_gexpAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT TestListGexpAst: public AstNode
 {
-    enum { KIND = Test_list_gexpKind };
+    enum { KIND = TestListGexpKind };
 
     const KDevPG::ListNode<TestAst *> *testSequence;
 };
@@ -889,17 +874,17 @@ struct KDEVPYTHONPARSER_EXPORT Testlist1Ast: public AstNode
     const KDevPG::ListNode<TestAst *> *testSequence;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Testlist_gexpAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT TestlistGexpAst: public AstNode
 {
-    enum { KIND = Testlist_gexpKind };
+    enum { KIND = TestlistGexpKind };
 
-    Test_list_gexpAst *test_list_gexp;
-    Gen_forAst *gen_for;
+    TestListGexpAst *testListGexp;
+    GenForAst *genFor;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Testlist_safeAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT TestlistSafeAst: public AstNode
 {
-    enum { KIND = Testlist_safeKind };
+    enum { KIND = TestlistSafeKind };
 
     const KDevPG::ListNode<TestAst *> *testSequence;
 };
@@ -908,52 +893,52 @@ struct KDEVPYTHONPARSER_EXPORT TrailerAst: public AstNode
 {
     enum { KIND = TrailerKind };
 
-    ArglistAst *trailer_arglist;
+    ArglistAst *trailerArglist;
     SubscriptlistAst *subscriptlist;
-    qint64 tariler_dot_name;
+    qint64 tarilerDotName;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Try_stmtAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT TryStmtAst: public AstNode
 {
-    enum { KIND = Try_stmtKind };
+    enum { KIND = TryStmtKind };
 
-    SuiteAst *try_suite;
-    const KDevPG::ListNode<Except_clauseAst *> *except_clauseSequence;
-    const KDevPG::ListNode<SuiteAst *> *except_suiteSequence;
-    SuiteAst *try_else_suite;
-    SuiteAst *finally_suite;
+    SuiteAst *trySuite;
+    const KDevPG::ListNode<ExceptClauseAst *> *exceptClauseSequence;
+    const KDevPG::ListNode<SuiteAst *> *exceptSuiteSequence;
+    SuiteAst *tryElseSuite;
+    SuiteAst *finallySuite;
 };
 
 struct KDEVPYTHONPARSER_EXPORT VarargslistAst: public AstNode
 {
     enum { KIND = VarargslistKind };
 
-    Func_defAst *func_def;
-    Fun_pos_paramAst *fun_pos_param;
+    FuncDefAst *funcDef;
+    FunPosParamAst *funPosParam;
 };
 
-struct KDEVPYTHONPARSER_EXPORT While_stmtAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT WhileStmtAst: public AstNode
 {
-    enum { KIND = While_stmtKind };
+    enum { KIND = WhileStmtKind };
 
-    TestAst *while_test;
-    SuiteAst *while_suite;
-    SuiteAst *while_else_suite;
+    TestAst *whileTest;
+    SuiteAst *whileSuite;
+    SuiteAst *whileElseSuite;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Xor_exprAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT XorExprAst: public AstNode
 {
-    enum { KIND = Xor_exprKind };
+    enum { KIND = XorExprKind };
 
-    And_exprAst *xor_expr;
-    const KDevPG::ListNode<And_exprAst *> *hat_xor_exprSequence;
+    AndExprAst *xorExpr;
+    const KDevPG::ListNode<AndExprAst *> *hatXorExprSequence;
 };
 
-struct KDEVPYTHONPARSER_EXPORT Yield_stmtAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT YieldStmtAst: public AstNode
 {
-    enum { KIND = Yield_stmtKind };
+    enum { KIND = YieldStmtKind };
 
-    TestlistAst *yield_expr;
+    TestlistAst *yieldExpr;
 };
 
 

@@ -58,8 +58,8 @@ install(TARGETS kdev4pythonparser DESTINATION ${LIB_INSTALL_DIR})
 
 
 add_custom_target( copy-generated
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/pythonparser.cpp" "${CMAKE_SOURCE_DIR}/parser/generated/python_parser.cpp"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/pythonparser.h" "${CMAKE_SOURCE_DIR}/parser/generated/python_parser.h"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/pythonparser.cpp" "${CMAKE_SOURCE_DIR}/parser/generated/pythonparser.cpp"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/pythonparser.h" "${CMAKE_SOURCE_DIR}/parser/generated/pythonparser.h"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/pythonast.h" "${CMAKE_SOURCE_DIR}/parser/generated/pythonast.h"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/pythonvisitor.h" "${CMAKE_SOURCE_DIR}/parser/generated/pythonvisitor.h"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/pythonvisitor.cpp" "${CMAKE_SOURCE_DIR}/parser/generated/pythonvisitor.cpp"

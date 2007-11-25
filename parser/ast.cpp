@@ -28,8 +28,12 @@ Ast::Ast( Ast* parent )
 {
 }
 
-CodeAst::CodeAst( Ast* parent )
-    : Ast( parent )
+Ast::~Ast()
+{
+}
+
+CodeAst::CodeAst()
+    : Ast( 0 )
 {
 }
 FunctionDefinitionAst::FunctionDefinitionAst( Ast* parent )

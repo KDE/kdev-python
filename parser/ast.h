@@ -111,6 +111,7 @@ public:
         BinaryExpressionAst,
         BooleanExpressionAst,
         BooleanOperationAst,
+        BreakAst,
         CallAst,
         ClassDefinitionAst,
         CodeAst,
@@ -160,6 +161,7 @@ public:
     };
 
     Ast( Ast* parent );
+    virtual ~Ast();
     AstType astType;
     Ast* parent;
     /**
@@ -167,49 +169,49 @@ public:
      *
      * Counting starts with 0.
      */
-    int start;
+    qint64 start;
 
     /**
      * This is the absolute position in the file that this Ast node ends at.
      *
      * Counting starts with 0.
      */
-    int end;
+    qint64 end;
 
     /**
      * This is the column in the starting line where this Ast node starts.
      *
      * Counting starts with 0.
      */
-    int startCol;
+    qint64 startCol;
 
     /**
      * This is the line where this Ast node starts.
      *
      * Counting starts with 0.
      */
-    int startLine;
+    qint64 startLine;
 
     /**
      * This is the column in the ending line where this Ast node ends.
      *
      * Counting starts with 0.
      */
-    int endCol;
+    qint64 endCol;
 
     /**
      * This is the line where this Ast node ends.
      *
      * Counting starts with 0.
      */
-    int endLine;
+    qint64 endLine;
 };
 
 class CodeAst : public Ast
 {
 
 public:
-    CodeAst( Ast* parent );
+    CodeAst();
     QList<StatementAst*> statements;
 };
 

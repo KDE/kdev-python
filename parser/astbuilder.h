@@ -18,101 +18,118 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
 
-#ifndef astbuilder_H
-#define astbuilder_H
+#ifndef ASTBUILDER_H
+#define ASTBUILDER_H
 
-class AstBuilder
+#include <QtCore/QStack>
+
+#include "pythondefaultvisitor.h"
+#include <kdev-pg-token-stream.h>
+
+#include "ast.h"
+
+namespace Python
+{
+
+class AstBuilder : public PythonParser::DefaultVisitor
 {
 public:
-    AstBuilder();
+    AstBuilder(KDevPG::TokenStream*);
 
-    virtual void visitAndExpr(AndExprAst *node);
-    virtual void visitAndTest(AndTestAst *node);
-    virtual void visitArgList(ArgListAst *node);
-    virtual void visitArglist(ArglistAst *node);
-    virtual void visitArgument(ArgumentAst *node);
-    virtual void visitArithExpr(ArithExprAst *node);
-    virtual void visitArithOp(ArithOpAst *node);
-    virtual void visitAssertStmt(AssertStmtAst *node);
-    virtual void visitAtom(AtomAst *node);
-    virtual void visitAugassign(AugassignAst *node);
-    virtual void visitBreakStmt(BreakStmtAst *node);
-    virtual void visitClassdef(ClassdefAst *node);
-    virtual void visitCompOp(CompOpAst *node);
-    virtual void visitComparison(ComparisonAst *node);
-    virtual void visitCompoundStmt(CompoundStmtAst *node);
-    virtual void visitContinueStmt(ContinueStmtAst *node);
-    virtual void visitDecorator(DecoratorAst *node);
-    virtual void visitDecorators(DecoratorsAst *node);
-    virtual void visitDelStmt(DelStmtAst *node);
-    virtual void visitDictmaker(DictmakerAst *node);
-    virtual void visitDottedAsName(DottedAsNameAst *node);
-    virtual void visitDottedAsNames(DottedAsNamesAst *node);
-    virtual void visitDottedName(DottedNameAst *node);
-    virtual void visitExceptClause(ExceptClauseAst *node);
-    virtual void visitExecStmt(ExecStmtAst *node);
-    virtual void visitExpr(ExprAst *node);
-    virtual void visitExprStmt(ExprStmtAst *node);
-    virtual void visitExprlist(ExprlistAst *node);
-    virtual void visitFactOp(FactOpAst *node);
-    virtual void visitFactor(FactorAst *node);
-    virtual void visitFlowStmt(FlowStmtAst *node);
-    virtual void visitForStmt(ForStmtAst *node);
-    virtual void visitFpDef(FpDefAst *node);
-    virtual void visitFpdef(FpdefAst *node);
-    virtual void visitFplist(FplistAst *node);
-    virtual void visitFunPosParam(FunPosParamAst *node);
-    virtual void visitFuncDef(FuncDefAst *node);
-    virtual void visitFuncdef(FuncdefAst *node);
-    virtual void visitGenFor(GenForAst *node);
-    virtual void visitGenIf(GenIfAst *node);
-    virtual void visitGenIter(GenIterAst *node);
-    virtual void visitGlobalStmt(GlobalStmtAst *node);
-    virtual void visitIfStmt(IfStmtAst *node);
-    virtual void visitImportAsName(ImportAsNameAst *node);
-    virtual void visitImportAsNames(ImportAsNamesAst *node);
-    virtual void visitImportFrom(ImportFromAst *node);
-    virtual void visitImportName(ImportNameAst *node);
-    virtual void visitImportStmt(ImportStmtAst *node);
-    virtual void visitLambdaDef(LambdaDefAst *node);
-    virtual void visitListFor(ListForAst *node);
-    virtual void visitListIf(ListIfAst *node);
-    virtual void visitListIter(ListIterAst *node);
-    virtual void visitListMaker(ListMakerAst *node);
-    virtual void visitListmaker(ListmakerAst *node);
-    virtual void visitNotTest(NotTestAst *node);
-    virtual void visitNumber(NumberAst *node);
-    virtual void visitPassStmt(PassStmtAst *node);
-    virtual void visitPower(PowerAst *node);
-    virtual void visitPrintStmt(PrintStmtAst *node);
-    virtual void visitProject(ProjectAst *node);
-    virtual void visitRaiseStmt(RaiseStmtAst *node);
-    virtual void visitReturnStmt(ReturnStmtAst *node);
-    virtual void visitShiftExpr(ShiftExprAst *node);
-    virtual void visitShiftOp(ShiftOpAst *node);
-    virtual void visitSimpleStmt(SimpleStmtAst *node);
-    virtual void visitSliceop(SliceopAst *node);
-    virtual void visitSmallStmt(SmallStmtAst *node);
-    virtual void visitStmt(StmtAst *node);
-    virtual void visitSubscript(SubscriptAst *node);
-    virtual void visitSubscriptlist(SubscriptlistAst *node);
-    virtual void visitSuite(SuiteAst *node);
-    virtual void visitTerm(TermAst *node);
-    virtual void visitTermOp(TermOpAst *node);
-    virtual void visitTest(TestAst *node);
-    virtual void visitTestListGexp(TestListGexpAst *node);
-    virtual void visitTestlist(TestlistAst *node);
-    virtual void visitTestlist1(Testlist1Ast *node);
-    virtual void visitTestlistGexp(TestlistGexpAst *node);
-    virtual void visitTestlistSafe(TestlistSafeAst *node);
-    virtual void visitTrailer(TrailerAst *node);
-    virtual void visitTryStmt(TryStmtAst *node);
-    virtual void visitVarargslist(VarargslistAst *node);
-    virtual void visitWhileStmt(WhileStmtAst *node);
-    virtual void visitXorExpr(XorExprAst *node);
-    virtual void visitYieldStmt(YieldStmtAst *node);
+    virtual void visitAndExpr(PythonParser::AndExprAst *node);
+    virtual void visitAndTest(PythonParser::AndTestAst *node);
+    virtual void visitArglist(PythonParser::ArglistAst *node);
+    virtual void visitArgument(PythonParser::ArgumentAst *node);
+    virtual void visitArithExpr(PythonParser::ArithExprAst *node);
+    virtual void visitArithOp(PythonParser::ArithOpAst *node);
+    virtual void visitAssertStmt(PythonParser::AssertStmtAst *node);
+    virtual void visitAtom(PythonParser::AtomAst *node);
+    virtual void visitAugassign(PythonParser::AugassignAst *node);
+    virtual void visitBreakStmt(PythonParser::BreakStmtAst *node);
+    virtual void visitClassdef(PythonParser::ClassdefAst *node);
+    virtual void visitCodeexpr(PythonParser::CodeexprAst *node);
+    virtual void visitCompOp(PythonParser::CompOpAst *node);
+    virtual void visitComparison(PythonParser::ComparisonAst *node);
+    virtual void visitCompoundStmt(PythonParser::CompoundStmtAst *node);
+    virtual void visitContinueStmt(PythonParser::ContinueStmtAst *node);
+    virtual void visitDecorator(PythonParser::DecoratorAst *node);
+    virtual void visitDecorators(PythonParser::DecoratorsAst *node);
+    virtual void visitDelStmt(PythonParser::DelStmtAst *node);
+    virtual void visitDictmaker(PythonParser::DictmakerAst *node);
+    virtual void visitDottedAsName(PythonParser::DottedAsNameAst *node);
+    virtual void visitDottedAsNames(PythonParser::DottedAsNamesAst *node);
+    virtual void visitDottedName(PythonParser::DottedNameAst *node);
+    virtual void visitExceptClause(PythonParser::ExceptClauseAst *node);
+    virtual void visitExecStmt(PythonParser::ExecStmtAst *node);
+    virtual void visitExpr(PythonParser::ExprAst *node);
+    virtual void visitExprStmt(PythonParser::ExprStmtAst *node);
+    virtual void visitExprlist(PythonParser::ExprlistAst *node);
+    virtual void visitFactOp(PythonParser::FactOpAst *node);
+    virtual void visitFactor(PythonParser::FactorAst *node);
+    virtual void visitFlowStmt(PythonParser::FlowStmtAst *node);
+    virtual void visitForStmt(PythonParser::ForStmtAst *node);
+    virtual void visitFpDef(PythonParser::FpDefAst *node);
+    virtual void visitFpdef(PythonParser::FpdefAst *node);
+    virtual void visitFplist(PythonParser::FplistAst *node);
+    virtual void visitFunPosParam(PythonParser::FunPosParamAst *node);
+    virtual void visitFuncDef(PythonParser::FuncDefAst *node);
+    virtual void visitFuncdef(PythonParser::FuncdefAst *node);
+    virtual void visitGenFor(PythonParser::GenForAst *node);
+    virtual void visitGenIf(PythonParser::GenIfAst *node);
+    virtual void visitGenIter(PythonParser::GenIterAst *node);
+    virtual void visitGlobalStmt(PythonParser::GlobalStmtAst *node);
+    virtual void visitIfStmt(PythonParser::IfStmtAst *node);
+    virtual void visitImportAsName(PythonParser::ImportAsNameAst *node);
+    virtual void visitImportAsNames(PythonParser::ImportAsNamesAst *node);
+    virtual void visitImportFrom(PythonParser::ImportFromAst *node);
+    virtual void visitImportName(PythonParser::ImportNameAst *node);
+    virtual void visitImportStmt(PythonParser::ImportStmtAst *node);
+    virtual void visitLambdaDef(PythonParser::LambdaDefAst *node);
+    virtual void visitListFor(PythonParser::ListForAst *node);
+    virtual void visitListIf(PythonParser::ListIfAst *node);
+    virtual void visitListIter(PythonParser::ListIterAst *node);
+    virtual void visitListMaker(PythonParser::ListMakerAst *node);
+    virtual void visitListmaker(PythonParser::ListmakerAst *node);
+    virtual void visitNotTest(PythonParser::NotTestAst *node);
+    virtual void visitNumber(PythonParser::NumberAst *node);
+    virtual void visitPassStmt(PythonParser::PassStmtAst *node);
+    virtual void visitPlainArgumentsList(PythonParser::PlainArgumentsListAst *node);
+    virtual void visitPower(PythonParser::PowerAst *node);
+    virtual void visitPrintStmt(PythonParser::PrintStmtAst *node);
+    virtual void visitProject(PythonParser::ProjectAst *node);
+    virtual void visitRaiseStmt(PythonParser::RaiseStmtAst *node);
+    virtual void visitReturnStmt(PythonParser::ReturnStmtAst *node);
+    virtual void visitShiftExpr(PythonParser::ShiftExprAst *node);
+    virtual void visitShiftOp(PythonParser::ShiftOpAst *node);
+    virtual void visitSimpleStmt(PythonParser::SimpleStmtAst *node);
+    virtual void visitSliceop(PythonParser::SliceopAst *node);
+    virtual void visitSmallStmt(PythonParser::SmallStmtAst *node);
+    virtual void visitStmt(PythonParser::StmtAst *node);
+    virtual void visitSubscript(PythonParser::SubscriptAst *node);
+    virtual void visitSubscriptlist(PythonParser::SubscriptlistAst *node);
+    virtual void visitSuite(PythonParser::SuiteAst *node);
+    virtual void visitTerm(PythonParser::TermAst *node);
+    virtual void visitTermOp(PythonParser::TermOpAst *node);
+    virtual void visitTest(PythonParser::TestAst *node);
+    virtual void visitTestListGexp(PythonParser::TestListGexpAst *node);
+    virtual void visitTestlist(PythonParser::TestlistAst *node);
+    virtual void visitTestlistGexp(PythonParser::TestlistGexpAst *node);
+    virtual void visitTestlistSafe(PythonParser::TestlistSafeAst *node);
+    virtual void visitTrailer(PythonParser::TrailerAst *node);
+    virtual void visitTryStmt(PythonParser::TryStmtAst *node);
+    virtual void visitVarargslist(PythonParser::VarargslistAst *node);
+    virtual void visitWhileStmt(PythonParser::WhileStmtAst *node);
+    virtual void visitXorExpr(PythonParser::XorExprAst *node);
+    virtual void visitYieldStmt(PythonParser::YieldStmtAst *node);
 
+
+private:
+    QStack<Ast*> mNodeStack;
+    KDevPG::TokenStream* tokenStream;
+    void setStartEnd( Ast* ast, PythonParser::AstNode* node );
 };
+
+}
 
 #endif
 

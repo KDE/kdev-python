@@ -20,347 +20,396 @@
 
 #include "astbuilder.h"
 
-AstBuilder::AstBuilder()
+namespace Python
 {
+
+
+template <typename T> T* safeNodeCast( Ast* node )
+{
+    T* ast = dynamic_cast<T*>(node);
+    Q_ASSERT(ast);
+    return ast;
+}
+
+
+void AstBuilder::setStartEnd( Ast* ast, PythonParser::AstNode* node )
+{
+    ast->start = tokenStream->token( node->startToken ).begin;
+    ast->end = tokenStream->token( node->endToken ).end;
+    tokenStream->startPosition( node->startToken, &ast->startLine, &ast->startCol );
+    tokenStream->endPosition( node->endToken, &ast->endLine, &ast->endCol );
+}
+
+AstBuilder::AstBuilder(KDevPG::TokenStream* stream)
+    : tokenStream(stream)
+{
 }
 
-void AstBuilder::visitAndExpr(AndExprAst *node)
+void AstBuilder::visitAndExpr(PythonParser::AndExprAst *node)
 {
 }
 
-void AstBuilder::visitAndTest(AndTestAst *node)
+void AstBuilder::visitAndTest(PythonParser::AndTestAst *node)
 {
 }
 
-void AstBuilder::visitArgList(ArgListAst *node)
+void AstBuilder::visitArglist(PythonParser::ArglistAst *node)
 {
 }
 
-void AstBuilder::visitArglist(ArglistAst *node)
+void AstBuilder::visitArgument(PythonParser::ArgumentAst *node)
 {
 }
 
-void AstBuilder::visitArgument(ArgumentAst *node)
+void AstBuilder::visitArithExpr(PythonParser::ArithExprAst *node)
 {
 }
 
-void AstBuilder::visitArithExpr(ArithExprAst *node)
+void AstBuilder::visitArithOp(PythonParser::ArithOpAst *node)
 {
 }
 
-void AstBuilder::visitArithOp(ArithOpAst *node)
+void AstBuilder::visitAssertStmt(PythonParser::AssertStmtAst *node)
 {
+    AssertAst* ast = new AssertAst( mNodeStack.top() );
+    setStartEnd( ast, node );
+    visitNode( node->assertNotTest );
+    ast->assertTest = safeNodeCast<ExpressionAst>(mNodeStack.pop());
+    if( node->assertRaiseTest )
+    {
+        visitNode( node->assertRaiseTest );
+        ast->exceptionValue = safeNodeCast<ExpressionAst>(mNodeStack.pop());
+    }
+    mNodeStack.push(ast);
 }
 
-void AstBuilder::visitAssertStmt(AssertStmtAst *node)
+void AstBuilder::visitAtom(PythonParser::AtomAst *node)
 {
 }
 
-void AstBuilder::visitAtom(AtomAst *node)
+void AstBuilder::visitAugassign(PythonParser::AugassignAst *node)
 {
 }
 
-void AstBuilder::visitAugassign(AugassignAst *node)
+void AstBuilder::visitBreakStmt(PythonParser::BreakStmtAst *node)
 {
+    StatementAst* ast = new StatementAst( mNodeStack.top() );
+    setStartEnd( ast, node );
+    ast->astType = Ast::BreakAst;
+    mNodeStack.push( ast );
 }
 
-void AstBuilder::visitBreakStmt(BreakStmtAst *node)
+void AstBuilder::visitClassdef(PythonParser::ClassdefAst *node)
 {
 }
 
-void AstBuilder::visitClassdef(ClassdefAst *node)
+void AstBuilder::visitCompOp(PythonParser::CompOpAst *node)
 {
 }
 
-void AstBuilder::visitCompOp(CompOpAst *node)
+void AstBuilder::visitComparison(PythonParser::ComparisonAst *node)
 {
 }
 
-void AstBuilder::visitComparison(ComparisonAst *node)
+void AstBuilder::visitCompoundStmt(PythonParser::CompoundStmtAst *node)
 {
+    PythonParser::DefaultVisitor::visitCompoundStmt( node );
 }
 
-void AstBuilder::visitCompoundStmt(CompoundStmtAst *node)
+void AstBuilder::visitContinueStmt(PythonParser::ContinueStmtAst *node)
 {
 }
 
-void AstBuilder::visitContinueStmt(ContinueStmtAst *node)
+void AstBuilder::visitDecorator(PythonParser::DecoratorAst *node)
 {
 }
 
-void AstBuilder::visitDecorator(DecoratorAst *node)
+void AstBuilder::visitDecorators(PythonParser::DecoratorsAst *node)
 {
 }
 
-void AstBuilder::visitDecorators(DecoratorsAst *node)
+void AstBuilder::visitDelStmt(PythonParser::DelStmtAst *node)
 {
 }
 
-void AstBuilder::visitDelStmt(DelStmtAst *node)
+void AstBuilder::visitDictmaker(PythonParser::DictmakerAst *node)
 {
 }
 
-void AstBuilder::visitDictmaker(DictmakerAst *node)
+void AstBuilder::visitDottedAsName(PythonParser::DottedAsNameAst *node)
 {
 }
 
-void AstBuilder::visitDottedAsName(DottedAsNameAst *node)
+void AstBuilder::visitDottedAsNames(PythonParser::DottedAsNamesAst *node)
 {
 }
 
-void AstBuilder::visitDottedAsNames(DottedAsNamesAst *node)
+void AstBuilder::visitDottedName(PythonParser::DottedNameAst *node)
 {
 }
 
-void AstBuilder::visitDottedName(DottedNameAst *node)
+void AstBuilder::visitExceptClause(PythonParser::ExceptClauseAst *node)
 {
 }
 
-void AstBuilder::visitExceptClause(ExceptClauseAst *node)
+void AstBuilder::visitExecStmt(PythonParser::ExecStmtAst *node)
 {
 }
 
-void AstBuilder::visitExecStmt(ExecStmtAst *node)
+void AstBuilder::visitExpr(PythonParser::ExprAst *node)
 {
 }
 
-void AstBuilder::visitExpr(ExprAst *node)
+void AstBuilder::visitExprStmt(PythonParser::ExprStmtAst *node)
 {
 }
 
-void AstBuilder::visitExprStmt(ExprStmtAst *node)
+void AstBuilder::visitExprlist(PythonParser::ExprlistAst *node)
 {
 }
 
-void AstBuilder::visitExprlist(ExprlistAst *node)
+void AstBuilder::visitFactOp(PythonParser::FactOpAst *node)
 {
 }
 
-void AstBuilder::visitFactOp(FactOpAst *node)
+void AstBuilder::visitFactor(PythonParser::FactorAst *node)
 {
 }
 
-void AstBuilder::visitFactor(FactorAst *node)
+void AstBuilder::visitFlowStmt(PythonParser::FlowStmtAst *node)
 {
 }
 
-void AstBuilder::visitFlowStmt(FlowStmtAst *node)
+void AstBuilder::visitForStmt(PythonParser::ForStmtAst *node)
 {
 }
 
-void AstBuilder::visitForStmt(ForStmtAst *node)
+void AstBuilder::visitFpDef(PythonParser::FpDefAst *node)
 {
 }
 
-void AstBuilder::visitFpDef(FpDefAst *node)
+void AstBuilder::visitFpdef(PythonParser::FpdefAst *node)
 {
 }
 
-void AstBuilder::visitFpdef(FpdefAst *node)
+void AstBuilder::visitFplist(PythonParser::FplistAst *node)
 {
 }
 
-void AstBuilder::visitFplist(FplistAst *node)
+void AstBuilder::visitFunPosParam(PythonParser::FunPosParamAst *node)
 {
 }
 
-void AstBuilder::visitFunPosParam(FunPosParamAst *node)
+void AstBuilder::visitFuncDef(PythonParser::FuncDefAst *node)
 {
 }
 
-void AstBuilder::visitFuncDef(FuncDefAst *node)
+void AstBuilder::visitFuncdef(PythonParser::FuncdefAst *node)
 {
 }
 
-void AstBuilder::visitFuncdef(FuncdefAst *node)
+void AstBuilder::visitGenFor(PythonParser::GenForAst *node)
 {
 }
 
-void AstBuilder::visitGenFor(GenForAst *node)
+void AstBuilder::visitGenIf(PythonParser::GenIfAst *node)
 {
 }
 
-void AstBuilder::visitGenIf(GenIfAst *node)
+void AstBuilder::visitGenIter(PythonParser::GenIterAst *node)
 {
 }
 
-void AstBuilder::visitGenIter(GenIterAst *node)
+void AstBuilder::visitGlobalStmt(PythonParser::GlobalStmtAst *node)
 {
 }
 
-void AstBuilder::visitGlobalStmt(GlobalStmtAst *node)
+void AstBuilder::visitIfStmt(PythonParser::IfStmtAst *node)
 {
 }
 
-void AstBuilder::visitIfStmt(IfStmtAst *node)
+void AstBuilder::visitImportAsName(PythonParser::ImportAsNameAst *node)
 {
 }
 
-void AstBuilder::visitImportAsName(ImportAsNameAst *node)
+void AstBuilder::visitImportAsNames(PythonParser::ImportAsNamesAst *node)
 {
 }
 
-void AstBuilder::visitImportAsNames(ImportAsNamesAst *node)
+void AstBuilder::visitImportFrom(PythonParser::ImportFromAst *node)
 {
 }
 
-void AstBuilder::visitImportFrom(ImportFromAst *node)
+void AstBuilder::visitImportName(PythonParser::ImportNameAst *node)
 {
 }
 
-void AstBuilder::visitImportName(ImportNameAst *node)
+void AstBuilder::visitImportStmt(PythonParser::ImportStmtAst *node)
 {
 }
 
-void AstBuilder::visitImportStmt(ImportStmtAst *node)
+void AstBuilder::visitLambdaDef(PythonParser::LambdaDefAst *node)
 {
 }
 
-void AstBuilder::visitLambdaDef(LambdaDefAst *node)
+void AstBuilder::visitListFor(PythonParser::ListForAst *node)
 {
 }
 
-void AstBuilder::visitListFor(ListForAst *node)
+void AstBuilder::visitListIf(PythonParser::ListIfAst *node)
 {
 }
 
-void AstBuilder::visitListIf(ListIfAst *node)
+void AstBuilder::visitListIter(PythonParser::ListIterAst *node)
 {
 }
 
-void AstBuilder::visitListIter(ListIterAst *node)
+void AstBuilder::visitListMaker(PythonParser::ListMakerAst *node)
 {
 }
 
-void AstBuilder::visitListMaker(ListMakerAst *node)
+void AstBuilder::visitListmaker(PythonParser::ListmakerAst *node)
 {
 }
 
-void AstBuilder::visitListmaker(ListmakerAst *node)
+void AstBuilder::visitNotTest(PythonParser::NotTestAst *node)
 {
 }
 
-void AstBuilder::visitNotTest(NotTestAst *node)
+void AstBuilder::visitNumber(PythonParser::NumberAst *node)
 {
 }
 
-void AstBuilder::visitNumber(NumberAst *node)
+void AstBuilder::visitPassStmt(PythonParser::PassStmtAst *node)
 {
 }
 
-void AstBuilder::visitPassStmt(PassStmtAst *node)
+void AstBuilder::visitPower(PythonParser::PowerAst *node)
 {
 }
 
-void AstBuilder::visitPower(PowerAst *node)
+void AstBuilder::visitPlainArgumentsList(PythonParser::PlainArgumentsListAst *node)
 {
 }
 
-void AstBuilder::visitPrintStmt(PrintStmtAst *node)
+void AstBuilder::visitPrintStmt(PythonParser::PrintStmtAst *node)
 {
 }
 
-void AstBuilder::visitProject(ProjectAst *node)
+void AstBuilder::visitProject(PythonParser::ProjectAst *node)
 {
+    CodeAst* code = new CodeAst();
+    setStartEnd( code, node );
+    mNodeStack.push( code );
+    PythonParser::DefaultVisitor::visitProject( node );
+
 }
 
-void AstBuilder::visitRaiseStmt(RaiseStmtAst *node)
+void AstBuilder::visitRaiseStmt(PythonParser::RaiseStmtAst *node)
 {
 }
 
-void AstBuilder::visitReturnStmt(ReturnStmtAst *node)
+void AstBuilder::visitReturnStmt(PythonParser::ReturnStmtAst *node)
 {
 }
 
-void AstBuilder::visitShiftExpr(ShiftExprAst *node)
+void AstBuilder::visitShiftExpr(PythonParser::ShiftExprAst *node)
 {
 }
 
-void AstBuilder::visitShiftOp(ShiftOpAst *node)
+void AstBuilder::visitShiftOp(PythonParser::ShiftOpAst *node)
 {
 }
 
-void AstBuilder::visitSimpleStmt(SimpleStmtAst *node)
+void AstBuilder::visitSimpleStmt(PythonParser::SimpleStmtAst *node)
 {
+    PythonParser::DefaultVisitor::visitSimpleStmt( node );
 }
 
-void AstBuilder::visitSliceop(SliceopAst *node)
+void AstBuilder::visitSliceop(PythonParser::SliceopAst *node)
 {
 }
 
-void AstBuilder::visitSmallStmt(SmallStmtAst *node)
+void AstBuilder::visitSmallStmt(PythonParser::SmallStmtAst *node)
 {
+    PythonParser::DefaultVisitor::visitSmallStmt( node );
 }
 
-void AstBuilder::visitStmt(StmtAst *node)
+void AstBuilder::visitStmt(PythonParser::StmtAst *node)
 {
+    PythonParser::DefaultVisitor::visitStmt( node );
+    StatementAst* ast = safeNodeCast<StatementAst>(mNodeStack.pop());
+    CodeAst* code = safeNodeCast<CodeAst>(mNodeStack.top());
+    code->statements.append( ast );
 }
 
-void AstBuilder::visitSubscript(SubscriptAst *node)
+void AstBuilder::visitSubscript(PythonParser::SubscriptAst *node)
 {
 }
 
-void AstBuilder::visitSubscriptlist(SubscriptlistAst *node)
+void AstBuilder::visitSubscriptlist(PythonParser::SubscriptlistAst *node)
 {
 }
 
-void AstBuilder::visitSuite(SuiteAst *node)
+void AstBuilder::visitSuite(PythonParser::SuiteAst *node)
 {
 }
 
-void AstBuilder::visitTerm(TermAst *node)
+void AstBuilder::visitTerm(PythonParser::TermAst *node)
 {
 }
 
-void AstBuilder::visitTermOp(TermOpAst *node)
+void AstBuilder::visitTermOp(PythonParser::TermOpAst *node)
 {
 }
 
-void AstBuilder::visitTest(TestAst *node)
+void AstBuilder::visitTest(PythonParser::TestAst *node)
 {
 }
 
-void AstBuilder::visitTestListGexp(TestListGexpAst *node)
+void AstBuilder::visitTestListGexp(PythonParser::TestListGexpAst *node)
 {
 }
 
-void AstBuilder::visitTestlist(TestlistAst *node)
+void AstBuilder::visitTestlist(PythonParser::TestlistAst *node)
 {
 }
 
-void AstBuilder::visitTestlist1(Testlist1Ast *node)
+
+void AstBuilder::visitCodeexpr(PythonParser::CodeexprAst *node)
 {
 }
 
-void AstBuilder::visitTestlistGexp(TestlistGexpAst *node)
+void AstBuilder::visitTestlistGexp(PythonParser::TestlistGexpAst *node)
 {
 }
 
-void AstBuilder::visitTestlistSafe(TestlistSafeAst *node)
+void AstBuilder::visitTestlistSafe(PythonParser::TestlistSafeAst *node)
 {
 }
 
-void AstBuilder::visitTrailer(TrailerAst *node)
+void AstBuilder::visitTrailer(PythonParser::TrailerAst *node)
 {
 }
 
-void AstBuilder::visitTryStmt(TryStmtAst *node)
+void AstBuilder::visitTryStmt(PythonParser::TryStmtAst *node)
 {
 }
 
-void AstBuilder::visitVarargslist(VarargslistAst *node)
+void AstBuilder::visitVarargslist(PythonParser::VarargslistAst *node)
 {
 }
 
-void AstBuilder::visitWhileStmt(WhileStmtAst *node)
+void AstBuilder::visitWhileStmt(PythonParser::WhileStmtAst *node)
 {
 }
 
-void AstBuilder::visitXorExpr(XorExprAst *node)
+void AstBuilder::visitXorExpr(PythonParser::XorExprAst *node)
 {
 }
 
-void AstBuilder::visitYieldStmt(YieldStmtAst *node)
+void AstBuilder::visitYieldStmt(PythonParser::YieldStmtAst *node)
 {
 }
 
+}

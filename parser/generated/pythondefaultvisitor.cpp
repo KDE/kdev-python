@@ -156,7 +156,7 @@ void DefaultVisitor::visitCompoundStmt(CompoundStmtAst *node)
     visitNode(node->whileStmt);
     visitNode(node->forStmt);
     visitNode(node->tryStmt);
-    visitNode(node->fucdef);
+    visitNode(node->funcdecl);
     visitNode(node->classdef);
 }
 
@@ -182,6 +182,11 @@ void DefaultVisitor::visitDecorators(DecoratorsAst *node)
         }
         while (__it != __end);
     }
+}
+
+void DefaultVisitor::visitDefparam(DefparamAst *node)
+{
+    visitNode(node->fplist);
 }
 
 void DefaultVisitor::visitDelStmt(DelStmtAst *node)
@@ -335,20 +340,15 @@ void DefaultVisitor::visitForStmt(ForStmtAst *node)
 
 void DefaultVisitor::visitFpDef(FpDefAst *node)
 {
-    visitNode(node->fpdef);
+    visitNode(node->defparam);
     visitNode(node->fpDefTest);
-}
-
-void DefaultVisitor::visitFpdef(FpdefAst *node)
-{
-    visitNode(node->fplist);
 }
 
 void DefaultVisitor::visitFplist(FplistAst *node)
 {
     if (node->fplistFpdefSequence)
     {
-        const KDevPG::ListNode<FpdefAst*> *__it = node->fplistFpdefSequence->front(), *__end = __it;
+        const KDevPG::ListNode<DefparamAst*> *__it = node->fplistFpdefSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -376,7 +376,7 @@ void DefaultVisitor::visitFuncDef(FuncDefAst *node)
     }
 }
 
-void DefaultVisitor::visitFuncdef(FuncdefAst *node)
+void DefaultVisitor::visitFuncdecl(FuncdeclAst *node)
 {
     visitNode(node->decorators);
     visitNode(node->funArgs);
@@ -503,7 +503,7 @@ void DefaultVisitor::visitListIter(ListIterAst *node)
     visitNode(node->listIf);
 }
 
-void DefaultVisitor::visitListMaker(ListMakerAst *node)
+void DefaultVisitor::visitListMakerTest(ListMakerTestAst *node)
 {
     if (node->listTestSequence)
     {
@@ -519,7 +519,7 @@ void DefaultVisitor::visitListMaker(ListMakerAst *node)
 
 void DefaultVisitor::visitListmaker(ListmakerAst *node)
 {
-    visitNode(node->listMaker);
+    visitNode(node->listMakerTest);
     visitNode(node->listFor);
 }
 

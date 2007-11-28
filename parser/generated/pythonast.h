@@ -81,6 +81,7 @@ struct CompoundStmtAst;
 struct ContinueStmtAst;
 struct DecoratorAst;
 struct DecoratorsAst;
+struct DefparamAst;
 struct DelStmtAst;
 struct DictmakerAst;
 struct DottedAsNameAst;
@@ -96,11 +97,10 @@ struct FactorAst;
 struct FlowStmtAst;
 struct ForStmtAst;
 struct FpDefAst;
-struct FpdefAst;
 struct FplistAst;
 struct FunPosParamAst;
 struct FuncDefAst;
-struct FuncdefAst;
+struct FuncdeclAst;
 struct GenForAst;
 struct GenIfAst;
 struct GenIterAst;
@@ -115,7 +115,7 @@ struct LambdaDefAst;
 struct ListForAst;
 struct ListIfAst;
 struct ListIterAst;
-struct ListMakerAst;
+struct ListMakerTestAst;
 struct ListmakerAst;
 struct NotTestAst;
 struct NumberAst;
@@ -172,26 +172,26 @@ struct KDEVPYTHONPARSER_EXPORT AstNode
         ContinueStmtKind = 1015,
         DecoratorKind = 1016,
         DecoratorsKind = 1017,
-        DelStmtKind = 1018,
-        DictmakerKind = 1019,
-        DottedAsNameKind = 1020,
-        DottedAsNamesKind = 1021,
-        DottedNameKind = 1022,
-        ExceptClauseKind = 1023,
-        ExecStmtKind = 1024,
-        ExprKind = 1025,
-        ExprStmtKind = 1026,
-        ExprlistKind = 1027,
-        FactOpKind = 1028,
-        FactorKind = 1029,
-        FlowStmtKind = 1030,
-        ForStmtKind = 1031,
-        FpDefKind = 1032,
-        FpdefKind = 1033,
+        DefparamKind = 1018,
+        DelStmtKind = 1019,
+        DictmakerKind = 1020,
+        DottedAsNameKind = 1021,
+        DottedAsNamesKind = 1022,
+        DottedNameKind = 1023,
+        ExceptClauseKind = 1024,
+        ExecStmtKind = 1025,
+        ExprKind = 1026,
+        ExprStmtKind = 1027,
+        ExprlistKind = 1028,
+        FactOpKind = 1029,
+        FactorKind = 1030,
+        FlowStmtKind = 1031,
+        ForStmtKind = 1032,
+        FpDefKind = 1033,
         FplistKind = 1034,
         FunPosParamKind = 1035,
         FuncDefKind = 1036,
-        FuncdefKind = 1037,
+        FuncdeclKind = 1037,
         GenForKind = 1038,
         GenIfKind = 1039,
         GenIterKind = 1040,
@@ -206,7 +206,7 @@ struct KDEVPYTHONPARSER_EXPORT AstNode
         ListForKind = 1049,
         ListIfKind = 1050,
         ListIterKind = 1051,
-        ListMakerKind = 1052,
+        ListMakerTestKind = 1052,
         ListmakerKind = 1053,
         NotTestKind = 1054,
         NumberKind = 1055,
@@ -370,7 +370,7 @@ struct KDEVPYTHONPARSER_EXPORT CompoundStmtAst: public AstNode
     WhileStmtAst *whileStmt;
     ForStmtAst *forStmt;
     TryStmtAst *tryStmt;
-    FuncdefAst *fucdef;
+    FuncdeclAst *funcdecl;
     ClassdefAst *classdef;
 };
 
@@ -393,6 +393,13 @@ struct KDEVPYTHONPARSER_EXPORT DecoratorsAst: public AstNode
     enum { KIND = DecoratorsKind };
 
     const KDevPG::ListNode<DecoratorAst *> *decoratorSequence;
+};
+
+struct KDEVPYTHONPARSER_EXPORT DefparamAst: public AstNode
+{
+    enum { KIND = DefparamKind };
+
+    FplistAst *fplist;
 };
 
 struct KDEVPYTHONPARSER_EXPORT DelStmtAst: public AstNode
@@ -516,22 +523,15 @@ struct KDEVPYTHONPARSER_EXPORT FpDefAst: public AstNode
 {
     enum { KIND = FpDefKind };
 
-    FpdefAst *fpdef;
+    DefparamAst *defparam;
     TestAst *fpDefTest;
-};
-
-struct KDEVPYTHONPARSER_EXPORT FpdefAst: public AstNode
-{
-    enum { KIND = FpdefKind };
-
-    FplistAst *fplist;
 };
 
 struct KDEVPYTHONPARSER_EXPORT FplistAst: public AstNode
 {
     enum { KIND = FplistKind };
 
-    const KDevPG::ListNode<FpdefAst *> *fplistFpdefSequence;
+    const KDevPG::ListNode<DefparamAst *> *fplistFpdefSequence;
 };
 
 struct KDEVPYTHONPARSER_EXPORT FunPosParamAst: public AstNode
@@ -549,9 +549,9 @@ struct KDEVPYTHONPARSER_EXPORT FuncDefAst: public AstNode
     const KDevPG::ListNode<FpDefAst *> *fpDefSequence;
 };
 
-struct KDEVPYTHONPARSER_EXPORT FuncdefAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT FuncdeclAst: public AstNode
 {
-    enum { KIND = FuncdefKind };
+    enum { KIND = FuncdeclKind };
 
     DecoratorsAst *decorators;
     qint64 funcName;
@@ -674,9 +674,9 @@ struct KDEVPYTHONPARSER_EXPORT ListIterAst: public AstNode
     ListIfAst *listIf;
 };
 
-struct KDEVPYTHONPARSER_EXPORT ListMakerAst: public AstNode
+struct KDEVPYTHONPARSER_EXPORT ListMakerTestAst: public AstNode
 {
-    enum { KIND = ListMakerKind };
+    enum { KIND = ListMakerTestKind };
 
     const KDevPG::ListNode<TestAst *> *listTestSequence;
 };
@@ -685,7 +685,7 @@ struct KDEVPYTHONPARSER_EXPORT ListmakerAst: public AstNode
 {
     enum { KIND = ListmakerKind };
 
-    ListMakerAst *listMaker;
+    ListMakerTestAst *listMakerTest;
     ListForAst *listFor;
 };
 

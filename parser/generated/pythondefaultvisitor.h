@@ -31,6 +31,7 @@ public:
     virtual void visitContinueStmt(ContinueStmtAst *node);
     virtual void visitDecorator(DecoratorAst *node);
     virtual void visitDecorators(DecoratorsAst *node);
+    virtual void visitDefparam(DefparamAst *node);
     virtual void visitDelStmt(DelStmtAst *node);
     virtual void visitDictmaker(DictmakerAst *node);
     virtual void visitDottedAsName(DottedAsNameAst *node);
@@ -46,11 +47,10 @@ public:
     virtual void visitFlowStmt(FlowStmtAst *node);
     virtual void visitForStmt(ForStmtAst *node);
     virtual void visitFpDef(FpDefAst *node);
-    virtual void visitFpdef(FpdefAst *node);
     virtual void visitFplist(FplistAst *node);
     virtual void visitFunPosParam(FunPosParamAst *node);
     virtual void visitFuncDef(FuncDefAst *node);
-    virtual void visitFuncdef(FuncdefAst *node);
+    virtual void visitFuncdecl(FuncdeclAst *node);
     virtual void visitGenFor(GenForAst *node);
     virtual void visitGenIf(GenIfAst *node);
     virtual void visitGenIter(GenIterAst *node);
@@ -65,7 +65,7 @@ public:
     virtual void visitListFor(ListForAst *node);
     virtual void visitListIf(ListIfAst *node);
     virtual void visitListIter(ListIterAst *node);
-    virtual void visitListMaker(ListMakerAst *node);
+    virtual void visitListMakerTest(ListMakerTestAst *node);
     virtual void visitListmaker(ListmakerAst *node);
     virtual void visitNotTest(NotTestAst *node);
     virtual void visitNumber(NumberAst *node);

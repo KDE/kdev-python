@@ -204,7 +204,7 @@ namespace PythonParser
     DEF funcName=IDENTIFIER LPAREN ( ?[: LA(1).kind != Token_RPAREN :] ( funArgs = varargslist )
     | 0 )
     RPAREN COLON funSuite=suite
--> funcdef ;;
+-> funcdecl ;;
 
 -- Function variable Arguement List
     (funcDef=funcDef | 0 ) (
@@ -224,20 +224,20 @@ namespace PythonParser
 
 
 -- Function parameter Defintion
-    fpdef=fpdef ( EQUAL fpDefTest=test | 0 )
+    defparam=defparam ( EQUAL fpDefTest=test | 0 )
 -> fpDef ;;
 
 -- Function Parameter Definition
    LPAREN (fplist = fplist) RPAREN
     |  IDENTIFIER
--> fpdef ;;
+-> defparam ;;
 
 
 -- Function parameter List
-    #fplistFpdef=fpdef
+    #fplistFpdef=defparam
     ( COMMA [: if ( yytoken == Token_RPAREN )
                   { break; } :]
-            #fplistFpdef=fpdef )*
+            #fplistFpdef=defparam )*
 -> fplist ;;
 
 -- A statement could be simple statement, a compound statement OR just a Linebreak
@@ -358,7 +358,7 @@ namespace PythonParser
    | whileStmt=whileStmt
    | forStmt=forStmt
    | tryStmt=tryStmt
-   | fucdef=funcdef
+   | funcdecl=funcdecl
    | classdef=classdef
 -> compoundStmt ;;
 
@@ -475,9 +475,9 @@ namespace PythonParser
     member variable numType: PythonParser::NumericType; ];;
 
    ( #listTest=test ( COMMA [: if (yytoken == Token_RBRACKET) { break; } :] #listTest=test )* | 0)
--> listMaker ;;
+-> listMakerTest ;;
 
-    listMaker=listMaker (listFor=listFor | 0)
+    listMakerTest=listMakerTest (listFor=listFor | 0)
 -> listmaker ;;
 
    #test=test ( COMMA [: if( yytoken == Token_COLON || yytoken == Token_SEMICOLON || yytoken == Token_RPAREN || yytoken == Token_LINEBREAK) { break; } :] #test=test )*

@@ -39,6 +39,7 @@ public:
     virtual void visitContinueStmt(ContinueStmtAst *) {}
     virtual void visitDecorator(DecoratorAst *) {}
     virtual void visitDecorators(DecoratorsAst *) {}
+    virtual void visitDefparam(DefparamAst *) {}
     virtual void visitDelStmt(DelStmtAst *) {}
     virtual void visitDictmaker(DictmakerAst *) {}
     virtual void visitDottedAsName(DottedAsNameAst *) {}
@@ -54,11 +55,10 @@ public:
     virtual void visitFlowStmt(FlowStmtAst *) {}
     virtual void visitForStmt(ForStmtAst *) {}
     virtual void visitFpDef(FpDefAst *) {}
-    virtual void visitFpdef(FpdefAst *) {}
     virtual void visitFplist(FplistAst *) {}
     virtual void visitFunPosParam(FunPosParamAst *) {}
     virtual void visitFuncDef(FuncDefAst *) {}
-    virtual void visitFuncdef(FuncdefAst *) {}
+    virtual void visitFuncdecl(FuncdeclAst *) {}
     virtual void visitGenFor(GenForAst *) {}
     virtual void visitGenIf(GenIfAst *) {}
     virtual void visitGenIter(GenIterAst *) {}
@@ -73,7 +73,7 @@ public:
     virtual void visitListFor(ListForAst *) {}
     virtual void visitListIf(ListIfAst *) {}
     virtual void visitListIter(ListIterAst *) {}
-    virtual void visitListMaker(ListMakerAst *) {}
+    virtual void visitListMakerTest(ListMakerTestAst *) {}
     virtual void visitListmaker(ListmakerAst *) {}
     virtual void visitNotTest(NotTestAst *) {}
     virtual void visitNumber(NumberAst *) {}

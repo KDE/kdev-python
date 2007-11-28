@@ -214,6 +214,7 @@ public:
     bool parseContinueStmt(ContinueStmtAst **yynode);
     bool parseDecorator(DecoratorAst **yynode);
     bool parseDecorators(DecoratorsAst **yynode);
+    bool parseDefparam(DefparamAst **yynode);
     bool parseDelStmt(DelStmtAst **yynode);
     bool parseDictmaker(DictmakerAst **yynode);
     bool parseDottedAsName(DottedAsNameAst **yynode);
@@ -229,11 +230,10 @@ public:
     bool parseFlowStmt(FlowStmtAst **yynode);
     bool parseForStmt(ForStmtAst **yynode);
     bool parseFpDef(FpDefAst **yynode);
-    bool parseFpdef(FpdefAst **yynode);
     bool parseFplist(FplistAst **yynode);
     bool parseFunPosParam(FunPosParamAst **yynode);
     bool parseFuncDef(FuncDefAst **yynode);
-    bool parseFuncdef(FuncdefAst **yynode);
+    bool parseFuncdecl(FuncdeclAst **yynode);
     bool parseGenFor(GenForAst **yynode);
     bool parseGenIf(GenIfAst **yynode);
     bool parseGenIter(GenIterAst **yynode);
@@ -248,7 +248,7 @@ public:
     bool parseListFor(ListForAst **yynode);
     bool parseListIf(ListIfAst **yynode);
     bool parseListIter(ListIterAst **yynode);
-    bool parseListMaker(ListMakerAst **yynode);
+    bool parseListMakerTest(ListMakerTestAst **yynode);
     bool parseListmaker(ListmakerAst **yynode);
     bool parseNotTest(NotTestAst **yynode);
     bool parseNumber(NumberAst **yynode);

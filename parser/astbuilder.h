@@ -24,17 +24,23 @@
 #include <QtCore/QStack>
 
 #include "pythondefaultvisitor.h"
-#include <kdev-pg-token-stream.h>
 
-#include "ast.h"
+namespace PythonParser
+{
+    class Parser;
+}
 
 namespace Python
 {
+    class Ast;
+    class CodeAst;
+
 
 class AstBuilder : public PythonParser::DefaultVisitor
 {
 public:
-    AstBuilder(KDevPG::TokenStream*);
+    AstBuilder(PythonParser::Parser*);
+    CodeAst* codeAst();
 
     virtual void visitAndExpr(PythonParser::AndExprAst *node);
     virtual void visitAndTest(PythonParser::AndTestAst *node);
@@ -54,6 +60,7 @@ public:
     virtual void visitContinueStmt(PythonParser::ContinueStmtAst *node);
     virtual void visitDecorator(PythonParser::DecoratorAst *node);
     virtual void visitDecorators(PythonParser::DecoratorsAst *node);
+    virtual void visitDefparam(PythonParser::DefparamAst *node);
     virtual void visitDelStmt(PythonParser::DelStmtAst *node);
     virtual void visitDictmaker(PythonParser::DictmakerAst *node);
     virtual void visitDottedAsName(PythonParser::DottedAsNameAst *node);
@@ -69,11 +76,10 @@ public:
     virtual void visitFlowStmt(PythonParser::FlowStmtAst *node);
     virtual void visitForStmt(PythonParser::ForStmtAst *node);
     virtual void visitFpDef(PythonParser::FpDefAst *node);
-    virtual void visitFpdef(PythonParser::FpdefAst *node);
     virtual void visitFplist(PythonParser::FplistAst *node);
     virtual void visitFunPosParam(PythonParser::FunPosParamAst *node);
+    virtual void visitFuncdecl(PythonParser::FuncdeclAst *node);
     virtual void visitFuncDef(PythonParser::FuncDefAst *node);
-    virtual void visitFuncdef(PythonParser::FuncdefAst *node);
     virtual void visitGenFor(PythonParser::GenForAst *node);
     virtual void visitGenIf(PythonParser::GenIfAst *node);
     virtual void visitGenIter(PythonParser::GenIterAst *node);
@@ -88,8 +94,8 @@ public:
     virtual void visitListFor(PythonParser::ListForAst *node);
     virtual void visitListIf(PythonParser::ListIfAst *node);
     virtual void visitListIter(PythonParser::ListIterAst *node);
-    virtual void visitListMaker(PythonParser::ListMakerAst *node);
     virtual void visitListmaker(PythonParser::ListmakerAst *node);
+    virtual void visitListMakerTest(PythonParser::ListMakerTestAst *node);
     virtual void visitNotTest(PythonParser::NotTestAst *node);
     virtual void visitNumber(PythonParser::NumberAst *node);
     virtual void visitPassStmt(PythonParser::PassStmtAst *node);
@@ -125,8 +131,10 @@ public:
 
 private:
     QStack<Ast*> mNodeStack;
-    KDevPG::TokenStream* tokenStream;
+    QStack<QList<Ast*> > mListStack;
+    PythonParser::Parser* parser;
     void setStartEnd( Ast* ast, PythonParser::AstNode* node );
+    QString tokenText( qint64 tokenidx );
 };
 
 }

@@ -27,6 +27,8 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QTextCodec>
 
+#include "astbuilder.h"
+
 namespace Python
 {
 
@@ -58,7 +60,7 @@ void Driver::setDebug( bool debug )
     m_debug = debug;
 }
 
-bool Driver::parse( PythonParser::ProjectAst** ast )
+bool Driver::parse( Python::CodeAst** ast )
 {
     if(!m_tokenstream)
         m_tokenstream = new KDevPG::TokenStream();
@@ -71,10 +73,14 @@ bool Driver::parse( PythonParser::ProjectAst** ast )
     pythonparser.setDebug( m_debug );
 
     pythonparser.tokenize(m_content);
-    bool matched = pythonparser.parseProject(ast);
+    PythonParser::ProjectAst** srcast;
+    bool matched = pythonparser.parseProject(srcast);
     if( matched )
     {
         qDebug() << "Sucessfully parsed";
+        Python::AstBuilder builder(&pythonparser);
+        builder.visitProject( *srcast );
+        *ast = builder.codeAst();
 //         if( m_debug )
 //         {
 //             DebugVisitor d(&pythonparser);

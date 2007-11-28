@@ -29,29 +29,21 @@
 #include <ducontext.h>
 
 ParseSession::ParseSession()
-        : m_memoryPool( new KDevPG::MemoryPool )
-        , m_tokenStream( new KDevPG::TokenStream )
 {
 }
 ParseSession::~ParseSession()
 {
-    delete m_memoryPool;
-    delete m_tokenStream;
-}
-void ParseSession::positionAt( qint64 offset, qint64 *line, qint64 *column ) const
-{
-    m_tokenStream->locationTable()->positionAt( offset, line, column );
 }
 
-void ParseSession::putNode( PythonParser::AstNode* ast_node, KDevelop::DUContext* topducontext )
+void ParseSession::putNode( Python::Ast* ast_node, KDevelop::DUContext* topducontext )
 {
     m_nodeHash[ast_node] = topducontext;
 }
-KDevelop::DUContext* ParseSession::getNode( PythonParser::AstNode* ast_node )
+KDevelop::DUContext* ParseSession::getNode( Python::Ast* ast_node )
 {
     return m_nodeHash[ast_node];
 }
-void ParseSession::removeNode( PythonParser::AstNode* ast_node )
+void ParseSession::removeNode( Python::Ast* ast_node )
 {
     m_nodeHash.remove(ast_node);
 }
@@ -65,23 +57,12 @@ void ParseSession::setContents( const QString& contents )
     m_contents = contents;
 }
 
-bool ParseSession::parse( PythonParser::ProjectAst** ast )
+bool ParseSession::parse( Python::CodeAst** ast )
 {
     Python::Driver d;
-    d.setTokenStream( m_tokenStream );
-    d.setMemoryPool( m_memoryPool );
     d.setContent( m_contents );
     return d.parse( ast );
 }
 
-QString ParseSession::tokenText( qint64 begin, qint64 end )
-{
-    return m_contents.mid(begin,end-begin+1);
-}
 
-
-KDevPG::TokenStream* ParseSession::tokenStream() const
-{
-    return m_tokenStream;
-}
 

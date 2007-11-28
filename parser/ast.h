@@ -103,67 +103,67 @@ class Ast
 public:
     enum AstType
     {
-        ArgumentAst,
-        AssertAst,
-        AssignmentAst,
-        AtomAst,
-        AttributeReferenceAst,
-        BinaryExpressionAst,
-        BooleanExpressionAst,
-        BooleanOperationAst,
-        BreakAst,
-        CallAst,
-        ClassDefinitionAst,
-        CodeAst,
-        ComparisonAst,
-        DecoratorAst,
-        DefaultParameterAst,
-        DelAst,
-        DictionaryAst,
-        DictionaryParameterAst,
-        EllipsisSliceAst,
-        EnclosureAst,
-        ExceptAst,
-        ExecAst,
-        ExpressionSliceAst,
-        ExpressionStatementAst,
-        ExtendedSliceAst,
-        ForAst,
-        FromImportAst,
-        FunctionDefinitionAst,
-        GeneratorAst,
-        GeneratorForAst,
-        GeneratorIfAst,
-        GlobalAst,
-        IdentifierParameterPartAst,
-        IfAst,
-        LambdaAst,
-        ListAst,
-        ListForAst,
-        ListIfAst,
-        ListParameterAst,
-        ListParameterPartAst,
-        ParameterAst,
-        PlainImportAst,
-        PrintAst,
-        ProperSliceItemAst,
-        RaiseAst,
-        ReturnAst,
-        SimpleSliceAst,
-        StarImportAst,
-        SubscriptAst,
-        TargetAst,
-        TryAst,
-        UnaryExpressionAst,
-        WhileAst,
-        WithAst,
-        YieldAst
+        ArgumentAst = 0,
+        AssertAst = 1,
+        AssignmentAst = 2,
+        AtomAst = 3,
+        AttributeReferenceAst = 4,
+        BinaryExpressionAst = 5,
+        BooleanExpressionAst = 6,
+        BooleanOperationAst = 7,
+        BreakAst = 8,
+        CallAst = 9,
+        ClassDefinitionAst = 10,
+        CodeAst = 11,
+        ComparisonAst = 12,
+        DecoratorAst = 13,
+        DefaultParameterAst = 14,
+        DelAst = 15,
+        DictionaryAst = 16,
+        DictionaryParameterAst = 17,
+        EllipsisSliceAst = 18,
+        EnclosureAst = 19,
+        ExceptAst = 20,
+        ExecAst = 21,
+        ExpressionSliceAst = 22,
+        ExpressionStatementAst = 23,
+        ExtendedSliceAst = 24,
+        ForAst = 25,
+        FromImportAst = 26,
+        FunctionDefinitionAst = 27,
+        GeneratorAst = 28,
+        GeneratorForAst = 29,
+        GeneratorIfAst = 30,
+        GlobalAst = 31,
+        IdentifierParameterPartAst = 32,
+        IfAst = 33,
+        LambdaAst = 34,
+        ListAst = 35,
+        ListForAst = 36,
+        ListIfAst = 37,
+        ListParameterAst = 38,
+        ListParameterPartAst = 39,
+        ParameterAst = 40,
+        PlainImportAst = 41,
+        PrintAst = 42,
+        ProperSliceItemAst = 43,
+        RaiseAst = 44,
+        ReturnAst = 45,
+        SimpleSliceAst = 46,
+        StarImportAst = 47,
+        SubscriptAst = 48,
+        TargetAst = 49,
+        TryAst = 50,
+        UnaryExpressionAst = 51,
+        WhileAst = 52,
+        WithAst = 53,
+        YieldAst = 54
     };
 
-    Ast( Ast* parent );
+    Ast( Ast* parent, AstType type );
     virtual ~Ast();
-    AstType astType;
     Ast* parent;
+    AstType astType;
     /**
      * This is the absolute position in the file that this Ast node starts at.
      *
@@ -219,26 +219,26 @@ class StatementAst : public Ast
 {
 
 public:
-    StatementAst( Ast* );
+    StatementAst( Ast*, Ast::AstType type );
 };
 
 class PrimaryAst : public Ast
 {
 
 public:
-    PrimaryAst( Ast* );
+    PrimaryAst( Ast*, Ast::AstType type );
 };
 
 class ParameterAst : public Ast
 {
 public:
-    ParameterAst( Ast* parent );
+    ParameterAst( Ast* parent, Ast::AstType type );
 };
 
 class ParameterPartAst : public Ast
 {
 public:
-    ParameterPartAst( Ast* );
+    ParameterPartAst( Ast*, Ast::AstType type );
 };
 
 
@@ -246,14 +246,14 @@ class ImportAst : public StatementAst
 {
 
 public:
-    ImportAst( Ast* );
+    ImportAst( Ast*, Ast::AstType type );
 };
 
 class SliceAst : public PrimaryAst
 {
 
 public:
-    SliceAst( Ast* );
+    SliceAst( Ast*, Ast::AstType type );
     Python::PrimaryAst* primary;
 };
 
@@ -262,7 +262,7 @@ class SliceItemAst : public Ast
 {
 
 public:
-    SliceItemAst( Ast* );
+    SliceItemAst( Ast*, Ast::AstType type );
 };
 
 
@@ -289,7 +289,7 @@ class ArithmeticExpressionAst : public Ast
     };
 
 public:
-    ArithmeticExpressionAst( Ast* );
+    ArithmeticExpressionAst( Ast*, Ast::AstType type );
     ArithmeticOperation opType;
 };
 
@@ -297,7 +297,7 @@ class ExpressionAst : public Ast
 {
 
 public:
-    ExpressionAst( Ast* );
+    ExpressionAst( Ast*, Ast::AstType type );
 };
 
 class FunctionDefinitionAst : public StatementAst

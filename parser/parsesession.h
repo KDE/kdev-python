@@ -28,10 +28,10 @@
 #include "parserexport.h"
 
 class LexedFile;
-namespace PythonParser
+namespace Python
 {
-    class ProjectAst;
-    class AstNode;
+    class CodeAst;
+    class Ast;
 }
 
 namespace KDevPG
@@ -51,22 +51,17 @@ public:
     ParseSession();
     ~ParseSession();
 
-    void positionAt( qint64 offset, qint64 *line, qint64 *column ) const;
     void setContents( const QString& contents );
     QString contents() const;
 
-    void putNode( PythonParser::AstNode* ast_node, KDevelop::DUContext* topducontext );
-    void removeNode( PythonParser::AstNode* ast_node );
-    KDevelop::DUContext* getNode( PythonParser::AstNode* ast_node );
+    void putNode( Python::Ast* ast_node, KDevelop::DUContext* topducontext );
+    void removeNode( Python::Ast* ast_node );
+    KDevelop::DUContext* getNode( Python::Ast* ast_node );
 
-    bool parse( PythonParser::ProjectAst** );
-    QString tokenText( qint64, qint64);
-    KDevPG::TokenStream* tokenStream() const;
+    bool parse( Python::CodeAst** );
 private:
-    QHash<PythonParser::AstNode*, KDevelop::DUContext*> m_nodeHash;
+    QHash<Python::Ast*, KDevelop::DUContext*> m_nodeHash;
     QString m_contents;
-    KDevPG::MemoryPool* m_memoryPool;
-    KDevPG::TokenStream* m_tokenStream;
 
 };
 

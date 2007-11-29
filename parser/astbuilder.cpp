@@ -21,6 +21,7 @@
 #include "astbuilder.h"
 
 #include <QDebug>
+#include <QStringList>
 
 #include "pythonparser.h"
 #include "ast.h"
@@ -48,6 +49,16 @@ template <typename T> QList<T*> generateSpecializedList( const QList<Ast*>& list
     return l;
 }
 
+QStringList AstBuilder::identifierListFromTokenList( const KDevPG::ListNode<qint64>* sequence )
+{
+    QStringList identifiers;
+    for( int i = 0; i < sequence->count(); i++ )
+    {
+        identifiers << tokenText( sequence->at(i)->element );
+    }
+    return identifiers;
+}
+
 void AstBuilder::setStartEnd( Ast* ast, PythonParser::AstNode* node )
 {
     ast->start = parser->tokenStream->token( node->startToken ).begin;
@@ -58,6 +69,8 @@ void AstBuilder::setStartEnd( Ast* ast, PythonParser::AstNode* node )
 
 QString AstBuilder::tokenText( qint64 tokenidx )
 {
+    //@TODO: change kdev-pg-qt to generate invalid indexes for non-existing tokens, for example import foo without AS X.
+    qDebug() << "Fetching text for idx:" << tokenidx;
     KDevPG::TokenStream::Token token = parser->tokenStream->token( tokenidx );
     return parser->tokenText( token.begin, token.end );
 }
@@ -106,8 +119,7 @@ void AstBuilder::visitArithOp(PythonParser::ArithOpAst *node)
 void AstBuilder::visitAssertStmt(PythonParser::AssertStmtAst *node)
 {
     qDebug() << "visitAssertStmt start";
-    AssertAst* ast = new AssertAst( mNodeStack.top() );
-    setStartEnd( ast, node );
+    AssertAst* ast = createAst<AssertAst>( node );
     visitNode( node->assertNotTest );
     ast->assertTest = safeNodeCast<ExpressionAst>(mNodeStack.pop());
     if( node->assertRaiseTest )
@@ -134,8 +146,7 @@ void AstBuilder::visitAugassign(PythonParser::AugassignAst *node)
 void AstBuilder::visitBreakStmt(PythonParser::BreakStmtAst *node)
 {
     qDebug() << "visitBreakStmt start";
-    StatementAst* ast = new StatementAst( mNodeStack.top(), Ast::BreakAst );
-    setStartEnd( ast, node );
+    StatementAst* ast = createAst<StatementAst>( node, Ast::BreakAst );
     mNodeStack.push( ast );
     qDebug() << "visitBreakStmt end";
 }
@@ -143,8 +154,7 @@ void AstBuilder::visitBreakStmt(PythonParser::BreakStmtAst *node)
 void AstBuilder::visitClassdef(PythonParser::ClassdefAst *node)
 {
     qDebug() << "visitClassdef start";
-    ClassDefinitionAst* ast = new ClassDefinitionAst( mNodeStack.top() );
-    setStartEnd( ast, node );
+    ClassDefinitionAst* ast = createAst<ClassDefinitionAst>( node );
     ast->className = tokenText( node->className );
     visitNode( node->testlist );
     ast->inheritance = generateSpecializedList<ExpressionAst>( mListStack.pop() );
@@ -176,6 +186,8 @@ void AstBuilder::visitCompoundStmt(PythonParser::CompoundStmtAst *node)
 void AstBuilder::visitContinueStmt(PythonParser::ContinueStmtAst *node)
 {
     qDebug() << "visitContinueStmt start";
+    StatementAst* ast = createAst<StatementAst>( node, Ast::ContinueAst );
+    mNodeStack.push( ast );
     qDebug() << "visitContinueStmt end";
 }
 
@@ -200,6 +212,10 @@ void AstBuilder::visitDefparam(PythonParser::DefparamAst *node)
 void AstBuilder::visitDelStmt(PythonParser::DelStmtAst *node)
 {
     qDebug() << "visitDelStmt start";
+    DelAst* ast = createAst<DelAst>( node );
+    visitNode( node->delList );
+    ast->deleteObjects = generateSpecializedList<TargetAst>( mListStack.pop() );
+    mNodeStack.push( ast );
     qDebug() << "visitDelStmt end";
 }
 
@@ -224,6 +240,9 @@ void AstBuilder::visitDottedAsNames(PythonParser::DottedAsNamesAst *node)
 void AstBuilder::visitDottedName(PythonParser::DottedNameAst *node)
 {
     qDebug() << "visitDottedName start";
+    // This visit should never be reached as the dottedName members are always
+    // evaluated directly where they are used, i.e. in the decorator and import visits
+    Q_ASSERT( false );
     qDebug() << "visitDottedName end";
 }
 
@@ -236,6 +255,20 @@ void AstBuilder::visitExceptClause(PythonParser::ExceptClauseAst *node)
 void AstBuilder::visitExecStmt(PythonParser::ExecStmtAst *node)
 {
     qDebug() << "visitExecStmt start";
+    ExecAst* ast = createAst<ExecAst>( node );
+    visitNode( node->execCode );
+    ast->executable = safeNodeCast<ArithmeticExpressionAst>( mNodeStack.pop() );
+    if( node->globalDictExec )
+    {
+        visitNode( node->globalDictExec );
+        ast->globalsAndLocals = safeNodeCast<DictionaryAst>( mNodeStack.pop() );
+    }
+    if( node->localDictExec )
+    {
+        visitNode( node->localDictExec );
+        ast->localsOnly = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+    }
+    mNodeStack.push( ast );
     qDebug() << "visitExecStmt end";
 }
 
@@ -272,12 +305,26 @@ void AstBuilder::visitFactor(PythonParser::FactorAst *node)
 void AstBuilder::visitFlowStmt(PythonParser::FlowStmtAst *node)
 {
     qDebug() << "visitFlowStmt start";
+    PythonParser::DefaultVisitor::visitFlowStmt( node );
     qDebug() << "visitFlowStmt end";
 }
 
 void AstBuilder::visitForStmt(PythonParser::ForStmtAst *node)
 {
     qDebug() << "visitForStmt start";
+    ForAst* ast = createAst<ForAst>( node );
+    visitNode( node->forExpr );
+    ast->assignedTargets = generateSpecializedList<TargetAst>( mListStack.pop() );
+    visitNode( node->forTestlist );
+    ast->iterable = generateSpecializedList<ExpressionAst>( mListStack.pop() );
+    visitNode( node->forSuite );
+    ast->forBody = generateSpecializedList<StatementAst>( mListStack.pop() );
+    if( node->forElseSuite )
+    {
+        visitNode( node->forElseSuite );
+        ast->elseBody = generateSpecializedList<StatementAst>( mListStack.pop() );
+    }
+    mNodeStack.push( ast );
     qDebug() << "visitForStmt end";
 }
 
@@ -302,6 +349,21 @@ void AstBuilder::visitFunPosParam(PythonParser::FunPosParamAst *node)
 void AstBuilder::visitFuncdecl(PythonParser::FuncdeclAst *node)
 {
     qDebug() << "visitFuncdecl start";
+    FunctionDefinitionAst* ast = createAst<FunctionDefinitionAst>( node );
+    if( node->decorators )
+    {
+        visitNode( node->decorators );
+        ast->decorators = generateSpecializedList<DecoratorAst>( mListStack.pop() );
+    }
+    ast->functionName = tokenText( node->funcName );
+    if( node->funArgs )
+    {
+        visitNode( node->funArgs );
+        ast->parameters = generateSpecializedList<ParameterAst>( mListStack.pop() );
+    }
+    visitNode( node->funSuite );
+    ast->functionBody = generateSpecializedList<StatementAst>( mListStack.pop() );
+    mNodeStack.push( ast );
     qDebug() << "visitFuncdecl end";
 }
 
@@ -332,42 +394,106 @@ void AstBuilder::visitGenIter(PythonParser::GenIterAst *node)
 void AstBuilder::visitGlobalStmt(PythonParser::GlobalStmtAst *node)
 {
     qDebug() << "visitGlobalStmt start";
+    GlobalAst* ast = createAst<GlobalAst>( node );
+    ast->identifiers = identifierListFromTokenList( node->globalNameSequence );
+    mNodeStack.push( ast );
     qDebug() << "visitGlobalStmt end";
 }
 
 void AstBuilder::visitIfStmt(PythonParser::IfStmtAst *node)
 {
     qDebug() << "visitIfStmt start";
+    IfAst* ast = createAst<IfAst>( node );
+    visitNode( node->ifTest );
+    ast->ifCondition = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+    visitNode( node->ifSuite );
+    ast->ifBody = generateSpecializedList<StatementAst>( mListStack.pop() );
+    Q_ASSERT( node->elifTestSequence->count() == node->elifSuiteSequence->count() );
+    int count = node->elifTestSequence->count();
+    for( int i = 0; i < count; i++)
+    {
+        visitNode( node->elifTestSequence->at(i)->element );
+        ExpressionAst* expr = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+        visitNode( node->elifSuiteSequence->at(i)->element );
+        ast->elseIfBodies.append(
+                                 qMakePair( expr ,
+                                            generateSpecializedList<StatementAst>(
+                                                    mListStack.pop() ) ) );
+    }
+    if( node->ifElseSuite )
+    {
+        visitNode( node->ifElseSuite );
+        ast->elseBody = generateSpecializedList<StatementAst>( mListStack.pop() );
+    }
+    mNodeStack.push( ast );
     qDebug() << "visitIfStmt end";
 }
 
 void AstBuilder::visitImportAsName(PythonParser::ImportAsNameAst *node)
 {
     qDebug() << "visitImportAsName start";
+    // This visit should never be reached as the dottedName members are always
+    // evaluated directly where they are used, i.e. in the decorator and import visits
+    Q_ASSERT( false );
     qDebug() << "visitImportAsName end";
 }
 
 void AstBuilder::visitImportAsNames(PythonParser::ImportAsNamesAst *node)
 {
     qDebug() << "visitImportAsNames start";
+    // This visit should never be reached as the dottedName members are always
+    // evaluated directly where they are used, i.e. in the decorator and import visits
+    Q_ASSERT( false );
     qDebug() << "visitImportAsNames end";
 }
 
 void AstBuilder::visitImportFrom(PythonParser::ImportFromAst *node)
 {
     qDebug() << "visitImportFrom start";
+    if( !node->importAsNames )
+    {
+        StarImportAst* ast = createAst<StarImportAst>( node );
+        ast->modulePath = identifierListFromTokenList( node->importFromName->dottedNameSequence );
+        mNodeStack.push( ast );
+    }else
+    {
+        FromImportAst* ast = createAst<FromImportAst>( node );
+        ast->modulePath = identifierListFromTokenList( node->importFromName->dottedNameSequence );
+        const KDevPG::ListNode<PythonParser::ImportAsNameAst*>* idNames;
+        idNames = node->importAsNames->importAsNameSequence;
+        int count = idNames->count();
+        for(int i = 0; i < count; i++)
+        {
+            PythonParser::ImportAsNameAst* namenode = idNames->at(i)->element;
+            qDebug() << "Fetching from-as:" << tokenText( namenode->importedName );
+            ast->identifierAsName[ tokenText( namenode->importedName ) ] = tokenText( namenode->importedAs );
+        }
+        mNodeStack.push( ast );
+    }
     qDebug() << "visitImportFrom end";
 }
 
 void AstBuilder::visitImportName(PythonParser::ImportNameAst *node)
 {
     qDebug() << "visitImportName start";
+    PlainImportAst* ast = createAst<PlainImportAst>( node );
+    const KDevPG::ListNode<PythonParser::DottedAsNameAst*>* importedmodules;
+    importedmodules = node->importName->dottedAsNameSequence;
+    int count = importedmodules->count();
+    for( int i = 0; i < count ; i++ )
+    {
+        PythonParser::DottedAsNameAst* import = importedmodules->at(i)->element;
+        QStringList modulepath = identifierListFromTokenList( import->importDottedName->dottedNameSequence );
+        ast->modulesAsName[ i ] = qMakePair( modulepath, tokenText( import->importedAs ) );
+    }
+    mNodeStack.push( ast );
     qDebug() << "visitImportName end";
 }
 
 void AstBuilder::visitImportStmt(PythonParser::ImportStmtAst *node)
 {
     qDebug() << "visitImportStmt start";
+    PythonParser::DefaultVisitor::visitImportStmt( node );
     qDebug() << "visitImportStmt end";
 }
 
@@ -422,6 +548,8 @@ void AstBuilder::visitNumber(PythonParser::NumberAst *node)
 void AstBuilder::visitPassStmt(PythonParser::PassStmtAst *node)
 {
     qDebug() << "visitPassStmt start";
+    StatementAst* ast = createAst<StatementAst>( node,  Ast::PassAst );
+    mNodeStack.push( ast );
     qDebug() << "visitPassStmt end";
 }
 
@@ -440,6 +568,27 @@ void AstBuilder::visitPlainArgumentsList(PythonParser::PlainArgumentsListAst *no
 void AstBuilder::visitPrintStmt(PythonParser::PrintStmtAst *node)
 {
     qDebug() << "visitPrintStmt start";
+    PrintAst* ast = createAst<PrintAst>( node );
+    if( node->printArgsSequence->count() > 0 )
+    {
+        int count = node->printArgsSequence->count();
+        for( int i = 0; i < count; i++ )
+        {
+            visitNode( node->printArgsSequence->at(i)->element );
+            ast->printables.append( safeNodeCast<ExpressionAst>( mNodeStack.pop() ) );
+        }
+    }else
+    {
+        visitNode( node->rshiftArgsSequence->at(0)->element );
+        ast->outfile = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+        int count = node->rshiftArgsSequence->count();
+        for( int i = 1; i < count; i++ )
+        {
+            visitNode( node->printArgsSequence->at(i)->element );
+            ast->printables.append( safeNodeCast<ExpressionAst>( mNodeStack.pop() ) );
+        }
+    }
+    mNodeStack.push( ast );
     qDebug() << "visitPrintStmt end";
 }
 

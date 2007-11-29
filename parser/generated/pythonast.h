@@ -436,7 +436,7 @@ struct KDEVPYTHONPARSER_EXPORT DottedNameAst: public AstNode
 {
     enum { KIND = DottedNameKind };
 
-    qint64 dottedName;
+    const KDevPG::ListNode<qint64 > *dottedNameSequence;
 };
 
 struct KDEVPYTHONPARSER_EXPORT ExceptClauseAst: public AstNode
@@ -595,7 +595,7 @@ struct KDEVPYTHONPARSER_EXPORT IfStmtAst: public AstNode
 {
     enum { KIND = IfStmtKind };
 
-    const KDevPG::ListNode<TestAst *> *ifTestSequence;
+    TestAst *ifTest;
     SuiteAst *ifSuite;
     const KDevPG::ListNode<TestAst *> *elifTestSequence;
     const KDevPG::ListNode<SuiteAst *> *elifSuiteSequence;
@@ -623,7 +623,6 @@ struct KDEVPYTHONPARSER_EXPORT ImportFromAst: public AstNode
 
     DottedNameAst *importFromName;
     ImportAsNamesAst *importAsNames;
-    ImportAsNamesAst *importFromAsName;
 };
 
 struct KDEVPYTHONPARSER_EXPORT ImportNameAst: public AstNode

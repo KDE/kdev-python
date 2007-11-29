@@ -116,48 +116,50 @@ public:
         ClassDefinitionAst = 10,
         CodeAst = 11,
         ComparisonAst = 12,
-        DecoratorAst = 13,
-        DefaultParameterAst = 14,
-        DelAst = 15,
-        DictionaryAst = 16,
-        DictionaryParameterAst = 17,
-        EllipsisSliceAst = 18,
-        EnclosureAst = 19,
-        ExceptAst = 20,
-        ExecAst = 21,
-        ExpressionSliceAst = 22,
-        ExpressionStatementAst = 23,
-        ExtendedSliceAst = 24,
-        ForAst = 25,
-        FromImportAst = 26,
-        FunctionDefinitionAst = 27,
-        GeneratorAst = 28,
-        GeneratorForAst = 29,
-        GeneratorIfAst = 30,
-        GlobalAst = 31,
-        IdentifierParameterPartAst = 32,
-        IfAst = 33,
-        LambdaAst = 34,
-        ListAst = 35,
-        ListForAst = 36,
-        ListIfAst = 37,
-        ListParameterAst = 38,
-        ListParameterPartAst = 39,
-        ParameterAst = 40,
-        PlainImportAst = 41,
-        PrintAst = 42,
-        ProperSliceItemAst = 43,
-        RaiseAst = 44,
-        ReturnAst = 45,
-        SimpleSliceAst = 46,
-        StarImportAst = 47,
-        SubscriptAst = 48,
-        TargetAst = 49,
-        TryAst = 50,
-        UnaryExpressionAst = 51,
-        WhileAst = 52,
-        WithAst = 53,
-        YieldAst = 54
+        ContinueAst = 13,
+        DecoratorAst = 14,
+        DefaultParameterAst = 15,
+        DelAst = 16,
+        DictionaryAst = 17,
+        DictionaryParameterAst = 18,
+        EllipsisSliceAst = 19,
+        EnclosureAst = 20,
+        ExceptAst = 21,
+        ExecAst = 22,
+        ExpressionSliceAst = 23,
+        ExpressionStatementAst = 24,
+        ExtendedSliceAst = 25,
+        ForAst = 26,
+        FromImportAst = 27,
+        FunctionDefinitionAst = 28,
+        GeneratorAst = 29,
+        GeneratorForAst = 30,
+        GeneratorIfAst = 31,
+        GlobalAst = 32,
+        IdentifierParameterPartAst = 33,
+        IfAst = 34,
+        LambdaAst = 35,
+        ListAst = 36,
+        ListForAst = 37,
+        ListIfAst = 38,
+        ListParameterAst = 39,
+        ListParameterPartAst = 40,
+        ParameterAst = 41,
+        PassAst = 42,
+        PlainImportAst = 43,
+        PrintAst = 44,
+        ProperSliceItemAst = 45,
+        RaiseAst = 46,
+        ReturnAst = 47,
+        SimpleSliceAst = 48,
+        StarImportAst = 49,
+        SubscriptAst = 50,
+        TargetAst = 51,
+        TryAst = 52,
+        UnaryExpressionAst = 53,
+        WhileAst = 54,
+        WithAst = 55,
+        YieldAst = 56
     };
 
     Ast( Ast* parent, AstType type );
@@ -401,7 +403,9 @@ class IfAst : public StatementAst
 
 public:
     IfAst( Ast* );
-    QMap<Python::ExpressionAst*, QList<Python::StatementAst*> > ifElseIfBodies;
+    ExpressionAst* ifCondition;
+    QList<Python::StatementAst*> ifBody;
+    QList<QPair<Python::ExpressionAst*, QList<Python::StatementAst*> > > elseIfBodies;
     QList<Python::StatementAst*> elseBody;
 };
 
@@ -490,7 +494,7 @@ class PlainImportAst : public ImportAst
 
 public:
     PlainImportAst( Ast* );
-    QMap<QStringList, QString> modulesAsName;
+    QMap<int, QPair< QStringList, QString> > modulesAsName;
 };
 
 class StarImportAst : public ImportAst
@@ -506,7 +510,7 @@ class FromImportAst : public ImportAst
 
 public:
     FromImportAst( Ast* );
-    QList<QString> modulePath;
+    QStringList modulePath;
     int numLeadingDots;
     QMap<QString, QString> identifierAsName;
 };

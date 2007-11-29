@@ -1947,7 +1947,7 @@ bool Parser::parseDottedName(DottedNameAst **yynode)
             expectedToken(yytoken, Token_IDENTIFIER, "identifier");
             return false;
         }
-        (*yynode)->dottedName = tokenStream->index() - 1;
+        (*yynode)->dottedNameSequence = snoc((*yynode)->dottedNameSequence, tokenStream->index() - 1, memoryPool);
         yylex();
 
         while (yytoken == Token_DOT)
@@ -1964,7 +1964,7 @@ bool Parser::parseDottedName(DottedNameAst **yynode)
                 expectedToken(yytoken, Token_IDENTIFIER, "identifier");
                 return false;
             }
-            (*yynode)->dottedName = tokenStream->index() - 1;
+            (*yynode)->dottedNameSequence = snoc((*yynode)->dottedNameSequence, tokenStream->index() - 1, memoryPool);
             yylex();
 
         }
@@ -3258,7 +3258,7 @@ bool Parser::parseIfStmt(IfStmtAst **yynode)
             expectedSymbol(AstNode::TestKind, "test");
             return false;
         }
-        (*yynode)->ifTestSequence = snoc((*yynode)->ifTestSequence, __node_88, memoryPool);
+        (*yynode)->ifTest = __node_88;
 
         if (yytoken != Token_COLON)
         {
@@ -3525,7 +3525,7 @@ bool Parser::parseImportFrom(ImportFromAst **yynode)
                 expectedSymbol(AstNode::ImportAsNamesKind, "importAsNames");
                 return false;
             }
-            (*yynode)->importFromAsName = __node_97;
+            (*yynode)->importAsNames = __node_97;
 
         }
         else

@@ -326,7 +326,7 @@ namespace PythonParser
    IMPORT importName=dottedAsNames
 -> importName ;;
 
-   FROM importFromName=dottedName IMPORT ( STAR | LPAREN importAsNames=importAsNames RPAREN | importFromAsName=importAsNames )
+   FROM importFromName=dottedName IMPORT ( STAR | LPAREN importAsNames=importAsNames RPAREN | importAsNames=importAsNames )
 -> importFrom ;;
 
    importedName=IDENTIFIER ( AS importedAs=IDENTIFIER | 0 )
@@ -342,7 +342,7 @@ namespace PythonParser
    #dottedAsName=dottedAsName ( COMMA #dottedAsName=dottedAsName )*
 -> dottedAsNames ;;
 
-   dottedName=IDENTIFIER ( DOT dottedName=IDENTIFIER )*
+   #dottedName=IDENTIFIER ( DOT #dottedName=IDENTIFIER )*
 -> dottedName ;;
 
    GLOBAL #globalName=IDENTIFIER ( COMMA #globalName=IDENTIFIER )*
@@ -362,7 +362,7 @@ namespace PythonParser
    | classdef=classdef
 -> compoundStmt ;;
 
-   IF #ifTest=test COLON ifSuite=suite ( ELIF #elifTest=test COLON #elifSuite=suite )* ( ELSE COLON ifElseSuite=suite | 0 )
+   IF ifTest=test COLON ifSuite=suite ( ELIF #elifTest=test COLON #elifSuite=suite )* ( ELSE COLON ifElseSuite=suite | 0 )
 -> ifStmt ;;
 
    WHILE whileTest=test COLON whileSuite=suite ( ELSE COLON whileElseSuite=suite | 0 )

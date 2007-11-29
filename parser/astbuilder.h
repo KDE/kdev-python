@@ -23,11 +23,15 @@
 
 #include <QtCore/QStack>
 
+#include <kdev-pg-list.h>
+
 #include "pythondefaultvisitor.h"
+#include "ast.h"
 
 namespace PythonParser
 {
     class Parser;
+    class AstNode;
 }
 
 namespace Python
@@ -135,6 +139,21 @@ private:
     PythonParser::Parser* parser;
     void setStartEnd( Ast* ast, PythonParser::AstNode* node );
     QString tokenText( qint64 tokenidx );
+
+    template <typename T> T* createAst( PythonParser::AstNode* node, Ast::AstType t )
+    {
+        T* ast = new T( mNodeStack.top(), t );
+        setStartEnd( ast, node );
+        return ast;
+    }
+
+    template <typename T> T* createAst( PythonParser::AstNode* node )
+    {
+        T* ast = new T( mNodeStack.top() );
+        setStartEnd( ast, node );
+        return ast;
+    }
+    QStringList identifierListFromTokenList( const KDevPG::ListNode<qint64>* sequence );
 };
 
 }

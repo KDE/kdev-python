@@ -408,16 +408,7 @@ void DefaultVisitor::visitGlobalStmt(GlobalStmtAst *)
 
 void DefaultVisitor::visitIfStmt(IfStmtAst *node)
 {
-    if (node->ifTestSequence)
-    {
-        const KDevPG::ListNode<TestAst*> *__it = node->ifTestSequence->front(), *__end = __it;
-        do
-        {
-            visitNode(__it->element);
-            __it = __it->next;
-        }
-        while (__it != __end);
-    }
+    visitNode(node->ifTest);
     visitNode(node->ifSuite);
     if (node->elifTestSequence)
     {
@@ -464,7 +455,6 @@ void DefaultVisitor::visitImportFrom(ImportFromAst *node)
 {
     visitNode(node->importFromName);
     visitNode(node->importAsNames);
-    visitNode(node->importFromAsName);
 }
 
 void DefaultVisitor::visitImportName(ImportNameAst *node)

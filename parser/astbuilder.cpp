@@ -69,8 +69,9 @@ void AstBuilder::setStartEnd( Ast* ast, PythonParser::AstNode* node )
 
 QString AstBuilder::tokenText( qint64 tokenidx )
 {
-    //@TODO: change kdev-pg-qt to generate invalid indexes for non-existing tokens, for example import foo without AS X.
-    qDebug() << "Fetching text for idx:" << tokenidx;
+    // -1 means this is not a valid token idx and thus return an empty string;
+    if( tokenidx == -1 )
+        return "";
     KDevPG::TokenStream::Token token = parser->tokenStream->token( tokenidx );
     return parser->tokenText( token.begin, token.end );
 }

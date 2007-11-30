@@ -608,12 +608,33 @@ void AstBuilder::visitProject(PythonParser::ProjectAst *node)
 void AstBuilder::visitRaiseStmt(PythonParser::RaiseStmtAst *node)
 {
     qDebug() << "visitRaiseStmt start";
+    RaiseAst* ast = createAst<RaiseAst>( node );
+    if( node->type )
+    {
+        visitNode( node->type );
+        ast->exceptionType = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+    }
+    if( node->value )
+    {
+        visitNode( node->value );
+        ast->exceptionValue = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+    }
+    if( node->traceback )
+    {
+        visitNode( node->traceback );
+        ast->traceback = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+    }
+    mNodeStack.push( ast );
     qDebug() << "visitRaiseStmt end";
 }
 
 void AstBuilder::visitReturnStmt(PythonParser::ReturnStmtAst *node)
 {
     qDebug() << "visitReturnStmt start";
+    ReturnAst* ast = createAst<ReturnAst>( node );
+    visitNode( node->returnExpr );
+    ast->returnValues = generateSpecializedList<ExpressionAst>( mListStack.pop() );
+    mNodeStack.push( ast );
     qDebug() << "visitReturnStmt end";
 }
 
@@ -680,6 +701,7 @@ void AstBuilder::visitSubscriptlist(PythonParser::SubscriptlistAst *node)
 void AstBuilder::visitSuite(PythonParser::SuiteAst *node)
 {
     qDebug() << "visitSuite start";
+    PythonParser::DefaultVisitor::visitSuite( node );
     qDebug() << "visitSuite end";
 }
 
@@ -740,6 +762,30 @@ void AstBuilder::visitTrailer(PythonParser::TrailerAst *node)
 void AstBuilder::visitTryStmt(PythonParser::TryStmtAst *node)
 {
     qDebug() << "visitTryStmt start";
+    TryAst* ast = createAst<TryAst>( node );
+    visitNode( node->trySuite );
+    ast->tryBody = generateSpecializedList<StatementAst>( mListStack.pop() );
+    if( node->finallySuite )
+    {
+        ast->finallyBody = generateSpecializedList<StatementAst>( mListStack.pop() );
+    }else
+    {
+        int count = node->exceptClauseSequence->count();
+        for( int i = 1; i < count; i++ )
+        {
+            visitNode( node->exceptClauseSequence->at(i)->element );
+            ExceptAst* ex = safeNodeCast<ExceptAst>( mNodeStack.pop() );
+            visitNode( node->exceptSuiteSequence->at(i)->element );
+            ex->exceptionBody = generateSpecializedList<StatementAst>( mListStack.pop() );
+            ast->exceptions.append( ex );
+        }
+        if( node->tryElseSuite )
+        {
+            visitNode( node->tryElseSuite );
+            ast->elseBody = generateSpecializedList<StatementAst>( mListStack.pop() );
+        }
+    }
+    mNodeStack.push( ast );
     qDebug() << "visitTryStmt end";
 }
 
@@ -752,6 +798,17 @@ void AstBuilder::visitVarargslist(PythonParser::VarargslistAst *node)
 void AstBuilder::visitWhileStmt(PythonParser::WhileStmtAst *node)
 {
     qDebug() << "visitWhileStmt start";
+    WhileAst* ast = createAst<WhileAst>( node );
+    visitNode( node->whileTest );
+    ast->condition = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+    visitNode( node->whileSuite );
+    ast->whileBody = generateSpecializedList<StatementAst>( mListStack.pop() );;
+    if( node->whileElseSuite )
+    {
+        visitNode( node->whileElseSuite );
+        ast->elseBody = generateSpecializedList<StatementAst>( mListStack.pop() );
+    }
+    mNodeStack.push( ast );
     qDebug() << "visitWhileStmt end";
 }
 
@@ -764,6 +821,10 @@ void AstBuilder::visitXorExpr(PythonParser::XorExprAst *node)
 void AstBuilder::visitYieldStmt(PythonParser::YieldStmtAst *node)
 {
     qDebug() << "visitYieldStmt start";
+    YieldAst* ast = createAst<YieldAst>( node );
+    visitNode( node->yieldExpr );
+    ast->yieldValue = generateSpecializedList<ExpressionAst>( mListStack.pop() );
+    mNodeStack.push( ast );
     qDebug() << "visitYieldStmt end";
 }
 

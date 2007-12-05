@@ -84,6 +84,32 @@ AstBuilder::AstBuilder(PythonParser::Parser* p)
 void AstBuilder::visitAndExpr(PythonParser::AndExprAst *node)
 {
     qDebug() << "visitAndExpr start";
+    visitNode( node->andExpr );
+    if( node->anddShifExprSequence->count() > 0 )
+    {
+        BinaryExpressionAst* ast = createAst<BinaryExpressionAst>( node );
+        ast->opType = ArithmeticExpressionAst::BinaryAnd;
+        ast->lhs = safeNodeCast<ArithmeticExpressionAst>( mNodeStack.pop() );
+        int count = node->anddShifExprSequence->count();
+        BinaryExpressionAst* curast = ast;
+        for( int i = 0; i < count; i++ )
+        {
+            visitNode( node->anddShifExprSequence->at(i)->element );
+            if( i+1 < count )
+            {
+                BinaryExpressionAst* tmp = createAst<BinaryExpressionAst>( 
+                        node->anddShifExprSequence->at(i)->element );
+                curast->opType = ArithmeticExpressionAst::BinaryAnd;
+                tmp->lhs = safeNodeCast<ArithmeticExpressionAst>( mNodeStack.pop() );
+                curast->rhs = tmp;
+                curast = tmp;
+            }else
+            {
+                curast->rhs = safeNodeCast<ArithmeticExpressionAst>( mNodeStack.pop() );
+            }
+        }
+        mNodeStack.push( ast );
+    }
     qDebug() << "visitAndExpr end";
 }
 

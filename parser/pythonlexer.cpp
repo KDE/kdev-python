@@ -487,7 +487,7 @@ int Lexer::nextTokenKind()
                             token = Parser::Token_ANDEQ;
                         }else
                         {
-                            token = Parser::Token_ANDD;
+                            token = Parser::Token_BITAND;
                         }
                         break;
                     case '<':
@@ -537,11 +537,11 @@ int Lexer::nextTokenKind()
                             token = Parser::Token_OREQ;
                         }else
                         {
-                            token = Parser::Token_ORR;
+                            token = Parser::Token_BITOR;
                         };
                         break;
                     case '^':
-                        token = Parser::Token_HAT;
+                        token = Parser::Token_BITXOR;
                         break;
                     case '!':
                         if( ch2 && ch2->unicode() == '=' )

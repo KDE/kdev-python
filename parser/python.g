@@ -180,8 +180,8 @@ namespace PythonParser
        DOUBLESLASHEQ ("doubleslasheq"), MODULOEQ ("moduloeq"), ANDEQ ("andeq"),
        STAREQ ("stareq"), DOUBLESTAREQ ("doublestareq"), LSHIFTEQ ("lshifteq"),
        RSHIFTEQ ("rshifteq"), LESS ("less"), GREATER ("greater"), GREATEREQ ("greatereq"),
-       LESSEQ ("lesseq"), UNEQUAL ("unequal"), OR ("or"), HAT ("hat"), ISEQUAL ("isequal"),
-       TILDEEQ ("tildeeq"), OREQ ("oreq"), ANDD ("andd") , ORR ("orr");;
+       LESSEQ ("lesseq"), UNEQUAL ("unequal"), OR ("or"), BITXOR ("bitxor"), ISEQUAL ("isequal"),
+       TILDEEQ ("tildeeq"), OREQ ("oreq"), BITAND ("bitand") , BITOR ("bitor");;
 
 
 -- token that makes the parser fail in any case:
@@ -407,13 +407,13 @@ namespace PythonParser
 -> compOp [
         member variable compOp : PythonParser::OperatorType; ];;
 
-   expr=xorExpr ( ORR #orrExpr=xorExpr )*
+   expr=xorExpr ( BITOR #orrExpr=xorExpr )*
 -> expr ;;
 
-   xorExpr=andExpr ( HAT #hatXorExpr=andExpr )*
+   xorExpr=andExpr ( BITXOR #hatXorExpr=andExpr )*
 -> xorExpr ;;
 
-   andExpr=shiftExpr ( ANDD #anddShifExpr=shiftExpr )*
+   andExpr=shiftExpr ( BITAND #anddShifExpr=shiftExpr )*
 -> andExpr ;;
 
    arithExpr=arithExpr

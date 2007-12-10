@@ -116,6 +116,30 @@ void AstBuilder::visitAndExpr(PythonParser::AndExprAst *node)
 void AstBuilder::visitAndTest(PythonParser::AndTestAst *node)
 {
     qDebug() << "visitAndTest start";
+    visitNode( node->notTestSequence->at(0)->element );
+    if( node->notTestSequence->count() > 1 )
+    {
+        BooleanAndOperationAst* ast = createAst<BooleanAndOperationAst>( node );
+        ast->lhs = safeNodeCast<BooleanOperationAst>( mNodeStack.pop() );
+        int count = node->notTestSequence->count();
+        BooleanAndOperationAst* curast = ast;
+        for( int i = 1; i < count; i++ )
+        {
+            visitNode( node->notTestSequence->at(i)->element );
+            if( i+1 < count )
+            {
+                BooleanAndOperationAst* tmp = createAst<BooleanAndOperationAst>( 
+                        node->notTestSequence->at(i)->element );
+                tmp->lhs = safeNodeCast<BooleanOperationAst>( mNodeStack.pop() );
+                curast->rhs = tmp;
+                curast = tmp;
+            }else
+            {
+                curast->rhs = safeNodeCast<BooleanOperationAst>( mNodeStack.pop() );
+            }
+        }
+        mNodeStack.push( ast );
+    }
     qDebug() << "visitAndTest end";
 }
 

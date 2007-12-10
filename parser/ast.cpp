@@ -238,19 +238,19 @@ BinaryExpressionAst::BinaryExpressionAst( Ast* parent )
 {
 }
 ComparisonAst::ComparisonAst( Ast* parent )
-    : Ast( parent, Ast::ComparisonAst )
+    : BooleanOperationAst( parent, Ast::ComparisonAst )
 {
 }
-BooleanOperationAst::BooleanOperationAst( Ast* parent )
-    : Ast( parent, Ast::BooleanOperationAst )
+BooleanOperationAst::BooleanOperationAst( Ast* parent, Ast::AstType type )
+    : Ast( parent, type )
 {
 }
 ExpressionAst::ExpressionAst( Ast* parent, Ast::AstType type )
     : Ast( parent, type )
 {
 }
-BooleanExpressionAst::BooleanExpressionAst( Ast* parent )
-    : ExpressionAst( parent, Ast::BooleanExpressionAst )
+ConditionalExpressionAst::ConditionalExpressionAst( Ast* parent )
+    : ExpressionAst( parent, Ast::ConditionalExpressionAst )
 {
 }
 LambdaAst::LambdaAst( Ast* parent )
@@ -285,6 +285,21 @@ DictionaryParameterAst::DictionaryParameterAst( Ast * parent )
 
 ListParameterAst::ListParameterAst( Ast * parent )
     : ParameterAst( parent, Ast::ListParameterAst )
+{
+}
+
+BooleanNotOperationAst::BooleanNotOperationAst( Ast * parent )
+    : BooleanOperationAst( parent, Ast::BooleanNotOperationAst )
+{
+}
+
+BooleanOrOperationAst::BooleanOrOperationAst( Ast * parent )
+    : BooleanOperationAst( parent, Ast::BooleanOrOperationAst )
+{
+}
+
+BooleanAndOperationAst::BooleanAndOperationAst( Ast * parent )
+    : BooleanOperationAst( parent, Ast::BooleanAndOperationAst )
 {
 }
 

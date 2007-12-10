@@ -89,7 +89,7 @@ class BinaryExpressionAst;
 class ComparisonAst;
 class BooleanOperationAst;
 class ExpressionAst;
-class BooleanExpressionAst;
+class ConditionalExpressionAst;
 class LambdaAst;
 class ParameterAst;
 class ParameterPartAst;
@@ -109,57 +109,59 @@ public:
         AtomAst = 3,
         AttributeReferenceAst = 4,
         BinaryExpressionAst = 5,
-        BooleanExpressionAst = 6,
-        BooleanOperationAst = 7,
-        BreakAst = 8,
-        CallAst = 9,
-        ClassDefinitionAst = 10,
-        CodeAst = 11,
-        ComparisonAst = 12,
-        ContinueAst = 13,
-        DecoratorAst = 14,
-        DefaultParameterAst = 15,
-        DelAst = 16,
-        DictionaryAst = 17,
-        DictionaryParameterAst = 18,
-        EllipsisSliceAst = 19,
-        EnclosureAst = 20,
-        ExceptAst = 21,
-        ExecAst = 22,
-        ExpressionSliceAst = 23,
-        ExpressionStatementAst = 24,
-        ExtendedSliceAst = 25,
-        ForAst = 26,
-        FromImportAst = 27,
-        FunctionDefinitionAst = 28,
-        GeneratorAst = 29,
-        GeneratorForAst = 30,
-        GeneratorIfAst = 31,
-        GlobalAst = 32,
-        IdentifierParameterPartAst = 33,
-        IfAst = 34,
-        LambdaAst = 35,
-        ListAst = 36,
-        ListForAst = 37,
-        ListIfAst = 38,
-        ListParameterAst = 39,
-        ListParameterPartAst = 40,
-        ParameterAst = 41,
-        PassAst = 42,
-        PlainImportAst = 43,
-        PrintAst = 44,
-        ProperSliceItemAst = 45,
-        RaiseAst = 46,
-        ReturnAst = 47,
-        SimpleSliceAst = 48,
-        StarImportAst = 49,
-        SubscriptAst = 50,
-        TargetAst = 51,
-        TryAst = 52,
-        UnaryExpressionAst = 53,
-        WhileAst = 54,
-        WithAst = 55,
-        YieldAst = 56
+        BooleanAndOperationAst = 6,
+        BooleanNotOperationAst = 7,
+        BooleanOrOperationAst = 8,
+        BreakAst = 9,
+        CallAst = 10,
+        ClassDefinitionAst = 11,
+        CodeAst = 12,
+        ComparisonAst = 13,
+        ConditionalExpressionAst = 14,
+        ContinueAst = 15,
+        DecoratorAst = 16,
+        DefaultParameterAst = 17,
+        DelAst = 18,
+        DictionaryAst = 19,
+        DictionaryParameterAst = 20,
+        EllipsisSliceAst = 21,
+        EnclosureAst = 22,
+        ExceptAst = 23,
+        ExecAst = 24,
+        ExpressionSliceAst = 25,
+        ExpressionStatementAst = 26,
+        ExtendedSliceAst = 27,
+        ForAst = 28,
+        FromImportAst = 29,
+        FunctionDefinitionAst = 30,
+        GeneratorAst = 31,
+        GeneratorForAst = 32,
+        GeneratorIfAst = 33,
+        GlobalAst = 34,
+        IdentifierParameterPartAst = 35,
+        IfAst = 36,
+        LambdaAst = 37,
+        ListAst = 38,
+        ListForAst = 39,
+        ListIfAst = 40,
+        ListParameterAst = 41,
+        ListParameterPartAst = 42,
+        ParameterAst = 43,
+        PassAst = 44,
+        PlainImportAst = 45,
+        PrintAst = 46,
+        ProperSliceItemAst = 47,
+        RaiseAst = 48,
+        ReturnAst = 49,
+        SimpleSliceAst = 50,
+        StarImportAst = 51,
+        SubscriptAst = 52,
+        TargetAst = 53,
+        TryAst = 54,
+        UnaryExpressionAst = 55,
+        WhileAst = 56,
+        WithAst = 57,
+        YieldAst = 58
     };
 
     Ast( Ast* parent, AstType type );
@@ -301,6 +303,13 @@ class ExpressionAst : public Ast
 public:
     ExpressionAst( Ast*, Ast::AstType type );
 };
+
+class BooleanOperationAst : public Ast
+{
+public:
+    BooleanOperationAst( Ast* parent, Ast::AstType type );
+};
+
 
 class FunctionDefinitionAst : public StatementAst
 {
@@ -670,7 +679,7 @@ class GeneratorForAst : public Ast
 public:
     GeneratorForAst( Ast* );
     QList<Python::TargetAst*> assignedTargets;
-    Python::BooleanExpressionAst * iterableObject;
+    Python::ConditionalExpressionAst * iterableObject;
     Python::GeneratorForAst* nextGenerator;
     Python::GeneratorIfAst* nextCondition;
 };
@@ -782,7 +791,7 @@ public:
     Python::ArithmeticExpressionAst* rhs;
 };
 
-class ComparisonAst : public Ast
+class ComparisonAst : public BooleanOperationAst
 {
     enum ComparisonOperator
     {
@@ -805,27 +814,34 @@ public:
          Python::BinaryExpressionAst*> comparatorList;
 };
 
-class BooleanOperationAst : public Ast
+class BooleanAndOperationAst : public BooleanOperationAst
 {
-    enum BooleanOperation
-    {
-        NotOp,
-        AndOp,
-        OrOp
-    };
-
 public:
-    BooleanOperationAst( Ast* );
+    BooleanAndOperationAst( Ast* );
     Python::BooleanOperationAst* lhs;
-    BooleanOperation opType;
-    Python::ComparisonAst* rhs;
+    Python::BooleanOperationAst* rhs;
 };
 
-class BooleanExpressionAst : public ExpressionAst
+class BooleanOrOperationAst : public BooleanOperationAst
+{
+public:
+    BooleanOrOperationAst( Ast* );
+    Python::BooleanOperationAst* lhs;
+    Python::BooleanOperationAst* rhs;
+};
+
+class BooleanNotOperationAst : public BooleanOperationAst
+{
+public:
+    BooleanNotOperationAst( Ast* );
+    Python::BooleanOperationAst* op;
+};
+
+class ConditionalExpressionAst : public ExpressionAst
 {
 
 public:
-    BooleanExpressionAst( Ast* );
+    ConditionalExpressionAst( Ast* );
     Python::BooleanOperationAst* mainExpression;
     Python::BooleanOperationAst* condition;
     Python::ExpressionAst* elseExpression;

@@ -272,11 +272,19 @@ void AstDefaultVisitor::visitComparison( ComparisonAst* )
 {
 }
 
-void AstDefaultVisitor::visitBooleanOperation( BooleanOperationAst* )
+void AstDefaultVisitor::visitBooleanNotOperation( BooleanNotOperationAst* )
 {
 }
 
-void AstDefaultVisitor::visitBooleanExpression( BooleanExpressionAst* )
+void AstDefaultVisitor::visitBooleanOrOperation( BooleanOrOperationAst* )
+{
+}
+
+void AstDefaultVisitor::visitBooleanAndOperation( BooleanAndOperationAst* )
+{
+}
+
+void AstDefaultVisitor::visitConditionalExpression( ConditionalExpressionAst* )
 {
 }
 

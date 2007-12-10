@@ -292,7 +292,7 @@ void LexerTest::lexSeparatorsAndOperators_data()
     QTest::newRow( "row23" )
             << MAKETESTROW( "%", PythonParser::Parser::Token_MODULO, 0, 0 );
     QTest::newRow( "row24" )
-            << MAKETESTROW( "&", PythonParser::Parser::Token_ANDD, 0, 0 );
+            << MAKETESTROW( "&", PythonParser::Parser::Token_BITAND, 0, 0 );
     QTest::newRow( "row25" )
             << MAKETESTROW( "<<", PythonParser::Parser::Token_LSHIFT, 0, 1 );
     QTest::newRow( "row26" )
@@ -334,9 +334,9 @@ void LexerTest::lexSeparatorsAndOperators_data()
     QTest::newRow( "row44" )
             << MAKETESTROW( "!=", PythonParser::Parser::Token_UNEQUAL, 0, 1 );
     QTest::newRow( "row45" )
-            << MAKETESTROW( "|", PythonParser::Parser::Token_ORR, 0, 0 );
+            << MAKETESTROW( "|", PythonParser::Parser::Token_BITOR, 0, 0 );
     QTest::newRow( "row46" )
-            << MAKETESTROW( "^", PythonParser::Parser::Token_HAT, 0, 0 );
+            << MAKETESTROW( "^", PythonParser::Parser::Token_BITXOR, 0, 0 );
     QTest::newRow( "row47" )
             << MAKETESTROW( "==", PythonParser::Parser::Token_ISEQUAL, 0, 1 );
 }

@@ -91,8 +91,10 @@ public:
     virtual void visitUnaryExpression( UnaryExpressionAst* );
     virtual void visitBinaryExpression( BinaryExpressionAst* );
     virtual void visitComparison( ComparisonAst* );
-    virtual void visitBooleanOperation( BooleanOperationAst* );
-    virtual void visitBooleanExpression( BooleanExpressionAst* );
+    virtual void visitBooleanNotOperation( BooleanNotOperationAst* );
+    virtual void visitBooleanAndOperation( BooleanAndOperationAst* );
+    virtual void visitBooleanOrOperation( BooleanOrOperationAst* );
+    virtual void visitConditionalExpression( ConditionalExpressionAst* );
     virtual void visitLambda( LambdaAst* );
 
     void visitNode( Ast* );

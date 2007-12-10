@@ -40,42 +40,6 @@ void AstDefaultVisitor::visitCode( CodeAst* code )
     }
 }
 
-void AstDefaultVisitor::visitStatement( StatementAst* )
-{
-}
-
-void AstDefaultVisitor::visitPrimary( PrimaryAst* )
-{
-}
-
-void AstDefaultVisitor::visitParameter( ParameterAst* )
-{
-}
-
-void AstDefaultVisitor::visitParameterPart( ParameterPartAst* )
-{
-}
-
-void AstDefaultVisitor::visitImport( ImportAst* )
-{
-}
-
-void AstDefaultVisitor::visitSlice( SliceAst* )
-{
-}
-
-void AstDefaultVisitor::visitSliceItem( SliceItemAst* )
-{
-}
-
-void AstDefaultVisitor::visitArithmeticExpression( ArithmeticExpressionAst* )
-{
-}
-
-void AstDefaultVisitor::visitExpression( ExpressionAst* )
-{
-}
-
 void AstDefaultVisitor::visitFunctionDefinition( FunctionDefinitionAst* )
 {
 }
@@ -289,6 +253,18 @@ void AstDefaultVisitor::visitConditionalExpression( ConditionalExpressionAst* )
 }
 
 void AstDefaultVisitor::visitLambda( LambdaAst* )
+{
+}
+
+void AstDefaultVisitor::visitPass( PassAst * )
+{
+}
+
+void AstDefaultVisitor::visitContinue( ContinueAst * )
+{
+}
+
+void AstDefaultVisitor::visitBreak( BreakAst * )
 {
 }
 

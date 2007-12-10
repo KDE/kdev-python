@@ -36,15 +36,6 @@ public:
     void visitNode( Ast* );
 
     virtual void visitCode( CodeAst* ) = 0;
-    virtual void visitStatement( StatementAst* ) = 0;
-    virtual void visitPrimary( PrimaryAst* ) = 0;
-    virtual void visitParameter( ParameterAst* ) = 0;
-    virtual void visitParameterPart( ParameterPartAst* ) = 0;
-    virtual void visitImport( ImportAst* ) = 0;
-    virtual void visitSlice( SliceAst* ) = 0;
-    virtual void visitSliceItem( SliceItemAst* ) = 0;
-    virtual void visitArithmeticExpression( ArithmeticExpressionAst* ) = 0;
-    virtual void visitExpression( ExpressionAst* ) = 0;
     virtual void visitFunctionDefinition( FunctionDefinitionAst* ) = 0;
     virtual void visitTarget( TargetAst* ) = 0;
     virtual void visitDecorator( DecoratorAst* ) = 0;
@@ -99,6 +90,9 @@ public:
     virtual void visitBooleanOrOperation( BooleanOrOperationAst* ) = 0;
     virtual void visitConditionalExpression( ConditionalExpressionAst* ) = 0;
     virtual void visitLambda( LambdaAst* ) = 0;
+    virtual void visitBreak( BreakAst* ) = 0;
+    virtual void visitContinue( ContinueAst* ) = 0;
+    virtual void visitPass( PassAst* ) = 0;
 };
 }
 

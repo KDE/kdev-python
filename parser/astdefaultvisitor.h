@@ -33,15 +33,6 @@ public:
     virtual ~AstDefaultVisitor();
 
     virtual void visitCode( CodeAst* );
-    virtual void visitStatement( StatementAst* );
-    virtual void visitPrimary( PrimaryAst* );
-    virtual void visitParameter( ParameterAst* );
-    virtual void visitParameterPart( ParameterPartAst* );
-    virtual void visitImport( ImportAst* );
-    virtual void visitSlice( SliceAst* );
-    virtual void visitSliceItem( SliceItemAst* );
-    virtual void visitArithmeticExpression( ArithmeticExpressionAst* );
-    virtual void visitExpression( ExpressionAst* );
     virtual void visitFunctionDefinition( FunctionDefinitionAst* );
     virtual void visitTarget( TargetAst* );
     virtual void visitDecorator( DecoratorAst* );
@@ -96,6 +87,9 @@ public:
     virtual void visitBooleanOrOperation( BooleanOrOperationAst* );
     virtual void visitConditionalExpression( ConditionalExpressionAst* );
     virtual void visitLambda( LambdaAst* );
+    virtual void visitBreak( BreakAst* );
+    virtual void visitContinue( ContinueAst* );
+    virtual void visitPass( PassAst* );
 
     void visitNode( Ast* );
 

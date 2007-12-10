@@ -323,6 +323,8 @@ public:
 
 class TargetAst : public Ast
 {
+public:
+
     enum TargetType
     {
         TupleTarget,
@@ -331,8 +333,6 @@ class TargetAst : public Ast
         SubscriptTarget,
         SliceTarget
     };
-
-public:
     TargetAst( Ast* );
     QString identifier;
     QList<Python::TargetAst*> listItems;
@@ -624,6 +624,15 @@ class EnclosureAst : public Ast
 {
 
 public:
+    enum EnclosureType
+    {
+        ParenthesizedForm,
+        List,
+        Generator,
+        Dictionary,
+        StringConversion,
+        Yield
+    };
     EnclosureAst( Ast* );
     QList<Python::ExpressionAst*> parenthesizedform;
     Python::ListAst* list;
@@ -631,6 +640,7 @@ public:
     Python::DictionaryAst* dict;
     QList<Python::ExpressionAst*> stringConversion;
     Python::YieldAst* yield;
+    EnclosureType encType;
 };
 
 class ListAst : public Ast

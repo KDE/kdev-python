@@ -87,11 +87,9 @@ public:
     virtual void visitBooleanOrOperation( BooleanOrOperationAst* );
     virtual void visitConditionalExpression( ConditionalExpressionAst* );
     virtual void visitLambda( LambdaAst* );
-    virtual void visitBreak( BreakAst* );
-    virtual void visitContinue( ContinueAst* );
-    virtual void visitPass( PassAst* );
-
-    void visitNode( Ast* );
+    virtual void visitBreak( StatementAst* );
+    virtual void visitContinue( StatementAst* );
+    virtual void visitPass( StatementAst* );
 
 };
 

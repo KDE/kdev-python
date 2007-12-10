@@ -90,9 +90,9 @@ public:
     virtual void visitBooleanOrOperation( BooleanOrOperationAst* ) = 0;
     virtual void visitConditionalExpression( ConditionalExpressionAst* ) = 0;
     virtual void visitLambda( LambdaAst* ) = 0;
-    virtual void visitBreak( BreakAst* ) = 0;
-    virtual void visitContinue( ContinueAst* ) = 0;
-    virtual void visitPass( PassAst* ) = 0;
+    virtual void visitBreak( StatementAst* ) = 0;
+    virtual void visitContinue( StatementAst* ) = 0;
+    virtual void visitPass( StatementAst* ) = 0;
 };
 }
 

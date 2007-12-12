@@ -153,7 +153,8 @@ private:
         setStartEnd( ast, node );
         return ast;
     }
-    QStringList identifierListFromTokenList( const KDevPG::ListNode<qint64>* sequence );
+    QList<IdentifierAst*> identifierListFromTokenList( Ast* parent, const KDevPG::ListNode<qint64>* sequence );
+    IdentifierAst* createIdentifier( Ast* parent, qint64 idx );
 };
 
 }

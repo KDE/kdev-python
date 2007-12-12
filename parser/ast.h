@@ -67,6 +67,7 @@ class EnclosureAst;
 class ListAst;
 class ListForAst;
 class ListIfAst;
+class IdentifierAst;
 class ListParameterAst;
 class GeneratorAst;
 class GeneratorForAst;
@@ -138,29 +139,30 @@ public:
         GeneratorForAst = 32,
         GeneratorIfAst = 33,
         GlobalAst = 34,
-        IdentifierParameterPartAst = 35,
-        IfAst = 36,
-        LambdaAst = 37,
-        ListAst = 38,
-        ListForAst = 39,
-        ListIfAst = 40,
-        ListParameterAst = 41,
-        ListParameterPartAst = 42,
-        PassAst = 43,
-        PlainImportAst = 44,
-        PrintAst = 45,
-        ProperSliceItemAst = 46,
-        RaiseAst = 47,
-        ReturnAst = 48,
-        SimpleSliceAst = 49,
-        StarImportAst = 50,
-        SubscriptAst = 51,
-        TargetAst = 52,
-        TryAst = 53,
-        UnaryExpressionAst = 54,
-        WhileAst = 55,
-        WithAst = 56,
-        YieldAst = 57
+        IdentifierAst = 35,
+        IdentifierParameterPartAst = 36,
+        IfAst = 37,
+        LambdaAst = 38,
+        ListAst = 39,
+        ListForAst = 40,
+        ListIfAst = 41,
+        ListParameterAst = 42,
+        ListParameterPartAst = 43,
+        PassAst = 44,
+        PlainImportAst = 45,
+        PrintAst = 46,
+        ProperSliceItemAst = 47,
+        RaiseAst = 48,
+        ReturnAst = 49,
+        SimpleSliceAst = 50,
+        StarImportAst = 51,
+        SubscriptAst = 52,
+        TargetAst = 53,
+        TryAst = 54,
+        UnaryExpressionAst = 55,
+        WhileAst = 56,
+        WithAst = 57,
+        YieldAst = 58
     };
 
     Ast( Ast* parent, AstType type );
@@ -268,8 +270,14 @@ public:
     SliceItemAst( Ast*, Ast::AstType type );
 };
 
+class ExpressionAst : public Ast
+{
 
-class ArithmeticExpressionAst : public Ast
+public:
+    ExpressionAst( Ast*, Ast::AstType type );
+};
+
+class ArithmeticExpressionAst : public ExpressionAst
 {
 public:
     enum ArithmeticOperation
@@ -296,13 +304,6 @@ public:
     ArithmeticOperation opType;
 };
 
-class ExpressionAst : public Ast
-{
-
-public:
-    ExpressionAst( Ast*, Ast::AstType type );
-};
-
 class BooleanOperationAst : public Ast
 {
 public:
@@ -315,7 +316,7 @@ class FunctionDefinitionAst : public StatementAst
 
 public:
     FunctionDefinitionAst( Ast* parent );
-    QString functionName;
+    Python::IdentifierAst* functionName;
     QList<Python::ParameterAst*> parameters;
     QList<Python::DecoratorAst*> decorators;
     QList<Python::StatementAst*> functionBody;
@@ -334,7 +335,7 @@ public:
         SliceTarget
     };
     TargetAst( Ast* );
-    QString identifier;
+    Python::IdentifierAst* identifier;
     QList<Python::TargetAst*> listItems;
     TargetType targetType;
     Python::AttributeReferenceAst* attributeReference;
@@ -347,7 +348,7 @@ class DecoratorAst : public Ast
 
 public:
     DecoratorAst( Ast* parent );
-    QStringList dottedName;
+    QList<Python::IdentifierAst*> dottedName;
     QList<Python::ArgumentAst*> arguments;
 };
 
@@ -364,7 +365,7 @@ public:
     };
     ArgumentAst( Ast* );
     Python::ExpressionAst* argumentExpression;
-    QString keywordName;
+    Python::IdentifierAst* keywordName;
     ArgumentType argumentType;
 };
 
@@ -381,7 +382,7 @@ class IdentifierParameterPartAst : public ParameterPartAst
 {
 public:
     IdentifierParameterPartAst( Ast* );
-    QString name;
+    Python::IdentifierAst* name;
 };
 
 class ListParameterPartAst : public ParameterPartAst
@@ -395,14 +396,14 @@ class DictionaryParameterAst : public ParameterAst
 {
 public:
     DictionaryParameterAst( Ast* );
-    QString name;
+    Python::IdentifierAst* name;
 };
 
 class ListParameterAst : public ParameterAst
 {
 public:
     ListParameterAst( Ast* );
-    QString name;
+    Python::IdentifierAst* name;
 };
 
 class IfAst : public StatementAst
@@ -442,7 +443,7 @@ class ClassDefinitionAst : public StatementAst
 
 public:
     ClassDefinitionAst( Ast* parent );
-    QString className;
+    Python::IdentifierAst* className;
     QList<Python::ExpressionAst*> inheritance;
     QList<Python::StatementAst*> classBody;
 };
@@ -493,7 +494,7 @@ class GlobalAst : public StatementAst
 
 public:
     GlobalAst( Ast* );
-    QList<QString> identifiers;
+    QList<Python::IdentifierAst*> identifiers;
 };
 
 class PlainImportAst : public ImportAst
@@ -501,7 +502,7 @@ class PlainImportAst : public ImportAst
 
 public:
     PlainImportAst( Ast* );
-    QMap<int, QPair< QStringList, QString> > modulesAsName;
+    QMap<int, QPair< QList<Python::IdentifierAst*>, Python::IdentifierAst*> > modulesAsName;
 };
 
 class StarImportAst : public ImportAst
@@ -509,7 +510,7 @@ class StarImportAst : public ImportAst
 
 public:
     StarImportAst( Ast* );
-    QStringList modulePath;
+    QList<Python::IdentifierAst*> modulePath;
 };
 
 class FromImportAst : public ImportAst
@@ -517,9 +518,9 @@ class FromImportAst : public ImportAst
 
 public:
     FromImportAst( Ast* );
-    QStringList modulePath;
+    QList<Python::IdentifierAst*> modulePath;
     int numLeadingDots;
-    QMap<QString, QString> identifierAsName;
+    QMap<Python::IdentifierAst*, Python::IdentifierAst*> identifierAsName;
 };
 
 class RaiseAst : public StatementAst
@@ -614,8 +615,8 @@ class AtomAst : public PrimaryAst
 
 public:
     AtomAst( Ast* );
-    QString identifier;
-    QString literal;
+    Python::IdentifierAst* identifier;
+    Python::IdentifierAst* literal;
     Python::EnclosureAst* enclosure;
 };
 
@@ -716,7 +717,7 @@ class AttributeReferenceAst : public PrimaryAst
 public:
     AttributeReferenceAst( Ast* );
     Python::PrimaryAst* primary;
-    QString identifier;
+    Python::IdentifierAst* identifier;
 };
 
 class SubscriptAst : public PrimaryAst
@@ -817,9 +818,9 @@ class ComparisonAst : public BooleanOperationAst
 
 public:
     ComparisonAst( Ast* );
-    Python::BinaryExpressionAst* firstComparator;
+    Python::ArithmeticExpressionAst* firstComparator;
     QMap<Python::ComparisonAst::ComparisonOperator,
-         Python::BinaryExpressionAst*> comparatorList;
+         Python::ArithmeticExpressionAst*> comparatorList;
 };
 
 class BooleanAndOperationAst : public BooleanOperationAst
@@ -862,6 +863,13 @@ public:
     LambdaAst( Ast* );
     QList<Python::ParameterAst*> parameters;
     Python::ExpressionAst* expression;
+};
+
+class IdentifierAst : public ExpressionAst
+{
+public:
+    IdentifierAst( Ast* );
+    QString identifier;
 };
 
 }

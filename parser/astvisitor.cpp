@@ -60,6 +60,7 @@ AstVisitor::visitFunc _S_parser_table[] =  {
     reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitGeneratorFor),
     reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitGeneratorIf),
     reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitGlobal),
+    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitIdentifier),
     reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitIdentifierParameterPart),
     reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitIf),
     reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitLambda),

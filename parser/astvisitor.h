@@ -93,6 +93,7 @@ public:
     virtual void visitBreak( StatementAst* ) = 0;
     virtual void visitContinue( StatementAst* ) = 0;
     virtual void visitPass( StatementAst* ) = 0;
+    virtual void visitIdentifier( IdentifierAst* ) = 0;
 };
 }
 

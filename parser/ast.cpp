@@ -226,7 +226,7 @@ CallAst::CallAst( Ast* parent )
 {
 }
 ArithmeticExpressionAst::ArithmeticExpressionAst( Ast* parent, Ast::AstType type )
-    : Ast( parent, type )
+    : ExpressionAst( parent, type )
 {
 }
 UnaryExpressionAst::UnaryExpressionAst( Ast* parent )
@@ -303,6 +303,13 @@ BooleanAndOperationAst::BooleanAndOperationAst( Ast * parent )
 {
 }
 
+IdentifierAst::IdentifierAst( Ast * parent )
+    : ExpressionAst( parent, Ast::IdentifierAst )
+{
 }
+
+
+}
+
 
 #include "pythonast.h"

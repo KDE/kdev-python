@@ -504,7 +504,7 @@ void AstDefaultVisitor::visitBinaryExpression( BinaryExpressionAst* node )
 void AstDefaultVisitor::visitComparison( ComparisonAst* node )
 {
     visitNode( node->firstComparator );
-    foreach( BinaryExpressionAst* b, node->comparatorList.values() )
+    foreach( ArithmeticExpressionAst* b, node->comparatorList.values() )
     {
         visitNode( b );
     }
@@ -555,4 +555,9 @@ void AstDefaultVisitor::visitBreak( StatementAst* )
 {
 }
 
+void AstDefaultVisitor::visitIdentifier( IdentifierAst * )
+{
 }
+
+}
+

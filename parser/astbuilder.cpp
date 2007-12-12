@@ -49,12 +49,23 @@ template <typename T> QList<T*> generateSpecializedList( const QList<Ast*>& list
     return l;
 }
 
-QStringList AstBuilder::identifierListFromTokenList( const KDevPG::ListNode<qint64>* sequence )
+IdentifierAst* AstBuilder::createIdentifier( Ast* parent, qint64 idx )
 {
-    QStringList identifiers;
+    IdentifierAst* ast = new IdentifierAst( parent );
+    ast->start = parser->tokenStream->token( idx ).begin;
+    ast->end = parser->tokenStream->token( idx ).end;
+    parser->tokenStream->startPosition( idx, &ast->startLine, &ast->startCol );
+    parser->tokenStream->endPosition( idx, &ast->endLine, &ast->endCol );
+    ast->identifier = tokenText( idx );
+    return ast;
+}
+
+QList<IdentifierAst*> AstBuilder::identifierListFromTokenList( Ast* parent, const KDevPG::ListNode<qint64>* sequence )
+{
+    QList<IdentifierAst*> identifiers;
     for( int i = 0; i < sequence->count(); i++ )
     {
-        identifiers << tokenText( sequence->at(i)->element );
+        identifiers << createIdentifier( parent, sequence->at(i)->element );
     }
     return identifiers;
 }
@@ -146,23 +157,25 @@ void AstBuilder::visitAndTest(PythonParser::AndTestAst *node)
 void AstBuilder::visitArglist(PythonParser::ArglistAst *node)
 {
     qDebug() << "visitArglist start";
-    QList<ArgumentAst*> args;
+    QList<Ast*> args;
     visitNode( node->argListBegin );
     if( node->argListBegin )
     {
-        args += generateSpecializedList<ArgumentAst>( mListStack.pop() );
+        args += mListStack.pop();
     }
     if( node->arglistStar )
     {
-        ArgumentAst* ast = createAst<ArgumentAst>( node->arglistStar, ArgumentAst::ListArgument );
-        visitNode( node->argListStar );
+        ArgumentAst* ast = createAst<ArgumentAst>( node->arglistStar );
+        ast->argumentType = ArgumentAst::ListArgument;
+        visitNode( node->arglistStar );
         ast->argumentExpression = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
         args << ast;
     }
     if( node->arglistDoublestar )
     {
-        ArgumentAst* ast = createAst<ArgumentAst>( node->arglistDoublestar, ArgumentAst::DictArgument );
-        visitNode( node->argListDoublestar );
+        ArgumentAst* ast = createAst<ArgumentAst>( node->arglistDoublestar );
+        ast->argumentType = ArgumentAst::DictArgument;
+        visitNode( node->arglistDoublestar );
         ast->argumentExpression = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
         args << ast;
     }
@@ -227,7 +240,7 @@ void AstBuilder::visitClassdef(PythonParser::ClassdefAst *node)
 {
     qDebug() << "visitClassdef start";
     ClassDefinitionAst* ast = createAst<ClassDefinitionAst>( node );
-    ast->className = tokenText( node->className );
+    ast->className = createIdentifier( ast, node->className );
     visitNode( node->testlist );
     ast->inheritance = generateSpecializedList<ExpressionAst>( mListStack.pop() );
     visitNode( node->classSuite );
@@ -427,7 +440,7 @@ void AstBuilder::visitFuncdecl(PythonParser::FuncdeclAst *node)
         visitNode( node->decorators );
         ast->decorators = generateSpecializedList<DecoratorAst>( mListStack.pop() );
     }
-    ast->functionName = tokenText( node->funcName );
+    ast->functionName = createIdentifier( ast,  node->funcName );
     if( node->funArgs )
     {
         visitNode( node->funArgs );
@@ -467,7 +480,7 @@ void AstBuilder::visitGlobalStmt(PythonParser::GlobalStmtAst *node)
 {
     qDebug() << "visitGlobalStmt start";
     GlobalAst* ast = createAst<GlobalAst>( node );
-    ast->identifiers = identifierListFromTokenList( node->globalNameSequence );
+    ast->identifiers = identifierListFromTokenList( ast, node->globalNameSequence );
     mNodeStack.push( ast );
     qDebug() << "visitGlobalStmt end";
 }
@@ -525,12 +538,12 @@ void AstBuilder::visitImportFrom(PythonParser::ImportFromAst *node)
     if( !node->importAsNames )
     {
         StarImportAst* ast = createAst<StarImportAst>( node );
-        ast->modulePath = identifierListFromTokenList( node->importFromName->dottedNameSequence );
+        ast->modulePath = identifierListFromTokenList( ast, node->importFromName->dottedNameSequence );
         mNodeStack.push( ast );
     }else
     {
         FromImportAst* ast = createAst<FromImportAst>( node );
-        ast->modulePath = identifierListFromTokenList( node->importFromName->dottedNameSequence );
+        ast->modulePath = identifierListFromTokenList( ast, node->importFromName->dottedNameSequence );
         const KDevPG::ListNode<PythonParser::ImportAsNameAst*>* idNames;
         idNames = node->importAsNames->importAsNameSequence;
         int count = idNames->count();
@@ -538,7 +551,7 @@ void AstBuilder::visitImportFrom(PythonParser::ImportFromAst *node)
         {
             PythonParser::ImportAsNameAst* namenode = idNames->at(i)->element;
             qDebug() << "Fetching from-as:" << tokenText( namenode->importedName );
-            ast->identifierAsName[ tokenText( namenode->importedName ) ] = tokenText( namenode->importedAs );
+            ast->identifierAsName[ createIdentifier( ast, namenode->importedName ) ] = createIdentifier( ast, namenode->importedAs );
         }
         mNodeStack.push( ast );
     }
@@ -555,8 +568,8 @@ void AstBuilder::visitImportName(PythonParser::ImportNameAst *node)
     for( int i = 0; i < count ; i++ )
     {
         PythonParser::DottedAsNameAst* import = importedmodules->at(i)->element;
-        QStringList modulepath = identifierListFromTokenList( import->importDottedName->dottedNameSequence );
-        ast->modulesAsName[ i ] = qMakePair( modulepath, tokenText( import->importedAs ) );
+        QList<IdentifierAst*> modulepath = identifierListFromTokenList( ast, import->importDottedName->dottedNameSequence );
+        ast->modulesAsName[ i ] = qMakePair( modulepath, createIdentifier( ast, import->importedAs ) );
     }
     mNodeStack.push( ast );
     qDebug() << "visitImportName end";

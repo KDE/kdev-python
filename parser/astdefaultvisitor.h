@@ -90,6 +90,7 @@ public:
     virtual void visitBreak( StatementAst* );
     virtual void visitContinue( StatementAst* );
     virtual void visitPass( StatementAst* );
+    virtual void visitIdentifier( IdentifierAst* );
 
 };
 

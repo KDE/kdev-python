@@ -363,9 +363,8 @@ public:
         DictArgument
     };
     ArgumentAst( Ast* );
-    QList<Python::ExpressionAst*> positionalArguments;
-    QMap<QString, Python::ExpressionAst*> keywordArguments;
-    Python::ExpressionAst* listOrDictName;
+    Python::ExpressionAst* argumentExpression;
+    QString keywordName;
     ArgumentType argumentType;
 };
 

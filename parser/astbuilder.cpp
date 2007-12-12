@@ -146,6 +146,27 @@ void AstBuilder::visitAndTest(PythonParser::AndTestAst *node)
 void AstBuilder::visitArglist(PythonParser::ArglistAst *node)
 {
     qDebug() << "visitArglist start";
+    QList<ArgumentAst*> args;
+    visitNode( node->argListBegin );
+    if( node->argListBegin )
+    {
+        args += generateSpecializedList<ArgumentAst>( mListStack.pop() );
+    }
+    if( node->arglistStar )
+    {
+        ArgumentAst* ast = createAst<ArgumentAst>( node->arglistStar, ArgumentAst::ListArgument );
+        visitNode( node->argListStar );
+        ast->argumentExpression = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+        args << ast;
+    }
+    if( node->arglistDoublestar )
+    {
+        ArgumentAst* ast = createAst<ArgumentAst>( node->arglistDoublestar, ArgumentAst::DictArgument );
+        visitNode( node->argListDoublestar );
+        ast->argumentExpression = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+        args << ast;
+    }
+    mListStack.push( args );
     qDebug() << "visitArglist end";
 }
 

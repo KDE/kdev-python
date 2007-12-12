@@ -91,25 +91,7 @@ void AstDefaultVisitor::visitDecorator( DecoratorAst* node )
 
 void AstDefaultVisitor::visitArgument( ArgumentAst* node )
 {
-    switch( node->argumentType )
-    {
-        case ArgumentAst::PositionalArgument:
-            foreach( ExpressionAst* e, node->positionalArguments )
-            {
-                visitNode(e);
-            }
-            break;
-        case ArgumentAst::KeywordArgument:
-            foreach( ExpressionAst* e, node->keywordArguments.values() )
-            {
-                visitNode( e );
-            }
-            break;
-        case ArgumentAst::DictArgument:
-        case ArgumentAst::ListArgument:
-            visitNode( node->listOrDictName );
-            break;
-    }
+    visitNode( node->argumentExpression );
 }
 
 void AstDefaultVisitor::visitDefaultParameter( DefaultParameterAst* node )

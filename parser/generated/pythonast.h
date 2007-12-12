@@ -894,7 +894,7 @@ struct KDEVPYTHONPARSER_EXPORT TrailerAst: public AstNode
 
     ArglistAst *trailerArglist;
     SubscriptlistAst *subscriptlist;
-    qint64 tarilerDotName;
+    qint64 trailerDotName;
 };
 
 struct KDEVPYTHONPARSER_EXPORT TryStmtAst: public AstNode

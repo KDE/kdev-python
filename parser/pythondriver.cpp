@@ -29,6 +29,8 @@
 
 #include "astbuilder.h"
 
+#include "pythondebugvisitor.h"
+
 namespace Python
 {
 
@@ -78,18 +80,15 @@ bool Driver::parse( Python::CodeAst** ast )
     if( matched )
     {
         qDebug() << "Sucessfully parsed";
+//         if( m_debug )
+//         {
+//             PythonParser::DebugVisitor d( pythonparser.tokenStream );
+//             d.visitProject(*srcast);
+//         }
         Python::AstBuilder builder(&pythonparser);
         builder.visitProject( *srcast );
         *ast = builder.codeAst();
-//         if( m_debug )
-//         {
-//             DebugVisitor d(&pythonparser);
-//             d.visit_project(ast);
-//         }
-//         *qmast = new ProjectAST();
-//         BuildASTVisitor d( &qmakeparser, *qmast );
-//         d.visit_project(ast);
-//         kDebug(9024) << "Found" << (*qmast)->statements().count() << "Statements";
+        
     }else
     {
         *ast = 0;

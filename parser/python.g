@@ -489,7 +489,7 @@ namespace PythonParser
    LAMBDA ( lambdaVarargslist=varargslist | 0 ) COLON lambdaTest=test
 -> lambdaDef ;;
 
-   LPAREN ( trailerArglist=arglist | 0 ) RPAREN | LBRACKET subscriptlist=subscriptlist RBRACKET | DOT tarilerDotName=IDENTIFIER
+   LPAREN ( trailerArglist=arglist | 0 ) RPAREN | LBRACKET subscriptlist=subscriptlist RBRACKET | DOT trailerDotName=IDENTIFIER
 -> trailer ;;
 
    #subscript=subscript ( COMMA [: if (yytoken == Token_RBRACKET) { break; } :]
@@ -538,7 +538,7 @@ namespace PythonParser
     | 0 )
 -> arglist ;;
 
-   argumentTest=test ( EQUAL argumentEqualTest=test ( ?[: LA(2).kind == Token_FOR :] LPAREN genFor=genFor RPAREN | 0 )
+   argumentTest=test ( EQUAL argumentEqualTest=test
     | ?[: yytoken == Token_FOR :] genFor=genFor
     | ?[: yytoken == Token_RPAREN || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR || yytoken == Token_COMMA :] 0 )
 -> argument ;;

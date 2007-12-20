@@ -467,6 +467,14 @@ void AstBuilder::visitDecorator(PythonParser::DecoratorAst *node)
 void AstBuilder::visitDecorators(PythonParser::DecoratorsAst *node)
 {
     qDebug() << "visitDecorators start";
+    QList<Ast*> l;
+    int count = node->decoratorSequence->count();
+    for( int i = 0; i < count; i++ )
+    {
+        visitNode( node->decoratorSequence->at(i)->element );
+        l << safeNodeCast<DecoratorAst>( mNodeStack.pop() );
+    }
+    mListStack.push( l );
     qDebug() << "visitDecorators end";
 }
 

@@ -323,23 +323,35 @@ void AstBuilder::visitAtom(PythonParser::AtomAst *node)
         ast->enclosure = enc;
     }else if( node->yield )
     {
+        visitNode( node->yield );
+        EnclosureAst* enc = createAst<EnclosureAst>( node->yield );
+        enc->parent = ast;
+        enc->encType = EnclosureAst::Yield;
+        enc->yield = safeNodeCast<YieldAst>( mNodeStack.pop() );
+        ast->enclosure = enc;
     }else
     {
         EnclosureAst* enc;
-        if( node->testlist && node->genFor )
+        visitNode( node->testlist );
+        if( node->genFor )
         {
             enc = createAst<EnclosureAst>( node );
-//             if( node->testlist->tests->count() > 1 )
-//             {
-//                 
-//             }else
-//             {
-//                 enc->encType = EnclosureAst::Generator;
-//                 visitNode( node->testlistGexp );
-//                 enc->parenthesizedform = generateSpecializedList<ExpressionAst>( mListStack.pop() );
-//                 enc->parent = ast;
-//                 ast->enclosure = enc;
-//             }
+            enc->encType = EnclosureAst::Generator;
+            QList<ExpressionAst> l = generateSpecializedList<ExpressionAst>( mListStack.pop() );
+            GeneratorAst* gen = createAst<GeneratorAst>( node );
+            gen->generatedValue = l.first();
+            visitNode( node->genFor );
+            gen->generator = safeNodeCast<GeneratorForAst>( mNodeStack.pop() );
+            enc->generator = gen;
+            enc->parent = ast;
+            ast->enclosure = enc;
+        }else
+        {
+            enc = createAst<EnclosureAst>( node );
+            enc->encType = EnclosureAst::ParenthesizedForm;
+            enc->parent = ast;
+            enc->parenthesizedform = generateSpecializedList<ExpressionAst>( mListStack.pop() );
+            ast->enclosure = enc;
         }
     }
     mNodeStack.push( ast );

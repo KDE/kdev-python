@@ -195,7 +195,7 @@ namespace PythonParser
    AT decoratorName = dottedName ( LPAREN ( arguments=arglist | 0) RPAREN | 0 ) LINEBREAK
 -> decorator ;;
 
-   (#decorator = decorator )*
+   (#decorator = decorator )+
 -> decorators ;;
 
 -- Function Definition: Can start with Decorators.

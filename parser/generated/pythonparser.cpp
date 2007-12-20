@@ -1601,10 +1601,9 @@ bool Parser::parseDecorators(DecoratorsAst **yynode)
 
     (*yynode)->startToken = tokenStream->index() - 1;
 
-    if (yytoken == Token_AT || yytoken == Token_DEF
-        || yytoken == Token_EOF)
+    if (yytoken == Token_AT)
     {
-        while (yytoken == Token_AT)
+        do
         {
             DecoratorAst *__node_38 = 0;
             if (!parseDecorator(&__node_38))
@@ -1615,6 +1614,7 @@ bool Parser::parseDecorators(DecoratorsAst **yynode)
             (*yynode)->decoratorSequence = snoc((*yynode)->decoratorSequence, __node_38, memoryPool);
 
         }
+        while (yytoken == Token_AT);
     }
     else
     {

@@ -96,15 +96,14 @@ public:
     virtual void visitTerm(TermAst *) {}
     virtual void visitTermOp(TermOpAst *) {}
     virtual void visitTest(TestAst *) {}
-    virtual void visitTestListGexp(TestListGexpAst *) {}
     virtual void visitTestlist(TestlistAst *) {}
-    virtual void visitTestlistGexp(TestlistGexpAst *) {}
     virtual void visitTestlistSafe(TestlistSafeAst *) {}
     virtual void visitTrailer(TrailerAst *) {}
     virtual void visitTryStmt(TryStmtAst *) {}
     virtual void visitVarargslist(VarargslistAst *) {}
     virtual void visitWhileStmt(WhileStmtAst *) {}
     virtual void visitXorExpr(XorExprAst *) {}
+    virtual void visitYieldExpr(YieldExprAst *) {}
     virtual void visitYieldStmt(YieldStmtAst *) {}
 };
 

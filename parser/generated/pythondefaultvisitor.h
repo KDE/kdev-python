@@ -88,15 +88,14 @@ public:
     virtual void visitTerm(TermAst *node);
     virtual void visitTermOp(TermOpAst *node);
     virtual void visitTest(TestAst *node);
-    virtual void visitTestListGexp(TestListGexpAst *node);
     virtual void visitTestlist(TestlistAst *node);
-    virtual void visitTestlistGexp(TestlistGexpAst *node);
     virtual void visitTestlistSafe(TestlistSafeAst *node);
     virtual void visitTrailer(TrailerAst *node);
     virtual void visitTryStmt(TryStmtAst *node);
     virtual void visitVarargslist(VarargslistAst *node);
     virtual void visitWhileStmt(WhileStmtAst *node);
     virtual void visitXorExpr(XorExprAst *node);
+    virtual void visitYieldExpr(YieldExprAst *node);
     virtual void visitYieldStmt(YieldStmtAst *node);
 };
 

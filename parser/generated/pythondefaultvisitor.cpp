@@ -86,7 +86,9 @@ void DefaultVisitor::visitAssertStmt(AssertStmtAst *node)
 
 void DefaultVisitor::visitAtom(AtomAst *node)
 {
-    visitNode(node->testlistGexp);
+    visitNode(node->yield);
+    visitNode(node->testlist);
+    visitNode(node->genFor);
     visitNode(node->listmaker);
     visitNode(node->dictmaker);
     visitNode(node->codeexpr);
@@ -529,9 +531,9 @@ void DefaultVisitor::visitPassStmt(PassStmtAst *)
 
 void DefaultVisitor::visitPlainArgumentsList(PlainArgumentsListAst *node)
 {
-    if (node->argumentSequence)
+    if (node->argumentsSequence)
     {
-        const KDevPG::ListNode<ArgumentAst*> *__it = node->argumentSequence->front(), *__end = __it;
+        const KDevPG::ListNode<ArgumentAst*> *__it = node->argumentsSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -754,25 +756,11 @@ void DefaultVisitor::visitTest(TestAst *node)
     visitNode(node->lambdaDef);
 }
 
-void DefaultVisitor::visitTestListGexp(TestListGexpAst *node)
-{
-    if (node->testSequence)
-    {
-        const KDevPG::ListNode<TestAst*> *__it = node->testSequence->front(), *__end = __it;
-        do
-        {
-            visitNode(__it->element);
-            __it = __it->next;
-        }
-        while (__it != __end);
-    }
-}
-
 void DefaultVisitor::visitTestlist(TestlistAst *node)
 {
-    if (node->testSequence)
+    if (node->testsSequence)
     {
-        const KDevPG::ListNode<TestAst*> *__it = node->testSequence->front(), *__end = __it;
+        const KDevPG::ListNode<TestAst*> *__it = node->testsSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -780,22 +768,6 @@ void DefaultVisitor::visitTestlist(TestlistAst *node)
         }
         while (__it != __end);
     }
-    if (node->testlistSequence)
-    {
-        const KDevPG::ListNode<TestAst*> *__it = node->testlistSequence->front(), *__end = __it;
-        do
-        {
-            visitNode(__it->element);
-            __it = __it->next;
-        }
-        while (__it != __end);
-    }
-}
-
-void DefaultVisitor::visitTestlistGexp(TestlistGexpAst *node)
-{
-    visitNode(node->testListGexp);
-    visitNode(node->genFor);
 }
 
 void DefaultVisitor::visitTestlistSafe(TestlistSafeAst *node)
@@ -873,9 +845,14 @@ void DefaultVisitor::visitXorExpr(XorExprAst *node)
     }
 }
 
+void DefaultVisitor::visitYieldExpr(YieldExprAst *node)
+{
+    visitNode(node->expr);
+}
+
 void DefaultVisitor::visitYieldStmt(YieldStmtAst *node)
 {
-    visitNode(node->yieldExpr);
+    visitNode(node->yield);
 }
 
 

@@ -313,7 +313,10 @@ namespace PythonParser
    RETURN ( returnExpr=testlist | 0 )
 -> returnStmt ;;
 
-   YIELD yieldExpr=testlist
+   YIELD ( expr=testlist | 0 ) 
+-> yieldExpr ;;
+
+   yield=yieldExpr
 -> yieldStmt ;;
 
    RAISE ( type=test ( COMMA value=test ( COMMA traceback=test | 0 ) | 0 ) | 0 )
@@ -458,7 +461,8 @@ namespace PythonParser
     (#trailer=trailer)* ( DOUBLESTAR factor=factor | 0 )
 -> power ;;
 
-   LPAREN ( testlistGexp=testlistGexp | 0 ) RPAREN
+   LPAREN ( yield=yieldExpr | 
+            ( testlist=testlist ( genFor=genFor | 0 ) ) | 0 ) RPAREN
    | LBRACKET listmaker=listmaker RBRACKET
    | LBRACE dictmaker=dictmaker RBRACE
    | BACKTICK codeexpr=codeexpr BACKTICK
@@ -468,9 +472,9 @@ namespace PythonParser
 -> atom ;;
 
 
-   INTEGER      [: (*yynode)->numType = PythonParser::IntegerNumeric;      :]
-   | FLOAT      [: (*yynode)->numType = PythonParser::FloatNumeric;    :]
-   | IMAGNUM    [: (*yynode)->numType = PythonParser::ImaginaryNumeric;  :]
+   value=INTEGER      [: (*yynode)->numType = PythonParser::IntegerNumeric;      :]
+   | value=FLOAT      [: (*yynode)->numType = PythonParser::FloatNumeric;    :]
+   | value=IMAGNUM    [: (*yynode)->numType = PythonParser::ImaginaryNumeric;  :]
 -> number [
     member variable numType: PythonParser::NumericType; ];;
 
@@ -479,12 +483,6 @@ namespace PythonParser
 
     listMakerTest=listMakerTest (listFor=listFor | 0)
 -> listmaker ;;
-
-   #test=test ( COMMA [: if( yytoken == Token_COLON || yytoken == Token_SEMICOLON || yytoken == Token_RPAREN || yytoken == Token_LINEBREAK) { break; } :] #test=test )*
--> testListGexp ;;
-
-    testListGexp=testListGexp ( genFor=genFor | 0 )
--> testlistGexp ;;
 
    LAMBDA ( lambdaVarargslist=varargslist | 0 ) COLON lambdaTest=test
 -> lambdaDef ;;
@@ -513,8 +511,8 @@ namespace PythonParser
     #exprlist=expr )*
 -> exprlist ;;
 
-   #test=test ( COMMA [: if( yytoken == Token_COLON || yytoken == Token_SEMICOLON || yytoken == Token_RPAREN || yytoken == Token_LINEBREAK) {break;} :]
-    #testlist=test )*
+   #tests=test ( COMMA [: if( yytoken == Token_COLON || yytoken == Token_SEMICOLON || yytoken == Token_RPAREN || yytoken == Token_LINEBREAK) {break;} :]
+    #tests=test )*
 -> testlist ;;
 
    #test=test ( ( COMMA #test=test )+ ( COMMA | 0 ) | 0 )
@@ -527,8 +525,8 @@ namespace PythonParser
    CLASS className=IDENTIFIER ( ( LPAREN testlist=testlist RPAREN ) | 0 ) COLON classSuite=suite
 -> classdef ;;
 
-   #argument=argument
-    ( COMMA [: if(yytoken == Token_RPAREN || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR) { break; } :] #argument=argument)*
+   #arguments=argument
+    ( COMMA [: if(yytoken == Token_RPAREN || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR) { break; } :] #arguments=argument)*
 -> plainArgumentsList ;;
 
     (argListBegin=plainArgumentsList | 0)

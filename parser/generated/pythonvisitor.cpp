@@ -83,15 +83,14 @@ Visitor::ParserFuncType Visitor::sParserTable[] =
     reinterpret_cast<ParserFuncType>(&Visitor::visitTerm),
     reinterpret_cast<ParserFuncType>(&Visitor::visitTermOp),
     reinterpret_cast<ParserFuncType>(&Visitor::visitTest),
-    reinterpret_cast<ParserFuncType>(&Visitor::visitTestListGexp),
     reinterpret_cast<ParserFuncType>(&Visitor::visitTestlist),
-    reinterpret_cast<ParserFuncType>(&Visitor::visitTestlistGexp),
     reinterpret_cast<ParserFuncType>(&Visitor::visitTestlistSafe),
     reinterpret_cast<ParserFuncType>(&Visitor::visitTrailer),
     reinterpret_cast<ParserFuncType>(&Visitor::visitTryStmt),
     reinterpret_cast<ParserFuncType>(&Visitor::visitVarargslist),
     reinterpret_cast<ParserFuncType>(&Visitor::visitWhileStmt),
     reinterpret_cast<ParserFuncType>(&Visitor::visitXorExpr),
+    reinterpret_cast<ParserFuncType>(&Visitor::visitYieldExpr),
     reinterpret_cast<ParserFuncType>(&Visitor::visitYieldStmt)
 }; // sParserTable[]
 

@@ -138,15 +138,14 @@ struct SuiteAst;
 struct TermAst;
 struct TermOpAst;
 struct TestAst;
-struct TestListGexpAst;
 struct TestlistAst;
-struct TestlistGexpAst;
 struct TestlistSafeAst;
 struct TrailerAst;
 struct TryStmtAst;
 struct VarargslistAst;
 struct WhileStmtAst;
 struct XorExprAst;
+struct YieldExprAst;
 struct YieldStmtAst;
 
 
@@ -229,16 +228,15 @@ struct KDEVPYTHONPARSER_EXPORT AstNode
         TermKind = 1072,
         TermOpKind = 1073,
         TestKind = 1074,
-        TestListGexpKind = 1075,
-        TestlistKind = 1076,
-        TestlistGexpKind = 1077,
-        TestlistSafeKind = 1078,
-        TrailerKind = 1079,
-        TryStmtKind = 1080,
-        VarargslistKind = 1081,
-        WhileStmtKind = 1082,
-        XorExprKind = 1083,
-        YieldStmtKind = 1084,
+        TestlistKind = 1075,
+        TestlistSafeKind = 1076,
+        TrailerKind = 1077,
+        TryStmtKind = 1078,
+        VarargslistKind = 1079,
+        WhileStmtKind = 1080,
+        XorExprKind = 1081,
+        YieldExprKind = 1082,
+        YieldStmtKind = 1083,
         AST_NODE_KIND_COUNT
     };
 
@@ -308,7 +306,9 @@ struct KDEVPYTHONPARSER_EXPORT AtomAst: public AstNode
 {
     enum { KIND = AtomKind };
 
-    TestlistGexpAst *testlistGexp;
+    YieldExprAst *yield;
+    TestlistAst *testlist;
+    GenForAst *genFor;
     ListmakerAst *listmaker;
     DictmakerAst *dictmaker;
     CodeexprAst *codeexpr;
@@ -701,6 +701,7 @@ struct KDEVPYTHONPARSER_EXPORT NumberAst: public AstNode
     enum { KIND = NumberKind };
 
     PythonParser::NumericType numType;
+    qint64 value;
 };
 
 struct KDEVPYTHONPARSER_EXPORT PassStmtAst: public AstNode
@@ -713,7 +714,7 @@ struct KDEVPYTHONPARSER_EXPORT PlainArgumentsListAst: public AstNode
 {
     enum { KIND = PlainArgumentsListKind };
 
-    const KDevPG::ListNode<ArgumentAst *> *argumentSequence;
+    const KDevPG::ListNode<ArgumentAst *> *argumentsSequence;
 };
 
 struct KDEVPYTHONPARSER_EXPORT PowerAst: public AstNode
@@ -858,27 +859,11 @@ struct KDEVPYTHONPARSER_EXPORT TestAst: public AstNode
     LambdaDefAst *lambdaDef;
 };
 
-struct KDEVPYTHONPARSER_EXPORT TestListGexpAst: public AstNode
-{
-    enum { KIND = TestListGexpKind };
-
-    const KDevPG::ListNode<TestAst *> *testSequence;
-};
-
 struct KDEVPYTHONPARSER_EXPORT TestlistAst: public AstNode
 {
     enum { KIND = TestlistKind };
 
-    const KDevPG::ListNode<TestAst *> *testSequence;
-    const KDevPG::ListNode<TestAst *> *testlistSequence;
-};
-
-struct KDEVPYTHONPARSER_EXPORT TestlistGexpAst: public AstNode
-{
-    enum { KIND = TestlistGexpKind };
-
-    TestListGexpAst *testListGexp;
-    GenForAst *genFor;
+    const KDevPG::ListNode<TestAst *> *testsSequence;
 };
 
 struct KDEVPYTHONPARSER_EXPORT TestlistSafeAst: public AstNode
@@ -933,11 +918,18 @@ struct KDEVPYTHONPARSER_EXPORT XorExprAst: public AstNode
     const KDevPG::ListNode<AndExprAst *> *hatXorExprSequence;
 };
 
+struct KDEVPYTHONPARSER_EXPORT YieldExprAst: public AstNode
+{
+    enum { KIND = YieldExprKind };
+
+    TestlistAst *expr;
+};
+
 struct KDEVPYTHONPARSER_EXPORT YieldStmtAst: public AstNode
 {
     enum { KIND = YieldStmtKind };
 
-    TestlistAst *yieldExpr;
+    YieldExprAst *yield;
 };
 
 

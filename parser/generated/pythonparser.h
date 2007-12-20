@@ -271,15 +271,14 @@ public:
     bool parseTerm(TermAst **yynode);
     bool parseTermOp(TermOpAst **yynode);
     bool parseTest(TestAst **yynode);
-    bool parseTestListGexp(TestListGexpAst **yynode);
     bool parseTestlist(TestlistAst **yynode);
-    bool parseTestlistGexp(TestlistGexpAst **yynode);
     bool parseTestlistSafe(TestlistSafeAst **yynode);
     bool parseTrailer(TrailerAst **yynode);
     bool parseTryStmt(TryStmtAst **yynode);
     bool parseVarargslist(VarargslistAst **yynode);
     bool parseWhileStmt(WhileStmtAst **yynode);
     bool parseXorExpr(XorExprAst **yynode);
+    bool parseYieldExpr(YieldExprAst **yynode);
     bool parseYieldStmt(YieldStmtAst **yynode);
 };
 

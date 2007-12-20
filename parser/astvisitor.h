@@ -70,6 +70,7 @@ public:
     virtual void visitList( ListAst* ) = 0;
     virtual void visitListFor( ListForAst* ) = 0;
     virtual void visitListIf( ListIfAst* ) = 0;
+    virtual void visitLiteral( LiteralAst* ) = 0;
     virtual void visitGenerator( GeneratorAst* ) = 0;
     virtual void visitGeneratorFor( GeneratorForAst* ) = 0;
     virtual void visitGeneratorIf( GeneratorIfAst* ) = 0;

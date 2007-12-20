@@ -120,9 +120,7 @@ public:
     virtual void visitTerm(PythonParser::TermAst *node);
     virtual void visitTermOp(PythonParser::TermOpAst *node);
     virtual void visitTest(PythonParser::TestAst *node);
-    virtual void visitTestListGexp(PythonParser::TestListGexpAst *node);
     virtual void visitTestlist(PythonParser::TestlistAst *node);
-    virtual void visitTestlistGexp(PythonParser::TestlistGexpAst *node);
     virtual void visitTestlistSafe(PythonParser::TestlistSafeAst *node);
     virtual void visitTrailer(PythonParser::TrailerAst *node);
     virtual void visitTryStmt(PythonParser::TryStmtAst *node);
@@ -130,6 +128,7 @@ public:
     virtual void visitWhileStmt(PythonParser::WhileStmtAst *node);
     virtual void visitXorExpr(PythonParser::XorExprAst *node);
     virtual void visitYieldStmt(PythonParser::YieldStmtAst *node);
+    virtual void visitYieldExpr(PythonParser::YieldExprAst *node);
 
 
 private:

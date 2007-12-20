@@ -148,21 +148,22 @@ public:
         ListIfAst = 41,
         ListParameterAst = 42,
         ListParameterPartAst = 43,
-        PassAst = 44,
-        PlainImportAst = 45,
-        PrintAst = 46,
-        ProperSliceItemAst = 47,
-        RaiseAst = 48,
-        ReturnAst = 49,
-        SimpleSliceAst = 50,
-        StarImportAst = 51,
-        SubscriptAst = 52,
-        TargetAst = 53,
-        TryAst = 54,
-        UnaryExpressionAst = 55,
-        WhileAst = 56,
-        WithAst = 57,
-        YieldAst = 58
+        LiteralAst = 44,
+        PassAst = 45,
+        PlainImportAst = 46,
+        PrintAst = 47,
+        ProperSliceItemAst = 48,
+        RaiseAst = 49,
+        ReturnAst = 50,
+        SimpleSliceAst = 51,
+        StarImportAst = 52,
+        SubscriptAst = 53,
+        TargetAst = 54,
+        TryAst = 55,
+        UnaryExpressionAst = 56,
+        WhileAst = 57,
+        WithAst = 58,
+        YieldAst = 59
     };
 
     Ast( Ast* parent, AstType type );
@@ -227,13 +228,6 @@ public:
     StatementAst( Ast*, Ast::AstType type );
 };
 
-class PrimaryAst : public Ast
-{
-
-public:
-    PrimaryAst( Ast*, Ast::AstType type );
-};
-
 class ParameterAst : public Ast
 {
 public:
@@ -254,6 +248,20 @@ public:
     ImportAst( Ast*, Ast::AstType type );
 };
 
+class ExpressionAst : public Ast
+{
+
+public:
+    ExpressionAst( Ast*, Ast::AstType type );
+};
+
+class PrimaryAst : public ExpressionAst
+{
+
+public:
+    PrimaryAst( Ast*, Ast::AstType type );
+};
+
 class SliceAst : public PrimaryAst
 {
 
@@ -270,12 +278,6 @@ public:
     SliceItemAst( Ast*, Ast::AstType type );
 };
 
-class ExpressionAst : public Ast
-{
-
-public:
-    ExpressionAst( Ast*, Ast::AstType type );
-};
 
 class ArithmeticExpressionAst : public ExpressionAst
 {
@@ -609,6 +611,20 @@ public:
     Python::YieldAst* yieldValue;
 };
 
+class LiteralAst : public Ast
+{
+public:
+    enum LiteralType
+    {
+        String,
+        Float,
+        Integer,
+        ImaginaryNumber
+    };
+    LiteralAst( Ast* );
+    Python::IdentifierAst* value;
+    LiteralType literalType;
+};
 
 class AtomAst : public PrimaryAst
 {
@@ -616,7 +632,7 @@ class AtomAst : public PrimaryAst
 public:
     AtomAst( Ast* );
     Python::IdentifierAst* identifier;
-    Python::IdentifierAst* literal;
+    Python::LiteralAst* literal;
     Python::EnclosureAst* enclosure;
 };
 
@@ -871,6 +887,7 @@ public:
     IdentifierAst( Ast* );
     QString identifier;
 };
+
 
 }
 

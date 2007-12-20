@@ -67,6 +67,7 @@ public:
     virtual void visitList( ListAst* );
     virtual void visitListFor( ListForAst* );
     virtual void visitListIf( ListIfAst* );
+    virtual void visitLiteral( LiteralAst* );
     virtual void visitGenerator( GeneratorAst* );
     virtual void visitGeneratorFor( GeneratorForAst* );
     virtual void visitGeneratorIf( GeneratorIfAst* );

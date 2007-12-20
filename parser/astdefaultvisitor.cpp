@@ -336,6 +336,7 @@ void AstDefaultVisitor::visitAssignment( AssignmentAst* node )
 void AstDefaultVisitor::visitAtom( AtomAst* node )
 {
     visitNode( node->enclosure );
+    visitNode( node->literal );
 }
 
 void AstDefaultVisitor::visitEnclosure( EnclosureAst* node )
@@ -556,6 +557,10 @@ void AstDefaultVisitor::visitBreak( StatementAst* )
 }
 
 void AstDefaultVisitor::visitIdentifier( IdentifierAst * )
+{
+}
+
+void AstDefaultVisitor::visitLiteral( LiteralAst * )
 {
 }
 

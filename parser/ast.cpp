@@ -182,7 +182,7 @@ DictionaryAst::DictionaryAst( Ast* parent )
 {
 }
 PrimaryAst::PrimaryAst( Ast* parent, Ast::AstType type )
-    : Ast( parent, type )
+    : ExpressionAst( parent, type )
 {
 }
 AttributeReferenceAst::AttributeReferenceAst( Ast* parent )
@@ -308,6 +308,10 @@ IdentifierAst::IdentifierAst( Ast * parent )
 {
 }
 
+LiteralAst::LiteralAst( Ast* parent )
+    : Ast( parent, Ast::LiteralAst )
+{
+}
 
 }
 

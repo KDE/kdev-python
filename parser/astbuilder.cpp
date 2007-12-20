@@ -203,7 +203,7 @@ void AstBuilder::visitArgument(PythonParser::ArgumentAst *node)
         mNodeStack.push( ast );
     }else if( node->genFor )
     {
-        GeneratorAst* ast = creastAst<GeneratorAst>( node );
+        GeneratorAst* ast = createAst<GeneratorAst>( node );
         ast->generatedValue = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
         visitNode( node->genFor );
         ast->generator = safeNodeCast<GeneratorForAst>( mNodeStack.pop() );
@@ -221,17 +221,17 @@ void AstBuilder::visitArithExpr(PythonParser::ArithExprAst *node)
 {
     qDebug() << "visitArithExpr start";
     visitNode( node->arithTerm );
-    if( node->arithOpList->count() > 0 && node->arithTermList->count() > 0 )
+    if( node->arithOpListSequence->count() > 0 && node->arithTermListSequence->count() > 0 )
     {
-        Q_ASSERT_X( node->arithOpList->count() == node->arithTermList->count(),
+        Q_ASSERT_X( node->arithOpListSequence->count() == node->arithTermListSequence->count(),
                     "visitArithExpr", "different number of operators and operands" );
         BinaryExpressionAst* ast = createAst<BinaryExpressionAst>( node );
         ast->lhs = safeNodeCast<ArithmeticExpressionAst>( mNodeStack.pop() );
         BinaryExpressionAst* cur = ast;
-        int count = node->arithOpList->count();
+        int count = node->arithOpListSequence->count();
         for( int i = 0; i < count; i++ )
         {
-            switch( node->arithOpList->at(i)->element->arithOp )
+            switch( node->arithOpListSequence->at(i)->element->arithOp )
             {
                 case PythonParser::PlusOp:
                     cur->opType = BinaryExpressionAst::BinaryPlus;
@@ -240,10 +240,10 @@ void AstBuilder::visitArithExpr(PythonParser::ArithExprAst *node)
                     cur->opType = BinaryExpressionAst::BinaryMinus;
                     break;
             }
-            visitNode( node->arithTermList->at(i)->element );
+            visitNode( node->arithTermListSequence->at(i)->element );
             if( i+1 < count )
             {
-                BinaryExpressionAst* tmp = createAst<BinaryExpressionAst>( node->arithTermList->at(i)->element );
+                BinaryExpressionAst* tmp = createAst<BinaryExpressionAst>( node->arithTermListSequence->at(i)->element );
                 cur->rhs = tmp;
                 cur = tmp;
                 cur->lhs = safeNodeCast<ArithmeticExpressionAst>( mNodeStack.pop() );
@@ -275,6 +275,74 @@ void AstBuilder::visitAssertStmt(PythonParser::AssertStmtAst *node)
 void AstBuilder::visitAtom(PythonParser::AtomAst *node)
 {
     qDebug() << "visitAtom start";
+    AtomAst* ast = createAst<AtomAst>( node );
+    if( node->atomIdentifierName >= 0 || node->number || node->stringliteralSequence->count() > 0 )
+    {
+        if( node->atomIdentifierName >= 0 )
+        {
+            IdentifierAst* id = createIdentifier( ast, node->atomIdentifierName );
+            ast->identifier = id;
+        }else if( node->number )
+        {
+            visitNode( node->number );
+            ast->literal = safeNodeCast<LiteralAst>( mNodeStack.pop() );
+        }else
+        {
+            LiteralAst* lit = createAst<LiteralAst>( node );
+            lit->parent = ast;
+            lit->value = createAst<IdentifierAst>( node );
+            lit->value->parent = lit;
+            for( int i = 0; i < node->stringliteralSequence->count(); i++ )
+            {
+                lit->value->identifier += tokenText( node->stringliteralSequence->at(i)->element );
+            }
+        }
+    }else if( node->listmaker )
+    {
+        EnclosureAst* enc = createAst<EnclosureAst>( node->listmaker );
+        enc->parent = ast;
+        visitNode( node->listmaker );
+        enc->encType = EnclosureAst::List;
+        enc->list = safeNodeCast<ListAst>( mNodeStack.pop() );
+        ast->enclosure = enc;
+    }else if( node->codeexpr )
+    {
+        EnclosureAst* enc = createAst<EnclosureAst>( node->codeexpr );
+        visitNode( node->codeexpr );
+        enc->parent = ast;
+        enc->encType = EnclosureAst::StringConversion;
+        enc->stringConversion = generateSpecializedList<ExpressionAst>( mListStack.pop() );
+        ast->enclosure = enc;
+    }else if( node->dictmaker )
+    {
+        EnclosureAst* enc = createAst<EnclosureAst>( node->dictmaker );
+        enc->parent = ast;
+        visitNode( node->dictmaker );
+        enc->encType = EnclosureAst::Dictionary;
+        enc->dict = safeNodeCast<DictionaryAst>( mNodeStack.pop() );
+        ast->enclosure = enc;
+    }else if( node->yield )
+    {
+    }else
+    {
+        EnclosureAst* enc;
+        if( node->testlist && node->genFor )
+        {
+            enc = createAst<EnclosureAst>( node );
+//             if( node->testlist->tests->count() > 1 )
+//             {
+//                 
+//             }else
+//             {
+//                 enc->encType = EnclosureAst::Generator;
+//                 visitNode( node->testlistGexp );
+//                 enc->parenthesizedform = generateSpecializedList<ExpressionAst>( mListStack.pop() );
+//                 enc->parent = ast;
+//                 ast->enclosure = enc;
+//             }
+        }
+    }
+    mNodeStack.push( ast );
     qDebug() << "visitAtom end";
 }
 
@@ -703,11 +771,11 @@ void AstBuilder::visitPower(PythonParser::PowerAst *node)
 void AstBuilder::visitPlainArgumentsList(PythonParser::PlainArgumentsListAst *node)
 {
     qDebug() << "visitPlainArgumentsList start";
-    QList<ArgumentAst*> l;
-    int count = node->arguments->count();
+    QList<Ast*> l;
+    int count = node->argumentsSequence->count();
     for( int i = 0; i < count; i++ )
     {
-        visitNode( node->arguments->at(i)->element );
+        visitNode( node->argumentsSequence->at(i)->element );
         if( dynamic_cast<ArgumentAst*>( mNodeStack.top() ) )
         {
             l << safeNodeCast<ArgumentAst>( mNodeStack.pop() );
@@ -878,12 +946,6 @@ void AstBuilder::visitTest(PythonParser::TestAst *node)
     qDebug() << "visitTest end";
 }
 
-void AstBuilder::visitTestListGexp(PythonParser::TestListGexpAst *node)
-{
-    qDebug() << "visitTestListGexp start";
-    qDebug() << "visitTestListGexp end";
-}
-
 void AstBuilder::visitTestlist(PythonParser::TestlistAst *node)
 {
     qDebug() << "visitTestlist start";
@@ -894,12 +956,6 @@ void AstBuilder::visitCodeexpr(PythonParser::CodeexprAst *node)
 {
     qDebug() << "visitCodeexpr start";
     qDebug() << "visitCodeexpr end";
-}
-
-void AstBuilder::visitTestlistGexp(PythonParser::TestlistGexpAst *node)
-{
-    qDebug() << "visitTestlistGexp start";
-    qDebug() << "visitTestlistGexp end";
 }
 
 void AstBuilder::visitTestlistSafe(PythonParser::TestlistSafeAst *node)
@@ -973,13 +1029,20 @@ void AstBuilder::visitXorExpr(PythonParser::XorExprAst *node)
     qDebug() << "visitXorExpr end";
 }
 
+void AstBuilder::visitYieldExpr( PythonParser::YieldExprAst * node )
+{
+    qDebug() << "visitYieldExpr start";
+    YieldAst* ast = createAst<YieldAst>( node );
+    visitNode( node->expr );
+    ast->yieldValue = generateSpecializedList<ExpressionAst>( mListStack.pop() );
+    mNodeStack.push( ast );
+    qDebug() << "visitYieldExpr end";
+}
+
 void AstBuilder::visitYieldStmt(PythonParser::YieldStmtAst *node)
 {
     qDebug() << "visitYieldStmt start";
-    YieldAst* ast = createAst<YieldAst>( node );
-    visitNode( node->yieldExpr );
-    ast->yieldValue = generateSpecializedList<ExpressionAst>( mListStack.pop() );
-    mNodeStack.push( ast );
+    visitNode( node->yield );
     qDebug() << "visitYieldStmt end";
 }
 
@@ -988,4 +1051,6 @@ CodeAst* AstBuilder::codeAst()
     return safeNodeCast<CodeAst>( mNodeStack.top() );
 }
 
+
 }
+

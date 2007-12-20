@@ -452,6 +452,15 @@ void AstBuilder::visitContinueStmt(PythonParser::ContinueStmtAst *node)
 void AstBuilder::visitDecorator(PythonParser::DecoratorAst *node)
 {
     qDebug() << "visitDecorator start";
+    DecoratorAst* ast = createAst<DecoratorAst>( node );
+    visitNode( node->decoratorName );
+    ast->dottedName = generateSpecializedList<IdentifierAst>( mListStack.pop() );
+    if( node->arguments )
+    {
+        visitNode( node->arguments );
+        ast->arguments = generateSpecializedList<ArgumentAst>( mListStack.pop() );
+    }
+    mNodeStack.push( ast );
     qDebug() << "visitDecorator end";
 }
 

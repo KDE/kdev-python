@@ -159,6 +159,12 @@ void AstBuilder::visitArglist(PythonParser::ArglistAst *node)
     qDebug() << "visitArglist start";
     QList<Ast*> args;
     visitNode( node->argListBegin );
+    if( dynamic_cast<GeneratorAst*>( mNodeStack.top() ) )
+    {
+        // Early return because a Generator expression was found, thats the only
+        // thing in this "argumentlist" then
+        return;
+    }
     if( node->argListBegin )
     {
         args += mListStack.pop();
@@ -186,6 +192,28 @@ void AstBuilder::visitArglist(PythonParser::ArglistAst *node)
 void AstBuilder::visitArgument(PythonParser::ArgumentAst *node)
 {
     qDebug() << "visitArgument start";
+    visitNode( node->argumentTest );
+    if( node->argumentEqualTest )
+    {
+        ArgumentAst* ast = createAst<ArgumentAst>( node );
+        ast->argumentType = ArgumentAst::KeywordArgument;
+        ast->keywordName = safeNodeCast<IdentifierAst>( mNodeStack.pop() );
+        visitNode( node->argumentEqualTest );
+        ast->argumentExpression = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+        mNodeStack.push( ast );
+    }else if( node->genFor )
+    {
+        GeneratorAst* ast = creastAst<GeneratorAst>( node );
+        ast->generatedValue = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+        visitNode( node->genFor );
+        ast->generator = safeNodeCast<GeneratorForAst>( mNodeStack.pop() );
+        mNodeStack.push( ast );
+    }else
+    {
+        ArgumentAst* ast = createAst<ArgumentAst>( node );
+        ast->argumentType = ArgumentAst::PositionalArgument;
+        mNodeStack.push( ast );
+    }
     qDebug() << "visitArgument end";
 }
 
@@ -647,6 +675,21 @@ void AstBuilder::visitPower(PythonParser::PowerAst *node)
 void AstBuilder::visitPlainArgumentsList(PythonParser::PlainArgumentsListAst *node)
 {
     qDebug() << "visitPlainArgumentsList start";
+    QList<ArgumentAst*> l;
+    int count = node->arguments->count();
+    for( int i = 0; i < count; i++ )
+    {
+        visitNode( node->arguments->at(i)->element );
+        if( dynamic_cast<ArgumentAst*>( mNodeStack.top() ) )
+        {
+            l << safeNodeCast<ArgumentAst>( mNodeStack.pop() );
+        }else if( dynamic_cast<GeneratorAst*>( mNodeStack.top() ) )
+        {
+            //Early return, we found a generator expression on the stack
+            return;
+        }
+    }
+    mListStack.push( l );
     qDebug() << "visitPlainArgumentsList end";
 }
 

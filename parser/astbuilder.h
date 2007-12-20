@@ -53,11 +53,9 @@ public:
     virtual void visitArithExpr(PythonParser::ArithExprAst *node);
     virtual void visitAssertStmt(PythonParser::AssertStmtAst *node);
     virtual void visitAtom(PythonParser::AtomAst *node);
-    virtual void visitAugassign(PythonParser::AugassignAst *node);
     virtual void visitBreakStmt(PythonParser::BreakStmtAst *node);
     virtual void visitClassdef(PythonParser::ClassdefAst *node);
     virtual void visitCodeexpr(PythonParser::CodeexprAst *node);
-    virtual void visitCompOp(PythonParser::CompOpAst *node);
     virtual void visitComparison(PythonParser::ComparisonAst *node);
     virtual void visitCompoundStmt(PythonParser::CompoundStmtAst *node);
     virtual void visitContinueStmt(PythonParser::ContinueStmtAst *node);

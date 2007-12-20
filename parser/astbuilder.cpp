@@ -337,7 +337,7 @@ void AstBuilder::visitAtom(PythonParser::AtomAst *node)
         {
             enc = createAst<EnclosureAst>( node );
             enc->encType = EnclosureAst::Generator;
-            QList<ExpressionAst> l = generateSpecializedList<ExpressionAst>( mListStack.pop() );
+            QList<ExpressionAst*> l = generateSpecializedList<ExpressionAst>( mListStack.pop() );
             GeneratorAst* gen = createAst<GeneratorAst>( node );
             gen->generatedValue = l.first();
             visitNode( node->genFor );
@@ -356,12 +356,6 @@ void AstBuilder::visitAtom(PythonParser::AtomAst *node)
     }
     mNodeStack.push( ast );
     qDebug() << "visitAtom end";
-}
-
-void AstBuilder::visitAugassign(PythonParser::AugassignAst *node)
-{
-    qDebug() << "visitAugassign start";
-    qDebug() << "visitAugassign end";
 }
 
 void AstBuilder::visitBreakStmt(PythonParser::BreakStmtAst *node)
@@ -385,15 +379,58 @@ void AstBuilder::visitClassdef(PythonParser::ClassdefAst *node)
     qDebug() << "visitClassdef end";
 }
 
-void AstBuilder::visitCompOp(PythonParser::CompOpAst *node)
-{
-    qDebug() << "visitCompOp start";
-    qDebug() << "visitCompOp end";
-}
-
 void AstBuilder::visitComparison(PythonParser::ComparisonAst *node)
 {
     qDebug() << "visitComparison start";
+    ComparisonAst* ast = createAst<ComparisonAst>( node );
+    visitNode( node->compExpr );
+    ast->firstComparator = safeNodeCast<ArithmeticExpressionAst>( mNodeStack.pop() );
+    if( node->compOpSequence->count() > 0 && node->compOpExprSequence->count() > 0 )
+    {
+        Q_ASSERT( node->compOpSequence->count() == node->compOpExprSequence->count() );
+        int count = node->compOpSequence->count();
+        for( int i = 0; i < count; i++ )
+        {
+            QPair<ComparisonAst::ComparisonOperator, ArithmeticExpressionAst*> pair;
+            switch( node->compOpSequence->at(i)->element->compOp )
+            {
+                case PythonParser::LessOp:
+                    pair.first = ComparisonAst::LessThanOp;
+                    break;
+                case PythonParser::GreaterOp:
+                    pair.first = ComparisonAst::GreaterThanOp;
+                    break;
+                case PythonParser::IsEqualOp:
+                    pair.first = ComparisonAst::EqualOp;
+                    break;
+                case PythonParser::GreaterEqOp:
+                    pair.first = ComparisonAst::GreaterEqualOp;
+                    break;
+                case PythonParser::LessEqOp:
+                    pair.first = ComparisonAst::LessEqualOp;
+                    break;
+                case PythonParser::UnEqualOp:
+                    pair.first = ComparisonAst::UnequalOp;
+                    break;
+                case PythonParser::InOp:
+                    pair.first = ComparisonAst::InOp;
+                    break;
+                case PythonParser::NotInOp:
+                    pair.first = ComparisonAst::NotInOp;
+                    break;
+                case PythonParser::IsNotOp:
+                    pair.first = ComparisonAst::IsNotOp;
+                    break;
+                case PythonParser::IsOp:
+                    pair.first = ComparisonAst::IsOp;
+                    break;
+            }
+            visitNode( node->compOpExprSequence->at(i)->element );
+            pair.second = safeNodeCast<ArithmeticExpressionAst>( mNodeStack.pop() );
+            ast->comparatorList << pair;
+        }
+    }
+    mNodeStack.push( ast );
     qDebug() << "visitComparison end";
 }
 

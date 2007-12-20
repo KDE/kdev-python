@@ -51,7 +51,6 @@ public:
     virtual void visitArglist(PythonParser::ArglistAst *node);
     virtual void visitArgument(PythonParser::ArgumentAst *node);
     virtual void visitArithExpr(PythonParser::ArithExprAst *node);
-    virtual void visitArithOp(PythonParser::ArithOpAst *node);
     virtual void visitAssertStmt(PythonParser::AssertStmtAst *node);
     virtual void visitAtom(PythonParser::AtomAst *node);
     virtual void visitAugassign(PythonParser::AugassignAst *node);

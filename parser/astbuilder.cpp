@@ -220,13 +220,41 @@ void AstBuilder::visitArgument(PythonParser::ArgumentAst *node)
 void AstBuilder::visitArithExpr(PythonParser::ArithExprAst *node)
 {
     qDebug() << "visitArithExpr start";
+    visitNode( node->arithTerm );
+    if( node->arithOpList->count() > 0 && node->arithTermList->count() > 0 )
+    {
+        Q_ASSERT_X( node->arithOpList->count() == node->arithTermList->count(),
+                    "visitArithExpr", "different number of operators and operands" );
+        BinaryExpressionAst* ast = createAst<BinaryExpressionAst>( node );
+        ast->lhs = safeNodeCast<ArithmeticExpressionAst>( mNodeStack.pop() );
+        BinaryExpressionAst* cur = ast;
+        int count = node->arithOpList->count();
+        for( int i = 0; i < count; i++ )
+        {
+            switch( node->arithOpList->at(i)->element->arithOp )
+            {
+                case PythonParser::PlusOp:
+                    cur->opType = BinaryExpressionAst::BinaryPlus;
+                    break;
+                case PythonParser::MinusOp:
+                    cur->opType = BinaryExpressionAst::BinaryMinus;
+                    break;
+            }
+            visitNode( node->arithTermList->at(i)->element );
+            if( i+1 < count )
+            {
+                BinaryExpressionAst* tmp = createAst<BinaryExpressionAst>( node->arithTermList->at(i)->element );
+                cur->rhs = tmp;
+                cur = tmp;
+                cur->lhs = safeNodeCast<ArithmeticExpressionAst>( mNodeStack.pop() );
+            }else
+            {
+                cur->rhs = safeNodeCast<ArithmeticExpressionAst>( mNodeStack.pop() );
+            }
+        }
+        mNodeStack.push( ast );
+    }
     qDebug() << "visitArithExpr end";
-}
-
-void AstBuilder::visitArithOp(PythonParser::ArithOpAst *node)
-{
-    qDebug() << "visitArithOp start";
-    qDebug() << "visitArithOp end";
 }
 
 void AstBuilder::visitAssertStmt(PythonParser::AssertStmtAst *node)

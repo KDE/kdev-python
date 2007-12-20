@@ -818,6 +818,8 @@ public:
 
 class ComparisonAst : public BooleanOperationAst
 {
+public:
+    
     enum ComparisonOperator
     {
         LessThanOp,
@@ -831,12 +833,10 @@ class ComparisonAst : public BooleanOperationAst
         InOp,
         NotInOp
     };
-
-public:
     ComparisonAst( Ast* );
     Python::ArithmeticExpressionAst* firstComparator;
-    QMap<Python::ComparisonAst::ComparisonOperator,
-         Python::ArithmeticExpressionAst*> comparatorList;
+    QList< QPair<Python::ComparisonAst::ComparisonOperator,
+         Python::ArithmeticExpressionAst*> > comparatorList;
 };
 
 class BooleanAndOperationAst : public BooleanOperationAst

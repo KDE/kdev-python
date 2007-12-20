@@ -505,9 +505,11 @@ void AstDefaultVisitor::visitBinaryExpression( BinaryExpressionAst* node )
 void AstDefaultVisitor::visitComparison( ComparisonAst* node )
 {
     visitNode( node->firstComparator );
-    foreach( ArithmeticExpressionAst* b, node->comparatorList.values() )
+    QList< QPair< ComparisonAst::ComparisonOperator, ArithmeticExpressionAst*> >::iterator it;
+    QList< QPair< ComparisonAst::ComparisonOperator, ArithmeticExpressionAst*> >::iterator end = node->comparatorList.end();
+    for( it = node->comparatorList.begin(); it != end; ++it )
     {
-        visitNode( b );
+        visitNode( (*it).second );
     }
 }
 

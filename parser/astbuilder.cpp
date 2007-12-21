@@ -559,6 +559,32 @@ void AstBuilder::visitExecStmt(PythonParser::ExecStmtAst *node)
 void AstBuilder::visitExpr(PythonParser::ExprAst *node)
 {
     qDebug() << "visitExpr start";
+    visitNode( node->expr );
+    if( node->orrExprSequence->count() > 0 )
+    {
+        BinaryExpressionAst* ast = createAst<BinaryExpressionAst>( node );
+        ast->opType = ArithmeticExpressionAst::BinaryOr;
+        ast->lhs = safeNodeCast<ArithmeticExpressionAst>( mNodeStack.pop() );
+        int count = node->orrExprSequence->count();
+        BinaryExpressionAst* curast = ast;
+        for( int i = 0; i < count; i++ )
+        {
+            visitNode( node->orrExprSequence->at(i)->element );
+            if( i+1 < count )
+            {
+                BinaryExpressionAst* tmp = createAst<BinaryExpressionAst>( 
+                        node->orrExprSequence->at(i)->element );
+                curast->opType = ArithmeticExpressionAst::BinaryOr;
+                tmp->lhs = safeNodeCast<ArithmeticExpressionAst>( mNodeStack.pop() );
+                curast->rhs = tmp;
+                curast = tmp;
+            }else
+            {
+                curast->rhs = safeNodeCast<ArithmeticExpressionAst>( mNodeStack.pop() );
+            }
+        }
+        mNodeStack.push( ast );
+    }
     qDebug() << "visitExpr end";
 }
 

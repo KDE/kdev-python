@@ -702,6 +702,14 @@ void AstBuilder::visitExprStmt(PythonParser::ExprStmtAst *node)
 void AstBuilder::visitExprlist(PythonParser::ExprlistAst *node)
 {
     qDebug() << "visitExprlist start";
+    QList<Ast*> l;
+    int count = node->exprSequence->count();
+    for( int i = 0; i < count; i++ )
+    {
+        visitNode( node->exprSequence->at(i)->element );
+        l << safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+    }
+    mListStack.push( l );
     qDebug() << "visitExprlist end";
 }
 

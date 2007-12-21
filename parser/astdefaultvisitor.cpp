@@ -23,6 +23,8 @@
 namespace Python
 {
 
+// TODO: Check which visitXX need a visitNode( node->someIdentifierAst );
+    
 AstDefaultVisitor::AstDefaultVisitor()
     : AstVisitor()
 {
@@ -251,16 +253,39 @@ void AstDefaultVisitor::visitGlobal( GlobalAst* )
 {
 }
 
-void AstDefaultVisitor::visitPlainImport( PlainImportAst* )
+void AstDefaultVisitor::visitPlainImport( PlainImportAst* node )
 {
+    for( int i = 0; i < node->modulesAsName.count(); i++ )
+    {
+        QPair< QList<Python::IdentifierAst*>, Python::IdentifierAst*> pair =
+                node->modulesAsName.at(i);
+        for( int j = 0; j < pair.first.count(); j++ )
+        {
+            visitNode( pair.first.at(j) );
+        }
+        visitNode( pair.second );
+    }
 }
 
-void AstDefaultVisitor::visitStarImport( StarImportAst* )
+void AstDefaultVisitor::visitStarImport( StarImportAst* node )
 {
+    foreach( IdentifierAst* a, node->modulePath )
+    {
+        visitNode( a );
+    }
 }
 
-void AstDefaultVisitor::visitFromImport( FromImportAst* )
+void AstDefaultVisitor::visitFromImport( FromImportAst* node )
 {
+    foreach( IdentifierAst* a, node->modulePath )
+    {
+        visitNode( a );
+    }
+    for( int i = 0; i < node->identifierAsName.count(); i++ )
+    {
+        visitNode( node->identifierAsName.at(i).first );
+        visitNode( node->identifierAsName.at(i).second );
+    }
 }
 
 void AstDefaultVisitor::visitRaise( RaiseAst* node )

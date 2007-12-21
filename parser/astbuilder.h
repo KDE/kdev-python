@@ -64,9 +64,6 @@ public:
     virtual void visitDefparam(PythonParser::DefparamAst *node);
     virtual void visitDelStmt(PythonParser::DelStmtAst *node);
     virtual void visitDictmaker(PythonParser::DictmakerAst *node);
-    virtual void visitDottedAsName(PythonParser::DottedAsNameAst *node);
-    virtual void visitDottedAsNames(PythonParser::DottedAsNamesAst *node);
-    virtual void visitDottedName(PythonParser::DottedNameAst *node);
     virtual void visitExceptClause(PythonParser::ExceptClauseAst *node);
     virtual void visitExecStmt(PythonParser::ExecStmtAst *node);
     virtual void visitExpr(PythonParser::ExprAst *node);

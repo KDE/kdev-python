@@ -38,7 +38,6 @@ class CodeAst;
 class FunctionDefinitionAst;
 class DecoratorAst;
 class ArgumentAst;
-class ParameterAst;
 class StatementAst;
 class IfAst;
 class WhileAst;
@@ -504,7 +503,7 @@ class PlainImportAst : public ImportAst
 
 public:
     PlainImportAst( Ast* );
-    QMap<int, QPair< QList<Python::IdentifierAst*>, Python::IdentifierAst*> > modulesAsName;
+    QList< QPair< QList<Python::IdentifierAst*>, Python::IdentifierAst*> > modulesAsName;
 };
 
 class StarImportAst : public ImportAst
@@ -522,7 +521,7 @@ public:
     FromImportAst( Ast* );
     QList<Python::IdentifierAst*> modulePath;
     int numLeadingDots;
-    QMap<Python::IdentifierAst*, Python::IdentifierAst*> identifierAsName;
+    QList< QPair<Python::IdentifierAst*, Python::IdentifierAst*> > identifierAsName;
 };
 
 class RaiseAst : public StatementAst
@@ -622,7 +621,7 @@ public:
         ImaginaryNumber
     };
     LiteralAst( Ast* );
-    Python::IdentifierAst* value;
+    QString value;
     LiteralType literalType;
 };
 

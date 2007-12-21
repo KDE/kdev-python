@@ -69,6 +69,7 @@ AstVisitor::visitFunc _S_parser_table[] =  {
     reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitListIf),
     reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitListParameter),
     reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitListParameterPart),
+    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitLiteral),
     reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitPass),
     reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitPlainImport),
     reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitPrint),

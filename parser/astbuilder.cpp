@@ -30,6 +30,7 @@
 namespace Python
 {
 
+//TODO: Check that created AST nodes are pushed onto the stack _before_ visiting subnodes to make sure their parent is correct
 
 template <typename T> T* safeNodeCast( Ast* node )
 {
@@ -290,11 +291,9 @@ void AstBuilder::visitAtom(PythonParser::AtomAst *node)
         {
             LiteralAst* lit = createAst<LiteralAst>( node );
             lit->parent = ast;
-            lit->value = createAst<IdentifierAst>( node );
-            lit->value->parent = lit;
             for( int i = 0; i < node->stringliteralSequence->count(); i++ )
             {
-                lit->value->identifier += tokenText( node->stringliteralSequence->at(i)->element );
+                lit->value += tokenText( node->stringliteralSequence->at(i)->element );
             }
         }
     }else if( node->listmaker )
@@ -480,8 +479,21 @@ void AstBuilder::visitDecorators(PythonParser::DecoratorsAst *node)
 
 void AstBuilder::visitDefparam(PythonParser::DefparamAst *node)
 {
-    qDebug() << "visitFpdef start";
-    qDebug() << "visitFpdef start";
+    
+    qDebug() << "visitDefparam start";
+    if( node->paramname != -1 )
+    {
+        IdentifierParameterPartAst* ast = createAst<IdentifierParameterPartAst>( node );
+        ast->name = createIdentifier( ast, node->paramname );
+        mNodeStack.push( ast );
+    }else
+    {
+        ListParameterPartAst* ast = createAst<ListParameterPartAst>( node );
+        mNodeStack.push( ast );
+        visitNode( node->fplist );
+        ast->parameternames = generateSpecializedList<ParameterPartAst>( mListStack.pop() );
+    }
+    qDebug() << "visitDefparam start";
 }
 
 void AstBuilder::visitDelStmt(PythonParser::DelStmtAst *node)
@@ -497,33 +509,30 @@ void AstBuilder::visitDelStmt(PythonParser::DelStmtAst *node)
 void AstBuilder::visitDictmaker(PythonParser::DictmakerAst *node)
 {
     qDebug() << "visitDictmaker start";
+    DictionaryAst* ast = createAst<DictionaryAst>( node );
+    mNodeStack.push(ast);
+    int count = node->keyListSequence->count();
+    Q_ASSERT( count = node->valueListSequence->count() );
+    for( int i = 0; i < count; i++ )
+    {
+        visitNode( node->keyListSequence->at(i)->element );
+        ExpressionAst* key = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+        visitNode( node->valueListSequence->at(i)->element );
+        ast->dictionary.insert( key, safeNodeCast<ExpressionAst>( mNodeStack.pop() ) );
+    }
+
     qDebug() << "visitDictmaker end";
-}
-
-void AstBuilder::visitDottedAsName(PythonParser::DottedAsNameAst *node)
-{
-    qDebug() << "visitDottedAsName start";
-    qDebug() << "visitDottedAsName end";
-}
-
-void AstBuilder::visitDottedAsNames(PythonParser::DottedAsNamesAst *node)
-{
-    qDebug() << "visitDottedAsNames start";
-    qDebug() << "visitDottedAsNames end";
-}
-
-void AstBuilder::visitDottedName(PythonParser::DottedNameAst *node)
-{
-    qDebug() << "visitDottedName start";
-    // This visit should never be reached as the dottedName members are always
-    // evaluated directly where they are used, i.e. in the decorator and import visits
-    Q_ASSERT( false );
-    qDebug() << "visitDottedName end";
 }
 
 void AstBuilder::visitExceptClause(PythonParser::ExceptClauseAst *node)
 {
     qDebug() << "visitExceptClause start";
+    ExceptAst* ast = createAst<ExceptAst>( node );
+    mNodeStack.push( ast );
+    visitNode( node->exceptTest );
+    ast->exceptionDeclaration = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+    visitNode( node->exceptTargetTest );
+    ast->exceptionValue = safeNodeCast<TargetAst>( mNodeStack.pop() );
     qDebug() << "visitExceptClause end";
 }
 
@@ -612,6 +621,14 @@ void AstBuilder::visitFpDef(PythonParser::FpDefAst *node)
 void AstBuilder::visitFplist(PythonParser::FplistAst *node)
 {
     qDebug() << "visitFplist start";
+    int count = node->fplistFpdefSequence->count();
+    QList<Ast*> l;
+    for( int i = 0; i < count; i++ )
+    {
+        visitNode( node->fplistFpdefSequence->at(i)->element );
+        l << safeNodeCast<ParameterPartAst>( mNodeStack.pop() );
+    }
+    mListStack.push( l );
     qDebug() << "visitFplist end";
 }
 
@@ -741,7 +758,9 @@ void AstBuilder::visitImportFrom(PythonParser::ImportFromAst *node)
         {
             PythonParser::ImportAsNameAst* namenode = idNames->at(i)->element;
             qDebug() << "Fetching from-as:" << tokenText( namenode->importedName );
-            ast->identifierAsName[ createIdentifier( ast, namenode->importedName ) ] = createIdentifier( ast, namenode->importedAs );
+            ast->identifierAsName.append( qMakePair( 
+                                                      createIdentifier( ast, namenode->importedName ), 
+                                                      createIdentifier( ast, namenode->importedAs ) ) );
         }
         mNodeStack.push( ast );
     }
@@ -759,7 +778,7 @@ void AstBuilder::visitImportName(PythonParser::ImportNameAst *node)
     {
         PythonParser::DottedAsNameAst* import = importedmodules->at(i)->element;
         QList<IdentifierAst*> modulepath = identifierListFromTokenList( ast, import->importDottedName->dottedNameSequence );
-        ast->modulesAsName[ i ] = qMakePair( modulepath, createIdentifier( ast, import->importedAs ) );
+        ast->modulesAsName.append( qMakePair( modulepath, createIdentifier( ast, import->importedAs ) ) );
     }
     mNodeStack.push( ast );
     qDebug() << "visitImportName end";

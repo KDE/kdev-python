@@ -36,7 +36,7 @@ enum OperatorType
     ModuloEqOp,
     AndEqOp,
     OrEqOp,
-    TildeEqOp,
+    HatEqOp,
     LeftShiftEqOp,
     RightShiftEqOp,
     DoublestarEqOp,
@@ -400,6 +400,7 @@ struct KDEVPYTHONPARSER_EXPORT DefparamAst: public AstNode
     enum { KIND = DefparamKind };
 
     FplistAst *fplist;
+    qint64 paramname;
 };
 
 struct KDEVPYTHONPARSER_EXPORT DelStmtAst: public AstNode
@@ -471,6 +472,7 @@ struct KDEVPYTHONPARSER_EXPORT ExprStmtAst: public AstNode
     TestlistAst *testlist;
     AugassignAst *augassign;
     TestlistAst *anugassignTestlist;
+    YieldExprAst *yield;
     const KDevPG::ListNode<TestlistAst *> *equalTestlistSequence;
 };
 

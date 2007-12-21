@@ -586,6 +586,8 @@ public:
 
 class AssignmentAst : public StatementAst
 {
+public:
+    
     enum OpType
     {
         AddEqualOp,
@@ -599,10 +601,9 @@ class AssignmentAst : public StatementAst
         XorEqualOp,
         OrEqualOp,
         AndEqualOp,
+        FloorEqualOp,
         AssignmentOp
     };
-
-public:
     AssignmentAst( Ast* );
     OpType operation;
     QList<QList<Python::TargetAst*> > targets;

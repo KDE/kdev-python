@@ -276,6 +276,7 @@ void DefaultVisitor::visitExprStmt(ExprStmtAst *node)
     visitNode(node->testlist);
     visitNode(node->augassign);
     visitNode(node->anugassignTestlist);
+    visitNode(node->yield);
     if (node->equalTestlistSequence)
     {
         const KDevPG::ListNode<TestlistAst*> *__it = node->equalTestlistSequence->front(), *__end = __it;

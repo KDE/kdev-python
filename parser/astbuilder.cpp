@@ -240,6 +240,9 @@ void AstBuilder::visitArithExpr(PythonParser::ArithExprAst *node)
                 case PythonParser::MinusOp:
                     cur->opType = BinaryExpressionAst::BinaryMinus;
                     break;
+                default:
+                    //Should never reach here, unless somebody changed the grammer and not the builder
+                    Q_ASSERT(false);
             }
             visitNode( node->arithTermListSequence->at(i)->element );
             if( i+1 < count )
@@ -423,6 +426,9 @@ void AstBuilder::visitComparison(PythonParser::ComparisonAst *node)
                 case PythonParser::IsOp:
                     pair.first = ComparisonAst::IsOp;
                     break;
+                default:
+                    //Should never reach here, unless somebody changed the grammer and not the builder
+                    Q_ASSERT(false);
             }
             visitNode( node->compOpExprSequence->at(i)->element );
             pair.second = safeNodeCast<ArithmeticExpressionAst>( mNodeStack.pop() );
@@ -591,7 +597,105 @@ void AstBuilder::visitExpr(PythonParser::ExprAst *node)
 void AstBuilder::visitExprStmt(PythonParser::ExprStmtAst *node)
 {
     qDebug() << "visitExprStmt start";
-    //foo
+    visitNode( node->testlist );
+    if( node->augassign )
+    {
+        // Augmented assignments cannot have multiple targets, so the testlist needs to contain only 1 element
+        Q_ASSERT( mListStack.top().count() == 1 );
+        AssignmentAst* a = createAst<AssignmentAst>( node );
+        a->targets.append( generateSpecializedList<TargetAst>( mListStack.pop() ) );
+        
+        switch( node->augassign->assignOp )
+        {
+            case PythonParser::PlusEqOp:
+                a->operation = AssignmentAst::AddEqualOp;
+                break;
+            case PythonParser::MinusEqOp:
+                a->operation = AssignmentAst::SubEqualOp;
+                break;
+            case PythonParser::StarEqOp:
+                a->operation = AssignmentAst::MultiplyEqualOp;
+                break;
+            case PythonParser::SlashEqOp:
+                a->operation = AssignmentAst::DivideEqualOp;
+                break;
+            case PythonParser::ModuloEqOp:
+                a->operation = AssignmentAst::ModuloEqualOp;
+                break;
+            case PythonParser::AndEqOp:
+                a->operation = AssignmentAst::AndEqualOp;
+                break;
+            case PythonParser::OrEqOp:
+                a->operation = AssignmentAst::OrEqualOp;
+                break;
+            case PythonParser::HatEqOp:
+                a->operation = AssignmentAst::XorEqualOp;
+                break;
+            case PythonParser::LeftShiftEqOp:
+                a->operation = AssignmentAst::LeftShiftEqualOp;
+                break;
+            case PythonParser::RightShiftEqOp:
+                a->operation = AssignmentAst::RightShiftEqualOp;
+                break;
+            case PythonParser::DoublestarEqOp:
+                a->operation = AssignmentAst::PowEqualOp;
+                break;
+            case PythonParser::DoubleslashEqOp:
+                a->operation = AssignmentAst::FloorEqualOp;
+                break;
+            default:
+                //Should never reach here, unless somebody changed the grammer and not the builder
+                Q_ASSERT(false);
+        }
+        if( node->yield )
+        {
+            visitNode( node->yield );
+            a->yieldValue = safeNodeCast<YieldAst>( mNodeStack.pop() );
+        }else
+        {
+            visitNode( node->anugassignTestlist );
+            a->value = generateSpecializedList<ExpressionAst>( mListStack.pop() );
+        }
+        mNodeStack.push( a );
+    }else if( node->yield || node->equalTestlistSequence->count() > 0 )
+    {
+        QList<QList<TargetAst*> > l;
+        l << generateSpecializedList<TargetAst>( mListStack.pop() );
+        
+        AssignmentAst* a = createAst<AssignmentAst>( node );
+        a->operation = AssignmentAst::AssignmentOp;
+        int count = node->equalTestlistSequence->count();
+        if( count > 0 )
+        {
+            for( int i = 0; i < count; i++ )
+            {
+                if( !node->yield && i == count-1 )
+                {
+                    // We have no yield statement, so the last element in the 
+                    // list is the actual expression for the assignment
+                    break;
+                }
+                visitNode( node->equalTestlistSequence->at(i)->element );
+                l << generateSpecializedList<TargetAst>( mListStack.pop() );
+            }
+        }
+        a->targets = l;
+        if( node->yield )
+        {
+            visitNode( node->yield );
+            a->yieldValue = safeNodeCast<YieldAst>( mNodeStack.pop() );
+        }else
+        {
+            visitNode( node->equalTestlistSequence->at( count-1 )->element );
+            a->value = generateSpecializedList<ExpressionAst>( mListStack.pop() );
+        }
+        mNodeStack.push( a );
+    }else
+    {
+        ExpressionStatementAst *ast = createAst<ExpressionStatementAst>( node );
+        ast->expressions = generateSpecializedList<ExpressionAst>( mListStack.pop() );
+        mNodeStack.push( ast );
+    }
     qDebug() << "visitExprStmt end";
 }
 

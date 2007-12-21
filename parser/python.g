@@ -86,7 +86,7 @@ namespace PythonParser
         ModuloEqOp,
         AndEqOp,
         OrEqOp,
-        TildeEqOp,
+        HatEqOp,
         LeftShiftEqOp,
         RightShiftEqOp,
         DoublestarEqOp,
@@ -263,8 +263,8 @@ namespace PythonParser
    | assertStmt = assertStmt
 -> smallStmt ;;
 
-   (testlist = testlist) ( augassign = augassign anugassignTestlist = testlist
-    | ( EQUAL #equalTestlist = testlist )+
+   (testlist = testlist) ( augassign = augassign ( anugassignTestlist = testlist | yield=yieldExpr )
+    | ( EQUAL ( yield=yieldExpr | #equalTestlist = testlist ) )+
     | ?[: yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK :] 0 )
 -> exprStmt ;;
 
@@ -275,7 +275,7 @@ namespace PythonParser
    | MODULOEQ       [: (*yynode)->assignOp = PythonParser::ModuloEqOp; :]
    | ANDEQ          [: (*yynode)->assignOp = PythonParser::AndEqOp;    :]
    | OREQ           [: (*yynode)->assignOp = PythonParser::OrEqOp;     :]
-   | TILDEEQ        [: (*yynode)->assignOp = PythonParser::TildeEqOp;  :]
+   | TILDEEQ        [: (*yynode)->assignOp = PythonParser::HatEqOp;  :]
    | LSHIFTEQ       [: (*yynode)->assignOp = PythonParser::LeftShiftEqOp; :]
    | RSHIFTEQ       [: (*yynode)->assignOp = PythonParser::RightShiftEqOp; :]
    | DOUBLESTAREQ   [: (*yynode)->assignOp = PythonParser::DoublestarEqOp; :]
@@ -313,7 +313,7 @@ namespace PythonParser
    RETURN ( returnExpr=testlist | 0 )
 -> returnStmt ;;
 
-   YIELD ( expr=testlist | 0 ) 
+   YIELD ( expr=testlist | 0 )
 -> yieldExpr ;;
 
    yield=yieldExpr
@@ -461,7 +461,7 @@ namespace PythonParser
     (#trailer=trailer)* ( DOUBLESTAR factor=factor | 0 )
 -> power ;;
 
-   LPAREN ( yield=yieldExpr | 
+   LPAREN ( yield=yieldExpr |
             ( testlist=testlist ( genFor=genFor | 0 ) ) | 0 ) RPAREN
    | LBRACKET listmaker=listmaker RBRACKET
    | LBRACE dictmaker=dictmaker RBRACE

@@ -508,7 +508,7 @@ namespace PythonParser
 
    #expr=expr
     ( COMMA [: if (yytoken == Token_IN || yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK ) { break; } :]
-    #exprlist=expr )*
+    #expr=expr )*
 -> exprlist ;;
 
    #tests=test ( COMMA [: if( yytoken == Token_COLON || yytoken == Token_SEMICOLON || yytoken == Token_RPAREN || yytoken == Token_LINEBREAK) {break;} :]

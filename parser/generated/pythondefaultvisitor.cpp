@@ -301,16 +301,6 @@ void DefaultVisitor::visitExprlist(ExprlistAst *node)
         }
         while (__it != __end);
     }
-    if (node->exprlistSequence)
-    {
-        const KDevPG::ListNode<ExprAst*> *__it = node->exprlistSequence->front(), *__end = __it;
-        do
-        {
-            visitNode(__it->element);
-            __it = __it->next;
-        }
-        while (__it != __end);
-    }
 }
 
 void DefaultVisitor::visitFactOp(FactOpAst *)

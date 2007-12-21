@@ -2410,7 +2410,7 @@ bool Parser::parseExprlist(ExprlistAst **yynode)
                 expectedSymbol(AstNode::ExprKind, "expr");
                 return false;
             }
-            (*yynode)->exprlistSequence = snoc((*yynode)->exprlistSequence, __node_62, memoryPool);
+            (*yynode)->exprSequence = snoc((*yynode)->exprSequence, __node_62, memoryPool);
 
         }
     }

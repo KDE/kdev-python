@@ -481,7 +481,6 @@ struct KDEVPYTHONPARSER_EXPORT ExprlistAst: public AstNode
     enum { KIND = ExprlistKind };
 
     const KDevPG::ListNode<ExprAst *> *exprSequence;
-    const KDevPG::ListNode<ExprAst *> *exprlistSequence;
 };
 
 struct KDEVPYTHONPARSER_EXPORT FactOpAst: public AstNode

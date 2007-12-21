@@ -591,6 +591,7 @@ void AstBuilder::visitExpr(PythonParser::ExprAst *node)
 void AstBuilder::visitExprStmt(PythonParser::ExprStmtAst *node)
 {
     qDebug() << "visitExprStmt start";
+    //foo
     qDebug() << "visitExprStmt end";
 }
 

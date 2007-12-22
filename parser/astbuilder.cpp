@@ -838,18 +838,51 @@ void AstBuilder::visitFuncDef(PythonParser::FuncDefAst *node)
 void AstBuilder::visitGenFor(PythonParser::GenForAst *node)
 {
     qDebug() << "visitGenFor start";
+    GeneratorForAst* ast = createAst<GeneratorForAst>( node );
+    mNodeStack.push( ast );
+    visitNode( node->exprlist );
+    ast->assignedTargets = generateSpecializedList<TargetAst>( mListStack.pop() );
+    visitNode( node->test );
+    ast->iterableObject = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+    if( node->genIter )
+    {
+        visitNode( node->genIter );
+        if( node->genIter->genFor )
+        {
+            ast->nextGenerator = safeNodeCast<GeneratorForAst>( mNodeStack.pop() );
+        }else
+        {
+            ast->nextCondition = safeNodeCast<GeneratorIfAst>( mNodeStack.pop() );
+        }
+    }
     qDebug() << "visitGenFor end";
 }
 
 void AstBuilder::visitGenIf(PythonParser::GenIfAst *node)
 {
     qDebug() << "visitGenIf start";
+    GeneratorIfAst* ast = createAst<GeneratorIfAst>( node );
+    mNodeStack.push( ast );
+    visitNode( node->test );
+    ast->condition = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+    if( node->genIter )
+    {
+        visitNode( node->genIter );
+        if( node->genIter->genFor )
+        {
+            ast->nextGenerator = safeNodeCast<GeneratorForAst>( mNodeStack.pop() );
+        }else
+        {
+            ast->nextCondition = safeNodeCast<GeneratorIfAst>( mNodeStack.pop() );
+        }
+    }
     qDebug() << "visitGenIf end";
 }
 
 void AstBuilder::visitGenIter(PythonParser::GenIterAst *node)
 {
     qDebug() << "visitGenIter start";
+    PythonParser::DefaultVisitor::visitGenIter(node);
     qDebug() << "visitGenIter end";
 }
 

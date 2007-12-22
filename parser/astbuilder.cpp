@@ -800,12 +800,6 @@ void AstBuilder::visitFplist(PythonParser::FplistAst *node)
     qDebug() << "visitFplist end";
 }
 
-void AstBuilder::visitFunPosParam(PythonParser::FunPosParamAst *node)
-{
-    qDebug() << "visitFunPosParam start";
-    qDebug() << "visitFunPosParam end";
-}
-
 void AstBuilder::visitFuncdecl(PythonParser::FuncdeclAst *node)
 {
     qDebug() << "visitFuncdecl start";
@@ -830,6 +824,14 @@ void AstBuilder::visitFuncdecl(PythonParser::FuncdeclAst *node)
 void AstBuilder::visitFuncDef(PythonParser::FuncDefAst *node)
 {
     qDebug() << "visitFuncDef start";
+    QList<Ast*> l;
+    int count = node->fpDefSequence->count();
+    for( int i = 0; i < count; i++ )
+    {
+        visitNode( node->fpDefSequence->at(i)->element );
+        l << safeNodeCast<ParameterAst>( mNodeStack.pop() );
+    }
+    mListStack.push( l );
     qDebug() << "visitFuncDef end";
 }
 
@@ -1256,6 +1258,28 @@ void AstBuilder::visitTryStmt(PythonParser::TryStmtAst *node)
 void AstBuilder::visitVarargslist(PythonParser::VarargslistAst *node)
 {
     qDebug() << "visitVarargslist start";
+    QList<Ast*> l;
+    if( node->funcDef )
+    {
+        visitNode( node->funPosParam );
+        l += mListStack.pop();
+    }
+    if( node->funPosParam )
+    {
+        if( node->funPosParam->starId > -1 )
+        {
+            ListParameterAst* ast = createAst<ListParameterAst>( node->funPosParam );
+            ast->name = createIdentifier( ast, node->funPosParam->starId );
+            l << ast;
+        }
+        if( node->funPosParam->doubleStarId > -1 )
+        {
+            DictionaryParameterAst* ast = createAst<DictionaryParameterAst>( node->funPosParam );
+            ast->name = createIdentifier( ast, node->funPosParam->doubleStarId );
+            l << ast;
+        }
+    }
+    mListStack.push( l );
     qDebug() << "visitVarargslist end";
 }
 

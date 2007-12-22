@@ -713,15 +713,34 @@ void AstBuilder::visitExprlist(PythonParser::ExprlistAst *node)
     qDebug() << "visitExprlist end";
 }
 
-void AstBuilder::visitFactOp(PythonParser::FactOpAst *node)
-{
-    qDebug() << "visitFactOp start";
-    qDebug() << "visitFactOp end";
-}
-
 void AstBuilder::visitFactor(PythonParser::FactorAst *node)
 {
     qDebug() << "visitFactor start";
+    if( node->power )
+    {
+        visitNode( node->power );
+    }else
+    {
+        UnaryExpressionAst* ast = createAst<UnaryExpressionAst>( node );
+        mNodeStack.push( ast );
+        visitNode( node->factor );
+        switch( node->factOp->facOp )
+        {
+            case PythonParser::UnaryPlusOp:
+                ast->opType = ArithmeticExpressionAst::UnaryPlus;
+                break;
+            case PythonParser::UnaryTildeOp:
+                ast->opType = ArithmeticExpressionAst::UnaryTilde;
+                break;
+            case PythonParser::UnaryMinusOp:
+                ast->opType = ArithmeticExpressionAst::UnaryMinus;
+                break;
+            default:
+                //Shouldn't reach this, unless someone changes the grammar and didn't update here
+                Q_ASSERT(false);
+        }
+        ast->operand = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+    }
     qDebug() << "visitFactor end";
 }
 

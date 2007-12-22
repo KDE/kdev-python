@@ -69,7 +69,6 @@ public:
     virtual void visitExpr(PythonParser::ExprAst *node);
     virtual void visitExprStmt(PythonParser::ExprStmtAst *node);
     virtual void visitExprlist(PythonParser::ExprlistAst *node);
-    virtual void visitFactOp(PythonParser::FactOpAst *node);
     virtual void visitFactor(PythonParser::FactorAst *node);
     virtual void visitFlowStmt(PythonParser::FlowStmtAst *node);
     virtual void visitForStmt(PythonParser::ForStmtAst *node);

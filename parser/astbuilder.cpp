@@ -843,7 +843,7 @@ void AstBuilder::visitGenFor(PythonParser::GenForAst *node)
     visitNode( node->exprlist );
     ast->assignedTargets = generateSpecializedList<TargetAst>( mListStack.pop() );
     visitNode( node->test );
-    ast->iterableObject = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+    ast->iterableObject = safeNodeCast<ConditionalExpressionAst>( mNodeStack.pop() );
     if( node->genIter )
     {
         visitNode( node->genIter );
@@ -924,24 +924,6 @@ void AstBuilder::visitIfStmt(PythonParser::IfStmtAst *node)
     qDebug() << "visitIfStmt end";
 }
 
-void AstBuilder::visitImportAsName(PythonParser::ImportAsNameAst *node)
-{
-    qDebug() << "visitImportAsName start";
-    // This visit should never be reached as the dottedName members are always
-    // evaluated directly where they are used, i.e. in the decorator and import visits
-    Q_ASSERT( false );
-    qDebug() << "visitImportAsName end";
-}
-
-void AstBuilder::visitImportAsNames(PythonParser::ImportAsNamesAst *node)
-{
-    qDebug() << "visitImportAsNames start";
-    // This visit should never be reached as the dottedName members are always
-    // evaluated directly where they are used, i.e. in the decorator and import visits
-    Q_ASSERT( false );
-    qDebug() << "visitImportAsNames end";
-}
-
 void AstBuilder::visitImportFrom(PythonParser::ImportFromAst *node)
 {
     qDebug() << "visitImportFrom start";
@@ -997,6 +979,14 @@ void AstBuilder::visitImportStmt(PythonParser::ImportStmtAst *node)
 void AstBuilder::visitLambdaDef(PythonParser::LambdaDefAst *node)
 {
     qDebug() << "visitLambdaDef start";
+    LambdaAst* ast = createAst<LambdaAst>( node );
+    if( node->lambdaVarargslist )
+    {
+        visitNode( node->lambdaVarargslist );
+        ast->parameters = generateSpecializedList<ParameterAst>( mListStack.pop() );
+    }
+    visitNode( node->lambdaTest );
+    ast->expression = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
     qDebug() << "visitLambdaDef end";
 }
 

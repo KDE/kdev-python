@@ -773,6 +773,16 @@ void AstBuilder::visitForStmt(PythonParser::ForStmtAst *node)
 void AstBuilder::visitFpDef(PythonParser::FpDefAst *node)
 {
     qDebug() << "visitFpDef start";
+    DefaultParameterAst* ast = createAst<DefaultParameterAst>( node );
+    
+    mNodeStack.push( ast );
+    visitNode( node->defparam );
+    ast->name = safeNodeCast<ParameterPartAst>( mNodeStack.pop() );
+    if( node->fpDefTest )
+    {
+        visitNode( node->fpDefTest );
+        ast->value = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+    }
     qDebug() << "visitFpDef end";
 }
 

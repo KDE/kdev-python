@@ -993,25 +993,60 @@ void AstBuilder::visitLambdaDef(PythonParser::LambdaDefAst *node)
 void AstBuilder::visitListFor(PythonParser::ListForAst *node)
 {
     qDebug() << "visitListFor start";
+    ListForAst* ast = createAst<ListForAst>( node );
+    mNodeStack.push( ast );
+    visitNode( node->exprlist );
+    ast->assignedTargets = generateSpecializedList<TargetAst>( mListStack.pop() );
+    visitNode( node->testlistSafe );
+    ast->iterableObject = generateSpecializedList<ExpressionAst>( mListStack.pop() );
+    if( node->listIter )
+    {
+        visitNode( node->listIter );
+        if( node->listIter->listFor )
+        {
+            ast->nextGenerator = safeNodeCast<ListForAst>( mNodeStack.pop() );
+        }else
+        {
+            ast->nextCondition = safeNodeCast<ListIfAst>( mNodeStack.pop() );
+        }
+    }
     qDebug() << "visitListFor end";
 }
 
 void AstBuilder::visitListIf(PythonParser::ListIfAst *node)
 {
     qDebug() << "visitListIf start";
+    ListIfAst* ast = createAst<ListIfAst>( node );
+    mNodeStack.push( ast );
+    visitNode( node->test );
+    ast->condition = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+    if( node->listIter )
+    {
+        visitNode( node->listIter );
+        if( node->listIter->listFor )
+        {
+            ast->nextGenerator = safeNodeCast<ListForAst>( mNodeStack.pop() );
+        }else
+        {
+            ast->nextCondition = safeNodeCast<ListIfAst>( mNodeStack.pop() );
+        }
+    }
+    
     qDebug() << "visitListIf end";
 }
 
 void AstBuilder::visitListIter(PythonParser::ListIterAst *node)
 {
     qDebug() << "visitListIter start";
+    PythonParser::DefaultVisitor::visitListIter( node );
     qDebug() << "visitListIter end";
 }
 
 void AstBuilder::visitListmaker(PythonParser::ListmakerAst *node)
 {
-    qDebug() << "visitFpDef start";
-    qDebug() << "visitFpDef end";
+    qDebug() << "visitListmaker start";
+    
+    qDebug() << "visitListmaker end";
 }
 
 void AstBuilder::visitListMakerTest(PythonParser::ListMakerTestAst *node)

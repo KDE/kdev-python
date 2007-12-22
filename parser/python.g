@@ -76,9 +76,9 @@ namespace PythonParser
         SlashOp,
         ModuloOp,
         DoubleSlashOp,
-        BinaryPlusOp,
-        BinaryMinusOp,
-        BinaryTildeOp,
+        UnaryPlusOp,
+        UnaryMinusOp,
+        UnaryTildeOp,
         PlusEqOp,
         MinusEqOp,
         StarEqOp,
@@ -451,9 +451,9 @@ namespace PythonParser
    ( factOp=factOp) factor=factor | power=power
 -> factor ;;
 
-    PLUS        [: (*yynode)->facOp = PythonParser::BinaryPlusOp;     :]
-    | MINUS     [: (*yynode)->facOp = PythonParser::BinaryMinusOp;    :]
-    | TILDE     [: (*yynode)->facOp = PythonParser::BinaryTildeOp ;   :]
+    PLUS        [: (*yynode)->facOp = PythonParser::UnaryPlusOp;     :]
+    | MINUS     [: (*yynode)->facOp = PythonParser::UnaryMinusOp;    :]
+    | TILDE     [: (*yynode)->facOp = PythonParser::UnaryTildeOp ;   :]
 -> factOp [
     member variable facOp : PythonParser::OperatorType;   ];;
 

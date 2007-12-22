@@ -2443,7 +2443,7 @@ bool Parser::parseFactOp(FactOpAst **yynode)
             }
             yylex();
 
-            (*yynode)->facOp = PythonParser::BinaryPlusOp;
+            (*yynode)->facOp = PythonParser::UnaryPlusOp;
         }
         else if (yytoken == Token_MINUS)
         {
@@ -2454,7 +2454,7 @@ bool Parser::parseFactOp(FactOpAst **yynode)
             }
             yylex();
 
-            (*yynode)->facOp = PythonParser::BinaryMinusOp;
+            (*yynode)->facOp = PythonParser::UnaryMinusOp;
         }
         else if (yytoken == Token_TILDE)
         {
@@ -2465,7 +2465,7 @@ bool Parser::parseFactOp(FactOpAst **yynode)
             }
             yylex();
 
-            (*yynode)->facOp = PythonParser::BinaryTildeOp ;
+            (*yynode)->facOp = PythonParser::UnaryTildeOp ;
         }
         else
         {

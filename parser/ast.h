@@ -283,7 +283,7 @@ class ArithmeticExpressionAst : public ExpressionAst
 public:
     enum ArithmeticOperation
     {
-        PowerOp,
+        Power,
         UnaryPlus,
         UnaryMinus,
         UnaryTilde,
@@ -297,8 +297,7 @@ public:
         BinaryRightShift,
         BinaryAnd,
         BinaryOr,
-        BinaryXor,
-        NoOp
+        BinaryXor
     };
 
     ArithmeticExpressionAst( Ast*, Ast::AstType type );
@@ -802,9 +801,7 @@ class UnaryExpressionAst : public ArithmeticExpressionAst
 
 public:
     UnaryExpressionAst( Ast* );
-    //Either primary or operand is set. If primary is set this unary expression doesn't have an opType
-    Python::PrimaryAst* primary;
-    Python::UnaryExpressionAst* operand;
+    Python::ExpressionAst* operand;
 };
 
 class BinaryExpressionAst : public ArithmeticExpressionAst
@@ -812,8 +809,8 @@ class BinaryExpressionAst : public ArithmeticExpressionAst
 
 public:
     BinaryExpressionAst( Ast* );
-    Python::ArithmeticExpressionAst* lhs;
-    Python::ArithmeticExpressionAst* rhs;
+    Python::ExpressionAst* lhs;
+    Python::ExpressionAst* rhs;
 };
 
 class ComparisonAst : public BooleanOperationAst

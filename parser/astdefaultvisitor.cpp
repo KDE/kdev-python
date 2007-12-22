@@ -517,7 +517,6 @@ void AstDefaultVisitor::visitCall( CallAst* node )
 
 void AstDefaultVisitor::visitUnaryExpression( UnaryExpressionAst* node )
 {
-    visitNode( node->primary );
     visitNode( node->operand );
 }
 

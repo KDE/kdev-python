@@ -1045,13 +1045,31 @@ void AstBuilder::visitListIter(PythonParser::ListIterAst *node)
 void AstBuilder::visitListmaker(PythonParser::ListmakerAst *node)
 {
     qDebug() << "visitListmaker start";
-    
+    ListAst* ast = createAst<ListAst>( node );
+    mNodeStack.push( ast );
+    visitNode( node->listMakerTest );
+    ast->plainList = generateSpecializedList<ExpressionAst>( mListStack.pop() );
+    if( node->listFor )
+    {
+        //We should have only 1 expression in the listMakerTest as we're having a list_comprehension
+        Q_ASSERT( node->listMakerTest->listTestSequence->count() == 1 );
+        visitNode( node->listFor );
+        ast->listGenerator = safeNodeCast<ListForAst>( mNodeStack.pop() );
+    }
     qDebug() << "visitListmaker end";
 }
 
 void AstBuilder::visitListMakerTest(PythonParser::ListMakerTestAst *node)
 {
     qDebug() << "visitListMakerTest start";
+    QList<Ast*> l;
+    int count = node->listTestSequence->count();
+    for( int i = 0; i < count; i++ )
+    {
+        visitNode( node->listTestSequence->at(i)->element );
+        l << mNodeStack.pop();
+    }
+    mListStack.push( l );
     qDebug() << "visitListMakerTest end";
 }
 

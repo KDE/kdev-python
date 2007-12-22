@@ -74,7 +74,6 @@ public:
     virtual void visitForStmt(PythonParser::ForStmtAst *node);
     virtual void visitFpDef(PythonParser::FpDefAst *node);
     virtual void visitFplist(PythonParser::FplistAst *node);
-    virtual void visitFunPosParam(PythonParser::FunPosParamAst *node);
     virtual void visitFuncdecl(PythonParser::FuncdeclAst *node);
     virtual void visitFuncDef(PythonParser::FuncDefAst *node);
     virtual void visitGenFor(PythonParser::GenForAst *node);
@@ -82,8 +81,6 @@ public:
     virtual void visitGenIter(PythonParser::GenIterAst *node);
     virtual void visitGlobalStmt(PythonParser::GlobalStmtAst *node);
     virtual void visitIfStmt(PythonParser::IfStmtAst *node);
-    virtual void visitImportAsName(PythonParser::ImportAsNameAst *node);
-    virtual void visitImportAsNames(PythonParser::ImportAsNamesAst *node);
     virtual void visitImportFrom(PythonParser::ImportFromAst *node);
     virtual void visitImportName(PythonParser::ImportNameAst *node);
     virtual void visitImportStmt(PythonParser::ImportStmtAst *node);

@@ -1092,6 +1092,21 @@ void AstBuilder::visitNotTest(PythonParser::NotTestAst *node)
 void AstBuilder::visitNumber(PythonParser::NumberAst *node)
 {
     qDebug() << "visitNumber start";
+    LiteralAst* ast = createAst<LiteralAst>( node );
+    switch( node->numType )
+    {
+        case PythonParser::IntegerNumeric:
+            ast->literalType = LiteralAst::Integer;
+            break;
+        case PythonParser::ImaginaryNumeric:
+            ast->literalType = LiteralAst::ImaginaryNumber;
+            break;
+        case PythonParser::FloatNumeric:
+            ast->literalType = LiteralAst::Float;
+            break;
+    }
+    ast->value = tokenText( node->value );
+    mNodeStack.push( ast );
     qDebug() << "visitNumber end";
 }
 

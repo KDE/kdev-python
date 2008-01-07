@@ -1262,6 +1262,38 @@ void AstBuilder::visitReturnStmt(PythonParser::ReturnStmtAst *node)
 void AstBuilder::visitShiftExpr(PythonParser::ShiftExprAst *node)
 {
     qDebug() << "visitShiftExpr start";
+    visitNode( node->arithExpr );
+    if( count > 0 )
+    {
+        Q_ASSERT( count == node->arithExprListSequence->count() );
+        BinaryExpressionAst* ast = createAst<BinaryExpressionAst>( node );
+        ast->lhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+        count = node->shiftOpListSequence->count();
+        BinaryExpressionAst* cur = ast;
+        for( int i = 0; i < count; i++ )
+        {
+            switch( node->shiftOpListSequence->at( i )->element->shiftOp )
+            {
+                case PythonParser::LeftShiftOp:
+                    cur->opType = ArithmeticExpressionAst::BinaryLeftShift;
+                    break;
+                case PythonParser::RightShiftOp:
+                    cur->opType = ArithmeticExpressionAst::BinaryRightShift;
+                    break;
+            }
+            visitNode( node->arithExprListSequence->at( i )->element );
+            if( i == count - 1 )
+            {
+                cur->rhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+            }else
+            {
+                cur->rhs = createAst<BinaryExpressionAst>( node->arithExprListSequence->at( i )->element );
+                cur = cur->rhs;
+                cur->lhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+            }
+        }
+        mNodeStack.push( ast );
+    }
     qDebug() << "visitShiftExpr end";
 }
 

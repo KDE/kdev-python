@@ -1122,9 +1122,9 @@ void AstBuilder::visitPower(PythonParser::PowerAst *node)
 {
     qDebug() << "visitPower start";
     visitNode( node->atom );
-    AtomAst* atomast = safeNodeCast<AtomAst>( ast );
+    AtomAst* atomast = safeNodeCast<AtomAst>( mNodeStack.pop() );
     mNodeStack.push( atomast );
-    count = node->trailerSequence.count();
+    int count = node->trailerSequence->count();
     if( count > 0 )
     {
         for( int i = 0; i < count; i++ )
@@ -1134,21 +1134,21 @@ void AstBuilder::visitPower(PythonParser::PowerAst *node)
             PrimaryAst* prim = safeNodeCast<PrimaryAst>( mNodeStack.pop() );
             switch( ast->astType )
             {
-                case CallAst:
-                    static_cast<CallAst>( ast )->primary = prim;
+                case Ast::CallAst:
+                    static_cast<CallAst*>( ast )->callable = prim;
                     break;
                 case Ast::ExtendedSliceAst:
                 case Ast::SimpleSliceAst:
-                    static_cast<SliceAst>( ast )->primary = prim;
+                    static_cast<SliceAst*>( ast )->primary = prim;
                     break;
                 case Ast::AttributeReferenceAst:
-                    static_cast<AttributeReferenceAst>( ast )->primary = prim;
+                    static_cast<AttributeReferenceAst*>( ast )->primary = prim;
                     break;
                 case Ast::SubscriptAst:
-                    static_cast<SubscriptAst>( ast )->primary = prim;
+                    static_cast<SubscriptAst*>( ast )->primary = prim;
                     break;
                 default:
-                    Q_ASSERT_X(false, "OOOPS visitTrailer returned a PrimaryAst that is not known to have a primary in front of it, like an AtomAst or something new.");
+                    Q_ASSERT_X(false, "visitTrailer", "OOOPS visitTrailer returned a PrimaryAst that is not known to have a primary in front of it, like an AtomAst or something new.");
                     break;
             }
             mNodeStack.push( ast );
@@ -1263,12 +1263,12 @@ void AstBuilder::visitShiftExpr(PythonParser::ShiftExprAst *node)
 {
     qDebug() << "visitShiftExpr start";
     visitNode( node->arithExpr );
+    int count = node->shiftOpListSequence->count();
     if( count > 0 )
     {
         Q_ASSERT( count == node->arithExprListSequence->count() );
         BinaryExpressionAst* ast = createAst<BinaryExpressionAst>( node );
         ast->lhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
-        count = node->shiftOpListSequence->count();
         BinaryExpressionAst* cur = ast;
         for( int i = 0; i < count; i++ )
         {
@@ -1280,6 +1280,8 @@ void AstBuilder::visitShiftExpr(PythonParser::ShiftExprAst *node)
                 case PythonParser::RightShiftOp:
                     cur->opType = ArithmeticExpressionAst::BinaryRightShift;
                     break;
+                default:
+                    Q_ASSERT_X(false, "visitShiftExpr", "OOOPS, shift operator was something other than left or right shifting!");
             }
             visitNode( node->arithExprListSequence->at( i )->element );
             if( i == count - 1 )
@@ -1288,7 +1290,7 @@ void AstBuilder::visitShiftExpr(PythonParser::ShiftExprAst *node)
             }else
             {
                 cur->rhs = createAst<BinaryExpressionAst>( node->arithExprListSequence->at( i )->element );
-                cur = cur->rhs;
+                cur = safeNodeCast<BinaryExpressionAst>( cur->rhs );
                 cur->lhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
             }
         }

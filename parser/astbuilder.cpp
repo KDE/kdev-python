@@ -1265,12 +1265,6 @@ void AstBuilder::visitShiftExpr(PythonParser::ShiftExprAst *node)
     qDebug() << "visitShiftExpr end";
 }
 
-void AstBuilder::visitShiftOp(PythonParser::ShiftOpAst *node)
-{
-    qDebug() << "visitShiftOp start";
-    qDebug() << "visitShiftOp end";
-}
-
 void AstBuilder::visitSimpleStmt(PythonParser::SimpleStmtAst *node)
 {
     qDebug() << "visitSimpleStmt start";

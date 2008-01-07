@@ -1121,6 +1121,48 @@ void AstBuilder::visitPassStmt(PythonParser::PassStmtAst *node)
 void AstBuilder::visitPower(PythonParser::PowerAst *node)
 {
     qDebug() << "visitPower start";
+    visitNode( node->atom );
+    AtomAst* atomast = safeNodeCast<AtomAst>( ast );
+    mNodeStack.push( atomast );
+    count = node->trailerSequence.count();
+    if( count > 0 )
+    {
+        for( int i = 0; i < count; i++ )
+        {
+            visitTrailer( node->trailerSequence->at( i )->element );
+            PrimaryAst* ast = safeNodeCast<PrimaryAst>( mNodeStack.pop() );
+            PrimaryAst* prim = safeNodeCast<PrimaryAst>( mNodeStack.pop() );
+            switch( ast->astType )
+            {
+                case CallAst:
+                    static_cast<CallAst>( ast )->primary = prim;
+                    break;
+                case Ast::ExtendedSliceAst:
+                case Ast::SimpleSliceAst:
+                    static_cast<SliceAst>( ast )->primary = prim;
+                    break;
+                case Ast::AttributeReferenceAst:
+                    static_cast<AttributeReferenceAst>( ast )->primary = prim;
+                    break;
+                case Ast::SubscriptAst:
+                    static_cast<SubscriptAst>( ast )->primary = prim;
+                    break;
+                default:
+                    Q_ASSERT_X(false, "OOOPS visitTrailer returned a PrimaryAst that is not known to have a primary in front of it, like an AtomAst or something new.");
+                    break;
+            }
+            mNodeStack.push( ast );
+        }
+    }
+    if( node->factor )
+    {
+        BinaryExpressionAst* bast = createAst<BinaryExpressionAst>( node );
+        bast->opType = ArithmeticExpressionAst::Power;
+        bast->lhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+        visitNode( node->factor );
+        bast->rhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+        mNodeStack.push( bast );
+    }
     qDebug() << "visitPower end";
 }
 

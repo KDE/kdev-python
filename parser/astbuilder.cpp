@@ -1076,6 +1076,16 @@ void AstBuilder::visitListMakerTest(PythonParser::ListMakerTestAst *node)
 void AstBuilder::visitNotTest(PythonParser::NotTestAst *node)
 {
     qDebug() << "visitNotTest start";
+    if( node->notTest )
+    {
+        BooleanNotOperationAst* ast = createAst<BooleanNotOperationAst>( node );
+        mNodeStack.push( ast );
+        visitNode( node->notTest );
+        ast->op = safeNodeCast<BooleanOperationAst>( mNodeStack.pop() );
+    }else
+    {
+        visitNode( node->comparison );
+    }
     qDebug() << "visitNotTest end";
 }
 

@@ -438,24 +438,24 @@ namespace PythonParser
     member variable arithOp: PythonParser::OperatorType; ] ;;
 
    factor=factor
-    ((#termOpList = termOp #factorList=factor )+ | 0)
+    ((#termOp = termOp #factors=factor )+ | 0)
 -> term ;;
 
-    STAR        [: (*yynode)->termOp = PythonParser::StarOp;      :]
-    | SLASH     [: (*yynode)->termOp = PythonParser::SlashOp;     :]
-    | MODULO    [: (*yynode)->termOp = PythonParser::ModuloOp;    :]
-    | DOUBLESLASH [: (*yynode)->termOp = PythonParser::DoubleSlashOp; :]
+    STAR        [: (*yynode)->op = PythonParser::StarOp;      :]
+    | SLASH     [: (*yynode)->op = PythonParser::SlashOp;     :]
+    | MODULO    [: (*yynode)->op = PythonParser::ModuloOp;    :]
+    | DOUBLESLASH [: (*yynode)->op = PythonParser::DoubleSlashOp; :]
 -> termOp [
-    member variable termOp : PythonParser::OperatorType; ];;
+    member variable op : PythonParser::OperatorType; ];;
 
    ( factOp=factOp) factor=factor | power=power
 -> factor ;;
 
-    PLUS        [: (*yynode)->facOp = PythonParser::UnaryPlusOp;     :]
-    | MINUS     [: (*yynode)->facOp = PythonParser::UnaryMinusOp;    :]
-    | TILDE     [: (*yynode)->facOp = PythonParser::UnaryTildeOp ;   :]
+    PLUS        [: (*yynode)->op = PythonParser::UnaryPlusOp;     :]
+    | MINUS     [: (*yynode)->op = PythonParser::UnaryMinusOp;    :]
+    | TILDE     [: (*yynode)->op = PythonParser::UnaryTildeOp ;   :]
 -> factOp [
-    member variable facOp : PythonParser::OperatorType;   ];;
+    member variable op : PythonParser::OperatorType;   ];;
 
    ( atom=atom )
     (#trailer=trailer)* ( DOUBLESTAR factor=factor | 0 )

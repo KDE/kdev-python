@@ -108,61 +108,66 @@ public:
         AssignmentAst = 2,
         AtomAst = 3,
         AttributeReferenceAst = 4,
-        BinaryExpressionAst = 5,
-        BooleanAndOperationAst = 6,
-        BooleanNotOperationAst = 7,
-        BooleanOrOperationAst = 8,
-        BreakAst = 9,
-        CallAst = 10,
-        ClassDefinitionAst = 11,
-        CodeAst = 12,
-        ComparisonAst = 13,
-        ConditionalExpressionAst = 14,
-        ContinueAst = 15,
-        DecoratorAst = 16,
-        DefaultParameterAst = 17,
-        DelAst = 18,
-        DictionaryAst = 19,
-        DictionaryParameterAst = 20,
-        EllipsisSliceItemAst = 21,
-        EnclosureAst = 22,
-        ExceptAst = 23,
-        ExecAst = 24,
-        ExpressionSliceItemAst = 25,
-        ExpressionStatementAst = 26,
-        ExtendedSliceAst = 27,
-        ForAst = 28,
-        FromImportAst = 29,
-        FunctionDefinitionAst = 30,
-        GeneratorAst = 31,
-        GeneratorForAst = 32,
-        GeneratorIfAst = 33,
-        GlobalAst = 34,
-        IdentifierAst = 35,
-        IdentifierParameterPartAst = 36,
-        IfAst = 37,
-        LambdaAst = 38,
-        ListAst = 39,
-        ListForAst = 40,
-        ListIfAst = 41,
-        ListParameterAst = 42,
-        ListParameterPartAst = 43,
-        LiteralAst = 44,
-        PassAst = 45,
-        PlainImportAst = 46,
-        PrintAst = 47,
-        ProperSliceItemAst = 48,
-        RaiseAst = 49,
-        ReturnAst = 50,
-        SimpleSliceAst = 51,
-        StarImportAst = 52,
-        SubscriptAst = 53,
-        TargetAst = 54,
-        TryAst = 55,
-        UnaryExpressionAst = 56,
-        WhileAst = 57,
-        WithAst = 58,
-        YieldAst = 59
+        AttributeReferenceTargetAst = 5,
+        BinaryExpressionAst = 6,
+        BooleanAndOperationAst = 7,
+        BooleanNotOperationAst = 8,
+        BooleanOrOperationAst = 9,
+        BreakAst = 10,
+        CallAst = 11,
+        ClassDefinitionAst = 12,
+        CodeAst = 13,
+        ComparisonAst = 14,
+        ConditionalExpressionAst = 15,
+        ContinueAst = 16,
+        DecoratorAst = 17,
+        DefaultParameterAst = 18,
+        DelAst = 19,
+        DictionaryAst = 20,
+        DictionaryParameterAst = 21,
+        EllipsisSliceItemAst = 22,
+        EnclosureAst = 23,
+        ExceptAst = 24,
+        ExecAst = 25,
+        ExpressionSliceItemAst = 26,
+        ExpressionStatementAst = 27,
+        ExtendedSliceAst = 28,
+        ForAst = 29,
+        FromImportAst = 30,
+        FunctionDefinitionAst = 31,
+        GeneratorAst = 32,
+        GeneratorForAst = 33,
+        GeneratorIfAst = 34,
+        GlobalAst = 35,
+        IdentifierAst = 36,
+        IdentifierParameterPartAst = 37,
+        IdentifierTargetAst = 38,
+        IfAst = 39,
+        LambdaAst = 40,
+        ListAst = 41,
+        ListForAst = 42,
+        ListIfAst = 43,
+        ListParameterAst = 44,
+        ListParameterPartAst = 45,
+        ListTargetAst = 46,
+        LiteralAst = 47,
+        PassAst = 48,
+        PlainImportAst = 49,
+        PrintAst = 50,
+        ProperSliceItemAst = 51,
+        RaiseAst = 52,
+        ReturnAst = 53,
+        SimpleSliceAst = 54,
+        SliceTargetAst = 55,
+        StarImportAst = 56,
+        SubscriptAst = 57,
+        SubscriptTargetAst = 58,
+        TryAst = 59,
+        TupleTargetAst = 60,
+        UnaryExpressionAst = 61,
+        WhileAst = 62,
+        WithAst = 63,
+        YieldAst = 64
     };
 
     Ast( Ast* parent, AstType type );
@@ -311,6 +316,12 @@ public:
 };
 
 
+class TargetAst : public Ast
+{
+public:
+    TargetAst( Ast*, Ast::AstType );
+};
+
 class FunctionDefinitionAst : public StatementAst
 {
 
@@ -322,25 +333,46 @@ public:
     QList<Python::StatementAst*> functionBody;
 };
 
-class TargetAst : public Ast
+class IdentifierTargetAst : public TargetAst
 {
 public:
-
-    enum TargetType
-    {
-        TupleTarget,
-        ListTarget,
-        AttributeReferenceTarget,
-        SubscriptTarget,
-        SliceTarget
-    };
-    TargetAst( Ast* );
+    IdentifierTargetAst( Ast* );
     Python::IdentifierAst* identifier;
-    QList<Python::TargetAst*> listItems;
-    TargetType targetType;
-    Python::AttributeReferenceAst* attributeReference;
+};
+
+class TupleTargetAst : public TargetAst
+{
+public:
+    TupleTargetAst( Ast* );
+    QList<Python::TargetAst*> items;
+};
+
+class ListTargetAst : public TargetAst
+{
+public:
+    ListTargetAst( Ast* );
+    QList<Python::TargetAst*> items;
+};
+
+class AttributeReferenceTargetAst : public TargetAst
+{
+public:
+    AttributeReferenceTargetAst( Ast* );
+    Python::AttributeReferenceAst* attribute;
+};
+
+class SubscriptTargetAst : public TargetAst
+{
+public:
+    SubscriptTargetAst( Ast* );
     Python::SubscriptAst* subscript;
-    Python::SliceAst* slice;
+};
+
+class SliceTargetAst : public TargetAst
+{
+public:
+    SliceTargetAst( Ast* );
+    Python::SliceAst* subscript;
 };
 
 class DecoratorAst : public Ast
@@ -604,8 +636,7 @@ public:
         AssignmentOp
     };
     AssignmentAst( Ast* );
-    OpType operation;
-    QList<QList<Python::TargetAst*> > targets;
+    QList<QPair<QList<Python::TargetAst*>, OpType > > targets;
     QList<Python::ExpressionAst*> value;
     Python::YieldAst* yieldValue;
 };

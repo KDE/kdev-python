@@ -37,7 +37,6 @@ public:
 
     virtual void visitCode( CodeAst* ) = 0;
     virtual void visitFunctionDefinition( FunctionDefinitionAst* ) = 0;
-    virtual void visitTarget( TargetAst* ) = 0;
     virtual void visitDecorator( DecoratorAst* ) = 0;
     virtual void visitArgument( ArgumentAst* ) = 0;
     virtual void visitDefaultParameter( DefaultParameterAst* ) = 0;
@@ -95,6 +94,12 @@ public:
     virtual void visitContinue( StatementAst* ) = 0;
     virtual void visitPass( StatementAst* ) = 0;
     virtual void visitIdentifier( IdentifierAst* ) = 0;
+    virtual void visitIdentifierTarget( IdentifierTargetAst* ) = 0;
+    virtual void visitListTarget( ListTargetAst* ) = 0;
+    virtual void visitTupleTarget( TupleTargetAst* ) = 0;
+    virtual void visitAttributeReferenceTarget( AttributeReferenceTargetAst* ) = 0;
+    virtual void visitSubscriptTarget( SubscriptTargetAst* ) = 0;
+    virtual void visitSliceTarget( SliceTargetAst* ) = 0;
 };
 }
 

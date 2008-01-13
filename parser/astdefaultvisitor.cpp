@@ -60,29 +60,6 @@ void AstDefaultVisitor::visitFunctionDefinition( FunctionDefinitionAst* node )
     }
 }
 
-void AstDefaultVisitor::visitTarget( TargetAst* node )
-{
-    switch( node->targetType )
-    {
-        case TargetAst::TupleTarget:
-        case TargetAst::ListTarget:
-            foreach( TargetAst* t, node->listItems )
-            {
-                visitNode( t );
-            }
-            break;
-        case TargetAst::AttributeReferenceTarget:
-            visitNode( node->attributeReference );
-            break;
-        case TargetAst::SubscriptTarget:
-            visitNode( node->subscript );
-            break;
-        case TargetAst::SliceTarget:
-            visitNode( node->slice );
-            break;
-    }
-}
-
 void AstDefaultVisitor::visitDecorator( DecoratorAst* node )
 {
     foreach( ArgumentAst* a, node->arguments )
@@ -344,13 +321,19 @@ void AstDefaultVisitor::visitExpressionStatement( ExpressionStatementAst* node )
 
 void AstDefaultVisitor::visitAssignment( AssignmentAst* node )
 {
-    foreach( QList<TargetAst*> tl,  node->targets )
+    QList<QPair<QList<TargetAst*>, AssignmentAst::OpType > >::const_iterator it;
+    QList<QPair<QList<TargetAst*>, AssignmentAst::OpType > >::const_iterator end;
+    it = node->targets.begin();
+    end = node->targets.end();
+    for( ; it != end; ++it )
     {
-        foreach( TargetAst* t,  tl )
+        QList<TargetAst*> tl = (*it).first;
+        foreach( TargetAst* t, tl )
         {
             visitNode( t );
         }
     }
+    
     foreach( ExpressionAst* e, node->value )
     {
         visitNode( e );
@@ -588,6 +571,42 @@ void AstDefaultVisitor::visitIdentifier( IdentifierAst * )
 
 void AstDefaultVisitor::visitLiteral( LiteralAst * )
 {
+}
+
+void AstDefaultVisitor::visitIdentifierTarget( IdentifierTargetAst * ast )
+{
+    visitNode( ast->identifier );
+}
+
+void AstDefaultVisitor::visitListTarget( ListTargetAst * ast )
+{
+    foreach( Python::TargetAst* t, ast->items )
+    {
+        visitNode( t );
+    }
+}
+
+void AstDefaultVisitor::visitTupleTarget( TupleTargetAst * ast )
+{
+    foreach( Python::TargetAst* t, ast->items )
+    {
+        visitNode( t );
+    }
+}
+
+void AstDefaultVisitor::visitAttributeReferenceTarget( AttributeReferenceTargetAst * ast )
+{
+    visitNode( ast->attribute );
+}
+
+void AstDefaultVisitor::visitSubscriptTarget( SubscriptTargetAst * ast )
+{
+    visitNode( ast->subscript );
+}
+
+void AstDefaultVisitor::visitSliceTarget( SliceTargetAst * ast )
+{
+    visitNode( ast->subscript );
 }
 
 }

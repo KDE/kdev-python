@@ -603,50 +603,51 @@ void AstBuilder::visitExprStmt(PythonParser::ExprStmtAst *node)
         // Augmented assignments cannot have multiple targets, so the testlist needs to contain only 1 element
         Q_ASSERT( mListStack.top().count() == 1 );
         AssignmentAst* a = createAst<AssignmentAst>( node );
-        a->targets.append( generateSpecializedList<TargetAst>( mListStack.pop() ) );
-        
+        QList<TargetAst*> l = generateSpecializedList<TargetAst>( mListStack.pop() );
+        AssignmentAst::OpType op;
         switch( node->augassign->assignOp )
         {
             case PythonParser::PlusEqOp:
-                a->operation = AssignmentAst::AddEqualOp;
+                op = AssignmentAst::AddEqualOp;
                 break;
             case PythonParser::MinusEqOp:
-                a->operation = AssignmentAst::SubEqualOp;
+                op = AssignmentAst::SubEqualOp;
                 break;
             case PythonParser::StarEqOp:
-                a->operation = AssignmentAst::MultiplyEqualOp;
+                op = AssignmentAst::MultiplyEqualOp;
                 break;
             case PythonParser::SlashEqOp:
-                a->operation = AssignmentAst::DivideEqualOp;
+                op = AssignmentAst::DivideEqualOp;
                 break;
             case PythonParser::ModuloEqOp:
-                a->operation = AssignmentAst::ModuloEqualOp;
+                op = AssignmentAst::ModuloEqualOp;
                 break;
             case PythonParser::AndEqOp:
-                a->operation = AssignmentAst::AndEqualOp;
+                op = AssignmentAst::AndEqualOp;
                 break;
             case PythonParser::OrEqOp:
-                a->operation = AssignmentAst::OrEqualOp;
+                op = AssignmentAst::OrEqualOp;
                 break;
             case PythonParser::HatEqOp:
-                a->operation = AssignmentAst::XorEqualOp;
+                op = AssignmentAst::XorEqualOp;
                 break;
             case PythonParser::LeftShiftEqOp:
-                a->operation = AssignmentAst::LeftShiftEqualOp;
+                op = AssignmentAst::LeftShiftEqualOp;
                 break;
             case PythonParser::RightShiftEqOp:
-                a->operation = AssignmentAst::RightShiftEqualOp;
+                op = AssignmentAst::RightShiftEqualOp;
                 break;
             case PythonParser::DoublestarEqOp:
-                a->operation = AssignmentAst::PowEqualOp;
+                op = AssignmentAst::PowEqualOp;
                 break;
             case PythonParser::DoubleslashEqOp:
-                a->operation = AssignmentAst::FloorEqualOp;
+                op = AssignmentAst::FloorEqualOp;
                 break;
             default:
                 //Should never reach here, unless somebody changed the grammer and not the builder
                 Q_ASSERT(false);
         }
+        a->targets.append( qMakePair( l, op ) );
         if( node->yield )
         {
             visitNode( node->yield );
@@ -659,11 +660,11 @@ void AstBuilder::visitExprStmt(PythonParser::ExprStmtAst *node)
         mNodeStack.push( a );
     }else if( node->yield || node->equalTestlistSequence->count() > 0 )
     {
-        QList<QList<TargetAst*> > l;
-        l << generateSpecializedList<TargetAst>( mListStack.pop() );
-        
         AssignmentAst* a = createAst<AssignmentAst>( node );
-        a->operation = AssignmentAst::AssignmentOp;
+        QList<TargetAst*> l;
+        a->targets.append( qMakePair( generateSpecializedList<TargetAst>( mListStack.pop() ),
+                                      AssignmentAst::AssignmentOp) );
+
         int count = node->equalTestlistSequence->count();
         if( count > 0 )
         {
@@ -676,10 +677,10 @@ void AstBuilder::visitExprStmt(PythonParser::ExprStmtAst *node)
                     break;
                 }
                 visitNode( node->equalTestlistSequence->at(i)->element );
-                l << generateSpecializedList<TargetAst>( mListStack.pop() );
+                a->targets.append( qMakePair( generateSpecializedList<TargetAst>( mListStack.pop() ),
+                                              AssignmentAst::AssignmentOp ) );
             }
         }
-        a->targets = l;
         if( node->yield )
         {
             visitNode( node->yield );
@@ -1122,7 +1123,6 @@ void AstBuilder::visitPower(PythonParser::PowerAst *node)
 {
     qDebug() << "visitPower start";
     visitNode( node->atom );
-    AtomAst* atomast = safeNodeCast<AtomAst>( mNodeStack.top() );
     int count = node->trailerSequence->count();
     if( count > 0 )
     {

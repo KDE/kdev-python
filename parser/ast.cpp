@@ -141,8 +141,8 @@ AssignmentAst::AssignmentAst( Ast* parent )
     : StatementAst( parent, Ast::AssignmentAst )
 {
 }
-TargetAst::TargetAst( Ast* parent )
-    : Ast( parent, Ast::TargetAst )
+TargetAst::TargetAst( Ast* parent, Ast::AstType type )
+    : Ast( parent, type )
 {
 }
 AtomAst::AtomAst( Ast* parent )
@@ -312,6 +312,37 @@ LiteralAst::LiteralAst( Ast* parent )
     : Ast( parent, Ast::LiteralAst )
 {
 }
+
+IdentifierTargetAst::IdentifierTargetAst( Ast * parent )
+    : TargetAst( parent, Ast::IdentifierTargetAst )
+{
+}
+
+TupleTargetAst::TupleTargetAst( Ast * parent )
+    : TargetAst( parent, Ast::TupleTargetAst )
+{
+}
+
+ListTargetAst::ListTargetAst( Ast * parent )
+    : TargetAst( parent, Ast::ListTargetAst )
+{
+}
+
+AttributeReferenceTargetAst::AttributeReferenceTargetAst( Ast * parent )
+    : TargetAst( parent, Ast::AttributeReferenceTargetAst )
+{
+}
+
+SubscriptTargetAst::SubscriptTargetAst( Ast * parent )
+    : TargetAst( parent, Ast::SubscriptTargetAst )
+{
+}
+
+SliceTargetAst::SliceTargetAst( Ast * parent )
+    : TargetAst( parent, Ast::SliceTargetAst )
+{
+}
+
 
 }
 

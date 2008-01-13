@@ -1500,6 +1500,14 @@ void AstBuilder::visitTest(PythonParser::TestAst *node)
 void AstBuilder::visitTestlist(PythonParser::TestlistAst *node)
 {
     qDebug() << "visitTestlist start";
+    QList<Ast*> expressions;
+    int count = node->testsSequence->count();
+    for( int i = 0; i < count; i++ )
+    {
+        visitNode( node->testsSequence->at( i )->element );
+        expressions << safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+    }
+    mListStack.push( expressions ); 
     qDebug() << "visitTestlist end";
 }
 
@@ -1512,6 +1520,14 @@ void AstBuilder::visitCodeexpr(PythonParser::CodeexprAst *node)
 void AstBuilder::visitTestlistSafe(PythonParser::TestlistSafeAst *node)
 {
     qDebug() << "visitTestlistSafe start";
+    QList<Ast*> expressions;
+    int count = node->testSequence->count();
+    for( int i = 0; i < count; i++ )
+    {
+        visitNode( node->testSequence->at( i )->element );
+        expressions << safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+    }
+    mListStack.push( expressions ); 
     qDebug() << "visitTestlistSafe end";
 }
 

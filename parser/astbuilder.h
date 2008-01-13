@@ -107,7 +107,6 @@ public:
     virtual void visitSubscriptlist(PythonParser::SubscriptlistAst *node);
     virtual void visitSuite(PythonParser::SuiteAst *node);
     virtual void visitTerm(PythonParser::TermAst *node);
-    virtual void visitTermOp(PythonParser::TermOpAst *node);
     virtual void visitTest(PythonParser::TestAst *node);
     virtual void visitTestlist(PythonParser::TestlistAst *node);
     virtual void visitTestlistSafe(PythonParser::TestlistSafeAst *node);

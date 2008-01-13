@@ -724,7 +724,7 @@ void AstBuilder::visitFactor(PythonParser::FactorAst *node)
         UnaryExpressionAst* ast = createAst<UnaryExpressionAst>( node );
         mNodeStack.push( ast );
         visitNode( node->factor );
-        switch( node->factOp->facOp )
+        switch( node->factOp->op )
         {
             case PythonParser::UnaryPlusOp:
                 ast->opType = ArithmeticExpressionAst::UnaryPlus;
@@ -1122,8 +1122,7 @@ void AstBuilder::visitPower(PythonParser::PowerAst *node)
 {
     qDebug() << "visitPower start";
     visitNode( node->atom );
-    AtomAst* atomast = safeNodeCast<AtomAst>( mNodeStack.pop() );
-    mNodeStack.push( atomast );
+    AtomAst* atomast = safeNodeCast<AtomAst>( mNodeStack.top() );
     int count = node->trailerSequence->count();
     if( count > 0 )
     {
@@ -1444,13 +1443,52 @@ void AstBuilder::visitSuite(PythonParser::SuiteAst *node)
 void AstBuilder::visitTerm(PythonParser::TermAst *node)
 {
     qDebug() << "visitTerm start";
+    visitNode( node->factor );
+    int count = node->factorsSequence->count();
+    if( count > 0 )
+    {
+        Q_ASSERT( count == node->termOpSequence->count() );
+        BinaryExpressionAst* curast = createAst<BinaryExpressionAst>( node );
+        curast->lhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+        // put the binary expression onto the stack now, so its still on the stack
+        // after the loop finishes
+        mNodeStack.push( curast );
+        for( int i = 0; i < count; i++ )
+        {
+            //Push current bin-expr on stack to be used as parent
+            mNodeStack.push( curast );
+            visitNode( node->factorsSequence->at(i)->element );
+            if( i == count-1 )
+            {
+                curast->rhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+            }else
+            {
+                curast->rhs = createAst<BinaryExpressionAst>( node );
+                switch( node->termOpSequence->at(i)->element->op )
+                {
+                    case PythonParser::StarOp:
+                        curast->opType = ArithmeticExpressionAst::BinaryMultiply;
+                        break;
+                    case PythonParser::ModuloOp:
+                        curast->opType = ArithmeticExpressionAst::BinaryModulo;
+                        break;
+                    case PythonParser::SlashOp:
+                        curast->opType = ArithmeticExpressionAst::BinaryDivide;
+                        break;
+                    case PythonParser::DoubleSlashOp:
+                        curast->opType = ArithmeticExpressionAst::BinaryFloor;
+                        break;
+                    default:
+                        Q_ASSERT_X( false, "visitTerm", "OOPS, termop has an unknown value" );
+                }
+                curast->lhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+                curast = safeNodeCast<BinaryExpressionAst>( curast->rhs );
+            }
+            //pop parent from stack
+            mNodeStack.pop();
+        }
+    }
     qDebug() << "visitTerm end";
-}
-
-void AstBuilder::visitTermOp(PythonParser::TermOpAst *node)
-{
-    qDebug() << "visitTermOp start";
-    qDebug() << "visitTermOp end";
 }
 
 void AstBuilder::visitTest(PythonParser::TestAst *node)

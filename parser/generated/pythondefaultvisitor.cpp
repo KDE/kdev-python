@@ -643,11 +643,6 @@ void DefaultVisitor::visitSimpleStmt(SimpleStmtAst *node)
     }
 }
 
-void DefaultVisitor::visitSliceop(SliceopAst *node)
-{
-    visitNode(node->sliceTest);
-}
-
 void DefaultVisitor::visitSmallStmt(SmallStmtAst *node)
 {
     visitNode(node->exprStmt);
@@ -669,9 +664,9 @@ void DefaultVisitor::visitStmt(StmtAst *node)
 
 void DefaultVisitor::visitSubscript(SubscriptAst *node)
 {
-    visitNode(node->subTest);
-    visitNode(node->subColonTest);
-    visitNode(node->sliceop);
+    visitNode(node->begin);
+    visitNode(node->end);
+    visitNode(node->step);
 }
 
 void DefaultVisitor::visitSubscriptlist(SubscriptlistAst *node)
@@ -706,9 +701,9 @@ void DefaultVisitor::visitSuite(SuiteAst *node)
 void DefaultVisitor::visitTerm(TermAst *node)
 {
     visitNode(node->factor);
-    if (node->termOpListSequence)
+    if (node->termOpSequence)
     {
-        const KDevPG::ListNode<TermOpAst*> *__it = node->termOpListSequence->front(), *__end = __it;
+        const KDevPG::ListNode<TermOpAst*> *__it = node->termOpSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);
@@ -716,9 +711,9 @@ void DefaultVisitor::visitTerm(TermAst *node)
         }
         while (__it != __end);
     }
-    if (node->factorListSequence)
+    if (node->factorsSequence)
     {
-        const KDevPG::ListNode<FactorAst*> *__it = node->factorListSequence->front(), *__end = __it;
+        const KDevPG::ListNode<FactorAst*> *__it = node->factorsSequence->front(), *__end = __it;
         do
         {
             visitNode(__it->element);

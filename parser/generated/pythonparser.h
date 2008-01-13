@@ -262,7 +262,6 @@ public:
     bool parseShiftExpr(ShiftExprAst **yynode);
     bool parseShiftOp(ShiftOpAst **yynode);
     bool parseSimpleStmt(SimpleStmtAst **yynode);
-    bool parseSliceop(SliceopAst **yynode);
     bool parseSmallStmt(SmallStmtAst **yynode);
     bool parseStmt(StmtAst **yynode);
     bool parseSubscript(SubscriptAst **yynode);

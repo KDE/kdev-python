@@ -87,7 +87,6 @@ public:
     virtual void visitShiftExpr(ShiftExprAst *) {}
     virtual void visitShiftOp(ShiftOpAst *) {}
     virtual void visitSimpleStmt(SimpleStmtAst *) {}
-    virtual void visitSliceop(SliceopAst *) {}
     virtual void visitSmallStmt(SmallStmtAst *) {}
     virtual void visitStmt(StmtAst *) {}
     virtual void visitSubscript(SubscriptAst *) {}

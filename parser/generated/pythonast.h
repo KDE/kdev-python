@@ -129,7 +129,6 @@ struct ReturnStmtAst;
 struct ShiftExprAst;
 struct ShiftOpAst;
 struct SimpleStmtAst;
-struct SliceopAst;
 struct SmallStmtAst;
 struct StmtAst;
 struct SubscriptAst;
@@ -219,24 +218,23 @@ struct KDEVPYTHONPARSER_EXPORT AstNode
         ShiftExprKind = 1063,
         ShiftOpKind = 1064,
         SimpleStmtKind = 1065,
-        SliceopKind = 1066,
-        SmallStmtKind = 1067,
-        StmtKind = 1068,
-        SubscriptKind = 1069,
-        SubscriptlistKind = 1070,
-        SuiteKind = 1071,
-        TermKind = 1072,
-        TermOpKind = 1073,
-        TestKind = 1074,
-        TestlistKind = 1075,
-        TestlistSafeKind = 1076,
-        TrailerKind = 1077,
-        TryStmtKind = 1078,
-        VarargslistKind = 1079,
-        WhileStmtKind = 1080,
-        XorExprKind = 1081,
-        YieldExprKind = 1082,
-        YieldStmtKind = 1083,
+        SmallStmtKind = 1066,
+        StmtKind = 1067,
+        SubscriptKind = 1068,
+        SubscriptlistKind = 1069,
+        SuiteKind = 1070,
+        TermKind = 1071,
+        TermOpKind = 1072,
+        TestKind = 1073,
+        TestlistKind = 1074,
+        TestlistSafeKind = 1075,
+        TrailerKind = 1076,
+        TryStmtKind = 1077,
+        VarargslistKind = 1078,
+        WhileStmtKind = 1079,
+        XorExprKind = 1080,
+        YieldExprKind = 1081,
+        YieldStmtKind = 1082,
         AST_NODE_KIND_COUNT
     };
 
@@ -487,7 +485,7 @@ struct KDEVPYTHONPARSER_EXPORT FactOpAst: public AstNode
 {
     enum { KIND = FactOpKind };
 
-    PythonParser::OperatorType facOp;
+    PythonParser::OperatorType op;
 };
 
 struct KDEVPYTHONPARSER_EXPORT FactorAst: public AstNode
@@ -781,13 +779,6 @@ struct KDEVPYTHONPARSER_EXPORT SimpleStmtAst: public AstNode
     const KDevPG::ListNode<SmallStmtAst *> *smallStmtSequence;
 };
 
-struct KDEVPYTHONPARSER_EXPORT SliceopAst: public AstNode
-{
-    enum { KIND = SliceopKind };
-
-    TestAst *sliceTest;
-};
-
 struct KDEVPYTHONPARSER_EXPORT SmallStmtAst: public AstNode
 {
     enum { KIND = SmallStmtKind };
@@ -815,16 +806,18 @@ struct KDEVPYTHONPARSER_EXPORT SubscriptAst: public AstNode
 {
     enum { KIND = SubscriptKind };
 
-    qint64 subcriptEllipsis;
-    TestAst *subTest;
-    TestAst *subColonTest;
-    SliceopAst *sliceop;
+    bool isEllipsis;
+    bool hasColon;
+    TestAst *begin;
+    TestAst *end;
+    TestAst *step;
 };
 
 struct KDEVPYTHONPARSER_EXPORT SubscriptlistAst: public AstNode
 {
     enum { KIND = SubscriptlistKind };
 
+    bool hasComma;
     const KDevPG::ListNode<SubscriptAst *> *subscriptSequence;
 };
 
@@ -841,15 +834,15 @@ struct KDEVPYTHONPARSER_EXPORT TermAst: public AstNode
     enum { KIND = TermKind };
 
     FactorAst *factor;
-    const KDevPG::ListNode<TermOpAst *> *termOpListSequence;
-    const KDevPG::ListNode<FactorAst *> *factorListSequence;
+    const KDevPG::ListNode<TermOpAst *> *termOpSequence;
+    const KDevPG::ListNode<FactorAst *> *factorsSequence;
 };
 
 struct KDEVPYTHONPARSER_EXPORT TermOpAst: public AstNode
 {
     enum { KIND = TermOpKind };
 
-    PythonParser::OperatorType termOp;
+    PythonParser::OperatorType op;
 };
 
 struct KDEVPYTHONPARSER_EXPORT TestAst: public AstNode

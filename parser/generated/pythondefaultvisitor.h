@@ -79,7 +79,6 @@ public:
     virtual void visitShiftExpr(ShiftExprAst *node);
     virtual void visitShiftOp(ShiftOpAst *node);
     virtual void visitSimpleStmt(SimpleStmtAst *node);
-    virtual void visitSliceop(SliceopAst *node);
     virtual void visitSmallStmt(SmallStmtAst *node);
     virtual void visitStmt(StmtAst *node);
     virtual void visitSubscript(SubscriptAst *node);

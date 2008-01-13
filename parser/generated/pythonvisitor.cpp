@@ -74,7 +74,6 @@ Visitor::ParserFuncType Visitor::sParserTable[] =
     reinterpret_cast<ParserFuncType>(&Visitor::visitShiftExpr),
     reinterpret_cast<ParserFuncType>(&Visitor::visitShiftOp),
     reinterpret_cast<ParserFuncType>(&Visitor::visitSimpleStmt),
-    reinterpret_cast<ParserFuncType>(&Visitor::visitSliceop),
     reinterpret_cast<ParserFuncType>(&Visitor::visitSmallStmt),
     reinterpret_cast<ParserFuncType>(&Visitor::visitStmt),
     reinterpret_cast<ParserFuncType>(&Visitor::visitSubscript),

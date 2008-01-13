@@ -395,7 +395,7 @@ void AstBuilder::visitComparison(PythonParser::ComparisonAst *node)
         int count = node->compOpSequence->count();
         for( int i = 0; i < count; i++ )
         {
-            QPair<ComparisonAst::ComparisonOperator, ArithmeticExpressionAst*> pair;
+            QPair<ComparisonAst::ComparisonOperator, ExpressionAst*> pair;
             switch( node->compOpSequence->at(i)->element->compOp )
             {
                 case PythonParser::LessOp:
@@ -433,7 +433,7 @@ void AstBuilder::visitComparison(PythonParser::ComparisonAst *node)
                     Q_ASSERT(false);
             }
             visitNode( node->compOpExprSequence->at(i)->element );
-            pair.second = safeNodeCast<ArithmeticExpressionAst>( mNodeStack.pop() );
+            pair.second = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
             ast->comparatorList << pair;
         }
     }
@@ -1496,6 +1496,35 @@ void AstBuilder::visitTerm(PythonParser::TermAst *node)
 void AstBuilder::visitTest(PythonParser::TestAst *node)
 {
     qDebug() << "visitTest start";
+    if( node->lambdaDef )
+    {
+        visitNode( node->lambdaDef );
+    }else
+    {
+        visitNode( node->andTestSequence->at(0)->element );
+        if( node->andTestSequence->count() > 1 )
+        {
+            BooleanOrOperationAst* ast = createAst<BooleanOrOperationAst>( node );
+            ast->lhs = safeNodeCast<BooleanOperationAst>( mNodeStack.pop() );
+            int count = node->andTestSequence->count();
+            mNodeStack.push( ast );
+            for( int i = 1; i < count; i++ )
+            {
+                visitNode( node->andTestSequence->at(i)->element );
+                if( i+1 < count )
+                {
+                    BooleanOrOperationAst* tmp = createAst<BooleanOrOperationAst>( 
+                            node->andTestSequence->at(i)->element );
+                    tmp->lhs = safeNodeCast<BooleanOperationAst>( mNodeStack.pop() );
+                    ast->rhs = tmp;
+                    ast = tmp;
+                }else
+                {
+                    ast->rhs = safeNodeCast<BooleanOperationAst>( mNodeStack.pop() );
+                }
+            }
+        }
+    }
     qDebug() << "visitTest end";
 }
 

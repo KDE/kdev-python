@@ -822,8 +822,7 @@ public:
     CallAst( Ast* );
     Python::PrimaryAst* callable;
     QList<Python::ArgumentAst*> arguments;
-    Python::ExpressionAst* callValue;
-    Python::GeneratorForAst* callGenerator;
+    Python::GeneratorAst* generator;
 };
 
 

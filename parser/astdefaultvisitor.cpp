@@ -494,8 +494,7 @@ void AstDefaultVisitor::visitCall( CallAst* node )
     {
         visitNode( a );
     }
-    visitNode( node->callValue );
-    visitNode( node->callGenerator );
+    visitNode( node->generator );
 }
 
 void AstDefaultVisitor::visitUnaryExpression( UnaryExpressionAst* node )

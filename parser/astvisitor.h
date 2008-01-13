@@ -80,8 +80,8 @@ public:
     virtual void visitExtendedSlice( ExtendedSliceAst* ) = 0;
     virtual void visitSimpleSlice( SimpleSliceAst* ) = 0;
     virtual void visitProperSliceItem( ProperSliceItemAst* ) = 0;
-    virtual void visitExpressionSlice( ExpressionSliceAst* ) = 0;
-    virtual void visitEllipsisSlice( EllipsisSliceAst* ) = 0;
+    virtual void visitExpressionSliceItem( ExpressionSliceItemAst* ) = 0;
+    virtual void visitEllipsisSliceItem( EllipsisSliceItemAst* ) = 0;
     virtual void visitCall( CallAst* ) = 0;
     virtual void visitUnaryExpression( UnaryExpressionAst* ) = 0;
     virtual void visitBinaryExpression( BinaryExpressionAst* ) = 0;

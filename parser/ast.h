@@ -124,11 +124,11 @@ public:
         DelAst = 18,
         DictionaryAst = 19,
         DictionaryParameterAst = 20,
-        EllipsisSliceAst = 21,
+        EllipsisSliceItemAst = 21,
         EnclosureAst = 22,
         ExceptAst = 23,
         ExecAst = 24,
-        ExpressionSliceAst = 25,
+        ExpressionSliceItemAst = 25,
         ExpressionStatementAst = 26,
         ExtendedSliceAst = 27,
         ForAst = 28,
@@ -586,7 +586,7 @@ public:
 class AssignmentAst : public StatementAst
 {
 public:
-    
+
     enum OpType
     {
         AddEqualOp,
@@ -769,19 +769,19 @@ public:
     Python::ExpressionAst* stride;
 };
 
-class ExpressionSliceAst : public SliceItemAst
+class ExpressionSliceItemAst : public SliceItemAst
 {
 
 public:
-    ExpressionSliceAst( Ast* );
+    ExpressionSliceItemAst( Ast* );
     Python::ExpressionAst* sliceExpression;
 };
 
-class EllipsisSliceAst : public SliceItemAst
+class EllipsisSliceItemAst : public SliceItemAst
 {
 
 public:
-    EllipsisSliceAst( Ast* );
+    EllipsisSliceItemAst( Ast* );
 };
 
 class CallAst : public PrimaryAst
@@ -816,7 +816,7 @@ public:
 class ComparisonAst : public BooleanOperationAst
 {
 public:
-    
+
     enum ComparisonOperator
     {
         LessThanOp,

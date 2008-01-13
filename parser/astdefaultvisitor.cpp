@@ -495,12 +495,12 @@ void AstDefaultVisitor::visitProperSliceItem( ProperSliceItemAst* node )
     visitNode( node->stride );
 }
 
-void AstDefaultVisitor::visitExpressionSlice( ExpressionSliceAst* node )
+void AstDefaultVisitor::visitExpressionSliceItem( ExpressionSliceItemAst* node )
 {
     visitNode( node->sliceExpression );
 }
 
-void AstDefaultVisitor::visitEllipsisSlice( EllipsisSliceAst* )
+void AstDefaultVisitor::visitEllipsisSliceItem( EllipsisSliceItemAst* )
 {
 }
 

@@ -213,12 +213,12 @@ ProperSliceItemAst::ProperSliceItemAst( Ast* parent )
     : SliceItemAst( parent, Ast::ProperSliceItemAst )
 {
 }
-ExpressionSliceAst::ExpressionSliceAst( Ast* parent )
-    : SliceItemAst( parent, Ast::ExpressionSliceAst )
+ExpressionSliceItemAst::ExpressionSliceItemAst( Ast* parent )
+    : SliceItemAst( parent, Ast::ExpressionSliceItemAst )
 {
 }
-EllipsisSliceAst::EllipsisSliceAst( Ast* parent )
-    : SliceItemAst( parent, Ast::EllipsisSliceAst )
+EllipsisSliceItemAst::EllipsisSliceItemAst( Ast* parent )
+    : SliceItemAst( parent, Ast::EllipsisSliceItemAst )
 {
 }
 CallAst::CallAst( Ast* parent )

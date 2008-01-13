@@ -77,8 +77,8 @@ public:
     virtual void visitExtendedSlice( ExtendedSliceAst* );
     virtual void visitSimpleSlice( SimpleSliceAst* );
     virtual void visitProperSliceItem( ProperSliceItemAst* );
-    virtual void visitExpressionSlice( ExpressionSliceAst* );
-    virtual void visitEllipsisSlice( EllipsisSliceAst* );
+    virtual void visitExpressionSliceItem( ExpressionSliceItemAst* );
+    virtual void visitEllipsisSliceItem( EllipsisSliceItemAst* );
     virtual void visitCall( CallAst* );
     virtual void visitUnaryExpression( UnaryExpressionAst* );
     virtual void visitBinaryExpression( BinaryExpressionAst* );

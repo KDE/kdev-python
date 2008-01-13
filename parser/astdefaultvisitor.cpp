@@ -511,8 +511,8 @@ void AstDefaultVisitor::visitBinaryExpression( BinaryExpressionAst* node )
 void AstDefaultVisitor::visitComparison( ComparisonAst* node )
 {
     visitNode( node->firstComparator );
-    QList< QPair< ComparisonAst::ComparisonOperator, ArithmeticExpressionAst*> >::iterator it;
-    QList< QPair< ComparisonAst::ComparisonOperator, ArithmeticExpressionAst*> >::iterator end = node->comparatorList.end();
+    QList< QPair< ComparisonAst::ComparisonOperator, ExpressionAst*> >::iterator it;
+    QList< QPair< ComparisonAst::ComparisonOperator, ExpressionAst*> >::iterator end = node->comparatorList.end();
     for( it = node->comparatorList.begin(); it != end; ++it )
     {
         visitNode( (*it).second );

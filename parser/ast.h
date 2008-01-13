@@ -861,9 +861,9 @@ public:
         NotInOp
     };
     ComparisonAst( Ast* );
-    Python::ArithmeticExpressionAst* firstComparator;
+    Python::ExpressionAst* firstComparator;
     QList< QPair<Python::ComparisonAst::ComparisonOperator,
-         Python::ArithmeticExpressionAst*> > comparatorList;
+         Python::ExpressionAst*> > comparatorList;
 };
 
 class BooleanAndOperationAst : public BooleanOperationAst

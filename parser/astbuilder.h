@@ -101,7 +101,6 @@ public:
     virtual void visitReturnStmt(PythonParser::ReturnStmtAst *node);
     virtual void visitShiftExpr(PythonParser::ShiftExprAst *node);
     virtual void visitSimpleStmt(PythonParser::SimpleStmtAst *node);
-    virtual void visitSliceop(PythonParser::SliceopAst *node);
     virtual void visitSmallStmt(PythonParser::SmallStmtAst *node);
     virtual void visitStmt(PythonParser::StmtAst *node);
     virtual void visitSubscript(PythonParser::SubscriptAst *node);

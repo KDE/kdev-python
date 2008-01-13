@@ -1306,12 +1306,6 @@ void AstBuilder::visitSimpleStmt(PythonParser::SimpleStmtAst *node)
     qDebug() << "visitSimpleStmt end";
 }
 
-void AstBuilder::visitSliceop(PythonParser::SliceopAst *node)
-{
-    qDebug() << "visitSliceop start";
-    qDebug() << "visitSliceop end";
-}
-
 void AstBuilder::visitSmallStmt(PythonParser::SmallStmtAst *node)
 {
     qDebug() << "visitSmallStmt start";

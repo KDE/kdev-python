@@ -497,11 +497,12 @@ namespace PythonParser
 -- Sub Scripts Check if the curent token is not a COLON it should be a test
 -- If a COLON it skips the 'test'. if the next token is not RBRACKET or COMMA after test it can be a COLON.
 -- Else it ends.
-   subcriptEllipsis=ELLIPSIS
+   subcriptEllipsis=ELLIPSIS [: (*yynode)->isSlice = true; :]
     | ( ?[: yytoken != Token_COLON :] begin=test | 0 )
     ( ?[: yytoken == Token_RBRACKET || yytoken == Token_COMMA :] 0
-        | COLON ( end=test | 0 ) ( COLON ( step=test | 0 ) | 0 ) )
--> subscript ;;
+        | COLON [: (*yynode)->isSlice = true; :] ( end=test | 0 ) ( COLON [: (*yynode)->isSlice = true; :] ( step=test | 0 ) | 0 ) )
+-> subscript [
+    member variable isSlice: bool; ] ;;
 
    #expr=expr
     ( COMMA [: if (yytoken == Token_IN || yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK ) { break; } :]

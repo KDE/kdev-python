@@ -1332,12 +1332,105 @@ void AstBuilder::visitStmt(PythonParser::StmtAst *node)
 void AstBuilder::visitSubscript(PythonParser::SubscriptAst *node)
 {
     qDebug() << "visitSubscript start";
+    if( node->isEllipsis || node->hasColon )
+    {
+        if( node->isEllipsis )
+        {
+            EllipsisSliceItemAst* ast = createAst<EllipsisSliceItemAst>( node );
+            mNodeStack.push( ast );
+        }else
+        {
+            ProperSliceItemAst* ast = createAst<ProperSliceItemAst>( node );
+            mNodeStack.push( ast );
+            if( node->begin )
+            {
+                visitNode( node->begin );
+                ast->bounds.first = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+            }
+            if( node->end )
+            {
+                visitNode( node->end );
+                ast->bounds.second = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+            }
+            if( node->step )
+            {
+                visitNode( node->step );
+                ast->stride = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+            }
+        }
+    }else if( node->begin )
+    {
+        visitNode( node->begin );
+    }
     qDebug() << "visitSubscript end";
 }
 
 void AstBuilder::visitSubscriptlist(PythonParser::SubscriptlistAst *node)
 {
     qDebug() << "visitSubscriptlist start";
+    
+    if( node->hasComma )
+    {
+        int count = node->subscriptSequence->count();
+        PrimaryAst* curast = createAst<SubscriptAst>( node );
+        mNodeStack.push( curast );
+        for( int i = 0; i < count; i++ )
+        {
+            visitNode( node->subscriptSequence->at( i )->element );
+            if( dynamic_cast<ExpressionAst*>( mNodeStack.top() ) == 0
+                && curast->astType != Ast::ExtendedSliceAst )
+            {
+                SubscriptAst* sast = safeNodeCast<SubscriptAst>( curast );
+                curast = createAst<ExtendedSliceAst>( node );
+                ExtendedSliceAst* esast = safeNodeCast<ExtendedSliceAst>( curast );
+                for( int j = 0; j < sast->subscription.count(); j++ )
+                {
+                    ExpressionSliceItemAst* esiast = createAst<ExpressionSliceItemAst>(
+                            node->subscriptSequence->at(j)->element );
+                    esiast->sliceExpression = sast->subscription.at( j );
+                    esast->extendedSliceList << esiast;
+                }
+                delete sast;
+            }
+            
+            if( curast->astType == Ast::ExtendedSliceAst )
+            {
+                if( dynamic_cast<ExpressionAst*>( mNodeStack.top() ) != 0 )
+                {
+                    ExpressionSliceItemAst* itemast = createAst<ExpressionSliceItemAst>(
+                            node->subscriptSequence->at(i)->element );
+                    itemast->sliceExpression = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+                    safeNodeCast<ExtendedSliceAst>( curast )->extendedSliceList << itemast;
+                }else
+                {
+                    safeNodeCast<ExtendedSliceAst>( curast )->extendedSliceList << 
+                        safeNodeCast<SliceItemAst>( mNodeStack.pop() );
+                }
+            }else
+            {
+                safeNodeCast<SubscriptAst>( curast )->subscription 
+                        << safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+            }
+        }
+    }else
+    {
+        visitNode( node->subscriptSequence->at(0)->element );
+        if( dynamic_cast<ExpressionAst*>( mNodeStack.top() ) )
+        {
+            SubscriptAst* ast = createAst<SubscriptAst>( node );
+            ast->subscription << safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+            mNodeStack.push( ast );
+        }else
+        {
+            SimpleSliceAst* ast = createAst<SimpleSliceAst>( node );
+            ProperSliceItemAst* extslice = safeNodeCast<ProperSliceItemAst>( mNodeStack.pop() );
+            ast->simpleSliceBounds.first = extslice->bounds.first;
+            ast->simpleSliceBounds.second = extslice->bounds.second;
+            delete extslice;
+            mNodeStack.push( ast );
+        }
+    }
+    
     qDebug() << "visitSubscriptlist end";
 }
 

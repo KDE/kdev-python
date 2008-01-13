@@ -1623,6 +1623,27 @@ void AstBuilder::visitWhileStmt(PythonParser::WhileStmtAst *node)
 void AstBuilder::visitXorExpr(PythonParser::XorExprAst *node)
 {
     qDebug() << "visitXorExpr start";
+    visitNode( node->xorExpr );
+    if( node->hatXorExprSequence->count() > 0 )
+    {
+        BinaryExpressionAst* curast = createAst<BinaryExpressionAst>( node );
+        mNodeStack.push( curast );
+        int count = node->hatXorExprSequence->count();
+        for( int i = 0; i < count; i++ )
+        {
+            visitNode( node->hatXorExprSequence->at(i)->element );
+            if( i == count - 1 )
+            {
+                curast->rhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+            }else
+            {
+                BinaryExpressionAst* bin = createAst<BinaryExpressionAst>( node->hatXorExprSequence->at(i)->element );
+                bin->lhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+                curast->rhs = bin;
+                curast = bin;
+            }
+        }
+    }
     qDebug() << "visitXorExpr end";
 }
 

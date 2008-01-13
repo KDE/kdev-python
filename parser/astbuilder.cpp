@@ -162,6 +162,8 @@ void AstBuilder::visitArglist(PythonParser::ArglistAst *node)
     visitNode( node->argListBegin );
     if( dynamic_cast<GeneratorAst*>( mNodeStack.top() ) )
     {
+        args << mNodeStack.pop();
+        mListStack.push( args );
         // Early return because a Generator expression was found, thats the only
         // thing in this "argumentlist" then
         return;
@@ -1542,6 +1544,26 @@ void AstBuilder::visitTestlistSafe(PythonParser::TestlistSafeAst *node)
 void AstBuilder::visitTrailer(PythonParser::TrailerAst *node)
 {
     qDebug() << "visitTrailer start";
+    if( node->trailerArglist )
+    {
+        CallAst* ast = createAst<CallAst>( node );
+        visitNode( node->trailerArglist );
+        QList<Ast*> tmp = mListStack.pop();
+        if( tmp.count() == 1 && tmp.at( 0 )->astType == Ast::GeneratorAst )
+        {
+            //generator in the call
+            ast->generator = safeNodeCast<GeneratorAst>( tmp.at( 0 ) );
+        }else
+        {
+            ast->arguments = generateSpecializedList<ArgumentAst>( tmp );
+        }
+        mNodeStack.push( ast );
+    }else if( node->trailerDotName )
+    {
+        AttributeReferenceAst* ast = createAst<AttributeReferenceAst>( node );
+        ast->identifier = createIdentifier( ast, node->trailerDotName );
+        mNodeStack.push( ast );
+    }
     qDebug() << "visitTrailer end";
 }
 

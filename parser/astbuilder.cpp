@@ -1514,6 +1514,14 @@ void AstBuilder::visitTestlist(PythonParser::TestlistAst *node)
 void AstBuilder::visitCodeexpr(PythonParser::CodeexprAst *node)
 {
     qDebug() << "visitCodeexpr start";
+    QList<Ast*> l;
+    int count = node->testSequence->count();
+    for( int i = 0; i < count; i++ )
+    {
+        visitNode( node->testSequence->at(i)->element );
+        l << safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+    }
+    mListStack.push( l );
     qDebug() << "visitCodeexpr end";
 }
 

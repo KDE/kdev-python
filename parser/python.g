@@ -490,19 +490,25 @@ namespace PythonParser
    LPAREN ( trailerArglist=arglist | 0 ) RPAREN | LBRACKET subscriptlist=subscriptlist RBRACKET | DOT trailerDotName=IDENTIFIER
 -> trailer ;;
 
-   #subscript=subscript ( COMMA [: if (yytoken == Token_RBRACKET) { break; } :]
+   #subscript=subscript ( COMMA [: (*yynode)->hasComma = true; if (yytoken == Token_RBRACKET) { break; } :]
     #subscript=subscript )*
--> subscriptlist ;;
+-> subscriptlist [
+    member variable hasComma: bool; ] ;;
 
 -- Sub Scripts Check if the curent token is not a COLON it should be a test
 -- If a COLON it skips the 'test'. if the next token is not RBRACKET or COMMA after test it can be a COLON.
 -- Else it ends.
-   subcriptEllipsis=ELLIPSIS [: (*yynode)->isSlice = true; :]
+   ELLIPSIS [: (*yynode)->isEllipsis :]
     | ( ?[: yytoken != Token_COLON :] begin=test | 0 )
     ( ?[: yytoken == Token_RBRACKET || yytoken == Token_COMMA :] 0
-        | COLON [: (*yynode)->isSlice = true; :] ( end=test | 0 ) ( COLON [: (*yynode)->isSlice = true; :] ( step=test | 0 ) | 0 ) )
--> subscript [
-    member variable isSlice: bool; ] ;;
+        | COLON [: (*yynode)->firstColon = true; :] ( end=test | 0 ) ( COLON [: (*yynode)->secondColon = true; :] ( step=test | 0 ) | 0 ) )
+-> subscript
+   [: (*yynode)->firstColon = false;
+      (*yynode)->secondColon = false; :]
+   [
+    member variable firstColon: bool;
+    member variable secondColon: bool;
+    member variable isEllipsis: bool; ] ;;
 
    #expr=expr
     ( COMMA [: if (yytoken == Token_IN || yytoken == Token_SEMICOLON || yytoken == Token_LINEBREAK ) { break; } :]

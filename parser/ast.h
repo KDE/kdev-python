@@ -309,7 +309,7 @@ public:
     ArithmeticOperation opType;
 };
 
-class BooleanOperationAst : public Ast
+class BooleanOperationAst : public ExpressionAst
 {
 public:
     BooleanOperationAst( Ast* parent, Ast::AstType type );
@@ -372,7 +372,7 @@ class SliceTargetAst : public TargetAst
 {
 public:
     SliceTargetAst( Ast* );
-    Python::SliceAst* subscript;
+    Python::SliceAst* slice;
 };
 
 class DecoratorAst : public Ast

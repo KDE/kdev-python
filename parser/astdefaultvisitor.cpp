@@ -605,7 +605,7 @@ void AstDefaultVisitor::visitSubscriptTarget( SubscriptTargetAst * ast )
 
 void AstDefaultVisitor::visitSliceTarget( SliceTargetAst * ast )
 {
-    visitNode( ast->subscript );
+    visitNode( ast->slice );
 }
 
 }

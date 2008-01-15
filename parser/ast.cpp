@@ -37,7 +37,7 @@ CodeAst::CodeAst()
 {
 }
 FunctionDefinitionAst::FunctionDefinitionAst( Ast* parent )
-    : StatementAst( parent, Ast::FunctionDefinitionAst )
+    : StatementAst( parent, Ast::FunctionDefinitionAst ), functionName( 0 )
 {
 }
 DecoratorAst::DecoratorAst( Ast* parent )
@@ -45,7 +45,7 @@ DecoratorAst::DecoratorAst( Ast* parent )
 {
 }
 ArgumentAst::ArgumentAst( Ast* parent )
-    : Ast( parent, Ast::ArgumentAst )
+    : Ast( parent, Ast::ArgumentAst ), argumentExpression( 0 ), keywordName( 0 )
 {
 }
 ParameterAst::ParameterAst( Ast* parent, Ast::AstType type )
@@ -57,11 +57,11 @@ StatementAst::StatementAst( Ast* parent, Ast::AstType type )
 {
 }
 IfAst::IfAst( Ast* parent )
-    : StatementAst( parent, Ast::IfAst )
+    : StatementAst( parent, Ast::IfAst ), ifCondition( 0 )
 {
 }
 WhileAst::WhileAst( Ast* parent )
-    : StatementAst( parent, Ast::WhileAst )
+    : StatementAst( parent, Ast::WhileAst ), condition( 0 )
 {
 }
 ForAst::ForAst( Ast* parent )
@@ -69,7 +69,7 @@ ForAst::ForAst( Ast* parent )
 {
 }
 ClassDefinitionAst::ClassDefinitionAst( Ast* parent )
-    : StatementAst( parent, Ast::ClassDefinitionAst )
+    : StatementAst( parent, Ast::ClassDefinitionAst ), className( 0 )
 {
 }
 TryAst::TryAst( Ast* parent )
@@ -77,15 +77,15 @@ TryAst::TryAst( Ast* parent )
 {
 }
 ExceptAst::ExceptAst( Ast* parent )
-    : Ast( parent, Ast::ExceptAst )
+    : Ast( parent, Ast::ExceptAst ), exceptionDeclaration( 0 ), exceptionValue( 0 )
 {
 }
 WithAst::WithAst( Ast* parent )
-    : StatementAst( parent, Ast::WithAst )
+    : StatementAst( parent, Ast::WithAst ), context( 0 ), name( 0 )
 {
 }
 ExecAst::ExecAst( Ast* parent )
-    : StatementAst( parent, Ast::ExecAst )
+    : StatementAst( parent, Ast::ExecAst ), executable( 0 ), globalsAndLocals( 0 ), localsOnly( 0 )
 {
 }
 GlobalAst::GlobalAst( Ast* parent )
@@ -109,11 +109,11 @@ FromImportAst::FromImportAst( Ast* parent )
 {
 }
 RaiseAst::RaiseAst( Ast* parent )
-    : StatementAst( parent, Ast::RaiseAst )
+    : StatementAst( parent, Ast::RaiseAst ), exceptionType( 0 ), exceptionValue( 0 ), traceback( 0 )
 {
 }
 PrintAst::PrintAst( Ast* parent )
-    : StatementAst( parent, Ast::PrintAst )
+    : StatementAst( parent, Ast::PrintAst ), outfile( 0 )
 {
 }
 
@@ -130,7 +130,7 @@ DelAst::DelAst( Ast* parent )
 {
 }
 AssertAst::AssertAst( Ast* parent )
-    : StatementAst( parent, Ast::AssertAst )
+    : StatementAst( parent, Ast::AssertAst ), assertTest( 0 ), exceptionValue( 0 )
 {
 }
 ExpressionStatementAst::ExpressionStatementAst( Ast* parent )
@@ -138,7 +138,7 @@ ExpressionStatementAst::ExpressionStatementAst( Ast* parent )
 {
 }
 AssignmentAst::AssignmentAst( Ast* parent )
-    : StatementAst( parent, Ast::AssignmentAst )
+    : StatementAst( parent, Ast::AssignmentAst ), yieldValue( 0 )
 {
 }
 TargetAst::TargetAst( Ast* parent, Ast::AstType type )
@@ -146,35 +146,36 @@ TargetAst::TargetAst( Ast* parent, Ast::AstType type )
 {
 }
 AtomAst::AtomAst( Ast* parent )
-    : PrimaryAst( parent, Ast::AtomAst )
+    : PrimaryAst( parent, Ast::AtomAst ), identifier( 0 ), literal( 0 ), enclosure( 0 )
 {
 }
 EnclosureAst::EnclosureAst( Ast* parent )
-    : Ast( parent, Ast::EnclosureAst )
+    : Ast( parent, Ast::EnclosureAst ), list( 0 ), generator( 0 ), dict( 0 ), yield( 0 )
 {
 }
 ListAst::ListAst( Ast* parent )
-    : Ast( parent, Ast::ListAst )
+    : Ast( parent, Ast::ListAst ), listGenerator( 0 )
 {
 }
 ListForAst::ListForAst( Ast* parent )
-    : Ast( parent, Ast::ListForAst )
+    : Ast( parent, Ast::ListForAst ), nextGenerator( 0 ), nextCondition( 0 )
 {
 }
 ListIfAst::ListIfAst( Ast* parent )
-    : Ast( parent, Ast::ListIfAst )
+    : Ast( parent, Ast::ListIfAst ), condition( 0 ), nextGenerator( 0 ), nextCondition( 0 )
 {
 }
 GeneratorAst::GeneratorAst( Ast* parent )
-    : Ast( parent, Ast::GeneratorAst )
+    : Ast( parent, Ast::GeneratorAst ), generatedValue( 0 ), generator( 0 )
 {
 }
 GeneratorForAst::GeneratorForAst( Ast* parent )
-    : Ast( parent, Ast::GeneratorForAst )
+    : Ast( parent, Ast::GeneratorForAst ), iterableObject( 0 ), 
+      nextGenerator( 0 ), nextCondition( 0 )
 {
 }
 GeneratorIfAst::GeneratorIfAst( Ast* parent )
-    : Ast( parent, Ast::GeneratorIfAst )
+    : Ast( parent, Ast::GeneratorIfAst ), condition( 0 ), nextGenerator( 0 ), nextCondition( 0 )
 {
 }
 DictionaryAst::DictionaryAst( Ast* parent )
@@ -186,15 +187,15 @@ PrimaryAst::PrimaryAst( Ast* parent, Ast::AstType type )
 {
 }
 AttributeReferenceAst::AttributeReferenceAst( Ast* parent )
-    : PrimaryAst( parent, Ast::AttributeReferenceAst )
+    : PrimaryAst( parent, Ast::AttributeReferenceAst ), primary( 0 ), identifier( 0 )
 {
 }
 SubscriptAst::SubscriptAst( Ast* parent )
-    : PrimaryAst( parent, Ast::SubscriptAst )
+    : PrimaryAst( parent, Ast::SubscriptAst ), primary( 0 )
 {
 }
 SliceAst::SliceAst( Ast* parent, Ast::AstType type )
-    : PrimaryAst( parent, type )
+    : PrimaryAst( parent, type ), primary( 0 )
 {
 }
 ExtendedSliceAst::ExtendedSliceAst( Ast* parent )
@@ -210,11 +211,11 @@ SliceItemAst::SliceItemAst( Ast* parent, Ast::AstType type )
 {
 }
 ProperSliceItemAst::ProperSliceItemAst( Ast* parent )
-    : SliceItemAst( parent, Ast::ProperSliceItemAst )
+    : SliceItemAst( parent, Ast::ProperSliceItemAst ), stride( 0 )
 {
 }
 ExpressionSliceItemAst::ExpressionSliceItemAst( Ast* parent )
-    : SliceItemAst( parent, Ast::ExpressionSliceItemAst )
+    : SliceItemAst( parent, Ast::ExpressionSliceItemAst ), sliceExpression( 0 )
 {
 }
 EllipsisSliceItemAst::EllipsisSliceItemAst( Ast* parent )
@@ -222,7 +223,7 @@ EllipsisSliceItemAst::EllipsisSliceItemAst( Ast* parent )
 {
 }
 CallAst::CallAst( Ast* parent )
-    : PrimaryAst( parent, Ast::CallAst )
+    : PrimaryAst( parent, Ast::CallAst ), callable( 0 ), generator( 0 )
 {
 }
 ArithmeticExpressionAst::ArithmeticExpressionAst( Ast* parent, Ast::AstType type )
@@ -230,19 +231,19 @@ ArithmeticExpressionAst::ArithmeticExpressionAst( Ast* parent, Ast::AstType type
 {
 }
 UnaryExpressionAst::UnaryExpressionAst( Ast* parent )
-    : ArithmeticExpressionAst( parent, Ast::UnaryExpressionAst )
+    : ArithmeticExpressionAst( parent, Ast::UnaryExpressionAst ), operand( 0 )
 {
 }
 BinaryExpressionAst::BinaryExpressionAst( Ast* parent )
-    : ArithmeticExpressionAst( parent, Ast::BinaryExpressionAst )
+    : ArithmeticExpressionAst( parent, Ast::BinaryExpressionAst ), lhs( 0 ), rhs( 0 )
 {
 }
 ComparisonAst::ComparisonAst( Ast* parent )
-    : BooleanOperationAst( parent, Ast::ComparisonAst )
+    : BooleanOperationAst( parent, Ast::ComparisonAst ), firstComparator( 0 )
 {
 }
 BooleanOperationAst::BooleanOperationAst( Ast* parent, Ast::AstType type )
-    : Ast( parent, type )
+    : ExpressionAst( parent, type )
 {
 }
 ExpressionAst::ExpressionAst( Ast* parent, Ast::AstType type )
@@ -250,16 +251,17 @@ ExpressionAst::ExpressionAst( Ast* parent, Ast::AstType type )
 {
 }
 ConditionalExpressionAst::ConditionalExpressionAst( Ast* parent )
-    : ExpressionAst( parent, Ast::ConditionalExpressionAst )
+    : ExpressionAst( parent, Ast::ConditionalExpressionAst ), 
+      mainExpression( 0 ), condition( 0 ), elseExpression( 0 )
 {
 }
 LambdaAst::LambdaAst( Ast* parent )
-    : ExpressionAst( parent, Ast::LambdaAst )
+    : ExpressionAst( parent, Ast::LambdaAst ), expression( 0 )
 {
 }
 
 DefaultParameterAst::DefaultParameterAst( Ast * parent )
-    : ParameterAst( parent, Ast::DefaultParameterAst )
+    : ParameterAst( parent, Ast::DefaultParameterAst ), name( 0 ), value( 0 )
 {
 }
 
@@ -269,7 +271,7 @@ ParameterPartAst::ParameterPartAst( Ast * parent, Ast::AstType type )
 }
 
 IdentifierParameterPartAst::IdentifierParameterPartAst( Ast * parent )
-    : ParameterPartAst( parent, Ast::IdentifierParameterPartAst )
+    : ParameterPartAst( parent, Ast::IdentifierParameterPartAst ), name( 0 )
 {
 }
 
@@ -279,27 +281,27 @@ ListParameterPartAst::ListParameterPartAst( Ast * parent )
 }
 
 DictionaryParameterAst::DictionaryParameterAst( Ast * parent )
-    : ParameterAst( parent, Ast::DictionaryParameterAst )
+    : ParameterAst( parent, Ast::DictionaryParameterAst ), name( 0 )
 {
 }
 
 ListParameterAst::ListParameterAst( Ast * parent )
-    : ParameterAst( parent, Ast::ListParameterAst )
+    : ParameterAst( parent, Ast::ListParameterAst ), name( 0 )
 {
 }
 
 BooleanNotOperationAst::BooleanNotOperationAst( Ast * parent )
-    : BooleanOperationAst( parent, Ast::BooleanNotOperationAst )
+    : BooleanOperationAst( parent, Ast::BooleanNotOperationAst ), op( 0 )
 {
 }
 
 BooleanOrOperationAst::BooleanOrOperationAst( Ast * parent )
-    : BooleanOperationAst( parent, Ast::BooleanOrOperationAst )
+    : BooleanOperationAst( parent, Ast::BooleanOrOperationAst ), lhs( 0 ), rhs( 0 )
 {
 }
 
 BooleanAndOperationAst::BooleanAndOperationAst( Ast * parent )
-    : BooleanOperationAst( parent, Ast::BooleanAndOperationAst )
+    : BooleanOperationAst( parent, Ast::BooleanAndOperationAst ), lhs( 0 ), rhs( 0 )
 {
 }
 
@@ -314,7 +316,7 @@ LiteralAst::LiteralAst( Ast* parent )
 }
 
 IdentifierTargetAst::IdentifierTargetAst( Ast * parent )
-    : TargetAst( parent, Ast::IdentifierTargetAst )
+    : TargetAst( parent, Ast::IdentifierTargetAst ), identifier( 0 )
 {
 }
 
@@ -329,17 +331,17 @@ ListTargetAst::ListTargetAst( Ast * parent )
 }
 
 AttributeReferenceTargetAst::AttributeReferenceTargetAst( Ast * parent )
-    : TargetAst( parent, Ast::AttributeReferenceTargetAst )
+    : TargetAst( parent, Ast::AttributeReferenceTargetAst ), attribute( 0 )
 {
 }
 
 SubscriptTargetAst::SubscriptTargetAst( Ast * parent )
-    : TargetAst( parent, Ast::SubscriptTargetAst )
+    : TargetAst( parent, Ast::SubscriptTargetAst ), subscript( 0 )
 {
 }
 
 SliceTargetAst::SliceTargetAst( Ast * parent )
-    : TargetAst( parent, Ast::SliceTargetAst )
+    : TargetAst( parent, Ast::SliceTargetAst ), slice( 0 )
 {
 }
 

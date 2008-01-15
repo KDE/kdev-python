@@ -32,14 +32,98 @@ namespace Python
 
 //TODO: Check that created AST nodes are pushed onto the stack _before_ visiting subnodes to make sure their parent is correct
 
-template <typename T> T* safeNodeCast( Ast* node )
+template <typename T> static T* safeNodeCast( Ast* node )
 {
     T* ast = dynamic_cast<T*>(node);
     Q_ASSERT(ast);
     return ast;
 }
 
-template <typename T> QList<T*> generateSpecializedList( const QList<Ast*>& list )
+static QList<TargetAst*> targetAstListFromExpressionAstList( const QList<ExpressionAst*>& list )
+{
+    QList<TargetAst*> l;
+    foreach( ExpressionAst* ast, list )
+    {
+        switch( ast->astType )
+        {
+            case Ast::IdentifierAst:
+            {
+                IdentifierTargetAst* target = new IdentifierTargetAst( ast->parent );
+                target->identifier = safeNodeCast<IdentifierAst>( ast );
+                target->start = ast->start;
+                target->end = ast->end;
+                target->startCol = ast->startCol;
+                target->startLine = ast->startLine;
+                target->endCol = ast->endCol;
+                target->endLine = ast->endLine;
+                l << target;
+                break;
+            }
+            case Ast::SubscriptAst:
+            {
+                SubscriptTargetAst* target = new SubscriptTargetAst( ast->parent );
+                target->subscript = safeNodeCast<SubscriptAst>( ast );
+                target->start = ast->start;
+                target->end = ast->end;
+                target->startCol = ast->startCol;
+                target->startLine = ast->startLine;
+                target->endCol = ast->endCol;
+                target->endLine = ast->endLine;
+                l << target;
+                break;
+            }
+            case Ast::AttributeReferenceAst:
+            {
+                AttributeReferenceTargetAst* target = new AttributeReferenceTargetAst( ast->parent );
+                target->attribute = safeNodeCast<AttributeReferenceAst>( ast );
+                target->start = ast->start;
+                target->end = ast->end;
+                target->startCol = ast->startCol;
+                target->startLine = ast->startLine;
+                target->endCol = ast->endCol;
+                target->endLine = ast->endLine;
+                l << target;
+                break;
+            }
+            case Ast::ExtendedSliceAst:
+                //fall through
+            case Ast::SimpleSliceAst:
+            {
+                SliceTargetAst* target = new SliceTargetAst( ast->parent );
+                target->slice = safeNodeCast<SliceAst>( ast );
+                target->start = ast->start;
+                target->end = ast->end;
+                target->startCol = ast->startCol;
+                target->startLine = ast->startLine;
+                target->endCol = ast->endCol;
+                target->endLine = ast->endLine;
+                l << target;
+                break;
+            }
+            case Ast::AtomAst:
+            {
+                AtomAst* atom = dynamic_cast<AtomAst*>( ast );
+                IdentifierTargetAst* target = new IdentifierTargetAst( ast->parent );
+                target->identifier = atom->identifier;
+                target->start = atom->start;
+                target->end = atom->end;
+                target->startCol = atom->startCol;
+                target->endCol = atom->endCol;
+                target->startLine = atom->startLine;
+                target->endLine = atom->endLine;
+                l << target;
+                delete atom;
+                break;
+            }
+            default:
+                qDebug() << ast->astType;
+                Q_ASSERT_X( false, "create_targetlist", "Ooops, found an expression that we can't convert to a target ast, check the code! " );
+        }
+    }
+    return l;
+}
+
+template <typename T> static  QList<T*> generateSpecializedList( const QList<Ast*>& list )
 {
     QList<T*> l;
     foreach( Ast* ast, list )
@@ -97,7 +181,7 @@ void AstBuilder::visitAndExpr(PythonParser::AndExprAst *node)
 {
     qDebug() << "visitAndExpr start";
     visitNode( node->andExpr );
-    if( node->anddShifExprSequence->count() > 0 )
+    if( node->anddShifExprSequence && node->anddShifExprSequence->count() > 0 )
     {
         BinaryExpressionAst* ast = createAst<BinaryExpressionAst>( node );
         ast->opType = ArithmeticExpressionAst::BinaryAnd;
@@ -224,7 +308,7 @@ void AstBuilder::visitArithExpr(PythonParser::ArithExprAst *node)
 {
     qDebug() << "visitArithExpr start";
     visitNode( node->arithTerm );
-    if( node->arithOpListSequence->count() > 0 && node->arithTermListSequence->count() > 0 )
+    if( node->arithOpListSequence && node->arithOpListSequence->count() > 0 && node->arithTermListSequence->count() > 0 )
     {
         Q_ASSERT_X( node->arithOpListSequence->count() == node->arithTermListSequence->count(),
                     "visitArithExpr", "different number of operators and operands" );
@@ -386,11 +470,12 @@ void AstBuilder::visitClassdef(PythonParser::ClassdefAst *node)
 void AstBuilder::visitComparison(PythonParser::ComparisonAst *node)
 {
     qDebug() << "visitComparison start";
-    ComparisonAst* ast = createAst<ComparisonAst>( node );
     visitNode( node->compExpr );
-    ast->firstComparator = safeNodeCast<ArithmeticExpressionAst>( mNodeStack.pop() );
-    if( node->compOpSequence->count() > 0 && node->compOpExprSequence->count() > 0 )
+    if( node->compOpSequence && node->compOpSequence->count() > 0 && node->compOpExprSequence->count() > 0 )
     {
+        ComparisonAst* ast = createAst<ComparisonAst>( node );
+        ast->firstComparator = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+        mNodeStack.push( ast );
         Q_ASSERT( node->compOpSequence->count() == node->compOpExprSequence->count() );
         int count = node->compOpSequence->count();
         for( int i = 0; i < count; i++ )
@@ -437,7 +522,6 @@ void AstBuilder::visitComparison(PythonParser::ComparisonAst *node)
             ast->comparatorList << pair;
         }
     }
-    mNodeStack.push( ast );
     qDebug() << "visitComparison end";
 }
 
@@ -568,7 +652,7 @@ void AstBuilder::visitExpr(PythonParser::ExprAst *node)
 {
     qDebug() << "visitExpr start";
     visitNode( node->expr );
-    if( node->orrExprSequence->count() > 0 )
+    if( node->orrExprSequence && node->orrExprSequence->count() > 0 )
     {
         BinaryExpressionAst* ast = createAst<BinaryExpressionAst>( node );
         ast->opType = ArithmeticExpressionAst::BinaryOr;
@@ -605,7 +689,8 @@ void AstBuilder::visitExprStmt(PythonParser::ExprStmtAst *node)
         // Augmented assignments cannot have multiple targets, so the testlist needs to contain only 1 element
         Q_ASSERT( mListStack.top().count() == 1 );
         AssignmentAst* a = createAst<AssignmentAst>( node );
-        QList<TargetAst*> l = generateSpecializedList<TargetAst>( mListStack.pop() );
+        QList<TargetAst*> l = targetAstListFromExpressionAstList( 
+                generateSpecializedList<ExpressionAst>( mListStack.pop() ) );
         AssignmentAst::OpType op;
         switch( node->augassign->assignOp )
         {
@@ -663,9 +748,9 @@ void AstBuilder::visitExprStmt(PythonParser::ExprStmtAst *node)
     }else if( node->yield || node->equalTestlistSequence->count() > 0 )
     {
         AssignmentAst* a = createAst<AssignmentAst>( node );
-        QList<TargetAst*> l;
-        a->targets.append( qMakePair( generateSpecializedList<TargetAst>( mListStack.pop() ),
-                                      AssignmentAst::AssignmentOp) );
+        QList<TargetAst*> l = targetAstListFromExpressionAstList(
+                generateSpecializedList<ExpressionAst>( mListStack.pop() ) );
+        a->targets.append( qMakePair( l, AssignmentAst::AssignmentOp) );
 
         int count = node->equalTestlistSequence->count();
         if( count > 0 )
@@ -679,8 +764,9 @@ void AstBuilder::visitExprStmt(PythonParser::ExprStmtAst *node)
                     break;
                 }
                 visitNode( node->equalTestlistSequence->at(i)->element );
-                a->targets.append( qMakePair( generateSpecializedList<TargetAst>( mListStack.pop() ),
-                                              AssignmentAst::AssignmentOp ) );
+                l = targetAstListFromExpressionAstList(
+                        generateSpecializedList<ExpressionAst>( mListStack.pop() ) );
+                a->targets.append( qMakePair( l, AssignmentAst::AssignmentOp ) );
             }
         }
         if( node->yield )
@@ -1125,34 +1211,37 @@ void AstBuilder::visitPower(PythonParser::PowerAst *node)
 {
     qDebug() << "visitPower start";
     visitNode( node->atom );
-    int count = node->trailerSequence->count();
-    if( count > 0 )
+    if( node->trailerSequence )
     {
-        for( int i = 0; i < count; i++ )
+        int count = node->trailerSequence->count();
+        if( count > 0 )
         {
-            visitTrailer( node->trailerSequence->at( i )->element );
-            PrimaryAst* ast = safeNodeCast<PrimaryAst>( mNodeStack.pop() );
-            PrimaryAst* prim = safeNodeCast<PrimaryAst>( mNodeStack.pop() );
-            switch( ast->astType )
+            for( int i = 0; i < count; i++ )
             {
-                case Ast::CallAst:
-                    static_cast<CallAst*>( ast )->callable = prim;
-                    break;
-                case Ast::ExtendedSliceAst:
-                case Ast::SimpleSliceAst:
-                    static_cast<SliceAst*>( ast )->primary = prim;
-                    break;
-                case Ast::AttributeReferenceAst:
-                    static_cast<AttributeReferenceAst*>( ast )->primary = prim;
-                    break;
-                case Ast::SubscriptAst:
-                    static_cast<SubscriptAst*>( ast )->primary = prim;
-                    break;
-                default:
-                    Q_ASSERT_X(false, "visitTrailer", "OOOPS visitTrailer returned a PrimaryAst that is not known to have a primary in front of it, like an AtomAst or something new.");
-                    break;
+                visitTrailer( node->trailerSequence->at( i )->element );
+                PrimaryAst* ast = safeNodeCast<PrimaryAst>( mNodeStack.pop() );
+                PrimaryAst* prim = safeNodeCast<PrimaryAst>( mNodeStack.pop() );
+                switch( ast->astType )
+                {
+                    case Ast::CallAst:
+                        static_cast<CallAst*>( ast )->callable = prim;
+                        break;
+                    case Ast::ExtendedSliceAst:
+                    case Ast::SimpleSliceAst:
+                        static_cast<SliceAst*>( ast )->primary = prim;
+                        break;
+                    case Ast::AttributeReferenceAst:
+                        static_cast<AttributeReferenceAst*>( ast )->primary = prim;
+                        break;
+                    case Ast::SubscriptAst:
+                        static_cast<SubscriptAst*>( ast )->primary = prim;
+                        break;
+                    default:
+                        Q_ASSERT_X(false, "visitTrailer", "OOOPS visitTrailer returned a PrimaryAst that is not known to have a primary in front of it, like an AtomAst or something new.");
+                        break;
+                }
+                mNodeStack.push( ast );
             }
-            mNodeStack.push( ast );
         }
     }
     if( node->factor )
@@ -1221,9 +1310,12 @@ void AstBuilder::visitProject(PythonParser::ProjectAst *node)
     CodeAst* code = new CodeAst();
     setStartEnd( code, node );
     mNodeStack.push( code );
-    mListStack.push( QList<Ast*>() );
-    PythonParser::DefaultVisitor::visitProject( node );
-    code->statements = generateSpecializedList<StatementAst>( mListStack.pop() );
+    int count = node->stmtSequence->count();
+    for( int i = 0; i < count; i++ )
+    {
+        visitNode( node->stmtSequence->at(i)->element );
+        code->statements << safeNodeCast<StatementAst>( mNodeStack.pop() );
+    }
     qDebug() << "visitProject end";
 }
 
@@ -1264,38 +1356,41 @@ void AstBuilder::visitShiftExpr(PythonParser::ShiftExprAst *node)
 {
     qDebug() << "visitShiftExpr start";
     visitNode( node->arithExpr );
-    int count = node->shiftOpListSequence->count();
-    if( count > 0 )
+    if( node->shiftOpListSequence )
     {
-        Q_ASSERT( count == node->arithExprListSequence->count() );
-        BinaryExpressionAst* ast = createAst<BinaryExpressionAst>( node );
-        ast->lhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
-        BinaryExpressionAst* cur = ast;
-        for( int i = 0; i < count; i++ )
+        int count = node->shiftOpListSequence->count();
+        if( count > 0 )
         {
-            switch( node->shiftOpListSequence->at( i )->element->shiftOp )
+            Q_ASSERT( count == node->arithExprListSequence->count() );
+            BinaryExpressionAst* ast = createAst<BinaryExpressionAst>( node );
+            ast->lhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+            BinaryExpressionAst* cur = ast;
+            for( int i = 0; i < count; i++ )
             {
-                case PythonParser::LeftShiftOp:
-                    cur->opType = ArithmeticExpressionAst::BinaryLeftShift;
-                    break;
-                case PythonParser::RightShiftOp:
-                    cur->opType = ArithmeticExpressionAst::BinaryRightShift;
-                    break;
-                default:
-                    Q_ASSERT_X(false, "visitShiftExpr", "OOOPS, shift operator was something other than left or right shifting!");
+                switch( node->shiftOpListSequence->at( i )->element->shiftOp )
+                {
+                    case PythonParser::LeftShiftOp:
+                        cur->opType = ArithmeticExpressionAst::BinaryLeftShift;
+                        break;
+                    case PythonParser::RightShiftOp:
+                        cur->opType = ArithmeticExpressionAst::BinaryRightShift;
+                        break;
+                    default:
+                        Q_ASSERT_X(false, "visitShiftExpr", "OOOPS, shift operator was something other than left or right shifting!");
+                }
+                visitNode( node->arithExprListSequence->at( i )->element );
+                if( i == count - 1 )
+                {
+                    cur->rhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+                }else
+                {
+                    cur->rhs = createAst<BinaryExpressionAst>( node->arithExprListSequence->at( i )->element );
+                    cur = safeNodeCast<BinaryExpressionAst>( cur->rhs );
+                    cur->lhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+                }
             }
-            visitNode( node->arithExprListSequence->at( i )->element );
-            if( i == count - 1 )
-            {
-                cur->rhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
-            }else
-            {
-                cur->rhs = createAst<BinaryExpressionAst>( node->arithExprListSequence->at( i )->element );
-                cur = safeNodeCast<BinaryExpressionAst>( cur->rhs );
-                cur->lhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
-            }
+            mNodeStack.push( ast );
         }
-        mNodeStack.push( ast );
     }
     qDebug() << "visitShiftExpr end";
 }
@@ -1320,9 +1415,6 @@ void AstBuilder::visitStmt(PythonParser::StmtAst *node)
     if( node->simpleStmt || node->compoundStmt )
     {
         PythonParser::DefaultVisitor::visitStmt( node );
-        StatementAst* ast = safeNodeCast<StatementAst>(mNodeStack.pop());
-        QList<Ast*>& stmtlist = mListStack.top();
-        stmtlist << ast;
     }else
     {
         qDebug() << "Found linebreak";
@@ -1446,48 +1538,51 @@ void AstBuilder::visitTerm(PythonParser::TermAst *node)
 {
     qDebug() << "visitTerm start";
     visitNode( node->factor );
-    int count = node->factorsSequence->count();
-    if( count > 0 )
+    if( node->factorsSequence )
     {
-        Q_ASSERT( count == node->termOpSequence->count() );
-        BinaryExpressionAst* curast = createAst<BinaryExpressionAst>( node );
-        curast->lhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
-        // put the binary expression onto the stack now, so its still on the stack
-        // after the loop finishes
-        mNodeStack.push( curast );
-        for( int i = 0; i < count; i++ )
+        int count = node->factorsSequence->count();
+        if( count > 0 )
         {
-            //Push current bin-expr on stack to be used as parent
+            Q_ASSERT( count == node->termOpSequence->count() );
+            BinaryExpressionAst* curast = createAst<BinaryExpressionAst>( node );
+            curast->lhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+            // put the binary expression onto the stack now, so its still on the stack
+            // after the loop finishes
             mNodeStack.push( curast );
-            visitNode( node->factorsSequence->at(i)->element );
-            if( i == count-1 )
+            for( int i = 0; i < count; i++ )
             {
-                curast->rhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
-            }else
-            {
-                curast->rhs = createAst<BinaryExpressionAst>( node );
-                switch( node->termOpSequence->at(i)->element->op )
+                //Push current bin-expr on stack to be used as parent
+                mNodeStack.push( curast );
+                visitNode( node->factorsSequence->at(i)->element );
+                if( i == count-1 )
                 {
-                    case PythonParser::StarOp:
-                        curast->opType = ArithmeticExpressionAst::BinaryMultiply;
-                        break;
-                    case PythonParser::ModuloOp:
-                        curast->opType = ArithmeticExpressionAst::BinaryModulo;
-                        break;
-                    case PythonParser::SlashOp:
-                        curast->opType = ArithmeticExpressionAst::BinaryDivide;
-                        break;
-                    case PythonParser::DoubleSlashOp:
-                        curast->opType = ArithmeticExpressionAst::BinaryFloor;
-                        break;
-                    default:
-                        Q_ASSERT_X( false, "visitTerm", "OOPS, termop has an unknown value" );
+                    curast->rhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+                }else
+                {
+                    curast->rhs = createAst<BinaryExpressionAst>( node );
+                    switch( node->termOpSequence->at(i)->element->op )
+                    {
+                        case PythonParser::StarOp:
+                            curast->opType = ArithmeticExpressionAst::BinaryMultiply;
+                            break;
+                        case PythonParser::ModuloOp:
+                            curast->opType = ArithmeticExpressionAst::BinaryModulo;
+                            break;
+                        case PythonParser::SlashOp:
+                            curast->opType = ArithmeticExpressionAst::BinaryDivide;
+                            break;
+                        case PythonParser::DoubleSlashOp:
+                            curast->opType = ArithmeticExpressionAst::BinaryFloor;
+                            break;
+                        default:
+                            Q_ASSERT_X( false, "visitTerm", "OOPS, termop has an unknown value" );
+                    }
+                    curast->lhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
+                    curast = safeNodeCast<BinaryExpressionAst>( curast->rhs );
                 }
-                curast->lhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
-                curast = safeNodeCast<BinaryExpressionAst>( curast->rhs );
+                //pop parent from stack
+                mNodeStack.pop();
             }
-            //pop parent from stack
-            mNodeStack.pop();
         }
     }
     qDebug() << "visitTerm end";
@@ -1675,7 +1770,7 @@ void AstBuilder::visitXorExpr(PythonParser::XorExprAst *node)
 {
     qDebug() << "visitXorExpr start";
     visitNode( node->xorExpr );
-    if( node->hatXorExprSequence->count() > 0 )
+    if( node->hatXorExprSequence && node->hatXorExprSequence->count() > 0 )
     {
         BinaryExpressionAst* curast = createAst<BinaryExpressionAst>( node );
         mNodeStack.push( curast );

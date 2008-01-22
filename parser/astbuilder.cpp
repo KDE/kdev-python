@@ -1314,7 +1314,9 @@ void AstBuilder::visitProject(PythonParser::ProjectAst *node)
     for( int i = 0; i < count; i++ )
     {
         visitNode( node->stmtSequence->at(i)->element );
-        code->statements << safeNodeCast<StatementAst>( mNodeStack.pop() );
+        Ast* a = mNodeStack.pop();
+        if( a )
+            code->statements << safeNodeCast<StatementAst>( a );
     }
     qDebug() << "visitProject end";
 }
@@ -1417,6 +1419,9 @@ void AstBuilder::visitStmt(PythonParser::StmtAst *node)
         PythonParser::DefaultVisitor::visitStmt( node );
     }else
     {
+        // Pushing a 0 onto the stack so that visitProject and visitSuite can 
+        // test for this case
+        mNodeStack.push( 0 );
         qDebug() << "Found linebreak";
     }
     qDebug() << "visitStmt end";
@@ -1530,7 +1535,23 @@ void AstBuilder::visitSubscriptlist(PythonParser::SubscriptlistAst *node)
 void AstBuilder::visitSuite(PythonParser::SuiteAst *node)
 {
     qDebug() << "visitSuite start";
-    PythonParser::DefaultVisitor::visitSuite( node );
+    QList<Ast*> l;
+    if( node->simpleStmt )
+    {
+        visitNode( node->simpleStmt );
+        l << mNodeStack.pop();
+    } else 
+    {
+        int count = node->stmtSequence->count();
+        for( int i = 0; i < count; i++ )
+        {
+            visitNode( node->stmtSequence->at(i)->element );
+            Ast* a = mNodeStack.pop();
+            if( a )
+                l << a;
+        }
+    }
+    mListStack.push( l );
     qDebug() << "visitSuite end";
 }
 

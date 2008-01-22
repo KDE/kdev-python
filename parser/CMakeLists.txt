@@ -18,7 +18,7 @@ set(parser_STAT_SRCS
     )
 
 if(KDEVPGQT_FOUND)
-    kdevpgqt_generate(_kdevpgList python NAMESPACE PythonParser 
+    kdevpgqt_generate(_kdevpgList python NAMESPACE PythonParser
         "${CMAKE_SOURCE_DIR}/parser/python.g"
         "${CMAKE_SOURCE_DIR}/parser/pythonlexer.h"
     )

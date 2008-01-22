@@ -29,8 +29,6 @@
 
 #include "astbuilder.h"
 
-#include "pythondebugvisitor.h"
-
 namespace Python
 {
 

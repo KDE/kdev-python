@@ -27,6 +27,14 @@ target_link_libraries(python-lexertest
     kdev4pythonparser
 )
 
+set( functiondeclarationtest_SRCS functiondeclarationtest.cpp )
+
+kde4_add_unit_test(python-functiondeclarationtest ${functiondeclarationtest_SRCS} )
+target_link_libraries(python-functiondeclarationtest
+    ${QT_QTTEST_LIBRARY}
+    ${QT_QTCORE_LIBRARY}
+    kdev4pythonparser
+)
 
 if(KDE4_BUILD_TESTS)
 add_custom_target( run_py_test

@@ -33,11 +33,11 @@
 
 int main( int argc, char* argv[] )
 {
-    KCmdLineArgs::init( argc, argv, "QMake Parser", 0, ki18n("qmake-parser"), "4.0.0", ki18n("Parse QMake project files"));
+    KCmdLineArgs::init( argc, argv, "Python Parser", 0, ki18n("python-parser"), "4.0.0", ki18n("Parse Python project files"));
 
     KCmdLineOptions options;
     options.add("!debug", ki18n("Enable output of the debug AST"));
-    options.add("!+files", ki18n("QMake project files"));
+    options.add("!+files", ki18n("Python project files"));
     KCmdLineArgs::addCmdLineOptions(options);
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();

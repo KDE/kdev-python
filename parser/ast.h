@@ -20,14 +20,16 @@
 
 // The Python 2.6 Language Reference was used as basis for this AST
 
-#ifndef PYTHONAST_H
-#define PYTHONAST_H
+#ifndef PYTHON_AST_H
+#define PYTHON_AST_H
 
 #include <QList>
 #include <QMap>
 #include <QString>
 #include <QStringList>
 #include <QPair>
+
+#include "parserexport.h"
 
 namespace Python
 {
@@ -98,7 +100,7 @@ class IdentifierParameterPartAst;
 class ListParameterPartAst;
 class DictionaryParameterAst;
 
-class Ast
+class KDEVPYTHONPARSER_EXPORT KDEVPYTHONPARSER_EXPORT Ast
 {
 public:
     enum AstType
@@ -217,7 +219,7 @@ public:
     qint64 endLine;
 };
 
-class CodeAst : public Ast
+class KDEVPYTHONPARSER_EXPORT CodeAst : public Ast
 {
 
 public:
@@ -225,48 +227,48 @@ public:
     QList<StatementAst*> statements;
 };
 
-class StatementAst : public Ast
+class KDEVPYTHONPARSER_EXPORT StatementAst : public Ast
 {
 
 public:
     StatementAst( Ast*, Ast::AstType type );
 };
 
-class ParameterAst : public Ast
+class KDEVPYTHONPARSER_EXPORT ParameterAst : public Ast
 {
 public:
     ParameterAst( Ast* parent, Ast::AstType type );
 };
 
-class ParameterPartAst : public Ast
+class KDEVPYTHONPARSER_EXPORT ParameterPartAst : public Ast
 {
 public:
     ParameterPartAst( Ast*, Ast::AstType type );
 };
 
 
-class ImportAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT ImportAst : public StatementAst
 {
 
 public:
     ImportAst( Ast*, Ast::AstType type );
 };
 
-class ExpressionAst : public Ast
+class KDEVPYTHONPARSER_EXPORT ExpressionAst : public Ast
 {
 
 public:
     ExpressionAst( Ast*, Ast::AstType type );
 };
 
-class PrimaryAst : public ExpressionAst
+class KDEVPYTHONPARSER_EXPORT PrimaryAst : public ExpressionAst
 {
 
 public:
     PrimaryAst( Ast*, Ast::AstType type );
 };
 
-class SliceAst : public PrimaryAst
+class KDEVPYTHONPARSER_EXPORT SliceAst : public PrimaryAst
 {
 
 public:
@@ -275,7 +277,7 @@ public:
 };
 
 
-class SliceItemAst : public Ast
+class KDEVPYTHONPARSER_EXPORT SliceItemAst : public Ast
 {
 
 public:
@@ -283,7 +285,7 @@ public:
 };
 
 
-class ArithmeticExpressionAst : public ExpressionAst
+class KDEVPYTHONPARSER_EXPORT ArithmeticExpressionAst : public ExpressionAst
 {
 public:
     enum ArithmeticOperation
@@ -309,20 +311,20 @@ public:
     ArithmeticOperation opType;
 };
 
-class BooleanOperationAst : public ExpressionAst
+class KDEVPYTHONPARSER_EXPORT BooleanOperationAst : public ExpressionAst
 {
 public:
     BooleanOperationAst( Ast* parent, Ast::AstType type );
 };
 
 
-class TargetAst : public Ast
+class KDEVPYTHONPARSER_EXPORT TargetAst : public Ast
 {
 public:
     TargetAst( Ast*, Ast::AstType );
 };
 
-class FunctionDefinitionAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT FunctionDefinitionAst : public StatementAst
 {
 
 public:
@@ -333,49 +335,49 @@ public:
     QList<Python::StatementAst*> functionBody;
 };
 
-class IdentifierTargetAst : public TargetAst
+class KDEVPYTHONPARSER_EXPORT IdentifierTargetAst : public TargetAst
 {
 public:
     IdentifierTargetAst( Ast* );
     Python::IdentifierAst* identifier;
 };
 
-class TupleTargetAst : public TargetAst
+class KDEVPYTHONPARSER_EXPORT TupleTargetAst : public TargetAst
 {
 public:
     TupleTargetAst( Ast* );
     QList<Python::TargetAst*> items;
 };
 
-class ListTargetAst : public TargetAst
+class KDEVPYTHONPARSER_EXPORT ListTargetAst : public TargetAst
 {
 public:
     ListTargetAst( Ast* );
     QList<Python::TargetAst*> items;
 };
 
-class AttributeReferenceTargetAst : public TargetAst
+class KDEVPYTHONPARSER_EXPORT AttributeReferenceTargetAst : public TargetAst
 {
 public:
     AttributeReferenceTargetAst( Ast* );
     Python::AttributeReferenceAst* attribute;
 };
 
-class SubscriptTargetAst : public TargetAst
+class KDEVPYTHONPARSER_EXPORT SubscriptTargetAst : public TargetAst
 {
 public:
     SubscriptTargetAst( Ast* );
     Python::SubscriptAst* subscript;
 };
 
-class SliceTargetAst : public TargetAst
+class KDEVPYTHONPARSER_EXPORT SliceTargetAst : public TargetAst
 {
 public:
     SliceTargetAst( Ast* );
     Python::SliceAst* slice;
 };
 
-class DecoratorAst : public Ast
+class KDEVPYTHONPARSER_EXPORT DecoratorAst : public Ast
 {
 
 public:
@@ -384,7 +386,7 @@ public:
     QList<Python::ArgumentAst*> arguments;
 };
 
-class ArgumentAst : public Ast
+class KDEVPYTHONPARSER_EXPORT ArgumentAst : public Ast
 {
 
 public:
@@ -401,7 +403,7 @@ public:
     ArgumentType argumentType;
 };
 
-class DefaultParameterAst : public ParameterAst
+class KDEVPYTHONPARSER_EXPORT DefaultParameterAst : public ParameterAst
 {
 public:
     DefaultParameterAst( Ast* );
@@ -410,35 +412,35 @@ public:
 };
 
 
-class IdentifierParameterPartAst : public ParameterPartAst
+class KDEVPYTHONPARSER_EXPORT IdentifierParameterPartAst : public ParameterPartAst
 {
 public:
     IdentifierParameterPartAst( Ast* );
     Python::IdentifierAst* name;
 };
 
-class ListParameterPartAst : public ParameterPartAst
+class KDEVPYTHONPARSER_EXPORT ListParameterPartAst : public ParameterPartAst
 {
 public:
     ListParameterPartAst( Ast* );
     QList<ParameterPartAst*> parameternames;
 };
 
-class DictionaryParameterAst : public ParameterAst
+class KDEVPYTHONPARSER_EXPORT DictionaryParameterAst : public ParameterAst
 {
 public:
     DictionaryParameterAst( Ast* );
     Python::IdentifierAst* name;
 };
 
-class ListParameterAst : public ParameterAst
+class KDEVPYTHONPARSER_EXPORT ListParameterAst : public ParameterAst
 {
 public:
     ListParameterAst( Ast* );
     Python::IdentifierAst* name;
 };
 
-class IfAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT IfAst : public StatementAst
 {
 
 public:
@@ -449,7 +451,7 @@ public:
     QList<Python::StatementAst*> elseBody;
 };
 
-class WhileAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT WhileAst : public StatementAst
 {
 
 public:
@@ -459,7 +461,7 @@ public:
     QList<Python::StatementAst*> elseBody;
 };
 
-class ForAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT ForAst : public StatementAst
 {
 
 public:
@@ -470,7 +472,7 @@ public:
     QList<Python::StatementAst*> elseBody;
 };
 
-class ClassDefinitionAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT ClassDefinitionAst : public StatementAst
 {
 
 public:
@@ -480,7 +482,7 @@ public:
     QList<Python::StatementAst*> classBody;
 };
 
-class TryAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT TryAst : public StatementAst
 {
 
 public:
@@ -491,7 +493,7 @@ public:
     QList<Python::ExceptAst*> exceptions;
 };
 
-class ExceptAst : public Ast
+class KDEVPYTHONPARSER_EXPORT ExceptAst : public Ast
 {
 
 public:
@@ -501,7 +503,7 @@ public:
     QList<Python::StatementAst*> exceptionBody;
 };
 
-class WithAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT WithAst : public StatementAst
 {
 
 public:
@@ -511,7 +513,7 @@ public:
     QList<Python::StatementAst*> body;
 };
 
-class ExecAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT ExecAst : public StatementAst
 {
 
 public:
@@ -521,7 +523,7 @@ public:
     Python::ExpressionAst* localsOnly;
 };
 
-class GlobalAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT GlobalAst : public StatementAst
 {
 
 public:
@@ -529,7 +531,7 @@ public:
     QList<Python::IdentifierAst*> identifiers;
 };
 
-class PlainImportAst : public ImportAst
+class KDEVPYTHONPARSER_EXPORT PlainImportAst : public ImportAst
 {
 
 public:
@@ -537,7 +539,7 @@ public:
     QList< QPair< QList<Python::IdentifierAst*>, Python::IdentifierAst*> > modulesAsName;
 };
 
-class StarImportAst : public ImportAst
+class KDEVPYTHONPARSER_EXPORT StarImportAst : public ImportAst
 {
 
 public:
@@ -545,7 +547,7 @@ public:
     QList<Python::IdentifierAst*> modulePath;
 };
 
-class FromImportAst : public ImportAst
+class KDEVPYTHONPARSER_EXPORT FromImportAst : public ImportAst
 {
 
 public:
@@ -555,7 +557,7 @@ public:
     QList< QPair<Python::IdentifierAst*, Python::IdentifierAst*> > identifierAsName;
 };
 
-class RaiseAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT RaiseAst : public StatementAst
 {
 
 public:
@@ -565,7 +567,7 @@ public:
     Python::ExpressionAst* traceback;
 };
 
-class PrintAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT PrintAst : public StatementAst
 {
 
 public:
@@ -574,7 +576,7 @@ public:
     Python::ExpressionAst* outfile;
 };
 
-class ReturnAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT ReturnAst : public StatementAst
 {
 
 public:
@@ -582,7 +584,7 @@ public:
     QList<Python::ExpressionAst*> returnValues;
 };
 
-class YieldAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT YieldAst : public StatementAst
 {
 
 public:
@@ -590,7 +592,7 @@ public:
     QList<Python::ExpressionAst*> yieldValue;
 };
 
-class DelAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT DelAst : public StatementAst
 {
 
 public:
@@ -598,7 +600,7 @@ public:
     QList<Python::TargetAst*> deleteObjects;
 };
 
-class AssertAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT AssertAst : public StatementAst
 {
 
 public:
@@ -607,7 +609,7 @@ public:
     Python::ExpressionAst* exceptionValue;
 };
 
-class ExpressionStatementAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT ExpressionStatementAst : public StatementAst
 {
 
 public:
@@ -615,7 +617,7 @@ public:
     QList<Python::ExpressionAst*> expressions;
 };
 
-class AssignmentAst : public StatementAst
+class KDEVPYTHONPARSER_EXPORT AssignmentAst : public StatementAst
 {
 public:
 
@@ -641,7 +643,7 @@ public:
     Python::YieldAst* yieldValue;
 };
 
-class LiteralAst : public Ast
+class KDEVPYTHONPARSER_EXPORT LiteralAst : public Ast
 {
 public:
     enum LiteralType
@@ -656,7 +658,7 @@ public:
     LiteralType literalType;
 };
 
-class AtomAst : public PrimaryAst
+class KDEVPYTHONPARSER_EXPORT AtomAst : public PrimaryAst
 {
 
 public:
@@ -666,7 +668,7 @@ public:
     Python::EnclosureAst* enclosure;
 };
 
-class EnclosureAst : public Ast
+class KDEVPYTHONPARSER_EXPORT EnclosureAst : public Ast
 {
 
 public:
@@ -689,7 +691,7 @@ public:
     EnclosureType encType;
 };
 
-class ListAst : public Ast
+class KDEVPYTHONPARSER_EXPORT ListAst : public Ast
 {
 
 public:
@@ -698,7 +700,7 @@ public:
     Python::ListForAst* listGenerator;
 };
 
-class ListForAst : public Ast
+class KDEVPYTHONPARSER_EXPORT ListForAst : public Ast
 {
 
 public:
@@ -709,7 +711,7 @@ public:
     Python::ListIfAst* nextCondition;
 };
 
-class ListIfAst : public Ast
+class KDEVPYTHONPARSER_EXPORT ListIfAst : public Ast
 {
 
 public:
@@ -719,7 +721,7 @@ public:
     Python::ListIfAst* nextCondition;
 };
 
-class GeneratorAst : public Ast
+class KDEVPYTHONPARSER_EXPORT GeneratorAst : public Ast
 {
 
 public:
@@ -728,7 +730,7 @@ public:
     Python::GeneratorForAst* generator;
 };
 
-class GeneratorForAst : public Ast
+class KDEVPYTHONPARSER_EXPORT GeneratorForAst : public Ast
 {
 
 public:
@@ -739,7 +741,7 @@ public:
     Python::GeneratorIfAst* nextCondition;
 };
 
-class GeneratorIfAst : public Ast
+class KDEVPYTHONPARSER_EXPORT GeneratorIfAst : public Ast
 {
 
 public:
@@ -749,7 +751,7 @@ public:
     Python::GeneratorIfAst* nextCondition;
 };
 
-class DictionaryAst : public Ast
+class KDEVPYTHONPARSER_EXPORT DictionaryAst : public Ast
 {
 
 public:
@@ -757,7 +759,7 @@ public:
     QMap<Python::ExpressionAst*, Python::ExpressionAst*> dictionary;
 };
 
-class AttributeReferenceAst : public PrimaryAst
+class KDEVPYTHONPARSER_EXPORT AttributeReferenceAst : public PrimaryAst
 {
 
 public:
@@ -766,7 +768,7 @@ public:
     Python::IdentifierAst* identifier;
 };
 
-class SubscriptAst : public PrimaryAst
+class KDEVPYTHONPARSER_EXPORT SubscriptAst : public PrimaryAst
 {
 
 public:
@@ -775,7 +777,7 @@ public:
     QList<Python::ExpressionAst*> subscription;
 };
 
-class ExtendedSliceAst : public SliceAst
+class KDEVPYTHONPARSER_EXPORT ExtendedSliceAst : public SliceAst
 {
 
 public:
@@ -783,7 +785,7 @@ public:
     QList<Python::SliceItemAst*> extendedSliceList;
 };
 
-class SimpleSliceAst : public SliceAst
+class KDEVPYTHONPARSER_EXPORT SimpleSliceAst : public SliceAst
 {
 
 public:
@@ -791,7 +793,7 @@ public:
     QPair<Python::ExpressionAst*, Python::ExpressionAst*> simpleSliceBounds;
 };
 
-class ProperSliceItemAst : public SliceItemAst
+class KDEVPYTHONPARSER_EXPORT ProperSliceItemAst : public SliceItemAst
 {
 
 public:
@@ -800,7 +802,7 @@ public:
     Python::ExpressionAst* stride;
 };
 
-class ExpressionSliceItemAst : public SliceItemAst
+class KDEVPYTHONPARSER_EXPORT ExpressionSliceItemAst : public SliceItemAst
 {
 
 public:
@@ -808,14 +810,14 @@ public:
     Python::ExpressionAst* sliceExpression;
 };
 
-class EllipsisSliceItemAst : public SliceItemAst
+class KDEVPYTHONPARSER_EXPORT EllipsisSliceItemAst : public SliceItemAst
 {
 
 public:
     EllipsisSliceItemAst( Ast* );
 };
 
-class CallAst : public PrimaryAst
+class KDEVPYTHONPARSER_EXPORT CallAst : public PrimaryAst
 {
 
 public:
@@ -826,7 +828,7 @@ public:
 };
 
 
-class UnaryExpressionAst : public ArithmeticExpressionAst
+class KDEVPYTHONPARSER_EXPORT UnaryExpressionAst : public ArithmeticExpressionAst
 {
 
 public:
@@ -834,7 +836,7 @@ public:
     Python::ExpressionAst* operand;
 };
 
-class BinaryExpressionAst : public ArithmeticExpressionAst
+class KDEVPYTHONPARSER_EXPORT BinaryExpressionAst : public ArithmeticExpressionAst
 {
 
 public:
@@ -843,7 +845,7 @@ public:
     Python::ExpressionAst* rhs;
 };
 
-class ComparisonAst : public BooleanOperationAst
+class KDEVPYTHONPARSER_EXPORT ComparisonAst : public BooleanOperationAst
 {
 public:
 
@@ -866,7 +868,7 @@ public:
          Python::ExpressionAst*> > comparatorList;
 };
 
-class BooleanAndOperationAst : public BooleanOperationAst
+class KDEVPYTHONPARSER_EXPORT BooleanAndOperationAst : public BooleanOperationAst
 {
 public:
     BooleanAndOperationAst( Ast* );
@@ -874,7 +876,7 @@ public:
     Python::BooleanOperationAst* rhs;
 };
 
-class BooleanOrOperationAst : public BooleanOperationAst
+class KDEVPYTHONPARSER_EXPORT BooleanOrOperationAst : public BooleanOperationAst
 {
 public:
     BooleanOrOperationAst( Ast* );
@@ -882,14 +884,14 @@ public:
     Python::BooleanOperationAst* rhs;
 };
 
-class BooleanNotOperationAst : public BooleanOperationAst
+class KDEVPYTHONPARSER_EXPORT BooleanNotOperationAst : public BooleanOperationAst
 {
 public:
     BooleanNotOperationAst( Ast* );
     Python::BooleanOperationAst* op;
 };
 
-class ConditionalExpressionAst : public ExpressionAst
+class KDEVPYTHONPARSER_EXPORT ConditionalExpressionAst : public ExpressionAst
 {
 
 public:
@@ -899,7 +901,7 @@ public:
     Python::ExpressionAst* elseExpression;
 };
 
-class LambdaAst : public ExpressionAst
+class KDEVPYTHONPARSER_EXPORT LambdaAst : public ExpressionAst
 {
 
 public:
@@ -908,7 +910,7 @@ public:
     Python::ExpressionAst* expression;
 };
 
-class IdentifierAst : public ExpressionAst
+class KDEVPYTHONPARSER_EXPORT IdentifierAst : public ExpressionAst
 {
 public:
     IdentifierAst( Ast* );

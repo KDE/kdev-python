@@ -22,11 +22,12 @@
 #define PYTHONASTVISITOR_H
 
 #include "ast.h"
+#include "parserexport.h"
 
 namespace Python
 {
 
-class AstVisitor
+class KDEVPYTHONPARSER_EXPORT AstVisitor
 {
 public:
     virtual ~AstVisitor() {}

@@ -22,11 +22,12 @@
 #define PYTHONASTDEFAULTVISITOR_H
 
 #include "astvisitor.h"
+#include "parserexport.h"
 
 namespace Python
 {
 
-class AstDefaultVisitor : public AstVisitor
+class KDEVPYTHONPARSER_EXPORT AstDefaultVisitor : public AstVisitor
 {
 public:
     AstDefaultVisitor();
@@ -91,12 +92,12 @@ public:
     virtual void visitContinue( StatementAst* );
     virtual void visitPass( StatementAst* );
     virtual void visitIdentifier( IdentifierAst* );
-    virtual void visitIdentifierTarget( IdentifierTargetAst* ) = 0;
-    virtual void visitListTarget( ListTargetAst* ) = 0;
-    virtual void visitTupleTarget( TupleTargetAst* ) = 0;
-    virtual void visitAttributeReferenceTarget( AttributeReferenceTargetAst* ) = 0;
-    virtual void visitSubscriptTarget( SubscriptTargetAst* ) = 0;
-    virtual void visitSliceTarget( SliceTargetAst* ) = 0;
+    virtual void visitIdentifierTarget( IdentifierTargetAst* );
+    virtual void visitListTarget( ListTargetAst* );
+    virtual void visitTupleTarget( TupleTargetAst* );
+    virtual void visitAttributeReferenceTarget( AttributeReferenceTargetAst* );
+    virtual void visitSubscriptTarget( SubscriptTargetAst* );
+    virtual void visitSliceTarget( SliceTargetAst* );
 
 };
 

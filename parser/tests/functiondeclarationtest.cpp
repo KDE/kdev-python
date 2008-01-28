@@ -24,21 +24,10 @@
 
 #include "ast.h"
 #include "pythondriver.h"
+#include "testvisitor.h"
 
 Q_DECLARE_METATYPE(Python::CodeAst*)
 QTEST_MAIN( FunctionDeclarationTest )
-
-#define BASIC_AST_TEST( result, expected ) \
-    QCOMPARE( result->start, expected->start ); \
-    QCOMPARE( result->startCol, expected->startCol ); \
-    QCOMPARE( result->startLine, expected->startLine ); \
-    QEXPECT_FAIL("", "This will fail for code ast", Continue); \
-    QCOMPARE( result->end, expected->end ); \
-    QEXPECT_FAIL("", "This will fail for code ast", Continue); \
-    QCOMPARE( result->endCol, expected->endCol ); \
-    QEXPECT_FAIL("", "This will fail for code ast", Continue); \
-    QCOMPARE( result->endLine, expected->endLine ); \
-    QCOMPARE( result->astType, expected->astType );
 
 FunctionDeclarationTest::FunctionDeclarationTest( QObject* parent )
     : QObject( parent )
@@ -58,8 +47,9 @@ void FunctionDeclarationTest::noArguments( )
     Python::CodeAst* result;
     d.setContent( project );
     d.parse( &result );
-    BASIC_AST_TEST( result, expected )
-    QCOMPARE( result->statements.count(), expected->statements.count() );
+    TestVisitor tv;
+    tv.setExpected( expected );
+    tv.visitCode( result );
     
 }
 

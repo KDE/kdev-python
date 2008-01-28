@@ -27,7 +27,7 @@ target_link_libraries(python-lexertest
     kdev4pythonparser
 )
 
-set( functiondeclarationtest_SRCS functiondeclarationtest.cpp )
+set( functiondeclarationtest_SRCS functiondeclarationtest.cpp testvisitor.cpp )
 
 kde4_add_unit_test(python-functiondeclarationtest ${functiondeclarationtest_SRCS} )
 target_link_libraries(python-functiondeclarationtest

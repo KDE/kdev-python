@@ -32,9 +32,11 @@
     QCOMPARE( result->endCol, expected->endCol ); \
     QEXPECT_FAIL("", "This will fail for code ast", Continue); \
     QCOMPARE( result->endLine, expected->endLine ); \
-    QCOMPARE( result->astType, expected->astType );
+    QCOMPARE( result->astType, expected->astType )
 
 using namespace Python;
+
+
 
 TestVisitor::TestVisitor()
 {
@@ -44,316 +46,305 @@ TestVisitor::~TestVisitor()
 {
 }
 
-void TestVisitor::setExpected( Python::CodeAst* ast )
+void TestVisitor::setExpected( CodeAst* ast )
 {
     expectedStack.push( ast );
 }
 
-void TestVisitor::visitCode( Python::CodeAst* ast )
+void TestVisitor::visitCode( CodeAst* ast )
 {
-    Python::CodeAst* expectedast = pop<Python::CodeAst>();
-    BASIC_AST_TEST( ast, expectedast )
+    CodeAst* expectedast = pop<CodeAst>();
+    BASIC_AST_TEST( ast, expectedast );
     QCOMPARE( ast->statements.count(), expectedast->statements.count() );
-    QList<StatementAst*>::const_iterator it, end = ast->statements.end();
-    QList<StatementAst*>::const_iterator expectedit, expectedend = expectedast->statements.end();
-    for( it = ast->statements.begin(), expectedit = expectedast->statements.begin(); it != end, expectedit != expectedend ; it++, expectedit++ )
-    {
-        expectedStack.push( *expectedit );
-        visitNode( *it );
-    }
+    checkList( ast->statements, expectedast->statements );
+    Q_ASSERT( expectedStack.isEmpty() );
 }
 
-void TestVisitor::visitFunctionDefinition( Python::FunctionDefinitionAst* ast )
+void TestVisitor::visitFunctionDefinition( FunctionDefinitionAst* ast )
 {
-    Python::FunctionDefinitionAst* expectedast = pop<Python::FunctionDefinitionAst>();
-    BASIC_AST_TEST( ast, expectedast )
+    FunctionDefinitionAst* expectedast = pop<FunctionDefinitionAst>();
+    BASIC_AST_TEST( ast, expectedast );
     QCOMPARE( ast->decorators.count(), expectedast->decorators.count() );
     QCOMPARE( ast->functionBody.count(), expectedast->functionBody.count() );
     QCOMPARE( ast->parameters.count(), expectedast->parameters.count() );
     
-    {
-        QList<DecoratorAst*>::const_iterator it, end = ast->decorators.end();
-        QList<DecoratorAst*>::const_iterator expectedit, expectedend = expectedast->decorators.end();
-        for( it = ast->decorators.begin(), expectedit = expectedast->decorators.begin();
-             it != end, expectedit != end; it++, expectedit++ )
-        {
-            expectedStack.push( *expectedit );
-            visitNode( *it );
-        }
-    }
+    checkList( ast->decorators, expectedast->decorators );
     expectedStack.push( expectedast->functionName );
     visitNode( ast->functionName );
+    checkList( ast->parameters, expectedast->parameters );
+    checkList( ast->functionBody, expectedast->functionBody );
+}
+
+void TestVisitor::visitDecorator( DecoratorAst* ast )
+{
+    DecoratorAst* expectedast = pop<DecoratorAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkList( ast->dottedName, expectedast->dottedName );
+    checkList( ast->arguments, expectedast->arguments );
+}
+
+void TestVisitor::visitArgument( ArgumentAst* ast )
+{
+    ArgumentAst* expectedast = pop<ArgumentAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    QCOMPARE( ast->argumentType, expectedast->argumentType );
+    if( ast->argumentType == ArgumentAst::KeywordArgument )
     {
-        QList<ParameterAst*>::const_iterator it, end = ast->parameters.end();
-        QList<ParameterAst*>::const_iterator expectedit, expectedend = expectedast->parameters.end();
-        for( it = ast->parameters.begin(), expectedit = expectedast->parameters.begin();
-             it != end, expectedit != end; it++, expectedit++ )
-        {
-            expectedStack.push( *expectedit );
-            visitNode( *it );
-        }
+        expectedStack.push( expectedast->keywordName );
+        visitNode( ast->keywordName );
     }
-    {
-        QList<StatementAst*>::const_iterator it, end = ast->functionBody.end();
-        QList<StatementAst*>::const_iterator expectedit, expectedend = expectedast->functionBody.end();
-        for( it = ast->functionBody.begin(), expectedit = expectedast->functionBody.begin();
-             it != end, expectedit != end; it++, expectedit++ )
-        {
-            expectedStack.push( *expectedit );
-            visitNode( *it );
-        }
-    }
+    
+    expectedStack.push( expectedast->argumentExpression );
+    visitNode( ast->argumentExpression );
 }
 
-void TestVisitor::visitDecorator( Python::DecoratorAst* )
+void TestVisitor::visitDefaultParameter( DefaultParameterAst* ast )
+{
+    DefaultParameterAst* expectedast = pop<DefaultParameterAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    expectedStack.push( expectedast->name );
+    visitNode( ast->name );
+    expectedStack.push( expectedast->value );
+    visitNode( ast->value );
+}
+
+void TestVisitor::visitIdentifierParameterPart( IdentifierParameterPartAst* )
 {
 }
 
-void TestVisitor::visitArgument( Python::ArgumentAst* )
+void TestVisitor::visitListParameterPart( ListParameterPartAst* )
 {
 }
 
-void TestVisitor::visitDefaultParameter( Python::DefaultParameterAst* )
+void TestVisitor::visitDictionaryParameter( DictionaryParameterAst* )
 {
 }
 
-void TestVisitor::visitIdentifierParameterPart( Python::IdentifierParameterPartAst* )
+void TestVisitor::visitListParameter( ListParameterAst* )
 {
 }
 
-void TestVisitor::visitListParameterPart( Python::ListParameterPartAst* )
+void TestVisitor::visitIf( IfAst* )
 {
 }
 
-void TestVisitor::visitDictionaryParameter( Python::DictionaryParameterAst* )
+void TestVisitor::visitWhile( WhileAst* )
 {
 }
 
-void TestVisitor::visitListParameter( Python::ListParameterAst* )
+void TestVisitor::visitFor( ForAst* )
 {
 }
 
-void TestVisitor::visitIf( Python::IfAst* )
+void TestVisitor::visitClassDefinition( ClassDefinitionAst* )
 {
 }
 
-void TestVisitor::visitWhile( Python::WhileAst* )
+void TestVisitor::visitTry( TryAst* )
 {
 }
 
-void TestVisitor::visitFor( Python::ForAst* )
+void TestVisitor::visitExcept( ExceptAst* )
 {
 }
 
-void TestVisitor::visitClassDefinition( Python::ClassDefinitionAst* )
+void TestVisitor::visitWith( WithAst* )
 {
 }
 
-void TestVisitor::visitTry( Python::TryAst* )
+void TestVisitor::visitExec( ExecAst* )
 {
 }
 
-void TestVisitor::visitExcept( Python::ExceptAst* )
+void TestVisitor::visitGlobal( GlobalAst* )
 {
 }
 
-void TestVisitor::visitWith( Python::WithAst* )
+void TestVisitor::visitPlainImport( PlainImportAst* )
 {
 }
 
-void TestVisitor::visitExec( Python::ExecAst* )
+void TestVisitor::visitStarImport( StarImportAst* )
 {
 }
 
-void TestVisitor::visitGlobal( Python::GlobalAst* )
+void TestVisitor::visitFromImport( FromImportAst* )
 {
 }
 
-void TestVisitor::visitPlainImport( Python::PlainImportAst* )
+void TestVisitor::visitRaise( RaiseAst* )
 {
 }
 
-void TestVisitor::visitStarImport( Python::StarImportAst* )
+void TestVisitor::visitPrint( PrintAst* )
 {
 }
 
-void TestVisitor::visitFromImport( Python::FromImportAst* )
+void TestVisitor::visitReturn( ReturnAst* )
 {
 }
 
-void TestVisitor::visitRaise( Python::RaiseAst* )
+void TestVisitor::visitYield( YieldAst* )
 {
 }
 
-void TestVisitor::visitPrint( Python::PrintAst* )
+void TestVisitor::visitDel( DelAst* )
 {
 }
 
-void TestVisitor::visitReturn( Python::ReturnAst* )
+void TestVisitor::visitAssert( AssertAst* )
 {
 }
 
-void TestVisitor::visitYield( Python::YieldAst* )
+void TestVisitor::visitExpressionStatement( ExpressionStatementAst* )
 {
 }
 
-void TestVisitor::visitDel( Python::DelAst* )
+void TestVisitor::visitAssignment( AssignmentAst* )
 {
 }
 
-void TestVisitor::visitAssert( Python::AssertAst* )
+void TestVisitor::visitAtom( AtomAst* )
 {
 }
 
-void TestVisitor::visitExpressionStatement( Python::ExpressionStatementAst* )
+void TestVisitor::visitEnclosure( EnclosureAst* )
 {
 }
 
-void TestVisitor::visitAssignment( Python::AssignmentAst* )
+void TestVisitor::visitList( ListAst* )
 {
 }
 
-void TestVisitor::visitAtom( Python::AtomAst* )
+void TestVisitor::visitListFor( ListForAst* )
 {
 }
 
-void TestVisitor::visitEnclosure( Python::EnclosureAst* )
+void TestVisitor::visitListIf( ListIfAst* )
 {
 }
 
-void TestVisitor::visitList( Python::ListAst* )
+void TestVisitor::visitLiteral( LiteralAst* )
 {
 }
 
-void TestVisitor::visitListFor( Python::ListForAst* )
+void TestVisitor::visitGenerator( GeneratorAst* )
 {
 }
 
-void TestVisitor::visitListIf( Python::ListIfAst* )
+void TestVisitor::visitGeneratorFor( GeneratorForAst* )
 {
 }
 
-void TestVisitor::visitLiteral( Python::LiteralAst* )
+void TestVisitor::visitGeneratorIf( GeneratorIfAst* )
 {
 }
 
-void TestVisitor::visitGenerator( Python::GeneratorAst* )
+void TestVisitor::visitDictionary( DictionaryAst* )
 {
 }
 
-void TestVisitor::visitGeneratorFor( Python::GeneratorForAst* )
+void TestVisitor::visitAttributeReference( AttributeReferenceAst* )
 {
 }
 
-void TestVisitor::visitGeneratorIf( Python::GeneratorIfAst* )
+void TestVisitor::visitSubscript( SubscriptAst* )
 {
 }
 
-void TestVisitor::visitDictionary( Python::DictionaryAst* )
+void TestVisitor::visitExtendedSlice( ExtendedSliceAst* )
 {
 }
 
-void TestVisitor::visitAttributeReference( Python::AttributeReferenceAst* )
+void TestVisitor::visitSimpleSlice( SimpleSliceAst* )
 {
 }
 
-void TestVisitor::visitSubscript( Python::SubscriptAst* )
+void TestVisitor::visitProperSliceItem( ProperSliceItemAst* )
 {
 }
 
-void TestVisitor::visitExtendedSlice( Python::ExtendedSliceAst* )
+void TestVisitor::visitExpressionSliceItem( ExpressionSliceItemAst* )
 {
 }
 
-void TestVisitor::visitSimpleSlice( Python::SimpleSliceAst* )
+void TestVisitor::visitEllipsisSliceItem( EllipsisSliceItemAst* )
 {
 }
 
-void TestVisitor::visitProperSliceItem( Python::ProperSliceItemAst* )
+void TestVisitor::visitCall( CallAst* )
 {
 }
 
-void TestVisitor::visitExpressionSliceItem( Python::ExpressionSliceItemAst* )
+void TestVisitor::visitUnaryExpression( UnaryExpressionAst* )
 {
 }
 
-void TestVisitor::visitEllipsisSliceItem( Python::EllipsisSliceItemAst* )
+void TestVisitor::visitBinaryExpression( BinaryExpressionAst* )
 {
 }
 
-void TestVisitor::visitCall( Python::CallAst* )
+void TestVisitor::visitComparison( ComparisonAst* )
 {
 }
 
-void TestVisitor::visitUnaryExpression( Python::UnaryExpressionAst* )
+void TestVisitor::visitBooleanNotOperation( BooleanNotOperationAst* )
 {
 }
 
-void TestVisitor::visitBinaryExpression( Python::BinaryExpressionAst* )
+void TestVisitor::visitBooleanAndOperation( BooleanAndOperationAst* )
 {
 }
 
-void TestVisitor::visitComparison( Python::ComparisonAst* )
+void TestVisitor::visitBooleanOrOperation( BooleanOrOperationAst* )
 {
 }
 
-void TestVisitor::visitBooleanNotOperation( Python::BooleanNotOperationAst* )
+void TestVisitor::visitConditionalExpression( ConditionalExpressionAst* )
 {
 }
 
-void TestVisitor::visitBooleanAndOperation( Python::BooleanAndOperationAst* )
+void TestVisitor::visitLambda( LambdaAst* )
 {
 }
 
-void TestVisitor::visitBooleanOrOperation( Python::BooleanOrOperationAst* )
+void TestVisitor::visitBreak( StatementAst* )
 {
 }
 
-void TestVisitor::visitConditionalExpression( Python::ConditionalExpressionAst* )
+void TestVisitor::visitContinue( StatementAst* )
 {
 }
 
-void TestVisitor::visitLambda( Python::LambdaAst* )
+void TestVisitor::visitPass( StatementAst* )
 {
 }
 
-void TestVisitor::visitBreak( Python::StatementAst* )
+void TestVisitor::visitIdentifier( IdentifierAst* )
 {
 }
 
-void TestVisitor::visitContinue( Python::StatementAst* )
+void TestVisitor::visitIdentifierTarget( IdentifierTargetAst* )
 {
 }
 
-void TestVisitor::visitPass( Python::StatementAst* )
+void TestVisitor::visitListTarget( ListTargetAst* )
 {
 }
 
-void TestVisitor::visitIdentifier( Python::IdentifierAst* )
+void TestVisitor::visitTupleTarget( TupleTargetAst* )
 {
 }
 
-void TestVisitor::visitIdentifierTarget( Python::IdentifierTargetAst* )
+void TestVisitor::visitAttributeReferenceTarget( AttributeReferenceTargetAst* )
 {
 }
 
-void TestVisitor::visitListTarget( Python::ListTargetAst* )
+void TestVisitor::visitSubscriptTarget( SubscriptTargetAst* )
 {
 }
 
-void TestVisitor::visitTupleTarget( Python::TupleTargetAst* )
-{
-}
-
-void TestVisitor::visitAttributeReferenceTarget( Python::AttributeReferenceTargetAst* )
-{
-}
-
-void TestVisitor::visitSubscriptTarget( Python::SubscriptTargetAst* )
-{
-}
-
-void TestVisitor::visitSliceTarget( Python::SliceTargetAst* )
+void TestVisitor::visitSliceTarget( SliceTargetAst* )
 {
 }
 

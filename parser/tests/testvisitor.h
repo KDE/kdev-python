@@ -24,6 +24,7 @@
 #include "astdefaultvisitor.h"
 #include "ast.h"
 #include <QStack>
+#include <QList>
 
 class TestVisitor : public Python::AstDefaultVisitor
 {
@@ -105,6 +106,16 @@ private:
         T* ast = dynamic_cast<T*>( expectedStack.pop() );
         Q_ASSERT(ast);
         return ast;
+    }
+    template <typename T> void checkList( const QList<T*>& l, const QList<T*>& expected )
+    {
+        typename QList<T*>::ConstIterator it, end = l.end();
+        typename QList<T*>::ConstIterator expectedit, expectedend = expected.end();
+        for( it = l.begin(), expectedit = expected.end(); it != end, expectedit != expectedend; it++, expectedit++ )
+        {
+            expectedStack.push( *expectedit );
+            visitNode( *it );
+        }
     }
     QStack<Python::Ast*> expectedStack;
 };

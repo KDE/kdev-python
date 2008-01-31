@@ -305,24 +305,67 @@ void TestVisitor::visitAtom( AtomAst* ast )
     checkOptional( ast->literal, expectedast->literal );
 }
 
-void TestVisitor::visitEnclosure( EnclosureAst* )
+void TestVisitor::visitEnclosure( EnclosureAst* ast )
 {
+    EnclosureAst* expectedast = pop<EnclosureAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    QCOMPARE( ast->encType, expectedast->encType );
+    switch( ast->encType )
+    {
+        case EnclosureAst::Dictionary:
+            checkNode( ast->dict, expectedast->dict );
+            break;
+        case EnclosureAst::Generator:
+            checkNode( ast->generator, expectedast->generator );
+            break;
+        case EnclosureAst::ParenthesizedForm:
+            checkList( ast->parenthesizedform, expectedast->parenthesizedform );
+            break;
+        case EnclosureAst::StringConversion:
+            checkList( ast->stringConversion, expectedast->stringConversion );
+            break;
+        case EnclosureAst::List:
+            checkNode( ast->list, expectedast->list );
+            break;
+        case EnclosureAst::Yield:
+            checkNode( ast->yield, expectedast->yield );
+            break;
+    }
 }
 
-void TestVisitor::visitList( ListAst* )
+void TestVisitor::visitList( ListAst* ast )
 {
+    ListAst* expectedast = pop<ListAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkList( ast->plainList, expectedast->plainList );
+    checkOptional( ast->listGenerator, expectedast->listGenerator );
 }
 
-void TestVisitor::visitListFor( ListForAst* )
+void TestVisitor::visitListFor( ListForAst* ast )
 {
+    ListForAst* expectedast = pop<ListForAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkList( ast->assignedTargets, expectedast->assignedTargets );
+    checkList( ast->iterableObject, expectedast->iterableObject );
+    checkOptional( ast->nextCondition, expectedast->nextCondition );
+    checkOptional( ast->nextGenerator, expectedast->nextGenerator );
 }
 
-void TestVisitor::visitListIf( ListIfAst* )
+void TestVisitor::visitListIf( ListIfAst* ast )
 {
+    ListIfAst* expectedast = pop<ListIfAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->condition, expectedast->condition );
+    checkOptional( ast->nextCondition, expectedast->nextCondition );
+    checkOptional( ast->nextGenerator, expectedast->nextGenerator );
 }
 
-void TestVisitor::visitLiteral( LiteralAst* )
+void TestVisitor::visitLiteral( LiteralAst* ast )
 {
+    LiteralAst* expectedast = pop<LiteralAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    QCOMPARE( ast->literalType, expectedast->literalType );
+    QCOMPARE( ast->value, expectedast->value );
 }
 
 void TestVisitor::visitGenerator( GeneratorAst* )

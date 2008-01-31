@@ -38,7 +38,7 @@ endif(KDEVPGQT_FOUND)
 
 
 add_subdirectory(parser)
-add_subdirectory(duchain)
+#add_subdirectory(duchain)
 
 set(kdevpythonlanguagesupport_PART_SRCS
     pythonlanguagesupport.cpp
@@ -46,20 +46,20 @@ set(kdevpythonlanguagesupport_PART_SRCS
     pythonhighlighting.cpp
 )
 
-kde4_add_plugin(kdevpythonlanguagesupport ${kdevpythonlanguagesupport_PART_SRCS})
+#kde4_add_plugin(kdevpythonlanguagesupport ${kdevpythonlanguagesupport_PART_SRCS})
 
-target_link_libraries(kdevpythonlanguagesupport
-    ${KDE4_KDEUI_LIBS}
-    ${KDEVPLATFORM_INTERFACES_LIBRARY}
-    ${KDEVPLATFORM_LANGUAGE_LIBRARY}
-    ${KDE4_THREADWEAVER_LIBRARIES}
-    ${KDEVPLATFORM_EDITOR_LIBRARY}
-    ${KDE4_KTEXTEDITOR_LIBS}
-    kdev4pythonparser
-    kdev4pythonduchain
-)
+#target_link_libraries(kdevpythonlanguagesupport
+#    ${KDE4_KDEUI_LIBS}
+#    ${KDEVPLATFORM_INTERFACES_LIBRARY}
+#    ${KDEVPLATFORM_LANGUAGE_LIBRARY}
+#    ${KDE4_THREADWEAVER_LIBRARIES}
+#    ${KDEVPLATFORM_EDITOR_LIBRARY}
+#    ${KDE4_KTEXTEDITOR_LIBS}
+#    kdev4pythonparser
+#    kdev4pythonduchain
+#)
 
-install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})
+#install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES kdevpythonsupport.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 

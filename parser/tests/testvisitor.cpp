@@ -20,8 +20,6 @@
 
 #include "testvisitor.h"
 
-#include <QtTest/QtTest>
-
 #define BASIC_AST_TEST( result, expected ) \
     QCOMPARE( result->start, expected->start ); \
     QCOMPARE( result->startCol, expected->startCol ); \
@@ -69,8 +67,7 @@ void TestVisitor::visitFunctionDefinition( FunctionDefinitionAst* ast )
     QCOMPARE( ast->parameters.count(), expectedast->parameters.count() );
     
     checkList( ast->decorators, expectedast->decorators );
-    expectedStack.push( expectedast->functionName );
-    visitNode( ast->functionName );
+    checkNode( ast->functionName, expectedast->functionName );
     checkList( ast->parameters, expectedast->parameters );
     checkList( ast->functionBody, expectedast->functionBody );
 }
@@ -90,122 +87,222 @@ void TestVisitor::visitArgument( ArgumentAst* ast )
     QCOMPARE( ast->argumentType, expectedast->argumentType );
     if( ast->argumentType == ArgumentAst::KeywordArgument )
     {
-        expectedStack.push( expectedast->keywordName );
-        visitNode( ast->keywordName );
+        checkNode( ast->keywordName, expectedast->keywordName );
     }
     
-    expectedStack.push( expectedast->argumentExpression );
-    visitNode( ast->argumentExpression );
+    checkNode( ast->argumentExpression, expectedast->argumentExpression );
 }
 
 void TestVisitor::visitDefaultParameter( DefaultParameterAst* ast )
 {
     DefaultParameterAst* expectedast = pop<DefaultParameterAst>();
     BASIC_AST_TEST( ast, expectedast );
-    expectedStack.push( expectedast->name );
-    visitNode( ast->name );
-    expectedStack.push( expectedast->value );
-    visitNode( ast->value );
+    checkNode( ast->name, expectedast->name );
+    checkNode( ast->value, expectedast->value );
 }
 
-void TestVisitor::visitIdentifierParameterPart( IdentifierParameterPartAst* )
+void TestVisitor::visitIdentifierParameterPart( IdentifierParameterPartAst* ast )
 {
+    IdentifierParameterPartAst* expectedast = pop<IdentifierParameterPartAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->name, expectedast->name );
 }
 
-void TestVisitor::visitListParameterPart( ListParameterPartAst* )
+void TestVisitor::visitListParameterPart( ListParameterPartAst* ast )
 {
+    ListParameterPartAst* expectedast = pop<ListParameterPartAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkList( ast->parameternames, expectedast->parameternames );
 }
 
-void TestVisitor::visitDictionaryParameter( DictionaryParameterAst* )
+void TestVisitor::visitDictionaryParameter( DictionaryParameterAst* ast )
 {
+    DictionaryParameterAst* expectedast = pop<DictionaryParameterAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->name, expectedast->name );
 }
 
-void TestVisitor::visitListParameter( ListParameterAst* )
+void TestVisitor::visitListParameter( ListParameterAst* ast )
 {
+    ListParameterAst* expectedast = pop<ListParameterAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->name, expectedast->name );
 }
 
-void TestVisitor::visitIf( IfAst* )
+void TestVisitor::visitIf( IfAst* ast )
 {
+    IfAst* expectedast = pop<IfAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->ifCondition, expectedast->ifCondition );
+    checkList( ast->ifBody, expectedast->ifBody );
+    checkPairList( ast->elseIfBodies, expectedast->elseIfBodies );
+    checkList( ast->elseBody, expectedast->elseBody );
 }
 
-void TestVisitor::visitWhile( WhileAst* )
+void TestVisitor::visitWhile( WhileAst* ast )
 {
+    WhileAst* expectedast = pop<WhileAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->condition, expectedast->condition );
+    checkList( ast->whileBody, expectedast->whileBody );
+    checkList( ast->elseBody, expectedast->elseBody );
 }
 
-void TestVisitor::visitFor( ForAst* )
+void TestVisitor::visitFor( ForAst* ast )
 {
+    ForAst* expectedast = pop<ForAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkList( ast->assignedTargets, expectedast->assignedTargets );
+    checkList( ast->iterable, expectedast->iterable );
+    checkList( ast->forBody, expectedast->forBody );
+    checkList( ast->elseBody, expectedast->elseBody );
 }
 
-void TestVisitor::visitClassDefinition( ClassDefinitionAst* )
+void TestVisitor::visitClassDefinition( ClassDefinitionAst* ast )
 {
+    ClassDefinitionAst* expectedast = pop<ClassDefinitionAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->className, expectedast->className );
+    checkList( ast->inheritance, expectedast->inheritance );
+    checkList( ast->classBody, expectedast->classBody );
 }
 
-void TestVisitor::visitTry( TryAst* )
+void TestVisitor::visitTry( TryAst* ast )
 {
+    TryAst* expectedast = pop<TryAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkList( ast->tryBody, expectedast->tryBody );
+    checkList( ast->exceptions, expectedast->exceptions );
+    checkList( ast->elseBody, expectedast->elseBody );
+    checkList( ast->finallyBody, expectedast->finallyBody );
 }
 
-void TestVisitor::visitExcept( ExceptAst* )
+void TestVisitor::visitExcept( ExceptAst* ast )
 {
+    ExceptAst* expectedast = pop<ExceptAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkOptional( ast->exceptionDeclaration, expectedast->exceptionDeclaration );
+    checkOptional( ast->exceptionValue, expectedast->exceptionValue );
+    checkList( ast->exceptionBody, expectedast->exceptionBody );
 }
 
-void TestVisitor::visitWith( WithAst* )
+void TestVisitor::visitWith( WithAst* ast )
 {
+    WithAst* expectedast = pop<WithAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->context, expectedast->context );
+    checkOptional( ast->name, expectedast->name );
+    checkList( ast->body, expectedast->body );
 }
 
-void TestVisitor::visitExec( ExecAst* )
+void TestVisitor::visitExec( ExecAst* ast )
 {
+    ExecAst* expectedast = pop<ExecAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->executable, expectedast->executable );
+    checkOptional( ast->globalsAndLocals, expectedast->globalsAndLocals );
+    checkOptional( ast->localsOnly, expectedast->localsOnly );
 }
 
-void TestVisitor::visitGlobal( GlobalAst* )
+void TestVisitor::visitGlobal( GlobalAst* ast )
 {
+    GlobalAst* expectedast = pop<GlobalAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkList( ast->identifiers, expectedast->identifiers );
 }
 
-void TestVisitor::visitPlainImport( PlainImportAst* )
+void TestVisitor::visitPlainImport( PlainImportAst* ast )
 {
+    PlainImportAst* expectedast = pop<PlainImportAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkPairList( ast->modulesAsName, expectedast->modulesAsName );
 }
 
-void TestVisitor::visitStarImport( StarImportAst* )
+void TestVisitor::visitStarImport( StarImportAst* ast )
 {
+    StarImportAst* expectedast = pop<StarImportAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkList( ast->modulePath, expectedast->modulePath );
 }
 
-void TestVisitor::visitFromImport( FromImportAst* )
+void TestVisitor::visitFromImport( FromImportAst* ast )
 {
+    FromImportAst* expectedast = pop<FromImportAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    QCOMPARE( ast->numLeadingDots, expectedast->numLeadingDots );
+    checkList( ast->modulePath, expectedast->modulePath );
+    checkPairList( ast->identifierAsName, expectedast->identifierAsName );
 }
 
-void TestVisitor::visitRaise( RaiseAst* )
+void TestVisitor::visitRaise( RaiseAst* ast )
 {
+    RaiseAst* expectedast = pop<RaiseAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkOptional( ast->exceptionType, expectedast->exceptionType );
+    checkOptional( ast->exceptionValue, expectedast->exceptionValue );
+    checkOptional( ast->traceback, expectedast->traceback );
 }
 
-void TestVisitor::visitPrint( PrintAst* )
+void TestVisitor::visitPrint( PrintAst* ast )
 {
+    PrintAst* expectedast = pop<PrintAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkOptional( ast->outfile, expectedast->outfile );
+    checkList( ast->printables, expectedast->printables );
 }
 
-void TestVisitor::visitReturn( ReturnAst* )
+void TestVisitor::visitReturn( ReturnAst* ast )
 {
+    ReturnAst* expectedast = pop<ReturnAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkList( ast->returnValues, expectedast->returnValues );
 }
 
-void TestVisitor::visitYield( YieldAst* )
+void TestVisitor::visitYield( YieldAst* ast )
 {
+    YieldAst* expectedast = pop<YieldAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkList( ast->yieldValue, expectedast->yieldValue );
 }
 
-void TestVisitor::visitDel( DelAst* )
+void TestVisitor::visitDel( DelAst* ast )
 {
+    DelAst* expectedast = pop<DelAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkList( ast->deleteObjects, expectedast->deleteObjects );
 }
 
-void TestVisitor::visitAssert( AssertAst* )
+void TestVisitor::visitAssert( AssertAst* ast )
 {
+    AssertAst* expectedast = pop<AssertAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->assertTest, expectedast->assertTest );
+    checkOptional( ast->exceptionValue, expectedast->exceptionValue );
 }
 
-void TestVisitor::visitExpressionStatement( ExpressionStatementAst* )
+void TestVisitor::visitExpressionStatement( ExpressionStatementAst* ast )
 {
+    ExpressionStatementAst* expectedast = pop<ExpressionStatementAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkList( ast->expressions, expectedast->expressions );
 }
 
-void TestVisitor::visitAssignment( AssignmentAst* )
+void TestVisitor::visitAssignment( AssignmentAst* ast )
 {
+    AssignmentAst* expectedast = pop<AssignmentAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkPairList( ast->targets, expectedast->targets );
+    checkOptional( ast->yieldValue, expectedast->yieldValue );
+    checkList( ast->value, expectedast->value );
 }
 
-void TestVisitor::visitAtom( AtomAst* )
+void TestVisitor::visitAtom( AtomAst* ast )
 {
+    AtomAst* expectedast = pop<AtomAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkOptional( ast->enclosure, expectedast->enclosure );
+    checkOptional( ast->identifier, expectedast->identifier );
+    checkOptional( ast->literal, expectedast->literal );
 }
 
 void TestVisitor::visitEnclosure( EnclosureAst* )

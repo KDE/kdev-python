@@ -25,6 +25,7 @@
 #include "ast.h"
 #include <QStack>
 #include <QList>
+#include <QtTest/QtTest>
 
 class TestVisitor : public Python::AstDefaultVisitor
 {
@@ -115,6 +116,66 @@ private:
         {
             expectedStack.push( *expectedit );
             visitNode( *it );
+        }
+    }
+
+    template <typename T1, typename T2> void checkPairList( const QList<QPair<T1*, QList<T2*> > >& l, const QList<QPair<T1*, QList<T2*> > >& expected )
+    {
+        typename QList<QPair<T1*, QList<T2*> > >::ConstIterator it, end = l.end();
+        typename QList<QPair<T1*, QList<T2*> > >::ConstIterator expectedit, expectedend = expected.end();
+        for( it = l.begin(), expectedit = expected.end(); it != end, expectedit != expectedend; it++, expectedit++ )
+        {
+            expectedStack.push( (*expectedit).first );
+            visitNode( (*it).first );
+            checkList( (*it).second, (*expectedit).second );
+        }
+    }
+    template <typename T1, typename T2> void checkPairList( const QList<QPair<QList<T1*>, T2*> >& l, const QList<QPair<QList<T1*>, T2* > >& expected )
+    {
+        typename QList<QPair<QList<T1*>, T2*> >::ConstIterator it, end = l.end();
+        typename QList<QPair<QList<T1*>, T2*> >::ConstIterator expectedit, expectedend = expected.end();
+        for( it = l.begin(), expectedit = expected.end(); it != end, expectedit != expectedend; it++, expectedit++ )
+        {
+            checkList( (*it).first, (*expectedit).first );
+            expectedStack.push( (*expectedit).second );
+            visitNode( (*it).second );
+        }
+    }
+    template <typename T1> void checkPairList( const QList<QPair<QList<T1*>, Python::AssignmentAst::OpType> >& l, const QList<QPair<QList<T1*>, Python::AssignmentAst::OpType> >& expected )
+    {
+        typename QList<QPair<QList<T1*>, Python::AssignmentAst::OpType> >::ConstIterator it, end = l.end();
+        typename QList<QPair<QList<T1*>, Python::AssignmentAst::OpType> >::ConstIterator expectedit, expectedend = expected.end();
+        for( it = l.begin(), expectedit = expected.end(); it != end, expectedit != expectedend; it++, expectedit++ )
+        {
+            checkList( (*it).first, (*expectedit).first );
+            QCOMPARE( (*it).second, (*expectedit).second );
+        }
+    }
+    template <typename T1, typename T2> void checkPairList( const QList<QPair<T1*, T2*> >& l, const QList<QPair<T1*, T2* > >& expected )
+    {
+        typename QList<QPair<T1*, T2*> >::ConstIterator it, end = l.end();
+        typename QList<QPair<T1*, T2*> >::ConstIterator expectedit, expectedend = expected.end();
+        for( it = l.begin(), expectedit = expected.end(); it != end, expectedit != expectedend; it++, expectedit++ )
+        {
+            expectedStack.push( (*expectedit).first );
+            visitNode( (*it).first );
+            expectedStack.push( (*expectedit).second );
+            visitNode( (*it).second );
+        }
+    }
+    template <typename T> void checkNode( T* org, T* expect )
+    {
+        expectedStack.push( expect );
+        visitNode( org );
+    }
+    template <typename T> void checkOptional( T* org, T* expect )
+    {
+        if( org && expect )
+        {
+            checkNode( org, expect );
+        }else
+        {
+            QCOMPARE( org, expect );
         }
     }
     QStack<Python::Ast*> expectedStack;

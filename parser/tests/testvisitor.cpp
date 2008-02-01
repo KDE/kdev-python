@@ -368,123 +368,240 @@ void TestVisitor::visitLiteral( LiteralAst* ast )
     QCOMPARE( ast->value, expectedast->value );
 }
 
-void TestVisitor::visitGenerator( GeneratorAst* )
+void TestVisitor::visitGenerator( GeneratorAst* ast )
 {
+    GeneratorAst* expectedast = pop<GeneratorAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->generatedValue, expectedast->generatedValue );
+    checkNode( ast->generator, expectedast->generator );
 }
 
-void TestVisitor::visitGeneratorFor( GeneratorForAst* )
+void TestVisitor::visitGeneratorFor( GeneratorForAst* ast )
 {
+    GeneratorForAst* expectedast = pop<GeneratorForAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkList( ast->assignedTargets, expectedast->assignedTargets );
+    checkNode( ast->iterableObject, expectedast->iterableObject );
+    checkOptional( ast->nextCondition, expectedast->nextCondition );
+    checkOptional( ast->nextGenerator, expectedast->nextGenerator );
 }
 
-void TestVisitor::visitGeneratorIf( GeneratorIfAst* )
+void TestVisitor::visitGeneratorIf( GeneratorIfAst* ast )
 {
+    GeneratorIfAst* expectedast = pop<GeneratorIfAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->condition, expectedast->condition );
+    checkOptional( ast->nextCondition, expectedast->nextCondition );
+    checkOptional( ast->nextGenerator, expectedast->nextGenerator );
 }
 
-void TestVisitor::visitDictionary( DictionaryAst* )
+void TestVisitor::visitDictionary( DictionaryAst* ast )
 {
+    DictionaryAst* expectedast = pop<DictionaryAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    QCOMPARE( ast->dictionary.count(), expectedast->dictionary.count() );
+    QMap<ExpressionAst*, ExpressionAst*>::ConstIterator it, end = ast->dictionary.end();
+    QMap<ExpressionAst*, ExpressionAst*>::ConstIterator expectedit, expectedend = expectedast->dictionary.end();
+    for( it = ast->dictionary.begin(), expectedit = expectedast->dictionary.begin(); it != end, expectedit != expectedend; it++, expectedit++ )
+    {
+        checkNode( it.key(), expectedit.key() );
+        checkNode( it.value(), expectedit.value() );
+    }
 }
 
-void TestVisitor::visitAttributeReference( AttributeReferenceAst* )
+void TestVisitor::visitAttributeReference( AttributeReferenceAst* ast )
 {
+    AttributeReferenceAst* expectedast = pop<AttributeReferenceAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->primary, expectedast->primary );
+    checkNode( ast->identifier, expectedast->identifier );
 }
 
-void TestVisitor::visitSubscript( SubscriptAst* )
+void TestVisitor::visitSubscript( SubscriptAst* ast )
 {
+    SubscriptAst* expectedast = pop<SubscriptAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->primary, expectedast->primary );
+    checkList( ast->subscription, expectedast->subscription );
 }
 
-void TestVisitor::visitExtendedSlice( ExtendedSliceAst* )
+void TestVisitor::visitExtendedSlice( ExtendedSliceAst* ast )
 {
+    ExtendedSliceAst* expectedast = pop<ExtendedSliceAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->primary, expectedast->primary );
+    checkList( ast->extendedSliceList, expectedast->extendedSliceList );
 }
 
-void TestVisitor::visitSimpleSlice( SimpleSliceAst* )
+void TestVisitor::visitSimpleSlice( SimpleSliceAst* ast )
 {
+    SimpleSliceAst* expectedast = pop<SimpleSliceAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->primary, expectedast->primary );
+    checkNode( ast->simpleSliceBounds.first, expectedast->simpleSliceBounds.first );
+    checkNode( ast->simpleSliceBounds.second, expectedast->simpleSliceBounds.second );
 }
 
-void TestVisitor::visitProperSliceItem( ProperSliceItemAst* )
+void TestVisitor::visitProperSliceItem( ProperSliceItemAst* ast )
 {
+    ProperSliceItemAst* expectedast = pop<ProperSliceItemAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->bounds.first, expectedast->bounds.first );
+    checkNode( ast->bounds.second, expectedast->bounds.second );
+    checkOptional( ast->stride, expectedast->stride );
 }
 
-void TestVisitor::visitExpressionSliceItem( ExpressionSliceItemAst* )
+void TestVisitor::visitExpressionSliceItem( ExpressionSliceItemAst* ast )
 {
+    ExpressionSliceItemAst* expectedast = pop<ExpressionSliceItemAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->sliceExpression, expectedast->sliceExpression );
 }
 
-void TestVisitor::visitEllipsisSliceItem( EllipsisSliceItemAst* )
+void TestVisitor::visitEllipsisSliceItem( EllipsisSliceItemAst* ast )
 {
+    EllipsisSliceItemAst* expectedast = pop<EllipsisSliceItemAst>();
+    BASIC_AST_TEST( ast, expectedast );
 }
 
-void TestVisitor::visitCall( CallAst* )
+void TestVisitor::visitCall( CallAst* ast )
 {
+    CallAst* expectedast = pop<CallAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->callable, expectedast->callable );
+    checkList( ast->arguments, expectedast->arguments );
+    checkOptional( ast->generator, expectedast->generator );
 }
 
-void TestVisitor::visitUnaryExpression( UnaryExpressionAst* )
+void TestVisitor::visitUnaryExpression( UnaryExpressionAst* ast )
 {
+    UnaryExpressionAst* expectedast = pop<UnaryExpressionAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    QCOMPARE( ast->opType, expectedast->opType );
+    checkNode( ast->operand, expectedast->operand );
 }
 
-void TestVisitor::visitBinaryExpression( BinaryExpressionAst* )
+void TestVisitor::visitBinaryExpression( BinaryExpressionAst* ast )
 {
+    BinaryExpressionAst* expectedast = pop<BinaryExpressionAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->lhs, expectedast->lhs );
+    QCOMPARE( ast->opType, expectedast->opType );
+    checkNode( ast->rhs, expectedast->rhs );
 }
 
-void TestVisitor::visitComparison( ComparisonAst* )
+void TestVisitor::visitComparison( ComparisonAst* ast )
 {
+    ComparisonAst* expectedast = pop<ComparisonAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->firstComparator, expectedast->firstComparator );
+    checkPairList( ast->comparatorList, expectedast->comparatorList );
 }
 
-void TestVisitor::visitBooleanNotOperation( BooleanNotOperationAst* )
+void TestVisitor::visitBooleanNotOperation( BooleanNotOperationAst* ast )
 {
+    BooleanNotOperationAst* expectedast = pop<BooleanNotOperationAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->op, expectedast->op );
 }
 
-void TestVisitor::visitBooleanAndOperation( BooleanAndOperationAst* )
+void TestVisitor::visitBooleanAndOperation( BooleanAndOperationAst* ast )
 {
+    BooleanAndOperationAst* expectedast = pop<BooleanAndOperationAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->lhs, expectedast->lhs );
+    checkNode( ast->rhs, expectedast->rhs );
 }
 
-void TestVisitor::visitBooleanOrOperation( BooleanOrOperationAst* )
+void TestVisitor::visitBooleanOrOperation( BooleanOrOperationAst* ast )
 {
+    BooleanOrOperationAst* expectedast = pop<BooleanOrOperationAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->lhs, expectedast->lhs );
+    checkNode( ast->rhs, expectedast->rhs );
 }
 
-void TestVisitor::visitConditionalExpression( ConditionalExpressionAst* )
+void TestVisitor::visitConditionalExpression( ConditionalExpressionAst* ast )
 {
+    ConditionalExpressionAst* expectedast = pop<ConditionalExpressionAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->mainExpression, expectedast->mainExpression );
+    checkNode( ast->condition, expectedast->condition );
+    checkNode( ast->elseExpression, expectedast->elseExpression );
 }
 
-void TestVisitor::visitLambda( LambdaAst* )
+void TestVisitor::visitLambda( LambdaAst* ast )
 {
+    LambdaAst* expectedast = pop<LambdaAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkList( ast->parameters, expectedast->parameters );
+    checkNode( ast->expression, expectedast->expression );
 }
 
-void TestVisitor::visitBreak( StatementAst* )
+void TestVisitor::visitBreak( StatementAst* ast )
 {
+    StatementAst* expectedast = pop<StatementAst>();
+    BASIC_AST_TEST( ast, expectedast );
 }
 
-void TestVisitor::visitContinue( StatementAst* )
+void TestVisitor::visitContinue( StatementAst* ast )
 {
+    StatementAst* expectedast = pop<StatementAst>();
+    BASIC_AST_TEST( ast, expectedast );
 }
 
-void TestVisitor::visitPass( StatementAst* )
+void TestVisitor::visitPass( StatementAst* ast )
 {
+    StatementAst* expectedast = pop<StatementAst>();
+    BASIC_AST_TEST( ast, expectedast );
 }
 
-void TestVisitor::visitIdentifier( IdentifierAst* )
+void TestVisitor::visitIdentifier( IdentifierAst* ast )
 {
+    IdentifierAst* expectedast = pop<IdentifierAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    QCOMPARE( ast->identifier, expectedast->identifier );
 }
 
-void TestVisitor::visitIdentifierTarget( IdentifierTargetAst* )
+void TestVisitor::visitIdentifierTarget( IdentifierTargetAst* ast )
 {
+    IdentifierTargetAst* expectedast = pop<IdentifierTargetAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->identifier, expectedast->identifier );
 }
 
-void TestVisitor::visitListTarget( ListTargetAst* )
+void TestVisitor::visitListTarget( ListTargetAst* ast )
 {
+    ListTargetAst* expectedast = pop<ListTargetAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkList( ast->items, expectedast->items );
 }
 
-void TestVisitor::visitTupleTarget( TupleTargetAst* )
+void TestVisitor::visitTupleTarget( TupleTargetAst* ast )
 {
+    TupleTargetAst* expectedast = pop<TupleTargetAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkList( ast->items, expectedast->items );
 }
 
-void TestVisitor::visitAttributeReferenceTarget( AttributeReferenceTargetAst* )
+void TestVisitor::visitAttributeReferenceTarget( AttributeReferenceTargetAst* ast )
 {
+    AttributeReferenceTargetAst* expectedast = pop<AttributeReferenceTargetAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->attribute, expectedast->attribute );
 }
 
-void TestVisitor::visitSubscriptTarget( SubscriptTargetAst* )
+void TestVisitor::visitSubscriptTarget( SubscriptTargetAst* ast )
 {
+    SubscriptTargetAst* expectedast = pop<SubscriptTargetAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->subscript, expectedast->subscript );
 }
 
-void TestVisitor::visitSliceTarget( SliceTargetAst* )
+void TestVisitor::visitSliceTarget( SliceTargetAst* ast )
 {
+    SliceTargetAst* expectedast = pop<SliceTargetAst>();
+    BASIC_AST_TEST( ast, expectedast );
+    checkNode( ast->slice, expectedast->slice );
 }
 

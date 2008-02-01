@@ -163,6 +163,18 @@ private:
             visitNode( (*it).second );
         }
     }
+    template <typename T> void checkPairList( const QList<QPair<Python::ComparisonAst::ComparisonOperator, T*> >& l, 
+                                              const QList<QPair<Python::ComparisonAst::ComparisonOperator, T* > >& expected )
+    {
+        typename QList<QPair<Python::ComparisonAst::ComparisonOperator, T*> >::ConstIterator it, end = l.end();
+        typename QList<QPair<Python::ComparisonAst::ComparisonOperator, T*> >::ConstIterator expectedit, expectedend = expected.end();
+        for( it = l.begin(), expectedit = expected.end(); it != end, expectedit != expectedend; it++, expectedit++ )
+        {
+            QCOMPARE( (*it).first, (*expectedit).first );
+            expectedStack.push( (*expectedit).second );
+            visitNode( (*it).second );
+        }
+    }
     template <typename T> void checkNode( T* org, T* expect )
     {
         expectedStack.push( expect );

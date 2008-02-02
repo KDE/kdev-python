@@ -22,38 +22,55 @@
 
 using namespace Python;
 
+static void initAst( Ast* ast, qint64 s, qint64 sL, qint64 sC, qint64 e, qint64 eL, qint64 eC )
+{
+    ast->start = s;
+    ast->startLine = sL;
+    ast->startCol = sC;
+    ast->end = e;
+    ast->endLine = eL;
+    ast->endCol = eC;
+}
+
+template <typename T> T* createAstNode( qint64 start, qint64 startLine, qint64 startCol,
+                                        qint64 end, qint64 endLine, qint64 endCol,
+                                        Ast::AstType type, Ast* parent )
+{
+    T* ast = new T( parent, type );
+    initAst( ast, start, startLine, startCol, end, endLine, endCol );
+    return ast;
+}
+
+template <typename T> T* createAstNode( qint64 start, qint64 startLine, qint64 startCol,
+                                        qint64 end, qint64 endLine, qint64 endCol )
+{
+    T* ast = new T();
+    initAst( ast, start, startLine, startCol, end, endLine, endCol );
+    return ast;
+}
+
+template <typename T> T* createAstNode( qint64 start, qint64 startLine, qint64 startCol,
+                                        qint64 end, qint64 endLine, qint64 endCol,
+                                        Ast* parent )
+{
+    T* ast = new T( parent );
+    initAst( ast, start, startLine, startCol, end, endLine, endCol );
+    return ast;
+}
+
+template <typename T> T* createAstFrom( Ast* parent )
+{
+    return createAstNode<T>( parent->start, parent->startLine, parent->startCol, parent->end, parent->endLine, parent->endCol, parent );
+}
+
 CodeAst* simpleFunctionSingleParam()
 {
-    CodeAst* ast = new CodeAst();
-    ast->start = 0;
-    ast->startLine = 0;
-    ast->startCol = 0;
-    ast->end = -1;
-    ast->endLine = -1;
-    ast->endCol = -1;
-    FunctionDefinitionAst* funast = new FunctionDefinitionAst( ast );
-    funast->startLine = 0;
-    funast->endLine = 1;
-    funast->start = 0;
-    funast->startCol = 0;
-    funast->endCol = 6;
-    funast->end = 16;
-    IdentifierAst* idast = new IdentifierAst( funast );
-    idast->startLine = 0;
-    idast->startCol = 4;
-    idast->start = 4;
-    idast->endLine = 0;
-    idast->endCol = 6;
-    idast->end = 6;
+    CodeAst* ast = createAstNode<CodeAst>( 0, 0, 0, -1, -1, -1 );
+    FunctionDefinitionAst* funast = createAstNode<FunctionDefinitionAst>( 0, 0, 0, 16, 1, 6, ast );
+    IdentifierAst* idast = createAstNode<IdentifierAst>( 4, 0, 4, 6, 0, 6, funast );
     idast->identifier = "foo";
     funast->functionName = idast;
-    StatementAst* pass = new StatementAst( funast, Ast::PassAst );
-    pass->startLine = 1;
-    pass->startCol = 2;
-    pass->start = 13;
-    pass->end = 16;
-    pass->endLine = 1;
-    pass->endCol = 5;
+    StatementAst* pass = createAstNode<StatementAst>( 13, 1, 2, 16, 1, 5, Ast::PassAst, funast );
     funast->functionBody << pass;
     ast->statements << funast;
     return ast;
@@ -61,63 +78,22 @@ CodeAst* simpleFunctionSingleParam()
 
 CodeAst* simpleFunctionNoParams()
 {
-    CodeAst* ast = new CodeAst();
-    ast->start = 0;
-    ast->startLine = 0;
-    ast->startCol = 0;
-    ast->end = -1;
-    ast->endLine = -1;
-    ast->endCol = -1;
-    FunctionDefinitionAst* funast = new FunctionDefinitionAst( ast );
-    funast->startLine = 0;
-    funast->endLine = 1;
-    funast->start = 0;
-    funast->startCol = 0;
-    funast->endCol = 6;
-    funast->end = 16;
-    IdentifierAst* idast = new IdentifierAst( funast );
-    idast->startLine = 0;
-    idast->startCol = 4;
-    idast->start = 4;
-    idast->endLine = 0;
-    idast->endCol = 6;
-    idast->end = 6;
+    CodeAst* ast = createAstNode<CodeAst>( 0, 0, 0, -1, -1, -1 );
+    FunctionDefinitionAst* funast = createAstNode<FunctionDefinitionAst>( 0, 0, 0, 16, 1, 6, ast );
+    IdentifierAst* idast = createAstNode<IdentifierAst>( 4, 0, 4, 6, 0, 6, funast );
     idast->identifier = "foo";
     funast->functionName = idast;
-    DefaultParameterAst* param = new DefaultParameterAst( funast );
-    param->start = 9;
-    param->startLine = 0;
-    param->startCol = 9;
-    param->endLine = 0;
-    param->endCol = 10;
-    param->end = 10;
-    IdentifierParameterPartAst* idparam = new IdentifierParameterPartAst( param );
-    idparam->start = 9;
-    idparam->startLine = 0;
-    idparam->startCol = 9;
-    idparam->endLine = 0;
-    idparam->endCol = 10;
-    idparam->end = 10;
-    IdentifierAst* paramname = new IdentifierAst( idparam );
-    paramname->start = 9;
-    paramname->startLine = 0;
-    paramname->startCol = 9;
-    paramname->endLine = 0;
-    paramname->endCol = 10;
-    paramname->end = 10;
+    DefaultParameterAst* param = createAstNode<DefaultParameterAst>( 9, 0, 9, 0, 10, 10, funast );
+    IdentifierParameterPartAst* idparam = createAstFrom<IdentifierParameterPartAst>( param );
+    IdentifierAst* paramname = createAstFrom<IdentifierAst>( idparam );
     
     idparam->name = paramname;
     param->name = idparam;
-    
     funast->parameters << param;
     
-    StatementAst* pass = new StatementAst( funast, Ast::PassAst );
-    pass->startLine = 1;
-    pass->startCol = 2;
-    pass->start = 13;
-    pass->end = 16;
-    pass->endLine = 1;
-    pass->endCol = 5;
+    StatementAst* pass = createAstNode<StatementAst>( 13, 1, 2, 16, 1, 5, Ast::PassAst, funast );
+    pass->astType = Ast::PassAst;
+    
     funast->functionBody << pass;
     ast->statements << funast;
     return ast;

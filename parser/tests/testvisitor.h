@@ -115,7 +115,6 @@ private:
         typename QList<T*>::ConstIterator expectedit, expectedend = expected.end();
         for( it = l.begin(), expectedit = expected.begin(); it != end, expectedit != expectedend; it++, expectedit++ )
         {
-            qDebug() << "Checking parameter:" << *it << "against" << *expectedit;
             expectedStack.push( *expectedit );
             visitNode( *it );
         }

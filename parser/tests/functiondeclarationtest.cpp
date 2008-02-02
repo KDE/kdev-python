@@ -26,8 +26,13 @@
 #include "pythondriver.h"
 #include "testvisitor.h"
 
-Q_DECLARE_METATYPE(Python::CodeAst*)
+using namespace Python;
+
+Q_DECLARE_METATYPE(CodeAst*)
 QTEST_MAIN( FunctionDeclarationTest )
+
+extern CodeAst* simpleFunctionSingleParam();
+extern CodeAst* simpleFunctionNoParams();
 
 FunctionDeclarationTest::FunctionDeclarationTest( QObject* parent )
     : QObject( parent )
@@ -41,10 +46,10 @@ FunctionDeclarationTest::~FunctionDeclarationTest()
 void FunctionDeclarationTest::noArguments( )
 {
     QFETCH( QString, project );
-    QFETCH( Python::CodeAst*, expected );
+    QFETCH( CodeAst*, expected );
     
-    Python::Driver d;
-    Python::CodeAst* result;
+    Driver d;
+    CodeAst* result;
     d.setContent( project );
     d.parse( &result );
     TestVisitor tv;
@@ -56,40 +61,10 @@ void FunctionDeclarationTest::noArguments( )
 void FunctionDeclarationTest::noArguments_data( )
 {
     QTest::addColumn<QString>("project");
-    QTest::addColumn<Python::CodeAst*>("expected");
-    Python::CodeAst* ast = new Python::CodeAst();
-    ast->start = 0;
-    ast->startLine = 0;
-    ast->startCol = 0;
-    ast->end = -1;
-    ast->endLine = -1;
-    ast->endCol = -1;
-    Python::FunctionDefinitionAst* funast = new Python::FunctionDefinitionAst( ast );
-    funast->startLine = 0;
-    funast->endLine = 1;
-    funast->start = 0;
-    funast->startCol = 0;
-    funast->endCol = 6;
-    funast->end = 16;
-    Python::IdentifierAst* idast = new Python::IdentifierAst( funast );
-    idast->startLine = 0;
-    idast->startCol = 4;
-    idast->start = 4;
-    idast->endLine = 0;
-    idast->endCol = 6;
-    idast->end = 6;
-    idast->identifier = "foo";
-    funast->functionName = idast;
-    Python::StatementAst* pass = new Python::StatementAst( funast, Python::Ast::PassAst );
-    pass->startLine = 1;
-    pass->startCol = 2;
-    pass->start = 13;
-    pass->end = 16;
-    pass->endLine = 1;
-    pass->endCol = 5;
-    funast->functionBody << pass;
-    ast->statements << funast;
-    QTest::newRow( "simple name" ) << "def foo():\n  pass\n" << ast;
+    QTest::addColumn<CodeAst*>("expected");
+    QTest::newRow( "simple name" ) << "def foo():\n  pass\n" << simpleFunctionNoParams();
+    QTest::newRow( "simple name" ) << "def foo( a ):\n  pass\n" << simpleFunctionSingleParam();
 }
+
 
 #include "functiondeclarationtest.moc"

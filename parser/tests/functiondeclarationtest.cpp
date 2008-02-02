@@ -61,9 +61,9 @@ void FunctionDeclarationTest::noArguments_data( )
     ast->start = 0;
     ast->startLine = 0;
     ast->startCol = 0;
-    ast->end = 16;
-    ast->endLine = 1;
-    ast->endCol = 6;
+    ast->end = -1;
+    ast->endLine = -1;
+    ast->endCol = -1;
     Python::FunctionDefinitionAst* funast = new Python::FunctionDefinitionAst( ast );
     funast->startLine = 0;
     funast->endLine = 1;

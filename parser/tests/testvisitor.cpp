@@ -24,11 +24,8 @@
     QCOMPARE( result->start, expected->start ); \
     QCOMPARE( result->startCol, expected->startCol ); \
     QCOMPARE( result->startLine, expected->startLine ); \
-    QEXPECT_FAIL("", "This will fail for code ast", Continue); \
     QCOMPARE( result->end, expected->end ); \
-    QEXPECT_FAIL("", "This will fail for code ast", Continue); \
     QCOMPARE( result->endCol, expected->endCol ); \
-    QEXPECT_FAIL("", "This will fail for code ast", Continue); \
     QCOMPARE( result->endLine, expected->endLine ); \
     QCOMPARE( result->astType, expected->astType )
 

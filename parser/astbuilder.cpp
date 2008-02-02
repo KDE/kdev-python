@@ -1748,7 +1748,7 @@ void AstBuilder::visitVarargslist(PythonParser::VarargslistAst *node)
     QList<Ast*> l;
     if( node->funcDef )
     {
-        visitNode( node->funPosParam );
+        visitNode( node->funcDef );
         l += mListStack.pop();
     }
     if( node->funPosParam )

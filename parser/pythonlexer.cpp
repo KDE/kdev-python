@@ -84,13 +84,14 @@ int Lexer::nextTokenKind()
     int token = Parser::Token_INVALID;
     if ( m_curpos >= m_contentSize )
     {
-        m_tokenBegin = -1;
-        m_tokenEnd = -1;
         if( indentation() > 0 )
         {
             popIndentation();
+            m_tokenEnd = m_curpos;
             return Parser::Token_DEDENT;
         }
+        m_tokenBegin = -1;
+        m_tokenEnd = -1;
         return 0;
     }
     QChar* it = m_content.data();
@@ -561,13 +562,14 @@ int Lexer::nextTokenKind()
     }
     if ( m_curpos >= m_contentSize )
     {
-        m_tokenBegin = -1;
-        m_tokenEnd = -1;
         if( indentation() > 0 )
         {
             popIndentation();
+            m_tokenEnd = m_curpos;
             return Parser::Token_DEDENT;
         }
+        m_tokenBegin = -1;
+        m_tokenEnd = -1;
         return 0;
     }
     m_tokenEnd = m_curpos;

@@ -34,6 +34,17 @@ QTEST_MAIN( FunctionDeclarationTest )
 extern CodeAst* simpleFunctionSingleParam();
 extern CodeAst* simpleFunctionNoParams();
 
+static void doTest( const QString& project, CodeAst* expected )
+{
+    Driver d;
+    CodeAst* result;
+    d.setContent( project );
+    d.parse( &result );
+    TestVisitor tv;
+    tv.setExpected( expected );
+    tv.visitCode( result );
+}
+
 FunctionDeclarationTest::FunctionDeclarationTest( QObject* parent )
     : QObject( parent )
 {
@@ -47,15 +58,7 @@ void FunctionDeclarationTest::noArguments( )
 {
     QFETCH( QString, project );
     QFETCH( CodeAst*, expected );
-    
-    Driver d;
-    CodeAst* result;
-    d.setContent( project );
-    d.parse( &result );
-    TestVisitor tv;
-    tv.setExpected( expected );
-    tv.visitCode( result );
-    
+    doTest( project, expected );
 }
 
 void FunctionDeclarationTest::noArguments_data( )
@@ -63,8 +66,30 @@ void FunctionDeclarationTest::noArguments_data( )
     QTest::addColumn<QString>("project");
     QTest::addColumn<CodeAst*>("expected");
     QTest::newRow( "simple name" ) << "def foo():\n  pass\n" << simpleFunctionNoParams();
-    QTest::newRow( "simple name" ) << "def foo( a ):\n  pass\n" << simpleFunctionSingleParam();
 }
 
+void FunctionDeclarationTest::singleArgument()
+{
+    {
+        QFETCH( QString, project );
+        QFETCH( CodeAst*, expected );
+        doTest( project, expected );
+    }
+    
+    {
+        QFETCH( QString, project );
+        QFETCH( CodeAst*, expected );
+        doTest( project, expected );
+        
+    }
+}
+
+void FunctionDeclarationTest::singleArgument_data()
+{
+    QTest::addColumn<QString>("project");
+    QTest::addColumn<CodeAst*>("expected");
+    QTest::newRow( "simple name" ) << "def foo( a ):\n  pass\n" << simpleFunctionSingleParam();
+//     QTest::newRow( "simple name" ) << "def foo( a='bar' ):\n  pass\n" << simpleFunctionDefaultParam();
+}
 
 #include "functiondeclarationtest.moc"

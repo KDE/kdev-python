@@ -70,6 +70,15 @@ CodeAst* simpleFunctionSingleParam()
     IdentifierAst* idast = createAstNode<IdentifierAst>( 4, 0, 4, 6, 0, 6, funast );
     idast->identifier = "foo";
     funast->functionName = idast;
+    
+    DefaultParameterAst* param = createAstNode<DefaultParameterAst>( 9, 0, 9, 10, 0, 10, funast );
+    IdentifierParameterPartAst* idparam = createAstFrom<IdentifierParameterPartAst>( param );
+    IdentifierAst* paramname = createAstFrom<IdentifierAst>( idparam );
+    
+    idparam->name = paramname;
+    param->name = idparam;
+    funast->parameters << param;
+    
     StatementAst* pass = createAstNode<StatementAst>( 13, 1, 2, 16, 1, 5, Ast::PassAst, funast );
     funast->functionBody << pass;
     ast->statements << funast;
@@ -83,9 +92,27 @@ CodeAst* simpleFunctionNoParams()
     IdentifierAst* idast = createAstNode<IdentifierAst>( 4, 0, 4, 6, 0, 6, funast );
     idast->identifier = "foo";
     funast->functionName = idast;
-    DefaultParameterAst* param = createAstNode<DefaultParameterAst>( 9, 0, 9, 0, 10, 10, funast );
+    
+    StatementAst* pass = createAstNode<StatementAst>( 13, 1, 2, 16, 1, 5, Ast::PassAst, funast );
+    pass->astType = Ast::PassAst;
+    
+    funast->functionBody << pass;
+    ast->statements << funast;
+    return ast;
+}
+
+CodeAst* simpleFunctionDefaultParam()
+{
+    CodeAst* ast = createAstNode<CodeAst>( 0, 0, 0, -1, -1, -1 );
+    FunctionDefinitionAst* funast = createAstNode<FunctionDefinitionAst>( 0, 0, 0, 16, 1, 6, ast );
+    IdentifierAst* idast = createAstNode<IdentifierAst>( 4, 0, 4, 6, 0, 6, funast );
+    idast->identifier = "foo";
+    funast->functionName = idast;
+    DefaultParameterAst* param = createAstNode<DefaultParameterAst>( 9, 0, 9, 10, 0, 10, funast );
     IdentifierParameterPartAst* idparam = createAstFrom<IdentifierParameterPartAst>( param );
     IdentifierAst* paramname = createAstFrom<IdentifierAst>( idparam );
+    
+//     LiteralAst* lit = createAstNode<LiteralAst>( 12, 0, 12,  )
     
     idparam->name = paramname;
     param->name = idparam;

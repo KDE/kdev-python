@@ -32,6 +32,8 @@ public:
 private slots:
     void noArguments();
     void noArguments_data();
+    void singleArgument();
+    void singleArgument_data();
 };
 
 #endif

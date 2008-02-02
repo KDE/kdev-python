@@ -207,7 +207,7 @@ namespace PythonParser
 -> funcdecl ;;
 
 -- Function variable Arguement List
-    (funcDef=funcDef | 0 ) (
+    ( funcDef=funcDef | 0 ) (
     ?[: yytoken != Token_RPAREN  && LA(2).kind == Token_IDENTIFIER:] (funPosParam = funPosParam )
     | 0
     )

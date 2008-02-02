@@ -591,10 +591,10 @@ void Parser::tokenize( const QString& contents )
         kind = lexer.nextTokenKind();
         if ( !kind ) // when the lexer returns 0, the end of file is reached
         {
-            Parser::Token &tt = tokenStream->next();
-            tt.kind = Parser::Token_LINEBREAK;
-            tt.begin = lexer.tokenBegin();
-            tt.end = lexer.tokenEnd();
+            //Parser::Token &tt = tokenStream->next();
+            //tt.kind = Parser::Token_LINEBREAK;
+            //tt.begin = lexer.tokenBegin();
+            //tt.end = lexer.tokenEnd();
             kind = Parser::Token_EOF;
         }
         Parser::Token &t = tokenStream->next();

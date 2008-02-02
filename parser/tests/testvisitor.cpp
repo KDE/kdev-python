@@ -50,7 +50,6 @@ void TestVisitor::visitCode( CodeAst* ast )
 {
     CodeAst* expectedast = pop<CodeAst>();
     BASIC_AST_TEST( ast, expectedast );
-    QCOMPARE( ast->statements.count(), expectedast->statements.count() );
     checkList( ast->statements, expectedast->statements );
     Q_ASSERT( expectedStack.isEmpty() );
 }
@@ -59,9 +58,6 @@ void TestVisitor::visitFunctionDefinition( FunctionDefinitionAst* ast )
 {
     FunctionDefinitionAst* expectedast = pop<FunctionDefinitionAst>();
     BASIC_AST_TEST( ast, expectedast );
-    QCOMPARE( ast->decorators.count(), expectedast->decorators.count() );
-    QCOMPARE( ast->functionBody.count(), expectedast->functionBody.count() );
-    QCOMPARE( ast->parameters.count(), expectedast->parameters.count() );
     
     checkList( ast->decorators, expectedast->decorators );
     checkNode( ast->functionName, expectedast->functionName );

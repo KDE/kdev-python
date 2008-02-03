@@ -134,3 +134,27 @@ CodeAst* simpleFunctionDefaultParam()
     ast->statements << funast;
     return ast;
 }
+
+CodeAst* simpleFunctionListParam()
+{
+    CodeAst* ast = createAstNode<CodeAst>( 0, 0, 0, -1, -1, -1 );
+    FunctionDefinitionAst* funast = createAstNode<FunctionDefinitionAst>( 0, 0, 0, -1, -1, -1, ast );
+    IdentifierAst* idast = createAstNode<IdentifierAst>( 4, 0, 4, 6, 0, 6, funast );
+    idast->identifier = "foo";
+    funast->functionName = idast;
+    
+    ListParameterAst* param = createAstNode<ListParameterAst>( 9, 0, 9, 14, 0, 14, funast );
+    IdentifierAst* paramname = createAstNode<IdentifierAst>( 10, 0, 10, 12, 0, 12, param );
+    paramname->identifier = "bar";
+    
+    param->name = paramname;
+    
+    funast->parameters << param;
+    
+    StatementAst* pass = createAstNode<StatementAst>( 19, 1, 2, 23, 1, 6, Ast::PassAst, funast );
+    pass->astType = Ast::PassAst;
+    
+    funast->functionBody << pass;
+    ast->statements << funast;
+    return ast;
+}

@@ -37,6 +37,7 @@ extern CodeAst* simpleFunctionListParam();
 extern CodeAst* simpleFunctionNoParams();
 extern CodeAst* simpleFunctionDictParam();
 extern CodeAst* simpleFunctionTwoParam();
+extern CodeAst* simpleFunctionTwoLongParam();
 
 static void doTest( const QString& project, CodeAst* expected )
 {
@@ -74,23 +75,9 @@ void FunctionDeclarationTest::noArguments_data( )
 
 void FunctionDeclarationTest::singleArgument()
 {
-    {
-        QFETCH( QString, project );
-        QFETCH( CodeAst*, expected );
-        doTest( project, expected );
-    }
-    
-    {
-        QFETCH( QString, project );
-        QFETCH( CodeAst*, expected );
-        doTest( project, expected );
-    }
-    
-    {
-        QFETCH( QString, project );
-        QFETCH( CodeAst*, expected );
-        doTest( project, expected );
-    }
+    QFETCH( QString, project );
+    QFETCH( CodeAst*, expected );
+    doTest( project, expected );
 }
 
 void FunctionDeclarationTest::singleArgument_data()
@@ -106,11 +93,9 @@ void FunctionDeclarationTest::singleArgument_data()
 
 void FunctionDeclarationTest::multiArguments()
 {
-    {
-        QFETCH( QString, project );
-        QFETCH( CodeAst*, expected );
-        doTest( project, expected );
-    }
+    QFETCH( QString, project );
+    QFETCH( CodeAst*, expected );
+    doTest( project, expected );
 }
 
 void FunctionDeclarationTest::multiArguments_data()
@@ -118,6 +103,7 @@ void FunctionDeclarationTest::multiArguments_data()
     QTest::addColumn<QString>("project");
     QTest::addColumn<CodeAst*>("expected");
     QTest::newRow( "function with two simple params" ) << "def foo( a, b ):\n  pass\n" << simpleFunctionTwoParam();
+    QTest::newRow( "function with two longer params" ) << "def foo( alpha, beta ):\n  pass\n" << simpleFunctionTwoLongParam();
 }
 
 #include "functiondeclarationtest.moc"

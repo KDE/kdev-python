@@ -380,10 +380,12 @@ void AstBuilder::visitAtom(PythonParser::AtomAst *node)
         {
             LiteralAst* lit = createAst<LiteralAst>( node );
             lit->parent = ast;
+            lit->literalType = LiteralAst::String;
             for( int i = 0; i < node->stringliteralSequence->count(); i++ )
             {
                 lit->value += tokenText( node->stringliteralSequence->at(i)->element );
             }
+            ast->literal = lit;
         }
     }else if( node->listmaker )
     {

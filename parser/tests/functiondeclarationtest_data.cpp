@@ -183,3 +183,36 @@ CodeAst* simpleFunctionDictParam()
     ast->statements << funast;
     return ast;
 }
+
+CodeAst* simpleFunctionTwoParam()
+{
+    CodeAst* ast = createAstNode<CodeAst>( 0, 0, 0, -1, -1, -1 );
+    FunctionDefinitionAst* funast = createAstNode<FunctionDefinitionAst>( 0, 0, 0, -1, -1, -1, ast );
+    IdentifierAst* idast = createAstNode<IdentifierAst>( 4, 0, 4, 6, 0, 6, funast );
+    idast->identifier = "foo";
+    funast->functionName = idast;
+    
+    DefaultParameterAst* param = createAstNode<DefaultParameterAst>( 9, 0, 9, 10, 0, 10, funast );
+    IdentifierParameterPartAst* idparam = createAstFrom<IdentifierParameterPartAst>( param );
+    IdentifierAst* paramname = createAstNode<IdentifierAst>( 9, 0, 9, 9, 0, 9, idparam );
+    paramname->identifier = "a";
+    
+    idparam->name = paramname;
+    param->name = idparam;
+    funast->parameters << param;
+    
+    param = createAstNode<DefaultParameterAst>( 12, 0, 12, 14, 0, 14, funast );
+    idparam = createAstFrom<IdentifierParameterPartAst>( param );
+    paramname = createAstNode<IdentifierAst>( 12, 0, 12, 12, 0, 12, idparam );
+    paramname->identifier = "b";
+    
+    idparam->name = paramname;
+    param->name = idparam;
+    funast->parameters << param;
+    
+    StatementAst* pass = createAstNode<StatementAst>( 19, 1, 2, 23, 1, 6, Ast::PassAst, funast );
+    funast->functionBody << pass;
+    ast->statements << funast;
+    return ast;
+}
+

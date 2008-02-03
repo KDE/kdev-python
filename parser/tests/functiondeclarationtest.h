@@ -34,6 +34,8 @@ private slots:
     void noArguments_data();
     void singleArgument();
     void singleArgument_data();
+    void multiArguments();
+    void multiArguments_data();
 };
 
 #endif

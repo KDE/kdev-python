@@ -36,6 +36,7 @@ extern CodeAst* simpleFunctionDefaultParam();
 extern CodeAst* simpleFunctionListParam();
 extern CodeAst* simpleFunctionNoParams();
 extern CodeAst* simpleFunctionDictParam();
+extern CodeAst* simpleFunctionTwoParam();
 
 static void doTest( const QString& project, CodeAst* expected )
 {
@@ -68,7 +69,7 @@ void FunctionDeclarationTest::noArguments_data( )
 {
     QTest::addColumn<QString>("project");
     QTest::addColumn<CodeAst*>("expected");
-    QTest::newRow( "simple name" ) << "def foo():\n  pass\n" << simpleFunctionNoParams();
+    QTest::newRow( "simple function def" ) << "def foo():\n  pass\n" << simpleFunctionNoParams();
 }
 
 void FunctionDeclarationTest::singleArgument()
@@ -83,7 +84,12 @@ void FunctionDeclarationTest::singleArgument()
         QFETCH( QString, project );
         QFETCH( CodeAst*, expected );
         doTest( project, expected );
-        
+    }
+    
+    {
+        QFETCH( QString, project );
+        QFETCH( CodeAst*, expected );
+        doTest( project, expected );
     }
 }
 
@@ -91,10 +97,27 @@ void FunctionDeclarationTest::singleArgument_data()
 {
     QTest::addColumn<QString>("project");
     QTest::addColumn<CodeAst*>("expected");
-    QTest::newRow( "simple name" ) << "def foo( a ):\n  pass\n" << simpleFunctionSingleParam();
-    QTest::newRow( "simple name" ) << "def foo( a='bar' ):\n  pass\n" << simpleFunctionDefaultParam();
-    QTest::newRow( "simple name" ) << "def foo( *bar ):\n  pass\n" << simpleFunctionListParam();
-    QTest::newRow( "simple name" ) << "def foo( **bar ):\n  pass\n" << simpleFunctionDictParam();
+    QTest::newRow( "simple func one argument" ) << "def foo( a ):\n  pass\n" << simpleFunctionSingleParam();
+    QTest::newRow( "simple func one argument with default" ) << "def foo( a='bar' ):\n  pass\n" << simpleFunctionDefaultParam();
+    QTest::newRow( "simple func one list argument" ) << "def foo( *bar ):\n  pass\n" << simpleFunctionListParam();
+    QTest::newRow( "simple func one dict argument" ) << "def foo( **bar ):\n  pass\n" << simpleFunctionDictParam();
+}
+
+
+void FunctionDeclarationTest::multiArguments()
+{
+    {
+        QFETCH( QString, project );
+        QFETCH( CodeAst*, expected );
+        doTest( project, expected );
+    }
+}
+
+void FunctionDeclarationTest::multiArguments_data()
+{
+    QTest::addColumn<QString>("project");
+    QTest::addColumn<CodeAst*>("expected");
+    QTest::newRow( "function with two simple params" ) << "def foo( a, b ):\n  pass\n" << simpleFunctionTwoParam();
 }
 
 #include "functiondeclarationtest.moc"

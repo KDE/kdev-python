@@ -35,6 +35,7 @@ extern CodeAst* simpleFunctionSingleParam();
 extern CodeAst* simpleFunctionDefaultParam();
 extern CodeAst* simpleFunctionListParam();
 extern CodeAst* simpleFunctionNoParams();
+extern CodeAst* simpleFunctionDictParam();
 
 static void doTest( const QString& project, CodeAst* expected )
 {
@@ -93,6 +94,7 @@ void FunctionDeclarationTest::singleArgument_data()
     QTest::newRow( "simple name" ) << "def foo( a ):\n  pass\n" << simpleFunctionSingleParam();
     QTest::newRow( "simple name" ) << "def foo( a='bar' ):\n  pass\n" << simpleFunctionDefaultParam();
     QTest::newRow( "simple name" ) << "def foo( *bar ):\n  pass\n" << simpleFunctionListParam();
+    QTest::newRow( "simple name" ) << "def foo( **bar ):\n  pass\n" << simpleFunctionDictParam();
 }
 
 #include "functiondeclarationtest.moc"

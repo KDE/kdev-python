@@ -158,3 +158,28 @@ CodeAst* simpleFunctionListParam()
     ast->statements << funast;
     return ast;
 }
+
+
+CodeAst* simpleFunctionDictParam()
+{
+    CodeAst* ast = createAstNode<CodeAst>( 0, 0, 0, -1, -1, -1 );
+    FunctionDefinitionAst* funast = createAstNode<FunctionDefinitionAst>( 0, 0, 0, -1, -1, -1, ast );
+    IdentifierAst* idast = createAstNode<IdentifierAst>( 4, 0, 4, 6, 0, 6, funast );
+    idast->identifier = "foo";
+    funast->functionName = idast;
+    
+    DictionaryParameterAst* param = createAstNode<DictionaryParameterAst>( 9, 0, 9, 15, 0, 15, funast );
+    IdentifierAst* paramname = createAstNode<IdentifierAst>( 11, 0, 11, 13, 0, 13, param );
+    paramname->identifier = "bar";
+    
+    param->name = paramname;
+    
+    funast->parameters << param;
+    
+    StatementAst* pass = createAstNode<StatementAst>( 20, 1, 2, 24, 1, 6, Ast::PassAst, funast );
+    pass->astType = Ast::PassAst;
+    
+    funast->functionBody << pass;
+    ast->statements << funast;
+    return ast;
+}

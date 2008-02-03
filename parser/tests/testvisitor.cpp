@@ -91,7 +91,7 @@ void TestVisitor::visitDefaultParameter( DefaultParameterAst* ast )
     DefaultParameterAst* expectedast = pop<DefaultParameterAst>();
     BASIC_AST_TEST( ast, expectedast );
     checkNode( ast->name, expectedast->name );
-    checkNode( ast->value, expectedast->value );
+    checkOptional( ast->value, expectedast->value );
 }
 
 void TestVisitor::visitIdentifierParameterPart( IdentifierParameterPartAst* ast )

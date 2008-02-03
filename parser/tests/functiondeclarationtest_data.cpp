@@ -66,20 +66,21 @@ template <typename T> T* createAstFrom( Ast* parent )
 CodeAst* simpleFunctionSingleParam()
 {
     CodeAst* ast = createAstNode<CodeAst>( 0, 0, 0, -1, -1, -1 );
-    FunctionDefinitionAst* funast = createAstNode<FunctionDefinitionAst>( 0, 0, 0, 16, 1, 6, ast );
+    FunctionDefinitionAst* funast = createAstNode<FunctionDefinitionAst>( 0, 0, 0, -1, -1, -1, ast );
     IdentifierAst* idast = createAstNode<IdentifierAst>( 4, 0, 4, 6, 0, 6, funast );
     idast->identifier = "foo";
     funast->functionName = idast;
     
-    DefaultParameterAst* param = createAstNode<DefaultParameterAst>( 9, 0, 9, 10, 0, 10, funast );
+    DefaultParameterAst* param = createAstNode<DefaultParameterAst>( 9, 0, 9, 11, 0, 11, funast );
     IdentifierParameterPartAst* idparam = createAstFrom<IdentifierParameterPartAst>( param );
-    IdentifierAst* paramname = createAstFrom<IdentifierAst>( idparam );
+    IdentifierAst* paramname = createAstNode<IdentifierAst>( 9, 0, 9, 9, 0, 9, idparam );
+    paramname->identifier = "a";
     
     idparam->name = paramname;
     param->name = idparam;
     funast->parameters << param;
     
-    StatementAst* pass = createAstNode<StatementAst>( 13, 1, 2, 16, 1, 5, Ast::PassAst, funast );
+    StatementAst* pass = createAstNode<StatementAst>( 16, 1, 2, 20, 1, 6, Ast::PassAst, funast );
     funast->functionBody << pass;
     ast->statements << funast;
     return ast;
@@ -88,12 +89,12 @@ CodeAst* simpleFunctionSingleParam()
 CodeAst* simpleFunctionNoParams()
 {
     CodeAst* ast = createAstNode<CodeAst>( 0, 0, 0, -1, -1, -1 );
-    FunctionDefinitionAst* funast = createAstNode<FunctionDefinitionAst>( 0, 0, 0, 16, 1, 6, ast );
+    FunctionDefinitionAst* funast = createAstNode<FunctionDefinitionAst>( 0, 0, 0, -1, -1, -1, ast );
     IdentifierAst* idast = createAstNode<IdentifierAst>( 4, 0, 4, 6, 0, 6, funast );
     idast->identifier = "foo";
     funast->functionName = idast;
     
-    StatementAst* pass = createAstNode<StatementAst>( 13, 1, 2, 16, 1, 5, Ast::PassAst, funast );
+    StatementAst* pass = createAstNode<StatementAst>( 13, 1, 2, 17, 1, 6, Ast::PassAst, funast );
     pass->astType = Ast::PassAst;
     
     funast->functionBody << pass;
@@ -104,21 +105,29 @@ CodeAst* simpleFunctionNoParams()
 CodeAst* simpleFunctionDefaultParam()
 {
     CodeAst* ast = createAstNode<CodeAst>( 0, 0, 0, -1, -1, -1 );
-    FunctionDefinitionAst* funast = createAstNode<FunctionDefinitionAst>( 0, 0, 0, 16, 1, 6, ast );
+    FunctionDefinitionAst* funast = createAstNode<FunctionDefinitionAst>( 0, 0, 0, -1, -1, -1, ast );
     IdentifierAst* idast = createAstNode<IdentifierAst>( 4, 0, 4, 6, 0, 6, funast );
     idast->identifier = "foo";
     funast->functionName = idast;
-    DefaultParameterAst* param = createAstNode<DefaultParameterAst>( 9, 0, 9, 10, 0, 10, funast );
-    IdentifierParameterPartAst* idparam = createAstFrom<IdentifierParameterPartAst>( param );
-    IdentifierAst* paramname = createAstFrom<IdentifierAst>( idparam );
+    DefaultParameterAst* param = createAstNode<DefaultParameterAst>( 9, 0, 9, 17, 0, 17, funast );
+    IdentifierParameterPartAst* idparam = createAstNode<IdentifierParameterPartAst>( 9, 0, 9, 10, 0, 10, param );
+    IdentifierAst* paramname = createAstNode<IdentifierAst>( 9, 0, 9, 9, 0, 9, idparam );
+    paramname->identifier = "a";
     
-//     LiteralAst* lit = createAstNode<LiteralAst>( 12, 0, 12,  )
+    AtomAst* atom = createAstNode<AtomAst>( 11, 0, 11, 17, 0, 17, param );
+    
+    LiteralAst* lit = createAstNode<LiteralAst>( 11, 0, 11, 17, 0, 17, atom );
+    lit->literalType = LiteralAst::String;
+    lit->value = "'bar'";
+    
+    atom->literal = lit;
+    param->value = atom;
     
     idparam->name = paramname;
     param->name = idparam;
     funast->parameters << param;
     
-    StatementAst* pass = createAstNode<StatementAst>( 13, 1, 2, 16, 1, 5, Ast::PassAst, funast );
+    StatementAst* pass = createAstNode<StatementAst>( 22, 1, 2, 26, 1, 6, Ast::PassAst, funast );
     pass->astType = Ast::PassAst;
     
     funast->functionBody << pass;

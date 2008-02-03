@@ -32,6 +32,7 @@ Q_DECLARE_METATYPE(CodeAst*)
 QTEST_MAIN( FunctionDeclarationTest )
 
 extern CodeAst* simpleFunctionSingleParam();
+extern CodeAst* simpleFunctionDefaultParam();
 extern CodeAst* simpleFunctionNoParams();
 
 static void doTest( const QString& project, CodeAst* expected )
@@ -89,7 +90,7 @@ void FunctionDeclarationTest::singleArgument_data()
     QTest::addColumn<QString>("project");
     QTest::addColumn<CodeAst*>("expected");
     QTest::newRow( "simple name" ) << "def foo( a ):\n  pass\n" << simpleFunctionSingleParam();
-//     QTest::newRow( "simple name" ) << "def foo( a='bar' ):\n  pass\n" << simpleFunctionDefaultParam();
+    QTest::newRow( "simple name" ) << "def foo( a='bar' ):\n  pass\n" << simpleFunctionDefaultParam();
 }
 
 #include "functiondeclarationtest.moc"

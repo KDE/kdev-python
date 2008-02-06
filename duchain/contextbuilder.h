@@ -23,10 +23,11 @@
 #ifndef CONTEXTBUILDER_H
 #define CONTEXTBUILDER_H
 
-#include "python_default_visitor.h"
+#include "astdefaultvisitor.h"
 
 #include <QSet>
 #include <QHash>
+#include <QList>
 #include <identifier.h>
 #include <ducontext.h>
 #include <ksharedptr.h>
@@ -41,24 +42,25 @@ namespace KDevelop
     class TopDUContext;
 }
 
-class PythonEditorIntegrator;
+namespace Python
+{
+
+class EditorIntegrator;
 class ParseSession;
 
-using namespace Python;
-
-class KDEVPYTHONDUCHAIN_EXPORT ContextBuilder: public Python::default_visitor
+class KDEVPYTHONDUCHAIN_EXPORT ContextBuilder: public Python::AstDefaultVisitor
 {
 
 public:
     ContextBuilder(ParseSession* session, const KUrl &url);
-    ContextBuilder(PythonEditorIntegrator* editor, const KUrl &url);
+    ContextBuilder(EditorIntegrator* editor, const KUrl &url);
     virtual ~ContextBuilder ();
 
     ParseSession* parseSession() const;
 
-    KDevelop::TopDUContext* buildContexts(ast_node* node);
-    KDevelop::DUContext* buildSubContexts(const KUrl& url, ast_node *node, KDevelop::DUContext* parent = 0);
-    void supportBuild(ast_node *node, KDevelop::DUContext* context = 0);
+    KDevelop::TopDUContext* buildContexts(Ast* node);
+    KDevelop::DUContext* buildSubContexts(const KUrl& url, Ast *node, KDevelop::DUContext* parent = 0);
+    void supportBuild(Ast *node, KDevelop::DUContext* context = 0);
     inline KDevelop::DUContext* currentContext() { return m_contextStack.top(); }
 
     void setEncountered( KDevelop::DUChainBase* item )
@@ -74,30 +76,40 @@ public:
 
     virtual void openContext(KDevelop::DUContext* newContext);
     virtual void closeContext();
-    PythonEditorIntegrator* m_editor;
     inline bool recompiling() const { return m_recompiling; }
 
     QSet<KDevelop::DUChainBase*> m_encountered;
     QStack<KDevelop::DUContext*> m_contextStack;
     int m_nextContextIndex;
 
-    const KDevelop::QualifiedIdentifier identifierForName(std::size_t id);
+    const KDevelop::QualifiedIdentifier identifierForName( const QString& name );
 
-    KDevelop::DUContext* openContext(ast_node* range, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier);
-    KDevelop::DUContext* openContext(ast_node* range, KDevelop::DUContext::ContextType type, std::size_t identifier = 0);
-    KDevelop::DUContext* openContext(ast_node* fromRange, ast_node* toRange, KDevelop::DUContext::ContextType type, std::size_t identifier = 0);
-    KDevelop::DUContext* openContextInternal(const KTextEditor::Range& range, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier);
+    KDevelop::DUContext* openContext(Ast* range, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier);
+    KDevelop::DUContext* openContext(Ast* range, KDevelop::DUContext::ContextType type, const QString& );
+    KDevelop::DUContext* openContext(Ast* fromRange, Ast* toRange, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier );
+    KDevelop::DUContext* openContextInternal(const KDevelop::SimpleRange& range, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier);
 
-    virtual void visit_funcdef(funcdef_ast *node);
-    virtual void visit_classdef(classdef_ast *node);
-    virtual void visit_compound_stmt(compound_stmt_ast *node);
-    virtual void visit_varargslist(varargslist_ast *node);
-    virtual void visit_import_as_name(import_as_name_ast *node);
+    virtual void visitFunctionDefinition( FunctionDefinitionAst* );
+    virtual void visitClassDefinition( ClassDefinitionAst* );
+//     virtual void visit_compound_stmt(compound_stmt_ast *node);
+//     virtual void visit_varargslist(varargslist_ast *node);
+//     virtual void visit_import_as_name(import_as_name_ast *node);
     //virtual void visit_for_stmt(for_stmt_ast *node);
     //virtual void visit_while_stmt(while_stmt_ast *node);
     void addImportedContexts();
 
+private:
+    template <typename T> void visitNodeList( const QList<T*>& l )
+    {
+        typename QList<T*>::ConstIterator it, end = l.end();
+        for( it = l.begin(); it != end; ++it )
+        {
+            visitNode( (*it) );
+        }
+    }
+    
 protected:
+    EditorIntegrator* m_editor;
     ParseSession* m_session;
     KUrl m_url;
     bool m_ownsEditorIntegrator: 1;
@@ -115,6 +127,7 @@ protected:
 
 };
 
+}
 
 #endif
 // kate: space-indent on; indent-width 4; tab-width 4; replace-tabs on; auto-insert-doxygen on

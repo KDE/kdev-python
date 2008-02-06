@@ -42,7 +42,7 @@ endif(KDEVPGQT_FOUND)
 
 
 add_subdirectory(parser)
-#add_subdirectory(duchain)
+add_subdirectory(duchain)
 
 set(kdevpythonlanguagesupport_PART_SRCS
     pythonlanguagesupport.cpp
@@ -60,7 +60,7 @@ target_link_libraries(kdevpythonlanguagesupport
     ${KDEVPLATFORM_EDITOR_LIBRARY}
     ${KDE4_KTEXTEDITOR_LIBS}
     kdev4pythonparser
-#     kdev4pythonduchain
+    kdev4pythonduchain
 )
 
 install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})

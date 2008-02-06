@@ -40,7 +40,7 @@
 #include <duchain.h>
 #include <topducontext.h>
 
-// #include "contextbuilder.h"
+#include "contextbuilder.h"
 // #include "declarationbuilder.h"
 
 using namespace KDevelop;
@@ -97,6 +97,7 @@ void ParseJob::run()
     if ( m_readFromDisk )
     {
         QFile file( document().str() );
+        //TODO: Read the first lines to determine encoding using Python encoding and use that for the text stream
         if ( !file.open( QIODevice::ReadOnly | QIODevice::Text ) )
         {
             m_errorMessage = i18n( "Could not open file '%1'", document().str() );
@@ -124,6 +125,8 @@ void ParseJob::run()
     {
         kDebug() << m_url;
 //         DeclarationBuilder declarationBuilder(m_session,m_url);
+        ContextBuilder builder( m_session, m_url );
+        m_duContext = builder.buildContexts( m_ast );
 //         m_duContext = declarationBuilder.buildDeclarations(m_AST);
         kDebug() << "----Parsing Succeded---***";//TODO: bind declarations to the code model
 //         if( python() && declarationBuilder.m_editor->smart() )

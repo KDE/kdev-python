@@ -29,58 +29,41 @@
 #include <documentrange.h>
 #include <documentrangeobject.h>
 
-#include "python_ast.h"
+#include "ast.h"
 
 using namespace KTextEditor;
 
-PythonEditorIntegrator::PythonEditorIntegrator( ParseSession* session )
+namespace Python
+{
+
+EditorIntegrator::EditorIntegrator( ParseSession* session )
     : m_session(session)
 {
 }
 
-Cursor PythonEditorIntegrator::findPosition( std::size_t token, Edge edge ) const
+Cursor EditorIntegrator::findPosition( Ast* node , Edge edge ) const
 {
-    kdev_pg_token_stream::token_type const & t = m_session->tokenStream()->token(token);
-    return findPosition(t, edge);
+    if( edge == BackEdge )
+        return Cursor(node->endLine, node->endCol );
+    else
+        return Cursor(node->startLine, node->startCol);
 }
 
-Cursor PythonEditorIntegrator::findPosition( kdev_pg_token_stream::token_type const & token, Edge edge ) const
-{
-    std::size_t line, column;
-
-    //kDebug() << "Finding position for offset:" << offset  << m_session->contents()[offset];
-    kDebug()<<"Finding Position**********"<<token.end<<"******"<<token.begin;
-    m_session->positionAt((edge == BackEdge) ? token.end : token.begin, &line, &column);
-    kDebug() << "Found position:*************************" << line << column;
-    return Cursor(line, column);
-}
-
-Range PythonEditorIntegrator::findRange( Python::ast_node * node, RangeEdge edge )
+Range EditorIntegrator::findRange( Ast * node, RangeEdge edge )
 {
     kDebug() << "Finding Range ==================";
     Q_UNUSED(edge);
-    return Range(findPosition(node->start_token, FrontEdge), findPosition(node->end_token -1, BackEdge));
+    return Range(findPosition(node, FrontEdge), findPosition(node, BackEdge));
 }
 
-Range PythonEditorIntegrator::findRange( Python::ast_node* from, Python::ast_node* to )
+Range EditorIntegrator::findRange( Ast* from, Ast* to )
 {
-    return Range(findPosition(from->start_token, FrontEdge), findPosition(to->end_token - 1, BackEdge));
+    return Range(findPosition(from, FrontEdge), findPosition(to, BackEdge));
 }
 
-Range PythonEditorIntegrator::findRange( kdev_pg_token_stream::token_type const & token )
-{
-    return Range(findPosition(token, FrontEdge), findPosition(token, BackEdge));
-}
-
-QString PythonEditorIntegrator::tokenToString( std::size_t token ) const
-{
-    kdev_pg_token_stream::token_type const & t = m_session->tokenStream()->token(token);
-    return m_session->tokenText(t.begin, t.end);
-}
-
-
-ParseSession * PythonEditorIntegrator::parseSession() const
+ParseSession * EditorIntegrator::parseSession() const
 {
   return m_session;
 }
-// kate: space-indent on; indent-width 4; tab-width 4; replace-tabs on; auto-insert-doxygen on
+
+}

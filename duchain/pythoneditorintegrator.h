@@ -29,29 +29,26 @@
 
 namespace Python
 {
-    class ast_node;
-}
-
+class Ast;
 class ParseSession;
 
-class KDEVPYTHONDUCHAIN_EXPORT PythonEditorIntegrator : public KDevelop::EditorIntegrator
+class KDEVPYTHONDUCHAIN_EXPORT EditorIntegrator : public KDevelop::EditorIntegrator
 {
 public:
-    PythonEditorIntegrator(ParseSession* session);
+    EditorIntegrator(ParseSession* session);
     ParseSession* parseSession() const;
 
-    KTextEditor::Cursor findPosition( kdev_pg_token_stream::token_type const &token, Edge edge = BackEdge ) const;
-    KTextEditor::Cursor findPosition( std::size_t token, Edge edge = BackEdge ) const;
+    KTextEditor::Cursor findPosition( Ast* node, Edge edge = BackEdge ) const;
 
     using KDevelop::EditorIntegrator::createRange;
-    KTextEditor::Range findRange( Python::ast_node* node, RangeEdge = OuterEdge );
-    KTextEditor::Range findRange( Python::ast_node* from, Python::ast_node* to );
-    KTextEditor::Range findRange( kdev_pg_token_stream::token_type const &token );
-    KTextEditor::Range findRange( std::size_t token );
-    QString tokenToString( std::size_t token ) const;
+    KTextEditor::Range findRange( Ast* node, RangeEdge = OuterEdge );
+    KTextEditor::Range findRange( Ast* from, Python::Ast* to );
 
 private:
     ParseSession* m_session;
 };
+
+}
+
 #endif
 // kate: space-indent on; indent-width 4; tab-width 4; replace-tabs on; auto-insert-doxygen on

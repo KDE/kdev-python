@@ -47,16 +47,19 @@
 
 using namespace KDevelop;
 
-K_PLUGIN_FACTORY(KDevPythonSupportFactory, registerPlugin<PythonLanguageSupport>(); )
+K_PLUGIN_FACTORY(KDevPythonSupportFactory, registerPlugin<Python::LanguageSupport>(); )
 K_EXPORT_PLUGIN(KDevPythonSupportFactory("kdevpythonsupport"))
 
-PythonLanguageSupport::PythonLanguageSupport( QObject* parent, const QVariantList& /*args*/ )
+namespace Python
+{
+
+LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ )
         : KDevelop::IPlugin( KDevPythonSupportFactory::componentData(), parent ),
         KDevelop::ILanguageSupport()
 {
     KDEV_USE_EXTENSION_INTERFACE( KDevelop::ILanguageSupport )
     core()->pluginController()->loadPlugin("kdevduchainview");
-    m_highlighting = new PythonHighlighting(this);
+//     m_highlighting = new PythonHighlighting(this);
     connect( core()->documentController(),
              SIGNAL( documentStateChanged( KDevelop::IDocument* ) ),
              this, SLOT( documentChanged( KDevelop::IDocument* ) ) );
@@ -68,33 +71,36 @@ PythonLanguageSupport::PythonLanguageSupport( QObject* parent, const QVariantLis
              this, SLOT( documentChanged( KDevelop::IDocument* ) ) );
 }
 
-void PythonLanguageSupport::documentChanged( KDevelop::IDocument* doc )
+void LanguageSupport::documentChanged( KDevelop::IDocument* doc )
 {
         core()->languageController()->backgroundParser()->addDocument(doc->url());
 }
-PythonLanguageSupport::~PythonLanguageSupport()
+LanguageSupport::~LanguageSupport()
 {
     core()->languageController()->backgroundParser()->clear(this);
 }
 
-KDevelop::ParseJob *PythonLanguageSupport::createParseJob(const KUrl &url)
+KDevelop::ParseJob *LanguageSupport::createParseJob(const KUrl &url)
 {
-    return new PythonParseJob( url, this );
+    return new ParseJob( url, this );
 }
 
-QString PythonLanguageSupport::name() const
+QString LanguageSupport::name() const
 {
     return "Python";
 }
 
-KDevelop::ILanguage *PythonLanguageSupport::language()
+KDevelop::ILanguage *LanguageSupport::language()
 {
     return core()->languageController()->language(name());
 }
 
-KDevelop::ICodeHighlighting* PythonLanguageSupport::codeHighlighting() const
+KDevelop::ICodeHighlighting* LanguageSupport::codeHighlighting() const
 {
-    return m_highlighting;
+    return 0;
+//     return m_highlighting;
+}
+
 }
 
 #include "pythonlanguagesupport.moc"

@@ -23,7 +23,7 @@
  *****************************************************************************/
 #include "pythonparsejob.h"
 #include <kdebug.h>
-#include <cassert>
+// #include <cassert>
 #include <QFile>
 
 #include <ktexteditor/document.h>
@@ -31,8 +31,8 @@
 
 #include <klocale.h>
 #include "pythonhighlighting.h"
-#include "pythoneditorintegrator.h"
-#include "Thread.h"
+// #include "pythoneditorintegrator.h"
+// #include "Thread.h"
 #include "pythonlanguagesupport.h"
 #include <parsejob.h>
 #include "parsesession.h"
@@ -40,65 +40,68 @@
 #include <duchain.h>
 #include <topducontext.h>
 
-#include "contextbuilder.h"
-#include "declarationbuilder.h"
-using namespace Python;
+// #include "contextbuilder.h"
+// #include "declarationbuilder.h"
+
 using namespace KDevelop;
 
+namespace Python
+{
 
-PythonParseJob::PythonParseJob( const KUrl &url,PythonLanguageSupport *parent)
+
+ParseJob::ParseJob( const KUrl &url,LanguageSupport *parent)
         : KDevelop::ParseJob( url, parent )
         , m_session( new ParseSession )
-        , m_AST( 0 )
+        , m_ast( 0 )
         , m_readFromDisk( false )
         , m_duContext( 0 )
         , m_url(url)
 {
 }
 
-PythonParseJob::~PythonParseJob()
+ParseJob::~ParseJob()
 {
 }
 
-PythonLanguageSupport *PythonParseJob::python() const
+LanguageSupport *ParseJob::python() const
 {
-    return qobject_cast<PythonLanguageSupport*>(const_cast<QObject*>(parent()));
+    return qobject_cast<LanguageSupport*>(const_cast<QObject*>(parent()));
 }
 
 
-project_ast *PythonParseJob::AST() const
+CodeAst *ParseJob::ast() const
 {
-    Q_ASSERT(isFinished() && m_AST);
-    return m_AST;
+    Q_ASSERT(isFinished() && m_ast);
+    return m_ast;
 }
 
-TopDUContext* PythonParseJob::duChain() const
+TopDUContext* ParseJob::duChain() const
 {
     return m_duContext;
 }
 
-bool PythonParseJob::wasReadFromDisk() const
+bool ParseJob::wasReadFromDisk() const
 {
     return m_readFromDisk;
 }
-void PythonParseJob::setDUChain(TopDUContext * duChain)
+void ParseJob::setDUChain(TopDUContext * duChain)
 {
     m_duContext = duChain;
 }
 
-void PythonParseJob::run()
+void ParseJob::run()
 {
 
     m_readFromDisk = !contentsAvailableFromEditor();
 
     if ( m_readFromDisk )
     {
-        QFile file( m_document.path() );
+        QFile file( document().str() );
         if ( !file.open( QIODevice::ReadOnly | QIODevice::Text ) )
         {
-            m_errorMessage = i18n( "Could not open file '%1'", m_document.path() );
-            kWarning() << "Could not open file" << m_document
-                        << "(path" << m_document.path() << ")";
+            m_errorMessage = i18n( "Could not open file '%1'", document().str() );
+            kWarning() << "Could not open file" << document().str()
+                        << "(path" << document().str() << ")";
             return ;
         }
         QTextStream s(&file);
@@ -115,19 +118,19 @@ void PythonParseJob::run()
 
 
     // 2) parse
-    bool matched = m_session->parse( &m_AST );
+    bool matched = m_session->parse( &m_ast );
 
     if ( matched )
     {
         kDebug() << m_url;
-        DeclarationBuilder declarationBuilder(m_session,m_url);
-        m_duContext = declarationBuilder.buildDeclarations(m_AST);
+//         DeclarationBuilder declarationBuilder(m_session,m_url);
+//         m_duContext = declarationBuilder.buildDeclarations(m_AST);
         kDebug() << "----Parsing Succeded---***";//TODO: bind declarations to the code model
-        if( python() && declarationBuilder.m_editor->smart() )
-        {
-            QMutexLocker lock(declarationBuilder.m_editor->smart()->smartMutex());
-            python()->codeHighlighting()->highlightDUChain( m_duContext );
-        }
+//         if( python() && declarationBuilder.m_editor->smart() )
+//         {
+//             QMutexLocker lock(declarationBuilder.m_editor->smart()->smartMutex());
+//             python()->codeHighlighting()->highlightDUChain( m_duContext );
+//         }
     }
     else
     {
@@ -136,9 +139,12 @@ void PythonParseJob::run()
     }
 }
 
-ParseSession *PythonParseJob::parseSession() const
+ParseSession *ParseJob::parseSession() const
 {
     return m_session;
 }
+
+}
+
 #include "pythonparsejob.moc"
 // kate: space-indent on; indent-width 4; tab-width 4; replace-tabs on; auto-insert-doxygen on

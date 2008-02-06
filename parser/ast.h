@@ -31,6 +31,11 @@
 
 #include "parserexport.h"
 
+namespace KDevelop
+{
+    class DUContext;
+}
+
 namespace Python
 {
 
@@ -217,6 +222,7 @@ public:
      * Counting starts with 0.
      */
     qint64 endLine;
+    KDevelop::DUContext* context;
 };
 
 class KDEVPYTHONPARSER_EXPORT CodeAst : public Ast

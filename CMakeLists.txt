@@ -7,7 +7,7 @@ find_package(KDE4 REQUIRED)
 
 find_package(KDevPlatform REQUIRED)
 
-INCLUDE_DIRECTORIES(
+include_directories(
     ${KDEVPLATFORM_INCLUDE_DIR}/language/interfaces
     ${KDEVPLATFORM_INCLUDE_DIR}/interfaces
     ${KDEVPLATFORM_INCLUDE_DIR}/language
@@ -20,6 +20,10 @@ INCLUDE_DIRECTORIES(
     ${CMAKE_SOURCE_DIR}/duchain
     ${CMAKE_SOURCE_DIR}/parser
 )
+
+link_directories( ${KDE4_LIB_DIR} ${KDEVPLATFORM_LIB_DIR} )
+
+add_definitions( -DKDE_DEFAULT_DEBUG_AREA=9011 )
 
 #Don't error out if the FindXXX are missing for these two
 find_package(KDevelop-PG-Qt QUIET)
@@ -43,23 +47,23 @@ add_subdirectory(parser)
 set(kdevpythonlanguagesupport_PART_SRCS
     pythonlanguagesupport.cpp
     pythonparsejob.cpp
-    pythonhighlighting.cpp
+#     pythonhighlighting.cpp
 )
 
-#kde4_add_plugin(kdevpythonlanguagesupport ${kdevpythonlanguagesupport_PART_SRCS})
+kde4_add_plugin(kdevpythonlanguagesupport ${kdevpythonlanguagesupport_PART_SRCS})
 
-#target_link_libraries(kdevpythonlanguagesupport
-#    ${KDE4_KDEUI_LIBS}
-#    ${KDEVPLATFORM_INTERFACES_LIBRARY}
-#    ${KDEVPLATFORM_LANGUAGE_LIBRARY}
-#    ${KDE4_THREADWEAVER_LIBRARIES}
-#    ${KDEVPLATFORM_EDITOR_LIBRARY}
-#    ${KDE4_KTEXTEDITOR_LIBS}
-#    kdev4pythonparser
-#    kdev4pythonduchain
-#)
+target_link_libraries(kdevpythonlanguagesupport
+    ${KDE4_KDEUI_LIBS}
+    ${KDEVPLATFORM_INTERFACES_LIBRARY}
+    ${KDEVPLATFORM_LANGUAGE_LIBRARY}
+    ${KDE4_THREADWEAVER_LIBRARIES}
+    ${KDEVPLATFORM_EDITOR_LIBRARY}
+    ${KDE4_KTEXTEDITOR_LIBS}
+    kdev4pythonparser
+#     kdev4pythonduchain
+)
 
-#install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES kdevpythonsupport.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 

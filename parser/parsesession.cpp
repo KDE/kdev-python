@@ -23,10 +23,10 @@
  *****************************************************************************/
 #include "parsesession.h"
 
-#include "kdev-pg-memory-pool.h"
-#include "kdev-pg-token-stream.h"
 #include "pythondriver.h"
-#include <ducontext.h>
+
+namespace Python
+{
 
 ParseSession::ParseSession()
 {
@@ -35,18 +35,18 @@ ParseSession::~ParseSession()
 {
 }
 
-void ParseSession::putNode( Python::Ast* ast_node, KDevelop::DUContext* topducontext )
-{
-    m_nodeHash[ast_node] = topducontext;
-}
-KDevelop::DUContext* ParseSession::getNode( Python::Ast* ast_node )
-{
-    return m_nodeHash[ast_node];
-}
-void ParseSession::removeNode( Python::Ast* ast_node )
-{
-    m_nodeHash.remove(ast_node);
-}
+// void ParseSession::putNode( Python::Ast* ast_node, KDevelop::DUContext* topducontext )
+// {
+//     m_nodeHash[ast_node] = topducontext;
+// }
+// KDevelop::DUContext* ParseSession::getNode( Python::Ast* ast_node )
+// {
+//     return m_nodeHash[ast_node];
+// }
+// void ParseSession::removeNode( Python::Ast* ast_node )
+// {
+//     m_nodeHash.remove(ast_node);
+// }
 QString ParseSession::contents() const
 {
     return m_contents;
@@ -64,5 +64,4 @@ bool ParseSession::parse( Python::CodeAst** ast )
     return d.parse( ast );
 }
 
-
-
+}

@@ -42,7 +42,7 @@ bool Driver::readFile( const QString& filename, const char* codec )
     QFile f(filename);
     if( !f.open( QIODevice::ReadOnly | QIODevice::Text ) )
     {
-        qDebug() << "Couldn't open project file:" << filename;
+        kDebug() << "Couldn't open project file:" << filename;
         return false;
     }
     QTextStream s(&f);
@@ -77,7 +77,7 @@ bool Driver::parse( Python::CodeAst** ast )
     bool matched = pythonparser.parseProject(srcast);
     if( matched )
     {
-        qDebug() << "Sucessfully parsed";
+        kDebug() << "Sucessfully parsed";
 //         if( m_debug )
 //         {
 //             PythonParser::DebugVisitor d( pythonparser.tokenStream );
@@ -91,7 +91,7 @@ bool Driver::parse( Python::CodeAst** ast )
     {
         *ast = 0;
         pythonparser.expectedSymbol(PythonParser::AstNode::ProjectKind, "project");
-        qDebug() << "Couldn't parse content";
+        kDebug() << "Couldn't parse content";
     }
     return matched;
 }

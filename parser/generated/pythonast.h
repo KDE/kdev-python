@@ -11,6 +11,7 @@
 
 
 #include <QtCore/QString>
+#include <kdebug.h>
 
 namespace PythonParser
 {

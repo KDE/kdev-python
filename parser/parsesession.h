@@ -27,23 +27,10 @@
 #include <QtCore/QHash>
 #include "parserexport.h"
 
-class LexedFile;
 namespace Python
 {
     class CodeAst;
     class Ast;
-}
-
-namespace KDevPG
-{
-class TokenStream;
-class MemoryPool;
-}
-
-namespace KDevelop
-{
-    class DUContext;
-}
 
 class KDEVPYTHONPARSER_EXPORT ParseSession
 {
@@ -54,16 +41,18 @@ public:
     void setContents( const QString& contents );
     QString contents() const;
 
-    void putNode( Python::Ast* ast_node, KDevelop::DUContext* topducontext );
-    void removeNode( Python::Ast* ast_node );
-    KDevelop::DUContext* getNode( Python::Ast* ast_node );
+//     void putNode( Python::Ast* ast_node, KDevelop::DUContext* topducontext );
+//     void removeNode( Python::Ast* ast_node );
+//     KDevelop::DUContext* getNode( Python::Ast* ast_node );
 
     bool parse( Python::CodeAst** );
 private:
-    QHash<Python::Ast*, KDevelop::DUContext*> m_nodeHash;
+//     QHash<Python::Ast*, KDevelop::DUContext*> m_nodeHash;
     QString m_contents;
 
 };
+
+}
 
 #endif
 

@@ -32,7 +32,7 @@ void Parser::tokenize( const QString& contents )
         t.end = lexer.tokenEnd();
         t.kind = kind;
         if ( mDebug )
-            qDebug() << kind << tokenText(t.begin,t.end) << t.begin << t.end;
+            kDebug() << kind << tokenText(t.begin,t.end) << t.begin << t.end;
     }
     while ( kind != Parser::Token_EOF );
 
@@ -49,11 +49,11 @@ QString Parser::tokenText(qint64 begin, qint64 end)
 void Parser::reportProblem( Parser::ProblemType type, const QString& message )
 {
     if (type == Error)
-        qDebug() << "** ERROR:" << message;
+        kDebug() << "** ERROR:" << message;
     else if (type == Warning)
-        qDebug() << "** WARNING:" << message;
+        kDebug() << "** WARNING:" << message;
     else if (type == Info)
-        qDebug() << "** Info:" << message;
+        kDebug() << "** Info:" << message;
 }
 
 
@@ -69,8 +69,8 @@ void Parser::expectedSymbol(int /*expectedSymbol*/, const QString& name)
     qint64 col;
     qint64 index = tokenStream->index()-1;
     Token &token = tokenStream->token(index);
-    qDebug() << "token starts at:" << token.begin;
-    qDebug() << "index is:" << index;
+    kDebug() << "token starts at:" << token.begin;
+    kDebug() << "index is:" << index;
     tokenStream->startPosition(index, &line, &col);
     QString tokenValue = tokenText(token.begin, token.end);
     reportProblem( Parser::Error,

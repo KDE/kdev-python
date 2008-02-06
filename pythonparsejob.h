@@ -25,7 +25,7 @@
 #define PARSEJOB_H
 
 #include <parsejob.h>
-#include "python_ast.h"
+#include "ast.h"
 
 #include <QStringList>
 
@@ -34,53 +34,47 @@
 
 #include <duchainpointer.h>
 
-class PythonLanguageSupport;
-
-class ParseSession;
-
-using namespace Python;
 
 namespace KDevelop {
     class TopDUContext;
 }
 
 namespace Python {
-    class LexedFile;
-}
 
-typedef QList<KDevelop::TopDUContext*> ImportedFileList;
+class LanguageSupport;
+class ParseSession;
 
-class PythonParseJob : public KDevelop::ParseJob
+class ParseJob : public KDevelop::ParseJob
 {
     Q_OBJECT
 public:
-    PythonParseJob( const KUrl &url, PythonLanguageSupport* parent);
-    virtual ~PythonParseJob();
+    ParseJob( const KUrl &url, LanguageSupport* parent);
+    virtual ~ParseJob();
 
-    void setAST(project_ast* ast);
-    virtual project_ast *AST() const;
+    void setAST(CodeAst* ast);
+    virtual CodeAst *ast() const;
 
     void setDUChain(KDevelop::TopDUContext* duChain);
     virtual KDevelop::TopDUContext* duChain() const;
 
     const KTextEditor::Range& textRangeToParse() const;
 
-    PythonLanguageSupport* python() const;
+    LanguageSupport* python() const;
     ParseSession* parseSession() const;
     bool wasReadFromDisk() const;
-    void setLexedFile( Python::LexedFile* file );
-    Python::LexedFile* lexedFile();
 
 protected:
     virtual void run();
 private:
     ParseSession *m_session;
-    project_ast *m_AST;
+    CodeAst *m_ast;
     bool m_readFromDisk;
     KDevelop::TopDUContext* m_duContext;
     KUrl m_url;
     KTextEditor::Range m_textRangeToParse;
 };
+
+}
 
 #endif
 // kate: space-indent on; indent-width 4; tab-width 4; replace-tabs on; auto-insert-doxygen on

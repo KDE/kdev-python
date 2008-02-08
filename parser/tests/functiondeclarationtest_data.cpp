@@ -247,3 +247,100 @@ CodeAst* simpleFunctionTwoLongParam()
     ast->statements << funast;
     return ast;
 }
+
+CodeAst* simpleFunctionListAndDictParam()
+{
+    CodeAst* ast = createAstNode<CodeAst>( 0, 0, 0, -1, -1, -1 );
+    FunctionDefinitionAst* funast = createAstNode<FunctionDefinitionAst>( 0, 0, 0, -1, -1, -1, ast );
+    IdentifierAst* idast = createAstNode<IdentifierAst>( 4, 0, 4, 6, 0, 6, funast );
+    idast->identifier = "foo";
+    funast->functionName = idast;
+    
+    DefaultParameterAst* param = createAstNode<DefaultParameterAst>( 9, 0, 9, 10, 0, 10, funast );
+    IdentifierParameterPartAst* idparam = createAstFrom<IdentifierParameterPartAst>( param );
+    IdentifierAst* paramname = createAstNode<IdentifierAst>( 9, 0, 9, 9, 0, 9, idparam );
+    paramname->identifier = "a";
+    
+    idparam->name = paramname;
+    param->name = idparam;
+    funast->parameters << param;
+    
+    ListParameterAst* lparam = createAstNode<ListParameterAst>( 12, 0, 12, 15, 0, 15, funast );
+    paramname = createAstNode<IdentifierAst>( 12, 0, 12, 13, 0, 13, lparam );
+    paramname->identifier = "b";
+    
+    lparam->name = paramname;
+    funast->parameters << lparam;
+    
+    DictionaryParameterAst* dparam = createAstNode<DictionaryParameterAst>( 16, 0, 16, 20, 0, 20, funast );
+    paramname = createAstNode<IdentifierAst>( 16, 0, 16, 19, 0, 19, dparam );
+    paramname->identifier = "c";
+    
+    dparam->name = paramname;
+    funast->parameters << dparam;
+    
+    StatementAst* pass = createAstNode<StatementAst>( 19, 1, 2, 23, 1, 6, Ast::PassAst, funast );
+    funast->functionBody << pass;
+    ast->statements << funast;
+    return ast;
+}
+
+CodeAst* simpleFunctionCombinedDictParam()
+{
+    CodeAst* ast = createAstNode<CodeAst>( 0, 0, 0, -1, -1, -1 );
+    FunctionDefinitionAst* funast = createAstNode<FunctionDefinitionAst>( 0, 0, 0, -1, -1, -1, ast );
+    IdentifierAst* idast = createAstNode<IdentifierAst>( 4, 0, 4, 6, 0, 6, funast );
+    idast->identifier = "foo";
+    funast->functionName = idast;
+    
+    DefaultParameterAst* param = createAstNode<DefaultParameterAst>( 9, 0, 9, 10, 0, 10, funast );
+    IdentifierParameterPartAst* idparam = createAstFrom<IdentifierParameterPartAst>( param );
+    IdentifierAst* paramname = createAstNode<IdentifierAst>( 9, 0, 9, 9, 0, 9, idparam );
+    paramname->identifier = "a";
+    
+    idparam->name = paramname;
+    param->name = idparam;
+    funast->parameters << param;
+    
+    DictionaryParameterAst* dparam = createAstNode<DictionaryParameterAst>( 12, 0, 12, 15, 0, 15, funast );
+    paramname = createAstNode<IdentifierAst>( 12, 0, 12, 13, 0, 13, dparam );
+    paramname->identifier = "b";
+    
+    dparam->name = paramname;
+    funast->parameters << dparam;
+    
+    StatementAst* pass = createAstNode<StatementAst>( 19, 1, 2, 23, 1, 6, Ast::PassAst, funast );
+    funast->functionBody << pass;
+    ast->statements << funast;
+    return ast;
+}
+
+CodeAst* simpleFunctionCombinedListParam()
+{
+    CodeAst* ast = createAstNode<CodeAst>( 0, 0, 0, -1, -1, -1 );
+    FunctionDefinitionAst* funast = createAstNode<FunctionDefinitionAst>( 0, 0, 0, -1, -1, -1, ast );
+    IdentifierAst* idast = createAstNode<IdentifierAst>( 4, 0, 4, 6, 0, 6, funast );
+    idast->identifier = "foo";
+    funast->functionName = idast;
+    
+    DefaultParameterAst* param = createAstNode<DefaultParameterAst>( 9, 0, 9, 10, 0, 10, funast );
+    IdentifierParameterPartAst* idparam = createAstFrom<IdentifierParameterPartAst>( param );
+    IdentifierAst* paramname = createAstNode<IdentifierAst>( 9, 0, 9, 9, 0, 9, idparam );
+    paramname->identifier = "a";
+    
+    idparam->name = paramname;
+    param->name = idparam;
+    funast->parameters << param;
+    
+    ListParameterAst* lparam = createAstNode<ListParameterAst>( 12, 0, 12, 15, 0, 15, funast );
+    paramname = createAstNode<IdentifierAst>( 12, 0, 12, 13, 0, 13, lparam );
+    paramname->identifier = "b";
+    
+    lparam->name = paramname;
+    funast->parameters << lparam;
+    
+    StatementAst* pass = createAstNode<StatementAst>( 19, 1, 2, 23, 1, 6, Ast::PassAst, funast );
+    funast->functionBody << pass;
+    ast->statements << funast;
+    return ast;
+}

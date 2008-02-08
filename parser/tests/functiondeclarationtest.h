@@ -36,6 +36,8 @@ private slots:
     void singleArgument_data();
     void multiArguments();
     void multiArguments_data();
+    void combindedArgumentTypes();
+    void combindedArgumentTypes_data();
 };
 
 #endif

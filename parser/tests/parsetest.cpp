@@ -24,7 +24,7 @@
 
 #include <QDebug>
 
-QTEST_MAIN( ParseTest )
+QTEST_KDEMAIN( ParseTest )
 
 ParseTest::ParseTest( QObject* parent )
     : QObject( parent )

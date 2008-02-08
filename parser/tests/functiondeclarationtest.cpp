@@ -29,7 +29,7 @@
 using namespace Python;
 
 Q_DECLARE_METATYPE(CodeAst*)
-QTEST_MAIN( FunctionDeclarationTest )
+QTEST_KDEMAIN( FunctionDeclarationTest )
 
 extern CodeAst* simpleFunctionSingleParam();
 extern CodeAst* simpleFunctionDefaultParam();
@@ -38,12 +38,16 @@ extern CodeAst* simpleFunctionNoParams();
 extern CodeAst* simpleFunctionDictParam();
 extern CodeAst* simpleFunctionTwoParam();
 extern CodeAst* simpleFunctionTwoLongParam();
+extern CodeAst* simpleFunctionListAndDictParam();
+extern CodeAst* simpleFunctionCombinedDictParam();
+extern CodeAst* simpleFunctionCombinedListParam();
 
 static void doTest( const QString& project, CodeAst* expected )
 {
     Driver d;
     CodeAst* result;
     d.setContent( project );
+//     d.setDebug( true );
     d.parse( &result );
     TestVisitor tv;
     tv.setExpected( expected );
@@ -105,5 +109,22 @@ void FunctionDeclarationTest::multiArguments_data()
     QTest::newRow( "function with two simple params" ) << "def foo( a, b ):\n  pass\n" << simpleFunctionTwoParam();
     QTest::newRow( "function with two longer params" ) << "def foo( alpha, beta ):\n  pass\n" << simpleFunctionTwoLongParam();
 }
+
+void FunctionDeclarationTest::combindedArgumentTypes()
+{
+    QFETCH( QString, project );
+    QFETCH( CodeAst*, expected );
+    doTest( project, expected );
+}
+
+void FunctionDeclarationTest::combindedArgumentTypes_data()
+{
+    QTest::addColumn<QString>("project");
+    QTest::addColumn<CodeAst*>("expected");
+    QTest::newRow( "function with an added dict param" ) << "def foo( a, **b ):\n  pass\n" << simpleFunctionCombinedDictParam();
+    QTest::newRow( "function with an added list param" ) << "def foo( a, *b ):\n  pass\n" << simpleFunctionCombinedListParam();
+    QTest::newRow( "function with added list and dict param" ) << "def foo( a, *b, **c ):\n  pass\n" << simpleFunctionListAndDictParam();
+}
+
 
 #include "functiondeclarationtest.moc"

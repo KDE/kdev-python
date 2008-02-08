@@ -174,7 +174,7 @@ void ContextBuilder::supportBuild(Ast *node, DUContext* context)
 
 void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
-    //kDebug()<<"Visiting Class Declaration";
+    kDebug()<<"Visiting Class Declaration";
     openContext(node, DUContext::Class, identifierForName( node->className->identifier ));
     addImportedContexts();
     visitNodeList( node->inheritance );
@@ -217,9 +217,12 @@ void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
 
 void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
-    openContext( node->functionBody.first(), node->functionBody.last() ,DUContext::Function, identifierForName( node->functionName->identifier ));
+    kDebug() << "building function definition context";
+    openContext( node->functionBody.first(), node->functionBody.last() ,DUContext::Function, identifierForName( node->functionName->identifier ) );
     addImportedContexts();
-    AstDefaultVisitor::visitNode(node);
+    visitNodeList( node->decorators );
+    visitNodeList( node->parameters );
+    visitNodeList( node->functionBody );
     closeContext();
 }
 
@@ -297,7 +300,7 @@ DUContext* ContextBuilder::openContext(Ast* fromRange, Ast* toRange, DUContext::
 
 DUContext* ContextBuilder::openContextInternal(const SimpleRange& range, DUContext::ContextType type, const QualifiedIdentifier& identifier)
 {
-    //kDebug() << "OpenContextInternal";
+    kDebug() << "OpenContextInternal";
     Q_ASSERT(m_compilingContexts);
     DUContext* ret = 0L;
     {

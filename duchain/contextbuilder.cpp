@@ -115,7 +115,9 @@ TopDUContext* ContextBuilder::buildContexts(Ast* node)
         setEncountered(topLevelContext);
         node->context = topLevelContext;
     }
+    
     supportBuild(node);
+    
     {
         // allDeclarations always returned Zero as it looks for the Total Number Of definitions, as Depicted here.
         // Currently it simply dispalys the localdeclarations in the topcontext,
@@ -265,10 +267,8 @@ DUContext* ContextBuilder::openContext(Ast* rangeNode, DUContext::ContextType ty
 {
     if (m_compilingContexts)
     {
-        //kDebug() << "Creating ret";
-        const Range& m_range = m_editor->findRange(rangeNode);
         //kDebug() << "Opening ContextInternal";
-        DUContext* ret = openContextInternal(m_range, type, identifier);
+        DUContext* ret = openContextInternal(m_editor->findRange(rangeNode), type, identifier);
         //kDebug() << "Associating context" ;
         rangeNode->context = ret;
         return ret;
@@ -324,7 +324,7 @@ DUContext* ContextBuilder::openContextInternal(const SimpleRange& range, DUConte
                     ret = child;
                     readLock.unlock();
                     DUChainWriteLocker writeLock(DUChain::lock());
-                    //ret->clearNamespaceAliases();
+                    
                     ret->clearImportedParentContexts();
                     m_editor->setCurrentRange(ret->smartRange());
                     break;
@@ -344,7 +344,7 @@ DUContext* ContextBuilder::openContextInternal(const SimpleRange& range, DUConte
             {
                 ret->setLocalScopeIdentifier(identifier);
                 if (type == DUContext::Class)
-                SymbolTable::self()->addContext(ret);
+                    SymbolTable::self()->addContext(ret);
             }
         }
     }
@@ -383,7 +383,7 @@ void ContextBuilder::addImportedContexts()
 {
     if (m_compilingContexts && !m_importedParentContexts.isEmpty())
     {
-        //kDebug()<<"Adding Imported Contexts";
+        kDebug()<<"Adding Imported Contexts";
         DUChainWriteLocker lock(DUChain::lock());
         foreach (DUContext* imported, m_importedParentContexts)
             currentContext()->addImportedParentContext(imported);

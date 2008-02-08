@@ -1313,13 +1313,16 @@ void AstBuilder::visitProject(PythonParser::ProjectAst *node)
     CodeAst* code = new CodeAst();
     setStartEnd( code, node );
     mNodeStack.push( code );
-    int count = node->stmtSequence->count();
-    for( int i = 0; i < count; i++ )
+    if( node->stmtSequence )
     {
-        visitNode( node->stmtSequence->at(i)->element );
-        Ast* a = mNodeStack.pop();
-        if( a )
-            code->statements << safeNodeCast<StatementAst>( a );
+        int count = node->stmtSequence->count();
+        for( int i = 0; i < count; i++ )
+        {
+            visitNode( node->stmtSequence->at(i)->element );
+            Ast* a = mNodeStack.pop();
+            if( a )
+                code->statements << safeNodeCast<StatementAst>( a );
+        }
     }
     kDebug() << "visitProject end";
 }

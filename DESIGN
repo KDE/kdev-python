@@ -1,0 +1,42 @@
+Python Plugin Design:
+
+The plugin consists of various parts: a parser library, a duchain library and
+the actual plugin incorporating code completion and highlighting support
+
+The Parser Library
+------------------
+The parser is written using the KDevelop-PG Qt parser generator. The standard
+Python grammar has been transformed into a grammar that KDevelop-PG can
+understand, see parser/python.g. The generated parser parses a piece of python
+code and creates an abstract syntax tree from that. This AST is very close to
+the actual grammar of the language, which makes it unnecessarily complex in
+some places.
+
+Thus the initial AST is transformed, via the AstBuilder class, into a different
+AST that has been modelled after the python language reference. This happens
+inside the parser library, so users only see this hand-crafted AST structure.
+
+The parsing and AST transformation is driven by the PythonDriver class, which
+simply takes some input and runs the parser over it.
+
+The translation of the input text into tokens is done by a handwritten lexer in
+the Lexer class. It also handles creation of indentation and dedentation tokens
+as needed by the pythong language.
+
+Last but most importantly, there a couple of unit tests for the above parts. In
+particular there are a couple of example files to simply test the parser and a
+Qt unit test to parse the lexer. The creation of the handcrafted AST is tested
+in the rest of the various unittests.
+
+The DUChain Library
+-------------------
+This library builds a Definition-Use-Chain from the AST, which is then used to
+support code completion, syntax highlighting and other language features in
+KDevelop. The design of the DUChain is described at:
+http://api.kde.org/4.x-api/kdevplatform-apidocs/language/html/duchain-design.html
+
+The following language elements create a new Context:
+- a class definition
+- a function definition
+- a compound statement, that includes for, while, if, with statements
+

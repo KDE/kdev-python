@@ -56,7 +56,7 @@ public:
     ContextBuilder(EditorIntegrator* editor, const KUrl &url);
     virtual ~ContextBuilder ();
 
-    ParseSession* parseSession() const;
+//     ParseSession* parseSession() const;
 
     KDevelop::TopDUContext* buildContexts(Ast* node);
     KDevelop::DUContext* buildSubContexts(const KUrl& url, Ast *node, KDevelop::DUContext* parent = 0);
@@ -84,13 +84,14 @@ public:
 
     const KDevelop::QualifiedIdentifier identifierForName( const QString& name );
 
-    KDevelop::DUContext* openContext(Ast* range, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier);
+    KDevelop::DUContext* openContext(Ast* range, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier );
     KDevelop::DUContext* openContext(Ast* range, KDevelop::DUContext::ContextType type, const QString& );
-    KDevelop::DUContext* openContext(Ast* fromRange, Ast* toRange, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier );
+    KDevelop::DUContext* openContext(Ast* fromRange, Ast* toRange, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier = KDevelop::QualifiedIdentifier() );
     KDevelop::DUContext* openContextInternal(const KDevelop::SimpleRange& range, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier);
 
     virtual void visitFunctionDefinition( FunctionDefinitionAst* );
     virtual void visitClassDefinition( ClassDefinitionAst* );
+    virtual void visitFor( ForAst* node );
 //     virtual void visit_compound_stmt(compound_stmt_ast *node);
 //     virtual void visit_varargslist(varargslist_ast *node);
 //     virtual void visit_import_as_name(import_as_name_ast *node);

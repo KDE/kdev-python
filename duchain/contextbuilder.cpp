@@ -74,7 +74,7 @@ ContextBuilder::~ContextBuilder ()
 TopDUContext* ContextBuilder::buildContexts(Ast* node)
 {
     m_compilingContexts = true;
-    m_editor->setCurrentUrl( KDevelop::HashedString( m_url.path() ) );
+    m_editor->setCurrentUrl( KDevelop::HashedString( m_url.url() ) );
 
     TopDUContext* topLevelContext = 0;
     {
@@ -109,7 +109,7 @@ TopDUContext* ContextBuilder::buildContexts(Ast* node)
             topLevelContext = new TopDUContext(m_editor->currentUrl(), m_editor->currentDocument() ? SimpleRange(m_editor->currentDocument()->documentRange()) : SimpleRange(SimpleCursor(0,0), SimpleCursor(INT_MAX, INT_MAX)));
             topLevelContext->setSmartRange( m_editor->topRange( EditorIntegrator::DefinitionUseChain) , DocumentRangeObject::Own );
             topLevelContext->setType(DUContext::Global);
-            DUChain::self()->addDocumentChain(IdentifiedFile(HashedString( m_url.path() ),0), topLevelContext);
+            DUChain::self()->addDocumentChain(IdentifiedFile(HashedString( m_url.url() ),0), topLevelContext);
         }
 
         setEncountered(topLevelContext);
@@ -141,7 +141,7 @@ KDevelop::DUContext* ContextBuilder::buildSubContexts(const KUrl& url, Ast *node
 {
     m_compilingContexts = true;
     m_recompiling = false;
-    m_editor->setCurrentUrl( HashedString( url.path() ) );
+    m_editor->setCurrentUrl( HashedString( url.url() ) );
     node->context = parent;
     {
         openContext(node->context);
@@ -366,9 +366,35 @@ void ContextBuilder::closeContext()
     m_editor->exitCurrentRange();
 }
 
-ParseSession *ContextBuilder::parseSession() const
+// ParseSession *ContextBuilder::parseSession() const
+// {
+//     return m_session;
+// }
+
+void ContextBuilder::visitFor( ForAst* node )
 {
-    return m_session;
+    kDebug() << "Found for, building context";
+    DUContext* forctx = openContext( node->assignedTargets.first(), node->iterable.first(), DUContext::Other );
+    visitNodeList( node->assignedTargets );
+    visitNodeList( node->iterable );
+    closeContext();
+    
+    m_importedParentContexts = QList<DUContext*>() << forctx;
+    if( node->forBody.count() > 1 ) 
+    {
+        openContext( node->forBody.first(), node->forBody.last(), DUContext::Other );
+        addImportedContexts();
+        visitNodeList( node->forBody );
+        closeContext();
+    }
+    if( node->elseBody.count() > 1 ) 
+    {
+        openContext( node->elseBody.first(), node->elseBody.last(), DUContext::Other );
+        addImportedContexts();
+        visitNodeList( node->elseBody );
+        closeContext();
+    }
+    m_importedParentContexts.clear();
 }
 
 const QualifiedIdentifier ContextBuilder::identifierForName( const QString& name )

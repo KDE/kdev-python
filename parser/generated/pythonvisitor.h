@@ -41,6 +41,7 @@ public:
     virtual void visitDecorators(DecoratorsAst *) {}
     virtual void visitDefparam(DefparamAst *) {}
     virtual void visitDelStmt(DelStmtAst *) {}
+    virtual void visitDictParam(DictParamAst *) {}
     virtual void visitDictmaker(DictmakerAst *) {}
     virtual void visitDottedAsName(DottedAsNameAst *) {}
     virtual void visitDottedAsNames(DottedAsNamesAst *) {}
@@ -74,6 +75,7 @@ public:
     virtual void visitListIf(ListIfAst *) {}
     virtual void visitListIter(ListIterAst *) {}
     virtual void visitListMakerTest(ListMakerTestAst *) {}
+    virtual void visitListParam(ListParamAst *) {}
     virtual void visitListmaker(ListmakerAst *) {}
     virtual void visitNotTest(NotTestAst *) {}
     virtual void visitNumber(NumberAst *) {}

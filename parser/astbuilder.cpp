@@ -1759,16 +1759,16 @@ void AstBuilder::visitVarargslist(PythonParser::VarargslistAst *node)
     }
     if( node->funPosParam )
     {
-        if( node->funPosParam->starId > -1 )
+        if( node->funPosParam->listParam )
         {
-            ListParameterAst* ast = createAst<ListParameterAst>( node->funPosParam );
-            ast->name = createIdentifier( ast, node->funPosParam->starId );
+            ListParameterAst* ast = createAst<ListParameterAst>( node->funPosParam->listParam );
+            ast->name = createIdentifier( ast, node->funPosParam->listParam->starId );
             l << ast;
         }
-        if( node->funPosParam->doubleStarId > -1 )
+        if( node->funPosParam->dictParam )
         {
-            DictionaryParameterAst* ast = createAst<DictionaryParameterAst>( node->funPosParam );
-            ast->name = createIdentifier( ast, node->funPosParam->doubleStarId );
+            DictionaryParameterAst* ast = createAst<DictionaryParameterAst>( node->funPosParam->dictParam );
+            ast->name = createIdentifier( ast, node->funPosParam->dictParam->doubleStarId );
             l << ast;
         }
     }

@@ -33,6 +33,7 @@ public:
     virtual void visitDecorators(DecoratorsAst *node);
     virtual void visitDefparam(DefparamAst *node);
     virtual void visitDelStmt(DelStmtAst *node);
+    virtual void visitDictParam(DictParamAst *node);
     virtual void visitDictmaker(DictmakerAst *node);
     virtual void visitDottedAsName(DottedAsNameAst *node);
     virtual void visitDottedAsNames(DottedAsNamesAst *node);
@@ -66,6 +67,7 @@ public:
     virtual void visitListIf(ListIfAst *node);
     virtual void visitListIter(ListIterAst *node);
     virtual void visitListMakerTest(ListMakerTestAst *node);
+    virtual void visitListParam(ListParamAst *node);
     virtual void visitListmaker(ListmakerAst *node);
     virtual void visitNotTest(NotTestAst *node);
     virtual void visitNumber(NumberAst *node);

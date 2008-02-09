@@ -196,6 +196,10 @@ void DefaultVisitor::visitDelStmt(DelStmtAst *node)
     visitNode(node->delList);
 }
 
+void DefaultVisitor::visitDictParam(DictParamAst *)
+{
+}
+
 void DefaultVisitor::visitDictmaker(DictmakerAst *node)
 {
     if (node->keyListSequence)
@@ -351,8 +355,10 @@ void DefaultVisitor::visitFplist(FplistAst *node)
     }
 }
 
-void DefaultVisitor::visitFunPosParam(FunPosParamAst *)
+void DefaultVisitor::visitFunPosParam(FunPosParamAst *node)
 {
+    visitNode(node->listParam);
+    visitNode(node->dictParam);
 }
 
 void DefaultVisitor::visitFuncDef(FuncDefAst *node)
@@ -498,6 +504,10 @@ void DefaultVisitor::visitListMakerTest(ListMakerTestAst *node)
         }
         while (__it != __end);
     }
+}
+
+void DefaultVisitor::visitListParam(ListParamAst *)
+{
 }
 
 void DefaultVisitor::visitListmaker(ListmakerAst *node)

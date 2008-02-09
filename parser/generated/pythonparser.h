@@ -216,6 +216,7 @@ public:
     bool parseDecorators(DecoratorsAst **yynode);
     bool parseDefparam(DefparamAst **yynode);
     bool parseDelStmt(DelStmtAst **yynode);
+    bool parseDictParam(DictParamAst **yynode);
     bool parseDictmaker(DictmakerAst **yynode);
     bool parseDottedAsName(DottedAsNameAst **yynode);
     bool parseDottedAsNames(DottedAsNamesAst **yynode);
@@ -249,6 +250,7 @@ public:
     bool parseListIf(ListIfAst **yynode);
     bool parseListIter(ListIterAst **yynode);
     bool parseListMakerTest(ListMakerTestAst **yynode);
+    bool parseListParam(ListParamAst **yynode);
     bool parseListmaker(ListmakerAst **yynode);
     bool parseNotTest(NotTestAst **yynode);
     bool parseNumber(NumberAst **yynode);

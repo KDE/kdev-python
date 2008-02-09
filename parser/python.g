@@ -215,9 +215,15 @@ namespace PythonParser
 -> varargslist ;;
 
 -- The Vararguement trailer, defines *args and **args
-    ( STAR starId=IDENTIFIER ( COMMA DOUBLESTAR doubleStarId=IDENTIFIER | 0 )
-        | DOUBLESTAR doubleStarId=IDENTIFIER )
+    ( listParam=listParam ( COMMA dictParam=dictParam | 0 )
+        | dictParam=dictParam )
 -> funPosParam;;
+
+   DOUBLESTAR doubleStarId=IDENTIFIER
+-> dictParam;;
+
+   STAR starId=IDENTIFIER
+-> listParam;;
 
 -- Function Definition
     #fpDef=fpDef ( COMMA [:if(yytoken == Token_RPAREN  || yytoken == Token_STAR || yytoken == Token_DOUBLESTAR ) { break; } :] #fpDef=fpDef )*

@@ -146,7 +146,7 @@ bool Parser::parseAndExpr(AndExprAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -203,7 +203,7 @@ bool Parser::parseAndTest(AndTestAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -344,7 +344,7 @@ bool Parser::parseArglist(ArglistAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -420,7 +420,7 @@ bool Parser::parseArgument(ArgumentAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -490,7 +490,7 @@ bool Parser::parseArithExpr(ArithExprAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -536,7 +536,7 @@ bool Parser::parseArithOp(ArithOpAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -595,7 +595,7 @@ bool Parser::parseAssertStmt(AssertStmtAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -818,7 +818,7 @@ bool Parser::parseAtom(AtomAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -984,7 +984,7 @@ bool Parser::parseAugassign(AugassignAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -1010,7 +1010,7 @@ bool Parser::parseBreakStmt(BreakStmtAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -1092,7 +1092,7 @@ bool Parser::parseClassdef(ClassdefAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -1150,7 +1150,7 @@ bool Parser::parseCodeexpr(CodeexprAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -1305,7 +1305,7 @@ bool Parser::parseCompOp(CompOpAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -1370,7 +1370,7 @@ bool Parser::parseComparison(ComparisonAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -1466,7 +1466,7 @@ bool Parser::parseCompoundStmt(CompoundStmtAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -1492,7 +1492,7 @@ bool Parser::parseContinueStmt(ContinueStmtAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -1590,7 +1590,7 @@ bool Parser::parseDecorator(DecoratorAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -1621,7 +1621,7 @@ bool Parser::parseDecorators(DecoratorsAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -1682,7 +1682,7 @@ bool Parser::parseDefparam(DefparamAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -1716,7 +1716,7 @@ bool Parser::parseDelStmt(DelStmtAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -1751,7 +1751,7 @@ bool Parser::parseDictParam(DictParamAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -1868,7 +1868,7 @@ bool Parser::parseDictmaker(DictmakerAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -1921,7 +1921,7 @@ bool Parser::parseDottedAsName(DottedAsNameAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -1966,7 +1966,7 @@ bool Parser::parseDottedAsNames(DottedAsNamesAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -2011,7 +2011,7 @@ bool Parser::parseDottedName(DottedNameAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -2093,7 +2093,7 @@ bool Parser::parseExceptClause(ExceptClauseAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -2177,7 +2177,7 @@ bool Parser::parseExecStmt(ExecStmtAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -2233,7 +2233,7 @@ bool Parser::parseExpr(ExprAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -2394,7 +2394,7 @@ bool Parser::parseExprStmt(ExprStmtAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -2454,7 +2454,7 @@ bool Parser::parseExprlist(ExprlistAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -2512,7 +2512,7 @@ bool Parser::parseFactOp(FactOpAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -2586,7 +2586,7 @@ bool Parser::parseFactor(FactorAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -2668,7 +2668,7 @@ bool Parser::parseFlowStmt(FlowStmtAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -2764,7 +2764,7 @@ bool Parser::parseForStmt(ForStmtAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -2817,7 +2817,7 @@ bool Parser::parseFpDef(FpDefAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -2867,7 +2867,7 @@ bool Parser::parseFplist(FplistAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -2938,7 +2938,7 @@ bool Parser::parseFunPosParam(FunPosParamAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -2988,7 +2988,7 @@ bool Parser::parseFuncDef(FuncDefAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -3092,7 +3092,7 @@ bool Parser::parseFuncdecl(FuncdeclAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -3160,7 +3160,7 @@ bool Parser::parseGenFor(GenForAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -3213,7 +3213,7 @@ bool Parser::parseGenIf(GenIfAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -3259,7 +3259,7 @@ bool Parser::parseGenIter(GenIterAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -3311,7 +3311,7 @@ bool Parser::parseGlobalStmt(GlobalStmtAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -3425,7 +3425,7 @@ bool Parser::parseIfStmt(IfStmtAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -3479,7 +3479,7 @@ bool Parser::parseImportAsName(ImportAsNameAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -3528,7 +3528,7 @@ bool Parser::parseImportAsNames(ImportAsNamesAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -3619,7 +3619,7 @@ bool Parser::parseImportFrom(ImportFromAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -3653,7 +3653,7 @@ bool Parser::parseImportName(ImportNameAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -3699,7 +3699,7 @@ bool Parser::parseImportStmt(ImportStmtAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -3761,7 +3761,7 @@ bool Parser::parseLambdaDef(LambdaDefAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -3829,7 +3829,7 @@ bool Parser::parseListFor(ListForAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -3882,7 +3882,7 @@ bool Parser::parseListIf(ListIfAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -3928,7 +3928,7 @@ bool Parser::parseListIter(ListIterAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -4015,7 +4015,7 @@ bool Parser::parseListMakerTest(ListMakerTestAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -4050,7 +4050,7 @@ bool Parser::parseListParam(ListParamAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -4110,7 +4110,7 @@ bool Parser::parseListmaker(ListmakerAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -4185,7 +4185,7 @@ bool Parser::parseNotTest(NotTestAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -4249,7 +4249,7 @@ bool Parser::parseNumber(NumberAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -4275,7 +4275,7 @@ bool Parser::parsePassStmt(PassStmtAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -4337,7 +4337,7 @@ bool Parser::parsePlainArgumentsList(PlainArgumentsListAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -4410,7 +4410,7 @@ bool Parser::parsePower(PowerAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -4529,7 +4529,7 @@ bool Parser::parsePrintStmt(PrintStmtAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -4631,7 +4631,7 @@ bool Parser::parseProject(ProjectAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -4738,7 +4738,7 @@ bool Parser::parseRaiseStmt(RaiseStmtAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -4795,7 +4795,7 @@ bool Parser::parseReturnStmt(ReturnStmtAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -4853,7 +4853,7 @@ bool Parser::parseShiftExpr(ShiftExprAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -4899,7 +4899,7 @@ bool Parser::parseShiftOp(ShiftOpAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -4981,7 +4981,7 @@ bool Parser::parseSimpleStmt(SimpleStmtAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -5147,7 +5147,7 @@ bool Parser::parseSmallStmt(SmallStmtAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -5268,7 +5268,7 @@ bool Parser::parseStmt(StmtAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -5467,7 +5467,7 @@ bool Parser::parseSubscript(SubscriptAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -5534,7 +5534,7 @@ bool Parser::parseSubscriptlist(SubscriptlistAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -5695,7 +5695,7 @@ bool Parser::parseSuite(SuiteAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -5769,7 +5769,7 @@ bool Parser::parseTerm(TermAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -5839,7 +5839,7 @@ bool Parser::parseTermOp(TermOpAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -5927,7 +5927,7 @@ bool Parser::parseTest(TestAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -5989,7 +5989,7 @@ bool Parser::parseTestlist(TestlistAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -6075,7 +6075,7 @@ bool Parser::parseTestlistSafe(TestlistSafeAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -6194,7 +6194,7 @@ bool Parser::parseTrailer(TrailerAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -6326,7 +6326,7 @@ bool Parser::parseTryStmt(TryStmtAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -6388,7 +6388,7 @@ bool Parser::parseVarargslist(VarargslistAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -6469,7 +6469,7 @@ bool Parser::parseWhileStmt(WhileStmtAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -6525,7 +6525,7 @@ bool Parser::parseXorExpr(XorExprAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -6582,7 +6582,7 @@ bool Parser::parseYieldExpr(YieldExprAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }
@@ -6609,7 +6609,7 @@ bool Parser::parseYieldStmt(YieldStmtAst **yynode)
         return false;
     }
 
-    (*yynode)->endToken = tokenStream->index() - 1;
+    (*yynode)->endToken = tokenStream->index() - 2;
 
     return true;
 }

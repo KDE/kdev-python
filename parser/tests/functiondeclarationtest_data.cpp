@@ -265,21 +265,21 @@ CodeAst* simpleFunctionListAndDictParam()
     param->name = idparam;
     funast->parameters << param;
     
-    ListParameterAst* lparam = createAstNode<ListParameterAst>( 12, 0, 12, 15, 0, 15, funast );
-    paramname = createAstNode<IdentifierAst>( 12, 0, 12, 13, 0, 13, lparam );
+    ListParameterAst* lparam = createAstNode<ListParameterAst>( 12, 0, 12, 14, 0, 14, funast );
+    paramname = createAstNode<IdentifierAst>( 13, 0, 13, 13, 0, 13, lparam );
     paramname->identifier = "b";
     
     lparam->name = paramname;
     funast->parameters << lparam;
     
     DictionaryParameterAst* dparam = createAstNode<DictionaryParameterAst>( 16, 0, 16, 20, 0, 20, funast );
-    paramname = createAstNode<IdentifierAst>( 16, 0, 16, 19, 0, 19, dparam );
+    paramname = createAstNode<IdentifierAst>( 18, 0, 18, 18, 0, 18, dparam );
     paramname->identifier = "c";
     
     dparam->name = paramname;
     funast->parameters << dparam;
     
-    StatementAst* pass = createAstNode<StatementAst>( 19, 1, 2, 23, 1, 6, Ast::PassAst, funast );
+    StatementAst* pass = createAstNode<StatementAst>( 25, 1, 2, 29, 1, 6, Ast::PassAst, funast );
     funast->functionBody << pass;
     ast->statements << funast;
     return ast;
@@ -302,14 +302,14 @@ CodeAst* simpleFunctionCombinedDictParam()
     param->name = idparam;
     funast->parameters << param;
     
-    DictionaryParameterAst* dparam = createAstNode<DictionaryParameterAst>( 12, 0, 12, 15, 0, 15, funast );
-    paramname = createAstNode<IdentifierAst>( 12, 0, 12, 13, 0, 13, dparam );
+    DictionaryParameterAst* dparam = createAstNode<DictionaryParameterAst>( 12, 0, 12, 16, 0, 16, funast );
+    paramname = createAstNode<IdentifierAst>( 14, 0, 14, 14, 0, 14, dparam );
     paramname->identifier = "b";
     
     dparam->name = paramname;
     funast->parameters << dparam;
     
-    StatementAst* pass = createAstNode<StatementAst>( 19, 1, 2, 23, 1, 6, Ast::PassAst, funast );
+    StatementAst* pass = createAstNode<StatementAst>( 21, 1, 2, 25, 1, 6, Ast::PassAst, funast );
     funast->functionBody << pass;
     ast->statements << funast;
     return ast;
@@ -333,13 +333,13 @@ CodeAst* simpleFunctionCombinedListParam()
     funast->parameters << param;
     
     ListParameterAst* lparam = createAstNode<ListParameterAst>( 12, 0, 12, 15, 0, 15, funast );
-    paramname = createAstNode<IdentifierAst>( 12, 0, 12, 13, 0, 13, lparam );
+    paramname = createAstNode<IdentifierAst>( 13, 0, 13, 13, 0, 13, lparam );
     paramname->identifier = "b";
     
     lparam->name = paramname;
     funast->parameters << lparam;
     
-    StatementAst* pass = createAstNode<StatementAst>( 19, 1, 2, 23, 1, 6, Ast::PassAst, funast );
+    StatementAst* pass = createAstNode<StatementAst>( 20, 1, 2, 24, 1, 6, Ast::PassAst, funast );
     funast->functionBody << pass;
     ast->statements << funast;
     return ast;

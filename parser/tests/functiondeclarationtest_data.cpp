@@ -18,50 +18,9 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
 
-#include "ast.h"
+#include "datahelper.h"
 
 using namespace Python;
-
-static void initAst( Ast* ast, qint64 s, qint64 sL, qint64 sC, qint64 e, qint64 eL, qint64 eC )
-{
-    ast->start = s;
-    ast->startLine = sL;
-    ast->startCol = sC;
-    ast->end = e;
-    ast->endLine = eL;
-    ast->endCol = eC;
-}
-
-template <typename T> T* createAstNode( qint64 start, qint64 startLine, qint64 startCol,
-                                        qint64 end, qint64 endLine, qint64 endCol,
-                                        Ast::AstType type, Ast* parent )
-{
-    T* ast = new T( parent, type );
-    initAst( ast, start, startLine, startCol, end, endLine, endCol );
-    return ast;
-}
-
-template <typename T> T* createAstNode( qint64 start, qint64 startLine, qint64 startCol,
-                                        qint64 end, qint64 endLine, qint64 endCol )
-{
-    T* ast = new T();
-    initAst( ast, start, startLine, startCol, end, endLine, endCol );
-    return ast;
-}
-
-template <typename T> T* createAstNode( qint64 start, qint64 startLine, qint64 startCol,
-                                        qint64 end, qint64 endLine, qint64 endCol,
-                                        Ast* parent )
-{
-    T* ast = new T( parent );
-    initAst( ast, start, startLine, startCol, end, endLine, endCol );
-    return ast;
-}
-
-template <typename T> T* createAstFrom( Ast* parent )
-{
-    return createAstNode<T>( parent->start, parent->startLine, parent->startCol, parent->end, parent->endLine, parent->endCol, parent );
-}
 
 CodeAst* simpleFunctionSingleParam()
 {

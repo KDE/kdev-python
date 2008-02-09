@@ -24,8 +24,7 @@
 #include <qtest_kde.h>
 
 #include "ast.h"
-#include "pythondriver.h"
-#include "testvisitor.h"
+#include "datahelper.h"
 
 using namespace Python;
 
@@ -42,18 +41,6 @@ extern CodeAst* simpleFunctionTwoLongParam();
 extern CodeAst* simpleFunctionListAndDictParam();
 extern CodeAst* simpleFunctionCombinedDictParam();
 extern CodeAst* simpleFunctionCombinedListParam();
-
-static void doTest( const QString& project, CodeAst* expected )
-{
-    Driver d;
-    CodeAst* result;
-    d.setContent( project );
-//     d.setDebug( true );
-    d.parse( &result );
-    TestVisitor tv;
-    tv.setExpected( expected );
-    tv.visitCode( result );
-}
 
 FunctionDeclarationTest::FunctionDeclarationTest( QObject* parent )
     : QObject( parent )

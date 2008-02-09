@@ -848,7 +848,7 @@ void AstBuilder::visitForStmt(PythonParser::ForStmtAst *node)
     kDebug() << "visitForStmt start";
     ForAst* ast = createAst<ForAst>( node );
     visitNode( node->forExpr );
-    ast->assignedTargets = generateSpecializedList<TargetAst>( mListStack.pop() );
+    ast->assignedTargets = targetAstListFromExpressionAstList( generateSpecializedList<ExpressionAst>( mListStack.pop() ) );
     visitNode( node->forTestlist );
     ast->iterable = generateSpecializedList<ExpressionAst>( mListStack.pop() );
     visitNode( node->forSuite );

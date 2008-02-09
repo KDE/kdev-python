@@ -24,22 +24,22 @@ using namespace Python;
 
 CodeAst* simpleForLoop()
 {
-    CodeAst* ast = createAstNode<CodeAst>( 0, 0, 0, -1, -1, -1 );
-    ForAst* forast = createAstNode<ForAst>( 0, 0, 0, -1, -1, -1, ast );
+    CodeAst* ast = createAstNode<CodeAst>( 0, 0, 0, 22, 2, 0 );
+    ForAst* forast = createAstNode<ForAst>( 0, 0, 0, 22, 2, 0, ast );
     
-    IdentifierTargetAst* target = createAstNode<IdentifierTargetAst>( 4, 0, 4, 6, 0, 6, forast );
-    IdentifierAst* idast = createAstNode<IdentifierAst>( 4, 0, 4, 6, 0, 6, target );
+    IdentifierTargetAst* target = createAstNode<IdentifierTargetAst>( 4, 0, 4, 4, 0, 4, forast );
+    IdentifierAst* idast = createAstNode<IdentifierAst>( 4, 0, 4, 4, 0, 4, target );
     idast->identifier = "i";
     target->identifier = idast;
     forast->assignedTargets << target;
     
     AtomAst* atom = createAstNode<AtomAst>( 9, 0, 9, 12, 0, 12, forast );
     idast = createAstNode<IdentifierAst>( 9, 0, 9, 12, 0, 12, atom );
-    idast->identifier = "foo";
+    idast->identifier = "list";
     atom->identifier = idast;
     forast->iterable << atom;
     
-    StatementAst* pass = createAstNode<StatementAst>( 17, 1, 2, 21, 1, 6, Ast::PassAst, forast );
+    StatementAst* pass = createAstNode<StatementAst>( 17, 1, 2, 20, 1, 5, Ast::PassAst, forast );
     forast->forBody << pass;
     ast->statements << forast;
     return ast;

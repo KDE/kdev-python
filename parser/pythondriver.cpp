@@ -68,13 +68,13 @@ bool Driver::parse( Python::CodeAst** ast )
         m_pool = new KDevPG::MemoryPool();
 
     PythonParser::Parser pythonparser;
-    pythonparser.setTokenStream(m_tokenstream);
-    pythonparser.setMemoryPool(m_pool);
+    pythonparser.setTokenStream( m_tokenstream );
+    pythonparser.setMemoryPool( m_pool );
     pythonparser.setDebug( m_debug );
 
     pythonparser.tokenize(m_content);
-    PythonParser::ProjectAst** srcast;
-    bool matched = pythonparser.parseProject(srcast);
+    PythonParser::ProjectAst* srcast;
+    bool matched = pythonparser.parseProject( &srcast );
     if( matched )
     {
         kDebug() << "Sucessfully parsed";
@@ -84,7 +84,7 @@ bool Driver::parse( Python::CodeAst** ast )
 //             d.visitProject(*srcast);
 //         }
         Python::AstBuilder builder(&pythonparser);
-        builder.visitProject( *srcast );
+        builder.visitProject( srcast );
         *ast = builder.codeAst();
         
     }else

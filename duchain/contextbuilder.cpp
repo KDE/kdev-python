@@ -74,7 +74,7 @@ ContextBuilder::~ContextBuilder ()
 TopDUContext* ContextBuilder::buildContexts(Ast* node)
 {
     m_compilingContexts = true;
-    m_editor->setCurrentUrl( KDevelop::HashedString( m_url.url() ) );
+    m_editor->setCurrentUrl( KDevelop::HashedString( m_url.prettyUrl() ) );
 
     TopDUContext* topLevelContext = 0;
     {
@@ -109,7 +109,7 @@ TopDUContext* ContextBuilder::buildContexts(Ast* node)
             topLevelContext = new TopDUContext(m_editor->currentUrl(), m_editor->currentDocument() ? SimpleRange(m_editor->currentDocument()->documentRange()) : SimpleRange(SimpleCursor(0,0), SimpleCursor(INT_MAX, INT_MAX)));
             topLevelContext->setSmartRange( m_editor->topRange( EditorIntegrator::DefinitionUseChain) , DocumentRangeObject::Own );
             topLevelContext->setType(DUContext::Global);
-            DUChain::self()->addDocumentChain(IdentifiedFile(HashedString( m_url.url() ),0), topLevelContext);
+            DUChain::self()->addDocumentChain(IdentifiedFile( m_url, 0 ), topLevelContext);
         }
 
         setEncountered(topLevelContext);
@@ -141,7 +141,7 @@ KDevelop::DUContext* ContextBuilder::buildSubContexts(const KUrl& url, Ast *node
 {
     m_compilingContexts = true;
     m_recompiling = false;
-    m_editor->setCurrentUrl( HashedString( url.url() ) );
+    m_editor->setCurrentUrl( HashedString( url.prettyUrl() ) );
     node->context = parent;
     {
         openContext(node->context);

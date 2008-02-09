@@ -22,9 +22,11 @@
 #include "parsetest.h"
 #include "pythondriver.h"
 
-#include <QDebug>
+#include <qtest_kde.h>
 
-QTEST_KDEMAIN( ParseTest )
+#include <kdebug.h>
+
+QTEST_KDEMAIN_CORE( ParseTest )
 
 ParseTest::ParseTest( QObject* parent )
     : QObject( parent )

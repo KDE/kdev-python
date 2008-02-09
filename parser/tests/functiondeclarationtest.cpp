@@ -21,6 +21,7 @@
 #include "functiondeclarationtest.h"
 
 #include <QtTest/QtTest>
+#include <qtest_kde.h>
 
 #include "ast.h"
 #include "pythondriver.h"
@@ -29,7 +30,7 @@
 using namespace Python;
 
 Q_DECLARE_METATYPE(CodeAst*)
-QTEST_KDEMAIN( FunctionDeclarationTest )
+QTEST_KDEMAIN_CORE( FunctionDeclarationTest )
 
 extern CodeAst* simpleFunctionSingleParam();
 extern CodeAst* simpleFunctionDefaultParam();

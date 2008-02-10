@@ -56,8 +56,6 @@ public:
     ContextBuilder(EditorIntegrator* editor, const KUrl &url);
     virtual ~ContextBuilder ();
 
-//     ParseSession* parseSession() const;
-
     KDevelop::TopDUContext* buildContexts(Ast* node);
     KDevelop::DUContext* buildSubContexts(const KUrl& url, Ast *node, KDevelop::DUContext* parent = 0);
     void supportBuild(Ast *node, KDevelop::DUContext* context = 0);
@@ -92,11 +90,7 @@ public:
     virtual void visitFunctionDefinition( FunctionDefinitionAst* );
     virtual void visitClassDefinition( ClassDefinitionAst* );
     virtual void visitFor( ForAst* node );
-//     virtual void visit_compound_stmt(compound_stmt_ast *node);
-//     virtual void visit_varargslist(varargslist_ast *node);
-//     virtual void visit_import_as_name(import_as_name_ast *node);
-    //virtual void visit_for_stmt(for_stmt_ast *node);
-    //virtual void visit_while_stmt(while_stmt_ast *node);
+    void visitWhile( WhileAst* node );
     void addImportedContexts();
 
 private:

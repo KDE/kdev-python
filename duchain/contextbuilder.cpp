@@ -220,12 +220,31 @@ void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
 void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
     kDebug() << "building function definition context";
+    ClassDefinitionAst* classast = dynamic_cast<ClassDefinitionAst*>( node->parent );
+    if( classast ) 
+    {
+        DUChainReadLocker lock( DUChain::lock() );
+        QList<DUContext*> classContexts = currentContext()->findContexts( DUContext::Class, QualifiedIdentifier( classast->context->localScopeIdentifier() ) );
+        if( classContexts.count() == 1 )
+        {
+            m_importedParentContexts.append( classContexts.first() );
+        }else if( classContexts.count() > 1 )
+        {
+            kWarning() << "Multiple class contexts for" << classast->className->identifier << classast->context->localScopeIdentifier() << "shouldn't happen!";
+            foreach( DUContext* classContext, classContexts )
+            {
+                kDebug() << "Context" << classContext->scopeIdentifier( true ) << "range" << classContext->range().textRange() << "in" << classContext->url().str();
+            }
+        }
+    }
+    
     openContext( node->functionBody.first(), node->functionBody.last() ,DUContext::Function, identifierForName( node->functionName->identifier ) );
     addImportedContexts();
     visitNodeList( node->decorators );
     visitNodeList( node->parameters );
     visitNodeList( node->functionBody );
     closeContext();
+    m_importedParentContexts.clear();
 }
 
 // void ContextBuilder::visit_varargslist(varargslist_ast *node)
@@ -366,11 +385,6 @@ void ContextBuilder::closeContext()
     m_editor->exitCurrentRange();
 }
 
-// ParseSession *ContextBuilder::parseSession() const
-// {
-//     return m_session;
-// }
-
 void ContextBuilder::visitFor( ForAst* node )
 {
     kDebug() << "Found for, building context";
@@ -380,14 +394,34 @@ void ContextBuilder::visitFor( ForAst* node )
     closeContext();
     
     m_importedParentContexts = QList<DUContext*>() << forctx;
-    if( node->forBody.count() > 1 ) 
+    if( node->forBody.count() > 0 )
     {
         openContext( node->forBody.first(), node->forBody.last(), DUContext::Other );
         addImportedContexts();
         visitNodeList( node->forBody );
         closeContext();
     }
-    if( node->elseBody.count() > 1 ) 
+    if( node->elseBody.count() > 0 )
+    {
+        openContext( node->elseBody.first(), node->elseBody.last(), DUContext::Other );
+        addImportedContexts();
+        visitNodeList( node->elseBody );
+        closeContext();
+    }
+    m_importedParentContexts.clear();
+}
+
+void ContextBuilder::visitWhile( WhileAst* node )
+{
+    kDebug() << "Creating contexts for while";
+    visitNode(node->condition);
+    if( node->whileBody.count() > 0 )
+    {
+        openContext( node->whileBody.first(), node->whileBody.last(), DUContext::Other );
+        addImportedContexts();
+        visitNodeList( node->whileBody );
+        closeContext();
+    } else if( node->elseBody.count() > 0 )
     {
         openContext( node->elseBody.first(), node->elseBody.last(), DUContext::Other );
         addImportedContexts();

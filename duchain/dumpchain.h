@@ -23,31 +23,37 @@
 #ifndef DUMPCHAIN_H
 #define DUMPCHAIN_H
 
-#include "python_default_visitor.h"
+#include <QTextStream>
+
+#include "astdefaultvisitor.h"
 #include "pythonduchainexport.h"
 
-class ParseSession;
-class PythonEditorIntegrator;
 
 namespace KDevelop
 {
     class DUContext;
 }
 
-using namespace Python;
+namespace Python
+{
 
-class KDEVPYTHONDUCHAIN_EXPORT DumpChain: public default_visitor
+class ParseSession;
+class EditorIntegrator;
+
+class KDEVPYTHONDUCHAIN_EXPORT DumpChain: public AstDefaultVisitor
 {
 public:
     DumpChain();
     virtual ~DumpChain();
-    void dump(ast_node *node, ParseSession* session = 0);
+    void dump(Ast *node, ParseSession* session = 0);
     void dump(KDevelop::DUContext* context, bool imported = false);
-    virtual void visit_node(ast_node *node);
+    virtual void visitNode(Ast *node);
 
 private:
-    PythonEditorIntegrator* m_editor;
+    EditorIntegrator* m_editor;
 };
+
+}
 
 #endif
 // kate: space-indent on; indent-width 4; tab-width 4; replace-tabs on; auto-insert-doxygen on

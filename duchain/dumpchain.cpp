@@ -3,9 +3,9 @@
  *                                                                           *
  * Permission is hereby granted, free of charge, to any person obtaining     *
  * a copy of this software and associated documentation files (the           *
- * "Software"), to deal in the Software without restriction, including       *
+ * "Software"), to deal in the Software without rekDebug()iction, including       *
  * without limitation the rights to use, copy, modify, merge, publish,       *
- * distribute, sublicense, and/or sell copies of the Software, and to        *
+ * dikDebug()ibute, sublicense, and/or sell copies of the Software, and to        *
  * permit persons to whom the Software is furnished to do so, subject to     *
  * the following conditions:                                                 *
  *                                                                           *
@@ -34,6 +34,8 @@
 
 using namespace KDevelop;
 
+namespace Python {
+
 static char const * const names[] = {
     0,
     "ClassDeclaration",
@@ -45,81 +47,75 @@ DumpChain::DumpChain()
 {
 }
 
-void DumpChain::dump( ast_node* node, ParseSession* session)
+void DumpChain::dump( Ast* node, ParseSession* session)
 {
     delete m_editor;
     m_editor = 0;
     if (session)
-        m_editor = new PythonEditorIntegrator(session);
-    visit_node(node);
+        m_editor = new EditorIntegrator(session);
+    visitNode(node);
 }
 
 void DumpChain::dump( DUContext * context, bool imported )
 {
     if(context)
-        kDebug()<<(imported ? "==import==> Context " : "New Context ") << context->scopeIdentifier(true) << context->textRange() << " " << (dynamic_cast<TopDUContext*>(context) ? "top-context" : "");
+        kDebug() << (imported ? "==import==> Context " : "New Context ") << context->scopeIdentifier(true) << context->range().textRange() << " " << (dynamic_cast<TopDUContext*>(context) ? "top-context" : "");
     if( !context )
         return;
     if (!imported)
     {
         if(!context->localDeclarations().count())
-            kDebug()<<"No Declarations in the context";
+            kDebug() <<"No Declarations in the context";
         foreach (Declaration* dec, context->localDeclarations())
         {
-            kDebug()<<dec->toString()<<" ["<<dec->qualifiedIdentifier()<< "]  "<<dec->textRange()<< ", "<< (dec->isDefinition() ? "defined, " : (dec->definition() ? "" : "no definition, "));
+            kDebug() <<dec->toString()<<" ["<<dec->qualifiedIdentifier()<< "]  "<<dec->range().textRange() << ", "<< (dec->isDefinition() ? "defined, " : (dec->definition() ? "" : "no definition, "));
             if (dec->definition())
-                kDebug()<<"Definition: " << dec->definition()->textRange() << endl;
+                kDebug() <<"Definition: " << dec->definition()->range().textRange() << endl;
         }
     }
     if (!imported)
     {
         foreach (DUContextPointer parent, context->importedParentContexts())
         {
-            kDebug()<<"===Dumping Parent Contexts===";
+            kDebug() <<"===Dumping Parent Contexts===";
             dump(parent.data(), true);
         }
         foreach (DUContext* child, context->childContexts())
         {
-            kDebug()<<"===Dumping Child Contexts===";
+            kDebug() <<"===Dumping Child Contexts===";
             dump(child);
         }
     }
 }
 
-void DumpChain::visit_node(ast_node *node)
+void DumpChain::visitNode(Ast *node)
 {
     if (node)
         if (m_editor)
         {
             QString nodeText;
-            for( std::size_t a = node->start_token; a != node->end_token; a++ )
-            {
-                kdev_pg_token_stream::token_type const &tok( m_editor->parseSession()->tokenStream()->token((int) a) );
-                if( !nodeText.isEmpty() )
-                    nodeText += ' ';
-                nodeText += m_editor->parseSession()->tokenText(tok.begin, tok.end);
-            }
-            if( !nodeText.isEmpty() ) nodeText = "\"" + nodeText + "\"";
-            kDebug() <<names[node->kind]
-              << "[(" << node->start_token << ") " << m_editor->findPosition(node->start_token, PythonEditorIntegrator::FrontEdge) << /*", "
-              << m_editor->findPosition(node->end_token, CppEditorIntegrator::FrontEdge) <<*/ "] " << nodeText << endl;
+            kDebug() << names[node->astType]
+              << "[(" << node->start << ") " << m_editor->findPosition( node, EditorIntegrator::FrontEdge) << ", "
+              << m_editor->findPosition( node , EditorIntegrator::BackEdge ) << "] ";
         }
         else
-            kDebug() << names[node->kind] << "[" << node->start_token << ", " << node->end_token << "]" << endl;
-    //DefaultVisitor::visit(node);
-
+            kDebug() << names[node->astType] << "[" << node->start << ", " << node->end << "]";
+    
+    AstDefaultVisitor::visitNode(node);
+    
     if (node)
         if (m_editor)
-            kDebug() << names[node->kind]
-              << "[("  << node->end_token << ") "/*<< m_editor->findPosition(node->start_token, CppEditorIntegrator::FrontEdge) << ", "*/
-              << m_editor->findPosition(node->end_token, PythonEditorIntegrator::FrontEdge) << "]" << endl;
+            kDebug() << names[node->astType]
+              << "[("  << node->end << ") " << m_editor->findPosition(node, EditorIntegrator::FrontEdge) << ", "
+              << m_editor->findPosition( node, EditorIntegrator::BackEdge ) << "]" << endl;
         else
-            kDebug() << names[node->kind]
-              << "[" << node->start_token << ", " << node->end_token << ']' << endl;
+            kDebug() << names[node->astType]
+              << "[" << node->start << ", " << node->end << ']' << endl;
 }
 
 DumpChain::~ DumpChain( )
 {
     delete m_editor;
 }
-// kate: space-indent on; indent-width 4; tab-width 4; replace-tabs on; auto-insert-doxygen on
+
+}

@@ -34,7 +34,7 @@ public:
 
     typedef void (AstVisitor::*visitFunc)(Ast *);
 
-    void visitNode( Ast* );
+    virtual void visitNode( Ast* );
 
     virtual void visitCode( CodeAst* ) = 0;
     virtual void visitFunctionDefinition( FunctionDefinitionAst* ) = 0;

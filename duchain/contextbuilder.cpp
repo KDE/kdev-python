@@ -459,3 +459,15 @@ void ContextBuilder::addImportedContexts()
 }
 
 }
+
+void Python::ContextBuilder::visitWith( WithAst * node )
+{
+    kDebug() << "creating contexts for With";
+    
+    if( node->body.count() > 0 )
+    {
+        openContext( node->body.first(), node->body.last(), DUContext::Other );
+        visitNodeList( node->body );
+        closeContext();
+    }
+}

@@ -90,7 +90,8 @@ public:
     virtual void visitFunctionDefinition( FunctionDefinitionAst* );
     virtual void visitClassDefinition( ClassDefinitionAst* );
     virtual void visitFor( ForAst* node );
-    void visitWhile( WhileAst* node );
+    virtual void visitWith( WithAst* node );
+    virtual void visitWhile( WhileAst* node );
     void addImportedContexts();
 
 private:

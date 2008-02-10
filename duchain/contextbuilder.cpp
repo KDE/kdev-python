@@ -238,10 +238,16 @@ void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         }
     }
     
+    visitNodeList( node->decorators );
+    if( node->parameters.count() > 0 )
+    {
+        openContext( node->parameters.first(), node->parameters.last(), DUContext::Other );
+        addImportedContexts();
+        visitNodeList( node->parameters );
+        closeContext();
+    }
     openContext( node->functionBody.first(), node->functionBody.last() ,DUContext::Function, identifierForName( node->functionName->identifier ) );
     addImportedContexts();
-    visitNodeList( node->decorators );
-    visitNodeList( node->parameters );
     visitNodeList( node->functionBody );
     closeContext();
     m_importedParentContexts.clear();

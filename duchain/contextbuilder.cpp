@@ -241,12 +241,13 @@ void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     visitNodeList( node->decorators );
     if( node->parameters.count() > 0 )
     {
-        openContext( node->parameters.first(), node->parameters.last(), DUContext::Other );
+        DUContext* funcctx = openContext( node->parameters.first(), node->parameters.last(), DUContext::Function );
         addImportedContexts();
         visitNodeList( node->parameters );
         closeContext();
+        m_importedParentContexts.append( funcctx );
     }
-    openContext( node->functionBody.first(), node->functionBody.last() ,DUContext::Function, identifierForName( node->functionName->identifier ) );
+    openContext( node->functionBody.first(), node->functionBody.last() ,DUContext::Other, identifierForName( node->functionName->identifier ) );
     addImportedContexts();
     visitNodeList( node->functionBody );
     closeContext();
@@ -394,10 +395,11 @@ void ContextBuilder::closeContext()
 void ContextBuilder::visitFor( ForAst* node )
 {
     kDebug() << "Found for, building context";
-    DUContext* forctx = openContext( node->assignedTargets.first(), node->iterable.first(), DUContext::Other );
+    DUContext* forctx = openContext( node->assignedTargets.first(), node->assignedTargets.last(), DUContext::Other );
     visitNodeList( node->assignedTargets );
-    visitNodeList( node->iterable );
     closeContext();
+    
+    visitNodeList( node->iterable );
     
     m_importedParentContexts = QList<DUContext*>() << forctx;
     if( node->forBody.count() > 0 )
@@ -464,9 +466,14 @@ void Python::ContextBuilder::visitWith( WithAst * node )
 {
     kDebug() << "creating contexts for With";
     
+    m_importedParentContexts = QList<DUContext*>() << openContext( node->name, DUContext::Other );
+    visitNode( node->name );
+    closeContext();
+    
     if( node->body.count() > 0 )
     {
         openContext( node->body.first(), node->body.last(), DUContext::Other );
+        addImportedContexts();
         visitNodeList( node->body );
         closeContext();
     }

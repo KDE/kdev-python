@@ -83,7 +83,7 @@ public:
     const KDevelop::QualifiedIdentifier identifierForName( const QString& name );
 
     KDevelop::DUContext* openContext(Ast* range, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier );
-    KDevelop::DUContext* openContext(Ast* range, KDevelop::DUContext::ContextType type, const QString& );
+    KDevelop::DUContext* openContext(Ast* range, KDevelop::DUContext::ContextType type, const QString& = QString() );
     KDevelop::DUContext* openContext(Ast* fromRange, Ast* toRange, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier = KDevelop::QualifiedIdentifier() );
     KDevelop::DUContext* openContextInternal(const KDevelop::SimpleRange& range, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier);
 

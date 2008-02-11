@@ -40,17 +40,15 @@ namespace Python
 class ParseSession;
 class EditorIntegrator;
 
-class KDEVPYTHONDUCHAIN_EXPORT DumpChain: public AstDefaultVisitor
+class KDEVPYTHONDUCHAIN_EXPORT DumpChain
 {
 public:
     DumpChain();
     virtual ~DumpChain();
-    void dump(Ast *node, ParseSession* session = 0);
     void dump(KDevelop::DUContext* context, bool imported = false);
-    virtual void visitNode(Ast *node);
 
 private:
-    EditorIntegrator* m_editor;
+    int indent;
 };
 
 }

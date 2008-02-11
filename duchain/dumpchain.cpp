@@ -36,86 +36,47 @@ using namespace KDevelop;
 
 namespace Python {
 
-static char const * const names[] = {
-    0,
-    "ClassDeclaration",
-    "FunctionDeclaration"
-};
 
 DumpChain::DumpChain()
-    : m_editor(0)
+    : indent(0)
 {
-}
-
-void DumpChain::dump( Ast* node, ParseSession* session)
-{
-    delete m_editor;
-    m_editor = 0;
-    if (session)
-        m_editor = new EditorIntegrator(session);
-    visitNode(node);
 }
 
 void DumpChain::dump( DUContext * context, bool imported )
 {
-    if(context)
-        kDebug() << (imported ? "==import==> Context " : "New Context ") << context->scopeIdentifier(true) << context->range().textRange() << " " << (dynamic_cast<TopDUContext*>(context) ? "top-context" : "");
     if( !context )
         return;
+    kDebug() << QString( indent*2, ' ' ) << (imported ? "==import==> Context " : "New Context ") << context->scopeIdentifier(true) << context->range().textRange() << " " << (dynamic_cast<TopDUContext*>(context) ? "top-context" : "");
     if (!imported)
     {
-        if(!context->localDeclarations().count())
-            kDebug() <<"No Declarations in the context";
         foreach (Declaration* dec, context->localDeclarations())
         {
-            kDebug() <<dec->toString()<<" ["<<dec->qualifiedIdentifier()<< "]  "<<dec->range().textRange() << ", "<< (dec->isDefinition() ? "defined, " : (dec->definition() ? "" : "no definition, "));
+            kDebug() << QString( (indent+1)*2, ' ' ) << "Declaration: " << dec->toString() << " [" << dec->qualifiedIdentifier() << "]  "<< dec << "(internal ctx" << dec->internalContext() << ")" << dec->range().textRange() << ", "<< ( dec->isDefinition() ? "defined, " : ( dec->definition() ? "" : "no definition, ") ) << dec->uses().count() << "use(s)";
             if (dec->definition())
-                kDebug() <<"Definition: " << dec->definition()->range().textRange() << endl;
+                kDebug() << QString( (indent+1)*2, ' ' ) << "Definition: " << dec->definition()->range().textRange() << endl;
+            foreach( Use* use, dec->uses() )
+            {
+                kDebug() << QString((indent+1)*2, ' ') << "Use:" << use->range().textRange();
+            }
         }
     }
+    ++indent;
     if (!imported)
     {
         foreach (DUContextPointer parent, context->importedParentContexts())
         {
-            kDebug() <<"===Dumping Parent Contexts===";
             dump(parent.data(), true);
         }
         foreach (DUContext* child, context->childContexts())
         {
-            kDebug() <<"===Dumping Child Contexts===";
             dump(child);
         }
     }
-}
-
-void DumpChain::visitNode(Ast *node)
-{
-    if (node)
-        if (m_editor)
-        {
-            QString nodeText;
-            kDebug() << names[node->astType]
-              << "[(" << node->start << ") " << m_editor->findPosition( node, EditorIntegrator::FrontEdge) << ", "
-              << m_editor->findPosition( node , EditorIntegrator::BackEdge ) << "] ";
-        }
-        else
-            kDebug() << names[node->astType] << "[" << node->start << ", " << node->end << "]";
-    
-    AstDefaultVisitor::visitNode(node);
-    
-    if (node)
-        if (m_editor)
-            kDebug() << names[node->astType]
-              << "[("  << node->end << ") " << m_editor->findPosition(node, EditorIntegrator::FrontEdge) << ", "
-              << m_editor->findPosition( node, EditorIntegrator::BackEdge ) << "]" << endl;
-        else
-            kDebug() << names[node->astType]
-              << "[" << node->start << ", " << node->end << ']' << endl;
+    --indent;
 }
 
 DumpChain::~ DumpChain( )
 {
-    delete m_editor;
 }
 
 }

@@ -31,10 +31,13 @@
 
 #include <klocale.h>
 #include "pythonhighlighting.h"
+#include <duchainlock.h>
 // #include "pythoneditorintegrator.h"
 // #include "Thread.h"
 #include "pythonlanguagesupport.h"
 #include <parsejob.h>
+#include "dumpchain.h"
+#include "dumpdotgraph.h"
 #include "parsesession.h"
 
 #include <duchain.h>
@@ -129,6 +132,14 @@ void ParseJob::run()
         m_duContext = builder.buildContexts( m_ast );
 //         m_duContext = declarationBuilder.buildDeclarations(m_AST);
         kDebug() << "----Parsing Succeded---***";//TODO: bind declarations to the code model
+        
+        {
+            DUChainReadLocker lock(DUChain::lock());
+            DumpChain dump;
+            dump.dump(m_duContext);
+        }
+//         KDevelop::DumpDotGraph dumpGraph;
+//         kDebug() << "Dot-Graph:\n" << dumpGraph.dotGraph(m_duContext, true);
 //         if( python() && declarationBuilder.m_editor->smart() )
 //         {
 //             QMutexLocker lock(declarationBuilder.m_editor->smart()->smartMutex());

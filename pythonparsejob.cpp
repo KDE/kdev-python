@@ -46,6 +46,8 @@
 #include "contextbuilder.h"
 // #include "declarationbuilder.h"
 
+#include "astprinter.h"
+
 using namespace KDevelop;
 
 namespace Python
@@ -127,6 +129,8 @@ void ParseJob::run()
     if ( matched )
     {
         kDebug() << m_url;
+        AstPrinter printer;
+        printer.visitCode( m_ast );
 //         DeclarationBuilder declarationBuilder(m_session,m_url);
         ContextBuilder builder( m_session, m_url );
         m_duContext = builder.buildContexts( m_ast );

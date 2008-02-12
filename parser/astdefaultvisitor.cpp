@@ -49,6 +49,8 @@ void AstDefaultVisitor::visitFunctionDefinition( FunctionDefinitionAst* node )
         visitNode( ast );
     }
     
+    visitNode( node->functionName );
+    
     foreach( ParameterAst* ast, node->parameters )
     {
         visitNode( ast );
@@ -62,6 +64,10 @@ void AstDefaultVisitor::visitFunctionDefinition( FunctionDefinitionAst* node )
 
 void AstDefaultVisitor::visitDecorator( DecoratorAst* node )
 {
+    foreach( IdentifierAst* a, node->dottedName )
+    {
+        visitNode( a );
+    }
     foreach( ArgumentAst* a, node->arguments )
     {
         visitNode( a );
@@ -70,6 +76,7 @@ void AstDefaultVisitor::visitDecorator( DecoratorAst* node )
 
 void AstDefaultVisitor::visitArgument( ArgumentAst* node )
 {
+    visitNode( node->keywordName );
     visitNode( node->argumentExpression );
 }
 
@@ -79,8 +86,9 @@ void AstDefaultVisitor::visitDefaultParameter( DefaultParameterAst* node )
     visitNode( node->value );
 }
 
-void AstDefaultVisitor::visitIdentifierParameterPart( IdentifierParameterPartAst* )
+void AstDefaultVisitor::visitIdentifierParameterPart( IdentifierParameterPartAst* node )
 {
+    visitNode( node->name );
 }
 
 void AstDefaultVisitor::visitListParameterPart( ListParameterPartAst* node )
@@ -91,12 +99,14 @@ void AstDefaultVisitor::visitListParameterPart( ListParameterPartAst* node )
     }
 }
 
-void AstDefaultVisitor::visitDictionaryParameter( DictionaryParameterAst* )
+void AstDefaultVisitor::visitDictionaryParameter( DictionaryParameterAst* node )
 {
+    visitNode( node->name );
 }
 
-void AstDefaultVisitor::visitListParameter( ListParameterAst* )
+void AstDefaultVisitor::visitListParameter( ListParameterAst* node )
 {
+    visitNode( node->name );
 }
 
 void AstDefaultVisitor::visitIf( IfAst* node )
@@ -167,6 +177,7 @@ void AstDefaultVisitor::visitFor( ForAst* node )
 
 void AstDefaultVisitor::visitClassDefinition( ClassDefinitionAst* node )
 {
+    visitNode( node->className );
     foreach( ExpressionAst* a, node->inheritance )
     {
         visitNode( a );
@@ -226,8 +237,12 @@ void AstDefaultVisitor::visitExec( ExecAst* node )
     visitNode( node->localsOnly );
 }
 
-void AstDefaultVisitor::visitGlobal( GlobalAst* )
+void AstDefaultVisitor::visitGlobal( GlobalAst* node )
 {
+    foreach( IdentifierAst* a, node->identifiers )
+    {
+        visitNode( a );
+    }
 }
 
 void AstDefaultVisitor::visitPlainImport( PlainImportAst* node )
@@ -343,6 +358,7 @@ void AstDefaultVisitor::visitAssignment( AssignmentAst* node )
 
 void AstDefaultVisitor::visitAtom( AtomAst* node )
 {
+    visitNode( node->identifier );
     visitNode( node->enclosure );
     visitNode( node->literal );
 }
@@ -444,6 +460,7 @@ void AstDefaultVisitor::visitDictionary( DictionaryAst* node )
 void AstDefaultVisitor::visitAttributeReference( AttributeReferenceAst* node )
 {
     visitNode( node->primary );
+    visitNode( node->identifier );
 }
 
 void AstDefaultVisitor::visitSubscript( SubscriptAst* node )

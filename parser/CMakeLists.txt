@@ -15,6 +15,7 @@ set(parser_STAT_SRCS
     astdefaultvisitor.cpp
     astvisitor.cpp
     astbuilder.cpp
+    astprinter.cpp
     )
 
 if(KDEVPGQT_FOUND)

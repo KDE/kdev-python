@@ -41,22 +41,22 @@ EditorIntegrator::EditorIntegrator()
 
 Cursor EditorIntegrator::findPosition( Ast* node , Edge edge ) const
 {
-    if( edge == BackEdge )
-        return Cursor(node->endLine, node->endCol );
+    if ( edge == BackEdge )
+        return Cursor( node->endLine, node->endCol );
     else
-        return Cursor(node->startLine, node->startCol);
+        return Cursor( node->startLine, node->startCol );
 }
 
 Range EditorIntegrator::findRange( Ast * node, RangeEdge edge )
 {
     kDebug() << "Finding Range ==================";
-    Q_UNUSED(edge);
-    return Range(findPosition(node, FrontEdge), findPosition(node, BackEdge));
+    Q_UNUSED( edge );
+    return Range( findPosition( node, FrontEdge ), findPosition( node, BackEdge ) );
 }
 
 Range EditorIntegrator::findRange( Ast* from, Ast* to )
 {
-    return Range(findPosition(from, FrontEdge), findPosition(to, BackEdge));
+    return Range( findPosition( from, FrontEdge ), findPosition( to, BackEdge ) );
 }
 
 }

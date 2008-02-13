@@ -36,10 +36,14 @@
 
 namespace KDevelop
 {
-    class DUChain;
-    class KDevelop::DUChainBase;
-    class DUContext;
-    class TopDUContext;
+
+class DUChain;
+
+class KDevelop::DUChainBase;
+
+class DUContext;
+
+class TopDUContext;
 }
 
 namespace Python
@@ -51,29 +55,35 @@ class KDEVPYTHONDUCHAIN_EXPORT ContextBuilder: public Python::AstDefaultVisitor
 {
 
 public:
-    ContextBuilder(const KUrl &url);
-    ContextBuilder(EditorIntegrator* editor, const KUrl &url);
-    virtual ~ContextBuilder ();
+    ContextBuilder( const KUrl &url );
+    ContextBuilder( EditorIntegrator* editor, const KUrl &url );
+    virtual ~ContextBuilder();
 
-    KDevelop::TopDUContext* buildContexts(Ast* node);
-    KDevelop::DUContext* buildSubContexts(const KUrl& url, Ast *node, KDevelop::DUContext* parent = 0);
-    void supportBuild(Ast *node, KDevelop::DUContext* context = 0);
-    inline KDevelop::DUContext* currentContext() { return m_contextStack.top(); }
+    KDevelop::TopDUContext* buildContexts( Ast* node );
+    KDevelop::DUContext* buildSubContexts( const KUrl& url, Ast *node, KDevelop::DUContext* parent = 0 );
+    void supportBuild( Ast *node, KDevelop::DUContext* context = 0 );
+    inline KDevelop::DUContext* currentContext()
+    {
+        return m_contextStack.top();
+    }
 
     void setEncountered( KDevelop::DUChainBase* item )
     {
-        m_encountered.insert(item);
+        m_encountered.insert( item );
     }
 
     bool wasEncountered( KDevelop::DUChainBase* item )
     {
-        return m_encountered.contains(item);
+        return m_encountered.contains( item );
     }
 
 
-    virtual void openContext(KDevelop::DUContext* newContext);
+    virtual void openContext( KDevelop::DUContext* newContext );
     virtual void closeContext();
-    inline bool recompiling() const { return m_recompiling; }
+    inline bool recompiling() const
+    {
+        return m_recompiling;
+    }
 
     QSet<KDevelop::DUChainBase*> m_encountered;
     QStack<KDevelop::DUContext*> m_contextStack;
@@ -81,10 +91,10 @@ public:
 
     const KDevelop::QualifiedIdentifier identifierForName( const QString& name );
 
-    KDevelop::DUContext* openContext(Ast* range, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier );
-    KDevelop::DUContext* openContext(Ast* range, KDevelop::DUContext::ContextType type, const QString& = QString() );
-    KDevelop::DUContext* openContext(Ast* fromRange, Ast* toRange, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier = KDevelop::QualifiedIdentifier() );
-    KDevelop::DUContext* openContextInternal(const KDevelop::SimpleRange& range, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier);
+    KDevelop::DUContext* openContext( Ast* range, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier );
+    KDevelop::DUContext* openContext( Ast* range, KDevelop::DUContext::ContextType type, const QString& = QString() );
+    KDevelop::DUContext* openContext( Ast* fromRange, Ast* toRange, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier = KDevelop::QualifiedIdentifier() );
+    KDevelop::DUContext* openContextInternal( const KDevelop::SimpleRange& range, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier );
 
     virtual void visitFunctionDefinition( FunctionDefinitionAst* );
     virtual void visitClassDefinition( ClassDefinitionAst* );
@@ -99,27 +109,39 @@ private:
     template <typename T> void visitNodeList( const QList<T*>& l )
     {
         typename QList<T*>::ConstIterator it, end = l.end();
-        for( it = l.begin(); it != end; ++it )
+
+        for ( it = l.begin(); it != end; ++it )
         {
-            visitNode( (*it) );
+            visitNode(( *it ) );
         }
     }
-    
+
 protected:
     EditorIntegrator* m_editor;
     KUrl m_url;
-    bool m_ownsEditorIntegrator: 1;
-    bool m_compilingContexts: 1;
-    bool m_recompiling : 1;
+
+bool m_ownsEditorIntegrator:
+    1;
+
+bool m_compilingContexts:
+    1;
+
+bool m_recompiling :
+    1;
 
     QStack<int> m_nextContextStack;
-    inline int& nextContextIndex() { return m_nextContextStack.top(); }
+    inline int& nextContextIndex()
+    {
+        return m_nextContextStack.top();
+    }
+
     KDevelop::Identifier m_identifier;
     KDevelop::QualifiedIdentifier m_qidentifier;
 
     KDevelop::DUContext* m_lastContext;
 
     QList<KDevelop::DUContext*> m_importedParentContexts;
+
 private:
     void openContextForStatementList( const QList<StatementAst*>& );
 };

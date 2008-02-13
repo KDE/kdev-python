@@ -28,10 +28,12 @@
 
 namespace Python
 {
+
 class Ast;
 
 class KDEVPYTHONDUCHAIN_EXPORT EditorIntegrator : public KDevelop::EditorIntegrator
 {
+
 public:
     EditorIntegrator();
 

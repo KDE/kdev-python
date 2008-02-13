@@ -22,30 +22,26 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
 #include "pythonparsejob.h"
-#include <kdebug.h>
-// #include <cassert>
 #include <QFile>
 
 #include <ktexteditor/document.h>
 #include <ktexteditor/smartinterface.h>
 
+#include <kdebug.h>
 #include <klocale.h>
-#include "pythonhighlighting.h"
-#include <duchainlock.h>
-// #include "pythoneditorintegrator.h"
-// #include "Thread.h"
-#include "pythonlanguagesupport.h"
-#include <parsejob.h>
-#include "dumpchain.h"
-#include "dumpdotgraph.h"
-#include "parsesession.h"
 
+#include <duchainlock.h>
+#include <parsejob.h>
 #include <duchain.h>
 #include <topducontext.h>
+#include <dumpdotgraph.h>
 
+#include "pythonhighlighting.h"
+#include "dumpchain.h"
+#include "parsesession.h"
+#include "pythonlanguagesupport.h"
 #include "contextbuilder.h"
 // #include "declarationbuilder.h"
-
 #include "astprinter.h"
 
 using namespace KDevelop;
@@ -54,13 +50,13 @@ namespace Python
 {
 
 
-ParseJob::ParseJob( const KUrl &url,LanguageSupport *parent)
+ParseJob::ParseJob( const KUrl &url, LanguageSupport *parent )
         : KDevelop::ParseJob( url, parent )
         , m_session( new ParseSession )
         , m_ast( 0 )
         , m_readFromDisk( false )
         , m_duContext( 0 )
-        , m_url(url)
+        , m_url( url )
 {
 }
 
@@ -70,13 +66,13 @@ ParseJob::~ParseJob()
 
 LanguageSupport *ParseJob::python() const
 {
-    return qobject_cast<LanguageSupport*>(const_cast<QObject*>(parent()));
+    return qobject_cast<LanguageSupport*>( const_cast<QObject*>( parent() ) );
 }
 
 
 CodeAst *ParseJob::ast() const
 {
-    Q_ASSERT(isFinished() && m_ast);
+    Q_ASSERT( isFinished() && m_ast );
     return m_ast;
 }
 
@@ -89,7 +85,8 @@ bool ParseJob::wasReadFromDisk() const
 {
     return m_readFromDisk;
 }
-void ParseJob::setDUChain(TopDUContext * duChain)
+
+void ParseJob::setDUChain( TopDUContext * duChain )
 {
     m_duContext = duChain;
 }
@@ -103,18 +100,21 @@ void ParseJob::run()
     {
         QFile file( document().str() );
         //TODO: Read the first lines to determine encoding using Python encoding and use that for the text stream
+
         if ( !file.open( QIODevice::ReadOnly | QIODevice::Text ) )
         {
             m_errorMessage = i18n( "Could not open file '%1'", document().str() );
             kWarning() << "Could not open file" << document().str()
-                        << "(path" << document().str() << ")";
+            << "(path" << document().str() << ")";
             return ;
         }
-        QTextStream s(&file);
+
+        QTextStream s( &file );
+
 //         if( codec )
 //             s.setCodec( QTextCodec::codecForName(codec) );
         m_session->setContents( s.readAll() );
-        Q_ASSERT ( m_session->contents().size() > 0 );
+        Q_ASSERT( m_session->contents().size() > 0 );
         file.close();
     }
     else
@@ -136,12 +136,13 @@ void ParseJob::run()
         m_duContext = builder.buildContexts( m_ast );
 //         m_duContext = declarationBuilder.buildDeclarations(m_AST);
         kDebug() << "----Parsing Succeded---***";//TODO: bind declarations to the code model
-        
+
         {
-            DUChainReadLocker lock(DUChain::lock());
+            DUChainReadLocker lock( DUChain::lock() );
             DumpChain dump;
-            dump.dump(m_duContext);
+            dump.dump( m_duContext );
         }
+
 //         KDevelop::DumpDotGraph dumpGraph;
 //         kDebug() << "Dot-Graph:\n" << dumpGraph.dotGraph(m_duContext, true);
 //         if( python() && declarationBuilder.m_editor->smart() )

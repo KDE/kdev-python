@@ -31,37 +31,41 @@
 
 namespace KDevelop
 {
-    class Declaration;
+
+class Declaration;
 }
 
 class KDEVPYTHONDUCHAIN_EXPORT DeclarationBuilder: public ContextBuilder
 {
+
 public:
-    DeclarationBuilder(ParseSession* session, const KUrl &url);
-    DeclarationBuilder(PythonEditorIntegrator* editor, const KUrl &url);
-    KDevelop::TopDUContext* buildDeclarations(ast_node *node);
-    KDevelop::DUContext* buildSubDeclarations(const KUrl& url, ast_node *node, KDevelop::DUContext* parent = 0);
-    virtual void visit_fun_pos_param(fun_pos_param_ast *node);
-    virtual void visit_atom(atom_ast *node);
-    virtual void visit_classdef(classdef_ast *node);
-    virtual void visit_funcdef(funcdef_ast *node);
-    virtual void openContext(KDevelop::DUContext* newContext);
+    DeclarationBuilder( const KUrl &url );
+    DeclarationBuilder( PythonEditorIntegrator* editor, const KUrl &url );
+    KDevelop::TopDUContext* buildDeclarations( Ast* node );
+    KDevelop::DUContext* buildSubDeclarations( const KUrl& url, ast_node *node, KDevelop::DUContext* parent = 0 );
+//     virtual void visit_fun_pos_param( fun_pos_param_ast *node );
+//     virtual void visit_atom( atom_ast *node );
+//     virtual void visit_classdef( classdef_ast *node );
+//     virtual void visit_funcdef( funcdef_ast *node );
+    virtual void openContext( KDevelop::DUContext* newContext );
     virtual void closeContext();
     virtual ~DeclarationBuilder();
+
 private:
-    KDevelop::ForwardDeclaration* openForwardDeclaration(std::size_t name, ast_node* range);
-    KDevelop::Declaration* openDeclaration(std::size_t name, ast_node* range, bool isFunction = false);
-    KDevelop::Declaration* openDefinition(std::size_t name, ast_node* range, bool isFunction = false);
+    KDevelop::ForwardDeclaration* openForwardDeclaration( std::size_t name, ast_node* range );
+    KDevelop::Declaration* openDeclaration( std::size_t name, ast_node* range, bool isFunction = false );
+    KDevelop::Declaration* openDefinition( std::size_t name, ast_node* range, bool isFunction = false );
     void closeDeclaration();
     void abortDeclaration();
     inline KDevelop::Declaration* currentDeclaration() const
     {
         return m_declarationStack.top();
     }
+
     template<class DeclarationType>
     inline DeclarationType* currentDeclaration() const
     {
-        return dynamic_cast<DeclarationType*>(m_declarationStack.top());
+        return dynamic_cast<DeclarationType*>( m_declarationStack.top() );
     }
 
     template<class DeclarationType>
@@ -72,9 +76,11 @@ private:
     {
         return m_nextDeclarationStack.top();
     }
+
     QStack<KDevelop::Declaration*> m_declarationStack;
     QStack<int> m_nextDeclarationStack;
     QStack<std::size_t> m_functionDefinedStack;
 };
+
 #endif
 // kate: space-indent on; indent-width 4; tab-width 4; replace-tabs on; auto-insert-doxygen on

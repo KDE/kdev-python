@@ -32,13 +32,14 @@
 #include <duchainlock.h>
 
 using namespace KTextEditor;
+
 using namespace KDevelop;
 
 namespace Python
 {
 
 Highlighting::Highlighting( QObject * parent )
-  : QObject(parent)
+        : QObject( parent )
 {
 }
 
@@ -50,115 +51,135 @@ KTextEditor::Attribute::Ptr Highlighting::attributeForType( Types type, Contexts
 {
     KTextEditor::Attribute::Ptr a;
     a = m_definitionAttributes[type];
-    if (!a)
+
+    if ( !a )
     {
-        a = KTextEditor::Attribute::Ptr(new KTextEditor::Attribute());
-        a->setBackgroundFillWhitespace(true);
-        m_definitionAttributes.insert(type, a);
-        switch (type)
+        a = KTextEditor::Attribute::Ptr( new KTextEditor::Attribute() );
+        a->setBackgroundFillWhitespace( true );
+        m_definitionAttributes.insert( type, a );
+
+        switch ( type )
         {
-            case NamespaceType:
-                a->setBackground(QColor(Qt::green).light(170));
-                break;
-            case ClassType:
-                a->setBackground(QColor(Qt::blue).light(175));
-                break;
-            case FunctionType:
-                a->setBackground(QColor(Qt::green).light(175));
-                break;
-            case FunctionVariableType:
-                a->setBackground(QColor(Qt::blue).light(175));
-                break;
-             case NamespaceVariableType:
-                a->setBackground(QColor(Qt::red).light(175));
-                break;
-            case ClassVariableType:
-                a->setBackground(QColor(Qt::green).light(165));
-                break;
-            default:
-                a->setBackground(QColor(Qt::green).light(175));
-                break;
+
+        case NamespaceType:
+            a->setBackground( QColor( Qt::green ).light( 170 ) );
+            break;
+
+        case ClassType:
+            a->setBackground( QColor( Qt::blue ).light( 175 ) );
+            break;
+
+        case FunctionType:
+            a->setBackground( QColor( Qt::green ).light( 175 ) );
+            break;
+
+        case FunctionVariableType:
+            a->setBackground( QColor( Qt::blue ).light( 175 ) );
+            break;
+
+        case NamespaceVariableType:
+            a->setBackground( QColor( Qt::red ).light( 175 ) );
+            break;
+
+        case ClassVariableType:
+            a->setBackground( QColor( Qt::green ).light( 165 ) );
+            break;
+
+        default:
+            a->setBackground( QColor( Qt::green ).light( 175 ) );
+            break;
         }
+
         a->setFontBold();
     }
+
     return a;
 }
 
 void Highlighting::highlightTree( KTextEditor::SmartRange * range ) const
 {
-    foreach (KTextEditor::SmartRange* child, range->childRanges())
-        highlightTree(child);
+    foreach( KTextEditor::SmartRange* child, range->childRanges() )
+    highlightTree( child );
 }
 
 void Highlighting::outputRange( KTextEditor::SmartRange * range ) const
 {
-    Q_ASSERT(range->start() <= range->end());
-    foreach (SmartRange* child, range->childRanges())
-        outputRange(child);
+    Q_ASSERT( range->start() <= range->end() );
+    foreach( SmartRange* child, range->childRanges() )
+    outputRange( child );
 }
 
-void Highlighting::highlightDUChain(KDevelop::TopDUContext* context) const
+void Highlighting::highlightDUChain( KDevelop::TopDUContext* context ) const
 {
-    DUChainReadLocker lock(DUChain::lock());
-    Q_ASSERT(context->topContext() == context);
-    highlightDUChain(static_cast<DUContext*>(context));
+    DUChainReadLocker lock( DUChain::lock() );
+    Q_ASSERT( context->topContext() == context );
+    highlightDUChain( static_cast<DUContext*>( context ) );
 }
 
-void Highlighting::highlightDUChain(DUContext* context) const
+void Highlighting::highlightDUChain( DUContext* context ) const
 {
 
     kDebug() << "Highlighting duchain";
-    if (!context->smartRange())
+
+    if ( !context->smartRange() )
     {
         kDebug() << "Ooops, no smart range, somethings broken";
         return;
     }
+
     kDebug() << "Highlighting declarations:" << context->localDeclarations();
-    foreach (Declaration* dec, context->localDeclarations())
-        highlightDeclaration(dec);
+
+    foreach( Declaration* dec, context->localDeclarations() )
+    highlightDeclaration( dec );
     kDebug() << "Highlighting definitions:" << context->localDefinitions();
-    foreach (Definition* def, context->localDefinitions())
-        highlightDefinition(def);
+    foreach( Definition* def, context->localDefinitions() )
+    highlightDefinition( def );
     kDebug() << "Highlighting child contexts:" << context->childContexts();
-    foreach (DUContext* child, context->childContexts())
-        highlightDUChain(child);
+    foreach( DUContext* child, context->childContexts() )
+    highlightDUChain( child );
 }
 
 
-Highlighting::Types Highlighting::typeForDeclaration(Declaration * dec) const
+Highlighting::Types Highlighting::typeForDeclaration( Declaration * dec ) const
 {
     Types type;
-    switch (dec->context()->type())
+
+    switch ( dec->context()->type() )
     {
-      case DUContext::Class:
+
+    case DUContext::Class:
         type = ClassVariableType;
         break;
-      case DUContext::Function:
+
+    case DUContext::Function:
         type = FunctionVariableType;
         break;
-      case DUContext::Namespace:
+
+    case DUContext::Namespace:
         type = NamespaceVariableType;
         break;
-      default:
+
+    default:
         break;
     }
+
     return type;
 }
 
-void Highlighting::highlightDefinition(Definition * definition) const
+void Highlighting::highlightDefinition( Definition * definition ) const
 {
-    if (Declaration* declaration = definition->declaration())
-        if (SmartRange* range = definition->smartRange())
-            range->setAttribute(attributeForType(typeForDeclaration(declaration), DeclarationContext));
+    if ( Declaration* declaration = definition->declaration() )
+        if ( SmartRange * range = definition->smartRange() )
+            range->setAttribute( attributeForType( typeForDeclaration( declaration ), DeclarationContext ) );
 }
 
-void Highlighting::highlightDeclaration(Declaration * declaration) const
+void Highlighting::highlightDeclaration( Declaration * declaration ) const
 {
-    if (SmartRange* range = declaration->smartRange())
-        range->setAttribute(attributeForType(typeForDeclaration(declaration), DeclarationContext));
+    if ( SmartRange* range = declaration->smartRange() )
+        range->setAttribute( attributeForType( typeForDeclaration( declaration ), DeclarationContext ) );
 }
 
-void Highlighting::highlightUse(KDevelop::Use* ) const
+void Highlighting::highlightUse( KDevelop::Use* ) const
 {
 }
 

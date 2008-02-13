@@ -35,26 +35,31 @@
 #include <duchainpointer.h>
 
 
-namespace KDevelop {
-    class TopDUContext;
+namespace KDevelop
+{
+
+class TopDUContext;
 }
 
-namespace Python {
+namespace Python
+{
 
 class LanguageSupport;
+
 class ParseSession;
 
 class ParseJob : public KDevelop::ParseJob
 {
     Q_OBJECT
+
 public:
-    ParseJob( const KUrl &url, LanguageSupport* parent);
+    ParseJob( const KUrl &url, LanguageSupport* parent );
     virtual ~ParseJob();
 
-    void setAST(CodeAst* ast);
+    void setAST( CodeAst* ast );
     virtual CodeAst *ast() const;
 
-    void setDUChain(KDevelop::TopDUContext* duChain);
+    void setDUChain( KDevelop::TopDUContext* duChain );
     virtual KDevelop::TopDUContext* duChain() const;
 
     const KTextEditor::Range& textRangeToParse() const;
@@ -65,6 +70,7 @@ public:
 
 protected:
     virtual void run();
+
 private:
     ParseSession *m_session;
     CodeAst *m_ast;

@@ -32,22 +32,26 @@
 
 namespace KTextEditor
 {
-    class SmartRange;
+
+class SmartRange;
 }
 
 namespace KDevelop
 {
-    class DUContext;
-    class Declaration;
+
+class DUContext;
+
+class Declaration;
 }
 
-namespace Python 
+namespace Python
 {
 
 class Highlighting : public QObject, public KDevelop::ICodeHighlighting
 {
     Q_OBJECT
-    Q_INTERFACES(KDevelop::ICodeHighlighting)
+    Q_INTERFACES( KDevelop::ICodeHighlighting )
+
 public:
 
     enum Types
@@ -65,21 +69,22 @@ public:
         DeclarationContext,
         NamespaceContext
     };
-    Highlighting(QObject* parent);
+    Highlighting( QObject* parent );
     virtual ~Highlighting();
 
-    void highlightTree(KTextEditor::SmartRange* topRange) const;
-    void highlightDUChain(KDevelop::TopDUContext* context) const;
+    void highlightTree( KTextEditor::SmartRange* topRange ) const;
+    void highlightDUChain( KDevelop::TopDUContext* context ) const;
 
-    virtual void highlightDefinition(KDevelop::Definition* definition) const;
-    virtual void highlightDeclaration(KDevelop::Declaration* declaration) const;
-    virtual void highlightUse(KDevelop::Use*) const;
-    KTextEditor::Attribute::Ptr attributeForType(Types type, Contexts context) const;
+    virtual void highlightDefinition( KDevelop::Definition* definition ) const;
+    virtual void highlightDeclaration( KDevelop::Declaration* declaration ) const;
+    virtual void highlightUse( KDevelop::Use* ) const;
+    KTextEditor::Attribute::Ptr attributeForType( Types type, Contexts context ) const;
+
 private:
-    void highlightDUChain(KDevelop::DUContext* context) const;
+    void highlightDUChain( KDevelop::DUContext* context ) const;
     void outputRange( KTextEditor::SmartRange * range ) const;
 
-    Types typeForDeclaration(KDevelop::Declaration* dec) const;
+    Types typeForDeclaration( KDevelop::Declaration* dec ) const;
 
     mutable QHash<Types, KTextEditor::Attribute::Ptr> m_definitionAttributes;
     mutable QHash<Types, KTextEditor::Attribute::Ptr> m_declarationAttributes;

@@ -31,20 +31,25 @@
 
 namespace KDevelop
 {
-    class ParseJob;
-    class IDocument;
-    class ICodeHighlighting;
+
+class ParseJob;
+
+class IDocument;
+
+class ICodeHighlighting;
 }
 
 
-namespace Python 
+namespace Python
 {
 
 class Highlighting;
+
 class LanguageSupport : public KDevelop::IPlugin, public KDevelop::ILanguageSupport
 {
-Q_OBJECT
-Q_INTERFACES( KDevelop::ILanguageSupport )
+    Q_OBJECT
+    Q_INTERFACES( KDevelop::ILanguageSupport )
+
 public:
     LanguageSupport( QObject *parent, const QVariantList& args = QVariantList() );
     virtual ~LanguageSupport();
@@ -55,8 +60,10 @@ public:
     KDevelop::ILanguage *language();
     /*The Language*/
     KDevelop::ICodeHighlighting* codeHighlighting() const;
+
 private slots:
-    void documentChanged( KDevelop::IDocument*);
+    void documentChanged( KDevelop::IDocument* );
+
 private:
     Highlighting* m_highlighting;
 };

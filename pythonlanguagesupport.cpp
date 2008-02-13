@@ -47,8 +47,8 @@
 
 using namespace KDevelop;
 
-K_PLUGIN_FACTORY(KDevPythonSupportFactory, registerPlugin<Python::LanguageSupport>(); )
-K_EXPORT_PLUGIN(KDevPythonSupportFactory("kdevpythonsupport"))
+K_PLUGIN_FACTORY( KDevPythonSupportFactory, registerPlugin<Python::LanguageSupport>(); )
+K_EXPORT_PLUGIN( KDevPythonSupportFactory( "kdevpythonsupport" ) )
 
 namespace Python
 {
@@ -58,8 +58,8 @@ LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ 
         KDevelop::ILanguageSupport()
 {
     KDEV_USE_EXTENSION_INTERFACE( KDevelop::ILanguageSupport )
-    core()->pluginController()->loadPlugin("kdevduchainview");
-    m_highlighting = new Highlighting(this);
+    core()->pluginController()->loadPlugin( "kdevduchainview" );
+    m_highlighting = new Highlighting( this );
     connect( core()->documentController(),
              SIGNAL( documentStateChanged( KDevelop::IDocument* ) ),
              this, SLOT( documentChanged( KDevelop::IDocument* ) ) );
@@ -73,14 +73,15 @@ LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ 
 
 void LanguageSupport::documentChanged( KDevelop::IDocument* doc )
 {
-        core()->languageController()->backgroundParser()->addDocument(doc->url());
-}
-LanguageSupport::~LanguageSupport()
-{
-    core()->languageController()->backgroundParser()->clear(this);
+    core()->languageController()->backgroundParser()->addDocument( doc->url() );
 }
 
-KDevelop::ParseJob *LanguageSupport::createParseJob(const KUrl &url)
+LanguageSupport::~LanguageSupport()
+{
+    core()->languageController()->backgroundParser()->clear( this );
+}
+
+KDevelop::ParseJob *LanguageSupport::createParseJob( const KUrl &url )
 {
     return new ParseJob( url, this );
 }
@@ -92,7 +93,7 @@ QString LanguageSupport::name() const
 
 KDevelop::ILanguage *LanguageSupport::language()
 {
-    return core()->languageController()->language(name());
+    return core()->languageController()->language( name() );
 }
 
 KDevelop::ICodeHighlighting* LanguageSupport::codeHighlighting() const

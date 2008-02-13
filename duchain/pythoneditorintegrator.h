@@ -24,19 +24,16 @@
 #define PYTHONEDITORINTEGRATOR_H
 
 #include <editorintegrator.h>
-#include <kdev-pg-token-stream.h>
 #include "pythonduchainexport.h"
 
 namespace Python
 {
 class Ast;
-class ParseSession;
 
 class KDEVPYTHONDUCHAIN_EXPORT EditorIntegrator : public KDevelop::EditorIntegrator
 {
 public:
-    EditorIntegrator(ParseSession* session);
-    ParseSession* parseSession() const;
+    EditorIntegrator();
 
     KTextEditor::Cursor findPosition( Ast* node, Edge edge = BackEdge ) const;
 
@@ -45,7 +42,6 @@ public:
     KTextEditor::Range findRange( Ast* from, Python::Ast* to );
 
 private:
-    ParseSession* m_session;
 };
 
 }

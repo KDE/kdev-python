@@ -24,7 +24,6 @@
 #ifndef PYTHON_PARSESESSION_H
 #define PYTHON_PARSESESSION_H
 #include <QtCore/QString>
-#include <QtCore/QHash>
 #include "parserexport.h"
 
 namespace Python
@@ -41,13 +40,8 @@ public:
     void setContents( const QString& contents );
     QString contents() const;
 
-//     void putNode( Python::Ast* ast_node, KDevelop::DUContext* topducontext );
-//     void removeNode( Python::Ast* ast_node );
-//     KDevelop::DUContext* getNode( Python::Ast* ast_node );
-
     bool parse( Python::CodeAst** );
 private:
-//     QHash<Python::Ast*, KDevelop::DUContext*> m_nodeHash;
     QString m_contents;
 
 };

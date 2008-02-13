@@ -46,13 +46,12 @@ namespace Python
 {
 
 class EditorIntegrator;
-class ParseSession;
 
 class KDEVPYTHONDUCHAIN_EXPORT ContextBuilder: public Python::AstDefaultVisitor
 {
 
 public:
-    ContextBuilder(ParseSession* session, const KUrl &url);
+    ContextBuilder(const KUrl &url);
     ContextBuilder(EditorIntegrator* editor, const KUrl &url);
     virtual ~ContextBuilder ();
 
@@ -108,7 +107,6 @@ private:
     
 protected:
     EditorIntegrator* m_editor;
-    ParseSession* m_session;
     KUrl m_url;
     bool m_ownsEditorIntegrator: 1;
     bool m_compilingContexts: 1;

@@ -21,7 +21,6 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
 #include "pythoneditorintegrator.h"
-#include "parsesession.h"
 #include <ktexteditor/document.h>
 #include <ktexteditor/smartrange.h>
 #include <ktexteditor/smartinterface.h>
@@ -36,8 +35,7 @@ using namespace KTextEditor;
 namespace Python
 {
 
-EditorIntegrator::EditorIntegrator( ParseSession* session )
-    : m_session(session)
+EditorIntegrator::EditorIntegrator()
 {
 }
 
@@ -59,11 +57,6 @@ Range EditorIntegrator::findRange( Ast * node, RangeEdge edge )
 Range EditorIntegrator::findRange( Ast* from, Ast* to )
 {
     return Range(findPosition(from, FrontEdge), findPosition(to, BackEdge));
-}
-
-ParseSession * EditorIntegrator::parseSession() const
-{
-  return m_session;
 }
 
 }

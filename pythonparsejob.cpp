@@ -132,7 +132,7 @@ void ParseJob::run()
         AstPrinter printer;
         printer.visitCode( m_ast );
 //         DeclarationBuilder declarationBuilder(m_session,m_url);
-        ContextBuilder builder( m_session, m_url );
+        ContextBuilder builder( m_url );
         m_duContext = builder.buildContexts( m_ast );
 //         m_duContext = declarationBuilder.buildDeclarations(m_AST);
         kDebug() << "----Parsing Succeded---***";//TODO: bind declarations to the code model

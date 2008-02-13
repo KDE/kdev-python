@@ -41,33 +41,32 @@ namespace Python
 {
 
 
-ContextBuilder::ContextBuilder(ParseSession* session, const KUrl &url)
-    :m_editor(new EditorIntegrator(session))
-    ,m_session(session)
-    ,m_url(url)
-    ,m_ownsEditorIntegrator(true)
-    ,m_compilingContexts(false)
-    ,m_recompiling(false)
-    ,m_lastContext(0)
+ContextBuilder::ContextBuilder( const KUrl &url )
+    :m_editor( new EditorIntegrator )
+    ,m_url( url )
+    ,m_ownsEditorIntegrator( true )
+    ,m_compilingContexts( false )
+    ,m_recompiling( false )
+    ,m_lastContext( 0 )
 {
-    kDebug() << "*********Building Contexts for*******"<<m_url;
+    kDebug() << "*********Building Contexts for*******" << m_url;
 
 }
-ContextBuilder::ContextBuilder (EditorIntegrator* editor, const KUrl &url)
-    :m_editor(editor)
-    ,m_url(url)
-    ,m_ownsEditorIntegrator(false)
-    ,m_compilingContexts(false)
-    ,m_recompiling(false)
-    ,m_lastContext(0)
+ContextBuilder::ContextBuilder( EditorIntegrator* editor, const KUrl &url )
+    :m_editor( editor )
+    ,m_url( url )
+    ,m_ownsEditorIntegrator( false )
+    ,m_compilingContexts( false )
+    ,m_recompiling( false )
+    ,m_lastContext( 0 )
 {
-    kDebug() << "*********Building Contexts for********"<<m_url;
+    kDebug() << "*********Building Contexts for********" << m_url;
 }
 
 
 ContextBuilder::~ContextBuilder ()
 {
-    if (m_ownsEditorIntegrator)
+    if( m_ownsEditorIntegrator )
         delete m_editor;
 }
 

@@ -35,18 +35,6 @@ ParseSession::~ParseSession()
 {
 }
 
-// void ParseSession::putNode( Python::Ast* ast_node, KDevelop::DUContext* topducontext )
-// {
-//     m_nodeHash[ast_node] = topducontext;
-// }
-// KDevelop::DUContext* ParseSession::getNode( Python::Ast* ast_node )
-// {
-//     return m_nodeHash[ast_node];
-// }
-// void ParseSession::removeNode( Python::Ast* ast_node )
-// {
-//     m_nodeHash.remove(ast_node);
-// }
 QString ParseSession::contents() const
 {
     return m_contents;

@@ -460,9 +460,8 @@ void ContextBuilder::addImportedContexts()
     }
 }
 
-}
 
-void Python::ContextBuilder::visitWith( WithAst * node )
+void ContextBuilder::visitWith( WithAst * node )
 {
     kDebug() << "creating contexts for With";
     
@@ -477,4 +476,39 @@ void Python::ContextBuilder::visitWith( WithAst * node )
         visitNodeList( node->body );
         closeContext();
     }
+}
+
+void ContextBuilder::visitIf( IfAst* node )
+{
+    kDebug() << "creating contexts for if";
+    visitNode( node->ifCondition );
+    if( node->ifBody.count() > 0 )
+    {
+        openContext( node->ifBody.first(), node->ifBody.last(), DUContext::Other );
+        addImportedContexts();
+        visitNodeList( node->ifBody );
+        closeContext();
+    }
+    QList< QPair< ExpressionAst*, QList<StatementAst*> > >::ConstIterator it, end = node->elseIfBodies.end();
+    for( it = node->elseIfBodies.begin(); it != end; ++it )
+    {
+        visitNode( (*it).first );
+        if( (*it).second.count() > 0 )
+        {
+            openContext( (*it).second.first(), (*it).second.last(), DUContext::Other );
+            addImportedContexts();
+            visitNodeList( (*it).second );
+            closeContext();
+        }
+    }
+    
+    if( node->elseBody.count() > 0 )
+    {
+        openContext( node->elseBody.first(), node->elseBody.last(), DUContext::Other );
+        addImportedContexts();
+        visitNodeList( node->elseBody );
+        closeContext();
+    }
+}
+
 }

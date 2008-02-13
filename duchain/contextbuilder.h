@@ -92,6 +92,7 @@ public:
     virtual void visitFor( ForAst* node );
     virtual void visitWith( WithAst* node );
     virtual void visitWhile( WhileAst* node );
+    virtual void visitIf( IfAst* node );
     void addImportedContexts();
 
 private:

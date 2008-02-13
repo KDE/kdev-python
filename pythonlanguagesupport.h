@@ -35,11 +35,12 @@ namespace KDevelop
     class IDocument;
     class ICodeHighlighting;
 }
-// class PythonHighlighting;
+
 
 namespace Python 
 {
 
+class Highlighting;
 class LanguageSupport : public KDevelop::IPlugin, public KDevelop::ILanguageSupport
 {
 Q_OBJECT
@@ -57,7 +58,7 @@ public:
 private slots:
     void documentChanged( KDevelop::IDocument*);
 private:
-//     PythonHighlighting* m_highlighting;
+    Highlighting* m_highlighting;
 };
 
 }

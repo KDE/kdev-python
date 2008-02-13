@@ -59,7 +59,7 @@ LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ 
 {
     KDEV_USE_EXTENSION_INTERFACE( KDevelop::ILanguageSupport )
     core()->pluginController()->loadPlugin("kdevduchainview");
-//     m_highlighting = new PythonHighlighting(this);
+    m_highlighting = new Highlighting(this);
     connect( core()->documentController(),
              SIGNAL( documentStateChanged( KDevelop::IDocument* ) ),
              this, SLOT( documentChanged( KDevelop::IDocument* ) ) );
@@ -97,8 +97,7 @@ KDevelop::ILanguage *LanguageSupport::language()
 
 KDevelop::ICodeHighlighting* LanguageSupport::codeHighlighting() const
 {
-    return 0;
-//     return m_highlighting;
+    return m_highlighting;
 }
 
 }

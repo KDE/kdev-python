@@ -41,7 +41,10 @@ namespace KDevelop
     class Declaration;
 }
 
-class PythonHighlighting : public QObject, public KDevelop::ICodeHighlighting
+namespace Python 
+{
+
+class Highlighting : public QObject, public KDevelop::ICodeHighlighting
 {
     Q_OBJECT
     Q_INTERFACES(KDevelop::ICodeHighlighting)
@@ -62,8 +65,8 @@ public:
         DeclarationContext,
         NamespaceContext
     };
-    PythonHighlighting(QObject* parent);
-    virtual ~PythonHighlighting();
+    Highlighting(QObject* parent);
+    virtual ~Highlighting();
 
     void highlightTree(KTextEditor::SmartRange* topRange) const;
     void highlightDUChain(KDevelop::TopDUContext* context) const;
@@ -82,5 +85,6 @@ private:
     mutable QHash<Types, KTextEditor::Attribute::Ptr> m_declarationAttributes;
 };
 
+}
+
 #endif
-// kate: space-indent on; indent-width 4; tab-width 4; replace-tabs on; auto-insert-doxygen on

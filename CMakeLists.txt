@@ -47,7 +47,7 @@ add_subdirectory(duchain)
 set(kdevpythonlanguagesupport_PART_SRCS
     pythonlanguagesupport.cpp
     pythonparsejob.cpp
-#     pythonhighlighting.cpp
+    pythonhighlighting.cpp
 )
 
 kde4_add_plugin(kdevpythonlanguagesupport ${kdevpythonlanguagesupport_PART_SRCS})

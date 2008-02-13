@@ -34,16 +34,19 @@
 using namespace KTextEditor;
 using namespace KDevelop;
 
-PythonHighlighting::PythonHighlighting( QObject * parent )
+namespace Python
+{
+
+Highlighting::Highlighting( QObject * parent )
   : QObject(parent)
 {
 }
 
-PythonHighlighting::~PythonHighlighting( )
+Highlighting::~Highlighting( )
 {
 }
 
-KTextEditor::Attribute::Ptr PythonHighlighting::attributeForType( Types type, Contexts context ) const
+KTextEditor::Attribute::Ptr Highlighting::attributeForType( Types type, Contexts context ) const
 {
     KTextEditor::Attribute::Ptr a;
     a = m_definitionAttributes[type];
@@ -81,27 +84,27 @@ KTextEditor::Attribute::Ptr PythonHighlighting::attributeForType( Types type, Co
     return a;
 }
 
-void PythonHighlighting::highlightTree( KTextEditor::SmartRange * range ) const
+void Highlighting::highlightTree( KTextEditor::SmartRange * range ) const
 {
     foreach (KTextEditor::SmartRange* child, range->childRanges())
         highlightTree(child);
 }
 
-void PythonHighlighting::outputRange( KTextEditor::SmartRange * range ) const
+void Highlighting::outputRange( KTextEditor::SmartRange * range ) const
 {
     Q_ASSERT(range->start() <= range->end());
     foreach (SmartRange* child, range->childRanges())
         outputRange(child);
 }
 
-void PythonHighlighting::highlightDUChain(KDevelop::TopDUContext* context) const
+void Highlighting::highlightDUChain(KDevelop::TopDUContext* context) const
 {
     DUChainReadLocker lock(DUChain::lock());
     Q_ASSERT(context->topContext() == context);
     highlightDUChain(static_cast<DUContext*>(context));
 }
 
-void PythonHighlighting::highlightDUChain(DUContext* context) const
+void Highlighting::highlightDUChain(DUContext* context) const
 {
 
     kDebug() << "Highlighting duchain";
@@ -122,7 +125,7 @@ void PythonHighlighting::highlightDUChain(DUContext* context) const
 }
 
 
-PythonHighlighting::Types PythonHighlighting::typeForDeclaration(Declaration * dec) const
+Highlighting::Types Highlighting::typeForDeclaration(Declaration * dec) const
 {
     Types type;
     switch (dec->context()->type())
@@ -142,23 +145,23 @@ PythonHighlighting::Types PythonHighlighting::typeForDeclaration(Declaration * d
     return type;
 }
 
-void PythonHighlighting::highlightDefinition(Definition * definition) const
+void Highlighting::highlightDefinition(Definition * definition) const
 {
     if (Declaration* declaration = definition->declaration())
         if (SmartRange* range = definition->smartRange())
             range->setAttribute(attributeForType(typeForDeclaration(declaration), DeclarationContext));
 }
 
-void PythonHighlighting::highlightDeclaration(Declaration * declaration) const
+void Highlighting::highlightDeclaration(Declaration * declaration) const
 {
     if (SmartRange* range = declaration->smartRange())
         range->setAttribute(attributeForType(typeForDeclaration(declaration), DeclarationContext));
 }
 
-void PythonHighlighting::highlightUse(KDevelop::Use* ) const
+void Highlighting::highlightUse(KDevelop::Use* ) const
 {
 }
 
-#include "pythonhighlighting.moc"
-// kate: space-indent on; indent-width 4; tab-width 4; replace-tabs on; auto-insert-doxygen on
+}
 
+#include "pythonhighlighting.moc"

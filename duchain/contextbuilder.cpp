@@ -180,42 +180,9 @@ void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
     openContext(node, DUContext::Class, identifierForName( node->className->identifier ));
     addImportedContexts();
     visitNodeList( node->inheritance );
-    visitNodeList(node->classBody);
+    visitNodeList( node->classBody );
     closeContext();
 }
-// void ContextBuilder::visit_import_as_name(import_as_name_ast *node)
-// {
-//     openContext(node, DUContext::Namespace , identifierForName(node->imported_as));
-//     addImportedContexts();
-//     closeContext();
-// }
-// 
-// void ContextBuilder::visit_compound_stmt(compound_stmt_ast *node)
-// {
-//     if(!node->classdef && !node->fucdef && !node->try_stmt)
-//     {
-//         openContext(node, DUContext::Other);
-//         addImportedContexts();
-//         default_visitor::visit_compound_stmt(node);
-//         closeContext();
-//     }
-//     else if(node->try_stmt)
-//     {
-//         QString name = "try";
-//         m_identifier = Identifier(name);
-//         KDevelop::QualifiedIdentifier x;
-//         x.push(m_identifier);
-//         openContext(node, DUContext::Other, x);
-//         addImportedContexts();
-//         default_visitor::visit_compound_stmt(node);
-//         closeContext();
-//         x.clear();
-//     }
-//     else
-//     {
-//         default_visitor::visit_compound_stmt(node);
-//     }
-// }
 
 void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
@@ -241,31 +208,18 @@ void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     visitNodeList( node->decorators );
     if( node->parameters.count() > 0 )
     {
-        DUContext* funcctx = openContext( node->parameters.first(), node->parameters.last(), DUContext::Function );
+        DUContext* funcctx = openContext( node->parameters.first(), node->parameters.last(), DUContext::Function, identifierForName( node->functionName->identifier ) );
         addImportedContexts();
         visitNodeList( node->parameters );
         closeContext();
         m_importedParentContexts.append( funcctx );
     }
-    openContext( node->functionBody.first(), node->functionBody.last() ,DUContext::Other, identifierForName( node->functionName->identifier ) );
+    openContext( node->functionBody.first(), node->functionBody.last() ,DUContext::Other );
     addImportedContexts();
     visitNodeList( node->functionBody );
     closeContext();
     m_importedParentContexts.clear();
 }
-
-// void ContextBuilder::visit_varargslist(varargslist_ast *node)
-// {
-//     QString name = "arguements";
-//     m_identifier = Identifier(name);
-//     KDevelop::QualifiedIdentifier x;
-//     x.push(m_identifier);
-//     openContext(node,DUContext::Other, x);
-//     addImportedContexts();
-//     default_visitor::visit_varargslist(node);
-//     closeContext();
-//     x.clear();
-// }
 
 void ContextBuilder::openContext(DUContext* newContext)
 {
@@ -402,20 +356,8 @@ void ContextBuilder::visitFor( ForAst* node )
     visitNodeList( node->iterable );
     
     m_importedParentContexts = QList<DUContext*>() << forctx;
-    if( node->forBody.count() > 0 )
-    {
-        openContext( node->forBody.first(), node->forBody.last(), DUContext::Other );
-        addImportedContexts();
-        visitNodeList( node->forBody );
-        closeContext();
-    }
-    if( node->elseBody.count() > 0 )
-    {
-        openContext( node->elseBody.first(), node->elseBody.last(), DUContext::Other );
-        addImportedContexts();
-        visitNodeList( node->elseBody );
-        closeContext();
-    }
+    openContextForStatementList( node->forBody );
+    openContextForStatementList( node->elseBody );
     m_importedParentContexts.clear();
 }
 
@@ -423,19 +365,8 @@ void ContextBuilder::visitWhile( WhileAst* node )
 {
     kDebug() << "Creating contexts for while";
     visitNode(node->condition);
-    if( node->whileBody.count() > 0 )
-    {
-        openContext( node->whileBody.first(), node->whileBody.last(), DUContext::Other );
-        addImportedContexts();
-        visitNodeList( node->whileBody );
-        closeContext();
-    } else if( node->elseBody.count() > 0 )
-    {
-        openContext( node->elseBody.first(), node->elseBody.last(), DUContext::Other );
-        addImportedContexts();
-        visitNodeList( node->elseBody );
-        closeContext();
-    }
+    openContextForStatementList( node->whileBody );
+    openContextForStatementList( node->elseBody );
     m_importedParentContexts.clear();
 }
 
@@ -469,46 +400,43 @@ void ContextBuilder::visitWith( WithAst * node )
     visitNode( node->name );
     closeContext();
     
-    if( node->body.count() > 0 )
+    openContextForStatementList( node->body );
+}
+
+void ContextBuilder::openContextForStatementList( const QList<StatementAst*>& l )
+{
+    if( l.count() > 0 )
     {
-        openContext( node->body.first(), node->body.last(), DUContext::Other );
-        addImportedContexts();
-        visitNodeList( node->body );
+        openContext( l.first(), l.last(), DUContext::Other );
+        addImportedContexts;
+        visitNodeList( l );
         closeContext();
     }
+}
+
+void ContextBuilder::visitTry( TryAst* node )
+{
+    kDebug() << "creating contexts for try";
+    openContextForStatementList( node->tryBody );
+    visitNodeList( node->exceptions );
+    openContextForStatementList( node->elseBody );
+    openContextForStatementList( node->finallyBody );
 }
 
 void ContextBuilder::visitIf( IfAst* node )
 {
     kDebug() << "creating contexts for if";
     visitNode( node->ifCondition );
-    if( node->ifBody.count() > 0 )
-    {
-        openContext( node->ifBody.first(), node->ifBody.last(), DUContext::Other );
-        addImportedContexts();
-        visitNodeList( node->ifBody );
-        closeContext();
-    }
+    openContextForStatementList( node->ifBody );
     QList< QPair< ExpressionAst*, QList<StatementAst*> > >::ConstIterator it, end = node->elseIfBodies.end();
     for( it = node->elseIfBodies.begin(); it != end; ++it )
     {
         visitNode( (*it).first );
-        if( (*it).second.count() > 0 )
-        {
-            openContext( (*it).second.first(), (*it).second.last(), DUContext::Other );
-            addImportedContexts();
-            visitNodeList( (*it).second );
-            closeContext();
-        }
+        openContextForStatementList( (*it).second );
+        
     }
     
-    if( node->elseBody.count() > 0 )
-    {
-        openContext( node->elseBody.first(), node->elseBody.last(), DUContext::Other );
-        addImportedContexts();
-        visitNodeList( node->elseBody );
-        closeContext();
-    }
+    openContextForStatementList( node->elseBody );
 }
 
 }

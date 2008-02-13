@@ -93,6 +93,8 @@ public:
     virtual void visitWith( WithAst* node );
     virtual void visitWhile( WhileAst* node );
     virtual void visitIf( IfAst* node );
+    virtual void visitTry( TryAst* node );
+    virtual void visitClassDefinition( ClassDefinitionAst* node );
     void addImportedContexts();
 
 private:
@@ -121,7 +123,8 @@ protected:
     KDevelop::DUContext* m_lastContext;
 
     QList<KDevelop::DUContext*> m_importedParentContexts;
-
+private:
+    openContextForStatementList( const QList<StatementAst*>& );
 };
 
 }

@@ -408,7 +408,7 @@ void ContextBuilder::openContextForStatementList( const QList<StatementAst*>& l 
     if( l.count() > 0 )
     {
         openContext( l.first(), l.last(), DUContext::Other );
-        addImportedContexts;
+        addImportedContexts();
         visitNodeList( l );
         closeContext();
     }
@@ -433,9 +433,7 @@ void ContextBuilder::visitIf( IfAst* node )
     {
         visitNode( (*it).first );
         openContextForStatementList( (*it).second );
-        
     }
-    
     openContextForStatementList( node->elseBody );
 }
 

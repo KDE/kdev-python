@@ -62,28 +62,16 @@ public:
     KDevelop::TopDUContext* buildContexts( Ast* node );
     KDevelop::DUContext* buildSubContexts( const KUrl& url, Ast *node, KDevelop::DUContext* parent = 0 );
     void supportBuild( Ast *node, KDevelop::DUContext* context = 0 );
-    inline KDevelop::DUContext* currentContext()
-    {
-        return m_contextStack.top();
-    }
+    KDevelop::DUContext* currentContext();
 
-    void setEncountered( KDevelop::DUChainBase* item )
-    {
-        m_encountered.insert( item );
-    }
+    void setEncountered( KDevelop::DUChainBase* item );
 
-    bool wasEncountered( KDevelop::DUChainBase* item )
-    {
-        return m_encountered.contains( item );
-    }
+    bool wasEncountered( KDevelop::DUChainBase* item );
 
 
     virtual void openContext( KDevelop::DUContext* newContext );
     virtual void closeContext();
-    inline bool recompiling() const
-    {
-        return m_recompiling;
-    }
+    bool recompiling() const;
 
     QSet<KDevelop::DUChainBase*> m_encountered;
     QStack<KDevelop::DUContext*> m_contextStack;
@@ -119,21 +107,15 @@ private:
 protected:
     EditorIntegrator* m_editor;
     KUrl m_url;
-
-bool m_ownsEditorIntegrator:
-    1;
-
-bool m_compilingContexts:
-    1;
-
-bool m_recompiling :
-    1;
+    
+    bool m_ownsEditorIntegrator: 1;
+    
+    bool m_compilingContexts: 1;
+    
+    bool m_recompiling : 1;
 
     QStack<int> m_nextContextStack;
-    inline int& nextContextIndex()
-    {
-        return m_nextContextStack.top();
-    }
+    int& nextContextIndex();
 
     KDevelop::Identifier m_identifier;
     KDevelop::QualifiedIdentifier m_qidentifier;

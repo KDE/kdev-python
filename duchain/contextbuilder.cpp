@@ -473,4 +473,29 @@ void ContextBuilder::visitIf( IfAst* node )
     openContextForStatementList( node->elseBody );
 }
 
+void ContextBuilder::setEncountered( KDevelop::DUChainBase* item )
+{
+    m_encountered.insert( item );
+}
+
+bool ContextBuilder::wasEncountered( KDevelop::DUChainBase* item )
+{
+    return m_encountered.contains( item );
+}
+
+KDevelop::DUContext * ContextBuilder::currentContext( )
+{
+    return m_contextStack.top();
+}
+
+bool ContextBuilder::recompiling( ) const
+{
+    return m_recompiling;
+}
+
+int& ContextBuilder::nextContextIndex()
+{
+    return m_nextContextStack.top();
+}
+
 }

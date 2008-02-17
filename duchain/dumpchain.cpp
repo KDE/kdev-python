@@ -22,15 +22,14 @@
  *****************************************************************************/
 #include "dumpchain.h"
 #include "pythoneditorintegrator.h"
-#include "parsesession.h"
 
-#include <identifiedtype.h>
-#include <ducontext.h>
-#include <topducontext.h>
-#include <declaration.h>
-#include <definition.h>
-#include <duchainpointer.h>
-#include <use.h>
+#include <language/duchain/identifiedtype.h>
+#include <language/duchain/ducontext.h>
+#include <language/duchain/topducontext.h>
+#include <language/duchain/declaration.h>
+#include <language/duchain/definition.h>
+#include <language/duchain/duchainpointer.h>
+#include <language/duchain/use.h>
 
 using namespace KDevelop;
 

@@ -28,21 +28,18 @@
 #include <QSet>
 #include <QHash>
 #include <QList>
-#include <identifier.h>
-#include <ducontext.h>
+#include <language/duchain/identifier.h>
+#include <language/duchain/duchainpointer.h>
+#include <language/duchain/ducontext.h>
 #include <ksharedptr.h>
 
 #include "pythonduchainexport.h"
 
 namespace KDevelop
 {
-
 class DUChain;
-
-class KDevelop::DUChainBase;
-
+class DUChainBase;
 class DUContext;
-
 class TopDUContext;
 }
 
@@ -55,13 +52,16 @@ class KDEVPYTHONDUCHAIN_EXPORT ContextBuilder: public Python::AstDefaultVisitor
 {
 
 public:
-    ContextBuilder( const KUrl &url );
-    ContextBuilder( EditorIntegrator* editor, const KUrl &url );
+    ContextBuilder();
+    ContextBuilder( EditorIntegrator* editor );
     virtual ~ContextBuilder();
 
-    KDevelop::TopDUContext* buildContexts( Ast* node );
-    KDevelop::DUContext* buildSubContexts( const KUrl& url, Ast *node, KDevelop::DUContext* parent = 0 );
+    KDevelop::TopDUContext* buildContexts( const KUrl& url, Ast* node, const KDevelop::TopDUContextPointer& updateContext = KDevelop::TopDUContextPointer() );
+    KDevelop::DUContext* buildSubContexts( const KUrl& url, Ast* node, KDevelop::DUContext* parent = 0 );
     void supportBuild( Ast *node, KDevelop::DUContext* context = 0 );
+    
+protected:
+    void smartenContext( KDevelop::TopDUContext* topLevelContext );
     KDevelop::DUContext* currentContext();
 
     void setEncountered( KDevelop::DUChainBase* item );
@@ -93,7 +93,6 @@ public:
     virtual void visitTry( TryAst* node );
     void addImportedContexts();
 
-private:
     template <typename T> void visitNodeList( const QList<T*>& l )
     {
         typename QList<T*>::ConstIterator it, end = l.end();
@@ -106,7 +105,6 @@ private:
 
 protected:
     EditorIntegrator* m_editor;
-    KUrl m_url;
     
     bool m_ownsEditorIntegrator: 1;
     

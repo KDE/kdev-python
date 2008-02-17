@@ -34,13 +34,13 @@
 
 #include <QExtensionFactory>
 
-#include <icore.h>
-#include <ilanguagecontroller.h>
-#include <iplugincontroller.h>
-#include <ilanguage.h>
-#include <idocument.h>
-#include <backgroundparser.h>
-#include <idocumentcontroller.h>
+#include <interfaces/icore.h>
+#include <interfaces/ilanguagecontroller.h>
+#include <interfaces/iplugincontroller.h>
+#include <interfaces/ilanguage.h>
+#include <interfaces/idocument.h>
+#include <language/backgroundparser/backgroundparser.h>
+#include <interfaces/idocumentcontroller.h>
 
 #include "pythonparsejob.h"
 #include "pythonhighlighting.h"

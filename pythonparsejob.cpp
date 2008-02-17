@@ -30,11 +30,10 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-#include <duchainlock.h>
-#include <parsejob.h>
-#include <duchain.h>
-#include <topducontext.h>
-#include <dumpdotgraph.h>
+#include <language/duchain/duchainlock.h>
+#include <language/duchain/duchain.h>
+#include <language/duchain/topducontext.h>
+#include <language/duchain/dumpdotgraph.h>
 
 #include "pythonhighlighting.h"
 #include "dumpchain.h"
@@ -132,8 +131,8 @@ void ParseJob::run()
         AstPrinter printer;
         printer.visitCode( m_ast );
 //         DeclarationBuilder declarationBuilder(m_session,m_url);
-        ContextBuilder builder( m_url );
-        m_duContext = builder.buildContexts( m_ast );
+        ContextBuilder builder;
+        m_duContext = builder.buildContexts( m_url, m_ast );
 //         m_duContext = declarationBuilder.buildDeclarations(m_AST);
         kDebug() << "----Parsing Succeded---***";//TODO: bind declarations to the code model
 

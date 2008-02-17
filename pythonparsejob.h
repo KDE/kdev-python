@@ -24,7 +24,7 @@
 #ifndef PARSEJOB_H
 #define PARSEJOB_H
 
-#include <parsejob.h>
+#include <language/backgroundparser/parsejob.h>
 #include "ast.h"
 
 #include <QStringList>
@@ -32,7 +32,7 @@
 #include <ksharedptr.h>
 #include <ktexteditor/range.h>
 
-#include <duchainpointer.h>
+#include <language/duchain/duchainpointer.h>
 
 
 namespace KDevelop

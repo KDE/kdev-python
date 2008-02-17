@@ -21,18 +21,17 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
 #include <contextbuilder.h>
-#include <duchain.h>
-#include <duchainlock.h>
-#include <parsesession.h>
-#include <topducontext.h>
-#include "pythoneditorintegrator.h"
-#include "dumpchain.h"
-#include <parsingenvironment.h>
+#include <language/duchain/duchain.h>
+#include <language/duchain/duchainlock.h>
+#include <language/duchain/topducontext.h>
+#include <language/duchain/parsingenvironment.h>
 #include <ktexteditor/smartrange.h>
 #include <ktexteditor/smartinterface.h>
 #include <ktexteditor/document.h>
-#include <smartconverter.h>
-#include <symboltable.h>
+#include <language/duchain/smartconverter.h>
+#include <language/duchain/symboltable.h>
+#include "pythoneditorintegrator.h"
+#include "dumpchain.h"
 
 using namespace KDevelop;
 
@@ -42,27 +41,23 @@ namespace Python
 {
 
 
-ContextBuilder::ContextBuilder( const KUrl &url )
+ContextBuilder::ContextBuilder()
         : m_editor( new EditorIntegrator )
-        , m_url( url )
         , m_ownsEditorIntegrator( true )
         , m_compilingContexts( false )
         , m_recompiling( false )
         , m_lastContext( 0 )
 {
-    kDebug() << "*********Building Contexts for*******" << m_url;
 
 }
 
-ContextBuilder::ContextBuilder( EditorIntegrator* editor, const KUrl &url )
+ContextBuilder::ContextBuilder( EditorIntegrator* editor )
         : m_editor( editor )
-        , m_url( url )
         , m_ownsEditorIntegrator( false )
         , m_compilingContexts( false )
         , m_recompiling( false )
         , m_lastContext( 0 )
 {
-    kDebug() << "*********Building Contexts for********" << m_url;
 }
 
 
@@ -72,22 +67,32 @@ ContextBuilder::~ContextBuilder()
         delete m_editor;
 }
 
-TopDUContext* ContextBuilder::buildContexts( Ast* node )
+TopDUContext* ContextBuilder::buildContexts( const KUrl& url, Ast* node, const TopDUContextPointer& updateContext )
 {
     m_compilingContexts = true;
-    m_editor->setCurrentUrl( KDevelop::HashedString( m_url.prettyUrl() ) );
+    m_editor->setCurrentUrl( KDevelop::HashedString( url.prettyUrl() ) );
 
     TopDUContext* topLevelContext = 0;
     {
         DUChainWriteLocker lock( DUChain::lock() );
-        topLevelContext = DUChain::self()->chainForDocument( m_url );
+        topLevelContext = updateContext.data();
 
         if ( topLevelContext && !topLevelContext->smartRange() && m_editor->smart() )
         {
             lock.unlock();
-            SmartConverter conv( m_editor, 0 );
-            conv.convertDUChain( topLevelContext );
+            smartenContext( topLevelContext );
             lock.lock();
+            topLevelContext = updateContext.data();
+        }
+
+        if ( topLevelContext && topLevelContext->smartRange() )
+        {
+            if ( topLevelContext->smartRange()->parentRange() )
+            {
+                //Top range must not have a parent, else something is wrong with the structure
+                kDebug() << *topLevelContext->smartRange() << "has a parent" << *topLevelContext->smartRange()->parentRange();
+                Q_ASSERT( false );
+            }
         }
 
         if ( topLevelContext )
@@ -112,7 +117,7 @@ TopDUContext* ContextBuilder::buildContexts( Ast* node )
             topLevelContext = new TopDUContext( m_editor->currentUrl(), m_editor->currentDocument() ? SimpleRange( m_editor->currentDocument()->documentRange() ) : SimpleRange( SimpleCursor( 0, 0 ), SimpleCursor( INT_MAX, INT_MAX ) ) );
             topLevelContext->setSmartRange( m_editor->topRange( EditorIntegrator::DefinitionUseChain ) , DocumentRangeObject::Own );
             topLevelContext->setType( DUContext::Global );
-            DUChain::self()->addDocumentChain( IdentifiedFile( m_url, 0 ), topLevelContext );
+            DUChain::self()->addDocumentChain( IdentifiedFile( url, 0 ), topLevelContext );
         }
 
         setEncountered( topLevelContext );
@@ -122,10 +127,13 @@ TopDUContext* ContextBuilder::buildContexts( Ast* node )
 
     supportBuild( node );
 
+    if ( m_editor->currentDocument() && m_editor->smart() && topLevelContext->range().textRange() != m_editor->currentDocument()->documentRange() )
     {
-        // allDeclarations always returned Zero as it looks for the Total Number Of definitions, as Depicted here.
-        // Currently it simply dispalys the localdeclarations in the topcontext,
-        // def a():\n\tpass\ndef b():\n\tpass returns 2 Declarations.
+        kDebug() << "WARNING: top level context has wrong size:" << topLevelContext->range().textRange() << "should be:" << m_editor->currentDocument()->documentRange();
+        topLevelContext->setRange( m_editor->currentDocument()->documentRange() );
+    }
+    
+    {
         DUChainReadLocker lock( DUChain::lock() );
         //foreach(DUContext* context, topLevelContext->childContexts());
         kDebug() << "built top-level context with" << topLevelContext->localDeclarations().count() << "declarations," << topLevelContext->localDefinitions().count() << " Definitions and" << topLevelContext->childContexts().size() << "Child-Contexts";
@@ -137,8 +145,7 @@ TopDUContext* ContextBuilder::buildContexts( Ast* node )
         }
 
         foreach( DUContext* contexts, topLevelContext->childContexts() )
-
-        kDebug() << "CHILD:" << contexts->scopeIdentifier( true ) << "Parent:" << ( dynamic_cast<TopDUContext*>( contexts->parentContext() ) ? "top-context" : "" );
+            kDebug() << "CHILD:" << contexts->scopeIdentifier( true ) << "Parent:" << ( dynamic_cast<TopDUContext*>( contexts->parentContext() ) ? "top-context" : "" );
     }
 
     m_compilingContexts = false;
@@ -147,8 +154,8 @@ TopDUContext* ContextBuilder::buildContexts( Ast* node )
 
 KDevelop::DUContext* ContextBuilder::buildSubContexts( const KUrl& url, Ast *node, KDevelop::DUContext* parent )
 {
-    m_compilingContexts = true;
-    m_recompiling = false;
+//     m_compilingContexts = true;
+//     m_recompiling = false;
     m_editor->setCurrentUrl( HashedString( url.prettyUrl() ) );
     node->context = parent;
     {
@@ -173,9 +180,14 @@ KDevelop::DUContext* ContextBuilder::buildSubContexts( const KUrl& url, Ast *nod
 
 void ContextBuilder::supportBuild( Ast *node, DUContext* context )
 {
-    if ( !node->context )
+    if( !context )
     {
-        kDebug() << "No Context Found matching with the node";
+        context = node->context;
+    }
+    
+    if( TopDUContext* topLevelContext = dynamic_cast<TopDUContext*>( context ) )
+    {
+        smartenContext( topLevelContext );
     }
 
     openContext( context ? context : node->context );
@@ -207,11 +219,12 @@ void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         DUChainReadLocker lock( DUChain::lock() );
         QList<DUContext*> classContexts = currentContext()->findContexts( DUContext::Class, QualifiedIdentifier( classast->context->localScopeIdentifier() ) );
 
-        if ( classContexts.count() == 1 )
+        if ( classContexts.count() != 1 )
         {
             m_importedParentContexts.append( classContexts.first() );
         }
-        else if ( classContexts.count() > 1 )
+
+        if ( classContexts.count() > 1 )
         {
             kWarning() << "Multiple class contexts for" << classast->className->identifier << classast->context->localScopeIdentifier() << "shouldn't happen!";
             foreach( DUContext* classContext, classContexts )
@@ -466,8 +479,8 @@ void ContextBuilder::visitIf( IfAst* node )
 
     for ( it = node->elseIfBodies.begin(); it != end; ++it )
     {
-        visitNode(( *it ).first );
-        openContextForStatementList(( *it ).second );
+        visitNode( ( *it ).first );
+        openContextForStatementList( ( *it ).second );
     }
 
     openContextForStatementList( node->elseBody );
@@ -496,6 +509,15 @@ bool ContextBuilder::recompiling( ) const
 int& ContextBuilder::nextContextIndex()
 {
     return m_nextContextStack.top();
+}
+
+void ContextBuilder::smartenContext( TopDUContext* topLevelContext )
+{
+    if ( topLevelContext && !topLevelContext->smartRange() && m_editor->smart() )
+    {
+        SmartConverter conv( m_editor, 0 );
+        conv.convertDUChain( topLevelContext );
+    }
 }
 
 }

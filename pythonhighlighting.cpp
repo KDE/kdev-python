@@ -62,36 +62,40 @@ KTextEditor::Attribute::Ptr Highlighting::attributeForType( Types type, Contexts
         switch ( type )
         {
 
-        case ClassType:
-        {
-            a->setBackground( QColor( 0x780859 ) );
-            KTextEditor::Attribute::Ptr e(new KTextEditor::Attribute() );
-            e->setForeground( QColor( 0x005500 ) );
-            a->setDynamicAttribute( Attribute::ActivateCaretIn, e );
-            break;
+            case ClassType:
+                {
+                    a->setForeground( QColor( 0x780859 ) );
+                    KTextEditor::Attribute::Ptr e( new KTextEditor::Attribute() );
+                    e->setForeground( QColor( 0x005500 ) );
+                    a->setDynamicAttribute( Attribute::ActivateCaretIn, e );
+                    break;
+                }
+
+            case FunctionType:
+                a->setForeground( QColor( 0x21005A ) );
+                break;
+
+            case FunctionVariableType:
+                a->setForeground( QColor( 0x300085 ) );
+                break;
+
+            case ClassVariableType:
+                a->setForeground( QColor( 0x443069 ) );
+                break;
+
+            default:
+                break;
         }
-        case FunctionType:
-            a->setBackground( QColor( 0x21005A ) );
-            break;
 
-        case FunctionVariableType:
-            a->setBackground( QColor( 0x300085 ) );
-            break;
-
-        case ClassVariableType:
-            a->setBackground( QColor( 0x443069 ) );
-            break;
-
-        default:
-            break;
-        }
-
-        switch( context )
+        switch ( context )
         {
+
             case DefinitionContext:
+
             case DeclarationContext:
                 a->setFontBold();
                 break;
+
             default:
                 break;
         }
@@ -134,39 +138,49 @@ void Highlighting::highlightDUChain( DUContext* context ) const
     kDebug() << "Highlighting declarations:" << context->localDeclarations();
 
     foreach( Declaration* dec, context->localDeclarations() )
-    highlightDeclaration( dec );
+    {
+        highlightDeclaration( dec );
+    }
+
     kDebug() << "Highlighting definitions:" << context->localDefinitions();
     foreach( Definition* def, context->localDefinitions() )
-    highlightDefinition( def );
+    {
+        highlightDefinition( def );
+    }
+
     kDebug() << "Highlighting child contexts:" << context->childContexts();
     foreach( DUContext* child, context->childContexts() )
-    highlightDUChain( child );
+    {
+        highlightDUChain( child );
+    }
 }
 
 
 Highlighting::Types Highlighting::typeForDeclaration( Declaration * dec ) const
 {
-    Types type;
-
-    switch ( dec->context()->type() )
+    Types type = LocalVariableType;
+    if( dec->context()->scopeIdentifier().isEmpty() )
     {
-
-    case DUContext::Class:
-        type = ClassVariableType;
-        break;
-
-    case DUContext::Function:
-        type = FunctionVariableType;
-        break;
-
-    case DUContext::Namespace:
-        type = NamespaceVariableType;
-        break;
-
-    default:
-        break;
+        kDebug() << "global variable";
+        type = GlobalVariableType;
+    } else
+    {
+        kDebug() << "class or function var";
+        switch ( dec->context()->type() )
+        {
+    
+            case DUContext::Class:
+                type = MemberVariableType;
+                break;
+    
+            case DUContext::Function:
+                type = FunctionVariableType;
+                break;
+    
+            default:
+                break;
+        }
     }
-
     return type;
 }
 

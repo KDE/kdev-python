@@ -59,10 +59,11 @@ public:
     {
         FunctionType,
         ClassType,
-        NamespaceType,
         FunctionVariableType,
         ClassVariableType,
-        NamespaceVariableType
+        LocalVariableType,
+        MemberVariableType,
+        GlobalVariableType
     };
     enum Contexts
     {

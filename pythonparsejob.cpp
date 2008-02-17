@@ -133,10 +133,8 @@ void ParseJob::run()
         printer.visitCode( m_ast );
         {
             EditorIntegrator editor;
-            DeclarationBuilder builder( &editor );
-    //         ContextBuilder builder;
-            m_duContext = builder.buildContexts( m_url, m_ast );
-    //         m_duContext = declarationBuilder.buildDeclarations(m_AST);
+            ContextBuilder builder( &editor );
+            m_duContext = builder.buildDeclarations( m_url, m_ast );
             kDebug() << "----Parsing Succeded---***";//TODO: bind declarations to the code model
     
             {

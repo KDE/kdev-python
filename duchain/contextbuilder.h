@@ -57,10 +57,21 @@ public:
     ContextBuilder( EditorIntegrator* editor );
     virtual ~ContextBuilder();
 
-    KDevelop::TopDUContext* buildContexts( const KUrl& url, Ast* node, const KDevelop::TopDUContextPointer& updateContext = KDevelop::TopDUContextPointer() );
-    KDevelop::DUContext* buildSubContexts( const KUrl& url, Ast* node, KDevelop::DUContext* parent = 0 );
+    KDevelop::TopDUContext* buildContexts( const KUrl& url, Ast* node,
+                                           const KDevelop::TopDUContextPointer& updateContext 
+                                                   = KDevelop::TopDUContextPointer() );
+    KDevelop::DUContext* buildSubContexts( const KUrl& url, Ast* node, 
+                                           KDevelop::DUContext* parent = 0 );
     void supportBuild( Ast *node, KDevelop::DUContext* context = 0 );
     
+    KDevelop::TopDUContext* buildDeclarations( const KUrl& url, Ast* node, 
+                                               const KDevelop::TopDUContextPointer& updateContext 
+                                                       = KDevelop::TopDUContextPointer() );
+    KDevelop::DUContext* buildSubDeclarations( const KUrl& url, Ast* node, 
+                                               KDevelop::DUContext* parent = 0 );
+    KDevelop::Declaration* currentDeclaration() const;
+
+
 protected:
     void smartenContext( KDevelop::TopDUContext* topLevelContext );
     KDevelop::DUContext* currentContext();
@@ -69,6 +80,16 @@ protected:
 
     bool wasEncountered( KDevelop::DUChainBase* item );
 
+    KDevelop::Declaration* openDeclaration( IdentifierAst* name, Ast* range, 
+                                             bool isFunction = false, 
+                                             bool isDefinition = false, 
+                                             const KDevelop::Identifier& customName 
+                                                     = KDevelop::Identifier() );
+    KDevelop::Declaration* openDefinition( IdentifierAst* name, Ast* range, 
+                                           bool isFunction = false );
+    void closeDeclaration();
+    void abortDeclaration();
+    void eventuallyAssignInternalContext();
 
     virtual void openContext( KDevelop::DUContext* newContext );
     virtual void closeContext();
@@ -94,17 +115,6 @@ protected:
     virtual void visitTry( TryAst* node );
     void addImportedContexts();
 
-    template <typename T> void visitNodeList( const QList<T*>& l )
-    {
-        typename QList<T*>::ConstIterator it, end = l.end();
-
-        for ( it = l.begin(); it != end; ++it )
-        {
-            visitNode(( *it ) );
-        }
-    }
-
-protected:
     EditorIntegrator* m_editor;
     
     bool m_ownsEditorIntegrator: 1;
@@ -122,9 +132,40 @@ protected:
     KDevelop::DUContext* m_lastContext;
 
     QList<KDevelop::DUContext*> m_importedParentContexts;
-
+    
 private:
     void openContextForStatementList( const QList<StatementAst*>& );
+    
+    template<class DeclarationType>
+    inline DeclarationType* currentDeclaration() const
+    {
+        return dynamic_cast<DeclarationType*>( m_declarationStack.top() );
+    }
+
+    template<class DeclarationType>
+    DeclarationType* specialDeclaration( KTextEditor::SmartRange* smartRange,
+                                         const KDevelop::SimpleRange& range );
+
+    template<class DeclarationType>
+    DeclarationType* specialDeclaration( KTextEditor::SmartRange* smartRange,
+                                         const KDevelop::SimpleRange& range,
+                                         int scope );
+
+    int& nextDeclaration();
+
+    template <typename T> void visitNodeList( const QList<T*>& l )
+    {
+        typename QList<T*>::ConstIterator it, end = l.end();
+
+        for ( it = l.begin(); it != end; ++it )
+        {
+            visitNode(( *it ) );
+        }
+    }
+    
+    QStack<KDevelop::Declaration*> m_declarationStack;
+    QStack<int> m_nextDeclarationStack;
+    QStack<std::size_t> m_functionDefinedStack;
 };
 
 }

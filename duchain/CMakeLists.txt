@@ -6,7 +6,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
 set(duchain_SRCS
     contextbuilder.cpp
     pythoneditorintegrator.cpp
-    declarationbuilder.cpp
+#     declarationbuilder.cpp
 #     usebuilder.cpp
     dumpchain.cpp
 #     typebuilder.cpp

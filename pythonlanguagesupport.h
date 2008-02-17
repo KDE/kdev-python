@@ -53,16 +53,20 @@ class LanguageSupport : public KDevelop::IPlugin, public KDevelop::ILanguageSupp
 public:
     LanguageSupport( QObject *parent, const QVariantList& args = QVariantList() );
     virtual ~LanguageSupport();
-    QString name() const;
     /*Name Of the Language*/
-    KDevelop::ParseJob *createParseJob( const KUrl &url );
+    QString name() const;
     /*Parsejob used by background parser to parse given Url*/
+    KDevelop::ParseJob *createParseJob( const KUrl &url );
+    /*the actual language object*/
     KDevelop::ILanguage *language();
-    /*The Language*/
+    /*the code highlighter*/
     KDevelop::ICodeHighlighting* codeHighlighting() const;
 
 private slots:
     void documentChanged( KDevelop::IDocument* );
+    void documentLoaded( KDevelop::IDocument* );
+    void documentClosed( KDevelop::IDocument* );
+    void documentActivated( KDevelop::IDocument* );
 
 private:
     Highlighting* m_highlighting;

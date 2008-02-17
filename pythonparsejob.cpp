@@ -36,11 +36,12 @@
 #include <language/duchain/dumpdotgraph.h>
 
 #include "pythonhighlighting.h"
+#include "pythoneditorintegrator.h"
 #include "dumpchain.h"
 #include "parsesession.h"
 #include "pythonlanguagesupport.h"
-#include "contextbuilder.h"
-// #include "declarationbuilder.h"
+// #include "contextbuilder.h"
+#include "declarationbuilder.h"
 #include "astprinter.h"
 
 using namespace KDevelop;
@@ -130,25 +131,30 @@ void ParseJob::run()
         kDebug() << m_url;
         AstPrinter printer;
         printer.visitCode( m_ast );
-//         DeclarationBuilder declarationBuilder(m_session,m_url);
-        ContextBuilder builder;
-        m_duContext = builder.buildContexts( m_url, m_ast );
-//         m_duContext = declarationBuilder.buildDeclarations(m_AST);
-        kDebug() << "----Parsing Succeded---***";//TODO: bind declarations to the code model
-
         {
-            DUChainReadLocker lock( DUChain::lock() );
-            DumpChain dump;
-            dump.dump( m_duContext );
+            EditorIntegrator editor;
+            DeclarationBuilder builder( &editor );
+    //         ContextBuilder builder;
+            m_duContext = builder.buildContexts( m_url, m_ast );
+    //         m_duContext = declarationBuilder.buildDeclarations(m_AST);
+            kDebug() << "----Parsing Succeded---***";//TODO: bind declarations to the code model
+    
+            {
+                DUChainReadLocker lock( DUChain::lock() );
+                DumpChain dump;
+                dump.dump( m_duContext );
+            }
+    
+    //         KDevelop::DumpDotGraph dumpGraph;
+    //         kDebug() << "Dot-Graph:\n" << dumpGraph.dotGraph(m_duContext, true);
+            if( python() && python()->codeHighlighting() && editor.smart() )
+            {
+                QMutexLocker lock(editor.smart()->smartMutex());
+                python()->codeHighlighting()->highlightDUChain( m_duContext );
+            }
+            if( editor.smart() )
+                editor.smart()->clearRevision();
         }
-
-//         KDevelop::DumpDotGraph dumpGraph;
-//         kDebug() << "Dot-Graph:\n" << dumpGraph.dotGraph(m_duContext, true);
-//         if( python() && declarationBuilder.m_editor->smart() )
-//         {
-//             QMutexLocker lock(declarationBuilder.m_editor->smart()->smartMutex());
-//             python()->codeHighlighting()->highlightDUChain( m_duContext );
-//         }
     }
     else
     {

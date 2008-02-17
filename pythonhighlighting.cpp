@@ -62,10 +62,6 @@ KTextEditor::Attribute::Ptr Highlighting::attributeForType( Types type, Contexts
         switch ( type )
         {
 
-        case NamespaceType:
-            a->setBackground( QColor( Qt::green ).light( 170 ) );
-            break;
-
         case ClassType:
             a->setBackground( QColor( Qt::blue ).light( 175 ) );
             break;
@@ -76,10 +72,6 @@ KTextEditor::Attribute::Ptr Highlighting::attributeForType( Types type, Contexts
 
         case FunctionVariableType:
             a->setBackground( QColor( Qt::blue ).light( 175 ) );
-            break;
-
-        case NamespaceVariableType:
-            a->setBackground( QColor( Qt::red ).light( 175 ) );
             break;
 
         case ClassVariableType:

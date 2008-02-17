@@ -54,14 +54,9 @@ Cursor EditorIntegrator::findPosition( Ast* node , Edge edge ) const
 
 Range EditorIntegrator::findRange( Ast * node, RangeEdge edge )
 {
+    Q_UNUSED( edge );
     kDebug() << "Finding Range ==================";
-    if( edge == OuterEdge )
-    {
-        return Range( findPosition( node, FrontEdge ), findPosition( node, BackEdge ) );
-    }else 
-    {
-        return Range( findPosition( node, edge ), findPosition( node, edge ) );
-    }
+    return Range( findPosition( node, FrontEdge ), findPosition( node, BackEdge ) );
 }
 
 Range EditorIntegrator::findRange( Ast* from, Ast* to )

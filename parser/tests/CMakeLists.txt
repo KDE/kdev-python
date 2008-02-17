@@ -44,6 +44,16 @@ target_link_libraries(python-fortest
     ${QT_QTCORE_LIBRARY}
     kdev4pythonparser
 )
+
+set( classdefinitiontest_SRCS classdefinitiontest.cpp classdefinitiontest_data.cpp testvisitor.cpp )
+
+kde4_add_unit_test(python-classdefinitiontest ${classdefinitiontest_SRCS} )
+target_link_libraries(python-classdefinitiontest
+    ${QT_QTTEST_LIBRARY}
+    ${QT_QTCORE_LIBRARY}
+    kdev4pythonparser
+)
+
 if(KDE4_BUILD_TESTS)
 add_custom_target( run_py_test
 	COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/test_runner.py -p ${CMAKE_BINARY_DIR}/parser/python-parser -s ${CMAKE_CURRENT_SOURCE_DIR}

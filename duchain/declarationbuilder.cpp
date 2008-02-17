@@ -1,5 +1,6 @@
 /*****************************************************************************
  * Copyright (c) 2007 Piyush verma <piyush.verma@gmail.com>                  *
+ *   Copyright 2007 Andreas Pakulat <apaku@gmx.de>                           *
  *                                                                           *
  * Permission is hereby granted, free of charge, to any person obtaining     *
  * a copy of this software and associated documentation files (the           *
@@ -27,32 +28,32 @@
 #include <ktexteditor/smartrange.h>
 #include <ktexteditor/smartinterface.h>
 
-#include <definition.h>
-#include <symboltable.h>
-#include <forwarddeclaration.h>
-#include <duchain.h>
-#include <duchainlock.h>
-#include "parsesession.h"
+#include <language/duchain/definition.h>
+#include <language/duchain/symboltable.h>
+#include <language/duchain/functiondeclaration.h>
+#include <language/duchain/classfunctiondeclaration.h>
+#include <language/duchain/duchain.h>
+#include <language/duchain/duchainlock.h>
+
 #include "pythoneditorintegrator.h"
-#include "functiondeclaration.h"
-#include "classfunctiondeclaration.h"
 
 
 using namespace KTextEditor;
 
 using namespace KDevelop;
 
-using namespace Python;
+namespace Python
+{
 
 
-DeclarationBuilder::DeclarationBuilder( const KUrl &url )
-        : DeclarationBuilderBase( url )
+DeclarationBuilder::DeclarationBuilder()
+        : ContextBuilder()
 {
     kDebug() << "Building Declarations";
 }
 
-DeclarationBuilder::DeclarationBuilder( PythonEditorIntegrator* editor, const KUrl &url )
-        : DeclarationBuilderBase( editor, url )
+DeclarationBuilder::DeclarationBuilder( EditorIntegrator* editor )
+        : ContextBuilder( editor )
 {
     kDebug() << "Building Declarations";
 }
@@ -61,111 +62,84 @@ DeclarationBuilder:: ~DeclarationBuilder()
 {
 }
 
-TopDUContext* DeclarationBuilder::buildDeclarations( Ast* node )
+TopDUContext* DeclarationBuilder::buildDeclarations( const KUrl& url, Ast* node, const KDevelop::TopDUContextPointer& updateContext )
 {
-    TopDUContext* top = buildContexts( node );
+    TopDUContext* top = buildContexts( url, node, updateContext );
     Q_ASSERT( m_functionDefinedStack.isEmpty() );
     return top;
 }
 
-DUContext* DeclarationBuilder::buildSubDeclarations( const KUrl& url, ast_node *node, KDevelop::DUContext* parent )
+DUContext* DeclarationBuilder::buildSubDeclarations( const KUrl& url, Ast* node, KDevelop::DUContext* parent )
 {
     DUContext* top = buildSubContexts( url, node, parent );
     Q_ASSERT( m_functionDefinedStack.isEmpty() );
     return top;
 }
 
-Declaration* DeclarationBuilder::openDefinition( std::size_t name, ast_node* rangeNode, bool isFunction )
+Declaration* DeclarationBuilder::openDefinition( IdentifierAst* name, Ast* rangeNode, bool isFunction )
 {
-    return openDeclaration( name, rangeNode, isFunction );
-}
-
-void DeclarationBuilder::visit_funcdef( funcdef_ast *node )
-{
-    //kDebug()<<"Opening definiton for function";
-    openDefinition( node->func_name, node, true );
-    DeclarationBuilderBase::visit_funcdef( node );
-}
-
-void DeclarationBuilder::visit_classdef( classdef_ast *node )
-{
-    openDefinition( node->class_name, node );
-    DeclarationBuilderBase::visit_classdef( node );
-    //closeDeclaration();
-}
-
-void DeclarationBuilder::visit_fun_pos_param( fun_pos_param_ast *node )
-{
-    if ( node->star_id )
-        openDefinition( node->star_id, node, false );
-
-    if ( node->double_star_id )
-        openDefinition( node->double_star_id, node, false );
-
-    DeclarationBuilderBase::visit_fun_pos_param( node );
-}
-
-void DeclarationBuilder::visit_atom( atom_ast *node )
-{
-    if ( node->atom_identifier_name )
-    {
-        DUChainWriteLocker lock( DUChain::lock() );
-        QList<Declaration*> decls = currentContext()->findDeclarations( identifierForName( node->atom_identifier_name ), m_editor->findPosition( node->start_token, KDevelop::EditorIntegrator::FrontEdge ) );
-
-        if ( !decls.count() )
-        {
-            openDefinition( node->atom_identifier_name, node, false );
-        }
-    }
-
-    DeclarationBuilderBase::visit_atom( node );
+    return openDeclaration( name, rangeNode, isFunction, true );
 }
 
 template<class DeclarationType>
-DeclarationType* DeclarationBuilder::specialDeclaration( KTextEditor::Range* range )
+DeclarationType* DeclarationBuilder::specialDeclaration( KTextEditor::SmartRange* smartRange,
+        const KDevelop::SimpleRange& range )
 {
-    return new DeclarationType( range, currentContext() );
+    DeclarationType* ret = new DeclarationType( m_editor->currentUrl(), range, currentContext() );
+    ret->setSmartRange( smartRange );
+    return ret;
 }
 
 template<class DeclarationType>
-DeclarationType* DeclarationBuilder::specialDeclaration( KTextEditor::Range* range, int scope )
+DeclarationType* DeclarationBuilder::specialDeclaration( KTextEditor::SmartRange* smartRange,
+        const KDevelop::SimpleRange& range,
+        int scope )
 {
-    return new DeclarationType( range, ( KDevelop::Declaration::Scope )scope, currentContext() );
+    DeclarationType* ret = new DeclarationType( m_editor->currentUrl(), range, ( KDevelop::Declaration::Scope )scope, currentContext() );
+    ret->setSmartRange( smartRange );
+    return ret;
 }
 
-Declaration* DeclarationBuilder::openDeclaration( std::size_t name, ast_node* rangeNode, bool isFunction )
+Declaration* DeclarationBuilder::openDeclaration( IdentifierAst* name, Ast* range, bool isFunction, bool isDefinition, const Identifier& customName )
 {
-    //kDebug()<<"Is Function:"<<isFunction;
+    kDebug() << "Is Function:" << isFunction;
     DUChainWriteLocker lock( DUChain::lock() );
-    Declaration::Scope scope;
+
+    if ( isFunction && !m_functionDefinedStack.isEmpty() )
+        isDefinition |= ( bool )m_functionDefinedStack.top();
+
+    Declaration::Scope scope = Declaration::GlobalScope;
 
     switch ( currentContext()->type() )
     {
 
-    case DUContext::Class:
-        //kDebug()<<"In a Class Context";
-        scope = Declaration::ClassScope;
-        break;
+        case DUContext::Class:
+            kDebug() << "In a Class Context";
+            scope = Declaration::ClassScope;
+            break;
 
-    case DUContext::Function:
-        //kDebug()<<"In a Function Context";
-        scope = Declaration::FunctionScope;
-        break;
+        case DUContext::Function:
+            kDebug() << "In a Function Context";
+            scope = Declaration::FunctionScope;
+            break;
 
-    case DUContext::Global:
-        //kDebug()<<"Context is of type Global";
-        scope = Declaration::GlobalScope;
-        break;
-
-    default:
-        kDebug() << "Context is Neithea Class Nor a Function";
-        break;
+        default:
+            break;
     }
 
-    Range newRange = m_editor->findRange( rangeNode );
+    SimpleRange newRange = m_editor->findRange( name ? name : range );
 
     QualifiedIdentifier id;
-    id = identifierForName( name );
+
+    if ( name )
+    {
+        id = identifierForName( name->identifier );
+    }
+    else
+    {
+        id = QualifiedIdentifier( customName );
+    }
+
     Identifier lastId;
 
     if ( !id.isEmpty() )
@@ -178,41 +152,40 @@ Declaration* DeclarationBuilder::openDeclaration( std::size_t name, ast_node* ra
 //         kDebug()<<"Is Function While Recompiling:"<<isFunction;
         //dec->isDefinition() == true;
         QMutexLocker lock( m_editor->smart() ? m_editor->smart()->smartMutex() : 0 );
-        Range translated = newRange;
+        SimpleRange translated = newRange;
 
         if ( m_editor->smart() )
-            translated = m_editor->smart()->translateFromRevision( translated );
+            translated = SimpleRange( m_editor->smart()->translateFromRevision( translated.textRange() ) );
 
-        Q_ASSERT( translated.start() != translated.end() );
-
-        kDebug() << "Recompiling:" << currentContext()->localDeclarations().count() << "declarations found.";
-
-        for ( ; nextDeclaration() < currentContext()->localDeclarations().count(); ++nextDeclaration() )
+        foreach( Declaration* dec, currentContext()->allLocalDeclarations( lastId ) )
         {
-            Declaration* dec = currentContext()->localDeclarations().at( nextDeclaration() );
-//             if (dec->textRange().start() > translated.end() && dec->smartRange())
-//                 break;
+            if ( wasEncountered( dec ) )
+            {
+                continue;
+            }
 
-            if ( dec->textRange() == translated &&
+            if ( dec->range() == translated &&
                     dec->scope() == scope &&
-                    (( id.isEmpty() && dec->identifier().toString().isEmpty() ) || ( !id.isEmpty() && lastId == dec->identifier() ) ) )
+                    ( ( id.isEmpty() && dec->identifier().toString().isEmpty() ) || ( !id.isEmpty() && lastId == dec->identifier() ) ) &&
+                    dec->isDefinition() == isDefinition
+               )
             {
                 if ( isFunction )
                 {
                     if ( scope == Declaration::ClassScope )
                     {
                         if ( !dynamic_cast<ClassFunctionDeclaration*>( dec ) )
-                            break;
+                            continue;
                     }
                     else if ( !dynamic_cast<AbstractFunctionDeclaration*>( dec ) )
                     {
-                        break;
+                        continue;
                     }
                 }
                 else if ( scope == Declaration::ClassScope )
                 {
                     if ( !dynamic_cast<ClassMemberDeclaration*>( dec ) )
-                        break;
+                        continue;
                 }
 
                 declaration = dec;
@@ -225,8 +198,8 @@ Declaration* DeclarationBuilder::openDeclaration( std::size_t name, ast_node* ra
     if ( !declaration )
     {
         //kDebug()<<"No Declarations";
-        Range* prior = m_editor->currentRange();
-        Range* range = m_editor->createRange( newRange );
+        SmartRange* prior = m_editor->currentRange();
+        SmartRange* range = m_editor->createRange( newRange.textRange() );
         m_editor->exitCurrentRange();
         //(range->start() != range->end());
         Q_ASSERT( m_editor->currentRange() == prior );
@@ -236,11 +209,11 @@ Declaration* DeclarationBuilder::openDeclaration( std::size_t name, ast_node* ra
             //kDebug()<<"Is a Function";
             if ( scope == Declaration::ClassScope )
             {
-                declaration = specialDeclaration<ClassFunctionDeclaration>( range );
+                declaration = specialDeclaration<ClassFunctionDeclaration>( range, newRange );
             }
             else
             {
-                declaration = specialDeclaration<FunctionDeclaration>( range, scope );
+                declaration = specialDeclaration<FunctionDeclaration>( range, newRange, scope );
             }
 
             if ( !m_functionDefinedStack.isEmpty() )
@@ -248,40 +221,27 @@ Declaration* DeclarationBuilder::openDeclaration( std::size_t name, ast_node* ra
         }
         else if ( scope == Declaration::ClassScope )
         {
-            declaration = specialDeclaration<ClassMemberDeclaration>( range );
+            declaration = specialDeclaration<ClassMemberDeclaration>( range, newRange );
         }
         else
         {
-            declaration = specialDeclaration<Declaration>( range, scope );
+            declaration = specialDeclaration<Declaration>( range, newRange, scope );
         }
 
-        if ( name )
-        {
-            declaration->setIdentifier( id.last() );
-        }
-
-        declaration->setDeclarationIsDefinition( true );
+        declaration->setDeclarationIsDefinition( isDefinition );
 
         switch ( currentContext()->type() )
         {
 
-        case DUContext::Global:
-            kDebug() << "Found Declaration::Global Context";
-            SymbolTable::self()->addDeclaration( declaration );
-            break;
+            case DUContext::Global:
 
-        case DUContext::Class:
-            kDebug() << "Found Declaration::Class Context";
-            SymbolTable::self()->addDeclaration( declaration );
-            break;
+            case DUContext::Class:
+                kDebug() << "Found Declaration::Class Context";
+                SymbolTable::self()->addDeclaration( declaration );
+                break;
 
-        case DUContext::Function:
-            kDebug() << "Found Declaration::Function Context";
-            SymbolTable::self()->addDeclaration( declaration );
-            break;
-
-        default:
-            break;
+            default:
+                break;
         }
     }
 
@@ -291,19 +251,38 @@ Declaration* DeclarationBuilder::openDeclaration( std::size_t name, ast_node* ra
     return declaration;
 }
 
-void DeclarationBuilder::closeDeclaration()
+void DeclarationBuilder::eventuallyAssignInternalContext()
 {
     if ( m_lastContext )
     {
         DUChainWriteLocker lock( DUChain::lock() );
+
+        if ( dynamic_cast<ClassFunctionDeclaration*>( currentDeclaration() ) )
+            Q_ASSERT( !static_cast<ClassFunctionDeclaration*>( currentDeclaration() )->isConstructor() || currentDeclaration()->context()->type() == DUContext::Class );
+
+        if ( m_lastContext && ( m_lastContext->type() == DUContext::Class || m_lastContext->type() == DUContext::Other || m_lastContext->type() == DUContext::Function ) )
+        {
+            if ( !m_lastContext->owner() || ( !wasEncountered( m_lastContext->owner()->asDeclaration() ) && !wasEncountered( m_lastContext->owner()->asDefinition() ) ) )   //if the context is already internalContext of another declaration, leave it alone
+            {
+                currentDeclaration()->setInternalContext( m_lastContext );
+
+                if ( currentDeclaration()->range().start >= currentDeclaration()->range().end )
+                    kDebug() << "Warning: Range was invalidated";
+
+                m_lastContext = 0;
+            }
+        }
+    }
+}
+
+void DeclarationBuilder::closeDeclaration()
+{
+    if ( m_lastContext )
+    {
         currentDeclaration()->setKind( Declaration::Type );
     }
 
-    if ( m_lastContext && ( m_lastContext->type() == DUContext::Class || m_lastContext->type() == DUContext::Other || m_lastContext->type() == DUContext::Function ) )
-    {
-        currentDeclaration()->setInternalContext( m_lastContext );
-        m_lastContext = 0;
-    }
+    eventuallyAssignInternalContext();
 
     m_declarationStack.pop();
 }
@@ -315,14 +294,23 @@ void DeclarationBuilder::abortDeclaration()
 
 void DeclarationBuilder::openContext( DUContext * newContext )
 {
-    DeclarationBuilderBase::openContext( newContext );
-
-    m_nextDeclarationStack.push( 0 );
+    ContextBuilder::openContext( newContext );
 }
 
 void DeclarationBuilder::closeContext()
 {
-    DeclarationBuilderBase::closeContext();
-    m_nextDeclarationStack.pop();
+    ContextBuilder::closeContext();
 }
-// kate: space-indent on; indent-width 4; tab-width 4; replace-tabs on; auto-insert-doxygen on
+
+
+KDevelop::Declaration* DeclarationBuilder::currentDeclaration() const
+{
+    return m_declarationStack.top();
+}
+
+int& DeclarationBuilder::nextDeclaration()
+{
+    return m_nextDeclarationStack.top();
+}
+
+}

@@ -1,5 +1,6 @@
 /*****************************************************************************
  * Copyright (c) 2007 Piyush verma <piyush.verma@gmail.com>                  *
+ *   Copyright 2007 Andreas Pakulat <apaku@gmx.de>                           *
  *                                                                           *
  * Permission is hereby granted, free of charge, to any person obtaining     *
  * a copy of this software and associated documentation files (the           *
@@ -23,8 +24,8 @@
 #ifndef DECLARATIONBUILDER_H
 #define DECLARATIONBUILDER_H
 
-#include <declaration.h>
-#include <classfunctiondeclaration.h>
+#include <language/duchain/declaration.h>
+#include <language/duchain/classfunctiondeclaration.h>
 #include "contextbuilder.h"
 #include "pythonduchainexport.h"
 
@@ -35,32 +36,38 @@ namespace KDevelop
 class Declaration;
 }
 
+namespace Python
+{
+
 class KDEVPYTHONDUCHAIN_EXPORT DeclarationBuilder: public ContextBuilder
 {
 
 public:
-    DeclarationBuilder( const KUrl &url );
-    DeclarationBuilder( PythonEditorIntegrator* editor, const KUrl &url );
-    KDevelop::TopDUContext* buildDeclarations( Ast* node );
-    KDevelop::DUContext* buildSubDeclarations( const KUrl& url, ast_node *node, KDevelop::DUContext* parent = 0 );
-//     virtual void visit_fun_pos_param( fun_pos_param_ast *node );
-//     virtual void visit_atom( atom_ast *node );
-//     virtual void visit_classdef( classdef_ast *node );
-//     virtual void visit_funcdef( funcdef_ast *node );
+    DeclarationBuilder();
+    DeclarationBuilder( EditorIntegrator* editor );
+    KDevelop::TopDUContext* buildDeclarations( const KUrl& url, Ast* node, 
+                                               const KDevelop::TopDUContextPointer& updateContext 
+                                                       = KDevelop::TopDUContextPointer() );
+    KDevelop::DUContext* buildSubDeclarations( const KUrl& url, Ast* node, 
+                                               KDevelop::DUContext* parent = 0 );
+    KDevelop::Declaration* currentDeclaration() const;
+
+protected:
     virtual void openContext( KDevelop::DUContext* newContext );
     virtual void closeContext();
     virtual ~DeclarationBuilder();
 
 private:
-    KDevelop::ForwardDeclaration* openForwardDeclaration( std::size_t name, ast_node* range );
-    KDevelop::Declaration* openDeclaration( std::size_t name, ast_node* range, bool isFunction = false );
-    KDevelop::Declaration* openDefinition( std::size_t name, ast_node* range, bool isFunction = false );
+    KDevelop::Declaration* openDeclaration( IdentifierAst* name, Ast* range, 
+                                             bool isFunction = false, 
+                                             bool isDefinition = false, 
+                                             const KDevelop::Identifier& customName 
+                                                     = KDevelop::Identifier() );
+    KDevelop::Declaration* openDefinition( IdentifierAst* name, Ast* range, 
+                                           bool isFunction = false );
     void closeDeclaration();
     void abortDeclaration();
-    inline KDevelop::Declaration* currentDeclaration() const
-    {
-        return m_declarationStack.top();
-    }
+    void eventuallyAssignInternalContext();
 
     template<class DeclarationType>
     inline DeclarationType* currentDeclaration() const
@@ -69,18 +76,22 @@ private:
     }
 
     template<class DeclarationType>
-    DeclarationType* specialDeclaration( KTextEditor::Range* range );
+    DeclarationType* specialDeclaration( KTextEditor::SmartRange* smartRange,
+                                         const KDevelop::SimpleRange& range );
+
     template<class DeclarationType>
-    DeclarationType* specialDeclaration( KTextEditor::Range* range, int scope );
-    inline int& nextDeclaration()
-    {
-        return m_nextDeclarationStack.top();
-    }
+    DeclarationType* specialDeclaration( KTextEditor::SmartRange* smartRange,
+                                         const KDevelop::SimpleRange& range,
+                                         int scope );
+
+    int& nextDeclaration();
 
     QStack<KDevelop::Declaration*> m_declarationStack;
     QStack<int> m_nextDeclarationStack;
     QStack<std::size_t> m_functionDefinedStack;
 };
+
+}
 
 #endif
 // kate: space-indent on; indent-width 4; tab-width 4; replace-tabs on; auto-insert-doxygen on

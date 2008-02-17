@@ -45,6 +45,7 @@ class KDEVPYTHONDUCHAIN_EXPORT DeclarationBuilder: public ContextBuilder
 public:
     DeclarationBuilder();
     DeclarationBuilder( EditorIntegrator* editor );
+    virtual ~DeclarationBuilder();
     KDevelop::TopDUContext* buildDeclarations( const KUrl& url, Ast* node, 
                                                const KDevelop::TopDUContextPointer& updateContext 
                                                        = KDevelop::TopDUContextPointer() );
@@ -55,7 +56,6 @@ public:
 protected:
     virtual void openContext( KDevelop::DUContext* newContext );
     virtual void closeContext();
-    virtual ~DeclarationBuilder();
 
     virtual void visitClassDefinition( ClassDefinitionAst* node );
 

@@ -462,8 +462,11 @@ void AstBuilder::visitClassdef(PythonParser::ClassdefAst *node)
     kDebug() << "visitClassdef start";
     ClassDefinitionAst* ast = createAst<ClassDefinitionAst>( node );
     ast->className = createIdentifier( ast, node->className );
-    visitNode( node->testlist );
-    ast->inheritance = generateSpecializedList<ExpressionAst>( mListStack.pop() );
+    if( node->testlist )
+    {
+        visitNode( node->testlist );
+        ast->inheritance = generateSpecializedList<ExpressionAst>( mListStack.pop() );
+    }
     visitNode( node->classSuite );
     ast->classBody = generateSpecializedList<StatementAst>( mListStack.pop() );
     mNodeStack.push(ast);

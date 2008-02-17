@@ -63,27 +63,38 @@ KTextEditor::Attribute::Ptr Highlighting::attributeForType( Types type, Contexts
         {
 
         case ClassType:
-            a->setBackground( QColor( Qt::blue ).light( 175 ) );
+        {
+            a->setBackground( QColor( 0x780859 ) );
+            KTextEditor::Attribute::Ptr e(new KTextEditor::Attribute() );
+            e->setForeground( QColor( 0x005500 ) );
+            a->setDynamicAttribute( Attribute::ActivateCaretIn, e );
             break;
-
+        }
         case FunctionType:
-            a->setBackground( QColor( Qt::green ).light( 175 ) );
+            a->setBackground( QColor( 0x21005A ) );
             break;
 
         case FunctionVariableType:
-            a->setBackground( QColor( Qt::blue ).light( 175 ) );
+            a->setBackground( QColor( 0x300085 ) );
             break;
 
         case ClassVariableType:
-            a->setBackground( QColor( Qt::green ).light( 165 ) );
+            a->setBackground( QColor( 0x443069 ) );
             break;
 
         default:
-            a->setBackground( QColor( Qt::green ).light( 175 ) );
             break;
         }
 
-        a->setFontBold();
+        switch( context )
+        {
+            case DefinitionContext:
+            case DeclarationContext:
+                a->setFontBold();
+                break;
+            default:
+                break;
+        }
     }
 
     return a;

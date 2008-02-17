@@ -42,16 +42,26 @@ EditorIntegrator::EditorIntegrator()
 Cursor EditorIntegrator::findPosition( Ast* node , Edge edge ) const
 {
     if ( edge == BackEdge )
-        return Cursor( node->endLine, node->endCol );
-    else
+    {
+        // Apparently KTE expects a range to go until _after_ the last character that should be included
+        // however the parser calculates endCol as the index _before_ the last included character, so adjust here
+        return Cursor( node->endLine, node->endCol+1 );
+    }else
+    {
         return Cursor( node->startLine, node->startCol );
+    }
 }
 
 Range EditorIntegrator::findRange( Ast * node, RangeEdge edge )
 {
     kDebug() << "Finding Range ==================";
-    Q_UNUSED( edge );
-    return Range( findPosition( node, FrontEdge ), findPosition( node, BackEdge ) );
+    if( edge == OuterEdge )
+    {
+        return Range( findPosition( node, FrontEdge ), findPosition( node, BackEdge ) );
+    }else 
+    {
+        return Range( findPosition( node, edge ), findPosition( node, edge ) );
+    }
 }
 
 Range EditorIntegrator::findRange( Ast* from, Ast* to )

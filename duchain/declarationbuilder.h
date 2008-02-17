@@ -57,6 +57,8 @@ protected:
     virtual void closeContext();
     virtual ~DeclarationBuilder();
 
+    virtual void visitClassDefinition( ClassDefinitionAst* node );
+
 private:
     KDevelop::Declaration* openDeclaration( IdentifierAst* name, Ast* range, 
                                              bool isFunction = false, 

@@ -313,4 +313,14 @@ int& DeclarationBuilder::nextDeclaration()
     return m_nextDeclarationStack.top();
 }
 
+void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
+{
+    kDebug() << "opening definition";
+    openDefinition( node->className, node );
+    ContextBuilder::visitClassDefinition( node );
+    eventuallyAssignInternalContext();
+    closeDeclaration();
 }
+
+}
+

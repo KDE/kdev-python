@@ -45,7 +45,7 @@ void DumpChain::dump( DUContext * context, bool imported )
 {
     if( !context )
         return;
-    kDebug() << QString( indent*2, ' ' ) << (imported ? "==import==> Context " : "New Context ") << context->scopeIdentifier(true) << context->range().textRange() << " " << (dynamic_cast<TopDUContext*>(context) ? "top-context" : "");
+    kDebug() << QString( indent*2, ' ' ) << (imported ? "==import==> Context " : "New Context ") << context->scopeIdentifier(true) << context->range().textRange() << " " << context << " " << (dynamic_cast<TopDUContext*>(context) ? "top-context" : "");
     if (!imported)
     {
         foreach (Declaration* dec, context->localDeclarations())

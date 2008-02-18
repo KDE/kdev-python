@@ -228,6 +228,7 @@ Declaration* DeclarationBuilder::openDeclaration( IdentifierAst* name, Ast* rang
             declaration = specialDeclaration<Declaration>( range, newRange, scope );
         }
 
+        declaration->setIdentifier( id.last() );
         declaration->setDeclarationIsDefinition( isDefinition );
 
         switch ( currentContext()->type() )
@@ -316,8 +317,8 @@ int& DeclarationBuilder::nextDeclaration()
 void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
     kDebug() << "opening definition";
-    openDefinition( node->className, node );
     ContextBuilder::visitClassDefinition( node );
+    openDefinition( node->className, node );
     eventuallyAssignInternalContext();
     closeDeclaration();
 }

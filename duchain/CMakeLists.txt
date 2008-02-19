@@ -23,5 +23,5 @@ target_link_libraries( kdev4pythonduchain
     kdev4pythonparser
  )
 
-install(TARGETS kdev4pythonduchain DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS kdev4pythonduchain DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
 

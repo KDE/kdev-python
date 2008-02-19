@@ -56,7 +56,7 @@ kde4_add_executable( python-parser main.cpp )
 target_link_libraries(python-parser ${QT_QTCORE_LIBRARY} kdev4pythonparser)
 
 install(TARGETS python-parser DESTINATION ${BIN_INSTALL_DIR})
-install(TARGETS kdev4pythonparser DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS kdev4pythonparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 
 add_custom_target( copy-generated

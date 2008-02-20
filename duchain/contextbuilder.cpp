@@ -200,71 +200,17 @@ void ContextBuilder::supportBuild( Ast *node, DUContext* context )
     Q_ASSERT( m_contextStack.isEmpty() );
 }
 
-void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
-{
-    kDebug() << "Visiting Class Declaration";
-    openContext( node, DUContext::Class, identifierForName( node->className->identifier ) );
-    addImportedContexts();
-    visitNodeList( node->inheritance );
-    visitNodeList( node->classBody );
-    closeContext();
-}
-
-void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
-{
-    kDebug() << "building function definition context";
-    ClassDefinitionAst* classast = dynamic_cast<ClassDefinitionAst*>( node->parent );
-
-    if ( classast )
-    {
-        DUChainReadLocker lock( DUChain::lock() );
-        QList<DUContext*> classContexts = currentContext()->findContexts( DUContext::Class, QualifiedIdentifier( classast->context->localScopeIdentifier() ) );
-
-        if ( classContexts.count() != 1 )
-        {
-            m_importedParentContexts.append( classContexts.first() );
-        }
-
-        if ( classContexts.count() > 1 )
-        {
-            kWarning() << "Multiple class contexts for" << classast->className->identifier << classast->context->localScopeIdentifier() << "shouldn't happen!";
-            foreach( DUContext* classContext, classContexts )
-            {
-                kDebug() << "Context" << classContext->scopeIdentifier( true ) << "range" << classContext->range().textRange() << "in" << classContext->url().str();
-            }
-        }
-    }
-
-    visitNodeList( node->decorators );
-
-    if ( node->parameters.count() > 0 )
-    {
-        DUContext* funcctx = openContext( node->parameters.first(), node->parameters.last(), DUContext::Function, identifierForName( node->functionName->identifier ) );
-        addImportedContexts();
-        visitNodeList( node->parameters );
-        closeContext();
-        m_importedParentContexts.append( funcctx );
-    }
-
-    openContext( node->functionBody.first(), node->functionBody.last() , DUContext::Other );
-
-    addImportedContexts();
-    visitNodeList( node->functionBody );
-    closeContext();
-    m_importedParentContexts.clear();
-}
-
 void ContextBuilder::openContext( DUContext* newContext )
 {
     m_contextStack.push( newContext );
     m_nextContextStack.push( 0 );
 }
 
-DUContext* ContextBuilder::openContext( Ast* rangeNode, DUContext::ContextType type, const QString& identifier )
+DUContext* ContextBuilder::openContext( Ast* rangeNode, DUContext::ContextType type, IdentifierAst* identifier )
 {
     if ( m_compilingContexts )
     {
-        DUContext* ret = openContextInternal( m_editor->findRange( rangeNode ), type, !identifier.isEmpty() ? identifierForName( identifier ) : QualifiedIdentifier() );
+        DUContext* ret = openContextInternal( m_editor->findRange( rangeNode ), type, identifier ? identifierForName( identifier ) : QualifiedIdentifier() );
         rangeNode->context = ret;
         return ret;
     }
@@ -394,33 +340,9 @@ void ContextBuilder::closeContext()
     m_editor->exitCurrentRange();
 }
 
-void ContextBuilder::visitFor( ForAst* node )
+const QualifiedIdentifier ContextBuilder::identifierForName( IdentifierAst* name )
 {
-    kDebug() << "Found for, building context";
-    DUContext* forctx = openContext( node->assignedTargets.first(), node->assignedTargets.last(), DUContext::Other );
-    visitNodeList( node->assignedTargets );
-    closeContext();
-
-    visitNodeList( node->iterable );
-
-    m_importedParentContexts = QList<DUContext*>() << forctx;
-    openContextForStatementList( node->forBody );
-    openContextForStatementList( node->elseBody );
-    m_importedParentContexts.clear();
-}
-
-void ContextBuilder::visitWhile( WhileAst* node )
-{
-    kDebug() << "Creating contexts for while";
-    visitNode( node->condition );
-    openContextForStatementList( node->whileBody );
-    openContextForStatementList( node->elseBody );
-    m_importedParentContexts.clear();
-}
-
-const QualifiedIdentifier ContextBuilder::identifierForName( const QString& name )
-{
-    m_identifier = Identifier( name );
+    m_identifier = Identifier( name->identifier );
     m_qidentifier.clear();
     m_qidentifier.push( m_identifier );
     return m_qidentifier;
@@ -439,18 +361,6 @@ void ContextBuilder::addImportedContexts()
     }
 }
 
-
-void ContextBuilder::visitWith( WithAst * node )
-{
-    kDebug() << "creating contexts for With";
-
-    m_importedParentContexts = QList<DUContext*>() << openContext( node->name, DUContext::Other );
-    visitNode( node->name );
-    closeContext();
-
-    openContextForStatementList( node->body );
-}
-
 void ContextBuilder::openContextForStatementList( const QList<StatementAst*>& l )
 {
     if ( l.count() > 0 )
@@ -460,31 +370,6 @@ void ContextBuilder::openContextForStatementList( const QList<StatementAst*>& l 
         visitNodeList( l );
         closeContext();
     }
-}
-
-void ContextBuilder::visitTry( TryAst* node )
-{
-    kDebug() << "creating contexts for try";
-    openContextForStatementList( node->tryBody );
-    visitNodeList( node->exceptions );
-    openContextForStatementList( node->elseBody );
-    openContextForStatementList( node->finallyBody );
-}
-
-void ContextBuilder::visitIf( IfAst* node )
-{
-    kDebug() << "creating contexts for if";
-    visitNode( node->ifCondition );
-    openContextForStatementList( node->ifBody );
-    QList< QPair< ExpressionAst*, QList<StatementAst*> > >::ConstIterator it, end = node->elseIfBodies.end();
-
-    for ( it = node->elseIfBodies.begin(); it != end; ++it )
-    {
-        visitNode( ( *it ).first );
-        openContextForStatementList( ( *it ).second );
-    }
-
-    openContextForStatementList( node->elseBody );
 }
 
 void ContextBuilder::setEncountered( KDevelop::DUChainBase* item )
@@ -519,6 +404,116 @@ void ContextBuilder::smartenContext( TopDUContext* topLevelContext )
         SmartConverter conv( m_editor, 0 );
         conv.convertDUChain( topLevelContext );
     }
+}
+
+void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
+{
+    kDebug() << "Visiting Class Declaration";
+    openContext( node, DUContext::Class, identifierForName( node->className ) );
+    addImportedContexts();
+    visitNodeList( node->inheritance );
+    visitNodeList( node->classBody );
+    closeContext();
+}
+
+void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
+{
+    kDebug() << "building function definition context";
+    ClassDefinitionAst* classast = dynamic_cast<ClassDefinitionAst*>( node->parent );
+
+    if ( classast )
+    {
+        DUChainReadLocker lock( DUChain::lock() );
+        QList<DUContext*> classContexts = currentContext()->findContexts( DUContext::Class, QualifiedIdentifier( classast->context->localScopeIdentifier() ) );
+
+        if ( classContexts.count() != 1 )
+        {
+            m_importedParentContexts.append( classContexts.first() );
+        }
+
+        if ( classContexts.count() > 1 )
+        {
+            kWarning() << "Multiple class contexts for" << classast->className->identifier << classast->context->localScopeIdentifier() << "shouldn't happen!";
+            foreach( DUContext* classContext, classContexts )
+            {
+                kDebug() << "Context" << classContext->scopeIdentifier( true ) << "range" << classContext->range().textRange() << "in" << classContext->url().str();
+            }
+        }
+    }
+
+    visitNodeList( node->decorators );
+
+    if ( node->parameters.count() > 0 )
+    {
+        DUContext* funcctx = openContext( node->parameters.first(), node->parameters.last(), DUContext::Function, identifierForName( node->functionName ) );
+        addImportedContexts();
+        visitNodeList( node->parameters );
+        closeContext();
+        m_importedParentContexts.append( funcctx );
+    }
+
+    openContextForStatementList( node->functionBody );
+    m_importedParentContexts.clear();
+}
+
+void ContextBuilder::visitFor( ForAst* node )
+{
+    kDebug() << "Found for, building context";
+    DUContext* forctx = openContext( node->assignedTargets.first(), node->assignedTargets.last(), DUContext::Other );
+    visitNodeList( node->assignedTargets );
+    closeContext();
+
+    visitNodeList( node->iterable );
+
+    m_importedParentContexts = QList<DUContext*>() << forctx;
+    openContextForStatementList( node->forBody );
+    openContextForStatementList( node->elseBody );
+    m_importedParentContexts.clear();
+}
+
+void ContextBuilder::visitWhile( WhileAst* node )
+{
+    kDebug() << "Creating contexts for while";
+    visitNode( node->condition );
+    openContextForStatementList( node->whileBody );
+    openContextForStatementList( node->elseBody );
+}
+
+void ContextBuilder::visitWith( WithAst * node )
+{
+    kDebug() << "creating contexts for With";
+
+    m_importedParentContexts = QList<DUContext*>() << openContext( node->name, DUContext::Other );
+    visitNode( node->name );
+    closeContext();
+
+    openContextForStatementList( node->body );
+    m_importedParentContexts.clear();
+}
+
+void ContextBuilder::visitTry( TryAst* node )
+{
+    kDebug() << "creating contexts for try";
+    openContextForStatementList( node->tryBody );
+    visitNodeList( node->exceptions );
+    openContextForStatementList( node->elseBody );
+    openContextForStatementList( node->finallyBody );
+}
+
+void ContextBuilder::visitIf( IfAst* node )
+{
+    kDebug() << "creating contexts for if";
+    visitNode( node->ifCondition );
+    openContextForStatementList( node->ifBody );
+    QList< QPair< ExpressionAst*, QList<StatementAst*> > >::ConstIterator it, end = node->elseIfBodies.end();
+
+    for ( it = node->elseIfBodies.begin(); it != end; ++it )
+    {
+        visitNode( ( *it ).first );
+        openContextForStatementList( ( *it ).second );
+    }
+
+    openContextForStatementList( node->elseBody );
 }
 
 }

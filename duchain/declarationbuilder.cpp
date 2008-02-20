@@ -133,7 +133,7 @@ Declaration* DeclarationBuilder::openDeclaration( IdentifierAst* name, Ast* rang
 
     if ( name )
     {
-        id = identifierForName( name->identifier );
+        id = identifierForName( name );
     }
     else
     {
@@ -149,8 +149,6 @@ Declaration* DeclarationBuilder::openDeclaration( IdentifierAst* name, Ast* rang
 
     if ( recompiling() )
     {
-//         kDebug()<<"Is Function While Recompiling:"<<isFunction;
-        //dec->isDefinition() == true;
         QMutexLocker lock( m_editor->smart() ? m_editor->smart()->smartMutex() : 0 );
         SimpleRange translated = newRange;
 
@@ -321,6 +319,10 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     openDefinition( node->className, node );
     eventuallyAssignInternalContext();
     closeDeclaration();
+}
+
+void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
+{
 }
 
 }

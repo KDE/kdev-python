@@ -78,10 +78,10 @@ protected:
     QStack<KDevelop::DUContext*> m_contextStack;
     int m_nextContextIndex;
 
-    const KDevelop::QualifiedIdentifier identifierForName( const QString& name );
+    const KDevelop::QualifiedIdentifier identifierForName( IdentifierAst* );
 
     KDevelop::DUContext* openContext( Ast* range, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier );
-    KDevelop::DUContext* openContext( Ast* range, KDevelop::DUContext::ContextType type, const QString& = QString() );
+    KDevelop::DUContext* openContext( Ast* range, KDevelop::DUContext::ContextType type, IdentifierAst* = 0 );
     KDevelop::DUContext* openContext( Ast* fromRange, Ast* toRange, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier = KDevelop::QualifiedIdentifier() );
     KDevelop::DUContext* openContextInternal( const KDevelop::SimpleRange& range, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier );
 

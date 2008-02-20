@@ -314,7 +314,7 @@ int& DeclarationBuilder::nextDeclaration()
 
 void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
-    kDebug() << "opening definition";
+    kDebug() << "opening class definition";
     ContextBuilder::visitClassDefinition( node );
     openDefinition( node->className, node );
     eventuallyAssignInternalContext();
@@ -323,6 +323,10 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 
 void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
+    kDebug() << "opening function definition";
+    openDeclaration( node->functionName, node, true, true );
+    ContextBuilder::visitFunctionDefinition( node );
+    closeDeclaration();
 }
 
 }

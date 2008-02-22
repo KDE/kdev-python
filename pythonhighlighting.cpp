@@ -197,7 +197,7 @@ void Highlighting::highlightDeclaration( Declaration * declaration ) const
         range->setAttribute( attributeForType( typeForDeclaration( declaration ), DeclarationContext ) );
 }
 
-void Highlighting::highlightUse( KDevelop::Use* ) const
+void Highlighting::highlightUses( DUContext* ) const
 {
 }
 

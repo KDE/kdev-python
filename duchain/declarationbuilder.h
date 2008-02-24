@@ -59,15 +59,14 @@ protected:
 
     virtual void visitClassDefinition( ClassDefinitionAst* node );
     virtual void visitFunctionDefinition( FunctionDefinitionAst* node );
+    virtual void visitDefaultParameter( DefaultParameterAst* node );
+    virtual void visitLambda( LambdaAst* node );
 
 private:
-    KDevelop::Declaration* openDeclaration( IdentifierAst* name, Ast* range, 
-                                             bool isFunction = false, 
-                                             bool isDefinition = false, 
-                                             const KDevelop::Identifier& customName 
-                                                     = KDevelop::Identifier() );
-    KDevelop::Declaration* openDefinition( IdentifierAst* name, Ast* range, 
-                                           bool isFunction = false );
+    KDevelop::Declaration* openDeclaration( IdentifierAst* name, Ast* range,
+                                            bool isFunction = false,
+                                            const KDevelop::Identifier& customName
+                                                    = KDevelop::Identifier() );
     void closeDeclaration();
     void abortDeclaration();
     void eventuallyAssignInternalContext();

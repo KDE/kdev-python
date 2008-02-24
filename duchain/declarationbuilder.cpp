@@ -76,11 +76,6 @@ DUContext* DeclarationBuilder::buildSubDeclarations( const KUrl& url, Ast* node,
     return top;
 }
 
-Declaration* DeclarationBuilder::openDefinition( IdentifierAst* name, Ast* rangeNode, bool isFunction )
-{
-    return openDeclaration( name, rangeNode, isFunction, true );
-}
-
 template<class DeclarationType>
 DeclarationType* DeclarationBuilder::specialDeclaration( KTextEditor::SmartRange* smartRange,
         const KDevelop::SimpleRange& range )
@@ -100,13 +95,10 @@ DeclarationType* DeclarationBuilder::specialDeclaration( KTextEditor::SmartRange
     return ret;
 }
 
-Declaration* DeclarationBuilder::openDeclaration( IdentifierAst* name, Ast* range, bool isFunction, bool isDefinition, const Identifier& customName )
+Declaration* DeclarationBuilder::openDeclaration( IdentifierAst* name, Ast* range, bool isFunction, const Identifier& customName )
 {
     kDebug() << "Is Function:" << isFunction;
     DUChainWriteLocker lock( DUChain::lock() );
-
-    if ( isFunction && !m_functionDefinedStack.isEmpty() )
-        isDefinition |= ( bool )m_functionDefinedStack.top();
 
     Declaration::Scope scope = Declaration::GlobalScope;
 
@@ -164,8 +156,7 @@ Declaration* DeclarationBuilder::openDeclaration( IdentifierAst* name, Ast* rang
 
             if ( dec->range() == translated &&
                     dec->scope() == scope &&
-                    ( ( id.isEmpty() && dec->identifier().toString().isEmpty() ) || ( !id.isEmpty() && lastId == dec->identifier() ) ) &&
-                    dec->isDefinition() == isDefinition
+                    ( ( id.isEmpty() && dec->identifier().toString().isEmpty() ) || ( !id.isEmpty() && lastId == dec->identifier() ) )
                )
             {
                 if ( isFunction )
@@ -227,7 +218,7 @@ Declaration* DeclarationBuilder::openDeclaration( IdentifierAst* name, Ast* rang
         }
 
         declaration->setIdentifier( id.last() );
-        declaration->setDeclarationIsDefinition( isDefinition );
+        declaration->setDeclarationIsDefinition( true );
 
         switch ( currentContext()->type() )
         {
@@ -316,7 +307,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
     kDebug() << "opening class definition";
     ContextBuilder::visitClassDefinition( node );
-    openDefinition( node->className, node );
+    openDeclaration( node->className, node );
     eventuallyAssignInternalContext();
     closeDeclaration();
 }
@@ -324,9 +315,39 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
     kDebug() << "opening function definition";
-    openDeclaration( node->functionName, node, true, true );
+    openDeclaration( node->functionName, node, true );
     ContextBuilder::visitFunctionDefinition( node );
     closeDeclaration();
+}
+
+void DeclarationBuilder::visitLambda( LambdaAst* node )
+{
+    kDebug() << "opening lambda def";
+    openDeclaration( static_cast<IdentifierAst*>(0), node, true, Identifier( "lambda" ) );
+    ContextBuilder::visitLambda( node );
+    closeDeclaration();
+}
+
+void DeclarationBuilder::visitDefaultParameter( DefaultParameterAst* node )
+{
+    ContextBuilder::visitDefaultParameter( node );
+    AbstractFunctionDeclaration* function = currentDeclaration<AbstractFunctionDeclaration>();
+    
+    if( function )
+    {
+        if( node->value )
+        {
+            //Not sure what to do here, C++ simply adds the source code as default parameter, but that doesn't sound sane...
+        }
+        //simple case, we have an identifier parameter
+        if( node->name->astType == Ast::IdentifierParameterPartAst )
+        {
+            function->addParameterName( dynamic_cast<IdentifierParameterPartAst*>( node->name )->name->identifier );
+        } else if( node->name->astType == Ast::ListParameterPartAst )
+        {
+            //complex case, a sublist, what to do??
+        }
+    }
 }
 
 }

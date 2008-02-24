@@ -137,7 +137,7 @@ TopDUContext* ContextBuilder::buildContexts( const KUrl& url, Ast* node, const T
     {
         DUChainReadLocker lock( DUChain::lock() );
         //foreach(DUContext* context, topLevelContext->childContexts());
-        kDebug() << "built top-level context with" << topLevelContext->localDeclarations().count() << "declarations," << topLevelContext->localDefinitions().count() << " Definitions and" << topLevelContext->childContexts().size() << "Child-Contexts";
+        kDebug() << "built top-level context with" << topLevelContext->localDeclarations().count() << "declarations," << topLevelContext->localDeclarations().count() << " Definitions and" << topLevelContext->childContexts().size() << "Child-Contexts";
 
         if ( m_recompiling )
         {

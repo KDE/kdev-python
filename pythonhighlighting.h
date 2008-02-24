@@ -77,7 +77,6 @@ public:
     void highlightTree( KTextEditor::SmartRange* topRange ) const;
     void highlightDUChain( KDevelop::TopDUContext* context ) const;
 
-    virtual void highlightDefinition( KDevelop::Definition* definition ) const;
     virtual void highlightDeclaration( KDevelop::Declaration* declaration ) const;
     virtual void highlightUses( KDevelop::DUContext* ) const;
     KTextEditor::Attribute::Ptr attributeForType( Types type, Contexts context ) const;

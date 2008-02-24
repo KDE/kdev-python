@@ -142,12 +142,6 @@ void Highlighting::highlightDUChain( DUContext* context ) const
         highlightDeclaration( dec );
     }
 
-    kDebug() << "Highlighting definitions:" << context->localDefinitions();
-    foreach( Definition* def, context->localDefinitions() )
-    {
-        highlightDefinition( def );
-    }
-
     kDebug() << "Highlighting child contexts:" << context->childContexts();
     foreach( DUContext* child, context->childContexts() )
     {
@@ -182,13 +176,6 @@ Highlighting::Types Highlighting::typeForDeclaration( Declaration * dec ) const
         }
     }
     return type;
-}
-
-void Highlighting::highlightDefinition( Definition * definition ) const
-{
-    if ( Declaration* declaration = definition->declaration() )
-        if ( SmartRange * range = definition->smartRange() )
-            range->setAttribute( attributeForType( typeForDeclaration( declaration ), DeclarationContext ) );
 }
 
 void Highlighting::highlightDeclaration( Declaration * declaration ) const

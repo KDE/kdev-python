@@ -22,7 +22,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/parser
 )
 
-link_directories( ${KDE4_LIB_DIR} ${KDEVPLATFORM_LIB_DIR} )
+link_directories( ${KDEVPLATFORM_LIB_DIR} )
 
 add_definitions( -DKDE_DEFAULT_DEBUG_AREA=9011 )
 

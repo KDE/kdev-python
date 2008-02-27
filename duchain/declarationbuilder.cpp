@@ -28,7 +28,6 @@
 #include <ktexteditor/smartrange.h>
 #include <ktexteditor/smartinterface.h>
 
-#include <language/duchain/definition.h>
 #include <language/duchain/symboltable.h>
 #include <language/duchain/functiondeclaration.h>
 #include <language/duchain/classfunctiondeclaration.h>

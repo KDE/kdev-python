@@ -27,7 +27,6 @@
 #include <language/duchain/ducontext.h>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/declaration.h>
-#include <language/duchain/definition.h>
 #include <language/duchain/duchainpointer.h>
 #include <language/duchain/use.h>
 

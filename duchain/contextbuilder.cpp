@@ -267,7 +267,7 @@ DUContext* ContextBuilder::openContextInternal( const SimpleRange& range, DUCont
 
         if ( recompiling() )
         {
-            const QList<DUContext*>& childContexts = currentContext()->childContexts();
+            const QVector<DUContext*>& childContexts = currentContext()->childContexts();
             QMutexLocker lock( m_editor->smart() ? m_editor->smart()->smartMutex() : 0 );
             SimpleRange translated = range;
 

@@ -341,7 +341,6 @@ void DeclarationBuilder::visitDefaultParameter( DefaultParameterAst* node )
         //simple case, we have an identifier parameter
         if( node->name->astType == Ast::IdentifierParameterPartAst )
         {
-            function->addParameterName( dynamic_cast<IdentifierParameterPartAst*>( node->name )->name->identifier );
         } else if( node->name->astType == Ast::ListParameterPartAst )
         {
             //complex case, a sublist, what to do??

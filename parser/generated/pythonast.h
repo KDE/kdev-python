@@ -246,6 +246,7 @@ struct KDEVPYTHONPARSER_EXPORT AstNode
     int kind;
     qint64 startToken;
     qint64 endToken;
+
 };
 
 struct KDEVPYTHONPARSER_EXPORT AndExprAst: public AstNode

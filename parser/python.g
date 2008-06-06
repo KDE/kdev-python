@@ -35,19 +35,19 @@
 -- TODO: Error recovery
 -- %parserclass (private declaration)
 -- [:
---   parser::javaCompatibilityMode _MCompatibilityMode;
+--   parser::pythonCompatibilityMode m_compatibilityMode;
 --
---   struct parserState {
+--   struct ParserState {
 --   };
---   parserState _MState;
+--   ParserState m_state;
 -- :]
--- parser::parserState *parser::copyCurrentState()
+-- Parser::parserState *Parser::copyCurrentState()
 -- {
---     parserState *state = new parserState();
+--     ParserState *state = new ParserState();
 --     return state;
 -- }
 --
--- void parser::restoreState( parser::parserState *state )
+-- void Parser::restoreState( Parser::ParserState *state )
 -- {
 -- }
 --

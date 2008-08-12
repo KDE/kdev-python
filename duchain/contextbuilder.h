@@ -26,64 +26,34 @@
 
 #include "astdefaultvisitor.h"
 
-#include <QSet>
-#include <QHash>
-#include <QList>
-#include <language/duchain/identifier.h>
-#include <language/duchain/duchainpointer.h>
-#include <language/duchain/ducontext.h>
-#include <ksharedptr.h>
+#include <language/duchain/builders/abstractcontextbuilder.h>
 
 #include "pythonduchainexport.h"
-
-namespace KDevelop
-{
-class DUChain;
-class DUChainBase;
-class DUContext;
-class TopDUContext;
-}
 
 namespace Python
 {
 
 class EditorIntegrator;
+class ParseSession;
 
-class KDEVPYTHONDUCHAIN_EXPORT ContextBuilder: public Python::AstDefaultVisitor
+typedef KDevelop::AbstractContextBuilder<Ast, IdentifierAst> ContextBuilderBase;
+
+class KDEVPYTHONDUCHAIN_EXPORT ContextBuilder: public ContextBuilderBase, public Python::AstDefaultVisitor
 {
-
 public:
-    ContextBuilder();
-    ContextBuilder( EditorIntegrator* editor );
-    virtual ~ContextBuilder();
+    void setEditor(EditorIntegrator* editor);
+    void setEditor(ParseSession* session);
 
-    KDevelop::TopDUContext* buildContexts( const KUrl& url, Ast* node, const KDevelop::TopDUContextPointer& updateContext = KDevelop::TopDUContextPointer() );
-    KDevelop::DUContext* buildSubContexts( const KUrl& url, Ast* node, KDevelop::DUContext* parent = 0 );
-    void supportBuild( Ast *node, KDevelop::DUContext* context = 0 );
-    
 protected:
-    void smartenContext( KDevelop::TopDUContext* topLevelContext );
-    KDevelop::DUContext* currentContext();
+    EditorIntegrator* editor() const;
 
-    void setEncountered( KDevelop::DUChainBase* item );
+    virtual void startVisiting( Ast* node );
+    virtual void setContextOnNode( Ast* node, KDevelop::DUContext* context );
+    virtual KDevelop::DUContext* contextFromNode( Ast* node );
+    virtual KTextEditor::Range editorFindRange( Ast* fromNode, Ast* toNode );
+    virtual KDevelop::QualifiedIdentifier identifierForNode( IdentifierAst* node );
 
-    bool wasEncountered( KDevelop::DUChainBase* item );
-
-
-    virtual void openContext( KDevelop::DUContext* newContext );
-    virtual void closeContext();
-    bool recompiling() const;
-
-    QSet<KDevelop::DUChainBase*> m_encountered;
-    QStack<KDevelop::DUContext*> m_contextStack;
-    int m_nextContextIndex;
-
-    const KDevelop::QualifiedIdentifier identifierForName( IdentifierAst* );
-
-    KDevelop::DUContext* openContext( Ast* range, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier );
-    KDevelop::DUContext* openContext( Ast* range, KDevelop::DUContext::ContextType type, IdentifierAst* = 0 );
-    KDevelop::DUContext* openContext( Ast* fromRange, Ast* toRange, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier = KDevelop::QualifiedIdentifier() );
-    KDevelop::DUContext* openContextInternal( const KDevelop::SimpleRange& range, KDevelop::DUContext::ContextType type, const KDevelop::QualifiedIdentifier& identifier );
+    void addImportedContexts();
 
     virtual void visitFunctionDefinition( FunctionDefinitionAst* );
     virtual void visitClassDefinition( ClassDefinitionAst* );
@@ -92,7 +62,6 @@ protected:
     virtual void visitWhile( WhileAst* node );
     virtual void visitIf( IfAst* node );
     virtual void visitTry( TryAst* node );
-    void addImportedContexts();
 
     template <typename T> void visitNodeList( const QList<T*>& l )
     {
@@ -104,27 +73,10 @@ protected:
         }
     }
 
-protected:
-    EditorIntegrator* m_editor;
-    
-    bool m_ownsEditorIntegrator: 1;
-    
-    bool m_compilingContexts: 1;
-    
-    bool m_recompiling : 1;
-
-    QStack<int> m_nextContextStack;
-    int& nextContextIndex();
-
-    KDevelop::Identifier m_identifier;
-    KDevelop::QualifiedIdentifier m_qidentifier;
-
-    KDevelop::DUContext* m_lastContext;
-
-    QList<KDevelop::DUContext*> m_importedParentContexts;
-
 private:
     void openContextForStatementList( const QList<StatementAst*>& );
+
+    QList<KDevelop::DUContext*> m_importedParentContexts;
 };
 
 }

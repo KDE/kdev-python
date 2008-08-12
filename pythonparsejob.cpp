@@ -103,7 +103,7 @@ void ParseJob::run()
 
         if ( !file.open( QIODevice::ReadOnly | QIODevice::Text ) )
         {
-            m_errorMessage = i18n( "Could not open file '%1'", document().str() );
+            //m_errorMessage = i18n( "Could not open file '%1'", document().str() );
             kWarning() << "Could not open file" << document().str()
             << "(path" << document().str() << ")";
             return ;
@@ -135,16 +135,16 @@ void ParseJob::run()
             EditorIntegrator editor;
             DeclarationBuilder builder( &editor );
     //         ContextBuilder builder;
-            m_duContext = builder.buildContexts( m_url, m_ast );
+            m_duContext = builder.build( KDevelop::IndexedString(m_url.pathOrUrl()), m_ast );
     //         m_duContext = declarationBuilder.buildDeclarations(m_AST);
             kDebug() << "----Parsing Succeded---***";//TODO: bind declarations to the code model
-    
+
             {
                 DUChainReadLocker lock( DUChain::lock() );
                 DumpChain dump;
                 dump.dump( m_duContext );
             }
-    
+
     //         KDevelop::DumpDotGraph dumpGraph;
     //         kDebug() << "Dot-Graph:\n" << dumpGraph.dotGraph(m_duContext, true);
             if( python() && python()->codeHighlighting() && editor.smart() )

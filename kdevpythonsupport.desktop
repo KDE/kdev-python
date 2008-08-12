@@ -9,7 +9,7 @@ Name[da]=KDevelop Pytthon-understøttelse
 Name[de]=Unterstützung für Python (KDevelop)
 Name[nds]=Ünnerstütten för Python (KDevelop)
 Name[pl]=KDevObsługaPython
-Name[sv]=KDevelop Python-stödexeckde4 cmake -DCMAKE_INSTALL_PREFIX=$HOME/soc -DKDEVPG_DATA_DIR=/home/piyush/soc/kdev-pg/share -DFLEX_DATA_DIR=/home/piyush/kde4/share/apps ../ 
+Name[sv]=KDevelop Python-stödexeckde4 cmake -DCMAKE_INSTALL_PREFIX=$HOME/soc -DKDEVPG_DATA_DIR=/home/piyush/soc/kdev-pg/share -DFLEX_DATA_DIR=/home/piyush/kde4/share/apps ../
 Name[x-test]=xxKDevPythonSupportxx
 Name[zh_TW]=KDevelop Python 支援
 GenericName=Python Support
@@ -47,5 +47,5 @@ X-KDevelop-Version=6
 X-KDevelop-Language=Python
 X-KDevelop-Args=PYTHON
 X-KDevelop-Interfaces=ILanguageSupport
-X-KDevelop-SupportedMimeTypes=text/x-python 
-X-KDE-PluginInfo-Name=KDevPythonSupport
+X-KDevelop-SupportedMimeTypes=text/x-python
+X-KDE-PluginInfo-Name=kdevpythonsupport

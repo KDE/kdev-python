@@ -23,7 +23,7 @@
 #ifndef PYTHONEDITORINTEGRATOR_H
 #define PYTHONEDITORINTEGRATOR_H
 
-#include <editor/editorintegrator.h>
+#include <language/editor/editorintegrator.h>
 #include "pythonduchainexport.h"
 
 namespace Python

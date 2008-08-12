@@ -23,7 +23,7 @@
 #include "dumpchain.h"
 #include "pythoneditorintegrator.h"
 
-#include <language/duchain/identifiedtype.h>
+#include <language/duchain/types/identifiedtype.h>
 #include <language/duchain/ducontext.h>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/declaration.h>
@@ -49,10 +49,8 @@ void DumpChain::dump( DUContext * context, bool imported )
     {
         foreach (Declaration* dec, context->localDeclarations())
         {
-            kDebug() << QString( (indent+1)*2, ' ' ) << "Declaration: " << dec->toString() << " [" << dec->qualifiedIdentifier() << "]  "<< dec << "(internal ctx" << dec->internalContext() << ")" << dec->range().textRange() << ", "<< ( dec->isDefinition() ? "defined, " : ( dec->definition() ? "" : "no definition, ") ) << dec->uses().count() << "use(s)";
-            if (dec->definition())
-                kDebug() << QString( (indent+1)*2, ' ' ) << "Definition: " << dec->definition()->range().textRange() << endl;
-            for( QMap<HashedString, QList<SimpleRange> >::const_iterator it = dec->uses().begin(); it != dec->uses().end(); ++it )
+            kDebug() << QString( (indent+1)*2, ' ' ) << "Declaration: " << dec->toString() << " [" << dec->qualifiedIdentifier() << "]  "<< dec << "(internal ctx" << dec->internalContext() << ")" << dec->range().textRange() << ", "<< ( dec->isDefinition() ? "definition, " : "declaration, " ) << dec->uses().count() << "use(s)";
+            for( QMap<IndexedString, QList<SimpleRange> >::const_iterator it = dec->uses().begin(); it != dec->uses().end(); ++it )
             {
                 kDebug() << QString((indent+1)*2, ' ') << "File:" << it.key().str();
                 foreach(SimpleRange r, it.value())
@@ -65,9 +63,9 @@ void DumpChain::dump( DUContext * context, bool imported )
     ++indent;
     if (!imported)
     {
-        foreach (DUContextPointer parent, context->importedParentContexts())
+        foreach (const DUContext::Import parent, context->importedParentContexts())
         {
-            dump(parent.data(), true);
+            dump(parent.context(), true);
         }
         foreach (DUContext* child, context->childContexts())
         {

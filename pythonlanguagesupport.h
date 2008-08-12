@@ -60,13 +60,7 @@ public:
     /*the actual language object*/
     KDevelop::ILanguage *language();
     /*the code highlighter*/
-    KDevelop::ICodeHighlighting* codeHighlighting() const;
-
-private slots:
-    void documentChanged( KDevelop::IDocument* );
-    void documentLoaded( KDevelop::IDocument* );
-    void documentClosed( KDevelop::IDocument* );
-    void documentActivated( KDevelop::IDocument* );
+    const KDevelop::ICodeHighlighting* codeHighlighting() const;
 
 private:
     Highlighting* m_highlighting;

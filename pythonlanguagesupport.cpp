@@ -60,7 +60,7 @@ LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ 
         KDevelop::ILanguageSupport()
 {
     KDEV_USE_EXTENSION_INTERFACE( KDevelop::ILanguageSupport )
-//     core()->pluginController()->loadPlugin( "kdevduchainview" );
+
     m_highlighting = new Highlighting( this );
 }
 

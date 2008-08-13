@@ -59,9 +59,6 @@ public:
     void setAST( CodeAst* ast );
     virtual CodeAst *ast() const;
 
-    void setDUChain( KDevelop::TopDUContext* duChain );
-    virtual KDevelop::TopDUContext* duChain() const;
-
     const KTextEditor::Range& textRangeToParse() const;
 
     LanguageSupport* python() const;

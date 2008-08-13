@@ -76,19 +76,9 @@ CodeAst *ParseJob::ast() const
     return m_ast;
 }
 
-TopDUContext* ParseJob::duChain() const
-{
-    return m_duContext;
-}
-
 bool ParseJob::wasReadFromDisk() const
 {
     return m_readFromDisk;
-}
-
-void ParseJob::setDUChain( TopDUContext * duChain )
-{
-    m_duContext = duChain;
 }
 
 void ParseJob::run()

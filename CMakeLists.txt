@@ -7,12 +7,6 @@ find_package(KDE4 REQUIRED)
 
 find_package(KDevPlatform REQUIRED)
 
-#    ${KDEVPLATFORM_INCLUDE_DIR}/language/interfaces
-#    ${KDEVPLATFORM_INCLUDE_DIR}/interfaces
-#    ${KDEVPLATFORM_INCLUDE_DIR}/language
-#    ${KDEVPLATFORM_INCLUDE_DIR}/editor
-#    ${KDEVPLATFORM_INCLUDE_DIR}/language/backgroundparser
-#    ${KDEVPLATFORM_INCLUDE_DIR}/language/duchain
 include_directories(
     ${KDEVPLATFORM_INCLUDE_DIR}
     ${KDE4_INCLUDES}
@@ -56,7 +50,6 @@ target_link_libraries(kdevpythonlanguagesupport
     ${KDEVPLATFORM_INTERFACES_LIBRARY}
     ${KDEVPLATFORM_LANGUAGE_LIBRARY}
     ${KDE4_THREADWEAVER_LIBRARIES}
-    ${KDEVPLATFORM_EDITOR_LIBRARY}
     ${KDE4_KTEXTEDITOR_LIBS}
     kdev4pythonparser
     kdev4pythonduchain

@@ -17,7 +17,6 @@ kde4_add_library( kdev4pythonduchain SHARED ${duchain_SRCS} )
 target_link_libraries( kdev4pythonduchain
     ${KDE4_KDECORE_LIBS}
     ${KDEVPLATFORM_LANGUAGE_LIBRARY}
-    ${KDEVPLATFORM_EDITOR_LIBRARY}
     ${KDE4_KTEXTEDITOR_LIBS}
     ${KDEVPLATFORM_INTERFACES_LIBRARY}
     kdev4pythonparser

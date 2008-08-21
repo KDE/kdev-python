@@ -97,7 +97,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
     kDebug() << "opening class definition";
     ContextBuilder::visitClassDefinition( node );
-    openDeclaration( node->className, node );
+    openDeclaration<Declaration>( node->className, node );
     eventuallyAssignInternalContext();
     closeDeclaration();
 }
@@ -105,7 +105,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
     kDebug() << "opening function definition";
-    openDeclaration( node->functionName, node, true );
+    openDeclaration<FunctionDeclaration>( node->functionName, node );
     ContextBuilder::visitFunctionDefinition( node );
     closeDeclaration();
 }
@@ -113,7 +113,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 void DeclarationBuilder::visitLambda( LambdaAst* node )
 {
     kDebug() << "opening lambda def";
-    openDeclaration( QualifiedIdentifier( "lambda" ), SimpleRange(editorFindRange(node, node)), true );
+    openDeclaration<FunctionDeclaration>( QualifiedIdentifier( "lambda" ), SimpleRange(editorFindRange(node, node)) );
     ContextBuilder::visitLambda( node );
     closeDeclaration();
 }

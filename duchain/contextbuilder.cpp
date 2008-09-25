@@ -30,7 +30,6 @@
 #include <ktexteditor/smartinterface.h>
 #include <ktexteditor/document.h>
 #include <language/duchain/smartconverter.h>
-#include <language/duchain/symboltable.h>
 #include "pythoneditorintegrator.h"
 #include "dumpchain.h"
 

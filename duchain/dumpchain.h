@@ -36,7 +36,7 @@ namespace KDevelop
 
 namespace Python
 {
-
+    
 class ParseSession;
 class EditorIntegrator;
 

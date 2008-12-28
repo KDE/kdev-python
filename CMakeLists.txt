@@ -8,7 +8,7 @@ find_package(KDE4 REQUIRED)
 find_package(KDevPlatform 0.9.80 REQUIRED)
 
 include_directories(
-    ${KDevPlatform_INCLUDE_DIR}
+    ${KDEVPLATFORM_INCLUDE_DIR}
     ${KDE4_INCLUDES}
     ${KDE4_INCLUDE_DIR}/threadweaver
     ${CMAKE_CURRENT_BINARY_DIR}
@@ -47,8 +47,8 @@ kde4_add_plugin(kdevpythonlanguagesupport ${kdevpythonlanguagesupport_PART_SRCS}
 
 target_link_libraries(kdevpythonlanguagesupport
     ${KDE4_KDEUI_LIBS}
-    ${KDevPlatform_INTERFACES_LIBRARY}
-    ${KDevPlatform_LANGUAGE_LIBRARY}
+    ${KDEVPLATFORM_INTERFACES_LIBRARY}
+    ${KDEVPLATFORM_LANGUAGE_LIBRARY}
     ${KDE4_THREADWEAVER_LIBRARIES}
     ${KDE4_KTEXTEDITOR_LIBS}
     kdev4pythonparser

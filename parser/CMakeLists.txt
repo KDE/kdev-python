@@ -20,8 +20,8 @@ set(parser_STAT_SRCS
 
 if(KDEVPGQT_FOUND)
      kdevpgqt_generate(_kdevpgList python NAMESPACE PythonParser
-        "${CMAKE_SOURCE_DIR}/parser/python.g"
-        "${CMAKE_SOURCE_DIR}/parser/pythonlexer.h"
+        "${kdevpython_SOURCE_DIR}/parser/python.g"
+        "${kdevpython_SOURCE_DIR}/parser/pythonlexer.h"
     )
 
     add_custom_target( debuginfo
@@ -60,19 +60,19 @@ install(TARGETS kdev4pythonparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 
 add_custom_target( copy-generated
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/pythonparser.cpp" "${CMAKE_SOURCE_DIR}/parser/generated/pythonparser.cpp"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/pythonparser.h" "${CMAKE_SOURCE_DIR}/parser/generated/pythonparser.h"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/pythonast.h" "${CMAKE_SOURCE_DIR}/parser/generated/pythonast.h"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/pythonvisitor.h" "${CMAKE_SOURCE_DIR}/parser/generated/pythonvisitor.h"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/pythonvisitor.cpp" "${CMAKE_SOURCE_DIR}/parser/generated/pythonvisitor.cpp"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/pythondefaultvisitor.h" "${CMAKE_SOURCE_DIR}/parser/generated/pythondefaultvisitor.h"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/parser/pythondefaultvisitor.cpp" "${CMAKE_SOURCE_DIR}/parser/generated/pythondefaultvisitor.cpp"
-    DEPENDS "${CMAKE_BINARY_DIR}/parser/pythonparser.cpp"
-    DEPENDS "${CMAKE_BINARY_DIR}/parser/pythonparser.h"
-    DEPENDS "${CMAKE_BINARY_DIR}/parser/pythonvisitor.cpp"
-    DEPENDS "${CMAKE_BINARY_DIR}/parser/pythonvisitor.h"
-    DEPENDS "${CMAKE_BINARY_DIR}/parser/pythondefaultvisitor.cpp"
-    DEPENDS "${CMAKE_BINARY_DIR}/parser/pythondefaultvisitor.h"
-    DEPENDS "${CMAKE_BINARY_DIR}/parser/pythonast.h"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${kdevpython_BINARY_DIR}/parser/pythonparser.cpp" "${kdevpython_SOURCE_DIR}/parser/generated/pythonparser.cpp"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${kdevpython_BINARY_DIR}/parser/pythonparser.h" "${kdevpython_SOURCE_DIR}/parser/generated/pythonparser.h"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${kdevpython_BINARY_DIR}/parser/pythonast.h" "${kdevpython_SOURCE_DIR}/parser/generated/pythonast.h"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${kdevpython_BINARY_DIR}/parser/pythonvisitor.h" "${kdevpython_SOURCE_DIR}/parser/generated/pythonvisitor.h"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${kdevpython_BINARY_DIR}/parser/pythonvisitor.cpp" "${kdevpython_SOURCE_DIR}/parser/generated/pythonvisitor.cpp"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${kdevpython_BINARY_DIR}/parser/pythondefaultvisitor.h" "${kdevpython_SOURCE_DIR}/parser/generated/pythondefaultvisitor.h"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${kdevpython_BINARY_DIR}/parser/pythondefaultvisitor.cpp" "${kdevpython_SOURCE_DIR}/parser/generated/pythondefaultvisitor.cpp"
+    DEPENDS "${kdevpython_BINARY_DIR}/parser/pythonparser.cpp"
+    DEPENDS "${kdevpython_BINARY_DIR}/parser/pythonparser.h"
+    DEPENDS "${kdevpython_BINARY_DIR}/parser/pythonvisitor.cpp"
+    DEPENDS "${kdevpython_BINARY_DIR}/parser/pythonvisitor.h"
+    DEPENDS "${kdevpython_BINARY_DIR}/parser/pythondefaultvisitor.cpp"
+    DEPENDS "${kdevpython_BINARY_DIR}/parser/pythondefaultvisitor.h"
+    DEPENDS "${kdevpython_BINARY_DIR}/parser/pythonast.h"
     )
 

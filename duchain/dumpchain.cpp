@@ -65,7 +65,7 @@ void DumpChain::dump( DUContext * context, bool imported )
     {
         foreach (const DUContext::Import parent, context->importedParentContexts())
         {
-            dump(parent.context(), true);
+            dump(parent.context(dynamic_cast<TopDUContext*>(context)), true);
         }
         foreach (DUContext* child, context->childContexts())
         {

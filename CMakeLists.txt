@@ -1,3 +1,4 @@
+PROJECT(kdevpython)
 
 #To properly find kdevelop-pg add -DKDEVPG_DATA_DIR=<kdevpg-install-path>/share to the
 #cmake run if you installed it in a different directory than this plugin
@@ -12,8 +13,9 @@ include_directories(
     ${KDE4_INCLUDES}
     ${KDE4_INCLUDE_DIR}/threadweaver
     ${CMAKE_CURRENT_BINARY_DIR}
-    ${CMAKE_SOURCE_DIR}/duchain
-    ${CMAKE_SOURCE_DIR}/parser
+    ${CMAKE_CURRENT_SOURCE_DIR}/duchain
+    ${CMAKE_CURRENT_SOURCE_DIR}/parser
+    ${CMAKE_CURRENT_BINARY_DIR}/parser
 )
 
 add_definitions( -DKDE_DEFAULT_DEBUG_AREA=9011 )
@@ -23,13 +25,13 @@ find_package(KDevelop-PG-Qt QUIET)
 
 if(KDEVPGQT_FOUND)
     include_directories(
-        ${CMAKE_BINARY_DIR}/parser
+        ${CMAKE_CURRENT_BINARY_DIR}/parser
         ${KDEVPGQT_INCLUDE_DIR}
     )
 else(KDEVPGQT_FOUND)
     include_directories(
-        ${CMAKE_SOURCE_DIR}/parser/generated
-        ${CMAKE_SOURCE_DIR}/parser/generated/kdevelop-pg-qt
+        ${CMAKE_CURRENT_SOURCE_DIR}/parser/generated
+        ${CMAKE_CURRENT_SOURCE_DIR}/parser/generated/kdevelop-pg-qt
     )
 endif(KDEVPGQT_FOUND)
 

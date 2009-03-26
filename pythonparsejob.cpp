@@ -24,6 +24,7 @@
 #include "pythonparsejob.h"
 #include <QFile>
 #include <QThread>
+#include <QReadLocker>
 
 #include <ktexteditor/document.h>
 #include <ktexteditor/smartinterface.h>
@@ -91,8 +92,7 @@ void ParseJob::run()
     if ( abortRequested() )
         return abortJob();
 
-    QMutexLocker lock(python()->language()->parseMutex(QThread::currentThread()));
-
+    QReadLocker lock(python()->language()->parseLock());
     m_readFromDisk = !contentsAvailableFromEditor();
 
     if ( m_readFromDisk )
@@ -102,10 +102,28 @@ void ParseJob::run()
 
         if ( !file.open( QIODevice::ReadOnly | QIODevice::Text ) )
         {
-            //m_errorMessage = i18n( "Could not open file '%1'", document().str() );
-            kWarning() << "Could not open file" << document().str()
-            << "(path" << document().str() << ")";
+            KDevelop::ProblemPointer p(new KDevelop::Problem());
+            p->setSource(KDevelop::ProblemData::Disk);
+            p->setDescription( i18n( "Could not open file '%1'", document().str() ) );
+            switch (file.error()) {
+                case QFile::ReadError:
+                    p->setExplanation(i18n("File could not be read from."));
+                    break;
+                case QFile::OpenError:
+                    p->setExplanation(i18n("File could not be opened."));
+                    break;
+                case QFile::PermissionsError:
+                    p->setExplanation(i18n("File permissions prevent opening for read.")); 
+                    break;
+                default:
+                    break;
+            }
+            p->setFinalLocation(KDevelop::DocumentRange(document().str(), KTextEditor::Cursor(0,0), KTextEditor::Cursor(0,0)));
+            // TODO addProblem(p);
+            kWarning( 9007 ) << "Could not open file " << document().str()
+                             << " (path " << document().str() << ")" << endl;
             return ;
+
         }
 
         QTextStream s( &file );

@@ -21,8 +21,8 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION     *
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
-#ifndef PARSEJOB_H
-#define PARSEJOB_H
+#ifndef PYTHON_PARSEJOB_H
+#define PYTHON_PARSEJOB_H
 
 #include <language/backgroundparser/parsejob.h>
 #include "ast.h"

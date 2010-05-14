@@ -21,20 +21,11 @@ include_directories(
 
 add_definitions( -DKDE_DEFAULT_DEBUG_AREA=9011 )
 
-#Don't error out if the FindXXX are missing for these two
-find_package(KDevelop-PG-Qt QUIET)
-
-if(KDEVPGQT_FOUND)
-    include_directories(
-        ${CMAKE_CURRENT_BINARY_DIR}/parser
-        ${KDEVPGQT_INCLUDE_DIR}
-    )
-else(KDEVPGQT_FOUND)
-    include_directories(
-        ${CMAKE_CURRENT_SOURCE_DIR}/parser/generated
-        ${CMAKE_CURRENT_SOURCE_DIR}/parser/generated/kdevelop-pg-qt
-    )
-endif(KDEVPGQT_FOUND)
+find_package(KDevelop-PG-Qt REQUIRED)
+include_directories(
+    ${CMAKE_CURRENT_BINARY_DIR}/parser
+    ${KDEVPGQT_INCLUDE_DIR}
+)
 
 
 add_subdirectory(parser)

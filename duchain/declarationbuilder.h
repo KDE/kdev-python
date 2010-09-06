@@ -26,12 +26,14 @@
 
 #include <language/duchain/builders/abstractdeclarationbuilder.h>
 #include <language/duchain/classfunctiondeclaration.h>
+#include <language/duchain/builders/abstracttypebuilder.h>
 #include "contextbuilder.h"
+#include "typebuilder.h"
 
 namespace Python
 {
 
-typedef KDevelop::AbstractDeclarationBuilder<Ast, IdentifierAst, ContextBuilder> DeclarationBuilderBase;
+typedef KDevelop::AbstractDeclarationBuilder<Ast, IdentifierAst, TypeBuilder> DeclarationBuilderBase;
 
 class KDEVPYTHONDUCHAIN_EXPORT DeclarationBuilder: public DeclarationBuilderBase
 {

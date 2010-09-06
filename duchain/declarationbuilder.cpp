@@ -35,6 +35,9 @@
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/types/functiontype.h>
 #include <language/duchain/types/abstracttype.h>
+#include <language/duchain/types/integraltype.h>
+#include <language/duchain/types/unsuretype.h>
+#include <language/duchain/builders/abstracttypebuilder.h>
 
 #include "pythoneditorintegrator.h"
 
@@ -117,10 +120,20 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
     kDebug() << "opening function definition";
     openDeclaration<FunctionDeclaration>( node->functionName, node );
+    
+    FunctionDeclaration *dec = currentDeclaration<FunctionDeclaration>();
+    
+    {
+        DUChainWriteLocker lock(DUChain::lock());
+        dec->setAbstractType(AbstractType::Ptr(new FunctionType));
+    }
+    
+    openAbstractType(dec->abstractType());
     ContextBuilder::visitFunctionDefinition( node );
+    closeType();
+    
     DUChainWriteLocker lock(DUChain::lock());
     kDebug() << AbstractType::Ptr();
-    currentDeclaration<FunctionDeclaration>()->setAbstractType(AbstractType::Ptr(new FunctionType));
     closeDeclaration();
 }
 
@@ -150,6 +163,8 @@ void DeclarationBuilder::visitDefaultParameter( DefaultParameterAst* node )
         {
             function->addDefaultParameter(IndexedString("foo"));
             kDebug() << function->defaultParametersSize();
+
+            currentType<FunctionType>()->addArgument(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
             
             // create a variable definition
             IdentifierParameterPartAst* identifierNode = dynamic_cast<IdentifierParameterPartAst*>(node->name);

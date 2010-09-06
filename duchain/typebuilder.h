@@ -24,27 +24,28 @@
 #define TYPEBUILDER_H
 
 #include "contextbuilder.h"
-#include <typesystem.h>
-#include <declaration.h>
 #include "pythonduchainexport.h"
+#include "pythoneditorintegrator.h"
+#include <language/duchain/builders/abstracttypebuilder.h>
 
-class ClassType;
-class FunctionType;
+namespace Python {
 
-typedef ContextBuilder TypeBuilderBase;
+typedef KDevelop::AbstractTypeBuilder<Ast, IdentifierAst, ContextBuilder> TypeBuilderBase;
 
 class KDEVPYTHONDUCHAIN_EXPORT TypeBuilder: public TypeBuilderBase
 {
-public:
-    TypeBuilder(ParseSession* session, const KUrl &url);
-    TypeBuilder(PythonEditorIntegrator* editor, const KUrl &url);
-    virtual void supportBuild(ast_node *node, KDevelop::DUContext* context = 0);
-    const QList< KDevelop::AbstractType::Ptr >& topTypes() const;
-    KDevelop::DUContext* searchContext() ;
-    KDevelop::AbstractType::Ptr lastType() const;
-    void setLastType(KDevelop::AbstractType::Ptr ptr);
-private:
-    QStack<KDevelop::AbstractType::Ptr> m_typeStack;
+// public:
+//     TypeBuilder(ParseSession* session, const KUrl &url);
+//     TypeBuilder(EditorIntegrator* editor, const KUrl &url);
+//     virtual void supportBuild(Ast *node, KDevelop::DUContext* context = 0);
+//     const QList< KDevelop::AbstractType::Ptr >& topTypes() const;
+//     KDevelop::DUContext* searchContext() ;
+//     KDevelop::AbstractType::Ptr lastType() const;
+//     void setLastType(KDevelop::AbstractType::Ptr ptr);
+// private:
+//     QStack<KDevelop::AbstractType::Ptr> m_typeStack;
 };
 
 #endif
+
+}

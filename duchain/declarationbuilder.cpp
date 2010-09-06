@@ -33,6 +33,8 @@
 #include <language/duchain/declaration.h>
 #include <language/duchain/duchain.h>
 #include <language/duchain/duchainlock.h>
+#include <language/duchain/types/functiontype.h>
+#include <language/duchain/types/abstracttype.h>
 
 #include "pythoneditorintegrator.h"
 
@@ -116,6 +118,9 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     kDebug() << "opening function definition";
     openDeclaration<FunctionDeclaration>( node->functionName, node );
     ContextBuilder::visitFunctionDefinition( node );
+    DUChainWriteLocker lock(DUChain::lock());
+    kDebug() << AbstractType::Ptr();
+    currentDeclaration<FunctionDeclaration>()->setAbstractType(AbstractType::Ptr(new FunctionType));
     closeDeclaration();
 }
 
@@ -130,7 +135,8 @@ void DeclarationBuilder::visitLambda( LambdaAst* node )
 void DeclarationBuilder::visitDefaultParameter( DefaultParameterAst* node )
 {
     ContextBuilder::visitDefaultParameter( node );
-    AbstractFunctionDeclaration* function = currentDeclaration<AbstractFunctionDeclaration>();
+//     AbstractFunctionDeclaration* function = currentDeclaration<AbstractFunctionDeclaration>();
+    AbstractFunctionDeclaration* function = dynamic_cast<AbstractFunctionDeclaration*>(currentDeclaration());
 
     if( function )
     {
@@ -142,15 +148,17 @@ void DeclarationBuilder::visitDefaultParameter( DefaultParameterAst* node )
         //simple case, we have an identifier parameter
         if( node->name->astType == Ast::IdentifierParameterPartAst )
         {
-            function->addDefaultParameter(IndexedString("Some_String."));
+            function->addDefaultParameter(IndexedString("foo"));
+            kDebug() << function->defaultParametersSize();
+            
+            // create a variable definition
+            IdentifierParameterPartAst* identifierNode = dynamic_cast<IdentifierParameterPartAst*>(node->name);
+            openDeclaration<Declaration>( identifierNode->name, node);
+            closeDeclaration();
         } else if( node->name->astType == Ast::ListParameterPartAst )
         {
             //complex case, a sublist, what to do??
         }
-        
-        // create a variable definition
-        openDeclaration<Declaration>( node->name, node);
-        closeDeclaration();
     }
 }
 

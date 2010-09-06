@@ -261,7 +261,7 @@ public:
 };
 
 
-class KDEVPYTHONPARSER_EXPORT ParameterPartAst : public IdentifierAst
+class KDEVPYTHONPARSER_EXPORT ParameterPartAst : public Ast
 {
 public:
     ParameterPartAst( Ast*, Ast::AstType type );

@@ -163,13 +163,17 @@ void DeclarationBuilder::visitDefaultParameter( DefaultParameterAst* node )
         {
             function->addDefaultParameter(IndexedString("foo"));
             kDebug() << function->defaultParametersSize();
-
-            currentType<FunctionType>()->addArgument(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
             
             // create a variable definition
             IdentifierParameterPartAst* identifierNode = dynamic_cast<IdentifierParameterPartAst*>(node->name);
-            openDeclaration<Declaration>( identifierNode->name, node);
-            closeDeclaration();
+            {
+                DUChainWriteLocker lock(DUChain::lock());
+                openDeclaration<Declaration>( identifierNode->name, node);
+                currentDeclaration()->setAbstractType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+                closeDeclaration();
+            }
+            currentType<FunctionType>()->addArgument(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+            
         } else if( node->name->astType == Ast::ListParameterPartAst )
         {
             //complex case, a sublist, what to do??

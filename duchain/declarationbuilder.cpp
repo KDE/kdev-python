@@ -122,13 +122,15 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     openDeclaration<FunctionDeclaration>( node->functionName, node );
     
     FunctionDeclaration *dec = currentDeclaration<FunctionDeclaration>();
+    TypePtr<AbstractType> type = AbstractType::Ptr(new FunctionType);
     
     {
         DUChainWriteLocker lock(DUChain::lock());
-        dec->setAbstractType(AbstractType::Ptr(new FunctionType));
+        dec->setAbstractType(type);
     }
     
-    openAbstractType(dec->abstractType());
+    openType(dec->abstractType());
+    TypePtr<FunctionType> type2 = currentType<FunctionType>();
     ContextBuilder::visitFunctionDefinition( node );
     closeType();
     
@@ -164,6 +166,12 @@ void DeclarationBuilder::visitDefaultParameter( DefaultParameterAst* node )
             function->addDefaultParameter(IndexedString("foo"));
             kDebug() << function->defaultParametersSize();
             
+            Q_ASSERT(hasCurrentType());
+            FunctionType::Ptr type = currentType<FunctionType>();
+            Q_ASSERT(type);
+            
+            type->addArgument(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+            
             // create a variable definition
             IdentifierParameterPartAst* identifierNode = dynamic_cast<IdentifierParameterPartAst*>(node->name);
             {
@@ -172,7 +180,6 @@ void DeclarationBuilder::visitDefaultParameter( DefaultParameterAst* node )
                 currentDeclaration()->setAbstractType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
                 closeDeclaration();
             }
-            currentType<FunctionType>()->addArgument(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
             
         } else if( node->name->astType == Ast::ListParameterPartAst )
         {

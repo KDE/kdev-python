@@ -119,27 +119,17 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
     kDebug() << "opening function definition";
-    openDeclaration<FunctionDeclaration>( node->functionName, node );
+    FunctionDeclaration* dec = openDeclaration<FunctionDeclaration>( node->functionName, node );
+
+    FunctionType::Ptr type(new FunctionType);
     
-    FunctionDeclaration *dec = currentDeclaration<FunctionDeclaration>();
-    TypePtr<AbstractType> type = AbstractType::Ptr(new FunctionType);
-    
-    {
-        DUChainWriteLocker lock(DUChain::lock());
-        dec->setAbstractType(type);
-    }
-    
-    openType(dec->type<FunctionType>());
+    openType(type);
     ContextBuilder::visitFunctionDefinition( node );
-    TypePtr<FunctionType> type2 = currentType<FunctionType>();
-    TypePtr<FunctionType> type3 = dec->type<FunctionType>();
-    kDebug() << type2->toString();
-    kDebug() << type3->toString();
     closeType();
     
     {
-        DUChainWriteLocker lock(DUChain::lock());
-        dec->setType<FunctionType>(type2);
+        DUChainWriteLocker lock;
+        dec->setType(type);
     }
     closeDeclaration();
 }
@@ -176,17 +166,16 @@ void DeclarationBuilder::visitDefaultParameter( DefaultParameterAst* node )
             Q_ASSERT(type);
             
             kDebug() << type->toString();
-            
-            type->addArgument(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
-            
+
             // create a variable definition
             IdentifierParameterPartAst* identifierNode = dynamic_cast<IdentifierParameterPartAst*>(node->name);
+            Declaration* dec = openDeclaration<Declaration>( identifierNode->name, node);
             {
                 DUChainWriteLocker lock(DUChain::lock());
-                openDeclaration<Declaration>( identifierNode->name, node);
-                currentDeclaration()->setAbstractType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
-                closeDeclaration();
+                dec->setType(IntegralType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+                type->addArgument(dec->abstractType());
             }
+            closeDeclaration();
             
         } else if( node->name->astType == Ast::ListParameterPartAst )
         {

@@ -129,13 +129,18 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         dec->setAbstractType(type);
     }
     
-    openType(dec->abstractType());
-    TypePtr<FunctionType> type2 = currentType<FunctionType>();
+    openType(dec->type<FunctionType>());
     ContextBuilder::visitFunctionDefinition( node );
+    TypePtr<FunctionType> type2 = currentType<FunctionType>();
+    TypePtr<FunctionType> type3 = dec->type<FunctionType>();
+    kDebug() << type2->toString();
+    kDebug() << type3->toString();
     closeType();
     
-    DUChainWriteLocker lock(DUChain::lock());
-    kDebug() << AbstractType::Ptr();
+    {
+        DUChainWriteLocker lock(DUChain::lock());
+        dec->setType<FunctionType>(type2);
+    }
     closeDeclaration();
 }
 
@@ -169,6 +174,8 @@ void DeclarationBuilder::visitDefaultParameter( DefaultParameterAst* node )
             Q_ASSERT(hasCurrentType());
             FunctionType::Ptr type = currentType<FunctionType>();
             Q_ASSERT(type);
+            
+            kDebug() << type->toString();
             
             type->addArgument(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
             

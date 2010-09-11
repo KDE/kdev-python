@@ -314,7 +314,8 @@ void AstBuilder::visitArithExpr(PythonParser::ArithExprAst *node)
         Q_ASSERT_X( node->arithOpListSequence->count() == node->arithTermListSequence->count(),
                     "visitArithExpr", "different number of operators and operands" );
         BinaryExpressionAst* ast = createAst<BinaryExpressionAst>( node );
-        ast->lhs = safeNodeCast<ArithmeticExpressionAst>( mNodeStack.pop() );
+        Ast *dbg_node = mNodeStack.pop();
+        ast->lhs = safeNodeCast<ExpressionAst>( dbg_node );
         BinaryExpressionAst* cur = ast;
         int count = node->arithOpListSequence->count();
         for( int i = 0; i < count; i++ )
@@ -337,10 +338,10 @@ void AstBuilder::visitArithExpr(PythonParser::ArithExprAst *node)
                 BinaryExpressionAst* tmp = createAst<BinaryExpressionAst>( node->arithTermListSequence->at(i)->element );
                 cur->rhs = tmp;
                 cur = tmp;
-                cur->lhs = safeNodeCast<ArithmeticExpressionAst>( mNodeStack.pop() );
+                cur->lhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
             }else
             {
-                cur->rhs = safeNodeCast<ArithmeticExpressionAst>( mNodeStack.pop() );
+                cur->rhs = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
             }
         }
         mNodeStack.push( ast );

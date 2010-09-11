@@ -610,8 +610,8 @@ void AstBuilder::visitDictmaker(PythonParser::DictmakerAst *node)
     kDebug() << "visitDictmaker start";
     DictionaryAst* ast = createAst<DictionaryAst>( node );
     mNodeStack.push(ast);
-    int count = node->keyListSequence->count();
-    Q_ASSERT( count = node->valueListSequence->count() );
+    int count = node->keyListSequence ? node->keyListSequence->count() : 0;
+    Q_ASSERT( count == (node->valueListSequence ? node->valueListSequence->count() : 0) );
     for( int i = 0; i < count; i++ )
     {
         visitNode( node->keyListSequence->at(i)->element );

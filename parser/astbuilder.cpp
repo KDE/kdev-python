@@ -752,7 +752,7 @@ void AstBuilder::visitExprStmt(PythonParser::ExprStmtAst *node)
             a->value = generateSpecializedList<ExpressionAst>( mListStack.pop() );
         }
         mNodeStack.push( a );
-    }else if( node->yield || node->equalTestlistSequence->count() > 0 )
+    }else if( node->yield || ( node->equalTestlistSequence && node->equalTestlistSequence->count() ) > 0 )
     {
         AssignmentAst* a = createAst<AssignmentAst>( node );
         QList<TargetAst*> l = targetAstListFromExpressionAstList(

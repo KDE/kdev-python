@@ -324,8 +324,7 @@ int Lexer::nextTokenKind()
                 }while( m_curpos < m_contentSize
                         && ( it->isNumber() || it->unicode() == 'e'
                             || it->unicode() == 'E' || it->unicode() == 'j'
-                            || it->unicode() == 'J' || it->unicode() == '+'
-                            || it->unicode() == '-' || it->unicode() == '.'
+                            || it->unicode() == 'J' || it->unicode() == '.'
                             || it->unicode() == 'A' || it->unicode() == 'B'
                             || it->unicode() == 'C' || it->unicode() == 'D'
                             || it->unicode() == 'F' || it->unicode() == 'a'

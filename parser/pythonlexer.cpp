@@ -107,8 +107,8 @@ int Lexer::nextTokenKind()
             // No whitespace at the start of the line, so we need to create
             // as many DEDENT tokens as we have indenations in the stack
             token = Parser::Token_DEDENT;
-            m_tokenBegin = -1;
-            m_tokenEnd = -1;
+            m_tokenBegin = m_curpos;
+            m_tokenEnd = m_curpos;
             popIndentation();
             return token;
         }else if( it->isSpace() )
@@ -556,6 +556,7 @@ int Lexer::nextTokenKind()
                         break;
                 }
             }
+            m_tokenEnd = m_curpos;
             break;
         default:
             token = Parser::Token_INVALID;

@@ -118,8 +118,8 @@ public:
     virtual void visitYieldStmt(PythonParser::YieldStmtAst *node);
     virtual void visitYieldExpr(PythonParser::YieldExprAst *node);
 
-    QStack<Ast*> mNodeStack;
 private:
+    QStack<Ast*> mNodeStack;
     QStack<QList<Ast*> > mListStack;
     PythonParser::Parser* parser;
     void setStartEnd( Ast* ast, PythonParser::AstNode* node );

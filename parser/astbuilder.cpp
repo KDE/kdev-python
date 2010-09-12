@@ -443,6 +443,7 @@ void AstBuilder::visitAtom(PythonParser::AtomAst *node)
             enc = createAst<EnclosureAst>( node );
             enc->encType = EnclosureAst::ParenthesizedForm;
             enc->parent = ast;
+            QList<Ast*> dbg_node = mListStack.top();
             enc->parenthesizedform = generateSpecializedList<ExpressionAst>( mListStack.pop() );
             ast->enclosure = enc;
         }
@@ -1147,7 +1148,9 @@ void AstBuilder::visitListmaker(PythonParser::ListmakerAst *node)
     ListAst* ast = createAst<ListAst>( node );
     mNodeStack.push( ast );
     visitNode( node->listMakerTest );
-    ast->plainList = generateSpecializedList<ExpressionAst>( mListStack.pop() );
+    if ( node->listMakerTest ) {
+        ast->plainList = generateSpecializedList<ExpressionAst>( mListStack.pop() );
+    }
     if( node->listFor )
     {
         //We should have only 1 expression in the listMakerTest as we're having a list_comprehension
@@ -1163,6 +1166,7 @@ void AstBuilder::visitListMakerTest(PythonParser::ListMakerTestAst *node)
     kDebug() << "visitListMakerTest start";
     QList<Ast*> l;
     int count = node->listTestSequence->count();
+    kDebug() << "Elements in list cnt: " << count;
     for( int i = 0; i < count; i++ )
     {
         visitNode( node->listTestSequence->at(i)->element );

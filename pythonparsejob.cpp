@@ -135,13 +135,13 @@ void ParseJob::run()
 
 //         if( codec )
 //             s.setCodec( QTextCodec::codecForName(codec) );
-        m_session->setContents( s.readAll() );
+        m_session->setContents( s.readAll() + "\n" );
         Q_ASSERT( m_session->contents().size() > 0 );
         file.close();
     }
     else
     {
-        m_session->setContents( contentsFromEditor().toAscii() );
+        m_session->setContents( contentsFromEditor().toAscii() + "\n" );
     }
 
     if ( abortRequested() )

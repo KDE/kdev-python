@@ -469,15 +469,14 @@ namespace PythonParser
 -> power ;;
 
    LPAREN ( yield=yieldExpr |
-            ( testlist=testlist ( genFor=genFor | 0 ) ) | 0 ) RPAREN
-   | LBRACKET listmaker=listmaker RBRACKET
+            ( testlist=testlist ( genFor=genFor | 0 ) ) | 0 [: (*yynode)->listmaker = create<ListmakerAst>(); :] ) RPAREN
+   | LBRACKET ( listmaker=listmaker | 0 [: (*yynode)->listmaker = create<ListmakerAst>(); :] ) RBRACKET
    | LBRACE dictmaker=dictmaker RBRACE
    | BACKTICK codeexpr=codeexpr BACKTICK
    | atomIdentifierName=IDENTIFIER
    | number=number
    | (#stringliteral=STRINGLITERAL)+
 -> atom ;;
-
 
    value=INTEGER      [: (*yynode)->numType = PythonParser::IntegerNumeric;      :]
    | value=FLOAT      [: (*yynode)->numType = PythonParser::FloatNumeric;    :]

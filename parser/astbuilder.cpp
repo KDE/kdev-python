@@ -300,6 +300,7 @@ void AstBuilder::visitArgument(PythonParser::ArgumentAst *node)
     {
         ArgumentAst* ast = createAst<ArgumentAst>( node );
         ast->argumentType = ArgumentAst::PositionalArgument;
+        ast->argumentExpression = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
         mNodeStack.push( ast );
     }
     kDebug() << "visitArgument end";
@@ -1319,6 +1320,7 @@ void AstBuilder::visitProject(PythonParser::ProjectAst *node)
     CodeAst* code = new CodeAst();
     setStartEnd( code, node );
     mNodeStack.push( code );
+    kDebug() << "Node stack count: " << mNodeStack.count();
     if( node->stmtSequence )
     {
         int count = node->stmtSequence->count();
@@ -1328,8 +1330,10 @@ void AstBuilder::visitProject(PythonParser::ProjectAst *node)
             Ast* a = mNodeStack.pop();
             if( a )
                 code->statements << safeNodeCast<StatementAst>( a );
+            kDebug() << "Node stack count: " << mNodeStack.count();
         }
     }
+    kDebug() << "Node stack count: " << mNodeStack.count();
     kDebug() << "visitProject end";
 }
 

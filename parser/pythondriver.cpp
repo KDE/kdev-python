@@ -85,6 +85,11 @@ bool Driver::parse( Python::CodeAst** ast )
 //         }
         Python::AstBuilder builder(&pythonparser);
         builder.visitProject( srcast );
+        int len = builder.mNodeStack.count();
+        for ( int i = 0; i < len ; i++ ) {
+            Ast* dbg_ast = builder.mNodeStack.at(i);
+            kDebug() << dbg_ast->astType;
+        }
         *ast = builder.codeAst();
         
     }else

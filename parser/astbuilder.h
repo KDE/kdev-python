@@ -59,6 +59,7 @@ public:
     virtual void visitComparison(PythonParser::ComparisonAst *node);
     virtual void visitCompoundStmt(PythonParser::CompoundStmtAst *node);
     virtual void visitContinueStmt(PythonParser::ContinueStmtAst *node);
+    virtual void visitDottedName(PythonParser::DottedNameAst *node);
     virtual void visitDecorator(PythonParser::DecoratorAst *node);
     virtual void visitDecorators(PythonParser::DecoratorsAst *node);
     virtual void visitDefparam(PythonParser::DefparamAst *node);
@@ -118,8 +119,8 @@ public:
     virtual void visitYieldStmt(PythonParser::YieldStmtAst *node);
     virtual void visitYieldExpr(PythonParser::YieldExprAst *node);
 
-private:
     QStack<Ast*> mNodeStack;
+private:
     QStack<QList<Ast*> > mListStack;
     PythonParser::Parser* parser;
     void setStartEnd( Ast* ast, PythonParser::AstNode* node );

@@ -236,7 +236,7 @@ namespace PythonParser
 
 -- Function Parameter Definition
    LPAREN (fplist = fplist) RPAREN
-    |  paramname=IDENTIFIER
+    | paramname=IDENTIFIER
 -> defparam ;;
 
 

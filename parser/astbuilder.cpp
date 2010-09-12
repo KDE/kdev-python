@@ -549,6 +549,15 @@ void AstBuilder::visitContinueStmt(PythonParser::ContinueStmtAst *node)
     kDebug() << "visitContinueStmt end";
 }
 
+void AstBuilder::visitDottedName(PythonParser::DottedNameAst *node) {
+    // no idea why this is meant to be a list,
+    // i've never seen something like "qualified decorators" in python... TODO check this
+    IdentifierAst *ast = createAst<IdentifierAst>( node );
+    QList<Ast*> l;
+    l << ast;
+    mListStack.push(l);
+}
+
 void AstBuilder::visitDecorator(PythonParser::DecoratorAst *node)
 {
     kDebug() << "visitDecorator start";

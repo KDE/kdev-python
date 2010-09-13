@@ -169,7 +169,7 @@ void ParseJob::run()
             {
                 DUChainReadLocker lock( DUChain::lock() );
                 DumpChain dump;
-                dump.dump( m_duContext );
+//                 dump.dump( m_duContext );
             }
             
             {

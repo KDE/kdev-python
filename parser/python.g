@@ -532,7 +532,7 @@ namespace PythonParser
     #keyList=test COLON #valueList=test )*
 -> dictmaker ;;
 
-   CLASS className=IDENTIFIER ( ( LPAREN testlist=testlist RPAREN ) | 0 ) COLON classSuite=suite
+   CLASS className=IDENTIFIER ( ( LPAREN (testlist=testlist | 0) RPAREN ) | 0 ) COLON classSuite=suite
 -> classdef ;;
 
    #arguments=argument

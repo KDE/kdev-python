@@ -285,7 +285,8 @@ void AstBuilder::visitArgument(PythonParser::ArgumentAst *node)
     {
         ArgumentAst* ast = createAst<ArgumentAst>( node );
         ast->argumentType = ArgumentAst::KeywordArgument;
-        ast->keywordName = safeNodeCast<IdentifierAst>( mNodeStack.pop() );
+        AtomAst *argumentName = safeNodeCast<AtomAst>( mNodeStack.pop() );
+        ast->keywordName = safeNodeCast<IdentifierAst>( argumentName->identifier );
         visitNode( node->argumentEqualTest );
         ast->argumentExpression = safeNodeCast<ExpressionAst>( mNodeStack.pop() );
         mNodeStack.push( ast );

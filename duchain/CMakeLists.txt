@@ -7,7 +7,7 @@ set(duchain_SRCS
     contextbuilder.cpp
     pythoneditorintegrator.cpp
     declarationbuilder.cpp
-#     usebuilder.cpp
+    usebuilder.cpp
     dumpchain.cpp
 #     typebuilder.cpp
     )

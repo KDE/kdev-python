@@ -28,18 +28,21 @@
 #include "pythoneditorintegrator.h"
 #include "ast.h"
 
+#include <language/duchain/builders/abstractusebuilder.h>
+
 namespace Python {
 
 class ParseSession;
 class PythonEditorIntegrator;
 
-typedef ContextBuilder UseBuilderBase;
+typedef KDevelop::AbstractUseBuilder<Ast, IdentifierAst, ContextBuilder> UseBuilderBase;
 
 class KDEVPYTHONDUCHAIN_EXPORT UseBuilder: public UseBuilderBase
 {
 public:
-    UseBuilder(ParseSession* session, const KUrl &url);
-    UseBuilder(PythonEditorIntegrator* editor, const KUrl &url);
+//     UseBuilder(ParseSession* session, const KUrl &url);
+//     UseBuilder(PythonEditorIntegrator* editor, const KUrl &url);
+    UseBuilder(EditorIntegrator *editor);
     ParseSession* parseSession() const;
     void buildUses(Ast *node);
     virtual void openContext(KDevelop::DUContext* newContext);

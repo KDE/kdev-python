@@ -46,6 +46,7 @@
 #include "pythonlanguagesupport.h"
 // #include "contextbuilder.h"
 #include "declarationbuilder.h"
+#include "usebuilder.h"
 #include "astprinter.h"
 // #include "usebuilder.h"
 
@@ -163,6 +164,9 @@ void ParseJob::run()
             EditorIntegrator editor;
             DeclarationBuilder builder( &editor );
             m_duContext = builder.build( KDevelop::IndexedString(m_url.pathOrUrl()), m_ast );
+            
+            UseBuilder usebuilder( &editor );
+            usebuilder.buildUses(m_ast);
             
             kDebug() << "----Parsing Succeded---***";
 

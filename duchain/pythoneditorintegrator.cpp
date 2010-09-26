@@ -28,6 +28,8 @@
 #include <language/editor/documentrange.h>
 #include <language/editor/documentrangeobject.h>
 
+#include <language/editor/editorintegrator.h>
+
 #include "ast.h"
 
 using namespace KTextEditor;

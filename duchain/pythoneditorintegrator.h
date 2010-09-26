@@ -36,6 +36,7 @@ class KDEVPYTHONDUCHAIN_EXPORT EditorIntegrator : public KDevelop::EditorIntegra
 
 public:
     EditorIntegrator();
+    ~EditorIntegrator();
 
     KTextEditor::Cursor findPosition( Ast* node, Edge edge = BackEdge ) const;
 

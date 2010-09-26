@@ -27,8 +27,10 @@
 #include "astdefaultvisitor.h"
 
 #include <language/duchain/builders/abstractcontextbuilder.h>
+#include <language/editor/rangeinrevision.h>
 
 #include "pythonduchainexport.h"
+
 
 namespace Python
 {
@@ -50,7 +52,7 @@ protected:
     virtual void startVisiting( Ast* node );
     virtual void setContextOnNode( Ast* node, KDevelop::DUContext* context );
     virtual KDevelop::DUContext* contextFromNode( Ast* node );
-    virtual KTextEditor::Range editorFindRange( Ast* fromNode, Ast* toNode );
+    virtual KDevelop::RangeInRevision editorFindRange( Ast* fromNode, Ast* toNode );
     virtual KDevelop::QualifiedIdentifier identifierForNode( IdentifierAst* node );
 
     void addImportedContexts();
@@ -62,6 +64,8 @@ protected:
     virtual void visitWhile( WhileAst* node );
     virtual void visitIf( IfAst* node );
     virtual void visitTry( TryAst* node );
+
+    EditorIntegrator *m_editor;
 
     template <typename T> void visitNodeList( const QList<T*>& l )
     {

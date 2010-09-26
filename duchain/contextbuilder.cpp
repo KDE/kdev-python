@@ -32,6 +32,7 @@
 #include <language/duchain/smartconverter.h>
 #include "pythoneditorintegrator.h"
 #include "dumpchain.h"
+#include <language/editor/rangeinrevision.h>
 
 using namespace KDevelop;
 
@@ -42,20 +43,21 @@ namespace Python
 
 EditorIntegrator* ContextBuilder::editor() const
 {
-    return static_cast<EditorIntegrator*>(ContextBuilderBase::editor());
+//     return static_cast<EditorIntegrator*>(ContextBuilderBase::editor());
+    return m_editor;
 }
 
 void ContextBuilder::setEditor(EditorIntegrator* editor)
 {
     //m_identifierCompiler = new IdentifierCompiler(editor->parseSession());
-    ContextBuilderBase::setEditor(editor, false);
+    m_editor = editor;
 }
 
 void ContextBuilder::setEditor(ParseSession* session)
 {
     EditorIntegrator* e = new EditorIntegrator(/*session*/);
     //m_identifierCompiler = new IdentifierCompiler(e->parseSession());
-    ContextBuilderBase::setEditor(e, true);
+    setEditor(e);
 }
 
 void ContextBuilder::startVisiting( Ast* node )
@@ -73,9 +75,9 @@ DUContext* ContextBuilder::contextFromNode( Ast* node )
     return node->context;
 }
 
-KTextEditor::Range ContextBuilder::editorFindRange( Ast* fromNode, Ast* toNode )
+RangeInRevision ContextBuilder::editorFindRange( Ast* fromNode, Ast* toNode )
 {
-    return editor()->findRange(fromNode, toNode);
+    return currentContext()->transformToLocalRevision(editor()->findRange(fromNode, toNode));
 }
 
 QualifiedIdentifier ContextBuilder::identifierForNode( IdentifierAst* node )

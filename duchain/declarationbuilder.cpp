@@ -122,11 +122,11 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     FunctionDeclaration* dec = openDeclaration<FunctionDeclaration>( node->functionName, node );
 
     FunctionType::Ptr type(new FunctionType);
-    
+
     openType(type);
     ContextBuilder::visitFunctionDefinition( node );
     closeType();
-    
+
     {
         DUChainWriteLocker lock;
         dec->setType(type);
@@ -137,9 +137,9 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 void DeclarationBuilder::visitLambda( LambdaAst* node )
 {
     kDebug() << "opening lambda def";
-    openDeclaration<FunctionDeclaration>( QualifiedIdentifier( "lambda" ), SimpleRange(editorFindRange(node, node)) );
+//     openDeclaration<FunctionDeclaration>( QualifiedIdentifier( "lambda" ), node ) );
     ContextBuilder::visitLambda( node );
-    closeDeclaration();
+//     closeDeclaration();
 }
 
 void DeclarationBuilder::visitDefaultParameter( DefaultParameterAst* node )
@@ -153,18 +153,17 @@ void DeclarationBuilder::visitDefaultParameter( DefaultParameterAst* node )
         if( node->value )
         {
             //Not sure what to do here, C++ simply adds the source code as default parameter, but that doesn't sound sane...
-            //No, it doesn't. But who cares? I guess it will work.
         }
         //simple case, we have an identifier parameter
         if( node->name->astType == Ast::IdentifierParameterPartAst )
         {
             function->addDefaultParameter(IndexedString("foo"));
             kDebug() << function->defaultParametersSize();
-            
+
             Q_ASSERT(hasCurrentType());
             FunctionType::Ptr type = currentType<FunctionType>();
             Q_ASSERT(type);
-            
+
             kDebug() << type->toString();
 
             // create a variable definition
@@ -176,7 +175,7 @@ void DeclarationBuilder::visitDefaultParameter( DefaultParameterAst* node )
                 type->addArgument(dec->abstractType());
             }
             closeDeclaration();
-            
+
         } else if( node->name->astType == Ast::ListParameterPartAst )
         {
             //complex case, a sublist, what to do??

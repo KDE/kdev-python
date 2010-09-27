@@ -48,7 +48,7 @@ class Highlighting;
 class LanguageSupport : public KDevelop::IPlugin, public KDevelop::ILanguageSupport
 {
     Q_OBJECT
-    Q_INTERFACES( KDevelop::ILanguageSupport )
+//    Q_INTERFACES( KDevelop::ILanguageSupport )
 
 public:
     LanguageSupport( QObject *parent, const QVariantList& args = QVariantList() );
@@ -60,7 +60,7 @@ public:
     /*the actual language object*/
     KDevelop::ILanguage *language();
     /*the code highlighter*/
-    const KDevelop::ICodeHighlighting* codeHighlighting() const;
+    KDevelop::ICodeHighlighting* codeHighlighting() const;
 
 private:
     Highlighting* m_highlighting;

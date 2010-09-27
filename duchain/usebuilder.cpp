@@ -39,7 +39,7 @@ using namespace KDevelop;
 
 namespace Python {
 
-UseBuilder::UseBuilder (EditorIntegrator* editor)
+UseBuilder::UseBuilder (PythonEditorIntegrator* editor)
 {
 }
 

@@ -23,24 +23,34 @@
 #ifndef PYTHONEDITORINTEGRATOR_H
 #define PYTHONEDITORINTEGRATOR_H
 
-#include <language/editor/editorintegrator.h>
 #include "pythonduchainexport.h"
+#include <language/editor/documentrange.h>
+#include <language/editor/documentrangeobject.h>
 
 namespace Python
 {
 
 class Ast;
 
-class KDEVPYTHONDUCHAIN_EXPORT EditorIntegrator : public KDevelop::EditorIntegrator
+class KDEVPYTHONDUCHAIN_EXPORT PythonEditorIntegrator
 {
 
 public:
-    EditorIntegrator();
-    ~EditorIntegrator();
+    PythonEditorIntegrator();
+    ~PythonEditorIntegrator();
+
+    enum Edge {
+        FrontEdge,
+        BackEdge
+    };
+
+    enum RangeEdge {
+        InnerEdge,
+        OuterEdge
+    };
 
     KTextEditor::Cursor findPosition( Ast* node, Edge edge = BackEdge ) const;
 
-    using KDevelop::EditorIntegrator::createRange;
     KTextEditor::Range findRange( Ast* node, RangeEdge = OuterEdge );
     KTextEditor::Range findRange( Ast* from, Python::Ast* to );
 

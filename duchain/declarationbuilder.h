@@ -39,7 +39,7 @@ class KDEVPYTHONDUCHAIN_EXPORT DeclarationBuilder: public DeclarationBuilderBase
 {
 public:
     DeclarationBuilder();
-    DeclarationBuilder( EditorIntegrator* editor );
+    DeclarationBuilder( PythonEditorIntegrator* editor );
     virtual ~DeclarationBuilder();
 
 protected:
@@ -53,6 +53,7 @@ protected:
     virtual void visitIdentifierTarget( IdentifierTargetAst * node );
 
 private:
+    /*
     template<class DeclarationType>
     DeclarationType* specialDeclaration( KTextEditor::SmartRange* smartRange,
                                          const KDevelop::SimpleRange& range );
@@ -61,6 +62,7 @@ private:
     DeclarationType* specialDeclaration( KTextEditor::SmartRange* smartRange,
                                          const KDevelop::SimpleRange& range,
                                          int scope );
+    */
 
     int& nextDeclaration();
 };

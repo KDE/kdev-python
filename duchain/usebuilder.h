@@ -42,7 +42,7 @@ class KDEVPYTHONDUCHAIN_EXPORT UseBuilder: public UseBuilderBase
 public:
 //     UseBuilder(ParseSession* session, const KUrl &url);
 //     UseBuilder(PythonEditorIntegrator* editor, const KUrl &url);
-    UseBuilder(EditorIntegrator *editor);
+    UseBuilder(PythonEditorIntegrator *editor);
     ParseSession* parseSession() const;
     void buildUses(Ast *node);
     virtual void openContext(KDevelop::DUContext* newContext);

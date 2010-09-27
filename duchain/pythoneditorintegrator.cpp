@@ -28,8 +28,6 @@
 #include <language/editor/documentrange.h>
 #include <language/editor/documentrangeobject.h>
 
-#include <language/editor/editorintegrator.h>
-
 #include "ast.h"
 
 using namespace KTextEditor;
@@ -37,11 +35,11 @@ using namespace KTextEditor;
 namespace Python
 {
 
-EditorIntegrator::EditorIntegrator()
+PythonEditorIntegrator::PythonEditorIntegrator()
 {
 }
 
-Cursor EditorIntegrator::findPosition( Ast* node , Edge edge ) const
+Cursor PythonEditorIntegrator::findPosition( Ast* node , Edge edge ) const
 {
     if ( edge == BackEdge )
     {
@@ -54,14 +52,14 @@ Cursor EditorIntegrator::findPosition( Ast* node , Edge edge ) const
     }
 }
 
-Range EditorIntegrator::findRange( Ast * node, RangeEdge edge )
+Range PythonEditorIntegrator::findRange( Ast * node, RangeEdge edge )
 {
     Q_UNUSED( edge );
     kDebug() << "Finding Range ==================";
     return Range( findPosition( node, FrontEdge ), findPosition( node, BackEdge ) );
 }
 
-Range EditorIntegrator::findRange( Ast* from, Ast* to )
+Range PythonEditorIntegrator::findRange( Ast* from, Ast* to )
 {
     return Range( findPosition( from, FrontEdge ), findPosition( to, BackEdge ) );
 }

@@ -56,7 +56,7 @@ DeclarationBuilder::DeclarationBuilder()
     kDebug() << "Building Declarations";
 }
 
-DeclarationBuilder::DeclarationBuilder( EditorIntegrator* editor )
+DeclarationBuilder::DeclarationBuilder( PythonEditorIntegrator* editor )
         : DeclarationBuilderBase( )
 {
     setEditor(editor);
@@ -67,6 +67,8 @@ DeclarationBuilder:: ~DeclarationBuilder()
 {
 }
 
+// This is not used anywhere and causes build errors, so... bye.
+/*
 template<class DeclarationType>
 DeclarationType* DeclarationBuilder::specialDeclaration( KTextEditor::SmartRange* smartRange,
         const KDevelop::SimpleRange& range )
@@ -85,6 +87,7 @@ DeclarationType* DeclarationBuilder::specialDeclaration( KTextEditor::SmartRange
     ret->setSmartRange( smartRange );
     return ret;
 }
+*/
 
 void DeclarationBuilder::closeDeclaration()
 {

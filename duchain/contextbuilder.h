@@ -35,7 +35,7 @@
 namespace Python
 {
 
-class EditorIntegrator;
+class PythonEditorIntegrator;
 class ParseSession;
 
 typedef KDevelop::AbstractContextBuilder<Ast, IdentifierAst> ContextBuilderBase;
@@ -43,11 +43,11 @@ typedef KDevelop::AbstractContextBuilder<Ast, IdentifierAst> ContextBuilderBase;
 class KDEVPYTHONDUCHAIN_EXPORT ContextBuilder: public ContextBuilderBase, public Python::AstDefaultVisitor
 {
 public:
-    void setEditor(EditorIntegrator* editor);
+    void setEditor(PythonEditorIntegrator* editor);
     void setEditor(ParseSession* session);
 
 protected:
-    EditorIntegrator* editor() const;
+    PythonEditorIntegrator* editor() const;
 
     virtual void startVisiting( Ast* node );
     virtual void setContextOnNode( Ast* node, KDevelop::DUContext* context );
@@ -65,7 +65,7 @@ protected:
     virtual void visitIf( IfAst* node );
     virtual void visitTry( TryAst* node );
 
-    EditorIntegrator *m_editor;
+    PythonEditorIntegrator *m_editor;
 
     template <typename T> void visitNodeList( const QList<T*>& l )
     {

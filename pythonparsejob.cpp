@@ -161,7 +161,7 @@ void ParseJob::run()
             if ( abortRequested() )
                 return abortJob();
 
-            EditorIntegrator editor;
+            PythonEditorIntegrator editor;
             DeclarationBuilder builder( &editor );
             m_duContext = builder.build( KDevelop::IndexedString(m_url.pathOrUrl()), m_ast );
             

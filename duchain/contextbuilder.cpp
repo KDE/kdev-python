@@ -41,13 +41,13 @@ using namespace KTextEditor;
 namespace Python
 {
 
-EditorIntegrator* ContextBuilder::editor() const
+PythonEditorIntegrator* ContextBuilder::editor() const
 {
 //     return static_cast<EditorIntegrator*>(ContextBuilderBase::editor());
     return m_editor;
 }
 
-void ContextBuilder::setEditor(EditorIntegrator* editor)
+void ContextBuilder::setEditor(PythonEditorIntegrator* editor)
 {
     //m_identifierCompiler = new IdentifierCompiler(editor->parseSession());
     m_editor = editor;
@@ -55,7 +55,7 @@ void ContextBuilder::setEditor(EditorIntegrator* editor)
 
 void ContextBuilder::setEditor(ParseSession* session)
 {
-    EditorIntegrator* e = new EditorIntegrator(/*session*/);
+    PythonEditorIntegrator* e = new PythonEditorIntegrator(/*session*/);
     //m_identifierCompiler = new IdentifierCompiler(e->parseSession());
     setEditor(e);
 }

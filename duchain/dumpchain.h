@@ -38,7 +38,7 @@ namespace Python
 {
     
 class ParseSession;
-class EditorIntegrator;
+class PythonEditorIntegrator;
 
 class KDEVPYTHONDUCHAIN_EXPORT DumpChain
 {

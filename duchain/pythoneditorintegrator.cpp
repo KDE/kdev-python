@@ -39,6 +39,10 @@ PythonEditorIntegrator::PythonEditorIntegrator()
 {
 }
 
+PythonEditorIntegrator::~PythonEditorIntegrator() 
+{
+}
+
 Cursor PythonEditorIntegrator::findPosition( Ast* node , Edge edge ) const
 {
     if ( edge == BackEdge )

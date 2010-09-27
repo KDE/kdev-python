@@ -99,6 +99,9 @@ void ParseJob::run()
 
 //     QReadLocker lock(python()->language()->parseLock());
     UrlParseLock urlLock(document());
+
+// I guess this check is not necessary any more 
+/*
     m_readFromDisk = !contentsAvailableFromEditor();
 
     if ( m_readFromDisk )
@@ -142,8 +145,11 @@ void ParseJob::run()
     }
     else
     {
-        m_session->setContents( contentsFromEditor().toAscii() + "\n" );
+*/
+     m_session->setContents( QString::fromUtf8(contents().contents) + "\n" );
+/*
     }
+*/
 
     if ( abortRequested() )
         return abortJob();
@@ -180,7 +186,7 @@ void ParseJob::run()
                 if ( m_parent && m_parent->codeHighlighting() ) {
                     kDebug() << m_duContext.data();
                     DUChainReadLocker lock(DUChain::lock());
-                    const KDevelop::ICodeHighlighting* hl = m_parent->codeHighlighting();
+                    KDevelop::ICodeHighlighting* hl = m_parent->codeHighlighting();
                     hl->highlightDUChain(m_duContext.data());
                 }
             }
@@ -190,10 +196,10 @@ void ParseJob::run()
     else
     {
         kDebug() << "===Failed===";
-        cleanupSmartRevision();
+//        cleanupSmartRevision();
         return;
     }
-    cleanupSmartRevision();
+//    cleanupSmartRevision();
 }
 
 ParseSession *ParseJob::parseSession() const

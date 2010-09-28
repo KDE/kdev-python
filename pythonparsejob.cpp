@@ -146,7 +146,8 @@ void ParseJob::run()
     else
     {
 */
-     m_session->setContents( QString::fromUtf8(contents().contents) + "\n" );
+    readContents();
+    m_session->setContents( QString::fromUtf8(contents().contents) + "\n" );
 /*
     }
 */
@@ -169,10 +170,16 @@ void ParseJob::run()
 
             PythonEditorIntegrator editor;
             DeclarationBuilder builder( &editor );
-            m_duContext = builder.build( KDevelop::IndexedString(m_url.pathOrUrl()), m_ast );
             
-            UseBuilder usebuilder( &editor );
-            usebuilder.buildUses(m_ast);
+            IndexedString filename = KDevelop::IndexedString(m_url.pathOrUrl());
+            m_session->setCurrentDocument(filename);
+            
+            editor.setParseSession(m_session);
+            
+            m_duContext = builder.build(filename, m_ast);
+            
+//             UseBuilder usebuilder( &editor );
+//             usebuilder.buildUses(m_ast);
             
             kDebug() << "----Parsing Succeded---***";
 
@@ -187,7 +194,8 @@ void ParseJob::run()
                     kDebug() << m_duContext.data();
                     DUChainReadLocker lock(DUChain::lock());
                     KDevelop::ICodeHighlighting* hl = m_parent->codeHighlighting();
-                    hl->highlightDUChain(m_duContext.data());
+                    kDebug() << m_duContext->parsingEnvironmentFile()->modificationRevision().toString();
+                    hl->highlightDUChain(m_duContext);
                 }
             }
             

@@ -38,11 +38,19 @@ set( parser_SRCS
 #add_subdirectory(tests)
 
 kde4_add_library( kdev4pythonparser SHARED ${parser_SRCS} ${parser_STAT_SRCS} )
-target_link_libraries( kdev4pythonparser ${KDE4_KDECORE_LIBS} )
+target_link_libraries( 
+    kdev4pythonparser 
+    ${KDE4_KDECORE_LIBS} 
+    ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
+)
 
 kde4_add_executable( python-parser main.cpp )
 
-target_link_libraries(python-parser ${QT_QTCORE_LIBRARY} kdev4pythonparser)
+target_link_libraries(
+    python-parser 
+    ${QT_QTCORE_LIBRARY} 
+    kdev4pythonparser
+)
 
 install(TARGETS python-parser ${INSTALL_TARGETS_DEFAULT_ARGS})
 install(TARGETS kdev4pythonparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})

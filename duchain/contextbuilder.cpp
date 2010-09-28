@@ -33,6 +33,7 @@
 #include "pythoneditorintegrator.h"
 #include "dumpchain.h"
 #include <language/editor/rangeinrevision.h>
+#include <interfaces/foregroundlock.h>
 
 using namespace KDevelop;
 
@@ -45,6 +46,17 @@ PythonEditorIntegrator* ContextBuilder::editor() const
 {
 //     return static_cast<EditorIntegrator*>(ContextBuilderBase::editor());
     return m_editor;
+}
+
+TopDUContext* ContextBuilder::newTopContext(const RangeInRevision& range, ParsingEnvironmentFile* file) 
+{
+    IndexedString currentDocumentUrl = m_editor->parseSession()->currentDocument();
+    
+    if ( !file ) {
+        file = new ParsingEnvironmentFile(currentDocumentUrl);
+        file->setLanguage(IndexedString("python"));
+    }
+    return new TopDUContext(currentDocumentUrl, range, file);
 }
 
 void ContextBuilder::setEditor(PythonEditorIntegrator* editor)
@@ -77,7 +89,7 @@ DUContext* ContextBuilder::contextFromNode( Ast* node )
 
 RangeInRevision ContextBuilder::editorFindRange( Ast* fromNode, Ast* toNode )
 {
-    return currentContext()->transformToLocalRevision(editor()->findRange(fromNode, toNode));
+    return editor()->findRange(fromNode, toNode);
 }
 
 QualifiedIdentifier ContextBuilder::identifierForNode( IdentifierAst* node )

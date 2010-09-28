@@ -84,6 +84,7 @@ QString LanguageSupport::name() const
 
 KDevelop::ILanguage *LanguageSupport::language()
 {
+    kDebug() << core()->languageController()->language( name() );
     return core()->languageController()->language( name() );
 }
 

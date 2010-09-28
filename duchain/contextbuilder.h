@@ -28,9 +28,11 @@
 
 #include <language/duchain/builders/abstractcontextbuilder.h>
 #include <language/editor/rangeinrevision.h>
+#include <language/duchain/topducontext.h>
 
 #include "pythonduchainexport.h"
 
+using namespace KDevelop;
 
 namespace Python
 {
@@ -66,6 +68,8 @@ protected:
     virtual void visitTry( TryAst* node );
 
     PythonEditorIntegrator *m_editor;
+    
+    TopDUContext* newTopContext(const RangeInRevision& range, ParsingEnvironmentFile* file);
 
     template <typename T> void visitNodeList( const QList<T*>& l )
     {

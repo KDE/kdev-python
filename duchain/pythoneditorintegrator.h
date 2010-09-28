@@ -26,6 +26,7 @@
 #include "pythonduchainexport.h"
 #include <language/editor/documentrange.h>
 #include <language/editor/documentrangeobject.h>
+#include "parsesession.h"
 
 namespace Python
 {
@@ -38,6 +39,9 @@ class KDEVPYTHONDUCHAIN_EXPORT PythonEditorIntegrator
 public:
     PythonEditorIntegrator();
     ~PythonEditorIntegrator();
+    
+    ParseSession* parseSession() const;
+    void setParseSession(ParseSession* session);
 
     enum Edge {
         FrontEdge,
@@ -49,12 +53,13 @@ public:
         OuterEdge
     };
 
-    KTextEditor::Cursor findPosition( Ast* node, Edge edge = BackEdge ) const;
+    CursorInRevision findPosition( Python::Ast* node, Python::PythonEditorIntegrator::Edge edge = BackEdge ) const;
 
-    KTextEditor::Range findRange( Ast* node, RangeEdge = OuterEdge );
-    KTextEditor::Range findRange( Ast* from, Python::Ast* to );
+    RangeInRevision findRange( Python::Ast* node, Python::PythonEditorIntegrator::RangeEdge edge = OuterEdge );
+    RangeInRevision findRange( Python::Ast* from, Python::Ast* to );
 
 private:
+    ParseSession* m_session;
 };
 
 }

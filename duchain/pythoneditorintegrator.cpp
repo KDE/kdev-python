@@ -43,29 +43,40 @@ PythonEditorIntegrator::~PythonEditorIntegrator()
 {
 }
 
-Cursor PythonEditorIntegrator::findPosition( Ast* node , Edge edge ) const
+ParseSession* PythonEditorIntegrator::parseSession() const
+{
+    return m_session;
+}
+
+void PythonEditorIntegrator::setParseSession(ParseSession* session)
+{
+    m_session = session;
+}
+
+
+CursorInRevision PythonEditorIntegrator::findPosition( Ast* node , Edge edge ) const
 {
     if ( edge == BackEdge )
     {
         // Apparently KTE expects a range to go until _after_ the last character that should be included
         // however the parser calculates endCol as the index _before_ the last included character, so adjust here
-        return Cursor( node->endLine, node->endCol+1 );
+        return CursorInRevision( node->endLine, node->endCol+1 );
     }else
     {
-        return Cursor( node->startLine, node->startCol );
+        return CursorInRevision( node->startLine, node->startCol );
     }
 }
 
-Range PythonEditorIntegrator::findRange( Ast * node, RangeEdge edge )
+RangeInRevision PythonEditorIntegrator::findRange( Ast * node, RangeEdge edge )
 {
     Q_UNUSED( edge );
     kDebug() << "Finding Range ==================";
-    return Range( findPosition( node, FrontEdge ), findPosition( node, BackEdge ) );
+    return RangeInRevision( findPosition( node, FrontEdge ), findPosition( node, BackEdge ) );
 }
 
-Range PythonEditorIntegrator::findRange( Ast* from, Ast* to )
+RangeInRevision PythonEditorIntegrator::findRange( Ast* from, Ast* to )
 {
-    return Range( findPosition( from, FrontEdge ), findPosition( to, BackEdge ) );
+    return RangeInRevision( findPosition( from, FrontEdge ), findPosition( to, BackEdge ) );
 }
 
 }

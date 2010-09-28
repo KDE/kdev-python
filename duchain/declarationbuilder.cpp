@@ -105,6 +105,7 @@ void DeclarationBuilder::closeDeclaration()
 void DeclarationBuilder::visitIdentifierTarget(IdentifierTargetAst* node)
 {
     Python::AstDefaultVisitor::visitIdentifierTarget(node);
+    
     openDeclaration<Declaration>( node->identifier, node);
     closeDeclaration();
 }

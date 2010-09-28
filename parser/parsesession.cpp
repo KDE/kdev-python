@@ -25,6 +25,9 @@
 #include <kdebug.h>
 
 #include "pythondriver.h"
+#include <language/duchain/indexedstring.h>
+
+using namespace KDevelop;
 
 namespace Python
 {
@@ -35,6 +38,17 @@ ParseSession::ParseSession()
 ParseSession::~ParseSession()
 {
 }
+
+void ParseSession::setCurrentDocument(IndexedString filename)
+{
+    m_currentDocument = filename;
+}
+
+IndexedString ParseSession::currentDocument()
+{
+    return m_currentDocument;
+}
+
 
 QString ParseSession::contents() const
 {

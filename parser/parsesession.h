@@ -25,6 +25,9 @@
 #define PYTHON_PARSESESSION_H
 #include <QtCore/QString>
 #include "parserexport.h"
+#include <language/duchain/indexedstring.h>
+
+using namespace KDevelop;
 
 namespace Python
 {
@@ -39,10 +42,14 @@ public:
 
     void setContents( const QString& contents );
     QString contents() const;
+    
+    void setCurrentDocument(IndexedString filename);
+    IndexedString currentDocument();
 
     bool parse( Python::CodeAst** );
 private:
     QString m_contents;
+    IndexedString m_currentDocument;
 
 };
 

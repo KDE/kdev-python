@@ -106,8 +106,22 @@ void DeclarationBuilder::visitIdentifierTarget(IdentifierTargetAst* node)
 {
     Python::AstDefaultVisitor::visitIdentifierTarget(node);
     
-    openDeclaration<Declaration>( node->identifier, node);
-    closeDeclaration();
+    QList<Declaration*> existingDeclarations;
+    
+    {
+        DUChainWriteLocker lock( DUChain::lock() );
+        RangeInRevision range = editorFindRange(node, node);
+        CursorInRevision stopSearching = range.start;
+        QualifiedIdentifier id = identifierForNode(node->identifier);
+        existingDeclarations = currentContext()->findDeclarations(id, stopSearching);
+    }
+    if ( ! existingDeclarations.length() ) {
+        openDeclaration<Declaration>( node->identifier, node);
+        closeDeclaration();
+    }
+    else {
+        kDebug() << "Declaration does already exist, not updating" << node->identifier->identifier.toAscii();
+    }
 }
 
 

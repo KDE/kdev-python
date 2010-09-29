@@ -61,7 +61,7 @@ void UseBuilder::visitIdentifier(IdentifierAst* node)
 
     kDebug() << "-- identifier: " << node->identifier.toAscii();
     kDebug() << "declaration count: " << dec.length();
-    kDebug() << "is atom: " << node->parent->astType;
+    kDebug() << "is type: " << node->parent->astType;
     
     // only highlight the top level properties; maybe we find a way to do the others later
     // but it'll be difficult

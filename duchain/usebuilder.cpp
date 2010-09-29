@@ -33,6 +33,7 @@
 #include <language/duchain/duchainlock.h>
 #include <parsesession.h>
 #include <usebuilder.h>
+#include "ast.h"
 
 using namespace KTextEditor;
 using namespace KDevelop;
@@ -57,9 +58,17 @@ void UseBuilder::visitIdentifier(IdentifierAst* node)
     RangeInRevision range = editorFindRange(node, node);
     CursorInRevision until = range.start;
     QList<Declaration*> dec = currentContext()->findDeclarations(id, until);
+
+    kDebug() << "-- identifier: " << node->identifier.toAscii();
+    kDebug() << "declaration count: " << dec.length();
+    kDebug() << "is atom: " << node->parent->astType;
     
-    if ( dec.length() ) {
-        UseBuilderBase::newUse(node, dec.last());
+    // only highlight the top level properties; maybe we find a way to do the others later
+    // but it'll be difficult
+    if ( node->parent->astType == Python::Ast::AtomAst ) {
+        if ( dec.length() ) {
+            UseBuilderBase::newUse(node, dec.last());
+        }
     }
 }
 

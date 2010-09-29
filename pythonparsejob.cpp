@@ -100,58 +100,9 @@ void ParseJob::run()
 //     QReadLocker lock(python()->language()->parseLock());
     UrlParseLock urlLock(document());
 
-// I guess this check is not necessary any more 
-/*
-    m_readFromDisk = !contentsAvailableFromEditor();
-
-    if ( m_readFromDisk )
-    {
-        QFile file( document().str() );
-        //TODO: Read the first lines to determine encoding using Python encoding and use that for the text stream
-
-        if ( !file.open( QIODevice::ReadOnly | QIODevice::Text ) )
-        {
-            KDevelop::ProblemPointer p(new KDevelop::Problem());
-            p->setSource(KDevelop::ProblemData::Disk);
-            p->setDescription( i18n( "Could not open file '%1'", document().str() ) );
-            switch (file.error()) {
-                case QFile::ReadError:
-                    p->setExplanation(i18n("File could not be read from."));
-                    break;
-                case QFile::OpenError:
-                    p->setExplanation(i18n("File could not be opened."));
-                    break;
-                case QFile::PermissionsError:
-                    p->setExplanation(i18n("File permissions prevent opening for read.")); 
-                    break;
-                default:
-                    break;
-            }
-            p->setFinalLocation(KDevelop::DocumentRange(document().str(), KTextEditor::Cursor(0,0), KTextEditor::Cursor(0,0)));
-            // TODO addProblem(p);
-            kWarning( 9007 ) << "Could not open file " << document().str()
-                             << " (path " << document().str() << ")" << endl;
-            return ;
-
-        }
-
-        QTextStream s( &file );
-
-//         if( codec )
-//             s.setCodec( QTextCodec::codecForName(codec) );
-        m_session->setContents( s.readAll() + "\n" );
-        Q_ASSERT( m_session->contents().size() > 0 );
-        file.close();
-    }
-    else
-    {
-*/
     readContents();
     m_session->setContents( QString::fromUtf8(contents().contents) + "\n" );
-/*
-    }
-*/
-
+    
     if ( abortRequested() )
         return abortJob();
 
@@ -177,24 +128,24 @@ void ParseJob::run()
             editor.setParseSession(m_session);
             
             m_duContext = builder.build(filename, m_ast);
+            setDuChain(m_duContext);
             
-//             UseBuilder usebuilder( &editor );
-//             usebuilder.buildUses(m_ast);
+            UseBuilder usebuilder( &editor );
+            usebuilder.buildUses(m_ast);
             
             kDebug() << "----Parsing Succeded---***";
 
-            {
-                DUChainReadLocker lock( DUChain::lock() );
-                DumpChain dump;
+//             {
+//                 DUChainReadLocker lock( DUChain::lock() );
+//                 DumpChain dump;
 //                 dump.dump( m_duContext );
-            }
+//             }
             
             {
                 if ( m_parent && m_parent->codeHighlighting() ) {
                     kDebug() << m_duContext.data();
-                    DUChainReadLocker lock(DUChain::lock());
+//                     DUChainReadLocker lock(DUChain::lock());
                     KDevelop::ICodeHighlighting* hl = m_parent->codeHighlighting();
-                    kDebug() << m_duContext->parsingEnvironmentFile()->modificationRevision().toString();
                     hl->highlightDUChain(m_duContext);
                 }
             }

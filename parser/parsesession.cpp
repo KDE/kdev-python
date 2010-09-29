@@ -39,7 +39,7 @@ ParseSession::~ParseSession()
 {
 }
 
-void ParseSession::setCurrentDocument(IndexedString &filename)
+void ParseSession::setCurrentDocument(IndexedString& filename)
 {
     m_currentDocument = filename;
 }

@@ -25,9 +25,16 @@
 #define PYTHON_PARSESESSION_H
 #include <QtCore/QString>
 #include "parserexport.h"
+#include "pythonparser.h"
 #include <language/duchain/indexedstring.h>
+#include <language/duchain/duchainpointer.h>
+#include <language/editor/simplecursor.h>
+#include <language/editor/documentrange.h>
+#include "ast.h"
 
 using namespace KDevelop;
+
+typedef QPair<KDevelop::DUContextPointer, KDevelop::RangeInRevision> SimpleUse;
 
 namespace Python
 {
@@ -47,6 +54,13 @@ public:
     IndexedString currentDocument();
 
     bool parse( Python::CodeAst** );
+    
+    void mapAstUse(Ast* node, const SimpleUse& use)
+    {
+        Q_UNUSED(node);
+        Q_UNUSED(use);
+    }
+    
 private:
     QString m_contents;
     IndexedString m_currentDocument;

@@ -33,7 +33,6 @@
 namespace Python {
 
 class ParseSession;
-class PythonEditorIntegrator;
 
 typedef KDevelop::AbstractUseBuilder<Ast, IdentifierAst, ContextBuilder> UseBuilderBase;
 
@@ -44,12 +43,14 @@ public:
 //     UseBuilder(PythonEditorIntegrator* editor, const KUrl &url);
     UseBuilder(PythonEditorIntegrator *editor);
     ParseSession* parseSession() const;
-    void buildUses(Ast *node);
+//     void buildUses(Python::Ast* node);
     virtual void openContext(KDevelop::DUContext* newContext);
     virtual void closeContext();
+    
+    virtual void visitIdentifier(IdentifierAst *node);
 private:
     ParseSession* m_session;
-    void newUse(std::size_t name, Ast *rangenode);
+//     void newUse(std::size_t name, Ast *rangenode);
     inline int& nextUseIndex()
     {
         return m_nextUseStack.top();

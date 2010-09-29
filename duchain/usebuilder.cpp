@@ -43,11 +43,24 @@ UseBuilder::UseBuilder (PythonEditorIntegrator* editor)
 {
 }
 
-void UseBuilder::buildUses(Ast *node)
+// void UseBuilder::buildUses(Ast *node)
+// {
+//     supportBuild(node);
+// //     if (TopDUContext* top = dynamic_cast<TopDUContext*>(m_session->getNode(node)))
+// //         top->setHasUses(true);
+// }
+
+void UseBuilder::visitIdentifier(IdentifierAst* node)
 {
-    supportBuild(node);
-//     if (TopDUContext* top = dynamic_cast<TopDUContext*>(m_session->getNode(node)))
-//         top->setHasUses(true);
+    DUChainWriteLocker lock( DUChain::lock() );
+    QualifiedIdentifier id = identifierForNode(node);
+    RangeInRevision range = editorFindRange(node, node);
+    CursorInRevision until = range.start;
+    QList<Declaration*> dec = currentContext()->findDeclarations(id, until);
+    
+    if ( dec.length() ) {
+        UseBuilderBase::newUse(node, dec.last());
+    }
 }
 
 void UseBuilder::openContext(DUContext * newContext)

@@ -80,6 +80,8 @@ protected:
             visitNode(( *it ) );
         }
     }
+    
+    bool m_mapAst;
 
 private:
     void openContextForStatementList( const QList<StatementAst*>& );

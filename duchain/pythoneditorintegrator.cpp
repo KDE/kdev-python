@@ -67,14 +67,14 @@ CursorInRevision PythonEditorIntegrator::findPosition( Ast* node , Edge edge ) c
     }
 }
 
-RangeInRevision PythonEditorIntegrator::findRange( Ast * node, RangeEdge edge )
+RangeInRevision PythonEditorIntegrator::findRange( Ast * node, RangeEdge edge ) const
 {
     Q_UNUSED( edge );
     kDebug() << "Finding Range ==================";
     return RangeInRevision( findPosition( node, FrontEdge ), findPosition( node, BackEdge ) );
 }
 
-RangeInRevision PythonEditorIntegrator::findRange( Ast* from, Ast* to )
+RangeInRevision PythonEditorIntegrator::findRange( Ast* from, Ast* to ) const
 {
     return RangeInRevision( findPosition( from, FrontEdge ), findPosition( to, BackEdge ) );
 }

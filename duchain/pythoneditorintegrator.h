@@ -41,7 +41,7 @@ public:
     ~PythonEditorIntegrator();
     
     ParseSession* parseSession() const;
-    void setParseSession(ParseSession* session);
+    void setParseSession(Python::ParseSession* session);
 
     enum Edge {
         FrontEdge,
@@ -55,8 +55,8 @@ public:
 
     CursorInRevision findPosition( Python::Ast* node, Python::PythonEditorIntegrator::Edge edge = BackEdge ) const;
 
-    RangeInRevision findRange( Python::Ast* node, Python::PythonEditorIntegrator::RangeEdge edge = OuterEdge );
-    RangeInRevision findRange( Python::Ast* from, Python::Ast* to );
+    RangeInRevision findRange( Python::Ast* node, Python::PythonEditorIntegrator::RangeEdge edge = OuterEdge) const;
+    RangeInRevision findRange( Python::Ast* from, Python::Ast* to) const;
 
 private:
     ParseSession* m_session;

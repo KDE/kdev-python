@@ -43,7 +43,7 @@ public:
     void setContents( const QString& contents );
     QString contents() const;
     
-    void setCurrentDocument(IndexedString filename);
+    void setCurrentDocument(IndexedString& filename);
     IndexedString currentDocument();
 
     bool parse( Python::CodeAst** );

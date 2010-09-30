@@ -48,6 +48,10 @@
 #include "duchain/pythoneditorintegrator.h"
 
 #include <stdio.h>
+#include <QWidget>
+#include <QPushButton>
+#include <qlabel.h>
+#include <qboxlayout.h>
 
 using namespace KDevelop;
 
@@ -92,6 +96,21 @@ KDevelop::ICodeHighlighting* LanguageSupport::codeHighlighting() const
 {
     return m_highlighting;
 }
+
+QWidget* LanguageSupport::specialLanguageObjectNavigationWidget(const KUrl& url, const KDevelop::SimpleCursor& position)
+{
+    kDebug() << "Navigation widget requested *** ";
+    // QWidget* navWidget = ILanguageSupport::specialLanguageObjectNavigationWidget(url, position);
+//     kDebug() << navWidget;
+    QWidget *navWidget = new QWidget();
+    QLabel *label = new QLabel();
+    QHBoxLayout *layout = new QHBoxLayout();
+    label->setText("Foo!");
+    layout->addWidget(label);
+    navWidget->setLayout(layout);
+    return navWidget;
+}
+
 
 }
 

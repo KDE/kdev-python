@@ -106,16 +106,17 @@ void DeclarationBuilder::visitIdentifierTarget(IdentifierTargetAst* node)
 {
     Python::AstDefaultVisitor::visitIdentifierTarget(node);
     
-    QList<Declaration*> existingDeclarations;
+    QList<Declaration*> existingLocalDeclarations;
     
     {
         DUChainWriteLocker lock( DUChain::lock() );
         RangeInRevision range = editorFindRange(node, node);
         CursorInRevision stopSearching = range.start;
         QualifiedIdentifier id = identifierForNode(node->identifier);
-        existingDeclarations = currentContext()->findDeclarations(id, stopSearching);
+        existingLocalDeclarations = currentContext()->findLocalDeclarations(id.last(), stopSearching);
     }
-    if ( ! existingDeclarations.length() ) {
+    
+    if ( ! existingLocalDeclarations.length() ) {
         openDeclaration<Declaration>( node->identifier, node);
         closeDeclaration();
     }

@@ -48,7 +48,7 @@ target_link_libraries(kdevpythonlanguagesupport
     ${KDE4_KTEXTEDITOR_LIBS}
     kdev4pythonparser
     kdev4pythonduchain
-    kdev4phpcompletion
+    kdev4pythoncompletion
 )
 
 install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})

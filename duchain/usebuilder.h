@@ -47,7 +47,8 @@ public:
     virtual void openContext(KDevelop::DUContext* newContext);
     virtual void closeContext();
     
-    virtual void visitIdentifier(IdentifierAst *node);
+    virtual void visitIdentifier(IdentifierAst* node);
+    virtual void visitIdentifierTarget(IdentifierTargetAst* node);
 private:
     ParseSession* m_session;
 //     void newUse(std::size_t name, Ast *rangenode);

@@ -59,6 +59,9 @@ void UseBuilder::visitIdentifier(IdentifierAst* node)
     CursorInRevision until = range.start;
     QList<Declaration*> allDeclarations = currentContext()->findDeclarations(id, until);
     
+    kDebug() << " >> scanning " << node->identifier;
+    kDebug() << "  > searching for declaration until" << until.line << ":" << until.column << "; " << allDeclarations.length() << "Declarations found";
+    
     Declaration *globalDeclaration = 0;
     foreach ( Declaration* dec, allDeclarations ) {
         if ( dec->context() == dec->topContext() ) {
@@ -67,20 +70,25 @@ void UseBuilder::visitIdentifier(IdentifierAst* node)
         }
     }
     
-    // only highlight the top level properties; maybe we find a way to do the others later
-    // but it'll be difficult and it'll require a TypeBuilder
-    if ( node->parent->astType == Python::Ast::AtomAst ) {
-        // if there's a local declaration, use the last one of those
-        if ( allDeclarations.length() && allDeclarations.last()->context() != allDeclarations.last()->topContext() ) {
-            UseBuilderBase::newUse(node, allDeclarations.last());
-        }
-        // otherwise, use the global one.
-        // Note that the following is not allowed by python: a=3; def foo(): print a; a=7
-        else if ( globalDeclaration ) {
-            UseBuilderBase::newUse(node, globalDeclaration);
-        }
+    // if there's a local declaration, use the last one of those
+    if ( allDeclarations.length() && allDeclarations.last()->context() != allDeclarations.last()->topContext() ) {
+        kDebug() << " ++ Created a use of local declaration for node" << node->identifier;
+        UseBuilderBase::newUse(node, allDeclarations.last());
+    }
+    // otherwise, use the global one.
+    // Note that the following is not allowed by python: a=3; def foo(): print a; a=7
+    else if ( globalDeclaration ) {
+        kDebug() << " ++ Created a use of global declaration for node" << node->identifier;
+        UseBuilderBase::newUse(node, globalDeclaration);
     }
 }
+
+void UseBuilder::visitIdentifierTarget(IdentifierTargetAst* node)
+{
+    kDebug() << "Target variable identifier: " << node->identifier->identifier.toAscii();
+    UseBuilderBase::visitIdentifierTarget(node);
+}
+
 
 void UseBuilder::openContext(DUContext * newContext)
 {

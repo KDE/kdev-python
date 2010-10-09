@@ -7,7 +7,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${kdevpython_SOURCE_DIR}/cmake/)
 #complain about the FindKDevelop-PG.cmake file not findable.
 find_package(KDE4 REQUIRED)
 
-find_package(KDevPlatform 0.9.80 REQUIRED)
+find_package(KDevPlatform 1.0.0 REQUIRED)
 
 include_directories(
     ${KDEVPLATFORM_INCLUDE_DIR}
@@ -30,6 +30,7 @@ include_directories(
 
 add_subdirectory(parser)
 add_subdirectory(duchain)
+add_subdirectory(codecompletion)
 
 set(kdevpythonlanguagesupport_PART_SRCS
     pythonlanguagesupport.cpp
@@ -47,11 +48,9 @@ target_link_libraries(kdevpythonlanguagesupport
     ${KDE4_KTEXTEDITOR_LIBS}
     kdev4pythonparser
     kdev4pythonduchain
+    kdev4phpcompletion
 )
 
 install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES kdevpythonsupport.desktop DESTINATION ${SERVICES_INSTALL_DIR})
-
-
-

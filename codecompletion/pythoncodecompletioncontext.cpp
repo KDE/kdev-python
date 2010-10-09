@@ -3,6 +3,9 @@
 #include <language/duchain/duchainpointer.h>
 #include <language/codecompletion/normaldeclarationcompletionitem.h>
 #include <language/util/includeitem.h>
+#include <language/codecompletion/abstractincludefilecompletionitem.h>
+#include "navigationwidget.h"
+#include "importfileitem.h"
 
 using namespace KDevelop;
 
@@ -12,8 +15,11 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
 {
     QList<CompletionTreeItemPointer> items;
     
-    CompletionTreeItem* item = new CompletionTreeItem();
-    items << CompletionTreeItemPointer( item );
+    kDebug() << "Adding testing item to completion list";
+    
+    IncludeItem item;
+    item.name = "Foo";
+    items << CompletionTreeItemPointer( new ImportFileItem(item) );
     
     return items;
 }

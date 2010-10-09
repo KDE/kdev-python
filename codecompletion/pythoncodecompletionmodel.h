@@ -5,6 +5,8 @@
 #include <language/duchain/duchainpointer.h>
 #include "pythoncompletionexport.h"
 
+namespace Python {
+
 class KDEVPYTHONCOMPLETION_EXPORT PythonCodeCompletionModel : public KDevelop::CodeCompletionModel
 {
 
@@ -15,5 +17,7 @@ public:
     virtual KDevelop::CodeCompletionWorker* createCompletionWorker();
     KTextEditor::Range completionRange(KTextEditor::View* view, const KTextEditor::Cursor &position); 
 };
+
+}
 
 #endif // PYTHONCODECOMPLETIONMODEL_H

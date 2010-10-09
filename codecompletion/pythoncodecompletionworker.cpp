@@ -1,6 +1,9 @@
 #include "pythoncodecompletionworker.h"
 #include "pythoncodecompletionmodel.h"
 
+
+namespace Python {
+
 PythonCodeCompletionWorker::PythonCodeCompletionWorker(PythonCodeCompletionModel *parent)
     : KDevelop::CodeCompletionWorker(parent)
 {
@@ -10,4 +13,7 @@ PythonCodeCompletionWorker::PythonCodeCompletionWorker(PythonCodeCompletionModel
 KDevelop::CodeCompletionContext* PythonCodeCompletionWorker::createCompletionContext(KDevelop::DUContextPointer context, const QString& contextText, const QString& followingText, const KDevelop::CursorInRevision& position) const
 {
     return KDevelop::CodeCompletionWorker::createCompletionContext(context, contextText, followingText, position);
+}
+
+
 }

@@ -4,8 +4,11 @@
 #include "pythoncodecompletionmodel.h"
 #include <language/codecompletion/codecompletionworker.h>
 #include <language/codecompletion/codecompletionitem.h>
+#include "pythoncompletionexport.h"
 
-class PythonCodeCompletionWorker : public KDevelop::CodeCompletionWorker
+namespace Python {
+
+class KDEVPYTHONCOMPLETION_EXPORT PythonCodeCompletionWorker : public KDevelop::CodeCompletionWorker
 {
 
 public:
@@ -14,3 +17,5 @@ public:
 };
 
 #endif // PYTHONCODECOMPLETIONWORKER_H
+
+}

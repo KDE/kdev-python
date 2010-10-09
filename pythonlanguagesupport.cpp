@@ -43,9 +43,13 @@
 #include <language/duchain/duchain.h>
 #include <interfaces/idocumentcontroller.h>
 
+#include <language/codecompletion/codecompletion.h>
+#include <language/codecompletion/codecompletionmodel.h>
+
 #include "pythonparsejob.h"
 #include "pythonhighlighting.h"
 #include "duchain/pythoneditorintegrator.h"
+#include "codecompletion/pythoncodecompletionmodel.h"
 
 #include <stdio.h>
 #include <QWidget>
@@ -68,6 +72,8 @@ LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ 
     KDEV_USE_EXTENSION_INTERFACE( KDevelop::ILanguageSupport )
 
     m_highlighting = new Highlighting( this );
+    PythonCodeCompletionModel* codeCompletion = new PythonCodeCompletionModel(this);
+    new KDevelop::CodeCompletion(this, codeCompletion, "Python");
 }
 
 LanguageSupport::~LanguageSupport()

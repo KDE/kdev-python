@@ -2,6 +2,8 @@
 #include "pythoncodecompletionworker.h"
 #include "ktexteditor/view.h"
 
+namespace Python {
+
 PythonCodeCompletionModel::PythonCodeCompletionModel(QObject* parent)
     : CodeCompletionModel(parent)
 {
@@ -19,4 +21,6 @@ KTextEditor::Range PythonCodeCompletionModel::completionRange(KTextEditor::View*
 KDevelop::CodeCompletionWorker* PythonCodeCompletionModel::createCompletionWorker()
 {
     return new PythonCodeCompletionWorker(this);
+}
+
 }

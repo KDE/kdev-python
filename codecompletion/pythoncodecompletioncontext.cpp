@@ -6,6 +6,8 @@
 
 using namespace KDevelop;
 
+namespace Python {
+
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bool& abort, bool fullCompletion)
 {
     QList<CompletionTreeItemPointer> items;
@@ -16,3 +18,4 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     return items;
 }
 
+}

@@ -1,5 +1,5 @@
 include_directories(
-    ${CMAKE_CURRENT_BINRAY_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
@@ -16,4 +16,4 @@ target_link_libraries(kdev4pythoncompletion
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
 )
 
-install(TARGETS ${kdev4pythoncompletion} DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS kdev4pythoncompletion DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})

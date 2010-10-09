@@ -4,7 +4,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
     )
 
 set(duchain_SRCS 
-    navigationwidget.cpp
+#     navigationwidget.cpp
     contextbuilder.cpp
     pythoneditorintegrator.cpp
     declarationbuilder.cpp

@@ -24,4 +24,10 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     return items;
 }
 
+PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position, int depth): CodeCompletionContext(context, text, position, depth)
+{
+
+}
+
+
 }

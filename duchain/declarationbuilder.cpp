@@ -117,8 +117,12 @@ void DeclarationBuilder::visitIdentifierTarget(IdentifierTargetAst* node)
     }
     
     if ( ! existingLocalDeclarations.length() ) {
-        openDeclaration<Declaration>( node->identifier, node);
+        Declaration *dec = openDeclaration<Declaration>( node->identifier, node);
         closeDeclaration();
+        {
+            DUChainWriteLocker lock(DUChain::lock());
+            dec->setType(IntegralType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+        }
     }
     else {
         kDebug() << "Declaration does already exist, not updating" << node->identifier->identifier.toAscii();

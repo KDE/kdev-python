@@ -10,6 +10,7 @@
 
 #include "navigationwidget.h"
 #include "importfileitem.h"
+#include <qprocess.h>
 
 using namespace KDevelop;
 
@@ -36,6 +37,22 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     IncludeItem item;
     item.name = "Foo";
     items << CompletionTreeItemPointer( new ImportFileItem(item) );
+    
+    // Regardless of the context, we can always use builtin functions. We can get them from python:
+    QProcess getBuiltins;
+    getBuiltins.start("./python_helpers/get_builtins.py");
+    if ( ! getBuiltins.waitForFinished() ) {
+        kError() << getBuiltins.errorString();
+        Q_ASSERT(false);
+    }
+    QString builtins_str = getBuiltins.readAllStandardOutput();
+    QList<QString> builtins = builtins_str.split("\n");
+       
+    for ( int i = 0; i < builtins.length(); i++ ) {
+        IncludeItem item;
+        item.name = builtins.at(i);
+        items << CompletionTreeItemPointer( new ImportFileItem(item) );
+    }
     
     return items;
 }

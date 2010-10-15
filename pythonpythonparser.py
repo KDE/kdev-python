@@ -16,7 +16,7 @@ class KDevelopNodeVisitor(ast.NodeVisitor):
     basenode = None
     currentnode = None
     nodecnt = 0
-    searching = []
+    childNodeMap = {}
     
     def __init__(self, *arg, **args):
         super(KDevelopNodeVisitor, self).__init__(*arg, **args)
@@ -27,7 +27,9 @@ class KDevelopNodeVisitor(ast.NodeVisitor):
     def generic_visit(self, node):
         self.nodecnt += 1
         
-        node_xmlrepr = self.xmlrepr.createElement(node.__class__.__name__ + "Node")
+        self.childNodeMap[self.nodecnt] = node
+        
+        node_xmlrepr = self.xmlrepr.createElement(node.__class__.__name__ + "Ast")
         node_xmlrepr.setAttribute('nodecnt', str(self.nodecnt))
         self.currentnode.appendChild(node_xmlrepr)
         
@@ -40,17 +42,30 @@ class KDevelopNodeVisitor(ast.NodeVisitor):
         searching_locally = []
         for field in fields:
             value = getattr(node, field)
-            if type(value) not in [types.IntType, types.StringType]:
-                search = NodeContainer(value)
-                self.searching.append(search)
+            if type(value) not in [types.IntType, types.StringType, types.FloatType, types.BooleanType]:
                 continue
             node_xmlrepr.setAttribute(field.lower(), str(value))
 
         super(KDevelopNodeVisitor, self).generic_visit(node)
         
+        key = '**WARNING::Undefined key'
         for field in fields:
+            multiple_keys = []
             value = getattr(node, field)
-        
+            if type(value) not in [types.IntType, types.StringType, types.FloatType, types.BooleanType]:
+                if type(value) == types.ListType:
+                    for currentValue in value:
+                        for currentKey, currentItem in self.childNodeMap.iteritems():
+                            if currentItem == currentValue:
+                                multiple_keys.append(str(currentKey))
+                    key = ','.join(multiple_keys)
+                else:
+                    for currentKey, currentItem in self.childNodeMap.iteritems():
+                        if currentItem == value:
+                            key = currentKey
+                node_xmlrepr.setAttribute(field.lower(), str(key))
+                
+                
         self.currentnode = save_currentnode
 
 f = open('/home/sven/test.py').read()

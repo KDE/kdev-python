@@ -1193,8 +1193,19 @@ void AstBuilder::visitNotTest(PythonParser::NotTestAst *node)
     {
         BooleanNotOperationAst* ast = createAst<BooleanNotOperationAst>( node );
         mNodeStack.push( ast );
+        
         visitNode( node->notTest );
-        ast->op = safeNodeCast<BooleanOperationAst>( mNodeStack.pop() );
+        
+        Ast* tmp = mNodeStack.pop();
+        // maybe it's an atom, then there's nothing left to do
+        if ( tmp->astType != Ast::AtomAst ) {
+            kDebug() << "Using boolean operator";
+            ast->op = safeNodeCast<BooleanOperationAst>( tmp );
+        }
+        else {
+            kDebug() << "Using NULL operator";
+            ast->op = 0;
+        }
     }else
     {
         visitNode( node->comparison );

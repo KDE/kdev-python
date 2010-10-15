@@ -21,7 +21,7 @@ Name=New Native Application Configuration
 Type=Native Application
 
 [Launch][Launch Configuration 0][Data]
-Arguments=-c kdevelop ~/test.py
+Arguments=-c kdevelop /home/sven/projects/kde4/python/python_helpers/generate_docs.py
 Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
 Dependency Action=Nothing
 EnvironmentGroup=default

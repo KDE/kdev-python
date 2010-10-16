@@ -3,13 +3,7 @@
 import ast
 from xml.dom.minidom import Document
 import types
-
-class NodeContainer():
-    identifier = 0
-    node = None
-    
-    def __init__(self, node):
-        self.node = node
+import sys
 
 class KDevelopNodeVisitor(ast.NodeVisitor):
     xmlrepr = Document()
@@ -27,7 +21,8 @@ class KDevelopNodeVisitor(ast.NodeVisitor):
     def generic_visit(self, node):
         self.nodecnt += 1
         
-        self.childNodeMap[self.nodecnt] = node
+        #self.childNodeMap[self.nodecnt] = node
+        self.childNodeMap[node] = self.nodecnt
         
         node_xmlrepr = self.xmlrepr.createElement(node.__class__.__name__ + "Ast")
         node_xmlrepr.setAttribute('nodecnt', str(self.nodecnt))
@@ -48,27 +43,29 @@ class KDevelopNodeVisitor(ast.NodeVisitor):
 
         super(KDevelopNodeVisitor, self).generic_visit(node)
         
-        key = '**WARNING::Undefined key'
+        key = 'None'
         for field in fields:
             multiple_keys = []
             value = getattr(node, field)
             if type(value) not in [types.IntType, types.StringType, types.FloatType, types.BooleanType]:
                 if type(value) == types.ListType:
                     for currentValue in value:
-                        for currentKey, currentItem in self.childNodeMap.iteritems():
-                            if currentItem == currentValue:
-                                multiple_keys.append(str(currentKey))
+                        try:
+                            multiple_keys.append(str(self.childNodeMap[currentValue]))
+                        except KeyError:
+                            multiple_keys.append('None')
                     key = ','.join(multiple_keys)
                 else:
-                    for currentKey, currentItem in self.childNodeMap.iteritems():
-                        if currentItem == value:
-                            key = currentKey
+                    try:
+                        key = self.childNodeMap[value]
+                    except KeyError:
+                        key = 'None'
                 node_xmlrepr.setAttribute(field.lower(), str(key))
                 
                 
         self.currentnode = save_currentnode
 
-f = open('/home/sven/test.py').read()
+f = open('/usr/lib/entropy/libraries/entropy/cache.py').read()
 v = KDevelopNodeVisitor()
 v.visit(ast.parse(f))
-print v.xmlrepr.toprettyxml(indent = "  ")
+print v.xmlrepr.toprettyxml(indent = "    ")

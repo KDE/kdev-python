@@ -26,6 +26,7 @@
 
 #include "pythondriver.h"
 #include <language/duchain/indexedstring.h>
+#include "astbuilder.h"
 
 using namespace KDevelop;
 
@@ -62,10 +63,9 @@ void ParseSession::setContents( const QString& contents )
 
 bool ParseSession::parse( Python::CodeAst** ast )
 {
-    Python::Driver d;
-    d.setContent( m_contents );
-    kDebug() << m_contents;
-    return d.parse( ast );
+    AstBuilder parser;
+    ast = parser.parse(m_currentDocument);
+    Q_ASSERT(false);
 }
 
 }

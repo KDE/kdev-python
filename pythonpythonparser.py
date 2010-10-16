@@ -65,7 +65,7 @@ class KDevelopNodeVisitor(ast.NodeVisitor):
                 
         self.currentnode = save_currentnode
 
-f = open('/usr/lib/entropy/libraries/entropy/cache.py').read()
+f = open(sys.argv[1]).read()
 v = KDevelopNodeVisitor()
 v.visit(ast.parse(f))
 print v.xmlrepr.toprettyxml(indent = "    ")

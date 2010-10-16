@@ -55,12 +55,13 @@ class KDevelopNodeVisitor(ast.NodeVisitor):
                         except KeyError:
                             multiple_keys.append('None')
                     key = ','.join(multiple_keys)
+                    node_xmlrepr.setAttribute("NRLST_" + field.lower(), str(key))
                 else:
                     try:
                         key = self.childNodeMap[value]
                     except KeyError:
                         key = 'None'
-                node_xmlrepr.setAttribute(field.lower(), str(key))
+                    node_xmlrepr.setAttribute("NR_" + field.lower(), str(key))
                 
                 
         self.currentnode = save_currentnode

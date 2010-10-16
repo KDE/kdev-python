@@ -102,12 +102,13 @@ void ParseJob::run()
 
     readContents();
     m_session->setContents( QString::fromUtf8(contents().contents) + "\n" );
+    m_session->setCurrentDocument(m_url);
     
     if ( abortRequested() )
         return abortJob();
 
     // 2) parse
-    bool matched = m_session->parse( &m_ast );
+    bool matched = m_session->parse( m_ast );
 
     if ( matched )
     {
@@ -123,8 +124,7 @@ void ParseJob::run()
             DeclarationBuilder builder( &editor );
             
             IndexedString filename = KDevelop::IndexedString(m_url.pathOrUrl());
-            m_session->setCurrentDocument(filename);
-            
+
             editor.setParseSession(m_session);
             
             m_duContext = builder.build(filename, m_ast);

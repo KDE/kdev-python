@@ -25,6 +25,9 @@
 
 #include "ast.h"
 #include <kurl.h>
+#include <QDomDocument>
+#include "kdebug.h"
+#include "QXmlStreamReader"
 
 namespace PythonParser
 {
@@ -45,7 +48,23 @@ public:
     CodeAst* parse(KUrl filename);
 private:
     CodeAst* parseXmlAst(QString xml);
-    QString getXmlForFile(KUrl filename) const;
+    QString getXmlForFile(KUrl filename);
+    void parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::TokenType token);
+    void parseAstNode(QString name, QString text, const QList<QXmlStreamAttribute>& attributes);
+    
+    QList<Ast*> m_nodeStack;
+    
+    template <typename ASTType> ASTType* createAst(QDomElement* startEnd = 0) {
+        ASTType* ast = new ASTType();
+        if ( startEnd ) {
+            kDebug() << "would set start end now";
+        }
+    }
+    
+    QMap<int, Ast*> m_nodeMap;
+    
+    AssignmentAst* createAssignmentAst(const QList<QXmlStreamAttribute>& attributes);
+    IdentifierAst* createIdentifierAst(const QList<QXmlStreamAttribute>& attributes);
 };
 
 }

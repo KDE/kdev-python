@@ -40,14 +40,14 @@ ParseSession::~ParseSession()
 {
 }
 
-void ParseSession::setCurrentDocument(IndexedString& filename)
+void ParseSession::setCurrentDocument(KUrl& filename)
 {
     m_currentDocument = filename;
 }
 
 IndexedString ParseSession::currentDocument()
 {
-    return m_currentDocument;
+    return KDevelop::IndexedString(m_currentDocument.fileName());
 }
 
 
@@ -61,7 +61,7 @@ void ParseSession::setContents( const QString& contents )
     m_contents = contents;
 }
 
-bool ParseSession::parse( Python::CodeAst** ast )
+bool ParseSession::parse( Python::CodeAst* ast )
 {
     AstBuilder parser;
     ast = parser.parse(m_currentDocument);

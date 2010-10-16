@@ -31,6 +31,7 @@
 #include <language/editor/simplecursor.h>
 #include <language/editor/documentrange.h>
 #include "ast.h"
+#include "kurl.h"
 
 using namespace KDevelop;
 
@@ -50,10 +51,10 @@ public:
     void setContents( const QString& contents );
     QString contents() const;
     
-    void setCurrentDocument(IndexedString& filename);
+    void setCurrentDocument(KUrl& filename);
     IndexedString currentDocument();
 
-    bool parse( Python::CodeAst** );
+    bool parse( Python::CodeAst* );
     
     void mapAstUse(Ast* node, const SimpleUse& use)
     {
@@ -63,7 +64,7 @@ public:
     
 private:
     QString m_contents;
-    IndexedString m_currentDocument;
+    KUrl m_currentDocument;
 
 };
 

@@ -23,81 +23,20 @@
 namespace Python
 {
 
-AstVisitor::visitFunc _S_parser_table[] =  {
-
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitArgument),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitAssert),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitAssignment),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitAtom),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitAttributeReference),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitAttributeReferenceTarget),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitBinaryExpression),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitBooleanNotOperation),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitBooleanAndOperation),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitBooleanOrOperation),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitBreak),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitCall),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitClassDefinition),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitCode),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitComparison),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitConditionalExpression),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitContinue),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitDecorator),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitDefaultParameter),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitDel),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitDictionary),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitDictionaryParameter),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitEllipsisSliceItem),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitEnclosure),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitExcept),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitExec),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitExpressionSliceItem),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitExpressionStatement),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitExtendedSlice),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitFor),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitFromImport),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitFunctionDefinition),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitGenerator),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitGeneratorFor),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitGeneratorIf),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitGlobal),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitIdentifier),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitIdentifierParameterPart),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitIdentifierTarget),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitIf),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitLambda),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitList),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitListFor),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitListIf),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitListParameter),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitListParameterPart),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitListTarget),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitLiteral),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitPass),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitPlainImport),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitPrint),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitProperSliceItem),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitRaise),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitReturn),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitSimpleSlice),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitSliceTarget),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitStarImport),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitSubscript),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitSubscriptTarget),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitTupleTarget),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitTry),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitUnaryExpression),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitWhile),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitWith),
-    reinterpret_cast<AstVisitor::visitFunc>(&AstVisitor::visitYield),
-
-
-};
-
-void AstVisitor::visitNode( Ast* node )
+void AstVisitor::visitNode(Ast* node)
 {
-    if  (node)
-          (this->*_S_parser_table[node->astType])(node);
+    if ( ! node ) return;
+    switch ( node->astType ) {
+        case Ast::ArgumentsAstType:             AstVisitor::visitArguments(node); break;
+        case Ast::AssignmentAstType:            AstVisitor::visitAssignment(node); break;
+        case Ast::AttributeAstType:             AstVisitor::visitAttribute(node); break;
+        case Ast::CallAstType:                  AstVisitor::visitCall(node); break;
+        case Ast::FunctionDefinitionAstType:    AstVisitor::visitFunctionDefinition(node); break;
+        case Ast::KeywordAstType:               AstVisitor::visitKeyword(node); break;
+        case Ast::NameAstType:                  AstVisitor::visitName(node); break;
+        case Ast::PassAstType:                  AstVisitor::visitPass(node); break;
+        case Ast::PrintAstType:                 AstVisitor::visitPrint(node); break;
+    }
 }
 
 }

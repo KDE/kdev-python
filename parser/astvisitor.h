@@ -33,74 +33,19 @@ public:
     virtual ~AstVisitor() {}
 
     typedef void (AstVisitor::*visitFunc)(Ast *);
+    
+    void visitNode(Ast* node);
 
-    virtual void visitNode( Ast* );
-
-    virtual void visitCode( CodeAst* ) = 0;
-    virtual void visitFunctionDefinition( FunctionDefinitionAst* ) = 0;
-    virtual void visitDecorator( DecoratorAst* ) = 0;
-    virtual void visitArgument( ArgumentAst* ) = 0;
-    virtual void visitDefaultParameter( DefaultParameterAst* ) = 0;
-    virtual void visitIdentifierParameterPart( IdentifierParameterPartAst* ) = 0;
-    virtual void visitListParameterPart( ListParameterPartAst* ) = 0;
-    virtual void visitDictionaryParameter( DictionaryParameterAst* ) = 0;
-    virtual void visitListParameter( ListParameterAst* ) = 0;
-    virtual void visitIf( IfAst* ) = 0;
-    virtual void visitWhile( WhileAst* ) = 0;
-    virtual void visitFor( ForAst* ) = 0;
-    virtual void visitClassDefinition( ClassDefinitionAst* ) = 0;
-    virtual void visitTry( TryAst* ) = 0;
-    virtual void visitExcept( ExceptAst* ) = 0;
-    virtual void visitWith( WithAst* ) = 0;
-    virtual void visitExec( ExecAst* ) = 0;
-    virtual void visitGlobal( GlobalAst* ) = 0;
-    virtual void visitPlainImport( PlainImportAst* ) = 0;
-    virtual void visitStarImport( StarImportAst* ) = 0;
-    virtual void visitFromImport( FromImportAst* ) = 0;
-    virtual void visitRaise( RaiseAst* ) = 0;
-    virtual void visitPrint( PrintAst* ) = 0;
-    virtual void visitReturn( ReturnAst* ) = 0;
-    virtual void visitYield( YieldAst* ) = 0;
-    virtual void visitDel( DelAst* ) = 0;
-    virtual void visitAssert( AssertAst* ) = 0;
-    virtual void visitExpressionStatement( ExpressionStatementAst* ) = 0;
-    virtual void visitAssignment( AssignmentAst* ) = 0;
-    virtual void visitAtom( AtomAst* ) = 0;
-    virtual void visitEnclosure( EnclosureAst* ) = 0;
-    virtual void visitList( ListAst* ) = 0;
-    virtual void visitListFor( ListForAst* ) = 0;
-    virtual void visitListIf( ListIfAst* ) = 0;
-    virtual void visitLiteral( LiteralAst* ) = 0;
-    virtual void visitGenerator( GeneratorAst* ) = 0;
-    virtual void visitGeneratorFor( GeneratorForAst* ) = 0;
-    virtual void visitGeneratorIf( GeneratorIfAst* ) = 0;
-    virtual void visitDictionary( DictionaryAst* ) = 0;
-    virtual void visitAttributeReference( AttributeReferenceAst* ) = 0;
-    virtual void visitSubscript( SubscriptAst* ) = 0;
-    virtual void visitExtendedSlice( ExtendedSliceAst* ) = 0;
-    virtual void visitSimpleSlice( SimpleSliceAst* ) = 0;
-    virtual void visitProperSliceItem( ProperSliceItemAst* ) = 0;
-    virtual void visitExpressionSliceItem( ExpressionSliceItemAst* ) = 0;
-    virtual void visitEllipsisSliceItem( EllipsisSliceItemAst* ) = 0;
-    virtual void visitCall( CallAst* ) = 0;
-    virtual void visitUnaryExpression( UnaryExpressionAst* ) = 0;
-    virtual void visitBinaryExpression( BinaryExpressionAst* ) = 0;
-    virtual void visitComparison( ComparisonAst* ) = 0;
-    virtual void visitBooleanNotOperation( BooleanNotOperationAst* ) = 0;
-    virtual void visitBooleanAndOperation( BooleanAndOperationAst* ) = 0;
-    virtual void visitBooleanOrOperation( BooleanOrOperationAst* ) = 0;
-    virtual void visitConditionalExpression( ConditionalExpressionAst* ) = 0;
-    virtual void visitLambda( LambdaAst* ) = 0;
-    virtual void visitBreak( StatementAst* ) = 0;
-    virtual void visitContinue( StatementAst* ) = 0;
-    virtual void visitPass( StatementAst* ) = 0;
-    virtual void visitIdentifier( IdentifierAst* ) = 0;
-    virtual void visitIdentifierTarget( IdentifierTargetAst* ) = 0;
-    virtual void visitListTarget( ListTargetAst* ) = 0;
-    virtual void visitTupleTarget( TupleTargetAst* ) = 0;
-    virtual void visitAttributeReferenceTarget( AttributeReferenceTargetAst* ) = 0;
-    virtual void visitSubscriptTarget( SubscriptTargetAst* ) = 0;
-    virtual void visitSliceTarget( SliceTargetAst* ) = 0;
+    virtual void visitCode(CodeAst* node);
+    virtual void visitFunctionDefinition(FunctionDefinitionAst* node);
+    virtual void visitPrint(PrintAst* node);
+    virtual void visitAssignment(AssignmentAst* node);
+    virtual void visitCall(CallAst* node);
+    virtual void visitPass(StatementAst* node);
+    virtual void visitName(NameAst* node);
+    virtual void visitAttribute(AttributeAst* node);
+    virtual void visitKeyword(KeywordAst* node);
+    virtual void visitArguments(ArgumentsAst* node);
 };
 }
 

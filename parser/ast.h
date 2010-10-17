@@ -36,6 +36,24 @@ namespace KDevelop
     class DUContext;
 }
 
+namespace Python {
+    class StatementAst;
+    class FunctionDefinitionAst;
+    class AssignmentAst;
+    class PrintAst;
+    class PassAst;
+    class ExpressionAst;
+    class NameAst;
+    class CallAst;
+    class AttributeAst;
+    class ArgumentsAst;
+    class KeywordAst;
+    
+    class ExpressionAst;
+    class StatementAst;
+    class Ast;
+}
+
 namespace Python
 {
     
@@ -45,16 +63,56 @@ public:
     QString value;
 };
 
-// Abstract StatementAst class
+// Base class for all other Abstract Syntax Tree classes
+class KDEVPYTHONPARSER_EXPORT Ast
+{
+public:
+    enum AstType
+    {
+        FunctionDefinitionAstType,
+        AssignmentAstType,
+        PrintAstType,
+        PassAstType,
+        ExpressionAstType,
+        NameAstType,
+        CallAstType,
+        AttributeAstType,
+        ArgumentsAstType,
+        KeywordAstType,
+    };
+
+    Ast(Ast* parent, AstType type);
+    virtual ~Ast();
+    Ast* parent;
+    AstType astType;
+
+    qint64 start;
+    qint64 end;
+    qint64 startCol;
+    qint64 startLine;
+    qint64 endCol;
+    qint64 endLine;
+    
+    KDevelop::DUContext* context;
+};
+
+// this replaces ModuleAst
+class KDEVPYTHONPARSER_EXPORT CodeAst : public Ast {
+public:
+    CodeAst(Ast* parent, AstType type);
+    QList<StatementAst*> body;
+};
+
+/** Statement classes **/
 class KDEVPYTHONPARSER_EXPORT StatementAst : public Ast {
 public:
-    virtual StatementAst(Ast* parent, Ast::AstType type) = 0;
+    StatementAst(Ast* parent, Ast::AstType type);
 };
 
 class KDEVPYTHONPARSER_EXPORT FunctionDefinitionAst : public StatementAst {
 public:
     FunctionDefinitionAst(Ast* parent, Ast::AstType type);
-    IdentifierAst* name;
+    Identifier* name;
     ArgumentsAst* arguments;
 };
 
@@ -78,9 +136,11 @@ public:
     PassAst(Ast* parent, AstType type);
 };
 
+
+/** Expression classes **/
 class KDEVPYTHONPARSER_EXPORT ExpressionAst : public Ast {
 public:
-    virtual ExpressionAst(Ast* parent, AstType type) = 0;
+    ExpressionAst(Ast* parent, AstType type);
     enum Context {
         Load, // the object is read
         Store, // the object is written
@@ -93,7 +153,7 @@ public:
 class KDEVPYTHONPARSER_EXPORT NameAst : public ExpressionAst {
 public:
     NameAst(Ast* parent, AstType type);
-    IdentifierAst* identifier;
+    Identifier* identifier;
     ExpressionAst::Context context;
 };
 
@@ -111,33 +171,25 @@ class KDEVPYTHONPARSER_EXPORT AttributeAst : public ExpressionAst {
 public:
     AttributeAst(Ast* parent, AstType type);
     ExpressionAst* value;
-    IdentifierAst* attribute;
+    Identifier* attribute;
     ExpressionAst::Context context;
 };
 
 
-
-class KDEVPYTHONPARSER_EXPORT Ast
-{
+/** Independent classes **/
+class KDEVPYTHONPARSER_EXPORT ArgumentsAst : public Ast {
 public:
-    enum AstType
-    {
-    
-    };
+    ArgumentsAst(Ast* parent, AstType type);
+    QList<ExpressionAst*> arguments;
+    QList<ExpressionAst*> defaultValues;
+    Identifier* vararg;
+    Identifier* kwarg;
+};
 
-    Ast(Ast* parent, AstType type);
-    virtual ~Ast();
-    Ast* parent;
-    AstType astType;
-
-    qint64 start;
-    qint64 end;
-    qint64 startCol;
-    qint64 startLine;
-    qint64 endCol;
-    qint64 endLine;
-    
-    KDevelop::DUContext* context;
+class KDEVPYTHONPARSER_EXPORT KeywordAst : public Ast {
+    KeywordAst(Ast* parent, AstType type);
+    Identifier* argumentName;
+    ExpressionAst* value;
 };
 
 }

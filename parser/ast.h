@@ -104,7 +104,7 @@ public:
         BinaryOperationAstType,
         UnaryOperationAstType,
         LambdaAstType,
-        IfExpAstType,
+        IfExpressionAstType, // the short one, if a then b else c
         DictAstType,
         SetAstType,
         ListComprehensionAstType,
@@ -156,7 +156,7 @@ public:
         UnaryOperatorSub
     };
     
-    enum ComparisionOperatorTypes {
+    enum ComparisonOperatorTypes {
         ComparisonOperatorEquals,
         ComparisonOperatorNotEquals,
         ComparisonOperatorLessThan,
@@ -204,11 +204,141 @@ public:
     ArgumentsAst* arguments;
 };
 
+class KDEVPYTHONPARSER_EXPORT ClassDefinitionAst : public StatementAst {
+public:
+    ClassDefinitionAst(Ast* parent, AstType type);
+    Identifier* name;
+    QList<ExpressionAst*> baseClasses;
+    QList<StatementAst*> body;
+    QList<ExpressionAst*> decorators;
+};
+
+class KDEVPYTHONPARSER_EXPORT ReturnAst : public StatementAst {
+public:
+    ReturnAst(Ast* parent, AstType type);
+    ExpressionAst* value;
+};
+
+class KDEVPYTHONPARSER_EXPORT DeleteAst : public StatementAst {
+public:
+    DeleteAst(Ast* parent, AstType type);
+    QList<ExpressionAst*> targets;
+};
+
 class KDEVPYTHONPARSER_EXPORT AssignmentAst : public StatementAst {
 public:
     AssignmentAst(Ast* parent, Ast::AstType type);
     QList<ExpressionAst*> targets;
     ExpressionAst* value;
+};
+
+class KDEVPYTHONPARSER_EXPORT AugmentedAssignmentAst : public StatementAst {
+public:
+    AugmentedAssignmentAst(Ast* parent, AstType type);
+    ExpressionAst* target;
+    Ast::OperatorTypes op;
+    ExpressionAst* value;
+};
+
+class KDEVPYTHONPARSER_EXPORT ForAst : public StatementAst {
+public:
+    ForAst(Ast* parent, AstType type);
+    ExpressionAst* target;
+    ExpressionAst* iterator;
+    QList<ExpressionAst*> body;
+    QList<StatementAst*> orelse;
+};
+
+class KDEVPYTHONPARSER_EXPORT WhileAst : public StatementAst {
+public:
+    WhileAst(Ast* parent, AstType type);
+    ExpressionAst* condition;
+    QList<StatementAst*> body;
+    QList<StatementAst*> orelse;
+};
+
+class KDEVPYTHONPARSER_EXPORT IfAst : public StatementAst {
+public:
+    IfAst(Ast* parent, AstType type);
+    ExpressionAst* condition;
+    QList<StatementAst*> body;
+    QList<StatementAst*> orelse;
+};
+
+class KDEVPYTHONPARSER_EXPORT WithAst : public StatementAst {
+public:
+    WithAst(Ast* parent, AstType type);
+    ExpressionAst* contextExpression;
+    ExpressionAst* optionalVars;
+    QList<StatementAst*> body;
+};
+
+class KDEVPYTHONPARSER_EXPORT RaiseAst : public StatementAst {
+public:
+    RaiseAst(Ast* parent, AstType type);
+    ExpressionAst* type;
+    // TODO check what the other things in the grammar actually are and add them
+};
+
+class KDEVPYTHONPARSER_EXPORT TryExceptAst : public StatementAst {
+public:
+    TryExceptAst(Ast* parent, AstType type);
+    QList<StatementAst*> body;
+    QList<ExceptionHandlerAst*> handlers;
+    QList<StatementAst*> orelse;
+};
+
+class KDEVPYTHONPARSER_EXPORT TryFinallyAst : public StatementAst {
+public:
+    TryFinallyAst(Ast* parent, AstType type);
+    QList<StatementAst*> body;
+    QList<StatementAst*> finalbody;
+};
+
+class KDEVPYTHONPARSER_EXPORT AssertionAst : public StatementAst {
+public:
+    AssertionAst(Ast* parent, AstType type);
+    ExpressionAst* condition;
+    ExpressionAst* message;
+};
+
+class KDEVPYTHONPARSER_EXPORT ImportAst : public StatementAst {
+public:
+    ImportAst(Ast* parent, AstType type);
+    QList<AliasAst*> names;
+};
+
+class KDEVPYTHONPARSER_EXPORT ImportFromAst : public StatementAst {
+public:
+    ImportFromAst(Ast* parent, AstType type);
+    Identifier* module;
+    QList<AliasAst*> names;
+    int level;
+};
+
+class KDEVPYTHONPARSER_EXPORT ExecAst : public StatementAst {
+public:
+    ExecAst(Ast* parent, AstType type);
+    ExpressionAst* body;
+    ExpressionAst* globals;
+    ExpressionAst* locals;
+};
+
+class KDEVPYTHONPARSER_EXPORT GlobalAst : public StatementAst {
+public:
+    QList<Identifier*> name;
+};
+
+// TODO what's stmt::Expr(expr value) in the grammar and what do we need it for?
+
+class KDEVPYTHONPARSER_EXPORT BreakAst : public StatementAst {
+public:
+    BreakAst(Ast* parent, AstType type);
+};
+
+class KDEVPYTHONPARSER_EXPORT ContinueAst : public StatementAst {
+public:
+    ContinueAst(Ast* parent, AstType type);
 };
 
 class KDEVPYTHONPARSER_EXPORT PrintAst : public StatementAst {
@@ -234,8 +364,118 @@ public:
         Store, // the object is written
         Delete, // the object is deleted
         Parameter, // the object is passed as a parameter
-        AugLoad, AugStore // Apparently not used by python currently, I also dont know what they mean
+        AugLoad, AugStore // Augmented assignments, like a += 1
     };
+};
+
+class KDEVPYTHONPARSER_EXPORT BooleanOperationAst : public ExpressionAst {
+public:
+    BooleanOperationAst(Ast* parent, AstType type);
+    Ast::BooleanOperationTypes type;
+    QList<ExpressionAst*> values;
+};
+
+class KDEVPYTHONPARSER_EXPORT BinaryOperationAst : public ExpressionAst {
+public:
+    BinaryOperationAst(Ast* parent, AstType type);
+    Ast::OperatorTypes type;
+    ExpressionAst* lhs;
+    ExpressionAst* rhs;
+};
+
+class KDEVPYTHONPARSER_EXPORT UnaryOperationAst : public ExpressionAst {
+public:
+    UnaryOperationAst(Ast* parent, AstType type);
+    Ast::UnaryOperatorTypes type;
+    ExpressionAst* operand;
+};
+
+class KDEVPYTHONPARSER_EXPORT LambdaAst : public ExpressionAst {
+public:
+    LambdaAst(Ast* parent, AstType type);
+    ArgumentsAst* arguments;
+    ExpressionAst* body;
+};
+
+class KDEVPYTHONPARSER_EXPORT IfExpressionAst : public ExpressionAst {
+public:
+    IfExpressionAst(Ast* parent, AstType type);
+    ExpressionAst* condition;
+    ExpressionAst* body;
+    ExpressionAst* orelse;
+};
+
+class KDEVPYTHONPARSER_EXPORT DictAst : public ExpressionAst {
+public:
+    QList<ExpressionAst*> keys;
+    QList<ExpressionAst*> values;
+};
+
+class KDEVPYTHONPARSER_EXPORT SetAst : public ExpressionAst {
+public:
+    SetAst(Ast* parent, AstType type);
+    QList<ExpressionAst*> elements;
+};
+
+class KDEVPYTHONPARSER_EXPORT ListComprehensionAst : public ExpressionAst {
+public:
+    ExpressionAst* element;
+    QList<ComprehensionAst*> generators;
+};
+
+class KDEVPYTHONPARSER_EXPORT SetComprehensionAst : public ExpressionAst {
+public:
+    SetComprehensionAst(Ast* parent, AstType type);
+    ExpressionAst* element;
+    QList<ComprehensionAst*> generators;
+};
+
+class KDEVPYTHONPARSER_EXPORT DictionaryComprehensionAst : public ExpressionAst {
+public:
+    DictionaryComprehensionAst(Ast* parent, AstType type);
+    ExpressionAst* key;
+    ExpressionAst* value;
+    QList<ComprehensionAst*> generators;
+};
+
+class KDEVPYTHONPARSER_EXPORT GeneratorExpressionAst : public ExpressionAst {
+public:
+    GeneratorExpressionAst(Ast* parent, AstType type);
+    ExpressionAst* element;
+    QList<ComprehensionAst*> generators;
+};
+
+class KDEVPYTHONPARSER_EXPORT CompareAst : public ExpressionAst {
+public:
+    CompareAst(Ast* parent, AstType type);
+    ExpressionAst* leftmostElement;
+    QList<ComparisonOperatorTypes> operators;
+    QList<ExpressionAst*> comparands;
+};
+
+// TODO whats this exactly?
+class KDEVPYTHONPARSER_EXPORT ReprAst : public ExpressionAst {
+public:
+    ReprAst(Ast* parent, AstType type);
+    ExpressionAst* value;
+};
+
+class KDEVPYTHONPARSER_EXPORT NumberAst : public ExpressionAst {
+public:
+    NumberAst(Ast* parent, AstType type);
+    QString value; // everything else would be even more strange
+};
+
+class KDEVPYTHONPARSER_EXPORT StringAst : public ExpressionAst {
+public:
+    StringAst(Ast* parent, AstType type);
+    QString value;
+};
+
+class KDEVPYTHONPARSER_EXPORT YieldAst : public ExpressionAst {
+public:
+    YieldAst(Ast* parent, AstType type);
+    ExpressionAst* value;
 };
 
 class KDEVPYTHONPARSER_EXPORT NameAst : public ExpressionAst {
@@ -263,6 +503,56 @@ public:
     ExpressionAst::Context context;
 };
 
+class KDEVPYTHONPARSER_EXPORT SubscriptAst : public ExpressionAst {
+public:
+    SubscriptAst(Ast* parent, AstType type);
+    ExpressionAst* value;
+    SliceAst* slice;
+    ExpressionAst::Context context;
+};
+
+class KDEVPYTHONPARSER_EXPORT ListAst : public ExpressionAst {
+public:
+    ListAst(Ast* parent, AstType type);
+    QList<ExpressionAst*> elements;
+    ExpressionAst::Context context;
+};
+
+class KDEVPYTHONPARSER_EXPORT TupleAst : public ExpressionAst {
+public:
+    TupleAst(Ast* parent, AstType type);
+    QList<ExpressionAst*> elements;
+    ExpressionAst::Context context;
+};
+
+/** Slice classes **/
+class KDEVPYTHONPARSER_EXPORT SliceAstBase : public Ast {
+public:
+    SliceAstBase(Ast* parent, AstType type);
+};
+
+class KDEVPYTHONPARSER_EXPORT EllipsisAstType : public SliceAstBase {
+public:
+    EllipsisAstType(Ast* parent, AstType type);
+};
+
+class KDEVPYTHONPARSER_EXPORT SliceAst : public SliceAstBase {
+public:
+    ExpressionAst* lower;
+    ExpressionAst* upper;
+    ExpressionAst* step;
+};
+
+class KDEVPYTHONPARSER_EXPORT ExtendedSliceAst : public SliceAstBase {
+public:
+    ExtendedSliceAst(Ast* parent, AstType type);
+    QList<SliceAst*> dims;
+};
+
+class KDEVPYTHONPARSER_EXPORT IndexAst : public SliceAstBase {
+public:
+    ExpressionAst* value;
+};
 
 /** Independent classes **/
 class KDEVPYTHONPARSER_EXPORT ArgumentsAst : public Ast {
@@ -279,6 +569,29 @@ public:
     KeywordAst(Ast* parent, AstType type);
     Identifier* argumentName;
     ExpressionAst* value;
+};
+
+class KDEVPYTHONPARSER_EXPORT ComprehensionAst : public Ast {
+public:
+    ComprehensionAst(Ast* parent, AstType type);
+    ExpressionAst* target;
+    ExpressionAst* iterator;
+    QList<ExpressionAst*> conditions;
+};
+
+class KDEVPYTHONPARSER_EXPORT ExceptionHandlerAst : public Ast {
+public:
+    ExceptionHandlerAst(Ast* parent, AstType type);
+    ExpressionAst* type;
+    ExpressionAst* name;
+    QList<StatementAst*> body;
+};
+
+class KDEVPYTHONPARSER_EXPORT AliasAst : public Ast {
+public:
+    AliasAst(Ast* parent, AstType type);
+    Identifier* name;
+    Identifier* asName;
 };
 
 }

@@ -91,6 +91,7 @@ void AstVisitor::visitNode(Ast* node)
         case Ast::ExceptionHandlerAstType:                      AstVisitor::visitExceptionHandler(dynamic_cast<ExceptionHandlerAst*>(node)); break;
         case Ast::AliasAstType:                                 AstVisitor::visitAlias(dynamic_cast<AliasAst*>(node)); break;
         case Ast::ExpressionAstType:                            break;
+        case Ast::StatementAstType:                             break;
     }
 }
 

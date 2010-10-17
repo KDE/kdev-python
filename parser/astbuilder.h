@@ -62,9 +62,9 @@ private:
     }
     
     QMap<int, Ast*> m_nodeMap;
+    QStack<Ast*> m_astStack;
     
-    AssignmentAst* createAssignmentAst(const QMap<QString, QString>& attributes);
-    Identifier* createIdentifier(const QMap<QString, QString>& attributes);
+    void populateAst();
 };
 
 }

@@ -98,7 +98,6 @@ public:
         ImportFromAstType,
         ExecAstType,
         GlobalAstType,
-        ExprAstType,
         BreakAstType,
         ContinueAstType,
         AssertionAstType,
@@ -546,6 +545,7 @@ public:
 
 class KDEVPYTHONPARSER_EXPORT SliceAst : public SliceAstBase {
 public:
+    SliceAst(Ast* parent, AstType type);
     ExpressionAst* lower;
     ExpressionAst* upper;
     ExpressionAst* step;
@@ -559,6 +559,7 @@ public:
 
 class KDEVPYTHONPARSER_EXPORT IndexAst : public SliceAstBase {
 public:
+    IndexAst(Ast* parent, AstType type);
     ExpressionAst* value;
 };
 

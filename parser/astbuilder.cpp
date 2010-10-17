@@ -106,22 +106,78 @@ void AstBuilder::parseAstNode(QString name, QString text, const QList< QXmlStrea
     Ast* ast;
     
     QMap<QString, QString> attributeDict;
+    
     for ( int i=0; i<attributes.length(); i++ ) {
         attributeDict.insert(attributes.at(i).name().toString(), attributes.at(i).value().toString());
     }
     
-    if      ( name == "AssignAst" )         ast = createAssignmentAst(attributeDict);
-    else if ( name == "NameAst" )           { }
-    else if ( name == "StoreAst" )          { }
-    else                                    kError() << "Unknown AST type" << name;
+    // TODO think about a less explicit way to do this
+    // things in the comments are definitely found like this in the XML file
+    name = name.toLower();
+    if      ( name == "aliasast" ) ast = new AliasAst(); // aliasAst
+    else if ( name == "argumentsast" ) ast = new ArgumentsAst(); // argumentsAst
+    else if ( name == "assertast" ) ast = new AssertionAst(); // assertAst
+    else if ( name == "assignast" ) ast = new AssignmentAst(); // assignAst
+    else if ( name == "attributeast" ) ast = new AttributeAst(); // attributeAst
+    else if ( name == "augassignast" ) ast = new AugmentedAssignmentAst(); // augassignast
+    else if ( name == "binopast" ) ast = new BinaryOperationAst(); // binOpAst
+    else if ( name == "boolopast" ) ast = new BooleanOperationAst(); // boolOpAst
+    else if ( name == "breakast" ) ast = new BreakAst(); // breakAst
+    else if ( name == "callast" ) ast = new CallAst(); // callAst
+    else if ( name == "classdefast" ) ast = new ClassDefinitionAst(); // classDefAst
+    else if ( name == "moduleast" ) ast = new CodeAst(); // moduleAst
+    else if ( name == "compareast" ) ast = new CompareAst(); // compareAst
+    else if ( name == "comprehensionast" ) ast = new ComprehensionAst(); // comprehensionAst
+    else if ( name == "continueast" ) ast = new ContinueAst(); // continueAst
+    else if ( name == "deleteast" ) ast = new DeleteAst(); // deleteAst
+    else if ( name == "dictast" ) ast = new DictAst(); // dictAst
+//     else if ( name == "dictionarycomprehensionast" ) ast = new DictionaryComprehensionAst(); // TODO support this for python 2.7+
+    else if ( name == "ellipsisast" ) ast = new EllipsisAst(); // ellipsisAst
+    else if ( name == "excepthandlerast" ) ast = new ExceptionHandlerAst(); // exceptHandlerAst
+    else if ( name == "execast" ) ast = new ExecAst(); // execAst
+    else if ( name == "exprast" ) ast = new ExpressionAst(); // exprast
+    else if ( name == "extsliceast" ) ast = new ExtendedSliceAst(); // extsliceast
+    else if ( name == "forast" ) ast = new ForAst(); // forAst
+    else if ( name == "functiondefast" ) ast = new FunctionDefinitionAst(); // functionDefAst
+//     else if ( name == "generatorexpressionast" ) ast = new GeneratorExpressionAst(); // TODO check this
+    else if ( name == "globalast" ) ast = new GlobalAst(); // globalAst
+    else if ( name == "ifast" ) ast = new IfAst(); // ifAst
+    else if ( name == "ifexpast" ) ast = new IfExpressionAst(); // ifExpAst
+    else if ( name == "importast" ) ast = new ImportAst(); // importAst
+    else if ( name == "importfromast" ) ast = new ImportFromAst(); // importFromAst
+    else if ( name == "indexast" ) ast = new IndexAst(); // indexAst
+    else if ( name == "keywordast" ) ast = new KeywordAst(); // keywordAst
+    else if ( name == "lambdaast" ) ast = new LambdaAst(); // lambdaAst
+    else if ( name == "listast" ) ast = new ListAst(); // listAst
+    else if ( name == "listcompast" ) ast = new ListComprehensionAst(); // listCompAst
+    else if ( name == "nameast" ) ast = new NameAst(); // nameAst
+    else if ( name == "numast" ) ast = new NumberAst(); // numAst
+    else if ( name == "passast" ) ast = new PassAst();  // passAst
+    else if ( name == "printast" ) ast = new PrintAst(); // printAst
+    else if ( name == "raiseast" ) ast = new RaiseAst();  // raiseAst
+//     else if ( name == "reprast" ) ast = new ReprAst(); // TODO what's this?
+    else if ( name == "returnast" ) ast = new ReturnAst(); // returnAst
+//     else if ( name == "setast" ) ast = new SetAst(); // TODO support this for python 2.7+
+//     else if ( name == "setcomprehensionast" ) ast = new SetComprehensionAst(); // TODO support this for python 2.7+
+    else if ( name == "sliceast" ) ast = new SliceAst(); // sliceAst
+    else if ( name == "strast" ) ast = new StringAst(); // strAst
+    else if ( name == "subscriptast" ) ast = new SubscriptAst(); // subscriptAst
+    else if ( name == "tryexceptast" ) ast = new TryExceptAst(); // tryExceptAst
+    else if ( name == "tryfinallyast" ) ast = new TryFinallyAst(); // tryFinallyAst
+    else if ( name == "tupleast" ) ast = new TupleAst(); // tupleAst
+    else if ( name == "unaryopast" ) ast = new UnaryOperationAst(); // unaryOpAst
+    else if ( name == "whileast" ) ast = new WhileAst(); // whileAst
+    else if ( name == "withast" ) ast = new WithAst(); // withAst
+    else if ( name == "yieldast" ) ast = new YieldAst(); // yieldAst
+    else kError() << "Unknown AST type" << name;
+    
+    m_nodeMap.insert(attributeDict["nodecnt"], ast);
     
 }
 
-AssignmentAst* AstBuilder::createAssignmentAst(const QMap< QString, QString >& attributes)
+void AstBuilder::populateAst()
 {
-
 }
-
     
 }
 

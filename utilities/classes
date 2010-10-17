@@ -104,11 +104,6 @@ public:
         BreakAstType,
         ContinueAstType,
         AttributesAstType,
-        AssertionAstType,
-        AugmentedAssignmentAstType,
-        DictionaryComprehensionAstType,
-        ExtendedSliceAstType,
-        CodeAstType,
         
         BooleanOperationAstType,
         BinaryOperationAstType,
@@ -336,8 +331,7 @@ public:
 
 class KDEVPYTHONPARSER_EXPORT GlobalAst : public StatementAst {
 public:
-    GlobalAst(Ast* parent, AstType type);
-    QList<Identifier*> names;
+    QList<Identifier*> name;
 };
 
 // TODO what's stmt::Expr(expr value) in the grammar and what do we need it for?
@@ -542,9 +536,9 @@ public:
     SliceAstBase(Ast* parent, AstType type);
 };
 
-class KDEVPYTHONPARSER_EXPORT EllipsisAst : public SliceAstBase {
+class KDEVPYTHONPARSER_EXPORT EllipsisAstType : public SliceAstBase {
 public:
-    EllipsisAst(Ast* parent, AstType type);
+    EllipsisAstType(Ast* parent, AstType type);
 };
 
 class KDEVPYTHONPARSER_EXPORT SliceAst : public SliceAstBase {

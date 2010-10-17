@@ -52,6 +52,11 @@ namespace Python {
     class ExpressionAst;
     class StatementAst;
     class Ast;
+    class ExceptionHandlerAst;
+    class AliasAst;
+    class ComprehensionAst;
+    class SliceAstBase;
+    class SliceAst;
 }
 
 namespace Python
@@ -167,7 +172,7 @@ public:
         ComparisonOperatorIsNot,
         ComparisonOperatorIn,
         ComparisonOperatorNotIn
-    }
+    };
 
     Ast(Ast* parent, AstType type);
     virtual ~Ast();

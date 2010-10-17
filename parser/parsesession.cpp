@@ -65,7 +65,8 @@ bool ParseSession::parse( Python::CodeAst* ast )
 {
     AstBuilder parser;
     ast = parser.parse(m_currentDocument);
-    Q_ASSERT(false);
+    if ( ! ast ) 
+        Q_ASSERT(false);
 }
 
 }

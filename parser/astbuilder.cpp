@@ -70,7 +70,10 @@ CodeAst* AstBuilder::parseXmlAst(QString xml)
     
     populateAst();
     
-    Q_ASSERT(false);
+    CodeAst* codeAst = dynamic_cast<CodeAst*>(m_currentNode);
+    if ( ! codeAst ) 
+        Q_ASSERT(codeAst);
+    return codeAst;
 }
 
 void AstBuilder::parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::TokenType token = QXmlStreamReader::Invalid) {
@@ -111,6 +114,7 @@ void AstBuilder::parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::Tok
             parseXmlAstNode(xmlast, token);
             
             // now we pop this parent off
+            m_currentNode = m_nodeStack.last();
             m_nodeStack.removeLast();
         }
         // Everything else (stuff between tags, comments...) is ignored
@@ -128,6 +132,8 @@ bool AstBuilder::parseAstNode(QString name, QString text, const QList< QXmlStrea
         kDebug() << "Added attribute: " << attributes.at(i).name().toString() << attributes.at(i).value().toString();
         attributeDict.insert(attributes.at(i).name().toString(), attributes.at(i).value().toString());
     }
+    
+    int node_id = attributeDict["nodecnt"].toInt();
     
     // TODO think about a less explicit way to do this
     // things in the comments are definitely found like this in the XML file
@@ -188,12 +194,52 @@ bool AstBuilder::parseAstNode(QString name, QString text, const QList< QXmlStrea
     else if ( name == "withast" ) ast = new WithAst(m_nodeStack.last()); // withAst
     else if ( name == "yieldast" ) ast = new YieldAst(m_nodeStack.last()); // yieldAst
     else {
-        kWarning() << "Unknown AST type" << name;
+        // assemble AST primitives
+        // TODO revert the order, better performance
+        if      ( name == "loadast" ) m_contextNodeMap.insert(node_id, ExpressionAst::Load);
+        else if ( name == "storeast") m_contextNodeMap.insert(node_id, ExpressionAst::Store);
+        else if ( name == "deleteast" ) m_contextNodeMap.insert(node_id, ExpressionAst::Delete);
+        else if ( name == "augassignast" ) m_contextNodeMap.insert(node_id, ExpressionAst::AugStore);
+        
+        else if ( name == "addast" ) m_opNodeMap.insert(node_id, Ast::OperatorAdd);
+        else if ( name == "subast" ) m_opNodeMap.insert(node_id, Ast::OperatorSub);
+        else if ( name == "multast" ) m_opNodeMap.insert(node_id, Ast::OperatorMult);
+        else if ( name == "divast" ) m_opNodeMap.insert(node_id, Ast::OperatorDiv);
+        else if ( name == "modast" ) m_opNodeMap.insert(node_id, Ast::OperatorMod);
+        else if ( name == "bitxorast" ) m_opNodeMap.insert(node_id, Ast::OperatorBitwiseXor);
+        else if ( name == "bitandast" ) m_opNodeMap.insert(node_id, Ast::OperatorBitwiseAnd);
+        else if ( name == "bitorast" ) m_opNodeMap.insert(node_id, Ast::OperatorBitwiseOr);
+        else if ( name == "powast" ) m_opNodeMap.insert(node_id, Ast::OperatorPow);
+        else if ( name == "rshiftast" ) m_opNodeMap.insert(node_id, Ast::OperatorRightShift);
+        else if ( name == "lshiftast" ) m_opNodeMap.insert(node_id, Ast::OperatorLeftShift);
+        
+        else if ( name == "notast" ) m_unaryOpNodeMap.insert(node_id, Ast::UnaryOperatorNot);
+        else if ( name == "uaddast" ) m_unaryOpNodeMap.insert(node_id, Ast::UnaryOperatorAdd);
+        else if ( name == "usubast" ) m_unaryOpNodeMap.insert(node_id, Ast::UnaryOperatorSub);
+        else if ( name == "invertast" ) m_unaryOpNodeMap.insert(node_id, Ast::UnaryOperatorInvert);
+        
+        else if ( name == "eqast" ) m_compOpNodeMap.insert(node_id, Ast::ComparisonOperatorEquals);
+        else if ( name == "noteqast" ) m_compOpNodeMap.insert(node_id, Ast::ComparisonOperatorNotEquals);
+        else if ( name == "ltast" ) m_compOpNodeMap.insert(node_id, Ast::ComparisonOperatorLessThan);
+        else if ( name == "lteast" ) m_compOpNodeMap.insert(node_id, Ast::ComparisonOperatorLessThanEqual);
+        else if ( name == "gtast" ) m_compOpNodeMap.insert(node_id, Ast::ComparisonOperatorGreaterThan);
+        else if ( name == "gteast" ) m_compOpNodeMap.insert(node_id, Ast::ComparisonOperatorGreaterThanEqual);
+        else if ( name == "isast" ) m_compOpNodeMap.insert(node_id, Ast::ComparisonOperatorIs);
+        else if ( name == "isnotast" ) m_compOpNodeMap.insert(node_id, Ast::ComparisonOperatorIsNot);
+        else if ( name == "inast" ) m_compOpNodeMap.insert(node_id, Ast::ComparisonOperatorIn);
+        else if ( name == "notinast" ) m_compOpNodeMap.insert(node_id, Ast::ComparisonOperatorNotIn);
+        
+        else if ( name == "andast" ) m_boolOpNodeMap.insert(node_id, Ast::BooleanAnd);
+        else if ( name == "orast" ) m_boolOpNodeMap.insert(node_id, Ast::BooleanOr);
+        else {
+            kWarning() << "Unknown AST type" << name;
+        }
+        // we did not push a node onto the stack, so we return false
         return false;
     }
     
-    m_nodeMap.insert(attributeDict["nodecnt"].toInt(), ast);
-    m_attributeStore.insert(attributeDict["nodecnt"].toInt(), attributeDict);
+    m_nodeMap.insert(node_id, ast);
+    m_attributeStore.insert(node_id, attributeDict);
     
     m_nodeStack.append(ast);
     return true;

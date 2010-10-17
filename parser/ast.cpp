@@ -83,7 +83,7 @@ ClassDefinitionAst::ClassDefinitionAst(Ast* parent): StatementAst(parent, Ast::C
 
 CodeAst::CodeAst()
 {
-
+    astType = Ast::CodeAstType;
 }
 
 CompareAst::CompareAst(Ast* parent): ExpressionAst(parent, Ast::CompareAstType)

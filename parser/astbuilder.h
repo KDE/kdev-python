@@ -55,9 +55,17 @@ private:
     
     QList<Ast*> m_nodeStack;
     
+    // one map for regular ast nodes, and the others for primitive nodes of different types
     QMap<int, Ast*> m_nodeMap;
+    QMap<int, ExpressionAst::Context> m_contextNodeMap;
+    QMap<int, Ast::BooleanOperationTypes> m_boolOpNodeMap;
+    QMap<int, Ast::ComparisonOperatorTypes> m_compOpNodeMap;
+    QMap<int, Ast::OperatorTypes> m_opNodeMap;
+    QMap<int, Ast::UnaryOperatorTypes> m_unaryOpNodeMap;
+    
     QStack<Ast*> m_astStack;
     QMap<int, stringDictionary> m_attributeStore;
+    Ast* m_currentNode;
     
     void populateAst();
     

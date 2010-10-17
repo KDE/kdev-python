@@ -39,7 +39,6 @@ public:
     virtual ~AstDefaultVisitor();
 
     virtual void visitCode(CodeAst* node);
-    virtual void visitStatement(StatementAst* node);
     virtual void visitFunctionDefinition(FunctionDefinitionAst* node);
     virtual void visitClassDefinition(ClassDefinitionAst* node);
     virtual void visitReturn(ReturnAst* node);

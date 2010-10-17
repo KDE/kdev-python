@@ -37,6 +37,7 @@ void AstDefaultVisitor::visitContinue(ContinueAst* node) { }
 void AstDefaultVisitor::visitEllipsis(EllipsisAst* node) { }
 void AstDefaultVisitor::visitGlobal(GlobalAst* node) { }
 void AstDefaultVisitor::visitNumber(NumberAst* node) { }
+void AstDefaultVisitor::visitString(StringAst* node) { }
 
 void AstDefaultVisitor::visitCode(CodeAst* node)
 {
@@ -137,7 +138,105 @@ void AstDefaultVisitor::visitLambda(LambdaAst* node)
 
 void AstDefaultVisitor::visitRaise(RaiseAst* node)
 {
-    Python::AstVisitor::visitRaise(node);
+    visitNode(node->type);
+}
+
+void AstDefaultVisitor::visitRepr(ReprAst* node)
+{
+    visitNode(node->value);
+}
+
+void AstDefaultVisitor::visitReturn(ReturnAst* node)
+{
+    visitNode(node->value);
+}
+
+void AstDefaultVisitor::visitSet(SetAst* node)
+{
+    foreach (ExpressionAst* expression, node->elements) {
+        visitNode(expression);
+    }
+}
+
+void AstDefaultVisitor::visitSetComprehension(SetComprehensionAst* node)
+{
+    visitNode(node->element);
+    foreach (ComprehensionAst* comp, node->generators) {
+        visitNode(comp);
+    }
+}
+
+void AstDefaultVisitor::visitSlice(SliceAst* node)
+{
+    visitNode(node->lower);
+    visitNode(node->upper);
+    visitNode(node->step);
+}
+
+void AstDefaultVisitor::visitSubscript(SubscriptAst* node)
+{
+    visitNode(node->value);
+    visitNode(node->slice);
+}
+
+void AstDefaultVisitor::visitTryExcept(TryExceptAst* node)
+{
+    foreach (StatementAst* statement, node->body) {
+        visitNode(statement);
+    }
+    foreach (ExceptionHandlerAst* handler, node->handlers) {
+        visitNode(handler);
+    }
+    foreach (StatementAst* statement, node->orelse) {
+        visitNode(statement);
+    }
+}
+
+void AstDefaultVisitor::visitTryFinally(TryFinallyAst* node)
+{
+    foreach (StatementAst* statement, node->body) {
+        visitNode(statement);
+    }
+    foreach (StatementAst* statement, node->finalbody) {
+        visitNode(statement);
+    }
+}
+
+void AstDefaultVisitor::visitTuple(TupleAst* node)
+{
+    foreach (ExpressionAst* expression, node->elements) {
+        visitNode(expression);
+    }
+}
+
+void AstDefaultVisitor::visitUnaryOperation(UnaryOperationAst* node)
+{
+    visitNode(node->operand);
+}
+
+void AstDefaultVisitor::visitWhile(WhileAst* node)
+{
+    visitNode(node->condition);
+    foreach (StatementAst* statement, node->body) {
+        visitNode(statement);
+    }
+    foreach (StatementAst* statement, node->orelse) {
+        visitNode(statement);
+    }
+}
+
+void AstDefaultVisitor::visitWith(WithAst* node)
+{
+    visitNode(node->contextExpression);
+    visitNode(node->optionalVars);
+    foreach (StatementAst* statement, node->body) {
+        visitNode(statement);
+    }
+}
+
+void AstDefaultVisitor::visitYield(YieldAst* node)
+{
+    visitNode(node->value);
 }
 
 void AstDefaultVisitor::visitList(ListAst* node)

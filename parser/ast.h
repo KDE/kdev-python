@@ -79,7 +79,95 @@ public:
         AttributeAstType,
         ArgumentsAstType,
         KeywordAstType,
+        ClassDefinitionAstType,
+        ReturnAstType,
+        DeleteAstType,
+        AugAssignAstType,
+        ForAstType,
+        WhileAstType,
+        IfAstType,
+        WithAstType,
+        RaiseAstType,
+        TryExceptAstType,
+        TryFinallyAstType,
+        AssertAstType,
+        ImportAstType,
+        ImportFromAstType,
+        ExecAstType,
+        GlobalAstType,
+        ExprAstType,
+        BreakAstType,
+        ContinueAstType,
+        AttributesAstType,
+        
+        BooleanOperationAstType,
+        BinaryOperationAstType,
+        UnaryOperationAstType,
+        LambdaAstType,
+        IfExpAstType,
+        DictAstType,
+        SetAstType,
+        ListComprehensionAstType,
+        SetComprehensionAstType,
+        DictComprehensionAstType,
+        GeneratorExpressionAstType,
+        YieldAstType,
+        CompareAstType,
+        ReprAstType,
+        NumberAstType,
+        StringAstType,
+        SubscriptAstType,
+        ListAstType,
+        TupleAstType,
+        
+        SliceAstType,
+        EllipsisAstType,
+        IndexAstType,
+        
+        ComprehensionAstType,
+        ExceptionHandlerAstType,
+        AliasAstType // for imports
     };
+    
+    enum BooleanOperationTypes {
+        BooleanAnd,
+        BooleanOr
+    };
+    
+    enum OperatorTypes {
+        OperatorAdd,
+        OperatorSub,
+        OperatorMult,
+        OperatorDiv,
+        OperatorMod,
+        OperatorPow,
+        OperatorLeftShift,
+        OperatorRightShift,
+        OperatorBitwiseOr,
+        OperatorBitwiseXor,
+        OperatorBitwiseAnd,
+        OperatorFloorDivision
+    };
+    
+    enum UnaryOperatorTypes {
+        UnaryOperatorInvert,
+        UnaryOperatorNot,
+        UnaryOperatorAdd,
+        UnaryOperatorSub
+    };
+    
+    enum ComparisionOperatorTypes {
+        ComparisonOperatorEquals,
+        ComparisonOperatorNotEquals,
+        ComparisonOperatorLessThan,
+        ComparisonOperatorLessThanEqual,
+        ComparisonOperatorGreaterThan,
+        ComparisonOperatorGreaterThanEqual,
+        ComparisonOperatorIs,
+        ComparisonOperatorIsNot,
+        ComparisonOperatorIn,
+        ComparisonOperatorNotIn
+    }
 
     Ast(Ast* parent, AstType type);
     virtual ~Ast();
@@ -127,7 +215,7 @@ class KDEVPYTHONPARSER_EXPORT PrintAst : public StatementAst {
 public:
     PrintAst(Ast* parent, AstType type);
     ExpressionAst* destination;
-    QList<ExpressionAst> values;
+    QList<ExpressionAst*> values;
     bool newline;
 };
 
@@ -187,6 +275,7 @@ public:
 };
 
 class KDEVPYTHONPARSER_EXPORT KeywordAst : public Ast {
+public:
     KeywordAst(Ast* parent, AstType type);
     Identifier* argumentName;
     ExpressionAst* value;

@@ -22,20 +22,25 @@
 
 namespace Python
 {
+    
+AstVisitor::AstVisitor() { }
+AstVisitor::~AstVisitor() { }
+
 
 void AstVisitor::visitNode(Ast* node)
 {
     if ( ! node ) return;
     switch ( node->astType ) {
-        case Ast::ArgumentsAstType:             AstVisitor::visitArguments(node); break;
-        case Ast::AssignmentAstType:            AstVisitor::visitAssignment(node); break;
-        case Ast::AttributeAstType:             AstVisitor::visitAttribute(node); break;
-        case Ast::CallAstType:                  AstVisitor::visitCall(node); break;
-        case Ast::FunctionDefinitionAstType:    AstVisitor::visitFunctionDefinition(node); break;
-        case Ast::KeywordAstType:               AstVisitor::visitKeyword(node); break;
-        case Ast::NameAstType:                  AstVisitor::visitName(node); break;
-        case Ast::PassAstType:                  AstVisitor::visitPass(node); break;
-        case Ast::PrintAstType:                 AstVisitor::visitPrint(node); break;
+        case Ast::ArgumentsAstType:             AstVisitor::visitArguments(dynamic_cast<ArgumentsAst*>(node)); break;
+        case Ast::AssignmentAstType:            AstVisitor::visitAssignment(dynamic_cast<AssignmentAst*>(node)); break;
+        case Ast::AttributeAstType:             AstVisitor::visitAttribute(dynamic_cast<AttributeAst*>(node)); break;
+        case Ast::CallAstType:                  AstVisitor::visitCall(dynamic_cast<CallAst*>(node)); break;
+        case Ast::FunctionDefinitionAstType:    AstVisitor::visitFunctionDefinition(dynamic_cast<FunctionDefinitionAst*>(node)); break;
+        case Ast::KeywordAstType:               AstVisitor::visitKeyword(dynamic_cast<KeywordAst*>(node)); break;
+        case Ast::NameAstType:                  AstVisitor::visitName(dynamic_cast<NameAst*>(node)); break;
+        case Ast::PassAstType:                  AstVisitor::visitPass(dynamic_cast<PassAst*>(node)); break;
+        case Ast::PrintAstType:                 AstVisitor::visitPrint(dynamic_cast<PrintAst*>(node)); break;
+        case Ast::ExpressionAstType:            break;
     }
 }
 

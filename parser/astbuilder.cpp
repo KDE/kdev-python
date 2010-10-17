@@ -42,7 +42,7 @@ CodeAst* AstBuilder::parse(KUrl filename)
     
 QString AstBuilder::getXmlForFile(KUrl filename)
 {
-    QProcess *parser = new QProcess();
+    QProcess* parser = new QProcess();
     // we call a python script to parse the code for us. It returns an XML string with the AST
     parser->start("/home/sven/projects/kde4/python/pythonpythonparser.py", QStringList(filename.path())); // TODO fix this
     parser->waitForFinished();
@@ -62,14 +62,15 @@ CodeAst* AstBuilder::parseXmlAst(QString xml)
 {
     QXmlStreamReader* xmlast = new QXmlStreamReader();
     xmlast->addData(xml);
-    m_nodeMap = new QMap<int, Ast*>;
+    
+    m_nodeMap.clear();
     
     parseXmlAstNode(xmlast, QXmlStreamReader::Invalid);
     
     Q_ASSERT(false);
 }
 
-void AstBuilder::parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::TokenType token) {
+void AstBuilder::parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::TokenType token = QXmlStreamReader::Invalid) {
     while ( ! xmlast->atEnd() && ! xmlast->hasError() ) {
         // Advance to the next (first) token
         QXmlStreamReader::TokenType token = xmlast->readNext();
@@ -103,13 +104,24 @@ void AstBuilder::parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::Tok
 void AstBuilder::parseAstNode(QString name, QString text, const QList< QXmlStreamAttribute >& attributes)
 {
     Ast* ast;
-    switch ( name ) {
-        case "AssignAst":   ast = createAssignmentAst(name, text, attributes); break;
-        case "NameAst":     ast = createIdentifierAst(name, text, attributes); break;
-        case "StoreAst":    break;
-        default:            kError() << "Unknown AST type" << name;
+    
+    QMap<QString, QString> attributeDict;
+    for ( int i=0; i<attributes.length(); i++ ) {
+        attributeDict.insert(attributes.at(i).name().toString(), attributes.at(i).value().toString());
     }
+    
+    if      ( name == "AssignAst" )         ast = createAssignmentAst(attributeDict);
+    else if ( name == "NameAst" )           { }
+    else if ( name == "StoreAst" )          { }
+    else                                    kError() << "Unknown AST type" << name;
+    
 }
+
+AssignmentAst* AstBuilder::createAssignmentAst(const QMap< QString, QString >& attributes)
+{
+
+}
+
     
 }
 

@@ -63,8 +63,8 @@ private:
     
     QMap<int, Ast*> m_nodeMap;
     
-    AssignmentAst* createAssignmentAst(const QList<QXmlStreamAttribute>& attributes);
-    IdentifierAst* createIdentifierAst(const QList<QXmlStreamAttribute>& attributes);
+    AssignmentAst* createAssignmentAst(const QMap<QString, QString>& attributes);
+    Identifier* createIdentifier(const QMap<QString, QString>& attributes);
 };
 
 }

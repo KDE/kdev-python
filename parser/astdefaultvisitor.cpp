@@ -19,11 +19,12 @@
  ***************************************************************************/
 
 #include "astdefaultvisitor.h"
+#include "ast.h"
 
 namespace Python
 {
 
-AstDefaultVisitor::AstDefaultVisitor() : AstVisitor() { }
+AstDefaultVisitor::AstDefaultVisitor() { }
 AstDefaultVisitor::~AstDefaultVisitor() { }
 
 // The Ast "ends" here, those dont have child nodes
@@ -61,9 +62,8 @@ void AstDefaultVisitor::visitCall(CallAst* node)
     visitNode(node->keywordArguments);
     visitNode(node->starArguments);
     foreach (ExpressionAst* argument, node->arguments) {
-        visitNode(node->arguments);
+        visitNode(argument);
     }
-    visitNode(node->arguments);
 }
 
 void AstDefaultVisitor::visitFunctionDefinition(FunctionDefinitionAst* node)

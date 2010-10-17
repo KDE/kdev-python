@@ -30,22 +30,23 @@ namespace Python
 class KDEVPYTHONPARSER_EXPORT AstVisitor
 {
 public:
-    virtual ~AstVisitor() {}
+    AstVisitor();
+    virtual ~AstVisitor();
 
     typedef void (AstVisitor::*visitFunc)(Ast *);
     
     void visitNode(Ast* node);
 
-    virtual void visitCode(CodeAst* node);
-    virtual void visitFunctionDefinition(FunctionDefinitionAst* node);
-    virtual void visitPrint(PrintAst* node);
-    virtual void visitAssignment(AssignmentAst* node);
-    virtual void visitCall(CallAst* node);
-    virtual void visitPass(StatementAst* node);
-    virtual void visitName(NameAst* node);
-    virtual void visitAttribute(AttributeAst* node);
-    virtual void visitKeyword(KeywordAst* node);
-    virtual void visitArguments(ArgumentsAst* node);
+    virtual void visitCode(CodeAst* node) { Q_UNUSED(node); };
+    virtual void visitFunctionDefinition(FunctionDefinitionAst* node) { Q_UNUSED(node); };
+    virtual void visitPrint(PrintAst* node) { Q_UNUSED(node); };
+    virtual void visitAssignment(AssignmentAst* node) { Q_UNUSED(node); };
+    virtual void visitCall(CallAst* node) { Q_UNUSED(node); };
+    virtual void visitPass(StatementAst* node) { Q_UNUSED(node); };
+    virtual void visitName(NameAst* node) { Q_UNUSED(node); };
+    virtual void visitAttribute(AttributeAst* node) { Q_UNUSED(node); };
+    virtual void visitKeyword(KeywordAst* node) { Q_UNUSED(node); };
+    virtual void visitArguments(ArgumentsAst* node) { Q_UNUSED(node); };
 };
 }
 

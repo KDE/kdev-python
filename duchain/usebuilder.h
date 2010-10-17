@@ -34,7 +34,7 @@ namespace Python {
 
 class ParseSession;
 
-typedef KDevelop::AbstractUseBuilder<Ast, IdentifierAst, ContextBuilder> UseBuilderBase;
+typedef KDevelop::AbstractUseBuilder<Ast, Identifier, ContextBuilder> UseBuilderBase;
 
 class KDEVPYTHONDUCHAIN_EXPORT UseBuilder: public UseBuilderBase
 {
@@ -47,8 +47,7 @@ public:
     virtual void openContext(KDevelop::DUContext* newContext);
     virtual void closeContext();
     
-    virtual void visitIdentifier(IdentifierAst* node);
-    virtual void visitIdentifierTarget(IdentifierTargetAst* node);
+    virtual void visitIdentifier(Identifier* node);
 private:
     ParseSession* m_session;
 //     void newUse(std::size_t name, Ast *rangenode);

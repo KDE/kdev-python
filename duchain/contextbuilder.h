@@ -40,7 +40,7 @@ namespace Python
 class PythonEditorIntegrator;
 class ParseSession;
 
-typedef KDevelop::AbstractContextBuilder<Ast, IdentifierAst> ContextBuilderBase;
+typedef KDevelop::AbstractContextBuilder<Ast, Identifier> ContextBuilderBase;
 
 class KDEVPYTHONDUCHAIN_EXPORT ContextBuilder: public ContextBuilderBase, public Python::AstDefaultVisitor
 {
@@ -55,7 +55,7 @@ protected:
     virtual void setContextOnNode( Ast* node, KDevelop::DUContext* context );
     virtual KDevelop::DUContext* contextFromNode( Ast* node );
     virtual KDevelop::RangeInRevision editorFindRange( Ast* fromNode, Ast* toNode );
-    virtual KDevelop::QualifiedIdentifier identifierForNode( IdentifierAst* node );
+    virtual KDevelop::QualifiedIdentifier identifierForNode( Identifier* node );
 
     void addImportedContexts();
 
@@ -65,7 +65,6 @@ protected:
     virtual void visitWith( WithAst* node );
     virtual void visitWhile( WhileAst* node );
     virtual void visitIf( IfAst* node );
-    virtual void visitTry( TryAst* node );
 
     PythonEditorIntegrator *m_editor;
     

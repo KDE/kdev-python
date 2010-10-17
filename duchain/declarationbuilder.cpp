@@ -67,28 +67,6 @@ DeclarationBuilder:: ~DeclarationBuilder()
 {
 }
 
-// This is not used anywhere and causes build errors, so... bye.
-/*
-template<class DeclarationType>
-DeclarationType* DeclarationBuilder::specialDeclaration( KTextEditor::SmartRange* smartRange,
-        const KDevelop::SimpleRange& range )
-{
-    DeclarationType* ret = new DeclarationType( m_editor->currentUrl(), range, currentContext() );
-    ret->setSmartRange( smartRange );
-    return ret;
-}
-
-template<class DeclarationType>
-DeclarationType* DeclarationBuilder::specialDeclaration( KTextEditor::SmartRange* smartRange,
-        const KDevelop::SimpleRange& range,
-        int scope )
-{
-    DeclarationType* ret = new DeclarationType( m_editor->currentUrl(), range, currentContext() );
-    ret->setSmartRange( smartRange );
-    return ret;
-}
-*/
-
 void DeclarationBuilder::closeDeclaration()
 {
     if ( lastContext() )
@@ -102,39 +80,39 @@ void DeclarationBuilder::closeDeclaration()
     DeclarationBuilderBase::closeDeclaration();
 }
 
-void DeclarationBuilder::visitIdentifierTarget(IdentifierTargetAst* node)
-{
-    Python::AstDefaultVisitor::visitIdentifierTarget(node);
-    
-    QList<Declaration*> existingLocalDeclarations;
-    
-    {
-        DUChainWriteLocker lock( DUChain::lock() );
-        RangeInRevision range = editorFindRange(node, node);
-        CursorInRevision stopSearching = range.start;
-        QualifiedIdentifier id = identifierForNode(node->identifier);
-        existingLocalDeclarations = currentContext()->findLocalDeclarations(id.last(), stopSearching);
-    }
-    
-    if ( ! existingLocalDeclarations.length() ) {
-        Declaration *dec = openDeclaration<Declaration>( node->identifier, node);
-        closeDeclaration();
-        {
-            DUChainWriteLocker lock(DUChain::lock());
-            dec->setType(IntegralType::Ptr(new IntegralType(IntegralType::TypeMixed)));
-        }
-    }
-    else {
-        kDebug() << "Declaration does already exist, not updating" << node->identifier->identifier.toAscii();
-    }
-}
+// void DeclarationBuilder::visitIdentifierTarget(IdentifierTargetAst* node)
+// {
+//     Python::AstDefaultVisitor::visitIdentifierTarget(node);
+//     
+//     QList<Declaration*> existingLocalDeclarations;
+//     
+//     {
+//         DUChainWriteLocker lock( DUChain::lock() );
+//         RangeInRevision range = editorFindRange(node, node);
+//         CursorInRevision stopSearching = range.start;
+//         QualifiedIdentifier id = identifierForNode(node->identifier);
+//         existingLocalDeclarations = currentContext()->findLocalDeclarations(id.last(), stopSearching);
+//     }
+//     
+//     if ( ! existingLocalDeclarations.length() ) {
+//         Declaration *dec = openDeclaration<Declaration>( node->identifier, node);
+//         closeDeclaration();
+//         {
+//             DUChainWriteLocker lock(DUChain::lock());
+//             dec->setType(IntegralType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+//         }
+//     }
+//     else {
+//         kDebug() << "Declaration does already exist, not updating" << node->identifier->identifier.toAscii();
+//     }
+// }
 
 
 void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
     kDebug() << "opening class definition";
     ContextBuilder::visitClassDefinition( node );
-    openDeclaration<Declaration>( node->className, node );
+    openDeclaration<Declaration>( node->name, node );
     eventuallyAssignInternalContext();
     closeDeclaration();
 }
@@ -142,7 +120,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
     kDebug() << "opening function definition";
-    FunctionDeclaration* dec = openDeclaration<FunctionDeclaration>( node->functionName, node );
+    FunctionDeclaration* dec = openDeclaration<FunctionDeclaration>( node->name, node );
 
     FunctionType::Ptr type(new FunctionType);
 
@@ -165,45 +143,46 @@ void DeclarationBuilder::visitLambda( LambdaAst* node )
 //     closeDeclaration();
 }
 
-void DeclarationBuilder::visitDefaultParameter( DefaultParameterAst* node )
+void DeclarationBuilder::visitArguments( ArgumentsAst* node )
 {
-    ContextBuilder::visitDefaultParameter( node );
-//     AbstractFunctionDeclaration* function = currentDeclaration<AbstractFunctionDeclaration>();
-    AbstractFunctionDeclaration* function = dynamic_cast<AbstractFunctionDeclaration*>(currentDeclaration());
-
-    if( function )
-    {
-        if( node->value )
-        {
-            //Not sure what to do here, C++ simply adds the source code as default parameter, but that doesn't sound sane...
-        }
-        //simple case, we have an identifier parameter
-        if( node->name->astType == Ast::IdentifierParameterPartAst )
-        {
-            function->addDefaultParameter(IndexedString("foo"));
-            kDebug() << function->defaultParametersSize();
-
-            Q_ASSERT(hasCurrentType());
-            FunctionType::Ptr type = currentType<FunctionType>();
-            Q_ASSERT(type);
-
-            kDebug() << type->toString();
-
-            // create a variable definition
-            IdentifierParameterPartAst* identifierNode = dynamic_cast<IdentifierParameterPartAst*>(node->name);
-            Declaration* dec = openDeclaration<Declaration>( identifierNode->name, node);
-            {
-                DUChainWriteLocker lock(DUChain::lock());
-                dec->setType(IntegralType::Ptr(new IntegralType(IntegralType::TypeMixed)));
-                type->addArgument(dec->abstractType());
-            }
-            closeDeclaration();
-
-        } else if( node->name->astType == Ast::ListParameterPartAst )
-        {
-            //complex case, a sublist, what to do??
-        }
-    }
+    AstDefaultVisitor::visitArguments(node);
+//     ContextBuilder::visitDefaultParameter( node );
+// //     AbstractFunctionDeclaration* function = currentDeclaration<AbstractFunctionDeclaration>();
+//     AbstractFunctionDeclaration* function = dynamic_cast<AbstractFunctionDeclaration*>(currentDeclaration());
+// 
+//     if( function )
+//     {
+//         if( node->value )
+//         {
+//             //Not sure what to do here, C++ simply adds the source code as default parameter, but that doesn't sound sane...
+//         }
+//         //simple case, we have an identifier parameter
+//         if( node->name->astType == Ast::IdentifierParameterPartAst )
+//         {
+//             function->addDefaultParameter(IndexedString("foo"));
+//             kDebug() << function->defaultParametersSize();
+// 
+//             Q_ASSERT(hasCurrentType());
+//             FunctionType::Ptr type = currentType<FunctionType>();
+//             Q_ASSERT(type);
+// 
+//             kDebug() << type->toString();
+// 
+//             // create a variable definition
+//             IdentifierParameterPartAst* identifierNode = dynamic_cast<IdentifierParameterPartAst*>(node->name);
+//             Declaration* dec = openDeclaration<Declaration>( identifierNode->name, node);
+//             {
+//                 DUChainWriteLocker lock(DUChain::lock());
+//                 dec->setType(IntegralType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+//                 type->addArgument(dec->abstractType());
+//             }
+//             closeDeclaration();
+// 
+//         } else if( node->name->astType == Ast::ListParameterPartAst )
+//         {
+//             //complex case, a sublist, what to do??
+//         }
+//     }
 }
 
 }

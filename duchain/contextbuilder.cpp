@@ -29,7 +29,6 @@
 #include <ktexteditor/smartrange.h>
 #include <ktexteditor/smartinterface.h>
 #include <ktexteditor/document.h>
-#include <language/duchain/smartconverter.h>
 #include "pythoneditorintegrator.h"
 #include "dumpchain.h"
 #include <language/editor/rangeinrevision.h>
@@ -92,9 +91,9 @@ RangeInRevision ContextBuilder::editorFindRange( Ast* fromNode, Ast* toNode )
     return editor()->findRange(fromNode, toNode);
 }
 
-QualifiedIdentifier ContextBuilder::identifierForNode( IdentifierAst* node )
+QualifiedIdentifier ContextBuilder::identifierForNode( Python::Identifier* node )
 {
-    return QualifiedIdentifier( node->identifier );
+    return QualifiedIdentifier( node->value );
 }
 
 void ContextBuilder::addImportedContexts()
@@ -124,10 +123,10 @@ void ContextBuilder::openContextForStatementList( const QList<StatementAst*>& l 
 void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
     kDebug() << "Visiting Class Declaration";
-    openContext( node, DUContext::Class, identifierForNode( node->className ) );
+    openContext( node, DUContext::Class, identifierForNode( node->name ) );
     addImportedContexts();
-    visitNodeList( node->inheritance );
-    visitNodeList( node->classBody );
+    visitNodeList( node->baseClasses );
+    visitNodeList( node->body );
     closeContext();
 }
 
@@ -160,31 +159,31 @@ void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 
     visitNodeList( node->decorators );
 
-    if ( node->parameters.count() > 0 )
+    if ( node->arguments )
     {
-        DUContext* funcctx = openContext( node->parameters.first(), node->parameters.last(), DUContext::Function, identifierForNode( node->functionName ) );
+        DUContext* funcctx = openContext( node->arguments, node->arguments, DUContext::Function, identifierForNode( node->name ) );
         addImportedContexts();
-        visitNodeList( node->parameters );
+        visitNode( node->arguments );
         closeContext();
         m_importedParentContexts.append( funcctx );
     }
 
-    openContextForStatementList( node->functionBody );
+    openContextForStatementList( node->body );
     m_importedParentContexts.clear();
 }
 
 void ContextBuilder::visitFor( ForAst* node )
 {
     kDebug() << "Found for, building context";
-    DUContext* forctx = openContext( node->assignedTargets.first(), node->assignedTargets.last(), DUContext::Other );
-    visitNodeList( node->assignedTargets );
+    DUContext* forctx = openContext( node, KDevelop::DUContext::Other );
+    visitNode(node->target);
     closeContext();
 
-    visitNodeList( node->iterable );
+    visitNode(node->iterator);
 
     m_importedParentContexts = QList<DUContext*>() << forctx;
-    openContextForStatementList( node->forBody );
-    openContextForStatementList( node->elseBody );
+    openContextForStatementList( node->body );
+    openContextForStatementList( node->orelse );
     m_importedParentContexts.clear();
 }
 
@@ -192,45 +191,45 @@ void ContextBuilder::visitWhile( WhileAst* node )
 {
     kDebug() << "Creating contexts for while";
     visitNode( node->condition );
-    openContextForStatementList( node->whileBody );
-    openContextForStatementList( node->elseBody );
+    openContextForStatementList( node->body );
+    openContextForStatementList( node->orelse );
 }
 
 void ContextBuilder::visitWith( WithAst * node )
 {
     kDebug() << "creating contexts for With";
 
-    m_importedParentContexts = QList<DUContext*>() << openContext( node->name, DUContext::Other );
-    visitNode( node->name );
+    m_importedParentContexts = QList<DUContext*>() << openContext( node->contextExpression, DUContext::Other );
+    visitNode( node->contextExpression );
     closeContext();
 
     openContextForStatementList( node->body );
     m_importedParentContexts.clear();
 }
 
-void ContextBuilder::visitTry( TryAst* node )
-{
-    kDebug() << "creating contexts for try";
-    openContextForStatementList( node->tryBody );
-    visitNodeList( node->exceptions );
-    openContextForStatementList( node->elseBody );
-    openContextForStatementList( node->finallyBody );
-}
+// void ContextBuilder::visitTry( TryAst* node )
+// {
+//     kDebug() << "creating contexts for try";
+//     openContextForStatementList( node->tryBody );
+//     visitNodeList( node->exceptions );
+//     openContextForStatementList( node->elseBody );
+//     openContextForStatementList( node->finallyBody );
+// }
 
 void ContextBuilder::visitIf( IfAst* node )
 {
     kDebug() << "creating contexts for if";
-    visitNode( node->ifCondition );
-    openContextForStatementList( node->ifBody );
-    QList< QPair< ExpressionAst*, QList<StatementAst*> > >::ConstIterator it, end = node->elseIfBodies.end();
+    visitNode( node->condition );
+    openContextForStatementList( node->body );
+    
+    QList <Python::StatementAst* >::const_iterator it, end = node->body.constEnd();
 
-    for ( it = node->elseIfBodies.begin(); it != end; ++it )
+    for ( it = node->body.begin(); it != end; ++it )
     {
-        visitNode( ( *it ).first );
-        openContextForStatementList( ( *it ).second );
+        visitNode(*it);
     }
 
-    openContextForStatementList( node->elseBody );
+    openContextForStatementList( node->orelse );
 }
 
 }

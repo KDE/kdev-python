@@ -77,8 +77,8 @@ void AstDefaultVisitor::visitFor(ForAst* node)
 {
     visitNode(node->target);
     visitNode(node->iterator);
-    foreach (ExpressionAst* expression, node->body) {
-        visitNode(expression);
+    foreach (StatementAst* statement, node->body) {
+        visitNode(statement);
     }
     foreach (StatementAst* statement, node->orelse) {
         visitNode(statement);

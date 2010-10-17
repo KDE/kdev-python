@@ -51,7 +51,7 @@ UseBuilder::UseBuilder (PythonEditorIntegrator* editor)
 // //         top->setHasUses(true);
 // }
 
-void UseBuilder::visitIdentifier(IdentifierAst* node)
+void UseBuilder::visitIdentifier(Identifier* node)
 {
     DUChainWriteLocker lock( DUChain::lock() );
     QualifiedIdentifier id = identifierForNode(node);
@@ -59,35 +59,35 @@ void UseBuilder::visitIdentifier(IdentifierAst* node)
     CursorInRevision until = range.start;
     QList<Declaration*> allDeclarations = currentContext()->findDeclarations(id, until);
     
-    kDebug() << " >> scanning " << node->identifier;
+    kDebug() << " >> scanning " << node->value;
     kDebug() << "  > searching for declaration until" << until.line << ":" << until.column << "; " << allDeclarations.length() << "Declarations found";
     
     Declaration *globalDeclaration = 0;
     foreach ( Declaration* dec, allDeclarations ) {
         if ( dec->context() == dec->topContext() ) {
-            kDebug() << "There's already a global declaration for" << node->identifier;
+            kDebug() << "There's already a global declaration for" << node->value;
             globalDeclaration = dec;
         }
     }
     
     // if there's a local declaration, use the last one of those
     if ( allDeclarations.length() && allDeclarations.last()->context() != allDeclarations.last()->topContext() ) {
-        kDebug() << " ++ Created a use of local declaration for node" << node->identifier;
+        kDebug() << " ++ Created a use of local declaration for node" << node->value;
         UseBuilderBase::newUse(node, allDeclarations.last());
     }
     // otherwise, use the global one.
     // Note that the following is not allowed by python: a=3; def foo(): print a; a=7
     else if ( globalDeclaration ) {
-        kDebug() << " ++ Created a use of global declaration for node" << node->identifier;
+        kDebug() << " ++ Created a use of global declaration for node" << node->value;
         UseBuilderBase::newUse(node, globalDeclaration);
     }
 }
 
-void UseBuilder::visitIdentifierTarget(IdentifierTargetAst* node)
-{
-    kDebug() << "Target variable identifier: " << node->identifier->identifier.toAscii();
-    UseBuilderBase::visitIdentifierTarget(node);
-}
+// void UseBuilder::visitIdentifierTarget(IdentifierTargetAst* node)
+// {
+//     kDebug() << "Target variable identifier: " << node->identifier->identifier.toAscii();
+//     UseBuilderBase::visitIdentifierTarget(node);
+// }
 
 
 void UseBuilder::openContext(DUContext * newContext)

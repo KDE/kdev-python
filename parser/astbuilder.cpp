@@ -47,8 +47,9 @@ QString AstBuilder::getXmlForFile(KUrl filename)
     parser->start("/home/sven/projects/kde4/python/pythonpythonparser.py", QStringList(filename.path())); // TODO fix this
     parser->waitForFinished();
     
-    if ( parser->error() ) {
-        kError() << parser->errorString();
+    // TODO this is not clean
+    if ( parser->exitStatus() != QProcess::NormalExit ) {
+        kError() << "Error parsing file: " << parser->errorString();
         return "";
     }
     
@@ -67,10 +68,14 @@ CodeAst* AstBuilder::parseXmlAst(QString xml)
     
     parseXmlAstNode(xmlast, QXmlStreamReader::Invalid);
     
+    populateAst();
+    
     Q_ASSERT(false);
 }
 
 void AstBuilder::parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::TokenType token = QXmlStreamReader::Invalid) {
+    bool nodeAdded = false;
+    
     while ( ! xmlast->atEnd() && ! xmlast->hasError() ) {
         // Advance to the next (first) token
         QXmlStreamReader::TokenType token = xmlast->readNext();
@@ -87,13 +92,21 @@ void AstBuilder::parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::Tok
         // We recursively continue parsing if we find another element
         else if ( token == QXmlStreamReader::StartElement ) {
             // Here we can now assemble an actual node with the attributes extracted above
+            
+            // Skip the document root element
+            if ( currentElementName == "pythonast" ) {
+                parseXmlAstNode(xmlast, token);
+                continue;
+            }
+            
             kDebug() << "Token: " << token << "; " << "Name: " << currentElementName << "; Text: " << currentElementText;
             for ( int i=0; i<currentElementAttributes.length(); i++ ) {
                 kDebug() << currentElementAttributes.at(i).name() << currentElementAttributes.at(i).value();
             }
             
             // this will push a parent onto the stack
-            parseAstNode(currentElementName, currentElementText, currentElementAttributes);
+            nodeAdded = parseAstNode(currentElementName, currentElementText, currentElementAttributes);
+            if ( ! nodeAdded ) continue;
             
             parseXmlAstNode(xmlast, token);
             
@@ -105,13 +118,14 @@ void AstBuilder::parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::Tok
     }
 }
 
-void AstBuilder::parseAstNode(QString name, QString text, const QList< QXmlStreamAttribute >& attributes)
+bool AstBuilder::parseAstNode(QString name, QString text, const QList< QXmlStreamAttribute >& attributes)
 {
     Ast* ast;
     
     QMap<QString, QString> attributeDict;
     
     for ( int i=0; i<attributes.length(); i++ ) {
+        kDebug() << "Added attribute: " << attributes.at(i).name().toString() << attributes.at(i).value().toString();
         attributeDict.insert(attributes.at(i).name().toString(), attributes.at(i).value().toString());
     }
     
@@ -173,15 +187,123 @@ void AstBuilder::parseAstNode(QString name, QString text, const QList< QXmlStrea
     else if ( name == "whileast" ) ast = new WhileAst(m_nodeStack.last()); // whileAst
     else if ( name == "withast" ) ast = new WithAst(m_nodeStack.last()); // withAst
     else if ( name == "yieldast" ) ast = new YieldAst(m_nodeStack.last()); // yieldAst
-    else kError() << "Unknown AST type" << name;
+    else {
+        kWarning() << "Unknown AST type" << name;
+        return false;
+    }
     
     m_nodeMap.insert(attributeDict["nodecnt"].toInt(), ast);
+    m_attributeStore.insert(attributeDict["nodecnt"].toInt(), attributeDict);
     
     m_nodeStack.append(ast);
+    return true;
+}
+
+template <typename T> T* AstBuilder::resolveNode(const QString& identifier)
+{
+    return dynamic_cast<T*>(m_nodeMap[identifier.toInt()]);
+}
+
+template <typename T> QList<T*> AstBuilder::resolveNodeList(const QString& commaSeperatedIdentifiers)
+{
+    QList<T*> items;
+    QStringList identifiers = commaSeperatedIdentifiers.split(",");
+    for ( int i=0; i<identifiers.length(); i++ ) {
+        items << resolveNode<T>(identifiers.at(i));
+    }
+    return items;
+}
+
+FunctionDefinitionAst* AstBuilder::populateFunctionDefinitionAst(Ast* ast, const stringDictionary& currentAttributes)
+{
+    FunctionDefinitionAst* currentNode = dynamic_cast<FunctionDefinitionAst*>(ast);
+    currentNode->arguments = resolveNode<ArgumentsAst>(currentAttributes.value("NR_args"));
+    currentNode->body = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_body"));
+    currentNode->decorators = resolveNodeList<NameAst>(currentAttributes.value("NRLST_decorator_list"));
+    currentNode->name = new Identifier(currentAttributes.value("name"));
+    kDebug() << "Found function definition, name: " << currentAttributes.value("name");
+    return currentNode;
 }
 
 void AstBuilder::populateAst()
 {
+    Ast* currentAbstractNode;
+    Ast* currentNode;
+    stringDictionary currentAttributes;
+    QMapIterator<int, Ast*> i(m_nodeMap);
+    while ( i.hasNext() ) {
+        i.next();
+        currentAbstractNode = i.value();
+        currentAttributes = m_attributeStore.value(i.key());
+        
+        kDebug() << "Processing AST node ID " << i.key();
+        kDebug() << "Amount of attributes: " << currentAttributes.size();
+        
+        stringDictionary::const_iterator i = currentAttributes.begin();
+        while ( i != currentAttributes.end() ) {
+            kDebug() << i.key() << i.value();
+            ++i;
+        }
+        
+        switch ( currentAbstractNode->astType ) {
+            case Ast::CodeAstType:                                  break;
+            case Ast::FunctionDefinitionAstType:                    populateFunctionDefinitionAst(currentAbstractNode, currentAttributes); break;
+            case Ast::ClassDefinitionAstType:                       break;
+            case Ast::ReturnAstType:                                break;
+            case Ast::DeleteAstType:                                break;
+            case Ast::AssignmentAstType:                            break;
+            case Ast::AugmentedAssignmentAstType:                   break;
+            case Ast::ForAstType:                                   break;
+            case Ast::WhileAstType:                                 break;
+            case Ast::IfAstType:                                    break;
+            case Ast::WithAstType:                                  break;
+            case Ast::RaiseAstType:                                 break;
+            case Ast::TryExceptAstType:                             break;
+            case Ast::TryFinallyAstType:                            break;
+            case Ast::AssertionAstType:                             break;
+            case Ast::ImportAstType:                                break;
+            case Ast::ImportFromAstType:                            break;
+            case Ast::ExecAstType:                                  break;
+            case Ast::GlobalAstType:                                break;
+            case Ast::BreakAstType:                                 break;
+            case Ast::ContinueAstType:                              break;
+            case Ast::PrintAstType:                                 break;
+            case Ast::PassAstType:                                  break;
+            case Ast::BooleanOperationAstType:                      break;
+            case Ast::BinaryOperationAstType:                       break;
+            case Ast::UnaryOperationAstType:                        break;
+            case Ast::LambdaAstType:                                break;
+            case Ast::IfExpressionAstType:                          break;
+            case Ast::DictAstType:                                  break;
+            case Ast::SetAstType:                                   break;
+            case Ast::ListComprehensionAstType:                     break;
+            case Ast::SetComprehensionAstType:                      break;
+            case Ast::DictionaryComprehensionAstType:               break;
+            case Ast::GeneratorExpressionAstType:                   break;
+            case Ast::CompareAstType:                               break;
+            case Ast::ReprAstType:                                  break;
+            case Ast::NumberAstType:                                break;
+            case Ast::StringAstType:                                break;
+            case Ast::YieldAstType:                                 break;
+            case Ast::NameAstType:                                  break;
+            case Ast::CallAstType:                                  break;
+            case Ast::AttributeAstType:                             break;
+            case Ast::SubscriptAstType:                             break;
+            case Ast::ListAstType:                                  break;
+            case Ast::TupleAstType:                                 break;
+            case Ast::EllipsisAstType:                              break;
+            case Ast::SliceAstType:                                 break;
+            case Ast::ExtendedSliceAstType:                         break;
+            case Ast::IndexAstType:                                 break;
+            case Ast::ArgumentsAstType:                             break;
+            case Ast::KeywordAstType:                               break;
+            case Ast::ComprehensionAstType:                         break;
+            case Ast::ExceptionHandlerAstType:                      break;
+            case Ast::AliasAstType:                                 break;
+            case Ast::ExpressionAstType:                            break;
+            case Ast::StatementAstType:                             break;
+        }
+    }
 }
     
 }

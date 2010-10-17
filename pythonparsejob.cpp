@@ -47,7 +47,7 @@
 // #include "contextbuilder.h"
 #include "declarationbuilder.h"
 #include "usebuilder.h"
-#include "astprinter.h"
+// #include "astprinter.h"
 // #include "usebuilder.h"
 
 using namespace KDevelop;

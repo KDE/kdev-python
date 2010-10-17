@@ -33,7 +33,7 @@
 namespace Python
 {
 
-typedef KDevelop::AbstractDeclarationBuilder<Ast, IdentifierAst, TypeBuilder> DeclarationBuilderBase;
+typedef KDevelop::AbstractDeclarationBuilder<Ast, Identifier, TypeBuilder> DeclarationBuilderBase;
 
 class KDEVPYTHONDUCHAIN_EXPORT DeclarationBuilder: public DeclarationBuilderBase
 {
@@ -47,10 +47,10 @@ protected:
 
     virtual void visitClassDefinition( ClassDefinitionAst* node );
     virtual void visitFunctionDefinition( FunctionDefinitionAst* node );
-    virtual void visitDefaultParameter( DefaultParameterAst* node );
+    virtual void visitArguments( ArgumentsAst* node );
     virtual void visitLambda( LambdaAst* node );
     
-    virtual void visitIdentifierTarget( IdentifierTargetAst * node );
+//     virtual void visitIdentifierTarget( IdentifierTargetAst * node );
 
 private:
     /*

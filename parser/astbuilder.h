@@ -40,6 +40,7 @@ namespace Python
     class Ast;
     class CodeAst;
 
+typedef QMap<QString, QString> stringDictionary;
 
 class AstBuilder
 {
@@ -50,21 +51,20 @@ private:
     CodeAst* parseXmlAst(QString xml);
     QString getXmlForFile(KUrl filename);
     void parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::TokenType token);
-    void parseAstNode(QString name, QString text, const QList<QXmlStreamAttribute>& attributes);
+    bool parseAstNode(QString name, QString text, const QList<QXmlStreamAttribute>& attributes);
     
     QList<Ast*> m_nodeStack;
     
-    template <typename ASTType> ASTType* createAst(QDomElement* startEnd = 0) {
-        ASTType* ast = new ASTType();
-        if ( startEnd ) {
-            kDebug() << "would set start end now";
-        }
-    }
-    
     QMap<int, Ast*> m_nodeMap;
     QStack<Ast*> m_astStack;
+    QMap<int, stringDictionary> m_attributeStore;
     
     void populateAst();
+    
+    template<typename T> QList<T*> resolveNodeList(const QString& commaSeperatedIdentifiers);
+    template<typename T> T* resolveNode(const QString& identifier);
+    
+    FunctionDefinitionAst* populateFunctionDefinitionAst(Ast* ast, const stringDictionary& currentAttributes);
 };
 
 }

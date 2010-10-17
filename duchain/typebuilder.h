@@ -30,7 +30,7 @@
 
 namespace Python {
 
-typedef KDevelop::AbstractTypeBuilder<Ast, IdentifierAst, ContextBuilder> TypeBuilderBase;
+typedef KDevelop::AbstractTypeBuilder<Ast, Identifier, ContextBuilder> TypeBuilderBase;
 
 class KDEVPYTHONDUCHAIN_EXPORT TypeBuilder: public TypeBuilderBase
 {

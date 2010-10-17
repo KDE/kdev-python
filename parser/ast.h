@@ -61,12 +61,7 @@ namespace Python {
 
 namespace Python
 {
-    
-class KDEVPYTHONPARSER_EXPORT Identifier {
-public:
-    Identifier(QString value);
-    QString value;
-};
+
 
 // Base class for all other Abstract Syntax Tree classes
 class KDEVPYTHONPARSER_EXPORT Ast
@@ -191,6 +186,12 @@ public:
     KDevelop::DUContext* context;
 };
 
+class KDEVPYTHONPARSER_EXPORT Identifier : public Ast {
+public:
+    Identifier(QString value);
+    QString value;
+};
+
 // this replaces ModuleAst
 class KDEVPYTHONPARSER_EXPORT CodeAst : public Ast {
 public:
@@ -209,6 +210,8 @@ public:
     FunctionDefinitionAst(Ast* parent);
     Identifier* name;
     ArgumentsAst* arguments;
+    QList<NameAst*> decorators;
+    QList<StatementAst*> body;
 };
 
 class KDEVPYTHONPARSER_EXPORT ClassDefinitionAst : public StatementAst {
@@ -252,7 +255,7 @@ public:
     ForAst(Ast* parent);
     ExpressionAst* target;
     ExpressionAst* iterator;
-    QList<ExpressionAst*> body;
+    QList<StatementAst*> body;
     QList<StatementAst*> orelse;
 };
 

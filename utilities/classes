@@ -248,7 +248,7 @@ public:
 class KDEVPYTHONPARSER_EXPORT ForAst : public StatementAst {
 public:
     ForAst(Ast* parent, AstType type);
-    ExpressionAst* target;
+    ExpressionAst* target; // may be a tupleAst for something like for a, b in j
     ExpressionAst* iterator;
     QList<ExpressionAst*> body;
     QList<StatementAst*> orelse;

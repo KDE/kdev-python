@@ -89,7 +89,6 @@ public:
     virtual void visitSubscript(SubscriptAst* node) { Q_UNUSED(node); };
     virtual void visitList(ListAst* node) { Q_UNUSED(node); };
     virtual void visitTuple(TupleAst* node) { Q_UNUSED(node); };
-    virtual void visitSlice(SliceAst* node) { Q_UNUSED(node); };
     virtual void visitEllipsis(EllipsisAst* node) { Q_UNUSED(node); };
     virtual void visitSlice(SliceAst* node) { Q_UNUSED(node); };
     virtual void visitExtendedSlice(ExtendedSliceAst* node) { Q_UNUSED(node); };

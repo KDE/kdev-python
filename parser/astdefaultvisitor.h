@@ -83,7 +83,6 @@ public:
     virtual void visitSubscript(SubscriptAst* node);
     virtual void visitList(ListAst* node);
     virtual void visitTuple(TupleAst* node);
-    virtual void visitSlice(SliceAst* node);
     virtual void visitEllipsis(EllipsisAst* node);
     virtual void visitSlice(SliceAst* node);
     virtual void visitExtendedSlice(ExtendedSliceAst* node);

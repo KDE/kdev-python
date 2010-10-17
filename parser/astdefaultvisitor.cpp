@@ -29,15 +29,15 @@ AstDefaultVisitor::~AstDefaultVisitor() { }
 
 // The Ast "ends" here, those dont have child nodes
 // note that Identifier is not a node in this Ast
-void AstDefaultVisitor::visitName(NameAst* node) { }
-void AstDefaultVisitor::visitPass(StatementAst* node) { }
-void AstDefaultVisitor::visitAlias(AliasAst* node) { }
-void AstDefaultVisitor::visitBreak(BreakAst* node) { }
-void AstDefaultVisitor::visitContinue(ContinueAst* node) { }
-void AstDefaultVisitor::visitEllipsis(EllipsisAst* node) { }
-void AstDefaultVisitor::visitGlobal(GlobalAst* node) { }
-void AstDefaultVisitor::visitNumber(NumberAst* node) { }
-void AstDefaultVisitor::visitString(StringAst* node) { }
+void AstDefaultVisitor::visitName(NameAst* node) { Q_UNUSED(node); }
+void AstDefaultVisitor::visitPass(PassAst* node) { Q_UNUSED(node); }
+void AstDefaultVisitor::visitAlias(AliasAst* node) { Q_UNUSED(node); }
+void AstDefaultVisitor::visitBreak(BreakAst* node) { Q_UNUSED(node); }
+void AstDefaultVisitor::visitContinue(ContinueAst* node) { Q_UNUSED(node); }
+void AstDefaultVisitor::visitEllipsis(EllipsisAst* node) { Q_UNUSED(node); }
+void AstDefaultVisitor::visitGlobal(GlobalAst* node) { Q_UNUSED(node); }
+void AstDefaultVisitor::visitNumber(NumberAst* node) { Q_UNUSED(node); }
+void AstDefaultVisitor::visitString(StringAst* node) { Q_UNUSED(node); }
 
 void AstDefaultVisitor::visitCode(CodeAst* node)
 {

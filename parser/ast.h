@@ -331,7 +331,8 @@ public:
 
 class KDEVPYTHONPARSER_EXPORT GlobalAst : public StatementAst {
 public:
-    QList<Identifier*> name;
+    GlobalAst(Ast* parent, AstType type);
+    QList<Identifier*> names;
 };
 
 // TODO what's stmt::Expr(expr value) in the grammar and what do we need it for?
@@ -536,9 +537,9 @@ public:
     SliceAstBase(Ast* parent, AstType type);
 };
 
-class KDEVPYTHONPARSER_EXPORT EllipsisAstType : public SliceAstBase {
+class KDEVPYTHONPARSER_EXPORT EllipsisAst : public SliceAstBase {
 public:
-    EllipsisAstType(Ast* parent, AstType type);
+    EllipsisAst(Ast* parent, AstType type);
 };
 
 class KDEVPYTHONPARSER_EXPORT SliceAst : public SliceAstBase {

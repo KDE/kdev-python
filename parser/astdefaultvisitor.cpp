@@ -31,12 +31,204 @@ AstDefaultVisitor::~AstDefaultVisitor() { }
 // note that Identifier is not a node in this Ast
 void AstDefaultVisitor::visitName(NameAst* node) { }
 void AstDefaultVisitor::visitPass(StatementAst* node) { }
-
+void AstDefaultVisitor::visitAlias(AliasAst* node) { }
+void AstDefaultVisitor::visitBreak(BreakAst* node) { }
+void AstDefaultVisitor::visitContinue(ContinueAst* node) { }
+void AstDefaultVisitor::visitEllipsis(EllipsisAst* node) { }
+void AstDefaultVisitor::visitGlobal(GlobalAst* node) { }
+void AstDefaultVisitor::visitNumber(NumberAst* node) { }
 
 void AstDefaultVisitor::visitCode(CodeAst* node)
 {
     foreach (StatementAst* statement, node->body) {
         visitNode(statement);
+    }
+}
+
+void AstDefaultVisitor::visitAssertion(AssertionAst* node)
+{
+    visitNode(node->condition);
+    visitNode(node->message);
+}
+
+void AstDefaultVisitor::visitDelete(DeleteAst* node)
+{
+    foreach (ExpressionAst* expression, node->targets) {
+        visitNode(expression);
+    }
+}
+
+void AstDefaultVisitor::visitExec(ExecAst* node)
+{
+    visitNode(node->body);
+    visitNode(node->globals);
+    visitNode(node->locals);
+}
+
+void AstDefaultVisitor::visitExtendedSlice(ExtendedSliceAst* node)
+{
+    foreach (SliceAst* slice, node->dims) {
+        visitNode(slice);
+    }
+}
+
+void AstDefaultVisitor::visitFor(ForAst* node)
+{
+    visitNode(node->target);
+    visitNode(node->iterator);
+    foreach (ExpressionAst* expression, node->body) {
+        visitNode(expression);
+    }
+    foreach (StatementAst* statement, node->orelse) {
+        visitNode(statement);
+    }
+}
+
+void AstDefaultVisitor::visitGeneratorExpression(GeneratorExpressionAst* node)
+{
+    visitNode(node->element);
+    foreach (ComprehensionAst* comp, node->generators) {
+        visitNode(comp);
+    }
+}
+
+void AstDefaultVisitor::visitIf(IfAst* node)
+{
+    visitNode(node->condition);
+    foreach (StatementAst* statement, node->body) {
+        visitNode(statement);
+    }
+    foreach (StatementAst* statement, node->orelse) {
+        visitNode(statement);
+    }
+}
+
+void AstDefaultVisitor::visitIfExpression(IfExpressionAst* node)
+{
+    visitNode(node->condition);
+    visitNode(node->body);
+    visitNode(node->orelse);
+}
+
+void AstDefaultVisitor::visitImport(ImportAst* node)
+{
+    foreach (AliasAst* alias, node->names) {
+        visitNode(alias);
+    }
+}
+
+void AstDefaultVisitor::visitImportFrom(ImportFromAst* node)
+{
+    foreach (AliasAst* alias, node->names) {
+        visitNode(alias);
+    }
+}
+
+void AstDefaultVisitor::visitIndex(IndexAst* node)
+{
+    visitNode(node->value);
+}
+
+void AstDefaultVisitor::visitLambda(LambdaAst* node)
+{
+    visitNode(node->arguments);
+    visitNode(node->body);
+}
+
+void AstDefaultVisitor::visitRaise(RaiseAst* node)
+{
+    Python::AstVisitor::visitRaise(node);
+}
+
+void AstDefaultVisitor::visitList(ListAst* node)
+{
+    foreach (ExpressionAst* expression, node->elements) {
+        visitNode(expression);
+    }
+}
+
+void AstDefaultVisitor::visitListComprehension(ListComprehensionAst* node)
+{
+    visitNode(node->element);
+    foreach (ComprehensionAst* comp, node->generators) {
+        visitNode(comp);
+    }
+}
+
+void AstDefaultVisitor::visitExceptionHandler(ExceptionHandlerAst* node)
+{
+    visitNode(node->type);
+    visitNode(node->name);
+    foreach (StatementAst* statement, node->body) {
+        visitNode(statement);
+    }
+}
+
+void AstDefaultVisitor::visitDict(DictAst* node)
+{
+    foreach (ExpressionAst* expression, node->keys) {
+        visitNode(expression);
+    }
+    foreach (ExpressionAst* expression, node->values) {
+        visitNode(expression);
+    }
+}
+
+void AstDefaultVisitor::visitDictionaryComprehension(DictionaryComprehensionAst* node)
+{
+    visitNode(node->key);
+    visitNode(node->value);
+    foreach (ComprehensionAst* comp, node->generators) {
+        visitNode(comp);
+    }
+}
+
+void AstDefaultVisitor::visitAugmentedAssignment(AugmentedAssignmentAst* node)
+{
+    visitNode(node->target);
+    visitNode(node->value);
+}
+
+void AstDefaultVisitor::visitBinaryOperation(BinaryOperationAst* node)
+{
+    visitNode(node->lhs);
+    visitNode(node->rhs);
+}
+
+void AstDefaultVisitor::visitBooleanOperation(BooleanOperationAst* node)
+{
+    foreach (ExpressionAst* expression, node->values) {
+        visitNode(expression);
+    }
+}
+
+void AstDefaultVisitor::visitClassDefinition(ClassDefinitionAst* node)
+{
+    foreach (ExpressionAst* expression, node->baseClasses) {
+        visitNode(expression);
+    }
+    foreach (StatementAst* statement, node->body) {
+        visitNode(statement);
+    }
+    foreach (ExpressionAst* expression, node->decorators) {
+        visitNode(expression);
+    }
+}
+
+void AstDefaultVisitor::visitCompare(CompareAst* node)
+{
+    visitNode(node->leftmostElement);
+    foreach (ExpressionAst* expression, node->comparands) {
+        visitNode(expression);
+    }
+}
+
+void AstDefaultVisitor::visitComprehension(ComprehensionAst* node)
+{
+    visitNode(node->target);
+    visitNode(node->iterator);
+    foreach (ExpressionAst* expression, node->conditions) {
+        visitNode(expression);
     }
 }
 

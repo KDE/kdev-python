@@ -74,8 +74,7 @@ ParseJob::~ParseJob()
 
 LanguageSupport *ParseJob::python() const
 {
-    kDebug() << "language requested";
-    return qobject_cast<LanguageSupport*>( const_cast<QObject*>( parent() ) );
+    return LanguageSupport::self();
 }
 
 
@@ -94,10 +93,14 @@ void ParseJob::run()
 {
     kDebug();
 
-    if ( abortRequested() )
+    if (abortRequested() || !python() || !python()->language()) {
+        kWarning() << "Language support is NULL";
         return abortJob();
-
-//     QReadLocker lock(python()->language()->parseLock());
+    }
+    
+    LanguageSupport* lang = python();
+    ILanguage* ilang = lang->language();
+    QReadLocker lock(ilang->parseLock());
     UrlParseLock urlLock(document());
 
     readContents();
@@ -108,9 +111,10 @@ void ParseJob::run()
         return abortJob();
 
     // 2) parse
-    bool matched = m_session->parse( m_ast );
+    QPair<CodeAst*, bool> parserResults = m_session->parse(m_ast);
+    m_ast = parserResults.first;
 
-    if ( matched )
+    if ( parserResults.second )
     {
         kDebug() << m_url;
 //         AstPrinter printer;

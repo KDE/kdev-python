@@ -62,10 +62,13 @@ public:
     /*the code highlighter*/
     KDevelop::ICodeHighlighting* codeHighlighting() const;
     
+    static LanguageSupport* self();
+    
 //     virtual QWidget* specialLanguageObjectNavigationWidget(const KUrl& url, const KDevelop::SimpleCursor& position);
 
 private:
     Highlighting* m_highlighting;
+    static LanguageSupport* m_self;
 };
 
 }

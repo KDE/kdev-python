@@ -54,7 +54,7 @@ public:
     void setCurrentDocument(KUrl& filename);
     IndexedString currentDocument();
 
-    bool parse( Python::CodeAst* );
+    QPair<CodeAst*, bool> parse( Python::CodeAst* ast );
     
     void mapAstUse(Ast* node, const SimpleUse& use)
     {

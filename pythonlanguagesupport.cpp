@@ -64,12 +64,16 @@ K_EXPORT_PLUGIN( KDevPythonSupportFactory( "kdevpythonsupport" ) )
 
 namespace Python
 {
+    
+LanguageSupport* LanguageSupport::m_self = 0;
 
 LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ )
         : KDevelop::IPlugin( KDevPythonSupportFactory::componentData(), parent ),
         KDevelop::ILanguageSupport()
 {
     KDEV_USE_EXTENSION_INTERFACE( KDevelop::ILanguageSupport )
+    
+    m_self = this;
 
     m_highlighting = new Highlighting( this );
     PythonCodeCompletionModel* codeCompletion = new PythonCodeCompletionModel(this);
@@ -90,6 +94,11 @@ KDevelop::ParseJob *LanguageSupport::createParseJob( const KUrl &url )
 QString LanguageSupport::name() const
 {
     return "Python";
+}
+
+LanguageSupport* LanguageSupport::self()
+{
+    return m_self;
 }
 
 KDevelop::ILanguage *LanguageSupport::language()

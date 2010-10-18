@@ -37,7 +37,8 @@ namespace Python
     
 CodeAst* AstBuilder::parse(KUrl filename)
 {
-    return parseXmlAst(getXmlForFile(filename));
+    CodeAst* ast = parseXmlAst(getXmlForFile(filename));
+    return ast;
 }
     
 QString AstBuilder::getXmlForFile(KUrl filename)
@@ -315,7 +316,6 @@ CodeAst* AstBuilder::populateCodeAst(Ast* ast, const Python::stringDictionary& c
 void AstBuilder::populateAst()
 {
     Ast* currentAbstractNode;
-    Ast* currentNode;
     stringDictionary currentAttributes;
     QMapIterator<int, Ast*> i(m_nodeMap);
     while ( i.hasNext() ) {
@@ -331,6 +331,11 @@ void AstBuilder::populateAst()
             kDebug() << i.key() << i.value();
             ++i;
         }
+        
+        int startLine = currentAttributes.value("lineno").toInt();
+        if ( startLine ) currentAbstractNode->startLine = startLine;
+        int startCol = currentAttributes.value("col_offset").toInt();
+        if ( startCol ) currentAbstractNode->startCol = startCol;
         
         switch ( currentAbstractNode->astType ) {
             case Ast::CodeAstType:                                  currentAbstractNode = populateCodeAst(currentAbstractNode, currentAttributes); break;

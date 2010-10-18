@@ -61,12 +61,13 @@ void ParseSession::setContents( const QString& contents )
     m_contents = contents;
 }
 
-bool ParseSession::parse( Python::CodeAst* ast )
+QPair<CodeAst*, bool> ParseSession::parse( Python::CodeAst* ast )
 {
     AstBuilder parser;
     ast = parser.parse(m_currentDocument);
     if ( ! ast ) 
         Q_ASSERT(false);
+    return QPair<CodeAst*, bool>(ast, true);
 }
 
 }

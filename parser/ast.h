@@ -176,8 +176,6 @@ public:
     Ast* parent;
     AstType astType;
 
-    qint64 start;
-    qint64 end;
     qint64 startCol;
     qint64 startLine;
     qint64 endCol;

@@ -375,7 +375,8 @@ public:
         Store, // the object is written
         Delete, // the object is deleted
         Parameter, // the object is passed as a parameter
-        AugLoad, AugStore // Augmented assignments, like a += 1
+        AugLoad, AugStore, // Augmented assignments, like a += 1
+        Invalid
     };
     ExpressionAst* value;
 };

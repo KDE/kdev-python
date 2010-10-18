@@ -67,12 +67,28 @@ private:
     QMap<int, stringDictionary> m_attributeStore;
     Ast* m_currentNode;
     
+    Ast::BooleanOperationTypes resolveBooleanOperator(const QString& identifier);
+    Ast::ComparisonOperatorTypes resolveComparisonOperator(const QString& identifier);
+    Ast::OperatorTypes resolveOperator(const QString& identifier);
+    Ast::UnaryOperatorTypes resolveUnaryOperator(const QString& identifier);
+    ExpressionAst::Context resolveContext(const QString& identifier);
+    
+    QList<Ast::BooleanOperationTypes> resolveBooleanOperatorList(const QString& identifiers);
+    QList<Ast::ComparisonOperatorTypes> resolveComparisonOperatorList(const QString& identifiers);
+    QList<Ast::OperatorTypes> resolveOperatorList(const QString& identifiers);
+    QList<Ast::UnaryOperatorTypes> resolveUnaryOperatorList(const QString& identifiers);
+    QList<ExpressionAst::Context> resolveContextList(const QString& identifiers);
+    
     void populateAst();
     
     template<typename T> QList<T*> resolveNodeList(const QString& commaSeperatedIdentifiers);
     template<typename T> T* resolveNode(const QString& identifier);
     
     FunctionDefinitionAst* populateFunctionDefinitionAst(Ast* ast, const stringDictionary& currentAttributes);
+    AssignmentAst* populateAssignmentAst(Ast* ast, const stringDictionary& currentAttributes);
+    CodeAst* populateCodeAst(Ast* ast, const stringDictionary& currentAttributes);
+    ClassDefinitionAst* populateClassDefinitonAst(Ast* ast, const stringDictionary& currentAttributes);
+    NameAst* populateNameAst(Ast* ast, const stringDictionary& currentAttributes);
 };
 
 }

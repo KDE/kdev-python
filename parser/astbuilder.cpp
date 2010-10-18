@@ -135,7 +135,7 @@ bool AstBuilder::parseAstNode(QString name, QString text, const QList< QXmlStrea
     
     int node_id = attributeDict["nodecnt"].toInt();
     
-    // TODO think about a less explicit way to do this
+    // TODO implent this using QMap/QBinaryFind/enum/parser table
     // things in the comments are definitely found like this in the XML file
     name = name.toLower();
     if      ( name == "aliasast" ) ast = new AliasAst(m_nodeStack.last()); // aliasAst
@@ -195,7 +195,6 @@ bool AstBuilder::parseAstNode(QString name, QString text, const QList< QXmlStrea
     else if ( name == "yieldast" ) ast = new YieldAst(m_nodeStack.last()); // yieldAst
     else {
         // assemble AST primitives
-        // TODO revert the order, better performance
         if      ( name == "loadast" ) m_contextNodeMap.insert(node_id, ExpressionAst::Load);
         else if ( name == "storeast") m_contextNodeMap.insert(node_id, ExpressionAst::Store);
         else if ( name == "deleteast" ) m_contextNodeMap.insert(node_id, ExpressionAst::Delete);
@@ -247,7 +246,9 @@ bool AstBuilder::parseAstNode(QString name, QString text, const QList< QXmlStrea
 
 template <typename T> T* AstBuilder::resolveNode(const QString& identifier)
 {
-    return dynamic_cast<T*>(m_nodeMap[identifier.toInt()]);
+    int id = identifier.toInt();
+    if ( ! id ) return 0;
+    return dynamic_cast<T*>(m_nodeMap.value(id));
 }
 
 template <typename T> QList<T*> AstBuilder::resolveNodeList(const QString& commaSeperatedIdentifiers)
@@ -260,6 +261,32 @@ template <typename T> QList<T*> AstBuilder::resolveNodeList(const QString& comma
     return items;
 }
 
+ExpressionAst::Context AstBuilder::resolveContext(const QString& identifier)
+{
+    int id = identifier.toInt();
+    if ( ! id ) return ExpressionAst::Invalid;
+    return m_contextNodeMap.value(id);
+}
+
+NameAst* AstBuilder::populateNameAst(Ast* ast, const Python::stringDictionary& currentAttributes)
+{
+    NameAst* currentNode = dynamic_cast<NameAst*>(ast);
+    currentNode->context = resolveContext(currentAttributes.value("NR_ctx"));
+    currentNode->identifier = new Identifier(currentAttributes.value("id"));
+    kDebug() << "Processing NameAst" << currentNode->identifier->value;
+    return currentNode;
+}
+
+ClassDefinitionAst* AstBuilder::populateClassDefinitonAst(Ast* ast, const Python::stringDictionary& currentAttributes)
+{
+    ClassDefinitionAst* currentNode = dynamic_cast<ClassDefinitionAst*>(ast);
+    currentNode->baseClasses = resolveNodeList<ExpressionAst>(currentAttributes.value("NRLST_bases"));
+    currentNode->body = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_body"));
+    currentNode->decorators = resolveNodeList<ExpressionAst>(currentAttributes.value("NRLST_decorator_list"));
+    currentNode->name = new Identifier(currentAttributes.value("name"));
+    return currentNode;
+}
+
 FunctionDefinitionAst* AstBuilder::populateFunctionDefinitionAst(Ast* ast, const stringDictionary& currentAttributes)
 {
     FunctionDefinitionAst* currentNode = dynamic_cast<FunctionDefinitionAst*>(ast);
@@ -267,7 +294,21 @@ FunctionDefinitionAst* AstBuilder::populateFunctionDefinitionAst(Ast* ast, const
     currentNode->body = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_body"));
     currentNode->decorators = resolveNodeList<NameAst>(currentAttributes.value("NRLST_decorator_list"));
     currentNode->name = new Identifier(currentAttributes.value("name"));
-    kDebug() << "Found function definition, name: " << currentAttributes.value("name");
+    return currentNode;
+}
+
+AssignmentAst* AstBuilder::populateAssignmentAst(Ast* ast, const Python::stringDictionary& currentAttributes)
+{
+    AssignmentAst* currentNode = dynamic_cast<AssignmentAst*>(ast);
+    currentNode->value = resolveNode<ExpressionAst>(currentAttributes.value("NR_value"));
+    currentNode->targets = resolveNodeList<ExpressionAst>(currentAttributes.value("NRLST_targets"));
+    return currentNode;
+}
+
+CodeAst* AstBuilder::populateCodeAst(Ast* ast, const Python::stringDictionary& currentAttributes)
+{
+    CodeAst* currentNode = dynamic_cast<CodeAst*>(ast);
+    currentNode->body = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_body"));
     return currentNode;
 }
 
@@ -292,12 +333,12 @@ void AstBuilder::populateAst()
         }
         
         switch ( currentAbstractNode->astType ) {
-            case Ast::CodeAstType:                                  break;
-            case Ast::FunctionDefinitionAstType:                    populateFunctionDefinitionAst(currentAbstractNode, currentAttributes); break;
-            case Ast::ClassDefinitionAstType:                       break;
+            case Ast::CodeAstType:                                  currentAbstractNode = populateCodeAst(currentAbstractNode, currentAttributes); break;
+            case Ast::FunctionDefinitionAstType:                    currentAbstractNode = populateFunctionDefinitionAst(currentAbstractNode, currentAttributes); break;
+            case Ast::ClassDefinitionAstType:                       currentAbstractNode = populateClassDefinitonAst(currentAbstractNode, currentAttributes); break;
             case Ast::ReturnAstType:                                break;
             case Ast::DeleteAstType:                                break;
-            case Ast::AssignmentAstType:                            break;
+            case Ast::AssignmentAstType:                            currentAbstractNode = populateAssignmentAst(currentAbstractNode, currentAttributes); break;
             case Ast::AugmentedAssignmentAstType:                   break;
             case Ast::ForAstType:                                   break;
             case Ast::WhileAstType:                                 break;
@@ -331,7 +372,7 @@ void AstBuilder::populateAst()
             case Ast::NumberAstType:                                break;
             case Ast::StringAstType:                                break;
             case Ast::YieldAstType:                                 break;
-            case Ast::NameAstType:                                  break;
+            case Ast::NameAstType:                                  currentAbstractNode = populateNameAst(currentAbstractNode, currentAttributes); break;
             case Ast::CallAstType:                                  break;
             case Ast::AttributeAstType:                             break;
             case Ast::SubscriptAstType:                             break;

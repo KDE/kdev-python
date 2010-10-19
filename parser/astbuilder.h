@@ -89,6 +89,11 @@ private:
     CodeAst* populateCodeAst(Ast* ast, const stringDictionary& currentAttributes);
     ClassDefinitionAst* populateClassDefinitonAst(Ast* ast, const stringDictionary& currentAttributes);
     NameAst* populateNameAst(Ast* ast, const stringDictionary& currentAttributes);
+    ReturnAst* populateReturnAst(Ast* ast, const stringDictionary& currentAttributes);
+    DeleteAst* populateDeleteAst(Ast* ast, const stringDictionary& currentAttributes);
+    ForAst* populateForAst(Ast* ast, const stringDictionary& currentAttributes);
+    WhileAst* populateWhileAst(Ast* ast, const stringDictionary& currentAttributes);
+    PrintAst* populatePrintAst(Ast* ast, const stringDictionary& currentAttributes);
 };
 
 }

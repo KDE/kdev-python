@@ -20,6 +20,7 @@
 
 #include "astdefaultvisitor.h"
 #include "ast.h"
+#include <kdebug.h>
 
 namespace Python
 {
@@ -41,6 +42,7 @@ void AstDefaultVisitor::visitString(StringAst* node) { Q_UNUSED(node); }
 
 void AstDefaultVisitor::visitCode(CodeAst* node)
 {
+    kDebug() << "Visiting code";
     foreach (StatementAst* statement, node->body) {
         visitNode(statement);
     }

@@ -313,6 +313,39 @@ CodeAst* AstBuilder::populateCodeAst(Ast* ast, const Python::stringDictionary& c
     return currentNode;
 }
 
+DeleteAst* AstBuilder::populateDeleteAst(Ast* ast, const Python::stringDictionary& currentAttributes)
+{
+    DeleteAst* currentNode = dynamic_cast<DeleteAst*>(ast);
+    currentNode->targets = resolveNodeList<ExpressionAst>(currentAttributes.value("NRLST_targets"));
+    return currentNode;
+}
+
+ForAst* AstBuilder::populateForAst(Ast* ast, const Python::stringDictionary& currentAttributes)
+{
+    ForAst* currentNode = dynamic_cast<ForAst*>(ast);
+    currentNode->body = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_body"));
+    currentNode->orelse = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_orelse"));
+    currentNode->iterator = resolveNode<ExpressionAst>(currentAttributes.value("NR_iter"));
+    currentNode->target = resolveNode<ExpressionAst>(currentAttributes.value("NR_target"));
+    return currentNode;
+}
+
+PrintAst* AstBuilder::populatePrintAst(Ast* ast, const Python::stringDictionary& currentAttributes)
+{
+    PrintAst* currentNode = dynamic_cast<PrintAst*>(ast);
+    currentNode->destination = resolveNode<ExpressionAst>(currentAttributes.value("NR_dest"));
+    currentNode->newline = currentAttributes.value("nl") == "True" ? true : false;
+    currentNode->values = resolveNodeList<ExpressionAst>(currentAttributes.value("NRLST_values"));
+    return currentNode;
+}
+
+ReturnAst* AstBuilder::populateReturnAst(Ast* ast, const Python::stringDictionary& currentAttributes)
+{
+    ReturnAst* currentNode = dynamic_cast<ReturnAst*>(ast);
+    currentNode->value = resolveNode<ExpressionAst>(currentAttributes.value("NR_value"));
+    return currentNode;
+}
+
 void AstBuilder::populateAst()
 {
     Ast* currentAbstractNode;
@@ -333,19 +366,19 @@ void AstBuilder::populateAst()
         }
         
         int startLine = currentAttributes.value("lineno").toInt();
-        if ( startLine ) currentAbstractNode->startLine = startLine;
+        currentAbstractNode->startLine = startLine;
         int startCol = currentAttributes.value("col_offset").toInt();
-        if ( startCol ) currentAbstractNode->startCol = startCol;
+        currentAbstractNode->startCol = startCol;
         
         switch ( currentAbstractNode->astType ) {
             case Ast::CodeAstType:                                  currentAbstractNode = populateCodeAst(currentAbstractNode, currentAttributes); break;
             case Ast::FunctionDefinitionAstType:                    currentAbstractNode = populateFunctionDefinitionAst(currentAbstractNode, currentAttributes); break;
             case Ast::ClassDefinitionAstType:                       currentAbstractNode = populateClassDefinitonAst(currentAbstractNode, currentAttributes); break;
-            case Ast::ReturnAstType:                                break;
-            case Ast::DeleteAstType:                                break;
+            case Ast::ReturnAstType:                                currentAbstractNode = populateReturnAst(currentAbstractNode, currentAttributes); break;
+            case Ast::DeleteAstType:                                currentAbstractNode = populateDeleteAst(currentAbstractNode, currentAttributes); break;
             case Ast::AssignmentAstType:                            currentAbstractNode = populateAssignmentAst(currentAbstractNode, currentAttributes); break;
             case Ast::AugmentedAssignmentAstType:                   break;
-            case Ast::ForAstType:                                   break;
+            case Ast::ForAstType:                                   currentAbstractNode = populateForAst(currentAbstractNode, currentAttributes); break;
             case Ast::WhileAstType:                                 break;
             case Ast::IfAstType:                                    break;
             case Ast::WithAstType:                                  break;
@@ -359,7 +392,7 @@ void AstBuilder::populateAst()
             case Ast::GlobalAstType:                                break;
             case Ast::BreakAstType:                                 break;
             case Ast::ContinueAstType:                              break;
-            case Ast::PrintAstType:                                 break;
+            case Ast::PrintAstType:                                 currentAbstractNode = populatePrintAst(currentAbstractNode, currentAttributes); break;
             case Ast::PassAstType:                                  break;
             case Ast::BooleanOperationAstType:                      break;
             case Ast::BinaryOperationAstType:                       break;

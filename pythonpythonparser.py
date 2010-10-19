@@ -43,7 +43,7 @@ class KDevelopNodeVisitor(ast.NodeVisitor):
 
         super(KDevelopNodeVisitor, self).generic_visit(node)
         
-        key = 'None'
+        key = ''
         for field in fields:
             multiple_keys = []
             value = getattr(node, field)
@@ -53,14 +53,14 @@ class KDevelopNodeVisitor(ast.NodeVisitor):
                         try:
                             multiple_keys.append(str(self.childNodeMap[currentValue]))
                         except KeyError:
-                            multiple_keys.append('None')
+                            multiple_keys.append('')
                     key = ','.join(multiple_keys)
                     node_xmlrepr.setAttribute("NRLST_" + field.lower(), str(key))
                 else:
                     try:
                         key = self.childNodeMap[value]
                     except KeyError:
-                        key = 'None'
+                        key = ''
                     node_xmlrepr.setAttribute("NR_" + field.lower(), str(key))
                 
                 

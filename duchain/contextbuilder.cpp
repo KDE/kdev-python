@@ -50,12 +50,16 @@ PythonEditorIntegrator* ContextBuilder::editor() const
 TopDUContext* ContextBuilder::newTopContext(const RangeInRevision& range, ParsingEnvironmentFile* file) 
 {
     IndexedString currentDocumentUrl = m_editor->parseSession()->currentDocument();
+    kDebug() << currentDocumentUrl.str();
     
     if ( !file ) {
         file = new ParsingEnvironmentFile(currentDocumentUrl);
         file->setLanguage(IndexedString("python"));
     }
-    return new TopDUContext(currentDocumentUrl, range, file);
+    TopDUContext* top = new TopDUContext(currentDocumentUrl, range, file);
+    ReferencedTopDUContext ref(top);
+    m_topContext = ref;
+    return top;
 }
 
 void ContextBuilder::setEditor(PythonEditorIntegrator* editor)

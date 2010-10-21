@@ -81,6 +81,7 @@ protected:
     }
     
     bool m_mapAst;
+    ReferencedTopDUContext m_topContext;
 
 private:
     void openContextForStatementList( const QList<StatementAst*>& );

@@ -53,6 +53,7 @@ class KDevelopNodeVisitor(ast.NodeVisitor):
                         try:
                             multiple_keys.append(str(self.childNodeMap[currentValue]))
                         except KeyError:
+                            sys.stderr.write("Warning: missing key on node " + str(node) + "\n")
                             multiple_keys.append('')
                     key = ','.join(multiple_keys)
                     node_xmlrepr.setAttribute("NRLST_" + field.lower(), str(key))

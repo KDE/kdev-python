@@ -158,7 +158,7 @@ void ParseJob::run()
     }
     else
     {
-        kDebug() << "===Failed===";
+        kWarning() << "===Failed===";
 //        cleanupSmartRevision();
         return;
     }

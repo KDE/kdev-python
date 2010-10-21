@@ -132,7 +132,8 @@ public:
     
     enum BooleanOperationTypes {
         BooleanAnd,
-        BooleanOr
+        BooleanOr,
+        BooleanInvalidOperation
     };
     
     enum OperatorTypes {
@@ -147,14 +148,16 @@ public:
         OperatorBitwiseOr,
         OperatorBitwiseXor,
         OperatorBitwiseAnd,
-        OperatorFloorDivision
+        OperatorFloorDivision,
+        OperatorInvalid
     };
     
     enum UnaryOperatorTypes {
         UnaryOperatorInvert,
         UnaryOperatorNot,
         UnaryOperatorAdd,
-        UnaryOperatorSub
+        UnaryOperatorSub,
+        UnaryOperatorInvalid
     };
     
     enum ComparisonOperatorTypes {
@@ -167,7 +170,8 @@ public:
         ComparisonOperatorIs,
         ComparisonOperatorIsNot,
         ComparisonOperatorIn,
-        ComparisonOperatorNotIn
+        ComparisonOperatorNotIn,
+        ComparisonOperatorInvalid
     };
 
     Ast(Ast* parent, AstType type);
@@ -504,8 +508,8 @@ public:
     ExpressionAst* function;
     QList<ExpressionAst*> arguments;
     QList<KeywordAst*> keywords;
-    ExpressionAst* starArguments;
     ExpressionAst* keywordArguments;
+    ExpressionAst* starArguments;
 };
 
 class KDEVPYTHONPARSER_EXPORT AttributeAst : public ExpressionAst {
@@ -606,7 +610,7 @@ class KDEVPYTHONPARSER_EXPORT AliasAst : public Ast {
 public:
     AliasAst(Ast* parent);
     Identifier* name;
-    Identifier* asName;
+    NameAst* asName;
 };
 
 }

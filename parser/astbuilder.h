@@ -94,6 +94,31 @@ private:
     ForAst* populateForAst(Ast* ast, const stringDictionary& currentAttributes);
     WhileAst* populateWhileAst(Ast* ast, const stringDictionary& currentAttributes);
     PrintAst* populatePrintAst(Ast* ast, const stringDictionary& currentAttributes);
+    IfAst* populateIfAst(Ast* ast, const stringDictionary& currentAttributes);
+    LambdaAst* populateLambdaAst(Ast* ast, const stringDictionary& currentAttributes);
+    BooleanOperationAst* populateBooleanOperationAst(Ast* ast, const stringDictionary& currentAttributes);
+    CallAst* populateCallAst(Ast* ast, const stringDictionary& currentAttributes);
+    DictAst* populateDictAst(Ast* ast, const stringDictionary& currentAttributes);
+    ListAst* populateListAst(Ast* ast, const stringDictionary& currentAttributes);
+    TupleAst* populateTupleAst(Ast* ast, const stringDictionary& currentAttributes);
+    AugmentedAssignmentAst* populateAugmentedAssignmentAst(Ast* ast, const stringDictionary& currentAttributes);
+    WithAst* populateWithAst(Ast* ast, const stringDictionary& currentAttributes);
+    RaiseAst* populateRaiseAst(Ast* ast, const stringDictionary& currentAttributes);
+    TryExceptAst* populateTryExceptAst(Ast* ast, const stringDictionary& currentAttributes);
+    TryFinallyAst* populateTryFinallyAst(Ast* ast, const stringDictionary& currentAttributes);
+    AssertionAst* populateAssertionAst(Ast* ast, const stringDictionary& currentAttributes);
+    ImportAst* populateImportAst(Ast* ast, const stringDictionary& currentAttributes);
+    ImportFromAst* populateImportFromAst(Ast* ast, const stringDictionary& currentAttributes);
+    ExecAst* populateExecAst(Ast* ast, const stringDictionary& currentAttributes);
+    GlobalAst* populateGlobalAst(Ast* ast, const stringDictionary& currentAttributes);
+    BinaryOperationAst* populateBinaryOperationAst(Ast* ast, const stringDictionary& currentAttributes);
+    AliasAst* populateAliasAst(Ast* ast, const stringDictionary& currentAttributes);
+    UnaryOperationAst* populateUnaryOperationAst(Ast* ast, const stringDictionary& currentAttributes);
+    IfExpressionAst* populateIfExpressionAst(Ast* ast, const stringDictionary& currentAttributes);
+    ListComprehensionAst* populateListComprehensionAst(Ast* ast, const stringDictionary& currentAttributes);
+    GeneratorExpressionAst* populateGeneratorExpressionAst(Ast* ast, const stringDictionary& currentAttributes);
+    ComprehensionAst* populateComprehensionAst(Ast* ast, const stringDictionary& currentAttributes);
+    CompareAst* populateCompareAst(Ast* ast, const stringDictionary& currentAttributes);
 };
 
 }

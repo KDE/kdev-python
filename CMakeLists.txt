@@ -14,6 +14,7 @@ include_directories(
     ${KDE4_INCLUDES}
     ${KDE4_INCLUDE_DIR}/threadweaver
     ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/duchain
     ${CMAKE_CURRENT_SOURCE_DIR}/parser
     ${CMAKE_CURRENT_BINARY_DIR}/parser
@@ -54,4 +55,4 @@ target_link_libraries(kdevpythonlanguagesupport
 install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES kdevpythonsupport.desktop DESTINATION ${SERVICES_INSTALL_DIR})
-install(FILES pythonpythonparser.py DESTINATION ${PLUGIN_INSTALL_DIR})
+install(FILES pythonpythonparser.py DESTINATION ${LIB_INSTALL_DIR})

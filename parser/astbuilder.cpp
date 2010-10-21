@@ -45,7 +45,7 @@ QString AstBuilder::getXmlForFile(KUrl filename)
 {
     QProcess* parser = new QProcess();
     // we call a python script to parse the code for us. It returns an XML string with the AST
-    parser->start("/home/sven/projects/kde4/python/pythonpythonparser.py", QStringList(filename.path())); // TODO fix this
+    parser->start("./pythonpythonparser.py", QStringList(filename.path())); // TODO fix this
     parser->waitForFinished();
     
     // TODO this is not clean

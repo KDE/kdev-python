@@ -54,3 +54,4 @@ target_link_libraries(kdevpythonlanguagesupport
 install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES kdevpythonsupport.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+install(FILES pythonpythonparser.py DESTINATION ${PLUGIN_INSTALL_DIR})

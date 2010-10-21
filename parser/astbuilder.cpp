@@ -433,14 +433,14 @@ DictAst* AstBuilder::populateDictAst(Ast* ast, const Python::stringDictionary& c
 {
     DictAst* currentNode = dynamic_cast<DictAst*>(ast);
     currentNode->keys = resolveNodeList<ExpressionAst>(currentAttributes.value("NRLST_keys"));
-    currentNode->values = resolveNode<ExpressionAst>(currentAttributes.value("NRLST_values"));
+    currentNode->values = resolveNodeList<ExpressionAst>(currentAttributes.value("NRLST_values"));
     return currentNode;
 }
 
 ListAst* AstBuilder::populateListAst(Ast* ast, const Python::stringDictionary& currentAttributes)
 {
     ListAst* currentNode = dynamic_cast<ListAst*>(ast);
-    currentNode->elements = resolveNode<ExpressionAst>(currentAttributes.value("NRLST_elts"));
+    currentNode->elements = resolveNodeList<ExpressionAst>(currentAttributes.value("NRLST_elts"));
     currentNode->context = resolveContext(currentAttributes.value("NR_ctx"));
     return currentNode;
 }
@@ -449,7 +449,7 @@ TupleAst* AstBuilder::populateTupleAst(Ast* ast, const Python::stringDictionary&
 {
     TupleAst* currentNode = dynamic_cast<TupleAst*>(ast);
     currentNode->context = resolveContext(currentAttributes.value("NR_ctx"));
-    currentNode->elements = resolveNode<ExpressionAst>(currentAttributes.value("NRLST_elts"));
+    currentNode->elements = resolveNodeList<ExpressionAst>(currentAttributes.value("NRLST_elts"));
     return currentNode;
 }
 
@@ -506,7 +506,7 @@ BinaryOperationAst* AstBuilder::populateBinaryOperationAst(Ast* ast, const Pytho
 ImportAst* AstBuilder::populateImportAst(Ast* ast, const Python::stringDictionary& currentAttributes)
 {
     ImportAst* currentNode = dynamic_cast<ImportAst*>(ast);
-    currentNode->names = resolveNodeList<ExpressionAst>(currentAttributes.value("NRLST_names"));
+    currentNode->names = resolveNodeList<AliasAst>(currentAttributes.value("NRLST_names"));
     return currentNode;
 }
 
@@ -629,17 +629,17 @@ SliceAst* AstBuilder::populateSliceAst(Ast* ast, const Python::stringDictionary&
 
 ArgumentsAst* AstBuilder::populateArgumentsAst(Ast* ast, const Python::stringDictionary& currentAttributes)
 {
-    ArgumentsAst* currentNode = dynamic_cast<ArgumentsAst>(ast);
+    ArgumentsAst* currentNode = dynamic_cast<ArgumentsAst*>(ast);
     currentNode->arguments = resolveNodeList<ExpressionAst>(currentAttributes.value("NRLST_args"));
     currentNode->defaultValues = resolveNodeList<ExpressionAst>(currentAttributes.value("NRLST_defaults"));
-    currentNode->kwarg = currentAttributes.value("kwarg");
-    currentNode->vararg = currentAttributes.value("paramstar");
+    currentNode->kwarg = new Identifier(currentAttributes.value("kwarg"));
+    currentNode->vararg = new Identifier(currentAttributes.value("paramstar"));
     return currentNode;
 }
 
 ExceptionHandlerAst* AstBuilder::populateExceptionHandlerAst(Ast* ast, const Python::stringDictionary& currentAttributes)
 {
-    ExceptionHandlerAst* currentNode = dynamic_cast<ExceptionHandlerAst>(ast);
+    ExceptionHandlerAst* currentNode = dynamic_cast<ExceptionHandlerAst*>(ast);
     currentNode->body = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_body"));
     currentNode->name = resolveNode<ExpressionAst>(currentAttributes.value("NR_name"));
     currentNode->type = resolveNode<ExpressionAst>(currentAttributes.value("NR_type"));
@@ -648,15 +648,15 @@ ExceptionHandlerAst* AstBuilder::populateExceptionHandlerAst(Ast* ast, const Pyt
 
 IndexAst* AstBuilder::populateIndexAst(Ast* ast, const Python::stringDictionary& currentAttributes)
 {
-    IndexAst* currentNode = dynamic_cast<IndexAst>(ast);
+    IndexAst* currentNode = dynamic_cast<IndexAst*>(ast);
     currentNode->value = resolveNode<ExpressionAst>(currentAttributes.value("NR_value"));
     return currentNode;
 }
 
 KeywordAst* AstBuilder::populateKeywordAst(Ast* ast, const Python::stringDictionary& currentAttributes)
 {
-    KeywordAst* currentNode = dynamic_cast<KeywordAst>(ast);
-    currentNode->argumentName = currentAttributes.value("arg");
+    KeywordAst* currentNode = dynamic_cast<KeywordAst*>(ast);
+    currentNode->argumentName = new Identifier(currentAttributes.value("arg"));
     currentNode->value = resolveNode<ExpressionAst>(currentAttributes.value("NR_value"));
     return currentNode;
 }

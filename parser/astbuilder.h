@@ -119,6 +119,15 @@ private:
     GeneratorExpressionAst* populateGeneratorExpressionAst(Ast* ast, const stringDictionary& currentAttributes);
     ComprehensionAst* populateComprehensionAst(Ast* ast, const stringDictionary& currentAttributes);
     CompareAst* populateCompareAst(Ast* ast, const stringDictionary& currentAttributes);
+    NumberAst* populateNumberAst(Ast* ast, const stringDictionary& currentAttributes);
+    StringAst* populateStringAst(Ast* ast, const stringDictionary& currentAttributes);
+    AttributeAst* populateAttributeAst(Ast* ast, const stringDictionary& currentAttributes);
+    SubscriptAst* populateSubscriptAst(Ast* ast, const stringDictionary& currentAttributes);
+    SliceAst* populateSliceAst(Ast* ast, const stringDictionary& currentAttributes);
+    KeywordAst* populateKeywordAst(Ast* ast, const stringDictionary& currentAttributes);
+    ArgumentsAst* populateArgumentsAst(Ast* ast, const stringDictionary& currentAttributes);
+    IndexAst* populateIndexAst(Ast* ast, const stringDictionary& currentAttributes);
+    ExceptionHandlerAst* populateExceptionHandlerAst(Ast* ast, const stringDictionary& currentAttributes);
 };
 
 }

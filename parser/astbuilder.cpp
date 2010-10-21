@@ -544,7 +544,7 @@ UnaryOperationAst* AstBuilder::populateUnaryOperationAst(Ast* ast, const Python:
 
 IfExpressionAst* AstBuilder::populateIfExpressionAst(Ast* ast, const Python::stringDictionary& currentAttributes)
 {
-    IfExpressionAst* currentNode = dynamic_cast<IfExpressionAst>(ast);
+    IfExpressionAst* currentNode = dynamic_cast<IfExpressionAst*>(ast);
     currentNode->body = resolveNode<ExpressionAst>(currentAttributes.value("NR_body"));
     currentNode->orelse = resolveNode<ExpressionAst>(currentAttributes.value("NR_orelse"));
     currentNode->condition = resolveNode<ExpressionAst>(currentAttributes.value("NR_test"));
@@ -561,7 +561,7 @@ ListComprehensionAst* AstBuilder::populateListComprehensionAst(Ast* ast, const P
 
 WithAst* AstBuilder::populateWithAst(Ast* ast, const Python::stringDictionary& currentAttributes)
 {
-    WithAst* currentNode = dynamic_cast<WithAst>(ast);
+    WithAst* currentNode = dynamic_cast<WithAst*>(ast);
     currentNode->body = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_body"));
     currentNode->contextExpression = resolveNode<ExpressionAst>(currentAttributes.value("NR_context_expr"));
     currentNode->optionalVars = resolveNode<ExpressionAst>(currentAttributes.value("NR_optional_vars"));
@@ -570,7 +570,7 @@ WithAst* AstBuilder::populateWithAst(Ast* ast, const Python::stringDictionary& c
 
 ComprehensionAst* AstBuilder::populateComprehensionAst(Ast* ast, const Python::stringDictionary& currentAttributes)
 {
-    ComprehensionAst* currentNode = dynamic_cast<ComprehensionAst>(ast);
+    ComprehensionAst* currentNode = dynamic_cast<ComprehensionAst*>(ast);
     currentNode->conditions = resolveNodeList<ExpressionAst>(currentAttributes.value("NRLST_ifs"));
     currentNode->iterator = resolveNode<ExpressionAst>(currentAttributes.value("NR_iter"));
     currentNode->target = resolveNode<ExpressionAst>(currentAttributes.value("NR_target"));
@@ -579,10 +579,85 @@ ComprehensionAst* AstBuilder::populateComprehensionAst(Ast* ast, const Python::s
 
 CompareAst* AstBuilder::populateCompareAst(Ast* ast, const Python::stringDictionary& currentAttributes)
 {
-    CompareAst* currentNode = dynamic_cast<CompareAst>(ast);
+    CompareAst* currentNode = dynamic_cast<CompareAst*>(ast);
     currentNode->comparands = resolveNodeList<ExpressionAst>(currentAttributes.value("NRLST_comparators"));
     currentNode->operators = resolveComparisonOperatorList(currentAttributes.value("NRLST_ops"));
     currentNode->leftmostElement = resolveNode<ExpressionAst>(currentAttributes.value("NR_left"));
+    return currentNode;
+}
+
+NumberAst* AstBuilder::populateNumberAst(Ast* ast, const Python::stringDictionary& currentAttributes)
+{
+    NumberAst* currentNode = dynamic_cast<NumberAst*>(ast);
+    currentNode->value = currentAttributes.value("n"); // save this as a QString to aviod problems with python number formats like 3j+2 (complex), 3L, 3.35, etc.
+    return currentNode;
+}
+
+StringAst* AstBuilder::populateStringAst(Ast* ast, const Python::stringDictionary& currentAttributes)
+{
+    StringAst* currentNode = dynamic_cast<StringAst*>(ast);
+    currentNode->value = currentAttributes.value("s");
+    return currentNode;
+}
+
+AttributeAst* AstBuilder::populateAttributeAst(Ast* ast, const Python::stringDictionary& currentAttributes)
+{
+    AttributeAst* currentNode = dynamic_cast<AttributeAst*>(ast);
+    currentNode->value = resolveNode<ExpressionAst>(currentAttributes.value("NR_value"));
+    currentNode->attribute = new Identifier(currentAttributes.value("attr"));
+    currentNode->context = resolveContext(currentAttributes.value("NR_ctx"));
+    return currentNode;
+}
+
+SubscriptAst* AstBuilder::populateSubscriptAst(Ast* ast, const Python::stringDictionary& currentAttributes)
+{
+    SubscriptAst* currentNode = dynamic_cast<SubscriptAst*>(ast);
+    currentNode->context = resolveContext("NR_ctx");
+    currentNode->slice = resolveNode<SliceAst>(currentAttributes.value("NR_slice"));
+    currentNode->value = resolveNode<ExpressionAst>(currentAttributes.value("NR_value"));
+    return currentNode;
+}
+
+SliceAst* AstBuilder::populateSliceAst(Ast* ast, const Python::stringDictionary& currentAttributes)
+{
+    SliceAst* currentNode = dynamic_cast<SliceAst*>(ast);
+    currentNode->lower = resolveNode<ExpressionAst>(currentAttributes.value("NR_lower"));
+    currentNode->upper = resolveNode<ExpressionAst>(currentAttributes.value("NR_upper"));
+    currentNode->step = resolveNode<ExpressionAst>(currentAttributes.value("NR_step"));
+    return currentNode;
+}
+
+ArgumentsAst* AstBuilder::populateArgumentsAst(Ast* ast, const Python::stringDictionary& currentAttributes)
+{
+    ArgumentsAst* currentNode = dynamic_cast<ArgumentsAst>(ast);
+    currentNode->arguments = resolveNodeList<ExpressionAst>(currentAttributes.value("NRLST_args"));
+    currentNode->defaultValues = resolveNodeList<ExpressionAst>(currentAttributes.value("NRLST_defaults"));
+    currentNode->kwarg = currentAttributes.value("kwarg");
+    currentNode->vararg = currentAttributes.value("paramstar");
+    return currentNode;
+}
+
+ExceptionHandlerAst* AstBuilder::populateExceptionHandlerAst(Ast* ast, const Python::stringDictionary& currentAttributes)
+{
+    ExceptionHandlerAst* currentNode = dynamic_cast<ExceptionHandlerAst>(ast);
+    currentNode->body = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_body"));
+    currentNode->name = resolveNode<ExpressionAst>(currentAttributes.value("NR_name"));
+    currentNode->type = resolveNode<ExpressionAst>(currentAttributes.value("NR_type"));
+    return currentNode;
+}
+
+IndexAst* AstBuilder::populateIndexAst(Ast* ast, const Python::stringDictionary& currentAttributes)
+{
+    IndexAst* currentNode = dynamic_cast<IndexAst>(ast);
+    currentNode->value = resolveNode<ExpressionAst>(currentAttributes.value("NR_value"));
+    return currentNode;
+}
+
+KeywordAst* AstBuilder::populateKeywordAst(Ast* ast, const Python::stringDictionary& currentAttributes)
+{
+    KeywordAst* currentNode = dynamic_cast<KeywordAst>(ast);
+    currentNode->argumentName = currentAttributes.value("arg");
+    currentNode->value = resolveNode<ExpressionAst>(currentAttributes.value("NR_value"));
     return currentNode;
 }
 
@@ -649,27 +724,27 @@ void AstBuilder::populateAst()
 //             case Ast::DictionaryComprehensionAstType:               break; // TODO fix this for python 2.7+
 //             case Ast::GeneratorExpressionAstType:                   break; // TODO read about this
             case Ast::CompareAstType:                               currentAbstractNode = populateCompareAst(currentAbstractNode, currentAttributes); break;
-            case Ast::ReprAstType:                                  break;
-            case Ast::NumberAstType:                                break;
-            case Ast::StringAstType:                                break;
-            case Ast::YieldAstType:                                 break;
+//             case Ast::ReprAstType:                                  break; // TODO support this
+            case Ast::NumberAstType:                                currentAbstractNode = populateNumberAst(currentAbstractNode, currentAttributes); break;
+            case Ast::StringAstType:                                currentAbstractNode = populateStringAst(currentAbstractNode, currentAttributes); break;
+//             case Ast::YieldAstType:                                 break; // TODO TODO
             case Ast::NameAstType:                                  currentAbstractNode = populateNameAst(currentAbstractNode, currentAttributes); break;
             case Ast::CallAstType:                                  currentAbstractNode = populateCallAst(currentAbstractNode, currentAttributes); break;
-            case Ast::AttributeAstType:                             break;
-            case Ast::SubscriptAstType:                             break;
+            case Ast::AttributeAstType:                             currentAbstractNode = populateAttributeAst(currentAbstractNode, currentAttributes); break;
+            case Ast::SubscriptAstType:                             currentAbstractNode = populateSubscriptAst(currentAbstractNode, currentAttributes); break;
             case Ast::ListAstType:                                  currentAbstractNode = populateListAst(currentAbstractNode, currentAttributes); break;
             case Ast::TupleAstType:                                 currentAbstractNode = populateTupleAst(currentAbstractNode, currentAttributes); break;
-            case Ast::EllipsisAstType:                              break;
-            case Ast::SliceAstType:                                 break;
-            case Ast::ExtendedSliceAstType:                         break;
-            case Ast::IndexAstType:                                 break;
-            case Ast::ArgumentsAstType:                             break;
-            case Ast::KeywordAstType:                               break;
+//             case Ast::EllipsisAstType:                              break; // TODO TODO
+            case Ast::SliceAstType:                                 currentAbstractNode = populateSliceAst(currentAbstractNode, currentAttributes); break;
+//             case Ast::ExtendedSliceAstType:                         break; // TODO TODO
+            case Ast::IndexAstType:                                 currentAbstractNode = populateIndexAst(currentAbstractNode, currentAttributes); break;
+            case Ast::ArgumentsAstType:                             currentAbstractNode = populateArgumentsAst(currentAbstractNode, currentAttributes); break;
+            case Ast::KeywordAstType:                               currentAbstractNode = populateKeywordAst(currentAbstractNode, currentAttributes); break;
             case Ast::ComprehensionAstType:                         currentAbstractNode = populateComprehensionAst(currentAbstractNode, currentAttributes); break;
-            case Ast::ExceptionHandlerAstType:                      break;
+            case Ast::ExceptionHandlerAstType:                      currentAbstractNode = populateExceptionHandlerAst(currentAbstractNode, currentAttributes); break;
             case Ast::AliasAstType:                                 currentAbstractNode = populateAliasAst(currentAbstractNode, currentAttributes); break;
-            case Ast::ExpressionAstType:                            break;
-            case Ast::StatementAstType:                             break;
+            case Ast::ExpressionAstType:                            break; // ok
+            case Ast::StatementAstType:                             break; // ok
         }
     }
 }

@@ -81,14 +81,50 @@ void DeclarationBuilder::closeDeclaration()
     DeclarationBuilderBase::closeDeclaration();
 }
 
+void DeclarationBuilder::visitVariableDeclaration(Ast* node)
+{
+    NameAst* currentVariableDefinition = dynamic_cast<NameAst*>(node);
+    kDebug() << node->astType;
+    Q_ASSERT(currentVariableDefinition);
+    openDeclaration<Declaration>(currentVariableDefinition->identifier, currentVariableDefinition);
+    closeDeclaration();
+}
+
+void DeclarationBuilder::visitVariableDeclaration(Identifier* node)
+{
+    openDeclaration<Declaration>(node, node);
+    closeDeclaration();
+}
+
+void DeclarationBuilder::visitFor(ForAst* node)
+{
+    Python::ContextBuilder::visitFor(node);
+    visitVariableDeclaration(node->target);
+}
+
+void DeclarationBuilder::visitImport(ImportAst* node)
+{
+    Python::AstDefaultVisitor::visitImport(node);
+    foreach ( AliasAst* name, node->names ) {
+        if ( name->asName ) visitVariableDeclaration(name->asName);
+        else visitVariableDeclaration(name->name);
+    }
+}
+
+void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
+{
+    Python::AstDefaultVisitor::visitImportFrom(node);
+    foreach ( AliasAst* name, node->names ) {
+        if ( name->asName ) visitVariableDeclaration(name->asName);
+        else visitVariableDeclaration(name->name);
+    }
+}
+
 void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 {
-    NameAst* currentVariableDefinition;
     foreach ( ExpressionAst* target, node->targets ) {
         if ( target->astType == Ast::NameAstType ) {
-            currentVariableDefinition = dynamic_cast<NameAst*>(target);
-            openDeclaration<Declaration>(currentVariableDefinition->identifier, currentVariableDefinition);
-            closeDeclaration();
+            visitVariableDeclaration(target);
         }
     }
     visitNode(node->value);

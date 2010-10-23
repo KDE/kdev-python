@@ -32,6 +32,8 @@
 #include <qxmlstream.h>
 #include <QXmlStreamReader>
 #include <qdir.h>
+#include <language/duchain/topducontext.h>
+#include <language/interfaces/iproblem.h>
 
 namespace Python
 {
@@ -47,7 +49,7 @@ QString AstBuilder::getXmlForFile(KUrl filename)
     QProcess* parser = new QProcess();
     // we call a python script to parse the code for us. It returns an XML string with the AST
     kDebug() << QDir::current();
-    parser->start("/usr/bin/env", QStringList() << "python" << "/home/sven/projects/compiled/kde4/bin/pythonpythonparser.py" << filename.path());
+    parser->start("/usr/bin/env", QStringList() << "python" << "pythonpythonparser.py" << filename.path());
     parser->waitForFinished();
     
     // TODO this is not clean
@@ -58,6 +60,19 @@ QString AstBuilder::getXmlForFile(KUrl filename)
     
     QString result = parser->readAllStandardOutput();
     kDebug() << "XML for " << filename << ":" << result;
+    
+    if ( ! result.length() ) {
+        result = parser->readAllStandardError();
+        result.split(":");
+        int lineno = result[0].toAscii();
+        int colno = result[1].toAscii();
+        KDevelop::ProblemPointer p(new KDevelop::Problem());
+        p->setFinalLocation(KDevelop::DocumentRange(KDevelop::IndexedString(filename), KDevelop::SimpleRange(lineno, colno, lineno, colno + 1)));
+        p->setSource(KDevelop::ProblemData::Disk);
+        p->setDescription(result);
+        kWarning() << "Parse Error: " << result;
+        return "0";
+    }
     delete parser;
     return result;
 }
@@ -65,6 +80,10 @@ QString AstBuilder::getXmlForFile(KUrl filename)
 CodeAst* AstBuilder::parseXmlAst(QString xml)
 {
     Q_ASSERT(xml.length());
+    
+    if ( xml == "0" ) {
+        return 0;
+    }
     
     QXmlStreamReader* xmlast = new QXmlStreamReader();
     xmlast->addData(xml);
@@ -261,7 +280,7 @@ template <typename T> QList<T*> AstBuilder::resolveNodeList(const QString& comma
     QList<T*> items;
     QStringList identifiers = commaSeperatedIdentifiers.split(",");
     for ( int i=0; i<identifiers.length(); i++ ) {
-        items << resolveNode<T>(identifiers.at(i));
+        if ( identifiers.at(i).length() ) items << resolveNode<T>(identifiers.at(i));
     }
     return items;
 }

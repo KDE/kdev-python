@@ -50,6 +50,12 @@ protected:
     virtual void visitArguments( ArgumentsAst* node );
     virtual void visitLambda( LambdaAst* node );
     virtual void visitAssignment(AssignmentAst* node);
+    virtual void visitFor(ForAst* node);
+    virtual void visitImport(ImportAst* node);
+    virtual void visitImportFrom(ImportFromAst* node);
+    
+    void visitVariableDeclaration(Ast* node);
+    void visitVariableDeclaration(Identifier* node);
     
 //     virtual void visitIdentifierTarget( IdentifierTargetAst * node );
 

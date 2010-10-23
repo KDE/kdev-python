@@ -69,5 +69,9 @@ class KDevelopNodeVisitor(ast.NodeVisitor):
 
 f = open(sys.argv[1]).read()
 v = KDevelopNodeVisitor()
-v.visit(ast.parse(f))
-print v.xmlrepr.toprettyxml(indent = "    ")
+try:
+    v.visit(ast.parse(f))
+except Exception as e:
+    sys.stderr.write(str(e.lineno) + ':' + str(e.offset))
+else:
+    sys.stdout.write(v.xmlrepr.toprettyxml(indent = "    "))

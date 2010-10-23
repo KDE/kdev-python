@@ -64,7 +64,7 @@ public:
     
 private:
     QString m_contents;
-    KUrl m_currentDocument;
+    KDevelop::IndexedString m_currentDocument;
 
 };
 

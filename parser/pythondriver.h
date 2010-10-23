@@ -23,6 +23,7 @@
 
 #include <QtCore/QString>
 #include "parserexport.h"
+#include <kurl.h>
 namespace KDevPG
 {
 class MemoryPool;
@@ -45,15 +46,16 @@ public:
     bool readFile( const QString&, const char* = 0 );
     void setContent( const QString& );
     void setDebug( bool );
-    bool parse( Python::CodeAst** ast );
+    QPair<CodeAst*, bool> parse( Python::CodeAst* ast );
     void setTokenStream( KDevPG::TokenStream* );
     void setMemoryPool( KDevPG::MemoryPool* );
+    void setCurrentDocument(KUrl url);
 private:
     QString m_content;
     bool m_debug;
     KDevPG::MemoryPool* m_pool;
     KDevPG::TokenStream* m_tokenstream;
-
+    KUrl m_currentDocument;
 };
 
 }

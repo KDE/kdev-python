@@ -60,41 +60,23 @@ void Driver::setDebug( bool debug )
     m_debug = debug;
 }
 
-bool Driver::parse( Python::CodeAst** ast )
+void Driver::setCurrentDocument(KUrl url)
 {
-    if(!m_tokenstream)
-        m_tokenstream = new KDevPG::TokenStream();
-    if(!m_pool)
-        m_pool = new KDevPG::MemoryPool();
+    m_currentDocument = url;
+}
 
-    PythonParser::Parser pythonparser;
-    pythonparser.setTokenStream( m_tokenstream );
-    pythonparser.setMemoryPool( m_pool );
-    pythonparser.setDebug( m_debug );
-
-    pythonparser.tokenize(m_content);
-    PythonParser::ProjectAst* srcast;
-    bool matched = pythonparser.parseProject( &srcast );
-    if( matched )
+QPair<CodeAst*, bool> Driver::parse( Python::CodeAst* ast )
+{
+    AstBuilder pythonparser;
+    QPair<CodeAst*, bool> matched;
+    matched.first = pythonparser.parse( m_currentDocument );
+    matched.second = true; // TODO fix this
+    if( matched.second )
     {
         kDebug() << "Sucessfully parsed";
-//         if( m_debug )
-//         {
-//             PythonParser::DebugVisitor d( pythonparser.tokenStream );
-//             d.visitProject(*srcast);
-//         }
-        Python::AstBuilder builder(&pythonparser);
-        builder.visitProject( srcast );
-        for ( int i=0; i < builder.mNodeStack.count(); i++ ) {
-            Ast* dbg_node = builder.mNodeStack.at(i);
-            kDebug() << dbg_node;
-        }
-        *ast = builder.codeAst();
-        
     }else
     {
-        *ast = 0;
-        pythonparser.expectedSymbol(PythonParser::AstNode::ProjectKind, "project");
+        matched.first = 0;
         kDebug() << "Couldn't parse content";
     }
     return matched;

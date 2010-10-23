@@ -49,6 +49,10 @@
 #include "usebuilder.h"
 // #include "astprinter.h"
 // #include "usebuilder.h"
+#include <language/highlighting/codehighlighting.h>
+#include <interfaces/icore.h>
+#include <interfaces/ilanguagecontroller.h>
+
 
 using namespace KDevelop;
 
@@ -107,6 +111,9 @@ void ParseJob::run()
     m_session->setContents( QString::fromUtf8(contents().contents) + "\n" );
     m_session->setCurrentDocument(m_url);
     
+    IndexedString test(m_url);
+    kDebug() << m_url.toLocalFile();
+    
     if ( abortRequested() )
         return abortJob();
 
@@ -138,7 +145,7 @@ void ParseJob::run()
             usebuilder.buildUses(m_ast);
             
             kDebug() << "----Parsing Succeded---***";
-
+            
 //             {
 //                 DUChainReadLocker lock( DUChain::lock() );
 //                 DumpChain dump;
@@ -148,7 +155,7 @@ void ParseJob::run()
             {
                 if ( m_parent && m_parent->codeHighlighting() ) {
                     kDebug() << m_duContext.data();
-//                     DUChainReadLocker lock(DUChain::lock());
+                    DUChainReadLocker lock(DUChain::lock());
                     KDevelop::ICodeHighlighting* hl = m_parent->codeHighlighting();
                     hl->highlightDUChain(m_duContext);
                 }

@@ -31,6 +31,7 @@
 #include "kurl.h"
 #include <qxmlstream.h>
 #include <QXmlStreamReader>
+#include <qdir.h>
 
 namespace Python
 {
@@ -45,7 +46,8 @@ QString AstBuilder::getXmlForFile(KUrl filename)
 {
     QProcess* parser = new QProcess();
     // we call a python script to parse the code for us. It returns an XML string with the AST
-    parser->start("./pythonpythonparser.py", QStringList(filename.path())); // TODO fix this
+    kDebug() << QDir::current();
+    parser->start("/usr/bin/env", QStringList() << "python" << "/home/sven/projects/compiled/kde4/bin/pythonpythonparser.py" << filename.path());
     parser->waitForFinished();
     
     // TODO this is not clean
@@ -62,6 +64,8 @@ QString AstBuilder::getXmlForFile(KUrl filename)
 
 CodeAst* AstBuilder::parseXmlAst(QString xml)
 {
+    Q_ASSERT(xml.length());
+    
     QXmlStreamReader* xmlast = new QXmlStreamReader();
     xmlast->addData(xml);
     
@@ -72,8 +76,7 @@ CodeAst* AstBuilder::parseXmlAst(QString xml)
     populateAst();
     
     CodeAst* codeAst = dynamic_cast<CodeAst*>(m_currentNode);
-    if ( ! codeAst ) 
-        Q_ASSERT(codeAst);
+    Q_ASSERT(codeAst);
     return codeAst;
 }
 
@@ -242,6 +245,7 @@ bool AstBuilder::parseAstNode(QString name, QString text, const QList< QXmlStrea
     m_attributeStore.insert(node_id, attributeDict);
     
     m_nodeStack.append(ast);
+    kDebug() << "Stack size: " << m_nodeStack.length();
     return true;
 }
 
@@ -685,8 +689,14 @@ void AstBuilder::populateAst()
         currentAbstractNode->endLine = startLine;
         int startCol = currentAttributes.value("col_offset").toInt();
         currentAbstractNode->startCol = startCol;
-        currentAbstractNode->endCol = startCol + 10; // TODO fix this ;p
+        currentAbstractNode->endCol = startCol + 100; // TODO fix this ;p
         
+        if ( ! currentAbstractNode->startLine && currentAbstractNode->parent ) {
+            currentAbstractNode->startLine = currentAbstractNode->parent->startLine;
+            currentAbstractNode->endLine = currentAbstractNode->parent->endLine;
+            currentAbstractNode->startCol = currentAbstractNode->parent->startCol;
+            currentAbstractNode->endCol = currentAbstractNode->parent->endCol;
+        }
         
         switch ( currentAbstractNode->astType ) {
             case Ast::CodeAstType:                                  currentAbstractNode = populateCodeAst(currentAbstractNode, currentAttributes); break;

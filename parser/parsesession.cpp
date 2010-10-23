@@ -42,12 +42,12 @@ ParseSession::~ParseSession()
 
 void ParseSession::setCurrentDocument(KUrl& filename)
 {
-    m_currentDocument = filename;
+    m_currentDocument = KDevelop::IndexedString(filename);
 }
 
 IndexedString ParseSession::currentDocument()
 {
-    return KDevelop::IndexedString(m_currentDocument.fileName());
+    return m_currentDocument;
 }
 
 
@@ -63,11 +63,11 @@ void ParseSession::setContents( const QString& contents )
 
 QPair<CodeAst*, bool> ParseSession::parse( Python::CodeAst* ast )
 {
-    AstBuilder parser;
-    ast = parser.parse(m_currentDocument);
-    if ( ! ast ) 
-        Q_ASSERT(false);
-    return QPair<CodeAst*, bool>(ast, true);
+    Driver driver;
+    driver.setCurrentDocument(m_currentDocument.toUrl());
+    QPair<CodeAst*, bool> result = driver.parse(ast);
+    Q_ASSERT(result.first);
+    return result;
 }
 
 }

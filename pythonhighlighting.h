@@ -38,7 +38,6 @@ class Highlighting : public KDevelop::CodeHighlighting
     Q_OBJECT
 public:
     Highlighting( QObject* parent );
-
 };
 
 }

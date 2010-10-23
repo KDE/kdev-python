@@ -8,6 +8,7 @@ set(parser_STAT_SRCS
     astdefaultvisitor.cpp
     astvisitor.cpp
     astbuilder.cpp
+    pythondriver.cpp
 )
 
 # kdevpgqt_generate(_kdevpgList python NAMESPACE PythonParser

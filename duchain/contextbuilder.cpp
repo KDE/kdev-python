@@ -21,7 +21,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION     *
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
-#include <contextbuilder.h>
+#include "contextbuilder.h"
 // #include <language/duchain/language.h>
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/topducontext.h>
@@ -38,18 +38,19 @@ using namespace KDevelop;
 
 using namespace KTextEditor;
 
+Python::PythonEditorIntegrator* Python::ContextBuilder::m_editor;
+
 namespace Python
 {
 
 PythonEditorIntegrator* ContextBuilder::editor() const
 {
-//     return static_cast<EditorIntegrator*>(ContextBuilderBase::editor());
-    return m_editor;
+    return ContextBuilder::m_editor;
 }
 
 TopDUContext* ContextBuilder::newTopContext(const RangeInRevision& range, ParsingEnvironmentFile* file) 
 {
-    IndexedString currentDocumentUrl = m_editor->parseSession()->currentDocument();
+    IndexedString currentDocumentUrl = ContextBuilder::m_editor->parseSession()->currentDocument();
     kDebug() << currentDocumentUrl.str();
     
     if ( !file ) {
@@ -65,7 +66,7 @@ TopDUContext* ContextBuilder::newTopContext(const RangeInRevision& range, Parsin
 void ContextBuilder::setEditor(PythonEditorIntegrator* editor)
 {
     //m_identifierCompiler = new IdentifierCompiler(editor->parseSession());
-    m_editor = editor;
+    ContextBuilder::m_editor = editor;
 }
 
 void ContextBuilder::setEditor(ParseSession* session)

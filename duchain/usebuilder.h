@@ -48,8 +48,10 @@ public:
     virtual void closeContext();
     
     virtual void visitIdentifier(Identifier* node);
+    virtual void visitName(NameAst* node);
 private:
     ParseSession* m_session;
+    PythonEditorIntegrator* m_editor;
 //     void newUse(std::size_t name, Ast *rangenode);
     inline int& nextUseIndex()
     {

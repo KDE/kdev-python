@@ -40,6 +40,7 @@
 #include <language/duchain/builders/abstracttypebuilder.h>
 
 #include "pythoneditorintegrator.h"
+#include "QtGlobal"
 
 
 using namespace KTextEditor;
@@ -78,6 +79,19 @@ void DeclarationBuilder::closeDeclaration()
     eventuallyAssignInternalContext();
 
     DeclarationBuilderBase::closeDeclaration();
+}
+
+void DeclarationBuilder::visitAssignment(AssignmentAst* node)
+{
+    NameAst* currentVariableDefinition;
+    foreach ( ExpressionAst* target, node->targets ) {
+        if ( target->astType == Ast::NameAstType ) {
+            currentVariableDefinition = dynamic_cast<NameAst*>(target);
+            openDeclaration<Declaration>(currentVariableDefinition->identifier, currentVariableDefinition);
+            closeDeclaration();
+        }
+    }
+    visitNode(node->value);
 }
 
 // void DeclarationBuilder::visitIdentifierTarget(IdentifierTargetAst* node)

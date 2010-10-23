@@ -49,6 +49,7 @@ protected:
     virtual void visitFunctionDefinition( FunctionDefinitionAst* node );
     virtual void visitArguments( ArgumentsAst* node );
     virtual void visitLambda( LambdaAst* node );
+    virtual void visitAssignment(AssignmentAst* node);
     
 //     virtual void visitIdentifierTarget( IdentifierTargetAst * node );
 

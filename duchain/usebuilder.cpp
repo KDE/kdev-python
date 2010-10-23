@@ -40,7 +40,7 @@ using namespace KDevelop;
 
 namespace Python {
 
-UseBuilder::UseBuilder (PythonEditorIntegrator* editor)
+UseBuilder::UseBuilder (PythonEditorIntegrator* editor) : m_editor(editor)
 {
 }
 
@@ -50,6 +50,17 @@ UseBuilder::UseBuilder (PythonEditorIntegrator* editor)
 // //     if (TopDUContext* top = dynamic_cast<TopDUContext*>(m_session->getNode(node)))
 // //         top->setHasUses(true);
 // }
+
+void UseBuilder::visitName(NameAst* node)
+{
+    DUChainWriteLocker lock(DUChain::lock());
+    QList<Declaration*> declarations = currentContext()->findDeclarations(identifierForNode(node->identifier), editorFindRange(node, node).start);
+    if ( ! declarations.length() ) return;
+    Declaration* dec = declarations.last();
+    if ( node->context == ExpressionAst::Load ) {
+        UseBuilderBase::newUse(node, dec);
+    }
+}
 
 void UseBuilder::visitIdentifier(Identifier* node)
 {

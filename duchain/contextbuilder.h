@@ -66,7 +66,7 @@ protected:
     virtual void visitWhile( WhileAst* node );
     virtual void visitIf( IfAst* node );
 
-    PythonEditorIntegrator *m_editor;
+    static PythonEditorIntegrator* m_editor;
     
     TopDUContext* newTopContext(const RangeInRevision& range, ParsingEnvironmentFile* file);
 

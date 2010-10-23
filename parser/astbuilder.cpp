@@ -266,6 +266,16 @@ template <typename T> QList<T*> AstBuilder::resolveNodeList(const QString& comma
     return items;
 }
 
+Identifier* AstBuilder::createIdentifier(const QString& name, Ast* range)
+{
+    Identifier* ident = new Identifier(name);
+    ident->startCol = range->startCol;
+    ident->endCol = range->startCol + name.length() - 1;
+    ident->startLine = range->startLine;
+    ident->endLine = range->endLine;
+    return ident;
+}
+
 ExpressionAst::Context AstBuilder::resolveContext(const QString& identifier)
 {
     int id = identifier.toInt();
@@ -315,7 +325,7 @@ NameAst* AstBuilder::populateNameAst(Ast* ast, const Python::stringDictionary& c
 {
     NameAst* currentNode = dynamic_cast<NameAst*>(ast);
     currentNode->context = resolveContext(currentAttributes.value("NR_ctx"));
-    currentNode->identifier = new Identifier(currentAttributes.value("id"));
+    currentNode->identifier = createIdentifier(currentAttributes.value("id"), currentNode);
     kDebug() << "Processing NameAst" << currentNode->identifier->value;
     return currentNode;
 }
@@ -326,7 +336,9 @@ ClassDefinitionAst* AstBuilder::populateClassDefinitonAst(Ast* ast, const Python
     currentNode->baseClasses = resolveNodeList<ExpressionAst>(currentAttributes.value("NRLST_bases"));
     currentNode->body = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_body"));
     currentNode->decorators = resolveNodeList<ExpressionAst>(currentAttributes.value("NRLST_decorator_list"));
-    currentNode->name = new Identifier(currentAttributes.value("name"));
+    currentNode->name = createIdentifier(currentAttributes.value("name"), currentNode);
+    currentNode->name->startCol += 6; // TODO fix this! ;D
+    currentNode->name->endCol += 6;
     return currentNode;
 }
 
@@ -336,7 +348,9 @@ FunctionDefinitionAst* AstBuilder::populateFunctionDefinitionAst(Ast* ast, const
     currentNode->arguments = resolveNode<ArgumentsAst>(currentAttributes.value("NR_args"));
     currentNode->body = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_body"));
     currentNode->decorators = resolveNodeList<NameAst>(currentAttributes.value("NRLST_decorator_list"));
-    currentNode->name = new Identifier(currentAttributes.value("name"));
+    currentNode->name = createIdentifier(currentAttributes.value("name"), currentNode);
+    currentNode->name->startCol += 4; // TODO fix this! ;D
+    currentNode->name->endCol += 4;
     return currentNode;
 }
 
@@ -518,7 +532,7 @@ ImportFromAst* AstBuilder::populateImportFromAst(Ast* ast, const Python::stringD
 {
     ImportFromAst* currentNode = dynamic_cast<ImportFromAst*>(ast);
     currentNode->level = currentAttributes.value("level").toInt();
-    currentNode->module = new Identifier(currentAttributes.value("module"));
+    currentNode->module = createIdentifier(currentAttributes.value("module"), currentNode);
     currentNode->names = resolveNodeList<AliasAst>(currentAttributes.value("NRLST_names"));
     return currentNode;
 }
@@ -527,7 +541,7 @@ AliasAst* AstBuilder::populateAliasAst(Ast* ast, const Python::stringDictionary&
 {
     AliasAst* currentNode = dynamic_cast<AliasAst*>(ast);
     currentNode->asName = resolveNode<NameAst>(currentAttributes.value("NR_asname"));
-    currentNode->name = new Identifier(currentAttributes.value("name"));
+    currentNode->name = createIdentifier(currentAttributes.value("name"), currentNode);
     return currentNode;
 }
 
@@ -608,7 +622,7 @@ AttributeAst* AstBuilder::populateAttributeAst(Ast* ast, const Python::stringDic
 {
     AttributeAst* currentNode = dynamic_cast<AttributeAst*>(ast);
     currentNode->value = resolveNode<ExpressionAst>(currentAttributes.value("NR_value"));
-    currentNode->attribute = new Identifier(currentAttributes.value("attr"));
+    currentNode->attribute = createIdentifier(currentAttributes.value("attr"), currentNode);
     currentNode->context = resolveContext(currentAttributes.value("NR_ctx"));
     return currentNode;
 }
@@ -636,8 +650,8 @@ ArgumentsAst* AstBuilder::populateArgumentsAst(Ast* ast, const Python::stringDic
     ArgumentsAst* currentNode = dynamic_cast<ArgumentsAst*>(ast);
     currentNode->arguments = resolveNodeList<ExpressionAst>(currentAttributes.value("NRLST_args"));
     currentNode->defaultValues = resolveNodeList<ExpressionAst>(currentAttributes.value("NRLST_defaults"));
-    currentNode->kwarg = new Identifier(currentAttributes.value("kwarg"));
-    currentNode->vararg = new Identifier(currentAttributes.value("paramstar"));
+    currentNode->kwarg = createIdentifier(currentAttributes.value("kwarg"), currentNode);
+    currentNode->vararg = createIdentifier(currentAttributes.value("paramstar"), currentNode);
     return currentNode;
 }
 
@@ -660,7 +674,7 @@ IndexAst* AstBuilder::populateIndexAst(Ast* ast, const Python::stringDictionary&
 KeywordAst* AstBuilder::populateKeywordAst(Ast* ast, const Python::stringDictionary& currentAttributes)
 {
     KeywordAst* currentNode = dynamic_cast<KeywordAst*>(ast);
-    currentNode->argumentName = new Identifier(currentAttributes.value("arg"));
+    currentNode->argumentName = createIdentifier(currentAttributes.value("arg"), currentNode);
     currentNode->value = resolveNode<ExpressionAst>(currentAttributes.value("NR_value"));
     return currentNode;
 }
@@ -684,7 +698,7 @@ void AstBuilder::populateAst()
             ++i;
         }
         
-        int startLine = currentAttributes.value("lineno").toInt();
+        int startLine = currentAttributes.value("lineno").toInt() - 1; // start = 0 <> start = 1
         currentAbstractNode->startLine = startLine;
         currentAbstractNode->endLine = startLine;
         int startCol = currentAttributes.value("col_offset").toInt();

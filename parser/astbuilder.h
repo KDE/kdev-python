@@ -84,6 +84,8 @@ private:
     template<typename T> QList<T*> resolveNodeList(const QString& commaSeperatedIdentifiers);
     template<typename T> T* resolveNode(const QString& identifier);
     
+    Identifier* createIdentifier(const QString& name, Ast* range);
+    
     FunctionDefinitionAst* populateFunctionDefinitionAst(Ast* ast, const stringDictionary& currentAttributes);
     AssignmentAst* populateAssignmentAst(Ast* ast, const stringDictionary& currentAttributes);
     CodeAst* populateCodeAst(Ast* ast, const stringDictionary& currentAttributes);

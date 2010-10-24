@@ -54,10 +54,16 @@ UseBuilder::UseBuilder (PythonEditorIntegrator* editor) : m_editor(editor)
 void UseBuilder::visitName(NameAst* node)
 {
     DUChainWriteLocker lock(DUChain::lock());
+    DUContext* current = currentContext();
     QList<Declaration*> declarations = currentContext()->findDeclarations(identifierForNode(node->identifier), editorFindRange(node, node).end);
-    if ( declarations.length() ) {
-        UseBuilderBase::newUse(node, RangeInRevision(node->identifier->startLine, node->identifier->startCol, node->identifier->endLine, node->identifier->endCol + 1), declarations.last()); // +1 for whatever reason
-    }
+    Declaration* declaration;
+    if ( declarations.length() ) declaration = declarations.last();
+    else declaration = 0;
+    
+    Q_ASSERT(node->identifier);
+    Q_ASSERT(node->hasUsefulRangeInformation); // TODO remove this!
+    kDebug() << " Registeriung use for " << node->identifier->value << " at " << node->identifier->startLine << ":" << node->identifier->endCol << "->" << node->identifier->endLine << ":" << node->identifier->endCol + 1 << "with dec" << declaration;
+    UseBuilderBase::newUse(node, RangeInRevision(node->identifier->startLine, node->identifier->startCol, node->identifier->endLine, node->identifier->endCol + 1), declaration); // +1 for whatever reason
 }
 
 // void UseBuilder::visitIdentifier(Identifier* node)

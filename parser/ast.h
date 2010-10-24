@@ -185,6 +185,8 @@ public:
     qint64 endCol;
     qint64 endLine;
     
+    bool hasUsefulRangeInformation;
+    
     KDevelop::DUContext* context;
 };
 

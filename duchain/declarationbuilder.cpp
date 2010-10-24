@@ -84,10 +84,11 @@ void DeclarationBuilder::closeDeclaration()
 Declaration* DeclarationBuilder::visitVariableDeclaration(Ast* node)
 {
     NameAst* currentVariableDefinition = dynamic_cast<NameAst*>(node);
-    kDebug() << node->astType;
     Q_ASSERT(currentVariableDefinition);
     if ( currentVariableDefinition->context != ExpressionAst::Store
-      && currentVariableDefinition->context != ExpressionAst::Parameter) {
+      && currentVariableDefinition->context != ExpressionAst::Parameter
+      && currentVariableDefinition->context != ExpressionAst::AugStore
+    ) {
             return 0;
     }
     Identifier* id = currentVariableDefinition->identifier;
@@ -106,7 +107,7 @@ Declaration* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast*
     Declaration* dec = 0;
     
     if ( ! existingDeclarations.length() ) {
-        kDebug() << "Creating variable definition for " << node->value << node->startLine << ":" << node->startCol;
+        kDebug() << "Creating variable declaration for " << node->value << node->startLine << ":" << node->startCol;
         dec = openDeclaration<Declaration>(node, originalAst ? originalAst : node);
         closeDeclaration();
         dec->setType(IntegralType::Ptr(new IntegralType(IntegralType::TypeMixed)));

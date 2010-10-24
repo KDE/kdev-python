@@ -51,8 +51,10 @@ QString AstBuilder::getXmlForFile(KUrl filename)
     QProcess* parser = new QProcess();
     // we call a python script to parse the code for us. It returns an XML string with the AST
 //     kDebug() << QDir::current();
+    kDebug() << "+++ Starting parser for file " << filename.path();
     parser->start("/usr/bin/env", QStringList() << "python" << QString(INSTALL_PATH) + QString("/pythonpythonparser.py") << filename.path());
     parser->waitForFinished();
+    kDebug() << " ** Reading results...";
     
     // TODO this is not clean
     if ( parser->exitStatus() != QProcess::NormalExit ) {
@@ -61,7 +63,7 @@ QString AstBuilder::getXmlForFile(KUrl filename)
     }
     
     QString result = parser->readAllStandardOutput();
-    kDebug() << "XML for " << filename << ": length" << result.length();
+    kDebug() << " ** XML for " << filename << ": length" << result.length();
     
     if ( ! result.length() ) {
         result = parser->readAllStandardError();
@@ -273,8 +275,8 @@ bool AstBuilder::parseAstNode(QString name, QString text, const QList< QXmlStrea
 
 template <typename T> T* AstBuilder::resolveNode(const QString& identifier)
 {
+    if ( ! identifier.length() ) return 0;
     int id = identifier.toInt();
-    if ( ! id ) return 0;
     Ast* found = m_nodeMap.value(id);
     T* ret = dynamic_cast<T*>(found);
     Q_ASSERT(found || ! ret);
@@ -284,6 +286,7 @@ template <typename T> T* AstBuilder::resolveNode(const QString& identifier)
 template <typename T> QList<T*> AstBuilder::resolveNodeList(const QString& commaSeperatedIdentifiers)
 {
     QList<T*> items;
+    items.clear();
     QStringList identifiers = commaSeperatedIdentifiers.split(",");
     T* found;
     for ( int i=0; i<identifiers.length(); i++ ) {
@@ -735,6 +738,9 @@ void AstBuilder::populateAst()
 //             kDebug() << i.key() << i.value();
 //             ++i;
 //         }
+        if ( currentAttributes.value("lineno").length() > 0 && currentAttributes.value("col_offset").length() > 0 )
+             currentAbstractNode->hasUsefulRangeInformation = true;
+        else currentAbstractNode->hasUsefulRangeInformation = false;
         
         int startLine = currentAttributes.value("lineno").toInt() - 1; // start = 0 <> start = 1
         currentAbstractNode->startLine = startLine;
@@ -742,13 +748,6 @@ void AstBuilder::populateAst()
         int startCol = currentAttributes.value("col_offset").toInt();
         currentAbstractNode->startCol = startCol;
         currentAbstractNode->endCol = startCol; // this is justified if necessary (only an AST with an actual value or identifier will know the true range)
-        
-        if ( ! currentAttributes.value("lineno").length() && currentAbstractNode->parent ) {
-            currentAbstractNode->startLine = currentAbstractNode->parent->startLine;
-            currentAbstractNode->endLine = currentAbstractNode->parent->endLine;
-            currentAbstractNode->startCol = currentAbstractNode->parent->startCol;
-            currentAbstractNode->endCol = currentAbstractNode->parent->endCol;
-        }
         
         switch ( currentAbstractNode->astType ) {
             case Ast::CodeAstType:                                  currentAbstractNode = populateCodeAst(currentAbstractNode, currentAttributes); break;

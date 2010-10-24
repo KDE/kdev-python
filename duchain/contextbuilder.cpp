@@ -105,7 +105,6 @@ void ContextBuilder::addImportedContexts()
 {
     if ( compilingContexts() && !m_importedParentContexts.isEmpty() )
     {
-        kDebug() << "Adding Imported Contexts";
         DUChainWriteLocker lock( DUChain::lock() );
         foreach( DUContext* imported, m_importedParentContexts )
             currentContext()->addImportedParentContext( imported );
@@ -118,7 +117,10 @@ void ContextBuilder::openContextForStatementList( const QList<StatementAst*>& l 
 {
     if ( l.count() > 0 )
     {
-        openContext( l.first(), l.last(), DUContext::Other );
+        Ast* first = l.first();
+        Ast* last = l.last();
+        openContext(first, RangeInRevision(first->startLine - 1, first->startCol, last->endLine + 1, 10000), DUContext::Other );
+        kDebug() << " +++ opening context: " << first->startLine - 1 << ":" << first->startCol << " -- " << last->endLine + 1 << "inf";
         addImportedContexts();
         visitNodeList( l );
         closeContext();
@@ -127,7 +129,6 @@ void ContextBuilder::openContextForStatementList( const QList<StatementAst*>& l 
 
 void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
-    kDebug() << "Visiting Class Declaration";
     openContext( node, DUContext::Class, identifierForNode( node->name ) );
     addImportedContexts();
     visitNodeList( node->baseClasses );
@@ -142,8 +143,7 @@ void ContextBuilder::visitArguments(ArgumentsAst* node)
 
 void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
-    kDebug() << "building function definition context";
-    kDebug() << node->startLine;
+    kDebug() << " Building function definition context: " << node->name;
     ClassDefinitionAst* classast = dynamic_cast<ClassDefinitionAst*>( node->parent );
 
     if ( classast ) m_importedParentContexts.append( currentContext() );
@@ -165,7 +165,6 @@ void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 
 void ContextBuilder::visitFor( ForAst* node )
 {
-    kDebug() << "Found for, building context";
     DUContext* forctx = openContext( node, KDevelop::DUContext::Other );
     visitNode(node->target);
     closeContext();
@@ -180,7 +179,6 @@ void ContextBuilder::visitFor( ForAst* node )
 
 void ContextBuilder::visitWhile( WhileAst* node )
 {
-    kDebug() << "Creating contexts for while";
     visitNode( node->condition );
     openContextForStatementList( node->body );
     openContextForStatementList( node->orelse );
@@ -188,8 +186,6 @@ void ContextBuilder::visitWhile( WhileAst* node )
 
 void ContextBuilder::visitWith( WithAst * node )
 {
-    kDebug() << "creating contexts for With";
-
     m_importedParentContexts = QList<DUContext*>() << openContext( node->contextExpression, DUContext::Other );
     visitNode( node->contextExpression );
     closeContext();
@@ -209,7 +205,6 @@ void ContextBuilder::visitWith( WithAst * node )
 
 void ContextBuilder::visitIf( IfAst* node )
 {
-    kDebug() << "creating contexts for if";
     visitNode( node->condition );
     openContextForStatementList( node->body );
     

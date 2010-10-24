@@ -137,7 +137,7 @@ void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
 
 void ContextBuilder::visitArguments(ArgumentsAst* node)
 {
-
+    AstDefaultVisitor::visitArguments(node);
 }
 
 void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
@@ -213,11 +213,8 @@ void ContextBuilder::visitIf( IfAst* node )
     visitNode( node->condition );
     openContextForStatementList( node->body );
     
-    QList <Python::StatementAst* >::const_iterator it, end = node->body.constEnd();
-
-    for ( it = node->body.begin(); it != end; ++it )
-    {
-        visitNode(*it);
+    foreach ( StatementAst* current, node->body) {
+        visitNode(current);
     }
 
     openContextForStatementList( node->orelse );

@@ -50,7 +50,7 @@ QString AstBuilder::getXmlForFile(KUrl filename)
 {
     QProcess* parser = new QProcess();
     // we call a python script to parse the code for us. It returns an XML string with the AST
-    kDebug() << QDir::current();
+//     kDebug() << QDir::current();
     parser->start("/usr/bin/env", QStringList() << "python" << QString(INSTALL_PATH) + QString("/pythonpythonparser.py") << filename.path());
     parser->waitForFinished();
     
@@ -61,7 +61,7 @@ QString AstBuilder::getXmlForFile(KUrl filename)
     }
     
     QString result = parser->readAllStandardOutput();
-    kDebug() << "XML for " << filename << ":" << result;
+    kDebug() << "XML for " << filename << ": length" << result.length();
     
     if ( ! result.length() ) {
         result = parser->readAllStandardError();
@@ -127,10 +127,10 @@ void AstBuilder::parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::Tok
                 continue;
             }
             
-            kDebug() << "Token: " << token << "; " << "Name: " << currentElementName << "; Text: " << currentElementText;
-            for ( int i=0; i<currentElementAttributes.length(); i++ ) {
-                kDebug() << currentElementAttributes.at(i).name() << currentElementAttributes.at(i).value();
-            }
+//             kDebug() << "Token: " << token << "; " << "Name: " << currentElementName << "; Text: " << currentElementText;
+//             for ( int i=0; i<currentElementAttributes.length(); i++ ) {
+//                 kDebug() << currentElementAttributes.at(i).name() << currentElementAttributes.at(i).value();
+//             }
             
             // this will push a parent onto the stack
             nodeAdded = parseAstNode(currentElementName, currentElementText, currentElementAttributes);
@@ -154,7 +154,7 @@ bool AstBuilder::parseAstNode(QString name, QString text, const QList< QXmlStrea
     QMap<QString, QString> attributeDict;
     
     for ( int i=0; i<attributes.length(); i++ ) {
-        kDebug() << "Added attribute: " << attributes.at(i).name().toString() << attributes.at(i).value().toString();
+//         kDebug() << "Added attribute: " << attributes.at(i).name().toString() << attributes.at(i).value().toString();
         attributeDict.insert(attributes.at(i).name().toString(), attributes.at(i).value().toString());
     }
     
@@ -267,7 +267,7 @@ bool AstBuilder::parseAstNode(QString name, QString text, const QList< QXmlStrea
     m_attributeStore.insert(node_id, attributeDict);
     
     m_nodeStack.append(ast);
-    kDebug() << "Stack size: " << m_nodeStack.length();
+//     kDebug() << "Stack size: " << m_nodeStack.length();
     return true;
 }
 
@@ -275,15 +275,22 @@ template <typename T> T* AstBuilder::resolveNode(const QString& identifier)
 {
     int id = identifier.toInt();
     if ( ! id ) return 0;
-    return dynamic_cast<T*>(m_nodeMap.value(id));
+    Ast* found = m_nodeMap.value(id);
+    T* ret = dynamic_cast<T*>(found);
+    Q_ASSERT(found || ! ret);
+    return found ? ret : 0;
 }
 
 template <typename T> QList<T*> AstBuilder::resolveNodeList(const QString& commaSeperatedIdentifiers)
 {
     QList<T*> items;
     QStringList identifiers = commaSeperatedIdentifiers.split(",");
+    T* found;
     for ( int i=0; i<identifiers.length(); i++ ) {
-        if ( identifiers.at(i).length() ) items << resolveNode<T>(identifiers.at(i));
+        // make sure we have no null pointers in our lists
+        found = 0;
+        if ( identifiers.at(i).length() ) found = resolveNode<T>(identifiers.at(i));
+        if ( found ) items << found;
     }
     return items;
 }
@@ -343,12 +350,21 @@ QList< Ast::ComparisonOperatorTypes > AstBuilder::resolveComparisonOperatorList(
     return items;
 }
 
+ExecAst* AstBuilder::populateExecAst(Ast* ast, const Python::stringDictionary& currentAttributes)
+{
+    ExecAst* currentNode = dynamic_cast<ExecAst*>(ast);
+    currentNode->body = resolveNode<ExpressionAst>(currentAttributes.value("NR_body"));
+    currentNode->locals = resolveNode<ExpressionAst>(currentAttributes.value("NR_locals"));
+    currentNode->globals = resolveNode<ExpressionAst>(currentAttributes.value("NR_globals"));
+    return currentNode;
+}
+
 NameAst* AstBuilder::populateNameAst(Ast* ast, const Python::stringDictionary& currentAttributes)
 {
     NameAst* currentNode = dynamic_cast<NameAst*>(ast);
     currentNode->context = resolveContext(currentAttributes.value("NR_ctx"));
     currentNode->identifier = createIdentifier(currentAttributes.value("id"), currentNode);
-    kDebug() << "Processing NameAst" << currentNode->identifier->value;
+//     kDebug() << "Processing NameAst" << currentNode->identifier->value;
     return currentNode;
 }
 
@@ -711,14 +727,14 @@ void AstBuilder::populateAst()
         currentAbstractNode = i.value();
         currentAttributes = m_attributeStore.value(i.key());
         
-        kDebug() << "Processing AST node ID " << i.key();
-        kDebug() << "Amount of attributes: " << currentAttributes.size();
+//         kDebug() << "Processing AST node ID " << i.key();
+//         kDebug() << "Amount of attributes: " << currentAttributes.size();
         
         stringDictionary::const_iterator i = currentAttributes.begin();
-        while ( i != currentAttributes.end() ) {
-            kDebug() << i.key() << i.value();
-            ++i;
-        }
+//         while ( i != currentAttributes.end() ) {
+//             kDebug() << i.key() << i.value();
+//             ++i;
+//         }
         
         int startLine = currentAttributes.value("lineno").toInt() - 1; // start = 0 <> start = 1
         currentAbstractNode->startLine = startLine;

@@ -56,6 +56,7 @@ void PythonEditorIntegrator::setParseSession(ParseSession* session)
 
 CursorInRevision PythonEditorIntegrator::findPosition( Ast* node , Edge edge ) const
 {
+    Q_ASSERT(node);
     if ( edge == BackEdge )
     {
         // Apparently KTE expects a range to go until _after_ the last character that should be included

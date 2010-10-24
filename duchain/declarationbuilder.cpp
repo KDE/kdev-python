@@ -118,7 +118,12 @@ Declaration* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast*
 void DeclarationBuilder::visitFor(ForAst* node)
 {
     Python::ContextBuilder::visitFor(node);
-    visitVariableDeclaration(node->target);
+    if ( node->target->astType == Ast::NameAstType ) visitVariableDeclaration(node->target);
+    else if ( node->target->astType == Ast::TupleAstType ) {
+        foreach ( ExpressionAst* tupleMember, dynamic_cast<TupleAst*>(node->target)->elements ) {
+            if ( tupleMember->astType == Ast::NameAstType ) visitVariableDeclaration(tupleMember);
+        }
+    }
 }
 
 void DeclarationBuilder::visitImport(ImportAst* node)
@@ -189,6 +194,8 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
     kDebug() << "opening function definition";
+    int decoratorOffset = node->decorators.length(); // adjust the actual range of the functions' name
+    node->name->startLine += decoratorOffset; node->name->endLine += decoratorOffset;
     FunctionDeclaration* dec = openDeclaration<FunctionDeclaration>( node->name, node );
 
     FunctionType::Ptr type(new FunctionType);

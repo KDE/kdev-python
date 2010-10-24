@@ -35,6 +35,8 @@
 #include <language/duchain/topducontext.h>
 #include <language/interfaces/iproblem.h>
 
+#include "parserConfig.h"
+
 namespace Python
 {
     
@@ -49,7 +51,7 @@ QString AstBuilder::getXmlForFile(KUrl filename)
     QProcess* parser = new QProcess();
     // we call a python script to parse the code for us. It returns an XML string with the AST
     kDebug() << QDir::current();
-    parser->start("/usr/bin/env", QStringList() << "python" << "pythonpythonparser.py" << filename.path());
+    parser->start("/usr/bin/env", QStringList() << "python" << QString(INSTALL_PATH) + QString("/pythonpythonparser.py") << filename.path());
     parser->waitForFinished();
     
     // TODO this is not clean

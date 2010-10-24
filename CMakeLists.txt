@@ -52,6 +52,8 @@ target_link_libraries(kdevpythonlanguagesupport
     kdev4pythonduchain
 )
 
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/parser/parserConfig.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/parser/parserConfig.h" )
+
 install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES kdevpythonsupport.desktop DESTINATION ${SERVICES_INSTALL_DIR})

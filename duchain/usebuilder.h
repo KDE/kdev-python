@@ -47,7 +47,7 @@ public:
     virtual void openContext(KDevelop::DUContext* newContext);
     virtual void closeContext();
     
-    virtual void visitIdentifier(Identifier* node);
+//     virtual void visitIdentifier(Identifier* node);
     virtual void visitName(NameAst* node);
 private:
     ParseSession* m_session;

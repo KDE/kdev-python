@@ -224,6 +224,7 @@ bool AstBuilder::parseAstNode(QString name, QString text, const QList< QXmlStrea
         else if ( name == "storeast") m_contextNodeMap.insert(node_id, ExpressionAst::Store);
         else if ( name == "deleteast" ) m_contextNodeMap.insert(node_id, ExpressionAst::Delete);
         else if ( name == "augassignast" ) m_contextNodeMap.insert(node_id, ExpressionAst::AugStore);
+        else if ( name == "paramast" ) m_contextNodeMap.insert(node_id, ExpressionAst::Parameter);
         
         else if ( name == "addast" ) m_opNodeMap.insert(node_id, Ast::OperatorAdd);
         else if ( name == "subast" ) m_opNodeMap.insert(node_id, Ast::OperatorSub);
@@ -724,9 +725,9 @@ void AstBuilder::populateAst()
         currentAbstractNode->endLine = startLine;
         int startCol = currentAttributes.value("col_offset").toInt();
         currentAbstractNode->startCol = startCol;
-        currentAbstractNode->endCol = startCol + 100; // TODO fix this ;p
+        currentAbstractNode->endCol = startCol; // this is justified if necessary (only an AST with an actual value or identifier will know the true range)
         
-        if ( ! currentAbstractNode->startLine && currentAbstractNode->parent ) {
+        if ( ! currentAttributes.value("lineno").length() && currentAbstractNode->parent ) {
             currentAbstractNode->startLine = currentAbstractNode->parent->startLine;
             currentAbstractNode->endLine = currentAbstractNode->parent->endLine;
             currentAbstractNode->startCol = currentAbstractNode->parent->startCol;

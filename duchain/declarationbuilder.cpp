@@ -81,19 +81,38 @@ void DeclarationBuilder::closeDeclaration()
     DeclarationBuilderBase::closeDeclaration();
 }
 
-void DeclarationBuilder::visitVariableDeclaration(Ast* node)
+Declaration* DeclarationBuilder::visitVariableDeclaration(Ast* node)
 {
     NameAst* currentVariableDefinition = dynamic_cast<NameAst*>(node);
     kDebug() << node->astType;
     Q_ASSERT(currentVariableDefinition);
-    openDeclaration<Declaration>(currentVariableDefinition->identifier, currentVariableDefinition);
-    closeDeclaration();
+    if ( currentVariableDefinition->context != ExpressionAst::Store
+      && currentVariableDefinition->context != ExpressionAst::Parameter) {
+            return 0;
+    }
+    Identifier* id = currentVariableDefinition->identifier;
+    return visitVariableDeclaration(id, currentVariableDefinition);
 }
 
-void DeclarationBuilder::visitVariableDeclaration(Identifier* node)
+Declaration* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast* originalAst)
 {
-    openDeclaration<Declaration>(node, node);
-    closeDeclaration();
+    DUChainWriteLocker lock(DUChain::lock());
+    
+    QList<Declaration*> existingDeclarations;
+    CursorInRevision until = editorFindRange(node, node).end;
+    
+    existingDeclarations = currentContext()->findDeclarations(identifierForNode(node), until);
+    
+    Declaration* dec = 0;
+    
+    if ( ! existingDeclarations.length() ) {
+        kDebug() << "Creating variable definition for " << node->value << node->startLine << ":" << node->startCol;
+        dec = openDeclaration<Declaration>(node, originalAst ? originalAst : node);
+        closeDeclaration();
+        dec->setType(IntegralType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+    }
+    else kDebug() << "Not updating existing declaration for " << node->value;
+    return dec;
 }
 
 void DeclarationBuilder::visitFor(ForAst* node)
@@ -196,6 +215,22 @@ void DeclarationBuilder::visitLambda( LambdaAst* node )
 void DeclarationBuilder::visitArguments( ArgumentsAst* node )
 {
     AstDefaultVisitor::visitArguments(node);
+    
+    AbstractFunctionDeclaration* function = dynamic_cast<AbstractFunctionDeclaration*>(currentDeclaration());
+    if ( function ) {
+        NameAst* realParam;
+        foreach (ExpressionAst* expression, node->arguments) {
+            visitNode(expression);
+            realParam = dynamic_cast<NameAst*>(expression);
+            if ( realParam && realParam->context == ExpressionAst::Parameter ) {
+                Declaration* paramDeclaration = visitVariableDeclaration(realParam);
+                function->addDefaultParameter(IndexedString(realParam->identifier->value));
+                FunctionType::Ptr type = currentType<FunctionType>();
+                if ( type && paramDeclaration ) type->addArgument(paramDeclaration->abstractType());
+            }
+        }
+    }
+    
 //     ContextBuilder::visitDefaultParameter( node );
 // //     AbstractFunctionDeclaration* function = currentDeclaration<AbstractFunctionDeclaration>();
 //     AbstractFunctionDeclaration* function = dynamic_cast<AbstractFunctionDeclaration*>(currentDeclaration());

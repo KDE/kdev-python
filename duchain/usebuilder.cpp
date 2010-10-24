@@ -54,45 +54,43 @@ UseBuilder::UseBuilder (PythonEditorIntegrator* editor) : m_editor(editor)
 void UseBuilder::visitName(NameAst* node)
 {
     DUChainWriteLocker lock(DUChain::lock());
-    QList<Declaration*> declarations = currentContext()->findDeclarations(identifierForNode(node->identifier), editorFindRange(node, node).start);
-    if ( ! declarations.length() ) return;
-    Declaration* dec = declarations.last();
-    if ( node->context == ExpressionAst::Load ) {
-        UseBuilderBase::newUse(node, dec);
+    QList<Declaration*> declarations = currentContext()->findDeclarations(identifierForNode(node->identifier), editorFindRange(node, node).end);
+    if ( declarations.length() ) {
+        UseBuilderBase::newUse(node, RangeInRevision(node->identifier->startLine, node->identifier->startCol, node->identifier->endLine, node->identifier->endCol + 1), declarations.last()); // +1 for whatever reason
     }
 }
 
-void UseBuilder::visitIdentifier(Identifier* node)
-{
-    DUChainWriteLocker lock( DUChain::lock() );
-    QualifiedIdentifier id = identifierForNode(node);
-    RangeInRevision range = editorFindRange(node, node);
-    CursorInRevision until = range.start;
-    QList<Declaration*> allDeclarations = currentContext()->findDeclarations(id, until);
-    
-    kDebug() << " >> scanning " << node->value;
-    kDebug() << "  > searching for declaration until" << until.line << ":" << until.column << "; " << allDeclarations.length() << "Declarations found";
-    
-    Declaration *globalDeclaration = 0;
-    foreach ( Declaration* dec, allDeclarations ) {
-        if ( dec->context() == dec->topContext() ) {
-            kDebug() << "There's already a global declaration for" << node->value;
-            globalDeclaration = dec;
-        }
-    }
-    
-    // if there's a local declaration, use the last one of those
-    if ( allDeclarations.length() && allDeclarations.last()->context() != allDeclarations.last()->topContext() ) {
-        kDebug() << " ++ Created a use of local declaration for node" << node->value;
-        UseBuilderBase::newUse(node, allDeclarations.last());
-    }
-    // otherwise, use the global one.
-    // Note that the following is not allowed by python: a=3; def foo(): print a; a=7
-    else if ( globalDeclaration ) {
-        kDebug() << " ++ Created a use of global declaration for node" << node->value;
-        UseBuilderBase::newUse(node, globalDeclaration);
-    }
-}
+// void UseBuilder::visitIdentifier(Identifier* node)
+// {
+//     DUChainWriteLocker lock( DUChain::lock() );
+//     QualifiedIdentifier id = identifierForNode(node);
+//     RangeInRevision range = editorFindRange(node, node);
+//     CursorInRevision until = range.start;
+//     QList<Declaration*> allDeclarations = currentContext()->findDeclarations(id, until);
+//     
+//     kDebug() << " >> scanning " << node->value;
+//     kDebug() << "  > searching for declaration until" << until.line << ":" << until.column << "; " << allDeclarations.length() << "Declarations found";
+//     
+//     Declaration *globalDeclaration = 0;
+//     foreach ( Declaration* dec, allDeclarations ) {
+//         if ( dec->context() == dec->topContext() ) {
+//             kDebug() << "There's already a global declaration for" << node->value;
+//             globalDeclaration = dec;
+//         }
+//     }
+//     
+//     // if there's a local declaration, use the last one of those
+//     if ( allDeclarations.length() && allDeclarations.last()->context() != allDeclarations.last()->topContext() ) {
+//         kDebug() << " ++ Created a use of local declaration for node" << node->value;
+//         UseBuilderBase::newUse(node, allDeclarations.last());
+//     }
+//     // otherwise, use the global one.
+//     // Note that the following is not allowed by python: a=3; def foo(): print a; a=7
+//     else if ( globalDeclaration ) {
+//         kDebug() << " ++ Created a use of global declaration for node" << node->value;
+//         UseBuilderBase::newUse(node, globalDeclaration);
+//     }
+// }
 
 // void UseBuilder::visitIdentifierTarget(IdentifierTargetAst* node)
 // {

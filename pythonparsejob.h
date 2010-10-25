@@ -33,13 +33,11 @@
 #include <ktexteditor/range.h>
 
 #include <language/duchain/duchainpointer.h>
+#include <language/duchain/topducontext.h>
 
 
-namespace KDevelop
-{
 
-class TopDUContext;
-}
+using namespace KDevelop;
 
 namespace Python
 {
@@ -66,6 +64,7 @@ public:
     bool wasReadFromDisk() const;
     
     const LanguageSupport* m_parent;
+    TopDUContext* m_top;
 
 protected:
     virtual void run();

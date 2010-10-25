@@ -111,12 +111,20 @@ void ParseJob::run()
     m_session->setContents( QString::fromUtf8(contents().contents) + "\n" );
     m_session->setCurrentDocument(m_url);
     
-    IndexedString test(m_url);
-    kDebug() << m_url.toLocalFile();
-    
     if ( abortRequested() )
         return abortJob();
-
+    
+    IndexedString filename = KDevelop::IndexedString(m_url.pathOrUrl());
+    
+    {
+        DUChainWriteLocker lock(DUChain::lock());
+        ParsingEnvironmentFile *file = new ParsingEnvironmentFile(document());
+        IndexedString langstring("python");
+        file->setLanguage(langstring);
+        m_top = new TopDUContext(document(), RangeInRevision(0, 0, INT_MAX, INT_MAX), file);
+        DUChain::self()->addDocumentChain(m_top);
+    }
+    
     // 2) parse
     QPair<CodeAst*, bool> parserResults = m_session->parse(m_ast);
     m_ast = parserResults.first;
@@ -134,8 +142,6 @@ void ParseJob::run()
             PythonEditorIntegrator editor;
             DeclarationBuilder builder( &editor );
             
-            IndexedString filename = KDevelop::IndexedString(m_url.pathOrUrl());
-
             editor.setParseSession(m_session);
             
             m_duContext = builder.build(filename, m_ast);
@@ -167,7 +173,7 @@ void ParseJob::run()
     {
         kWarning() << "===Failed===";
 //        cleanupSmartRevision();
-        return;
+        return abortJob();
     }
 //    cleanupSmartRevision();
 }

@@ -28,6 +28,7 @@
 #include <QDomDocument>
 #include "kdebug.h"
 #include "QXmlStreamReader"
+#include <language/duchain/topducontext.h>
 
 namespace PythonParser
 {
@@ -52,6 +53,8 @@ private:
     QString getXmlForFile(KUrl filename, const QString& contents);
     void parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::TokenType token);
     bool parseAstNode(QString name, QString text, const QList<QXmlStreamAttribute>& attributes);
+    
+    KDevelop::TopDUContext* m_topContext;
     
     QList<Ast*> m_nodeStack;
     

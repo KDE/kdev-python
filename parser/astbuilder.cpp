@@ -34,14 +34,23 @@
 #include <qdir.h>
 #include <language/duchain/topducontext.h>
 #include <language/interfaces/iproblem.h>
+#include <language/duchain/duchain.h>
 
 #include "parserConfig.h"
+#include <language/duchain/duchainlock.h>
+
+using namespace KDevelop;
 
 namespace Python
 {
     
 CodeAst* AstBuilder::parse(KUrl filename, const QString& contents)
 {
+    {
+        DUChainWriteLocker lock(DUChain::lock());
+        m_topContext = DUChain::self()->chainForDocument(filename);
+        Q_ASSERT(m_topContext);
+    }
     CodeAst* ast = parseXmlAst(getXmlForFile(filename, contents));
     return ast;
 }
@@ -66,7 +75,7 @@ QString AstBuilder::getXmlForFile(KUrl filename, const QString& contents)
     // TODO this is not clean
     if ( parser->exitStatus() != QProcess::NormalExit ) {
         kError() << "Error parsing file: " << parser->errorString();
-        return "";
+        return "0";
     }
     
     QString result = parser->readAllStandardOutput();
@@ -81,6 +90,12 @@ QString AstBuilder::getXmlForFile(KUrl filename, const QString& contents)
         p->setFinalLocation(KDevelop::DocumentRange(KDevelop::IndexedString(filename), KDevelop::SimpleRange(lineno, colno, lineno, colno + 1)));
         p->setSource(KDevelop::ProblemData::Disk);
         p->setDescription(result);
+        {
+            DUChainWriteLocker lock(DUChain::lock());
+            m_topContext->addProblem(p);
+            DUChain::self()->updateContextForUrl(IndexedString(filename), m_topContext->features());
+            kDebug() << m_topContext->problems();
+        }
         kWarning() << "Parse Error: " << result;
         return "0";
     }

@@ -29,6 +29,12 @@
 
 #include "astbuilder.h"
 
+#include <language/duchain/duchain.h>
+#include <language/duchain/topducontext.h>
+
+
+using namespace KDevelop;
+
 namespace Python
 {
 
@@ -71,6 +77,7 @@ QPair<CodeAst*, bool> Driver::parse( Python::CodeAst* ast )
     QPair<CodeAst*, bool> matched;
     matched.first = pythonparser.parse(m_currentDocument, m_content);
     matched.second = matched.first ? true : false; // check wether an AST was returned and react accordingly
+    
     if( matched.second )
     {
         kDebug() << "Sucessfully parsed";

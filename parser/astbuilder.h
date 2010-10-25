@@ -46,10 +46,10 @@ class AstBuilder
 {
     
 public:
-    CodeAst* parse(KUrl filename);
+    CodeAst* parse(KUrl filename, const QString& contents);
 private:
     CodeAst* parseXmlAst(QString xml);
-    QString getXmlForFile(KUrl filename);
+    QString getXmlForFile(KUrl filename, const QString& contents);
     void parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::TokenType token);
     bool parseAstNode(QString name, QString text, const QList<QXmlStreamAttribute>& attributes);
     

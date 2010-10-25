@@ -67,7 +67,7 @@ class KDevelopNodeVisitor(ast.NodeVisitor):
                 
         self.currentnode = save_currentnode
 
-f = open(sys.argv[1]).read()
+f = sys.stdin.read()
 v = KDevelopNodeVisitor()
 try:
     v.visit(ast.parse(f))

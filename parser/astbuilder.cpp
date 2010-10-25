@@ -40,19 +40,26 @@
 namespace Python
 {
     
-CodeAst* AstBuilder::parse(KUrl filename)
+CodeAst* AstBuilder::parse(KUrl filename, const QString& contents)
 {
-    CodeAst* ast = parseXmlAst(getXmlForFile(filename));
+    CodeAst* ast = parseXmlAst(getXmlForFile(filename, contents));
     return ast;
 }
     
-QString AstBuilder::getXmlForFile(KUrl filename)
+QString AstBuilder::getXmlForFile(KUrl filename, const QString& contents)
 {
     QProcess* parser = new QProcess();
     // we call a python script to parse the code for us. It returns an XML string with the AST
 //     kDebug() << QDir::current();
     kDebug() << "+++ Starting parser for file " << filename.path();
-    parser->start("/usr/bin/env", QStringList() << "python" << QString(INSTALL_PATH) + QString("/pythonpythonparser.py") << filename.path());
+    parser->start("/usr/bin/env", QStringList() << "python" << QString(INSTALL_PATH) + QString("/pythonpythonparser.py"));
+    qint64 length = contents.length();
+    qint64 written = parser->write(contents.toAscii().data(), length);
+    kDebug() << "Content length: " << length << ", Bytes written: " << written;
+    parser->closeWriteChannel();
+    if ( written != length ) {
+        Q_ASSERT(false);
+    }
     parser->waitForFinished();
     kDebug() << " ** Reading results...";
     

@@ -121,8 +121,9 @@ void ParseJob::run()
         ParsingEnvironmentFile *file = new ParsingEnvironmentFile(document());
         IndexedString langstring("python");
         file->setLanguage(langstring);
-        m_top = new TopDUContext(document(), RangeInRevision(0, 0, INT_MAX, INT_MAX), file);
-        DUChain::self()->addDocumentChain(m_top);
+        m_duContext = new TopDUContext(document(), RangeInRevision(0, 0, INT_MAX, INT_MAX), file);
+        m_duContext->setType(KDevelop::DUContext::Global);
+        DUChain::self()->addDocumentChain(m_duContext);
     }
     
     // 2) parse
@@ -144,7 +145,7 @@ void ParseJob::run()
             
             editor.setParseSession(m_session);
             
-            m_duContext = builder.build(filename, m_ast);
+            m_duContext = builder.build(filename, m_ast, m_duContext);
             setDuChain(m_duContext);
             
             UseBuilder usebuilder( &editor );

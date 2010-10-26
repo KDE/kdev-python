@@ -83,13 +83,17 @@ QString AstBuilder::getXmlForFile(KUrl filename, const QString& contents)
     
     if ( ! result.length() ) {
         result = parser->readAllStandardError();
-        result.split(":");
-        int lineno = result[0].toAscii();
-        int colno = result[1].toAscii();
+        QStringList position = result.split(":");
+        qint64 lineno = position.at(0).toInt() - 1;
+        qint64 colno = position.at(0).toInt() - 1;
+        
+        kDebug() << lineno << colno;
+        
         KDevelop::ProblemPointer p(new KDevelop::Problem());
-        p->setFinalLocation(KDevelop::DocumentRange(KDevelop::IndexedString(filename), KDevelop::SimpleRange(lineno, colno, lineno, colno + 1)));
+        p->setFinalLocation(KDevelop::DocumentRange(KDevelop::IndexedString(filename), KDevelop::SimpleRange(lineno, colno - 1, lineno, colno + 1)));
         p->setSource(KDevelop::ProblemData::Disk);
         p->setDescription(result);
+        p->setSeverity(KDevelop::ProblemData::Error);
         {
             DUChainWriteLocker lock(DUChain::lock());
             m_topContext->addProblem(p);

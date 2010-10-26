@@ -64,7 +64,6 @@ public:
     bool wasReadFromDisk() const;
     
     const LanguageSupport* m_parent;
-    TopDUContext* m_top;
 
 protected:
     virtual void run();

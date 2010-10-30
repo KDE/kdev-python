@@ -135,39 +135,35 @@ void ParseJob::run()
         kDebug() << m_url;
 //         AstPrinter printer;
 //         printer.visitCode( m_ast );
-        {
+        if ( abortRequested() )
+            return abortJob();
 
-            if ( abortRequested() )
-                return abortJob();
-
-            PythonEditorIntegrator editor;
-            DeclarationBuilder builder( &editor );
-            
-            editor.setParseSession(m_session);
-            
-            m_duContext = builder.build(filename, m_ast, m_duContext);
-            setDuChain(m_duContext);
-            
-            UseBuilder usebuilder( &editor );
-            usebuilder.buildUses(m_ast);
-            
-            kDebug() << "----Parsing Succeded---***";
-            
+        PythonEditorIntegrator editor;
+        DeclarationBuilder builder( &editor );
+        
+        editor.setParseSession(m_session);
+        
+        m_duContext = builder.build(filename, m_ast, m_duContext);
+        setDuChain(m_duContext);
+        
+        UseBuilder usebuilder( &editor );
+        usebuilder.buildUses(m_ast);
+        
+        kDebug() << "----Parsing Succeded---***";
+        
 //             {
 //                 DUChainReadLocker lock( DUChain::lock() );
 //                 DumpChain dump;
 //                 dump.dump( m_duContext );
 //             }
-            
-            {
-                if ( m_parent && m_parent->codeHighlighting() ) {
-                    kDebug() << m_duContext.data();
-                    DUChainReadLocker lock(DUChain::lock());
-                    KDevelop::ICodeHighlighting* hl = m_parent->codeHighlighting();
-                    hl->highlightDUChain(m_duContext);
-                }
+        
+        {
+            if ( m_parent && m_parent->codeHighlighting() ) {
+                kDebug() << m_duContext.data();
+                DUChainReadLocker lock(DUChain::lock());
+                KDevelop::ICodeHighlighting* hl = m_parent->codeHighlighting();
+                hl->highlightDUChain(m_duContext);
             }
-            
         }
     }
     else

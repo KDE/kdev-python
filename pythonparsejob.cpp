@@ -124,7 +124,9 @@ void ParseJob::run()
         m_duContext = new TopDUContext(document(), RangeInRevision(0, 0, INT_MAX, INT_MAX), file);
         m_duContext->setType(KDevelop::DUContext::Global);
         DUChain::self()->addDocumentChain(m_duContext);
+    	m_duContext->clearProblems();
     }
+    
     
     // 2) parse
     QPair<CodeAst*, bool> parserResults = m_session->parse(m_ast);

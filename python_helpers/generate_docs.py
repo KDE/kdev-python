@@ -53,28 +53,29 @@ validModuleTypes = [pyqtWrapperType, types.FunctionType]
 
 def process(obj):
     try:
-        if obj.__name__.startswith('__'):
+        if obj.__name__.startswith('_'):
             raise AttributeError
     except:
-        dbg("Aborting, name starts with __")
+        #dbg("Aborting, name starts with __")
         return
     
     try:
         current_name.append(obj.__name__)
     except:
         current_name.append('<atom>')
-    dbg(" ++ Process called with argument " + str(obj))
+    #dbg(" ++ Process called with argument " + str(obj))
     
     if type(obj) == types.ModuleType or type(obj) in validModuleTypes:
         properties = dir(obj)
         #print obj, properties, type(obj)
-        if not obj.__name__.startswith('_'):
-            print indent() + "class " + obj.__name__ + "(): pass"
+        if type(obj) == types.ModuleType:
+            print indent() + "class " + obj.__name__.replace('<','').replace('>','') + "():"
+            print indent(1) + "pass"
             
         for current_property in properties:
             current_property = getattr(obj, current_property)
             if type(current_property) in validMethodTypes:
-                dbg(" >> Processing property: " + str(current_property))
+                #dbg(" >> Processing property: " + str(current_property))
                 process(current_property)
             if type(current_property) in validModuleTypes:
                 dbg(" MODULE: " + str(current_property))
@@ -86,8 +87,8 @@ def process(obj):
                 #dbg(" -- Skipped property of invalid type " + str(type(current_property)))
         
     if type(obj) in validMethodTypes:
-        dbg(" !! Generating documentation for " + str(obj))
-        dbg('.'.join(current_name))
+        dbg(" ++ Generating documentation for " + str(obj))
+        dbg(" ++ [" + '.'.join(current_name) + "]")
         documentation = subprocess.Popen(['/usr/bin/pydoc', '.'.join(current_name)], stdout = subprocess.PIPE).stdout.read()
         lines = documentation.split("\n")
         
@@ -110,7 +111,7 @@ def process(obj):
         
         documentation = "\n".join(lines[3:])
         
-        lines[2] = lines[2].replace('<', '"').replace('>', '"')
+        lines[2] = lines[2].replace('{', "''' ").replace('}', " '''").replace('function <lambda>', 'lambda_func').replace('<', '"').replace('>', '"').replace('...', "args='<unknown>'")
         
         print indent() + lines[2]
         print indent(1) + '"""'
@@ -122,22 +123,31 @@ def process(obj):
     current_name.pop()
 
 root_path = ''
-f = open('modules')
+exclude_packages = ['_sane', 'sane', 'this', 'Pyrex.Plex.test_tm']
+current_file = None
+result_basepath = 'results/'
 for module in walk_directory('/usr/lib/python2.6/'):
-    module = module.replace("\n", "")
+    module = module.replace("\n", "").replace('site-packages.', '')
     module_parts = module.split('.')
+    try:
+        current_file = open(result_basepath + module.replace('.', '/'), 'w')
+    except IOError:
+        path = result_basepath
+        for part in module_parts:
+            path += part + '/'
+            if not os.path.exists(path):
+                os.mkdir(path)
+        current_file = open(result_basepath + module.replace('.', '/'), 'w')
+        
+    dbg(" >> Processing MODULE: " + module)
+    if module in exclude_packages or module.find('test') != -1: # exclude tests and stuff
+        continue
     try:
         current_m = __import__(root_path + module)
     except:
         dbg("Could not import module " + module)
         continue
-    #if len(module_parts) > 1:
-        #dbg(str(current_m))
-        #for part in module_parts[1:]:
-            #dbg(root_path + '.'.join(module_parts))
-            #__import__(root_path + '.'.join(module_parts))
-            #current_m = getattr(current_m, part)
-    
+
     get_attributes = module.split('.')
     
     for attrib in get_attributes:

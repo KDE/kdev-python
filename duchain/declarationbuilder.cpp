@@ -197,6 +197,14 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     kDebug() << "opening function definition";
     int decoratorOffset = node->decorators.length(); // adjust the actual range of the functions' name
     node->name->startLine += decoratorOffset; node->name->endLine += decoratorOffset;
+    kDebug() << "Function definition RANGE:" << node->name->startLine << node->name->startCol << node->name->endLine << node->name->endCol;
+    
+    // adjust range of arguments, too
+    if ( node->arguments ) {
+        node->arguments->startLine += decoratorOffset;
+        node->arguments->endLine += decoratorOffset;
+    }
+    
     FunctionDeclaration* dec = openDeclaration<FunctionDeclaration>( node->name, node );
 
     FunctionType::Ptr type(new FunctionType);
@@ -222,13 +230,11 @@ void DeclarationBuilder::visitLambda( LambdaAst* node )
 
 void DeclarationBuilder::visitArguments( ArgumentsAst* node )
 {
-    AstDefaultVisitor::visitArguments(node);
-    
     AbstractFunctionDeclaration* function = dynamic_cast<AbstractFunctionDeclaration*>(currentDeclaration());
+    kDebug() << "Current context for parameters: " << currentContext();
     if ( function ) {
         NameAst* realParam;
         foreach (ExpressionAst* expression, node->arguments) {
-            visitNode(expression);
             realParam = dynamic_cast<NameAst*>(expression);
             if ( realParam && realParam->context == ExpressionAst::Parameter ) {
                 Declaration* paramDeclaration = visitVariableDeclaration(realParam);
@@ -236,8 +242,11 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 FunctionType::Ptr type = currentType<FunctionType>();
                 if ( type && paramDeclaration ) type->addArgument(paramDeclaration->abstractType());
             }
+            visitNode(expression);
         }
     }
+    
+    AstDefaultVisitor::visitArguments(node);
     
 //     ContextBuilder::visitDefaultParameter( node );
 // //     AbstractFunctionDeclaration* function = currentDeclaration<AbstractFunctionDeclaration>();

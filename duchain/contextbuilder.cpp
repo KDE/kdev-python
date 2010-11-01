@@ -143,7 +143,7 @@ void ContextBuilder::visitArguments(ArgumentsAst* node)
 
 void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
-    kDebug() << " Building function definition context: " << node->name;
+    kDebug() << " Building function definition context: " << node->name->value;
     ClassDefinitionAst* classast = dynamic_cast<ClassDefinitionAst*>( node->parent );
 
     if ( classast ) m_importedParentContexts.append( currentContext() );

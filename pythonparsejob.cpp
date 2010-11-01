@@ -104,7 +104,7 @@ void ParseJob::run()
     
     LanguageSupport* lang = python();
     ILanguage* ilang = lang->language();
-    QReadLocker lock(ilang->parseLock());
+    QReadLocker parselock(ilang->parseLock());
     UrlParseLock urlLock(document());
 
     readContents();
@@ -116,22 +116,25 @@ void ParseJob::run()
     
     IndexedString filename = KDevelop::IndexedString(m_url.pathOrUrl());
     
+    ParsingEnvironmentFile* file = 0;
     {
         DUChainWriteLocker lock(DUChain::lock());
-        ParsingEnvironmentFile *file = new ParsingEnvironmentFile(document());
+        
+        file = new ParsingEnvironmentFile(document());
+        file->setModificationRevision(contents().modification);
         IndexedString langstring("python");
         file->setLanguage(langstring);
         m_duContext = new TopDUContext(document(), RangeInRevision(0, 0, INT_MAX, INT_MAX), file);
         m_duContext->setType(KDevelop::DUContext::Global);
         DUChain::self()->addDocumentChain(m_duContext);
-    	m_duContext->clearProblems();
+        m_duContext->clearProblems();
+        lock.unlock();
     }
-    
     
     // 2) parse
     QPair<CodeAst*, bool> parserResults = m_session->parse(m_ast);
     m_ast = parserResults.first;
-
+    
     if ( parserResults.second )
     {
         kDebug() << m_url;
@@ -162,16 +165,21 @@ void ParseJob::run()
         {
             if ( m_parent && m_parent->codeHighlighting() ) {
                 kDebug() << m_duContext.data();
-                DUChainReadLocker lock(DUChain::lock());
+                DUChainReadLocker rlock(DUChain::lock());
                 KDevelop::ICodeHighlighting* hl = m_parent->codeHighlighting();
                 hl->highlightDUChain(m_duContext);
             }
+        }
+        {
+            DUChainWriteLocker lock(DUChain::lock());
+            file->setModificationRevision(contents().modification);
         }
     }
     else
     {
         kWarning() << "===Failed===";
 //        cleanupSmartRevision();
+        setDuChain(m_duContext);
         return abortJob();
     }
 //    cleanupSmartRevision();

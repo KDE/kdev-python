@@ -118,13 +118,13 @@ Declaration* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast*
 
 void DeclarationBuilder::visitFor(ForAst* node)
 {
-    Python::ContextBuilder::visitFor(node);
     if ( node->target->astType == Ast::NameAstType ) visitVariableDeclaration(node->target);
     else if ( node->target->astType == Ast::TupleAstType ) {
         foreach ( ExpressionAst* tupleMember, dynamic_cast<TupleAst*>(node->target)->elements ) {
             if ( tupleMember->astType == Ast::NameAstType ) visitVariableDeclaration(tupleMember);
         }
     }
+    Python::ContextBuilder::visitFor(node);
 }
 
 void DeclarationBuilder::visitImport(ImportAst* node)

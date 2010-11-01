@@ -68,7 +68,8 @@ class DocumentationGenerator():
                 current_type = type(current_property)
                 dbg("CHECK> ", module_name, module, current_property, current_type)
                 if current_type in self.validModuleTypes:
-                    self.walk_module(current_property, module_name + '.' + current_property_name)
+                    dbg("RECURSIVE_CHECK> ", module_name, current_property_name)
+                    self.walk_module(current_property_name, module_name + '.' + current_property_name)
                 if current_type in self.validMethodTypes:
                     self.generate_documentation_for(module_name + '.' + current_property_name)
         self.generate_documentation_for(module_name)
@@ -79,7 +80,7 @@ class DocumentationGenerator():
         self.current_file.write('\n')
     
     def get_docfile(self, module_name):
-        pathspec = module_name.split('.')
+        pathspec = module_name.split('.')[:-1]
         relative_path = 'results/' + '/'.join(pathspec) + '.py'
         dbg("PATH> ", relative_path, " (from ", module_name, ")")
         try:
@@ -130,10 +131,12 @@ class DocumentationGenerator():
                 return
         except:
             pass
-        self.write_docfile(self.indent() + "# Generated Documentation for ", ''.join(split[:1]))
         if not '='.join(split[1:]): 
             dbg("SKIP> Skipping invalid function")
-            dbg("SKIP> Error was", documentation)
+            dbg("SKIP> Failed to get documentation for", module_name)
+            return
+        if '='.join(split[1:]).find('class ') != -1:
+            dbg("SKIP_CLS> skipping class", module_name)
             return
         lines[2] = "def" + '='.join(split[1:])
         
@@ -144,6 +147,7 @@ class DocumentationGenerator():
         
         lines[2] = lines[2].replace('{', "''' ").replace('}', " '''").replace('function <lambda>', 'lambda_func').replace('<', '"').replace('>', '"').replace('...', "args='<unknown>'")
         
+        self.write_docfile(self.indent() + "# Generated Documentation for ", ''.join(split[:1]))
         self.write_docfile(self.indent() + lines[2])
         self.write_docfile(self.indent(1) + '"""')
         for line in lines[3:]:

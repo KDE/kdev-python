@@ -72,4 +72,4 @@ try:
 except Exception as e:
     sys.stderr.write(str(e.lineno) + ':' + str(e.offset))
 else:
-    sys.stdout.write(etree.tostring(v.basenode, xml_declaration=True, pretty_print=True))
+    sys.stdout.write(etree.tostring(v.basenode, xml_declaration=True, pretty_print=True, encoding='UTF-8'))

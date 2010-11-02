@@ -52,7 +52,7 @@
 #include <language/highlighting/codehighlighting.h>
 #include <interfaces/icore.h>
 #include <interfaces/ilanguagecontroller.h>
-
+#include <language/duchain/indexedstring.h>
 
 using namespace KDevelop;
 
@@ -99,10 +99,7 @@ bool ParseJob::wasReadFromDisk() const
 void ParseJob::checkInternalFunctionsParsed()
 {
     if ( ! ParseJob::m_internalFunctions ) {
-        Python::ParseJob* internal = dynamic_cast<Python::ParseJob*>(Python::LanguageSupport::self()->createParseJob(*internalFunctionsFile));
-        internal->run();
-        ParseJob::m_internalFunctions = internal->duChain();
-        kDebug() << ParseJob::m_internalFunctions;
+        DUChain::self()->updateContextForUrl(IndexedString(*internalFunctionsFile), minimumFeatures());
     }
 }
 

@@ -146,7 +146,8 @@ void ContextBuilder::visitArguments(ArgumentsAst* node)
 
 void ContextBuilder::visitCode(CodeAst* node) {
     AstDefaultVisitor::visitCode(node);
-    currentContext()->addImportedParentContext(ParseJob::m_internalFunctions);
+    DUChainWriteLocker lock(DUChain::lock());
+    currentContext()->addImportedParentContext(DUChain::self()->chainForDocument(KUrl("/home/sven/projects/kde4/python/documentation/test.py")));
 }
 
 void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )

@@ -64,6 +64,10 @@ public:
     bool wasReadFromDisk() const;
     
     const LanguageSupport* m_parent;
+    static TopDUContext* m_internalFunctions;
+    const KUrl* internalFunctionsFile;
+    
+    void checkInternalFunctionsParsed();
 
 protected:
     virtual void run();

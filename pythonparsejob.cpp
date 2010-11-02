@@ -59,6 +59,7 @@ using namespace KDevelop;
 namespace Python
 {
 
+TopDUContext* ParseJob::m_internalFunctions;
 
 ParseJob::ParseJob(LanguageSupport* parent, const KUrl &url )
         : KDevelop::ParseJob( url )
@@ -70,6 +71,8 @@ ParseJob::ParseJob(LanguageSupport* parent, const KUrl &url )
 {
     kDebug();
     m_parent = parent;
+    ParseJob::internalFunctionsFile =  new KUrl("/home/sven/projects/kde4/python/documentation/test.py");
+    ParseJob::m_internalFunctions = 0;
 }
 
 ParseJob::~ParseJob()
@@ -93,9 +96,21 @@ bool ParseJob::wasReadFromDisk() const
     return m_readFromDisk;
 }
 
+void ParseJob::checkInternalFunctionsParsed()
+{
+    if ( ! ParseJob::m_internalFunctions ) {
+        Python::ParseJob* internal = dynamic_cast<Python::ParseJob*>(Python::LanguageSupport::self()->createParseJob(*internalFunctionsFile));
+        internal->run();
+        ParseJob::m_internalFunctions = internal->duChain();
+        kDebug() << ParseJob::m_internalFunctions;
+    }
+}
+
 void ParseJob::run()
 {
     kDebug();
+    
+    if ( m_url != *internalFunctionsFile ) checkInternalFunctionsParsed();
 
     if (abortRequested() || !python() || !python()->language()) {
         kWarning() << "Language support is NULL";

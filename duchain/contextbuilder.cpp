@@ -33,6 +33,7 @@
 #include "dumpchain.h"
 #include <language/editor/rangeinrevision.h>
 #include <interfaces/foregroundlock.h>
+#include <pythonparsejob.h>
 
 using namespace KDevelop;
 
@@ -42,6 +43,8 @@ Python::PythonEditorIntegrator* Python::ContextBuilder::m_editor;
 
 namespace Python
 {
+    
+TopDUContext* ParseJob::m_internalFunctions;
 
 PythonEditorIntegrator* ContextBuilder::editor() const
 {
@@ -139,6 +142,11 @@ void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
 void ContextBuilder::visitArguments(ArgumentsAst* node)
 {
     AstDefaultVisitor::visitArguments(node);
+}
+
+void ContextBuilder::visitCode(CodeAst* node) {
+    AstDefaultVisitor::visitCode(node);
+    currentContext()->addImportedParentContext(ParseJob::m_internalFunctions);
 }
 
 void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )

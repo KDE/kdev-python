@@ -66,6 +66,7 @@ protected:
 //     virtual void visitWhile( WhileAst* node );
 //     virtual void visitIf( IfAst* node );
     virtual void visitArguments(ArgumentsAst* node);
+    virtual void visitCode(CodeAst* node);
 
     static PythonEditorIntegrator* m_editor;
     

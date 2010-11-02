@@ -2,20 +2,18 @@
 
 import ast
 from xml.dom.minidom import Document
+from lxml import etree
 import types
 import sys
 
 class KDevelopNodeVisitor(ast.NodeVisitor):
-    xmlrepr = Document()
-    basenode = None
+    basenode = etree.Element("pythonast")
     currentnode = None
     nodecnt = 0
     childNodeMap = {}
     
     def __init__(self, *arg, **args):
         super(KDevelopNodeVisitor, self).__init__(*arg, **args)
-        self.basenode = self.xmlrepr.createElement("pythonast")
-        self.xmlrepr.appendChild(self.basenode)
         self.currentnode = self.basenode
         
     def generic_visit(self, node):
@@ -24,9 +22,9 @@ class KDevelopNodeVisitor(ast.NodeVisitor):
         #self.childNodeMap[self.nodecnt] = node
         self.childNodeMap[node] = self.nodecnt
         
-        node_xmlrepr = self.xmlrepr.createElement(node.__class__.__name__ + "Ast")
-        node_xmlrepr.setAttribute('nodecnt', str(self.nodecnt))
-        self.currentnode.appendChild(node_xmlrepr)
+        node_xmlrepr = etree.Element(node.__class__.__name__ + "Ast")
+        node_xmlrepr.set('nodecnt', str(self.nodecnt))
+        self.currentnode.append(node_xmlrepr)
         
         save_currentnode = self.currentnode
         self.currentnode = node_xmlrepr
@@ -39,7 +37,7 @@ class KDevelopNodeVisitor(ast.NodeVisitor):
             value = getattr(node, field)
             if type(value) not in [types.IntType, types.StringType, types.FloatType, types.BooleanType]:
                 continue
-            node_xmlrepr.setAttribute(field.lower(), str(value))
+            node_xmlrepr.set(field.lower(), str(value))
 
         super(KDevelopNodeVisitor, self).generic_visit(node)
         
@@ -56,13 +54,13 @@ class KDevelopNodeVisitor(ast.NodeVisitor):
                             sys.stderr.write("Warning: missing key on node " + str(node) + "\n")
                             multiple_keys.append('')
                     key = ','.join(multiple_keys)
-                    node_xmlrepr.setAttribute("NRLST_" + field.lower(), str(key))
+                    node_xmlrepr.set("NRLST_" + field.lower(), str(key))
                 else:
                     try:
                         key = self.childNodeMap[value]
                     except KeyError:
                         key = ''
-                    node_xmlrepr.setAttribute("NR_" + field.lower(), str(key))
+                    node_xmlrepr.set("NR_" + field.lower(), str(key))
                 
                 
         self.currentnode = save_currentnode
@@ -74,4 +72,4 @@ try:
 except Exception as e:
     sys.stderr.write(str(e.lineno) + ':' + str(e.offset))
 else:
-    sys.stdout.write(v.xmlrepr.toprettyxml(indent = "    "))
+    sys.stdout.write(etree.tostring(v.basenode, xml_declaration=True, pretty_print=True))

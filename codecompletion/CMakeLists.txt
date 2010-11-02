@@ -15,6 +15,8 @@ kde4_add_library(kdev4pythoncompletion SHARED ${completion_SRCS})
 target_link_libraries(kdev4pythoncompletion
     ${KDE4_KDECORE_LIBS}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
+    ${KDEVPLATFORM_INTERFACES_LIBRARIES}
+    ${KDEVPLATFORM_PROJECT_LIBRARIES}
     kdev4pythonduchain
 )
 

@@ -96,9 +96,10 @@ QString AstBuilder::getXmlForFile(KUrl filename, const QString& contents)
         p->setSeverity(KDevelop::ProblemData::Error);
         {
             DUChainWriteLocker lock(DUChain::lock());
+            m_topContext->clearProblems();
             m_topContext->addProblem(p);
             DUChain::self()->updateContextForUrl(IndexedString(filename), m_topContext->features());
-            kDebug() << m_topContext->problems();
+            kDebug() << "Added problem: " << m_topContext->problems();
         }
         kWarning() << "Parse Error: " << result;
         return "0";

@@ -136,7 +136,7 @@ ExceptionHandlerAst::ExceptionHandlerAst(Ast* parent): Ast(parent, Ast::Exceptio
     
 }
 
-ExecAst::ExecAst(Ast* parent): StatementAst(parent, Ast::ExecAstType), body(0)
+ExecAst::ExecAst(Ast* parent): StatementAst(parent, Ast::ExecAstType), body(0), locals(0), globals(0)
 {
     
 }

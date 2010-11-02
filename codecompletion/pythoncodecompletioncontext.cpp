@@ -11,6 +11,10 @@
 #include "navigationwidget.h"
 #include "importfileitem.h"
 #include <qprocess.h>
+#include <interfaces/icore.h>
+#include <interfaces/iprojectcontroller.h>
+#include <interfaces/iproject.h>
+#include <project/projectmodel.h>
 
 using namespace KDevelop;
 
@@ -34,9 +38,15 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     
     kDebug() << "Adding testing item to completion list";
     
-    IncludeItem item;
-    item.name = "Foo";
-    items << CompletionTreeItemPointer( new ImportFileItem(item) );
+    foreach  (IProject* project, ICore::self()->projectController()->projects() ) {
+        foreach ( ProjectFolderItem* folder, project->foldersForUrl( KUrl(project->folder().url()) ) ) {
+            foreach ( ProjectFileItem* file, folder->fileList() ) {
+                IncludeItem item;
+                item.name = file->fileName();
+                items << CompletionTreeItemPointer( new ImportFileItem(item) );
+            }
+        }
+    }
     
     return items;
 }

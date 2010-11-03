@@ -174,6 +174,11 @@ void AstBuilder::parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::Tok
         // Everything else (stuff between tags, comments...) is ignored
         else continue;
     }
+    if ( xmlast->hasError() ) {
+        kWarning() << "Invalid XML file: " << xmlast->errorString();
+        kWarning() << "Aborting!";
+        Q_ASSERT(false);
+    }
 }
 
 bool AstBuilder::parseAstNode(QString name, QString text, const QList< QXmlStreamAttribute >& attributes)
@@ -833,6 +838,7 @@ void AstBuilder::populateAst()
             case Ast::AliasAstType:                                 currentAbstractNode = populateAliasAst(currentAbstractNode, currentAttributes); break;
             case Ast::ExpressionAstType:                            break; // ok
             case Ast::StatementAstType:                             break; // ok
+            default:                                                kWarning() << "Unsupported AST type: " << currentAbstractNode->astType; break;
         }
     }
 }

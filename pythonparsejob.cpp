@@ -128,19 +128,21 @@ void ParseJob::run()
     
     IndexedString filename = KDevelop::IndexedString(m_url.pathOrUrl());
     
-    ParsingEnvironmentFile* file = 0;
     {
         DUChainWriteLocker lock(DUChain::lock());
         
-        file = new ParsingEnvironmentFile(document());
-        file->setModificationRevision(contents().modification);
-        IndexedString langstring("python");
-        file->setLanguage(langstring);
-        m_duContext = new TopDUContext(document(), RangeInRevision(0, 0, INT_MAX, INT_MAX), file);
-        m_duContext->setType(KDevelop::DUContext::Global);
-        DUChain::self()->addDocumentChain(m_duContext);
+        m_duContext = DUChain::self()->chainForDocument(document());
+        if ( ! m_duContext ) {
+            IndexedString langstring("python");
+            ParsingEnvironmentFile* file = new ParsingEnvironmentFile(document());
+            m_duContext = new TopDUContext(document(), RangeInRevision(0, 0, INT_MAX, INT_MAX), file);
+            m_duContext->setType(KDevelop::DUContext::Global);
+            DUChain::self()->addDocumentChain(m_duContext);
+        }
         m_duContext->clearProblems();
-        lock.unlock();
+    
+        ParsingEnvironmentFilePointer file = m_duContext->parsingEnvironmentFile();
+        file->setModificationRevision(contents().modification);
     }
     
     // 2) parse
@@ -184,7 +186,6 @@ void ParseJob::run()
         }
         {
             DUChainWriteLocker lock(DUChain::lock());
-            file->setModificationRevision(contents().modification);
         }
     }
     else

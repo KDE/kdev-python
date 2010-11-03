@@ -15,6 +15,7 @@
 #include <interfaces/iprojectcontroller.h>
 #include <interfaces/iproject.h>
 #include <project/projectmodel.h>
+#include <QtCore/QRegExp>
 
 using namespace KDevelop;
 
@@ -53,7 +54,14 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
 
 PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position, int depth): CodeCompletionContext(context, text, position, depth)
 {
-
+    kDebug() << text;
+    QRegExp importfile("(.*)[\\s]*import[\\s]$");
+    importfile.setMinimal(true);
+    QRegExp memberaccess("");
+    bool is_importfile = importfile.exactMatch(text);
+    
+    kDebug() << "Is import file: " << is_importfile;
+//     Q_ASSERT(false);
 }
 
 

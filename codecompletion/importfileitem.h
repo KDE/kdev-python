@@ -3,6 +3,7 @@
 
 #include <language/codecompletion/abstractincludefilecompletionitem.h>
 #include "navigationwidget.h"
+#include <shell/project.h>
 
 namespace Python {
 
@@ -12,13 +13,14 @@ class ImportFileItem : public IncludeFileItemBase
 {
 
 public:
-    ImportFileItem(const KDevelop::IncludeItem& include)
-        : IncludeFileItemBase(include) {};
+    ImportFileItem(const KDevelop::IncludeItem& include);
     virtual ~ImportFileItem();
     
     virtual void execute(KTextEditor::Document* document, const KTextEditor::Range& word);
+    QString moduleName;
+    KDevelop::IProject* fromProject;
 };
 
-#endif // IMPORTFILEITEM_H
-
 }
+
+#endif // IMPORTFILEITEM_H

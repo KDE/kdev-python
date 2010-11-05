@@ -67,6 +67,7 @@ QPair<CodeAst*, bool> ParseSession::parse( Python::CodeAst* ast )
     driver.setCurrentDocument(m_currentDocument.toUrl());
     driver.setContent(m_contents);
     QPair<CodeAst*, bool> result = driver.parse(ast);
+    m_problems = driver.m_problems;
     return result;
 }
 

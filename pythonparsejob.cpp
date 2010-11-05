@@ -107,17 +107,17 @@ void ParseJob::run()
 {
     kDebug();
     
+    LanguageSupport* lang = python();
+    ILanguage* ilang = lang->language();
+    QReadLocker parselock(ilang->parseLock());
+    UrlParseLock urlLock(document());
+    
     if ( m_url != *internalFunctionsFile ) checkInternalFunctionsParsed();
 
     if (abortRequested() || !python() || !python()->language()) {
         kWarning() << "Language support is NULL";
         return abortJob();
     }
-    
-    LanguageSupport* lang = python();
-    ILanguage* ilang = lang->language();
-    QReadLocker parselock(ilang->parseLock());
-    UrlParseLock urlLock(document());
 
     readContents();
     m_session->setContents( QString::fromUtf8(contents().contents) + "\n" );
@@ -128,22 +128,22 @@ void ParseJob::run()
     
     IndexedString filename = KDevelop::IndexedString(m_url.pathOrUrl());
     
-    {
-        DUChainWriteLocker lock(DUChain::lock());
-        
-        m_duContext = DUChain::self()->chainForDocument(document());
-        if ( ! m_duContext ) {
-            IndexedString langstring("python");
-            ParsingEnvironmentFile* file = new ParsingEnvironmentFile(document());
-            m_duContext = new TopDUContext(document(), RangeInRevision(0, 0, INT_MAX, INT_MAX), file);
-            m_duContext->setType(KDevelop::DUContext::Global);
-            DUChain::self()->addDocumentChain(m_duContext);
-        }
-        m_duContext->clearProblems();
-    
-        ParsingEnvironmentFilePointer file = m_duContext->parsingEnvironmentFile();
-        file->setModificationRevision(contents().modification);
-    }
+//     {
+//         DUChainWriteLocker lock(DUChain::lock());
+//         
+//         m_duContext = DUChain::self()->chainForDocument(document());
+//         if ( ! m_duContext ) {
+//             IndexedString langstring("python");
+//             ParsingEnvironmentFile* file = new ParsingEnvironmentFile(document());
+//             m_duContext = new TopDUContext(document(), RangeInRevision(0, 0, INT_MAX, INT_MAX), file);
+//             m_duContext->setType(KDevelop::DUContext::Global);
+//             DUChain::self()->addDocumentChain(m_duContext);
+//         }
+//         m_duContext->clearProblems();
+//         
+//         ParsingEnvironmentFilePointer file = m_duContext->parsingEnvironmentFile();
+//         file.data()->setModificationRevision(contents().modification);
+//     }
     
     // 2) parse
     QPair<CodeAst*, bool> parserResults = m_session->parse(m_ast);
@@ -162,7 +162,7 @@ void ParseJob::run()
         
         editor.setParseSession(m_session);
         
-        m_duContext = builder.build(filename, m_ast, m_duContext);
+        m_duContext = builder.build(filename, m_ast);
         setDuChain(m_duContext);
         
         UseBuilder usebuilder( &editor );
@@ -170,32 +170,46 @@ void ParseJob::run()
         
         kDebug() << "----Parsing Succeded---***";
         
-//             {
-//                 DUChainReadLocker lock( DUChain::lock() );
-//                 DumpChain dump;
-//                 dump.dump( m_duContext );
-//             }
+        if ( m_parent && m_parent->codeHighlighting() ) {
+            kDebug() << m_duContext.data();
+            DUChainReadLocker lock(DUChain::lock());
+            KDevelop::ICodeHighlighting* hl = m_parent->codeHighlighting();
+            hl->highlightDUChain(m_duContext);
+        }
         
-        {
-            if ( m_parent && m_parent->codeHighlighting() ) {
-                kDebug() << m_duContext.data();
-                DUChainReadLocker rlock(DUChain::lock());
-                KDevelop::ICodeHighlighting* hl = m_parent->codeHighlighting();
-                hl->highlightDUChain(m_duContext);
-            }
-        }
-        {
-            DUChainWriteLocker lock(DUChain::lock());
-        }
+        DUChainWriteLocker lock(DUChain::lock());
+        ParsingEnvironmentFilePointer parsingEnvironmentFile = m_duContext->parsingEnvironmentFile();
+        parsingEnvironmentFile->setModificationRevision(contents().modification);
+        DUChain::self()->updateContextEnvironment(m_duContext, parsingEnvironmentFile.data());
     }
     else
     {
         kWarning() << "===Failed===";
-//        cleanupSmartRevision();
+        {
+            DUChainReadLocker lock(DUChain::lock());
+            m_duContext = DUChain::self()->chainForDocument(document());
+        }
+        if ( m_duContext ) {
+            DUChainWriteLocker lock(DUChain::lock());
+            m_duContext->clearProblems();
+            m_duContext->parsingEnvironmentFile()->clearModificationRevisions();
+        }
+        else {
+            DUChainWriteLocker lock(DUChain::lock());
+            ParsingEnvironmentFile *file = new ParsingEnvironmentFile(document());
+            static const IndexedString langString("python");
+            file->setModificationRevision(contents().modification);
+            file->setLanguage(langString);
+            m_duContext = new TopDUContext(document(), RangeInRevision(0, 0, INT_MAX, INT_MAX), file);
+            DUChain::self()->addDocumentChain(m_duContext);
+        }
+        DUChainWriteLocker lock(DUChain::lock());
+        foreach ( ProblemPointer p, m_session->m_problems ) {
+            kDebug() << "Added problem to context";
+            m_duContext->addProblem(p);
+        }
         setDuChain(m_duContext);
-        return abortJob();
     }
-//    cleanupSmartRevision();
 }
 
 ParseSession *ParseJob::parseSession() const

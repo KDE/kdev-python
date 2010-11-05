@@ -48,6 +48,7 @@ class AstBuilder
     
 public:
     CodeAst* parse(KUrl filename, const QString& contents);
+    QList<KDevelop::ProblemPointer> m_problems;
 private:
     CodeAst* parseXmlAst(QString xml);
     QString getXmlForFile(KUrl filename, const QString& contents);

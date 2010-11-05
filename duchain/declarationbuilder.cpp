@@ -92,12 +92,14 @@ Declaration* DeclarationBuilder::visitVariableDeclaration(Ast* node)
             return 0;
     }
     Identifier* id = currentVariableDefinition->identifier;
+    Q_ASSERT(id);
     return visitVariableDeclaration(id, currentVariableDefinition);
 }
 
 Declaration* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast* originalAst)
 {
     DUChainWriteLocker lock(DUChain::lock());
+    Q_ASSERT(node);
     
     QList<Declaration*> existingDeclarations;
     CursorInRevision until = editorFindRange(node, node).end;

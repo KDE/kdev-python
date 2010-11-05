@@ -78,6 +78,8 @@ QPair<CodeAst*, bool> Driver::parse( Python::CodeAst* ast )
     matched.first = pythonparser.parse(m_currentDocument, m_content);
     matched.second = matched.first ? true : false; // check wether an AST was returned and react accordingly
     
+    m_problems = pythonparser.m_problems;
+    
     if( matched.second )
     {
         kDebug() << "Sucessfully parsed";

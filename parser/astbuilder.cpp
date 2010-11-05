@@ -46,11 +46,6 @@ namespace Python
     
 CodeAst* AstBuilder::parse(KUrl filename, const QString& contents)
 {
-    {
-        DUChainWriteLocker lock(DUChain::lock());
-        m_topContext = DUChain::self()->chainForDocument(filename);
-        Q_ASSERT(m_topContext);
-    }
     CodeAst* ast = parseXmlAst(getXmlForFile(filename, contents));
     return ast;
 }
@@ -96,10 +91,8 @@ QString AstBuilder::getXmlForFile(KUrl filename, const QString& contents)
         p->setSeverity(KDevelop::ProblemData::Error);
         {
             DUChainWriteLocker lock(DUChain::lock());
-            m_topContext->clearProblems();
-            m_topContext->addProblem(p);
-            DUChain::self()->updateContextForUrl(IndexedString(filename), m_topContext->features());
-            kDebug() << "Added problem: " << m_topContext->problems();
+            m_problems.clear();
+            m_problems.append(p);
         }
         kWarning() << "Parse Error: " << result;
         return "0";

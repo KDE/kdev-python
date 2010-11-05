@@ -26,8 +26,12 @@ namespace Python {
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bool& abort, bool fullCompletion)
 {
     QList<CompletionTreeItemPointer> items;
+    DUChainReadLocker lock(DUChain::lock());
     
-    if ( m_operation == PythonCodeCompletionContext::ImportFileCompletion ) {
+    if ( m_operation == PythonCodeCompletionContext::NoCompletion ) {
+            
+    }
+    else if ( m_operation == PythonCodeCompletionContext::ImportFileCompletion ) {
         m_maxFolderScanDepth = 1;
         foreach ( ImportFileItem* item, includeFileItems() ) {
             item->includeItem.name = QString(item->moduleName + " (from " + KUrl::relativeUrl(item->fromProject->folder(), item->includeItem.basePath) + ")");
@@ -48,8 +52,11 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         int count = declarations.length();
         for ( int i = 0; i < count; i++ ) {
             currentDeclaration = declarations.at(i).first;
+            kDebug() << "Adding item: " << currentDeclaration->identifier().identifier().str();
             DeclarationPointer ptr(currentDeclaration);
-            items << CompletionTreeItemPointer( new NormalDeclarationCompletionItem(ptr) );
+            NormalDeclarationCompletionItem* item = new NormalDeclarationCompletionItem(ptr, KDevelop::CodeCompletionContext::Ptr(this));
+            kDebug() << item->declaration().data()->identifier().identifier().str();
+            items << CompletionTreeItemPointer(item);
         }
     }
     
@@ -83,10 +90,12 @@ QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems() {
 QList<ImportFileItem*> PythonCodeCompletionContext::fileItemsForFolder(KDevelop::ProjectFolderItem* folder, IProject* project)
 {
     if ( ! folder ) return QList<ImportFileItem*>();
+    bool continue_recursion = true;
+    bool do_recursion = true;
     
     kDebug() << m_maxFolderScanDepth << m_folderStack.count() << m_searchingForModule;
     
-    if ( m_maxFolderScanDepth < m_folderStack.count() ) return QList<ImportFileItem*>();
+    if ( m_maxFolderScanDepth - 1 < m_folderStack.count() ) continue_recursion = false; // we dont offer foo.bar.baz.bang.bar if there's only one dot in the address by now
     
     if ( m_searchingForModule.length() > 0 && folder->url() != project->folder().url() ) {
         if ( m_searchingForModule.length() >= m_folderStack.count() && m_searchingForModule.at(m_folderStack.count() - 2) != folder->folderName() ) {
@@ -100,17 +109,25 @@ QList<ImportFileItem*> PythonCodeCompletionContext::fileItemsForFolder(KDevelop:
     foreach ( KDevelop::ProjectFolderItem* folder, folder->folderList() ) {
         if ( ! folder ) continue;
         m_folderStack.push(folder);
-        kDebug() << "Scanning for include items: " << folder->folderName();
-        items << fileItemsForFolder(folder, project);
+        if ( continue_recursion ) {
+            kDebug() << "Scanning for include items: " << folder->folderName();
+            items << fileItemsForFolder(folder, project);
+        }
         
         // only add items when at right level
         if ( m_searchingForModule.length() != 0 && m_maxFolderScanDepth != m_folderStack.count() ) {
             kDebug() << "CONTINUE: " << m_maxFolderScanDepth << m_folderStack.count();
-            m_folderStack.pop();
-            continue;
+            if ( m_searchingForModule.length() < m_folderStack.count() ) do_recursion = false; // don't add items from here, we're too deep 
+            else {
+                // we're not yet deep enough, so don't even add the folder
+                m_folderStack.pop();
+                continue;
+            }
         }
-        kDebug() << "ADD: " << m_maxFolderScanDepth << m_folderStack.count();
-        kDebug() << "adding files and folders from directory " << folder->folderName();
+        else {
+            kDebug() << "ADD: " << m_maxFolderScanDepth << m_folderStack.count();
+            kDebug() << "adding files and folders from directory " << folder->folderName();
+        }
         
         // Add the folder
         IncludeItem* folderItem = new IncludeItem();
@@ -121,30 +138,40 @@ QList<ImportFileItem*> PythonCodeCompletionContext::fileItemsForFolder(KDevelop:
         importFolderItem->moduleName = folder->folderName();
         items << importFolderItem;
         
-        // Add all sub-items and folders
-        foreach ( ProjectFileItem* file, folder->fileList() ) {
-            if ( ! file->fileName().endsWith(".py") || file->fileName() == "__init__.py" ) continue;
-            IncludeItem* item = new IncludeItem();
-            item->basePath = m_folderStack.top()->url();
-            ImportFileItem* importItem = new ImportFileItem(*item);
-            importItem->moduleName = file->fileName().replace(".py", "");
-            importItem->fromProject = project;
-            items << importItem;
+        if ( continue_recursion && do_recursion ) {
+            // Add all sub-items and folders
+            foreach ( ProjectFileItem* file, folder->fileList() ) {
+                if ( ! file->fileName().endsWith(".py") || file->fileName() == "__init__.py" ) continue;
+                IncludeItem* item = new IncludeItem();
+                item->basePath = m_folderStack.top()->url();
+                ImportFileItem* importItem = new ImportFileItem(*item);
+                importItem->moduleName = file->fileName().replace(".py", "");
+                importItem->fromProject = project;
+                items << importItem;
+            }
         }
         m_folderStack.pop();
     }
     return items;
 }
 
-PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position, int depth): CodeCompletionContext(context, text, position, depth)
+PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position, 
+                                                         int depth): CodeCompletionContext(context, text, position, depth)
 {
-    kDebug() << text;
+    QString currentLine = "\n" + text.split("\n").last(); // we'll only look at the last line, as 99% of python statements are limited to one line
+    kDebug() << "Doing auto-completion context scan for: " << currentLine;
     
     QRegExp importsub("(.*)\n[\\s]*from(.*)import[\\s]*$");
     importsub.setMinimal(true);
-    bool is_importSub = importsub.exactMatch(text);
-    if ( is_importSub ) {
-        QStringList for_module_match = importsub.capturedTexts();
+    bool is_importSub = importsub.exactMatch(currentLine);
+    QRegExp importsub2("(.*)\n[\\s]*(from(.*)|import(.*))\\.$");
+    importsub2.setMinimal(true);
+    bool is_importSub2 = importsub2.exactMatch(currentLine);
+    if ( is_importSub || is_importSub2 ) {
+        QStringList for_module_match;
+        if ( is_importSub ) for_module_match = importsub.capturedTexts();
+        else for_module_match = importsub2.capturedTexts();
+        
         QString for_module = for_module_match.last().replace(" ", "");
         kDebug() << for_module_match;
         m_operation = PythonCodeCompletionContext::ImportSubCompletion;
@@ -154,12 +181,20 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     
     QRegExp importfile("(.*)\n[\\s]*import[\\s]*$");
     importfile.setMinimal(true);
-    bool is_importfile = importfile.exactMatch(text);
+    bool is_importfile = importfile.exactMatch(currentLine);
     QRegExp fromimport("(.*)\n[\\s]*from[\\s]*$");
     fromimport.setMinimal(true);
-    bool is_fromimport = fromimport.exactMatch(text);
+    bool is_fromimport = fromimport.exactMatch(currentLine);
     if ( is_importfile || is_fromimport ) {
         m_operation = PythonCodeCompletionContext::ImportFileCompletion;
+        return;
+    }
+    
+    QRegExp noCompletionPossible("(.*)\n[\\s]*(class|def)[\\s]*$");
+    noCompletionPossible.setMinimal(true);
+    bool is_noCompletionPossible = noCompletionPossible.exactMatch(currentLine);
+    if ( is_noCompletionPossible ) {
+        m_operation = PythonCodeCompletionContext::NoCompletion;
         return;
     }
     

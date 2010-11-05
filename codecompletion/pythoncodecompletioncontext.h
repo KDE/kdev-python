@@ -23,7 +23,8 @@ public:
         ImportFileCompletion,
         MemberAccessCompletion,
         DefaultCompletion,
-        ImportSubCompletion
+        ImportSubCompletion,
+        NoCompletion
     };
     
     PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position, int depth);

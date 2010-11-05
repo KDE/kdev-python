@@ -33,6 +33,8 @@
 #include "ast.h"
 #include "kurl.h"
 
+#include <language/interfaces/iproblem.h>
+
 using namespace KDevelop;
 
 typedef QPair<KDevelop::DUContextPointer, KDevelop::RangeInRevision> SimpleUse;
@@ -55,6 +57,8 @@ public:
     IndexedString currentDocument();
 
     QPair<CodeAst*, bool> parse( Python::CodeAst* ast );
+    
+    QList<KDevelop::ProblemPointer> m_problems;
     
     void mapAstUse(Ast* node, const SimpleUse& use)
     {

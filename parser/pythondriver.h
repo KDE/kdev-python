@@ -24,6 +24,10 @@
 #include <QtCore/QString>
 #include "parserexport.h"
 #include <kurl.h>
+
+#include <language/interfaces/iproblem.h>
+
+
 namespace KDevPG
 {
 class MemoryPool;
@@ -50,6 +54,9 @@ public:
     void setTokenStream( KDevPG::TokenStream* );
     void setMemoryPool( KDevPG::MemoryPool* );
     void setCurrentDocument(KUrl url);
+    
+    QList<KDevelop::ProblemPointer> m_problems;
+    
 private:
     QString m_content;
     bool m_debug;

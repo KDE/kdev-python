@@ -189,8 +189,13 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         if ( is_importSub ) for_module_match = importsub.capturedTexts();
         else for_module_match = importsub2.capturedTexts();
         
-        QString for_module = for_module_match.last().replace(" ", "");
         kDebug() << for_module_match;
+        
+        QString for_module;
+        if ( is_importSub ) for_module = for_module_match.last().replace(" ", "");
+        else for_module = for_module_match[3].replace(" ", "");
+            
+        kDebug() << "Matching against module name: " << for_module_match;
         m_operation = PythonCodeCompletionContext::ImportSubCompletion;
         m_subForModule = for_module;
         return;

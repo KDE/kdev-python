@@ -89,7 +89,12 @@ QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems() {
 
 QList<ImportFileItem*> PythonCodeCompletionContext::fileItemsForFolder(KDevelop::ProjectFolderItem* folder, IProject* project)
 {
-    if ( ! folder ) return QList<ImportFileItem*>();
+    kDebug() << " +++++ Processing folder: " << folder->folderName();
+    kDebug() << "current folder stack count " << m_folderStack.count();
+    if ( ! folder ) {
+        m_dontAddMe = true;
+        return QList<ImportFileItem*>();
+    }
     bool continue_recursion = true;
     bool do_recursion = true;
     
@@ -100,10 +105,17 @@ QList<ImportFileItem*> PythonCodeCompletionContext::fileItemsForFolder(KDevelop:
     if ( m_searchingForModule.length() > 0 && folder->url() != project->folder().url() ) {
         if ( m_searchingForModule.length() >= m_folderStack.count() && m_searchingForModule.at(m_folderStack.count() - 2) != folder->folderName() ) {
             kDebug() << "Skip: " << m_searchingForModule.at(m_folderStack.count() - 2) << m_searchingForModule << m_folderStack.count() - 2 << folder->folderName();
+            m_dontAddMe = true;
+            return QList<ImportFileItem*>();
+        }
+        else if ( m_searchingForModule.at(m_folderStack.count() - 2) != folder->folderName() ) {
+            m_dontAddMe = true;
             return QList<ImportFileItem*>();
         }
         kDebug() << "USE: " << m_searchingForModule.at(m_folderStack.count() - 2) << m_searchingForModule << m_folderStack << folder->folderName();
     }
+    
+    kDebug() << " >>>>> For directory " << folder->folderName() << " : " << "doing recursion: " << do_recursion << "; continuing downwards: " << continue_recursion;
     
     QList<ImportFileItem*> items;
     foreach ( KDevelop::ProjectFolderItem* folder, folder->folderList() ) {
@@ -112,6 +124,11 @@ QList<ImportFileItem*> PythonCodeCompletionContext::fileItemsForFolder(KDevelop:
         if ( continue_recursion ) {
             kDebug() << "Scanning for include items: " << folder->folderName();
             items << fileItemsForFolder(folder, project);
+            if ( m_dontAddMe ) {
+                m_dontAddMe = false;
+                m_folderStack.pop();
+                continue;
+            }
         }
         
         // only add items when at right level
@@ -131,7 +148,7 @@ QList<ImportFileItem*> PythonCodeCompletionContext::fileItemsForFolder(KDevelop:
         
         // Add the folder
         IncludeItem* folderItem = new IncludeItem();
-        folderItem->basePath = m_folderStack.top()->url();
+        folderItem->basePath = folder->url();
         folderItem->isDirectory = true;
         ImportFileItem* importFolderItem = new ImportFileItem(*folderItem);
         importFolderItem->fromProject = project;
@@ -143,7 +160,7 @@ QList<ImportFileItem*> PythonCodeCompletionContext::fileItemsForFolder(KDevelop:
             foreach ( ProjectFileItem* file, folder->fileList() ) {
                 if ( ! file->fileName().endsWith(".py") || file->fileName() == "__init__.py" ) continue;
                 IncludeItem* item = new IncludeItem();
-                item->basePath = m_folderStack.top()->url();
+                item->basePath = folder->url();
                 ImportFileItem* importItem = new ImportFileItem(*item);
                 importItem->moduleName = file->fileName().replace(".py", "");
                 importItem->fromProject = project;

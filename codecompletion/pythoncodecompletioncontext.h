@@ -38,6 +38,9 @@ public:
     int m_maxFolderScanDepth;
     QStringList m_searchingForModule;
     QString m_subForModule;
+    
+private:
+    bool m_dontAddMe;
 };
 
 }

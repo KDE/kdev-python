@@ -34,6 +34,11 @@
 #include <language/editor/rangeinrevision.h>
 #include <interfaces/foregroundlock.h>
 #include <pythonparsejob.h>
+#include <interfaces/icore.h>
+#include <interfaces/idocumentcontroller.h>
+#include <interfaces/iprojectcontroller.h>
+#include <project/projectmodel.h>
+#include <interfaces/iproject.h>
 
 using namespace KDevelop;
 
@@ -147,7 +152,46 @@ void ContextBuilder::visitArguments(ArgumentsAst* node)
 void ContextBuilder::visitCode(CodeAst* node) {
     AstDefaultVisitor::visitCode(node);
     DUChainWriteLocker lock(DUChain::lock());
-    currentContext()->addImportedParentContext(DUChain::self()->chainForDocument(KUrl("/home/sven/projects/kde4/python/documentation/test.py")));
+    TopDUContext* internal = DUChain::self()->chainForDocument(KUrl("/home/sven/projects/kde4/python/documentation/test.py"));
+    if ( internal ) {
+        currentContext()->addImportedParentContext(internal);
+    }
+}
+
+KUrl ContextBuilder::findModulePath(const QString& name)
+{
+    KUrl currentPath = currentContext()->url().toUrl();
+    Q_ASSERT(currentPath.url().length());
+    kDebug() << "Got URL: " << currentPath.url();
+    IProject* currentProject = ICore::self()->projectController()->findProjectForUrl(currentPath);
+    if ( ! currentProject ) {
+        kError() << "Cannot import module contexts without a project opened.";
+        return KUrl();
+    }
+    foreach ( ProjectFileItem* file, currentProject->filesForUrl(currentPath) ) {
+        kDebug() << "File: " << file->fileName();
+    }
+    QStringList modulePath = name.split(".");
+    return KUrl();
+}
+
+void ContextBuilder::visitImportFrom(ImportFromAst* node)
+{
+    Python::AstDefaultVisitor::visitImportFrom(node);
+}
+
+void ContextBuilder::visitImport(ImportAst* node)
+{
+    foreach ( AliasAst* name, node->names ) {
+        // for "import ... as", use the as thingy, use the module name otherwise
+        Identifier* variableDeclarationName = name->asName ? name->asName->identifier : name->name;
+        
+        KUrl moduleFilePath = findModulePath(name->name->value);
+        continue;
+        TopDUContext* moduleChain = DUChain::self()->chainForDocument(KUrl(moduleFilePath));
+        currentContext()->addImportedParentContext(moduleChain);
+    }
+    Python::AstDefaultVisitor::visitImport(node);
 }
 
 void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )

@@ -47,6 +47,8 @@ class KDEVPYTHONDUCHAIN_EXPORT ContextBuilder: public ContextBuilderBase, public
 public:
     void setEditor(PythonEditorIntegrator* editor);
     void setEditor(ParseSession* session);
+    
+    KUrl findModulePath(const QString& name);
 
 protected:
     PythonEditorIntegrator* editor() const;
@@ -67,6 +69,8 @@ protected:
 //     virtual void visitIf( IfAst* node );
     virtual void visitArguments(ArgumentsAst* node);
     virtual void visitCode(CodeAst* node);
+    virtual void visitImport(ImportAst* node);
+    virtual void visitImportFrom(ImportFromAst* node);
 
     static PythonEditorIntegrator* m_editor;
     

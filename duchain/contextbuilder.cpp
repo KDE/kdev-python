@@ -200,7 +200,9 @@ void ContextBuilder::visitImport(ImportAst* node)
         else {
             DUChainWriteLocker lock(DUChain::lock());
             TopDUContext* moduleChain = DUChain::self()->chainForDocument(KUrl(moduleFilePath));
-            currentContext()->addImportedParentContext(moduleChain);
+            contextsForModules.insert(name->name->value, TopDUContextPointer(moduleChain));
+            kDebug() << "Added " << name->name->value << " to the module chain map";
+//             currentContext()->addImportedParentContext(moduleChain);
         }
     }
     Python::AstDefaultVisitor::visitImport(node);

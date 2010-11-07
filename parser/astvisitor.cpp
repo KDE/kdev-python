@@ -90,7 +90,7 @@ void AstVisitor::visitNode(Ast* node)
         case Ast::ComprehensionAstType:                         this->visitComprehension(dynamic_cast<ComprehensionAst*>(node)); break;
         case Ast::ExceptionHandlerAstType:                      this->visitExceptionHandler(dynamic_cast<ExceptionHandlerAst*>(node)); break;
         case Ast::AliasAstType:                                 this->visitAlias(dynamic_cast<AliasAst*>(node)); break;
-        case Ast::ExpressionAstType:                            break;
+        case Ast::ExpressionAstType:                            this->visitExpression(dynamic_cast<ExpressionAst*>(node)); break;
         case Ast::StatementAstType:                             break;
     }
 }

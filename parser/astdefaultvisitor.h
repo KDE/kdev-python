@@ -92,6 +92,7 @@ public:
     virtual void visitComprehension(ComprehensionAst* node);
     virtual void visitExceptionHandler(ExceptionHandlerAst* node);
     virtual void visitAlias(AliasAst* node);
+    virtual void visitExpression(ExpressionAst* node);
 };
 
 }

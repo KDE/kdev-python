@@ -431,7 +431,7 @@ AssignmentAst* AstBuilder::populateAssignmentAst(Ast* ast, const Python::stringD
 CodeAst* AstBuilder::populateCodeAst(Ast* ast, const Python::stringDictionary& currentAttributes)
 {
     CodeAst* currentNode = dynamic_cast<CodeAst*>(ast);
-    currentNode->body = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_body"));
+    currentNode->body = resolveNodeList<Ast>(currentAttributes.value("NRLST_body"));
     return currentNode;
 }
 
@@ -745,6 +745,13 @@ KeywordAst* AstBuilder::populateKeywordAst(Ast* ast, const Python::stringDiction
     return currentNode;
 }
 
+ExpressionAst* AstBuilder::populateExpressionAst(Ast* ast, const stringDictionary& currentAttributes)
+{
+    ExpressionAst* currentNode = dynamic_cast<ExpressionAst*>(ast);
+    currentNode->value = resolveNode<ExpressionAst>(currentAttributes.value("NR_value"));
+    return currentNode;
+}
+
 void AstBuilder::populateAst()
 {
     Ast* currentAbstractNode;
@@ -829,7 +836,7 @@ void AstBuilder::populateAst()
             case Ast::ComprehensionAstType:                         currentAbstractNode = populateComprehensionAst(currentAbstractNode, currentAttributes); break;
             case Ast::ExceptionHandlerAstType:                      currentAbstractNode = populateExceptionHandlerAst(currentAbstractNode, currentAttributes); break;
             case Ast::AliasAstType:                                 currentAbstractNode = populateAliasAst(currentAbstractNode, currentAttributes); break;
-            case Ast::ExpressionAstType:                            break; // ok
+            case Ast::ExpressionAstType:                            currentAbstractNode = populateExpressionAst(currentAbstractNode, currentAttributes); break;
             case Ast::StatementAstType:                             break; // ok
             default:                                                kWarning() << "Unsupported AST type: " << currentAbstractNode->astType; break;
         }

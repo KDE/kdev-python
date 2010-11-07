@@ -32,6 +32,8 @@
 
 namespace Python
 {
+    
+typedef QPair<QString, TopDUContextPointer> moduleContextTuple;
 
 typedef KDevelop::AbstractDeclarationBuilder<Ast, Identifier, TypeBuilder> DeclarationBuilderBase;
 
@@ -53,9 +55,13 @@ protected:
     virtual void visitImport(ImportAst* node);
     virtual void visitImportFrom(ImportFromAst* node);
     virtual void visitArguments(ArgumentsAst* node);
+    virtual void visitExceptionHandler(ExceptionHandlerAst* node);
+    virtual void visitCall(CallAst* node);
     
     Declaration* visitVariableDeclaration(Ast* node);
     Declaration* visitVariableDeclaration(Identifier* node, Ast* originalAst = 0);
+    
+    QStack<TopDUContextPointer> m_importContextsForImportStatement;
     
 //     virtual void visitIdentifierTarget( IdentifierTargetAst * node );
 

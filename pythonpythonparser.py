@@ -1,4 +1,11 @@
 #!/usr/bin/env python2.6
+# -*- coding: utf-8 -*-
+
+#
+# This file is part of KDevelop
+# Copyright 2010 Sven Brauch <svenbrauch@googlemail.com>
+# Licensed under the GNU GPL
+#
 
 import ast
 from xml.dom.minidom import Document

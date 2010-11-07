@@ -134,6 +134,7 @@ private:
     ArgumentsAst* populateArgumentsAst(Ast* ast, const stringDictionary& currentAttributes);
     IndexAst* populateIndexAst(Ast* ast, const stringDictionary& currentAttributes);
     ExceptionHandlerAst* populateExceptionHandlerAst(Ast* ast, const stringDictionary& currentAttributes);
+    ExpressionAst* populateExpressionAst(Ast* ast, const stringDictionary& currentAttributes);
 };
 
 }

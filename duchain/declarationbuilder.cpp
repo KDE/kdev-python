@@ -1,6 +1,7 @@
 /*****************************************************************************
  * Copyright (c) 2007 Piyush verma <piyush.verma@gmail.com>                  *
- *   Copyright 2007 Andreas Pakulat <apaku@gmx.de>                           *
+ * Copyright 2007 Andreas Pakulat <apaku@gmx.de>                             *
+ * Copyright 2010 Sven Brauch <svenbrauch@googlemail.com>                    *
  *                                                                           *
  * Permission is hereby granted, free of charge, to any person obtaining     *
  * a copy of this software and associated documentation files (the           *
@@ -38,6 +39,8 @@
 #include <language/duchain/types/integraltype.h>
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/builders/abstracttypebuilder.h>
+
+#include "contextbuilder.h"
 
 #include "pythoneditorintegrator.h"
 #include "QtGlobal"
@@ -115,7 +118,14 @@ Declaration* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast*
         dec->setType(IntegralType::Ptr(new IntegralType(IntegralType::TypeMixed)));
     }
     else kDebug() << "Not updating existing declaration for " << node->value;
+//     dec->setType<>();
     return dec;
+}
+
+void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
+{
+    if ( node->name ) visitVariableDeclaration(node->name); // except Error as <vardecl>
+    Python::AstDefaultVisitor::visitExceptionHandler(node);
 }
 
 void DeclarationBuilder::visitFor(ForAst* node)
@@ -131,10 +141,14 @@ void DeclarationBuilder::visitFor(ForAst* node)
 
 void DeclarationBuilder::visitImport(ImportAst* node)
 {
-    Python::AstDefaultVisitor::visitImport(node);
+    Python::ContextBuilder::visitImport(node);
     foreach ( AliasAst* name, node->names ) {
+        TopDUContextPointer contextptr = contextsForModules.value(name->asName ? name->asName->identifier->value : name->name->value);
+        kDebug() << "Chain for document: " << contextptr;
+        m_importContextsForImportStatement.push(contextptr);
         if ( name->asName ) visitVariableDeclaration(name->asName);
         else visitVariableDeclaration(name->name);
+        m_importContextsForImportStatement.clear();
     }
 }
 
@@ -228,6 +242,17 @@ void DeclarationBuilder::visitLambda( LambdaAst* node )
 //     openDeclaration<FunctionDeclaration>( QualifiedIdentifier( "lambda" ), node ) );
     ContextBuilder::visitLambda( node );
 //     closeDeclaration();
+}
+
+void DeclarationBuilder::visitCall(CallAst* node)
+{
+    foreach ( ExpressionAst* currentArgument, node->arguments ) {
+        NameAst* realArgument = dynamic_cast<NameAst*>(currentArgument);
+        if ( realArgument ) {
+            visitVariableDeclaration(realArgument); // some_func(<arg1>, <arg2>)
+        }
+    }
+    Python::AstDefaultVisitor::visitCall(node);
 }
 
 void DeclarationBuilder::visitArguments( ArgumentsAst* node )

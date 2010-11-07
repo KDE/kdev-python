@@ -200,7 +200,7 @@ public:
 class KDEVPYTHONPARSER_EXPORT CodeAst : public Ast {
 public:
     CodeAst();
-    QList<StatementAst*> body;
+    QList<Ast*> body;
 };
 
 /** Statement classes **/

@@ -36,6 +36,8 @@ using namespace KDevelop;
 
 namespace Python
 {
+    
+typedef QPair<QString, TopDUContextPointer> moduleContextTuple;
 
 class PythonEditorIntegrator;
 class ParseSession;
@@ -71,6 +73,8 @@ protected:
     virtual void visitCode(CodeAst* node);
     virtual void visitImport(ImportAst* node);
     virtual void visitImportFrom(ImportFromAst* node);
+    
+    QMap<QString, TopDUContextPointer> contextsForModules;
 
     static PythonEditorIntegrator* m_editor;
     

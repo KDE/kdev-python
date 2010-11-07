@@ -1,6 +1,7 @@
 /***************************************************************************
  *   This file is part of KDevelop                                         *
  *   Copyright 2007 Andreas Pakulat <apaku@gmx.de>                         *
+ * Copyright 2010 Sven Brauch <svenbrauch@googlemail.com>                  *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Library General Public License as       *
@@ -43,9 +44,15 @@ void AstDefaultVisitor::visitString(StringAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitCode(CodeAst* node)
 {
     kDebug() << "Visiting code";
-    foreach (StatementAst* statement, node->body) {
+    foreach (Ast* statement, node->body) {
+        kDebug() << statement->astType << Ast::ExpressionAstType;
         visitNode(statement);
     }
+}
+
+void AstDefaultVisitor::visitExpression(ExpressionAst* node)
+{
+    visitNode(node->value);
 }
 
 void AstDefaultVisitor::visitAssertion(AssertionAst* node)

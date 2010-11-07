@@ -1,3 +1,9 @@
+/*
+ * This file is part of KDevelop
+ * Copyright 2010 Sven Brauch <svenbrauch@googlemail.com>
+ * Licensed under the GNU GPL
+ * */
+
 #include "pythoncodecompletionworker.h"
 #include "pythoncodecompletionmodel.h"
 #include "pythoncodecompletioncontext.h"

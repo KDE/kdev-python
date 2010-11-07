@@ -160,18 +160,27 @@ void ContextBuilder::visitCode(CodeAst* node) {
 
 KUrl ContextBuilder::findModulePath(const QString& name)
 {
+    QStringList modulePath = name.split(".");
+    
     KUrl currentPath = currentContext()->url().toUrl();
     Q_ASSERT(currentPath.url().length());
-    kDebug() << "Got URL: " << currentPath.url();
+    kDebug() << " >>>>>>>>> Got URL: " << currentPath.upUrl().url(KUrl::RemoveTrailingSlash);
+    
     IProject* currentProject = ICore::self()->projectController()->findProjectForUrl(currentPath);
     if ( ! currentProject ) {
         kError() << "Cannot import module contexts without a project opened.";
         return KUrl();
     }
-    foreach ( ProjectFileItem* file, currentProject->filesForUrl(currentPath) ) {
-        kDebug() << "File: " << file->fileName();
+    
+    // easiest case: current directory
+    KUrl filename(currentPath.directory(KUrl::AppendTrailingSlash) + modulePath.first() + ".py");
+    kDebug() << "filename url: " << filename;
+    if ( currentProject->filesForUrl(filename).length() > 0 ) {
+        ProjectFileItem* result = currentProject->filesForUrl(filename).first();
+        kDebug() << "Found! " << result->url();
+        return result->url();
     }
-    QStringList modulePath = name.split(".");
+    
     return KUrl();
 }
 
@@ -187,9 +196,12 @@ void ContextBuilder::visitImport(ImportAst* node)
         Identifier* variableDeclarationName = name->asName ? name->asName->identifier : name->name;
         
         KUrl moduleFilePath = findModulePath(name->name->value);
-        continue;
-        TopDUContext* moduleChain = DUChain::self()->chainForDocument(KUrl(moduleFilePath));
-        currentContext()->addImportedParentContext(moduleChain);
+        if ( ! moduleFilePath.isValid() ) continue;
+        else {
+            DUChainWriteLocker lock(DUChain::lock());
+            TopDUContext* moduleChain = DUChain::self()->chainForDocument(KUrl(moduleFilePath));
+            currentContext()->addImportedParentContext(moduleChain);
+        }
     }
     Python::AstDefaultVisitor::visitImport(node);
 }

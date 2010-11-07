@@ -78,16 +78,25 @@ QString AstBuilder::getXmlForFile(KUrl filename, const QString& contents)
     
     if ( ! result.length() ) {
         result = parser->readAllStandardError();
-        QStringList position = result.split(":");
+        QStringList position = result.split(":::");
         qint64 lineno = position.at(0).toInt() - 1;
-        qint64 colno = position.at(0).toInt() - 1;
+        qint64 colno = position.at(1).toInt() - 1;
         
         kDebug() << lineno << colno;
         
+        QString additionalExplanation = "";
+        if ( position.at(2) == "SyntaxError" ) {
+            additionalExplanation = "Something's wrong with your syntax. Check for missing brackets, commas, and colons.";
+        }
+        else if ( position.at(2) == "IndentationError" ) {
+            additionalExplanation = "You indented your code incorrectly. Also check that you didn't mix tabs and spaces in an incorrect way!";
+        }
+        
         KDevelop::ProblemPointer p(new KDevelop::Problem());
-        p->setFinalLocation(KDevelop::DocumentRange(KDevelop::IndexedString(filename), KDevelop::SimpleRange(lineno, colno - 1, lineno, colno + 1)));
-        p->setSource(KDevelop::ProblemData::Disk);
-        p->setDescription(result);
+        p->setFinalLocation(KDevelop::DocumentRange(KDevelop::IndexedString(filename), KDevelop::SimpleRange(lineno, colno - 5 < 0 ? 0 : colno - 5, lineno, colno + 5)));
+        p->setSource(KDevelop::ProblemData::Parser);
+        p->setDescription(position.at(2));
+        p->setExplanation(position.at(3) + "<br><br>" + additionalExplanation);
         p->setSeverity(KDevelop::ProblemData::Error);
         {
             DUChainWriteLocker lock(DUChain::lock());

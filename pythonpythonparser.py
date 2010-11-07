@@ -77,6 +77,7 @@ v = KDevelopNodeVisitor()
 try:
     v.visit(ast.parse(f))
 except Exception as e:
-    sys.stderr.write(str(e.lineno) + ':' + str(e.offset))
+    sys.stderr.write(str(e.lineno) + ':::' + str(e.offset))
+    sys.stderr.write(":::" + str(type(e)).replace('<type \'exceptions.', '').replace('\'>', '') + ':::' + str(e.msg) + ": \"" + str(e.text).replace("\n", "") + "\"")
 else:
     sys.stdout.write(etree.tostring(v.basenode, xml_declaration=True, pretty_print=True, encoding='UTF-8'))

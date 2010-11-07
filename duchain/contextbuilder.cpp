@@ -139,8 +139,7 @@ void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
     openContext( node, DUContext::Class, identifierForNode( node->name ) );
     addImportedContexts();
-    visitNodeList( node->baseClasses );
-    visitNodeList( node->body );
+    Python::AstDefaultVisitor::visitClassDefinition(node);
     closeContext();
 }
 
@@ -228,28 +227,8 @@ void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 
     openContextForStatementList( node->body );
     m_importedParentContexts.clear();
+//     Python::AstDefaultVisitor::visitFunctionDefinition(node);
 }
-
-// void ContextBuilder::visitFor( ForAst* node )
-// {
-//     DUContext* forctx = openContext( node, KDevelop::DUContext::Other );
-//     visitNode(node->target);
-//     closeContext();
-// 
-//     visitNode(node->iterator);
-// 
-//     m_importedParentContexts = QList<DUContext*>() << forctx;
-//     openContextForStatementList( node->body );
-//     openContextForStatementList( node->orelse );
-//     m_importedParentContexts.clear();
-// }
-
-// void ContextBuilder::visitWhile( WhileAst* node )
-// {
-//     visitNode( node->condition );
-//     openContextForStatementList( node->body );
-//     openContextForStatementList( node->orelse );
-// }
 
 void ContextBuilder::visitWith( WithAst * node )
 {
@@ -259,27 +238,7 @@ void ContextBuilder::visitWith( WithAst * node )
 
     openContextForStatementList( node->body );
     m_importedParentContexts.clear();
+    Python::AstDefaultVisitor::visitWith(node);
 }
-
-// void ContextBuilder::visitTry( TryAst* node )
-// {
-//     kDebug() << "creating contexts for try";
-//     openContextForStatementList( node->tryBody );
-//     visitNodeList( node->exceptions );
-//     openContextForStatementList( node->elseBody );
-//     openContextForStatementList( node->finallyBody );
-// }
-
-// void ContextBuilder::visitIf( IfAst* node )
-// {
-//     visitNode( node->condition );
-//     openContextForStatementList( node->body );
-//     
-//     foreach ( StatementAst* current, node->body) {
-//         visitNode(current);
-//     }
-// 
-//     openContextForStatementList( node->orelse );
-// }
 
 }

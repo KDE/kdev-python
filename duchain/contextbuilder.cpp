@@ -121,7 +121,7 @@ void ContextBuilder::addImportedContexts()
     }
 }
 
-void ContextBuilder::openContextForStatementList( const QList<StatementAst*>& l )
+void ContextBuilder::openContextForStatementList( const QList<Ast*>& l )
 {
     if ( l.count() > 0 )
     {

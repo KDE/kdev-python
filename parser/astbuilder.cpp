@@ -400,7 +400,7 @@ ClassDefinitionAst* AstBuilder::populateClassDefinitonAst(Ast* ast, const Python
 {
     ClassDefinitionAst* currentNode = dynamic_cast<ClassDefinitionAst*>(ast);
     currentNode->baseClasses = resolveNodeList<ExpressionAst>(currentAttributes.value("NRLST_bases"));
-    currentNode->body = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_body"));
+    currentNode->body = resolveNodeList<Ast>(currentAttributes.value("NRLST_body"));
     currentNode->decorators = resolveNodeList<ExpressionAst>(currentAttributes.value("NRLST_decorator_list"));
     currentNode->name = createIdentifier(currentAttributes.value("name"), currentNode);
     currentNode->name->startCol += 6; // TODO fix this! ;D
@@ -412,7 +412,7 @@ FunctionDefinitionAst* AstBuilder::populateFunctionDefinitionAst(Ast* ast, const
 {
     FunctionDefinitionAst* currentNode = dynamic_cast<FunctionDefinitionAst*>(ast);
     currentNode->arguments = resolveNode<ArgumentsAst>(currentAttributes.value("NR_args"));
-    currentNode->body = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_body"));
+    currentNode->body = resolveNodeList<Ast>(currentAttributes.value("NRLST_body"));
     currentNode->decorators = resolveNodeList<NameAst>(currentAttributes.value("NRLST_decorator_list"));
     currentNode->name = createIdentifier(currentAttributes.value("name"), currentNode);
     currentNode->name->startCol += 4; // TODO fix this! ;D
@@ -445,8 +445,8 @@ DeleteAst* AstBuilder::populateDeleteAst(Ast* ast, const Python::stringDictionar
 ForAst* AstBuilder::populateForAst(Ast* ast, const Python::stringDictionary& currentAttributes)
 {
     ForAst* currentNode = dynamic_cast<ForAst*>(ast);
-    currentNode->body = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_body"));
-    currentNode->orelse = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_orelse"));
+    currentNode->body = resolveNodeList<Ast>(currentAttributes.value("NRLST_body"));
+    currentNode->orelse = resolveNodeList<Ast>(currentAttributes.value("NRLST_orelse"));
     currentNode->iterator = resolveNode<ExpressionAst>(currentAttributes.value("NR_iter"));
     currentNode->target = resolveNode<ExpressionAst>(currentAttributes.value("NR_target"));
     return currentNode;
@@ -471,9 +471,9 @@ ReturnAst* AstBuilder::populateReturnAst(Ast* ast, const Python::stringDictionar
 IfAst* AstBuilder::populateIfAst(Ast* ast, const Python::stringDictionary& currentAttributes)
 {
     IfAst* currentNode = dynamic_cast<IfAst*>(ast);
-    currentNode->body = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_body"));
+    currentNode->body = resolveNodeList<Ast>(currentAttributes.value("NRLST_body"));
     currentNode->condition = resolveNode<ExpressionAst>(currentAttributes.value("NR_test"));
-    currentNode->orelse = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_orelse"));
+    currentNode->orelse = resolveNodeList<Ast>(currentAttributes.value("NRLST_orelse"));
     return currentNode;
 }
 
@@ -507,8 +507,8 @@ LambdaAst* AstBuilder::populateLambdaAst(Ast* ast, const Python::stringDictionar
 WhileAst* AstBuilder::populateWhileAst(Ast* ast, const Python::stringDictionary& currentAttributes)
 {
     WhileAst* currentNode = dynamic_cast<WhileAst*>(ast);
-    currentNode->body = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_body"));
-    currentNode->orelse = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_orelse"));
+    currentNode->body = resolveNodeList<Ast>(currentAttributes.value("NRLST_body"));
+    currentNode->orelse = resolveNodeList<Ast>(currentAttributes.value("NRLST_orelse"));
     currentNode->condition = resolveNode<ExpressionAst>(currentAttributes.value("NR_test"));
     return currentNode;
 }
@@ -556,17 +556,17 @@ RaiseAst* AstBuilder::populateRaiseAst(Ast* ast, const Python::stringDictionary&
 TryExceptAst* AstBuilder::populateTryExceptAst(Ast* ast, const Python::stringDictionary& currentAttributes)
 {
     TryExceptAst* currentNode = dynamic_cast<TryExceptAst*>(ast);
-    currentNode->body = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_body"));
+    currentNode->body = resolveNodeList<Ast>(currentAttributes.value("NRLST_body"));
     currentNode->handlers = resolveNodeList<ExceptionHandlerAst>(currentAttributes.value("NRLST_handlers"));
-    currentNode->orelse = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_orelse"));
+    currentNode->orelse = resolveNodeList<Ast>(currentAttributes.value("NRLST_orelse"));
     return currentNode;
 }
 
 TryFinallyAst* AstBuilder::populateTryFinallyAst(Ast* ast, const Python::stringDictionary& currentAttributes)
 {
     TryFinallyAst* currentNode = dynamic_cast<TryFinallyAst*>(ast);
-    currentNode->body = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_body"));
-    currentNode->finalbody = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_finalbody"));
+    currentNode->body = resolveNodeList<Ast>(currentAttributes.value("NRLST_body"));
+    currentNode->finalbody = resolveNodeList<Ast>(currentAttributes.value("NRLST_finalbody"));
     return currentNode;
 }
 
@@ -646,7 +646,7 @@ ListComprehensionAst* AstBuilder::populateListComprehensionAst(Ast* ast, const P
 WithAst* AstBuilder::populateWithAst(Ast* ast, const Python::stringDictionary& currentAttributes)
 {
     WithAst* currentNode = dynamic_cast<WithAst*>(ast);
-    currentNode->body = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_body"));
+    currentNode->body = resolveNodeList<Ast>(currentAttributes.value("NRLST_body"));
     currentNode->contextExpression = resolveNode<ExpressionAst>(currentAttributes.value("NR_context_expr"));
     currentNode->optionalVars = resolveNode<ExpressionAst>(currentAttributes.value("NR_optional_vars"));
     return currentNode;
@@ -724,7 +724,7 @@ ArgumentsAst* AstBuilder::populateArgumentsAst(Ast* ast, const Python::stringDic
 ExceptionHandlerAst* AstBuilder::populateExceptionHandlerAst(Ast* ast, const Python::stringDictionary& currentAttributes)
 {
     ExceptionHandlerAst* currentNode = dynamic_cast<ExceptionHandlerAst*>(ast);
-    currentNode->body = resolveNodeList<StatementAst>(currentAttributes.value("NRLST_body"));
+    currentNode->body = resolveNodeList<Ast>(currentAttributes.value("NRLST_body"));
     currentNode->name = resolveNode<ExpressionAst>(currentAttributes.value("NR_name"));
     currentNode->type = resolveNode<ExpressionAst>(currentAttributes.value("NR_type"));
     return currentNode;

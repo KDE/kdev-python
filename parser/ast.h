@@ -215,7 +215,7 @@ public:
     Identifier* name;
     ArgumentsAst* arguments;
     QList<NameAst*> decorators;
-    QList<StatementAst*> body;
+    QList<Ast*> body;
 };
 
 class KDEVPYTHONPARSER_EXPORT ClassDefinitionAst : public StatementAst {
@@ -223,7 +223,7 @@ public:
     ClassDefinitionAst(Ast* parent);
     Identifier* name;
     QList<ExpressionAst*> baseClasses;
-    QList<StatementAst*> body;
+    QList<Ast*> body;
     QList<ExpressionAst*> decorators;
 };
 
@@ -259,24 +259,24 @@ public:
     ForAst(Ast* parent);
     ExpressionAst* target;
     ExpressionAst* iterator;
-    QList<StatementAst*> body;
-    QList<StatementAst*> orelse;
+    QList<Ast*> body;
+    QList<Ast*> orelse;
 };
 
 class KDEVPYTHONPARSER_EXPORT WhileAst : public StatementAst {
 public:
     WhileAst(Ast* parent);
     ExpressionAst* condition;
-    QList<StatementAst*> body;
-    QList<StatementAst*> orelse;
+    QList<Ast*> body;
+    QList<Ast*> orelse;
 };
 
 class KDEVPYTHONPARSER_EXPORT IfAst : public StatementAst {
 public:
     IfAst(Ast* parent);
     ExpressionAst* condition;
-    QList<StatementAst*> body;
-    QList<StatementAst*> orelse;
+    QList<Ast*> body;
+    QList<Ast*> orelse;
 };
 
 class KDEVPYTHONPARSER_EXPORT WithAst : public StatementAst {
@@ -284,7 +284,7 @@ public:
     WithAst(Ast* parent);
     ExpressionAst* contextExpression;
     ExpressionAst* optionalVars;
-    QList<StatementAst*> body;
+    QList<Ast*> body;
 };
 
 class KDEVPYTHONPARSER_EXPORT RaiseAst : public StatementAst {
@@ -297,16 +297,16 @@ public:
 class KDEVPYTHONPARSER_EXPORT TryExceptAst : public StatementAst {
 public:
     TryExceptAst(Ast* parent);
-    QList<StatementAst*> body;
+    QList<Ast*> body;
     QList<ExceptionHandlerAst*> handlers;
-    QList<StatementAst*> orelse;
+    QList<Ast*> orelse;
 };
 
 class KDEVPYTHONPARSER_EXPORT TryFinallyAst : public StatementAst {
 public:
     TryFinallyAst(Ast* parent);
-    QList<StatementAst*> body;
-    QList<StatementAst*> finalbody;
+    QList<Ast*> body;
+    QList<Ast*> finalbody;
 };
 
 class KDEVPYTHONPARSER_EXPORT AssertionAst : public StatementAst {
@@ -605,7 +605,7 @@ public:
     ExceptionHandlerAst(Ast* parent);
     ExpressionAst* type;
     ExpressionAst* name;
-    QList<StatementAst*> body;
+    QList<Ast*> body;
 };
 
 class KDEVPYTHONPARSER_EXPORT AliasAst : public Ast {

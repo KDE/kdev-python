@@ -94,7 +94,7 @@ protected:
     ReferencedTopDUContext m_topContext;
 
 private:
-    void openContextForStatementList( const QList<StatementAst*>& );
+    void openContextForStatementList( const QList<Ast*>& );
 
     QList<KDevelop::DUContext*> m_importedParentContexts;
 };

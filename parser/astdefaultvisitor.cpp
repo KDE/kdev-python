@@ -86,10 +86,10 @@ void AstDefaultVisitor::visitFor(ForAst* node)
 {
     visitNode(node->target);
     visitNode(node->iterator);
-    foreach (StatementAst* statement, node->body) {
+    foreach (Ast* statement, node->body) {
         visitNode(statement);
     }
-    foreach (StatementAst* statement, node->orelse) {
+    foreach (Ast* statement, node->orelse) {
         visitNode(statement);
     }
 }
@@ -105,10 +105,10 @@ void AstDefaultVisitor::visitGeneratorExpression(GeneratorExpressionAst* node)
 void AstDefaultVisitor::visitIf(IfAst* node)
 {
     visitNode(node->condition);
-    foreach (StatementAst* statement, node->body) {
+    foreach (Ast* statement, node->body) {
         visitNode(statement);
     }
-    foreach (StatementAst* statement, node->orelse) {
+    foreach (Ast* statement, node->orelse) {
         visitNode(statement);
     }
 }
@@ -190,23 +190,23 @@ void AstDefaultVisitor::visitSubscript(SubscriptAst* node)
 
 void AstDefaultVisitor::visitTryExcept(TryExceptAst* node)
 {
-    foreach (StatementAst* statement, node->body) {
+    foreach (Ast* statement, node->body) {
         visitNode(statement);
     }
     foreach (ExceptionHandlerAst* handler, node->handlers) {
         visitNode(handler);
     }
-    foreach (StatementAst* statement, node->orelse) {
+    foreach (Ast* statement, node->orelse) {
         visitNode(statement);
     }
 }
 
 void AstDefaultVisitor::visitTryFinally(TryFinallyAst* node)
 {
-    foreach (StatementAst* statement, node->body) {
+    foreach (Ast* statement, node->body) {
         visitNode(statement);
     }
-    foreach (StatementAst* statement, node->finalbody) {
+    foreach (Ast* statement, node->finalbody) {
         visitNode(statement);
     }
 }
@@ -226,10 +226,10 @@ void AstDefaultVisitor::visitUnaryOperation(UnaryOperationAst* node)
 void AstDefaultVisitor::visitWhile(WhileAst* node)
 {
     visitNode(node->condition);
-    foreach (StatementAst* statement, node->body) {
+    foreach (Ast* statement, node->body) {
         visitNode(statement);
     }
-    foreach (StatementAst* statement, node->orelse) {
+    foreach (Ast* statement, node->orelse) {
         visitNode(statement);
     }
 }
@@ -238,7 +238,7 @@ void AstDefaultVisitor::visitWith(WithAst* node)
 {
     visitNode(node->contextExpression);
     visitNode(node->optionalVars);
-    foreach (StatementAst* statement, node->body) {
+    foreach (Ast* statement, node->body) {
         visitNode(statement);
     }
 }
@@ -267,7 +267,7 @@ void AstDefaultVisitor::visitExceptionHandler(ExceptionHandlerAst* node)
 {
     visitNode(node->type);
     visitNode(node->name);
-    foreach (StatementAst* statement, node->body) {
+    foreach (Ast* statement, node->body) {
         visitNode(statement);
     }
 }
@@ -315,7 +315,7 @@ void AstDefaultVisitor::visitClassDefinition(ClassDefinitionAst* node)
     foreach (ExpressionAst* expression, node->baseClasses) {
         visitNode(expression);
     }
-    foreach (StatementAst* statement, node->body) {
+    foreach (Ast* statement, node->body) {
         visitNode(statement);
     }
     foreach (ExpressionAst* expression, node->decorators) {

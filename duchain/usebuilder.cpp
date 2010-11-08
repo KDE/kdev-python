@@ -44,21 +44,17 @@ UseBuilder::UseBuilder (PythonEditorIntegrator* editor) : m_editor(editor)
 {
 }
 
-// void UseBuilder::buildUses(Ast *node)
-// {
-//     supportBuild(node);
-// //     if (TopDUContext* top = dynamic_cast<TopDUContext*>(m_session->getNode(node)))
-// //         top->setHasUses(true);
-// }
-
 void UseBuilder::visitName(NameAst* node)
 {
     DUChainWriteLocker lock(DUChain::lock());
     DUContext* current = currentContext();
-    QList<Declaration*> declarations = currentContext()->findDeclarations(identifierForNode(node->identifier), editorFindRange(node, node).end);
+    QList<Declaration*> declarations = currentContext()->findDeclarations(identifierForNode(node->identifier), editorFindRange(node, node).start);
+    QList<Declaration*> isDecl = currentContext()->findDeclarations(identifierForNode(node->identifier), editorFindRange(node, node).end); // TODO not so elegant ;D
     Declaration* declaration;
     if ( declarations.length() ) declaration = declarations.last();
     else declaration = 0;
+    
+    if ( ! declarations.length() && isDecl.length() ) return;
     
     Q_ASSERT(node->identifier);
     Q_ASSERT(node->hasUsefulRangeInformation); // TODO remove this!

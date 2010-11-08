@@ -46,7 +46,8 @@ public:
 //     void buildUses(Python::Ast* node);
     virtual void openContext(KDevelop::DUContext* newContext);
     virtual void closeContext();
-    
+
+protected:
 //     virtual void visitIdentifier(Identifier* node);
     virtual void visitName(NameAst* node);
 private:

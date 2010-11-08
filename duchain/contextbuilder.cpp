@@ -39,6 +39,7 @@
 #include <interfaces/iprojectcontroller.h>
 #include <project/projectmodel.h>
 #include <interfaces/iproject.h>
+#include "usebuilder.h"
 
 using namespace KDevelop;
 
@@ -149,12 +150,12 @@ void ContextBuilder::visitArguments(ArgumentsAst* node)
 }
 
 void ContextBuilder::visitCode(CodeAst* node) {
-    AstDefaultVisitor::visitCode(node);
     DUChainWriteLocker lock(DUChain::lock());
     TopDUContext* internal = DUChain::self()->chainForDocument(KUrl("/home/sven/projects/kde4/python/documentation/test.py"));
     if ( internal ) {
         currentContext()->addImportedParentContext(internal);
     }
+    AstDefaultVisitor::visitCode(node);
 }
 
 KUrl ContextBuilder::findModulePath(const QString& name)
@@ -227,7 +228,6 @@ void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 
     openContextForStatementList( node->body );
     m_importedParentContexts.clear();
-//     Python::AstDefaultVisitor::visitFunctionDefinition(node);
 }
 
 void ContextBuilder::visitWith( WithAst * node )
@@ -238,7 +238,6 @@ void ContextBuilder::visitWith( WithAst * node )
 
     openContextForStatementList( node->body );
     m_importedParentContexts.clear();
-    Python::AstDefaultVisitor::visitWith(node);
 }
 
 }

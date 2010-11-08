@@ -125,7 +125,6 @@ Declaration* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast*
 void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
 {
     if ( node->name ) visitVariableDeclaration(node->name); // except Error as <vardecl>
-    Python::AstDefaultVisitor::visitExceptionHandler(node);
 }
 
 void DeclarationBuilder::visitFor(ForAst* node)
@@ -174,7 +173,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
     kDebug() << "opening class definition";
-    ContextBuilder::visitClassDefinition( node );
+    DeclarationBuilderBase::visitClassDefinition( node );
     openDeclaration<Declaration>( node->name, node );
     eventuallyAssignInternalContext();
     closeDeclaration();
@@ -241,11 +240,11 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 FunctionType::Ptr type = currentType<FunctionType>();
                 if ( type && paramDeclaration ) type->addArgument(paramDeclaration->abstractType());
             }
-            visitNode(expression);
+            else {
+                DeclarationBuilderBase::visitArguments(node);
+            }
         }
     }
-    
-    AstDefaultVisitor::visitArguments(node);
 }
 
 }

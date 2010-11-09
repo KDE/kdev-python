@@ -43,7 +43,7 @@ public:
 //     UseBuilder(PythonEditorIntegrator* editor, const KUrl &url);
     UseBuilder(PythonEditorIntegrator *editor);
     ParseSession* parseSession() const;
-//     void buildUses(Python::Ast* node);
+    void buildUses(Python::Ast* node);
     virtual void openContext(KDevelop::DUContext* newContext);
     virtual void closeContext();
 

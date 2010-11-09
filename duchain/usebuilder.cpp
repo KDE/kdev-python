@@ -44,6 +44,12 @@ UseBuilder::UseBuilder (PythonEditorIntegrator* editor) : m_editor(editor)
 {
 }
 
+void UseBuilder::buildUses(Ast* node)
+{
+    UseBuilderBase::buildUses(node);
+}
+
+
 void UseBuilder::visitName(NameAst* node)
 {
     DUChainWriteLocker lock(DUChain::lock());

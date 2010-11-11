@@ -122,23 +122,28 @@ void ContextBuilder::addImportedContexts()
     }
 }
 
-void ContextBuilder::openContextForStatementList( const QList<Ast*>& l )
+void ContextBuilder::openContextForStatementList( const QList<Ast*>& l, DUContext::ContextType type)
 {
     if ( l.count() > 0 )
     {
         Ast* first = l.first();
         Ast* last = l.last();
-        openContext(first, RangeInRevision(first->startLine - 1, first->startCol, last->endLine + 1, 10000), DUContext::Other );
-        kDebug() << " +++ opening context: " << first->startLine - 1 << ":" << first->startCol << " -- " << last->endLine + 1 << "inf";
+        Q_ASSERT(first->hasUsefulRangeInformation); // TODO remove this
+        RangeInRevision range(RangeInRevision(first->startLine - 1, first->startCol, last->endLine + 1, 10000));
+        DUContext* rangectx = openContext(first, range, DUContext::Other );
+        kDebug() << " +++ opening context (stmlist): " << range.castToSimpleRange();
         addImportedContexts();
         visitNodeList( l );
         closeContext();
+        kDebug() << " --- closed context (stmlist): line " << rangectx->range().castToSimpleRange();
     }
 }
 
 void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
-    openContext( node, DUContext::Class, identifierForNode( node->name ) );
+    RangeInRevision range(node->body.first()->startLine, node->body.first()->startCol, node->body.first()->endLine, node->body.last()->endCol);
+    openContext( node, range, DUContext::Class, identifierForNode( node->name ) );
+    kDebug() << " +++ opening CLASS context: " << range.castToSimpleRange();
     addImportedContexts();
     Python::AstDefaultVisitor::visitClassDefinition(node);
     closeContext();
@@ -216,20 +221,23 @@ void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 
     if ( node->arguments )
     {
-        DUContext* funcctx = openContext( node->arguments, node->arguments, DUContext::Function, identifierForNode( node->name ) );
-        addImportedContexts();
+        RangeInRevision range(node->startLine, node->startCol, node->startLine, 10000);
+        DUContext* funcctx = openContext( node->arguments, range, DUContext::Other, identifierForNode( node->name ) );
+        kDebug() << " +++ opening FUNCTION ARGUMENTS context: " << node->arguments->startLine - 1 << ":" << node->arguments->startCol << " -- " << node->arguments->endLine + 1 << "inf";
+//         addImportedContexts();
         visitNode( node->arguments );
         closeContext();
         m_importedParentContexts.append( funcctx );
     }
 
-    openContextForStatementList( node->body );
+    openContextForStatementList( node->body, DUContext::Function);
     m_importedParentContexts.clear();
 }
 
 void ContextBuilder::visitWith( WithAst * node )
 {
     m_importedParentContexts = QList<DUContext*>() << openContext( node->contextExpression, DUContext::Other );
+    kDebug() << " +++ opening context: " << node->startLine - 1 << ":" << node->startCol << " -- " << node->endLine + 1 << "inf";
     visitNode( node->contextExpression );
     closeContext();
 

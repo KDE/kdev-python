@@ -74,6 +74,8 @@ protected:
     virtual void visitImport(ImportAst* node);
     virtual void visitImportFrom(ImportFromAst* node);
     
+    DUContext* openSafeContext( Python::Ast* node, RangeInRevision& range, DUContext::ContextType type, Python::Identifier* identifier = 0 );
+    
     QMap<QString, TopDUContextPointer> contextsForModules;
 
     static PythonEditorIntegrator* m_editor;
@@ -94,7 +96,7 @@ protected:
     ReferencedTopDUContext m_topContext;
 
 private:
-    void openContextForStatementList( const QList<Ast*>& );
+    void openContextForStatementList( const QList<Ast*>&, DUContext::ContextType type = DUContext::Other);
 
     QList<KDevelop::DUContext*> m_importedParentContexts;
 };

@@ -849,6 +849,20 @@ void AstBuilder::populateAst()
             case Ast::StatementAstType:                             break; // ok
             default:                                                kWarning() << "Unsupported AST type: " << currentAbstractNode->astType; break;
         }
+        
+        // Walk throguh the tree and set proper end columns and lines, as the python parser sadly does not do this for us
+        if ( currentAbstractNode->hasUsefulRangeInformation ) {
+            Ast* parent = currentAbstractNode->parent;
+            while ( parent ) {
+                if ( parent->endLine < currentAbstractNode->endLine ) {
+                    kWarning() << "Adjusting parent range information";
+                    parent->endLine = currentAbstractNode->endLine;
+                    parent->endCol = currentAbstractNode->endCol;
+                }
+                parent = parent->parent;
+            }
+        }
+        
     }
 }
     

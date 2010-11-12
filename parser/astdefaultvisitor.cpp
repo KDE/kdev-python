@@ -45,7 +45,6 @@ void AstDefaultVisitor::visitCode(CodeAst* node)
 {
     kDebug() << "Visiting code";
     foreach (Ast* statement, node->body) {
-        kDebug() << statement->astType << Ast::ExpressionAstType;
         visitNode(statement);
     }
 }

@@ -152,27 +152,18 @@ void AstBuilder::parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::Tok
         else if ( token == QXmlStreamReader::StartElement ) {
             // Here we can now assemble an actual node with the attributes extracted above
             
-            kDebug() << "PRocessing: " << currentElementName;
-            
             // Skip the document root element
             if ( currentElementName == "pythonast" ) {
                 parseXmlAstNode(xmlast, token);
                 continue;
             }
             
-//             kDebug() << "Token: " << token << "; " << "Name: " << currentElementName << "; Text: " << currentElementText;
-//             for ( int i=0; i<currentElementAttributes.length(); i++ ) {
-//                 kDebug() << currentElementAttributes.at(i).name() << currentElementAttributes.at(i).value();
-//             }
-            
             // this will push a parent onto the stack
             nodeAdded = parseAstNode(currentElementName, currentElementText, currentElementAttributes);
             if ( ! nodeAdded ) {
                 m_isRealNodeMap.append(false);
-                kDebug() << "ADD (false) " << xmlast->name() << "; new length: " << m_nodeStack.length();
                 continue;
             }
-            kDebug() << "ADD (true) " << xmlast->name() << "; new length: " << m_nodeStack.length();
             m_isRealNodeMap.append(true);
             
             m_currentNode = m_nodeStack.last();
@@ -186,9 +177,7 @@ void AstBuilder::parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::Tok
             bool isreal = m_isRealNodeMap.last();
             m_isRealNodeMap.removeLast();
             
-            kDebug() << "real: " << isreal << "; cnt: " << m_nodeStack.length() << currentElementName;
             if ( isreal ) {
-                kDebug() << "REM " << m_nodeStack.last();
                 m_currentNode = m_nodeStack.last();
                 m_nodeStack.removeLast();
             }
@@ -875,15 +864,12 @@ void AstBuilder::populateAst()
             Ast* parent = currentAbstractNode->parent;
             while ( parent ) {
                 if ( parent->endLine < currentAbstractNode->endLine ) {
-                    kWarning() << "Adjusting parent end range information to" << currentAbstractNode->endLine << currentAbstractNode->endCol;
                     parent->endLine = currentAbstractNode->endLine;
                     parent->endCol = currentAbstractNode->endCol;
                 }
                 parent = parent->parent;
             }
         }
-        kDebug() << "Done adjusting ranges.";
-        
     }
 }
     

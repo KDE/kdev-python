@@ -233,14 +233,14 @@ void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         ecol = node->arguments->arguments.last()->endCol;
         
         RangeInRevision range(sline, scol, eline, ecol+100000);
-        DUContext* funcctx = openContext( node->arguments, range, DUContext::Other);
+        DUContext* funcctx = openContext( node->arguments, range, DUContext::Function);
         kDebug() << " +++ opening FUNCTION ARGUMENTS context: " << funcctx->range().castToSimpleRange();
         visitNode( node->arguments );
         closeContext();
         m_importedParentContexts.append( funcctx );
     }
     
-    DUContext* ctx = openContext(first, range, DUContext::Other, identifierForNode( node->name ) );
+    DUContext* ctx = openContext(first, range, DUContext::Function, identifierForNode( node->name ) );
     kDebug() << " +++ opening context (function definition): " << range.castToSimpleRange();
     addImportedContexts();
     

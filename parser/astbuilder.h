@@ -61,6 +61,8 @@ private:
     
     // one map for regular ast nodes, and the others for primitive nodes of different types
     QMap<int, Ast*> m_nodeMap;
+    QList<bool> m_isRealNodeMap;
+    
     QMap<int, ExpressionAst::Context> m_contextNodeMap;
     QMap<int, Ast::BooleanOperationTypes> m_boolOpNodeMap;
     QMap<int, Ast::ComparisonOperatorTypes> m_compOpNodeMap;

@@ -152,6 +152,8 @@ void AstBuilder::parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::Tok
         else if ( token == QXmlStreamReader::StartElement ) {
             // Here we can now assemble an actual node with the attributes extracted above
             
+            kDebug() << "PRocessing: " << currentElementName;
+            
             // Skip the document root element
             if ( currentElementName == "pythonast" ) {
                 parseXmlAstNode(xmlast, token);
@@ -165,13 +167,31 @@ void AstBuilder::parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::Tok
             
             // this will push a parent onto the stack
             nodeAdded = parseAstNode(currentElementName, currentElementText, currentElementAttributes);
-            if ( ! nodeAdded ) continue;
+            if ( ! nodeAdded ) {
+                m_isRealNodeMap.append(false);
+                kDebug() << "ADD (false) " << xmlast->name() << "; new length: " << m_nodeStack.length();
+                continue;
+            }
+            kDebug() << "ADD (true) " << xmlast->name() << "; new length: " << m_nodeStack.length();
+            m_isRealNodeMap.append(true);
+            
+            m_currentNode = m_nodeStack.last();
             
             parseXmlAstNode(xmlast, token);
+        }
+        else if ( token == QXmlStreamReader::EndElement ) {
+            if ( currentElementName == "pythonast" ) continue;
             
-            // now we pop this parent off
-            m_currentNode = m_nodeStack.last();
-            m_nodeStack.removeLast();
+            // now we pop the parent off
+            bool isreal = m_isRealNodeMap.last();
+            m_isRealNodeMap.removeLast();
+            
+            kDebug() << "real: " << isreal << "; cnt: " << m_nodeStack.length() << currentElementName;
+            if ( isreal ) {
+                kDebug() << "REM " << m_nodeStack.last();
+                m_currentNode = m_nodeStack.last();
+                m_nodeStack.removeLast();
+            }
         }
         // Everything else (stuff between tags, comments...) is ignored
         else continue;
@@ -855,13 +875,14 @@ void AstBuilder::populateAst()
             Ast* parent = currentAbstractNode->parent;
             while ( parent ) {
                 if ( parent->endLine < currentAbstractNode->endLine ) {
-                    kWarning() << "Adjusting parent range information";
+                    kWarning() << "Adjusting parent end range information to" << currentAbstractNode->endLine << currentAbstractNode->endCol;
                     parent->endLine = currentAbstractNode->endLine;
                     parent->endCol = currentAbstractNode->endCol;
                 }
                 parent = parent->parent;
             }
         }
+        kDebug() << "Done adjusting ranges.";
         
     }
 }

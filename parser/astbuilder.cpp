@@ -79,12 +79,19 @@ QString AstBuilder::getXmlForFile(KUrl filename, const QString& contents)
     if ( ! result.length() ) {
         result = parser->readAllStandardError();
         QStringList position = result.split(":::");
+        
+        QString additionalExplanation = "";
+        if ( position.length() < 4 ) {
+            kError() << "Could not parse error message! This should not happen.";
+            kError() << "Raw data was: " << result;
+            return "0";
+        }
+        
         qint64 lineno = position.at(0).toInt() - 1;
         qint64 colno = position.at(1).toInt() - 1;
         
         kDebug() << lineno << colno;
         
-        QString additionalExplanation = "";
         if ( position.at(2) == "SyntaxError" ) {
             additionalExplanation = "Something's wrong with your syntax. Check for missing brackets, commas, and colons.";
         }

@@ -216,6 +216,7 @@ void ContextBuilder::visitImport(ImportAst* node)
 void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
     kDebug() << " Building function definition context: " << node->name->value;
+    DUChainWriteLocker lock(DUChain::lock());
     
     visitNodeList( node->decorators );
     
@@ -233,7 +234,9 @@ void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         ecol = node->arguments->arguments.last()->endCol;
         
         RangeInRevision range(sline, scol, eline, ecol+100000);
+        Q_ASSERT(range.isValid());
         DUContext* funcctx = openContext( node->arguments, range, DUContext::Function);
+        kDebug() << funcctx;
         kDebug() << " +++ opening FUNCTION ARGUMENTS context: " << funcctx->range().castToSimpleRange();
         visitNode( node->arguments );
         closeContext();

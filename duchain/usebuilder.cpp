@@ -69,17 +69,17 @@ void UseBuilder::visitName(NameAst* node)
 }
 
 
-void UseBuilder::openContext(DUContext * newContext)
-{
-  UseBuilderBase::openContext(newContext);
-  m_nextUseStack.push(0);
-}
-
-void UseBuilder::closeContext()
-{
-  UseBuilderBase::closeContext();
-  m_nextUseStack.pop();
-}
+// void UseBuilder::openContext(DUContext * newContext)
+// {
+//   UseBuilderBase::openContext(newContext);
+//   m_nextUseStack.push(0);
+// }
+// 
+// void UseBuilder::closeContext()
+// {
+//   UseBuilderBase::closeContext();
+//   m_nextUseStack.pop();
+// }
 
 
 ParseSession *UseBuilder::parseSession() const

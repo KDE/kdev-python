@@ -125,6 +125,7 @@ Declaration* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast*
 void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
 {
     if ( node->name ) visitVariableDeclaration(node->name); // except Error as <vardecl>
+    DeclarationBuilderBase::visitExceptionHandler(node);
 }
 
 void DeclarationBuilder::visitFor(ForAst* node)

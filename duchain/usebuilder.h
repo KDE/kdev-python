@@ -44,8 +44,8 @@ public:
     UseBuilder(PythonEditorIntegrator *editor);
     ParseSession* parseSession() const;
     void buildUses(Python::Ast* node);
-    virtual void openContext(KDevelop::DUContext* newContext);
-    virtual void closeContext();
+//     virtual void openContext(KDevelop::DUContext* newContext);
+//     virtual void closeContext();
 
 protected:
 //     virtual void visitIdentifier(Identifier* node);

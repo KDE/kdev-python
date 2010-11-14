@@ -181,6 +181,7 @@ void ParseJob::run()
         ParsingEnvironmentFilePointer parsingEnvironmentFile = m_duContext->parsingEnvironmentFile();
         parsingEnvironmentFile->setModificationRevision(contents().modification);
         DUChain::self()->updateContextEnvironment(m_duContext, parsingEnvironmentFile.data());
+        m_duContext->clearProblems();
     }
     else
     {

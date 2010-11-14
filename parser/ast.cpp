@@ -221,7 +221,7 @@ NameAst::NameAst(Ast* parent): ExpressionAst(parent, Ast::NameAstType), identifi
     
 }
 
-NumberAst::NumberAst(Ast* parent): ExpressionAst(parent, Ast::NumberAstType), value(0)
+NumberAst::NumberAst(Ast* parent): ExpressionAst(parent, Ast::NumberAstType), value("0")
 {
     
 }
@@ -271,7 +271,7 @@ StatementAst::StatementAst(Ast* parent, AstType type): Ast(parent, type)
     
 }
 
-StringAst::StringAst(Ast* parent): ExpressionAst(parent, Ast::StringAstType), value(0)
+StringAst::StringAst(Ast* parent): ExpressionAst(parent, Ast::StringAstType), value("")
 {
     
 }

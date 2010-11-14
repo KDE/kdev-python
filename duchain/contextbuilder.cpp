@@ -40,6 +40,7 @@
 #include <project/projectmodel.h>
 #include <interfaces/iproject.h>
 #include "usebuilder.h"
+#include "pythonducontext.h"
 
 using namespace KDevelop;
 
@@ -66,10 +67,15 @@ TopDUContext* ContextBuilder::newTopContext(const RangeInRevision& range, Parsin
         file = new ParsingEnvironmentFile(currentDocumentUrl);
         file->setLanguage(IndexedString("python"));
     }
-    TopDUContext* top = new TopDUContext(currentDocumentUrl, range, file);
+    TopDUContext* top = new PythonDUContext<TopDUContext>(currentDocumentUrl, range, file);
     ReferencedTopDUContext ref(top);
     m_topContext = ref;
     return top;
+}
+
+DUContext* ContextBuilder::newContext(const RangeInRevision& range)
+{
+    return new PythonDUContext<DUContext>(range, currentContext());
 }
 
 void ContextBuilder::setEditor(PythonEditorIntegrator* editor)

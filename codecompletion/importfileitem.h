@@ -2,7 +2,7 @@
 #define IMPORTFILEITEM_H
 
 #include <language/codecompletion/abstractincludefilecompletionitem.h>
-#include "navigationwidget.h"
+#include "navigation/navigationwidget.h"
 #include <shell/project.h>
 
 namespace Python {

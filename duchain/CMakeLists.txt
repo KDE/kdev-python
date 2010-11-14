@@ -4,7 +4,8 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
     )
 
 set(duchain_SRCS 
-    navigationwidget.cpp
+    pythonducontext.cpp 
+    navigation/navigationwidget.cpp 
     contextbuilder.cpp
     pythoneditorintegrator.cpp
     declarationbuilder.cpp
@@ -26,3 +27,5 @@ target_link_libraries( kdev4pythonduchain
 
 install(TARGETS kdev4pythonduchain DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
 
+
+add_subdirectory(navigation)

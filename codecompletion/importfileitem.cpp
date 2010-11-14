@@ -1,6 +1,7 @@
 #include "importfileitem.h"
 #include <ktexteditor/document.h>
 #include <language/codecompletion/abstractincludefilecompletionitem.h>
+#include "navigation/navigationwidget.h"
 
 using namespace KDevelop;
 

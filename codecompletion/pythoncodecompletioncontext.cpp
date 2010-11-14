@@ -14,7 +14,7 @@
 #include <language/duchain/duchainpointer.h>
 #include <language/duchain/declaration.h>
 
-#include "navigationwidget.h"
+#include "navigation/navigationwidget.h"
 #include "importfileitem.h"
 #include <qprocess.h>
 #include <interfaces/icore.h>

@@ -31,6 +31,7 @@
 #include <language/duchain/topducontext.h>
 
 #include "pythonduchainexport.h"
+#include "pythonducontext.h"
 
 using namespace KDevelop;
 
@@ -81,6 +82,7 @@ protected:
     static PythonEditorIntegrator* m_editor;
     
     TopDUContext* newTopContext(const RangeInRevision& range, ParsingEnvironmentFile* file);
+    virtual KDevelop::DUContext* newContext(const KDevelop::RangeInRevision& range);
 
     template <typename T> void visitNodeList( const QList<T*>& l )
     {

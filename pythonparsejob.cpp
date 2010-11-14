@@ -190,12 +190,7 @@ void ParseJob::run()
             DUChainReadLocker lock(DUChain::lock());
             m_duContext = DUChain::self()->chainForDocument(document());
         }
-        if ( m_duContext ) {
-            DUChainWriteLocker lock(DUChain::lock());
-            m_duContext->clearProblems();
-            m_duContext->parsingEnvironmentFile()->clearModificationRevisions();
-        }
-        else {
+        if ( ! m_duContext ) {
             DUChainWriteLocker lock(DUChain::lock());
             ParsingEnvironmentFile *file = new ParsingEnvironmentFile(document());
             static const IndexedString langString("python");
@@ -204,6 +199,13 @@ void ParseJob::run()
             m_duContext = new TopDUContext(document(), RangeInRevision(0, 0, INT_MAX, INT_MAX), file);
             DUChain::self()->addDocumentChain(m_duContext);
         }
+        {
+            DUChainWriteLocker lock(DUChain::lock());
+            DUChain::self()->updateContextEnvironment(m_duContext, m_duContext->parsingEnvironmentFile().data());
+            m_duContext->parsingEnvironmentFile()->clearModificationRevisions();
+            m_duContext->clearProblems();
+        }
+        
         DUChainWriteLocker lock(DUChain::lock());
         foreach ( ProblemPointer p, m_session->m_problems ) {
             kDebug() << "Added problem to context";

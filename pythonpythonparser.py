@@ -23,7 +23,7 @@ class KDevelopNodeVisitor(ast.NodeVisitor):
     def __init__(self, *arg, **args):
         super(KDevelopNodeVisitor, self).__init__(*arg, **args)
         self.currentnode = self.basenode
-        
+    
     def generic_visit(self, node):
         self.nodecnt += 1
         

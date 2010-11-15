@@ -5,12 +5,14 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
 
 set(duchain_SRCS 
     pythonducontext.cpp 
-    navigation/navigationwidget.cpp 
     contextbuilder.cpp
     pythoneditorintegrator.cpp
     declarationbuilder.cpp
     usebuilder.cpp
     dumpchain.cpp
+    
+    navigation/navigationwidget.cpp 
+    navigation/declarationnavigationcontext.cpp
 #     typebuilder.cpp
     )
 

@@ -34,6 +34,7 @@ protected:
     KDevelop::NavigationContextPointer registerChild(KDevelop::DeclarationPointer declaration);
 //     virtual KDevelop::QualifiedIdentifier prettyQualifiedIdentifier( KDevelop::DeclarationPointer decl ) const;
 //     virtual void htmlClass();
+    virtual void htmlFunction();
 
     void makeLink( const QString& name, KDevelop::DeclarationPointer declaration, KDevelop::NavigationAction::Type actionType );
 

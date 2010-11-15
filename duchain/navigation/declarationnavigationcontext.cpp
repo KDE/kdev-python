@@ -36,6 +36,11 @@ using namespace KDevelop;
 DeclarationNavigationContext::DeclarationNavigationContext(DeclarationPointer decl, KDevelop::TopDUContextPointer topContext, AbstractNavigationContext* previousContext)
         : AbstractDeclarationNavigationContext(decl, topContext, previousContext)
 {
+    
+}
+
+void DeclarationNavigationContext::htmlFunction() {
+    modifyHtml() += "<dl><dt><a name=\"-random.randint\"><strong>random.randint</strong></a> = randint(self, a, b)<font color=\"#909090\"><font face=\"helvetica, arial\"> method of <a href=\"random.html#Random\">random.Random</a> instance</font></font></dt><dd><tt>Return&nbsp;random&nbsp;integer&nbsp;in&nbsp;range&nbsp;[a,&nbsp;b],&nbsp;including&nbsp;both&nbsp;end&nbsp;points.</tt></dd></dl>";
 }
 
 NavigationContextPointer DeclarationNavigationContext::registerChild(DeclarationPointer declaration)
@@ -50,10 +55,6 @@ void DeclarationNavigationContext::makeLink(const QString& name, DeclarationPoin
 
 QString DeclarationNavigationContext::declarationKind(DeclarationPointer decl)
 {
-    if ( decl->kind() == Declaration::Instance && decl->abstractType()
-         && decl->abstractType()->modifiers() & AbstractType::ConstModifier ) {
-        return i18nc("kind of a php-constant, as shown in the declaration tooltip", "Constant");
-    }
     return AbstractDeclarationNavigationContext::declarationKind(decl);
 }
 

@@ -146,8 +146,17 @@ void DeclarationBuilder::visitImport(ImportAst* node)
         TopDUContextPointer contextptr = contextsForModules.value(name->asName ? name->asName->identifier->value : name->name->value);
         kDebug() << "Chain for document: " << contextptr;
         m_importContextsForImportStatement.push(contextptr);
-        if ( name->asName ) visitVariableDeclaration(name->asName);
-        else visitVariableDeclaration(name->name);
+        Declaration* dec;
+        if ( name->asName ) dec = visitVariableDeclaration(name->asName);
+        else dec = visitVariableDeclaration(name->name);
+        QString moduleName = name->name->value;
+        if ( name->asName && name->asName->identifier ) 
+            moduleName += name->asName->identifier->value;
+        if ( dec ) {
+            DUChainWriteLocker lock(DUChain::lock());
+            dec->setComment(";;module " + moduleName);
+            kDebug() << "Set comment to " << dec->comment();
+        }
         m_importContextsForImportStatement.clear();
     }
 }

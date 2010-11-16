@@ -58,8 +58,8 @@ protected:
     virtual void visitExceptionHandler(ExceptionHandlerAst* node);
     virtual void visitCall(CallAst* node);
     
-    Declaration* visitVariableDeclaration(Ast* node);
-    Declaration* visitVariableDeclaration(Identifier* node, Ast* originalAst = 0);
+    template<typename T> T* visitVariableDeclaration(Ast* node);
+    template<typename T> T* visitVariableDeclaration(Identifier* node, Ast* originalAst = 0);
     
     QStack<TopDUContextPointer> m_importContextsForImportStatement;
     

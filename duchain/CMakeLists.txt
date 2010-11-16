@@ -3,7 +3,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     )
 
-set(duchain_SRCS 
+set(duchain_SRCS declarations/importedmoduledeclaration.cpp 
     pythonducontext.cpp 
     contextbuilder.cpp
     pythoneditorintegrator.cpp
@@ -31,3 +31,4 @@ install(TARGETS kdev4pythonduchain DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 
 add_subdirectory(navigation)
+add_subdirectory(declarations)

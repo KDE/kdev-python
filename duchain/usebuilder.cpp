@@ -65,7 +65,7 @@ void UseBuilder::visitName(NameAst* node)
     Q_ASSERT(node->identifier);
     Q_ASSERT(node->hasUsefulRangeInformation); // TODO remove this!
     kDebug() << " Registeriung use for " << node->identifier->value << " at " << node->identifier->startLine << ":" << node->identifier->endCol << "->" << node->identifier->endLine << ":" << node->identifier->endCol + 1 << "with dec" << declaration;
-    UseBuilderBase::newUse(node, RangeInRevision(node->identifier->startLine, node->identifier->startCol, node->identifier->endLine, node->identifier->endCol + 1), declaration); // +1 for whatever reason
+    UseBuilderBase::newUse(node, RangeInRevision(node->identifier->startLine, node->identifier->startCol, node->identifier->endLine, node->identifier->endCol + 1), DeclarationPointer(declaration)); // +1 for whatever reason
 }
 
 

@@ -16,6 +16,7 @@ public:
     importedModuleDeclaration(DeclarationData& dd, const KDevelop::RangeInRevision& range);
     importedModuleDeclaration(const KDevelop::Declaration& rhs);
     QString m_moduleIdentifier;
+    QString generateDocumentationForModule();
 };
 
 }

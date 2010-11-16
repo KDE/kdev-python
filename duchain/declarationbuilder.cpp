@@ -156,8 +156,8 @@ void DeclarationBuilder::visitImport(ImportAst* node)
             moduleName += name->asName->identifier->value;
         if ( dec ) {
             DUChainWriteLocker lock(DUChain::lock());
-            dec->setComment(";;module " + moduleName);
-            kDebug() << "Set comment to " << dec->comment();
+            dec->m_moduleIdentifier = moduleName;
+            kDebug() << "Set comment to " << dec->m_moduleIdentifier;
         }
         m_importContextsForImportStatement.clear();
     }
@@ -167,8 +167,12 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
 {
     Python::AstDefaultVisitor::visitImportFrom(node);
     foreach ( AliasAst* name, node->names ) {
+        importedModuleDeclaration* dec = 0;
         if ( name->asName ) visitVariableDeclaration<importedModuleDeclaration>(name->asName);
         else visitVariableDeclaration<importedModuleDeclaration>(name->name);
+        if ( dec && name->name ) {
+            dec->m_moduleIdentifier = name->name->value;
+        }
     }
 }
 

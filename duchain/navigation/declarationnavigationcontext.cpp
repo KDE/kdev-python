@@ -28,6 +28,7 @@
 #include <language/duchain/namespacealiasdeclaration.h>
 #include <language/duchain/forwarddeclaration.h>
 #include <language/duchain/duchainutils.h>
+#include <declarations/importedmoduledeclaration.h>
 
 namespace Python
 {
@@ -36,11 +37,21 @@ using namespace KDevelop;
 DeclarationNavigationContext::DeclarationNavigationContext(DeclarationPointer decl, KDevelop::TopDUContextPointer topContext, AbstractNavigationContext* previousContext)
         : AbstractDeclarationNavigationContext(decl, topContext, previousContext)
 {
-    
+    kDebug() << "Generating declaration widget";
+    importedModuleDeclaration* import_decl = dynamic_cast<importedModuleDeclaration*>(decl.data());
+    if ( import_decl ) {
+        kDebug() << " >> Module declaration found! Building documentation";
+        kDebug() << " >> Identifier: " << import_decl->m_moduleIdentifier;
+        m_moduleDocumentation = import_decl->generateDocumentationForModule();
+    }
 }
 
-void DeclarationNavigationContext::htmlFunction() {
-    modifyHtml() += "<dl><dt><a name=\"-random.randint\"><strong>random.randint</strong></a> = randint(self, a, b)<font color=\"#909090\"><font face=\"helvetica, arial\"> method of <a href=\"random.html#Random\">random.Random</a> instance</font></font></dt><dd><tt>Return&nbsp;random&nbsp;integer&nbsp;in&nbsp;range&nbsp;[a,&nbsp;b],&nbsp;including&nbsp;both&nbsp;end&nbsp;points.</tt></dd></dl>";
+QString DeclarationNavigationContext::html(bool shorten) {
+    QString normalDoc = AbstractDeclarationNavigationContext::html(shorten);
+    if ( m_moduleDocumentation.length() ) {
+        normalDoc += "<br><hr><br>" + m_moduleDocumentation;
+    }
+    return normalDoc;
 }
 
 NavigationContextPointer DeclarationNavigationContext::registerChild(DeclarationPointer declaration)

@@ -128,23 +128,6 @@ void ParseJob::run()
     
     IndexedString filename = KDevelop::IndexedString(m_url.pathOrUrl());
     
-//     {
-//         DUChainWriteLocker lock(DUChain::lock());
-//         
-//         m_duContext = DUChain::self()->chainForDocument(document());
-//         if ( ! m_duContext ) {
-//             IndexedString langstring("python");
-//             ParsingEnvironmentFile* file = new ParsingEnvironmentFile(document());
-//             m_duContext = new TopDUContext(document(), RangeInRevision(0, 0, INT_MAX, INT_MAX), file);
-//             m_duContext->setType(KDevelop::DUContext::Global);
-//             DUChain::self()->addDocumentChain(m_duContext);
-//         }
-//         m_duContext->clearProblems();
-//         
-//         ParsingEnvironmentFilePointer file = m_duContext->parsingEnvironmentFile();
-//         file.data()->setModificationRevision(contents().modification);
-//     }
-    
     // 2) parse
     QPair<CodeAst*, bool> parserResults = m_session->parse(m_ast);
     m_ast = parserResults.first;
@@ -203,6 +186,7 @@ void ParseJob::run()
             DUChainWriteLocker lock(DUChain::lock());
             DUChain::self()->updateContextEnvironment(m_duContext, m_duContext->parsingEnvironmentFile().data());
             m_duContext->parsingEnvironmentFile()->clearModificationRevisions();
+            m_duContext->parsingEnvironmentFile()->setModificationRevision(contents().modification);
             m_duContext->clearProblems();
         }
         

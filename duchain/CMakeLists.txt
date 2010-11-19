@@ -24,6 +24,7 @@ target_link_libraries( kdev4pythonduchain
     ${KDEVPLATFORM_PROJECT_LIBRARIES}
     ${KDE4_KTEXTEDITOR_LIBS}
     ${KDEVPLATFORM_INTERFACES_LIBRARIES}
+    ${QT_QTWEBKIT_LIBRARY}
     kdev4pythonparser
  )
 

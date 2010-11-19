@@ -43,6 +43,7 @@ DeclarationNavigationContext::DeclarationNavigationContext(DeclarationPointer de
         kDebug() << " >> Module declaration found! Building documentation";
         kDebug() << " >> Identifier: " << import_decl->m_moduleIdentifier;
         m_moduleDocumentation = import_decl->generateDocumentationForModule();
+        kDebug() << " << Done generating documentation";
     }
 }
 
@@ -51,7 +52,8 @@ QString DeclarationNavigationContext::html(bool shorten) {
     if ( m_moduleDocumentation.length() ) {
         normalDoc += "<br><hr><br>" + m_moduleDocumentation;
     }
-    return normalDoc;
+//     return normalDoc;
+    return QString();
 }
 
 NavigationContextPointer DeclarationNavigationContext::registerChild(DeclarationPointer declaration)

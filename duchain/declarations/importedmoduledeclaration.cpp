@@ -19,8 +19,6 @@ QString importedModuleDeclaration::generateDocumentationForModule()
     
     QString result = parser->readAllStandardOutput();
     
-    kDebug() << result;
-    
     return result;
 }
     

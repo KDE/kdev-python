@@ -162,6 +162,7 @@ void ParseJob::run()
         
         DUChainWriteLocker lock(DUChain::lock());
         ParsingEnvironmentFilePointer parsingEnvironmentFile = m_duContext->parsingEnvironmentFile();
+        parsingEnvironmentFile->clearModificationRevisions();
         parsingEnvironmentFile->setModificationRevision(contents().modification);
         DUChain::self()->updateContextEnvironment(m_duContext, parsingEnvironmentFile.data());
         m_duContext->clearProblems();

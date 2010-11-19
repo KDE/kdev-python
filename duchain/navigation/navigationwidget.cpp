@@ -25,13 +25,11 @@ NavigationWidget::NavigationWidget(KDevelop::DeclarationPointer declaration, KDe
     m_documentationWebView->load(QUrl("http://localhost:1050/"));
     connect( m_documentationWebView, SIGNAL(loadFinished(bool)), SLOT(addDocumentationData(bool)) );
     
-    delete layout();
-    
     QGridLayout* newLayout = new QGridLayout();
     newLayout->setRowMinimumHeight(0, 300);
     newLayout->setColumnMinimumWidth(0, 400);
-    setLayout(newLayout);
-    layout()->addWidget(m_documentationWebView);
+    newLayout->addWidget(m_documentationWebView);
+    layout()->addItem(newLayout);
     
     initBrowser(400);
 }
@@ -39,15 +37,15 @@ NavigationWidget::NavigationWidget(KDevelop::DeclarationPointer declaration, KDe
 void NavigationWidget::addDocumentationData(bool finished)
 {
     kDebug() << "Done loading!";
-    QWebElement document = m_documentationWebView->page()->mainFrame()->documentElement();
-    if ( ! document.isNull() ) {
-        kDebug() << " >>> Trying to append documentation... ";
-        kDebug() << document.findFirst("body").tagName();
-        document.findFirst("body").findFirst("div").replace(m_originalHtml);
-    }
-    else {
-        kError() << " !!! Could not append documentation to HTML page received!";
-    }
+//     QWebElement document = m_documentationWebView->page()->mainFrame()->documentElement();
+//     if ( ! document.isNull() ) {
+//         kDebug() << " >>> Trying to append documentation... ";
+//         kDebug() << document.findFirst("body").tagName();
+//         document.findFirst("body").findFirst("div").replace(m_originalHtml);
+//     }
+//     else {
+//         kError() << " !!! Could not append documentation to HTML page received!";
+//     }
 }
 
 NavigationWidget::NavigationWidget(const KDevelop::IncludeItem& includeItem, KDevelop::TopDUContextPointer topContext, const QString& htmlPrefix, const QString& htmlSuffix)

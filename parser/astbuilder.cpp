@@ -22,7 +22,6 @@
 
 #include <QStringList>
 
-#include "pythonparser.h"
 #include "ast.h"
 
 #include <kdebug.h>

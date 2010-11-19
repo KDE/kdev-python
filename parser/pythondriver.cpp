@@ -20,7 +20,6 @@
 
 
 #include "pythondriver.h"
-#include "pythonparser.h"
 
 #include <QtCore/QFile>
 #include <QtCore/QDebug>

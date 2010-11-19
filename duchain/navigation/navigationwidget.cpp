@@ -19,6 +19,8 @@ NavigationWidget::NavigationWidget(KDevelop::DeclarationPointer declaration, KDe
     m_startContext = new DeclarationNavigationContext(declaration, m_topContext);
     setContext(m_startContext);
     
+    m_originalHtml = m_startContext->html();
+    
     m_documentationWebView = new QWebView(this);
     m_documentationWebView->load(QUrl("http://localhost:1050/"));
     connect( m_documentationWebView, SIGNAL(loadFinished(bool)), SLOT(addDocumentationData(bool)) );
@@ -40,7 +42,8 @@ void NavigationWidget::addDocumentationData(bool finished)
     QWebElement document = m_documentationWebView->page()->mainFrame()->documentElement();
     if ( ! document.isNull() ) {
         kDebug() << " >>> Trying to append documentation... ";
-        document.findFirst("body").appendInside("Hello World");
+        kDebug() << document.findFirst("body").tagName();
+        document.findFirst("body").findFirst("div").replace(m_originalHtml);
     }
     else {
         kError() << " !!! Could not append documentation to HTML page received!";

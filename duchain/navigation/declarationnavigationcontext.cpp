@@ -47,14 +47,14 @@ DeclarationNavigationContext::DeclarationNavigationContext(DeclarationPointer de
     }
 }
 
-QString DeclarationNavigationContext::html(bool shorten) {
-    QString normalDoc = AbstractDeclarationNavigationContext::html(shorten);
-    if ( m_moduleDocumentation.length() ) {
-        normalDoc += "<br><hr><br>" + m_moduleDocumentation;
-    }
-//     return normalDoc;
-    return QString();
-}
+// QString DeclarationNavigationContext::html(bool shorten) {
+//     QString normalDoc = AbstractDeclarationNavigationContext::html(shorten);
+//     if ( m_moduleDocumentation.length() ) {
+//         normalDoc += "<br><hr><br>" + m_moduleDocumentation;
+//     }
+// //     return normalDoc;
+//     return QString();
+// }
 
 NavigationContextPointer DeclarationNavigationContext::registerChild(DeclarationPointer declaration)
 {

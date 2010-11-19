@@ -23,6 +23,7 @@ public:
     static QString shortDescription(const KDevelop::IncludeItem& includeItem) { return "<b>Test</b>"; };
     
     QWebView* m_documentationWebView;
+    QString m_originalHtml;
 };
 
 }

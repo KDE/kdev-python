@@ -42,8 +42,10 @@ DeclarationNavigationContext::DeclarationNavigationContext(DeclarationPointer de
     if ( import_decl ) {
         kDebug() << " >> Module declaration found! Building documentation";
         kDebug() << " >> Identifier: " << import_decl->m_moduleIdentifier;
-        m_moduleDocumentation = import_decl->generateDocumentationForModule();
-        kDebug() << " << Done generating documentation";
+        m_fullyQualifiedModuleIdentifier = import_decl->m_moduleIdentifier;
+    }
+    else {
+        kDebug() << "Could not find declaration for this module!" << decl->identifier().identifier().str();
     }
 }
 

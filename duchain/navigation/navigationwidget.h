@@ -19,11 +19,12 @@ public:
     NavigationWidget(KDevelop::DeclarationPointer declaration, KDevelop::TopDUContextPointer topContext, const QString& htmlPrefix = QString(), const QString& htmlSuffix = QString());
     NavigationWidget(const KDevelop::IncludeItem& includeItem, KDevelop::TopDUContextPointer topContext, const QString& htmlPrefix = QString(), const QString& htmlSuffix = QString());
     
-    static QString shortDescription(KDevelop::Declaration* declaration) { return "<b>Test</b>"; };
-    static QString shortDescription(const KDevelop::IncludeItem& includeItem) { return "<b>Test</b>"; };
+    static QString shortDescription(KDevelop::Declaration* /*declaration*/) { return "<b>Test</b>"; };
+    static QString shortDescription(const KDevelop::IncludeItem& /*includeItem*/) { return "<b>Test</b>"; };
     
     QWebView* m_documentationWebView;
     QString m_originalHtml;
+    QString m_fullyQualifiedModuleIdentifier;
 };
 
 }

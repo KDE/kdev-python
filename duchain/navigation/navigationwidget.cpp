@@ -11,32 +11,40 @@
 
 namespace Python {
 
-NavigationWidget::NavigationWidget(KDevelop::DeclarationPointer declaration, KDevelop::TopDUContextPointer topContext, const QString& htmlPrefix, const QString& htmlSuffix)
+NavigationWidget::NavigationWidget(KDevelop::DeclarationPointer declaration, KDevelop::TopDUContextPointer topContext, const QString& /* htmlPrefix */, const QString& /* htmlSuffix */)
 {
     kDebug() << "Navigation widget for Declaration requested";
     m_topContext = topContext;
     
-    m_startContext = new DeclarationNavigationContext(declaration, m_topContext);
+    initBrowser(400);
+    
+    DeclarationNavigationContext* context = new DeclarationNavigationContext(declaration, m_topContext);
+    m_startContext = context;
     setContext(m_startContext);
     
-    m_originalHtml = m_startContext->html();
-    
-    m_documentationWebView = new QWebView(this);
-    m_documentationWebView->load(QUrl("http://localhost:1050/"));
-    connect( m_documentationWebView, SIGNAL(loadFinished(bool)), SLOT(addDocumentationData(bool)) );
-    
-    QGridLayout* newLayout = new QGridLayout();
-    newLayout->setRowMinimumHeight(0, 300);
-    newLayout->setColumnMinimumWidth(0, 400);
-    newLayout->addWidget(m_documentationWebView);
-    layout()->addItem(newLayout);
-    
-    initBrowser(400);
+    m_fullyQualifiedModuleIdentifier = context->m_fullyQualifiedModuleIdentifier;
+    kDebug() << "Identifier: " << m_fullyQualifiedModuleIdentifier;
+    if ( m_fullyQualifiedModuleIdentifier.length() ) {
+        m_documentationWebView = new QWebView(this);
+        m_documentationWebView->load(QUrl("http://localhost:1050/" + m_fullyQualifiedModuleIdentifier + ".html"));
+        connect( m_documentationWebView, SIGNAL(loadFinished(bool)), SLOT(addDocumentationData(bool)) );
+    }
 }
 
 void NavigationWidget::addDocumentationData(bool finished)
 {
     kDebug() << "Done loading!";
+    disconnect(m_documentationWebView, SIGNAL(loadFinished(bool)));
+    if ( finished ) {
+        QGridLayout* newLayout = new QGridLayout();
+        newLayout->setRowMinimumHeight(0, 200);
+        newLayout->setColumnMinimumWidth(0, 500);
+        newLayout->addWidget(m_documentationWebView);
+        layout()->addItem(newLayout);
+    }
+    else {
+        kError() << "Failed to get documentation for " << m_fullyQualifiedModuleIdentifier;
+    }
 //     QWebElement document = m_documentationWebView->page()->mainFrame()->documentElement();
 //     if ( ! document.isNull() ) {
 //         kDebug() << " >>> Trying to append documentation... ";
@@ -48,7 +56,7 @@ void NavigationWidget::addDocumentationData(bool finished)
 //     }
 }
 
-NavigationWidget::NavigationWidget(const KDevelop::IncludeItem& includeItem, KDevelop::TopDUContextPointer topContext, const QString& htmlPrefix, const QString& htmlSuffix)
+NavigationWidget::NavigationWidget(const KDevelop::IncludeItem& /* includeItem */, KDevelop::TopDUContextPointer /*topContext*/, const QString& /*htmlPrefix*/, const QString& /*htmlSuffix*/)
 {
 
 }

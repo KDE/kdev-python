@@ -30,6 +30,8 @@ class DeclarationNavigationContext : public KDevelop::AbstractDeclarationNavigat
 public:
     DeclarationNavigationContext(KDevelop::DeclarationPointer decl, KDevelop::TopDUContextPointer topContext, KDevelop::AbstractNavigationContext* previousContext = 0);
 
+    QString m_fullyQualifiedModuleIdentifier;
+    
 protected:
     KDevelop::NavigationContextPointer registerChild(KDevelop::DeclarationPointer declaration);
 //     virtual KDevelop::QualifiedIdentifier prettyQualifiedIdentifier( KDevelop::DeclarationPointer decl ) const;
@@ -40,9 +42,7 @@ protected:
     void makeLink( const QString& name, KDevelop::DeclarationPointer declaration, KDevelop::NavigationAction::Type actionType );
 
     virtual QString declarationKind(KDevelop::DeclarationPointer decl);
-
-private:
-    QString m_moduleDocumentation;
+    
 };
 
 }

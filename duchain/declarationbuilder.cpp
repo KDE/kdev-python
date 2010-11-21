@@ -153,11 +153,11 @@ void DeclarationBuilder::visitImport(ImportAst* node)
         else dec = visitVariableDeclaration<importedModuleDeclaration>(name->name);
         QString moduleName = name->name->value;
         if ( name->asName && name->asName->identifier ) 
-            moduleName += name->asName->identifier->value;
+            moduleName += "." + name->asName->identifier->value;
+        kDebug() << "Module name: " << moduleName;
         if ( dec ) {
             DUChainWriteLocker lock(DUChain::lock());
             dec->m_moduleIdentifier = moduleName;
-            kDebug() << "Set comment to " << dec->m_moduleIdentifier;
         }
         m_importContextsForImportStatement.clear();
     }
@@ -168,10 +168,11 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
     Python::AstDefaultVisitor::visitImportFrom(node);
     foreach ( AliasAst* name, node->names ) {
         importedModuleDeclaration* dec = 0;
-        if ( name->asName ) visitVariableDeclaration<importedModuleDeclaration>(name->asName);
-        else visitVariableDeclaration<importedModuleDeclaration>(name->name);
-        if ( dec && name->name ) {
-            dec->m_moduleIdentifier = name->name->value;
+        if ( name->asName ) dec = visitVariableDeclaration<importedModuleDeclaration>(name->asName);
+        else dec = visitVariableDeclaration<importedModuleDeclaration>(name->name);
+        if ( dec && name->name && node->module ) {
+            dec->m_moduleIdentifier = node->module->value + "." + name->name->value;
+            kDebug() << "FromImport module name: " << name->name->value;
         }
     }
 }

@@ -30,6 +30,9 @@
 #include <language/duchain/duchainutils.h>
 #include <declarations/importedmoduledeclaration.h>
 
+#include <QTcpSocket>
+#include <QProcess>
+
 namespace Python
 {
 using namespace KDevelop;

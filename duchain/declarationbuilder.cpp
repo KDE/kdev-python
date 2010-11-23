@@ -35,10 +35,16 @@
 #include <language/duchain/duchain.h>
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/types/functiontype.h>
+#include <language/duchain/types/alltypes.h>
 #include <language/duchain/types/abstracttype.h>
 #include <language/duchain/types/integraltype.h>
+#include <language/duchain/classdeclaration.h>
+#include <language/duchain/classfunctiondeclaration.h>
+#include <language/duchain/classmemberdeclaration.h>
+#include <language/duchain/classmemberdeclarationdata.h>
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/builders/abstracttypebuilder.h>
+#include <language/duchain/aliasdeclaration.h>
 
 #include "contextbuilder.h"
 
@@ -46,6 +52,7 @@
 #include "QtGlobal"
 
 #include <declarations/importedmoduledeclaration.h>
+#include <../kdevplatform/language/duchain/declaration.h>
 
 
 using namespace KTextEditor;
@@ -54,7 +61,6 @@ using namespace KDevelop;
 
 namespace Python
 {
-
 
 DeclarationBuilder::DeclarationBuilder()
         : DeclarationBuilderBase()
@@ -101,6 +107,9 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node)
     return visitVariableDeclaration<T>(id, currentVariableDefinition);
 }
 
+/*
+ * WARNING: This will return a nullpointer if another than the expected type of variable was found!
+ * */
 template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast* originalAst)
 {
     DUChainWriteLocker lock(DUChain::lock());
@@ -111,17 +120,27 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     
     existingDeclarations = currentContext()->findDeclarations(identifierForNode(node), until);
     
-    T* dec = 0;
+    Declaration* dec = 0;
     
-    if ( ! existingDeclarations.length() ) {
+    if ( currentContext() && currentContext()->type() == DUContext::Class && ! existingDeclarations.length() ) {
+        kDebug() << "Creating class member declaration for " << node->value << node->startLine << ":" << node->startCol;
+        dec = openDeclaration<ClassMemberDeclaration>(node, originalAst ? originalAst : node);
+        closeDeclaration();
+    }
+    else if ( ! existingDeclarations.length() ) {
         kDebug() << "Creating variable declaration for " << node->value << node->startLine << ":" << node->startCol;
         dec = openDeclaration<T>(node, originalAst ? originalAst : node);
         closeDeclaration();
         dec->setType(IntegralType::Ptr(new IntegralType(IntegralType::TypeMixed)));
     }
-    else kDebug() << "Not updating existing declaration for " << node->value;
+    else {
+        kDebug() << "Not updating existing declaration for " << node->value;
+        dec = existingDeclarations.last();
+    }
 //     dec->setType<>();
-    return dec;
+    T* result = dynamic_cast<T*>(dec);
+    if ( ! result ) kError() << "variable declaration does not have the expected type";
+    return result;
 }
 
 void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
@@ -190,10 +209,13 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
     kDebug() << "opening class definition";
-    DeclarationBuilderBase::visitClassDefinition( node );
-    openDeclaration<Declaration>( node->name, node );
+    ClassDeclaration* classDec = new ClassDeclaration(editorFindRange(node->body.first(), node->body.last()), currentContext());
+    
+    openDeclaration<ClassDeclaration>( node->name, node );
     eventuallyAssignInternalContext();
     closeDeclaration();
+    
+    DeclarationBuilderBase::visitClassDefinition( node );
 }
 
 void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )

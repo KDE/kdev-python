@@ -120,7 +120,7 @@ void ParseJob::run()
     }
 
     readContents();
-    m_session->setContents( QString::fromUtf8(contents().contents) + "\n" );
+    m_session->setContents( QString::fromUtf8(contents().contents) + "\n" ); // append a newline in case the parser doesnt like it without one
     m_session->setCurrentDocument(m_url);
     
     if ( abortRequested() )
@@ -148,6 +148,15 @@ void ParseJob::run()
         m_duContext = builder.build(filename, m_ast);
         setDuChain(m_duContext);
         
+        {
+            DUChainWriteLocker lock(DUChain::lock());
+            ParsingEnvironmentFilePointer parsingEnvironmentFile = m_duContext->parsingEnvironmentFile();
+            parsingEnvironmentFile->clearModificationRevisions();
+            parsingEnvironmentFile->setModificationRevision(contents().modification);
+            DUChain::self()->updateContextEnvironment(m_duContext, parsingEnvironmentFile.data());
+            m_duContext->clearProblems();
+        }
+        
         UseBuilder usebuilder( &editor );
         usebuilder.buildUses(m_ast);
         
@@ -159,13 +168,6 @@ void ParseJob::run()
             KDevelop::ICodeHighlighting* hl = m_parent->codeHighlighting();
             hl->highlightDUChain(m_duContext);
         }
-        
-        DUChainWriteLocker lock(DUChain::lock());
-        ParsingEnvironmentFilePointer parsingEnvironmentFile = m_duContext->parsingEnvironmentFile();
-        parsingEnvironmentFile->clearModificationRevisions();
-        parsingEnvironmentFile->setModificationRevision(contents().modification);
-        DUChain::self()->updateContextEnvironment(m_duContext, parsingEnvironmentFile.data());
-        m_duContext->clearProblems();
     }
     else
     {
@@ -178,17 +180,16 @@ void ParseJob::run()
             DUChainWriteLocker lock(DUChain::lock());
             ParsingEnvironmentFile *file = new ParsingEnvironmentFile(document());
             static const IndexedString langString("python");
-            file->setModificationRevision(contents().modification);
             file->setLanguage(langString);
             m_duContext = new TopDUContext(document(), RangeInRevision(0, 0, INT_MAX, INT_MAX), file);
             DUChain::self()->addDocumentChain(m_duContext);
         }
         {
             DUChainWriteLocker lock(DUChain::lock());
-            DUChain::self()->updateContextEnvironment(m_duContext, m_duContext->parsingEnvironmentFile().data());
             m_duContext->parsingEnvironmentFile()->clearModificationRevisions();
             m_duContext->parsingEnvironmentFile()->setModificationRevision(contents().modification);
             m_duContext->clearProblems();
+            DUChain::self()->updateContextEnvironment(m_duContext, m_duContext->parsingEnvironmentFile().data());
         }
         
         DUChainWriteLocker lock(DUChain::lock());

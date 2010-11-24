@@ -158,6 +158,7 @@ void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
     addImportedContexts();
     Python::AstDefaultVisitor::visitClassDefinition(node);
     closeContext();
+    kDebug() << " --- closing CLASS context: " << range.castToSimpleRange();
 }
 
 void ContextBuilder::visitArguments(ArgumentsAst* node)

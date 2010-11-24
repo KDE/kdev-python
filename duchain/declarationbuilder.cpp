@@ -103,7 +103,6 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node)
             return 0;
     }
     Identifier* id = currentVariableDefinition->identifier;
-    Q_ASSERT(id);
     return visitVariableDeclaration<T>(id, currentVariableDefinition);
 }
 
@@ -122,14 +121,17 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     
     Declaration* dec = 0;
     
+    kDebug() << "VARIABLE CONTEXT: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange() << currentContext()->type();
+    
     if ( currentContext() && currentContext()->type() == DUContext::Class && ! existingDeclarations.length() ) {
         kDebug() << "Creating class member declaration for " << node->value << node->startLine << ":" << node->startCol;
-        dec = openDeclaration<ClassMemberDeclaration>(node, originalAst ? originalAst : node);
+        kDebug() << "Context type: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
+        dec = openDeclaration<ClassMemberDeclaration>(node, originalAst ? originalAst : node, DeclarationIsDefinition);
         closeDeclaration();
     }
     else if ( ! existingDeclarations.length() ) {
         kDebug() << "Creating variable declaration for " << node->value << node->startLine << ":" << node->startCol;
-        dec = openDeclaration<T>(node, originalAst ? originalAst : node);
+        dec = openDeclaration<T>(node, originalAst ? originalAst : node, DeclarationIsDefinition);
         closeDeclaration();
         dec->setType(IntegralType::Ptr(new IntegralType(IntegralType::TypeMixed)));
     }

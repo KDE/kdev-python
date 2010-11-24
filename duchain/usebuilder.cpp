@@ -53,19 +53,21 @@ void UseBuilder::buildUses(Ast* node)
 void UseBuilder::visitName(NameAst* node)
 {
     DUChainWriteLocker lock(DUChain::lock());
-    DUContext* current = currentContext();
     QList<Declaration*> declarations = currentContext()->findDeclarations(identifierForNode(node->identifier), editorFindRange(node, node).start);
-    QList<Declaration*> isDecl = currentContext()->findDeclarations(identifierForNode(node->identifier), editorFindRange(node, node).end); // TODO not so elegant ;D
+//     QList<Declaration*> isDecl = currentContext()->findDeclarations(identifierForNode(node->identifier), editorFindRange(node, node).end); // TODO not so elegant ;D
     Declaration* declaration;
     if ( declarations.length() ) declaration = declarations.last();
     else declaration = 0;
-    
-    if ( ! declarations.length() && isDecl.length() ) return;
+    kDebug() << currentContext()->type() << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
     
     Q_ASSERT(node->identifier);
     Q_ASSERT(node->hasUsefulRangeInformation); // TODO remove this!
-    kDebug() << " Registeriung use for " << node->identifier->value << " at " << node->identifier->startLine << ":" << node->identifier->endCol << "->" << node->identifier->endLine << ":" << node->identifier->endCol + 1 << "with dec" << declaration;
-    UseBuilderBase::newUse(node, RangeInRevision(node->identifier->startLine, node->identifier->startCol, node->identifier->endLine, node->identifier->endCol + 1), DeclarationPointer(declaration)); // +1 for whatever reason
+    RangeInRevision useRange(node->identifier->startLine, node->identifier->startCol, node->identifier->endLine, node->identifier->endCol + 1);
+    
+    if ( declaration && declaration->range() == useRange ) return;
+    
+    kDebug() << " Registering use for " << node->identifier->value << " at " << useRange.castToSimpleRange() << "with dec" << declaration;
+    UseBuilderBase::newUse(node, useRange, DeclarationPointer(declaration));
 }
 
 

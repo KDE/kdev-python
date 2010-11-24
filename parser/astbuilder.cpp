@@ -314,6 +314,8 @@ bool AstBuilder::parseAstNode(QString name, QString text, const QList< QXmlStrea
         return false;
     }
     
+    ast->startLine = -5;
+    
     m_nodeMap.insert(node_id, ast);
     m_attributeStore.insert(node_id, attributeDict);
     
@@ -865,13 +867,17 @@ void AstBuilder::populateAst()
             default:                                                kWarning() << "Unsupported AST type: " << currentAbstractNode->astType; break;
         }
         
-        // Walk throguh the tree and set proper end columns and lines, as the python parser sadly does not do this for us
+        // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
         if ( currentAbstractNode->hasUsefulRangeInformation ) {
             Ast* parent = currentAbstractNode->parent;
             while ( parent ) {
                 if ( parent->endLine < currentAbstractNode->endLine ) {
                     parent->endLine = currentAbstractNode->endLine;
                     parent->endCol = currentAbstractNode->endCol;
+                }
+                if ( ! parent->hasUsefulRangeInformation && parent->startLine == -5 ) {
+                    parent->startLine = currentAbstractNode->startLine;
+                    parent->startCol = currentAbstractNode->startCol;
                 }
                 parent = parent->parent;
             }

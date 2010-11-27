@@ -356,6 +356,7 @@ Identifier* AstBuilder::createIdentifier(const QString& name, Ast* range)
     ident->endCol = range->startCol + name.length() - 1;
     ident->startLine = range->startLine;
     ident->endLine = range->endLine;
+    ident->parent = range;
     return ident;
 }
 

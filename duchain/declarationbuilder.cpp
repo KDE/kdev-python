@@ -113,6 +113,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
 {
     DUChainWriteLocker lock(DUChain::lock());
     Q_ASSERT(node);
+    AssignmentAst* parent = dynamic_cast<AssignmentAst*>(node->parent->parent);
     
     QList<Declaration*> existingDeclarations;
     CursorInRevision until = editorFindRange(node, node).end;
@@ -133,11 +134,25 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         kDebug() << "Creating variable declaration for " << node->value << node->startLine << ":" << node->startCol;
         dec = openDeclaration<T>(node, originalAst ? originalAst : node, DeclarationIsDefinition);
         closeDeclaration();
-        dec->setType(IntegralType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+//         dec->setType(IntegralType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+        dec->setKind(KDevelop::Declaration::Instance); // everything is an object in python
+        if ( parent ) {
+            NameAst* singleValue = dynamic_cast<NameAst*>(parent->value);
+            if ( singleValue ) {
+                kDebug() << "Found a single target value for variable declaration";
+                QList<Declaration*> newValueDecs = currentContext()->findDeclarations(identifierForNode(singleValue->identifier), until);
+                if ( newValueDecs.length() > 0 ) {
+                    Declaration* newValueDec = newValueDecs.last();
+                    kDebug() << newValueDec << newValueDec->type<AbstractType>();
+                    dec->setType(newValueDec->type<AbstractType>());
+                }
+            }
+        }
     }
     else {
         kDebug() << "Not updating existing declaration for " << node->value;
         dec = existingDeclarations.last();
+        setEncountered(dec);
     }
 //     dec->setType<>();
     T* result = dynamic_cast<T*>(dec);
@@ -179,6 +194,7 @@ void DeclarationBuilder::visitImport(ImportAst* node)
         if ( dec ) {
             DUChainWriteLocker lock(DUChain::lock());
             dec->m_moduleIdentifier = moduleName;
+            dec->setType(IntegralType::Ptr(new IntegralType(IntegralType::TypeMixed)));
         }
         m_importContextsForImportStatement.clear();
     }
@@ -194,6 +210,9 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
         if ( dec && name->name && node->module ) {
             dec->m_moduleIdentifier = node->module->value + "." + name->name->value;
             kDebug() << "FromImport module name: " << name->name->value;
+        }
+        if ( dec ) {
+            dec->setType(IntegralType::Ptr(new IntegralType(IntegralType::TypeMixed)));
         }
     }
 }

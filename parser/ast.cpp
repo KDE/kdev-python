@@ -324,6 +324,3 @@ AliasAst::AliasAst(Ast* parent): Ast(parent, Ast::AliasAstType), name(0), asName
 
 
 }
-
-
-#include "pythonast.h"

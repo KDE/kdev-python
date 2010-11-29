@@ -14,7 +14,7 @@ namespace KDevelop
 namespace Python
 {
 
-template<class BaseContext>
+template<class BaseContext, int IdentityT>
 class PythonDUContext : public BaseContext
 {
 public:
@@ -41,9 +41,12 @@ public:
     virtual QWidget* createNavigationWidget(KDevelop::Declaration* decl, KDevelop::TopDUContext* topContext, const QString& htmlPrefix, const QString& htmlSuffix) const;
 
     enum {
-        Identity = BaseContext::Identity + 51
+        Identity = IdentityT
     };
 };
+
+typedef PythonDUContext<KDevelop::TopDUContext, 100> PythonTopDUContext;
+typedef PythonDUContext<KDevelop::DUContext, 101> PythonNormalDUContext;
 
 }
 

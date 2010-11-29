@@ -67,7 +67,7 @@ TopDUContext* ContextBuilder::newTopContext(const RangeInRevision& range, Parsin
         file = new ParsingEnvironmentFile(currentDocumentUrl);
         file->setLanguage(IndexedString("python"));
     }
-    TopDUContext* top = new PythonDUContext<TopDUContext>(currentDocumentUrl, range, file);
+    TopDUContext* top = new PythonTopDUContext(currentDocumentUrl, range, file);
     ReferencedTopDUContext ref(top);
     m_topContext = ref;
     return top;
@@ -75,7 +75,7 @@ TopDUContext* ContextBuilder::newTopContext(const RangeInRevision& range, Parsin
 
 DUContext* ContextBuilder::newContext(const RangeInRevision& range)
 {
-    return new PythonDUContext<DUContext>(range, currentContext());
+    return new PythonNormalDUContext(range, currentContext());
 }
 
 void ContextBuilder::setEditor(PythonEditorIntegrator* editor)

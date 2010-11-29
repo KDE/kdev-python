@@ -172,12 +172,11 @@ void ParseJob::run()
     else
     {
         kWarning() << "===Failed===";
+        DUChainWriteLocker lock;
         {
-            DUChainReadLocker lock(DUChain::lock());
             m_duContext = DUChain::self()->chainForDocument(document());
         }
         if ( ! m_duContext ) {
-            DUChainWriteLocker lock(DUChain::lock());
             ParsingEnvironmentFile *file = new ParsingEnvironmentFile(document());
             static const IndexedString langString("python");
             file->setLanguage(langString);
@@ -185,14 +184,12 @@ void ParseJob::run()
             DUChain::self()->addDocumentChain(m_duContext);
         }
         {
-            DUChainWriteLocker lock(DUChain::lock());
             m_duContext->parsingEnvironmentFile()->clearModificationRevisions();
             m_duContext->parsingEnvironmentFile()->setModificationRevision(contents().modification);
             m_duContext->clearProblems();
             DUChain::self()->updateContextEnvironment(m_duContext, m_duContext->parsingEnvironmentFile().data());
         }
-        
-        DUChainWriteLocker lock(DUChain::lock());
+
         foreach ( ProblemPointer p, m_session->m_problems ) {
             kDebug() << "Added problem to context";
             m_duContext->addProblem(p);

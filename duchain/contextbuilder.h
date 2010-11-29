@@ -48,9 +48,12 @@ typedef KDevelop::AbstractContextBuilder<Ast, Identifier> ContextBuilderBase;
 class KDEVPYTHONDUCHAIN_EXPORT ContextBuilder: public ContextBuilderBase, public Python::AstDefaultVisitor
 {
 public:
+    virtual ReferencedTopDUContext build(const KDevelop::IndexedString& url, Ast* node,
+                                         ReferencedTopDUContext updateContext = ReferencedTopDUContext());
+
     void setEditor(PythonEditorIntegrator* editor);
     void setEditor(ParseSession* session);
-    
+
     KUrl findModulePath(const QString& name);
 
 protected:

@@ -53,6 +53,25 @@ namespace Python
     
 TopDUContext* ParseJob::m_internalFunctions;
 
+ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node, ReferencedTopDUContext updateContext)
+{
+    if (!updateContext) {
+        DUChainReadLocker lock(DUChain::lock());
+        updateContext = DUChain::self()->chainForDocument(url);
+    }
+    if (updateContext) {
+        kDebug() << "re-compiling" << url.str();
+        DUChainWriteLocker lock(DUChain::lock());
+        updateContext->clearImportedParentContexts();
+        updateContext->parsingEnvironmentFile()->clearModificationRevisions();
+        updateContext->clearProblems();
+    } else {
+        kDebug() << "compiling" << url.str();
+    }
+
+    return ContextBuilderBase::build(url, node, updateContext);
+}
+
 PythonEditorIntegrator* ContextBuilder::editor() const
 {
     return ContextBuilder::m_editor;

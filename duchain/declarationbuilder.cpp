@@ -154,6 +154,25 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         dec = existingDeclarations.last();
         setEncountered(dec);
     }
+    AssignmentAst* assignment = node->parent && node->parent->parent ? dynamic_cast<AssignmentAst*>(node->parent->parent) : 0;
+    if ( dec->abstractType().isNull() && assignment && assignment->value ) {
+        switch ( assignment->value->astType ) {
+            case Python::Ast::StringAstType:
+                kDebug() << "Found a string variable declaration";
+                dec->setType(IntegralType::Ptr(new IntegralType(IntegralType::TypeString)));
+                break;
+            case Python::Ast::NumberAstType:
+                kDebug() << "Found a number variable";
+                dec->setType(IntegralType::Ptr(new IntegralType(IntegralType::TypeFloat)));
+                break;
+            default:
+                kDebug() << "Could not determine type for variable " << node->value;
+                break;
+        }
+    }
+    else {
+        kDebug() << "Could not convert variable declaration to assignment!";
+    }
 //     dec->setType<>();
     T* result = dynamic_cast<T*>(dec);
     if ( ! result ) kError() << "variable declaration does not have the expected type";

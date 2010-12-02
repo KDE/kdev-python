@@ -45,11 +45,11 @@ class KDevelopNodeVisitor(ast.NodeVisitor):
             value = getattr(node, field)
             if type(value) not in [types.IntType, types.StringType, types.FloatType, types.BooleanType]:
                 continue
-	    try:
-     	        node_xmlrepr.set(field.lower(), str(value))
-	    except:
-	        sys.stderr.write("Warning: Invalid string literal replaced by empty string!\n")
-	        node_xmlrepr.set(field.lower(), "")
+            try:
+                node_xmlrepr.set(field.lower(), str(value))
+            except:
+                sys.stderr.write("Warning: Invalid string literal replaced by empty string!\n")
+                node_xmlrepr.set(field.lower(), "")
 
 
         super(KDevelopNodeVisitor, self).generic_visit(node)
@@ -81,13 +81,13 @@ class KDevelopNodeVisitor(ast.NodeVisitor):
 f = sys.stdin.read()
 v = KDevelopNodeVisitor()
 try:
-	parsetree = ast.parse(f)
+    parsetree = ast.parse(f)
 except Exception as e:
     try:
-	sys.stderr.write(str(e.lineno) + ':::' + str(e.offset))
-	sys.stderr.write(":::" + str(type(e)).replace('<type \'exceptions.', '').replace('\'>', '') + ':::' + str(e.msg) + ": \"" + str(e.text).replace("\n", "") + "\"")
+        sys.stderr.write(str(e.lineno) + ':::' + str(e.offset))
+        sys.stderr.write(":::" + str(type(e)).replace('<type \'exceptions.', '').replace('\'>', '') + ':::' + str(e.msg) + ": \"" + str(e.text).replace("\n", "") + "\"")
     except:
-    	sys.stderr.write('?:::?:::'+str(e)+':::?')
+        sys.stderr.write('?:::?:::'+str(e)+':::?')
 else:
     v.visit(parsetree)
     sys.stdout.write(etree.tostring(v.basenode, xml_declaration=True, pretty_print=True, encoding='UTF-8'))

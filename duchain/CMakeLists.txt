@@ -33,3 +33,4 @@ install(TARGETS kdev4pythonduchain DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 add_subdirectory(navigation)
 add_subdirectory(declarations)
+add_subdirectory(tests)

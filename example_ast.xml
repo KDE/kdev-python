@@ -1,0 +1,990 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pythonast>
+  <ModuleAst nodecnt="1" NRLST_body="2,11,20,38,44,49,54,60,62,64,66,68,71,76,85,95,129,136,140,149,156,163,170,177,184,191,198,205,212,220,228,236,244,252,260,268,276,284,292,300,307,314,321,328,343,357,362,368,376,378,381,387,399,409,426,430,437,444,452,453,457,481,487,495,500,503,505,513,523,533,539,546,553,561,570,574,588,604,612,628,631,636">
+    <AssignAst nodecnt="2" lineno="1" col_offset="0" NRLST_targets="3" NR_value="5">
+      <NameAst nodecnt="3" lineno="1" col_offset="0" id="a" NR_ctx="4">
+        <StoreAst nodecnt="4"/>
+      </NameAst>
+      <BoolOpAst nodecnt="5" lineno="1" col_offset="4" NR_op="6" NRLST_values="7,9">
+        <AndAst nodecnt="6"/>
+        <NameAst nodecnt="7" lineno="1" col_offset="4" id="a" NR_ctx="8">
+          <LoadAst nodecnt="8"/>
+        </NameAst>
+        <NameAst nodecnt="9" lineno="1" col_offset="10" id="a" NR_ctx="10">
+          <LoadAst nodecnt="10"/>
+        </NameAst>
+      </BoolOpAst>
+    </AssignAst>
+    <AssignAst nodecnt="11" lineno="2" col_offset="0" NRLST_targets="12" NR_value="14">
+      <NameAst nodecnt="12" lineno="2" col_offset="0" id="a" NR_ctx="13">
+        <StoreAst nodecnt="13"/>
+      </NameAst>
+      <BoolOpAst nodecnt="14" lineno="2" col_offset="4" NR_op="15" NRLST_values="16,18">
+        <OrAst nodecnt="15"/>
+        <NameAst nodecnt="16" lineno="2" col_offset="4" id="a" NR_ctx="17">
+          <LoadAst nodecnt="17"/>
+        </NameAst>
+        <NameAst nodecnt="18" lineno="2" col_offset="9" id="b" NR_ctx="19">
+          <LoadAst nodecnt="19"/>
+        </NameAst>
+      </BoolOpAst>
+    </AssignAst>
+    <FunctionDefAst nodecnt="20" lineno="4" col_offset="0" name="some_class" NR_args="21" NRLST_body="26,30,34" NRLST_decorator_list="">
+      <argumentsAst nodecnt="21" NRLST_args="22,24" NR_vararg="" NR_kwarg="" NRLST_defaults="">
+        <NameAst nodecnt="22" lineno="4" col_offset="15" id="foo" NR_ctx="23">
+          <ParamAst nodecnt="23"/>
+        </NameAst>
+        <NameAst nodecnt="24" lineno="4" col_offset="20" id="bar" NR_ctx="25">
+          <ParamAst nodecnt="25"/>
+        </NameAst>
+      </argumentsAst>
+      <AssignAst nodecnt="26" lineno="5" col_offset="1" NRLST_targets="27" NR_value="29">
+        <NameAst nodecnt="27" lineno="5" col_offset="1" id="attr1" NR_ctx="28">
+          <StoreAst nodecnt="28"/>
+        </NameAst>
+        <NumAst nodecnt="29" lineno="5" col_offset="9" n="3"/>
+      </AssignAst>
+      <AssignAst nodecnt="30" lineno="6" col_offset="1" NRLST_targets="31" NR_value="33">
+        <NameAst nodecnt="31" lineno="6" col_offset="1" id="attr2" NR_ctx="32">
+          <StoreAst nodecnt="32"/>
+        </NameAst>
+        <NumAst nodecnt="33" lineno="6" col_offset="9" n="5"/>
+      </AssignAst>
+      <AssignAst nodecnt="34" lineno="7" col_offset="1" NRLST_targets="35" NR_value="37">
+        <NameAst nodecnt="35" lineno="7" col_offset="1" id="attr3" NR_ctx="36">
+          <StoreAst nodecnt="36"/>
+        </NameAst>
+        <StrAst nodecnt="37" lineno="7" col_offset="9" s="str"/>
+      </AssignAst>
+    </FunctionDefAst>
+    <AssignAst nodecnt="38" lineno="9" col_offset="0" NRLST_targets="39" NR_value="41">
+      <NameAst nodecnt="39" lineno="9" col_offset="0" id="some_instance" NR_ctx="40">
+        <StoreAst nodecnt="40"/>
+      </NameAst>
+      <CallAst nodecnt="41" lineno="9" col_offset="16" NR_func="42" NRLST_args="" NRLST_keywords="" NR_starargs="" NR_kwargs="">
+        <NameAst nodecnt="42" lineno="9" col_offset="16" id="some_class" NR_ctx="43">
+          <LoadAst nodecnt="43"/>
+        </NameAst>
+      </CallAst>
+    </AssignAst>
+    <ExprAst nodecnt="44" lineno="10" col_offset="0" NR_value="45">
+      <AttributeAst nodecnt="45" lineno="10" col_offset="0" attr="attr1" NR_value="46" NR_ctx="48">
+        <NameAst nodecnt="46" lineno="10" col_offset="0" id="some_instance" NR_ctx="47">
+          <LoadAst nodecnt="47"/>
+        </NameAst>
+        <LoadAst nodecnt="48"/>
+      </AttributeAst>
+    </ExprAst>
+    <ExprAst nodecnt="49" lineno="11" col_offset="0" NR_value="50">
+      <AttributeAst nodecnt="50" lineno="11" col_offset="0" attr="attr2" NR_value="51" NR_ctx="53">
+        <NameAst nodecnt="51" lineno="11" col_offset="0" id="some_instance" NR_ctx="52">
+          <LoadAst nodecnt="52"/>
+        </NameAst>
+        <LoadAst nodecnt="53"/>
+      </AttributeAst>
+    </ExprAst>
+    <ExprAst nodecnt="54" lineno="12" col_offset="0" NR_value="55">
+      <CallAst nodecnt="55" lineno="12" col_offset="0" NR_func="56" NRLST_args="" NRLST_keywords="" NR_starargs="" NR_kwargs="">
+        <AttributeAst nodecnt="56" lineno="12" col_offset="0" attr="some_method" NR_value="57" NR_ctx="59">
+          <NameAst nodecnt="57" lineno="12" col_offset="0" id="some_instance" NR_ctx="58">
+            <LoadAst nodecnt="58"/>
+          </NameAst>
+          <LoadAst nodecnt="59"/>
+        </AttributeAst>
+      </CallAst>
+    </ExprAst>
+    <ExprAst nodecnt="60" lineno="19" col_offset="-1" NR_value="61">
+      <StrAst nodecnt="61" lineno="19" col_offset="-1" s="&#10;multiline comment&#10;foo&#10;bar&#10;"/>
+    </ExprAst>
+    <ImportAst nodecnt="62" lineno="21" col_offset="0" NRLST_names="63">
+      <aliasAst nodecnt="63" name="sys" NR_asname=""/>
+    </ImportAst>
+    <ImportAst nodecnt="64" lineno="22" col_offset="0" NRLST_names="65">
+      <aliasAst nodecnt="65" name="random" NR_asname=""/>
+    </ImportAst>
+    <ImportAst nodecnt="66" lineno="24" col_offset="0" NRLST_names="67">
+      <aliasAst nodecnt="67" name="PyQt4.QtCore" NR_asname=""/>
+    </ImportAst>
+    <PrintAst nodecnt="68" lineno="26" col_offset="0" nl="True" NR_dest="" NRLST_values="69">
+      <NameAst nodecnt="69" lineno="26" col_offset="6" id="sys" NR_ctx="70">
+        <LoadAst nodecnt="70"/>
+      </NameAst>
+    </PrintAst>
+    <FunctionDefAst nodecnt="71" lineno="28" col_offset="0" name="simple_func" NR_args="72" NRLST_body="75" NRLST_decorator_list="">
+      <argumentsAst nodecnt="72" NRLST_args="73" NR_vararg="" NR_kwarg="" NRLST_defaults="">
+        <NameAst nodecnt="73" lineno="28" col_offset="16" id="foo" NR_ctx="74">
+          <ParamAst nodecnt="74"/>
+        </NameAst>
+      </argumentsAst>
+      <PassAst nodecnt="75" lineno="30" col_offset="1"/>
+    </FunctionDefAst>
+    <FunctionDefAst nodecnt="76" lineno="32" col_offset="0" name="function" NR_args="77" NRLST_body="80,82" NRLST_decorator_list="">
+      <argumentsAst nodecnt="77" NRLST_args="78" NR_vararg="" NR_kwarg="" NRLST_defaults="">
+        <NameAst nodecnt="78" lineno="32" col_offset="13" id="foo" NR_ctx="79">
+          <ParamAst nodecnt="79"/>
+        </NameAst>
+      </argumentsAst>
+      <ExprAst nodecnt="80" lineno="38" col_offset="-1" NR_value="81">
+        <StrAst nodecnt="81" lineno="38" col_offset="-1" s=" docstring&#10;&#9;more&#10;&#9;more more&#10;&#9;&gt;&gt;&gt; test&#10;&#9;&gt;&gt;&gt; test&#10;&#9;"/>
+      </ExprAst>
+      <ReturnAst nodecnt="82" lineno="39" col_offset="1" NR_value="83">
+        <NameAst nodecnt="83" lineno="39" col_offset="8" id="foo" NR_ctx="84">
+          <LoadAst nodecnt="84"/>
+        </NameAst>
+      </ReturnAst>
+    </FunctionDefAst>
+    <TryExceptAst nodecnt="85" lineno="41" col_offset="0" NRLST_body="86" NRLST_handlers="87" NRLST_orelse="">
+      <PassAst nodecnt="86" lineno="42" col_offset="4"/>
+      <ExceptHandlerAst nodecnt="87" lineno="43" col_offset="0" NR_type="88" NR_name="90" NRLST_body="92">
+        <NameAst nodecnt="88" lineno="43" col_offset="7" id="Exception" NR_ctx="89">
+          <LoadAst nodecnt="89"/>
+        </NameAst>
+        <NameAst nodecnt="90" lineno="43" col_offset="20" id="e" NR_ctx="91">
+          <StoreAst nodecnt="91"/>
+        </NameAst>
+        <PrintAst nodecnt="92" lineno="44" col_offset="4" nl="True" NR_dest="" NRLST_values="93">
+          <NameAst nodecnt="93" lineno="44" col_offset="10" id="e" NR_ctx="94">
+            <LoadAst nodecnt="94"/>
+          </NameAst>
+        </PrintAst>
+      </ExceptHandlerAst>
+    </TryExceptAst>
+    <FunctionDefAst nodecnt="95" lineno="46" col_offset="0" name="func" NR_args="96" NRLST_body="113,116,119,122" NRLST_decorator_list="">
+      <argumentsAst nodecnt="96" NRLST_args="97,99,101,103,105,107,109,111" NR_vararg="" NR_kwarg="" NRLST_defaults="">
+        <NameAst nodecnt="97" lineno="46" col_offset="9" id="foo" NR_ctx="98">
+          <ParamAst nodecnt="98"/>
+        </NameAst>
+        <NameAst nodecnt="99" lineno="46" col_offset="14" id="bar" NR_ctx="100">
+          <ParamAst nodecnt="100"/>
+        </NameAst>
+        <NameAst nodecnt="101" lineno="46" col_offset="19" id="baz" NR_ctx="102">
+          <ParamAst nodecnt="102"/>
+        </NameAst>
+        <NameAst nodecnt="103" lineno="46" col_offset="24" id="bang" NR_ctx="104">
+          <ParamAst nodecnt="104"/>
+        </NameAst>
+        <NameAst nodecnt="105" lineno="46" col_offset="30" id="foobang" NR_ctx="106">
+          <ParamAst nodecnt="106"/>
+        </NameAst>
+        <NameAst nodecnt="107" lineno="46" col_offset="39" id="foobar" NR_ctx="108">
+          <ParamAst nodecnt="108"/>
+        </NameAst>
+        <NameAst nodecnt="109" lineno="46" col_offset="47" id="foobazbar" NR_ctx="110">
+          <ParamAst nodecnt="110"/>
+        </NameAst>
+        <NameAst nodecnt="111" lineno="46" col_offset="58" id="foobazbarbang" NR_ctx="112">
+          <ParamAst nodecnt="112"/>
+        </NameAst>
+      </argumentsAst>
+      <ReturnAst nodecnt="113" lineno="47" col_offset="4" NR_value="114">
+        <NameAst nodecnt="114" lineno="47" col_offset="11" id="foobang" NR_ctx="115">
+          <LoadAst nodecnt="115"/>
+        </NameAst>
+      </ReturnAst>
+      <PrintAst nodecnt="116" lineno="48" col_offset="4" nl="True" NR_dest="" NRLST_values="117">
+        <NameAst nodecnt="117" lineno="48" col_offset="10" id="foo" NR_ctx="118">
+          <LoadAst nodecnt="118"/>
+        </NameAst>
+      </PrintAst>
+      <PrintAst nodecnt="119" lineno="49" col_offset="4" nl="True" NR_dest="" NRLST_values="120">
+        <NameAst nodecnt="120" lineno="49" col_offset="10" id="foobazbarbang" NR_ctx="121">
+          <LoadAst nodecnt="121"/>
+        </NameAst>
+      </PrintAst>
+      <IfAst nodecnt="122" lineno="51" col_offset="4" NR_test="123" NRLST_body="128" NRLST_orelse="">
+        <CompareAst nodecnt="123" lineno="51" col_offset="7" NR_left="124" NRLST_ops="126" NRLST_comparators="127">
+          <NameAst nodecnt="124" lineno="51" col_offset="7" id="foobazbar" NR_ctx="125">
+            <LoadAst nodecnt="125"/>
+          </NameAst>
+          <LtAst nodecnt="126"/>
+          <NumAst nodecnt="127" lineno="51" col_offset="19" n="5"/>
+        </CompareAst>
+        <PassAst nodecnt="128" lineno="52" col_offset="8"/>
+      </IfAst>
+    </FunctionDefAst>
+    <FunctionDefAst nodecnt="129" lineno="54" col_offset="0" name="another_function" NR_args="130" NRLST_body="133" NRLST_decorator_list="">
+      <argumentsAst nodecnt="130" NRLST_args="131" NR_vararg="" NR_kwarg="" NRLST_defaults="">
+        <NameAst nodecnt="131" lineno="54" col_offset="21" id="param" NR_ctx="132">
+          <ParamAst nodecnt="132"/>
+        </NameAst>
+      </argumentsAst>
+      <PrintAst nodecnt="133" lineno="55" col_offset="4" nl="True" NR_dest="" NRLST_values="134">
+        <NameAst nodecnt="134" lineno="55" col_offset="10" id="param" NR_ctx="135">
+          <LoadAst nodecnt="135"/>
+        </NameAst>
+      </PrintAst>
+    </FunctionDefAst>
+    <AssignAst nodecnt="136" lineno="57" col_offset="0" NRLST_targets="137" NR_value="139">
+      <NameAst nodecnt="137" lineno="57" col_offset="0" id="a" NR_ctx="138">
+        <StoreAst nodecnt="138"/>
+      </NameAst>
+      <NumAst nodecnt="139" lineno="57" col_offset="4" n="5"/>
+    </AssignAst>
+    <AssignAst nodecnt="140" lineno="59" col_offset="0" NRLST_targets="141" NR_value="143">
+      <NameAst nodecnt="141" lineno="59" col_offset="0" id="bar" NR_ctx="142">
+        <StoreAst nodecnt="142"/>
+      </NameAst>
+      <CompareAst nodecnt="143" lineno="59" col_offset="6" NR_left="144" NRLST_ops="146" NRLST_comparators="147">
+        <NameAst nodecnt="144" lineno="59" col_offset="6" id="a" NR_ctx="145">
+          <LoadAst nodecnt="145"/>
+        </NameAst>
+        <EqAst nodecnt="146"/>
+        <NameAst nodecnt="147" lineno="59" col_offset="11" id="a" NR_ctx="148">
+          <LoadAst nodecnt="148"/>
+        </NameAst>
+      </CompareAst>
+    </AssignAst>
+    <ExprAst nodecnt="149" lineno="60" col_offset="0" NR_value="150">
+      <CompareAst nodecnt="150" lineno="60" col_offset="0" NR_left="151" NRLST_ops="153" NRLST_comparators="154">
+        <NameAst nodecnt="151" lineno="60" col_offset="0" id="a" NR_ctx="152">
+          <LoadAst nodecnt="152"/>
+        </NameAst>
+        <NotEqAst nodecnt="153"/>
+        <NameAst nodecnt="154" lineno="60" col_offset="5" id="a" NR_ctx="155">
+          <LoadAst nodecnt="155"/>
+        </NameAst>
+      </CompareAst>
+    </ExprAst>
+    <ExprAst nodecnt="156" lineno="61" col_offset="0" NR_value="157">
+      <CompareAst nodecnt="157" lineno="61" col_offset="0" NR_left="158" NRLST_ops="160" NRLST_comparators="161">
+        <NameAst nodecnt="158" lineno="61" col_offset="0" id="a" NR_ctx="159">
+          <LoadAst nodecnt="159"/>
+        </NameAst>
+        <LtAst nodecnt="160"/>
+        <NameAst nodecnt="161" lineno="61" col_offset="4" id="a" NR_ctx="162">
+          <LoadAst nodecnt="162"/>
+        </NameAst>
+      </CompareAst>
+    </ExprAst>
+    <ExprAst nodecnt="163" lineno="62" col_offset="0" NR_value="164">
+      <CompareAst nodecnt="164" lineno="62" col_offset="0" NR_left="165" NRLST_ops="167" NRLST_comparators="168">
+        <NameAst nodecnt="165" lineno="62" col_offset="0" id="a" NR_ctx="166">
+          <LoadAst nodecnt="166"/>
+        </NameAst>
+        <LtEAst nodecnt="167"/>
+        <NameAst nodecnt="168" lineno="62" col_offset="5" id="a" NR_ctx="169">
+          <LoadAst nodecnt="169"/>
+        </NameAst>
+      </CompareAst>
+    </ExprAst>
+    <ExprAst nodecnt="170" lineno="63" col_offset="0" NR_value="171">
+      <CompareAst nodecnt="171" lineno="63" col_offset="0" NR_left="172" NRLST_ops="174" NRLST_comparators="175">
+        <NameAst nodecnt="172" lineno="63" col_offset="0" id="a" NR_ctx="173">
+          <LoadAst nodecnt="173"/>
+        </NameAst>
+        <GtAst nodecnt="174"/>
+        <NameAst nodecnt="175" lineno="63" col_offset="4" id="a" NR_ctx="176">
+          <LoadAst nodecnt="176"/>
+        </NameAst>
+      </CompareAst>
+    </ExprAst>
+    <ExprAst nodecnt="177" lineno="64" col_offset="0" NR_value="178">
+      <CompareAst nodecnt="178" lineno="64" col_offset="0" NR_left="179" NRLST_ops="181" NRLST_comparators="182">
+        <NameAst nodecnt="179" lineno="64" col_offset="0" id="a" NR_ctx="180">
+          <LoadAst nodecnt="180"/>
+        </NameAst>
+        <GtEAst nodecnt="181"/>
+        <NameAst nodecnt="182" lineno="64" col_offset="5" id="a" NR_ctx="183">
+          <LoadAst nodecnt="183"/>
+        </NameAst>
+      </CompareAst>
+    </ExprAst>
+    <ExprAst nodecnt="184" lineno="65" col_offset="0" NR_value="185">
+      <CompareAst nodecnt="185" lineno="65" col_offset="0" NR_left="186" NRLST_ops="188" NRLST_comparators="189">
+        <NameAst nodecnt="186" lineno="65" col_offset="0" id="a" NR_ctx="187">
+          <LoadAst nodecnt="187"/>
+        </NameAst>
+        <IsAst nodecnt="188"/>
+        <NameAst nodecnt="189" lineno="65" col_offset="5" id="a" NR_ctx="190">
+          <LoadAst nodecnt="190"/>
+        </NameAst>
+      </CompareAst>
+    </ExprAst>
+    <ExprAst nodecnt="191" lineno="66" col_offset="0" NR_value="192">
+      <CompareAst nodecnt="192" lineno="66" col_offset="0" NR_left="193" NRLST_ops="195" NRLST_comparators="196">
+        <NameAst nodecnt="193" lineno="66" col_offset="0" id="a" NR_ctx="194">
+          <LoadAst nodecnt="194"/>
+        </NameAst>
+        <IsNotAst nodecnt="195"/>
+        <NameAst nodecnt="196" lineno="66" col_offset="9" id="a" NR_ctx="197">
+          <LoadAst nodecnt="197"/>
+        </NameAst>
+      </CompareAst>
+    </ExprAst>
+    <ExprAst nodecnt="198" lineno="67" col_offset="0" NR_value="199">
+      <CompareAst nodecnt="199" lineno="67" col_offset="0" NR_left="200" NRLST_ops="202" NRLST_comparators="203">
+        <NameAst nodecnt="200" lineno="67" col_offset="0" id="a" NR_ctx="201">
+          <LoadAst nodecnt="201"/>
+        </NameAst>
+        <NotInAst nodecnt="202"/>
+        <NameAst nodecnt="203" lineno="67" col_offset="9" id="a" NR_ctx="204">
+          <LoadAst nodecnt="204"/>
+        </NameAst>
+      </CompareAst>
+    </ExprAst>
+    <ExprAst nodecnt="205" lineno="68" col_offset="0" NR_value="206">
+      <CompareAst nodecnt="206" lineno="68" col_offset="0" NR_left="207" NRLST_ops="209" NRLST_comparators="210">
+        <NameAst nodecnt="207" lineno="68" col_offset="0" id="a" NR_ctx="208">
+          <LoadAst nodecnt="208"/>
+        </NameAst>
+        <InAst nodecnt="209"/>
+        <NameAst nodecnt="210" lineno="68" col_offset="5" id="a" NR_ctx="211">
+          <LoadAst nodecnt="211"/>
+        </NameAst>
+      </CompareAst>
+    </ExprAst>
+    <AssignAst nodecnt="212" lineno="70" col_offset="0" NRLST_targets="213" NR_value="215">
+      <NameAst nodecnt="213" lineno="70" col_offset="0" id="a" NR_ctx="214">
+        <StoreAst nodecnt="214"/>
+      </NameAst>
+      <BinOpAst nodecnt="215" lineno="70" col_offset="4" NR_left="216" NR_op="218" NR_right="219">
+        <NameAst nodecnt="216" lineno="70" col_offset="4" id="a" NR_ctx="217">
+          <LoadAst nodecnt="217"/>
+        </NameAst>
+        <AddAst nodecnt="218"/>
+        <NumAst nodecnt="219" lineno="70" col_offset="8" n="1"/>
+      </BinOpAst>
+    </AssignAst>
+    <AssignAst nodecnt="220" lineno="71" col_offset="0" NRLST_targets="221" NR_value="223">
+      <NameAst nodecnt="221" lineno="71" col_offset="0" id="a" NR_ctx="222">
+        <StoreAst nodecnt="222"/>
+      </NameAst>
+      <BinOpAst nodecnt="223" lineno="71" col_offset="4" NR_left="224" NR_op="226" NR_right="227">
+        <NameAst nodecnt="224" lineno="71" col_offset="4" id="a" NR_ctx="225">
+          <LoadAst nodecnt="225"/>
+        </NameAst>
+        <SubAst nodecnt="226"/>
+        <NumAst nodecnt="227" lineno="71" col_offset="8" n="1"/>
+      </BinOpAst>
+    </AssignAst>
+    <AssignAst nodecnt="228" lineno="72" col_offset="0" NRLST_targets="229" NR_value="231">
+      <NameAst nodecnt="229" lineno="72" col_offset="0" id="a" NR_ctx="230">
+        <StoreAst nodecnt="230"/>
+      </NameAst>
+      <BinOpAst nodecnt="231" lineno="72" col_offset="4" NR_left="232" NR_op="234" NR_right="235">
+        <NameAst nodecnt="232" lineno="72" col_offset="4" id="a" NR_ctx="233">
+          <LoadAst nodecnt="233"/>
+        </NameAst>
+        <MultAst nodecnt="234"/>
+        <NumAst nodecnt="235" lineno="72" col_offset="8" n="1"/>
+      </BinOpAst>
+    </AssignAst>
+    <AssignAst nodecnt="236" lineno="73" col_offset="0" NRLST_targets="237" NR_value="239">
+      <NameAst nodecnt="237" lineno="73" col_offset="0" id="a" NR_ctx="238">
+        <StoreAst nodecnt="238"/>
+      </NameAst>
+      <BinOpAst nodecnt="239" lineno="73" col_offset="4" NR_left="240" NR_op="242" NR_right="243">
+        <NameAst nodecnt="240" lineno="73" col_offset="4" id="a" NR_ctx="241">
+          <LoadAst nodecnt="241"/>
+        </NameAst>
+        <DivAst nodecnt="242"/>
+        <NumAst nodecnt="243" lineno="73" col_offset="8" n="1"/>
+      </BinOpAst>
+    </AssignAst>
+    <AssignAst nodecnt="244" lineno="74" col_offset="0" NRLST_targets="245" NR_value="247">
+      <NameAst nodecnt="245" lineno="74" col_offset="0" id="a" NR_ctx="246">
+        <StoreAst nodecnt="246"/>
+      </NameAst>
+      <BinOpAst nodecnt="247" lineno="74" col_offset="4" NR_left="248" NR_op="250" NR_right="251">
+        <NameAst nodecnt="248" lineno="74" col_offset="4" id="a" NR_ctx="249">
+          <LoadAst nodecnt="249"/>
+        </NameAst>
+        <ModAst nodecnt="250"/>
+        <NumAst nodecnt="251" lineno="74" col_offset="8" n="1"/>
+      </BinOpAst>
+    </AssignAst>
+    <AssignAst nodecnt="252" lineno="75" col_offset="0" NRLST_targets="253" NR_value="255">
+      <NameAst nodecnt="253" lineno="75" col_offset="0" id="a" NR_ctx="254">
+        <StoreAst nodecnt="254"/>
+      </NameAst>
+      <BinOpAst nodecnt="255" lineno="75" col_offset="4" NR_left="256" NR_op="258" NR_right="259">
+        <NameAst nodecnt="256" lineno="75" col_offset="4" id="a" NR_ctx="257">
+          <LoadAst nodecnt="257"/>
+        </NameAst>
+        <BitXorAst nodecnt="258"/>
+        <NumAst nodecnt="259" lineno="75" col_offset="8" n="1"/>
+      </BinOpAst>
+    </AssignAst>
+    <AssignAst nodecnt="260" lineno="76" col_offset="0" NRLST_targets="261" NR_value="263">
+      <NameAst nodecnt="261" lineno="76" col_offset="0" id="a" NR_ctx="262">
+        <StoreAst nodecnt="262"/>
+      </NameAst>
+      <BinOpAst nodecnt="263" lineno="76" col_offset="4" NR_left="264" NR_op="266" NR_right="267">
+        <NameAst nodecnt="264" lineno="76" col_offset="4" id="a" NR_ctx="265">
+          <LoadAst nodecnt="265"/>
+        </NameAst>
+        <BitAndAst nodecnt="266"/>
+        <NumAst nodecnt="267" lineno="76" col_offset="8" n="1"/>
+      </BinOpAst>
+    </AssignAst>
+    <AssignAst nodecnt="268" lineno="77" col_offset="0" NRLST_targets="269" NR_value="271">
+      <NameAst nodecnt="269" lineno="77" col_offset="0" id="a" NR_ctx="270">
+        <StoreAst nodecnt="270"/>
+      </NameAst>
+      <BinOpAst nodecnt="271" lineno="77" col_offset="4" NR_left="272" NR_op="274" NR_right="275">
+        <NameAst nodecnt="272" lineno="77" col_offset="4" id="a" NR_ctx="273">
+          <LoadAst nodecnt="273"/>
+        </NameAst>
+        <BitOrAst nodecnt="274"/>
+        <NumAst nodecnt="275" lineno="77" col_offset="8" n="1"/>
+      </BinOpAst>
+    </AssignAst>
+    <AssignAst nodecnt="276" lineno="78" col_offset="0" NRLST_targets="277" NR_value="279">
+      <NameAst nodecnt="277" lineno="78" col_offset="0" id="a" NR_ctx="278">
+        <StoreAst nodecnt="278"/>
+      </NameAst>
+      <BinOpAst nodecnt="279" lineno="78" col_offset="4" NR_left="280" NR_op="282" NR_right="283">
+        <NameAst nodecnt="280" lineno="78" col_offset="4" id="a" NR_ctx="281">
+          <LoadAst nodecnt="281"/>
+        </NameAst>
+        <PowAst nodecnt="282"/>
+        <NumAst nodecnt="283" lineno="78" col_offset="9" n="1"/>
+      </BinOpAst>
+    </AssignAst>
+    <AssignAst nodecnt="284" lineno="79" col_offset="0" NRLST_targets="285" NR_value="287">
+      <NameAst nodecnt="285" lineno="79" col_offset="0" id="a" NR_ctx="286">
+        <StoreAst nodecnt="286"/>
+      </NameAst>
+      <BinOpAst nodecnt="287" lineno="79" col_offset="4" NR_left="288" NR_op="290" NR_right="291">
+        <NameAst nodecnt="288" lineno="79" col_offset="4" id="a" NR_ctx="289">
+          <LoadAst nodecnt="289"/>
+        </NameAst>
+        <RShiftAst nodecnt="290"/>
+        <NumAst nodecnt="291" lineno="79" col_offset="9" n="1"/>
+      </BinOpAst>
+    </AssignAst>
+    <AssignAst nodecnt="292" lineno="80" col_offset="0" NRLST_targets="293" NR_value="295">
+      <NameAst nodecnt="293" lineno="80" col_offset="0" id="a" NR_ctx="294">
+        <StoreAst nodecnt="294"/>
+      </NameAst>
+      <BinOpAst nodecnt="295" lineno="80" col_offset="4" NR_left="296" NR_op="298" NR_right="299">
+        <NameAst nodecnt="296" lineno="80" col_offset="4" id="a" NR_ctx="297">
+          <LoadAst nodecnt="297"/>
+        </NameAst>
+        <LShiftAst nodecnt="298"/>
+        <NumAst nodecnt="299" lineno="80" col_offset="9" n="1"/>
+      </BinOpAst>
+    </AssignAst>
+    <AssignAst nodecnt="300" lineno="82" col_offset="0" NRLST_targets="301" NR_value="303">
+      <NameAst nodecnt="301" lineno="82" col_offset="0" id="a" NR_ctx="302">
+        <StoreAst nodecnt="302"/>
+      </NameAst>
+      <UnaryOpAst nodecnt="303" lineno="82" col_offset="4" NR_op="304" NR_operand="305">
+        <NotAst nodecnt="304"/>
+        <NameAst nodecnt="305" lineno="82" col_offset="8" id="a" NR_ctx="306">
+          <LoadAst nodecnt="306"/>
+        </NameAst>
+      </UnaryOpAst>
+    </AssignAst>
+    <AssignAst nodecnt="307" lineno="83" col_offset="0" NRLST_targets="308" NR_value="310">
+      <NameAst nodecnt="308" lineno="83" col_offset="0" id="a" NR_ctx="309">
+        <StoreAst nodecnt="309"/>
+      </NameAst>
+      <UnaryOpAst nodecnt="310" lineno="83" col_offset="4" NR_op="311" NR_operand="312">
+        <UAddAst nodecnt="311"/>
+        <NameAst nodecnt="312" lineno="83" col_offset="5" id="a" NR_ctx="313">
+          <LoadAst nodecnt="313"/>
+        </NameAst>
+      </UnaryOpAst>
+    </AssignAst>
+    <AssignAst nodecnt="314" lineno="84" col_offset="0" NRLST_targets="315" NR_value="317">
+      <NameAst nodecnt="315" lineno="84" col_offset="0" id="a" NR_ctx="316">
+        <StoreAst nodecnt="316"/>
+      </NameAst>
+      <UnaryOpAst nodecnt="317" lineno="84" col_offset="4" NR_op="318" NR_operand="319">
+        <USubAst nodecnt="318"/>
+        <NameAst nodecnt="319" lineno="84" col_offset="5" id="a" NR_ctx="320">
+          <LoadAst nodecnt="320"/>
+        </NameAst>
+      </UnaryOpAst>
+    </AssignAst>
+    <AssignAst nodecnt="321" lineno="85" col_offset="0" NRLST_targets="322" NR_value="324">
+      <NameAst nodecnt="322" lineno="85" col_offset="0" id="a" NR_ctx="323">
+        <StoreAst nodecnt="323"/>
+      </NameAst>
+      <UnaryOpAst nodecnt="324" lineno="85" col_offset="4" NR_op="325" NR_operand="326">
+        <InvertAst nodecnt="325"/>
+        <NameAst nodecnt="326" lineno="85" col_offset="5" id="a" NR_ctx="327">
+          <LoadAst nodecnt="327"/>
+        </NameAst>
+      </UnaryOpAst>
+    </AssignAst>
+    <AssignAst nodecnt="328" lineno="87" col_offset="0" NRLST_targets="329" NR_value="331">
+      <NameAst nodecnt="329" lineno="87" col_offset="0" id="a" NR_ctx="330">
+        <StoreAst nodecnt="330"/>
+      </NameAst>
+      <SubscriptAst nodecnt="331" lineno="87" col_offset="4" NR_value="332" NR_slice="340" NR_ctx="342">
+        <SubscriptAst nodecnt="332" lineno="87" col_offset="4" NR_value="333" NR_slice="335" NR_ctx="339">
+          <NameAst nodecnt="333" lineno="87" col_offset="4" id="b" NR_ctx="334">
+            <LoadAst nodecnt="334"/>
+          </NameAst>
+          <SliceAst nodecnt="335" NR_lower="336" NR_upper="337" NR_step="338">
+            <NumAst nodecnt="336" lineno="87" col_offset="6" n="1"/>
+            <NumAst nodecnt="337" lineno="87" col_offset="8" n="2"/>
+            <NumAst nodecnt="338" lineno="87" col_offset="10" n="3"/>
+          </SliceAst>
+          <LoadAst nodecnt="339"/>
+        </SubscriptAst>
+        <IndexAst nodecnt="340" NR_value="341">
+          <NumAst nodecnt="341" lineno="87" col_offset="13" n="2"/>
+        </IndexAst>
+        <LoadAst nodecnt="342"/>
+      </SubscriptAst>
+    </AssignAst>
+    <AssignAst nodecnt="343" lineno="88" col_offset="0" NRLST_targets="344" NR_value="346">
+      <NameAst nodecnt="344" lineno="88" col_offset="0" id="extended" NR_ctx="345">
+        <StoreAst nodecnt="345"/>
+      </NameAst>
+      <SubscriptAst nodecnt="346" lineno="88" col_offset="11" NR_value="347" NR_slice="349" NR_ctx="356">
+        <NameAst nodecnt="347" lineno="88" col_offset="11" id="a" NR_ctx="348">
+          <LoadAst nodecnt="348"/>
+        </NameAst>
+        <ExtSliceAst nodecnt="349" NRLST_dims="350,353">
+          <SliceAst nodecnt="350" NR_lower="351" NR_upper="352" NR_step="">
+            <NumAst nodecnt="351" lineno="88" col_offset="13" n="1"/>
+            <NumAst nodecnt="352" lineno="88" col_offset="15" n="2"/>
+          </SliceAst>
+          <SliceAst nodecnt="353" NR_lower="354" NR_upper="355" NR_step="">
+            <NumAst nodecnt="354" lineno="88" col_offset="18" n="2"/>
+            <NumAst nodecnt="355" lineno="88" col_offset="20" n="3"/>
+          </SliceAst>
+        </ExtSliceAst>
+        <LoadAst nodecnt="356"/>
+      </SubscriptAst>
+    </AssignAst>
+    <AugAssignAst nodecnt="357" lineno="90" col_offset="0" NR_target="358" NR_op="360" NR_value="361">
+      <NameAst nodecnt="358" lineno="90" col_offset="0" id="i" NR_ctx="359">
+        <StoreAst nodecnt="359"/>
+      </NameAst>
+      <AddAst nodecnt="360"/>
+      <NumAst nodecnt="361" lineno="90" col_offset="5" n="3"/>
+    </AugAssignAst>
+    <AugAssignAst nodecnt="362" lineno="91" col_offset="0" NR_target="363" NR_op="365" NR_value="366">
+      <NameAst nodecnt="363" lineno="91" col_offset="0" id="i" NR_ctx="364">
+        <StoreAst nodecnt="364"/>
+      </NameAst>
+      <AddAst nodecnt="365"/>
+      <NameAst nodecnt="366" lineno="91" col_offset="5" id="j" NR_ctx="367">
+        <LoadAst nodecnt="367"/>
+      </NameAst>
+    </AugAssignAst>
+    <PrintAst nodecnt="368" lineno="93" col_offset="0" nl="True" NR_dest="" NRLST_values="369">
+      <IfExpAst nodecnt="369" lineno="93" col_offset="6" NR_test="370" NR_body="374" NR_orelse="375">
+        <CompareAst nodecnt="370" lineno="93" col_offset="11" NR_left="371" NRLST_ops="372" NRLST_comparators="373">
+          <NumAst nodecnt="371" lineno="93" col_offset="11" n="5"/>
+          <LtAst nodecnt="372"/>
+          <NumAst nodecnt="373" lineno="93" col_offset="15" n="7"/>
+        </CompareAst>
+        <NumAst nodecnt="374" lineno="93" col_offset="6" n="3"/>
+        <NumAst nodecnt="375" lineno="93" col_offset="22" n="4"/>
+      </IfExpAst>
+    </PrintAst>
+    <ImportFromAst nodecnt="376" lineno="95" col_offset="0" module="random" level="0" NRLST_names="377">
+      <aliasAst nodecnt="377" name="random" NR_asname=""/>
+    </ImportFromAst>
+    <PrintAst nodecnt="378" lineno="97" col_offset="0" nl="True" NR_dest="" NRLST_values="379">
+      <NameAst nodecnt="379" lineno="97" col_offset="6" id="random" NR_ctx="380">
+        <LoadAst nodecnt="380"/>
+      </NameAst>
+    </PrintAst>
+    <ExprAst nodecnt="381" lineno="99" col_offset="0" NR_value="382">
+      <CallAst nodecnt="382" lineno="99" col_offset="0" NR_func="383" NRLST_args="" NRLST_keywords="385" NR_starargs="" NR_kwargs="">
+        <NameAst nodecnt="383" lineno="99" col_offset="0" id="random" NR_ctx="384">
+          <LoadAst nodecnt="384"/>
+        </NameAst>
+        <keywordAst nodecnt="385" arg="foo" NR_value="386">
+          <NumAst nodecnt="386" lineno="99" col_offset="11" n="3"/>
+        </keywordAst>
+      </CallAst>
+    </ExprAst>
+    <AssignAst nodecnt="387" lineno="101" col_offset="0" NRLST_targets="388" NR_value="390">
+      <NameAst nodecnt="388" lineno="101" col_offset="0" id="a" NR_ctx="389">
+        <StoreAst nodecnt="389"/>
+      </NameAst>
+      <LambdaAst nodecnt="390" lineno="101" col_offset="4" NR_args="391" NR_body="394">
+        <argumentsAst nodecnt="391" NRLST_args="392" NR_vararg="" NR_kwarg="" NRLST_defaults="">
+          <NameAst nodecnt="392" lineno="101" col_offset="11" id="x" NR_ctx="393">
+            <ParamAst nodecnt="393"/>
+          </NameAst>
+        </argumentsAst>
+        <BinOpAst nodecnt="394" lineno="101" col_offset="14" NR_left="395" NR_op="397" NR_right="398">
+          <NameAst nodecnt="395" lineno="101" col_offset="14" id="x" NR_ctx="396">
+            <LoadAst nodecnt="396"/>
+          </NameAst>
+          <PowAst nodecnt="397"/>
+          <NumAst nodecnt="398" lineno="101" col_offset="17" n="2"/>
+        </BinOpAst>
+      </LambdaAst>
+    </AssignAst>
+    <FunctionDefAst nodecnt="399" lineno="103" col_offset="0" name="genfunc" NR_args="400" NRLST_body="401" NRLST_decorator_list="405,407">
+      <argumentsAst nodecnt="400" NRLST_args="" NR_vararg="" NR_kwarg="" NRLST_defaults=""/>
+      <ExprAst nodecnt="401" lineno="106" col_offset="4" NR_value="402">
+        <YieldAst nodecnt="402" lineno="106" col_offset="4" NR_value="403">
+          <NameAst nodecnt="403" lineno="106" col_offset="10" id="foo" NR_ctx="404">
+            <LoadAst nodecnt="404"/>
+          </NameAst>
+        </YieldAst>
+      </ExprAst>
+      <NameAst nodecnt="405" lineno="103" col_offset="1" id="staticmethod" NR_ctx="406">
+        <LoadAst nodecnt="406"/>
+      </NameAst>
+      <NameAst nodecnt="407" lineno="104" col_offset="1" id="classmethod" NR_ctx="408">
+        <LoadAst nodecnt="408"/>
+      </NameAst>
+    </FunctionDefAst>
+    <ForAst nodecnt="409" lineno="108" col_offset="0" NR_target="410" NR_iter="416" NRLST_body="421" NRLST_orelse="">
+      <TupleAst nodecnt="410" lineno="108" col_offset="0" NRLST_elts="411,413" NR_ctx="415">
+        <NameAst nodecnt="411" lineno="108" col_offset="4" id="target1" NR_ctx="412">
+          <StoreAst nodecnt="412"/>
+        </NameAst>
+        <NameAst nodecnt="413" lineno="108" col_offset="13" id="target2" NR_ctx="414">
+          <StoreAst nodecnt="414"/>
+        </NameAst>
+        <StoreAst nodecnt="415"/>
+      </TupleAst>
+      <CallAst nodecnt="416" lineno="108" col_offset="24" NR_func="417" NRLST_args="" NRLST_keywords="" NR_starargs="" NR_kwargs="">
+        <AttributeAst nodecnt="417" lineno="108" col_offset="24" attr="iteritems" NR_value="418" NR_ctx="420">
+          <NameAst nodecnt="418" lineno="108" col_offset="24" id="some_dict" NR_ctx="419">
+            <LoadAst nodecnt="419"/>
+          </NameAst>
+          <LoadAst nodecnt="420"/>
+        </AttributeAst>
+      </CallAst>
+      <PrintAst nodecnt="421" lineno="109" col_offset="4" nl="True" NR_dest="" NRLST_values="422,424">
+        <NameAst nodecnt="422" lineno="109" col_offset="10" id="target1" NR_ctx="423">
+          <LoadAst nodecnt="423"/>
+        </NameAst>
+        <NameAst nodecnt="424" lineno="109" col_offset="19" id="target2" NR_ctx="425">
+          <LoadAst nodecnt="425"/>
+        </NameAst>
+      </PrintAst>
+    </ForAst>
+    <AssignAst nodecnt="426" lineno="111" col_offset="0" NRLST_targets="427" NR_value="429">
+      <NameAst nodecnt="427" lineno="111" col_offset="0" id="pi" NR_ctx="428">
+        <StoreAst nodecnt="428"/>
+      </NameAst>
+      <NumAst nodecnt="429" lineno="111" col_offset="5" n="3.1415"/>
+    </AssignAst>
+    <AssignAst nodecnt="430" lineno="113" col_offset="0" NRLST_targets="431" NR_value="433">
+      <NameAst nodecnt="431" lineno="113" col_offset="0" id="foo" NR_ctx="432">
+        <StoreAst nodecnt="432"/>
+      </NameAst>
+      <TupleAst nodecnt="433" lineno="113" col_offset="6" NRLST_elts="434,435" NR_ctx="436">
+        <NumAst nodecnt="434" lineno="113" col_offset="6" n="1"/>
+        <NumAst nodecnt="435" lineno="113" col_offset="9" n="2"/>
+        <LoadAst nodecnt="436"/>
+      </TupleAst>
+    </AssignAst>
+    <AssignAst nodecnt="437" lineno="114" col_offset="0" NRLST_targets="438" NR_value="440">
+      <NameAst nodecnt="438" lineno="114" col_offset="0" id="bar" NR_ctx="439">
+        <StoreAst nodecnt="439"/>
+      </NameAst>
+      <TupleAst nodecnt="440" lineno="114" col_offset="7" NRLST_elts="441,442" NR_ctx="443">
+        <NumAst nodecnt="441" lineno="114" col_offset="7" n="1"/>
+        <NumAst nodecnt="442" lineno="114" col_offset="10" n="2"/>
+        <LoadAst nodecnt="443"/>
+      </TupleAst>
+    </AssignAst>
+    <WithAst nodecnt="444" lineno="116" col_offset="0" NR_context_expr="445" NR_optional_vars="449" NRLST_body="451">
+      <CallAst nodecnt="445" lineno="116" col_offset="5" NR_func="446" NRLST_args="448" NRLST_keywords="" NR_starargs="" NR_kwargs="">
+        <NameAst nodecnt="446" lineno="116" col_offset="5" id="open" NR_ctx="447">
+          <LoadAst nodecnt="447"/>
+        </NameAst>
+        <StrAst nodecnt="448" lineno="116" col_offset="10" s="f"/>
+      </CallAst>
+      <NameAst nodecnt="449" lineno="116" col_offset="18" id="foo" NR_ctx="450">
+        <StoreAst nodecnt="450"/>
+      </NameAst>
+      <PassAst nodecnt="451" lineno="117" col_offset="4"/>
+    </WithAst>
+    <GlobalAst nodecnt="452" lineno="119" col_offset="0" NRLST_names=""/>
+    <AssignAst nodecnt="453" lineno="120" col_offset="0" NRLST_targets="454" NR_value="456">
+      <NameAst nodecnt="454" lineno="120" col_offset="0" id="IMAGLOBALVARIABLE" NR_ctx="455">
+        <StoreAst nodecnt="455"/>
+      </NameAst>
+      <NumAst nodecnt="456" lineno="120" col_offset="20" n="0"/>
+    </AssignAst>
+    <TryFinallyAst nodecnt="457" lineno="121" col_offset="0" NRLST_body="458" NRLST_finalbody="478">
+      <TryExceptAst nodecnt="458" lineno="121" col_offset="0" NRLST_body="459" NRLST_handlers="466" NRLST_orelse="474">
+        <AssignAst nodecnt="459" lineno="122" col_offset="4" NRLST_targets="460" NR_value="462">
+          <NameAst nodecnt="460" lineno="122" col_offset="4" id="a" NR_ctx="461">
+            <StoreAst nodecnt="461"/>
+          </NameAst>
+          <BinOpAst nodecnt="462" lineno="122" col_offset="8" NR_left="463" NR_op="464" NR_right="465">
+            <NumAst nodecnt="463" lineno="122" col_offset="8" n="3"/>
+            <DivAst nodecnt="464"/>
+            <NumAst nodecnt="465" lineno="122" col_offset="12" n="0"/>
+          </BinOpAst>
+        </AssignAst>
+        <ExceptHandlerAst nodecnt="466" lineno="123" col_offset="0" NR_type="467" NR_name="469" NRLST_body="471">
+          <NameAst nodecnt="467" lineno="123" col_offset="7" id="ZeroDivisionError" NR_ctx="468">
+            <LoadAst nodecnt="468"/>
+          </NameAst>
+          <NameAst nodecnt="469" lineno="123" col_offset="28" id="err" NR_ctx="470">
+            <StoreAst nodecnt="470"/>
+          </NameAst>
+          <RaiseAst nodecnt="471" lineno="124" col_offset="4" NR_type="472" NR_inst="" NR_tback="">
+            <NameAst nodecnt="472" lineno="124" col_offset="10" id="ValueError" NR_ctx="473">
+              <LoadAst nodecnt="473"/>
+            </NameAst>
+          </RaiseAst>
+        </ExceptHandlerAst>
+        <ExprAst nodecnt="474" lineno="126" col_offset="4" NR_value="475">
+          <CallAst nodecnt="475" lineno="126" col_offset="4" NR_func="476" NRLST_args="" NRLST_keywords="" NR_starargs="" NR_kwargs="">
+            <NameAst nodecnt="476" lineno="126" col_offset="4" id="do_something" NR_ctx="477">
+              <LoadAst nodecnt="477"/>
+            </NameAst>
+          </CallAst>
+        </ExprAst>
+      </TryExceptAst>
+      <ExprAst nodecnt="478" lineno="128" col_offset="4" NR_value="479">
+        <NameAst nodecnt="479" lineno="128" col_offset="4" id="BAM" NR_ctx="480">
+          <LoadAst nodecnt="480"/>
+        </NameAst>
+      </ExprAst>
+    </TryFinallyAst>
+    <IfAst nodecnt="481" lineno="130" col_offset="0" NR_test="482" NRLST_body="486" NRLST_orelse="">
+      <BoolOpAst nodecnt="482" lineno="130" col_offset="3" NR_op="483" NRLST_values="484,485">
+        <AndAst nodecnt="483"/>
+        <NumAst nodecnt="484" lineno="130" col_offset="3" n="3"/>
+        <NumAst nodecnt="485" lineno="130" col_offset="9" n="5"/>
+      </BoolOpAst>
+      <PassAst nodecnt="486" lineno="131" col_offset="4"/>
+    </IfAst>
+    <ForAst nodecnt="487" lineno="133" col_offset="0" NR_target="488" NR_iter="490" NRLST_body="494" NRLST_orelse="">
+      <NameAst nodecnt="488" lineno="133" col_offset="4" id="i" NR_ctx="489">
+        <StoreAst nodecnt="489"/>
+      </NameAst>
+      <CallAst nodecnt="490" lineno="133" col_offset="9" NR_func="491" NRLST_args="493" NRLST_keywords="" NR_starargs="" NR_kwargs="">
+        <NameAst nodecnt="491" lineno="133" col_offset="9" id="xrange" NR_ctx="492">
+          <LoadAst nodecnt="492"/>
+        </NameAst>
+        <NumAst nodecnt="493" lineno="133" col_offset="16" n="20"/>
+      </CallAst>
+      <PassAst nodecnt="494" lineno="134" col_offset="4"/>
+    </ForAst>
+    <WhileAst nodecnt="495" lineno="136" col_offset="0" NR_test="496" NRLST_body="498,499" NRLST_orelse="">
+      <NameAst nodecnt="496" lineno="136" col_offset="6" id="True" NR_ctx="497">
+        <LoadAst nodecnt="497"/>
+      </NameAst>
+      <BreakAst nodecnt="498" lineno="137" col_offset="4"/>
+      <ContinueAst nodecnt="499" lineno="138" col_offset="4"/>
+    </WhileAst>
+    <DeleteAst nodecnt="500" lineno="140" col_offset="0" NRLST_targets="501">
+      <NameAst nodecnt="501" lineno="140" col_offset="4" id="foo" NR_ctx="502">
+        <DelAst nodecnt="502"/>
+      </NameAst>
+    </DeleteAst>
+    <ImportAst nodecnt="503" lineno="142" col_offset="0" NRLST_names="504">
+      <aliasAst nodecnt="504" name="random" NR_asname=""/>
+    </ImportAst>
+    <ExprAst nodecnt="505" lineno="143" col_offset="0" NR_value="506">
+      <CallAst nodecnt="506" lineno="143" col_offset="0" NR_func="507" NRLST_args="511,512" NRLST_keywords="" NR_starargs="" NR_kwargs="">
+        <AttributeAst nodecnt="507" lineno="143" col_offset="0" attr="random" NR_value="508" NR_ctx="510">
+          <NameAst nodecnt="508" lineno="143" col_offset="0" id="random" NR_ctx="509">
+            <LoadAst nodecnt="509"/>
+          </NameAst>
+          <LoadAst nodecnt="510"/>
+        </AttributeAst>
+        <NumAst nodecnt="511" lineno="143" col_offset="14" n="3"/>
+        <NumAst nodecnt="512" lineno="143" col_offset="17" n="5"/>
+      </CallAst>
+    </ExprAst>
+    <AssignAst nodecnt="513" lineno="145" col_offset="0" NRLST_targets="514" NR_value="516">
+      <NameAst nodecnt="514" lineno="145" col_offset="0" id="somelist" NR_ctx="515">
+        <StoreAst nodecnt="515"/>
+      </NameAst>
+      <ListAst nodecnt="516" lineno="145" col_offset="11" NRLST_elts="517,518,519,520,521" NR_ctx="522">
+        <NumAst nodecnt="517" lineno="145" col_offset="12" n="1"/>
+        <NumAst nodecnt="518" lineno="145" col_offset="15" n="2"/>
+        <NumAst nodecnt="519" lineno="145" col_offset="18" n="3"/>
+        <NumAst nodecnt="520" lineno="145" col_offset="21" n="4"/>
+        <NumAst nodecnt="521" lineno="145" col_offset="24" n="5"/>
+        <LoadAst nodecnt="522"/>
+      </ListAst>
+    </AssignAst>
+    <AssignAst nodecnt="523" lineno="146" col_offset="0" NRLST_targets="524" NR_value="526">
+      <NameAst nodecnt="524" lineno="146" col_offset="0" id="somedict" NR_ctx="525">
+        <StoreAst nodecnt="525"/>
+      </NameAst>
+      <DictAst nodecnt="526" lineno="146" col_offset="11" NRLST_keys="527,528" NRLST_values="530,531">
+        <StrAst nodecnt="527" lineno="146" col_offset="13" s="key1"/>
+        <NameAst nodecnt="528" lineno="146" col_offset="32" id="key2" NR_ctx="529">
+          <LoadAst nodecnt="529"/>
+        </NameAst>
+        <StrAst nodecnt="530" lineno="146" col_offset="22" s="value1"/>
+        <NameAst nodecnt="531" lineno="146" col_offset="38" id="value2" NR_ctx="532">
+          <LoadAst nodecnt="532"/>
+        </NameAst>
+      </DictAst>
+    </AssignAst>
+    <PrintAst nodecnt="533" lineno="148" col_offset="0" nl="True" NR_dest="" NRLST_values="534">
+      <SubscriptAst nodecnt="534" lineno="148" col_offset="6" NR_value="535" NR_slice="537" NR_ctx="538">
+        <NameAst nodecnt="535" lineno="148" col_offset="6" id="somelist" NR_ctx="536">
+          <LoadAst nodecnt="536"/>
+        </NameAst>
+        <EllipsisAst nodecnt="537"/>
+        <LoadAst nodecnt="538"/>
+      </SubscriptAst>
+    </PrintAst>
+    <PrintAst nodecnt="539" lineno="149" col_offset="0" nl="True" NR_dest="" NRLST_values="540">
+      <SubscriptAst nodecnt="540" lineno="149" col_offset="6" NR_value="541" NR_slice="543" NR_ctx="545">
+        <NameAst nodecnt="541" lineno="149" col_offset="6" id="somelist" NR_ctx="542">
+          <LoadAst nodecnt="542"/>
+        </NameAst>
+        <SliceAst nodecnt="543" NR_lower="544" NR_upper="" NR_step="">
+          <NumAst nodecnt="544" lineno="149" col_offset="15" n="1"/>
+        </SliceAst>
+        <LoadAst nodecnt="545"/>
+      </SubscriptAst>
+    </PrintAst>
+    <PrintAst nodecnt="546" lineno="150" col_offset="0" nl="True" NR_dest="" NRLST_values="547">
+      <SubscriptAst nodecnt="547" lineno="150" col_offset="6" NR_value="548" NR_slice="550" NR_ctx="552">
+        <NameAst nodecnt="548" lineno="150" col_offset="6" id="somelist" NR_ctx="549">
+          <LoadAst nodecnt="549"/>
+        </NameAst>
+        <SliceAst nodecnt="550" NR_lower="" NR_upper="551" NR_step="">
+          <NumAst nodecnt="551" lineno="150" col_offset="16" n="20"/>
+        </SliceAst>
+        <LoadAst nodecnt="552"/>
+      </SubscriptAst>
+    </PrintAst>
+    <PrintAst nodecnt="553" lineno="151" col_offset="0" nl="True" NR_dest="" NRLST_values="554">
+      <SubscriptAst nodecnt="554" lineno="151" col_offset="6" NR_value="555" NR_slice="557" NR_ctx="560">
+        <NameAst nodecnt="555" lineno="151" col_offset="6" id="somelist" NR_ctx="556">
+          <LoadAst nodecnt="556"/>
+        </NameAst>
+        <SliceAst nodecnt="557" NR_lower="558" NR_upper="559" NR_step="">
+          <NumAst nodecnt="558" lineno="151" col_offset="15" n="1"/>
+          <NumAst nodecnt="559" lineno="151" col_offset="17" n="20"/>
+        </SliceAst>
+        <LoadAst nodecnt="560"/>
+      </SubscriptAst>
+    </PrintAst>
+    <PrintAst nodecnt="561" lineno="152" col_offset="0" nl="True" NR_dest="" NRLST_values="562">
+      <SubscriptAst nodecnt="562" lineno="152" col_offset="6" NR_value="563" NR_slice="565" NR_ctx="569">
+        <NameAst nodecnt="563" lineno="152" col_offset="6" id="somelist" NR_ctx="564">
+          <LoadAst nodecnt="564"/>
+        </NameAst>
+        <SliceAst nodecnt="565" NR_lower="566" NR_upper="567" NR_step="568">
+          <NumAst nodecnt="566" lineno="152" col_offset="15" n="1"/>
+          <NumAst nodecnt="567" lineno="152" col_offset="17" n="20"/>
+          <NumAst nodecnt="568" lineno="152" col_offset="20" n="2"/>
+        </SliceAst>
+        <LoadAst nodecnt="569"/>
+      </SubscriptAst>
+    </PrintAst>
+    <ClassDefAst nodecnt="570" lineno="154" col_offset="0" name="bar" NRLST_bases="571" NRLST_body="573" NRLST_decorator_list="">
+      <NameAst nodecnt="571" lineno="154" col_offset="10" id="parent" NR_ctx="572">
+        <LoadAst nodecnt="572"/>
+      </NameAst>
+      <PassAst nodecnt="573" lineno="155" col_offset="4"/>
+    </ClassDefAst>
+    <IfAst nodecnt="574" lineno="157" col_offset="0" NR_test="575" NRLST_body="587" NRLST_orelse="">
+      <BoolOpAst nodecnt="575" lineno="157" col_offset="3" NR_op="576" NRLST_values="577,583">
+        <AndAst nodecnt="576"/>
+        <CompareAst nodecnt="577" lineno="157" col_offset="3" NR_left="578" NRLST_ops="580" NRLST_comparators="581">
+          <NameAst nodecnt="578" lineno="157" col_offset="3" id="foo" NR_ctx="579">
+            <LoadAst nodecnt="579"/>
+          </NameAst>
+          <InAst nodecnt="580"/>
+          <NameAst nodecnt="581" lineno="157" col_offset="10" id="bar" NR_ctx="582">
+            <LoadAst nodecnt="582"/>
+          </NameAst>
+        </CompareAst>
+        <CompareAst nodecnt="583" lineno="157" col_offset="18" NR_left="584" NRLST_ops="585" NRLST_comparators="586">
+          <NumAst nodecnt="584" lineno="157" col_offset="18" n="3"/>
+          <LtAst nodecnt="585"/>
+          <NumAst nodecnt="586" lineno="157" col_offset="22" n="5"/>
+        </CompareAst>
+      </BoolOpAst>
+      <PassAst nodecnt="587" lineno="158" col_offset="4"/>
+    </IfAst>
+    <AssignAst nodecnt="588" lineno="160" col_offset="0" NRLST_targets="589" NR_value="591">
+      <NameAst nodecnt="589" lineno="160" col_offset="0" id="a" NR_ctx="590">
+        <StoreAst nodecnt="590"/>
+      </NameAst>
+      <ListCompAst nodecnt="591" lineno="160" col_offset="5" NR_elt="592" NRLST_generators="597">
+        <BinOpAst nodecnt="592" lineno="160" col_offset="5" NR_left="593" NR_op="595" NR_right="596">
+          <NameAst nodecnt="593" lineno="160" col_offset="5" id="x" NR_ctx="594">
+            <LoadAst nodecnt="594"/>
+          </NameAst>
+          <MultAst nodecnt="595"/>
+          <NumAst nodecnt="596" lineno="160" col_offset="7" n="2"/>
+        </BinOpAst>
+        <comprehensionAst nodecnt="597" NR_target="598" NR_iter="600" NRLST_ifs="">
+          <NameAst nodecnt="598" lineno="160" col_offset="13" id="x" NR_ctx="599">
+            <StoreAst nodecnt="599"/>
+          </NameAst>
+          <CallAst nodecnt="600" lineno="160" col_offset="18" NR_func="601" NRLST_args="603" NRLST_keywords="" NR_starargs="" NR_kwargs="">
+            <NameAst nodecnt="601" lineno="160" col_offset="18" id="xrange" NR_ctx="602">
+              <LoadAst nodecnt="602"/>
+            </NameAst>
+            <NumAst nodecnt="603" lineno="160" col_offset="25" n="20"/>
+          </CallAst>
+        </comprehensionAst>
+      </ListCompAst>
+    </AssignAst>
+    <AssignAst nodecnt="604" lineno="162" col_offset="0" NRLST_targets="605" NR_value="611">
+      <AttributeAst nodecnt="605" lineno="162" col_offset="0" attr="variable3" NR_value="606" NR_ctx="610">
+        <AttributeAst nodecnt="606" lineno="162" col_offset="0" attr="variable2" NR_value="607" NR_ctx="609">
+          <NameAst nodecnt="607" lineno="162" col_offset="0" id="variable" NR_ctx="608">
+            <LoadAst nodecnt="608"/>
+          </NameAst>
+          <LoadAst nodecnt="609"/>
+        </AttributeAst>
+        <StoreAst nodecnt="610"/>
+      </AttributeAst>
+      <NumAst nodecnt="611" lineno="162" col_offset="31" n="15"/>
+    </AssignAst>
+    <FunctionDefAst nodecnt="612" lineno="163" col_offset="0" name="function" NR_args="613" NRLST_body="620,621" NRLST_decorator_list="">
+      <argumentsAst nodecnt="613" vararg="paramstar" kwarg="paramdstar" NRLST_args="614,616,618" NRLST_defaults="">
+        <NameAst nodecnt="614" lineno="163" col_offset="13" id="param1" NR_ctx="615">
+          <ParamAst nodecnt="615"/>
+        </NameAst>
+        <NameAst nodecnt="616" lineno="163" col_offset="21" id="param2" NR_ctx="617">
+          <ParamAst nodecnt="617"/>
+        </NameAst>
+        <NameAst nodecnt="618" lineno="163" col_offset="29" id="param3" NR_ctx="619">
+          <ParamAst nodecnt="619"/>
+        </NameAst>
+      </argumentsAst>
+      <PassAst nodecnt="620" lineno="164" col_offset="4"/>
+      <ReturnAst nodecnt="621" lineno="165" col_offset="4" NR_value="622">
+        <BinOpAst nodecnt="622" lineno="165" col_offset="11" NR_left="623" NR_op="625" NR_right="626">
+          <NameAst nodecnt="623" lineno="165" col_offset="11" id="param1" NR_ctx="624">
+            <LoadAst nodecnt="624"/>
+          </NameAst>
+          <MultAst nodecnt="625"/>
+          <NameAst nodecnt="626" lineno="165" col_offset="20" id="param2" NR_ctx="627">
+            <LoadAst nodecnt="627"/>
+          </NameAst>
+        </BinOpAst>
+      </ReturnAst>
+    </FunctionDefAst>
+    <AssertAst nodecnt="628" lineno="167" col_offset="0" NR_test="629" NR_msg="">
+      <NameAst nodecnt="629" lineno="167" col_offset="7" id="False" NR_ctx="630">
+        <LoadAst nodecnt="630"/>
+      </NameAst>
+    </AssertAst>
+    <IfAst nodecnt="631" lineno="168" col_offset="0" NR_test="632" NRLST_body="635" NRLST_orelse="">
+      <UnaryOpAst nodecnt="632" lineno="168" col_offset="3" NR_op="633" NR_operand="634">
+        <NotAst nodecnt="633"/>
+        <NumAst nodecnt="634" lineno="168" col_offset="7" n="3"/>
+      </UnaryOpAst>
+      <PassAst nodecnt="635" lineno="169" col_offset="4"/>
+    </IfAst>
+    <IfAst nodecnt="636" lineno="171" col_offset="0" NR_test="637" NRLST_body="644" NRLST_orelse="">
+      <CompareAst nodecnt="637" lineno="171" col_offset="3" NR_left="638" NRLST_ops="642" NRLST_comparators="643">
+        <BinOpAst nodecnt="638" lineno="171" col_offset="3" NR_left="639" NR_op="640" NR_right="641">
+          <NumAst nodecnt="639" lineno="171" col_offset="3" n="3"/>
+          <MultAst nodecnt="640"/>
+          <NumAst nodecnt="641" lineno="171" col_offset="7" n="5"/>
+        </BinOpAst>
+        <EqAst nodecnt="642"/>
+        <NumAst nodecnt="643" lineno="171" col_offset="12" n="7"/>
+      </CompareAst>
+      <PassAst nodecnt="644" lineno="172" col_offset="4"/>
+    </IfAst>
+  </ModuleAst>
+</pythonast>

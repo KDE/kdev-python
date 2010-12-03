@@ -107,8 +107,11 @@ void PyDUChainTest::testSimple()
     QCOMPARE(declarations.size(), decls);
     
     int usesCount = 0;
-    foreach(Declaration* d, declarations)
+    foreach(Declaration* d, declarations) {
         usesCount += d->uses().size();
+        
+        QVERIFY(!d->abstractType().isNull());
+    }
     
     QCOMPARE(usesCount, uses);
 }
@@ -119,5 +122,7 @@ void PyDUChainTest::testSimple_data()
     QTest::addColumn<int>("decls");
     QTest::addColumn<int>("uses");
     
-    QTest::newRow("int") << "a = 'casa'; b = 2; c = 3 + b" << 3 << 1;
+    QTest::newRow("assign") << "b = 2;" << 1 << 0;
+    QTest::newRow("assign_str") << "b = 'hola';" << 1 << 0;
+    QTest::newRow("op") << "a = 3; b = a+2;" << 2 << 1;
 }

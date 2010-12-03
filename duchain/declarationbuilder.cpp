@@ -53,6 +53,7 @@
 
 #include <declarations/importedmoduledeclaration.h>
 #include <../kdevplatform/language/duchain/declaration.h>
+#include "expressionvisitor.h"
 
 
 using namespace KTextEditor;
@@ -113,66 +114,26 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
 {
     DUChainWriteLocker lock(DUChain::lock());
     Q_ASSERT(node);
-    AssignmentAst* parent = dynamic_cast<AssignmentAst*>(node->parent->parent);
     
-    QList<Declaration*> existingDeclarations;
     CursorInRevision until = editorFindRange(node, node).end;
-    
-    existingDeclarations = currentContext()->findDeclarations(identifierForNode(node), until);
     
     Declaration* dec = 0;
     
     kDebug() << "VARIABLE CONTEXT: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange() << currentContext()->type();
     
-    if ( currentContext() && currentContext()->type() == DUContext::Class && ! existingDeclarations.length() ) {
+    if ( currentContext() && currentContext()->type() == DUContext::Class ) {
         kDebug() << "Creating class member declaration for " << node->value << node->startLine << ":" << node->startCol;
         kDebug() << "Context type: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
         dec = openDeclaration<ClassMemberDeclaration>(node, originalAst ? originalAst : node, DeclarationIsDefinition);
         closeDeclaration();
-    }
-    else if ( ! existingDeclarations.length() ) {
+    } else {
         kDebug() << "Creating variable declaration for " << node->value << node->startLine << ":" << node->startCol;
         dec = openDeclaration<T>(node, originalAst ? originalAst : node, DeclarationIsDefinition);
         closeDeclaration();
-//         dec->setType(IntegralType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+        dec->setType(lastType());
         dec->setKind(KDevelop::Declaration::Instance); // everything is an object in python
-        if ( parent ) {
-            NameAst* singleValue = dynamic_cast<NameAst*>(parent->value);
-            if ( singleValue ) {
-                kDebug() << "Found a single target value for variable declaration";
-                QList<Declaration*> newValueDecs = currentContext()->findDeclarations(identifierForNode(singleValue->identifier), until);
-                if ( newValueDecs.length() > 0 ) {
-                    Declaration* newValueDec = newValueDecs.last();
-                    kDebug() << newValueDec << newValueDec->type<AbstractType>();
-                    dec->setType(newValueDec->type<AbstractType>());
-                }
-            }
-        }
     }
-    else {
-        kDebug() << "Not updating existing declaration for " << node->value;
-        dec = existingDeclarations.last();
-        setEncountered(dec);
-    }
-    AssignmentAst* assignment = node->parent && node->parent->parent ? dynamic_cast<AssignmentAst*>(node->parent->parent) : 0;
-    if ( dec->abstractType().isNull() && assignment && assignment->value ) {
-        switch ( assignment->value->astType ) {
-            case Python::Ast::StringAstType:
-                kDebug() << "Found a string variable declaration";
-                dec->setType(IntegralType::Ptr(new IntegralType(IntegralType::TypeString)));
-                break;
-            case Python::Ast::NumberAstType:
-                kDebug() << "Found a number variable";
-                dec->setType(IntegralType::Ptr(new IntegralType(IntegralType::TypeFloat)));
-                break;
-            default:
-                kDebug() << "Could not determine type for variable " << node->value;
-                break;
-        }
-    }
-    else {
-        kDebug() << "Could not convert variable declaration to assignment!";
-    }
+    
 //     dec->setType<>();
     T* result = dynamic_cast<T*>(dec);
     if ( ! result ) kError() << "variable declaration does not have the expected type";
@@ -238,12 +199,18 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
 
 void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 {
+//     visitNode(node->value);
+
+//     qDebug() << "pepeppepe" << node->;
+    ExpressionVisitor v(currentContext());
+    v.visitNode(node->value);
+    setLastType(v.lastType());
+    
     foreach ( ExpressionAst* target, node->targets ) {
         if ( target->astType == Ast::NameAstType ) {
             visitVariableDeclaration<Declaration>(target);
         }
     }
-    visitNode(node->value);
 }
 
 void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )

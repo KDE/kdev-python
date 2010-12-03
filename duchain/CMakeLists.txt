@@ -3,7 +3,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     )
 
-set(duchain_SRCS declarations/importedmoduledeclaration.cpp 
+set(duchain_SRCS expressionvisitor.cpp declarations/importedmoduledeclaration.cpp 
     pythonducontext.cpp 
     contextbuilder.cpp
     pythoneditorintegrator.cpp

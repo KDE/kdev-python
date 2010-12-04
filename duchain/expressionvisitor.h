@@ -3,6 +3,11 @@
 
 #include <astdefaultvisitor.h>
 #include <language/duchain/types/abstracttype.h>
+#include <QHash>
+
+namespace KDevelop {
+class Identifier;
+}
 
 namespace Python
 {
@@ -14,6 +19,7 @@ class ExpressionVisitor : public AstDefaultVisitor
         
         virtual void visitBinaryOperation(BinaryOperationAst* node);
         virtual void visitUnaryOperation(UnaryOperationAst* node);
+        virtual void visitBooleanOperation(BooleanOperationAst* node);
         
         virtual void visitString(StringAst* node);
         virtual void visitNumber(NumberAst* node);
@@ -21,6 +27,8 @@ class ExpressionVisitor : public AstDefaultVisitor
     
         KDevelop::AbstractType::Ptr lastType() const { return m_lastType; }
     private:
+        static QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> s_defaultTypes;
+        
         KDevelop::AbstractType::Ptr m_lastType;
         KDevelop::DUContext* m_ctx;
 };

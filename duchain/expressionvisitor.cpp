@@ -3,12 +3,22 @@
 #include <language/duchain/types/integraltype.h>
 #include <language/duchain/ducontext.h>
 #include <language/duchain/declaration.h>
+#include <language/interfaces/iproblem.h>
+#include <KLocalizedString>
 
 using namespace KDevelop;
+using namespace Python;
+
+QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> ExpressionVisitor::s_defaultTypes;
 
 Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx)
     : m_ctx(ctx)
-{}
+{
+    if(s_defaultTypes.isEmpty()) {
+        s_defaultTypes.insert(KDevelop::Identifier("True"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
+        s_defaultTypes.insert(KDevelop::Identifier("False"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
+    }
+}
 
 void Python::ExpressionVisitor::visitNumber(Python::NumberAst* )
 {
@@ -20,12 +30,40 @@ void Python::ExpressionVisitor::visitString(Python::StringAst* )
     m_lastType = AbstractType::Ptr(new IntegralType(IntegralType::TypeString));
 }
 
+RangeInRevision nodeRange(Python::Ast* node)
+{
+    qDebug() << node->endLine;
+//     return RangeInRevision(node->startLine, node->startCol, node->endLine,node->endCol);
+    return RangeInRevision(0,0, 2, 2);
+}
+
 void Python::ExpressionVisitor::visitName(Python::NameAst* node)
 {
-    qDebug() << "pepepepepe" << node->identifier->value;
-    QList< Declaration* > d=m_ctx->findDeclarations(KDevelop::Identifier(node->identifier->value));
-    Q_ASSERT(!d.isEmpty());
-    m_lastType = d.last()->abstractType();
+    KDevelop::Identifier id(node->identifier->value);
+    QHash < KDevelop::Identifier, AbstractType::Ptr >::const_iterator defId = s_defaultTypes.constFind(id);
+    if(defId!=s_defaultTypes.constEnd()) {
+        m_lastType = *defId;
+        return;
+    }
+    
+    QList< Declaration* > d=m_ctx->findDeclarations(id);
+//     Q_ASSERT(!d.isEmpty());
+ 
+    qDebug() << "visitName" << node->identifier->value << d;   
+    if(!d.isEmpty())
+        m_lastType = d.last()->abstractType();
+    else {
+        qDebug("VistName type not found");
+        RangeInRevision r = nodeRange(node);
+        
+        ProblemPointer p(new Problem);
+        p->setRange(r);
+        p->setDescription(i18n("undefined variable '%1'", node->identifier->value));
+        p->setFinalLocation(DocumentRange(m_ctx->topContext()->url(), r.castToSimpleRange()));
+        p->setSeverity(ProblemData::Error);
+        p->setSource(KDevelop::ProblemData::Parser);
+        m_ctx->topContext()->addProblem(p);
+    }
 }
 
 void Python::ExpressionVisitor::visitBinaryOperation(Python::BinaryOperationAst* node)
@@ -48,3 +86,26 @@ void Python::ExpressionVisitor::visitUnaryOperation(Python::UnaryOperationAst* n
     
     //FIXME: m_lastValue = m_lastValue;
 }
+
+void Python::ExpressionVisitor::visitBooleanOperation(Python::BooleanOperationAst* node)
+{
+    bool problem = false;
+    foreach (ExpressionAst* expression, node->values) {
+        visitNode(expression);
+        if(m_lastType->whichType() != AbstractType::TypeIntegral || m_lastType.cast<IntegralType>()->dataType() != IntegralType::TypeBoolean){
+            problem = true;
+            qDebug() << "VistBooleanOperation type not match";
+            RangeInRevision r = nodeRange(expression);
+            ProblemPointer p(new Problem);
+            p->setRange(r);
+            p->setDescription(i18n("wrong type '%1'", m_lastType->toString()));
+            p->setFinalLocation(DocumentRange(m_ctx->topContext()->url(), r.castToSimpleRange()));
+            p->setSeverity(ProblemData::Error);
+            p->setSource(KDevelop::ProblemData::SemanticAnalysis);
+            m_ctx->topContext()->addProblem(p);
+        }
+    }
+    //if(!problem)
+        m_lastType = AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean));
+}
+

@@ -51,16 +51,19 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             items << CompletionTreeItemPointer( item );
         }
     }
+    else if ( m_operation == PythonCodeCompletionContext::MemberAccessCompletion ) {
+        // we don't have type support, so we cannot support completing mebers yet. But we can at least prevent kdevelop from opening a pointless
+        // popup with completion items you don't want
+    }
     else {
         QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(CursorInRevision::invalid(), m_duContext->topContext());
         
-        Declaration* currentDeclaration;
+        DeclarationPointer currentDeclaration;
         int count = declarations.length();
         for ( int i = 0; i < count; i++ ) {
-            currentDeclaration = declarations.at(i).first;
-            kDebug() << "Adding item: " << currentDeclaration->identifier().identifier().str();
-            DeclarationPointer ptr(currentDeclaration);
-            NormalDeclarationCompletionItem* item = new NormalDeclarationCompletionItem(ptr, KDevelop::CodeCompletionContext::Ptr(this));
+            currentDeclaration = DeclarationPointer(declarations.at(i).first);
+            kDebug() << "Adding item: " << currentDeclaration.data()->identifier().identifier().str();
+            NormalDeclarationCompletionItem* item = new NormalDeclarationCompletionItem(currentDeclaration, KDevelop::CodeCompletionContext::Ptr(this));
             kDebug() << item->declaration().data()->identifier().identifier().str();
             items << CompletionTreeItemPointer(item);
         }
@@ -215,6 +218,14 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     bool is_fromimport = fromimport.exactMatch(currentLine);
     if ( is_importfile || is_fromimport ) {
         m_operation = PythonCodeCompletionContext::ImportFileCompletion;
+        return;
+    }
+    
+    QRegExp attributeAccess("(.*)\n[\\s]*(.*)\\.$");
+    attributeAccess.setMinimal(true);
+    bool is_attributeAccess = attributeAccess.exactMatch(currentLine);
+    if ( is_attributeAccess ) {
+        m_operation = PythonCodeCompletionContext::MemberAccessCompletion;
         return;
     }
     

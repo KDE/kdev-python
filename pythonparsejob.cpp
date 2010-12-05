@@ -181,7 +181,7 @@ void ParseJob::run()
             static const IndexedString langString("python");
             file->setLanguage(langString);
             m_duContext = new TopDUContext(document(), RangeInRevision(0, 0, INT_MAX, INT_MAX), file);
-//             DUChain::self()->addDocumentChain(m_duContext);
+            DUChain::self()->addDocumentChain(m_duContext);
         }
         {
             m_duContext->parsingEnvironmentFile()->clearModificationRevisions();
@@ -197,10 +197,10 @@ void ParseJob::run()
         setDuChain(m_duContext);
     }
     
-    DUChainWriteLocker lock(DUChain::lock());
-    if ( ! DUChain::self()->chainForDocument(document()) && m_duContext ) {
-        DUChain::self()->addDocumentChain(m_duContext);
-    }
+//     DUChainWriteLocker lock(DUChain::lock());
+//     if ( ! DUChain::self()->chainForDocument(document()) && m_duContext ) {
+//         DUChain::self()->addDocumentChain(m_duContext);
+//     }
     
 }
 

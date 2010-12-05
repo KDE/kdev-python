@@ -29,7 +29,7 @@ typedef QPair<Declaration*, int> DeclarationDepthPair;
 
 namespace Python {
 
-QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bool& abort, bool fullCompletion)
+QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bool& /*abort*/, bool /*fullCompletion*/)
 {
     QList<CompletionTreeItemPointer> items;
     DUChainReadLocker lock(DUChain::lock());

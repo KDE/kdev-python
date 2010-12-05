@@ -148,17 +148,17 @@ void ParseJob::run()
         m_duContext = builder.build(filename, m_ast);
         setDuChain(m_duContext);
         
+        UseBuilder usebuilder( &editor );
+        usebuilder.buildUses(m_ast);
+        
         {
             DUChainWriteLocker lock(DUChain::lock());
+            m_duContext->clearProblems();
             ParsingEnvironmentFilePointer parsingEnvironmentFile = m_duContext->parsingEnvironmentFile();
             parsingEnvironmentFile->clearModificationRevisions();
             parsingEnvironmentFile->setModificationRevision(contents().modification);
             DUChain::self()->updateContextEnvironment(m_duContext, parsingEnvironmentFile.data());
-            m_duContext->clearProblems();
         }
-        
-        UseBuilder usebuilder( &editor );
-        usebuilder.buildUses(m_ast);
         
         kDebug() << "----Parsing Succeded---***";
         
@@ -181,7 +181,7 @@ void ParseJob::run()
             static const IndexedString langString("python");
             file->setLanguage(langString);
             m_duContext = new TopDUContext(document(), RangeInRevision(0, 0, INT_MAX, INT_MAX), file);
-            DUChain::self()->addDocumentChain(m_duContext);
+//             DUChain::self()->addDocumentChain(m_duContext);
         }
         {
             m_duContext->parsingEnvironmentFile()->clearModificationRevisions();
@@ -189,13 +189,19 @@ void ParseJob::run()
             m_duContext->clearProblems();
             DUChain::self()->updateContextEnvironment(m_duContext, m_duContext->parsingEnvironmentFile().data());
         }
-
+        
         foreach ( ProblemPointer p, m_session->m_problems ) {
             kDebug() << "Added problem to context";
             m_duContext->addProblem(p);
         }
         setDuChain(m_duContext);
     }
+    
+    DUChainWriteLocker lock(DUChain::lock());
+    if ( ! DUChain::self()->chainForDocument(document()) && m_duContext ) {
+        DUChain::self()->addDocumentChain(m_duContext);
+    }
+    
 }
 
 ParseSession *ParseJob::parseSession() const

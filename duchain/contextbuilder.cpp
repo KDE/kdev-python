@@ -103,7 +103,7 @@ void ContextBuilder::setEditor(PythonEditorIntegrator* editor)
     ContextBuilder::m_editor = editor;
 }
 
-void ContextBuilder::setEditor(ParseSession* session)
+void ContextBuilder::setEditor(ParseSession* /*session*/)
 {
     PythonEditorIntegrator* e = new PythonEditorIntegrator(/*session*/);
     //m_identifierCompiler = new IdentifierCompiler(e->parseSession());
@@ -147,7 +147,7 @@ void ContextBuilder::addImportedContexts()
     }
 }
 
-void ContextBuilder::openContextForStatementList( const QList<Ast*>& l, DUContext::ContextType type)
+void ContextBuilder::openContextForStatementList( const QList<Ast*>& l, DUContext::ContextType /*type*/)
 {
     if ( l.count() > 0 )
     {
@@ -229,7 +229,7 @@ void ContextBuilder::visitImport(ImportAst* node)
 {
     foreach ( AliasAst* name, node->names ) {
         // for "import ... as", use the as thingy, use the module name otherwise
-        Identifier* variableDeclarationName = name->asName ? name->asName->identifier : name->name;
+//         Identifier* variableDeclarationName = name->asName ? name->asName->identifier : name->name; # TODO check this
         
         KUrl moduleFilePath = findModulePath(name->name->value);
         if ( ! moduleFilePath.isValid() ) continue;

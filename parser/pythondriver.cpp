@@ -70,7 +70,7 @@ void Driver::setCurrentDocument(KUrl url)
     m_currentDocument = url;
 }
 
-QPair<CodeAst*, bool> Driver::parse( Python::CodeAst* ast )
+QPair<CodeAst*, bool> Driver::parse( Python::CodeAst* /* ast */)
 {
     AstBuilder pythonparser;
     QPair<CodeAst*, bool> matched;

@@ -53,7 +53,7 @@ private:
     CodeAst* parseXmlAst(QString xml);
     QString getXmlForFile(KUrl filename, const QString& contents);
     void parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::TokenType token);
-    bool parseAstNode(QString name, QString text, const QList<QXmlStreamAttribute>& attributes);
+    bool parseAstNode(QString name, /*QString text, */const QList<QXmlStreamAttribute>& attributes);
     
     KDevelop::TopDUContext* m_topContext;
     

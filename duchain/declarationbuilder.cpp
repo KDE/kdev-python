@@ -216,7 +216,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
     kDebug() << "opening class definition";
-    ClassDeclaration* classDec = new ClassDeclaration(editorFindRange(node->body.first(), node->body.last()), currentContext());
+//     ClassDeclaration* classDec = new ClassDeclaration(editorFindRange(node->body.first(), node->body.last()), currentContext());
     
     openDeclaration<ClassDeclaration>( node->name, node );
     eventuallyAssignInternalContext();

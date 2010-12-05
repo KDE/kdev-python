@@ -138,7 +138,7 @@ CodeAst* AstBuilder::parseXmlAst(QString xml)
     return codeAst;
 }
 
-void AstBuilder::parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::TokenType token = QXmlStreamReader::Invalid) {
+void AstBuilder::parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::TokenType /*token = QXmlStreamReader::Invalid*/) {
     bool nodeAdded = false;
     
     while ( ! xmlast->atEnd() && ! xmlast->hasError() ) {
@@ -165,7 +165,7 @@ void AstBuilder::parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::Tok
             }
             
             // this will push a parent onto the stack
-            nodeAdded = parseAstNode(currentElementName, currentElementText, currentElementAttributes);
+            nodeAdded = parseAstNode(currentElementName, /*currentElementText,*/ currentElementAttributes); // we might need ElementText some day
             if ( ! nodeAdded ) {
                 m_isRealNodeMap.append(false);
                 continue;
@@ -198,7 +198,7 @@ void AstBuilder::parseXmlAstNode(QXmlStreamReader* xmlast, QXmlStreamReader::Tok
     }
 }
 
-bool AstBuilder::parseAstNode(QString name, QString text, const QList< QXmlStreamAttribute >& attributes)
+bool AstBuilder::parseAstNode(QString name, /*QString text, */ const QList< QXmlStreamAttribute >& attributes)
 {
     Ast* ast;
     

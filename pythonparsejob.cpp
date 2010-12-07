@@ -173,21 +173,17 @@ void ParseJob::run()
     {
         kWarning() << "===Failed===";
         DUChainWriteLocker lock;
-        {
-            m_duContext = DUChain::self()->chainForDocument(document());
+        m_duContext = DUChain::self()->chainForDocument(document());
+        if ( m_duContext ) {
+            m_duContext->parsingEnvironmentFile()->clearModificationRevisions();
+            m_duContext->clearProblems();
         }
-        if ( ! m_duContext ) {
+        else {
             ParsingEnvironmentFile *file = new ParsingEnvironmentFile(document());
             static const IndexedString langString("python");
             file->setLanguage(langString);
             m_duContext = new TopDUContext(document(), RangeInRevision(0, 0, INT_MAX, INT_MAX), file);
             DUChain::self()->addDocumentChain(m_duContext);
-        }
-        {
-            m_duContext->parsingEnvironmentFile()->clearModificationRevisions();
-            m_duContext->parsingEnvironmentFile()->setModificationRevision(contents().modification);
-            m_duContext->clearProblems();
-            DUChain::self()->updateContextEnvironment(m_duContext, m_duContext->parsingEnvironmentFile().data());
         }
         
         foreach ( ProblemPointer p, m_session->m_problems ) {

@@ -4,6 +4,7 @@ include_directories(
 )
 
 set(completion_SRCS 
+    functiondeclarationcompletionitem.cpp 
     importfileitem.cpp
     pythoncodecompletioncontext.cpp
     pythoncodecompletionmodel.cpp

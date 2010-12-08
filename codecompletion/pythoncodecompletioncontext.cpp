@@ -16,6 +16,8 @@
 
 #include "navigation/navigationwidget.h"
 #include "importfileitem.h"
+#include "functiondeclarationcompletionitem.h"
+
 #include <qprocess.h>
 #include <interfaces/icore.h>
 #include <interfaces/iprojectcontroller.h>
@@ -23,14 +25,19 @@
 #include <project/projectmodel.h>
 #include <QtCore/QRegExp>
 
+#include <language/duchain/functiondeclaration.h>
+
 using namespace KDevelop;
 
 typedef QPair<Declaration*, int> DeclarationDepthPair;
 
 namespace Python {
 
-QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bool& /*abort*/, bool /*fullCompletion*/)
+QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bool& abort, bool /*fullCompletion*/)
 {
+    if ( abort ) 
+        return QList<CompletionTreeItemPointer>();
+    
     QList<CompletionTreeItemPointer> items;
     DUChainReadLocker lock(DUChain::lock());
     
@@ -56,14 +63,27 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         // popup with completion items you don't want
     }
     else {
-        QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(CursorInRevision::invalid(), m_duContext->topContext());
+        if ( abort ) {
+            return QList<CompletionTreeItemPointer>();
+        }
+        QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
         
         DeclarationPointer currentDeclaration;
         int count = declarations.length();
         for ( int i = 0; i < count; i++ ) {
+            if ( abort ) {
+                return items;
+            }
             currentDeclaration = DeclarationPointer(declarations.at(i).first);
             kDebug() << "Adding item: " << currentDeclaration.data()->identifier().identifier().str();
-            NormalDeclarationCompletionItem* item = new NormalDeclarationCompletionItem(currentDeclaration, KDevelop::CodeCompletionContext::Ptr(this));
+            NormalDeclarationCompletionItem* item;
+            if ( currentDeclaration.data()->abstractType() && currentDeclaration.data()->abstractType().constData()->whichType() == AbstractType::TypeFunction ) {
+                kDebug() << "Adding function declaration item";
+                item = new FunctionDeclarationCompletionItem(currentDeclaration);
+            }
+            else {
+                item = new NormalDeclarationCompletionItem(currentDeclaration, KDevelop::CodeCompletionContext::Ptr(this));
+            }
             kDebug() << item->declaration().data()->identifier().identifier().str();
             items << CompletionTreeItemPointer(item);
         }

@@ -51,6 +51,14 @@ def func(foo, bar, baz, bang, foobang, foobar, foobazbar, foobazbarbang):
     if foobazbar < 5:
         pass
 
+func(sys)
+simple_func()
+
+def func_without_param():
+    pass
+
+func_without_param()
+
 def another_function(param):
     print param
 

@@ -6,9 +6,9 @@
 
 #include "pythoncodecompletioncontext.h"
 
-#include <language/codecompletion/codecompletionitem.h>
 #include <language/codecompletion/normaldeclarationcompletionitem.h>
 #include <language/codecompletion/abstractincludefilecompletionitem.h>
+#include <language/codecompletion/codecompletionitem.h>
 #include <language/util/includeitem.h>
 
 #include <language/duchain/duchainpointer.h>
@@ -26,6 +26,8 @@
 #include <QtCore/QRegExp>
 
 #include <language/duchain/functiondeclaration.h>
+#include <language/codecompletion/codecompletionitem.h>
+#include "keyworditem.h"
 
 using namespace KDevelop;
 
@@ -63,6 +65,13 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         // popup with completion items you don't want
     }
     else {
+        if ( m_operation == PythonCodeCompletionContext::NewStatementCompletion ) {
+            QStringList keywordItems;
+            keywordItems << "def" << "class" << "lambda" << "global" << "print";
+            foreach ( const QString& current, keywordItems ) {
+                items << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), current));
+            }
+        }
         if ( abort ) {
             return QList<CompletionTreeItemPointer>();
         }
@@ -227,6 +236,14 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         kDebug() << "Matching against module name: " << for_module_match;
         m_operation = PythonCodeCompletionContext::ImportSubCompletion;
         m_subForModule = for_module;
+        return;
+    }
+    
+    QRegExp newStatementCompletion("(.*)\n[\\s]*$");
+    newStatementCompletion.setMinimal(true);
+    bool isNewStatementCompletion = newStatementCompletion.exactMatch(currentLine);
+    if ( isNewStatementCompletion ) {
+        m_operation = PythonCodeCompletionContext::NewStatementCompletion;
         return;
     }
     

@@ -35,7 +35,7 @@ typedef QPair<Declaration*, int> DeclarationDepthPair;
 
 namespace Python {
 
-QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bool& abort, bool /*fullCompletion*/)
+QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bool& abort, bool fullCompletion)
 {
     if ( abort ) 
         return QList<CompletionTreeItemPointer>();
@@ -65,7 +65,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         // popup with completion items you don't want
     }
     else {
-        if ( m_operation == PythonCodeCompletionContext::NewStatementCompletion ) {
+        // it's stupid to display a 3-letter completion item on manually invoked code completion and makes everything look crowded
+        if ( m_operation == PythonCodeCompletionContext::NewStatementCompletion && ! fullCompletion ) {
             QStringList keywordItems;
             keywordItems << "def" << "class" << "lambda" << "global" << "print";
             foreach ( const QString& current, keywordItems ) {

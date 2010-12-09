@@ -33,8 +33,7 @@ void Python::ExpressionVisitor::visitString(Python::StringAst* )
 RangeInRevision nodeRange(Python::Ast* node)
 {
     qDebug() << node->endLine;
-//     return RangeInRevision(node->startLine, node->startCol, node->endLine,node->endCol);
-    return RangeInRevision(0,0, 2, 2);
+    return RangeInRevision(node->startLine, node->startCol, node->endLine,node->endCol);
 }
 
 void Python::ExpressionVisitor::visitName(Python::NameAst* node)
@@ -59,9 +58,10 @@ void Python::ExpressionVisitor::visitName(Python::NameAst* node)
         ProblemPointer p(new Problem);
         p->setRange(r);
         p->setDescription(i18n("undefined variable '%1'", node->identifier->value));
+        qDebug() << "adddProblemKiko" << m_ctx->topContext()->url().str();
         p->setFinalLocation(DocumentRange(m_ctx->topContext()->url(), r.castToSimpleRange()));
         p->setSeverity(ProblemData::Error);
-        p->setSource(KDevelop::ProblemData::Parser);
+        p->setSource(KDevelop::ProblemData::SemanticAnalysis);
         m_ctx->topContext()->addProblem(p);
     }
 }
@@ -89,23 +89,23 @@ void Python::ExpressionVisitor::visitUnaryOperation(Python::UnaryOperationAst* n
 
 void Python::ExpressionVisitor::visitBooleanOperation(Python::BooleanOperationAst* node)
 {
-    bool problem = false;
+//    
     foreach (ExpressionAst* expression, node->values) {
         visitNode(expression);
-        if(m_lastType->whichType() != AbstractType::TypeIntegral || m_lastType.cast<IntegralType>()->dataType() != IntegralType::TypeBoolean){
-            problem = true;
-            qDebug() << "VistBooleanOperation type not match";
-            RangeInRevision r = nodeRange(expression);
-            ProblemPointer p(new Problem);
-            p->setRange(r);
-            p->setDescription(i18n("wrong type '%1'", m_lastType->toString()));
-            p->setFinalLocation(DocumentRange(m_ctx->topContext()->url(), r.castToSimpleRange()));
-            p->setSeverity(ProblemData::Error);
-            p->setSource(KDevelop::ProblemData::SemanticAnalysis);
-            m_ctx->topContext()->addProblem(p);
-        }
+//         if(m_lastType->whichType() != AbstractType::TypeIntegral || m_lastType.cast<IntegralType>()->dataType() != IntegralType::TypeBoolean){
+//             problem = true;
+//             qDebug() << "VistBooleanOperation type not match";
+//             RangeInRevision r = nodeRange(expression);
+//             ProblemPointer p(new Problem);
+//             p->setRange(r);
+//             p->setDescription(i18n("wrong type '%1'", m_lastType->toString()));
+//             p->setFinalLocation(DocumentRange(m_ctx->topContext()->url(), r.castToSimpleRange()));
+//             p->setSeverity(ProblemData::Error);
+//             p->setSource(KDevelop::ProblemData::SemanticAnalysis);
+//             m_ctx->topContext()->addProblem(p);
+//         }
     }
-    //if(!problem)
-        m_lastType = AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean));
+    
+    m_lastType = AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean));
 }
 

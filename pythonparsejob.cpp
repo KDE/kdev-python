@@ -139,7 +139,7 @@ void ParseJob::run()
 //         printer.visitCode( m_ast );
         if ( abortRequested() )
             return abortJob();
-
+        
         PythonEditorIntegrator editor;
         DeclarationBuilder builder( &editor );
         
@@ -150,10 +150,10 @@ void ParseJob::run()
         
         UseBuilder usebuilder( &editor );
         usebuilder.buildUses(m_ast);
-        
+
         {
             DUChainWriteLocker lock(DUChain::lock());
-            m_duContext->clearProblems();
+//             m_duContext->clearProblems();
             ParsingEnvironmentFilePointer parsingEnvironmentFile = m_duContext->parsingEnvironmentFile();
             parsingEnvironmentFile->clearModificationRevisions();
             parsingEnvironmentFile->setModificationRevision(contents().modification);

@@ -2,20 +2,24 @@
  * Copyright (c) 2007 Andreas Pakulat <apaku@gmx.de>                         *
  * Copyright (c) 2007 Piyush verma <piyush.verma@gmail.com>                  *
  *                                                                           *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301, USA.
+ * Permission is hereby granted, free of charge, to any person obtaining     *
+ * a copy of this software and associated documentation files (the           *
+ * "Software"), to deal in the Software without restriction, including       *
+ * without limitation the rights to use, copy, modify, merge, publish,       *
+ * distribute, sublicense, and/or sell copies of the Software, and to        *
+ * permit persons to whom the Software is furnished to do so, subject to     *
+ * the following conditions:                                                 *
+ *                                                                           *
+ * The above copyright notice and this permission notice shall be            *
+ * included in all copies or substantial portions of the Software.           *
+ *                                                                           *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,           *
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF        *
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND                     *
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE    *
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION    *
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION     *
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
 #include "pythonparsejob.h"
 #include <QFile>
@@ -33,6 +37,7 @@
 #include <language/duchain/topducontext.h>
 #include <language/duchain/dumpdotgraph.h>
 #include <interfaces/ilanguage.h>
+#include <language/backgroundparser/urlparselock.h>
 
 #include "pythonhighlighting.h"
 #include "pythoneditorintegrator.h"
@@ -42,6 +47,7 @@
 // #include "contextbuilder.h"
 #include "declarationbuilder.h"
 #include "astprinter.h"
+// #include "usebuilder.h"
 
 using namespace KDevelop;
 
@@ -49,8 +55,8 @@ namespace Python
 {
 
 
-ParseJob::ParseJob( const KUrl &url, LanguageSupport *parent )
-        : KDevelop::ParseJob( url, parent )
+ParseJob::ParseJob(LanguageSupport* parent, const KUrl &url )
+        : KDevelop::ParseJob( url )
         , m_session( new ParseSession )
         , m_ast( 0 )
         , m_readFromDisk( false )
@@ -58,6 +64,7 @@ ParseJob::ParseJob( const KUrl &url, LanguageSupport *parent )
         , m_url( url )
 {
     kDebug();
+    m_parent = parent;
 }
 
 ParseJob::~ParseJob()
@@ -66,6 +73,7 @@ ParseJob::~ParseJob()
 
 LanguageSupport *ParseJob::python() const
 {
+    kDebug() << "language requested";
     return qobject_cast<LanguageSupport*>( const_cast<QObject*>( parent() ) );
 }
 
@@ -88,7 +96,8 @@ void ParseJob::run()
     if ( abortRequested() )
         return abortJob();
 
-    QReadLocker lock(python()->language()->parseLock());
+//     QReadLocker lock(python()->language()->parseLock());
+    UrlParseLock urlLock(document());
     m_readFromDisk = !contentsAvailableFromEditor();
 
     if ( m_readFromDisk )
@@ -144,8 +153,8 @@ void ParseJob::run()
     if ( matched )
     {
         kDebug() << m_url;
-        AstPrinter printer;
-        printer.visitCode( m_ast );
+//         AstPrinter printer;
+//         printer.visitCode( m_ast );
         {
 
             if ( abortRequested() )
@@ -154,7 +163,7 @@ void ParseJob::run()
             EditorIntegrator editor;
             DeclarationBuilder builder( &editor );
             m_duContext = builder.build( KDevelop::IndexedString(m_url.pathOrUrl()), m_ast );
-
+            
             kDebug() << "----Parsing Succeded---***";
 
             {
@@ -162,13 +171,25 @@ void ParseJob::run()
                 DumpChain dump;
                 dump.dump( m_duContext );
             }
+            
+            {
+                if ( m_parent && m_parent->codeHighlighting() ) {
+                    kDebug() << m_duContext.data();
+                    DUChainReadLocker lock(DUChain::lock());
+                    const KDevelop::ICodeHighlighting* hl = m_parent->codeHighlighting();
+                    hl->highlightDUChain(m_duContext.data());
+                }
+            }
+            
         }
     }
     else
     {
         kDebug() << "===Failed===";
+        cleanupSmartRevision();
         return;
     }
+    cleanupSmartRevision();
 }
 
 ParseSession *ParseJob::parseSession() const

@@ -30,6 +30,7 @@
 
 #include <language/duchain/functiondeclaration.h>
 #include <language/duchain/classfunctiondeclaration.h>
+#include <language/duchain/declaration.h>
 #include <language/duchain/duchain.h>
 #include <language/duchain/duchainlock.h>
 
@@ -84,6 +85,7 @@ void DeclarationBuilder::closeDeclaration()
 {
     if ( lastContext() )
     {
+        DUChainReadLocker lock( DUChain::lock() );
         currentDeclaration()->setKind( Declaration::Type );
     }
 
@@ -91,6 +93,14 @@ void DeclarationBuilder::closeDeclaration()
 
     DeclarationBuilderBase::closeDeclaration();
 }
+
+void DeclarationBuilder::visitIdentifierTarget(IdentifierTargetAst* node)
+{
+    Python::AstDefaultVisitor::visitIdentifierTarget(node);
+    openDeclaration<Declaration>( node->identifier, node);
+    closeDeclaration();
+}
+
 
 void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
@@ -127,14 +137,20 @@ void DeclarationBuilder::visitDefaultParameter( DefaultParameterAst* node )
         if( node->value )
         {
             //Not sure what to do here, C++ simply adds the source code as default parameter, but that doesn't sound sane...
+            //No, it doesn't. But who cares? I guess it will work.
         }
         //simple case, we have an identifier parameter
         if( node->name->astType == Ast::IdentifierParameterPartAst )
         {
+            function->addDefaultParameter(IndexedString("Some_String."));
         } else if( node->name->astType == Ast::ListParameterPartAst )
         {
             //complex case, a sublist, what to do??
         }
+        
+        // create a variable definition
+        openDeclaration<Declaration>( node->name, node);
+        closeDeclaration();
     }
 }
 

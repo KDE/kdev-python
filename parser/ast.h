@@ -246,7 +246,22 @@ public:
     ParameterAst( Ast* parent, Ast::AstType type );
 };
 
-class KDEVPYTHONPARSER_EXPORT ParameterPartAst : public Ast
+class KDEVPYTHONPARSER_EXPORT ExpressionAst : public Ast
+{
+
+public:
+    ExpressionAst( Ast*, Ast::AstType type );
+};
+
+class KDEVPYTHONPARSER_EXPORT IdentifierAst : public ExpressionAst
+{
+public:
+    IdentifierAst( Ast* );
+    QString identifier;
+};
+
+
+class KDEVPYTHONPARSER_EXPORT ParameterPartAst : public IdentifierAst
 {
 public:
     ParameterPartAst( Ast*, Ast::AstType type );
@@ -258,13 +273,6 @@ class KDEVPYTHONPARSER_EXPORT ImportAst : public StatementAst
 
 public:
     ImportAst( Ast*, Ast::AstType type );
-};
-
-class KDEVPYTHONPARSER_EXPORT ExpressionAst : public Ast
-{
-
-public:
-    ExpressionAst( Ast*, Ast::AstType type );
 };
 
 class KDEVPYTHONPARSER_EXPORT PrimaryAst : public ExpressionAst
@@ -915,14 +923,6 @@ public:
     QList<Python::ParameterAst*> parameters;
     Python::ExpressionAst* expression;
 };
-
-class KDEVPYTHONPARSER_EXPORT IdentifierAst : public ExpressionAst
-{
-public:
-    IdentifierAst( Ast* );
-    QString identifier;
-};
-
 
 }
 

@@ -81,6 +81,7 @@ void Lexer::popIndentation()
 
 int Lexer::nextTokenKind()
 {
+    kDebug() << "nextTokenKind called";
     int token = Parser::Token_INVALID;
     if ( m_curpos >= m_contentSize )
     {
@@ -115,7 +116,7 @@ int Lexer::nextTokenKind()
             // We've got indentation, lets see how much
             m_tokenBegin = m_curpos;
             int spacecount = 0;
-            do
+            while( it->isSpace() && it->unicode() != '\n' && m_curpos < m_contentSize )
             {
                 if( it->unicode() == '\t' )
                 {
@@ -139,7 +140,7 @@ int Lexer::nextTokenKind()
                 }
                 it++;
                 m_curpos++;
-            }while( it->isSpace() && it->unicode() != '\n' && m_curpos < m_contentSize );
+            }
             if( it->unicode() == '#' )
             {
                 // Ooops, whitespace and then a #, this is a plain comment line, only create
@@ -339,6 +340,7 @@ int Lexer::nextTokenKind()
             {
                 QChar* ch2 = m_curpos < m_contentSize ? it + 1 : 0;
                 QChar* ch3 = m_curpos < m_contentSize ? it + 2 : 0;
+                kDebug() << "it: " << it->toAscii();
                 switch ( it->unicode() )
                 {
                     case '\n':

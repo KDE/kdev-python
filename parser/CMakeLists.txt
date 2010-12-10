@@ -35,7 +35,7 @@ add_custom_target( debuginfo
 set( parser_SRCS
     ${_kdevpgList}
 )
-add_subdirectory(tests)
+#add_subdirectory(tests)
 
 kde4_add_library( kdev4pythonparser SHARED ${parser_SRCS} ${parser_STAT_SRCS} )
 target_link_libraries( kdev4pythonparser ${KDE4_KDECORE_LIBS} )

@@ -22,7 +22,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
 #include <contextbuilder.h>
-#include <language/duchain/duchain.h>
+// #include <language/duchain/language.h>
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/parsingenvironment.h>
@@ -120,26 +120,28 @@ void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
 void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
     kDebug() << "building function definition context";
+    kDebug() << node->startLine;
     ClassDefinitionAst* classast = dynamic_cast<ClassDefinitionAst*>( node->parent );
 
     if ( classast )
     {
-        DUChainReadLocker lock( DUChain::lock() );
-        QList<DUContext*> classContexts = currentContext()->findContexts( DUContext::Class, QualifiedIdentifier( classast->context->localScopeIdentifier() ) );
+//         DUChainReadLocker lock( DUChain::lock() );
+//         QList<DUContext*> classContexts = currentContext()->findContexts( DUContext::Class, QualifiedIdentifier( classast->context->localScopeIdentifier(). ) );
 
-        if ( classContexts.count() != 1 )
-        {
-            m_importedParentContexts.append( classContexts.first() );
-        }
+//         if ( classContexts.count() != 1 )
+//         {
+//             m_importedParentContexts.append( classContexts.first() );
+               m_importedParentContexts.append( currentContext() );
+//         }
 
-        if ( classContexts.count() > 1 )
-        {
-            kWarning() << "Multiple class contexts for" << classast->className->identifier << classast->context->localScopeIdentifier() << "shouldn't happen!";
-            foreach( DUContext* classContext, classContexts )
-            {
-                kDebug() << "Context" << classContext->scopeIdentifier( true ) << "range" << classContext->range().textRange() << "in" << classContext->url().str();
-            }
-        }
+//         if ( classContexts.count() > 1 )
+//         {
+//             kWarning() << "Multiple class contexts for" << classast->className->identifier << classast->context->localScopeIdentifier() << "shouldn't happen!";
+//             foreach( DUContext* classContext, classContexts )
+//             {
+//                 kDebug() << "Context" << classContext->scopeIdentifier( true ) << "range" << classContext->range().textRange() << "in" << classContext->url().str();
+//             }
+//         }
     }
 
     visitNodeList( node->decorators );

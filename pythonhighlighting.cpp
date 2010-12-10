@@ -2,20 +2,24 @@
  * Copyright (c) 2007 Piyush verma <piyush.verma@gmail.com>                  *
  *   Copyright 2007 Andreas Pakulat <apaku@gmx.de>                           *
  *                                                                           *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301, USA.
+ * Permission is hereby granted, free of charge, to any person obtaining     *
+ * a copy of this software and associated documentation files (the           *
+ * "Software"), to deal in the Software without restriction, including       *
+ * without limitation the rights to use, copy, modify, merge, publish,       *
+ * distribute, sublicense, and/or sell copies of the Software, and to        *
+ * permit persons to whom the Software is furnished to do so, subject to     *
+ * the following conditions:                                                 *
+ *                                                                           *
+ * The above copyright notice and this permission notice shall be            *
+ * included in all copies or substantial portions of the Software.           *
+ *                                                                           *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,           *
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF        *
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND                     *
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE    *
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION    *
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION     *
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
 #include "pythonhighlighting.h"
 
@@ -47,35 +51,40 @@ KTextEditor::Attribute::Ptr Highlighting::attributeForType( Types type, Contexts
 {
     KTextEditor::Attribute::Ptr a;
     a = m_definitionAttributes[type];
-
-    if ( !a )
+    
+    if ( !a || true )
     {
         a = KTextEditor::Attribute::Ptr( new KTextEditor::Attribute() );
         a->setBackgroundFillWhitespace( true );
         m_definitionAttributes.insert( type, a );
+        
+        a->setForeground(QColor(0xff0000));
+        kDebug() << type << "(cls:" << ClassType << ", func:" << FunctionType << ")";
+        
+        return a;
 
         switch ( type )
         {
 
             case ClassType:
                 {
-                    a->setForeground( QColor( 0x780859 ) );
+                    a->setForeground( QColor( 0xff0000 ) );
                     KTextEditor::Attribute::Ptr e( new KTextEditor::Attribute() );
-                    e->setForeground( QColor( 0x005500 ) );
+                    e->setForeground( QColor( 0xff0000 ) );
                     a->setDynamicAttribute( Attribute::ActivateCaretIn, e );
                     break;
                 }
 
             case FunctionType:
-                a->setForeground( QColor( 0x21005A ) );
+                a->setForeground( QColor( 0xff0000 ) );
                 break;
 
             case FunctionVariableType:
-                a->setForeground( QColor( 0x300085 ) );
+                a->setForeground( QColor( 0xff0000 ) );
                 break;
 
             case ClassVariableType:
-                a->setForeground( QColor( 0x443069 ) );
+                a->setForeground( QColor( 0xff0000 ) );
                 break;
 
             default:
@@ -114,6 +123,7 @@ void Highlighting::outputRange( KTextEditor::SmartRange * range ) const
 
 void Highlighting::highlightDUChain( KDevelop::TopDUContext* context ) const
 {
+    kDebug() << "Highlight duchain TopDUContext";
     DUChainReadLocker lock( DUChain::lock() );
     Q_ASSERT( context->topContext() == context );
     highlightDUChain( static_cast<DUContext*>( context ) );
@@ -175,8 +185,11 @@ Highlighting::Types Highlighting::typeForDeclaration( Declaration * dec ) const
 
 void Highlighting::highlightDeclaration( Declaration * declaration ) const
 {
-    if ( SmartRange* range = declaration->smartRange() )
+    if ( SmartRange* range = declaration->smartRange() ) {
         range->setAttribute( attributeForType( typeForDeclaration( declaration ), DeclarationContext ) );
+        int start = range->start().column();
+        int end = range->end().column();
+    }
 }
 
 void Highlighting::highlightUses( DUContext* ) const

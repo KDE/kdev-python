@@ -47,6 +47,8 @@ protected:
     virtual void visitFunctionDefinition( FunctionDefinitionAst* node );
     virtual void visitDefaultParameter( DefaultParameterAst* node );
     virtual void visitLambda( LambdaAst* node );
+    
+    virtual void visitIdentifierTarget( IdentifierTargetAst * node );
 
 private:
     template<class DeclarationType>

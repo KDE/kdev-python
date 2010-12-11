@@ -28,6 +28,7 @@
 #include <QProcess>
 #include <QDomDocument>
 #include "kurl.h"
+#include <klocale.h>
 #include <qxmlstream.h>
 #include <QXmlStreamReader>
 #include <qdir.h>
@@ -92,10 +93,10 @@ QString AstBuilder::getXmlForFile(KUrl filename, const QString& contents)
         kDebug() << lineno << colno;
         
         if ( position.at(2) == "SyntaxError" ) {
-            additionalExplanation = "Something's wrong with your syntax. Check for missing brackets, commas, and colons.";
+            additionalExplanation = i18n("Something is wrong with your syntax. Check for missing brackets, commas, and colons.");
         }
         else if ( position.at(2) == "IndentationError" ) {
-            additionalExplanation = "You indented your code incorrectly. Also check that you didn't mix tabs and spaces in an incorrect way!";
+            additionalExplanation = i18n("You indented your code incorrectly. Also check that you did not mix tabs and spaces in an incorrect way.");
         }
         
         KDevelop::ProblemPointer p(new KDevelop::Problem());

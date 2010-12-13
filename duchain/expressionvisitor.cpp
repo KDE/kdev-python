@@ -74,10 +74,16 @@ void Python::ExpressionVisitor::visitBinaryOperation(Python::BinaryOperationAst*
     visitNode(node->rhs);
     KDevelop::AbstractType::Ptr rightType = m_lastType;
     
-    if(leftType->whichType()==AbstractType::TypeIntegral && leftType->whichType()==AbstractType::TypeIntegral)
+    if ( leftType &&
+         leftType->whichType() == AbstractType::TypeIntegral && 
+         leftType->whichType() == AbstractType::TypeIntegral ) 
+    {
         m_lastType = leftType;
-    else
+    }
+    else 
+    {
         m_lastType = AbstractType::Ptr(new UnsureType);
+    }
 }
 
 void Python::ExpressionVisitor::visitUnaryOperation(Python::UnaryOperationAst* node)

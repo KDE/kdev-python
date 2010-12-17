@@ -40,6 +40,7 @@ Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx)
     if(s_defaultTypes.isEmpty()) {
         s_defaultTypes.insert(KDevelop::Identifier("True"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
         s_defaultTypes.insert(KDevelop::Identifier("False"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
+        s_defaultTypes.insert(KDevelop::Identifier("None"), AbstractType::Ptr(new IntegralType(IntegralType::TypeDouble)));
     }
 }
 

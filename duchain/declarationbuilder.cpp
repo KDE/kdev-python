@@ -128,6 +128,8 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         kDebug() << "Context type: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
         dec = openDeclaration<ClassMemberDeclaration>(node, originalAst ? originalAst : node, DeclarationIsDefinition);
         closeDeclaration();
+        dec->setType(lastType());
+        dec->setKind(KDevelop::Declaration::Instance);
     } else if ( existingDeclarations.isEmpty() ) {
         kDebug() << "Creating variable declaration for " << node->value << node->startLine << ":" << node->startCol;
         dec = openDeclaration<T>(node, originalAst ? originalAst : node, DeclarationIsDefinition);
@@ -260,8 +262,14 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     kDebug() << "opening class definition";
 //     ClassDeclaration* classDec = new ClassDeclaration(editorFindRange(node->body.first(), node->body.last()), currentContext());
     
-    openDeclaration<ClassDeclaration>( node->name, node );
+    ClassDeclaration* dec = openDeclaration<ClassDeclaration>( node->name, node );
     eventuallyAssignInternalContext();
+    dec->setKind(KDevelop::Declaration::Type);
+    dec->clearBaseClasses();
+    dec->setClassType(ClassDeclarationData::Class);
+    StructureType::Ptr type(new StructureType());
+    type->setDeclaration(dec);
+    dec->setType(type);
     closeDeclaration();
     
     DeclarationBuilderBase::visitClassDefinition( node );

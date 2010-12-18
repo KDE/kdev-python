@@ -41,7 +41,7 @@ NavigationWidget::NavigationWidget(KDevelop::DeclarationPointer declaration, KDe
         if ( ! running ) {
             kDebug() << "Not running, starting pydoc server";
             QProcess::startDetached("/usr/bin/env", QStringList() << "python" << QString(INSTALL_PATH) + "/pydoc.py" << "-p" << "1050");
-            usleep(100000); // give pydoc server 100ms to start up
+            usleep(500000); // give pydoc server 500ms to start up
         }
         else {
             sock->disconnectFromHost();

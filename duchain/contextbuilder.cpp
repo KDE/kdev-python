@@ -172,8 +172,9 @@ void ContextBuilder::visitAttribute(AttributeAst* node)
 void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
     RangeInRevision range(node->body.first()->startLine, node->body.first()->startCol, node->body.last()->endLine, node->body.last()->endCol + 100000);
-    openContext( node, range, DUContext::Class, identifierForNode( node->name ) );
-    kDebug() << " +++ opening CLASS context: " << range.castToSimpleRange();
+    openContext( node, range, DUContext::Class, node->name);
+    currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));
+    kDebug() << " +++ opening CLASS context: " << range.castToSimpleRange() << node->name;
     addImportedContexts();
     Python::AstDefaultVisitor::visitClassDefinition(node);
     closeContext();

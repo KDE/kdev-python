@@ -130,9 +130,10 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         kDebug() << "Creating variable declaration for " << node->value << node->startLine << ":" << node->startCol;
         dec = openDeclaration<T>(node, originalAst ? originalAst : node, DeclarationIsDefinition);
         closeDeclaration();
-        dec->setType(lastType());
-        dec->setKind(KDevelop::Declaration::Instance); // everything is an object in python
     }
+    
+    dec->setType(lastType());
+    dec->setKind(KDevelop::Declaration::Instance); // everything is an object in python
     
 //     dec->setType<>();
     T* result = dynamic_cast<T*>(dec);

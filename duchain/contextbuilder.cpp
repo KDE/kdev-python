@@ -272,7 +272,7 @@ void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         
         RangeInRevision range(sline, scol, eline, ecol+100000);
         Q_ASSERT(range.isValid());
-        DUContext* funcctx = openContext( node->arguments, range, DUContext::Function);
+        DUContext* funcctx = openContext( node->arguments, range, DUContext::Function, node->name);
         kDebug() << funcctx;
         kDebug() << " +++ opening FUNCTION ARGUMENTS context: " << funcctx->range().castToSimpleRange();
         visitNode( node->arguments );

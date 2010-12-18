@@ -269,9 +269,10 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     StructureType::Ptr type(new StructureType());
     type->setDeclaration(dec);
     dec->setType(type);
-    closeDeclaration();
     
     DeclarationBuilderBase::visitClassDefinition( node );
+    
+    closeDeclaration();
 }
 
 void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )

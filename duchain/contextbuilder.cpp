@@ -130,6 +130,11 @@ RangeInRevision ContextBuilder::editorFindRange( Ast* fromNode, Ast* toNode )
     return editor()->findRange(fromNode, toNode);
 }
 
+CursorInRevision ContextBuilder::startPos( Ast* node )
+{
+    return m_editor->findPosition(node, PythonEditorIntegrator::FrontEdge);
+}
+
 QualifiedIdentifier ContextBuilder::identifierForNode( Python::Identifier* node )
 {
     return QualifiedIdentifier( node->value );

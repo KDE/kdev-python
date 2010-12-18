@@ -63,6 +63,7 @@ protected:
     virtual void setContextOnNode( Ast* node, KDevelop::DUContext* context );
     virtual KDevelop::DUContext* contextFromNode( Ast* node );
     virtual KDevelop::RangeInRevision editorFindRange( Ast* fromNode, Ast* toNode );
+    virtual KDevelop::CursorInRevision startPos(Ast* node);
     virtual KDevelop::QualifiedIdentifier identifierForNode( Identifier* node );
 
     void addImportedContexts();

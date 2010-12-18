@@ -1,3 +1,26 @@
+/*****************************************************************************
+ * Copyright 2010 (c) Miquel Canes Gonzalez <miquelcanes@gmail.com>          *
+ *                                                                           *
+ * Permission is hereby granted, free of charge, to any person obtaining     *
+ * a copy of this software and associated documentation files (the           *
+ * "Software"), to deal in the Software without restriction, including       *
+ * without limitation the rights to use, copy, modify, merge, publish,       *
+ * distribute, sublicense, and/or sell copies of the Software, and to        *
+ * permit persons to whom the Software is furnished to do so, subject to     *
+ * the following conditions:                                                 *
+ *                                                                           *
+ * The above copyright notice and this permission notice shall be            *
+ * included in all copies or substantial portions of the Software.           *
+ *                                                                           *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,           *
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF        *
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND                     *
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE    *
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION    *
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION     *
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
+ *****************************************************************************/
+
 #include "expressionvisitor.h"
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/types/integraltype.h>
@@ -17,6 +40,7 @@ Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx)
     if(s_defaultTypes.isEmpty()) {
         s_defaultTypes.insert(KDevelop::Identifier("True"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
         s_defaultTypes.insert(KDevelop::Identifier("False"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
+        s_defaultTypes.insert(KDevelop::Identifier("None"), AbstractType::Ptr(new IntegralType(IntegralType::TypeNull)));
     }
 }
 
@@ -58,7 +82,6 @@ void Python::ExpressionVisitor::visitName(Python::NameAst* node)
         ProblemPointer p(new Problem);
         p->setRange(r);
         p->setDescription(i18n("undefined variable '%1'", node->identifier->value));
-        qDebug() << "adddProblemKiko" << m_ctx->topContext()->url().str();
         p->setFinalLocation(DocumentRange(m_ctx->topContext()->url(), r.castToSimpleRange()));
         p->setSeverity(ProblemData::Error);
         p->setSource(KDevelop::ProblemData::SemanticAnalysis);

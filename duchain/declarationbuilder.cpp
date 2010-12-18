@@ -115,7 +115,9 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     DUChainWriteLocker lock(DUChain::lock());
     Q_ASSERT(node);
     
-    CursorInRevision until = editorFindRange(node, node).end;
+    //CursorInRevision until = editorFindRange(node, node).end;
+    
+    QList<Declaration*> existingDeclarations = currentContext()->findDeclarations(identifierForNode(node), startPos(node));
     
     Declaration* dec = 0;
     
@@ -126,16 +128,55 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         kDebug() << "Context type: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
         dec = openDeclaration<ClassMemberDeclaration>(node, originalAst ? originalAst : node, DeclarationIsDefinition);
         closeDeclaration();
-    } else {
+        dec->setType(lastType());
+        dec->setKind(KDevelop::Declaration::Instance);
+    } else if ( existingDeclarations.isEmpty() ) {
         kDebug() << "Creating variable declaration for " << node->value << node->startLine << ":" << node->startCol;
         dec = openDeclaration<T>(node, originalAst ? originalAst : node, DeclarationIsDefinition);
         closeDeclaration();
+        dec->setType(lastType());
+        dec->setKind(KDevelop::Declaration::Instance); // everything is an object in python
+    } else {
+        qDebug() << "Existing declarations are not empty. count: " << existingDeclarations.count();
+        dec = existingDeclarations.last();
+        AbstractType::Ptr lasttype = dec->abstractType();
+        AbstractType::Ptr type = lastType();
+        if(type){
+            if ( lasttype && !lasttype->equals(type.unsafeData()) ) {
+                IntegralType::Ptr integral = IntegralType::Ptr::dynamicCast(lasttype);
+                if ( integral &&  integral->dataType() == IntegralType::TypeMixed ) {
+                    dec->setType(type);
+                }else{
+                    UnsureType::Ptr unsure = UnsureType::Ptr::dynamicCast(lasttype);
+                    // maybe it's referenced?
+                    ReferenceType::Ptr rType = ReferenceType::Ptr::dynamicCast(lasttype);
+                    if ( !unsure && rType ) {
+                        unsure = UnsureType::Ptr::dynamicCast(rType->baseType());
+                    }
+                    if ( !unsure ) {
+                        unsure = UnsureType::Ptr(new UnsureType());
+                        if ( rType ) {
+                            unsure->addType(rType->baseType()->indexed());
+                        } else {
+                            unsure->addType(dec->indexedType());
+                        }
+                    }
+                    unsure->addType(type->indexed());
+                    if ( rType ) {
+                        rType->setBaseType(AbstractType::Ptr(unsure.unsafeData()));
+                        dec->setType(rType);
+                    } else {
+                        dec->setType(unsure);
+                    }
+                }
+            }else{
+                qDebug() << "Existing declaration with no type from last declaration.";
+                dec->setType(lastType());
+            }
+        }else{
+            qDebug() << "Existing declaration with no type.";
     }
     
-    dec->setType(lastType());
-    dec->setKind(KDevelop::Declaration::Instance); // everything is an object in python
-    
-//     dec->setType<>();
     T* result = dynamic_cast<T*>(dec);
     if ( ! result ) kError() << "variable declaration does not have the expected type";
     return result;
@@ -219,8 +260,14 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     kDebug() << "opening class definition";
 //     ClassDeclaration* classDec = new ClassDeclaration(editorFindRange(node->body.first(), node->body.last()), currentContext());
     
-    openDeclaration<ClassDeclaration>( node->name, node );
+    ClassDeclaration* dec = openDeclaration<ClassDeclaration>( node->name, node );
     eventuallyAssignInternalContext();
+    dec->setKind(KDevelop::Declaration::Type);
+    dec->clearBaseClasses();
+    dec->setClassType(ClassDeclarationData::Class);
+    StructureType::Ptr type(new StructureType());
+    type->setDeclaration(dec);
+    dec->setType(type);
     closeDeclaration();
     
     DeclarationBuilderBase::visitClassDefinition( node );

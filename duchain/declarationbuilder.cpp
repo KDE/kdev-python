@@ -169,12 +169,13 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
                         dec->setType(unsure);
                     }
                 }
-            }else{
+            } else {
                 qDebug() << "Existing declaration with no type from last declaration.";
                 dec->setType(lastType());
             }
-        }else{
+        } else {
             qDebug() << "Existing declaration with no type.";
+        }
     }
     
     T* result = dynamic_cast<T*>(dec);

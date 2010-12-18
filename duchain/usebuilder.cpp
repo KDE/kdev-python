@@ -54,9 +54,10 @@ void UseBuilder::visitName(NameAst* node)
 {
     DUChainWriteLocker lock(DUChain::lock());
     QList<Declaration*> declarations = currentContext()->findDeclarations(identifierForNode(node->identifier), editorFindRange(node, node).start);
-//     QList<Declaration*> isDecl = currentContext()->findDeclarations(identifierForNode(node->identifier), editorFindRange(node, node).end); // TODO not so elegant ;D
+    QList<Declaration*> localDeclarations = currentContext()->findLocalDeclarations(identifierForNode(node->identifier).last(), editorFindRange(node, node).end, currentContext()->topContext());
     Declaration* declaration;
-    if ( declarations.length() ) declaration = declarations.last();
+    if ( localDeclarations.length() ) declaration = localDeclarations.last();
+    else if ( declarations.length() ) declaration = declarations.last();
     else declaration = 0;
     kDebug() << currentContext()->type() << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
     

@@ -130,7 +130,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         closeDeclaration();
         dec->setType(lastType());
         dec->setKind(KDevelop::Declaration::Instance);
-    } else if ( existingDeclarations.isEmpty() ) {
+    } else if ( existingDeclarations.isEmpty() || existingDeclarations.last()->context() != currentContext() ) {
         kDebug() << "Creating variable declaration for " << node->value << node->startLine << ":" << node->startCol;
         dec = openDeclaration<T>(node, originalAst ? originalAst : node, DeclarationIsDefinition);
         closeDeclaration();

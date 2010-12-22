@@ -85,6 +85,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
                 return items;
             }
             currentDeclaration = DeclarationPointer(declarations.at(i).first);
+//             if ( currentDeclaration.data()->rangeInCurrentRevision().start > m_position.castToSimpleCursor() ) continue;
+            
             kDebug() << "Adding item: " << currentDeclaration.data()->identifier().identifier().str();
             NormalDeclarationCompletionItem* item;
             if ( currentDeclaration.data()->abstractType() && currentDeclaration.data()->abstractType().constData()->whichType() == AbstractType::TypeFunction ) {

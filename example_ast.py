@@ -9,7 +9,12 @@ def some_class(foo, bar):
 some_instance = some_class()
 some_instance.attr1
 some_instance.attr2
-some_instance.some_method()
+some_instance.some_method().foobar
+some_instance.some_method(some_arg, some_arg2).second_attribute
+some_instance \
+		.   	attribute \
+		.funcfunc(argarg, arg2arg) \
+		.foo
 
 #comment
 """

@@ -20,7 +20,10 @@ void FunctionDeclarationCompletionItem::executed(KTextEditor::Document* document
 {
     kDebug() << "FunctionDeclarationCompletionItem executed";
     DUChainPointer<FunctionDeclaration> decl = declaration().dynamicCast<FunctionDeclaration>();
-    Q_ASSERT(decl.data());
+    if ( ! decl.data() ) {
+        kError() << "ERROR: could not get declaration data, not executing completion item!";
+        return;
+    }
     kDebug() << "declaration data: " << decl.data();
     const QString suffix = "()";
     int skip = 2; // place cursor behind bracktes

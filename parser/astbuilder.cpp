@@ -52,6 +52,7 @@ CodeAst* AstBuilder::parse(KUrl filename, const QString& contents)
     
 QString AstBuilder::getXmlForFile(KUrl filename, const QString& contents)
 {
+    m_contents = contents.split("\n");
     QProcess* parser = new QProcess();
     // we call a python script to parse the code for us. It returns an XML string with the AST
 //     kDebug() << QDir::current();
@@ -718,6 +719,37 @@ AttributeAst* AstBuilder::populateAttributeAst(Ast* ast, const Python::stringDic
     currentNode->value = resolveNode<ExpressionAst>(currentAttributes.value("NR_value"));
     currentNode->attribute = createIdentifier(currentAttributes.value("attr"), currentNode);
     currentNode->context = resolveContext(currentAttributes.value("NR_ctx"));
+    
+    kDebug() << m_contents.at(currentNode->startLine);
+    QString workingOnCode = m_contents.at(currentNode->startLine);
+    QRegExp removeQuotedSymbols(".*(\"[^A]*[^\\\\]\").*");
+    int matches = 0;
+    QStringList matchedTexts;
+    QRegExp replaceByTrivial(".");
+    
+    do {
+        removeQuotedSymbols.exactMatch(workingOnCode);
+        matches = removeQuotedSymbols.captureCount();
+        if ( matches < 2 ) break;
+        matchedTexts = removeQuotedSymbols.capturedTexts();
+        kDebug() << "Found: " << matchedTexts;
+        QString replace = matchedTexts.last();
+        replace = "\"" + replace.replace(replaceByTrivial, "A") + "\""; // replace everything inside quotes by an A
+        workingOnCode.replace(matchedTexts.last(), replace);
+    } while ( matches >= 2 );
+    
+    kDebug() << workingOnCode;
+    
+    QRegExp dot("\\."); // we're always only interested in the 2nd match
+    dot.setMinimal(true);
+    int skip_offset = dot.indexIn(workingOnCode);
+    int real_offset = dot.indexIn(workingOnCode, skip_offset);
+    
+    currentNode->startCol = currentNode->attribute->startCol = real_offset + 1;
+    currentNode->endCol = currentNode->attribute->endCol = currentNode->startCol + currentNode->attribute->value.length();
+    
+    kDebug() << "Set range on " << currentNode->attribute->value << " to " << currentNode->startCol << currentNode->endCol;
+    
     return currentNode;
 }
 

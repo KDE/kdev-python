@@ -73,6 +73,8 @@ private:
     QMap<int, stringDictionary> m_attributeStore;
     Ast* m_currentNode;
     
+    QStringList m_contents;
+    
     Ast::BooleanOperationTypes resolveBooleanOperator(const QString& identifier);
     Ast::ComparisonOperatorTypes resolveComparisonOperator(const QString& identifier);
     Ast::OperatorTypes resolveOperator(const QString& identifier);

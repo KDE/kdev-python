@@ -34,6 +34,7 @@
 #include <parsesession.h>
 #include <usebuilder.h>
 #include "ast.h"
+#include <language/duchain/types/structuretype.h>
 
 using namespace KTextEditor;
 using namespace KDevelop;
@@ -54,10 +55,16 @@ void UseBuilder::visitName(NameAst* node)
 {
     DUChainWriteLocker lock(DUChain::lock());
     QList<Declaration*> declarations = currentContext()->findDeclarations(identifierForNode(node->identifier), editorFindRange(node, node).start);
-    QList<Declaration*> localDeclarations = currentContext()->findLocalDeclarations(identifierForNode(node->identifier).last(), editorFindRange(node, node).end, currentContext()->topContext());
+    QList<Declaration*> localDeclarations = currentContext()->findLocalDeclarations(identifierForNode(node->identifier).last(), editorFindRange(node, node).end);
     Declaration* declaration;
-    if ( localDeclarations.length() ) declaration = localDeclarations.last();
-    else if ( declarations.length() ) declaration = declarations.last();
+    if ( localDeclarations.length() ) {
+        declaration = localDeclarations.last();
+        kDebug() << "Using local declaration";
+    }
+    else if ( declarations.length() ) {
+        declaration = declarations.last();
+        kDebug() << "Using global declaration";
+    }
     else declaration = 0;
     kDebug() << currentContext()->type() << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
     
@@ -71,6 +78,41 @@ void UseBuilder::visitName(NameAst* node)
     UseBuilderBase::newUse(node, useRange, DeclarationPointer(declaration));
 }
 
+void UseBuilder::visitAttribute(AttributeAst* node)
+{
+    kDebug() << "VisitAttribute start";
+    UseBuilderBase::visitAttribute(node);
+    kDebug() << "Visit Attribute base end";
+    NameAst* accessingAttributeOf = dynamic_cast<NameAst*>(node->value);
+    if ( ! accessingAttributeOf ) {
+        kWarning() << "Accessing attributes of non-names not implemented, aborting";
+        return;
+    }
+    QList<Declaration*> availableDeclarations = currentContext()->findDeclarations(identifierForNode(accessingAttributeOf->identifier), editorFindRange(node, node).start);
+    Declaration* accessingAttributeOfDeclaration;
+    if ( availableDeclarations.length() > 0 ) accessingAttributeOfDeclaration = availableDeclarations.last();
+    else {
+        kWarning() << "No declaration found to look up type of attribute in! This is probably something wrong in YOUR code. :)";
+        return; // TODO report error
+    }
+    
+    TypePtr<StructureType> accessingAttributeOfType = accessingAttributeOfDeclaration->type<StructureType>();
+    DUContext* searchAttrInContext = accessingAttributeOfType.unsafeData()->declaration(currentContext()->topContext())->internalContext();
+    QList<Declaration*> foundDecls = searchAttrInContext->findDeclarations(identifierForNode(node->attribute), CursorInRevision::invalid(), 
+                                                                           KDevelop::AbstractType::Ptr(), searchAttrInContext->topContext());
+    
+    RangeInRevision useRange(node->attribute->startLine, node->attribute->startCol, node->attribute->endLine, node->attribute->endCol);
+    
+    if ( foundDecls.length() > 0 ) {
+        kDebug() << "Creating a new attribute declaration:" << useRange.castToSimpleRange() << ", Declaration:" << foundDecls.last()->range();
+        UseBuilderBase::newUse(node, useRange, DeclarationPointer(foundDecls.last()));
+    }
+    else {
+        kWarning() << "No declaration found for attribute";
+        UseBuilderBase::newUse(node, useRange, DeclarationPointer(0));
+    }
+    kDebug() << "VisitAttribute end";
+}
 
 // void UseBuilder::openContext(DUContext * newContext)
 // {

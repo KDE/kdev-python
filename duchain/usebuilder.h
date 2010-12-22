@@ -50,6 +50,7 @@ public:
 protected:
 //     virtual void visitIdentifier(Identifier* node);
     virtual void visitName(NameAst* node);
+    virtual void visitAttribute(AttributeAst* node);
 private:
     ParseSession* m_session;
     PythonEditorIntegrator* m_editor;

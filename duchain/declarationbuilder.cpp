@@ -183,6 +183,11 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     return result;
 }
 
+void DeclarationBuilder::visitAttribute(AttributeAst* node)
+{
+    DeclarationBuilderBase::visitAttribute(node);
+}
+
 void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
 {
     if ( node->name ) visitVariableDeclaration<Declaration>(node->name); // except Error as <vardecl>

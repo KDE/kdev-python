@@ -852,9 +852,19 @@ void AstBuilder::populateAst()
         if ( currentAbstractNode->astType == Ast::AttributeAstType ) {
             // until we reach the current expression ast of the tree, we count the attribute's depth
             // so if it's something like foo.bar.baz, it'll count 3 times for baz, and 2 times for bar
-            while ( current && current->astType == Ast::AttributeAstType ) {
+            while ( current && (      current->astType == Ast::AttributeAstType
+                                 || ( current->astType == Ast::CallAstType && dynamic_cast<AttributeAst*>(dynamic_cast<CallAst*>(current)->function) )
+                               )
+            ) {
+                // do not count non-attributeAst nodes, otherwise we'll count stuff like function calls twice
+                if ( current->astType != Ast::AttributeAstType ) {
+                    current = current->parent;
+                    continue;
+                }
+                else {
+                    current = current->parent;
+                }
                 depth += 1;
-                current = current->parent;
             }
             dynamic_cast<AttributeAst*>(currentAbstractNode)->depth = depth;
         }

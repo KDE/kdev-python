@@ -47,6 +47,8 @@ class ExpressionVisitor : public AstDefaultVisitor
         virtual void visitString(StringAst* node);
         virtual void visitNumber(NumberAst* node);
         virtual void visitName(NameAst* node);
+        
+        virtual void visitAttribute(AttributeAst* node);
     
         KDevelop::AbstractType::Ptr lastType() const { return m_lastType; }
     private:

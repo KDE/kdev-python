@@ -78,7 +78,6 @@ protected:
     virtual void visitCode(CodeAst* node);
     virtual void visitImport(ImportAst* node);
     virtual void visitImportFrom(ImportFromAst* node);
-    virtual void visitAttribute(AttributeAst* node);
     
     DUContext* openSafeContext( Python::Ast* node, RangeInRevision& range, DUContext::ContextType type, Python::Identifier* identifier = 0 );
     

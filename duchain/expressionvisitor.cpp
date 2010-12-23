@@ -32,6 +32,8 @@
 using namespace KDevelop;
 using namespace Python;
 
+namespace Python {
+
 QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> ExpressionVisitor::s_defaultTypes;
 
 Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx)
@@ -89,6 +91,13 @@ void Python::ExpressionVisitor::visitName(Python::NameAst* node)
     }
 }
 
+void Python::ExpressionVisitor::visitAttribute(AttributeAst* node)
+{
+    kDebug() << "Visit attribute from expressionvisitor";
+    Q_ASSERT(false);
+    Python::AstDefaultVisitor::visitAttribute(node);
+}
+
 void Python::ExpressionVisitor::visitBinaryOperation(Python::BinaryOperationAst* node)
 {
     visitNode(node->lhs);
@@ -97,9 +106,7 @@ void Python::ExpressionVisitor::visitBinaryOperation(Python::BinaryOperationAst*
     visitNode(node->rhs);
     KDevelop::AbstractType::Ptr rightType = m_lastType;
     
-    if ( leftType &&
-         leftType->whichType() == AbstractType::TypeIntegral && 
-         leftType->whichType() == AbstractType::TypeIntegral ) 
+    if ( leftType && leftType->whichType() == AbstractType::TypeIntegral ) 
     {
         m_lastType = leftType;
     }
@@ -136,5 +143,7 @@ void Python::ExpressionVisitor::visitBooleanOperation(Python::BooleanOperationAs
     }
     
     m_lastType = AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean));
+}
+
 }
 

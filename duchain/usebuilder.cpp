@@ -21,7 +21,11 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
 #include "usebuilder.h"
+
+#include "parsesession.h"
 #include "pythoneditorintegrator.h"
+#include "ast.h"
+#include "expressionvisitor.h"
 
 #include <ktexteditor/smartrange.h>
 #include <ktexteditor/smartinterface.h>
@@ -31,9 +35,6 @@
 #include <language/duchain/topducontext.h>
 #include <language/duchain/duchain.h>
 #include <language/duchain/duchainlock.h>
-#include <parsesession.h>
-#include <usebuilder.h>
-#include "ast.h"
 #include <language/duchain/types/structuretype.h>
 
 using namespace KTextEditor;
@@ -83,32 +84,66 @@ void UseBuilder::visitAttribute(AttributeAst* node)
     kDebug() << "VisitAttribute start";
     UseBuilderBase::visitAttribute(node);
     kDebug() << "Visit Attribute base end";
-    NameAst* accessingAttributeOf = dynamic_cast<NameAst*>(node->value);
-    if ( ! accessingAttributeOf ) {
-        kWarning() << "Accessing attributes of non-names not implemented, aborting";
-        return;
-    }
-    QList<Declaration*> availableDeclarations = currentContext()->findDeclarations(identifierForNode(accessingAttributeOf->identifier), editorFindRange(node, node).start);
-    Declaration* accessingAttributeOfDeclaration;
-    if ( availableDeclarations.length() > 0 ) accessingAttributeOfDeclaration = availableDeclarations.last();
-    else {
-        kWarning() << "No declaration found to look up type of attribute in! This is probably something wrong in YOUR code. :)";
-        return; // TODO report error
-    }
+    ExpressionAst* accessingAttributeOf = node->value;
+    Identifier* identifier;
+    QList<Declaration*> availableDeclarations;
     
-    TypePtr<StructureType> accessingAttributeOfType = accessingAttributeOfDeclaration->type<StructureType>();
-    DUContext* searchAttrInContext = accessingAttributeOfType.unsafeData()->declaration(currentContext()->topContext())->internalContext();
-    QList<Declaration*> foundDecls = searchAttrInContext->findDeclarations(identifierForNode(node->attribute), CursorInRevision::invalid(), 
-                                                                           KDevelop::AbstractType::Ptr(), searchAttrInContext->topContext());
+    kDebug() << "Processing attribute: " << node->attribute->value;
     
     RangeInRevision useRange(node->attribute->startLine, node->attribute->startCol, node->attribute->endLine, node->attribute->endCol);
     
+    Declaration* accessingAttributeOfDeclaration;
+    
+    if ( accessingAttributeOf->astType == Ast::AttributeAstType ) {
+        identifier = dynamic_cast<AttributeAst*>(accessingAttributeOf)->attribute;
+        if ( m_lastAccessedAttributeDeclaration.data() ) {
+            availableDeclarations << m_lastAccessedAttributeDeclaration.data();
+        }
+        else {
+            kWarning() << "No type set for accessed attribute";
+            return;
+        }
+    }
+    else if ( accessingAttributeOf->astType == Ast::NameAstType ) {
+        identifier = dynamic_cast<NameAst*>(accessingAttributeOf)->identifier;
+        availableDeclarations = currentContext()->findDeclarations(identifierForNode(identifier), editorFindRange(node, node).start);
+    }
+    else {
+        kWarning() << "Unsupported attribute access method";
+        return;
+    }
+    
+    if ( availableDeclarations.length() > 0 && availableDeclarations.last() ) {
+        accessingAttributeOfDeclaration = availableDeclarations.last();
+    } 
+    else {
+        kWarning() << "No declaration found to look up type of attribute in! This is probably something wrong in YOUR code. :)";
+        UseBuilderBase::newUse(node, useRange, DeclarationPointer(0));
+        return; // TODO report error
+    }
+    
+    QList<Declaration*> foundDecls;
+    
+    TypePtr<StructureType> accessingAttributeOfType = accessingAttributeOfDeclaration->type<StructureType>();
+    // maybe our attribute isn't a class at all, then that's an error by definition for now
+    if ( accessingAttributeOfType.unsafeData() ) {
+        Declaration* foundContainerDeclaration = accessingAttributeOfType.unsafeData()->declaration(currentContext()->topContext());
+        DUContext* searchAttrInContext = foundContainerDeclaration->internalContext();
+        foundDecls = searchAttrInContext->findDeclarations(identifierForNode(node->attribute), CursorInRevision::invalid(), 
+                                                                            KDevelop::AbstractType::Ptr(), searchAttrInContext->topContext());
+    }
+    else {
+        foundDecls.clear();
+    }
+    
     if ( foundDecls.length() > 0 ) {
         kDebug() << "Creating a new attribute declaration:" << useRange.castToSimpleRange() << ", Declaration:" << foundDecls.last()->range();
+        m_lastAccessedAttributeDeclaration = DeclarationPointer(foundDecls.last());
         UseBuilderBase::newUse(node, useRange, DeclarationPointer(foundDecls.last()));
     }
     else {
         kWarning() << "No declaration found for attribute";
+        m_lastAccessedAttributeDeclaration = DeclarationPointer(0);
         UseBuilderBase::newUse(node, useRange, DeclarationPointer(0));
     }
     kDebug() << "VisitAttribute end";

@@ -39,27 +39,23 @@ typedef KDevelop::AbstractUseBuilder<Ast, Identifier, ContextBuilder> UseBuilder
 class KDEVPYTHONDUCHAIN_EXPORT UseBuilder: public UseBuilderBase
 {
 public:
-//     UseBuilder(ParseSession* session, const KUrl &url);
-//     UseBuilder(PythonEditorIntegrator* editor, const KUrl &url);
     UseBuilder(PythonEditorIntegrator *editor);
     ParseSession* parseSession() const;
     void buildUses(Python::Ast* node);
-//     virtual void openContext(KDevelop::DUContext* newContext);
-//     virtual void closeContext();
 
 protected:
-//     virtual void visitIdentifier(Identifier* node);
     virtual void visitName(NameAst* node);
     virtual void visitAttribute(AttributeAst* node);
 private:
     ParseSession* m_session;
     PythonEditorIntegrator* m_editor;
-//     void newUse(std::size_t name, Ast *rangenode);
     inline int& nextUseIndex()
     {
         return m_nextUseStack.top();
     }
     QStack<int> m_nextUseStack;
+    
+    DeclarationPointer m_lastAccessedAttributeDeclaration;
 };
 
 }

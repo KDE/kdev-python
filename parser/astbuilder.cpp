@@ -720,8 +720,11 @@ AttributeAst* AstBuilder::populateAttributeAst(Ast* ast, const Python::stringDic
     currentNode->attribute = createIdentifier(currentAttributes.value("attr"), currentNode);
     currentNode->context = resolveContext(currentAttributes.value("NR_ctx"));
     
+    #warning fixme:This will not work with multiple lines
     kDebug() << m_contents.at(currentNode->startLine);
     QString workingOnCode = m_contents.at(currentNode->startLine);
+    workingOnCode.rightRef(workingOnCode.length() - currentNode->attribute->startCol); // only get the actual attribute
+    kDebug() << "cut: " << m_contents.at(currentNode->startLine);
     QRegExp removeQuotedSymbols(".*(\"[^A]*[^\\\\]\").*");
     int matches = 0;
     QStringList matchedTexts;
@@ -740,12 +743,15 @@ AttributeAst* AstBuilder::populateAttributeAst(Ast* ast, const Python::stringDic
     
     kDebug() << workingOnCode;
     
-    QRegExp dot("\\."); // we're always only interested in the 2nd match
-    dot.setMinimal(true);
-    int skip_offset = dot.indexIn(workingOnCode);
-    int real_offset = dot.indexIn(workingOnCode, skip_offset);
+    QStringList attributes = workingOnCode.split(".");
+    int listIndexToAccess = attributes.length() - currentNode->depth;
+    QString matched = attributes.value(listIndexToAccess);
+    int offset = 0;
+    for ( int currentListIndex = 0; currentListIndex < listIndexToAccess; currentListIndex++ ) {
+        offset += attributes.value(currentListIndex).length() + 1;
+    }
     
-    currentNode->startCol = currentNode->attribute->startCol = real_offset + 1;
+    currentNode->startCol = currentNode->attribute->startCol = offset;
     currentNode->endCol = currentNode->attribute->endCol = currentNode->startCol + currentNode->attribute->value.length();
     
     kDebug() << "Set range on " << currentNode->attribute->value << " to " << currentNode->startCol << currentNode->endCol;
@@ -841,6 +847,18 @@ void AstBuilder::populateAst()
         currentAbstractNode->startCol = startCol;
         currentAbstractNode->endCol = startCol; // this is justified if necessary (only an AST with an actual value or identifier will know the true range)
         
+        Ast* current = currentAbstractNode;
+        int depth = 0;
+        if ( currentAbstractNode->astType == Ast::AttributeAstType ) {
+            // until we reach the current expression ast of the tree, we count the attribute's depth
+            // so if it's something like foo.bar.baz, it'll count 3 times for baz, and 2 times for bar
+            while ( current && current->astType == Ast::AttributeAstType ) {
+                depth += 1;
+                current = current->parent;
+            }
+            dynamic_cast<AttributeAst*>(currentAbstractNode)->depth = depth;
+        }
+        
         switch ( currentAbstractNode->astType ) {
             case Ast::CodeAstType:                                  currentAbstractNode = populateCodeAst(currentAbstractNode, currentAttributes); break;
             case Ast::FunctionDefinitionAstType:                    currentAbstractNode = populateFunctionDefinitionAst(currentAbstractNode, currentAttributes); break;
@@ -916,6 +934,8 @@ void AstBuilder::populateAst()
                 parent = parent->parent;
             }
         }
+        
+        if ( currentAbstractNode->astType == Ast::AttributeAstType ) kDebug() << "Depth for node " << dynamic_cast<AttributeAst*>(currentAbstractNode)->attribute->value << ":" << depth;
     }
 }
     

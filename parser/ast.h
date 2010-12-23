@@ -520,6 +520,7 @@ public:
     ExpressionAst* value;
     Identifier* attribute;
     ExpressionAst::Context context;
+    int depth; // foo.bar.baz -> foo has depth 1, bar has depth 2, baz 3; needed for range analysis
 };
 
 class KDEVPYTHONPARSER_EXPORT SubscriptAst : public ExpressionAst {

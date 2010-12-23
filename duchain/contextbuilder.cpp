@@ -169,11 +169,6 @@ void ContextBuilder::openContextForStatementList( const QList<Ast*>& l, DUContex
     }
 }
 
-void ContextBuilder::visitAttribute(AttributeAst* node)
-{
-    Python::AstDefaultVisitor::visitAttribute(node);
-}
-
 void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
     RangeInRevision range(node->body.first()->startLine, node->body.first()->startCol, node->body.last()->endLine, node->body.last()->endCol + 100000);

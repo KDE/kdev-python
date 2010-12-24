@@ -25,6 +25,7 @@
 #define PYDUCHAINTEST_H
 
 #include <QObject>
+#include "ast.h"
 
 namespace KDevelop {
 class TopDUContext;
@@ -40,9 +41,13 @@ class PyDUChainTest : public QObject
         
         KDevelop::ReferencedTopDUContext parse(const QByteArray& code);
         
+        Python::CodeAst* m_ast;
+        
     private slots:
         void testSimple();
         void testSimple_data();
+        void testAttributeRanges();
+        void testAttributeRanges_data();
 };
 
 #endif // PYDUCHAINTEST_H

@@ -35,10 +35,13 @@
 #include <declarationbuilder.h>
 #include <usebuilder.h>
 
+#include "astdefaultvisitor.h"
+
 QTEST_MAIN(PyDUChainTest)
 
 using namespace KDevelop;
 using namespace Python;
+
 
 PyDUChainTest::PyDUChainTest(QObject* parent): QObject(parent)
 {
@@ -66,6 +69,7 @@ ReferencedTopDUContext PyDUChainTest::parse(const QByteArray& code)
     
     QPair<CodeAst*, bool> parserResults = session->parse(0);
     CodeAst* ast = parserResults.first;
+    m_ast = ast;
     
     if(!parserResults.second)
         return 0;
@@ -128,3 +132,61 @@ void PyDUChainTest::testSimple_data()
     QTest::newRow("bool") << "a = True" << 1 << 0;
     QTest::newRow("op") << "a = True and True;" << 1 << 0;
 }
+
+class AttributeRangeTestVisitor : public AstDefaultVisitor {
+public:
+    bool found;
+    SimpleRange searchingForRange;
+    QString searchingForIdentifier;
+    virtual void visitAttribute(AttributeAst* node) {
+        SimpleRange r(0, node->startCol, 0, node->endCol);
+        qDebug() << "Found: " << r << node->attribute->value << ", looking for: " << searchingForRange << searchingForIdentifier;
+        if ( r == searchingForRange && node->attribute->value == searchingForIdentifier ) {
+            found = true;
+            return;
+        }
+        AstDefaultVisitor::visitAttribute(node);
+    }
+};
+
+void PyDUChainTest::testAttributeRanges()
+{
+    QFETCH(QString, code);
+    QFETCH(int, expected_amount_of_variables);
+    QFETCH(QStringList, column_ranges);
+    
+    ReferencedTopDUContext ctx = parse(code.toLatin1());
+    QVERIFY(ctx);
+    
+    QVERIFY(m_ast);
+    
+    for ( int i = 0; i < column_ranges.length(); i++ ) {
+        DUChainReadLocker lock(DUChain::lock());
+        int scol = column_ranges.at(i).split(",")[0].toInt();
+        int ecol = column_ranges.at(i).split(",")[1].toInt();
+        QString identifier = column_ranges.at(i).split(",")[2];
+        SimpleRange r(0, scol, 0, ecol);
+        
+        AttributeRangeTestVisitor* visitor = new AttributeRangeTestVisitor();
+        visitor->searchingForRange = r;
+        visitor->searchingForIdentifier = identifier;
+        visitor->visitCode(m_ast);
+        
+        QCOMPARE(visitor->found, true);
+    }
+}
+
+void PyDUChainTest::testAttributeRanges_data()
+{
+    QTest::addColumn<QString>("code");
+    QTest::addColumn<int>("expected_amount_of_variables");
+    QTest::addColumn<QStringList>("column_ranges");
+    
+    QTest::newRow("two_attributes") << "base.attr" << 2 << ( QStringList() << "5,9,attr" );
+    QTest::newRow("three_attributes") << "base.attr.subattr" << 3 << ( QStringList() << "5,9,attr" << "10,17,subattr" );
+    QTest::newRow("functionCall") << "base.attr().subattr" << 3 << ( QStringList() << "5,9,attr" << "12,19,subattr" );
+    QTest::newRow("stringSubscript") << "base.attr[\"a.b.c..de\"].subattr" << 3 << ( QStringList() << "5,9,attr" << "12,19,subattr" );
+}
+
+
+

@@ -382,7 +382,8 @@ public:
         AugLoad, AugStore, // Augmented assignments, like a += 1
         Invalid
     };
-    ExpressionAst* value;
+    ExpressionAst* value; // WARNING this is not set in most cases!
+    AttributeAst* directDescendant; // foo.bar.baz; this is baz; this attribute points to bar
 };
 
 class KDEVPYTHONPARSER_EXPORT BooleanOperationAst : public ExpressionAst {

@@ -46,7 +46,7 @@ AssignmentAst::AssignmentAst(Ast* parent): StatementAst(parent, Ast::AssignmentA
     
 }
 
-AttributeAst::AttributeAst(Ast* parent): ExpressionAst(parent, Ast::AttributeAstType), value(0)
+AttributeAst::AttributeAst(Ast* parent): ExpressionAst(parent, Ast::AttributeAstType), value(0), depth(0)
 {
     
 }
@@ -146,7 +146,7 @@ ListComprehensionAst::ListComprehensionAst(Ast* parent): ExpressionAst(parent, A
 
 }
 
-ExpressionAst::ExpressionAst(Ast* parent, AstType type): Ast(parent, type), value(0)
+ExpressionAst::ExpressionAst(Ast* parent, AstType type): Ast(parent, type), value(0), directDescendant(0)
 {
     
 }

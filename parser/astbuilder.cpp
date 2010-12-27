@@ -318,6 +318,36 @@ bool AstBuilder::parseAstNode(QString name, /*QString text, */ const QList< QXml
     
     ast->startLine = -5;
     
+    Ast* current = ast;
+    int depth = 0;
+    if ( ast->astType == Ast::AttributeAstType ) {
+        // until we reach the current expression ast of the tree, we count the attribute's depth
+        // so if it's something like foo.bar.baz, it'll count 3 times for baz, and 2 times for bar
+        // TODO it'd be better to compare the casted stuff to previously found nodes instead of just checking wether it exists (more error-prone)
+        while ( current && (      current->astType == Ast::AttributeAstType
+                                || ( current->astType == Ast::CallAstType && dynamic_cast<AttributeAst*>(dynamic_cast<CallAst*>(current)->function) )
+                                || ( current->astType == Ast::SubscriptAstType && dynamic_cast<AttributeAst*>(dynamic_cast<SubscriptAst*>(current)->value) )
+                            )
+        ) {
+            // do not count non-attributeAst nodes, otherwise we'll count stuff like function calls twice
+            if ( current->astType != Ast::AttributeAstType ) {
+                current = current->parent;
+                continue;
+            }
+            else {
+                current = current->parent;
+            }
+            depth += 1;
+        }
+        AttributeAst* attrib = dynamic_cast<AttributeAst*>(ast);
+        attrib->depth = depth;
+        ExpressionAst* parent = dynamic_cast<ExpressionAst*>(ast->parent);
+        if ( parent ) {
+            parent->directDescendant = attrib;
+            kDebug() << "set descendant";
+        }
+    }
+    
     m_nodeMap.insert(node_id, ast);
     m_attributeStore.insert(node_id, attributeDict);
     
@@ -723,23 +753,26 @@ AttributeAst* AstBuilder::populateAttributeAst(Ast* ast, const Python::stringDic
     #warning fixme:This will not work with multiple lines
     kDebug() << m_contents.at(currentNode->startLine);
     QString workingOnCode = m_contents.at(currentNode->startLine);
-    workingOnCode.rightRef(workingOnCode.length() - currentNode->attribute->startCol); // only get the actual attribute
-    kDebug() << "cut: " << m_contents.at(currentNode->startLine);
+    workingOnCode = workingOnCode.right(workingOnCode.length() - currentNode->attribute->startCol); // only get the actual attribute
+    if ( currentNode->directDescendant ) {
+        kDebug() << "Cut left side: " << currentNode->directDescendant->startCol << " - " << currentNode->startCol;
+        workingOnCode = workingOnCode.left(currentNode->directDescendant->startCol - currentNode->startCol);
+    }
+    kDebug() << "cut: " << workingOnCode;
     QRegExp removeQuotedSymbols(".*(\"[^A]*[^\\\\]\").*");
-    int matches = 0;
     QStringList matchedTexts;
     QRegExp replaceByTrivial(".");
     
+    bool regexMatched;
     do {
-        removeQuotedSymbols.exactMatch(workingOnCode);
-        matches = removeQuotedSymbols.captureCount();
-        if ( matches < 2 ) break;
+        regexMatched = removeQuotedSymbols.exactMatch(workingOnCode);
+        if ( ! regexMatched ) break;
         matchedTexts = removeQuotedSymbols.capturedTexts();
         kDebug() << "Found: " << matchedTexts;
         QString replace = matchedTexts.last();
-        replace = "\"" + replace.replace(replaceByTrivial, "A") + "\""; // replace everything inside quotes by an A
+        replace = replace.replace(replaceByTrivial, "1"); // replace everything inside quotes by a 1
         workingOnCode.replace(matchedTexts.last(), replace);
-    } while ( matches >= 2 );
+    } while ( regexMatched );
     
     kDebug() << workingOnCode;
     
@@ -847,29 +880,35 @@ void AstBuilder::populateAst()
         currentAbstractNode->startCol = startCol;
         currentAbstractNode->endCol = startCol; // this is justified if necessary (only an AST with an actual value or identifier will know the true range)
         
-        Ast* current = currentAbstractNode;
-        int depth = 0;
-        if ( currentAbstractNode->astType == Ast::AttributeAstType ) {
-            // until we reach the current expression ast of the tree, we count the attribute's depth
-            // so if it's something like foo.bar.baz, it'll count 3 times for baz, and 2 times for bar
-            // TODO it'd be better to compare the casted stuff to previously found nodes instead of just checking wether it exists (more error-prone)
-            while ( current && (      current->astType == Ast::AttributeAstType
-                                 || ( current->astType == Ast::CallAstType && dynamic_cast<AttributeAst*>(dynamic_cast<CallAst*>(current)->function) )
-                                 || ( current->astType == Ast::SubscriptAstType && dynamic_cast<AttributeAst*>(dynamic_cast<SubscriptAst*>(current)->value) )
-                               )
-            ) {
-                // do not count non-attributeAst nodes, otherwise we'll count stuff like function calls twice
-                if ( current->astType != Ast::AttributeAstType ) {
-                    current = current->parent;
-                    continue;
-                }
-                else {
-                    current = current->parent;
-                }
-                depth += 1;
-            }
-            dynamic_cast<AttributeAst*>(currentAbstractNode)->depth = depth;
-        }
+//         Ast* current = currentAbstractNode;
+//         int depth = 0;
+//         if ( currentAbstractNode->astType == Ast::AttributeAstType ) {
+//             // until we reach the current expression ast of the tree, we count the attribute's depth
+//             // so if it's something like foo.bar.baz, it'll count 3 times for baz, and 2 times for bar
+//             // TODO it'd be better to compare the casted stuff to previously found nodes instead of just checking wether it exists (more error-prone)
+//             while ( current && (      current->astType == Ast::AttributeAstType
+//                                  || ( current->astType == Ast::CallAstType && dynamic_cast<AttributeAst*>(dynamic_cast<CallAst*>(current)->function) )
+//                                  || ( current->astType == Ast::SubscriptAstType && dynamic_cast<AttributeAst*>(dynamic_cast<SubscriptAst*>(current)->value) )
+//                                )
+//             ) {
+//                 // do not count non-attributeAst nodes, otherwise we'll count stuff like function calls twice
+//                 if ( current->astType != Ast::AttributeAstType ) {
+//                     current = current->parent;
+//                     continue;
+//                 }
+//                 else {
+//                     current = current->parent;
+//                 }
+//                 depth += 1;
+//             }
+//             AttributeAst* attrib = dynamic_cast<AttributeAst*>(currentAbstractNode);
+//             attrib->depth = depth;
+//             ExpressionAst* parent = dynamic_cast<ExpressionAst*>(currentAbstractNode->parent);
+//             if ( parent ) {
+//                 parent->directDescendant = attrib;
+//                 kDebug() << "set descendant";
+//             }
+//         }
         
         switch ( currentAbstractNode->astType ) {
             case Ast::CodeAstType:                                  currentAbstractNode = populateCodeAst(currentAbstractNode, currentAttributes); break;
@@ -947,7 +986,7 @@ void AstBuilder::populateAst()
             }
         }
         
-        if ( currentAbstractNode->astType == Ast::AttributeAstType ) kDebug() << "Depth for node " << dynamic_cast<AttributeAst*>(currentAbstractNode)->attribute->value << ":" << depth;
+//         if ( currentAbstractNode->astType == Ast::AttributeAstType ) kDebug() << "Depth for node " << dynamic_cast<AttributeAst*>(currentAbstractNode)->attribute->value << ":" << depth;
     }
 }
     

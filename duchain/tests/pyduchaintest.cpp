@@ -185,7 +185,9 @@ void PyDUChainTest::testAttributeRanges_data()
     QTest::newRow("two_attributes") << "base.attr" << 2 << ( QStringList() << "5,9,attr" );
     QTest::newRow("three_attributes") << "base.attr.subattr" << 3 << ( QStringList() << "5,9,attr" << "10,17,subattr" );
     QTest::newRow("functionCall") << "base.attr().subattr" << 3 << ( QStringList() << "5,9,attr" << "12,19,subattr" );
-    QTest::newRow("stringSubscript") << "base.attr[\"a.b.c..de\"].subattr" << 3 << ( QStringList() << "5,9,attr" << "12,19,subattr" );
+    QTest::newRow("stringSubscript") << "base.attr[\"a.b.c..de\"].subattr" << 3 << ( QStringList() << "5,9,attr" << "23,30,subattr" );
+    QTest::newRow("functionCallWithArguments") << "base.attr(arg1, arg2).subattr" << 5 << ( QStringList() << "5,9,attr" << "22,29,subattr" );
+    QTest::newRow("functionCallWithArguments") << "base.attr(arg1.parg2).subattr" << 5 << ( QStringList() << "5,9,attr" << "22,29,subattr" << "15,20,parg2" );
 }
 
 

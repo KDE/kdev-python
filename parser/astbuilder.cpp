@@ -39,14 +39,43 @@
 #include "parserConfig.h"
 #include <language/duchain/duchainlock.h>
 
+#include <python2.6/pyport.h>
+#include <python2.6/pyconfig.h>
+#include <python2.6/node.h>
+
+#include <python2.6/Python.h>
+
+#include <python2.6/Python-ast.h>
+#include <python2.6/ast.h>
+
+#include <python2.6/graminit.h>
+#include <python2.6/grammar.h>
+#include <python2.6/parsetok.h>
+
 using namespace KDevelop;
+
+extern grammar _PyParser_Grammar;
+
+// remove evil macros from headers which pollutes the namespace (grr!)
+#undef test
+#undef decorators
 
 namespace Python
 {
     
 CodeAst* AstBuilder::parse(KUrl filename, const QString& contents)
 {
-    CodeAst* ast = parseXmlAst(getXmlForFile(filename, contents));
+//     CodeAst* ast = parseXmlAst(getXmlForFile(filename, contents));
+    CodeAst* ast = 0;
+    
+    const char* code = "Foo.bar.Baz(bang)";
+    
+    PyArena* arena = PyArena_New();
+    
+    perrdetail* errors;
+    const node* parsed = PyParser_ParseString(code, &_PyParser_Grammar, 0, errors);
+    mod_ty myast = PyAST_FromNode(parsed, 0, "", arena);
+    
     return ast;
 }
     

@@ -35,6 +35,7 @@ target_link_libraries(kdev4pythonparser
     ${KDE4_KDECORE_LIBS} 
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${QT_QTCORE_LIBRARY} 
+    python2.6
 )
 
 install(TARGETS kdev4pythonparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})

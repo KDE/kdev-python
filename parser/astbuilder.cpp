@@ -71,10 +71,11 @@ CodeAst* AstBuilder::parse(KUrl filename, const QString& contents)
     const char* code = "Foo.bar.Baz(bang)";
     
     PyArena* arena = PyArena_New();
+    PyCompilerFlags* flags = new PyCompilerFlags();
     
-    perrdetail* errors;
-    const node* parsed = PyParser_ParseString(code, &_PyParser_Grammar, 0, errors);
-    mod_ty myast = PyAST_FromNode(parsed, 0, "", arena);
+    mod_ty syntaxtree = PyParser_ASTFromString(code, "<test>", file_input, flags, arena);
+    
+    Q_ASSERT(false);
     
     return ast;
 }

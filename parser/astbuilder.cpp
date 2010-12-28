@@ -56,24 +56,132 @@ using namespace KDevelop;
 
 extern grammar _PyParser_Grammar;
 
-// remove evil macros from headers which pollutes the namespace (grr!)
+// remove evil macros from headers which pollute the namespace (grr!)
 #undef test
 #undef decorators
 
 namespace Python
 {
     
+class PythonAstTransformer {
+public:
+    CodeAst* ast;
+    void run(mod_ty syntaxtree) {
+        ast = new CodeAst();
+        visitNodeList<_stmt>(syntaxtree->v.Module.body);
+    }
+private:
+    // statement visitor
+    void visitNode(_stmt* node) {
+        switch ( node->kind ) {
+            case FunctionDef_kind: break;
+            case ClassDef_kind: break;
+            case Return_kind: break;
+            case Delete_kind: break;
+            case Assign_kind: break;
+            case AugAssign_kind: break;
+            case Print_kind: break;
+            case For_kind: break;
+            case While_kind: break;
+            case If_kind: break;
+            case With_kind: break;
+            case Raise_kind: break;
+            case TryExcept_kind: break;
+            case TryFinally_kind: break;
+            case Assert_kind: break;
+            case Import_kind: break;
+            case ImportFrom_kind: break;
+            case Exec_kind: break;
+            case Global_kind: break;
+            case Expr_kind:
+                _stmt::Expr n = dynamic_cast<_stmt::Expr*>(node);
+                visitNode(n.value);
+                break;
+            case Pass_kind: break;
+            case Break_kind: break;
+            case Continue_kind: break;
+            default:
+                kWarning() << "Unsupported statement AST type: " << node->kind;
+                Q_ASSERT(false);
+        }
+    }
+    // expression visitor
+    void visitNode(_expr* node) {
+        switch ( node->kind ) {
+            case BoolOp_kind: break;
+            case BinOp_kind: break;
+            case UnaryOp_kind: break;
+            case Lambda_kind: break;
+            case IfExp_kind: break;
+            case Dict_kind: break;
+            case ListComp_kind: break;
+            case GeneratorExp_kind: break;
+            case Yield_kind: break;
+            case Compare_kind: break;
+            case Call_kind: break;
+            case Repr_kind: break;
+            case Num_kind: break;
+            case Str_kind: break;
+            case Attribute_kind: break;
+            case Subscript_kind: break;
+            case Name_kind: break;
+            case List_kind: break;
+            case Tuple_kind: break;
+            default:
+                kWarning() << "Unsupported statement AST type: " << node->kind;
+                Q_ASSERT(false);
+        }
+    }
+    // slice visitor
+    void visitNode(_slice* node) {
+        
+    }
+    // generator visitor
+    void visitNode(_comprehension* node) {
+        
+    }
+    // exception handler (except:) visitor
+    void visitNode(_excepthandler* node) {
+        
+    }
+    // module visitor
+    void visitNode(_mod* node) {
+        
+    }
+    // argument visitor
+    void visitNode(_arguments* node) {
+        
+    }
+    void visitNode(_keyword* node) {
+        
+    }
+    void visitNode(_alias* node) {
+        
+    }
+    template<typename T> void visitNodeList(asdl_seq* node) {
+        for ( int i=0; i < node->size; i++ ) {
+            T* currentNode = reinterpret_cast<T*>(node->elements[i]);
+            Q_ASSERT(currentNode);
+            visitNode(currentNode);
+        }
+    }
+};
+    
 CodeAst* AstBuilder::parse(KUrl filename, const QString& contents)
 {
 //     CodeAst* ast = parseXmlAst(getXmlForFile(filename, contents));
     CodeAst* ast = 0;
     
-    const char* code = "Foo.bar.Baz(bang)";
+    const char* code = "Foo.bar.Baz\nfoo.bar\nbar.baz\nbang.ba";
     
     PyArena* arena = PyArena_New();
     PyCompilerFlags* flags = new PyCompilerFlags();
     
     mod_ty syntaxtree = PyParser_ASTFromString(code, "<test>", file_input, flags, arena);
+    
+    Q_ASSERT(syntaxtree);
+    kDebug() << syntaxtree->kind << Module_kind;
+    kDebug() << reinterpret_cast<_stmt*>(syntaxtree->v.Module.body->elements[2])->kind;
     
     Q_ASSERT(false);
     

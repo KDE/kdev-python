@@ -204,15 +204,15 @@ void DeclarationBuilder::visitImport(ImportAst* node)
 {
     Python::ContextBuilder::visitImport(node);
     foreach ( AliasAst* name, node->names ) {
-        TopDUContextPointer contextptr = contextsForModules.value(name->asName ? name->asName->identifier->value : name->name->value);
+        TopDUContextPointer contextptr = contextsForModules.value(name->asName ? name->asName->value : name->name->value);
         kDebug() << "Chain for document: " << contextptr;
         m_importContextsForImportStatement.push(contextptr);
         importedModuleDeclaration* dec;
         if ( name->asName ) dec = visitVariableDeclaration<importedModuleDeclaration>(name->asName);
         else dec = visitVariableDeclaration<importedModuleDeclaration>(name->name);
         QString moduleName = name->name->value;
-        if ( name->asName && name->asName->identifier ) 
-            moduleName += "." + name->asName->identifier->value;
+        if ( name->asName && name->asName ) 
+            moduleName += "." + name->asName->value;
         kDebug() << "Module name: " << moduleName;
         if ( dec ) {
             DUChainWriteLocker lock(DUChain::lock());

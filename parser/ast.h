@@ -614,7 +614,7 @@ class KDEVPYTHONPARSER_EXPORT AliasAst : public Ast {
 public:
     AliasAst(Ast* parent);
     Identifier* name;
-    NameAst* asName;
+    Identifier* asName;
 };
 
 }

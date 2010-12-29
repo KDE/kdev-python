@@ -1,5 +1,7 @@
 PROJECT(kdevpython)
 
+cmake_minimum_required(VERSION 2.8)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${kdevpython_SOURCE_DIR}/cmake/)
 #To properly find kdevelop-pg add -DKDEVPG_DATA_DIR=<kdevpg-install-path>/share to the
 #cmake run if you installed it in a different directory than this plugin

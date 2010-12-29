@@ -36,6 +36,17 @@ create_identifier_line_any = '''            v->%{TARGET} = new Python::Identifie
 set_attribute_line_any = '''            v->%{TARGET} = dynamic_cast<%{AST_TYPE}*>(visitNode(node->%{VALUE}));'''
 resolve_list_line_any = '''            v->%{TARGET} = visitNodeList<%{PYTHON_AST_TYPE}, %{AST_TYPE}>(node->%{VALUE});'''
 direct_assignment_line = '''                v->%{TARGET} = node->v.%{VALUE};'''
+cast_operator_line = '''                v->%{TARGET} = (ExpressionAst::%{AST_TYPE}) node->v.%{KIND_W/O_SUFFIX}.%{VALUE};'''
+resolve_oplist_block = '''
+                for ( int _i = 0; _i < node->v.%{KIND_W/O_SUFFIX}.%{VALUE}.size; _i++ ) {
+                    v->%{TARGET}.append((ExpressionAst::%{AST_TYPE}) node->v.%{KIND_W/O_SUFFIX}.%{VALUE}.elements[_i]);
+                }
+'''
+resolve_identifier_block = '''
+                for ( int _i = 0; _i < node->v.%{KIND_W/O_SUFFIX}.%{VALUE}.size; _i++ ) {
+                    v->%{TARGET}.append(new Python::Identifier(PyString_AsString(PyObject_Str(node->v.%{KIND_W/O_SUFFIX}.%{VALUE}.elements[_i])));
+                }
+'''
 
 results = dict()
 
@@ -43,7 +54,12 @@ def pluginAstToPythonAstType(plugintypestr):
     if plugintypestr == 'ExpressionAst': return '_expr'
     if plugintypestr == 'StatementAst' : return '_stmt'
     if plugintypestr == 'NameAst': return '_expr'
-    if plugintypestr == 'ExceptionHandlerAst': return '_stmt'
+    if plugintypestr == 'ExceptionHandlerAst': return '_excepthandler'
+    if plugintypestr == 'ComprehensionAst': return '_comprehension'
+    if plugintypestr == 'KeywordAst': return '_keyword'
+    if plugintypestr == 'ArgumentsAst': return '_arguments'
+    if plugintypestr == 'AliasAst': return '_alias'
+    if plugintypestr == 'SliceAst': return '_slice'
     if plugintypestr == 'Ast': return '_node' # not sure about this
     else: return '<ERROR>'
 
@@ -73,20 +89,22 @@ for rule in contents:
         action = '<ERROR>'
         if command == 'set':
             s = arguments.split('>')
-            commandType = s[0][-1] # -, ~ or =
+            commandType = s[0][-1] # -, ~, =, : , *, #
             target = s[0][:-1]
             s = s[1].split(',')
             raw = False
             
             if kind == 'any': any = True
             else: any = False
-
-            if commandType == '~' or commandType == ':' or commandType == '*' or commandType == '#':
+            
+            # commands with one argument
+            if commandType == '~' or commandType == ':':
                 if commandType == ':':
                     raw = direct_assignment_line
                 if commandType == '~':
                     raw = create_identifier_line if not any else create_identifier_line_any
                 value = s[0]
+            # commands with two arguments
             else:
                 astType = s[0]
                 try:
@@ -94,9 +112,16 @@ for rule in contents:
                 except IndexError:
                     raise SyntaxError('Missing argument for operator ' + commandType + ' in rule: ' + rule)
                 if commandType == '=':
-                    raw = resolve_list_line if not any else resolve_list_line_any
+                    if astType == 'Identifier':
+                        raw = resolve_identifier_block
+                    else:
+                        raw = resolve_list_line if not any else resolve_list_line_any
                 if commandType == '-':
                     raw = set_attribute_line if not any else set_attribute_line_any
+                if commandType == '*':
+                    raw = cast_operator_line
+                if commandType == '#':
+                    raw = resolve_oplist_block
             
             if raw:
                 command = raw.replace('%{AST_TYPE}', astType).replace('%{TARGET}', target) \

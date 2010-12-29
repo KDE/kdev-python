@@ -209,6 +209,10 @@ private:
                 AttributeAst* v = new AttributeAst(parent());
                 v->value = dynamic_cast<ExpressionAst*>(visitNode(node->v.Attribute.value));
                 v->attribute = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.Attribute.attr)));
+                v->attribute->startCol = node->col_offset;
+                v->attribute->startLine = node->lineno - 1;
+                v->attribute->endCol = node->col_offset + v->attribute->value.length();
+                v->attribute->endLine = node->lineno - 1;
                 v->context = (ExpressionAst::Context) node->v.Attribute.ctx;
                 result = v;
                 break;
@@ -224,6 +228,10 @@ private:
         case Name_kind: {
                 NameAst* v = new NameAst(parent());
                 v->identifier = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.Name.id)));
+                v->identifier->startCol = node->col_offset;
+                v->identifier->startLine = node->lineno - 1;
+                v->identifier->endCol = node->col_offset + v->identifier->value.length();
+                v->identifier->endLine = node->lineno - 1;
                 v->context = (ExpressionAst::Context) node->v.Name.ctx;
                 result = v;
                 break;
@@ -248,11 +256,34 @@ private:
         }
 
             result->startCol = node->col_offset;
-            result->endCol = node->col_offset + 10;
-            result->startLine = node->lineno;
-            result->endLine = node->lineno;
+            result->endCol = node->col_offset;
+            result->startLine = node->lineno - 1;
+            result->endLine = node->lineno - 1;
             result->hasUsefulRangeInformation = true;
         
+        // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
+        if ( result->hasUsefulRangeInformation ) {
+            Ast* parent = result->parent;
+            while ( parent ) {
+                if ( parent->endLine < result->endLine ) {
+                    parent->endLine = result->endLine;
+                    parent->endCol = result->endCol;
+                }
+                if ( ! parent->hasUsefulRangeInformation && parent->startLine == -5 ) {
+                    parent->startLine = result->startLine;
+                    parent->startCol = result->startCol;
+                }
+                parent = parent->parent;
+            }
+        }
+    
+        NameAst* r = dynamic_cast<NameAst*>(result);
+        if ( r ) {
+            r->startCol = r->identifier->startCol;
+            r->endCol = r->identifier->endCol;
+            r->startLine = r->identifier->startLine;
+            r->endLine = r->identifier->endLine;
+        }
         return result;
     }
 
@@ -274,6 +305,29 @@ private:
             Q_ASSERT(false);
         }
 
+        // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
+        if ( result->hasUsefulRangeInformation ) {
+            Ast* parent = result->parent;
+            while ( parent ) {
+                if ( parent->endLine < result->endLine ) {
+                    parent->endLine = result->endLine;
+                    parent->endCol = result->endCol;
+                }
+                if ( ! parent->hasUsefulRangeInformation && parent->startLine == -5 ) {
+                    parent->startLine = result->startLine;
+                    parent->startCol = result->startCol;
+                }
+                parent = parent->parent;
+            }
+        }
+    
+        NameAst* r = dynamic_cast<NameAst*>(result);
+        if ( r ) {
+            r->startCol = r->identifier->startCol;
+            r->endCol = r->identifier->endCol;
+            r->startLine = r->identifier->startLine;
+            r->endLine = r->identifier->endLine;
+        }
         return result;
     }
 
@@ -313,6 +367,10 @@ private:
                 v->body = visitNodeList<_stmt, Ast>(node->v.FunctionDef.body);
                 v->decorators = visitNodeList<_expr, NameAst>(node->v.FunctionDef.decorator_list);
                 v->name = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.FunctionDef.name)));
+                v->name->startCol = node->col_offset;
+                v->name->startLine = node->lineno - 1;
+                v->name->endCol = node->col_offset + v->name->value.length();
+                v->name->endLine = node->lineno - 1;
                 result = v;
                 break;
             }
@@ -322,6 +380,10 @@ private:
                 v->body = visitNodeList<_stmt, Ast>(node->v.ClassDef.body);
                 v->decorators = visitNodeList<_expr, ExpressionAst>(node->v.ClassDef.decorator_list);
                 v->name = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.ClassDef.name)));
+                v->name->startCol = node->col_offset;
+                v->name->startLine = node->lineno - 1;
+                v->name->endCol = node->col_offset + v->name->value.length();
+                v->name->endLine = node->lineno - 1;
                 result = v;
                 break;
             }
@@ -430,6 +492,10 @@ private:
         case ImportFrom_kind: {
                 ImportFromAst* v = new ImportFromAst(parent());
                 v->module = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.ImportFrom.module)));
+                v->module->startCol = node->col_offset;
+                v->module->startLine = node->lineno - 1;
+                v->module->endCol = node->col_offset + v->module->value.length();
+                v->module->endLine = node->lineno - 1;
                 v->names = visitNodeList<_alias, AliasAst>(node->v.ImportFrom.names);
                 v->level = node->v.ImportFrom.level;
                 result = v;
@@ -477,11 +543,34 @@ private:
         }
 
             result->startCol = node->col_offset;
-            result->endCol = node->col_offset + 10;
-            result->startLine = node->lineno;
-            result->endLine = node->lineno;
+            result->endCol = node->col_offset;
+            result->startLine = node->lineno - 1;
+            result->endLine = node->lineno - 1;
             result->hasUsefulRangeInformation = true;
         
+        // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
+        if ( result->hasUsefulRangeInformation ) {
+            Ast* parent = result->parent;
+            while ( parent ) {
+                if ( parent->endLine < result->endLine ) {
+                    parent->endLine = result->endLine;
+                    parent->endCol = result->endCol;
+                }
+                if ( ! parent->hasUsefulRangeInformation && parent->startLine == -5 ) {
+                    parent->startLine = result->startLine;
+                    parent->startCol = result->startCol;
+                }
+                parent = parent->parent;
+            }
+        }
+    
+        NameAst* r = dynamic_cast<NameAst*>(result);
+        if ( r ) {
+            r->startCol = r->identifier->startCol;
+            r->endCol = r->identifier->endCol;
+            r->startLine = r->identifier->startLine;
+            r->endLine = r->identifier->endLine;
+        }
         return result;
     }
 
@@ -520,6 +609,29 @@ private:
             Q_ASSERT(false);
         }
 
+        // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
+        if ( result->hasUsefulRangeInformation ) {
+            Ast* parent = result->parent;
+            while ( parent ) {
+                if ( parent->endLine < result->endLine ) {
+                    parent->endLine = result->endLine;
+                    parent->endCol = result->endCol;
+                }
+                if ( ! parent->hasUsefulRangeInformation && parent->startLine == -5 ) {
+                    parent->startLine = result->startLine;
+                    parent->startCol = result->startCol;
+                }
+                parent = parent->parent;
+            }
+        }
+    
+        NameAst* r = dynamic_cast<NameAst*>(result);
+        if ( r ) {
+            r->startCol = r->identifier->startCol;
+            r->endCol = r->identifier->endCol;
+            r->startLine = r->identifier->startLine;
+            r->endLine = r->identifier->endLine;
+        }
         return result;
     }
 

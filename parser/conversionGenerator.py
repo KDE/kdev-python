@@ -17,6 +17,13 @@ func_structure = '''
             Q_ASSERT(false);
         }
 %{APPENDIX}
+        NameAst* r = dynamic_cast<NameAst*>(result);
+        if ( r ) {
+            r->startCol = r->identifier->startCol;
+            r->endCol = r->identifier->endCol;
+            r->startLine = r->identifier->startLine;
+            r->endLine = r->identifier->endLine;
+        }
         return result;
     }
 '''
@@ -58,6 +65,12 @@ resolve_identifier_block = '''
                     v->%{TARGET}.append(id);
                 }
 '''
+
+copy_ident_ranges = '''
+                v->%{TARGET}->startCol = node->col_offset;
+                v->%{TARGET}->startLine = node->lineno - 1;
+                v->%{TARGET}->endCol = node->col_offset + v->%{TARGET}->value.length();
+                v->%{TARGET}->endLine = node->lineno - 1;'''
 
 results = dict()
 does_match_any = dict()
@@ -116,6 +129,8 @@ for rule in contents:
                     raw = direct_assignment_line if not any else direct_assignment_line_any
                 if commandType == '~':
                     raw = create_identifier_line if not any else create_identifier_line_any
+                    if rule_for in ['_expr', '_stmt', '_excepthandler']:
+                        raw += copy_ident_ranges
                 value = s[0]
             # commands with two arguments
             else:
@@ -192,16 +207,32 @@ private:
 
 for index, lines in results.iteritems():
     current_switch_lines = "\n".join(lines)
+    appendix = ''
     if index == '_expr' or index == '_stmt':
         appendix = '''
             result->startCol = node->col_offset;
-            result->endCol = node->col_offset + 10;
-            result->startLine = node->lineno;
-            result->endLine = node->lineno;
+            result->endCol = node->col_offset;
+            result->startLine = node->lineno - 1;
+            result->endLine = node->lineno - 1;
             result->hasUsefulRangeInformation = true;
         '''
-    else: 
-        appendix = ''
+    appendix += '''
+        // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
+        if ( result->hasUsefulRangeInformation ) {
+            Ast* parent = result->parent;
+            while ( parent ) {
+                if ( parent->endLine < result->endLine ) {
+                    parent->endLine = result->endLine;
+                    parent->endCol = result->endCol;
+                }
+                if ( ! parent->hasUsefulRangeInformation && parent->startLine == -5 ) {
+                    parent->startLine = result->startLine;
+                    parent->startCol = result->startCol;
+                }
+                parent = parent->parent;
+            }
+        }
+    '''
     if not does_match_any[index]:
         func = func_structure.replace('%{RULE_FOR}', index).replace('%{SWITCH_LINES}', current_switch_lines).replace('%{APPENDIX}', appendix)
     else:

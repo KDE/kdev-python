@@ -52,6 +52,10 @@
 #include <python2.6/grammar.h>
 #include <python2.6/parsetok.h>
 
+#include <python2.6/object.h>
+
+#include "pythonasttransformer.h"
+
 using namespace KDevelop;
 
 extern grammar _PyParser_Grammar;
@@ -59,6 +63,7 @@ extern grammar _PyParser_Grammar;
 // remove evil macros from headers which pollute the namespace (grr!)
 #undef test
 #undef decorators
+#undef Attribute
 
 namespace Python
 {
@@ -68,102 +73,131 @@ public:
     CodeAst* ast;
     void run(mod_ty syntaxtree) {
         ast = new CodeAst();
-        visitNodeList<_stmt>(syntaxtree->v.Module.body);
+        nodeStack.push(ast);
+        ast->body = visitNodeList<_stmt>(syntaxtree->v.Module.body);
     }
 private:
+    QStack<Ast*> nodeStack;
+    
+    Ast* parent() {
+        return nodeStack.top();
+    }
+    
     // statement visitor
-    void visitNode(_stmt* node) {
+    Ast* visitNode(_stmt* node) {
         switch ( node->kind ) {
-            case FunctionDef_kind: break;
-            case ClassDef_kind: break;
-            case Return_kind: break;
-            case Delete_kind: break;
-            case Assign_kind: break;
-            case AugAssign_kind: break;
-            case Print_kind: break;
-            case For_kind: break;
-            case While_kind: break;
-            case If_kind: break;
-            case With_kind: break;
-            case Raise_kind: break;
-            case TryExcept_kind: break;
-            case TryFinally_kind: break;
-            case Assert_kind: break;
-            case Import_kind: break;
-            case ImportFrom_kind: break;
-            case Exec_kind: break;
-            case Global_kind: break;
-            case Expr_kind:
-                _stmt::Expr n = dynamic_cast<_stmt::Expr*>(node);
-                visitNode(n.value);
-                break;
-            case Pass_kind: break;
-            case Break_kind: break;
-            case Continue_kind: break;
+            case FunctionDef_kind: return 0;
+            case ClassDef_kind: return 0;
+            case Return_kind: return 0;
+            case Delete_kind: return 0;
+            case Assign_kind: return 0;
+            case AugAssign_kind: return 0;
+            case Print_kind: return 0;
+            case For_kind: return 0;
+            case While_kind: return 0;
+            case If_kind: return 0;
+            case With_kind: return 0;
+            case Raise_kind: return 0;
+            case TryExcept_kind: return 0;
+            case TryFinally_kind: return 0;
+            case Assert_kind: return 0;
+            case Import_kind: return 0;
+            case ImportFrom_kind: return 0;
+            case Exec_kind: return 0;
+            case Global_kind: return 0;
+            case Expr_kind: {
+                ExpressionAst* v = new ExpressionAst(parent());
+                v->value = dynamic_cast<ExpressionAst*>(visitNode(node->v.Expr.value));
+                return v;
+            }
+            case Pass_kind: return 0;
+            case Break_kind: return 0;
+            case Continue_kind: return 0;
             default:
                 kWarning() << "Unsupported statement AST type: " << node->kind;
                 Q_ASSERT(false);
         }
     }
     // expression visitor
-    void visitNode(_expr* node) {
+    Ast* visitNode(_expr* node) {
         switch ( node->kind ) {
-            case BoolOp_kind: break;
-            case BinOp_kind: break;
-            case UnaryOp_kind: break;
-            case Lambda_kind: break;
-            case IfExp_kind: break;
-            case Dict_kind: break;
-            case ListComp_kind: break;
-            case GeneratorExp_kind: break;
-            case Yield_kind: break;
-            case Compare_kind: break;
-            case Call_kind: break;
-            case Repr_kind: break;
-            case Num_kind: break;
-            case Str_kind: break;
-            case Attribute_kind: break;
-            case Subscript_kind: break;
-            case Name_kind: break;
-            case List_kind: break;
-            case Tuple_kind: break;
+            case BoolOp_kind: return 0;
+            case BinOp_kind: return 0;
+            case UnaryOp_kind: return 0;
+            case Lambda_kind: return 0;
+            case IfExp_kind: return 0;
+            case Dict_kind: return 0;
+            case ListComp_kind: return 0;
+            case GeneratorExp_kind: return 0;
+            case Yield_kind: return 0;
+            case Compare_kind: return 0;
+            case Call_kind: return 0;
+            case Repr_kind: return 0;
+            case Num_kind: return 0;
+            case Str_kind: return 0;
+            case Attribute_kind: {
+                AttributeAst* v = new AttributeAst(parent());
+                v->attribute = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.Attribute.attr)));
+                kDebug() << v->attribute->value;
+                v->context = convertContextEnum(node->v.Attribute.ctx);
+                v->value = dynamic_cast<ExpressionAst*>(visitNode(node->v.Attribute.value));
+                return v;
+            }
+            case Subscript_kind: return 0;
+            case Name_kind: return 0;
+            case List_kind: return 0;
+            case Tuple_kind: return 0;
             default:
                 kWarning() << "Unsupported statement AST type: " << node->kind;
                 Q_ASSERT(false);
         }
     }
+    
+    Python::ExpressionAst::Context convertContextEnum(expr_context_ty ctx) {
+        switch ( ctx ) {
+            case Load: return Python::ExpressionAst::Load;
+            case Store: return Python::ExpressionAst::Store;
+            case AugLoad: return Python::ExpressionAst::AugLoad;
+            case AugStore: return Python::ExpressionAst::AugStore;
+            case Param: return Python::ExpressionAst::Parameter;
+            case Del: return Python::ExpressionAst::Delete;
+        }
+    }
+    
     // slice visitor
-    void visitNode(_slice* node) {
+    Ast* visitNode(_slice* node) {
         
     }
     // generator visitor
-    void visitNode(_comprehension* node) {
+    Ast* visitNode(_comprehension* node) {
         
     }
     // exception handler (except:) visitor
-    void visitNode(_excepthandler* node) {
+    Ast* visitNode(_excepthandler* node) {
         
     }
     // module visitor
-    void visitNode(_mod* node) {
+    Ast* visitNode(_mod* node) {
         
     }
     // argument visitor
-    void visitNode(_arguments* node) {
+    Ast* visitNode(_arguments* node) {
         
     }
-    void visitNode(_keyword* node) {
+    Ast* visitNode(_keyword* node) {
         
     }
-    void visitNode(_alias* node) {
+    Ast* visitNode(_alias* node) {
         
     }
-    template<typename T> void visitNodeList(asdl_seq* node) {
+    template<typename T> QList<T*> visitNodeList(asdl_seq* node) {
+        QList<T*> nodelist;
         for ( int i=0; i < node->size; i++ ) {
             T* currentNode = reinterpret_cast<T*>(node->elements[i]);
             Q_ASSERT(currentNode);
-            visitNode(currentNode);
+            nodelist.append(visitNode(currentNode));
         }
+        return nodelist;
     }
 };
     
@@ -182,6 +216,10 @@ CodeAst* AstBuilder::parse(KUrl filename, const QString& contents)
     Q_ASSERT(syntaxtree);
     kDebug() << syntaxtree->kind << Module_kind;
     kDebug() << reinterpret_cast<_stmt*>(syntaxtree->v.Module.body->elements[2])->kind;
+    
+    PythonAstTransformer* t = new PythonAstTransformer();
+    t->run(syntaxtree);
+    kDebug() << t->ast;
     
     Q_ASSERT(false);
     

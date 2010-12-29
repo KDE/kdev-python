@@ -91,13 +91,6 @@ void Python::ExpressionVisitor::visitName(Python::NameAst* node)
     }
 }
 
-void Python::ExpressionVisitor::visitAttribute(AttributeAst* node)
-{
-    kDebug() << "Visit attribute from expressionvisitor";
-    Q_ASSERT(false);
-    Python::AstDefaultVisitor::visitAttribute(node);
-}
-
 void Python::ExpressionVisitor::visitBinaryOperation(Python::BinaryOperationAst* node)
 {
     visitNode(node->lhs);

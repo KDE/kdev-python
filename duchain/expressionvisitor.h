@@ -48,8 +48,6 @@ class ExpressionVisitor : public AstDefaultVisitor
         virtual void visitNumber(NumberAst* node);
         virtual void visitName(NameAst* node);
         
-        virtual void visitAttribute(AttributeAst* node);
-    
         KDevelop::AbstractType::Ptr lastType() const { return m_lastType; }
     private:
         static QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> s_defaultTypes;

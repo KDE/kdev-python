@@ -8,26 +8,31 @@ contents = open('python26.sdef').read().replace("\n", "").split(';;')
 
 func_structure = '''
     Ast* visitNode(%{RULE_FOR}* node) {
+        if ( ! node ) return 0;
+        Ast* result = 0;
         switch ( node->kind ) {
 %{SWITCH_LINES}
         default:
             kWarning() << "Unsupported statement AST type: " << node->kind;
             Q_ASSERT(false);
         }
-        return 0; // this will never be reached, but avoids gcc warnings
+%{APPENDIX}
+        return result;
     }
 '''
 
 simple_func_structure = '''
     Ast* visitNode(%{RULE_FOR}* node) {
+        if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
 %{SWITCH_LINES}
-        return 0; // this will never be reached, but avoids gcc warnings
+        return v;
     }
 '''
 
 switch_line = '''        case %{KIND}: {
 %{ACTIONS}
-                return v;
+                result = v;
+                break;
             }'''
 
 create_ast_line = '''                %{AST_TYPE}* v = new %{AST_TYPE}(parent());'''
@@ -48,7 +53,7 @@ resolve_oplist_block = '''
 resolve_identifier_block = '''
                 for ( int _i = 0; _i < node->v.%{KIND_W/O_SUFFIX}.%{VALUE}->size; _i++ ) {
                     Python::Identifier* id = new Python::Identifier(PyString_AsString(PyObject_Str(
-                                    reinterpret_cast<PyObject*>(node->v.%{KIND_W/O_SUFFIX}.%{VALUE}->elements[_i])
+                                    static_cast<PyObject*>(node->v.%{KIND_W/O_SUFFIX}.%{VALUE}->elements[_i])
                             )));
                     v->%{TARGET}.append(id);
                 }
@@ -161,7 +166,7 @@ public:
     void run(mod_ty syntaxtree) {
         ast = new CodeAst();
         nodeStack.push(ast);
-        ast->body = visitNodeList<_expr, Ast>(syntaxtree->v.Module.body);
+        ast->body = visitNodeList<_stmt, Ast>(syntaxtree->v.Module.body);
     }
 private:
     QStack<Ast*> nodeStack;
@@ -172,8 +177,9 @@ private:
     
     template<typename T, typename K> QList<K*> visitNodeList(asdl_seq* node) {
         QList<K*> nodelist;
+        if ( ! node ) return nodelist;
         for ( int i=0; i < node->size; i++ ) {
-            T* currentNode = reinterpret_cast<T*>(node->elements[i]);
+            T* currentNode = static_cast<T*>(node->elements[i]);
             Q_ASSERT(currentNode);
             K* transformedNode = dynamic_cast<K*>(visitNode(currentNode));
             Q_ASSERT(transformedNode);
@@ -186,8 +192,18 @@ private:
 
 for index, lines in results.iteritems():
     current_switch_lines = "\n".join(lines)
+    if index == '_expr' or index == '_stmt':
+        appendix = '''
+            result->startCol = node->col_offset;
+            result->endCol = node->col_offset + 10;
+            result->startLine = node->lineno;
+            result->endLine = node->lineno;
+            result->hasUsefulRangeInformation = true;
+        '''
+    else: 
+        appendix = ''
     if not does_match_any[index]:
-        func = func_structure.replace('%{RULE_FOR}', index).replace('%{SWITCH_LINES}', current_switch_lines)
+        func = func_structure.replace('%{RULE_FOR}', index).replace('%{SWITCH_LINES}', current_switch_lines).replace('%{APPENDIX}', appendix)
     else:
         func = simple_func_structure.replace('%{RULE_FOR}', index).replace('%{SWITCH_LINES}', current_switch_lines)
     print func

@@ -44,10 +44,10 @@ switch_line = '''        case %{KIND}: {
 
 create_ast_line = '''                %{AST_TYPE}* v = new %{AST_TYPE}(parent());'''
 create_identifier_line = '''                v->%{TARGET} = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.%{KIND_W/O_SUFFIX}.%{VALUE})));'''
-set_attribute_line = '''                v->%{TARGET} = dynamic_cast<%{AST_TYPE}*>(visitNode(node->v.%{KIND_W/O_SUFFIX}.%{VALUE}));'''
+set_attribute_line = '''                v->%{TARGET} = static_cast<%{AST_TYPE}*>(visitNode(node->v.%{KIND_W/O_SUFFIX}.%{VALUE}));'''
 resolve_list_line = '''                v->%{TARGET} = visitNodeList<%{PYTHON_AST_TYPE}, %{AST_TYPE}>(node->v.%{KIND_W/O_SUFFIX}.%{VALUE});'''
 create_identifier_line_any = '''            v->%{TARGET} = new Python::Identifier(PyString_AsString(PyObject_Str(node->%{VALUE})));'''
-set_attribute_line_any = '''            v->%{TARGET} = dynamic_cast<%{AST_TYPE}*>(visitNode(node->%{VALUE}));'''
+set_attribute_line_any = '''            v->%{TARGET} = static_cast<%{AST_TYPE}*>(visitNode(node->%{VALUE}));'''
 resolve_list_line_any = '''            v->%{TARGET} = visitNodeList<%{PYTHON_AST_TYPE}, %{AST_TYPE}>(node->%{VALUE});'''
 direct_assignment_line = '''                v->%{TARGET} = node->v.%{KIND_W/O_SUFFIX}.%{VALUE};'''
 direct_assignment_line_any = '''                v->%{TARGET} = node->v.%{VALUE};'''
@@ -196,7 +196,7 @@ private:
         for ( int i=0; i < node->size; i++ ) {
             T* currentNode = static_cast<T*>(node->elements[i]);
             Q_ASSERT(currentNode);
-            K* transformedNode = dynamic_cast<K*>(visitNode(currentNode));
+            K* transformedNode = static_cast<K*>(visitNode(currentNode));
             Q_ASSERT(transformedNode);
             nodelist.append(transformedNode);
         }

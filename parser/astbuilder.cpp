@@ -90,8 +90,8 @@ private:
         for ( int i=0; i < node->size; i++ ) {
             T* currentNode = static_cast<T*>(node->elements[i]);
             Q_ASSERT(currentNode);
-            K* transformedNode = static_cast<K*>(visitNode(currentNode));
-            Q_ASSERT(transformedNode);
+            Ast* result = visitNode(currentNode);
+            K* transformedNode = static_cast<K*>(result);
             nodelist.append(transformedNode);
         }
         return nodelist;
@@ -211,7 +211,7 @@ private:
                 v->attribute = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.Attribute.attr)));
                 v->attribute->startCol = node->col_offset;
                 v->attribute->startLine = node->lineno - 1;
-                v->attribute->endCol = node->col_offset + v->attribute->value.length();
+                v->attribute->endCol = node->col_offset + v->attribute->value.length() - 1;
                 v->attribute->endLine = node->lineno - 1;
                 v->context = (ExpressionAst::Context) node->v.Attribute.ctx;
                 result = v;
@@ -230,7 +230,7 @@ private:
                 v->identifier = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.Name.id)));
                 v->identifier->startCol = node->col_offset;
                 v->identifier->startLine = node->lineno - 1;
-                v->identifier->endCol = node->col_offset + v->identifier->value.length();
+                v->identifier->endCol = node->col_offset + v->identifier->value.length() - 1;
                 v->identifier->endLine = node->lineno - 1;
                 v->context = (ExpressionAst::Context) node->v.Name.ctx;
                 result = v;
@@ -369,7 +369,7 @@ private:
                 v->name = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.FunctionDef.name)));
                 v->name->startCol = node->col_offset;
                 v->name->startLine = node->lineno - 1;
-                v->name->endCol = node->col_offset + v->name->value.length();
+                v->name->endCol = node->col_offset + v->name->value.length() - 1;
                 v->name->endLine = node->lineno - 1;
                 result = v;
                 break;
@@ -382,7 +382,7 @@ private:
                 v->name = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.ClassDef.name)));
                 v->name->startCol = node->col_offset;
                 v->name->startLine = node->lineno - 1;
-                v->name->endCol = node->col_offset + v->name->value.length();
+                v->name->endCol = node->col_offset + v->name->value.length() - 1;
                 v->name->endLine = node->lineno - 1;
                 result = v;
                 break;
@@ -494,7 +494,7 @@ private:
                 v->module = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.ImportFrom.module)));
                 v->module->startCol = node->col_offset;
                 v->module->startLine = node->lineno - 1;
-                v->module->endCol = node->col_offset + v->module->value.length();
+                v->module->endCol = node->col_offset + v->module->value.length() - 1;
                 v->module->endLine = node->lineno - 1;
                 v->names = visitNodeList<_alias, AliasAst>(node->v.ImportFrom.names);
                 v->level = node->v.ImportFrom.level;
@@ -683,7 +683,6 @@ CodeAst* AstBuilder::parse(KUrl filename, const QString& contents)
         return 0;
     }
     kDebug() << syntaxtree->kind << Module_kind;
-    kDebug() << reinterpret_cast<_stmt*>(syntaxtree->v.Module.body->elements[2])->kind;
     
     PythonAstTransformer* t = new PythonAstTransformer();
     t->run(syntaxtree);

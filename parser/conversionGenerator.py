@@ -69,7 +69,7 @@ resolve_identifier_block = '''
 copy_ident_ranges = '''
                 v->%{TARGET}->startCol = node->col_offset;
                 v->%{TARGET}->startLine = node->lineno - 1;
-                v->%{TARGET}->endCol = node->col_offset + v->%{TARGET}->value.length();
+                v->%{TARGET}->endCol = node->col_offset + v->%{TARGET}->value.length() - 1;
                 v->%{TARGET}->endLine = node->lineno - 1;'''
 
 results = dict()
@@ -196,8 +196,8 @@ private:
         for ( int i=0; i < node->size; i++ ) {
             T* currentNode = static_cast<T*>(node->elements[i]);
             Q_ASSERT(currentNode);
-            K* transformedNode = static_cast<K*>(visitNode(currentNode));
-            Q_ASSERT(transformedNode);
+            Ast* result = visitNode(currentNode);
+            K* transformedNode = static_cast<K*>(result);
             nodelist.append(transformedNode);
         }
         return nodelist;

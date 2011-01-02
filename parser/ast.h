@@ -375,12 +375,12 @@ class KDEVPYTHONPARSER_EXPORT ExpressionAst : public Ast {
 public:
     ExpressionAst(Ast* parent, AstType type = Ast::ExpressionAstType);
     enum Context {
-        Load, // the object is read
-        Store, // the object is written
-        Delete, // the object is deleted
-        Parameter, // the object is passed as a parameter
-        AugLoad, AugStore, // Augmented assignments, like a += 1
-        Invalid
+        Load = 1, // the object is read
+        Store = 2, // the object is written
+        Delete = 3, // the object is deleted
+        Parameter = 6, // the object is passed as a parameter
+        AugLoad = 4, AugStore = 5, // Augmented assignments, like a += 1
+        Invalid = -1
     };
     ExpressionAst* value; // WARNING this is not set in most cases!
     AttributeAst* directDescendant; // foo.bar.baz; this is baz; this attribute points to bar

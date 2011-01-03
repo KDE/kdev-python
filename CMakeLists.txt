@@ -3,14 +3,17 @@ PROJECT(kdevpython)
 cmake_minimum_required(VERSION 2.8)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${kdevpython_SOURCE_DIR}/cmake/)
-#To properly find kdevelop-pg add -DKDEVPG_DATA_DIR=<kdevpg-install-path>/share to the
-#cmake run if you installed it in a different directory than this plugin
-#TODO: a cmake run is needed after changing one of the CMakeLists.txt, make will
-#complain about the FindKDevelop-PG.cmake file not findable.
-find_package(KDE4 REQUIRED)
 
+find_package(KDE4 REQUIRED)
 find_package(KDevPlatform 1.0.0 REQUIRED)
 
+# first, build our custom python distribution
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/python-src/build-for-kdevelop.sh.in" "${CMAKE_CURRENT_SOURCE_DIR}/python-src/build-for-kdevelop.sh")
+execute_process(
+    COMMAND /bin/bash ${CMAKE_CURRENT_SOURCE_DIR}/python-src/build-for-kdevelop.sh
+)
+
+# then, build the plugin
 include_directories(
     ${KDEVPLATFORM_INCLUDE_DIR}
     ${KDE4_INCLUDES}
@@ -24,10 +27,8 @@ include_directories(
 
 add_definitions( -DKDE_DEFAULT_DEBUG_AREA=9011 )
 
-find_package(KDevelop-PG-Qt REQUIRED)
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}/parser
-    ${KDEVPGQT_INCLUDE_DIR}
 )
 
 

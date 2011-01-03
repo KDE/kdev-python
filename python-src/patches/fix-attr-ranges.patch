@@ -1,0 +1,22 @@
+diff --git a/python-src/Python/ast.c b/python-src/Python/ast.c
+index 88e4745..d2fede8 100644
+--- a/python-src/Python/ast.c
++++ b/python-src/Python/ast.c
+@@ -1667,7 +1667,7 @@ ast_for_trailer(struct compiling *c, const node *n, expr_ty left_expr)
+         if (!attr_id)
+             return NULL;
+         return Attribute(left_expr, attr_id, Load,
+-                         LINENO(n), n->n_col_offset, c->c_arena);
++                         LINENO(CHILD(n, 1)), CHILD(n, 1)->n_col_offset, c->c_arena);
+     }
+     else {
+         REQ(CHILD(n, 0), LSQB);
+@@ -1794,8 +1794,6 @@ ast_for_power(struct compiling *c, const node *n)
+         tmp = ast_for_trailer(c, ch, e);
+         if (!tmp)
+             return NULL;
+-        tmp->lineno = e->lineno;
+-        tmp->col_offset = e->col_offset;
+         e = tmp;
+     }
+     if (TYPE(CHILD(n, NCH(n) - 1)) == factor) {

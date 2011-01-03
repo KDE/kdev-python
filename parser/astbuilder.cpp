@@ -39,20 +39,20 @@
 #include "parserConfig.h"
 #include <language/duchain/duchainlock.h>
 
-#include <python2.6/pyport.h>
-#include <python2.6/pyconfig.h>
-#include <python2.6/node.h>
+#include "python-src/Include/pyport.h"
+#include "python-src/pyconfig.h"
+#include "python-src/Include/node.h"
 
-#include <python2.6/Python.h>
+#include "python-src/Include/Python.h"
 
-#include <python2.6/Python-ast.h>
-#include <python2.6/ast.h>
+#include "python-src/Include/Python-ast.h"
+#include "python-src/Include/ast.h"
 
-#include <python2.6/graminit.h>
-#include <python2.6/grammar.h>
-#include <python2.6/parsetok.h>
+#include "python-src/Include/graminit.h"
+#include "python-src/Include/grammar.h"
+#include "python-src/Include/parsetok.h"
 
-#include <python2.6/object.h>
+#include "python-src/Include/object.h"
 
 using namespace KDevelop;
 

@@ -9,6 +9,7 @@ contents = open('python26.sdef').read().replace("\n", "").split(';;')
 func_structure = '''
     Ast* visitNode(%{RULE_FOR}* node) {
         if ( ! node ) return 0;
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
         Ast* result = 0;
         switch ( node->kind ) {
 %{SWITCH_LINES}
@@ -67,10 +68,11 @@ resolve_identifier_block = '''
 '''
 
 copy_ident_ranges = '''
-                v->%{TARGET}->startCol = node->col_offset;
-                v->%{TARGET}->startLine = node->lineno - 1;
-                v->%{TARGET}->endCol = node->col_offset + v->%{TARGET}->value.length() - 1;
-                v->%{TARGET}->endLine = node->lineno - 1;'''
+                v->%{TARGET}->startCol = node->col_offset; v->startCol = v->%{TARGET}->startCol;
+                v->%{TARGET}->startLine = node->lineno - 1;  v->startLine = v->%{TARGET}->startLine;
+                v->%{TARGET}->endCol = node->col_offset + v->%{TARGET}->value.length() - 1;  v->endCol = v->%{TARGET}->endCol;
+                v->%{TARGET}->endLine = node->lineno - 1;  v->endLine = v->%{TARGET}->endLine;
+                ranges_copied = true;'''
 
 results = dict()
 does_match_any = dict()
@@ -210,11 +212,16 @@ for index, lines in results.iteritems():
     appendix = ''
     if index == '_expr' or index == '_stmt':
         appendix = '''
+        if ( ! ranges_copied ) {
             result->startCol = node->col_offset;
             result->endCol = node->col_offset;
             result->startLine = node->lineno - 1;
             result->endLine = node->lineno - 1;
             result->hasUsefulRangeInformation = true;
+        }
+        else {
+            result->hasUsefulRangeInformation = true;
+        }
         '''
     appendix += '''
         // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us

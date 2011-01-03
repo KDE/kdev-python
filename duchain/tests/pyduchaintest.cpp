@@ -191,12 +191,12 @@ void PyDUChainTest::testRanges_data()
     QTest::addColumn<int>("expected_amount_of_variables");
     QTest::addColumn<QStringList>("column_ranges");
     
-    QTest::newRow("attr_two_attributes") << "base.attr" << 2 << ( QStringList() << "5,9,attr" );
-    QTest::newRow("attr_three_attributes") << "base.attr.subattr" << 3 << ( QStringList() << "5,9,attr" << "10,17,subattr" );
-    QTest::newRow("attr_functionCall") << "base.attr().subattr" << 3 << ( QStringList() << "5,9,attr" << "12,19,subattr" );
-    QTest::newRow("attr_stringSubscript") << "base.attr[\"a.b.c..de\"].subattr" << 3 << ( QStringList() << "5,9,attr" << "23,30,subattr" );
-    QTest::newRow("attr_functionCallWithArguments") << "base.attr(arg1, arg2).subattr" << 5 << ( QStringList() << "5,9,attr" << "22,29,subattr" );
-    QTest::newRow("attr_functionCallWithArgument_withInner") << "base.attr(arg1.parg2).subattr" << 5 << ( QStringList() << "5,9,attr" << "22,29,subattr" << "15,20,parg2" );
+    QTest::newRow("attr_two_attributes") << "base.attr" << 2 << ( QStringList() << "5,8,attr" );
+    QTest::newRow("attr_three_attributes") << "base.attr.subattr" << 3 << ( QStringList() << "5,8,attr" << "10,16,subattr" );
+    QTest::newRow("attr_functionCall") << "base.attr().subattr" << 3 << ( QStringList() << "5,8,attr" << "12,18,subattr" );
+    QTest::newRow("attr_stringSubscript") << "base.attr[\"a.b.c..de\"].subattr" << 3 << ( QStringList() << "5,8,attr" << "23,29,subattr" );
+    QTest::newRow("attr_functionCallWithArguments") << "base.attr(arg1, arg2).subattr" << 5 << ( QStringList() << "5,8,attr" << "22,28,subattr" );
+    QTest::newRow("attr_functionCallWithArgument_withInner") << "base.attr(arg1.parg2).subattr" << 5 << ( QStringList() << "5,8,attr" << "22,28,subattr" << "15,19,parg2" );
     
     QTest::newRow("funcrange_def") << "def func(): pass" << 2 << ( QStringList() << "4,7,func" );
     QTest::newRow("funcrange_spaces_def") << "def    func(): pass" << 2 << ( QStringList() << "7,10,func" );

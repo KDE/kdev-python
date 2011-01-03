@@ -36,6 +36,10 @@
 #include <language/interfaces/iproblem.h>
 #include <language/duchain/duchain.h>
 
+// avoid compiler warnings... urgh
+#undef _POSIX_C_SOURCE
+#undef _XOPEN_SOURCE
+
 #include "parserConfig.h"
 #include <language/duchain/duchainlock.h>
 
@@ -102,6 +106,7 @@ private:
 
     Ast* visitNode(_expr* node) {
         if ( ! node ) return 0;
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
         Ast* result = 0;
         switch ( node->kind ) {
         case BoolOp_kind: {
@@ -210,10 +215,11 @@ private:
                 AttributeAst* v = new AttributeAst(parent());
                 v->value = static_cast<ExpressionAst*>(visitNode(node->v.Attribute.value));
                 v->attribute = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.Attribute.attr)));
-                v->attribute->startCol = node->col_offset;
-                v->attribute->startLine = node->lineno - 1;
-                v->attribute->endCol = node->col_offset + v->attribute->value.length() - 1;
-                v->attribute->endLine = node->lineno - 1;
+                v->attribute->startCol = node->col_offset; v->startCol = v->attribute->startCol;
+                v->attribute->startLine = node->lineno - 1;  v->startLine = v->attribute->startLine;
+                v->attribute->endCol = node->col_offset + v->attribute->value.length() - 1;  v->endCol = v->attribute->endCol;
+                v->attribute->endLine = node->lineno - 1;  v->endLine = v->attribute->endLine;
+                ranges_copied = true;
                 v->context = (ExpressionAst::Context) node->v.Attribute.ctx;
                 result = v;
                 break;
@@ -229,10 +235,11 @@ private:
         case Name_kind: {
                 NameAst* v = new NameAst(parent());
                 v->identifier = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.Name.id)));
-                v->identifier->startCol = node->col_offset;
-                v->identifier->startLine = node->lineno - 1;
-                v->identifier->endCol = node->col_offset + v->identifier->value.length() - 1;
-                v->identifier->endLine = node->lineno - 1;
+                v->identifier->startCol = node->col_offset; v->startCol = v->identifier->startCol;
+                v->identifier->startLine = node->lineno - 1;  v->startLine = v->identifier->startLine;
+                v->identifier->endCol = node->col_offset + v->identifier->value.length() - 1;  v->endCol = v->identifier->endCol;
+                v->identifier->endLine = node->lineno - 1;  v->endLine = v->identifier->endLine;
+                ranges_copied = true;
                 v->context = (ExpressionAst::Context) node->v.Name.ctx;
                 result = v;
                 break;
@@ -256,11 +263,16 @@ private:
             Q_ASSERT(false);
         }
 
+        if ( ! ranges_copied ) {
             result->startCol = node->col_offset;
             result->endCol = node->col_offset;
             result->startLine = node->lineno - 1;
             result->endLine = node->lineno - 1;
             result->hasUsefulRangeInformation = true;
+        }
+        else {
+            result->hasUsefulRangeInformation = true;
+        }
         
         // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
         if ( result->hasUsefulRangeInformation ) {
@@ -291,6 +303,7 @@ private:
 
     Ast* visitNode(_excepthandler* node) {
         if ( ! node ) return 0;
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
         Ast* result = 0;
         switch ( node->kind ) {
         case ExceptHandler_kind: {
@@ -354,6 +367,7 @@ private:
 
     Ast* visitNode(_stmt* node) {
         if ( ! node ) return 0;
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
         Ast* result = 0;
         switch ( node->kind ) {
         case Expr_kind: {
@@ -368,10 +382,11 @@ private:
                 v->body = visitNodeList<_stmt, Ast>(node->v.FunctionDef.body);
                 v->decorators = visitNodeList<_expr, NameAst>(node->v.FunctionDef.decorator_list);
                 v->name = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.FunctionDef.name)));
-                v->name->startCol = node->col_offset;
-                v->name->startLine = node->lineno - 1;
-                v->name->endCol = node->col_offset + v->name->value.length() - 1;
-                v->name->endLine = node->lineno - 1;
+                v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
+                v->name->startLine = node->lineno - 1;  v->startLine = v->name->startLine;
+                v->name->endCol = node->col_offset + v->name->value.length() - 1;  v->endCol = v->name->endCol;
+                v->name->endLine = node->lineno - 1;  v->endLine = v->name->endLine;
+                ranges_copied = true;
                 result = v;
                 break;
             }
@@ -381,10 +396,11 @@ private:
                 v->body = visitNodeList<_stmt, Ast>(node->v.ClassDef.body);
                 v->decorators = visitNodeList<_expr, ExpressionAst>(node->v.ClassDef.decorator_list);
                 v->name = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.ClassDef.name)));
-                v->name->startCol = node->col_offset;
-                v->name->startLine = node->lineno - 1;
-                v->name->endCol = node->col_offset + v->name->value.length() - 1;
-                v->name->endLine = node->lineno - 1;
+                v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
+                v->name->startLine = node->lineno - 1;  v->startLine = v->name->startLine;
+                v->name->endCol = node->col_offset + v->name->value.length() - 1;  v->endCol = v->name->endCol;
+                v->name->endLine = node->lineno - 1;  v->endLine = v->name->endLine;
+                ranges_copied = true;
                 result = v;
                 break;
             }
@@ -493,10 +509,11 @@ private:
         case ImportFrom_kind: {
                 ImportFromAst* v = new ImportFromAst(parent());
                 v->module = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.ImportFrom.module)));
-                v->module->startCol = node->col_offset;
-                v->module->startLine = node->lineno - 1;
-                v->module->endCol = node->col_offset + v->module->value.length() - 1;
-                v->module->endLine = node->lineno - 1;
+                v->module->startCol = node->col_offset; v->startCol = v->module->startCol;
+                v->module->startLine = node->lineno - 1;  v->startLine = v->module->startLine;
+                v->module->endCol = node->col_offset + v->module->value.length() - 1;  v->endCol = v->module->endCol;
+                v->module->endLine = node->lineno - 1;  v->endLine = v->module->endLine;
+                ranges_copied = true;
                 v->names = visitNodeList<_alias, AliasAst>(node->v.ImportFrom.names);
                 v->level = node->v.ImportFrom.level;
                 result = v;
@@ -543,11 +560,16 @@ private:
             Q_ASSERT(false);
         }
 
+        if ( ! ranges_copied ) {
             result->startCol = node->col_offset;
             result->endCol = node->col_offset;
             result->startLine = node->lineno - 1;
             result->endLine = node->lineno - 1;
             result->hasUsefulRangeInformation = true;
+        }
+        else {
+            result->hasUsefulRangeInformation = true;
+        }
         
         // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
         if ( result->hasUsefulRangeInformation ) {
@@ -578,6 +600,7 @@ private:
 
     Ast* visitNode(_slice* node) {
         if ( ! node ) return 0;
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
         Ast* result = 0;
         switch ( node->kind ) {
         case Slice_kind: {

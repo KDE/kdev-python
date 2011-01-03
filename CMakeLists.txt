@@ -13,6 +13,8 @@ execute_process(
     COMMAND /bin/bash ${CMAKE_CURRENT_SOURCE_DIR}/python-src/build-for-kdevelop.sh
 )
 
+set(CMAKE_CXX_FLAGS_DEBUG -Wfatal-errors -Wall)
+
 # then, build the plugin
 include_directories(
     ${KDEVPLATFORM_INCLUDE_DIR}

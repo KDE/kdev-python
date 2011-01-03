@@ -21,8 +21,6 @@
 #ifndef ASTBUILDER_H
 #define ASTBUILDER_H
 
-#include <QtCore/QStack>
-
 #include "ast.h"
 #include <kurl.h>
 #include <QDomDocument>

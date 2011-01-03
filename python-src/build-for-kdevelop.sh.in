@@ -21,20 +21,25 @@ else
 fi
 make || fail
 
-if test -x /usr/bin/md5sum && test -f libpython2.7.so; then
-	echo -ne "\n ** Checking weather an update of the library is necessary..."
+update_necessary=1
+echo -ne "\n ** Checking weather an update of the library is necessary..."
+         
+if test -x /usr/bin/md5sum && test -f libpython2.7.so && test -f "@BIN_INSTALL_DIR@"/libpython2.7.so; then
 	old=$(md5sum libpython2.7.so)
 	p=$(pwd)
 	cd "@BIN_INSTALL_DIR@"
 	new=$(md5sum libpython2.7.so)
 	cd $p
-	if test "$old" != "$new"; then
-		echo " yes"
-		cp libpython2.7.so "@BIN_INSTALL_DIR@"/libpython2.7.so || fail
-		test -f "@BIN_INSTALL_DIR@"/libpython2.7.so.1.0 || ln -s "@BIN_INSTALL_DIR@"/libpython2.7.so "@BIN_INSTALL_DIR@"/libpython2.7.so.1.0 || fail
-	else
+	if test "$old" == "$new"; then
 		echo " no"
+        update_necessary=0
 	fi
+fi
+
+if test $update_necessary -eq 1; then
+    echo " yes"
+    cp libpython2.7.so "@BIN_INSTALL_DIR@"/libpython2.7.so || fail
+    test -f "@BIN_INSTALL_DIR@"/libpython2.7.so.1.0 || ln -s "@BIN_INSTALL_DIR@"/libpython2.7.so "@BIN_INSTALL_DIR@"/libpython2.7.so.1.0 || fail
 fi
 
 echo -e "\e[1m\e[32mSuccessfully installed file: @BIN_INSTALL_DIR@/libpython2.7.so\e[0m"

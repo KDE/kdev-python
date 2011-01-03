@@ -53,6 +53,7 @@
 #include "python-src/Include/parsetok.h"
 
 #include "python-src/Include/object.h"
+#include <Modules/cjkcodecs/multibytecodec.h>
 
 using namespace KDevelop;
 
@@ -661,19 +662,30 @@ private:
  * End generated code
  */
 
+QMutex AstBuilder::pyInitLock;
+
 CodeAst* AstBuilder::parse(KUrl filename, const QString& contents)
 {
-    const char* code = contents.toAscii();
-//     const char* code = "Foo = 3\n";
-    
     PyArena* arena = PyArena_New();
     Q_ASSERT(arena); // out of memory
     PyCompilerFlags* flags = new PyCompilerFlags();
     flags->cf_flags = 0;
     
-    Py_Initialize();
+    Py_NoSiteFlag = 1;
     
-    mod_ty syntaxtree = PyParser_ASTFromString(code, "<kdev-editor-contents>", file_input, flags, arena);
+    AstBuilder::pyInitLock.lock();
+    if ( ! Py_IsInitialized() ) {
+        kDebug() << "Not initialized, calling init func.";
+        Py_Initialize();
+    }
+    else kDebug() << "Already initialized.";
+    
+//     const char* code = contents.toLatin1();
+//     kDebug() << "Got code: " << code << contents;
+    
+    mod_ty syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);
+    
+    AstBuilder::pyInitLock.unlock();
     
     if ( ! syntaxtree ) {
         kWarning() << "DID NOT RECEIVE A SYNTAX TREE -- probably parse error.";
@@ -682,11 +694,13 @@ CodeAst* AstBuilder::parse(KUrl filename, const QString& contents)
         PyObject_Print(value, stderr, Py_PRINT_RAW);
         return 0;
     }
-    kDebug() << syntaxtree->kind << Module_kind;
+    kDebug() << "Got syntax tree from python parser:" << syntaxtree->kind << Module_kind;
     
     PythonAstTransformer* t = new PythonAstTransformer();
     t->run(syntaxtree);
     kDebug() << t->ast;
+    
+    PyArena_Free(arena);
     
     return t->ast;
 }

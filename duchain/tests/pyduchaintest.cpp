@@ -58,7 +58,7 @@ void PyDUChainTest::initShell()
   KDevelop::CodeRepresentation::setDiskChangesForbidden(true);
 }
 
-ReferencedTopDUContext PyDUChainTest::parse(const QByteArray& code)
+ReferencedTopDUContext PyDUChainTest::parse(const QString& code)
 {
     ParseSession* session = new ParseSession;
     session->setContents( code + "\n" ); // append a newline in case the parser doesnt like it without one
@@ -102,7 +102,7 @@ void PyDUChainTest::testSimple()
     QFETCH(int, decls);
     QFETCH(int, uses);
     
-    ReferencedTopDUContext ctx = parse(code.toLatin1());
+    ReferencedTopDUContext ctx = parse(code);
     QVERIFY(ctx);
     
     DUChainReadLocker lock(DUChain::lock());
@@ -155,7 +155,7 @@ void PyDUChainTest::testAttributeRanges()
     QFETCH(int, expected_amount_of_variables);
     QFETCH(QStringList, column_ranges);
     
-    ReferencedTopDUContext ctx = parse(code.toLatin1());
+    ReferencedTopDUContext ctx = parse(code.toAscii());
     QVERIFY(ctx);
     
     QVERIFY(m_ast);
@@ -187,7 +187,7 @@ void PyDUChainTest::testAttributeRanges_data()
     QTest::newRow("functionCall") << "base.attr().subattr" << 3 << ( QStringList() << "5,9,attr" << "12,19,subattr" );
     QTest::newRow("stringSubscript") << "base.attr[\"a.b.c..de\"].subattr" << 3 << ( QStringList() << "5,9,attr" << "23,30,subattr" );
     QTest::newRow("functionCallWithArguments") << "base.attr(arg1, arg2).subattr" << 5 << ( QStringList() << "5,9,attr" << "22,29,subattr" );
-    QTest::newRow("functionCallWithArguments") << "base.attr(arg1.parg2).subattr" << 5 << ( QStringList() << "5,9,attr" << "22,29,subattr" << "15,20,parg2" );
+    QTest::newRow("functionCallWithArgument_withInner") << "base.attr(arg1.parg2).subattr" << 5 << ( QStringList() << "5,9,attr" << "22,29,subattr" << "15,20,parg2" );
 }
 
 

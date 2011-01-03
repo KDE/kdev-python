@@ -5,3 +5,6 @@ build/*
 *.swp
 *.pyc
 *.kdev4
+*.o
+*.a
+*.so

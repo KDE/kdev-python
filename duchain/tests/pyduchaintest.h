@@ -46,8 +46,8 @@ class PyDUChainTest : public QObject
     private slots:
         void testSimple();
         void testSimple_data();
-        void testAttributeRanges();
-        void testAttributeRanges_data();
+        void testRanges();
+        void testRanges_data();
 };
 
 #endif // PYDUCHAINTEST_H

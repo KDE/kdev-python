@@ -275,16 +275,6 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
     kDebug() << "opening function definition";
-    int decoratorOffset = node->decorators.length(); // adjust the actual range of the functions' name
-    node->name->startLine += decoratorOffset; node->name->endLine += decoratorOffset;
-    kDebug() << "Function definition RANGE:" << node->name->startLine << node->name->startCol << node->name->endLine << node->name->endCol;
-    
-    // adjust range of arguments, too
-    if ( node->arguments ) {
-        node->arguments->startLine += decoratorOffset;
-        node->arguments->endLine += decoratorOffset;
-    }
-    
     FunctionDeclaration* dec = openDeclaration<FunctionDeclaration>( node->name, node );
 
     FunctionType::Ptr type(new FunctionType);

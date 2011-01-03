@@ -912,8 +912,8 @@ ast_for_funcdef(struct compiling *c, const node *n, asdl_seq *decorator_seq)
     if (!body)
         return NULL;
 
-    return FunctionDef(name, args, body, decorator_seq, LINENO(n),
-                       n->n_col_offset, c->c_arena);
+    return FunctionDef(name, args, body, decorator_seq, LINENO(CHILD(n, name_i)),
+                       CHILD(n, name_i)->n_col_offset, c->c_arena);
 }
 
 static stmt_ty
@@ -939,10 +939,11 @@ ast_for_decorated(struct compiling *c, const node *n)
     }
     /* we count the decorators in when talking about the class' or
        function's line number */
-    if (thing) {
-        thing->lineno = LINENO(n);
-        thing->col_offset = n->n_col_offset;
-    }
+    /* I don't. */
+//     if (thing) {
+//         thing->lineno = LINENO(n);
+//         thing->col_offset = n->n_col_offset;
+//     }
     return thing;
 }
 
@@ -3196,8 +3197,8 @@ ast_for_classdef(struct compiling *c, const node *n, asdl_seq *decorator_seq)
         classname = NEW_IDENTIFIER(CHILD(n, 1));
         if (!classname)
             return NULL;
-        return ClassDef(classname, NULL, s, decorator_seq, LINENO(n),
-                        n->n_col_offset, c->c_arena);
+        return ClassDef(classname, NULL, s, decorator_seq, LINENO(CHILD(n, 1)),
+                        CHILD(n, 1)->n_col_offset, c->c_arena);
     }
     /* check for empty base list */
     if (TYPE(CHILD(n,3)) == RPAR) {

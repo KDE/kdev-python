@@ -362,7 +362,7 @@ LIBRARY_OBJS=	\
 
 # Default target
 all:		build_all
-build_all:	$(BUILDPYTHON) oldsharedmods sharedmods gdbhooks
+build_all:	$(BUILDPYTHON) oldsharedmods sharedmods
 
 # Compile a binary with gcc profile guided optimization.
 profile-opt:

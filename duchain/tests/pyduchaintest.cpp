@@ -140,7 +140,7 @@ public:
     QString searchingForIdentifier;
     virtual void visitAttribute(AttributeAst* node) {
         SimpleRange r(0, node->startCol, 0, node->endCol);
-        qDebug() << "Found: " << r << node->attribute->value << ", looking for: " << searchingForRange << searchingForIdentifier;
+        qDebug() << "Found attr: " << r << node->attribute->value << ", looking for: " << searchingForRange << searchingForIdentifier;
         if ( r == searchingForRange && node->attribute->value == searchingForIdentifier ) {
             found = true;
             return;
@@ -149,12 +149,21 @@ public:
     }
     virtual void visitFunctionDefinition(FunctionDefinitionAst* node) {
         SimpleRange r(0, node->name->startCol, 0, node->name->endCol);
-        qDebug() << "Found name: " << r << node->name->value << ", looking for: " << searchingForRange << searchingForIdentifier;
+        qDebug() << "Found func: " << r << node->name->value << ", looking for: " << searchingForRange << searchingForIdentifier;
         if ( r == searchingForRange && node->name->value == searchingForIdentifier ) {
             found = true;
             return;
         }
         AstDefaultVisitor::visitFunctionDefinition(node);
+    }
+    virtual void visitClassDefinition(ClassDefinitionAst* node) {
+        SimpleRange r(0, node->name->startCol, 0, node->name->endCol);
+        qDebug() << "Found cls: " << r << node->name->value << ", looking for: " << searchingForRange << searchingForIdentifier;
+        if ( r == searchingForRange && node->name->value == searchingForIdentifier ) {
+            found = true;
+            return;
+        }
+        AstDefaultVisitor::visitClassDefinition(node);
     }
 };
 
@@ -198,8 +207,11 @@ void PyDUChainTest::testRanges_data()
     QTest::newRow("attr_functionCallWithArguments") << "base.attr(arg1, arg2).subattr" << 5 << ( QStringList() << "5,8,attr" << "22,28,subattr" );
     QTest::newRow("attr_functionCallWithArgument_withInner") << "base.attr(arg1.parg2).subattr" << 5 << ( QStringList() << "5,8,attr" << "22,28,subattr" << "15,19,parg2" );
     
-    QTest::newRow("funcrange_def") << "def func(): pass" << 2 << ( QStringList() << "4,7,func" );
-    QTest::newRow("funcrange_spaces_def") << "def    func(): pass" << 2 << ( QStringList() << "7,10,func" );
+    QTest::newRow("funcrange_def") << "def func(): pass" << 1 << ( QStringList() << "4,7,func" );
+    QTest::newRow("funcrange_spaces_def") << "def    func(): pass" << 1 << ( QStringList() << "7,10,func" );
+    QTest::newRow("classdef_range") << "class cls(): pass" << 1 << ( QStringList() << "6,8,cls" );
+    QTest::newRow("classdef_range_inheritance") << "class cls(parent1, parent2): pass" << 1 << ( QStringList() << "6,8,cls" );
+    QTest::newRow("classdef_range_inheritance_spaces") << "class       cls(  parent1,    parent2     ):pass" << 1 << ( QStringList() << "12,14,cls" );
 }
 
 

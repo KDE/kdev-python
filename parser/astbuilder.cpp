@@ -741,7 +741,6 @@ CodeAst* AstBuilder::parse(KUrl filename, const QString& contents)
     kDebug() << t->ast;
     
     PyArena_Free(arena);
-    Py_Finalize();
     
     return t->ast;
 }

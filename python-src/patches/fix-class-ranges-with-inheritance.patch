@@ -1,0 +1,24 @@
+diff --git a/python-src/Python/ast.c b/python-src/Python/ast.c
+index 2e768bc..4227829 100644
+--- a/python-src/Python/ast.c
++++ b/python-src/Python/ast.c
+@@ -3208,8 +3208,8 @@ ast_for_classdef(struct compiling *c, const node *n, asdl_seq *decorator_seq)
+         classname = NEW_IDENTIFIER(CHILD(n, 1));
+         if (!classname)
+             return NULL;
+-        return ClassDef(classname, NULL, s, decorator_seq, LINENO(n),
+-                        n->n_col_offset, c->c_arena);
++        return ClassDef(classname, NULL, s, decorator_seq, LINENO(CHILD(n, 1)),
++                        CHILD(n, 1)->n_col_offset, c->c_arena);
+     }
+ 
+     /* else handle the base class list */
+@@ -3224,7 +3224,7 @@ ast_for_classdef(struct compiling *c, const node *n, asdl_seq *decorator_seq)
+     if (!classname)
+         return NULL;
+     return ClassDef(classname, bases, s, decorator_seq,
+-                    LINENO(n), n->n_col_offset, c->c_arena);
++                    LINENO(CHILD(n, 1)), CHILD(n, 1)->n_col_offset, c->c_arena);
+ }
+ 
+ static stmt_ty

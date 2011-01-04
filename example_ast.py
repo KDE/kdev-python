@@ -1,7 +1,7 @@
 a = a and a
 a = a or b
 
-def some_class(foo, bar):
+class some_class(foo, bar):
 	attr1 = 3
 	attr2 = 5
 	attr3 = 'str'
@@ -12,7 +12,7 @@ some_instance.attr2
 some_instance.some_method().foobar
 some_instance.some_method(some_arg, some_arg2).second_attribute
 some_instance \
-		.   	attribute \
+		.   attr1 \
 		.funcfunc(argarg, arg2arg) \
 		.foo
 

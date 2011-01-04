@@ -689,11 +689,6 @@ QMutex AstBuilder::pyInitLock;
 
 CodeAst* AstBuilder::parse(KUrl filename, const QString& contents)
 {
-    PyArena* arena = PyArena_New();
-    Q_ASSERT(arena); // out of memory
-    PyCompilerFlags* flags = new PyCompilerFlags();
-    flags->cf_flags = 0;
-    
     Py_NoSiteFlag = 1;
     
     AstBuilder::pyInitLock.lock();
@@ -703,18 +698,40 @@ CodeAst* AstBuilder::parse(KUrl filename, const QString& contents)
     }
     else kDebug() << "Already initialized.";
     
-//     const char* code = contents.toLatin1();
-//     kDebug() << "Got code: " << code << contents;
-    
-    mod_ty syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);
+    PyArena* arena = PyArena_New();
+    Q_ASSERT(arena); // out of memory
+    PyCompilerFlags* flags = new PyCompilerFlags();
+    flags->cf_flags = 0;
     
     AstBuilder::pyInitLock.unlock();
     
+    mod_ty syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);
+    
     if ( ! syntaxtree ) {
         kWarning() << "DID NOT RECEIVE A SYNTAX TREE -- probably parse error.";
-        PyObject *exception, *value, *tb;
-        PyErr_Fetch(&exception, &value, &tb);
-        PyObject_Print(value, stderr, Py_PRINT_RAW);
+        
+        PyObject *exception, *value, *backtrace;
+        PyErr_Fetch(&exception, &value, &backtrace);
+        PyObject_Print(PyObject_Dir(value), stderr, Py_PRINT_RAW);
+        
+        char* format = QString("(i)").toAscii().data();
+        char* method = QString("__getitem__").toAscii().data();
+        PyObject* errorMessage_str = PyObject_CallMethod(value, method, format, 0);
+        PyObject* errorDetails_tuple = PyObject_CallMethod(value, method, format, 1);
+        int lineno = PyInt_AsLong(PyObject_CallMethod(errorDetails_tuple, method, format, 1)) - 1;
+        int colno = PyInt_AsLong(PyObject_CallMethod(errorDetails_tuple, method, format, 2));
+        
+        ProblemPointer p(new Problem());
+        SimpleCursor start(lineno, colno-4);
+        SimpleCursor end(lineno, colno+4);
+        SimpleRange range(start, end);
+        kDebug() << "Problem range: " << range;
+        DocumentRange location(IndexedString(filename.path()), range);
+        p->setFinalLocation(location);
+        p->setDescription(PyString_AsString(PyObject_Str(errorMessage_str)));
+        p->setSource(ProblemData::Parser);
+        m_problems.append(p);
+        
         return 0;
     }
     kDebug() << "Got syntax tree from python parser:" << syntaxtree->kind << Module_kind;
@@ -724,6 +741,7 @@ CodeAst* AstBuilder::parse(KUrl filename, const QString& contents)
     kDebug() << t->ast;
     
     PyArena_Free(arena);
+    Py_Finalize();
     
     return t->ast;
 }

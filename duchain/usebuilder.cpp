@@ -90,7 +90,7 @@ void UseBuilder::visitAttribute(AttributeAst* node)
     
     kDebug() << "Processing attribute: " << node->attribute->value;
     
-    RangeInRevision useRange(node->attribute->startLine, node->attribute->startCol, node->attribute->endLine, node->attribute->endCol);
+    RangeInRevision useRange(node->attribute->startLine, node->attribute->startCol, node->attribute->endLine, node->attribute->endCol + 1);
     
     Declaration* accessingAttributeOfDeclaration;
     

@@ -29,10 +29,18 @@
 #include <language/interfaces/iproblem.h>
 #include <KLocalizedString>
 
+#include <language/duchain/types/typeregister.h>
+#include "pythonduchainexport.h"
+
+#include <language/duchain/types/integraltype.h>
+#include <language/duchain/types/typesystemdata.h>
+
 using namespace KDevelop;
 using namespace Python;
 
 namespace Python {
+
+REGISTER_TYPE(IntegralTypeExtended);
 
 QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> ExpressionVisitor::s_defaultTypes;
 
@@ -44,6 +52,16 @@ Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx)
         s_defaultTypes.insert(KDevelop::Identifier("False"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
         s_defaultTypes.insert(KDevelop::Identifier("None"), AbstractType::Ptr(new IntegralType(IntegralType::TypeNull)));
     }
+}
+
+void ExpressionVisitor::visitList(ListAst* /*node*/)
+{
+    m_lastType = AbstractType::Ptr(new IntegralTypeExtended(IntegralTypeExtended::TypeList));
+}
+
+void ExpressionVisitor::visitDict(DictAst* /*node*/)
+{
+    m_lastType = AbstractType::Ptr(new IntegralTypeExtended(IntegralTypeExtended::TypeDict));
 }
 
 void Python::ExpressionVisitor::visitNumber(Python::NumberAst* )
@@ -58,7 +76,7 @@ void Python::ExpressionVisitor::visitString(Python::StringAst* )
 
 RangeInRevision nodeRange(Python::Ast* node)
 {
-    qDebug() << node->endLine;
+    kDebug() << node->endLine;
     return RangeInRevision(node->startLine, node->startCol, node->endLine,node->endCol);
 }
 
@@ -74,12 +92,13 @@ void Python::ExpressionVisitor::visitName(Python::NameAst* node)
     QList< Declaration* > d=m_ctx->findDeclarations(id);
 //     Q_ASSERT(!d.isEmpty());
  
-    qDebug() << "visitName" << node->identifier->value << d;   
+    kDebug() << "visitName" << node->identifier->value << d;   
     if(!d.isEmpty())
         m_lastType = d.last()->abstractType();
     else {
         qDebug("VistName type not found");
         RangeInRevision r = nodeRange(node);
+        r.end.column += 1;
         
         ProblemPointer p(new Problem);
         p->setRange(r);
@@ -88,6 +107,7 @@ void Python::ExpressionVisitor::visitName(Python::NameAst* node)
         p->setSeverity(ProblemData::Error);
         p->setSource(KDevelop::ProblemData::SemanticAnalysis);
         m_ctx->topContext()->addProblem(p);
+        m_lastType = 0;
     }
 }
 

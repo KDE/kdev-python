@@ -36,6 +36,8 @@
 #include <usebuilder.h>
 
 #include "astdefaultvisitor.h"
+#include "expressionvisitor.h"
+#include "contextbuilder.h"
 
 QTEST_MAIN(PyDUChainTest)
 
@@ -214,5 +216,56 @@ void PyDUChainTest::testRanges_data()
     QTest::newRow("classdef_range_inheritance_spaces") << "class       cls(  parent1,    parent2     ):pass" << 1 << ( QStringList() << "12,14,cls" );
 }
 
+class TypeTestVisitor : public AstDefaultVisitor {
+public:
+    uint searchingForType;
+    TopDUContextPointer ctx;
+    bool found;
+    virtual void visitName(NameAst* node) {
+        if ( node->identifier->value != "checkme" ) return;
+        QList<Declaration*> decls = ctx->findDeclarations(QualifiedIdentifier(node->identifier->value));
+        if ( ! decls.length() ) {
+            kDebug() << "No declaration found for " << node->identifier->value;
+            return;
+        }
+        Declaration* d = decls.last();
+        QVERIFY(d->type<IntegralType>());
+        kDebug() << "found: " << node->identifier->value << "is" << d->type<IntegralType>().constData()->dataType() << "should be" << searchingForType;
+        if ( d->type<IntegralType>().constData()->dataType() == searchingForType ) {
+            found = true;
+            return;
+        }
+        AstDefaultVisitor::visitName(node);
+    };
+};
+
+void PyDUChainTest::testTypes()
+{
+    QFETCH(QString, code);
+    QFETCH(uint, expectedType);
+    
+    ReferencedTopDUContext ctx = parse(code.toAscii());
+    QVERIFY(ctx);
+    QVERIFY(m_ast);
+    
+    DUChainReadLocker lock(DUChain::lock());
+    TypeTestVisitor* visitor = new TypeTestVisitor();
+    visitor->ctx = TopDUContextPointer(ctx.data());
+    visitor->searchingForType = expectedType;
+    visitor->visitCode(m_ast);
+    
+    QCOMPARE(visitor->found, true);
+}
+
+void PyDUChainTest::testTypes_data()
+{
+    QTest::addColumn<QString>("code");
+    QTest::addColumn<uint>("expectedType");
+    
+    QTest::newRow("listtype") << "checkme = []" << (uint) IntegralTypeExtended::TypeList;
+    QTest::newRow("listtype_extended") << "some_misc_var = []; checkme = some_misc_var" << (uint) IntegralTypeExtended::TypeList;
+    QTest::newRow("dicttype") << "checkme = {}" << (uint) IntegralTypeExtended::TypeDict;
+    QTest::newRow("dicttype_extended") << "some_misc_var = {}; checkme = some_misc_var" << (uint) IntegralTypeExtended::TypeDict;
+}
 
 

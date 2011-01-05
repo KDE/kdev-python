@@ -185,7 +185,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
 
 void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
 {
-    if ( node->name ) visitVariableDeclaration<Declaration>(node->name); // except Error as <vardecl>
+    if ( dynamic_cast<NameAst*>(node->name) ) visitVariableDeclaration<Declaration>(node->name); // except Error as <vardecl>
     DeclarationBuilderBase::visitExceptionHandler(node);
 }
 

@@ -172,7 +172,7 @@ public:
 void PyDUChainTest::testRanges()
 {
     QFETCH(QString, code);
-    QFETCH(int, expected_amount_of_variables);
+    QFETCH(int, expected_amount_of_variables); Q_UNUSED(expected_amount_of_variables);
     QFETCH(QStringList, column_ranges);
     
     ReferencedTopDUContext ctx = parse(code.toAscii());
@@ -266,6 +266,8 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("listtype_extended") << "some_misc_var = []; checkme = some_misc_var" << (uint) IntegralTypeExtended::TypeList;
     QTest::newRow("dicttype") << "checkme = {}" << (uint) IntegralTypeExtended::TypeDict;
     QTest::newRow("dicttype_extended") << "some_misc_var = {}; checkme = some_misc_var" << (uint) IntegralTypeExtended::TypeDict;
+    QTest::newRow("bool") << "checkme = True" << (uint) IntegralType::TypeBoolean;
+    QTest::newRow("float") << "checkme = 3.7" << (uint) IntegralType::TypeFloat;
 }
 
 

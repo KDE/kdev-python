@@ -129,8 +129,13 @@ void UseBuilder::visitAttribute(AttributeAst* node)
     if ( accessingAttributeOfType.unsafeData() ) {
         Declaration* foundContainerDeclaration = accessingAttributeOfType.unsafeData()->declaration(currentContext()->topContext());
         DUContext* searchAttrInContext = foundContainerDeclaration->internalContext();
-        foundDecls = searchAttrInContext->findDeclarations(identifierForNode(node->attribute), CursorInRevision::invalid(), 
-                                                                            KDevelop::AbstractType::Ptr(), searchAttrInContext->topContext());
+        if ( searchAttrInContext ) {
+            foundDecls = searchAttrInContext->findDeclarations(identifierForNode(node->attribute), CursorInRevision::invalid(), 
+                                                               KDevelop::AbstractType::Ptr(), searchAttrInContext->topContext());
+        }
+        else {
+            foundDecls.clear();
+        }
     }
     else {
         foundDecls.clear();

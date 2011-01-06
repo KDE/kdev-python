@@ -91,6 +91,8 @@ class ExpressionVisitor : public AstDefaultVisitor
         virtual void visitName(NameAst* node);
         virtual void visitList(ListAst* node);
         virtual void visitDict(DictAst* node);
+        virtual void visitSubscript(SubscriptAst* node);
+        virtual void visitCall(CallAst* node);
         
         KDevelop::AbstractType::Ptr lastType() const { return m_lastType; }
     private:
@@ -98,6 +100,8 @@ class ExpressionVisitor : public AstDefaultVisitor
         
         KDevelop::AbstractType::Ptr m_lastType;
         KDevelop::DUContext* m_ctx;
+        
+        void unknownTypeEncountered();
 };
 
 }

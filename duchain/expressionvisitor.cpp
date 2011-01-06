@@ -34,6 +34,8 @@
 
 #include <language/duchain/types/integraltype.h>
 #include <language/duchain/types/typesystemdata.h>
+#include <language/duchain/functiondeclaration.h>
+#include <language/duchain/types/functiontype.h>
 
 using namespace KDevelop;
 using namespace Python;
@@ -54,14 +56,64 @@ Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx)
     }
 }
 
-void ExpressionVisitor::visitList(ListAst* /*node*/)
-{
-    m_lastType = AbstractType::Ptr(new IntegralTypeExtended(IntegralTypeExtended::TypeList));
+void ExpressionVisitor::unknownTypeEncountered() {
+    m_lastType = AbstractType::Ptr(new IntegralType(IntegralType::TypeNull));
 }
 
-void ExpressionVisitor::visitDict(DictAst* /*node*/)
+void ExpressionVisitor::visitCall(CallAst* node)
+{
+    Python::AstDefaultVisitor::visitCall(node);
+    Q_ASSERT(dynamic_cast<NameAst*>(node->function));
+    QList<Declaration*> decls = m_ctx->findDeclarations(QualifiedIdentifier(dynamic_cast<NameAst*>(node->function)->identifier->value));
+    if ( decls.length() == 0 ) {
+        kWarning() << "No declaration for " << node->function->value;
+        return unknownTypeEncountered();
+    }
+    else {
+        FunctionDeclaration* decl = dynamic_cast<FunctionDeclaration*>(decls.last());
+        if ( ! decl || ! decl->isFunctionDeclaration() || ! decl->type<FunctionType>() ) {
+            kWarning() << "Declaration for " << node->function->value << "is not a function declaration";
+            return unknownTypeEncountered();
+        }
+        m_lastType = decl->type<FunctionType>()->returnType();
+    }
+}
+
+void ExpressionVisitor::visitSubscript(SubscriptAst* node)
+{
+    Python::AstDefaultVisitor::visitSubscript(node);
+    if ( node->slice ) {
+        int sliceCount = 0;
+        sliceCount += node->slice->lower ? 1 : 0;
+        sliceCount += node->slice->upper ? 1 : 0;
+        sliceCount += node->slice->step ? 1 : 0;
+        kDebug() << "Slice count: " << sliceCount;
+        // those slices will return a list, not an element.
+        // thus, the result is a list again.
+        if ( sliceCount > 1 ) {
+            m_lastType = AbstractType::Ptr(new IntegralTypeExtended(IntegralTypeExtended::TypeList));
+        }
+        // otherwise, a single element is accessed. It's almost impossible to track the types of those,
+        // and will rarely be useful. maybe later.
+        else {
+            unknownTypeEncountered();
+        }
+    }
+    else {
+        unknownTypeEncountered();
+    }
+}
+
+void ExpressionVisitor::visitList(ListAst* node)
+{
+    m_lastType = AbstractType::Ptr(new IntegralTypeExtended(IntegralTypeExtended::TypeList));
+    AstDefaultVisitor::visitList(node);
+}
+
+void ExpressionVisitor::visitDict(DictAst* node)
 {
     m_lastType = AbstractType::Ptr(new IntegralTypeExtended(IntegralTypeExtended::TypeDict));
+    AstDefaultVisitor::visitDict(node);
 }
 
 void Python::ExpressionVisitor::visitNumber(Python::NumberAst* )

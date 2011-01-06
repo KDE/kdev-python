@@ -268,6 +268,12 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("dicttype_extended") << "some_misc_var = {}; checkme = some_misc_var" << (uint) IntegralTypeExtended::TypeDict;
     QTest::newRow("bool") << "checkme = True" << (uint) IntegralType::TypeBoolean;
     QTest::newRow("float") << "checkme = 3.7" << (uint) IntegralType::TypeFloat;
+    
+    QTest::newRow("list_access_right_open_slice") << "checkme = some_list[2:]" << (uint) IntegralTypeExtended::TypeList;
+    QTest::newRow("list_access_left_open_slice") << "checkme = some_list[:2]" << (uint) IntegralTypeExtended::TypeList;
+    QTest::newRow("list_access_closed_slice") << "checkme = some_list[2:17]" << (uint) IntegralTypeExtended::TypeList;
+    QTest::newRow("list_access_step") << "checkme = some_list[::2]" << (uint) IntegralTypeExtended::TypeList;
+    QTest::newRow("list_access_singleItem") << "checkme = some_list[42]" << (uint) IntegralType::TypeNull;
 }
 
 

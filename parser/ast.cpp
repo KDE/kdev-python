@@ -28,7 +28,7 @@ namespace Python
 // there's nothing happening here, don't bother reading the code
     
 Ast::Ast( Ast* parent, Ast::AstType type ) : parent(parent), astType( type ) { }
-Ast::Ast() :  parent(0), startCol(0), startLine(0), endCol(0), endLine(0), context(0) { }
+Ast::Ast() :  parent(0), startCol(0), startLine(0), endCol(0), endLine(0), hasUsefulRangeInformation(false), context(0) { }
 Ast::~Ast() { }
 
 ArgumentsAst::ArgumentsAst(Ast* parent): Ast(parent, Ast::ArgumentsAstType)
@@ -146,7 +146,7 @@ ListComprehensionAst::ListComprehensionAst(Ast* parent): ExpressionAst(parent, A
 
 }
 
-ExpressionAst::ExpressionAst(Ast* parent, AstType type): Ast(parent, type), value(0), directDescendant(0)
+ExpressionAst::ExpressionAst(Ast* parent, AstType type): Ast(parent, type), value(0)
 {
     
 }

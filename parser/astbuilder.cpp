@@ -703,6 +703,7 @@ CodeAst* AstBuilder::parse(KUrl filename, const QString& contents)
     PyCompilerFlags* flags = new PyCompilerFlags();
     flags->cf_flags = 0;
     
+    kDebug() << "Done allocating memory, unlocking";
     AstBuilder::pyInitLock.unlock();
     
     mod_ty syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);

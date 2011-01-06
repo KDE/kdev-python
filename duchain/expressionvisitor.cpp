@@ -63,7 +63,10 @@ void ExpressionVisitor::unknownTypeEncountered() {
 void ExpressionVisitor::visitCall(CallAst* node)
 {
     Python::AstDefaultVisitor::visitCall(node);
-    Q_ASSERT(dynamic_cast<NameAst*>(node->function));
+    // if it's not written like foo() but like foo[3](), then we don't attempt to guess a type
+    if ( ! dynamic_cast<NameAst*>(node->function) ) {
+        return unknownTypeEncountered();
+    }
     QList<Declaration*> decls = m_ctx->findDeclarations(QualifiedIdentifier(dynamic_cast<NameAst*>(node->function)->identifier->value));
     if ( decls.length() == 0 ) {
         kWarning() << "No declaration for " << node->function->value;
@@ -81,26 +84,13 @@ void ExpressionVisitor::visitCall(CallAst* node)
 
 void ExpressionVisitor::visitSubscript(SubscriptAst* node)
 {
-    Python::AstDefaultVisitor::visitSubscript(node);
-    if ( node->slice ) {
-        int sliceCount = 0;
-        sliceCount += node->slice->lower ? 1 : 0;
-        sliceCount += node->slice->upper ? 1 : 0;
-        sliceCount += node->slice->step ? 1 : 0;
-        kDebug() << "Slice count: " << sliceCount;
-        // those slices will return a list, not an element.
-        // thus, the result is a list again.
-        if ( sliceCount > 1 ) {
-            m_lastType = AbstractType::Ptr(new IntegralTypeExtended(IntegralTypeExtended::TypeList));
-        }
-        // otherwise, a single element is accessed. It's almost impossible to track the types of those,
-        // and will rarely be useful. maybe later.
-        else {
-            unknownTypeEncountered();
-        }
+    if ( node->slice && node->slice->astType != Ast::IndexAstType ) {
+        kDebug() << "Found slice, will use ListType for assignment";
+        m_lastType = AbstractType::Ptr(new IntegralTypeExtended(IntegralTypeExtended::TypeList));
     }
     else {
-        unknownTypeEncountered();
+        kDebug() << "No slice, defaulting to NULL type.";
+        return unknownTypeEncountered();
     }
 }
 

@@ -383,7 +383,6 @@ public:
         Invalid = -1
     };
     ExpressionAst* value; // WARNING this is not set in most cases!
-    AttributeAst* directDescendant; // foo.bar.baz; this is baz; this attribute points to bar
 };
 
 class KDEVPYTHONPARSER_EXPORT BooleanOperationAst : public ExpressionAst {
@@ -528,7 +527,7 @@ class KDEVPYTHONPARSER_EXPORT SubscriptAst : public ExpressionAst {
 public:
     SubscriptAst(Ast* parent);
     ExpressionAst* value;
-    SliceAst* slice;
+    SliceAstBase* slice;
     ExpressionAst::Context context;
 };
 

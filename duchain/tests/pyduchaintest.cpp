@@ -276,4 +276,44 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("list_access_singleItem") << "checkme = some_list[42]" << (uint) IntegralType::TypeNull;
 }
 
+void PyDUChainTest::testImportDeclarations() {
+    QFETCH(QString, code);
+    QFETCH(QStringList, expectedDecls);
+    
+    ReferencedTopDUContext ctx = parse(code.toAscii());
+    QVERIFY(ctx);
+    QVERIFY(m_ast);
+    
+    DUChainReadLocker lock(DUChain::lock());
+    foreach ( QString expected, expectedDecls ) {
+        bool found = false;
+        QString name;
+        int start, end;
+        QStringList split = expected.split(",");
+        name = split[0];
+        start = split[1].toInt();
+        end = split[2].toInt();
+        QList<Declaration*> foundDecls = ctx->findDeclarations(QualifiedIdentifier(name));
+        kDebug() << "Found " << foundDecls.length() << " Declarations for " << name;
+        QVERIFY(foundDecls.length() > 0);
+        foreach ( Declaration* current, foundDecls ) {
+            kDebug() << "Found identifier: " << current->identifier().toString() << current->range().castToSimpleRange() << "(should be " << start << "," << end << ")";
+            if ( current->range().start.column == start && current->range().end.column == end ) {
+                found = true;
+                break;
+            }
+        }
+        QVERIFY(found);
+    }
+}
+
+void PyDUChainTest::testImportDeclarations_data() {
+    QTest::addColumn<QString>("code");
+    QTest::addColumn<QStringList>("expectedDecls");
+    
+    QTest::newRow("from_import") << "from foo import checkme" << ( QStringList() << "checkme,16,23" );
+    QTest::newRow("import") << "import checkme" << ( QStringList() << "checkme,7,14" );
+    QTest::newRow("import_as") << "import foo as checkme" << ( QStringList() << "checkme,14,21" );
+    QTest::newRow("from_import_as") << "from bar import foo as checkme" << ( QStringList() << "checkme,23,30" );
+}
 

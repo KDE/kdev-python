@@ -208,8 +208,14 @@ void DeclarationBuilder::visitImport(ImportAst* node)
         kDebug() << "Chain for document: " << contextptr;
         m_importContextsForImportStatement.push(contextptr);
         importedModuleDeclaration* dec;
-        if ( name->asName ) dec = visitVariableDeclaration<importedModuleDeclaration>(name->asName);
-        else dec = visitVariableDeclaration<importedModuleDeclaration>(name->name);
+        kDebug() << ( name->asName ? name->asName->value : QString("no asName") ) << ( name->name ? name->name->value : "no name" );
+        if ( name->asName ) {
+            dec = visitVariableDeclaration<importedModuleDeclaration>(name->asName);
+        }
+        else {
+            dec = visitVariableDeclaration<importedModuleDeclaration>(name->name);
+        }
+            
         QString moduleName = name->name->value;
         if ( name->asName && name->asName ) 
             moduleName += "." + name->asName->value;
@@ -228,8 +234,12 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
     Python::AstDefaultVisitor::visitImportFrom(node);
     foreach ( AliasAst* name, node->names ) {
         importedModuleDeclaration* dec = 0;
-        if ( name->asName ) dec = visitVariableDeclaration<importedModuleDeclaration>(name->asName);
-        else dec = visitVariableDeclaration<importedModuleDeclaration>(name->name);
+        if ( name->asName ) {
+            dec = visitVariableDeclaration<importedModuleDeclaration>(name->asName);
+        }
+        else {
+            dec = visitVariableDeclaration<importedModuleDeclaration>(name->name);
+        }
         if ( dec && name->name && node->module ) {
             dec->m_moduleIdentifier = node->module->value + "." + name->name->value;
             kDebug() << "FromImport module name: " << name->name->value;

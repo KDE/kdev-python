@@ -31,6 +31,7 @@ func_structure = '''
 
 simple_func_structure = '''
     Ast* visitNode(%{RULE_FOR}* node) {
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
         if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
 %{SWITCH_LINES}
         return v;
@@ -44,10 +45,10 @@ switch_line = '''        case %{KIND}: {
             }'''
 
 create_ast_line = '''                %{AST_TYPE}* v = new %{AST_TYPE}(parent());'''
-create_identifier_line = '''                v->%{TARGET} = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.%{KIND_W/O_SUFFIX}.%{VALUE})));'''
+create_identifier_line = '''                v->%{TARGET} = node->v.%{KIND_W/O_SUFFIX}.%{VALUE} ? new Python::Identifier(PyString_AsString(PyObject_Str(node->v.%{KIND_W/O_SUFFIX}.%{VALUE}))) : 0;'''
 set_attribute_line = '''                v->%{TARGET} = static_cast<%{AST_TYPE}*>(visitNode(node->v.%{KIND_W/O_SUFFIX}.%{VALUE}));'''
 resolve_list_line = '''                v->%{TARGET} = visitNodeList<%{PYTHON_AST_TYPE}, %{AST_TYPE}>(node->v.%{KIND_W/O_SUFFIX}.%{VALUE});'''
-create_identifier_line_any = '''            v->%{TARGET} = new Python::Identifier(PyString_AsString(PyObject_Str(node->%{VALUE})));'''
+create_identifier_line_any = '''            v->%{TARGET} = node->%{VALUE} ? new Python::Identifier(PyString_AsString(PyObject_Str(node->%{VALUE}))) : 0;'''
 set_attribute_line_any = '''            v->%{TARGET} = static_cast<%{AST_TYPE}*>(visitNode(node->%{VALUE}));'''
 resolve_list_line_any = '''            v->%{TARGET} = visitNodeList<%{PYTHON_AST_TYPE}, %{AST_TYPE}>(node->%{VALUE});'''
 direct_assignment_line = '''                v->%{TARGET} = node->v.%{KIND_W/O_SUFFIX}.%{VALUE};'''
@@ -68,11 +69,13 @@ resolve_identifier_block = '''
 '''
 
 copy_ident_ranges = '''
-                v->%{TARGET}->startCol = node->col_offset; v->startCol = v->%{TARGET}->startCol;
-                v->%{TARGET}->startLine = node->lineno - 1;  v->startLine = v->%{TARGET}->startLine;
-                v->%{TARGET}->endCol = node->col_offset + v->%{TARGET}->value.length() - 1;  v->endCol = v->%{TARGET}->endCol;
-                v->%{TARGET}->endLine = node->lineno - 1;  v->endLine = v->%{TARGET}->endLine;
-                ranges_copied = true;'''
+                if ( v->%{TARGET} ) {
+                    v->%{TARGET}->startCol = node->col_offset; v->startCol = v->%{TARGET}->startCol;
+                    v->%{TARGET}->startLine = node->lineno - 1;  v->startLine = v->%{TARGET}->startLine;
+                    v->%{TARGET}->endCol = node->col_offset + v->%{TARGET}->value.length() - 1;  v->endCol = v->%{TARGET}->endCol;
+                    v->%{TARGET}->endLine = node->lineno - 1;  v->endLine = v->%{TARGET}->endLine;
+                    ranges_copied = true;
+                }'''
 
 results = dict()
 does_match_any = dict()
@@ -131,7 +134,7 @@ for rule in contents:
                     raw = direct_assignment_line if not any else direct_assignment_line_any
                 if commandType == '~':
                     raw = create_identifier_line if not any else create_identifier_line_any
-                    if rule_for in ['_expr', '_stmt', '_excepthandler']:
+                    if rule_for in ['_expr', '_stmt', '_excepthandler', '_alias']:
                         raw += copy_ident_ranges
                 value = s[0]
             # commands with two arguments

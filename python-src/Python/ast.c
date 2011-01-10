@@ -2436,8 +2436,9 @@ alias_for_import_name(struct compiling *c, const node *n, int store)
          case import_as_name: {
             node *name_node = CHILD(n, 0);
             str = NULL;
+            node *str_node = 0;
             if (NCH(n) == 3) {
-                node *str_node = CHILD(n, 2);
+                str_node = CHILD(n, 2);
                 if (store && !forbidden_check(c, str_node, STR(str_node)))
                     return NULL;
                 str = NEW_IDENTIFIER(str_node);
@@ -2451,7 +2452,7 @@ alias_for_import_name(struct compiling *c, const node *n, int store)
             name = NEW_IDENTIFIER(name_node);
             if (!name)
                 return NULL;
-            return alias(name, str, c->c_arena);
+            return alias(name, str, str_node ? str_node->n_lineno : name_node->n_lineno, str_node ? str_node->n_col_offset : name_node->n_col_offset, c->c_arena);
         }
         case dotted_as_name:
             if (NCH(n) == 1) {
@@ -2460,6 +2461,7 @@ alias_for_import_name(struct compiling *c, const node *n, int store)
             }
             else {
                 node *asname_node = CHILD(n, 2);
+                node *as_trivial_node = CHILD(n, 1);
                 alias_ty a = alias_for_import_name(c, CHILD(n, 0), 0);
                 if (!a)
                     return NULL;
@@ -2469,6 +2471,8 @@ alias_for_import_name(struct compiling *c, const node *n, int store)
                 a->asname = NEW_IDENTIFIER(asname_node);
                 if (!a->asname)
                     return NULL;
+                a->lineno = asname_node->n_lineno;
+                a->col_offset = asname_node->n_col_offset;
                 return a;
             }
             break;
@@ -2480,7 +2484,7 @@ alias_for_import_name(struct compiling *c, const node *n, int store)
                 name = NEW_IDENTIFIER(name_node);
                 if (!name)
                     return NULL;
-                return alias(name, NULL, c->c_arena);
+                return alias(name, NULL, name_node->n_lineno, name_node->n_col_offset, c->c_arena);
             }
             else {
                 /* Create a string of the form "a.b.c" */
@@ -2509,13 +2513,13 @@ alias_for_import_name(struct compiling *c, const node *n, int store)
                 *s = '\0';
                 PyString_InternInPlace(&str);
                 PyArena_AddPyObject(c->c_arena, str);
-                return alias(str, NULL, c->c_arena);
+                return alias(str, NULL, CHILD(n, 0)->n_lineno, CHILD(n, 0)->n_col_offset, c->c_arena);
             }
             break;
         case STAR:
             str = PyString_InternFromString("*");
             PyArena_AddPyObject(c->c_arena, str);
-            return alias(str, NULL, c->c_arena);
+            return alias(str, NULL, 0, 0, c->c_arena);
         default:
             PyErr_Format(PyExc_SystemError,
                          "unexpected import name: %d", TYPE(n));

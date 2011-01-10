@@ -1,0 +1,121 @@
+diff --git a/python-src/Include/Python-ast.h b/python-src/Include/Python-ast.h
+index 3f35bbb..37722b1 100644
+--- a/python-src/Include/Python-ast.h
++++ b/python-src/Include/Python-ast.h
+@@ -369,6 +369,8 @@ struct _keyword {
+ struct _alias {
+         identifier name;
+         identifier asname;
++        int lineno;
++        int col_offset;
+ };
+ 
+ 
+@@ -527,8 +529,8 @@ arguments_ty _Py_arguments(asdl_seq * args, identifier vararg, identifier
+                            kwarg, asdl_seq * defaults, PyArena *arena);
+ #define keyword(a0, a1, a2) _Py_keyword(a0, a1, a2)
+ keyword_ty _Py_keyword(identifier arg, expr_ty value, PyArena *arena);
+-#define alias(a0, a1, a2) _Py_alias(a0, a1, a2)
+-alias_ty _Py_alias(identifier name, identifier asname, PyArena *arena);
++#define alias(a0, a1, ln, co, a2) _Py_alias(a0, a1, ln, co, a2)
++alias_ty _Py_alias(identifier name, identifier asname, int lineno, int col_offset, PyArena *arena);
+ 
+ PyObject* PyAST_mod2obj(mod_ty t);
+ mod_ty PyAST_obj2mod(PyObject* ast, PyArena* arena, int mode);
+diff --git a/python-src/Python/Python-ast.c b/python-src/Python/Python-ast.c
+index 701ac48..a1ae575 100644
+--- a/python-src/Python/Python-ast.c
++++ b/python-src/Python/Python-ast.c
+@@ -2096,7 +2096,7 @@ keyword(identifier arg, expr_ty value, PyArena *arena)
+ }
+ 
+ alias_ty
+-alias(identifier name, identifier asname, PyArena *arena)
++alias(identifier name, identifier asname, int lineno, int col_offset, PyArena *arena)
+ {
+         alias_ty p;
+         if (!name) {
+@@ -2109,6 +2109,8 @@ alias(identifier name, identifier asname, PyArena *arena)
+                 return NULL;
+         p->name = name;
+         p->asname = asname;
++        p->lineno = lineno;
++        p->col_offset = col_offset;
+         return p;
+ }
+ 
+@@ -6551,7 +6553,7 @@ obj2ast_alias(PyObject* obj, alias_ty* out, PyArena* arena)
+         } else {
+                 asname = NULL;
+         }
+-        *out = alias(name, asname, arena);
++        *out = alias(name, asname, 0, 0, arena);
+         return 0;
+ failed:
+         Py_XDECREF(tmp);
+diff --git a/python-src/Python/ast.c b/python-src/Python/ast.c
+index 4227829..37ab2be 100644
+--- a/python-src/Python/ast.c
++++ b/python-src/Python/ast.c
+@@ -2436,8 +2436,9 @@ alias_for_import_name(struct compiling *c, const node *n, int store)
+          case import_as_name: {
+             node *name_node = CHILD(n, 0);
+             str = NULL;
++            node *str_node = 0;
+             if (NCH(n) == 3) {
+-                node *str_node = CHILD(n, 2);
++                str_node = CHILD(n, 2);
+                 if (store && !forbidden_check(c, str_node, STR(str_node)))
+                     return NULL;
+                 str = NEW_IDENTIFIER(str_node);
+@@ -2451,7 +2452,7 @@ alias_for_import_name(struct compiling *c, const node *n, int store)
+             name = NEW_IDENTIFIER(name_node);
+             if (!name)
+                 return NULL;
+-            return alias(name, str, c->c_arena);
++            return alias(name, str, str_node ? str_node->n_lineno : name_node->n_lineno, str_node ? str_node->n_col_offset : name_node->n_col_offset, c->c_arena);
+         }
+         case dotted_as_name:
+             if (NCH(n) == 1) {
+@@ -2460,6 +2461,7 @@ alias_for_import_name(struct compiling *c, const node *n, int store)
+             }
+             else {
+                 node *asname_node = CHILD(n, 2);
++                node *as_trivial_node = CHILD(n, 1);
+                 alias_ty a = alias_for_import_name(c, CHILD(n, 0), 0);
+                 if (!a)
+                     return NULL;
+@@ -2469,6 +2471,8 @@ alias_for_import_name(struct compiling *c, const node *n, int store)
+                 a->asname = NEW_IDENTIFIER(asname_node);
+                 if (!a->asname)
+                     return NULL;
++                a->lineno = asname_node->n_lineno;
++                a->col_offset = asname_node->n_col_offset;
+                 return a;
+             }
+             break;
+@@ -2480,7 +2484,7 @@ alias_for_import_name(struct compiling *c, const node *n, int store)
+                 name = NEW_IDENTIFIER(name_node);
+                 if (!name)
+                     return NULL;
+-                return alias(name, NULL, c->c_arena);
++                return alias(name, NULL, name_node->n_lineno, name_node->n_col_offset, c->c_arena);
+             }
+             else {
+                 /* Create a string of the form "a.b.c" */
+@@ -2509,13 +2513,13 @@ alias_for_import_name(struct compiling *c, const node *n, int store)
+                 *s = '\0';
+                 PyString_InternInPlace(&str);
+                 PyArena_AddPyObject(c->c_arena, str);
+-                return alias(str, NULL, c->c_arena);
++                return alias(str, NULL, CHILD(n, 0)->n_lineno, CHILD(n, 0)->n_col_offset, c->c_arena);
+             }
+             break;
+         case STAR:
+             str = PyString_InternFromString("*");
+             PyArena_AddPyObject(c->c_arena, str);
+-            return alias(str, NULL, c->c_arena);
++            return alias(str, NULL, 0, 0, c->c_arena);
+         default:
+             PyErr_Format(PyExc_SystemError,
+                          "unexpected import name: %d", TYPE(n));

@@ -50,6 +50,8 @@ class PyDUChainTest : public QObject
         void testRanges_data();
         void testTypes();
         void testTypes_data();
+        void testImportDeclarations();
+        void testImportDeclarations_data();
 };
 
 #endif // PYDUCHAINTEST_H

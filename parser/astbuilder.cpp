@@ -214,12 +214,14 @@ private:
         case Attribute_kind: {
                 AttributeAst* v = new AttributeAst(parent());
                 v->value = static_cast<ExpressionAst*>(visitNode(node->v.Attribute.value));
-                v->attribute = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.Attribute.attr)));
-                v->attribute->startCol = node->col_offset; v->startCol = v->attribute->startCol;
-                v->attribute->startLine = node->lineno - 1;  v->startLine = v->attribute->startLine;
-                v->attribute->endCol = node->col_offset + v->attribute->value.length() - 1;  v->endCol = v->attribute->endCol;
-                v->attribute->endLine = node->lineno - 1;  v->endLine = v->attribute->endLine;
-                ranges_copied = true;
+                v->attribute = node->v.Attribute.attr ? new Python::Identifier(PyString_AsString(PyObject_Str(node->v.Attribute.attr))) : 0;
+                if ( v->attribute ) {
+                    v->attribute->startCol = node->col_offset; v->startCol = v->attribute->startCol;
+                    v->attribute->startLine = node->lineno - 1;  v->startLine = v->attribute->startLine;
+                    v->attribute->endCol = node->col_offset + v->attribute->value.length() - 1;  v->endCol = v->attribute->endCol;
+                    v->attribute->endLine = node->lineno - 1;  v->endLine = v->attribute->endLine;
+                    ranges_copied = true;
+                }
                 v->context = (ExpressionAst::Context) node->v.Attribute.ctx;
                 result = v;
                 break;
@@ -234,12 +236,14 @@ private:
             }
         case Name_kind: {
                 NameAst* v = new NameAst(parent());
-                v->identifier = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.Name.id)));
-                v->identifier->startCol = node->col_offset; v->startCol = v->identifier->startCol;
-                v->identifier->startLine = node->lineno - 1;  v->startLine = v->identifier->startLine;
-                v->identifier->endCol = node->col_offset + v->identifier->value.length() - 1;  v->endCol = v->identifier->endCol;
-                v->identifier->endLine = node->lineno - 1;  v->endLine = v->identifier->endLine;
-                ranges_copied = true;
+                v->identifier = node->v.Name.id ? new Python::Identifier(PyString_AsString(PyObject_Str(node->v.Name.id))) : 0;
+                if ( v->identifier ) {
+                    v->identifier->startCol = node->col_offset; v->startCol = v->identifier->startCol;
+                    v->identifier->startLine = node->lineno - 1;  v->startLine = v->identifier->startLine;
+                    v->identifier->endCol = node->col_offset + v->identifier->value.length() - 1;  v->endCol = v->identifier->endCol;
+                    v->identifier->endLine = node->lineno - 1;  v->endLine = v->identifier->endLine;
+                    ranges_copied = true;
+                }
                 v->context = (ExpressionAst::Context) node->v.Name.ctx;
                 result = v;
                 break;
@@ -347,6 +351,7 @@ private:
 
 
     Ast* visitNode(_comprehension* node) {
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
         if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
                 ComprehensionAst* v = new ComprehensionAst(parent());
             v->target = static_cast<ExpressionAst*>(visitNode(node->target));
@@ -357,10 +362,25 @@ private:
 
 
     Ast* visitNode(_alias* node) {
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
         if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
                 AliasAst* v = new AliasAst(parent());
-            v->name = new Python::Identifier(PyString_AsString(PyObject_Str(node->name)));
-            v->asName = new Python::Identifier(PyString_AsString(PyObject_Str(node->asname)));
+            v->name = node->name ? new Python::Identifier(PyString_AsString(PyObject_Str(node->name))) : 0;
+                if ( v->name ) {
+                    v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
+                    v->name->startLine = node->lineno - 1;  v->startLine = v->name->startLine;
+                    v->name->endCol = node->col_offset + v->name->value.length() - 1;  v->endCol = v->name->endCol;
+                    v->name->endLine = node->lineno - 1;  v->endLine = v->name->endLine;
+                    ranges_copied = true;
+                }
+            v->asName = node->asname ? new Python::Identifier(PyString_AsString(PyObject_Str(node->asname))) : 0;
+                if ( v->asName ) {
+                    v->asName->startCol = node->col_offset; v->startCol = v->asName->startCol;
+                    v->asName->startLine = node->lineno - 1;  v->startLine = v->asName->startLine;
+                    v->asName->endCol = node->col_offset + v->asName->value.length() - 1;  v->endCol = v->asName->endCol;
+                    v->asName->endLine = node->lineno - 1;  v->endLine = v->asName->endLine;
+                    ranges_copied = true;
+                }
         return v;
     }
 
@@ -381,12 +401,14 @@ private:
                 v->arguments = static_cast<ArgumentsAst*>(visitNode(node->v.FunctionDef.args));
                 v->body = visitNodeList<_stmt, Ast>(node->v.FunctionDef.body);
                 v->decorators = visitNodeList<_expr, NameAst>(node->v.FunctionDef.decorator_list);
-                v->name = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.FunctionDef.name)));
-                v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
-                v->name->startLine = node->lineno - 1;  v->startLine = v->name->startLine;
-                v->name->endCol = node->col_offset + v->name->value.length() - 1;  v->endCol = v->name->endCol;
-                v->name->endLine = node->lineno - 1;  v->endLine = v->name->endLine;
-                ranges_copied = true;
+                v->name = node->v.FunctionDef.name ? new Python::Identifier(PyString_AsString(PyObject_Str(node->v.FunctionDef.name))) : 0;
+                if ( v->name ) {
+                    v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
+                    v->name->startLine = node->lineno - 1;  v->startLine = v->name->startLine;
+                    v->name->endCol = node->col_offset + v->name->value.length() - 1;  v->endCol = v->name->endCol;
+                    v->name->endLine = node->lineno - 1;  v->endLine = v->name->endLine;
+                    ranges_copied = true;
+                }
                 result = v;
                 break;
             }
@@ -395,12 +417,14 @@ private:
                 v->baseClasses = visitNodeList<_expr, ExpressionAst>(node->v.ClassDef.bases);
                 v->body = visitNodeList<_stmt, Ast>(node->v.ClassDef.body);
                 v->decorators = visitNodeList<_expr, ExpressionAst>(node->v.ClassDef.decorator_list);
-                v->name = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.ClassDef.name)));
-                v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
-                v->name->startLine = node->lineno - 1;  v->startLine = v->name->startLine;
-                v->name->endCol = node->col_offset + v->name->value.length() - 1;  v->endCol = v->name->endCol;
-                v->name->endLine = node->lineno - 1;  v->endLine = v->name->endLine;
-                ranges_copied = true;
+                v->name = node->v.ClassDef.name ? new Python::Identifier(PyString_AsString(PyObject_Str(node->v.ClassDef.name))) : 0;
+                if ( v->name ) {
+                    v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
+                    v->name->startLine = node->lineno - 1;  v->startLine = v->name->startLine;
+                    v->name->endCol = node->col_offset + v->name->value.length() - 1;  v->endCol = v->name->endCol;
+                    v->name->endLine = node->lineno - 1;  v->endLine = v->name->endLine;
+                    ranges_copied = true;
+                }
                 result = v;
                 break;
             }
@@ -508,12 +532,14 @@ private:
             }
         case ImportFrom_kind: {
                 ImportFromAst* v = new ImportFromAst(parent());
-                v->module = new Python::Identifier(PyString_AsString(PyObject_Str(node->v.ImportFrom.module)));
-                v->module->startCol = node->col_offset; v->startCol = v->module->startCol;
-                v->module->startLine = node->lineno - 1;  v->startLine = v->module->startLine;
-                v->module->endCol = node->col_offset + v->module->value.length() - 1;  v->endCol = v->module->endCol;
-                v->module->endLine = node->lineno - 1;  v->endLine = v->module->endLine;
-                ranges_copied = true;
+                v->module = node->v.ImportFrom.module ? new Python::Identifier(PyString_AsString(PyObject_Str(node->v.ImportFrom.module))) : 0;
+                if ( v->module ) {
+                    v->module->startCol = node->col_offset; v->startCol = v->module->startCol;
+                    v->module->startLine = node->lineno - 1;  v->startLine = v->module->startLine;
+                    v->module->endCol = node->col_offset + v->module->value.length() - 1;  v->endCol = v->module->endCol;
+                    v->module->endLine = node->lineno - 1;  v->endLine = v->module->endLine;
+                    ranges_copied = true;
+                }
                 v->names = visitNodeList<_alias, AliasAst>(node->v.ImportFrom.names);
                 v->level = node->v.ImportFrom.level;
                 result = v;
@@ -661,20 +687,22 @@ private:
 
 
     Ast* visitNode(_arguments* node) {
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
         if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
                 ArgumentsAst* v = new ArgumentsAst(parent());
             v->arguments = visitNodeList<_expr, ExpressionAst>(node->args);
             v->defaultValues = visitNodeList<_expr, ExpressionAst>(node->defaults);
-            v->vararg = new Python::Identifier(PyString_AsString(PyObject_Str(node->vararg)));
-            v->kwarg = new Python::Identifier(PyString_AsString(PyObject_Str(node->kwarg)));
+            v->vararg = node->vararg ? new Python::Identifier(PyString_AsString(PyObject_Str(node->vararg))) : 0;
+            v->kwarg = node->kwarg ? new Python::Identifier(PyString_AsString(PyObject_Str(node->kwarg))) : 0;
         return v;
     }
 
 
     Ast* visitNode(_keyword* node) {
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
         if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
                 KeywordAst* v = new KeywordAst(parent());
-            v->argumentName = new Python::Identifier(PyString_AsString(PyObject_Str(node->arg)));
+            v->argumentName = node->arg ? new Python::Identifier(PyString_AsString(PyObject_Str(node->arg))) : 0;
             v->value = static_cast<ExpressionAst*>(visitNode(node->value));
         return v;
     }

@@ -30,6 +30,19 @@ import PyQt4.QtCore
 
 print sys
 
+def returns_int(param):
+    return 5
+
+def returns_str(param):
+    return 'str'
+
+def returns_list(param): return []; foo = returns_list()
+
+bar = 'test'
+foo = returns_int()
+s = returns_str()
+l = returns_list()
+
 def simple_func(foo):
 	# usage comment, bla, param:foo
 	pass

@@ -57,6 +57,7 @@ protected:
     virtual void visitArguments(ArgumentsAst* node);
     virtual void visitExceptionHandler(ExceptionHandlerAst* node);
     virtual void visitCall(CallAst* node);
+    virtual void visitReturn(ReturnAst* node);
     
     template<typename T> T* visitVariableDeclaration(Python::Ast* node);
     template<typename T> T* visitVariableDeclaration(Identifier* node, Ast* originalAst = 0);

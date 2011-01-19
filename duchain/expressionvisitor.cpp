@@ -74,10 +74,11 @@ void ExpressionVisitor::visitCall(CallAst* node)
     }
     else {
         FunctionDeclaration* decl = dynamic_cast<FunctionDeclaration*>(decls.last());
-        if ( ! decl || ! decl->isFunctionDeclaration() || ! decl->type<FunctionType>() ) {
+        if ( ! decl || ! decl->type<FunctionType>() ) {
             kWarning() << "Declaration for " << node->function->value << "is not a function declaration";
             return unknownTypeEncountered();
         }
+        kDebug() << decl->toString();
         m_lastType = decl->type<FunctionType>()->returnType();
     }
 }

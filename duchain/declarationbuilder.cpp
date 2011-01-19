@@ -256,6 +256,8 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
     v.visitNode(node->value);
     setLastType(v.lastType());
     
+    kDebug() << ( lastType().unsafeData() ? "last type: " + lastType()->toString() : "don't have a type for variable :(" );
+    
     foreach ( ExpressionAst* target, node->targets ) {
         if ( target->astType == Ast::NameAstType ) {
             visitVariableDeclaration<Declaration>(target);
@@ -288,16 +290,40 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     FunctionDeclaration* dec = openDeclaration<FunctionDeclaration>( node->name, node );
 
     FunctionType::Ptr type(new FunctionType);
-
-    openType(type);
-    ContextBuilder::visitFunctionDefinition( node );
-    closeType();
-
+    
     {
         DUChainWriteLocker lock;
         dec->setType(type);
     }
+
+    openType(type);
+    ContextBuilder::visitFunctionDefinition( node );
+    closeType();
+    
+    kDebug() << "Got function return type: " << ( type->returnType().unsafeData() ? type->returnType()->toString() : "<none set>" );
+    
     closeDeclaration();
+}
+
+void DeclarationBuilder::visitReturn(ReturnAst* node)
+{
+    ExpressionVisitor v(currentContext());
+    v.visitNode(node->value);
+    if ( node->value ) {
+        TypePtr<FunctionType> t = currentType<FunctionType>();
+        if ( ! t.unsafeData() ) {
+            KDevelop::Problem *p = new KDevelop::Problem();
+            p->setFinalLocation(DocumentRange(document(), SimpleRange(node->startLine, node->startCol, node->endLine, node->endCol)));
+            p->setSource(KDevelop::ProblemData::SemanticAnalysis);
+            p->setDescription(i18n("Return statement not within function declaration"));
+            ProblemPointer ptr(p);
+            topContext()->addProblem(ptr);
+            return;
+        }
+        AbstractType::Ptr encountered = v.lastType();
+        kDebug() << "Found type: " << encountered->toString();
+        t->setReturnType(encountered);
+    }
 }
 
 void DeclarationBuilder::visitLambda( LambdaAst* node )

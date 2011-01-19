@@ -274,6 +274,12 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("list_access_closed_slice") << "checkme = some_list[2:17]" << (uint) IntegralTypeExtended::TypeList;
     QTest::newRow("list_access_step") << "checkme = some_list[::2]" << (uint) IntegralTypeExtended::TypeList;
     QTest::newRow("list_access_singleItem") << "checkme = some_list[42]" << (uint) IntegralType::TypeNull;
+    
+    QTest::newRow("funccall_number") << "def foo(): return 3; checkme = foo();" << (uint) IntegralType::TypeFloat;
+    QTest::newRow("funccall_string") << "def foo(): return 'a'; checkme = foo();" << (uint) IntegralType::TypeString;
+    QTest::newRow("funccall_list") << "def foo(): return []; checkme = foo();" << (uint) IntegralTypeExtended::TypeList;
+    QTest::newRow("funccall_dict") << "def foo(): return {}; checkme = foo();" << (uint) IntegralTypeExtended::TypeDict;
+//    QTest::newRow("funccall_dict") << "def foo(): return foo; checkme = foo();" << (uint) IntegralType::TypeFunction;
 }
 
 void PyDUChainTest::testImportDeclarations() {

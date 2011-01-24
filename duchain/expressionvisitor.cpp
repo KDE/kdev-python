@@ -67,6 +67,9 @@ void ExpressionVisitor::visitCall(CallAst* node)
     if ( ! dynamic_cast<NameAst*>(node->function) ) {
         return unknownTypeEncountered();
     }
+    
+    kDebug() << "Visiting call of function " << dynamic_cast<NameAst*>(node->function)->identifier->value;
+    
     QList<Declaration*> decls = m_ctx->findDeclarations(QualifiedIdentifier(dynamic_cast<NameAst*>(node->function)->identifier->value));
     if ( decls.length() == 0 ) {
         kWarning() << "No declaration for " << node->function->value;
@@ -78,7 +81,8 @@ void ExpressionVisitor::visitCall(CallAst* node)
             kWarning() << "Declaration for " << node->function->value << "is not a function declaration";
             return unknownTypeEncountered();
         }
-        kDebug() << decl->toString();
+        kDebug() << decl->toString() << decl->type<FunctionType>()->toString();
+        kDebug() << decl->type<FunctionType>()->returnType();
         m_lastType = decl->type<FunctionType>()->returnType();
     }
 }

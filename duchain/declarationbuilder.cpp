@@ -301,6 +301,12 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     closeType();
     
     kDebug() << "Got function return type: " << ( type->returnType().unsafeData() ? type->returnType()->toString() : "<none set>" );
+    {
+        DUChainWriteLocker lock(DUChain::lock());
+        dec->setType(type);
+    }
+    
+    kDebug() << dec->toString();
     
     closeDeclaration();
 }
@@ -310,8 +316,7 @@ void DeclarationBuilder::visitReturn(ReturnAst* node)
     ExpressionVisitor v(currentContext());
     v.visitNode(node->value);
     if ( node->value ) {
-        TypePtr<FunctionType> t = currentType<FunctionType>();
-        if ( ! t.unsafeData() ) {
+        if ( ! hasCurrentType() ) {
             KDevelop::Problem *p = new KDevelop::Problem();
             p->setFinalLocation(DocumentRange(document(), SimpleRange(node->startLine, node->startCol, node->endLine, node->endCol)));
             p->setSource(KDevelop::ProblemData::SemanticAnalysis);
@@ -320,8 +325,9 @@ void DeclarationBuilder::visitReturn(ReturnAst* node)
             topContext()->addProblem(ptr);
             return;
         }
+        TypePtr<FunctionType> t = currentType<FunctionType>();
         AbstractType::Ptr encountered = v.lastType();
-        kDebug() << "Found type: " << encountered->toString();
+//         kDebug() << "Found type: " << encountered->toString();
         t->setReturnType(encountered);
     }
 }

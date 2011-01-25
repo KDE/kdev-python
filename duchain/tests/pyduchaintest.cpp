@@ -38,6 +38,7 @@
 #include "astdefaultvisitor.h"
 #include "expressionvisitor.h"
 #include "contextbuilder.h"
+#include <language/duchain/types/functiontype.h>
 
 QTEST_MAIN(PyDUChainTest)
 
@@ -280,6 +281,81 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("funccall_list") << "def foo(): return []; \ncheckme = foo();" << (uint) IntegralTypeExtended::TypeList;
     QTest::newRow("funccall_dict") << "def foo(): return {}; \ncheckme = foo();" << (uint) IntegralTypeExtended::TypeDict;
 //    QTest::newRow("funccall_dict") << "def foo(): return foo; checkme = foo();" << (uint) IntegralType::TypeFunction;
+}
+
+class FunctionStuffTestVisitor : public AstDefaultVisitor {
+public:
+    bool found;
+    TopDUContextPointer ctx;
+    virtual void visitFunctionDefinition(FunctionDefinitionAst* node) {
+        if ( node->name->value != "checkme" ) return;
+        DUContext* current_ctx = ctx->findContext(KDevelop::CursorInRevision(node->startLine, node->startCol));
+        if ( ! current_ctx ) {
+            kDebug() << "No context found, using default.";
+            current_ctx = ctx.data();
+        }
+        QList<Declaration*> decls = current_ctx->findLocalDeclarations(KDevelop::Identifier(node->name->value));
+        QVERIFY(decls.length() == 1);
+        FunctionDeclaration* d = dynamic_cast<FunctionDeclaration*>(decls.last());
+        QVERIFY(d);
+        QVERIFY(d->type<FunctionType>());
+        TypePtr<FunctionType> t = d->type<FunctionType>();
+        kDebug() << "Function type looks like the following: " <<  t->toString();
+        if ( t->toString().length() >= 30 ) {
+            QFAIL("That parameter looks kinda wrong");
+        }
+        else if ( t->returnType() && t->returnType() != IntegralType::TypeNone ) {
+            QFAIL("Return type set, there shouldn't be one " + t->returnType()->toString().data()->toAscii());
+        }
+        else {
+            found = 1;
+        }
+        AstDefaultVisitor::visitFunctionDefinition(node);
+    }
+};
+
+void PyDUChainTest::testFunctionStuff()
+{
+    // None of those functions should have parameters set.
+    QFETCH(QString, code);
+    
+    ReferencedTopDUContext ctx = parse(code.toAscii());
+    QVERIFY(ctx);
+    QVERIFY(m_ast);
+    
+    DUChainWriteLocker lock(DUChain::lock());
+    FunctionStuffTestVisitor t;
+    t.found = false;
+    t.ctx = ctx;
+    t.visitCode(m_ast);
+    QVERIFY(t.found);
+}
+
+void PyDUChainTest::testFunctionStuff_data()
+{
+    QTest::addColumn<QString>("code");
+    
+    QTest::newRow("simple") << "def checkme(par): return;";
+    QTest::newRow("scope_var") << "def checkme(par): var = 5; return;";
+    QTest::newRow("class") << "class cls():\n\tdef checkme(par):\t\tvar = 3; more_var = 5; return;";
+    QTest::newRow("class_with_members") << "class cls():\n\tfoo = '3'\n\tbar = 5\n\tdef checkme(par):\t\tvar = 3; more_var = 5; return;";
+    QTest::newRow("class_with_more_stuff") << "class cls():\n\tfoo = '3'\n\tbar = 5\n\tdef foo(par, p, t): return;\n\tdef checkme(par):\t\tvar = 3; more_var = 5; return;";
+    QTest::newRow("complex_example") << "class KDevelopNodeVisitor(ast.NodeVisitor):\n\
+    basenode = etree.Element(\"pythonast\")\n\
+    currentnode = None\n\
+    nodecnt = 0\n\
+    childNodeMap = {}\n\
+    def fooOobar():\n\
+        super(KDevelopNodeVisitor, self).__init__(*arg, **args)\n\
+        self.currentnode = self.basenode\n\
+    def checkme(par):\n\
+        self.nodecnt += 1\n\
+        self.childNodeMap[node] = self.nodecnt\n\
+        node_xmlrepr = etree.Element(node.__class__.__name__ + \"Ast\")\n\
+        node_xmlrepr.set('nodecnt', str(self.nodecnt))\n\
+        self.currentnode.append(node_xmlrepr)\n\
+        save_currentnode = self.currentnode\n\
+        self.currentnode = node_xmlrepr\n";
 }
 
 void PyDUChainTest::testImportDeclarations() {

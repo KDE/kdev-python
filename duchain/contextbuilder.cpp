@@ -256,7 +256,7 @@ void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     Ast* first = node->body.first();
     Ast* last = node->body.last();
     Q_ASSERT(first->hasUsefulRangeInformation); // TODO remove this
-    RangeInRevision range(RangeInRevision(first->startLine, first->startCol, last->endLine, last->endCol + 100000));
+    RangeInRevision range(RangeInRevision(first->startLine, first->startCol, last->endLine, last->endCol));
     
     if ( node->arguments && node->arguments->arguments.length() )
     {
@@ -266,7 +266,7 @@ void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         scol = node->arguments->arguments.first()->startCol;
         ecol = node->arguments->arguments.last()->endCol;
         
-        RangeInRevision range(sline, scol, eline, ecol+100000);
+        RangeInRevision range(sline, scol, eline, ecol);
         Q_ASSERT(range.isValid());
         DUContext* funcctx = openContext( node->arguments, range, DUContext::Function, node->name);
         kDebug() << funcctx;
@@ -276,7 +276,9 @@ void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         m_importedParentContexts.append( funcctx );
     }
     
+    // Done building the function declaration, start building the body now
     DUContext* ctx = openContext(first, range, DUContext::Function, identifierForNode( node->name ) );
+    currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));
     kDebug() << " +++ opening context (function definition): " << range.castToSimpleRange();
     addImportedContexts();
     

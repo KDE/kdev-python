@@ -14,6 +14,13 @@ import types
 import sys
 import re
 
+def func():
+    bar = 3 + 5;
+    return bar
+
+some_variable = func()
+print some_variable
+
 class KDevelopNodeVisitor(ast.NodeVisitor):
     basenode = etree.Element("pythonast")
     currentnode = None

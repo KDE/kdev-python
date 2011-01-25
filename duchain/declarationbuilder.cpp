@@ -121,7 +121,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     
     Declaration* dec = 0;
     
-    kDebug() << "VARIABLE CONTEXT: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange() << currentContext()->type();
+    kDebug() << "VARIABLE CONTEXT: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange() << currentContext()->type() << DUContext::Class;
     
     if ( currentContext() && currentContext()->type() == DUContext::Class ) {
         kDebug() << "Creating class member declaration for " << node->value << node->startLine << ":" << node->startCol;
@@ -139,17 +139,17 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     } else {
         qDebug() << "Existing declarations are not empty. count: " << existingDeclarations.count();
         dec = existingDeclarations.last();
-        AbstractType::Ptr lasttype = dec->abstractType();
-        AbstractType::Ptr type = lastType();
-        if(type){
-            if ( lasttype && !lasttype->equals(type.unsafeData()) ) {
-                IntegralType::Ptr integral = IntegralType::Ptr::dynamicCast(lasttype);
+        AbstractType::Ptr currentType = dec->abstractType();
+        AbstractType::Ptr newType = lastType();
+        if ( newType ) {
+            if ( currentType && !currentType->equals(newType.unsafeData()) ) {
+                IntegralType::Ptr integral = IntegralType::Ptr::dynamicCast(currentType);
                 if ( integral &&  integral->dataType() == IntegralType::TypeMixed ) {
-                    dec->setType(type);
-                }else{
-                    UnsureType::Ptr unsure = UnsureType::Ptr::dynamicCast(lasttype);
+                    dec->setType(newType);
+                } else {
+                    UnsureType::Ptr unsure = UnsureType::Ptr::dynamicCast(currentType);
                     // maybe it's referenced?
-                    ReferenceType::Ptr rType = ReferenceType::Ptr::dynamicCast(lasttype);
+                    ReferenceType::Ptr rType = ReferenceType::Ptr::dynamicCast(currentType);
                     if ( !unsure && rType ) {
                         unsure = UnsureType::Ptr::dynamicCast(rType->baseType());
                     }
@@ -161,7 +161,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
                             unsure->addType(dec->indexedType());
                         }
                     }
-                    unsure->addType(type->indexed());
+                    unsure->addType(newType->indexed());
                     if ( rType ) {
                         rType->setBaseType(AbstractType::Ptr(unsure.unsafeData()));
                         dec->setType(rType);
@@ -177,6 +177,9 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
             qDebug() << "Existing declaration with no type.";
         }
     }
+    
+    // clear last encountered type
+    setLastType(AbstractType::Ptr(0));
     
     T* result = dynamic_cast<T*>(dec);
     if ( ! result ) kError() << "variable declaration does not have the expected type";
@@ -288,7 +291,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
     kDebug() << "opening function definition";
     FunctionDeclaration* dec = openDeclaration<FunctionDeclaration>( node->name, node );
-
+    eventuallyAssignInternalContext();
     FunctionType::Ptr type(new FunctionType);
     
     {
@@ -297,7 +300,9 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     }
 
     openType(type);
+    kDebug() << " <<< open function type";
     ContextBuilder::visitFunctionDefinition( node );
+    kDebug() << " >>> close function type";
     closeType();
     
     kDebug() << "Got function return type: " << ( type->returnType().unsafeData() ? type->returnType()->toString() : "<none set>" );
@@ -307,6 +312,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     }
     
     kDebug() << dec->toString();
+    kDebug() << dec->type<FunctionType>()->arguments().toSet();
     
     closeDeclaration();
 }
@@ -359,13 +365,21 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         NameAst* realParam;
         foreach (ExpressionAst* expression, node->arguments) {
             realParam = dynamic_cast<NameAst*>(expression);
+            
             if ( realParam && realParam->context == ExpressionAst::Parameter ) {
+                ExpressionVisitor t(currentContext());
+                t.visitExpression(expression);
+                
                 Declaration* paramDeclaration = visitVariableDeclaration<Declaration>(realParam);
+                paramDeclaration->setAbstractType(t.lastType());
+                
                 function->addDefaultParameter(IndexedString(realParam->identifier->value));
                 FunctionType::Ptr type = currentType<FunctionType>();
-                if ( type && paramDeclaration ) type->addArgument(paramDeclaration->abstractType());
-            }
-            else {
+                if ( type && paramDeclaration ) {
+                    kDebug() << "Adding argument: " << realParam->identifier->value << paramDeclaration->abstractType();
+                    type->addArgument(paramDeclaration->abstractType());
+                }
+            } else {
                 DeclarationBuilderBase::visitArguments(node);
             }
         }

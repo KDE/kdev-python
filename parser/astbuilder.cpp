@@ -81,6 +81,8 @@ public:
         ast = new CodeAst();
         nodeStack.push(ast);
         ast->body = visitNodeList<_stmt, Ast>(syntaxtree->v.Module.body);
+        nodeStack.pop();
+        Q_ASSERT(nodeStack.isEmpty());
     }
 private:
     QStack<Ast*> nodeStack;
@@ -112,92 +114,92 @@ private:
         case BoolOp_kind: {
                 BooleanOperationAst* v = new BooleanOperationAst(parent());
                 v->type = (ExpressionAst::BooleanOperationTypes) node->v.BoolOp.op;
-                v->values = visitNodeList<_expr, ExpressionAst>(node->v.BoolOp.values);
+                nodeStack.push(v); v->values = visitNodeList<_expr, ExpressionAst>(node->v.BoolOp.values); nodeStack.pop();
                 result = v;
                 break;
             }
         case BinOp_kind: {
                 BinaryOperationAst* v = new BinaryOperationAst(parent());
                 v->type = (ExpressionAst::OperatorTypes) node->v.BinOp.op;
-                v->lhs = static_cast<ExpressionAst*>(visitNode(node->v.BinOp.left));
-                v->rhs = static_cast<ExpressionAst*>(visitNode(node->v.BinOp.right));
+                nodeStack.push(v); v->lhs = static_cast<ExpressionAst*>(visitNode(node->v.BinOp.left)); nodeStack.pop();
+                nodeStack.push(v); v->rhs = static_cast<ExpressionAst*>(visitNode(node->v.BinOp.right)); nodeStack.pop();
                 result = v;
                 break;
             }
         case UnaryOp_kind: {
                 UnaryOperationAst* v = new UnaryOperationAst(parent());
                 v->type = (ExpressionAst::UnaryOperatorTypes) node->v.UnaryOp.op;
-                v->operand = static_cast<ExpressionAst*>(visitNode(node->v.UnaryOp.operand));
+                nodeStack.push(v); v->operand = static_cast<ExpressionAst*>(visitNode(node->v.UnaryOp.operand)); nodeStack.pop();
                 result = v;
                 break;
             }
         case Lambda_kind: {
                 LambdaAst* v = new LambdaAst(parent());
-                v->arguments = static_cast<ArgumentsAst*>(visitNode(node->v.Lambda.args));
-                v->body = static_cast<ExpressionAst*>(visitNode(node->v.Lambda.body));
+                nodeStack.push(v); v->arguments = static_cast<ArgumentsAst*>(visitNode(node->v.Lambda.args)); nodeStack.pop();
+                nodeStack.push(v); v->body = static_cast<ExpressionAst*>(visitNode(node->v.Lambda.body)); nodeStack.pop();
                 result = v;
                 break;
             }
         case IfExp_kind: {
                 IfExpressionAst* v = new IfExpressionAst(parent());
-                v->condition = static_cast<ExpressionAst*>(visitNode(node->v.IfExp.test));
-                v->body = static_cast<ExpressionAst*>(visitNode(node->v.IfExp.body));
-                v->orelse = static_cast<ExpressionAst*>(visitNode(node->v.IfExp.orelse));
+                nodeStack.push(v); v->condition = static_cast<ExpressionAst*>(visitNode(node->v.IfExp.test)); nodeStack.pop();
+                nodeStack.push(v); v->body = static_cast<ExpressionAst*>(visitNode(node->v.IfExp.body)); nodeStack.pop();
+                nodeStack.push(v); v->orelse = static_cast<ExpressionAst*>(visitNode(node->v.IfExp.orelse)); nodeStack.pop();
                 result = v;
                 break;
             }
         case Dict_kind: {
                 DictAst* v = new DictAst(parent());
-                v->keys = visitNodeList<_expr, ExpressionAst>(node->v.Dict.keys);
-                v->values = visitNodeList<_expr, ExpressionAst>(node->v.Dict.values);
+                nodeStack.push(v); v->keys = visitNodeList<_expr, ExpressionAst>(node->v.Dict.keys); nodeStack.pop();
+                nodeStack.push(v); v->values = visitNodeList<_expr, ExpressionAst>(node->v.Dict.values); nodeStack.pop();
                 result = v;
                 break;
             }
         case ListComp_kind: {
                 ListComprehensionAst* v = new ListComprehensionAst(parent());
-                v->element = static_cast<ExpressionAst*>(visitNode(node->v.ListComp.elt));
-                v->generators = visitNodeList<_comprehension, ComprehensionAst>(node->v.ListComp.generators);
+                nodeStack.push(v); v->element = static_cast<ExpressionAst*>(visitNode(node->v.ListComp.elt)); nodeStack.pop();
+                nodeStack.push(v); v->generators = visitNodeList<_comprehension, ComprehensionAst>(node->v.ListComp.generators); nodeStack.pop();
                 result = v;
                 break;
             }
         case GeneratorExp_kind: {
                 GeneratorExpressionAst* v = new GeneratorExpressionAst(parent());
-                v->element = static_cast<ExpressionAst*>(visitNode(node->v.GeneratorExp.elt));
-                v->generators = visitNodeList<_comprehension, ComprehensionAst>(node->v.GeneratorExp.generators);
+                nodeStack.push(v); v->element = static_cast<ExpressionAst*>(visitNode(node->v.GeneratorExp.elt)); nodeStack.pop();
+                nodeStack.push(v); v->generators = visitNodeList<_comprehension, ComprehensionAst>(node->v.GeneratorExp.generators); nodeStack.pop();
                 result = v;
                 break;
             }
         case Yield_kind: {
                 YieldAst* v = new YieldAst(parent());
-                v->value = static_cast<ExpressionAst*>(visitNode(node->v.Yield.value));
+                nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.Yield.value)); nodeStack.pop();
                 result = v;
                 break;
             }
         case Compare_kind: {
                 CompareAst* v = new CompareAst(parent());
-                v->leftmostElement = static_cast<ExpressionAst*>(visitNode(node->v.Compare.left));
+                nodeStack.push(v); v->leftmostElement = static_cast<ExpressionAst*>(visitNode(node->v.Compare.left)); nodeStack.pop();
 
                 for ( int _i = 0; _i < node->v.Compare.ops->size; _i++ ) {
                     v->operators.append((ExpressionAst::ComparisonOperatorTypes) node->v.Compare.ops->elements[_i]);
                 }
 
-                v->comparands = visitNodeList<_expr, ExpressionAst>(node->v.Compare.comparators);
+                nodeStack.push(v); v->comparands = visitNodeList<_expr, ExpressionAst>(node->v.Compare.comparators); nodeStack.pop();
                 result = v;
                 break;
             }
         case Call_kind: {
                 CallAst* v = new CallAst(parent());
-                v->function = static_cast<ExpressionAst*>(visitNode(node->v.Call.func));
-                v->arguments = visitNodeList<_expr, ExpressionAst>(node->v.Call.args);
-                v->keywords = visitNodeList<_keyword, KeywordAst>(node->v.Call.keywords);
-                v->keywordArguments = static_cast<ExpressionAst*>(visitNode(node->v.Call.kwargs));
-                v->starArguments = static_cast<ExpressionAst*>(visitNode(node->v.Call.starargs));
+                nodeStack.push(v); v->function = static_cast<ExpressionAst*>(visitNode(node->v.Call.func)); nodeStack.pop();
+                nodeStack.push(v); v->arguments = visitNodeList<_expr, ExpressionAst>(node->v.Call.args); nodeStack.pop();
+                nodeStack.push(v); v->keywords = visitNodeList<_keyword, KeywordAst>(node->v.Call.keywords); nodeStack.pop();
+                nodeStack.push(v); v->keywordArguments = static_cast<ExpressionAst*>(visitNode(node->v.Call.kwargs)); nodeStack.pop();
+                nodeStack.push(v); v->starArguments = static_cast<ExpressionAst*>(visitNode(node->v.Call.starargs)); nodeStack.pop();
                 result = v;
                 break;
             }
         case Repr_kind: {
                 ReprAst* v = new ReprAst(parent());
-                v->value = static_cast<ExpressionAst*>(visitNode(node->v.Repr.value));
+                nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.Repr.value)); nodeStack.pop();
                 result = v;
                 break;
             }
@@ -213,7 +215,6 @@ private:
             }
         case Attribute_kind: {
                 AttributeAst* v = new AttributeAst(parent());
-                v->value = static_cast<ExpressionAst*>(visitNode(node->v.Attribute.value));
                 v->attribute = node->v.Attribute.attr ? new Python::Identifier(PyString_AsString(PyObject_Str(node->v.Attribute.attr))) : 0;
                 if ( v->attribute ) {
                     v->attribute->startCol = node->col_offset; v->startCol = v->attribute->startCol;
@@ -222,14 +223,15 @@ private:
                     v->attribute->endLine = node->lineno - 1;  v->endLine = v->attribute->endLine;
                     ranges_copied = true;
                 }
+                nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.Attribute.value)); nodeStack.pop();
                 v->context = (ExpressionAst::Context) node->v.Attribute.ctx;
                 result = v;
                 break;
             }
         case Subscript_kind: {
                 SubscriptAst* v = new SubscriptAst(parent());
-                v->value = static_cast<ExpressionAst*>(visitNode(node->v.Subscript.value));
-                v->slice = static_cast<SliceAst*>(visitNode(node->v.Subscript.slice));
+                nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.Subscript.value)); nodeStack.pop();
+                nodeStack.push(v); v->slice = static_cast<SliceAst*>(visitNode(node->v.Subscript.slice)); nodeStack.pop();
                 v->context = (ExpressionAst::Context) node->v.Subscript.ctx;
                 result = v;
                 break;
@@ -250,14 +252,14 @@ private:
             }
         case List_kind: {
                 ListAst* v = new ListAst(parent());
-                v->elements = visitNodeList<_expr, ExpressionAst>(node->v.List.elts);
+                nodeStack.push(v); v->elements = visitNodeList<_expr, ExpressionAst>(node->v.List.elts); nodeStack.pop();
                 v->context = (ExpressionAst::Context) node->v.List.ctx;
                 result = v;
                 break;
             }
         case Tuple_kind: {
                 TupleAst* v = new TupleAst(parent());
-                v->elements = visitNodeList<_expr, ExpressionAst>(node->v.Tuple.elts);
+                nodeStack.push(v); v->elements = visitNodeList<_expr, ExpressionAst>(node->v.Tuple.elts); nodeStack.pop();
                 v->context = (ExpressionAst::Context) node->v.Tuple.ctx;
                 result = v;
                 break;
@@ -312,9 +314,9 @@ private:
         switch ( node->kind ) {
         case ExceptHandler_kind: {
                 ExceptionHandlerAst* v = new ExceptionHandlerAst(parent());
-                v->type = static_cast<ExpressionAst*>(visitNode(node->v.ExceptHandler.type));
-                v->name = static_cast<ExpressionAst*>(visitNode(node->v.ExceptHandler.name));
-                v->body = visitNodeList<_stmt, Ast>(node->v.ExceptHandler.body);
+                nodeStack.push(v); v->type = static_cast<ExpressionAst*>(visitNode(node->v.ExceptHandler.type)); nodeStack.pop();
+                nodeStack.push(v); v->name = static_cast<ExpressionAst*>(visitNode(node->v.ExceptHandler.name)); nodeStack.pop();
+                nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.ExceptHandler.body); nodeStack.pop();
                 result = v;
                 break;
             }
@@ -354,9 +356,9 @@ private:
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
         if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
                 ComprehensionAst* v = new ComprehensionAst(parent());
-            v->target = static_cast<ExpressionAst*>(visitNode(node->target));
-            v->iterator = static_cast<ExpressionAst*>(visitNode(node->iter));
-            v->conditions = visitNodeList<_expr, ExpressionAst>(node->ifs);
+            nodeStack.push(v); v->target = static_cast<ExpressionAst*>(visitNode(node->target)); nodeStack.pop();
+            nodeStack.push(v); v->iterator = static_cast<ExpressionAst*>(visitNode(node->iter)); nodeStack.pop();
+            nodeStack.push(v); v->conditions = visitNodeList<_expr, ExpressionAst>(node->ifs); nodeStack.pop();
         return v;
     }
 
@@ -392,15 +394,12 @@ private:
         switch ( node->kind ) {
         case Expr_kind: {
                 ExpressionAst* v = new ExpressionAst(parent());
-                v->value = static_cast<ExpressionAst*>(visitNode(node->v.Expr.value));
+                nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.Expr.value)); nodeStack.pop();
                 result = v;
                 break;
             }
         case FunctionDef_kind: {
                 FunctionDefinitionAst* v = new FunctionDefinitionAst(parent());
-                v->arguments = static_cast<ArgumentsAst*>(visitNode(node->v.FunctionDef.args));
-                v->body = visitNodeList<_stmt, Ast>(node->v.FunctionDef.body);
-                v->decorators = visitNodeList<_expr, NameAst>(node->v.FunctionDef.decorator_list);
                 v->name = node->v.FunctionDef.name ? new Python::Identifier(PyString_AsString(PyObject_Str(node->v.FunctionDef.name))) : 0;
                 if ( v->name ) {
                     v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
@@ -409,14 +408,14 @@ private:
                     v->name->endLine = node->lineno - 1;  v->endLine = v->name->endLine;
                     ranges_copied = true;
                 }
+                nodeStack.push(v); v->arguments = static_cast<ArgumentsAst*>(visitNode(node->v.FunctionDef.args)); nodeStack.pop();
+                nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.FunctionDef.body); nodeStack.pop();
+                nodeStack.push(v); v->decorators = visitNodeList<_expr, NameAst>(node->v.FunctionDef.decorator_list); nodeStack.pop();
                 result = v;
                 break;
             }
         case ClassDef_kind: {
                 ClassDefinitionAst* v = new ClassDefinitionAst(parent());
-                v->baseClasses = visitNodeList<_expr, ExpressionAst>(node->v.ClassDef.bases);
-                v->body = visitNodeList<_stmt, Ast>(node->v.ClassDef.body);
-                v->decorators = visitNodeList<_expr, ExpressionAst>(node->v.ClassDef.decorator_list);
                 v->name = node->v.ClassDef.name ? new Python::Identifier(PyString_AsString(PyObject_Str(node->v.ClassDef.name))) : 0;
                 if ( v->name ) {
                     v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
@@ -425,108 +424,111 @@ private:
                     v->name->endLine = node->lineno - 1;  v->endLine = v->name->endLine;
                     ranges_copied = true;
                 }
+                nodeStack.push(v); v->baseClasses = visitNodeList<_expr, ExpressionAst>(node->v.ClassDef.bases); nodeStack.pop();
+                nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.ClassDef.body); nodeStack.pop();
+                nodeStack.push(v); v->decorators = visitNodeList<_expr, ExpressionAst>(node->v.ClassDef.decorator_list); nodeStack.pop();
                 result = v;
                 break;
             }
         case Return_kind: {
                 ReturnAst* v = new ReturnAst(parent());
-                v->value = static_cast<ExpressionAst*>(visitNode(node->v.Return.value));
+                nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.Return.value)); nodeStack.pop();
                 result = v;
                 break;
             }
         case Delete_kind: {
                 DeleteAst* v = new DeleteAst(parent());
-                v->targets = visitNodeList<_expr, ExpressionAst>(node->v.Delete.targets);
+                nodeStack.push(v); v->targets = visitNodeList<_expr, ExpressionAst>(node->v.Delete.targets); nodeStack.pop();
                 result = v;
                 break;
             }
         case Assign_kind: {
                 AssignmentAst* v = new AssignmentAst(parent());
-                v->targets = visitNodeList<_expr, ExpressionAst>(node->v.Assign.targets);
-                v->value = static_cast<ExpressionAst*>(visitNode(node->v.Assign.value));
+                nodeStack.push(v); v->targets = visitNodeList<_expr, ExpressionAst>(node->v.Assign.targets); nodeStack.pop();
+                nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.Assign.value)); nodeStack.pop();
                 result = v;
                 break;
             }
         case AugAssign_kind: {
                 AugmentedAssignmentAst* v = new AugmentedAssignmentAst(parent());
-                v->target = static_cast<ExpressionAst*>(visitNode(node->v.AugAssign.target));
+                nodeStack.push(v); v->target = static_cast<ExpressionAst*>(visitNode(node->v.AugAssign.target)); nodeStack.pop();
                 v->op = (ExpressionAst::OperatorTypes) node->v.AugAssign.op;
-                v->value = static_cast<ExpressionAst*>(visitNode(node->v.AugAssign.value));
+                nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.AugAssign.value)); nodeStack.pop();
                 result = v;
                 break;
             }
         case Print_kind: {
                 PrintAst* v = new PrintAst(parent());
-                v->destination = static_cast<ExpressionAst*>(visitNode(node->v.Print.dest));
-                v->values = visitNodeList<_expr, ExpressionAst>(node->v.Print.values);
+                nodeStack.push(v); v->destination = static_cast<ExpressionAst*>(visitNode(node->v.Print.dest)); nodeStack.pop();
+                nodeStack.push(v); v->values = visitNodeList<_expr, ExpressionAst>(node->v.Print.values); nodeStack.pop();
                 v->newline = node->v.Print.nl;
                 result = v;
                 break;
             }
         case For_kind: {
                 ForAst* v = new ForAst(parent());
-                v->target = static_cast<ExpressionAst*>(visitNode(node->v.For.target));
-                v->iterator = static_cast<ExpressionAst*>(visitNode(node->v.For.iter));
-                v->body = visitNodeList<_stmt, Ast>(node->v.For.body);
-                v->orelse = visitNodeList<_stmt, Ast>(node->v.For.orelse);
+                nodeStack.push(v); v->target = static_cast<ExpressionAst*>(visitNode(node->v.For.target)); nodeStack.pop();
+                nodeStack.push(v); v->iterator = static_cast<ExpressionAst*>(visitNode(node->v.For.iter)); nodeStack.pop();
+                nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.For.body); nodeStack.pop();
+                nodeStack.push(v); v->orelse = visitNodeList<_stmt, Ast>(node->v.For.orelse); nodeStack.pop();
                 result = v;
                 break;
             }
         case While_kind: {
                 WhileAst* v = new WhileAst(parent());
-                v->condition = static_cast<ExpressionAst*>(visitNode(node->v.While.test));
-                v->body = visitNodeList<_stmt, Ast>(node->v.While.body);
-                v->orelse = visitNodeList<_stmt, Ast>(node->v.While.orelse);
+                nodeStack.push(v); v->condition = static_cast<ExpressionAst*>(visitNode(node->v.While.test)); nodeStack.pop();
+                nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.While.body); nodeStack.pop();
+                nodeStack.push(v); v->orelse = visitNodeList<_stmt, Ast>(node->v.While.orelse); nodeStack.pop();
                 result = v;
                 break;
             }
         case If_kind: {
                 IfAst* v = new IfAst(parent());
-                v->condition = static_cast<ExpressionAst*>(visitNode(node->v.If.test));
-                v->body = visitNodeList<_stmt, Ast>(node->v.If.body);
-                v->orelse = visitNodeList<_stmt, Ast>(node->v.If.orelse);
+                nodeStack.push(v); v->condition = static_cast<ExpressionAst*>(visitNode(node->v.If.test)); nodeStack.pop();
+                nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.If.body); nodeStack.pop();
+                nodeStack.push(v); v->orelse = visitNodeList<_stmt, Ast>(node->v.If.orelse); nodeStack.pop();
                 result = v;
                 break;
             }
         case With_kind: {
                 WithAst* v = new WithAst(parent());
-                v->contextExpression = static_cast<ExpressionAst*>(visitNode(node->v.With.context_expr));
-                v->optionalVars = static_cast<ExpressionAst*>(visitNode(node->v.With.optional_vars));
-                v->body = visitNodeList<_stmt, Ast>(node->v.With.body);
+                nodeStack.push(v); v->contextExpression = static_cast<ExpressionAst*>(visitNode(node->v.With.context_expr)); nodeStack.pop();
+                nodeStack.push(v); v->optionalVars = static_cast<ExpressionAst*>(visitNode(node->v.With.optional_vars)); nodeStack.pop();
+                nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.With.body); nodeStack.pop();
                 result = v;
                 break;
             }
         case Raise_kind: {
                 RaiseAst* v = new RaiseAst(parent());
-                v->type = static_cast<ExpressionAst*>(visitNode(node->v.Raise.type));
+                nodeStack.push(v); v->type = static_cast<ExpressionAst*>(visitNode(node->v.Raise.type)); nodeStack.pop();
                 result = v;
                 break;
             }
         case TryExcept_kind: {
                 TryExceptAst* v = new TryExceptAst(parent());
-                v->body = visitNodeList<_stmt, Ast>(node->v.TryExcept.body);
-                v->orelse = visitNodeList<_stmt, Ast>(node->v.TryExcept.orelse);
-                v->handlers = visitNodeList<_excepthandler, ExceptionHandlerAst>(node->v.TryExcept.handlers);
+                nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.TryExcept.body); nodeStack.pop();
+                nodeStack.push(v); v->orelse = visitNodeList<_stmt, Ast>(node->v.TryExcept.orelse); nodeStack.pop();
+                nodeStack.push(v); v->handlers = visitNodeList<_excepthandler, ExceptionHandlerAst>(node->v.TryExcept.handlers); nodeStack.pop();
                 result = v;
                 break;
             }
         case TryFinally_kind: {
                 TryFinallyAst* v = new TryFinallyAst(parent());
-                v->body = visitNodeList<_stmt, Ast>(node->v.TryFinally.body);
-                v->finalbody = visitNodeList<_stmt, Ast>(node->v.TryFinally.finalbody);
+                nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.TryFinally.body); nodeStack.pop();
+                nodeStack.push(v); v->finalbody = visitNodeList<_stmt, Ast>(node->v.TryFinally.finalbody); nodeStack.pop();
                 result = v;
                 break;
             }
         case Assert_kind: {
                 AssertionAst* v = new AssertionAst(parent());
-                v->condition = static_cast<ExpressionAst*>(visitNode(node->v.Assert.test));
-                v->message = static_cast<ExpressionAst*>(visitNode(node->v.Assert.msg));
+                nodeStack.push(v); v->condition = static_cast<ExpressionAst*>(visitNode(node->v.Assert.test)); nodeStack.pop();
+                nodeStack.push(v); v->message = static_cast<ExpressionAst*>(visitNode(node->v.Assert.msg)); nodeStack.pop();
                 result = v;
                 break;
             }
         case Import_kind: {
                 ImportAst* v = new ImportAst(parent());
-                v->names = visitNodeList<_alias, AliasAst>(node->v.Import.names);
+                nodeStack.push(v); v->names = visitNodeList<_alias, AliasAst>(node->v.Import.names); nodeStack.pop();
                 result = v;
                 break;
             }
@@ -540,16 +542,16 @@ private:
                     v->module->endLine = node->lineno - 1;  v->endLine = v->module->endLine;
                     ranges_copied = true;
                 }
-                v->names = visitNodeList<_alias, AliasAst>(node->v.ImportFrom.names);
+                nodeStack.push(v); v->names = visitNodeList<_alias, AliasAst>(node->v.ImportFrom.names); nodeStack.pop();
                 v->level = node->v.ImportFrom.level;
                 result = v;
                 break;
             }
         case Exec_kind: {
                 ExecAst* v = new ExecAst(parent());
-                v->body = static_cast<ExpressionAst*>(visitNode(node->v.Exec.body));
-                v->globals = static_cast<ExpressionAst*>(visitNode(node->v.Exec.globals));
-                v->locals = static_cast<ExpressionAst*>(visitNode(node->v.Exec.locals));
+                nodeStack.push(v); v->body = static_cast<ExpressionAst*>(visitNode(node->v.Exec.body)); nodeStack.pop();
+                nodeStack.push(v); v->globals = static_cast<ExpressionAst*>(visitNode(node->v.Exec.globals)); nodeStack.pop();
+                nodeStack.push(v); v->locals = static_cast<ExpressionAst*>(visitNode(node->v.Exec.locals)); nodeStack.pop();
                 result = v;
                 break;
             }
@@ -631,21 +633,21 @@ private:
         switch ( node->kind ) {
         case Slice_kind: {
                 SliceAst* v = new SliceAst(parent());
-                v->lower = static_cast<ExpressionAst*>(visitNode(node->v.Slice.lower));
-                v->upper = static_cast<ExpressionAst*>(visitNode(node->v.Slice.upper));
-                v->step = static_cast<ExpressionAst*>(visitNode(node->v.Slice.step));
+                nodeStack.push(v); v->lower = static_cast<ExpressionAst*>(visitNode(node->v.Slice.lower)); nodeStack.pop();
+                nodeStack.push(v); v->upper = static_cast<ExpressionAst*>(visitNode(node->v.Slice.upper)); nodeStack.pop();
+                nodeStack.push(v); v->step = static_cast<ExpressionAst*>(visitNode(node->v.Slice.step)); nodeStack.pop();
                 result = v;
                 break;
             }
         case ExtSlice_kind: {
                 ExtendedSliceAst* v = new ExtendedSliceAst(parent());
-                v->dims = visitNodeList<_slice, SliceAst>(node->v.ExtSlice.dims);
+                nodeStack.push(v); v->dims = visitNodeList<_slice, SliceAst>(node->v.ExtSlice.dims); nodeStack.pop();
                 result = v;
                 break;
             }
         case Index_kind: {
                 IndexAst* v = new IndexAst(parent());
-                v->value = static_cast<ExpressionAst*>(visitNode(node->v.Index.value));
+                nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.Index.value)); nodeStack.pop();
                 result = v;
                 break;
             }
@@ -690,10 +692,10 @@ private:
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
         if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
                 ArgumentsAst* v = new ArgumentsAst(parent());
-            v->arguments = visitNodeList<_expr, ExpressionAst>(node->args);
-            v->defaultValues = visitNodeList<_expr, ExpressionAst>(node->defaults);
             v->vararg = node->vararg ? new Python::Identifier(PyString_AsString(PyObject_Str(node->vararg))) : 0;
             v->kwarg = node->kwarg ? new Python::Identifier(PyString_AsString(PyObject_Str(node->kwarg))) : 0;
+            nodeStack.push(v); v->arguments = visitNodeList<_expr, ExpressionAst>(node->args); nodeStack.pop();
+            nodeStack.push(v); v->defaultValues = visitNodeList<_expr, ExpressionAst>(node->defaults); nodeStack.pop();
         return v;
     }
 
@@ -703,7 +705,7 @@ private:
         if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
                 KeywordAst* v = new KeywordAst(parent());
             v->argumentName = node->arg ? new Python::Identifier(PyString_AsString(PyObject_Str(node->arg))) : 0;
-            v->value = static_cast<ExpressionAst*>(visitNode(node->value));
+            nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->value)); nodeStack.pop();
         return v;
     }
 

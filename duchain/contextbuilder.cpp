@@ -253,10 +253,7 @@ void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     
     visitNodeList( node->decorators );
     
-    Ast* first = node->body.first();
-    Ast* last = node->body.last();
-    Q_ASSERT(first->hasUsefulRangeInformation); // TODO remove this
-    RangeInRevision range(RangeInRevision(first->startLine, first->startCol, last->endLine, last->endCol));
+    RangeInRevision range(RangeInRevision(node->startLine, node->startCol, node->endLine, node->endCol + 10000));
     
     if ( node->arguments && node->arguments->arguments.length() )
     {
@@ -277,7 +274,7 @@ void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     }
     
     // Done building the function declaration, start building the body now
-    DUContext* ctx = openContext(first, range, DUContext::Function, identifierForNode( node->name ) );
+    DUContext* ctx = openContext(node, range, DUContext::Function, identifierForNode( node->name ) );
     currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));
     kDebug() << " +++ opening context (function definition): " << range.castToSimpleRange();
     addImportedContexts();

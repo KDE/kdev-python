@@ -5,10 +5,10 @@ COMMENT;the CODE statement can be used to add custom code.;;
 
 
 RULE_FOR _stmt;KIND Expr_kind;ACTIONS create|ExpressionAst set|value->ExpressionAst,value;;
-RULE_FOR _stmt;KIND FunctionDef_kind;ACTIONS create|FunctionDefinitionAst set|arguments->ArgumentsAst,args
-    set|body=>Ast,body set|decorators=>NameAst,decorator_list set|name~>name;;
-RULE_FOR _stmt;KIND ClassDef_kind;ACTIONS create|ClassDefinitionAst set|baseClasses=>ExpressionAst,bases set|body=>Ast,body
-    set|decorators=>ExpressionAst,decorator_list set|name~>name;;
+RULE_FOR _stmt;KIND FunctionDef_kind;ACTIONS create|FunctionDefinitionAst set|name~>name set|arguments->ArgumentsAst,args
+    set|body=>Ast,body set|decorators=>NameAst,decorator_list;;
+RULE_FOR _stmt;KIND ClassDef_kind;ACTIONS create|ClassDefinitionAst set|name~>name set|baseClasses=>ExpressionAst,bases set|body=>Ast,body
+    set|decorators=>ExpressionAst,decorator_list;;
 RULE_FOR _stmt;KIND Return_kind;ACTIONS create|ReturnAst set|value->ExpressionAst,value;;
 RULE_FOR _stmt;KIND Delete_kind;ACTIONS create|DeleteAst set|targets=>ExpressionAst,targets;;
 RULE_FOR _stmt;KIND Assign_kind;ACTIONS create|AssignmentAst set|targets=>ExpressionAst,targets set|value->ExpressionAst,value;;
@@ -46,7 +46,7 @@ RULE_FOR _expr;KIND Call_kind;ACTIONS create|CallAst set|function->ExpressionAst
 RULE_FOR _expr;KIND Repr_kind;ACTIONS create|ReprAst set|value->ExpressionAst,value;;
 RULE_FOR _expr;KIND Num_kind;ACTIONS create|NumberAst;;
 RULE_FOR _expr;KIND Str_kind;ACTIONS create|StringAst;;
-RULE_FOR _expr;KIND Attribute_kind;ACTIONS create|AttributeAst set|value->ExpressionAst,value set|attribute~>attr set|context*>Context,ctx;;
+RULE_FOR _expr;KIND Attribute_kind;ACTIONS create|AttributeAst set|attribute~>attr set|value->ExpressionAst,value set|context*>Context,ctx;;
 RULE_FOR _expr;KIND Subscript_kind;ACTIONS create|SubscriptAst set|value->ExpressionAst,value set|slice->SliceAst,slice set|context*>Context,ctx;;
 RULE_FOR _expr;KIND Name_kind;ACTIONS create|NameAst set|identifier~>id set|context*>Context,ctx;;
 RULE_FOR _expr;KIND List_kind;ACTIONS create|ListAst set|elements=>ExpressionAst,elts set|context*>Context,ctx;;
@@ -59,6 +59,6 @@ RULE_FOR _slice;KIND Ellipsis_kind;ACTIONS create|EllipsisAst;;
 
 RULE_FOR _comprehension;KIND any;ACTIONS create|ComprehensionAst set|target->ExpressionAst,target set|iterator->ExpressionAst,iter set|conditions=>ExpressionAst,ifs;;
 RULE_FOR _excepthandler;KIND ExceptHandler_kind;ACTIONS create|ExceptionHandlerAst set|type->ExpressionAst,type set|name->ExpressionAst,name set|body=>Ast,body;;
-RULE_FOR _arguments;KIND any;ACTIONS create|ArgumentsAst set|arguments=>ExpressionAst,args set|defaultValues=>ExpressionAst,defaults set|vararg~>vararg set|kwarg~>kwarg;;
+RULE_FOR _arguments;KIND any;ACTIONS create|ArgumentsAst set|vararg~>vararg set|kwarg~>kwarg set|arguments=>ExpressionAst,args set|defaultValues=>ExpressionAst,defaults;;
 RULE_FOR _keyword;KIND any;ACTIONS create|KeywordAst set|argumentName~>arg set|value->ExpressionAst,value;;
 RULE_FOR _alias;KIND any;ACTIONS create|AliasAst set|name~>name set|asName~>asname;;

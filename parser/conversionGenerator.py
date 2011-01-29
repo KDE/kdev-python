@@ -46,11 +46,11 @@ switch_line = '''        case %{KIND}: {
 
 create_ast_line = '''                %{AST_TYPE}* v = new %{AST_TYPE}(parent());'''
 create_identifier_line = '''                v->%{TARGET} = node->v.%{KIND_W/O_SUFFIX}.%{VALUE} ? new Python::Identifier(PyString_AsString(PyObject_Str(node->v.%{KIND_W/O_SUFFIX}.%{VALUE}))) : 0;'''
-set_attribute_line = '''                v->%{TARGET} = static_cast<%{AST_TYPE}*>(visitNode(node->v.%{KIND_W/O_SUFFIX}.%{VALUE}));'''
-resolve_list_line = '''                v->%{TARGET} = visitNodeList<%{PYTHON_AST_TYPE}, %{AST_TYPE}>(node->v.%{KIND_W/O_SUFFIX}.%{VALUE});'''
+set_attribute_line = '''                v->%{TARGET} = nodeStack.push(v); static_cast<%{AST_TYPE}*>(visitNode(node->v.%{KIND_W/O_SUFFIX}.%{VALUE})); nodeStack.pop(v);'''
+resolve_list_line = '''                v->%{TARGET} = nodeStack.push(v); visitNodeList<%{PYTHON_AST_TYPE}, %{AST_TYPE}>(node->v.%{KIND_W/O_SUFFIX}.%{VALUE}); nodeStack.pop();'''
 create_identifier_line_any = '''            v->%{TARGET} = node->%{VALUE} ? new Python::Identifier(PyString_AsString(PyObject_Str(node->%{VALUE}))) : 0;'''
-set_attribute_line_any = '''            v->%{TARGET} = static_cast<%{AST_TYPE}*>(visitNode(node->%{VALUE}));'''
-resolve_list_line_any = '''            v->%{TARGET} = visitNodeList<%{PYTHON_AST_TYPE}, %{AST_TYPE}>(node->%{VALUE});'''
+set_attribute_line_any = '''            v->%{TARGET} = nodeStack.push(v); static_cast<%{AST_TYPE}*>(visitNode(node->%{VALUE})); nodeStack.pop(v);'''
+resolve_list_line_any = '''            v->%{TARGET} = nodeStack.push(v); visitNodeList<%{PYTHON_AST_TYPE}, %{AST_TYPE}>(node->%{VALUE}); nodeStack.pop();'''
 direct_assignment_line = '''                v->%{TARGET} = node->v.%{KIND_W/O_SUFFIX}.%{VALUE};'''
 direct_assignment_line_any = '''                v->%{TARGET} = node->v.%{VALUE};'''
 cast_operator_line = '''                v->%{TARGET} = (ExpressionAst::%{AST_TYPE}) node->v.%{KIND_W/O_SUFFIX}.%{VALUE};'''
@@ -187,6 +187,8 @@ public:
         ast = new CodeAst();
         nodeStack.push(ast);
         ast->body = visitNodeList<_stmt, Ast>(syntaxtree->v.Module.body);
+        nodeStack.pop();
+        Q_ASSERT(nodeStack.isEmpty());
     }
 private:
     QStack<Ast*> nodeStack;

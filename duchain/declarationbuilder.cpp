@@ -126,13 +126,13 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     if ( currentContext() && currentContext()->type() == DUContext::Class ) {
         kDebug() << "Creating class member declaration for " << node->value << node->startLine << ":" << node->startCol;
         kDebug() << "Context type: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
-        dec = openDeclaration<ClassMemberDeclaration>(node, originalAst ? originalAst : node, DeclarationIsDefinition);
+        dec = openDeclaration<ClassMemberDeclaration>(node, originalAst ? originalAst : node);
         closeDeclaration();
         dec->setType(lastType());
         dec->setKind(KDevelop::Declaration::Instance);
     } else if ( existingDeclarations.isEmpty() || existingDeclarations.last()->context() != currentContext() ) {
         kDebug() << "Creating variable declaration for " << node->value << node->startLine << ":" << node->startCol;
-        dec = openDeclaration<T>(node, originalAst ? originalAst : node, DeclarationIsDefinition);
+        dec = openDeclaration<T>(node, originalAst ? originalAst : node);
         closeDeclaration();
         dec->setType(lastType());
         dec->setKind(KDevelop::Declaration::Instance); // everything is an object in python
@@ -348,12 +348,12 @@ void DeclarationBuilder::visitLambda( LambdaAst* node )
 
 void DeclarationBuilder::visitCall(CallAst* node)
 {
-    foreach ( ExpressionAst* currentArgument, node->arguments ) {
-        NameAst* realArgument = dynamic_cast<NameAst*>(currentArgument);
-        if ( realArgument ) {
-            visitVariableDeclaration<Declaration>(realArgument); // some_func(<arg1>, <arg2>)
-        }
-    }
+//     foreach ( ExpressionAst* currentArgument, node->arguments ) {
+//         NameAst* realArgument = dynamic_cast<NameAst*>(currentArgument);
+//         if ( realArgument ) {
+//             visitVariableDeclaration<Declaration>(realArgument); // some_func(<arg1>, <arg2>)
+//         }
+//     }
     Python::AstDefaultVisitor::visitCall(node);
 }
 

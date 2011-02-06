@@ -111,5 +111,5 @@ module Python version "$Revision: 82160 $"
         keyword = (identifier arg, expr value)
 
         -- import name with optional 'as' alias.
-        alias = (identifier name, identifier? asname)
+        alias = (identifier name, identifier? asname, int? lineno, int? col_offset)
 }

@@ -381,6 +381,8 @@ static PyObject* ast2obj_alias(void*);
 static char *alias_fields[]={
         "name",
         "asname",
+        "lineno",
+        "col_offset",
 };
 
 
@@ -943,7 +945,7 @@ static int init_types(void)
         if (!arguments_type) return 0;
         keyword_type = make_type("keyword", &AST_type, keyword_fields, 2);
         if (!keyword_type) return 0;
-        alias_type = make_type("alias", &AST_type, alias_fields, 2);
+        alias_type = make_type("alias", &AST_type, alias_fields, 4);
         if (!alias_type) return 0;
         initialized = 1;
         return 1;
@@ -2096,7 +2098,8 @@ keyword(identifier arg, expr_ty value, PyArena *arena)
 }
 
 alias_ty
-alias(identifier name, identifier asname, int lineno, int col_offset, PyArena *arena)
+alias(identifier name, identifier asname, int lineno, int col_offset, PyArena
+      *arena)
 {
         alias_ty p;
         if (!name) {
@@ -3291,6 +3294,16 @@ ast2obj_alias(void* _o)
         value = ast2obj_identifier(o->asname);
         if (!value) goto failed;
         if (PyObject_SetAttrString(result, "asname", value) == -1)
+                goto failed;
+        Py_DECREF(value);
+        value = ast2obj_int(o->lineno);
+        if (!value) goto failed;
+        if (PyObject_SetAttrString(result, "lineno", value) == -1)
+                goto failed;
+        Py_DECREF(value);
+        value = ast2obj_int(o->col_offset);
+        if (!value) goto failed;
+        if (PyObject_SetAttrString(result, "col_offset", value) == -1)
                 goto failed;
         Py_DECREF(value);
         return result;
@@ -6529,6 +6542,8 @@ obj2ast_alias(PyObject* obj, alias_ty* out, PyArena* arena)
         PyObject* tmp = NULL;
         identifier name;
         identifier asname;
+        int lineno;
+        int col_offset;
 
         if (PyObject_HasAttrString(obj, "name")) {
                 int res;
@@ -6553,7 +6568,29 @@ obj2ast_alias(PyObject* obj, alias_ty* out, PyArena* arena)
         } else {
                 asname = NULL;
         }
-        *out = alias(name, asname, 0, 0, arena);
+        if (PyObject_HasAttrString(obj, "lineno")) {
+                int res;
+                tmp = PyObject_GetAttrString(obj, "lineno");
+                if (tmp == NULL) goto failed;
+                res = obj2ast_int(tmp, &lineno, arena);
+                if (res != 0) goto failed;
+                Py_XDECREF(tmp);
+                tmp = NULL;
+        } else {
+                lineno = 0;
+        }
+        if (PyObject_HasAttrString(obj, "col_offset")) {
+                int res;
+                tmp = PyObject_GetAttrString(obj, "col_offset");
+                if (tmp == NULL) goto failed;
+                res = obj2ast_int(tmp, &col_offset, arena);
+                if (res != 0) goto failed;
+                Py_XDECREF(tmp);
+                tmp = NULL;
+        } else {
+                col_offset = 0;
+        }
+        *out = alias(name, asname, lineno, col_offset, arena);
         return 0;
 failed:
         Py_XDECREF(tmp);

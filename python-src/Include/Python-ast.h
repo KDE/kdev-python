@@ -529,8 +529,9 @@ arguments_ty _Py_arguments(asdl_seq * args, identifier vararg, identifier
                            kwarg, asdl_seq * defaults, PyArena *arena);
 #define keyword(a0, a1, a2) _Py_keyword(a0, a1, a2)
 keyword_ty _Py_keyword(identifier arg, expr_ty value, PyArena *arena);
-#define alias(a0, a1, ln, co, a2) _Py_alias(a0, a1, ln, co, a2)
-alias_ty _Py_alias(identifier name, identifier asname, int lineno, int col_offset, PyArena *arena);
+#define alias(a0, a1, a2, a3, a4) _Py_alias(a0, a1, a2, a3, a4)
+alias_ty _Py_alias(identifier name, identifier asname, int lineno, int
+                   col_offset, PyArena *arena);
 
 PyObject* PyAST_mod2obj(mod_ty t);
 mod_ty PyAST_obj2mod(PyObject* ast, PyArena* arena, int mode);

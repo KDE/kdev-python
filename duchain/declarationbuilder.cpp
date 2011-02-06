@@ -127,13 +127,13 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         kDebug() << "Creating class member declaration for " << node->value << node->startLine << ":" << node->startCol;
         kDebug() << "Context type: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
         dec = openDeclaration<ClassMemberDeclaration>(node, originalAst ? originalAst : node);
-        closeDeclaration();
+        DeclarationBuilderBase::closeDeclaration();
         dec->setType(lastType());
         dec->setKind(KDevelop::Declaration::Instance);
     } else if ( existingDeclarations.isEmpty() || existingDeclarations.last()->context() != currentContext() ) {
         kDebug() << "Creating variable declaration for " << node->value << node->startLine << ":" << node->startCol;
         dec = openDeclaration<T>(node, originalAst ? originalAst : node);
-        closeDeclaration();
+        DeclarationBuilderBase::closeDeclaration();
         dec->setType(lastType());
         dec->setKind(KDevelop::Declaration::Instance); // everything is an object in python
     } else {
@@ -178,9 +178,6 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         }
     }
     
-    // clear last encountered type
-    setLastType(AbstractType::Ptr(0));
-    
     T* result = dynamic_cast<T*>(dec);
     if ( ! result ) kError() << "variable declaration does not have the expected type";
     return result;
@@ -188,13 +185,23 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
 
 void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
 {
-    if ( dynamic_cast<NameAst*>(node->name) ) visitVariableDeclaration<Declaration>(node->name); // except Error as <vardecl>
+    if ( dynamic_cast<NameAst*>(node->name) ) {
+        openType(AbstractType::Ptr(0)); // TODO set exception type
+        setLastType(AbstractType::Ptr(0));
+        visitVariableDeclaration<Declaration>(node->name); // except Error as <vardecl>
+        closeType();
+    }
     DeclarationBuilderBase::visitExceptionHandler(node);
 }
 
 void DeclarationBuilder::visitFor(ForAst* node)
 {
-    if ( node->target->astType == Ast::NameAstType ) visitVariableDeclaration<Declaration>(node->target);
+    if ( node->target->astType == Ast::NameAstType ) {
+        openType(AbstractType::Ptr(0)); // TODO check for what is iterated over
+        setLastType(AbstractType::Ptr(0));
+        visitVariableDeclaration<Declaration>(node->target);
+        closeType();
+    }
     else if ( node->target->astType == Ast::TupleAstType ) {
         foreach ( ExpressionAst* tupleMember, dynamic_cast<TupleAst*>(node->target)->elements ) {
             if ( tupleMember->astType == Ast::NameAstType ) visitVariableDeclaration<Declaration>(tupleMember);
@@ -212,12 +219,15 @@ void DeclarationBuilder::visitImport(ImportAst* node)
         m_importContextsForImportStatement.push(contextptr);
         importedModuleDeclaration* dec;
         kDebug() << ( name->asName ? name->asName->value : QString("no asName") ) << ( name->name ? name->name->value : "no name" );
+        openType(AbstractType::Ptr(0));
+        setLastType(AbstractType::Ptr(0));
         if ( name->asName ) {
             dec = visitVariableDeclaration<importedModuleDeclaration>(name->asName);
         }
         else {
             dec = visitVariableDeclaration<importedModuleDeclaration>(name->name);
         }
+        closeType();
             
         QString moduleName = name->name->value;
         if ( name->asName && name->asName ) 
@@ -226,7 +236,6 @@ void DeclarationBuilder::visitImport(ImportAst* node)
         if ( dec ) {
             DUChainWriteLocker lock(DUChain::lock());
             dec->m_moduleIdentifier = moduleName;
-            dec->setType(IntegralType::Ptr(new IntegralType(IntegralType::TypeMixed)));
         }
         m_importContextsForImportStatement.clear();
     }
@@ -237,18 +246,18 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
     Python::AstDefaultVisitor::visitImportFrom(node);
     foreach ( AliasAst* name, node->names ) {
         importedModuleDeclaration* dec = 0;
+        openType(AbstractType::Ptr(0));
+        setLastType(AbstractType::Ptr(0));
         if ( name->asName ) {
             dec = visitVariableDeclaration<importedModuleDeclaration>(name->asName);
         }
         else {
             dec = visitVariableDeclaration<importedModuleDeclaration>(name->name);
         }
+        closeType();
         if ( dec && name->name && node->module ) {
             dec->m_moduleIdentifier = node->module->value + "." + name->name->value;
             kDebug() << "FromImport module name: " << name->name->value;
-        }
-        if ( dec ) {
-            dec->setType(IntegralType::Ptr(new IntegralType(IntegralType::TypeMixed)));
         }
     }
 }
@@ -282,14 +291,16 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     type->setDeclaration(dec);
     dec->setType(type);
     
+    openType(type);
     DeclarationBuilderBase::visitClassDefinition( node );
+    closeType();
     
     closeDeclaration();
 }
 
 void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
-    kDebug() << "opening function definition";
+    kDebug() << "opening function definition" << node->startLine << node->endLine;
     FunctionDeclaration* dec = openDeclaration<FunctionDeclaration>( node->name, node );
     eventuallyAssignInternalContext();
     FunctionType::Ptr type(new FunctionType);
@@ -301,11 +312,12 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 
     openType(type);
     kDebug() << " <<< open function type";
-    ContextBuilder::visitFunctionDefinition( node );
+    DeclarationBuilderBase::visitFunctionDefinition( node );
     kDebug() << " >>> close function type";
     closeType();
     
     kDebug() << "Got function return type: " << ( type->returnType().unsafeData() ? type->returnType()->toString() : "<none set>" );
+    kDebug() << type->toString();
     {
         DUChainWriteLocker lock(DUChain::lock());
         dec->setType(type);
@@ -321,6 +333,7 @@ void DeclarationBuilder::visitReturn(ReturnAst* node)
 {
     ExpressionVisitor v(currentContext());
     v.visitNode(node->value);
+    setLastType(v.lastType());
     if ( node->value ) {
         if ( ! hasCurrentType() ) {
             KDevelop::Problem *p = new KDevelop::Problem();
@@ -336,6 +349,7 @@ void DeclarationBuilder::visitReturn(ReturnAst* node)
 //         kDebug() << "Found type: " << encountered->toString();
         t->setReturnType(encountered);
     }
+    setLastType(AbstractType::Ptr(0));
 }
 
 void DeclarationBuilder::visitLambda( LambdaAst* node )
@@ -361,6 +375,9 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
 {
     AbstractFunctionDeclaration* function = dynamic_cast<AbstractFunctionDeclaration*>(currentDeclaration());
     kDebug() << "Current context for parameters: " << currentContext();
+    kDebug() << currentContext()->scopeIdentifier().toString();
+    kDebug() << currentDeclaration()->identifier().toString();
+    
     if ( function ) {
         NameAst* realParam;
         foreach (ExpressionAst* expression, node->arguments) {
@@ -370,21 +387,25 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 ExpressionVisitor t(currentContext());
                 t.visitExpression(expression);
                 
+                setLastType(t.lastType());
                 Declaration* paramDeclaration = visitVariableDeclaration<Declaration>(realParam);
-                paramDeclaration->setAbstractType(t.lastType());
+                setLastType(AbstractType::Ptr(0));
                 
-                function->addDefaultParameter(IndexedString(realParam->identifier->value));
                 FunctionType::Ptr type = currentType<FunctionType>();
                 if ( type && paramDeclaration ) {
                     kDebug() << "Adding argument: " << realParam->identifier->value << paramDeclaration->abstractType();
-                    type->addArgument(paramDeclaration->abstractType());
+                    AbstractType::Ptr p = paramDeclaration->abstractType();
+                    if ( ! p ) {
+                        kDebug() << "No type set for argument, using null type";
+                        p = AbstractType::Ptr(new IntegralType(IntegralType::TypeUnsure));
+                    }
+                    type->addArgument(p);
                 }
-            } else {
-                DeclarationBuilderBase::visitArguments(node);
             }
         }
     }
 }
 
 }
+
 

@@ -261,7 +261,7 @@ void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         sline = node->arguments->arguments.first()->startLine;
         eline = node->arguments->arguments.last()->endLine;
         scol = node->arguments->arguments.first()->startCol;
-        ecol = node->arguments->arguments.last()->endCol;
+        ecol = 10000;
         
         RangeInRevision range(sline, scol, eline, ecol);
         Q_ASSERT(range.isValid());

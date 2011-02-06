@@ -72,7 +72,7 @@ ParseJob::ParseJob(LanguageSupport* parent, const KUrl &url )
 {
     kDebug();
     m_parent = parent;
-    ParseJob::internalFunctionsFile =  new KUrl(QString(INSTALL_PATH) + QString("test.py"));
+    ParseJob::internalFunctionsFile =  new KUrl(QString(INSTALL_PATH) + QString("/test.py"));
     ParseJob::m_internalFunctions = 0;
 }
 

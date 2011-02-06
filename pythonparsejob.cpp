@@ -53,6 +53,7 @@
 #include <interfaces/icore.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <language/duchain/indexedstring.h>
+#include "parser/parserConfig.h"
 
 using namespace KDevelop;
 
@@ -71,7 +72,7 @@ ParseJob::ParseJob(LanguageSupport* parent, const KUrl &url )
 {
     kDebug();
     m_parent = parent;
-    ParseJob::internalFunctionsFile =  new KUrl("/home/sven/projects/kde4/python/documentation/test.py");
+    ParseJob::internalFunctionsFile =  new KUrl(QString(INSTALL_PATH) + QString("test.py"));
     ParseJob::m_internalFunctions = 0;
 }
 

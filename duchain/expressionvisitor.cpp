@@ -36,6 +36,7 @@
 #include <language/duchain/types/typesystemdata.h>
 #include <language/duchain/functiondeclaration.h>
 #include <language/duchain/types/functiontype.h>
+#include <language/duchain/classdeclaration.h>
 
 using namespace KDevelop;
 using namespace Python;
@@ -76,14 +77,19 @@ void ExpressionVisitor::visitCall(CallAst* node)
         return unknownTypeEncountered();
     }
     else {
-        FunctionDeclaration* decl = dynamic_cast<FunctionDeclaration*>(decls.last());
-        if ( ! decl || ! decl->type<FunctionType>() ) {
-            kWarning() << "Declaration for " << node->function->value << "is not a function declaration";
+        ClassDeclaration* classDecl = dynamic_cast<ClassDeclaration*>(decls.last());
+        FunctionDeclaration* funcDecl = dynamic_cast<FunctionDeclaration*>(decls.last());
+        
+        if ( classDecl ) {
+            m_lastType = classDecl->abstractType();
+        }
+        else if ( funcDecl && funcDecl->type<FunctionType>() ) {
+            m_lastType = funcDecl->type<FunctionType>()->returnType();
+        }
+        else {
+            kDebug() << "Declaraton for " << node->function->value << " is not a class or function declaration";
             return unknownTypeEncountered();
         }
-        kDebug() << decl->toString() << decl->type<FunctionType>()->toString();
-        kDebug() << decl->type<FunctionType>()->returnType();
-        m_lastType = decl->type<FunctionType>()->returnType();
     }
 }
 

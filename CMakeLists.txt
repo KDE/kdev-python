@@ -8,10 +8,18 @@ find_package(KDE4 REQUIRED)
 find_package(KDevPlatform 1.0.0 REQUIRED)
 
 # first, build our custom python distribution
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/python-src/build-for-kdevelop.sh.in" "${CMAKE_CURRENT_SOURCE_DIR}/python-src/build-for-kdevelop.sh")
-execute_process(
-    COMMAND /bin/bash ${CMAKE_CURRENT_SOURCE_DIR}/python-src/build-for-kdevelop.sh
-)
+if ( EXISTS ${kdevpython_SOURCE_DIR}/python-src/Makefile )
+    message(STATUS "Skipping reconfiguration of python sources, assuming nothing changed here. If you want to force reconfiguring, delete the Makefile in python-src/.")
+elseif ( NOT EXISTS ${kdevpython_SOURCE_DIR}/python-src/Makefile )
+    message(STATUS "Configuring python 2.7...")
+    execute_process(COMMAND /bin/bash ${kdevpython_SOURCE_DIR}/python-src/configure --enable-shared WORKING_DIRECTORY ${kdevpython_SOURCE_DIR}/python-src)
+endif( EXISTS ${kdevpython_SOURCE_DIR}/python-src/Makefile )
+
+execute_process(COMMAND /usr/bin/env make -f ${kdevpython_SOURCE_DIR}/python-src/Makefile WORKING_DIRECTORY ${kdevpython_SOURCE_DIR}/python-src)
+install(FILES ${kdevpython_SOURCE_DIR}/python-src/libpython2.7.so DESTINATION ${BIN_INSTALL_DIR})
+
+message(STATUS "Any warnings about missing dependencies for python can be ignored, you won't need any of them for sure.")
+message(STATUS "Fine, going to build the actual plugin now.")
 
 set(CMAKE_CXX_FLAGS_DEBUG -Wfatal-errors -Wall)
 

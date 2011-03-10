@@ -33,6 +33,7 @@
 #include "kurl.h"
 
 #include <language/interfaces/iproblem.h>
+#include <language/editor/rangeinrevision.h>
 
 using namespace KDevelop;
 

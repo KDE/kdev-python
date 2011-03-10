@@ -107,14 +107,14 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
 
 void ExpressionVisitor::visitList(ListAst* node)
 {
-    m_lastType = AbstractType::Ptr(new IntegralTypeExtended(IntegralTypeExtended::TypeList));
     AstDefaultVisitor::visitList(node);
+    m_lastType = AbstractType::Ptr(new IntegralTypeExtended(IntegralTypeExtended::TypeList));
 }
 
 void ExpressionVisitor::visitDict(DictAst* node)
 {
-    m_lastType = AbstractType::Ptr(new IntegralTypeExtended(IntegralTypeExtended::TypeDict));
     AstDefaultVisitor::visitDict(node);
+    m_lastType = AbstractType::Ptr(new IntegralTypeExtended(IntegralTypeExtended::TypeDict));
 }
 
 void Python::ExpressionVisitor::visitNumber(Python::NumberAst* )

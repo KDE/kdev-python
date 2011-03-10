@@ -264,6 +264,7 @@ void PyDUChainTest::testTypes_data()
     QTest::addColumn<uint>("expectedType");
     
     QTest::newRow("listtype") << "checkme = []" << (uint) IntegralTypeExtended::TypeList;
+    QTest::newRow("listtype_with_contents") << "checkme = [1, 2, 3, 4, 5]" << (uint) IntegralTypeExtended::TypeList;
     QTest::newRow("listtype_extended") << "some_misc_var = []; checkme = some_misc_var" << (uint) IntegralTypeExtended::TypeList;
     QTest::newRow("dicttype") << "checkme = {}" << (uint) IntegralTypeExtended::TypeDict;
     QTest::newRow("dicttype_extended") << "some_misc_var = {}; checkme = some_misc_var" << (uint) IntegralTypeExtended::TypeDict;
@@ -283,6 +284,7 @@ void PyDUChainTest::testTypes_data()
 //    QTest::newRow("funccall_dict") << "def foo(): return foo; checkme = foo();" << (uint) IntegralType::TypeFunction;
 }
 
+/*
 class FunctionStuffTestVisitor : public AstDefaultVisitor {
 public:
     bool found;
@@ -357,6 +359,7 @@ void PyDUChainTest::testFunctionStuff_data()
         save_currentnode = self.currentnode\n\
         self.currentnode = node_xmlrepr\n";
 }
+*/
 
 void PyDUChainTest::testImportDeclarations() {
     QFETCH(QString, code);

@@ -52,8 +52,8 @@ class PyDUChainTest : public QObject
         void testTypes_data();
         void testImportDeclarations();
         void testImportDeclarations_data();
-        void testFunctionStuff();
-        void testFunctionStuff_data();
+//         void testFunctionStuff();
+//         void testFunctionStuff_data();
 };
 
 #endif // PYDUCHAINTEST_H

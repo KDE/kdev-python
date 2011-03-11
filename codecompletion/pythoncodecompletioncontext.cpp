@@ -58,7 +58,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     }
     else if ( m_operation == PythonCodeCompletionContext::ImportSubCompletion ) {
         foreach ( ImportFileItem* item, includeFileItemsForSubmodule(m_subForModule) ) {
-            item->includeItem.name = QString(item->moduleName + " (from " + KUrl::relativeUrl(item->fromProject->folder(), item->includeItem.basePath) + ")");
+            Q_ASSERT(item);
+            item->includeItem.name = QString(item->moduleName + " (from " + KUrl::relativeUrl(m_workingOnDocument, item->includeItem.basePath) + ")");
             items << CompletionTreeItemPointer( item );
         }
     }
@@ -139,16 +140,15 @@ QList< ImportFileItem* > PythonCodeCompletionContext::includeFileItemsForSubmodu
     // and then gather all the items in those paths.
     
     foreach (KUrl currentPath, searchPaths) {
-        QDir currentDir(currentPath.url());
-        kDebug() << "Searching in path: " << currentDir.absolutePath();
         bool exists = true;
+        kDebug() << "Searching: " << currentPath;
         foreach ( QString subdir, subdirs ) {
-            exists = currentDir.cd(subdir);
-            kDebug() << currentDir.absolutePath();
+            exists = currentPath.cd(subdir);
+            kDebug() << currentPath;
             if ( ! exists ) break;
         }
         if ( exists ) {
-            foundPaths.append(KUrl(currentDir.path()));
+            foundPaths.append(currentPath);
             kDebug() << "Found path: exists";
         }
     }
@@ -162,9 +162,11 @@ QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems(QList<KUrl>
     
     foreach (KUrl currentPath, searchPaths) {
         kDebug() << "Processing path: " << currentPath;
-        QDir currentDir(currentPath.url());
+        QDir currentDir(currentPath.path());
         QFileInfoList files = currentDir.entryInfoList();
         foreach (QFileInfo file, files) {
+            kDebug() << "Scanning file: " << file.absoluteFilePath();
+            if ( file.fileName == "." || file.fileName() == ".." ) continue;
             if ( file.fileName().endsWith(".py") || file.fileName().endsWith(".pyc") || file.isDir() ) {
                 IncludeItem includeItem;
                 includeItem.basePath = file.baseName();
@@ -173,6 +175,7 @@ QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems(QList<KUrl>
                 ImportFileItem* item = new ImportFileItem(includeItem);
                 item->moduleName = file.fileName().replace(".pyc", "").replace(".pyo", "").replace(".py", "");
                 items.append(item);
+                kDebug() << "FOUND: " << file.absoluteFilePath();
             }
         }
     }

@@ -69,7 +69,7 @@ ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node
     } else {
         kDebug() << "compiling" << url.str();
     }
-
+    
     return ContextBuilderBase::build(url, node, updateContext);
 }
 

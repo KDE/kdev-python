@@ -24,7 +24,7 @@ endif( EXISTS ${kdevpython_SOURCE_DIR}/python-src/Makefile )
 execute_process(COMMAND /usr/bin/env make -f ${kdevpython_SOURCE_DIR}/python-src/Makefile WORKING_DIRECTORY ${kdevpython_SOURCE_DIR}/python-src)
 message(STATUS "Any warnings about missing dependencies for python can be ignored, you won't need any of them for sure.")
 
-execute_process(COMMAND /usr/bin/env cp ${kdevpython_SOURCE_DIR}/python-src/libpython2.7.so ${BIN_INSTALL_DIR})
+execute_process(COMMAND /usr/bin/env cp -u ${kdevpython_SOURCE_DIR}/python-src/libpython2.7.so ${BIN_INSTALL_DIR})
 
 kde4_add_library( kdev4pythonparser SHARED ${parser_SRCS} ${parser_STAT_SRCS} )
 target_link_libraries(kdev4pythonparser 

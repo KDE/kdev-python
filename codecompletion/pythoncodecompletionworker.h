@@ -12,11 +12,11 @@ class KDEVPYTHONCOMPLETION_EXPORT PythonCodeCompletionWorker : public KDevelop::
 {
 
 public:
-    PythonCodeCompletionWorker(PythonCodeCompletionModel *parent);
+    PythonCodeCompletionWorker(PythonCodeCompletionModel *parent, KUrl document);
     virtual KDevelop::CodeCompletionContext* createCompletionContext(KDevelop::DUContextPointer context, const QString& contextText, const QString& followingText, const KDevelop::CursorInRevision& position) const;
-    KUrl m_workingOnDocument;
+    PythonCodeCompletionModel* parent;
 };
 
-#endif // PYTHONCODECOMPLETIONWORKER_H
-
 }
+
+#endif // PYTHONCODECOMPLETIONWORKER_H

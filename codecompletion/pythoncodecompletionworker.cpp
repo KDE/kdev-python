@@ -11,15 +11,15 @@
 
 namespace Python {
 
-PythonCodeCompletionWorker::PythonCodeCompletionWorker(PythonCodeCompletionModel *parent)
-    : KDevelop::CodeCompletionWorker(parent)
+PythonCodeCompletionWorker::PythonCodeCompletionWorker(PythonCodeCompletionModel *parent, KUrl document)
+    : KDevelop::CodeCompletionWorker(parent), parent(parent)
 {
 
 }
 
 KDevelop::CodeCompletionContext* PythonCodeCompletionWorker::createCompletionContext(KDevelop::DUContextPointer context, const QString& contextText, const QString& /*followingText*/, const KDevelop::CursorInRevision& position) const
 {
-    PythonCodeCompletionContext* completionContext = new PythonCodeCompletionContext(context, contextText, position, 0, m_workingOnDocument);
+    PythonCodeCompletionContext* completionContext = new PythonCodeCompletionContext(context, contextText, position, 0, this);
     return completionContext;
 }
 

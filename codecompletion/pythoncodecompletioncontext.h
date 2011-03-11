@@ -6,6 +6,7 @@
 #include <language/duchain/duchainpointer.h>
 #include <qstack.h>
 #include <importfileitem.h>
+#include "pythoncodecompletionworker.h"
 
 using namespace KDevelop;
 
@@ -28,15 +29,18 @@ public:
         NewStatementCompletion
     };
     
-    PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position, int depth, KUrl document);
+    PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position, int depth, const PythonCodeCompletionWorker* parent);
     virtual QList< KDevelop::CompletionTreeItemPointer > completionItems(bool& abort, bool fullCompletion = true);
-    QList<ImportFileItem*> includeFileItems();
+    QList<ImportFileItem*> includeFileItems(QList<KUrl> searchPaths);
+    QList<ImportFileItem*> includeFileItemsForSubmodule(QString submodule);
+    QList<KUrl> getSearchPaths();
     
     CompletionContextType m_operation;
     QStack<ProjectFolderItem*> m_folderStack;
     int m_maxFolderScanDepth;
     QStringList m_searchingForModule;
     QString m_subForModule;
+    const PythonCodeCompletionWorker* parent;
     KUrl m_workingOnDocument;
     
 private:

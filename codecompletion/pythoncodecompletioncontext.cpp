@@ -28,6 +28,7 @@
 #include <language/duchain/functiondeclaration.h>
 #include <language/codecompletion/codecompletionitem.h>
 #include "keyworditem.h"
+#include "pythoncodecompletionworker.h"
 
 using namespace KDevelop;
 
@@ -49,18 +50,17 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     else if ( m_operation == PythonCodeCompletionContext::ImportFileCompletion ) {
         kDebug() << "Preparing to do autocompletion for import...";
         m_maxFolderScanDepth = 1;
-        foreach ( ImportFileItem* item, includeFileItems() ) {
+        foreach ( ImportFileItem* item, includeFileItems(getSearchPaths()) ) {
             Q_ASSERT(item);
             item->includeItem.name = QString(item->moduleName + " (from " + KUrl::relativeUrl(m_workingOnDocument, item->includeItem.basePath) + ")");
             items << CompletionTreeItemPointer( item );
         }
     }
     else if ( m_operation == PythonCodeCompletionContext::ImportSubCompletion ) {
-//         kDebug() << "Stuff found for completion: " << findFilesForName(m_subForModule);
-//         foreach ( ImportFileItem* item, findFilesForName(m_subForModule) ) {
-//             item->includeItem.name = QString(item->moduleName + " (from " + KUrl::relativeUrl(item->fromProject->folder(), item->includeItem.basePath) + ")");
-//             items << CompletionTreeItemPointer( item );
-//         }
+        foreach ( ImportFileItem* item, includeFileItemsForSubmodule(m_subForModule) ) {
+            item->includeItem.name = QString(item->moduleName + " (from " + KUrl::relativeUrl(item->fromProject->folder(), item->includeItem.basePath) + ")");
+            items << CompletionTreeItemPointer( item );
+        }
     }
     else if ( m_operation == PythonCodeCompletionContext::MemberAccessCompletion ) {
         // we don't have type support, so we cannot support completing mebers yet. But we can at least prevent kdevelop from opening a pointless
@@ -109,31 +109,69 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     return items;
 }
 
-QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems() {
-    QList<ImportFileItem*> items;
+QList< KUrl > PythonCodeCompletionContext::getSearchPaths()
+{
     QList<KUrl> searchPaths;
-    
-    kDebug() << "Gathering include file autocompletions...";
-    
     // search in the projects, as they're packages and likely to be installed or added to PYTHONPATH later
     foreach  (IProject* project, ICore::self()->projectController()->projects() ) {
         searchPaths.append(KUrl(project->folder().url()));
     }
     
     // search in the current packages
-    searchPaths.append(m_workingOnDocument);
+    searchPaths.append(KUrl(m_workingOnDocument.directory()));
+    
+    kDebug() << "Search paths: " << searchPaths;
+    kDebug() << m_workingOnDocument;
+    return searchPaths;
+}
+
+QList< ImportFileItem* > PythonCodeCompletionContext::includeFileItemsForSubmodule(QString submodule)
+{
+    QList<ImportFileItem*> items;
+    QList<KUrl> searchPaths = getSearchPaths();
+    QStringList subdirs = submodule.split(".");
+    QList<KUrl> foundPaths;
+    
+    // this is a bit tricky. We need to find every path formed like /.../foo/bar for
+    // a query string ("submodule" variable) like foo.bar
+    // we also need paths like /foo.py, because then bar is probably a module in that file.
+    // Thus, we first generate a list of possible paths, then match them against those which actually exist
+    // and then gather all the items in those paths.
     
     foreach (KUrl currentPath, searchPaths) {
         QDir currentDir(currentPath.url());
-        QFileInfoList files = currentDir.entryInfoList(QDir::Files);
+        kDebug() << "Searching in path: " << currentDir.absolutePath();
+        bool exists = true;
+        foreach ( QString subdir, subdirs ) {
+            exists = currentDir.cd(subdir);
+            kDebug() << currentDir.absolutePath();
+            if ( ! exists ) break;
+        }
+        if ( exists ) {
+            foundPaths.append(KUrl(currentDir.path()));
+            kDebug() << "Found path: exists";
+        }
+    }
+    return includeFileItems(foundPaths);
+}
+
+QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems(QList<KUrl> searchPaths) {
+    QList<ImportFileItem*> items;
+    
+    kDebug() << "Gathering include file autocompletions...";
+    
+    foreach (KUrl currentPath, searchPaths) {
+        kDebug() << "Processing path: " << currentPath;
+        QDir currentDir(currentPath.url());
+        QFileInfoList files = currentDir.entryInfoList();
         foreach (QFileInfo file, files) {
-            if ( file.fileName().endsWith(".py") || file.fileName().endsWith(".pyc") ) {
-                IncludeItem includeItem;;
+            if ( file.fileName().endsWith(".py") || file.fileName().endsWith(".pyc") || file.isDir() ) {
+                IncludeItem includeItem;
                 includeItem.basePath = file.baseName();
                 includeItem.name = file.fileName();
-                includeItem.isDirectory = false;
+                includeItem.isDirectory = file.isDir();
                 ImportFileItem* item = new ImportFileItem(includeItem);
-                item->moduleName = file.fileName().replace(".py", "").replace(".pyc", "").replace(".pyo", "");
+                item->moduleName = file.fileName().replace(".pyc", "").replace(".pyo", "").replace(".py", "");
                 items.append(item);
             }
         }
@@ -143,8 +181,9 @@ QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems() {
 }
 
 PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position, 
-                                                         int depth, KUrl document): CodeCompletionContext(context, text, position, depth), m_workingOnDocument(document)
+                                                         int depth, const PythonCodeCompletionWorker* parent): CodeCompletionContext(context, text, position, depth), parent(parent)
 {
+    m_workingOnDocument = parent->parent->m_currentDocument;
     QString currentLine = "\n" + text.split("\n").last(); // we'll only look at the last line, as 99% of python statements are limited to one line
     kDebug() << "Doing auto-completion context scan for: " << currentLine;
     
@@ -168,6 +207,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         kDebug() << "Matching against module name: " << for_module_match;
         m_operation = PythonCodeCompletionContext::ImportSubCompletion;
         m_subForModule = for_module;
+        kDebug() << "submodule: " << for_module;
         return;
     }
     

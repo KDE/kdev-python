@@ -23,14 +23,13 @@ PythonCodeCompletionModel::~PythonCodeCompletionModel() { }
 KTextEditor::Range PythonCodeCompletionModel::completionRange(KTextEditor::View* view, const KTextEditor::Cursor& position)
 {
     m_currentDocument = view->document()->url();
+    kWarning() << "Current document: " << m_currentDocument;
     return KTextEditor::CodeCompletionModelControllerInterface3::completionRange(view, position);
 }
 
 KDevelop::CodeCompletionWorker* PythonCodeCompletionModel::createCompletionWorker()
 {
-    PythonCodeCompletionWorker* w = new PythonCodeCompletionWorker(this);
-    w->m_workingOnDocument = m_currentDocument;
-    return w;
+    return new PythonCodeCompletionWorker(this, m_currentDocument);
 }
 
 }

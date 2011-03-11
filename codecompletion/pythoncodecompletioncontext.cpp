@@ -166,7 +166,7 @@ QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems(QList<KUrl>
         QFileInfoList files = currentDir.entryInfoList();
         foreach (QFileInfo file, files) {
             kDebug() << "Scanning file: " << file.absoluteFilePath();
-            if ( file.fileName == "." || file.fileName() == ".." ) continue;
+            if ( file.fileName() == "." || file.fileName() == ".." ) continue;
             if ( file.fileName().endsWith(".py") || file.fileName().endsWith(".pyc") || file.isDir() ) {
                 IncludeItem includeItem;
                 includeItem.basePath = file.baseName();

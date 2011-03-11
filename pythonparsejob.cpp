@@ -146,7 +146,7 @@ void ParseJob::run()
         
         editor.setParseSession(m_session);
         
-        m_duContext = builder.build(filename, m_ast);
+        m_duContext = builder.build(filename, m_ast, m_duContext);
         setDuChain(m_duContext);
         
         UseBuilder usebuilder( &editor );

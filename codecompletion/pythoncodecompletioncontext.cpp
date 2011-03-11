@@ -47,18 +47,20 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             
     }
     else if ( m_operation == PythonCodeCompletionContext::ImportFileCompletion ) {
+        kDebug() << "Preparing to do autocompletion for import...";
         m_maxFolderScanDepth = 1;
         foreach ( ImportFileItem* item, includeFileItems() ) {
-            item->includeItem.name = QString(item->moduleName + " (from " + KUrl::relativeUrl(item->fromProject->folder(), item->includeItem.basePath) + ")");
+            Q_ASSERT(item);
+            item->includeItem.name = QString(item->moduleName + " (from " + KUrl::relativeUrl(m_workingOnDocument, item->includeItem.basePath) + ")");
             items << CompletionTreeItemPointer( item );
         }
     }
     else if ( m_operation == PythonCodeCompletionContext::ImportSubCompletion ) {
-        kDebug() << "Stuff found for completion: " << findFilesForName(m_subForModule);
-        foreach ( ImportFileItem* item, findFilesForName(m_subForModule) ) {
-            item->includeItem.name = QString(item->moduleName + " (from " + KUrl::relativeUrl(item->fromProject->folder(), item->includeItem.basePath) + ")");
-            items << CompletionTreeItemPointer( item );
-        }
+//         kDebug() << "Stuff found for completion: " << findFilesForName(m_subForModule);
+//         foreach ( ImportFileItem* item, findFilesForName(m_subForModule) ) {
+//             item->includeItem.name = QString(item->moduleName + " (from " + KUrl::relativeUrl(item->fromProject->folder(), item->includeItem.basePath) + ")");
+//             items << CompletionTreeItemPointer( item );
+//         }
     }
     else if ( m_operation == PythonCodeCompletionContext::MemberAccessCompletion ) {
         // we don't have type support, so we cannot support completing mebers yet. But we can at least prevent kdevelop from opening a pointless
@@ -107,114 +109,41 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     return items;
 }
 
-QList< ImportFileItem* > PythonCodeCompletionContext::findFilesForName(const QString& name)
-{
-    kDebug() << "Name: " << name;
-    QStringList resolvedName = name.split(".");
-    m_maxFolderScanDepth = resolvedName.length() + 1;
-    m_searchingForModule = resolvedName;
-    return includeFileItems();
-}
-
 QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems() {
     QList<ImportFileItem*> items;
+    QList<KUrl> searchPaths;
+    
+    kDebug() << "Gathering include file autocompletions...";
+    
+    // search in the projects, as they're packages and likely to be installed or added to PYTHONPATH later
     foreach  (IProject* project, ICore::self()->projectController()->projects() ) {
-        foreach ( KDevelop::ProjectFolderItem* folder, project->foldersForUrl( KUrl(project->folder().url()) ) ) {
-            m_folderStack.push(folder);
-            items << fileItemsForFolder(folder, project);
-            m_folderStack.pop();
-        }
-    }
-    return items;
-}
-
-QList<ImportFileItem*> PythonCodeCompletionContext::fileItemsForFolder(KDevelop::ProjectFolderItem* folder, IProject* project)
-{
-    kDebug() << " +++++ Processing folder: " << folder->folderName();
-    kDebug() << "current folder stack count " << m_folderStack.count();
-    if ( ! folder ) {
-        m_dontAddMe = true;
-        return QList<ImportFileItem*>();
-    }
-    bool continue_recursion = true;
-    bool do_recursion = true;
-    
-    kDebug() << m_maxFolderScanDepth << m_folderStack.count() << m_searchingForModule;
-    
-    if ( m_maxFolderScanDepth - 1 < m_folderStack.count() ) continue_recursion = false; // we dont offer foo.bar.baz.bang.bar if there's only one dot in the address by now
-    
-    if ( m_searchingForModule.length() > 0 && folder->url() != project->folder().url() ) {
-        if ( m_searchingForModule.length() >= m_folderStack.count() && m_searchingForModule.at(m_folderStack.count() - 2) != folder->folderName() ) {
-            kDebug() << "Skip: " << m_searchingForModule.at(m_folderStack.count() - 2) << m_searchingForModule << m_folderStack.count() - 2 << folder->folderName();
-            m_dontAddMe = true;
-            return QList<ImportFileItem*>();
-        }
-        else if ( m_searchingForModule.at(m_folderStack.count() - 2) != folder->folderName() ) {
-            m_dontAddMe = true;
-            return QList<ImportFileItem*>();
-        }
-        kDebug() << "USE: " << m_searchingForModule.at(m_folderStack.count() - 2) << m_searchingForModule << m_folderStack << folder->folderName();
+        searchPaths.append(KUrl(project->folder().url()));
     }
     
-    kDebug() << " >>>>> For directory " << folder->folderName() << " : " << "doing recursion: " << do_recursion << "; continuing downwards: " << continue_recursion;
+    // search in the current packages
+    searchPaths.append(m_workingOnDocument);
     
-    QList<ImportFileItem*> items;
-    foreach ( KDevelop::ProjectFolderItem* folder, folder->folderList() ) {
-        if ( ! folder ) continue;
-        m_folderStack.push(folder);
-        if ( continue_recursion ) {
-            kDebug() << "Scanning for include items: " << folder->folderName();
-            items << fileItemsForFolder(folder, project);
-            if ( m_dontAddMe ) {
-                m_dontAddMe = false;
-                m_folderStack.pop();
-                continue;
+    foreach (KUrl currentPath, searchPaths) {
+        QDir currentDir(currentPath.url());
+        QFileInfoList files = currentDir.entryInfoList(QDir::Files);
+        foreach (QFileInfo file, files) {
+            if ( file.fileName().endsWith(".py") || file.fileName().endsWith(".pyc") ) {
+                IncludeItem includeItem;;
+                includeItem.basePath = file.baseName();
+                includeItem.name = file.fileName();
+                includeItem.isDirectory = false;
+                ImportFileItem* item = new ImportFileItem(includeItem);
+                item->moduleName = file.fileName().replace(".py", "").replace(".pyc", "").replace(".pyo", "");
+                items.append(item);
             }
         }
-        
-        // only add items when at right level
-        if ( m_searchingForModule.length() != 0 && m_maxFolderScanDepth != m_folderStack.count() ) {
-            kDebug() << "CONTINUE: " << m_maxFolderScanDepth << m_folderStack.count();
-            if ( m_searchingForModule.length() < m_folderStack.count() ) do_recursion = false; // don't add items from here, we're too deep 
-            else {
-                // we're not yet deep enough, so don't even add the folder
-                m_folderStack.pop();
-                continue;
-            }
-        }
-        else {
-            kDebug() << "ADD: " << m_maxFolderScanDepth << m_folderStack.count();
-            kDebug() << "adding files and folders from directory " << folder->folderName();
-        }
-        
-        // Add the folder
-        IncludeItem* folderItem = new IncludeItem();
-        folderItem->basePath = folder->url();
-        folderItem->isDirectory = true;
-        ImportFileItem* importFolderItem = new ImportFileItem(*folderItem);
-        importFolderItem->fromProject = project;
-        importFolderItem->moduleName = folder->folderName();
-        items << importFolderItem;
-        
-        if ( continue_recursion && do_recursion ) {
-            // Add all sub-items and folders
-            foreach ( ProjectFileItem* file, folder->fileList() ) {
-                if ( ! file->fileName().endsWith(".py") || file->fileName() == "__init__.py" ) continue;
-                IncludeItem* item = new IncludeItem();
-                item->basePath = folder->url();
-                ImportFileItem* importItem = new ImportFileItem(*item);
-                importItem->moduleName = file->fileName().replace(".py", "");
-                importItem->fromProject = project;
-                items << importItem;
-            }
-        }
-        m_folderStack.pop();
     }
+    
     return items;
 }
 
 PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position, 
-                                                         int depth): CodeCompletionContext(context, text, position, depth)
+                                                         int depth, KUrl document): CodeCompletionContext(context, text, position, depth), m_workingOnDocument(document)
 {
     QString currentLine = "\n" + text.split("\n").last(); // we'll only look at the last line, as 99% of python statements are limited to one line
     kDebug() << "Doing auto-completion context scan for: " << currentLine;
@@ -257,6 +186,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     fromimport.setMinimal(true);
     bool is_fromimport = fromimport.exactMatch(currentLine);
     if ( is_importfile || is_fromimport ) {
+        kDebug() << "Autocompletion type: import completion";
         m_operation = PythonCodeCompletionContext::ImportFileCompletion;
         return;
     }

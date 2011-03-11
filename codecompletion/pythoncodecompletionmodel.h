@@ -4,6 +4,7 @@
 #include <language/codecompletion/codecompletionmodel.h>
 #include <language/duchain/duchainpointer.h>
 #include "pythoncompletionexport.h"
+#include <KUrl>
 
 namespace Python {
 
@@ -16,6 +17,7 @@ public:
     
     virtual KDevelop::CodeCompletionWorker* createCompletionWorker();
     KTextEditor::Range completionRange(KTextEditor::View* view, const KTextEditor::Cursor &position); 
+    KUrl m_currentDocument;
 };
 
 }

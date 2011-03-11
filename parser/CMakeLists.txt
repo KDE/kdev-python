@@ -12,7 +12,8 @@ set(parser_STAT_SRCS
     pythondriver.cpp
 )
 
-# first, build our custom python distribution
+# This will build the stuff in python-src/.
+# I know it would be better to use INSTALL() instead of cp, but I've no idea how...
 if ( EXISTS ${kdevpython_SOURCE_DIR}/python-src/Makefile )
     message(STATUS "Skipping reconfiguration of python sources, assuming nothing changed here. If you want to force reconfiguring, delete the Makefile in python-src/.")
 elseif ( NOT EXISTS ${kdevpython_SOURCE_DIR}/python-src/Makefile )
@@ -21,19 +22,16 @@ elseif ( NOT EXISTS ${kdevpython_SOURCE_DIR}/python-src/Makefile )
 endif( EXISTS ${kdevpython_SOURCE_DIR}/python-src/Makefile )
 
 execute_process(COMMAND /usr/bin/env make -f ${kdevpython_SOURCE_DIR}/python-src/Makefile WORKING_DIRECTORY ${kdevpython_SOURCE_DIR}/python-src)
-install(FILES ../python-src/libpython2.7.so DESTINATION ${BIN_INSTALL_DIR})
-
-
 message(STATUS "Any warnings about missing dependencies for python can be ignored, you won't need any of them for sure.")
-message(STATUS "Fine, going to build the actual plugin now.")
+
+execute_process(COMMAND /usr/bin/env cp ${kdevpython_SOURCE_DIR}/python-src/libpython2.7.so ${BIN_INSTALL_DIR})
 
 kde4_add_library( kdev4pythonparser SHARED ${parser_SRCS} ${parser_STAT_SRCS} )
-find_library(PYTHON_LIB libpython2.7.so ${BIN_INSTALL_DIR})
 target_link_libraries(kdev4pythonparser 
     ${KDE4_KDECORE_LIBS} 
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${QT_QTCORE_LIBRARY} 
-    ${PYTHON_LIB}
+    ${BIN_INSTALL_DIR}/libpython2.7.so
 )
 
 install(TARGETS kdev4pythonparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})

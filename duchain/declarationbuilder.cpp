@@ -264,7 +264,7 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
 
 void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 {
-    ExpressionVisitor v(currentContext());
+    ExpressionVisitor v(currentContext(), editor());
     v.visitNode(node->value);
     setLastType(v.lastType());
     
@@ -331,7 +331,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 
 void DeclarationBuilder::visitReturn(ReturnAst* node)
 {
-    ExpressionVisitor v(currentContext());
+    ExpressionVisitor v(currentContext(), editor());
     v.visitNode(node->value);
     setLastType(v.lastType());
     if ( node->value ) {
@@ -384,7 +384,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             realParam = dynamic_cast<NameAst*>(expression);
             
             if ( realParam && realParam->context == ExpressionAst::Parameter ) {
-                ExpressionVisitor t(currentContext());
+                ExpressionVisitor t(currentContext(), editor());
                 t.visitExpression(expression);
                 
                 setLastType(t.lastType());

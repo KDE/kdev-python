@@ -84,74 +84,12 @@ void UseBuilder::visitAttribute(AttributeAst* node)
     kDebug() << "VisitAttribute start";
     UseBuilderBase::visitAttribute(node);
     kDebug() << "Visit Attribute base end";
-    ExpressionAst* accessingAttributeOf = node->value;
-    Identifier* identifier;
-    QList<Declaration*> availableDeclarations;
     
-    kDebug() << "Processing attribute: " << node->attribute->value;
+    ExpressionVisitor* v = new ExpressionVisitor(currentContext(), editor());
+    v->visitNode(node);
     
     RangeInRevision useRange(node->attribute->startLine, node->attribute->startCol, node->attribute->endLine, node->attribute->endCol + 1);
-    
-    Declaration* accessingAttributeOfDeclaration;
-    
-    if ( accessingAttributeOf->astType == Ast::AttributeAstType ) {
-        identifier = dynamic_cast<AttributeAst*>(accessingAttributeOf)->attribute;
-        if ( m_lastAccessedAttributeDeclaration.data() ) {
-            availableDeclarations << m_lastAccessedAttributeDeclaration.data();
-        }
-        else {
-            kWarning() << "No type set for accessed attribute";
-            return;
-        }
-    }
-    else if ( accessingAttributeOf->astType == Ast::NameAstType ) {
-        identifier = dynamic_cast<NameAst*>(accessingAttributeOf)->identifier;
-        availableDeclarations = currentContext()->findDeclarations(identifierForNode(identifier), editorFindRange(node, node).start);
-    }
-    else {
-        kWarning() << "Unsupported attribute access method";
-        return;
-    }
-    
-    if ( availableDeclarations.length() > 0 && availableDeclarations.last() ) {
-        accessingAttributeOfDeclaration = availableDeclarations.last();
-    } 
-    else {
-        kWarning() << "No declaration found to look up type of attribute in.";
-        UseBuilderBase::newUse(node, useRange, DeclarationPointer(0));
-        return; // TODO report error
-    }
-    
-    QList<Declaration*> foundDecls;
-    
-    TypePtr<StructureType> accessingAttributeOfType = accessingAttributeOfDeclaration->type<StructureType>();
-    // maybe our attribute isn't a class at all, then that's an error by definition for now
-    if ( accessingAttributeOfType.unsafeData() ) {
-        Declaration* foundContainerDeclaration = accessingAttributeOfType.unsafeData()->declaration(currentContext()->topContext());
-        DUContext* searchAttrInContext = foundContainerDeclaration->internalContext();
-        if ( searchAttrInContext ) {
-            foundDecls = searchAttrInContext->findDeclarations(identifierForNode(node->attribute), CursorInRevision::invalid(), 
-                                                               KDevelop::AbstractType::Ptr(), searchAttrInContext->topContext());
-        }
-        else {
-            foundDecls.clear();
-        }
-    }
-    else {
-        foundDecls.clear();
-    }
-    
-    if ( foundDecls.length() > 0 ) {
-        kDebug() << "Creating a new attribute declaration:" << useRange.castToSimpleRange() << ", Declaration:" << foundDecls.last()->range();
-        m_lastAccessedAttributeDeclaration = DeclarationPointer(foundDecls.last());
-        UseBuilderBase::newUse(node, useRange, DeclarationPointer(foundDecls.last()));
-    }
-    else {
-        kWarning() << "No declaration found for attribute";
-        m_lastAccessedAttributeDeclaration = DeclarationPointer(0);
-        UseBuilderBase::newUse(node, useRange, DeclarationPointer(0));
-    }
-    kDebug() << "VisitAttribute end";
+    newUse(node, useRange, v->lastDeclaration());
 }
 
 // void UseBuilder::openContext(DUContext * newContext)

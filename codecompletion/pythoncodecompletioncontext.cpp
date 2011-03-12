@@ -4,35 +4,34 @@
  * Licensed under the GNU GPL
  * */
 
-#include "pythoncodecompletioncontext.h"
+#include <qprocess.h>
+#include <QtCore/QRegExp>
 
+#include <language/duchain/duchainpointer.h>
+#include <language/duchain/declaration.h>
+#include <language/duchain/functiondeclaration.h>
+#include <language/codecompletion/codecompletionitem.h>
 #include <language/codecompletion/normaldeclarationcompletionitem.h>
 #include <language/codecompletion/abstractincludefilecompletionitem.h>
 #include <language/codecompletion/codecompletionitem.h>
 #include <language/util/includeitem.h>
 
-#include <language/duchain/duchainpointer.h>
-#include <language/duchain/declaration.h>
-
-#include "navigation/navigationwidget.h"
-#include "importfileitem.h"
-#include "functiondeclarationcompletionitem.h"
-
-#include <qprocess.h>
 #include <interfaces/icore.h>
 #include <interfaces/iprojectcontroller.h>
 #include <interfaces/iproject.h>
 #include <project/projectmodel.h>
-#include <QtCore/QRegExp>
 
-#include <language/duchain/functiondeclaration.h>
-#include <language/codecompletion/codecompletionitem.h>
 #include "keyworditem.h"
 #include "pythoncodecompletionworker.h"
-
 #include "astbuilder.h"
 #include "expressionvisitor.h"
+#include "navigation/navigationwidget.h"
+#include "importfileitem.h"
+#include "functiondeclarationcompletionitem.h"
+#include "pythoncodecompletioncontext.h"
+#include "pythoneditorintegrator.h"
 
+using namespace KTextEditor;
 using namespace KDevelop;
 
 typedef QPair<Declaration*, int> DeclarationDepthPair;
@@ -70,7 +69,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         AstBuilder* builder = new AstBuilder();
         CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
         if ( tmpAst ) {
-            ExpressionVisitor* v = new ExpressionVisitor(m_context.data());
+            PythonEditorIntegrator* ed = new PythonEditorIntegrator();
+            ExpressionVisitor* v = new ExpressionVisitor(m_context.data(), ed);
             v->visitCode(tmpAst);
             kDebug() << v->lastType()->toString();
         }

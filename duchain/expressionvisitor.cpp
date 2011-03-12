@@ -21,25 +21,27 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
 
-#include "expressionvisitor.h"
+#include <KLocalizedString>
+
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/types/integraltype.h>
 #include <language/duchain/ducontext.h>
 #include <language/duchain/declaration.h>
 #include <language/interfaces/iproblem.h>
-#include <KLocalizedString>
-
 #include <language/duchain/types/typeregister.h>
-#include "pythonduchainexport.h"
-
 #include <language/duchain/types/integraltype.h>
 #include <language/duchain/types/typesystemdata.h>
 #include <language/duchain/functiondeclaration.h>
 #include <language/duchain/types/functiontype.h>
 #include <language/duchain/classdeclaration.h>
 
+#include "pythonduchainexport.h"
+#include "expressionvisitor.h"
+#include "pythoneditorintegrator.h"
+
 using namespace KDevelop;
 using namespace Python;
+using namespace KTextEditor;
 
 namespace Python {
 
@@ -52,8 +54,8 @@ void ExpressionVisitor::encounter(AbstractType::Ptr type)
     m_lastType = type;
 }
 
-Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx)
-    : m_ctx(ctx)
+Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegrator* editor)
+    : m_ctx(ctx), m_editor(editor)
 {
     if(s_defaultTypes.isEmpty()) {
         s_defaultTypes.insert(KDevelop::Identifier("True"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
@@ -64,6 +66,78 @@ Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx)
 
 void ExpressionVisitor::unknownTypeEncountered() {
     encounter(AbstractType::Ptr(new IntegralType(IntegralType::TypeNull)));
+}
+
+void ExpressionVisitor::visitAttribute(AttributeAst* node)
+{
+    Python::AstDefaultVisitor::visitAttribute(node);
+    ExpressionAst* accessingAttributeOf = node->value;
+    Identifier* identifier;
+    QList<DeclarationPointer> availableDeclarations;
+    
+    kDebug() << "Processing attribute: " << node->attribute->value;
+    
+    RangeInRevision useRange(node->attribute->startLine, node->attribute->startCol, node->attribute->endLine, node->attribute->endCol + 1);
+    
+    DeclarationPointer accessingAttributeOfDeclaration;
+    
+    if ( accessingAttributeOf->astType == Ast::AttributeAstType ) {
+        identifier = dynamic_cast<AttributeAst*>(accessingAttributeOf)->attribute;
+        if ( m_lastAccessedAttributeDeclaration.data() ) {
+            availableDeclarations << m_lastAccessedAttributeDeclaration;
+        }
+        else {
+            kWarning() << "No type set for accessed attribute";
+            return unknownTypeEncountered();
+        }
+    }
+    else if ( accessingAttributeOf->astType == Ast::NameAstType ) {
+        availableDeclarations = QList<DeclarationPointer>() << m_lastAccessedNameDeclaration;
+    }
+    else {
+        kWarning() << "Unsupported attribute access method";
+        return;
+    }
+    
+    if ( availableDeclarations.length() > 0 && availableDeclarations.last().data() ) {
+        accessingAttributeOfDeclaration = availableDeclarations.last();
+    } 
+    else {
+        kWarning() << "No declaration found to look up type of attribute in.";
+        m_lastAccessedAttributeDeclaration = DeclarationPointer(0);
+        return unknownTypeEncountered();
+    }
+    
+    QList<Declaration*> foundDecls;
+    
+    TypePtr<StructureType> accessingAttributeOfType = accessingAttributeOfDeclaration.data()->type<StructureType>();
+    // maybe our attribute isn't a class at all, then that's an error by definition for now
+    if ( accessingAttributeOfType.unsafeData() ) {
+        Declaration* foundContainerDeclaration = accessingAttributeOfType.unsafeData()->declaration(m_ctx->topContext());
+        DUContext* searchAttrInContext = foundContainerDeclaration->internalContext();
+        if ( searchAttrInContext ) {
+            foundDecls = searchAttrInContext->findDeclarations(QualifiedIdentifier(node->attribute->value), CursorInRevision::invalid(), 
+                                                               KDevelop::AbstractType::Ptr(), searchAttrInContext->topContext());
+        }
+        else {
+            foundDecls.clear();
+        }
+    }
+    else {
+        foundDecls.clear();
+    }
+    
+    if ( foundDecls.length() > 0 ) {
+        kDebug() << "Creating a new attribute declaration:" << useRange.castToSimpleRange() << ", Declaration:" << foundDecls.last()->range();
+        m_lastAccessedAttributeDeclaration = DeclarationPointer(foundDecls.last());
+        encounter(foundDecls.last()->abstractType());
+    }
+    else {
+        kWarning() << "No declaration found for attribute";
+        m_lastAccessedAttributeDeclaration = DeclarationPointer(0);
+        return unknownTypeEncountered();
+    }
+    kDebug() << "VisitAttribute end";
 }
 
 void ExpressionVisitor::visitCall(CallAst* node)
@@ -153,9 +227,10 @@ void Python::ExpressionVisitor::visitName(Python::NameAst* node)
     kDebug() << "visitName" << node->identifier->value << d;   
     if ( ! d.isEmpty() ) {
         encounter(d.last()->abstractType());
+        m_lastAccessedNameDeclaration = d.last();
     }
     else {
-        qDebug("VistName type not found");
+        kDebug() << "VistName type not found";
         RangeInRevision r = nodeRange(node);
         r.end.column += 1;
         

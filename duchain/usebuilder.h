@@ -54,8 +54,6 @@ private:
         return m_nextUseStack.top();
     }
     QStack<int> m_nextUseStack;
-    
-    DeclarationPointer m_lastAccessedAttributeDeclaration;
 };
 
 }

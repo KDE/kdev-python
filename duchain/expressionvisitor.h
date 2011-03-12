@@ -1,5 +1,6 @@
 /*****************************************************************************
  * Copyright 2010 (c) Miquel Canes Gonzalez <miquelcanes@gmail.com>          *
+ * Copyright 2011 Sven Brauch <svenbrauch@googlemail.com>                    *
  *                                                                           *
  * Permission is hereby granted, free of charge, to any person obtaining     *
  * a copy of this software and associated documentation files (the           *
@@ -24,25 +25,29 @@
 #ifndef EXPRESSIONVISITOR_H
 #define EXPRESSIONVISITOR_H
 
-#include <astdefaultvisitor.h>
-#include <language/duchain/types/abstracttype.h>
 #include <QHash>
-#include <language/duchain/types/integraltype.h>
-#include <language/duchain/types/typesystemdata.h>
-
-#include "pythonduchainexport.h"
-#include <language/duchain/types/typeregister.h>
 #include <KLocalizedString>
 
+#include <language/duchain/types/abstracttype.h>
+#include <language/duchain/types/integraltype.h>
+#include <language/duchain/types/typesystemdata.h>
+#include <language/duchain/types/typeregister.h>
+#include <language/duchain/duchainpointer.h>
+
+#include "astdefaultvisitor.h"
+#include "pythonduchainexport.h"
+#include "pythoneditorintegrator.h"
+
+
 namespace KDevelop {
-class Identifier;
+    class Identifier;
 }
 
 using namespace KDevelop;
 
 namespace Python
 {
-    
+
 typedef KDevelop::IntegralTypeData IntegralTypeExtendedData;
 class KDEVPYTHONDUCHAIN_EXPORT IntegralTypeExtended : public KDevelop::IntegralType {
 public:
@@ -80,7 +85,7 @@ protected:
 class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
 {
     public:
-        ExpressionVisitor(KDevelop::DUContext* ctx);
+        ExpressionVisitor(KDevelop::DUContext* ctx, PythonEditorIntegrator* editor);
         
         virtual void visitBinaryOperation(BinaryOperationAst* node);
         virtual void visitUnaryOperation(UnaryOperationAst* node);
@@ -93,17 +98,24 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         virtual void visitDict(DictAst* node);
         virtual void visitSubscript(SubscriptAst* node);
         virtual void visitCall(CallAst* node);
+        virtual void visitAttribute(AttributeAst* node);
         
         KDevelop::AbstractType::Ptr lastType() const { return m_lastType; }
+        KDevelop::DeclarationPointer lastDeclaration() const { return m_lastAccessedAttributeDeclaration; }
     private:
         static QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> s_defaultTypes;
         
         KDevelop::AbstractType::Ptr m_lastType;
         KDevelop::DUContext* m_ctx;
+        PythonEditorIntegrator* m_editor;
         
         void encounter(KDevelop::AbstractType::Ptr type);
         
         void unknownTypeEncountered();
+        DeclarationPointer m_lastAccessedNameDeclaration;
+        DeclarationPointer m_lastAccessedAttributeDeclaration;  // this is in general not what the expression visitor is meant for,
+                                                                // but the processes to find those declarations and the types are pretty much the same
+                                                                // and are both pretty long, so we can avoid dulicated code with this.
 };
 
 }

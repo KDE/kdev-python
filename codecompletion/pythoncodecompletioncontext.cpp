@@ -34,8 +34,6 @@
 using namespace KTextEditor;
 using namespace KDevelop;
 
-typedef QPair<Declaration*, int> DeclarationDepthPair;
-
 namespace Python {
 
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bool& abort, bool fullCompletion)
@@ -73,6 +71,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             ExpressionVisitor* v = new ExpressionVisitor(m_context.data(), ed);
             v->visitCode(tmpAst);
             kDebug() << v->lastType()->toString();
+            items = getCompletionItemsForType(v->lastType());
         }
         else {
             kWarning() << "Completion requested for syntactically invalid expression, not offering anything";
@@ -82,7 +81,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         // it's stupid to display a 3-letter completion item on manually invoked code completion and makes everything look crowded
         if ( m_operation == PythonCodeCompletionContext::NewStatementCompletion && ! fullCompletion ) {
             QStringList keywordItems;
-            keywordItems << "def" << "class" << "lambda" << "global" << "print";
+            keywordItems << "def" << "class" << "lambda" << "global" << "print" << "import" << "from" << "while" << "for";
             foreach ( const QString& current, keywordItems ) {
                 items << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), current));
             }
@@ -91,33 +90,58 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             return QList<CompletionTreeItemPointer>();
         }
         QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
-        
-        DeclarationPointer currentDeclaration;
-        int count = declarations.length();
-        for ( int i = 0; i < count; i++ ) {
-            if ( abort ) {
-                return items;
-            }
-            currentDeclaration = DeclarationPointer(declarations.at(i).first);
-//             if ( currentDeclaration.data()->rangeInCurrentRevision().start > m_position.castToSimpleCursor() ) continue;
-            
-            kDebug() << "Adding item: " << currentDeclaration.data()->identifier().identifier().str();
-            NormalDeclarationCompletionItem* item;
-            if ( currentDeclaration.data()->abstractType() && currentDeclaration.data()->abstractType().constData()->whichType() == AbstractType::TypeFunction ) {
-                kDebug() << "Adding function declaration item";
-                item = new FunctionDeclarationCompletionItem(currentDeclaration);
-            }
-            else {
-                item = new NormalDeclarationCompletionItem(currentDeclaration, KDevelop::CodeCompletionContext::Ptr(this));
-            }
-            kDebug() << item->declaration().data()->identifier().identifier().str();
-            items << CompletionTreeItemPointer(item);
-        }
+        items.append(declarationListToItemList(declarations));
     }
     
     m_searchingForModule.clear();
     m_subForModule.clear();
     
+    return items;
+}
+
+QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToItemList(QList<DeclarationDepthPair> declarations, int maxDepth)
+{
+    QList<CompletionTreeItemPointer> items;
+    
+    DeclarationPointer currentDeclaration;
+    int count = declarations.length();
+    for ( int i = 0; i < count; i++ ) {
+        if ( maxDepth && maxDepth > declarations.at(i).second ) {
+            kDebug() << "Skipped completion item because of its depth";
+            continue;
+        }
+        currentDeclaration = DeclarationPointer(declarations.at(i).first);
+        
+        kDebug() << "Adding item: " << currentDeclaration.data()->identifier().identifier().str();
+        NormalDeclarationCompletionItem* item;
+        if ( currentDeclaration.data()->abstractType() && currentDeclaration.data()->abstractType().constData()->whichType() == AbstractType::TypeFunction ) {
+            kDebug() << "Adding function declaration item";
+            item = new FunctionDeclarationCompletionItem(currentDeclaration);
+        }
+        else {
+            item = new NormalDeclarationCompletionItem(currentDeclaration, KDevelop::CodeCompletionContext::Ptr(this));
+        }
+        kDebug() << item->declaration().data()->identifier().identifier().str();
+        items << CompletionTreeItemPointer(item);
+    }
+    return items;
+}
+
+QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItemsForType(AbstractType::Ptr type)
+{
+    if ( type->whichType() == AbstractType::TypeStructure ) {
+        // find properties of class declaration
+        TypePtr<StructureType> cls = StructureType::Ptr::dynamicCast(type);
+        kDebug() << "Finding completion items for class type";
+        QList<DeclarationDepthPair> declarations = cls->internalContext(m_context->topContext())->allDeclarations(m_position, m_context->topContext(), false);
+        return declarationListToItemList(declarations);
+    }
+    
+    if ( type->whichType() == AbstractType::TypeIntegral ) {
+        kDebug() << "Finding completion items for integral type";
+    }
+    
+    QList<CompletionTreeItemPointer> items;
     return items;
 }
 

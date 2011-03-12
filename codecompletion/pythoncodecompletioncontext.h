@@ -16,6 +16,8 @@ namespace KDevelop {
 }
 
 namespace Python {
+    
+typedef QPair<Declaration*, int> DeclarationDepthPair;
 
 class KDEVPYTHONCOMPLETION_EXPORT PythonCodeCompletionContext : public KDevelop::CodeCompletionContext
 {
@@ -34,6 +36,8 @@ public:
     QList<ImportFileItem*> includeFileItems(QList<KUrl> searchPaths);
     QList<ImportFileItem*> includeFileItemsForSubmodule(QString submodule);
     QList<KUrl> getSearchPaths();
+    QList<CompletionTreeItemPointer> getCompletionItemsForType(AbstractType::Ptr type);
+    QList<CompletionTreeItemPointer> declarationListToItemList(QList<DeclarationDepthPair> declarations, int maxDepth = 0);
     
     CompletionContextType m_operation;
     QStack<ProjectFolderItem*> m_folderStack;

@@ -30,6 +30,9 @@
 #include "keyworditem.h"
 #include "pythoncodecompletionworker.h"
 
+#include "astbuilder.h"
+#include "expressionvisitor.h"
+
 using namespace KDevelop;
 
 typedef QPair<Declaration*, int> DeclarationDepthPair;
@@ -64,8 +67,16 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         }
     }
     else if ( m_operation == PythonCodeCompletionContext::MemberAccessCompletion ) {
-        // we don't have type support, so we cannot support completing mebers yet. But we can at least prevent kdevelop from opening a pointless
-        // popup with completion items you don't want
+        AstBuilder* builder = new AstBuilder();
+        CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
+        if ( tmpAst ) {
+            ExpressionVisitor* v = new ExpressionVisitor(m_context.data());
+            v->visitCode(tmpAst);
+            kDebug() << v->lastType()->toString();
+        }
+        else {
+            kWarning() << "Completion requested for syntactically invalid expression, not offering anything";
+        }
     }
     else {
         // it's stupid to display a 3-letter completion item on manually invoked code completion and makes everything look crowded
@@ -184,7 +195,8 @@ QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems(QList<KUrl>
 }
 
 PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position, 
-                                                         int depth, const PythonCodeCompletionWorker* parent): CodeCompletionContext(context, text, position, depth), parent(parent)
+                                                         int depth, const PythonCodeCompletionWorker* parent): CodeCompletionContext(context, text, position, depth),
+                                                         parent(parent), m_context(context)
 {
     m_workingOnDocument = parent->parent->m_currentDocument;
     QString currentLine = "\n" + text.split("\n").last(); // we'll only look at the last line, as 99% of python statements are limited to one line
@@ -234,10 +246,15 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         return;
     }
     
-    QRegExp attributeAccess("(.*)\n[\\s]*(.*)\\.$");
+    QRegExp attributeAccess(".*\n[\\s]*(.*\\.)*$");
     attributeAccess.setMinimal(true);
     bool is_attributeAccess = attributeAccess.exactMatch(currentLine);
     if ( is_attributeAccess ) {
+        QStringList expr = currentLine.split(".");
+        expr.removeAll("");
+        m_guessTypeOfExpression = expr.join(".");
+        m_guessTypeOfExpression.replace(QRegExp("\"(.*)\""), "\"STRING\"");
+        kDebug() << "Guess type of this expression: " << m_guessTypeOfExpression;
         m_operation = PythonCodeCompletionContext::MemberAccessCompletion;
         return;
     }

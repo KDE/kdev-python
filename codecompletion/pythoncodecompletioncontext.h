@@ -42,6 +42,9 @@ public:
     QString m_subForModule;
     const PythonCodeCompletionWorker* parent;
     KUrl m_workingOnDocument;
+    QString m_guessTypeOfExpression;
+    
+    DUContextPointer m_context;
     
 private:
     bool m_dontAddMe;

@@ -117,7 +117,7 @@ void UseBuilder::visitAttribute(AttributeAst* node)
         accessingAttributeOfDeclaration = availableDeclarations.last();
     } 
     else {
-        kWarning() << "No declaration found to look up type of attribute in! This is probably something wrong in YOUR code. :)";
+        kWarning() << "No declaration found to look up type of attribute in.";
         UseBuilderBase::newUse(node, useRange, DeclarationPointer(0));
         return; // TODO report error
     }

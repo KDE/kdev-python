@@ -47,6 +47,11 @@ REGISTER_TYPE(IntegralTypeExtended);
 
 QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> ExpressionVisitor::s_defaultTypes;
 
+void ExpressionVisitor::encounter(AbstractType::Ptr type)
+{
+    m_lastType = type;
+}
+
 Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx)
     : m_ctx(ctx)
 {
@@ -58,7 +63,7 @@ Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx)
 }
 
 void ExpressionVisitor::unknownTypeEncountered() {
-    m_lastType = AbstractType::Ptr(new IntegralType(IntegralType::TypeNull));
+    encounter(AbstractType::Ptr(new IntegralType(IntegralType::TypeNull)));
 }
 
 void ExpressionVisitor::visitCall(CallAst* node)
@@ -81,10 +86,10 @@ void ExpressionVisitor::visitCall(CallAst* node)
         FunctionDeclaration* funcDecl = dynamic_cast<FunctionDeclaration*>(decls.last());
         
         if ( classDecl ) {
-            m_lastType = classDecl->abstractType();
+            encounter(classDecl->abstractType());
         }
         else if ( funcDecl && funcDecl->type<FunctionType>() ) {
-            m_lastType = funcDecl->type<FunctionType>()->returnType();
+            encounter(funcDecl->type<FunctionType>()->returnType());
         }
         else {
             kDebug() << "Declaraton for " << node->function->value << " is not a class or function declaration";
@@ -97,7 +102,7 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
 {
     if ( node->slice && node->slice->astType != Ast::IndexAstType ) {
         kDebug() << "Found slice, will use ListType for assignment";
-        m_lastType = AbstractType::Ptr(new IntegralTypeExtended(IntegralTypeExtended::TypeList));
+        encounter(AbstractType::Ptr(new IntegralTypeExtended(IntegralTypeExtended::TypeList)));
     }
     else {
         kDebug() << "No slice, defaulting to NULL type.";
@@ -108,23 +113,23 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
 void ExpressionVisitor::visitList(ListAst* node)
 {
     AstDefaultVisitor::visitList(node);
-    m_lastType = AbstractType::Ptr(new IntegralTypeExtended(IntegralTypeExtended::TypeList));
+    encounter(AbstractType::Ptr(new IntegralTypeExtended(IntegralTypeExtended::TypeList)));
 }
 
 void ExpressionVisitor::visitDict(DictAst* node)
 {
     AstDefaultVisitor::visitDict(node);
-    m_lastType = AbstractType::Ptr(new IntegralTypeExtended(IntegralTypeExtended::TypeDict));
+    encounter(AbstractType::Ptr(new IntegralTypeExtended(IntegralTypeExtended::TypeDict)));
 }
 
 void Python::ExpressionVisitor::visitNumber(Python::NumberAst* )
 {
-    m_lastType = AbstractType::Ptr(new IntegralType(IntegralType::TypeFloat));
+    encounter(AbstractType::Ptr(new IntegralType(IntegralType::TypeFloat)));
 }
 
 void Python::ExpressionVisitor::visitString(Python::StringAst* )
 {
-    m_lastType = AbstractType::Ptr(new IntegralType(IntegralType::TypeString));
+    encounter(AbstractType::Ptr(new IntegralType(IntegralType::TypeString)));
 }
 
 RangeInRevision nodeRange(Python::Ast* node)
@@ -137,17 +142,18 @@ void Python::ExpressionVisitor::visitName(Python::NameAst* node)
 {
     KDevelop::Identifier id(node->identifier->value);
     QHash < KDevelop::Identifier, AbstractType::Ptr >::const_iterator defId = s_defaultTypes.constFind(id);
-    if(defId!=s_defaultTypes.constEnd()) {
+    if ( defId != s_defaultTypes.constEnd() ) {
         m_lastType = *defId;
         return;
     }
     
-    QList< Declaration* > d=m_ctx->findDeclarations(id);
+    QList< Declaration* > d = m_ctx->findDeclarations(id);
 //     Q_ASSERT(!d.isEmpty());
  
     kDebug() << "visitName" << node->identifier->value << d;   
-    if(!d.isEmpty())
-        m_lastType = d.last()->abstractType();
+    if ( ! d.isEmpty() ) {
+        encounter(d.last()->abstractType());
+    }
     else {
         qDebug("VistName type not found");
         RangeInRevision r = nodeRange(node);
@@ -160,7 +166,7 @@ void Python::ExpressionVisitor::visitName(Python::NameAst* node)
         p->setSeverity(ProblemData::Error);
         p->setSource(KDevelop::ProblemData::SemanticAnalysis);
         m_ctx->topContext()->addProblem(p);
-        m_lastType = 0;
+        unknownTypeEncountered();
     }
 }
 
@@ -174,11 +180,11 @@ void Python::ExpressionVisitor::visitBinaryOperation(Python::BinaryOperationAst*
     
     if ( leftType && leftType->whichType() == AbstractType::TypeIntegral ) 
     {
-        m_lastType = leftType;
+        encounter(leftType);
     }
     else 
     {
-        m_lastType = AbstractType::Ptr(new UnsureType);
+        encounter(AbstractType::Ptr(new UnsureType));
     }
 }
 
@@ -208,7 +214,7 @@ void Python::ExpressionVisitor::visitBooleanOperation(Python::BooleanOperationAs
 //         }
     }
     
-    m_lastType = AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean));
+    encounter(AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
 }
 
 }

@@ -14,12 +14,18 @@ set(completion_SRCS
 
 kde4_add_library(kdev4pythoncompletion SHARED ${completion_SRCS})
 
+add_dependencies(kdev4pythoncompletion
+    kdev4pythonparser 
+    kdev4pythonduchain
+)
+
 target_link_libraries(kdev4pythoncompletion
     ${KDE4_KDECORE_LIBS}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${KDEVPLATFORM_INTERFACES_LIBRARIES}
     ${KDEVPLATFORM_PROJECT_LIBRARIES}
     kdev4pythonduchain
+    kdev4pythonparser
 )
 
 install(TARGETS kdev4pythoncompletion DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})

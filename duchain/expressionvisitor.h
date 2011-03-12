@@ -77,7 +77,7 @@ protected:
     TYPE_DECLARE_DATA(IntegralTypeExtended);
 };
 
-class ExpressionVisitor : public AstDefaultVisitor
+class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
 {
     public:
         ExpressionVisitor(KDevelop::DUContext* ctx);
@@ -100,6 +100,8 @@ class ExpressionVisitor : public AstDefaultVisitor
         
         KDevelop::AbstractType::Ptr m_lastType;
         KDevelop::DUContext* m_ctx;
+        
+        void encounter(KDevelop::AbstractType::Ptr type);
         
         void unknownTypeEncountered();
 };

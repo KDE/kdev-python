@@ -27,6 +27,7 @@
 #include "kdebug.h"
 #include "QXmlStreamReader"
 #include <language/duchain/topducontext.h>
+#include "parserexport.h"
 
 namespace PythonParser
 {
@@ -41,7 +42,7 @@ namespace Python
 
 typedef QMap<QString, QString> stringDictionary;
 
-class AstBuilder
+class KDEVPYTHONPARSER_EXPORT AstBuilder
 {
     
 public:

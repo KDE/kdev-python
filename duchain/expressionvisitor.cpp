@@ -128,9 +128,20 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     }
     
     if ( foundDecls.length() > 0 ) {
-        kDebug() << "Creating a new attribute declaration:" << useRange.castToSimpleRange() << ", Declaration:" << foundDecls.last()->range();
         m_lastAccessedAttributeDeclaration = DeclarationPointer(foundDecls.last());
-        encounter(foundDecls.last()->abstractType());
+        
+        // if it's a function call, the result of that call will be the return type
+        // TODO check weather we need to distinguish bettween foo.bar and foo.bar() here
+        if ( foundDecls.last()->type<FunctionType>() ) {
+            kDebug() << "Method found, determining return type";
+            encounter(foundDecls.last()->type<FunctionType>()->returnType());
+            if ( foundDecls.last()->type<FunctionType>()->returnType() ) {
+                kDebug() << "Return type for method: " << foundDecls.last()->type<FunctionType>()->returnType()->toString();
+            }
+        }
+        else {
+            encounter(foundDecls.last()->abstractType());
+        }
     }
     else {
         kWarning() << "No declaration found for attribute";
@@ -144,15 +155,20 @@ void ExpressionVisitor::visitCall(CallAst* node)
 {
     Python::AstDefaultVisitor::visitCall(node);
     // if it's not written like foo() but like foo[3](), then we don't attempt to guess a type
-    if ( ! dynamic_cast<NameAst*>(node->function) ) {
+    if ( node->function->astType == Ast::AttributeAstType ) {
+        // a bit confusing, but visitAttribute() already has taken care of this.
+        return;
+    }
+    if ( ! ( node->function->astType == Ast::NameAstType ) ) {
         return unknownTypeEncountered();
     }
     
-    kDebug() << "Visiting call of function " << dynamic_cast<NameAst*>(node->function)->identifier->value;
+    QString functionName = dynamic_cast<NameAst*>(node->function)->identifier->value;
+    kDebug() << "Visiting call of function " << functionName;
     
-    QList<Declaration*> decls = m_ctx->findDeclarations(QualifiedIdentifier(dynamic_cast<NameAst*>(node->function)->identifier->value));
+    QList<Declaration*> decls = m_ctx->findDeclarations(QualifiedIdentifier(functionName));
     if ( decls.length() == 0 ) {
-        kWarning() << "No declaration for " << node->function->value;
+        kWarning() << "No declaration for " << functionName;
         return unknownTypeEncountered();
     }
     else {
@@ -166,7 +182,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
             encounter(funcDecl->type<FunctionType>()->returnType());
         }
         else {
-            kDebug() << "Declaraton for " << node->function->value << " is not a class or function declaration";
+            kDebug() << "Declaraton for " << functionName << " is not a class or function declaration";
             return unknownTypeEncountered();
         }
     }
@@ -231,16 +247,6 @@ void Python::ExpressionVisitor::visitName(Python::NameAst* node)
     }
     else {
         kDebug() << "VistName type not found";
-        RangeInRevision r = nodeRange(node);
-        r.end.column += 1;
-        
-        ProblemPointer p(new Problem);
-        p->setRange(r);
-        p->setDescription(i18n("undefined variable '%1'", node->identifier->value));
-        p->setFinalLocation(DocumentRange(m_ctx->topContext()->url(), r.castToSimpleRange()));
-        p->setSeverity(ProblemData::Error);
-        p->setSource(KDevelop::ProblemData::SemanticAnalysis);
-        m_ctx->topContext()->addProblem(p);
         unknownTypeEncountered();
     }
 }

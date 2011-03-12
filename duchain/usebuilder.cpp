@@ -54,9 +54,13 @@ void UseBuilder::buildUses(Ast* node)
 
 void UseBuilder::visitName(NameAst* node)
 {
-    DUChainWriteLocker lock(DUChain::lock());
-    QList<Declaration*> declarations = currentContext()->findDeclarations(identifierForNode(node->identifier), editorFindRange(node, node).start);
-    QList<Declaration*> localDeclarations = currentContext()->findLocalDeclarations(identifierForNode(node->identifier).last(), editorFindRange(node, node).end);
+    QList<Declaration*> declarations;
+    QList<Declaration*> localDeclarations;
+    {
+        DUChainReadLocker lock(DUChain::lock());
+        declarations = currentContext()->findDeclarations(identifierForNode(node->identifier), editorFindRange(node, node).start);
+        localDeclarations = currentContext()->findLocalDeclarations(identifierForNode(node->identifier).last(), editorFindRange(node, node).end);
+    }
     Declaration* declaration;
     if ( localDeclarations.length() ) {
         declaration = localDeclarations.last();

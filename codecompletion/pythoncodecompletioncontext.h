@@ -2,11 +2,12 @@
 #define PYTHONCODECOMPLETIONCONTEXT_H
 
 #include <language/codecompletion/codecompletioncontext.h>
-#include "pythoncompletionexport.h"
 #include <language/duchain/duchainpointer.h>
 #include <qstack.h>
-#include <importfileitem.h>
+
+#include "importfileitem.h"
 #include "pythoncodecompletionworker.h"
+#include "pythoncompletionexport.h"
 
 using namespace KDevelop;
 
@@ -35,7 +36,6 @@ public:
     virtual QList< KDevelop::CompletionTreeItemPointer > completionItems(bool& abort, bool fullCompletion = true);
     QList<ImportFileItem*> includeFileItems(QList<KUrl> searchPaths);
     QList<ImportFileItem*> includeFileItemsForSubmodule(QString submodule);
-    QList<KUrl> getSearchPaths();
     QList<CompletionTreeItemPointer> getCompletionItemsForType(AbstractType::Ptr type);
     QList<CompletionTreeItemPointer> declarationListToItemList(QList<DeclarationDepthPair> declarations, int maxDepth = 0);
     

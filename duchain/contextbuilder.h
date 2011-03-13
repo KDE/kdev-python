@@ -54,7 +54,7 @@ public:
     void setEditor(PythonEditorIntegrator* editor);
     void setEditor(ParseSession* session);
 
-    KUrl findModulePath(const QString& name);
+    QPair<KUrl, QStringList> findModulePath(const QString& name);
 
 protected:
     PythonEditorIntegrator* editor() const;

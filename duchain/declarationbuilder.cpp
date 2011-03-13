@@ -22,9 +22,8 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION     *
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
-#include "declarationbuilder.h"
-
 #include <QByteArray>
+#include <QtGlobal>
 
 #include <ktexteditor/smartrange.h>
 #include <ktexteditor/smartinterface.h>
@@ -45,14 +44,12 @@
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/builders/abstracttypebuilder.h>
 #include <language/duchain/aliasdeclaration.h>
-
-#include "contextbuilder.h"
-
-#include "pythoneditorintegrator.h"
-#include "QtGlobal"
-
 #include <declarations/importedmoduledeclaration.h>
 #include <../kdevplatform/language/duchain/declaration.h>
+
+#include "contextbuilder.h"
+#include "declarationbuilder.h"
+#include "pythoneditorintegrator.h"
 #include "expressionvisitor.h"
 
 

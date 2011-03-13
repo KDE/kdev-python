@@ -30,6 +30,7 @@
 #include "functiondeclarationcompletionitem.h"
 #include "pythoncodecompletioncontext.h"
 #include "pythoneditorintegrator.h"
+#include "duchain/declarationbuilder.h"
 
 using namespace KTextEditor;
 using namespace KDevelop;
@@ -50,7 +51,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     else if ( m_operation == PythonCodeCompletionContext::ImportFileCompletion ) {
         kDebug() << "Preparing to do autocompletion for import...";
         m_maxFolderScanDepth = 1;
-        foreach ( ImportFileItem* item, includeFileItems(getSearchPaths()) ) {
+        foreach ( ImportFileItem* item, includeFileItems(getSearchPaths(m_workingOnDocument)) ) {
             Q_ASSERT(item);
             item->includeItem.name = QString(item->moduleName + " (from " + KUrl::relativeUrl(m_workingOnDocument, item->includeItem.basePath) + ")");
             items << CompletionTreeItemPointer( item );
@@ -145,26 +146,10 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
     return items;
 }
 
-QList< KUrl > PythonCodeCompletionContext::getSearchPaths()
-{
-    QList<KUrl> searchPaths;
-    // search in the projects, as they're packages and likely to be installed or added to PYTHONPATH later
-    foreach  (IProject* project, ICore::self()->projectController()->projects() ) {
-        searchPaths.append(KUrl(project->folder().url()));
-    }
-    
-    // search in the current packages
-    searchPaths.append(KUrl(m_workingOnDocument.directory()));
-    
-    kDebug() << "Search paths: " << searchPaths;
-    kDebug() << m_workingOnDocument;
-    return searchPaths;
-}
-
 QList< ImportFileItem* > PythonCodeCompletionContext::includeFileItemsForSubmodule(QString submodule)
 {
     QList<ImportFileItem*> items;
-    QList<KUrl> searchPaths = getSearchPaths();
+    QList<KUrl> searchPaths = getSearchPaths(m_workingOnDocument);
     QStringList subdirs = submodule.split(".");
     QList<KUrl> foundPaths;
     

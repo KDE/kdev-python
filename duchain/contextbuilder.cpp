@@ -22,26 +22,29 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION     *
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
-#include "contextbuilder.h"
-// #include <language/duchain/language.h>
-#include <language/duchain/duchainlock.h>
-#include <language/duchain/topducontext.h>
-#include <language/duchain/parsingenvironment.h>
 #include <ktexteditor/smartrange.h>
 #include <ktexteditor/smartinterface.h>
 #include <ktexteditor/document.h>
-#include "pythoneditorintegrator.h"
-#include "dumpchain.h"
+
+#include <language/duchain/duchainlock.h>
+#include <language/duchain/topducontext.h>
+#include <language/duchain/parsingenvironment.h>
 #include <language/editor/rangeinrevision.h>
 #include <interfaces/foregroundlock.h>
-#include <pythonparsejob.h>
 #include <interfaces/icore.h>
 #include <interfaces/idocumentcontroller.h>
 #include <interfaces/iprojectcontroller.h>
-#include <project/projectmodel.h>
 #include <interfaces/iproject.h>
+#include <project/projectmodel.h>
+
+#include "pythoneditorintegrator.h"
+#include "dumpchain.h"
 #include "usebuilder.h"
+#include "contextbuilder.h"
 #include "pythonducontext.h"
+#include "codecompletion/pythoncodecompletioncontext.h"
+#include "pythonparsejob.h"
+#include "declarationbuilder.h"
 
 using namespace KDevelop;
 
@@ -196,30 +199,29 @@ void ContextBuilder::visitCode(CodeAst* node) {
     AstDefaultVisitor::visitCode(node);
 }
 
-KUrl ContextBuilder::findModulePath(const QString& name)
+QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
 {
-    QStringList modulePath = name.split(".");
-    
-    KUrl currentPath = currentContext()->url().toUrl();
-    Q_ASSERT(currentPath.url().length());
-    kDebug() << " >>>>>>>>> Got URL: " << currentPath.upUrl().url(KUrl::RemoveTrailingSlash);
-    
-    IProject* currentProject = ICore::self()->projectController()->findProjectForUrl(currentPath);
-    if ( ! currentProject ) {
-        kError() << "Cannot import module contexts without a project opened.";
-        return KUrl();
+    QStringList nameComponents = name.split(".");
+    QList<KUrl> searchPaths = getSearchPaths(document().toUrl());
+    foreach ( KUrl currentPath, searchPaths ) {
+        KUrl tmp = currentPath;
+        int moduleComponentsUsed = 0;
+        foreach ( QString component, nameComponents ) {
+            moduleComponentsUsed += 1;
+            QString testFilename = currentPath.path(KUrl::AddTrailingSlash) + component;
+            KUrl sourceUrl = testFilename + ".py";
+            QFile sourcefile(testFilename + ".py"); // we can only parse those, so we don't care about anything else for now.
+            if ( sourcefile.exists() ) {
+                for ( int i=0; i<moduleComponentsUsed; i++ ) nameComponents.removeFirst();
+                return QPair<KUrl, QStringList>(sourceUrl, nameComponents);
+            }
+            bool can_continue = tmp.cd(component);
+            if ( ! can_continue ) {
+                break;
+            }
+        }
     }
-    
-    // easiest case: current directory
-    KUrl filename(currentPath.directory(KUrl::AppendTrailingSlash) + modulePath.first() + ".py");
-    kDebug() << "filename url: " << filename;
-    if ( currentProject->filesForUrl(filename).length() > 0 ) {
-        ProjectFileItem* result = currentProject->filesForUrl(filename).first();
-        kDebug() << "Found! " << result->url();
-        return result->url();
-    }
-    
-    return KUrl();
+    return QPair<KUrl, QStringList>(KUrl(), QStringList());
 }
 
 void ContextBuilder::visitImportFrom(ImportFromAst* node)
@@ -233,14 +235,15 @@ void ContextBuilder::visitImport(ImportAst* node)
         // for "import ... as", use the as thingy, use the module name otherwise
 //         Identifier* variableDeclarationName = name->asName ? name->asName->identifier : name->name; # TODO check this
         
-        KUrl moduleFilePath = findModulePath(name->name->value);
-        if ( ! moduleFilePath.isValid() ) continue;
+        QPair<KUrl, QStringList> moduleFilePath = findModulePath(name->name->value);
+        if ( ! moduleFilePath.first.isValid() ) continue;
         else {
             DUChainWriteLocker lock(DUChain::lock());
-            TopDUContext* moduleChain = DUChain::self()->chainForDocument(KUrl(moduleFilePath));
+            DUChain::self()->updateContextForUrl(IndexedString(moduleFilePath.first.path()), TopDUContext::AllDeclarationsAndContexts);
+            TopDUContext* moduleChain = DUChain::self()->chainForDocument(KUrl(moduleFilePath.first));
             contextsForModules.insert(name->name->value, TopDUContextPointer(moduleChain));
             kDebug() << "Added " << name->name->value << " to the module chain map";
-//             currentContext()->addImportedParentContext(moduleChain);
+            currentContext()->addImportedParentContext(moduleChain);
         }
     }
     Python::AstDefaultVisitor::visitImport(node);

@@ -18,7 +18,7 @@ if ( EXISTS ${kdevpython_SOURCE_DIR}/python-src/Makefile )
     message(STATUS "Skipping reconfiguration of python sources, assuming nothing changed here. If you want to force reconfiguring, delete the Makefile in python-src/.")
 elseif ( NOT EXISTS ${kdevpython_SOURCE_DIR}/python-src/Makefile )
     message(STATUS "Configuring python 2.7...")
-    execute_process(COMMAND /bin/bash ${kdevpython_SOURCE_DIR}/python-src/configure --enable-shared WORKING_DIRECTORY ${kdevpython_SOURCE_DIR}/python-src)
+    execute_process(COMMAND /bin/bash ${kdevpython_SOURCE_DIR}/python-src/configure --enable-shared --without-pymalloc WORKING_DIRECTORY ${kdevpython_SOURCE_DIR}/python-src)
 endif( EXISTS ${kdevpython_SOURCE_DIR}/python-src/Makefile )
 
 execute_process(COMMAND /usr/bin/env make -f ${kdevpython_SOURCE_DIR}/python-src/Makefile WORKING_DIRECTORY ${kdevpython_SOURCE_DIR}/python-src)

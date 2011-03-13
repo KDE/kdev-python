@@ -177,7 +177,9 @@ void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
     RangeInRevision range(node->body.first()->startLine, node->body.first()->startCol, node->body.last()->endLine, node->body.last()->endCol + 100000);
     openContext( node, range, DUContext::Class, node->name);
+    DUChainWriteLocker lock(DUChain::lock());
     currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));
+    lock.unlock();
     kDebug() << " +++ opening CLASS context: " << range.castToSimpleRange() << node->name;
     addImportedContexts();
     Python::AstDefaultVisitor::visitClassDefinition(node);
@@ -191,10 +193,12 @@ void ContextBuilder::visitArguments(ArgumentsAst* node)
 }
 
 void ContextBuilder::visitCode(CodeAst* node) {
-    DUChainWriteLocker lock(DUChain::lock());
-    TopDUContext* internal = DUChain::self()->chainForDocument(KUrl("/home/sven/projects/kde4/python/documentation/test.py"));
-    if ( internal ) {
-        currentContext()->addImportedParentContext(internal);
+    {
+        DUChainWriteLocker lock(DUChain::lock());
+        TopDUContext* internal = DUChain::self()->chainForDocument(KUrl("/home/sven/projects/kde4/python/documentation/test.py"));
+        if ( internal ) {
+            currentContext()->addImportedParentContext(internal);
+        }
     }
     AstDefaultVisitor::visitCode(node);
 }
@@ -238,10 +242,18 @@ void ContextBuilder::visitImport(ImportAst* node)
         QPair<KUrl, QStringList> moduleFilePath = findModulePath(name->name->value);
         if ( ! moduleFilePath.first.isValid() ) continue;
         else {
-            DUChainWriteLocker lock(DUChain::lock());
-            DUChain::self()->updateContextForUrl(IndexedString(moduleFilePath.first.path()), TopDUContext::AllDeclarationsAndContexts);
-            TopDUContext* moduleChain = DUChain::self()->chainForDocument(KUrl(moduleFilePath.first));
-            contextsForModules.insert(variableDeclarationName, TopDUContextPointer(moduleChain));
+            kDebug() << DUChain::lock()->currentThreadHasReadLock() << DUChain::lock()->currentThreadHasWriteLock();
+            const IndexedString doc = IndexedString(moduleFilePath.first.path());
+            ReferencedTopDUContext moduleChain;
+            DUChainReadLocker lock(DUChain::lock());
+            moduleChain = DUChain::self()->chainForDocument(doc);
+            lock.unlock();
+            if ( ! moduleChain ) {
+                DUChain::self()->updateContextForUrl(doc, TopDUContext::AllDeclarationsAndContexts);
+                ReferencedTopDUContext moduleChain = DUChain::self()->waitForUpdate(doc, TopDUContext::AllDeclarationsAndContexts);
+            }
+            
+            contextsForModules.insert(variableDeclarationName, TopDUContextPointer(moduleChain.data()));
             kDebug() << "Added " << name->name->value << " to the module chain map";
 //             currentContext()->addImportedParentContext(moduleChain);
         }

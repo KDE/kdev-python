@@ -113,6 +113,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     TypePtr<StructureType> accessingAttributeOfType = accessingAttributeOfDeclaration.data()->type<StructureType>();
     // maybe our attribute isn't a class at all, then that's an error by definition for now
     bool success = false;
+    DUChainReadLocker lock(DUChain::lock());
     if ( accessingAttributeOfType.unsafeData() ) {
         Declaration* foundContainerDeclaration = accessingAttributeOfType.unsafeData()->declaration(m_ctx->topContext());
         if ( foundContainerDeclaration ) {
@@ -128,6 +129,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     
     if ( foundDecls.length() > 0 ) {
         m_lastAccessedAttributeDeclaration = DeclarationPointer(foundDecls.last());
+        kDebug() << "Last accessed declaration: " << m_lastAccessedAttributeDeclaration->identifier().toString() << m_lastAccessedAttributeDeclaration.data();
         
         // if it's a function call, the result of that call will be the return type
         // TODO check weather we need to distinguish bettween foo.bar and foo.bar() here
@@ -165,6 +167,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
     QString functionName = dynamic_cast<NameAst*>(node->function)->identifier->value;
     kDebug() << "Visiting call of function " << functionName;
     
+    DUChainReadLocker lock(DUChain::lock());
     QList<Declaration*> decls = m_ctx->findDeclarations(QualifiedIdentifier(functionName));
     if ( decls.length() == 0 ) {
         kWarning() << "No declaration for " << functionName;
@@ -236,7 +239,9 @@ void Python::ExpressionVisitor::visitName(Python::NameAst* node)
         return;
     }
     
+    DUChainReadLocker lock(DUChain::lock());
     QList< Declaration* > d = m_ctx->findDeclarations(id);
+    lock.unlock();
 //     Q_ASSERT(!d.isEmpty());
  
     kDebug() << "visitName" << node->identifier->value << d;   

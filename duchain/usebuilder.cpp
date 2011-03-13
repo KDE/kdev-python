@@ -71,7 +71,7 @@ void UseBuilder::visitName(NameAst* node)
         kDebug() << "Using global declaration";
     }
     else declaration = 0;
-    kDebug() << currentContext()->type() << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
+//     kDebug() << currentContext()->type() << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
     
     Q_ASSERT(node->identifier);
     Q_ASSERT(node->hasUsefulRangeInformation); // TODO remove this!
@@ -82,6 +82,7 @@ void UseBuilder::visitName(NameAst* node)
     kDebug() << " Registering use for " << node->identifier->value << " at " << useRange.castToSimpleRange() << "with dec" << declaration;
     UseBuilderBase::newUse(node, useRange, DeclarationPointer(declaration));
 }
+
 
 void UseBuilder::visitAttribute(AttributeAst* node)
 {
@@ -95,18 +96,6 @@ void UseBuilder::visitAttribute(AttributeAst* node)
     RangeInRevision useRange(node->attribute->startLine, node->attribute->startCol, node->attribute->endLine, node->attribute->endCol + 1);
     newUse(node, useRange, v->lastDeclaration());
 }
-
-// void UseBuilder::openContext(DUContext * newContext)
-// {
-//   UseBuilderBase::openContext(newContext);
-//   m_nextUseStack.push(0);
-// }
-// 
-// void UseBuilder::closeContext()
-// {
-//   UseBuilderBase::closeContext();
-//   m_nextUseStack.pop();
-// }
 
 
 ParseSession *UseBuilder::parseSession() const

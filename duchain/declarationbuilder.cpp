@@ -210,6 +210,7 @@ void DeclarationBuilder::visitFor(ForAst* node)
 void DeclarationBuilder::visitImport(ImportAst* node)
 {
     Python::ContextBuilder::visitImport(node);
+    DUChainWriteLocker lock(DUChain::lock());
     foreach ( AliasAst* name, node->names ) {
         TopDUContextPointer contextptr = contextsForModules.value(name->asName ? name->asName : name->name);
         kDebug() << "Chain for document: " << contextptr;
@@ -239,7 +240,7 @@ void DeclarationBuilder::visitImport(ImportAst* node)
             dec->setType(type);
         
             dec->setInternalContext(contextptr.data());
-            kDebug() << dec->context()->allDeclarations(CursorInRevision::invalid(), currentContext()->topContext());
+            kDebug() << "All declarations in the module which has just been imported" << dec->context()->allDeclarations(CursorInRevision::invalid(), currentContext()->topContext());
         }
     }
 }
@@ -285,6 +286,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     kDebug() << "opening class definition";
 //     ClassDeclaration* classDec = new ClassDeclaration(editorFindRange(node->body.first(), node->body.last()), currentContext());
     
+    DUChainWriteLocker lock(DUChain::lock());
     ClassDeclaration* dec = openDeclaration<ClassDeclaration>( node->name, node );
     eventuallyAssignInternalContext();
     dec->setKind(KDevelop::Declaration::Type);
@@ -293,6 +295,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     StructureType::Ptr type(new StructureType());
     type->setDeclaration(dec);
     dec->setType(type);
+    lock.unlock();
     
     openType(type);
     DeclarationBuilderBase::visitClassDefinition( node );

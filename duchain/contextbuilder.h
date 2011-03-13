@@ -81,7 +81,7 @@ protected:
     
     DUContext* openSafeContext( Python::Ast* node, RangeInRevision& range, DUContext::ContextType type, Python::Identifier* identifier = 0 );
     
-    QMap<QString, TopDUContextPointer> contextsForModules;
+    QMap<Identifier*, TopDUContextPointer> contextsForModules;
 
     static PythonEditorIntegrator* m_editor;
     

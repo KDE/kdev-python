@@ -233,7 +233,7 @@ void ContextBuilder::visitImport(ImportAst* node)
 {
     foreach ( AliasAst* name, node->names ) {
         // for "import ... as", use the as thingy, use the module name otherwise
-//         Identifier* variableDeclarationName = name->asName ? name->asName->identifier : name->name; # TODO check this
+        Identifier* variableDeclarationName = name->asName ? name->asName : name->name;
         
         QPair<KUrl, QStringList> moduleFilePath = findModulePath(name->name->value);
         if ( ! moduleFilePath.first.isValid() ) continue;
@@ -241,9 +241,9 @@ void ContextBuilder::visitImport(ImportAst* node)
             DUChainWriteLocker lock(DUChain::lock());
             DUChain::self()->updateContextForUrl(IndexedString(moduleFilePath.first.path()), TopDUContext::AllDeclarationsAndContexts);
             TopDUContext* moduleChain = DUChain::self()->chainForDocument(KUrl(moduleFilePath.first));
-            contextsForModules.insert(name->name->value, TopDUContextPointer(moduleChain));
+            contextsForModules.insert(variableDeclarationName, TopDUContextPointer(moduleChain));
             kDebug() << "Added " << name->name->value << " to the module chain map";
-            currentContext()->addImportedParentContext(moduleChain);
+//             currentContext()->addImportedParentContext(moduleChain);
         }
     }
     Python::AstDefaultVisitor::visitImport(node);

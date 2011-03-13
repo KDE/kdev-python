@@ -211,12 +211,13 @@ void DeclarationBuilder::visitImport(ImportAst* node)
 {
     Python::ContextBuilder::visitImport(node);
     foreach ( AliasAst* name, node->names ) {
-        TopDUContextPointer contextptr = contextsForModules.value(name->asName ? name->asName->value : name->name->value);
+        TopDUContextPointer contextptr = contextsForModules.value(name->asName ? name->asName : name->name);
         kDebug() << "Chain for document: " << contextptr;
-        m_importContextsForImportStatement.push(contextptr);
         importedModuleDeclaration* dec;
         kDebug() << ( name->asName ? name->asName->value : QString("no asName") ) << ( name->name ? name->name->value : "no name" );
-        openType(AbstractType::Ptr(0));
+        
+        StructureType::Ptr type(new StructureType());
+        openType(type);
         setLastType(AbstractType::Ptr(0));
         if ( name->asName ) {
             dec = visitVariableDeclaration<importedModuleDeclaration>(name->asName);
@@ -225,6 +226,8 @@ void DeclarationBuilder::visitImport(ImportAst* node)
             dec = visitVariableDeclaration<importedModuleDeclaration>(name->name);
         }
         closeType();
+        
+        type->setDeclaration(dec);
             
         QString moduleName = name->name->value;
         if ( name->asName && name->asName ) 
@@ -233,8 +236,11 @@ void DeclarationBuilder::visitImport(ImportAst* node)
         if ( dec ) {
             DUChainWriteLocker lock(DUChain::lock());
             dec->m_moduleIdentifier = moduleName;
+            dec->setType(type);
+        
+            dec->setInternalContext(contextptr.data());
+            kDebug() << dec->context()->allDeclarations(CursorInRevision::invalid(), currentContext()->topContext());
         }
-        m_importContextsForImportStatement.clear();
     }
 }
 

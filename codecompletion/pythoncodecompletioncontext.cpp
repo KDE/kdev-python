@@ -71,8 +71,13 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             PythonEditorIntegrator* ed = new PythonEditorIntegrator();
             ExpressionVisitor* v = new ExpressionVisitor(m_context.data(), ed);
             v->visitCode(tmpAst);
-            kDebug() << v->lastType()->toString();
-            items = getCompletionItemsForType(v->lastType());
+            if ( v->lastType() ) {
+                kDebug() << v->lastType()->toString();
+                items = getCompletionItemsForType(v->lastType());
+            }
+            else {
+                kWarning() << "Did not receive a type from expression visitor! Not offering autocompletion.";
+            }
         }
         else {
             kWarning() << "Completion requested for syntactically invalid expression, not offering anything";
@@ -134,7 +139,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
         // find properties of class declaration
         TypePtr<StructureType> cls = StructureType::Ptr::dynamicCast(type);
         kDebug() << "Finding completion items for class type";
-        QList<DeclarationDepthPair> declarations = cls->internalContext(m_context->topContext())->allDeclarations(m_position, m_context->topContext(), false);
+        QList<DeclarationDepthPair> declarations = cls->internalContext(m_context->topContext())->allDeclarations(CursorInRevision::invalid(), m_context->topContext(), false);
         return declarationListToItemList(declarations);
     }
     

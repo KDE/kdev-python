@@ -112,20 +112,19 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     
     TypePtr<StructureType> accessingAttributeOfType = accessingAttributeOfDeclaration.data()->type<StructureType>();
     // maybe our attribute isn't a class at all, then that's an error by definition for now
+    bool success = false;
     if ( accessingAttributeOfType.unsafeData() ) {
         Declaration* foundContainerDeclaration = accessingAttributeOfType.unsafeData()->declaration(m_ctx->topContext());
-        DUContext* searchAttrInContext = foundContainerDeclaration->internalContext();
-        if ( searchAttrInContext ) {
-            foundDecls = searchAttrInContext->findDeclarations(QualifiedIdentifier(node->attribute->value), CursorInRevision::invalid(), 
-                                                               KDevelop::AbstractType::Ptr(), searchAttrInContext->topContext());
-        }
-        else {
-            foundDecls.clear();
+        if ( foundContainerDeclaration ) {
+            DUContext* searchAttrInContext = foundContainerDeclaration->internalContext();
+            if ( searchAttrInContext ) {
+                foundDecls = searchAttrInContext->findDeclarations(QualifiedIdentifier(node->attribute->value), CursorInRevision::invalid(), 
+                                                                   KDevelop::AbstractType::Ptr(), searchAttrInContext->topContext());
+                success = true;
+            }
         }
     }
-    else {
-        foundDecls.clear();
-    }
+    if ( ! success ) foundDecls.clear();
     
     if ( foundDecls.length() > 0 ) {
         m_lastAccessedAttributeDeclaration = DeclarationPointer(foundDecls.last());

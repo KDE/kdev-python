@@ -45,6 +45,7 @@
 #include "codecompletion/pythoncodecompletioncontext.h"
 #include "pythonparsejob.h"
 #include "declarationbuilder.h"
+#include "parser/parserConfig.h"
 
 using namespace KDevelop;
 
@@ -193,10 +194,17 @@ void ContextBuilder::visitArguments(ArgumentsAst* node)
 }
 
 void ContextBuilder::visitCode(CodeAst* node) {
-    {
-        DUChainWriteLocker lock(DUChain::lock());
-        TopDUContext* internal = DUChain::self()->chainForDocument(KUrl("/home/sven/projects/kde4/python/documentation/test.py"));
+    IndexedString doc = IndexedString(QString(INSTALL_PATH) + "/builtindocumentation.py");
+    if ( document() != doc ) {
+        DUChainReadLocker lock(DUChain::lock());
+        TopDUContext* internal = DUChain::self()->chainForDocument(doc); // TODO add startup-check and error message, this must exist
+        lock.unlock();
+        
+        if ( ! internal ) DUChain::self()->updateContextForUrl(doc, TopDUContext::AllDeclarationsAndContexts);
+        
         if ( internal ) {
+            kDebug() << "Adding builtin function context...";
+            DUChainWriteLocker wlock(DUChain::lock());
             currentContext()->addImportedParentContext(internal);
         }
     }
@@ -249,8 +257,10 @@ void ContextBuilder::visitImport(ImportAst* node)
             moduleChain = DUChain::self()->chainForDocument(doc);
             lock.unlock();
             if ( ! moduleChain ) {
-                DUChain::self()->updateContextForUrl(doc, TopDUContext::AllDeclarationsAndContexts);
-                ReferencedTopDUContext moduleChain = DUChain::self()->waitForUpdate(doc, TopDUContext::AllDeclarationsAndContexts);
+//                 DUChain::self()->updateContextForUrl(doc, TopDUContext::AllDeclarationsAndContexts);
+                lock.lock();
+                ReferencedTopDUContext moduleChain = DUChain::self()->chainForDocument(doc);
+                lock.unlock();
             }
             
             contextsForModules.insert(variableDeclarationName, TopDUContextPointer(moduleChain.data()));

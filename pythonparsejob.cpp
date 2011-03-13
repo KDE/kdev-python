@@ -72,7 +72,6 @@ ParseJob::ParseJob(LanguageSupport* parent, const KUrl &url )
 {
     kDebug();
     m_parent = parent;
-    ParseJob::internalFunctionsFile =  new KUrl(QString(INSTALL_PATH) + QString("/test.py"));
     ParseJob::m_internalFunctions = 0;
 }
 
@@ -97,13 +96,6 @@ bool ParseJob::wasReadFromDisk() const
     return m_readFromDisk;
 }
 
-void ParseJob::checkInternalFunctionsParsed()
-{
-    if ( ! ParseJob::m_internalFunctions ) {
-        DUChain::self()->updateContextForUrl(IndexedString(*internalFunctionsFile), minimumFeatures());
-    }
-}
-
 void ParseJob::run()
 {
     kDebug();
@@ -113,8 +105,6 @@ void ParseJob::run()
     QReadLocker parselock(ilang->parseLock());
     UrlParseLock urlLock(document());
     
-    if ( m_url != *internalFunctionsFile ) checkInternalFunctionsParsed();
-
     if (abortRequested() || !python() || !python()->language()) {
         kWarning() << "Language support is NULL";
         return abortJob();

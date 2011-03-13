@@ -202,26 +202,39 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
     }
 }
 
+AbstractType::Ptr ExpressionVisitor::typeObjectForIntegralType(QString typeDescriptor)
+{
+    DUChainReadLocker lock(DUChain::lock());
+    QList<Declaration*> decls = m_ctx->topContext()->findDeclarations(QualifiedIdentifier("__kdevpythondocumentation_builtin_" + typeDescriptor));
+    Declaration* decl = decls.isEmpty() ? 0 : decls.first();
+    AbstractType::Ptr type = decl ? decl->abstractType() : AbstractType::Ptr(0);
+    return type;
+}
+
 void ExpressionVisitor::visitList(ListAst* node)
 {
     AstDefaultVisitor::visitList(node);
-    encounter(AbstractType::Ptr(new IntegralTypeExtended(IntegralTypeExtended::TypeList)));
+    AbstractType::Ptr type = typeObjectForIntegralType("list");
+    encounter(type);
 }
 
 void ExpressionVisitor::visitDict(DictAst* node)
 {
     AstDefaultVisitor::visitDict(node);
-    encounter(AbstractType::Ptr(new IntegralTypeExtended(IntegralTypeExtended::TypeDict)));
+    AbstractType::Ptr type = typeObjectForIntegralType("dict");
+    encounter(type);
 }
 
-void Python::ExpressionVisitor::visitNumber(Python::NumberAst* )
+void ExpressionVisitor::visitNumber(Python::NumberAst* )
 {
-    encounter(AbstractType::Ptr(new IntegralType(IntegralType::TypeFloat)));
+    AbstractType::Ptr type = typeObjectForIntegralType("float");
+    encounter(type);
 }
 
-void Python::ExpressionVisitor::visitString(Python::StringAst* )
+void ExpressionVisitor::visitString(Python::StringAst* )
 {
-    encounter(AbstractType::Ptr(new IntegralType(IntegralType::TypeString)));
+    AbstractType::Ptr type = typeObjectForIntegralType("string");
+    encounter(type);
 }
 
 RangeInRevision nodeRange(Python::Ast* node)
@@ -230,7 +243,7 @@ RangeInRevision nodeRange(Python::Ast* node)
     return RangeInRevision(node->startLine, node->startCol, node->endLine,node->endCol);
 }
 
-void Python::ExpressionVisitor::visitName(Python::NameAst* node)
+void ExpressionVisitor::visitName(Python::NameAst* node)
 {
     KDevelop::Identifier id(node->identifier->value);
     QHash < KDevelop::Identifier, AbstractType::Ptr >::const_iterator defId = s_defaultTypes.constFind(id);
@@ -255,7 +268,7 @@ void Python::ExpressionVisitor::visitName(Python::NameAst* node)
     }
 }
 
-void Python::ExpressionVisitor::visitBinaryOperation(Python::BinaryOperationAst* node)
+void ExpressionVisitor::visitBinaryOperation(Python::BinaryOperationAst* node)
 {
     visitNode(node->lhs);
     KDevelop::AbstractType::Ptr leftType = m_lastType;
@@ -273,14 +286,14 @@ void Python::ExpressionVisitor::visitBinaryOperation(Python::BinaryOperationAst*
     }
 }
 
-void Python::ExpressionVisitor::visitUnaryOperation(Python::UnaryOperationAst* node)
+void ExpressionVisitor::visitUnaryOperation(Python::UnaryOperationAst* node)
 {
     visitNode(node->operand);
     
     //FIXME: m_lastValue = m_lastValue;
 }
 
-void Python::ExpressionVisitor::visitBooleanOperation(Python::BooleanOperationAst* node)
+void ExpressionVisitor::visitBooleanOperation(Python::BooleanOperationAst* node)
 {
 //    
     foreach (ExpressionAst* expression, node->values) {

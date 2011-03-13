@@ -267,7 +267,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         QStringList expr = currentLine.split(".");
         expr.removeAll("");
         m_guessTypeOfExpression = expr.join(".");
-        m_guessTypeOfExpression.replace(QRegExp("\"(.*)\""), "\"STRING\"");
+        m_guessTypeOfExpression.replace(QRegExp("\"(.*)\""), "\"STRING\"").replace(QRegExp("(.*)\n[\\s]*"), "");
         kDebug() << "Guess type of this expression: " << m_guessTypeOfExpression;
         m_operation = PythonCodeCompletionContext::MemberAccessCompletion;
         return;

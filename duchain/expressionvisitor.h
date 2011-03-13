@@ -110,6 +110,7 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         PythonEditorIntegrator* m_editor;
         
         void encounter(KDevelop::AbstractType::Ptr type);
+        AbstractType::Ptr typeObjectForIntegralType(QString typeDescriptor);
         
         void unknownTypeEncountered();
         DeclarationPointer m_lastAccessedNameDeclaration;

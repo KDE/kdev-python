@@ -14,6 +14,10 @@ import types
 import sys
 import re
 
+import asynchat
+
+a = []
+
 def func():
     bar = 3 + 5;
     return bar

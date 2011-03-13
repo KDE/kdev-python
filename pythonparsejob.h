@@ -65,7 +65,7 @@ public:
     
     const LanguageSupport* m_parent;
     static TopDUContext* m_internalFunctions;
-    const KUrl* internalFunctionsFile;
+    static KUrl internalFunctionsFile;
     
     void checkInternalFunctionsParsed();
 

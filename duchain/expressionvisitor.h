@@ -113,6 +113,7 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         AbstractType::Ptr typeObjectForIntegralType(QString typeDescriptor);
         
         void unknownTypeEncountered();
+        AbstractType::Ptr m_lastAccessedReturnType;
         DeclarationPointer m_lastAccessedNameDeclaration;
         DeclarationPointer m_lastAccessedAttributeDeclaration;  // this is in general not what the expression visitor is meant for,
                                                                 // but the processes to find those declarations and the types are pretty much the same

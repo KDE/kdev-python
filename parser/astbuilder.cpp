@@ -743,14 +743,13 @@ CodeAst* AstBuilder::parse(KUrl filename, const QString& contents)
         
         PyObject *exception, *value, *backtrace;
         PyErr_Fetch(&exception, &value, &backtrace);
-        PyObject_Print(PyObject_Dir(value), stderr, Py_PRINT_RAW);
+        PyObject_Print(value, stderr, Py_PRINT_RAW);
         
-        char* format = QString("(i)").toAscii().data();
-        char* method = QString("__getitem__").toAscii().data();
-        PyObject* errorMessage_str = PyObject_CallMethod(value, method, format, 0);
-        PyObject* errorDetails_tuple = PyObject_CallMethod(value, method, format, 1);
-        int lineno = PyInt_AsLong(PyObject_CallMethod(errorDetails_tuple, method, format, 1)) - 1;
-        int colno = PyInt_AsLong(PyObject_CallMethod(errorDetails_tuple, method, format, 2));
+        PyObject* errorMessage_str = PyTuple_GetItem(value, 0);
+        PyObject* errorDetails_tuple = PyTuple_GetItem(value, 1);
+        PyObject_Print(errorMessage_str, stderr, Py_PRINT_RAW);
+        int lineno = PyInt_AsLong(PyTuple_GetItem(errorDetails_tuple, 1)) - 1;
+        int colno = PyInt_AsLong(PyTuple_GetItem(errorDetails_tuple, 2));
         
         ProblemPointer p(new Problem());
         SimpleCursor start(lineno, colno-4);

@@ -80,7 +80,10 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     RangeInRevision useRange(node->attribute->startLine, node->attribute->startCol, node->attribute->endLine, node->attribute->endCol + 1);
     
     DeclarationPointer accessingAttributeOfDeclaration;
+    TypePtr<StructureType> accessingAttributeOfType;
     
+    // Step 1: Find out which kind of attribute is before us in the queue, like foo.bar().baz, foo.bar.baz, foo.bar[].baz, etc.
+    // Query information about its type or declaration from previously visited stuff.
     if ( accessingAttributeOf->astType == Ast::AttributeAstType ) {
         identifier = dynamic_cast<AttributeAst*>(accessingAttributeOf)->attribute;
         if ( m_lastAccessedAttributeDeclaration.data() ) {
@@ -94,23 +97,35 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     else if ( accessingAttributeOf->astType == Ast::NameAstType ) {
         availableDeclarations = QList<DeclarationPointer>() << m_lastAccessedNameDeclaration;
     }
+    else if ( accessingAttributeOf->astType == Ast::CallAstType ) {
+        availableDeclarations.clear();
+        accessingAttributeOfType = dynamic_cast<StructureType*>(m_lastAccessedReturnType.unsafeData());
+    }
     else {
         kWarning() << "Unsupported attribute access method";
         return;
     }
     
+    // Step 2: Select a declaration from those which were found.
     if ( availableDeclarations.length() > 0 && availableDeclarations.last().data() ) {
         accessingAttributeOfDeclaration = availableDeclarations.last();
-    } 
-    else {
+    }
+    else if ( ! accessingAttributeOfType.unsafeData() ) {
         kWarning() << "No declaration found to look up type of attribute in.";
         m_lastAccessedAttributeDeclaration = DeclarationPointer(0);
         return unknownTypeEncountered();
     }
     
+    // Step 3: If no type was found previously, construct it from the Declaration.
+    if ( ! accessingAttributeOfType.unsafeData() ) {
+        accessingAttributeOfType = accessingAttributeOfDeclaration.data()->type<StructureType>();
+    }
+    
     QList<Declaration*> foundDecls;
     
-    TypePtr<StructureType> accessingAttributeOfType = accessingAttributeOfDeclaration.data()->type<StructureType>();
+    // Step 4: Find all matching declarations which are made inside the type of which the accessed object is.
+    // Like, for A.B.C where B is an instance of foo, when processing C, find all properties of foo which are called C.
+    
     // maybe our attribute isn't a class at all, then that's an error by definition for now
     bool success = false;
     DUChainReadLocker lock(DUChain::lock());
@@ -127,18 +142,24 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     }
     if ( ! success ) foundDecls.clear();
     
+    // Step 5: Construct the type of the declaration which was found.
     if ( foundDecls.length() > 0 ) {
         m_lastAccessedAttributeDeclaration = DeclarationPointer(foundDecls.last());
         kDebug() << "Last accessed declaration: " << m_lastAccessedAttributeDeclaration->identifier().toString() << m_lastAccessedAttributeDeclaration.data();
         
         // if it's a function call, the result of that call will be the return type
         // TODO check weather we need to distinguish bettween foo.bar and foo.bar() here
-        if ( foundDecls.last()->type<FunctionType>() ) {
-            kDebug() << "Method found, determining return type";
-            encounter(foundDecls.last()->type<FunctionType>()->returnType());
-            if ( foundDecls.last()->type<FunctionType>()->returnType() ) {
-                kDebug() << "Return type for method: " << foundDecls.last()->type<FunctionType>()->returnType()->toString();
-            }
+        Declaration* decl = foundDecls.last();
+        ClassDeclaration* classDecl = dynamic_cast<ClassDeclaration*>(decl);
+        FunctionDeclaration* funcDecl = dynamic_cast<FunctionDeclaration*>(decl);
+        
+        if ( classDecl ) {
+            encounter(classDecl->abstractType());
+            m_lastAccessedReturnType = classDecl->abstractType();
+        }
+        else if ( funcDecl && funcDecl->type<FunctionType>() ) {
+            encounter(funcDecl->type<FunctionType>()->returnType());
+            m_lastAccessedReturnType = funcDecl->type<FunctionType>()->returnType();
         }
         else {
             encounter(foundDecls.last()->abstractType());
@@ -179,9 +200,11 @@ void ExpressionVisitor::visitCall(CallAst* node)
         
         if ( classDecl ) {
             encounter(classDecl->abstractType());
+            m_lastAccessedReturnType = classDecl->abstractType();
         }
         else if ( funcDecl && funcDecl->type<FunctionType>() ) {
             encounter(funcDecl->type<FunctionType>()->returnType());
+            m_lastAccessedReturnType = funcDecl->type<FunctionType>()->returnType();
         }
         else {
             kDebug() << "Declaraton for " << functionName << " is not a class or function declaration";

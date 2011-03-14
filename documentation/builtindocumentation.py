@@ -5,15 +5,104 @@ class Exception:
 class __kdevpythondocumentation_builtin_list():
     def append(obj): pass
     def extend(obj): return []
+    def insert(i, x): return None
+    def pop(i): return None
+    def index(x): return 0
+    def count(x): return 0
+    def sort(): return None
+    def reverse(): return None
+
+class __kdevpythondocumentation_builtin_fileObject():
+    def close(): return None
+    def flush(): return None
+    def fileno(): return None
+    def isatty(): return True
+    def next(): return None
+    def read(size = 0): return ""
+    def readLine(size = 0): return ""
+    def readlines(sizehint = 0): return ""
+    def xreadlines(): return None
+    def seek(offset, whence = 0): return None
+    def tell(): return None
+    def truncate(size = 0): return None
+    def write(string): return None
+    def writelines(sequence): return None
+    closed = True
+    errors = None
+    mode = None
+    name = ""
+    newlines = ""
+    softspace = True
+    
 
 class __kdevpythondocumentation_builtin_dict():
     def append(obj): pass
+    def clear(): return None
+    def copy(): return {}
+    def fromkeys(seq, value = None): return {}
+    def get(key, default = ""): return None
+    def has_key(key): return True
+    def items(): return [()]
+    def iteritems(): return __kdevpythondocumentation_builtin_iterator
+    def iterkeys(): return __kdevpythondocumentation_builtin_iterator
+    def itervalues(): return __kdevpythondocumentation_builtin_iterator
+    def keys(): return []
+    def pop(key, default = ""): return None
+    def popitem(): return None
+    def setdefault(key, default = ""): return None
+    def update(other = None): return None
+    def values(): return []
+    def viewitems(): return None
+    def viewkeys(): return None
+    def viewvalues(): return None
+    
 
 class __kdevpythondocumentation_builtin_string():
     def replace(before, after): return ""
+    def capitalize(): return ""
+    def center(width, fillchar = None): return ""
+    def count(substring, start = 0, end = 0): return 0
+    def decode(encoding = None, errors = None): return ""
+    def endswith(suffix, start = 0, end = 0): return True
+    def expandtabs(tabsize = 0): return ""
+    def find(substring, start = 0, end = 0): return 0
+    def format(*args, **kwargs): return ""
+    def index(substring, start = 0, end = 0): return 0
+    def isalnum(): return True
+    def isalpha(): return True
+    def isdigit(): return True
+    def islower(): return True
+    def isspace(): return True
+    def istitle(): return True
+    def isupper(): return True
+    def join(iterable): return ""
+    def ljust(width, fillchar = ""): return ""
+    def lower(): return ""
+    def lstrip(chars = ""): return ""
+    def partition(seperator): return ("", "", "")
+    def replace(old, new, count = 0): return ""
+    def rfind(substring, start = 0, end = 0): return 0
+    def rindex(substring, start = 0, end = 0): return 0
+    def rjust(width, fillchar = ""): return ""
+    def rpartition(seperator): return ("", "", "")
+    def rsplit(seperator = "", maxsplit = 0): return []
+    def rstrip(chars = ""): return ""
+    def split(seperator = "", maxsplit = 0): return []
+    def splitlines(keepends = False): return []
+    def startswith(prefix, start = 0, end = 0): return True
+    def strip(chars = ""): return ""
+    def swapcase(): return ""
+    def title(): return ""
+    def translate(table, deletechars = ""): return ""
+    def upper(): return ""
+    def zfill(width): return ""
     
 class __kdevpythondocumentation_builtin_float():
-    pass
+    def bit_length(): return 0
+    def as_integer_ration(): return (0, 0)
+    def is_integer(): return True
+    def hex(): return 0x0
+    def fromhex(s): return 0
 
 
 def abs(x): return 0

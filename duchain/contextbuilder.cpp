@@ -195,7 +195,11 @@ void ContextBuilder::visitArguments(ArgumentsAst* node)
 
 void ContextBuilder::visitCode(CodeAst* node) {
 //     DUContext* top = currentContext();
-//     DUContext* moduleContext = openContext(node, KDevelop::DUContext::Namespace);
+//     DUContext* moduleContext = openContext(node, KDevelop::DUContext::Helper);
+//     {
+//         DUChainWriteLocker lock(DUChain::lock());
+//         moduleContext->setType(DUContext::Helper);
+//     }
     
     IndexedString doc = IndexedString(QString(INSTALL_PATH) + "/builtindocumentation.py");
     if ( document() != doc ) {
@@ -212,10 +216,6 @@ void ContextBuilder::visitCode(CodeAst* node) {
         }
     }
     
-//     {
-//         DUChainWriteLocker lock(DUChain::lock());
-//         moduleContext->addImportedParentContext(top);
-//     }
     AstDefaultVisitor::visitCode(node);
 
 //     closeContext();

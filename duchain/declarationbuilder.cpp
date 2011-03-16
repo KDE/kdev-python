@@ -243,8 +243,8 @@ void DeclarationBuilder::visitImport(ImportAst* node)
         }
         closeType();
         
-        DUContext* newctx = openContext(name, KDevelop::DUContext::Namespace);
-        newctx->setType(KDevelop::DUContext::Namespace);
+        DUContext* newctx = openContext(name, KDevelop::DUContext::Other);
+        newctx->setType(KDevelop::DUContext::Other);
         kDebug() << currentContext()->type() << DUContext::Namespace << DUContext::Class;
         
         if ( currentContext() && contextptr.data() ) {
@@ -302,7 +302,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
     v.visitNode(node->value);
     setLastType(v.lastType());
     
-    kDebug() << ( lastType().unsafeData() ? "last type: " + lastType()->toString() : "don't have a type for variable :(" );
+//     kDebug() << ( lastType().unsafeData() ? "last type: " + lastType()->toString() : "don't have a type for variable :(" );
     
     foreach ( ExpressionAst* target, node->targets ) {
         if ( target->astType == Ast::NameAstType ) {
@@ -352,14 +352,14 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     kDebug() << " >>> close function type";
     closeType();
     
-    kDebug() << "Got function return type: " << ( type->returnType().unsafeData() ? type->returnType()->toString() : "<none set>" );
-    kDebug() << type->toString();
+//     kDebug() << "Got function return type: " << ( type->returnType().unsafeData() ? type->returnType()->toString() : "<none set>" );
+//     kDebug() << type->toString();
     {
         DUChainWriteLocker lock(DUChain::lock());
         dec->setType(type);
     }
     
-    kDebug() << dec->toString();
+//     kDebug() << dec->toString();
     kDebug() << dec->type<FunctionType>()->arguments().toSet();
     
     closeDeclaration();

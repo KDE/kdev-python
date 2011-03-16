@@ -49,6 +49,16 @@ public:
     virtual ~DeclarationBuilder();
 
 protected:
+    template<class T> T* openDeclaration(Identifier* name, Ast* range, DeclarationFlags flags = NoFlags) {
+        T* decl = DeclarationBuilderBase::openDeclaration<T>(name, range, flags);
+        decl->setAlwaysForceDirect(true);
+        return decl;
+    };
+    template<class T> T* openDeclaration(const QualifiedIdentifier& id, const RangeInRevision& newRange, DeclarationFlags flags = NoFlags) {
+        T* decl = DeclarationBuilderBase::openDeclaration<T>(id, newRange, flags);
+        decl->setAlwaysForceDirect(true);
+        return decl;
+    };
     virtual void closeDeclaration();
 
     virtual void visitClassDefinition( ClassDefinitionAst* node );

@@ -77,8 +77,9 @@ namespace Python
 class PythonAstTransformer {
 public:
     CodeAst* ast;
-    void run(mod_ty syntaxtree) {
+    void run(mod_ty syntaxtree, QString moduleName) {
         ast = new CodeAst();
+        ast->name = new Identifier(moduleName);
         nodeStack.push(ast);
         ast->body = visitNodeList<_stmt, Ast>(syntaxtree->v.Module.body);
         nodeStack.pop();
@@ -767,7 +768,7 @@ CodeAst* AstBuilder::parse(KUrl filename, const QString& contents)
     kDebug() << "Got syntax tree from python parser:" << syntaxtree->kind << Module_kind;
     
     PythonAstTransformer* t = new PythonAstTransformer();
-    t->run(syntaxtree);
+    t->run(syntaxtree, filename.fileName().replace(".py", ""));
     kDebug() << t->ast;
     
     PyArena_Free(arena);

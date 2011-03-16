@@ -280,7 +280,7 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
     lock.unlock();
 //     Q_ASSERT(!d.isEmpty());
  
-    kDebug() << "visitName" << node->identifier->value << d;   
+    kDebug() << "visitName" << node->identifier->value << d.count();   
     if ( ! d.isEmpty() ) {
         encounter(d.last()->abstractType());
         m_lastAccessedNameDeclaration = d.last();

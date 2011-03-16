@@ -81,7 +81,7 @@ ClassDefinitionAst::ClassDefinitionAst(Ast* parent): StatementAst(parent, Ast::C
     
 }
 
-CodeAst::CodeAst()
+CodeAst::CodeAst() : name(0)
 {
     astType = Ast::CodeAstType;
 }

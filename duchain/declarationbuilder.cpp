@@ -180,6 +180,17 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     return result;
 }
 
+void DeclarationBuilder::visitCode(CodeAst* node)
+{
+    Declaration* moduleDeclaration = openDeclaration<ClassDeclaration>(node->name, node);    
+    Python::ContextBuilder::visitCode(node);
+    closeDeclaration();
+    
+//     DUChainWriteLocker lock(DUChain::lock());
+//     Q_ASSERT(m_moduleContext.data());
+//     moduleDeclaration->setInternalContext(m_moduleContext.data());
+}
+
 void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
 {
     if ( dynamic_cast<NameAst*>(node->name) ) {
@@ -212,6 +223,10 @@ void DeclarationBuilder::visitImport(ImportAst* node)
     Python::ContextBuilder::visitImport(node);
     DUChainWriteLocker lock(DUChain::lock());
     foreach ( AliasAst* name, node->names ) {
+        QString moduleName = name->name->value;
+        if ( name->asName && name->asName ) 
+            moduleName += "." + name->asName->value;
+        
         TopDUContextPointer contextptr = contextsForModules.value(name->asName ? name->asName : name->name);
         kDebug() << "Chain for document: " << contextptr;
         importedModuleDeclaration* dec;
@@ -228,19 +243,34 @@ void DeclarationBuilder::visitImport(ImportAst* node)
         }
         closeType();
         
+        DUContext* newctx = openContext(name, KDevelop::DUContext::Namespace);
+        newctx->setType(KDevelop::DUContext::Namespace);
+        kDebug() << currentContext()->type() << DUContext::Namespace << DUContext::Class;
+        
+        if ( currentContext() && contextptr.data() ) {
+            currentContext()->addImportedParentContext(contextptr.data());
+            kDebug() << "Context for " << moduleName << "imported (I)"; 
+        }
+        else {
+            kWarning() << "Context for " << moduleName << " is not available";
+        }
+        
+        closeContext();
+        
         type->setDeclaration(dec);
-            
-        QString moduleName = name->name->value;
-        if ( name->asName && name->asName ) 
-            moduleName += "." + name->asName->value;
-        kDebug() << "Module name: " << moduleName;
+        
         if ( dec ) {
             DUChainWriteLocker lock(DUChain::lock());
             dec->m_moduleIdentifier = moduleName;
             dec->setType(type);
+            kDebug() << "Context for " << moduleName << "imported (II)"; 
         
-            dec->setInternalContext(contextptr.data());
-            kDebug() << "All declarations in the module which has just been imported" << dec->context()->allDeclarations(CursorInRevision::invalid(), currentContext()->topContext());
+            dec->setInternalContext(newctx);
+            kDebug() << "All declarations in the module which has just been imported" << dec->internalContext()
+                        ->allDeclarations(CursorInRevision::invalid(), currentContext()->topContext(), false);
+        }
+        else {
+            kWarning() << "Failed to import context for " << moduleName << ", no declaration";
         }
     }
 }

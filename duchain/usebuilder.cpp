@@ -52,7 +52,6 @@ void UseBuilder::buildUses(Ast* node)
     UseBuilderBase::buildUses(node);
 }
 
-
 void UseBuilder::visitName(NameAst* node)
 {
     QList<Declaration*> declarations;

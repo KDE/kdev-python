@@ -73,7 +73,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             v->visitCode(tmpAst);
             if ( v->lastType() ) {
                 kDebug() << v->lastType()->toString();
-                items = getCompletionItemsForType(v->lastType());
+                items = getCompletionItemsForType(v->lastType(), v->lastDeclaration());
             }
             else {
                 kWarning() << "Did not receive a type from expression visitor! Not offering autocompletion.";
@@ -133,12 +133,18 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
     return items;
 }
 
-QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItemsForType(AbstractType::Ptr type)
+QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItemsForType(AbstractType::Ptr type, DeclarationPointer declaration)
 {
     if ( type->whichType() == AbstractType::TypeStructure ) {
         // find properties of class declaration
         TypePtr<StructureType> cls = StructureType::Ptr::dynamicCast(type);
         kDebug() << "Finding completion items for class type";
+//         kDebug() << cls->internalContext(m_context->topContext()) << cls->internalContext(declaration->context()->topContext());
+        if ( ! cls || ! cls->internalContext(m_context->topContext()) ) {
+            kWarning() << "No class type available, no completion offered";
+            kDebug() << cls;
+            return QList<CompletionTreeItemPointer>();
+        }
         QList<DeclarationDepthPair> declarations = cls->internalContext(m_context->topContext())->allDeclarations(CursorInRevision::invalid(), m_context->topContext(), false);
         return declarationListToItemList(declarations);
     }

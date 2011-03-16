@@ -100,6 +100,7 @@ protected:
     
     bool m_mapAst;
     ReferencedTopDUContext m_topContext;
+    DUContextPointer m_moduleContext;
 
 private:
     void openContextForStatementList( const QList<Ast*>&, DUContext::ContextType type = DUContext::Other);

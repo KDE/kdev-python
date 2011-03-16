@@ -194,6 +194,9 @@ void ContextBuilder::visitArguments(ArgumentsAst* node)
 }
 
 void ContextBuilder::visitCode(CodeAst* node) {
+//     DUContext* top = currentContext();
+//     DUContext* moduleContext = openContext(node, KDevelop::DUContext::Namespace);
+    
     IndexedString doc = IndexedString(QString(INSTALL_PATH) + "/builtindocumentation.py");
     if ( document() != doc ) {
         DUChainReadLocker lock(DUChain::lock());
@@ -208,7 +211,15 @@ void ContextBuilder::visitCode(CodeAst* node) {
             currentContext()->addImportedParentContext(internal);
         }
     }
+    
+//     {
+//         DUChainWriteLocker lock(DUChain::lock());
+//         moduleContext->addImportedParentContext(top);
+//     }
     AstDefaultVisitor::visitCode(node);
+
+//     closeContext();
+//     m_moduleContext = moduleContext;
 }
 
 QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
@@ -245,7 +256,7 @@ void ContextBuilder::visitImport(ImportAst* node)
 {
     foreach ( AliasAst* name, node->names ) {
         // for "import ... as", use the as thingy, use the module name otherwise
-        Identifier* variableDeclarationName = name->asName ? name->asName : name->name;
+        Identifier* moduleName = name->asName ? name->asName : name->name;
         
         QPair<KUrl, QStringList> moduleFilePath = findModulePath(name->name->value);
         if ( ! moduleFilePath.first.isValid() ) continue;
@@ -263,7 +274,7 @@ void ContextBuilder::visitImport(ImportAst* node)
                 lock.unlock();
             }
             
-            contextsForModules.insert(variableDeclarationName, TopDUContextPointer(moduleChain.data()));
+            contextsForModules.insert(moduleName, TopDUContextPointer(moduleChain.data()));
             kDebug() << "Added " << name->name->value << " to the module chain map";
 //             currentContext()->addImportedParentContext(moduleChain);
         }

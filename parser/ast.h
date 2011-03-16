@@ -201,6 +201,7 @@ class KDEVPYTHONPARSER_EXPORT CodeAst : public Ast {
 public:
     CodeAst();
     QList<Ast*> body;
+    Identifier* name; // module name
 };
 
 /** Statement classes **/

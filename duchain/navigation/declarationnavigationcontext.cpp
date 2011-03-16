@@ -33,6 +33,8 @@
 #include <QTcpSocket>
 #include <QProcess>
 
+#include "parser/parserConfig.h"
+
 namespace Python
 {
 using namespace KDevelop;
@@ -52,15 +54,6 @@ DeclarationNavigationContext::DeclarationNavigationContext(DeclarationPointer de
     }
 }
 
-// QString DeclarationNavigationContext::html(bool shorten) {
-//     QString normalDoc = AbstractDeclarationNavigationContext::html(shorten);
-//     if ( m_moduleDocumentation.length() ) {
-//         normalDoc += "<br><hr><br>" + m_moduleDocumentation;
-//     }
-// //     return normalDoc;
-//     return QString();
-// }
-
 NavigationContextPointer DeclarationNavigationContext::registerChild(DeclarationPointer declaration)
 {
     return AbstractDeclarationNavigationContext::registerChild(new DeclarationNavigationContext(declaration, m_topContext, this));
@@ -68,6 +61,11 @@ NavigationContextPointer DeclarationNavigationContext::registerChild(Declaration
 
 void DeclarationNavigationContext::makeLink(const QString& name, DeclarationPointer declaration, NavigationAction::Type actionType)
 {
+    QString linktext = name;
+    if ( declaration && declaration->url() == IndexedString(DOCFILE_PATH) ) {
+        modifyHtml() += linktext.replace("__kdevpythondocumentation_builtin_", "");
+        return;
+    }
     AbstractDeclarationNavigationContext::makeLink(name, declaration, actionType);
 }
 

@@ -31,6 +31,7 @@
 #include "pythoncodecompletioncontext.h"
 #include "pythoneditorintegrator.h"
 #include "duchain/declarationbuilder.h"
+#include "parser/parserConfig.h"
 
 using namespace KTextEditor;
 using namespace KDevelop;
@@ -146,7 +147,19 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
             return QList<CompletionTreeItemPointer>();
         }
         QList<DeclarationDepthPair> declarations = cls->internalContext(m_context->topContext())->allDeclarations(CursorInRevision::invalid(), m_context->topContext(), false);
-        return declarationListToItemList(declarations);
+        QList<DeclarationDepthPair> keepDeclarations;
+        // filter out those which are builtin functions, and those which were imported; we don't want those here
+        // TODO rework this, it's maybe not the most elegant solution possible
+        foreach ( DeclarationDepthPair current, declarations ) {
+            if ( current.first->topContext() != DUChain::self()->chainForDocument(QString(DOCFILE_PATH)) ) {
+                kDebug() << "Keeping declaration" << current.first->toString();
+                keepDeclarations.append(current);
+            }
+            else {
+                kDebug() << "Discarding declaration " << current.first->toString();
+            }
+        }
+        return declarationListToItemList(keepDeclarations);
     }
     
     if ( type->whichType() == AbstractType::TypeIntegral ) {

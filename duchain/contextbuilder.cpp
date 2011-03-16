@@ -201,7 +201,7 @@ void ContextBuilder::visitCode(CodeAst* node) {
 //         moduleContext->setType(DUContext::Helper);
 //     }
     
-    IndexedString doc = IndexedString(QString(INSTALL_PATH) + "/builtindocumentation.py");
+    IndexedString doc = IndexedString(QString(DOCFILE_PATH));
     if ( document() != doc ) {
         DUChainReadLocker lock(DUChain::lock());
         TopDUContext* internal = DUChain::self()->chainForDocument(doc); // TODO add startup-check and error message, this must exist
@@ -213,6 +213,7 @@ void ContextBuilder::visitCode(CodeAst* node) {
             kDebug() << "Adding builtin function context...";
             DUChainWriteLocker wlock(DUChain::lock());
             currentContext()->addImportedParentContext(internal);
+            m_builtinFunctionsContext = TopDUContextPointer(internal);
         }
     }
     

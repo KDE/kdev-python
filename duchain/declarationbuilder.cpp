@@ -182,13 +182,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
 
 void DeclarationBuilder::visitCode(CodeAst* node)
 {
-    Declaration* moduleDeclaration = openDeclaration<ClassDeclaration>(node->name, node);    
     Python::ContextBuilder::visitCode(node);
-    closeDeclaration();
-    
-//     DUChainWriteLocker lock(DUChain::lock());
-//     Q_ASSERT(m_moduleContext.data());
-//     moduleDeclaration->setInternalContext(m_moduleContext.data());
 }
 
 void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
@@ -264,7 +258,11 @@ void DeclarationBuilder::visitImport(ImportAst* node)
             dec->m_moduleIdentifier = moduleName;
             dec->setType(type);
             kDebug() << "Context for " << moduleName << "imported (II)"; 
-        
+            
+            if ( m_builtinFunctionsContext.data() ) {
+                kDebug() << "Deleting builtin functions context from imported module...";
+                newctx->removeImportedParentContext(m_builtinFunctionsContext.data());
+            }
             dec->setInternalContext(newctx);
             kDebug() << "All declarations in the module which has just been imported" << dec->internalContext()
                         ->allDeclarations(CursorInRevision::invalid(), currentContext()->topContext(), false);

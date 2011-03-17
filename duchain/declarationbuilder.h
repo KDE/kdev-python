@@ -78,6 +78,7 @@ protected:
     template<typename T> T* visitVariableDeclaration(Identifier* node, Ast* originalAst = 0);
     
     QStack<TopDUContextPointer> m_importContextsForImportStatement;
+    DeclarationPointer m_firstAttributeDeclaration;
     
 //     virtual void visitIdentifierTarget( IdentifierTargetAst * node );
 

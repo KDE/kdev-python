@@ -358,9 +358,25 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     }
     
 //     kDebug() << dec->toString();
-    kDebug() << dec->type<FunctionType>()->arguments().toSet();
+    
+    FunctionType::Ptr funcdecl = dec->type<FunctionType>();
+    kDebug() << funcdecl->arguments().toSet();
     
     closeDeclaration();
+    
+    kDebug() << "parent context: " << currentContext()->parentContext();
+    if ( currentContext()->parentContext() ) {
+        kDebug() << currentContext()->parentContext()->type() << currentContext()->type() << DUContext::Class;
+    }
+    
+    if ( funcdecl->arguments().length() && currentContext()->type() == DUContext::Class ) {
+        kDebug() << "Changing self argument type";
+        funcdecl->arguments().removeFirst();
+        Q_ASSERT(m_firstAttributeDeclaration.data());
+        DUChainWriteLocker lock(DUChain::lock());
+        m_firstAttributeDeclaration->setAbstractType(currentDeclaration()->abstractType());
+        m_firstAttributeDeclaration = DeclarationPointer(0);
+    }
 }
 
 void DeclarationBuilder::visitReturn(ReturnAst* node)
@@ -414,6 +430,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
     
     if ( function ) {
         NameAst* realParam;
+        bool isFirst = true;
         foreach (ExpressionAst* expression, node->arguments) {
             realParam = dynamic_cast<NameAst*>(expression);
             
@@ -435,7 +452,11 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                     }
                     type->addArgument(p);
                 }
+                if ( isFirst ) {
+                    m_firstAttributeDeclaration = paramDeclaration;
+                }
             }
+            isFirst = false;
         }
     }
 }

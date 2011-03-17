@@ -375,7 +375,26 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         Q_ASSERT(m_firstAttributeDeclaration.data());
         DUChainWriteLocker lock(DUChain::lock());
         m_firstAttributeDeclaration->setAbstractType(currentDeclaration()->abstractType());
+        if ( m_firstAttributeDeclaration->identifier().identifier() != IndexedString("self") ) {
+            KDevelop::Problem *p = new KDevelop::Problem();
+            p->setFinalLocation(DocumentRange(document(), SimpleRange(node->startLine, node->startCol, node->startLine, 10000)));
+            p->setSource(KDevelop::ProblemData::SemanticAnalysis);
+            p->setSeverity(KDevelop::ProblemData::Warning);
+            p->setDescription(i18n("First argument of class method is not called self, this is deprecated"));
+            ProblemPointer ptr(p);
+            topContext()->addProblem(ptr);
+        }
         m_firstAttributeDeclaration = DeclarationPointer(0);
+    }
+    else if ( currentContext()->type() == DUContext::Class ) {
+        DUChainWriteLocker lock(DUChain::lock());
+        KDevelop::Problem *p = new KDevelop::Problem();
+        p->setFinalLocation(DocumentRange(document(), SimpleRange(node->startLine, node->startCol, node->startLine, 10000))); // only mark first line
+        p->setSource(KDevelop::ProblemData::SemanticAnalysis);
+        p->setSeverity(KDevelop::ProblemData::Warning);
+        p->setDescription(i18n("Non-static class method without arguments, must have at least one (self)"));
+        ProblemPointer ptr(p);
+        topContext()->addProblem(ptr);
     }
 }
 
@@ -386,8 +405,9 @@ void DeclarationBuilder::visitReturn(ReturnAst* node)
     setLastType(v.lastType());
     if ( node->value ) {
         if ( ! hasCurrentType() ) {
+            DUChainWriteLocker lock(DUChain::lock());
             KDevelop::Problem *p = new KDevelop::Problem();
-            p->setFinalLocation(DocumentRange(document(), SimpleRange(node->startLine, node->startCol, node->endLine, node->endCol)));
+            p->setFinalLocation(DocumentRange(document(), SimpleRange(node->startLine, node->startCol, node->endLine, node->endCol))); // only mark first line
             p->setSource(KDevelop::ProblemData::SemanticAnalysis);
             p->setDescription(i18n("Return statement not within function declaration"));
             ProblemPointer ptr(p);
@@ -454,9 +474,9 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 }
                 if ( isFirst ) {
                     m_firstAttributeDeclaration = paramDeclaration;
+                    isFirst = false;
                 }
             }
-            isFirst = false;
         }
     }
 }

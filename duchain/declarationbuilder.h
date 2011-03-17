@@ -64,14 +64,12 @@ protected:
 
     virtual void visitClassDefinition( ClassDefinitionAst* node );
     virtual void visitFunctionDefinition( FunctionDefinitionAst* node );
-    virtual void visitLambda( LambdaAst* node );
     virtual void visitAssignment(AssignmentAst* node);
     virtual void visitFor(ForAst* node);
     virtual void visitImport(ImportAst* node);
     virtual void visitImportFrom(ImportFromAst* node);
     virtual void visitArguments(ArgumentsAst* node);
     virtual void visitExceptionHandler(ExceptionHandlerAst* node);
-    virtual void visitCall(CallAst* node);
     virtual void visitReturn(ReturnAst* node);
     virtual void visitCode(CodeAst* node);
     
@@ -81,20 +79,7 @@ protected:
     QStack<TopDUContextPointer> m_importContextsForImportStatement;
     DeclarationPointer m_firstAttributeDeclaration;
     
-//     virtual void visitIdentifierTarget( IdentifierTargetAst * node );
-
 private:
-    /*
-    template<class DeclarationType>
-    DeclarationType* specialDeclaration( KTextEditor::SmartRange* smartRange,
-                                         const KDevelop::SimpleRange& range );
-
-    template<class DeclarationType>
-    DeclarationType* specialDeclaration( KTextEditor::SmartRange* smartRange,
-                                         const KDevelop::SimpleRange& range,
-                                         int scope );
-    */
-
     int& nextDeclaration();
 };
 

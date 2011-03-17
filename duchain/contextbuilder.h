@@ -70,11 +70,7 @@ protected:
 
     virtual void visitFunctionDefinition( FunctionDefinitionAst* );
     virtual void visitClassDefinition( ClassDefinitionAst* );
-//     virtual void visitFor( ForAst* node );
     virtual void visitWith( WithAst* node );
-//     virtual void visitWhile( WhileAst* node );
-//     virtual void visitIf( IfAst* node );
-    virtual void visitArguments(ArgumentsAst* node);
     virtual void visitCode(CodeAst* node);
     virtual void visitImport(ImportAst* node);
     virtual void visitImportFrom(ImportFromAst* node);

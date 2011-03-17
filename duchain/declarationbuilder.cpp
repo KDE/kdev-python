@@ -422,31 +422,13 @@ void DeclarationBuilder::visitReturn(ReturnAst* node)
     setLastType(AbstractType::Ptr(0));
 }
 
-void DeclarationBuilder::visitLambda( LambdaAst* node )
-{
-    kDebug() << "opening lambda def";
-//     openDeclaration<FunctionDeclaration>( QualifiedIdentifier( "lambda" ), node ) );
-    ContextBuilder::visitLambda( node );
-//     closeDeclaration();
-}
-
-void DeclarationBuilder::visitCall(CallAst* node)
-{
-//     foreach ( ExpressionAst* currentArgument, node->arguments ) {
-//         NameAst* realArgument = dynamic_cast<NameAst*>(currentArgument);
-//         if ( realArgument ) {
-//             visitVariableDeclaration<Declaration>(realArgument); // some_func(<arg1>, <arg2>)
-//         }
-//     }
-    Python::AstDefaultVisitor::visitCall(node);
-}
-
 void DeclarationBuilder::visitArguments( ArgumentsAst* node )
 {
+    DUChainWriteLocker lock(DUChain::lock());
     AbstractFunctionDeclaration* function = dynamic_cast<AbstractFunctionDeclaration*>(currentDeclaration());
     kDebug() << "Current context for parameters: " << currentContext();
     kDebug() << currentContext()->scopeIdentifier().toString();
-    kDebug() << currentDeclaration()->identifier().toString();
+    if ( currentDeclaration() ) kDebug() << currentDeclaration()->identifier().toString();
     
     if ( function ) {
         NameAst* realParam;

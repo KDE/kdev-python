@@ -5,6 +5,11 @@ class some_class(foo, bar):
 	attr1 = 3
 	attr2 = 5
 	attr3 = 'str'
+	
+	def some_method(self):
+        return 3
+	
+	
 
 some_instance = some_class()
 some_instance.attr1
@@ -36,7 +41,9 @@ def returns_int(param):
 def returns_str(param):
     return 'str'
 
-def returns_list(param): return []; foo = returns_list()
+def returns_list(param): return [];
+
+foo = returns_list()
 
 bar = 'test'
 foo = returns_int()

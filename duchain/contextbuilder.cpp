@@ -188,19 +188,7 @@ void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
     kDebug() << " --- closing CLASS context: " << range.castToSimpleRange();
 }
 
-void ContextBuilder::visitArguments(ArgumentsAst* node)
-{
-    AstDefaultVisitor::visitArguments(node);
-}
-
 void ContextBuilder::visitCode(CodeAst* node) {
-//     DUContext* top = currentContext();
-//     DUContext* moduleContext = openContext(node, KDevelop::DUContext::Helper);
-//     {
-//         DUChainWriteLocker lock(DUChain::lock());
-//         moduleContext->setType(DUContext::Helper);
-//     }
-    
     IndexedString doc = IndexedString(QString(DOCFILE_PATH));
     if ( document() != doc ) {
         DUChainReadLocker lock(DUChain::lock());
@@ -218,9 +206,6 @@ void ContextBuilder::visitCode(CodeAst* node) {
     }
     
     AstDefaultVisitor::visitCode(node);
-
-//     closeContext();
-//     m_moduleContext = moduleContext;
 }
 
 QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)

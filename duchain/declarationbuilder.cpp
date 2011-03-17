@@ -369,10 +369,10 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         kDebug() << currentContext()->parentContext()->type() << currentContext()->type() << DUContext::Class;
     }
     
-    if ( funcdecl->arguments().length() && currentContext()->type() == DUContext::Class ) {
+    // please dont ask me why this check with m_firstAttributeDeclaration works, but it does
+    if ( funcdecl->arguments().length() && m_firstAttributeDeclaration.data() && currentContext()->type() == DUContext::Class ) {
         kDebug() << "Changing self argument type";
         funcdecl->arguments().removeFirst();
-        Q_ASSERT(m_firstAttributeDeclaration.data());
         DUChainWriteLocker lock(DUChain::lock());
         m_firstAttributeDeclaration->setAbstractType(currentDeclaration()->abstractType());
         if ( m_firstAttributeDeclaration->identifier().identifier() != IndexedString("self") ) {
@@ -450,7 +450,6 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
     
     if ( function ) {
         NameAst* realParam;
-        bool isFirst = true;
         foreach (ExpressionAst* expression, node->arguments) {
             realParam = dynamic_cast<NameAst*>(expression);
             
@@ -471,10 +470,9 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                         p = AbstractType::Ptr(new IntegralType(IntegralType::TypeUnsure));
                     }
                     type->addArgument(p);
-                }
-                if ( isFirst ) {
-                    m_firstAttributeDeclaration = paramDeclaration;
-                    isFirst = false;
+                    if ( ! m_firstAttributeDeclaration.data() ) {
+                        m_firstAttributeDeclaration = DeclarationPointer(paramDeclaration);
+                    }
                 }
             }
         }

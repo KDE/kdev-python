@@ -3,7 +3,8 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-set(completion_SRCS 
+set(completion_SRCS
+    implementfunctioncompletionitem.cpp 
     keyworditem.cpp 
     functiondeclarationcompletionitem.cpp 
     importfileitem.cpp

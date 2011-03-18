@@ -34,6 +34,7 @@
 
 #include "contextbuilder.h"
 #include "typebuilder.h"
+#include "parser/parserConfig.h"
 
 namespace Python
 {
@@ -93,6 +94,7 @@ static QList<KUrl> getSearchPaths(KUrl workingOnDocument)
     }
     
     searchPaths.append(KUrl("/usr/lib/python2.6")); // TODO fixme
+    searchPaths.append(KUrl(DOC_DIR));
     
     // search in the current packages
     searchPaths.append(KUrl(workingOnDocument.directory()));

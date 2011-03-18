@@ -24,6 +24,7 @@
  *****************************************************************************/
 #include <QByteArray>
 #include <QtGlobal>
+#include <KUrl>
 
 #include <ktexteditor/smartrange.h>
 #include <ktexteditor/smartinterface.h>
@@ -134,7 +135,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         dec->setType(lastType());
         dec->setKind(KDevelop::Declaration::Instance); // everything is an object in python
     } else {
-        qDebug() << "Existing declarations are not empty. count: " << existingDeclarations.count();
+        kDebug() << "Existing declarations are not empty. count: " << existingDeclarations.count();
         dec = existingDeclarations.last();
         AbstractType::Ptr currentType = dec->abstractType();
         AbstractType::Ptr newType = lastType();
@@ -167,22 +168,23 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
                     }
                 }
             } else {
-                qDebug() << "Existing declaration with no type from last declaration.";
+                kDebug() << "Existing declaration with no type from last declaration.";
                 dec->setType(lastType());
             }
         } else {
-            qDebug() << "Existing declaration with no type.";
+            kDebug() << "Existing declaration with no type.";
         }
     }
     
     T* result = dynamic_cast<T*>(dec);
-    if ( ! result ) kError() << "variable declaration does not have the expected type";
+    if ( ! result ) kWarning() << "variable declaration does not have the expected type";
     return result;
 }
 
 void DeclarationBuilder::visitCode(CodeAst* node)
 {
-    Python::ContextBuilder::visitCode(node);
+    Q_ASSERT(currentlyParsedDocument().toUrl().isValid());
+    DeclarationBuilderBase::visitCode(node);
 }
 
 void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
@@ -221,7 +223,7 @@ void DeclarationBuilder::visitImport(ImportAst* node)
         if ( name->asName && name->asName ) 
             moduleName += "." + name->asName->value;
         
-        TopDUContextPointer contextptr = contextsForModules.value(name->asName ? name->asName : name->name);
+        ReferencedTopDUContext contextptr = contextsForModules.value(name->asName ? name->asName->value : name->name->value);
         kDebug() << "Chain for document: " << contextptr;
         importedModuleDeclaration* dec;
         kDebug() << ( name->asName ? name->asName->value : QString("no asName") ) << ( name->name ? name->name->value : "no name" );
@@ -246,7 +248,7 @@ void DeclarationBuilder::visitImport(ImportAst* node)
             kDebug() << "Context for " << moduleName << "imported (I)"; 
         }
         else {
-            kWarning() << "Context for " << moduleName << " is not available";
+            kWarning() << "Context for " << moduleName << " is not available" << currentContext() << contextptr.data();
         }
         
         closeContext();
@@ -382,7 +384,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         m_firstAttributeDeclaration->setAbstractType(currentDeclaration()->abstractType());
         if ( m_firstAttributeDeclaration->identifier().identifier() != IndexedString("self") ) {
             KDevelop::Problem *p = new KDevelop::Problem();
-            p->setFinalLocation(DocumentRange(document(), SimpleRange(node->startLine, node->startCol, node->startLine, 10000)));
+            p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(node->startLine, node->startCol, node->startLine, 10000)));
             p->setSource(KDevelop::ProblemData::SemanticAnalysis);
             p->setSeverity(KDevelop::ProblemData::Warning);
             p->setDescription(i18n("First argument of class method is not called self, this is deprecated"));
@@ -394,7 +396,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     else if ( currentContext()->type() == DUContext::Class ) {
         DUChainWriteLocker lock(DUChain::lock());
         KDevelop::Problem *p = new KDevelop::Problem();
-        p->setFinalLocation(DocumentRange(document(), SimpleRange(node->startLine, node->startCol, node->startLine, 10000))); // only mark first line
+        p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(node->startLine, node->startCol, node->startLine, 10000))); // only mark first line
         p->setSource(KDevelop::ProblemData::SemanticAnalysis);
         p->setSeverity(KDevelop::ProblemData::Warning);
         p->setDescription(i18n("Non-static class method without arguments, must have at least one (self)"));
@@ -412,7 +414,7 @@ void DeclarationBuilder::visitReturn(ReturnAst* node)
         if ( ! hasCurrentType() ) {
             DUChainWriteLocker lock(DUChain::lock());
             KDevelop::Problem *p = new KDevelop::Problem();
-            p->setFinalLocation(DocumentRange(document(), SimpleRange(node->startLine, node->startCol, node->endLine, node->endCol))); // only mark first line
+            p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(node->startLine, node->startCol, node->endLine, node->endCol))); // only mark first line
             p->setSource(KDevelop::ProblemData::SemanticAnalysis);
             p->setDescription(i18n("Return statement not within function declaration"));
             ProblemPointer ptr(p);

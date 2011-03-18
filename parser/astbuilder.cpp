@@ -779,7 +779,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
         unsigned short currentLineIndent = 0;
         bool atLineBeginning = true;
         QList<unsigned short> indents;
-        for (int i = 0; i < len; i++ ) {
+        for ( int i = 0; i < len; i++ ) {
             c = contents.at(i);
             if ( ! c.isSpace() ) {
                 emptySince = i;
@@ -820,7 +820,6 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
                 break;
             }
         }
-        kDebug() << contents << indents << indents.at(emptySinceLine) << indents.at(emptySinceLine + 1) << emptySinceLine;
         syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);
         if ( ! syntaxtree ) return 0; // everything fails, so we abort.
     }

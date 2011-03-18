@@ -23,13 +23,10 @@
  *****************************************************************************/
 #include "usebuilder.h"
 
-#include "parsesession.h"
-#include "pythoneditorintegrator.h"
-#include "ast.h"
-#include "expressionvisitor.h"
-
 #include <ktexteditor/smartrange.h>
 #include <ktexteditor/smartinterface.h>
+
+#include <KUrl>
 
 #include <language/duchain/declaration.h>
 #include <language/duchain/use.h>
@@ -38,18 +35,19 @@
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/types/structuretype.h>
 
+#include "parsesession.h"
+#include "pythoneditorintegrator.h"
+#include "ast.h"
+#include "expressionvisitor.h"
+
 using namespace KTextEditor;
 using namespace KDevelop;
 
 namespace Python {
 
-UseBuilder::UseBuilder (PythonEditorIntegrator* editor) : m_editor(editor)
+UseBuilder::UseBuilder (PythonEditorIntegrator* editor) : UseBuilderBase()
 {
-}
-
-void UseBuilder::buildUses(Ast* node)
-{
-    UseBuilderBase::buildUses(node);
+    setEditor(editor);
 }
 
 void UseBuilder::visitName(NameAst* node)

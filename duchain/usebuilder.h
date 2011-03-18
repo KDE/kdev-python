@@ -41,7 +41,6 @@ class KDEVPYTHONDUCHAIN_EXPORT UseBuilder: public UseBuilderBase
 public:
     UseBuilder(PythonEditorIntegrator *editor);
     ParseSession* parseSession() const;
-    void buildUses(Python::Ast* node);
 
 protected:
     virtual void visitName(NameAst* node);

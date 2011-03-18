@@ -82,6 +82,11 @@ PythonEditorIntegrator* ContextBuilder::editor() const
     return ContextBuilder::m_editor;
 }
 
+IndexedString ContextBuilder::currentlyParsedDocument() const
+{
+    return m_currentlyParsedDocument;
+}
+
 TopDUContext* ContextBuilder::newTopContext(const RangeInRevision& range, ParsingEnvironmentFile* file) 
 {
     IndexedString currentDocumentUrl = ContextBuilder::m_editor->parseSession()->currentDocument();
@@ -190,12 +195,17 @@ void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
 
 void ContextBuilder::visitCode(CodeAst* node) {
     IndexedString doc = IndexedString(QString(DOCFILE_PATH));
-    if ( document() != doc ) {
+    Q_ASSERT(currentlyParsedDocument().toUrl().isValid());
+    if ( currentlyParsedDocument() != doc ) {
         DUChainReadLocker lock(DUChain::lock());
         TopDUContext* internal = DUChain::self()->chainForDocument(doc); // TODO add startup-check and error message, this must exist
         lock.unlock();
         
-        if ( ! internal ) DUChain::self()->updateContextForUrl(doc, TopDUContext::AllDeclarationsAndContexts);
+        if ( ! internal ) {
+            DUChain::self()->updateContextForUrl(doc, TopDUContext::AllDeclarationsAndContexts, 0,  -5);
+            DUChain::self()->updateContextForUrl(currentlyParsedDocument(), TopDUContext::AllDeclarationsContextsAndUses, 0, 1);
+            return; // abort parsing
+        }
         
         if ( internal ) {
             kDebug() << "Adding builtin function context...";
@@ -204,14 +214,14 @@ void ContextBuilder::visitCode(CodeAst* node) {
             m_builtinFunctionsContext = TopDUContextPointer(internal);
         }
     }
-    
+    Q_ASSERT(currentlyParsedDocument().toUrl().isValid());
     AstDefaultVisitor::visitCode(node);
 }
 
 QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
 {
     QStringList nameComponents = name.split(".");
-    QList<KUrl> searchPaths = getSearchPaths(document().toUrl());
+    QList<KUrl> searchPaths = getSearchPaths(currentlyParsedDocument().toUrl());
     foreach ( KUrl currentPath, searchPaths ) {
         KUrl tmp = currentPath;
         int moduleComponentsUsed = 0;
@@ -247,22 +257,29 @@ void ContextBuilder::visitImport(ImportAst* node)
         QPair<KUrl, QStringList> moduleFilePath = findModulePath(name->name->value);
         if ( ! moduleFilePath.first.isValid() ) continue;
         else {
-            kDebug() << DUChain::lock()->currentThreadHasReadLock() << DUChain::lock()->currentThreadHasWriteLock();
-            const IndexedString doc = IndexedString(moduleFilePath.first.path());
             ReferencedTopDUContext moduleChain;
             DUChainReadLocker lock(DUChain::lock());
-            moduleChain = DUChain::self()->chainForDocument(doc);
-            lock.unlock();
-            if ( ! moduleChain ) {
-//                 DUChain::self()->updateContextForUrl(doc, TopDUContext::AllDeclarationsAndContexts);
-                lock.lock();
-                ReferencedTopDUContext moduleChain = DUChain::self()->chainForDocument(doc);
-                lock.unlock();
+            
+            moduleFilePath.first.cleanPath(KUrl::SimplifyDirSeparators);
+            kDebug() << moduleFilePath.first.path();
+            moduleChain = DUChain::self()->chainForDocument(moduleFilePath.first);
+            
+            if ( ! moduleChain.data() ) {
+                // parse the include file, then reparse the current one.
+                kDebug() << "Module not cached, reparsing";
+                kDebug() << currentlyParsedDocument().toUrl().path();
+                Q_ASSERT(moduleFilePath.first.isValid());
+                Q_ASSERT(currentlyParsedDocument().toUrl().isValid());
+                DUChain::self()->updateContextForUrl(IndexedString(moduleFilePath.first.path()), TopDUContext::AllDeclarationsAndContexts, 0, -1);
+                DUChain::self()->updateContextForUrl(currentlyParsedDocument(), TopDUContext::AllDeclarationsContextsAndUses, 0, 1);
+            }
+            else {
+                contextsForModules.insert(moduleName->value, moduleChain);
+                kDebug() << moduleFilePath.first.path();
+                kDebug() << "Added " << name->name->value << " to the module chain map" << moduleChain.data();
             }
             
-            contextsForModules.insert(moduleName, TopDUContextPointer(moduleChain.data()));
-            kDebug() << "Added " << name->name->value << " to the module chain map";
-//             currentContext()->addImportedParentContext(moduleChain);
+            lock.unlock();
         }
     }
     Python::AstDefaultVisitor::visitImport(node);

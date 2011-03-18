@@ -112,6 +112,7 @@ void ParseJob::run()
 
     readContents();
     m_session->setContents( QString::fromUtf8(contents().contents) + "\n" ); // append a newline in case the parser doesnt like it without one
+    Q_ASSERT(m_url.isValid());
     m_session->setCurrentDocument(m_url);
     
     if ( abortRequested() )
@@ -125,7 +126,7 @@ void ParseJob::run()
     
     if ( parserResults.second )
     {
-        kDebug() << m_url;
+        Q_ASSERT(m_url.isValid());
 //         AstPrinter printer;
 //         printer.visitCode( m_ast );
         if ( abortRequested() )
@@ -133,13 +134,17 @@ void ParseJob::run()
         
         PythonEditorIntegrator editor;
         DeclarationBuilder builder( &editor );
+        builder.m_currentlyParsedDocument = filename;
         
         editor.setParseSession(m_session);
         
+        Q_ASSERT(m_session->currentDocument().toUrl().isValid());
         m_duContext = builder.build(filename, m_ast, m_duContext);
         setDuChain(m_duContext);
         
+        Q_ASSERT(m_session->currentDocument().toUrl().isValid());
         UseBuilder usebuilder( &editor );
+        usebuilder.m_currentlyParsedDocument = filename;
         usebuilder.buildUses(m_ast);
 
         {

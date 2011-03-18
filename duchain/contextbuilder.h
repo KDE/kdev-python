@@ -55,6 +55,13 @@ public:
     void setEditor(ParseSession* session);
 
     QPair<KUrl, QStringList> findModulePath(const QString& name);
+    
+    // ugly because this collides with currentDocument(), but we have to use it;
+    // for some reason the UseBuilder does not have m_url set, and it's private (not even protected) to AbstractContextBuilder.
+    // so at least keep this consistent within the plugin and use this everywhere.
+    // maybe we can remove this hack later. TODO maybe change something in kdevplatform, or maybe we're doing something wrong here?
+    IndexedString currentlyParsedDocument() const;
+    IndexedString m_currentlyParsedDocument;
 
 protected:
     PythonEditorIntegrator* editor() const;
@@ -77,7 +84,7 @@ protected:
     
     DUContext* openSafeContext( Python::Ast* node, RangeInRevision& range, DUContext::ContextType type, Python::Identifier* identifier = 0 );
     
-    QMap<Identifier*, TopDUContextPointer> contextsForModules;
+    QMap<QString, ReferencedTopDUContext> contextsForModules;
 
     static PythonEditorIntegrator* m_editor;
     

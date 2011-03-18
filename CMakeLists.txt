@@ -52,6 +52,7 @@ target_link_libraries(kdevpythonlanguagesupport
     kdev4pythonduchain
 )
 
+set(DOCUMENTATION_INSTALL_DIR ${BIN_INSTALL_DIR}/../share/pythondocumentation)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/parser/parserConfig.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/parser/parserConfig.h" )
 
 install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})
@@ -59,5 +60,8 @@ install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES kdevpythonsupport.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 install(FILES pythonpythonparser.py DESTINATION ${BIN_INSTALL_DIR})
 install(FILES documentation/pydoc.py DESTINATION ${BIN_INSTALL_DIR})
-install(FILES documentation/builtindocumentation.py DESTINATION ${BIN_INSTALL_DIR}) # TODO fix me
+
+FILE(MAKE_DIRECTORY ${DOCUMENTATION_INSTALL_DIR})
+install(FILES documentation/builtindocumentation.py DESTINATION ${DOCUMENTATION_INSTALL_DIR})
+install(FILES documentation/math.py DESTINATION ${DOCUMENTATION_INSTALL_DIR})
 

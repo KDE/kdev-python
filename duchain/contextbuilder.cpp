@@ -281,11 +281,11 @@ void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     {
         int sline, eline, scol, ecol;
         sline = node->arguments->arguments.first()->startLine;
-        eline = node->arguments->arguments.last()->endLine;
+        eline = node->arguments->arguments.last()->endLine + 1;
         scol = node->arguments->arguments.first()->startCol;
-        ecol = 10000;
-        
+        ecol = 10;
         RangeInRevision range(sline, scol, eline, ecol);
+        
         Q_ASSERT(range.isValid());
         DUContext* funcctx = openContext( node->arguments, range, DUContext::Function, node->name);
         kDebug() << funcctx;

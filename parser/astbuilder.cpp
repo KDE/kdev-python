@@ -754,8 +754,8 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
         int colno = PyInt_AsLong(PyTuple_GetItem(errorDetails_tuple, 2));
         
         ProblemPointer p(new Problem());
-        SimpleCursor start(lineno, colno-4);
-        SimpleCursor end(lineno, colno+4);
+        SimpleCursor start(lineno, (colno-4 > 0 ? colno-4 : 0));
+        SimpleCursor end(lineno, (colno+4 > 4 ? colno+4 : 4));
         SimpleRange range(start, end);
         kDebug() << "Problem range: " << range;
         DocumentRange location(IndexedString(filename.path()), range);
@@ -764,27 +764,54 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
         p->setSource(ProblemData::Parser);
         m_problems.append(p);
         
-        // try to recover. First try: Comment out the line in question.
+        // try to recover.
+        // Currently the following is tired:
+        // * If the last non-space char before the error reported was ":", it's most likely an indent error.
+        //   The common easy-to-fix and annoying indent error is "for item in foo: <EOF>". In that case, just add "pass" after the ":" token.
+        // * If it's not, we will just comment the line with the error, fixing problems like "foo = <EOF>".
         int len = contents.length();
         int currentLine = 0;
         QString currentLineContents;
         QChar c;
         QChar newline(QString("\n").at(0));
         QChar saveChar; int savePosition;
-        int emptySince = 0;
+        int emptySince = 0; int emptySinceLine = 0; int emptyLinesSince = 0; int emptyLinesSinceLine;
+        unsigned short currentLineIndent = 0;
+        bool atLineBeginning = true;
+        QList<unsigned short> indents;
         for (int i = 0; i < len; i++ ) {
             c = contents.at(i);
             if ( ! c.isSpace() ) {
                 emptySince = i;
+                emptySinceLine = currentLine;
+                atLineBeginning = false;
             }
-            if ( c == newline ) {
+            else if ( c == newline ) {
                 currentLine += 1;
+                // this line has content, so reset the "empty lines since" counter
+                if ( ! atLineBeginning ) {
+                    emptyLinesSince = i;
+                    emptyLinesSinceLine = currentLine;
+                }
+                atLineBeginning = true;
+                indents.append(currentLineIndent);
+                currentLineIndent = 0;
             }
+            else if ( atLineBeginning ) {
+                currentLineIndent += 1;
+            }
+            
             if ( currentLine == lineno ) {
                 // if the last non-empty char before the error opens a new block, it's likely an "empty block" problem
-                // we can easily fix that by adding in a "pass" statement.
+                // we can easily fix that by adding in a "pass" statement. However, we want to add that in the next line, if possible
+                // so context ranges for autocompletion stay intact.
                 if ( contents[emptySince] == QString(":").at(0) ) {
-                    contents.insert(emptySince + 1, "pass");
+                    if ( indents.length() > emptySinceLine + 1 && indents.at(emptySinceLine) < indents.at(emptySinceLine + 1) ) {
+                        contents.insert(emptyLinesSince + 1 + indents.at(emptyLinesSinceLine), "pass");
+                    }
+                    else {
+                        contents.insert(emptySince + 1, "pass");
+                    }
                 }
                 else {
                     contents[i+1] = QString("#").at(0);
@@ -793,7 +820,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
                 break;
             }
         }
-        kDebug() << contents;
+        kDebug() << contents << indents << indents.at(emptySinceLine) << indents.at(emptySinceLine + 1) << emptySinceLine;
         syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);
         if ( ! syntaxtree ) return 0; // everything fails, so we abort.
     }

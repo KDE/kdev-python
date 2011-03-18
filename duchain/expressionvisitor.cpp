@@ -158,8 +158,16 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
             m_lastAccessedReturnType = classDecl->abstractType();
         }
         else if ( funcDecl && funcDecl->type<FunctionType>() ) {
-            encounter(funcDecl->type<FunctionType>()->returnType());
-            m_lastAccessedReturnType = funcDecl->type<FunctionType>()->returnType();
+            Ast* parent = node;
+            while ( dynamic_cast<ExpressionAst*>(parent->parent) ) parent = parent->parent;
+            if ( parent->astType == Ast::CallAstType ) {
+                encounter(funcDecl->type<FunctionType>()->returnType());
+                m_lastAccessedReturnType = funcDecl->type<FunctionType>()->returnType();
+            }
+            else {
+                encounter(funcDecl->abstractType());
+                m_lastAccessedReturnType = funcDecl->abstractType(); // TODO check this
+            }
         }
         else {
             encounter(foundDecls.last()->abstractType());

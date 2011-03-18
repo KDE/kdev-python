@@ -304,7 +304,12 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
     
     foreach ( ExpressionAst* target, node->targets ) {
         if ( target->astType == Ast::NameAstType ) {
-            visitVariableDeclaration<Declaration>(target);
+            if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeFunction) {
+                visitVariableDeclaration<FunctionDeclaration>(target);
+            }
+            else {
+                visitVariableDeclaration<Declaration>(target);
+            }
         }
     }
 }

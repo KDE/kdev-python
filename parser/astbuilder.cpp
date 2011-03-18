@@ -719,7 +719,7 @@ private:
 
 QMutex AstBuilder::pyInitLock;
 
-CodeAst* AstBuilder::parse(KUrl filename, const QString& contents)
+CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
 {
     Py_NoSiteFlag = 1;
     
@@ -764,7 +764,36 @@ CodeAst* AstBuilder::parse(KUrl filename, const QString& contents)
         p->setSource(ProblemData::Parser);
         m_problems.append(p);
         
-        return 0;
+        // try to recover. First try: Comment out the line in question.
+        int len = contents.length();
+        int currentLine = 0;
+        QString currentLineContents;
+        QChar c;
+        QChar newline(QString("\n").at(0));
+        QChar saveChar; int savePosition;
+        int emptySince = 0;
+        for (int i = 0; i < len; i++ ) {
+            c = contents.at(i);
+            if ( ! c.isSpace() ) {
+                emptySince = i;
+            }
+            if ( c == newline ) {
+                currentLine += 1;
+            }
+            if ( currentLine == lineno ) {
+                saveChar = contents[i+1]; savePosition = i+1;
+                contents[i+1] = QString("#").at(0);
+                // if the last non-empty char before the error opens a new block, it's likely an "empty block" problem
+                // we can easily fix that by adding in a "pass" statement.
+                if ( contents[emptySince] == QString(":").at(0) ) {
+                    contents.insert(emptySince + 1, "pass");
+                }
+                break;
+            }
+        }
+        kDebug() << contents;
+        syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);
+        if ( ! syntaxtree ) return 0; // everything fails, so we abort.
     }
     kDebug() << "Got syntax tree from python parser:" << syntaxtree->kind << Module_kind;
     

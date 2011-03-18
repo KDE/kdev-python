@@ -47,7 +47,7 @@ class KDEVPYTHONPARSER_EXPORT AstBuilder
 {
     
 public:
-    CodeAst* parse(KUrl filename, const QString& contents);
+    CodeAst* parse(KUrl filename, QString& contents);
     QList<KDevelop::ProblemPointer> m_problems;
 private:
     static QMutex pyInitLock;

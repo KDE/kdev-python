@@ -177,11 +177,13 @@ void ParseJob::run()
             DUChain::self()->addDocumentChain(m_duContext);
         }
         
-        foreach ( ProblemPointer p, m_session->m_problems ) {
-            kDebug() << "Added problem to context";
-            m_duContext->addProblem(p);
-        }
         setDuChain(m_duContext);
+    }
+    
+    DUChainWriteLocker lock(DUChain::lock());
+    foreach ( ProblemPointer p, m_session->m_problems ) {
+        kDebug() << "Added problem to context";
+        m_duContext->addProblem(p);
     }
     
 //     DUChainWriteLocker lock(DUChain::lock());

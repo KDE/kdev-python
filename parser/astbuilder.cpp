@@ -781,12 +781,14 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
                 currentLine += 1;
             }
             if ( currentLine == lineno ) {
-                saveChar = contents[i+1]; savePosition = i+1;
-                contents[i+1] = QString("#").at(0);
                 // if the last non-empty char before the error opens a new block, it's likely an "empty block" problem
                 // we can easily fix that by adding in a "pass" statement.
                 if ( contents[emptySince] == QString(":").at(0) ) {
                     contents.insert(emptySince + 1, "pass");
+                }
+                else {
+                    contents[i+1] = QString("#").at(0);
+                    saveChar = contents[i+1]; savePosition = i+1;
                 }
                 break;
             }

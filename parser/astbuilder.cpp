@@ -722,6 +722,7 @@ QMutex AstBuilder::pyInitLock;
 CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
 {
     Py_NoSiteFlag = 1;
+    contents = contents + "\n\npass"; // gives better error reporting
     
     AstBuilder::pyInitLock.lock();
     if ( ! Py_IsInitialized() ) {
@@ -806,7 +807,9 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
                 // we can easily fix that by adding in a "pass" statement. However, we want to add that in the next line, if possible
                 // so context ranges for autocompletion stay intact.
                 if ( contents[emptySince] == QString(":").at(0) ) {
+                    kDebug() << indents.length() << emptySinceLine + 1;
                     if ( indents.length() > emptySinceLine + 1 && indents.at(emptySinceLine) < indents.at(emptySinceLine + 1) ) {
+                        kDebug() << indents.at(emptySinceLine) << indents.at(emptySinceLine + 1);
                         contents.insert(emptyLinesSince + 1 + indents.at(emptyLinesSinceLine), "pass");
                     }
                     else {
@@ -814,12 +817,16 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
                     }
                 }
                 else {
-                    contents[i+1] = QString("#").at(0);
+                    contents[i+1+indents.at(currentLine - 1)] = QString("#").at(0);
+                    contents.insert(i+1+indents.at(currentLine - 1), "pass");
                     saveChar = contents[i+1]; savePosition = i+1;
                 }
                 break;
             }
         }
+        
+        kDebug() << contents;
+        
         syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);
         if ( ! syntaxtree ) return 0; // everything fails, so we abort.
     }

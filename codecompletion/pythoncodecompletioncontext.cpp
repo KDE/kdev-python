@@ -61,12 +61,20 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     QList<CompletionTreeItemPointer> items;
     DUChainReadLocker lock(DUChain::lock());
     
+    kDebug() << "Line: " << m_position.line;
+    if ( m_position.line == 0 ) { // TODO group those correctly so they appear at the top
+        items << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python"));
+        items << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python2.6"));
+        items << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python2.7"));
+    }
+    
     if ( m_operation == PythonCodeCompletionContext::NoCompletion ) {
             
     }
     else if ( m_operation == PythonCodeCompletionContext::DefineCompletion ) {
         QList<implementFunctionDescription> funcs;
         // well, duh. I didn't think it's that many functions.
+        {
         funcs << ( implementFunctionDescription() << "__init__" << "self" << "self" );
         funcs << ( implementFunctionDescription() << "__new__" << "self" << "self" );
         funcs << ( implementFunctionDescription() << "__del__" << "self" << "self" );
@@ -154,6 +162,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         funcs << ( implementFunctionDescription() << "__hex__" << "self" << "self" );
         funcs << ( implementFunctionDescription() << "__index__" << "self" << "self" );
         funcs << ( implementFunctionDescription() << "__coerce__" << "self, <any object> other" << "self, other" );
+        }
 
         foreach ( implementFunctionDescription func, funcs ) {
             items << CompletionTreeItemPointer(new ImplementFunctionCompletionItem(func.at(0), func.at(1), func.at(2), m_indent));
@@ -339,11 +348,12 @@ QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems(QList<KUrl>
 
 PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position, 
                                                          int depth, const PythonCodeCompletionWorker* parent): CodeCompletionContext(context, text, position, depth),
-                                                         parent(parent), m_context(context)
+                                                         parent(parent), m_context(context), m_position(position)
 {
     m_workingOnDocument = parent->parent->m_currentDocument;
     QString currentLine = "\n" + text.split("\n").last(); // we'll only look at the last line, as 99% of python statements are limited to one line
     kDebug() << "Doing auto-completion context scan for: " << currentLine;
+    
     
     QRegExp importsub("(.*)\n[\\s]*from(.*)import[\\s]*$");
     importsub.setMinimal(true);

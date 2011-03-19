@@ -203,8 +203,7 @@ void ContextBuilder::visitCode(CodeAst* node) {
         
         if ( ! internal ) {
             DUChain::self()->updateContextForUrl(doc, TopDUContext::AllDeclarationsAndContexts, 0,  -5);
-            DUChain::self()->updateContextForUrl(currentlyParsedDocument(), TopDUContext::AllDeclarationsContextsAndUses, 0, 1);
-            return; // abort parsing
+            DUChain::self()->updateContextForUrl(currentlyParsedDocument(), TopDUContext::AllDeclarationsContextsAndUses, 0, 5);
         }
         
         if ( internal ) {
@@ -270,8 +269,8 @@ void ContextBuilder::visitImport(ImportAst* node)
                 kDebug() << currentlyParsedDocument().toUrl().path();
                 Q_ASSERT(moduleFilePath.first.isValid());
                 Q_ASSERT(currentlyParsedDocument().toUrl().isValid());
-                DUChain::self()->updateContextForUrl(IndexedString(moduleFilePath.first.path()), TopDUContext::AllDeclarationsAndContexts, 0, -1);
-                DUChain::self()->updateContextForUrl(currentlyParsedDocument(), TopDUContext::AllDeclarationsContextsAndUses, 0, 1);
+                DUChain::self()->updateContextForUrl(IndexedString(moduleFilePath.first.path()), TopDUContext::AllDeclarationsContextsAndUses, 0, -5);
+                DUChain::self()->updateContextForUrl(currentlyParsedDocument(), TopDUContext::AllDeclarationsContextsAndUses, 0, 5);
             }
             else {
                 contextsForModules.insert(moduleName->value, moduleChain);
@@ -292,7 +291,7 @@ void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     
     visitNodeList( node->decorators );
     
-    RangeInRevision range(RangeInRevision(node->startLine, node->startCol, node->endLine, node->endCol + 10000));
+    RangeInRevision range(RangeInRevision(node->startLine, node->startCol, node->endLine + 1, 0));
     
     if ( node->arguments && node->arguments->arguments.length() )
     {

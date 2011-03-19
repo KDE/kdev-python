@@ -352,9 +352,84 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
 {
     m_workingOnDocument = parent->parent->m_currentDocument;
     QString currentLine = "\n" + text.split("\n").last(); // we'll only look at the last line, as 99% of python statements are limited to one line
-    kDebug() << "Doing auto-completion context scan for: " << currentLine;
+    int atLine = text.count("\n");
+    kDebug() << "Doing auto-completion context scan for: " << currentLine << "@line" << atLine;
     
+    bool currentLineIsEmpty = true;
+    {
+        QChar c;
+        for ( int i = currentLine.length() - 1; i >= 0; i-- ) {
+            c = currentLine.at(i);
+            if ( ! c.isSpace() ) {
+                currentLineIsEmpty = false;
+                break;
+            }
+        }
+    }
     
+    if ( currentLineIsEmpty ) {
+        // okay, so our contexts end too early. They end at the last valid token of a function or such,
+        // but not at the DEDENT token. This means, if a function ends with 5 empty but indented lines, and you
+        // place your cursor in the 3rd one and start typing, there's no completion for variables local to the function.
+        // Thus, we walk back in the text line-by-line, searching for some context which has the same
+        // indent like the current one and is directly before it in the code.
+        DUContext* currentlyChecked = context.data();
+        int currentlyCheckedLine = atLine;
+        {
+            DUChainReadLocker lock(DUChain::lock());
+            while ( currentlyChecked == context.data() && currentlyCheckedLine >= 0 ) {
+                currentlyChecked = context->topContext()->findContextAt(CursorInRevision(currentlyCheckedLine, 0));
+                currentlyCheckedLine -= 1;
+            }
+        }
+        
+        // cool, we found something. Now we need to compare its indent to the current one; if they don't match, then 
+        // we ignore it and use the one provided as an argument to this function. Otherwise, we use what we found.
+        if ( currentlyChecked ) {
+            kDebug() << "Previous / Current context ranges: " << currentlyChecked->range().castToSimpleRange() << context->range().castToSimpleRange();
+            int skipLinesBack = atLine - currentlyChecked->range().castToSimpleRange().end.line; // how many lines to skip backwards
+            int i = text.length();
+            QChar newline = QString("\n").at(0);
+            QMap<int, int> indentForLine;
+            int currentIndent = 0;
+            int skippedLines = 0;
+            QChar c;
+            while ( i > 0 ) {
+                i -= 1;
+                c = text.at(i);
+                if ( c == newline ) {
+                    skippedLines += 1;
+                    indentForLine[atLine - skippedLines + 1] = currentIndent;
+                    kDebug() << "Indent for line" << atLine - skippedLines + 1 << " : " << currentIndent;
+                    currentIndent = 0;
+                }
+                else if ( c.isSpace() ) {
+                    currentIndent += 1;
+                }
+                else {
+                    // reset if non-space, so we don't count whitespaces within the line
+                    currentIndent = 0;
+                }
+                if ( skippedLines > skipLinesBack ) {
+                    break;
+                }
+            }
+            kDebug() << indentForLine << skipLinesBack << skippedLines;
+            
+            // if the indents match, use the context which was found.
+            if ( indentForLine[currentlyChecked->range().castToSimpleRange().end.line] == indentForLine[atLine] ) {
+                kDebug() << "Indents match, replacing context by" << currentlyChecked;
+                context = DUContextPointer(currentlyChecked);
+                m_duContext = context;
+                DUChainReadLocker lock(DUChain::lock()); // TODO remove debug
+                kDebug() << "New context: " << context->scopeIdentifier().toString() << context->range().castToSimpleRange();
+            }
+            else {
+                kDebug() << "Indents mismatch, so the given context is correct.";
+            }
+        }
+    }
+        
     QRegExp importsub("(.*)\n[\\s]*from(.*)import[\\s]*$");
     importsub.setMinimal(true);
     bool is_importSub = importsub.exactMatch(currentLine);

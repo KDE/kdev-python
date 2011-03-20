@@ -238,10 +238,10 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
         }
         currentDeclaration = DeclarationPointer(declarations.at(i).first);
         
-        kDebug() << "Adding item: " << currentDeclaration.data()->identifier().identifier().str();
+//         kDebug() << "Adding item: " << currentDeclaration.data()->identifier().identifier().str();
         NormalDeclarationCompletionItem* item;
         if ( currentDeclaration.data()->abstractType() && currentDeclaration.data()->abstractType().constData()->whichType() == AbstractType::TypeFunction ) {
-            kDebug() << "Adding function declaration item";
+//             kDebug() << "Adding function declaration item";
             item = new FunctionDeclarationCompletionItem(currentDeclaration);
         }
         else {
@@ -346,6 +346,8 @@ QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems(QList<KUrl>
     return items;
 }
 
+// decide what kind of completion will be offered based on the code before the current cursor position
+// lazy as we are, we use regular expression matching for this
 PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position, 
                                                          int depth, const PythonCodeCompletionWorker* parent): CodeCompletionContext(context, text, position, depth),
                                                          parent(parent), m_context(context), m_position(position)
@@ -353,7 +355,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     m_workingOnDocument = parent->parent->m_currentDocument;
     QString currentLine = "\n" + text.split("\n").last(); // we'll only look at the last line, as 99% of python statements are limited to one line
     int atLine = position.line;
-    kDebug() << "Doing auto-completion context scan for: " << currentLine << "@line" << atLine;
+    kDebug() << "Doing auto-completion context scan for: " << currentLine << "@line" << atLine << "@context" << context->range().castToSimpleRange();
     
     bool currentLineIsEmpty = true;
     {
@@ -367,76 +369,76 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         }
     }
     
-    if ( currentLineIsEmpty ) {
-        // okay, so our contexts end too early. They end at the last valid token of a function or such,
-        // but not at the DEDENT token. This means, if a function ends with 5 empty but indented lines, and you
-        // place your cursor in the 3rd one and start typing, there's no completion for variables local to the function.
-        // Thus, we walk back in the text line-by-line, searching for some context which has the same
-        // indent like the current one and is directly before it in the code.
-        DUContext* currentlyChecked = context.data();
-        int previousEndsAtLine = currentlyChecked->range().castToSimpleRange().end.line;
-        int currentlyCheckedLine = atLine;
-        {
-            DUChainReadLocker lock(DUChain::lock());
-            while ( currentlyChecked == context.data() && currentlyCheckedLine >= 0 ) {
-                currentlyChecked = context->topContext()->findContextAt(CursorInRevision(currentlyCheckedLine, 0));
-                currentlyCheckedLine -= 1;
-            }
-        }
-        
-        // cool, we found something. Now we need to compare its indent to the current one; if they don't match, then 
-        // we ignore it and use the one provided as an argument to this function. Otherwise, we use what we found.
-        if ( currentlyChecked ) {
-            kDebug() << "Previous / Current context ranges: " << currentlyChecked->range().castToSimpleRange() << context->range().castToSimpleRange();
-            int skipLinesBack = atLine - previousEndsAtLine; // how many lines to skip backwards
-            int i = text.length();
-            QChar newline = QString("\n").at(0);
-            
-            // init indents array
-            QMap<int, int> indentForLine;
-            const int invalid = -1;
-            indentForLine[atLine] = invalid; indentForLine[previousEndsAtLine] = invalid;
-            
-            int currentIndent = 0;
-            int skippedLines = 0;
-            QChar c;
-            while ( i > 0 ) {
-                i -= 1;
-                c = text.at(i);
-                if ( c == newline ) {
-                    skippedLines += 1;
-                    indentForLine[atLine - skippedLines + 1] = currentIndent;
-                    kDebug() << "Indent for line" << atLine - skippedLines + 1 << " : " << currentIndent;
-                    currentIndent = 0;
-                }
-                else if ( c.isSpace() ) {
-                    currentIndent += 1;
-                }
-                else {
-                    // reset if non-space, so we don't count whitespaces within the line
-                    currentIndent = 0;
-                }
-                if ( skippedLines > skipLinesBack ) {
-                    break;
-                }
-            }
-            kDebug() << indentForLine << skipLinesBack << skippedLines;
-            
-            // if the indents match, use the context which was found.
-            // if those are still "invalid", then the scanner has not reached them, meaning it aborted scanning because
-            // even a match would not have meant that the context has to be replaced
-            if ( ( indentForLine[previousEndsAtLine] != invalid ) && ( indentForLine[atLine] != invalid ) && ( indentForLine[previousEndsAtLine] == indentForLine[atLine] ) ) {
-                kDebug() << "Indents match, replacing context by" << currentlyChecked;
-                context = DUContextPointer(currentlyChecked);
-                m_duContext = context;
-                DUChainReadLocker lock(DUChain::lock()); // TODO remove debug
-                kDebug() << "New context: " << context->scopeIdentifier().toString() << context->range().castToSimpleRange();
-            }
-            else {
-                kDebug() << "Indents mismatch, so the given context is correct.";
-            }
+    // okay, so our contexts end too early. They end at the last valid token of a function or such,
+    // but not at the DEDENT token. This means, if a function ends with 5 empty but indented lines, and you
+    // place your cursor in the 3rd one and start typing, there's no completion for variables local to the function.
+    // Thus, we walk back in the text line-by-line, searching for some context which has the same
+    // indent like the current one and is directly before it in the code.
+    DUContext* currentlyChecked = context.data();
+    int currentlyCheckedLine = atLine;
+    {
+        DUChainReadLocker lock(DUChain::lock());
+        while ( currentlyChecked == context.data() && currentlyCheckedLine >= 0 ) {
+            currentlyChecked = context->topContext()->findContextAt(CursorInRevision(currentlyCheckedLine, 0));
+            currentlyCheckedLine -= 1;
         }
     }
+    
+    // cool, we found something. Now we need to compare its indent to the current one; if they don't match, then 
+    // we ignore it and use the one provided as an argument to this function. Otherwise, we use what we found.
+    if ( currentlyChecked ) {
+        int previousEndsAtLine = currentlyChecked->range().castToSimpleRange().end.line;
+        kDebug() << "Previous context ends at line" << previousEndsAtLine;
+        kDebug() << "Previous / Current context ranges: " << currentlyChecked->range().castToSimpleRange() << context->range().castToSimpleRange();
+        int skipLinesBack = atLine - previousEndsAtLine; // how many lines to skip backwards
+        int i = text.length();
+        QChar newline = QString("\n").at(0);
+        
+        // init indents array
+        QMap<int, int> indentForLine;
+        const int invalid = -1;
+        indentForLine[atLine] = invalid; indentForLine[previousEndsAtLine] = invalid;
+        
+        int currentIndent = 0;
+        int skippedLines = 0;
+        QChar c;
+        while ( i > 0 ) {
+            i -= 1;
+            c = text.at(i);
+            if ( c == newline ) {
+                skippedLines += 1;
+                indentForLine[atLine - skippedLines + 1] = currentIndent;
+                kDebug() << "Indent for line" << atLine - skippedLines + 1 << " : " << currentIndent;
+                currentIndent = 0;
+            }
+            else if ( c.isSpace() ) {
+                currentIndent += 1;
+            }
+            else {
+                // reset if non-space, so we don't count whitespaces within the line
+                currentIndent = 0;
+            }
+            if ( skippedLines > skipLinesBack ) {
+                break;
+            }
+        }
+        kDebug() << indentForLine << skipLinesBack << skippedLines;
+        
+        // if the indents match, use the context which was found.
+        // if those are still "invalid", then the scanner has not reached them, meaning it aborted scanning because
+        // even a match would not have meant that the context has to be replaced
+        if ( ( indentForLine[previousEndsAtLine] != invalid ) && ( indentForLine[atLine] != invalid ) && ( indentForLine[previousEndsAtLine] == indentForLine[atLine] ) ) {
+            kDebug() << "Indents match, replacing context by" << currentlyChecked;
+            context = DUContextPointer(currentlyChecked);
+            m_duContext = context;
+            DUChainReadLocker lock(DUChain::lock()); // TODO remove debug
+            kDebug() << "New context: " << context->scopeIdentifier().toString() << context->range().castToSimpleRange();
+        }
+        else {
+            kDebug() << "Indents mismatch, so the given context is correct.";
+        }
+    }
+
         
     QRegExp importsub("(.*)\n[\\s]*from(.*)import[\\s]*$");
     importsub.setMinimal(true);
@@ -491,6 +493,8 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         QStringList expr = currentExpression.split(".");
         expr.removeAll("");
         m_guessTypeOfExpression = "\n" + expr.join(".");
+        // remove spaces at the beginning of the expression, they are treated as an INDENT token by the parser
+        // and are thus a syntax error
         m_guessTypeOfExpression.replace(QRegExp("\n[\\s]*"), "");
         kDebug() << "Guess type of this expression: " << m_guessTypeOfExpression;
         m_operation = PythonCodeCompletionContext::MemberAccessCompletion;

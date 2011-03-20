@@ -722,7 +722,6 @@ QMutex AstBuilder::pyInitLock;
 CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
 {
     Py_NoSiteFlag = 1;
-    contents = contents + "\n\npass"; // gives better error reporting
     
     AstBuilder::pyInitLock.lock();
     if ( ! Py_IsInitialized() ) {
@@ -776,7 +775,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
         QChar c;
         QChar newline(QString("\n").at(0));
         QChar saveChar; int savePosition;
-        int emptySince = 0; int emptySinceLine = 0; int emptyLinesSince = 0; int emptyLinesSinceLine;
+        int emptySince = 0; int emptySinceLine = 0; int emptyLinesSince = 0; int emptyLinesSinceLine; int lastNonemptyLineBeginning;
         unsigned short currentLineIndent = 0;
         bool atLineBeginning = true;
         QList<unsigned short> indents;
@@ -791,6 +790,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
                 currentLine += 1;
                 // this line has had content, so reset the "empty lines since" counter
                 if ( ! atLineBeginning ) {
+                    lastNonemptyLineBeginning = emptyLinesSince;
                     emptyLinesSince = i;
                     emptyLinesSinceLine = currentLine;
                 }
@@ -816,7 +816,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
                         contents.insert(emptySince + 1, "pass");
                     }
                 }
-                else if ( indents.length() > emptySinceLine + 1 ) {
+                else if ( indents.length() >= currentLine ) {
                     kDebug() << indents << currentLine;
                     contents[i+1+indents.at(currentLine - 1)] = QString("#").at(0);
                     contents.insert(i+1+indents.at(currentLine - 1), "pass");
@@ -829,6 +829,13 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
         kDebug() << contents;
         
         syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);
+        // 3rd try: discard everything after the last non-empty line.
+        if ( ! syntaxtree ) {
+            kWarning() << "Discarding most of the code to be parsed because of previous errors";
+            contents = contents.remove(lastNonemptyLineBeginning, contents.length() - lastNonemptyLineBeginning);
+            kDebug() << "This is what is left: " << contents;
+            syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);
+        }
         if ( ! syntaxtree ) return 0; // everything fails, so we abort.
     }
     kDebug() << "Got syntax tree from python parser:" << syntaxtree->kind << Module_kind;

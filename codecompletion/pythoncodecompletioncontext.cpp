@@ -270,7 +270,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
         // filter out those which are builtin functions, and those which were imported; we don't want those here
         // TODO rework this, it's maybe not the most elegant solution possible
         foreach ( DeclarationDepthPair current, declarations ) {
-            if ( current.first->topContext() != DUChain::self()->chainForDocument(QString(DOCFILE_PATH)) ) {
+            if ( current.first->context() != DUChain::self()->chainForDocument(QString(DOCFILE_PATH)) ) {
                 kDebug() << "Keeping declaration" << current.first->toString();
                 keepDeclarations.append(current);
             }
@@ -352,7 +352,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
 {
     m_workingOnDocument = parent->parent->m_currentDocument;
     QString currentLine = "\n" + text.split("\n").last(); // we'll only look at the last line, as 99% of python statements are limited to one line
-    int atLine = text.count("\n");
+    int atLine = position.line;
     kDebug() << "Doing auto-completion context scan for: " << currentLine << "@line" << atLine;
     
     bool currentLineIsEmpty = true;
@@ -374,6 +374,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         // Thus, we walk back in the text line-by-line, searching for some context which has the same
         // indent like the current one and is directly before it in the code.
         DUContext* currentlyChecked = context.data();
+        int previousEndsAtLine = currentlyChecked->range().castToSimpleRange().end.line;
         int currentlyCheckedLine = atLine;
         {
             DUChainReadLocker lock(DUChain::lock());
@@ -387,10 +388,15 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         // we ignore it and use the one provided as an argument to this function. Otherwise, we use what we found.
         if ( currentlyChecked ) {
             kDebug() << "Previous / Current context ranges: " << currentlyChecked->range().castToSimpleRange() << context->range().castToSimpleRange();
-            int skipLinesBack = atLine - currentlyChecked->range().castToSimpleRange().end.line; // how many lines to skip backwards
+            int skipLinesBack = atLine - previousEndsAtLine; // how many lines to skip backwards
             int i = text.length();
             QChar newline = QString("\n").at(0);
+            
+            // init indents array
             QMap<int, int> indentForLine;
+            const int invalid = -1;
+            indentForLine[atLine] = invalid; indentForLine[previousEndsAtLine] = invalid;
+            
             int currentIndent = 0;
             int skippedLines = 0;
             QChar c;
@@ -417,7 +423,9 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
             kDebug() << indentForLine << skipLinesBack << skippedLines;
             
             // if the indents match, use the context which was found.
-            if ( indentForLine[currentlyChecked->range().castToSimpleRange().end.line] == indentForLine[atLine] ) {
+            // if those are still "invalid", then the scanner has not reached them, meaning it aborted scanning because
+            // even a match would not have meant that the context has to be replaced
+            if ( ( indentForLine[previousEndsAtLine] != invalid ) && ( indentForLine[atLine] != invalid ) && ( indentForLine[previousEndsAtLine] == indentForLine[atLine] ) ) {
                 kDebug() << "Indents match, replacing context by" << currentlyChecked;
                 context = DUContextPointer(currentlyChecked);
                 m_duContext = context;
@@ -474,14 +482,15 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         return;
     }
     
-    QRegExp attributeAccess(".*\n[\\s]*(.*\\.)*$");
+    currentLine.replace(QRegExp("\"(.*)\""), "\"STRING\"");
+    QRegExp attributeAccess(".*\n[\\s]*.*([\\s]*[a-z|A-Z|_]*[\\s]*\\.)+$");
     attributeAccess.setMinimal(true);
     bool is_attributeAccess = attributeAccess.exactMatch(currentLine);
     if ( is_attributeAccess ) {
         QStringList expr = currentLine.split(".");
         expr.removeAll("");
         m_guessTypeOfExpression = expr.join(".");
-        m_guessTypeOfExpression.replace(QRegExp("\"(.*)\""), "\"STRING\"").replace(QRegExp("(.*)\n[\\s]*"), "");
+        m_guessTypeOfExpression.replace(QRegExp("(.*)\n[\\s]*"), "");
         kDebug() << "Guess type of this expression: " << m_guessTypeOfExpression;
         m_operation = PythonCodeCompletionContext::MemberAccessCompletion;
         return;

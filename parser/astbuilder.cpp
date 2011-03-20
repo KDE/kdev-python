@@ -789,7 +789,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
             }
             else if ( c == newline ) {
                 currentLine += 1;
-                // this line has content, so reset the "empty lines since" counter
+                // this line has had content, so reset the "empty lines since" counter
                 if ( ! atLineBeginning ) {
                     emptyLinesSince = i;
                     emptyLinesSinceLine = currentLine;
@@ -816,7 +816,8 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
                         contents.insert(emptySince + 1, "pass");
                     }
                 }
-                else {
+                else if ( indents.length() > emptySinceLine + 1 ) {
+                    kDebug() << indents << currentLine;
                     contents[i+1+indents.at(currentLine - 1)] = QString("#").at(0);
                     contents.insert(i+1+indents.at(currentLine - 1), "pass");
                     saveChar = contents[i+1]; savePosition = i+1;

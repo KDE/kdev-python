@@ -284,7 +284,8 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
     }
     
     DUChainReadLocker lock(DUChain::lock());
-    QList< Declaration* > d = m_ctx->findDeclarations(id);
+    QList< Declaration* > d = m_ctx->topContext()->findDeclarations(id);
+    d.append(m_ctx->findDeclarations(id));
     lock.unlock();
 //     Q_ASSERT(!d.isEmpty());
  

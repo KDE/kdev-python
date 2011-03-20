@@ -149,7 +149,7 @@ void ParseJob::run()
 
         {
             DUChainWriteLocker lock(DUChain::lock());
-//             m_duContext->clearProblems();
+            m_duContext->setFeatures(minimumFeatures());
             ParsingEnvironmentFilePointer parsingEnvironmentFile = m_duContext->parsingEnvironmentFile();
             parsingEnvironmentFile->clearModificationRevisions();
             parsingEnvironmentFile->setModificationRevision(contents().modification);
@@ -190,6 +190,8 @@ void ParseJob::run()
         kDebug() << "Added problem to context";
         m_duContext->addProblem(p);
     }
+    
+    setDuChain(m_duContext);
     
 //     DUChainWriteLocker lock(DUChain::lock());
 //     if ( ! DUChain::self()->chainForDocument(document()) && m_duContext ) {

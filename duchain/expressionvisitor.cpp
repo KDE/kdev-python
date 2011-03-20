@@ -145,7 +145,8 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     // Step 5: Construct the type of the declaration which was found.
     if ( foundDecls.length() > 0 ) {
         m_lastAccessedAttributeDeclaration = DeclarationPointer(foundDecls.last());
-        kDebug() << "Last accessed declaration: " << m_lastAccessedAttributeDeclaration->identifier().toString() << m_lastAccessedAttributeDeclaration.data();
+        kDebug() << "Last accessed declaration: " << m_lastAccessedAttributeDeclaration->identifier().toString() 
+                 << m_lastAccessedAttributeDeclaration.data() << "@" << m_lastAccessedAttributeDeclaration->topContext()->url().toUrl().path();
         
         // if it's a function call, the result of that call will be the return type
         // TODO check weather we need to distinguish bettween foo.bar and foo.bar() here

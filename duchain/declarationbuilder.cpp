@@ -85,6 +85,8 @@ void DeclarationBuilder::closeDeclaration()
         DUChainReadLocker lock( DUChain::lock() );
         currentDeclaration()->setKind( Declaration::Type );
     }
+    
+    Q_ASSERT(currentDeclaration()->alwaysForceDirect());
 
     eventuallyAssignInternalContext();
 

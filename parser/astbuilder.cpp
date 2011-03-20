@@ -769,12 +769,12 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
         // * If the last non-space char before the error reported was ":", it's most likely an indent error.
         //   The common easy-to-fix and annoying indent error is "for item in foo: <EOF>". In that case, just add "pass" after the ":" token.
         // * If it's not, we will just comment the line with the error, fixing problems like "foo = <EOF>".
+        // * If both fails, everything including the first non-empty line before the one with the error will be deleted.
         int len = contents.length();
         int currentLine = 0;
         QString currentLineContents;
         QChar c;
         QChar newline(QString("\n").at(0));
-        QChar saveChar; int savePosition;
         int emptySince = 0; int emptySinceLine = 0; int emptyLinesSince = 0; int emptyLinesSinceLine; int lastNonemptyLineBeginning;
         unsigned short currentLineIndent = 0;
         bool atLineBeginning = true;
@@ -820,7 +820,6 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
                     kDebug() << indents << currentLine;
                     contents[i+1+indents.at(currentLine - 1)] = QString("#").at(0);
                     contents.insert(i+1+indents.at(currentLine - 1), "pass");
-                    saveChar = contents[i+1]; savePosition = i+1;
                 }
                 break;
             }

@@ -194,21 +194,27 @@ void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
 }
 
 void ContextBuilder::visitCode(CodeAst* node) {
-    IndexedString doc = IndexedString(QString(DOCFILE_PATH));
+    KUrl doc_url = KUrl(DOCFILE_PATH);
+    doc_url.cleanPath(KUrl::SimplifyDirSeparators);
+    IndexedString doc = IndexedString(doc_url.path());
     Q_ASSERT(currentlyParsedDocument().toUrl().isValid());
+    kDebug() << "Internal functions file: " << currentlyParsedDocument().toUrl().path() << doc.toUrl().path();
     if ( currentlyParsedDocument() != doc ) {
-        DUChainReadLocker lock(DUChain::lock());
-        TopDUContext* internal = DUChain::self()->chainForDocument(doc); // TODO add startup-check and error message, this must exist
-        lock.unlock();
+        TopDUContext* internal;
+        {
+            DUChainReadLocker lock(DUChain::lock());
+            internal = DUChain::self()->chainForDocument(doc); // TODO add startup-check and error message, this must exist
+        }
         
         if ( ! internal ) {
             DUChain::self()->updateContextForUrl(doc, TopDUContext::AllDeclarationsAndContexts, 0,  -5);
             DUChain::self()->updateContextForUrl(currentlyParsedDocument(), TopDUContext::AllDeclarationsContextsAndUses, 0, 5);
+            DUChainWriteLocker wlock(DUChain::lock());
+            topContext()->setFeatures(KDevelop::TopDUContext::Empty); // force reparsing
         }
         
         if ( internal ) {
             kDebug() << "Adding builtin function context...";
-            DUChainWriteLocker wlock(DUChain::lock());
             currentContext()->addImportedParentContext(internal);
             m_builtinFunctionsContext = TopDUContextPointer(internal);
         }
@@ -257,28 +263,37 @@ void ContextBuilder::visitImport(ImportAst* node)
         if ( ! moduleFilePath.first.isValid() ) continue;
         else {
             ReferencedTopDUContext moduleChain;
-            DUChainReadLocker lock(DUChain::lock());
             
             moduleFilePath.first.cleanPath(KUrl::SimplifyDirSeparators);
             kDebug() << moduleFilePath.first.path();
-            moduleChain = DUChain::self()->chainForDocument(moduleFilePath.first);
+            IndexedString doc = IndexedString(moduleFilePath.first.path());
+            {
+                DUChainReadLocker lock(DUChain::lock());
+                moduleChain = DUChain::self()->chainForDocument(doc);
+            }
             
-            if ( ! moduleChain.data() ) {
+            bool featuresSatisfied = false;
+            if ( moduleChain.data() ) {
+                if ( moduleChain->features() >= TopDUContext::AllDeclarationsContextsAndUses ) featuresSatisfied = true;
+            }
+            kDebug() << "Chain: " << moduleChain.data() << ";" << "Features satisfied: " << featuresSatisfied;
+            if ( ! featuresSatisfied ) {
                 // parse the include file, then reparse the current one.
                 kDebug() << "Module not cached, reparsing";
                 kDebug() << currentlyParsedDocument().toUrl().path();
                 Q_ASSERT(moduleFilePath.first.isValid());
                 Q_ASSERT(currentlyParsedDocument().toUrl().isValid());
-                DUChain::self()->updateContextForUrl(IndexedString(moduleFilePath.first.path()), TopDUContext::AllDeclarationsContextsAndUses, 0, -5);
+                DUChain::self()->updateContextForUrl(doc, TopDUContext::AllDeclarationsContextsAndUses, 0, -5);
                 DUChain::self()->updateContextForUrl(currentlyParsedDocument(), TopDUContext::AllDeclarationsContextsAndUses, 0, 5);
+                DUChainWriteLocker lock(DUChain::lock());
+                topContext()->setFeatures(KDevelop::TopDUContext::Empty); // force reparsing
+                return;
             }
             else {
                 contextsForModules.insert(moduleName->value, moduleChain);
                 kDebug() << moduleFilePath.first.path();
                 kDebug() << "Added " << name->name->value << " to the module chain map" << moduleChain.data();
             }
-            
-            lock.unlock();
         }
     }
     Python::AstDefaultVisitor::visitImport(node);

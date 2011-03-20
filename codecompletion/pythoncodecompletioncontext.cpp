@@ -485,7 +485,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     }
     
     currentLine.replace(QRegExp("\"(.*)\""), "\"STRING\"");
-    QRegExp attributeAccess(".*\n[\\s]*.*([\\s]*[a-z|A-Z|_]*[\\s]*\\.)+$");
+    QRegExp attributeAccess(".*\n[\\s]*.*([[\\s]*[a-z|A-Z|_|0-9]*[\\s]*\\.]+)$");
     attributeAccess.setMinimal(true);
     bool is_attributeAccess = attributeAccess.exactMatch(currentLine);
     if ( is_attributeAccess ) {

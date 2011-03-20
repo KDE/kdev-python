@@ -487,10 +487,11 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     attributeAccess.setMinimal(true);
     bool is_attributeAccess = attributeAccess.exactMatch(currentLine);
     if ( is_attributeAccess ) {
-        QStringList expr = currentLine.split(".");
+        QString currentExpression = attributeAccess.capturedTexts().last();
+        QStringList expr = currentExpression.split(".");
         expr.removeAll("");
-        m_guessTypeOfExpression = expr.join(".");
-        m_guessTypeOfExpression.replace(QRegExp("(.*)\n[\\s]*"), "");
+        m_guessTypeOfExpression = "\n" + expr.join(".");
+        m_guessTypeOfExpression.replace(QRegExp("\n[\\s]*"), "");
         kDebug() << "Guess type of this expression: " << m_guessTypeOfExpression;
         m_operation = PythonCodeCompletionContext::MemberAccessCompletion;
         return;

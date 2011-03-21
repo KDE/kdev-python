@@ -82,6 +82,10 @@ protected:
     virtual void visitImport(ImportAst* node);
     virtual void visitImportFrom(ImportFromAst* node);
     
+    // helpers, because they need to be called seperately from DeclarationBuilder... well
+    virtual void visitFunctionArguments(FunctionDefinitionAst* node);
+    virtual void visitFunctionBody(FunctionDefinitionAst* node);
+    
     DUContext* openSafeContext( Python::Ast* node, RangeInRevision& range, DUContext::ContextType type, Python::Identifier* identifier = 0 );
     
     QMap<QString, ReferencedTopDUContext> contextsForModules;

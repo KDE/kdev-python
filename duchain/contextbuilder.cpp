@@ -181,7 +181,7 @@ void ContextBuilder::openContextForStatementList( const QList<Ast*>& l, DUContex
 
 void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
-    RangeInRevision range(node->body.first()->startLine, node->body.first()->startCol, node->body.last()->endLine, node->body.last()->endCol + 100000);
+    RangeInRevision range(node->startLine, node->startCol, node->body.last()->endLine + 1, 0);
     openContext( node, range, DUContext::Class, node->name);
     DUChainWriteLocker lock(DUChain::lock());
     currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));
@@ -300,33 +300,39 @@ void ContextBuilder::visitImport(ImportAst* node)
     Python::AstDefaultVisitor::visitImport(node);
 }
 
-void ContextBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
+void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
+{
+    int sline, eline, scol, ecol;
+    sline = node->arguments->arguments.first()->startLine;
+    scol = node->arguments->arguments.first()->startCol;
+    eline = node->arguments->arguments.last()->endLine;
+    ecol = node->arguments->arguments.last()->endCol;
+    RangeInRevision range(sline, scol, eline, ecol);
+    
+    Q_ASSERT(range.isValid());
+    DUContext* funcctx = openContext( node->arguments, range, DUContext::Function, node->name);
+    kDebug() << funcctx;
+    kDebug() << " +++ opening FUNCTION ARGUMENTS context: " << funcctx->range().castToSimpleRange();
+    visitNode(node->arguments);
+    closeContext();
+    m_importedParentContexts.append( funcctx );
+}
+
+void ContextBuilder::visitFunctionDefinition(FunctionDefinitionAst* node)
 {
     kDebug() << " Building function definition context: " << node->name->value;
     DUChainWriteLocker lock(DUChain::lock());
     
     visitNodeList( node->decorators );
     
+    visitFunctionArguments(node);
+    
+    visitFunctionBody(node);
+}
+
+void ContextBuilder::visitFunctionBody(FunctionDefinitionAst* node)
+{
     RangeInRevision range(RangeInRevision(node->startLine, node->startCol, node->endLine + 1, 0));
-    
-    if ( node->arguments && node->arguments->arguments.length() )
-    {
-        int sline, eline, scol, ecol;
-        sline = node->arguments->arguments.first()->startLine;
-        scol = node->arguments->arguments.first()->startCol;
-        eline = node->arguments->arguments.last()->endLine;
-        ecol = node->arguments->arguments.last()->endCol;
-        RangeInRevision range(sline, scol, eline, ecol);
-        
-        Q_ASSERT(range.isValid());
-        DUContext* funcctx = openContext( node->arguments, range, DUContext::Function, node->name);
-        kDebug() << funcctx;
-        kDebug() << " +++ opening FUNCTION ARGUMENTS context: " << funcctx->range().castToSimpleRange();
-        visitNode( node->arguments );
-        closeContext();
-        m_importedParentContexts.append( funcctx );
-    }
-    
     // Done building the function declaration, start building the body now
     DUContext* ctx = openContext(node, range, DUContext::Function, identifierForNode( node->name ) );
     currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));

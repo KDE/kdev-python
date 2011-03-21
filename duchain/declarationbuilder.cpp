@@ -468,6 +468,8 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             }
         }
     }
+    
+    DeclarationBuilderBase::visitArguments(node);
 }
 
 }

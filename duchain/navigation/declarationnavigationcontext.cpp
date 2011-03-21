@@ -62,7 +62,9 @@ NavigationContextPointer DeclarationNavigationContext::registerChild(Declaration
 void DeclarationNavigationContext::makeLink(const QString& name, DeclarationPointer declaration, NavigationAction::Type actionType)
 {
     QString linktext = name;
-    if ( declaration && declaration->url() == IndexedString(DOCFILE_PATH) ) {
+    KUrl docfile(DOCFILE_PATH);
+    docfile.cleanPath(KUrl::SimplifyDirSeparators);
+    if ( declaration && declaration->url() == IndexedString(docfile.path()) ) {
         modifyHtml() += linktext.replace("__kdevpythondocumentation_builtin_", "");
         return;
     }

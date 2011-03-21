@@ -54,15 +54,21 @@ void UseBuilder::visitName(NameAst* node)
 {
     QList<Declaration*> declarations;
     QList<Declaration*> localDeclarations;
+    QList<Declaration*> importedLocalDeclarations;
     {
         DUChainReadLocker lock(DUChain::lock());
-        declarations = currentContext()->findDeclarations(identifierForNode(node->identifier), editorFindRange(node, node).start);
+        declarations = currentContext()->topContext()->findDeclarations(identifierForNode(node->identifier), CursorInRevision::invalid());
         localDeclarations = currentContext()->findLocalDeclarations(identifierForNode(node->identifier).last(), editorFindRange(node, node).end);
+        importedLocalDeclarations = currentContext()->findDeclarations(identifierForNode(node->identifier).last(), editorFindRange(node, node).end);
     }
     Declaration* declaration;
     if ( localDeclarations.length() ) {
         declaration = localDeclarations.last();
         kDebug() << "Using local declaration";
+    }
+    else if ( importedLocalDeclarations.length() ) {
+        declaration = importedLocalDeclarations.last();
+        kDebug() << "Using imported local declaration (i.e., argument)";
     }
     else if ( declarations.length() ) {
         declaration = declarations.last();

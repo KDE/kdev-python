@@ -215,6 +215,7 @@ void ContextBuilder::visitCode(CodeAst* node) {
         
         if ( internal ) {
             kDebug() << "Adding builtin function context...";
+            DUChainWriteLocker wlock(DUChain::lock());
             currentContext()->addImportedParentContext(internal);
             m_builtinFunctionsContext = TopDUContextPointer(internal);
         }

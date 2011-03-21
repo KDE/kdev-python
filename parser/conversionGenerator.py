@@ -105,6 +105,9 @@ for rule in contents:
     kind = outline[1].split(' ')[1]
     kind_wo_suffix = kind.replace('_kind', '')
     actions = outline[2].split(' ')[1:]
+    code = False
+    if len(outline) > 3:
+        code = ' '.join(outline[3].split(' ')[1:]) + ";"
     
     if not results.has_key(rule_for):
         results[rule_for] = list()
@@ -167,6 +170,9 @@ for rule in contents:
         elif command == 'create':
             astType = arguments
             current_actions.append(create_ast_line.replace('%{AST_TYPE}', astType))
+    
+    if code:
+        current_actions.append(code);
     
     current_actions = "\n".join(current_actions)
     if kind == 'any':

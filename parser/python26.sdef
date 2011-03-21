@@ -42,7 +42,7 @@ RULE_FOR _expr;KIND GeneratorExp_kind;ACTIONS create|GeneratorExpressionAst set|
 RULE_FOR _expr;KIND Yield_kind;ACTIONS create|YieldAst set|value->ExpressionAst,value;;
 RULE_FOR _expr;KIND Compare_kind;ACTIONS create|CompareAst set|leftmostElement->ExpressionAst,left set|operators#>ComparisonOperatorTypes,ops set|comparands=>ExpressionAst,comparators;;
 RULE_FOR _expr;KIND Call_kind;ACTIONS create|CallAst set|function->ExpressionAst,func set|arguments=>ExpressionAst,args set|keywords=>KeywordAst,keywords
-                                                     set|keywordArguments->ExpressionAst,kwargs set|starArguments->ExpressionAst,starargs;;
+                                                     set|keywordArguments->ExpressionAst,kwargs set|starArguments->ExpressionAst,starargs;CODE v->function->belongsToCall = v;;
 RULE_FOR _expr;KIND Repr_kind;ACTIONS create|ReprAst set|value->ExpressionAst,value;;
 RULE_FOR _expr;KIND Num_kind;ACTIONS create|NumberAst;;
 RULE_FOR _expr;KIND Str_kind;ACTIONS create|StringAst;;

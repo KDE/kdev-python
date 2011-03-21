@@ -196,6 +196,7 @@ private:
                 nodeStack.push(v); v->keywords = visitNodeList<_keyword, KeywordAst>(node->v.Call.keywords); nodeStack.pop();
                 nodeStack.push(v); v->keywordArguments = static_cast<ExpressionAst*>(visitNode(node->v.Call.kwargs)); nodeStack.pop();
                 nodeStack.push(v); v->starArguments = static_cast<ExpressionAst*>(visitNode(node->v.Call.starargs)); nodeStack.pop();
+                v->function->belongsToCall = v;
                 result = v;
                 break;
             }
@@ -717,6 +718,7 @@ private:
  * End generated code
  */
 
+
 QMutex AstBuilder::pyInitLock;
 
 CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
@@ -816,7 +818,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
                         contents.insert(emptySince + 1, "pass");
                     }
                 }
-                else if ( indents.length() >= currentLine ) {
+                else if ( indents.length() >= currentLine && currentLine > 0 ) {
                     kDebug() << indents << currentLine;
                     contents[i+1+indents.at(currentLine - 1)] = QString("#").at(0);
                     contents.insert(i+1+indents.at(currentLine - 1), "pass");

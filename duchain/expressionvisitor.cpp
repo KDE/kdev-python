@@ -159,9 +159,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
             m_lastAccessedReturnType = classDecl->abstractType();
         }
         else if ( funcDecl && funcDecl->type<FunctionType>() ) {
-            Ast* parent = node;
-            while ( dynamic_cast<ExpressionAst*>(parent->parent) ) parent = parent->parent;
-            if ( parent->astType == Ast::CallAstType ) {
+            if ( node->belongsToCall ) {
                 encounter(funcDecl->type<FunctionType>()->returnType());
                 m_lastAccessedReturnType = funcDecl->type<FunctionType>()->returnType();
             }
@@ -179,6 +177,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
         m_lastAccessedAttributeDeclaration = DeclarationPointer(0);
         return unknownTypeEncountered();
     }
+    kDebug() << "Last encountered type: " << ( lastType().unsafeData() ? lastType()->toString() : "<none>" );
     kDebug() << "VisitAttribute end";
 }
 

@@ -350,7 +350,7 @@ QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems(QList<KUrl>
 // lazy as we are, we use regular expression matching for this
 PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position, 
                                                          int depth, const PythonCodeCompletionWorker* parent): CodeCompletionContext(context, text, position, depth),
-                                                         parent(parent), m_context(context), m_position(position)
+                                                         parent(parent), m_context(context), m_position(position), m_operation(PythonCodeCompletionContext::DefaultCompletion)
 {
     m_workingOnDocument = parent->parent->m_currentDocument;
     QString currentLine = "\n" + text.split("\n").last(); // we'll only look at the last line, as 99% of python statements are limited to one line
@@ -484,18 +484,55 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         return;
     }
     
-    currentLine.replace(QRegExp("\"(.*)\""), "\"STRING\"");
-    QRegExp attributeAccess(".*\n[\\s]*.*([[\\s]*[a-z|A-Z|_|0-9]*[\\s]*\\.]+)$");
-    attributeAccess.setMinimal(true);
-    bool is_attributeAccess = attributeAccess.exactMatch(currentLine);
+    QString line = currentLine.replace(QRegExp("\"(.*)\""), "\"S\""); // we don't need strings, cut them out
+    // go back the current line, and kill everything except an eventual AttributeAccessAst
+    // there's two cases in which the search will stop: a space without a dot (for "while foo.bar.")
+    // or an unmatched left parenthesis (for "foo(bar.baz.").
+    int i = line.length() - 1;
+    bool is_attributeAccess = false;
+    bool atEnd = true;
+    bool previousWasSpace = false;
+    QChar c;
+    QChar colon('.'); QChar lbrace('('); QChar rbrace(')'); QChar lbracket('['); QChar rbracket(']'); QChar ldic('{'); QChar rdic('}');
+    QList<QChar> openingBrackets; QList<QChar> closingBrackets;
+    openingBrackets << lbrace << lbracket << ldic;
+    closingBrackets << rbrace << rbracket << rdic;
+    QChar searchingForMatching('!');
+    QChar invalid('!');
+    QString scanned = "";
+    while ( i > 0 ) {
+        c = line.at(i);
+        scanned.insert(0, c);
+        if ( atEnd && ! c.isSpace() ) {
+            if ( c == colon ) is_attributeAccess = true;
+            else is_attributeAccess = false;
+            atEnd = false;
+        }
+        if ( searchingForMatching != invalid && c == searchingForMatching ) {
+            kDebug() << "Found matching " << c << "token";
+            searchingForMatching = invalid;
+        }
+        else if ( closingBrackets.contains(c) ) {
+            kDebug() << "Searching for opening " << c << "token";
+            searchingForMatching = openingBrackets.at(closingBrackets.indexOf(c));
+        }
+        else if ( openingBrackets.contains(c) ) {
+            scanned[0] = ' ';
+            break;
+        }
+        if ( previousWasSpace && ! c.isSpace() && c != colon ) {
+            kDebug() << "Previous char was space, current is no colon -- break";
+            scanned[0] = ' ';
+            break;
+        }
+        if ( c.isSpace() ) previousWasSpace = true;
+        i -= 1;
+    }
     if ( is_attributeAccess ) {
-        QString currentExpression = attributeAccess.capturedTexts().last();
-        QStringList expr = currentExpression.split(".");
-        expr.removeAll("");
-        m_guessTypeOfExpression = "\n" + expr.join(".");
+        m_guessTypeOfExpression = '\n' + scanned;
         // remove spaces at the beginning of the expression, they are treated as an INDENT token by the parser
-        // and are thus a syntax error
-        m_guessTypeOfExpression.replace(QRegExp("\n[\\s]*"), "");
+        // and are thus a syntax error; also remove trailing dot
+        m_guessTypeOfExpression.replace(QRegExp("\n[\\s]*"), "").replace(QRegExp("\\.[\\s]*$"), "");
         kDebug() << "Guess type of this expression: " << m_guessTypeOfExpression;
         m_operation = PythonCodeCompletionContext::MemberAccessCompletion;
         return;

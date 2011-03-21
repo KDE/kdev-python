@@ -101,7 +101,7 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         virtual void visitAttribute(AttributeAst* node);
         
         KDevelop::AbstractType::Ptr lastType() const { return m_lastType; }
-        KDevelop::DeclarationPointer lastDeclaration() const { return m_lastAccessedAttributeDeclaration; }
+        KDevelop::DeclarationPointer lastDeclaration() const { return m_lastAccessedDeclaration; }
     private:
         static QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> s_defaultTypes;
         
@@ -115,6 +115,7 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         void unknownTypeEncountered();
         AbstractType::Ptr m_lastAccessedReturnType;
         DeclarationPointer m_lastAccessedNameDeclaration;
+        DeclarationPointer m_lastAccessedDeclaration;
         DeclarationPointer m_lastAccessedAttributeDeclaration;  // this is in general not what the expression visitor is meant for,
                                                                 // but the processes to find those declarations and the types are pretty much the same
                                                                 // and are both pretty long, so we can avoid dulicated code with this.

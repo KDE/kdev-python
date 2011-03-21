@@ -113,6 +113,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     else if ( ! accessingAttributeOfType.unsafeData() ) {
         kWarning() << "No declaration found to look up type of attribute in.";
         m_lastAccessedAttributeDeclaration = DeclarationPointer(0);
+        m_lastAccessedDeclaration = DeclarationPointer(0);
         return unknownTypeEncountered();
     }
     
@@ -145,6 +146,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     // Step 5: Construct the type of the declaration which was found.
     if ( foundDecls.length() > 0 ) {
         m_lastAccessedAttributeDeclaration = DeclarationPointer(foundDecls.last());
+        m_lastAccessedDeclaration = DeclarationPointer(foundDecls.last());
         kDebug() << "Last accessed declaration: " << m_lastAccessedAttributeDeclaration->identifier().toString() 
                  << m_lastAccessedAttributeDeclaration.data() << "@" << m_lastAccessedAttributeDeclaration->topContext()->url().toUrl().path();
         
@@ -175,6 +177,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     else {
         kWarning() << "No declaration found for attribute";
         m_lastAccessedAttributeDeclaration = DeclarationPointer(0);
+        m_lastAccessedDeclaration = DeclarationPointer(0);
         return unknownTypeEncountered();
     }
     kDebug() << "Last encountered type: " << ( lastType().unsafeData() ? lastType()->toString() : "<none>" );
@@ -293,6 +296,9 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
     if ( ! d.isEmpty() ) {
         encounter(d.last()->abstractType());
         m_lastAccessedNameDeclaration = d.last();
+        m_lastAccessedDeclaration = d.last();
+        DUChainReadLocker lock(DUChain::lock());
+        kDebug() << "Found declaration: " << d.last()->toString() << d.last();
     }
     else {
         kDebug() << "VistName type not found";

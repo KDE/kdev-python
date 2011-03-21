@@ -302,17 +302,53 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 {
     ExpressionVisitor v(currentContext(), editor());
     v.visitNode(node->value);
-    setLastType(v.lastType());
-    
-//     kDebug() << ( lastType().unsafeData() ? "last type: " + lastType()->toString() : "don't have a type for variable :(" );
     
     foreach ( ExpressionAst* target, node->targets ) {
+        setLastType(v.lastType()); // TODO fix this for x, y = a, b, i.e. if node->value->astType == TupleAstType
         if ( target->astType == Ast::NameAstType ) {
             if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeFunction) {
                 visitVariableDeclaration<FunctionDeclaration>(target);
             }
             else {
                 visitVariableDeclaration<Declaration>(target);
+            }
+        }
+        if ( target->astType == Ast::AttributeAstType ) {
+            AttributeAst* attrib = static_cast<AttributeAst*>(target);
+            // check weather the current attribute is undeclared, but the previos ones known
+            // like in X.Y.Z = 3 where X and Y are defined, but Z isn't; then declare Z.
+            ExpressionVisitor checkForUnknownAttribute(currentContext(), editor());
+            checkForUnknownAttribute.visitNode(attrib);
+            if ( ! checkForUnknownAttribute.lastDeclaration().data() ) {
+                ExpressionVisitor checkPreviousAttributes(currentContext(), editor());
+                checkPreviousAttributes.visitNode(attrib->value); // go "down one level", so only visit "X.Y"
+                
+                DUContextPointer internal(0);
+                DeclarationPointer decl = checkPreviousAttributes.lastDeclaration();
+                AbstractType::Ptr type = checkPreviousAttributes.lastType();
+                if ( ! decl ) continue;
+                // if foo is a class, this is like foo.bar = 3
+                if ( decl->internalContext() ) {
+                    kDebug() << "Accessing class type directly";
+                    internal = decl->internalContext();
+                }
+                // while this is like A = foo(); A.bar = 3
+                else {
+                    kDebug() << "Accessing class type through an instance, searching original declaration of type...";
+                    type = decl->abstractType();
+                    StructureType::Ptr structure(dynamic_cast<StructureType*>(type.unsafeData()));
+                    if ( ! structure.unsafeData() || ! structure->declaration(topContext()) ) continue;
+                    internal = structure->declaration(topContext())->internalContext();
+                    kDebug() << "... ok!";
+                }
+                if ( ! internal.data() ) continue;
+                kDebug() << "Fine, got an internal context.";
+                
+                openType(type);
+                openContext(internal.data());
+                visitVariableDeclaration<Declaration>(attrib->attribute, target);
+                closeContext();
+                closeType();
             }
         }
     }

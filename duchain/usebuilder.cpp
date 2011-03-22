@@ -83,14 +83,13 @@ void UseBuilder::visitName(NameAst* node)
     
     if ( declaration && declaration->range() == useRange ) return;
     
+    /// debug
     kDebug() << " Registering use for " << node->identifier->value << " at " << useRange.castToSimpleRange() << "with dec" << declaration;
-
     {
-        DUChainWriteLocker lock(DUChain::lock());
-        if ( declaration ) {
-            Q_ASSERT(declaration->alwaysForceDirect());
-        }
+        DUChainReadLocker lock(DUChain::lock());
+        Q_ASSERT( ! declaration || declaration->alwaysForceDirect() );
     }
+    /// end debug
     UseBuilderBase::newUse(node, useRange, DeclarationPointer(declaration));
 }
 
@@ -106,13 +105,16 @@ void UseBuilder::visitAttribute(AttributeAst* node)
     
     RangeInRevision useRange(node->attribute->startLine, node->attribute->startCol, node->attribute->endLine, node->attribute->endCol + 1);
     
-    {
-        DUChainWriteLocker lock(DUChain::lock());
-        if ( v->lastDeclaration() ) {
-            Q_ASSERT(v->lastDeclaration()->alwaysForceDirect());
-        }
+    DeclarationPointer declaration = v->lastDeclaration();
+    if ( declaration && declaration->range() == useRange ) return;
+    /// debug
+    if ( declaration ) {
+        DUChainReadLocker lock(DUChain::lock());
+        kDebug() << "Registering new use for item: " << declaration->toString() << "; Ranges are " << declaration->range().castToSimpleRange() << useRange.castToSimpleRange();
+        Q_ASSERT( ! declaration || declaration->alwaysForceDirect() );
     }
-    UseBuilderBase::newUse(node, useRange, v->lastDeclaration());
+    /// end debug
+    UseBuilderBase::newUse(node, useRange, declaration);
 }
 
 

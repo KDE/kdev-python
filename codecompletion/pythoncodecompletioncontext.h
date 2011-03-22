@@ -53,7 +53,6 @@ public:
     };
     
     PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position, int depth, const PythonCodeCompletionWorker* parent);
-    virtual ~PythonCodeCompletionContext();
     virtual QList< KDevelop::CompletionTreeItemPointer > completionItems(bool& abort, bool fullCompletion = true);
     QList<ImportFileItem*> includeFileItems(QList<KUrl> searchPaths);
     QList<ImportFileItem*> includeFileItemsForSubmodule(QString submodule);
@@ -70,7 +69,6 @@ public:
     QString m_guessTypeOfExpression;
     QString m_indent;
     KDevelop::CursorInRevision m_position;
-    QList<DeclarationPointer> m_keepalive;
     
     DUContextPointer m_context;
     

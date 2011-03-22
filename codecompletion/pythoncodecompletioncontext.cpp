@@ -237,7 +237,6 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
             continue;
         }
         currentDeclaration = DeclarationPointer(declarations.at(i).first);
-        m_keepalive.append(currentDeclaration);
         
 //         kDebug() << "Adding item: " << currentDeclaration.data()->identifier().identifier().str();
         NormalDeclarationCompletionItem* item;
@@ -563,11 +562,5 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     kDebug() << "Is import file: " << is_importfile;
 //     Q_ASSERT(false);
 }
-
-PythonCodeCompletionContext::~PythonCodeCompletionContext()
-{
-    m_keepalive.clear();
-}
-
 
 }

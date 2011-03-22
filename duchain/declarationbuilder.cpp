@@ -322,38 +322,54 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             checkForUnknownAttribute.visitNode(attrib);
             DeclarationPointer unknown = checkForUnknownAttribute.lastDeclaration();
             
-            // if the attribute is undeclared *or* the range of the declaration is the same like the currenlty parsed one
-            // (some magic caching seems to be at work here) declare the attribute.
-            if ( ! unknown.data() || unknown->range() == editorFindRange(target, target) ) {
-                ExpressionVisitor checkPreviousAttributes(currentContext(), editor());
-                checkPreviousAttributes.visitNode(attrib->value); // go "down one level", so only visit "X.Y"
-                
-                DUContextPointer internal(0);
-                DeclarationPointer decl = checkPreviousAttributes.lastDeclaration();
-                AbstractType::Ptr type = checkPreviousAttributes.lastType();
-            
-                if ( ! decl ) continue;
-                // if foo is a class, this is like foo.bar = 3
-                if ( decl->internalContext() ) {
-                    kDebug() << "Accessing class type directly";
-                    internal = decl->internalContext();
-                }
-                // while this is like A = foo(); A.bar = 3
-                else {
-                    kDebug() << "Accessing class type through an instance, searching original declaration of type...";
-                    type = decl->abstractType();
-                    StructureType::Ptr structure(dynamic_cast<StructureType*>(type.unsafeData()));
-                    if ( ! structure.unsafeData() || ! structure->declaration(topContext()) ) continue;
-                    internal = structure->declaration(topContext())->internalContext();
-                    kDebug() << "... ok!";
-                }
-                if ( ! internal.data() ) continue;
-                kDebug() << "Fine, got an internal context.";
-                
-                Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target);
-                DUChainWriteLocker lock(DUChain::lock());
-                dec->setContext(internal.data());
+            // declare the attribute.
+            // however, if there's an earlier declaration which does not match the current position
+            // (so it's really a different declaration) we skip this.
+            if ( unknown.data() && unknown->range() != editorFindRange(target, target) ) {
+                kWarning() << "Another declaration exists for this attribute, aborting";
+                continue;
             }
+            
+            ExpressionVisitor checkPreviousAttributes(currentContext(), editor());
+            checkPreviousAttributes.visitNode(attrib->value); // go "down one level", so only visit "X.Y"
+            
+            DUContextPointer internal(0);
+            DeclarationPointer decl = checkPreviousAttributes.lastDeclaration();
+            AbstractType::Ptr type = checkPreviousAttributes.lastType();
+        
+            if ( ! decl ) {
+                kWarning() << "No declaration for attribute base, aborting creation of attribute";
+                continue;
+            }
+            // if foo is a class, this is like foo.bar = 3
+            if ( decl->internalContext() ) {
+                kDebug() << "Accessing class type directly";
+                internal = decl->internalContext();
+            }
+            // while this is like A = foo(); A.bar = 3
+            else {
+                kDebug() << "Accessing class type through an instance, searching original declaration of type...";
+                type = decl->abstractType();
+                StructureType::Ptr structure(dynamic_cast<StructureType*>(type.unsafeData()));
+                if ( ! structure.unsafeData() || ! structure->declaration(topContext()) ) continue;
+                internal = structure->declaration(topContext())->internalContext();
+                kDebug() << "... ok!";
+            }
+            if ( ! internal.data() ) {
+                kWarning() << "No internal context for structure type, aborting creation of attribute declaration";
+                continue;
+            }
+            kDebug() << "Fine, got an internal context.";
+            
+            openType(type);
+            if ( contextAlreayOpen(internal) ) activateAlreadyOpenedContext(internal);
+            else openContext(internal.data());
+            Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target);
+            if ( contextAlreayOpen(internal) ) closeAlreadyOpenedContext(internal);
+            else closeContext();
+            closeType();
+            
+            kDebug() << "Declaration for attribute " << attrib->attribute << "has been created successfully.";
         }
     }
 }

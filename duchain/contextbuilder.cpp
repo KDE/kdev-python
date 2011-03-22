@@ -162,6 +162,40 @@ void ContextBuilder::addImportedContexts()
     }
 }
 
+void ContextBuilder::closeAlreadyOpenedContext(DUContextPointer context)
+{
+    Q_ASSERT(currentContext() == context.data());
+    while ( ! m_temporarilyClosedContexts.isEmpty() ) {
+        openContext(m_temporarilyClosedContexts.last().data());
+        m_temporarilyClosedContexts.removeLast();
+    }
+}
+
+void ContextBuilder::activateAlreadyOpenedContext(DUContextPointer context)
+{
+    Q_ASSERT(m_temporarilyClosedContexts.isEmpty());
+    Q_ASSERT(contextAlreayOpen(context));
+    DUContext* current = currentContext();
+    while ( current ) {
+        if ( current == context.data() ) {
+            return;
+        }
+        m_temporarilyClosedContexts.append(DUContextPointer(current));
+        closeContext();
+        current = currentContext();
+    }
+}
+
+bool ContextBuilder::contextAlreayOpen(DUContextPointer context)
+{
+    DUContext* current = currentContext();
+    while ( current ) {
+        if ( context.data() == current ) return true;
+        current = current->parentContext();
+    }
+    return false;
+}
+
 void ContextBuilder::openContextForStatementList( const QList<Ast*>& l, DUContext::ContextType /*type*/)
 {
     if ( l.count() > 0 )
@@ -302,20 +336,22 @@ void ContextBuilder::visitImport(ImportAst* node)
 
 void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
 {
-    int sline, eline, scol, ecol;
-    sline = node->arguments->arguments.first()->startLine;
-    scol = node->arguments->arguments.first()->startCol;
-    eline = node->arguments->arguments.last()->endLine;
-    ecol = node->arguments->arguments.last()->endCol;
-    RangeInRevision range(sline, scol, eline, ecol);
-    
-    Q_ASSERT(range.isValid());
-    DUContext* funcctx = openContext( node->arguments, range, DUContext::Function, node->name);
-    kDebug() << funcctx;
-    kDebug() << " +++ opening FUNCTION ARGUMENTS context: " << funcctx->range().castToSimpleRange();
-    visitNode(node->arguments);
-    closeContext();
-    m_importedParentContexts.append( funcctx );
+    if ( node->arguments && node->arguments->arguments.count() ) {
+        int sline, eline, scol, ecol;
+        sline = node->arguments->arguments.first()->startLine;
+        scol = node->arguments->arguments.first()->startCol;
+        eline = node->arguments->arguments.last()->endLine;
+        ecol = node->arguments->arguments.last()->endCol;
+        RangeInRevision range(sline, scol, eline, ecol);
+        
+        Q_ASSERT(range.isValid());
+        DUContext* funcctx = openContext( node->arguments, range, DUContext::Function, node->name);
+        kDebug() << funcctx;
+        kDebug() << " +++ opening FUNCTION ARGUMENTS context: " << funcctx->range().castToSimpleRange();
+        visitNode(node->arguments);
+        closeContext();
+        m_importedParentContexts.append( funcctx );
+    }
 }
 
 void ContextBuilder::visitFunctionDefinition(FunctionDefinitionAst* node)

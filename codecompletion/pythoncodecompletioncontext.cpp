@@ -418,7 +418,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
                 // reset if non-space, so we don't count whitespaces within the line
                 currentIndent = 0;
             }
-            if ( skippedLines > ( skipLinesBack + 1 ) ) {
+            if ( skippedLines > ( skipLinesBack + 2 ) ) {
                 break;
             }
         }
@@ -427,8 +427,8 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         // if the indents match, use the context which was found.
         // if those are still "invalid", then the scanner has not reached them, meaning it aborted scanning because
         // even a match would not have meant that the context has to be replaced
-        if (   previousEndsAtLine-1 != atLine && ( indentForLine[previousEndsAtLine - 1] != invalid ) && 
-             ( indentForLine[atLine] != invalid ) && ( indentForLine[previousEndsAtLine - 1] == indentForLine[atLine] ) ) {
+        if (   previousEndsAtLine-1 != atLine && ( indentForLine[previousEndsAtLine - 2] != invalid ) && 
+             ( indentForLine[atLine] != invalid ) && ( indentForLine[previousEndsAtLine - 2] == indentForLine[atLine] ) ) {
             kDebug() << "Indents match, replacing context by" << currentlyChecked;
             context = DUContextPointer(currentlyChecked);
             m_duContext = context;

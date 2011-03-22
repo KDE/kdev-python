@@ -52,6 +52,7 @@
 #include "declarationbuilder.h"
 #include "pythoneditorintegrator.h"
 #include "expressionvisitor.h"
+#include <interfaces/foregroundlock.h>
 
 
 using namespace KTextEditor;
@@ -319,13 +320,18 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             // like in X.Y.Z = 3 where X and Y are defined, but Z isn't; then declare Z.
             ExpressionVisitor checkForUnknownAttribute(currentContext(), editor());
             checkForUnknownAttribute.visitNode(attrib);
-            if ( ! checkForUnknownAttribute.lastDeclaration().data() ) {
+            DeclarationPointer unknown = checkForUnknownAttribute.lastDeclaration();
+            
+            // if the attribute is undeclared *or* the range of the declaration is the same like the currenlty parsed one
+            // (some magic caching seems to be at work here) declare the attribute.
+            if ( ! unknown.data() || unknown->range() == editorFindRange(target, target) ) {
                 ExpressionVisitor checkPreviousAttributes(currentContext(), editor());
                 checkPreviousAttributes.visitNode(attrib->value); // go "down one level", so only visit "X.Y"
                 
                 DUContextPointer internal(0);
                 DeclarationPointer decl = checkPreviousAttributes.lastDeclaration();
                 AbstractType::Ptr type = checkPreviousAttributes.lastType();
+            
                 if ( ! decl ) continue;
                 // if foo is a class, this is like foo.bar = 3
                 if ( decl->internalContext() ) {
@@ -344,11 +350,9 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                 if ( ! internal.data() ) continue;
                 kDebug() << "Fine, got an internal context.";
                 
-                openType(type);
-                openContext(internal.data());
-                visitVariableDeclaration<Declaration>(attrib->attribute, target);
-                closeContext();
-                closeType();
+                Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target);
+                DUChainWriteLocker lock(DUChain::lock());
+                dec->setContext(internal.data());
             }
         }
     }
@@ -380,6 +384,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
     kDebug() << "opening function definition" << node->startLine << node->endLine;
+    DeclarationPointer eventualParentDeclaration(currentDeclaration()); // an eventual containing class declaration
     FunctionDeclaration* dec = openDeclaration<FunctionDeclaration>( node->name, node );
     eventuallyAssignInternalContext();
     FunctionType::Ptr type(new FunctionType);
@@ -388,38 +393,39 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         DUChainWriteLocker lock;
         dec->setType(type);
     }
-
+    
     openType(type);
     kDebug() << " <<< open function type";
-    DeclarationBuilderBase::visitFunctionDefinition( node );
+    DUChainWriteLocker lock(DUChain::lock());
+    {
+        visitNodeList( node->decorators );
+        visitFunctionArguments(node);
+        
+        // this must be done here, because the type of self must be known when parsing the body
+        kDebug() << "Checking weather we have to change argument types...";
+        kDebug() <<  eventualParentDeclaration.data() << currentType<FunctionType>()->arguments().length() << m_firstAttributeDeclaration.data() << currentContext()->type() << DUContext::Class;
+        if ( eventualParentDeclaration.data() && currentType<FunctionType>()->arguments().length() 
+             && m_firstAttributeDeclaration.data() && currentContext()->type() == DUContext::Class ) {
+            kDebug() << "Changing self argument type";
+            currentType<FunctionType>()->arguments().removeFirst();
+            DUChainWriteLocker lock(DUChain::lock());
+            m_firstAttributeDeclaration->setAbstractType(eventualParentDeclaration->abstractType());
+        }
+        
+        visitFunctionBody(node);
+    }
     kDebug() << " >>> close function type";
     closeType();
     
-//     kDebug() << "Got function return type: " << ( type->returnType().unsafeData() ? type->returnType()->toString() : "<none set>" );
-//     kDebug() << type->toString();
     {
         DUChainWriteLocker lock(DUChain::lock());
         dec->setType(type);
     }
-    
-//     kDebug() << dec->toString();
-    
-    FunctionType::Ptr funcdecl = dec->type<FunctionType>();
-    kDebug() << funcdecl->arguments().toSet();
-    
+
     closeDeclaration();
     
-    kDebug() << "parent context: " << currentContext()->parentContext();
-    if ( currentContext()->parentContext() ) {
-        kDebug() << currentContext()->parentContext()->type() << currentContext()->type() << DUContext::Class;
-    }
-    
-    // please dont ask me why this check with m_firstAttributeDeclaration works, but it does
-    if ( funcdecl->arguments().length() && m_firstAttributeDeclaration.data() && currentContext()->type() == DUContext::Class ) {
-        kDebug() << "Changing self argument type";
-        funcdecl->arguments().removeFirst();
-        DUChainWriteLocker lock(DUChain::lock());
-        m_firstAttributeDeclaration->setAbstractType(currentDeclaration()->abstractType());
+    if ( eventualParentDeclaration.data() && type->arguments().length() 
+         && m_firstAttributeDeclaration.data() && currentContext()->type() == DUContext::Class ) {
         if ( m_firstAttributeDeclaration->identifier().identifier() != IndexedString("self") ) {
             KDevelop::Problem *p = new KDevelop::Problem();
             p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(node->startLine, node->startCol, node->startLine, 10000)));
@@ -477,6 +483,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
     
     if ( function ) {
         NameAst* realParam;
+        bool isFirst = true;
         foreach (ExpressionAst* expression, node->arguments) {
             realParam = dynamic_cast<NameAst*>(expression);
             
@@ -494,12 +501,12 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                     AbstractType::Ptr p = paramDeclaration->abstractType();
                     if ( ! p ) {
                         kDebug() << "No type set for argument, using null type";
-                        p = AbstractType::Ptr(new IntegralType(IntegralType::TypeUnsure));
+                        p = AbstractType::Ptr(new IntegralType(IntegralType::TypeNone));
                     }
                     type->addArgument(p);
-                    if ( ! m_firstAttributeDeclaration.data() ) {
-                        m_firstAttributeDeclaration = DeclarationPointer(paramDeclaration);
-                    }
+                    kDebug() << "Arguments count: " << type->arguments().length();
+                    m_firstAttributeDeclaration = DeclarationPointer(paramDeclaration);
+                    isFirst = false;
                 }
             }
         }

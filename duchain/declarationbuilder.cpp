@@ -362,14 +362,17 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             kDebug() << "Fine, got an internal context.";
             
             openType(type);
-            if ( contextAlreayOpen(internal) ) activateAlreadyOpenedContext(internal);
+            bool isAlreadyOpen = contextAlreayOpen(internal);
+            if ( isAlreadyOpen ) activateAlreadyOpenedContext(internal);
             else openContext(internal.data());
             Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target);
-            if ( contextAlreayOpen(internal) ) closeAlreadyOpenedContext(internal);
+            if ( isAlreadyOpen ) closeAlreadyOpenedContext(internal);
             else closeContext();
             closeType();
             
             kDebug() << "Declaration for attribute " << attrib->attribute << "has been created successfully.";
+            DUChainReadLocker lock(DUChain::lock());
+            kDebug() << dec->context()->range().castToSimpleRange();
         }
     }
 }

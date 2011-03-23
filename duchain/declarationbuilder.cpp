@@ -544,8 +544,10 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                     }
                     type->addArgument(p);
                     kDebug() << "Arguments count: " << type->arguments().length();
-                    m_firstAttributeDeclaration = DeclarationPointer(paramDeclaration);
-                    isFirst = false;
+                    if ( isFirst ) {
+                        m_firstAttributeDeclaration = DeclarationPointer(paramDeclaration);
+                        isFirst = false;
+                    }
                 }
             }
         }

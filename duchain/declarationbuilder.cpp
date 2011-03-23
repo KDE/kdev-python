@@ -329,30 +329,36 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                 kWarning() << "Another declaration exists for this attribute, aborting";
                 continue;
             }
+            else if ( unknown.data() ) {
+                kWarning() << "Declaration already created, setting as encountered";
+                setEncountered(unknown.data());
+                continue;
+            }
             
             ExpressionVisitor checkPreviousAttributes(currentContext(), editor());
             checkPreviousAttributes.visitNode(attrib->value); // go "down one level", so only visit "X.Y"
             
             DUContextPointer internal(0);
-            DeclarationPointer decl = checkPreviousAttributes.lastDeclaration();
+            DeclarationPointer parentObjectDeclaration = checkPreviousAttributes.lastDeclaration();
             AbstractType::Ptr type = checkPreviousAttributes.lastType();
         
-            if ( ! decl ) {
+            if ( ! parentObjectDeclaration ) {
                 kWarning() << "No declaration for attribute base, aborting creation of attribute";
                 continue;
             }
             // if foo is a class, this is like foo.bar = 3
-            if ( decl->internalContext() ) {
+            if ( parentObjectDeclaration->internalContext() ) {
                 kDebug() << "Accessing class type directly";
-                internal = decl->internalContext();
+                internal = parentObjectDeclaration->internalContext();
             }
             // while this is like A = foo(); A.bar = 3
             else {
                 kDebug() << "Accessing class type through an instance, searching original declaration of type...";
-                type = decl->abstractType();
+                type = parentObjectDeclaration->abstractType();
                 StructureType::Ptr structure(dynamic_cast<StructureType*>(type.unsafeData()));
                 if ( ! structure.unsafeData() || ! structure->declaration(topContext()) ) continue;
-                internal = structure->declaration(topContext())->internalContext();
+                parentObjectDeclaration = structure->declaration(topContext());
+                internal = parentObjectDeclaration->internalContext();
                 kDebug() << "... ok!";
             }
             if ( ! internal.data() ) {
@@ -361,18 +367,32 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             }
             kDebug() << "Fine, got an internal context.";
             
-            openType(type);
-            bool isAlreadyOpen = contextAlreayOpen(internal);
-            if ( isAlreadyOpen ) activateAlreadyOpenedContext(internal);
-            else openContext(internal.data());
-            Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target);
-            if ( isAlreadyOpen ) closeAlreadyOpenedContext(internal);
-            else closeContext();
-            closeType();
+            DUContext* previousContext = currentContext();
             
-            kDebug() << "Declaration for attribute " << attrib->attribute << "has been created successfully.";
-            DUChainReadLocker lock(DUChain::lock());
-            kDebug() << dec->context()->range().castToSimpleRange();
+            bool isAlreadyOpen = contextAlreayOpen(internal);
+            if ( isAlreadyOpen ) {
+                activateAlreadyOpenedContext(internal);
+                Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target);
+                closeAlreadyOpenedContext(internal);
+            }
+            else {
+                injectContext(internal.data());
+            
+                Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target);
+                dec->setRange(RangeInRevision(internal->range().start, internal->range().start));
+                dec->setAutoDeclaration(true);
+                DUChainWriteLocker lock(DUChain::lock());
+                previousContext->createUse(dec->ownIndex(), editorFindRange(attrib, attrib));
+                lock.unlock();
+                
+                closeInjectedContext();
+            }
+            
+//             kDebug() << "Declaration for attribute " << attrib->attribute << "has been created successfully.";
+//             DUChainReadLocker lock(DUChain::lock());
+//             kDebug() << "declaration context range:" << dec->context()->range().castToSimpleRange() << "declaration range: " << dec->range().castToSimpleRange();
+//             kDebug() << dec->identifier().toString();
+//             kDebug() << "all matching declarations in context: " << internal.data()->findDeclarations(dec->identifier()) << "dec: " << dec;
         }
     }
 }

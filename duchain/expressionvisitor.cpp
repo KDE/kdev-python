@@ -135,8 +135,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
         if ( foundContainerDeclaration ) {
             DUContext* searchAttrInContext = foundContainerDeclaration->internalContext();
             if ( searchAttrInContext ) {
-                foundDecls = searchAttrInContext->findDeclarations(QualifiedIdentifier(node->attribute->value), CursorInRevision::invalid(), 
-                                                                   KDevelop::AbstractType::Ptr(), searchAttrInContext->topContext());
+                foundDecls = searchAttrInContext->findDeclarations(QualifiedIdentifier(node->attribute->value), CursorInRevision::invalid());
                 success = true;
             }
         }

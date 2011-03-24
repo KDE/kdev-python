@@ -44,7 +44,7 @@ DeclarationNavigationContext::DeclarationNavigationContext(DeclarationPointer de
 {
     kDebug() << "Generating declaration widget";
     importedModuleDeclaration* import_decl = dynamic_cast<importedModuleDeclaration*>(decl.data());
-    if ( import_decl ) {
+    if ( import_decl && ! decl->comment().size() ) {
         kDebug() << " >> Module declaration found! Building documentation";
         kDebug() << " >> Identifier: " << import_decl->m_moduleIdentifier;
         m_fullyQualifiedModuleIdentifier = import_decl->m_moduleIdentifier;

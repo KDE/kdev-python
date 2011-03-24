@@ -238,9 +238,11 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
         }
         currentDeclaration = DeclarationPointer(declarations.at(i).first);
         
-//         kDebug() << "Adding item: " << currentDeclaration.data()->identifier().identifier().str();
         NormalDeclarationCompletionItem* item;
-        if ( currentDeclaration.data()->abstractType() && currentDeclaration.data()->abstractType().constData()->whichType() == AbstractType::TypeFunction ) {
+        if ( currentDeclaration.data()->abstractType() 
+          && ( currentDeclaration.data()->abstractType()->whichType() == AbstractType::TypeFunction
+            || currentDeclaration.data()->abstractType()->whichType() == AbstractType::TypeStructure )
+        ) {
 //             kDebug() << "Adding function declaration item";
             item = new FunctionDeclarationCompletionItem(currentDeclaration);
         }

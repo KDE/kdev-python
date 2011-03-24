@@ -196,7 +196,7 @@ private:
                 nodeStack.push(v); v->keywords = visitNodeList<_keyword, KeywordAst>(node->v.Call.keywords); nodeStack.pop();
                 nodeStack.push(v); v->keywordArguments = static_cast<ExpressionAst*>(visitNode(node->v.Call.kwargs)); nodeStack.pop();
                 nodeStack.push(v); v->starArguments = static_cast<ExpressionAst*>(visitNode(node->v.Call.starargs)); nodeStack.pop();
-                v->function->belongsToCall = v;
+v->function->belongsToCall = v;
                 result = v;
                 break;
             }
@@ -213,6 +213,7 @@ private:
             }
         case Str_kind: {
                 StringAst* v = new StringAst(parent());
+                v->value = PyString_AsString(PyObject_Str(node->v.Str.s));
                 result = v;
                 break;
             }
@@ -781,6 +782,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
         unsigned short currentLineIndent = 0;
         bool atLineBeginning = true;
         QList<unsigned short> indents;
+        int errline = lineno;
         for ( int i = 0; i < len; i++ ) {
             c = contents.at(i);
             if ( ! c.isSpace() ) {
@@ -804,11 +806,11 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
                 currentLineIndent += 1;
             }
             
-            if ( currentLine == lineno ) {
+            if ( currentLine == errline ) {
                 // if the last non-empty char before the error opens a new block, it's likely an "empty block" problem
                 // we can easily fix that by adding in a "pass" statement. However, we want to add that in the next line, if possible
                 // so context ranges for autocompletion stay intact.
-                if ( contents[emptySince] == QString(":").at(0) ) {
+                if ( contents[emptySince] == QChar(':') ) {
                     kDebug() << indents.length() << emptySinceLine + 1;
                     if ( indents.length() > emptySinceLine + 1 && indents.at(emptySinceLine) < indents.at(emptySinceLine + 1) ) {
                         kDebug() << indents.at(emptySinceLine) << indents.at(emptySinceLine + 1);
@@ -820,7 +822,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
                 }
                 else if ( indents.length() >= currentLine && currentLine > 0 ) {
                     kDebug() << indents << currentLine;
-                    contents[i+1+indents.at(currentLine - 1)] = QString("#").at(0);
+                    contents[i+1+indents.at(currentLine - 1)] = QChar('#');
                     contents.insert(i+1+indents.at(currentLine - 1), "pass");
                 }
                 break;

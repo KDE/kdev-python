@@ -74,6 +74,8 @@ protected:
     virtual void visitReturn(ReturnAst* node);
     virtual void visitCode(CodeAst* node);
     
+    QString getDocstring(QList<Ast*> body);
+    
     template<typename T> T* visitVariableDeclaration(Python::Ast* node);
     template<typename T> T* visitVariableDeclaration(Identifier* node, Ast* originalAst = 0);
     

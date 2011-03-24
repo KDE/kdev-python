@@ -54,6 +54,7 @@ resolve_list_line_any = '''            nodeStack.push(v); v->%{TARGET} = visitNo
 direct_assignment_line = '''                v->%{TARGET} = node->v.%{KIND_W/O_SUFFIX}.%{VALUE};'''
 direct_assignment_line_any = '''                v->%{TARGET} = node->v.%{VALUE};'''
 cast_operator_line = '''                v->%{TARGET} = (ExpressionAst::%{AST_TYPE}) node->v.%{KIND_W/O_SUFFIX}.%{VALUE};'''
+resolve_string = '''                v->%{TARGET} = PyString_AsString(PyObject_Str(node->v.%{KIND_W/O_SUFFIX}.%{VALUE}));'''
 resolve_oplist_block = '''
                 for ( int _i = 0; _i < node->v.%{KIND_W/O_SUFFIX}.%{VALUE}->size; _i++ ) {
                     v->%{TARGET}.append((ExpressionAst::%{AST_TYPE}) node->v.%{KIND_W/O_SUFFIX}.%{VALUE}->elements[_i]);
@@ -132,13 +133,15 @@ for rule in contents:
             
             
             # commands with one argument
-            if commandType == '~' or commandType == ':':
+            if commandType in ['~', ':', '$']:
                 if commandType == ':':
                     raw = direct_assignment_line if not any else direct_assignment_line_any
                 if commandType == '~':
                     raw = create_identifier_line if not any else create_identifier_line_any
                     if rule_for in ['_expr', '_stmt', '_excepthandler', '_alias']:
                         raw += copy_ident_ranges
+                if commandType == '$':
+                    raw = resolve_string
                 value = s[0]
             # commands with two arguments
             else:

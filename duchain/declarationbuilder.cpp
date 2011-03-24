@@ -308,7 +308,11 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         setLastType(v.lastType()); // TODO fix this for x, y = a, b, i.e. if node->value->astType == TupleAstType
         if ( target->astType == Ast::NameAstType ) {
             if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeFunction) {
-                visitVariableDeclaration<FunctionDeclaration>(target);
+                FunctionDeclaration* d = visitVariableDeclaration<FunctionDeclaration>(target);
+                if ( v.lastDeclaration() && d ) {
+                    // copy docstring
+                    d->setComment(v.lastDeclaration()->comment());
+                }
             }
             else {
                 visitVariableDeclaration<Declaration>(target);
@@ -418,6 +422,8 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     closeType();
     
     closeDeclaration();
+    
+    dec->setComment(getDocstring(node->body));
 }
 
 void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
@@ -486,6 +492,20 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         ProblemPointer ptr(p);
         topContext()->addProblem(ptr);
     }
+    
+    // check for documentation
+    dec->setComment(getDocstring(node->body));
+}
+
+QString DeclarationBuilder::getDocstring(QList< Ast* > body)
+{
+    if ( body.length() && body.first()->astType == Ast::ExpressionAstType 
+            && static_cast<ExpressionAst*>(body.first())->value->astType == Ast::StringAstType ) {
+        StringAst* docstring = static_cast<StringAst*>(static_cast<ExpressionAst*>(body.first())->value);
+        kDebug() << "Got docstring for declaration: " << docstring->value;
+        return docstring->value;
+    }
+    return QString("");
 }
 
 void DeclarationBuilder::visitReturn(ReturnAst* node)

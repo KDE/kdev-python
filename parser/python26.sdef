@@ -1,6 +1,7 @@
 COMMENT;This file specifies rules for a conversion of a python (C) to a plugin-internal (C++) syntax tree;;
 COMMENT;All lines are terminated by a double semicolon token, newlines are ignored.;;
 COMMENT;-> stands for "convert AST", => for "convert AST list", ~> for "make an identifier", :> is an assignment w/o conversion, and *> is an enum cast.;;
+COMMENT;$> is a string assignment.
 COMMENT;the CODE statement can be used to add custom code.;;
 
 
@@ -45,7 +46,7 @@ RULE_FOR _expr;KIND Call_kind;ACTIONS create|CallAst set|function->ExpressionAst
                                                      set|keywordArguments->ExpressionAst,kwargs set|starArguments->ExpressionAst,starargs;CODE v->function->belongsToCall = v;;
 RULE_FOR _expr;KIND Repr_kind;ACTIONS create|ReprAst set|value->ExpressionAst,value;;
 RULE_FOR _expr;KIND Num_kind;ACTIONS create|NumberAst;;
-RULE_FOR _expr;KIND Str_kind;ACTIONS create|StringAst;;
+RULE_FOR _expr;KIND Str_kind;ACTIONS create|StringAst set|value$>s;;
 RULE_FOR _expr;KIND Attribute_kind;ACTIONS create|AttributeAst set|attribute~>attr set|value->ExpressionAst,value set|context*>Context,ctx;;
 RULE_FOR _expr;KIND Subscript_kind;ACTIONS create|SubscriptAst set|value->ExpressionAst,value set|slice->SliceAst,slice set|context*>Context,ctx;;
 RULE_FOR _expr;KIND Name_kind;ACTIONS create|NameAst set|identifier~>id set|context*>Context,ctx;;

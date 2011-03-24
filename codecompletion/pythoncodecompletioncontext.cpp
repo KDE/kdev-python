@@ -271,8 +271,11 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
         QList<DeclarationDepthPair> keepDeclarations;
         // filter out those which are builtin functions, and those which were imported; we don't want those here
         // TODO rework this, it's maybe not the most elegant solution possible
+        KUrl url = KUrl(DOCFILE_PATH);
+        url.cleanPath();
+        QString u = url.path();
         foreach ( DeclarationDepthPair current, declarations ) {
-            if ( current.first->context() != DUChain::self()->chainForDocument(QString(DOCFILE_PATH)) ) {
+            if ( current.first->context() != DUChain::self()->chainForDocument(u) ) {
                 kDebug() << "Keeping declaration" << current.first->toString();
                 keepDeclarations.append(current);
             }

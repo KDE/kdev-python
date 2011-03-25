@@ -63,11 +63,11 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     DUChainReadLocker lock(DUChain::lock());
     
     kDebug() << "Line: " << m_position.line;
-    if ( m_position.line == 0 ) { // TODO group those correctly so they appear at the top
-        items << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python"));
-        items << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python2.6"));
-        items << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python2.7"));
-    }
+//     if ( m_position.line == 0 ) { // TODO group those correctly so they appear at the top
+//         items << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python"));
+//         items << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python2.6"));
+//         items << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python2.7"));
+//     }
     
     if ( m_operation == PythonCodeCompletionContext::NoCompletion ) {
             
@@ -174,7 +174,11 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         m_maxFolderScanDepth = 1;
         foreach ( ImportFileItem* item, includeFileItems(getSearchPaths(m_workingOnDocument)) ) {
             Q_ASSERT(item);
-            item->includeItem.name = QString(item->moduleName + " (from " + KUrl::relativeUrl(m_workingOnDocument, item->includeItem.basePath) + ")");
+            QString relativeUrl = KUrl::relativeUrl(m_workingOnDocument, item->includeItem.basePath);
+            QString absoluteUrl = item->includeItem.basePath.path();
+            // use whichever one is shorter
+            QString useUrl = relativeUrl.length() < absoluteUrl.length() ? relativeUrl : absoluteUrl;
+            item->includeItem.name = QString(item->moduleName + " (from " + useUrl + ")");
             items << CompletionTreeItemPointer( item );
         }
     }
@@ -339,7 +343,7 @@ QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems(QList<KUrl>
             if ( file.fileName() == "." || file.fileName() == ".." ) continue;
             if ( file.fileName().endsWith(".py") || file.fileName().endsWith(".pyc") || file.isDir() ) {
                 IncludeItem includeItem;
-                includeItem.basePath = file.baseName();
+                includeItem.basePath = currentPath.path(KUrl::AddTrailingSlash) + file.baseName();
                 includeItem.name = file.fileName();
                 includeItem.isDirectory = file.isDir();
                 ImportFileItem* item = new ImportFileItem(includeItem);
@@ -451,7 +455,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     QRegExp importsub("(.*)\n[\\s]*from(.*)import[\\s]*$");
     importsub.setMinimal(true);
     bool is_importSub = importsub.exactMatch(currentLine);
-    QRegExp importsub2("(.*)\n[\\s]*(from(.*)|import(.*))\\.$");
+    QRegExp importsub2("(.*)\n[\\s]*(from|import)(.*)\\.$");
     importsub2.setMinimal(true);
     bool is_importSub2 = importsub2.exactMatch(currentLine);
     if ( is_importSub || is_importSub2 ) {

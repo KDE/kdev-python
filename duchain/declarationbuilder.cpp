@@ -446,17 +446,17 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     FunctionType::Ptr type;
     FunctionDeclaration* dec = 0;
     QList<Declaration*> existing;
-    {
-        DUChainReadLocker lock(DUChain::lock());
-        existing = currentContext()->findDeclarations(identifierForNode(node->name), editorFindRange(node, node).end);
-    }
-    if ( !existing.isEmpty() && existing.last()->range() == editorFindRange(node, node) )
-        dec = dynamic_cast<FunctionDeclaration*>(existing.last());
-    
+//     {
+//         DUChainReadLocker lock(DUChain::lock());
+//         existing = currentContext()->findDeclarations(identifierForNode(node->name), editorFindRange(node, node).end);
+//     }
+//     if ( !existing.isEmpty() && existing.last()->range() == editorFindRange(node, node) )
+//         dec = dynamic_cast<FunctionDeclaration*>(existing.last());
+//     
     if ( ! dec ) 
         dec = openDeclaration<FunctionDeclaration>( node->name, node );
-    else 
-        setEncountered(existing.last());
+//     else 
+//         setEncountered(existing.last());
     
     eventuallyAssignInternalContext();
     type = FunctionType::Ptr(new FunctionType());
@@ -472,6 +472,8 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     {
         visitNodeList( node->decorators );
         visitFunctionArguments(node);
+        
+        closeDeclaration();
         
         // this must be done here, because the type of self must be known when parsing the body
         kDebug() << "Checking weather we have to change argument types...";
@@ -494,8 +496,6 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         dec->setType(type);
     }
 
-    closeDeclaration();
-    
     if ( eventualParentDeclaration.data() && type->arguments().length() 
          && m_firstAttributeDeclaration.data() && currentContext()->type() == DUContext::Class ) {
         if ( m_firstAttributeDeclaration->identifier().identifier() != IndexedString("self") ) {
@@ -584,12 +584,8 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 FunctionType::Ptr type = currentType<FunctionType>();
                 if ( type && paramDeclaration ) {
                     kDebug() << "Adding argument: " << realParam->identifier->value << paramDeclaration->abstractType();
-                    AbstractType::Ptr p = paramDeclaration->abstractType();
-                    if ( ! p ) {
-                        kDebug() << "No type set for argument, using null type";
-                        p = AbstractType::Ptr(new IntegralType(IntegralType::TypeNone));
-                    }
-                    type->addArgument(p);
+                    type->addArgument(AbstractType::Ptr(new IntegralType(IntegralType::TypeNone)));
+                    static_cast<FunctionDeclaration*>(currentDeclaration())->addDefaultParameter(paramDeclaration->identifier().identifier());
                     kDebug() << "Arguments count: " << type->arguments().length();
                     if ( isFirst ) {
                         m_firstAttributeDeclaration = DeclarationPointer(paramDeclaration);

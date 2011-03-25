@@ -116,24 +116,37 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     DUChainWriteLocker lock(DUChain::lock());
     Q_ASSERT(node);
     
+    kDebug() << "Parsing variable declaration: " << node->value;
+    
     //CursorInRevision until = editorFindRange(node, node).end;
     
-    QList<Declaration*> existingDeclarations = currentContext()->findDeclarations(identifierForNode(node), startPos(node));
-    
     Declaration* dec = 0;
+    QList<Declaration*> existingDeclarations = currentContext()->findDeclarations(identifierForNode(node), editorFindRange(node, node).end);
+    if ( existingDeclarations.length() ) {
+        kDebug() << "Existing declaration range: " << existingDeclarations.last()->range().castToSimpleRange() << "vs" << editorFindRange(node, node).castToSimpleRange();
+    }
+    if ( existingDeclarations.length() && existingDeclarations.last()->range() == editorFindRange(node, node) ) {
+        if ( dynamic_cast<T*>(existingDeclarations.last()) ) {
+            kDebug() << "Opening previously existing declaration for " << existingDeclarations.last()->toString();
+            openDeclarationInternal(existingDeclarations.last());
+            dec = existingDeclarations.last();
+            setEncountered(dec);
+            existingDeclarations.removeLast();
+        }
+    }
     
     kDebug() << "VARIABLE CONTEXT: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange() << currentContext()->type() << DUContext::Class;
     
     if ( currentContext() && currentContext()->type() == DUContext::Class ) {
         kDebug() << "Creating class member declaration for " << node->value << node->startLine << ":" << node->startCol;
         kDebug() << "Context type: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
-        dec = openDeclaration<ClassMemberDeclaration>(node, originalAst ? originalAst : node);
+        if ( ! dec ) dec = openDeclaration<ClassMemberDeclaration>(node, originalAst ? originalAst : node);
         DeclarationBuilderBase::closeDeclaration();
         dec->setType(lastType());
         dec->setKind(KDevelop::Declaration::Instance);
     } else if ( existingDeclarations.isEmpty() || existingDeclarations.last()->context() != currentContext() ) {
         kDebug() << "Creating variable declaration for " << node->value << node->startLine << ":" << node->startCol;
-        dec = openDeclaration<T>(node, originalAst ? originalAst : node);
+        if ( ! dec ) dec = openDeclaration<T>(node, originalAst ? originalAst : node);
         DeclarationBuilderBase::closeDeclaration();
         dec->setType(lastType());
         dec->setKind(KDevelop::Declaration::Instance); // everything is an object in python
@@ -430,9 +443,23 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
     kDebug() << "opening function definition" << node->startLine << node->endLine;
     DeclarationPointer eventualParentDeclaration(currentDeclaration()); // an eventual containing class declaration
-    FunctionDeclaration* dec = openDeclaration<FunctionDeclaration>( node->name, node );
+    FunctionType::Ptr type;
+    FunctionDeclaration* dec = 0;
+    QList<Declaration*> existing;
+    {
+        DUChainReadLocker lock(DUChain::lock());
+        existing = currentContext()->findDeclarations(identifierForNode(node->name), editorFindRange(node, node).end);
+    }
+    if ( !existing.isEmpty() && existing.last()->range() == editorFindRange(node, node) )
+        dec = dynamic_cast<FunctionDeclaration*>(existing.last());
+    
+    if ( ! dec ) 
+        dec = openDeclaration<FunctionDeclaration>( node->name, node );
+    else 
+        setEncountered(existing.last());
+    
     eventuallyAssignInternalContext();
-    FunctionType::Ptr type(new FunctionType);
+    type = FunctionType::Ptr(new FunctionType());
     
     {
         DUChainWriteLocker lock;

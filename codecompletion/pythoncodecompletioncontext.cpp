@@ -27,6 +27,7 @@
 #include <language/codecompletion/abstractincludefilecompletionitem.h>
 #include <language/codecompletion/codecompletionitem.h>
 #include <language/util/includeitem.h>
+#include <language/codecompletion/codecompletionitemgrouper.h>
 
 #include <interfaces/icore.h>
 #include <interfaces/iprojectcontroller.h>
@@ -209,7 +210,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             QStringList keywordItems;
             keywordItems << "def" << "class" << "lambda" << "global" << "print" << "import" << "from" << "while" << "for";
             foreach ( const QString& current, keywordItems ) {
-                items << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), current));
+                KeywordItem* k = new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), current);
+                items << CompletionTreeItemPointer(k);
             }
         }
         if ( abort ) {

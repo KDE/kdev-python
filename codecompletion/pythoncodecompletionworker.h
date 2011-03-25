@@ -32,6 +32,7 @@ class KDEVPYTHONCOMPLETION_EXPORT PythonCodeCompletionWorker : public KDevelop::
 public:
     PythonCodeCompletionWorker(PythonCodeCompletionModel *parent, KUrl document);
     virtual KDevelop::CodeCompletionContext* createCompletionContext(KDevelop::DUContextPointer context, const QString& contextText, const QString& followingText, const KDevelop::CursorInRevision& position) const;
+    virtual QList< KSharedPtr< KDevelop::CompletionTreeElement > > computeGroups(QList< KDevelop::CompletionTreeItemPointer > items, KSharedPtr< KDevelop::CodeCompletionContext > completionContext);
     PythonCodeCompletionModel* parent;
 };
 

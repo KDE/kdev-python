@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2010 Sven Brauch <svenbrauch@googlemail.com>                *
+ * Copyright (c) 2010-2011 Sven Brauch <svenbrauch@googlemail.com>           *
  *                                                                           *
  * This program is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU General Public License as            *
@@ -19,6 +19,8 @@
 #include "pythoncodecompletionworker.h"
 #include "pythoncodecompletionmodel.h"
 #include "pythoncodecompletioncontext.h"
+#include <language/duchain/declaration.h>
+#include <KLocalizedString>
 
 
 namespace Python {
@@ -33,6 +35,40 @@ KDevelop::CodeCompletionContext* PythonCodeCompletionWorker::createCompletionCon
 {
     PythonCodeCompletionContext* completionContext = new PythonCodeCompletionContext(context, contextText, position, 0, this);
     return completionContext;
+}
+
+QList< KSharedPtr< CompletionTreeElement > > PythonCodeCompletionWorker::computeGroups(QList< CompletionTreeItemPointer > items, KSharedPtr< CodeCompletionContext > completionContext)
+{
+    QList< KSharedPtr<CompletionTreeElement> > tree;
+    CompletionCustomGroupNode* localDeclarations = new CompletionCustomGroupNode(i18n("Local declarations"));
+    CompletionCustomGroupNode* globalDeclarations = new CompletionCustomGroupNode(i18n("Global or imported declarations"));
+    CompletionCustomGroupNode* stuff = new CompletionCustomGroupNode(i18n("Other suggestions"));
+    
+    int currentIndex = 0;
+    foreach (CompletionTreeItemPointer currentItem, items) {
+        KSharedPtr<CompletionTreeElement> currentElement(dynamic_cast<CompletionTreeElement*>(currentItem.data()));
+        Declaration* currentDeclaration = currentItem->declaration().data();
+        if ( currentDeclaration ) {
+            if ( items.lastIndexOf(currentItem) != currentIndex ) continue;
+            if ( currentDeclaration->context() == completionContext.data()->duContext() ) {
+                kDebug() << "Adding " << currentDeclaration->toString() << "to local declarations";
+                localDeclarations->appendChild(currentElement);
+            }
+            else {
+                kDebug() << "Adding " << currentDeclaration->toString() << "to global declarations";
+                globalDeclarations->appendChild(currentElement);
+            }
+        }
+        else {
+            stuff->appendChild(currentElement);
+        }
+        currentIndex += 1;
+    }
+    
+    if ( localDeclarations->children.length() ) tree << KSharedPtr<CompletionTreeElement>(dynamic_cast<CompletionTreeElement*>(localDeclarations));
+    if ( globalDeclarations->children.length() ) tree << KSharedPtr<CompletionTreeElement>(dynamic_cast<CompletionTreeElement*>(globalDeclarations));
+    if ( stuff->children.length() ) tree << KSharedPtr<CompletionTreeElement>(dynamic_cast<CompletionTreeElement*>(stuff));
+    return tree;
 }
 
 

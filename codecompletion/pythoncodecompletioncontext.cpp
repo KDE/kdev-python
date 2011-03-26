@@ -74,7 +74,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     }
     else if ( m_operation == PythonCodeCompletionContext::DefineCompletion ) {
         QList<implementFunctionDescription> funcs;
-        // well, duh. I didn't think it's that many functions.
+        // well, duh. I didn't think it's that many functions. TODO think of a more sane way to do this
         {
         funcs << ( implementFunctionDescription() << "__init__" << "self" << "self" );
         funcs << ( implementFunctionDescription() << "__new__" << "self" << "self" );
@@ -220,6 +220,25 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         }
         if ( abort ) {
             return QList<CompletionTreeItemPointer>();
+        }
+        if ( m_operation == PythonCodeCompletionContext::FunctionCallCompletion ) {
+            // gather additional items to show above the real ones (for parameters, and stuff)
+            QList<Declaration*> calltips = m_duContext->findDeclarations(QualifiedIdentifier(m_calledFunction), m_position);
+            QList<DeclarationDepthPair> realCalltips_withDepth;
+            foreach ( Declaration* current, calltips ) {
+                if ( ! dynamic_cast<FunctionDeclaration*>(current) ) {
+                    kDebug() << "Not a function declaration: " << current->toString();
+                    continue;
+                }
+                realCalltips_withDepth.append(DeclarationDepthPair(current, 0));
+            }
+            
+            QList<CompletionTreeItemPointer> calltipItems = declarationListToItemList(realCalltips_withDepth);
+            foreach ( CompletionTreeItemPointer current, calltipItems ) {
+                dynamic_cast<FunctionDeclarationCompletionItem*>(current.data())->setArgumentHintDepth(m_alreadyGivenParametersCount);
+            }
+            
+            items.append(calltipItems);
         }
         QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
         items.append(declarationListToItemList(declarations));
@@ -458,8 +477,8 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         }
     }
 
-        
-    QRegExp importsub("(.*)\n[\\s]*from(.*)import[\\s]*$");
+    //                                                 v   v   v   v   v allow comma seperated list of imports
+    QRegExp importsub("(.*)\n[\\s]*from(.*)import[\\s]*(.*[\\s]*,[\\s]*)*$");
     importsub.setMinimal(true);
     bool is_importSub = importsub.exactMatch(currentLine);
     QRegExp importsub2("(.*)\n[\\s]*(from|import)(.*)\\.$");
@@ -491,7 +510,8 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         return;
     }
     
-    QRegExp importfile("(.*)\n[\\s]*import[\\s]*$");
+    //                                          v   v   v   v   v allow comma seperated list of imports
+    QRegExp importfile("(.*)\n[\\s]*import[\\s]*(.*[\\s]*,[\\s]*)*$");
     importfile.setMinimal(true);
     bool is_importfile = importfile.exactMatch(currentLine);
     QRegExp fromimport("(.*)\n[\\s]*from[\\s]*$");
@@ -503,11 +523,13 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         return;
     }
     
-    QString line = currentLine.replace(QRegExp("\"(.*)\""), "\"S\""); // we don't need strings, cut them out
+    QRegExp replaceStrings("(\".*\"|\'.*\'|\"\"\".*\"\"\"|\'\'\'.*\'\'\')");
+    replaceStrings.setMinimal(true);
+    QString strippedLine = currentLine.replace(replaceStrings, "\"S\""); // we don't need string contents, cut them out
     // go back the current line, and kill everything except an eventual AttributeAccessAst
     // there's two cases in which the search will stop: a space without a dot (for "while foo.bar.")
-    // or an unmatched left parenthesis (for "foo(bar.baz.").
-    int i = line.length() - 1;
+    // or any unmatched left parenthesis (for "foo(bar.baz.").
+    int i = strippedLine.length() - 1;
     bool is_attributeAccess = false;
     bool atEnd = true;
     bool previousWasSpace = false;
@@ -520,7 +542,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     QChar invalid('!');
     QString scanned = "";
     while ( i > 0 ) {
-        c = line.at(i);
+        c = strippedLine.at(i);
         scanned.insert(0, c);
         if ( atEnd && ! c.isSpace() ) {
             if ( c == colon ) is_attributeAccess = true;
@@ -568,6 +590,19 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         }
     }
     
+    //        function name vvvvv  |vvvv args
+    QRegExp functionCall(".*\\s(\\w*)\\((.*)$");
+    functionCall.setMinimal(true);
+    bool is_FunctionCall = functionCall.exactMatch(strippedLine);
+    if ( is_FunctionCall ) {
+        m_operation = PythonCodeCompletionContext::FunctionCallCompletion;
+        kDebug() << functionCall.capturedTexts().at(2) << strippedLine;
+        m_alreadyGivenParametersCount = functionCall.capturedTexts().at(2).count(',') + 1; // strings are already replaced by "S", so no risk to count commas
+        m_calledFunction = functionCall.capturedTexts().at(1);
+        kDebug() << "Found function call completion item, called function is " << m_calledFunction << ", currently at parameter: " << m_alreadyGivenParametersCount;
+        return;
+    }
+    
     QRegExp nocompletion("(.*)\n[\\s]*(class|def)[\\s]*$");
     nocompletion.setMinimal(true);
     bool is_nocompletion = nocompletion.exactMatch(currentLine);
@@ -576,9 +611,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         return;
     }
     
-    QRegExp memberaccess("");
     kDebug() << "Is import file: " << is_importfile;
-//     Q_ASSERT(false);
 }
 
 }

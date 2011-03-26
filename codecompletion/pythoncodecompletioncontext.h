@@ -49,7 +49,8 @@ public:
         NoCompletion,
         NewStatementCompletion,
         DefineCompletion,
-        ShebangLineCompletion
+        ShebangLineCompletion,
+        FunctionCallCompletion
     };
     
     PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position, int depth, const PythonCodeCompletionWorker* parent);
@@ -66,9 +67,14 @@ public:
     QString m_subForModule;
     const PythonCodeCompletionWorker* parent;
     KUrl m_workingOnDocument;
+    
     QString m_guessTypeOfExpression;
+    
     QString m_indent;
     KDevelop::CursorInRevision m_position;
+    
+    QString m_calledFunction;
+    int m_alreadyGivenParametersCount;
     
     DUContextPointer m_context;
     

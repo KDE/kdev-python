@@ -24,13 +24,64 @@
 
 #include "functiondeclarationcompletionitem.h"
 #include "navigation/navigationwidget.h"
+#include <language/codecompletion/codecompletionmodel.h>
+#include <language/duchain/types/functiontype.h>
+#include "helpers.h"
 
 using namespace KDevelop;
 using namespace KTextEditor;
 
 namespace Python {
 
-FunctionDeclarationCompletionItem::FunctionDeclarationCompletionItem(DeclarationPointer decl) : NormalDeclarationCompletionItem(decl) { }
+FunctionDeclarationCompletionItem::FunctionDeclarationCompletionItem(DeclarationPointer decl) : NormalDeclarationCompletionItem(decl), m_argumentHintDepth(0) { }
+
+int FunctionDeclarationCompletionItem::argumentHintDepth() const
+{
+    return m_argumentHintDepth;
+}
+
+void FunctionDeclarationCompletionItem::setArgumentHintDepth(int d)
+{
+    m_argumentHintDepth = d;
+}
+
+QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const
+{
+    FunctionDeclaration* dec = dynamic_cast<FunctionDeclaration*>(m_declaration.data());
+    DUChainReadLocker lock(DUChain::lock());
+    switch ( role ) {
+        case Qt::DisplayRole: {
+            if ( index.column() == KDevelop::CodeCompletionModel::Arguments ) {
+                if ( ! dec ) return QVariant();
+                if (FunctionType::Ptr functionType = dec->type<FunctionType>()) {
+                    QString ret;
+                    createArgumentList(dec, ret, 0);
+                    return ret;
+                }
+            }
+        }
+        case KDevelop::CodeCompletionModel::HighlightingMethod: {
+            if ( index.column() == KDevelop::CodeCompletionModel::Arguments )
+                return QVariant(KDevelop::CodeCompletionModel::CustomHighlighting);
+            break;
+        }
+        case KDevelop::CodeCompletionModel::CustomHighlight: {
+            if ( index.column() == KDevelop::CodeCompletionModel::Arguments ) {
+                if ( ! dec ) return QVariant();
+                QString ret;
+                QList<QVariant> highlight;
+                if ( argumentHintDepth() ) {
+                    createArgumentList(dec, ret, &highlight, argumentHintDepth());
+                }
+                else {
+                    createArgumentList(dec, ret, 0);
+                }
+                return QVariant(highlight);
+            }
+        }
+    }
+    return KDevelop::NormalDeclarationCompletionItem::data(index, role, model);
+}
 
 void FunctionDeclarationCompletionItem::executed(KTextEditor::Document* document, const KTextEditor::Range& word)
 {

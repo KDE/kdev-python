@@ -262,17 +262,24 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
 {
     QStringList nameComponents = name.split(".");
     QList<KUrl> searchPaths = getSearchPaths(currentlyParsedDocument().toUrl());
+    KUrl tmp;
+    QStringList leftNameComponents;
+    QString dirFound("<invalid>");
     foreach ( KUrl currentPath, searchPaths ) {
-        KUrl tmp = currentPath;
-        int moduleComponentsUsed = 0;
+        tmp = currentPath;
+        leftNameComponents = nameComponents;
         foreach ( QString component, nameComponents ) {
-            moduleComponentsUsed += 1;
-            QString testFilename = currentPath.path(KUrl::AddTrailingSlash) + component;
+            leftNameComponents.removeFirst();
+            QString testFilename = tmp.path(KUrl::AddTrailingSlash) + component;
+            kDebug() << testFilename;
             KUrl sourceUrl = testFilename + ".py";
             QFile sourcefile(testFilename + ".py"); // we can only parse those, so we don't care about anything else for now.
+            QFileInfo sourcedir(testFilename);
             if ( sourcefile.exists() ) {
-                for ( int i=0; i<moduleComponentsUsed; i++ ) nameComponents.removeFirst();
-                return QPair<KUrl, QStringList>(sourceUrl, nameComponents);
+                return QPair<KUrl, QStringList>(sourceUrl, leftNameComponents);
+            }
+            else if ( sourcedir.exists() && sourcedir.isDir() ) {
+                return QPair<KUrl, QStringList>(KUrl(testFilename.append("/__init__.py")), leftNameComponents);
             }
             bool can_continue = tmp.cd(component);
             if ( ! can_continue ) {
@@ -295,40 +302,41 @@ void ContextBuilder::visitImport(ImportAst* node)
         Identifier* moduleName = name->asName ? name->asName : name->name;
         
         QPair<KUrl, QStringList> moduleFilePath = findModulePath(name->name->value);
-        if ( ! moduleFilePath.first.isValid() ) continue;
+        kDebug() << "Module path: " << moduleFilePath.first.path();
+        if ( ! moduleFilePath.first.isValid() || ! QFileInfo(moduleFilePath.first.path()).exists() ) {
+            kWarning() << "Malformed or nonexistent path, skipping";
+            continue;
+        }
+        ReferencedTopDUContext moduleChain;
+        
+        moduleFilePath.first.cleanPath(KUrl::SimplifyDirSeparators);
+        IndexedString doc = IndexedString(moduleFilePath.first.path());
+        {
+            DUChainReadLocker lock(DUChain::lock());
+            moduleChain = DUChain::self()->chainForDocument(doc);
+        }
+        
+        bool featuresSatisfied = false;
+        if ( moduleChain.data() ) {
+            if ( moduleChain->features() >= TopDUContext::AllDeclarationsContextsAndUses ) featuresSatisfied = true;
+        }
+        kDebug() << "Chain: " << moduleChain.data() << ";" << "Features satisfied: " << featuresSatisfied;
+        if ( ! featuresSatisfied ) {
+            // parse the include file, then reparse the current one.
+            kDebug() << "Module not cached, reparsing";
+            kDebug() << currentlyParsedDocument().toUrl().path();
+            Q_ASSERT(moduleFilePath.first.isValid());
+            Q_ASSERT(currentlyParsedDocument().toUrl().isValid());
+            DUChain::self()->updateContextForUrl(doc, TopDUContext::AllDeclarationsContextsAndUses, 0, -5);
+            DUChain::self()->updateContextForUrl(currentlyParsedDocument(), TopDUContext::AllDeclarationsContextsAndUses, 0, 5);
+            DUChainWriteLocker lock(DUChain::lock());
+            topContext()->setFeatures(KDevelop::TopDUContext::Empty); // force reparsing
+            return;
+        }
         else {
-            ReferencedTopDUContext moduleChain;
-            
-            moduleFilePath.first.cleanPath(KUrl::SimplifyDirSeparators);
+            contextsForModules.insert(moduleName->value, moduleChain);
             kDebug() << moduleFilePath.first.path();
-            IndexedString doc = IndexedString(moduleFilePath.first.path());
-            {
-                DUChainReadLocker lock(DUChain::lock());
-                moduleChain = DUChain::self()->chainForDocument(doc);
-            }
-            
-            bool featuresSatisfied = false;
-            if ( moduleChain.data() ) {
-                if ( moduleChain->features() >= TopDUContext::AllDeclarationsContextsAndUses ) featuresSatisfied = true;
-            }
-            kDebug() << "Chain: " << moduleChain.data() << ";" << "Features satisfied: " << featuresSatisfied;
-            if ( ! featuresSatisfied ) {
-                // parse the include file, then reparse the current one.
-                kDebug() << "Module not cached, reparsing";
-                kDebug() << currentlyParsedDocument().toUrl().path();
-                Q_ASSERT(moduleFilePath.first.isValid());
-                Q_ASSERT(currentlyParsedDocument().toUrl().isValid());
-                DUChain::self()->updateContextForUrl(doc, TopDUContext::AllDeclarationsContextsAndUses, 0, -5);
-                DUChain::self()->updateContextForUrl(currentlyParsedDocument(), TopDUContext::AllDeclarationsContextsAndUses, 0, 5);
-                DUChainWriteLocker lock(DUChain::lock());
-                topContext()->setFeatures(KDevelop::TopDUContext::Empty); // force reparsing
-                return;
-            }
-            else {
-                contextsForModules.insert(moduleName->value, moduleChain);
-                kDebug() << moduleFilePath.first.path();
-                kDebug() << "Added " << name->name->value << " to the module chain map" << moduleChain.data();
-            }
+            kDebug() << "Added " << name->name->value << " to the module chain map" << moduleChain.data();
         }
     }
     Python::AstDefaultVisitor::visitImport(node);

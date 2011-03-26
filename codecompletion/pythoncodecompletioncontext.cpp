@@ -338,6 +338,7 @@ QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems(QList<KUrl>
         kDebug() << "Processing path: " << currentPath;
         QDir currentDir(currentPath.path());
         QFileInfoList files = currentDir.entryInfoList();
+        QStringList alreadyFound;
         foreach (QFileInfo file, files) {
             kDebug() << "Scanning file: " << file.absoluteFilePath();
             if ( file.fileName() == "." || file.fileName() == ".." ) continue;
@@ -348,6 +349,12 @@ QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems(QList<KUrl>
                 includeItem.isDirectory = file.isDir();
                 ImportFileItem* item = new ImportFileItem(includeItem);
                 item->moduleName = file.fileName().replace(".pyc", "").replace(".pyo", "").replace(".py", "");
+                if ( alreadyFound.contains(item->moduleName) ) {
+                    continue;
+                }
+                else {
+                    alreadyFound << item->moduleName;
+                }
                 items.append(item);
                 kDebug() << "FOUND: " << file.absoluteFilePath();
             }

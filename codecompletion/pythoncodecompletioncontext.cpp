@@ -277,7 +277,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
         }
         currentDeclaration = DeclarationPointer(declarations.at(i).first);
         
-        NormalDeclarationCompletionItem* item;
+        PythonDeclarationCompletionItem* item;
         if ( currentDeclaration.data()->abstractType() 
           && ( currentDeclaration.data()->abstractType()->whichType() == AbstractType::TypeFunction
             || currentDeclaration.data()->abstractType()->whichType() == AbstractType::TypeStructure )
@@ -286,7 +286,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
             item = new FunctionDeclarationCompletionItem(currentDeclaration);
         }
         else {
-            item = new NormalDeclarationCompletionItem(currentDeclaration, KDevelop::CodeCompletionContext::Ptr(this));
+            item = new PythonDeclarationCompletionItem(currentDeclaration, KDevelop::CodeCompletionContext::Ptr(this));
         }
         kDebug() << item->declaration().data()->identifier().identifier().str();
         items << CompletionTreeItemPointer(item);

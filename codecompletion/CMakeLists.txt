@@ -12,6 +12,7 @@ set(completion_SRCS
     pythoncodecompletionmodel.cpp
     pythoncodecompletionworker.cpp
     helpers.cpp
+    pythondeclarationcompletionitem.cpp
 )
 
 kde4_add_library(kdev4pythoncompletion SHARED ${completion_SRCS})

@@ -21,11 +21,13 @@
 #include <language/codecompletion/normaldeclarationcompletionitem.h>
 #include <language/duchain/functiondeclaration.h>
 
+#include "pythondeclarationcompletionitem.h"
+
 using namespace KDevelop;
 
 namespace Python {
 
-class FunctionDeclarationCompletionItem : public KDevelop::NormalDeclarationCompletionItem
+class FunctionDeclarationCompletionItem : public Python::PythonDeclarationCompletionItem
 {
 
 public:

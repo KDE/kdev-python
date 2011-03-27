@@ -24,6 +24,8 @@
 
 #include "functiondeclarationcompletionitem.h"
 #include "navigation/navigationwidget.h"
+#include "pythondeclarationcompletionitem.h"
+
 #include <language/codecompletion/codecompletionmodel.h>
 #include <language/duchain/types/functiontype.h>
 #include "helpers.h"
@@ -33,7 +35,7 @@ using namespace KTextEditor;
 
 namespace Python {
 
-FunctionDeclarationCompletionItem::FunctionDeclarationCompletionItem(DeclarationPointer decl) : NormalDeclarationCompletionItem(decl), m_argumentHintDepth(0) { }
+FunctionDeclarationCompletionItem::FunctionDeclarationCompletionItem(DeclarationPointer decl) : PythonDeclarationCompletionItem(decl), m_argumentHintDepth(0) { }
 
 int FunctionDeclarationCompletionItem::argumentHintDepth() const
 {
@@ -80,7 +82,7 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
             }
         }
     }
-    return KDevelop::NormalDeclarationCompletionItem::data(index, role, model);
+    return Python::PythonDeclarationCompletionItem::data(index, role, model);
 }
 
 void FunctionDeclarationCompletionItem::executed(KTextEditor::Document* document, const KTextEditor::Range& word)

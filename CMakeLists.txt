@@ -59,9 +59,7 @@ install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES kdevpythonsupport.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 install(FILES pythonpythonparser.py DESTINATION ${BIN_INSTALL_DIR})
-install(FILES documentation/pydoc.py DESTINATION ${BIN_INSTALL_DIR})
+install(FILES documentation_src/pydoc.py DESTINATION ${BIN_INSTALL_DIR})
 
-FILE(MAKE_DIRECTORY ${DOCUMENTATION_INSTALL_DIR})
-install(FILES documentation/builtindocumentation.py DESTINATION ${DOCUMENTATION_INSTALL_DIR})
-install(FILES documentation/math.py DESTINATION ${DOCUMENTATION_INSTALL_DIR})
+install(DIRECTORY documentation_files DESTINATION ${DOCUMENTATION_INSTALL_DIR})
 

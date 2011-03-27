@@ -1,3 +1,3 @@
 #define INSTALL_PATH "@BIN_INSTALL_DIR@"
-#define DOC_DIR "@DOCUMENTATION_INSTALL_DIR@"
+#define DOC_DIR "@DOCUMENTATION_INSTALL_DIR@/documentation_files"
 #define DOCFILE_PATH QString(DOC_DIR) + "/builtindocumentation.py"

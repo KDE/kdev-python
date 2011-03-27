@@ -792,29 +792,34 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
                 if ( indents.length() <= currentLine ) indents.append(currentLineIndent);
             }
             else if ( c == newline ) {
-                currentLine += 1;
-                // this line has had content, so reset the "empty lines since" counter
-                if ( ! atLineBeginning ) {
-                    lastNonemptyLineBeginning = emptyLinesSince;
-                    emptyLinesSince = i;
-                    emptyLinesSinceLine = currentLine;
+                if ( currentLine == errline ) {
+                    atLineBeginning = false;
                 }
-                atLineBeginning = true;
-                if ( indents.length() <= currentLine ) indents.append(currentLineIndent);
-                currentLineIndent = 0;
+                else {
+                    currentLine += 1;
+                    // this line has had content, so reset the "empty lines since" counter
+                    if ( ! atLineBeginning ) {
+                        lastNonemptyLineBeginning = emptyLinesSince;
+                        emptyLinesSince = i;
+                        emptyLinesSinceLine = currentLine;
+                    }
+                    atLineBeginning = true;
+                    if ( indents.length() <= currentLine ) indents.append(currentLineIndent);
+                    currentLineIndent = 0;
+                }
             }
             else if ( atLineBeginning ) {
                 currentLineIndent += 1;
             }
             
-            if ( currentLine == errline ) {
+            if ( currentLine == errline && ! atLineBeginning ) {
                 // if the last non-empty char before the error opens a new block, it's likely an "empty block" problem
                 // we can easily fix that by adding in a "pass" statement. However, we want to add that in the next line, if possible
                 // so context ranges for autocompletion stay intact.
                 if ( contents[emptySince] == QChar(':') ) {
-                    kDebug() << indents.length() << emptySinceLine + 1;
-                    if ( indents.length() > emptySinceLine && indents.at(emptySinceLine - 1) < indents.at(emptySinceLine) ) {
-                        kDebug() << indents.at(emptySinceLine - 1) << indents.at(emptySinceLine);
+                    kDebug() << indents.length() << emptySinceLine + 1 << indents;
+                    if ( indents.length() > emptySinceLine + 1 && indents.at(emptySinceLine) < indents.at(emptySinceLine + 1) ) {
+                        kDebug() << indents.at(emptySinceLine) << indents.at(emptySinceLine + 1);
                         contents.insert(emptyLinesSince + 1 + indents.at(emptyLinesSinceLine), "\tpass#");
                     }
                     else {

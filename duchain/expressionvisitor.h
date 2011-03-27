@@ -85,7 +85,7 @@ protected:
 class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
 {
     public:
-        ExpressionVisitor(KDevelop::DUContext* ctx, PythonEditorIntegrator* editor);
+        ExpressionVisitor(KDevelop::DUContext* ctx, PythonEditorIntegrator* editor = 0);
         
         virtual void visitBinaryOperation(BinaryOperationAst* node);
         virtual void visitUnaryOperation(UnaryOperationAst* node);

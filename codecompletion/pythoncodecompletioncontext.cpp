@@ -223,7 +223,20 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         }
         if ( m_operation == PythonCodeCompletionContext::FunctionCallCompletion ) {
             // gather additional items to show above the real ones (for parameters, and stuff)
-            QList<Declaration*> calltips = m_duContext->findDeclarations(QualifiedIdentifier(m_calledFunction), m_position);
+            QList<Declaration*> calltips;
+            AstBuilder* builder = new AstBuilder();
+            CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
+            if ( tmpAst ) {
+                ExpressionVisitor* v = new ExpressionVisitor(m_context.data());
+                v->visitCode(tmpAst);
+                if ( v->lastDeclaration().data() ) {
+                    calltips << v->lastDeclaration().data();
+                }
+                else {
+                    kWarning() << "Did not receive a function declaration from expression visitor! Not offering call tips.";
+                }
+            }
+            
             QList<DeclarationDepthPair> realCalltips_withDepth;
             foreach ( Declaration* current, calltips ) {
                 if ( ! dynamic_cast<FunctionDeclaration*>(current) ) {
@@ -235,7 +248,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             
             QList<CompletionTreeItemPointer> calltipItems = declarationListToItemList(realCalltips_withDepth);
             foreach ( CompletionTreeItemPointer current, calltipItems ) {
-                dynamic_cast<FunctionDeclarationCompletionItem*>(current.data())->setArgumentHintDepth(m_alreadyGivenParametersCount);
+                kDebug() << "Adding calltip item"; 
+                dynamic_cast<FunctionDeclarationCompletionItem*>(current.data())->setArgumentHintDepth(m_alreadyGivenParametersCount + 1);
             }
             
             items.append(calltipItems);
@@ -526,55 +540,9 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     QRegExp replaceStrings("(\".*\"|\'.*\'|\"\"\".*\"\"\"|\'\'\'.*\'\'\')");
     replaceStrings.setMinimal(true);
     QString strippedLine = currentLine.replace(replaceStrings, "\"S\""); // we don't need string contents, cut them out
-    // go back the current line, and kill everything except an eventual AttributeAccessAst
-    // there's two cases in which the search will stop: a space without a dot (for "while foo.bar.")
-    // or any unmatched left parenthesis (for "foo(bar.baz.").
-    int i = strippedLine.length() - 1;
-    bool is_attributeAccess = false;
-    bool atEnd = true;
-    bool previousWasSpace = false;
-    QChar c;
-    QChar colon('.'); QChar lbrace('('); QChar rbrace(')'); QChar lbracket('['); QChar rbracket(']'); QChar ldic('{'); QChar rdic('}');
-    QList<QChar> openingBrackets; QList<QChar> closingBrackets;
-    openingBrackets << lbrace << lbracket << ldic;
-    closingBrackets << rbrace << rbracket << rdic;
-    QChar searchingForMatching('!');
-    QChar invalid('!');
-    QString scanned = "";
-    while ( i > 0 ) {
-        c = strippedLine.at(i);
-        scanned.insert(0, c);
-        if ( atEnd && ! c.isSpace() ) {
-            if ( c == colon ) is_attributeAccess = true;
-            else is_attributeAccess = false;
-            atEnd = false;
-        }
-        if ( searchingForMatching != invalid && c == searchingForMatching ) {
-            kDebug() << "Found matching " << c << "token";
-            searchingForMatching = invalid;
-        }
-        else if ( closingBrackets.contains(c) ) {
-            kDebug() << "Searching for opening " << c << "token";
-            searchingForMatching = openingBrackets.at(closingBrackets.indexOf(c));
-        }
-        else if ( openingBrackets.contains(c) ) {
-            scanned[0] = ' ';
-            break;
-        }
-        if ( previousWasSpace && ! c.isSpace() && c != colon ) {
-            kDebug() << "Previous char was space, current is no colon -- break";
-            scanned[0] = ' ';
-            break;
-        }
-        if ( c.isSpace() ) previousWasSpace = true;
-        i -= 1;
-    }
+    
+    bool is_attributeAccess = scanExpressionBackwards(strippedLine, QStringList(), QStringList() << ".", QStringList() << ".", QStringList());
     if ( is_attributeAccess ) {
-        m_guessTypeOfExpression = '\n' + scanned;
-        // remove spaces at the beginning of the expression, they are treated as an INDENT token by the parser
-        // and are thus a syntax error; also remove trailing dot
-        m_guessTypeOfExpression.replace(QRegExp("\n[\\s]*"), "").replace(QRegExp("\\.[\\s]*$"), "");
-        kDebug() << "Guess type of this expression: " << m_guessTypeOfExpression;
         m_operation = PythonCodeCompletionContext::MemberAccessCompletion;
         return;
     }
@@ -590,16 +558,16 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         }
     }
     
-    //        function name vvvvv  |vvvv args
-    QRegExp functionCall(".*\\s(\\w*)\\((.*)$");
-    functionCall.setMinimal(true);
-    bool is_FunctionCall = functionCall.exactMatch(strippedLine);
+    kDebug() << "Scanning for function call";
+    bool is_FunctionCall = scanExpressionBackwards(strippedLine, QStringList(), QStringList() << "." << ",", QStringList() << "," << "(", QStringList());
     if ( is_FunctionCall ) {
         m_operation = PythonCodeCompletionContext::FunctionCallCompletion;
-        kDebug() << functionCall.capturedTexts().at(2) << strippedLine;
-        m_alreadyGivenParametersCount = functionCall.capturedTexts().at(2).count(',') + 1; // strings are already replaced by "S", so no risk to count commas
-        m_calledFunction = functionCall.capturedTexts().at(1);
-        kDebug() << "Found function call completion item, called function is " << m_calledFunction << ", currently at parameter: " << m_alreadyGivenParametersCount;
+        m_alreadyGivenParametersCount = m_guessTypeOfExpression.count(','); // strings are already replaced by "S", so no risk to count commas
+        
+        scanExpressionBackwards(m_remainingExpression, QStringList(), QStringList() << "." << ",", QStringList(), QStringList() << "("); // get the next item in a chain of calls
+                // for "a(b(c(), d, e" (we want autocompletion for b) the first call will give us "a(b" and "c(), d, e", but we want "b". so we call it again on the first result.
+        kDebug() << "Found function call completion item, called function is " << m_guessTypeOfExpression << ", currently at parameter: " << m_alreadyGivenParametersCount;
+//         Q_ASSERT(false);
         return;
     }
     
@@ -612,6 +580,70 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     }
     
     kDebug() << "Is import file: " << is_importfile;
+}
+
+bool PythonCodeCompletionContext::scanExpressionBackwards(QString line, QStringList stopTokens, QStringList stopAtSpaceWithout, QStringList mustEndWithToken, QStringList ignoreAtEnd)
+{
+    int i = line.length() - 1;
+    bool success = false;
+    bool atEnd = true;
+    bool previousWasSpace = false;
+    QChar c;
+    QChar colon('.'); QChar lbrace('('); QChar rbrace(')'); QChar lbracket('['); QChar rbracket(']'); QChar ldic('{'); QChar rdic('}');
+    QList<QChar> openingBrackets; QList<QChar> closingBrackets;
+    openingBrackets << lbrace << lbracket << ldic;
+    closingBrackets << rbrace << rbracket << rdic;
+    QChar searchingForMatching('!');
+    QChar invalid('!');
+    QString scanned = "";
+    while ( i > 0 ) {
+        c = line.at(i);
+        if ( atEnd && ignoreAtEnd.contains(c) ) {
+            i -= 1;
+            continue;
+        }
+        scanned.insert(0, c);
+        if ( atEnd ) previousWasSpace = false; // ignore trailing spaces
+        if ( atEnd && ! c.isSpace() ) {
+            if ( ! mustEndWithToken.count() || mustEndWithToken.contains(c) ) success = true;
+            else success = false;
+            atEnd = false;
+        }
+        if ( searchingForMatching != invalid && c == searchingForMatching ) {
+            kDebug() << "Found matching " << c << "token";
+            searchingForMatching = invalid;
+        }
+        else if ( searchingForMatching != invalid ) {
+            // do nothing, this is in another expression, we don't care about it
+        }
+        else if ( closingBrackets.contains(c) ) {
+            kDebug() << "Searching for opening " << c << "token";
+            searchingForMatching = openingBrackets.at(closingBrackets.indexOf(c));
+        }
+        else if ( openingBrackets.contains(c) ) {
+            scanned[0] = ' ';
+            break;
+        }
+        else if ( previousWasSpace && ! c.isSpace() && ! stopAtSpaceWithout.contains(c) ) {
+            kDebug() << "Previous char was space, current is " << c << " -- break";
+            scanned[0] = ' ';
+            break;
+        }
+        else if ( stopTokens.contains(c) ) break;
+        if ( c.isSpace() ) previousWasSpace = true;
+        else previousWasSpace = false;
+        i -= 1;
+    }
+    if ( success ) {
+        m_guessTypeOfExpression = '\n' + scanned;
+        // remove spaces at the beginning of the expression, they are treated as an INDENT token by the parser
+        // and are thus a syntax error; also remove trailing dot
+        m_guessTypeOfExpression.replace(QRegExp("\n[\\s]*"), "").replace(QRegExp("\\.[\\s]*$"), "");
+        kDebug() << "Guess type of this expression: " << m_guessTypeOfExpression;
+        m_remainingExpression = line.remove(i, line.length() - 1 - i);
+        kDebug() << "Remaining expression: " << m_remainingExpression;
+    }
+    return success;
 }
 
 }

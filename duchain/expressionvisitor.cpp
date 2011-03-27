@@ -189,6 +189,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
     // if it's not written like foo() but like foo[3](), then we don't attempt to guess a type
     if ( node->function->astType == Ast::AttributeAstType ) {
         // a bit confusing, but visitAttribute() already has taken care of this.
+        encounter(m_lastAccessedReturnType);
         return;
     }
     if ( ! ( node->function->astType == Ast::NameAstType ) ) {

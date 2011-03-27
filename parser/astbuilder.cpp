@@ -789,6 +789,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
                 emptySince = i;
                 emptySinceLine = currentLine;
                 atLineBeginning = false;
+                if ( indents.length() <= currentLine ) indents.append(currentLineIndent);
             }
             else if ( c == newline ) {
                 currentLine += 1;
@@ -799,7 +800,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
                     emptyLinesSinceLine = currentLine;
                 }
                 atLineBeginning = true;
-                indents.append(currentLineIndent);
+                if ( indents.length() <= currentLine ) indents.append(currentLineIndent);
                 currentLineIndent = 0;
             }
             else if ( atLineBeginning ) {
@@ -812,12 +813,12 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
                 // so context ranges for autocompletion stay intact.
                 if ( contents[emptySince] == QChar(':') ) {
                     kDebug() << indents.length() << emptySinceLine + 1;
-                    if ( indents.length() > emptySinceLine + 1 && indents.at(emptySinceLine) < indents.at(emptySinceLine + 1) ) {
-                        kDebug() << indents.at(emptySinceLine) << indents.at(emptySinceLine + 1);
-                        contents.insert(emptyLinesSince + 1 + indents.at(emptyLinesSinceLine), "pass");
+                    if ( indents.length() > emptySinceLine && indents.at(emptySinceLine - 1) < indents.at(emptySinceLine) ) {
+                        kDebug() << indents.at(emptySinceLine - 1) << indents.at(emptySinceLine);
+                        contents.insert(emptyLinesSince + 1 + indents.at(emptyLinesSinceLine), "\tpass#");
                     }
                     else {
-                        contents.insert(emptySince + 1, "pass");
+                        contents.insert(emptySince + 1, "\tpass#");
                     }
                 }
                 else if ( indents.length() >= currentLine && currentLine > 0 ) {

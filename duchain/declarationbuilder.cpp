@@ -342,8 +342,9 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             // declare the attribute.
             // however, if there's an earlier declaration which does not match the current position
             // (so it's really a different declaration) we skip this.
-            if ( unknown.data() && unknown->range() != editorFindRange(target, target) ) {
+            if ( unknown.data() && unknown->range() != editorFindRange(target, target) && ! unknown->range().isEmpty() ) {
                 kWarning() << "Another declaration exists for this attribute, aborting";
+                kDebug() << "Other range: " << unknown->range().castToSimpleRange() << "; own range: " << editorFindRange(target, target).castToSimpleRange();
                 continue;
             }
             else if ( unknown.data() ) {

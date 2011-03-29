@@ -568,31 +568,45 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
     kDebug() << currentContext()->scopeIdentifier().toString();
     if ( currentDeclaration() ) kDebug() << currentDeclaration()->identifier().toString();
     
+    
     if ( function ) {
+        static_cast<FunctionDeclaration*>(currentDeclaration())->clearDefaultParameters();
+        FunctionType::Ptr type = currentType<FunctionType>();
         NameAst* realParam;
         bool isFirst = true;
-        foreach (ExpressionAst* expression, node->arguments) {
+        int defaultParametersCount = node->defaultValues.length();
+        int parametersCount = node->arguments.length();
+        int firstDefaultParameterOffset = parametersCount - defaultParametersCount;
+        int currentIndex = 0;
+        foreach ( ExpressionAst* expression, node->arguments ) {
+            currentIndex += 1;
             realParam = dynamic_cast<NameAst*>(expression);
             
-            if ( realParam && realParam->context == ExpressionAst::Parameter ) {
-                ExpressionVisitor t(currentContext(), editor());
-                t.visitExpression(expression);
-                
-                setLastType(t.lastType());
-                Declaration* paramDeclaration = visitVariableDeclaration<Declaration>(realParam);
-                setLastType(AbstractType::Ptr(0));
-                
-                FunctionType::Ptr type = currentType<FunctionType>();
-                if ( type && paramDeclaration ) {
-                    kDebug() << "Adding argument: " << realParam->identifier->value << paramDeclaration->abstractType();
-                    type->addArgument(AbstractType::Ptr(new IntegralType(IntegralType::TypeNone)));
-                    static_cast<FunctionDeclaration*>(currentDeclaration())->addDefaultParameter(paramDeclaration->identifier().identifier());
-                    kDebug() << "Arguments count: " << type->arguments().length();
-                    if ( isFirst ) {
-                        m_firstAttributeDeclaration = DeclarationPointer(paramDeclaration);
-                        isFirst = false;
-                    }
+            if ( ! realParam || realParam->context != ExpressionAst::Parameter ) continue;
+            
+            Declaration* paramDeclaration = visitVariableDeclaration<Declaration>(realParam);
+            
+            if ( type && paramDeclaration && currentIndex > firstDefaultParameterOffset ) {
+                kDebug() << "Adding default argument: " << realParam->identifier->value << paramDeclaration->abstractType();
+                // find type of given default value
+                ExpressionVisitor v(currentContext());
+                v.visitNode(node->defaultValues.at(currentIndex - firstDefaultParameterOffset - 1));
+                if ( v.lastType() ) {
+                    type->addArgument(v.lastType());
                 }
+                else {
+                    type->addArgument(AbstractType::Ptr(new IntegralType(IntegralType::TypeNone)));
+                }
+                static_cast<FunctionDeclaration*>(currentDeclaration())->addDefaultParameter(paramDeclaration->identifier().identifier());
+                kDebug() << "Arguments count: " << type->arguments().length();
+            }
+            else {
+                kDebug() << "Not a default argument: " << realParam->identifier->value;
+                type->addArgument(AbstractType::Ptr(new IntegralType(IntegralType::TypeNone)));
+            }
+            if ( isFirst ) {
+                m_firstAttributeDeclaration = DeclarationPointer(paramDeclaration);
+                isFirst = false;
             }
         }
     }

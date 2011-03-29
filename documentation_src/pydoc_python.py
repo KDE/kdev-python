@@ -114,6 +114,8 @@ def replace(text, *pairs):
 
 def cram(text, maxlen):
     """Omit part of a string if needed to make it fit in a maximum length."""
+    # we do not want this.
+    return text
     if len(text) > maxlen:
         pre = max(0, (maxlen-3)//2)
         post = max(0, maxlen-3-pre)
@@ -369,13 +371,17 @@ class Doc:
 
 class TextRepr(Repr):
     """Class for safely making a text representation of a Python object."""
+    safeTypes = [types.BooleanType, types.ComplexType, types.DictionaryType, types.FloatType, types.FloatType, types.IntType, types.StringType]
     def __init__(self):
         Repr.__init__(self)
-        self.maxlist = self.maxtuple = 20
-        self.maxdict = 10
-        self.maxstring = self.maxother = 100
+        self.maxlist = self.maxtuple = 9999999
+        self.maxdict = 999999
+        self.maxstring = self.maxother = 999999
 
     def repr1(self, x, level):
+        if not type(x) in self.safeTypes:
+            return "None"
+            
         if hasattr(type(x), '__name__'):
             methodname = 'repr_' + join(split(type(x).__name__), '_')
             if hasattr(self, methodname):
@@ -383,6 +389,8 @@ class TextRepr(Repr):
         return cram(stripid(repr(x)), self.maxother)
 
     def repr_string(self, x, level):
+        if not type(x) in self.safeTypes:
+            return "None"
         test = cram(x, self.maxstring)
         testrepr = repr(test)
         if '\\' in test and '\\' not in replace(testrepr, r'\\', ''):
@@ -506,17 +514,18 @@ class TextDoc(Doc):
 
         if classes:
             classlist = map(lambda key_value: key_value[1], classes)
-            contents = [self.formattree(
-                inspect.getclasstree(classlist, 1), name)]
+            contents = []
+            #contents = [self.formattree(
+                #inspect.getclasstree(classlist, 1), name)]
             for key, value in classes:
                 contents.append(self.document(value, key, name))
-            result = result + self.section('CLASSES', join(contents, '\n'))
+            result = result + join(contents, '\n')
 
         if funcs:
             contents = []
             for key, value in funcs:
                 contents.append(self.document(value, key, name))
-            result = result + join(contents, '\ndef ')
+            result = result + join(contents, '\n')
 
         if data:
             contents = []
@@ -546,40 +555,41 @@ class TextDoc(Doc):
         def makename(c, m=object.__module__):
             return classname(c, m)
 
-        if name == realname:
-            title = 'class ' + self.bold(realname)
-        else:
-            title = self.bold(name) + ' = class ' + realname
+        #if name == realname:
+        title = 'class ' + self.bold(realname)
+        #else:
+            #title = self.bold(name) + ' = class ' + realname
         if bases:
             parents = map(makename, bases)
             title = title + '(%s)' % join(parents, ', ')
+        title = title + ":"
 
-        doc = getdoc(object)
+        doc = '"""' + getdoc(object) + '"""'
         contents = doc and [doc + '\n'] or []
         push = contents.append
 
         # List the mro, if non-trivial.
         mro = deque(inspect.getmro(object))
-        if len(mro) > 2:
-            push("Method resolution order:")
-            for base in mro:
-                push('    ' + makename(base))
-            push('')
+        #if len(mro) > 2:
+            #push("Method resolution order:")
+            #for base in mro:
+                #push('    ' + makename(base))
+            #push('')
 
         # Cute little class to pump out a horizontal rule between sections.
-        class HorizontalRule:
-            def __init__(self):
-                self.needone = 0
-            def maybe(self):
-                if self.needone:
-                    push('-' * 70)
-                self.needone = 1
-        hr = HorizontalRule()
+        #class HorizontalRule:
+            #def __init__(self):
+                #self.needone = 0
+            #def maybe(self):
+                #if self.needone:
+                    #push('-' * 70)
+                #self.needone = 1
+        #hr = HorizontalRule()
 
         def spill(msg, attrs, predicate):
             ok, attrs = _split_list(attrs, predicate)
             if ok:
-                hr.maybe()
+                #hr.maybe()
                 push(msg)
                 for name, kind, homecls, value in ok:
                     push(self.document(getattr(object, name),
@@ -589,7 +599,7 @@ class TextDoc(Doc):
         def spilldescriptors(msg, attrs, predicate):
             ok, attrs = _split_list(attrs, predicate)
             if ok:
-                hr.maybe()
+                #hr.maybe()
                 push(msg)
                 for name, kind, homecls, value in ok:
                     push(self._docdescriptor(name, value, mod))
@@ -598,7 +608,7 @@ class TextDoc(Doc):
         def spilldata(msg, attrs, predicate):
             ok, attrs = _split_list(attrs, predicate)
             if ok:
-                hr.maybe()
+                #hr.maybe()
                 push(msg)
                 for name, kind, homecls, value in ok:
                     if (hasattr(value, '__call__') or
@@ -622,25 +632,25 @@ class TextDoc(Doc):
             if thisclass is __builtin__.object:
                 attrs = inherited
                 continue
-            elif thisclass is object:
-                tag = "defined here"
-            else:
-                tag = "inherited from %s" % classname(thisclass,
-                                                      object.__module__)
+            #elif thisclass is object:
+                #tag = "defined here"
+            #else:
+                #tag = "inherited from %s" % classname(thisclass,
+                                                      #object.__module__)
 
             # Sort attrs by name.
             attrs.sort()
 
             # Pump out the attrs, segregated by kind.
-            attrs = spill("Methods %s:\n" % tag, attrs,
+            attrs = spill("", attrs,
                           lambda t: t[1] == 'method')
-            attrs = spill("Class methods %s:\n" % tag, attrs,
+            attrs = spill("", attrs,
                           lambda t: t[1] == 'class method')
-            attrs = spill("Static methods %s:\n" % tag, attrs,
+            attrs = spill("", attrs,
                           lambda t: t[1] == 'static method')
-            attrs = spilldescriptors("Data descriptors %s:\n" % tag, attrs,
+            attrs = spilldescriptors("", attrs,
                                      lambda t: t[1] == 'data descriptor')
-            attrs = spilldata("Data and other attributes %s:\n" % tag, attrs,
+            attrs = spilldata("", attrs,
                               lambda t: t[1] == 'data')
             assert attrs == []
             attrs = inherited
@@ -648,7 +658,7 @@ class TextDoc(Doc):
         contents = '\n'.join(contents)
         if not contents:
             return title + '\n'
-        return title + '\n' + self.indent(rstrip(contents), ' |  ') + '\n'
+        return title + '\n' + self.indent(rstrip(contents)) + '\n'
 
     def formatvalue(self, object):
         """Format an argument default value as text."""
@@ -690,12 +700,9 @@ class TextDoc(Doc):
         else:
             argspec = '(**args)'
         decl = title + argspec + ":" + self.indent('\n"""') + note
-
-        if skipdocs:
-            return decl + '\n'
-        else:
-            doc = getdoc(object) or ''
-            return decl + '\n' + (doc and rstrip(self.indent(doc)) + '"""' + '\n' + self.indent("return") + "\n")
+        
+        doc = getdoc(object) or ''
+        return "def " + decl + '\n' + doc + '"""' + '\n' + self.indent("\nreturn") + "\n"
 
     def _docdescriptor(self, name, value, mod):
         results = []
@@ -721,10 +728,6 @@ class TextDoc(Doc):
     def docother(self, object, name=None, mod=None, parent=None, maxlen=None, doc=None):
         """Produce text documentation for a data object."""
         repr = self.repr(object)
-        if maxlen:
-            line = (name and name + ' = ' or '') + repr
-            chop = maxlen - len(line)
-            if chop < 0: repr = repr[:chop] + '...'
         line = (name and self.bold(name) + ' = ' or '') + repr
         if doc is not None:
             line += '\n' + self.indent(str(doc))

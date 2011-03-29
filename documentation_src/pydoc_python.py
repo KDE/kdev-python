@@ -695,14 +695,21 @@ class TextDoc(Doc):
             argspec = inspect.formatargspec(
                 args, varargs, varkw, defaults, formatvalue=self.formatvalue)
             if realname == '<lambda>':
-                title = self.bold(name) + ' lambda '
+                title = name + ' lambda '
                 argspec = argspec[1:-1] # remove parentheses
         else:
             argspec = '(**args)'
         decl = title + argspec + ":" + self.indent('\n"""') + note
         
         doc = getdoc(object) or ''
-        return "def " + decl + '\n' + doc + '"""' + '\n' + self.indent("\nreturn") + "\n"
+        
+        if doc.split('\n')[0].find(name) != -1:
+            args = doc.split("\n")[0].split("->")[0]
+            import re
+            argspec = re.sub("[^\\w\\(\\)\\,\\s]", "_", args)
+            
+            decl = argspec + ":" + self.indent('\n"""') + note
+        return "def " + decl + '\n' + self.indent(doc) + '"""' + '\n' + self.indent("\nreturn") + "\n"
 
     def _docdescriptor(self, name, value, mod):
         results = []

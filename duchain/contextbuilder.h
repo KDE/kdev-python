@@ -93,6 +93,7 @@ protected:
     virtual void visitFunctionArguments(FunctionDefinitionAst* node);
     virtual void visitFunctionBody(FunctionDefinitionAst* node);
     void openContextForFunctionBody(FunctionDefinitionAst* node);
+    void openContextForClassDefinition(ClassDefinitionAst* node);
     
     DUContext* openSafeContext( Python::Ast* node, RangeInRevision& range, DUContext::ContextType type, Python::Identifier* identifier = 0 );
     

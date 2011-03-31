@@ -214,18 +214,22 @@ void ContextBuilder::openContextForStatementList( const QList<Ast*>& l, DUContex
     }
 }
 
-void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
+void ContextBuilder::openContextForClassDefinition(ClassDefinitionAst* node)
 {
     RangeInRevision range(node->startLine, node->startCol, node->body.last()->endLine + 1, 0);
-    openContext( node, range, DUContext::Class, node->name);
     DUChainWriteLocker lock(DUChain::lock());
+    openContext( node, range, DUContext::Class, node->name);
     currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));
     lock.unlock();
     kDebug() << " +++ opening CLASS context: " << range.castToSimpleRange() << node->name;
     addImportedContexts();
+}
+
+void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
+{
+    openContextForClassDefinition(node);
     Python::AstDefaultVisitor::visitClassDefinition(node);
     closeContext();
-    kDebug() << " --- closing CLASS context: " << range.castToSimpleRange();
 }
 
 void ContextBuilder::visitCode(CodeAst* node) {

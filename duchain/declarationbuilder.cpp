@@ -437,19 +437,20 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     StructureType::Ptr type(new StructureType());
     type->setDeclaration(dec);
     dec->setType(type);
-    
+    lock.unlock();
     
     openType(type);
     
     // needs to be done here, so the assignment of the internal context happens before visiting the body
-    RangeInRevision range(node->startLine, node->startCol, node->body.last()->endLine + 1, 0);
-    openContext( node, range, DUContext::Class, node->name);
-    kDebug() << " +++ opening CLASS context: " << range.castToSimpleRange() << node->name;
+    
+    openContextForClassDefinition(node);
+    lock.lock();
     dec->setInternalContext(currentContext());
     lock.unlock();
-    DeclarationBuilderBase::visitClassDefinition( node );
+    // yes, we do not call the context builder here, because contexts are already open
+    AstDefaultVisitor::visitClassDefinition( node );
     lock.lock();
-    kDebug() << " --- closing CLASS context: " << range.castToSimpleRange();
+    kDebug() << " --- closing CLASS context: " << currentContext()->range().castToSimpleRange();
     closeContext();
     lock.unlock();
     
@@ -604,6 +605,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             
             if ( ! realParam || realParam->context != ExpressionAst::Parameter ) continue;
             
+            setLastType(AbstractType::Ptr(0));
             Declaration* paramDeclaration = visitVariableDeclaration<Declaration>(realParam);
             
             if ( type && paramDeclaration && currentIndex > firstDefaultParameterOffset ) {

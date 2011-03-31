@@ -47,6 +47,8 @@
 #include "parser/parserConfig.h"
 #include "implementfunctioncompletionitem.h"
 
+#include "duchain/helpers.h"
+
 using namespace KTextEditor;
 using namespace KDevelop;
 
@@ -172,7 +174,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     else if ( m_operation == PythonCodeCompletionContext::ImportFileCompletion ) {
         kDebug() << "Preparing to do autocompletion for import...";
         m_maxFolderScanDepth = 1;
-        foreach ( ImportFileItem* item, includeFileItems(getSearchPaths(m_workingOnDocument)) ) {
+        foreach ( ImportFileItem* item, includeFileItems(Helper::getSearchPaths(m_workingOnDocument)) ) {
             Q_ASSERT(item);
             QString relativeUrl = KUrl::relativeUrl(m_workingOnDocument, item->includeItem.basePath);
             QString absoluteUrl = item->includeItem.basePath.path();
@@ -336,7 +338,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
 QList< ImportFileItem* > PythonCodeCompletionContext::includeFileItemsForSubmodule(QString submodule)
 {
     QList<ImportFileItem*> items;
-    QList<KUrl> searchPaths = getSearchPaths(m_workingOnDocument);
+    QList<KUrl> searchPaths = Helper::getSearchPaths(m_workingOnDocument);
     QStringList subdirs = submodule.split(".");
     QList<KUrl> foundPaths;
     

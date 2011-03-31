@@ -702,9 +702,10 @@ class TextDoc(Doc):
         decl = title + argspec + ":" + self.indent('\n"""') + note
         
         doc = getdoc(object) or ''
+	if title[:2] == '__': return ""
         
-        if doc.split('\n')[0].find(name) != -1:
-            args = doc.split("\n")[0].split("->")[0]
+        if doc.split('\n')[0].find(name) != -1 and argspec == '(**args)':
+            args = doc.split("\n")[0].split("->")[0].split('<==>')[0]
             import re
             argspec = re.sub("[^\\w\\(\\)\\,\\s]", "_", args)
             

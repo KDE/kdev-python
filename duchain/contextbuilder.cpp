@@ -46,6 +46,7 @@
 #include "pythonparsejob.h"
 #include "declarationbuilder.h"
 #include "parser/parserConfig.h"
+#include "helpers.h"
 
 using namespace KDevelop;
 
@@ -261,7 +262,7 @@ void ContextBuilder::visitCode(CodeAst* node) {
 QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
 {
     QStringList nameComponents = name.split(".");
-    QList<KUrl> searchPaths = getSearchPaths(currentlyParsedDocument().toUrl());
+    QList<KUrl> searchPaths = Helper::getSearchPaths(currentlyParsedDocument().toUrl());
     KUrl tmp;
     QStringList leftNameComponents;
     QString dirFound("<invalid>");
@@ -288,11 +289,6 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
         }
     }
     return QPair<KUrl, QStringList>(KUrl(), QStringList());
-}
-
-void ContextBuilder::visitImportFrom(ImportFromAst* node)
-{
-    Python::AstDefaultVisitor::visitImportFrom(node);
 }
 
 void ContextBuilder::visitImport(ImportAst* node)
@@ -381,6 +377,7 @@ void ContextBuilder::visitFunctionBody(FunctionDefinitionAst* node)
     DUContext* ctx = openContext(node, range, DUContext::Function, identifierForNode( node->name ) );
     currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));
     kDebug() << " +++ opening context (function definition): " << range.castToSimpleRange();
+    kDebug() << currentContext()->type() << DUContext::Function;
     addImportedContexts();
     
     visitNodeList(node->body);

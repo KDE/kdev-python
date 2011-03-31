@@ -88,11 +88,11 @@ protected:
     virtual void visitWith( WithAst* node );
     virtual void visitCode(CodeAst* node);
     virtual void visitImport(ImportAst* node);
-    virtual void visitImportFrom(ImportFromAst* node);
     
     // helpers, because they need to be called seperately from DeclarationBuilder... well
     virtual void visitFunctionArguments(FunctionDefinitionAst* node);
     virtual void visitFunctionBody(FunctionDefinitionAst* node);
+    void openContextForFunctionBody(FunctionDefinitionAst* node);
     
     DUContext* openSafeContext( Python::Ast* node, RangeInRevision& range, DUContext::ContextType type, Python::Identifier* identifier = 0 );
     

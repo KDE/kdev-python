@@ -94,7 +94,7 @@ void DeclarationBuilder::closeDeclaration()
     DeclarationBuilderBase::closeDeclaration();
 }
 
-template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node)
+template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, Declaration* previous)
 {
     NameAst* currentVariableDefinition = dynamic_cast<NameAst*>(node);
     Q_ASSERT(currentVariableDefinition);
@@ -105,13 +105,13 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node)
             return 0;
     }
     Identifier* id = currentVariableDefinition->identifier;
-    return visitVariableDeclaration<T>(id, currentVariableDefinition);
+    return visitVariableDeclaration<T>(id, currentVariableDefinition, previous);
 }
 
 /*
  * WARNING: This will return a nullpointer if another than the expected type of variable was found!
  * */
-template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast* originalAst)
+template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast* originalAst, Declaration* previous)
 {
     DUChainWriteLocker lock(DUChain::lock());
     Q_ASSERT(node);
@@ -121,18 +121,26 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     //CursorInRevision until = editorFindRange(node, node).end;
     
     Declaration* dec = 0;
-    QList<Declaration*> existingDeclarations = currentContext()->findDeclarations(identifierForNode(node), editorFindRange(node, node).end);
-    if ( existingDeclarations.length() ) {
-        kDebug() << "Existing declaration range: " << existingDeclarations.last()->range().castToSimpleRange() << "vs" << editorFindRange(node, node).castToSimpleRange();
-    }
-    if ( existingDeclarations.length() && existingDeclarations.last()->range() == editorFindRange(node, node) ) {
-        if ( dynamic_cast<T*>(existingDeclarations.last()) ) {
-            kDebug() << "Opening previously existing declaration for " << existingDeclarations.last()->toString();
-            openDeclarationInternal(existingDeclarations.last());
-            dec = existingDeclarations.last();
-            setEncountered(dec);
-            existingDeclarations.removeLast();
+    QList<Declaration*> existingDeclarations;
+    if ( ! previous ) {
+        existingDeclarations = currentContext()->findDeclarations(identifierForNode(node), editorFindRange(node, node).end);
+        if ( existingDeclarations.length() ) {
+            kDebug() << "Existing declaration range: " << existingDeclarations.last()->range().castToSimpleRange() << "vs" << editorFindRange(node, node).castToSimpleRange();
         }
+        if ( existingDeclarations.length() && existingDeclarations.last()->range() == editorFindRange(node, node) ) {
+            if ( dynamic_cast<T*>(existingDeclarations.last()) ) {
+                kDebug() << "Opening previously existing declaration for " << existingDeclarations.last()->toString();
+                openDeclarationInternal(existingDeclarations.last());
+                dec = existingDeclarations.last();
+                setEncountered(dec);
+                existingDeclarations.removeLast();
+            }
+        }
+    }
+    else {
+        dec = previous;
+        openDeclarationInternal(dec);
+        setEncountered(dec);
     }
     
     kDebug() << "VARIABLE CONTEXT: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange() << currentContext()->type() << DUContext::Class;
@@ -321,6 +329,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         setLastType(v.lastType()); // TODO fix this for x, y = a, b, i.e. if node->value->astType == TupleAstType
         if ( target->astType == Ast::NameAstType ) {
             if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeFunction) {
+                // TODO change this: use AliasDeclaration, I guess
                 FunctionDeclaration* d = visitVariableDeclaration<FunctionDeclaration>(target);
                 if ( v.lastDeclaration() && d ) {
                     // copy docstring
@@ -342,15 +351,15 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             // declare the attribute.
             // however, if there's an earlier declaration which does not match the current position
             // (so it's really a different declaration) we skip this.
+            Declaration* haveDeclaration = 0;
             if ( unknown.data() && unknown->range() != editorFindRange(target, target) && ! unknown->range().isEmpty() ) {
                 kWarning() << "Another declaration exists for this attribute, aborting";
                 kDebug() << "Other range: " << unknown->range().castToSimpleRange() << "; own range: " << editorFindRange(target, target).castToSimpleRange();
                 continue;
             }
             else if ( unknown.data() ) {
-                kWarning() << "Declaration already created, setting as encountered";
-                setEncountered(unknown.data());
-                continue;
+                kWarning() << "Declaration is already created";
+                haveDeclaration = unknown.data();
             }
             
             ExpressionVisitor checkPreviousAttributes(currentContext(), editor());
@@ -390,13 +399,13 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             bool isAlreadyOpen = contextAlreayOpen(internal);
             if ( isAlreadyOpen ) {
                 activateAlreadyOpenedContext(internal);
-                Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target);
+                Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target, haveDeclaration);
                 closeAlreadyOpenedContext(internal);
             }
             else {
                 injectContext(internal.data());
             
-                Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target);
+                Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target, haveDeclaration);
                 dec->setRange(RangeInRevision(internal->range().start, internal->range().start));
                 dec->setAutoDeclaration(true);
                 DUChainWriteLocker lock(DUChain::lock());
@@ -418,7 +427,6 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
     kDebug() << "opening class definition";
-//     ClassDeclaration* classDec = new ClassDeclaration(editorFindRange(node->body.first(), node->body.last()), currentContext());
     
     DUChainWriteLocker lock(DUChain::lock());
     ClassDeclaration* dec = openDeclaration<ClassDeclaration>( node->name, node );
@@ -429,10 +437,22 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     StructureType::Ptr type(new StructureType());
     type->setDeclaration(dec);
     dec->setType(type);
-    lock.unlock();
+    
     
     openType(type);
+    
+    // needs to be done here, so the assignment of the internal context happens before visiting the body
+    RangeInRevision range(node->startLine, node->startCol, node->body.last()->endLine + 1, 0);
+    openContext( node, range, DUContext::Class, node->name);
+    kDebug() << " +++ opening CLASS context: " << range.castToSimpleRange() << node->name;
+    dec->setInternalContext(currentContext());
+    lock.unlock();
     DeclarationBuilderBase::visitClassDefinition( node );
+    lock.lock();
+    kDebug() << " --- closing CLASS context: " << range.castToSimpleRange();
+    closeContext();
+    lock.unlock();
+    
     closeType();
     
     closeDeclaration();

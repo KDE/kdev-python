@@ -58,7 +58,7 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
                 if (FunctionType::Ptr functionType = dec->type<FunctionType>()) {
                     QString ret;
                     createArgumentList(dec, ret, 0);
-                    return ret;
+                    return ret.replace("__kdevpythondocumentation_builtin_", "");
                 }
             }
         }

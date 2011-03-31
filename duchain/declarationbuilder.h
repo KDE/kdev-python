@@ -76,8 +76,8 @@ protected:
     
     QString getDocstring(QList<Ast*> body);
     
-    template<typename T> T* visitVariableDeclaration(Python::Ast* node);
-    template<typename T> T* visitVariableDeclaration(Identifier* node, Ast* originalAst = 0);
+    template<typename T> T* visitVariableDeclaration(Python::Ast* node, Declaration* previous = 0);
+    template<typename T> T* visitVariableDeclaration(Identifier* node, Ast* originalAst = 0, Declaration* previous = 0);
     
     QStack<TopDUContextPointer> m_importContextsForImportStatement;
     DeclarationPointer m_firstAttributeDeclaration;
@@ -85,26 +85,6 @@ protected:
 private:
     int& nextDeclaration();
 };
-
-// TODO this is not really a good place for this.
-static QList<KUrl> getSearchPaths(KUrl workingOnDocument)
-{
-    QList<KUrl> searchPaths;
-    // search in the projects, as they're packages and likely to be installed or added to PYTHONPATH later
-    foreach  (IProject* project, ICore::self()->projectController()->projects() ) {
-        searchPaths.append(KUrl(project->folder().url()));
-    }
-    
-    searchPaths.append(KUrl("/usr/lib/python2.6")); // TODO fixme
-    searchPaths.append(KUrl(DOC_DIR));
-    
-    // search in the current packages
-    searchPaths.append(KUrl(workingOnDocument.directory()));
-    
-    kDebug() << "Search paths: " << searchPaths;
-    kDebug() << workingOnDocument;
-    return searchPaths;
-}
 
 }
 

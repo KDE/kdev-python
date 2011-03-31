@@ -25,7 +25,6 @@
 
 #include "pythonduchainexport.h"
 #include <language/editor/documentrange.h>
-#include <language/editor/documentrangeobject.h>
 #include "parsesession.h"
 
 namespace Python

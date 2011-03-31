@@ -67,8 +67,6 @@ public:
     static TopDUContext* m_internalFunctions;
     static KUrl internalFunctionsFile;
     
-    void checkInternalFunctionsParsed();
-
 protected:
     virtual void run();
 

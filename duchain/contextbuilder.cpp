@@ -73,6 +73,7 @@ ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node
         updateContext->clearProblems();
     } else {
         kDebug() << "compiling" << url.str();
+        DUChain::self()->updateContextForUrl(currentlyParsedDocument(), TopDUContext::AllDeclarationsContextsAndUses, 0, 5);
     }
     
     return ContextBuilderBase::build(url, node, updateContext);

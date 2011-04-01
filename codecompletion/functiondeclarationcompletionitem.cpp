@@ -96,7 +96,7 @@ void FunctionDeclarationCompletionItem::executed(KTextEditor::Document* document
     kDebug() << "declaration data: " << decl.data();
     const QString suffix = "()";
     int skip = 2; // place cursor behind bracktes
-    if ( decl.data()->defaultParametersSize() != 0 ) {
+    if ( decl.data()->type<FunctionType>()->arguments().length() != 0 ) {
         skip = 1; // place cursor in brackets if there's parameters
     }
     document->replaceText(word, decl.data()->identifier().toString() + suffix);

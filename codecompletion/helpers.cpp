@@ -23,7 +23,7 @@ void createArgumentList(Declaration* dec, QString& ret, QList<QVariant>* highlig
     
     AbstractFunctionDeclaration* decl = dynamic_cast<AbstractFunctionDeclaration*>(dec);
     FunctionType::Ptr functionType = dec->type<FunctionType>();
-
+    
     if (functionType && decl) {
 
         QVector<Declaration*> parameters;
@@ -38,7 +38,18 @@ void createArgumentList(Declaration* dec, QString& ret, QList<QVariant>* highlig
         bool first = true;
         int num = 0;
         
+        bool skipFirst = false;
+        if ( parameters.count() > functionType->arguments().count() ) {
+            // the function is a class method, and its first argument is "self". Don't display that.
+            skipFirst = true;
+        }
+        
         foreach(Declaration* dec, parameters) {
+            if ( skipFirst ) {
+                skipFirst = false;
+                continue;
+            }
+            // that has nothing to do with the skip, it's just for the comma
             if (first)
                 first = false;
             else

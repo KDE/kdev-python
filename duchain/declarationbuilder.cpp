@@ -491,6 +491,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     openType(type);
     kDebug() << " <<< open function type";
     DUChainWriteLocker lock(DUChain::lock());
+    bool hasFirstArgument = false;
     {
         visitNodeList( node->decorators );
         visitFunctionArguments(node);
@@ -503,9 +504,12 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         if ( eventualParentDeclaration.data() && currentType<FunctionType>()->arguments().length() 
              && m_firstAttributeDeclaration.data() && currentContext()->type() == DUContext::Class ) {
             kDebug() << "Changing self argument type";
-            currentType<FunctionType>()->arguments().removeFirst();
+            kDebug() << "Arguments left: " << currentType<FunctionType>()->arguments().count();
+            currentType<FunctionType>()->removeArgument(currentType<FunctionType>()->arguments().at(0));
+            kDebug() << "Arguments left: " << currentType<FunctionType>()->arguments().count();
             DUChainWriteLocker lock(DUChain::lock());
             m_firstAttributeDeclaration->setAbstractType(eventualParentDeclaration->abstractType());
+            hasFirstArgument = true;
         }
         
         visitFunctionBody(node);
@@ -518,8 +522,8 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         dec->setType(type);
     }
 
-    if ( eventualParentDeclaration.data() && type->arguments().length() 
-         && m_firstAttributeDeclaration.data() && currentContext()->type() == DUContext::Class ) {
+    if ( eventualParentDeclaration.data() && currentContext()->type() == DUContext::Class && m_firstAttributeDeclaration.data()
+          && ( type->arguments().length() || hasFirstArgument ) ) {
         if ( m_firstAttributeDeclaration->identifier().identifier() != IndexedString("self") ) {
             KDevelop::Problem *p = new KDevelop::Problem();
             p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(node->startLine, node->startCol, node->startLine, 10000)));

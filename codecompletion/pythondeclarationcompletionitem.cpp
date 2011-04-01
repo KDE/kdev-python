@@ -43,12 +43,12 @@ QVariant Python::PythonDeclarationCompletionItem::data(const QModelIndex& index,
     // this looks a bit hackish; still, this is the sort of stuff I think it's not worth doing clean, as the clean way
     // does not really provide objective advantages (except for being clean) and is definitely way more difficult to implement
     QVariant data = KDevelop::NormalDeclarationCompletionItem::data(index, role, model);
-    if ( data.type() == QMetaType::QString ) {
+    if ( static_cast<QMetaType::Type>(data.type()) == QMetaType::QString ) {
         QString s = data.toString();
         s.replace("__kdevpythondocumentation_builtin_", "").replace("<unknown>", "?");
         return QVariant(s);
     }
-    else if ( data.type() == QMetaType::QStringList ) {
+    else if ( static_cast<QMetaType::Type>(data.type()) == QMetaType::QStringList ) {
         QStringList s = data.toStringList();
         s.replaceInStrings("__kdevpythondocumentation_builtin_", "").replaceInStrings("<unknown>", "?");
         return QVariant(s);

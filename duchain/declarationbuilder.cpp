@@ -399,7 +399,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             bool isAlreadyOpen = contextAlreayOpen(internal);
             if ( isAlreadyOpen ) {
                 activateAlreadyOpenedContext(internal);
-                Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target, haveDeclaration);
+                visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target, haveDeclaration);
                 closeAlreadyOpenedContext(internal);
             }
             else {

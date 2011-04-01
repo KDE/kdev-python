@@ -296,7 +296,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
     return items;
 }
 
-QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItemsForType(AbstractType::Ptr type, DeclarationPointer declaration)
+QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItemsForType(AbstractType::Ptr type, DeclarationPointer /*declaration*/)
 {
     if ( type->whichType() == AbstractType::TypeStructure ) {
         // find properties of class declaration
@@ -403,7 +403,7 @@ QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems(QList<KUrl>
 // lazy as we are, we use regular expression matching for this
 PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position, 
                                                          int depth, const PythonCodeCompletionWorker* parent): CodeCompletionContext(context, text, position, depth),
-                                                         parent(parent), m_context(context), m_position(position), m_operation(PythonCodeCompletionContext::DefaultCompletion)
+                                                         m_operation(PythonCodeCompletionContext::DefaultCompletion), parent(parent), m_position(position), m_context(context)
 {
     m_workingOnDocument = parent->parent->m_currentDocument;
     QString currentLine = "\n" + text.split("\n").last(); // we'll only look at the last line, as 99% of python statements are limited to one line

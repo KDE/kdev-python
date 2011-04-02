@@ -95,6 +95,8 @@ protected:
     void openContextForFunctionBody(FunctionDefinitionAst* node);
     void openContextForClassDefinition(ClassDefinitionAst* node);
     
+    void updateChain(const IndexedString& document);
+    
     DUContext* openSafeContext( Python::Ast* node, RangeInRevision& range, DUContext::ContextType type, Python::Identifier* identifier = 0 );
     
     QMap<QString, ReferencedTopDUContext> contextsForModules;
@@ -118,6 +120,7 @@ protected:
     ReferencedTopDUContext m_topContext;
     DUContextPointer m_moduleContext;
     TopDUContextPointer m_builtinFunctionsContext;
+    bool m_scheduledForReparsing;
 
 private:
     void openContextForStatementList( const QList<Ast*>&, DUContext::ContextType type = DUContext::Other);

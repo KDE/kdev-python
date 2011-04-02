@@ -299,24 +299,63 @@ void DeclarationBuilder::visitImport(ImportAst* node)
     }
 }
 
+Declaration* DeclarationBuilder::findDeclarationInContext(QStringList dottedNameIdentifier, TopDUContext* ctx) const
+{
+    DUChainReadLocker lock(DUChain::lock());
+    DUContext* currentContext = ctx;
+    Q_ASSERT(currentContext);
+    Declaration* lastAccessedDeclaration = 0;
+    foreach ( QString currentIdentifier, dottedNameIdentifier ) {
+        QList<Declaration*> declarations = currentContext->findDeclarations(QualifiedIdentifier(currentIdentifier));
+        // break if the list of identifiers is not yet totally worked through and no declaration with an internal context was found
+        if ( declarations.isEmpty() || ( ! declarations.first()->internalContext() && currentIdentifier != dottedNameIdentifier.last() ) ) {
+            kWarning() << "Declaration not found: " << dottedNameIdentifier << "in top context" << ctx->url().toUrl().path();
+            return 0;
+        }
+        else {
+            lastAccessedDeclaration = declarations.first();
+            currentContext = lastAccessedDeclaration->internalContext();
+        }
+    }
+    return lastAccessedDeclaration;
+}
+
 void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
 {
     Python::AstDefaultVisitor::visitImportFrom(node);
+    QString identifier;
     foreach ( AliasAst* name, node->names ) {
-        importedModuleDeclaration* dec = 0;
+        identifier = node->module->value + "." + name->name->value;
+        AliasDeclaration* dec = 0;
         openType(AbstractType::Ptr(0));
         setLastType(AbstractType::Ptr(0));
-        if ( name->asName ) {
-            dec = visitVariableDeclaration<importedModuleDeclaration>(name->asName);
+        QPair<KUrl, QStringList> moduleInfo = findModulePath(identifier);
+        IndexedString doc(moduleInfo.first);
+        DUChainReadLocker lock(DUChain::lock());
+        TopDUContext* ctx = DUChain::self()->chainForDocument(doc);
+        lock.unlock();
+        if ( ctx ) {
+            Declaration* orignalDeclaration = findDeclarationInContext(moduleInfo.second, ctx);
+            if ( name->asName ) {
+                dec = openDeclaration<AliasDeclaration>(name->asName, name);
+            }
+            else {
+                dec = openDeclaration<AliasDeclaration>(name->name, name);
+            }
+            if ( dec && name->name && node->module && orignalDeclaration ) {
+                DUChainWriteLocker wlock(DUChain::lock());
+                dec->setAliasedDeclaration(orignalDeclaration);
+                kDebug() << "FromImport module name: " << name->name->value;
+            }
+            else kWarning() << "Failed to create an alias declaration";
+        }
+        else if ( moduleInfo.first.isValid() ) {
+            updateChain(doc);
         }
         else {
-            dec = visitVariableDeclaration<importedModuleDeclaration>(name->name);
+            kWarning() << "Invalid URL for module " << identifier << "!";
         }
         closeType();
-        if ( dec && name->name && node->module ) {
-            dec->m_moduleIdentifier = node->module->value + "." + name->name->value;
-            kDebug() << "FromImport module name: " << name->name->value;
-        }
     }
 }
 

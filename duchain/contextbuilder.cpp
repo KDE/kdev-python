@@ -198,6 +198,15 @@ bool ContextBuilder::contextAlreayOpen(DUContextPointer context)
     return false;
 }
 
+void ContextBuilder::updateChain(const IndexedString& document)
+{
+    DUChain::self()->updateContextForUrl(document, TopDUContext::AllDeclarationsAndContexts, 0,  -5);
+    if ( ! m_scheduledForReparsing ) {
+        DUChain::self()->updateContextForUrl(currentlyParsedDocument(), TopDUContext::AllDeclarationsContextsAndUses, 0, 5);
+        m_scheduledForReparsing = true;
+    }
+}
+
 void ContextBuilder::openContextForStatementList( const QList<Ast*>& l, DUContext::ContextType /*type*/)
 {
     if ( l.count() > 0 )
@@ -247,8 +256,7 @@ void ContextBuilder::visitCode(CodeAst* node) {
         }
         
         if ( ! internal ) {
-            DUChain::self()->updateContextForUrl(doc, TopDUContext::AllDeclarationsAndContexts, 0,  -5);
-            DUChain::self()->updateContextForUrl(currentlyParsedDocument(), TopDUContext::AllDeclarationsContextsAndUses, 0, 5);
+            updateChain(doc);
             DUChainWriteLocker wlock(DUChain::lock());
             topContext()->setFeatures(KDevelop::TopDUContext::Empty); // force reparsing
         }

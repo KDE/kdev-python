@@ -79,6 +79,17 @@ protected:
     template<typename T> T* visitVariableDeclaration(Python::Ast* node, Declaration* previous = 0);
     template<typename T> T* visitVariableDeclaration(Identifier* node, Ast* originalAst = 0, Declaration* previous = 0);
     
+    /**
+     * @brief Find a declaration specified by "foo.bar.baz" in the given top context.
+     *
+     * @param dottedNameIdentifier string list of module names, starting with the most general one.
+     * @param ctx top context to search
+     * @return :Declaration* declaration if found, 0x0 otherwise.
+     * 
+     * @note The DUChain must not be locked.
+     **/
+    Declaration* findDeclarationInContext(QStringList dottedNameIdentifier, TopDUContext* ctx) const;
+    
     QStack<TopDUContextPointer> m_importContextsForImportStatement;
     DeclarationPointer m_firstAttributeDeclaration;
     

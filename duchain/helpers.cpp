@@ -18,7 +18,7 @@ QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
     foreach  (IProject* project, ICore::self()->projectController()->projects() ) {
         searchPaths.append(KUrl(project->folder().url()));
     }
-    
+
     searchPaths.append(KUrl("/usr/lib/python2.6")); // TODO fixme
     searchPaths.append(KUrl(DOC_DIR));
     

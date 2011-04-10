@@ -51,6 +51,8 @@
 #include "duchain/pythoneditorintegrator.h"
 #include "codecompletion/pythoncodecompletionmodel.h"
 
+#include <pythoninterpreter.h>
+
 #include <stdio.h>
 #include <QWidget>
 #include <QPushButton>
@@ -78,6 +80,8 @@ LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ 
     m_highlighting = new Highlighting( this );
     PythonCodeCompletionModel* codeCompletion = new PythonCodeCompletionModel(this);
     new KDevelop::CodeCompletion(this, codeCompletion, "Python");
+
+    PythonInterpreter* pythonInterpreter = PythonInterpreter::instance();
 }
 
 LanguageSupport::~LanguageSupport()

@@ -7,6 +7,8 @@
 #include <interfaces/iprojectcontroller.h>
 #include <KDebug>
 
+#include <pythoninterpreter.h>
+
 using namespace KDevelop;
 
 namespace Python {
@@ -19,7 +21,13 @@ QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
         searchPaths.append(KUrl(project->folder().url()));
     }
 
-    searchPaths.append(KUrl("/usr/lib/python2.6")); // TODO fixme
+    kDebug() << "Python path";
+    QStringList tmp = PythonInterpreter::instance()->getPythonPath();
+    foreach(QString item, tmp) {
+        kDebug() << item;
+        searchPaths.append(KUrl(item));
+    }
+
     searchPaths.append(KUrl(DOC_DIR));
     
     // search in the current packages

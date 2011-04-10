@@ -21,8 +21,13 @@ public:
         {
             mutex.lock();
 
-            if (!m_Instance)
+            if (!m_Instance) {
                 m_Instance = new PythonInterpreter;
+                m_Instance->m_isinitialized = false;
+                kDebug() << "Initializing interpreter";
+                m_Instance->init();
+                kDebug() << "Initializing interpreter: Done";
+            }
 
             mutex.unlock();
         }
@@ -50,7 +55,7 @@ public:
     QString code();
 
 
-private:
+private:    
     PythonInterpreter() {}
 
     PythonInterpreter(const PythonInterpreter &); // hide copy constructor
@@ -61,6 +66,8 @@ private:
     static PythonInterpreter* m_Instance;
     Kross::Action* m_action;
     Kross::Action* m_util;
+    QMutex m_mutex;
+    bool m_isinitialized;
 };
 
 };

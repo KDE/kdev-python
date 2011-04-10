@@ -1,7 +1,6 @@
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${KDE4_INCLUDES}
 )
 
 set(parser_STAT_SRCS
@@ -11,7 +10,6 @@ set(parser_STAT_SRCS
     astvisitor.cpp
     astbuilder.cpp
     pythondriver.cpp
-    pythoninterpreter.cpp
 )
 
 # This will build the stuff in python-src/.
@@ -26,9 +24,6 @@ endif( EXISTS ${kdevpython_SOURCE_DIR}/python-src/Makefile )
 execute_process(COMMAND /usr/bin/env make -f ${kdevpython_SOURCE_DIR}/python-src/Makefile WORKING_DIRECTORY ${kdevpython_SOURCE_DIR}/python-src)
 message(STATUS "Any warnings about missing dependencies for python can be ignored, you won't need any of them for sure.")
 
-message(STATUS "Processing python scripts")
-execute_process(WORKING_DIRECTORY ${kdevpython_SOURCE_DIR}/parser/ COMMAND /usr/bin/env python process.py pythoncode.h.in)
-
 install(FILES ${kdevpython_SOURCE_DIR}/python-src/libpython2.7.so DESTINATION ${LIB_INSTALL_DIR})
 install(FILES ${kdevpython_SOURCE_DIR}/python-src/libpython2.7.so.1.0 DESTINATION ${LIB_INSTALL_DIR})
 
@@ -38,7 +33,6 @@ target_link_libraries(kdev4pythonparser
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${QT_QTCORE_LIBRARY} 
     ${kdevpython_SOURCE_DIR}/python-src/libpython2.7.so
-    ${KDE4_KROSSCORE_LIBS}
 )
 
 install(TARGETS kdev4pythonparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})

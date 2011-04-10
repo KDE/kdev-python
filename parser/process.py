@@ -19,13 +19,12 @@ def processpy(arg):
 for arg in sys.argv[1:]:
     print('Opening %s' % arg)
     try:
-        with open(arg, 'rb') as src:
-            with open(arg[:-3], 'wb') as dst:
-                for line in src:
-                    if line.startswith(';// python:'):
-                        dst.write(processpy(line))
-                    else:
-                        dst.write(line)
+        with open(arg, 'rb') as src, open(arg[:-3], 'wb') as dst:
+            for line in src:
+                if line.startswith(';// python:'):
+                    dst.write(processpy(line))
+                else:
+                    dst.write(line)
         print('Output writen to %s' % arg[:-3])                    
     except IOError as e:
         print('Could not process %s: %r' % (filename, e))

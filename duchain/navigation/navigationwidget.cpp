@@ -1,8 +1,5 @@
 #include "navigationwidget.h"
 #include "declarationnavigationcontext.h"
-
-#include <pythoninterpreter.h>
-
 #include <qlayout.h>
 #include <QWebView>
 #include <QUrl>
@@ -37,8 +34,22 @@ NavigationWidget::NavigationWidget(KDevelop::DeclarationPointer declaration, KDe
     m_fullyQualifiedModuleIdentifier = context->m_fullyQualifiedModuleIdentifier;
     kDebug() << "Identifier: " << m_fullyQualifiedModuleIdentifier;
     if ( m_fullyQualifiedModuleIdentifier.length() ) {
+        kDebug() << "Checking wether doc server is running";
+        QTcpSocket* sock = new QTcpSocket();
+        sock->connectToHost(QHostAddress::LocalHost, 1050, QTcpSocket::ReadOnly);
+        bool running = sock->waitForConnected(300);
+        if ( ! running ) {
+            kDebug() << "Not running, starting pydoc server";
+            QProcess::startDetached("/usr/bin/env", QStringList() << "python" << QString(INSTALL_PATH) + "/pydoc.py" << "-p" << "1050");
+            usleep(500000); // give pydoc server 500ms to start up
+        }
+        else {
+            sock->disconnectFromHost();
+        }
+        delete sock;
+        
         m_documentationWebView = new QWebView(this);
-        m_documentationWebView->setHtml(PythonInterpreter::instance()->pydoc(m_fullyQualifiedModuleIdentifier));
+        m_documentationWebView->load(QUrl("http://localhost:1050/" + m_fullyQualifiedModuleIdentifier + ".html"));
         connect( m_documentationWebView, SIGNAL(loadFinished(bool)), SLOT(addDocumentationData(bool)) );
     }
 }

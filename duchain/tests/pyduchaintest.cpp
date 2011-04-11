@@ -39,6 +39,8 @@
 #include "expressionvisitor.h"
 #include "contextbuilder.h"
 #include <language/duchain/types/functiontype.h>
+#include "parser/parserConfig.h"
+#include <astbuilder.h>
 
 QTEST_MAIN(PyDUChainTest)
 
@@ -53,12 +55,18 @@ PyDUChainTest::PyDUChainTest(QObject* parent): QObject(parent)
 
 void PyDUChainTest::initShell()
 {
-  AutoTestShell::init();
-  TestCore* core = new TestCore();
-  core->initialize(KDevelop::Core::NoUi);
+    AutoTestShell::init();
+    TestCore* core = new TestCore();
+    core->initialize(KDevelop::Core::NoUi);
+    
+    KUrl doc_url = KUrl(DOCFILE_PATH);
+    doc_url.cleanPath(KUrl::SimplifyDirSeparators);
 
-  DUChain::self()->disablePersistentStorage();
-  KDevelop::CodeRepresentation::setDiskChangesForbidden(true);
+    DUChain::self()->updateContextForUrl(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
+    DUChain::self()->waitForUpdate(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
+
+    DUChain::self()->disablePersistentStorage();
+    KDevelop::CodeRepresentation::setDiskChangesForbidden(true);
 }
 
 ReferencedTopDUContext PyDUChainTest::parse(const QString& code)
@@ -67,34 +75,27 @@ ReferencedTopDUContext PyDUChainTest::parse(const QString& code)
     session->setContents( code + "\n" ); // append a newline in case the parser doesnt like it without one
     
     static int mytest=0;
-    KUrl filename("/test"+QString::number(mytest++));
-    session->setCurrentDocument(filename);
+    KUrl filename("/tmp/pyduchaintest" + QString::number(mytest++) + ".py");
+    QFile f(filename.path());
+    f.open(QIODevice::WriteOnly);
+    f.write(code.toAscii());
+    f.close();
     
-    QPair<CodeAst*, bool> parserResults = session->parse(0);
-    CodeAst* ast = parserResults.first;
-    m_ast = ast;
-    
-    if(!parserResults.second)
-        return 0;
-    
-    PythonEditorIntegrator editor;
-    DeclarationBuilder builder( &editor );
-    
-    editor.setParseSession(session);
-    
-    ReferencedTopDUContext ret = builder.build(IndexedString(filename), ast);
-    
-    {
-        DUChainWriteLocker lock(DUChain::lock());
-//         ParsingEnvironmentFilePointer parsingEnvironmentFile = ret->parsingEnvironmentFile();
-//         parsingEnvironmentFile->clearModificationRevisions();
-//         parsingEnvironmentFile->setModificationRevision(contents().modification);
-//         DUChain::self()->updateContextEnvironment(m_duContext, parsingEnvironmentFile.data());
-        ret->clearProblems();
+    DUChainReadLocker lock(DUChain::lock());
+    ReferencedTopDUContext chain = DUChain::self()->chainForDocument(IndexedString(filename));
+    lock.unlock();
+    if ( chain ) {
+        DUChainWriteLocker wlock(DUChain::lock());
+        DUChain::self()->removeDocumentChain(chain.data());
     }
+    DUChain::self()->updateContextForUrl(IndexedString(filename), KDevelop::TopDUContext::ForceUpdate);
+    DUChain::self()->waitForUpdate(IndexedString(filename), KDevelop::TopDUContext::ForceUpdate);
+    lock.lock();
+    ReferencedTopDUContext ret = DUChain::self()->chainForDocument(IndexedString(filename));
+    Q_ASSERT(ret.data());
     
-    UseBuilder usebuilder( &editor );
-    usebuilder.buildUses(ast);
+    AstBuilder* a = new AstBuilder();
+    m_ast = a->parse(filename, const_cast<QString&>(code));
     
     return ret;
 }
@@ -106,9 +107,9 @@ void PyDUChainTest::testSimple()
     QFETCH(int, uses);
     
     ReferencedTopDUContext ctx = parse(code);
+    DUChainWriteLocker lock(DUChain::lock());
     QVERIFY(ctx);
     
-    DUChainReadLocker lock(DUChain::lock());
     QVector< Declaration* > declarations = ctx->localDeclarations(ctx);
     
     QCOMPARE(declarations.size(), decls);
@@ -176,13 +177,13 @@ void PyDUChainTest::testRanges()
     QFETCH(int, expected_amount_of_variables); Q_UNUSED(expected_amount_of_variables);
     QFETCH(QStringList, column_ranges);
     
-    ReferencedTopDUContext ctx = parse(code.toAscii());
+    ReferencedTopDUContext ctx = parse(code);
+    DUChainWriteLocker lock(DUChain::lock());
     QVERIFY(ctx);
     
     QVERIFY(m_ast);
     
     for ( int i = 0; i < column_ranges.length(); i++ ) {
-        DUChainReadLocker lock(DUChain::lock());
         int scol = column_ranges.at(i).split(",")[0].toInt();
         int ecol = column_ranges.at(i).split(",")[1].toInt();
         QString identifier = column_ranges.at(i).split(",")[2];
@@ -230,13 +231,13 @@ public:
             return;
         }
         Declaration* d = decls.last();
-        QVERIFY(d->type<IntegralType>());
-        kDebug() << "found: " << node->identifier->value << "is" << d->type<IntegralType>().constData()->dataType() << "should be" << searchingForType;
+        kDebug() << "Declaration: " << node->identifier->value << d->type<StructureType>();
+        QVERIFY(d->abstractType());
+        kDebug() << "found: " << node->identifier->value << "is" << d->abstractType()->toString() << "should be" << searchingForType;
         if ( d->type<IntegralType>().constData()->dataType() == searchingForType ) {
             found = true;
             return;
         }
-        AstDefaultVisitor::visitName(node);
     };
 };
 

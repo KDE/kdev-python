@@ -220,7 +220,7 @@ void PyDUChainTest::testRanges_data()
 
 class TypeTestVisitor : public AstDefaultVisitor {
 public:
-    uint searchingForType;
+    QString searchingForType;
     TopDUContextPointer ctx;
     bool found;
     virtual void visitName(NameAst* node) {
@@ -234,7 +234,7 @@ public:
         kDebug() << "Declaration: " << node->identifier->value << d->type<StructureType>();
         QVERIFY(d->abstractType());
         kDebug() << "found: " << node->identifier->value << "is" << d->abstractType()->toString() << "should be" << searchingForType;
-        if ( d->type<IntegralType>().constData()->dataType() == searchingForType ) {
+        if ( d->abstractType()->toString().replace("__kdevpythondocumentation_builtin_", "") == searchingForType ) {
             found = true;
             return;
         }
@@ -244,7 +244,7 @@ public:
 void PyDUChainTest::testTypes()
 {
     QFETCH(QString, code);
-    QFETCH(uint, expectedType);
+    QFETCH(QString, expectedType);
     
     ReferencedTopDUContext ctx = parse(code.toAscii());
     QVERIFY(ctx);
@@ -262,26 +262,26 @@ void PyDUChainTest::testTypes()
 void PyDUChainTest::testTypes_data()
 {
     QTest::addColumn<QString>("code");
-    QTest::addColumn<uint>("expectedType");
+    QTest::addColumn<QString>("expectedType");
     
-    QTest::newRow("listtype") << "checkme = []" << (uint) IntegralTypeExtended::TypeList;
-    QTest::newRow("listtype_with_contents") << "checkme = [1, 2, 3, 4, 5]" << (uint) IntegralTypeExtended::TypeList;
-    QTest::newRow("listtype_extended") << "some_misc_var = []; checkme = some_misc_var" << (uint) IntegralTypeExtended::TypeList;
-    QTest::newRow("dicttype") << "checkme = {}" << (uint) IntegralTypeExtended::TypeDict;
-    QTest::newRow("dicttype_extended") << "some_misc_var = {}; checkme = some_misc_var" << (uint) IntegralTypeExtended::TypeDict;
-    QTest::newRow("bool") << "checkme = True" << (uint) IntegralType::TypeBoolean;
-    QTest::newRow("float") << "checkme = 3.7" << (uint) IntegralType::TypeFloat;
+    QTest::newRow("listtype") << "checkme = []" << "list";
+    QTest::newRow("listtype_with_contents") << "checkme = [1, 2, 3, 4, 5]" << "list";
+    QTest::newRow("listtype_extended") << "some_misc_var = []; checkme = some_misc_var" << "list";
+    QTest::newRow("dicttype") << "checkme = {}" << "dict";
+    QTest::newRow("dicttype_extended") << "some_misc_var = {}; checkme = some_misc_var" << "dict";
+    QTest::newRow("bool") << "checkme = True" << "bool";
+    QTest::newRow("float") << "checkme = 3.7" << "float";
     
-    QTest::newRow("list_access_right_open_slice") << "checkme = some_list[2:]" << (uint) IntegralTypeExtended::TypeList;
-    QTest::newRow("list_access_left_open_slice") << "checkme = some_list[:2]" << (uint) IntegralTypeExtended::TypeList;
-    QTest::newRow("list_access_closed_slice") << "checkme = some_list[2:17]" << (uint) IntegralTypeExtended::TypeList;
-    QTest::newRow("list_access_step") << "checkme = some_list[::2]" << (uint) IntegralTypeExtended::TypeList;
-    QTest::newRow("list_access_singleItem") << "checkme = some_list[42]" << (uint) IntegralType::TypeNull;
+    QTest::newRow("list_access_right_open_slice") << "checkme = some_list[2:]" << "list";
+    QTest::newRow("list_access_left_open_slice") << "checkme = some_list[:2]" << "list";
+    QTest::newRow("list_access_closed_slice") << "checkme = some_list[2:17]" << "list";
+    QTest::newRow("list_access_step") << "checkme = some_list[::2]" << "list";
+    QTest::newRow("list_access_singleItem") << "checkme = some_list[42]" << "null";
     
-    QTest::newRow("funccall_number") << "def foo(): return 3; \ncheckme = foo();" << (uint) IntegralType::TypeFloat;
-    QTest::newRow("funccall_string") << "def foo(): return 'a'; \ncheckme = foo();" << (uint) IntegralType::TypeString;
-    QTest::newRow("funccall_list") << "def foo(): return []; \ncheckme = foo();" << (uint) IntegralTypeExtended::TypeList;
-    QTest::newRow("funccall_dict") << "def foo(): return {}; \ncheckme = foo();" << (uint) IntegralTypeExtended::TypeDict;
+    QTest::newRow("funccall_number") << "def foo(): return 3; \ncheckme = foo();" << "float";
+    QTest::newRow("funccall_string") << "def foo(): return 'a'; \ncheckme = foo();" << "string";
+    QTest::newRow("funccall_list") << "def foo(): return []; \ncheckme = foo();" << "list";
+    QTest::newRow("funccall_dict") << "def foo(): return {}; \ncheckme = foo();" << "dict";
 //    QTest::newRow("funccall_dict") << "def foo(): return foo; checkme = foo();" << (uint) IntegralType::TypeFunction;
 }
 

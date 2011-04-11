@@ -102,15 +102,18 @@ void ParseJob::run()
     
     LanguageSupport* lang = python();
     ILanguage* ilang = lang->language();
-    QReadLocker parselock(ilang->parseLock());
-    UrlParseLock urlLock(document());
     
-    if (abortRequested() || !python() || !python()->language()) {
+    if ( !python() || !python()->language()) {
         kWarning() << "Language support is NULL";
         return abortJob();
     }
-
+    
+    if ( abortRequested() ) return abortJob();
     readContents();
+    
+    QReadLocker parselock(ilang->parseLock());
+    UrlParseLock urlLock(document());
+    
     m_session->setContents( QString::fromUtf8(contents().contents) + "\n" ); // append a newline in case the parser doesnt like it without one
     Q_ASSERT(m_url.isValid());
     m_session->setCurrentDocument(m_url);

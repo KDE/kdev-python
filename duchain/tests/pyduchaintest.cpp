@@ -41,6 +41,7 @@
 #include <language/duchain/types/functiontype.h>
 #include "parser/parserConfig.h"
 #include <astbuilder.h>
+#include <language/duchain/aliasdeclaration.h>
 
 QTEST_MAIN(PyDUChainTest)
 
@@ -64,6 +65,14 @@ void PyDUChainTest::initShell()
 
     DUChain::self()->updateContextForUrl(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
     DUChain::self()->waitForUpdate(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
+    
+    QFile f("/tmp/i.py");
+    f.open(QIODevice::WriteOnly);
+    f.write("def checkme(): pass\n");
+    f.close();
+    
+    DUChain::self()->updateContextForUrl(IndexedString("/tmp/i.py"), KDevelop::TopDUContext::ForceUpdate);
+    DUChain::self()->waitForUpdate(IndexedString("/tmp/i.py"), KDevelop::TopDUContext::ForceUpdate);
 
     DUChain::self()->disablePersistentStorage();
     KDevelop::CodeRepresentation::setDiskChangesForbidden(true);
@@ -365,6 +374,7 @@ void PyDUChainTest::testFunctionStuff_data()
 void PyDUChainTest::testImportDeclarations() {
     QFETCH(QString, code);
     QFETCH(QStringList, expectedDecls);
+    QFETCH(bool, shouldBeAliased);
     
     ReferencedTopDUContext ctx = parse(code.toAscii());
     QVERIFY(ctx);
@@ -383,10 +393,17 @@ void PyDUChainTest::testImportDeclarations() {
         kDebug() << "Found " << foundDecls.length() << " Declarations for " << name;
         QVERIFY(foundDecls.length() > 0);
         foreach ( Declaration* current, foundDecls ) {
-            kDebug() << "Found identifier: " << current->identifier().toString() << current->range().castToSimpleRange() << "(should be " << start << "," << end << ")";
-            if ( current->range().start.column == start && current->range().end.column == end ) {
-                found = true;
-                break;
+            bool isAliased = false;
+            if ( current->topContext() != ctx->topContext() ) isAliased = true;
+            if ( isAliased && shouldBeAliased ) {
+                found = true; // TODO fixme
+            }
+            else if ( ! shouldBeAliased ) {
+                kDebug() << "Found identifier: " << current->identifier().toString() << current->range().castToSimpleRange() << "(should be " << start << "," << end << ")";
+                if ( current->range().start.column == start && current->range().end.column == end ) {
+                    found = true;
+                    break;
+                }
             }
         }
         QVERIFY(found);
@@ -396,10 +413,11 @@ void PyDUChainTest::testImportDeclarations() {
 void PyDUChainTest::testImportDeclarations_data() {
     QTest::addColumn<QString>("code");
     QTest::addColumn<QStringList>("expectedDecls");
+    QTest::addColumn<bool>("shouldBeAliased");
     
-    QTest::newRow("from_import") << "from foo import checkme" << ( QStringList() << "checkme,16,23" );
-    QTest::newRow("import") << "import checkme" << ( QStringList() << "checkme,7,14" );
-    QTest::newRow("import_as") << "import foo as checkme" << ( QStringList() << "checkme,14,21" );
-    QTest::newRow("from_import_as") << "from bar import foo as checkme" << ( QStringList() << "checkme,23,30" );
+    QTest::newRow("from_import") << "from i import checkme" << ( QStringList() << "checkme,16,23" ) << true;
+    QTest::newRow("import") << "import checkme" << ( QStringList() << "checkme,7,14" ) << false;
+    QTest::newRow("import_as") << "import foo as checkme" << ( QStringList() << "checkme,14,21" ) << false;
+    QTest::newRow("from_import_as") << "from i import checkme as checkme" << ( QStringList() << "checkme,23,30" ) << true;
 }
 

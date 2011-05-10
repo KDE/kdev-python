@@ -50,7 +50,7 @@ void DumpChain::dump( DUContext * context, bool imported )
         foreach (Declaration* dec, context->localDeclarations())
         {
             kDebug() << QString( (indent+1)*2, ' ' ) << "Declaration: " << dec->toString() << " [" << dec->qualifiedIdentifier() << "]  "<< dec << "(internal ctx" << dec->internalContext() << ")" << context->transformFromLocalRevision(dec->range()).textRange() << ", "<< ( dec->isDefinition() ? "definition, " : "declaration, " ) << dec->uses().count() << "use(s)";
-            for( QMap<IndexedString, QList<RangeInRevision> >::const_iterator it = dec->uses().begin(); it != dec->uses().end(); ++it )
+            for( QMap<IndexedString, QList<RangeInRevision> >::const_iterator it = dec->uses().constBegin(); it != dec->uses().constEnd(); ++it )
             {
                 kDebug() << QString((indent+1)*2, ' ') << "File:" << it.key().str();
                 foreach(RangeInRevision r, it.value())

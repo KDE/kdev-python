@@ -26,7 +26,8 @@ namespace Python {
 PythonCodeCompletionModel::PythonCodeCompletionModel(QObject* parent)
     : CodeCompletionModel(parent)
 {
-
+    // This avoids flickering of the completion-list when full code-completion mode is used
+    setForceWaitForModel(true);
 }
 
 PythonCodeCompletionModel::~PythonCodeCompletionModel() { }

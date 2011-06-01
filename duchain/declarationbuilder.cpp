@@ -170,24 +170,30 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
                     dec->setType(newType);
                 } else {
                     UnsureType::Ptr unsure = UnsureType::Ptr::dynamicCast(currentType);
-                    // maybe it's referenced?
-                    ReferenceType::Ptr rType = ReferenceType::Ptr::dynamicCast(currentType);
-                    if ( !unsure && rType ) {
-                        unsure = UnsureType::Ptr::dynamicCast(rType->baseType());
-                    }
-                    if ( !unsure ) {
-                        unsure = UnsureType::Ptr(new UnsureType());
-                        if ( rType ) {
-                            unsure->addType(rType->baseType()->indexed());
-                        } else {
-                            unsure->addType(dec->indexedType());
+                    UnsureType::Ptr newUnsure = UnsureType::Ptr::dynamicCast(newType);
+                    // both types are unsure, so join the list of possible types.
+                    if ( unsure && newUnsure ) {
+                        int len = newUnsure->typesSize();
+                        for ( int i = 0; i < len; i++ ) {
+                            unsure->addType(newUnsure->types()[i]);
                         }
+                        dec->setType(unsure);
                     }
-                    unsure->addType(newType->indexed());
-                    if ( rType ) {
-                        rType->setBaseType(AbstractType::Ptr(unsure.unsafeData()));
-                        dec->setType(rType);
-                    } else {
+                    // one of them is unsure, use that and add the other one
+                    else if ( unsure ) {
+                        unsure->addType(newType->indexed());
+                        dec->setType(unsure);
+                    }
+                    else if ( newUnsure ) {
+                        AbstractType::Ptr newType = AbstractType::Ptr(newUnsure->clone());
+                        UnsureType::Ptr newUnsureType = UnsureType::Ptr::dynamicCast(newType);
+                        newUnsureType->addType(currentType->indexed());
+                        dec->setType(newType);
+                    }
+                    else {
+                        unsure = UnsureType::Ptr(new UnsureType());
+                        unsure->addType(newType->indexed());
+                        unsure->addType(currentType->indexed());
                         dec->setType(unsure);
                     }
                 }

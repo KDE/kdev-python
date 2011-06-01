@@ -369,11 +369,8 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         if ( target->astType == Ast::NameAstType ) {
             if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeFunction) {
                 // TODO change this: use AliasDeclaration, I guess
-                FunctionDeclaration* d = visitVariableDeclaration<FunctionDeclaration>(target);
-                if ( v.lastDeclaration() && d ) {
-                    // copy docstring
-                    d->setComment(v.lastDeclaration()->comment());
-                }
+                AliasDeclaration* decl = openDeclaration<AliasDeclaration>(static_cast<NameAst*>(target)->identifier, target);
+                decl->setAliasedDeclaration(v.lastDeclaration().data());
             }
             else {
                 visitVariableDeclaration<Declaration>(target);

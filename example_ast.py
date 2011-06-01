@@ -5,11 +5,8 @@ class some_class(foo, bar):
 	attr1 = 3
 	attr2 = 5
 	attr3 = 'str'
-	
-	def some_method(self):
-        return 3
-	
-	
+
+
 
 some_instance = some_class()
 some_instance.attr1
@@ -51,8 +48,11 @@ s = returns_str()
 l = returns_list()
 
 def simple_func(foo):
-	# usage comment, bla, param:foo
+	""" usage comment, bla, param:foo"""
 	pass
+
+copied = simple_func
+print copied
 
 def function(foo):
 	""" docstring

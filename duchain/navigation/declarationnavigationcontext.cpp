@@ -59,15 +59,21 @@ NavigationContextPointer DeclarationNavigationContext::registerChild(Declaration
     return AbstractDeclarationNavigationContext::registerChild(new DeclarationNavigationContext(declaration, m_topContext, this));
 }
 
+QString DeclarationNavigationContext::html(bool shorten)
+{
+    QString h = KDevelop::AbstractDeclarationNavigationContext::html(shorten);
+    return h.replace("__kdevpythondocumentation_builtin_", "");
+}
+
 void DeclarationNavigationContext::makeLink(const QString& name, DeclarationPointer declaration, NavigationAction::Type actionType)
 {
-    QString linktext = name;
-    KUrl docfile(DOCFILE_PATH);
-    docfile.cleanPath(KUrl::SimplifyDirSeparators);
-    if ( declaration && declaration->url() == IndexedString(docfile.path()) ) {
-        modifyHtml() += linktext.replace("__kdevpythondocumentation_builtin_", "");
-        return;
-    }
+//     QString linktext = name;
+//     KUrl docfile(DOCFILE_PATH);
+//     docfile.cleanPath(KUrl::SimplifyDirSeparators);
+//     if ( declaration && declaration->url() == IndexedString(docfile.path()) ) {
+//         modifyHtml() += linktext.replace("", "");
+//         return;
+//     }
     AbstractDeclarationNavigationContext::makeLink(name, declaration, actionType);
 }
 

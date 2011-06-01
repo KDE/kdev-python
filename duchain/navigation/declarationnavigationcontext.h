@@ -37,7 +37,7 @@ protected:
 //     virtual KDevelop::QualifiedIdentifier prettyQualifiedIdentifier( KDevelop::DeclarationPointer decl ) const;
 //     virtual void htmlClass();
 //     virtual void htmlFunction();
-//     QString html(bool shorten = false);
+    QString html(bool shorten = false);
 
     void makeLink( const QString& name, KDevelop::DeclarationPointer declaration, KDevelop::NavigationAction::Type actionType );
 

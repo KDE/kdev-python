@@ -373,10 +373,9 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
 
 void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 {
-    ExpressionVisitor v(currentContext(), editor());
-    v.visitNode(node->value);
-    
     QList<ExpressionAst*> realTargets;
+    QList<AbstractType::Ptr> realValues;
+    QList<DeclarationPointer> realDeclarations;
     
     foreach ( ExpressionAst* target, node->targets ) {
         if ( target->astType == Ast::TupleAstType ) {
@@ -390,13 +389,42 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         }
     }
     
+    if ( node->value->astType == Ast::TupleAstType ) {
+        foreach ( ExpressionAst* value, static_cast<TupleAst*>(node->value)->elements ) {
+            ExpressionVisitor v(currentContext(), editor());
+            v.visitNode(value);
+            realValues << v.lastType();
+            realDeclarations << v.lastDeclaration();
+        }
+    }
+    else {
+        ExpressionVisitor v(currentContext(), editor());
+        v.visitNode(node->value);
+        realValues << v.lastType();
+        realDeclarations << v.lastDeclaration();
+    }
+    
+    AbstractType::Ptr tupleElementType;
+    DeclarationPointer tupleElementDeclaration;
+    bool canUnpack = realTargets.length() == realValues.length();
+    int i = 0;
     foreach ( ExpressionAst* target, realTargets ) {
-        setLastType(v.lastType()); // TODO fix this for x, y = a, b, i.e. if node->value->astType == TupleAstType
+        if ( canUnpack ) {
+            tupleElementType = realValues.at(i);
+            tupleElementDeclaration = realDeclarations.at(i);
+        }
+        else {
+            tupleElementType = AbstractType::Ptr(new IntegralType(IntegralType::TypeNull));
+            tupleElementDeclaration = 0;
+        }
+        i += 1;
+        setLastType(tupleElementType); // TODO fix this for x, y = a, b, i.e. if node->value->astType == TupleAstType
         if ( target->astType == Ast::NameAstType ) {
-            if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeFunction) {
-                // TODO change this: use AliasDeclaration, I guess
-                AliasDeclaration* decl = openDeclaration<AliasDeclaration>(static_cast<NameAst*>(target)->identifier, target);
-                decl->setAliasedDeclaration(v.lastDeclaration().data());
+            if ( tupleElementType && tupleElementType->whichType() == AbstractType::TypeFunction ) {
+                if ( tupleElementDeclaration ) {
+                    AliasDeclaration* decl = openDeclaration<AliasDeclaration>(static_cast<NameAst*>(target)->identifier, target);
+                    decl->setAliasedDeclaration(tupleElementDeclaration.data());
+                }
             }
             else {
                 visitVariableDeclaration<Declaration>(target);
@@ -466,7 +494,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             }
             else {
                 injectContext(internal.data());
-            
+                
                 Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target, haveDeclaration);
                 dec->setRange(RangeInRevision(internal->range().start, internal->range().start));
                 dec->setAutoDeclaration(true);

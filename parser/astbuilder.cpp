@@ -777,12 +777,13 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
         int currentLine = 0;
         QString currentLineContents;
         QChar c;
-        QChar newline(QString("\n").at(0));
-        int emptySince = 0; int emptySinceLine = 0; int emptyLinesSince = 0; int emptyLinesSinceLine; int lastNonemptyLineBeginning;
+        QChar newline('\n');
+        int emptySince = 0; int emptySinceLine = 0; int emptyLinesSince = 0; int emptyLinesSinceLine = 0; int lastNonemptyLineBeginning = 0;
         unsigned short currentLineIndent = 0;
         bool atLineBeginning = true;
         QList<unsigned short> indents;
         int errline = lineno;
+        int currentLineBeginning = 0;
         for ( int i = 0; i < len; i++ ) {
             c = contents.at(i);
             if ( ! c.isSpace() ) {
@@ -797,6 +798,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
                 }
                 else {
                     currentLine += 1;
+                    currentLineBeginning = i+1;
                     // this line has had content, so reset the "empty lines since" counter
                     if ( ! atLineBeginning ) {
                         lastNonemptyLineBeginning = emptyLinesSince;
@@ -838,10 +840,42 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
         kDebug() << contents;
         
         syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);
-        // 3rd try: discard everything after the last non-empty line.
+        // 3rd try: discard everything after the last non-empty line, but only until the next block start
         if ( ! syntaxtree ) {
-            kWarning() << "Discarding most of the code to be parsed because of previous errors";
-            contents = contents.remove(lastNonemptyLineBeginning, contents.length() - lastNonemptyLineBeginning);
+            kWarning() << "Discarding parts of the code to be parsed because of previous errors";
+            kDebug() << indents;
+            int indentAtError = indents.at(errline);
+            QChar c;
+            bool atLineBeginning = true;
+            int currentIndent = -1;
+            int currentLineBeginning_end = currentLineBeginning;
+            int currentLineContentBeginning = currentLineBeginning;
+            for ( int i = currentLineBeginning; i < len; i++ ) {
+                c = contents.at(i);
+                kDebug() << c;
+                if ( c == '\n' ) {
+                    if ( currentIndent <= indentAtError && currentIndent != -1 ) {
+                        kDebug() << "Start of error code: " << currentLineBeginning;
+                        kDebug() << "End of error block (current position): " << currentLineBeginning_end;
+                        kDebug() << "Length: " << currentLineBeginning_end - currentLineBeginning;
+                        kDebug() << "indent at error <> current indent:" << indentAtError << "<>" << currentIndent;
+//                         contents.remove(currentLineBeginning, currentLineBeginning_end-currentLineBeginning);
+                        break;
+                    }
+                    contents.insert(currentLineContentBeginning - 1, "pass#");
+                    i += 5; len += 5;
+                    atLineBeginning = true;
+                    currentIndent = 0;
+                    currentLineBeginning_end = i + 1;
+                    currentLineContentBeginning = i + 1;
+                    continue;
+                }
+                if ( ! c.isSpace() && atLineBeginning ) {
+                    currentLineContentBeginning = i;
+                    atLineBeginning = false;
+                }
+                if ( c.isSpace() && atLineBeginning ) currentIndent += 1;
+            }
             kDebug() << "This is what is left: " << contents;
             syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);
         }

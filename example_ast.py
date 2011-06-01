@@ -6,7 +6,10 @@ class some_class(foo, bar):
 	attr2 = 5
 	attr3 = 'str'
 
-
+argarg = 2
+def foo(a, b):
+    while a < b:
+       
 
 some_instance = some_class()
 some_instance.attr1

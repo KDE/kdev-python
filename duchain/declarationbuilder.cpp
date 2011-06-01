@@ -376,7 +376,21 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
     ExpressionVisitor v(currentContext(), editor());
     v.visitNode(node->value);
     
+    QList<ExpressionAst*> realTargets;
+    
     foreach ( ExpressionAst* target, node->targets ) {
+        if ( target->astType == Ast::TupleAstType ) {
+            TupleAst* tuple = static_cast<TupleAst*>(target);
+            foreach ( ExpressionAst* ast, tuple->elements ) {
+                realTargets << ast;
+            }
+        }
+        else {
+            realTargets << target;
+        }
+    }
+    
+    foreach ( ExpressionAst* target, realTargets ) {
         setLastType(v.lastType()); // TODO fix this for x, y = a, b, i.e. if node->value->astType == TupleAstType
         if ( target->astType == Ast::NameAstType ) {
             if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeFunction) {

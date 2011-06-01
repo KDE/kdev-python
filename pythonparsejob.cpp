@@ -163,7 +163,6 @@ void ParseJob::run()
         
         if ( m_parent && m_parent->codeHighlighting() ) {
             kDebug() << "Starting highlighter...";
-            DUChainReadLocker lock(DUChain::lock());
             KDevelop::ICodeHighlighting* hl = m_parent->codeHighlighting();
             hl->highlightDUChain(m_duContext);
         }

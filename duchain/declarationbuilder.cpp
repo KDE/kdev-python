@@ -108,6 +108,38 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, 
     return visitVariableDeclaration<T>(id, currentVariableDefinition, previous);
 }
 
+UnsureType::Ptr DeclarationBuilder::mergeTypes(AbstractType::Ptr type, AbstractType::Ptr newType)
+{
+    UnsureType::Ptr unsure = UnsureType::Ptr::dynamicCast(type);
+    UnsureType::Ptr newUnsure = UnsureType::Ptr::dynamicCast(newType);
+    UnsureType::Ptr ret;
+    // both types are unsure, so join the list of possible types.
+    if ( unsure && newUnsure ) {
+        int len = newUnsure->typesSize();
+        for ( int i = 0; i < len; i++ ) {
+            unsure->addType(newUnsure->types()[i]);
+        }
+        ret = unsure;
+    }
+    // one of them is unsure, use that and add the other one
+    else if ( unsure ) {
+        unsure->addType(newType->indexed());
+        ret = unsure;
+    }
+    else if ( newUnsure ) {
+        AbstractType::Ptr createdType = AbstractType::Ptr(newUnsure->clone());
+        UnsureType::Ptr createdUnsureType = UnsureType::Ptr::dynamicCast(newType);
+        createdUnsureType->addType(type->indexed());
+        ret = createdUnsureType;
+    }
+    else {
+        unsure = UnsureType::Ptr(new UnsureType());
+        unsure->addType(newType->indexed());
+        unsure->addType(type->indexed());
+        ret = unsure;
+    }
+    return ret;
+}
 /*
  * WARNING: This will return a nullpointer if another than the expected type of variable was found!
  * */
@@ -169,33 +201,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
                 if ( integral &&  integral->dataType() == IntegralType::TypeMixed ) {
                     dec->setType(newType);
                 } else {
-                    UnsureType::Ptr unsure = UnsureType::Ptr::dynamicCast(currentType);
-                    UnsureType::Ptr newUnsure = UnsureType::Ptr::dynamicCast(newType);
-                    // both types are unsure, so join the list of possible types.
-                    if ( unsure && newUnsure ) {
-                        int len = newUnsure->typesSize();
-                        for ( int i = 0; i < len; i++ ) {
-                            unsure->addType(newUnsure->types()[i]);
-                        }
-                        dec->setType(unsure);
-                    }
-                    // one of them is unsure, use that and add the other one
-                    else if ( unsure ) {
-                        unsure->addType(newType->indexed());
-                        dec->setType(unsure);
-                    }
-                    else if ( newUnsure ) {
-                        AbstractType::Ptr newType = AbstractType::Ptr(newUnsure->clone());
-                        UnsureType::Ptr newUnsureType = UnsureType::Ptr::dynamicCast(newType);
-                        newUnsureType->addType(currentType->indexed());
-                        dec->setType(newType);
-                    }
-                    else {
-                        unsure = UnsureType::Ptr(new UnsureType());
-                        unsure->addType(newType->indexed());
-                        unsure->addType(currentType->indexed());
-                        dec->setType(unsure);
-                    }
+                    dec->setType(mergeTypes(currentType, newType));
                 }
             } else {
                 kDebug() << "Existing declaration with no type from last declaration.";
@@ -510,13 +516,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     FunctionType::Ptr type;
     FunctionDeclaration* dec = 0;
     QList<Declaration*> existing;
-//     {
-//         DUChainReadLocker lock(DUChain::lock());
-//         existing = currentContext()->findDeclarations(identifierForNode(node->name), editorFindRange(node, node).end);
-//     }
-//     if ( !existing.isEmpty() && existing.last()->range() == editorFindRange(node, node) )
-//         dec = dynamic_cast<FunctionDeclaration*>(existing.last());
-//     
+
     if ( ! dec ) 
         dec = openDeclaration<FunctionDeclaration>( node->name, node );
 //     else 
@@ -524,7 +524,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     
     eventuallyAssignInternalContext();
     type = FunctionType::Ptr(new FunctionType());
-    
+    type->setReturnType(AbstractType::Ptr(new IntegralType(IntegralType::TypeNone)));
     {
         DUChainWriteLocker lock;
         dec->setType(type);

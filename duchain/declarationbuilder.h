@@ -35,6 +35,7 @@
 #include "contextbuilder.h"
 #include "typebuilder.h"
 #include "parser/parserConfig.h"
+#include <language/duchain/types/unsuretype.h>
 
 namespace Python
 {
@@ -78,6 +79,8 @@ protected:
     
     template<typename T> T* visitVariableDeclaration(Python::Ast* node, Declaration* previous = 0);
     template<typename T> T* visitVariableDeclaration(Identifier* node, Ast* originalAst = 0, Declaration* previous = 0);
+    
+    UnsureType::Ptr mergeTypes(AbstractType::Ptr type, AbstractType::Ptr newType);
     
     /**
      * @brief Find a declaration specified by "foo.bar.baz" in the given top context.

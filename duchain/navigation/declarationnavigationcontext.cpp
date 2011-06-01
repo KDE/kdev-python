@@ -65,21 +65,4 @@ QString DeclarationNavigationContext::html(bool shorten)
     return h.replace("__kdevpythondocumentation_builtin_", "");
 }
 
-void DeclarationNavigationContext::makeLink(const QString& name, DeclarationPointer declaration, NavigationAction::Type actionType)
-{
-//     QString linktext = name;
-//     KUrl docfile(DOCFILE_PATH);
-//     docfile.cleanPath(KUrl::SimplifyDirSeparators);
-//     if ( declaration && declaration->url() == IndexedString(docfile.path()) ) {
-//         modifyHtml() += linktext.replace("", "");
-//         return;
-//     }
-    AbstractDeclarationNavigationContext::makeLink(name, declaration, actionType);
-}
-
-QString DeclarationNavigationContext::declarationKind(DeclarationPointer decl)
-{
-    return AbstractDeclarationNavigationContext::declarationKind(decl);
-}
-
 }

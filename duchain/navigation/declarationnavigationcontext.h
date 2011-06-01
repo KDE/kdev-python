@@ -38,11 +38,6 @@ protected:
 //     virtual void htmlClass();
 //     virtual void htmlFunction();
     QString html(bool shorten = false);
-
-    void makeLink( const QString& name, KDevelop::DeclarationPointer declaration, KDevelop::NavigationAction::Type actionType );
-
-    virtual QString declarationKind(KDevelop::DeclarationPointer decl);
-    
 };
 
 }

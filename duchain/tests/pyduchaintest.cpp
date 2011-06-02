@@ -109,6 +109,18 @@ ReferencedTopDUContext PyDUChainTest::parse(const QString& code)
     return ret;
 }
 
+void PyDUChainTest::testCrashes() {
+    QFETCH(QString, code);
+    ReferencedTopDUContext ctx = parse(code);
+    QVERIFY(ctx);
+}
+
+void PyDUChainTest::testCrashes_data() {
+    QTest::addColumn<QString>("code");
+    
+    QTest::newRow("unicode escape char") << "print u\"\\xe9\"";
+}
+
 void PyDUChainTest::testSimple()
 {
     QFETCH(QString, code);

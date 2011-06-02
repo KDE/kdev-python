@@ -57,6 +57,8 @@
 #include "python-src/Include/grammar.h"
 #include "python-src/Include/parsetok.h"
 
+#include "python-src/Include/unicodeobject.h"
+
 #include "python-src/Include/object.h"
 #include <Modules/cjkcodecs/multibytecodec.h>
 
@@ -729,7 +731,10 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     AstBuilder::pyInitLock.lock();
     if ( ! Py_IsInitialized() ) {
         kDebug() << "Not initialized, calling init func.";
+        char dir[] = INSTALL_PATH;
+        Py_SetPythonHome(dir);
         Py_Initialize();
+        qDebug() << "unicode setting succeeded?" << PyUnicode_SetDefaultEncoding("utf_8");
     }
     else kDebug() << "Already initialized.";
     

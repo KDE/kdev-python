@@ -62,4 +62,5 @@ install(FILES pythonpythonparser.py DESTINATION ${BIN_INSTALL_DIR})
 install(FILES documentation_src/pydoc.py DESTINATION ${BIN_INSTALL_DIR})
 
 install(DIRECTORY documentation_files DESTINATION ${DOCUMENTATION_INSTALL_DIR})
+install(DIRECTORY python-src/Lib/encodings DESTINATION ${BIN_INSTALL_DIR})
 

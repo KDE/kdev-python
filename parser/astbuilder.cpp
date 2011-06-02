@@ -730,11 +730,10 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     
     AstBuilder::pyInitLock.lock();
     if ( ! Py_IsInitialized() ) {
-        kDebug() << "Not initialized, calling init func.";
         char dir[] = INSTALL_PATH;
         Py_SetPythonHome(dir);
+        kDebug() << "Not initialized, calling init func.";
         Py_Initialize();
-        qDebug() << "unicode setting succeeded?" << PyUnicode_SetDefaultEncoding("utf_8");
     }
     else kDebug() << "Already initialized.";
     

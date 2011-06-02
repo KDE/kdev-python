@@ -8826,7 +8826,7 @@ void _PyUnicode_Init(void)
     if (!unicode_empty)
         return;
 
-    strcpy(unicode_default_encoding, "ascii");
+    strcpy(unicode_default_encoding, "utf-8");
     for (i = 0; i < 256; i++)
         unicode_latin1[i] = NULL;
     if (PyType_Ready(&PyUnicode_Type) < 0)

@@ -66,7 +66,8 @@ ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node
         updateContext = DUChain::self()->chainForDocument(url);
     }
     if (updateContext) {
-        kDebug() << "re-compiling" << url.str();
+        qDebug() << "re-compiling" << url.str();
+        qDebug() << "*******************************************";
         DUChainWriteLocker lock(DUChain::lock());
         updateContext->clearImportedParentContexts();
         updateContext->parsingEnvironmentFile()->clearModificationRevisions();

@@ -78,13 +78,19 @@ void PyDUChainTest::initShell()
     KDevelop::CodeRepresentation::setDiskChangesForbidden(true);
 }
 
-ReferencedTopDUContext PyDUChainTest::parse(const QString& code)
+ReferencedTopDUContext PyDUChainTest::parse(const QString& code, const QString& suffix, bool forceUpdate)
 {
     ParseSession* session = new ParseSession;
     session->setContents( code + "\n" ); // append a newline in case the parser doesnt like it without one
     
     static int mytest=0;
-    KUrl filename("/tmp/pyduchaintest" + QString::number(mytest++) + ".py");
+    KUrl filename;
+    if ( suffix.isNull() ) {
+        filename = "/tmp/pyduchaintest" + QString::number(mytest++) + ".py";
+    }
+    else {
+        filename = "/tmp/pyduchaintest__" + suffix + ".py";
+    }
     QFile f(filename.path());
     f.open(QIODevice::WriteOnly);
     f.write(code.toAscii());
@@ -93,7 +99,7 @@ ReferencedTopDUContext PyDUChainTest::parse(const QString& code)
     DUChainReadLocker lock(DUChain::lock());
     ReferencedTopDUContext chain = DUChain::self()->chainForDocument(IndexedString(filename));
     lock.unlock();
-    if ( chain ) {
+    if ( chain && !forceUpdate ) {
         DUChainWriteLocker wlock(DUChain::lock());
         DUChain::self()->removeDocumentChain(chain.data());
     }
@@ -119,6 +125,36 @@ void PyDUChainTest::testCrashes_data() {
     QTest::addColumn<QString>("code");
     
     QTest::newRow("unicode escape char") << "print u\"\\xe9\"";
+}
+
+void PyDUChainTest::testFlickering()
+{
+    QFETCH(QStringList, code);
+    QFETCH(int, before);
+    QFETCH(int, after);
+    
+    ReferencedTopDUContext ctx = parse(code[0], "flickering");
+    int count = ctx->localDeclarations().size();
+    qDebug() << "Declaration count before: " << count;
+    QVERIFY(count == before);
+    ctx = parse(code[1], "flickering", true);
+    count = ctx->localDeclarations().size();
+    qDebug() << "Declaration count afterwards: " << count;
+    QVERIFY(count == after);
+    
+    foreach(Declaration* dec, ctx->localDeclarations()) {
+        qDebug() << dec->toString() << dec->range();
+        qDebug() << dec->uses().size();
+    }
+}
+
+void PyDUChainTest::testFlickering_data()
+{
+    QTest::addColumn<QStringList>("code");
+    QTest::addColumn<int>("before");
+    QTest::addColumn<int>("after");
+    
+    QTest::newRow("declaration_flicker") << ( QStringList() << "a=2\n" << "b=3\na=2\n" ) << 1 << 2;
 }
 
 void PyDUChainTest::testSimple()

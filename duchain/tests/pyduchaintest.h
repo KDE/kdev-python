@@ -39,7 +39,7 @@ class PyDUChainTest : public QObject
         explicit PyDUChainTest(QObject* parent = 0);
         void initShell();
         
-        KDevelop::ReferencedTopDUContext parse(const QString& code);
+        KDevelop::ReferencedTopDUContext parse(const QString& code, const QString& suffix = QString::null, bool forceUpdate = false);
         
         Python::CodeAst* m_ast;
         
@@ -54,6 +54,8 @@ class PyDUChainTest : public QObject
         void testImportDeclarations_data();
         void testCrashes();
         void testCrashes_data();
+        void testFlickering();
+        void testFlickering_data();
 //         void testFunctionStuff();
 //         void testFunctionStuff_data();
 };

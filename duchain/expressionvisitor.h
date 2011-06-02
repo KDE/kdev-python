@@ -99,6 +99,7 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         virtual void visitSubscript(SubscriptAst* node);
         virtual void visitCall(CallAst* node);
         virtual void visitAttribute(AttributeAst* node);
+        virtual void visitTuple(TupleAst* node);
         
         KDevelop::AbstractType::Ptr lastType() const { return m_lastType; }
         KDevelop::DeclarationPointer lastDeclaration() const { return m_lastAccessedDeclaration; }

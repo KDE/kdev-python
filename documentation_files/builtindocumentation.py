@@ -104,6 +104,8 @@ class __kdevpythondocumentation_builtin_float():
     def hex(): return 0x0
     def fromhex(s): return 0
 
+class __kdevpythondocumentation_builtin_tuple():
+    pass
 
 def abs(x): return 0
 def all(iterable): return True

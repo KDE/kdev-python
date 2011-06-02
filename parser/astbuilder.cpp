@@ -756,9 +756,17 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
         
         PyObject* errorMessage_str = PyTuple_GetItem(value, 0);
         PyObject* errorDetails_tuple = PyTuple_GetItem(value, 1);
+        qDebug() << "Eventual errors while extracting tuple: ";
         PyObject_Print(errorMessage_str, stderr, Py_PRINT_RAW);
-        int lineno = PyInt_AsLong(PyTuple_GetItem(errorDetails_tuple, 1)) - 1;
-        int colno = PyInt_AsLong(PyTuple_GetItem(errorDetails_tuple, 2));
+        PyObject* linenoobj = PyTuple_GetItem(errorDetails_tuple, 1);
+        
+        errorMessage_str = PyTuple_GetItem(value, 0);
+        errorDetails_tuple = PyTuple_GetItem(value, 1);
+        PyObject_Print(errorMessage_str, stderr, Py_PRINT_RAW);
+        
+        PyObject* colnoobj = PyTuple_GetItem(errorDetails_tuple, 2);
+        int lineno = PyInt_AsLong(linenoobj) - 1;
+        int colno = PyInt_AsLong(colnoobj);
         
         ProblemPointer p(new Problem());
         SimpleCursor start(lineno, (colno-4 > 0 ? colno-4 : 0));

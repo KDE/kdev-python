@@ -174,7 +174,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
         }
     }
     else {
-        kWarning() << "No declaration found for attribute";
+        kDebug() << "No declaration found for attribute";
         m_lastAccessedAttributeDeclaration = DeclarationPointer(0);
         m_lastAccessedDeclaration = DeclarationPointer(0);
         return unknownTypeEncountered();
@@ -249,6 +249,12 @@ void ExpressionVisitor::visitList(ListAst* node)
 {
     AstDefaultVisitor::visitList(node);
     AbstractType::Ptr type = typeObjectForIntegralType("list");
+    encounter(type);
+}
+
+void ExpressionVisitor::visitTuple(TupleAst* node) {
+    AstDefaultVisitor::visitTuple(node);
+    AbstractType::Ptr type = typeObjectForIntegralType("tuple");
     encounter(type);
 }
 

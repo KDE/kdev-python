@@ -320,13 +320,14 @@ Declaration* DeclarationBuilder::findDeclarationInContext(QStringList dottedName
     foreach ( QString currentIdentifier, dottedNameIdentifier ) {
         QList<Declaration*> declarations = currentContext->findDeclarations(QualifiedIdentifier(currentIdentifier));
         // break if the list of identifiers is not yet totally worked through and no declaration with an internal context was found
-        if ( declarations.isEmpty() || ( ! declarations.first()->internalContext() && currentIdentifier != dottedNameIdentifier.last() ) ) {
+        if ( declarations.isEmpty() || ( ! declarations.first()->internalContext() || currentIdentifier != dottedNameIdentifier.last() ) ) {
             kWarning() << "Declaration not found: " << dottedNameIdentifier << "in top context" << ctx->url().toUrl().path();
             return 0;
         }
         else {
             lastAccessedDeclaration = declarations.first();
             currentContext = lastAccessedDeclaration->internalContext();
+            Q_ASSERT(currentContext);
         }
     }
     return lastAccessedDeclaration;
@@ -337,7 +338,12 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
     Python::AstDefaultVisitor::visitImportFrom(node);
     QString identifier;
     foreach ( AliasAst* name, node->names ) {
-        identifier = node->module->value + "." + name->name->value;
+        if ( node->module ) {
+            identifier = node->module->value + "." + name->name->value;
+        }
+        else {
+            identifier = name->name->value;
+        }
         AliasDeclaration* dec = 0;
         openType(AbstractType::Ptr(0));
         setLastType(AbstractType::Ptr(0));
@@ -448,7 +454,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                 continue;
             }
             else if ( unknown.data() ) {
-                kWarning() << "Declaration is already created";
+                kDebug() << "Declaration is already created";
                 haveDeclaration = unknown.data();
             }
             
@@ -496,11 +502,14 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                 injectContext(internal.data());
                 
                 Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target, haveDeclaration);
-                dec->setRange(RangeInRevision(internal->range().start, internal->range().start));
-                dec->setAutoDeclaration(true);
-                DUChainWriteLocker lock(DUChain::lock());
-                previousContext->createUse(dec->ownIndex(), editorFindRange(attrib, attrib));
-                lock.unlock();
+                if ( dec ) {
+                    dec->setRange(RangeInRevision(internal->range().start, internal->range().start));
+                    dec->setAutoDeclaration(true);
+                    DUChainWriteLocker lock(DUChain::lock());
+                    previousContext->createUse(dec->ownIndex(), editorFindRange(attrib, attrib));
+                    lock.unlock();
+                }
+                else kWarning() << "No declaration created for " << attrib->attribute << "as parent is not a class";
                 
                 closeInjectedContext();
             }

@@ -306,6 +306,7 @@ void PyDUChainTest::testTypes_data()
     
     QTest::newRow("tuple1") << "checkme, foo = 3, \"str\"" << "float";
     QTest::newRow("tuple2") << "foo, checkme = 3, \"str\"" << "string";
+    QTest::newRow("tuple_type") << "checkme = (1, 2)" << "tuple";
 //    QTest::newRow("funccall_dict") << "def foo(): return foo; checkme = foo();" << (uint) IntegralType::TypeFunction;
 }
 

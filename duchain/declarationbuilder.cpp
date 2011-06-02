@@ -155,18 +155,18 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     Declaration* dec = 0;
     QList<Declaration*> existingDeclarations;
     if ( ! previous ) {
-        existingDeclarations = currentContext()->findDeclarations(identifierForNode(node).first(), editorFindRange(node, node).end, 0, DUContext::DontSearchInParent);
+        existingDeclarations = currentContext()->findDeclarations(identifierForNode(node).first(), 
+                                                                  CursorInRevision::invalid(), 0, 
+                                                                  DUContext::DontSearchInParent);
         if ( existingDeclarations.length() ) {
-            kDebug() << "Existing declaration range: " << existingDeclarations.last()->range().castToSimpleRange() << "vs" << editorFindRange(node, node).castToSimpleRange();
-        }
-        if ( existingDeclarations.length() ) {
-            dec = existingDeclarations.last();
-            if ( dynamic_cast<T*>(dec) ) {
-                kDebug() << "Opening previously existing declaration for " << dec->toString();
-                openDeclarationInternal(dec);
-                dec->setRange(editorFindRange(node, node));
-                setEncountered(dec);
+            Declaration* d = existingDeclarations.last();
+            if ( dynamic_cast<T*>(d) && ! wasEncountered(d) ) {
+                kDebug() << "Opening previously existing declaration for " << d->toString();
+                openDeclarationInternal(d);
+                d->setRange(editorFindRange(node, node));
+                setEncountered(d);
                 existingDeclarations.removeLast();
+                dec = d;
             }
         }
     }

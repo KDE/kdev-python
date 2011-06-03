@@ -98,7 +98,7 @@ bool ParseJob::wasReadFromDisk() const
 
 void ParseJob::run()
 {
-    kDebug();
+    qDebug() << " ====> PARSING ====> " << m_url;
     
     LanguageSupport* lang = python();
     ILanguage* ilang = lang->language();

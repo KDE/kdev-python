@@ -4,6 +4,8 @@ import sqlite3
 import os
 import shutil
 
+import sqlite3
+
 conn = sqlite3.connect('documentation.db')
 c = conn.cursor()
 

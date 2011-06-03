@@ -745,23 +745,34 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     flags->cf_flags = 0;
     
     kDebug() << "Done allocating memory, unlocking";
-    AstBuilder::pyInitLock.unlock();
     
+    PyObject *exception, *value, *backtrace;
+    PyErr_Fetch(&exception, &value, &backtrace);
+    kDebug() << "Errors before calling parser: " << exception << value << backtrace;
+    PyObject_Print(value, stderr, Py_PRINT_RAW);
+    
+    kDebug() << "Parser arguments:" << file_input << flags << arena;
     mod_ty syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);
     
+
     if ( ! syntaxtree ) {
         kWarning() << "DID NOT RECEIVE A SYNTAX TREE -- probably parse error.";
         
-        PyObject *exception, *value, *backtrace;
         PyErr_Fetch(&exception, &value, &backtrace);
+        kDebug() << "Error objects: " << exception << value << backtrace;
         PyObject_Print(value, stderr, Py_PRINT_RAW);
         
         PyObject* errorMessage_str = PyTuple_GetItem(value, 0);
         PyObject* errorDetails_tuple = PyTuple_GetItem(value, 1);
         qDebug() << "Eventual errors while extracting tuple: ";
         PyObject_Print(errorMessage_str, stderr, Py_PRINT_RAW);
+       
+        if ( ! errorDetails_tuple ) {
+            kWarning() << "Error retrieving error message, not displaying, and not doing anything";
+            pyInitLock.unlock();
+            return 0;
+        }
         PyObject* linenoobj = PyTuple_GetItem(errorDetails_tuple, 1);
-        
         errorMessage_str = PyTuple_GetItem(value, 0);
         errorDetails_tuple = PyTuple_GetItem(value, 1);
         PyObject_Print(errorMessage_str, stderr, Py_PRINT_RAW);
@@ -893,9 +904,14 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
             kDebug() << "This is what is left: " << contents;
             syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);
         }
-        if ( ! syntaxtree ) return 0; // everything fails, so we abort.
+        if ( ! syntaxtree ) {
+            pyInitLock.unlock();
+            return 0; // everything fails, so we abort.
+        }
     }
     kDebug() << "Got syntax tree from python parser:" << syntaxtree->kind << Module_kind;
+
+    AstBuilder::pyInitLock.unlock();
     
     PythonAstTransformer* t = new PythonAstTransformer();
     t->run(syntaxtree, filename.fileName().replace(".py", ""));

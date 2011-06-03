@@ -42,16 +42,6 @@ using namespace KDevelop;
 DeclarationNavigationContext::DeclarationNavigationContext(DeclarationPointer decl, KDevelop::TopDUContextPointer topContext, AbstractNavigationContext* previousContext)
         : AbstractDeclarationNavigationContext(decl, topContext, previousContext)
 {
-    kDebug() << "Generating declaration widget";
-    importedModuleDeclaration* import_decl = dynamic_cast<importedModuleDeclaration*>(decl.data());
-    if ( import_decl && ! decl->comment().size() ) {
-        kDebug() << " >> Module declaration found! Building documentation";
-        kDebug() << " >> Identifier: " << import_decl->m_moduleIdentifier;
-        m_fullyQualifiedModuleIdentifier = import_decl->m_moduleIdentifier;
-    }
-    else {
-        kDebug() << "Could not find declaration for this module!" << decl->identifier().identifier().str();
-    }
 }
 
 NavigationContextPointer DeclarationNavigationContext::registerChild(DeclarationPointer declaration)

@@ -319,7 +319,8 @@ Declaration* DeclarationBuilder::findDeclarationInContext(QStringList dottedName
     Q_ASSERT(currentContext);
     Declaration* lastAccessedDeclaration = 0;
     foreach ( QString currentIdentifier, dottedNameIdentifier ) {
-        QList<Declaration*> declarations = currentContext->findDeclarations(QualifiedIdentifier(currentIdentifier));
+        QList<Declaration*> declarations = currentContext->findDeclarations(QualifiedIdentifier(currentIdentifier).first(),
+                                                                            CursorInRevision::invalid(), 0, DUContext::DontSearchInParent);
         // break if the list of identifiers is not yet totally worked through and no declaration with an internal context was found
         if ( declarations.isEmpty() || ( ! declarations.first()->internalContext() || currentIdentifier != dottedNameIdentifier.last() ) ) {
             kWarning() << "Declaration not found: " << dottedNameIdentifier << "in top context" << ctx->url().toUrl().path();
@@ -369,7 +370,8 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
             else kWarning() << "Failed to create an alias declaration";
         }
         else if ( moduleInfo.first.isValid() ) {
-            updateChain(doc);
+            kDebug() << " ---> UPDATING ---> " << moduleInfo.first;
+            updateChain(IndexedString(moduleInfo.first));
         }
         else {
             kWarning() << "Invalid URL for module " << identifier << "!";
@@ -568,13 +570,12 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     FunctionType::Ptr type;
     FunctionDeclaration* dec = 0;
     QList<Declaration*> existing;
-
+    
     if ( ! dec ) 
         dec = openDeclaration<FunctionDeclaration>( node->name, node );
 //     else 
 //         setEncountered(existing.last());
     
-    eventuallyAssignInternalContext();
     type = FunctionType::Ptr(new FunctionType());
     type->setReturnType(AbstractType::Ptr(new IntegralType(IntegralType::TypeNone)));
     {
@@ -591,6 +592,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         visitFunctionArguments(node);
         
         closeDeclaration();
+        eventuallyAssignInternalContext();
         
         // this must be done here, because the type of self must be known when parsing the body
         kDebug() << "Checking weather we have to change argument types...";
@@ -610,6 +612,11 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     }
     kDebug() << " >>> close function type";
     closeType();
+    
+    // python methods don't have their parents attributes directly inside them
+    if ( eventualParentDeclaration && eventualParentDeclaration->internalContext() && dec->internalContext() ) {
+        dec->internalContext()->removeImportedParentContext(eventualParentDeclaration->internalContext());
+    }
     
     {
         DUChainWriteLocker lock(DUChain::lock());

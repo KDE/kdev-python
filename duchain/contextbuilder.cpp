@@ -74,9 +74,9 @@ ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node
         updateContext->clearProblems();
     } else {
         kDebug() << "compiling" << url.str();
-        DUChain::self()->updateContextForUrl(currentlyParsedDocument(), TopDUContext::AllDeclarationsContextsAndUses, 0, 5);
+//         DUChain::self()->updateContextForUrl(currentlyParsedDocument(), TopDUContext::AllDeclarationsContextsAndUses, 0, 5);
     }
-    
+    m_isScheduledForReparsing = false;
     return ContextBuilderBase::build(url, node, updateContext);
 }
 
@@ -305,6 +305,12 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
     return QPair<KUrl, QStringList>(KUrl(), QStringList());
 }
 
+void ContextBuilder::scheduleForReparsing() {
+    if ( ! m_isScheduledForReparsing ) {
+        DUChain::self()->updateContextForUrl(document(), TopDUContext::AllDeclarationsContextsAndUses, 0, 5);
+    }
+}
+
 void ContextBuilder::visitImport(ImportAst* node)
 {
     foreach ( AliasAst* name, node->names ) {
@@ -338,10 +344,7 @@ void ContextBuilder::visitImport(ImportAst* node)
             Q_ASSERT(moduleFilePath.first.isValid());
             Q_ASSERT(currentlyParsedDocument().toUrl().isValid());
             DUChain::self()->updateContextForUrl(doc, TopDUContext::AllDeclarationsContextsAndUses, 0, -5);
-            DUChain::self()->updateContextForUrl(currentlyParsedDocument(), TopDUContext::AllDeclarationsContextsAndUses, 0, 5);
-            DUChainWriteLocker lock(DUChain::lock());
-            topContext()->setFeatures(KDevelop::TopDUContext::Empty); // force reparsing
-            return;
+            scheduleForReparsing();
         }
         else {
             contextsForModules.insert(moduleName->value, moduleChain);

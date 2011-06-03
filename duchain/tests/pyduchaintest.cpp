@@ -342,7 +342,9 @@ void PyDUChainTest::testTypes_data()
     
     QTest::newRow("tuple1") << "checkme, foo = 3, \"str\"" << "float";
     QTest::newRow("tuple2") << "foo, checkme = 3, \"str\"" << "string";
-    QTest::newRow("tuple_type") << "checkme = (1, 2)" << "tuple";
+    QTest::newRow("tuple_type") << "checkme = 1, 2" << "tuple";
+    
+    QTest::newRow("class_method_import") << "class c:\n attr = 3\n def m(): return attr;\ni=c()\ncheckme=i.m()" << "null";
 //    QTest::newRow("funccall_dict") << "def foo(): return foo; checkme = foo();" << (uint) IntegralType::TypeFunction;
 }
 
@@ -368,17 +370,12 @@ void PyDUChainTest::testImportDeclarations() {
         kDebug() << "Found " << foundDecls.length() << " Declarations for " << name;
         QVERIFY(foundDecls.length() > 0);
         foreach ( Declaration* current, foundDecls ) {
-            bool isAliased = false;
-            if ( current->topContext() != ctx->topContext() ) isAliased = true;
+            AliasDeclaration* isAliased = dynamic_cast<AliasDeclaration*>(current);
             if ( isAliased && shouldBeAliased ) {
                 found = true; // TODO fixme
             }
-            else if ( ! shouldBeAliased ) {
-                kDebug() << "Found identifier: " << current->identifier().toString() << current->range().castToSimpleRange() << "(should be " << start << "," << end << ")";
-                if ( current->range().start.column == start && current->range().end.column == end ) {
-                    found = true;
-                    break;
-                }
+            else if ( ! shouldBeAliased && ! isAliased ) {
+                found = true;
             }
         }
         QVERIFY(found);
@@ -392,7 +389,7 @@ void PyDUChainTest::testImportDeclarations_data() {
     
     QTest::newRow("from_import") << "from i import checkme" << ( QStringList() << "checkme,16,23" ) << true;
     QTest::newRow("import") << "import checkme" << ( QStringList() << "checkme,7,14" ) << false;
-    QTest::newRow("import_as") << "import foo as checkme" << ( QStringList() << "checkme,14,21" ) << false;
+    QTest::newRow("import_as") << "import i as checkme" << ( QStringList() << "checkme,14,21" ) << false;
     QTest::newRow("from_import_as") << "from i import checkme as checkme" << ( QStringList() << "checkme,23,30" ) << true;
 }
 

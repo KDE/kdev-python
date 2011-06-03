@@ -275,6 +275,7 @@ v->function->belongsToCall = v;
             Q_ASSERT(false);
         }
 
+	if ( ! result ) return 0;
         if ( ! ranges_copied ) {
             result->startCol = node->col_offset;
             result->endCol = node->col_offset;
@@ -594,6 +595,7 @@ v->function->belongsToCall = v;
             Q_ASSERT(false);
         }
 
+	if ( ! result ) return 0;
         if ( ! ranges_copied ) {
             result->startCol = node->col_offset;
             result->endCol = node->col_offset;

@@ -140,7 +140,7 @@ class DocumentationParser():
             if line[1][0] != "NEWLINE":
                 return accumulatedContent, line[1]
             indent += line[1][1]
-            accumulatedContent += line[0]
+            accumulatedContent += line[0] + "\n"
             #print " [d]", indent, line
         return accumulatedContent, line[1]
     

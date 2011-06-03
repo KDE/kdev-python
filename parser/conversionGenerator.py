@@ -227,6 +227,7 @@ for index, lines in results.iteritems():
     appendix = ''
     if index == '_expr' or index == '_stmt':
         appendix = '''
+	if ( ! result ) return 0;
         if ( ! ranges_copied ) {
             result->startCol = node->col_offset;
             result->endCol = node->col_offset;

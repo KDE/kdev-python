@@ -80,8 +80,8 @@ class IterableUserDict(UserDict):
     def __iter__(self):
         return iter(self.data)
 
-import _abcoll
-_abcoll.MutableMapping.register(IterableUserDict)
+#import _abcoll
+#_abcoll.MutableMapping.register(IterableUserDict)
 
 
 class DictMixin:

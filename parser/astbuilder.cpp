@@ -748,13 +748,15 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     PyCompilerFlags* flags = new PyCompilerFlags();
     flags->cf_flags = 0;
     
+    PyObject *exception, *value, *backtrace;
+    PyErr_Fetch(&exception, &value, &backtrace);
+    kDebug() << "Error objects *before calling parser* (should be none): " << exception << value << backtrace;
+    PyObject_Print(value, stderr, Py_PRINT_RAW);
     mod_ty syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);
-    
 
     if ( ! syntaxtree ) {
         kWarning() << "DID NOT RECEIVE A SYNTAX TREE -- probably parse error.";
         
-        PyObject *exception, *value, *backtrace;
         PyErr_Fetch(&exception, &value, &backtrace);
         kDebug() << "Error objects: " << exception << value << backtrace;
         PyObject_Print(value, stderr, Py_PRINT_RAW);

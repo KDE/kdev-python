@@ -10,7 +10,7 @@
 using namespace KDevelop;
 
 namespace Python {
-
+    
 QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
 {
     QList<KUrl> searchPaths;

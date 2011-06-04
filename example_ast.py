@@ -1,3 +1,7 @@
+def func(foo, bar, 
+	 baz, *args, **kwargs):
+	pass
+
 a = a and a
 a = a or b
 

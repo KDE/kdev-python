@@ -211,9 +211,26 @@ public:
     virtual void visitFunctionDefinition(FunctionDefinitionAst* node) {
         SimpleRange r(0, node->name->startCol, 0, node->name->endCol);
         qDebug() << "Found func: " << r << node->name->value << ", looking for: " << searchingForRange << searchingForIdentifier;
+        qDebug() << node->arguments->vararg << node->arguments->kwarg;
         if ( r == searchingForRange && node->name->value == searchingForIdentifier ) {
             found = true;
             return;
+        }
+        if ( node->arguments->vararg ) {
+            SimpleRange r(0, node->arguments->vararg_col_offset, 0, node->arguments->vararg_col_offset+node->arguments->vararg->value.length());
+            qDebug() << "Found vararg: " << node->arguments->vararg->value << r;
+            if ( r == searchingForRange && node->arguments->vararg->value == searchingForIdentifier ) {
+                found = true;
+                return;
+            }
+        }
+        if ( node->arguments->kwarg ) {
+            SimpleRange r(0, node->arguments->arg_col_offset, 0, node->arguments->arg_col_offset+node->arguments->kwarg->value.length());
+            qDebug() << "Found kwarg: " << node->arguments->kwarg->value << r;
+            if ( r == searchingForRange && node->arguments->kwarg->value == searchingForIdentifier ) {
+                found = true;
+                return;
+            }
         }
         AstDefaultVisitor::visitFunctionDefinition(node);
     }
@@ -273,6 +290,7 @@ void PyDUChainTest::testRanges_data()
     QTest::newRow("classdef_range") << "class cls(): pass" << 1 << ( QStringList() << "6,8,cls" );
     QTest::newRow("classdef_range_inheritance") << "class cls(parent1, parent2): pass" << 1 << ( QStringList() << "6,8,cls" );
     QTest::newRow("classdef_range_inheritance_spaces") << "class       cls(  parent1,    parent2     ):pass" << 1 << ( QStringList() << "12,14,cls" );
+    QTest::newRow("vararg_kwarg") << "def func(*vararg, **kwargs): pass" << 2 << ( QStringList() << "10,16,vararg" << "20,26,kwargs" );
 }
 
 class TypeTestVisitor : public AstDefaultVisitor {

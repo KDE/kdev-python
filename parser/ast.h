@@ -586,6 +586,8 @@ public:
     QList<ExpressionAst*> defaultValues;
     Identifier* vararg;
     Identifier* kwarg;
+    int arg_lineno, arg_col_offset;
+    int vararg_lineno, vararg_col_offset;
 };
 
 class KDEVPYTHONPARSER_EXPORT KeywordAst : public Ast {

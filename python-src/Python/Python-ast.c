@@ -369,6 +369,10 @@ static char *arguments_fields[]={
         "vararg",
         "kwarg",
         "defaults",
+        "arg_lineno",
+        "arg_col_offset",
+        "vararg_lineno",
+        "vararg_col_offset",
 };
 static PyTypeObject *keyword_type;
 static PyObject* ast2obj_keyword(void*);
@@ -941,7 +945,7 @@ static int init_types(void)
         ExceptHandler_type = make_type("ExceptHandler", excepthandler_type,
                                        ExceptHandler_fields, 3);
         if (!ExceptHandler_type) return 0;
-        arguments_type = make_type("arguments", &AST_type, arguments_fields, 4);
+        arguments_type = make_type("arguments", &AST_type, arguments_fields, 8);
         if (!arguments_type) return 0;
         keyword_type = make_type("keyword", &AST_type, keyword_fields, 2);
         if (!keyword_type) return 0;
@@ -2062,7 +2066,8 @@ ExceptHandler(expr_ty type, expr_ty name, asdl_seq * body, int lineno, int
 
 arguments_ty
 arguments(asdl_seq * args, identifier vararg, identifier kwarg, asdl_seq *
-          defaults, PyArena *arena)
+          defaults, int arg_lineno, int arg_col_offset, int vararg_lineno, int
+          vararg_col_offset, PyArena *arena)
 {
         arguments_ty p;
         p = (arguments_ty)PyArena_Malloc(arena, sizeof(*p));
@@ -2072,6 +2077,10 @@ arguments(asdl_seq * args, identifier vararg, identifier kwarg, asdl_seq *
         p->vararg = vararg;
         p->kwarg = kwarg;
         p->defaults = defaults;
+        p->arg_lineno = arg_lineno;
+        p->arg_col_offset = arg_col_offset;
+        p->vararg_lineno = vararg_lineno;
+        p->vararg_col_offset = vararg_col_offset;
         return p;
 }
 
@@ -3236,6 +3245,26 @@ ast2obj_arguments(void* _o)
         value = ast2obj_list(o->defaults, ast2obj_expr);
         if (!value) goto failed;
         if (PyObject_SetAttrString(result, "defaults", value) == -1)
+                goto failed;
+        Py_DECREF(value);
+        value = ast2obj_int(o->arg_lineno);
+        if (!value) goto failed;
+        if (PyObject_SetAttrString(result, "arg_lineno", value) == -1)
+                goto failed;
+        Py_DECREF(value);
+        value = ast2obj_int(o->arg_col_offset);
+        if (!value) goto failed;
+        if (PyObject_SetAttrString(result, "arg_col_offset", value) == -1)
+                goto failed;
+        Py_DECREF(value);
+        value = ast2obj_int(o->vararg_lineno);
+        if (!value) goto failed;
+        if (PyObject_SetAttrString(result, "vararg_lineno", value) == -1)
+                goto failed;
+        Py_DECREF(value);
+        value = ast2obj_int(o->vararg_col_offset);
+        if (!value) goto failed;
+        if (PyObject_SetAttrString(result, "vararg_col_offset", value) == -1)
                 goto failed;
         Py_DECREF(value);
         return result;
@@ -6418,6 +6447,10 @@ obj2ast_arguments(PyObject* obj, arguments_ty* out, PyArena* arena)
         identifier vararg;
         identifier kwarg;
         asdl_seq* defaults;
+        int arg_lineno;
+        int arg_col_offset;
+        int vararg_lineno;
+        int vararg_col_offset;
 
         if (PyObject_HasAttrString(obj, "args")) {
                 int res;
@@ -6491,7 +6524,53 @@ obj2ast_arguments(PyObject* obj, arguments_ty* out, PyArena* arena)
                 PyErr_SetString(PyExc_TypeError, "required field \"defaults\" missing from arguments");
                 return 1;
         }
-        *out = arguments(args, vararg, kwarg, defaults, arena);
+        if (PyObject_HasAttrString(obj, "arg_lineno")) {
+                int res;
+                tmp = PyObject_GetAttrString(obj, "arg_lineno");
+                if (tmp == NULL) goto failed;
+                res = obj2ast_int(tmp, &arg_lineno, arena);
+                if (res != 0) goto failed;
+                Py_XDECREF(tmp);
+                tmp = NULL;
+        } else {
+                arg_lineno = 0;
+        }
+        if (PyObject_HasAttrString(obj, "arg_col_offset")) {
+                int res;
+                tmp = PyObject_GetAttrString(obj, "arg_col_offset");
+                if (tmp == NULL) goto failed;
+                res = obj2ast_int(tmp, &arg_col_offset, arena);
+                if (res != 0) goto failed;
+                Py_XDECREF(tmp);
+                tmp = NULL;
+        } else {
+                arg_col_offset = 0;
+        }
+        if (PyObject_HasAttrString(obj, "vararg_lineno")) {
+                int res;
+                tmp = PyObject_GetAttrString(obj, "vararg_lineno");
+                if (tmp == NULL) goto failed;
+                res = obj2ast_int(tmp, &vararg_lineno, arena);
+                if (res != 0) goto failed;
+                Py_XDECREF(tmp);
+                tmp = NULL;
+        } else {
+                vararg_lineno = 0;
+        }
+        if (PyObject_HasAttrString(obj, "vararg_col_offset")) {
+                int res;
+                tmp = PyObject_GetAttrString(obj, "vararg_col_offset");
+                if (tmp == NULL) goto failed;
+                res = obj2ast_int(tmp, &vararg_col_offset, arena);
+                if (res != 0) goto failed;
+                Py_XDECREF(tmp);
+                tmp = NULL;
+        } else {
+                vararg_col_offset = 0;
+        }
+        *out = arguments(args, vararg, kwarg, defaults, arg_lineno,
+                         arg_col_offset, vararg_lineno, vararg_col_offset,
+                         arena);
         return 0;
 failed:
         Py_XDECREF(tmp);

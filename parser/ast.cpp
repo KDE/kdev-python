@@ -31,7 +31,7 @@ Ast::Ast( Ast* parent, Ast::AstType type ) : parent(parent), astType( type ), st
 Ast::Ast() :  parent(0), startCol(0), startLine(-5), endCol(0), endLine(0), hasUsefulRangeInformation(false), context(0) { }
 Ast::~Ast() { }
 
-ArgumentsAst::ArgumentsAst(Ast* parent): Ast(parent, Ast::ArgumentsAstType)
+ArgumentsAst::ArgumentsAst(Ast* parent): Ast(parent, Ast::ArgumentsAstType), arg_lineno(0), arg_col_offset(0), vararg_lineno(0), vararg_col_offset(0)
 {
     
 }

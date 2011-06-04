@@ -236,10 +236,10 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
     }
 }
 
-AbstractType::Ptr ExpressionVisitor::typeObjectForIntegralType(QString typeDescriptor)
+AbstractType::Ptr ExpressionVisitor::typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx)
 {
     DUChainReadLocker lock(DUChain::lock());
-    QList<Declaration*> decls = m_ctx->topContext()->findDeclarations(QualifiedIdentifier("__kdevpythondocumentation_builtin_" + typeDescriptor));
+    QList<Declaration*> decls = ctx->topContext()->findDeclarations(QualifiedIdentifier("__kdevpythondocumentation_builtin_" + typeDescriptor));
     Declaration* decl = decls.isEmpty() ? 0 : decls.first();
     AbstractType::Ptr type = decl ? decl->abstractType() : AbstractType::Ptr(0);
     return type;
@@ -248,32 +248,32 @@ AbstractType::Ptr ExpressionVisitor::typeObjectForIntegralType(QString typeDescr
 void ExpressionVisitor::visitList(ListAst* node)
 {
     AstDefaultVisitor::visitList(node);
-    AbstractType::Ptr type = typeObjectForIntegralType("list");
+    AbstractType::Ptr type = typeObjectForIntegralType("list", m_ctx);
     encounter(type);
 }
 
 void ExpressionVisitor::visitTuple(TupleAst* node) {
     AstDefaultVisitor::visitTuple(node);
-    AbstractType::Ptr type = typeObjectForIntegralType("tuple");
+    AbstractType::Ptr type = typeObjectForIntegralType("tuple", m_ctx);
     encounter(type);
 }
 
 void ExpressionVisitor::visitDict(DictAst* node)
 {
     AstDefaultVisitor::visitDict(node);
-    AbstractType::Ptr type = typeObjectForIntegralType("dict");
+    AbstractType::Ptr type = typeObjectForIntegralType("dict", m_ctx);
     encounter(type);
 }
 
 void ExpressionVisitor::visitNumber(Python::NumberAst* )
 {
-    AbstractType::Ptr type = typeObjectForIntegralType("float");
+    AbstractType::Ptr type = typeObjectForIntegralType("float", m_ctx);
     encounter(type);
 }
 
 void ExpressionVisitor::visitString(Python::StringAst* )
 {
-    AbstractType::Ptr type = typeObjectForIntegralType("string");
+    AbstractType::Ptr type = typeObjectForIntegralType("string", m_ctx);
     encounter(type);
 }
 

@@ -53,6 +53,7 @@
 #include "pythoneditorintegrator.h"
 #include "expressionvisitor.h"
 #include <interfaces/foregroundlock.h>
+#include "helpers.h"
 
 
 using namespace KTextEditor;
@@ -186,7 +187,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         dec->setType(lastType());
         dec->setKind(KDevelop::Declaration::Instance);
     } else if ( existingDeclarations.isEmpty() || existingDeclarations.last()->context() != currentContext() ) {
-        kDebug() << "Creating variable declaration for " << node->value << node->startLine << ":" << node->startCol;
+        kDebug() << "Creating variable declaration for " << node->value << node->startLine << ":" << node->startCol << "->" << node->endLine << ":" << node->endCol;
         if ( ! dec ) dec = openDeclaration<T>(node, originalAst ? originalAst : node);
         DeclarationBuilderBase::closeDeclaration();
         dec->setType(lastType());
@@ -432,6 +433,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         if ( target->astType == Ast::NameAstType ) {
             if ( tupleElementType && tupleElementType->whichType() == AbstractType::TypeFunction ) {
                 if ( tupleElementDeclaration ) {
+                    DUChainWriteLocker lock(DUChain::lock());
                     AliasDeclaration* decl = openDeclaration<AliasDeclaration>(static_cast<NameAst*>(target)->identifier, target);
                     decl->setAliasedDeclaration(tupleElementDeclaration.data());
                 }
@@ -705,6 +707,19 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         int parametersCount = node->arguments.length();
         int firstDefaultParameterOffset = parametersCount - defaultParametersCount;
         int currentIndex = 0;
+        if ( node->kwarg ) {
+            type->addArgument(ExpressionVisitor::typeObjectForIntegralType("dict", currentContext()));
+            node->kwarg->startCol = node->arg_col_offset; node->kwarg->endCol = node->arg_col_offset + node->vararg->value.length() - 1;
+            node->kwarg->startLine = node->arg_lineno - 1; node->kwarg->endLine = node->arg_lineno - 1;
+            visitVariableDeclaration<Declaration>(node->kwarg);
+        }
+        if ( node->vararg ) {
+            type->addArgument(ExpressionVisitor::typeObjectForIntegralType("list", currentContext()));
+            node->vararg->startCol = node->vararg_col_offset; node->vararg->endCol = node->vararg_col_offset + node->vararg->value.length() - 1;
+            node->vararg->startLine = node->vararg_lineno - 1; node->vararg->endLine = node->vararg_lineno - 1;
+            visitVariableDeclaration<Declaration>(node->vararg);
+        }
+        kDebug() << "variable argument ranges: " << node->arg_lineno << node->arg_col_offset << node->vararg_lineno << node->vararg_col_offset;
         foreach ( ExpressionAst* expression, node->arguments ) {
             currentIndex += 1;
             realParam = dynamic_cast<NameAst*>(expression);

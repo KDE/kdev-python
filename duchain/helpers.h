@@ -7,8 +7,11 @@
 #include <KUrl>
 #include <interfaces/iproject.h>
 #include <KDebug>
+#include <language/editor/simplerange.h>
 
 #include "pythonduchainexport.h"
+
+using namespace KDevelop;
 
 namespace Python {
 

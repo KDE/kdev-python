@@ -1,7 +1,7 @@
 COMMENT;This file specifies rules for a conversion of a python (C) to a plugin-internal (C++) syntax tree;;
 COMMENT;All lines are terminated by a double semicolon token, newlines are ignored.;;
 COMMENT;-> stands for "convert AST", => for "convert AST list", ~> for "make an identifier", :> is an assignment w/o conversion, and *> is an enum cast.;;
-COMMENT;$> is a string assignment.
+COMMENT;$> is a string assignment, +> is a "mindless assignment, like, it just does v->arg = node->arg.
 COMMENT;the CODE statement can be used to add custom code.;;
 
 
@@ -60,6 +60,7 @@ RULE_FOR _slice;KIND Ellipsis_kind;ACTIONS create|EllipsisAst;;
 
 RULE_FOR _comprehension;KIND any;ACTIONS create|ComprehensionAst set|target->ExpressionAst,target set|iterator->ExpressionAst,iter set|conditions=>ExpressionAst,ifs;;
 RULE_FOR _excepthandler;KIND ExceptHandler_kind;ACTIONS create|ExceptionHandlerAst set|type->ExpressionAst,type set|name->ExpressionAst,name set|body=>Ast,body;;
-RULE_FOR _arguments;KIND any;ACTIONS create|ArgumentsAst set|vararg~>vararg set|kwarg~>kwarg set|arguments=>ExpressionAst,args set|defaultValues=>ExpressionAst,defaults;;
+RULE_FOR _arguments;KIND any;ACTIONS create|ArgumentsAst set|vararg~>vararg set|kwarg~>kwarg set|arguments=>ExpressionAst,args set|defaultValues=>ExpressionAst,defaults
+                                     set|arg_lineno+>arg_lineno set|arg_col_offset+>arg_col_offset set|vararg_lineno+>vararg_lineno set|vararg_col_offset+>vararg_col_offset;;
 RULE_FOR _keyword;KIND any;ACTIONS create|KeywordAst set|argumentName~>arg set|value->ExpressionAst,value;;
 RULE_FOR _alias;KIND any;ACTIONS create|AliasAst set|name~>name set|asName~>asname;;

@@ -297,12 +297,6 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
     return QPair<KUrl, QStringList>(KUrl(), QStringList());
 }
 
-void ContextBuilder::scheduleForReparsing() {
-    if ( ! m_isScheduledForReparsing ) {
-        DUChain::self()->updateContextForUrl(document(), TopDUContext::AllDeclarationsContextsAndUses, 0, 5);
-    }
-}
-
 void ContextBuilder::visitImport(ImportAst* node)
 {
     foreach ( AliasAst* name, node->names ) {

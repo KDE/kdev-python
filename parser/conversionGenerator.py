@@ -55,6 +55,7 @@ direct_assignment_line = '''                v->%{TARGET} = node->v.%{KIND_W/O_SU
 direct_assignment_line_any = '''                v->%{TARGET} = node->v.%{VALUE};'''
 cast_operator_line = '''                v->%{TARGET} = (ExpressionAst::%{AST_TYPE}) node->v.%{KIND_W/O_SUFFIX}.%{VALUE};'''
 resolve_string = '''                v->%{TARGET} = PyString_AsString(PyObject_Str(node->v.%{KIND_W/O_SUFFIX}.%{VALUE}));'''
+assign_mindless = '''              v->%{TARGET} = node->%{VALUE};'''
 resolve_oplist_block = '''
                 for ( int _i = 0; _i < node->v.%{KIND_W/O_SUFFIX}.%{VALUE}->size; _i++ ) {
                     v->%{TARGET}.append((ExpressionAst::%{AST_TYPE}) node->v.%{KIND_W/O_SUFFIX}.%{VALUE}->elements[_i]);
@@ -133,7 +134,7 @@ for rule in contents:
             
             
             # commands with one argument
-            if commandType in ['~', ':', '$']:
+            if commandType in ['~', ':', '$', '+']:
                 if commandType == ':':
                     raw = direct_assignment_line if not any else direct_assignment_line_any
                 if commandType == '~':
@@ -142,6 +143,8 @@ for rule in contents:
                         raw += copy_ident_ranges
                 if commandType == '$':
                     raw = resolve_string
+                if commandType == '+':
+                    raw = assign_mindless;
                 value = s[0]
             # commands with two arguments
             else:

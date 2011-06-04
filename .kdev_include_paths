@@ -1,7 +1,8 @@
 ../kdevelop
 ../kdevplatform
-/home/sven/projects/.build/kde4/python/parser
-/home/sven/projects/kde4/kdevplatform
-/home/sven/projects/kde4/kdevelop
-/home/sven/projects/kde4/python/python-src
-/home/sven/projects/kde4/python/python-src/Include
+kdev-python/parser
+kdevplatform
+kdevelop
+python-src
+Include
+/home/sven/p/python-src/Include

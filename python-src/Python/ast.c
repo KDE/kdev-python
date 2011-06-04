@@ -673,7 +673,7 @@ ast_for_arguments(struct compiling *c, const node *n)
 
     if (TYPE(n) == parameters) {
         if (NCH(n) == 2) /* () as argument list */
-            return arguments(NULL, NULL, NULL, NULL, c->c_arena);
+            return arguments(NULL, NULL, NULL, NULL, 0, 0, 0, 0, c->c_arena);
         n = CHILD(n, 1);
     }
     REQ(n, varargslist);
@@ -699,6 +699,7 @@ ast_for_arguments(struct compiling *c, const node *n)
     i = 0;
     j = 0;  /* index for defaults */
     k = 0;  /* index for args */
+    int arg_lineno = 0, arg_col_offset = 0, vararg_lineno = 0, vararg_col_offset = 0;
     while (i < NCH(n)) {
         ch = CHILD(n, i);
         switch (TYPE(ch)) {
@@ -777,6 +778,8 @@ ast_for_arguments(struct compiling *c, const node *n)
                 if (!forbidden_check(c, CHILD(n, i+1), STR(CHILD(n, i+1))))
                     return NULL;
                 vararg = NEW_IDENTIFIER(CHILD(n, i+1));
+                vararg_lineno = CHILD(n, i+1)->n_lineno;
+                vararg_col_offset = CHILD(n, i+1)->n_col_offset;
                 if (!vararg)
                     return NULL;
                 i += 3;
@@ -785,6 +788,8 @@ ast_for_arguments(struct compiling *c, const node *n)
                 if (!forbidden_check(c, CHILD(n, i+1), STR(CHILD(n, i+1))))
                     return NULL;
                 kwarg = NEW_IDENTIFIER(CHILD(n, i+1));
+                arg_lineno = CHILD(n, i+1)->n_lineno;
+                arg_col_offset = CHILD(n, i+1)->n_col_offset;
                 if (!kwarg)
                     return NULL;
                 i += 3;
@@ -797,7 +802,7 @@ ast_for_arguments(struct compiling *c, const node *n)
         }
     }
 
-    return arguments(args, vararg, kwarg, defaults, c->c_arena);
+    return arguments(args, vararg, kwarg, defaults, arg_lineno, arg_col_offset, vararg_lineno, vararg_col_offset, c->c_arena);
 }
 
 static expr_ty
@@ -955,7 +960,7 @@ ast_for_lambdef(struct compiling *c, const node *n)
     expr_ty expression;
 
     if (NCH(n) == 3) {
-        args = arguments(NULL, NULL, NULL, NULL, c->c_arena);
+        args = arguments(NULL, NULL, NULL, NULL, 0, 0, 0, 0, c->c_arena);
         if (!args)
             return NULL;
         expression = ast_for_expr(c, CHILD(n, 2));

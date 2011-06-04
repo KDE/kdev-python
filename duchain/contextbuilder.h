@@ -122,7 +122,6 @@ protected:
 
 private:
     void openContextForStatementList( const QList<Ast*>&, DUContext::ContextType type = DUContext::Other);
-    void scheduleForReparsing();
     bool m_isScheduledForReparsing;
 
     QList<KDevelop::DUContext*> m_importedParentContexts;

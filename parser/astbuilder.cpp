@@ -275,7 +275,7 @@ v->function->belongsToCall = v;
             Q_ASSERT(false);
         }
 
-	if ( ! result ) return 0;
+    if ( ! result ) return 0;
         if ( ! ranges_copied ) {
             result->startCol = node->col_offset;
             result->endCol = node->col_offset;
@@ -595,7 +595,7 @@ v->function->belongsToCall = v;
             Q_ASSERT(false);
         }
 
-	if ( ! result ) return 0;
+    if ( ! result ) return 0;
         if ( ! ranges_copied ) {
             result->startCol = node->col_offset;
             result->endCol = node->col_offset;
@@ -704,6 +704,10 @@ v->function->belongsToCall = v;
             v->kwarg = node->kwarg ? new Python::Identifier(PyString_AsString(PyObject_Str(node->kwarg))) : 0;
             nodeStack.push(v); v->arguments = visitNodeList<_expr, ExpressionAst>(node->args); nodeStack.pop();
             nodeStack.push(v); v->defaultValues = visitNodeList<_expr, ExpressionAst>(node->defaults); nodeStack.pop();
+              v->arg_lineno = node->arg_lineno;
+              v->arg_col_offset = node->arg_col_offset;
+              v->vararg_lineno = node->vararg_lineno;
+              v->vararg_col_offset = node->vararg_col_offset;
         return v;
     }
 
@@ -744,20 +748,13 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     PyCompilerFlags* flags = new PyCompilerFlags();
     flags->cf_flags = 0;
     
-    kDebug() << "Done allocating memory, unlocking";
-    
-    PyObject *exception, *value, *backtrace;
-    PyErr_Fetch(&exception, &value, &backtrace);
-    kDebug() << "Errors before calling parser: " << exception << value << backtrace;
-    PyObject_Print(value, stderr, Py_PRINT_RAW);
-    
-    kDebug() << "Parser arguments:" << file_input << flags << arena;
     mod_ty syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);
     
 
     if ( ! syntaxtree ) {
         kWarning() << "DID NOT RECEIVE A SYNTAX TREE -- probably parse error.";
         
+        PyObject *exception, *value, *backtrace;
         PyErr_Fetch(&exception, &value, &backtrace);
         kDebug() << "Error objects: " << exception << value << backtrace;
         PyObject_Print(value, stderr, Py_PRINT_RAW);

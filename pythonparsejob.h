@@ -51,6 +51,9 @@ class ParseJob : public KDevelop::ParseJob
     Q_OBJECT
 
 public:
+    enum {
+        Rescheduled = KDevelop::TopDUContext::LastFeature
+    };
     ParseJob(LanguageSupport* parent, const KUrl &url );
     virtual ~ParseJob();
 

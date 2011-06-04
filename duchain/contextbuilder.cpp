@@ -47,6 +47,9 @@
 #include "declarationbuilder.h"
 #include "parser/parserConfig.h"
 #include "helpers.h"
+#include <pythonlanguagesupport.h>
+#include <interfaces/ilanguagecontroller.h>
+#include <language/backgroundparser/backgroundparser.h>
 
 using namespace KDevelop;
 
@@ -199,15 +202,6 @@ bool ContextBuilder::contextAlreayOpen(DUContextPointer context)
     return false;
 }
 
-void ContextBuilder::updateChain(const IndexedString& document)
-{
-    DUChain::self()->updateContextForUrl(document, TopDUContext::AllDeclarationsAndContexts, 0,  -5);
-    if ( ! m_scheduledForReparsing ) {
-        DUChain::self()->updateContextForUrl(currentlyParsedDocument(), TopDUContext::AllDeclarationsContextsAndUses, 0, 5);
-        m_scheduledForReparsing = true;
-    }
-}
-
 void ContextBuilder::openContextForStatementList( const QList<Ast*>& l, DUContext::ContextType /*type*/)
 {
     if ( l.count() > 0 )
@@ -254,22 +248,20 @@ void ContextBuilder::visitCode(CodeAst* node) {
         {
             DUChainReadLocker lock(DUChain::lock());
             internal = DUChain::self()->chainForDocument(doc); // TODO add startup-check and error message, this must exist
+            // ICore::languageController()->backgroundParser()->parseJobForDocument();
         }
         
         if ( ! internal ) {
-            updateChain(doc);
-            DUChainWriteLocker wlock(DUChain::lock());
-            topContext()->setFeatures(KDevelop::TopDUContext::Empty); // force reparsing
+            m_hasUnresolvedImports = true;
+            DUChain::self()->updateContextForUrl(doc, TopDUContext::AllDeclarationsContextsAndUses);
         }
-        
-        if ( internal ) {
+        else {
             kDebug() << "Adding builtin function context...";
             DUChainWriteLocker wlock(DUChain::lock());
             currentContext()->addImportedParentContext(internal);
             m_builtinFunctionsContext = TopDUContextPointer(internal);
         }
     }
-    Q_ASSERT(currentlyParsedDocument().toUrl().isValid());
     AstDefaultVisitor::visitCode(node);
 }
 
@@ -338,13 +330,8 @@ void ContextBuilder::visitImport(ImportAst* node)
         }
         kDebug() << "Chain: " << moduleChain.data() << ";" << "Features satisfied: " << featuresSatisfied;
         if ( ! featuresSatisfied ) {
-            // parse the include file, then reparse the current one.
-            kDebug() << "Module not cached, reparsing";
-            kDebug() << currentlyParsedDocument().toUrl().path();
-            Q_ASSERT(moduleFilePath.first.isValid());
-            Q_ASSERT(currentlyParsedDocument().toUrl().isValid());
-            DUChain::self()->updateContextForUrl(doc, TopDUContext::AllDeclarationsContextsAndUses, 0, -5);
-            scheduleForReparsing();
+            m_hasUnresolvedImports = true;
+            DUChain::self()->updateContextForUrl(doc, TopDUContext::AllDeclarationsContextsAndUses);
         }
         else {
             contextsForModules.insert(moduleName->value, moduleChain);

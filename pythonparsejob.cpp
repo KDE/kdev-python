@@ -54,6 +54,7 @@
 #include <interfaces/ilanguagecontroller.h>
 #include <language/duchain/indexedstring.h>
 #include "parser/parserConfig.h"
+#include <language/backgroundparser/backgroundparser.h>
 
 using namespace KDevelop;
 
@@ -138,6 +139,7 @@ void ParseJob::run()
         PythonEditorIntegrator editor;
         DeclarationBuilder builder( &editor );
         builder.m_currentlyParsedDocument = filename;
+        bool needsReparse = builder.m_hasUnresolvedImports;
         
         editor.setParseSession(m_session);
         
@@ -149,7 +151,15 @@ void ParseJob::run()
         UseBuilder usebuilder( &editor );
         usebuilder.m_currentlyParsedDocument = filename;
         usebuilder.buildUses(m_ast);
-
+        
+        if ( needsReparse ) {
+            if ( ! ( minimumFeatures() & Rescheduled ) && KDevelop::ICore::self()->languageController()->backgroundParser()->queuedCount() ) {
+                m_duContext->setFeatures(minimumFeatures());
+                KDevelop::ICore::self()->languageController()->backgroundParser()->addDocument(document().toUrl(), 
+                                     static_cast<TopDUContext::Features>(minimumFeatures() | Rescheduled), 50000);
+            }
+        }
+        
         {
             DUChainWriteLocker lock(DUChain::lock());
             m_duContext->setFeatures(minimumFeatures());

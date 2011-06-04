@@ -221,6 +221,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
 void DeclarationBuilder::visitCode(CodeAst* node)
 {
     Q_ASSERT(currentlyParsedDocument().toUrl().isValid());
+    m_hasUnresolvedImports = false;
     DeclarationBuilderBase::visitCode(node);
 }
 
@@ -370,8 +371,8 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
             else kWarning() << "Failed to create an alias declaration";
         }
         else if ( moduleInfo.first.isValid() ) {
-            kDebug() << " ---> UPDATING ---> " << moduleInfo.first;
-            updateChain(IndexedString(moduleInfo.first));
+            m_hasUnresolvedImports = true;
+            DUChain::self()->updateContextForUrl(IndexedString(moduleInfo.first), TopDUContext::AllDeclarationsContextsAndUses);
         }
         else {
             kWarning() << "Invalid URL for module " << identifier << "!";

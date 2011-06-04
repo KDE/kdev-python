@@ -69,7 +69,7 @@ class CDLL:
 	"""
 	
 	
-	def __init__(self, name,mode=DEFAULT_MODE,handle=None,use_errno=False,use_last_error=False):
+	def __init__(self, ):
 		pass
 	
 	
@@ -90,7 +90,7 @@ class OleDLL:
 	"""
 	
 	
-	def __init__(self, name,mode=DEFAULT_MODE,handle=None,use_errno=False,use_last_error=False):
+	def __init__(self, ):
 		pass
 	
 	
@@ -115,7 +115,7 @@ class WinDLL:
 	"""
 	
 	
-	def __init__(self, name,mode=DEFAULT_MODE,handle=None,use_errno=False,use_last_error=False):
+	def __init__(self, ):
 		pass
 	
 	
@@ -163,7 +163,7 @@ class PyDLL:
 	"""
 	
 	
-	def __init__(self, name,mode=DEFAULT_MODE,handle=None):
+	def __init__(self, ):
 		pass
 	
 	""":noindex:
@@ -217,9 +217,18 @@ class LibraryLoader:
 	"""
 	
 	
-	def __init__(self, dlltype):
+	def __init__(self, ):
 		pass
 	
+	def LoadLibrary(self, name):
+		"""
+		Load a shared library into the process and return it.  This method always
+		returns a new instance of the library.
+		
+		These prefabricated library loaders are available:
+		"""
+		pass
+		
 	""":noindex:
 	
 	Creates :class:`CDLL` instances.
@@ -293,7 +302,7 @@ class _FuncPtr:
 	def __init__(self, ):
 		pass
 	
-	def callable(result,func,arguments):
+	def callable(self, result,func,arguments):
 		""":noindex:
 		
 		*result* is what the foreign function returns, as specified by the
@@ -315,7 +324,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def CFUNCTYPE(restype,argtypes,use_errno=False,use_last_error=False):
+	def CFUNCTYPE(self, restype,argtypes,use_errno=False,use_last_error=False):
 		"""
 		The returned function prototype creates functions that use the standard C
 		calling convention.  The function will release the GIL during the call.  If
@@ -327,7 +336,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def WINFUNCTYPE(restype,argtypes,use_errno=False,use_last_error=False):
+	def WINFUNCTYPE(self, restype,argtypes,use_errno=False,use_last_error=False):
 		"""
 		Windows only: The returned function prototype creates functions that use the
 		``stdcall`` calling convention, except on Windows CE where
@@ -339,7 +348,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def PYFUNCTYPE(restype,argtypes):
+	def PYFUNCTYPE(self, restype,argtypes):
 		"""
 		The returned function prototype creates functions that use the Python calling
 		convention.  The function will *not* release the GIL during the call.
@@ -351,7 +360,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def prototype(address):
+	def prototype(self, address):
 		""":noindex:
 		:module:
 		
@@ -361,7 +370,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def prototype(callable):
+	def prototype(self, callable):
 		""":noindex:
 		:module:
 		
@@ -371,7 +380,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def prototype(func_spec,paramflags):
+	def prototype(self, func_spec,paramflags):
 		""":noindex:
 		:module:
 		
@@ -384,7 +393,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def prototype(vtbl_index,name,paramflags,iid):
+	def prototype(self, vtbl_index,name,paramflags,iid):
 		""":noindex:
 		:module:
 		
@@ -426,7 +435,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def addressof(obj):
+	def addressof(self, obj):
 		"""
 		Returns the address of the memory buffer as integer.  *obj* must be an
 		instance of a ctypes type.
@@ -435,7 +444,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def alignment(obj_or_type):
+	def alignment(self, obj_or_type):
 		"""
 		Returns the alignment requirements of a ctypes type. *obj_or_type* must be a
 		ctypes type or instance.
@@ -444,7 +453,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def byref(obj,offset):
+	def byref(self, obj,offset):
 		"""
 		Returns a light-weight pointer to *obj*, which must be an instance of a
 		ctypes type.  *offset* defaults to zero, and must be an integer that will be
@@ -461,7 +470,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def cast(obj,type):
+	def cast(self, obj,type):
 		"""
 		This function is similar to the cast operator in C.  It returns a new
 		instance of *type* which points to the same memory block as *obj*.  *type*
@@ -472,7 +481,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def create_string_buffer(init_or_size,size):
+	def create_string_buffer(self, init_or_size,size):
 		"""
 		This function creates a mutable character buffer. The returned object is a
 		ctypes array of :class:`c_char`.
@@ -492,7 +501,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def create_unicode_buffer(init_or_size,size):
+	def create_unicode_buffer(self, init_or_size,size):
 		"""
 		This function creates a mutable unicode character buffer. The returned object is
 		a ctypes array of :class:`c_wchar`.
@@ -513,7 +522,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def DllCanUnloadNow():
+	def DllCanUnloadNow(self, ):
 		"""
 		Windows only: This function is a hook which allows to implement in-process
 		COM servers with ctypes.  It is called from the DllCanUnloadNow function that
@@ -523,7 +532,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def DllGetClassObject():
+	def DllGetClassObject(self, ):
 		"""
 		Windows only: This function is a hook which allows to implement in-process
 		COM servers with ctypes.  It is called from the DllGetClassObject function
@@ -533,7 +542,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def find_library(name):
+	def find_library(self, name):
 		""":module: ctypes.util
 		
 		Try to find a library and return a pathname.  *name* is the library name
@@ -546,7 +555,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def find_msvcrt():
+	def find_msvcrt(self, ):
 		""":module: ctypes.util
 		
 		Windows only: return the filename of the VC runtype library used by Python,
@@ -560,7 +569,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def FormatError(code):
+	def FormatError(self, code):
 		"""
 		Windows only: Returns a textual description of the error code *code*.  If no
 		error code is specified, the last error code is used by calling the Windows
@@ -570,7 +579,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def GetLastError():
+	def GetLastError(self, ):
 		"""
 		Windows only: Returns the last error code set by Windows in the calling thread.
 		This function calls the Windows `GetLastError()` function directly,
@@ -579,7 +588,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def get_errno():
+	def get_errno(self, ):
 		"""
 		Returns the current value of the ctypes-private copy of the system
 		:data:`errno` variable in the calling thread.
@@ -587,7 +596,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def get_last_error():
+	def get_last_error(self, ):
 		"""
 		Windows only: returns the current value of the ctypes-private copy of the system
 		:data:`LastError` variable in the calling thread.
@@ -595,7 +604,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def memmove(dst,src,count):
+	def memmove(self, dst,src,count):
 		"""
 		Same as the standard C memmove library function: copies *count* bytes from
 		*src* to *dst*. *dst* and *src* must be integers or ctypes instances that can
@@ -605,7 +614,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def memset(dst,c,count):
+	def memset(self, dst,c,count):
 		"""
 		Same as the standard C memset library function: fills the memory block at
 		address *dst* with *count* bytes of value *c*. *dst* must be an integer
@@ -615,7 +624,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def POINTER(type):
+	def POINTER(self, type):
 		"""
 		This factory function creates and returns a new ctypes pointer type. Pointer
 		types are cached an reused internally, so calling this function repeatedly is
@@ -625,7 +634,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def pointer(obj):
+	def pointer(self, obj):
 		"""
 		This function creates a new pointer instance, pointing to *obj*. The returned
 		object is of the type ``POINTER(type(obj))``.
@@ -637,7 +646,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def resize(obj,size):
+	def resize(self, obj,size):
 		"""
 		This function resizes the internal memory buffer of *obj*, which must be an
 		instance of a ctypes type.  It is not possible to make the buffer smaller
@@ -648,7 +657,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def set_conversion_mode(encoding,errors):
+	def set_conversion_mode(self, encoding,errors):
 		"""
 		This function sets the rules that ctypes objects use when converting between
 		8-bit strings and unicode strings.  *encoding* must be a string specifying an
@@ -664,7 +673,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def set_errno(value):
+	def set_errno(self, value):
 		"""
 		Set the current value of the ctypes-private copy of the system :data:`errno`
 		variable in the calling thread to *value* and return the previous value.
@@ -672,7 +681,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def set_last_error(value):
+	def set_last_error(self, value):
 		"""
 		Windows only: set the current value of the ctypes-private copy of the system
 		:data:`LastError` variable in the calling thread to *value* and return the
@@ -681,7 +690,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def sizeof(obj_or_type):
+	def sizeof(self, obj_or_type):
 		"""
 		Returns the size in bytes of a ctypes type or instance memory buffer. Does the
 		same as the C ``sizeof()`` function.
@@ -690,7 +699,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def string_at(address,size):
+	def string_at(self, address,size):
 		"""
 		This function returns the string starting at memory address address. If size
 		is specified, it is used as size, otherwise the string is assumed to be
@@ -700,7 +709,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def WinError(code=None,descr=None):
+	def WinError(self, code=None,descr=None):
 		"""
 		Windows only: this function is probably the worst-named thing in ctypes.  It
 		creates an instance of WindowsError.  If *code* is not specified,
@@ -712,7 +721,7 @@ class _FuncPtr:
 		"""
 		pass
 		
-	def wstring_at(address,size):
+	def wstring_at(self, address,size):
 		"""
 		This function returns the wide character string starting at memory address
 		*address* as unicode string.  If *size* is specified, it is used as the
@@ -751,6 +760,64 @@ class _CData:
 	def __init__(self, ):
 		pass
 	
+	def _from_buffer(self, source,offset):
+		"""
+		This method returns a ctypes instance that shares the buffer of the
+		*source* object.  The *source* object must support the writeable buffer
+		interface.  The optional *offset* parameter specifies an offset into the
+		source buffer in bytes; the default is zero.  If the source buffer is not
+		large enough a :exc:`ValueError` is raised.
+		
+		"""
+		pass
+		
+	def _from_buffer_copy(self, source,offset):
+		"""
+		This method creates a ctypes instance, copying the buffer from the
+		*source* object buffer which must be readable.  The optional *offset*
+		parameter specifies an offset into the source buffer in bytes; the default
+		is zero.  If the source buffer is not large enough a :exc:`ValueError` is
+		raised.
+		
+		"""
+		pass
+		
+	def _from_address(self, address):
+		"""
+		This method returns a ctypes type instance using the memory specified by
+		*address* which must be an integer.
+		
+		
+		"""
+		pass
+		
+	def _from_param(self, obj):
+		"""
+		This method adapts *obj* to a ctypes type.  It is called with the actual
+		object used in a foreign function call when the type is present in the
+		foreign function's :attr:`argtypes` tuple; it must return an object that
+		can be used as a function call parameter.
+		
+		All ctypes data types have a default implementation of this classmethod
+		that normally returns *obj* if that is an instance of the type.  Some
+		types accept other objects as well.
+		
+		
+		"""
+		pass
+		
+	def in_dll(self, library,name):
+		"""
+		This method returns a ctypes type instance exported by a shared
+		library. *name* is the name of the symbol that exports the data, *library*
+		is the loaded shared library.
+		
+		
+		Common instance variables of ctypes data types:
+		
+		"""
+		pass
+		
 	
 
 
@@ -1323,7 +1390,7 @@ class Union:
 	"""
 	
 	
-	def __init__(self, args,kw):
+	def __init__(self, ):
 		pass
 	
 	
@@ -1339,7 +1406,7 @@ class BigEndianStructure:
 	"""
 	
 	
-	def __init__(self, args,kw):
+	def __init__(self, ):
 		pass
 	
 	
@@ -1358,7 +1425,7 @@ class LittleEndianStructure:
 	"""
 	
 	
-	def __init__(self, args,kw):
+	def __init__(self, ):
 		pass
 	
 	
@@ -1379,7 +1446,7 @@ class Structure:
 	"""
 	
 	
-	def __init__(self, args,kw):
+	def __init__(self, ):
 		pass
 	
 	

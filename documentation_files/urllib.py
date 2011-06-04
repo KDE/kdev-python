@@ -217,9 +217,53 @@ class URLopener:
 	"""
 	
 	
-	def __init__(self, proxies,x509):
+	def __init__(self, ):
 		pass
 	
+	def open(self, fullurl,data):
+		"""
+		Open *fullurl* using the appropriate protocol.  This method sets up cache and
+		proxy information, then calls the appropriate open method with its input
+		arguments.  If the scheme is not recognized, :meth:`open_unknown` is called.
+		The *data* argument has the same meaning as the *data* argument of
+		:func:`urlopen`.
+		
+		
+		"""
+		pass
+		
+	def open_unknown(self, fullurl,data):
+		"""
+		Overridable interface to open unknown URL types.
+		
+		
+		"""
+		pass
+		
+	def retrieve(self, url,filename,reporthook,data):
+		"""
+		Retrieves the contents of *url* and places it in *filename*.  The return value
+		is a tuple consisting of a local filename and either a
+		:class:`mimetools.Message` object containing the response headers (for remote
+		URLs) or ``None`` (for local URLs).  The caller must then open and read the
+		contents of *filename*.  If *filename* is not given and the URL refers to a
+		local file, the input filename is returned.  If the URL is non-local and
+		*filename* is not given, the filename is the output of :func:`tempfile.mktemp`
+		with a suffix that matches the suffix of the last path component of the input
+		URL.  If *reporthook* is given, it must be a function accepting three numeric
+		parameters.  It will be called after each chunk of data is read from the
+		network.  *reporthook* is ignored for local URLs.
+		
+		If the *url* uses the :file:`http:` scheme identifier, the optional *data*
+		argument may be given to specify a ``POST`` request (normally the request type
+		is ``GET``).  The *data* argument must in standard
+		:mimetype:`application/x-www-form-urlencoded` format; see the :func:`urlencode`
+		function below.
+		
+		
+		"""
+		pass
+		
 	
 
 
@@ -240,9 +284,22 @@ class FancyURLopener:
 	"""
 	
 	
-	def __init__(self, more):
+	def __init__(self, ):
 		pass
 	
+	def prompt_user_passwd(self, host,realm):
+		"""
+		Return information needed to authenticate the user at the given host in the
+		specified security realm.  The return value should be a tuple, ``(user,
+		password)``, which can be used for basic authentication.
+		
+		The implementation prompts for this information on the terminal; an application
+		should override this method to use an appropriate interaction model in the local
+		environment.
+		
+		"""
+		pass
+		
 	
 
 

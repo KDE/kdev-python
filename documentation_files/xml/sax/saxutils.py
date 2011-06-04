@@ -61,7 +61,7 @@ class XMLGenerator:
 	"""
 	
 	
-	def __init__(self, out,encoding):
+	def __init__(self, ):
 		pass
 	
 	
@@ -81,7 +81,7 @@ class XMLFilterBase:
 	"""
 	
 	
-	def __init__(self, base):
+	def __init__(self, ):
 		pass
 	
 	

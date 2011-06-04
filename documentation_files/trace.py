@@ -27,9 +27,46 @@ class Trace:
 	"""
 	
 	
-	def __init__(self, count=1,trace=1,countfuncs=0,countcallers=0,ignoremods=[],ignoredirs=[],infile=None,outfile=None,timing=False):
+	def __init__(self, ):
 		pass
 	
+	def run(self, cmd):
+		"""
+		Execute the command and gather statistics from the execution with
+		the current tracing parameters.  *cmd* must be a string or code object,
+		suitable for passing into :func:`exec`.
+		
+		"""
+		pass
+		
+	def runctx(self, cmd,globals=None,locals=None):
+		"""
+		Execute the command and gather statistics from the execution with the
+		current tracing parameters, in the defined global and local
+		environments.  If not defined, *globals* and *locals* default to empty
+		dictionaries.
+		
+		"""
+		pass
+		
+	def runfunc(self, func,args,kwds):
+		"""
+		Call *func* with the given arguments under control of the :class:`Trace`
+		object with the current tracing parameters.
+		
+		"""
+		pass
+		
+	def results(self, ):
+		"""
+		Return a :class:`CoverageResults` object that contains the cumulative
+		results of all previous calls to ``run``, ``runctx`` and ``runfunc``
+		for the given :class:`Trace` instance.  Does not reset the accumulated
+		trace results.
+		
+		"""
+		pass
+		
 	
 
 
@@ -46,6 +83,25 @@ class CoverageResults:
 	def __init__(self, ):
 		pass
 	
+	def update(self, other):
+		"""
+		Merge in data from another :class:`CoverageResults` object.
+		
+		"""
+		pass
+		
+	def write_results(self, show_missing=True,summary=False,coverdir=None):
+		"""
+		Write coverage results.  Set *show_missing* to show lines that had no
+		hits.  Set *summary* to include in the output the coverage summary per
+		module.  *coverdir* specifies the directory into which the coverage
+		result files will be output.  If ``None``, the results for each source
+		file are placed in its directory.
+		
+		A simple example demonstrating the use of the programmatic interface::
+		"""
+		pass
+		
 	
 
 

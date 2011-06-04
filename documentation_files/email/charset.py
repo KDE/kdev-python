@@ -44,10 +44,157 @@ class Charset:
 	"""
 	
 	
-	def __init__(self, input_charset):
+	def __init__(self, ):
 		pass
 	
-	def add_charset(charset,header_enc,body_enc,output_charset):
+	def get_body_encoding(self, ):
+		"""
+		Return the content transfer encoding used for body encoding.
+		
+		This is either the string ``quoted-printable`` or ``base64`` depending on
+		the encoding used, or it is a function, in which case you should call the
+		function with a single argument, the Message object being encoded.  The
+		function should then set the :mailheader:`Content-Transfer-Encoding`
+		header itself to whatever is appropriate.
+		
+		Returns the string ``quoted-printable`` if *body_encoding* is ``QP``,
+		returns the string ``base64`` if *body_encoding* is ``BASE64``, and
+		returns the string ``7bit`` otherwise.
+		
+		
+		"""
+		pass
+		
+	def convert(self, s):
+		"""
+		Convert the string *s* from the *input_codec* to the *output_codec*.
+		
+		
+		"""
+		pass
+		
+	def to_splittable(self, s):
+		"""
+		Convert a possibly multibyte string to a safely splittable format. *s* is
+		the string to split.
+		
+		Uses the *input_codec* to try and convert the string to Unicode, so it can
+		be safely split on character boundaries (even for multibyte characters).
+		
+		Returns the string as-is if it isn't known how to convert *s* to Unicode
+		with the *input_charset*.
+		
+		Characters that could not be converted to Unicode will be replaced with
+		the Unicode replacement character ``'U+FFFD'``.
+		
+		
+		"""
+		pass
+		
+	def _from_splittable(self, ustr,to_output):
+		"""
+		Convert a splittable string back into an encoded string.  *ustr* is a
+		Unicode string to "unsplit".
+		
+		This method uses the proper codec to try and convert the string from
+		Unicode back into an encoded format.  Return the string as-is if it is not
+		Unicode, or if it could not be converted from Unicode.
+		
+		Characters that could not be converted from Unicode will be replaced with
+		an appropriate character (usually ``'?'``).
+		
+		If *to_output* is ``True`` (the default), uses *output_codec* to convert
+		to an encoded format.  If *to_output* is ``False``, it uses *input_codec*.
+		
+		
+		"""
+		pass
+		
+	def get_output_charset(self, ):
+		"""
+		Return the output character set.
+		
+		This is the *output_charset* attribute if that is not ``None``, otherwise
+		it is *input_charset*.
+		
+		
+		"""
+		pass
+		
+	def encoded_header_len(self, ):
+		"""
+		Return the length of the encoded header string, properly calculating for
+		quoted-printable or base64 encoding.
+		
+		
+		"""
+		pass
+		
+	def header_encode(self, s,convert):
+		"""
+		Header-encode the string *s*.
+		
+		If *convert* is ``True``, the string will be converted from the input
+		charset to the output charset automatically.  This is not useful for
+		multibyte character sets, which have line length issues (multibyte
+		characters must be split on a character, not a byte boundary); use the
+		higher-level :class:`~email.header.Header` class to deal with these issues
+		(see :mod:`email.header`).  *convert* defaults to ``False``.
+		
+		The type of encoding (base64 or quoted-printable) will be based on the
+		*header_encoding* attribute.
+		
+		
+		"""
+		pass
+		
+	def body_encode(self, s,convert):
+		"""
+		Body-encode the string *s*.
+		
+		If *convert* is ``True`` (the default), the string will be converted from
+		the input charset to output charset automatically. Unlike
+		:meth:`header_encode`, there are no issues with byte boundaries and
+		multibyte charsets in email bodies, so this is usually pretty safe.
+		
+		The type of encoding (base64 or quoted-printable) will be based on the
+		*body_encoding* attribute.
+		
+		The :class:`Charset` class also provides a number of methods to support
+		standard operations and built-in functions.
+		
+		
+		"""
+		pass
+		
+	def __str__(self, ):
+		"""
+		Returns *input_charset* as a string coerced to lower
+		case. :meth:`__repr__` is an alias for :meth:`__str__`.
+		
+		
+		"""
+		pass
+		
+	def __eq__(self, other):
+		"""
+		This method allows you to compare two :class:`Charset` instances for
+		equality.
+		
+		
+		"""
+		pass
+		
+	def __ne__(self, other):
+		"""
+		This method allows you to compare two :class:`Charset` instances for
+		inequality.
+		
+		The :mod:`email.charset` module also provides the following functions for adding
+		"""
+		pass
+		
+	def add_charset(self, charset,header_enc,body_enc,output_charset):
 		"""
 		Add character properties to the global registry.
 		
@@ -77,7 +224,7 @@ class Charset:
 		"""
 		pass
 		
-	def add_alias(alias,canonical):
+	def add_alias(self, alias,canonical):
 		"""
 		Add a character set alias.  *alias* is the alias name, e.g. ``latin-1``.
 		*canonical* is the character set's canonical name, e.g. ``iso-8859-1``.

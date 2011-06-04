@@ -41,6 +41,39 @@ class AsyncResult:
 	def __init__(self, ):
 		pass
 	
+	def get(self, timeout):
+		"""
+		Return the result when it arrives.  If *timeout* is not ``None`` and the
+		result does not arrive within *timeout* seconds then
+		:exc:`multiprocessing.TimeoutError` is raised.  If the remote call raised
+		an exception then that exception will be reraised by :meth:`get`.
+		
+		"""
+		pass
+		
+	def wait(self, timeout):
+		"""
+		Wait until the result is available or until *timeout* seconds pass.
+		
+		"""
+		pass
+		
+	def ready(self, ):
+		"""
+		Return whether the call has completed.
+		
+		"""
+		pass
+		
+	def successful(self, ):
+		"""
+		Return whether the call completed without raising an exception.  Will
+		raise :exc:`AssertionError` if the result is not ready.
+		
+		The following example demonstrates the use of a pool::
+		"""
+		pass
+		
 	
 
 

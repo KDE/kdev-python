@@ -160,9 +160,30 @@ class JSONDecoder:
 	"""
 	
 	
-	def __init__(self, encoding,object_hook,parse_float,parse_int,parse_constant,strict,object_pairs_hook):
+	def __init__(self, ):
 		pass
 	
+	def decode(self, s):
+		"""
+		Return the Python representation of *s* (a :class:`str` or
+		:class:`unicode` instance containing a JSON document)
+		
+		"""
+		pass
+		
+	def raw_decode(self, s):
+		"""
+		Decode a JSON document from *s* (a :class:`str` or :class:`unicode`
+		beginning with a JSON document) and return a 2-tuple of the Python
+		representation and the index in *s* where the document ended.
+		
+		This can be used to decode a JSON document from a string that may have
+		extraneous data at the end.
+		
+		
+		"""
+		pass
+		
 	
 
 
@@ -241,9 +262,43 @@ class JSONEncoder:
 	"""
 	
 	
-	def __init__(self, skipkeys,ensure_ascii,check_circular,allow_nan,sort_keys,indent,separators,encoding,default):
+	def __init__(self, ):
 		pass
 	
+	def default(self, o):
+		"""
+		Implement this method in a subclass such that it returns a serializable
+		object for *o*, or calls the base implementation (to raise a
+		:exc:`TypeError`).
+		
+		For example, to support arbitrary iterators, you could implement default
+		like this::
+		
+		def default(self, o):
+		try:
+		iterable = iter(o)
+		except TypeError:
+		pass
+		else:
+		return list(iterable)
+		return JSONEncoder.default(self, o)
+		
+		
+		"""
+		pass
+		
+	def encode(self, o):
+		"""
+		Return a JSON string representation of a Python data structure, *o*.  For
+		example::
+		
+		>>> JSONEncoder().encode({"foo": ["bar", "baz"]})
+		'{"foo": ["bar", "baz"]}'
+		
+		
+		"""
+		pass
+		
 	
 
 

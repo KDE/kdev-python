@@ -29,6 +29,105 @@ class async_chat:
 	def __init__(self, ):
 		pass
 	
+	def close_when_done(self, ):
+		"""
+		Pushes a ``None`` on to the producer fifo. When this producer is popped off
+		the fifo it causes the channel to be closed.
+		
+		
+		"""
+		pass
+		
+	def collect_incoming_data(self, data):
+		"""
+		Called with *data* holding an arbitrary amount of received data.  The
+		default method, which must be overridden, raises a
+		:exc:`NotImplementedError` exception.
+		
+		
+		"""
+		pass
+		
+	def discard_buffers(self, ):
+		"""
+		In emergencies this method will discard any data held in the input and/or
+		output buffers and the producer fifo.
+		
+		
+		"""
+		pass
+		
+	def found_terminator(self, ):
+		"""
+		Called when the incoming data stream  matches the termination condition set
+		by :meth:`set_terminator`. The default method, which must be overridden,
+		raises a :exc:`NotImplementedError` exception. The buffered input data
+		should be available via an instance attribute.
+		
+		
+		"""
+		pass
+		
+	def get_terminator(self, ):
+		"""
+		Returns the current terminator for the channel.
+		
+		
+		"""
+		pass
+		
+	def push(self, data):
+		"""
+		Pushes data on to the channel's fifo to ensure its transmission.
+		This is all you need to do to have the channel write the data out to the
+		network, although it is possible to use your own producers in more complex
+		schemes to implement encryption and chunking, for example.
+		
+		
+		"""
+		pass
+		
+	def push_with_producer(self, producer):
+		"""
+		Takes a producer object and adds it to the producer fifo associated with
+		the channel.  When all currently-pushed producers have been exhausted the
+		channel will consume this producer's data by calling its :meth:`more`
+		method and send the data to the remote endpoint.
+		
+		
+		"""
+		pass
+		
+	def set_terminator(self, term):
+		"""
+		Sets the terminating condition to be recognized on the channel.  ``term``
+		may be any of three types of value, corresponding to three different ways
+		to handle incoming protocol data.
+		
+		+-----------+---------------------------------------------+
+		| term      | Description                                 |
+		+===========+=============================================+
+		| *string*  | Will call :meth:`found_terminator` when the |
+		|           | string is found in the input stream         |
+		+-----------+---------------------------------------------+
+		| *integer* | Will call :meth:`found_terminator` when the |
+		|           | indicated number of characters have been    |
+		|           | received                                    |
+		+-----------+---------------------------------------------+
+		| ``None``  | The channel continues to collect data       |
+		|           | forever                                     |
+		+-----------+---------------------------------------------+
+		
+		Note that any data following the terminator will be available for reading
+		by the channel after :meth:`found_terminator` is called.
+		
+		
+		asynchat - Auxiliary Classes
+		------------------------------------------
+		
+		"""
+		pass
+		
 	"""
 	The asynchronous input buffer size (default ``4096``).
 	
@@ -76,9 +175,44 @@ class fifo:
 	"""
 	
 	
-	def __init__(self, list=None):
+	def __init__(self, ):
 		pass
 	
+	def is_empty(self, ):
+		"""
+		Returns ``True`` if and only if the fifo is empty.
+		
+		
+		"""
+		pass
+		
+	def first(self, ):
+		"""
+		Returns the least-recently :meth:`push`\ ed item from the fifo.
+		
+		
+		"""
+		pass
+		
+	def push(self, data):
+		"""
+		Adds the given data (which may be a string or a producer object) to the
+		producer fifo.
+		
+		
+		"""
+		pass
+		
+	def pop(self, ):
+		"""
+		If the fifo is not empty, returns ``True, first()``, deleting the popped
+		item.  Returns ``False, None`` for an empty fifo.
+		
+		
+		.. synchat Example
+		"""
+		pass
+		
 	
 
 

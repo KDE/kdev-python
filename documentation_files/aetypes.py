@@ -16,7 +16,7 @@ class Unknown:
 	"""
 	
 	
-	def __init__(self, type,data):
+	def __init__(self, ):
 		pass
 	
 	
@@ -32,7 +32,7 @@ class Enum:
 	"""
 	
 	
-	def __init__(self, enum):
+	def __init__(self, ):
 		pass
 	
 	
@@ -48,7 +48,7 @@ class InsertionLoc:
 	"""
 	
 	
-	def __init__(self, of,pos):
+	def __init__(self, ):
 		pass
 	
 	
@@ -64,7 +64,7 @@ class Boolean:
 	"""
 	
 	
-	def __init__(self, bool):
+	def __init__(self, ):
 		pass
 	
 	
@@ -80,7 +80,7 @@ class StyledText:
 	"""
 	
 	
-	def __init__(self, style,text):
+	def __init__(self, ):
 		pass
 	
 	
@@ -96,7 +96,7 @@ class AEText:
 	"""
 	
 	
-	def __init__(self, script,style,text):
+	def __init__(self, ):
 		pass
 	
 	
@@ -112,7 +112,7 @@ class IntlText:
 	"""
 	
 	
-	def __init__(self, script,language,text):
+	def __init__(self, ):
 		pass
 	
 	
@@ -128,7 +128,7 @@ class IntlWritingCode:
 	"""
 	
 	
-	def __init__(self, script,language):
+	def __init__(self, ):
 		pass
 	
 	
@@ -144,7 +144,7 @@ class QDPoint:
 	"""
 	
 	
-	def __init__(self, v,h):
+	def __init__(self, ):
 		pass
 	
 	
@@ -160,7 +160,7 @@ class QDRectangle:
 	"""
 	
 	
-	def __init__(self, v0,h0,v1,h1):
+	def __init__(self, ):
 		pass
 	
 	
@@ -176,7 +176,7 @@ class RGBColor:
 	"""
 	
 	
-	def __init__(self, r,g,b):
+	def __init__(self, ):
 		pass
 	
 	
@@ -192,7 +192,7 @@ class Type:
 	"""
 	
 	
-	def __init__(self, type):
+	def __init__(self, ):
 		pass
 	
 	
@@ -208,7 +208,7 @@ class Keyword:
 	"""
 	
 	
-	def __init__(self, name):
+	def __init__(self, ):
 		pass
 	
 	
@@ -224,7 +224,7 @@ class Range:
 	"""
 	
 	
-	def __init__(self, start,stop):
+	def __init__(self, ):
 		pass
 	
 	
@@ -241,7 +241,7 @@ class Ordinal:
 	"""
 	
 	
-	def __init__(self, abso):
+	def __init__(self, ):
 		pass
 	
 	
@@ -257,7 +257,7 @@ class Logical:
 	"""
 	
 	
-	def __init__(self, logc,term):
+	def __init__(self, ):
 		pass
 	
 	
@@ -276,7 +276,7 @@ class Comparison:
 	"""
 	
 	
-	def __init__(self, obj1,relo,obj2):
+	def __init__(self, ):
 		pass
 	
 	
@@ -295,7 +295,7 @@ class ComponentItem:
 	"""
 	
 	
-	def __init__(self, which,fr):
+	def __init__(self, ):
 		pass
 	
 	
@@ -313,7 +313,7 @@ class NProperty:
 	"""
 	
 	
-	def __init__(self, fr):
+	def __init__(self, ):
 		pass
 	
 	

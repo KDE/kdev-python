@@ -44,7 +44,7 @@ class MIMEBase:
 	"""
 	
 	
-	def __init__(self, _maintype,_subtype,_params):
+	def __init__(self, ):
 		pass
 	
 	
@@ -99,7 +99,7 @@ class MIMEMultipart:
 	"""
 	
 	
-	def __init__(self, _subtype,boundary,_subparts,_params):
+	def __init__(self, ):
 		pass
 	
 	
@@ -130,7 +130,7 @@ class MIMEApplication:
 	"""
 	
 	
-	def __init__(self, _data,_subtype,_encoder,_params):
+	def __init__(self, ):
 		pass
 	
 	
@@ -165,7 +165,7 @@ class MIMEAudio:
 	"""
 	
 	
-	def __init__(self, _audiodata,_subtype,_encoder,_params):
+	def __init__(self, ):
 		pass
 	
 	
@@ -201,7 +201,7 @@ class MIMEImage:
 	"""
 	
 	
-	def __init__(self, _imagedata,_subtype,_encoder,_params):
+	def __init__(self, ):
 		pass
 	
 	
@@ -226,7 +226,7 @@ class MIMEMessage:
 	"""
 	
 	
-	def __init__(self, _msg,_subtype):
+	def __init__(self, ):
 		pass
 	
 	
@@ -250,7 +250,7 @@ class MIMEText:
 	"""
 	
 	
-	def __init__(self, _text,_subtype,_charset):
+	def __init__(self, ):
 		pass
 	
 	

@@ -15,10 +15,10 @@ class Tk:
 	"""
 	
 	
-	def __init__(self, screenName=None,baseName=None,_className='Tk',useTk=1):
+	def __init__(self, ):
 		pass
 	
-	def Tcl(screenName=None,baseName=None,_className='Tk',useTk=0):
+	def Tcl(self, screenName=None,baseName=None,_className='Tk',useTk=0):
 		"""
 		The :func:`Tcl` function is a factory function which creates an object much like
 		that created by the :class:`Tk` class, except that it does not initialize the Tk

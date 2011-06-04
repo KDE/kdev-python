@@ -33,9 +33,30 @@ class WSGIServer:
 	"""
 	
 	
-	def __init__(self, server_address,RequestHandlerClass):
+	def __init__(self, ):
 		pass
 	
+	def set_app(self, application):
+		"""
+		Sets the callable *application* as the WSGI application that will receive
+		requests.
+		
+		
+		"""
+		pass
+		
+	def get_app(self, ):
+		"""
+		Returns the currently-set application callable.
+		
+		Normally, however, you do not need to use these additional methods, as
+		:meth:`set_app` is normally called by :func:`make_server`, and the
+		:meth:`get_app` exists mainly for the benefit of request handler instances.
+		
+		
+		"""
+		pass
+		
 	
 
 
@@ -56,9 +77,42 @@ class WSGIRequestHandler:
 	"""
 	
 	
-	def __init__(self, request,client_address,server):
+	def __init__(self, ):
 		pass
 	
+	def get_environ(self, ):
+		"""
+		Returns a dictionary containing the WSGI environment for a request.  The default
+		implementation copies the contents of the :class:`WSGIServer` object's
+		:attr:`base_environ` dictionary attribute and then adds various headers derived
+		from the HTTP request.  Each call to this method should return a new dictionary
+		containing all of the relevant CGI environment variables as specified in
+		:pep:`333`.
+		
+		
+		"""
+		pass
+		
+	def get_stderr(self, ):
+		"""
+		Return the object that should be used as the ``wsgi.errors`` stream. The default
+		implementation just returns ``sys.stderr``.
+		
+		
+		"""
+		pass
+		
+	def handle(self, ):
+		"""
+		Process the HTTP request.  The default implementation creates a handler instance
+		using a :mod:`wsgiref.handlers` class to implement the actual WSGI application
+		interface.
+		
+		
+		:mod:`wsgiref.validate` --- WSGI conformance checker
+		"""
+		pass
+		
 	
 
 

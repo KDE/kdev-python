@@ -247,7 +247,7 @@ class TransientResource:
 	"""
 	
 	
-	def __init__(self, exc,kwargs):
+	def __init__(self, ):
 		pass
 	
 	
@@ -269,6 +269,23 @@ class EnvironmentVarGuard:
 	def __init__(self, ):
 		pass
 	
+	def set(self, envvar,value):
+		"""
+		Temporarily set the environment variable ``envvar`` to the value of
+		``value``.
+		
+		
+		"""
+		pass
+		
+	def unset(self, envvar):
+		"""
+		Temporarily unset the environment variable ``envvar``.
+		
+		
+		"""
+		pass
+		
 	
 
 

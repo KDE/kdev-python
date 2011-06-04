@@ -384,9 +384,28 @@ class IncrementalEncoder:
 	"""
 	
 	
-	def __init__(self, errors):
+	def __init__(self, ):
 		pass
 	
+	def encode(self, object,final):
+		"""
+		Encodes *object* (taking the current state of the encoder into account)
+		and returns the resulting encoded object. If this is the last call to
+		:meth:`encode` *final* must be true (the default is false).
+		
+		
+		"""
+		pass
+		
+	def reset(self, ):
+		"""
+		Reset the encoder to the initial state.
+		
+		
+		.. ncrementalDecoder Objects
+		"""
+		pass
+		
 	
 
 
@@ -421,9 +440,32 @@ class IncrementalDecoder:
 	"""
 	
 	
-	def __init__(self, errors):
+	def __init__(self, ):
 		pass
 	
+	def decode(self, object,final):
+		"""
+		Decodes *object* (taking the current state of the decoder into account)
+		and returns the resulting decoded object. If this is the last call to
+		:meth:`decode` *final* must be true (the default is false). If *final* is
+		true the decoder must decode the input completely and must flush all
+		buffers. If this isn't possible (e.g. because of incomplete byte sequences
+		at the end of the input) it must initiate error handling just like in the
+		stateless case (which might raise an exception).
+		
+		
+		"""
+		pass
+		
+	def reset(self, ):
+		"""
+		Reset the decoder to the initial state.
+		
+		
+		The :class:`StreamWriter` and :class:`StreamReader` classes provide generic
+		"""
+		pass
+		
 	
 
 
@@ -463,9 +505,39 @@ class StreamWriter:
 	"""
 	
 	
-	def __init__(self, stream,errors):
+	def __init__(self, ):
 		pass
 	
+	def write(self, object):
+		"""
+		Writes the object's contents encoded to the stream.
+		
+		
+		"""
+		pass
+		
+	def writelines(self, list):
+		"""
+		Writes the concatenated list of strings to the stream (possibly by reusing
+		the :meth:`write` method).
+		
+		
+		"""
+		pass
+		
+	def reset(self, ):
+		"""
+		Flushes and resets the codec buffers used for keeping state.
+		
+		Calling this method should ensure that the data on the output is put into
+		a clean state that allows appending of new fresh data without having to
+		rescan the whole stream to recover state.
+		
+		
+		In addition to the above methods, the :class:`StreamWriter` must also inherit
+		"""
+		pass
+		
 	
 
 
@@ -501,9 +573,74 @@ class StreamReader:
 	"""
 	
 	
-	def __init__(self, stream,errors):
+	def __init__(self, ):
 		pass
 	
+	def read(self, size,chars,firstline):
+		"""
+		Decodes data from the stream and returns the resulting object.
+		
+		*chars* indicates the number of characters to read from the
+		stream. :func:`read` will never return more than *chars* characters, but
+		it might return less, if there are not enough characters available.
+		
+		*size* indicates the approximate maximum number of bytes to read from the
+		stream for decoding purposes. The decoder can modify this setting as
+		appropriate. The default value -1 indicates to read and decode as much as
+		possible.  *size* is intended to prevent having to decode huge files in
+		one step.
+		
+		*firstline* indicates that it would be sufficient to only return the first
+		line, if there are decoding errors on later lines.
+		
+		The method should use a greedy read strategy meaning that it should read
+		as much data as is allowed within the definition of the encoding and the
+		given size, e.g.  if optional encoding endings or state markers are
+		available on the stream, these should be read too.
+		
+		"""
+		pass
+		
+	def readline(self, size,keepends):
+		"""
+		Read one line from the input stream and return the decoded data.
+		
+		*size*, if given, is passed as size argument to the stream's
+		:meth:`readline` method.
+		
+		If *keepends* is false line-endings will be stripped from the lines
+		returned.
+		
+		"""
+		pass
+		
+	def readlines(self, sizehint,keepends):
+		"""
+		Read all lines available on the input stream and return them as a list of
+		lines.
+		
+		Line-endings are implemented using the codec's decoder method and are
+		included in the list entries if *keepends* is true.
+		
+		*sizehint*, if given, is passed as the *size* argument to the stream's
+		:meth:`read` method.
+		
+		
+		"""
+		pass
+		
+	def reset(self, ):
+		"""
+		Resets the codec buffers used for keeping state.
+		
+		Note that no stream repositioning should take place.  This method is
+		primarily intended to be able to recover from decoding errors.
+		
+		
+		In addition to the above methods, the :class:`StreamReader` must also inherit
+		"""
+		pass
+		
 	
 
 
@@ -534,7 +671,7 @@ class StreamReaderWriter:
 	"""
 	
 	
-	def __init__(self, stream,Reader,Writer,errors):
+	def __init__(self, ):
 		pass
 	
 	
@@ -990,7 +1127,7 @@ class StreamRecoder:
 	"""
 	
 	
-	def __init__(self, stream,encode,decode,Reader,Writer,errors):
+	def __init__(self, ):
 		pass
 	
 	

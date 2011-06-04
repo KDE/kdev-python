@@ -25,9 +25,87 @@ class InteractiveInterpreter:
 	"""
 	
 	
-	def __init__(self, locals):
+	def __init__(self, ):
 		pass
 	
+	def runsource(self, source,filename,symbol):
+		"""
+		Compile and run some source in the interpreter. Arguments are the same as for
+		:func:`compile_command`; the default for *filename* is ``'<input>'``, and for
+		*symbol* is ``'single'``.  One several things can happen:
+		
+		* The input is incorrect; :func:`compile_command` raised an exception
+		(:exc:`SyntaxError` or :exc:`OverflowError`).  A syntax traceback will be
+		printed by calling the :meth:`showsyntaxerror` method.  :meth:`runsource`
+		returns ``False``.
+		
+		* The input is incomplete, and more input is required; :func:`compile_command`
+		returned ``None``. :meth:`runsource` returns ``True``.
+		
+		* The input is complete; :func:`compile_command` returned a code object.  The
+		code is executed by calling the :meth:`runcode` (which also handles run-time
+		exceptions, except for :exc:`SystemExit`). :meth:`runsource` returns ``False``.
+		
+		The return value can be used to decide whether to use ``sys.ps1`` or ``sys.ps2``
+		to prompt the next line.
+		
+		
+		"""
+		pass
+		
+	def runcode(self, code):
+		"""
+		Execute a code object. When an exception occurs, :meth:`showtraceback` is called
+		to display a traceback.  All exceptions are caught except :exc:`SystemExit`,
+		which is allowed to propagate.
+		
+		A note about :exc:`KeyboardInterrupt`: this exception may occur elsewhere in
+		this code, and may not always be caught.  The caller should be prepared to deal
+		with it.
+		
+		
+		"""
+		pass
+		
+	def showsyntaxerror(self, filename):
+		"""
+		Display the syntax error that just occurred.  This does not display a stack
+		trace because there isn't one for syntax errors. If *filename* is given, it is
+		stuffed into the exception instead of the default filename provided by Python's
+		parser, because it always uses ``'<string>'`` when reading from a string. The
+		output is written by the :meth:`write` method.
+		
+		
+		"""
+		pass
+		
+	def showtraceback(self, ):
+		"""
+		Display the exception that just occurred.  We remove the first stack item
+		because it is within the interpreter object implementation. The output is
+		written by the :meth:`write` method.
+		
+		
+		"""
+		pass
+		
+	def write(self, data):
+		"""
+		Write a string to the standard error stream (``sys.stderr``). Derived classes
+		should override this to provide the appropriate output handling as needed.
+		
+		
+		.. nteractive Console Objects
+		---------------------------
+		
+		The :class:`InteractiveConsole` class is a subclass of
+		:class:`InteractiveInterpreter`, and so offers all the methods of the
+		interpreter objects as well as the following additions.
+		
+		
+		"""
+		pass
+		
 	
 
 
@@ -43,10 +121,10 @@ class InteractiveConsole:
 	"""
 	
 	
-	def __init__(self, locals,filename):
+	def __init__(self, ):
 		pass
 	
-	def interact(banner,readfunc,local):
+	def interact(self, banner,readfunc,local):
 		"""
 		Convenience function to run a read-eval-print loop.  This creates a new instance
 		of :class:`InteractiveConsole` and sets *readfunc* to be used as the
@@ -60,7 +138,7 @@ class InteractiveConsole:
 		"""
 		pass
 		
-	def compile_command(source,filename,symbol):
+	def compile_command(self, source,filename,symbol):
 		"""
 		This function is useful for programs that want to emulate Python's interpreter
 		main loop (a.k.a. the read-eval-print loop).  The tricky part is to determine
@@ -83,6 +161,41 @@ class InteractiveConsole:
 		
 		.. nteractive Interpreter Objects
 		-------------------------------
+		
+		
+		"""
+		pass
+		
+	def interact(self, banner):
+		"""
+		Closely emulate the interactive Python console. The optional banner argument
+		specify the banner to print before the first interaction; by default it prints a
+		banner similar to the one printed by the standard Python interpreter, followed
+		by the class name of the console object in parentheses (so as not to confuse
+		this with the real interpreter -- since it's so close!).
+		
+		
+		"""
+		pass
+		
+	def push(self, line):
+		"""
+		Push a line of source text to the interpreter. The line should not have a
+		trailing newline; it may have internal newlines.  The line is appended to a
+		buffer and the interpreter's :meth:`runsource` method is called with the
+		concatenated contents of the buffer as source.  If this indicates that the
+		command was executed or invalid, the buffer is reset; otherwise, the command is
+		incomplete, and the buffer is left as it was after the line was appended.  The
+		return value is ``True`` if more input is required, ``False`` if the line was
+		dealt with in some way (this is the same as :meth:`runsource`).
+		
+		
+		"""
+		pass
+		
+	def resetbuffer(self, ):
+		"""
+		Remove any unhandled source text from the input buffer.
 		
 		
 		"""

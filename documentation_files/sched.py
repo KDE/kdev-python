@@ -70,9 +70,72 @@ class scheduler:
 	"""
 	
 	
-	def __init__(self, timefunc,delayfunc):
+	def __init__(self, ):
 		pass
 	
+	def enterabs(self, time,priority,action,argument):
+		"""
+		Schedule a new event. The *time* argument should be a numeric type compatible
+		with the return value of the *timefunc* function passed  to the constructor.
+		Events scheduled for the same *time* will be executed in the order of their
+		*priority*.
+		
+		Executing the event means executing ``action(*argument)``.  *argument* must be a
+		sequence holding the parameters for *action*.
+		
+		Return value is an event which may be used for later cancellation of the event
+		(see :meth:`cancel`).
+		
+		
+		"""
+		pass
+		
+	def enter(self, delay,priority,action,argument):
+		"""
+		Schedule an event for *delay* more time units. Other then the relative time, the
+		other arguments, the effect and the return value are the same as those for
+		:meth:`enterabs`.
+		
+		
+		"""
+		pass
+		
+	def cancel(self, event):
+		"""
+		Remove the event from the queue. If *event* is not an event currently in the
+		queue, this method will raise a :exc:`ValueError`.
+		
+		
+		"""
+		pass
+		
+	def empty(self, ):
+		"""
+		Return true if the event queue is empty.
+		
+		
+		"""
+		pass
+		
+	def run(self, ):
+		"""
+		Run all scheduled events. This function will wait  (using the :func:`delayfunc`
+		function passed to the constructor) for the next event, then execute it and so
+		on until there are no more scheduled events.
+		
+		Either *action* or *delayfunc* can raise an exception.  In either case, the
+		scheduler will maintain a consistent state and propagate the exception.  If an
+		exception is raised by *action*, the event will not be attempted in future calls
+		to :meth:`run`.
+		
+		If a sequence of events takes longer to run than the time available before the
+		next event, the scheduler will simply fall behind.  No events will be dropped;
+		the calling code is responsible for canceling  events which are no longer
+		pertinent.
+		
+		"""
+		pass
+		
 	
 
 

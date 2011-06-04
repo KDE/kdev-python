@@ -46,10 +46,10 @@ class PrettyPrinter:
 	"""
 	
 	
-	def __init__(self, more):
+	def __init__(self, ):
 		pass
 	
-	def pformat(object,indent,width,depth):
+	def pformat(self, object,indent,width,depth):
 		"""
 		Return the formatted representation of *object* as a string.  *indent*, *width*
 		and *depth* will be passed to the :class:`PrettyPrinter` constructor as
@@ -58,7 +58,7 @@ class PrettyPrinter:
 		"""
 		pass
 		
-	def pprint(object,stream,indent,width,depth):
+	def pprint(self, object,stream,indent,width,depth):
 		"""
 		Prints the formatted representation of *object* on *stream*, followed by a
 		newline.  If *stream* is omitted, ``sys.stdout`` is used.  This may be used in
@@ -80,12 +80,12 @@ class PrettyPrinter:
 		"""
 		pass
 		
-	def isreadable(object):
+	def isreadable(self, object):
 		"""
 		"""
 		pass
 		
-	def isrecursive(object):
+	def isrecursive(self, object):
 		"""
 		Determine if *object* requires a recursive representation.
 		
@@ -95,7 +95,7 @@ class PrettyPrinter:
 		"""
 		pass
 		
-	def saferepr(object):
+	def saferepr(self, object):
 		"""
 		Return a string representation of *object*, protected against recursive data
 		structures.  If the representation of *object* exposes a recursive entry, the
@@ -111,6 +111,65 @@ class PrettyPrinter:
 		
 		:class:`PrettyPrinter` instances have the following methods:
 		
+		
+		"""
+		pass
+		
+	def pformat(self, object):
+		"""
+		Return the formatted representation of *object*.  This takes into account the
+		options passed to the :class:`PrettyPrinter` constructor.
+		
+		
+		"""
+		pass
+		
+	def pprint(self, object):
+		"""
+		Print the formatted representation of *object* on the configured stream,
+		followed by a newline.
+		
+		The following methods provide the implementations for the corresponding
+		functions of the same names.  Using these methods on an instance is slightly
+		more efficient since new :class:`PrettyPrinter` objects don't need to be
+		created.
+		
+		
+		"""
+		pass
+		
+	def isreadable(self, object):
+		"""
+		"""
+		pass
+		
+	def isrecursive(self, object):
+		"""
+		Determine if the object requires a recursive representation.
+		
+		This method is provided as a hook to allow subclasses to modify the way objects
+		are converted to strings.  The default implementation uses the internals of the
+		:func:`saferepr` implementation.
+		
+		
+		"""
+		pass
+		
+	def format(self, object,context,maxlevels,level):
+		"""
+		Returns three values: the formatted version of *object* as a string, a flag
+		indicating whether the result is readable, and a flag indicating whether
+		recursion was detected.  The first argument is the object to be presented.  The
+		second is a dictionary which contains the :func:`id` of objects that are part of
+		the current presentation context (direct and indirect containers for *object*
+		that are affecting the presentation) as the keys; if an object needs to be
+		presented which is already represented in *context*, the third return value
+		should be ``True``.  Recursive calls to the :meth:`format` method should add
+		additional entries for containers to this dictionary.  The third argument,
+		*maxlevels*, gives the requested limit to recursion; this will be ``0`` if there
+		is no requested limit.  This argument should be passed unmodified to recursive
+		calls. The fourth argument, *level*, gives the current level; recursive calls
+		should be passed a value less than that of the current call.
 		
 		"""
 		pass

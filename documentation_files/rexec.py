@@ -44,9 +44,153 @@ class RExec:
 	"""
 	
 	
-	def __init__(self, hooks,verbose):
+	def __init__(self, ):
 		pass
 	
+	def r_eval(self, code):
+		"""
+		*code* must either be a string containing a Python expression, or a compiled
+		code object, which will be evaluated in the restricted environment's
+		:mod:`__main__` module.  The value of the expression or code object will be
+		returned.
+		
+		
+		"""
+		pass
+		
+	def r_exec(self, code):
+		"""
+		*code* must either be a string containing one or more lines of Python code, or a
+		compiled code object, which will be executed in the restricted environment's
+		:mod:`__main__` module.
+		
+		
+		"""
+		pass
+		
+	def r_execfile(self, filename):
+		"""
+		Execute the Python code contained in the file *filename* in the restricted
+		environment's :mod:`__main__` module.
+		
+		Methods whose names begin with ``s_`` are similar to the functions beginning
+		with ``r_``, but the code will be granted access to restricted versions of the
+		standard I/O streams ``sys.stdin``, ``sys.stderr``, and ``sys.stdout``.
+		
+		
+		"""
+		pass
+		
+	def s_eval(self, code):
+		"""
+		*code* must be a string containing a Python expression, which will be evaluated
+		in the restricted environment.
+		
+		
+		"""
+		pass
+		
+	def s_exec(self, code):
+		"""
+		*code* must be a string containing one or more lines of Python code, which will
+		be executed in the restricted environment.
+		
+		
+		"""
+		pass
+		
+	def s_execfile(self, code):
+		"""
+		Execute the Python code contained in the file *filename* in the restricted
+		environment.
+		
+		:class:`RExec` objects must also support various methods which will be
+		implicitly called by code executing in the restricted environment. Overriding
+		these methods in a subclass is used to change the policies enforced by a
+		restricted environment.
+		
+		
+		"""
+		pass
+		
+	def r_import(self, modulename,globals,locals,_fromlist):
+		"""
+		Import the module *modulename*, raising an :exc:`ImportError` exception if the
+		module is considered unsafe.
+		
+		
+		"""
+		pass
+		
+	def r_open(self, filename,mode,bufsize):
+		"""
+		Method called when :func:`open` is called in the restricted environment.  The
+		arguments are identical to those of :func:`open`, and a file object (or a class
+		instance compatible with file objects) should be returned.  :class:`RExec`'s
+		default behaviour is allow opening any file for reading, but forbidding any
+		attempt to write a file.  See the example below for an implementation of a less
+		restrictive :meth:`r_open`.
+		
+		
+		"""
+		pass
+		
+	def r_reload(self, module):
+		"""
+		Reload the module object *module*, re-parsing and re-initializing it.
+		
+		
+		"""
+		pass
+		
+	def r_unload(self, module):
+		"""
+		Unload the module object *module* (remove it from the restricted environment's
+		``sys.modules`` dictionary).
+		
+		And their equivalents with access to restricted standard I/O streams:
+		
+		
+		"""
+		pass
+		
+	def s_import(self, modulename,globals,locals,_fromlist):
+		"""
+		Import the module *modulename*, raising an :exc:`ImportError` exception if the
+		module is considered unsafe.
+		
+		
+		"""
+		pass
+		
+	def s_reload(self, module):
+		"""
+		Reload the module object *module*, re-parsing and re-initializing it.
+		
+		
+		"""
+		pass
+		
+	def s_unload(self, module):
+		"""
+		Unload the module object *module*.
+		
+		.. re the semantics of this?
+		
+		
+		.. efining restricted environments
+		--------------------------------
+		
+		The :class:`RExec` class has the following class attributes, which are used by
+		the :meth:`__init__` method.  Changing them on an existing instance won't have
+		any effect; instead, create a subclass of :class:`RExec` and assign them new
+		values in the class definition. Instances of the new class will then use those
+		new values.  All these attributes are tuples of strings.
+		
+		
+		"""
+		pass
+		
 	
 
 

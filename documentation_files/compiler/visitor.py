@@ -42,6 +42,25 @@ class ASTVisitor:
 	def __init__(self, ):
 		pass
 	
+	def default(self, node,more):
+		"""
+		
+		"""
+		pass
+		
+	def dispatch(self, node,more):
+		"""
+		
+		"""
+		pass
+		
+	def preorder(self, tree,visitor):
+		"""
+		
+		Bytecode Generation
+		"""
+		pass
+		
 	
 
 

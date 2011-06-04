@@ -166,7 +166,7 @@ class FileWrapper:
 	"""
 	
 	
-	def __init__(self, filelike,blksize=8192):
+	def __init__(self, ):
 		pass
 	
 	

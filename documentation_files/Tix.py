@@ -57,7 +57,7 @@ class Tix:
 	"""
 	
 	
-	def __init__(self, screenName,baseName,_className):
+	def __init__(self, ):
 		pass
 	
 	
@@ -702,6 +702,93 @@ class tixCommand:
 	def __init__(self, ):
 		pass
 	
+	def tix_configure(self, cnf,kw):
+		"""
+		Query or modify the configuration options of the Tix application context. If no
+		option is specified, returns a dictionary all of the available options.  If
+		option is specified with no value, then the method returns a list describing the
+		one named option (this list will be identical to the corresponding sublist of
+		the value returned if no option is specified).  If one or more option-value
+		pairs are specified, then the method modifies the given option(s) to have the
+		given value(s); in this case the method returns an empty string. Option may be
+		any of the configuration options.
+		
+		
+		"""
+		pass
+		
+	def tix_cget(self, option):
+		"""
+		Returns the current value of the configuration option given by *option*. Option
+		may be any of the configuration options.
+		
+		
+		"""
+		pass
+		
+	def tix_getbitmap(self, name):
+		"""
+		Locates a bitmap file of the name ``name.xpm`` or ``name`` in one of the bitmap
+		directories (see the :meth:`tix_addbitmapdir` method).  By using
+		:meth:`tix_getbitmap`, you can avoid hard coding the pathnames of the bitmap
+		files in your application. When successful, it returns the complete pathname of
+		the bitmap file, prefixed with the character ``@``.  The returned value can be
+		used to configure the ``bitmap`` option of the Tk and Tix widgets.
+		
+		
+		"""
+		pass
+		
+	def tix_addbitmapdir(self, directory):
+		"""
+		Tix maintains a list of directories under which the :meth:`tix_getimage` and
+		:meth:`tix_getbitmap` methods will search for image files.  The standard bitmap
+		directory is :file:`$TIX_LIBRARY/bitmaps`. The :meth:`tix_addbitmapdir` method
+		adds *directory* into this list. By using this method, the image files of an
+		applications can also be located using the :meth:`tix_getimage` or
+		:meth:`tix_getbitmap` method.
+		
+		
+		"""
+		pass
+		
+	def tix_filedialog(self, dlg_class):
+		"""
+		Returns the file selection dialog that may be shared among different calls from
+		this application.  This method will create a file selection dialog widget when
+		it is called the first time. This dialog will be returned by all subsequent
+		calls to :meth:`tix_filedialog`.  An optional dlgclass parameter can be passed
+		as a string to specified what type of file selection dialog widget is desired.
+		Possible options are ``tix``, ``FileSelectDialog`` or ``tixExFileSelectDialog``.
+		
+		
+		"""
+		pass
+		
+	def tix_getimage(self, name):
+		"""
+		Locates an image file of the name :file:`name.xpm`, :file:`name.xbm` or
+		:file:`name.ppm` in one of the bitmap directories (see the
+		:meth:`tix_addbitmapdir` method above). If more than one file with the same name
+		(but different extensions) exist, then the image type is chosen according to the
+		depth of the X display: xbm images are chosen on monochrome displays and color
+		images are chosen on color displays. By using :meth:`tix_getimage`, you can
+		avoid hard coding the pathnames of the image files in your application. When
+		successful, this method returns the name of the newly created image, which can
+		be used to configure the ``image`` option of the Tk and Tix widgets.
+		
+		
+		"""
+		pass
+		
+	def tix_option_get(self, name):
+		"""
+		Gets the options maintained by the Tix scheme mechanism.
+		
+		
+		"""
+		pass
+		
 	
 
 

@@ -38,9 +38,26 @@ class ModuleFinder:
 	"""
 	
 	
-	def __init__(self, path=None,debug=0,excludes=[],replace_paths=[]):
+	def __init__(self, ):
 		pass
 	
+	def report(self, ):
+		"""
+		Print a report to standard output that lists the modules imported by the
+		script and their paths, as well as modules that are missing or seem to be
+		missing.
+		
+		"""
+		pass
+		
+	def run_script(self, pathname):
+		"""
+		Analyze the contents of the *pathname* file, which must contain Python
+		code.
+		
+		"""
+		pass
+		
 	
 
 

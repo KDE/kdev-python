@@ -201,9 +201,148 @@ class NullTranslations:
 	"""
 	
 	
-	def __init__(self, fp):
+	def __init__(self, ):
 		pass
 	
+	def _parse(self, fp):
+		"""
+		No-op'd in the base class, this method takes file object *fp*, and reads
+		the data from the file, initializing its message catalog.  If you have an
+		unsupported message catalog file format, you should override this method
+		to parse your format.
+		
+		
+		"""
+		pass
+		
+	def add_fallback(self, fallback):
+		"""
+		Add *fallback* as the fallback object for the current translation
+		object. A translation object should consult the fallback if it cannot provide a
+		translation for a given message.
+		
+		
+		"""
+		pass
+		
+	def gettext(self, message):
+		"""
+		If a fallback has been set, forward :meth:`gettext` to the
+		fallback. Otherwise, return the translated message.  Overridden in derived
+		classes.
+		
+		
+		"""
+		pass
+		
+	def lgettext(self, message):
+		"""
+		If a fallback has been set, forward :meth:`lgettext` to the
+		fallback. Otherwise, return the translated message.  Overridden in derived
+		classes.
+		
+		"""
+		pass
+		
+	def ugettext(self, message):
+		"""
+		If a fallback has been set, forward :meth:`ugettext` to the
+		fallback. Otherwise, return the translated message as a Unicode
+		string. Overridden in derived classes.
+		
+		
+		"""
+		pass
+		
+	def ngettext(self, singular,plural,n):
+		"""
+		If a fallback has been set, forward :meth:`ngettext` to the
+		fallback. Otherwise, return the translated message.  Overridden in derived
+		classes.
+		
+		"""
+		pass
+		
+	def lngettext(self, singular,plural,n):
+		"""
+		If a fallback has been set, forward :meth:`ngettext` to the
+		fallback. Otherwise, return the translated message.  Overridden in derived
+		classes.
+		
+		"""
+		pass
+		
+	def ungettext(self, singular,plural,n):
+		"""
+		If a fallback has been set, forward :meth:`ungettext` to the fallback.
+		Otherwise, return the translated message as a Unicode string. Overridden
+		in derived classes.
+		
+		"""
+		pass
+		
+	def info(self, ):
+		"""
+		Return the "protected" :attr:`_info` variable.
+		
+		
+		"""
+		pass
+		
+	def charset(self, ):
+		"""
+		Return the "protected" :attr:`_charset` variable.
+		
+		
+		"""
+		pass
+		
+	def output_charset(self, ):
+		"""
+		Return the "protected" :attr:`_output_charset` variable, which defines the
+		encoding used to return translated messages.
+		
+		"""
+		pass
+		
+	def set_output_charset(self, charset):
+		"""
+		Change the "protected" :attr:`_output_charset` variable, which defines the
+		encoding used to return translated messages.
+		
+		"""
+		pass
+		
+	def install(self, unicode,names):
+		"""
+		If the *unicode* flag is false, this method installs :meth:`self.gettext`
+		into the built-in namespace, binding it to ``_``.  If *unicode* is true,
+		it binds :meth:`self.ugettext` instead.  By default, *unicode* is false.
+		
+		If the *names* parameter is given, it must be a sequence containing the
+		names of functions you want to install in the builtins namespace in
+		addition to :func:`_`.  Supported names are ``'gettext'`` (bound to
+		:meth:`self.gettext` or :meth:`self.ugettext` according to the *unicode*
+		flag), ``'ngettext'`` (bound to :meth:`self.ngettext` or
+		:meth:`self.ungettext` according to the *unicode* flag), ``'lgettext'``
+		and ``'lngettext'``.
+		
+		Note that this is only one way, albeit the most convenient way, to make
+		the :func:`_` function available to your application.  Because it affects
+		the entire application globally, and specifically the built-in namespace,
+		localized modules should never install :func:`_`. Instead, they should use
+		this code to make :func:`_` available to their module::
+		
+		import gettext
+		t = gettext.translation('mymodule', *more)
+		_ = t.gettext
+		
+		This puts :func:`_` only in the module's global namespace and so only
+		affects calls within this module.
+		
+		"""
+		pass
+		
 	
 
 

@@ -91,7 +91,7 @@ class ServerProxy:
 	"""
 	
 	
-	def __init__(self, uri,transport,encoding,verbose,allow_none,use_datetime):
+	def __init__(self, ):
 		pass
 	
 	
@@ -157,10 +157,10 @@ class MultiCall:
 	"""
 	
 	
-	def __init__(self, server):
+	def __init__(self, ):
 		pass
 	
-	def boolean(value):
+	def boolean(self, value):
 		"""
 		Convert any Python value to one of the XML-RPC Boolean constants, ``True`` or
 		``False``.
@@ -169,7 +169,7 @@ class MultiCall:
 		"""
 		pass
 		
-	def dumps(params,methodname,methodresponse,encoding,allow_none):
+	def dumps(self, params,methodname,methodresponse,encoding,allow_none):
 		"""
 		Convert *params* into an XML-RPC request. or into a response if *methodresponse*
 		is true. *params* can be either a tuple of arguments or an instance of the
@@ -183,7 +183,7 @@ class MultiCall:
 		"""
 		pass
 		
-	def loads(data,use_datetime):
+	def loads(self, data,use_datetime):
 		"""
 		Convert an XML-RPC request or response into Python objects, a ``(params,
 		methodname)``.  *params* is a tuple of argument; *methodname* is a string, or

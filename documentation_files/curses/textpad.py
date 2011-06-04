@@ -39,9 +39,96 @@ class Textbox:
 	"""
 	
 	
-	def __init__(self, win):
+	def __init__(self, ):
 		pass
 	
+	def edit(self, validator):
+		"""
+		This is the entry point you will normally use.  It accepts editing
+		keystrokes until one of the termination keystrokes is entered.  If
+		*validator* is supplied, it must be a function.  It will be called for
+		each keystroke entered with the keystroke as a parameter; command dispatch
+		is done on the result. This method returns the window contents as a
+		string; whether blanks in the window are included is affected by the
+		:attr:`stripspaces` member.
+		
+		
+		"""
+		pass
+		
+	def do_command(self, ch):
+		"""
+		Process a single command keystroke.  Here are the supported special
+		keystrokes:
+		
+		+------------------+-------------------------------------------+
+		| Keystroke        | Action                                    |
+		+==================+===========================================+
+		| :kbd:`Control-A` | Go to left edge of window.                |
+		+------------------+-------------------------------------------+
+		| :kbd:`Control-B` | Cursor left, wrapping to previous line if |
+		|                  | appropriate.                              |
+		+------------------+-------------------------------------------+
+		| :kbd:`Control-D` | Delete character under cursor.            |
+		+------------------+-------------------------------------------+
+		| :kbd:`Control-E` | Go to right edge (stripspaces off) or end |
+		|                  | of line (stripspaces on).                 |
+		+------------------+-------------------------------------------+
+		| :kbd:`Control-F` | Cursor right, wrapping to next line when  |
+		|                  | appropriate.                              |
+		+------------------+-------------------------------------------+
+		| :kbd:`Control-G` | Terminate, returning the window contents. |
+		+------------------+-------------------------------------------+
+		| :kbd:`Control-H` | Delete character backward.                |
+		+------------------+-------------------------------------------+
+		| :kbd:`Control-J` | Terminate if the window is 1 line,        |
+		|                  | otherwise insert newline.                 |
+		+------------------+-------------------------------------------+
+		| :kbd:`Control-K` | If line is blank, delete it, otherwise    |
+		|                  | clear to end of line.                     |
+		+------------------+-------------------------------------------+
+		| :kbd:`Control-L` | Refresh screen.                           |
+		+------------------+-------------------------------------------+
+		| :kbd:`Control-N` | Cursor down; move down one line.          |
+		+------------------+-------------------------------------------+
+		| :kbd:`Control-O` | Insert a blank line at cursor location.   |
+		+------------------+-------------------------------------------+
+		| :kbd:`Control-P` | Cursor up; move up one line.              |
+		+------------------+-------------------------------------------+
+		
+		Move operations do nothing if the cursor is at an edge where the movement
+		is not possible.  The following synonyms are supported where possible:
+		
+		+------------------------+------------------+
+		| Constant               | Keystroke        |
+		+========================+==================+
+		| :const:`KEY_LEFT`      | :kbd:`Control-B` |
+		+------------------------+------------------+
+		| :const:`KEY_RIGHT`     | :kbd:`Control-F` |
+		+------------------------+------------------+
+		| :const:`KEY_UP`        | :kbd:`Control-P` |
+		+------------------------+------------------+
+		| :const:`KEY_DOWN`      | :kbd:`Control-N` |
+		+------------------------+------------------+
+		| :const:`KEY_BACKSPACE` | :kbd:`Control-h` |
+		+------------------------+------------------+
+		
+		All other keystrokes are treated as a command to insert the given
+		character and move right (with line wrapping).
+		
+		
+		"""
+		pass
+		
+	def gather(self, ):
+		"""
+		This method returns the window contents as a string; whether blanks in the
+		window are included is affected by the :attr:`stripspaces` member.
+		
+		
+		"""
+		pass
+		
 	
 
 

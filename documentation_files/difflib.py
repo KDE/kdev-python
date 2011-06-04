@@ -36,6 +36,184 @@ class SequenceMatcher:
 	def __init__(self, ):
 		pass
 	
+	def set_seqs(self, a,b):
+		"""
+		Set the two sequences to be compared.
+		
+		:class:`SequenceMatcher` computes and caches detailed information about the
+		second sequence, so if you want to compare one sequence against many
+		sequences, use :meth:`set_seq2` to set the commonly used sequence once and
+		call :meth:`set_seq1` repeatedly, once for each of the other sequences.
+		
+		
+		"""
+		pass
+		
+	def set_seq1(self, a):
+		"""
+		Set the first sequence to be compared.  The second sequence to be compared
+		is not changed.
+		
+		
+		"""
+		pass
+		
+	def set_seq2(self, b):
+		"""
+		Set the second sequence to be compared.  The first sequence to be compared
+		is not changed.
+		
+		
+		"""
+		pass
+		
+	def find_longest_match(self, alo,ahi,blo,bhi):
+		"""
+		Find longest matching block in ``a[alo:ahi]`` and ``b[blo:bhi]``.
+		
+		If *isjunk* was omitted or ``None``, :meth:`find_longest_match` returns
+		``(i, j, k)`` such that ``a[i:i+k]`` is equal to ``b[j:j+k]``, where ``alo
+		<= i <= i+k <= ahi`` and ``blo <= j <= j+k <= bhi``. For all ``(i', j',
+		k')`` meeting those conditions, the additional conditions ``k >= k'``, ``i
+		<= i'``, and if ``i == i'``, ``j <= j'`` are also met. In other words, of
+		all maximal matching blocks, return one that starts earliest in *a*, and
+		of all those maximal matching blocks that start earliest in *a*, return
+		the one that starts earliest in *b*.
+		
+		>>> s = SequenceMatcher(None, " abcd", "abcd abcd")
+		>>> s.find_longest_match(0, 5, 0, 9)
+		Match(a=0, b=4, size=5)
+		
+		If *isjunk* was provided, first the longest matching block is determined
+		as above, but with the additional restriction that no junk element appears
+		in the block.  Then that block is extended as far as possible by matching
+		(only) junk elements on both sides. So the resulting block never matches
+		on junk except as identical junk happens to be adjacent to an interesting
+		match.
+		
+		Here's the same example as before, but considering blanks to be junk. That
+		prevents ``' abcd'`` from matching the ``' abcd'`` at the tail end of the
+		second sequence directly.  Instead only the ``'abcd'`` can match, and
+		matches the leftmost ``'abcd'`` in the second sequence:
+		
+		>>> s = SequenceMatcher(lambda x: x==" ", " abcd", "abcd abcd")
+		>>> s.find_longest_match(0, 5, 0, 9)
+		Match(a=1, b=0, size=4)
+		
+		If no blocks match, this returns ``(alo, blo, 0)``.
+		
+		"""
+		pass
+		
+	def get_matching_blocks(self, ):
+		"""
+		Return list of triples describing matching subsequences. Each triple is of
+		the form ``(i, j, n)``, and means that ``a[i:i+n] == b[j:j+n]``.  The
+		triples are monotonically increasing in *i* and *j*.
+		
+		The last triple is a dummy, and has the value ``(len(a), len(b), 0)``.  It
+		is the only triple with ``n == 0``.  If ``(i, j, n)`` and ``(i', j', n')``
+		are adjacent triples in the list, and the second is not the last triple in
+		the list, then ``i+n != i'`` or ``j+n != j'``; in other words, adjacent
+		triples always describe non-adjacent equal blocks.
+		
+		.. hy a dummy is used!
+		
+		"""
+		pass
+		
+	def get_opcodes(self, ):
+		"""
+		Return list of 5-tuples describing how to turn *a* into *b*. Each tuple is
+		of the form ``(tag, i1, i2, j1, j2)``.  The first tuple has ``i1 == j1 ==
+		0``, and remaining tuples have *i1* equal to the *i2* from the preceding
+		tuple, and, likewise, *j1* equal to the previous *j2*.
+		
+		The *tag* values are strings, with these meanings:
+		
+		+---------------+---------------------------------------------+
+		| Value         | Meaning                                     |
+		+===============+=============================================+
+		| ``'replace'`` | ``a[i1:i2]`` should be replaced by          |
+		|               | ``b[j1:j2]``.                               |
+		+---------------+---------------------------------------------+
+		| ``'delete'``  | ``a[i1:i2]`` should be deleted.  Note that  |
+		|               | ``j1 == j2`` in this case.                  |
+		+---------------+---------------------------------------------+
+		| ``'insert'``  | ``b[j1:j2]`` should be inserted at          |
+		|               | ``a[i1:i1]``. Note that ``i1 == i2`` in     |
+		|               | this case.                                  |
+		+---------------+---------------------------------------------+
+		| ``'equal'``   | ``a[i1:i2] == b[j1:j2]`` (the sub-sequences |
+		|               | are equal).                                 |
+		+---------------+---------------------------------------------+
+		
+		For example:
+		
+		>>> a = "qabxcd"
+		>>> b = "abycdf"
+		>>> s = SequenceMatcher(None, a, b)
+		>>> for tag, i1, i2, j1, j2 in s.get_opcodes():
+		*more    print ("%7s a[%d:%d] (%s) b[%d:%d] (%s)" %
+		*more           (tag, i1, i2, a[i1:i2], j1, j2, b[j1:j2]))
+		delete a[0:1] (q) b[0:0] ()
+		equal a[1:3] (ab) b[0:2] (ab)
+		replace a[3:4] (x) b[2:3] (y)
+		equal a[4:6] (cd) b[3:5] (cd)
+		insert a[6:6] () b[5:6] (f)
+		
+		
+		"""
+		pass
+		
+	def get_grouped_opcodes(self, n):
+		"""
+		Return a :term:`generator` of groups with up to *n* lines of context.
+		
+		Starting with the groups returned by :meth:`get_opcodes`, this method
+		splits out smaller change clusters and eliminates intervening ranges which
+		have no changes.
+		
+		The groups are returned in the same format as :meth:`get_opcodes`.
+		
+		"""
+		pass
+		
+	def ratio(self, ):
+		"""
+		Return a measure of the sequences' similarity as a float in the range [0,
+		1].
+		
+		Where T is the total number of elements in both sequences, and M is the
+		number of matches, this is 2.0\*M / T. Note that this is ``1.0`` if the
+		sequences are identical, and ``0.0`` if they have nothing in common.
+		
+		This is expensive to compute if :meth:`get_matching_blocks` or
+		:meth:`get_opcodes` hasn't already been called, in which case you may want
+		to try :meth:`quick_ratio` or :meth:`real_quick_ratio` first to get an
+		upper bound.
+		
+		
+		"""
+		pass
+		
+	def quick_ratio(self, ):
+		"""
+		Return an upper bound on :meth:`ratio` relatively quickly.
+		
+		
+		"""
+		pass
+		
+	def real_quick_ratio(self, ):
+		"""
+		Return an upper bound on :meth:`ratio` very quickly.
+		
+		
+		The three methods that return the ratio of matching to total characters can give
+		"""
+		pass
+		
 	
 
 
@@ -73,6 +251,20 @@ class Differ:
 	def __init__(self, ):
 		pass
 	
+	def compare(self, a,b):
+		"""
+		Compare two sequences of lines, and generate the delta (a sequence of lines).
+		
+		Each sequence must contain individual single-line strings ending with newlines.
+		Such sequences can be obtained from the :meth:`readlines` method of file-like
+		objects.  The delta generated also consists of newline-terminated strings, ready
+		to be printed as-is via the :meth:`writelines` method of a file-like object.
+		
+		
+		.. iffer Example
+		"""
+		pass
+		
 	
 
 
@@ -94,7 +286,7 @@ class HtmlDiff:
 	def __init__(self, ):
 		pass
 	
-	def __init__(tabsize,wrapcolumn,linejunk,charjunk):
+	def __init__(self, tabsize,wrapcolumn,linejunk,charjunk):
 		"""
 		Initializes instance of :class:`HtmlDiff`.
 		
@@ -114,7 +306,7 @@ class HtmlDiff:
 		"""
 		pass
 		
-	def make_file(_fromlines,tolines,_fromdesc,todesc,context,numlines):
+	def make_file(self, _fromlines,tolines,_fromdesc,todesc,context,numlines):
 		"""
 		Compares *fromlines* and *tolines* (lists of strings) and returns a string which
 		is a complete HTML file containing a table showing line by line differences with
@@ -137,7 +329,7 @@ class HtmlDiff:
 		"""
 		pass
 		
-	def make_table(_fromlines,tolines,_fromdesc,todesc,context,numlines):
+	def make_table(self, _fromlines,tolines,_fromdesc,todesc,context,numlines):
 		"""
 		Compares *fromlines* and *tolines* (lists of strings) and returns a string which
 		is a complete HTML table showing line by line differences with inter-line and
@@ -152,7 +344,7 @@ class HtmlDiff:
 		"""
 		pass
 		
-	def context_diff(a,b,_fromfile,tofile,_fromfiledate,tofiledate,n,lineterm):
+	def context_diff(self, a,b,_fromfile,tofile,_fromfiledate,tofiledate,n,lineterm):
 		"""
 		Compare *a* and *b* (lists of strings); return a delta (a :term:`generator`
 		generating the delta lines) in context diff format.
@@ -199,7 +391,7 @@ class HtmlDiff:
 		"""
 		pass
 		
-	def get_close_matches(word,possibilities,n,cutoff):
+	def get_close_matches(self, word,possibilities,n,cutoff):
 		"""
 		Return a list of the best "good enough" matches.  *word* is a sequence for which
 		close matches are desired (typically a string), and *possibilities* is a list of
@@ -228,7 +420,7 @@ class HtmlDiff:
 		"""
 		pass
 		
-	def ndiff(a,b,linejunk,charjunk):
+	def ndiff(self, a,b,linejunk,charjunk):
 		"""
 		Compare *a* and *b* (lists of strings); return a :class:`Differ`\ -style
 		delta (a :term:`generator` generating the delta lines).
@@ -269,7 +461,7 @@ class HtmlDiff:
 		"""
 		pass
 		
-	def restore(sequence,which):
+	def restore(self, sequence,which):
 		"""
 		Return one of the two sequences that generated a delta.
 		
@@ -295,7 +487,7 @@ class HtmlDiff:
 		"""
 		pass
 		
-	def unified_diff(a,b,_fromfile,tofile,_fromfiledate,tofiledate,n,lineterm):
+	def unified_diff(self, a,b,_fromfile,tofile,_fromfiledate,tofiledate,n,lineterm):
 		"""
 		Compare *a* and *b* (lists of strings); return a delta (a :term:`generator`
 		generating the delta lines) in unified diff format.
@@ -340,7 +532,7 @@ class HtmlDiff:
 		"""
 		pass
 		
-	def IS_LINE_JUNK(line):
+	def IS_LINE_JUNK(self, line):
 		"""
 		Return true for ignorable lines.  The line *line* is ignorable if *line* is
 		blank or contains a single ``'#'``, otherwise it is not ignorable.  Used as a
@@ -350,7 +542,7 @@ class HtmlDiff:
 		"""
 		pass
 		
-	def IS_CHARACTER_JUNK(ch):
+	def IS_CHARACTER_JUNK(self, ch):
 		"""
 		Return true for ignorable characters.  The character *ch* is ignorable if *ch*
 		is a space or tab, otherwise it is not ignorable.  Used as a default for
@@ -387,9 +579,187 @@ class SequenceMatcher:
 	"""
 	
 	
-	def __init__(self, isjunk,a,b,autojunk=True):
+	def __init__(self, ):
 		pass
 	
+	def set_seqs(self, a,b):
+		"""
+		Set the two sequences to be compared.
+		
+		:class:`SequenceMatcher` computes and caches detailed information about the
+		second sequence, so if you want to compare one sequence against many
+		sequences, use :meth:`set_seq2` to set the commonly used sequence once and
+		call :meth:`set_seq1` repeatedly, once for each of the other sequences.
+		
+		
+		"""
+		pass
+		
+	def set_seq1(self, a):
+		"""
+		Set the first sequence to be compared.  The second sequence to be compared
+		is not changed.
+		
+		
+		"""
+		pass
+		
+	def set_seq2(self, b):
+		"""
+		Set the second sequence to be compared.  The first sequence to be compared
+		is not changed.
+		
+		
+		"""
+		pass
+		
+	def find_longest_match(self, alo,ahi,blo,bhi):
+		"""
+		Find longest matching block in ``a[alo:ahi]`` and ``b[blo:bhi]``.
+		
+		If *isjunk* was omitted or ``None``, :meth:`find_longest_match` returns
+		``(i, j, k)`` such that ``a[i:i+k]`` is equal to ``b[j:j+k]``, where ``alo
+		<= i <= i+k <= ahi`` and ``blo <= j <= j+k <= bhi``. For all ``(i', j',
+		k')`` meeting those conditions, the additional conditions ``k >= k'``, ``i
+		<= i'``, and if ``i == i'``, ``j <= j'`` are also met. In other words, of
+		all maximal matching blocks, return one that starts earliest in *a*, and
+		of all those maximal matching blocks that start earliest in *a*, return
+		the one that starts earliest in *b*.
+		
+		>>> s = SequenceMatcher(None, " abcd", "abcd abcd")
+		>>> s.find_longest_match(0, 5, 0, 9)
+		Match(a=0, b=4, size=5)
+		
+		If *isjunk* was provided, first the longest matching block is determined
+		as above, but with the additional restriction that no junk element appears
+		in the block.  Then that block is extended as far as possible by matching
+		(only) junk elements on both sides. So the resulting block never matches
+		on junk except as identical junk happens to be adjacent to an interesting
+		match.
+		
+		Here's the same example as before, but considering blanks to be junk. That
+		prevents ``' abcd'`` from matching the ``' abcd'`` at the tail end of the
+		second sequence directly.  Instead only the ``'abcd'`` can match, and
+		matches the leftmost ``'abcd'`` in the second sequence:
+		
+		>>> s = SequenceMatcher(lambda x: x==" ", " abcd", "abcd abcd")
+		>>> s.find_longest_match(0, 5, 0, 9)
+		Match(a=1, b=0, size=4)
+		
+		If no blocks match, this returns ``(alo, blo, 0)``.
+		
+		"""
+		pass
+		
+	def get_matching_blocks(self, ):
+		"""
+		Return list of triples describing matching subsequences. Each triple is of
+		the form ``(i, j, n)``, and means that ``a[i:i+n] == b[j:j+n]``.  The
+		triples are monotonically increasing in *i* and *j*.
+		
+		The last triple is a dummy, and has the value ``(len(a), len(b), 0)``.  It
+		is the only triple with ``n == 0``.  If ``(i, j, n)`` and ``(i', j', n')``
+		are adjacent triples in the list, and the second is not the last triple in
+		the list, then ``i+n != i'`` or ``j+n != j'``; in other words, adjacent
+		triples always describe non-adjacent equal blocks.
+		
+		.. hy a dummy is used!
+		
+		"""
+		pass
+		
+	def get_opcodes(self, ):
+		"""
+		Return list of 5-tuples describing how to turn *a* into *b*. Each tuple is
+		of the form ``(tag, i1, i2, j1, j2)``.  The first tuple has ``i1 == j1 ==
+		0``, and remaining tuples have *i1* equal to the *i2* from the preceding
+		tuple, and, likewise, *j1* equal to the previous *j2*.
+		
+		The *tag* values are strings, with these meanings:
+		
+		+---------------+---------------------------------------------+
+		| Value         | Meaning                                     |
+		+===============+=============================================+
+		| ``'replace'`` | ``a[i1:i2]`` should be replaced by          |
+		|               | ``b[j1:j2]``.                               |
+		+---------------+---------------------------------------------+
+		| ``'delete'``  | ``a[i1:i2]`` should be deleted.  Note that  |
+		|               | ``j1 == j2`` in this case.                  |
+		+---------------+---------------------------------------------+
+		| ``'insert'``  | ``b[j1:j2]`` should be inserted at          |
+		|               | ``a[i1:i1]``. Note that ``i1 == i2`` in     |
+		|               | this case.                                  |
+		+---------------+---------------------------------------------+
+		| ``'equal'``   | ``a[i1:i2] == b[j1:j2]`` (the sub-sequences |
+		|               | are equal).                                 |
+		+---------------+---------------------------------------------+
+		
+		For example:
+		
+		>>> a = "qabxcd"
+		>>> b = "abycdf"
+		>>> s = SequenceMatcher(None, a, b)
+		>>> for tag, i1, i2, j1, j2 in s.get_opcodes():
+		*more    print ("%7s a[%d:%d] (%s) b[%d:%d] (%s)" %
+		*more           (tag, i1, i2, a[i1:i2], j1, j2, b[j1:j2]))
+		delete a[0:1] (q) b[0:0] ()
+		equal a[1:3] (ab) b[0:2] (ab)
+		replace a[3:4] (x) b[2:3] (y)
+		equal a[4:6] (cd) b[3:5] (cd)
+		insert a[6:6] () b[5:6] (f)
+		
+		
+		"""
+		pass
+		
+	def get_grouped_opcodes(self, n):
+		"""
+		Return a :term:`generator` of groups with up to *n* lines of context.
+		
+		Starting with the groups returned by :meth:`get_opcodes`, this method
+		splits out smaller change clusters and eliminates intervening ranges which
+		have no changes.
+		
+		The groups are returned in the same format as :meth:`get_opcodes`.
+		
+		"""
+		pass
+		
+	def ratio(self, ):
+		"""
+		Return a measure of the sequences' similarity as a float in the range [0,
+		1].
+		
+		Where T is the total number of elements in both sequences, and M is the
+		number of matches, this is 2.0\*M / T. Note that this is ``1.0`` if the
+		sequences are identical, and ``0.0`` if they have nothing in common.
+		
+		This is expensive to compute if :meth:`get_matching_blocks` or
+		:meth:`get_opcodes` hasn't already been called, in which case you may want
+		to try :meth:`quick_ratio` or :meth:`real_quick_ratio` first to get an
+		upper bound.
+		
+		
+		"""
+		pass
+		
+	def quick_ratio(self, ):
+		"""
+		Return an upper bound on :meth:`ratio` relatively quickly.
+		
+		
+		"""
+		pass
+		
+	def real_quick_ratio(self, ):
+		"""
+		Return an upper bound on :meth:`ratio` very quickly.
+		
+		
+		The three methods that return the ratio of matching to total characters can give
+		"""
+		pass
+		
 	
 
 
@@ -414,9 +784,23 @@ class Differ:
 	"""
 	
 	
-	def __init__(self, linejunk,charjunk):
+	def __init__(self, ):
 		pass
 	
+	def compare(self, a,b):
+		"""
+		Compare two sequences of lines, and generate the delta (a sequence of lines).
+		
+		Each sequence must contain individual single-line strings ending with newlines.
+		Such sequences can be obtained from the :meth:`readlines` method of file-like
+		objects.  The delta generated also consists of newline-terminated strings, ready
+		to be printed as-is via the :meth:`writelines` method of a file-like object.
+		
+		
+		.. iffer Example
+		"""
+		pass
+		
 	
 
 

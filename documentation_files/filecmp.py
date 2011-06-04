@@ -73,9 +73,43 @@ class dircmp:
 	"""
 	
 	
-	def __init__(self, a,b,ignore,hide):
+	def __init__(self, ):
 		pass
 	
+	def report(self, ):
+		"""
+		Print (to ``sys.stdout``) a comparison between *a* and *b*.
+		
+		
+		"""
+		pass
+		
+	def report_partial_closure(self, ):
+		"""
+		Print a comparison between *a* and *b* and common immediate
+		subdirectories.
+		
+		
+		"""
+		pass
+		
+	def report_full_closure(self, ):
+		"""
+		Print a comparison between *a* and *b* and common subdirectories
+		(recursively).
+		
+		The :class:`dircmp` offers a number of interesting attributes that may be
+		used to get various bits of information about the directory trees being
+		compared.
+		
+		Note that via :meth:`__getattr__` hooks, all attributes are computed lazily,
+		so there is no speed penalty if only those attributes which are lightweight
+		to compute are used.
+		
+		
+		"""
+		pass
+		
 	
 
 

@@ -52,9 +52,46 @@ class Headers:
 	"""
 	
 	
-	def __init__(self, headers):
+	def __init__(self, ):
 		pass
 	
+	def get_all(self, name):
+		"""
+		Return a list of all the values for the named header.
+		
+		The returned list will be sorted in the order they appeared in the original
+		header list or were added to this instance, and may contain duplicates.  Any
+		fields deleted and re-inserted are always appended to the header list.  If no
+		fields exist with the given name, returns an empty list.
+		
+		
+		"""
+		pass
+		
+	def add_header(self, name,value,_params):
+		"""
+		Add a (possibly multi-valued) header, with optional MIME parameters specified
+		via keyword arguments.
+		
+		*name* is the header field to add.  Keyword arguments can be used to set MIME
+		parameters for the header field.  Each parameter must be a string or ``None``.
+		Underscores in parameter names are converted to dashes, since dashes are illegal
+		in Python identifiers, but many MIME parameter names include dashes.  If the
+		parameter value is a string, it is added to the header value parameters in the
+		form ``name="value"``. If it is ``None``, only the parameter name is added.
+		(This is used for MIME parameters without a value.)  Example usage::
+		
+		h.add_header('content-disposition', 'attachment', filename='bud.gif')
+		
+		The above will add a header that looks like this::
+		
+		Content-Disposition: attachment; filename="bud.gif"
+		
+		
+		:mod:`wsgiref.simple_server` -- a simple WSGI HTTP server
+		"""
+		pass
+		
 	
 
 

@@ -126,7 +126,7 @@ class DictReader:
 	"""
 	
 	
-	def __init__(self, csvfile,fieldnames=None,restkey=None,restval=None,dialect='excel',args,kwds):
+	def __init__(self, ):
 		pass
 	
 	
@@ -156,9 +156,16 @@ class DictWriter:
 	"""
 	
 	
-	def __init__(self, csvfile,fieldnames,restval='',extrasaction='raise',dialect='excel',args,kwds):
+	def __init__(self, ):
 		pass
 	
+	def writeheader(self, ):
+		"""
+		Write a row with the field names (as specified in the constructor).
+		
+		"""
+		pass
+		
 	
 
 
@@ -228,6 +235,26 @@ class Sniffer:
 	def __init__(self, ):
 		pass
 	
+	def sniff(self, sample,delimiters=None):
+		"""
+		Analyze the given *sample* and return a :class:`Dialect` subclass
+		reflecting the parameters found.  If the optional *delimiters* parameter
+		is given, it is interpreted as a string containing possible valid
+		delimiter characters.
+		
+		
+		"""
+		pass
+		
+	def has_header(self, sample):
+		"""
+		Analyze the sample text (presumed to be in CSV format) and return
+		:const:`True` if the first row appears to be a series of column headers.
+		
+		An example for :class:`Sniffer` use::
+		"""
+		pass
+		
 	"""
 	Instructs :class:`writer` objects to quote all fields.
 	

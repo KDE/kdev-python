@@ -97,10 +97,131 @@ class TarFile:
 	def __init__(self, ):
 		pass
 	
-	def is_tarfile(name):
+	def is_tarfile(self, name):
 		"""
 		Return :const:`True` if *name* is a tar archive file, that the :mod:`tarfile`
 		module can read.
+		
+		
+		"""
+		pass
+		
+	def open(self, more):
+		"""
+		Alternative constructor. The :func:`tarfile.open` function is actually a
+		shortcut to this classmethod.
+		
+		
+		"""
+		pass
+		
+	def getmember(self, name):
+		"""
+		Return a :class:`TarInfo` object for member *name*. If *name* can not be found
+		in the archive, :exc:`KeyError` is raised.
+		
+		"""
+		pass
+		
+	def getmembers(self, ):
+		"""
+		Return the members of the archive as a list of :class:`TarInfo` objects. The
+		list has the same order as the members in the archive.
+		
+		
+		"""
+		pass
+		
+	def getnames(self, ):
+		"""
+		Return the members as a list of their names. It has the same order as the list
+		returned by :meth:`getmembers`.
+		
+		
+		"""
+		pass
+		
+	def list(self, verbose=True):
+		"""
+		Print a table of contents to ``sys.stdout``. If *verbose* is :const:`False`,
+		only the names of the members are printed. If it is :const:`True`, output
+		similar to that of :program:`ls -l` is produced.
+		
+		
+		"""
+		pass
+		
+	def next(self, ):
+		"""
+		Return the next member of the archive as a :class:`TarInfo` object, when
+		:class:`TarFile` is opened for reading. Return :const:`None` if there is no more
+		available.
+		
+		
+		"""
+		pass
+		
+	def extract(self, member,path=""):
+		"""
+		Extract a member from the archive to the current working directory, using its
+		full name. Its file information is extracted as accurately as possible. *member*
+		may be a filename or a :class:`TarInfo` object. You can specify a different
+		directory using *path*.
+		
+		"""
+		pass
+		
+	def extractfile(self, member):
+		"""
+		Extract a member from the archive as a file object. *member* may be a filename
+		or a :class:`TarInfo` object. If *member* is a regular file, a file-like object
+		is returned. If *member* is a link, a file-like object is constructed from the
+		link's target. If *member* is none of the above, :const:`None` is returned.
+		
+		"""
+		pass
+		
+	def add(self, name,arcname=None,recursive=True,exclude=None,filter=None):
+		"""
+		Add the file *name* to the archive. *name* may be any type of file (directory,
+		fifo, symbolic link, etc.). If given, *arcname* specifies an alternative name
+		for the file in the archive. Directories are added recursively by default. This
+		can be avoided by setting *recursive* to :const:`False`. If *exclude* is given
+		it must be a function that takes one filename argument and returns a boolean
+		value. Depending on this value the respective file is either excluded
+		(:const:`True`) or added (:const:`False`). If *filter* is specified it must
+		be a function that takes a :class:`TarInfo` object argument and returns the
+		changed :class:`TarInfo` object. If it instead returns :const:`None` the :class:`TarInfo`
+		object will be excluded from the archive. See :ref:`tar-examples` for an
+		example.
+		
+		"""
+		pass
+		
+	def addfile(self, tarinfo,fileobj=None):
+		"""
+		Add the :class:`TarInfo` object *tarinfo* to the archive. If *fileobj* is given,
+		``tarinfo.size`` bytes are read from it and added to the archive.  You can
+		create :class:`TarInfo` objects using :meth:`gettarinfo`.
+		
+		"""
+		pass
+		
+	def gettarinfo(self, name=None,arcname=None,fileobj=None):
+		"""
+		Create a :class:`TarInfo` object for either the file *name* or the file object
+		*fileobj* (using :func:`os.fstat` on its file descriptor).  You can modify some
+		of the :class:`TarInfo`'s attributes before you add it using :meth:`addfile`.
+		If given, *arcname* specifies an alternative name for the file in the archive.
+		
+		
+		"""
+		pass
+		
+	def close(self, ):
+		"""
+		Close the :class:`TarFile`. In write mode, two finishing zero blocks are
+		appended to the archive.
 		
 		
 		"""
@@ -121,7 +242,7 @@ class TarFileCompat:
 	"""
 	
 	
-	def __init__(self, filename,mode='r',compression=TAR_PLAIN):
+	def __init__(self, ):
 		pass
 	
 	"""
@@ -194,9 +315,139 @@ class TarFile:
 	"""
 	
 	
-	def __init__(self, name=None,mode='r',fileobj=None,format=DEFAULT_FORMAT,tarinfo=TarInfo,dereference=False,ignore_zeros=False,encoding=ENCODING,errors=None,pax_headers=None,debug=0,errorlevel=0):
+	def __init__(self, ):
 		pass
 	
+	def is_tarfile(self, name):
+		"""
+		Return :const:`True` if *name* is a tar archive file, that the :mod:`tarfile`
+		module can read.
+		
+		
+		"""
+		pass
+		
+	def open(self, more):
+		"""
+		Alternative constructor. The :func:`tarfile.open` function is actually a
+		shortcut to this classmethod.
+		
+		
+		"""
+		pass
+		
+	def getmember(self, name):
+		"""
+		Return a :class:`TarInfo` object for member *name*. If *name* can not be found
+		in the archive, :exc:`KeyError` is raised.
+		
+		"""
+		pass
+		
+	def getmembers(self, ):
+		"""
+		Return the members of the archive as a list of :class:`TarInfo` objects. The
+		list has the same order as the members in the archive.
+		
+		
+		"""
+		pass
+		
+	def getnames(self, ):
+		"""
+		Return the members as a list of their names. It has the same order as the list
+		returned by :meth:`getmembers`.
+		
+		
+		"""
+		pass
+		
+	def list(self, verbose=True):
+		"""
+		Print a table of contents to ``sys.stdout``. If *verbose* is :const:`False`,
+		only the names of the members are printed. If it is :const:`True`, output
+		similar to that of :program:`ls -l` is produced.
+		
+		
+		"""
+		pass
+		
+	def next(self, ):
+		"""
+		Return the next member of the archive as a :class:`TarInfo` object, when
+		:class:`TarFile` is opened for reading. Return :const:`None` if there is no more
+		available.
+		
+		
+		"""
+		pass
+		
+	def extract(self, member,path=""):
+		"""
+		Extract a member from the archive to the current working directory, using its
+		full name. Its file information is extracted as accurately as possible. *member*
+		may be a filename or a :class:`TarInfo` object. You can specify a different
+		directory using *path*.
+		
+		"""
+		pass
+		
+	def extractfile(self, member):
+		"""
+		Extract a member from the archive as a file object. *member* may be a filename
+		or a :class:`TarInfo` object. If *member* is a regular file, a file-like object
+		is returned. If *member* is a link, a file-like object is constructed from the
+		link's target. If *member* is none of the above, :const:`None` is returned.
+		
+		"""
+		pass
+		
+	def add(self, name,arcname=None,recursive=True,exclude=None,filter=None):
+		"""
+		Add the file *name* to the archive. *name* may be any type of file (directory,
+		fifo, symbolic link, etc.). If given, *arcname* specifies an alternative name
+		for the file in the archive. Directories are added recursively by default. This
+		can be avoided by setting *recursive* to :const:`False`. If *exclude* is given
+		it must be a function that takes one filename argument and returns a boolean
+		value. Depending on this value the respective file is either excluded
+		(:const:`True`) or added (:const:`False`). If *filter* is specified it must
+		be a function that takes a :class:`TarInfo` object argument and returns the
+		changed :class:`TarInfo` object. If it instead returns :const:`None` the :class:`TarInfo`
+		object will be excluded from the archive. See :ref:`tar-examples` for an
+		example.
+		
+		"""
+		pass
+		
+	def addfile(self, tarinfo,fileobj=None):
+		"""
+		Add the :class:`TarInfo` object *tarinfo* to the archive. If *fileobj* is given,
+		``tarinfo.size`` bytes are read from it and added to the archive.  You can
+		create :class:`TarInfo` objects using :meth:`gettarinfo`.
+		
+		"""
+		pass
+		
+	def gettarinfo(self, name=None,arcname=None,fileobj=None):
+		"""
+		Create a :class:`TarInfo` object for either the file *name* or the file object
+		*fileobj* (using :func:`os.fstat` on its file descriptor).  You can modify some
+		of the :class:`TarInfo`'s attributes before you add it using :meth:`addfile`.
+		If given, *arcname* specifies an alternative name for the file in the archive.
+		
+		
+		"""
+		pass
+		
+	def close(self, ):
+		"""
+		Close the :class:`TarFile`. In write mode, two finishing zero blocks are
+		appended to the archive.
+		
+		
+		"""
+		pass
+		
 	
 
 
@@ -210,9 +461,96 @@ class TarInfo:
 	"""
 	
 	
-	def __init__(self, name=""):
+	def __init__(self, ):
 		pass
 	
+	def _frombuf(self, buf):
+		"""
+		Create and return a :class:`TarInfo` object from string buffer *buf*.
+		
+		"""
+		pass
+		
+	def _fromtarfile(self, tarfile):
+		"""
+		Read the next member from the :class:`TarFile` object *tarfile* and return it as
+		a :class:`TarInfo` object.
+		
+		"""
+		pass
+		
+	def tobuf(self, format=DEFAULT_FORMAT,encoding=ENCODING,errors='strict'):
+		"""
+		Create a string buffer from a :class:`TarInfo` object. For information on the
+		arguments see the constructor of the :class:`TarFile` class.
+		
+		"""
+		pass
+		
+	def isfile(self, ):
+		"""
+		Return :const:`True` if the :class:`Tarinfo` object is a regular file.
+		
+		
+		"""
+		pass
+		
+	def isreg(self, ):
+		"""
+		Same as :meth:`isfile`.
+		
+		
+		"""
+		pass
+		
+	def isdir(self, ):
+		"""
+		Return :const:`True` if it is a directory.
+		
+		
+		"""
+		pass
+		
+	def issym(self, ):
+		"""
+		Return :const:`True` if it is a symbolic link.
+		
+		
+		"""
+		pass
+		
+	def islnk(self, ):
+		"""
+		Return :const:`True` if it is a hard link.
+		
+		
+		"""
+		pass
+		
+	def ischr(self, ):
+		"""
+		Return :const:`True` if it is a character device.
+		
+		
+		"""
+		pass
+		
+	def isblk(self, ):
+		"""
+		Return :const:`True` if it is a block device.
+		
+		
+		"""
+		pass
+		
+	def isfifo(self, ):
+		"""
+		Return :const:`True` if it is a FIFO.
+		
+		
+		"""
+		pass
+		
 	
 
 

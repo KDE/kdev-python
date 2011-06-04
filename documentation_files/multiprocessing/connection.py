@@ -25,10 +25,30 @@ class Listener:
 	"""
 	
 	
-	def __init__(self, address,family,backlog,authenticate,authkey):
+	def __init__(self, ):
 		pass
 	
-	def get_logger():
+	def accept(self, ):
+		"""
+		Accept a connection on the bound socket or named pipe of the listener
+		object and return a :class:`Connection` object.  If authentication is
+		attempted and fails, then :exc:`AuthenticationError` is raised.
+		
+		"""
+		pass
+		
+	def close(self, ):
+		"""
+		Close the bound socket or named pipe of the listener object.  This is
+		called automatically when the listener is garbage collected.  However it
+		is advisable to call it explicitly.
+		
+		Listener objects have the following read-only properties:
+		
+		"""
+		pass
+		
+	def get_logger(self, ):
 		"""
 		Returns the logger used by :mod:`multiprocessing`.  If necessary, a new one
 		will be created.
@@ -44,7 +64,7 @@ class Listener:
 		"""
 		pass
 		
-	def log_to_stderr():
+	def log_to_stderr(self, ):
 		"""
 		This function performs a call to :func:`get_logger` but in addition to
 		returning the logger created by get_logger, it adds a handler which sends

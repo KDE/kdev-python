@@ -34,6 +34,29 @@ class Node:
 	def __init__(self, ):
 		pass
 	
+	def getChildren(self, ):
+		"""
+		Returns a flattened list of the child nodes and objects in the order they
+		occur.  Specifically, the order of the nodes is the order in which they
+		appear in the Python grammar.  Not all of the children are :class:`Node`
+		instances.  The names of functions and classes, for example, are plain
+		strings.
+		
+		
+		"""
+		pass
+		
+	def getChildNodes(self, ):
+		"""
+		Returns a flattened list of the child nodes in the order they occur.  This
+		method is like :meth:`getChildren`, except that it only returns those
+		children that are :class:`Node` instances.
+		
+		
+		Two examples illustrate the general structure of :class:`Node` classes.  The
+		"""
+		pass
+		
 	
 
 

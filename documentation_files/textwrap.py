@@ -94,9 +94,20 @@ class TextWrapper:
 	"""
 	
 	
-	def __init__(self, more):
+	def __init__(self, ):
 		pass
 	
+	def wrap(self, text):
+		"""
+		Wraps the single paragraph in *text* (a string) so every line is at most
+		:attr:`width` characters long.  All wrapping options are taken from
+		instance attributes of the :class:`TextWrapper` instance. Returns a list
+		of output lines, without final newlines.
+		
+		
+		"""
+		pass
+		
 	
 
 

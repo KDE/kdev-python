@@ -39,6 +39,14 @@ class Complex:
 	def __init__(self, ):
 		pass
 	
+	def conjugate(self, ):
+		"""
+		Abstract. Returns the complex conjugate. For example, ``(1+3j).conjugate()
+		== (1-3j)``.
+		
+		"""
+		pass
+		
 	
 
 

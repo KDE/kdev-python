@@ -33,6 +33,33 @@ class mutex:
 	def __init__(self, ):
 		pass
 	
+	def test(self, ):
+		"""
+		Check whether the mutex is locked.
+		
+		
+		"""
+		pass
+		
+	def testandset(self, ):
+		"""
+		"Atomic" test-and-set, grab the lock if it is not set, and return ``True``,
+		otherwise, return ``False``.
+		
+		
+		"""
+		pass
+		
+	def lock(self, function,argument):
+		"""
+		Execute ``function(argument)``, unless the mutex is locked. In the case it is
+		locked, place the function and argument on the queue. See :meth:`unlock` for
+		explanation of when ``function(argument)`` is executed in that case.
+		
+		
+		"""
+		pass
+		
 	
 
 

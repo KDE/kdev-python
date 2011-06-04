@@ -59,7 +59,7 @@ class ImpImporter:
 	"""
 	
 	
-	def __init__(self, dirname=None):
+	def __init__(self, ):
 		pass
 	
 	
@@ -75,10 +75,10 @@ class ImpLoader:
 	"""
 	
 	
-	def __init__(self, fullname,file,filename,etc):
+	def __init__(self, ):
 		pass
 	
-	def find_loader(fullname):
+	def find_loader(self, fullname):
 		"""
 		Find a :pep:`302` "loader" object for *fullname*.
 		
@@ -92,7 +92,7 @@ class ImpLoader:
 		"""
 		pass
 		
-	def get_importer(path_item):
+	def get_importer(self, path_item):
 		"""
 		Retrieve a :pep:`302` importer for the given *path_item*.
 		
@@ -110,7 +110,7 @@ class ImpLoader:
 		"""
 		pass
 		
-	def get_loader(module_or_name):
+	def get_loader(self, module_or_name):
 		"""
 		Get a :pep:`302` "loader" object for *module_or_name*.
 		
@@ -128,7 +128,7 @@ class ImpLoader:
 		"""
 		pass
 		
-	def iter_importers(fullname=''):
+	def iter_importers(self, fullname=''):
 		"""
 		Yield :pep:`302` importers for the given module name.
 		
@@ -157,7 +157,7 @@ class ImpLoader:
 		"""
 		pass
 		
-	def iter_modules(path=None,prefix=''):
+	def iter_modules(self, path=None,prefix=''):
 		"""
 		Yields ``(module_loader, name, ispkg)`` for all submodules on *path*, or, if
 		path is ``None``, all top-level modules on ``sys.path``.
@@ -170,7 +170,7 @@ class ImpLoader:
 		"""
 		pass
 		
-	def walk_packages(path=None,prefix='',onerror=None):
+	def walk_packages(self, path=None,prefix='',onerror=None):
 		"""
 		Yields ``(module_loader, name, ispkg)`` for all modules recursively on
 		*path*, or, if path is ``None``, all accessible modules.

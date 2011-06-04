@@ -54,9 +54,45 @@ class Generator:
 	"""
 	
 	
-	def __init__(self, outfp,mangle__from_,maxheaderlen):
+	def __init__(self, ):
 		pass
 	
+	def flatten(self, msg,unix_from):
+		"""
+		Print the textual representation of the message object structure rooted at
+		*msg* to the output file specified when the :class:`Generator` instance
+		was created.  Subparts are visited depth-first and the resulting text will
+		be properly MIME encoded.
+		
+		Optional *unixfrom* is a flag that forces the printing of the envelope
+		header delimiter before the first :rfc:`2822` header of the root message
+		object.  If the root object has no envelope header, a standard one is
+		crafted.  By default, this is set to ``False`` to inhibit the printing of
+		the envelope delimiter.
+		
+		Note that for subparts, no envelope header is ever printed.
+		
+		"""
+		pass
+		
+	def clone(self, fp):
+		"""
+		Return an independent clone of this :class:`Generator` instance with the
+		exact same options.
+		
+		"""
+		pass
+		
+	def write(self, s):
+		"""
+		Write the string *s* to the underlying file object, i.e. *outfp* passed to
+		:class:`Generator`'s constructor.  This provides just enough file-like API
+		for :class:`Generator` instances to be used in extended print statements.
+		
+		As a convenience, see the methods :meth:`Message.as_string` and
+		"""
+		pass
+		
 	
 
 
@@ -92,7 +128,7 @@ class DecodedGenerator:
 	"""
 	
 	
-	def __init__(self, outfp,mangle__from_,maxheaderlen,fmt):
+	def __init__(self, ):
 		pass
 	
 	

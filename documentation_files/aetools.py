@@ -65,9 +65,17 @@ class TalkTo:
 	"""
 	
 	
-	def __init__(self, signature=None,start=0,timeout=0):
+	def __init__(self, ):
 		pass
 	
+	def _start(self, ):
+		"""
+		Test whether the application is running, and attempt to start it if not.
+		
+		
+		"""
+		pass
+		
 	
 
 

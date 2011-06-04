@@ -184,9 +184,184 @@ class Element:
 	"""
 	
 	
-	def __init__(self, tag,attrib={},extra):
+	def __init__(self, ):
 		pass
 	
+	def clear(self, ):
+		"""
+		Resets an element.  This function removes all subelements, clears all
+		attributes, and sets the text and tail attributes to None.
+		
+		
+		"""
+		pass
+		
+	def get(self, key,default=None):
+		"""
+		Gets the element attribute named *key*.
+		
+		Returns the attribute value, or *default* if the attribute was not found.
+		
+		
+		"""
+		pass
+		
+	def items(self, ):
+		"""
+		Returns the element attributes as a sequence of (name, value) pairs.  The
+		attributes are returned in an arbitrary order.
+		
+		
+		"""
+		pass
+		
+	def keys(self, ):
+		"""
+		Returns the elements attribute names as a list.  The names are returned
+		in an arbitrary order.
+		
+		
+		"""
+		pass
+		
+	def set(self, key,value):
+		"""
+		Set the attribute *key* on the element to *value*.
+		
+		The following methods work on the element's children (subelements).
+		
+		
+		"""
+		pass
+		
+	def append(self, subelement):
+		"""
+		Adds the element *subelement* to the end of this elements internal list
+		of subelements.
+		
+		
+		"""
+		pass
+		
+	def extend(self, subelements):
+		"""
+		Appends *subelements* from a sequence object with zero or more elements.
+		Raises :exc:`AssertionError` if a subelement is not a valid object.
+		
+		"""
+		pass
+		
+	def find(self, match):
+		"""
+		Finds the first subelement matching *match*.  *match* may be a tag name
+		or path.  Returns an element instance or ``None``.
+		
+		
+		"""
+		pass
+		
+	def findall(self, match):
+		"""
+		Finds all matching subelements, by tag name or path.  Returns a list
+		containing all matching elements in document order.
+		
+		
+		"""
+		pass
+		
+	def findtext(self, match,default=None):
+		"""
+		Finds text for the first subelement matching *match*.  *match* may be
+		a tag name or path.  Returns the text content of the first matching
+		element, or *default* if no element was found.  Note that if the matching
+		element has no text content an empty string is returned.
+		
+		
+		"""
+		pass
+		
+	def getchildren(self, ):
+		"""
+		"""
+		pass
+		
+	def getiterator(self, tag=None):
+		"""
+		"""
+		pass
+		
+	def insert(self, index,element):
+		"""
+		Inserts a subelement at the given position in this element.
+		
+		
+		"""
+		pass
+		
+	def iter(self, tag=None):
+		"""
+		Creates a tree :term:`iterator` with the current element as the root.
+		The iterator iterates over this element and all elements below it, in
+		document (depth first) order.  If *tag* is not ``None`` or ``'*'``, only
+		elements whose tag equals *tag* are returned from the iterator.  If the
+		tree structure is modified during iteration, the result is undefined.
+		
+		
+		"""
+		pass
+		
+	def iterfind(self, match):
+		"""
+		Finds all matching subelements, by tag name or path.  Returns an iterable
+		yielding all matching elements in document order.
+		
+		"""
+		pass
+		
+	def itertext(self, ):
+		"""
+		Creates a text iterator.  The iterator loops over this element and all
+		subelements, in document order, and returns all inner text.
+		
+		"""
+		pass
+		
+	def makeelement(self, tag,attrib):
+		"""
+		Creates a new element object of the same type as this element.  Do not
+		call this method, use the :func:`SubElement` factory function instead.
+		
+		
+		"""
+		pass
+		
+	def remove(self, subelement):
+		"""
+		Removes *subelement* from the element.  Unlike the find\* methods this
+		method compares elements based on the instance identity, not on tag value
+		or contents.
+		
+		:class:`Element` objects also support the following sequence type methods
+		for working with subelements: :meth:`__delitem__`, :meth:`__getitem__`,
+		:meth:`__setitem__`, :meth:`__len__`.
+		
+		Caution: Elements with no subelements will test as ``False``.  This behavior
+		will change in future versions.  Use specific ``len(elem)`` or ``elem is
+		None`` test instead. ::
+		
+		element = root.find('foo')
+		
+		if not element:  # careful!
+		print "element not found, or element has no subelements"
+		
+		if element is None:
+		print "element not found"
+		
+		
+		.. lementTree Objects
+		"""
+		pass
+		
 	
 
 
@@ -205,9 +380,109 @@ class ElementTree:
 	"""
 	
 	
-	def __init__(self, element=None,file=None):
+	def __init__(self, ):
 		pass
 	
+	def _setroot(self, element):
+		"""
+		Replaces the root element for this tree.  This discards the current
+		contents of the tree, and replaces it with the given element.  Use with
+		care.  *element* is an element instance.
+		
+		
+		"""
+		pass
+		
+	def find(self, match):
+		"""
+		Finds the first toplevel element matching *match*.  *match* may be a tag
+		name or path.  Same as getroot().find(match).  Returns the first matching
+		element, or ``None`` if no element was found.
+		
+		
+		"""
+		pass
+		
+	def findall(self, match):
+		"""
+		Finds all matching subelements, by tag name or path.  Same as
+		getroot().findall(match).  *match* may be a tag name or path.  Returns a
+		list containing all matching elements, in document order.
+		
+		
+		"""
+		pass
+		
+	def findtext(self, match,default=None):
+		"""
+		Finds the element text for the first toplevel element with given tag.
+		Same as getroot().findtext(match).  *match* may be a tag name or path.
+		*default* is the value to return if the element was not found.  Returns
+		the text content of the first matching element, or the default value no
+		element was found.  Note that if the element is found, but has no text
+		content, this method returns an empty string.
+		
+		
+		"""
+		pass
+		
+	def getiterator(self, tag=None):
+		"""
+		"""
+		pass
+		
+	def getroot(self, ):
+		"""
+		Returns the root element for this tree.
+		
+		
+		"""
+		pass
+		
+	def iter(self, tag=None):
+		"""
+		Creates and returns a tree iterator for the root element.  The iterator
+		loops over all elements in this tree, in section order.  *tag* is the tag
+		to look for (default is to return all elements)
+		
+		
+		"""
+		pass
+		
+	def iterfind(self, match):
+		"""
+		Finds all matching subelements, by tag name or path.  Same as
+		getroot().iterfind(match). Returns an iterable yielding all matching
+		elements in document order.
+		
+		"""
+		pass
+		
+	def parse(self, source,parser=None):
+		"""
+		Loads an external XML section into this element tree.  *source* is a file
+		name or file object.  *parser* is an optional parser instance.  If not
+		given, the standard XMLParser parser is used.  Returns the section
+		root element.
+		
+		
+		"""
+		pass
+		
+	def write(self, file,encoding="us_ascii",xml_declaration=None,method="xml"):
+		"""
+		Writes the element tree to a file, as XML.  *file* is a file name, or a
+		file object opened for writing.  *encoding* [1]_ is the output encoding
+		(default is US-ASCII).  *xml_declaration* controls if an XML declaration
+		should be added to the file.  Use False for never, True for always, None
+		for only if not US-ASCII or UTF-8 (default is None).  *method* is either
+		``"xml"``, ``"html"`` or ``"text"`` (default is ``"xml"``).  Returns an
+		encoded string.
+		
+		This is the XML file that is going to be manipulated::
+		"""
+		pass
+		
 	
 
 
@@ -230,7 +505,7 @@ class QName:
 	"""
 	
 	
-	def __init__(self, text_or_uri,tag=None):
+	def __init__(self, ):
 		pass
 	
 	
@@ -250,9 +525,57 @@ class TreeBuilder:
 	"""
 	
 	
-	def __init__(self, element_factory=None):
+	def __init__(self, ):
 		pass
 	
+	def close(self, ):
+		"""
+		Flushes the builder buffers, and returns the toplevel document
+		element.  Returns an :class:`Element` instance.
+		
+		
+		"""
+		pass
+		
+	def data(self, data):
+		"""
+		Adds text to the current element.  *data* is a string.  This should be
+		either a bytestring, or a Unicode string.
+		
+		
+		"""
+		pass
+		
+	def end(self, tag):
+		"""
+		Closes the current element.  *tag* is the element name.  Returns the
+		closed element.
+		
+		
+		"""
+		pass
+		
+	def start(self, tag,attrs):
+		"""
+		Opens a new element.  *tag* is the element name.  *attrs* is a dictionary
+		containing element attributes.  Returns the opened element.
+		
+		
+		In addition, a custom :class:`TreeBuilder` object can provide the
+		following method:
+		
+		"""
+		pass
+		
+	def doctype(self, name,pubid,system):
+		"""
+		Handles a doctype declaration.  *name* is the doctype name.  *pubid* is
+		the public identifier.  *system* is the system identifier.  This method
+		does not exist on the default :class:`TreeBuilder` class.
+		
+		"""
+		pass
+		
 	
 
 
@@ -271,9 +594,30 @@ class XMLParser:
 	"""
 	
 	
-	def __init__(self, html=0,target=None,encoding=None):
+	def __init__(self, ):
 		pass
 	
+	def close(self, ):
+		"""
+		Finishes feeding data to the parser.  Returns an element structure.
+		
+		
+		"""
+		pass
+		
+	def doctype(self, name,pubid,system):
+		"""
+		"""
+		pass
+		
+	def feed(self, data):
+		"""
+		Feeds data to the parser.  *data* is encoded data.
+		
+		:meth:`XMLParser.feed` calls *target*\'s :meth:`start` method
+		"""
+		pass
+		
 	
 
 

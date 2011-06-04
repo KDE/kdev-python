@@ -25,10 +25,10 @@ class Popen:
 	"""
 	
 	
-	def __init__(self, args,bufsize=0,executable=None,stdin=None,stdout=None,stderr=None,preexec_fn=None,close_fds=False,shell=False,cwd=None,env=None,universal_newlines=False,startupinfo=None,creationflags=0):
+	def __init__(self, ):
 		pass
 	
-	def call(popenargs,kwargs):
+	def call(self, popenargs,kwargs):
 		"""
 		Run command with arguments.  Wait for command to complete, then return the
 		:attr:`returncode` attribute.
@@ -40,7 +40,7 @@ class Popen:
 		"""
 		pass
 		
-	def check_call(popenargs,kwargs):
+	def check_call(self, popenargs,kwargs):
 		"""
 		Run command with arguments.  Wait for command to complete. If the exit code was
 		zero then return, otherwise raise :exc:`CalledProcessError`. The
@@ -55,7 +55,7 @@ class Popen:
 		"""
 		pass
 		
-	def check_output(popenargs,kwargs):
+	def check_output(self, popenargs,kwargs):
 		"""
 		Run command with arguments and return its output as a byte string.
 		
@@ -76,6 +76,64 @@ class Popen:
 		*more     ["/bin/sh", "-c", "ls non_existent_file; exit 0"],
 		*more     stderr=subprocess.STDOUT)
 		'ls: non_existent_file: No such file or directory\n'
+		
+		"""
+		pass
+		
+	def poll(self, ):
+		"""
+		Check if child process has terminated.  Set and return :attr:`returncode`
+		attribute.
+		
+		
+		"""
+		pass
+		
+	def wait(self, ):
+		"""
+		Wait for child process to terminate.  Set and return :attr:`returncode`
+		attribute.
+		
+		"""
+		pass
+		
+	def communicate(self, input=None):
+		"""
+		Interact with process: Send data to stdin.  Read data from stdout and stderr,
+		until end-of-file is reached.  Wait for process to terminate. The optional
+		*input* argument should be a string to be sent to the child process, or
+		``None``, if no data should be sent to the child.
+		
+		:meth:`communicate` returns a tuple ``(stdoutdata, stderrdata)``.
+		
+		Note that if you want to send data to the process's stdin, you need to create
+		the Popen object with ``stdin=PIPE``.  Similarly, to get anything other than
+		``None`` in the result tuple, you need to give ``stdout=PIPE`` and/or
+		``stderr=PIPE`` too.
+		
+		"""
+		pass
+		
+	def send_signal(self, signal):
+		"""
+		Sends the signal *signal* to the child.
+		
+		"""
+		pass
+		
+	def terminate(self, ):
+		"""
+		Stop the child. On Posix OSs the method sends SIGTERM to the
+		child. On Windows the Win32 API function :cfunc:`TerminateProcess` is called
+		to stop the child.
+		
+		"""
+		pass
+		
+	def kill(self, ):
+		"""
+		Kills the child. On Posix OSs the function sends SIGKILL to the child.
+		On Windows :meth:`kill` is an alias for :meth:`terminate`.
 		
 		"""
 		pass

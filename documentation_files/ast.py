@@ -26,7 +26,7 @@ class AST:
 	def __init__(self, ):
 		pass
 	
-	def parse(source,filename='"unknown"',mode='exec'):
+	def parse(self, source,filename='"unknown"',mode='exec'):
 		"""
 		Parse the source into an AST node.  Equivalent to ``compile(source,
 		filename, mode, ast.PyCF_ONLY_AST)``.
@@ -35,7 +35,7 @@ class AST:
 		"""
 		pass
 		
-	def literal_eval(node_or_string):
+	def literal_eval(self, node_or_string):
 		"""
 		Safely evaluate an expression node or a string containing a Python
 		expression.  The string or node provided may only consist of the following
@@ -49,7 +49,7 @@ class AST:
 		"""
 		pass
 		
-	def get_docstring(node,clean=True):
+	def get_docstring(self, node,clean=True):
 		"""
 		Return the docstring of the given *node* (which must be a
 		:class:`FunctionDef`, :class:`ClassDef` or :class:`Module` node), or ``None``
@@ -60,7 +60,7 @@ class AST:
 		"""
 		pass
 		
-	def fix_missing_locations(node):
+	def fix_missing_locations(self, node):
 		"""
 		When you compile a node tree with :func:`compile`, the compiler expects
 		:attr:`lineno` and :attr:`col_offset` attributes for every node that supports
@@ -72,7 +72,7 @@ class AST:
 		"""
 		pass
 		
-	def increment_lineno(node,n=1):
+	def increment_lineno(self, node,n=1):
 		"""
 		Increment the line number of each node in the tree starting at *node* by *n*.
 		This is useful to "move code" to a different location in a file.
@@ -81,7 +81,7 @@ class AST:
 		"""
 		pass
 		
-	def copy_location(new_node,old_node):
+	def copy_location(self, new_node,old_node):
 		"""
 		Copy source location (:attr:`lineno` and :attr:`col_offset`) from *old_node*
 		to *new_node* if possible, and return *new_node*.
@@ -90,7 +90,7 @@ class AST:
 		"""
 		pass
 		
-	def iter_fields(node):
+	def iter_fields(self, node):
 		"""
 		Yield a tuple of ``(fieldname, value)`` for each field in ``node._fields``
 		that is present on *node*.
@@ -99,7 +99,7 @@ class AST:
 		"""
 		pass
 		
-	def iter_child_nodes(node):
+	def iter_child_nodes(self, node):
 		"""
 		Yield all direct child nodes of *node*, that is, all fields that are nodes
 		and all items of fields that are lists of nodes.
@@ -108,7 +108,7 @@ class AST:
 		"""
 		pass
 		
-	def walk(node):
+	def walk(self, node):
 		"""
 		Recursively yield all descendant nodes in the tree starting at *node*
 		(including *node* itself), in no specified order.  This is useful if you only
@@ -138,6 +138,31 @@ class NodeVisitor:
 	def __init__(self, ):
 		pass
 	
+	def visit(self, node):
+		"""
+		Visit a node.  The default implementation calls the method called
+		:samp:`self.visit_{classname}` where *classname* is the name of the node
+		class, or :meth:`generic_visit` if that method doesn't exist.
+		
+		"""
+		pass
+		
+	def generic_visit(self, node):
+		"""
+		This visitor calls :meth:`visit` on all children of the node.
+		
+		Note that child nodes of nodes that have a custom visitor method won't be
+		visited unless the visitor calls :meth:`generic_visit` or visits them
+		itself.
+		
+		Don't use the :class:`NodeVisitor` if you want to apply changes to nodes
+		during traversal.  For this a special visitor exists
+		(:class:`NodeTransformer`) that allows modifications.
+		
+		
+		"""
+		pass
+		
 	
 
 

@@ -178,6 +178,135 @@ class IOBase:
 	def __init__(self, ):
 		pass
 	
+	def close(self, ):
+		"""
+		Flush and close this stream. This method has no effect if the file is
+		already closed. Once the file is closed, any operation on the file
+		(e.g. reading or writing) will raise a :exc:`ValueError`.
+		
+		As a convenience, it is allowed to call this method more than once;
+		only the first call, however, will have an effect.
+		
+		"""
+		pass
+		
+	def fileno(self, ):
+		"""
+		Return the underlying file descriptor (an integer) of the stream if it
+		exists.  An :exc:`IOError` is raised if the IO object does not use a file
+		descriptor.
+		
+		"""
+		pass
+		
+	def flush(self, ):
+		"""
+		Flush the write buffers of the stream if applicable.  This does nothing
+		for read-only and non-blocking streams.
+		
+		"""
+		pass
+		
+	def isatty(self, ):
+		"""
+		Return ``True`` if the stream is interactive (i.e., connected to
+		a terminal/tty device).
+		
+		"""
+		pass
+		
+	def readable(self, ):
+		"""
+		Return ``True`` if the stream can be read from.  If False, :meth:`read`
+		will raise :exc:`IOError`.
+		
+		"""
+		pass
+		
+	def readline(self, limit=_1):
+		"""
+		Read and return one line from the stream.  If *limit* is specified, at
+		most *limit* bytes will be read.
+		
+		The line terminator is always ``b'\n'`` for binary files; for text files,
+		the *newlines* argument to :func:`.open` can be used to select the line
+		terminator(s) recognized.
+		
+		"""
+		pass
+		
+	def readlines(self, hint=_1):
+		"""
+		Read and return a list of lines from the stream.  *hint* can be specified
+		to control the number of lines read: no more lines will be read if the
+		total size (in bytes/characters) of all lines so far exceeds *hint*.
+		
+		"""
+		pass
+		
+	def seek(self, offset,whence=SEEK_SET):
+		"""
+		Change the stream position to the given byte *offset*.  *offset* is
+		interpreted relative to the position indicated by *whence*.  Values for
+		*whence* are:
+		
+		* :data:`SEEK_SET` or ``0`` -- start of the stream (the default);
+		*offset* should be zero or positive
+		* :data:`SEEK_CUR` or ``1`` -- current stream position; *offset* may
+		be negative
+		* :data:`SEEK_END` or ``2`` -- end of the stream; *offset* is usually
+		negative
+		
+		Return the new absolute position.
+		
+		"""
+		pass
+		
+	def seekable(self, ):
+		"""
+		Return ``True`` if the stream supports random access.  If ``False``,
+		:meth:`seek`, :meth:`tell` and :meth:`truncate` will raise :exc:`IOError`.
+		
+		"""
+		pass
+		
+	def tell(self, ):
+		"""
+		Return the current stream position.
+		
+		"""
+		pass
+		
+	def truncate(self, size=None):
+		"""
+		Resize the stream to the given *size* in bytes (or the current position
+		if *size* is not specified).  The current stream position isn't changed.
+		This resizing can extend or reduce the current file size.  In case of
+		extension, the contents of the new file area depend on the platform
+		(on most systems, additional bytes are zero-filled, on Windows they're
+		undetermined).  The new file size is returned.
+		
+		"""
+		pass
+		
+	def writable(self, ):
+		"""
+		Return ``True`` if the stream supports writing.  If ``False``,
+		:meth:`write` and :meth:`truncate` will raise :exc:`IOError`.
+		
+		"""
+		pass
+		
+	def writelines(self, lines):
+		"""
+		Write a list of lines to the stream.  Line separators are not added, so it
+		is usual for each of the lines provided to have a line separator at the
+		end.
+		
+		
+		"""
+		pass
+		
 	
 
 
@@ -201,6 +330,50 @@ class RawIOBase:
 	def __init__(self, ):
 		pass
 	
+	def read(self, n=_1):
+		"""
+		Read up to *n* bytes from the object and return them.  As a convenience,
+		if *n* is unspecified or -1, :meth:`readall` is called.  Otherwise,
+		only one system call is ever made.  Fewer than *n* bytes may be
+		returned if the operating system call returns fewer than *n* bytes.
+		
+		If 0 bytes are returned, and *n* was not 0, this indicates end of file.
+		If the object is in non-blocking mode and no bytes are available,
+		``None`` is returned.
+		
+		"""
+		pass
+		
+	def readall(self, ):
+		"""
+		Read and return all the bytes from the stream until EOF, using multiple
+		calls to the stream if necessary.
+		
+		"""
+		pass
+		
+	def readinto(self, b):
+		"""
+		Read up to len(b) bytes into bytearray *b* and return the number
+		of bytes read.  If the object is in non-blocking mode and no
+		bytes are available, ``None`` is returned.
+		
+		"""
+		pass
+		
+	def write(self, b):
+		"""
+		Write the given bytes or bytearray object, *b*, to the underlying raw
+		stream and return the number of bytes written.  This can be less than
+		``len(b)``, depending on specifics of the underlying raw stream, and
+		especially if it is in non-blocking mode.  ``None`` is returned if the
+		raw stream is set not to block and no single byte could be readily
+		written to it.
+		
+		
+		"""
+		pass
+		
 	
 
 
@@ -237,6 +410,79 @@ class BufferedIOBase:
 	def __init__(self, ):
 		pass
 	
+	def detach(self, ):
+		"""
+		Separate the underlying raw stream from the buffer and return it.
+		
+		After the raw stream has been detached, the buffer is in an unusable
+		state.
+		
+		Some buffers, like :class:`BytesIO`, do not have the concept of a single
+		raw stream to return from this method.  They raise
+		:exc:`UnsupportedOperation`.
+		
+		"""
+		pass
+		
+	def read(self, n=_1):
+		"""
+		Read and return up to *n* bytes.  If the argument is omitted, ``None``, or
+		negative, data is read and returned until EOF is reached.  An empty bytes
+		object is returned if the stream is already at EOF.
+		
+		If the argument is positive, and the underlying raw stream is not
+		interactive, multiple raw reads may be issued to satisfy the byte count
+		(unless EOF is reached first).  But for interactive raw streams, at most
+		one raw read will be issued, and a short result does not imply that EOF is
+		imminent.
+		
+		A :exc:`BlockingIOError` is raised if the underlying raw stream is in
+		non blocking-mode, and has no data available at the moment.
+		
+		"""
+		pass
+		
+	def read1(self, n=_1):
+		"""
+		Read and return up to *n* bytes, with at most one call to the underlying
+		raw stream's :meth:`~RawIOBase.read` method.  This can be useful if you
+		are implementing your own buffering on top of a :class:`BufferedIOBase`
+		object.
+		
+		"""
+		pass
+		
+	def readinto(self, b):
+		"""
+		Read up to len(b) bytes into bytearray *b* and return the number of bytes
+		read.
+		
+		Like :meth:`read`, multiple reads may be issued to the underlying raw
+		stream, unless the latter is 'interactive'.
+		
+		A :exc:`BlockingIOError` is raised if the underlying raw stream is in
+		non blocking-mode, and has no data available at the moment.
+		
+		"""
+		pass
+		
+	def write(self, b):
+		"""
+		Write the given bytes or bytearray object, *b* and return the number
+		of bytes written (never less than ``len(b)``, since if the write fails
+		an :exc:`IOError` will be raised).  Depending on the actual
+		implementation, these bytes may be readily written to the underlying
+		stream, or held in a buffer for performance and latency reasons.
+		
+		When in non-blocking mode, a :exc:`BlockingIOError` is raised if the
+		data needed to be written to the raw stream but it couldn't accept
+		all the data without blocking.
+		
+		
+		Raw File I/O
+		"""
+		pass
+		
 	
 
 
@@ -269,7 +515,7 @@ class FileIO:
 	"""
 	
 	
-	def __init__(self, name,mode='r',closefd=True):
+	def __init__(self, ):
 		pass
 	
 	
@@ -290,9 +536,24 @@ class BytesIO:
 	"""
 	
 	
-	def __init__(self, initial_bytes):
+	def __init__(self, ):
 		pass
 	
+	def getvalue(self, ):
+		"""
+		Return ``bytes`` containing the entire contents of the buffer.
+		
+		"""
+		pass
+		
+	def read1(self, ):
+		"""
+		In :class:`BytesIO`, this is the same as :meth:`read`.
+		
+		
+		"""
+		pass
+		
 	
 
 
@@ -316,9 +577,36 @@ class BufferedReader:
 	"""
 	
 	
-	def __init__(self, raw,buffer_size=DEFAULT_BUFFER_SIZE):
+	def __init__(self, ):
 		pass
 	
+	def peek(self, n):
+		"""
+		Return bytes from the stream without advancing the position.  At most one
+		single read on the raw stream is done to satisfy the call. The number of
+		bytes returned may be less or more than requested.
+		
+		"""
+		pass
+		
+	def read(self, n):
+		"""
+		Read and return *n* bytes, or if *n* is not given or negative, until EOF
+		or if the read call would block in non-blocking mode.
+		
+		"""
+		pass
+		
+	def read1(self, n):
+		"""
+		Read and return up to *n* bytes with only one call on the raw stream.  If
+		at least one byte is buffered, only buffered bytes are returned.
+		Otherwise, one raw stream read call is made.
+		
+		
+		"""
+		pass
+		
 	
 
 
@@ -349,9 +637,27 @@ class BufferedWriter:
 	"""
 	
 	
-	def __init__(self, raw,buffer_size=DEFAULT_BUFFER_SIZE):
+	def __init__(self, ):
 		pass
 	
+	def flush(self, ):
+		"""
+		Force bytes held in the buffer into the raw stream.  A
+		:exc:`BlockingIOError` should be raised if the raw stream blocks.
+		
+		"""
+		pass
+		
+	def write(self, b):
+		"""
+		Write the bytes or bytearray object, *b* and return the number of bytes
+		written.  When in non-blocking mode, a :exc:`BlockingIOError` is raised
+		if the buffer needs to be written out but the raw stream blocks.
+		
+		
+		"""
+		pass
+		
 	
 
 
@@ -379,7 +685,7 @@ class BufferedRWPair:
 	"""
 	
 	
-	def __init__(self, reader,writer,buffer_size=DEFAULT_BUFFER_SIZE):
+	def __init__(self, ):
 		pass
 	
 	
@@ -409,7 +715,7 @@ class BufferedRandom:
 	"""
 	
 	
-	def __init__(self, raw,buffer_size=DEFAULT_BUFFER_SIZE):
+	def __init__(self, ):
 		pass
 	
 	
@@ -433,6 +739,46 @@ class TextIOBase:
 	def __init__(self, ):
 		pass
 	
+	def detach(self, ):
+		"""
+		Separate the underlying binary buffer from the :class:`TextIOBase` and
+		return it.
+		
+		After the underlying buffer has been detached, the :class:`TextIOBase` is
+		in an unusable state.
+		
+		Some :class:`TextIOBase` implementations, like :class:`StringIO`, may not
+		have the concept of an underlying buffer and calling this method will
+		raise :exc:`UnsupportedOperation`.
+		
+		"""
+		pass
+		
+	def read(self, n):
+		"""
+		Read and return at most *n* characters from the stream as a single
+		:class:`unicode`.  If *n* is negative or ``None``, reads until EOF.
+		
+		"""
+		pass
+		
+	def readline(self, ):
+		"""
+		Read until newline or EOF and return a single ``unicode``.  If the
+		stream is already at EOF, an empty string is returned.
+		
+		"""
+		pass
+		
+	def write(self, s):
+		"""
+		Write the :class:`unicode` string *s* to the stream and return the
+		number of characters written.
+		
+		
+		"""
+		pass
+		
 	
 
 
@@ -475,7 +821,7 @@ class TextIOWrapper:
 	"""
 	
 	
-	def __init__(self, buffer,encoding=None,errors=None,newline=None,line_buffering=False):
+	def __init__(self, ):
 		pass
 	
 	
@@ -498,9 +844,35 @@ class StringIO:
 	"""
 	
 	
-	def __init__(self, initial_value=u'',newline=None):
+	def __init__(self, ):
 		pass
 	
+	def getvalue(self, ):
+		"""
+		Return a ``unicode`` containing the entire contents of the buffer at any
+		time before the :class:`StringIO` object's :meth:`close` method is
+		called.
+		
+		Example usage::
+		
+		import io
+		
+		output = io.StringIO()
+		output.write(u'First line.\n')
+		output.write(u'Second line.\n')
+		
+		# Retrieve file contents -- this will be
+		# u'First line.\nSecond line.\n'
+		contents = output.getvalue()
+		
+		# Close object and discard memory buffer --
+		# .getvalue() will now raise an exception.
+		output.close()
+		
+		
+		"""
+		pass
+		
 	
 
 

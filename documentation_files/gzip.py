@@ -73,10 +73,10 @@ class GzipFile:
 	"""
 	
 	
-	def __init__(self, filename,mode,compresslevel,fileobj,mtime):
+	def __init__(self, ):
 		pass
 	
-	def open(filename,mode,compresslevel):
+	def open(self, filename,mode,compresslevel):
 		"""
 		This is a shorthand for ``GzipFile(filename,`` ``mode,`` ``compresslevel)``.
 		The *filename* argument is required; *mode* defaults to ``'rb'`` and

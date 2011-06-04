@@ -264,9 +264,17 @@ class NullImporter:
 	"""
 	
 	
-	def __init__(self, path_string):
+	def __init__(self, ):
 		pass
 	
+	def find_module(self, fullname,path):
+		"""
+		This method always returns ``None``, indicating that the requested module could
+		not be found.
+		
+		"""
+		pass
+		
 	
 
 

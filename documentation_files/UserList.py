@@ -17,7 +17,7 @@ class UserList:
 	"""
 	
 	
-	def __init__(self, list):
+	def __init__(self, ):
 		pass
 	
 	

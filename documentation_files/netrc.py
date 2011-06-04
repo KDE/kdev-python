@@ -16,9 +16,31 @@ class netrc:
 	"""
 	
 	
-	def __init__(self, file):
+	def __init__(self, ):
 		pass
 	
+	def authenticators(self, host):
+		"""
+		Return a 3-tuple ``(login, account, password)`` of authenticators for *host*.
+		If the netrc file did not contain an entry for the given host, return the tuple
+		associated with the 'default' entry.  If neither matching host nor default entry
+		is available, return ``None``.
+		
+		
+		"""
+		pass
+		
+	def __repr__(self, ):
+		"""
+		Dump the class data as a string in the format of a netrc file. (This discards
+		comments and may reorder the entries.)
+		
+		Instances of :class:`netrc` have public instance variables:
+		
+		
+		"""
+		pass
+		
 	
 
 

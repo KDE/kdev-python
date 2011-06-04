@@ -71,10 +71,51 @@ class Fraction:
 	"""
 	
 	
-	def __init__(self, numerator=0,denominator=1):
+	def __init__(self, ):
 		pass
 	
-	def gcd(a,b):
+	def _from_float(self, flt):
+		"""
+		This class method constructs a :class:`Fraction` representing the exact
+		value of *flt*, which must be a :class:`float`. Beware that
+		``Fraction.from_float(0.3)`` is not the same value as ``Fraction(3, 10)``
+		
+		"""
+		pass
+		
+	def _from_decimal(self, dec):
+		"""
+		This class method constructs a :class:`Fraction` representing the exact
+		value of *dec*, which must be a :class:`decimal.Decimal`.
+		
+		"""
+		pass
+		
+	def limit_denominator(self, max_denominator=1000000):
+		"""
+		Finds and returns the closest :class:`Fraction` to ``self`` that has
+		denominator at most max_denominator.  This method is useful for finding
+		rational approximations to a given floating-point number:
+		
+		>>> from fractions import Fraction
+		>>> Fraction('3.1415926535897932').limit_denominator(1000)
+		Fraction(355, 113)
+		
+		or for recovering a rational number that's represented as a float:
+		
+		>>> from math import pi, cos
+		>>> Fraction(cos(pi/3))
+		Fraction(4503599627370497, 9007199254740992)
+		>>> Fraction(cos(pi/3)).limit_denominator()
+		Fraction(1, 2)
+		>>> Fraction(1.1).limit_denominator()
+		Fraction(11, 10)
+		
+		
+		"""
+		pass
+		
+	def gcd(self, a,b):
 		"""
 		Return the greatest common divisor of the integers *a* and *b*.  If either
 		*a* or *b* is nonzero, then the absolute value of ``gcd(a, b)`` is the

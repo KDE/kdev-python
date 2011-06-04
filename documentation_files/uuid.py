@@ -35,10 +35,10 @@ class UUID:
 	"""
 	
 	
-	def __init__(self, hex,bytes,bytes_le,fields,int,version):
+	def __init__(self, ):
 		pass
 	
-	def getnode():
+	def getnode(self, ):
 		"""
 		Get the hardware address as a 48-bit positive integer.  The first time this
 		runs, it may launch a separate program, which could be quite slow.  If all
@@ -50,7 +50,7 @@ class UUID:
 		"""
 		pass
 		
-	def uuid1(node,clock_seq):
+	def uuid1(self, node,clock_seq):
 		"""
 		Generate a UUID from a host ID, sequence number, and the current time. If *node*
 		is not given, :func:`getnode` is used to obtain the hardware address. If
@@ -60,7 +60,7 @@ class UUID:
 		"""
 		pass
 		
-	def uuid3(namespace,name):
+	def uuid3(self, namespace,name):
 		"""
 		Generate a UUID based on the MD5 hash of a namespace identifier (which is a
 		UUID) and a name (which is a string).
@@ -68,14 +68,14 @@ class UUID:
 		"""
 		pass
 		
-	def uuid4():
+	def uuid4(self, ):
 		"""
 		Generate a random UUID.
 		
 		"""
 		pass
 		
-	def uuid5(namespace,name):
+	def uuid5(self, namespace,name):
 		"""
 		Generate a UUID based on the SHA-1 hash of a namespace identifier (which is a
 		UUID) and a name (which is a string).

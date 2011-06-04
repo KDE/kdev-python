@@ -196,7 +196,7 @@ class struct_time:
 	def __init__(self, ):
 		pass
 	
-	def time():
+	def time(self, ):
 		"""
 		Return the time as a floating point number expressed in seconds since the epoch,
 		in UTC.  Note that even though the time is always returned as a floating point
@@ -209,7 +209,7 @@ class struct_time:
 		"""
 		pass
 		
-	def tzset():
+	def tzset(self, ):
 		"""
 		Resets the time conversion rules used by the library routines. The environment
 		variable :envvar:`TZ` specifies how this is done.

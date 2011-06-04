@@ -242,10 +242,10 @@ class WichmannHill:
 	"""
 	
 	
-	def __init__(self, seed):
+	def __init__(self, ):
 		pass
 	
-	def whseed(x):
+	def whseed(self, x):
 		"""
 		This is obsolete, supplied for bit-level compatibility with versions of Python
 		prior to 2.1. See :func:`seed` for details.  :func:`whseed` does not guarantee
@@ -273,7 +273,7 @@ class SystemRandom:
 	"""
 	
 	
-	def __init__(self, seed):
+	def __init__(self, ):
 		pass
 	
 	

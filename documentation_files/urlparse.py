@@ -253,9 +253,33 @@ class ParseResult:
 	"""
 	
 	
-	def __init__(self, scheme,netloc,path,params,query,fragment):
+	def __init__(self, ):
 		pass
 	
+	def geturl(self, ):
+		"""
+		Return the re-combined version of the original URL as a string. This may differ
+		from the original URL in that the scheme will always be normalized to lower case
+		and empty components may be dropped. Specifically, empty parameters, queries,
+		and fragment identifiers will be removed.
+		
+		The result of this method is a fixpoint if passed back through the original
+		parsing function:
+		
+		>>> import urlparse
+		>>> url = 'HTTP://www.Python.org/doc/#'
+		
+		>>> r1 = urlparse.urlsplit(url)
+		>>> r1.geturl()
+		'http://www.Python.org/doc/'
+		
+		>>> r2 = urlparse.urlsplit(r1.geturl())
+		>>> r2.geturl()
+		'http://www.Python.org/doc/'
+		
+		"""
+		pass
+		
 	
 
 

@@ -36,9 +36,70 @@ class Counter:
 	"""
 	
 	
-	def __init__(self, iterable_or_mapping):
+	def __init__(self, ):
 		pass
 	
+	def elements(self, ):
+		"""
+		Return an iterator over elements repeating each as many times as its
+		count.  Elements are returned in arbitrary order.  If an element's count
+		is less than one, :meth:`elements` will ignore it.
+		
+		>>> c = Counter(a=4, b=2, c=0, d=-2)
+		>>> list(c.elements())
+		['a', 'a', 'a', 'a', 'b', 'b']
+		
+		"""
+		pass
+		
+	def most_common(self, n):
+		"""
+		Return a list of the *n* most common elements and their counts from the
+		most common to the least.  If *n* is not specified, :func:`most_common`
+		returns *all* elements in the counter.  Elements with equal counts are
+		ordered arbitrarily:
+		
+		>>> Counter('abracadabra').most_common(3)
+		[('a', 5), ('r', 2), ('b', 2)]
+		
+		"""
+		pass
+		
+	def subtract(self, iterable_or_mapping):
+		"""
+		Elements are subtracted from an *iterable* or from another *mapping*
+		(or counter).  Like :meth:`dict.update` but subtracts counts instead
+		of replacing them.  Both inputs and outputs may be zero or negative.
+		
+		>>> c = Counter(a=4, b=2, c=0, d=-2)
+		>>> d = Counter(a=1, b=2, c=3, d=4)
+		>>> c.subtract(d)
+		Counter({'a': 3, 'b': 0, 'c': -3, 'd': -6})
+		
+		The usual dictionary methods are available for :class:`Counter` objects
+		except for two which work differently for counters.
+		
+		"""
+		pass
+		
+	def _fromkeys(self, iterable):
+		"""
+		This class method is not implemented for :class:`Counter` objects.
+		
+		"""
+		pass
+		
+	def update(self, iterable_or_mapping):
+		"""
+		Elements are counted from an *iterable* or added-in from another
+		*mapping* (or counter).  Like :meth:`dict.update` but adds counts
+		instead of replacing them.  Also, the *iterable* is expected to be a
+		sequence of elements, not a sequence of ``(key, value)`` pairs.
+		
+		Common patterns for working with :class:`Counter` objects::
+		"""
+		pass
+		
 	
 
 
@@ -62,9 +123,104 @@ class deque:
 	"""
 	
 	
-	def __init__(self, iterable,maxlen):
+	def __init__(self, ):
 		pass
 	
+	def append(self, x):
+		"""
+		Add *x* to the right side of the deque.
+		
+		
+		"""
+		pass
+		
+	def appendleft(self, x):
+		"""
+		Add *x* to the left side of the deque.
+		
+		
+		"""
+		pass
+		
+	def clear(self, ):
+		"""
+		Remove all elements from the deque leaving it with length 0.
+		
+		
+		"""
+		pass
+		
+	def count(self, x):
+		"""
+		Count the number of deque elements equal to *x*.
+		
+		"""
+		pass
+		
+	def extend(self, iterable):
+		"""
+		Extend the right side of the deque by appending elements from the iterable
+		argument.
+		
+		
+		"""
+		pass
+		
+	def extendleft(self, iterable):
+		"""
+		Extend the left side of the deque by appending elements from *iterable*.
+		Note, the series of left appends results in reversing the order of
+		elements in the iterable argument.
+		
+		
+		"""
+		pass
+		
+	def pop(self, ):
+		"""
+		Remove and return an element from the right side of the deque. If no
+		elements are present, raises an :exc:`IndexError`.
+		
+		
+		"""
+		pass
+		
+	def popleft(self, ):
+		"""
+		Remove and return an element from the left side of the deque. If no
+		elements are present, raises an :exc:`IndexError`.
+		
+		
+		"""
+		pass
+		
+	def remove(self, value):
+		"""
+		Removed the first occurrence of *value*.  If not found, raises a
+		:exc:`ValueError`.
+		
+		"""
+		pass
+		
+	def reverse(self, ):
+		"""
+		Reverse the elements of the deque in-place and then return ``None``.
+		
+		"""
+		pass
+		
+	def rotate(self, n):
+		"""
+		Rotate the deque *n* steps to the right.  If *n* is negative, rotate to
+		the left.  Rotating one step to the right is equivalent to:
+		``d.appendleft(d.pop())``.
+		
+		
+		Deque objects also provide one read-only attribute:
+		
+		"""
+		pass
+		
 	
 
 
@@ -85,10 +241,33 @@ class defaultdict:
 	"""
 	
 	
-	def __init__(self, default_factory,more):
+	def __init__(self, ):
 		pass
 	
-	def namedtuple(typename,field_names,verbose=False,rename=False):
+	def __missing__(self, key):
+		"""
+		If the :attr:`default_factory` attribute is ``None``, this raises a
+		:exc:`KeyError` exception with the *key* as argument.
+		
+		If :attr:`default_factory` is not ``None``, it is called without arguments
+		to provide a default value for the given *key*, this value is inserted in
+		the dictionary for the *key*, and returned.
+		
+		If calling :attr:`default_factory` raises an exception this exception is
+		propagated unchanged.
+		
+		This method is called by the :meth:`__getitem__` method of the
+		:class:`dict` class when the requested key is not found; whatever it
+		returns or raises is then returned or raised by :meth:`__getitem__`.
+		
+		
+		:class:`defaultdict` objects support the following instance variable:
+		
+		
+		"""
+		pass
+		
+	def namedtuple(self, typename,field_names,verbose=False,rename=False):
 		"""
 		Returns a new tuple subclass named *typename*.  The new subclass is used to
 		create tuple-like objects that have fields accessible by attribute lookup as
@@ -135,9 +314,32 @@ class OrderedDict:
 	"""
 	
 	
-	def __init__(self, items):
+	def __init__(self, ):
 		pass
 	
+	def popitem(self, last=True):
+		"""
+		The :meth:`popitem` method for ordered dictionaries returns and removes
+		a (key, value) pair.  The pairs are returned in LIFO order if *last* is
+		true or FIFO order if false.
+		
+		In addition to the usual mapping methods, ordered dictionaries also support
+		reverse iteration using :func:`reversed`.
+		
+		Equality tests between :class:`OrderedDict` objects are order-sensitive
+		and are implemented as ``list(od1.items())==list(od2.items())``.
+		Equality tests between :class:`OrderedDict` objects and other
+		:class:`Mapping` objects are order-insensitive like regular dictionaries.
+		This allows :class:`OrderedDict` objects to be substituted anywhere a
+		regular dictionary is used.
+		
+		The :class:`OrderedDict` constructor and :meth:`update` method both accept
+		keyword arguments, but their order is lost because Python's function call
+		semantics pass-in keyword arguments using a regular unordered dictionary.
+		
+		"""
+		pass
+		
 	
 
 

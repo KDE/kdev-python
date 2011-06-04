@@ -36,6 +36,12 @@ def strict_sanitize(expr):
     expr = expr.replace('(', '').replace(')', '')
     return expr
 
+def add_self_arg(expr):
+    if expr.find('self') == -1:
+        l = expr.split('(')
+        expr = l[0] + '(self, ' + '('.join(l[1:])
+    return expr
+
 class DocumentationExporter:
     def run(self):
         modules = c.execute("SELECT * FROM modules")
@@ -68,12 +74,12 @@ class DocumentationExporter:
                 classDocumentation = '"""' + documentation.replace('"""', ' " " " ') + '"""\n'
                 classDocumentation += "\n\ndef __init__(self, " + sanitize(''.join(classname.split("(")[1:])).replace(")", "")
                 classDocumentation += "):\n\tpass\n\n"
-                c.execute("SELECT * FROM methods WHERE modulename=? and classname=?", [module, classname])
+                c.execute("SELECT * FROM methods WHERE modulename=? and classname=?", [module, classname.split('(')[0]])
                 for trash, trash, methodname, documentation in c.fetchall():
                     brackets = "" if methodname.find('(') != -1 else "()"
-                    classDocumentation += "def " + sanitize(methodname) + brackets + ":\n"
+                    classDocumentation += "def " + add_self_arg(sanitize(methodname)) + brackets + ":\n"
                     classDocumentation += indent('"""' + documentation.replace('"""', ' " " " ') + '"""\npass\n')
-                c.execute("SELECT * FROM properties WHERE modulename=? and classname=?", [module, classname])
+                c.execute("SELECT * FROM properties WHERE modulename=? and classname=?", [module, classname.split('(')[0]])
                 for trash, trash, propertyname, documentation in c.fetchall():
                     classDocumentation += '"""' + documentation.replace('"""', ' " " " ') + '"""\n'
                     classDocumentation += propertyname + " = None\n"

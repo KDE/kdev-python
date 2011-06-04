@@ -49,9 +49,33 @@ class FeedParser:
 	"""
 	
 	
-	def __init__(self, _factory):
+	def __init__(self, ):
 		pass
 	
+	def feed(self, data):
+		"""
+		Feed the :class:`FeedParser` some more data.  *data* should be a string
+		containing one or more lines.  The lines can be partial and the
+		:class:`FeedParser` will stitch such partial lines together properly.  The
+		lines in the string can have any of the common three line endings,
+		carriage return, newline, or carriage return and newline (they can even be
+		mixed).
+		
+		
+		"""
+		pass
+		
+	def close(self, ):
+		"""
+		Closing a :class:`FeedParser` completes the parsing of all previously fed
+		data, and returns the root message object.  It is undefined what happens
+		if you feed more data to a closed :class:`FeedParser`.
+		
+		
+		Parser class API
+		"""
+		pass
+		
 	
 
 
@@ -70,10 +94,41 @@ class Parser:
 	"""
 	
 	
-	def __init__(self, __class):
+	def __init__(self, ):
 		pass
 	
-	def message__from_string(s,__class,strict):
+	def parse(self, fp,headersonly):
+		"""
+		Read all the data from the file-like object *fp*, parse the resulting
+		text, and return the root message object.  *fp* must support both the
+		:meth:`readline` and the :meth:`read` methods on file-like objects.
+		
+		The text contained in *fp* must be formatted as a block of :rfc:`2822`
+		style headers and header continuation lines, optionally preceded by a
+		envelope header.  The header block is terminated either by the end of the
+		data or by a blank line.  Following the header block is the body of the
+		message (which may contain MIME-encoded subparts).
+		
+		Optional *headersonly* is as with the :meth:`parse` method.
+		
+		"""
+		pass
+		
+	def parsestr(self, text,headersonly):
+		"""
+		Similar to the :meth:`parse` method, except it takes a string object
+		instead of a file-like object.  Calling this method on a string is exactly
+		equivalent to wrapping *text* in a :class:`StringIO` instance first and
+		calling :meth:`parse`.
+		
+		Optional *headersonly* is a flag specifying whether to stop parsing after
+		reading the headers or not.  The default is ``False``, meaning it parses
+		the entire contents of the file.
+		
+		"""
+		pass
+		
+	def message__from_string(self, s,__class,strict):
 		"""
 		Return a message object structure from a string.  This is exactly equivalent to
 		``Parser().parsestr(s)``.  Optional *_class* and *strict* are interpreted as
@@ -82,7 +137,7 @@ class Parser:
 		"""
 		pass
 		
-	def message__from_file(fp,__class,strict):
+	def message__from_file(self, fp,__class,strict):
 		"""
 		Return a message object structure tree from an open file object.  This is
 		exactly equivalent to ``Parser().parse(fp)``.  Optional *_class* and *strict*

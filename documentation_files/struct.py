@@ -191,9 +191,44 @@ class Struct:
 	"""
 	
 	
-	def __init__(self, format):
+	def __init__(self, ):
 		pass
 	
+	def pack(self, v1,v2,more):
+		"""
+		Identical to the :func:`pack` function, using the compiled format.
+		(``len(result)`` will equal :attr:`self.size`.)
+		
+		
+		"""
+		pass
+		
+	def pack_into(self, buffer,offset,v1,v2,more):
+		"""
+		Identical to the :func:`pack_into` function, using the compiled format.
+		
+		
+		"""
+		pass
+		
+	def unpack(self, string):
+		"""
+		Identical to the :func:`unpack` function, using the compiled format.
+		(``len(string)`` must equal :attr:`self.size`).
+		
+		
+		"""
+		pass
+		
+	def unpack__from(self, buffer,offset=0):
+		"""
+		Identical to the :func:`unpack_from` function, using the compiled format.
+		(``len(buffer[offset:])`` must be at least :attr:`self.size`).
+		
+		
+		"""
+		pass
+		
 	
 
 

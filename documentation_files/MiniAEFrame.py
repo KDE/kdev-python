@@ -21,6 +21,16 @@ class AEServer:
 	def __init__(self, ):
 		pass
 	
+	def installaehandler(self, _classe,type,callback):
+		"""
+		Installs an AppleEvent handler. *classe* and *type* are the four-character OSA
+		Class and Type designators, ``'****'`` wildcards are allowed. When a matching
+		AppleEvent is received the parameters are decoded and your callback is invoked.
+		
+		
+		"""
+		pass
+		
 	
 
 

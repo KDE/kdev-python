@@ -29,7 +29,7 @@ class NullFormatter:
 	"""
 	
 	
-	def __init__(self, writer):
+	def __init__(self, ):
 		pass
 	
 	
@@ -57,7 +57,7 @@ class AbstractFormatter:
 	"""
 	
 	
-	def __init__(self, writer):
+	def __init__(self, ):
 		pass
 	
 	

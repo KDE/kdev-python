@@ -12,7 +12,7 @@ c.execute("CREATE TABLE IF NOT EXISTS properties (modulename text, classname tex
 c.execute("CREATE TABLE IF NOT EXISTS modulefunctions (modulename text, functionname text, documentation text)")
 c.execute("CREATE TABLE IF NOT EXISTS moduleproperties (modulename text, propertyname text, documentation text)")
 
-accept_commands = ["data::", "function::", "class::", "module::"]
+accept_commands = ["data::", "function::", "method::", "class::", "module::"]
 
 class DocumentationParser():
     last_class = None
@@ -21,10 +21,11 @@ class DocumentationParser():
     	self.filename = filename
     	with open(self.filename) as f:
             self.text = f.read()
-        self.text = self.text.replace("...", "*more")
+        self.text = self.text.replace("...", "more")
         self.handlers = {
             "data::" : self.save_data,
             "function::" : self.save_function,
+            "method::" : self.save_function,
             "class::" : self.save_class,
             "module::" : self.save_module
         }
@@ -49,7 +50,7 @@ class DocumentationParser():
         identifier = identifier[-1]
         module, class_ = self.resolve_path(path)
         c.execute("""INSERT INTO classes (modulename, classname, documentation) VALUES (?, ?, ?)""",
-                  (module.decode("utf-8"), class_.decode("utf-8"), documentation.decode("utf-8")))
+                  (module.decode("utf-8"), class_.split('(')[0].decode("utf-8"), documentation.decode("utf-8")))
     
     def save_module(self, identifier, documentation):
         c.execute("""INSERT INTO modules (modulename, documentation) VALUES (?, ?)""",
@@ -65,7 +66,7 @@ class DocumentationParser():
                          VALUES (?, ?, ?)""", (module.decode("utf-8"), identifier.decode("utf-8"), documentation.decode("utf-8")))
         else:
             c.execute("""INSERT INTO methods (modulename, classname, methodname, documentation)
-                         VALUES (?, ?, ?, ?)""", (module.decode("utf-8"), class_.decode("utf-8"),
+                         VALUES (?, ?, ?, ?)""", (module.decode("utf-8"), class_.split('(')[0].decode("utf-8"),
                          identifier.decode("utf-8"), documentation.decode("utf-8")))
     
     def save_data(self, identifier, documentation):
@@ -80,7 +81,7 @@ class DocumentationParser():
         else:
             c.execute("""INSERT INTO properties ( modulename, propertyname, classname,
                        documentation ) VALUES (?, ?, ?, ?)""", (module.decode("utf-8"), 
-                       identifier.decode("utf-8"), class_.decode("utf-8"), documentation.decode("utf-8")))
+                       identifier.decode("utf-8"), class_.split('(')[0].decode("utf-8"), documentation.decode("utf-8")))
     
     def tokenize(self):
         cmdstring = '.. '
@@ -152,6 +153,7 @@ class DocumentationParser():
                 if token[0] == "COMMAND":
                     commandName = token[1]
                     args, token = self.readLine(tokenStream, token)
+                    #print commandName, args
                     documentation, token = self.readBlock(tokenStream, token)
                     if commandName == "module::":
                         self.last_module = args
@@ -166,7 +168,7 @@ class DocumentationParser():
                 else:
                     token = tokenStream.next()
         except StopIteration:
-            print "Done."
+            pass
 
 p = DocumentationParser(sys.argv[1])
 p.parse()

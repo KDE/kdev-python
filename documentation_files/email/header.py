@@ -79,10 +79,89 @@ class Header:
 	"""
 	
 	
-	def __init__(self, s,charset,maxlinelen,header_name,continuation_ws,errors):
+	def __init__(self, ):
 		pass
 	
-	def decode_header(header):
+	def append(self, s,charset,errors):
+		"""
+		Append the string *s* to the MIME header.
+		
+		Optional *charset*, if given, should be a :class:`~email.charset.Charset`
+		instance (see :mod:`email.charset`) or the name of a character set, which
+		will be converted to a :class:`~email.charset.Charset` instance.  A value
+		of ``None`` (the default) means that the *charset* given in the constructor
+		is used.
+		
+		*s* may be a byte string or a Unicode string.  If it is a byte string
+		(i.e.  ``isinstance(s, str)`` is true), then *charset* is the encoding of
+		that byte string, and a :exc:`UnicodeError` will be raised if the string
+		cannot be decoded with that character set.
+		
+		If *s* is a Unicode string, then *charset* is a hint specifying the
+		character set of the characters in the string.  In this case, when
+		producing an :rfc:`2822`\ -compliant header using :rfc:`2047` rules, the
+		Unicode string will be encoded using the following charsets in order:
+		``us-ascii``, the *charset* hint, ``utf-8``.  The first character set to
+		not provoke a :exc:`UnicodeError` is used.
+		
+		Optional *errors* is passed through to any :func:`unicode` or
+		:func:`ustr.encode` call, and defaults to "strict".
+		
+		
+		"""
+		pass
+		
+	def encode(self, splitchars):
+		"""
+		Encode a message header into an RFC-compliant format, possibly wrapping
+		long lines and encapsulating non-ASCII parts in base64 or quoted-printable
+		encodings.  Optional *splitchars* is a string containing characters to
+		split long ASCII lines on, in rough support of :rfc:`2822`'s *highest
+		level syntactic breaks*.  This doesn't affect :rfc:`2047` encoded lines.
+		
+		The :class:`Header` class also provides a number of methods to support
+		standard operators and built-in functions.
+		
+		
+		"""
+		pass
+		
+	def __str__(self, ):
+		"""
+		A synonym for :meth:`Header.encode`.  Useful for ``str(aHeader)``.
+		
+		
+		"""
+		pass
+		
+	def __unicode__(self, ):
+		"""
+		A helper for the built-in :func:`unicode` function.  Returns the header as
+		a Unicode string.
+		
+		
+		"""
+		pass
+		
+	def __eq__(self, other):
+		"""
+		This method allows you to compare two :class:`Header` instances for
+		equality.
+		
+		
+		"""
+		pass
+		
+	def __ne__(self, other):
+		"""
+		This method allows you to compare two :class:`Header` instances for
+		inequality.
+		
+		The :mod:`email.header` module also provides the following convenient functions.
+		"""
+		pass
+		
+	def decode_header(self, header):
 		"""
 		Decode a message header value without converting the character set. The header
 		value is in *header*.

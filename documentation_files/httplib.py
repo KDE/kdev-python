@@ -31,9 +31,116 @@ class HTTPConnection:
 	"""
 	
 	
-	def __init__(self, host,port,strict,timeout,source_address):
+	def __init__(self, ):
 		pass
 	
+	def request(self, method,url,body,headers):
+		"""
+		This will send a request to the server using the HTTP request method *method*
+		and the selector *url*.  If the *body* argument is present, it should be a
+		string of data to send after the headers are finished. Alternatively, it may
+		be an open file object, in which case the contents of the file is sent; this
+		file object should support ``fileno()`` and ``read()`` methods. The header
+		Content-Length is automatically set to the correct value. The *headers*
+		argument should be a mapping of extra HTTP headers to send with the request.
+		
+		"""
+		pass
+		
+	def getresponse(self, ):
+		"""
+		Should be called after a request is sent to get the response from the server.
+		Returns an :class:`HTTPResponse` instance.
+		
+		"""
+		pass
+		
+	def set_debuglevel(self, level):
+		"""
+		Set the debugging level (the amount of debugging output printed). The default
+		debug level is ``0``, meaning no debugging output is printed.
+		
+		
+		"""
+		pass
+		
+	def set_tunnel(self, host,port=None,headers=None):
+		"""
+		Set the host and the port for HTTP Connect Tunnelling. Normally used when
+		it is required to do HTTPS Conection through a proxy server.
+		
+		The headers argument should be a mapping of extra HTTP headers to to sent
+		with the CONNECT request.
+		
+		"""
+		pass
+		
+	def connect(self, ):
+		"""
+		Connect to the server specified when the object was created.
+		
+		
+		"""
+		pass
+		
+	def close(self, ):
+		"""
+		Close the connection to the server.
+		
+		As an alternative to using the :meth:`request` method described above, you can
+		also send your request step by step, by using the four functions below.
+		
+		
+		"""
+		pass
+		
+	def putrequest(self, request,selector,skip_host,skip_accept_encoding):
+		"""
+		This should be the first call after the connection to the server has been made.
+		It sends a line to the server consisting of the *request* string, the *selector*
+		string, and the HTTP version (``HTTP/1.1``).  To disable automatic sending of
+		``Host:`` or ``Accept-Encoding:`` headers (for example to accept additional
+		content encodings), specify *skip_host* or *skip_accept_encoding* with non-False
+		values.
+		
+		"""
+		pass
+		
+	def putheader(self, header,argument,more):
+		"""
+		Send an :rfc:`822`\ -style header to the server.  It sends a line to the server
+		consisting of the header, a colon and a space, and the first argument.  If more
+		arguments are given, continuation lines are sent, each consisting of a tab and
+		an argument.
+		
+		
+		"""
+		pass
+		
+	def endheaders(self, ):
+		"""
+		Send a blank line to the server, signalling the end of the headers.
+		
+		
+		"""
+		pass
+		
+	def send(self, data):
+		"""
+		Send data to the server.  This should be used directly only after the
+		:meth:`endheaders` method has been called and before :meth:`getresponse` is
+		called.
+		
+		
+		.. TTPResponse Objects
+		--------------------
+		
+		:class:`HTTPResponse` instances have the following methods and attributes:
+		
+		
+		"""
+		pass
+		
 	
 
 
@@ -49,7 +156,7 @@ class HTTPSConnection:
 	"""
 	
 	
-	def __init__(self, host,port,key_file,cert_file,strict,timeout,source_address):
+	def __init__(self, ):
 		pass
 	
 	
@@ -65,9 +172,40 @@ class HTTPResponse:
 	"""
 	
 	
-	def __init__(self, sock,debuglevel=0,strict=0):
+	def __init__(self, ):
 		pass
 	
+	def read(self, amt):
+		"""
+		Reads and returns the response body, or up to the next *amt* bytes.
+		
+		
+		"""
+		pass
+		
+	def getheader(self, name,default):
+		"""
+		Get the contents of the header *name*, or *default* if there is no matching
+		header.
+		
+		
+		"""
+		pass
+		
+	def getheaders(self, ):
+		"""
+		Return a list of (header, value) tuples.
+		
+		"""
+		pass
+		
+	def fileno(self, ):
+		"""
+		Returns the ``fileno`` of the underlying socket.
+		
+		"""
+		pass
+		
 	
 
 

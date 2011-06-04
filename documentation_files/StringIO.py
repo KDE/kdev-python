@@ -30,9 +30,48 @@ class StringIO:
 	"""
 	
 	
-	def __init__(self, buffer):
+	def __init__(self, ):
 		pass
 	
+	def getvalue(self, ):
+		"""
+		Retrieve the entire contents of the "file" at any time before the
+		:class:`StringIO` object's :meth:`close` method is called.  See the note above
+		for information about mixing Unicode and 8-bit strings; such mixing can cause
+		this method to raise :exc:`UnicodeError`.
+		
+		
+		"""
+		pass
+		
+	def close(self, ):
+		"""
+		Free the memory buffer.  Attempting to do further operations with a closed
+		:class:`StringIO` object will raise a :exc:`ValueError`.
+		
+		Example usage::
+		
+		import StringIO
+		
+		output = StringIO.StringIO()
+		output.write('First line.\n')
+		print >>output, 'Second line.'
+		
+		# Retrieve file contents -- this will be
+		# 'First line.\nSecond line.\n'
+		contents = output.getvalue()
+		
+		# Close object and discard memory buffer --
+		# .getvalue() will now raise an exception.
+		output.close()
+		
+		
+		:mod:`cStringIO` --- Faster version of :mod:`StringIO`
+		======================================================
+		
+		"""
+		pass
+		
 	
 
 

@@ -48,9 +48,32 @@ class Popen3:
 	"""
 	
 	
-	def __init__(self, cmd,capturestderr,bufsize):
+	def __init__(self, ):
 		pass
 	
+	def poll(self, ):
+		"""
+		Returns ``-1`` if child process hasn't completed yet, or its status code
+		(see :meth:`wait`) otherwise.
+		
+		
+		"""
+		pass
+		
+	def wait(self, ):
+		"""
+		Waits for and returns the status code of the child process.  The status code
+		encodes both the return code of the process and information about whether it
+		exited using the :cfunc:`exit` system call or died due to a signal.  Functions
+		to help interpret the status code are defined in the :mod:`os` module; see
+		section :ref:`os-process` for the :func:`W\*` family of functions.
+		
+		The following attributes are also available:
+		
+		
+		"""
+		pass
+		
 	
 
 
@@ -65,7 +88,7 @@ class Popen4:
 	"""
 	
 	
-	def __init__(self, cmd,bufsize):
+	def __init__(self, ):
 		pass
 	
 	

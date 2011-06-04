@@ -16,9 +16,30 @@ class StreamHandler:
 	"""
 	
 	
-	def __init__(self, stream=None):
+	def __init__(self, ):
 		pass
 	
+	def emit(self, record):
+		"""
+		If a formatter is specified, it is used to format the record. The record
+		is then written to the stream with a newline terminator. If exception
+		information is present, it is formatted using
+		:func:`traceback.print_exception` and appended to the stream.
+		
+		
+		"""
+		pass
+		
+	def flush(self, ):
+		"""
+		Flushes the stream by calling its :meth:`flush` method. Note that the
+		:meth:`close` method is inherited from :class:`Handler` and so does
+		no output, so an explicit :meth:`flush` call may be needed at times.
+		
+		.. ileHandler
+		"""
+		pass
+		
 	
 
 
@@ -35,9 +56,26 @@ class FileHandler:
 	"""
 	
 	
-	def __init__(self, filename,mode='a',encoding=None,delay=False):
+	def __init__(self, ):
 		pass
 	
+	def close(self, ):
+		"""
+		Closes the file.
+		
+		
+		"""
+		pass
+		
+	def emit(self, record):
+		"""
+		Outputs the record to the file.
+		
+		
+		.. ullHandler
+		"""
+		pass
+		
 	
 
 
@@ -53,6 +91,30 @@ class NullHandler:
 	def __init__(self, ):
 		pass
 	
+	def emit(self, record):
+		"""
+		This method does nothing.
+		
+		"""
+		pass
+		
+	def handle(self, record):
+		"""
+		This method does nothing.
+		
+		"""
+		pass
+		
+	def createLock(self, ):
+		"""
+		This method returns ``None`` for the lock, since there is no
+		underlying I/O to which access needs to be serialized.
+		
+		
+		See :ref:`library-config` for more information on how to use
+		"""
+		pass
+		
 	
 
 
@@ -70,9 +132,19 @@ class WatchedFileHandler:
 	"""
 	
 	
-	def __init__(self, filename,mode,encoding,delay):
+	def __init__(self, ):
 		pass
 	
+	def emit(self, record):
+		"""
+		Outputs the record to the file, but first checks to see if the file has
+		changed.  If it has, the existing stream is flushed and closed and the
+		file opened again, before outputting the record to the file.
+		
+		.. otatingFileHandler
+		"""
+		pass
+		
 	
 
 
@@ -102,9 +174,26 @@ class RotatingFileHandler:
 	"""
 	
 	
-	def __init__(self, filename,mode='a',maxBytes=0,backupCount=0,encoding=None,delay=0):
+	def __init__(self, ):
 		pass
 	
+	def doRollover(self, ):
+		"""
+		Does a rollover, as described above.
+		
+		
+		"""
+		pass
+		
+	def emit(self, record):
+		"""
+		Outputs the record to the file, catering for rollover as described
+		previously.
+		
+		.. imedRotatingFileHandler
+		"""
+		pass
+		
 	
 
 
@@ -159,9 +248,26 @@ class TimedRotatingFileHandler:
 	"""
 	
 	
-	def __init__(self, filename,when='h',interval=1,backupCount=0,encoding=None,delay=False,utc=False):
+	def __init__(self, ):
 		pass
 	
+	def doRollover(self, ):
+		"""
+		Does a rollover, as described above.
+		
+		
+		"""
+		pass
+		
+	def emit(self, record):
+		"""
+		Outputs the record to the file, catering for rollover as described above.
+		
+		
+		.. ocketHandler
+		"""
+		pass
+		
 	
 
 
@@ -176,9 +282,99 @@ class SocketHandler:
 	"""
 	
 	
-	def __init__(self, host,port):
+	def __init__(self, ):
 		pass
 	
+	def close(self, ):
+		"""
+		Closes the socket.
+		
+		
+		"""
+		pass
+		
+	def emit(self, ):
+		"""
+		Pickles the record's attribute dictionary and writes it to the socket in
+		binary format. If there is an error with the socket, silently drops the
+		packet. If the connection was previously lost, re-establishes the
+		connection. To unpickle the record at the receiving end into a
+		:class:`LogRecord`, use the :func:`makeLogRecord` function.
+		
+		
+		"""
+		pass
+		
+	def handleError(self, ):
+		"""
+		Handles an error which has occurred during :meth:`emit`. The most likely
+		cause is a lost connection. Closes the socket so that we can retry on the
+		next event.
+		
+		
+		"""
+		pass
+		
+	def makeSocket(self, ):
+		"""
+		This is a factory method which allows subclasses to define the precise
+		type of socket they want. The default implementation creates a TCP socket
+		(:const:`socket.SOCK_STREAM`).
+		
+		
+		"""
+		pass
+		
+	def makePickle(self, record):
+		"""
+		Pickles the record's attribute dictionary in binary format with a length
+		prefix, and returns it ready for transmission across the socket.
+		
+		Note that pickles aren't completely secure. If you are concerned about
+		security, you may want to override this method to implement a more secure
+		mechanism. For example, you can sign pickles using HMAC and then verify
+		them on the receiving end, or alternatively you can disable unpickling of
+		global objects on the receiving end.
+		
+		
+		"""
+		pass
+		
+	def send(self, packet):
+		"""
+		Send a pickled string *packet* to the socket. This function allows for
+		partial sends which can happen when the network is busy.
+		
+		
+		"""
+		pass
+		
+	def createSocket(self, ):
+		"""
+		Tries to create a socket; on failure, uses an exponential back-off
+		algorithm.  On intial failure, the handler will drop the message it was
+		trying to send.  When subsequent messages are handled by the same
+		instance, it will not try connecting until some time has passed.  The
+		default parameters are such that the initial delay is one second, and if
+		after that delay the connection still can't be made, the handler will
+		double the delay each time up to a maximum of 30 seconds.
+		
+		This behaviour is controlled by the following handler attributes:
+		
+		* ``retryStart`` (initial delay, defaulting to 1.0 seconds).
+		* ``retryFactor`` (multiplier, defaulting to 2.0).
+		* ``retryMax`` (maximum delay, defaulting to 30.0 seconds).
+		
+		This means that if the remote listener starts up *after* the handler has
+		been used, you could lose messages (since the handler won't even attempt
+		a connection until the delay has elapsed, but just silently drop messages
+		during the delay period).
+		
+		
+		.. atagramHandler
+		"""
+		pass
+		
 	
 
 
@@ -193,9 +389,38 @@ class DatagramHandler:
 	"""
 	
 	
-	def __init__(self, host,port):
+	def __init__(self, ):
 		pass
 	
+	def emit(self, ):
+		"""
+		Pickles the record's attribute dictionary and writes it to the socket in
+		binary format. If there is an error with the socket, silently drops the
+		packet. To unpickle the record at the receiving end into a
+		:class:`LogRecord`, use the :func:`makeLogRecord` function.
+		
+		
+		"""
+		pass
+		
+	def makeSocket(self, ):
+		"""
+		The factory method of :class:`SocketHandler` is here overridden to create
+		a UDP socket (:const:`socket.SOCK_DGRAM`).
+		
+		
+		"""
+		pass
+		
+	def send(self, s):
+		"""
+		Send a pickled string to a socket.
+		
+		
+		.. ysLogHandler
+		"""
+		pass
+		
 	
 
 
@@ -227,9 +452,119 @@ class SysLogHandler:
 	"""
 	
 	
-	def __init__(self, address='localhost',SYSLOG_UDP_PORT,facility=LOG_USER,socktype=socket):
+	def __init__(self, ):
 		pass
 	
+	def close(self, ):
+		"""
+		Closes the socket to the remote host.
+		
+		
+		"""
+		pass
+		
+	def emit(self, record):
+		"""
+		The record is formatted, and then sent to the syslog server. If exception
+		information is present, it is *not* sent to the server.
+		
+		
+		"""
+		pass
+		
+	def encodePriority(self, facility,priority):
+		"""
+		Encodes the facility and priority into an integer. You can pass in strings
+		or integers - if strings are passed, internal mapping dictionaries are
+		used to convert them to integers.
+		
+		The symbolic ``LOG_`` values are defined in :class:`SysLogHandler` and
+		mirror the values defined in the ``sys/syslog.h`` header file.
+		
+		**Priorities**
+		
+		+--------------------------+---------------+
+		| Name (string)            | Symbolic value|
+		+==========================+===============+
+		| ``alert``                | LOG_ALERT     |
+		+--------------------------+---------------+
+		| ``crit`` or ``critical`` | LOG_CRIT      |
+		+--------------------------+---------------+
+		| ``debug``                | LOG_DEBUG     |
+		+--------------------------+---------------+
+		| ``emerg`` or ``panic``   | LOG_EMERG     |
+		+--------------------------+---------------+
+		| ``err`` or ``error``     | LOG_ERR       |
+		+--------------------------+---------------+
+		| ``info``                 | LOG_INFO      |
+		+--------------------------+---------------+
+		| ``notice``               | LOG_NOTICE    |
+		+--------------------------+---------------+
+		| ``warn`` or ``warning``  | LOG_WARNING   |
+		+--------------------------+---------------+
+		
+		**Facilities**
+		
+		+---------------+---------------+
+		| Name (string) | Symbolic value|
+		+===============+===============+
+		| ``auth``      | LOG_AUTH      |
+		+---------------+---------------+
+		| ``authpriv``  | LOG_AUTHPRIV  |
+		+---------------+---------------+
+		| ``cron``      | LOG_CRON      |
+		+---------------+---------------+
+		| ``daemon``    | LOG_DAEMON    |
+		+---------------+---------------+
+		| ``ftp``       | LOG_FTP       |
+		+---------------+---------------+
+		| ``kern``      | LOG_KERN      |
+		+---------------+---------------+
+		| ``lpr``       | LOG_LPR       |
+		+---------------+---------------+
+		| ``mail``      | LOG_MAIL      |
+		+---------------+---------------+
+		| ``news``      | LOG_NEWS      |
+		+---------------+---------------+
+		| ``syslog``    | LOG_SYSLOG    |
+		+---------------+---------------+
+		| ``user``      | LOG_USER      |
+		+---------------+---------------+
+		| ``uucp``      | LOG_UUCP      |
+		+---------------+---------------+
+		| ``local0``    | LOG_LOCAL0    |
+		+---------------+---------------+
+		| ``local1``    | LOG_LOCAL1    |
+		+---------------+---------------+
+		| ``local2``    | LOG_LOCAL2    |
+		+---------------+---------------+
+		| ``local3``    | LOG_LOCAL3    |
+		+---------------+---------------+
+		| ``local4``    | LOG_LOCAL4    |
+		+---------------+---------------+
+		| ``local5``    | LOG_LOCAL5    |
+		+---------------+---------------+
+		| ``local6``    | LOG_LOCAL6    |
+		+---------------+---------------+
+		| ``local7``    | LOG_LOCAL7    |
+		+---------------+---------------+
+		
+		"""
+		pass
+		
+	def mapPriority(self, levelname):
+		"""
+		Maps a logging level name to a syslog priority name.
+		You may need to override this if you are using custom levels, or
+		if the default algorithm is not suitable for your needs. The
+		default algorithm maps ``DEBUG``, ``INFO``, ``WARNING``, ``ERROR`` and
+		``CRITICAL`` to the equivalent syslog names, and all other level
+		names to 'warning'.
+		
+		.. TEventLogHandler
+		"""
+		pass
+		
 	
 
 
@@ -254,9 +589,65 @@ class NTEventLogHandler:
 	"""
 	
 	
-	def __init__(self, appname,dllname=None,logtype='Application'):
+	def __init__(self, ):
 		pass
 	
+	def close(self, ):
+		"""
+		At this point, you can remove the application name from the registry as a
+		source of event log entries. However, if you do this, you will not be able
+		to see the events as you intended in the Event Log Viewer - it needs to be
+		able to access the registry to get the .dll name. The current version does
+		not do this.
+		
+		
+		"""
+		pass
+		
+	def emit(self, record):
+		"""
+		Determines the message ID, event category and event type, and then logs
+		the message in the NT event log.
+		
+		
+		"""
+		pass
+		
+	def getEventCategory(self, record):
+		"""
+		Returns the event category for the record. Override this if you want to
+		specify your own categories. This version returns 0.
+		
+		
+		"""
+		pass
+		
+	def getEventType(self, record):
+		"""
+		Returns the event type for the record. Override this if you want to
+		specify your own types. This version does a mapping using the handler's
+		typemap attribute, which is set up in :meth:`__init__` to a dictionary
+		which contains mappings for :const:`DEBUG`, :const:`INFO`,
+		:const:`WARNING`, :const:`ERROR` and :const:`CRITICAL`. If you are using
+		your own levels, you will either need to override this method or place a
+		suitable dictionary in the handler's *typemap* attribute.
+		
+		
+		"""
+		pass
+		
+	def getMessageID(self, record):
+		"""
+		Returns the message ID for the record. If you are using your own messages,
+		you could do this by having the *msg* passed to the logger being an ID
+		rather than a format string. Then, in here, you could use a dictionary
+		lookup to get the message ID. This version returns 1, which is the base
+		message ID in :file:`win32service.pyd`.
+		
+		.. MTPHandler
+		"""
+		pass
+		
 	
 
 
@@ -276,9 +667,26 @@ class SMTPHandler:
 	"""
 	
 	
-	def __init__(self, mailhost,_fromaddr,toaddrs,subject,credentials=None,secure=None):
+	def __init__(self, ):
 		pass
 	
+	def emit(self, record):
+		"""
+		Formats the record and sends it to the specified addressees.
+		
+		
+		"""
+		pass
+		
+	def getSubject(self, record):
+		"""
+		If you want to specify a subject line which is record-dependent, override
+		this method.
+		
+		.. emoryHandler
+		"""
+		pass
+		
 	
 
 
@@ -292,9 +700,36 @@ class BufferingHandler:
 	"""
 	
 	
-	def __init__(self, capacity):
+	def __init__(self, ):
 		pass
 	
+	def emit(self, record):
+		"""
+		Appends the record to the buffer. If :meth:`shouldFlush` returns true,
+		calls :meth:`flush` to process the buffer.
+		
+		
+		"""
+		pass
+		
+	def flush(self, ):
+		"""
+		You can override this to implement custom flushing behavior. This version
+		just zaps the buffer to empty.
+		
+		
+		"""
+		pass
+		
+	def shouldFlush(self, record):
+		"""
+		Returns true if the buffer is up to capacity. This method can be
+		overridden to implement custom flushing strategies.
+		
+		
+		"""
+		pass
+		
 	
 
 
@@ -311,9 +746,41 @@ class MemoryHandler:
 	"""
 	
 	
-	def __init__(self, capacity,flushLevel=ERROR,target=None):
+	def __init__(self, ):
 		pass
 	
+	def close(self, ):
+		"""
+		Calls :meth:`flush`, sets the target to :const:`None` and clears the
+		buffer.
+		
+		
+		"""
+		pass
+		
+	def flush(self, ):
+		"""
+		For a :class:`MemoryHandler`, flushing means just sending the buffered
+		records to the target, if there is one. The buffer is also cleared when
+		this happens. Override if you want different behavior.
+		
+		
+		"""
+		pass
+		
+	def setTarget(self, target):
+		""""""
+		pass
+		
+	def shouldFlush(self, record):
+		"""
+		Checks for buffer full or a record at the *flushLevel* or higher.
+		
+		
+		.. TTPHandler
+		"""
+		pass
+		
 	
 
 
@@ -329,9 +796,17 @@ class HTTPHandler:
 	"""
 	
 	
-	def __init__(self, host,url,method='GET'):
+	def __init__(self, ):
 		pass
 	
+	def emit(self, record):
+		"""
+		Sends the record to the Web server as a percent-encoded dictionary.
+		
+		
+		"""
+		pass
+		
 	
 
 

@@ -75,9 +75,29 @@ class Pickler:
 	"""
 	
 	
-	def __init__(self, file,protocol):
+	def __init__(self, ):
 		pass
 	
+	def dump(self, obj):
+		"""
+		Write a pickled representation of *obj* to the open file object given in the
+		constructor.  Either the binary or ASCII format will be used, depending on the
+		value of the *protocol* argument passed to the constructor.
+		
+		
+		"""
+		pass
+		
+	def clear_memo(self, ):
+		"""
+		Clears the pickler's "memo".  The memo is the data structure that remembers
+		which objects the pickler has already seen, so that shared or recursive objects
+		pickled by reference and not by value.  This method is useful when re-using
+		picklers.
+		
+		"""
+		pass
+		
 	
 
 
@@ -102,9 +122,39 @@ class Unpickler:
 	"""
 	
 	
-	def __init__(self, file):
+	def __init__(self, ):
 		pass
 	
+	def load(self, ):
+		"""
+		Read a pickled object representation from the open file object given in
+		the constructor, and return the reconstituted object hierarchy specified
+		therein.
+		
+		This method automatically determines whether the data stream was written
+		in binary mode or not.
+		
+		
+		"""
+		pass
+		
+	def noload(self, ):
+		"""
+		This is just like :meth:`load` except that it doesn't actually create any
+		objects.  This is useful primarily for finding what's called "persistent
+		ids" that may be referenced in a pickle data stream.  See section
+		:ref:`pickle-protocol` below for more details.
+		
+		**Note:** the :meth:`noload` method is currently only available on
+		:class:`Unpickler` objects created with the :mod:`cPickle` module.
+		:mod:`pickle` module :class:`Unpickler`\ s do not have the :meth:`noload`
+		method.
+		
+		
+		What can be pickled and unpickled?
+		"""
+		pass
+		
 	
 
 

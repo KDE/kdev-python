@@ -60,9 +60,145 @@ class mmap:
 	"""
 	
 	
-	def __init__(self, fileno,length,tagname,access,offset):
+	def __init__(self, ):
 		pass
 	
+	def close(self, ):
+		"""
+		Close the file.  Subsequent calls to other methods of the object will
+		result in an exception being raised.
+		
+		
+		"""
+		pass
+		
+	def find(self, string,start,end):
+		"""
+		Returns the lowest index in the object where the substring *string* is
+		found, such that *string* is contained in the range [*start*, *end*].
+		Optional arguments *start* and *end* are interpreted as in slice notation.
+		Returns ``-1`` on failure.
+		
+		
+		"""
+		pass
+		
+	def flush(self, offset,size):
+		"""
+		Flushes changes made to the in-memory copy of a file back to disk. Without
+		use of this call there is no guarantee that changes are written back before
+		the object is destroyed.  If *offset* and *size* are specified, only
+		changes to the given range of bytes will be flushed to disk; otherwise, the
+		whole extent of the mapping is flushed.
+		
+		**(Windows version)** A nonzero value returned indicates success; zero
+		indicates failure.
+		
+		**(Unix version)** A zero value is returned to indicate success. An
+		exception is raised when the call failed.
+		
+		
+		"""
+		pass
+		
+	def move(self, dest,src,count):
+		"""
+		Copy the *count* bytes starting at offset *src* to the destination index
+		*dest*.  If the mmap was created with :const:`ACCESS_READ`, then calls to
+		move will raise a :exc:`TypeError` exception.
+		
+		
+		"""
+		pass
+		
+	def read(self, num):
+		"""
+		Return a string containing up to *num* bytes starting from the current
+		file position; the file position is updated to point after the bytes that
+		were returned.
+		
+		
+		"""
+		pass
+		
+	def read_byte(self, ):
+		"""
+		Returns a string of length 1 containing the character at the current file
+		position, and advances the file position by 1.
+		
+		
+		"""
+		pass
+		
+	def readline(self, ):
+		"""
+		Returns a single line, starting at the current file position and up to the
+		next newline.
+		
+		
+		"""
+		pass
+		
+	def resize(self, newsize):
+		"""
+		Resizes the map and the underlying file, if any. If the mmap was created
+		with :const:`ACCESS_READ` or :const:`ACCESS_COPY`, resizing the map will
+		raise a :exc:`TypeError` exception.
+		
+		
+		"""
+		pass
+		
+	def rfind(self, string,start,end):
+		"""
+		Returns the highest index in the object where the substring *string* is
+		found, such that *string* is contained in the range [*start*, *end*].
+		Optional arguments *start* and *end* are interpreted as in slice notation.
+		Returns ``-1`` on failure.
+		
+		
+		"""
+		pass
+		
+	def seek(self, pos,whence):
+		"""
+		Set the file's current position.  *whence* argument is optional and
+		defaults to ``os.SEEK_SET`` or ``0`` (absolute file positioning); other
+		values are ``os.SEEK_CUR`` or ``1`` (seek relative to the current
+		position) and ``os.SEEK_END`` or ``2`` (seek relative to the file's end).
+		
+		
+		"""
+		pass
+		
+	def size(self, ):
+		"""
+		Return the length of the file, which can be larger than the size of the
+		memory-mapped area.
+		
+		
+		"""
+		pass
+		
+	def tell(self, ):
+		"""
+		Returns the current position of the file pointer.
+		
+		
+		"""
+		pass
+		
+	def write(self, string):
+		"""
+		Write the bytes in *string* into memory at the current position of the
+		file pointer; the file position is updated to point after the bytes that
+		were written. If the mmap was created with :const:`ACCESS_READ`, then
+		writing to it will raise a :exc:`TypeError` exception.
+		
+		
+		"""
+		pass
+		
 	
 
 
@@ -150,9 +286,145 @@ class mmap:
 	"""
 	
 	
-	def __init__(self, fileno,length,flags,prot,access,offset):
+	def __init__(self, ):
 		pass
 	
+	def close(self, ):
+		"""
+		Close the file.  Subsequent calls to other methods of the object will
+		result in an exception being raised.
+		
+		
+		"""
+		pass
+		
+	def find(self, string,start,end):
+		"""
+		Returns the lowest index in the object where the substring *string* is
+		found, such that *string* is contained in the range [*start*, *end*].
+		Optional arguments *start* and *end* are interpreted as in slice notation.
+		Returns ``-1`` on failure.
+		
+		
+		"""
+		pass
+		
+	def flush(self, offset,size):
+		"""
+		Flushes changes made to the in-memory copy of a file back to disk. Without
+		use of this call there is no guarantee that changes are written back before
+		the object is destroyed.  If *offset* and *size* are specified, only
+		changes to the given range of bytes will be flushed to disk; otherwise, the
+		whole extent of the mapping is flushed.
+		
+		**(Windows version)** A nonzero value returned indicates success; zero
+		indicates failure.
+		
+		**(Unix version)** A zero value is returned to indicate success. An
+		exception is raised when the call failed.
+		
+		
+		"""
+		pass
+		
+	def move(self, dest,src,count):
+		"""
+		Copy the *count* bytes starting at offset *src* to the destination index
+		*dest*.  If the mmap was created with :const:`ACCESS_READ`, then calls to
+		move will raise a :exc:`TypeError` exception.
+		
+		
+		"""
+		pass
+		
+	def read(self, num):
+		"""
+		Return a string containing up to *num* bytes starting from the current
+		file position; the file position is updated to point after the bytes that
+		were returned.
+		
+		
+		"""
+		pass
+		
+	def read_byte(self, ):
+		"""
+		Returns a string of length 1 containing the character at the current file
+		position, and advances the file position by 1.
+		
+		
+		"""
+		pass
+		
+	def readline(self, ):
+		"""
+		Returns a single line, starting at the current file position and up to the
+		next newline.
+		
+		
+		"""
+		pass
+		
+	def resize(self, newsize):
+		"""
+		Resizes the map and the underlying file, if any. If the mmap was created
+		with :const:`ACCESS_READ` or :const:`ACCESS_COPY`, resizing the map will
+		raise a :exc:`TypeError` exception.
+		
+		
+		"""
+		pass
+		
+	def rfind(self, string,start,end):
+		"""
+		Returns the highest index in the object where the substring *string* is
+		found, such that *string* is contained in the range [*start*, *end*].
+		Optional arguments *start* and *end* are interpreted as in slice notation.
+		Returns ``-1`` on failure.
+		
+		
+		"""
+		pass
+		
+	def seek(self, pos,whence):
+		"""
+		Set the file's current position.  *whence* argument is optional and
+		defaults to ``os.SEEK_SET`` or ``0`` (absolute file positioning); other
+		values are ``os.SEEK_CUR`` or ``1`` (seek relative to the current
+		position) and ``os.SEEK_END`` or ``2`` (seek relative to the file's end).
+		
+		
+		"""
+		pass
+		
+	def size(self, ):
+		"""
+		Return the length of the file, which can be larger than the size of the
+		memory-mapped area.
+		
+		
+		"""
+		pass
+		
+	def tell(self, ):
+		"""
+		Returns the current position of the file pointer.
+		
+		
+		"""
+		pass
+		
+	def write(self, string):
+		"""
+		Write the bytes in *string* into memory at the current position of the
+		file pointer; the file position is updated to point after the bytes that
+		were written. If the mmap was created with :const:`ACCESS_READ`, then
+		writing to it will raise a :exc:`TypeError` exception.
+		
+		
+		"""
+		pass
+		
 	
 
 

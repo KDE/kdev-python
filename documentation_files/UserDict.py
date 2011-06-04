@@ -30,7 +30,7 @@ class UserDict:
 	"""
 	
 	
-	def __init__(self, initialdata):
+	def __init__(self, ):
 		pass
 	
 	
@@ -51,7 +51,7 @@ class IterableUserDict:
 	"""
 	
 	
-	def __init__(self, initialdata):
+	def __init__(self, ):
 		pass
 	
 	

@@ -1,6 +1,10 @@
-def func(foo, bar, 
-	 baz, *args, **kwargs):
+def func(foo, bar, *args, **kwargs):
 	pass
+
+def ASDF(arg, arg2):
+    arg = arg2
+    print arg2
+print ASDF()
 
 a = a and a
 a = a or b
@@ -33,6 +37,9 @@ import sys
 import random
 
 import PyQt4.QtCore
+
+import bisect
+bisect.bisect_right()
 
 print sys
 
@@ -76,6 +83,16 @@ def func(foo, bar, baz, bang, foobang, foobar, foobazbar, foobazbarbang):
     return foobang
     print foo
     print foobazbarbang
+    
+    import asynchat
+    obj = asynchat.async_chat
+    obj.collect_incoming_data()
+    import _winreg
+    _winreg.CreateKey()
+    import binhex
+    binhex.hexbin()
+    
+    print foo, bar, baz, bang
     
     if foobazbar < 5:
         pass

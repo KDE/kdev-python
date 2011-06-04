@@ -261,6 +261,92 @@ class RegexObject:
 	def __init__(self, ):
 		pass
 	
+	def search(self, string,pos,endpos):
+		"""
+		Scan through *string* looking for a location where this regular expression
+		produces a match, and return a corresponding :class:`MatchObject` instance.
+		Return ``None`` if no position in the string matches the pattern; note that this
+		is different from finding a zero-length match at some point in the string.
+		
+		The optional second parameter *pos* gives an index in the string where the
+		search is to start; it defaults to ``0``.  This is not completely equivalent to
+		slicing the string; the ``'^'`` pattern character matches at the real beginning
+		of the string and at positions just after a newline, but not necessarily at the
+		index where the search is to start.
+		
+		The optional parameter *endpos* limits how far the string will be searched; it
+		will be as if the string is *endpos* characters long, so only the characters
+		from *pos* to ``endpos - 1`` will be searched for a match.  If *endpos* is less
+		than *pos*, no match will be found, otherwise, if *rx* is a compiled regular
+		expression object, ``rx.search(string, 0, 50)`` is equivalent to
+		``rx.search(string[:50], 0)``.
+		
+		>>> pattern = re.compile("d")
+		>>> pattern.search("dog")     # Match at index 0
+		<_sre.SRE_Match object at *more>
+		>>> pattern.search("dog", 1)  # No match; search doesn't include the "d"
+		
+		
+		"""
+		pass
+		
+	def match(self, string,pos,endpos):
+		"""
+		If zero or more characters at the *beginning* of *string* match this regular
+		expression, return a corresponding :class:`MatchObject` instance.  Return
+		``None`` if the string does not match the pattern; note that this is different
+		from a zero-length match.
+		
+		The optional *pos* and *endpos* parameters have the same meaning as for the
+		:meth:`~RegexObject.search` method.
+		
+		"""
+		pass
+		
+	def split(self, string,maxsplit=0):
+		"""
+		Identical to the :func:`split` function, using the compiled pattern.
+		
+		
+		"""
+		pass
+		
+	def findall(self, string,pos,endpos):
+		"""
+		Similar to the :func:`findall` function, using the compiled pattern, but
+		also accepts optional *pos* and *endpos* parameters that limit the search
+		region like for :meth:`match`.
+		
+		
+		"""
+		pass
+		
+	def finditer(self, string,pos,endpos):
+		"""
+		Similar to the :func:`finditer` function, using the compiled pattern, but
+		also accepts optional *pos* and *endpos* parameters that limit the search
+		region like for :meth:`match`.
+		
+		
+		"""
+		pass
+		
+	def sub(self, repl,string,count=0):
+		"""
+		Identical to the :func:`sub` function, using the compiled pattern.
+		
+		
+		"""
+		pass
+		
+	def subn(self, repl,string,count=0):
+		"""
+		Identical to the :func:`subn` function, using the compiled pattern.
+		
+		
+		"""
+		pass
+		
 	
 
 
@@ -279,6 +365,152 @@ class MatchObject:
 	def __init__(self, ):
 		pass
 	
+	def expand(self, template):
+		"""
+		Return the string obtained by doing backslash substitution on the template
+		string *template*, as done by the :meth:`~RegexObject.sub` method.  Escapes
+		such as ``\n`` are converted to the appropriate characters, and numeric
+		backreferences (``\1``, ``\2``) and named backreferences (``\g<1>``,
+		``\g<name>``) are replaced by the contents of the corresponding group.
+		
+		
+		"""
+		pass
+		
+	def group(self, group1,more):
+		"""
+		Returns one or more subgroups of the match.  If there is a single argument, the
+		result is a single string; if there are multiple arguments, the result is a
+		tuple with one item per argument. Without arguments, *group1* defaults to zero
+		(the whole match is returned). If a *groupN* argument is zero, the corresponding
+		return value is the entire matching string; if it is in the inclusive range
+		[1..99], it is the string matching the corresponding parenthesized group.  If a
+		group number is negative or larger than the number of groups defined in the
+		pattern, an :exc:`IndexError` exception is raised. If a group is contained in a
+		part of the pattern that did not match, the corresponding result is ``None``.
+		If a group is contained in a part of the pattern that matched multiple times,
+		the last match is returned.
+		
+		>>> m = re.match(r"(\w+) (\w+)", "Isaac Newton, physicist")
+		>>> m.group(0)       # The entire match
+		'Isaac Newton'
+		>>> m.group(1)       # The first parenthesized subgroup.
+		'Isaac'
+		>>> m.group(2)       # The second parenthesized subgroup.
+		'Newton'
+		>>> m.group(1, 2)    # Multiple arguments give us a tuple.
+		('Isaac', 'Newton')
+		
+		If the regular expression uses the ``(?P<name>*more)`` syntax, the *groupN*
+		arguments may also be strings identifying groups by their group name.  If a
+		string argument is not used as a group name in the pattern, an :exc:`IndexError`
+		exception is raised.
+		
+		A moderately complicated example:
+		
+		>>> m = re.match(r"(?P<first_name>\w+) (?P<last_name>\w+)", "Malcolm Reynolds")
+		>>> m.group('first_name')
+		'Malcolm'
+		>>> m.group('last_name')
+		'Reynolds'
+		
+		Named groups can also be referred to by their index:
+		
+		>>> m.group(1)
+		'Malcolm'
+		>>> m.group(2)
+		'Reynolds'
+		
+		If a group matches multiple times, only the last match is accessible:
+		
+		>>> m = re.match(r"(..)+", "a1b2c3")  # Matches 3 times.
+		>>> m.group(1)                        # Returns only the last match.
+		'c3'
+		
+		
+		"""
+		pass
+		
+	def groups(self, default):
+		"""
+		Return a tuple containing all the subgroups of the match, from 1 up to however
+		many groups are in the pattern.  The *default* argument is used for groups that
+		did not participate in the match; it defaults to ``None``.  (Incompatibility
+		note: in the original Python 1.5 release, if the tuple was one element long, a
+		string would be returned instead.  In later versions (from 1.5.1 on), a
+		singleton tuple is returned in such cases.)
+		
+		For example:
+		
+		>>> m = re.match(r"(\d+)\.(\d+)", "24.1632")
+		>>> m.groups()
+		('24', '1632')
+		
+		If we make the decimal place and everything after it optional, not all groups
+		might participate in the match.  These groups will default to ``None`` unless
+		the *default* argument is given:
+		
+		>>> m = re.match(r"(\d+)\.?(\d+)?", "24")
+		>>> m.groups()      # Second group defaults to None.
+		('24', None)
+		>>> m.groups('0')   # Now, the second group defaults to '0'.
+		('24', '0')
+		
+		
+		"""
+		pass
+		
+	def groupdict(self, default):
+		"""
+		Return a dictionary containing all the *named* subgroups of the match, keyed by
+		the subgroup name.  The *default* argument is used for groups that did not
+		participate in the match; it defaults to ``None``.  For example:
+		
+		>>> m = re.match(r"(?P<first_name>\w+) (?P<last_name>\w+)", "Malcolm Reynolds")
+		>>> m.groupdict()
+		{'first_name': 'Malcolm', 'last_name': 'Reynolds'}
+		
+		
+		"""
+		pass
+		
+	def start(self, group):
+		"""MatchObject.end([group])
+		
+		Return the indices of the start and end of the substring matched by *group*;
+		*group* defaults to zero (meaning the whole matched substring). Return ``-1`` if
+		*group* exists but did not contribute to the match.  For a match object *m*, and
+		a group *g* that did contribute to the match, the substring matched by group *g*
+		(equivalent to ``m.group(g)``) is ::
+		
+		m.string[m.start(g):m.end(g)]
+		
+		Note that ``m.start(group)`` will equal ``m.end(group)`` if *group* matched a
+		null string.  For example, after ``m = re.search('b(c?)', 'cba')``,
+		``m.start(0)`` is 1, ``m.end(0)`` is 2, ``m.start(1)`` and ``m.end(1)`` are both
+		2, and ``m.start(2)`` raises an :exc:`IndexError` exception.
+		
+		An example that will remove *remove_this* from email addresses:
+		
+		>>> email = "tony@tiremove_thisger.net"
+		>>> m = re.search("remove_this", email)
+		>>> email[:m.start()] + email[m.end():]
+		'tony@tiger.net'
+		
+		
+		"""
+		pass
+		
+	def span(self, group):
+		"""
+		For :class:`MatchObject` *m*, return the 2-tuple ``(m.start(group),
+		m.end(group))``. Note that if *group* did not contribute to the match, this is
+		``(-1, -1)``.  *group* defaults to zero, the entire match.
+		
+		
+		"""
+		pass
+		
 	
 
 

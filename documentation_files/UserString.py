@@ -17,7 +17,7 @@ class UserString:
 	"""
 	
 	
-	def __init__(self, sequence):
+	def __init__(self, ):
 		pass
 	
 	
@@ -38,7 +38,7 @@ class MutableString:
 	"""
 	
 	
-	def __init__(self, sequence):
+	def __init__(self, ):
 		pass
 	
 	

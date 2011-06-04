@@ -32,9 +32,28 @@ class Shelf:
 	"""
 	
 	
-	def __init__(self, dict,protocol=None,writeback=False):
+	def __init__(self, ):
 		pass
 	
+	def sync(self, ):
+		"""
+		Write back all entries in the cache if the shelf was opened with *writeback*
+		set to :const:`True`.  Also empty the cache and synchronize the persistent
+		dictionary on disk, if feasible.  This is called automatically when the shelf
+		is closed with :meth:`close`.
+		
+		"""
+		pass
+		
+	def close(self, ):
+		"""
+		Synchronize and close the persistent *dict* object.  Operations on a closed
+		shelf will fail with a :exc:`ValueError`.
+		
+		
+		"""
+		pass
+		
 	
 
 
@@ -54,7 +73,7 @@ class BsdDbShelf:
 	"""
 	
 	
-	def __init__(self, dict,protocol=None,writeback=False):
+	def __init__(self, ):
 		pass
 	
 	
@@ -111,7 +130,7 @@ class DbfilenameShelf:
 	"""
 	
 	
-	def __init__(self, filename,flag='c',protocol=None,writeback=False):
+	def __init__(self, ):
 		pass
 	
 	

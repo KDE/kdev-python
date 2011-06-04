@@ -93,9 +93,21 @@ class Pdb:
 	"""
 	
 	
-	def __init__(self, completekey='tab',stdin=None,stdout=None,skip=None):
+	def __init__(self, ):
 		pass
 	
+	def run(self, statement,globals,locals):
+		"""runeval(expression[, globals[, locals]])
+		runcall(function[, argument, *more])
+		set_trace()
+		
+		See the documentation for the functions explained above.
+		
+		
+		.. ebugger Commands
+		"""
+		pass
+		
 	
 
 

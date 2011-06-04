@@ -1072,7 +1072,7 @@ class RawTurtle:
 	"""
 	
 	
-	def __init__(self, canvas):
+	def __init__(self, ):
 		pass
 	
 	
@@ -1107,7 +1107,7 @@ class TurtleScreen:
 	"""
 	
 	
-	def __init__(self, cv):
+	def __init__(self, ):
 		pass
 	
 	
@@ -1142,7 +1142,7 @@ class ScrolledCanvas:
 	"""
 	
 	
-	def __init__(self, master):
+	def __init__(self, ):
 		pass
 	
 	
@@ -1170,9 +1170,20 @@ class Shape:
 	"""
 	
 	
-	def __init__(self, type_,data):
+	def __init__(self, ):
 		pass
 	
+	def addcomponent(self, poly,fill,outline=None):
+		"""
+		:param poly: a polygon, i.e. a tuple of pairs of numbers
+		:param fill: a color the *poly* will be filled with
+		:param outline: a color for the poly's outline (if given)
+		
+		Example:
+		
+		"""
+		pass
+		
 	
 
 
@@ -1286,10 +1297,10 @@ class Vec2D:
 	"""
 	
 	
-	def __init__(self, x,y):
+	def __init__(self, ):
 		pass
 	
-	def write_docstringdict(filename="turtle_docstringdict"):
+	def write_docstringdict(self, filename="turtle_docstringdict"):
 		"""
 		:param filename: a string, used as filename
 		

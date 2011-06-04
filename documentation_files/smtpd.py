@@ -16,9 +16,24 @@ class SMTPServer:
 	"""
 	
 	
-	def __init__(self, localaddr,remoteaddr):
+	def __init__(self, ):
 		pass
 	
+	def process_message(self, peer,mail_from,rcpttos,data):
+		"""
+		Raise :exc:`NotImplementedError` exception. Override this in subclasses to
+		do something useful with this message. Whatever was passed in the
+		constructor as *remoteaddr* will be available as the :attr:`_remoteaddr`
+		attribute. *peer* is the remote host's address, *mailfrom* is the envelope
+		originator, *rcpttos* are the envelope recipients and *data* is a string
+		containing the contents of the e-mail (which should be in :rfc:`2822`
+		format).
+		
+		
+		DebuggingServer Objects
+		"""
+		pass
+		
 	
 
 
@@ -37,7 +52,7 @@ class DebuggingServer:
 	"""
 	
 	
-	def __init__(self, localaddr,remoteaddr):
+	def __init__(self, ):
 		pass
 	
 	
@@ -59,7 +74,7 @@ class PureProxy:
 	"""
 	
 	
-	def __init__(self, localaddr,remoteaddr):
+	def __init__(self, ):
 		pass
 	
 	

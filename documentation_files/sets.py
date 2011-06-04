@@ -16,7 +16,7 @@ class Set:
 	"""
 	
 	
-	def __init__(self, iterable):
+	def __init__(self, ):
 		pass
 	
 	
@@ -85,7 +85,7 @@ class ImmutableSet:
 	"""
 	
 	
-	def __init__(self, iterable):
+	def __init__(self, ):
 		pass
 	
 	

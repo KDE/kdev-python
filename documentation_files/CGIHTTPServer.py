@@ -27,9 +27,19 @@ class CGIHTTPRequestHandler:
 	"""
 	
 	
-	def __init__(self, request,client_address,server):
+	def __init__(self, ):
 		pass
 	
+	def do_POST(self, ):
+		"""
+		This method serves the ``'POST'`` request type, only allowed for CGI
+		scripts.  Error 501, "Can only POST to CGI scripts", is output when trying
+		to POST to a non-CGI url.
+		
+		Note that CGI scripts will be run with UID of user nobody, for security reasons.
+		"""
+		pass
+		
 	
 
 

@@ -141,7 +141,7 @@ class catch_warnings:
 	"""
 	
 	
-	def __init__(self, ESC,record=False,module=None):
+	def __init__(self, ):
 		pass
 	
 	

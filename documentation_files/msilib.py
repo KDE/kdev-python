@@ -98,10 +98,10 @@ class Binary:
 	"""
 	
 	
-	def __init__(self, filename):
+	def __init__(self, ):
 		pass
 	
-	def add_tables(database,module):
+	def add_tables(self, database,module):
 		"""
 		Add all table content from *module* to *database*. *module* must contain an
 		attribute *tables* listing all tables for which content should be added, and one
@@ -113,7 +113,7 @@ class Binary:
 		"""
 		pass
 		
-	def add_stream(database,name,path):
+	def add_stream(self, database,name,path):
 		"""
 		Add the file *path* into the ``_Stream`` table of *database*, with the stream
 		name *name*.
@@ -122,7 +122,7 @@ class Binary:
 		"""
 		pass
 		
-	def gen_uuid():
+	def gen_uuid(self, ):
 		"""
 		Return a new UUID, in the format that MSI typically requires (i.e. in curly
 		braces, and with all hexdigits in upper-case).
@@ -149,9 +149,32 @@ class CAB:
 	"""
 	
 	
-	def __init__(self, name):
+	def __init__(self, ):
 		pass
 	
+	def append(self, full,file,logical):
+		"""
+		Add the file with the pathname *full* to the CAB file, under the name
+		*logical*.  If there is already a file named *logical*, a new file name is
+		created.
+		
+		Return the index of the file in the CAB file, and the new name of the file
+		inside the CAB file.
+		
+		
+		"""
+		pass
+		
+	def commit(self, database):
+		"""
+		Generate a CAB file, add it as a stream to the MSI file, put it into the
+		``Media`` table, and remove the generated file from the disk.
+		
+		
+		.. irectory Objects
+		"""
+		pass
+		
 	
 
 
@@ -172,9 +195,50 @@ class Directory:
 	"""
 	
 	
-	def __init__(self, database,cab,basedir,physical,logical,default,componentflags):
+	def __init__(self, ):
 		pass
 	
+	def start_component(self, component,feature,flags,keyfile,uuid):
+		"""
+		Add an entry to the Component table, and make this component the current
+		component for this directory. If no component name is given, the directory
+		name is used. If no *feature* is given, the current feature is used. If no
+		*flags* are given, the directory's default flags are used. If no *keyfile*
+		is given, the KeyPath is left null in the Component table.
+		
+		
+		"""
+		pass
+		
+	def add_file(self, file,src,version,language):
+		"""
+		Add a file to the current component of the directory, starting a new one
+		if there is no current component. By default, the file name in the source
+		and the file table will be identical. If the *src* file is specified, it
+		is interpreted relative to the current directory. Optionally, a *version*
+		and a *language* can be specified for the entry in the File table.
+		
+		
+		"""
+		pass
+		
+	def glob(self, pattern,exclude):
+		"""
+		Add a list of files to the current component as specified in the glob
+		pattern.  Individual files can be excluded in the *exclude* list.
+		
+		
+		"""
+		pass
+		
+	def remove_pyc(self, ):
+		"""
+		Remove ``.pyc``/``.pyo`` files on uninstall.
+		
+		
+		"""
+		pass
+		
 	
 
 
@@ -191,9 +255,19 @@ class Feature:
 	"""
 	
 	
-	def __init__(self, database,id,title,desc,display,level=1,parent,directory,attributes=0):
+	def __init__(self, ):
 		pass
 	
+	def set_current(self, ):
+		"""
+		Make this feature the current feature of :mod:`msilib`. New components are
+		automatically added to the default feature, unless a feature is explicitly
+		specified.
+		
+		
+		"""
+		pass
+		
 	
 
 
@@ -208,9 +282,33 @@ class Control:
 	"""
 	
 	
-	def __init__(self, dlg,name):
+	def __init__(self, ):
 		pass
 	
+	def event(self, event,argument,condition=1,ordering):
+		"""
+		Make an entry into the ``ControlEvent`` table for this control.
+		
+		
+		"""
+		pass
+		
+	def mapping(self, event,attribute):
+		"""
+		Make an entry into the ``EventMapping`` table for this control.
+		
+		
+		"""
+		pass
+		
+	def condition(self, action,condition):
+		"""
+		Make an entry into the ``ControlCondition`` table for this control.
+		
+		
+		"""
+		pass
+		
 	
 
 
@@ -225,9 +323,19 @@ class RadioButtonGroup:
 	"""
 	
 	
-	def __init__(self, dlg,name,property):
+	def __init__(self, ):
 		pass
 	
+	def add(self, name,x,y,width,height,text,value):
+		"""
+		Add a radio button named *name* to the group, at the coordinates *x*, *y*,
+		*width*, *height*, and with the label *text*. If *value* is omitted, it
+		defaults to *name*.
+		
+		
+		"""
+		pass
+		
 	
 
 
@@ -243,9 +351,69 @@ class Dialog:
 	"""
 	
 	
-	def __init__(self, db,name,x,y,w,h,attr,title,first,default,cancel):
+	def __init__(self, ):
 		pass
 	
+	def control(self, name,type,x,y,width,height,attributes,property,text,control_next,help):
+		"""
+		Return a new :class:`Control` object. An entry in the ``Control`` table is
+		made with the specified parameters.
+		
+		This is a generic method; for specific types, specialized methods are
+		provided.
+		
+		
+		"""
+		pass
+		
+	def text(self, name,x,y,width,height,attributes,text):
+		"""
+		Add and return a ``Text`` control.
+		
+		
+		"""
+		pass
+		
+	def bitmap(self, name,x,y,width,height,text):
+		"""
+		Add and return a ``Bitmap`` control.
+		
+		
+		"""
+		pass
+		
+	def line(self, name,x,y,width,height):
+		"""
+		Add and return a ``Line`` control.
+		
+		
+		"""
+		pass
+		
+	def pushbutton(self, name,x,y,width,height,attributes,text,next_control):
+		"""
+		Add and return a ``PushButton`` control.
+		
+		
+		"""
+		pass
+		
+	def radiogroup(self, name,x,y,width,height,attributes,property,text,next_control):
+		"""
+		Add and return a ``RadioButtonGroup`` control.
+		
+		
+		"""
+		pass
+		
+	def checkbox(self, name,x,y,width,height,attributes,property,text,next_control):
+		"""
+		Add and return a ``CheckBox`` control.
+		
+		
+		"""
+		pass
+		
 	"""
 	This is the standard MSI schema for MSI 2.0, with the *tables* variable
 	providing a list of table definitions, and *_Validation_records* providing the

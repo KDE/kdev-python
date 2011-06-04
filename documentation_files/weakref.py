@@ -35,10 +35,10 @@ class ref:
 	"""
 	
 	
-	def __init__(self, object,callback):
+	def __init__(self, ):
 		pass
 	
-	def proxy(object,callback):
+	def proxy(self, object,callback):
 		"""
 		Return a proxy to *object* which uses a weak reference.  This supports use of
 		the proxy in most contexts instead of requiring the explicit dereferencing used
@@ -53,7 +53,7 @@ class ref:
 		"""
 		pass
 		
-	def getweakrefcount(object):
+	def getweakrefcount(self, object):
 		"""
 		Return the number of weak references and proxies which refer to *object*.
 		
@@ -61,7 +61,7 @@ class ref:
 		"""
 		pass
 		
-	def getweakrefs(object):
+	def getweakrefs(self, object):
 		"""
 		Return a list of all weak reference and proxy objects which refer to *object*.
 		
@@ -85,9 +85,23 @@ class WeakKeyDictionary:
 	"""
 	
 	
-	def __init__(self, dict):
+	def __init__(self, ):
 		pass
 	
+	def iterkeyrefs(self, ):
+		"""
+		Return an :term:`iterator` that yields the weak references to the keys.
+		
+		"""
+		pass
+		
+	def keyrefs(self, ):
+		"""
+		Return a list of weak references to the keys.
+		
+		"""
+		pass
+		
 	
 
 
@@ -101,9 +115,23 @@ class WeakValueDictionary:
 	"""
 	
 	
-	def __init__(self, dict):
+	def __init__(self, ):
 		pass
 	
+	def itervaluerefs(self, ):
+		"""
+		Return an :term:`iterator` that yields the weak references to the values.
+		
+		"""
+		pass
+		
+	def valuerefs(self, ):
+		"""
+		Return a list of weak references to the values.
+		
+		"""
+		pass
+		
 	
 
 
@@ -117,7 +145,7 @@ class WeakSet:
 	"""
 	
 	
-	def __init__(self, elements):
+	def __init__(self, ):
 		pass
 	
 	"""

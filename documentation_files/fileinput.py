@@ -113,10 +113,10 @@ class FileInput:
 	"""
 	
 	
-	def __init__(self, files,inplace,backup,mode,openhook):
+	def __init__(self, ):
 		pass
 	
-	def hook_compressed(filename,mode):
+	def hook_compressed(self, filename,mode):
 		"""
 		Transparently opens files compressed with gzip and bzip2 (recognized by the
 		extensions ``'.gz'`` and ``'.bz2'``) using the :mod:`gzip` and :mod:`bz2`
@@ -128,7 +128,7 @@ class FileInput:
 		"""
 		pass
 		
-	def hook_encoded(encoding):
+	def hook_encoded(self, encoding):
 		"""
 		Returns a hook which opens each file with :func:`codecs.open`, using the given
 		*encoding* to read the file.

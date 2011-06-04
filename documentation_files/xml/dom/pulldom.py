@@ -12,7 +12,7 @@ class PullDOM:
 	"""
 	
 	
-	def __init__(self, documentFactory):
+	def __init__(self, ):
 		pass
 	
 	
@@ -28,9 +28,25 @@ class DOMEventStream:
 	"""
 	
 	
-	def __init__(self, stream,parser,bufsize):
+	def __init__(self, ):
 		pass
 	
+	def getEvent(self, ):
+		"""
+		*more
+		
+		
+		"""
+		pass
+		
+	def expandNode(self, node):
+		"""
+		*more
+		
+		
+		"""
+		pass
+		
 	
 
 
@@ -44,10 +60,10 @@ class SAX2DOM:
 	"""
 	
 	
-	def __init__(self, documentFactory):
+	def __init__(self, ):
 		pass
 	
-	def parse(stream_or_string,parser,bufsize):
+	def parse(self, stream_or_string,parser,bufsize):
 		"""
 		*more
 		
@@ -55,7 +71,7 @@ class SAX2DOM:
 		"""
 		pass
 		
-	def parseString(string,parser):
+	def parseString(self, string,parser):
 		"""
 		*more
 		

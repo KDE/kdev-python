@@ -133,9 +133,61 @@ class MimeTypes:
 	"""
 	
 	
-	def __init__(self, filenames):
+	def __init__(self, ):
 		pass
 	
+	def guess_extension(self, type,strict):
+		"""
+		Similar to the :func:`guess_extension` function, using the tables stored as part
+		of the object.
+		
+		
+		"""
+		pass
+		
+	def guess_all_extensions(self, type,strict):
+		"""
+		Similar to the :func:`guess_all_extensions` function, using the tables stored as part
+		of the object.
+		
+		
+		"""
+		pass
+		
+	def guess_type(self, url,strict):
+		"""
+		Similar to the :func:`guess_type` function, using the tables stored as part of
+		the object.
+		
+		
+		"""
+		pass
+		
+	def read(self, path):
+		"""
+		Load MIME information from a file named *path*.  This uses :meth:`readfp` to
+		parse the file.
+		
+		
+		"""
+		pass
+		
+	def readfp(self, file):
+		"""
+		Load MIME type information from an open file.  The file must have the format of
+		the standard :file:`mime.types` files.
+		
+		
+		"""
+		pass
+		
+	def read_windows_registry(self, ):
+		"""
+		Load MIME type information from the Windows registry.  Availability: Windows.
+		
+		"""
+		pass
+		
 	
 
 

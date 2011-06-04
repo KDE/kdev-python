@@ -446,7 +446,7 @@ class DocTest:
 	"""
 	
 	
-	def __init__(self, examples,globs,name,filename,lineno,docstring):
+	def __init__(self, ):
 		pass
 	
 	
@@ -463,7 +463,7 @@ class Example:
 	"""
 	
 	
-	def __init__(self, source,want,exc_msg,lineno,indent,options):
+	def __init__(self, ):
 		pass
 	
 	
@@ -494,9 +494,50 @@ class DocTestFinder:
 	"""
 	
 	
-	def __init__(self, verbose,parser,recurse,exclude_empty):
+	def __init__(self, ):
 		pass
 	
+	def find(self, obj,name,module,globs,extraglobs):
+		"""
+		Return a list of the :class:`DocTest`\ s that are defined by *obj*'s
+		docstring, or by any of its contained objects' docstrings.
+		
+		The optional argument *name* specifies the object's name; this name will be
+		used to construct names for the returned :class:`DocTest`\ s.  If *name* is
+		not specified, then ``obj.__name__`` is used.
+		
+		The optional parameter *module* is the module that contains the given object.
+		If the module is not specified or is None, then the test finder will attempt
+		to automatically determine the correct module.  The object's module is used:
+		
+		* As a default namespace, if *globs* is not specified.
+		
+		* To prevent the DocTestFinder from extracting DocTests from objects that are
+		imported from other modules.  (Contained objects with modules other than
+		*module* are ignored.)
+		
+		* To find the name of the file containing the object.
+		
+		* To help find the line number of the object within its file.
+		
+		If *module* is ``False``, no attempt to find the module will be made.  This is
+		obscure, of use mostly in testing doctest itself: if *module* is ``False``, or
+		is ``None`` but cannot be found automatically, then all objects are considered
+		to belong to the (non-existent) module, so all contained objects will
+		(recursively) be searched for doctests.
+		
+		The globals for each :class:`DocTest` is formed by combining *globs* and
+		*extraglobs* (bindings in *extraglobs* override bindings in *globs*).  A new
+		shallow copy of the globals dictionary is created for each :class:`DocTest`.
+		If *globs* is not specified, then it defaults to the module's *__dict__*, if
+		specified, or ``{}`` otherwise.  If *extraglobs* is not specified, then it
+		defaults to ``{}``.
+		
+		
+		.. ocTestParser objects
+		"""
+		pass
+		
 	
 
 
@@ -513,6 +554,41 @@ class DocTestParser:
 	def __init__(self, ):
 		pass
 	
+	def get_doctest(self, string,globs,name,filename,lineno):
+		"""
+		Extract all doctest examples from the given string, and collect them into a
+		:class:`DocTest` object.
+		
+		*globs*, *name*, *filename*, and *lineno* are attributes for the new
+		:class:`DocTest` object.  See the documentation for :class:`DocTest` for more
+		information.
+		
+		
+		"""
+		pass
+		
+	def get_examples(self, string,name):
+		"""
+		Extract all doctest examples from the given string, and return them as a list
+		of :class:`Example` objects.  Line numbers are 0-based.  The optional argument
+		*name* is a name identifying this string, and is only used for error messages.
+		
+		
+		"""
+		pass
+		
+	def parse(self, string,name):
+		"""
+		Divide the given string into examples and intervening text, and return them as
+		a list of alternating :class:`Example`\ s and strings. Line numbers for the
+		:class:`Example`\ s are 0-based.  The optional argument *name* is a name
+		identifying this string, and is only used for error messages.
+		
+		
+		.. ocTestRunner objects
+		"""
+		pass
+		
 	
 
 
@@ -554,9 +630,100 @@ class DocTestRunner:
 	"""
 	
 	
-	def __init__(self, checker,verbose,optionflags):
+	def __init__(self, ):
 		pass
 	
+	def report_start(self, out,test,example):
+		"""
+		Report that the test runner is about to process the given example. This method
+		is provided to allow subclasses of :class:`DocTestRunner` to customize their
+		output; it should not be called directly.
+		
+		*example* is the example about to be processed.  *test* is the test
+		*containing example*.  *out* is the output function that was passed to
+		:meth:`DocTestRunner.run`.
+		
+		
+		"""
+		pass
+		
+	def report_success(self, out,test,example,got):
+		"""
+		Report that the given example ran successfully.  This method is provided to
+		allow subclasses of :class:`DocTestRunner` to customize their output; it
+		should not be called directly.
+		
+		*example* is the example about to be processed.  *got* is the actual output
+		from the example.  *test* is the test containing *example*.  *out* is the
+		output function that was passed to :meth:`DocTestRunner.run`.
+		
+		
+		"""
+		pass
+		
+	def report_failure(self, out,test,example,got):
+		"""
+		Report that the given example failed.  This method is provided to allow
+		subclasses of :class:`DocTestRunner` to customize their output; it should not
+		be called directly.
+		
+		*example* is the example about to be processed.  *got* is the actual output
+		from the example.  *test* is the test containing *example*.  *out* is the
+		output function that was passed to :meth:`DocTestRunner.run`.
+		
+		
+		"""
+		pass
+		
+	def report_unexpected_exception(self, out,test,example,exc_info):
+		"""
+		Report that the given example raised an unexpected exception. This method is
+		provided to allow subclasses of :class:`DocTestRunner` to customize their
+		output; it should not be called directly.
+		
+		*example* is the example about to be processed. *exc_info* is a tuple
+		containing information about the unexpected exception (as returned by
+		:func:`sys.exc_info`). *test* is the test containing *example*.  *out* is the
+		output function that was passed to :meth:`DocTestRunner.run`.
+		
+		
+		"""
+		pass
+		
+	def run(self, test,compileflags,out,clear_globs):
+		"""
+		Run the examples in *test* (a :class:`DocTest` object), and display the
+		results using the writer function *out*.
+		
+		The examples are run in the namespace ``test.globs``.  If *clear_globs* is
+		true (the default), then this namespace will be cleared after the test runs,
+		to help with garbage collection. If you would like to examine the namespace
+		after the test completes, then use *clear_globs=False*.
+		
+		*compileflags* gives the set of flags that should be used by the Python
+		compiler when running the examples.  If not specified, then it will default to
+		the set of future-import flags that apply to *globs*.
+		
+		The output of each example is checked using the :class:`DocTestRunner`'s
+		output checker, and the results are formatted by the
+		:meth:`DocTestRunner.report_\*` methods.
+		
+		
+		"""
+		pass
+		
+	def summarize(self, verbose):
+		"""
+		Print a summary of all the test cases that have been run by this DocTestRunner,
+		and return a :term:`named tuple` ``TestResults(failed, attempted)``.
+		
+		The optional *verbose* argument controls how detailed the summary is.  If the
+		verbosity is not specified, then the :class:`DocTestRunner`'s verbosity is
+		used.
+		
+		"""
+		pass
+		
 	
 
 
@@ -576,7 +743,30 @@ class OutputChecker:
 	def __init__(self, ):
 		pass
 	
-	def script__from_examples(s):
+	def check_output(self, want,got,optionflags):
+		"""
+		Return ``True`` iff the actual output from an example (*got*) matches the
+		expected output (*want*).  These strings are always considered to match if
+		they are identical; but depending on what option flags the test runner is
+		using, several non-exact match types are also possible.  See section
+		:ref:`doctest-options` for more information about option flags.
+		
+		
+		"""
+		pass
+		
+	def output_difference(self, example,got,optionflags):
+		"""
+		Return a string describing the differences between the expected output for a
+		given example (*example*) and the actual output (*got*).  *optionflags* is the
+		set of option flags used to compare *want* and *got*.
+		
+		
+		.. ebugging
+		"""
+		pass
+		
+	def script__from_examples(self, s):
 		"""
 		Convert text with examples to a script.
 		
@@ -612,7 +802,7 @@ class OutputChecker:
 		"""
 		pass
 		
-	def testsource(module,name):
+	def testsource(self, module,name):
 		"""
 		Convert the doctest for an object to a script.
 		
@@ -632,7 +822,7 @@ class OutputChecker:
 		"""
 		pass
 		
-	def debug(module,name,pm):
+	def debug(self, module,name,pm):
 		"""
 		Debug the doctests for an object.
 		
@@ -655,7 +845,7 @@ class OutputChecker:
 		"""
 		pass
 		
-	def debug_src(src,pm,globs):
+	def debug_src(self, src,pm,globs):
 		"""
 		Debug the doctests in a string.
 		
@@ -694,7 +884,7 @@ class DebugRunner:
 	"""
 	
 	
-	def __init__(self, checker,verbose,optionflags):
+	def __init__(self, ):
 		pass
 	
 	

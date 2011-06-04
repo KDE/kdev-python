@@ -411,3 +411,25 @@ void PyDUChainTest::testImportDeclarations_data() {
     QTest::newRow("from_import_as") << "from i import checkme as checkme" << ( QStringList() << "checkme,23,30" ) << true;
 }
 
+void PyDUChainTest::testFunctionArgs()
+{
+    ReferencedTopDUContext ctx = parse("def ASDF(arg1, arg2):\n"
+                                       "  arg1 = arg2");
+    QVERIFY(ctx);
+    QVERIFY(m_ast);
+    DUChainReadLocker lock;
+//     dumpDUContext(ctx);
+
+    QCOMPARE(ctx->childContexts().size(), 2);
+    ///TODO: fix order of child contexts
+    DUContext* funcArgCtx = ctx->childContexts().last();
+    QCOMPARE(funcArgCtx->type(), DUContext::Function);
+    QCOMPARE(funcArgCtx->localDeclarations().size(), 2);
+    QVERIFY(!funcArgCtx->owner());
+
+    DUContext* funcBodyCtx = ctx->childContexts().first();
+    QCOMPARE(funcBodyCtx->type(), DUContext::Other);
+    QEXPECT_FAIL("", "todo", Continue);
+    QVERIFY(funcBodyCtx->localDeclarations().isEmpty());
+    QVERIFY(funcBodyCtx->owner());
+}

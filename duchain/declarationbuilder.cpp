@@ -594,9 +594,6 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         visitNodeList( node->decorators );
         visitFunctionArguments(node);
         
-        closeDeclaration();
-        eventuallyAssignInternalContext();
-        
         // this must be done here, because the type of self must be known when parsing the body
         kDebug() << "Checking weather we have to change argument types...";
         kDebug() <<  eventualParentDeclaration.data() << currentType<FunctionType>()->arguments().length() << m_firstAttributeDeclaration.data() << currentContext()->type() << DUContext::Class;
@@ -612,6 +609,9 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         }
         
         visitFunctionBody(node);
+
+        closeDeclaration();
+        eventuallyAssignInternalContext();
     }
     kDebug() << " >>> close function type";
     closeType();

@@ -372,10 +372,9 @@ void ContextBuilder::visitFunctionBody(FunctionDefinitionAst* node)
 {
     RangeInRevision range(RangeInRevision(node->startLine, node->startCol, node->endLine + 1, 0));
     // Done building the function declaration, start building the body now
-    DUContext* ctx = openContext(node, range, DUContext::Function, identifierForNode( node->name ) );
+    DUContext* ctx = openContext(node, range, DUContext::Other, identifierForNode( node->name ) );
     currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));
     kDebug() << " +++ opening context (function definition): " << range.castToSimpleRange();
-    kDebug() << currentContext()->type() << DUContext::Function;
     addImportedContexts();
     
     visitNodeList(node->body);

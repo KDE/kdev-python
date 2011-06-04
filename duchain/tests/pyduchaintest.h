@@ -56,6 +56,7 @@ class PyDUChainTest : public QObject
         void testCrashes_data();
         void testFlickering();
         void testFlickering_data();
+        void testFunctionArgs();
 //         void testFunctionStuff();
 //         void testFunctionStuff_data();
 };

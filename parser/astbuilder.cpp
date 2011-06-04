@@ -734,13 +734,10 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     Py_NoSiteFlag = 1;
     
     AstBuilder::pyInitLock.lock();
-    if ( ! Py_IsInitialized() ) {
-        char dir[] = INSTALL_PATH;
-        Py_SetPythonHome(dir);
-        kDebug() << "Not initialized, calling init func.";
-        Py_Initialize();
-    }
-    else kDebug() << "Already initialized.";
+    char dir[] = INSTALL_PATH;
+    Py_SetPythonHome(dir);
+    kDebug() << "Not initialized, calling init func.";
+    Py_Initialize();
     
     PyArena* arena = PyArena_New();
     Q_ASSERT(arena); // out of memory
@@ -749,8 +746,9 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     
     PyObject *exception, *value, *backtrace;
     PyErr_Fetch(&exception, &value, &backtrace);
-    kDebug() << "Error objects *before calling parser* (should be none): " << exception << value << backtrace;
+    kDebug() << "Errors before starting parser:";
     PyObject_Print(value, stderr, Py_PRINT_RAW);
+    kDebug();
     mod_ty syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);
 
     if ( ! syntaxtree ) {
@@ -916,6 +914,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     kDebug() << t->ast;
     
     PyArena_Free(arena);
+    Py_Finalize();
     
     return t->ast;
 }

@@ -338,22 +338,41 @@ void ContextBuilder::visitImport(ImportAst* node)
 
 void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
 {
-    if ( node->arguments && node->arguments->arguments.count() ) {
-        int sline, eline, scol, ecol;
-        sline = node->arguments->arguments.first()->startLine;
-        scol = node->arguments->arguments.first()->startCol;
-        eline = node->arguments->arguments.last()->endLine;
-        ecol = node->arguments->arguments.last()->endCol;
-        RangeInRevision range(sline, scol, eline, ecol);
-        
-        Q_ASSERT(range.isValid());
-        DUContext* funcctx = openContext( node->arguments, range, DUContext::Function, node->name);
-        kDebug() << funcctx;
-        kDebug() << " +++ opening FUNCTION ARGUMENTS context: " << funcctx->range().castToSimpleRange();
-        visitNode(node->arguments);
-        closeContext();
-        m_importedParentContexts.append( funcctx );
+    // construct the range for the arguments context... due to stupid args / varargs this is pretty complicated
+    RangeInRevision range;
+    CursorInRevision start, end;
+    if ( node->arguments->arguments.count() ) {
+        Ast* first = node->arguments->arguments.first();
+        start = CursorInRevision(first->startLine, first->startCol);
     }
+    else if ( node->arguments->vararg )
+        start = CursorInRevision(node->arguments->vararg_lineno, node->arguments->vararg_col_offset);
+    else if ( node->arguments->kwarg ) 
+        start = CursorInRevision(node->arguments->arg_lineno, node->arguments->arg_col_offset);
+    
+    if ( node->arguments->kwarg )
+        end = CursorInRevision(node->arguments->arg_lineno, node->arguments->arg_col_offset + node->arguments->kwarg->value.length());
+    else if ( node->arguments->vararg )
+        end = CursorInRevision(node->arguments->vararg_lineno, node->arguments->vararg_col_offset + node->arguments->vararg->value.length());
+    else if ( node->arguments->arguments.count() ) {
+        Ast* last = node->arguments->arguments.last();
+        end = CursorInRevision(last->endLine, last->endCol);
+    }
+    
+    if ( node->arguments->arguments.isEmpty() ) {
+        start = CursorInRevision(node->startLine, node->startCol + node->name->value.length());
+        end = start;
+    }
+    
+    range = RangeInRevision(start, end);
+    Q_ASSERT(range.isValid());
+    
+    DUContext* funcctx = openContext( node->arguments, range, DUContext::Function, node->name);
+    kDebug() << funcctx;
+    kDebug() << " +++ opening FUNCTION ARGUMENTS context: " << funcctx->range().castToSimpleRange();
+    visitNode(node->arguments);
+    closeContext();
+    m_importedParentContexts.append( funcctx );
 }
 
 void ContextBuilder::visitFunctionDefinition(FunctionDefinitionAst* node)
@@ -370,7 +389,14 @@ void ContextBuilder::visitFunctionDefinition(FunctionDefinitionAst* node)
 
 void ContextBuilder::visitFunctionBody(FunctionDefinitionAst* node)
 {
-    RangeInRevision range(RangeInRevision(node->startLine, node->startCol, node->endLine + 1, 0));
+    RangeInRevision range;
+    if ( ! node->arguments->arguments.length() ) {
+        range = RangeInRevision(node->startLine, node->startCol, node->endLine + 1, 0);
+    }
+    else {
+        Ast* ref = node->arguments->arguments.last();
+        range = RangeInRevision(ref->endLine, ref->endCol, node->endLine + 1, 0);
+    }
     // Done building the function declaration, start building the body now
     DUContext* ctx = openContext(node, range, DUContext::Other, identifierForNode( node->name ) );
     currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));

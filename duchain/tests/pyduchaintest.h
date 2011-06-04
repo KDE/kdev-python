@@ -26,6 +26,8 @@
 
 #include <QObject>
 #include "ast.h"
+#include <language/duchain/indexedstring.h>
+#include <language/duchain/topducontext.h>
 
 namespace KDevelop {
 class TopDUContext;
@@ -39,9 +41,12 @@ class PyDUChainTest : public QObject
         explicit PyDUChainTest(QObject* parent = 0);
         void initShell();
         
+        void parse_int(const QString& code, const QString& suffix = QString::null, bool forceUpdate = false);
         KDevelop::ReferencedTopDUContext parse(const QString& code, const QString& suffix = QString::null, bool forceUpdate = false);
         
         Python::CodeAst* m_ast;
+        KDevelop::ReferencedTopDUContext m_ctx;
+        bool m_finished;
         
     private slots:
         void testSimple();
@@ -57,6 +62,8 @@ class PyDUChainTest : public QObject
         void testFlickering();
         void testFlickering_data();
         void testFunctionArgs();
+        void updateReady(KDevelop::IndexedString url, KDevelop::ReferencedTopDUContext topContext);
+        
 //         void testFunctionStuff();
 //         void testFunctionStuff_data();
 };

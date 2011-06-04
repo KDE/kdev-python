@@ -71,14 +71,11 @@ void PyDUChainTest::initShell()
     f.write("def checkme(): pass\n");
     f.close();
     
-    DUChain::self()->updateContextForUrl(IndexedString("/tmp/i.py"), KDevelop::TopDUContext::ForceUpdate);
-    DUChain::self()->waitForUpdate(IndexedString("/tmp/i.py"), KDevelop::TopDUContext::ForceUpdate);
-
     DUChain::self()->disablePersistentStorage();
     KDevelop::CodeRepresentation::setDiskChangesForbidden(true);
 }
 
-ReferencedTopDUContext PyDUChainTest::parse(const QString& code, const QString& suffix, bool forceUpdate)
+void PyDUChainTest::parse_int(const QString& code, const QString& suffix, bool forceUpdate)
 {
     ParseSession* session = new ParseSession;
     session->setContents( code + "\n" ); // append a newline in case the parser doesnt like it without one
@@ -96,23 +93,30 @@ ReferencedTopDUContext PyDUChainTest::parse(const QString& code, const QString& 
     f.write(code.toAscii());
     f.close();
     
-    DUChainReadLocker lock(DUChain::lock());
-    ReferencedTopDUContext chain = DUChain::self()->chainForDocument(IndexedString(filename));
-    lock.unlock();
-    if ( chain && !forceUpdate ) {
-        DUChainWriteLocker wlock(DUChain::lock());
-        DUChain::self()->removeDocumentChain(chain.data());
-    }
-    DUChain::self()->updateContextForUrl(IndexedString(filename), KDevelop::TopDUContext::ForceUpdate);
-    DUChain::self()->waitForUpdate(IndexedString(filename), KDevelop::TopDUContext::ForceUpdate);
-    lock.lock();
-    ReferencedTopDUContext ret = DUChain::self()->chainForDocument(IndexedString(filename));
-    Q_ASSERT(ret.data());
+    KDevelop::DUChain::self()->updateContextForUrl(KDevelop::IndexedString(filename), TopDUContext::AllDeclarationsContextsAndUses,
+                                                   this, 1);
     
     AstBuilder* a = new AstBuilder();
     m_ast = a->parse(filename, const_cast<QString&>(code));
-    
-    return ret;
+}
+
+ReferencedTopDUContext PyDUChainTest::parse(const QString& code, const QString& suffix, bool forceUpdate)
+{
+    m_finished = false;
+    parse_int(code, suffix, forceUpdate);
+    QTime t;
+    t.start();
+    while ( ! m_finished ) {
+        Q_ASSERT(t.elapsed() < 60000);
+        QTest::qWait(10);
+    }
+    return m_ctx;
+}
+
+void PyDUChainTest::updateReady(IndexedString url, ReferencedTopDUContext topContext)
+{
+    m_ctx = topContext;
+    m_finished = true;
 }
 
 void PyDUChainTest::testCrashes() {
@@ -363,6 +367,7 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("tuple_type") << "checkme = 1, 2" << "tuple";
     
     QTest::newRow("class_method_import") << "class c:\n attr = 3\n def m(): return attr;\ni=c()\ncheckme=i.m()" << "null";
+    QTest::newRow("class_method_self") << "class c:\n def func(checkme, arg, arg2):\n  pass\n" << "c";
 //    QTest::newRow("funccall_dict") << "def foo(): return foo; checkme = foo();" << (uint) IntegralType::TypeFunction;
 }
 
@@ -417,19 +422,23 @@ void PyDUChainTest::testFunctionArgs()
                                        "  arg1 = arg2");
     QVERIFY(ctx);
     QVERIFY(m_ast);
-    DUChainReadLocker lock;
 //     dumpDUContext(ctx);
 
     QCOMPARE(ctx->childContexts().size(), 2);
-    ///TODO: fix order of child contexts
-    DUContext* funcArgCtx = ctx->childContexts().last();
+    DUContext* funcArgCtx = ctx->childContexts().first();
     QCOMPARE(funcArgCtx->type(), DUContext::Function);
     QCOMPARE(funcArgCtx->localDeclarations().size(), 2);
     QVERIFY(!funcArgCtx->owner());
+    
+    FunctionDeclaration* decl = dynamic_cast<FunctionDeclaration*>(
+                                    ctx->allDeclarations(CursorInRevision::invalid(), ctx->topContext()).first().first);
+    QVERIFY(decl);
+    QCOMPARE(decl->type<FunctionType>()->arguments().length(), 2);
+    qDebug() << decl->type<FunctionType>()->arguments().length() << 2;
 
-    DUContext* funcBodyCtx = ctx->childContexts().first();
+    DUContext* funcBodyCtx = ctx->childContexts().last();
     QCOMPARE(funcBodyCtx->type(), DUContext::Other);
-    QEXPECT_FAIL("", "todo", Continue);
-    QVERIFY(funcBodyCtx->localDeclarations().isEmpty());
     QVERIFY(funcBodyCtx->owner());
+    QEXPECT_FAIL("", "fixme: re-use argument declaration", Continue);
+    QVERIFY(funcBodyCtx->localDeclarations().isEmpty());
 }

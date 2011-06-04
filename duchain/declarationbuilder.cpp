@@ -571,13 +571,9 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     kDebug() << "opening function definition" << node->startLine << node->endLine;
     DeclarationPointer eventualParentDeclaration(currentDeclaration()); // an eventual containing class declaration
     FunctionType::Ptr type;
-    FunctionDeclaration* dec = 0;
     QList<Declaration*> existing;
     
-    if ( ! dec ) 
-        dec = openDeclaration<FunctionDeclaration>( node->name, node );
-//     else 
-//         setEncountered(existing.last());
+    FunctionDeclaration* dec = openDeclaration<FunctionDeclaration>( node->name, node );
     
     type = FunctionType::Ptr(new FunctionType());
     type->setReturnType(AbstractType::Ptr(new IntegralType(IntegralType::TypeNone)));
@@ -590,29 +586,29 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     kDebug() << " <<< open function type";
     DUChainWriteLocker lock(DUChain::lock());
     bool hasFirstArgument = false;
-    {
-        visitNodeList( node->decorators );
-        visitFunctionArguments(node);
-        
-        // this must be done here, because the type of self must be known when parsing the body
-        kDebug() << "Checking weather we have to change argument types...";
-        kDebug() <<  eventualParentDeclaration.data() << currentType<FunctionType>()->arguments().length() << m_firstAttributeDeclaration.data() << currentContext()->type() << DUContext::Class;
-        if ( eventualParentDeclaration.data() && currentType<FunctionType>()->arguments().length() 
-             && m_firstAttributeDeclaration.data() && currentContext()->type() == DUContext::Class ) {
-            kDebug() << "Changing self argument type";
-            kDebug() << "Arguments left: " << currentType<FunctionType>()->arguments().count();
-            currentType<FunctionType>()->removeArgument(currentType<FunctionType>()->arguments().at(0));
-            kDebug() << "Arguments left: " << currentType<FunctionType>()->arguments().count();
-            DUChainWriteLocker lock(DUChain::lock());
-            m_firstAttributeDeclaration->setAbstractType(eventualParentDeclaration->abstractType());
-            hasFirstArgument = true;
-        }
-        
-        visitFunctionBody(node);
-
-        closeDeclaration();
-        eventuallyAssignInternalContext();
+    
+    visitNodeList( node->decorators );
+    visitFunctionArguments(node);
+    
+    // this must be done here, because the type of self must be known when parsing the body
+    kDebug() << "Checking weather we have to change argument types...";
+    kDebug() <<  eventualParentDeclaration.data() << currentType<FunctionType>()->arguments().length() << m_firstAttributeDeclaration.data() << currentContext()->type() << DUContext::Class;
+    if ( eventualParentDeclaration.data() && currentType<FunctionType>()->arguments().length() 
+            && m_firstAttributeDeclaration.data() && currentContext()->type() == DUContext::Class ) {
+        kDebug() << "Changing self argument type";
+        kDebug() << "Arguments left: " << currentType<FunctionType>()->arguments().count();
+        currentType<FunctionType>()->removeArgument(0);
+        kDebug() << "Arguments left: " << currentType<FunctionType>()->arguments().count();
+        DUChainWriteLocker lock(DUChain::lock());
+        m_firstAttributeDeclaration->setAbstractType(eventualParentDeclaration->abstractType());
+        hasFirstArgument = true;
     }
+    
+    visitFunctionBody(node);
+
+    closeDeclaration();
+    eventuallyAssignInternalContext();
+
     kDebug() << " >>> close function type";
     closeType();
     

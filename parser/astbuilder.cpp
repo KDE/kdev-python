@@ -272,7 +272,6 @@ v->function->belongsToCall = v;
             }
         default:
             kWarning() << "Unsupported statement AST type: " << node->kind;
-            Q_ASSERT(false);
         }
 
     if ( ! result ) return 0;

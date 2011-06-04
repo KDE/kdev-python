@@ -707,24 +707,6 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         int parametersCount = node->arguments.length();
         int firstDefaultParameterOffset = parametersCount - defaultParametersCount;
         int currentIndex = 0;
-        if ( node->kwarg ) {
-            AbstractType::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType("dict", currentContext());
-            type->addArgument(dictType);
-            node->kwarg->startCol = node->arg_col_offset; node->kwarg->endCol = node->arg_col_offset + node->kwarg->value.length() - 1;
-            node->kwarg->startLine = node->arg_lineno - 1; node->kwarg->endLine = node->arg_lineno - 1;
-            Declaration* d = visitVariableDeclaration<Declaration>(node->kwarg);
-            Q_ASSERT(d);
-            d->setAbstractType(dictType);
-        }
-        if ( node->vararg ) {
-            AbstractType::Ptr listType = ExpressionVisitor::typeObjectForIntegralType("list", currentContext());
-            type->addArgument(listType);
-            node->vararg->startCol = node->vararg_col_offset; node->vararg->endCol = node->vararg_col_offset + node->vararg->value.length() - 1;
-            node->vararg->startLine = node->vararg_lineno - 1; node->vararg->endLine = node->vararg_lineno - 1;
-            Declaration* d = visitVariableDeclaration<Declaration>(node->vararg);
-            Q_ASSERT(d);
-            d->setAbstractType(listType);
-        }
         kDebug() << "variable argument ranges: " << node->arg_lineno << node->arg_col_offset << node->vararg_lineno << node->vararg_col_offset;
         foreach ( ExpressionAst* expression, node->arguments ) {
             currentIndex += 1;
@@ -757,6 +739,24 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 m_firstAttributeDeclaration = DeclarationPointer(paramDeclaration);
                 isFirst = false;
             }
+        }
+        if ( node->vararg ) {
+            AbstractType::Ptr listType = ExpressionVisitor::typeObjectForIntegralType("list", currentContext());
+            type->addArgument(listType);
+            node->vararg->startCol = node->vararg_col_offset; node->vararg->endCol = node->vararg_col_offset + node->vararg->value.length() - 1;
+            node->vararg->startLine = node->vararg_lineno - 1; node->vararg->endLine = node->vararg_lineno - 1;
+            Declaration* d = visitVariableDeclaration<Declaration>(node->vararg);
+            Q_ASSERT(d);
+            d->setAbstractType(listType);
+        }
+        if ( node->kwarg ) {
+            AbstractType::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType("dict", currentContext());
+            type->addArgument(dictType);
+            node->kwarg->startCol = node->arg_col_offset; node->kwarg->endCol = node->arg_col_offset + node->kwarg->value.length() - 1;
+            node->kwarg->startLine = node->arg_lineno - 1; node->kwarg->endLine = node->arg_lineno - 1;
+            Declaration* d = visitVariableDeclaration<Declaration>(node->kwarg);
+            Q_ASSERT(d);
+            d->setAbstractType(dictType);
         }
     }
     

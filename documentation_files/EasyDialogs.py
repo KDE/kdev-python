@@ -65,7 +65,7 @@ def ProgressBar(title,maxval,label,id):
 	"""
 	Displays a modeless progress-bar dialog. This is the constructor for the
 	:class:`ProgressBar` class described below. *title* is the text string displayed
-	(default "Working*more"), *maxval* is the value at which progress is complete
+	(default "Workingmore"), *maxval* is the value at which progress is complete
 	(default ``0``, indicating that an indeterminate amount of work remains to be
 	done), and *label* is the text that is displayed above the progress bar itself.
 	

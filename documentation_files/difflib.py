@@ -154,8 +154,8 @@ class SequenceMatcher:
 		>>> b = "abycdf"
 		>>> s = SequenceMatcher(None, a, b)
 		>>> for tag, i1, i2, j1, j2 in s.get_opcodes():
-		*more    print ("%7s a[%d:%d] (%s) b[%d:%d] (%s)" %
-		*more           (tag, i1, i2, a[i1:i2], j1, j2, b[j1:j2]))
+		more    print ("%7s a[%d:%d] (%s) b[%d:%d] (%s)" %
+		more           (tag, i1, i2, a[i1:i2], j1, j2, b[j1:j2]))
 		delete a[0:1] (q) b[0:0] ()
 		equal a[1:3] (ab) b[0:2] (ab)
 		replace a[3:4] (x) b[2:3] (y)
@@ -371,7 +371,7 @@ class HtmlDiff:
 		>>> s1 = ['bacon\n', 'eggs\n', 'ham\n', 'guido\n']
 		>>> s2 = ['python\n', 'eggy\n', 'hamster\n', 'guido\n']
 		>>> for line in context_diff(s1, s2, fromfile='before.py', tofile='after.py'):
-		*more     sys.stdout.write(line)  # doctest: +NORMALIZE_WHITESPACE
+		more     sys.stdout.write(line)  # doctest: +NORMALIZE_WHITESPACE
 		*** before.py
 		--- after.py
 		***************
@@ -445,7 +445,7 @@ class HtmlDiff:
 		:file:`Tools/scripts/ndiff.py` is a command-line front-end to this function.
 		
 		>>> diff = ndiff('one\ntwo\nthree\n'.splitlines(1),
-		*more              'ore\ntree\nemu\n'.splitlines(1))
+		more              'ore\ntree\nemu\n'.splitlines(1))
 		>>> print ''.join(diff),
 		- one
 		?  ^
@@ -472,7 +472,7 @@ class HtmlDiff:
 		Example:
 		
 		>>> diff = ndiff('one\ntwo\nthree\n'.splitlines(1),
-		*more              'ore\ntree\nemu\n'.splitlines(1))
+		more              'ore\ntree\nemu\n'.splitlines(1))
 		>>> diff = list(diff) # materialize the generated delta into a list
 		>>> print ''.join(restore(diff, 1)),
 		one
@@ -515,7 +515,7 @@ class HtmlDiff:
 		>>> s1 = ['bacon\n', 'eggs\n', 'ham\n', 'guido\n']
 		>>> s2 = ['python\n', 'eggy\n', 'hamster\n', 'guido\n']
 		>>> for line in unified_diff(s1, s2, fromfile='before.py', tofile='after.py'):
-		*more     sys.stdout.write(line)   # doctest: +NORMALIZE_WHITESPACE
+		more     sys.stdout.write(line)   # doctest: +NORMALIZE_WHITESPACE
 		--- before.py
 		+++ after.py
 		@@ -1,4 +1,4 @@
@@ -700,8 +700,8 @@ class SequenceMatcher:
 		>>> b = "abycdf"
 		>>> s = SequenceMatcher(None, a, b)
 		>>> for tag, i1, i2, j1, j2 in s.get_opcodes():
-		*more    print ("%7s a[%d:%d] (%s) b[%d:%d] (%s)" %
-		*more           (tag, i1, i2, a[i1:i2], j1, j2, b[j1:j2]))
+		more    print ("%7s a[%d:%d] (%s) b[%d:%d] (%s)" %
+		more           (tag, i1, i2, a[i1:i2], j1, j2, b[j1:j2]))
 		delete a[0:1] (q) b[0:0] ()
 		equal a[1:3] (ab) b[0:2] (ab)
 		replace a[3:4] (x) b[2:3] (y)

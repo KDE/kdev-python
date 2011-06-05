@@ -11,7 +11,7 @@ class SGMLParser:
 	The :class:`SGMLParser` class is instantiated without arguments. The parser is
 	hardcoded to recognize the following constructs:
 	
-	* Opening and closing tags of the form ``<tag attr="value" *more>`` and
+	* Opening and closing tags of the form ``<tag attr="value" more>`` and
 	``</tag>``, respectively.
 	
 	* Numeric character references of the form ``&#name;``.
@@ -208,7 +208,7 @@ class SGMLParser:
 		``DOCTYPE`` declaration is the only thing observed in HTML, but the parser does
 		not discriminate among different (or broken) declarations.  Internal subsets in
 		a ``DOCTYPE`` declaration are not supported.  The *data* parameter will be the
-		entire contents of the declaration inside the ``<!``*more\ ``>`` markup.  The
+		entire contents of the declaration inside the ``<!``more\ ``>`` markup.  The
 		default implementation does nothing.
 		
 		

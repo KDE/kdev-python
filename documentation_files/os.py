@@ -1271,7 +1271,7 @@ def mkfifo(path,mode):
 	"""
 	pass
 	
-def mknod(filename,mode=0600,device):
+def mknod(filename,mode=0600,device=None):
 	"""
 	Create a filesystem node (file, device special file or named pipe) named
 	*filename*. *mode* specifies both the permissions to use and the type of node to
@@ -1551,9 +1551,9 @@ def abort():
 	pass
 	
 def execl(path,arg0,arg1,more):
-	"""execle(path, arg0, arg1, *more, env)
-	execlp(file, arg0, arg1, *more)
-	execlpe(file, arg0, arg1, *more, env)
+	"""execle(path, arg0, arg1, more, env)
+	execlp(file, arg0, arg1, more)
+	execlpe(file, arg0, arg1, more, env)
 	execv(path, args)
 	execve(path, args, env)
 	execvp(file, args)
@@ -1672,9 +1672,9 @@ def plock(op):
 	pass
 	
 def popen(more):
-	"""popen2(*more)
-	popen3(*more)
-	popen4(*more)
+	"""popen2(more)
+	popen3(more)
+	popen4(more)
 	:noindex:
 	
 	Run child processes, returning opened pipes for communications.  These functions
@@ -1685,9 +1685,9 @@ def popen(more):
 	pass
 	
 def spawnl(mode,path,more):
-	"""spawnle(mode, path, *more, env)
-	spawnlp(mode, file, *more)
-	spawnlpe(mode, file, *more, env)
+	"""spawnle(mode, path, more, env)
+	spawnlp(mode, file, more)
+	spawnlpe(mode, file, more, env)
 	spawnv(mode, path, args)
 	spawnve(mode, path, args, env)
 	spawnvp(mode, file, args)

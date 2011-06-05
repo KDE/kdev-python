@@ -8,7 +8,7 @@ Unlike normal string objects, however, these are mutable.  You can use mmap
 objects in most places where strings are expected; for example, you can use
 the :mod:`re` module to search through a memory-mapped file.  Since they're
 mutable, you can change a single character by doing ``obj[index] = 'a'``, or
-change a substring by assigning to a slice: ``obj[i1:i2] = '*more'``.  You can
+change a substring by assigning to a slice: ``obj[i1:i2] = 'more'``.  You can
 also read and write data starting at the current file position, and
 :meth:`seek` through the file to different positions.
 
@@ -255,7 +255,7 @@ class mmap:
 	# update content using slice notation;
 	# note that new content must have same size
 	map[6:] = " world!\n"
-	# *more and read again using standard file methods
+	# more and read again using standard file methods
 	map.seek(0)
 	print map.readline()  # prints "Hello  world!"
 	# close the map

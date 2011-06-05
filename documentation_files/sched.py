@@ -20,14 +20,14 @@ class scheduler:
 	>>> import sched, time
 	>>> s = sched.scheduler(time.time, time.sleep)
 	>>> def print_time(): print "From print_time", time.time()
-	*more
+	more
 	>>> def print_some_times():
-	*more     print time.time()
-	*more     s.enter(5, 1, print_time, ())
-	*more     s.enter(10, 1, print_time, ())
-	*more     s.run()
-	*more     print time.time()
-	*more
+	more     print time.time()
+	more     s.enter(5, 1, print_time, ())
+	more     s.enter(10, 1, print_time, ())
+	more     s.run()
+	more     print time.time()
+	more
 	>>> print_some_times()
 	930343690.257
 	From print_time 930343695.274
@@ -45,15 +45,15 @@ class scheduler:
 	>>> import time
 	>>> from threading import Timer
 	>>> def print_time():
-	*more     print "From print_time", time.time()
-	*more
+	more     print "From print_time", time.time()
+	more
 	>>> def print_some_times():
-	*more     print time.time()
-	*more     Timer(5, print_time, ()).start()
-	*more     Timer(10, print_time, ()).start()
-	*more     time.sleep(11)  # sleep while time-delay events execute
-	*more     print time.time()
-	*more
+	more     print time.time()
+	more     Timer(5, print_time, ()).start()
+	more     Timer(10, print_time, ()).start()
+	more     time.sleep(11)  # sleep while time-delay events execute
+	more     print time.time()
+	more
 	>>> print_some_times()
 	930343690.257
 	From print_time 930343695.274

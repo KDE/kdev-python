@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 
-The visitor pattern is *more  The :mod:`compiler` package uses a variant on the
+The visitor pattern is more  The :mod:`compiler` package uses a variant on the
 visitor pattern that takes advantage of Python's introspection features to
 eliminate the need for much of the visitor's infrastructure.
 

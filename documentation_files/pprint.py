@@ -16,7 +16,7 @@ class PrettyPrinter:
 	the default is one.  Other values can cause output to look a little odd, but can
 	make nesting easier to spot.  The number of levels which may be printed is
 	controlled by *depth*; if the data structure being printed is too deep, the next
-	contained level is replaced by ``*more``.  By default, there is no constraint on
+	contained level is replaced by ``more``.  By default, there is no constraint on
 	the depth of the objects being formatted.  The desired output width is
 	constrained using the *width* parameter; the default is 80 characters.  If a
 	structure cannot be formatted within the constrained width, a best effort will
@@ -34,10 +34,10 @@ class PrettyPrinter:
 	'knights',
 	'ni']
 	>>> tup = ('spam', ('eggs', ('lumberjack', ('knights', ('ni', ('dead',
-	*more ('parrot', ('fresh fruit',))))))))
+	more ('parrot', ('fresh fruit',))))))))
 	>>> pp = pprint.PrettyPrinter(depth=6)
 	>>> pp.pprint(tup)
-	('spam', ('eggs', ('lumberjack', ('knights', ('ni', ('dead', (*more)))))))
+	('spam', ('eggs', ('lumberjack', ('knights', ('ni', ('dead', (more)))))))
 	
 	The :class:`PrettyPrinter` class supports several derivative functions:
 	
@@ -70,7 +70,7 @@ class PrettyPrinter:
 		>>> stuff = ['spam', 'eggs', 'lumberjack', 'knights', 'ni']
 		>>> stuff.insert(0, stuff)
 		>>> pprint.pprint(stuff)
-		[<Recursion on list with id=*more>,
+		[<Recursion on list with id=more>,
 		'spam',
 		'eggs',
 		'lumberjack',
@@ -103,7 +103,7 @@ class PrettyPrinter:
 		id=number>``.  The representation is not otherwise formatted.
 		
 		>>> pprint.saferepr(stuff)
-		"[<Recursion on list with id=*more>, 'spam', 'eggs', 'lumberjack', 'knights', 'ni']"
+		"[<Recursion on list with id=more>, 'spam', 'eggs', 'lumberjack', 'knights', 'ni']"
 		
 		
 		.. rettyPrinter Objects

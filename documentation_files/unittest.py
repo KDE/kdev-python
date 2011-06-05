@@ -118,7 +118,7 @@ class TestCase:
 		
 		@classmethod
 		def setUpClass(cls):
-		*more
+		more
 		
 		See `Class and Module Fixtures`_ for more details.
 		
@@ -133,7 +133,7 @@ class TestCase:
 		
 		@classmethod
 		def tearDownClass(cls):
-		*more
+		more
 		
 		See `Class and Module Fixtures`_ for more details.
 		
@@ -1081,7 +1081,7 @@ class TextTestRunner:
 		
 		@unittest.removeHandler
 		def test_signal_handling(self):
-		*more
+		more
 		
 		"""
 		pass

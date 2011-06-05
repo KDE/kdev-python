@@ -133,7 +133,7 @@ def circle(radius,extent=None,steps=None):
 	"""
 	pass
 	
-def dot(size=None,color):
+def dot(size=None,color=None):
 	"""
 	:param size: an integer >= 1 (if given)
 	:param color: a colorstring or a numeric color tuple
@@ -302,7 +302,7 @@ def pensize(width=None):
 	"""
 	pass
 	
-def pen(pen=None,pendict):
+def pen(pen=None,pendict=dict()):
 	"""
 	:param pen: a dictionary with some or all of the below listed keys
 	:param pendict: one or more keyword-arguments with the below listed keys as keywords
@@ -1027,7 +1027,7 @@ def exitonclick():
 	"""
 	pass
 	
-def setup(width=_CFG"width",height=_CFG"height",startx=_CFG"leftright",starty=_CFG"topbottom"):
+def setup(width=_CFG_width,height=_CFG_height,startx=_CFG_leftright,starty=_CFG_topbottom):
 	"""
 	Set the size and position of the main window.  Default values of arguments
 	are stored in the configuration dictionary and can be changed via a

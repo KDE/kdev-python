@@ -124,7 +124,7 @@ def lockf(fd,operation,length,start,whence):
 	
 	import struct, fcntl, os
 	
-	f = open(*more)
+	f = open(more)
 	rv = fcntl.fcntl(f, fcntl.F_SETFL, os.O_NDELAY)
 	
 	lockdata = struct.pack('hhllhh', fcntl.F_WRLCK, 0, 0, 0, 0, 0)

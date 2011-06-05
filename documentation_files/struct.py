@@ -5,7 +5,7 @@
 """
 def pack(fmt,v1,v2,more):
 	"""
-	Return a string containing the values ``v1, v2, *more`` packed according to the
+	Return a string containing the values ``v1, v2, more`` packed according to the
 	given format.  The arguments must match the values required by the format
 	exactly.
 	
@@ -15,7 +15,7 @@ def pack(fmt,v1,v2,more):
 	
 def pack_into(fmt,buffer,offset,v1,v2,more):
 	"""
-	Pack the values ``v1, v2, *more`` according to the given format, write the
+	Pack the values ``v1, v2, more`` according to the given format, write the
 	packed bytes into the writable *buffer* starting at *offset*. Note that the
 	offset is a required argument.
 	
@@ -24,7 +24,7 @@ def pack_into(fmt,buffer,offset,v1,v2,more):
 	
 def unpack(fmt,string):
 	"""
-	Unpack the string (presumably packed by ``pack(fmt, *more)``) according to the
+	Unpack the string (presumably packed by ``pack(fmt, more)``) according to the
 	given format.  The result is a tuple even if it contains exactly one item.
 	The string must contain exactly the amount of data required by the format
 	(``len(string)`` must equal ``calcsize(fmt)``).

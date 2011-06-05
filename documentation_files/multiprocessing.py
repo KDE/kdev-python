@@ -16,8 +16,8 @@ class Process:
 	:class:`threading.Thread`.  *target* is the callable object to be invoked by
 	the :meth:`run()` method.  It defaults to ``None``, meaning nothing is
 	called. *name* is the process name.  By default, a unique name is constructed
-	of the form 'Process-N\ :sub:`1`:N\ :sub:`2`:*more:N\ :sub:`k`' where N\
-	:sub:`1`,N\ :sub:`2`,*more,N\ :sub:`k` is a sequence of integers whose length
+	of the form 'Process-N\ :sub:`1`:N\ :sub:`2`:more:N\ :sub:`k`' where N\
+	:sub:`1`,N\ :sub:`2`,more,N\ :sub:`k` is a sequence of integers whose length
 	is determined by the *generation* of the process.  *args* is the argument
 	tuple for the target invocation.  *kwargs* is a dictionary of keyword
 	arguments for the target invocation.  By default, no arguments are passed to
@@ -70,7 +70,7 @@ class Process:
 		"""
 		pass
 		
-	def is_alive(self, ():
+	def is_alive(self, ):
 		"""
 		Return whether the process is alive.
 		
@@ -579,7 +579,7 @@ class Semaphore:
 		"""
 		pass
 		
-	def Array(self, typecode_or_type,size_or_initializer,,lock=True):
+	def Array(self, typecode_or_type,size_or_initializer,more,lock=True):
 		"""
 		Return a ctypes array allocated from shared memory.  By default the return
 		value is actually a synchronized wrapper for the array.

@@ -599,7 +599,7 @@ class Message:
 		message structure::
 		
 		>>> for part in msg.walk():
-		*more     print part.get_content_type()
+		more     print part.get_content_type()
 		multipart/report
 		text/plain
 		message/delivery-status

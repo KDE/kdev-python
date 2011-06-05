@@ -438,7 +438,7 @@ class LoggerAdapter:
 		not undo customisations already applied by other code. For example::
 		
 		class MyLogger(logging.getLoggerClass()):
-		# *more override behaviour here
+		# more override behaviour here
 		
 		
 		"""

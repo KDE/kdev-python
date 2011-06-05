@@ -31,7 +31,7 @@ def run(command,filename):
 	ncalls  tottime  percall  cumtime  percall filename:lineno(function)
 	2    0.006    0.003    0.953    0.477 pobject.py:75(save_objects)
 	43/3    0.533    0.012    0.749    0.250 pobject.py:99(evaluate)
-	*more
+	more
 	
 	The first line indicates that 2706 calls were monitored.  Of those calls, 2004
 	were :dfn:`primitive`.  We define :dfn:`primitive` to mean that the call was not

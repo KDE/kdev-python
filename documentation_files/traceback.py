@@ -225,20 +225,20 @@ def tb_lineno(tb):
 	The output for the example would look similar to this::
 	
 	*** print_tb:
-	File "<doctest*more>", line 10, in <module>
+	File "<doctestmore>", line 10, in <module>
 	lumberjack()
 	*** print_exception:
 	Traceback (most recent call last):
-	File "<doctest*more>", line 10, in <module>
+	File "<doctestmore>", line 10, in <module>
 	lumberjack()
-	File "<doctest*more>", line 4, in lumberjack
+	File "<doctestmore>", line 4, in lumberjack
 	bright_side_of_death()
 	IndexError: tuple index out of range
 	*** print_exc:
 	Traceback (most recent call last):
-	File "<doctest*more>", line 10, in <module>
+	File "<doctestmore>", line 10, in <module>
 	lumberjack()
-	File "<doctest*more>", line 4, in lumberjack
+	File "<doctestmore>", line 4, in lumberjack
 	bright_side_of_death()
 	IndexError: tuple index out of range
 	*** format_exc, first and last line:
@@ -246,18 +246,18 @@ def tb_lineno(tb):
 	IndexError: tuple index out of range
 	*** format_exception:
 	['Traceback (most recent call last):\n',
-	'  File "<doctest*more>", line 10, in <module>\n    lumberjack()\n',
-	'  File "<doctest*more>", line 4, in lumberjack\n    bright_side_of_death()\n',
-	'  File "<doctest*more>", line 7, in bright_side_of_death\n    return tuple()[0]\n',
+	'  File "<doctestmore>", line 10, in <module>\n    lumberjack()\n',
+	'  File "<doctestmore>", line 4, in lumberjack\n    bright_side_of_death()\n',
+	'  File "<doctestmore>", line 7, in bright_side_of_death\n    return tuple()[0]\n',
 	'IndexError: tuple index out of range\n']
 	*** extract_tb:
-	[('<doctest*more>', 10, '<module>', 'lumberjack()'),
-	('<doctest*more>', 4, 'lumberjack', 'bright_side_of_death()'),
-	('<doctest*more>', 7, 'bright_side_of_death', 'return tuple()[0]')]
+	[('<doctestmore>', 10, '<module>', 'lumberjack()'),
+	('<doctestmore>', 4, 'lumberjack', 'bright_side_of_death()'),
+	('<doctestmore>', 7, 'bright_side_of_death', 'return tuple()[0]')]
 	*** format_tb:
-	['  File "<doctest*more>", line 10, in <module>\n    lumberjack()\n',
-	'  File "<doctest*more>", line 4, in lumberjack\n    bright_side_of_death()\n',
-	'  File "<doctest*more>", line 7, in bright_side_of_death\n    return tuple()[0]\n']
+	['  File "<doctestmore>", line 10, in <module>\n    lumberjack()\n',
+	'  File "<doctestmore>", line 4, in lumberjack\n    bright_side_of_death()\n',
+	'  File "<doctestmore>", line 7, in bright_side_of_death\n    return tuple()[0]\n']
 	*** tb_lineno: 10
 	
 	
@@ -265,13 +265,13 @@ def tb_lineno(tb):
 	
 	>>> import traceback
 	>>> def another_function():
-	*more     lumberstack()
-	*more
+	more     lumberstack()
+	more
 	>>> def lumberstack():
-	*more     traceback.print_stack()
-	*more     print repr(traceback.extract_stack())
-	*more     print repr(traceback.format_stack())
-	*more
+	more     traceback.print_stack()
+	more     print repr(traceback.extract_stack())
+	more     print repr(traceback.format_stack())
+	more
 	>>> another_function()
 	File "<doctest>", line 10, in <module>
 	another_function()

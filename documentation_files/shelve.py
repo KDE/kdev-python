@@ -112,7 +112,7 @@ class DbfilenameShelf:
 	klist = d.keys() # a list of all existing keys (slow!)
 	
 	# as d was opened WITHOUT writeback=True, beware:
-	d['xx'] = range(4)  # this works as expected, but*more
+	d['xx'] = range(4)  # this works as expected, butmore
 	d['xx'].append(5)   # *this doesn't!* -- d['xx'] is STILL range(4)!
 	
 	# having opened d without writeback=True, you need to code carefully:

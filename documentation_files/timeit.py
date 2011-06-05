@@ -32,9 +32,9 @@ class Timer:
 		
 		Typical use::
 		
-		t = Timer(*more)       # outside the try/except
+		t = Timer(more)       # outside the try/except
 		try:
-		t.timeit(*more)    # or t.repeat(*more)
+		t.timeit(more)    # or t.repeat(more)
 		except:
 		t.print_exc()
 		

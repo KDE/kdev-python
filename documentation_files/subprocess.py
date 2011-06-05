@@ -73,8 +73,8 @@ class Popen:
 		To capture standard error in the result, use ``stderr=subprocess.STDOUT``::
 		
 		>>> subprocess.check_output(
-		*more     ["/bin/sh", "-c", "ls non_existent_file; exit 0"],
-		*more     stderr=subprocess.STDOUT)
+		more     ["/bin/sh", "-c", "ls non_existent_file; exit 0"],
+		more     stderr=subprocess.STDOUT)
 		'ls: non_existent_file: No such file or directory\n'
 		
 		"""

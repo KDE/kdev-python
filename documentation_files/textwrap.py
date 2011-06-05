@@ -19,7 +19,7 @@ def fill(text,width,more):
 	Wraps the single paragraph in *text*, and returns a single string containing the
 	wrapped paragraph.  :func:`fill` is shorthand for  ::
 	
-	"\n".join(wrap(text, *more))
+	"\n".join(wrap(text, more))
 	
 	In particular, :func:`fill` accepts exactly the same keyword arguments as
 	:func:`wrap`.

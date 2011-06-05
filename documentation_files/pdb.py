@@ -98,7 +98,7 @@ class Pdb:
 	
 	def run(self, statement,globals,locals):
 		"""runeval(expression[, globals[, locals]])
-		runcall(function[, argument, *more])
+		runcall(function[, argument, more])
 		set_trace()
 		
 		See the documentation for the functions explained above.

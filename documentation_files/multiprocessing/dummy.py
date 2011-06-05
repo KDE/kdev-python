@@ -110,7 +110,7 @@ So for instance ::
 from multiprocessing import Process, Lock
 
 def f():
-*more do something using "lock" *more
+more do something using "lock" more
 
 if __name__ == '__main__':
 lock = Lock()
@@ -122,7 +122,7 @@ should be rewritten as ::
 from multiprocessing import Process, Lock
 
 def f(l):
-*more do something using "l" *more
+more do something using "l" more
 
 if __name__ == '__main__':
 lock = Lock()

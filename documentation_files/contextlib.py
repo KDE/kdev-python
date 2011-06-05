@@ -21,8 +21,8 @@ def contextmanager(func):
 	print "</%s>" % name
 	
 	>>> with tag("h1"):
-	*more    print "foo"
-	*more
+	more    print "foo"
+	more
 	<h1>
 	foo
 	</h1>
@@ -35,7 +35,7 @@ def contextmanager(func):
 	statement is executed.  The generator is then resumed after the block is exited.
 	If an unhandled exception occurs in the block, it is reraised inside the
 	generator at the point where the yield occurred.  Thus, you can use a
-	:keyword:`try`*more\ :keyword:`except`*more\ :keyword:`finally` statement to trap
+	:keyword:`try`more\ :keyword:`except`more\ :keyword:`finally` statement to trap
 	the error (if any), or ensure that some cleanup takes place. If an exception is
 	trapped merely in order to log it or to perform some action (rather than to
 	suppress it entirely), the generator must reraise that exception. Otherwise the

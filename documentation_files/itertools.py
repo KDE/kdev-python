@@ -139,8 +139,8 @@ def count(start=0,step=1):
 	Also, used with :func:`izip` to add sequence numbers.  Equivalent to::
 	
 	def count(start=0, step=1):
-	# count(10) --> 10 11 12 13 14 *more
-	# count(2.5, 0.5) -> 2.5 3.0 3.5 *more
+	# count(10) --> 10 11 12 13 14 more
+	# count(2.5, 0.5) -> 2.5 3.0 3.5 more
 	n = start
 	while True:
 	yield n
@@ -160,7 +160,7 @@ def cycle(iterable):
 	indefinitely.  Equivalent to::
 	
 	def cycle(iterable):
-	# cycle('ABCD') --> A B C D A B C D A B C D *more
+	# cycle('ABCD') --> A B C D A B C D A B C D more
 	saved = []
 	for element in iterable:
 	yield element

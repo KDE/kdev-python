@@ -45,7 +45,7 @@ class SMTP:
 		"""
 		pass
 		
-	def docmd(self, cmd,,argstring):
+	def docmd(self, cmd,argstring):
 		"""
 		Send a command *cmd* to the server.  The optional argument *argstring* is simply
 		concatenated to the command, separated by a space.

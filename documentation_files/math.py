@@ -24,13 +24,13 @@ Number-theoretic and representation functions
 
 """
 """
-The mathematical constant π = 3.141592*more, to available precision.
+The mathematical constant π = 3.141592more, to available precision.
 
 
 """
 pi = None
 """
-The mathematical constant e = 2.718281*more, to available precision.
+The mathematical constant e = 2.718281more, to available precision.
 
 
 """

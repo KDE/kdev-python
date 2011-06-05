@@ -325,7 +325,7 @@ class Bdb:
 		"""
 		pass
 		
-	def set_break(self, filename,lineno,temporary=0,cond,funcname):
+	def set_break(self, filename,lineno,temporary,cond,funcname):
 		"""
 		Set a new breakpoint.  If the *lineno* line doesn't exist for the
 		*filename* passed as argument, return an error message.  The *filename*

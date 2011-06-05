@@ -294,7 +294,7 @@ class IMAP4:
 		
 		Example::
 		
-		# M is a connected IMAP4 instance*more
+		# M is a connected IMAP4 instancemore
 		typ, msgnums = M.search(None, 'FROM', '"LDJ"')
 		
 		# or:

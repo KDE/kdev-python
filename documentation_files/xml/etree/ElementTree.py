@@ -101,7 +101,7 @@ def register_namespace(prefix,uri):
 	"""
 	pass
 	
-def SubElement(parent,tag,attrib={},extra):
+def SubElement(parent,tag,attrib,extra):
 	"""
 	Subelement factory.  This function creates an element instance, and appends
 	it to an existing element.

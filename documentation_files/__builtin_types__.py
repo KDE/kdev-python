@@ -69,7 +69,7 @@ class set:
 		pass
 		
 	def union(self, other,more):
-		"""set | other | *more
+		"""set | other | more
 		
 		Return a new set with elements from the set and all others.
 		
@@ -77,7 +77,7 @@ class set:
 		pass
 		
 	def intersection(self, other,more):
-		"""set & other & *more
+		"""set & other & more
 		
 		Return a new set with elements common to the set and all others.
 		
@@ -85,7 +85,7 @@ class set:
 		pass
 		
 	def difference(self, other,more):
-		"""set - other - *more
+		"""set - other - more
 		
 		Return a new set with elements in the set that are not in the others.
 		
@@ -145,7 +145,7 @@ class set:
 		pass
 		
 	def update(self, other,more):
-		"""set |= other | *more
+		"""set |= other | more
 		
 		Update the set, adding elements from all others.
 		
@@ -153,7 +153,7 @@ class set:
 		pass
 		
 	def intersection_update(self, other,more):
-		"""set &= other & *more
+		"""set &= other & more
 		
 		Update the set, keeping only elements found in it and all others.
 		
@@ -161,7 +161,7 @@ class set:
 		pass
 		
 	def difference_update(self, other,more):
-		"""set -= other | *more
+		"""set -= other | more
 		
 		Update the set, removing elements found in others.
 		

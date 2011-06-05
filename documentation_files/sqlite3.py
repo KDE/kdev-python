@@ -388,7 +388,7 @@ class Row:
 	def __init__(self, ):
 		pass
 	
-	def keys(self, ():
+	def keys(self, ):
 		"""
 		This method returns a tuple of column names. Immediately after a query,
 		it is the first member of each tuple in :attr:`Cursor.description`.

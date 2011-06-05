@@ -111,7 +111,7 @@ def setup_testing_defaults(environ):
 	return ret
 	
 	httpd = make_server('', 8000, simple_app)
-	print "Serving on port 8000*more"
+	print "Serving on port 8000more"
 	httpd.serve_forever()
 	
 	

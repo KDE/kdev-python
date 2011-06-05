@@ -161,7 +161,7 @@ def _classmethod(function):
 	
 	class C:
 	@classmethod
-	def f(cls, arg1, arg2, *more): *more
+	def f(cls, arg1, arg2, more): more
 	
 	The ``@classmethod`` form is a function :term:`decorator` -- see the description
 	of function definitions in :ref:`function` for details.
@@ -307,9 +307,9 @@ def dir(object):
 	'__package__', '_clearcache', 'calcsize', 'error', 'pack', 'pack_into',
 	'unpack', 'unpack_from']
 	>>> class Foo(object):
-	*more     def __dir__(self):
-	*more         return ["kan", "ga", "roo"]
-	*more
+	more     def __dir__(self):
+	more         return ["kan", "ga", "roo"]
+	more
 	>>> f = Foo()
 	>>> dir(f)
 	['ga', 'kan', 'roo']
@@ -339,10 +339,10 @@ def enumerate(sequence,start=0):
 	tuple containing a count (from *start* which defaults to 0) and the
 	corresponding value obtained from iterating over *iterable*.
 	:func:`enumerate` is useful for obtaining an indexed series: ``(0, seq[0])``,
-	``(1, seq[1])``, ``(2, seq[2])``, *more. For example:
+	``(1, seq[1])``, ``(2, seq[2])``, more. For example:
 	
 	>>> for i, season in enumerate(['Spring', 'Summer', 'Fall', 'Winter']):
-	*more     print i, season
+	more     print i, season
 	0 Spring
 	1 Summer
 	2 Fall
@@ -864,7 +864,7 @@ def range(start,stop,step):
 	It is most often used in :keyword:`for` loops.  The arguments must be plain
 	integers.  If the *step* argument is omitted, it defaults to ``1``.  If the
 	*start* argument is omitted, it defaults to ``0``.  The full form returns a list
-	of plain integers ``[start, start + step, start + 2 * step, *more]``.  If *step*
+	of plain integers ``[start, start + step, start + 2 * step, more]``.  If *step*
 	is positive, the last element is the largest ``start + i * step`` less than
 	*stop*; if *step* is negative, the last element is the smallest ``start + i *
 	step`` greater than *stop*.  *step* must not be zero (or else :exc:`ValueError`
@@ -974,8 +974,8 @@ def reload(module):
 	In many cases, however, extension modules are not designed to be initialized
 	more than once, and may fail in arbitrary ways when reloaded.
 	
-	If a module imports objects from another module using :keyword:`from` *more
-	:keyword:`import` *more, calling :func:`reload` for the other module does not
+	If a module imports objects from another module using :keyword:`from` more
+	:keyword:`import` more, calling :func:`reload` for the other module does not
 	redefine the objects imported from it --- one way around this is to re-execute
 	the :keyword:`from` statement, another is to use :keyword:`import` and qualified
 	names (*module*.*name*) instead.
@@ -1097,7 +1097,7 @@ def staticmethod(function):
 	
 	class C:
 	@staticmethod
-	def f(arg1, arg2, *more): *more
+	def f(arg1, arg2, more): more
 	
 	The ``@staticmethod`` form is a function :term:`decorator` -- see the
 	description of function definitions in :ref:`function` for details.
@@ -1201,8 +1201,8 @@ def type(name,bases,dict):
 	:class:`type` objects:
 	
 	>>> class X(object):
-	*more     a = 1
-	*more
+	more     a = 1
+	more
 	>>> X = type('X', (object,), dict(a=1))
 	
 	"""

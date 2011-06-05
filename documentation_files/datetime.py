@@ -154,7 +154,7 @@ class date:
 		True
 		>>> my_birthday = date(today.year, 6, 24)
 		>>> if my_birthday < today:
-		*more     my_birthday = my_birthday.replace(year=today.year + 1)
+		more     my_birthday = my_birthday.replace(year=today.year + 1)
 		>>> my_birthday
 		datetime.date(2008, 6, 24)
 		>>> time_to_birthday = abs(my_birthday - today)
@@ -258,16 +258,16 @@ class time:
 		
 		>>> from datetime import time, tzinfo
 		>>> class GMT1(tzinfo):
-		*more     def utcoffset(self, dt):
-		*more         return timedelta(hours=1)
-		*more     def dst(self, dt):
-		*more         return timedelta(0)
-		*more     def tzname(self,dt):
-		*more         return "Europe/Prague"
-		*more
+		more     def utcoffset(self, dt):
+		more         return timedelta(hours=1)
+		more     def dst(self, dt):
+		more         return timedelta(0)
+		more     def tzname(self,dt):
+		more         return "Europe/Prague"
+		more
 		>>> t = time(12, 10, 30, tzinfo=GMT1())
 		>>> t                               # doctest: +ELLIPSIS
-		datetime.time(12, 10, 30, tzinfo=<GMT1 object at 0x*more>)
+		datetime.time(12, 10, 30, tzinfo=<GMT1 object at 0xmore>)
 		>>> gmt = GMT1()
 		>>> t.isoformat()
 		'12:10:30+01:00'
@@ -522,8 +522,8 @@ class datetime:
 		
 		>>> from datetime import tzinfo, timedelta, datetime
 		>>> class TZ(tzinfo):
-		*more     def utcoffset(self, dt): return timedelta(minutes=-399)
-		*more
+		more     def utcoffset(self, dt): return timedelta(minutes=-399)
+		more
 		>>> datetime(2002, 12, 25, tzinfo=TZ()).isoformat(' ')
 		'2002-12-25 00:00:00-06:39'
 		
@@ -1005,7 +1005,7 @@ class date:
 		True
 		>>> my_birthday = date(today.year, 6, 24)
 		>>> if my_birthday < today:
-		*more     my_birthday = my_birthday.replace(year=today.year + 1)
+		more     my_birthday = my_birthday.replace(year=today.year + 1)
 		>>> my_birthday
 		datetime.date(2008, 6, 24)
 		>>> time_to_birthday = abs(my_birthday - today)
@@ -1242,8 +1242,8 @@ class datetime:
 		
 		>>> from datetime import tzinfo, timedelta, datetime
 		>>> class TZ(tzinfo):
-		*more     def utcoffset(self, dt): return timedelta(minutes=-399)
-		*more
+		more     def utcoffset(self, dt): return timedelta(minutes=-399)
+		more
 		>>> datetime(2002, 12, 25, tzinfo=TZ()).isoformat(' ')
 		'2002-12-25 00:00:00-06:39'
 		
@@ -1383,16 +1383,16 @@ class time:
 		
 		>>> from datetime import time, tzinfo
 		>>> class GMT1(tzinfo):
-		*more     def utcoffset(self, dt):
-		*more         return timedelta(hours=1)
-		*more     def dst(self, dt):
-		*more         return timedelta(0)
-		*more     def tzname(self,dt):
-		*more         return "Europe/Prague"
-		*more
+		more     def utcoffset(self, dt):
+		more         return timedelta(hours=1)
+		more     def dst(self, dt):
+		more         return timedelta(0)
+		more     def tzname(self,dt):
+		more         return "Europe/Prague"
+		more
 		>>> t = time(12, 10, 30, tzinfo=GMT1())
 		>>> t                               # doctest: +ELLIPSIS
-		datetime.time(12, 10, 30, tzinfo=<GMT1 object at 0x*more>)
+		datetime.time(12, 10, 30, tzinfo=<GMT1 object at 0xmore>)
 		>>> gmt = GMT1()
 		>>> t.isoformat()
 		'12:10:30+01:00'

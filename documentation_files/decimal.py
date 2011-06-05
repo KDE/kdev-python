@@ -18,7 +18,7 @@ class Decimal:
 	sign           ::=  '+' | '-'
 	digit          ::=  '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
 	indicator      ::=  'e' | 'E'
-	digits         ::=  digit [digit]*more
+	digits         ::=  digit [digit]more
 	decimal-part   ::=  digits '.' [digits] | ['.'] digits
 	exponent-part  ::=  indicator [sign] digits
 	infinity       ::=  'Infinity' | 'Inf'

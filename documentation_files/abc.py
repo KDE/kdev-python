@@ -69,9 +69,9 @@ class ABCMeta:
 		
 		class Foo(object):
 		def __getitem__(self, index):
-		*more
+		more
 		def __len__(self):
-		*more
+		more
 		def get_iterator(self):
 		return iter(self)
 		
@@ -140,8 +140,8 @@ class ABCMeta:
 		class C:
 		__metaclass__ = ABCMeta
 		@abstractmethod
-		def my_abstract_method(self, *more):
-		*more
+		def my_abstract_method(self, more):
+		more
 		
 		"""
 		pass
@@ -163,15 +163,15 @@ class ABCMeta:
 		__metaclass__ = ABCMeta
 		@abstractproperty
 		def my_abstract_property(self):
-		*more
+		more
 		
 		This defines a read-only property; you can also define a read-write abstract
 		property using the 'long' form of property declaration::
 		
 		class C:
 		__metaclass__ = ABCMeta
-		def getx(self): *more
-		def setx(self, value): *more
+		def getx(self): more
+		def setx(self, value): more
 		x = abstractproperty(getx, setx)
 		
 		

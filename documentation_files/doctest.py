@@ -36,7 +36,7 @@ your source.
 """
 NORMALIZE_WHITESPACE = None
 """
-When specified, an ellipsis marker (``*more``) in the expected output can match
+When specified, an ellipsis marker (``more``) in the expected output can match
 any substring in the actual output.  This includes substrings that span line
 boundaries, and empty substrings, so it's best to keep usage of this simple.
 Complicated uses can lead to the same kinds of "oops, it matched too much!"

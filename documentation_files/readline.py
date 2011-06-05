@@ -145,7 +145,7 @@ def set_completer(function):
 	Set or remove the completer function.  If *function* is specified, it will be
 	used as the new completer function; if omitted or ``None``, any completer
 	function already installed is removed.  The completer function is called as
-	``function(text, state)``, for *state* in ``0``, ``1``, ``2``, *more, until it
+	``function(text, state)``, for *state* in ``0``, ``1``, ``2``, more, until it
 	returns a non-string value.  It should return the next possible completion
 	starting with *text*.
 	

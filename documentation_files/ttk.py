@@ -23,7 +23,7 @@ class Widget:
 		"""
 		pass
 		
-	def instate(self, statespec,callback=None,args,kw):
+	def instate(self, statespec,callback,args,kw=dict()):
 		"""
 		Test the widget's state. If a callback is not specified, returns True
 		if the widget state matches *statespec* and False otherwise. If callback
@@ -101,7 +101,7 @@ class Notebook:
 	def __init__(self, ):
 		pass
 	
-	def add(self, child,kw):
+	def add(self, child,kw=dict()):
 		"""
 		Adds a new tab to the notebook.
 		
@@ -179,7 +179,7 @@ class Notebook:
 		"""
 		pass
 		
-	def tab(self, tab_id,option=None,kw):
+	def tab(self, tab_id,option=None,kw=None):
 		"""
 		Query or modify the options of the specific *tab_id*.
 		
@@ -312,7 +312,7 @@ class Treeview:
 		"""
 		pass
 		
-	def column(self, column,option=None,kw):
+	def column(self, column,option=None,kw=dict()):
 		"""
 		Query or modify the options for the specified *column*.
 		
@@ -382,7 +382,7 @@ class Treeview:
 		"""
 		pass
 		
-	def heading(self, column,option=None,kw):
+	def heading(self, column,option=None,kw=dict()):
 		"""
 		Query or modify the heading options for the specified *column*.
 		
@@ -476,7 +476,7 @@ class Treeview:
 		"""
 		pass
 		
-	def insert(self, parent,index,iid=None,kw):
+	def insert(self, parent,index,iid=None,kw=dict()):
 		"""
 		Creates a new item and returns the item identifier of the newly created
 		item.
@@ -496,7 +496,7 @@ class Treeview:
 		"""
 		pass
 		
-	def item(self, item,option,kw):
+	def item(self, item,option,kw=dict()):
 		"""
 		Query or modify the options for the specified *item*.
 		
@@ -631,7 +631,7 @@ class Treeview:
 		"""
 		pass
 		
-	def tag_configure(self, tagname,option=None,kw):
+	def tag_configure(self, tagname,option=None,kw=dict()):
 		"""
 		Query or modify the options for the specified *tagname*.
 		
@@ -689,7 +689,7 @@ class Style:
 	def __init__(self, ):
 		pass
 	
-	def configure(self, style,query_opt=None,kw):
+	def configure(self, style,query_opt=None,kw=dict()):
 		"""
 		Query or set the default value of the specified option(s) in *style*.
 		
@@ -716,7 +716,7 @@ class Style:
 		"""
 		pass
 		
-	def map(self, style,query_opt=None,kw):
+	def map(self, style,query_opt=None,kw=dict()):
 		"""
 		Query or sets dynamic values of the specified option(s) in *style*.
 		
@@ -808,7 +808,7 @@ class Style:
 		"""
 		pass
 		
-	def element_create(self, elementname,etype,args,kw):
+	def element_create(self, elementname,etype,args=[],kw=dict()):
 		"""
 		Create a new element in the current theme, of the given *etype* which is
 		expected to be either "image", "from" or "vsapi". The latter is only

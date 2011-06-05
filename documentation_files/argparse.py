@@ -70,8 +70,8 @@ class ArgumentParser:
 	argument to :class:`ArgumentParser`::
 	
 	>>> parser = argparse.ArgumentParser(
-	*more     description='A foo that bars',
-	*more     epilog="And that's how you'd foo a bar")
+	more     description='A foo that bars',
+	more     epilog="And that's how you'd foo a bar")
 	>>> parser.print_help()
 	usage: argparse.py [-h]
 	
@@ -166,7 +166,7 @@ class ArgumentParser:
 	arguments they contain.  For example::
 	
 	>>> with open('args.txt', 'w') as fp:
-	*more    fp.write('-f\nbar')
+	more    fp.write('-f\nbar')
 	>>> parser = argparse.ArgumentParser(fromfile_prefix_chars='@')
 	>>> parser.add_argument('-f')
 	>>> parser.parse_args(['-f', 'foo', '@args.txt'])
@@ -393,10 +393,10 @@ class ArgumentParser:
 		An example of a custom action::
 		
 		>>> class FooAction(argparse.Action):
-		*more     def __call__(self, parser, namespace, values, option_string=None):
-		*more         print '%r %r %r' % (namespace, values, option_string)
-		*more         setattr(namespace, self.dest, values)
-		*more
+		more     def __call__(self, parser, namespace, values, option_string=None):
+		more         print '%r %r %r' % (namespace, values, option_string)
+		more         setattr(namespace, self.dest, values)
+		more
 		>>> parser = argparse.ArgumentParser()
 		>>> parser.add_argument('--foo', action=FooAction)
 		>>> parser.add_argument('bar', action=FooAction)
@@ -449,15 +449,15 @@ class ArgumentParser:
 		
 		>>> parser = argparse.ArgumentParser()
 		>>> parser.add_argument('infile', nargs='?', type=argparse.FileType('r'),
-		*more                     default=sys.stdin)
+		more                     default=sys.stdin)
 		>>> parser.add_argument('outfile', nargs='?', type=argparse.FileType('w'),
-		*more                     default=sys.stdout)
+		more                     default=sys.stdout)
 		>>> parser.parse_args(['input.txt', 'output.txt'])
-		Namespace(infile=<open file 'input.txt', mode 'r' at 0x*more>,
-		outfile=<open file 'output.txt', mode 'w' at 0x*more>)
+		Namespace(infile=<open file 'input.txt', mode 'r' at 0xmore>,
+		outfile=<open file 'output.txt', mode 'w' at 0xmore>)
 		>>> parser.parse_args([])
-		Namespace(infile=<open file '<stdin>', mode 'r' at 0x*more>,
-		outfile=<open file '<stdout>', mode 'w' at 0x*more>)
+		Namespace(infile=<open file '<stdin>', mode 'r' at 0xmore>,
+		outfile=<open file '<stdout>', mode 'w' at 0xmore>)
 		
 		* ``'*'``.  All command-line args present are gathered into a list.  Note that
 		it generally doesn't make much sense to have more than one positional argument
@@ -480,7 +480,7 @@ class ArgumentParser:
 		>>> parser.parse_args('a b'.split())
 		Namespace(foo=['a', 'b'])
 		>>> parser.parse_args(''.split())
-		usage: PROG [-h] foo [foo *more]
+		usage: PROG [-h] foo [foo more]
 		PROG: error: too few arguments
 		
 		If the ``nargs`` keyword argument is not provided, the number of args consumed
@@ -562,7 +562,7 @@ class ArgumentParser:
 		>>> parser.add_argument('foo', type=int)
 		>>> parser.add_argument('bar', type=file)
 		>>> parser.parse_args('2 temp.txt'.split())
-		Namespace(bar=<open file 'temp.txt', mode 'r' at 0x*more>, foo=2)
+		Namespace(bar=<open file 'temp.txt', mode 'r' at 0xmore>, foo=2)
 		
 		To ease the use of various types of files, the argparse module provides the
 		factory FileType which takes the ``mode=`` and ``bufsize=`` arguments of the
@@ -572,19 +572,19 @@ class ArgumentParser:
 		>>> parser = argparse.ArgumentParser()
 		>>> parser.add_argument('bar', type=argparse.FileType('w'))
 		>>> parser.parse_args(['out.txt'])
-		Namespace(bar=<open file 'out.txt', mode 'w' at 0x*more>)
+		Namespace(bar=<open file 'out.txt', mode 'w' at 0xmore>)
 		
 		``type=`` can take any callable that takes a single string argument and returns
 		the type-converted value::
 		
 		>>> def perfect_square(string):
-		*more     value = int(string)
-		*more     sqrt = math.sqrt(value)
-		*more     if sqrt != int(sqrt):
-		*more         msg = "%r is not a perfect square" % string
-		*more         raise argparse.ArgumentTypeError(msg)
-		*more     return value
-		*more
+		more     value = int(string)
+		more     sqrt = math.sqrt(value)
+		more     if sqrt != int(sqrt):
+		more         msg = "%r is not a perfect square" % string
+		more         raise argparse.ArgumentTypeError(msg)
+		more     return value
+		more
 		>>> parser = argparse.ArgumentParser(prog='PROG')
 		>>> parser.add_argument('foo', type=perfect_square)
 		>>> parser.parse_args('9'.split())
@@ -824,11 +824,11 @@ class ArgumentParser:
 		
 		>>> parser = argparse.ArgumentParser()
 		>>> parser.add_argument(
-		*more     'integers', metavar='int', type=int, choices=xrange(10),
-		*more  nargs='+', help='an integer in the range 0..9')
+		more     'integers', metavar='int', type=int, choices=xrange(10),
+		more  nargs='+', help='an integer in the range 0..9')
 		>>> parser.add_argument(
-		*more     '--sum', dest='accumulate', action='store_const', const=sum,
-		*more   default=max, help='sum the integers (default: find the max)')
+		more     '--sum', dest='accumulate', action='store_const', const=sum,
+		more   default=max, help='sum the integers (default: find the max)')
 		>>> parser.parse_args(['1', '2', '3', '4'])
 		Namespace(accumulate=<built-in function max>, integers=[1, 2, 3, 4])
 		>>> parser.parse_args('1 2 3 4 --sum'.split())
@@ -855,8 +855,8 @@ class ArgumentParser:
 		be achieved by specifying the ``namespace=`` keyword argument::
 		
 		>>> class C(object):
-		*more     pass
-		*more
+		more     pass
+		more
 		>>> c = C()
 		>>> parser = argparse.ArgumentParser()
 		>>> parser.add_argument('--foo')
@@ -925,7 +925,7 @@ class ArgumentParser:
 		::
 		
 		>>> parser.parse_args(['--help'])
-		usage: PROG [-h] [--foo] {a,b} *more
+		usage: PROG [-h] [--foo] {a,b} more
 		
 		positional arguments:
 		{a,b}   sub-command help
@@ -958,12 +958,12 @@ class ArgumentParser:
 		
 		>>> parser = argparse.ArgumentParser()
 		>>> subparsers = parser.add_subparsers(title='subcommands',
-		*more                                    description='valid subcommands',
-		*more                                    help='additional help')
+		more                                    description='valid subcommands',
+		more                                    help='additional help')
 		>>> subparsers.add_parser('foo')
 		>>> subparsers.add_parser('bar')
 		>>> parser.parse_args(['-h'])
-		usage:  [-h] {foo,bar} *more
+		usage:  [-h] {foo,bar} more
 		
 		optional arguments:
 		-h, --help  show this help message and exit
@@ -981,11 +981,11 @@ class ArgumentParser:
 		
 		>>> # sub-command functions
 		>>> def foo(args):
-		*more     print args.x * args.y
-		*more
+		more     print args.x * args.y
+		more
 		>>> def bar(args):
-		*more     print '((%s))' % args.z
-		*more
+		more     print '((%s))' % args.z
+		more
 		>>> # create the top-level parser
 		>>> parser = argparse.ArgumentParser()
 		>>> subparsers = parser.add_subparsers()
@@ -1256,14 +1256,14 @@ class RawDescriptionHelpFormatter:
 	epilog_ texts in command-line help messages::
 	
 	>>> parser = argparse.ArgumentParser(
-	*more     prog='PROG',
-	*more     description='''this description
-	*more         was indented weird
-	*more             but that is okay''',
-	*more     epilog='''
-	*more             likewise for this epilog whose whitespace will
-	*more         be cleaned up and whose words will be wrapped
-	*more         across a couple lines''')
+	more     prog='PROG',
+	more     description='''this description
+	more         was indented weird
+	more             but that is okay''',
+	more     epilog='''
+	more             likewise for this epilog whose whitespace will
+	more         be cleaned up and whose words will be wrapped
+	more         across a couple lines''')
 	>>> parser.print_help()
 	usage: PROG [-h]
 	
@@ -1280,15 +1280,15 @@ class RawDescriptionHelpFormatter:
 	should not be line-wrapped::
 	
 	>>> parser = argparse.ArgumentParser(
-	*more     prog='PROG',
-	*more     formatter_class=argparse.RawDescriptionHelpFormatter,
-	*more     description=textwrap.dedent('''\
-	*more         Please do not mess up this text!
-	*more         --------------------------------
-	*more             I have indented it
-	*more             exactly the way
-	*more             I want it
-	*more         '''))
+	more     prog='PROG',
+	more     formatter_class=argparse.RawDescriptionHelpFormatter,
+	more     description=textwrap.dedent('''\
+	more         Please do not mess up this text!
+	more         --------------------------------
+	more             I have indented it
+	more             exactly the way
+	more             I want it
+	more         '''))
 	>>> parser.print_help()
 	usage: PROG [-h]
 	
@@ -1308,12 +1308,12 @@ class RawDescriptionHelpFormatter:
 	will add information about the default value of each of the arguments::
 	
 	>>> parser = argparse.ArgumentParser(
-	*more     prog='PROG',
-	*more     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+	more     prog='PROG',
+	more     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	>>> parser.add_argument('--foo', type=int, default=42, help='FOO!')
 	>>> parser.add_argument('bar', nargs='*', default=[1, 2, 3], help='BAR!')
 	>>> parser.print_help()
-	usage: PROG [-h] [--foo FOO] [bar [bar *more]]
+	usage: PROG [-h] [--foo FOO] [bar [bar more]]
 	
 	positional arguments:
 	bar         BAR! (default: [1, 2, 3])
@@ -1427,7 +1427,7 @@ class RawDescriptionHelpFormatter:
 	>>> parser.add_argument('--foo', nargs='?', help='foo help')
 	>>> parser.add_argument('bar', nargs='+', help='bar help')
 	>>> parser.print_help()
-	usage: PROG [-h] [--foo [FOO]] bar [bar *more]
+	usage: PROG [-h] [--foo [FOO]] bar [bar more]
 	
 	positional arguments:
 	bar          bar help
@@ -1479,7 +1479,7 @@ class FileType:
 	>>> parser = argparse.ArgumentParser()
 	>>> parser.add_argument('--output', type=argparse.FileType('wb', 0))
 	>>> parser.parse_args(['--output', 'out'])
-	Namespace(output=<open file 'out', mode 'wb' at 0x*more>)
+	Namespace(output=<open file 'out', mode 'wb' at 0xmore>)
 	
 	FileType objects understand the pseudo-argument ``'-'`` and automatically
 	convert this into ``sys.stdin`` for readable :class:`FileType` objects and
@@ -1488,7 +1488,7 @@ class FileType:
 	>>> parser = argparse.ArgumentParser()
 	>>> parser.add_argument('infile', type=argparse.FileType('r'))
 	>>> parser.parse_args(['-'])
-	Namespace(infile=<open file '<stdin>', mode 'r' at 0x*more>)
+	Namespace(infile=<open file '<stdin>', mode 'r' at 0xmore>)
 	
 	
 	Argument groups

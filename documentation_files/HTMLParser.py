@@ -94,7 +94,7 @@ class HTMLParser:
 	def handle_startendtag(self, tag,attrs):
 		"""
 		Similar to :meth:`handle_starttag`, but called when the parser encounters an
-		XHTML-style empty tag (``<a *more/>``).  This method may be overridden by
+		XHTML-style empty tag (``<a more/>``).  This method may be overridden by
 		subclasses which require this particular lexical information; the default
 		implementation simple calls :meth:`handle_starttag` and :meth:`handle_endtag`.
 		
@@ -157,7 +157,7 @@ class HTMLParser:
 		"""
 		Method called when an SGML ``doctype`` declaration is read by the parser.
 		The *decl* parameter will be the entire contents of the declaration inside
-		the ``<!*more>`` markup.  It is intended to be overridden by a derived class;
+		the ``<!more>`` markup.  It is intended to be overridden by a derived class;
 		the base class implementation does nothing.
 		
 		
@@ -168,7 +168,7 @@ class HTMLParser:
 		"""
 		Method called when an unrecognized SGML declaration is read by the parser.
 		The *data* parameter will be the entire contents of the declaration inside
-		the ``<!*more>`` markup.  It is sometimes useful to be overridden by a
+		the ``<!more>`` markup.  It is sometimes useful to be overridden by a
 		derived class; the base class implementation throws an :exc:`HTMLParseError`.
 		
 		

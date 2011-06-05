@@ -86,7 +86,7 @@ class Message:
 		"""
 		Return the *value* of the first parameter (as returned by :meth:`getplist`) of
 		the form ``name=value`` for the given *name*.  If *value* is surrounded by
-		quotes of the form '``<``*more\ ``>``' or '``"``*more\ ``"``', these are removed.
+		quotes of the form '``<``more\ ``>``' or '``"``more\ ``"``', these are removed.
 		
 		
 		"""

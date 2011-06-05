@@ -4,7 +4,7 @@
 
 
 """
-def open(name=None,mode='r',fileobj=None,bufsize=10240,ESCESCkwargs):
+def open(name=None,mode='r',fileobj=None,bufsize=10240,kwargs=None):
 	"""
 	Return a :class:`TarFile` object for the pathname *name*. For detailed
 	information on :class:`TarFile` objects and the keyword arguments that are

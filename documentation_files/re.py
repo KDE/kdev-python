@@ -134,8 +134,8 @@ def split(pattern,string,maxsplit=0,flags=0):
 	the string, the result will start with an empty string.  The same holds for
 	the end of the string:
 	
-	>>> re.split('(\W+)', '*morewords, words*more')
-	['', '*more', 'words', ', ', 'words', '*more', '']
+	>>> re.split('(\W+)', 'morewords, wordsmore')
+	['', 'more', 'words', ', ', 'words', 'more', '']
 	
 	That way, separator components are always found at the same relative
 	indices within the result list (e.g., if there's one capturing group
@@ -187,8 +187,8 @@ def sub(pattern,repl,string,count,flags):
 	For example:
 	
 	>>> re.sub(r'def\s+([a-zA-Z_][a-zA-Z_0-9]*)\s*\(\s*\):',
-	*more        r'static PyObject*\npy_\1(void)\n{',
-	*more        'def myfunc():')
+	more        r'static PyObject*\npy_\1(void)\n{',
+	more        'def myfunc():')
 	'static PyObject*\npy_myfunc(void)\n{'
 	
 	If *repl* is a function, it is called for every non-overlapping occurrence of
@@ -196,8 +196,8 @@ def sub(pattern,repl,string,count,flags):
 	replacement string.  For example:
 	
 	>>> def dashrepl(matchobj):
-	*more     if matchobj.group(0) == '-': return ' '
-	*more     else: return '-'
+	more     if matchobj.group(0) == '-': return ' '
+	more     else: return '-'
 	>>> re.sub('-{1,2}', dashrepl, 'pro----gram-files')
 	'pro--gram files'
 	>>> re.sub(r'\sAND\s', ' & ', 'Baked Beans And Spam', flags=re.IGNORECASE)
@@ -213,7 +213,7 @@ def sub(pattern,repl,string,count,flags):
 	
 	In addition to character escapes and backreferences as described above,
 	``\g<name>`` will use the substring matched by the group named ``name``, as
-	defined by the ``(?P<name>*more)`` syntax. ``\g<number>`` uses the corresponding
+	defined by the ``(?P<name>more)`` syntax. ``\g<number>`` uses the corresponding
 	group number; ``\g<2>`` is therefore equivalent to ``\2``, but isn't ambiguous
 	in a replacement such as ``\g<2>0``.  ``\20`` would be interpreted as a
 	reference to group 20, not a reference to group 2 followed by the literal
@@ -283,7 +283,7 @@ class RegexObject:
 		
 		>>> pattern = re.compile("d")
 		>>> pattern.search("dog")     # Match at index 0
-		<_sre.SRE_Match object at *more>
+		<_sre.SRE_Match object at more>
 		>>> pattern.search("dog", 1)  # No match; search doesn't include the "d"
 		
 		
@@ -401,7 +401,7 @@ class MatchObject:
 		>>> m.group(1, 2)    # Multiple arguments give us a tuple.
 		('Isaac', 'Newton')
 		
-		If the regular expression uses the ``(?P<name>*more)`` syntax, the *groupN*
+		If the regular expression uses the ``(?P<name>more)`` syntax, the *groupN*
 		arguments may also be strings identifying groups by their group name.  If a
 		string argument is not used as a group name in the pattern, an :exc:`IndexError`
 		exception is raised.

@@ -6,7 +6,7 @@ class PullDOM:
 
 
 	"""
-	:class:`xml.sax.handler.ContentHandler` implementation that *more
+	:class:`xml.sax.handler.ContentHandler` implementation that more
 	
 	
 	"""
@@ -22,7 +22,7 @@ class DOMEventStream:
 
 
 	"""
-	*more
+	more
 	
 	
 	"""
@@ -33,7 +33,7 @@ class DOMEventStream:
 	
 	def getEvent(self, ):
 		"""
-		*more
+		more
 		
 		
 		"""
@@ -41,7 +41,7 @@ class DOMEventStream:
 		
 	def expandNode(self, node):
 		"""
-		*more
+		more
 		
 		
 		"""
@@ -54,7 +54,7 @@ class SAX2DOM:
 
 
 	"""
-	:class:`xml.sax.handler.ContentHandler` implementation that *more
+	:class:`xml.sax.handler.ContentHandler` implementation that more
 	
 	
 	"""
@@ -65,7 +65,7 @@ class SAX2DOM:
 	
 	def parse(self, stream_or_string,parser,bufsize):
 		"""
-		*more
+		more
 		
 		
 		"""
@@ -73,7 +73,7 @@ class SAX2DOM:
 		
 	def parseString(self, string,parser):
 		"""
-		*more
+		more
 		
 		
 		"""

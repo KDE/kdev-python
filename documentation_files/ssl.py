@@ -83,7 +83,7 @@ The raw version number of the OpenSSL library, as a single integer::
 
 """
 OPENSSL_VERSION_NUMBER = None
-def wrap_socket(sock,keyfile=None,certfile=None,server_side=False,cert_reqs=CERT_NONE,ssl_version={seedocs},ca_certs=None,do_handshake_on_connect=True,suppress_ragged_eofs=True,ciphers=None):
+def wrap_socket(sock,keyfile=None,certfile=None,server_side=False,cert_reqs=CERT_NONE,ssl_version=None,ca_certs=None,do_handshake_on_connect=True,suppress_ragged_eofs=True,ciphers=None):
 	"""
 	Takes an instance ``sock`` of :class:`socket.socket`, and returns an instance
 	of :class:`ssl.SSLSocket`, a subtype of :class:`socket.socket`, which wraps
@@ -107,10 +107,10 @@ def wrap_socket(sock,keyfile=None,certfile=None,server_side=False,cert_reqs=CERT
 	the certificate chain::
 	
 	-----BEGIN RSA PRIVATE KEY-----
-	*more (private key in base64 encoding) *more
+	more (private key in base64 encoding) more
 	-----END RSA PRIVATE KEY-----
 	-----BEGIN CERTIFICATE-----
-	*more (certificate in base64 PEM encoding) *more
+	more (certificate in base64 PEM encoding) more
 	-----END CERTIFICATE-----
 	
 	The parameter ``server_side`` is a boolean which identifies whether

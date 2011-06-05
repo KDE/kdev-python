@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """:synopsis: Write and read tabular data to and from delimited files.
 """
-def reader(csvfile,dialect='excel',fmtparam):
+def reader(csvfile,dialect='excel',fmtparam=None):
 	"""
 	Return a reader object which will iterate over lines in the given *csvfile*.
 	*csvfile* can be any object which supports the :term:`iterator` protocol and returns a
@@ -25,14 +25,14 @@ def reader(csvfile,dialect='excel',fmtparam):
 	>>> import csv
 	>>> spamReader = csv.reader(open('eggs.csv', 'rb'), delimiter=' ', quotechar='|')
 	>>> for row in spamReader:
-	*more     print ', '.join(row)
+	more     print ', '.join(row)
 	Spam, Spam, Spam, Spam, Spam, Baked Beans
 	Spam, Lovely Spam, Wonderful Spam
 	
 	"""
 	pass
 	
-def writer(csvfile,dialect='excel',fmtparam):
+def writer(csvfile,dialect='excel',fmtparam=None):
 	"""
 	Return a writer object responsible for converting the user's data into delimited
 	strings on the given file-like object.  *csvfile* can be any object with a
@@ -55,7 +55,7 @@ def writer(csvfile,dialect='excel',fmtparam):
 	
 	>>> import csv
 	>>> spamWriter = csv.writer(open('eggs.csv', 'wb'), delimiter=' ',
-	*more                         quotechar='|', quoting=csv.QUOTE_MINIMAL)
+	more                         quotechar='|', quoting=csv.QUOTE_MINIMAL)
 	>>> spamWriter.writerow(['Spam'] * 5 + ['Baked Beans'])
 	>>> spamWriter.writerow(['Spam', 'Lovely Spam', 'Wonderful Spam'])
 	

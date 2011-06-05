@@ -285,7 +285,7 @@ class Control:
 	def __init__(self, ):
 		pass
 	
-	def event(self, event,argument,condition=1,ordering):
+	def event(self, event,argument,condition=1,ordering=None):
 		"""
 		Make an entry into the ``ControlEvent`` table for this control.
 		

@@ -282,20 +282,6 @@ class BaseProxy:
 		
 		If the referent is unpicklable then this will raise an exception.
 		
-		"""
-		pass
-		
-	def __repr__(self, ():
-		"""
-		Return a representation of the proxy object.
-		
-		"""
-		pass
-		
-	def __str__(self, ():
-		"""
-		Return the representation of the referent.
-		
 		
 		Cleanup
 		"""

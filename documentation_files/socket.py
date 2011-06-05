@@ -73,7 +73,7 @@ this platform.
 has_ipv6 = None
 """
 This is a Python type object that represents the socket object type. It is the
-same as ``type(socket(*more))``.
+same as ``type(socket(more))``.
 
 
 """

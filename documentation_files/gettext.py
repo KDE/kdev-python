@@ -334,7 +334,7 @@ class NullTranslations:
 		this code to make :func:`_` available to their module::
 		
 		import gettext
-		t = gettext.translation('mymodule', *more)
+		t = gettext.translation('mymodule', more)
 		_ = t.gettext
 		
 		This puts :func:`_` only in the module's global namespace and so only

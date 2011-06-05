@@ -104,7 +104,7 @@ def escape(s,quote):
 	sequences.  Use this if you need to display text that might contain such
 	characters in HTML.  If the optional flag *quote* is true, the quotation mark
 	character (``"``) is also translated; this helps for inclusion in an HTML
-	attribute value delimited by double quotes, as in ``<a href="*more">``.  Note
+	attribute value delimited by double quotes, as in ``<a href="more">``.  Note
 	that single quotes are never translated.
 	
 	If the value to be quoted might include single- or double-quote characters,

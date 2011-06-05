@@ -98,17 +98,17 @@ def wraps(wrapped,assigned,updated):
 	
 	>>> from functools import wraps
 	>>> def my_decorator(f):
-	*more     @wraps(f)
-	*more     def wrapper(*args, **kwds):
-	*more         print 'Calling decorated function'
-	*more         return f(*args, **kwds)
-	*more     return wrapper
-	*more
+	more     @wraps(f)
+	more     def wrapper(*args, **kwds):
+	more         print 'Calling decorated function'
+	more         return f(*args, **kwds)
+	more     return wrapper
+	more
 	>>> @my_decorator
-	*more def example():
-	*more      " " " Docstring " " " 
-	*more     print 'Called example function'
-	*more
+	more def example():
+	more      " " " Docstring " " " 
+	more     print 'Called example function'
+	more
 	>>> example()
 	Calling decorated function
 	Called example function

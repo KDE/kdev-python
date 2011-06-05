@@ -213,10 +213,10 @@ example, to test that the Python interpreter is at least version 1.5.2, use::
 
 if sys.hexversion >= 0x010502F0:
 # use some advanced feature
-*more
+more
 else:
 # use an alternative implementation or warn the user
-*more
+more
 
 This is called ``hexversion`` since it only really looks meaningful when viewed
 as the result of passing it to the built-in :func:`hex` function.  The
@@ -411,11 +411,54 @@ generation.
 
 """
 dont_write_bytecode = None
-"""stdout
-stderr
+"""
+File objects corresponding to the interpreter's standard input, output and error
+streams.  ``stdin`` is used for all interpreter input except for scripts but
+including calls to :func:`input` and :func:`raw_input`.  ``stdout`` is used for
+the output of :keyword:`print` and :term:`expression` statements and for the
+prompts of :func:`input` and :func:`raw_input`. The interpreter's own prompts
+and (almost all of) its error messages go to ``stderr``.  ``stdout`` and
+``stderr`` needn't be built-in file objects: any object is acceptable as long
+as it has a :meth:`write` method that takes a string argument.  (Changing these
+objects doesn't affect the standard I/O streams of processes executed by
+:func:`os.popen`, :func:`os.system` or the :func:`exec\*` family of functions in
+the :mod:`os` module.)
+
 
 """
 stdin = None
+"""
+File objects corresponding to the interpreter's standard input, output and error
+streams.  ``stdin`` is used for all interpreter input except for scripts but
+including calls to :func:`input` and :func:`raw_input`.  ``stdout`` is used for
+the output of :keyword:`print` and :term:`expression` statements and for the
+prompts of :func:`input` and :func:`raw_input`. The interpreter's own prompts
+and (almost all of) its error messages go to ``stderr``.  ``stdout`` and
+``stderr`` needn't be built-in file objects: any object is acceptable as long
+as it has a :meth:`write` method that takes a string argument.  (Changing these
+objects doesn't affect the standard I/O streams of processes executed by
+:func:`os.popen`, :func:`os.system` or the :func:`exec\*` family of functions in
+the :mod:`os` module.)
+
+
+"""
+stdout = None
+"""
+File objects corresponding to the interpreter's standard input, output and error
+streams.  ``stdin`` is used for all interpreter input except for scripts but
+including calls to :func:`input` and :func:`raw_input`.  ``stdout`` is used for
+the output of :keyword:`print` and :term:`expression` statements and for the
+prompts of :func:`input` and :func:`raw_input`. The interpreter's own prompts
+and (almost all of) its error messages go to ``stderr``.  ``stdout`` and
+``stderr`` needn't be built-in file objects: any object is acceptable as long
+as it has a :meth:`write` method that takes a string argument.  (Changing these
+objects doesn't affect the standard I/O streams of processes executed by
+:func:`os.popen`, :func:`os.system` or the :func:`exec\*` family of functions in
+the :mod:`os` module.)
+
+
+"""
+stderr = None
 """__stdout__
 __stderr__
 

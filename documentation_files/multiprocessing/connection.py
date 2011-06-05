@@ -79,12 +79,12 @@ class Listener:
 		>>> logger.warning('doomed')
 		[WARNING/MainProcess] doomed
 		>>> m = multiprocessing.Manager()
-		[INFO/SyncManager-*more] child process calling self.run()
-		[INFO/SyncManager-*more] created temp directory /*more/pymp-*more
-		[INFO/SyncManager-*more] manager serving at '/*more/listener-*more'
+		[INFO/SyncManager-more] child process calling self.run()
+		[INFO/SyncManager-more] created temp directory /more/pymp-more
+		[INFO/SyncManager-more] manager serving at '/more/listener-more'
 		>>> del m
 		[INFO/MainProcess] sending shutdown message to manager
-		[INFO/SyncManager-*more] manager exiting with exitcode 0
+		[INFO/SyncManager-more] manager exiting with exitcode 0
 		
 		In addition to having these two logging functions, the multiprocessing also
 		exposes two additional logging level attributes. These are  :const:`SUBWARNING`
@@ -111,18 +111,18 @@ class Listener:
 		>>> logger.warning('doomed')
 		[WARNING/MainProcess] doomed
 		>>> m = multiprocessing.Manager()
-		[INFO/SyncManager-*more] child process calling self.run()
-		[INFO/SyncManager-*more] created temp directory /*more/pymp-*more
-		[INFO/SyncManager-*more] manager serving at '/*more/pymp-djGBXN/listener-*more'
+		[INFO/SyncManager-more] child process calling self.run()
+		[INFO/SyncManager-more] created temp directory /more/pymp-more
+		[INFO/SyncManager-more] manager serving at '/more/pymp-djGBXN/listener-more'
 		>>> del m
-		[SUBDEBUG/MainProcess] finalizer calling *more
+		[SUBDEBUG/MainProcess] finalizer calling more
 		[INFO/MainProcess] sending shutdown message to manager
-		[DEBUG/SyncManager-*more] manager received shutdown message
-		[SUBDEBUG/SyncManager-*more] calling <Finalize object, callback=unlink, *more
-		[SUBDEBUG/SyncManager-*more] finalizer calling <built-in function unlink> *more
-		[SUBDEBUG/SyncManager-*more] calling <Finalize object, dead>
-		[SUBDEBUG/SyncManager-*more] finalizer calling <function rmtree at 0x5aa730> *more
-		[INFO/SyncManager-*more] manager exiting with exitcode 0
+		[DEBUG/SyncManager-more] manager received shutdown message
+		[SUBDEBUG/SyncManager-more] calling <Finalize object, callback=unlink, more
+		[SUBDEBUG/SyncManager-more] finalizer calling <built-in function unlink> more
+		[SUBDEBUG/SyncManager-more] calling <Finalize object, dead>
+		[SUBDEBUG/SyncManager-more] finalizer calling <function rmtree at 0x5aa730> more
+		[INFO/SyncManager-more] manager exiting with exitcode 0
 		
 		The :mod:`multiprocessing.dummy` module
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

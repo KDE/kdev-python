@@ -210,7 +210,7 @@ class RawConfigParser:
 		sensitive::
 		
 		cfgparser = ConfigParser()
-		*more
+		more
 		cfgparser.optionxform = str
 		
 		Note that when reading configuration files, whitespace around the

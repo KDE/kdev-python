@@ -83,7 +83,7 @@ class POP3:
 	def list(self, which):
 		"""
 		Request message list, result is in the form ``(response, ['mesg_num octets',
-		*more], octets)``. If *which* is set, it is the message to list.
+		more], octets)``. If *which* is set, it is the message to list.
 		
 		
 		"""
@@ -92,7 +92,7 @@ class POP3:
 	def retr(self, which):
 		"""
 		Retrieve whole message number *which*, and set its seen flag. Result is in form
-		``(response, ['line', *more], octets)``.
+		``(response, ['line', more], octets)``.
 		
 		
 		"""
@@ -135,7 +135,7 @@ class POP3:
 	def top(self, which,howmuch):
 		"""
 		Retrieves the message header plus *howmuch* lines of the message after the
-		header of message number *which*. Result is in form ``(response, ['line', *more],
+		header of message number *which*. Result is in form ``(response, ['line', more],
 		octets)``.
 		
 		The POP3 TOP command this method uses, unlike the RETR command, doesn't set the

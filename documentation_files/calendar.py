@@ -295,7 +295,7 @@ class LocaleHTMLCalendar:
 		
 	def weekday(self, year,month,day):
 		"""
-		Returns the day of the week (``0`` is Monday) for *year* (``1970``--*more),
+		Returns the day of the week (``0`` is Monday) for *year* (``1970``--more),
 		*month* (``1``--``12``), *day* (``1``--``31``).
 		
 		

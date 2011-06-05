@@ -75,7 +75,7 @@ def compileFile(source):
 	of error checking for free.  It implements the second phase itself, and that
 	implementation is incomplete.  For example, the compiler package does not raise
 	an error if a name appears more than once in an argument list:  ``def f(x, x):
-	*more``
+	more``
 	
 	A future version of the compiler should fix these problems.
 	

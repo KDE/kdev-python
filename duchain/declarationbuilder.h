@@ -82,6 +82,8 @@ protected:
     
     UnsureType::Ptr mergeTypes(AbstractType::Ptr type, AbstractType::Ptr newType);
     
+    Declaration* createModuleImportDeclaration(QString dottedName, Python::Identifier* declarationIdentifier);
+    
     /**
      * @brief Find a declaration specified by "foo.bar.baz" in the given top context.
      *

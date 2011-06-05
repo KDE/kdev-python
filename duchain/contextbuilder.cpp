@@ -278,62 +278,26 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
         foreach ( QString component, nameComponents ) {
             leftNameComponents.removeFirst();
             QString testFilename = tmp.path(KUrl::AddTrailingSlash) + component;
-            kDebug() << testFilename;
             KUrl sourceUrl = testFilename + ".py";
             QFile sourcefile(testFilename + ".py"); // we can only parse those, so we don't care about anything else for now.
             QFileInfo sourcedir(testFilename);
-            if ( sourcefile.exists() ) {
-                return QPair<KUrl, QStringList>(sourceUrl, leftNameComponents);
-            }
-            else if ( sourcedir.exists() && sourcedir.isDir() ) {
-                return QPair<KUrl, QStringList>(KUrl(testFilename.append("/__init__.py")), leftNameComponents);
-            }
             bool can_continue = tmp.cd(component);
-            if ( ! can_continue ) {
+            kDebug() << testFilename << "can continue:" << can_continue << "exists: [file/dir]" << sourcefile.exists() << sourcedir.exists();
+            if ( ! can_continue || leftNameComponents.isEmpty() ) {
+                if ( sourcefile.exists() ) {
+                    kDebug() << "RESULT:" << sourceUrl;
+                    return QPair<KUrl, QStringList>(sourceUrl, leftNameComponents);
+                }
+                else if ( sourcedir.exists() && sourcedir.isDir() ) {
+                    kDebug() << "RESULT:" << testFilename + "/__init__.py";
+                    return QPair<KUrl, QStringList>(KUrl(testFilename + "/__init__.py"), leftNameComponents);
+                }
+                kDebug() << "RESULT:" << "No module path found.";
                 break;
             }
         }
     }
     return QPair<KUrl, QStringList>(KUrl(), QStringList());
-}
-
-void ContextBuilder::visitImport(ImportAst* node)
-{
-    foreach ( AliasAst* name, node->names ) {
-        // for "import ... as", use the as thingy, use the module name otherwise
-        Identifier* moduleName = name->asName ? name->asName : name->name;
-        
-        QPair<KUrl, QStringList> moduleFilePath = findModulePath(name->name->value);
-        kDebug() << "Module path: " << moduleFilePath.first.path();
-        if ( ! moduleFilePath.first.isValid() || ! QFileInfo(moduleFilePath.first.path()).exists() ) {
-            kWarning() << "Malformed or nonexistent path, skipping";
-            continue;
-        }
-        ReferencedTopDUContext moduleChain;
-        
-        moduleFilePath.first.cleanPath(KUrl::SimplifyDirSeparators);
-        IndexedString doc = IndexedString(moduleFilePath.first.path());
-        {
-            DUChainReadLocker lock(DUChain::lock());
-            moduleChain = DUChain::self()->chainForDocument(doc);
-        }
-        
-        bool featuresSatisfied = false;
-        if ( moduleChain.data() ) {
-            if ( moduleChain->features() >= TopDUContext::AllDeclarationsContextsAndUses ) featuresSatisfied = true;
-        }
-        kDebug() << "Chain: " << moduleChain.data() << ";" << "Features satisfied: " << featuresSatisfied;
-        if ( ! featuresSatisfied ) {
-            m_hasUnresolvedImports = true;
-            DUChain::self()->updateContextForUrl(doc, TopDUContext::AllDeclarationsContextsAndUses);
-        }
-        else {
-            contextsForModules.insert(moduleName->value, moduleChain);
-            kDebug() << moduleFilePath.first.path();
-            kDebug() << "Added " << name->name->value << " to the module chain map" << moduleChain.data();
-        }
-    }
-    Python::AstDefaultVisitor::visitImport(node);
 }
 
 void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)

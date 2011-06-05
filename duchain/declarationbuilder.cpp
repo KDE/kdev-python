@@ -141,6 +141,8 @@ UnsureType::Ptr DeclarationBuilder::mergeTypes(AbstractType::Ptr type, AbstractT
     }
     return ret;
 }
+
+typedef QPair<Declaration*, int> p;
 /*
  * WARNING: This will return a nullpointer if another than the expected type of variable was found!
  * */
@@ -156,11 +158,19 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     Declaration* dec = 0;
     QList<Declaration*> existingDeclarations;
     if ( ! previous ) {
-        existingDeclarations = currentContext()->findDeclarations(identifierForNode(node).first(), 
+        kDebug() << "No previous declaration. Current context: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
+        kDebug() << "Looking for node identifier:" << identifierForNode(node);
+        existingDeclarations = currentContext()->findDeclarations(identifierForNode(node).last(),  // <- WARNING first / last?
                                                                   CursorInRevision::invalid(), 0, 
                                                                   DUContext::DontSearchInParent);
+        kDebug() << "found: " << existingDeclarations.length() << "declarations";
+        QList<p> chk = currentContext()->allDeclarations(CursorInRevision::invalid(), currentContext()->topContext(), false);
+        foreach (p c, chk ) {
+            kDebug() << "Decl in context: " << c.first->toString();
+        }
         if ( existingDeclarations.length() ) {
             Declaration* d = existingDeclarations.last();
+            kDebug() << "last one: " << d << d->toString() << dynamic_cast<T*>(d) << wasEncountered(d);
             if ( dynamic_cast<T*>(d) && ! wasEncountered(d) ) {
                 kDebug() << "Opening previously existing declaration for " << d->toString();
                 openDeclarationInternal(d);
@@ -253,67 +263,6 @@ void DeclarationBuilder::visitFor(ForAst* node)
     Python::ContextBuilder::visitFor(node);
 }
 
-void DeclarationBuilder::visitImport(ImportAst* node)
-{
-    Python::ContextBuilder::visitImport(node);
-    DUChainWriteLocker lock(DUChain::lock());
-    foreach ( AliasAst* name, node->names ) {
-        QString moduleName = name->name->value;
-        if ( name->asName && name->asName ) 
-            moduleName += "." + name->asName->value;
-        
-        ReferencedTopDUContext contextptr = contextsForModules.value(name->asName ? name->asName->value : name->name->value);
-        kDebug() << "Chain for document: " << contextptr;
-        importedModuleDeclaration* dec;
-        kDebug() << ( name->asName ? name->asName->value : QString("no asName") ) << ( name->name ? name->name->value : "no name" );
-        
-        StructureType::Ptr type(new StructureType());
-        openType(type);
-        setLastType(AbstractType::Ptr(0));
-        if ( name->asName ) {
-            dec = visitVariableDeclaration<importedModuleDeclaration>(name->asName);
-        }
-        else {
-            dec = visitVariableDeclaration<importedModuleDeclaration>(name->name);
-        }
-        closeType();
-        
-        DUContext* newctx = openContext(name, KDevelop::DUContext::Other);
-        newctx->setType(KDevelop::DUContext::Other);
-        kDebug() << currentContext()->type() << DUContext::Namespace << DUContext::Class;
-        
-        if ( currentContext() && contextptr.data() ) {
-            currentContext()->addImportedParentContext(contextptr.data());
-            kDebug() << "Context for " << moduleName << "imported (I)"; 
-        }
-        else {
-            kWarning() << "Context for " << moduleName << " is not available" << currentContext() << contextptr.data();
-        }
-        
-        closeContext();
-        
-        type->setDeclaration(dec);
-        
-        if ( dec ) {
-            DUChainWriteLocker lock(DUChain::lock());
-            dec->m_moduleIdentifier = moduleName;
-            dec->setType(type);
-            kDebug() << "Context for " << moduleName << "imported (II)"; 
-            
-            if ( m_builtinFunctionsContext.data() ) {
-                kDebug() << "Deleting builtin functions context from imported module...";
-                newctx->removeImportedParentContext(m_builtinFunctionsContext.data());
-            }
-            dec->setInternalContext(newctx);
-            kDebug() << "All declarations in the module which has just been imported" << dec->internalContext()
-                        ->allDeclarations(CursorInRevision::invalid(), currentContext()->topContext(), false);
-        }
-        else {
-            kWarning() << "Failed to import context for " << moduleName << ", no declaration";
-        }
-    }
-}
-
 Declaration* DeclarationBuilder::findDeclarationInContext(QStringList dottedNameIdentifier, TopDUContext* ctx) const
 {
     DUChainReadLocker lock(DUChain::lock());
@@ -340,46 +289,70 @@ Declaration* DeclarationBuilder::findDeclarationInContext(QStringList dottedName
 void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
 {
     Python::AstDefaultVisitor::visitImportFrom(node);
-    QString identifier;
+    QString moduleName;
     foreach ( AliasAst* name, node->names ) {
         if ( node->module ) {
-            identifier = node->module->value + "." + name->name->value;
+            moduleName = node->module->value + "." + name->name->value;
         }
         else {
-            identifier = name->name->value;
+            moduleName = name->name->value;
         }
-        AliasDeclaration* dec = 0;
-        openType(AbstractType::Ptr(0));
-        setLastType(AbstractType::Ptr(0));
-        QPair<KUrl, QStringList> moduleInfo = findModulePath(identifier);
-        IndexedString doc(moduleInfo.first);
-        DUChainReadLocker lock(DUChain::lock());
-        TopDUContext* ctx = DUChain::self()->chainForDocument(doc);
-        lock.unlock();
-        if ( ctx ) {
-            Declaration* orignalDeclaration = findDeclarationInContext(moduleInfo.second, ctx);
-            if ( name->asName ) {
-                dec = openDeclaration<AliasDeclaration>(name->asName, name);
-            }
-            else {
-                dec = openDeclaration<AliasDeclaration>(name->name, name);
-            }
-            if ( dec && name->name && node->module && orignalDeclaration ) {
-                DUChainWriteLocker wlock(DUChain::lock());
-                dec->setAliasedDeclaration(orignalDeclaration);
-                kDebug() << "FromImport module name: " << name->name->value;
-            }
-            else kWarning() << "Failed to create an alias declaration";
-        }
-        else if ( moduleInfo.first.isValid() ) {
-            m_hasUnresolvedImports = true;
-            DUChain::self()->updateContextForUrl(IndexedString(moduleInfo.first), TopDUContext::AllDeclarationsContextsAndUses);
-        }
-        else {
-            kWarning() << "Invalid URL for module " << identifier << "!";
-        }
-        closeType();
+        Identifier* declarationIdentifier = name->asName ? name->asName : name->name;
+        createModuleImportDeclaration(moduleName, declarationIdentifier);
     }
+}
+
+
+void DeclarationBuilder::visitImport(ImportAst* node)
+{
+    Python::ContextBuilder::visitImport(node);
+    DUChainWriteLocker lock(DUChain::lock());
+    foreach ( AliasAst* name, node->names ) {
+        QString moduleName = name->name->value;
+        if ( name->asName && name->asName ) 
+            moduleName += "." + name->asName->value;
+        
+        // use alias if available, name otherwise
+        Identifier* declarationIdentifier = name->asName ? name->asName : name->name;
+        createModuleImportDeclaration(moduleName, declarationIdentifier);
+    }
+}
+
+Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedName, Identifier* declarationIdentifier)
+{
+    QPair<KUrl, QStringList> moduleInfo = findModulePath(dottedName);
+    Q_ASSERT(declarationIdentifier->hasUsefulRangeInformation);
+    kDebug() << "Found module path [path/path in file]: " << moduleInfo;
+    ReferencedTopDUContext moduleContext = DUChain::self()->chainForDocument(IndexedString(moduleInfo.first));
+    Declaration* resultingDeclaration;
+    if ( ! moduleContext ) {
+        // schedule the include file for parsing, and schedule the current one for reparsing after that is done
+        m_hasUnresolvedImports = true;
+        DUChain::self()->updateContextForUrl(IndexedString(moduleInfo.first), TopDUContext::AllDeclarationsContextsAndUses);
+        return 0;
+    }
+    if ( moduleInfo.second.isEmpty() ) {
+        // import the whole module
+        StructureType::Ptr moduleType(new StructureType());
+        openType(moduleType);
+        resultingDeclaration = visitVariableDeclaration<importedModuleDeclaration>(declarationIdentifier);
+        closeType();
+        // create a wrapper context, import the context for the file into that context, and add it using a declaration
+        DUContext* wrapperContext = openContext(declarationIdentifier, KDevelop::DUContext::Other);
+        wrapperContext->addImportedParentContext(moduleContext);
+        moduleType->setDeclaration(resultingDeclaration);
+        resultingDeclaration->setType(moduleType);
+        if ( m_builtinFunctionsContext )
+            wrapperContext->removeImportedParentContext(m_builtinFunctionsContext.data());
+        resultingDeclaration->setInternalContext(wrapperContext);
+    }
+    else {
+        // import a specific declaration from the given file
+        Declaration* originalDeclaration = findDeclarationInContext(moduleInfo.second, moduleContext);
+        resultingDeclaration = visitVariableDeclaration<AliasDeclaration>(declarationIdentifier);
+        static_cast<AliasDeclaration*>(resultingDeclaration)->setAliasedDeclaration(originalDeclaration);
+    }
+    return resultingDeclaration;
 }
 
 void DeclarationBuilder::visitAssignment(AssignmentAst* node)
@@ -576,7 +549,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     FunctionDeclaration* dec = openDeclaration<FunctionDeclaration>( node->name, node );
     
     type = FunctionType::Ptr(new FunctionType());
-    type->setReturnType(AbstractType::Ptr(new IntegralType(IntegralType::TypeNone)));
+    type->setReturnType(AbstractType::Ptr(new IntegralType(IntegralType::TypeVoid)));
     {
         DUChainWriteLocker lock;
         dec->setType(type);

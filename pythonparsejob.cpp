@@ -110,10 +110,11 @@ void ParseJob::run()
     }
     
     if ( abortRequested() ) return abortJob();
-    readContents();
     
     QReadLocker parselock(ilang->parseLock());
     UrlParseLock urlLock(document());
+    
+    readContents();
     
     m_session->setContents( QString::fromUtf8(contents().contents) + "\n" ); // append a newline in case the parser doesnt like it without one
     Q_ASSERT(m_url.isValid());

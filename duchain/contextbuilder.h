@@ -88,7 +88,6 @@ protected:
     virtual void visitClassDefinition( ClassDefinitionAst* );
     virtual void visitWith( WithAst* node );
     virtual void visitCode(CodeAst* node);
-    virtual void visitImport(ImportAst* node);
     
     // helpers, because they need to be called seperately from DeclarationBuilder... well
     virtual void visitFunctionArguments(FunctionDefinitionAst* node);

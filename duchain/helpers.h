@@ -1,8 +1,6 @@
 #ifndef GLOBALHELPERS_H
 #define GLOBALHELPERS_H
 
-#include "parser/parserConfig.h"
-
 #include <QList>
 #include <KUrl>
 #include <interfaces/iproject.h>

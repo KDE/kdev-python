@@ -44,11 +44,11 @@
 #include "pythoncodecompletioncontext.h"
 #include "pythoneditorintegrator.h"
 #include "duchain/declarationbuilder.h"
-#include "parser/parserConfig.h"
 #include "implementfunctioncompletionitem.h"
 
 #include "duchain/helpers.h"
 #include <language/duchain/aliasdeclaration.h>
+#include <KStandardDirs>
 
 using namespace KTextEditor;
 using namespace KDevelop;
@@ -321,7 +321,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
         QList<DeclarationDepthPair> keepDeclarations;
         // filter out those which are builtin functions, and those which were imported; we don't want those here
         // TODO rework this, it's maybe not the most elegant solution possible
-        KUrl url = KUrl(DOCFILE_PATH);
+        KUrl url = KUrl(KStandardDirs::locate("data", "kdevpythonsupport/documentation_files/builtindocumentation.py"));
         url.cleanPath();
         QString u = url.path();
         foreach ( DeclarationDepthPair current, declarations ) {

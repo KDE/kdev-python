@@ -51,6 +51,7 @@ public:
     QList<KDevelop::ProblemPointer> m_problems;
 private:
     static QMutex pyInitLock;
+    static QString pyHomeDir;
 };
 
 }

@@ -28,12 +28,9 @@
 #include <language/duchain/namespacealiasdeclaration.h>
 #include <language/duchain/forwarddeclaration.h>
 #include <language/duchain/duchainutils.h>
-#include <declarations/importedmoduledeclaration.h>
 
 #include <QTcpSocket>
 #include <QProcess>
-
-#include "parser/parserConfig.h"
 
 namespace Python
 {

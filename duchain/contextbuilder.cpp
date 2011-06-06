@@ -45,11 +45,11 @@
 #include "codecompletion/pythoncodecompletioncontext.h"
 #include "pythonparsejob.h"
 #include "declarationbuilder.h"
-#include "parser/parserConfig.h"
 #include "helpers.h"
 #include <pythonlanguagesupport.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <language/backgroundparser/backgroundparser.h>
+#include <KStandardDirs>
 
 using namespace KDevelop;
 
@@ -250,7 +250,7 @@ void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
 }
 
 void ContextBuilder::visitCode(CodeAst* node) {
-    KUrl doc_url = KUrl(DOCFILE_PATH);
+    KUrl doc_url = KUrl(KStandardDirs::locate("data", "kdevpythonsupport/documentation_files/builtindocumentation.py"));
     doc_url.cleanPath(KUrl::SimplifyDirSeparators);
     IndexedString doc = IndexedString(doc_url.path());
     Q_ASSERT(currentlyParsedDocument().toUrl().isValid());

@@ -41,7 +41,6 @@
 #undef _POSIX_C_SOURCE
 #undef _XOPEN_SOURCE
 
-#include "parserConfig.h"
 #include <language/duchain/duchainlock.h>
 
 #include "python-src/Include/pyport.h"
@@ -61,6 +60,7 @@
 
 #include "python-src/Include/object.h"
 #include <Modules/cjkcodecs/multibytecodec.h>
+#include <KStandardDirs>
 
 using namespace KDevelop;
 
@@ -728,14 +728,14 @@ v->function->belongsToCall = v;
 
 
 QMutex AstBuilder::pyInitLock;
+QString AstBuilder::pyHomeDir = KStandardDirs::locate("data", "");
 
 CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
 {
     Py_NoSiteFlag = 1;
     
     AstBuilder::pyInitLock.lock();
-    char dir[] = INSTALL_PATH;
-    Py_SetPythonHome(dir);
+    Py_SetPythonHome(AstBuilder::pyHomeDir.toAscii().data());
     kDebug() << "Not initialized, calling init func.";
     Py_Initialize();
     
@@ -857,8 +857,6 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
                 break;
             }
         }
-        
-        kDebug() << contents;
         
         syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);
         // 3rd try: discard everything after the last non-empty line, but only until the next block start

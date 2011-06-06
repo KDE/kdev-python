@@ -53,7 +53,6 @@
 #include <interfaces/icore.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <language/duchain/indexedstring.h>
-#include "parser/parserConfig.h"
 #include <language/backgroundparser/backgroundparser.h>
 
 using namespace KDevelop;

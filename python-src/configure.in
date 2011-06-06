@@ -12,7 +12,7 @@ m4_define([version_required],
        [],
        [m4_fatal([Autoconf version $1 is required for Python], 63)])
 ])
-version_required(2.65)
+version_required(2.67)
 
 AC_REVISION($Revision: 86076 $)
 AC_INIT(python, PYTHON_VERSION, http://bugs.python.org/)

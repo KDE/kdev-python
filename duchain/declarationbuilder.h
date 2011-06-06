@@ -34,7 +34,6 @@
 
 #include "contextbuilder.h"
 #include "typebuilder.h"
-#include "parser/parserConfig.h"
 #include <language/duchain/types/unsuretype.h>
 
 namespace Python

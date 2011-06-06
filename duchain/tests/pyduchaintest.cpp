@@ -39,9 +39,9 @@
 #include "expressionvisitor.h"
 #include "contextbuilder.h"
 #include <language/duchain/types/functiontype.h>
-#include "parser/parserConfig.h"
 #include <astbuilder.h>
 #include <language/duchain/aliasdeclaration.h>
+#include <KStandardDirs>
 
 QTEST_MAIN(PyDUChainTest)
 
@@ -60,7 +60,7 @@ void PyDUChainTest::initShell()
     TestCore* core = new TestCore();
     core->initialize(KDevelop::Core::NoUi);
     
-    KUrl doc_url = KUrl(DOCFILE_PATH);
+    KUrl doc_url = KUrl(KStandardDirs::locate("data", "kdevpythonsupport/documentation_files/builtindocumentation.py"));
     doc_url.cleanPath(KUrl::SimplifyDirSeparators);
 
     DUChain::self()->updateContextForUrl(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
@@ -78,7 +78,7 @@ void PyDUChainTest::initShell()
     KDevelop::CodeRepresentation::setDiskChangesForbidden(true);
 }
 
-void PyDUChainTest::parse_int(const QString& code, const QString& suffix, bool forceUpdate)
+void PyDUChainTest::parse_int(const QString& code, const QString& suffix)
 {
     ParseSession* session = new ParseSession;
     session->setContents( code + "\n" ); // append a newline in case the parser doesnt like it without one
@@ -104,10 +104,10 @@ void PyDUChainTest::parse_int(const QString& code, const QString& suffix, bool f
     m_ast = a->parse(filename, const_cast<QString&>(code));
 }
 
-ReferencedTopDUContext PyDUChainTest::parse(const QString& code, const QString& suffix, bool forceUpdate)
+ReferencedTopDUContext PyDUChainTest::parse(const QString& code, const QString& suffix)
 {
     m_finished = false;
-    parse_int(code, suffix, forceUpdate);
+    parse_int(code, suffix);
     QTime t;
     t.start();
     while ( ! m_finished ) {
@@ -117,7 +117,7 @@ ReferencedTopDUContext PyDUChainTest::parse(const QString& code, const QString& 
     return m_ctx;
 }
 
-void PyDUChainTest::updateReady(IndexedString url, ReferencedTopDUContext topContext)
+void PyDUChainTest::updateReady(IndexedString /*url*/, ReferencedTopDUContext topContext)
 {
     m_ctx = topContext;
     m_finished = true;
@@ -145,7 +145,7 @@ void PyDUChainTest::testFlickering()
     int count = ctx->localDeclarations().size();
     qDebug() << "Declaration count before: " << count;
     QVERIFY(count == before);
-    ctx = parse(code[1], "flickering", true);
+    ctx = parse(code[1], "flickering");
     count = ctx->localDeclarations().size();
     qDebug() << "Declaration count afterwards: " << count;
     QVERIFY(count == after);

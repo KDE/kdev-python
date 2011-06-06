@@ -1,6 +1,5 @@
 #include "navigationwidget.h"
 #include "declarationnavigationcontext.h"
-#include "parser/parserConfig.h"
 
 #include <QUrl>
 #include <QObject>
@@ -35,7 +34,7 @@ NavigationWidget::NavigationWidget(KDevelop::DeclarationPointer declaration, KDe
     setContext(m_startContext);
 }
 
-void NavigationWidget::addDocumentationData(bool finished)
+void NavigationWidget::addDocumentationData(bool /*finished*/)
 {
 }
 

@@ -41,8 +41,8 @@ class PyDUChainTest : public QObject
         explicit PyDUChainTest(QObject* parent = 0);
         void initShell();
         
-        void parse_int(const QString& code, const QString& suffix = QString::null, bool forceUpdate = false);
-        KDevelop::ReferencedTopDUContext parse(const QString& code, const QString& suffix = QString::null, bool forceUpdate = false);
+        void parse_int(const QString& code, const QString& suffix = QString::null);
+        KDevelop::ReferencedTopDUContext parse(const QString& code, const QString& suffix = QString::null);
         
         Python::CodeAst* m_ast;
         KDevelop::ReferencedTopDUContext m_ctx;

@@ -45,7 +45,6 @@
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/builders/abstracttypebuilder.h>
 #include <language/duchain/aliasdeclaration.h>
-#include <declarations/importedmoduledeclaration.h>
 #include <../kdevplatform/language/duchain/declaration.h>
 
 #include "contextbuilder.h"
@@ -138,7 +137,6 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         }
         /** /DBG **/
         // append arguments context
-        FunctionDeclaration* currentFunction = currentDeclaration<FunctionDeclaration>();
         if ( m_mostRecentArgumentsContext ) {
             QList<Declaration*> args = m_mostRecentArgumentsContext->findDeclarations(identifierForNode(node).last(),
                                                                                       CursorInRevision::invalid(), 0, DUContext::DontSearchInParent);
@@ -359,7 +357,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
         StructureType::Ptr moduleType(new StructureType());
         openType(moduleType);
         DUChainWriteLocker lock(DUChain::lock());
-        resultingDeclaration = openDeclaration<importedModuleDeclaration>(identifierForNode(declarationIdentifier), range);
+        resultingDeclaration = openDeclaration<Declaration>(identifierForNode(declarationIdentifier), range);
         Q_ASSERT(resultingDeclaration);
         resultingDeclaration->setKind(KDevelop::Declaration::Instance);
         closeDeclaration();

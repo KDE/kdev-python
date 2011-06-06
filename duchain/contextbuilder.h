@@ -71,6 +71,7 @@ public:
     IndexedString currentlyParsedDocument() const;
     IndexedString m_currentlyParsedDocument;
     bool m_hasUnresolvedImports;
+    static RangeInRevision rangeForNode(Ast* node, bool moveRight);
 
 protected:
     PythonEditorIntegrator* editor() const;

@@ -185,6 +185,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         }
     }
     else if ( m_operation == PythonCodeCompletionContext::ImportSubCompletion ) {
+        kDebug() << "Finding items for submodule: " << m_subForModule;
         foreach ( ImportFileItem* item, includeFileItemsForSubmodule(m_subForModule) ) {
             Q_ASSERT(item);
             item->includeItem.name = QString(item->moduleName + " (from " + KUrl::relativeUrl(m_workingOnDocument, item->includeItem.basePath) + ")");
@@ -405,6 +406,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
                                                          int depth, const PythonCodeCompletionWorker* parent): CodeCompletionContext(context, text, position, depth),
                                                          m_operation(PythonCodeCompletionContext::DefaultCompletion), parent(parent), m_position(position), m_context(context)
 {
+    kDebug() << "Text: " << text;
     m_workingOnDocument = parent->parent->m_currentDocument;
     QString currentLine = "\n" + text.split("\n").last(); // we'll only look at the last line, as 99% of python statements are limited to one line
     int atLine = position.line;
@@ -494,10 +496,10 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     }
 
     //                                                 v   v   v   v   v allow comma seperated list of imports
-    QRegExp importsub("(.*)\n[\\s]*from(.*)import[\\s]*(.*[\\s]*,[\\s]*)*$");
+    QRegExp importsub("^[\\s]*from(.*)import[\\s]*(.*[\\s]*,[\\s]*)*$");
     importsub.setMinimal(true);
     bool is_importSub = importsub.exactMatch(currentLine);
-    QRegExp importsub2("(.*)\n[\\s]*(from|import)(.*)\\.$");
+    QRegExp importsub2("^[\\s]*(from|import)[\\s]*(.*)\\.$");
     importsub2.setMinimal(true);
     bool is_importSub2 = importsub2.exactMatch(currentLine);
     if ( is_importSub || is_importSub2 ) {
@@ -508,10 +510,10 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         kDebug() << for_module_match;
         
         QString for_module;
-        if ( is_importSub ) for_module = for_module_match.last().replace(" ", "");
+        if ( is_importSub ) for_module = for_module_match[1].replace(" ", "");
         else for_module = for_module_match[3].replace(" ", "");
-            
-        kDebug() << "Matching against module name: " << for_module_match;
+        
+        kDebug() << "Matching against module name: " << for_module_match << is_importSub << is_importSub2;
         m_operation = PythonCodeCompletionContext::ImportSubCompletion;
         m_subForModule = for_module;
         kDebug() << "submodule: " << for_module;
@@ -527,10 +529,10 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     }
     
     //                                          v   v   v   v   v allow comma seperated list of imports
-    QRegExp importfile("(.*)\n[\\s]*import[\\s]*(.*[\\s]*,[\\s]*)*$");
+    QRegExp importfile("^[\\s]*import[\\s]*(.*[\\s]*,[\\s]*)*$");
     importfile.setMinimal(true);
     bool is_importfile = importfile.exactMatch(currentLine);
-    QRegExp fromimport("(.*)\n[\\s]*from[\\s]*$");
+    QRegExp fromimport("^[\\s]*from[\\s]*$");
     fromimport.setMinimal(true);
     bool is_fromimport = fromimport.exactMatch(currentLine);
     if ( is_importfile || is_fromimport ) {

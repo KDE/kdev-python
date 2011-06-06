@@ -309,9 +309,6 @@ void DeclarationBuilder::visitImport(ImportAst* node)
     DUChainWriteLocker lock(DUChain::lock());
     foreach ( AliasAst* name, node->names ) {
         QString moduleName = name->name->value;
-        if ( name->asName && name->asName ) 
-            moduleName += "." + name->asName->value;
-        
         // use alias if available, name otherwise
         Identifier* declarationIdentifier = name->asName ? name->asName : name->name;
         createModuleImportDeclaration(moduleName, declarationIdentifier);
@@ -323,22 +320,36 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
     QPair<KUrl, QStringList> moduleInfo = findModulePath(dottedName);
     Q_ASSERT(declarationIdentifier->hasUsefulRangeInformation);
     kDebug() << "Found module path [path/path in file]: " << moduleInfo;
+    DUChainWriteLocker lock(DUChain::lock());
     ReferencedTopDUContext moduleContext = DUChain::self()->chainForDocument(IndexedString(moduleInfo.first));
-    Declaration* resultingDeclaration;
+    lock.unlock();
+    Declaration* resultingDeclaration = 0;
+    if ( ! moduleInfo.first.isValid() ) {
+        kWarning() << "invalid or non-existent URL:" << moduleInfo;
+        return 0;
+    }
     if ( ! moduleContext ) {
         // schedule the include file for parsing, and schedule the current one for reparsing after that is done
+        kDebug() << "No module context, recompiling";
         m_hasUnresolvedImports = true;
         DUChain::self()->updateContextForUrl(IndexedString(moduleInfo.first), TopDUContext::AllDeclarationsContextsAndUses);
         return 0;
     }
     if ( moduleInfo.second.isEmpty() ) {
         // import the whole module
+        kDebug() << "Got module, importing it";
         StructureType::Ptr moduleType(new StructureType());
         openType(moduleType);
-        resultingDeclaration = visitVariableDeclaration<importedModuleDeclaration>(declarationIdentifier);
+        DUChainWriteLocker lock(DUChain::lock());
+        resultingDeclaration = openDeclaration<importedModuleDeclaration>(identifierForNode(declarationIdentifier),
+                                                                          rangeForNode(declarationIdentifier, true));
+        Q_ASSERT(resultingDeclaration);
+        resultingDeclaration->setKind(KDevelop::Declaration::Instance);
+        closeDeclaration();
         closeType();
         // create a wrapper context, import the context for the file into that context, and add it using a declaration
         DUContext* wrapperContext = openContext(declarationIdentifier, KDevelop::DUContext::Other);
+        closeContext();
         wrapperContext->addImportedParentContext(moduleContext);
         moduleType->setDeclaration(resultingDeclaration);
         resultingDeclaration->setType(moduleType);
@@ -348,9 +359,18 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
     }
     else {
         // import a specific declaration from the given file
+        lock.lock();
+        kDebug() << "Got module, importing declaration: " << moduleInfo.second;
         Declaration* originalDeclaration = findDeclarationInContext(moduleInfo.second, moduleContext);
-        resultingDeclaration = visitVariableDeclaration<AliasDeclaration>(declarationIdentifier);
-        static_cast<AliasDeclaration*>(resultingDeclaration)->setAliasedDeclaration(originalDeclaration);
+        kDebug() << "Result: " << originalDeclaration;
+        if ( originalDeclaration ) {
+            DUChainWriteLocker lock(DUChain::lock());
+            resultingDeclaration = openDeclaration<AliasDeclaration>(identifierForNode(declarationIdentifier),
+                                                                    rangeForNode(declarationIdentifier, true));
+            static_cast<AliasDeclaration*>(resultingDeclaration)->setAliasedDeclaration(originalDeclaration);
+            closeDeclaration();
+        }
+        // TODO report error
     }
     return resultingDeclaration;
 }

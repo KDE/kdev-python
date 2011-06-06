@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2010-2011 Sven Brauch <svenbrauch@googlemail.com>                *
+ * Copyright (c) 2010-2011 Sven Brauch <svenbrauch@googlemail.com>           *
  *                                                                           *
  * This program is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU General Public License as            *

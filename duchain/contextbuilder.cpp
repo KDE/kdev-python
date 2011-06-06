@@ -93,6 +93,18 @@ IndexedString ContextBuilder::currentlyParsedDocument() const
     return m_currentlyParsedDocument;
 }
 
+RangeInRevision ContextBuilder::rangeForNode(Ast* node, bool moveRight)
+{
+    RangeInRevision range;
+    if ( moveRight ) {
+        range = RangeInRevision(node->startLine, node->startCol, node->endLine, node->endCol + 1);
+    }
+    else {
+        range = RangeInRevision(node->startLine, node->startCol, node->endLine, node->endCol);
+    }
+    return range;
+}
+
 TopDUContext* ContextBuilder::newTopContext(const RangeInRevision& range, ParsingEnvironmentFile* file) 
 {
     IndexedString currentDocumentUrl = ContextBuilder::m_editor->parseSession()->currentDocument();
@@ -281,16 +293,19 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
             KUrl sourceUrl = testFilename + ".py";
             QFile sourcefile(testFilename + ".py"); // we can only parse those, so we don't care about anything else for now.
             QFileInfo sourcedir(testFilename);
-            bool can_continue = tmp.cd(component);
-            kDebug() << testFilename << "can continue:" << can_continue << "exists: [file/dir]" << sourcefile.exists() << sourcedir.exists();
-            if ( ! can_continue || leftNameComponents.isEmpty() ) {
+            tmp.cd(component);
+            kDebug() << testFilename << "exists: [file/dir]" << sourcefile.exists() << sourcedir.exists();
+            if ( ! sourcedir.exists() || leftNameComponents.isEmpty() ) {
                 if ( sourcefile.exists() ) {
                     kDebug() << "RESULT:" << sourceUrl;
+                    sourceUrl.cleanPath();
                     return QPair<KUrl, QStringList>(sourceUrl, leftNameComponents);
                 }
                 else if ( sourcedir.exists() && sourcedir.isDir() ) {
                     kDebug() << "RESULT:" << testFilename + "/__init__.py";
-                    return QPair<KUrl, QStringList>(KUrl(testFilename + "/__init__.py"), leftNameComponents);
+                    KUrl path(testFilename + "/__init__.py");
+                    path.cleanPath();
+                    return QPair<KUrl, QStringList>(path, leftNameComponents);
                 }
                 kDebug() << "RESULT:" << "No module path found.";
                 break;

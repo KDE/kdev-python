@@ -901,14 +901,13 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
             syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);
         }
         if ( ! syntaxtree ) {
+            Py_Finalize();
             pyInitLock.unlock();
             return 0; // everything fails, so we abort.
         }
     }
     kDebug() << "Got syntax tree from python parser:" << syntaxtree->kind << Module_kind;
 
-    AstBuilder::pyInitLock.unlock();
-    
     PythonAstTransformer* t = new PythonAstTransformer();
     t->run(syntaxtree, filename.fileName().replace(".py", ""));
     kDebug() << t->ast;
@@ -916,6 +915,8 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     PyArena_Free(arena);
     Py_Finalize();
     
+    AstBuilder::pyInitLock.unlock();
+
     return t->ast;
 }
 

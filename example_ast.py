@@ -1,5 +1,22 @@
 def func(foo, bar, *args, **kwargs):
-	pass
+    pass
+
+def func(**kwargs):
+    for item in kwargs.iterkeys():
+        print item
+    return kwargs
+
+def my_func():
+    my_var_04 = 5
+    my_var_01 = 1
+    my_var_07 = 12
+    my_var_07 = 12
+    my_var_07 = 12
+    more_vars = 2
+    my_var_02 = 2
+    my_var_03 = 3
+
+import os
 
 def ASDF(arg, arg2):
     arg = arg2

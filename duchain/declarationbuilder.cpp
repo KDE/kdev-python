@@ -346,7 +346,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
     }
     if ( ! moduleContext ) {
         // schedule the include file for parsing, and schedule the current one for reparsing after that is done
-        kDebug() << "No module context, recompiling";
+        qDebug() << "No module context, recompiling";
         m_hasUnresolvedImports = true;
         DUChain::self()->updateContextForUrl(IndexedString(moduleInfo.first), TopDUContext::AllDeclarationsContextsAndUses, 0, -20);
         return 0;

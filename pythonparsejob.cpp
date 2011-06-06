@@ -139,19 +139,20 @@ void ParseJob::run()
         PythonEditorIntegrator editor;
         DeclarationBuilder builder( &editor );
         builder.m_currentlyParsedDocument = filename;
-        bool needsReparse = builder.m_hasUnresolvedImports;
         
         editor.setParseSession(m_session);
         
         Q_ASSERT(m_session->currentDocument().toUrl().isValid());
         m_duContext = builder.build(filename, m_ast, m_duContext);
+        bool needsReparse = builder.m_hasUnresolvedImports;
         setDuChain(m_duContext);
         
         Q_ASSERT(m_session->currentDocument().toUrl().isValid());
         UseBuilder usebuilder( &editor );
         usebuilder.m_currentlyParsedDocument = filename;
         usebuilder.buildUses(m_ast);
-        
+
+        qDebug() << "Document needs update because of unresolved identifiers: " << needsReparse;
         if ( needsReparse ) {
             if ( ! ( minimumFeatures() & Rescheduled ) && KDevelop::ICore::self()->languageController()->backgroundParser()->queuedCount() ) {
                 m_duContext->setFeatures(minimumFeatures());
@@ -164,7 +165,7 @@ void ParseJob::run()
             DUChainWriteLocker lock(DUChain::lock());
             m_duContext->setFeatures(minimumFeatures());
             ParsingEnvironmentFilePointer parsingEnvironmentFile = m_duContext->parsingEnvironmentFile();
-            parsingEnvironmentFile->clearModificationRevisions();
+//             parsingEnvironmentFile->clearModificationRevisions();
             parsingEnvironmentFile->setModificationRevision(contents().modification);
             DUChain::self()->updateContextEnvironment(m_duContext, parsingEnvironmentFile.data());
         }

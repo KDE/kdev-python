@@ -419,6 +419,55 @@ void PyDUChainTest::testImportDeclarations_data() {
     QTest::newRow("from_import_as") << "from i import checkme as checkme" << ( QStringList() << "checkme,23,30" ) << true;
 }
 
+typedef QPair<Declaration*, int> p;
+
+void PyDUChainTest::testAutocompletionFlickering()
+{
+    ReferencedTopDUContext ctx1 = parse("foo = 3\nfoo2 = 2\nfo", "autocompletion1");
+    DUChainWriteLocker lock(DUChain::lock());
+    QVERIFY(ctx1);
+    QList<p> decls1 = ctx1->allDeclarations(CursorInRevision::invalid(), ctx1->topContext());
+    QList<DeclarationId> declIds;
+    foreach ( p d, decls1 ) {
+        declIds << d.first->id();
+    }
+    lock.unlock();
+    ReferencedTopDUContext ctx2 = parse("foo = 3\nfoo2 = 2\nfoo", "autocompletion1");
+    QVERIFY(ctx2);
+    lock.lock();
+    QList<p> decls2 = ctx2->allDeclarations(CursorInRevision::invalid(), ctx2->topContext());
+    foreach ( p d2, decls2 ) {
+        kDebug() << "@1: " << d2.first->toString() << "::" << d2.first->id().hash() << "<>" << declIds.first().hash();
+        QVERIFY(d2.first->id() == declIds.first());
+        declIds.removeFirst();
+    }
+    lock.unlock();
+    
+    qDebug() << "=========================";
+    
+    ctx1 = parse("def func():\n\tfoo = 3\n\tfoo2 = 2\n\tfo", "autocompletion2");
+    lock.lock();
+    QVERIFY(ctx1);
+    decls1 = ctx1->allDeclarations(CursorInRevision::invalid(), ctx1->topContext(), false).first().first->internalContext()
+                 ->allDeclarations(CursorInRevision::invalid(), ctx1->topContext());
+    declIds.clear();
+    foreach ( p d, decls1 ) {
+        declIds << d.first->id();
+    }
+    lock.unlock();
+    ctx2 = parse("def func():\n\tfoo = 3\n\tfoo2 = 2\n\tfoo", "autocompletion2");
+    QVERIFY(ctx2);
+    lock.lock();
+    decls2 = ctx2->allDeclarations(CursorInRevision::invalid(), ctx2->topContext(), false).first().first->internalContext()
+                 ->allDeclarations(CursorInRevision::invalid(), ctx2->topContext());
+    foreach ( p d2, decls2 ) {
+        kDebug() << "@2: " << d2.first->toString() << "::" << d2.first->id().hash() << "<>" << declIds.first().hash();
+        QVERIFY(d2.first->id() == declIds.first());
+        declIds.removeFirst();
+    }
+    lock.unlock();
+}
+
 void PyDUChainTest::testFunctionArgs()
 {
     ReferencedTopDUContext ctx = parse("def ASDF(arg1, arg2):\n"

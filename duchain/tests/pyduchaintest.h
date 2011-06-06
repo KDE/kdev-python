@@ -62,6 +62,7 @@ class PyDUChainTest : public QObject
         void testFlickering();
         void testFlickering_data();
         void testFunctionArgs();
+        void testAutocompletionFlickering();
         void updateReady(KDevelop::IndexedString url, KDevelop::ReferencedTopDUContext topContext);
         
 //         void testFunctionStuff();

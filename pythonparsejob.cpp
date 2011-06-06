@@ -157,7 +157,7 @@ void ParseJob::run()
             if ( ! ( minimumFeatures() & Rescheduled ) && KDevelop::ICore::self()->languageController()->backgroundParser()->queuedCount() ) {
                 m_duContext->setFeatures(minimumFeatures());
                 KDevelop::ICore::self()->languageController()->backgroundParser()->addDocument(document().toUrl(), 
-                                     static_cast<TopDUContext::Features>(minimumFeatures() | Rescheduled), 50000);
+                                     static_cast<TopDUContext::Features>(minimumFeatures() | Rescheduled), 10000);
             }
         }
         

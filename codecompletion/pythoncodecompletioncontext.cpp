@@ -48,6 +48,7 @@
 #include "implementfunctioncompletionitem.h"
 
 #include "duchain/helpers.h"
+#include <language/duchain/aliasdeclaration.h>
 
 using namespace KTextEditor;
 using namespace KDevelop;
@@ -272,6 +273,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
     QList<CompletionTreeItemPointer> items;
     
     DeclarationPointer currentDeclaration;
+    DUChainPointer<Declaration> checkDeclaration;
     int count = declarations.length();
     for ( int i = 0; i < count; i++ ) {
         if ( maxDepth && maxDepth > declarations.at(i).second ) {
@@ -280,12 +282,18 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
         }
         currentDeclaration = DeclarationPointer(declarations.at(i).first);
         
+        
         PythonDeclarationCompletionItem* item;
-        if ( currentDeclaration.data()->abstractType() 
-          && ( currentDeclaration.data()->abstractType()->whichType() == AbstractType::TypeFunction
-            || currentDeclaration.data()->abstractType()->whichType() == AbstractType::TypeStructure )
-        ) {
-//             kDebug() << "Adding function declaration item";
+        AliasDeclaration* alias = dynamic_cast<AliasDeclaration*>(currentDeclaration.data());
+        if ( alias ) {
+            DUChainReadLocker lock(DUChain::lock());
+            checkDeclaration = DUChainPointer<Declaration>(alias->aliasedDeclaration().declaration());
+        }
+        else {
+            checkDeclaration = currentDeclaration;
+        }
+        AbstractType::Ptr type = checkDeclaration->abstractType();
+        if ( type && ( type->whichType() == AbstractType::TypeFunction || type->whichType() == AbstractType::TypeStructure ) ) {
             item = new FunctionDeclarationCompletionItem(currentDeclaration);
         }
         else {

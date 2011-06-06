@@ -1,33 +1,36 @@
 #include "navigationwidget.h"
 #include "declarationnavigationcontext.h"
-#include <qlayout.h>
-#include <QWebView>
+#include "parser/parserConfig.h"
+
 #include <QUrl>
-#include <QWebFrame>
-#include <QWebElement>
-#include <qboxlayout.h>
-#include <qpushbutton.h>
 #include <QObject>
 
-#include <QtNetwork>
+#include <language/duchain/aliasdeclaration.h>
 
-#include <QProcess>
-
-#include "parser/parserConfig.h"
-#include <QThread>
-
-#include <QTimer>
+using namespace KDevelop;
 
 namespace Python {
 
 NavigationWidget::NavigationWidget(KDevelop::DeclarationPointer declaration, KDevelop::TopDUContextPointer topContext, const QString& /* htmlPrefix */, const QString& /* htmlSuffix */)
 {
     kDebug() << "Navigation widget for Declaration requested";
+    
+    AliasDeclaration* alias = dynamic_cast<AliasDeclaration*>(declaration.data());
+    DeclarationPointer realDeclaration;
+    if ( alias ) {
+        kDebug() << "is alias declaration";
+        DUChainReadLocker lock(DUChain::lock());
+        realDeclaration = DeclarationPointer(alias->aliasedDeclaration().declaration());
+    }
+    else {
+        realDeclaration = declaration;
+    }
+    
     m_topContext = topContext;
     
     initBrowser(400);
     
-    DeclarationNavigationContext* context = new DeclarationNavigationContext(declaration, m_topContext);
+    DeclarationNavigationContext* context = new DeclarationNavigationContext(realDeclaration, m_topContext);
     m_startContext = context;
     setContext(m_startContext);
 }

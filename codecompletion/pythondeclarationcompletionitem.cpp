@@ -26,6 +26,7 @@
 #include <language/duchain/types/functiontype.h>
 #include <language/duchain/types/enumeratortype.h>
 #include <language/duchain/duchainutils.h>
+#include <language/duchain/aliasdeclaration.h>
 
 using namespace KDevelop;
 
@@ -34,7 +35,7 @@ namespace Python {
 PythonDeclarationCompletionItem::PythonDeclarationCompletionItem(DeclarationPointer decl, KSharedPtr< CodeCompletionContext > context, int inheritanceDepth)
                                : NormalDeclarationCompletionItem(decl, context, inheritanceDepth)
 {
-    
+    Q_ASSERT(decl->alwaysForceDirect());
 }
 
     

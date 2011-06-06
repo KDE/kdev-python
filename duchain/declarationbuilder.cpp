@@ -332,7 +332,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
         // schedule the include file for parsing, and schedule the current one for reparsing after that is done
         kDebug() << "No module context, recompiling";
         m_hasUnresolvedImports = true;
-        DUChain::self()->updateContextForUrl(IndexedString(moduleInfo.first), TopDUContext::AllDeclarationsContextsAndUses);
+        DUChain::self()->updateContextForUrl(IndexedString(moduleInfo.first), TopDUContext::AllDeclarationsContextsAndUses, 0, -20);
         return 0;
     }
     if ( moduleInfo.second.isEmpty() ) {
@@ -368,7 +368,9 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
             resultingDeclaration = openDeclaration<AliasDeclaration>(identifierForNode(declarationIdentifier),
                                                                     rangeForNode(declarationIdentifier, true));
             static_cast<AliasDeclaration*>(resultingDeclaration)->setAliasedDeclaration(originalDeclaration);
+            resultingDeclaration->setKind(KDevelop::Declaration::Alias);
             closeDeclaration();
+            kDebug() << "Resulting alias: " << resultingDeclaration->toString();
         }
         // TODO report error
     }

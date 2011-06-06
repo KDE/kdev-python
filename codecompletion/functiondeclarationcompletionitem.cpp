@@ -29,6 +29,7 @@
 #include <language/codecompletion/codecompletionmodel.h>
 #include <language/duchain/types/functiontype.h>
 #include "helpers.h"
+#include <language/duchain/aliasdeclaration.h>
 
 using namespace KDevelop;
 using namespace KTextEditor;
@@ -88,15 +89,24 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
 void FunctionDeclarationCompletionItem::executed(KTextEditor::Document* document, const KTextEditor::Range& word)
 {
     kDebug() << "FunctionDeclarationCompletionItem executed";
-    DUChainPointer<FunctionDeclaration> decl = declaration().dynamicCast<FunctionDeclaration>();
-    if ( ! decl.data() ) {
+    DeclarationPointer decl(declaration());
+    DUChainPointer<FunctionDeclaration> fdecl;
+    AliasDeclaration* alias = dynamic_cast<AliasDeclaration*>(decl.data());
+    if ( alias ) {
+        DUChainReadLocker lock(DUChain::lock());
+        fdecl = dynamic_cast<FunctionDeclaration*>(alias->aliasedDeclaration().declaration());
+    }
+    else {
+        fdecl = decl.dynamicCast<FunctionDeclaration>();
+    }
+    if ( ! fdecl.data() || ! fdecl.dynamicCast<FunctionDeclaration>() ) {
         kError() << "ERROR: could not get declaration data, not executing completion item!";
         return;
     }
-    kDebug() << "declaration data: " << decl.data();
+    kDebug() << "declaration data: " << fdecl.data();
     const QString suffix = "()";
     int skip = 2; // place cursor behind bracktes
-    if ( decl.data()->type<FunctionType>()->arguments().length() != 0 ) {
+    if ( fdecl.data()->type<FunctionType>()->arguments().length() != 0 ) {
         skip = 1; // place cursor in brackets if there's parameters
     }
     document->replaceText(word, decl.data()->identifier().toString() + suffix);

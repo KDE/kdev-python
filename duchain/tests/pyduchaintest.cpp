@@ -414,7 +414,7 @@ void PyDUChainTest::testImportDeclarations_data() {
     QTest::addColumn<bool>("shouldBeAliased");
     
     QTest::newRow("from_import") << "from i import checkme" << ( QStringList() << "checkme,16,23" ) << true;
-    QTest::newRow("import") << "import checkme" << ( QStringList() << "checkme,7,14" ) << false;
+    QTest::newRow("import") << "import i" << ( QStringList() << "i,7,14" ) << false;
     QTest::newRow("import_as") << "import i as checkme" << ( QStringList() << "checkme,14,21" ) << false;
     QTest::newRow("from_import_as") << "from i import checkme as checkme" << ( QStringList() << "checkme,23,30" ) << true;
 }

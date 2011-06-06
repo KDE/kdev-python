@@ -131,21 +131,25 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     
     Declaration* dec = 0;
     QList<Declaration*> existingDeclarations;
-    /**DBG**/
-    kDebug() << "Current context: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
-    kDebug() << "Looking for node identifier:" << identifierForNode(node);
-    /** /DBG **/
-    existingDeclarations = currentContext()->findDeclarations(identifierForNode(node).last(),  // <- WARNING first / last?
-                                                                CursorInRevision::invalid(), 0, 
-                                                                DUContext::DontSearchInParent);
+    // specified from outside
     if ( previous ) {
         existingDeclarations << previous;
     }
-    // append arguments context
-    if ( m_mostRecentArgumentsContext ) {
-        QList<Declaration*> args = m_mostRecentArgumentsContext->findDeclarations(identifierForNode(node).last(),
-                                                                                    CursorInRevision::invalid(), 0, DUContext::DontSearchInParent);
-        existingDeclarations.append(args);
+    // find decls by ourselves
+    else {
+        /**DBG**/
+        kDebug() << "Current context: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
+        kDebug() << "Looking for node identifier:" << identifierForNode(node);
+        /** /DBG **/
+        existingDeclarations = currentContext()->findDeclarations(identifierForNode(node).last(),  // <- WARNING first / last?
+                                                                    CursorInRevision::invalid(), 0, 
+                                                                    DUContext::DontSearchInParent);
+        // append arguments context
+        if ( m_mostRecentArgumentsContext ) {
+            QList<Declaration*> args = m_mostRecentArgumentsContext->findDeclarations(identifierForNode(node).last(),
+                                                                                        CursorInRevision::invalid(), 0, DUContext::DontSearchInParent);
+            existingDeclarations.append(args);
+        }
     }
     if ( existingDeclarations.length() ) {
         Declaration* d = existingDeclarations.last();
@@ -162,7 +166,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     
     kDebug() << "VARIABLE CONTEXT: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange() << currentContext()->type() << DUContext::Class;
     
-    if ( currentContext() && currentContext()->type() == DUContext::Class ) {
+    if ( currentContext() && currentContext()->type() == DUContext::Class && existingDeclarations.isEmpty() ) {
         kDebug() << "Creating class member declaration for " << node->value << node->startLine << ":" << node->startCol;
         kDebug() << "Context type: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
         if ( ! dec ) dec = openDeclaration<ClassMemberDeclaration>(node, originalAst ? originalAst : node);

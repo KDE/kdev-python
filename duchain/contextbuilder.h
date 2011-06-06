@@ -119,6 +119,7 @@ protected:
     ReferencedTopDUContext m_topContext;
     DUContextPointer m_moduleContext;
     TopDUContextPointer m_builtinFunctionsContext;
+    DUContextPointer m_mostRecentArgumentsContext;
 
 private:
     void openContextForStatementList( const QList<Ast*>&, DUContext::ContextType type = DUContext::Other);

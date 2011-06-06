@@ -352,6 +352,7 @@ void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
     visitNode(node->arguments);
     closeContext();
     m_importedParentContexts.append( funcctx );
+    m_mostRecentArgumentsContext = DUContextPointer(funcctx);
 }
 
 void ContextBuilder::visitFunctionDefinition(FunctionDefinitionAst* node)
@@ -386,6 +387,7 @@ void ContextBuilder::visitFunctionBody(FunctionDefinitionAst* node)
     
     closeContext();
     kDebug() << " --- closed context (function definition): " << ctx->range().castToSimpleRange();
+    m_mostRecentArgumentsContext = DUContextPointer(0);
 }
 
 void ContextBuilder::visitWith( WithAst * node )

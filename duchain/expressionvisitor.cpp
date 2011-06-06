@@ -60,12 +60,12 @@ Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegra
     if(s_defaultTypes.isEmpty()) {
         s_defaultTypes.insert(KDevelop::Identifier("True"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
         s_defaultTypes.insert(KDevelop::Identifier("False"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
-        s_defaultTypes.insert(KDevelop::Identifier("None"), AbstractType::Ptr(new IntegralType(IntegralType::TypeNull)));
+        s_defaultTypes.insert(KDevelop::Identifier("None"), AbstractType::Ptr(new IntegralType(IntegralType::TypeVoid)));
     }
 }
 
 void ExpressionVisitor::unknownTypeEncountered() {
-    encounter(AbstractType::Ptr(new IntegralType(IntegralType::TypeNull)));
+    encounter(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
 }
 
 void ExpressionVisitor::visitAttribute(AttributeAst* node)

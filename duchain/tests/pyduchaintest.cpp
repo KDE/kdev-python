@@ -472,6 +472,7 @@ void PyDUChainTest::testFunctionArgs()
 {
     ReferencedTopDUContext ctx = parse("def ASDF(arg1, arg2):\n"
                                        "  arg1 = arg2");
+    DUChainWriteLocker lock(DUChain::lock());
     QVERIFY(ctx);
     QVERIFY(m_ast);
 //     dumpDUContext(ctx);

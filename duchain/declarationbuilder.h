@@ -82,7 +82,7 @@ protected:
     
     UnsureType::Ptr mergeTypes(AbstractType::Ptr type, AbstractType::Ptr newType);
     
-    Declaration* createModuleImportDeclaration(QString dottedName, Python::Identifier* declarationIdentifier);
+    Declaration* createModuleImportDeclaration( QString dottedName, Python::Identifier* declarationIdentifier, Python::Ast* rangeNode = 0);
     
     /**
      * @brief Find a declaration specified by "foo.bar.baz" in the given top context.
@@ -97,7 +97,6 @@ protected:
     
     QStack<TopDUContextPointer> m_importContextsForImportStatement;
     DeclarationPointer m_firstAttributeDeclaration;
-    
 private:
     int& nextDeclaration();
 };

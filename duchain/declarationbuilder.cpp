@@ -131,37 +131,33 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     
     Declaration* dec = 0;
     QList<Declaration*> existingDeclarations;
-    if ( ! previous ) {
-        /**DBG**/
-        kDebug() << "No previous declaration. Current context: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
-        kDebug() << "Looking for node identifier:" << identifierForNode(node);
-        /** /DBG **/
-        existingDeclarations = currentContext()->findDeclarations(identifierForNode(node).last(),  // <- WARNING first / last?
-                                                                  CursorInRevision::invalid(), 0, 
-                                                                  DUContext::DontSearchInParent);
-        // append arguments context
-        if ( m_mostRecentArgumentsContext ) {
-            QList<Declaration*> args = m_mostRecentArgumentsContext->findDeclarations(identifierForNode(node).last(),
-                                                                                      CursorInRevision::invalid(), 0, DUContext::DontSearchInParent);
-            existingDeclarations.append(args);
-        }
-        if ( existingDeclarations.length() ) {
-            Declaration* d = existingDeclarations.last();
-            kDebug() << "last one: " << d << d->toString() << dynamic_cast<T*>(d) << wasEncountered(d);
-            if ( dynamic_cast<T*>(d) && ! wasEncountered(d) ) {
-                kDebug() << "Opening previously existing declaration for " << d->toString();
-                openDeclarationInternal(d);
-                d->setRange(editorFindRange(node, node));
-                setEncountered(d);
-                existingDeclarations.removeLast();
-                dec = d;
-            }
-        }
+    /**DBG**/
+    kDebug() << "Current context: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
+    kDebug() << "Looking for node identifier:" << identifierForNode(node);
+    /** /DBG **/
+    existingDeclarations = currentContext()->findDeclarations(identifierForNode(node).last(),  // <- WARNING first / last?
+                                                                CursorInRevision::invalid(), 0, 
+                                                                DUContext::DontSearchInParent);
+    if ( previous ) {
+        existingDeclarations << previous;
     }
-    else {
-        dec = previous;
-        openDeclarationInternal(dec);
-        setEncountered(dec);
+    // append arguments context
+    if ( m_mostRecentArgumentsContext ) {
+        QList<Declaration*> args = m_mostRecentArgumentsContext->findDeclarations(identifierForNode(node).last(),
+                                                                                    CursorInRevision::invalid(), 0, DUContext::DontSearchInParent);
+        existingDeclarations.append(args);
+    }
+    if ( existingDeclarations.length() ) {
+        Declaration* d = existingDeclarations.last();
+        kDebug() << "last one: " << d << d->toString() << dynamic_cast<T*>(d) << wasEncountered(d);
+        if ( dynamic_cast<T*>(d) && ! wasEncountered(d) ) {
+            kDebug() << "Opening previously existing declaration for " << d->toString();
+            openDeclarationInternal(d);
+            d->setRange(editorFindRange(node, node));
+            setEncountered(d);
+            existingDeclarations.removeLast();
+            dec = d;
+        }
     }
     
     kDebug() << "VARIABLE CONTEXT: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange() << currentContext()->type() << DUContext::Class;
@@ -452,6 +448,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         }
         if ( target->astType == Ast::AttributeAstType ) {
             AttributeAst* attrib = static_cast<AttributeAst*>(target);
+            kDebug() << "Visiting attribute: " << attrib->attribute->value;
             // check weather the current attribute is undeclared, but the previos ones known
             // like in X.Y.Z = 3 where X and Y are defined, but Z isn't; then declare Z.
             ExpressionVisitor checkForUnknownAttribute(currentContext(), editor());
@@ -462,12 +459,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             // however, if there's an earlier declaration which does not match the current position
             // (so it's really a different declaration) we skip this.
             Declaration* haveDeclaration = 0;
-            if ( unknown.data() && unknown->range() != editorFindRange(target, target) && ! unknown->range().isEmpty() ) {
-                kWarning() << "Another declaration exists for this attribute, aborting";
-                kDebug() << "Other range: " << unknown->range().castToSimpleRange() << "; own range: " << editorFindRange(target, target).castToSimpleRange();
-                continue;
-            }
-            else if ( unknown.data() ) {
+            if ( unknown.data() ) {
                 kDebug() << "Declaration is already created";
                 haveDeclaration = unknown.data();
             }

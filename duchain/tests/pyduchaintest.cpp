@@ -96,7 +96,8 @@ void PyDUChainTest::parse_int(const QString& code, const QString& suffix, bool f
     f.write(code.toAscii());
     f.close();
     
-    KDevelop::DUChain::self()->updateContextForUrl(KDevelop::IndexedString(filename), TopDUContext::AllDeclarationsContextsAndUses,
+    KDevelop::DUChain::self()->updateContextForUrl(KDevelop::IndexedString(filename), 
+                                                   static_cast<TopDUContext::Features>(TopDUContext::AllDeclarationsContextsAndUses | TopDUContext::ForceUpdate),
                                                    this, 1);
     
     AstBuilder* a = new AstBuilder();

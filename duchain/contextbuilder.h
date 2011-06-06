@@ -96,6 +96,8 @@ protected:
     void openContextForFunctionBody(FunctionDefinitionAst* node);
     void openContextForClassDefinition(ClassDefinitionAst* node);
     
+    RangeInRevision rangeForArgumentsContext( Python::FunctionDefinitionAst* node);
+    
     DUContext* openSafeContext( Python::Ast* node, RangeInRevision& range, DUContext::ContextType type, Python::Identifier* identifier = 0 );
     
     QMap<QString, ReferencedTopDUContext> contextsForModules;

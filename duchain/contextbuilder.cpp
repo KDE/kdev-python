@@ -315,7 +315,7 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
     return QPair<KUrl, QStringList>(KUrl(), QStringList());
 }
 
-void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
+RangeInRevision ContextBuilder::rangeForArgumentsContext(FunctionDefinitionAst* node)
 {
     // construct the range for the arguments context... due to stupid args / varargs this is pretty complicated
     RangeInRevision range;
@@ -338,17 +338,23 @@ void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
         end = CursorInRevision(last->endLine, last->endCol);
     }
     
-    if ( node->arguments->arguments.isEmpty() ) {
+    if ( node->arguments->arguments.isEmpty() && ! node->arguments->kwarg && ! node->arguments->vararg ) {
         start = CursorInRevision(node->startLine, node->startCol + node->name->value.length());
         end = start;
     }
     
     range = RangeInRevision(start, end);
     Q_ASSERT(range.isValid());
+    return range;
+}
+
+void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
+{
+    RangeInRevision range = rangeForArgumentsContext(node);
     
     DUContext* funcctx = openContext( node->arguments, range, DUContext::Function, node->name);
     kDebug() << funcctx;
-    kDebug() << " +++ opening FUNCTION ARGUMENTS context: " << funcctx->range().castToSimpleRange();
+    kDebug() << " +++ opening FUNCTION ARGUMENTS context: " << funcctx->range().castToSimpleRange() << node->name->value << range;
     visitNode(node->arguments);
     closeContext();
     m_importedParentContexts.append( funcctx );
@@ -369,14 +375,9 @@ void ContextBuilder::visitFunctionDefinition(FunctionDefinitionAst* node)
 
 void ContextBuilder::visitFunctionBody(FunctionDefinitionAst* node)
 {
-    RangeInRevision range;
-    if ( ! node->arguments->arguments.length() ) {
-        range = RangeInRevision(node->startLine, node->startCol, node->endLine + 1, 0);
-    }
-    else {
-        Ast* ref = node->arguments->arguments.last();
-        range = RangeInRevision(ref->endLine, ref->endCol, node->endLine + 1, 0);
-    }
+    CursorInRevision end = CursorInRevision(node->endLine + 1, 0);
+    CursorInRevision start = rangeForArgumentsContext(node).end;
+    RangeInRevision range(start, end);
     // Done building the function declaration, start building the body now
     DUContext* ctx = openContext(node, range, DUContext::Other, identifierForNode( node->name ) );
     currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));

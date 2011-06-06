@@ -78,6 +78,7 @@ protected:
     
     template<typename T> T* visitVariableDeclaration(Python::Ast* node, Declaration* previous = 0);
     template<typename T> T* visitVariableDeclaration(Identifier* node, Ast* originalAst = 0, Declaration* previous = 0);
+    template<typename T> T* visitVariableDeclaration(Identifier* node, RangeInRevision range);
     
     UnsureType::Ptr mergeTypes(AbstractType::Ptr type, AbstractType::Ptr newType);
     

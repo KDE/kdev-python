@@ -37,6 +37,7 @@
 #include "astdefaultvisitor.h"
 #include "pythonduchainexport.h"
 #include "pythoneditorintegrator.h"
+#include <language/duchain/declaration.h>
 
 
 namespace KDevelop {
@@ -100,6 +101,16 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         virtual void visitCall(CallAst* node);
         virtual void visitAttribute(AttributeAst* node);
         virtual void visitTuple(TupleAst* node);
+        
+        
+        /**
+         * @brief Resolve the given declaration if it is an alias declaration.
+         *
+         * @param decl the declaration to resolve
+         * @return :Declaration* decl if not an alias declaration, decl->aliasedDeclaration().data otherwise
+         * DUChain must be read locked
+         **/
+        Declaration* resolveAliasDeclaration(Declaration* decl);
         
         KDevelop::AbstractType::Ptr lastType() const { return m_lastType; }
         KDevelop::DeclarationPointer lastDeclaration() const { return m_lastAccessedDeclaration; }

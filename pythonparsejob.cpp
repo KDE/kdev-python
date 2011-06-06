@@ -155,6 +155,7 @@ void ParseJob::run()
         qDebug() << "Document needs update because of unresolved identifiers: " << needsReparse;
         if ( needsReparse ) {
             if ( ! ( minimumFeatures() & Rescheduled ) && KDevelop::ICore::self()->languageController()->backgroundParser()->queuedCount() ) {
+                DUChainWriteLocker lock(DUChain::lock());
                 m_duContext->setFeatures(minimumFeatures());
                 KDevelop::ICore::self()->languageController()->backgroundParser()->addDocument(document().toUrl(), 
                                      static_cast<TopDUContext::Features>(minimumFeatures() | Rescheduled), 10000);

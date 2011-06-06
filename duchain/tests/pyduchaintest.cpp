@@ -359,7 +359,7 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("list_access_left_open_slice") << "checkme = some_list[:2]" << "list";
     QTest::newRow("list_access_closed_slice") << "checkme = some_list[2:17]" << "list";
     QTest::newRow("list_access_step") << "checkme = some_list[::2]" << "list";
-    QTest::newRow("list_access_singleItem") << "checkme = some_list[42]" << "null";
+    QTest::newRow("list_access_singleItem") << "checkme = some_list[42]" << "mixed";
     
     QTest::newRow("funccall_number") << "def foo(): return 3; \ncheckme = foo();" << "float";
     QTest::newRow("funccall_string") << "def foo(): return 'a'; \ncheckme = foo();" << "string";
@@ -370,7 +370,7 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("tuple2") << "foo, checkme = 3, \"str\"" << "string";
     QTest::newRow("tuple_type") << "checkme = 1, 2" << "tuple";
     
-    QTest::newRow("class_method_import") << "class c:\n attr = 3\n def m(): return attr;\ni=c()\ncheckme=i.m()" << "null";
+    QTest::newRow("class_method_import") << "class c:\n attr = 3\n def m(): return attr;\ni=c()\ncheckme=i.m()" << "mixed";
     QTest::newRow("class_method_self") << "class c:\n def func(checkme, arg, arg2):\n  pass\n" << "c";
 //    QTest::newRow("funccall_dict") << "def foo(): return foo; checkme = foo();" << (uint) IntegralType::TypeFunction;
 }

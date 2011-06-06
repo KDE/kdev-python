@@ -108,6 +108,16 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, 
     return visitVariableDeclaration<T>(id, currentVariableDefinition, previous);
 }
 
+template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, RangeInRevision range)
+{
+    Ast* pseudo = new Ast();
+    pseudo->startLine = range.start.line; pseudo->startCol = range.start.column;
+    pseudo->endLine = range.end.line; pseudo->endCol = range.end.column;
+    T* result = visitVariableDeclaration<T>(node, pseudo, 0);
+    delete pseudo;
+    return result;
+}
+
 typedef QPair<Declaration*, int> p;
 /*
  * WARNING: This will return a nullpointer if another than the expected type of variable was found!
@@ -129,13 +139,6 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         existingDeclarations = currentContext()->findDeclarations(identifierForNode(node).last(),  // <- WARNING first / last?
                                                                   CursorInRevision::invalid(), 0, 
                                                                   DUContext::DontSearchInParent);
-        /** DBG **/
-        kDebug() << "found: " << existingDeclarations.length() << "declarations";
-        QList<p> chk = currentContext()->allDeclarations(CursorInRevision::invalid(), currentContext()->topContext(), false);
-        foreach (p c, chk ) {
-            kDebug() << "Decl in context: " << c.first->toString();
-        }
-        /** /DBG **/
         // append arguments context
         if ( m_mostRecentArgumentsContext ) {
             QList<Declaration*> args = m_mostRecentArgumentsContext->findDeclarations(identifierForNode(node).last(),
@@ -357,10 +360,8 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
         StructureType::Ptr moduleType(new StructureType());
         openType(moduleType);
         DUChainWriteLocker lock(DUChain::lock());
-        resultingDeclaration = openDeclaration<Declaration>(identifierForNode(declarationIdentifier), range);
+        resultingDeclaration = visitVariableDeclaration<Declaration>(declarationIdentifier, range);
         Q_ASSERT(resultingDeclaration);
-        resultingDeclaration->setKind(KDevelop::Declaration::Instance);
-        closeDeclaration();
         closeType();
         // create a wrapper context, import the context for the file into that context, and add it using a declaration
         DUContext* wrapperContext = openContext(declarationIdentifier, KDevelop::DUContext::Other);
@@ -380,10 +381,8 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
         kDebug() << "Result: " << originalDeclaration;
         if ( originalDeclaration ) {
             DUChainWriteLocker lock(DUChain::lock());
-            resultingDeclaration = openDeclaration<AliasDeclaration>(identifierForNode(declarationIdentifier), range);
+            resultingDeclaration = visitVariableDeclaration<AliasDeclaration>(declarationIdentifier, range);
             static_cast<AliasDeclaration*>(resultingDeclaration)->setAliasedDeclaration(originalDeclaration);
-            resultingDeclaration->setKind(KDevelop::Declaration::Alias);
-            closeDeclaration();
             kDebug() << "Resulting alias: " << resultingDeclaration->toString();
         }
         // TODO report error

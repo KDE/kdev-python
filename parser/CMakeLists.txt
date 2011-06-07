@@ -12,23 +12,6 @@ set(parser_STAT_SRCS
     pythondriver.cpp
 )
 
-# This will build the stuff in python-src/.
-# I know it would be better to use INSTALL() instead of cp, but I've no idea how...
-if ( EXISTS ${kdevpython_SOURCE_DIR}/python-src/Makefile )
-    message(STATUS "Skipping reconfiguration of python sources, assuming nothing changed here. If you want to force reconfiguring, delete the Makefile in python-src/.")
-elseif ( NOT EXISTS ${kdevpython_SOURCE_DIR}/python-src/Makefile )
-    message(STATUS "Configuring python 2.7...")
-    execute_process(COMMAND /bin/bash ${kdevpython_SOURCE_DIR}/python-src/configure --enable-shared --without-pymalloc WORKING_DIRECTORY ${kdevpython_SOURCE_DIR}/python-src)
-endif( EXISTS ${kdevpython_SOURCE_DIR}/python-src/Makefile )
-
-execute_process(COMMAND /usr/bin/env make -f ${kdevpython_SOURCE_DIR}/python-src/Makefile WORKING_DIRECTORY ${kdevpython_SOURCE_DIR}/python-src)
-file(RENAME ${kdevpython_SOURCE_DIR}/python-src/libpython2.7.so ${kdevpython_SOURCE_DIR}/python-src/libkdevpythonparser.so)
-file(RENAME ${kdevpython_SOURCE_DIR}/python-src/libpython2.7.so.1.0 ${kdevpython_SOURCE_DIR}/python-src/libkdevpythonparser.so.1.0)
-message(STATUS "Any warnings about missing dependencies for python can be ignored, you won't need any of them for sure.")
-
-install(FILES ${kdevpython_SOURCE_DIR}/python-src/libkdevpythonparser.so DESTINATION ${LIB_INSTALL_DIR})
-install(FILES ${kdevpython_SOURCE_DIR}/python-src/libkdevpythonparser.so.1.0 DESTINATION ${LIB_INSTALL_DIR})
-
 kde4_add_library( kdev4pythonparser SHARED ${parser_SRCS} ${parser_STAT_SRCS} )
 target_link_libraries(kdev4pythonparser 
     ${KDE4_KDECORE_LIBS} 

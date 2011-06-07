@@ -34,6 +34,7 @@ include_directories(
 add_subdirectory(parser)
 add_subdirectory(duchain)
 add_subdirectory(codecompletion)
+add_subdirectory(python-src)
 
 set(kdevpythonlanguagesupport_PART_SRCS
     pythonlanguagesupport.cpp

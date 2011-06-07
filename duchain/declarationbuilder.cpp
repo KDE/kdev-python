@@ -166,14 +166,15 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     
     kDebug() << "VARIABLE CONTEXT: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange() << currentContext()->type() << DUContext::Class;
     
-    if ( currentContext() && currentContext()->type() == DUContext::Class && existingDeclarations.isEmpty() ) {
+    bool noFittingDeclaration = existingDeclarations.isEmpty() || ( ! existingDeclarations.isEmpty() && ! dynamic_cast<T*>(existingDeclarations.last()) );
+    if ( currentContext() && currentContext()->type() == DUContext::Class && noFittingDeclaration ) {
         kDebug() << "Creating class member declaration for " << node->value << node->startLine << ":" << node->startCol;
         kDebug() << "Context type: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
         if ( ! dec ) dec = openDeclaration<ClassMemberDeclaration>(node, originalAst ? originalAst : node);
         DeclarationBuilderBase::closeDeclaration();
         dec->setType(lastType());
         dec->setKind(KDevelop::Declaration::Instance);
-    } else if ( existingDeclarations.isEmpty() ) {
+    } else if ( noFittingDeclaration ) {
         kDebug() << "Creating variable declaration for " << node->value << node->startLine << ":" << node->startCol << "->" << node->endLine << ":" << node->endCol;
         if ( ! dec ) dec = openDeclaration<T>(node, originalAst ? originalAst : node);
         DeclarationBuilderBase::closeDeclaration();
@@ -382,8 +383,12 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
         if ( originalDeclaration ) {
             DUChainWriteLocker lock(DUChain::lock());
             resultingDeclaration = visitVariableDeclaration<AliasDeclaration>(declarationIdentifier, range);
-            static_cast<AliasDeclaration*>(resultingDeclaration)->setAliasedDeclaration(originalDeclaration);
-            kDebug() << "Resulting alias: " << resultingDeclaration->toString();
+            if ( dynamic_cast<AliasDeclaration*>(resultingDeclaration) ) {
+                static_cast<AliasDeclaration*>(resultingDeclaration)->setAliasedDeclaration(originalDeclaration);
+                kDebug() << "Resulting alias: " << resultingDeclaration->toString();
+            }
+            else
+                kWarning() << "import declaration is being overwritten!";
         }
         // TODO report error
     }

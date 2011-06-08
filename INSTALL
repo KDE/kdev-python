@@ -1,0 +1,6 @@
+To install, do this:
+mkdir -p build
+cd build
+cmake ..
+make parser
+make install

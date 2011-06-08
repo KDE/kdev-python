@@ -553,8 +553,8 @@ MAKEFLAGS=
 # Identity of this package.
 PACKAGE_NAME='python'
 PACKAGE_TARNAME='python'
-PACKAGE_VERSION='2.7'
-PACKAGE_STRING='python 2.7'
+PACKAGE_VERSION='2.7-kdevelop'
+PACKAGE_STRING='python 2.7-kdevelop'
 PACKAGE_BUGREPORT='http://bugs.python.org/'
 PACKAGE_URL=''
 
@@ -2699,7 +2699,7 @@ rm confdefs.h
 mv confdefs.h.new confdefs.h
 
 
-VERSION=2.7
+VERSION="2.7-kdevelop"
 
 
 SOVERSION=1.0

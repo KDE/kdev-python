@@ -17,7 +17,7 @@ target_link_libraries(kdev4pythonparser
     ${KDE4_KDECORE_LIBS} 
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${QT_QTCORE_LIBRARY} 
-    ${kdevpython_SOURCE_DIR}/python-src/libkdevpythonparser.so
+    ${kdevpython_SOURCE_DIR}/python-src/libpython2.7-kdevelop.so
 )
 
 install(TARGETS kdev4pythonparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})

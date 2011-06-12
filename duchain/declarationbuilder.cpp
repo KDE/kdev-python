@@ -191,7 +191,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
                 if ( integral &&  integral->dataType() == IntegralType::TypeMixed ) {
                     dec->setType(newType);
                 } else {
-                    dec->setType(mergeTypes(currentType, newType));
+                    dec->setType(Helper::mergeTypes(currentType, newType));
                 }
             } else {
                 kDebug() << "Existing declaration with no type from last declaration.";
@@ -206,40 +206,6 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     if ( ! result ) kWarning() << "variable declaration does not have the expected type";
     return result;
 }
-
-UnsureType::Ptr DeclarationBuilder::mergeTypes(AbstractType::Ptr type, AbstractType::Ptr newType)
-{
-    UnsureType::Ptr unsure = UnsureType::Ptr::dynamicCast(type);
-    UnsureType::Ptr newUnsure = UnsureType::Ptr::dynamicCast(newType);
-    UnsureType::Ptr ret;
-    // both types are unsure, so join the list of possible types.
-    if ( unsure && newUnsure ) {
-        int len = newUnsure->typesSize();
-        for ( int i = 0; i < len; i++ ) {
-            unsure->addType(newUnsure->types()[i]);
-        }
-        ret = unsure;
-    }
-    // one of them is unsure, use that and add the other one
-    else if ( unsure ) {
-        unsure->addType(newType->indexed());
-        ret = unsure;
-    }
-    else if ( newUnsure ) {
-        AbstractType::Ptr createdType = AbstractType::Ptr(newUnsure->clone());
-        UnsureType::Ptr createdUnsureType = UnsureType::Ptr::dynamicCast(newType);
-        createdUnsureType->addType(type->indexed());
-        ret = createdUnsureType;
-    }
-    else {
-        unsure = UnsureType::Ptr(new UnsureType());
-        unsure->addType(newType->indexed());
-        unsure->addType(type->indexed());
-        ret = unsure;
-    }
-    return ret;
-}
-
 
 void DeclarationBuilder::visitCode(CodeAst* node)
 {

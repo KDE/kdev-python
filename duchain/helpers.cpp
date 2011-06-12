@@ -8,6 +8,7 @@
 #include <KDebug>
 #include <KStandardDirs>
 #include <QProcess>
+#include <language/duchain/types/unsuretype.h>
 
 using namespace KDevelop;
 
@@ -67,6 +68,39 @@ QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
     kDebug() << "Search paths: " << searchPaths;
     kDebug() << workingOnDocument;
     return searchPaths;
+}
+
+UnsureType::Ptr Helper::mergeTypes(AbstractType::Ptr type, AbstractType::Ptr newType)
+{
+    UnsureType::Ptr unsure = UnsureType::Ptr::dynamicCast(type);
+    UnsureType::Ptr newUnsure = UnsureType::Ptr::dynamicCast(newType);
+    UnsureType::Ptr ret;
+    // both types are unsure, so join the list of possible types.
+    if ( unsure && newUnsure ) {
+        int len = newUnsure->typesSize();
+        for ( int i = 0; i < len; i++ ) {
+            unsure->addType(newUnsure->types()[i]);
+        }
+        ret = unsure;
+    }
+    // one of them is unsure, use that and add the other one
+    else if ( unsure ) {
+        unsure->addType(newType->indexed());
+        ret = unsure;
+    }
+    else if ( newUnsure ) {
+        AbstractType::Ptr createdType = AbstractType::Ptr(newUnsure->clone());
+        UnsureType::Ptr createdUnsureType = UnsureType::Ptr::dynamicCast(newType);
+        createdUnsureType->addType(type->indexed());
+        ret = createdUnsureType;
+    }
+    else {
+        unsure = UnsureType::Ptr(new UnsureType());
+        unsure->addType(newType->indexed());
+        unsure->addType(type->indexed());
+        ret = unsure;
+    }
+    return ret;
 }
 
 }

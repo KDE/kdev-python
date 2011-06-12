@@ -114,7 +114,7 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         
         KDevelop::AbstractType::Ptr lastType() const { return m_lastType; }
         KDevelop::DeclarationPointer lastDeclaration() const { return m_lastAccessedDeclaration; }
-        static AbstractType::Ptr typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx);
+        template<typename T> static TypePtr<T> typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx);
     private:
         static QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> s_defaultTypes;
         

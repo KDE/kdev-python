@@ -1,11 +1,13 @@
 #ifndef GLOBALHELPERS_H
 #define GLOBALHELPERS_H
 
+#include <interfaces/iproject.h>
+#include <language/duchain/types/unsuretype.h>
+#include <language/editor/simplerange.h>
+
 #include <QList>
 #include <KUrl>
-#include <interfaces/iproject.h>
 #include <KDebug>
-#include <language/editor/simplerange.h>
 
 #include "pythonduchainexport.h"
 
@@ -17,6 +19,7 @@ class KDEVPYTHONDUCHAIN_EXPORT Helper {
 public:
     static QList<KUrl> getSearchPaths(KUrl workingOnDocument);
     static QList<KUrl> cachedSearchPaths;
+    static UnsureType::Ptr mergeTypes(AbstractType::Ptr type, AbstractType::Ptr newType);
 };
 
 }

@@ -39,6 +39,7 @@
 #include "expressionvisitor.h"
 #include "pythoneditorintegrator.h"
 #include <language/duchain/aliasdeclaration.h>
+#include "declarations/variablelengthcontainerdeclaration.h"
 
 using namespace KDevelop;
 using namespace Python;
@@ -249,44 +250,57 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
     }
 }
 
-AbstractType::Ptr ExpressionVisitor::typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx)
+template<typename T> TypePtr<T> ExpressionVisitor::typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx)
 {
     DUChainReadLocker lock(DUChain::lock());
-    QList<Declaration*> decls = ctx->topContext()->findDeclarations(QualifiedIdentifier("__kdevpythondocumentation_builtin_" + typeDescriptor));
+    QList<Declaration*> decls = ctx->topContext()->findDeclarations(
+        QualifiedIdentifier("__kdevpythondocumentation_builtin_" + typeDescriptor));
     Declaration* decl = decls.isEmpty() ? 0 : decls.first();
     AbstractType::Ptr type = decl ? decl->abstractType() : AbstractType::Ptr(0);
+    QStringList builtinListTypes;
+    builtinListTypes << "list" << "dict";
+    if ( builtinListTypes.contains(typeDescriptor) ) {
+        // return something which can hold a content type
+        VariableLengthContainerDeclaration decl(type);
+        type = AbstractType::Ptr(decl);
+    }
     return type;
 }
 
 void ExpressionVisitor::visitList(ListAst* node)
 {
     AstDefaultVisitor::visitList(node);
-    AbstractType::Ptr type = typeObjectForIntegralType("list", m_ctx);
+    TypePtr<VariableLengthContainerDeclaration> type = typeObjectForIntegralType<VariableLengthContainerDeclaration>("list", m_ctx);
+    ExpressionVisitor contentVisitor(m_ctx);
+    foreach ( ExpressionAst* content, node->elements ) {
+        contentVisitor.visitNode(content);
+        type->addContentType(contentVisitor.lastType());
+    }
     encounter(type);
 }
 
 void ExpressionVisitor::visitTuple(TupleAst* node) {
     AstDefaultVisitor::visitTuple(node);
-    AbstractType::Ptr type = typeObjectForIntegralType("tuple", m_ctx);
+    AbstractType::Ptr type = typeObjectForIntegralType<AbstractType>("tuple", m_ctx);
     encounter(type);
 }
 
 void ExpressionVisitor::visitDict(DictAst* node)
 {
     AstDefaultVisitor::visitDict(node);
-    AbstractType::Ptr type = typeObjectForIntegralType("dict", m_ctx);
+    AbstractType::Ptr type = typeObjectForIntegralType<VariableLengthContainerDeclaration>("dict", m_ctx);
     encounter(type);
 }
 
 void ExpressionVisitor::visitNumber(Python::NumberAst* )
 {
-    AbstractType::Ptr type = typeObjectForIntegralType("float", m_ctx);
+    AbstractType::Ptr type = typeObjectForIntegralType<AbstractType>("float", m_ctx);
     encounter(type);
 }
 
 void ExpressionVisitor::visitString(Python::StringAst* )
 {
-    AbstractType::Ptr type = typeObjectForIntegralType("string", m_ctx);
+    AbstractType::Ptr type = typeObjectForIntegralType<AbstractType>("string", m_ctx);
     encounter(type);
 }
 

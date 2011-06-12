@@ -7,10 +7,13 @@
 #include <interfaces/iprojectcontroller.h>
 #include <KDebug>
 #include <KStandardDirs>
+#include <QProcess>
 
 using namespace KDevelop;
 
 namespace Python {
+
+QList<KUrl> Helper::cachedSearchPaths;
     
 QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
 {
@@ -22,14 +25,41 @@ QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
     
     KStandardDirs d;
     searchPaths.append(KUrl(d.findDirs("data", "kdevpythonsupport/documentation_files").first()));
-    kDebug() << "SEARCH PATHS:" << searchPaths;
-    searchPaths.append(KUrl("/usr/lib/python2.7"));
-    searchPaths.append(KUrl("/usr/lib/python2.7/site-packages"));
-    QString path = getenv("PYTHONPATH");
-    QStringList paths = path.split(':');
-    foreach ( const QString& path, paths ) {
-        searchPaths.append(path);
+    
+    if ( cachedSearchPaths.isEmpty() ) {
+        kDebug() << "*** Gathering search paths...";
+        QStringList getpath;
+        getpath << "python" << "-c" << "import sys; sys.stdout.write(':'.join(sys.path))";
+        
+        QProcess python;
+        python.start("/usr/bin/env", getpath);
+        python.waitForFinished(1000);
+        QByteArray pythonpath = python.readAllStandardOutput();
+        QList<QByteArray> paths = pythonpath.split(':');
+        paths.removeAll("");
+        
+        if ( ! pythonpath.isEmpty() ) {
+            foreach ( const QString& path, paths ) {
+                cachedSearchPaths.append(path);
+            }
+        }
+        else {
+            kWarning() << "Could not get search paths! Defaulting to stupid stuff.";
+            searchPaths.append(KUrl("/usr/lib/python2.7"));
+            searchPaths.append(KUrl("/usr/lib/python2.7/site-packages"));
+            QString path = getenv("PYTHONPATH");
+            QStringList paths = path.split(':');
+            foreach ( const QString& path, paths ) {
+                cachedSearchPaths.append(path);
+            }
+        }
+        kDebug() << " *** Done. Got search paths: " << cachedSearchPaths;
     }
+    else {
+        kDebug() << " --- Search paths from cache: " << cachedSearchPaths;
+    }
+    
+    searchPaths.append(cachedSearchPaths);
     
     // search in the current packages
     searchPaths.append(KUrl(workingOnDocument.directory()));

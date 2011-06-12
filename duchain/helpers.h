@@ -16,6 +16,7 @@ namespace Python {
 class KDEVPYTHONDUCHAIN_EXPORT Helper {
 public:
     static QList<KUrl> getSearchPaths(KUrl workingOnDocument);
+    static QList<KUrl> cachedSearchPaths;
 };
 
 }

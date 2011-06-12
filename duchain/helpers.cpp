@@ -23,7 +23,13 @@ QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
     KStandardDirs d;
     searchPaths.append(KUrl(d.findDirs("data", "kdevpythonsupport/documentation_files").first()));
     kDebug() << "SEARCH PATHS:" << searchPaths;
-    searchPaths.append(KUrl("/usr/lib/python2.7")); // TODO fixme
+    searchPaths.append(KUrl("/usr/lib/python2.7"));
+    searchPaths.append(KUrl("/usr/lib/python2.7/site-packages"));
+    QString path = getenv("PYTHONPATH");
+    QStringList paths = path.split(':');
+    foreach ( const QString& path, paths ) {
+        searchPaths.append(path);
+    }
     
     // search in the current packages
     searchPaths.append(KUrl(workingOnDocument.directory()));

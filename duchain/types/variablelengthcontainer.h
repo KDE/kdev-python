@@ -17,10 +17,10 @@
 **/
 
 
-#ifndef VARIABLELENGTHCONTAINERDECLARATION_H
-#define VARIABLELENGTHCONTAINERDECLARATION_H
+#ifndef VARIABLELENGTHCONTAINER_H
+#define VARIABLELENGTHCONTAINER_H
 
-#include <language/duchain/declaration.h>
+#include <language/duchain/types/structuretype.h>
 #include "pythonduchainexport.h"
 
 using namespace KDevelop;
@@ -31,9 +31,11 @@ namespace Python {
 * Describes something like a python list which is a list, but has a second type,
 * the type of its content (for example "list of integers").
 **/
-class KDEVPYTHONDUCHAIN_EXPORT VariableLengthContainerDeclaration : public KDevelop::Declaration
+class KDEVPYTHONDUCHAIN_EXPORT VariableLengthContainer : public KDevelop::StructureType
 {
 public:
+    VariableLengthContainer(const StructureType& rhs);
+    VariableLengthContainer(const AbstractType::Ptr copyFrom);
     AbstractType::Ptr m_contentType;
     AbstractType::Ptr contentType();
     void addContentType(AbstractType::Ptr typeToAdd);
@@ -44,4 +46,4 @@ public:
 
 }
 
-#endif // VARIABLELENGTHCONTAINERDECLARATION_H
+#endif // VARIABLELENGTHCONTAINER_H

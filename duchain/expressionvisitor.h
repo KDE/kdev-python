@@ -123,6 +123,7 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         PythonEditorIntegrator* m_editor;
         
         void encounter(KDevelop::AbstractType::Ptr type);
+        template<typename T> void encounter(TypePtr<T> type);
         
         void unknownTypeEncountered();
         AbstractType::Ptr m_lastAccessedReturnType;

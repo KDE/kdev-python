@@ -16,26 +16,41 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include "variablelengthcontainerdeclaration.h"
+#include "variablelengthcontainer.h"
 #include "helpers.h"
 
+using namespace KDevelop;
 
-void Python::VariableLengthContainerDeclaration::addContentType(AbstractType::Ptr typeToAdd)
+namespace Python {
+    
+VariableLengthContainer::VariableLengthContainer(const StructureType& rhs) : StructureType(rhs)
 {
-    m_contentType = Helper::mergeTypes(m_contentType, typeToAdd);
+
 }
 
-AbstractType::Ptr Python::VariableLengthContainerDeclaration::contentType()
+VariableLengthContainer::VariableLengthContainer(const AbstractType::Ptr copyFrom)
+{
+    VariableLengthContainer(*(copyFrom.cast<StructureType>().unsafeData()));
+}
+    
+void Python::VariableLengthContainer::addContentType(AbstractType::Ptr typeToAdd)
+{
+    m_contentType = AbstractType::Ptr::staticCast(Helper::mergeTypes(m_contentType, typeToAdd));
+}
+
+AbstractType::Ptr Python::VariableLengthContainer::contentType()
 {
     return m_contentType;
 }
 
-void Python::VariableLengthContainerDeclaration::addKeyType(AbstractType::Ptr typeToAdd)
+void Python::VariableLengthContainer::addKeyType(AbstractType::Ptr typeToAdd)
 {
-    m_keyType = Helper::mergeTypes(m_keyType, typeToAdd);
+    m_keyType = AbstractType::Ptr::staticCast(Helper::mergeTypes(m_keyType, typeToAdd));
 }
 
-AbstractType::Ptr Python::VariableLengthContainerDeclaration::keyType()
+AbstractType::Ptr Python::VariableLengthContainer::keyType()
 {
     return m_keyType;
+}
+
 }

@@ -4,7 +4,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
     )
 
 set(duchain_SRCS
-    declarations/variablelengthcontainerdeclaration.cpp 
+    types/variablelengthcontainer.cpp 
     expressionvisitor.cpp 
     helpers.cpp
     pythonducontext.cpp 
@@ -38,4 +38,4 @@ add_subdirectory(navigation)
 
 add_subdirectory(tests)
 
-add_subdirectory(declarations)
+add_subdirectory(types)

@@ -39,7 +39,7 @@
 #include "expressionvisitor.h"
 #include "pythoneditorintegrator.h"
 #include <language/duchain/aliasdeclaration.h>
-#include "declarations/variablelengthcontainerdeclaration.h"
+#include "types/variablelengthcontainer.h"
 
 using namespace KDevelop;
 using namespace Python;
@@ -54,6 +54,11 @@ QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> ExpressionVisitor::s_de
 void ExpressionVisitor::encounter(AbstractType::Ptr type)
 {
     m_lastType = type;
+}
+
+template<typename T> void ExpressionVisitor::encounter(TypePtr< T > type)
+{
+    encounter(AbstractType::Ptr::staticCast(type));
 }
 
 Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegrator* editor)
@@ -242,10 +247,10 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
 {
     if ( node->slice && node->slice->astType != Ast::IndexAstType ) {
         kDebug() << "Found slice, will use ListType for assignment";
-        encounter(AbstractType::Ptr(new IntegralTypeExtended(IntegralTypeExtended::TypeList)));
+        kDebug() << "LAST DECLARATION:" << lastDeclaration();
     }
     else {
-        kDebug() << "No slice, defaulting to NULL type.";
+        kDebug() << "LAST DECLARATION for slice access:" << lastDeclaration();
         return unknownTypeEncountered();
     }
 }
@@ -259,24 +264,24 @@ template<typename T> TypePtr<T> ExpressionVisitor::typeObjectForIntegralType(QSt
     AbstractType::Ptr type = decl ? decl->abstractType() : AbstractType::Ptr(0);
     QStringList builtinListTypes;
     builtinListTypes << "list" << "dict";
-    if ( builtinListTypes.contains(typeDescriptor) ) {
+    if ( builtinListTypes.contains(typeDescriptor) && decl ) {
         // return something which can hold a content type
-        VariableLengthContainerDeclaration decl(type);
-        type = AbstractType::Ptr(decl);
+        VariableLengthContainer* container = new VariableLengthContainer(type);
+        type = AbstractType::Ptr(container);
     }
-    return type;
+    return type.cast<T>();
 }
 
 void ExpressionVisitor::visitList(ListAst* node)
 {
     AstDefaultVisitor::visitList(node);
-    TypePtr<VariableLengthContainerDeclaration> type = typeObjectForIntegralType<VariableLengthContainerDeclaration>("list", m_ctx);
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
     ExpressionVisitor contentVisitor(m_ctx);
     foreach ( ExpressionAst* content, node->elements ) {
         contentVisitor.visitNode(content);
         type->addContentType(contentVisitor.lastType());
     }
-    encounter(type);
+    encounter<VariableLengthContainer>(type);
 }
 
 void ExpressionVisitor::visitTuple(TupleAst* node) {
@@ -288,8 +293,8 @@ void ExpressionVisitor::visitTuple(TupleAst* node) {
 void ExpressionVisitor::visitDict(DictAst* node)
 {
     AstDefaultVisitor::visitDict(node);
-    AbstractType::Ptr type = typeObjectForIntegralType<VariableLengthContainerDeclaration>("dict", m_ctx);
-    encounter(type);
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("dict", m_ctx);
+    encounter<VariableLengthContainer>(type);
 }
 
 void ExpressionVisitor::visitNumber(Python::NumberAst* )

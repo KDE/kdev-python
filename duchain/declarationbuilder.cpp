@@ -712,7 +712,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             }
         }
         if ( node->vararg ) {
-            AbstractType::Ptr listType = ExpressionVisitor::typeObjectForIntegralType("list", currentContext());
+            AbstractType::Ptr listType = ExpressionVisitor::typeObjectForIntegralType<AbstractType>("list", currentContext());
             type->addArgument(listType);
             node->vararg->startCol = node->vararg_col_offset; node->vararg->endCol = node->vararg_col_offset + node->vararg->value.length() - 1;
             node->vararg->startLine = node->vararg_lineno - 1; node->vararg->endLine = node->vararg_lineno - 1;
@@ -721,7 +721,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             d->setAbstractType(listType);
         }
         if ( node->kwarg ) {
-            AbstractType::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType("dict", currentContext());
+            AbstractType::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType<AbstractType>("dict", currentContext());
             type->addArgument(dictType);
             node->kwarg->startCol = node->arg_col_offset; node->kwarg->endCol = node->arg_col_offset + node->kwarg->value.length() - 1;
             node->kwarg->startLine = node->arg_lineno - 1; node->kwarg->endLine = node->arg_lineno - 1;

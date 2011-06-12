@@ -519,9 +519,9 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         
         QString for_module;
         if ( is_importSub ) for_module = for_module_match[1].replace(" ", "");
-        else for_module = for_module_match[3].replace(" ", "");
+        else for_module = for_module_match[2].replace(" ", "");
         
-        kDebug() << "Matching against module name: " << for_module_match << is_importSub << is_importSub2;
+        kDebug() << "Matching against module name: " << for_module << is_importSub << is_importSub2;
         m_operation = PythonCodeCompletionContext::ImportSubCompletion;
         m_subForModule = for_module;
         kDebug() << "submodule: " << for_module;

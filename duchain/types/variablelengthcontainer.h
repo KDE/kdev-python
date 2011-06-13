@@ -34,14 +34,17 @@ class KDEVPYTHONDUCHAIN_EXPORT VariableLengthContainerData : public KDevelop::St
 public:
     /// Constructor
     VariableLengthContainerData()
-        : KDevelop::StructureTypeData()
+        : KDevelop::StructureTypeData(), m_keyType(0), m_contentType(0)
     {
     }
     /// Copy constructor. \param rhs data to copy
-    VariableLengthContainerData( const StructureTypeData& rhs )
-        : KDevelop::StructureTypeData(rhs)
+    VariableLengthContainerData( const VariableLengthContainerData& rhs )
+        : KDevelop::StructureTypeData(rhs), m_keyType(rhs.m_keyType), m_contentType(rhs.m_contentType)
     {
     }
+    
+    AbstractType::Ptr m_keyType;
+    AbstractType::Ptr m_contentType;
 };
 
 
@@ -54,16 +57,16 @@ class KDEVPYTHONDUCHAIN_EXPORT VariableLengthContainer : public KDevelop::Struct
 public:
     typedef TypePtr<VariableLengthContainer> Ptr;
     
+    VariableLengthContainer();
     VariableLengthContainer(const StructureType& rhs);
-    VariableLengthContainer(const AbstractType::Ptr copyFrom);
-    AbstractType::Ptr m_contentType;
-    AbstractType::Ptr contentType();
+//     VariableLengthContainer(const AbstractType::Ptr copyFrom);
+    VariableLengthContainer(StructureTypeData& data);
     void addContentType(AbstractType::Ptr typeToAdd);
-    AbstractType::Ptr m_keyType;
-    AbstractType::Ptr keyType();
     void addKeyType(AbstractType::Ptr typeToAdd);
     virtual AbstractType* clone() const;
     virtual uint hash() const;
+    AbstractType::Ptr contentType() const;
+    AbstractType::Ptr keyType() const;
     
     enum {
 #warning check identity value (61)

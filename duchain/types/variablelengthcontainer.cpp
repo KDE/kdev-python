@@ -26,8 +26,18 @@ using namespace KDevelop;
 namespace Python {
     
 REGISTER_TYPE(VariableLengthContainer);
+
+VariableLengthContainer::VariableLengthContainer() : KDevelop::StructureType(createData<VariableLengthContainer>())
+{
+
+}
     
-VariableLengthContainer::VariableLengthContainer(const StructureType& rhs) : StructureType(rhs), m_contentType(0), m_keyType(0)
+VariableLengthContainer::VariableLengthContainer(const StructureType& rhs) : StructureType(rhs)
+{
+
+}
+
+VariableLengthContainer::VariableLengthContainer(StructureTypeData& data): StructureType(data)
 {
 
 }
@@ -39,22 +49,22 @@ VariableLengthContainer::VariableLengthContainer(const AbstractType::Ptr copyFro
     
 void Python::VariableLengthContainer::addContentType(AbstractType::Ptr typeToAdd)
 {
-    m_contentType = AbstractType::Ptr::staticCast(Helper::mergeTypes(m_contentType, typeToAdd));
+    d_func_dynamic()->m_contentType = AbstractType::Ptr::staticCast(Helper::mergeTypes(d_func()->m_contentType, typeToAdd));
 }
 
-AbstractType::Ptr Python::VariableLengthContainer::contentType()
+AbstractType::Ptr Python::VariableLengthContainer::contentType() const
 {
-    return m_contentType;
+    return d_func()->m_contentType;
 }
 
 void Python::VariableLengthContainer::addKeyType(AbstractType::Ptr typeToAdd)
 {
-    m_keyType = AbstractType::Ptr::staticCast(Helper::mergeTypes(m_keyType, typeToAdd));
+    d_func_dynamic()->m_keyType = AbstractType::Ptr::staticCast(Helper::mergeTypes(d_func()->m_keyType, typeToAdd));
 }
 
-AbstractType::Ptr Python::VariableLengthContainer::keyType()
+AbstractType::Ptr Python::VariableLengthContainer::keyType() const
 {
-    return m_keyType;
+    return d_func()->m_keyType;
 }
 
 KDevelop::AbstractType* VariableLengthContainer::clone() const
@@ -64,7 +74,13 @@ KDevelop::AbstractType* VariableLengthContainer::clone() const
 
 uint VariableLengthContainer::hash() const
 {
-    return StructureType::hash() + ( m_contentType ? m_contentType->hash() : 0 ) + ( m_keyType ?  m_keyType->hash() : 0 );
+    kDebug() << d_func() << d_func()->m_contentType;
+    const AbstractType* type = d_func()->m_contentType.unsafeData();
+    kDebug() << "type object: " << type;
+    kDebug() << type->hash();
+    return StructureType::hash() + 
+        ( d_func()->m_contentType ? d_func()->m_contentType->hash() : 0 ) + 
+        ( d_func()->m_keyType ? d_func()->m_keyType->hash() : 0 );
 }
 
 }

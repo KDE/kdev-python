@@ -413,7 +413,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         }
     }
     
-    if ( node->value->astType == Ast::TupleAstType ) {
+    if ( node->value && node->value->astType == Ast::TupleAstType ) {
         foreach ( ExpressionAst* value, static_cast<TupleAst*>(node->value)->elements ) {
             ExpressionVisitor v(currentContext(), editor());
             v.visitNode(value);

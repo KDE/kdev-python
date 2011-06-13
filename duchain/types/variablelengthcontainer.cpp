@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
+#include <language/duchain/types/typeregister.h>
+
 #include "variablelengthcontainer.h"
 #include "helpers.h"
 
@@ -23,7 +25,9 @@ using namespace KDevelop;
 
 namespace Python {
     
-VariableLengthContainer::VariableLengthContainer(const StructureType& rhs) : StructureType(rhs)
+REGISTER_TYPE(VariableLengthContainer);
+    
+VariableLengthContainer::VariableLengthContainer(const StructureType& rhs) : StructureType(rhs), m_contentType(0), m_keyType(0)
 {
 
 }
@@ -51,6 +55,16 @@ void Python::VariableLengthContainer::addKeyType(AbstractType::Ptr typeToAdd)
 AbstractType::Ptr Python::VariableLengthContainer::keyType()
 {
     return m_keyType;
+}
+
+KDevelop::AbstractType* VariableLengthContainer::clone() const
+{
+    return new VariableLengthContainer(*this);
+}
+
+uint VariableLengthContainer::hash() const
+{
+    return StructureType::hash() + ( m_contentType ? m_contentType->hash() : 0 ) + ( m_keyType ?  m_keyType->hash() : 0 );
 }
 
 }

@@ -42,6 +42,7 @@
 #include <astbuilder.h>
 #include <language/duchain/aliasdeclaration.h>
 #include <KStandardDirs>
+#include <types/variablelengthcontainer.h>
 
 QTEST_MAIN(PyDUChainTest)
 
@@ -62,6 +63,8 @@ void PyDUChainTest::initShell()
     
     KUrl doc_url = KUrl(KStandardDirs::locate("data", "kdevpythonsupport/documentation_files/builtindocumentation.py"));
     doc_url.cleanPath(KUrl::SimplifyDirSeparators);
+    
+    kDebug() << doc_url;
 
     DUChain::self()->updateContextForUrl(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
     DUChain::self()->waitForUpdate(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
@@ -493,6 +496,30 @@ void PyDUChainTest::testFunctionArgs()
     DUContext* funcBodyCtx = ctx->childContexts().last();
     QCOMPARE(funcBodyCtx->type(), DUContext::Other);
     QVERIFY(funcBodyCtx->owner());
-    QEXPECT_FAIL("", "fixme: re-use argument declaration", Continue);
     QVERIFY(funcBodyCtx->localDeclarations().isEmpty());
 }
+
+void PyDUChainTest::testContainerTypes()
+{
+    QFETCH(QString, code);
+    QFETCH(QString, contenttype);
+    ReferencedTopDUContext ctx = parse(code.toAscii());
+    QVERIFY(ctx);
+    
+    DUChainReadLocker lock(DUChain::lock());
+    QList<Declaration*> decls = ctx->findDeclarations(QualifiedIdentifier("checkme"));
+    QVERIFY(decls.length() > 0);
+    VariableLengthContainer* type = dynamic_cast<VariableLengthContainer*>(decls.first()->abstractType().unsafeData());
+    kDebug() << "type is: " << decls.first()->abstractType().unsafeData()->toString();
+    QVERIFY(type);
+    QVERIFY(type->contentType()->toString() == contenttype);
+}
+
+void PyDUChainTest::testContainerTypes_data()
+{
+    QTest::addColumn<QString>("code");
+    QTest::addColumn<QString>("contenttype");
+    
+    QTest::newRow("list_of_int") << "checkme = [1, 2, 3]" << "float";
+}
+

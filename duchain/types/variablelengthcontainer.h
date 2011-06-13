@@ -21,11 +21,29 @@
 #define VARIABLELENGTHCONTAINER_H
 
 #include <language/duchain/types/structuretype.h>
+#include <language/duchain/types/typesystemdata.h>
+
 #include "pythonduchainexport.h"
 
 using namespace KDevelop;
 
 namespace Python {
+    
+class KDEVPYTHONDUCHAIN_EXPORT VariableLengthContainerData : public KDevelop::StructureTypeData
+{
+public:
+    /// Constructor
+    VariableLengthContainerData()
+        : KDevelop::StructureTypeData()
+    {
+    }
+    /// Copy constructor. \param rhs data to copy
+    VariableLengthContainerData( const StructureTypeData& rhs )
+        : KDevelop::StructureTypeData(rhs)
+    {
+    }
+};
+
 
 /**
 * Describes something like a python list which is a list, but has a second type,
@@ -34,6 +52,8 @@ namespace Python {
 class KDEVPYTHONDUCHAIN_EXPORT VariableLengthContainer : public KDevelop::StructureType
 {
 public:
+    typedef TypePtr<VariableLengthContainer> Ptr;
+    
     VariableLengthContainer(const StructureType& rhs);
     VariableLengthContainer(const AbstractType::Ptr copyFrom);
     AbstractType::Ptr m_contentType;
@@ -42,6 +62,19 @@ public:
     AbstractType::Ptr m_keyType;
     AbstractType::Ptr keyType();
     void addKeyType(AbstractType::Ptr typeToAdd);
+    virtual AbstractType* clone() const;
+    virtual uint hash() const;
+    
+    enum {
+#warning check identity value (61)
+        Identity = 61
+    };
+    
+    typedef VariableLengthContainerData Data;
+    typedef KDevelop::StructureType BaseType;
+    
+protected:
+    TYPE_DECLARE_DATA(VariableLengthContainer);
 };
 
 }

@@ -53,6 +53,7 @@
 #include "expressionvisitor.h"
 #include <interfaces/foregroundlock.h>
 #include "helpers.h"
+#include "types/variablelengthcontainer.h"
 
 
 using namespace KTextEditor;
@@ -407,6 +408,18 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             tupleElementType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
             tupleElementDeclaration = 0;
         }
+        /** DEBUG **/
+        if ( tupleElementType ) {
+            VariableLengthContainer* d = dynamic_cast<VariableLengthContainer*>(tupleElementType.unsafeData());
+            if ( d ) {
+                DUChainReadLocker lock(DUChain::lock());
+                kDebug() << "Got container type for declaration creation: " << tupleElementType << d->contentType();
+                if ( d->contentType() ) {
+                    kDebug() << "Content type: " << d->contentType()->toString();
+                }
+            }
+        }
+        /** END DEBUG **/
         i += 1;
         setLastType(tupleElementType); // TODO fix this for x, y = a, b, i.e. if node->value->astType == TupleAstType
         if ( target->astType == Ast::NameAstType ) {
@@ -418,7 +431,17 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                 }
             }
             else {
-                visitVariableDeclaration<Declaration>(target);
+                DUChainWriteLocker lock(DUChain::lock());
+                Declaration* dec = visitVariableDeclaration<Declaration>(target);
+                dec->setAbstractType(tupleElementType);
+                /** DEBUG **/
+                if ( tupleElementType ) {
+                    VariableLengthContainer* type = dynamic_cast<VariableLengthContainer*>(dec->abstractType().unsafeData());
+                    kDebug() << "type is: " << dec->abstractType().unsafeData() << type << dynamic_cast<VariableLengthContainer*>(tupleElementType.unsafeData());
+                    kDebug() << "indexed: " << tupleElementType->indexed().hash() << "<>" << dec->indexedType().hash();
+                    Q_ASSERT((dynamic_cast<VariableLengthContainer*>(tupleElementType.unsafeData()) == 0 ) xor ( dec->abstractType().unsafeData() == 0));
+                }
+                /** END DEBUG **/
             }
         }
         if ( target->astType == Ast::AttributeAstType ) {

@@ -266,8 +266,11 @@ template<typename T> TypePtr<T> ExpressionVisitor::typeObjectForIntegralType(QSt
     builtinListTypes << "list" << "dict";
     if ( builtinListTypes.contains(typeDescriptor) && decl ) {
         // return something which can hold a content type
+        kDebug() << "Returning container type object";
         VariableLengthContainer* container = new VariableLengthContainer(type);
         type = AbstractType::Ptr(container);
+        VariableLengthContainer* t = dynamic_cast<VariableLengthContainer*>(type.unsafeData());
+        Q_ASSERT(t);
     }
     return type.cast<T>();
 }

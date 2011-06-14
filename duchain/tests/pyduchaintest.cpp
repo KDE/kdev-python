@@ -474,6 +474,29 @@ void PyDUChainTest::testAutocompletionFlickering()
     lock.unlock();
 }
 
+void PyDUChainTest::testDecorators()
+{
+    QFETCH(QString, code);
+    QFETCH(int, amountOfDecorators);
+    ReferencedTopDUContext ctx = parse(code);
+    QVERIFY(ctx);
+    DUChainReadLocker lock(DUChain::lock());
+    Python::FunctionDeclaration* decl = dynamic_cast<Python::FunctionDeclaration*>(
+        ctx->allDeclarations(CursorInRevision::invalid(), ctx->topContext()).first().first);
+    QVERIFY(decl);
+    QCOMPARE(decl->decorators.count(), amountOfDecorators);
+}
+
+void PyDUChainTest::testDecorators_data()
+{
+    QTest::addColumn<QString>("code");
+    QTest::addColumn<int>("amountOfDecorators");
+    
+    QTest::newRow("one_decorator") << "@foo\ndef func(): pass" << 1;
+    QTest::newRow("decorator_with_args") << "@foo(2, \"bar\")\ndef func(): pass" << 1;
+    QTest::newRow("two_decorators") << "@foo\n@bar(17)\ndef func(): pass" << 2;
+}
+
 void PyDUChainTest::testFunctionArgs()
 {
     ReferencedTopDUContext ctx = parse("def ASDF(arg1, arg2):\n"

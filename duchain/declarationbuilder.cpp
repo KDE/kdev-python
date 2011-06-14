@@ -577,6 +577,12 @@ void DeclarationBuilder::visitDecorators(QList< ExpressionAst* > decorators, Dec
             }
             addTo->decorators.append(d);
         }
+        else if ( decorator->astType == Ast::NameAstType ) {
+            NameAst* name = static_cast<NameAst*>(decorator);
+            Decorator d;
+            d.name = *(name->identifier);
+            addTo->decorators.append(d);
+        }
     }
 }
 

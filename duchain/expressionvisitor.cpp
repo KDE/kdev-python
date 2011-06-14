@@ -272,9 +272,15 @@ void ExpressionVisitor::visitList(ListAst* node)
     AstDefaultVisitor::visitList(node);
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
     ExpressionVisitor contentVisitor(m_ctx);
-    foreach ( ExpressionAst* content, node->elements ) {
-        contentVisitor.visitNode(content);
-        type->addContentType(contentVisitor.lastType());
+    if ( type ) {
+        foreach ( ExpressionAst* content, node->elements ) {
+            contentVisitor.visitNode(content);
+            type->addContentType(contentVisitor.lastType());
+        }
+    }
+    else {
+        unknownTypeEncountered();
+        kWarning() << " [ !!! ] did not get a typetrack container object when expecting one! Fix code / setup.";
     }
     encounter<VariableLengthContainer>(type);
 }

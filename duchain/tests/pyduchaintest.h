@@ -66,6 +66,8 @@ class PyDUChainTest : public QObject
         void updateReady(KDevelop::IndexedString url, KDevelop::ReferencedTopDUContext topContext);
         void testContainerTypes();
         void testContainerTypes_data();
+        void testDecorators();
+        void testDecorators_data();
         
 //         void testFunctionStuff();
 //         void testFunctionStuff_data();

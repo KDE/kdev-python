@@ -120,7 +120,6 @@ def cmp(self,x, y): return 0
 def compile(self,source, filename, mode, flags = None, dont_inherit = None): return None
 def complex(self,real = 0, imag = 0): return 1+3j
 def delattr(self,obj, name): return None
-def dict(self,arg = None): return {"string" : None}
 def dir(self,obj = None): return {"string" : None}
 def divmod(self,a, b): return 0
 def enumerate(self,sequence, start = 0): return [(self,0, 0)]
@@ -179,3 +178,5 @@ def vars(self,obj): return None
 def xrange(self,start = 0, stop = 0, step = 0): return []
 def zip(self,iterable = None): return []
 def __import__(self,name, globa = None, loca = None, fromlist = None, level = 0): return None
+
+dict = __kdevpythondocumentation_builtin_dict

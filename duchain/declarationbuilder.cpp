@@ -50,7 +50,7 @@
 #include "expressionvisitor.h"
 #include "helpers.h"
 #include "types/variablelengthcontainer.h"
-#include "declarations/pythonfunctiondeclaration.h"
+#include "declarations/decorateddeclaration.h"
 
 using namespace KTextEditor;
 
@@ -565,7 +565,8 @@ void DeclarationBuilder::visitDecorators(QList< ExpressionAst* > decorators, Dec
         if ( decorator->astType == Ast::CallAstType ) {
             CallAst* call = static_cast<CallAst*>(decorator);
             Decorator d;
-            d.name = call->function->value;
+            if ( call->function->astType != Ast::NameAstType ) continue;
+            d.name = *static_cast<NameAst*>(call->function)->identifier;
             foreach ( ExpressionAst* arg, call->arguments ) {
                 if ( arg->astType == Ast::NumberAstType ) {
                     d.args << static_cast<NumberAst*>(arg)->value;
@@ -600,7 +601,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     DUChainWriteLocker lock(DUChain::lock());
     bool hasFirstArgument = false;
     
-    visitNodeList( node->decorators );
+    visitDecorators(node->decorators, dec);
     visitFunctionArguments(node);
     
     // this must be done here, because the type of self must be known when parsing the body

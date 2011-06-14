@@ -30,19 +30,21 @@
 #include <tests/testcore.h>
 #include <language/duchain/duchain.h>
 #include <QtTest/QtTest>
-#include <parsesession.h>
-#include <pythoneditorintegrator.h>
-#include <declarationbuilder.h>
-#include <usebuilder.h>
+#include <KStandardDirs>
+#include <language/duchain/types/functiontype.h>
+#include <language/duchain/aliasdeclaration.h>
 
+#include "parsesession.h"
+#include "pythoneditorintegrator.h"
+#include "declarationbuilder.h"
+#include "usebuilder.h"
 #include "astdefaultvisitor.h"
 #include "expressionvisitor.h"
 #include "contextbuilder.h"
-#include <language/duchain/types/functiontype.h>
-#include <astbuilder.h>
-#include <language/duchain/aliasdeclaration.h>
-#include <KStandardDirs>
-#include <types/variablelengthcontainer.h>
+#include "astbuilder.h"
+
+#include "types/variablelengthcontainer.h"
+#include "duchain/declarations/decorateddeclaration.h"
 
 QTEST_MAIN(PyDUChainTest)
 
@@ -487,7 +489,7 @@ void PyDUChainTest::testFunctionArgs()
     QCOMPARE(funcArgCtx->localDeclarations().size(), 2);
     QVERIFY(!funcArgCtx->owner());
     
-    FunctionDeclaration* decl = dynamic_cast<FunctionDeclaration*>(
+    Python::FunctionDeclaration* decl = dynamic_cast<Python::FunctionDeclaration*>(
                                     ctx->allDeclarations(CursorInRevision::invalid(), ctx->topContext()).first().first);
     QVERIFY(decl);
     QCOMPARE(decl->type<FunctionType>()->arguments().length(), 2);

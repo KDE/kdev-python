@@ -260,18 +260,10 @@ template<typename T> TypePtr<T> ExpressionVisitor::typeObjectForIntegralType(QSt
     DUChainReadLocker lock(DUChain::lock());
     QList<Declaration*> decls = ctx->topContext()->findDeclarations(
         QualifiedIdentifier("__kdevpythondocumentation_builtin_" + typeDescriptor));
-    Declaration* decl = decls.isEmpty() ? 0 : decls.first();
+    Declaration* decl = decls.isEmpty() ? 0 : dynamic_cast<Declaration*>(decls.first());
     AbstractType::Ptr type = decl ? decl->abstractType() : AbstractType::Ptr(0);
     QStringList builtinListTypes;
     builtinListTypes << "list" << "dict";
-    if ( builtinListTypes.contains(typeDescriptor) && decl ) {
-        // return something which can hold a content type
-        kDebug() << "Returning container type object";
-        VariableLengthContainer* container = new VariableLengthContainer(type);
-        type = AbstractType::Ptr(container);
-        VariableLengthContainer* t = dynamic_cast<VariableLengthContainer*>(type.unsafeData());
-        Q_ASSERT(t);
-    }
     return type.cast<T>();
 }
 

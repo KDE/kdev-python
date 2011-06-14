@@ -368,7 +368,7 @@ void AstDefaultVisitor::visitCall(CallAst* node)
 
 void AstDefaultVisitor::visitFunctionDefinition(FunctionDefinitionAst* node)
 {
-    foreach (NameAst* decorator, node->decorators) {
+    foreach (ExpressionAst* decorator, node->decorators) {
         visitNode(decorator);
     }
     visitNode(node->arguments);

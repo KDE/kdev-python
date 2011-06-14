@@ -193,6 +193,10 @@ public:
 class KDEVPYTHONPARSER_EXPORT Identifier : public Ast {
 public:
     Identifier(QString value);
+    Identifier operator=(const Identifier& rhs) {
+        Identifier c(rhs.value);
+        return c;
+    };
     QString value;
 };
 

@@ -29,6 +29,9 @@ namespace Python {
 
 class Decorator {
 public:
+    Decorator() : name("<none set>") {
+        
+    };
     Identifier name;
     QList<QVariant> args;
 };
@@ -39,14 +42,24 @@ public:
 };
 
 class PythonFunctionDeclaration : public KDevelop::FunctionDeclaration, public DecoratedDeclaration {
-    
+public:
+    PythonFunctionDeclaration(const KDevelop::RangeInRevision& range, KDevelop::DUContext* context);
+    PythonFunctionDeclaration(const FunctionDeclaration& rhs);
+    PythonFunctionDeclaration(KDevelop::FunctionDeclarationData& data);
+    PythonFunctionDeclaration(KDevelop::FunctionDeclarationData& data, const KDevelop::RangeInRevision& );
 };
 
 class PythonClassDeclaration : public KDevelop::ClassDeclaration, public DecoratedDeclaration {
-
+public:
+    PythonClassDeclaration(const KDevelop::RangeInRevision& range, KDevelop::DUContext* context);
+    PythonClassDeclaration(const ClassDeclaration& rhs);
+    PythonClassDeclaration(KDevelop::ClassDeclarationData& data);
+    PythonClassDeclaration(KDevelop::ClassDeclarationData& data, const KDevelop::RangeInRevision& range, KDevelop::DUContext* context);
 };
 
 typedef PythonFunctionDeclaration FunctionDeclaration;
 typedef PythonClassDeclaration ClassDeclaration;
+
+}
 
 #endif // DECORATEDDECLARATION_H

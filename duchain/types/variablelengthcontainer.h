@@ -58,8 +58,8 @@ public:
     typedef TypePtr<VariableLengthContainer> Ptr;
     
     VariableLengthContainer();
-    VariableLengthContainer(const StructureType& rhs);
-//     VariableLengthContainer(const AbstractType::Ptr copyFrom);
+    VariableLengthContainer(const VariableLengthContainer& rhs);
+    VariableLengthContainer(const StructureType& copyFrom);
     VariableLengthContainer(StructureTypeData& data);
     void addContentType(AbstractType::Ptr typeToAdd);
     void addKeyType(AbstractType::Ptr typeToAdd);

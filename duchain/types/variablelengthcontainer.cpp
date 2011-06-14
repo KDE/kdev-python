@@ -31,8 +31,9 @@ VariableLengthContainer::VariableLengthContainer() : KDevelop::StructureType(cre
 {
 
 }
-    
-VariableLengthContainer::VariableLengthContainer(const StructureType& rhs) : StructureType(rhs)
+
+VariableLengthContainer::VariableLengthContainer(const VariableLengthContainer& rhs)
+    : StructureType(copyData<VariableLengthContainer>(*rhs.d_func()))
 {
 
 }
@@ -40,11 +41,6 @@ VariableLengthContainer::VariableLengthContainer(const StructureType& rhs) : Str
 VariableLengthContainer::VariableLengthContainer(StructureTypeData& data): StructureType(data)
 {
 
-}
-
-VariableLengthContainer::VariableLengthContainer(const AbstractType::Ptr copyFrom)
-{
-    VariableLengthContainer(*(copyFrom.cast<StructureType>().unsafeData()));
 }
     
 void Python::VariableLengthContainer::addContentType(AbstractType::Ptr typeToAdd)

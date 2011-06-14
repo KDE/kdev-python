@@ -215,7 +215,7 @@ public:
     FunctionDefinitionAst(Ast* parent);
     Identifier* name;
     ArgumentsAst* arguments;
-    QList<NameAst*> decorators;
+    QList<ExpressionAst*> decorators;
     QList<Ast*> body;
 };
 

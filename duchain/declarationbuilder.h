@@ -35,6 +35,7 @@
 #include "contextbuilder.h"
 #include "typebuilder.h"
 #include <language/duchain/types/unsuretype.h>
+#include "declarations/decorateddeclaration.h"
 
 namespace Python
 {
@@ -73,6 +74,8 @@ protected:
     virtual void visitExceptionHandler(ExceptionHandlerAst* node);
     virtual void visitReturn(ReturnAst* node);
     virtual void visitCode(CodeAst* node);
+    
+    void visitDecorators(QList<ExpressionAst*> decorators, DecoratedDeclaration* addTo);
     
     QString getDocstring(QList<Ast*> body);
     

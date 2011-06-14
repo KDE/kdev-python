@@ -26,9 +26,6 @@
 #include <QtGlobal>
 #include <KUrl>
 
-#include <ktexteditor/smartrange.h>
-#include <ktexteditor/smartinterface.h>
-
 #include <language/duchain/functiondeclaration.h>
 #include <language/duchain/classfunctiondeclaration.h>
 #include <language/duchain/declaration.h>
@@ -45,16 +42,15 @@
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/builders/abstracttypebuilder.h>
 #include <language/duchain/aliasdeclaration.h>
-#include <../kdevplatform/language/duchain/declaration.h>
+#include <language/duchain/declaration.h>
 
 #include "contextbuilder.h"
 #include "declarationbuilder.h"
 #include "pythoneditorintegrator.h"
 #include "expressionvisitor.h"
-#include <interfaces/foregroundlock.h>
 #include "helpers.h"
 #include "types/variablelengthcontainer.h"
-
+#include "declarations/pythonfunctiondeclaration.h"
 
 using namespace KTextEditor;
 
@@ -562,6 +558,25 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     closeDeclaration();
     
     dec->setComment(getDocstring(node->body));
+}
+
+void DeclarationBuilder::visitDecorators(QList< ExpressionAst* > decorators, DecoratedDeclaration* addTo) {
+    foreach ( ExpressionAst* decorator, decorators ) {
+        if ( decorator->astType == Ast::CallAstType ) {
+            CallAst* call = static_cast<CallAst*>(decorator);
+            Decorator d;
+            d.name = call->function->value;
+            foreach ( ExpressionAst* arg, call->arguments ) {
+                if ( arg->astType == Ast::NumberAstType ) {
+                    d.args << static_cast<NumberAst*>(arg)->value;
+                }
+                else if ( arg->astType == Ast::StringAstType ) {
+                    d.args << static_cast<StringAst*>(arg)->value;
+                }
+            }
+            addTo->decorators.append(d);
+        }
+    }
 }
 
 void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )

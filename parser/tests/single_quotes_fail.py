@@ -1,3 +1,0 @@
-print "Foo
-Bar
-Fun"

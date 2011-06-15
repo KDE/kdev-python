@@ -478,6 +478,7 @@ void PyDUChainTest::testDecorators()
 {
     QFETCH(QString, code);
     QFETCH(int, amountOfDecorators);
+    QFETCH(QStringList, names);
     ReferencedTopDUContext ctx = parse(code);
     QVERIFY(ctx);
     DUChainReadLocker lock(DUChain::lock());
@@ -485,16 +486,23 @@ void PyDUChainTest::testDecorators()
         ctx->allDeclarations(CursorInRevision::invalid(), ctx->topContext()).first().first);
     QVERIFY(decl);
     QCOMPARE(decl->decorators.count(), amountOfDecorators);
+    int i = 0;
+    foreach ( const Decorator& d, decl->decorators ) {
+        kDebug() << "Name is: " << d.name << "should be: " << names.at(i);
+        QVERIFY(d.name == names.at(i));
+        ++i;
+    }
 }
 
 void PyDUChainTest::testDecorators_data()
 {
     QTest::addColumn<QString>("code");
     QTest::addColumn<int>("amountOfDecorators");
+    QTest::addColumn<QStringList>("names");
     
-    QTest::newRow("one_decorator") << "@foo\ndef func(): pass" << 1;
-    QTest::newRow("decorator_with_args") << "@foo(2, \"bar\")\ndef func(): pass" << 1;
-    QTest::newRow("two_decorators") << "@foo\n@bar(17)\ndef func(): pass" << 2;
+    QTest::newRow("one_decorator") << "@foo\ndef func(): pass" << 1 << ( QStringList() << "foo" );
+    QTest::newRow("decorator_with_args") << "@foo(2, \"bar\")\ndef func(): pass" << 1 << ( QStringList() << "foo");
+    QTest::newRow("two_decorators") << "@foo\n@bar(17)\ndef func(): pass" << 2 << ( QStringList() << "foo" << "bar" );
 }
 
 void PyDUChainTest::testFunctionArgs()
@@ -534,9 +542,11 @@ void PyDUChainTest::testContainerTypes()
     DUChainReadLocker lock(DUChain::lock());
     QList<Declaration*> decls = ctx->findDeclarations(QualifiedIdentifier("checkme"));
     QVERIFY(decls.length() > 0);
-    VariableLengthContainer* type = dynamic_cast<VariableLengthContainer*>(decls.first()->abstractType().unsafeData());
+    QVERIFY(decls.first()->abstractType());
     kDebug() << "type is: " << decls.first()->abstractType().unsafeData()->toString();
+    VariableLengthContainer* type = dynamic_cast<VariableLengthContainer*>(decls.first()->abstractType().unsafeData());
     QVERIFY(type);
+    QVERIFY(type->contentType());
     QVERIFY(type->contentType()->toString() == contenttype);
 }
 

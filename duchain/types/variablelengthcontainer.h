@@ -43,6 +43,11 @@ public:
     {
     }
     
+    VariableLengthContainerData(const StructureTypeData& rhs)
+        : KDevelop::StructureTypeData(rhs)
+    {
+    };
+    
     AbstractType::Ptr m_keyType;
     AbstractType::Ptr m_contentType;
 };
@@ -67,6 +72,8 @@ public:
     virtual uint hash() const;
     AbstractType::Ptr contentType() const;
     AbstractType::Ptr keyType() const;
+    
+    virtual bool equals(const AbstractType* rhs) const;
     
     enum {
 #warning check identity value (61)

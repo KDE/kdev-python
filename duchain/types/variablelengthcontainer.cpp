@@ -68,12 +68,23 @@ KDevelop::AbstractType* VariableLengthContainer::clone() const
     return new VariableLengthContainer(*this);
 }
 
+bool VariableLengthContainer::equals(const AbstractType* rhs) const
+{
+    if ( this == rhs ) {
+        return true;
+    }
+    if ( ! KDevelop::StructureType::equals(rhs) ) {
+        return false;
+    }
+    const VariableLengthContainer* c = dynamic_cast<const VariableLengthContainer*>(rhs);
+    if ( ! c || ! c->contentType() == d_func()->m_contentType || ! c->keyType() == d_func()->m_keyType ) {
+        return false;
+    }
+    return true;
+}
+
 uint VariableLengthContainer::hash() const
 {
-    kDebug() << d_func() << d_func()->m_contentType;
-    const AbstractType* type = d_func()->m_contentType.unsafeData();
-    kDebug() << "type object: " << type;
-    kDebug() << type->hash();
     return StructureType::hash() + 
         ( d_func()->m_contentType ? d_func()->m_contentType->hash() : 0 ) + 
         ( d_func()->m_keyType ? d_func()->m_keyType->hash() : 0 );

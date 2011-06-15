@@ -513,12 +513,6 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                 
                 closeInjectedContext();
             }
-            
-//             kDebug() << "Declaration for attribute " << attrib->attribute << "has been created successfully.";
-//             DUChainReadLocker lock(DUChain::lock());
-//             kDebug() << "declaration context range:" << dec->context()->range().castToSimpleRange() << "declaration range: " << dec->range().castToSimpleRange();
-//             kDebug() << dec->identifier().toString();
-//             kDebug() << "all matching declarations in context: " << internal.data()->findDeclarations(dec->identifier()) << "dec: " << dec;
         }
     }
 }
@@ -529,11 +523,24 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     
     DUChainWriteLocker lock(DUChain::lock());
     ClassDeclaration* dec = openDeclaration<ClassDeclaration>( node->name, node );
+    visitDecorators(node->decorators, dec);
     eventuallyAssignInternalContext();
+    
     dec->setKind(KDevelop::Declaration::Type);
     dec->clearBaseClasses();
     dec->setClassType(ClassDeclarationData::Class);
-    StructureType::Ptr type(new StructureType());
+    
+    // check whether this is a type container (list, dict, ...) or just a "normal" class
+    StructureType::Ptr type(0);
+    foreach ( const Decorator& d, dec->decorators ) {
+        kDebug() << "Decorator for class: " << d.name;
+        if ( d.name == "TypeContainer" ) {
+            type = StructureType::Ptr(new VariableLengthContainer());
+        }
+    }
+    if ( ! type ) {
+        type = StructureType::Ptr(new StructureType());
+    }
     type->setDeclaration(dec);
     dec->setType(type);
     lock.unlock();
@@ -562,6 +569,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 
 void DeclarationBuilder::visitDecorators(QList< ExpressionAst* > decorators, DecoratedDeclaration* addTo) {
     foreach ( ExpressionAst* decorator, decorators ) {
+        kDebug() << "decorator type: " << decorator->astType << "(name: " << Ast::NameAstType << ", call: " << Ast::CallAstType << ")";
         if ( decorator->astType == Ast::CallAstType ) {
             CallAst* call = static_cast<CallAst*>(decorator);
             Decorator d;
@@ -575,12 +583,14 @@ void DeclarationBuilder::visitDecorators(QList< ExpressionAst* > decorators, Dec
                     d.args << static_cast<StringAst*>(arg)->value;
                 }
             }
+            kDebug() << "call decorator identifier: " << d.name << *static_cast<NameAst*>(call->function)->identifier;
             addTo->decorators.append(d);
         }
         else if ( decorator->astType == Ast::NameAstType ) {
             NameAst* name = static_cast<NameAst*>(decorator);
             Decorator d;
             d.name = *(name->identifier);
+            kDebug() << "name decorator identifier: " << d.name << *(name->identifier);
             addTo->decorators.append(d);
         }
     }

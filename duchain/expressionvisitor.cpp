@@ -39,6 +39,7 @@
 #include "expressionvisitor.h"
 #include "pythoneditorintegrator.h"
 #include <language/duchain/aliasdeclaration.h>
+#include "types/variablelengthcontainer.h"
 
 using namespace KDevelop;
 using namespace Python;
@@ -53,6 +54,11 @@ QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> ExpressionVisitor::s_de
 void ExpressionVisitor::encounter(AbstractType::Ptr type)
 {
     m_lastType = type;
+}
+
+template<typename T> void ExpressionVisitor::encounter(TypePtr< T > type)
+{
+    encounter(AbstractType::Ptr::staticCast(type));
 }
 
 Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegrator* editor)
@@ -239,54 +245,75 @@ void ExpressionVisitor::visitCall(CallAst* node)
 
 void ExpressionVisitor::visitSubscript(SubscriptAst* node)
 {
+    AstDefaultVisitor::visitNode(node->value);
     if ( node->slice && node->slice->astType != Ast::IndexAstType ) {
         kDebug() << "Found slice, will use ListType for assignment";
-        encounter(AbstractType::Ptr(new IntegralTypeExtended(IntegralTypeExtended::TypeList)));
+        kDebug() << "LAST DECLARATION:" << lastDeclaration();
+        encounter(lastType());
     }
     else {
-        kDebug() << "No slice, defaulting to NULL type.";
-        return unknownTypeEncountered();
+        DUChainReadLocker lock(DUChain::lock());
+        kDebug() << "LAST TYPE for slice access:" << lastType() << ( lastType() ? lastType()->toString() : "<null>" );
+        VariableLengthContainer::Ptr t = lastType().cast<VariableLengthContainer>();
+        if ( ! t ) {
+            return unknownTypeEncountered();
+        }
+        encounter(t->contentType());
     }
 }
 
-AbstractType::Ptr ExpressionVisitor::typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx)
+template<typename T> TypePtr<T> ExpressionVisitor::typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx)
 {
     DUChainReadLocker lock(DUChain::lock());
-    QList<Declaration*> decls = ctx->topContext()->findDeclarations(QualifiedIdentifier("__kdevpythondocumentation_builtin_" + typeDescriptor));
-    Declaration* decl = decls.isEmpty() ? 0 : decls.first();
+    QList<Declaration*> decls = ctx->topContext()->findDeclarations(
+        QualifiedIdentifier("__kdevpythondocumentation_builtin_" + typeDescriptor));
+    Declaration* decl = decls.isEmpty() ? 0 : dynamic_cast<Declaration*>(decls.first());
     AbstractType::Ptr type = decl ? decl->abstractType() : AbstractType::Ptr(0);
-    return type;
+    QStringList builtinListTypes;
+    builtinListTypes << "list" << "dict";
+    return type.cast<T>();
 }
 
 void ExpressionVisitor::visitList(ListAst* node)
 {
     AstDefaultVisitor::visitList(node);
-    AbstractType::Ptr type = typeObjectForIntegralType("list", m_ctx);
-    encounter(type);
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
+    ExpressionVisitor contentVisitor(m_ctx);
+    if ( type ) {
+        foreach ( ExpressionAst* content, node->elements ) {
+            contentVisitor.visitNode(content);
+            type->addContentType(contentVisitor.lastType());
+        }
+    }
+    else {
+        unknownTypeEncountered();
+        kWarning() << " [ !!! ] did not get a typetrack container object when expecting one! Fix code / setup.";
+    }
+    encounter<VariableLengthContainer>(type);
 }
 
 void ExpressionVisitor::visitTuple(TupleAst* node) {
     AstDefaultVisitor::visitTuple(node);
-    AbstractType::Ptr type = typeObjectForIntegralType("tuple", m_ctx);
+    AbstractType::Ptr type = typeObjectForIntegralType<AbstractType>("tuple", m_ctx);
     encounter(type);
 }
 
 void ExpressionVisitor::visitDict(DictAst* node)
 {
     AstDefaultVisitor::visitDict(node);
-    AbstractType::Ptr type = typeObjectForIntegralType("dict", m_ctx);
-    encounter(type);
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("dict", m_ctx);
+    encounter<VariableLengthContainer>(type);
 }
 
 void ExpressionVisitor::visitNumber(Python::NumberAst* )
 {
-    AbstractType::Ptr type = typeObjectForIntegralType("float", m_ctx);
+    AbstractType::Ptr type = typeObjectForIntegralType<AbstractType>("float", m_ctx);
     encounter(type);
 }
 
 void ExpressionVisitor::visitString(Python::StringAst* )
 {
-    AbstractType::Ptr type = typeObjectForIntegralType("string", m_ctx);
+    AbstractType::Ptr type = typeObjectForIntegralType<AbstractType>("string", m_ctx);
     encounter(type);
 }
 
@@ -317,7 +344,7 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
         m_lastAccessedNameDeclaration = d.last();
         m_lastAccessedDeclaration = d.last();
         DUChainReadLocker lock(DUChain::lock());
-        kDebug() << "Found declaration: " << d.last()->toString() << d.last();
+        kDebug() << "Found declaration: " << d.last()->toString() << d.last() << d.last()->abstractType() << dynamic_cast<VariableLengthContainer*>(d.last()->abstractType().unsafeData());
     }
     else {
         kDebug() << "VistName type not found";

@@ -416,7 +416,7 @@ v->function->belongsToCall = v;
                 }
                 nodeStack.push(v); v->arguments = static_cast<ArgumentsAst*>(visitNode(node->v.FunctionDef.args)); nodeStack.pop();
                 nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.FunctionDef.body); nodeStack.pop();
-                nodeStack.push(v); v->decorators = visitNodeList<_expr, NameAst>(node->v.FunctionDef.decorator_list); nodeStack.pop();
+                nodeStack.push(v); v->decorators = visitNodeList<_expr, ExpressionAst>(node->v.FunctionDef.decorator_list); nodeStack.pop();
                 result = v;
                 break;
             }

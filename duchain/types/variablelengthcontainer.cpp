@@ -38,7 +38,7 @@ VariableLengthContainer::VariableLengthContainer(const VariableLengthContainer& 
 
 }
 
-VariableLengthContainer::VariableLengthContainer(StructureTypeData& data): StructureType(copyData<StructureType>(data))
+VariableLengthContainer::VariableLengthContainer(StructureTypeData& data): StructureType(data)
 {
 
 }

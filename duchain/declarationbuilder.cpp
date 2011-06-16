@@ -435,7 +435,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                     VariableLengthContainer* type = dynamic_cast<VariableLengthContainer*>(dec->abstractType().unsafeData());
                     kDebug() << "type is: " << dec->abstractType().unsafeData() << type << dynamic_cast<VariableLengthContainer*>(tupleElementType.unsafeData());
                     kDebug() << "indexed: " << tupleElementType->indexed().hash() << "<>" << dec->indexedType().hash();
-                    Q_ASSERT((dynamic_cast<VariableLengthContainer*>(tupleElementType.unsafeData()) == 0 ) xor ( dec->abstractType().unsafeData() == 0));
+                    Q_ASSERT(dec->abstractType());
                 }
                 /** END DEBUG **/
             }

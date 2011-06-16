@@ -9,6 +9,7 @@
 #include <KStandardDirs>
 #include <QProcess>
 #include <language/duchain/types/unsuretype.h>
+#include <language/duchain/types/integraltype.h>
 
 using namespace KDevelop;
 
@@ -70,7 +71,23 @@ QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
     return searchPaths;
 }
 
-UnsureType::Ptr Helper::mergeTypes(AbstractType::Ptr type, AbstractType::Ptr newType)
+bool Helper::isUsefulType(AbstractType::Ptr type)
+{
+    if ( ! type ) {
+        return false;
+    }
+    QList<uint> skipTypes;
+    skipTypes << IntegralType::TypeMixed << IntegralType::TypeNone << IntegralType::TypeNull;
+    if ( type->whichType() != AbstractType::TypeIntegral ) {
+        return true;
+    }
+    if ( ! skipTypes.contains(type.cast<IntegralType>()->dataType()) ) {
+        return true;
+    }
+    return false;
+}
+
+AbstractType::Ptr Helper::mergeTypes(AbstractType::Ptr type, AbstractType::Ptr newType)
 {
     UnsureType::Ptr unsure = UnsureType::Ptr::dynamicCast(type);
     UnsureType::Ptr newUnsure = UnsureType::Ptr::dynamicCast(newType);
@@ -85,22 +102,33 @@ UnsureType::Ptr Helper::mergeTypes(AbstractType::Ptr type, AbstractType::Ptr new
     }
     // one of them is unsure, use that and add the other one
     else if ( unsure ) {
-        unsure->addType(newType->indexed());
+        if ( isUsefulType(newType) ) {
+            unsure->addType(newType->indexed());
+        }
         ret = unsure;
     }
     else if ( newUnsure ) {
         AbstractType::Ptr createdType = AbstractType::Ptr(newUnsure->clone());
         UnsureType::Ptr createdUnsureType = UnsureType::Ptr::dynamicCast(newType);
-        createdUnsureType->addType(type->indexed());
+        if ( isUsefulType(type) ) {
+            createdUnsureType->addType(type->indexed());
+        }
         ret = createdUnsureType;
     }
     else {
         unsure = UnsureType::Ptr(new UnsureType());
-        unsure->addType(newType->indexed());
-        unsure->addType(type->indexed());
+        if ( isUsefulType(newType) ) {
+            unsure->addType(newType->indexed());
+        }
+        if ( isUsefulType(type) ) {
+            unsure->addType(type->indexed());
+        }
         ret = unsure;
     }
-    return ret;
+    if ( ret->typesSize() == 1 ) {
+        return ret->types()[0].abstractType();
+    }
+    return ret.cast<AbstractType>();
 }
 
 }

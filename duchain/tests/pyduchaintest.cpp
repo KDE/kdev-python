@@ -547,7 +547,7 @@ void PyDUChainTest::testContainerTypes()
     VariableLengthContainer* type = dynamic_cast<VariableLengthContainer*>(decls.first()->abstractType().unsafeData());
     QVERIFY(type);
     QVERIFY(type->contentType());
-    QVERIFY(type->contentType()->toString() == contenttype);
+    QVERIFY(type->contentType()->toString().replace("__kdevpythondocumentation_builtin_", "") == contenttype);
 }
 
 void PyDUChainTest::testContainerTypes_data()

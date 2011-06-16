@@ -45,20 +45,20 @@ VariableLengthContainer::VariableLengthContainer(StructureTypeData& data): Struc
     
 void Python::VariableLengthContainer::addContentType(AbstractType::Ptr typeToAdd)
 {
-    d_func_dynamic()->m_contentType = AbstractType::Ptr::staticCast(Helper::mergeTypes(d_func()->m_contentType, typeToAdd));
+    d_func_dynamic()->m_contentType = Helper::mergeTypes(d_func()->m_contentType, typeToAdd);
 }
 
-AbstractType::Ptr Python::VariableLengthContainer::contentType() const
+const AbstractType::Ptr& Python::VariableLengthContainer::contentType() const
 {
     return d_func()->m_contentType;
 }
 
 void Python::VariableLengthContainer::addKeyType(AbstractType::Ptr typeToAdd)
 {
-    d_func_dynamic()->m_keyType = AbstractType::Ptr::staticCast(Helper::mergeTypes(d_func()->m_keyType, typeToAdd));
+    d_func_dynamic()->m_keyType = Helper::mergeTypes(d_func()->m_keyType, typeToAdd);
 }
 
-AbstractType::Ptr Python::VariableLengthContainer::keyType() const
+const AbstractType::Ptr& Python::VariableLengthContainer::keyType() const
 {
     return d_func()->m_keyType;
 }
@@ -77,7 +77,14 @@ bool VariableLengthContainer::equals(const AbstractType* rhs) const
         return false;
     }
     const VariableLengthContainer* c = dynamic_cast<const VariableLengthContainer*>(rhs);
-    if ( ! c || ! c->contentType() == d_func()->m_contentType || ! c->keyType() == d_func()->m_keyType ) {
+    if ( ! c ) {
+        return false;
+    }
+    kDebug() << c->contentType() << d_func()->m_contentType;
+    if ( c->contentType() != d_func()->m_contentType ) {
+        return false;
+    }
+    if ( c->keyType() != d_func()->m_keyType ) {
         return false;
     }
     return true;

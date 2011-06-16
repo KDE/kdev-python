@@ -245,13 +245,20 @@ void ExpressionVisitor::visitCall(CallAst* node)
 
 void ExpressionVisitor::visitSubscript(SubscriptAst* node)
 {
+    AstDefaultVisitor::visitNode(node->value);
     if ( node->slice && node->slice->astType != Ast::IndexAstType ) {
         kDebug() << "Found slice, will use ListType for assignment";
         kDebug() << "LAST DECLARATION:" << lastDeclaration();
+        encounter(lastType());
     }
     else {
-        kDebug() << "LAST DECLARATION for slice access:" << lastDeclaration();
-        return unknownTypeEncountered();
+        DUChainReadLocker lock(DUChain::lock());
+        kDebug() << "LAST TYPE for slice access:" << lastType() << ( lastType() ? lastType()->toString() : "<null>" );
+        VariableLengthContainer::Ptr t = lastType().cast<VariableLengthContainer>();
+        if ( ! t ) {
+            return unknownTypeEncountered();
+        }
+        encounter(t->contentType());
     }
 }
 
@@ -337,7 +344,7 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
         m_lastAccessedNameDeclaration = d.last();
         m_lastAccessedDeclaration = d.last();
         DUChainReadLocker lock(DUChain::lock());
-        kDebug() << "Found declaration: " << d.last()->toString() << d.last();
+        kDebug() << "Found declaration: " << d.last()->toString() << d.last() << d.last()->abstractType() << dynamic_cast<VariableLengthContainer*>(d.last()->abstractType().unsafeData());
     }
     else {
         kDebug() << "VistName type not found";

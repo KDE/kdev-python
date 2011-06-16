@@ -10,6 +10,8 @@
 #include <QProcess>
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/types/integraltype.h>
+#include <language/duchain/duchainlock.h>
+#include <language/duchain/duchain.h>
 
 using namespace KDevelop;
 
@@ -125,10 +127,14 @@ AbstractType::Ptr Helper::mergeTypes(AbstractType::Ptr type, AbstractType::Ptr n
         }
         ret = unsure;
     }
-    if ( ret->typesSize() == 1 ) {
+#warning remove me: lock
+    DUChainReadLocker lock(DUChain::lock());
+    if ( ret->typesSize() == 1 && ret->types()[0].abstractType() ) {
+        kDebug() << "Returning merged type:" << ret->types()[0].abstractType()->toString();
         return ret->types()[0].abstractType();
     }
-    return ret.cast<AbstractType>();
+    kDebug() << "Returning real merged type:" << ret->toString();
+    return AbstractType::Ptr::staticCast(ret);
 }
 
 }

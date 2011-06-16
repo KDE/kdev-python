@@ -44,7 +44,7 @@ public:
     }
     
     VariableLengthContainerData(const StructureTypeData& rhs)
-        : KDevelop::StructureTypeData(rhs)
+        : KDevelop::StructureTypeData(rhs), m_keyType(0), m_contentType(0)
     {
     };
     
@@ -69,8 +69,8 @@ public:
     void addKeyType(AbstractType::Ptr typeToAdd);
     virtual AbstractType* clone() const;
     virtual uint hash() const;
-    AbstractType::Ptr contentType() const;
-    AbstractType::Ptr keyType() const;
+    const AbstractType::Ptr& contentType() const;
+    const AbstractType::Ptr& keyType() const;
     
     virtual bool equals(const AbstractType* rhs) const;
     

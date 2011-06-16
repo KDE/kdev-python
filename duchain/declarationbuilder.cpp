@@ -435,6 +435,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                     VariableLengthContainer* type = dynamic_cast<VariableLengthContainer*>(dec->abstractType().unsafeData());
                     kDebug() << "type is: " << dec->abstractType().unsafeData() << type << dynamic_cast<VariableLengthContainer*>(tupleElementType.unsafeData());
                     kDebug() << "indexed: " << tupleElementType->indexed().hash() << "<>" << dec->indexedType().hash();
+                    kDebug() << "Container: " << dynamic_cast<VariableLengthContainer*>(dec->abstractType().unsafeData());
                     Q_ASSERT(dec->abstractType());
                 }
                 /** END DEBUG **/
@@ -443,7 +444,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         if ( target->astType == Ast::AttributeAstType ) {
             AttributeAst* attrib = static_cast<AttributeAst*>(target);
             kDebug() << "Visiting attribute: " << attrib->attribute->value;
-            // check weather the current attribute is undeclared, but the previos ones known
+            // check whether the current attribute is undeclared, but the previos ones known
             // like in X.Y.Z = 3 where X and Y are defined, but Z isn't; then declare Z.
             ExpressionVisitor checkForUnknownAttribute(currentContext(), editor());
             checkForUnknownAttribute.visitNode(attrib);

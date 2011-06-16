@@ -114,7 +114,7 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         
         KDevelop::AbstractType::Ptr lastType() const { return m_lastType; }
         KDevelop::DeclarationPointer lastDeclaration() const { return m_lastAccessedDeclaration; }
-        template<typename T> static TypePtr<T> typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx);
+        static AbstractType::Ptr typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx);
     private:
         static QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> s_defaultTypes;
         
@@ -123,7 +123,6 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         PythonEditorIntegrator* m_editor;
         
         void encounter(KDevelop::AbstractType::Ptr type);
-        template<typename T> void encounter(TypePtr<T> type);
         
         void unknownTypeEncountered();
         AbstractType::Ptr m_lastAccessedReturnType;

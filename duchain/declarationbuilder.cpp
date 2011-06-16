@@ -26,6 +26,9 @@
 #include <QtGlobal>
 #include <KUrl>
 
+#include <ktexteditor/smartrange.h>
+#include <ktexteditor/smartinterface.h>
+
 #include <language/duchain/functiondeclaration.h>
 #include <language/duchain/classfunctiondeclaration.h>
 #include <language/duchain/declaration.h>
@@ -42,15 +45,15 @@
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/builders/abstracttypebuilder.h>
 #include <language/duchain/aliasdeclaration.h>
-#include <language/duchain/declaration.h>
+#include <../kdevplatform/language/duchain/declaration.h>
 
 #include "contextbuilder.h"
 #include "declarationbuilder.h"
 #include "pythoneditorintegrator.h"
 #include "expressionvisitor.h"
+#include <interfaces/foregroundlock.h>
 #include "helpers.h"
-#include "types/variablelengthcontainer.h"
-#include "declarations/decorateddeclaration.h"
+
 
 using namespace KTextEditor;
 
@@ -188,7 +191,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
                 if ( integral &&  integral->dataType() == IntegralType::TypeMixed ) {
                     dec->setType(newType);
                 } else {
-                    dec->setType(Helper::mergeTypes(currentType, newType));
+                    dec->setType(mergeTypes(currentType, newType));
                 }
             } else {
                 kDebug() << "Existing declaration with no type from last declaration.";
@@ -203,6 +206,40 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     if ( ! result ) kWarning() << "variable declaration does not have the expected type";
     return result;
 }
+
+UnsureType::Ptr DeclarationBuilder::mergeTypes(AbstractType::Ptr type, AbstractType::Ptr newType)
+{
+    UnsureType::Ptr unsure = UnsureType::Ptr::dynamicCast(type);
+    UnsureType::Ptr newUnsure = UnsureType::Ptr::dynamicCast(newType);
+    UnsureType::Ptr ret;
+    // both types are unsure, so join the list of possible types.
+    if ( unsure && newUnsure ) {
+        int len = newUnsure->typesSize();
+        for ( int i = 0; i < len; i++ ) {
+            unsure->addType(newUnsure->types()[i]);
+        }
+        ret = unsure;
+    }
+    // one of them is unsure, use that and add the other one
+    else if ( unsure ) {
+        unsure->addType(newType->indexed());
+        ret = unsure;
+    }
+    else if ( newUnsure ) {
+        AbstractType::Ptr createdType = AbstractType::Ptr(newUnsure->clone());
+        UnsureType::Ptr createdUnsureType = UnsureType::Ptr::dynamicCast(newType);
+        createdUnsureType->addType(type->indexed());
+        ret = createdUnsureType;
+    }
+    else {
+        unsure = UnsureType::Ptr(new UnsureType());
+        unsure->addType(newType->indexed());
+        unsure->addType(type->indexed());
+        ret = unsure;
+    }
+    return ret;
+}
+
 
 void DeclarationBuilder::visitCode(CodeAst* node)
 {
@@ -404,18 +441,6 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             tupleElementType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
             tupleElementDeclaration = 0;
         }
-        /** DEBUG **/
-        if ( tupleElementType ) {
-            VariableLengthContainer* d = dynamic_cast<VariableLengthContainer*>(tupleElementType.unsafeData());
-            if ( d ) {
-                DUChainReadLocker lock(DUChain::lock());
-                kDebug() << "Got container type for declaration creation: " << tupleElementType << d->contentType();
-                if ( d->contentType() ) {
-                    kDebug() << "Content type: " << d->contentType()->toString();
-                }
-            }
-        }
-        /** END DEBUG **/
         i += 1;
         setLastType(tupleElementType); // TODO fix this for x, y = a, b, i.e. if node->value->astType == TupleAstType
         if ( target->astType == Ast::NameAstType ) {
@@ -427,24 +452,13 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                 }
             }
             else {
-                DUChainWriteLocker lock(DUChain::lock());
-                Declaration* dec = visitVariableDeclaration<Declaration>(target);
-                dec->setAbstractType(tupleElementType);
-                /** DEBUG **/
-                if ( tupleElementType ) {
-                    VariableLengthContainer* type = dynamic_cast<VariableLengthContainer*>(dec->abstractType().unsafeData());
-                    kDebug() << "type is: " << dec->abstractType().unsafeData() << type << dynamic_cast<VariableLengthContainer*>(tupleElementType.unsafeData());
-                    kDebug() << "indexed: " << tupleElementType->indexed().hash() << "<>" << dec->indexedType().hash();
-                    kDebug() << "Container: " << dynamic_cast<VariableLengthContainer*>(dec->abstractType().unsafeData());
-                    Q_ASSERT(dec->abstractType());
-                }
-                /** END DEBUG **/
+                visitVariableDeclaration<Declaration>(target);
             }
         }
         if ( target->astType == Ast::AttributeAstType ) {
             AttributeAst* attrib = static_cast<AttributeAst*>(target);
             kDebug() << "Visiting attribute: " << attrib->attribute->value;
-            // check whether the current attribute is undeclared, but the previos ones known
+            // check weather the current attribute is undeclared, but the previos ones known
             // like in X.Y.Z = 3 where X and Y are defined, but Z isn't; then declare Z.
             ExpressionVisitor checkForUnknownAttribute(currentContext(), editor());
             checkForUnknownAttribute.visitNode(attrib);
@@ -514,6 +528,12 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                 
                 closeInjectedContext();
             }
+            
+//             kDebug() << "Declaration for attribute " << attrib->attribute << "has been created successfully.";
+//             DUChainReadLocker lock(DUChain::lock());
+//             kDebug() << "declaration context range:" << dec->context()->range().castToSimpleRange() << "declaration range: " << dec->range().castToSimpleRange();
+//             kDebug() << dec->identifier().toString();
+//             kDebug() << "all matching declarations in context: " << internal.data()->findDeclarations(dec->identifier()) << "dec: " << dec;
         }
     }
 }
@@ -524,24 +544,11 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     
     DUChainWriteLocker lock(DUChain::lock());
     ClassDeclaration* dec = openDeclaration<ClassDeclaration>( node->name, node );
-    visitDecorators(node->decorators, dec);
     eventuallyAssignInternalContext();
-    
     dec->setKind(KDevelop::Declaration::Type);
     dec->clearBaseClasses();
     dec->setClassType(ClassDeclarationData::Class);
-    
-    // check whether this is a type container (list, dict, ...) or just a "normal" class
-    StructureType::Ptr type(0);
-    foreach ( const Decorator& d, dec->decorators ) {
-        kDebug() << "Decorator for class: " << d.name;
-        if ( d.name == "TypeContainer" ) {
-            type = StructureType::Ptr(new VariableLengthContainer());
-        }
-    }
-    if ( ! type ) {
-        type = StructureType::Ptr(new StructureType());
-    }
+    StructureType::Ptr type(new StructureType());
     type->setDeclaration(dec);
     dec->setType(type);
     lock.unlock();
@@ -568,35 +575,6 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     dec->setComment(getDocstring(node->body));
 }
 
-void DeclarationBuilder::visitDecorators(QList< ExpressionAst* > decorators, DecoratedDeclaration* addTo) {
-    foreach ( ExpressionAst* decorator, decorators ) {
-        kDebug() << "decorator type: " << decorator->astType << "(name: " << Ast::NameAstType << ", call: " << Ast::CallAstType << ")";
-        if ( decorator->astType == Ast::CallAstType ) {
-            CallAst* call = static_cast<CallAst*>(decorator);
-            Decorator d;
-            if ( call->function->astType != Ast::NameAstType ) continue;
-            d.name = *static_cast<NameAst*>(call->function)->identifier;
-            foreach ( ExpressionAst* arg, call->arguments ) {
-                if ( arg->astType == Ast::NumberAstType ) {
-                    d.args << static_cast<NumberAst*>(arg)->value;
-                }
-                else if ( arg->astType == Ast::StringAstType ) {
-                    d.args << static_cast<StringAst*>(arg)->value;
-                }
-            }
-            kDebug() << "call decorator identifier: " << d.name << *static_cast<NameAst*>(call->function)->identifier;
-            addTo->decorators.append(d);
-        }
-        else if ( decorator->astType == Ast::NameAstType ) {
-            NameAst* name = static_cast<NameAst*>(decorator);
-            Decorator d;
-            d.name = *(name->identifier);
-            kDebug() << "name decorator identifier: " << d.name << *(name->identifier);
-            addTo->decorators.append(d);
-        }
-    }
-}
-
 void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
     kDebug() << "opening function definition" << node->startLine << node->endLine;
@@ -618,7 +596,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     DUChainWriteLocker lock(DUChain::lock());
     bool hasFirstArgument = false;
     
-    visitDecorators(node->decorators, dec);
+    visitNodeList( node->decorators );
     visitFunctionArguments(node);
     
     // this must be done here, because the type of self must be known when parsing the body
@@ -768,7 +746,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             }
         }
         if ( node->vararg ) {
-            AbstractType::Ptr listType = ExpressionVisitor::typeObjectForIntegralType<AbstractType>("list", currentContext());
+            AbstractType::Ptr listType = ExpressionVisitor::typeObjectForIntegralType("list", currentContext());
             type->addArgument(listType);
             node->vararg->startCol = node->vararg_col_offset; node->vararg->endCol = node->vararg_col_offset + node->vararg->value.length() - 1;
             node->vararg->startLine = node->vararg_lineno - 1; node->vararg->endLine = node->vararg_lineno - 1;
@@ -777,7 +755,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             d->setAbstractType(listType);
         }
         if ( node->kwarg ) {
-            AbstractType::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType<AbstractType>("dict", currentContext());
+            AbstractType::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType("dict", currentContext());
             type->addArgument(dictType);
             node->kwarg->startCol = node->arg_col_offset; node->kwarg->endCol = node->arg_col_offset + node->kwarg->value.length() - 1;
             node->kwarg->startLine = node->arg_lineno - 1; node->kwarg->endLine = node->arg_lineno - 1;

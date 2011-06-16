@@ -3,9 +3,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     )
 
-set(duchain_SRCS
-    declarations/decorateddeclaration.cpp
-    types/variablelengthcontainer.cpp 
+set(duchain_SRCS 
     expressionvisitor.cpp 
     helpers.cpp
     pythonducontext.cpp 
@@ -38,6 +36,3 @@ install(TARGETS kdev4pythonduchain DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
 add_subdirectory(navigation)
 
 add_subdirectory(tests)
-
-add_subdirectory(types)
-add_subdirectory(declarations)

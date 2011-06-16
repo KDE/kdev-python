@@ -2,23 +2,15 @@
 class Exception:
 	pass
 
-@TypeContainer
-@addsTypeOfArg("__setitem__", 1)
-@getsType("__getitem__")
 class __kdevpythondocumentation_builtin_list(self,):
-    @addsTypeOfArg(1)
     def append(self,obj): pass
-    @addsTypeOfArgContent(1)
     def extend(self,obj): return []
-    @addsTypeOfArg(1)
     def insert(self,i, x): return None
-    @getsType
     def pop(self,i): return None
-    @getsType
     def index(self,x): return 0
     def count(self,x): return 0
-    def sort(self,): return self
-    def reverse(self,): return self
+    def sort(self,): return None
+    def reverse(self,): return None
 
 class __kdevpythondocumentation_builtin_fileObject(self,):
     def close(self,): return None
@@ -42,35 +34,23 @@ class __kdevpythondocumentation_builtin_fileObject(self,):
     newlines = ""
     softspace = True
     
-@TypeContainer
-@addsTypeOfArg("__setitem__", 1)
-@addsKeyTypeOfArg("__setitem__", 0)
-@getsType("__getitem__")
+
 class __kdevpythondocumentation_builtin_dict(self,):
+    def append(self,obj): pass
     def clear(self,): return None
     def copy(self,): return {}
-    @addsKeyTypeOfArgContent(1)
-    @addsTypeOfArg(2)
     def fromkeys(self,seq, value = None): return {}
-    @getsType
     def get(self,key, default = ""): return None
     def has_key(self,key): return True
     def items(self,): return [(self,)]
-    @getsListOfBoth
     def iteritems(self,): return __kdevpythondocumentation_builtin_iterator
-    @getsListOfKeys
     def iterkeys(self,): return __kdevpythondocumentation_builtin_iterator
-    @getsList
     def itervalues(self,): return __kdevpythondocumentation_builtin_iterator
-    @getsListOfKeys
     def keys(self,): return []
-    @getsType
     def pop(self,key, default = ""): return None
-    @getsBoth
     def popitem(self,): return None
     def setdefault(self,key, default = ""): return None
     def update(self,other = None): return None
-    @getsList
     def values(self,): return []
     def viewitems(self,): return None
     def viewkeys(self,): return None
@@ -124,7 +104,6 @@ class __kdevpythondocumentation_builtin_float(self,):
     def hex(self,): return 0x0
     def fromhex(self,s): return 0
 
-@IndexedTypeContainer
 class __kdevpythondocumentation_builtin_tuple(self,):
     pass
 

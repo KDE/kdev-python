@@ -35,7 +35,6 @@
 #include "contextbuilder.h"
 #include "typebuilder.h"
 #include <language/duchain/types/unsuretype.h>
-#include "declarations/decorateddeclaration.h"
 
 namespace Python
 {
@@ -75,13 +74,13 @@ protected:
     virtual void visitReturn(ReturnAst* node);
     virtual void visitCode(CodeAst* node);
     
-    void visitDecorators(QList<ExpressionAst*> decorators, DecoratedDeclaration* addTo);
-    
     QString getDocstring(QList<Ast*> body);
     
     template<typename T> T* visitVariableDeclaration(Python::Ast* node, Declaration* previous = 0);
     template<typename T> T* visitVariableDeclaration(Identifier* node, Ast* originalAst = 0, Declaration* previous = 0);
     template<typename T> T* visitVariableDeclaration(Identifier* node, RangeInRevision range);
+    
+    UnsureType::Ptr mergeTypes(AbstractType::Ptr type, AbstractType::Ptr newType);
     
     Declaration* createModuleImportDeclaration( QString dottedName, Python::Identifier* declarationIdentifier, Python::Ast* rangeNode = 0);
     

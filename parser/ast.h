@@ -203,21 +203,21 @@ public:
         hasUsefulRangeInformation = other.hasUsefulRangeInformation;
         return *this;
     };
-<<<<<<< HEAD
-    void copyRange(const Identifier& other) {
-        startCol = other.startCol;
-        endCol = other.endCol;
-        startLine = other.startLine;
-        endLine = other.endLine;
+    void copyRange(const Identifier* other) {
+        startCol = other->startCol;
+        endCol = other->endCol;
+        startLine = other->startLine;
+        endLine = other->endLine;
     }
-=======
->>>>>>> parent of 2b3324b... Revert "Merge branch 'listcontenttypes'"
     bool operator==(const Identifier& rhs) const {
         return value == rhs.value;
     };
     bool operator==(const QString& rhs) const {
         return value == rhs;
     };
+    void setEndColumn() {
+        endCol = startCol + value.length() - 1;
+    }
     operator QString() const {
         return value;
     };

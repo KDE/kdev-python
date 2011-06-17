@@ -380,6 +380,8 @@ void PyDUChainTest::testTypes_data()
 //    QTest::newRow("funccall_dict") << "def foo(): return foo; checkme = foo();" << (uint) IntegralType::TypeFunction;
 }
 
+typedef QPair<Declaration*, int> pair;
+
 void PyDUChainTest::testImportDeclarations() {
     QFETCH(QString, code);
     QFETCH(QStringList, expectedDecls);
@@ -398,11 +400,15 @@ void PyDUChainTest::testImportDeclarations() {
         name = split[0];
         start = split[1].toInt();
         end = split[2].toInt();
-        QList<Declaration*> foundDecls = ctx->findDeclarations(QualifiedIdentifier(name));
-        kDebug() << "Found " << foundDecls.length() << " Declarations for " << name;
-        QVERIFY(foundDecls.length() > 0);
-        foreach ( Declaration* current, foundDecls ) {
-            AliasDeclaration* isAliased = dynamic_cast<AliasDeclaration*>(current);
+        QList<pair> decls = ctx->allDeclarations(CursorInRevision::invalid(), ctx->topContext(), false);
+        kDebug() << "FOUND DECLARATIONS:";
+        foreach ( pair current, decls ) {
+            kDebug() << current.first->toString() << current.first->identifier().identifier().byteArray() << name;
+        }
+        foreach ( pair current, decls ) {
+            if ( ! ( current.first->identifier().identifier().byteArray() == name ) ) continue;
+            kDebug() << "Found: " << current.first->toString() << " for " << name;
+            AliasDeclaration* isAliased = dynamic_cast<AliasDeclaration*>(current.first);
             if ( isAliased && shouldBeAliased ) {
                 found = true; // TODO fixme
             }
@@ -536,6 +542,7 @@ void PyDUChainTest::testContainerTypes()
 {
     QFETCH(QString, code);
     QFETCH(QString, contenttype);
+    QFETCH(bool, use_type);
     ReferencedTopDUContext ctx = parse(code.toAscii());
     QVERIFY(ctx);
     
@@ -544,17 +551,25 @@ void PyDUChainTest::testContainerTypes()
     QVERIFY(decls.length() > 0);
     QVERIFY(decls.first()->abstractType());
     kDebug() << "type is: " << decls.first()->abstractType().unsafeData()->toString();
-    VariableLengthContainer* type = dynamic_cast<VariableLengthContainer*>(decls.first()->abstractType().unsafeData());
-    QVERIFY(type);
-    QVERIFY(type->contentType());
-    QVERIFY(type->contentType()->toString().replace("__kdevpythondocumentation_builtin_", "") == contenttype);
+    if ( ! use_type ) {
+        VariableLengthContainer* type = dynamic_cast<VariableLengthContainer*>(decls.first()->abstractType().unsafeData());
+        QVERIFY(type);
+        QVERIFY(type->contentType());
+        QVERIFY(type->contentType()->toString().replace("__kdevpythondocumentation_builtin_", "") == contenttype);
+    }
+    else {
+        QVERIFY(decls.first()->abstractType());
+        QVERIFY(decls.first()->abstractType()->toString().replace("__kdevpythondocumentation_builtin_", "") == contenttype);
+    }
 }
 
 void PyDUChainTest::testContainerTypes_data()
 {
     QTest::addColumn<QString>("code");
     QTest::addColumn<QString>("contenttype");
+    QTest::addColumn<bool>("use_type");
     
-    QTest::newRow("list_of_int") << "checkme = [1, 2, 3]" << "float";
+    QTest::newRow("list_of_int") << "checkme = [1, 2, 3]" << "float" << false;
+    QTest::newRow("list_of_int") << "list = [1, 2, 3]\ncheckme = list[0]" << "float" << true;
 }
 

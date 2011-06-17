@@ -48,8 +48,8 @@ public:
     {
     };
     
-    AbstractType::Ptr m_keyType;
-    AbstractType::Ptr m_contentType;
+    IndexedType m_keyType;
+    IndexedType m_contentType;
 };
 
 
@@ -69,8 +69,8 @@ public:
     void addKeyType(AbstractType::Ptr typeToAdd);
     virtual AbstractType* clone() const;
     virtual uint hash() const;
-    const AbstractType::Ptr& contentType() const;
-    const AbstractType::Ptr& keyType() const;
+    const IndexedType& contentType() const;
+    const IndexedType& keyType() const;
     
     virtual bool equals(const AbstractType* rhs) const;
     

@@ -412,7 +412,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                 DUChainReadLocker lock(DUChain::lock());
                 kDebug() << "Got container type for declaration creation: " << tupleElementType << d->contentType();
                 if ( d->contentType() ) {
-                    kDebug() << "Content type: " << d->contentType()->toString();
+                    kDebug() << "Content type: " << d->contentType().abstractType()->toString();
                 }
             }
         }

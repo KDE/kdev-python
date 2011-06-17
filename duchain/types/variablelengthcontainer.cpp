@@ -47,24 +47,24 @@ VariableLengthContainer::VariableLengthContainer(StructureTypeData& data): Struc
     
 void Python::VariableLengthContainer::addContentType(AbstractType::Ptr typeToAdd)
 {
-    d_func_dynamic()->m_contentType = Helper::mergeTypes(d_func()->m_contentType, typeToAdd);
+    d_func_dynamic()->m_contentType = Helper::mergeTypes(contentType().abstractType(), typeToAdd)->indexed();
     DUChainReadLocker lock(DUChain::lock());
-    kDebug() << "CONAINER :: new content type: " << d_func()->m_contentType->toString();
+    kDebug() << "CONAINER :: new content type: " << contentType().abstractType()->toString();
 }
 
-const AbstractType::Ptr& Python::VariableLengthContainer::contentType() const
+const IndexedType& Python::VariableLengthContainer::contentType() const
 {
     return d_func()->m_contentType;
 }
 
 void Python::VariableLengthContainer::addKeyType(AbstractType::Ptr typeToAdd)
 {
-    d_func_dynamic()->m_keyType = Helper::mergeTypes(d_func()->m_keyType, typeToAdd);
+    d_func_dynamic()->m_keyType = Helper::mergeTypes(keyType().abstractType(), typeToAdd)->indexed();
     DUChainReadLocker lock(DUChain::lock());
-    kDebug() << "CONAINER :: new key type: " << d_func()->m_contentType->toString();
+    kDebug() << "CONAINER :: new key type: " << keyType().abstractType()->toString();
 }
 
-const AbstractType::Ptr& Python::VariableLengthContainer::keyType() const
+const IndexedType& Python::VariableLengthContainer::keyType() const
 {
     return d_func()->m_keyType;
 }
@@ -73,7 +73,6 @@ KDevelop::AbstractType* VariableLengthContainer::clone() const
 {
     VariableLengthContainer* n = new VariableLengthContainer(*this);
     DUChainReadLocker lock(DUChain::lock());
-    kDebug() << "CLONED CONTAINER: " << n->toString() << n->contentType().unsafeData() << contentType().unsafeData();
     return n;
 }
 
@@ -102,8 +101,8 @@ bool VariableLengthContainer::equals(const AbstractType* rhs) const
 uint VariableLengthContainer::hash() const
 {
     return StructureType::hash() + 
-        ( d_func()->m_contentType ? d_func()->m_contentType->hash() : 0 ) + 
-        ( d_func()->m_keyType ? d_func()->m_keyType->hash() : 0 );
+        ( contentType().abstractType() ? contentType().abstractType()->hash() : 0 ) + 
+        ( contentType().abstractType() ? contentType().abstractType()->hash() : 0 );
 }
 
 }

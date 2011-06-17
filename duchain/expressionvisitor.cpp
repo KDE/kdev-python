@@ -313,7 +313,7 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
         if ( ! t ) {
             return unknownTypeEncountered();
         }
-        encounter(t->contentType());
+        encounter(t->contentType().abstractType());
     }
 }
 

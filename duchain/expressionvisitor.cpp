@@ -62,7 +62,7 @@ template<typename T> void ExpressionVisitor::encounter(TypePtr< T > type)
 }
 
 Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegrator* editor)
-    : m_ctx(ctx), m_editor(editor)
+    : m_ctx(ctx), m_lastType(0),  m_editor(editor), m_lastAccessedReturnType(0), m_lastAccessedNameDeclaration(0), m_lastAccessedDeclaration(0), m_lastAccessedAttributeDeclaration(0)
 {
     if(s_defaultTypes.isEmpty()) {
         s_defaultTypes.insert(KDevelop::Identifier("True"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
@@ -160,17 +160,20 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     if ( ! success ) foundDecls.clear();
     
     // Step 5: Construct the type of the declaration which was found.
+    DeclarationPointer actualDeclaration;
     if ( foundDecls.length() > 0 ) {
-        Declaration* actualDeclaration = resolveAliasDeclaration(foundDecls.last());
-        m_lastAccessedAttributeDeclaration = DeclarationPointer(actualDeclaration);
-        m_lastAccessedDeclaration = DeclarationPointer(actualDeclaration);
-        kDebug() << "Last accessed declaration: " << m_lastAccessedAttributeDeclaration->identifier().toString() 
-                 << m_lastAccessedAttributeDeclaration.data() << "@" << m_lastAccessedAttributeDeclaration->topContext()->url().toUrl().path();
+        actualDeclaration = DeclarationPointer(resolveAliasDeclaration(foundDecls.last()));
+    }
+    if ( actualDeclaration ) {
+        m_lastAccessedAttributeDeclaration = actualDeclaration;
+        m_lastAccessedDeclaration = actualDeclaration;
+//         kDebug() << "Last accessed declaration: " << m_lastAccessedAttributeDeclaration->identifier().toString() 
+//                  << m_lastAccessedAttributeDeclaration.data() << "@" << m_lastAccessedAttributeDeclaration->topContext()->url().toUrl().path();
         
         // if it's a function call, the result of that call will be the return type
         // TODO check weather we need to distinguish bettween foo.bar and foo.bar() here
-        ClassDeclaration* classDecl = dynamic_cast<ClassDeclaration*>(actualDeclaration);
-        FunctionDeclaration* funcDecl = dynamic_cast<FunctionDeclaration*>(actualDeclaration);
+        DUChainPointer<ClassDeclaration> classDecl = actualDeclaration.dynamicCast<ClassDeclaration>();
+        DUChainPointer<FunctionDeclaration> funcDecl = actualDeclaration.dynamicCast<FunctionDeclaration>();
         
         if ( classDecl ) {
             encounter(classDecl->abstractType());

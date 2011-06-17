@@ -415,8 +415,8 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         realDeclarations << v.lastDeclaration();
     }
     
-    AbstractType::Ptr tupleElementType;
-    DeclarationPointer tupleElementDeclaration;
+    AbstractType::Ptr tupleElementType(0);
+    DeclarationPointer tupleElementDeclaration(0);
     bool canUnpack = realTargets.length() == realValues.length();
     int i = 0;
     foreach ( ExpressionAst* target, realTargets ) {

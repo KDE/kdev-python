@@ -125,6 +125,9 @@ AbstractType::Ptr Helper::mergeTypes(AbstractType::Ptr type, AbstractType::Ptr n
         if ( isUsefulType(type) ) {
             unsure->addType(type->indexed());
         }
+        if ( ! unsure.count() ) {
+            return AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
+        }
         ret = unsure;
     }
 #warning remove me: lock

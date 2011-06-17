@@ -203,12 +203,15 @@ public:
         hasUsefulRangeInformation = other.hasUsefulRangeInformation;
         return *this;
     };
+<<<<<<< HEAD
     void copyRange(const Identifier& other) {
         startCol = other.startCol;
         endCol = other.endCol;
         startLine = other.startLine;
         endLine = other.endLine;
     }
+=======
+>>>>>>> parent of 2b3324b... Revert "Merge branch 'listcontenttypes'"
     bool operator==(const Identifier& rhs) const {
         return value == rhs.value;
     };
@@ -240,7 +243,7 @@ public:
     FunctionDefinitionAst(Ast* parent);
     Identifier* name;
     ArgumentsAst* arguments;
-    QList<NameAst*> decorators;
+    QList<ExpressionAst*> decorators;
     QList<Ast*> body;
 };
 

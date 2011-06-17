@@ -20,6 +20,8 @@
 
 #include "variablelengthcontainer.h"
 #include "helpers.h"
+#include <language/duchain/duchain.h>
+#include <language/duchain/duchainlock.h>
 
 using namespace KDevelop;
 
@@ -46,6 +48,8 @@ VariableLengthContainer::VariableLengthContainer(StructureTypeData& data): Struc
 void Python::VariableLengthContainer::addContentType(AbstractType::Ptr typeToAdd)
 {
     d_func_dynamic()->m_contentType = Helper::mergeTypes(d_func()->m_contentType, typeToAdd);
+    DUChainReadLocker lock(DUChain::lock());
+    kDebug() << "CONAINER :: new content type: " << d_func()->m_contentType->toString();
 }
 
 const AbstractType::Ptr& Python::VariableLengthContainer::contentType() const
@@ -56,6 +60,8 @@ const AbstractType::Ptr& Python::VariableLengthContainer::contentType() const
 void Python::VariableLengthContainer::addKeyType(AbstractType::Ptr typeToAdd)
 {
     d_func_dynamic()->m_keyType = Helper::mergeTypes(d_func()->m_keyType, typeToAdd);
+    DUChainReadLocker lock(DUChain::lock());
+    kDebug() << "CONAINER :: new key type: " << d_func()->m_contentType->toString();
 }
 
 const AbstractType::Ptr& Python::VariableLengthContainer::keyType() const
@@ -65,7 +71,10 @@ const AbstractType::Ptr& Python::VariableLengthContainer::keyType() const
 
 KDevelop::AbstractType* VariableLengthContainer::clone() const
 {
-    return new VariableLengthContainer(*this);
+    VariableLengthContainer* n = new VariableLengthContainer(*this);
+    DUChainReadLocker lock(DUChain::lock());
+    kDebug() << "CLONED CONTAINER: " << n->toString() << n->contentType().unsafeData() << contentType().unsafeData();
+    return n;
 }
 
 bool VariableLengthContainer::equals(const AbstractType* rhs) const

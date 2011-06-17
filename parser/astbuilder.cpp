@@ -61,6 +61,7 @@
 #include "python-src/Include/object.h"
 #include <Modules/cjkcodecs/multibytecodec.h>
 #include <KStandardDirs>
+#include <qtimer.h>
 
 using namespace KDevelop;
 
@@ -738,6 +739,13 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     Py_SetPythonHome(AstBuilder::pyHomeDir.toAscii().data());
     kDebug() << "Not initialized, calling init func.";
     Py_Initialize();
+    QTimer timer;
+    timer.start(1000);
+    while ( ! Py_IsInitialized() && timer.isActive() ) {
+        kWarning() << "Python doesn't say it is initialized yet, waiting -- should not happen!";
+        usleep(100000);
+    }
+    Q_ASSERT(Py_IsInitialized());
     
     PyArena* arena = PyArena_New();
     Q_ASSERT(arena); // out of memory
@@ -803,7 +811,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
         unsigned short currentLineIndent = 0;
         bool atLineBeginning = true;
         QList<unsigned short> indents;
-        int errline = lineno;
+        int errline = qMax(0, lineno);
         int currentLineBeginning = 0;
         for ( int i = 0; i < len; i++ ) {
             c = contents.at(i);

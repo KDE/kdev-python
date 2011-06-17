@@ -376,7 +376,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         }
     }
     
-    if ( node->value->astType == Ast::TupleAstType ) {
+    if ( node->value && node->value->astType == Ast::TupleAstType ) {
         foreach ( ExpressionAst* value, static_cast<TupleAst*>(node->value)->elements ) {
             ExpressionVisitor v(currentContext(), editor());
             v.visitNode(value);
@@ -391,8 +391,8 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         realDeclarations << v.lastDeclaration();
     }
     
-    AbstractType::Ptr tupleElementType;
-    DeclarationPointer tupleElementDeclaration;
+    AbstractType::Ptr tupleElementType(0);
+    DeclarationPointer tupleElementDeclaration(0);
     bool canUnpack = realTargets.length() == realValues.length();
     int i = 0;
     foreach ( ExpressionAst* target, realTargets ) {

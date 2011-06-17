@@ -382,6 +382,26 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
         kDebug() << "Result: " << originalDeclaration;
         if ( originalDeclaration ) {
             DUChainWriteLocker lock(DUChain::lock());
+            QStringList qualifiedNames = declarationIdentifier.split('.');
+            // name is dotted; use only the last one
+            int openedContexts = 0;
+            if ( qualifiedNames.length() > 1 ) {
+                declarationIdentifier = *declarationIdentifier; // copy it
+                declarationIdentifier->value = qualifiedNames.takeLast();
+                foreach ( const QString& name, qualifiedNames ) {
+                    kDebug() << "Opening fake context for dotted import: " << name;
+                    Identifier* current = Identifier(name);
+                    current->copyRange(declarationIdentifier);
+                    StructureType::Ptr moduleType(new StructureType());
+                    openType(moduleType);
+                    Declaration* d = visitVariableDeclaration<Declaration>(current);
+                    closeType();
+                    DUContext* wrapper = openContext(current, KDevelop::DUContext::Other);
+                    d->setInternalContext(wrapper);
+                    moduleType->setDeclaration(d);
+                    ++openedContexts;
+                }
+            }
             resultingDeclaration = visitVariableDeclaration<AliasDeclaration>(declarationIdentifier, range);
             if ( dynamic_cast<AliasDeclaration*>(resultingDeclaration) ) {
                 static_cast<AliasDeclaration*>(resultingDeclaration)->setAliasedDeclaration(originalDeclaration);
@@ -389,6 +409,10 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
             }
             else
                 kWarning() << "import declaration is being overwritten!";
+            // close all the module contexts
+            for ( int i = 0; i < openedContexts; i++ ) {
+                closeContext();
+            }
         }
         // TODO report error
     }

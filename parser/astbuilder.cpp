@@ -868,6 +868,8 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
         
         syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);
         // 3rd try: discard everything after the last non-empty line, but only until the next block start
+        currentLineBeginning = qMin(contents.length() - 1, currentLineBeginning);
+        errline = qMax(0, qMin(indents.length()-1, errline));
         if ( ! syntaxtree ) {
             kWarning() << "Discarding parts of the code to be parsed because of previous errors";
             kDebug() << indents;
@@ -890,7 +892,9 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
                         break;
                     }
                     contents.insert(currentLineContentBeginning - 1, "pass#");
-                    i += 5; len += 5;
+                    i += 5;
+                    i = qMin(i, contents.length());
+                    len = contents.length();
                     atLineBeginning = true;
                     currentIndent = 0;
                     currentLineBeginning_end = i + 1;

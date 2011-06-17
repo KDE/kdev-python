@@ -105,6 +105,11 @@ RangeInRevision ContextBuilder::rangeForNode(Ast* node, bool moveRight)
     return range;
 }
 
+RangeInRevision ContextBuilder::rangeForNode(Identifier* node, bool moveRight)
+{
+    return rangeForNode(static_cast<Ast*>(node), moveRight);
+}
+
 TopDUContext* ContextBuilder::newTopContext(const RangeInRevision& range, ParsingEnvironmentFile* file) 
 {
     IndexedString currentDocumentUrl = ContextBuilder::m_editor->parseSession()->currentDocument();

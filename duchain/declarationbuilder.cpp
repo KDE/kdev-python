@@ -248,14 +248,13 @@ Declaration* DeclarationBuilder::findDeclarationInContext(QStringList dottedName
         QList<Declaration*> declarations = currentContext->findDeclarations(QualifiedIdentifier(currentIdentifier).first(),
                                                                             CursorInRevision::invalid(), 0, DUContext::DontSearchInParent);
         // break if the list of identifiers is not yet totally worked through and no declaration with an internal context was found
-        if ( declarations.isEmpty() || ( ! declarations.first()->internalContext() || currentIdentifier != dottedNameIdentifier.last() ) ) {
+        if ( declarations.isEmpty() || ( ! declarations.first()->internalContext() && currentIdentifier != dottedNameIdentifier.last() ) ) {
             kWarning() << "Declaration not found: " << dottedNameIdentifier << "in top context" << ctx->url().toUrl().path();
             return 0;
         }
         else {
             lastAccessedDeclaration = declarations.first();
             currentContext = lastAccessedDeclaration->internalContext();
-            Q_ASSERT(currentContext);
         }
     }
     return lastAccessedDeclaration;
@@ -345,26 +344,6 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
         kDebug() << "Result: " << originalDeclaration;
         if ( originalDeclaration ) {
             DUChainWriteLocker lock(DUChain::lock());
-            QStringList qualifiedNames = declarationIdentifier.split('.');
-            // name is dotted; use only the last one
-            int openedContexts = 0;
-            if ( qualifiedNames.length() > 1 ) {
-                declarationIdentifier = *declarationIdentifier; // copy it
-                declarationIdentifier->value = qualifiedNames.takeLast();
-                foreach ( const QString& name, qualifiedNames ) {
-                    kDebug() << "Opening fake context for dotted import: " << name;
-                    Identifier* current = Identifier(name);
-                    current->copyRange(declarationIdentifier);
-                    StructureType::Ptr moduleType(new StructureType());
-                    openType(moduleType);
-                    Declaration* d = visitVariableDeclaration<Declaration>(current);
-                    closeType();
-                    DUContext* wrapper = openContext(current, KDevelop::DUContext::Other);
-                    d->setInternalContext(wrapper);
-                    moduleType->setDeclaration(d);
-                    ++openedContexts;
-                }
-            }
             resultingDeclaration = visitVariableDeclaration<AliasDeclaration>(declarationIdentifier, range);
             if ( dynamic_cast<AliasDeclaration*>(resultingDeclaration) ) {
                 static_cast<AliasDeclaration*>(resultingDeclaration)->setAliasedDeclaration(originalDeclaration);
@@ -372,10 +351,6 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
             }
             else
                 kWarning() << "import declaration is being overwritten!";
-            // close all the module contexts
-            for ( int i = 0; i < openedContexts; i++ ) {
-                closeContext();
-            }
         }
         // TODO report error
     }
@@ -413,6 +388,8 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         v.visitNode(node->value);
         realValues << v.lastType();
         realDeclarations << v.lastDeclaration();
+        DUChainReadLocker lock(DUChain::lock());
+        kDebug() << ( v.lastType() ? v.lastType()->toString() : "< no last type >" ) << ( v.lastDeclaration() ? v.lastDeclaration()->toString() : "< no last declaration >" );
     }
     
     AbstractType::Ptr tupleElementType(0);

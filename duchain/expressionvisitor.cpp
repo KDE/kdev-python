@@ -85,9 +85,81 @@ Declaration* ExpressionVisitor::resolveAliasDeclaration(Declaration* decl)
         return decl;
 }
 
+void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclaration, AttributeAst* node)
+{
+    // if it's a function call, the result of that call will be the return type
+    // TODO check weather we need to distinguish bettween foo.bar and foo.bar() here
+    DUChainPointer<ClassDeclaration> classDecl = actualDeclaration.dynamicCast<ClassDeclaration>();
+    DUChainPointer<FunctionDeclaration> funcDecl = actualDeclaration.dynamicCast<FunctionDeclaration>();
+    
+    if ( classDecl ) {
+        encounter(classDecl->abstractType());
+        m_lastAccessedReturnType = classDecl->abstractType();
+    }
+    else if ( funcDecl && funcDecl->type<FunctionType>() ) {
+        if ( node->belongsToCall ) {
+            encounter(funcDecl->type<FunctionType>()->returnType());
+            m_lastAccessedReturnType = funcDecl->type<FunctionType>()->returnType();
+        }
+        else {
+            encounter(funcDecl->abstractType());
+            m_lastAccessedReturnType = funcDecl->abstractType(); // TODO check this
+        }
+    }
+    else {
+        encounter(actualDeclaration->abstractType());
+    }
+}
+
 void ExpressionVisitor::visitAttribute(AttributeAst* node)
 {
-    Python::AstDefaultVisitor::visitAttribute(node);
+    // check whether this is explicitly imported like "import a.b.c"
+    AttributeAst* ptr = node;
+    QList<Identifier*> nameComponents;
+    bool success = false;
+    while ( ptr && ptr->astType == Ast::AttributeAstType ) {
+        nameComponents.prepend(ptr->attribute);
+        if ( ptr->value && ptr->value->astType == Ast::AttributeAstType ) {
+            ptr = static_cast<AttributeAst*>(ptr->value);
+        }
+        else if ( ptr->value && ptr->value->astType == Ast::NameAstType ) {
+            nameComponents.prepend(static_cast<NameAst*>(ptr->value)->identifier);
+            ptr = 0;
+            success = true;
+        }
+        else {
+            ptr = 0;
+        }
+    }
+    
+    kDebug() << "IS DOTTED: " << success;
+    
+    // this actually is an imported dotted name
+    if ( success ) {
+        RangeInRevision range = RangeInRevision(nameComponents.first()->startLine, nameComponents.first()->startCol,
+                                                nameComponents.first()->endLine, nameComponents.first()->endCol);
+        QStringList stringNameComponents;
+        foreach ( const Identifier* i, nameComponents ) {
+            stringNameComponents.append(i->value);
+        }
+        QString name = stringNameComponents.join(".");
+        DUChainReadLocker lock(DUChain::lock());
+        QList<Declaration*> found = m_ctx->findDeclarations(QualifiedIdentifier(name).first(), range.start);
+        lock.unlock();
+        kDebug() << "Found declarations for dotted name import: " << found;
+        if ( ! found.isEmpty() ) {
+            Declaration* real = resolveAliasDeclaration(found.last());
+            m_lastAccessedDeclaration = DeclarationPointer(real);
+            m_lastAccessedAttributeDeclaration = m_lastAccessedDeclaration;
+            DUChainReadLocker lock(DUChain::lock());
+            encounter(real->abstractType());
+            setTypesForEventualCall(m_lastAccessedDeclaration, node);
+            return;
+        }
+        else kDebug() << "None found, defaulting to normal behaviour";
+    }
+    
+    // This is not an imported dotted name, proceed with normal operation
     ExpressionAst* accessingAttributeOf = node->value;
     Identifier* identifier;
     QList<DeclarationPointer> availableDeclarations;
@@ -101,6 +173,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     
     // Step 1: Find out which kind of attribute is before us in the queue, like foo.bar().baz, foo.bar.baz, foo.bar[].baz, etc.
     // Query information about its type or declaration from previously visited stuff.
+    Python::AstDefaultVisitor::visitAttribute(node);
     if ( accessingAttributeOf->astType == Ast::AttributeAstType ) {
         identifier = dynamic_cast<AttributeAst*>(accessingAttributeOf)->attribute;
         if ( m_lastAccessedAttributeDeclaration.data() ) {
@@ -145,7 +218,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     // Like, for A.B.C where B is an instance of foo, when processing C, find all properties of foo which are called C.
     
     // maybe our attribute isn't a class at all, then that's an error by definition for now
-    bool success = false;
+    success = false;
     DUChainReadLocker lock(DUChain::lock());
     if ( accessingAttributeOfType.unsafeData() ) {
         Declaration* foundContainerDeclaration = accessingAttributeOfType.unsafeData()->declaration(m_ctx->topContext());
@@ -170,28 +243,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
 //         kDebug() << "Last accessed declaration: " << m_lastAccessedAttributeDeclaration->identifier().toString() 
 //                  << m_lastAccessedAttributeDeclaration.data() << "@" << m_lastAccessedAttributeDeclaration->topContext()->url().toUrl().path();
         
-        // if it's a function call, the result of that call will be the return type
-        // TODO check weather we need to distinguish bettween foo.bar and foo.bar() here
-        DUChainPointer<ClassDeclaration> classDecl = actualDeclaration.dynamicCast<ClassDeclaration>();
-        DUChainPointer<FunctionDeclaration> funcDecl = actualDeclaration.dynamicCast<FunctionDeclaration>();
-        
-        if ( classDecl ) {
-            encounter(classDecl->abstractType());
-            m_lastAccessedReturnType = classDecl->abstractType();
-        }
-        else if ( funcDecl && funcDecl->type<FunctionType>() ) {
-            if ( node->belongsToCall ) {
-                encounter(funcDecl->type<FunctionType>()->returnType());
-                m_lastAccessedReturnType = funcDecl->type<FunctionType>()->returnType();
-            }
-            else {
-                encounter(funcDecl->abstractType());
-                m_lastAccessedReturnType = funcDecl->abstractType(); // TODO check this
-            }
-        }
-        else {
-            encounter(actualDeclaration->abstractType());
-        }
+        setTypesForEventualCall(actualDeclaration, node);
     }
     else {
         kDebug() << "No declaration found for attribute";

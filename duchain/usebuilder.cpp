@@ -96,16 +96,16 @@ void UseBuilder::visitName(NameAst* node)
 
 void UseBuilder::visitAttribute(AttributeAst* node)
 {
+    ExpressionVisitor v(currentContext(), editor());
     kDebug() << "VisitAttribute start";
     UseBuilderBase::visitAttribute(node);
     kDebug() << "Visit Attribute base end";
     
-    ExpressionVisitor* v = new ExpressionVisitor(currentContext(), editor());
-    v->visitNode(node);
+    v.visitNode(node);
     
     RangeInRevision useRange(node->attribute->startLine, node->attribute->startCol, node->attribute->endLine, node->attribute->endCol + 1);
     
-    DeclarationPointer declaration = v->lastDeclaration();
+    DeclarationPointer declaration = v.lastDeclaration();
     if ( declaration && declaration->range() == useRange ) return;
     /// debug
     if ( declaration ) {

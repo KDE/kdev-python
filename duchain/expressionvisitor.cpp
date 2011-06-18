@@ -247,6 +247,9 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     }
     else {
         kWarning() << "Unsupported attribute access method";
+        setLastAccessedAttributeDeclaration(DeclarationPointer(0));
+        setLastAccessedDeclaration(DeclarationPointer(0));
+        m_lastType = AbstractType::Ptr(0);
         return;
     }
     
@@ -258,6 +261,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
         kWarning() << "No declaration found to look up type of attribute in.";
         setLastAccessedAttributeDeclaration(DeclarationPointer(0));
         setLastAccessedDeclaration(DeclarationPointer(0));
+        m_lastType = AbstractType::Ptr(0);
         return unknownTypeEncountered();
     }
     
@@ -365,6 +369,7 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
         DUChainReadLocker lock(DUChain::lock());
         kDebug() << "LAST TYPE for slice access:" << lastType() << ( lastType() ? lastType()->toString() : "<null>" );
         VariableLengthContainer::Ptr t = lastType().cast<VariableLengthContainer>();
+        kDebug() << "Is container: " << t;
         if ( ! t ) {
             return unknownTypeEncountered();
         }

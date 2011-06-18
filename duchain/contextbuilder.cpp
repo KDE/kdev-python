@@ -285,6 +285,7 @@ void ContextBuilder::visitCode(CodeAst* node) {
 QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
 {
     QStringList nameComponents = name.split(".");
+    kDebug() << "FINDING MODULE: " << nameComponents;
     QList<KUrl> searchPaths = Helper::getSearchPaths(currentlyParsedDocument().toUrl());
     KUrl tmp;
     QStringList leftNameComponents;

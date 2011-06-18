@@ -38,6 +38,7 @@
 #include "pythonduchainexport.h"
 #include "pythoneditorintegrator.h"
 #include <language/duchain/declaration.h>
+#include <language/duchain/types/structuretype.h>
 
 
 namespace KDevelop {
@@ -112,25 +113,63 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
          **/
         Declaration* resolveAliasDeclaration(Declaration* decl);
         
-        KDevelop::AbstractType::Ptr lastType() const { return m_lastType; }
-        KDevelop::DeclarationPointer lastDeclaration() const { return m_lastAccessedDeclaration; }
+        inline KDevelop::AbstractType::Ptr lastType() const {
+            return m_lastType;
+        }
+        inline KDevelop::DeclarationPointer lastDeclaration() const {
+            return ( m_lastAccessedDeclaration.isEmpty() ? DeclarationPointer(0) : m_lastAccessedDeclaration.last() );
+        }
         template<typename T> static TypePtr<T> typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx);
-        void setTypesForEventualCall(DeclarationPointer eventualFunction, AttributeAst* node);
+        /**
+         * @brief Takes a declaration and a node as arguments, and determines whether the function is called or assigned to.
+         * Then sets m_lastFoo types appropriately.
+         *
+         * @param eventualFunction The declaration to inspect.
+         * @param node The node to use for determining whether the function is called or assigned.
+         * @param extendUnsureTypes If true, do not overwrite type attributes, but extend them to UnsureTypes
+         * @return void
+         **/
+        void setTypesForEventualCall(DeclarationPointer actualDeclaration, Python::AttributeAst* node, bool extendUnsureTypes = false);
     private:
         static QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> s_defaultTypes;
+        
+        inline void setLastAccessedNameDeclaration(DeclarationPointer d) {
+            m_lastAccessedNameDeclaration.clear();
+            m_lastAccessedNameDeclaration << d;
+        };
+        inline void setLastAccessedAttributeDeclaration(DeclarationPointer d) {
+            m_lastAccessedAttributeDeclaration.clear();
+            m_lastAccessedAttributeDeclaration << d;
+        };
+        inline void setLastAccessedDeclaration(DeclarationPointer d) {
+            m_lastAccessedDeclaration.clear();
+            m_lastAccessedDeclaration << d;
+        };
         
         KDevelop::AbstractType::Ptr m_lastType;
         KDevelop::DUContext* m_ctx;
         PythonEditorIntegrator* m_editor;
         
-        void encounter(KDevelop::AbstractType::Ptr type);
+        void encounter(AbstractType::Ptr type, bool merge=false);
         template<typename T> void encounter(TypePtr<T> type);
         
         void unknownTypeEncountered();
+        QList< TypePtr< StructureType > > possibleStructureTypes(AbstractType::Ptr type);
+        QList< TypePtr< StructureType > > typeListForDeclarationList(QList< DeclarationPointer > decls);
+        
+        inline QList< DeclarationPointer > toSharedPtrList(QList< Declaration* > foundDecls) {
+            QList<DeclarationPointer> result;
+            foreach ( Declaration* d, foundDecls ) {
+                result << DeclarationPointer(d);
+            }
+            return result;
+        };
+        
+        
         AbstractType::Ptr m_lastAccessedReturnType;
-        DeclarationPointer m_lastAccessedNameDeclaration;
-        DeclarationPointer m_lastAccessedDeclaration;
-        DeclarationPointer m_lastAccessedAttributeDeclaration;  // this is in general not what the expression visitor is meant for,
+        QList<DeclarationPointer> m_lastAccessedNameDeclaration;
+        QList<DeclarationPointer> m_lastAccessedDeclaration;
+        QList<DeclarationPointer> m_lastAccessedAttributeDeclaration;  // this is in general not what the expression visitor is meant for,
                                                                 // but the processes to find those declarations and the types are pretty much the same
                                                                 // and are both pretty long, so we can avoid dulicated code with this.
 };

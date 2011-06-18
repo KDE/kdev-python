@@ -242,6 +242,9 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
         availableDeclarations.clear();
         accessingAttributeOfType.append(possibleStructureTypes(m_lastAccessedReturnType));
     }
+    else if ( m_lastType && m_lastType.cast<StructureType>() ) {
+        accessingAttributeOfType.append(m_lastType.cast<StructureType>());
+    }
     else {
         kWarning() << "Unsupported attribute access method";
         return;

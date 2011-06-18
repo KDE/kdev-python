@@ -107,8 +107,8 @@ class __kdevpythondocumentation_builtin_string(self,):
     def rpartition(self,seperator): return (self,"", "", "")
     def rsplit(self,seperator = "", maxsplit = 0): return []
     def rstrip(self,chars = ""): return ""
-    def split(self,seperator = "", maxsplit = 0): return []
-    def splitlines(self,keepends = False): return []
+    def split(self,seperator = "", maxsplit = 0): return ["string"]
+    def splitlines(self,keepends = False): return ["string"]
     def startswith(self,prefix, start = 0, end = 0): return True
     def strip(self,chars = ""): return ""
     def swapcase(self,): return ""

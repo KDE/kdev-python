@@ -430,7 +430,6 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             else {
                 DUChainWriteLocker lock(DUChain::lock());
                 Declaration* dec = visitVariableDeclaration<Declaration>(target);
-                dec->setAbstractType(tupleElementType);
                 /** DEBUG **/
                 if ( tupleElementType ) {
                     VariableLengthContainer* type = dynamic_cast<VariableLengthContainer*>(dec->abstractType().unsafeData());

@@ -305,7 +305,23 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
     return items;
 }
 
-QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItemsForType(AbstractType::Ptr type, DeclarationPointer /*declaration*/)
+QList< CompletionTreeItemPointer > PythonCodeCompletionContext::getCompletionItemsForType(AbstractType::Ptr type, DeclarationPointer declaration)
+{
+    QList<CompletionTreeItemPointer> result;
+    if ( type->whichType() == AbstractType::TypeUnsure ) {
+        UnsureType::Ptr unsure = type.cast<UnsureType>();
+        int count = unsure->typesSize();
+        for ( int i = 0; i < count; i++ ) {
+            result.append(getCompletionItemsForOneType(unsure->types()[i].abstractType(), declaration));
+        }
+    }
+    else {
+        result = getCompletionItemsForOneType(type, declaration);
+    }
+    return result;
+}
+
+QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItemsForOneType(AbstractType::Ptr type, DeclarationPointer /*declaration*/)
 {
     if ( type->whichType() == AbstractType::TypeStructure ) {
         // find properties of class declaration

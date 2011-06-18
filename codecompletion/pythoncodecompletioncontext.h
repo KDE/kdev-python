@@ -57,7 +57,10 @@ public:
     virtual QList< KDevelop::CompletionTreeItemPointer > completionItems(bool& abort, bool fullCompletion = true);
     QList<ImportFileItem*> includeFileItems(QList<KUrl> searchPaths);
     QList<ImportFileItem*> includeFileItemsForSubmodule(QString submodule);
+    
     QList<CompletionTreeItemPointer> getCompletionItemsForType(AbstractType::Ptr type, DeclarationPointer declaration);
+    QList<CompletionTreeItemPointer> getCompletionItemsForOneType(AbstractType::Ptr type, DeclarationPointer declaration);
+    
     QList<CompletionTreeItemPointer> declarationListToItemList(QList<DeclarationDepthPair> declarations, int maxDepth = 0);
     
     // go back the current line, and kill everything except an eventual Expression we search for.

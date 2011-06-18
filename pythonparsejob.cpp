@@ -147,11 +147,15 @@ void ParseJob::run()
         bool needsReparse = builder.m_hasUnresolvedImports;
         setDuChain(m_duContext);
         
+        if ( abortRequested() )
+            return abortJob();
         Q_ASSERT(m_session->currentDocument().toUrl().isValid());
         UseBuilder usebuilder( &editor );
         usebuilder.m_currentlyParsedDocument = filename;
         usebuilder.buildUses(m_ast);
-
+        
+        if ( abortRequested() )
+            return abortJob();
         qDebug() << "Document needs update because of unresolved identifiers: " << needsReparse;
         if ( needsReparse ) {
             if ( ! ( minimumFeatures() & Rescheduled ) && KDevelop::ICore::self()->languageController()->backgroundParser()->queuedCount() ) {
@@ -162,6 +166,8 @@ void ParseJob::run()
             }
         }
         
+        if ( abortRequested() )
+            return abortJob();
         {
             DUChainWriteLocker lock(DUChain::lock());
             m_duContext->setFeatures(minimumFeatures());
@@ -173,6 +179,8 @@ void ParseJob::run()
         
         kDebug() << "----Parsing Succeded---***";
         
+        if ( abortRequested() )
+            return abortJob();
         if ( m_parent && m_parent->codeHighlighting() ) {
             kDebug() << "Starting highlighter...";
             KDevelop::ICodeHighlighting* hl = m_parent->codeHighlighting();
@@ -182,6 +190,8 @@ void ParseJob::run()
     else
     {
         kWarning() << "===Failed===";
+        if ( abortRequested() )
+            return abortJob();
         DUChainWriteLocker lock;
         m_duContext = DUChain::self()->chainForDocument(document());
         if ( m_duContext ) {
@@ -198,6 +208,9 @@ void ParseJob::run()
         
         setDuChain(m_duContext);
     }
+    
+    if ( abortRequested() )
+            return abortJob();
     
     DUChainWriteLocker lock(DUChain::lock());
     foreach ( ProblemPointer p, m_session->m_problems ) {

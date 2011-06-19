@@ -12,12 +12,35 @@
 #include <language/duchain/types/integraltype.h>
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/duchain.h>
+#include <language/duchain/classdeclaration.h>
 
 using namespace KDevelop;
 
 namespace Python {
 
 QList<KUrl> Helper::cachedSearchPaths;
+
+QList< DUContext* > Helper::inernalContextsForClass(StructureType::Ptr klassType, TopDUContext* context)
+{
+    QList<DUContext*> searchContexts;
+    if ( ! klassType ) {
+        return searchContexts;
+    }
+    searchContexts << klassType->internalContext(context);
+    Declaration* decl = klassType->declaration(context);
+    ClassDeclaration* klass = dynamic_cast<ClassDeclaration*>(decl);
+    kDebug() << "Got class Declaration:" << klass;
+    if ( klass ) {
+        kDebug() << "Base classes: " << klass->baseClassesSize();
+        FOREACH_FUNCTION ( const BaseClassInstance& base, klass->baseClasses ) {
+            StructureType::Ptr baseClassType = base.baseClass.type<StructureType>();
+            kDebug() << "Base class type: " << baseClassType;
+            // recursive call, because the base class will have more base classes eventually
+            searchContexts.append(Helper::inernalContextsForClass(baseClassType, context));
+        }
+    }
+    return searchContexts;
+}
     
 QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
 {

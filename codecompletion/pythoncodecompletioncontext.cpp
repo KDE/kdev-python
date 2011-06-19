@@ -333,25 +333,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
             kDebug() << cls;
             return QList<CompletionTreeItemPointer>();
         }
-        QList<DUContext*> searchContexts;
-        searchContexts << cls->internalContext(m_context->topContext());
-        Declaration* decl = cls->declaration(m_context->topContext());
-        ClassDeclaration* klass = dynamic_cast<ClassDeclaration*>(decl);
-        kDebug() << "Got class Declaration:" << klass;
-        if ( klass ) {
-            kDebug() << "Base classes: " << klass->baseClassesSize();
-            FOREACH_FUNCTION ( const BaseClassInstance& base, klass->baseClasses ) {
-                StructureType::Ptr baseClassType = base.baseClass.type<StructureType>();
-                kDebug() << "Base class type: " << baseClassType;
-                if ( baseClassType ) {
-                    Declaration* baseClassDeclaration = baseClassType->declaration(m_context->topContext());
-                    kDebug() << "Base class declaration: " << baseClassDeclaration << baseClassDeclaration->internalContext();
-                    if ( baseClassDeclaration && baseClassDeclaration->internalContext() ) {
-                        searchContexts << baseClassDeclaration->internalContext();
-                    }
-                }
-            }
-        }
+        QList<DUContext*> searchContexts = Helper::inernalContextsForClass(cls, m_context->topContext());
         QList<DeclarationDepthPair> keepDeclarations;
         foreach ( const DUContext* currentlySearchedContext, searchContexts ) {
             QList<DeclarationDepthPair> declarations = currentlySearchedContext->allDeclarations(CursorInRevision::invalid(), m_context->topContext(), false);

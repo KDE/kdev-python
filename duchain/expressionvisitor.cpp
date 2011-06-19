@@ -68,7 +68,7 @@ template<typename T> void ExpressionVisitor::encounter(TypePtr< T > type)
 }
 
 Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegrator* editor)
-    : m_ctx(ctx), m_lastType(0),  m_editor(editor), m_lastAccessedReturnType(0)
+    : m_lastType(0), m_ctx(ctx), m_editor(editor), m_lastAccessedReturnType(0)
 {
     if(s_defaultTypes.isEmpty()) {
         s_defaultTypes.insert(KDevelop::Identifier("True"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
@@ -280,11 +280,10 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     DUChainReadLocker lock(DUChain::lock());
     if ( ! accessingAttributeOfType.isEmpty() ) {
         foreach ( StructureType::Ptr currentStructureType, accessingAttributeOfType ) {
-            Declaration* foundContainerDeclaration = currentStructureType->declaration(m_ctx->topContext());
-            if ( foundContainerDeclaration ) {
-                DUContext* searchAttrInContext = foundContainerDeclaration->internalContext();
-                if ( searchAttrInContext ) {
-                    foundDecls.append(searchAttrInContext->findDeclarations(QualifiedIdentifier(node->attribute->value), CursorInRevision::invalid()));
+            QList<DUContext*> searchContexts = Helper::inernalContextsForClass(currentStructureType, m_ctx->topContext());
+            foreach ( DUContext* currentInternalContext, searchContexts ) {
+                if ( currentInternalContext ) {
+                    foundDecls.append(currentInternalContext->findDeclarations(QualifiedIdentifier(node->attribute->value), CursorInRevision::invalid()));
                     success = true;
                 }
             }

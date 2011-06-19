@@ -538,6 +538,31 @@ void PyDUChainTest::testFunctionArgs()
     QVERIFY(funcBodyCtx->localDeclarations().isEmpty());
 }
 
+void PyDUChainTest::testInheritance()
+{
+    QFETCH(QString, code);
+    ReferencedTopDUContext ctx = parse(code);
+    QVERIFY(ctx);
+    DUChainReadLocker lock(DUChain::lock());
+    QList<p> decls = ctx->allDeclarations(CursorInRevision::invalid(), ctx->topContext(), false);
+    bool found = false;
+    foreach ( const p& item, decls ) {
+        kDebug() << "Checking declaration: " << item.first->identifier() << item.first->abstractType()->toString();
+        if ( item.first->identifier().toString() == "checkme" ) {
+            QVERIFY(item.first->abstractType()->toString() == "__kdevpythondocumentation_builtin_float");
+            found = true;
+        }
+    }
+    QVERIFY(found);
+}
+
+void PyDUChainTest::testInheritance_data()
+{
+    QTest::addColumn<QString>("code");
+    
+    QTest::newRow("simple") << "class A():\n\tattr = 3\n\nclass B(A):\n\tpass\n\ninst=B()\ncheckme = inst.attr";
+}
+
 void PyDUChainTest::testContainerTypes()
 {
     QFETCH(QString, code);

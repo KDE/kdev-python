@@ -333,20 +333,41 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
             kDebug() << cls;
             return QList<CompletionTreeItemPointer>();
         }
-        QList<DeclarationDepthPair> declarations = cls->internalContext(m_context->topContext())->allDeclarations(CursorInRevision::invalid(), m_context->topContext(), false);
-        QList<DeclarationDepthPair> keepDeclarations;
-        // filter out those which are builtin functions, and those which were imported; we don't want those here
-        // TODO rework this, it's maybe not the most elegant solution possible
-        KUrl url = KUrl(KStandardDirs::locate("data", "kdevpythonsupport/documentation_files/builtindocumentation.py"));
-        url.cleanPath();
-        QString u = url.path();
-        foreach ( DeclarationDepthPair current, declarations ) {
-            if ( current.first->context() != DUChain::self()->chainForDocument(u) ) {
-                kDebug() << "Keeping declaration" << current.first->toString();
-                keepDeclarations.append(current);
+        QList<DUContext*> searchContexts;
+        searchContexts << cls->internalContext(m_context->topContext());
+        Declaration* decl = cls->declaration(m_context->topContext());
+        ClassDeclaration* klass = dynamic_cast<ClassDeclaration*>(decl);
+        kDebug() << "Got class Declaration:" << klass;
+        if ( klass ) {
+            kDebug() << "Base classes: " << klass->baseClassesSize();
+            FOREACH_FUNCTION ( const BaseClassInstance& base, klass->baseClasses ) {
+                StructureType::Ptr baseClassType = base.baseClass.type<StructureType>();
+                kDebug() << "Base class type: " << baseClassType;
+                if ( baseClassType ) {
+                    Declaration* baseClassDeclaration = baseClassType->declaration(m_context->topContext());
+                    kDebug() << "Base class declaration: " << baseClassDeclaration << baseClassDeclaration->internalContext();
+                    if ( baseClassDeclaration && baseClassDeclaration->internalContext() ) {
+                        searchContexts << baseClassDeclaration->internalContext();
+                    }
+                }
             }
-            else {
-                kDebug() << "Discarding declaration " << current.first->toString();
+        }
+        QList<DeclarationDepthPair> keepDeclarations;
+        foreach ( const DUContext* currentlySearchedContext, searchContexts ) {
+            QList<DeclarationDepthPair> declarations = currentlySearchedContext->allDeclarations(CursorInRevision::invalid(), m_context->topContext(), false);
+            // filter out those which are builtin functions, and those which were imported; we don't want those here
+            // TODO rework this, it's maybe not the most elegant solution possible
+            KUrl url = KUrl(KStandardDirs::locate("data", "kdevpythonsupport/documentation_files/builtindocumentation.py"));
+            url.cleanPath();
+            QString u = url.path();
+            foreach ( DeclarationDepthPair current, declarations ) {
+                if ( current.first->context() != DUChain::self()->chainForDocument(u) ) {
+                    kDebug() << "Keeping declaration" << current.first->toString();
+                    keepDeclarations.append(current);
+                }
+                else {
+                    kDebug() << "Discarding declaration " << current.first->toString();
+                }
             }
         }
         return declarationListToItemList(keepDeclarations);

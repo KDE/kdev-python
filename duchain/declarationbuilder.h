@@ -74,6 +74,7 @@ protected:
     virtual void visitExceptionHandler(ExceptionHandlerAst* node);
     virtual void visitReturn(ReturnAst* node);
     virtual void visitCode(CodeAst* node);
+    virtual void visitCall(CallAst* node);
     
     void visitDecorators(QList<ExpressionAst*> decorators, DecoratedDeclaration* addTo);
     

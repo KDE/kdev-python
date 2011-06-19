@@ -357,6 +357,11 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
     return resultingDeclaration;
 }
 
+void DeclarationBuilder::visitCall(CallAst* node)
+{
+    Python::AstDefaultVisitor::visitCall(node);
+}
+
 void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 {
     QList<ExpressionAst*> realTargets;
@@ -530,6 +535,18 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     dec->setKind(KDevelop::Declaration::Type);
     dec->clearBaseClasses();
     dec->setClassType(ClassDeclarationData::Class);
+    
+    foreach ( ExpressionAst* c, node->baseClasses ) {
+        ExpressionVisitor v(currentContext(), editor());
+        v.visitNode(c);
+        if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeStructure ) {
+            StructureType::Ptr baseClassType = v.lastType().cast<StructureType>();
+            BaseClassInstance base;
+            base.baseClass = baseClassType->indexed();
+            base.access = KDevelop::Declaration::Public;
+            dec->addBaseClass(base);
+        }
+    }
     
     // check whether this is a type container (list, dict, ...) or just a "normal" class
     StructureType::Ptr type(0);

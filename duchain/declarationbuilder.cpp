@@ -175,7 +175,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
                                 node->startLine, node->startCol, node->startLine, (node->startLine == node->endLine ? node->endCol + 1 : 100))));
             p->setSource(KDevelop::ProblemData::SemanticAnalysis);
             p->setSeverity(KDevelop::ProblemData::Error);
-            p->setDescription(i18n("Re-declaration of \"" + node->value.toAscii() + "\" shadows a previous declaration with different type"));
+            p->setDescription(i18n("Re-declaration of \"%1\" shadows a previous declaration with different type", node->value));
             ProblemPointer ptr(p);
             topContext()->addProblem(ptr);
             return 0;

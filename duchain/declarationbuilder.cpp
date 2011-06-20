@@ -149,7 +149,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         }
     }
     if ( existingDeclarations.length() ) {
-        Declaration* d = existingDeclarations.last();
+        Declaration* d = existingDeclarations.first();
         kDebug() << "last one: " << d << d->toString() << dynamic_cast<T*>(d) << wasEncountered(d);
         if ( dynamic_cast<T*>(d) && ! wasEncountered(d) ) {
             kDebug() << "Opening previously existing declaration for " << d->toString();
@@ -158,6 +158,27 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
             setEncountered(d);
             existingDeclarations.removeLast();
             dec = d;
+        }
+    }
+    
+    if ( dec || ! existingDeclarations.isEmpty() ) {
+        Declaration* d = dec ? dec : existingDeclarations.first();
+        Q_ASSERT(d);
+        d = Helper::resolveAliasDeclaration(d);
+        if ( d && d->abstractType() && lastType() && lastType()->whichType() != AbstractType::TypeFunction && d->isFunctionDeclaration() ) {
+            kWarning() << "Found re-declaration, reporting error";
+            kDebug() << d->abstractType()->toString() << lastType()->toString() << d->abstractType()->whichType() << lastType()->whichType();
+            // assigning e.g. an integral value to something that was a function definition previously
+            // is difficult to handle and most likely not what you want, so we just report an error.
+            KDevelop::Problem *p = new KDevelop::Problem();
+            p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(
+                                node->startLine, node->startCol, node->startLine, (node->startLine == node->endLine ? node->endCol + 1 : 100))));
+            p->setSource(KDevelop::ProblemData::SemanticAnalysis);
+            p->setSeverity(KDevelop::ProblemData::Error);
+            p->setDescription(i18n("Re-declaration of \"" + node->value.toAscii() + "\" shadows a previous declaration with different type"));
+            ProblemPointer ptr(p);
+            topContext()->addProblem(ptr);
+            return 0;
         }
     }
     
@@ -323,6 +344,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
         StructureType::Ptr moduleType(new StructureType());
         openType(moduleType);
         DUChainWriteLocker lock(DUChain::lock());
+        setLastType(AbstractType::Ptr(0));
         resultingDeclaration = visitVariableDeclaration<Declaration>(declarationIdentifier, range);
         Q_ASSERT(resultingDeclaration);
         closeType();
@@ -439,7 +461,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                 DUChainWriteLocker lock(DUChain::lock());
                 Declaration* dec = visitVariableDeclaration<Declaration>(target);
                 /** DEBUG **/
-                if ( tupleElementType ) {
+                if ( tupleElementType && dec ) {
                     VariableLengthContainer* type = dynamic_cast<VariableLengthContainer*>(dec->abstractType().unsafeData());
                     kDebug() << "type is: " << dec->abstractType().unsafeData() << type << dynamic_cast<VariableLengthContainer*>(tupleElementType.unsafeData());
                     kDebug() << "indexed: " << tupleElementType->indexed().hash() << "<>" << dec->indexedType().hash();
@@ -625,6 +647,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     QList<Declaration*> existing;
     
     FunctionDeclaration* dec = openDeclaration<FunctionDeclaration>( node->name, node );
+    Q_ASSERT(dec->isFunctionDeclaration());
     
     type = FunctionType::Ptr(new FunctionType());
     type->setReturnType(AbstractType::Ptr(new IntegralType(IntegralType::TypeVoid)));

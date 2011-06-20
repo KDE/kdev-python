@@ -13,6 +13,7 @@
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/duchain.h>
 #include <language/duchain/classdeclaration.h>
+#include <language/duchain/aliasdeclaration.h>
 
 using namespace KDevelop;
 
@@ -20,7 +21,7 @@ namespace Python {
 
 QList<KUrl> Helper::cachedSearchPaths;
 
-QList< DUContext* > Helper::inernalContextsForClass(StructureType::Ptr klassType, TopDUContext* context)
+QList< DUContext* > Helper::inernalContextsForClass(StructureType::Ptr klassType, TopDUContext* context, int depth)
 {
     QList<DUContext*> searchContexts;
     if ( ! klassType ) {
@@ -36,10 +37,22 @@ QList< DUContext* > Helper::inernalContextsForClass(StructureType::Ptr klassType
             StructureType::Ptr baseClassType = base.baseClass.type<StructureType>();
             kDebug() << "Base class type: " << baseClassType;
             // recursive call, because the base class will have more base classes eventually
-            searchContexts.append(Helper::inernalContextsForClass(baseClassType, context));
+            if ( depth < 10 ) {
+                searchContexts.append(Helper::inernalContextsForClass(baseClassType, context, depth + 1));
+            }
         }
     }
     return searchContexts;
+}
+
+Declaration* Helper::resolveAliasDeclaration(Declaration* decl)
+{
+    AliasDeclaration* alias = dynamic_cast<AliasDeclaration*>(decl);
+    if ( alias ) {
+        return alias->aliasedDeclaration().data();
+    }
+    else
+        return decl;
 }
     
 QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)

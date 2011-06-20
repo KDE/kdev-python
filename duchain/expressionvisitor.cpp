@@ -81,16 +81,6 @@ void ExpressionVisitor::unknownTypeEncountered() {
     encounter(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
 }
 
-Declaration* ExpressionVisitor::resolveAliasDeclaration(Declaration* decl)
-{
-    AliasDeclaration* alias = dynamic_cast<AliasDeclaration*>(decl);
-    if ( alias ) {
-        return alias->aliasedDeclaration().data();
-    }
-    else
-        return decl;
-}
-
 void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclaration, AttributeAst* node, bool extendUnsureTypes)
 {
     // if it's a function call, the result of that call will be the return type
@@ -196,7 +186,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
         lock.unlock();
         kDebug() << "Found declarations for dotted name import: " << found;
         if ( ! found.isEmpty() ) {
-            Declaration* real = resolveAliasDeclaration(found.last());
+            Declaration* real = Helper::resolveAliasDeclaration(found.last());
             DeclarationPointer ptr = DeclarationPointer(real);
             setLastAccessedDeclaration(ptr);
             setLastAccessedAttributeDeclaration(ptr);
@@ -294,7 +284,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     // Step 5: Construct the type of the declaration which was found.
     DeclarationPointer actualDeclaration(0);
     if ( foundDecls.length() > 0 ) {
-        actualDeclaration = DeclarationPointer(resolveAliasDeclaration(foundDecls.last()));
+        actualDeclaration = DeclarationPointer(Helper::resolveAliasDeclaration(foundDecls.last()));
         m_lastAccessedAttributeDeclaration = toSharedPtrList(foundDecls);
         m_lastAccessedDeclaration = toSharedPtrList(foundDecls);
         bool extendUnsure = false;
@@ -336,7 +326,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
         return unknownTypeEncountered();
     }
     else {
-        Declaration* actualDeclaration = resolveAliasDeclaration(decls.last());
+        Declaration* actualDeclaration = Helper::resolveAliasDeclaration(decls.last());
         kDebug() << "Resolved alias declaration: " << decls.last()->toString();
         ClassDeclaration* classDecl = dynamic_cast<ClassDeclaration*>(actualDeclaration);
         FunctionDeclaration* funcDecl = dynamic_cast<FunctionDeclaration*>(actualDeclaration);

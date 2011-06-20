@@ -405,8 +405,11 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         if ( canUnpack ) {
             tupleElementType = realValues.at(i);
             tupleElementDeclaration = realDeclarations.at(i);
-        }
-        else {
+        } else if (realTargets.length() == 1) {
+            ExpressionVisitor v(currentContext(), editor());
+            v.visitNode(node->value);
+            tupleElementType =  v.lastType();
+        } else {
             tupleElementType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
             tupleElementDeclaration = 0;
         }

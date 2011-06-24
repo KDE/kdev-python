@@ -144,43 +144,48 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         // append arguments context
         if ( m_mostRecentArgumentsContext ) {
             QList<Declaration*> args = m_mostRecentArgumentsContext->findDeclarations(identifierForNode(node).last(),
-                                                                                        CursorInRevision::invalid(), 0, DUContext::DontSearchInParent);
+                                                                                      CursorInRevision::invalid(), 0, DUContext::DontSearchInParent);
             existingDeclarations.append(args);
         }
     }
-    if ( existingDeclarations.length() ) {
-        Declaration* d = existingDeclarations.first();
+    QList<Declaration*> remainingDeclarations;
+    foreach ( Declaration* d, existingDeclarations ) {
+        Declaration* fitting = dynamic_cast<T*>(d);
         kDebug() << "last one: " << d << d->toString() << dynamic_cast<T*>(d) << wasEncountered(d);
-        if ( dynamic_cast<T*>(d) && ! wasEncountered(d) ) {
+        bool invalidType = d && d->abstractType() && lastType() && lastType()->whichType() != AbstractType::TypeFunction && d->isFunctionDeclaration();
+        if ( fitting && ! wasEncountered(d) && ! invalidType ) {
             kDebug() << "Opening previously existing declaration for " << d->toString();
             openDeclarationInternal(d);
             d->setRange(editorFindRange(node, node));
             setEncountered(d);
-            existingDeclarations.removeLast();
             dec = d;
         }
-    }
-    
-    if ( dec || ! existingDeclarations.isEmpty() ) {
-        Declaration* d = dec ? dec : existingDeclarations.first();
-        Q_ASSERT(d);
-        d = Helper::resolveAliasDeclaration(d);
-        if ( d && d->abstractType() && lastType() && lastType()->whichType() != AbstractType::TypeFunction && d->isFunctionDeclaration() ) {
-            kWarning() << "Found re-declaration, reporting error";
-            kDebug() << d->abstractType()->toString() << lastType()->toString() << d->abstractType()->whichType() << lastType()->whichType();
-            // assigning e.g. an integral value to something that was a function definition previously
-            // is difficult to handle and most likely not what you want, so we just report an error.
-            KDevelop::Problem *p = new KDevelop::Problem();
-            p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(
-                                node->startLine, node->startCol, node->startLine, (node->startLine == node->endLine ? node->endCol + 1 : 100))));
-            p->setSource(KDevelop::ProblemData::SemanticAnalysis);
-            p->setSeverity(KDevelop::ProblemData::Error);
-            p->setDescription(i18n("Re-declaration of \"%1\" shadows a previous declaration with different type", node->value));
-            ProblemPointer ptr(p);
-            topContext()->addProblem(ptr);
-            return 0;
+        else if ( fitting && ! invalidType ) {
+           remainingDeclarations << fitting;
         }
     }
+    existingDeclarations = remainingDeclarations;
+    
+//     if ( dec || ! existingDeclarations.isEmpty() ) {
+//         Declaration* d = dec ? dec : existingDeclarations.first();
+//         Q_ASSERT(d);
+//         d = Helper::resolveAliasDeclaration(d);
+//         if ( d && d->abstractType() && lastType() && lastType()->whichType() != AbstractType::TypeFunction && d->isFunctionDeclaration() ) {
+//             kWarning() << "Found re-declaration, reporting error";
+//             kDebug() << d->abstractType()->toString() << lastType()->toString() << d->abstractType()->whichType() << lastType()->whichType();
+//             // assigning e.g. an integral value to something that was a function definition previously
+//             // is difficult to handle and most likely not what you want, so we just report an error.
+//             KDevelop::Problem *p = new KDevelop::Problem();
+//             p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(
+//                                 node->startLine, node->startCol, node->startLine, (node->startLine == node->endLine ? node->endCol + 1 : 100))));
+//             p->setSource(KDevelop::ProblemData::SemanticAnalysis);
+//             p->setSeverity(KDevelop::ProblemData::Error);
+//             p->setDescription(i18n("Re-declaration of \"%1\" shadows a previous declaration with different type", node->value));
+//             ProblemPointer ptr(p);
+//             topContext()->addProblem(ptr);
+//             return 0;
+//         }
+//     }
     
     kDebug() << "VARIABLE CONTEXT: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange() << currentContext()->type() << DUContext::Class;
     

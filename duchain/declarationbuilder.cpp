@@ -375,6 +375,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
             if ( dynamic_cast<AliasDeclaration*>(resultingDeclaration) ) {
                 static_cast<AliasDeclaration*>(resultingDeclaration)->setAliasedDeclaration(originalDeclaration);
                 kDebug() << "Resulting alias: " << resultingDeclaration->toString();
+                moduleContext->addDirectImporter(topContext());
             }
             else
                 kWarning() << "import declaration is being overwritten!";

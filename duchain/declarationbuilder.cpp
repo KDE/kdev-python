@@ -397,6 +397,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
             if ( dynamic_cast<AliasDeclaration*>(resultingDeclaration) ) {
                 static_cast<AliasDeclaration*>(resultingDeclaration)->setAliasedDeclaration(originalDeclaration);
                 kDebug() << "Resulting alias: " << resultingDeclaration->toString();
+#warning !!! WARNING: This needs a kdevplatform patch which has not yet been submitted! see git.reviewboard.kde.org/r/101754/
                 moduleContext->addDirectImporter(topContext());
             }
             else

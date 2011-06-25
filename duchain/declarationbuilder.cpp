@@ -60,13 +60,13 @@ namespace Python
 {
 
 DeclarationBuilder::DeclarationBuilder()
-        : DeclarationBuilderBase()
+        : DeclarationBuilderBase(), m_prebuilding(false)
 {
     kDebug() << "Building Declarations";
 }
 
 DeclarationBuilder::DeclarationBuilder( PythonEditorIntegrator* editor )
-        : DeclarationBuilderBase( )
+        : DeclarationBuilderBase( ), m_prebuilding(false)
 {
     setEditor(editor);
     kDebug() << "Building Declarations";
@@ -74,6 +74,27 @@ DeclarationBuilder::DeclarationBuilder( PythonEditorIntegrator* editor )
 
 DeclarationBuilder:: ~DeclarationBuilder()
 {
+}
+
+void DeclarationBuilder::setPrebuilding(bool prebuilding)
+{
+    m_prebuilding = prebuilding;
+}
+
+ReferencedTopDUContext DeclarationBuilder::build(const IndexedString& url, Ast* node, ReferencedTopDUContext updateContext)
+{
+    if ( ! m_prebuilding ) {
+        kDebug() << "building, but running pre-builder first";
+        DeclarationBuilder* prebuilder = new DeclarationBuilder(editor());
+        prebuilder->m_currentlyParsedDocument = currentlyParsedDocument();
+        prebuilder->setPrebuilding(true);
+        updateContext = prebuilder->build(url, node, updateContext);
+        kDebug() << "pre-builder finished";
+    }
+    else {
+        kDebug() << "prebuilding";
+    }
+    return DeclarationBuilderBase::build(url, node, updateContext);
 }
 
 void DeclarationBuilder::closeDeclaration()

@@ -320,7 +320,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
     kDebug() << "Visiting call of function " << functionName;
     
     DUChainReadLocker lock(DUChain::lock());
-    QList<Declaration*> decls = m_ctx->findDeclarations(QualifiedIdentifier(functionName));
+    QList<Declaration*> decls = m_ctx->topContext()->findDeclarations(QualifiedIdentifier(functionName));
     if ( decls.length() == 0 ) {
         kWarning() << "No declaration for " << functionName;
         return unknownTypeEncountered();

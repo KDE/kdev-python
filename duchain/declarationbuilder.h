@@ -50,6 +50,8 @@ public:
     DeclarationBuilder();
     DeclarationBuilder( PythonEditorIntegrator* editor );
     virtual ~DeclarationBuilder();
+    void setPrebuilding(bool arg1);
+    virtual ReferencedTopDUContext build(const IndexedString& url, Ast* node, ReferencedTopDUContext updateContext = ReferencedTopDUContext());
 
 protected:
     template<class T> T* openDeclaration(Identifier* name, Ast* range, DeclarationFlags flags = NoFlags) {
@@ -99,6 +101,7 @@ protected:
     
     QStack<TopDUContextPointer> m_importContextsForImportStatement;
     DeclarationPointer m_firstAttributeDeclaration;
+    bool m_prebuilding;
 private:
     int& nextDeclaration();
 };

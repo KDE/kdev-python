@@ -119,6 +119,9 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         inline KDevelop::DeclarationPointer lastDeclaration() const {
             return ( m_lastAccessedDeclaration.isEmpty() ? DeclarationPointer(0) : m_lastAccessedDeclaration.last() );
         }
+        inline KDevelop::DeclarationPointer lastFunctionDeclaration() const {
+            return m_firstAccessedFunctionDeclaration;
+        };
         template<typename T> static TypePtr<T> typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx);
         /**
          * @brief Takes a declaration and a node as arguments, and determines whether the function is called or assigned to.
@@ -142,8 +145,20 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
             m_lastAccessedAttributeDeclaration << d;
         };
         inline void setLastAccessedDeclaration(DeclarationPointer d) {
+            if ( d && ! m_firstAccessedFunctionDeclaration && d->isFunctionDeclaration() ) m_firstAccessedFunctionDeclaration = d;
             m_lastAccessedDeclaration.clear();
             m_lastAccessedDeclaration << d;
+        };
+        inline void setLastAccessedDeclaration(QList<DeclarationPointer> ds) {
+            if ( ! m_firstAccessedFunctionDeclaration ) {
+                foreach ( const DeclarationPointer& p, ds ) {
+                    if ( p->isFunctionDeclaration() ) {
+                        m_firstAccessedFunctionDeclaration = p;
+                        break;
+                    }
+                }
+            }
+            m_lastAccessedDeclaration = ds;
         };
         
         KDevelop::AbstractType::Ptr m_lastType;
@@ -167,6 +182,7 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         
         
         AbstractType::Ptr m_lastAccessedReturnType;
+        DeclarationPointer m_firstAccessedFunctionDeclaration;
         QList<DeclarationPointer> m_lastAccessedNameDeclaration;
         QList<DeclarationPointer> m_lastAccessedDeclaration;
         QList<DeclarationPointer> m_lastAccessedAttributeDeclaration;  // this is in general not what the expression visitor is meant for,

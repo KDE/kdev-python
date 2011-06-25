@@ -24,6 +24,7 @@
 #include <QVariant>
 #include <language/duchain/functiondeclaration.h>
 #include <language/duchain/classdeclaration.h>
+#include <language/duchain/duchainpointer.h>
 
 namespace Python {
 
@@ -59,6 +60,7 @@ public:
 
 typedef PythonFunctionDeclaration FunctionDeclaration;
 typedef PythonClassDeclaration ClassDeclaration;
+typedef KDevelop::DUChainPointer<PythonFunctionDeclaration> FunctionDeclarationPointer;
 
 }
 

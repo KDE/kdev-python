@@ -13,6 +13,7 @@
 
 #include "pythonduchainexport.h"
 #include <language/duchain/declaration.h>
+#include <ast.h>
 
 using namespace KDevelop;
 
@@ -57,6 +58,8 @@ public:
         * DUChain must be read locked
         **/
     static Declaration* resolveAliasDeclaration(Declaration* decl);
+    
+    static Declaration* declarationForName(NameAst* ast, const QualifiedIdentifier& identifier, const RangeInRevision& nodeRange, DUContextPointer context);
 };
 
 }

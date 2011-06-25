@@ -39,6 +39,7 @@
 #include "pythoneditorintegrator.h"
 #include "ast.h"
 #include "expressionvisitor.h"
+#include "helpers.h"
 
 using namespace KTextEditor;
 using namespace KDevelop;
@@ -52,30 +53,8 @@ UseBuilder::UseBuilder (PythonEditorIntegrator* editor) : UseBuilderBase()
 
 void UseBuilder::visitName(NameAst* node)
 {
-    QList<Declaration*> declarations;
-    QList<Declaration*> localDeclarations;
-    QList<Declaration*> importedLocalDeclarations;
-    {
-        DUChainReadLocker lock(DUChain::lock());
-        declarations = currentContext()->topContext()->findDeclarations(identifierForNode(node->identifier), CursorInRevision::invalid());
-        localDeclarations = currentContext()->findLocalDeclarations(identifierForNode(node->identifier).last(), editorFindRange(node, node).end);
-        importedLocalDeclarations = currentContext()->findDeclarations(identifierForNode(node->identifier).last(), editorFindRange(node, node).end);
-    }
-    Declaration* declaration;
-    if ( localDeclarations.length() ) {
-        declaration = localDeclarations.last();
-        kDebug() << "Using local declaration";
-    }
-    else if ( importedLocalDeclarations.length() ) {
-        declaration = importedLocalDeclarations.last();
-        kDebug() << "Using imported local declaration (i.e., argument)";
-    }
-    else if ( declarations.length() ) {
-        declaration = declarations.last();
-        kDebug() << "Using global declaration";
-    }
-    else declaration = 0;
-//     kDebug() << currentContext()->type() << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
+    Declaration* declaration = Helper::declarationForName(node, identifierForNode(node->identifier),
+                                                          editorFindRange(node, node), DUContextPointer(currentContext()));
     
     Q_ASSERT(node->identifier);
     Q_ASSERT(node->hasUsefulRangeInformation); // TODO remove this!

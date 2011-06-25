@@ -51,6 +51,7 @@
 #include "helpers.h"
 #include "types/variablelengthcontainer.h"
 #include "declarations/decorateddeclaration.h"
+#include <language/duchain/duchainutils.h>
 
 using namespace KTextEditor;
 
@@ -409,6 +410,42 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
 void DeclarationBuilder::visitCall(CallAst* node)
 {
     Python::AstDefaultVisitor::visitCall(node);
+    if ( m_prebuilding ) return;
+    kDebug() << "Trying to update function argument types based on call";
+    ExpressionVisitor v(currentContext(), editor());
+    v.visitNode(node);
+    kDebug() << "---";
+    if ( v.lastFunctionDeclaration() ) {
+        kDebug() << "got declaration:" << v.lastFunctionDeclaration()->toString();
+        if ( FunctionDeclarationPointer func = v.lastFunctionDeclaration().dynamicCast<FunctionDeclaration>() ) {
+            kDebug() << "... and yep, it's a function declaration";
+            DUContext* args = DUChainUtils::getArgumentContext(func.data());
+            if ( args ) {
+                kDebug() << "got arguments";
+                QVector<Declaration*> parameters = args->localDeclarations();
+                if ( func->type<FunctionType>()->arguments().length() < parameters.size() ) {
+                    parameters.remove(0);
+                }
+                int atParam = 0;
+                if ( parameters.size() == node->arguments.size() ) {
+                    kDebug() << "... and they match the parameter size";
+                    foreach ( ExpressionAst* arg, node->arguments ) {
+                        v.visitNode(arg);
+                        kDebug() << "Got type for function argument: " << v.lastType();
+                        if ( v.lastType() ) {
+                            kDebug() << "last type: " << v.lastType()->toString();
+                            parameters.at(atParam)->setAbstractType(Helper::mergeTypes(parameters.at(atParam)->abstractType(), v.lastType()));
+                        }
+                        atParam++;
+                    }
+                }
+                else {
+                    kWarning() << "Arguments size mismatch, not updating type" << parameters << node->arguments;
+                }
+            }
+        }
+    }
+    else kDebug() << "No declaration for function, not setting arg types";
 }
 
 void DeclarationBuilder::visitAssignment(AssignmentAst* node)

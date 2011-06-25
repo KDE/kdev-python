@@ -286,7 +286,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     if ( foundDecls.length() > 0 ) {
         actualDeclaration = DeclarationPointer(Helper::resolveAliasDeclaration(foundDecls.last()));
         m_lastAccessedAttributeDeclaration = toSharedPtrList(foundDecls);
-        m_lastAccessedDeclaration = toSharedPtrList(foundDecls);
+        setLastAccessedDeclaration(toSharedPtrList(foundDecls));
         bool extendUnsure = false;
         foreach ( Declaration* decl, foundDecls ) {
             setTypesForEventualCall(DeclarationPointer(decl), node, extendUnsure);

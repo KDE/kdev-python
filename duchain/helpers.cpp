@@ -14,12 +14,41 @@
 #include <language/duchain/duchain.h>
 #include <language/duchain/classdeclaration.h>
 #include <language/duchain/aliasdeclaration.h>
+#include <ast.h>
 
 using namespace KDevelop;
 
 namespace Python {
 
 QList<KUrl> Helper::cachedSearchPaths;
+
+Declaration* Helper::declarationForName(NameAst* ast, const QualifiedIdentifier& identifier, const RangeInRevision& nodeRange, DUContextPointer context)
+{
+    QList<Declaration*> declarations;
+    QList<Declaration*> localDeclarations;
+    QList<Declaration*> importedLocalDeclarations;
+    {
+        DUChainReadLocker lock(DUChain::lock());
+        declarations = context->topContext()->findDeclarations(identifier, CursorInRevision::invalid());
+        localDeclarations = context->findLocalDeclarations(identifier.last(), nodeRange.end);
+        importedLocalDeclarations = context->findDeclarations(identifier.last(), nodeRange.end);
+    }
+    Declaration* declaration;
+    if ( localDeclarations.length() ) {
+        declaration = localDeclarations.last();
+        kDebug() << "Using local declaration";
+    }
+    else if ( importedLocalDeclarations.length() ) {
+        declaration = importedLocalDeclarations.last();
+        kDebug() << "Using imported local declaration (i.e., argument)";
+    }
+    else if ( declarations.length() ) {
+        declaration = declarations.last();
+        kDebug() << "Using global declaration";
+    }
+    else declaration = 0;
+    return declaration;
+}
 
 QList< DUContext* > Helper::inernalContextsForClass(StructureType::Ptr klassType, TopDUContext* context, int depth)
 {

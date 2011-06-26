@@ -435,7 +435,17 @@ void DeclarationBuilder::visitCall(CallAst* node)
                         kDebug() << "Got type for function argument: " << v.lastType();
                         if ( v.lastType() ) {
                             kDebug() << "last type: " << v.lastType()->toString();
-                            parameters.at(atParam)->setAbstractType(Helper::mergeTypes(parameters.at(atParam)->abstractType(), v.lastType()));
+                            AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(atParam)->abstractType(), v.lastType());
+                            kDebug() << "new type: " << newType->toString();
+                            kDebug() << "at index: " << atParam;
+                            parameters.at(atParam)->setAbstractType(newType);
+                            FunctionType::Ptr functiontype = func->type<FunctionType>();
+                            kDebug() << "~old type: " << func->type<FunctionType>()->arguments()[atParam]->toString();
+                            kDebug() << "~old type2: " << functiontype->arguments()[atParam]->toString();
+                            functiontype->modifyArgumentType(atParam, newType);
+                            func->setAbstractType(functiontype.cast<AbstractType>());
+                            kDebug() << "~new type2: " << functiontype->arguments()[atParam]->toString();
+                            kDebug() << "~new type: " << func->type<FunctionType>()->arguments()[atParam]->toString();
                         }
                         atParam++;
                     }

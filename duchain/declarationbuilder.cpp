@@ -416,11 +416,11 @@ void DeclarationBuilder::visitCall(CallAst* node)
     ExpressionVisitor v(currentContext(), editor());
     v.visitNode(node);
     kDebug() << "---";
+    DUChainWriteLocker lock(DUChain::lock());
     if ( v.lastFunctionDeclaration() ) {
         kDebug() << "got declaration:" << v.lastFunctionDeclaration()->toString();
         if ( FunctionDeclarationPointer func = v.lastFunctionDeclaration().dynamicCast<FunctionDeclaration>() ) {
             kDebug() << "... and yep, it's a function declaration";
-            DUChainWriteLocker lock(DUChain::lock());
             DUContext* args = DUChainUtils::getArgumentContext(func.data());
             if ( args ) {
                 kDebug() << "got arguments";

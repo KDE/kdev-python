@@ -397,8 +397,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
             if ( dynamic_cast<AliasDeclaration*>(resultingDeclaration) ) {
                 static_cast<AliasDeclaration*>(resultingDeclaration)->setAliasedDeclaration(originalDeclaration);
                 kDebug() << "Resulting alias: " << resultingDeclaration->toString();
-#warning !!! WARNING: This needs a kdevplatform patch which has not yet been submitted! see git.reviewboard.kde.org/r/101754/
-                moduleContext->addDirectImporter(topContext());
+#warning Add code to handle dependencies correctly
             }
             else
                 kWarning() << "import declaration is being overwritten!";
@@ -443,7 +442,8 @@ void DeclarationBuilder::visitCall(CallAst* node)
                             FunctionType::Ptr functiontype = func->type<FunctionType>();
                             kDebug() << "~old type: " << func->type<FunctionType>()->arguments()[atParam]->toString();
                             kDebug() << "~old type2: " << functiontype->arguments()[atParam]->toString();
-                            functiontype->modifyArgumentType(atParam, newType);
+			    functiontype->removeArgument(atParam);
+                            functiontype->addArgument(newType, atParam);
                             func->setAbstractType(functiontype.cast<AbstractType>());
                             kDebug() << "~new type2: " << functiontype->arguments()[atParam]->toString();
                             kDebug() << "~new type: " << func->type<FunctionType>()->arguments()[atParam]->toString();

@@ -128,76 +128,76 @@ class __kdevpythondocumentation_builtin_float(self,):
 class __kdevpythondocumentation_builtin_tuple(self,):
     pass
 
-def abs(self,x): return 0
-def all(self,iterable): return True
-def any(self,iterable): return True
-def bin(self,x): return ""
-def bool(self,x = False): return True
-def bytearray(self,source = None, encoding = None, errors = None): return []
-def callable(self,object): return True
-def chr(self,i): return ""
-def classmethod(self,function): return None
-def cmp(self,x, y): return 0
-def compile(self,source, filename, mode, flags = None, dont_inherit = None): return None
-def complex(self,real = 0, imag = 0): return 1+3j
-def delattr(self,obj, name): return None
-def dir(self,obj = None): return {"string" : None}
-def divmod(self,a, b): return 0
-def enumerate(self,sequence, start = 0): return [(self,0, 0)]
-def eval(self,expression, glob = None, loc = None): return None
-def execfile(self,filename, glob = None, loc = None): return None
-def file(self,filename, mode = None, bufsize = None): return None
-def filter(self,function, iterable): return []
-def float(self,x = 0): return 0.0
-def format(self,value, format_spec = None): return ""
-def frozenset(self,iterable = None): return (self,)
-def getattr(self,obj, name, default = None): return None
-def globals(self,): return {}
-def hasattr(self,obj, name): return bool
-def hash(self,obj): return 0
-def hex(self,x): return 0x0
-def id(self,obj): return 0
-def input(self,prompt = None): return None
-def isinstance(self,obj, cls): return True
-def issubclass(self,cls, info): return True
-def iter(self,o, s = None): return __kdevpythondocumentation_builtin_iterator(self,)
-def len(self,s): return 0
-def list(self,i = None): return []
-def locals(self,): return {}
-def long(self,x = None, base = None): return 0L
-def map(self,func, iterab): return []
-def max(self,lst, args = None, key = None): return 0
-def memoryview(self,obj): return None
-def min(self,lst, default = None): return 0
-def next(self,iterator, default = None): return iterator[0]
-def object(self,): return None
-def oct(self,x): return 0o0
-def open(self,filename, mode = None, bufsize = None): return __kdevpythondocumentation_builtin_fileObject(self,)
-def ord(self,c): return 0
-def pow(self,x, y, z = 0): return 0.0
-def property(self,fget = 0, fset = 0, fdel = 0, doc = 0): return 0
-def range(self,start = 0, stop = 0, step = 0): return []
-def raw_input(self,prompt = ""): return ""
-def reduce(self,function, iterable, init = None): return None
-def reload(self,module) : return None
-def repr(self,object): return ""
-def reversed(self,seq): return __kdevpythondocumentation_builtin_iterator(self,)
-def round(self,x, n=0): return 0.0
-def set(self,iterable = None): return (self, )
-def setattr(self,obj, name, value): return None
-def slice(self,start = 0, stop = 0, step = 0): return __kdevpythondocumentation_builtin_sliceObject(self,)
-def sorted(self,iterable, cmpre = None, key = None, reverse = False): return []
-def staticmethod(self,function): return function
-def str(self,obj = None): return ""
-def sum(self,iterable): return 0.0
-def super(self,_type, obj = None): return None
-def tuple(self,iterable = None): return (self,)
-def type(self,object): return  __kdevpythondocumentation_builtin_typeObject(self,)
-def unichr(self,i): return ""
-def unicode(self,obj = None, encoding = None, errors = None): return ""
-def vars(self,obj): return None
-def xrange(self,start = 0, stop = 0, step = 0): return []
-def zip(self,iterable = None): return []
-def __import__(self,name, globa = None, loca = None, fromlist = None, level = 0): return None
+def abs(x): return 0
+def all(iterable): return True
+def any(iterable): return True
+def bin(x): return ""
+def bool(x = False): return True
+def bytearray(source = None, encoding = None, errors = None): return []
+def callable(object): return True
+def chr(i): return ""
+def classmethod(function): return None
+def cmp(x, y): return 0
+def compile(source, filename, mode, flags = None, dont_inherit = None): return None
+def complex(real = 0, imag = 0): return 1+3j
+def delattr(obj, name): return None
+def dir(obj = None): return {"string" : None}
+def divmod(a, b): return 0
+def enumerate(sequence, start = 0): return [(0, 0)]
+def eval(expression, glob = None, loc = None): return None
+def execfile(filename, glob = None, loc = None): return None
+def file(filename, mode = None, bufsize = None): return None
+def filter(function, iterable): return []
+def float(x = 0): return 0.0
+def format(value, format_spec = None): return ""
+def frozenset(iterable = None): return ()
+def getattr(obj, name, default = None): return None
+def globals(): return {}
+def hasattr(obj, name): return bool
+def hash(obj): return 0
+def hex(x): return 0x0
+def id(obj): return 0
+def input(prompt = None): return None
+def isinstance(obj, cls): return True
+def issubclass(cls, info): return True
+def iter(o, s = None): return __kdevpythondocumentation_builtin_iterator()
+def len(s): return 0
+def list(i = None): return []
+def locals(): return {}
+def long(x = None, base = None): return 0L
+def map(func, iterab): return []
+def max(lst, args = None, key = None): return 0
+def memoryview(obj): return None
+def min(lst, default = None): return 0
+def next(iterator, default = None): return iterator[0]
+def object(): return None
+def oct(x): return 0o0
+def open(filename, mode = None, bufsize = None): return __kdevpythondocumentation_builtin_fileObject()
+def ord(c): return 0
+def pow(x, y, z = 0): return 0.0
+def property(fget = 0, fset = 0, fdel = 0, doc = 0): return 0
+def range(start = 0, stop = 0, step = 0): return []
+def raw_input(prompt = ""): return ""
+def reduce(function, iterable, init = None): return None
+def reload(module) : return None
+def repr(object): return ""
+def reversed(seq): return __kdevpythondocumentation_builtin_iterator()
+def round(x, n=0): return 0.0
+def set(iterable = None): return ( )
+def setattr(obj, name, value): return None
+def slice(start = 0, stop = 0, step = 0): return __kdevpythondocumentation_builtin_sliceObject()
+def sorted(iterable, cmpre = None, key = None, reverse = False): return []
+def staticmethod(function): return function
+def str(obj = None): return ""
+def sum(iterable): return 0.0
+def super(_type, obj = None): return None
+def tuple(iterable = None): return ()
+def type(object): return  __kdevpythondocumentation_builtin_typeObject()
+def unichr(i): return ""
+def unicode(obj = None, encoding = None, errors = None): return ""
+def vars(obj): return None
+def xrange(start = 0, stop = 0, step = 0): return []
+def zip(iterable = None): return []
+def __import__(name, globa = None, loca = None, fromlist = None, level = 0): return None
 
 dict = __kdevpythondocumentation_builtin_dict

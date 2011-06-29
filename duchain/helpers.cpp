@@ -21,6 +21,8 @@ using namespace KDevelop;
 namespace Python {
 
 QList<KUrl> Helper::cachedSearchPaths;
+QString Helper::dataDir = QString::null;
+QString Helper::documentationFile = QString::null;
 
 Declaration* Helper::declarationForName(NameAst* ast, const QualifiedIdentifier& identifier, const RangeInRevision& nodeRange, DUContextPointer context)
 {
@@ -83,6 +85,21 @@ Declaration* Helper::resolveAliasDeclaration(Declaration* decl)
     else
         return decl;
 }
+
+QString Helper::getDataDir() {
+    if ( Helper::dataDir.isNull() ) {
+        KStandardDirs d;
+        Helper::dataDir = d.findDirs("data", "kdevpythonsupport/documentation_files").first();
+    }
+    return Helper::dataDir;
+}
+
+QString Helper::getDocumentationFile() {
+    if ( Helper::documentationFile.isNull() ) {
+        Helper::documentationFile = KStandardDirs::locate("data", "kdevpythonsupport/documentation_files/builtindocumentation.py");
+    }
+    return Helper::documentationFile;
+}
     
 QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
 {
@@ -92,10 +109,10 @@ QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
         searchPaths.append(KUrl(project->folder().url()));
     }
     
-    KStandardDirs d;
-    searchPaths.append(KUrl(d.findDirs("data", "kdevpythonsupport/documentation_files").first()));
+    searchPaths.append(KUrl(getDataDir()));
     
     if ( cachedSearchPaths.isEmpty() ) {
+        KStandardDirs d;
         kDebug() << "*** Gathering search paths...";
         QStringList getpath;
         getpath << "python" << "-c" << "import sys; sys.stdout.write(':'.join(sys.path))";

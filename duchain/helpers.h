@@ -23,6 +23,11 @@ class KDEVPYTHONDUCHAIN_EXPORT Helper {
 public:
     /** get search paths for python files **/
     static QList<KUrl> getSearchPaths(KUrl workingOnDocument);
+    static QString dataDir;
+    static QString documentationFile;
+    
+    static QString getDataDir();
+    static QString getDocumentationFile();
     
     static QList<KUrl> cachedSearchPaths;
     

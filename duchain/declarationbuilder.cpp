@@ -419,18 +419,28 @@ void DeclarationBuilder::visitCall(CallAst* node)
     if ( v.lastFunctionDeclaration() ) {
         kDebug() << "got declaration:" << v.lastFunctionDeclaration()->toString();
         if ( FunctionDeclarationPointer func = v.lastFunctionDeclaration().dynamicCast<FunctionDeclaration>() ) {
+            if ( func->topContext()->url() == IndexedString(Helper::getDocumentationFile()) ) {
+                kDebug() << "in documentation file, not modifying args";
+                return;
+            }
             kDebug() << "... and yep, it's a function declaration";
             DUContext* args = DUChainUtils::getArgumentContext(func.data());
-            if ( args ) {
+            FunctionType::Ptr functiontype = func->type<FunctionType>();
+            if ( args && functiontype ) {
                 kDebug() << "got arguments";
                 QVector<Declaration*> parameters = args->localDeclarations();
-                if ( func->type<FunctionType>()->arguments().length() < parameters.size() ) {
+                if ( functiontype->arguments().length() < parameters.size() ) {
                     parameters.remove(0);
                 }
                 int atParam = 0;
-                if ( parameters.size() == node->arguments.size() ) {
+                if ( parameters.size() >= node->arguments.size() &&
+                        functiontype->arguments().length() + func->defaultParametersSize() >= node->arguments.size() )
+                {
                     kDebug() << "... and they match the parameter size";
                     foreach ( ExpressionAst* arg, node->arguments ) {
+                        if ( atParam >= functiontype->arguments().size() - 1 || atParam >= parameters.size() - 1 ) {
+                            break;
+                        }
                         v.visitNode(arg);
                         kDebug() << "Got type for function argument: " << v.lastType();
                         if ( v.lastType() ) {
@@ -439,7 +449,6 @@ void DeclarationBuilder::visitCall(CallAst* node)
                             kDebug() << "new type: " << newType->toString();
                             kDebug() << "at index: " << atParam;
                             parameters.at(atParam)->setAbstractType(newType);
-                            FunctionType::Ptr functiontype = func->type<FunctionType>();
                             kDebug() << "~old type: " << func->type<FunctionType>()->arguments()[atParam]->toString();
                             kDebug() << "~old type2: " << functiontype->arguments()[atParam]->toString();
 			    functiontype->removeArgument(atParam);

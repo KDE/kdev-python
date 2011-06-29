@@ -221,7 +221,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
             availableDeclarations = m_lastAccessedAttributeDeclaration;
         }
         else {
-            kWarning() << "No type set for accessed attribute";
+            kDebug() << "No type set for accessed attribute";
             return unknownTypeEncountered();
         }
     }
@@ -248,7 +248,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
         accessingAttributeOfDeclaration = availableDeclarations;
     }
     else if ( accessingAttributeOfType.isEmpty() ) {
-        kWarning() << "No declaration found to look up type of attribute in.";
+        kDebug() << "No declaration found to look up type of attribute in.";
         setLastAccessedAttributeDeclaration(DeclarationPointer(0));
         setLastAccessedDeclaration(DeclarationPointer(0));
         m_lastType = AbstractType::Ptr(0);
@@ -322,7 +322,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
     DUChainReadLocker lock(DUChain::lock());
     QList<Declaration*> decls = m_ctx->topContext()->findDeclarations(QualifiedIdentifier(functionName));
     if ( decls.length() == 0 ) {
-        kWarning() << "No declaration for " << functionName;
+        kDebug() << "No declaration for " << functionName;
         return unknownTypeEncountered();
     }
     else {

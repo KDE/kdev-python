@@ -193,6 +193,17 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             items << CompletionTreeItemPointer( item );
         }
     }
+    else if ( m_operation == PythonCodeCompletionContext::InheritanceCompletion ) {
+        kDebug() << "InheritanceCompletion";
+        QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
+        QList<DeclarationDepthPair> remainingDeclarations;
+        foreach ( DeclarationDepthPair d, declarations ) {
+            if ( d.first && dynamic_cast<ClassDeclaration*>(d.first) ) {
+                remainingDeclarations << d;
+            }
+        }
+        items.append(declarationListToItemList(remainingDeclarations));
+    }
     else if ( m_operation == PythonCodeCompletionContext::MemberAccessCompletion ) {
         AstBuilder* builder = new AstBuilder();
         CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
@@ -216,9 +227,9 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         // it's stupid to display a 3-letter completion item on manually invoked code completion and makes everything look crowded
         if ( m_operation == PythonCodeCompletionContext::NewStatementCompletion && ! fullCompletion ) {
             QStringList keywordItems;
-            keywordItems << "def" << "class" << "lambda" << "global" << "print" << "import" << "from" << "while" << "for";
+            keywordItems << "def" << "class" << "lambda" << "global" << "print" << "import" << "from" << "while" << "for" << "yield" << "return";
             foreach ( const QString& current, keywordItems ) {
-                KeywordItem* k = new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), current);
+                KeywordItem* k = new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), current + " ");
                 items << CompletionTreeItemPointer(k);
             }
         }
@@ -587,6 +598,14 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
             m_operation = PythonCodeCompletionContext::DefineCompletion;
             return;
         }
+    }
+    
+    QRegExp inheritanceCompletion("(.*)\n[\\s]*class[\\s]*(.*)[\\s]*\\([\\s]*$");
+    inheritanceCompletion.setMinimal(true);
+    bool is_inheritance = inheritanceCompletion.exactMatch(currentLine);
+    if ( is_inheritance ) {
+        m_operation = PythonCodeCompletionContext::InheritanceCompletion;
+        return;
     }
     
     kDebug() << "Scanning for function call";

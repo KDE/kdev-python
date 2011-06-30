@@ -33,11 +33,8 @@ public:
     QString m_fullyQualifiedModuleIdentifier;
     
 protected:
-    KDevelop::NavigationContextPointer registerChild(KDevelop::DeclarationPointer declaration);
-//     virtual KDevelop::QualifiedIdentifier prettyQualifiedIdentifier( KDevelop::DeclarationPointer decl ) const;
-//     virtual void htmlClass();
-//     virtual void htmlFunction();
     QString html(bool shorten = false);
+    virtual void htmlIdentifiedType(KDevelop::AbstractType::Ptr type, const KDevelop::IdentifiedType* idType);
 };
 
 }

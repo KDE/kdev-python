@@ -22,6 +22,7 @@
 #include "helpers.h"
 #include <language/duchain/duchain.h>
 #include <language/duchain/duchainlock.h>
+#include <KLocalizedString>
 
 using namespace KDevelop;
 

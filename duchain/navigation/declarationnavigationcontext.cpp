@@ -28,9 +28,8 @@
 #include <language/duchain/namespacealiasdeclaration.h>
 #include <language/duchain/forwarddeclaration.h>
 #include <language/duchain/duchainutils.h>
-
-#include <QTcpSocket>
-#include <QProcess>
+#include <types/variablelengthcontainer.h>
+#include <language/duchain/types/typepointer.h>
 
 namespace Python
 {
@@ -41,9 +40,23 @@ DeclarationNavigationContext::DeclarationNavigationContext(DeclarationPointer de
 {
 }
 
-NavigationContextPointer DeclarationNavigationContext::registerChild(DeclarationPointer declaration)
+void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, const IdentifiedType* idType)
 {
-    return AbstractDeclarationNavigationContext::registerChild(new DeclarationNavigationContext(declaration, m_topContext, this));
+    if ( VariableLengthContainer::Ptr t = VariableLengthContainer::Ptr::dynamicCast(type) ) {
+        makeLink(t->toString(), DeclarationPointer(idType->declaration(m_topContext.data())), NavigationAction::NavigateDeclaration );
+        modifyHtml() += i18n(" of ");
+        if ( AbstractType::Ptr contents = t->contentType().abstractType() ) {
+            IdentifiedType* identifiedContent = dynamic_cast<IdentifiedType*>(contents.unsafeData());
+            if ( identifiedContent ) {
+                makeLink(contents->toString(), DeclarationPointer(identifiedContent->declaration(m_topContext.data())), NavigationAction::NavigateDeclaration );
+            }
+            else modifyHtml() += contents->toString();
+        }
+        else modifyHtml() += i18n("unknown");
+    }
+    else {
+        KDevelop::AbstractDeclarationNavigationContext::htmlIdentifiedType(type, idType);
+    }
 }
 
 QString DeclarationNavigationContext::html(bool shorten)

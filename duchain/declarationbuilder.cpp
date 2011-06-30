@@ -272,15 +272,34 @@ void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
 
 void DeclarationBuilder::visitFor(ForAst* node)
 {
+    ExpressionVisitor v(currentContext(), editor());
+    v.visitNode(node->iterator);
+    VariableLengthContainer::Ptr type = v.lastType().cast<VariableLengthContainer>();
     if ( node->target->astType == Ast::NameAstType ) {
-        openType(AbstractType::Ptr(0)); // TODO check for what is iterated over
-        setLastType(AbstractType::Ptr(0));
+        if ( type && type->contentType() ) {
+            setLastType(type->contentType().abstractType());
+        }
+        else {
+            setLastType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+        }
         visitVariableDeclaration<Declaration>(node->target);
-        closeType();
     }
     else if ( node->target->astType == Ast::TupleAstType ) {
+        short atElement = 0;
         foreach ( ExpressionAst* tupleMember, dynamic_cast<TupleAst*>(node->target)->elements ) {
-            if ( tupleMember->astType == Ast::NameAstType ) visitVariableDeclaration<Declaration>(tupleMember);
+            if ( tupleMember->astType == Ast::NameAstType ) {
+                if ( atElement == 0 && type && type->keyType() ) {
+                    setLastType(type->keyType().abstractType());
+                }
+                else if ( atElement == 1 && type && type->contentType() ) {
+                    setLastType(type->contentType().abstractType());
+                }
+                else {
+                    setLastType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+                }
+                visitVariableDeclaration<Declaration>(tupleMember);
+            }
+            ++atElement;
         }
     }
     Python::ContextBuilder::visitFor(node);

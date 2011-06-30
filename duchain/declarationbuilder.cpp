@@ -457,7 +457,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
                 {
                     kDebug() << "... and they match the parameter size";
                     foreach ( ExpressionAst* arg, node->arguments ) {
-                        if ( atParam >= functiontype->arguments().size() - 1 || atParam >= parameters.size() - 1 ) {
+                        if ( atParam >= functiontype->arguments().size() || atParam >= parameters.size() ) {
                             break;
                         }
                         v.visitNode(arg);

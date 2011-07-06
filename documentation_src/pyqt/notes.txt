@@ -1,0 +1,39 @@
+<Class name="QMimeSource">
+	<Function name="QMimeSource.__init__"/>
+	<Function name="QMimeSource.__init__">
+		<Argument typename="QMimeSource" typetype="class"/>
+	</Function>
+	...
+
+<Class name="QInputMethodEvent.Attribute">
+	<Member name="QInputMethodEvent.Attribute.length" typename="int"/>
+	<Member name="QInputMethodEvent.Attribute.start" typename="int"/>
+	<Member name="QInputMethodEvent.Attribute.type" typename="QInputMethodEvent.AttributeType" typetype="enum"/>
+	<Member name="QInputMethodEvent.Attribute.value" typename="QVariant" typetype="mappedtype"/>
+	<Function name="QInputMethodEvent.Attribute.__init__">
+		<Argument typename="QInputMethodEvent.AttributeType" typetype="enum" name="t"/>
+		<Argument typename="int" name="s"/>
+		<Argument typename="int" name="l"/>
+		<Argument typename="QVariant" typetype="mappedtype" name="val"/>
+	</Function>
+	<Function name="QInputMethodEvent.Attribute.__init__">
+		<Argument typename="QInputMethodEvent.Attribute" typetype="class"/>
+	</Function>
+</Class>
+
+<Class name="QDropEvent" inherits="QEvent QMimeSource">
+	<Function name="QDropEvent.__init__">
+		<Argument typename="QPoint" typetype="class" name="pos"/>
+		<Argument typename="Qt.DropActions" typetype="class" name="actions"/>
+		<Argument typename="QMimeData" typetype="class" name="data"/>
+		<Argument typename="Qt.MouseButtons" typetype="class" name="buttons"/>
+		<Argument typename="Qt.KeyboardModifiers" typetype="class" name="modifiers"/>
+		<Argument typename="QEvent.Type" typetype="enum" name="type" default="QEvent.Drop"/>
+	</Function>
+	...
+
+<Class name="QPaintEngine">
+	<Enum name="QPaintEngine.Type">
+		<EnumMember name="QPaintEngine.X11"/>
+		<EnumMember name="QPaintEngine.Windows"/>
+		...

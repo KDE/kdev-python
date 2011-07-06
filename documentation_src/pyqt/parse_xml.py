@@ -31,7 +31,7 @@ def parseEnum(enumNode, enumName, className = ''):
 
 def parseFunction(functionNode, funcName, className = ''):
     '''Parse Function node and return its string representation.'''
-    params = []
+    params = [] if className == '' else [("None", "self")]
     retType = 'None'
     namesUsed = []
     for node in functionNode.childNodes:

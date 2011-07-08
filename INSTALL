@@ -11,3 +11,7 @@ or edit the file python-src/Parser/asdl_c.py and change the first line to point 
 #! /usr/bin/env python
 with
 #! /usr/bin/env python2
+
+Another notice for arch users: The plugin queries your default python interpreter for module search paths. So, if you want to use django for example and it's installed
+in some python2 module directory, and python3 is your default interpreter, you won't get autocompletion (or anything) for it. You can easily solve that by adding
+the directory in question to the $PYTHONPATH environment variable (':' is the seperator, if you want more than one path) and restarting kdevelop.

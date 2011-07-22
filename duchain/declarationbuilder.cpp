@@ -407,21 +407,27 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
     else {
         // import a specific declaration from the given file
         lock.lock();
-        kDebug() << "Got module, importing declaration: " << moduleInfo.second;
-        Declaration* originalDeclaration = findDeclarationInContext(moduleInfo.second, moduleContext);
-        kDebug() << "Result: " << originalDeclaration;
-        if ( originalDeclaration ) {
-            DUChainWriteLocker lock(DUChain::lock());
-            resultingDeclaration = visitVariableDeclaration<AliasDeclaration>(declarationIdentifier, range);
-            if ( dynamic_cast<AliasDeclaration*>(resultingDeclaration) ) {
-                static_cast<AliasDeclaration*>(resultingDeclaration)->setAliasedDeclaration(originalDeclaration);
-                kDebug() << "Resulting alias: " << resultingDeclaration->toString();
-#warning Add code to handle dependencies correctly
-            }
-            else
-                kWarning() << "import declaration is being overwritten!";
+        if ( declarationIdentifier->value == "*" ) {
+            kDebug() << "Importing * from module";
+            currentContext()->addImportedParentContext(moduleContext);
         }
-        // TODO report error
+        else {
+            kDebug() << "Got module, importing declaration: " << moduleInfo.second;
+            Declaration* originalDeclaration = findDeclarationInContext(moduleInfo.second, moduleContext);
+            kDebug() << "Result: " << originalDeclaration;
+            if ( originalDeclaration ) {
+                DUChainWriteLocker lock(DUChain::lock());
+                resultingDeclaration = visitVariableDeclaration<AliasDeclaration>(declarationIdentifier, range);
+                if ( dynamic_cast<AliasDeclaration*>(resultingDeclaration) ) {
+                    static_cast<AliasDeclaration*>(resultingDeclaration)->setAliasedDeclaration(originalDeclaration);
+                    kDebug() << "Resulting alias: " << resultingDeclaration->toString();
+    #warning Add code to handle dependencies correctly
+                }
+                else
+                    kWarning() << "import declaration is being overwritten!";
+            }
+            // TODO report error
+        }
     }
     return resultingDeclaration;
 }

@@ -264,7 +264,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             QList<CompletionTreeItemPointer> calltipItems = declarationListToItemList(realCalltips_withDepth);
             foreach ( CompletionTreeItemPointer current, calltipItems ) {
                 kDebug() << "Adding calltip item"; 
-                dynamic_cast<FunctionDeclarationCompletionItem*>(current.data())->setArgumentHintDepth(m_alreadyGivenParametersCount + 1);
+                static_cast<FunctionDeclarationCompletionItem*>(current.data())->setAtArgument(m_alreadyGivenParametersCount + 1);
             }
             
             items.append(calltipItems);
@@ -532,6 +532,9 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
             kDebug() << "Indents mismatch, so the given context is correct.";
         }
     }
+    
+    // check whether this needs a parent context
+    
 
     //                                                 v   v   v   v   v allow comma seperated list of imports
     QRegExp importsub("^[\\s]*from(.*)import[\\s]*(.*[\\s]*,[\\s]*)*$");
@@ -617,7 +620,6 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         scanExpressionBackwards(m_remainingExpression, QStringList(), QStringList() << "." << ",", QStringList(), QStringList() << "("); // get the next item in a chain of calls
                 // for "a(b(c(), d, e" (we want autocompletion for b) the first call will give us "a(b" and "c(), d, e", but we want "b". so we call it again on the first result.
         kDebug() << "Found function call completion item, called function is " << m_guessTypeOfExpression << ", currently at parameter: " << m_alreadyGivenParametersCount;
-//         Q_ASSERT(false);
         return;
     }
     

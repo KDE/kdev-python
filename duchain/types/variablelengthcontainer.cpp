@@ -50,7 +50,7 @@ void Python::VariableLengthContainer::addContentType(AbstractType::Ptr typeToAdd
 {
     d_func_dynamic()->m_contentType = Helper::mergeTypes(contentType().abstractType(), typeToAdd)->indexed();
     DUChainReadLocker lock(DUChain::lock());
-    kDebug() << "CONAINER :: new content type: " << contentType().abstractType()->toString();
+    kDebug() << "CONTAINER :: new content type: " << contentType().abstractType()->toString();
 }
 
 const IndexedType& Python::VariableLengthContainer::contentType() const
@@ -62,7 +62,7 @@ void Python::VariableLengthContainer::addKeyType(AbstractType::Ptr typeToAdd)
 {
     d_func_dynamic()->m_keyType = Helper::mergeTypes(keyType().abstractType(), typeToAdd)->indexed();
     DUChainReadLocker lock(DUChain::lock());
-    kDebug() << "CONAINER :: new key type: " << keyType().abstractType()->toString();
+    kDebug() << "CONTAINER :: new key type: " << keyType().abstractType()->toString();
 }
 
 const IndexedType& Python::VariableLengthContainer::keyType() const

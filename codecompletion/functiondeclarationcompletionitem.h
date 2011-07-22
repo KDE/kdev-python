@@ -33,14 +33,14 @@ class FunctionDeclarationCompletionItem : public Python::PythonDeclarationComple
 public:
     FunctionDeclarationCompletionItem(DeclarationPointer decl);
     virtual ~FunctionDeclarationCompletionItem();
-    virtual int argumentHintDepth() const;
-    void setArgumentHintDepth(int d);
+    virtual int atArgument() const;
+    void setAtArgument(int d);
     
     virtual QVariant data(const QModelIndex& index, int role, const CodeCompletionModel* model) const;
     
     virtual void executed(KTextEditor::Document* document, const KTextEditor::Range& word);
 private:
-    int m_argumentHintDepth;
+    int m_atArgument;
 };
 
 }

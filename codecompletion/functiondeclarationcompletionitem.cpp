@@ -36,16 +36,16 @@ using namespace KTextEditor;
 
 namespace Python {
 
-FunctionDeclarationCompletionItem::FunctionDeclarationCompletionItem(DeclarationPointer decl) : PythonDeclarationCompletionItem(decl), m_argumentHintDepth(0) { }
+FunctionDeclarationCompletionItem::FunctionDeclarationCompletionItem(DeclarationPointer decl) : PythonDeclarationCompletionItem(decl), m_atArgument(0) { }
 
-int FunctionDeclarationCompletionItem::argumentHintDepth() const
+int FunctionDeclarationCompletionItem::atArgument() const
 {
-    return m_argumentHintDepth;
+    return m_atArgument;
 }
 
-void FunctionDeclarationCompletionItem::setArgumentHintDepth(int d)
+void FunctionDeclarationCompletionItem::setAtArgument(int d)
 {
-    m_argumentHintDepth = d;
+    m_atArgument = d;
 }
 
 QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const
@@ -73,8 +73,8 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
                 if ( ! dec ) return QVariant();
                 QString ret;
                 QList<QVariant> highlight;
-                if ( argumentHintDepth() ) {
-                    createArgumentList(dec, ret, &highlight, argumentHintDepth());
+                if ( atArgument() ) {
+                    createArgumentList(dec, ret, &highlight, atArgument());
                 }
                 else {
                     createArgumentList(dec, ret, 0);

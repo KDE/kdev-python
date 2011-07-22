@@ -375,6 +375,13 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
     Declaration* resultingDeclaration = 0;
     if ( ! moduleInfo.first.isValid() ) {
         kWarning() << "invalid or non-existent URL:" << moduleInfo;
+        KDevelop::Problem *p = new KDevelop::Problem();
+        p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange())); // TODO ok?
+        p->setSource(KDevelop::ProblemData::SemanticAnalysis);
+        p->setSeverity(KDevelop::ProblemData::Warning);
+        p->setDescription(i18n("Module \"%1\" not found", dottedName));
+        ProblemPointer ptr(p);
+        topContext()->addProblem(ptr);
         return 0;
     }
     if ( ! moduleContext ) {
@@ -426,7 +433,15 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
                 else
                     kWarning() << "import declaration is being overwritten!";
             }
-            // TODO report error
+            else {
+                KDevelop::Problem *p = new KDevelop::Problem();
+                p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange())); // TODO ok?
+                p->setSource(KDevelop::ProblemData::SemanticAnalysis);
+                p->setSeverity(KDevelop::ProblemData::Warning);
+                p->setDescription(i18n("Declaration for \"%1\" not found in specified modoule", moduleInfo.second.join(".")));
+                ProblemPointer ptr(p);
+                topContext()->addProblem(ptr);
+            }
         }
     }
     return resultingDeclaration;

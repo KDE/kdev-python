@@ -103,6 +103,9 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         virtual void visitAttribute(AttributeAst* node);
         virtual void visitTuple(TupleAst* node);
         
+        // whether type of expression should be known or not, i.e. if at the point where the chain breaks the previous type
+        // was already unknown, then this is an IDE error, otherwise probably the user's code is wrong; used for error reporting
+        bool shouldBeKnown() { return m_shouldBeKnown; };
         
         /**
          * @brief Resolve the given declaration if it is an alias declaration.
@@ -180,6 +183,7 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
             return result;
         };
         
+        bool m_shouldBeKnown;
         
         AbstractType::Ptr m_lastAccessedReturnType;
         DeclarationPointer m_firstAccessedFunctionDeclaration;

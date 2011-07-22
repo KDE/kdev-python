@@ -68,7 +68,7 @@ template<typename T> void ExpressionVisitor::encounter(TypePtr< T > type)
 }
 
 Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegrator* editor)
-    : m_lastType(0), m_ctx(ctx), m_editor(editor), m_lastAccessedReturnType(0)
+    : m_lastType(0), m_ctx(ctx), m_editor(editor), m_lastAccessedReturnType(0), m_shouldBeKnown(true)
 {
     if(s_defaultTypes.isEmpty()) {
         s_defaultTypes.insert(KDevelop::Identifier("True"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
@@ -222,6 +222,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
         }
         else {
             kDebug() << "No type set for accessed attribute";
+            m_shouldBeKnown = false;
             return unknownTypeEncountered();
         }
     }
@@ -240,6 +241,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
         setLastAccessedAttributeDeclaration(DeclarationPointer(0));
         setLastAccessedDeclaration(DeclarationPointer(0));
         m_lastType = AbstractType::Ptr(0);
+        m_shouldBeKnown = false;
         return;
     }
     
@@ -252,6 +254,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
         setLastAccessedAttributeDeclaration(DeclarationPointer(0));
         setLastAccessedDeclaration(DeclarationPointer(0));
         m_lastType = AbstractType::Ptr(0);
+        m_shouldBeKnown = false;
         return unknownTypeEncountered();
     }
     
@@ -267,9 +270,13 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     
     // maybe our attribute isn't a class at all, then that's an error by definition for now
     success = false;
+    bool haveOneUsefulType = false;
     DUChainReadLocker lock(DUChain::lock());
     if ( ! accessingAttributeOfType.isEmpty() ) {
         foreach ( StructureType::Ptr currentStructureType, accessingAttributeOfType ) {
+            if ( Helper::isUsefulType(currentStructureType.cast<AbstractType>()) ) {
+                haveOneUsefulType = true;
+            }
             QList<DUContext*> searchContexts = Helper::inernalContextsForClass(currentStructureType, m_ctx->topContext());
             foreach ( DUContext* currentInternalContext, searchContexts ) {
                 if ( currentInternalContext ) {
@@ -279,7 +286,12 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
             }
         }
     }
-    if ( ! success ) foundDecls.clear();
+    if ( ! success ) {
+        foundDecls.clear();
+    }
+    if ( ! haveOneUsefulType ) {
+        m_shouldBeKnown = false;
+    }
     
     // Step 5: Construct the type of the declaration which was found.
     DeclarationPointer actualDeclaration(0);
@@ -313,6 +325,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
         return;
     }
     if ( ! ( node->function->astType == Ast::NameAstType ) ) {
+        m_shouldBeKnown = false;
         return unknownTypeEncountered();
     }
     
@@ -323,6 +336,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
     QList<Declaration*> decls = m_ctx->topContext()->findDeclarations(QualifiedIdentifier(functionName));
     if ( decls.length() == 0 ) {
         kDebug() << "No declaration for " << functionName;
+        m_shouldBeKnown = false;
         return unknownTypeEncountered();
     }
     else {

@@ -62,6 +62,16 @@ void UseBuilder::visitName(NameAst* node)
     
     if ( declaration && declaration->range() == useRange ) return;
     
+    if ( ! declaration ) {
+        KDevelop::Problem *p = new KDevelop::Problem();
+        p->setFinalLocation(DocumentRange(currentlyParsedDocument(), useRange.castToSimpleRange())); // TODO ok?
+        p->setSource(KDevelop::ProblemData::SemanticAnalysis);
+        p->setSeverity(KDevelop::ProblemData::Hint);
+        p->setDescription(i18n("Undefined variable: %1", node->identifier->value));
+        ProblemPointer ptr(p);
+        topContext()->addProblem(ptr);
+    }
+    
     /// debug
     kDebug() << " Registering use for " << node->identifier->value << " at " << useRange.castToSimpleRange() << "with dec" << declaration;
     {
@@ -86,13 +96,15 @@ void UseBuilder::visitAttribute(AttributeAst* node)
     
     DeclarationPointer declaration = v.lastDeclaration();
     if ( declaration && declaration->range() == useRange ) return;
-    /// debug
-    if ( declaration ) {
-        DUChainReadLocker lock(DUChain::lock());
-        kDebug() << "Registering new use for item: " << declaration->toString() << "; Ranges are " << declaration->range().castToSimpleRange() << useRange.castToSimpleRange();
-        Q_ASSERT( ! declaration || declaration->alwaysForceDirect() );
+    if ( ! declaration && v.shouldBeKnown() ) {
+        KDevelop::Problem *p = new KDevelop::Problem();
+        p->setFinalLocation(DocumentRange(currentlyParsedDocument(), useRange.castToSimpleRange())); // TODO ok?
+        p->setSource(KDevelop::ProblemData::SemanticAnalysis);
+        p->setSeverity(KDevelop::ProblemData::Hint);
+        p->setDescription(i18n("Attribute \"%1\" not found on accessed object", node->attribute->value));
+        ProblemPointer ptr(p);
+        topContext()->addProblem(ptr);
     }
-    /// end debug
     UseBuilderBase::newUse(node, useRange, declaration);
 }
 

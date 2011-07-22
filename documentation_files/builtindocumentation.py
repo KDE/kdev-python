@@ -124,6 +124,9 @@ class __kdevpythondocumentation_builtin_float(self,):
     def hex(self,): return 0x0
     def fromhex(self,s): return 0
 
+class __kdevpythondocumentation_builtin_int(self,):
+    pass
+
 @IndexedTypeContainer
 class __kdevpythondocumentation_builtin_tuple(self,):
     pass

@@ -423,9 +423,16 @@ void ExpressionVisitor::visitDict(DictAst* node)
     encounter<VariableLengthContainer>(type);
 }
 
-void ExpressionVisitor::visitNumber(Python::NumberAst* )
+void ExpressionVisitor::visitNumber(Python::NumberAst* number)
 {
-    AbstractType::Ptr type = typeObjectForIntegralType<AbstractType>("float", m_ctx);
+    kDebug() << "NUMBER: is int:" << number->isInt;
+    AbstractType::Ptr type;
+    if ( number->isInt ) {
+        type = typeObjectForIntegralType<AbstractType>("int", m_ctx);
+    }
+    else {
+        type = typeObjectForIntegralType<AbstractType>("float", m_ctx);
+    }
     encounter(type);
 }
 

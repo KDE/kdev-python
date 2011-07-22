@@ -211,6 +211,7 @@ v->function->belongsToCall = v;
             }
         case Num_kind: {
                 NumberAst* v = new NumberAst(parent());
+                v->isInt = PyInt_Check(node->v.Num.n);
                 result = v;
                 break;
             }
@@ -273,6 +274,7 @@ v->function->belongsToCall = v;
             }
         default:
             kWarning() << "Unsupported statement AST type: " << node->kind;
+            Q_ASSERT(false);
         }
 
     if ( ! result ) return 0;
@@ -726,7 +728,6 @@ v->function->belongsToCall = v;
 /*
  * End generated code
  */
-
 
 QMutex AstBuilder::pyInitLock;
 QString AstBuilder::pyHomeDir = KStandardDirs::locate("data", "");

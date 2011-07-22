@@ -127,11 +127,19 @@ class __kdevpythondocumentation_builtin_float(self,):
 class __kdevpythondocumentation_builtin_int(self,):
     pass
 
+class AttributeError():
+    pass
+class IndexError():
+    pass
+class IOError():
+    pass
+
 @IndexedTypeContainer
 class __kdevpythondocumentation_builtin_tuple(self,):
     pass
 
 def abs(x): return 0
+def int(x): return 0
 def all(iterable): return True
 def any(iterable): return True
 def bin(x): return ""

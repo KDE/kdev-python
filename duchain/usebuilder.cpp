@@ -56,13 +56,16 @@ void UseBuilder::visitName(NameAst* node)
     Declaration* declaration = Helper::declarationForName(node, identifierForNode(node->identifier),
                                                           editorFindRange(node, node), DUContextPointer(currentContext()));
     
+    QStringList keywords;
+    keywords << "None" << "True" << "False";
+    
     Q_ASSERT(node->identifier);
     Q_ASSERT(node->hasUsefulRangeInformation); // TODO remove this!
     RangeInRevision useRange(node->identifier->startLine, node->identifier->startCol, node->identifier->endLine, node->identifier->endCol + 1);
     
     if ( declaration && declaration->range() == useRange ) return;
     
-    if ( ! declaration ) {
+    if ( ! declaration && ! keywords.contains(node->identifier->value) ) {
         KDevelop::Problem *p = new KDevelop::Problem();
         p->setFinalLocation(DocumentRange(currentlyParsedDocument(), useRange.castToSimpleRange())); // TODO ok?
         p->setSource(KDevelop::ProblemData::SemanticAnalysis);

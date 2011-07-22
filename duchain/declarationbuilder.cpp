@@ -438,7 +438,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
                 p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange())); // TODO ok?
                 p->setSource(KDevelop::ProblemData::SemanticAnalysis);
                 p->setSeverity(KDevelop::ProblemData::Warning);
-                p->setDescription(i18n("Declaration for \"%1\" not found in specified modoule", moduleInfo.second.join(".")));
+                p->setDescription(i18n("Declaration for \"%1\" not found in specified module", moduleInfo.second.join(".")));
                 ProblemPointer ptr(p);
                 topContext()->addProblem(ptr);
             }

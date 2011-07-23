@@ -51,7 +51,8 @@ public:
         DefineCompletion,
         ShebangLineCompletion,
         FunctionCallCompletion,
-        InheritanceCompletion
+        InheritanceCompletion,
+        RaiseExceptionCompletion
     };
     
     PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position, int depth, const PythonCodeCompletionWorker* parent);

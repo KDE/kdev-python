@@ -100,6 +100,11 @@ QString Helper::getDocumentationFile() {
     }
     return Helper::documentationFile;
 }
+
+ReferencedTopDUContext Helper::getDocumentationFileContext()
+{
+    return ReferencedTopDUContext(DUChain::self()->chainForDocument(Helper::getDocumentationFile()));
+}
     
 QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
 {

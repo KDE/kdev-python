@@ -387,8 +387,6 @@ template<typename T> TypePtr<T> ExpressionVisitor::typeObjectForIntegralType(QSt
         QualifiedIdentifier("__kdevpythondocumentation_builtin_" + typeDescriptor));
     Declaration* decl = decls.isEmpty() ? 0 : dynamic_cast<Declaration*>(decls.first());
     AbstractType::Ptr type = decl ? decl->abstractType() : AbstractType::Ptr(0);
-    QStringList builtinListTypes;
-    builtinListTypes << "list" << "dict";
     return type.cast<T>();
 }
 

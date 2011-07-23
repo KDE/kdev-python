@@ -28,6 +28,7 @@ public:
     
     static QString getDataDir();
     static QString getDocumentationFile();
+    static ReferencedTopDUContext getDocumentationFileContext();
     
     static QList<KUrl> cachedSearchPaths;
     

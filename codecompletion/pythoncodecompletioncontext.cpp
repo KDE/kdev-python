@@ -185,6 +185,33 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             items << CompletionTreeItemPointer( item );
         }
     }
+    else if ( m_operation == PythonCodeCompletionContext::RaiseExceptionCompletion ) {
+        kDebug() << "Finding items for raise statement";
+        ReferencedTopDUContext ctx = Helper::getDocumentationFileContext();
+        QList< Declaration* > declarations = ctx->findDeclarations(QualifiedIdentifier("BaseException"));
+        if ( declarations.isEmpty() || ! declarations.first()->abstractType() ) {
+            kDebug() << "No valid exception classes found, aborting";
+        }
+        else {
+            Declaration* base = declarations.first();
+            IndexedType baseType = base->abstractType()->indexed();
+            QList<DeclarationDepthPair> validDeclarations;
+            ClassDeclaration* current = 0;
+            StructureType::Ptr type;
+            foreach ( DeclarationDepthPair d, m_context->topContext()->allDeclarations(CursorInRevision::invalid(), m_context->topContext()) ) {
+                if ( ( current = dynamic_cast<ClassDeclaration*>(d.first) ) ) {
+                    if ( current->baseClassesSize() ) {
+                        FOREACH_FUNCTION( const BaseClassInstance& base, current->baseClasses ) {
+                            if ( base.baseClass == baseType ) {
+                                validDeclarations << d;
+                            }
+                        }
+                    }
+                }
+            }
+            items.append(declarationListToItemList(validDeclarations));
+        }
+    }
     else if ( m_operation == PythonCodeCompletionContext::ImportSubCompletion ) {
         kDebug() << "Finding items for submodule: " << m_subForModule;
         foreach ( ImportFileItem* item, includeFileItemsForSubmodule(m_subForModule) ) {
@@ -533,9 +560,14 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         }
     }
     
-    // check whether this needs a parent context
+    QRegExp raise("^[\\s]*raise(.*)$");
+    raise.setMinimal(true);
+    bool isRaise = raise.exactMatch(currentLine);
+    if ( isRaise ) {
+        m_operation = PythonCodeCompletionContext::RaiseExceptionCompletion;
+        return;
+    }
     
-
     //                                                 v   v   v   v   v allow comma seperated list of imports
     QRegExp importsub("^[\\s]*from(.*)import[\\s]*(.*[\\s]*,[\\s]*)*$");
     importsub.setMinimal(true);

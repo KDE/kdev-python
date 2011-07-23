@@ -270,6 +270,17 @@ void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
     DeclarationBuilderBase::visitExceptionHandler(node);
 }
 
+void DeclarationBuilder::visitWith(WithAst* node)
+{
+    if ( node->optionalVars ) {
+        ExpressionVisitor v(currentContext(), editor());
+        v.visitNode(node->contextExpression);
+        setLastType(v.lastType());
+        visitVariableDeclaration<Declaration>(node->optionalVars);
+    }
+    Python::ContextBuilder::visitWith(node);
+}
+
 void DeclarationBuilder::visitFor(ForAst* node)
 {
     ExpressionVisitor v(currentContext(), editor());

@@ -77,6 +77,7 @@ protected:
     virtual void visitReturn(ReturnAst* node);
     virtual void visitCode(CodeAst* node);
     virtual void visitCall(CallAst* node);
+    virtual void visitWith(WithAst* node);
     
     void visitDecorators(QList<ExpressionAst*> decorators, DecoratedDeclaration* addTo);
     

@@ -1,6685 +1,7728 @@
+import PyQt4.QtCore.pyqtSignal
+
 class QSysInfo():
     """"""
-    BigEndian = int() # QSysInfo.Endian enum
-    LittleEndian = int() # QSysInfo.Endian enum
-    ByteOrder = int() # QSysInfo.Endian enum
+    # Enum QSysInfo.Endian
+    BigEndian = 0
+    LittleEndian = 0
+    ByteOrder = 0
 
-    WordSize = int() # QSysInfo.Sizes enum
+    # Enum QSysInfo.Sizes
+    WordSize = 0
 
     def __init__(self):
-        """None QSysInfo.__init__(None self)"""
-        return None
+        '''void QSysInfo.__init__()'''
     def __init__(self):
-        """QSysInfo QSysInfo.__init__(None self)"""
+        '''QSysInfo QSysInfo.__init__()'''
         return QSysInfo()
 
 
 class Qt():
     """"""
-    NavigationModeNone = int() # Qt.NavigationMode enum
-    NavigationModeKeypadTabOrder = int() # Qt.NavigationMode enum
-    NavigationModeKeypadDirectional = int() # Qt.NavigationMode enum
-    NavigationModeCursorAuto = int() # Qt.NavigationMode enum
-    NavigationModeCursorForceVisible = int() # Qt.NavigationMode enum
-
-    DontStartGestureOnChildren = int() # Qt.GestureFlag enum
-    ReceivePartialGestures = int() # Qt.GestureFlag enum
-    IgnoredGesturesPropagateToParent = int() # Qt.GestureFlag enum
-
-    TapGesture = int() # Qt.GestureType enum
-    TapAndHoldGesture = int() # Qt.GestureType enum
-    PanGesture = int() # Qt.GestureType enum
-    PinchGesture = int() # Qt.GestureType enum
-    SwipeGesture = int() # Qt.GestureType enum
-    CustomGesture = int() # Qt.GestureType enum
-
-    GestureStarted = int() # Qt.GestureState enum
-    GestureUpdated = int() # Qt.GestureState enum
-    GestureFinished = int() # Qt.GestureState enum
-    GestureCanceled = int() # Qt.GestureState enum
-
-    TouchPointPressed = int() # Qt.TouchPointState enum
-    TouchPointMoved = int() # Qt.TouchPointState enum
-    TouchPointStationary = int() # Qt.TouchPointState enum
-    TouchPointReleased = int() # Qt.TouchPointState enum
-
-    DeviceCoordinates = int() # Qt.CoordinateSystem enum
-    LogicalCoordinates = int() # Qt.CoordinateSystem enum
-
-    AnchorLeft = int() # Qt.AnchorPoint enum
-    AnchorHorizontalCenter = int() # Qt.AnchorPoint enum
-    AnchorRight = int() # Qt.AnchorPoint enum
-    AnchorTop = int() # Qt.AnchorPoint enum
-    AnchorVerticalCenter = int() # Qt.AnchorPoint enum
-    AnchorBottom = int() # Qt.AnchorPoint enum
-
-    ImhNone = int() # Qt.InputMethodHint enum
-    ImhHiddenText = int() # Qt.InputMethodHint enum
-    ImhNoAutoUppercase = int() # Qt.InputMethodHint enum
-    ImhPreferNumbers = int() # Qt.InputMethodHint enum
-    ImhPreferUppercase = int() # Qt.InputMethodHint enum
-    ImhPreferLowercase = int() # Qt.InputMethodHint enum
-    ImhNoPredictiveText = int() # Qt.InputMethodHint enum
-    ImhDigitsOnly = int() # Qt.InputMethodHint enum
-    ImhFormattedNumbersOnly = int() # Qt.InputMethodHint enum
-    ImhUppercaseOnly = int() # Qt.InputMethodHint enum
-    ImhLowercaseOnly = int() # Qt.InputMethodHint enum
-    ImhDialableCharactersOnly = int() # Qt.InputMethodHint enum
-    ImhEmailCharactersOnly = int() # Qt.InputMethodHint enum
-    ImhUrlCharactersOnly = int() # Qt.InputMethodHint enum
-    ImhExclusiveInputMask = int() # Qt.InputMethodHint enum
-
-    StretchTile = int() # Qt.TileRule enum
-    RepeatTile = int() # Qt.TileRule enum
-    RoundTile = int() # Qt.TileRule enum
-
-    NoSection = int() # Qt.WindowFrameSection enum
-    LeftSection = int() # Qt.WindowFrameSection enum
-    TopLeftSection = int() # Qt.WindowFrameSection enum
-    TopSection = int() # Qt.WindowFrameSection enum
-    TopRightSection = int() # Qt.WindowFrameSection enum
-    RightSection = int() # Qt.WindowFrameSection enum
-    BottomRightSection = int() # Qt.WindowFrameSection enum
-    BottomSection = int() # Qt.WindowFrameSection enum
-    BottomLeftSection = int() # Qt.WindowFrameSection enum
-    TitleBarArea = int() # Qt.WindowFrameSection enum
-
-    MinimumSize = int() # Qt.SizeHint enum
-    PreferredSize = int() # Qt.SizeHint enum
-    MaximumSize = int() # Qt.SizeHint enum
-    MinimumDescent = int() # Qt.SizeHint enum
-
-    AbsoluteSize = int() # Qt.SizeMode enum
-    RelativeSize = int() # Qt.SizeMode enum
-
-    HighEventPriority = int() # Qt.EventPriority enum
-    NormalEventPriority = int() # Qt.EventPriority enum
-    LowEventPriority = int() # Qt.EventPriority enum
-
-    XAxis = int() # Qt.Axis enum
-    YAxis = int() # Qt.Axis enum
-    ZAxis = int() # Qt.Axis enum
-
-    MaskInColor = int() # Qt.MaskMode enum
-    MaskOutColor = int() # Qt.MaskMode enum
-
-    NoTextInteraction = int() # Qt.TextInteractionFlag enum
-    TextSelectableByMouse = int() # Qt.TextInteractionFlag enum
-    TextSelectableByKeyboard = int() # Qt.TextInteractionFlag enum
-    LinksAccessibleByMouse = int() # Qt.TextInteractionFlag enum
-    LinksAccessibleByKeyboard = int() # Qt.TextInteractionFlag enum
-    TextEditable = int() # Qt.TextInteractionFlag enum
-    TextEditorInteraction = int() # Qt.TextInteractionFlag enum
-    TextBrowserInteraction = int() # Qt.TextInteractionFlag enum
-
-    ContainsItemShape = int() # Qt.ItemSelectionMode enum
-    IntersectsItemShape = int() # Qt.ItemSelectionMode enum
-    ContainsItemBoundingRect = int() # Qt.ItemSelectionMode enum
-    IntersectsItemBoundingRect = int() # Qt.ItemSelectionMode enum
-
-    AA_ImmediateWidgetCreation = int() # Qt.ApplicationAttribute enum
-    AA_MSWindowsUseDirect3DByDefault = int() # Qt.ApplicationAttribute enum
-    AA_DontShowIconsInMenus = int() # Qt.ApplicationAttribute enum
-    AA_NativeWindows = int() # Qt.ApplicationAttribute enum
-    AA_DontCreateNativeWidgetSiblings = int() # Qt.ApplicationAttribute enum
-    AA_MacPluginApplication = int() # Qt.ApplicationAttribute enum
-    AA_DontUseNativeMenuBar = int() # Qt.ApplicationAttribute enum
-    AA_MacDontSwapCtrlAndMeta = int() # Qt.ApplicationAttribute enum
-    AA_S60DontConstructApplicationPanes = int() # Qt.ApplicationAttribute enum
-
-    NonModal = int() # Qt.WindowModality enum
-    WindowModal = int() # Qt.WindowModality enum
-    ApplicationModal = int() # Qt.WindowModality enum
-
-    MatchExactly = int() # Qt.MatchFlag enum
-    MatchFixedString = int() # Qt.MatchFlag enum
-    MatchContains = int() # Qt.MatchFlag enum
-    MatchStartsWith = int() # Qt.MatchFlag enum
-    MatchEndsWith = int() # Qt.MatchFlag enum
-    MatchRegExp = int() # Qt.MatchFlag enum
-    MatchWildcard = int() # Qt.MatchFlag enum
-    MatchCaseSensitive = int() # Qt.MatchFlag enum
-    MatchWrap = int() # Qt.MatchFlag enum
-    MatchRecursive = int() # Qt.MatchFlag enum
-
-    NoItemFlags = int() # Qt.ItemFlag enum
-    ItemIsSelectable = int() # Qt.ItemFlag enum
-    ItemIsEditable = int() # Qt.ItemFlag enum
-    ItemIsDragEnabled = int() # Qt.ItemFlag enum
-    ItemIsDropEnabled = int() # Qt.ItemFlag enum
-    ItemIsUserCheckable = int() # Qt.ItemFlag enum
-    ItemIsEnabled = int() # Qt.ItemFlag enum
-    ItemIsTristate = int() # Qt.ItemFlag enum
-
-    DisplayRole = int() # Qt.ItemDataRole enum
-    DecorationRole = int() # Qt.ItemDataRole enum
-    EditRole = int() # Qt.ItemDataRole enum
-    ToolTipRole = int() # Qt.ItemDataRole enum
-    StatusTipRole = int() # Qt.ItemDataRole enum
-    WhatsThisRole = int() # Qt.ItemDataRole enum
-    FontRole = int() # Qt.ItemDataRole enum
-    TextAlignmentRole = int() # Qt.ItemDataRole enum
-    BackgroundRole = int() # Qt.ItemDataRole enum
-    BackgroundColorRole = int() # Qt.ItemDataRole enum
-    ForegroundRole = int() # Qt.ItemDataRole enum
-    TextColorRole = int() # Qt.ItemDataRole enum
-    CheckStateRole = int() # Qt.ItemDataRole enum
-    AccessibleTextRole = int() # Qt.ItemDataRole enum
-    AccessibleDescriptionRole = int() # Qt.ItemDataRole enum
-    SizeHintRole = int() # Qt.ItemDataRole enum
-    UserRole = int() # Qt.ItemDataRole enum
-
-    Unchecked = int() # Qt.CheckState enum
-    PartiallyChecked = int() # Qt.CheckState enum
-    Checked = int() # Qt.CheckState enum
-
-    CopyAction = int() # Qt.DropAction enum
-    MoveAction = int() # Qt.DropAction enum
-    LinkAction = int() # Qt.DropAction enum
-    ActionMask = int() # Qt.DropAction enum
-    TargetMoveAction = int() # Qt.DropAction enum
-    IgnoreAction = int() # Qt.DropAction enum
-
-    LeftToRight = int() # Qt.LayoutDirection enum
-    RightToLeft = int() # Qt.LayoutDirection enum
-    LayoutDirectionAuto = int() # Qt.LayoutDirection enum
-
-    ToolButtonIconOnly = int() # Qt.ToolButtonStyle enum
-    ToolButtonTextOnly = int() # Qt.ToolButtonStyle enum
-    ToolButtonTextBesideIcon = int() # Qt.ToolButtonStyle enum
-    ToolButtonTextUnderIcon = int() # Qt.ToolButtonStyle enum
-    ToolButtonFollowStyle = int() # Qt.ToolButtonStyle enum
-
-    ImMicroFocus = int() # Qt.InputMethodQuery enum
-    ImFont = int() # Qt.InputMethodQuery enum
-    ImCursorPosition = int() # Qt.InputMethodQuery enum
-    ImSurroundingText = int() # Qt.InputMethodQuery enum
-    ImCurrentSelection = int() # Qt.InputMethodQuery enum
-    ImMaximumTextLength = int() # Qt.InputMethodQuery enum
-    ImAnchorPosition = int() # Qt.InputMethodQuery enum
-
-    NoContextMenu = int() # Qt.ContextMenuPolicy enum
-    PreventContextMenu = int() # Qt.ContextMenuPolicy enum
-    DefaultContextMenu = int() # Qt.ContextMenuPolicy enum
-    ActionsContextMenu = int() # Qt.ContextMenuPolicy enum
-    CustomContextMenu = int() # Qt.ContextMenuPolicy enum
-
-    MouseFocusReason = int() # Qt.FocusReason enum
-    TabFocusReason = int() # Qt.FocusReason enum
-    BacktabFocusReason = int() # Qt.FocusReason enum
-    ActiveWindowFocusReason = int() # Qt.FocusReason enum
-    PopupFocusReason = int() # Qt.FocusReason enum
-    ShortcutFocusReason = int() # Qt.FocusReason enum
-    MenuBarFocusReason = int() # Qt.FocusReason enum
-    OtherFocusReason = int() # Qt.FocusReason enum
-    NoFocusReason = int() # Qt.FocusReason enum
-
-    FastTransformation = int() # Qt.TransformationMode enum
-    SmoothTransformation = int() # Qt.TransformationMode enum
-
-    NoClip = int() # Qt.ClipOperation enum
-    ReplaceClip = int() # Qt.ClipOperation enum
-    IntersectClip = int() # Qt.ClipOperation enum
-    UniteClip = int() # Qt.ClipOperation enum
-
-    OddEvenFill = int() # Qt.FillRule enum
-    WindingFill = int() # Qt.FillRule enum
-
-    WidgetShortcut = int() # Qt.ShortcutContext enum
-    WindowShortcut = int() # Qt.ShortcutContext enum
-    ApplicationShortcut = int() # Qt.ShortcutContext enum
-    WidgetWithChildrenShortcut = int() # Qt.ShortcutContext enum
-
-    AutoConnection = int() # Qt.ConnectionType enum
-    DirectConnection = int() # Qt.ConnectionType enum
-    QueuedConnection = int() # Qt.ConnectionType enum
-    AutoCompatConnection = int() # Qt.ConnectionType enum
-    BlockingQueuedConnection = int() # Qt.ConnectionType enum
-    UniqueConnection = int() # Qt.ConnectionType enum
-
-    TopLeftCorner = int() # Qt.Corner enum
-    TopRightCorner = int() # Qt.Corner enum
-    BottomLeftCorner = int() # Qt.Corner enum
-    BottomRightCorner = int() # Qt.Corner enum
-
-    CaseInsensitive = int() # Qt.CaseSensitivity enum
-    CaseSensitive = int() # Qt.CaseSensitivity enum
-
-    ScrollBarAsNeeded = int() # Qt.ScrollBarPolicy enum
-    ScrollBarAlwaysOff = int() # Qt.ScrollBarPolicy enum
-    ScrollBarAlwaysOn = int() # Qt.ScrollBarPolicy enum
-
-    Monday = int() # Qt.DayOfWeek enum
-    Tuesday = int() # Qt.DayOfWeek enum
-    Wednesday = int() # Qt.DayOfWeek enum
-    Thursday = int() # Qt.DayOfWeek enum
-    Friday = int() # Qt.DayOfWeek enum
-    Saturday = int() # Qt.DayOfWeek enum
-    Sunday = int() # Qt.DayOfWeek enum
-
-    LocalTime = int() # Qt.TimeSpec enum
-    UTC = int() # Qt.TimeSpec enum
-    OffsetFromUTC = int() # Qt.TimeSpec enum
-
-    TextDate = int() # Qt.DateFormat enum
-    ISODate = int() # Qt.DateFormat enum
-    LocalDate = int() # Qt.DateFormat enum
-    SystemLocaleDate = int() # Qt.DateFormat enum
-    LocaleDate = int() # Qt.DateFormat enum
-    SystemLocaleShortDate = int() # Qt.DateFormat enum
-    SystemLocaleLongDate = int() # Qt.DateFormat enum
-    DefaultLocaleShortDate = int() # Qt.DateFormat enum
-    DefaultLocaleLongDate = int() # Qt.DateFormat enum
-
-    LeftToolBarArea = int() # Qt.ToolBarArea enum
-    RightToolBarArea = int() # Qt.ToolBarArea enum
-    TopToolBarArea = int() # Qt.ToolBarArea enum
-    BottomToolBarArea = int() # Qt.ToolBarArea enum
-    ToolBarArea_Mask = int() # Qt.ToolBarArea enum
-    AllToolBarAreas = int() # Qt.ToolBarArea enum
-    NoToolBarArea = int() # Qt.ToolBarArea enum
-
-    LeftDockWidgetArea = int() # Qt.DockWidgetArea enum
-    RightDockWidgetArea = int() # Qt.DockWidgetArea enum
-    TopDockWidgetArea = int() # Qt.DockWidgetArea enum
-    BottomDockWidgetArea = int() # Qt.DockWidgetArea enum
-    DockWidgetArea_Mask = int() # Qt.DockWidgetArea enum
-    AllDockWidgetAreas = int() # Qt.DockWidgetArea enum
-    NoDockWidgetArea = int() # Qt.DockWidgetArea enum
-
-    AnchorName = int() # Qt.AnchorAttribute enum
-    AnchorHref = int() # Qt.AnchorAttribute enum
-
-    IgnoreAspectRatio = int() # Qt.AspectRatioMode enum
-    KeepAspectRatio = int() # Qt.AspectRatioMode enum
-    KeepAspectRatioByExpanding = int() # Qt.AspectRatioMode enum
-
-    PlainText = int() # Qt.TextFormat enum
-    RichText = int() # Qt.TextFormat enum
-    AutoText = int() # Qt.TextFormat enum
-    LogText = int() # Qt.TextFormat enum
-
-    ArrowCursor = int() # Qt.CursorShape enum
-    UpArrowCursor = int() # Qt.CursorShape enum
-    CrossCursor = int() # Qt.CursorShape enum
-    WaitCursor = int() # Qt.CursorShape enum
-    IBeamCursor = int() # Qt.CursorShape enum
-    SizeVerCursor = int() # Qt.CursorShape enum
-    SizeHorCursor = int() # Qt.CursorShape enum
-    SizeBDiagCursor = int() # Qt.CursorShape enum
-    SizeFDiagCursor = int() # Qt.CursorShape enum
-    SizeAllCursor = int() # Qt.CursorShape enum
-    BlankCursor = int() # Qt.CursorShape enum
-    SplitVCursor = int() # Qt.CursorShape enum
-    SplitHCursor = int() # Qt.CursorShape enum
-    PointingHandCursor = int() # Qt.CursorShape enum
-    ForbiddenCursor = int() # Qt.CursorShape enum
-    OpenHandCursor = int() # Qt.CursorShape enum
-    ClosedHandCursor = int() # Qt.CursorShape enum
-    WhatsThisCursor = int() # Qt.CursorShape enum
-    BusyCursor = int() # Qt.CursorShape enum
-    LastCursor = int() # Qt.CursorShape enum
-    BitmapCursor = int() # Qt.CursorShape enum
-    CustomCursor = int() # Qt.CursorShape enum
-    DragCopyCursor = int() # Qt.CursorShape enum
-    DragMoveCursor = int() # Qt.CursorShape enum
-    DragLinkCursor = int() # Qt.CursorShape enum
-
-    UI_General = int() # Qt.UIEffect enum
-    UI_AnimateMenu = int() # Qt.UIEffect enum
-    UI_FadeMenu = int() # Qt.UIEffect enum
-    UI_AnimateCombo = int() # Qt.UIEffect enum
-    UI_AnimateTooltip = int() # Qt.UIEffect enum
-    UI_FadeTooltip = int() # Qt.UIEffect enum
-    UI_AnimateToolBox = int() # Qt.UIEffect enum
-
-    NoBrush = int() # Qt.BrushStyle enum
-    SolidPattern = int() # Qt.BrushStyle enum
-    Dense1Pattern = int() # Qt.BrushStyle enum
-    Dense2Pattern = int() # Qt.BrushStyle enum
-    Dense3Pattern = int() # Qt.BrushStyle enum
-    Dense4Pattern = int() # Qt.BrushStyle enum
-    Dense5Pattern = int() # Qt.BrushStyle enum
-    Dense6Pattern = int() # Qt.BrushStyle enum
-    Dense7Pattern = int() # Qt.BrushStyle enum
-    HorPattern = int() # Qt.BrushStyle enum
-    VerPattern = int() # Qt.BrushStyle enum
-    CrossPattern = int() # Qt.BrushStyle enum
-    BDiagPattern = int() # Qt.BrushStyle enum
-    FDiagPattern = int() # Qt.BrushStyle enum
-    DiagCrossPattern = int() # Qt.BrushStyle enum
-    LinearGradientPattern = int() # Qt.BrushStyle enum
-    RadialGradientPattern = int() # Qt.BrushStyle enum
-    ConicalGradientPattern = int() # Qt.BrushStyle enum
-    TexturePattern = int() # Qt.BrushStyle enum
-
-    MiterJoin = int() # Qt.PenJoinStyle enum
-    BevelJoin = int() # Qt.PenJoinStyle enum
-    RoundJoin = int() # Qt.PenJoinStyle enum
-    MPenJoinStyle = int() # Qt.PenJoinStyle enum
-    SvgMiterJoin = int() # Qt.PenJoinStyle enum
-
-    FlatCap = int() # Qt.PenCapStyle enum
-    SquareCap = int() # Qt.PenCapStyle enum
-    RoundCap = int() # Qt.PenCapStyle enum
-    MPenCapStyle = int() # Qt.PenCapStyle enum
-
-    NoPen = int() # Qt.PenStyle enum
-    SolidLine = int() # Qt.PenStyle enum
-    DashLine = int() # Qt.PenStyle enum
-    DotLine = int() # Qt.PenStyle enum
-    DashDotLine = int() # Qt.PenStyle enum
-    DashDotDotLine = int() # Qt.PenStyle enum
-    CustomDashLine = int() # Qt.PenStyle enum
-    MPenStyle = int() # Qt.PenStyle enum
-
-    NoArrow = int() # Qt.ArrowType enum
-    UpArrow = int() # Qt.ArrowType enum
-    DownArrow = int() # Qt.ArrowType enum
-    LeftArrow = int() # Qt.ArrowType enum
-    RightArrow = int() # Qt.ArrowType enum
-
-    Key_Escape = int() # Qt.Key enum
-    Key_Tab = int() # Qt.Key enum
-    Key_Backtab = int() # Qt.Key enum
-    Key_Backspace = int() # Qt.Key enum
-    Key_Return = int() # Qt.Key enum
-    Key_Enter = int() # Qt.Key enum
-    Key_Insert = int() # Qt.Key enum
-    Key_Delete = int() # Qt.Key enum
-    Key_Pause = int() # Qt.Key enum
-    Key_Print = int() # Qt.Key enum
-    Key_SysReq = int() # Qt.Key enum
-    Key_Clear = int() # Qt.Key enum
-    Key_Home = int() # Qt.Key enum
-    Key_End = int() # Qt.Key enum
-    Key_Left = int() # Qt.Key enum
-    Key_Up = int() # Qt.Key enum
-    Key_Right = int() # Qt.Key enum
-    Key_Down = int() # Qt.Key enum
-    Key_PageUp = int() # Qt.Key enum
-    Key_PageDown = int() # Qt.Key enum
-    Key_Shift = int() # Qt.Key enum
-    Key_Control = int() # Qt.Key enum
-    Key_Meta = int() # Qt.Key enum
-    Key_Alt = int() # Qt.Key enum
-    Key_CapsLock = int() # Qt.Key enum
-    Key_NumLock = int() # Qt.Key enum
-    Key_ScrollLock = int() # Qt.Key enum
-    Key_F1 = int() # Qt.Key enum
-    Key_F2 = int() # Qt.Key enum
-    Key_F3 = int() # Qt.Key enum
-    Key_F4 = int() # Qt.Key enum
-    Key_F5 = int() # Qt.Key enum
-    Key_F6 = int() # Qt.Key enum
-    Key_F7 = int() # Qt.Key enum
-    Key_F8 = int() # Qt.Key enum
-    Key_F9 = int() # Qt.Key enum
-    Key_F10 = int() # Qt.Key enum
-    Key_F11 = int() # Qt.Key enum
-    Key_F12 = int() # Qt.Key enum
-    Key_F13 = int() # Qt.Key enum
-    Key_F14 = int() # Qt.Key enum
-    Key_F15 = int() # Qt.Key enum
-    Key_F16 = int() # Qt.Key enum
-    Key_F17 = int() # Qt.Key enum
-    Key_F18 = int() # Qt.Key enum
-    Key_F19 = int() # Qt.Key enum
-    Key_F20 = int() # Qt.Key enum
-    Key_F21 = int() # Qt.Key enum
-    Key_F22 = int() # Qt.Key enum
-    Key_F23 = int() # Qt.Key enum
-    Key_F24 = int() # Qt.Key enum
-    Key_F25 = int() # Qt.Key enum
-    Key_F26 = int() # Qt.Key enum
-    Key_F27 = int() # Qt.Key enum
-    Key_F28 = int() # Qt.Key enum
-    Key_F29 = int() # Qt.Key enum
-    Key_F30 = int() # Qt.Key enum
-    Key_F31 = int() # Qt.Key enum
-    Key_F32 = int() # Qt.Key enum
-    Key_F33 = int() # Qt.Key enum
-    Key_F34 = int() # Qt.Key enum
-    Key_F35 = int() # Qt.Key enum
-    Key_Super_L = int() # Qt.Key enum
-    Key_Super_R = int() # Qt.Key enum
-    Key_Menu = int() # Qt.Key enum
-    Key_Hyper_L = int() # Qt.Key enum
-    Key_Hyper_R = int() # Qt.Key enum
-    Key_Help = int() # Qt.Key enum
-    Key_Direction_L = int() # Qt.Key enum
-    Key_Direction_R = int() # Qt.Key enum
-    Key_Space = int() # Qt.Key enum
-    Key_Any = int() # Qt.Key enum
-    Key_Exclam = int() # Qt.Key enum
-    Key_QuoteDbl = int() # Qt.Key enum
-    Key_NumberSign = int() # Qt.Key enum
-    Key_Dollar = int() # Qt.Key enum
-    Key_Percent = int() # Qt.Key enum
-    Key_Ampersand = int() # Qt.Key enum
-    Key_Apostrophe = int() # Qt.Key enum
-    Key_ParenLeft = int() # Qt.Key enum
-    Key_ParenRight = int() # Qt.Key enum
-    Key_Asterisk = int() # Qt.Key enum
-    Key_Plus = int() # Qt.Key enum
-    Key_Comma = int() # Qt.Key enum
-    Key_Minus = int() # Qt.Key enum
-    Key_Period = int() # Qt.Key enum
-    Key_Slash = int() # Qt.Key enum
-    Key_0 = int() # Qt.Key enum
-    Key_1 = int() # Qt.Key enum
-    Key_2 = int() # Qt.Key enum
-    Key_3 = int() # Qt.Key enum
-    Key_4 = int() # Qt.Key enum
-    Key_5 = int() # Qt.Key enum
-    Key_6 = int() # Qt.Key enum
-    Key_7 = int() # Qt.Key enum
-    Key_8 = int() # Qt.Key enum
-    Key_9 = int() # Qt.Key enum
-    Key_Colon = int() # Qt.Key enum
-    Key_Semicolon = int() # Qt.Key enum
-    Key_Less = int() # Qt.Key enum
-    Key_Equal = int() # Qt.Key enum
-    Key_Greater = int() # Qt.Key enum
-    Key_Question = int() # Qt.Key enum
-    Key_At = int() # Qt.Key enum
-    Key_A = int() # Qt.Key enum
-    Key_B = int() # Qt.Key enum
-    Key_C = int() # Qt.Key enum
-    Key_D = int() # Qt.Key enum
-    Key_E = int() # Qt.Key enum
-    Key_F = int() # Qt.Key enum
-    Key_G = int() # Qt.Key enum
-    Key_H = int() # Qt.Key enum
-    Key_I = int() # Qt.Key enum
-    Key_J = int() # Qt.Key enum
-    Key_K = int() # Qt.Key enum
-    Key_L = int() # Qt.Key enum
-    Key_M = int() # Qt.Key enum
-    Key_N = int() # Qt.Key enum
-    Key_O = int() # Qt.Key enum
-    Key_P = int() # Qt.Key enum
-    Key_Q = int() # Qt.Key enum
-    Key_R = int() # Qt.Key enum
-    Key_S = int() # Qt.Key enum
-    Key_T = int() # Qt.Key enum
-    Key_U = int() # Qt.Key enum
-    Key_V = int() # Qt.Key enum
-    Key_W = int() # Qt.Key enum
-    Key_X = int() # Qt.Key enum
-    Key_Y = int() # Qt.Key enum
-    Key_Z = int() # Qt.Key enum
-    Key_BracketLeft = int() # Qt.Key enum
-    Key_Backslash = int() # Qt.Key enum
-    Key_BracketRight = int() # Qt.Key enum
-    Key_AsciiCircum = int() # Qt.Key enum
-    Key_Underscore = int() # Qt.Key enum
-    Key_QuoteLeft = int() # Qt.Key enum
-    Key_BraceLeft = int() # Qt.Key enum
-    Key_Bar = int() # Qt.Key enum
-    Key_BraceRight = int() # Qt.Key enum
-    Key_AsciiTilde = int() # Qt.Key enum
-    Key_nobreakspace = int() # Qt.Key enum
-    Key_exclamdown = int() # Qt.Key enum
-    Key_cent = int() # Qt.Key enum
-    Key_sterling = int() # Qt.Key enum
-    Key_currency = int() # Qt.Key enum
-    Key_yen = int() # Qt.Key enum
-    Key_brokenbar = int() # Qt.Key enum
-    Key_section = int() # Qt.Key enum
-    Key_diaeresis = int() # Qt.Key enum
-    Key_copyright = int() # Qt.Key enum
-    Key_ordfeminine = int() # Qt.Key enum
-    Key_guillemotleft = int() # Qt.Key enum
-    Key_notsign = int() # Qt.Key enum
-    Key_hyphen = int() # Qt.Key enum
-    Key_registered = int() # Qt.Key enum
-    Key_macron = int() # Qt.Key enum
-    Key_degree = int() # Qt.Key enum
-    Key_plusminus = int() # Qt.Key enum
-    Key_twosuperior = int() # Qt.Key enum
-    Key_threesuperior = int() # Qt.Key enum
-    Key_acute = int() # Qt.Key enum
-    Key_mu = int() # Qt.Key enum
-    Key_paragraph = int() # Qt.Key enum
-    Key_periodcentered = int() # Qt.Key enum
-    Key_cedilla = int() # Qt.Key enum
-    Key_onesuperior = int() # Qt.Key enum
-    Key_masculine = int() # Qt.Key enum
-    Key_guillemotright = int() # Qt.Key enum
-    Key_onequarter = int() # Qt.Key enum
-    Key_onehalf = int() # Qt.Key enum
-    Key_threequarters = int() # Qt.Key enum
-    Key_questiondown = int() # Qt.Key enum
-    Key_Agrave = int() # Qt.Key enum
-    Key_Aacute = int() # Qt.Key enum
-    Key_Acircumflex = int() # Qt.Key enum
-    Key_Atilde = int() # Qt.Key enum
-    Key_Adiaeresis = int() # Qt.Key enum
-    Key_Aring = int() # Qt.Key enum
-    Key_AE = int() # Qt.Key enum
-    Key_Ccedilla = int() # Qt.Key enum
-    Key_Egrave = int() # Qt.Key enum
-    Key_Eacute = int() # Qt.Key enum
-    Key_Ecircumflex = int() # Qt.Key enum
-    Key_Ediaeresis = int() # Qt.Key enum
-    Key_Igrave = int() # Qt.Key enum
-    Key_Iacute = int() # Qt.Key enum
-    Key_Icircumflex = int() # Qt.Key enum
-    Key_Idiaeresis = int() # Qt.Key enum
-    Key_ETH = int() # Qt.Key enum
-    Key_Ntilde = int() # Qt.Key enum
-    Key_Ograve = int() # Qt.Key enum
-    Key_Oacute = int() # Qt.Key enum
-    Key_Ocircumflex = int() # Qt.Key enum
-    Key_Otilde = int() # Qt.Key enum
-    Key_Odiaeresis = int() # Qt.Key enum
-    Key_multiply = int() # Qt.Key enum
-    Key_Ooblique = int() # Qt.Key enum
-    Key_Ugrave = int() # Qt.Key enum
-    Key_Uacute = int() # Qt.Key enum
-    Key_Ucircumflex = int() # Qt.Key enum
-    Key_Udiaeresis = int() # Qt.Key enum
-    Key_Yacute = int() # Qt.Key enum
-    Key_THORN = int() # Qt.Key enum
-    Key_ssharp = int() # Qt.Key enum
-    Key_division = int() # Qt.Key enum
-    Key_ydiaeresis = int() # Qt.Key enum
-    Key_AltGr = int() # Qt.Key enum
-    Key_Multi_key = int() # Qt.Key enum
-    Key_Codeinput = int() # Qt.Key enum
-    Key_SingleCandidate = int() # Qt.Key enum
-    Key_MultipleCandidate = int() # Qt.Key enum
-    Key_PreviousCandidate = int() # Qt.Key enum
-    Key_Mode_switch = int() # Qt.Key enum
-    Key_Kanji = int() # Qt.Key enum
-    Key_Muhenkan = int() # Qt.Key enum
-    Key_Henkan = int() # Qt.Key enum
-    Key_Romaji = int() # Qt.Key enum
-    Key_Hiragana = int() # Qt.Key enum
-    Key_Katakana = int() # Qt.Key enum
-    Key_Hiragana_Katakana = int() # Qt.Key enum
-    Key_Zenkaku = int() # Qt.Key enum
-    Key_Hankaku = int() # Qt.Key enum
-    Key_Zenkaku_Hankaku = int() # Qt.Key enum
-    Key_Touroku = int() # Qt.Key enum
-    Key_Massyo = int() # Qt.Key enum
-    Key_Kana_Lock = int() # Qt.Key enum
-    Key_Kana_Shift = int() # Qt.Key enum
-    Key_Eisu_Shift = int() # Qt.Key enum
-    Key_Eisu_toggle = int() # Qt.Key enum
-    Key_Hangul = int() # Qt.Key enum
-    Key_Hangul_Start = int() # Qt.Key enum
-    Key_Hangul_End = int() # Qt.Key enum
-    Key_Hangul_Hanja = int() # Qt.Key enum
-    Key_Hangul_Jamo = int() # Qt.Key enum
-    Key_Hangul_Romaja = int() # Qt.Key enum
-    Key_Hangul_Jeonja = int() # Qt.Key enum
-    Key_Hangul_Banja = int() # Qt.Key enum
-    Key_Hangul_PreHanja = int() # Qt.Key enum
-    Key_Hangul_PostHanja = int() # Qt.Key enum
-    Key_Hangul_Special = int() # Qt.Key enum
-    Key_Dead_Grave = int() # Qt.Key enum
-    Key_Dead_Acute = int() # Qt.Key enum
-    Key_Dead_Circumflex = int() # Qt.Key enum
-    Key_Dead_Tilde = int() # Qt.Key enum
-    Key_Dead_Macron = int() # Qt.Key enum
-    Key_Dead_Breve = int() # Qt.Key enum
-    Key_Dead_Abovedot = int() # Qt.Key enum
-    Key_Dead_Diaeresis = int() # Qt.Key enum
-    Key_Dead_Abovering = int() # Qt.Key enum
-    Key_Dead_Doubleacute = int() # Qt.Key enum
-    Key_Dead_Caron = int() # Qt.Key enum
-    Key_Dead_Cedilla = int() # Qt.Key enum
-    Key_Dead_Ogonek = int() # Qt.Key enum
-    Key_Dead_Iota = int() # Qt.Key enum
-    Key_Dead_Voiced_Sound = int() # Qt.Key enum
-    Key_Dead_Semivoiced_Sound = int() # Qt.Key enum
-    Key_Dead_Belowdot = int() # Qt.Key enum
-    Key_Dead_Hook = int() # Qt.Key enum
-    Key_Dead_Horn = int() # Qt.Key enum
-    Key_Back = int() # Qt.Key enum
-    Key_Forward = int() # Qt.Key enum
-    Key_Stop = int() # Qt.Key enum
-    Key_Refresh = int() # Qt.Key enum
-    Key_VolumeDown = int() # Qt.Key enum
-    Key_VolumeMute = int() # Qt.Key enum
-    Key_VolumeUp = int() # Qt.Key enum
-    Key_BassBoost = int() # Qt.Key enum
-    Key_BassUp = int() # Qt.Key enum
-    Key_BassDown = int() # Qt.Key enum
-    Key_TrebleUp = int() # Qt.Key enum
-    Key_TrebleDown = int() # Qt.Key enum
-    Key_MediaPlay = int() # Qt.Key enum
-    Key_MediaStop = int() # Qt.Key enum
-    Key_MediaPrevious = int() # Qt.Key enum
-    Key_MediaNext = int() # Qt.Key enum
-    Key_MediaRecord = int() # Qt.Key enum
-    Key_HomePage = int() # Qt.Key enum
-    Key_Favorites = int() # Qt.Key enum
-    Key_Search = int() # Qt.Key enum
-    Key_Standby = int() # Qt.Key enum
-    Key_OpenUrl = int() # Qt.Key enum
-    Key_LaunchMail = int() # Qt.Key enum
-    Key_LaunchMedia = int() # Qt.Key enum
-    Key_Launch0 = int() # Qt.Key enum
-    Key_Launch1 = int() # Qt.Key enum
-    Key_Launch2 = int() # Qt.Key enum
-    Key_Launch3 = int() # Qt.Key enum
-    Key_Launch4 = int() # Qt.Key enum
-    Key_Launch5 = int() # Qt.Key enum
-    Key_Launch6 = int() # Qt.Key enum
-    Key_Launch7 = int() # Qt.Key enum
-    Key_Launch8 = int() # Qt.Key enum
-    Key_Launch9 = int() # Qt.Key enum
-    Key_LaunchA = int() # Qt.Key enum
-    Key_LaunchB = int() # Qt.Key enum
-    Key_LaunchC = int() # Qt.Key enum
-    Key_LaunchD = int() # Qt.Key enum
-    Key_LaunchE = int() # Qt.Key enum
-    Key_LaunchF = int() # Qt.Key enum
-    Key_MediaLast = int() # Qt.Key enum
-    Key_Select = int() # Qt.Key enum
-    Key_Yes = int() # Qt.Key enum
-    Key_No = int() # Qt.Key enum
-    Key_Context1 = int() # Qt.Key enum
-    Key_Context2 = int() # Qt.Key enum
-    Key_Context3 = int() # Qt.Key enum
-    Key_Context4 = int() # Qt.Key enum
-    Key_Call = int() # Qt.Key enum
-    Key_Hangup = int() # Qt.Key enum
-    Key_Flip = int() # Qt.Key enum
-    Key_unknown = int() # Qt.Key enum
-    Key_Execute = int() # Qt.Key enum
-    Key_Printer = int() # Qt.Key enum
-    Key_Play = int() # Qt.Key enum
-    Key_Sleep = int() # Qt.Key enum
-    Key_Zoom = int() # Qt.Key enum
-    Key_Cancel = int() # Qt.Key enum
-    Key_MonBrightnessUp = int() # Qt.Key enum
-    Key_MonBrightnessDown = int() # Qt.Key enum
-    Key_KeyboardLightOnOff = int() # Qt.Key enum
-    Key_KeyboardBrightnessUp = int() # Qt.Key enum
-    Key_KeyboardBrightnessDown = int() # Qt.Key enum
-    Key_PowerOff = int() # Qt.Key enum
-    Key_WakeUp = int() # Qt.Key enum
-    Key_Eject = int() # Qt.Key enum
-    Key_ScreenSaver = int() # Qt.Key enum
-    Key_WWW = int() # Qt.Key enum
-    Key_Memo = int() # Qt.Key enum
-    Key_LightBulb = int() # Qt.Key enum
-    Key_Shop = int() # Qt.Key enum
-    Key_History = int() # Qt.Key enum
-    Key_AddFavorite = int() # Qt.Key enum
-    Key_HotLinks = int() # Qt.Key enum
-    Key_BrightnessAdjust = int() # Qt.Key enum
-    Key_Finance = int() # Qt.Key enum
-    Key_Community = int() # Qt.Key enum
-    Key_AudioRewind = int() # Qt.Key enum
-    Key_BackForward = int() # Qt.Key enum
-    Key_ApplicationLeft = int() # Qt.Key enum
-    Key_ApplicationRight = int() # Qt.Key enum
-    Key_Book = int() # Qt.Key enum
-    Key_CD = int() # Qt.Key enum
-    Key_Calculator = int() # Qt.Key enum
-    Key_ToDoList = int() # Qt.Key enum
-    Key_ClearGrab = int() # Qt.Key enum
-    Key_Close = int() # Qt.Key enum
-    Key_Copy = int() # Qt.Key enum
-    Key_Cut = int() # Qt.Key enum
-    Key_Display = int() # Qt.Key enum
-    Key_DOS = int() # Qt.Key enum
-    Key_Documents = int() # Qt.Key enum
-    Key_Excel = int() # Qt.Key enum
-    Key_Explorer = int() # Qt.Key enum
-    Key_Game = int() # Qt.Key enum
-    Key_Go = int() # Qt.Key enum
-    Key_iTouch = int() # Qt.Key enum
-    Key_LogOff = int() # Qt.Key enum
-    Key_Market = int() # Qt.Key enum
-    Key_Meeting = int() # Qt.Key enum
-    Key_MenuKB = int() # Qt.Key enum
-    Key_MenuPB = int() # Qt.Key enum
-    Key_MySites = int() # Qt.Key enum
-    Key_News = int() # Qt.Key enum
-    Key_OfficeHome = int() # Qt.Key enum
-    Key_Option = int() # Qt.Key enum
-    Key_Paste = int() # Qt.Key enum
-    Key_Phone = int() # Qt.Key enum
-    Key_Calendar = int() # Qt.Key enum
-    Key_Reply = int() # Qt.Key enum
-    Key_Reload = int() # Qt.Key enum
-    Key_RotateWindows = int() # Qt.Key enum
-    Key_RotationPB = int() # Qt.Key enum
-    Key_RotationKB = int() # Qt.Key enum
-    Key_Save = int() # Qt.Key enum
-    Key_Send = int() # Qt.Key enum
-    Key_Spell = int() # Qt.Key enum
-    Key_SplitScreen = int() # Qt.Key enum
-    Key_Support = int() # Qt.Key enum
-    Key_TaskPane = int() # Qt.Key enum
-    Key_Terminal = int() # Qt.Key enum
-    Key_Tools = int() # Qt.Key enum
-    Key_Travel = int() # Qt.Key enum
-    Key_Video = int() # Qt.Key enum
-    Key_Word = int() # Qt.Key enum
-    Key_Xfer = int() # Qt.Key enum
-    Key_ZoomIn = int() # Qt.Key enum
-    Key_ZoomOut = int() # Qt.Key enum
-    Key_Away = int() # Qt.Key enum
-    Key_Messenger = int() # Qt.Key enum
-    Key_WebCam = int() # Qt.Key enum
-    Key_MailForward = int() # Qt.Key enum
-    Key_Pictures = int() # Qt.Key enum
-    Key_Music = int() # Qt.Key enum
-    Key_Battery = int() # Qt.Key enum
-    Key_Bluetooth = int() # Qt.Key enum
-    Key_WLAN = int() # Qt.Key enum
-    Key_UWB = int() # Qt.Key enum
-    Key_AudioForward = int() # Qt.Key enum
-    Key_AudioRepeat = int() # Qt.Key enum
-    Key_AudioRandomPlay = int() # Qt.Key enum
-    Key_Subtitle = int() # Qt.Key enum
-    Key_AudioCycleTrack = int() # Qt.Key enum
-    Key_Time = int() # Qt.Key enum
-    Key_Hibernate = int() # Qt.Key enum
-    Key_View = int() # Qt.Key enum
-    Key_TopMenu = int() # Qt.Key enum
-    Key_PowerDown = int() # Qt.Key enum
-    Key_Suspend = int() # Qt.Key enum
-    Key_ContrastAdjust = int() # Qt.Key enum
-    Key_MediaPause = int() # Qt.Key enum
-    Key_MediaTogglePlayPause = int() # Qt.Key enum
-    Key_LaunchG = int() # Qt.Key enum
-    Key_LaunchH = int() # Qt.Key enum
-    Key_ToggleCallHangup = int() # Qt.Key enum
-    Key_VoiceDial = int() # Qt.Key enum
-    Key_LastNumberRedial = int() # Qt.Key enum
-    Key_Camera = int() # Qt.Key enum
-    Key_CameraFocus = int() # Qt.Key enum
-
-    TransparentMode = int() # Qt.BGMode enum
-    OpaqueMode = int() # Qt.BGMode enum
-
-    ColorMode_Mask = int() # Qt.ImageConversionFlag enum
-    AutoColor = int() # Qt.ImageConversionFlag enum
-    ColorOnly = int() # Qt.ImageConversionFlag enum
-    MonoOnly = int() # Qt.ImageConversionFlag enum
-    AlphaDither_Mask = int() # Qt.ImageConversionFlag enum
-    ThresholdAlphaDither = int() # Qt.ImageConversionFlag enum
-    OrderedAlphaDither = int() # Qt.ImageConversionFlag enum
-    DiffuseAlphaDither = int() # Qt.ImageConversionFlag enum
-    NoAlpha = int() # Qt.ImageConversionFlag enum
-    Dither_Mask = int() # Qt.ImageConversionFlag enum
-    DiffuseDither = int() # Qt.ImageConversionFlag enum
-    OrderedDither = int() # Qt.ImageConversionFlag enum
-    ThresholdDither = int() # Qt.ImageConversionFlag enum
-    DitherMode_Mask = int() # Qt.ImageConversionFlag enum
-    AutoDither = int() # Qt.ImageConversionFlag enum
-    PreferDither = int() # Qt.ImageConversionFlag enum
-    AvoidDither = int() # Qt.ImageConversionFlag enum
-
-    WA_Disabled = int() # Qt.WidgetAttribute enum
-    WA_UnderMouse = int() # Qt.WidgetAttribute enum
-    WA_MouseTracking = int() # Qt.WidgetAttribute enum
-    WA_OpaquePaintEvent = int() # Qt.WidgetAttribute enum
-    WA_StaticContents = int() # Qt.WidgetAttribute enum
-    WA_LaidOut = int() # Qt.WidgetAttribute enum
-    WA_PaintOnScreen = int() # Qt.WidgetAttribute enum
-    WA_NoSystemBackground = int() # Qt.WidgetAttribute enum
-    WA_UpdatesDisabled = int() # Qt.WidgetAttribute enum
-    WA_Mapped = int() # Qt.WidgetAttribute enum
-    WA_MacNoClickThrough = int() # Qt.WidgetAttribute enum
-    WA_PaintOutsidePaintEvent = int() # Qt.WidgetAttribute enum
-    WA_InputMethodEnabled = int() # Qt.WidgetAttribute enum
-    WA_WState_Visible = int() # Qt.WidgetAttribute enum
-    WA_WState_Hidden = int() # Qt.WidgetAttribute enum
-    WA_ForceDisabled = int() # Qt.WidgetAttribute enum
-    WA_KeyCompression = int() # Qt.WidgetAttribute enum
-    WA_PendingMoveEvent = int() # Qt.WidgetAttribute enum
-    WA_PendingResizeEvent = int() # Qt.WidgetAttribute enum
-    WA_SetPalette = int() # Qt.WidgetAttribute enum
-    WA_SetFont = int() # Qt.WidgetAttribute enum
-    WA_SetCursor = int() # Qt.WidgetAttribute enum
-    WA_NoChildEventsFromChildren = int() # Qt.WidgetAttribute enum
-    WA_WindowModified = int() # Qt.WidgetAttribute enum
-    WA_Resized = int() # Qt.WidgetAttribute enum
-    WA_Moved = int() # Qt.WidgetAttribute enum
-    WA_PendingUpdate = int() # Qt.WidgetAttribute enum
-    WA_InvalidSize = int() # Qt.WidgetAttribute enum
-    WA_MacMetalStyle = int() # Qt.WidgetAttribute enum
-    WA_CustomWhatsThis = int() # Qt.WidgetAttribute enum
-    WA_LayoutOnEntireRect = int() # Qt.WidgetAttribute enum
-    WA_OutsideWSRange = int() # Qt.WidgetAttribute enum
-    WA_GrabbedShortcut = int() # Qt.WidgetAttribute enum
-    WA_TransparentForMouseEvents = int() # Qt.WidgetAttribute enum
-    WA_PaintUnclipped = int() # Qt.WidgetAttribute enum
-    WA_SetWindowIcon = int() # Qt.WidgetAttribute enum
-    WA_NoMouseReplay = int() # Qt.WidgetAttribute enum
-    WA_DeleteOnClose = int() # Qt.WidgetAttribute enum
-    WA_RightToLeft = int() # Qt.WidgetAttribute enum
-    WA_SetLayoutDirection = int() # Qt.WidgetAttribute enum
-    WA_NoChildEventsForParent = int() # Qt.WidgetAttribute enum
-    WA_ForceUpdatesDisabled = int() # Qt.WidgetAttribute enum
-    WA_WState_Created = int() # Qt.WidgetAttribute enum
-    WA_WState_CompressKeys = int() # Qt.WidgetAttribute enum
-    WA_WState_InPaintEvent = int() # Qt.WidgetAttribute enum
-    WA_WState_Reparented = int() # Qt.WidgetAttribute enum
-    WA_WState_ConfigPending = int() # Qt.WidgetAttribute enum
-    WA_WState_Polished = int() # Qt.WidgetAttribute enum
-    WA_WState_OwnSizePolicy = int() # Qt.WidgetAttribute enum
-    WA_WState_ExplicitShowHide = int() # Qt.WidgetAttribute enum
-    WA_MouseNoMask = int() # Qt.WidgetAttribute enum
-    WA_GroupLeader = int() # Qt.WidgetAttribute enum
-    WA_NoMousePropagation = int() # Qt.WidgetAttribute enum
-    WA_Hover = int() # Qt.WidgetAttribute enum
-    WA_InputMethodTransparent = int() # Qt.WidgetAttribute enum
-    WA_QuitOnClose = int() # Qt.WidgetAttribute enum
-    WA_KeyboardFocusChange = int() # Qt.WidgetAttribute enum
-    WA_AcceptDrops = int() # Qt.WidgetAttribute enum
-    WA_WindowPropagation = int() # Qt.WidgetAttribute enum
-    WA_NoX11EventCompression = int() # Qt.WidgetAttribute enum
-    WA_TintedBackground = int() # Qt.WidgetAttribute enum
-    WA_X11OpenGLOverlay = int() # Qt.WidgetAttribute enum
-    WA_AttributeCount = int() # Qt.WidgetAttribute enum
-    WA_AlwaysShowToolTips = int() # Qt.WidgetAttribute enum
-    WA_MacOpaqueSizeGrip = int() # Qt.WidgetAttribute enum
-    WA_SetStyle = int() # Qt.WidgetAttribute enum
-    WA_MacBrushedMetal = int() # Qt.WidgetAttribute enum
-    WA_SetLocale = int() # Qt.WidgetAttribute enum
-    WA_MacShowFocusRect = int() # Qt.WidgetAttribute enum
-    WA_MacNormalSize = int() # Qt.WidgetAttribute enum
-    WA_MacSmallSize = int() # Qt.WidgetAttribute enum
-    WA_MacMiniSize = int() # Qt.WidgetAttribute enum
-    WA_LayoutUsesWidgetRect = int() # Qt.WidgetAttribute enum
-    WA_StyledBackground = int() # Qt.WidgetAttribute enum
-    WA_MSWindowsUseDirect3D = int() # Qt.WidgetAttribute enum
-    WA_MacAlwaysShowToolWindow = int() # Qt.WidgetAttribute enum
-    WA_StyleSheet = int() # Qt.WidgetAttribute enum
-    WA_ShowWithoutActivating = int() # Qt.WidgetAttribute enum
-    WA_NativeWindow = int() # Qt.WidgetAttribute enum
-    WA_DontCreateNativeAncestors = int() # Qt.WidgetAttribute enum
-    WA_MacVariableSize = int() # Qt.WidgetAttribute enum
-    WA_X11NetWmWindowTypeDesktop = int() # Qt.WidgetAttribute enum
-    WA_X11NetWmWindowTypeDock = int() # Qt.WidgetAttribute enum
-    WA_X11NetWmWindowTypeToolBar = int() # Qt.WidgetAttribute enum
-    WA_X11NetWmWindowTypeMenu = int() # Qt.WidgetAttribute enum
-    WA_X11NetWmWindowTypeUtility = int() # Qt.WidgetAttribute enum
-    WA_X11NetWmWindowTypeSplash = int() # Qt.WidgetAttribute enum
-    WA_X11NetWmWindowTypeDialog = int() # Qt.WidgetAttribute enum
-    WA_X11NetWmWindowTypeDropDownMenu = int() # Qt.WidgetAttribute enum
-    WA_X11NetWmWindowTypePopupMenu = int() # Qt.WidgetAttribute enum
-    WA_X11NetWmWindowTypeToolTip = int() # Qt.WidgetAttribute enum
-    WA_X11NetWmWindowTypeNotification = int() # Qt.WidgetAttribute enum
-    WA_X11NetWmWindowTypeCombo = int() # Qt.WidgetAttribute enum
-    WA_X11NetWmWindowTypeDND = int() # Qt.WidgetAttribute enum
-    WA_MacFrameworkScaled = int() # Qt.WidgetAttribute enum
-    WA_TranslucentBackground = int() # Qt.WidgetAttribute enum
-    WA_AcceptTouchEvents = int() # Qt.WidgetAttribute enum
-    WA_TouchPadAcceptSingleTouchEvents = int() # Qt.WidgetAttribute enum
-    WA_MergeSoftkeys = int() # Qt.WidgetAttribute enum
-    WA_MergeSoftkeysRecursively = int() # Qt.WidgetAttribute enum
-    WA_X11DoNotAcceptFocus = int() # Qt.WidgetAttribute enum
-
-    WindowNoState = int() # Qt.WindowState enum
-    WindowMinimized = int() # Qt.WindowState enum
-    WindowMaximized = int() # Qt.WindowState enum
-    WindowFullScreen = int() # Qt.WindowState enum
-    WindowActive = int() # Qt.WindowState enum
-
-    Widget = int() # Qt.WindowType enum
-    Window = int() # Qt.WindowType enum
-    Dialog = int() # Qt.WindowType enum
-    Sheet = int() # Qt.WindowType enum
-    Drawer = int() # Qt.WindowType enum
-    Popup = int() # Qt.WindowType enum
-    Tool = int() # Qt.WindowType enum
-    ToolTip = int() # Qt.WindowType enum
-    SplashScreen = int() # Qt.WindowType enum
-    Desktop = int() # Qt.WindowType enum
-    SubWindow = int() # Qt.WindowType enum
-    WindowType_Mask = int() # Qt.WindowType enum
-    MSWindowsFixedSizeDialogHint = int() # Qt.WindowType enum
-    MSWindowsOwnDC = int() # Qt.WindowType enum
-    X11BypassWindowManagerHint = int() # Qt.WindowType enum
-    FramelessWindowHint = int() # Qt.WindowType enum
-    CustomizeWindowHint = int() # Qt.WindowType enum
-    WindowTitleHint = int() # Qt.WindowType enum
-    WindowSystemMenuHint = int() # Qt.WindowType enum
-    WindowMinimizeButtonHint = int() # Qt.WindowType enum
-    WindowMaximizeButtonHint = int() # Qt.WindowType enum
-    WindowMinMaxButtonsHint = int() # Qt.WindowType enum
-    WindowContextHelpButtonHint = int() # Qt.WindowType enum
-    WindowShadeButtonHint = int() # Qt.WindowType enum
-    WindowStaysOnTopHint = int() # Qt.WindowType enum
-    WindowOkButtonHint = int() # Qt.WindowType enum
-    WindowCancelButtonHint = int() # Qt.WindowType enum
-    WindowStaysOnBottomHint = int() # Qt.WindowType enum
-    WindowCloseButtonHint = int() # Qt.WindowType enum
-    MacWindowToolBarButtonHint = int() # Qt.WindowType enum
-    BypassGraphicsProxyWidget = int() # Qt.WindowType enum
-    WindowSoftkeysVisibleHint = int() # Qt.WindowType enum
-    WindowSoftkeysRespondHint = int() # Qt.WindowType enum
-
-    ElideLeft = int() # Qt.TextElideMode enum
-    ElideRight = int() # Qt.TextElideMode enum
-    ElideMiddle = int() # Qt.TextElideMode enum
-    ElideNone = int() # Qt.TextElideMode enum
-
-    TextSingleLine = int() # Qt.TextFlag enum
-    TextDontClip = int() # Qt.TextFlag enum
-    TextExpandTabs = int() # Qt.TextFlag enum
-    TextShowMnemonic = int() # Qt.TextFlag enum
-    TextWordWrap = int() # Qt.TextFlag enum
-    TextWrapAnywhere = int() # Qt.TextFlag enum
-    TextDontPrint = int() # Qt.TextFlag enum
-    TextIncludeTrailingSpaces = int() # Qt.TextFlag enum
-    TextHideMnemonic = int() # Qt.TextFlag enum
-    TextJustificationForced = int() # Qt.TextFlag enum
-
-    AlignLeft = int() # Qt.AlignmentFlag enum
-    AlignLeading = int() # Qt.AlignmentFlag enum
-    AlignRight = int() # Qt.AlignmentFlag enum
-    AlignTrailing = int() # Qt.AlignmentFlag enum
-    AlignHCenter = int() # Qt.AlignmentFlag enum
-    AlignJustify = int() # Qt.AlignmentFlag enum
-    AlignAbsolute = int() # Qt.AlignmentFlag enum
-    AlignHorizontal_Mask = int() # Qt.AlignmentFlag enum
-    AlignTop = int() # Qt.AlignmentFlag enum
-    AlignBottom = int() # Qt.AlignmentFlag enum
-    AlignVCenter = int() # Qt.AlignmentFlag enum
-    AlignVertical_Mask = int() # Qt.AlignmentFlag enum
-    AlignCenter = int() # Qt.AlignmentFlag enum
-
-    AscendingOrder = int() # Qt.SortOrder enum
-    DescendingOrder = int() # Qt.SortOrder enum
-
-    NoFocus = int() # Qt.FocusPolicy enum
-    TabFocus = int() # Qt.FocusPolicy enum
-    ClickFocus = int() # Qt.FocusPolicy enum
-    StrongFocus = int() # Qt.FocusPolicy enum
-    WheelFocus = int() # Qt.FocusPolicy enum
-
-    Horizontal = int() # Qt.Orientation enum
-    Vertical = int() # Qt.Orientation enum
-
-    NoButton = int() # Qt.MouseButton enum
-    LeftButton = int() # Qt.MouseButton enum
-    RightButton = int() # Qt.MouseButton enum
-    MidButton = int() # Qt.MouseButton enum
-    MiddleButton = int() # Qt.MouseButton enum
-    XButton1 = int() # Qt.MouseButton enum
-    XButton2 = int() # Qt.MouseButton enum
-    MouseButtonMask = int() # Qt.MouseButton enum
-
-    META = int() # Qt.Modifier enum
-    SHIFT = int() # Qt.Modifier enum
-    CTRL = int() # Qt.Modifier enum
-    ALT = int() # Qt.Modifier enum
-    MODIFIER_MASK = int() # Qt.Modifier enum
-    UNICODE_ACCEL = int() # Qt.Modifier enum
-
-    NoModifier = int() # Qt.KeyboardModifier enum
-    ShiftModifier = int() # Qt.KeyboardModifier enum
-    ControlModifier = int() # Qt.KeyboardModifier enum
-    AltModifier = int() # Qt.KeyboardModifier enum
-    MetaModifier = int() # Qt.KeyboardModifier enum
-    KeypadModifier = int() # Qt.KeyboardModifier enum
-    GroupSwitchModifier = int() # Qt.KeyboardModifier enum
-    KeyboardModifierMask = int() # Qt.KeyboardModifier enum
-
-    color0 = int() # Qt.GlobalColor enum
-    color1 = int() # Qt.GlobalColor enum
-    black = int() # Qt.GlobalColor enum
-    white = int() # Qt.GlobalColor enum
-    darkGray = int() # Qt.GlobalColor enum
-    gray = int() # Qt.GlobalColor enum
-    lightGray = int() # Qt.GlobalColor enum
-    red = int() # Qt.GlobalColor enum
-    green = int() # Qt.GlobalColor enum
-    blue = int() # Qt.GlobalColor enum
-    cyan = int() # Qt.GlobalColor enum
-    magenta = int() # Qt.GlobalColor enum
-    yellow = int() # Qt.GlobalColor enum
-    darkRed = int() # Qt.GlobalColor enum
-    darkGreen = int() # Qt.GlobalColor enum
-    darkBlue = int() # Qt.GlobalColor enum
-    darkCyan = int() # Qt.GlobalColor enum
-    darkMagenta = int() # Qt.GlobalColor enum
-    darkYellow = int() # Qt.GlobalColor enum
-    transparent = int() # Qt.GlobalColor enum
-
+    # Enum Qt.NavigationMode
+    NavigationModeNone = 0
+    NavigationModeKeypadTabOrder = 0
+    NavigationModeKeypadDirectional = 0
+    NavigationModeCursorAuto = 0
+    NavigationModeCursorForceVisible = 0
+
+    # Enum Qt.GestureFlag
+    DontStartGestureOnChildren = 0
+    ReceivePartialGestures = 0
+    IgnoredGesturesPropagateToParent = 0
+
+    # Enum Qt.GestureType
+    TapGesture = 0
+    TapAndHoldGesture = 0
+    PanGesture = 0
+    PinchGesture = 0
+    SwipeGesture = 0
+    CustomGesture = 0
+
+    # Enum Qt.GestureState
+    GestureStarted = 0
+    GestureUpdated = 0
+    GestureFinished = 0
+    GestureCanceled = 0
+
+    # Enum Qt.TouchPointState
+    TouchPointPressed = 0
+    TouchPointMoved = 0
+    TouchPointStationary = 0
+    TouchPointReleased = 0
+
+    # Enum Qt.CoordinateSystem
+    DeviceCoordinates = 0
+    LogicalCoordinates = 0
+
+    # Enum Qt.AnchorPoint
+    AnchorLeft = 0
+    AnchorHorizontalCenter = 0
+    AnchorRight = 0
+    AnchorTop = 0
+    AnchorVerticalCenter = 0
+    AnchorBottom = 0
+
+    # Enum Qt.InputMethodHint
+    ImhNone = 0
+    ImhHiddenText = 0
+    ImhNoAutoUppercase = 0
+    ImhPreferNumbers = 0
+    ImhPreferUppercase = 0
+    ImhPreferLowercase = 0
+    ImhNoPredictiveText = 0
+    ImhDigitsOnly = 0
+    ImhFormattedNumbersOnly = 0
+    ImhUppercaseOnly = 0
+    ImhLowercaseOnly = 0
+    ImhDialableCharactersOnly = 0
+    ImhEmailCharactersOnly = 0
+    ImhUrlCharactersOnly = 0
+    ImhExclusiveInputMask = 0
+
+    # Enum Qt.TileRule
+    StretchTile = 0
+    RepeatTile = 0
+    RoundTile = 0
+
+    # Enum Qt.WindowFrameSection
+    NoSection = 0
+    LeftSection = 0
+    TopLeftSection = 0
+    TopSection = 0
+    TopRightSection = 0
+    RightSection = 0
+    BottomRightSection = 0
+    BottomSection = 0
+    BottomLeftSection = 0
+    TitleBarArea = 0
+
+    # Enum Qt.SizeHint
+    MinimumSize = 0
+    PreferredSize = 0
+    MaximumSize = 0
+    MinimumDescent = 0
+
+    # Enum Qt.SizeMode
+    AbsoluteSize = 0
+    RelativeSize = 0
+
+    # Enum Qt.EventPriority
+    HighEventPriority = 0
+    NormalEventPriority = 0
+    LowEventPriority = 0
+
+    # Enum Qt.Axis
+    XAxis = 0
+    YAxis = 0
+    ZAxis = 0
+
+    # Enum Qt.MaskMode
+    MaskInColor = 0
+    MaskOutColor = 0
+
+    # Enum Qt.TextInteractionFlag
+    NoTextInteraction = 0
+    TextSelectableByMouse = 0
+    TextSelectableByKeyboard = 0
+    LinksAccessibleByMouse = 0
+    LinksAccessibleByKeyboard = 0
+    TextEditable = 0
+    TextEditorInteraction = 0
+    TextBrowserInteraction = 0
+
+    # Enum Qt.ItemSelectionMode
+    ContainsItemShape = 0
+    IntersectsItemShape = 0
+    ContainsItemBoundingRect = 0
+    IntersectsItemBoundingRect = 0
+
+    # Enum Qt.ApplicationAttribute
+    AA_ImmediateWidgetCreation = 0
+    AA_MSWindowsUseDirect3DByDefault = 0
+    AA_DontShowIconsInMenus = 0
+    AA_NativeWindows = 0
+    AA_DontCreateNativeWidgetSiblings = 0
+    AA_MacPluginApplication = 0
+    AA_DontUseNativeMenuBar = 0
+    AA_MacDontSwapCtrlAndMeta = 0
+    AA_S60DontConstructApplicationPanes = 0
+
+    # Enum Qt.WindowModality
+    NonModal = 0
+    WindowModal = 0
+    ApplicationModal = 0
+
+    # Enum Qt.MatchFlag
+    MatchExactly = 0
+    MatchFixedString = 0
+    MatchContains = 0
+    MatchStartsWith = 0
+    MatchEndsWith = 0
+    MatchRegExp = 0
+    MatchWildcard = 0
+    MatchCaseSensitive = 0
+    MatchWrap = 0
+    MatchRecursive = 0
+
+    # Enum Qt.ItemFlag
+    NoItemFlags = 0
+    ItemIsSelectable = 0
+    ItemIsEditable = 0
+    ItemIsDragEnabled = 0
+    ItemIsDropEnabled = 0
+    ItemIsUserCheckable = 0
+    ItemIsEnabled = 0
+    ItemIsTristate = 0
+
+    # Enum Qt.ItemDataRole
+    DisplayRole = 0
+    DecorationRole = 0
+    EditRole = 0
+    ToolTipRole = 0
+    StatusTipRole = 0
+    WhatsThisRole = 0
+    FontRole = 0
+    TextAlignmentRole = 0
+    BackgroundRole = 0
+    BackgroundColorRole = 0
+    ForegroundRole = 0
+    TextColorRole = 0
+    CheckStateRole = 0
+    AccessibleTextRole = 0
+    AccessibleDescriptionRole = 0
+    SizeHintRole = 0
+    UserRole = 0
+
+    # Enum Qt.CheckState
+    Unchecked = 0
+    PartiallyChecked = 0
+    Checked = 0
+
+    # Enum Qt.DropAction
+    CopyAction = 0
+    MoveAction = 0
+    LinkAction = 0
+    ActionMask = 0
+    TargetMoveAction = 0
+    IgnoreAction = 0
+
+    # Enum Qt.LayoutDirection
+    LeftToRight = 0
+    RightToLeft = 0
+    LayoutDirectionAuto = 0
+
+    # Enum Qt.ToolButtonStyle
+    ToolButtonIconOnly = 0
+    ToolButtonTextOnly = 0
+    ToolButtonTextBesideIcon = 0
+    ToolButtonTextUnderIcon = 0
+    ToolButtonFollowStyle = 0
+
+    # Enum Qt.InputMethodQuery
+    ImMicroFocus = 0
+    ImFont = 0
+    ImCursorPosition = 0
+    ImSurroundingText = 0
+    ImCurrentSelection = 0
+    ImMaximumTextLength = 0
+    ImAnchorPosition = 0
+
+    # Enum Qt.ContextMenuPolicy
+    NoContextMenu = 0
+    PreventContextMenu = 0
+    DefaultContextMenu = 0
+    ActionsContextMenu = 0
+    CustomContextMenu = 0
+
+    # Enum Qt.FocusReason
+    MouseFocusReason = 0
+    TabFocusReason = 0
+    BacktabFocusReason = 0
+    ActiveWindowFocusReason = 0
+    PopupFocusReason = 0
+    ShortcutFocusReason = 0
+    MenuBarFocusReason = 0
+    OtherFocusReason = 0
+    NoFocusReason = 0
+
+    # Enum Qt.TransformationMode
+    FastTransformation = 0
+    SmoothTransformation = 0
+
+    # Enum Qt.ClipOperation
+    NoClip = 0
+    ReplaceClip = 0
+    IntersectClip = 0
+    UniteClip = 0
+
+    # Enum Qt.FillRule
+    OddEvenFill = 0
+    WindingFill = 0
+
+    # Enum Qt.ShortcutContext
+    WidgetShortcut = 0
+    WindowShortcut = 0
+    ApplicationShortcut = 0
+    WidgetWithChildrenShortcut = 0
+
+    # Enum Qt.ConnectionType
+    AutoConnection = 0
+    DirectConnection = 0
+    QueuedConnection = 0
+    AutoCompatConnection = 0
+    BlockingQueuedConnection = 0
+    UniqueConnection = 0
+
+    # Enum Qt.Corner
+    TopLeftCorner = 0
+    TopRightCorner = 0
+    BottomLeftCorner = 0
+    BottomRightCorner = 0
+
+    # Enum Qt.CaseSensitivity
+    CaseInsensitive = 0
+    CaseSensitive = 0
+
+    # Enum Qt.ScrollBarPolicy
+    ScrollBarAsNeeded = 0
+    ScrollBarAlwaysOff = 0
+    ScrollBarAlwaysOn = 0
+
+    # Enum Qt.DayOfWeek
+    Monday = 0
+    Tuesday = 0
+    Wednesday = 0
+    Thursday = 0
+    Friday = 0
+    Saturday = 0
+    Sunday = 0
+
+    # Enum Qt.TimeSpec
+    LocalTime = 0
+    UTC = 0
+    OffsetFromUTC = 0
+
+    # Enum Qt.DateFormat
+    TextDate = 0
+    ISODate = 0
+    LocalDate = 0
+    SystemLocaleDate = 0
+    LocaleDate = 0
+    SystemLocaleShortDate = 0
+    SystemLocaleLongDate = 0
+    DefaultLocaleShortDate = 0
+    DefaultLocaleLongDate = 0
+
+    # Enum Qt.ToolBarArea
+    LeftToolBarArea = 0
+    RightToolBarArea = 0
+    TopToolBarArea = 0
+    BottomToolBarArea = 0
+    ToolBarArea_Mask = 0
+    AllToolBarAreas = 0
+    NoToolBarArea = 0
+
+    # Enum Qt.DockWidgetArea
+    LeftDockWidgetArea = 0
+    RightDockWidgetArea = 0
+    TopDockWidgetArea = 0
+    BottomDockWidgetArea = 0
+    DockWidgetArea_Mask = 0
+    AllDockWidgetAreas = 0
+    NoDockWidgetArea = 0
+
+    # Enum Qt.AnchorAttribute
+    AnchorName = 0
+    AnchorHref = 0
+
+    # Enum Qt.AspectRatioMode
+    IgnoreAspectRatio = 0
+    KeepAspectRatio = 0
+    KeepAspectRatioByExpanding = 0
+
+    # Enum Qt.TextFormat
+    PlainText = 0
+    RichText = 0
+    AutoText = 0
+    LogText = 0
+
+    # Enum Qt.CursorShape
+    ArrowCursor = 0
+    UpArrowCursor = 0
+    CrossCursor = 0
+    WaitCursor = 0
+    IBeamCursor = 0
+    SizeVerCursor = 0
+    SizeHorCursor = 0
+    SizeBDiagCursor = 0
+    SizeFDiagCursor = 0
+    SizeAllCursor = 0
+    BlankCursor = 0
+    SplitVCursor = 0
+    SplitHCursor = 0
+    PointingHandCursor = 0
+    ForbiddenCursor = 0
+    OpenHandCursor = 0
+    ClosedHandCursor = 0
+    WhatsThisCursor = 0
+    BusyCursor = 0
+    LastCursor = 0
+    BitmapCursor = 0
+    CustomCursor = 0
+    DragCopyCursor = 0
+    DragMoveCursor = 0
+    DragLinkCursor = 0
+
+    # Enum Qt.UIEffect
+    UI_General = 0
+    UI_AnimateMenu = 0
+    UI_FadeMenu = 0
+    UI_AnimateCombo = 0
+    UI_AnimateTooltip = 0
+    UI_FadeTooltip = 0
+    UI_AnimateToolBox = 0
+
+    # Enum Qt.BrushStyle
+    NoBrush = 0
+    SolidPattern = 0
+    Dense1Pattern = 0
+    Dense2Pattern = 0
+    Dense3Pattern = 0
+    Dense4Pattern = 0
+    Dense5Pattern = 0
+    Dense6Pattern = 0
+    Dense7Pattern = 0
+    HorPattern = 0
+    VerPattern = 0
+    CrossPattern = 0
+    BDiagPattern = 0
+    FDiagPattern = 0
+    DiagCrossPattern = 0
+    LinearGradientPattern = 0
+    RadialGradientPattern = 0
+    ConicalGradientPattern = 0
+    TexturePattern = 0
+
+    # Enum Qt.PenJoinStyle
+    MiterJoin = 0
+    BevelJoin = 0
+    RoundJoin = 0
+    MPenJoinStyle = 0
+    SvgMiterJoin = 0
+
+    # Enum Qt.PenCapStyle
+    FlatCap = 0
+    SquareCap = 0
+    RoundCap = 0
+    MPenCapStyle = 0
+
+    # Enum Qt.PenStyle
+    NoPen = 0
+    SolidLine = 0
+    DashLine = 0
+    DotLine = 0
+    DashDotLine = 0
+    DashDotDotLine = 0
+    CustomDashLine = 0
+    MPenStyle = 0
+
+    # Enum Qt.ArrowType
+    NoArrow = 0
+    UpArrow = 0
+    DownArrow = 0
+    LeftArrow = 0
+    RightArrow = 0
+
+    # Enum Qt.Key
+    Key_Escape = 0
+    Key_Tab = 0
+    Key_Backtab = 0
+    Key_Backspace = 0
+    Key_Return = 0
+    Key_Enter = 0
+    Key_Insert = 0
+    Key_Delete = 0
+    Key_Pause = 0
+    Key_Print = 0
+    Key_SysReq = 0
+    Key_Clear = 0
+    Key_Home = 0
+    Key_End = 0
+    Key_Left = 0
+    Key_Up = 0
+    Key_Right = 0
+    Key_Down = 0
+    Key_PageUp = 0
+    Key_PageDown = 0
+    Key_Shift = 0
+    Key_Control = 0
+    Key_Meta = 0
+    Key_Alt = 0
+    Key_CapsLock = 0
+    Key_NumLock = 0
+    Key_ScrollLock = 0
+    Key_F1 = 0
+    Key_F2 = 0
+    Key_F3 = 0
+    Key_F4 = 0
+    Key_F5 = 0
+    Key_F6 = 0
+    Key_F7 = 0
+    Key_F8 = 0
+    Key_F9 = 0
+    Key_F10 = 0
+    Key_F11 = 0
+    Key_F12 = 0
+    Key_F13 = 0
+    Key_F14 = 0
+    Key_F15 = 0
+    Key_F16 = 0
+    Key_F17 = 0
+    Key_F18 = 0
+    Key_F19 = 0
+    Key_F20 = 0
+    Key_F21 = 0
+    Key_F22 = 0
+    Key_F23 = 0
+    Key_F24 = 0
+    Key_F25 = 0
+    Key_F26 = 0
+    Key_F27 = 0
+    Key_F28 = 0
+    Key_F29 = 0
+    Key_F30 = 0
+    Key_F31 = 0
+    Key_F32 = 0
+    Key_F33 = 0
+    Key_F34 = 0
+    Key_F35 = 0
+    Key_Super_L = 0
+    Key_Super_R = 0
+    Key_Menu = 0
+    Key_Hyper_L = 0
+    Key_Hyper_R = 0
+    Key_Help = 0
+    Key_Direction_L = 0
+    Key_Direction_R = 0
+    Key_Space = 0
+    Key_Any = 0
+    Key_Exclam = 0
+    Key_QuoteDbl = 0
+    Key_NumberSign = 0
+    Key_Dollar = 0
+    Key_Percent = 0
+    Key_Ampersand = 0
+    Key_Apostrophe = 0
+    Key_ParenLeft = 0
+    Key_ParenRight = 0
+    Key_Asterisk = 0
+    Key_Plus = 0
+    Key_Comma = 0
+    Key_Minus = 0
+    Key_Period = 0
+    Key_Slash = 0
+    Key_0 = 0
+    Key_1 = 0
+    Key_2 = 0
+    Key_3 = 0
+    Key_4 = 0
+    Key_5 = 0
+    Key_6 = 0
+    Key_7 = 0
+    Key_8 = 0
+    Key_9 = 0
+    Key_Colon = 0
+    Key_Semicolon = 0
+    Key_Less = 0
+    Key_Equal = 0
+    Key_Greater = 0
+    Key_Question = 0
+    Key_At = 0
+    Key_A = 0
+    Key_B = 0
+    Key_C = 0
+    Key_D = 0
+    Key_E = 0
+    Key_F = 0
+    Key_G = 0
+    Key_H = 0
+    Key_I = 0
+    Key_J = 0
+    Key_K = 0
+    Key_L = 0
+    Key_M = 0
+    Key_N = 0
+    Key_O = 0
+    Key_P = 0
+    Key_Q = 0
+    Key_R = 0
+    Key_S = 0
+    Key_T = 0
+    Key_U = 0
+    Key_V = 0
+    Key_W = 0
+    Key_X = 0
+    Key_Y = 0
+    Key_Z = 0
+    Key_BracketLeft = 0
+    Key_Backslash = 0
+    Key_BracketRight = 0
+    Key_AsciiCircum = 0
+    Key_Underscore = 0
+    Key_QuoteLeft = 0
+    Key_BraceLeft = 0
+    Key_Bar = 0
+    Key_BraceRight = 0
+    Key_AsciiTilde = 0
+    Key_nobreakspace = 0
+    Key_exclamdown = 0
+    Key_cent = 0
+    Key_sterling = 0
+    Key_currency = 0
+    Key_yen = 0
+    Key_brokenbar = 0
+    Key_section = 0
+    Key_diaeresis = 0
+    Key_copyright = 0
+    Key_ordfeminine = 0
+    Key_guillemotleft = 0
+    Key_notsign = 0
+    Key_hyphen = 0
+    Key_registered = 0
+    Key_macron = 0
+    Key_degree = 0
+    Key_plusminus = 0
+    Key_twosuperior = 0
+    Key_threesuperior = 0
+    Key_acute = 0
+    Key_mu = 0
+    Key_paragraph = 0
+    Key_periodcentered = 0
+    Key_cedilla = 0
+    Key_onesuperior = 0
+    Key_masculine = 0
+    Key_guillemotright = 0
+    Key_onequarter = 0
+    Key_onehalf = 0
+    Key_threequarters = 0
+    Key_questiondown = 0
+    Key_Agrave = 0
+    Key_Aacute = 0
+    Key_Acircumflex = 0
+    Key_Atilde = 0
+    Key_Adiaeresis = 0
+    Key_Aring = 0
+    Key_AE = 0
+    Key_Ccedilla = 0
+    Key_Egrave = 0
+    Key_Eacute = 0
+    Key_Ecircumflex = 0
+    Key_Ediaeresis = 0
+    Key_Igrave = 0
+    Key_Iacute = 0
+    Key_Icircumflex = 0
+    Key_Idiaeresis = 0
+    Key_ETH = 0
+    Key_Ntilde = 0
+    Key_Ograve = 0
+    Key_Oacute = 0
+    Key_Ocircumflex = 0
+    Key_Otilde = 0
+    Key_Odiaeresis = 0
+    Key_multiply = 0
+    Key_Ooblique = 0
+    Key_Ugrave = 0
+    Key_Uacute = 0
+    Key_Ucircumflex = 0
+    Key_Udiaeresis = 0
+    Key_Yacute = 0
+    Key_THORN = 0
+    Key_ssharp = 0
+    Key_division = 0
+    Key_ydiaeresis = 0
+    Key_AltGr = 0
+    Key_Multi_key = 0
+    Key_Codeinput = 0
+    Key_SingleCandidate = 0
+    Key_MultipleCandidate = 0
+    Key_PreviousCandidate = 0
+    Key_Mode_switch = 0
+    Key_Kanji = 0
+    Key_Muhenkan = 0
+    Key_Henkan = 0
+    Key_Romaji = 0
+    Key_Hiragana = 0
+    Key_Katakana = 0
+    Key_Hiragana_Katakana = 0
+    Key_Zenkaku = 0
+    Key_Hankaku = 0
+    Key_Zenkaku_Hankaku = 0
+    Key_Touroku = 0
+    Key_Massyo = 0
+    Key_Kana_Lock = 0
+    Key_Kana_Shift = 0
+    Key_Eisu_Shift = 0
+    Key_Eisu_toggle = 0
+    Key_Hangul = 0
+    Key_Hangul_Start = 0
+    Key_Hangul_End = 0
+    Key_Hangul_Hanja = 0
+    Key_Hangul_Jamo = 0
+    Key_Hangul_Romaja = 0
+    Key_Hangul_Jeonja = 0
+    Key_Hangul_Banja = 0
+    Key_Hangul_PreHanja = 0
+    Key_Hangul_PostHanja = 0
+    Key_Hangul_Special = 0
+    Key_Dead_Grave = 0
+    Key_Dead_Acute = 0
+    Key_Dead_Circumflex = 0
+    Key_Dead_Tilde = 0
+    Key_Dead_Macron = 0
+    Key_Dead_Breve = 0
+    Key_Dead_Abovedot = 0
+    Key_Dead_Diaeresis = 0
+    Key_Dead_Abovering = 0
+    Key_Dead_Doubleacute = 0
+    Key_Dead_Caron = 0
+    Key_Dead_Cedilla = 0
+    Key_Dead_Ogonek = 0
+    Key_Dead_Iota = 0
+    Key_Dead_Voiced_Sound = 0
+    Key_Dead_Semivoiced_Sound = 0
+    Key_Dead_Belowdot = 0
+    Key_Dead_Hook = 0
+    Key_Dead_Horn = 0
+    Key_Back = 0
+    Key_Forward = 0
+    Key_Stop = 0
+    Key_Refresh = 0
+    Key_VolumeDown = 0
+    Key_VolumeMute = 0
+    Key_VolumeUp = 0
+    Key_BassBoost = 0
+    Key_BassUp = 0
+    Key_BassDown = 0
+    Key_TrebleUp = 0
+    Key_TrebleDown = 0
+    Key_MediaPlay = 0
+    Key_MediaStop = 0
+    Key_MediaPrevious = 0
+    Key_MediaNext = 0
+    Key_MediaRecord = 0
+    Key_HomePage = 0
+    Key_Favorites = 0
+    Key_Search = 0
+    Key_Standby = 0
+    Key_OpenUrl = 0
+    Key_LaunchMail = 0
+    Key_LaunchMedia = 0
+    Key_Launch0 = 0
+    Key_Launch1 = 0
+    Key_Launch2 = 0
+    Key_Launch3 = 0
+    Key_Launch4 = 0
+    Key_Launch5 = 0
+    Key_Launch6 = 0
+    Key_Launch7 = 0
+    Key_Launch8 = 0
+    Key_Launch9 = 0
+    Key_LaunchA = 0
+    Key_LaunchB = 0
+    Key_LaunchC = 0
+    Key_LaunchD = 0
+    Key_LaunchE = 0
+    Key_LaunchF = 0
+    Key_MediaLast = 0
+    Key_Select = 0
+    Key_Yes = 0
+    Key_No = 0
+    Key_Context1 = 0
+    Key_Context2 = 0
+    Key_Context3 = 0
+    Key_Context4 = 0
+    Key_Call = 0
+    Key_Hangup = 0
+    Key_Flip = 0
+    Key_unknown = 0
+    Key_Execute = 0
+    Key_Printer = 0
+    Key_Play = 0
+    Key_Sleep = 0
+    Key_Zoom = 0
+    Key_Cancel = 0
+    Key_MonBrightnessUp = 0
+    Key_MonBrightnessDown = 0
+    Key_KeyboardLightOnOff = 0
+    Key_KeyboardBrightnessUp = 0
+    Key_KeyboardBrightnessDown = 0
+    Key_PowerOff = 0
+    Key_WakeUp = 0
+    Key_Eject = 0
+    Key_ScreenSaver = 0
+    Key_WWW = 0
+    Key_Memo = 0
+    Key_LightBulb = 0
+    Key_Shop = 0
+    Key_History = 0
+    Key_AddFavorite = 0
+    Key_HotLinks = 0
+    Key_BrightnessAdjust = 0
+    Key_Finance = 0
+    Key_Community = 0
+    Key_AudioRewind = 0
+    Key_BackForward = 0
+    Key_ApplicationLeft = 0
+    Key_ApplicationRight = 0
+    Key_Book = 0
+    Key_CD = 0
+    Key_Calculator = 0
+    Key_ToDoList = 0
+    Key_ClearGrab = 0
+    Key_Close = 0
+    Key_Copy = 0
+    Key_Cut = 0
+    Key_Display = 0
+    Key_DOS = 0
+    Key_Documents = 0
+    Key_Excel = 0
+    Key_Explorer = 0
+    Key_Game = 0
+    Key_Go = 0
+    Key_iTouch = 0
+    Key_LogOff = 0
+    Key_Market = 0
+    Key_Meeting = 0
+    Key_MenuKB = 0
+    Key_MenuPB = 0
+    Key_MySites = 0
+    Key_News = 0
+    Key_OfficeHome = 0
+    Key_Option = 0
+    Key_Paste = 0
+    Key_Phone = 0
+    Key_Calendar = 0
+    Key_Reply = 0
+    Key_Reload = 0
+    Key_RotateWindows = 0
+    Key_RotationPB = 0
+    Key_RotationKB = 0
+    Key_Save = 0
+    Key_Send = 0
+    Key_Spell = 0
+    Key_SplitScreen = 0
+    Key_Support = 0
+    Key_TaskPane = 0
+    Key_Terminal = 0
+    Key_Tools = 0
+    Key_Travel = 0
+    Key_Video = 0
+    Key_Word = 0
+    Key_Xfer = 0
+    Key_ZoomIn = 0
+    Key_ZoomOut = 0
+    Key_Away = 0
+    Key_Messenger = 0
+    Key_WebCam = 0
+    Key_MailForward = 0
+    Key_Pictures = 0
+    Key_Music = 0
+    Key_Battery = 0
+    Key_Bluetooth = 0
+    Key_WLAN = 0
+    Key_UWB = 0
+    Key_AudioForward = 0
+    Key_AudioRepeat = 0
+    Key_AudioRandomPlay = 0
+    Key_Subtitle = 0
+    Key_AudioCycleTrack = 0
+    Key_Time = 0
+    Key_Hibernate = 0
+    Key_View = 0
+    Key_TopMenu = 0
+    Key_PowerDown = 0
+    Key_Suspend = 0
+    Key_ContrastAdjust = 0
+    Key_MediaPause = 0
+    Key_MediaTogglePlayPause = 0
+    Key_LaunchG = 0
+    Key_LaunchH = 0
+    Key_ToggleCallHangup = 0
+    Key_VoiceDial = 0
+    Key_LastNumberRedial = 0
+    Key_Camera = 0
+    Key_CameraFocus = 0
+
+    # Enum Qt.BGMode
+    TransparentMode = 0
+    OpaqueMode = 0
+
+    # Enum Qt.ImageConversionFlag
+    ColorMode_Mask = 0
+    AutoColor = 0
+    ColorOnly = 0
+    MonoOnly = 0
+    AlphaDither_Mask = 0
+    ThresholdAlphaDither = 0
+    OrderedAlphaDither = 0
+    DiffuseAlphaDither = 0
+    NoAlpha = 0
+    Dither_Mask = 0
+    DiffuseDither = 0
+    OrderedDither = 0
+    ThresholdDither = 0
+    DitherMode_Mask = 0
+    AutoDither = 0
+    PreferDither = 0
+    AvoidDither = 0
+
+    # Enum Qt.WidgetAttribute
+    WA_Disabled = 0
+    WA_UnderMouse = 0
+    WA_MouseTracking = 0
+    WA_OpaquePaintEvent = 0
+    WA_StaticContents = 0
+    WA_LaidOut = 0
+    WA_PaintOnScreen = 0
+    WA_NoSystemBackground = 0
+    WA_UpdatesDisabled = 0
+    WA_Mapped = 0
+    WA_MacNoClickThrough = 0
+    WA_PaintOutsidePaintEvent = 0
+    WA_InputMethodEnabled = 0
+    WA_WState_Visible = 0
+    WA_WState_Hidden = 0
+    WA_ForceDisabled = 0
+    WA_KeyCompression = 0
+    WA_PendingMoveEvent = 0
+    WA_PendingResizeEvent = 0
+    WA_SetPalette = 0
+    WA_SetFont = 0
+    WA_SetCursor = 0
+    WA_NoChildEventsFromChildren = 0
+    WA_WindowModified = 0
+    WA_Resized = 0
+    WA_Moved = 0
+    WA_PendingUpdate = 0
+    WA_InvalidSize = 0
+    WA_MacMetalStyle = 0
+    WA_CustomWhatsThis = 0
+    WA_LayoutOnEntireRect = 0
+    WA_OutsideWSRange = 0
+    WA_GrabbedShortcut = 0
+    WA_TransparentForMouseEvents = 0
+    WA_PaintUnclipped = 0
+    WA_SetWindowIcon = 0
+    WA_NoMouseReplay = 0
+    WA_DeleteOnClose = 0
+    WA_RightToLeft = 0
+    WA_SetLayoutDirection = 0
+    WA_NoChildEventsForParent = 0
+    WA_ForceUpdatesDisabled = 0
+    WA_WState_Created = 0
+    WA_WState_CompressKeys = 0
+    WA_WState_InPaintEvent = 0
+    WA_WState_Reparented = 0
+    WA_WState_ConfigPending = 0
+    WA_WState_Polished = 0
+    WA_WState_OwnSizePolicy = 0
+    WA_WState_ExplicitShowHide = 0
+    WA_MouseNoMask = 0
+    WA_GroupLeader = 0
+    WA_NoMousePropagation = 0
+    WA_Hover = 0
+    WA_InputMethodTransparent = 0
+    WA_QuitOnClose = 0
+    WA_KeyboardFocusChange = 0
+    WA_AcceptDrops = 0
+    WA_WindowPropagation = 0
+    WA_NoX11EventCompression = 0
+    WA_TintedBackground = 0
+    WA_X11OpenGLOverlay = 0
+    WA_AttributeCount = 0
+    WA_AlwaysShowToolTips = 0
+    WA_MacOpaqueSizeGrip = 0
+    WA_SetStyle = 0
+    WA_MacBrushedMetal = 0
+    WA_SetLocale = 0
+    WA_MacShowFocusRect = 0
+    WA_MacNormalSize = 0
+    WA_MacSmallSize = 0
+    WA_MacMiniSize = 0
+    WA_LayoutUsesWidgetRect = 0
+    WA_StyledBackground = 0
+    WA_MSWindowsUseDirect3D = 0
+    WA_MacAlwaysShowToolWindow = 0
+    WA_StyleSheet = 0
+    WA_ShowWithoutActivating = 0
+    WA_NativeWindow = 0
+    WA_DontCreateNativeAncestors = 0
+    WA_MacVariableSize = 0
+    WA_X11NetWmWindowTypeDesktop = 0
+    WA_X11NetWmWindowTypeDock = 0
+    WA_X11NetWmWindowTypeToolBar = 0
+    WA_X11NetWmWindowTypeMenu = 0
+    WA_X11NetWmWindowTypeUtility = 0
+    WA_X11NetWmWindowTypeSplash = 0
+    WA_X11NetWmWindowTypeDialog = 0
+    WA_X11NetWmWindowTypeDropDownMenu = 0
+    WA_X11NetWmWindowTypePopupMenu = 0
+    WA_X11NetWmWindowTypeToolTip = 0
+    WA_X11NetWmWindowTypeNotification = 0
+    WA_X11NetWmWindowTypeCombo = 0
+    WA_X11NetWmWindowTypeDND = 0
+    WA_MacFrameworkScaled = 0
+    WA_TranslucentBackground = 0
+    WA_AcceptTouchEvents = 0
+    WA_TouchPadAcceptSingleTouchEvents = 0
+    WA_MergeSoftkeys = 0
+    WA_MergeSoftkeysRecursively = 0
+    WA_X11DoNotAcceptFocus = 0
+
+    # Enum Qt.WindowState
+    WindowNoState = 0
+    WindowMinimized = 0
+    WindowMaximized = 0
+    WindowFullScreen = 0
+    WindowActive = 0
+
+    # Enum Qt.WindowType
+    Widget = 0
+    Window = 0
+    Dialog = 0
+    Sheet = 0
+    Drawer = 0
+    Popup = 0
+    Tool = 0
+    ToolTip = 0
+    SplashScreen = 0
+    Desktop = 0
+    SubWindow = 0
+    WindowType_Mask = 0
+    MSWindowsFixedSizeDialogHint = 0
+    MSWindowsOwnDC = 0
+    X11BypassWindowManagerHint = 0
+    FramelessWindowHint = 0
+    CustomizeWindowHint = 0
+    WindowTitleHint = 0
+    WindowSystemMenuHint = 0
+    WindowMinimizeButtonHint = 0
+    WindowMaximizeButtonHint = 0
+    WindowMinMaxButtonsHint = 0
+    WindowContextHelpButtonHint = 0
+    WindowShadeButtonHint = 0
+    WindowStaysOnTopHint = 0
+    WindowOkButtonHint = 0
+    WindowCancelButtonHint = 0
+    WindowStaysOnBottomHint = 0
+    WindowCloseButtonHint = 0
+    MacWindowToolBarButtonHint = 0
+    BypassGraphicsProxyWidget = 0
+    WindowSoftkeysVisibleHint = 0
+    WindowSoftkeysRespondHint = 0
+
+    # Enum Qt.TextElideMode
+    ElideLeft = 0
+    ElideRight = 0
+    ElideMiddle = 0
+    ElideNone = 0
+
+    # Enum Qt.TextFlag
+    TextSingleLine = 0
+    TextDontClip = 0
+    TextExpandTabs = 0
+    TextShowMnemonic = 0
+    TextWordWrap = 0
+    TextWrapAnywhere = 0
+    TextDontPrint = 0
+    TextIncludeTrailingSpaces = 0
+    TextHideMnemonic = 0
+    TextJustificationForced = 0
+
+    # Enum Qt.AlignmentFlag
+    AlignLeft = 0
+    AlignLeading = 0
+    AlignRight = 0
+    AlignTrailing = 0
+    AlignHCenter = 0
+    AlignJustify = 0
+    AlignAbsolute = 0
+    AlignHorizontal_Mask = 0
+    AlignTop = 0
+    AlignBottom = 0
+    AlignVCenter = 0
+    AlignVertical_Mask = 0
+    AlignCenter = 0
+
+    # Enum Qt.SortOrder
+    AscendingOrder = 0
+    DescendingOrder = 0
+
+    # Enum Qt.FocusPolicy
+    NoFocus = 0
+    TabFocus = 0
+    ClickFocus = 0
+    StrongFocus = 0
+    WheelFocus = 0
+
+    # Enum Qt.Orientation
+    Horizontal = 0
+    Vertical = 0
+
+    # Enum Qt.MouseButton
+    NoButton = 0
+    LeftButton = 0
+    RightButton = 0
+    MidButton = 0
+    MiddleButton = 0
+    XButton1 = 0
+    XButton2 = 0
+    MouseButtonMask = 0
+
+    # Enum Qt.Modifier
+    META = 0
+    SHIFT = 0
+    CTRL = 0
+    ALT = 0
+    MODIFIER_MASK = 0
+    UNICODE_ACCEL = 0
+
+    # Enum Qt.KeyboardModifier
+    NoModifier = 0
+    ShiftModifier = 0
+    ControlModifier = 0
+    AltModifier = 0
+    MetaModifier = 0
+    KeypadModifier = 0
+    GroupSwitchModifier = 0
+    KeyboardModifierMask = 0
+
+    # Enum Qt.GlobalColor
+    color0 = 0
+    color1 = 0
+    black = 0
+    white = 0
+    darkGray = 0
+    gray = 0
+    lightGray = 0
+    red = 0
+    green = 0
+    blue = 0
+    cyan = 0
+    magenta = 0
+    yellow = 0
+    darkRed = 0
+    darkGreen = 0
+    darkBlue = 0
+    darkCyan = 0
+    darkMagenta = 0
+    darkYellow = 0
+    transparent = 0
+
+    class WindowFlags():
+        """"""
+        def __init__(self):
+            '''Qt.WindowFlags Qt.WindowFlags.__init__()'''
+            return Qt.WindowFlags()
+        def __init__(self):
+            '''int Qt.WindowFlags.__init__()'''
+            return int()
+        def __init__(self):
+            '''void Qt.WindowFlags.__init__()'''
+        def __bool__(self):
+            '''int Qt.WindowFlags.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool Qt.WindowFlags.__ne__(Qt.WindowFlags f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool Qt.WindowFlags.__eq__(Qt.WindowFlags f)'''
+            return bool()
+        def __invert__(self):
+            '''Qt.WindowFlags Qt.WindowFlags.__invert__()'''
+            return Qt.WindowFlags()
+        def __and__(self, mask):
+            '''Qt.WindowFlags Qt.WindowFlags.__and__(int mask)'''
+            return Qt.WindowFlags()
+        def __xor__(self, f):
+            '''Qt.WindowFlags Qt.WindowFlags.__xor__(Qt.WindowFlags f)'''
+            return Qt.WindowFlags()
+        def __xor__(self, f):
+            '''Qt.WindowFlags Qt.WindowFlags.__xor__(int f)'''
+            return Qt.WindowFlags()
+        def __or__(self, f):
+            '''Qt.WindowFlags Qt.WindowFlags.__or__(Qt.WindowFlags f)'''
+            return Qt.WindowFlags()
+        def __or__(self, f):
+            '''Qt.WindowFlags Qt.WindowFlags.__or__(int f)'''
+            return Qt.WindowFlags()
+        def __int__(self):
+            '''int Qt.WindowFlags.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''Qt.WindowFlags Qt.WindowFlags.__ixor__(Qt.WindowFlags f)'''
+            return Qt.WindowFlags()
+        def __ior__(self, f):
+            '''Qt.WindowFlags Qt.WindowFlags.__ior__(Qt.WindowFlags f)'''
+            return Qt.WindowFlags()
+        def __iand__(self, mask):
+            '''Qt.WindowFlags Qt.WindowFlags.__iand__(int mask)'''
+            return Qt.WindowFlags()
+    class ToolBarAreas():
+        """"""
+        def __init__(self):
+            '''Qt.ToolBarAreas Qt.ToolBarAreas.__init__()'''
+            return Qt.ToolBarAreas()
+        def __init__(self):
+            '''int Qt.ToolBarAreas.__init__()'''
+            return int()
+        def __init__(self):
+            '''void Qt.ToolBarAreas.__init__()'''
+        def __bool__(self):
+            '''int Qt.ToolBarAreas.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool Qt.ToolBarAreas.__ne__(Qt.ToolBarAreas f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool Qt.ToolBarAreas.__eq__(Qt.ToolBarAreas f)'''
+            return bool()
+        def __invert__(self):
+            '''Qt.ToolBarAreas Qt.ToolBarAreas.__invert__()'''
+            return Qt.ToolBarAreas()
+        def __and__(self, mask):
+            '''Qt.ToolBarAreas Qt.ToolBarAreas.__and__(int mask)'''
+            return Qt.ToolBarAreas()
+        def __xor__(self, f):
+            '''Qt.ToolBarAreas Qt.ToolBarAreas.__xor__(Qt.ToolBarAreas f)'''
+            return Qt.ToolBarAreas()
+        def __xor__(self, f):
+            '''Qt.ToolBarAreas Qt.ToolBarAreas.__xor__(int f)'''
+            return Qt.ToolBarAreas()
+        def __or__(self, f):
+            '''Qt.ToolBarAreas Qt.ToolBarAreas.__or__(Qt.ToolBarAreas f)'''
+            return Qt.ToolBarAreas()
+        def __or__(self, f):
+            '''Qt.ToolBarAreas Qt.ToolBarAreas.__or__(int f)'''
+            return Qt.ToolBarAreas()
+        def __int__(self):
+            '''int Qt.ToolBarAreas.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''Qt.ToolBarAreas Qt.ToolBarAreas.__ixor__(Qt.ToolBarAreas f)'''
+            return Qt.ToolBarAreas()
+        def __ior__(self, f):
+            '''Qt.ToolBarAreas Qt.ToolBarAreas.__ior__(Qt.ToolBarAreas f)'''
+            return Qt.ToolBarAreas()
+        def __iand__(self, mask):
+            '''Qt.ToolBarAreas Qt.ToolBarAreas.__iand__(int mask)'''
+            return Qt.ToolBarAreas()
+    class InputMethodHints():
+        """"""
+        def __init__(self):
+            '''Qt.InputMethodHints Qt.InputMethodHints.__init__()'''
+            return Qt.InputMethodHints()
+        def __init__(self):
+            '''int Qt.InputMethodHints.__init__()'''
+            return int()
+        def __init__(self):
+            '''void Qt.InputMethodHints.__init__()'''
+        def __bool__(self):
+            '''int Qt.InputMethodHints.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool Qt.InputMethodHints.__ne__(Qt.InputMethodHints f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool Qt.InputMethodHints.__eq__(Qt.InputMethodHints f)'''
+            return bool()
+        def __invert__(self):
+            '''Qt.InputMethodHints Qt.InputMethodHints.__invert__()'''
+            return Qt.InputMethodHints()
+        def __and__(self, mask):
+            '''Qt.InputMethodHints Qt.InputMethodHints.__and__(int mask)'''
+            return Qt.InputMethodHints()
+        def __xor__(self, f):
+            '''Qt.InputMethodHints Qt.InputMethodHints.__xor__(Qt.InputMethodHints f)'''
+            return Qt.InputMethodHints()
+        def __xor__(self, f):
+            '''Qt.InputMethodHints Qt.InputMethodHints.__xor__(int f)'''
+            return Qt.InputMethodHints()
+        def __or__(self, f):
+            '''Qt.InputMethodHints Qt.InputMethodHints.__or__(Qt.InputMethodHints f)'''
+            return Qt.InputMethodHints()
+        def __or__(self, f):
+            '''Qt.InputMethodHints Qt.InputMethodHints.__or__(int f)'''
+            return Qt.InputMethodHints()
+        def __int__(self):
+            '''int Qt.InputMethodHints.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''Qt.InputMethodHints Qt.InputMethodHints.__ixor__(Qt.InputMethodHints f)'''
+            return Qt.InputMethodHints()
+        def __ior__(self, f):
+            '''Qt.InputMethodHints Qt.InputMethodHints.__ior__(Qt.InputMethodHints f)'''
+            return Qt.InputMethodHints()
+        def __iand__(self, mask):
+            '''Qt.InputMethodHints Qt.InputMethodHints.__iand__(int mask)'''
+            return Qt.InputMethodHints()
+    class MatchFlags():
+        """"""
+        def __init__(self):
+            '''Qt.MatchFlags Qt.MatchFlags.__init__()'''
+            return Qt.MatchFlags()
+        def __init__(self):
+            '''int Qt.MatchFlags.__init__()'''
+            return int()
+        def __init__(self):
+            '''void Qt.MatchFlags.__init__()'''
+        def __bool__(self):
+            '''int Qt.MatchFlags.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool Qt.MatchFlags.__ne__(Qt.MatchFlags f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool Qt.MatchFlags.__eq__(Qt.MatchFlags f)'''
+            return bool()
+        def __invert__(self):
+            '''Qt.MatchFlags Qt.MatchFlags.__invert__()'''
+            return Qt.MatchFlags()
+        def __and__(self, mask):
+            '''Qt.MatchFlags Qt.MatchFlags.__and__(int mask)'''
+            return Qt.MatchFlags()
+        def __xor__(self, f):
+            '''Qt.MatchFlags Qt.MatchFlags.__xor__(Qt.MatchFlags f)'''
+            return Qt.MatchFlags()
+        def __xor__(self, f):
+            '''Qt.MatchFlags Qt.MatchFlags.__xor__(int f)'''
+            return Qt.MatchFlags()
+        def __or__(self, f):
+            '''Qt.MatchFlags Qt.MatchFlags.__or__(Qt.MatchFlags f)'''
+            return Qt.MatchFlags()
+        def __or__(self, f):
+            '''Qt.MatchFlags Qt.MatchFlags.__or__(int f)'''
+            return Qt.MatchFlags()
+        def __int__(self):
+            '''int Qt.MatchFlags.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''Qt.MatchFlags Qt.MatchFlags.__ixor__(Qt.MatchFlags f)'''
+            return Qt.MatchFlags()
+        def __ior__(self, f):
+            '''Qt.MatchFlags Qt.MatchFlags.__ior__(Qt.MatchFlags f)'''
+            return Qt.MatchFlags()
+        def __iand__(self, mask):
+            '''Qt.MatchFlags Qt.MatchFlags.__iand__(int mask)'''
+            return Qt.MatchFlags()
+    class ItemFlags():
+        """"""
+        def __init__(self):
+            '''Qt.ItemFlags Qt.ItemFlags.__init__()'''
+            return Qt.ItemFlags()
+        def __init__(self):
+            '''int Qt.ItemFlags.__init__()'''
+            return int()
+        def __init__(self):
+            '''void Qt.ItemFlags.__init__()'''
+        def __bool__(self):
+            '''int Qt.ItemFlags.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool Qt.ItemFlags.__ne__(Qt.ItemFlags f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool Qt.ItemFlags.__eq__(Qt.ItemFlags f)'''
+            return bool()
+        def __invert__(self):
+            '''Qt.ItemFlags Qt.ItemFlags.__invert__()'''
+            return Qt.ItemFlags()
+        def __and__(self, mask):
+            '''Qt.ItemFlags Qt.ItemFlags.__and__(int mask)'''
+            return Qt.ItemFlags()
+        def __xor__(self, f):
+            '''Qt.ItemFlags Qt.ItemFlags.__xor__(Qt.ItemFlags f)'''
+            return Qt.ItemFlags()
+        def __xor__(self, f):
+            '''Qt.ItemFlags Qt.ItemFlags.__xor__(int f)'''
+            return Qt.ItemFlags()
+        def __or__(self, f):
+            '''Qt.ItemFlags Qt.ItemFlags.__or__(Qt.ItemFlags f)'''
+            return Qt.ItemFlags()
+        def __or__(self, f):
+            '''Qt.ItemFlags Qt.ItemFlags.__or__(int f)'''
+            return Qt.ItemFlags()
+        def __int__(self):
+            '''int Qt.ItemFlags.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''Qt.ItemFlags Qt.ItemFlags.__ixor__(Qt.ItemFlags f)'''
+            return Qt.ItemFlags()
+        def __ior__(self, f):
+            '''Qt.ItemFlags Qt.ItemFlags.__ior__(Qt.ItemFlags f)'''
+            return Qt.ItemFlags()
+        def __iand__(self, mask):
+            '''Qt.ItemFlags Qt.ItemFlags.__iand__(int mask)'''
+            return Qt.ItemFlags()
+    class MouseButtons():
+        """"""
+        def __init__(self):
+            '''Qt.MouseButtons Qt.MouseButtons.__init__()'''
+            return Qt.MouseButtons()
+        def __init__(self):
+            '''int Qt.MouseButtons.__init__()'''
+            return int()
+        def __init__(self):
+            '''void Qt.MouseButtons.__init__()'''
+        def __bool__(self):
+            '''int Qt.MouseButtons.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool Qt.MouseButtons.__ne__(Qt.MouseButtons f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool Qt.MouseButtons.__eq__(Qt.MouseButtons f)'''
+            return bool()
+        def __invert__(self):
+            '''Qt.MouseButtons Qt.MouseButtons.__invert__()'''
+            return Qt.MouseButtons()
+        def __and__(self, mask):
+            '''Qt.MouseButtons Qt.MouseButtons.__and__(int mask)'''
+            return Qt.MouseButtons()
+        def __xor__(self, f):
+            '''Qt.MouseButtons Qt.MouseButtons.__xor__(Qt.MouseButtons f)'''
+            return Qt.MouseButtons()
+        def __xor__(self, f):
+            '''Qt.MouseButtons Qt.MouseButtons.__xor__(int f)'''
+            return Qt.MouseButtons()
+        def __or__(self, f):
+            '''Qt.MouseButtons Qt.MouseButtons.__or__(Qt.MouseButtons f)'''
+            return Qt.MouseButtons()
+        def __or__(self, f):
+            '''Qt.MouseButtons Qt.MouseButtons.__or__(int f)'''
+            return Qt.MouseButtons()
+        def __int__(self):
+            '''int Qt.MouseButtons.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''Qt.MouseButtons Qt.MouseButtons.__ixor__(Qt.MouseButtons f)'''
+            return Qt.MouseButtons()
+        def __ior__(self, f):
+            '''Qt.MouseButtons Qt.MouseButtons.__ior__(Qt.MouseButtons f)'''
+            return Qt.MouseButtons()
+        def __iand__(self, mask):
+            '''Qt.MouseButtons Qt.MouseButtons.__iand__(int mask)'''
+            return Qt.MouseButtons()
+    class KeyboardModifiers():
+        """"""
+        def __init__(self):
+            '''Qt.KeyboardModifiers Qt.KeyboardModifiers.__init__()'''
+            return Qt.KeyboardModifiers()
+        def __init__(self):
+            '''int Qt.KeyboardModifiers.__init__()'''
+            return int()
+        def __init__(self):
+            '''void Qt.KeyboardModifiers.__init__()'''
+        def __bool__(self):
+            '''int Qt.KeyboardModifiers.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool Qt.KeyboardModifiers.__ne__(Qt.KeyboardModifiers f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool Qt.KeyboardModifiers.__eq__(Qt.KeyboardModifiers f)'''
+            return bool()
+        def __invert__(self):
+            '''Qt.KeyboardModifiers Qt.KeyboardModifiers.__invert__()'''
+            return Qt.KeyboardModifiers()
+        def __and__(self, mask):
+            '''Qt.KeyboardModifiers Qt.KeyboardModifiers.__and__(int mask)'''
+            return Qt.KeyboardModifiers()
+        def __xor__(self, f):
+            '''Qt.KeyboardModifiers Qt.KeyboardModifiers.__xor__(Qt.KeyboardModifiers f)'''
+            return Qt.KeyboardModifiers()
+        def __xor__(self, f):
+            '''Qt.KeyboardModifiers Qt.KeyboardModifiers.__xor__(int f)'''
+            return Qt.KeyboardModifiers()
+        def __or__(self, f):
+            '''Qt.KeyboardModifiers Qt.KeyboardModifiers.__or__(Qt.KeyboardModifiers f)'''
+            return Qt.KeyboardModifiers()
+        def __or__(self, f):
+            '''Qt.KeyboardModifiers Qt.KeyboardModifiers.__or__(int f)'''
+            return Qt.KeyboardModifiers()
+        def __int__(self):
+            '''int Qt.KeyboardModifiers.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''Qt.KeyboardModifiers Qt.KeyboardModifiers.__ixor__(Qt.KeyboardModifiers f)'''
+            return Qt.KeyboardModifiers()
+        def __ior__(self, f):
+            '''Qt.KeyboardModifiers Qt.KeyboardModifiers.__ior__(Qt.KeyboardModifiers f)'''
+            return Qt.KeyboardModifiers()
+        def __iand__(self, mask):
+            '''Qt.KeyboardModifiers Qt.KeyboardModifiers.__iand__(int mask)'''
+            return Qt.KeyboardModifiers()
+    class DropActions():
+        """"""
+        def __init__(self):
+            '''Qt.DropActions Qt.DropActions.__init__()'''
+            return Qt.DropActions()
+        def __init__(self):
+            '''int Qt.DropActions.__init__()'''
+            return int()
+        def __init__(self):
+            '''void Qt.DropActions.__init__()'''
+        def __bool__(self):
+            '''int Qt.DropActions.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool Qt.DropActions.__ne__(Qt.DropActions f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool Qt.DropActions.__eq__(Qt.DropActions f)'''
+            return bool()
+        def __invert__(self):
+            '''Qt.DropActions Qt.DropActions.__invert__()'''
+            return Qt.DropActions()
+        def __and__(self, mask):
+            '''Qt.DropActions Qt.DropActions.__and__(int mask)'''
+            return Qt.DropActions()
+        def __xor__(self, f):
+            '''Qt.DropActions Qt.DropActions.__xor__(Qt.DropActions f)'''
+            return Qt.DropActions()
+        def __xor__(self, f):
+            '''Qt.DropActions Qt.DropActions.__xor__(int f)'''
+            return Qt.DropActions()
+        def __or__(self, f):
+            '''Qt.DropActions Qt.DropActions.__or__(Qt.DropActions f)'''
+            return Qt.DropActions()
+        def __or__(self, f):
+            '''Qt.DropActions Qt.DropActions.__or__(int f)'''
+            return Qt.DropActions()
+        def __int__(self):
+            '''int Qt.DropActions.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''Qt.DropActions Qt.DropActions.__ixor__(Qt.DropActions f)'''
+            return Qt.DropActions()
+        def __ior__(self, f):
+            '''Qt.DropActions Qt.DropActions.__ior__(Qt.DropActions f)'''
+            return Qt.DropActions()
+        def __iand__(self, mask):
+            '''Qt.DropActions Qt.DropActions.__iand__(int mask)'''
+            return Qt.DropActions()
+    class DockWidgetAreas():
+        """"""
+        def __init__(self):
+            '''Qt.DockWidgetAreas Qt.DockWidgetAreas.__init__()'''
+            return Qt.DockWidgetAreas()
+        def __init__(self):
+            '''int Qt.DockWidgetAreas.__init__()'''
+            return int()
+        def __init__(self):
+            '''void Qt.DockWidgetAreas.__init__()'''
+        def __bool__(self):
+            '''int Qt.DockWidgetAreas.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool Qt.DockWidgetAreas.__ne__(Qt.DockWidgetAreas f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool Qt.DockWidgetAreas.__eq__(Qt.DockWidgetAreas f)'''
+            return bool()
+        def __invert__(self):
+            '''Qt.DockWidgetAreas Qt.DockWidgetAreas.__invert__()'''
+            return Qt.DockWidgetAreas()
+        def __and__(self, mask):
+            '''Qt.DockWidgetAreas Qt.DockWidgetAreas.__and__(int mask)'''
+            return Qt.DockWidgetAreas()
+        def __xor__(self, f):
+            '''Qt.DockWidgetAreas Qt.DockWidgetAreas.__xor__(Qt.DockWidgetAreas f)'''
+            return Qt.DockWidgetAreas()
+        def __xor__(self, f):
+            '''Qt.DockWidgetAreas Qt.DockWidgetAreas.__xor__(int f)'''
+            return Qt.DockWidgetAreas()
+        def __or__(self, f):
+            '''Qt.DockWidgetAreas Qt.DockWidgetAreas.__or__(Qt.DockWidgetAreas f)'''
+            return Qt.DockWidgetAreas()
+        def __or__(self, f):
+            '''Qt.DockWidgetAreas Qt.DockWidgetAreas.__or__(int f)'''
+            return Qt.DockWidgetAreas()
+        def __int__(self):
+            '''int Qt.DockWidgetAreas.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''Qt.DockWidgetAreas Qt.DockWidgetAreas.__ixor__(Qt.DockWidgetAreas f)'''
+            return Qt.DockWidgetAreas()
+        def __ior__(self, f):
+            '''Qt.DockWidgetAreas Qt.DockWidgetAreas.__ior__(Qt.DockWidgetAreas f)'''
+            return Qt.DockWidgetAreas()
+        def __iand__(self, mask):
+            '''Qt.DockWidgetAreas Qt.DockWidgetAreas.__iand__(int mask)'''
+            return Qt.DockWidgetAreas()
+    class Orientations():
+        """"""
+        def __init__(self):
+            '''Qt.Orientations Qt.Orientations.__init__()'''
+            return Qt.Orientations()
+        def __init__(self):
+            '''int Qt.Orientations.__init__()'''
+            return int()
+        def __init__(self):
+            '''void Qt.Orientations.__init__()'''
+        def __bool__(self):
+            '''int Qt.Orientations.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool Qt.Orientations.__ne__(Qt.Orientations f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool Qt.Orientations.__eq__(Qt.Orientations f)'''
+            return bool()
+        def __invert__(self):
+            '''Qt.Orientations Qt.Orientations.__invert__()'''
+            return Qt.Orientations()
+        def __and__(self, mask):
+            '''Qt.Orientations Qt.Orientations.__and__(int mask)'''
+            return Qt.Orientations()
+        def __xor__(self, f):
+            '''Qt.Orientations Qt.Orientations.__xor__(Qt.Orientations f)'''
+            return Qt.Orientations()
+        def __xor__(self, f):
+            '''Qt.Orientations Qt.Orientations.__xor__(int f)'''
+            return Qt.Orientations()
+        def __or__(self, f):
+            '''Qt.Orientations Qt.Orientations.__or__(Qt.Orientations f)'''
+            return Qt.Orientations()
+        def __or__(self, f):
+            '''Qt.Orientations Qt.Orientations.__or__(int f)'''
+            return Qt.Orientations()
+        def __int__(self):
+            '''int Qt.Orientations.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''Qt.Orientations Qt.Orientations.__ixor__(Qt.Orientations f)'''
+            return Qt.Orientations()
+        def __ior__(self, f):
+            '''Qt.Orientations Qt.Orientations.__ior__(Qt.Orientations f)'''
+            return Qt.Orientations()
+        def __iand__(self, mask):
+            '''Qt.Orientations Qt.Orientations.__iand__(int mask)'''
+            return Qt.Orientations()
+    class TextInteractionFlags():
+        """"""
+        def __init__(self):
+            '''Qt.TextInteractionFlags Qt.TextInteractionFlags.__init__()'''
+            return Qt.TextInteractionFlags()
+        def __init__(self):
+            '''int Qt.TextInteractionFlags.__init__()'''
+            return int()
+        def __init__(self):
+            '''void Qt.TextInteractionFlags.__init__()'''
+        def __bool__(self):
+            '''int Qt.TextInteractionFlags.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool Qt.TextInteractionFlags.__ne__(Qt.TextInteractionFlags f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool Qt.TextInteractionFlags.__eq__(Qt.TextInteractionFlags f)'''
+            return bool()
+        def __invert__(self):
+            '''Qt.TextInteractionFlags Qt.TextInteractionFlags.__invert__()'''
+            return Qt.TextInteractionFlags()
+        def __and__(self, mask):
+            '''Qt.TextInteractionFlags Qt.TextInteractionFlags.__and__(int mask)'''
+            return Qt.TextInteractionFlags()
+        def __xor__(self, f):
+            '''Qt.TextInteractionFlags Qt.TextInteractionFlags.__xor__(Qt.TextInteractionFlags f)'''
+            return Qt.TextInteractionFlags()
+        def __xor__(self, f):
+            '''Qt.TextInteractionFlags Qt.TextInteractionFlags.__xor__(int f)'''
+            return Qt.TextInteractionFlags()
+        def __or__(self, f):
+            '''Qt.TextInteractionFlags Qt.TextInteractionFlags.__or__(Qt.TextInteractionFlags f)'''
+            return Qt.TextInteractionFlags()
+        def __or__(self, f):
+            '''Qt.TextInteractionFlags Qt.TextInteractionFlags.__or__(int f)'''
+            return Qt.TextInteractionFlags()
+        def __int__(self):
+            '''int Qt.TextInteractionFlags.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''Qt.TextInteractionFlags Qt.TextInteractionFlags.__ixor__(Qt.TextInteractionFlags f)'''
+            return Qt.TextInteractionFlags()
+        def __ior__(self, f):
+            '''Qt.TextInteractionFlags Qt.TextInteractionFlags.__ior__(Qt.TextInteractionFlags f)'''
+            return Qt.TextInteractionFlags()
+        def __iand__(self, mask):
+            '''Qt.TextInteractionFlags Qt.TextInteractionFlags.__iand__(int mask)'''
+            return Qt.TextInteractionFlags()
+    class GestureFlags():
+        """"""
+        def __init__(self):
+            '''Qt.GestureFlags Qt.GestureFlags.__init__()'''
+            return Qt.GestureFlags()
+        def __init__(self):
+            '''int Qt.GestureFlags.__init__()'''
+            return int()
+        def __init__(self):
+            '''void Qt.GestureFlags.__init__()'''
+        def __bool__(self):
+            '''int Qt.GestureFlags.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool Qt.GestureFlags.__ne__(Qt.GestureFlags f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool Qt.GestureFlags.__eq__(Qt.GestureFlags f)'''
+            return bool()
+        def __invert__(self):
+            '''Qt.GestureFlags Qt.GestureFlags.__invert__()'''
+            return Qt.GestureFlags()
+        def __and__(self, mask):
+            '''Qt.GestureFlags Qt.GestureFlags.__and__(int mask)'''
+            return Qt.GestureFlags()
+        def __xor__(self, f):
+            '''Qt.GestureFlags Qt.GestureFlags.__xor__(Qt.GestureFlags f)'''
+            return Qt.GestureFlags()
+        def __xor__(self, f):
+            '''Qt.GestureFlags Qt.GestureFlags.__xor__(int f)'''
+            return Qt.GestureFlags()
+        def __or__(self, f):
+            '''Qt.GestureFlags Qt.GestureFlags.__or__(Qt.GestureFlags f)'''
+            return Qt.GestureFlags()
+        def __or__(self, f):
+            '''Qt.GestureFlags Qt.GestureFlags.__or__(int f)'''
+            return Qt.GestureFlags()
+        def __int__(self):
+            '''int Qt.GestureFlags.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''Qt.GestureFlags Qt.GestureFlags.__ixor__(Qt.GestureFlags f)'''
+            return Qt.GestureFlags()
+        def __ior__(self, f):
+            '''Qt.GestureFlags Qt.GestureFlags.__ior__(Qt.GestureFlags f)'''
+            return Qt.GestureFlags()
+        def __iand__(self, mask):
+            '''Qt.GestureFlags Qt.GestureFlags.__iand__(int mask)'''
+            return Qt.GestureFlags()
+    class Alignment():
+        """"""
+        def __init__(self):
+            '''Qt.Alignment Qt.Alignment.__init__()'''
+            return Qt.Alignment()
+        def __init__(self):
+            '''int Qt.Alignment.__init__()'''
+            return int()
+        def __init__(self):
+            '''void Qt.Alignment.__init__()'''
+        def __bool__(self):
+            '''int Qt.Alignment.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool Qt.Alignment.__ne__(Qt.Alignment f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool Qt.Alignment.__eq__(Qt.Alignment f)'''
+            return bool()
+        def __invert__(self):
+            '''Qt.Alignment Qt.Alignment.__invert__()'''
+            return Qt.Alignment()
+        def __and__(self, mask):
+            '''Qt.Alignment Qt.Alignment.__and__(int mask)'''
+            return Qt.Alignment()
+        def __xor__(self, f):
+            '''Qt.Alignment Qt.Alignment.__xor__(Qt.Alignment f)'''
+            return Qt.Alignment()
+        def __xor__(self, f):
+            '''Qt.Alignment Qt.Alignment.__xor__(int f)'''
+            return Qt.Alignment()
+        def __or__(self, f):
+            '''Qt.Alignment Qt.Alignment.__or__(Qt.Alignment f)'''
+            return Qt.Alignment()
+        def __or__(self, f):
+            '''Qt.Alignment Qt.Alignment.__or__(int f)'''
+            return Qt.Alignment()
+        def __int__(self):
+            '''int Qt.Alignment.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''Qt.Alignment Qt.Alignment.__ixor__(Qt.Alignment f)'''
+            return Qt.Alignment()
+        def __ior__(self, f):
+            '''Qt.Alignment Qt.Alignment.__ior__(Qt.Alignment f)'''
+            return Qt.Alignment()
+        def __iand__(self, mask):
+            '''Qt.Alignment Qt.Alignment.__iand__(int mask)'''
+            return Qt.Alignment()
+    class ImageConversionFlags():
+        """"""
+        def __init__(self):
+            '''Qt.ImageConversionFlags Qt.ImageConversionFlags.__init__()'''
+            return Qt.ImageConversionFlags()
+        def __init__(self):
+            '''int Qt.ImageConversionFlags.__init__()'''
+            return int()
+        def __init__(self):
+            '''void Qt.ImageConversionFlags.__init__()'''
+        def __bool__(self):
+            '''int Qt.ImageConversionFlags.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool Qt.ImageConversionFlags.__ne__(Qt.ImageConversionFlags f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool Qt.ImageConversionFlags.__eq__(Qt.ImageConversionFlags f)'''
+            return bool()
+        def __invert__(self):
+            '''Qt.ImageConversionFlags Qt.ImageConversionFlags.__invert__()'''
+            return Qt.ImageConversionFlags()
+        def __and__(self, mask):
+            '''Qt.ImageConversionFlags Qt.ImageConversionFlags.__and__(int mask)'''
+            return Qt.ImageConversionFlags()
+        def __xor__(self, f):
+            '''Qt.ImageConversionFlags Qt.ImageConversionFlags.__xor__(Qt.ImageConversionFlags f)'''
+            return Qt.ImageConversionFlags()
+        def __xor__(self, f):
+            '''Qt.ImageConversionFlags Qt.ImageConversionFlags.__xor__(int f)'''
+            return Qt.ImageConversionFlags()
+        def __or__(self, f):
+            '''Qt.ImageConversionFlags Qt.ImageConversionFlags.__or__(Qt.ImageConversionFlags f)'''
+            return Qt.ImageConversionFlags()
+        def __or__(self, f):
+            '''Qt.ImageConversionFlags Qt.ImageConversionFlags.__or__(int f)'''
+            return Qt.ImageConversionFlags()
+        def __int__(self):
+            '''int Qt.ImageConversionFlags.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''Qt.ImageConversionFlags Qt.ImageConversionFlags.__ixor__(Qt.ImageConversionFlags f)'''
+            return Qt.ImageConversionFlags()
+        def __ior__(self, f):
+            '''Qt.ImageConversionFlags Qt.ImageConversionFlags.__ior__(Qt.ImageConversionFlags f)'''
+            return Qt.ImageConversionFlags()
+        def __iand__(self, mask):
+            '''Qt.ImageConversionFlags Qt.ImageConversionFlags.__iand__(int mask)'''
+            return Qt.ImageConversionFlags()
+    class TouchPointStates():
+        """"""
+        def __init__(self):
+            '''Qt.TouchPointStates Qt.TouchPointStates.__init__()'''
+            return Qt.TouchPointStates()
+        def __init__(self):
+            '''int Qt.TouchPointStates.__init__()'''
+            return int()
+        def __init__(self):
+            '''void Qt.TouchPointStates.__init__()'''
+        def __bool__(self):
+            '''int Qt.TouchPointStates.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool Qt.TouchPointStates.__ne__(Qt.TouchPointStates f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool Qt.TouchPointStates.__eq__(Qt.TouchPointStates f)'''
+            return bool()
+        def __invert__(self):
+            '''Qt.TouchPointStates Qt.TouchPointStates.__invert__()'''
+            return Qt.TouchPointStates()
+        def __and__(self, mask):
+            '''Qt.TouchPointStates Qt.TouchPointStates.__and__(int mask)'''
+            return Qt.TouchPointStates()
+        def __xor__(self, f):
+            '''Qt.TouchPointStates Qt.TouchPointStates.__xor__(Qt.TouchPointStates f)'''
+            return Qt.TouchPointStates()
+        def __xor__(self, f):
+            '''Qt.TouchPointStates Qt.TouchPointStates.__xor__(int f)'''
+            return Qt.TouchPointStates()
+        def __or__(self, f):
+            '''Qt.TouchPointStates Qt.TouchPointStates.__or__(Qt.TouchPointStates f)'''
+            return Qt.TouchPointStates()
+        def __or__(self, f):
+            '''Qt.TouchPointStates Qt.TouchPointStates.__or__(int f)'''
+            return Qt.TouchPointStates()
+        def __int__(self):
+            '''int Qt.TouchPointStates.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''Qt.TouchPointStates Qt.TouchPointStates.__ixor__(Qt.TouchPointStates f)'''
+            return Qt.TouchPointStates()
+        def __ior__(self, f):
+            '''Qt.TouchPointStates Qt.TouchPointStates.__ior__(Qt.TouchPointStates f)'''
+            return Qt.TouchPointStates()
+        def __iand__(self, mask):
+            '''Qt.TouchPointStates Qt.TouchPointStates.__iand__(int mask)'''
+            return Qt.TouchPointStates()
+    class WindowStates():
+        """"""
+        def __init__(self):
+            '''Qt.WindowStates Qt.WindowStates.__init__()'''
+            return Qt.WindowStates()
+        def __init__(self):
+            '''int Qt.WindowStates.__init__()'''
+            return int()
+        def __init__(self):
+            '''void Qt.WindowStates.__init__()'''
+        def __bool__(self):
+            '''int Qt.WindowStates.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool Qt.WindowStates.__ne__(Qt.WindowStates f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool Qt.WindowStates.__eq__(Qt.WindowStates f)'''
+            return bool()
+        def __invert__(self):
+            '''Qt.WindowStates Qt.WindowStates.__invert__()'''
+            return Qt.WindowStates()
+        def __and__(self, mask):
+            '''Qt.WindowStates Qt.WindowStates.__and__(int mask)'''
+            return Qt.WindowStates()
+        def __xor__(self, f):
+            '''Qt.WindowStates Qt.WindowStates.__xor__(Qt.WindowStates f)'''
+            return Qt.WindowStates()
+        def __xor__(self, f):
+            '''Qt.WindowStates Qt.WindowStates.__xor__(int f)'''
+            return Qt.WindowStates()
+        def __or__(self, f):
+            '''Qt.WindowStates Qt.WindowStates.__or__(Qt.WindowStates f)'''
+            return Qt.WindowStates()
+        def __or__(self, f):
+            '''Qt.WindowStates Qt.WindowStates.__or__(int f)'''
+            return Qt.WindowStates()
+        def __int__(self):
+            '''int Qt.WindowStates.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''Qt.WindowStates Qt.WindowStates.__ixor__(Qt.WindowStates f)'''
+            return Qt.WindowStates()
+        def __ior__(self, f):
+            '''Qt.WindowStates Qt.WindowStates.__ior__(Qt.WindowStates f)'''
+            return Qt.WindowStates()
+        def __iand__(self, mask):
+            '''Qt.WindowStates Qt.WindowStates.__iand__(int mask)'''
+            return Qt.WindowStates()
 
 
 class QObject():
     """"""
-    staticMetaObject = None # QMetaObject member
-    def __init__(self, _parent):
-        """None QObject.__init__(None self, QObject _parent)"""
-        return None
-    def disconnectNotify(self, _signal):
-        """None QObject.disconnectNotify(None self, SIGNAL() _signal)"""
-        return None
-    def connectNotify(self, _signal):
-        """None QObject.connectNotify(None self, SIGNAL() _signal)"""
-        return None
+    staticMetaObject = None # QMetaObject - member
+    def __init__(self, parent = None):
+        '''void QObject.__init__(QObject parent = None)'''
+    def disconnectNotify(self, signal):
+        '''void QObject.disconnectNotify(SIGNAL() signal)'''
+    def connectNotify(self, signal):
+        '''void QObject.connectNotify(SIGNAL() signal)'''
     def customEvent(self):
-        """QEvent QObject.customEvent(None self)"""
+        '''QEvent QObject.customEvent()'''
         return QEvent()
     def childEvent(self):
-        """QChildEvent QObject.childEvent(None self)"""
+        '''QChildEvent QObject.childEvent()'''
         return QChildEvent()
     def timerEvent(self):
-        """QTimerEvent QObject.timerEvent(None self)"""
+        '''QTimerEvent QObject.timerEvent()'''
         return QTimerEvent()
-    def receivers(self, _signal):
-        """int QObject.receivers(None self, SIGNAL() _signal)"""
+    def receivers(self, signal):
+        '''int QObject.receivers(SIGNAL() signal)'''
         return int()
     def sender(self):
-        """QObject QObject.sender(None self)"""
+        '''QObject QObject.sender()'''
         return QObject()
     def deleteLater(self):
-        """None QObject.deleteLater(None self)"""
-        return None
-    def inherits(self, _classname):
-        """bool QObject.inherits(None self, str _classname)"""
+        '''void QObject.deleteLater()'''
+    def inherits(self, classname):
+        '''bool QObject.inherits(str classname)'''
         return bool()
     def parent(self):
-        """QObject QObject.parent(None self)"""
+        '''QObject QObject.parent()'''
         return QObject()
-    def property(self, _name):
-        """QVariant QObject.property(None self, str _name)"""
+    destroyed = PyQt4.QtCore.pyqtSignal() # void destroyed(QObject * = 0) - signal
+    def property(self, name):
+        '''QVariant QObject.property(str name)'''
         return QVariant()
-    def setProperty(self, _name, _value):
-        """bool QObject.setProperty(None self, str _name, QVariant _value)"""
+    def setProperty(self, name, value):
+        '''bool QObject.setProperty(str name, QVariant value)'''
         return bool()
     def dynamicPropertyNames(self):
-        """list-of-QByteArray QObject.dynamicPropertyNames(None self)"""
+        '''list-of-QByteArray QObject.dynamicPropertyNames()'''
         return [QByteArray()]
     def dumpObjectTree(self):
-        """None QObject.dumpObjectTree(None self)"""
-        return None
+        '''void QObject.dumpObjectTree()'''
     def dumpObjectInfo(self):
-        """None QObject.dumpObjectInfo(None self)"""
-        return None
+        '''void QObject.dumpObjectInfo()'''
     def disconnect(self):
-        """SLOT() QObject.disconnect(None self)"""
+        '''static SLOT() QObject.disconnect()'''
         return SLOT()()
     def disconnect(self):
-        """callable QObject.disconnect(None self)"""
+        '''static callable QObject.disconnect()'''
         return callable()
     def connect(self):
-        """Qt.ConnectionType QObject.connect(None self)"""
+        '''static Qt.ConnectionType QObject.connect()'''
         return Qt.ConnectionType()
     def connect(self):
-        """Qt.ConnectionType QObject.connect(None self)"""
+        '''static Qt.ConnectionType QObject.connect()'''
         return Qt.ConnectionType()
     def connect(self):
-        """Qt.ConnectionType QObject.connect(None self)"""
+        '''Qt.ConnectionType QObject.connect()'''
         return Qt.ConnectionType()
     def removeEventFilter(self):
-        """QObject QObject.removeEventFilter(None self)"""
+        '''QObject QObject.removeEventFilter()'''
         return QObject()
     def installEventFilter(self):
-        """QObject QObject.installEventFilter(None self)"""
+        '''QObject QObject.installEventFilter()'''
         return QObject()
     def setParent(self):
-        """QObject QObject.setParent(None self)"""
+        '''QObject QObject.setParent()'''
         return QObject()
     def children(self):
-        """list-of-QObject QObject.children(None self)"""
+        '''list-of-QObject QObject.children()'''
         return [QObject()]
-    def killTimer(self, _id):
-        """None QObject.killTimer(None self, int _id)"""
-        return None
-    def startTimer(self, _interval):
-        """int QObject.startTimer(None self, int _interval)"""
+    def killTimer(self, id):
+        '''void QObject.killTimer(int id)'''
+    def startTimer(self, interval):
+        '''int QObject.startTimer(int interval)'''
         return int()
-    def moveToThread(self, _thread):
-        """None QObject.moveToThread(None self, QThread _thread)"""
-        return None
+    def moveToThread(self, thread):
+        '''void QObject.moveToThread(QThread thread)'''
     def thread(self):
-        """QThread QObject.thread(None self)"""
+        '''QThread QObject.thread()'''
         return QThread()
-    def blockSignals(self, _b):
-        """bool QObject.blockSignals(None self, bool _b)"""
+    def blockSignals(self, b):
+        '''bool QObject.blockSignals(bool b)'''
         return bool()
     def signalsBlocked(self):
-        """bool QObject.signalsBlocked(None self)"""
+        '''bool QObject.signalsBlocked()'''
         return bool()
     def isWidgetType(self):
-        """bool QObject.isWidgetType(None self)"""
+        '''bool QObject.isWidgetType()'''
         return bool()
-    def setObjectName(self, _name):
-        """None QObject.setObjectName(None self, QString _name)"""
-        return None
+    def setObjectName(self, name):
+        '''void QObject.setObjectName(QString name)'''
     def objectName(self):
-        """QString QObject.objectName(None self)"""
+        '''QString QObject.objectName()'''
         return QString()
     def emit(self, *args):
-        """SIGNAL() QObject.emit(None self, ... *args)"""
+        '''SIGNAL() QObject.emit(... *args)'''
         return SIGNAL()()
-    def findChildren(self, _type, _name):
-        """list-of-QObject QObject.findChildren(None self, type _type, QString _name)"""
+    def findChildren(self, type, name = QString()):
+        '''list-of-QObject QObject.findChildren(type type, QString name = QString())'''
         return [QObject()]
-    def findChildren(self, _type, _regExp):
-        """list-of-QObject QObject.findChildren(None self, type _type, QRegExp _regExp)"""
+    def findChildren(self, type, regExp):
+        '''list-of-QObject QObject.findChildren(type type, QRegExp regExp)'''
         return [QObject()]
-    def findChild(self, _type, _name):
-        """QObject QObject.findChild(None self, type _type, QString _name)"""
+    def findChild(self, type, name = QString()):
+        '''QObject QObject.findChild(type type, QString name = QString())'''
         return QObject()
-    def trUtf8(self, _sourceText, _disambiguation, _n):
-        """QString QObject.trUtf8(None self, str _sourceText, str _disambiguation, int _n)"""
+    def trUtf8(self, sourceText, disambiguation = None, n = -1):
+        '''QString QObject.trUtf8(str sourceText, str disambiguation = None, int n = -1)'''
         return QString()
-    def tr(self, _sourceText, _disambiguation, _n):
-        """QString QObject.tr(None self, str _sourceText, str _disambiguation, int _n)"""
+    def tr(self, sourceText, disambiguation = None, n = -1):
+        '''QString QObject.tr(str sourceText, str disambiguation = None, int n = -1)'''
         return QString()
     def eventFilter(self):
-        """QEvent QObject.eventFilter(None self)"""
+        '''QEvent QObject.eventFilter()'''
         return QEvent()
     def event(self):
-        """QEvent QObject.event(None self)"""
+        '''QEvent QObject.event()'''
         return QEvent()
-    def __getattr__(self, _name):
-        """object QObject.__getattr__(None self, str _name)"""
+    def __getattr__(self, name):
+        '''object QObject.__getattr__(str name)'''
         return object()
     def pyqtConfigure(self):
-        """object QObject.pyqtConfigure(None self)"""
+        '''object QObject.pyqtConfigure()'''
         return object()
     def metaObject(self):
-        """QMetaObject QObject.metaObject(None self)"""
+        '''QMetaObject QObject.metaObject()'''
         return QMetaObject()
 
 
 class QAbstractAnimation(QObject):
     """"""
-    KeepWhenStopped = int() # QAbstractAnimation.DeletionPolicy enum
-    DeleteWhenStopped = int() # QAbstractAnimation.DeletionPolicy enum
+    # Enum QAbstractAnimation.DeletionPolicy
+    KeepWhenStopped = 0
+    DeleteWhenStopped = 0
 
-    Stopped = int() # QAbstractAnimation.State enum
-    Paused = int() # QAbstractAnimation.State enum
-    Running = int() # QAbstractAnimation.State enum
+    # Enum QAbstractAnimation.State
+    Stopped = 0
+    Paused = 0
+    Running = 0
 
-    Forward = int() # QAbstractAnimation.Direction enum
-    Backward = int() # QAbstractAnimation.Direction enum
+    # Enum QAbstractAnimation.Direction
+    Forward = 0
+    Backward = 0
 
-    def __init__(self, _parent):
-        """None QAbstractAnimation.__init__(None self, QObject _parent)"""
-        return None
-    def updateDirection(self, _direction):
-        """None QAbstractAnimation.updateDirection(None self, QAbstractAnimation.Direction _direction)"""
-        return None
-    def updateState(self, _newState, _oldState):
-        """None QAbstractAnimation.updateState(None self, QAbstractAnimation.State _newState, QAbstractAnimation.State _oldState)"""
-        return None
-    def updateCurrentTime(self, _currentTime):
-        """abstract None QAbstractAnimation.updateCurrentTime(None self, int _currentTime)"""
-        return None
-    def event(self, _event):
-        """bool QAbstractAnimation.event(None self, QEvent _event)"""
+    def __init__(self, parent = None):
+        '''void QAbstractAnimation.__init__(QObject parent = None)'''
+    def updateDirection(self, direction):
+        '''void QAbstractAnimation.updateDirection(QAbstractAnimation.Direction direction)'''
+    def updateState(self, newState, oldState):
+        '''void QAbstractAnimation.updateState(QAbstractAnimation.State newState, QAbstractAnimation.State oldState)'''
+    def updateCurrentTime(self, currentTime):
+        '''abstract void QAbstractAnimation.updateCurrentTime(int currentTime)'''
+    def event(self, event):
+        '''bool QAbstractAnimation.event(QEvent event)'''
         return bool()
-    def setCurrentTime(self, _msecs):
-        """None QAbstractAnimation.setCurrentTime(None self, int _msecs)"""
-        return None
+    def setCurrentTime(self, msecs):
+        '''void QAbstractAnimation.setCurrentTime(int msecs)'''
     def stop(self):
-        """None QAbstractAnimation.stop(None self)"""
-        return None
+        '''void QAbstractAnimation.stop()'''
     def setPaused(self):
-        """bool QAbstractAnimation.setPaused(None self)"""
+        '''bool QAbstractAnimation.setPaused()'''
         return bool()
     def resume(self):
-        """None QAbstractAnimation.resume(None self)"""
-        return None
+        '''void QAbstractAnimation.resume()'''
     def pause(self):
-        """None QAbstractAnimation.pause(None self)"""
-        return None
-    def start(self, _policy):
-        """None QAbstractAnimation.start(None self, QAbstractAnimation.DeletionPolicy _policy)"""
-        return None
+        '''void QAbstractAnimation.pause()'''
+    def start(self, policy = QAbstractAnimation.KeepWhenStopped):
+        '''void QAbstractAnimation.start(QAbstractAnimation.DeletionPolicy policy = QAbstractAnimation.KeepWhenStopped)'''
+    directionChanged = PyQt4.QtCore.pyqtSignal() # void directionChanged(QAbstractAnimation::Direction) - signal
+    currentLoopChanged = PyQt4.QtCore.pyqtSignal() # void currentLoopChanged(int) - signal
+    stateChanged = PyQt4.QtCore.pyqtSignal() # void stateChanged(QAbstractAnimation::State,QAbstractAnimation::State) - signal
+    finished = PyQt4.QtCore.pyqtSignal() # void finished() - signal
     def totalDuration(self):
-        """int QAbstractAnimation.totalDuration(None self)"""
+        '''int QAbstractAnimation.totalDuration()'''
         return int()
     def duration(self):
-        """abstract int QAbstractAnimation.duration(None self)"""
+        '''abstract int QAbstractAnimation.duration()'''
         return int()
     def currentLoop(self):
-        """int QAbstractAnimation.currentLoop(None self)"""
+        '''int QAbstractAnimation.currentLoop()'''
         return int()
-    def setLoopCount(self, _loopCount):
-        """None QAbstractAnimation.setLoopCount(None self, int _loopCount)"""
-        return None
+    def setLoopCount(self, loopCount):
+        '''void QAbstractAnimation.setLoopCount(int loopCount)'''
     def loopCount(self):
-        """int QAbstractAnimation.loopCount(None self)"""
+        '''int QAbstractAnimation.loopCount()'''
         return int()
     def currentLoopTime(self):
-        """int QAbstractAnimation.currentLoopTime(None self)"""
+        '''int QAbstractAnimation.currentLoopTime()'''
         return int()
     def currentTime(self):
-        """int QAbstractAnimation.currentTime(None self)"""
+        '''int QAbstractAnimation.currentTime()'''
         return int()
-    def setDirection(self, _direction):
-        """None QAbstractAnimation.setDirection(None self, QAbstractAnimation.Direction _direction)"""
-        return None
+    def setDirection(self, direction):
+        '''void QAbstractAnimation.setDirection(QAbstractAnimation.Direction direction)'''
     def direction(self):
-        """QAbstractAnimation.Direction QAbstractAnimation.direction(None self)"""
+        '''QAbstractAnimation.Direction QAbstractAnimation.direction()'''
         return QAbstractAnimation.Direction()
     def group(self):
-        """QAnimationGroup QAbstractAnimation.group(None self)"""
+        '''QAnimationGroup QAbstractAnimation.group()'''
         return QAnimationGroup()
     def state(self):
-        """QAbstractAnimation.State QAbstractAnimation.state(None self)"""
+        '''QAbstractAnimation.State QAbstractAnimation.state()'''
         return QAbstractAnimation.State()
 
 
 class QAbstractEventDispatcher(QObject):
     """"""
-    def __init__(self, _parent):
-        """None QAbstractEventDispatcher.__init__(None self, QObject _parent)"""
-        return None
+    def __init__(self, parent = None):
+        '''void QAbstractEventDispatcher.__init__(QObject parent = None)'''
+    awake = PyQt4.QtCore.pyqtSignal() # void awake() - signal
+    aboutToBlock = PyQt4.QtCore.pyqtSignal() # void aboutToBlock() - signal
     def closingDown(self):
-        """None QAbstractEventDispatcher.closingDown(None self)"""
-        return None
+        '''void QAbstractEventDispatcher.closingDown()'''
     def startingUp(self):
-        """None QAbstractEventDispatcher.startingUp(None self)"""
-        return None
+        '''void QAbstractEventDispatcher.startingUp()'''
     def flush(self):
-        """abstract None QAbstractEventDispatcher.flush(None self)"""
-        return None
+        '''abstract void QAbstractEventDispatcher.flush()'''
     def interrupt(self):
-        """abstract None QAbstractEventDispatcher.interrupt(None self)"""
-        return None
+        '''abstract void QAbstractEventDispatcher.interrupt()'''
     def wakeUp(self):
-        """abstract None QAbstractEventDispatcher.wakeUp(None self)"""
-        return None
-    def registeredTimers(self, _object):
-        """abstract list-of-tuple-of-int-int QAbstractEventDispatcher.registeredTimers(None self, QObject _object)"""
+        '''abstract void QAbstractEventDispatcher.wakeUp()'''
+    def registeredTimers(self, object):
+        '''abstract list-of-tuple-of-int-int QAbstractEventDispatcher.registeredTimers(QObject object)'''
         return [tuple-of-int-int()]
-    def unregisterTimers(self, _object):
-        """abstract bool QAbstractEventDispatcher.unregisterTimers(None self, QObject _object)"""
+    def unregisterTimers(self, object):
+        '''abstract bool QAbstractEventDispatcher.unregisterTimers(QObject object)'''
         return bool()
-    def unregisterTimer(self, _timerId):
-        """abstract bool QAbstractEventDispatcher.unregisterTimer(None self, int _timerId)"""
+    def unregisterTimer(self, timerId):
+        '''abstract bool QAbstractEventDispatcher.unregisterTimer(int timerId)'''
         return bool()
-    def registerTimer(self, _interval, _object):
-        """int QAbstractEventDispatcher.registerTimer(None self, int _interval, QObject _object)"""
+    def registerTimer(self, interval, object):
+        '''int QAbstractEventDispatcher.registerTimer(int interval, QObject object)'''
         return int()
-    def registerTimer(self, _timerId, _interval, _object):
-        """abstract None QAbstractEventDispatcher.registerTimer(None self, int _timerId, int _interval, QObject _object)"""
-        return None
-    def unregisterSocketNotifier(self, _notifier):
-        """abstract None QAbstractEventDispatcher.unregisterSocketNotifier(None self, QSocketNotifier _notifier)"""
-        return None
-    def registerSocketNotifier(self, _notifier):
-        """abstract None QAbstractEventDispatcher.registerSocketNotifier(None self, QSocketNotifier _notifier)"""
-        return None
+    def registerTimer(self, timerId, interval, object):
+        '''abstract void QAbstractEventDispatcher.registerTimer(int timerId, int interval, QObject object)'''
+    def unregisterSocketNotifier(self, notifier):
+        '''abstract void QAbstractEventDispatcher.unregisterSocketNotifier(QSocketNotifier notifier)'''
+    def registerSocketNotifier(self, notifier):
+        '''abstract void QAbstractEventDispatcher.registerSocketNotifier(QSocketNotifier notifier)'''
     def hasPendingEvents(self):
-        """abstract bool QAbstractEventDispatcher.hasPendingEvents(None self)"""
+        '''abstract bool QAbstractEventDispatcher.hasPendingEvents()'''
         return bool()
-    def processEvents(self, _flags):
-        """abstract bool QAbstractEventDispatcher.processEvents(None self, QEventLoop.ProcessEventsFlags _flags)"""
+    def processEvents(self, flags):
+        '''abstract bool QAbstractEventDispatcher.processEvents(QEventLoop.ProcessEventsFlags flags)'''
         return bool()
-    def instance(self, _thread):
-        """QAbstractEventDispatcher QAbstractEventDispatcher.instance(None self, QThread _thread)"""
+    def instance(self, thread = None):
+        '''static QAbstractEventDispatcher QAbstractEventDispatcher.instance(QThread thread = None)'''
         return QAbstractEventDispatcher()
 
 
 class QAbstractFileEngine():
     """"""
-    CreationTime = int() # QAbstractFileEngine.FileTime enum
-    ModificationTime = int() # QAbstractFileEngine.FileTime enum
-    AccessTime = int() # QAbstractFileEngine.FileTime enum
+    # Enum QAbstractFileEngine.FileTime
+    CreationTime = 0
+    ModificationTime = 0
+    AccessTime = 0
 
-    OwnerUser = int() # QAbstractFileEngine.FileOwner enum
-    OwnerGroup = int() # QAbstractFileEngine.FileOwner enum
+    # Enum QAbstractFileEngine.FileOwner
+    OwnerUser = 0
+    OwnerGroup = 0
 
-    DefaultName = int() # QAbstractFileEngine.FileName enum
-    BaseName = int() # QAbstractFileEngine.FileName enum
-    PathName = int() # QAbstractFileEngine.FileName enum
-    AbsoluteName = int() # QAbstractFileEngine.FileName enum
-    AbsolutePathName = int() # QAbstractFileEngine.FileName enum
-    LinkName = int() # QAbstractFileEngine.FileName enum
-    CanonicalName = int() # QAbstractFileEngine.FileName enum
-    CanonicalPathName = int() # QAbstractFileEngine.FileName enum
-    BundleName = int() # QAbstractFileEngine.FileName enum
+    # Enum QAbstractFileEngine.FileName
+    DefaultName = 0
+    BaseName = 0
+    PathName = 0
+    AbsoluteName = 0
+    AbsolutePathName = 0
+    LinkName = 0
+    CanonicalName = 0
+    CanonicalPathName = 0
+    BundleName = 0
 
-    ReadOwnerPerm = int() # QAbstractFileEngine.FileFlag enum
-    WriteOwnerPerm = int() # QAbstractFileEngine.FileFlag enum
-    ExeOwnerPerm = int() # QAbstractFileEngine.FileFlag enum
-    ReadUserPerm = int() # QAbstractFileEngine.FileFlag enum
-    WriteUserPerm = int() # QAbstractFileEngine.FileFlag enum
-    ExeUserPerm = int() # QAbstractFileEngine.FileFlag enum
-    ReadGroupPerm = int() # QAbstractFileEngine.FileFlag enum
-    WriteGroupPerm = int() # QAbstractFileEngine.FileFlag enum
-    ExeGroupPerm = int() # QAbstractFileEngine.FileFlag enum
-    ReadOtherPerm = int() # QAbstractFileEngine.FileFlag enum
-    WriteOtherPerm = int() # QAbstractFileEngine.FileFlag enum
-    ExeOtherPerm = int() # QAbstractFileEngine.FileFlag enum
-    LinkType = int() # QAbstractFileEngine.FileFlag enum
-    FileType = int() # QAbstractFileEngine.FileFlag enum
-    DirectoryType = int() # QAbstractFileEngine.FileFlag enum
-    HiddenFlag = int() # QAbstractFileEngine.FileFlag enum
-    LocalDiskFlag = int() # QAbstractFileEngine.FileFlag enum
-    ExistsFlag = int() # QAbstractFileEngine.FileFlag enum
-    RootFlag = int() # QAbstractFileEngine.FileFlag enum
-    PermsMask = int() # QAbstractFileEngine.FileFlag enum
-    TypesMask = int() # QAbstractFileEngine.FileFlag enum
-    FlagsMask = int() # QAbstractFileEngine.FileFlag enum
-    FileInfoAll = int() # QAbstractFileEngine.FileFlag enum
-    BundleType = int() # QAbstractFileEngine.FileFlag enum
-    Refresh = int() # QAbstractFileEngine.FileFlag enum
+    # Enum QAbstractFileEngine.FileFlag
+    ReadOwnerPerm = 0
+    WriteOwnerPerm = 0
+    ExeOwnerPerm = 0
+    ReadUserPerm = 0
+    WriteUserPerm = 0
+    ExeUserPerm = 0
+    ReadGroupPerm = 0
+    WriteGroupPerm = 0
+    ExeGroupPerm = 0
+    ReadOtherPerm = 0
+    WriteOtherPerm = 0
+    ExeOtherPerm = 0
+    LinkType = 0
+    FileType = 0
+    DirectoryType = 0
+    HiddenFlag = 0
+    LocalDiskFlag = 0
+    ExistsFlag = 0
+    RootFlag = 0
+    PermsMask = 0
+    TypesMask = 0
+    FlagsMask = 0
+    FileInfoAll = 0
+    BundleType = 0
+    Refresh = 0
 
     def __init__(self):
-        """None QAbstractFileEngine.__init__(None self)"""
-        return None
-    def setError(self, _error, _str):
-        """None QAbstractFileEngine.setError(None self, QFile.FileError _error, QString _str)"""
-        return None
-    def unmap(self, _ptr):
-        """bool QAbstractFileEngine.unmap(None self, sip.voidptr _ptr)"""
+        '''void QAbstractFileEngine.__init__()'''
+    def setError(self, error, str):
+        '''void QAbstractFileEngine.setError(QFile.FileError error, QString str)'''
+    def unmap(self, ptr):
+        '''bool QAbstractFileEngine.unmap(sip.voidptr ptr)'''
         return bool()
-    def map(self, _offset, _size, _flags):
-        """sip.voidptr QAbstractFileEngine.map(None self, int _offset, int _size, QFile.MemoryMapFlags _flags)"""
+    def map(self, offset, size, flags):
+        '''sip.voidptr QAbstractFileEngine.map(int offset, int size, QFile.MemoryMapFlags flags)'''
         return sip.voidptr()
-    def create(self, _fileName):
-        """QAbstractFileEngine QAbstractFileEngine.create(None self, QString _fileName)"""
+    def create(self, fileName):
+        '''static QAbstractFileEngine QAbstractFileEngine.create(QString fileName)'''
         return QAbstractFileEngine()
     def errorString(self):
-        """QString QAbstractFileEngine.errorString(None self)"""
+        '''QString QAbstractFileEngine.errorString()'''
         return QString()
     def error(self):
-        """QFile.FileError QAbstractFileEngine.error(None self)"""
+        '''QFile.FileError QAbstractFileEngine.error()'''
         return QFile.FileError()
-    def write(self, _data):
-        """int QAbstractFileEngine.write(None self, str _data)"""
+    def write(self, data):
+        '''int QAbstractFileEngine.write(str data)'''
         return int()
-    def readLine(self, _maxlen):
-        """str QAbstractFileEngine.readLine(None self, int _maxlen)"""
+    def readLine(self, maxlen):
+        '''str QAbstractFileEngine.readLine(int maxlen)'''
         return str()
-    def read(self, _maxlen):
-        """str QAbstractFileEngine.read(None self, int _maxlen)"""
+    def read(self, maxlen):
+        '''str QAbstractFileEngine.read(int maxlen)'''
         return str()
     def handle(self):
-        """int QAbstractFileEngine.handle(None self)"""
+        '''int QAbstractFileEngine.handle()'''
         return int()
-    def setFileName(self, _file):
-        """None QAbstractFileEngine.setFileName(None self, QString _file)"""
-        return None
-    def fileTime(self, _time):
-        """QDateTime QAbstractFileEngine.fileTime(None self, QAbstractFileEngine.FileTime _time)"""
+    def setFileName(self, file):
+        '''void QAbstractFileEngine.setFileName(QString file)'''
+    def fileTime(self, time):
+        '''QDateTime QAbstractFileEngine.fileTime(QAbstractFileEngine.FileTime time)'''
         return QDateTime()
     def owner(self):
-        """QAbstractFileEngine.FileOwner QAbstractFileEngine.owner(None self)"""
+        '''QAbstractFileEngine.FileOwner QAbstractFileEngine.owner()'''
         return QAbstractFileEngine.FileOwner()
     def ownerId(self):
-        """QAbstractFileEngine.FileOwner QAbstractFileEngine.ownerId(None self)"""
+        '''QAbstractFileEngine.FileOwner QAbstractFileEngine.ownerId()'''
         return QAbstractFileEngine.FileOwner()
-    def fileName(self, _file):
-        """QString QAbstractFileEngine.fileName(None self, QAbstractFileEngine.FileName _file)"""
+    def fileName(self, file = QAbstractFileEngine.DefaultName):
+        '''QString QAbstractFileEngine.fileName(QAbstractFileEngine.FileName file = QAbstractFileEngine.DefaultName)'''
         return QString()
-    def setPermissions(self, _perms):
-        """bool QAbstractFileEngine.setPermissions(None self, int _perms)"""
+    def setPermissions(self, perms):
+        '''bool QAbstractFileEngine.setPermissions(int perms)'''
         return bool()
-    def fileFlags(self, _type):
-        """QAbstractFileEngine.FileFlags QAbstractFileEngine.fileFlags(None self, QAbstractFileEngine.FileFlags _type)"""
+    def fileFlags(self, type = QAbstractFileEngine.FileInfoAll):
+        '''QAbstractFileEngine.FileFlags QAbstractFileEngine.fileFlags(QAbstractFileEngine.FileFlags type = QAbstractFileEngine.FileInfoAll)'''
         return QAbstractFileEngine.FileFlags()
-    def entryList(self, _filters, _filterNames):
-        """QStringList QAbstractFileEngine.entryList(None self, QDir.Filters _filters, QStringList _filterNames)"""
+    def entryList(self, filters, filterNames):
+        '''QStringList QAbstractFileEngine.entryList(QDir.Filters filters, QStringList filterNames)'''
         return QStringList()
     def isRelativePath(self):
-        """bool QAbstractFileEngine.isRelativePath(None self)"""
+        '''bool QAbstractFileEngine.isRelativePath()'''
         return bool()
     def caseSensitive(self):
-        """bool QAbstractFileEngine.caseSensitive(None self)"""
+        '''bool QAbstractFileEngine.caseSensitive()'''
         return bool()
-    def setSize(self, _size):
-        """bool QAbstractFileEngine.setSize(None self, int _size)"""
+    def setSize(self, size):
+        '''bool QAbstractFileEngine.setSize(int size)'''
         return bool()
-    def rmdir(self, _dirName, _recurseParentDirectories):
-        """bool QAbstractFileEngine.rmdir(None self, QString _dirName, bool _recurseParentDirectories)"""
+    def rmdir(self, dirName, recurseParentDirectories):
+        '''bool QAbstractFileEngine.rmdir(QString dirName, bool recurseParentDirectories)'''
         return bool()
-    def mkdir(self, _dirName, _createParentDirectories):
-        """bool QAbstractFileEngine.mkdir(None self, QString _dirName, bool _createParentDirectories)"""
+    def mkdir(self, dirName, createParentDirectories):
+        '''bool QAbstractFileEngine.mkdir(QString dirName, bool createParentDirectories)'''
         return bool()
-    def link(self, _newName):
-        """bool QAbstractFileEngine.link(None self, QString _newName)"""
+    def link(self, newName):
+        '''bool QAbstractFileEngine.link(QString newName)'''
         return bool()
-    def rename(self, _newName):
-        """bool QAbstractFileEngine.rename(None self, QString _newName)"""
+    def rename(self, newName):
+        '''bool QAbstractFileEngine.rename(QString newName)'''
         return bool()
-    def copy(self, _newName):
-        """bool QAbstractFileEngine.copy(None self, QString _newName)"""
+    def copy(self, newName):
+        '''bool QAbstractFileEngine.copy(QString newName)'''
         return bool()
     def remove(self):
-        """bool QAbstractFileEngine.remove(None self)"""
+        '''bool QAbstractFileEngine.remove()'''
         return bool()
     def isSequential(self):
-        """bool QAbstractFileEngine.isSequential(None self)"""
+        '''bool QAbstractFileEngine.isSequential()'''
         return bool()
-    def seek(self, _pos):
-        """bool QAbstractFileEngine.seek(None self, int _pos)"""
+    def seek(self, pos):
+        '''bool QAbstractFileEngine.seek(int pos)'''
         return bool()
     def pos(self):
-        """int QAbstractFileEngine.pos(None self)"""
+        '''int QAbstractFileEngine.pos()'''
         return int()
     def size(self):
-        """int QAbstractFileEngine.size(None self)"""
+        '''int QAbstractFileEngine.size()'''
         return int()
     def flush(self):
-        """bool QAbstractFileEngine.flush(None self)"""
+        '''bool QAbstractFileEngine.flush()'''
         return bool()
     def close(self):
-        """bool QAbstractFileEngine.close(None self)"""
+        '''bool QAbstractFileEngine.close()'''
         return bool()
-    def open(self, _openMode):
-        """bool QAbstractFileEngine.open(None self, QIODevice.OpenMode _openMode)"""
+    def open(self, openMode):
+        '''bool QAbstractFileEngine.open(QIODevice.OpenMode openMode)'''
         return bool()
     def atEnd(self):
-        """bool QAbstractFileEngine.atEnd(None self)"""
+        '''bool QAbstractFileEngine.atEnd()'''
         return bool()
+    class FileFlags():
+        """"""
+        def __init__(self):
+            '''QAbstractFileEngine.FileFlags QAbstractFileEngine.FileFlags.__init__()'''
+            return QAbstractFileEngine.FileFlags()
+        def __init__(self):
+            '''int QAbstractFileEngine.FileFlags.__init__()'''
+            return int()
+        def __init__(self):
+            '''void QAbstractFileEngine.FileFlags.__init__()'''
+        def __bool__(self):
+            '''int QAbstractFileEngine.FileFlags.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool QAbstractFileEngine.FileFlags.__ne__(QAbstractFileEngine.FileFlags f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool QAbstractFileEngine.FileFlags.__eq__(QAbstractFileEngine.FileFlags f)'''
+            return bool()
+        def __invert__(self):
+            '''QAbstractFileEngine.FileFlags QAbstractFileEngine.FileFlags.__invert__()'''
+            return QAbstractFileEngine.FileFlags()
+        def __and__(self, mask):
+            '''QAbstractFileEngine.FileFlags QAbstractFileEngine.FileFlags.__and__(int mask)'''
+            return QAbstractFileEngine.FileFlags()
+        def __xor__(self, f):
+            '''QAbstractFileEngine.FileFlags QAbstractFileEngine.FileFlags.__xor__(QAbstractFileEngine.FileFlags f)'''
+            return QAbstractFileEngine.FileFlags()
+        def __xor__(self, f):
+            '''QAbstractFileEngine.FileFlags QAbstractFileEngine.FileFlags.__xor__(int f)'''
+            return QAbstractFileEngine.FileFlags()
+        def __or__(self, f):
+            '''QAbstractFileEngine.FileFlags QAbstractFileEngine.FileFlags.__or__(QAbstractFileEngine.FileFlags f)'''
+            return QAbstractFileEngine.FileFlags()
+        def __or__(self, f):
+            '''QAbstractFileEngine.FileFlags QAbstractFileEngine.FileFlags.__or__(int f)'''
+            return QAbstractFileEngine.FileFlags()
+        def __int__(self):
+            '''int QAbstractFileEngine.FileFlags.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''QAbstractFileEngine.FileFlags QAbstractFileEngine.FileFlags.__ixor__(QAbstractFileEngine.FileFlags f)'''
+            return QAbstractFileEngine.FileFlags()
+        def __ior__(self, f):
+            '''QAbstractFileEngine.FileFlags QAbstractFileEngine.FileFlags.__ior__(QAbstractFileEngine.FileFlags f)'''
+            return QAbstractFileEngine.FileFlags()
+        def __iand__(self, mask):
+            '''QAbstractFileEngine.FileFlags QAbstractFileEngine.FileFlags.__iand__(int mask)'''
+            return QAbstractFileEngine.FileFlags()
 
 
 class QAbstractFileEngineHandler():
     """"""
     def __init__(self):
-        """None QAbstractFileEngineHandler.__init__(None self)"""
-        return None
+        '''void QAbstractFileEngineHandler.__init__()'''
     def __init__(self):
-        """QAbstractFileEngineHandler QAbstractFileEngineHandler.__init__(None self)"""
+        '''QAbstractFileEngineHandler QAbstractFileEngineHandler.__init__()'''
         return QAbstractFileEngineHandler()
-    def create(self, _fileName):
-        """abstract QAbstractFileEngine QAbstractFileEngineHandler.create(None self, QString _fileName)"""
+    def create(self, fileName):
+        '''abstract QAbstractFileEngine QAbstractFileEngineHandler.create(QString fileName)'''
         return QAbstractFileEngine()
 
 
 class QAbstractFileEngineIterator():
     """"""
-    def __init__(self, _filters, _nameFilters):
-        """None QAbstractFileEngineIterator.__init__(None self, QDir.Filters _filters, QStringList _nameFilters)"""
-        return None
+    def __init__(self, filters, nameFilters):
+        '''void QAbstractFileEngineIterator.__init__(QDir.Filters filters, QStringList nameFilters)'''
     def currentFilePath(self):
-        """QString QAbstractFileEngineIterator.currentFilePath(None self)"""
+        '''QString QAbstractFileEngineIterator.currentFilePath()'''
         return QString()
     def currentFileInfo(self):
-        """QFileInfo QAbstractFileEngineIterator.currentFileInfo(None self)"""
+        '''QFileInfo QAbstractFileEngineIterator.currentFileInfo()'''
         return QFileInfo()
     def currentFileName(self):
-        """abstract QString QAbstractFileEngineIterator.currentFileName(None self)"""
+        '''abstract QString QAbstractFileEngineIterator.currentFileName()'''
         return QString()
     def filters(self):
-        """QDir.Filters QAbstractFileEngineIterator.filters(None self)"""
+        '''QDir.Filters QAbstractFileEngineIterator.filters()'''
         return QDir.Filters()
     def nameFilters(self):
-        """QStringList QAbstractFileEngineIterator.nameFilters(None self)"""
+        '''QStringList QAbstractFileEngineIterator.nameFilters()'''
         return QStringList()
     def path(self):
-        """QString QAbstractFileEngineIterator.path(None self)"""
+        '''QString QAbstractFileEngineIterator.path()'''
         return QString()
     def hasNext(self):
-        """abstract bool QAbstractFileEngineIterator.hasNext(None self)"""
+        '''abstract bool QAbstractFileEngineIterator.hasNext()'''
         return bool()
     def next(self):
-        """abstract QString QAbstractFileEngineIterator.next(None self)"""
+        '''abstract QString QAbstractFileEngineIterator.next()'''
         return QString()
 
 
 class QModelIndex():
     """"""
     def __init__(self):
-        """None QModelIndex.__init__(None self)"""
-        return None
-    def __init__(self, _other):
-        """None QModelIndex.__init__(None self, QModelIndex _other)"""
-        return None
+        '''void QModelIndex.__init__()'''
+    def __init__(self, other):
+        '''void QModelIndex.__init__(QModelIndex other)'''
     def __init__(self):
-        """QPersistentModelIndex QModelIndex.__init__(None self)"""
+        '''QPersistentModelIndex QModelIndex.__init__()'''
         return QPersistentModelIndex()
-    def __ge__(self, _other):
-        """bool QModelIndex.__ge__(None self, QModelIndex _other)"""
+    def __ge__(self, other):
+        '''bool QModelIndex.__ge__(QModelIndex other)'''
         return bool()
     def __hash__(self):
-        """int QModelIndex.__hash__(None self)"""
+        '''int QModelIndex.__hash__()'''
         return int()
-    def __ne__(self, _other):
-        """bool QModelIndex.__ne__(None self, QModelIndex _other)"""
+    def __ne__(self, other):
+        '''bool QModelIndex.__ne__(QModelIndex other)'''
         return bool()
-    def __lt__(self, _other):
-        """bool QModelIndex.__lt__(None self, QModelIndex _other)"""
+    def __lt__(self, other):
+        '''bool QModelIndex.__lt__(QModelIndex other)'''
         return bool()
-    def __eq__(self, _other):
-        """bool QModelIndex.__eq__(None self, QModelIndex _other)"""
+    def __eq__(self, other):
+        '''bool QModelIndex.__eq__(QModelIndex other)'''
         return bool()
-    def sibling(self, _arow, _acolumn):
-        """QModelIndex QModelIndex.sibling(None self, int _arow, int _acolumn)"""
+    def sibling(self, arow, acolumn):
+        '''QModelIndex QModelIndex.sibling(int arow, int acolumn)'''
         return QModelIndex()
     def parent(self):
-        """QModelIndex QModelIndex.parent(None self)"""
+        '''QModelIndex QModelIndex.parent()'''
         return QModelIndex()
     def isValid(self):
-        """bool QModelIndex.isValid(None self)"""
+        '''bool QModelIndex.isValid()'''
         return bool()
     def model(self):
-        """QAbstractItemModel QModelIndex.model(None self)"""
+        '''QAbstractItemModel QModelIndex.model()'''
         return QAbstractItemModel()
     def internalId(self):
-        """int QModelIndex.internalId(None self)"""
+        '''int QModelIndex.internalId()'''
         return int()
     def internalPointer(self):
-        """object QModelIndex.internalPointer(None self)"""
+        '''object QModelIndex.internalPointer()'''
         return object()
     def flags(self):
-        """Qt.ItemFlags QModelIndex.flags(None self)"""
+        '''Qt.ItemFlags QModelIndex.flags()'''
         return Qt.ItemFlags()
-    def data(self, _role):
-        """QVariant QModelIndex.data(None self, int _role)"""
+    def data(self, role = Qt.DisplayRole):
+        '''QVariant QModelIndex.data(int role = Qt.DisplayRole)'''
         return QVariant()
     def column(self):
-        """int QModelIndex.column(None self)"""
+        '''int QModelIndex.column()'''
         return int()
     def row(self):
-        """int QModelIndex.row(None self)"""
+        '''int QModelIndex.row()'''
         return int()
-    def child(self, _arow, _acolumn):
-        """QModelIndex QModelIndex.child(None self, int _arow, int _acolumn)"""
+    def child(self, arow, acolumn):
+        '''QModelIndex QModelIndex.child(int arow, int acolumn)'''
         return QModelIndex()
 
 
 class QPersistentModelIndex():
     """"""
     def __init__(self):
-        """None QPersistentModelIndex.__init__(None self)"""
-        return None
-    def __init__(self, _index):
-        """None QPersistentModelIndex.__init__(None self, QModelIndex _index)"""
-        return None
-    def __init__(self, _other):
-        """None QPersistentModelIndex.__init__(None self, QPersistentModelIndex _other)"""
-        return None
-    def __ge__(self, _other):
-        """bool QPersistentModelIndex.__ge__(None self, QPersistentModelIndex _other)"""
+        '''void QPersistentModelIndex.__init__()'''
+    def __init__(self, index):
+        '''void QPersistentModelIndex.__init__(QModelIndex index)'''
+    def __init__(self, other):
+        '''void QPersistentModelIndex.__init__(QPersistentModelIndex other)'''
+    def __ge__(self, other):
+        '''bool QPersistentModelIndex.__ge__(QPersistentModelIndex other)'''
         return bool()
     def __hash__(self):
-        """int QPersistentModelIndex.__hash__(None self)"""
+        '''int QPersistentModelIndex.__hash__()'''
         return int()
-    def __ne__(self, _other):
-        """bool QPersistentModelIndex.__ne__(None self, QPersistentModelIndex _other)"""
+    def __ne__(self, other):
+        '''bool QPersistentModelIndex.__ne__(QPersistentModelIndex other)'''
         return bool()
-    def __ne__(self, _other):
-        """bool QPersistentModelIndex.__ne__(None self, QModelIndex _other)"""
+    def __ne__(self, other):
+        '''bool QPersistentModelIndex.__ne__(QModelIndex other)'''
         return bool()
-    def __eq__(self, _other):
-        """bool QPersistentModelIndex.__eq__(None self, QPersistentModelIndex _other)"""
+    def __eq__(self, other):
+        '''bool QPersistentModelIndex.__eq__(QPersistentModelIndex other)'''
         return bool()
-    def __eq__(self, _other):
-        """bool QPersistentModelIndex.__eq__(None self, QModelIndex _other)"""
+    def __eq__(self, other):
+        '''bool QPersistentModelIndex.__eq__(QModelIndex other)'''
         return bool()
-    def __lt__(self, _other):
-        """bool QPersistentModelIndex.__lt__(None self, QPersistentModelIndex _other)"""
+    def __lt__(self, other):
+        '''bool QPersistentModelIndex.__lt__(QPersistentModelIndex other)'''
         return bool()
     def isValid(self):
-        """bool QPersistentModelIndex.isValid(None self)"""
+        '''bool QPersistentModelIndex.isValid()'''
         return bool()
     def model(self):
-        """QAbstractItemModel QPersistentModelIndex.model(None self)"""
+        '''QAbstractItemModel QPersistentModelIndex.model()'''
         return QAbstractItemModel()
-    def child(self, _row, _column):
-        """QModelIndex QPersistentModelIndex.child(None self, int _row, int _column)"""
+    def child(self, row, column):
+        '''QModelIndex QPersistentModelIndex.child(int row, int column)'''
         return QModelIndex()
-    def sibling(self, _row, _column):
-        """QModelIndex QPersistentModelIndex.sibling(None self, int _row, int _column)"""
+    def sibling(self, row, column):
+        '''QModelIndex QPersistentModelIndex.sibling(int row, int column)'''
         return QModelIndex()
     def parent(self):
-        """QModelIndex QPersistentModelIndex.parent(None self)"""
+        '''QModelIndex QPersistentModelIndex.parent()'''
         return QModelIndex()
     def flags(self):
-        """Qt.ItemFlags QPersistentModelIndex.flags(None self)"""
+        '''Qt.ItemFlags QPersistentModelIndex.flags()'''
         return Qt.ItemFlags()
-    def data(self, _role):
-        """QVariant QPersistentModelIndex.data(None self, int _role)"""
+    def data(self, role = Qt.DisplayRole):
+        '''QVariant QPersistentModelIndex.data(int role = Qt.DisplayRole)'''
         return QVariant()
     def column(self):
-        """int QPersistentModelIndex.column(None self)"""
+        '''int QPersistentModelIndex.column()'''
         return int()
     def row(self):
-        """int QPersistentModelIndex.row(None self)"""
+        '''int QPersistentModelIndex.row()'''
         return int()
 
 
 class QAbstractItemModel(QObject):
     """"""
-    def __init__(self, _parent):
-        """None QAbstractItemModel.__init__(None self, QObject _parent)"""
-        return None
-    def setRoleNames(self, _roleNames):
-        """None QAbstractItemModel.setRoleNames(None self, dict-of-int-QByteArray _roleNames)"""
-        return None
+    def __init__(self, parent = None):
+        '''void QAbstractItemModel.__init__(QObject parent = None)'''
+    def setRoleNames(self, roleNames):
+        '''void QAbstractItemModel.setRoleNames(dict-of-int-QByteArray roleNames)'''
     def endResetModel(self):
-        """None QAbstractItemModel.endResetModel(None self)"""
-        return None
+        '''void QAbstractItemModel.endResetModel()'''
     def beginResetModel(self):
-        """None QAbstractItemModel.beginResetModel(None self)"""
-        return None
+        '''void QAbstractItemModel.beginResetModel()'''
     def endMoveColumns(self):
-        """None QAbstractItemModel.endMoveColumns(None self)"""
-        return None
-    def beginMoveColumns(self, _sourceParent, _sourceFirst, _sourceLast, _destinationParent, _destinationColumn):
-        """bool QAbstractItemModel.beginMoveColumns(None self, QModelIndex _sourceParent, int _sourceFirst, int _sourceLast, QModelIndex _destinationParent, int _destinationColumn)"""
+        '''void QAbstractItemModel.endMoveColumns()'''
+    def beginMoveColumns(self, sourceParent, sourceFirst, sourceLast, destinationParent, destinationColumn):
+        '''bool QAbstractItemModel.beginMoveColumns(QModelIndex sourceParent, int sourceFirst, int sourceLast, QModelIndex destinationParent, int destinationColumn)'''
         return bool()
     def endMoveRows(self):
-        """None QAbstractItemModel.endMoveRows(None self)"""
-        return None
-    def beginMoveRows(self, _sourceParent, _sourceFirst, _sourceLast, _destinationParent, _destinationRow):
-        """bool QAbstractItemModel.beginMoveRows(None self, QModelIndex _sourceParent, int _sourceFirst, int _sourceLast, QModelIndex _destinationParent, int _destinationRow)"""
+        '''void QAbstractItemModel.endMoveRows()'''
+    def beginMoveRows(self, sourceParent, sourceFirst, sourceLast, destinationParent, destinationRow):
+        '''bool QAbstractItemModel.beginMoveRows(QModelIndex sourceParent, int sourceFirst, int sourceLast, QModelIndex destinationParent, int destinationRow)'''
         return bool()
-    def createIndex(self, _row, _column, _object):
-        """QModelIndex QAbstractItemModel.createIndex(None self, int _row, int _column, object _object)"""
+    columnsMoved = PyQt4.QtCore.pyqtSignal() # void columnsMoved(const QModelIndex&,int,int,const QModelIndex&,int) - signal
+    columnsAboutToBeMoved = PyQt4.QtCore.pyqtSignal() # void columnsAboutToBeMoved(const QModelIndex&,int,int,const QModelIndex&,int) - signal
+    rowsMoved = PyQt4.QtCore.pyqtSignal() # void rowsMoved(const QModelIndex&,int,int,const QModelIndex&,int) - signal
+    rowsAboutToBeMoved = PyQt4.QtCore.pyqtSignal() # void rowsAboutToBeMoved(const QModelIndex&,int,int,const QModelIndex&,int) - signal
+    def createIndex(self, row, column, object = 0):
+        '''QModelIndex QAbstractItemModel.createIndex(int row, int column, object object = 0)'''
         return QModelIndex()
     def roleNames(self):
-        """dict-of-int-QByteArray QAbstractItemModel.roleNames(None self)"""
+        '''dict-of-int-QByteArray QAbstractItemModel.roleNames()'''
         return dict-of-int-QByteArray()
     def supportedDragActions(self):
-        """Qt.DropActions QAbstractItemModel.supportedDragActions(None self)"""
+        '''Qt.DropActions QAbstractItemModel.supportedDragActions()'''
         return Qt.DropActions()
     def setSupportedDragActions(self):
-        """Qt.DropActions QAbstractItemModel.setSupportedDragActions(None self)"""
+        '''Qt.DropActions QAbstractItemModel.setSupportedDragActions()'''
         return Qt.DropActions()
-    def removeColumn(self, _column, _parent):
-        """bool QAbstractItemModel.removeColumn(None self, int _column, QModelIndex _parent)"""
+    def removeColumn(self, column, parent = QModelIndex()):
+        '''bool QAbstractItemModel.removeColumn(int column, QModelIndex parent = QModelIndex())'''
         return bool()
-    def removeRow(self, _row, _parent):
-        """bool QAbstractItemModel.removeRow(None self, int _row, QModelIndex _parent)"""
+    def removeRow(self, row, parent = QModelIndex()):
+        '''bool QAbstractItemModel.removeRow(int row, QModelIndex parent = QModelIndex())'''
         return bool()
-    def insertColumn(self, _column, _parent):
-        """bool QAbstractItemModel.insertColumn(None self, int _column, QModelIndex _parent)"""
+    def insertColumn(self, column, parent = QModelIndex()):
+        '''bool QAbstractItemModel.insertColumn(int column, QModelIndex parent = QModelIndex())'''
         return bool()
-    def insertRow(self, _row, _parent):
-        """bool QAbstractItemModel.insertRow(None self, int _row, QModelIndex _parent)"""
+    def insertRow(self, row, parent = QModelIndex()):
+        '''bool QAbstractItemModel.insertRow(int row, QModelIndex parent = QModelIndex())'''
         return bool()
-    def changePersistentIndexList(self, _from, _to):
-        """None QAbstractItemModel.changePersistentIndexList(None self, list-of-QModelIndex _from, list-of-QModelIndex _to)"""
-        return None
-    def changePersistentIndex(self, _from, _to):
-        """None QAbstractItemModel.changePersistentIndex(None self, QModelIndex _from, QModelIndex _to)"""
-        return None
+    def changePersistentIndexList(self, from_, to):
+        '''void QAbstractItemModel.changePersistentIndexList(list-of-QModelIndex from, list-of-QModelIndex to)'''
+    def changePersistentIndex(self, from_, to):
+        '''void QAbstractItemModel.changePersistentIndex(QModelIndex from, QModelIndex to)'''
     def reset(self):
-        """None QAbstractItemModel.reset(None self)"""
-        return None
+        '''void QAbstractItemModel.reset()'''
     def persistentIndexList(self):
-        """list-of-QModelIndex QAbstractItemModel.persistentIndexList(None self)"""
+        '''list-of-QModelIndex QAbstractItemModel.persistentIndexList()'''
         return [QModelIndex()]
     def endRemoveColumns(self):
-        """None QAbstractItemModel.endRemoveColumns(None self)"""
-        return None
-    def beginRemoveColumns(self, _parent, _first, _last):
-        """None QAbstractItemModel.beginRemoveColumns(None self, QModelIndex _parent, int _first, int _last)"""
-        return None
+        '''void QAbstractItemModel.endRemoveColumns()'''
+    def beginRemoveColumns(self, parent, first, last):
+        '''void QAbstractItemModel.beginRemoveColumns(QModelIndex parent, int first, int last)'''
     def endInsertColumns(self):
-        """None QAbstractItemModel.endInsertColumns(None self)"""
-        return None
-    def beginInsertColumns(self, _parent, _first, _last):
-        """None QAbstractItemModel.beginInsertColumns(None self, QModelIndex _parent, int _first, int _last)"""
-        return None
+        '''void QAbstractItemModel.endInsertColumns()'''
+    def beginInsertColumns(self, parent, first, last):
+        '''void QAbstractItemModel.beginInsertColumns(QModelIndex parent, int first, int last)'''
     def endRemoveRows(self):
-        """None QAbstractItemModel.endRemoveRows(None self)"""
-        return None
-    def beginRemoveRows(self, _parent, _first, _last):
-        """None QAbstractItemModel.beginRemoveRows(None self, QModelIndex _parent, int _first, int _last)"""
-        return None
+        '''void QAbstractItemModel.endRemoveRows()'''
+    def beginRemoveRows(self, parent, first, last):
+        '''void QAbstractItemModel.beginRemoveRows(QModelIndex parent, int first, int last)'''
     def endInsertRows(self):
-        """None QAbstractItemModel.endInsertRows(None self)"""
-        return None
-    def beginInsertRows(self, _parent, _first, _last):
-        """None QAbstractItemModel.beginInsertRows(None self, QModelIndex _parent, int _first, int _last)"""
-        return None
-    def decodeData(self, _row, _column, _parent, _stream):
-        """bool QAbstractItemModel.decodeData(None self, int _row, int _column, QModelIndex _parent, QDataStream _stream)"""
+        '''void QAbstractItemModel.endInsertRows()'''
+    def beginInsertRows(self, parent, first, last):
+        '''void QAbstractItemModel.beginInsertRows(QModelIndex parent, int first, int last)'''
+    def decodeData(self, row, column, parent, stream):
+        '''bool QAbstractItemModel.decodeData(int row, int column, QModelIndex parent, QDataStream stream)'''
         return bool()
-    def encodeData(self, _indexes, _stream):
-        """None QAbstractItemModel.encodeData(None self, list-of-QModelIndex _indexes, QDataStream _stream)"""
-        return None
+    def encodeData(self, indexes, stream):
+        '''void QAbstractItemModel.encodeData(list-of-QModelIndex indexes, QDataStream stream)'''
     def revert(self):
-        """None QAbstractItemModel.revert(None self)"""
-        return None
+        '''void QAbstractItemModel.revert()'''
     def submit(self):
-        """bool QAbstractItemModel.submit(None self)"""
+        '''bool QAbstractItemModel.submit()'''
         return bool()
-    def span(self, _index):
-        """QSize QAbstractItemModel.span(None self, QModelIndex _index)"""
+    modelReset = PyQt4.QtCore.pyqtSignal() # void modelReset() - signal
+    modelAboutToBeReset = PyQt4.QtCore.pyqtSignal() # void modelAboutToBeReset() - signal
+    columnsRemoved = PyQt4.QtCore.pyqtSignal() # void columnsRemoved(const QModelIndex&,int,int) - signal
+    columnsAboutToBeRemoved = PyQt4.QtCore.pyqtSignal() # void columnsAboutToBeRemoved(const QModelIndex&,int,int) - signal
+    columnsInserted = PyQt4.QtCore.pyqtSignal() # void columnsInserted(const QModelIndex&,int,int) - signal
+    columnsAboutToBeInserted = PyQt4.QtCore.pyqtSignal() # void columnsAboutToBeInserted(const QModelIndex&,int,int) - signal
+    rowsRemoved = PyQt4.QtCore.pyqtSignal() # void rowsRemoved(const QModelIndex&,int,int) - signal
+    rowsAboutToBeRemoved = PyQt4.QtCore.pyqtSignal() # void rowsAboutToBeRemoved(const QModelIndex&,int,int) - signal
+    rowsInserted = PyQt4.QtCore.pyqtSignal() # void rowsInserted(const QModelIndex&,int,int) - signal
+    rowsAboutToBeInserted = PyQt4.QtCore.pyqtSignal() # void rowsAboutToBeInserted(const QModelIndex&,int,int) - signal
+    layoutChanged = PyQt4.QtCore.pyqtSignal() # void layoutChanged() - signal
+    layoutAboutToBeChanged = PyQt4.QtCore.pyqtSignal() # void layoutAboutToBeChanged() - signal
+    headerDataChanged = PyQt4.QtCore.pyqtSignal() # void headerDataChanged(Qt::Orientation,int,int) - signal
+    dataChanged = PyQt4.QtCore.pyqtSignal() # void dataChanged(const QModelIndex&,const QModelIndex&) - signal
+    def span(self, index):
+        '''QSize QAbstractItemModel.span(QModelIndex index)'''
         return QSize()
-    def match(self, _start, _role, _value, _hits, _flags):
-        """list-of-QModelIndex QAbstractItemModel.match(None self, QModelIndex _start, int _role, QVariant _value, int _hits, Qt.MatchFlags _flags)"""
+    def match(self, start, role, value, hits = 1, flags = Qt.MatchStartsWith|Qt.MatchWrap):
+        '''list-of-QModelIndex QAbstractItemModel.match(QModelIndex start, int role, QVariant value, int hits = 1, Qt.MatchFlags flags = Qt.MatchStartsWith|Qt.MatchWrap)'''
         return [QModelIndex()]
-    def buddy(self, _index):
-        """QModelIndex QAbstractItemModel.buddy(None self, QModelIndex _index)"""
+    def buddy(self, index):
+        '''QModelIndex QAbstractItemModel.buddy(QModelIndex index)'''
         return QModelIndex()
-    def sort(self, _column, _order):
-        """None QAbstractItemModel.sort(None self, int _column, Qt.SortOrder _order)"""
-        return None
-    def flags(self, _index):
-        """Qt.ItemFlags QAbstractItemModel.flags(None self, QModelIndex _index)"""
+    def sort(self, column, order = Qt.AscendingOrder):
+        '''void QAbstractItemModel.sort(int column, Qt.SortOrder order = Qt.AscendingOrder)'''
+    def flags(self, index):
+        '''Qt.ItemFlags QAbstractItemModel.flags(QModelIndex index)'''
         return Qt.ItemFlags()
-    def canFetchMore(self, _parent):
-        """bool QAbstractItemModel.canFetchMore(None self, QModelIndex _parent)"""
+    def canFetchMore(self, parent):
+        '''bool QAbstractItemModel.canFetchMore(QModelIndex parent)'''
         return bool()
-    def fetchMore(self, _parent):
-        """None QAbstractItemModel.fetchMore(None self, QModelIndex _parent)"""
-        return None
-    def removeColumns(self, _column, _count, _parent):
-        """bool QAbstractItemModel.removeColumns(None self, int _column, int _count, QModelIndex _parent)"""
+    def fetchMore(self, parent):
+        '''void QAbstractItemModel.fetchMore(QModelIndex parent)'''
+    def removeColumns(self, column, count, parent = QModelIndex()):
+        '''bool QAbstractItemModel.removeColumns(int column, int count, QModelIndex parent = QModelIndex())'''
         return bool()
-    def removeRows(self, _row, _count, _parent):
-        """bool QAbstractItemModel.removeRows(None self, int _row, int _count, QModelIndex _parent)"""
+    def removeRows(self, row, count, parent = QModelIndex()):
+        '''bool QAbstractItemModel.removeRows(int row, int count, QModelIndex parent = QModelIndex())'''
         return bool()
-    def insertColumns(self, _column, _count, _parent):
-        """bool QAbstractItemModel.insertColumns(None self, int _column, int _count, QModelIndex _parent)"""
+    def insertColumns(self, column, count, parent = QModelIndex()):
+        '''bool QAbstractItemModel.insertColumns(int column, int count, QModelIndex parent = QModelIndex())'''
         return bool()
-    def insertRows(self, _row, _count, _parent):
-        """bool QAbstractItemModel.insertRows(None self, int _row, int _count, QModelIndex _parent)"""
+    def insertRows(self, row, count, parent = QModelIndex()):
+        '''bool QAbstractItemModel.insertRows(int row, int count, QModelIndex parent = QModelIndex())'''
         return bool()
     def supportedDropActions(self):
-        """Qt.DropActions QAbstractItemModel.supportedDropActions(None self)"""
+        '''Qt.DropActions QAbstractItemModel.supportedDropActions()'''
         return Qt.DropActions()
-    def dropMimeData(self, _data, _action, _row, _column, _parent):
-        """bool QAbstractItemModel.dropMimeData(None self, QMimeData _data, Qt.DropAction _action, int _row, int _column, QModelIndex _parent)"""
+    def dropMimeData(self, data, action, row, column, parent):
+        '''bool QAbstractItemModel.dropMimeData(QMimeData data, Qt.DropAction action, int row, int column, QModelIndex parent)'''
         return bool()
-    def mimeData(self, _indexes):
-        """QMimeData QAbstractItemModel.mimeData(None self, list-of-QModelIndex _indexes)"""
+    def mimeData(self, indexes):
+        '''QMimeData QAbstractItemModel.mimeData(list-of-QModelIndex indexes)'''
         return QMimeData()
     def mimeTypes(self):
-        """QStringList QAbstractItemModel.mimeTypes(None self)"""
+        '''QStringList QAbstractItemModel.mimeTypes()'''
         return QStringList()
-    def setItemData(self, _index, _roles):
-        """bool QAbstractItemModel.setItemData(None self, QModelIndex _index, dict-of-int-QVariant _roles)"""
+    def setItemData(self, index, roles):
+        '''bool QAbstractItemModel.setItemData(QModelIndex index, dict-of-int-QVariant roles)'''
         return bool()
-    def itemData(self, _index):
-        """dict-of-int-QVariant QAbstractItemModel.itemData(None self, QModelIndex _index)"""
+    def itemData(self, index):
+        '''dict-of-int-QVariant QAbstractItemModel.itemData(QModelIndex index)'''
         return dict-of-int-QVariant()
-    def setHeaderData(self, _section, _orientation, _value, _role):
-        """bool QAbstractItemModel.setHeaderData(None self, int _section, Qt.Orientation _orientation, QVariant _value, int _role)"""
+    def setHeaderData(self, section, orientation, value, role = Qt.EditRole):
+        '''bool QAbstractItemModel.setHeaderData(int section, Qt.Orientation orientation, QVariant value, int role = Qt.EditRole)'''
         return bool()
-    def headerData(self, _section, _orientation, _role):
-        """QVariant QAbstractItemModel.headerData(None self, int _section, Qt.Orientation _orientation, int _role)"""
+    def headerData(self, section, orientation, role = Qt.DisplayRole):
+        '''QVariant QAbstractItemModel.headerData(int section, Qt.Orientation orientation, int role = Qt.DisplayRole)'''
         return QVariant()
-    def setData(self, _index, _value, _role):
-        """bool QAbstractItemModel.setData(None self, QModelIndex _index, QVariant _value, int _role)"""
+    def setData(self, index, value, role = Qt.EditRole):
+        '''bool QAbstractItemModel.setData(QModelIndex index, QVariant value, int role = Qt.EditRole)'''
         return bool()
-    def data(self, _index, _role):
-        """abstract QVariant QAbstractItemModel.data(None self, QModelIndex _index, int _role)"""
+    def data(self, index, role = Qt.DisplayRole):
+        '''abstract QVariant QAbstractItemModel.data(QModelIndex index, int role = Qt.DisplayRole)'''
         return QVariant()
-    def hasChildren(self, _parent):
-        """bool QAbstractItemModel.hasChildren(None self, QModelIndex _parent)"""
+    def hasChildren(self, parent = QModelIndex()):
+        '''bool QAbstractItemModel.hasChildren(QModelIndex parent = QModelIndex())'''
         return bool()
-    def columnCount(self, _parent):
-        """abstract int QAbstractItemModel.columnCount(None self, QModelIndex _parent)"""
+    def columnCount(self, parent = QModelIndex()):
+        '''abstract int QAbstractItemModel.columnCount(QModelIndex parent = QModelIndex())'''
         return int()
-    def rowCount(self, _parent):
-        """abstract int QAbstractItemModel.rowCount(None self, QModelIndex _parent)"""
+    def rowCount(self, parent = QModelIndex()):
+        '''abstract int QAbstractItemModel.rowCount(QModelIndex parent = QModelIndex())'''
         return int()
-    def sibling(self, _row, _column, _idx):
-        """QModelIndex QAbstractItemModel.sibling(None self, int _row, int _column, QModelIndex _idx)"""
+    def sibling(self, row, column, idx):
+        '''QModelIndex QAbstractItemModel.sibling(int row, int column, QModelIndex idx)'''
         return QModelIndex()
-    def parent(self, _child):
-        """abstract QModelIndex QAbstractItemModel.parent(None self, QModelIndex _child)"""
+    def parent(self, child):
+        '''abstract QModelIndex QAbstractItemModel.parent(QModelIndex child)'''
         return QModelIndex()
     def parent(self):
-        """QObject QAbstractItemModel.parent(None self)"""
+        '''QObject QAbstractItemModel.parent()'''
         return QObject()
-    def index(self, _row, _column, _parent):
-        """abstract QModelIndex QAbstractItemModel.index(None self, int _row, int _column, QModelIndex _parent)"""
+    def index(self, row, column, parent = QModelIndex()):
+        '''abstract QModelIndex QAbstractItemModel.index(int row, int column, QModelIndex parent = QModelIndex())'''
         return QModelIndex()
-    def hasIndex(self, _row, _column, _parent):
-        """bool QAbstractItemModel.hasIndex(None self, int _row, int _column, QModelIndex _parent)"""
+    def hasIndex(self, row, column, parent = QModelIndex()):
+        '''bool QAbstractItemModel.hasIndex(int row, int column, QModelIndex parent = QModelIndex())'''
         return bool()
 
 
 class QAbstractTableModel(QAbstractItemModel):
     """"""
-    def __init__(self, _parent):
-        """None QAbstractTableModel.__init__(None self, QObject _parent)"""
-        return None
-    def dropMimeData(self, _data, _action, _row, _column, _parent):
-        """bool QAbstractTableModel.dropMimeData(None self, QMimeData _data, Qt.DropAction _action, int _row, int _column, QModelIndex _parent)"""
+    def __init__(self, parent = None):
+        '''void QAbstractTableModel.__init__(QObject parent = None)'''
+    def dropMimeData(self, data, action, row, column, parent):
+        '''bool QAbstractTableModel.dropMimeData(QMimeData data, Qt.DropAction action, int row, int column, QModelIndex parent)'''
         return bool()
-    def index(self, _row, _column, _parent):
-        """QModelIndex QAbstractTableModel.index(None self, int _row, int _column, QModelIndex _parent)"""
+    def index(self, row, column, parent = QModelIndex()):
+        '''QModelIndex QAbstractTableModel.index(int row, int column, QModelIndex parent = QModelIndex())'''
         return QModelIndex()
 
 
 class QAbstractListModel(QAbstractItemModel):
     """"""
-    def __init__(self, _parent):
-        """None QAbstractListModel.__init__(None self, QObject _parent)"""
-        return None
-    def dropMimeData(self, _data, _action, _row, _column, _parent):
-        """bool QAbstractListModel.dropMimeData(None self, QMimeData _data, Qt.DropAction _action, int _row, int _column, QModelIndex _parent)"""
+    def __init__(self, parent = None):
+        '''void QAbstractListModel.__init__(QObject parent = None)'''
+    def dropMimeData(self, data, action, row, column, parent):
+        '''bool QAbstractListModel.dropMimeData(QMimeData data, Qt.DropAction action, int row, int column, QModelIndex parent)'''
         return bool()
-    def index(self, _row, _column, _parent):
-        """QModelIndex QAbstractListModel.index(None self, int _row, int _column, QModelIndex _parent)"""
+    def index(self, row, column = 0, parent = QModelIndex()):
+        '''QModelIndex QAbstractListModel.index(int row, int column = 0, QModelIndex parent = QModelIndex())'''
         return QModelIndex()
 
 
 class QAbstractState(QObject):
     """"""
-    def __init__(self, _parent):
-        """None QAbstractState.__init__(None self, QState _parent)"""
-        return None
-    def event(self, _e):
-        """bool QAbstractState.event(None self, QEvent _e)"""
+    def __init__(self, parent = None):
+        '''void QAbstractState.__init__(QState parent = None)'''
+    def event(self, e):
+        '''bool QAbstractState.event(QEvent e)'''
         return bool()
-    def onExit(self, _event):
-        """abstract None QAbstractState.onExit(None self, QEvent _event)"""
-        return None
-    def onEntry(self, _event):
-        """abstract None QAbstractState.onEntry(None self, QEvent _event)"""
-        return None
+    def onExit(self, event):
+        '''abstract void QAbstractState.onExit(QEvent event)'''
+    def onEntry(self, event):
+        '''abstract void QAbstractState.onEntry(QEvent event)'''
+    exited = PyQt4.QtCore.pyqtSignal() # void exited() - signal
+    entered = PyQt4.QtCore.pyqtSignal() # void entered() - signal
     def machine(self):
-        """QStateMachine QAbstractState.machine(None self)"""
+        '''QStateMachine QAbstractState.machine()'''
         return QStateMachine()
     def parentState(self):
-        """QState QAbstractState.parentState(None self)"""
+        '''QState QAbstractState.parentState()'''
         return QState()
 
 
 class QAbstractTransition(QObject):
     """"""
-    def __init__(self, _sourceState):
-        """None QAbstractTransition.__init__(None self, QState _sourceState)"""
-        return None
-    def event(self, _e):
-        """bool QAbstractTransition.event(None self, QEvent _e)"""
+    def __init__(self, sourceState = None):
+        '''void QAbstractTransition.__init__(QState sourceState = None)'''
+    def event(self, e):
+        '''bool QAbstractTransition.event(QEvent e)'''
         return bool()
-    def onTransition(self, _event):
-        """abstract None QAbstractTransition.onTransition(None self, QEvent _event)"""
-        return None
-    def eventTest(self, _event):
-        """abstract bool QAbstractTransition.eventTest(None self, QEvent _event)"""
+    def onTransition(self, event):
+        '''abstract void QAbstractTransition.onTransition(QEvent event)'''
+    def eventTest(self, event):
+        '''abstract bool QAbstractTransition.eventTest(QEvent event)'''
         return bool()
+    triggered = PyQt4.QtCore.pyqtSignal() # void triggered() - signal
     def animations(self):
-        """list-of-QAbstractAnimation QAbstractTransition.animations(None self)"""
+        '''list-of-QAbstractAnimation QAbstractTransition.animations()'''
         return [QAbstractAnimation()]
-    def removeAnimation(self, _animation):
-        """None QAbstractTransition.removeAnimation(None self, QAbstractAnimation _animation)"""
-        return None
-    def addAnimation(self, _animation):
-        """None QAbstractTransition.addAnimation(None self, QAbstractAnimation _animation)"""
-        return None
+    def removeAnimation(self, animation):
+        '''void QAbstractTransition.removeAnimation(QAbstractAnimation animation)'''
+    def addAnimation(self, animation):
+        '''void QAbstractTransition.addAnimation(QAbstractAnimation animation)'''
     def machine(self):
-        """QStateMachine QAbstractTransition.machine(None self)"""
+        '''QStateMachine QAbstractTransition.machine()'''
         return QStateMachine()
-    def setTargetStates(self, _targets):
-        """None QAbstractTransition.setTargetStates(None self, list-of-QAbstractState _targets)"""
-        return None
+    def setTargetStates(self, targets):
+        '''void QAbstractTransition.setTargetStates(list-of-QAbstractState targets)'''
     def targetStates(self):
-        """list-of-QAbstractState QAbstractTransition.targetStates(None self)"""
+        '''list-of-QAbstractState QAbstractTransition.targetStates()'''
         return [QAbstractState()]
-    def setTargetState(self, _target):
-        """None QAbstractTransition.setTargetState(None self, QAbstractState _target)"""
-        return None
+    def setTargetState(self, target):
+        '''void QAbstractTransition.setTargetState(QAbstractState target)'''
     def targetState(self):
-        """QAbstractState QAbstractTransition.targetState(None self)"""
+        '''QAbstractState QAbstractTransition.targetState()'''
         return QAbstractState()
     def sourceState(self):
-        """QState QAbstractTransition.sourceState(None self)"""
+        '''QState QAbstractTransition.sourceState()'''
         return QState()
 
 
 class QAnimationGroup(QAbstractAnimation):
     """"""
-    def __init__(self, _parent):
-        """None QAnimationGroup.__init__(None self, QObject _parent)"""
-        return None
-    def event(self, _event):
-        """bool QAnimationGroup.event(None self, QEvent _event)"""
+    def __init__(self, parent = None):
+        '''void QAnimationGroup.__init__(QObject parent = None)'''
+    def event(self, event):
+        '''bool QAnimationGroup.event(QEvent event)'''
         return bool()
     def clear(self):
-        """None QAnimationGroup.clear(None self)"""
-        return None
-    def takeAnimation(self, _index):
-        """QAbstractAnimation QAnimationGroup.takeAnimation(None self, int _index)"""
+        '''void QAnimationGroup.clear()'''
+    def takeAnimation(self, index):
+        '''QAbstractAnimation QAnimationGroup.takeAnimation(int index)'''
         return QAbstractAnimation()
-    def removeAnimation(self, _animation):
-        """None QAnimationGroup.removeAnimation(None self, QAbstractAnimation _animation)"""
-        return None
-    def insertAnimation(self, _index, _animation):
-        """None QAnimationGroup.insertAnimation(None self, int _index, QAbstractAnimation _animation)"""
-        return None
-    def addAnimation(self, _animation):
-        """None QAnimationGroup.addAnimation(None self, QAbstractAnimation _animation)"""
-        return None
-    def indexOfAnimation(self, _animation):
-        """int QAnimationGroup.indexOfAnimation(None self, QAbstractAnimation _animation)"""
+    def removeAnimation(self, animation):
+        '''void QAnimationGroup.removeAnimation(QAbstractAnimation animation)'''
+    def insertAnimation(self, index, animation):
+        '''void QAnimationGroup.insertAnimation(int index, QAbstractAnimation animation)'''
+    def addAnimation(self, animation):
+        '''void QAnimationGroup.addAnimation(QAbstractAnimation animation)'''
+    def indexOfAnimation(self, animation):
+        '''int QAnimationGroup.indexOfAnimation(QAbstractAnimation animation)'''
         return int()
     def animationCount(self):
-        """int QAnimationGroup.animationCount(None self)"""
+        '''int QAnimationGroup.animationCount()'''
         return int()
-    def animationAt(self, _index):
-        """QAbstractAnimation QAnimationGroup.animationAt(None self, int _index)"""
+    def animationAt(self, index):
+        '''QAbstractAnimation QAnimationGroup.animationAt(int index)'''
         return QAbstractAnimation()
 
 
 class QBasicTimer():
     """"""
     def __init__(self):
-        """None QBasicTimer.__init__(None self)"""
-        return None
+        '''void QBasicTimer.__init__()'''
     def __init__(self):
-        """QBasicTimer QBasicTimer.__init__(None self)"""
+        '''QBasicTimer QBasicTimer.__init__()'''
         return QBasicTimer()
     def stop(self):
-        """None QBasicTimer.stop(None self)"""
-        return None
-    def start(self, _msec, _obj):
-        """None QBasicTimer.start(None self, int _msec, QObject _obj)"""
-        return None
+        '''void QBasicTimer.stop()'''
+    def start(self, msec, obj):
+        '''void QBasicTimer.start(int msec, QObject obj)'''
     def timerId(self):
-        """int QBasicTimer.timerId(None self)"""
+        '''int QBasicTimer.timerId()'''
         return int()
     def isActive(self):
-        """bool QBasicTimer.isActive(None self)"""
+        '''bool QBasicTimer.isActive()'''
         return bool()
 
 
 class QBitArray():
     """"""
     def __init__(self):
-        """None QBitArray.__init__(None self)"""
-        return None
-    def __init__(self, _size, _value):
-        """None QBitArray.__init__(None self, int _size, bool _value)"""
-        return None
-    def __init__(self, _other):
-        """None QBitArray.__init__(None self, QBitArray _other)"""
-        return None
+        '''void QBitArray.__init__()'''
+    def __init__(self, size, value = False):
+        '''void QBitArray.__init__(int size, bool value = False)'''
+    def __init__(self, other):
+        '''void QBitArray.__init__(QBitArray other)'''
     def __or__(self):
-        """QBitArray QBitArray.__or__(None self)"""
+        '''QBitArray QBitArray.__or__()'''
         return QBitArray()
     def __and__(self):
-        """QBitArray QBitArray.__and__(None self)"""
+        '''QBitArray QBitArray.__and__()'''
         return QBitArray()
     def __xor__(self):
-        """QBitArray QBitArray.__xor__(None self)"""
+        '''QBitArray QBitArray.__xor__()'''
         return QBitArray()
     def __hash__(self):
-        """int QBitArray.__hash__(None self)"""
+        '''int QBitArray.__hash__()'''
         return int()
-    def at(self, _i):
-        """bool QBitArray.at(None self, int _i)"""
+    def at(self, i):
+        '''bool QBitArray.at(int i)'''
         return bool()
-    def __getitem__(self, _i):
-        """bool QBitArray.__getitem__(None self, int _i)"""
+    def __getitem__(self, i):
+        '''bool QBitArray.__getitem__(int i)'''
         return bool()
-    def toggleBit(self, _i):
-        """bool QBitArray.toggleBit(None self, int _i)"""
+    def toggleBit(self, i):
+        '''bool QBitArray.toggleBit(int i)'''
         return bool()
-    def clearBit(self, _i):
-        """None QBitArray.clearBit(None self, int _i)"""
-        return None
-    def setBit(self, _i):
-        """None QBitArray.setBit(None self, int _i)"""
-        return None
-    def setBit(self, _i, _val):
-        """None QBitArray.setBit(None self, int _i, bool _val)"""
-        return None
-    def testBit(self, _i):
-        """bool QBitArray.testBit(None self, int _i)"""
+    def clearBit(self, i):
+        '''void QBitArray.clearBit(int i)'''
+    def setBit(self, i):
+        '''void QBitArray.setBit(int i)'''
+    def setBit(self, i, val):
+        '''void QBitArray.setBit(int i, bool val)'''
+    def testBit(self, i):
+        '''bool QBitArray.testBit(int i)'''
         return bool()
-    def truncate(self, _pos):
-        """None QBitArray.truncate(None self, int _pos)"""
-        return None
-    def fill(self, _val, _first, _last):
-        """None QBitArray.fill(None self, bool _val, int _first, int _last)"""
-        return None
-    def fill(self, _value, _size):
-        """bool QBitArray.fill(None self, bool _value, int _size)"""
+    def truncate(self, pos):
+        '''void QBitArray.truncate(int pos)'''
+    def fill(self, val, first, last):
+        '''void QBitArray.fill(bool val, int first, int last)'''
+    def fill(self, value, size = -1):
+        '''bool QBitArray.fill(bool value, int size = -1)'''
         return bool()
-    def __ne__(self, _a):
-        """bool QBitArray.__ne__(None self, QBitArray _a)"""
+    def __ne__(self, a):
+        '''bool QBitArray.__ne__(QBitArray a)'''
         return bool()
-    def __eq__(self, _a):
-        """bool QBitArray.__eq__(None self, QBitArray _a)"""
+    def __eq__(self, a):
+        '''bool QBitArray.__eq__(QBitArray a)'''
         return bool()
     def __invert__(self):
-        """QBitArray QBitArray.__invert__(None self)"""
+        '''QBitArray QBitArray.__invert__()'''
         return QBitArray()
     def __ixor__(self):
-        """QBitArray QBitArray.__ixor__(None self)"""
+        '''QBitArray QBitArray.__ixor__()'''
         return QBitArray()
     def __ior__(self):
-        """QBitArray QBitArray.__ior__(None self)"""
+        '''QBitArray QBitArray.__ior__()'''
         return QBitArray()
     def __iand__(self):
-        """QBitArray QBitArray.__iand__(None self)"""
+        '''QBitArray QBitArray.__iand__()'''
         return QBitArray()
     def clear(self):
-        """None QBitArray.clear(None self)"""
-        return None
+        '''void QBitArray.clear()'''
     def isDetached(self):
-        """bool QBitArray.isDetached(None self)"""
+        '''bool QBitArray.isDetached()'''
         return bool()
     def detach(self):
-        """None QBitArray.detach(None self)"""
-        return None
-    def resize(self, _size):
-        """None QBitArray.resize(None self, int _size)"""
-        return None
+        '''void QBitArray.detach()'''
+    def resize(self, size):
+        '''void QBitArray.resize(int size)'''
     def isNull(self):
-        """bool QBitArray.isNull(None self)"""
+        '''bool QBitArray.isNull()'''
         return bool()
     def isEmpty(self):
-        """bool QBitArray.isEmpty(None self)"""
+        '''bool QBitArray.isEmpty()'''
         return bool()
     def __len__(self):
-        """ QBitArray.__len__(None self)"""
+        ''' QBitArray.__len__()'''
         return ()
     def count(self):
-        """int QBitArray.count(None self)"""
+        '''int QBitArray.count()'''
         return int()
-    def count(self, _on):
-        """int QBitArray.count(None self, bool _on)"""
+    def count(self, on):
+        '''int QBitArray.count(bool on)'''
         return int()
     def size(self):
-        """int QBitArray.size(None self)"""
+        '''int QBitArray.size()'''
         return int()
 
 
 class QIODevice(QObject):
     """"""
-    NotOpen = int() # QIODevice.OpenModeFlag enum
-    ReadOnly = int() # QIODevice.OpenModeFlag enum
-    WriteOnly = int() # QIODevice.OpenModeFlag enum
-    ReadWrite = int() # QIODevice.OpenModeFlag enum
-    Append = int() # QIODevice.OpenModeFlag enum
-    Truncate = int() # QIODevice.OpenModeFlag enum
-    Text = int() # QIODevice.OpenModeFlag enum
-    Unbuffered = int() # QIODevice.OpenModeFlag enum
+    # Enum QIODevice.OpenModeFlag
+    NotOpen = 0
+    ReadOnly = 0
+    WriteOnly = 0
+    ReadWrite = 0
+    Append = 0
+    Truncate = 0
+    Text = 0
+    Unbuffered = 0
 
     def __init__(self):
-        """None QIODevice.__init__(None self)"""
-        return None
-    def __init__(self, _parent):
-        """None QIODevice.__init__(None self, QObject _parent)"""
-        return None
-    def setErrorString(self, _errorString):
-        """None QIODevice.setErrorString(None self, QString _errorString)"""
-        return None
-    def setOpenMode(self, _openMode):
-        """None QIODevice.setOpenMode(None self, QIODevice.OpenMode _openMode)"""
-        return None
-    def writeData(self, _data):
-        """abstract int QIODevice.writeData(None self, str _data)"""
+        '''void QIODevice.__init__()'''
+    def __init__(self, parent):
+        '''void QIODevice.__init__(QObject parent)'''
+    def setErrorString(self, errorString):
+        '''void QIODevice.setErrorString(QString errorString)'''
+    def setOpenMode(self, openMode):
+        '''void QIODevice.setOpenMode(QIODevice.OpenMode openMode)'''
+    def writeData(self, data):
+        '''abstract int QIODevice.writeData(str data)'''
         return int()
-    def readLineData(self, _maxlen):
-        """str QIODevice.readLineData(None self, int _maxlen)"""
+    def readLineData(self, maxlen):
+        '''str QIODevice.readLineData(int maxlen)'''
         return str()
-    def readData(self, _maxlen):
-        """abstract str QIODevice.readData(None self, int _maxlen)"""
+    def readData(self, maxlen):
+        '''abstract str QIODevice.readData(int maxlen)'''
         return str()
+    readChannelFinished = PyQt4.QtCore.pyqtSignal() # void readChannelFinished() - signal
+    aboutToClose = PyQt4.QtCore.pyqtSignal() # void aboutToClose() - signal
+    bytesWritten = PyQt4.QtCore.pyqtSignal() # void bytesWritten(qint64) - signal
+    readyRead = PyQt4.QtCore.pyqtSignal() # void readyRead() - signal
     def errorString(self):
-        """QString QIODevice.errorString(None self)"""
+        '''QString QIODevice.errorString()'''
         return QString()
-    def getChar(self, _c):
-        """bool QIODevice.getChar(None self, str _c)"""
+    def getChar(self, c):
+        '''bool QIODevice.getChar(str c)'''
         return bool()
-    def putChar(self, _c):
-        """bool QIODevice.putChar(None self, str _c)"""
+    def putChar(self, c):
+        '''bool QIODevice.putChar(str c)'''
         return bool()
-    def ungetChar(self, _c):
-        """None QIODevice.ungetChar(None self, str _c)"""
-        return None
-    def waitForBytesWritten(self, _msecs):
-        """bool QIODevice.waitForBytesWritten(None self, int _msecs)"""
+    def ungetChar(self, c):
+        '''void QIODevice.ungetChar(str c)'''
+    def waitForBytesWritten(self, msecs):
+        '''bool QIODevice.waitForBytesWritten(int msecs)'''
         return bool()
-    def waitForReadyRead(self, _msecs):
-        """bool QIODevice.waitForReadyRead(None self, int _msecs)"""
+    def waitForReadyRead(self, msecs):
+        '''bool QIODevice.waitForReadyRead(int msecs)'''
         return bool()
-    def write(self, _data):
-        """int QIODevice.write(None self, QByteArray _data)"""
+    def write(self, data):
+        '''int QIODevice.write(QByteArray data)'''
         return int()
-    def peek(self, _maxlen):
-        """QByteArray QIODevice.peek(None self, int _maxlen)"""
+    def peek(self, maxlen):
+        '''QByteArray QIODevice.peek(int maxlen)'''
         return QByteArray()
     def canReadLine(self):
-        """bool QIODevice.canReadLine(None self)"""
+        '''bool QIODevice.canReadLine()'''
         return bool()
-    def readLine(self, _maxlen):
-        """str QIODevice.readLine(None self, int _maxlen)"""
+    def readLine(self, maxlen = 0):
+        '''str QIODevice.readLine(int maxlen = 0)'''
         return str()
     def readAll(self):
-        """QByteArray QIODevice.readAll(None self)"""
+        '''QByteArray QIODevice.readAll()'''
         return QByteArray()
-    def read(self, _maxlen):
-        """str QIODevice.read(None self, int _maxlen)"""
+    def read(self, maxlen):
+        '''str QIODevice.read(int maxlen)'''
         return str()
     def bytesToWrite(self):
-        """int QIODevice.bytesToWrite(None self)"""
+        '''int QIODevice.bytesToWrite()'''
         return int()
     def bytesAvailable(self):
-        """int QIODevice.bytesAvailable(None self)"""
+        '''int QIODevice.bytesAvailable()'''
         return int()
     def reset(self):
-        """bool QIODevice.reset(None self)"""
+        '''bool QIODevice.reset()'''
         return bool()
     def atEnd(self):
-        """bool QIODevice.atEnd(None self)"""
+        '''bool QIODevice.atEnd()'''
         return bool()
-    def seek(self, _pos):
-        """bool QIODevice.seek(None self, int _pos)"""
+    def seek(self, pos):
+        '''bool QIODevice.seek(int pos)'''
         return bool()
     def size(self):
-        """int QIODevice.size(None self)"""
+        '''int QIODevice.size()'''
         return int()
     def pos(self):
-        """int QIODevice.pos(None self)"""
+        '''int QIODevice.pos()'''
         return int()
     def close(self):
-        """None QIODevice.close(None self)"""
-        return None
-    def open(self, _mode):
-        """bool QIODevice.open(None self, QIODevice.OpenMode _mode)"""
+        '''void QIODevice.close()'''
+    def open(self, mode):
+        '''bool QIODevice.open(QIODevice.OpenMode mode)'''
         return bool()
     def isSequential(self):
-        """bool QIODevice.isSequential(None self)"""
+        '''bool QIODevice.isSequential()'''
         return bool()
     def isWritable(self):
-        """bool QIODevice.isWritable(None self)"""
+        '''bool QIODevice.isWritable()'''
         return bool()
     def isReadable(self):
-        """bool QIODevice.isReadable(None self)"""
+        '''bool QIODevice.isReadable()'''
         return bool()
     def isOpen(self):
-        """bool QIODevice.isOpen(None self)"""
+        '''bool QIODevice.isOpen()'''
         return bool()
     def isTextModeEnabled(self):
-        """bool QIODevice.isTextModeEnabled(None self)"""
+        '''bool QIODevice.isTextModeEnabled()'''
         return bool()
-    def setTextModeEnabled(self, _enabled):
-        """None QIODevice.setTextModeEnabled(None self, bool _enabled)"""
-        return None
+    def setTextModeEnabled(self, enabled):
+        '''void QIODevice.setTextModeEnabled(bool enabled)'''
     def openMode(self):
-        """QIODevice.OpenMode QIODevice.openMode(None self)"""
+        '''QIODevice.OpenMode QIODevice.openMode()'''
         return QIODevice.OpenMode()
+    class OpenMode():
+        """"""
+        def __init__(self):
+            '''QIODevice.OpenMode QIODevice.OpenMode.__init__()'''
+            return QIODevice.OpenMode()
+        def __init__(self):
+            '''int QIODevice.OpenMode.__init__()'''
+            return int()
+        def __init__(self):
+            '''void QIODevice.OpenMode.__init__()'''
+        def __bool__(self):
+            '''int QIODevice.OpenMode.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool QIODevice.OpenMode.__ne__(QIODevice.OpenMode f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool QIODevice.OpenMode.__eq__(QIODevice.OpenMode f)'''
+            return bool()
+        def __invert__(self):
+            '''QIODevice.OpenMode QIODevice.OpenMode.__invert__()'''
+            return QIODevice.OpenMode()
+        def __and__(self, mask):
+            '''QIODevice.OpenMode QIODevice.OpenMode.__and__(int mask)'''
+            return QIODevice.OpenMode()
+        def __xor__(self, f):
+            '''QIODevice.OpenMode QIODevice.OpenMode.__xor__(QIODevice.OpenMode f)'''
+            return QIODevice.OpenMode()
+        def __xor__(self, f):
+            '''QIODevice.OpenMode QIODevice.OpenMode.__xor__(int f)'''
+            return QIODevice.OpenMode()
+        def __or__(self, f):
+            '''QIODevice.OpenMode QIODevice.OpenMode.__or__(QIODevice.OpenMode f)'''
+            return QIODevice.OpenMode()
+        def __or__(self, f):
+            '''QIODevice.OpenMode QIODevice.OpenMode.__or__(int f)'''
+            return QIODevice.OpenMode()
+        def __int__(self):
+            '''int QIODevice.OpenMode.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''QIODevice.OpenMode QIODevice.OpenMode.__ixor__(QIODevice.OpenMode f)'''
+            return QIODevice.OpenMode()
+        def __ior__(self, f):
+            '''QIODevice.OpenMode QIODevice.OpenMode.__ior__(QIODevice.OpenMode f)'''
+            return QIODevice.OpenMode()
+        def __iand__(self, mask):
+            '''QIODevice.OpenMode QIODevice.OpenMode.__iand__(int mask)'''
+            return QIODevice.OpenMode()
 
 
 class QBuffer(QIODevice):
     """"""
-    def __init__(self, _parent):
-        """None QBuffer.__init__(None self, QObject _parent)"""
-        return None
-    def __init__(self, _byteArray, _parent):
-        """None QBuffer.__init__(None self, QByteArray _byteArray, QObject _parent)"""
-        return None
+    def __init__(self, parent = None):
+        '''void QBuffer.__init__(QObject parent = None)'''
+    def __init__(self, byteArray, parent = None):
+        '''void QBuffer.__init__(QByteArray byteArray, QObject parent = None)'''
     def disconnectNotify(self):
-        """SIGNAL() QBuffer.disconnectNotify(None self)"""
+        '''SIGNAL() QBuffer.disconnectNotify()'''
         return SIGNAL()()
     def connectNotify(self):
-        """SIGNAL() QBuffer.connectNotify(None self)"""
+        '''SIGNAL() QBuffer.connectNotify()'''
         return SIGNAL()()
-    def writeData(self, _data):
-        """int QBuffer.writeData(None self, str _data)"""
+    def writeData(self, data):
+        '''int QBuffer.writeData(str data)'''
         return int()
-    def readData(self, _maxlen):
-        """str QBuffer.readData(None self, int _maxlen)"""
+    def readData(self, maxlen):
+        '''str QBuffer.readData(int maxlen)'''
         return str()
     def canReadLine(self):
-        """bool QBuffer.canReadLine(None self)"""
+        '''bool QBuffer.canReadLine()'''
         return bool()
     def atEnd(self):
-        """bool QBuffer.atEnd(None self)"""
+        '''bool QBuffer.atEnd()'''
         return bool()
-    def seek(self, _off):
-        """bool QBuffer.seek(None self, int _off)"""
+    def seek(self, off):
+        '''bool QBuffer.seek(int off)'''
         return bool()
     def pos(self):
-        """int QBuffer.pos(None self)"""
+        '''int QBuffer.pos()'''
         return int()
     def size(self):
-        """int QBuffer.size(None self)"""
+        '''int QBuffer.size()'''
         return int()
     def close(self):
-        """None QBuffer.close(None self)"""
-        return None
-    def open(self, _openMode):
-        """bool QBuffer.open(None self, QIODevice.OpenMode _openMode)"""
+        '''void QBuffer.close()'''
+    def open(self, openMode):
+        '''bool QBuffer.open(QIODevice.OpenMode openMode)'''
         return bool()
-    def setData(self, _data):
-        """None QBuffer.setData(None self, QByteArray _data)"""
-        return None
-    def setData(self, _adata):
-        """None QBuffer.setData(None self, str _adata)"""
-        return None
-    def setBuffer(self, _a):
-        """None QBuffer.setBuffer(None self, QByteArray _a)"""
-        return None
+    def setData(self, data):
+        '''void QBuffer.setData(QByteArray data)'''
+    def setData(self, adata):
+        '''void QBuffer.setData(str adata)'''
+    def setBuffer(self, a):
+        '''void QBuffer.setBuffer(QByteArray a)'''
     def data(self):
-        """QByteArray QBuffer.data(None self)"""
+        '''QByteArray QBuffer.data()'''
         return QByteArray()
     def buffer(self):
-        """QByteArray QBuffer.buffer(None self)"""
+        '''QByteArray QBuffer.buffer()'''
         return QByteArray()
 
 
 class QByteArray():
     """"""
     def __init__(self):
-        """None QByteArray.__init__(None self)"""
-        return None
-    def __init__(self, _size, _c):
-        """None QByteArray.__init__(None self, int _size, str _c)"""
-        return None
-    def __init__(self, _a):
-        """None QByteArray.__init__(None self, QByteArray _a)"""
-        return None
-    def __add__(self, _a2):
-        """QByteArray QByteArray.__add__(None self, QByteArray _a2)"""
+        '''void QByteArray.__init__()'''
+    def __init__(self, size, c):
+        '''void QByteArray.__init__(int size, str c)'''
+    def __init__(self, a):
+        '''void QByteArray.__init__(QByteArray a)'''
+    def __add__(self, a2):
+        '''QByteArray QByteArray.__add__(QByteArray a2)'''
         return QByteArray()
-    def __add__(self, _s):
-        """QString QByteArray.__add__(None self, QString _s)"""
+    def __add__(self, s):
+        '''QString QByteArray.__add__(QString s)'''
         return QString()
-    def repeated(self, _times):
-        """QByteArray QByteArray.repeated(None self, int _times)"""
+    def repeated(self, times):
+        '''QByteArray QByteArray.repeated(int times)'''
         return QByteArray()
-    def fromPercentEncoding(self, _input, _percent):
-        """QByteArray QByteArray.fromPercentEncoding(None self, QByteArray _input, str _percent)"""
+    def fromPercentEncoding(self, input, percent = '%'):
+        '''static QByteArray QByteArray.fromPercentEncoding(QByteArray input, str percent = '%')'''
         return QByteArray()
-    def toPercentEncoding(self, _exclude, _include, _percent):
-        """QByteArray QByteArray.toPercentEncoding(None self, QByteArray _exclude, QByteArray _include, str _percent)"""
+    def toPercentEncoding(self, exclude = QByteArray(), include = QByteArray(), percent = '%'):
+        '''QByteArray QByteArray.toPercentEncoding(QByteArray exclude = QByteArray(), QByteArray include = QByteArray(), str percent = '%')'''
         return QByteArray()
     def toHex(self):
-        """QByteArray QByteArray.toHex(None self)"""
+        '''QByteArray QByteArray.toHex()'''
         return QByteArray()
-    def contains(self, _a):
-        """bool QByteArray.contains(None self, QByteArray _a)"""
+    def contains(self, a):
+        '''bool QByteArray.contains(QByteArray a)'''
         return bool()
-    def push_front(self, _a):
-        """None QByteArray.push_front(None self, QByteArray _a)"""
-        return None
-    def push_back(self, _a):
-        """None QByteArray.push_back(None self, QByteArray _a)"""
-        return None
+    def push_front(self, a):
+        '''void QByteArray.push_front(QByteArray a)'''
+    def push_back(self, a):
+        '''void QByteArray.push_back(QByteArray a)'''
     def squeeze(self):
-        """None QByteArray.squeeze(None self)"""
-        return None
-    def reserve(self, _size):
-        """None QByteArray.reserve(None self, int _size)"""
-        return None
+        '''void QByteArray.squeeze()'''
+    def reserve(self, size):
+        '''void QByteArray.reserve(int size)'''
     def capacity(self):
-        """int QByteArray.capacity(None self)"""
+        '''int QByteArray.capacity()'''
         return int()
     def data(self):
-        """str QByteArray.data(None self)"""
+        '''str QByteArray.data()'''
         return str()
     def isEmpty(self):
-        """bool QByteArray.isEmpty(None self)"""
+        '''bool QByteArray.isEmpty()'''
         return bool()
-    def __imul__(self, _m):
-        """QByteArray QByteArray.__imul__(None self, int _m)"""
+    def __imul__(self, m):
+        '''QByteArray QByteArray.__imul__(int m)'''
         return QByteArray()
-    def __mul__(self, _m):
-        """QByteArray QByteArray.__mul__(None self, int _m)"""
+    def __mul__(self, m):
+        '''QByteArray QByteArray.__mul__(int m)'''
         return QByteArray()
     def __repr__(self):
-        """str QByteArray.__repr__(None self)"""
+        '''str QByteArray.__repr__()'''
         return str()
     def __str__(self):
-        """str QByteArray.__str__(None self)"""
+        '''str QByteArray.__str__()'''
         return str()
     def __hash__(self):
-        """int QByteArray.__hash__(None self)"""
+        '''int QByteArray.__hash__()'''
         return int()
-    def __contains__(self, _a):
-        """int QByteArray.__contains__(None self, QByteArray _a)"""
+    def __contains__(self, a):
+        '''int QByteArray.__contains__(QByteArray a)'''
         return int()
-    def __getitem__(self, _i):
-        """str QByteArray.__getitem__(None self, int _i)"""
+    def __getitem__(self, i):
+        '''str QByteArray.__getitem__(int i)'''
         return str()
-    def __getitem__(self, _slice):
-        """QByteArray QByteArray.__getitem__(None self, slice _slice)"""
+    def __getitem__(self, slice):
+        '''QByteArray QByteArray.__getitem__(slice slice)'''
         return QByteArray()
-    def at(self, _i):
-        """str QByteArray.at(None self, int _i)"""
+    def at(self, i):
+        '''str QByteArray.at(int i)'''
         return str()
     def size(self):
-        """int QByteArray.size(None self)"""
+        '''int QByteArray.size()'''
         return int()
     def isNull(self):
-        """bool QByteArray.isNull(None self)"""
+        '''bool QByteArray.isNull()'''
         return bool()
     def length(self):
-        """int QByteArray.length(None self)"""
+        '''int QByteArray.length()'''
         return int()
     def __len__(self):
-        """ QByteArray.__len__(None self)"""
+        ''' QByteArray.__len__()'''
         return ()
-    def fromHex(self, _hexEncoded):
-        """QByteArray QByteArray.fromHex(None self, QByteArray _hexEncoded)"""
+    def fromHex(self, hexEncoded):
+        '''static QByteArray QByteArray.fromHex(QByteArray hexEncoded)'''
         return QByteArray()
     def fromRawData(self):
-        """str QByteArray.fromRawData(None self)"""
+        '''static str QByteArray.fromRawData()'''
         return str()
-    def fromBase64(self, _base64):
-        """QByteArray QByteArray.fromBase64(None self, QByteArray _base64)"""
+    def fromBase64(self, base64):
+        '''static QByteArray QByteArray.fromBase64(QByteArray base64)'''
         return QByteArray()
-    def number(self, _n, _base):
-        """QByteArray QByteArray.number(None self, int _n, int _base)"""
+    def number(self, n, base = 10):
+        '''static QByteArray QByteArray.number(int n, int base = 10)'''
         return QByteArray()
-    def number(self, _n, _format, _precision):
-        """QByteArray QByteArray.number(None self, float _n, str _format, int _precision)"""
+    def number(self, n, format = 'g', precision = 6):
+        '''static QByteArray QByteArray.number(float n, str format = 'g', int precision = 6)'''
         return QByteArray()
-    def number(self, _n, _base):
-        """QByteArray QByteArray.number(None self, int _n, int _base)"""
+    def number(self, n, base = 10):
+        '''static QByteArray QByteArray.number(int n, int base = 10)'''
         return QByteArray()
-    def number(self, _n, _base):
-        """QByteArray QByteArray.number(None self, int _n, int _base)"""
+    def number(self, n, base = 10):
+        '''static QByteArray QByteArray.number(int n, int base = 10)'''
         return QByteArray()
-    def setNum(self, _n, _base):
-        """QByteArray QByteArray.setNum(None self, int _n, int _base)"""
+    def setNum(self, n, base = 10):
+        '''QByteArray QByteArray.setNum(int n, int base = 10)'''
         return QByteArray()
-    def setNum(self, _n, _format, _precision):
-        """QByteArray QByteArray.setNum(None self, float _n, str _format, int _precision)"""
+    def setNum(self, n, format = 'g', precision = 6):
+        '''QByteArray QByteArray.setNum(float n, str format = 'g', int precision = 6)'''
         return QByteArray()
-    def setNum(self, _n, _base):
-        """QByteArray QByteArray.setNum(None self, int _n, int _base)"""
+    def setNum(self, n, base = 10):
+        '''QByteArray QByteArray.setNum(int n, int base = 10)'''
         return QByteArray()
-    def setNum(self, _n, _base):
-        """QByteArray QByteArray.setNum(None self, int _n, int _base)"""
+    def setNum(self, n, base = 10):
+        '''QByteArray QByteArray.setNum(int n, int base = 10)'''
         return QByteArray()
     def toBase64(self):
-        """QByteArray QByteArray.toBase64(None self)"""
+        '''QByteArray QByteArray.toBase64()'''
         return QByteArray()
-    def toDouble(self, _ok):
-        """float QByteArray.toDouble(None self, bool _ok)"""
+    def toDouble(self, ok):
+        '''float QByteArray.toDouble(bool ok)'''
         return float()
-    def toFloat(self, _ok):
-        """float QByteArray.toFloat(None self, bool _ok)"""
+    def toFloat(self, ok):
+        '''float QByteArray.toFloat(bool ok)'''
         return float()
-    def toULongLong(self, _ok, _base):
-        """int QByteArray.toULongLong(None self, bool _ok, int _base)"""
+    def toULongLong(self, ok, base = 10):
+        '''int QByteArray.toULongLong(bool ok, int base = 10)'''
         return int()
-    def toLongLong(self, _ok, _base):
-        """int QByteArray.toLongLong(None self, bool _ok, int _base)"""
+    def toLongLong(self, ok, base = 10):
+        '''int QByteArray.toLongLong(bool ok, int base = 10)'''
         return int()
-    def toULong(self, _ok, _base):
-        """int QByteArray.toULong(None self, bool _ok, int _base)"""
+    def toULong(self, ok, base = 10):
+        '''int QByteArray.toULong(bool ok, int base = 10)'''
         return int()
-    def toLong(self, _ok, _base):
-        """int QByteArray.toLong(None self, bool _ok, int _base)"""
+    def toLong(self, ok, base = 10):
+        '''int QByteArray.toLong(bool ok, int base = 10)'''
         return int()
-    def toUInt(self, _ok, _base):
-        """int QByteArray.toUInt(None self, bool _ok, int _base)"""
+    def toUInt(self, ok, base = 10):
+        '''int QByteArray.toUInt(bool ok, int base = 10)'''
         return int()
-    def toInt(self, _ok, _base):
-        """int QByteArray.toInt(None self, bool _ok, int _base)"""
+    def toInt(self, ok, base = 10):
+        '''int QByteArray.toInt(bool ok, int base = 10)'''
         return int()
-    def toUShort(self, _ok, _base):
-        """int QByteArray.toUShort(None self, bool _ok, int _base)"""
+    def toUShort(self, ok, base = 10):
+        '''int QByteArray.toUShort(bool ok, int base = 10)'''
         return int()
-    def toShort(self, _ok, _base):
-        """int QByteArray.toShort(None self, bool _ok, int _base)"""
+    def toShort(self, ok, base = 10):
+        '''int QByteArray.toShort(bool ok, int base = 10)'''
         return int()
-    def __ge__(self, _s2):
-        """bool QByteArray.__ge__(None self, QString _s2)"""
+    def __ge__(self, s2):
+        '''bool QByteArray.__ge__(QString s2)'''
         return bool()
-    def __ge__(self, _a2):
-        """bool QByteArray.__ge__(None self, QByteArray _a2)"""
+    def __ge__(self, a2):
+        '''bool QByteArray.__ge__(QByteArray a2)'''
         return bool()
-    def __le__(self, _s2):
-        """bool QByteArray.__le__(None self, QString _s2)"""
+    def __le__(self, s2):
+        '''bool QByteArray.__le__(QString s2)'''
         return bool()
-    def __le__(self, _a2):
-        """bool QByteArray.__le__(None self, QByteArray _a2)"""
+    def __le__(self, a2):
+        '''bool QByteArray.__le__(QByteArray a2)'''
         return bool()
-    def __gt__(self, _s2):
-        """bool QByteArray.__gt__(None self, QString _s2)"""
+    def __gt__(self, s2):
+        '''bool QByteArray.__gt__(QString s2)'''
         return bool()
-    def __gt__(self, _a2):
-        """bool QByteArray.__gt__(None self, QByteArray _a2)"""
+    def __gt__(self, a2):
+        '''bool QByteArray.__gt__(QByteArray a2)'''
         return bool()
-    def __lt__(self, _s2):
-        """bool QByteArray.__lt__(None self, QString _s2)"""
+    def __lt__(self, s2):
+        '''bool QByteArray.__lt__(QString s2)'''
         return bool()
-    def __lt__(self, _a2):
-        """bool QByteArray.__lt__(None self, QByteArray _a2)"""
+    def __lt__(self, a2):
+        '''bool QByteArray.__lt__(QByteArray a2)'''
         return bool()
-    def __ne__(self, _s2):
-        """bool QByteArray.__ne__(None self, QString _s2)"""
+    def __ne__(self, s2):
+        '''bool QByteArray.__ne__(QString s2)'''
         return bool()
-    def __ne__(self, _a2):
-        """bool QByteArray.__ne__(None self, QByteArray _a2)"""
+    def __ne__(self, a2):
+        '''bool QByteArray.__ne__(QByteArray a2)'''
         return bool()
-    def __eq__(self, _s2):
-        """bool QByteArray.__eq__(None self, QString _s2)"""
+    def __eq__(self, s2):
+        '''bool QByteArray.__eq__(QString s2)'''
         return bool()
-    def __eq__(self, _a2):
-        """bool QByteArray.__eq__(None self, QByteArray _a2)"""
+    def __eq__(self, a2):
+        '''bool QByteArray.__eq__(QByteArray a2)'''
         return bool()
-    def __iadd__(self, _a):
-        """QByteArray QByteArray.__iadd__(None self, QByteArray _a)"""
+    def __iadd__(self, a):
+        '''QByteArray QByteArray.__iadd__(QByteArray a)'''
         return QByteArray()
-    def __iadd__(self, _s):
-        """QByteArray QByteArray.__iadd__(None self, QString _s)"""
+    def __iadd__(self, s):
+        '''QByteArray QByteArray.__iadd__(QString s)'''
         return QByteArray()
-    def split(self, _sep):
-        """list-of-QByteArray QByteArray.split(None self, str _sep)"""
+    def split(self, sep):
+        '''list-of-QByteArray QByteArray.split(str sep)'''
         return [QByteArray()]
-    def replace(self, _index, _len, _s):
-        """QByteArray QByteArray.replace(None self, int _index, int _len, QByteArray _s)"""
+    def replace(self, index, len, s):
+        '''QByteArray QByteArray.replace(int index, int len, QByteArray s)'''
         return QByteArray()
-    def replace(self, _before, _after):
-        """QByteArray QByteArray.replace(None self, QByteArray _before, QByteArray _after)"""
+    def replace(self, before, after):
+        '''QByteArray QByteArray.replace(QByteArray before, QByteArray after)'''
         return QByteArray()
-    def replace(self, _before, _after):
-        """QByteArray QByteArray.replace(None self, QString _before, QByteArray _after)"""
+    def replace(self, before, after):
+        '''QByteArray QByteArray.replace(QString before, QByteArray after)'''
         return QByteArray()
-    def remove(self, _index, _len):
-        """QByteArray QByteArray.remove(None self, int _index, int _len)"""
+    def remove(self, index, len):
+        '''QByteArray QByteArray.remove(int index, int len)'''
         return QByteArray()
-    def insert(self, _i, _a):
-        """QByteArray QByteArray.insert(None self, int _i, QByteArray _a)"""
+    def insert(self, i, a):
+        '''QByteArray QByteArray.insert(int i, QByteArray a)'''
         return QByteArray()
-    def insert(self, _i, _s):
-        """QByteArray QByteArray.insert(None self, int _i, QString _s)"""
+    def insert(self, i, s):
+        '''QByteArray QByteArray.insert(int i, QString s)'''
         return QByteArray()
-    def append(self, _a):
-        """QByteArray QByteArray.append(None self, QByteArray _a)"""
+    def append(self, a):
+        '''QByteArray QByteArray.append(QByteArray a)'''
         return QByteArray()
-    def append(self, _s):
-        """QByteArray QByteArray.append(None self, QString _s)"""
+    def append(self, s):
+        '''QByteArray QByteArray.append(QString s)'''
         return QByteArray()
-    def prepend(self, _a):
-        """QByteArray QByteArray.prepend(None self, QByteArray _a)"""
+    def prepend(self, a):
+        '''QByteArray QByteArray.prepend(QByteArray a)'''
         return QByteArray()
-    def rightJustified(self, _width, _fill, _truncate):
-        """QByteArray QByteArray.rightJustified(None self, int _width, str _fill, bool _truncate)"""
+    def rightJustified(self, width, fill = ' ', truncate = False):
+        '''QByteArray QByteArray.rightJustified(int width, str fill = ' ', bool truncate = False)'''
         return QByteArray()
-    def leftJustified(self, _width, _fill, _truncate):
-        """QByteArray QByteArray.leftJustified(None self, int _width, str _fill, bool _truncate)"""
+    def leftJustified(self, width, fill = ' ', truncate = False):
+        '''QByteArray QByteArray.leftJustified(int width, str fill = ' ', bool truncate = False)'''
         return QByteArray()
     def simplified(self):
-        """QByteArray QByteArray.simplified(None self)"""
+        '''QByteArray QByteArray.simplified()'''
         return QByteArray()
     def trimmed(self):
-        """QByteArray QByteArray.trimmed(None self)"""
+        '''QByteArray QByteArray.trimmed()'''
         return QByteArray()
     def toUpper(self):
-        """QByteArray QByteArray.toUpper(None self)"""
+        '''QByteArray QByteArray.toUpper()'''
         return QByteArray()
     def toLower(self):
-        """QByteArray QByteArray.toLower(None self)"""
+        '''QByteArray QByteArray.toLower()'''
         return QByteArray()
-    def chop(self, _n):
-        """None QByteArray.chop(None self, int _n)"""
-        return None
-    def truncate(self, _pos):
-        """None QByteArray.truncate(None self, int _pos)"""
-        return None
-    def endsWith(self, _a):
-        """bool QByteArray.endsWith(None self, QByteArray _a)"""
+    def chop(self, n):
+        '''void QByteArray.chop(int n)'''
+    def truncate(self, pos):
+        '''void QByteArray.truncate(int pos)'''
+    def endsWith(self, a):
+        '''bool QByteArray.endsWith(QByteArray a)'''
         return bool()
-    def startsWith(self, _a):
-        """bool QByteArray.startsWith(None self, QByteArray _a)"""
+    def startsWith(self, a):
+        '''bool QByteArray.startsWith(QByteArray a)'''
         return bool()
-    def mid(self, _pos, _length):
-        """QByteArray QByteArray.mid(None self, int _pos, int _length)"""
+    def mid(self, pos, length = -1):
+        '''QByteArray QByteArray.mid(int pos, int length = -1)'''
         return QByteArray()
-    def right(self, _len):
-        """QByteArray QByteArray.right(None self, int _len)"""
+    def right(self, len):
+        '''QByteArray QByteArray.right(int len)'''
         return QByteArray()
-    def left(self, _len):
-        """QByteArray QByteArray.left(None self, int _len)"""
+    def left(self, len):
+        '''QByteArray QByteArray.left(int len)'''
         return QByteArray()
-    def count(self, _a):
-        """int QByteArray.count(None self, QByteArray _a)"""
+    def count(self, a):
+        '''int QByteArray.count(QByteArray a)'''
         return int()
     def count(self):
-        """int QByteArray.count(None self)"""
+        '''int QByteArray.count()'''
         return int()
-    def lastIndexOf(self, _ba, _from):
-        """int QByteArray.lastIndexOf(None self, QByteArray _ba, int _from)"""
+    def lastIndexOf(self, ba, from_ = -1):
+        '''int QByteArray.lastIndexOf(QByteArray ba, int from = -1)'''
         return int()
-    def lastIndexOf(self, _str, _from):
-        """int QByteArray.lastIndexOf(None self, QString _str, int _from)"""
+    def lastIndexOf(self, str, from_ = -1):
+        '''int QByteArray.lastIndexOf(QString str, int from = -1)'''
         return int()
-    def indexOf(self, _ba, _from):
-        """int QByteArray.indexOf(None self, QByteArray _ba, int _from)"""
+    def indexOf(self, ba, from_ = 0):
+        '''int QByteArray.indexOf(QByteArray ba, int from = 0)'''
         return int()
-    def indexOf(self, _str, _from):
-        """int QByteArray.indexOf(None self, QString _str, int _from)"""
+    def indexOf(self, str, from_ = 0):
+        '''int QByteArray.indexOf(QString str, int from = 0)'''
         return int()
     def clear(self):
-        """None QByteArray.clear(None self)"""
-        return None
-    def fill(self, _ch, _size):
-        """QByteArray QByteArray.fill(None self, str _ch, int _size)"""
+        '''void QByteArray.clear()'''
+    def fill(self, ch, size = -1):
+        '''QByteArray QByteArray.fill(str ch, int size = -1)'''
         return QByteArray()
-    def resize(self, _size):
-        """None QByteArray.resize(None self, int _size)"""
-        return None
+    def resize(self, size):
+        '''void QByteArray.resize(int size)'''
 
 
 class QByteArrayMatcher():
     """"""
     def __init__(self):
-        """None QByteArrayMatcher.__init__(None self)"""
-        return None
-    def __init__(self, _pattern):
-        """None QByteArrayMatcher.__init__(None self, QByteArray _pattern)"""
-        return None
-    def __init__(self, _other):
-        """None QByteArrayMatcher.__init__(None self, QByteArrayMatcher _other)"""
-        return None
+        '''void QByteArrayMatcher.__init__()'''
+    def __init__(self, pattern):
+        '''void QByteArrayMatcher.__init__(QByteArray pattern)'''
+    def __init__(self, other):
+        '''void QByteArrayMatcher.__init__(QByteArrayMatcher other)'''
     def pattern(self):
-        """QByteArray QByteArrayMatcher.pattern(None self)"""
+        '''QByteArray QByteArrayMatcher.pattern()'''
         return QByteArray()
-    def indexIn(self, _ba, _from):
-        """int QByteArrayMatcher.indexIn(None self, QByteArray _ba, int _from)"""
+    def indexIn(self, ba, from_ = 0):
+        '''int QByteArrayMatcher.indexIn(QByteArray ba, int from = 0)'''
         return int()
-    def setPattern(self, _pattern):
-        """None QByteArrayMatcher.setPattern(None self, QByteArray _pattern)"""
-        return None
+    def setPattern(self, pattern):
+        '''void QByteArrayMatcher.setPattern(QByteArray pattern)'''
 
 
 class QLatin1Char():
     """"""
-    def __init__(self, _c):
-        """None QLatin1Char.__init__(None self, str _c)"""
-        return None
+    def __init__(self, c):
+        '''void QLatin1Char.__init__(str c)'''
     def __init__(self):
-        """QLatin1Char QLatin1Char.__init__(None self)"""
+        '''QLatin1Char QLatin1Char.__init__()'''
         return QLatin1Char()
     def unicode(self):
-        """int QLatin1Char.unicode(None self)"""
+        '''int QLatin1Char.unicode()'''
         return int()
     def toLatin1(self):
-        """str QLatin1Char.toLatin1(None self)"""
+        '''str QLatin1Char.toLatin1()'''
         return str()
     def __repr__(self):
-        """str QLatin1Char.__repr__(None self)"""
+        '''str QLatin1Char.__repr__()'''
         return str()
 
 
 class QChar():
     """"""
-    Unicode_Unassigned = int() # QChar.UnicodeVersion enum
-    Unicode_1_1 = int() # QChar.UnicodeVersion enum
-    Unicode_2_0 = int() # QChar.UnicodeVersion enum
-    Unicode_2_1_2 = int() # QChar.UnicodeVersion enum
-    Unicode_3_0 = int() # QChar.UnicodeVersion enum
-    Unicode_3_1 = int() # QChar.UnicodeVersion enum
-    Unicode_3_2 = int() # QChar.UnicodeVersion enum
-    Unicode_4_0 = int() # QChar.UnicodeVersion enum
-    Unicode_4_1 = int() # QChar.UnicodeVersion enum
-    Unicode_5_0 = int() # QChar.UnicodeVersion enum
+    # Enum QChar.UnicodeVersion
+    Unicode_Unassigned = 0
+    Unicode_1_1 = 0
+    Unicode_2_0 = 0
+    Unicode_2_1_2 = 0
+    Unicode_3_0 = 0
+    Unicode_3_1 = 0
+    Unicode_3_2 = 0
+    Unicode_4_0 = 0
+    Unicode_4_1 = 0
+    Unicode_5_0 = 0
 
-    Combining_BelowLeftAttached = int() # QChar.CombiningClass enum
-    Combining_BelowAttached = int() # QChar.CombiningClass enum
-    Combining_BelowRightAttached = int() # QChar.CombiningClass enum
-    Combining_LeftAttached = int() # QChar.CombiningClass enum
-    Combining_RightAttached = int() # QChar.CombiningClass enum
-    Combining_AboveLeftAttached = int() # QChar.CombiningClass enum
-    Combining_AboveAttached = int() # QChar.CombiningClass enum
-    Combining_AboveRightAttached = int() # QChar.CombiningClass enum
-    Combining_BelowLeft = int() # QChar.CombiningClass enum
-    Combining_Below = int() # QChar.CombiningClass enum
-    Combining_BelowRight = int() # QChar.CombiningClass enum
-    Combining_Left = int() # QChar.CombiningClass enum
-    Combining_Right = int() # QChar.CombiningClass enum
-    Combining_AboveLeft = int() # QChar.CombiningClass enum
-    Combining_Above = int() # QChar.CombiningClass enum
-    Combining_AboveRight = int() # QChar.CombiningClass enum
-    Combining_DoubleBelow = int() # QChar.CombiningClass enum
-    Combining_DoubleAbove = int() # QChar.CombiningClass enum
-    Combining_IotaSubscript = int() # QChar.CombiningClass enum
+    # Enum QChar.CombiningClass
+    Combining_BelowLeftAttached = 0
+    Combining_BelowAttached = 0
+    Combining_BelowRightAttached = 0
+    Combining_LeftAttached = 0
+    Combining_RightAttached = 0
+    Combining_AboveLeftAttached = 0
+    Combining_AboveAttached = 0
+    Combining_AboveRightAttached = 0
+    Combining_BelowLeft = 0
+    Combining_Below = 0
+    Combining_BelowRight = 0
+    Combining_Left = 0
+    Combining_Right = 0
+    Combining_AboveLeft = 0
+    Combining_Above = 0
+    Combining_AboveRight = 0
+    Combining_DoubleBelow = 0
+    Combining_DoubleAbove = 0
+    Combining_IotaSubscript = 0
 
-    OtherJoining = int() # QChar.Joining enum
-    Dual = int() # QChar.Joining enum
-    Right = int() # QChar.Joining enum
-    Center = int() # QChar.Joining enum
+    # Enum QChar.Joining
+    OtherJoining = 0
+    Dual = 0
+    Right = 0
+    Center = 0
 
-    NoDecomposition = int() # QChar.Decomposition enum
-    Canonical = int() # QChar.Decomposition enum
-    Font = int() # QChar.Decomposition enum
-    NoBreak = int() # QChar.Decomposition enum
-    Initial = int() # QChar.Decomposition enum
-    Medial = int() # QChar.Decomposition enum
-    Final = int() # QChar.Decomposition enum
-    Isolated = int() # QChar.Decomposition enum
-    Circle = int() # QChar.Decomposition enum
-    Super = int() # QChar.Decomposition enum
-    Sub = int() # QChar.Decomposition enum
-    Vertical = int() # QChar.Decomposition enum
-    Wide = int() # QChar.Decomposition enum
-    Narrow = int() # QChar.Decomposition enum
-    Small = int() # QChar.Decomposition enum
-    Square = int() # QChar.Decomposition enum
-    Compat = int() # QChar.Decomposition enum
-    Fraction = int() # QChar.Decomposition enum
+    # Enum QChar.Decomposition
+    NoDecomposition = 0
+    Canonical = 0
+    Font = 0
+    NoBreak = 0
+    Initial = 0
+    Medial = 0
+    Final = 0
+    Isolated = 0
+    Circle = 0
+    Super = 0
+    Sub = 0
+    Vertical = 0
+    Wide = 0
+    Narrow = 0
+    Small = 0
+    Square = 0
+    Compat = 0
+    Fraction = 0
 
-    DirL = int() # QChar.Direction enum
-    DirR = int() # QChar.Direction enum
-    DirEN = int() # QChar.Direction enum
-    DirES = int() # QChar.Direction enum
-    DirET = int() # QChar.Direction enum
-    DirAN = int() # QChar.Direction enum
-    DirCS = int() # QChar.Direction enum
-    DirB = int() # QChar.Direction enum
-    DirS = int() # QChar.Direction enum
-    DirWS = int() # QChar.Direction enum
-    DirON = int() # QChar.Direction enum
-    DirLRE = int() # QChar.Direction enum
-    DirLRO = int() # QChar.Direction enum
-    DirAL = int() # QChar.Direction enum
-    DirRLE = int() # QChar.Direction enum
-    DirRLO = int() # QChar.Direction enum
-    DirPDF = int() # QChar.Direction enum
-    DirNSM = int() # QChar.Direction enum
-    DirBN = int() # QChar.Direction enum
+    # Enum QChar.Direction
+    DirL = 0
+    DirR = 0
+    DirEN = 0
+    DirES = 0
+    DirET = 0
+    DirAN = 0
+    DirCS = 0
+    DirB = 0
+    DirS = 0
+    DirWS = 0
+    DirON = 0
+    DirLRE = 0
+    DirLRO = 0
+    DirAL = 0
+    DirRLE = 0
+    DirRLO = 0
+    DirPDF = 0
+    DirNSM = 0
+    DirBN = 0
 
-    NoCategory = int() # QChar.Category enum
-    Mark_NonSpacing = int() # QChar.Category enum
-    Mark_SpacingCombining = int() # QChar.Category enum
-    Mark_Enclosing = int() # QChar.Category enum
-    Number_DecimalDigit = int() # QChar.Category enum
-    Number_Letter = int() # QChar.Category enum
-    Number_Other = int() # QChar.Category enum
-    Separator_Space = int() # QChar.Category enum
-    Separator_Line = int() # QChar.Category enum
-    Separator_Paragraph = int() # QChar.Category enum
-    Other_Control = int() # QChar.Category enum
-    Other_Format = int() # QChar.Category enum
-    Other_Surrogate = int() # QChar.Category enum
-    Other_PrivateUse = int() # QChar.Category enum
-    Other_NotAssigned = int() # QChar.Category enum
-    Letter_Uppercase = int() # QChar.Category enum
-    Letter_Lowercase = int() # QChar.Category enum
-    Letter_Titlecase = int() # QChar.Category enum
-    Letter_Modifier = int() # QChar.Category enum
-    Letter_Other = int() # QChar.Category enum
-    Punctuation_Connector = int() # QChar.Category enum
-    Punctuation_Dash = int() # QChar.Category enum
-    Punctuation_Open = int() # QChar.Category enum
-    Punctuation_Close = int() # QChar.Category enum
-    Punctuation_InitialQuote = int() # QChar.Category enum
-    Punctuation_FinalQuote = int() # QChar.Category enum
-    Punctuation_Other = int() # QChar.Category enum
-    Symbol_Math = int() # QChar.Category enum
-    Symbol_Currency = int() # QChar.Category enum
-    Symbol_Modifier = int() # QChar.Category enum
-    Symbol_Other = int() # QChar.Category enum
-    Punctuation_Dask = int() # QChar.Category enum
+    # Enum QChar.Category
+    NoCategory = 0
+    Mark_NonSpacing = 0
+    Mark_SpacingCombining = 0
+    Mark_Enclosing = 0
+    Number_DecimalDigit = 0
+    Number_Letter = 0
+    Number_Other = 0
+    Separator_Space = 0
+    Separator_Line = 0
+    Separator_Paragraph = 0
+    Other_Control = 0
+    Other_Format = 0
+    Other_Surrogate = 0
+    Other_PrivateUse = 0
+    Other_NotAssigned = 0
+    Letter_Uppercase = 0
+    Letter_Lowercase = 0
+    Letter_Titlecase = 0
+    Letter_Modifier = 0
+    Letter_Other = 0
+    Punctuation_Connector = 0
+    Punctuation_Dash = 0
+    Punctuation_Open = 0
+    Punctuation_Close = 0
+    Punctuation_InitialQuote = 0
+    Punctuation_FinalQuote = 0
+    Punctuation_Other = 0
+    Symbol_Math = 0
+    Symbol_Currency = 0
+    Symbol_Modifier = 0
+    Symbol_Other = 0
+    Punctuation_Dask = 0
 
-    Null = int() # QChar.SpecialCharacter enum
-    Nbsp = int() # QChar.SpecialCharacter enum
-    ReplacementCharacter = int() # QChar.SpecialCharacter enum
-    ObjectReplacementCharacter = int() # QChar.SpecialCharacter enum
-    ByteOrderMark = int() # QChar.SpecialCharacter enum
-    ByteOrderSwapped = int() # QChar.SpecialCharacter enum
-    ParagraphSeparator = int() # QChar.SpecialCharacter enum
-    LineSeparator = int() # QChar.SpecialCharacter enum
+    # Enum QChar.SpecialCharacter
+    Null = 0
+    Nbsp = 0
+    ReplacementCharacter = 0
+    ObjectReplacementCharacter = 0
+    ByteOrderMark = 0
+    ByteOrderSwapped = 0
+    ParagraphSeparator = 0
+    LineSeparator = 0
 
     def __init__(self):
-        """None QChar.__init__(None self)"""
-        return None
-    def __init__(self, _c):
-        """None QChar.__init__(None self, str _c)"""
-        return None
-    def __init__(self, _ch):
-        """None QChar.__init__(None self, QLatin1Char _ch)"""
-        return None
-    def __init__(self, _c, _r):
-        """None QChar.__init__(None self, str _c, str _r)"""
-        return None
-    def __init__(self, _rc):
-        """None QChar.__init__(None self, int _rc)"""
-        return None
-    def __init__(self, _s):
-        """None QChar.__init__(None self, QChar.SpecialCharacter _s)"""
-        return None
+        '''void QChar.__init__()'''
+    def __init__(self, c):
+        '''void QChar.__init__(str c)'''
+    def __init__(self, ch):
+        '''void QChar.__init__(QLatin1Char ch)'''
+    def __init__(self, c, r):
+        '''void QChar.__init__(str c, str r)'''
+    def __init__(self, rc):
+        '''void QChar.__init__(int rc)'''
+    def __init__(self, s):
+        '''void QChar.__init__(QChar.SpecialCharacter s)'''
     def __init__(self):
-        """QChar QChar.__init__(None self)"""
+        '''QChar QChar.__init__()'''
         return QChar()
-    def __eq__(self, _c2):
-        """bool QChar.__eq__(None self, QChar _c2)"""
+    def __eq__(self, c2):
+        '''bool QChar.__eq__(QChar c2)'''
         return bool()
-    def __ne__(self, _c2):
-        """bool QChar.__ne__(None self, QChar _c2)"""
+    def __ne__(self, c2):
+        '''bool QChar.__ne__(QChar c2)'''
         return bool()
-    def __lt__(self, _c2):
-        """bool QChar.__lt__(None self, QChar _c2)"""
+    def __lt__(self, c2):
+        '''bool QChar.__lt__(QChar c2)'''
         return bool()
-    def __le__(self, _c2):
-        """bool QChar.__le__(None self, QChar _c2)"""
+    def __le__(self, c2):
+        '''bool QChar.__le__(QChar c2)'''
         return bool()
-    def __gt__(self, _c2):
-        """bool QChar.__gt__(None self, QChar _c2)"""
+    def __gt__(self, c2):
+        '''bool QChar.__gt__(QChar c2)'''
         return bool()
-    def __ge__(self, _c2):
-        """bool QChar.__ge__(None self, QChar _c2)"""
+    def __ge__(self, c2):
+        '''bool QChar.__ge__(QChar c2)'''
         return bool()
-    def __add__(self, _s2):
-        """QString QChar.__add__(None self, QString _s2)"""
+    def __add__(self, s2):
+        '''QString QChar.__add__(QString s2)'''
         return QString()
-    def requiresSurrogates(self, _ucs4):
-        """bool QChar.requiresSurrogates(None self, int _ucs4)"""
+    def requiresSurrogates(self, ucs4):
+        '''static bool QChar.requiresSurrogates(int ucs4)'''
         return bool()
-    def lowSurrogate(self, _ucs4):
-        """int QChar.lowSurrogate(None self, int _ucs4)"""
+    def lowSurrogate(self, ucs4):
+        '''static int QChar.lowSurrogate(int ucs4)'''
         return int()
-    def highSurrogate(self, _ucs4):
-        """int QChar.highSurrogate(None self, int _ucs4)"""
+    def highSurrogate(self, ucs4):
+        '''static int QChar.highSurrogate(int ucs4)'''
         return int()
-    def surrogateToUcs4(self, _high, _low):
-        """int QChar.surrogateToUcs4(None self, int _high, int _low)"""
+    def surrogateToUcs4(self, high, low):
+        '''static int QChar.surrogateToUcs4(int high, int low)'''
         return int()
-    def surrogateToUcs4(self, _high, _low):
-        """int QChar.surrogateToUcs4(None self, QChar _high, QChar _low)"""
+    def surrogateToUcs4(self, high, low):
+        '''static int QChar.surrogateToUcs4(QChar high, QChar low)'''
         return int()
     def isLowSurrogate(self):
-        """bool QChar.isLowSurrogate(None self)"""
+        '''bool QChar.isLowSurrogate()'''
         return bool()
-    def isLowSurrogate(self, _ucs4):
-        """bool QChar.isLowSurrogate(None self, int _ucs4)"""
+    def isLowSurrogate(self, ucs4):
+        '''static bool QChar.isLowSurrogate(int ucs4)'''
         return bool()
     def isHighSurrogate(self):
-        """bool QChar.isHighSurrogate(None self)"""
+        '''bool QChar.isHighSurrogate()'''
         return bool()
-    def isHighSurrogate(self, _ucs4):
-        """bool QChar.isHighSurrogate(None self, int _ucs4)"""
+    def isHighSurrogate(self, ucs4):
+        '''static bool QChar.isHighSurrogate(int ucs4)'''
         return bool()
     def isTitleCase(self):
-        """bool QChar.isTitleCase(None self)"""
+        '''bool QChar.isTitleCase()'''
         return bool()
     def toCaseFolded(self):
-        """QChar QChar.toCaseFolded(None self)"""
+        '''QChar QChar.toCaseFolded()'''
         return QChar()
-    def toCaseFolded(self, _ucs4):
-        """int QChar.toCaseFolded(None self, int _ucs4)"""
+    def toCaseFolded(self, ucs4):
+        '''static int QChar.toCaseFolded(int ucs4)'''
         return int()
     def toTitleCase(self):
-        """QChar QChar.toTitleCase(None self)"""
+        '''QChar QChar.toTitleCase()'''
         return QChar()
-    def toTitleCase(self, _ucs4):
-        """int QChar.toTitleCase(None self, int _ucs4)"""
+    def toTitleCase(self, ucs4):
+        '''static int QChar.toTitleCase(int ucs4)'''
         return int()
-    def setRow(self, _arow):
-        """None QChar.setRow(None self, str _arow)"""
-        return None
-    def setCell(self, _acell):
-        """None QChar.setCell(None self, str _acell)"""
-        return None
-    def fromLatin1(self, _c):
-        """QChar QChar.fromLatin1(None self, str _c)"""
+    def setRow(self, arow):
+        '''void QChar.setRow(str arow)'''
+    def setCell(self, acell):
+        '''void QChar.setCell(str acell)'''
+    def fromLatin1(self, c):
+        '''static QChar QChar.fromLatin1(str c)'''
         return QChar()
     def toLatin1(self):
-        """str QChar.toLatin1(None self)"""
+        '''str QChar.toLatin1()'''
         return str()
     def row(self):
-        """str QChar.row(None self)"""
+        '''str QChar.row()'''
         return str()
     def cell(self):
-        """str QChar.cell(None self)"""
+        '''str QChar.cell()'''
         return str()
     def isSymbol(self):
-        """bool QChar.isSymbol(None self)"""
+        '''bool QChar.isSymbol()'''
         return bool()
     def isDigit(self):
-        """bool QChar.isDigit(None self)"""
+        '''bool QChar.isDigit()'''
         return bool()
     def isLetterOrNumber(self):
-        """bool QChar.isLetterOrNumber(None self)"""
+        '''bool QChar.isLetterOrNumber()'''
         return bool()
     def isNumber(self):
-        """bool QChar.isNumber(None self)"""
+        '''bool QChar.isNumber()'''
         return bool()
     def isLetter(self):
-        """bool QChar.isLetter(None self)"""
+        '''bool QChar.isLetter()'''
         return bool()
     def isMark(self):
-        """bool QChar.isMark(None self)"""
+        '''bool QChar.isMark()'''
         return bool()
     def isSpace(self):
-        """bool QChar.isSpace(None self)"""
+        '''bool QChar.isSpace()'''
         return bool()
     def isPunct(self):
-        """bool QChar.isPunct(None self)"""
+        '''bool QChar.isPunct()'''
         return bool()
     def isPrint(self):
-        """bool QChar.isPrint(None self)"""
+        '''bool QChar.isPrint()'''
         return bool()
     def isNull(self):
-        """bool QChar.isNull(None self)"""
+        '''bool QChar.isNull()'''
         return bool()
-    def fromAscii(self, _c):
-        """QChar QChar.fromAscii(None self, str _c)"""
+    def fromAscii(self, c):
+        '''static QChar QChar.fromAscii(str c)'''
         return QChar()
     def unicode(self):
-        """int QChar.unicode(None self)"""
+        '''int QChar.unicode()'''
         return int()
     def toAscii(self):
-        """str QChar.toAscii(None self)"""
+        '''str QChar.toAscii()'''
         return str()
     def unicodeVersion(self):
-        """QChar.UnicodeVersion QChar.unicodeVersion(None self)"""
+        '''QChar.UnicodeVersion QChar.unicodeVersion()'''
         return QChar.UnicodeVersion()
-    def unicodeVersion(self, _ucs4):
-        """QChar.UnicodeVersion QChar.unicodeVersion(None self, int _ucs4)"""
+    def unicodeVersion(self, ucs4):
+        '''static QChar.UnicodeVersion QChar.unicodeVersion(int ucs4)'''
         return QChar.UnicodeVersion()
     def combiningClass(self):
-        """str QChar.combiningClass(None self)"""
+        '''str QChar.combiningClass()'''
         return str()
-    def combiningClass(self, _ucs4):
-        """str QChar.combiningClass(None self, int _ucs4)"""
+    def combiningClass(self, ucs4):
+        '''static str QChar.combiningClass(int ucs4)'''
         return str()
     def decompositionTag(self):
-        """QChar.Decomposition QChar.decompositionTag(None self)"""
+        '''QChar.Decomposition QChar.decompositionTag()'''
         return QChar.Decomposition()
-    def decompositionTag(self, _ucs4):
-        """QChar.Decomposition QChar.decompositionTag(None self, int _ucs4)"""
+    def decompositionTag(self, ucs4):
+        '''static QChar.Decomposition QChar.decompositionTag(int ucs4)'''
         return QChar.Decomposition()
     def decomposition(self):
-        """QString QChar.decomposition(None self)"""
+        '''QString QChar.decomposition()'''
         return QString()
-    def decomposition(self, _ucs4):
-        """QString QChar.decomposition(None self, int _ucs4)"""
+    def decomposition(self, ucs4):
+        '''static QString QChar.decomposition(int ucs4)'''
         return QString()
     def mirroredChar(self):
-        """QChar QChar.mirroredChar(None self)"""
+        '''QChar QChar.mirroredChar()'''
         return QChar()
-    def mirroredChar(self, _ucs4):
-        """int QChar.mirroredChar(None self, int _ucs4)"""
+    def mirroredChar(self, ucs4):
+        '''static int QChar.mirroredChar(int ucs4)'''
         return int()
     def isUpper(self):
-        """bool QChar.isUpper(None self)"""
+        '''bool QChar.isUpper()'''
         return bool()
     def isLower(self):
-        """bool QChar.isLower(None self)"""
+        '''bool QChar.isLower()'''
         return bool()
     def hasMirrored(self):
-        """bool QChar.hasMirrored(None self)"""
+        '''bool QChar.hasMirrored()'''
         return bool()
     def joining(self):
-        """QChar.Joining QChar.joining(None self)"""
+        '''QChar.Joining QChar.joining()'''
         return QChar.Joining()
-    def joining(self, _ucs4):
-        """QChar.Joining QChar.joining(None self, int _ucs4)"""
+    def joining(self, ucs4):
+        '''static QChar.Joining QChar.joining(int ucs4)'''
         return QChar.Joining()
     def direction(self):
-        """QChar.Direction QChar.direction(None self)"""
+        '''QChar.Direction QChar.direction()'''
         return QChar.Direction()
-    def direction(self, _ucs4):
-        """QChar.Direction QChar.direction(None self, int _ucs4)"""
+    def direction(self, ucs4):
+        '''static QChar.Direction QChar.direction(int ucs4)'''
         return QChar.Direction()
     def category(self):
-        """QChar.Category QChar.category(None self)"""
+        '''QChar.Category QChar.category()'''
         return QChar.Category()
-    def category(self, _ucs4):
-        """QChar.Category QChar.category(None self, int _ucs4)"""
+    def category(self, ucs4):
+        '''static QChar.Category QChar.category(int ucs4)'''
         return QChar.Category()
     def toUpper(self):
-        """QChar QChar.toUpper(None self)"""
+        '''QChar QChar.toUpper()'''
         return QChar()
-    def toUpper(self, _ucs4):
-        """int QChar.toUpper(None self, int _ucs4)"""
+    def toUpper(self, ucs4):
+        '''static int QChar.toUpper(int ucs4)'''
         return int()
     def toLower(self):
-        """QChar QChar.toLower(None self)"""
+        '''QChar QChar.toLower()'''
         return QChar()
-    def toLower(self, _ucs4):
-        """int QChar.toLower(None self, int _ucs4)"""
+    def toLower(self, ucs4):
+        '''static int QChar.toLower(int ucs4)'''
         return int()
     def digitValue(self):
-        """int QChar.digitValue(None self)"""
+        '''int QChar.digitValue()'''
         return int()
-    def digitValue(self, _ucs4):
-        """int QChar.digitValue(None self, int _ucs4)"""
+    def digitValue(self, ucs4):
+        '''static int QChar.digitValue(int ucs4)'''
         return int()
     def __hash__(self):
-        """int QChar.__hash__(None self)"""
+        '''int QChar.__hash__()'''
         return int()
     def __repr__(self):
-        """str QChar.__repr__(None self)"""
+        '''str QChar.__repr__()'''
         return str()
 
 
 class QCoreApplication(QObject):
     """"""
-    CodecForTr = int() # QCoreApplication.Encoding enum
-    UnicodeUTF8 = int() # QCoreApplication.Encoding enum
-    DefaultCodec = int() # QCoreApplication.Encoding enum
+    # Enum QCoreApplication.Encoding
+    CodecForTr = 0
+    UnicodeUTF8 = 0
+    DefaultCodec = 0
 
-    def __init__(self, _argv):
-        """None QCoreApplication.__init__(None self, list-of-str _argv)"""
-        return None
+    def __init__(self, argv):
+        '''void QCoreApplication.__init__(list-of-str argv)'''
     def applicationPid(self):
-        """int QCoreApplication.applicationPid(None self)"""
+        '''static int QCoreApplication.applicationPid()'''
         return int()
     def applicationVersion(self):
-        """QString QCoreApplication.applicationVersion(None self)"""
+        '''static QString QCoreApplication.applicationVersion()'''
         return QString()
-    def setApplicationVersion(self, _version):
-        """None QCoreApplication.setApplicationVersion(None self, QString _version)"""
-        return None
+    def setApplicationVersion(self, version):
+        '''static void QCoreApplication.setApplicationVersion(QString version)'''
     def event(self):
-        """QEvent QCoreApplication.event(None self)"""
+        '''QEvent QCoreApplication.event()'''
         return QEvent()
+    aboutToQuit = PyQt4.QtCore.pyqtSignal() # void aboutToQuit() - signal
     def quit(self):
-        """None QCoreApplication.quit(None self)"""
-        return None
-    def testAttribute(self, _attribute):
-        """bool QCoreApplication.testAttribute(None self, Qt.ApplicationAttribute _attribute)"""
+        '''static void QCoreApplication.quit()'''
+    def testAttribute(self, attribute):
+        '''static bool QCoreApplication.testAttribute(Qt.ApplicationAttribute attribute)'''
         return bool()
-    def setAttribute(self, _attribute, _on):
-        """None QCoreApplication.setAttribute(None self, Qt.ApplicationAttribute _attribute, bool _on)"""
-        return None
+    def setAttribute(self, attribute, on = True):
+        '''static void QCoreApplication.setAttribute(Qt.ApplicationAttribute attribute, bool on = True)'''
     def flush(self):
-        """None QCoreApplication.flush(None self)"""
-        return None
-    def translate(self, _context, _sourceText, _disambiguation, _encoding):
-        """QString QCoreApplication.translate(None self, str _context, str _sourceText, str _disambiguation, QCoreApplication.Encoding _encoding)"""
+        '''static void QCoreApplication.flush()'''
+    def translate(self, context, sourceText, disambiguation = None, encoding = QCoreApplication.CodecForTr):
+        '''static QString QCoreApplication.translate(str context, str sourceText, str disambiguation = None, QCoreApplication.Encoding encoding = QCoreApplication.CodecForTr)'''
         return QString()
-    def translate(self, _context, _sourceText, _disambiguation, _encoding, _n):
-        """QString QCoreApplication.translate(None self, str _context, str _sourceText, str _disambiguation, QCoreApplication.Encoding _encoding, int _n)"""
+    def translate(self, context, sourceText, disambiguation, encoding, n):
+        '''static QString QCoreApplication.translate(str context, str sourceText, str disambiguation, QCoreApplication.Encoding encoding, int n)'''
         return QString()
     def removeTranslator(self):
-        """QTranslator QCoreApplication.removeTranslator(None self)"""
+        '''static QTranslator QCoreApplication.removeTranslator()'''
         return QTranslator()
     def installTranslator(self):
-        """QTranslator QCoreApplication.installTranslator(None self)"""
+        '''static QTranslator QCoreApplication.installTranslator()'''
         return QTranslator()
     def removeLibraryPath(self):
-        """QString QCoreApplication.removeLibraryPath(None self)"""
+        '''static QString QCoreApplication.removeLibraryPath()'''
         return QString()
     def addLibraryPath(self):
-        """QString QCoreApplication.addLibraryPath(None self)"""
+        '''static QString QCoreApplication.addLibraryPath()'''
         return QString()
     def libraryPaths(self):
-        """QStringList QCoreApplication.libraryPaths(None self)"""
+        '''static QStringList QCoreApplication.libraryPaths()'''
         return QStringList()
     def setLibraryPaths(self):
-        """QStringList QCoreApplication.setLibraryPaths(None self)"""
+        '''static QStringList QCoreApplication.setLibraryPaths()'''
         return QStringList()
     def applicationFilePath(self):
-        """QString QCoreApplication.applicationFilePath(None self)"""
+        '''static QString QCoreApplication.applicationFilePath()'''
         return QString()
     def applicationDirPath(self):
-        """QString QCoreApplication.applicationDirPath(None self)"""
+        '''static QString QCoreApplication.applicationDirPath()'''
         return QString()
     def closingDown(self):
-        """bool QCoreApplication.closingDown(None self)"""
+        '''static bool QCoreApplication.closingDown()'''
         return bool()
     def startingUp(self):
-        """bool QCoreApplication.startingUp(None self)"""
+        '''static bool QCoreApplication.startingUp()'''
         return bool()
     def notify(self):
-        """QEvent QCoreApplication.notify(None self)"""
+        '''QEvent QCoreApplication.notify()'''
         return QEvent()
     def hasPendingEvents(self):
-        """bool QCoreApplication.hasPendingEvents(None self)"""
+        '''static bool QCoreApplication.hasPendingEvents()'''
         return bool()
-    def removePostedEvents(self, _receiver):
-        """None QCoreApplication.removePostedEvents(None self, QObject _receiver)"""
-        return None
-    def removePostedEvents(self, _receiver, _eventType):
-        """None QCoreApplication.removePostedEvents(None self, QObject _receiver, int _eventType)"""
-        return None
-    def sendPostedEvents(self, _receiver, _event_type):
-        """None QCoreApplication.sendPostedEvents(None self, QObject _receiver, int _event_type)"""
-        return None
+    def removePostedEvents(self, receiver):
+        '''static void QCoreApplication.removePostedEvents(QObject receiver)'''
+    def removePostedEvents(self, receiver, eventType):
+        '''static void QCoreApplication.removePostedEvents(QObject receiver, int eventType)'''
+    def sendPostedEvents(self, receiver, event_type):
+        '''static void QCoreApplication.sendPostedEvents(QObject receiver, int event_type)'''
     def sendPostedEvents(self):
-        """None QCoreApplication.sendPostedEvents(None self)"""
-        return None
-    def postEvent(self, _receiver, _event):
-        """None QCoreApplication.postEvent(None self, QObject _receiver, QEvent _event)"""
-        return None
-    def postEvent(self, _receiver, _event, _priority):
-        """None QCoreApplication.postEvent(None self, QObject _receiver, QEvent _event, int _priority)"""
-        return None
-    def sendEvent(self, _receiver, _event):
-        """bool QCoreApplication.sendEvent(None self, QObject _receiver, QEvent _event)"""
+        '''static void QCoreApplication.sendPostedEvents()'''
+    def postEvent(self, receiver, event):
+        '''static void QCoreApplication.postEvent(QObject receiver, QEvent event)'''
+    def postEvent(self, receiver, event, priority):
+        '''static void QCoreApplication.postEvent(QObject receiver, QEvent event, int priority)'''
+    def sendEvent(self, receiver, event):
+        '''static bool QCoreApplication.sendEvent(QObject receiver, QEvent event)'''
         return bool()
-    def exit(self, _returnCode):
-        """None QCoreApplication.exit(None self, int _returnCode)"""
-        return None
-    def processEvents(self, _flags):
-        """None QCoreApplication.processEvents(None self, QEventLoop.ProcessEventsFlags _flags)"""
-        return None
-    def processEvents(self, _flags, _maxtime):
-        """None QCoreApplication.processEvents(None self, QEventLoop.ProcessEventsFlags _flags, int _maxtime)"""
-        return None
+    def exit(self, returnCode = 0):
+        '''static void QCoreApplication.exit(int returnCode = 0)'''
+    def processEvents(self, flags = QEventLoop.AllEvents):
+        '''static void QCoreApplication.processEvents(QEventLoop.ProcessEventsFlags flags = QEventLoop.AllEvents)'''
+    def processEvents(self, flags, maxtime):
+        '''static void QCoreApplication.processEvents(QEventLoop.ProcessEventsFlags flags, int maxtime)'''
     def exec_(self):
-        """int QCoreApplication.exec_(None self)"""
+        '''static int QCoreApplication.exec_()'''
         return int()
     def instance(self):
-        """QCoreApplication QCoreApplication.instance(None self)"""
+        '''static QCoreApplication QCoreApplication.instance()'''
         return QCoreApplication()
     def arguments(self):
-        """QStringList QCoreApplication.arguments(None self)"""
+        '''static QStringList QCoreApplication.arguments()'''
         return QStringList()
     def applicationName(self):
-        """QString QCoreApplication.applicationName(None self)"""
+        '''static QString QCoreApplication.applicationName()'''
         return QString()
-    def setApplicationName(self, _application):
-        """None QCoreApplication.setApplicationName(None self, QString _application)"""
-        return None
+    def setApplicationName(self, application):
+        '''static void QCoreApplication.setApplicationName(QString application)'''
     def organizationName(self):
-        """QString QCoreApplication.organizationName(None self)"""
+        '''static QString QCoreApplication.organizationName()'''
         return QString()
-    def setOrganizationName(self, _orgName):
-        """None QCoreApplication.setOrganizationName(None self, QString _orgName)"""
-        return None
+    def setOrganizationName(self, orgName):
+        '''static void QCoreApplication.setOrganizationName(QString orgName)'''
     def organizationDomain(self):
-        """QString QCoreApplication.organizationDomain(None self)"""
+        '''static QString QCoreApplication.organizationDomain()'''
         return QString()
-    def setOrganizationDomain(self, _orgDomain):
-        """None QCoreApplication.setOrganizationDomain(None self, QString _orgDomain)"""
-        return None
+    def setOrganizationDomain(self, orgDomain):
+        '''static void QCoreApplication.setOrganizationDomain(QString orgDomain)'''
     def argv(self):
-        """list-of-str QCoreApplication.argv(None self)"""
+        '''static list-of-str QCoreApplication.argv()'''
         return [str()]
     def argc(self):
-        """int QCoreApplication.argc(None self)"""
+        '''static int QCoreApplication.argc()'''
         return int()
 
 
 class QEvent():
     """"""
-    __kdevpythondocumentation_builtin_None = int() # QEvent.Type enum
-    Timer = int() # QEvent.Type enum
-    MouseButtonPress = int() # QEvent.Type enum
-    MouseButtonRelease = int() # QEvent.Type enum
-    MouseButtonDblClick = int() # QEvent.Type enum
-    MouseMove = int() # QEvent.Type enum
-    KeyPress = int() # QEvent.Type enum
-    KeyRelease = int() # QEvent.Type enum
-    FocusIn = int() # QEvent.Type enum
-    FocusOut = int() # QEvent.Type enum
-    Enter = int() # QEvent.Type enum
-    Leave = int() # QEvent.Type enum
-    Paint = int() # QEvent.Type enum
-    Move = int() # QEvent.Type enum
-    Resize = int() # QEvent.Type enum
-    Show = int() # QEvent.Type enum
-    Hide = int() # QEvent.Type enum
-    Close = int() # QEvent.Type enum
-    ParentChange = int() # QEvent.Type enum
-    ParentAboutToChange = int() # QEvent.Type enum
-    WindowActivate = int() # QEvent.Type enum
-    WindowDeactivate = int() # QEvent.Type enum
-    ShowToParent = int() # QEvent.Type enum
-    HideToParent = int() # QEvent.Type enum
-    Wheel = int() # QEvent.Type enum
-    WindowTitleChange = int() # QEvent.Type enum
-    WindowIconChange = int() # QEvent.Type enum
-    ApplicationWindowIconChange = int() # QEvent.Type enum
-    ApplicationFontChange = int() # QEvent.Type enum
-    ApplicationLayoutDirectionChange = int() # QEvent.Type enum
-    ApplicationPaletteChange = int() # QEvent.Type enum
-    PaletteChange = int() # QEvent.Type enum
-    Clipboard = int() # QEvent.Type enum
-    MetaCall = int() # QEvent.Type enum
-    SockAct = int() # QEvent.Type enum
-    WinEventAct = int() # QEvent.Type enum
-    DeferredDelete = int() # QEvent.Type enum
-    DragEnter = int() # QEvent.Type enum
-    DragMove = int() # QEvent.Type enum
-    DragLeave = int() # QEvent.Type enum
-    Drop = int() # QEvent.Type enum
-    ChildAdded = int() # QEvent.Type enum
-    ChildPolished = int() # QEvent.Type enum
-    ChildRemoved = int() # QEvent.Type enum
-    PolishRequest = int() # QEvent.Type enum
-    Polish = int() # QEvent.Type enum
-    LayoutRequest = int() # QEvent.Type enum
-    UpdateRequest = int() # QEvent.Type enum
-    UpdateLater = int() # QEvent.Type enum
-    ContextMenu = int() # QEvent.Type enum
-    InputMethod = int() # QEvent.Type enum
-    AccessibilityPrepare = int() # QEvent.Type enum
-    TabletMove = int() # QEvent.Type enum
-    LocaleChange = int() # QEvent.Type enum
-    LanguageChange = int() # QEvent.Type enum
-    LayoutDirectionChange = int() # QEvent.Type enum
-    TabletPress = int() # QEvent.Type enum
-    TabletRelease = int() # QEvent.Type enum
-    OkRequest = int() # QEvent.Type enum
-    IconDrag = int() # QEvent.Type enum
-    FontChange = int() # QEvent.Type enum
-    EnabledChange = int() # QEvent.Type enum
-    ActivationChange = int() # QEvent.Type enum
-    StyleChange = int() # QEvent.Type enum
-    IconTextChange = int() # QEvent.Type enum
-    ModifiedChange = int() # QEvent.Type enum
-    MouseTrackingChange = int() # QEvent.Type enum
-    WindowBlocked = int() # QEvent.Type enum
-    WindowUnblocked = int() # QEvent.Type enum
-    WindowStateChange = int() # QEvent.Type enum
-    ToolTip = int() # QEvent.Type enum
-    WhatsThis = int() # QEvent.Type enum
-    StatusTip = int() # QEvent.Type enum
-    ActionChanged = int() # QEvent.Type enum
-    ActionAdded = int() # QEvent.Type enum
-    ActionRemoved = int() # QEvent.Type enum
-    FileOpen = int() # QEvent.Type enum
-    Shortcut = int() # QEvent.Type enum
-    ShortcutOverride = int() # QEvent.Type enum
-    WhatsThisClicked = int() # QEvent.Type enum
-    ToolBarChange = int() # QEvent.Type enum
-    ApplicationActivate = int() # QEvent.Type enum
-    ApplicationActivated = int() # QEvent.Type enum
-    ApplicationDeactivate = int() # QEvent.Type enum
-    ApplicationDeactivated = int() # QEvent.Type enum
-    QueryWhatsThis = int() # QEvent.Type enum
-    EnterWhatsThisMode = int() # QEvent.Type enum
-    LeaveWhatsThisMode = int() # QEvent.Type enum
-    ZOrderChange = int() # QEvent.Type enum
-    HoverEnter = int() # QEvent.Type enum
-    HoverLeave = int() # QEvent.Type enum
-    HoverMove = int() # QEvent.Type enum
-    AccessibilityHelp = int() # QEvent.Type enum
-    AccessibilityDescription = int() # QEvent.Type enum
-    MenubarUpdated = int() # QEvent.Type enum
-    GraphicsSceneMouseMove = int() # QEvent.Type enum
-    GraphicsSceneMousePress = int() # QEvent.Type enum
-    GraphicsSceneMouseRelease = int() # QEvent.Type enum
-    GraphicsSceneMouseDoubleClick = int() # QEvent.Type enum
-    GraphicsSceneContextMenu = int() # QEvent.Type enum
-    GraphicsSceneHoverEnter = int() # QEvent.Type enum
-    GraphicsSceneHoverMove = int() # QEvent.Type enum
-    GraphicsSceneHoverLeave = int() # QEvent.Type enum
-    GraphicsSceneHelp = int() # QEvent.Type enum
-    GraphicsSceneDragEnter = int() # QEvent.Type enum
-    GraphicsSceneDragMove = int() # QEvent.Type enum
-    GraphicsSceneDragLeave = int() # QEvent.Type enum
-    GraphicsSceneDrop = int() # QEvent.Type enum
-    GraphicsSceneWheel = int() # QEvent.Type enum
-    GraphicsSceneResize = int() # QEvent.Type enum
-    GraphicsSceneMove = int() # QEvent.Type enum
-    KeyboardLayoutChange = int() # QEvent.Type enum
-    DynamicPropertyChange = int() # QEvent.Type enum
-    TabletEnterProximity = int() # QEvent.Type enum
-    TabletLeaveProximity = int() # QEvent.Type enum
-    CursorChange = int() # QEvent.Type enum
-    ToolTipChange = int() # QEvent.Type enum
-    GrabMouse = int() # QEvent.Type enum
-    UngrabMouse = int() # QEvent.Type enum
-    GrabKeyboard = int() # QEvent.Type enum
-    UngrabKeyboard = int() # QEvent.Type enum
-    StateMachineSignal = int() # QEvent.Type enum
-    StateMachineWrapped = int() # QEvent.Type enum
-    TouchBegin = int() # QEvent.Type enum
-    TouchUpdate = int() # QEvent.Type enum
-    TouchEnd = int() # QEvent.Type enum
-    RequestSoftwareInputPanel = int() # QEvent.Type enum
-    CloseSoftwareInputPanel = int() # QEvent.Type enum
-    WinIdChange = int() # QEvent.Type enum
-    Gesture = int() # QEvent.Type enum
-    GestureOverride = int() # QEvent.Type enum
-    User = int() # QEvent.Type enum
-    MaxUser = int() # QEvent.Type enum
+    # Enum QEvent.Type
+    __kdevpythondocumentation_builtin_None = 0
+    Timer = 0
+    MouseButtonPress = 0
+    MouseButtonRelease = 0
+    MouseButtonDblClick = 0
+    MouseMove = 0
+    KeyPress = 0
+    KeyRelease = 0
+    FocusIn = 0
+    FocusOut = 0
+    Enter = 0
+    Leave = 0
+    Paint = 0
+    Move = 0
+    Resize = 0
+    Show = 0
+    Hide = 0
+    Close = 0
+    ParentChange = 0
+    ParentAboutToChange = 0
+    WindowActivate = 0
+    WindowDeactivate = 0
+    ShowToParent = 0
+    HideToParent = 0
+    Wheel = 0
+    WindowTitleChange = 0
+    WindowIconChange = 0
+    ApplicationWindowIconChange = 0
+    ApplicationFontChange = 0
+    ApplicationLayoutDirectionChange = 0
+    ApplicationPaletteChange = 0
+    PaletteChange = 0
+    Clipboard = 0
+    MetaCall = 0
+    SockAct = 0
+    WinEventAct = 0
+    DeferredDelete = 0
+    DragEnter = 0
+    DragMove = 0
+    DragLeave = 0
+    Drop = 0
+    ChildAdded = 0
+    ChildPolished = 0
+    ChildRemoved = 0
+    PolishRequest = 0
+    Polish = 0
+    LayoutRequest = 0
+    UpdateRequest = 0
+    UpdateLater = 0
+    ContextMenu = 0
+    InputMethod = 0
+    AccessibilityPrepare = 0
+    TabletMove = 0
+    LocaleChange = 0
+    LanguageChange = 0
+    LayoutDirectionChange = 0
+    TabletPress = 0
+    TabletRelease = 0
+    OkRequest = 0
+    IconDrag = 0
+    FontChange = 0
+    EnabledChange = 0
+    ActivationChange = 0
+    StyleChange = 0
+    IconTextChange = 0
+    ModifiedChange = 0
+    MouseTrackingChange = 0
+    WindowBlocked = 0
+    WindowUnblocked = 0
+    WindowStateChange = 0
+    ToolTip = 0
+    WhatsThis = 0
+    StatusTip = 0
+    ActionChanged = 0
+    ActionAdded = 0
+    ActionRemoved = 0
+    FileOpen = 0
+    Shortcut = 0
+    ShortcutOverride = 0
+    WhatsThisClicked = 0
+    ToolBarChange = 0
+    ApplicationActivate = 0
+    ApplicationActivated = 0
+    ApplicationDeactivate = 0
+    ApplicationDeactivated = 0
+    QueryWhatsThis = 0
+    EnterWhatsThisMode = 0
+    LeaveWhatsThisMode = 0
+    ZOrderChange = 0
+    HoverEnter = 0
+    HoverLeave = 0
+    HoverMove = 0
+    AccessibilityHelp = 0
+    AccessibilityDescription = 0
+    MenubarUpdated = 0
+    GraphicsSceneMouseMove = 0
+    GraphicsSceneMousePress = 0
+    GraphicsSceneMouseRelease = 0
+    GraphicsSceneMouseDoubleClick = 0
+    GraphicsSceneContextMenu = 0
+    GraphicsSceneHoverEnter = 0
+    GraphicsSceneHoverMove = 0
+    GraphicsSceneHoverLeave = 0
+    GraphicsSceneHelp = 0
+    GraphicsSceneDragEnter = 0
+    GraphicsSceneDragMove = 0
+    GraphicsSceneDragLeave = 0
+    GraphicsSceneDrop = 0
+    GraphicsSceneWheel = 0
+    GraphicsSceneResize = 0
+    GraphicsSceneMove = 0
+    KeyboardLayoutChange = 0
+    DynamicPropertyChange = 0
+    TabletEnterProximity = 0
+    TabletLeaveProximity = 0
+    CursorChange = 0
+    ToolTipChange = 0
+    GrabMouse = 0
+    UngrabMouse = 0
+    GrabKeyboard = 0
+    UngrabKeyboard = 0
+    StateMachineSignal = 0
+    StateMachineWrapped = 0
+    TouchBegin = 0
+    TouchUpdate = 0
+    TouchEnd = 0
+    RequestSoftwareInputPanel = 0
+    CloseSoftwareInputPanel = 0
+    WinIdChange = 0
+    Gesture = 0
+    GestureOverride = 0
+    User = 0
+    MaxUser = 0
 
-    def __init__(self, _type):
-        """None QEvent.__init__(None self, QEvent.Type _type)"""
-        return None
+    def __init__(self, type):
+        '''void QEvent.__init__(QEvent.Type type)'''
     def __init__(self):
-        """QEvent QEvent.__init__(None self)"""
+        '''QEvent QEvent.__init__()'''
         return QEvent()
-    def registerEventType(self, _hint):
-        """int QEvent.registerEventType(None self, int _hint)"""
+    def registerEventType(self, hint = -1):
+        '''static int QEvent.registerEventType(int hint = -1)'''
         return int()
     def ignore(self):
-        """None QEvent.ignore(None self)"""
-        return None
+        '''void QEvent.ignore()'''
     def accept(self):
-        """None QEvent.accept(None self)"""
-        return None
+        '''void QEvent.accept()'''
     def isAccepted(self):
-        """bool QEvent.isAccepted(None self)"""
+        '''bool QEvent.isAccepted()'''
         return bool()
-    def setAccepted(self, _accepted):
-        """None QEvent.setAccepted(None self, bool _accepted)"""
-        return None
+    def setAccepted(self, accepted):
+        '''void QEvent.setAccepted(bool accepted)'''
     def spontaneous(self):
-        """bool QEvent.spontaneous(None self)"""
+        '''bool QEvent.spontaneous()'''
         return bool()
     def type(self):
-        """QEvent.Type QEvent.type(None self)"""
+        '''QEvent.Type QEvent.type()'''
         return QEvent.Type()
 
 
 class QTimerEvent(QEvent):
     """"""
-    def __init__(self, _timerId):
-        """None QTimerEvent.__init__(None self, int _timerId)"""
-        return None
+    def __init__(self, timerId):
+        '''void QTimerEvent.__init__(int timerId)'''
     def __init__(self):
-        """QTimerEvent QTimerEvent.__init__(None self)"""
+        '''QTimerEvent QTimerEvent.__init__()'''
         return QTimerEvent()
     def timerId(self):
-        """int QTimerEvent.timerId(None self)"""
+        '''int QTimerEvent.timerId()'''
         return int()
 
 
 class QChildEvent(QEvent):
     """"""
-    def __init__(self, _type, _child):
-        """None QChildEvent.__init__(None self, QEvent.Type _type, QObject _child)"""
-        return None
+    def __init__(self, type, child):
+        '''void QChildEvent.__init__(QEvent.Type type, QObject child)'''
     def __init__(self):
-        """QChildEvent QChildEvent.__init__(None self)"""
+        '''QChildEvent QChildEvent.__init__()'''
         return QChildEvent()
     def removed(self):
-        """bool QChildEvent.removed(None self)"""
+        '''bool QChildEvent.removed()'''
         return bool()
     def polished(self):
-        """bool QChildEvent.polished(None self)"""
+        '''bool QChildEvent.polished()'''
         return bool()
     def added(self):
-        """bool QChildEvent.added(None self)"""
+        '''bool QChildEvent.added()'''
         return bool()
     def child(self):
-        """QObject QChildEvent.child(None self)"""
+        '''QObject QChildEvent.child()'''
         return QObject()
 
 
 class QDynamicPropertyChangeEvent(QEvent):
     """"""
-    def __init__(self, _name):
-        """None QDynamicPropertyChangeEvent.__init__(None self, QByteArray _name)"""
-        return None
+    def __init__(self, name):
+        '''void QDynamicPropertyChangeEvent.__init__(QByteArray name)'''
     def __init__(self):
-        """QDynamicPropertyChangeEvent QDynamicPropertyChangeEvent.__init__(None self)"""
+        '''QDynamicPropertyChangeEvent QDynamicPropertyChangeEvent.__init__()'''
         return QDynamicPropertyChangeEvent()
     def propertyName(self):
-        """QByteArray QDynamicPropertyChangeEvent.propertyName(None self)"""
+        '''QByteArray QDynamicPropertyChangeEvent.propertyName()'''
         return QByteArray()
 
 
 class QCryptographicHash():
     """"""
-    Md4 = int() # QCryptographicHash.Algorithm enum
-    Md5 = int() # QCryptographicHash.Algorithm enum
-    Sha1 = int() # QCryptographicHash.Algorithm enum
+    # Enum QCryptographicHash.Algorithm
+    Md4 = 0
+    Md5 = 0
+    Sha1 = 0
 
-    def __init__(self, _method):
-        """None QCryptographicHash.__init__(None self, QCryptographicHash.Algorithm _method)"""
-        return None
-    def hash(self, _data, _method):
-        """QByteArray QCryptographicHash.hash(None self, QByteArray _data, QCryptographicHash.Algorithm _method)"""
+    def __init__(self, method):
+        '''void QCryptographicHash.__init__(QCryptographicHash.Algorithm method)'''
+    def hash(self, data, method):
+        '''static QByteArray QCryptographicHash.hash(QByteArray data, QCryptographicHash.Algorithm method)'''
         return QByteArray()
     def result(self):
-        """QByteArray QCryptographicHash.result(None self)"""
+        '''QByteArray QCryptographicHash.result()'''
         return QByteArray()
-    def addData(self, _data):
-        """None QCryptographicHash.addData(None self, str _data)"""
-        return None
-    def addData(self, _data):
-        """None QCryptographicHash.addData(None self, QByteArray _data)"""
-        return None
+    def addData(self, data):
+        '''void QCryptographicHash.addData(str data)'''
+    def addData(self, data):
+        '''void QCryptographicHash.addData(QByteArray data)'''
     def reset(self):
-        """None QCryptographicHash.reset(None self)"""
-        return None
+        '''void QCryptographicHash.reset()'''
 
 
 class QDataStream():
     """"""
-    SinglePrecision = int() # QDataStream.FloatingPointPrecision enum
-    DoublePrecision = int() # QDataStream.FloatingPointPrecision enum
+    # Enum QDataStream.FloatingPointPrecision
+    SinglePrecision = 0
+    DoublePrecision = 0
 
-    Ok = int() # QDataStream.Status enum
-    ReadPastEnd = int() # QDataStream.Status enum
-    ReadCorruptData = int() # QDataStream.Status enum
+    # Enum QDataStream.Status
+    Ok = 0
+    ReadPastEnd = 0
+    ReadCorruptData = 0
 
-    BigEndian = int() # QDataStream.ByteOrder enum
-    LittleEndian = int() # QDataStream.ByteOrder enum
+    # Enum QDataStream.ByteOrder
+    BigEndian = 0
+    LittleEndian = 0
 
-    Qt_1_0 = int() # QDataStream.Version enum
-    Qt_2_0 = int() # QDataStream.Version enum
-    Qt_2_1 = int() # QDataStream.Version enum
-    Qt_3_0 = int() # QDataStream.Version enum
-    Qt_3_1 = int() # QDataStream.Version enum
-    Qt_3_3 = int() # QDataStream.Version enum
-    Qt_4_0 = int() # QDataStream.Version enum
-    Qt_4_1 = int() # QDataStream.Version enum
-    Qt_4_2 = int() # QDataStream.Version enum
-    Qt_4_3 = int() # QDataStream.Version enum
-    Qt_4_4 = int() # QDataStream.Version enum
-    Qt_4_5 = int() # QDataStream.Version enum
-    Qt_4_6 = int() # QDataStream.Version enum
-    Qt_4_7 = int() # QDataStream.Version enum
+    # Enum QDataStream.Version
+    Qt_1_0 = 0
+    Qt_2_0 = 0
+    Qt_2_1 = 0
+    Qt_3_0 = 0
+    Qt_3_1 = 0
+    Qt_3_3 = 0
+    Qt_4_0 = 0
+    Qt_4_1 = 0
+    Qt_4_2 = 0
+    Qt_4_3 = 0
+    Qt_4_4 = 0
+    Qt_4_5 = 0
+    Qt_4_6 = 0
+    Qt_4_7 = 0
 
     def __init__(self):
-        """None QDataStream.__init__(None self)"""
-        return None
+        '''void QDataStream.__init__()'''
     def __init__(self):
-        """QIODevice QDataStream.__init__(None self)"""
+        '''QIODevice QDataStream.__init__()'''
         return QIODevice()
-    def __init__(self, _flags):
-        """QByteArray QDataStream.__init__(None self, QIODevice.OpenMode _flags)"""
+    def __init__(self, flags):
+        '''QByteArray QDataStream.__init__(QIODevice.OpenMode flags)'''
         return QByteArray()
     def __init__(self):
-        """QByteArray QDataStream.__init__(None self)"""
+        '''QByteArray QDataStream.__init__()'''
         return QByteArray()
     def __lshift__(self):
-        """QBitArray QDataStream.__lshift__(None self)"""
+        '''QBitArray QDataStream.__lshift__()'''
         return QBitArray()
     def __lshift__(self):
-        """QByteArray QDataStream.__lshift__(None self)"""
+        '''QByteArray QDataStream.__lshift__()'''
         return QByteArray()
     def __lshift__(self):
-        """QChar QDataStream.__lshift__(None self)"""
+        '''QChar QDataStream.__lshift__()'''
         return QChar()
     def __lshift__(self):
-        """QDate QDataStream.__lshift__(None self)"""
+        '''QDate QDataStream.__lshift__()'''
         return QDate()
     def __lshift__(self):
-        """QTime QDataStream.__lshift__(None self)"""
+        '''QTime QDataStream.__lshift__()'''
         return QTime()
     def __lshift__(self):
-        """QDateTime QDataStream.__lshift__(None self)"""
+        '''QDateTime QDataStream.__lshift__()'''
         return QDateTime()
     def __lshift__(self):
-        """QEasingCurve QDataStream.__lshift__(None self)"""
+        '''QEasingCurve QDataStream.__lshift__()'''
         return QEasingCurve()
     def __lshift__(self):
-        """QLine QDataStream.__lshift__(None self)"""
+        '''QLine QDataStream.__lshift__()'''
         return QLine()
     def __lshift__(self):
-        """QLineF QDataStream.__lshift__(None self)"""
+        '''QLineF QDataStream.__lshift__()'''
         return QLineF()
     def __lshift__(self):
-        """QLocale QDataStream.__lshift__(None self)"""
+        '''QLocale QDataStream.__lshift__()'''
         return QLocale()
     def __lshift__(self):
-        """QPoint QDataStream.__lshift__(None self)"""
+        '''QPoint QDataStream.__lshift__()'''
         return QPoint()
     def __lshift__(self):
-        """QPointF QDataStream.__lshift__(None self)"""
+        '''QPointF QDataStream.__lshift__()'''
         return QPointF()
     def __lshift__(self):
-        """QRect QDataStream.__lshift__(None self)"""
+        '''QRect QDataStream.__lshift__()'''
         return QRect()
     def __lshift__(self):
-        """QRectF QDataStream.__lshift__(None self)"""
+        '''QRectF QDataStream.__lshift__()'''
         return QRectF()
-    def __lshift__(self, _regExp):
-        """QDataStream QDataStream.__lshift__(None self, QRegExp _regExp)"""
+    def __lshift__(self, regExp):
+        '''QDataStream QDataStream.__lshift__(QRegExp regExp)'''
         return QDataStream()
     def __lshift__(self):
-        """QSize QDataStream.__lshift__(None self)"""
+        '''QSize QDataStream.__lshift__()'''
         return QSize()
     def __lshift__(self):
-        """QSizeF QDataStream.__lshift__(None self)"""
+        '''QSizeF QDataStream.__lshift__()'''
         return QSizeF()
     def __lshift__(self):
-        """QString QDataStream.__lshift__(None self)"""
+        '''QString QDataStream.__lshift__()'''
         return QString()
-    def __lshift__(self, _list):
-        """QDataStream QDataStream.__lshift__(None self, QStringList _list)"""
+    def __lshift__(self, list):
+        '''QDataStream QDataStream.__lshift__(QStringList list)'''
         return QDataStream()
     def __lshift__(self):
-        """QUrl QDataStream.__lshift__(None self)"""
+        '''QUrl QDataStream.__lshift__()'''
         return QUrl()
     def __lshift__(self):
-        """QUuid QDataStream.__lshift__(None self)"""
+        '''QUuid QDataStream.__lshift__()'''
         return QUuid()
-    def __lshift__(self, _p):
-        """QDataStream QDataStream.__lshift__(None self, QVariant _p)"""
+    def __lshift__(self, p):
+        '''QDataStream QDataStream.__lshift__(QVariant p)'''
         return QDataStream()
-    def __lshift__(self, _p):
-        """QDataStream QDataStream.__lshift__(None self, Type _p)"""
+    def __lshift__(self, p):
+        '''QDataStream QDataStream.__lshift__(Type p)'''
         return QDataStream()
     def __rshift__(self):
-        """QBitArray QDataStream.__rshift__(None self)"""
+        '''QBitArray QDataStream.__rshift__()'''
         return QBitArray()
     def __rshift__(self):
-        """QByteArray QDataStream.__rshift__(None self)"""
+        '''QByteArray QDataStream.__rshift__()'''
         return QByteArray()
     def __rshift__(self):
-        """QChar QDataStream.__rshift__(None self)"""
+        '''QChar QDataStream.__rshift__()'''
         return QChar()
     def __rshift__(self):
-        """QDate QDataStream.__rshift__(None self)"""
+        '''QDate QDataStream.__rshift__()'''
         return QDate()
     def __rshift__(self):
-        """QTime QDataStream.__rshift__(None self)"""
+        '''QTime QDataStream.__rshift__()'''
         return QTime()
     def __rshift__(self):
-        """QDateTime QDataStream.__rshift__(None self)"""
+        '''QDateTime QDataStream.__rshift__()'''
         return QDateTime()
     def __rshift__(self):
-        """QEasingCurve QDataStream.__rshift__(None self)"""
+        '''QEasingCurve QDataStream.__rshift__()'''
         return QEasingCurve()
     def __rshift__(self):
-        """QLine QDataStream.__rshift__(None self)"""
+        '''QLine QDataStream.__rshift__()'''
         return QLine()
     def __rshift__(self):
-        """QLineF QDataStream.__rshift__(None self)"""
+        '''QLineF QDataStream.__rshift__()'''
         return QLineF()
     def __rshift__(self):
-        """QLocale QDataStream.__rshift__(None self)"""
+        '''QLocale QDataStream.__rshift__()'''
         return QLocale()
     def __rshift__(self):
-        """QPoint QDataStream.__rshift__(None self)"""
+        '''QPoint QDataStream.__rshift__()'''
         return QPoint()
     def __rshift__(self):
-        """QPointF QDataStream.__rshift__(None self)"""
+        '''QPointF QDataStream.__rshift__()'''
         return QPointF()
     def __rshift__(self):
-        """QRect QDataStream.__rshift__(None self)"""
+        '''QRect QDataStream.__rshift__()'''
         return QRect()
     def __rshift__(self):
-        """QRectF QDataStream.__rshift__(None self)"""
+        '''QRectF QDataStream.__rshift__()'''
         return QRectF()
-    def __rshift__(self, _regExp):
-        """QDataStream QDataStream.__rshift__(None self, QRegExp _regExp)"""
+    def __rshift__(self, regExp):
+        '''QDataStream QDataStream.__rshift__(QRegExp regExp)'''
         return QDataStream()
     def __rshift__(self):
-        """QSize QDataStream.__rshift__(None self)"""
+        '''QSize QDataStream.__rshift__()'''
         return QSize()
     def __rshift__(self):
-        """QSizeF QDataStream.__rshift__(None self)"""
+        '''QSizeF QDataStream.__rshift__()'''
         return QSizeF()
     def __rshift__(self):
-        """QString QDataStream.__rshift__(None self)"""
+        '''QString QDataStream.__rshift__()'''
         return QString()
-    def __rshift__(self, _list):
-        """QDataStream QDataStream.__rshift__(None self, QStringList _list)"""
+    def __rshift__(self, list):
+        '''QDataStream QDataStream.__rshift__(QStringList list)'''
         return QDataStream()
     def __rshift__(self):
-        """QUrl QDataStream.__rshift__(None self)"""
+        '''QUrl QDataStream.__rshift__()'''
         return QUrl()
     def __rshift__(self):
-        """QUuid QDataStream.__rshift__(None self)"""
+        '''QUuid QDataStream.__rshift__()'''
         return QUuid()
-    def __rshift__(self, _p):
-        """QDataStream QDataStream.__rshift__(None self, QVariant _p)"""
+    def __rshift__(self, p):
+        '''QDataStream QDataStream.__rshift__(QVariant p)'''
         return QDataStream()
-    def __rshift__(self, _p):
-        """QDataStream QDataStream.__rshift__(None self, Type _p)"""
+    def __rshift__(self, p):
+        '''QDataStream QDataStream.__rshift__(Type p)'''
         return QDataStream()
-    def setFloatingPointPrecision(self, _precision):
-        """None QDataStream.setFloatingPointPrecision(None self, QDataStream.FloatingPointPrecision _precision)"""
-        return None
+    def setFloatingPointPrecision(self, precision):
+        '''void QDataStream.setFloatingPointPrecision(QDataStream.FloatingPointPrecision precision)'''
     def floatingPointPrecision(self):
-        """QDataStream.FloatingPointPrecision QDataStream.floatingPointPrecision(None self)"""
+        '''QDataStream.FloatingPointPrecision QDataStream.floatingPointPrecision()'''
         return QDataStream.FloatingPointPrecision()
     def writeRawData(self):
-        """str QDataStream.writeRawData(None self)"""
+        '''str QDataStream.writeRawData()'''
         return str()
     def writeBytes(self):
-        """str QDataStream.writeBytes(None self)"""
+        '''str QDataStream.writeBytes()'''
         return str()
-    def readRawData(self, _len):
-        """str QDataStream.readRawData(None self, int _len)"""
+    def readRawData(self, len):
+        '''str QDataStream.readRawData(int len)'''
         return str()
     def readBytes(self):
-        """str QDataStream.readBytes(None self)"""
+        '''str QDataStream.readBytes()'''
         return str()
-    def writeQVariantHash(self, _qvarhash):
-        """None QDataStream.writeQVariantHash(None self, dict-of-QString-QVariant _qvarhash)"""
-        return None
+    def writeQVariantHash(self, qvarhash):
+        '''void QDataStream.writeQVariantHash(dict-of-QString-QVariant qvarhash)'''
     def readQVariantHash(self):
-        """dict-of-QString-QVariant QDataStream.readQVariantHash(None self)"""
+        '''dict-of-QString-QVariant QDataStream.readQVariantHash()'''
         return dict-of-QString-QVariant()
-    def writeQVariantMap(self, _qvarmap):
-        """None QDataStream.writeQVariantMap(None self, dict-of-QString-QVariant _qvarmap)"""
-        return None
+    def writeQVariantMap(self, qvarmap):
+        '''void QDataStream.writeQVariantMap(dict-of-QString-QVariant qvarmap)'''
     def readQVariantMap(self):
-        """dict-of-QString-QVariant QDataStream.readQVariantMap(None self)"""
+        '''dict-of-QString-QVariant QDataStream.readQVariantMap()'''
         return dict-of-QString-QVariant()
-    def writeQVariantList(self, _qvarlst):
-        """None QDataStream.writeQVariantList(None self, list-of-QVariant _qvarlst)"""
-        return None
+    def writeQVariantList(self, qvarlst):
+        '''void QDataStream.writeQVariantList(list-of-QVariant qvarlst)'''
     def readQVariantList(self):
-        """list-of-QVariant QDataStream.readQVariantList(None self)"""
+        '''list-of-QVariant QDataStream.readQVariantList()'''
         return [QVariant()]
-    def writeQVariant(self, _qvar):
-        """None QDataStream.writeQVariant(None self, QVariant _qvar)"""
-        return None
+    def writeQVariant(self, qvar):
+        '''void QDataStream.writeQVariant(QVariant qvar)'''
     def readQVariant(self):
-        """QVariant QDataStream.readQVariant(None self)"""
+        '''QVariant QDataStream.readQVariant()'''
         return QVariant()
-    def writeQStringList(self, _qstrlst):
-        """None QDataStream.writeQStringList(None self, QStringList _qstrlst)"""
-        return None
+    def writeQStringList(self, qstrlst):
+        '''void QDataStream.writeQStringList(QStringList qstrlst)'''
     def readQStringList(self):
-        """QStringList QDataStream.readQStringList(None self)"""
+        '''QStringList QDataStream.readQStringList()'''
         return QStringList()
-    def writeQString(self, _qstr):
-        """None QDataStream.writeQString(None self, QString _qstr)"""
-        return None
+    def writeQString(self, qstr):
+        '''void QDataStream.writeQString(QString qstr)'''
     def readQString(self):
-        """QString QDataStream.readQString(None self)"""
+        '''QString QDataStream.readQString()'''
         return QString()
-    def writeString(self, _str):
-        """None QDataStream.writeString(None self, str _str)"""
-        return None
-    def writeDouble(self, _f):
-        """None QDataStream.writeDouble(None self, float _f)"""
-        return None
-    def writeFloat(self, _f):
-        """None QDataStream.writeFloat(None self, float _f)"""
-        return None
-    def writeBool(self, _i):
-        """None QDataStream.writeBool(None self, bool _i)"""
-        return None
-    def writeUInt64(self, _i):
-        """None QDataStream.writeUInt64(None self, int _i)"""
-        return None
-    def writeInt64(self, _i):
-        """None QDataStream.writeInt64(None self, int _i)"""
-        return None
-    def writeUInt32(self, _i):
-        """None QDataStream.writeUInt32(None self, int _i)"""
-        return None
-    def writeInt32(self, _i):
-        """None QDataStream.writeInt32(None self, int _i)"""
-        return None
-    def writeUInt16(self, _i):
-        """None QDataStream.writeUInt16(None self, int _i)"""
-        return None
-    def writeInt16(self, _i):
-        """None QDataStream.writeInt16(None self, int _i)"""
-        return None
-    def writeUInt8(self, _i):
-        """None QDataStream.writeUInt8(None self, str _i)"""
-        return None
-    def writeInt8(self, _i):
-        """None QDataStream.writeInt8(None self, str _i)"""
-        return None
-    def writeInt(self, _i):
-        """None QDataStream.writeInt(None self, int _i)"""
-        return None
+    def writeString(self, str):
+        '''void QDataStream.writeString(str str)'''
+    def writeDouble(self, f):
+        '''void QDataStream.writeDouble(float f)'''
+    def writeFloat(self, f):
+        '''void QDataStream.writeFloat(float f)'''
+    def writeBool(self, i):
+        '''void QDataStream.writeBool(bool i)'''
+    def writeUInt64(self, i):
+        '''void QDataStream.writeUInt64(int i)'''
+    def writeInt64(self, i):
+        '''void QDataStream.writeInt64(int i)'''
+    def writeUInt32(self, i):
+        '''void QDataStream.writeUInt32(int i)'''
+    def writeInt32(self, i):
+        '''void QDataStream.writeInt32(int i)'''
+    def writeUInt16(self, i):
+        '''void QDataStream.writeUInt16(int i)'''
+    def writeInt16(self, i):
+        '''void QDataStream.writeInt16(int i)'''
+    def writeUInt8(self, i):
+        '''void QDataStream.writeUInt8(str i)'''
+    def writeInt8(self, i):
+        '''void QDataStream.writeInt8(str i)'''
+    def writeInt(self, i):
+        '''void QDataStream.writeInt(int i)'''
     def readString(self):
-        """str QDataStream.readString(None self)"""
+        '''str QDataStream.readString()'''
         return str()
     def readDouble(self):
-        """float QDataStream.readDouble(None self)"""
+        '''float QDataStream.readDouble()'''
         return float()
     def readFloat(self):
-        """float QDataStream.readFloat(None self)"""
+        '''float QDataStream.readFloat()'''
         return float()
     def readBool(self):
-        """bool QDataStream.readBool(None self)"""
+        '''bool QDataStream.readBool()'''
         return bool()
     def readUInt64(self):
-        """int QDataStream.readUInt64(None self)"""
+        '''int QDataStream.readUInt64()'''
         return int()
     def readInt64(self):
-        """int QDataStream.readInt64(None self)"""
+        '''int QDataStream.readInt64()'''
         return int()
     def readUInt32(self):
-        """int QDataStream.readUInt32(None self)"""
+        '''int QDataStream.readUInt32()'''
         return int()
     def readInt32(self):
-        """int QDataStream.readInt32(None self)"""
+        '''int QDataStream.readInt32()'''
         return int()
     def readUInt16(self):
-        """int QDataStream.readUInt16(None self)"""
+        '''int QDataStream.readUInt16()'''
         return int()
     def readInt16(self):
-        """int QDataStream.readInt16(None self)"""
+        '''int QDataStream.readInt16()'''
         return int()
     def readUInt8(self):
-        """str QDataStream.readUInt8(None self)"""
+        '''str QDataStream.readUInt8()'''
         return str()
     def readInt8(self):
-        """str QDataStream.readInt8(None self)"""
+        '''str QDataStream.readInt8()'''
         return str()
     def readInt(self):
-        """int QDataStream.readInt(None self)"""
+        '''int QDataStream.readInt()'''
         return int()
-    def skipRawData(self, _len):
-        """int QDataStream.skipRawData(None self, int _len)"""
+    def skipRawData(self, len):
+        '''int QDataStream.skipRawData(int len)'''
         return int()
-    def setVersion(self, _v):
-        """None QDataStream.setVersion(None self, int _v)"""
-        return None
+    def setVersion(self, v):
+        '''void QDataStream.setVersion(int v)'''
     def version(self):
-        """int QDataStream.version(None self)"""
+        '''int QDataStream.version()'''
         return int()
     def setByteOrder(self):
-        """QDataStream.ByteOrder QDataStream.setByteOrder(None self)"""
+        '''QDataStream.ByteOrder QDataStream.setByteOrder()'''
         return QDataStream.ByteOrder()
     def byteOrder(self):
-        """QDataStream.ByteOrder QDataStream.byteOrder(None self)"""
+        '''QDataStream.ByteOrder QDataStream.byteOrder()'''
         return QDataStream.ByteOrder()
     def resetStatus(self):
-        """None QDataStream.resetStatus(None self)"""
-        return None
-    def setStatus(self, _status):
-        """None QDataStream.setStatus(None self, QDataStream.Status _status)"""
-        return None
+        '''void QDataStream.resetStatus()'''
+    def setStatus(self, status):
+        '''void QDataStream.setStatus(QDataStream.Status status)'''
     def status(self):
-        """QDataStream.Status QDataStream.status(None self)"""
+        '''QDataStream.Status QDataStream.status()'''
         return QDataStream.Status()
     def atEnd(self):
-        """bool QDataStream.atEnd(None self)"""
+        '''bool QDataStream.atEnd()'''
         return bool()
     def unsetDevice(self):
-        """None QDataStream.unsetDevice(None self)"""
-        return None
+        '''void QDataStream.unsetDevice()'''
     def setDevice(self):
-        """QIODevice QDataStream.setDevice(None self)"""
+        '''QIODevice QDataStream.setDevice()'''
         return QIODevice()
     def device(self):
-        """QIODevice QDataStream.device(None self)"""
+        '''QIODevice QDataStream.device()'''
         return QIODevice()
 
 
 class QDate():
     """"""
-    DateFormat = int() # QDate.MonthNameType enum
-    StandaloneFormat = int() # QDate.MonthNameType enum
+    # Enum QDate.MonthNameType
+    DateFormat = 0
+    StandaloneFormat = 0
 
     def __init__(self):
-        """None QDate.__init__(None self)"""
-        return None
-    def __init__(self, _y, _m, _d):
-        """None QDate.__init__(None self, int _y, int _m, int _d)"""
-        return None
+        '''void QDate.__init__()'''
+    def __init__(self, y, m, d):
+        '''void QDate.__init__(int y, int m, int d)'''
     def __init__(self):
-        """QDate QDate.__init__(None self)"""
+        '''QDate QDate.__init__()'''
         return QDate()
-    def getDate(self, _year, _month, _day):
-        """None QDate.getDate(None self, int _year, int _month, int _day)"""
-        return None
-    def setDate(self, _year, _month, _date):
-        """bool QDate.setDate(None self, int _year, int _month, int _date)"""
+    def getDate(self, year, month, day):
+        '''void QDate.getDate(int year, int month, int day)'''
+    def setDate(self, year, month, date):
+        '''bool QDate.setDate(int year, int month, int date)'''
         return bool()
     def toJulianDay(self):
-        """int QDate.toJulianDay(None self)"""
+        '''int QDate.toJulianDay()'''
         return int()
-    def fromJulianDay(self, _jd):
-        """QDate QDate.fromJulianDay(None self, int _jd)"""
+    def fromJulianDay(self, jd):
+        '''static QDate QDate.fromJulianDay(int jd)'''
         return QDate()
-    def julianToGregorian(self, _jd, _y, _m, _d):
-        """None QDate.julianToGregorian(None self, int _jd, int _y, int _m, int _d)"""
-        return None
-    def gregorianToJulian(self, _y, _m, _d):
-        """int QDate.gregorianToJulian(None self, int _y, int _m, int _d)"""
+    def julianToGregorian(self, jd, y, m, d):
+        '''static void QDate.julianToGregorian(int jd, int y, int m, int d)'''
+    def gregorianToJulian(self, y, m, d):
+        '''static int QDate.gregorianToJulian(int y, int m, int d)'''
         return int()
-    def isLeapYear(self, _year):
-        """bool QDate.isLeapYear(None self, int _year)"""
+    def isLeapYear(self, year):
+        '''static bool QDate.isLeapYear(int year)'''
         return bool()
-    def fromString(self, _string, _format):
-        """QDate QDate.fromString(None self, QString _string, Qt.DateFormat _format)"""
+    def fromString(self, string, format = Qt.TextDate):
+        '''static QDate QDate.fromString(QString string, Qt.DateFormat format = Qt.TextDate)'''
         return QDate()
-    def fromString(self, _s, _format):
-        """QDate QDate.fromString(None self, QString _s, QString _format)"""
+    def fromString(self, s, format):
+        '''static QDate QDate.fromString(QString s, QString format)'''
         return QDate()
     def currentDate(self):
-        """QDate QDate.currentDate(None self)"""
+        '''static QDate QDate.currentDate()'''
         return QDate()
-    def __ge__(self, _other):
-        """bool QDate.__ge__(None self, QDate _other)"""
+    def __ge__(self, other):
+        '''bool QDate.__ge__(QDate other)'''
         return bool()
-    def __gt__(self, _other):
-        """bool QDate.__gt__(None self, QDate _other)"""
+    def __gt__(self, other):
+        '''bool QDate.__gt__(QDate other)'''
         return bool()
-    def __le__(self, _other):
-        """bool QDate.__le__(None self, QDate _other)"""
+    def __le__(self, other):
+        '''bool QDate.__le__(QDate other)'''
         return bool()
-    def __lt__(self, _other):
-        """bool QDate.__lt__(None self, QDate _other)"""
+    def __lt__(self, other):
+        '''bool QDate.__lt__(QDate other)'''
         return bool()
-    def __ne__(self, _other):
-        """bool QDate.__ne__(None self, QDate _other)"""
+    def __ne__(self, other):
+        '''bool QDate.__ne__(QDate other)'''
         return bool()
-    def __eq__(self, _other):
-        """bool QDate.__eq__(None self, QDate _other)"""
+    def __eq__(self, other):
+        '''bool QDate.__eq__(QDate other)'''
         return bool()
     def daysTo(self):
-        """QDate QDate.daysTo(None self)"""
+        '''QDate QDate.daysTo()'''
         return QDate()
-    def addYears(self, _years):
-        """QDate QDate.addYears(None self, int _years)"""
+    def addYears(self, years):
+        '''QDate QDate.addYears(int years)'''
         return QDate()
-    def addMonths(self, _months):
-        """QDate QDate.addMonths(None self, int _months)"""
+    def addMonths(self, months):
+        '''QDate QDate.addMonths(int months)'''
         return QDate()
-    def addDays(self, _days):
-        """QDate QDate.addDays(None self, int _days)"""
+    def addDays(self, days):
+        '''QDate QDate.addDays(int days)'''
         return QDate()
-    def setYMD(self, _y, _m, _d):
-        """bool QDate.setYMD(None self, int _y, int _m, int _d)"""
+    def setYMD(self, y, m, d):
+        '''bool QDate.setYMD(int y, int m, int d)'''
         return bool()
-    def toString(self, _format):
-        """QString QDate.toString(None self, Qt.DateFormat _format)"""
+    def toString(self, format = Qt.TextDate):
+        '''QString QDate.toString(Qt.DateFormat format = Qt.TextDate)'''
         return QString()
-    def toString(self, _format):
-        """QString QDate.toString(None self, QString _format)"""
+    def toString(self, format):
+        '''QString QDate.toString(QString format)'''
         return QString()
-    def longDayName(self, _weekday):
-        """QString QDate.longDayName(None self, int _weekday)"""
+    def longDayName(self, weekday):
+        '''static QString QDate.longDayName(int weekday)'''
         return QString()
-    def longDayName(self, _weekday, _type):
-        """QString QDate.longDayName(None self, int _weekday, QDate.MonthNameType _type)"""
+    def longDayName(self, weekday, type):
+        '''static QString QDate.longDayName(int weekday, QDate.MonthNameType type)'''
         return QString()
-    def longMonthName(self, _month):
-        """QString QDate.longMonthName(None self, int _month)"""
+    def longMonthName(self, month):
+        '''static QString QDate.longMonthName(int month)'''
         return QString()
-    def longMonthName(self, _month, _type):
-        """QString QDate.longMonthName(None self, int _month, QDate.MonthNameType _type)"""
+    def longMonthName(self, month, type):
+        '''static QString QDate.longMonthName(int month, QDate.MonthNameType type)'''
         return QString()
-    def shortDayName(self, _weekday):
-        """QString QDate.shortDayName(None self, int _weekday)"""
+    def shortDayName(self, weekday):
+        '''static QString QDate.shortDayName(int weekday)'''
         return QString()
-    def shortDayName(self, _weekday, _type):
-        """QString QDate.shortDayName(None self, int _weekday, QDate.MonthNameType _type)"""
+    def shortDayName(self, weekday, type):
+        '''static QString QDate.shortDayName(int weekday, QDate.MonthNameType type)'''
         return QString()
-    def shortMonthName(self, _month):
-        """QString QDate.shortMonthName(None self, int _month)"""
+    def shortMonthName(self, month):
+        '''static QString QDate.shortMonthName(int month)'''
         return QString()
-    def shortMonthName(self, _month, _type):
-        """QString QDate.shortMonthName(None self, int _month, QDate.MonthNameType _type)"""
+    def shortMonthName(self, month, type):
+        '''static QString QDate.shortMonthName(int month, QDate.MonthNameType type)'''
         return QString()
-    def weekNumber(self, _yearNumber):
-        """int QDate.weekNumber(None self, int _yearNumber)"""
+    def weekNumber(self, yearNumber):
+        '''int QDate.weekNumber(int yearNumber)'''
         return int()
     def daysInYear(self):
-        """int QDate.daysInYear(None self)"""
+        '''int QDate.daysInYear()'''
         return int()
     def daysInMonth(self):
-        """int QDate.daysInMonth(None self)"""
+        '''int QDate.daysInMonth()'''
         return int()
     def dayOfYear(self):
-        """int QDate.dayOfYear(None self)"""
+        '''int QDate.dayOfYear()'''
         return int()
     def dayOfWeek(self):
-        """int QDate.dayOfWeek(None self)"""
+        '''int QDate.dayOfWeek()'''
         return int()
     def day(self):
-        """int QDate.day(None self)"""
+        '''int QDate.day()'''
         return int()
     def month(self):
-        """int QDate.month(None self)"""
+        '''int QDate.month()'''
         return int()
     def year(self):
-        """int QDate.year(None self)"""
+        '''int QDate.year()'''
         return int()
     def isValid(self):
-        """bool QDate.isValid(None self)"""
+        '''bool QDate.isValid()'''
         return bool()
-    def isValid(self, _y, _m, _d):
-        """bool QDate.isValid(None self, int _y, int _m, int _d)"""
+    def isValid(self, y, m, d):
+        '''static bool QDate.isValid(int y, int m, int d)'''
         return bool()
     def __bool__(self):
-        """int QDate.__bool__(None self)"""
+        '''int QDate.__bool__()'''
         return int()
     def isNull(self):
-        """bool QDate.isNull(None self)"""
+        '''bool QDate.isNull()'''
         return bool()
     def toPyDate(self):
-        """datetime.date QDate.toPyDate(None self)"""
+        '''datetime.date QDate.toPyDate()'''
         return datetime.date()
     def __hash__(self):
-        """int QDate.__hash__(None self)"""
+        '''int QDate.__hash__()'''
         return int()
     def __repr__(self):
-        """str QDate.__repr__(None self)"""
+        '''str QDate.__repr__()'''
         return str()
 
 
 class QTime():
     """"""
     def __init__(self):
-        """None QTime.__init__(None self)"""
-        return None
-    def __init__(self, _h, _m, _second, _msec):
-        """None QTime.__init__(None self, int _h, int _m, int _second, int _msec)"""
-        return None
+        '''void QTime.__init__()'''
+    def __init__(self, h, m, second = 0, msec = 0):
+        '''void QTime.__init__(int h, int m, int second = 0, int msec = 0)'''
     def __init__(self):
-        """QTime QTime.__init__(None self)"""
+        '''QTime QTime.__init__()'''
         return QTime()
     def elapsed(self):
-        """int QTime.elapsed(None self)"""
+        '''int QTime.elapsed()'''
         return int()
     def restart(self):
-        """int QTime.restart(None self)"""
+        '''int QTime.restart()'''
         return int()
     def start(self):
-        """None QTime.start(None self)"""
-        return None
-    def fromString(self, _string, _format):
-        """QTime QTime.fromString(None self, QString _string, Qt.DateFormat _format)"""
+        '''void QTime.start()'''
+    def fromString(self, string, format = Qt.TextDate):
+        '''static QTime QTime.fromString(QString string, Qt.DateFormat format = Qt.TextDate)'''
         return QTime()
-    def fromString(self, _s, _format):
-        """QTime QTime.fromString(None self, QString _s, QString _format)"""
+    def fromString(self, s, format):
+        '''static QTime QTime.fromString(QString s, QString format)'''
         return QTime()
     def currentTime(self):
-        """QTime QTime.currentTime(None self)"""
+        '''static QTime QTime.currentTime()'''
         return QTime()
-    def __ge__(self, _other):
-        """bool QTime.__ge__(None self, QTime _other)"""
+    def __ge__(self, other):
+        '''bool QTime.__ge__(QTime other)'''
         return bool()
-    def __gt__(self, _other):
-        """bool QTime.__gt__(None self, QTime _other)"""
+    def __gt__(self, other):
+        '''bool QTime.__gt__(QTime other)'''
         return bool()
-    def __le__(self, _other):
-        """bool QTime.__le__(None self, QTime _other)"""
+    def __le__(self, other):
+        '''bool QTime.__le__(QTime other)'''
         return bool()
-    def __lt__(self, _other):
-        """bool QTime.__lt__(None self, QTime _other)"""
+    def __lt__(self, other):
+        '''bool QTime.__lt__(QTime other)'''
         return bool()
-    def __ne__(self, _other):
-        """bool QTime.__ne__(None self, QTime _other)"""
+    def __ne__(self, other):
+        '''bool QTime.__ne__(QTime other)'''
         return bool()
-    def __eq__(self, _other):
-        """bool QTime.__eq__(None self, QTime _other)"""
+    def __eq__(self, other):
+        '''bool QTime.__eq__(QTime other)'''
         return bool()
     def msecsTo(self):
-        """QTime QTime.msecsTo(None self)"""
+        '''QTime QTime.msecsTo()'''
         return QTime()
-    def addMSecs(self, _ms):
-        """QTime QTime.addMSecs(None self, int _ms)"""
+    def addMSecs(self, ms):
+        '''QTime QTime.addMSecs(int ms)'''
         return QTime()
     def secsTo(self):
-        """QTime QTime.secsTo(None self)"""
+        '''QTime QTime.secsTo()'''
         return QTime()
-    def addSecs(self, _secs):
-        """QTime QTime.addSecs(None self, int _secs)"""
+    def addSecs(self, secs):
+        '''QTime QTime.addSecs(int secs)'''
         return QTime()
-    def setHMS(self, _h, _m, _s, _msec):
-        """bool QTime.setHMS(None self, int _h, int _m, int _s, int _msec)"""
+    def setHMS(self, h, m, s, msec = 0):
+        '''bool QTime.setHMS(int h, int m, int s, int msec = 0)'''
         return bool()
-    def toString(self, _format):
-        """QString QTime.toString(None self, Qt.DateFormat _format)"""
+    def toString(self, format = Qt.TextDate):
+        '''QString QTime.toString(Qt.DateFormat format = Qt.TextDate)'''
         return QString()
-    def toString(self, _format):
-        """QString QTime.toString(None self, QString _format)"""
+    def toString(self, format):
+        '''QString QTime.toString(QString format)'''
         return QString()
     def msec(self):
-        """int QTime.msec(None self)"""
+        '''int QTime.msec()'''
         return int()
     def second(self):
-        """int QTime.second(None self)"""
+        '''int QTime.second()'''
         return int()
     def minute(self):
-        """int QTime.minute(None self)"""
+        '''int QTime.minute()'''
         return int()
     def hour(self):
-        """int QTime.hour(None self)"""
+        '''int QTime.hour()'''
         return int()
     def isValid(self):
-        """bool QTime.isValid(None self)"""
+        '''bool QTime.isValid()'''
         return bool()
-    def isValid(self, _h, _m, _s, _msec):
-        """bool QTime.isValid(None self, int _h, int _m, int _s, int _msec)"""
+    def isValid(self, h, m, s, msec = 0):
+        '''static bool QTime.isValid(int h, int m, int s, int msec = 0)'''
         return bool()
     def __bool__(self):
-        """int QTime.__bool__(None self)"""
+        '''int QTime.__bool__()'''
         return int()
     def isNull(self):
-        """bool QTime.isNull(None self)"""
+        '''bool QTime.isNull()'''
         return bool()
     def toPyTime(self):
-        """datetime.time QTime.toPyTime(None self)"""
+        '''datetime.time QTime.toPyTime()'''
         return datetime.time()
     def __hash__(self):
-        """int QTime.__hash__(None self)"""
+        '''int QTime.__hash__()'''
         return int()
     def __repr__(self):
-        """str QTime.__repr__(None self)"""
+        '''str QTime.__repr__()'''
         return str()
 
 
 class QDateTime():
     """"""
     def __init__(self):
-        """None QDateTime.__init__(None self)"""
-        return None
-    def __init__(self, _other):
-        """None QDateTime.__init__(None self, QDateTime _other)"""
-        return None
+        '''void QDateTime.__init__()'''
+    def __init__(self, other):
+        '''void QDateTime.__init__(QDateTime other)'''
     def __init__(self):
-        """QDate QDateTime.__init__(None self)"""
+        '''QDate QDateTime.__init__()'''
         return QDate()
-    def __init__(self, _date, _time, _timeSpec):
-        """None QDateTime.__init__(None self, QDate _date, QTime _time, Qt.TimeSpec _timeSpec)"""
-        return None
-    def __init__(self, _y, _m, _d, _h, _m_, _s, _msec, _timeSpec):
-        """None QDateTime.__init__(None self, int _y, int _m, int _d, int _h, int _m_, int _s, int _msec, int _timeSpec)"""
-        return None
+    def __init__(self, date, time, timeSpec = Qt.LocalTime):
+        '''void QDateTime.__init__(QDate date, QTime time, Qt.TimeSpec timeSpec = Qt.LocalTime)'''
+    def __init__(self, y, m, d, h, m_, s = 0, msec = 0, timeSpec = 0):
+        '''void QDateTime.__init__(int y, int m, int d, int h, int m, int s = 0, int msec = 0, int timeSpec = 0)'''
     def currentMSecsSinceEpoch(self):
-        """int QDateTime.currentMSecsSinceEpoch(None self)"""
+        '''static int QDateTime.currentMSecsSinceEpoch()'''
         return int()
-    def fromMSecsSinceEpoch(self, _msecs):
-        """QDateTime QDateTime.fromMSecsSinceEpoch(None self, int _msecs)"""
+    def fromMSecsSinceEpoch(self, msecs):
+        '''static QDateTime QDateTime.fromMSecsSinceEpoch(int msecs)'''
         return QDateTime()
     def currentDateTimeUtc(self):
-        """QDateTime QDateTime.currentDateTimeUtc(None self)"""
+        '''static QDateTime QDateTime.currentDateTimeUtc()'''
         return QDateTime()
     def msecsTo(self):
-        """QDateTime QDateTime.msecsTo(None self)"""
+        '''QDateTime QDateTime.msecsTo()'''
         return QDateTime()
-    def setMSecsSinceEpoch(self, _msecs):
-        """None QDateTime.setMSecsSinceEpoch(None self, int _msecs)"""
-        return None
+    def setMSecsSinceEpoch(self, msecs):
+        '''void QDateTime.setMSecsSinceEpoch(int msecs)'''
     def toMSecsSinceEpoch(self):
-        """int QDateTime.toMSecsSinceEpoch(None self)"""
+        '''int QDateTime.toMSecsSinceEpoch()'''
         return int()
-    def fromTime_t(self, _secsSince1Jan1970UTC):
-        """QDateTime QDateTime.fromTime_t(None self, int _secsSince1Jan1970UTC)"""
+    def fromTime_t(self, secsSince1Jan1970UTC):
+        '''static QDateTime QDateTime.fromTime_t(int secsSince1Jan1970UTC)'''
         return QDateTime()
-    def fromString(self, _string, _format):
-        """QDateTime QDateTime.fromString(None self, QString _string, Qt.DateFormat _format)"""
+    def fromString(self, string, format = Qt.TextDate):
+        '''static QDateTime QDateTime.fromString(QString string, Qt.DateFormat format = Qt.TextDate)'''
         return QDateTime()
-    def fromString(self, _s, _format):
-        """QDateTime QDateTime.fromString(None self, QString _s, QString _format)"""
+    def fromString(self, s, format):
+        '''static QDateTime QDateTime.fromString(QString s, QString format)'''
         return QDateTime()
     def currentDateTime(self):
-        """QDateTime QDateTime.currentDateTime(None self)"""
+        '''static QDateTime QDateTime.currentDateTime()'''
         return QDateTime()
-    def __ge__(self, _other):
-        """bool QDateTime.__ge__(None self, QDateTime _other)"""
+    def __ge__(self, other):
+        '''bool QDateTime.__ge__(QDateTime other)'''
         return bool()
-    def __gt__(self, _other):
-        """bool QDateTime.__gt__(None self, QDateTime _other)"""
+    def __gt__(self, other):
+        '''bool QDateTime.__gt__(QDateTime other)'''
         return bool()
-    def __le__(self, _other):
-        """bool QDateTime.__le__(None self, QDateTime _other)"""
+    def __le__(self, other):
+        '''bool QDateTime.__le__(QDateTime other)'''
         return bool()
-    def __lt__(self, _other):
-        """bool QDateTime.__lt__(None self, QDateTime _other)"""
+    def __lt__(self, other):
+        '''bool QDateTime.__lt__(QDateTime other)'''
         return bool()
-    def __ne__(self, _other):
-        """bool QDateTime.__ne__(None self, QDateTime _other)"""
+    def __ne__(self, other):
+        '''bool QDateTime.__ne__(QDateTime other)'''
         return bool()
-    def __eq__(self, _other):
-        """bool QDateTime.__eq__(None self, QDateTime _other)"""
+    def __eq__(self, other):
+        '''bool QDateTime.__eq__(QDateTime other)'''
         return bool()
     def secsTo(self):
-        """QDateTime QDateTime.secsTo(None self)"""
+        '''QDateTime QDateTime.secsTo()'''
         return QDateTime()
     def daysTo(self):
-        """QDateTime QDateTime.daysTo(None self)"""
+        '''QDateTime QDateTime.daysTo()'''
         return QDateTime()
     def toUTC(self):
-        """QDateTime QDateTime.toUTC(None self)"""
+        '''QDateTime QDateTime.toUTC()'''
         return QDateTime()
     def toLocalTime(self):
-        """QDateTime QDateTime.toLocalTime(None self)"""
+        '''QDateTime QDateTime.toLocalTime()'''
         return QDateTime()
-    def toTimeSpec(self, _spec):
-        """QDateTime QDateTime.toTimeSpec(None self, Qt.TimeSpec _spec)"""
+    def toTimeSpec(self, spec):
+        '''QDateTime QDateTime.toTimeSpec(Qt.TimeSpec spec)'''
         return QDateTime()
-    def addMSecs(self, _msecs):
-        """QDateTime QDateTime.addMSecs(None self, int _msecs)"""
+    def addMSecs(self, msecs):
+        '''QDateTime QDateTime.addMSecs(int msecs)'''
         return QDateTime()
-    def addSecs(self, _secs):
-        """QDateTime QDateTime.addSecs(None self, int _secs)"""
+    def addSecs(self, secs):
+        '''QDateTime QDateTime.addSecs(int secs)'''
         return QDateTime()
-    def addYears(self, _years):
-        """QDateTime QDateTime.addYears(None self, int _years)"""
+    def addYears(self, years):
+        '''QDateTime QDateTime.addYears(int years)'''
         return QDateTime()
-    def addMonths(self, _months):
-        """QDateTime QDateTime.addMonths(None self, int _months)"""
+    def addMonths(self, months):
+        '''QDateTime QDateTime.addMonths(int months)'''
         return QDateTime()
-    def addDays(self, _days):
-        """QDateTime QDateTime.addDays(None self, int _days)"""
+    def addDays(self, days):
+        '''QDateTime QDateTime.addDays(int days)'''
         return QDateTime()
-    def toString(self, _format):
-        """QString QDateTime.toString(None self, Qt.DateFormat _format)"""
+    def toString(self, format = Qt.TextDate):
+        '''QString QDateTime.toString(Qt.DateFormat format = Qt.TextDate)'''
         return QString()
-    def toString(self, _format):
-        """QString QDateTime.toString(None self, QString _format)"""
+    def toString(self, format):
+        '''QString QDateTime.toString(QString format)'''
         return QString()
-    def setTime_t(self, _secsSince1Jan1970UTC):
-        """None QDateTime.setTime_t(None self, int _secsSince1Jan1970UTC)"""
-        return None
-    def setTimeSpec(self, _spec):
-        """None QDateTime.setTimeSpec(None self, Qt.TimeSpec _spec)"""
-        return None
-    def setTime(self, _time):
-        """None QDateTime.setTime(None self, QTime _time)"""
-        return None
-    def setDate(self, _date):
-        """None QDateTime.setDate(None self, QDate _date)"""
-        return None
+    def setTime_t(self, secsSince1Jan1970UTC):
+        '''void QDateTime.setTime_t(int secsSince1Jan1970UTC)'''
+    def setTimeSpec(self, spec):
+        '''void QDateTime.setTimeSpec(Qt.TimeSpec spec)'''
+    def setTime(self, time):
+        '''void QDateTime.setTime(QTime time)'''
+    def setDate(self, date):
+        '''void QDateTime.setDate(QDate date)'''
     def toTime_t(self):
-        """int QDateTime.toTime_t(None self)"""
+        '''int QDateTime.toTime_t()'''
         return int()
     def timeSpec(self):
-        """Qt.TimeSpec QDateTime.timeSpec(None self)"""
+        '''Qt.TimeSpec QDateTime.timeSpec()'''
         return Qt.TimeSpec()
     def time(self):
-        """QTime QDateTime.time(None self)"""
+        '''QTime QDateTime.time()'''
         return QTime()
     def date(self):
-        """QDate QDateTime.date(None self)"""
+        '''QDate QDateTime.date()'''
         return QDate()
     def isValid(self):
-        """bool QDateTime.isValid(None self)"""
+        '''bool QDateTime.isValid()'''
         return bool()
     def __bool__(self):
-        """int QDateTime.__bool__(None self)"""
+        '''int QDateTime.__bool__()'''
         return int()
     def isNull(self):
-        """bool QDateTime.isNull(None self)"""
+        '''bool QDateTime.isNull()'''
         return bool()
     def toPyDateTime(self):
-        """datetime.datetime QDateTime.toPyDateTime(None self)"""
+        '''datetime.datetime QDateTime.toPyDateTime()'''
         return datetime.datetime()
     def __hash__(self):
-        """int QDateTime.__hash__(None self)"""
+        '''int QDateTime.__hash__()'''
         return int()
     def __repr__(self):
-        """str QDateTime.__repr__(None self)"""
+        '''str QDateTime.__repr__()'''
         return str()
 
 
 class QDir():
     """"""
-    Name = int() # QDir.SortFlag enum
-    Time = int() # QDir.SortFlag enum
-    Size = int() # QDir.SortFlag enum
-    Unsorted = int() # QDir.SortFlag enum
-    SortByMask = int() # QDir.SortFlag enum
-    DirsFirst = int() # QDir.SortFlag enum
-    Reversed = int() # QDir.SortFlag enum
-    IgnoreCase = int() # QDir.SortFlag enum
-    DirsLast = int() # QDir.SortFlag enum
-    LocaleAware = int() # QDir.SortFlag enum
-    Type = int() # QDir.SortFlag enum
-    NoSort = int() # QDir.SortFlag enum
+    # Enum QDir.SortFlag
+    Name = 0
+    Time = 0
+    Size = 0
+    Unsorted = 0
+    SortByMask = 0
+    DirsFirst = 0
+    Reversed = 0
+    IgnoreCase = 0
+    DirsLast = 0
+    LocaleAware = 0
+    Type = 0
+    NoSort = 0
 
-    Dirs = int() # QDir.Filter enum
-    Files = int() # QDir.Filter enum
-    Drives = int() # QDir.Filter enum
-    NoSymLinks = int() # QDir.Filter enum
-    AllEntries = int() # QDir.Filter enum
-    TypeMask = int() # QDir.Filter enum
-    Readable = int() # QDir.Filter enum
-    Writable = int() # QDir.Filter enum
-    Executable = int() # QDir.Filter enum
-    PermissionMask = int() # QDir.Filter enum
-    Modified = int() # QDir.Filter enum
-    Hidden = int() # QDir.Filter enum
-    System = int() # QDir.Filter enum
-    AccessMask = int() # QDir.Filter enum
-    AllDirs = int() # QDir.Filter enum
-    CaseSensitive = int() # QDir.Filter enum
-    NoDotAndDotDot = int() # QDir.Filter enum
-    NoFilter = int() # QDir.Filter enum
-    NoDot = int() # QDir.Filter enum
-    NoDotDot = int() # QDir.Filter enum
+    # Enum QDir.Filter
+    Dirs = 0
+    Files = 0
+    Drives = 0
+    NoSymLinks = 0
+    AllEntries = 0
+    TypeMask = 0
+    Readable = 0
+    Writable = 0
+    Executable = 0
+    PermissionMask = 0
+    Modified = 0
+    Hidden = 0
+    System = 0
+    AccessMask = 0
+    AllDirs = 0
+    CaseSensitive = 0
+    NoDotAndDotDot = 0
+    NoFilter = 0
+    NoDot = 0
+    NoDotDot = 0
 
     def __init__(self):
-        """QDir QDir.__init__(None self)"""
+        '''QDir QDir.__init__()'''
         return QDir()
-    def __init__(self, _path):
-        """None QDir.__init__(None self, QString _path)"""
-        return None
-    def __init__(self, _path, _nameFilter, _sort, _filters):
-        """None QDir.__init__(None self, QString _path, QString _nameFilter, QDir.SortFlags _sort, QDir.Filters _filters)"""
-        return None
-    def searchPaths(self, _prefix):
-        """QStringList QDir.searchPaths(None self, QString _prefix)"""
+    def __init__(self, path = QString()):
+        '''void QDir.__init__(QString path = QString())'''
+    def __init__(self, path, nameFilter, sort = QDir.Name|QDir.IgnoreCase, filters = QDir.TypeMask):
+        '''void QDir.__init__(QString path, QString nameFilter, QDir.SortFlags sort = QDir.Name|QDir.IgnoreCase, QDir.Filters filters = QDir.TypeMask)'''
+    def searchPaths(self, prefix):
+        '''static QStringList QDir.searchPaths(QString prefix)'''
         return QStringList()
-    def addSearchPath(self, _prefix, _path):
-        """None QDir.addSearchPath(None self, QString _prefix, QString _path)"""
-        return None
-    def setSearchPaths(self, _prefix, _searchPaths):
-        """None QDir.setSearchPaths(None self, QString _prefix, QStringList _searchPaths)"""
-        return None
-    def fromNativeSeparators(self, _pathName):
-        """QString QDir.fromNativeSeparators(None self, QString _pathName)"""
+    def addSearchPath(self, prefix, path):
+        '''static void QDir.addSearchPath(QString prefix, QString path)'''
+    def setSearchPaths(self, prefix, searchPaths):
+        '''static void QDir.setSearchPaths(QString prefix, QStringList searchPaths)'''
+    def fromNativeSeparators(self, pathName):
+        '''static QString QDir.fromNativeSeparators(QString pathName)'''
         return QString()
-    def toNativeSeparators(self, _pathName):
-        """QString QDir.toNativeSeparators(None self, QString _pathName)"""
+    def toNativeSeparators(self, pathName):
+        '''static QString QDir.toNativeSeparators(QString pathName)'''
         return QString()
-    def cleanPath(self, _path):
-        """QString QDir.cleanPath(None self, QString _path)"""
+    def cleanPath(self, path):
+        '''static QString QDir.cleanPath(QString path)'''
         return QString()
-    def match(self, _filters, _fileName):
-        """bool QDir.match(None self, QStringList _filters, QString _fileName)"""
+    def match(self, filters, fileName):
+        '''static bool QDir.match(QStringList filters, QString fileName)'''
         return bool()
-    def match(self, _filter, _fileName):
-        """bool QDir.match(None self, QString _filter, QString _fileName)"""
+    def match(self, filter, fileName):
+        '''static bool QDir.match(QString filter, QString fileName)'''
         return bool()
     def tempPath(self):
-        """QString QDir.tempPath(None self)"""
+        '''static QString QDir.tempPath()'''
         return QString()
     def temp(self):
-        """QDir QDir.temp(None self)"""
+        '''static QDir QDir.temp()'''
         return QDir()
     def rootPath(self):
-        """QString QDir.rootPath(None self)"""
+        '''static QString QDir.rootPath()'''
         return QString()
     def root(self):
-        """QDir QDir.root(None self)"""
+        '''static QDir QDir.root()'''
         return QDir()
     def homePath(self):
-        """QString QDir.homePath(None self)"""
+        '''static QString QDir.homePath()'''
         return QString()
     def home(self):
-        """QDir QDir.home(None self)"""
+        '''static QDir QDir.home()'''
         return QDir()
     def currentPath(self):
-        """QString QDir.currentPath(None self)"""
+        '''static QString QDir.currentPath()'''
         return QString()
     def current(self):
-        """QDir QDir.current(None self)"""
+        '''static QDir QDir.current()'''
         return QDir()
-    def setCurrent(self, _path):
-        """bool QDir.setCurrent(None self, QString _path)"""
+    def setCurrent(self, path):
+        '''static bool QDir.setCurrent(QString path)'''
         return bool()
     def separator(self):
-        """QChar QDir.separator(None self)"""
+        '''static QChar QDir.separator()'''
         return QChar()
     def drives(self):
-        """list-of-QFileInfo QDir.drives(None self)"""
+        '''static list-of-QFileInfo QDir.drives()'''
         return [QFileInfo()]
     def refresh(self):
-        """None QDir.refresh(None self)"""
-        return None
-    def rename(self, _oldName, _newName):
-        """bool QDir.rename(None self, QString _oldName, QString _newName)"""
+        '''void QDir.refresh()'''
+    def rename(self, oldName, newName):
+        '''bool QDir.rename(QString oldName, QString newName)'''
         return bool()
-    def remove(self, _fileName):
-        """bool QDir.remove(None self, QString _fileName)"""
+    def remove(self, fileName):
+        '''bool QDir.remove(QString fileName)'''
         return bool()
-    def __ne__(self, _dir):
-        """bool QDir.__ne__(None self, QDir _dir)"""
+    def __ne__(self, dir):
+        '''bool QDir.__ne__(QDir dir)'''
         return bool()
-    def __eq__(self, _dir):
-        """bool QDir.__eq__(None self, QDir _dir)"""
+    def __eq__(self, dir):
+        '''bool QDir.__eq__(QDir dir)'''
         return bool()
     def makeAbsolute(self):
-        """bool QDir.makeAbsolute(None self)"""
+        '''bool QDir.makeAbsolute()'''
         return bool()
     def isAbsolute(self):
-        """bool QDir.isAbsolute(None self)"""
+        '''bool QDir.isAbsolute()'''
         return bool()
     def isRelative(self):
-        """bool QDir.isRelative(None self)"""
+        '''bool QDir.isRelative()'''
         return bool()
-    def isAbsolutePath(self, _path):
-        """bool QDir.isAbsolutePath(None self, QString _path)"""
+    def isAbsolutePath(self, path):
+        '''static bool QDir.isAbsolutePath(QString path)'''
         return bool()
-    def isRelativePath(self, _path):
-        """bool QDir.isRelativePath(None self, QString _path)"""
+    def isRelativePath(self, path):
+        '''static bool QDir.isRelativePath(QString path)'''
         return bool()
     def isRoot(self):
-        """bool QDir.isRoot(None self)"""
+        '''bool QDir.isRoot()'''
         return bool()
     def exists(self):
-        """bool QDir.exists(None self)"""
+        '''bool QDir.exists()'''
         return bool()
-    def exists(self, _name):
-        """bool QDir.exists(None self, QString _name)"""
+    def exists(self, name):
+        '''bool QDir.exists(QString name)'''
         return bool()
     def isReadable(self):
-        """bool QDir.isReadable(None self)"""
+        '''bool QDir.isReadable()'''
         return bool()
-    def rmpath(self, _dirPath):
-        """bool QDir.rmpath(None self, QString _dirPath)"""
+    def rmpath(self, dirPath):
+        '''bool QDir.rmpath(QString dirPath)'''
         return bool()
-    def mkpath(self, _dirPath):
-        """bool QDir.mkpath(None self, QString _dirPath)"""
+    def mkpath(self, dirPath):
+        '''bool QDir.mkpath(QString dirPath)'''
         return bool()
-    def rmdir(self, _dirName):
-        """bool QDir.rmdir(None self, QString _dirName)"""
+    def rmdir(self, dirName):
+        '''bool QDir.rmdir(QString dirName)'''
         return bool()
-    def mkdir(self, _dirName):
-        """bool QDir.mkdir(None self, QString _dirName)"""
+    def mkdir(self, dirName):
+        '''bool QDir.mkdir(QString dirName)'''
         return bool()
-    def entryInfoList(self, _filters, _sort):
-        """list-of-QFileInfo QDir.entryInfoList(None self, QDir.Filters _filters, QDir.SortFlags _sort)"""
+    def entryInfoList(self, filters = QDir.NoFilter, sort = QDir.NoSort):
+        '''list-of-QFileInfo QDir.entryInfoList(QDir.Filters filters = QDir.NoFilter, QDir.SortFlags sort = QDir.NoSort)'''
         return [QFileInfo()]
-    def entryInfoList(self, _nameFilters, _filters, _sort):
-        """list-of-QFileInfo QDir.entryInfoList(None self, QStringList _nameFilters, QDir.Filters _filters, QDir.SortFlags _sort)"""
+    def entryInfoList(self, nameFilters, filters = QDir.NoFilter, sort = QDir.NoSort):
+        '''list-of-QFileInfo QDir.entryInfoList(QStringList nameFilters, QDir.Filters filters = QDir.NoFilter, QDir.SortFlags sort = QDir.NoSort)'''
         return [QFileInfo()]
-    def entryList(self, _filters, _sort):
-        """QStringList QDir.entryList(None self, QDir.Filters _filters, QDir.SortFlags _sort)"""
+    def entryList(self, filters = QDir.NoFilter, sort = QDir.NoSort):
+        '''QStringList QDir.entryList(QDir.Filters filters = QDir.NoFilter, QDir.SortFlags sort = QDir.NoSort)'''
         return QStringList()
-    def entryList(self, _nameFilters, _filters, _sort):
-        """QStringList QDir.entryList(None self, QStringList _nameFilters, QDir.Filters _filters, QDir.SortFlags _sort)"""
+    def entryList(self, nameFilters, filters = QDir.NoFilter, sort = QDir.NoSort):
+        '''QStringList QDir.entryList(QStringList nameFilters, QDir.Filters filters = QDir.NoFilter, QDir.SortFlags sort = QDir.NoSort)'''
         return QStringList()
-    def nameFiltersFromString(self, _nameFilter):
-        """QStringList QDir.nameFiltersFromString(None self, QString _nameFilter)"""
+    def nameFiltersFromString(self, nameFilter):
+        '''static QStringList QDir.nameFiltersFromString(QString nameFilter)'''
         return QStringList()
     def __contains__(self):
-        """QString QDir.__contains__(None self)"""
+        '''QString QDir.__contains__()'''
         return QString()
     def __getitem__(self):
-        """int QDir.__getitem__(None self)"""
+        '''int QDir.__getitem__()'''
         return int()
     def __getitem__(self):
-        """slice QDir.__getitem__(None self)"""
+        '''slice QDir.__getitem__()'''
         return slice()
     def __len__(self):
-        """ QDir.__len__(None self)"""
+        ''' QDir.__len__()'''
         return ()
     def count(self):
-        """int QDir.count(None self)"""
+        '''int QDir.count()'''
         return int()
-    def setSorting(self, _sort):
-        """None QDir.setSorting(None self, QDir.SortFlags _sort)"""
-        return None
+    def setSorting(self, sort):
+        '''void QDir.setSorting(QDir.SortFlags sort)'''
     def sorting(self):
-        """QDir.SortFlags QDir.sorting(None self)"""
+        '''QDir.SortFlags QDir.sorting()'''
         return QDir.SortFlags()
-    def setFilter(self, _filter):
-        """None QDir.setFilter(None self, QDir.Filters _filter)"""
-        return None
+    def setFilter(self, filter):
+        '''void QDir.setFilter(QDir.Filters filter)'''
     def filter(self):
-        """QDir.Filters QDir.filter(None self)"""
+        '''QDir.Filters QDir.filter()'''
         return QDir.Filters()
-    def setNameFilters(self, _nameFilters):
-        """None QDir.setNameFilters(None self, QStringList _nameFilters)"""
-        return None
+    def setNameFilters(self, nameFilters):
+        '''void QDir.setNameFilters(QStringList nameFilters)'''
     def nameFilters(self):
-        """QStringList QDir.nameFilters(None self)"""
+        '''QStringList QDir.nameFilters()'''
         return QStringList()
     def cdUp(self):
-        """bool QDir.cdUp(None self)"""
+        '''bool QDir.cdUp()'''
         return bool()
-    def cd(self, _dirName):
-        """bool QDir.cd(None self, QString _dirName)"""
+    def cd(self, dirName):
+        '''bool QDir.cd(QString dirName)'''
         return bool()
-    def convertSeparators(self, _pathName):
-        """QString QDir.convertSeparators(None self, QString _pathName)"""
+    def convertSeparators(self, pathName):
+        '''static QString QDir.convertSeparators(QString pathName)'''
         return QString()
-    def relativeFilePath(self, _fileName):
-        """QString QDir.relativeFilePath(None self, QString _fileName)"""
+    def relativeFilePath(self, fileName):
+        '''QString QDir.relativeFilePath(QString fileName)'''
         return QString()
-    def absoluteFilePath(self, _fileName):
-        """QString QDir.absoluteFilePath(None self, QString _fileName)"""
+    def absoluteFilePath(self, fileName):
+        '''QString QDir.absoluteFilePath(QString fileName)'''
         return QString()
-    def filePath(self, _fileName):
-        """QString QDir.filePath(None self, QString _fileName)"""
+    def filePath(self, fileName):
+        '''QString QDir.filePath(QString fileName)'''
         return QString()
     def dirName(self):
-        """QString QDir.dirName(None self)"""
+        '''QString QDir.dirName()'''
         return QString()
-    def addResourceSearchPath(self, _path):
-        """None QDir.addResourceSearchPath(None self, QString _path)"""
-        return None
+    def addResourceSearchPath(self, path):
+        '''static void QDir.addResourceSearchPath(QString path)'''
     def canonicalPath(self):
-        """QString QDir.canonicalPath(None self)"""
+        '''QString QDir.canonicalPath()'''
         return QString()
     def absolutePath(self):
-        """QString QDir.absolutePath(None self)"""
+        '''QString QDir.absolutePath()'''
         return QString()
     def path(self):
-        """QString QDir.path(None self)"""
+        '''QString QDir.path()'''
         return QString()
-    def setPath(self, _path):
-        """None QDir.setPath(None self, QString _path)"""
-        return None
+    def setPath(self, path):
+        '''void QDir.setPath(QString path)'''
+    class Filters():
+        """"""
+        def __init__(self):
+            '''QDir.Filters QDir.Filters.__init__()'''
+            return QDir.Filters()
+        def __init__(self):
+            '''int QDir.Filters.__init__()'''
+            return int()
+        def __init__(self):
+            '''void QDir.Filters.__init__()'''
+        def __bool__(self):
+            '''int QDir.Filters.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool QDir.Filters.__ne__(QDir.Filters f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool QDir.Filters.__eq__(QDir.Filters f)'''
+            return bool()
+        def __invert__(self):
+            '''QDir.Filters QDir.Filters.__invert__()'''
+            return QDir.Filters()
+        def __and__(self, mask):
+            '''QDir.Filters QDir.Filters.__and__(int mask)'''
+            return QDir.Filters()
+        def __xor__(self, f):
+            '''QDir.Filters QDir.Filters.__xor__(QDir.Filters f)'''
+            return QDir.Filters()
+        def __xor__(self, f):
+            '''QDir.Filters QDir.Filters.__xor__(int f)'''
+            return QDir.Filters()
+        def __or__(self, f):
+            '''QDir.Filters QDir.Filters.__or__(QDir.Filters f)'''
+            return QDir.Filters()
+        def __or__(self, f):
+            '''QDir.Filters QDir.Filters.__or__(int f)'''
+            return QDir.Filters()
+        def __int__(self):
+            '''int QDir.Filters.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''QDir.Filters QDir.Filters.__ixor__(QDir.Filters f)'''
+            return QDir.Filters()
+        def __ior__(self, f):
+            '''QDir.Filters QDir.Filters.__ior__(QDir.Filters f)'''
+            return QDir.Filters()
+        def __iand__(self, mask):
+            '''QDir.Filters QDir.Filters.__iand__(int mask)'''
+            return QDir.Filters()
+    class SortFlags():
+        """"""
+        def __init__(self):
+            '''QDir.SortFlags QDir.SortFlags.__init__()'''
+            return QDir.SortFlags()
+        def __init__(self):
+            '''int QDir.SortFlags.__init__()'''
+            return int()
+        def __init__(self):
+            '''void QDir.SortFlags.__init__()'''
+        def __bool__(self):
+            '''int QDir.SortFlags.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool QDir.SortFlags.__ne__(QDir.SortFlags f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool QDir.SortFlags.__eq__(QDir.SortFlags f)'''
+            return bool()
+        def __invert__(self):
+            '''QDir.SortFlags QDir.SortFlags.__invert__()'''
+            return QDir.SortFlags()
+        def __and__(self, mask):
+            '''QDir.SortFlags QDir.SortFlags.__and__(int mask)'''
+            return QDir.SortFlags()
+        def __xor__(self, f):
+            '''QDir.SortFlags QDir.SortFlags.__xor__(QDir.SortFlags f)'''
+            return QDir.SortFlags()
+        def __xor__(self, f):
+            '''QDir.SortFlags QDir.SortFlags.__xor__(int f)'''
+            return QDir.SortFlags()
+        def __or__(self, f):
+            '''QDir.SortFlags QDir.SortFlags.__or__(QDir.SortFlags f)'''
+            return QDir.SortFlags()
+        def __or__(self, f):
+            '''QDir.SortFlags QDir.SortFlags.__or__(int f)'''
+            return QDir.SortFlags()
+        def __int__(self):
+            '''int QDir.SortFlags.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''QDir.SortFlags QDir.SortFlags.__ixor__(QDir.SortFlags f)'''
+            return QDir.SortFlags()
+        def __ior__(self, f):
+            '''QDir.SortFlags QDir.SortFlags.__ior__(QDir.SortFlags f)'''
+            return QDir.SortFlags()
+        def __iand__(self, mask):
+            '''QDir.SortFlags QDir.SortFlags.__iand__(int mask)'''
+            return QDir.SortFlags()
 
 
 class QDirIterator():
     """"""
-    NoIteratorFlags = int() # QDirIterator.IteratorFlag enum
-    FollowSymlinks = int() # QDirIterator.IteratorFlag enum
-    Subdirectories = int() # QDirIterator.IteratorFlag enum
+    # Enum QDirIterator.IteratorFlag
+    NoIteratorFlags = 0
+    FollowSymlinks = 0
+    Subdirectories = 0
 
-    def __init__(self, _dir, _flags):
-        """None QDirIterator.__init__(None self, QDir _dir, QDirIterator.IteratorFlags _flags)"""
-        return None
-    def __init__(self, _path, _flags):
-        """None QDirIterator.__init__(None self, QString _path, QDirIterator.IteratorFlags _flags)"""
-        return None
-    def __init__(self, _path, _filters, _flags):
-        """None QDirIterator.__init__(None self, QString _path, QDir.Filters _filters, QDirIterator.IteratorFlags _flags)"""
-        return None
-    def __init__(self, _path, _nameFilters, _filters, _flags):
-        """None QDirIterator.__init__(None self, QString _path, QStringList _nameFilters, QDir.Filters _filters, QDirIterator.IteratorFlags _flags)"""
-        return None
+    def __init__(self, dir, flags = QDirIterator.NoIteratorFlags):
+        '''void QDirIterator.__init__(QDir dir, QDirIterator.IteratorFlags flags = QDirIterator.NoIteratorFlags)'''
+    def __init__(self, path, flags = QDirIterator.NoIteratorFlags):
+        '''void QDirIterator.__init__(QString path, QDirIterator.IteratorFlags flags = QDirIterator.NoIteratorFlags)'''
+    def __init__(self, path, filters, flags = QDirIterator.NoIteratorFlags):
+        '''void QDirIterator.__init__(QString path, QDir.Filters filters, QDirIterator.IteratorFlags flags = QDirIterator.NoIteratorFlags)'''
+    def __init__(self, path, nameFilters, filters = QDir.NoFilter, flags = QDirIterator.NoIteratorFlags):
+        '''void QDirIterator.__init__(QString path, QStringList nameFilters, QDir.Filters filters = QDir.NoFilter, QDirIterator.IteratorFlags flags = QDirIterator.NoIteratorFlags)'''
     def path(self):
-        """QString QDirIterator.path(None self)"""
+        '''QString QDirIterator.path()'''
         return QString()
     def fileInfo(self):
-        """QFileInfo QDirIterator.fileInfo(None self)"""
+        '''QFileInfo QDirIterator.fileInfo()'''
         return QFileInfo()
     def filePath(self):
-        """QString QDirIterator.filePath(None self)"""
+        '''QString QDirIterator.filePath()'''
         return QString()
     def fileName(self):
-        """QString QDirIterator.fileName(None self)"""
+        '''QString QDirIterator.fileName()'''
         return QString()
     def hasNext(self):
-        """bool QDirIterator.hasNext(None self)"""
+        '''bool QDirIterator.hasNext()'''
         return bool()
     def next(self):
-        """QString QDirIterator.next(None self)"""
+        '''QString QDirIterator.next()'''
         return QString()
+    class IteratorFlags():
+        """"""
+        def __init__(self):
+            '''QDirIterator.IteratorFlags QDirIterator.IteratorFlags.__init__()'''
+            return QDirIterator.IteratorFlags()
+        def __init__(self):
+            '''int QDirIterator.IteratorFlags.__init__()'''
+            return int()
+        def __init__(self):
+            '''void QDirIterator.IteratorFlags.__init__()'''
+        def __bool__(self):
+            '''int QDirIterator.IteratorFlags.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool QDirIterator.IteratorFlags.__ne__(QDirIterator.IteratorFlags f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool QDirIterator.IteratorFlags.__eq__(QDirIterator.IteratorFlags f)'''
+            return bool()
+        def __invert__(self):
+            '''QDirIterator.IteratorFlags QDirIterator.IteratorFlags.__invert__()'''
+            return QDirIterator.IteratorFlags()
+        def __and__(self, mask):
+            '''QDirIterator.IteratorFlags QDirIterator.IteratorFlags.__and__(int mask)'''
+            return QDirIterator.IteratorFlags()
+        def __xor__(self, f):
+            '''QDirIterator.IteratorFlags QDirIterator.IteratorFlags.__xor__(QDirIterator.IteratorFlags f)'''
+            return QDirIterator.IteratorFlags()
+        def __xor__(self, f):
+            '''QDirIterator.IteratorFlags QDirIterator.IteratorFlags.__xor__(int f)'''
+            return QDirIterator.IteratorFlags()
+        def __or__(self, f):
+            '''QDirIterator.IteratorFlags QDirIterator.IteratorFlags.__or__(QDirIterator.IteratorFlags f)'''
+            return QDirIterator.IteratorFlags()
+        def __or__(self, f):
+            '''QDirIterator.IteratorFlags QDirIterator.IteratorFlags.__or__(int f)'''
+            return QDirIterator.IteratorFlags()
+        def __int__(self):
+            '''int QDirIterator.IteratorFlags.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''QDirIterator.IteratorFlags QDirIterator.IteratorFlags.__ixor__(QDirIterator.IteratorFlags f)'''
+            return QDirIterator.IteratorFlags()
+        def __ior__(self, f):
+            '''QDirIterator.IteratorFlags QDirIterator.IteratorFlags.__ior__(QDirIterator.IteratorFlags f)'''
+            return QDirIterator.IteratorFlags()
+        def __iand__(self, mask):
+            '''QDirIterator.IteratorFlags QDirIterator.IteratorFlags.__iand__(int mask)'''
+            return QDirIterator.IteratorFlags()
 
 
 class QEasingCurve():
     """"""
-    Linear = int() # QEasingCurve.Type enum
-    InQuad = int() # QEasingCurve.Type enum
-    OutQuad = int() # QEasingCurve.Type enum
-    InOutQuad = int() # QEasingCurve.Type enum
-    OutInQuad = int() # QEasingCurve.Type enum
-    InCubic = int() # QEasingCurve.Type enum
-    OutCubic = int() # QEasingCurve.Type enum
-    InOutCubic = int() # QEasingCurve.Type enum
-    OutInCubic = int() # QEasingCurve.Type enum
-    InQuart = int() # QEasingCurve.Type enum
-    OutQuart = int() # QEasingCurve.Type enum
-    InOutQuart = int() # QEasingCurve.Type enum
-    OutInQuart = int() # QEasingCurve.Type enum
-    InQuint = int() # QEasingCurve.Type enum
-    OutQuint = int() # QEasingCurve.Type enum
-    InOutQuint = int() # QEasingCurve.Type enum
-    OutInQuint = int() # QEasingCurve.Type enum
-    InSine = int() # QEasingCurve.Type enum
-    OutSine = int() # QEasingCurve.Type enum
-    InOutSine = int() # QEasingCurve.Type enum
-    OutInSine = int() # QEasingCurve.Type enum
-    InExpo = int() # QEasingCurve.Type enum
-    OutExpo = int() # QEasingCurve.Type enum
-    InOutExpo = int() # QEasingCurve.Type enum
-    OutInExpo = int() # QEasingCurve.Type enum
-    InCirc = int() # QEasingCurve.Type enum
-    OutCirc = int() # QEasingCurve.Type enum
-    InOutCirc = int() # QEasingCurve.Type enum
-    OutInCirc = int() # QEasingCurve.Type enum
-    InElastic = int() # QEasingCurve.Type enum
-    OutElastic = int() # QEasingCurve.Type enum
-    InOutElastic = int() # QEasingCurve.Type enum
-    OutInElastic = int() # QEasingCurve.Type enum
-    InBack = int() # QEasingCurve.Type enum
-    OutBack = int() # QEasingCurve.Type enum
-    InOutBack = int() # QEasingCurve.Type enum
-    OutInBack = int() # QEasingCurve.Type enum
-    InBounce = int() # QEasingCurve.Type enum
-    OutBounce = int() # QEasingCurve.Type enum
-    InOutBounce = int() # QEasingCurve.Type enum
-    OutInBounce = int() # QEasingCurve.Type enum
-    InCurve = int() # QEasingCurve.Type enum
-    OutCurve = int() # QEasingCurve.Type enum
-    SineCurve = int() # QEasingCurve.Type enum
-    CosineCurve = int() # QEasingCurve.Type enum
-    Custom = int() # QEasingCurve.Type enum
+    # Enum QEasingCurve.Type
+    Linear = 0
+    InQuad = 0
+    OutQuad = 0
+    InOutQuad = 0
+    OutInQuad = 0
+    InCubic = 0
+    OutCubic = 0
+    InOutCubic = 0
+    OutInCubic = 0
+    InQuart = 0
+    OutQuart = 0
+    InOutQuart = 0
+    OutInQuart = 0
+    InQuint = 0
+    OutQuint = 0
+    InOutQuint = 0
+    OutInQuint = 0
+    InSine = 0
+    OutSine = 0
+    InOutSine = 0
+    OutInSine = 0
+    InExpo = 0
+    OutExpo = 0
+    InOutExpo = 0
+    OutInExpo = 0
+    InCirc = 0
+    OutCirc = 0
+    InOutCirc = 0
+    OutInCirc = 0
+    InElastic = 0
+    OutElastic = 0
+    InOutElastic = 0
+    OutInElastic = 0
+    InBack = 0
+    OutBack = 0
+    InOutBack = 0
+    OutInBack = 0
+    InBounce = 0
+    OutBounce = 0
+    InOutBounce = 0
+    OutInBounce = 0
+    InCurve = 0
+    OutCurve = 0
+    SineCurve = 0
+    CosineCurve = 0
+    Custom = 0
 
-    def __init__(self, _type):
-        """None QEasingCurve.__init__(None self, QEasingCurve.Type _type)"""
-        return None
-    def __init__(self, _other):
-        """None QEasingCurve.__init__(None self, QEasingCurve _other)"""
-        return None
-    def valueForProgress(self, _progress):
-        """float QEasingCurve.valueForProgress(None self, float _progress)"""
+    def __init__(self, type = QEasingCurve.Linear):
+        '''void QEasingCurve.__init__(QEasingCurve.Type type = QEasingCurve.Linear)'''
+    def __init__(self, other):
+        '''void QEasingCurve.__init__(QEasingCurve other)'''
+    def valueForProgress(self, progress):
+        '''float QEasingCurve.valueForProgress(float progress)'''
         return float()
     def customType(self):
-        """callable QEasingCurve.customType(None self)"""
+        '''callable QEasingCurve.customType()'''
         return callable()
-    def setCustomType(self, _func):
-        """None QEasingCurve.setCustomType(None self, callable _func)"""
-        return None
-    def setType(self, _type):
-        """None QEasingCurve.setType(None self, QEasingCurve.Type _type)"""
-        return None
+    def setCustomType(self, func):
+        '''void QEasingCurve.setCustomType(callable func)'''
+    def setType(self, type):
+        '''void QEasingCurve.setType(QEasingCurve.Type type)'''
     def type(self):
-        """QEasingCurve.Type QEasingCurve.type(None self)"""
+        '''QEasingCurve.Type QEasingCurve.type()'''
         return QEasingCurve.Type()
-    def setOvershoot(self, _overshoot):
-        """None QEasingCurve.setOvershoot(None self, float _overshoot)"""
-        return None
+    def setOvershoot(self, overshoot):
+        '''void QEasingCurve.setOvershoot(float overshoot)'''
     def overshoot(self):
-        """float QEasingCurve.overshoot(None self)"""
+        '''float QEasingCurve.overshoot()'''
         return float()
-    def setPeriod(self, _period):
-        """None QEasingCurve.setPeriod(None self, float _period)"""
-        return None
+    def setPeriod(self, period):
+        '''void QEasingCurve.setPeriod(float period)'''
     def period(self):
-        """float QEasingCurve.period(None self)"""
+        '''float QEasingCurve.period()'''
         return float()
-    def setAmplitude(self, _amplitude):
-        """None QEasingCurve.setAmplitude(None self, float _amplitude)"""
-        return None
+    def setAmplitude(self, amplitude):
+        '''void QEasingCurve.setAmplitude(float amplitude)'''
     def amplitude(self):
-        """float QEasingCurve.amplitude(None self)"""
+        '''float QEasingCurve.amplitude()'''
         return float()
-    def __ne__(self, _other):
-        """bool QEasingCurve.__ne__(None self, QEasingCurve _other)"""
+    def __ne__(self, other):
+        '''bool QEasingCurve.__ne__(QEasingCurve other)'''
         return bool()
-    def __eq__(self, _other):
-        """bool QEasingCurve.__eq__(None self, QEasingCurve _other)"""
+    def __eq__(self, other):
+        '''bool QEasingCurve.__eq__(QEasingCurve other)'''
         return bool()
 
 
 class QElapsedTimer():
     """"""
-    SystemTime = int() # QElapsedTimer.ClockType enum
-    MonotonicClock = int() # QElapsedTimer.ClockType enum
-    TickCounter = int() # QElapsedTimer.ClockType enum
-    MachAbsoluteTime = int() # QElapsedTimer.ClockType enum
+    # Enum QElapsedTimer.ClockType
+    SystemTime = 0
+    MonotonicClock = 0
+    TickCounter = 0
+    MachAbsoluteTime = 0
 
     def __init__(self):
-        """None QElapsedTimer.__init__(None self)"""
-        return None
+        '''void QElapsedTimer.__init__()'''
     def __init__(self):
-        """QElapsedTimer QElapsedTimer.__init__(None self)"""
+        '''QElapsedTimer QElapsedTimer.__init__()'''
         return QElapsedTimer()
-    def __ge__(self, _v2):
-        """bool QElapsedTimer.__ge__(None self, QElapsedTimer _v2)"""
+    def __ge__(self, v2):
+        '''bool QElapsedTimer.__ge__(QElapsedTimer v2)'''
         return bool()
-    def __lt__(self, _v2):
-        """bool QElapsedTimer.__lt__(None self, QElapsedTimer _v2)"""
+    def __lt__(self, v2):
+        '''bool QElapsedTimer.__lt__(QElapsedTimer v2)'''
         return bool()
-    def __ne__(self, _other):
-        """bool QElapsedTimer.__ne__(None self, QElapsedTimer _other)"""
+    def __ne__(self, other):
+        '''bool QElapsedTimer.__ne__(QElapsedTimer other)'''
         return bool()
-    def __eq__(self, _other):
-        """bool QElapsedTimer.__eq__(None self, QElapsedTimer _other)"""
+    def __eq__(self, other):
+        '''bool QElapsedTimer.__eq__(QElapsedTimer other)'''
         return bool()
-    def secsTo(self, _other):
-        """int QElapsedTimer.secsTo(None self, QElapsedTimer _other)"""
+    def secsTo(self, other):
+        '''int QElapsedTimer.secsTo(QElapsedTimer other)'''
         return int()
-    def msecsTo(self, _other):
-        """int QElapsedTimer.msecsTo(None self, QElapsedTimer _other)"""
+    def msecsTo(self, other):
+        '''int QElapsedTimer.msecsTo(QElapsedTimer other)'''
         return int()
     def msecsSinceReference(self):
-        """int QElapsedTimer.msecsSinceReference(None self)"""
+        '''int QElapsedTimer.msecsSinceReference()'''
         return int()
-    def hasExpired(self, _timeout):
-        """bool QElapsedTimer.hasExpired(None self, int _timeout)"""
+    def hasExpired(self, timeout):
+        '''bool QElapsedTimer.hasExpired(int timeout)'''
         return bool()
     def elapsed(self):
-        """int QElapsedTimer.elapsed(None self)"""
+        '''int QElapsedTimer.elapsed()'''
         return int()
     def isValid(self):
-        """bool QElapsedTimer.isValid(None self)"""
+        '''bool QElapsedTimer.isValid()'''
         return bool()
     def invalidate(self):
-        """None QElapsedTimer.invalidate(None self)"""
-        return None
+        '''void QElapsedTimer.invalidate()'''
     def restart(self):
-        """int QElapsedTimer.restart(None self)"""
+        '''int QElapsedTimer.restart()'''
         return int()
     def start(self):
-        """None QElapsedTimer.start(None self)"""
-        return None
+        '''void QElapsedTimer.start()'''
     def isMonotonic(self):
-        """bool QElapsedTimer.isMonotonic(None self)"""
+        '''static bool QElapsedTimer.isMonotonic()'''
         return bool()
     def clockType(self):
-        """QElapsedTimer.ClockType QElapsedTimer.clockType(None self)"""
+        '''static QElapsedTimer.ClockType QElapsedTimer.clockType()'''
         return QElapsedTimer.ClockType()
 
 
 class QEventLoop(QObject):
     """"""
-    AllEvents = int() # QEventLoop.ProcessEventsFlag enum
-    ExcludeUserInputEvents = int() # QEventLoop.ProcessEventsFlag enum
-    ExcludeSocketNotifiers = int() # QEventLoop.ProcessEventsFlag enum
-    WaitForMoreEvents = int() # QEventLoop.ProcessEventsFlag enum
-    X11ExcludeTimers = int() # QEventLoop.ProcessEventsFlag enum
-    DeferredDeletion = int() # QEventLoop.ProcessEventsFlag enum
+    # Enum QEventLoop.ProcessEventsFlag
+    AllEvents = 0
+    ExcludeUserInputEvents = 0
+    ExcludeSocketNotifiers = 0
+    WaitForMoreEvents = 0
+    X11ExcludeTimers = 0
+    DeferredDeletion = 0
 
-    def __init__(self, _parent):
-        """None QEventLoop.__init__(None self, QObject _parent)"""
-        return None
+    def __init__(self, parent = None):
+        '''void QEventLoop.__init__(QObject parent = None)'''
     def quit(self):
-        """None QEventLoop.quit(None self)"""
-        return None
+        '''void QEventLoop.quit()'''
     def wakeUp(self):
-        """None QEventLoop.wakeUp(None self)"""
-        return None
+        '''void QEventLoop.wakeUp()'''
     def isRunning(self):
-        """bool QEventLoop.isRunning(None self)"""
+        '''bool QEventLoop.isRunning()'''
         return bool()
-    def exit(self, _returnCode):
-        """None QEventLoop.exit(None self, int _returnCode)"""
-        return None
-    def exec_(self, _flags):
-        """int QEventLoop.exec_(None self, QEventLoop.ProcessEventsFlags _flags)"""
+    def exit(self, returnCode = 0):
+        '''void QEventLoop.exit(int returnCode = 0)'''
+    def exec_(self, flags = QEventLoop.AllEvents):
+        '''int QEventLoop.exec_(QEventLoop.ProcessEventsFlags flags = QEventLoop.AllEvents)'''
         return int()
-    def processEvents(self, _flags):
-        """bool QEventLoop.processEvents(None self, QEventLoop.ProcessEventsFlags _flags)"""
+    def processEvents(self, flags = QEventLoop.AllEvents):
+        '''bool QEventLoop.processEvents(QEventLoop.ProcessEventsFlags flags = QEventLoop.AllEvents)'''
         return bool()
-    def processEvents(self, _flags, _maximumTime):
-        """None QEventLoop.processEvents(None self, QEventLoop.ProcessEventsFlags _flags, int _maximumTime)"""
-        return None
+    def processEvents(self, flags, maximumTime):
+        '''void QEventLoop.processEvents(QEventLoop.ProcessEventsFlags flags, int maximumTime)'''
+    class ProcessEventsFlags():
+        """"""
+        def __init__(self):
+            '''QEventLoop.ProcessEventsFlags QEventLoop.ProcessEventsFlags.__init__()'''
+            return QEventLoop.ProcessEventsFlags()
+        def __init__(self):
+            '''int QEventLoop.ProcessEventsFlags.__init__()'''
+            return int()
+        def __init__(self):
+            '''void QEventLoop.ProcessEventsFlags.__init__()'''
+        def __bool__(self):
+            '''int QEventLoop.ProcessEventsFlags.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool QEventLoop.ProcessEventsFlags.__ne__(QEventLoop.ProcessEventsFlags f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool QEventLoop.ProcessEventsFlags.__eq__(QEventLoop.ProcessEventsFlags f)'''
+            return bool()
+        def __invert__(self):
+            '''QEventLoop.ProcessEventsFlags QEventLoop.ProcessEventsFlags.__invert__()'''
+            return QEventLoop.ProcessEventsFlags()
+        def __and__(self, mask):
+            '''QEventLoop.ProcessEventsFlags QEventLoop.ProcessEventsFlags.__and__(int mask)'''
+            return QEventLoop.ProcessEventsFlags()
+        def __xor__(self, f):
+            '''QEventLoop.ProcessEventsFlags QEventLoop.ProcessEventsFlags.__xor__(QEventLoop.ProcessEventsFlags f)'''
+            return QEventLoop.ProcessEventsFlags()
+        def __xor__(self, f):
+            '''QEventLoop.ProcessEventsFlags QEventLoop.ProcessEventsFlags.__xor__(int f)'''
+            return QEventLoop.ProcessEventsFlags()
+        def __or__(self, f):
+            '''QEventLoop.ProcessEventsFlags QEventLoop.ProcessEventsFlags.__or__(QEventLoop.ProcessEventsFlags f)'''
+            return QEventLoop.ProcessEventsFlags()
+        def __or__(self, f):
+            '''QEventLoop.ProcessEventsFlags QEventLoop.ProcessEventsFlags.__or__(int f)'''
+            return QEventLoop.ProcessEventsFlags()
+        def __int__(self):
+            '''int QEventLoop.ProcessEventsFlags.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''QEventLoop.ProcessEventsFlags QEventLoop.ProcessEventsFlags.__ixor__(QEventLoop.ProcessEventsFlags f)'''
+            return QEventLoop.ProcessEventsFlags()
+        def __ior__(self, f):
+            '''QEventLoop.ProcessEventsFlags QEventLoop.ProcessEventsFlags.__ior__(QEventLoop.ProcessEventsFlags f)'''
+            return QEventLoop.ProcessEventsFlags()
+        def __iand__(self, mask):
+            '''QEventLoop.ProcessEventsFlags QEventLoop.ProcessEventsFlags.__iand__(int mask)'''
+            return QEventLoop.ProcessEventsFlags()
 
 
 class QEventTransition(QAbstractTransition):
     """"""
-    def __init__(self, _sourceState):
-        """None QEventTransition.__init__(None self, QState _sourceState)"""
-        return None
-    def __init__(self, _object, _type, _sourceState):
-        """None QEventTransition.__init__(None self, QObject _object, QEvent.Type _type, QState _sourceState)"""
-        return None
-    def event(self, _e):
-        """bool QEventTransition.event(None self, QEvent _e)"""
+    def __init__(self, sourceState = None):
+        '''void QEventTransition.__init__(QState sourceState = None)'''
+    def __init__(self, object, type, sourceState = None):
+        '''void QEventTransition.__init__(QObject object, QEvent.Type type, QState sourceState = None)'''
+    def event(self, e):
+        '''bool QEventTransition.event(QEvent e)'''
         return bool()
-    def onTransition(self, _event):
-        """None QEventTransition.onTransition(None self, QEvent _event)"""
-        return None
-    def eventTest(self, _event):
-        """bool QEventTransition.eventTest(None self, QEvent _event)"""
+    def onTransition(self, event):
+        '''void QEventTransition.onTransition(QEvent event)'''
+    def eventTest(self, event):
+        '''bool QEventTransition.eventTest(QEvent event)'''
         return bool()
-    def setEventType(self, _type):
-        """None QEventTransition.setEventType(None self, QEvent.Type _type)"""
-        return None
+    def setEventType(self, type):
+        '''void QEventTransition.setEventType(QEvent.Type type)'''
     def eventType(self):
-        """QEvent.Type QEventTransition.eventType(None self)"""
+        '''QEvent.Type QEventTransition.eventType()'''
         return QEvent.Type()
-    def setEventSource(self, _object):
-        """None QEventTransition.setEventSource(None self, QObject _object)"""
-        return None
+    def setEventSource(self, object):
+        '''void QEventTransition.setEventSource(QObject object)'''
     def eventSource(self):
-        """QObject QEventTransition.eventSource(None self)"""
+        '''QObject QEventTransition.eventSource()'''
         return QObject()
 
 
 class QFile(QIODevice):
     """"""
-    ReadOwner = int() # QFile.Permission enum
-    WriteOwner = int() # QFile.Permission enum
-    ExeOwner = int() # QFile.Permission enum
-    ReadUser = int() # QFile.Permission enum
-    WriteUser = int() # QFile.Permission enum
-    ExeUser = int() # QFile.Permission enum
-    ReadGroup = int() # QFile.Permission enum
-    WriteGroup = int() # QFile.Permission enum
-    ExeGroup = int() # QFile.Permission enum
-    ReadOther = int() # QFile.Permission enum
-    WriteOther = int() # QFile.Permission enum
-    ExeOther = int() # QFile.Permission enum
+    # Enum QFile.Permission
+    ReadOwner = 0
+    WriteOwner = 0
+    ExeOwner = 0
+    ReadUser = 0
+    WriteUser = 0
+    ExeUser = 0
+    ReadGroup = 0
+    WriteGroup = 0
+    ExeGroup = 0
+    ReadOther = 0
+    WriteOther = 0
+    ExeOther = 0
 
-    NoOptions = int() # QFile.MemoryMapFlags enum
+    # Enum QFile.MemoryMapFlags
+    NoOptions = 0
 
-    NoError = int() # QFile.FileError enum
-    ReadError = int() # QFile.FileError enum
-    WriteError = int() # QFile.FileError enum
-    FatalError = int() # QFile.FileError enum
-    ResourceError = int() # QFile.FileError enum
-    OpenError = int() # QFile.FileError enum
-    AbortError = int() # QFile.FileError enum
-    TimeOutError = int() # QFile.FileError enum
-    UnspecifiedError = int() # QFile.FileError enum
-    RemoveError = int() # QFile.FileError enum
-    RenameError = int() # QFile.FileError enum
-    PositionError = int() # QFile.FileError enum
-    ResizeError = int() # QFile.FileError enum
-    PermissionsError = int() # QFile.FileError enum
-    CopyError = int() # QFile.FileError enum
+    # Enum QFile.FileError
+    NoError = 0
+    ReadError = 0
+    WriteError = 0
+    FatalError = 0
+    ResourceError = 0
+    OpenError = 0
+    AbortError = 0
+    TimeOutError = 0
+    UnspecifiedError = 0
+    RemoveError = 0
+    RenameError = 0
+    PositionError = 0
+    ResizeError = 0
+    PermissionsError = 0
+    CopyError = 0
 
     def __init__(self):
-        """None QFile.__init__(None self)"""
-        return None
-    def __init__(self, _name):
-        """None QFile.__init__(None self, QString _name)"""
-        return None
-    def __init__(self, _parent):
-        """None QFile.__init__(None self, QObject _parent)"""
-        return None
-    def __init__(self, _name, _parent):
-        """None QFile.__init__(None self, QString _name, QObject _parent)"""
-        return None
-    def writeData(self, _data):
-        """int QFile.writeData(None self, str _data)"""
+        '''void QFile.__init__()'''
+    def __init__(self, name):
+        '''void QFile.__init__(QString name)'''
+    def __init__(self, parent):
+        '''void QFile.__init__(QObject parent)'''
+    def __init__(self, name, parent):
+        '''void QFile.__init__(QString name, QObject parent)'''
+    def writeData(self, data):
+        '''int QFile.writeData(str data)'''
         return int()
-    def readLineData(self, _maxlen):
-        """str QFile.readLineData(None self, int _maxlen)"""
+    def readLineData(self, maxlen):
+        '''str QFile.readLineData(int maxlen)'''
         return str()
-    def readData(self, _maxlen):
-        """str QFile.readData(None self, int _maxlen)"""
+    def readData(self, maxlen):
+        '''str QFile.readData(int maxlen)'''
         return str()
-    def unmap(self, _address):
-        """bool QFile.unmap(None self, sip.voidptr _address)"""
+    def unmap(self, address):
+        '''bool QFile.unmap(sip.voidptr address)'''
         return bool()
-    def map(self, _offset, _size, _flags):
-        """sip.voidptr QFile.map(None self, int _offset, int _size, QFile.MemoryMapFlags _flags)"""
+    def map(self, offset, size, flags = QFile.NoOptions):
+        '''sip.voidptr QFile.map(int offset, int size, QFile.MemoryMapFlags flags = QFile.NoOptions)'''
         return sip.voidptr()
     def symLinkTarget(self):
-        """QString QFile.symLinkTarget(None self)"""
+        '''QString QFile.symLinkTarget()'''
         return QString()
-    def symLinkTarget(self, _fileName):
-        """QString QFile.symLinkTarget(None self, QString _fileName)"""
+    def symLinkTarget(self, fileName):
+        '''static QString QFile.symLinkTarget(QString fileName)'''
         return QString()
     def fileEngine(self):
-        """QAbstractFileEngine QFile.fileEngine(None self)"""
+        '''QAbstractFileEngine QFile.fileEngine()'''
         return QAbstractFileEngine()
     def handle(self):
-        """int QFile.handle(None self)"""
+        '''int QFile.handle()'''
         return int()
-    def setPermissions(self, _permissionSpec):
-        """bool QFile.setPermissions(None self, QFile.Permissions _permissionSpec)"""
+    def setPermissions(self, permissionSpec):
+        '''bool QFile.setPermissions(QFile.Permissions permissionSpec)'''
         return bool()
-    def setPermissions(self, _filename, _permissionSpec):
-        """bool QFile.setPermissions(None self, QString _filename, QFile.Permissions _permissionSpec)"""
+    def setPermissions(self, filename, permissionSpec):
+        '''static bool QFile.setPermissions(QString filename, QFile.Permissions permissionSpec)'''
         return bool()
     def permissions(self):
-        """QFile.Permissions QFile.permissions(None self)"""
+        '''QFile.Permissions QFile.permissions()'''
         return QFile.Permissions()
-    def permissions(self, _filename):
-        """QFile.Permissions QFile.permissions(None self, QString _filename)"""
+    def permissions(self, filename):
+        '''static QFile.Permissions QFile.permissions(QString filename)'''
         return QFile.Permissions()
-    def resize(self, _sz):
-        """bool QFile.resize(None self, int _sz)"""
+    def resize(self, sz):
+        '''bool QFile.resize(int sz)'''
         return bool()
-    def resize(self, _filename, _sz):
-        """bool QFile.resize(None self, QString _filename, int _sz)"""
+    def resize(self, filename, sz):
+        '''static bool QFile.resize(QString filename, int sz)'''
         return bool()
     def flush(self):
-        """bool QFile.flush(None self)"""
+        '''bool QFile.flush()'''
         return bool()
     def atEnd(self):
-        """bool QFile.atEnd(None self)"""
+        '''bool QFile.atEnd()'''
         return bool()
-    def seek(self, _offset):
-        """bool QFile.seek(None self, int _offset)"""
+    def seek(self, offset):
+        '''bool QFile.seek(int offset)'''
         return bool()
     def pos(self):
-        """int QFile.pos(None self)"""
+        '''int QFile.pos()'''
         return int()
     def size(self):
-        """int QFile.size(None self)"""
+        '''int QFile.size()'''
         return int()
     def close(self):
-        """None QFile.close(None self)"""
-        return None
-    def open(self, _flags):
-        """bool QFile.open(None self, QIODevice.OpenMode _flags)"""
+        '''void QFile.close()'''
+    def open(self, flags):
+        '''bool QFile.open(QIODevice.OpenMode flags)'''
         return bool()
-    def open(self, _fd, _flags):
-        """bool QFile.open(None self, int _fd, QIODevice.OpenMode _flags)"""
+    def open(self, fd, flags):
+        '''bool QFile.open(int fd, QIODevice.OpenMode flags)'''
         return bool()
     def isSequential(self):
-        """bool QFile.isSequential(None self)"""
+        '''bool QFile.isSequential()'''
         return bool()
-    def copy(self, _newName):
-        """bool QFile.copy(None self, QString _newName)"""
+    def copy(self, newName):
+        '''bool QFile.copy(QString newName)'''
         return bool()
-    def copy(self, _fileName, _newName):
-        """bool QFile.copy(None self, QString _fileName, QString _newName)"""
+    def copy(self, fileName, newName):
+        '''static bool QFile.copy(QString fileName, QString newName)'''
         return bool()
-    def link(self, _newName):
-        """bool QFile.link(None self, QString _newName)"""
+    def link(self, newName):
+        '''bool QFile.link(QString newName)'''
         return bool()
-    def link(self, _oldname, _newName):
-        """bool QFile.link(None self, QString _oldname, QString _newName)"""
+    def link(self, oldname, newName):
+        '''static bool QFile.link(QString oldname, QString newName)'''
         return bool()
-    def rename(self, _newName):
-        """bool QFile.rename(None self, QString _newName)"""
+    def rename(self, newName):
+        '''bool QFile.rename(QString newName)'''
         return bool()
-    def rename(self, _oldName, _newName):
-        """bool QFile.rename(None self, QString _oldName, QString _newName)"""
+    def rename(self, oldName, newName):
+        '''static bool QFile.rename(QString oldName, QString newName)'''
         return bool()
     def remove(self):
-        """bool QFile.remove(None self)"""
+        '''bool QFile.remove()'''
         return bool()
-    def remove(self, _fileName):
-        """bool QFile.remove(None self, QString _fileName)"""
+    def remove(self, fileName):
+        '''static bool QFile.remove(QString fileName)'''
         return bool()
     def readLink(self):
-        """QString QFile.readLink(None self)"""
+        '''QString QFile.readLink()'''
         return QString()
-    def readLink(self, _fileName):
-        """QString QFile.readLink(None self, QString _fileName)"""
+    def readLink(self, fileName):
+        '''static QString QFile.readLink(QString fileName)'''
         return QString()
     def exists(self):
-        """bool QFile.exists(None self)"""
+        '''bool QFile.exists()'''
         return bool()
-    def exists(self, _fileName):
-        """bool QFile.exists(None self, QString _fileName)"""
+    def exists(self, fileName):
+        '''static bool QFile.exists(QString fileName)'''
         return bool()
-    def decodeName(self, _localFileName):
-        """QString QFile.decodeName(None self, QByteArray _localFileName)"""
+    def decodeName(self, localFileName):
+        '''static QString QFile.decodeName(QByteArray localFileName)'''
         return QString()
-    def decodeName(self, _localFileName):
-        """QString QFile.decodeName(None self, str _localFileName)"""
+    def decodeName(self, localFileName):
+        '''static QString QFile.decodeName(str localFileName)'''
         return QString()
-    def encodeName(self, _fileName):
-        """QByteArray QFile.encodeName(None self, QString _fileName)"""
+    def encodeName(self, fileName):
+        '''static QByteArray QFile.encodeName(QString fileName)'''
         return QByteArray()
-    def setFileName(self, _name):
-        """None QFile.setFileName(None self, QString _name)"""
-        return None
+    def setFileName(self, name):
+        '''void QFile.setFileName(QString name)'''
     def fileName(self):
-        """QString QFile.fileName(None self)"""
+        '''QString QFile.fileName()'''
         return QString()
     def unsetError(self):
-        """None QFile.unsetError(None self)"""
-        return None
+        '''void QFile.unsetError()'''
     def error(self):
-        """QFile.FileError QFile.error(None self)"""
+        '''QFile.FileError QFile.error()'''
         return QFile.FileError()
+    class Permissions():
+        """"""
+        def __init__(self):
+            '''QFile.Permissions QFile.Permissions.__init__()'''
+            return QFile.Permissions()
+        def __init__(self):
+            '''int QFile.Permissions.__init__()'''
+            return int()
+        def __init__(self):
+            '''void QFile.Permissions.__init__()'''
+        def __bool__(self):
+            '''int QFile.Permissions.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool QFile.Permissions.__ne__(QFile.Permissions f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool QFile.Permissions.__eq__(QFile.Permissions f)'''
+            return bool()
+        def __invert__(self):
+            '''QFile.Permissions QFile.Permissions.__invert__()'''
+            return QFile.Permissions()
+        def __and__(self, mask):
+            '''QFile.Permissions QFile.Permissions.__and__(int mask)'''
+            return QFile.Permissions()
+        def __xor__(self, f):
+            '''QFile.Permissions QFile.Permissions.__xor__(QFile.Permissions f)'''
+            return QFile.Permissions()
+        def __xor__(self, f):
+            '''QFile.Permissions QFile.Permissions.__xor__(int f)'''
+            return QFile.Permissions()
+        def __or__(self, f):
+            '''QFile.Permissions QFile.Permissions.__or__(QFile.Permissions f)'''
+            return QFile.Permissions()
+        def __or__(self, f):
+            '''QFile.Permissions QFile.Permissions.__or__(int f)'''
+            return QFile.Permissions()
+        def __int__(self):
+            '''int QFile.Permissions.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''QFile.Permissions QFile.Permissions.__ixor__(QFile.Permissions f)'''
+            return QFile.Permissions()
+        def __ior__(self, f):
+            '''QFile.Permissions QFile.Permissions.__ior__(QFile.Permissions f)'''
+            return QFile.Permissions()
+        def __iand__(self, mask):
+            '''QFile.Permissions QFile.Permissions.__iand__(int mask)'''
+            return QFile.Permissions()
 
 
 class QFileInfo():
     """"""
     def __init__(self):
-        """None QFileInfo.__init__(None self)"""
-        return None
-    def __init__(self, _file):
-        """None QFileInfo.__init__(None self, QString _file)"""
-        return None
-    def __init__(self, _file):
-        """None QFileInfo.__init__(None self, QFile _file)"""
-        return None
-    def __init__(self, _dir, _file):
-        """None QFileInfo.__init__(None self, QDir _dir, QString _file)"""
-        return None
-    def __init__(self, _fileinfo):
-        """None QFileInfo.__init__(None self, QFileInfo _fileinfo)"""
-        return None
+        '''void QFileInfo.__init__()'''
+    def __init__(self, file):
+        '''void QFileInfo.__init__(QString file)'''
+    def __init__(self, file):
+        '''void QFileInfo.__init__(QFile file)'''
+    def __init__(self, dir, file):
+        '''void QFileInfo.__init__(QDir dir, QString file)'''
+    def __init__(self, fileinfo):
+        '''void QFileInfo.__init__(QFileInfo fileinfo)'''
     def isBundle(self):
-        """bool QFileInfo.isBundle(None self)"""
+        '''bool QFileInfo.isBundle()'''
         return bool()
     def bundleName(self):
-        """QString QFileInfo.bundleName(None self)"""
+        '''QString QFileInfo.bundleName()'''
         return QString()
     def symLinkTarget(self):
-        """QString QFileInfo.symLinkTarget(None self)"""
+        '''QString QFileInfo.symLinkTarget()'''
         return QString()
-    def setCaching(self, _on):
-        """None QFileInfo.setCaching(None self, bool _on)"""
-        return None
+    def setCaching(self, on):
+        '''void QFileInfo.setCaching(bool on)'''
     def caching(self):
-        """bool QFileInfo.caching(None self)"""
+        '''bool QFileInfo.caching()'''
         return bool()
     def detach(self):
-        """None QFileInfo.detach(None self)"""
-        return None
+        '''void QFileInfo.detach()'''
     def lastRead(self):
-        """QDateTime QFileInfo.lastRead(None self)"""
+        '''QDateTime QFileInfo.lastRead()'''
         return QDateTime()
     def lastModified(self):
-        """QDateTime QFileInfo.lastModified(None self)"""
+        '''QDateTime QFileInfo.lastModified()'''
         return QDateTime()
     def created(self):
-        """QDateTime QFileInfo.created(None self)"""
+        '''QDateTime QFileInfo.created()'''
         return QDateTime()
     def size(self):
-        """int QFileInfo.size(None self)"""
+        '''int QFileInfo.size()'''
         return int()
     def permissions(self):
-        """QFile.Permissions QFileInfo.permissions(None self)"""
+        '''QFile.Permissions QFileInfo.permissions()'''
         return QFile.Permissions()
-    def permission(self, _permissions):
-        """bool QFileInfo.permission(None self, QFile.Permissions _permissions)"""
+    def permission(self, permissions):
+        '''bool QFileInfo.permission(QFile.Permissions permissions)'''
         return bool()
     def groupId(self):
-        """int QFileInfo.groupId(None self)"""
+        '''int QFileInfo.groupId()'''
         return int()
     def group(self):
-        """QString QFileInfo.group(None self)"""
+        '''QString QFileInfo.group()'''
         return QString()
     def ownerId(self):
-        """int QFileInfo.ownerId(None self)"""
+        '''int QFileInfo.ownerId()'''
         return int()
     def owner(self):
-        """QString QFileInfo.owner(None self)"""
+        '''QString QFileInfo.owner()'''
         return QString()
     def readLink(self):
-        """QString QFileInfo.readLink(None self)"""
+        '''QString QFileInfo.readLink()'''
         return QString()
     def isRoot(self):
-        """bool QFileInfo.isRoot(None self)"""
+        '''bool QFileInfo.isRoot()'''
         return bool()
     def isSymLink(self):
-        """bool QFileInfo.isSymLink(None self)"""
+        '''bool QFileInfo.isSymLink()'''
         return bool()
     def isDir(self):
-        """bool QFileInfo.isDir(None self)"""
+        '''bool QFileInfo.isDir()'''
         return bool()
     def isFile(self):
-        """bool QFileInfo.isFile(None self)"""
+        '''bool QFileInfo.isFile()'''
         return bool()
     def makeAbsolute(self):
-        """bool QFileInfo.makeAbsolute(None self)"""
+        '''bool QFileInfo.makeAbsolute()'''
         return bool()
     def isAbsolute(self):
-        """bool QFileInfo.isAbsolute(None self)"""
+        '''bool QFileInfo.isAbsolute()'''
         return bool()
     def isRelative(self):
-        """bool QFileInfo.isRelative(None self)"""
+        '''bool QFileInfo.isRelative()'''
         return bool()
     def isHidden(self):
-        """bool QFileInfo.isHidden(None self)"""
+        '''bool QFileInfo.isHidden()'''
         return bool()
     def isExecutable(self):
-        """bool QFileInfo.isExecutable(None self)"""
+        '''bool QFileInfo.isExecutable()'''
         return bool()
     def isWritable(self):
-        """bool QFileInfo.isWritable(None self)"""
+        '''bool QFileInfo.isWritable()'''
         return bool()
     def isReadable(self):
-        """bool QFileInfo.isReadable(None self)"""
+        '''bool QFileInfo.isReadable()'''
         return bool()
     def absoluteDir(self):
-        """QDir QFileInfo.absoluteDir(None self)"""
+        '''QDir QFileInfo.absoluteDir()'''
         return QDir()
     def dir(self):
-        """QDir QFileInfo.dir(None self)"""
+        '''QDir QFileInfo.dir()'''
         return QDir()
     def canonicalPath(self):
-        """QString QFileInfo.canonicalPath(None self)"""
+        '''QString QFileInfo.canonicalPath()'''
         return QString()
     def absolutePath(self):
-        """QString QFileInfo.absolutePath(None self)"""
+        '''QString QFileInfo.absolutePath()'''
         return QString()
     def path(self):
-        """QString QFileInfo.path(None self)"""
+        '''QString QFileInfo.path()'''
         return QString()
     def completeSuffix(self):
-        """QString QFileInfo.completeSuffix(None self)"""
+        '''QString QFileInfo.completeSuffix()'''
         return QString()
     def suffix(self):
-        """QString QFileInfo.suffix(None self)"""
+        '''QString QFileInfo.suffix()'''
         return QString()
     def completeBaseName(self):
-        """QString QFileInfo.completeBaseName(None self)"""
+        '''QString QFileInfo.completeBaseName()'''
         return QString()
     def baseName(self):
-        """QString QFileInfo.baseName(None self)"""
+        '''QString QFileInfo.baseName()'''
         return QString()
     def fileName(self):
-        """QString QFileInfo.fileName(None self)"""
+        '''QString QFileInfo.fileName()'''
         return QString()
     def canonicalFilePath(self):
-        """QString QFileInfo.canonicalFilePath(None self)"""
+        '''QString QFileInfo.canonicalFilePath()'''
         return QString()
     def absoluteFilePath(self):
-        """QString QFileInfo.absoluteFilePath(None self)"""
+        '''QString QFileInfo.absoluteFilePath()'''
         return QString()
     def filePath(self):
-        """QString QFileInfo.filePath(None self)"""
+        '''QString QFileInfo.filePath()'''
         return QString()
     def refresh(self):
-        """None QFileInfo.refresh(None self)"""
-        return None
+        '''void QFileInfo.refresh()'''
     def exists(self):
-        """bool QFileInfo.exists(None self)"""
+        '''bool QFileInfo.exists()'''
         return bool()
-    def setFile(self, _file):
-        """None QFileInfo.setFile(None self, QString _file)"""
-        return None
-    def setFile(self, _file):
-        """None QFileInfo.setFile(None self, QFile _file)"""
-        return None
-    def setFile(self, _dir, _file):
-        """None QFileInfo.setFile(None self, QDir _dir, QString _file)"""
-        return None
-    def __ne__(self, _fileinfo):
-        """bool QFileInfo.__ne__(None self, QFileInfo _fileinfo)"""
+    def setFile(self, file):
+        '''void QFileInfo.setFile(QString file)'''
+    def setFile(self, file):
+        '''void QFileInfo.setFile(QFile file)'''
+    def setFile(self, dir, file):
+        '''void QFileInfo.setFile(QDir dir, QString file)'''
+    def __ne__(self, fileinfo):
+        '''bool QFileInfo.__ne__(QFileInfo fileinfo)'''
         return bool()
-    def __eq__(self, _fileinfo):
-        """bool QFileInfo.__eq__(None self, QFileInfo _fileinfo)"""
+    def __eq__(self, fileinfo):
+        '''bool QFileInfo.__eq__(QFileInfo fileinfo)'''
         return bool()
 
 
 class QFileSystemWatcher(QObject):
     """"""
-    def __init__(self, _parent):
-        """None QFileSystemWatcher.__init__(None self, QObject _parent)"""
-        return None
-    def __init__(self, _paths, _parent):
-        """None QFileSystemWatcher.__init__(None self, QStringList _paths, QObject _parent)"""
-        return None
-    def removePaths(self, _files):
-        """None QFileSystemWatcher.removePaths(None self, QStringList _files)"""
-        return None
-    def removePath(self, _file):
-        """None QFileSystemWatcher.removePath(None self, QString _file)"""
-        return None
+    def __init__(self, parent = None):
+        '''void QFileSystemWatcher.__init__(QObject parent = None)'''
+    def __init__(self, paths, parent = None):
+        '''void QFileSystemWatcher.__init__(QStringList paths, QObject parent = None)'''
+    fileChanged = PyQt4.QtCore.pyqtSignal() # void fileChanged(const QString&) - signal
+    directoryChanged = PyQt4.QtCore.pyqtSignal() # void directoryChanged(const QString&) - signal
+    def removePaths(self, files):
+        '''void QFileSystemWatcher.removePaths(QStringList files)'''
+    def removePath(self, file):
+        '''void QFileSystemWatcher.removePath(QString file)'''
     def files(self):
-        """QStringList QFileSystemWatcher.files(None self)"""
+        '''QStringList QFileSystemWatcher.files()'''
         return QStringList()
     def directories(self):
-        """QStringList QFileSystemWatcher.directories(None self)"""
+        '''QStringList QFileSystemWatcher.directories()'''
         return QStringList()
-    def addPaths(self, _files):
-        """None QFileSystemWatcher.addPaths(None self, QStringList _files)"""
-        return None
-    def addPath(self, _file):
-        """None QFileSystemWatcher.addPath(None self, QString _file)"""
-        return None
+    def addPaths(self, files):
+        '''void QFileSystemWatcher.addPaths(QStringList files)'''
+    def addPath(self, file):
+        '''void QFileSystemWatcher.addPath(QString file)'''
 
 
 class QFinalState(QAbstractState):
     """"""
-    def __init__(self, _parent):
-        """None QFinalState.__init__(None self, QState _parent)"""
-        return None
-    def event(self, _e):
-        """bool QFinalState.event(None self, QEvent _e)"""
+    def __init__(self, parent = None):
+        '''void QFinalState.__init__(QState parent = None)'''
+    def event(self, e):
+        '''bool QFinalState.event(QEvent e)'''
         return bool()
-    def onExit(self, _event):
-        """None QFinalState.onExit(None self, QEvent _event)"""
-        return None
-    def onEntry(self, _event):
-        """None QFinalState.onEntry(None self, QEvent _event)"""
-        return None
+    def onExit(self, event):
+        '''void QFinalState.onExit(QEvent event)'''
+    def onEntry(self, event):
+        '''void QFinalState.onEntry(QEvent event)'''
 
 
 class QFSFileEngine(QAbstractFileEngine):
     """"""
     def __init__(self):
-        """None QFSFileEngine.__init__(None self)"""
-        return None
-    def __init__(self, _file):
-        """None QFSFileEngine.__init__(None self, QString _file)"""
-        return None
+        '''void QFSFileEngine.__init__()'''
+    def __init__(self, file):
+        '''void QFSFileEngine.__init__(QString file)'''
     def drives(self):
-        """list-of-QFileInfo QFSFileEngine.drives(None self)"""
+        '''static list-of-QFileInfo QFSFileEngine.drives()'''
         return [QFileInfo()]
     def tempPath(self):
-        """QString QFSFileEngine.tempPath(None self)"""
+        '''static QString QFSFileEngine.tempPath()'''
         return QString()
     def rootPath(self):
-        """QString QFSFileEngine.rootPath(None self)"""
+        '''static QString QFSFileEngine.rootPath()'''
         return QString()
     def homePath(self):
-        """QString QFSFileEngine.homePath(None self)"""
+        '''static QString QFSFileEngine.homePath()'''
         return QString()
-    def currentPath(self, _fileName):
-        """QString QFSFileEngine.currentPath(None self, QString _fileName)"""
+    def currentPath(self, fileName = QString()):
+        '''static QString QFSFileEngine.currentPath(QString fileName = QString())'''
         return QString()
-    def setCurrentPath(self, _path):
-        """bool QFSFileEngine.setCurrentPath(None self, QString _path)"""
+    def setCurrentPath(self, path):
+        '''static bool QFSFileEngine.setCurrentPath(QString path)'''
         return bool()
-    def write(self, _data):
-        """int QFSFileEngine.write(None self, str _data)"""
+    def write(self, data):
+        '''int QFSFileEngine.write(str data)'''
         return int()
-    def readLine(self, _maxlen):
-        """str QFSFileEngine.readLine(None self, int _maxlen)"""
+    def readLine(self, maxlen):
+        '''str QFSFileEngine.readLine(int maxlen)'''
         return str()
-    def read(self, _maxlen):
-        """str QFSFileEngine.read(None self, int _maxlen)"""
+    def read(self, maxlen):
+        '''str QFSFileEngine.read(int maxlen)'''
         return str()
     def handle(self):
-        """int QFSFileEngine.handle(None self)"""
+        '''int QFSFileEngine.handle()'''
         return int()
-    def setFileName(self, _file):
-        """None QFSFileEngine.setFileName(None self, QString _file)"""
-        return None
-    def fileTime(self, _time):
-        """QDateTime QFSFileEngine.fileTime(None self, QAbstractFileEngine.FileTime _time)"""
+    def setFileName(self, file):
+        '''void QFSFileEngine.setFileName(QString file)'''
+    def fileTime(self, time):
+        '''QDateTime QFSFileEngine.fileTime(QAbstractFileEngine.FileTime time)'''
         return QDateTime()
     def owner(self):
-        """QAbstractFileEngine.FileOwner QFSFileEngine.owner(None self)"""
+        '''QAbstractFileEngine.FileOwner QFSFileEngine.owner()'''
         return QAbstractFileEngine.FileOwner()
     def ownerId(self):
-        """QAbstractFileEngine.FileOwner QFSFileEngine.ownerId(None self)"""
+        '''QAbstractFileEngine.FileOwner QFSFileEngine.ownerId()'''
         return QAbstractFileEngine.FileOwner()
-    def fileName(self, _file):
-        """QString QFSFileEngine.fileName(None self, QAbstractFileEngine.FileName _file)"""
+    def fileName(self, file):
+        '''QString QFSFileEngine.fileName(QAbstractFileEngine.FileName file)'''
         return QString()
-    def setPermissions(self, _perms):
-        """bool QFSFileEngine.setPermissions(None self, int _perms)"""
+    def setPermissions(self, perms):
+        '''bool QFSFileEngine.setPermissions(int perms)'''
         return bool()
-    def fileFlags(self, _type):
-        """QAbstractFileEngine.FileFlags QFSFileEngine.fileFlags(None self, QAbstractFileEngine.FileFlags _type)"""
+    def fileFlags(self, type):
+        '''QAbstractFileEngine.FileFlags QFSFileEngine.fileFlags(QAbstractFileEngine.FileFlags type)'''
         return QAbstractFileEngine.FileFlags()
-    def entryList(self, _filters, _filterNames):
-        """QStringList QFSFileEngine.entryList(None self, QDir.Filters _filters, QStringList _filterNames)"""
+    def entryList(self, filters, filterNames):
+        '''QStringList QFSFileEngine.entryList(QDir.Filters filters, QStringList filterNames)'''
         return QStringList()
     def isRelativePath(self):
-        """bool QFSFileEngine.isRelativePath(None self)"""
+        '''bool QFSFileEngine.isRelativePath()'''
         return bool()
     def caseSensitive(self):
-        """bool QFSFileEngine.caseSensitive(None self)"""
+        '''bool QFSFileEngine.caseSensitive()'''
         return bool()
-    def setSize(self, _size):
-        """bool QFSFileEngine.setSize(None self, int _size)"""
+    def setSize(self, size):
+        '''bool QFSFileEngine.setSize(int size)'''
         return bool()
-    def rmdir(self, _dirName, _recurseParentDirectories):
-        """bool QFSFileEngine.rmdir(None self, QString _dirName, bool _recurseParentDirectories)"""
+    def rmdir(self, dirName, recurseParentDirectories):
+        '''bool QFSFileEngine.rmdir(QString dirName, bool recurseParentDirectories)'''
         return bool()
-    def mkdir(self, _dirName, _createParentDirectories):
-        """bool QFSFileEngine.mkdir(None self, QString _dirName, bool _createParentDirectories)"""
+    def mkdir(self, dirName, createParentDirectories):
+        '''bool QFSFileEngine.mkdir(QString dirName, bool createParentDirectories)'''
         return bool()
-    def link(self, _newName):
-        """bool QFSFileEngine.link(None self, QString _newName)"""
+    def link(self, newName):
+        '''bool QFSFileEngine.link(QString newName)'''
         return bool()
-    def rename(self, _newName):
-        """bool QFSFileEngine.rename(None self, QString _newName)"""
+    def rename(self, newName):
+        '''bool QFSFileEngine.rename(QString newName)'''
         return bool()
-    def copy(self, _newName):
-        """bool QFSFileEngine.copy(None self, QString _newName)"""
+    def copy(self, newName):
+        '''bool QFSFileEngine.copy(QString newName)'''
         return bool()
     def remove(self):
-        """bool QFSFileEngine.remove(None self)"""
+        '''bool QFSFileEngine.remove()'''
         return bool()
     def isSequential(self):
-        """bool QFSFileEngine.isSequential(None self)"""
+        '''bool QFSFileEngine.isSequential()'''
         return bool()
     def seek(self):
-        """int QFSFileEngine.seek(None self)"""
+        '''int QFSFileEngine.seek()'''
         return int()
     def pos(self):
-        """int QFSFileEngine.pos(None self)"""
+        '''int QFSFileEngine.pos()'''
         return int()
     def size(self):
-        """int QFSFileEngine.size(None self)"""
+        '''int QFSFileEngine.size()'''
         return int()
     def flush(self):
-        """bool QFSFileEngine.flush(None self)"""
+        '''bool QFSFileEngine.flush()'''
         return bool()
     def close(self):
-        """bool QFSFileEngine.close(None self)"""
+        '''bool QFSFileEngine.close()'''
         return bool()
-    def open(self, _openMode):
-        """bool QFSFileEngine.open(None self, QIODevice.OpenMode _openMode)"""
+    def open(self, openMode):
+        '''bool QFSFileEngine.open(QIODevice.OpenMode openMode)'''
         return bool()
-    def open(self, _flags, _fd):
-        """bool QFSFileEngine.open(None self, QIODevice.OpenMode _flags, int _fd)"""
+    def open(self, flags, fd):
+        '''bool QFSFileEngine.open(QIODevice.OpenMode flags, int fd)'''
         return bool()
 
 
 class QHistoryState(QAbstractState):
     """"""
-    ShallowHistory = int() # QHistoryState.HistoryType enum
-    DeepHistory = int() # QHistoryState.HistoryType enum
+    # Enum QHistoryState.HistoryType
+    ShallowHistory = 0
+    DeepHistory = 0
 
-    def __init__(self, _parent):
-        """None QHistoryState.__init__(None self, QState _parent)"""
-        return None
-    def __init__(self, _type, _parent):
-        """None QHistoryState.__init__(None self, QHistoryState.HistoryType _type, QState _parent)"""
-        return None
-    def event(self, _e):
-        """bool QHistoryState.event(None self, QEvent _e)"""
+    def __init__(self, parent = None):
+        '''void QHistoryState.__init__(QState parent = None)'''
+    def __init__(self, type, parent = None):
+        '''void QHistoryState.__init__(QHistoryState.HistoryType type, QState parent = None)'''
+    def event(self, e):
+        '''bool QHistoryState.event(QEvent e)'''
         return bool()
-    def onExit(self, _event):
-        """None QHistoryState.onExit(None self, QEvent _event)"""
-        return None
-    def onEntry(self, _event):
-        """None QHistoryState.onEntry(None self, QEvent _event)"""
-        return None
-    def setHistoryType(self, _type):
-        """None QHistoryState.setHistoryType(None self, QHistoryState.HistoryType _type)"""
-        return None
+    def onExit(self, event):
+        '''void QHistoryState.onExit(QEvent event)'''
+    def onEntry(self, event):
+        '''void QHistoryState.onEntry(QEvent event)'''
+    def setHistoryType(self, type):
+        '''void QHistoryState.setHistoryType(QHistoryState.HistoryType type)'''
     def historyType(self):
-        """QHistoryState.HistoryType QHistoryState.historyType(None self)"""
+        '''QHistoryState.HistoryType QHistoryState.historyType()'''
         return QHistoryState.HistoryType()
-    def setDefaultState(self, _state):
-        """None QHistoryState.setDefaultState(None self, QAbstractState _state)"""
-        return None
+    def setDefaultState(self, state):
+        '''void QHistoryState.setDefaultState(QAbstractState state)'''
     def defaultState(self):
-        """QAbstractState QHistoryState.defaultState(None self)"""
+        '''QAbstractState QHistoryState.defaultState()'''
         return QAbstractState()
 
 
 class QLibraryInfo():
     """"""
-    PrefixPath = int() # QLibraryInfo.LibraryLocation enum
-    DocumentationPath = int() # QLibraryInfo.LibraryLocation enum
-    HeadersPath = int() # QLibraryInfo.LibraryLocation enum
-    LibrariesPath = int() # QLibraryInfo.LibraryLocation enum
-    BinariesPath = int() # QLibraryInfo.LibraryLocation enum
-    PluginsPath = int() # QLibraryInfo.LibraryLocation enum
-    DataPath = int() # QLibraryInfo.LibraryLocation enum
-    TranslationsPath = int() # QLibraryInfo.LibraryLocation enum
-    SettingsPath = int() # QLibraryInfo.LibraryLocation enum
-    DemosPath = int() # QLibraryInfo.LibraryLocation enum
-    ExamplesPath = int() # QLibraryInfo.LibraryLocation enum
-    ImportsPath = int() # QLibraryInfo.LibraryLocation enum
+    # Enum QLibraryInfo.LibraryLocation
+    PrefixPath = 0
+    DocumentationPath = 0
+    HeadersPath = 0
+    LibrariesPath = 0
+    BinariesPath = 0
+    PluginsPath = 0
+    DataPath = 0
+    TranslationsPath = 0
+    SettingsPath = 0
+    DemosPath = 0
+    ExamplesPath = 0
+    ImportsPath = 0
 
     def __init__(self):
-        """QLibraryInfo QLibraryInfo.__init__(None self)"""
+        '''QLibraryInfo QLibraryInfo.__init__()'''
         return QLibraryInfo()
     def buildDate(self):
-        """QDate QLibraryInfo.buildDate(None self)"""
+        '''static QDate QLibraryInfo.buildDate()'''
         return QDate()
     def location(self):
-        """QLibraryInfo.LibraryLocation QLibraryInfo.location(None self)"""
+        '''static QLibraryInfo.LibraryLocation QLibraryInfo.location()'''
         return QLibraryInfo.LibraryLocation()
     def buildKey(self):
-        """QString QLibraryInfo.buildKey(None self)"""
+        '''static QString QLibraryInfo.buildKey()'''
         return QString()
     def licensedProducts(self):
-        """QString QLibraryInfo.licensedProducts(None self)"""
+        '''static QString QLibraryInfo.licensedProducts()'''
         return QString()
     def licensee(self):
-        """QString QLibraryInfo.licensee(None self)"""
+        '''static QString QLibraryInfo.licensee()'''
         return QString()
 
 
 class QLine():
     """"""
     def __init__(self):
-        """None QLine.__init__(None self)"""
-        return None
-    def __init__(self, _pt1_, _pt2_):
-        """None QLine.__init__(None self, QPoint _pt1_, QPoint _pt2_)"""
-        return None
-    def __init__(self, _x1pos, _y1pos, _x2pos, _y2pos):
-        """None QLine.__init__(None self, int _x1pos, int _y1pos, int _x2pos, int _y2pos)"""
-        return None
+        '''void QLine.__init__()'''
+    def __init__(self, pt1_, pt2_):
+        '''void QLine.__init__(QPoint pt1_, QPoint pt2_)'''
+    def __init__(self, x1pos, y1pos, x2pos, y2pos):
+        '''void QLine.__init__(int x1pos, int y1pos, int x2pos, int y2pos)'''
     def __init__(self):
-        """QLine QLine.__init__(None self)"""
+        '''QLine QLine.__init__()'''
         return QLine()
-    def setLine(self, _aX1, _aY1, _aX2, _aY2):
-        """None QLine.setLine(None self, int _aX1, int _aY1, int _aX2, int _aY2)"""
-        return None
-    def setPoints(self, _aP1, _aP2):
-        """None QLine.setPoints(None self, QPoint _aP1, QPoint _aP2)"""
-        return None
-    def setP2(self, _aP2):
-        """None QLine.setP2(None self, QPoint _aP2)"""
-        return None
-    def setP1(self, _aP1):
-        """None QLine.setP1(None self, QPoint _aP1)"""
-        return None
-    def translated(self, _p):
-        """QLine QLine.translated(None self, QPoint _p)"""
+    def setLine(self, aX1, aY1, aX2, aY2):
+        '''void QLine.setLine(int aX1, int aY1, int aX2, int aY2)'''
+    def setPoints(self, aP1, aP2):
+        '''void QLine.setPoints(QPoint aP1, QPoint aP2)'''
+    def setP2(self, aP2):
+        '''void QLine.setP2(QPoint aP2)'''
+    def setP1(self, aP1):
+        '''void QLine.setP1(QPoint aP1)'''
+    def translated(self, p):
+        '''QLine QLine.translated(QPoint p)'''
         return QLine()
-    def translated(self, _adx, _ady):
-        """QLine QLine.translated(None self, int _adx, int _ady)"""
+    def translated(self, adx, ady):
+        '''QLine QLine.translated(int adx, int ady)'''
         return QLine()
-    def __eq__(self, _d):
-        """bool QLine.__eq__(None self, QLine _d)"""
+    def __eq__(self, d):
+        '''bool QLine.__eq__(QLine d)'''
         return bool()
-    def translate(self, _point):
-        """None QLine.translate(None self, QPoint _point)"""
-        return None
-    def translate(self, _adx, _ady):
-        """None QLine.translate(None self, int _adx, int _ady)"""
-        return None
+    def translate(self, point):
+        '''void QLine.translate(QPoint point)'''
+    def translate(self, adx, ady):
+        '''void QLine.translate(int adx, int ady)'''
     def dy(self):
-        """int QLine.dy(None self)"""
+        '''int QLine.dy()'''
         return int()
     def dx(self):
-        """int QLine.dx(None self)"""
+        '''int QLine.dx()'''
         return int()
     def p2(self):
-        """QPoint QLine.p2(None self)"""
+        '''QPoint QLine.p2()'''
         return QPoint()
     def p1(self):
-        """QPoint QLine.p1(None self)"""
+        '''QPoint QLine.p1()'''
         return QPoint()
     def y2(self):
-        """int QLine.y2(None self)"""
+        '''int QLine.y2()'''
         return int()
     def x2(self):
-        """int QLine.x2(None self)"""
+        '''int QLine.x2()'''
         return int()
     def y1(self):
-        """int QLine.y1(None self)"""
+        '''int QLine.y1()'''
         return int()
     def x1(self):
-        """int QLine.x1(None self)"""
+        '''int QLine.x1()'''
         return int()
     def __bool__(self):
-        """int QLine.__bool__(None self)"""
+        '''int QLine.__bool__()'''
         return int()
     def isNull(self):
-        """bool QLine.isNull(None self)"""
+        '''bool QLine.isNull()'''
         return bool()
     def __repr__(self):
-        """str QLine.__repr__(None self)"""
+        '''str QLine.__repr__()'''
         return str()
-    def __ne__(self, _d):
-        """bool QLine.__ne__(None self, QLine _d)"""
+    def __ne__(self, d):
+        '''bool QLine.__ne__(QLine d)'''
         return bool()
 
 
 class QLineF():
     """"""
-    NoIntersection = int() # QLineF.IntersectType enum
-    BoundedIntersection = int() # QLineF.IntersectType enum
-    UnboundedIntersection = int() # QLineF.IntersectType enum
+    # Enum QLineF.IntersectType
+    NoIntersection = 0
+    BoundedIntersection = 0
+    UnboundedIntersection = 0
 
-    def __init__(self, _line):
-        """None QLineF.__init__(None self, QLine _line)"""
-        return None
+    def __init__(self, line):
+        '''void QLineF.__init__(QLine line)'''
     def __init__(self):
-        """None QLineF.__init__(None self)"""
-        return None
-    def __init__(self, _apt1, _apt2):
-        """None QLineF.__init__(None self, QPointF _apt1, QPointF _apt2)"""
-        return None
-    def __init__(self, _x1pos, _y1pos, _x2pos, _y2pos):
-        """None QLineF.__init__(None self, float _x1pos, float _y1pos, float _x2pos, float _y2pos)"""
-        return None
+        '''void QLineF.__init__()'''
+    def __init__(self, apt1, apt2):
+        '''void QLineF.__init__(QPointF apt1, QPointF apt2)'''
+    def __init__(self, x1pos, y1pos, x2pos, y2pos):
+        '''void QLineF.__init__(float x1pos, float y1pos, float x2pos, float y2pos)'''
     def __init__(self):
-        """QLineF QLineF.__init__(None self)"""
+        '''QLineF QLineF.__init__()'''
         return QLineF()
-    def setLine(self, _aX1, _aY1, _aX2, _aY2):
-        """None QLineF.setLine(None self, float _aX1, float _aY1, float _aX2, float _aY2)"""
-        return None
-    def setPoints(self, _aP1, _aP2):
-        """None QLineF.setPoints(None self, QPointF _aP1, QPointF _aP2)"""
-        return None
-    def setP2(self, _aP2):
-        """None QLineF.setP2(None self, QPointF _aP2)"""
-        return None
-    def setP1(self, _aP1):
-        """None QLineF.setP1(None self, QPointF _aP1)"""
-        return None
-    def translated(self, _p):
-        """QLineF QLineF.translated(None self, QPointF _p)"""
+    def setLine(self, aX1, aY1, aX2, aY2):
+        '''void QLineF.setLine(float aX1, float aY1, float aX2, float aY2)'''
+    def setPoints(self, aP1, aP2):
+        '''void QLineF.setPoints(QPointF aP1, QPointF aP2)'''
+    def setP2(self, aP2):
+        '''void QLineF.setP2(QPointF aP2)'''
+    def setP1(self, aP1):
+        '''void QLineF.setP1(QPointF aP1)'''
+    def translated(self, p):
+        '''QLineF QLineF.translated(QPointF p)'''
         return QLineF()
-    def translated(self, _adx, _ady):
-        """QLineF QLineF.translated(None self, float _adx, float _ady)"""
+    def translated(self, adx, ady):
+        '''QLineF QLineF.translated(float adx, float ady)'''
         return QLineF()
-    def angleTo(self, _l):
-        """float QLineF.angleTo(None self, QLineF _l)"""
+    def angleTo(self, l):
+        '''float QLineF.angleTo(QLineF l)'''
         return float()
-    def setAngle(self, _angle):
-        """None QLineF.setAngle(None self, float _angle)"""
-        return None
-    def fromPolar(self, _length, _angle):
-        """QLineF QLineF.fromPolar(None self, float _length, float _angle)"""
+    def setAngle(self, angle):
+        '''void QLineF.setAngle(float angle)'''
+    def fromPolar(self, length, angle):
+        '''static QLineF QLineF.fromPolar(float length, float angle)'''
         return QLineF()
-    def __eq__(self, _d):
-        """bool QLineF.__eq__(None self, QLineF _d)"""
+    def __eq__(self, d):
+        '''bool QLineF.__eq__(QLineF d)'''
         return bool()
     def toLine(self):
-        """QLine QLineF.toLine(None self)"""
+        '''QLine QLineF.toLine()'''
         return QLine()
-    def pointAt(self, _t):
-        """QPointF QLineF.pointAt(None self, float _t)"""
+    def pointAt(self, t):
+        '''QPointF QLineF.pointAt(float t)'''
         return QPointF()
-    def setLength(self, _len):
-        """None QLineF.setLength(None self, float _len)"""
-        return None
-    def translate(self, _point):
-        """None QLineF.translate(None self, QPointF _point)"""
-        return None
-    def translate(self, _adx, _ady):
-        """None QLineF.translate(None self, float _adx, float _ady)"""
-        return None
+    def setLength(self, len):
+        '''void QLineF.setLength(float len)'''
+    def translate(self, point):
+        '''void QLineF.translate(QPointF point)'''
+    def translate(self, adx, ady):
+        '''void QLineF.translate(float adx, float ady)'''
     def normalVector(self):
-        """QLineF QLineF.normalVector(None self)"""
+        '''QLineF QLineF.normalVector()'''
         return QLineF()
     def dy(self):
-        """float QLineF.dy(None self)"""
+        '''float QLineF.dy()'''
         return float()
     def dx(self):
-        """float QLineF.dx(None self)"""
+        '''float QLineF.dx()'''
         return float()
     def p2(self):
-        """QPointF QLineF.p2(None self)"""
+        '''QPointF QLineF.p2()'''
         return QPointF()
     def p1(self):
-        """QPointF QLineF.p1(None self)"""
+        '''QPointF QLineF.p1()'''
         return QPointF()
     def y2(self):
-        """float QLineF.y2(None self)"""
+        '''float QLineF.y2()'''
         return float()
     def x2(self):
-        """float QLineF.x2(None self)"""
+        '''float QLineF.x2()'''
         return float()
     def y1(self):
-        """float QLineF.y1(None self)"""
+        '''float QLineF.y1()'''
         return float()
     def x1(self):
-        """float QLineF.x1(None self)"""
+        '''float QLineF.x1()'''
         return float()
     def __repr__(self):
-        """str QLineF.__repr__(None self)"""
+        '''str QLineF.__repr__()'''
         return str()
-    def __ne__(self, _d):
-        """bool QLineF.__ne__(None self, QLineF _d)"""
+    def __ne__(self, d):
+        '''bool QLineF.__ne__(QLineF d)'''
         return bool()
-    def angle(self, _l):
-        """float QLineF.angle(None self, QLineF _l)"""
+    def angle(self, l):
+        '''float QLineF.angle(QLineF l)'''
         return float()
     def angle(self):
-        """float QLineF.angle(None self)"""
+        '''float QLineF.angle()'''
         return float()
-    def intersect(self, _l, _intersectionPoint):
-        """QLineF.IntersectType QLineF.intersect(None self, QLineF _l, QPointF _intersectionPoint)"""
+    def intersect(self, l, intersectionPoint):
+        '''QLineF.IntersectType QLineF.intersect(QLineF l, QPointF intersectionPoint)'''
         return QLineF.IntersectType()
     def unitVector(self):
-        """QLineF QLineF.unitVector(None self)"""
+        '''QLineF QLineF.unitVector()'''
         return QLineF()
     def length(self):
-        """float QLineF.length(None self)"""
+        '''float QLineF.length()'''
         return float()
     def __bool__(self):
-        """int QLineF.__bool__(None self)"""
+        '''int QLineF.__bool__()'''
         return int()
     def isNull(self):
-        """bool QLineF.isNull(None self)"""
+        '''bool QLineF.isNull()'''
         return bool()
 
 
 class QLibrary(QObject):
     """"""
-    ResolveAllSymbolsHint = int() # QLibrary.LoadHint enum
-    ExportExternalSymbolsHint = int() # QLibrary.LoadHint enum
-    LoadArchiveMemberHint = int() # QLibrary.LoadHint enum
+    # Enum QLibrary.LoadHint
+    ResolveAllSymbolsHint = 0
+    ExportExternalSymbolsHint = 0
+    LoadArchiveMemberHint = 0
 
-    def __init__(self, _parent):
-        """None QLibrary.__init__(None self, QObject _parent)"""
-        return None
-    def __init__(self, _fileName, _parent):
-        """None QLibrary.__init__(None self, QString _fileName, QObject _parent)"""
-        return None
-    def __init__(self, _fileName, _verNum, _parent):
-        """None QLibrary.__init__(None self, QString _fileName, int _verNum, QObject _parent)"""
-        return None
-    def __init__(self, _fileName, _version, _parent):
-        """None QLibrary.__init__(None self, QString _fileName, QString _version, QObject _parent)"""
-        return None
-    def setLoadHints(self, _hints):
-        """None QLibrary.setLoadHints(None self, QLibrary.LoadHints _hints)"""
-        return None
-    def setFileNameAndVersion(self, _fileName, _verNum):
-        """None QLibrary.setFileNameAndVersion(None self, QString _fileName, int _verNum)"""
-        return None
-    def setFileNameAndVersion(self, _fileName, _version):
-        """None QLibrary.setFileNameAndVersion(None self, QString _fileName, QString _version)"""
-        return None
-    def setFileName(self, _fileName):
-        """None QLibrary.setFileName(None self, QString _fileName)"""
-        return None
-    def isLibrary(self, _fileName):
-        """bool QLibrary.isLibrary(None self, QString _fileName)"""
+    def __init__(self, parent = None):
+        '''void QLibrary.__init__(QObject parent = None)'''
+    def __init__(self, fileName, parent = None):
+        '''void QLibrary.__init__(QString fileName, QObject parent = None)'''
+    def __init__(self, fileName, verNum, parent = None):
+        '''void QLibrary.__init__(QString fileName, int verNum, QObject parent = None)'''
+    def __init__(self, fileName, version, parent = None):
+        '''void QLibrary.__init__(QString fileName, QString version, QObject parent = None)'''
+    def setLoadHints(self, hints):
+        '''void QLibrary.setLoadHints(QLibrary.LoadHints hints)'''
+    def setFileNameAndVersion(self, fileName, verNum):
+        '''void QLibrary.setFileNameAndVersion(QString fileName, int verNum)'''
+    def setFileNameAndVersion(self, fileName, version):
+        '''void QLibrary.setFileNameAndVersion(QString fileName, QString version)'''
+    def setFileName(self, fileName):
+        '''void QLibrary.setFileName(QString fileName)'''
+    def isLibrary(self, fileName):
+        '''static bool QLibrary.isLibrary(QString fileName)'''
         return bool()
     def unload(self):
-        """bool QLibrary.unload(None self)"""
+        '''bool QLibrary.unload()'''
         return bool()
-    def resolve(self, _symbol):
-        """sip.voidptr QLibrary.resolve(None self, str _symbol)"""
+    def resolve(self, symbol):
+        '''sip.voidptr QLibrary.resolve(str symbol)'''
         return sip.voidptr()
-    def resolve(self, _fileName, _symbol):
-        """sip.voidptr QLibrary.resolve(None self, QString _fileName, str _symbol)"""
+    def resolve(self, fileName, symbol):
+        '''static sip.voidptr QLibrary.resolve(QString fileName, str symbol)'''
         return sip.voidptr()
-    def resolve(self, _fileName, _verNum, _symbol):
-        """sip.voidptr QLibrary.resolve(None self, QString _fileName, int _verNum, str _symbol)"""
+    def resolve(self, fileName, verNum, symbol):
+        '''static sip.voidptr QLibrary.resolve(QString fileName, int verNum, str symbol)'''
         return sip.voidptr()
-    def resolve(self, _fileName, _version, _symbol):
-        """sip.voidptr QLibrary.resolve(None self, QString _fileName, QString _version, str _symbol)"""
+    def resolve(self, fileName, version, symbol):
+        '''static sip.voidptr QLibrary.resolve(QString fileName, QString version, str symbol)'''
         return sip.voidptr()
     def loadHints(self):
-        """QLibrary.LoadHints QLibrary.loadHints(None self)"""
+        '''QLibrary.LoadHints QLibrary.loadHints()'''
         return QLibrary.LoadHints()
     def load(self):
-        """bool QLibrary.load(None self)"""
+        '''bool QLibrary.load()'''
         return bool()
     def isLoaded(self):
-        """bool QLibrary.isLoaded(None self)"""
+        '''bool QLibrary.isLoaded()'''
         return bool()
     def fileName(self):
-        """QString QLibrary.fileName(None self)"""
+        '''QString QLibrary.fileName()'''
         return QString()
     def errorString(self):
-        """QString QLibrary.errorString(None self)"""
+        '''QString QLibrary.errorString()'''
         return QString()
+    class LoadHints():
+        """"""
+        def __init__(self):
+            '''QLibrary.LoadHints QLibrary.LoadHints.__init__()'''
+            return QLibrary.LoadHints()
+        def __init__(self):
+            '''int QLibrary.LoadHints.__init__()'''
+            return int()
+        def __init__(self):
+            '''void QLibrary.LoadHints.__init__()'''
+        def __bool__(self):
+            '''int QLibrary.LoadHints.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool QLibrary.LoadHints.__ne__(QLibrary.LoadHints f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool QLibrary.LoadHints.__eq__(QLibrary.LoadHints f)'''
+            return bool()
+        def __invert__(self):
+            '''QLibrary.LoadHints QLibrary.LoadHints.__invert__()'''
+            return QLibrary.LoadHints()
+        def __and__(self, mask):
+            '''QLibrary.LoadHints QLibrary.LoadHints.__and__(int mask)'''
+            return QLibrary.LoadHints()
+        def __xor__(self, f):
+            '''QLibrary.LoadHints QLibrary.LoadHints.__xor__(QLibrary.LoadHints f)'''
+            return QLibrary.LoadHints()
+        def __xor__(self, f):
+            '''QLibrary.LoadHints QLibrary.LoadHints.__xor__(int f)'''
+            return QLibrary.LoadHints()
+        def __or__(self, f):
+            '''QLibrary.LoadHints QLibrary.LoadHints.__or__(QLibrary.LoadHints f)'''
+            return QLibrary.LoadHints()
+        def __or__(self, f):
+            '''QLibrary.LoadHints QLibrary.LoadHints.__or__(int f)'''
+            return QLibrary.LoadHints()
+        def __int__(self):
+            '''int QLibrary.LoadHints.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''QLibrary.LoadHints QLibrary.LoadHints.__ixor__(QLibrary.LoadHints f)'''
+            return QLibrary.LoadHints()
+        def __ior__(self, f):
+            '''QLibrary.LoadHints QLibrary.LoadHints.__ior__(QLibrary.LoadHints f)'''
+            return QLibrary.LoadHints()
+        def __iand__(self, mask):
+            '''QLibrary.LoadHints QLibrary.LoadHints.__iand__(int mask)'''
+            return QLibrary.LoadHints()
 
 
 class QLocale():
     """"""
-    MetricSystem = int() # QLocale.MeasurementSystem enum
-    ImperialSystem = int() # QLocale.MeasurementSystem enum
+    # Enum QLocale.MeasurementSystem
+    MetricSystem = 0
+    ImperialSystem = 0
 
-    LongFormat = int() # QLocale.FormatType enum
-    ShortFormat = int() # QLocale.FormatType enum
-    NarrowFormat = int() # QLocale.FormatType enum
+    # Enum QLocale.FormatType
+    LongFormat = 0
+    ShortFormat = 0
+    NarrowFormat = 0
 
-    OmitGroupSeparator = int() # QLocale.NumberOption enum
-    RejectGroupSeparator = int() # QLocale.NumberOption enum
+    # Enum QLocale.NumberOption
+    OmitGroupSeparator = 0
+    RejectGroupSeparator = 0
 
-    AnyCountry = int() # QLocale.Country enum
-    Afghanistan = int() # QLocale.Country enum
-    Albania = int() # QLocale.Country enum
-    Algeria = int() # QLocale.Country enum
-    AmericanSamoa = int() # QLocale.Country enum
-    Andorra = int() # QLocale.Country enum
-    Angola = int() # QLocale.Country enum
-    Anguilla = int() # QLocale.Country enum
-    Antarctica = int() # QLocale.Country enum
-    AntiguaAndBarbuda = int() # QLocale.Country enum
-    Argentina = int() # QLocale.Country enum
-    Armenia = int() # QLocale.Country enum
-    Aruba = int() # QLocale.Country enum
-    Australia = int() # QLocale.Country enum
-    Austria = int() # QLocale.Country enum
-    Azerbaijan = int() # QLocale.Country enum
-    Bahamas = int() # QLocale.Country enum
-    Bahrain = int() # QLocale.Country enum
-    Bangladesh = int() # QLocale.Country enum
-    Barbados = int() # QLocale.Country enum
-    Belarus = int() # QLocale.Country enum
-    Belgium = int() # QLocale.Country enum
-    Belize = int() # QLocale.Country enum
-    Benin = int() # QLocale.Country enum
-    Bermuda = int() # QLocale.Country enum
-    Bhutan = int() # QLocale.Country enum
-    Bolivia = int() # QLocale.Country enum
-    BosniaAndHerzegowina = int() # QLocale.Country enum
-    Botswana = int() # QLocale.Country enum
-    BouvetIsland = int() # QLocale.Country enum
-    Brazil = int() # QLocale.Country enum
-    BritishIndianOceanTerritory = int() # QLocale.Country enum
-    BruneiDarussalam = int() # QLocale.Country enum
-    Bulgaria = int() # QLocale.Country enum
-    BurkinaFaso = int() # QLocale.Country enum
-    Burundi = int() # QLocale.Country enum
-    Cambodia = int() # QLocale.Country enum
-    Cameroon = int() # QLocale.Country enum
-    Canada = int() # QLocale.Country enum
-    CapeVerde = int() # QLocale.Country enum
-    CaymanIslands = int() # QLocale.Country enum
-    CentralAfricanRepublic = int() # QLocale.Country enum
-    Chad = int() # QLocale.Country enum
-    Chile = int() # QLocale.Country enum
-    China = int() # QLocale.Country enum
-    ChristmasIsland = int() # QLocale.Country enum
-    CocosIslands = int() # QLocale.Country enum
-    Colombia = int() # QLocale.Country enum
-    Comoros = int() # QLocale.Country enum
-    DemocraticRepublicOfCongo = int() # QLocale.Country enum
-    PeoplesRepublicOfCongo = int() # QLocale.Country enum
-    CookIslands = int() # QLocale.Country enum
-    CostaRica = int() # QLocale.Country enum
-    IvoryCoast = int() # QLocale.Country enum
-    Croatia = int() # QLocale.Country enum
-    Cuba = int() # QLocale.Country enum
-    Cyprus = int() # QLocale.Country enum
-    CzechRepublic = int() # QLocale.Country enum
-    Denmark = int() # QLocale.Country enum
-    Djibouti = int() # QLocale.Country enum
-    Dominica = int() # QLocale.Country enum
-    DominicanRepublic = int() # QLocale.Country enum
-    EastTimor = int() # QLocale.Country enum
-    Ecuador = int() # QLocale.Country enum
-    Egypt = int() # QLocale.Country enum
-    ElSalvador = int() # QLocale.Country enum
-    EquatorialGuinea = int() # QLocale.Country enum
-    Eritrea = int() # QLocale.Country enum
-    Estonia = int() # QLocale.Country enum
-    Ethiopia = int() # QLocale.Country enum
-    FalklandIslands = int() # QLocale.Country enum
-    FaroeIslands = int() # QLocale.Country enum
-    FijiCountry = int() # QLocale.Country enum
-    Finland = int() # QLocale.Country enum
-    France = int() # QLocale.Country enum
-    MetropolitanFrance = int() # QLocale.Country enum
-    FrenchGuiana = int() # QLocale.Country enum
-    FrenchPolynesia = int() # QLocale.Country enum
-    FrenchSouthernTerritories = int() # QLocale.Country enum
-    Gabon = int() # QLocale.Country enum
-    Gambia = int() # QLocale.Country enum
-    Georgia = int() # QLocale.Country enum
-    Germany = int() # QLocale.Country enum
-    Ghana = int() # QLocale.Country enum
-    Gibraltar = int() # QLocale.Country enum
-    Greece = int() # QLocale.Country enum
-    Greenland = int() # QLocale.Country enum
-    Grenada = int() # QLocale.Country enum
-    Guadeloupe = int() # QLocale.Country enum
-    Guam = int() # QLocale.Country enum
-    Guatemala = int() # QLocale.Country enum
-    Guinea = int() # QLocale.Country enum
-    GuineaBissau = int() # QLocale.Country enum
-    Guyana = int() # QLocale.Country enum
-    Haiti = int() # QLocale.Country enum
-    HeardAndMcDonaldIslands = int() # QLocale.Country enum
-    Honduras = int() # QLocale.Country enum
-    HongKong = int() # QLocale.Country enum
-    Hungary = int() # QLocale.Country enum
-    Iceland = int() # QLocale.Country enum
-    India = int() # QLocale.Country enum
-    Indonesia = int() # QLocale.Country enum
-    Iran = int() # QLocale.Country enum
-    Iraq = int() # QLocale.Country enum
-    Ireland = int() # QLocale.Country enum
-    Israel = int() # QLocale.Country enum
-    Italy = int() # QLocale.Country enum
-    Jamaica = int() # QLocale.Country enum
-    Japan = int() # QLocale.Country enum
-    Jordan = int() # QLocale.Country enum
-    Kazakhstan = int() # QLocale.Country enum
-    Kenya = int() # QLocale.Country enum
-    Kiribati = int() # QLocale.Country enum
-    DemocraticRepublicOfKorea = int() # QLocale.Country enum
-    RepublicOfKorea = int() # QLocale.Country enum
-    Kuwait = int() # QLocale.Country enum
-    Kyrgyzstan = int() # QLocale.Country enum
-    Lao = int() # QLocale.Country enum
-    Latvia = int() # QLocale.Country enum
-    Lebanon = int() # QLocale.Country enum
-    Lesotho = int() # QLocale.Country enum
-    Liberia = int() # QLocale.Country enum
-    LibyanArabJamahiriya = int() # QLocale.Country enum
-    Liechtenstein = int() # QLocale.Country enum
-    Lithuania = int() # QLocale.Country enum
-    Luxembourg = int() # QLocale.Country enum
-    Macau = int() # QLocale.Country enum
-    Macedonia = int() # QLocale.Country enum
-    Madagascar = int() # QLocale.Country enum
-    Malawi = int() # QLocale.Country enum
-    Malaysia = int() # QLocale.Country enum
-    Maldives = int() # QLocale.Country enum
-    Mali = int() # QLocale.Country enum
-    Malta = int() # QLocale.Country enum
-    MarshallIslands = int() # QLocale.Country enum
-    Martinique = int() # QLocale.Country enum
-    Mauritania = int() # QLocale.Country enum
-    Mauritius = int() # QLocale.Country enum
-    Mayotte = int() # QLocale.Country enum
-    Mexico = int() # QLocale.Country enum
-    Micronesia = int() # QLocale.Country enum
-    Moldova = int() # QLocale.Country enum
-    Monaco = int() # QLocale.Country enum
-    Mongolia = int() # QLocale.Country enum
-    Montserrat = int() # QLocale.Country enum
-    Morocco = int() # QLocale.Country enum
-    Mozambique = int() # QLocale.Country enum
-    Myanmar = int() # QLocale.Country enum
-    Namibia = int() # QLocale.Country enum
-    NauruCountry = int() # QLocale.Country enum
-    Nepal = int() # QLocale.Country enum
-    Netherlands = int() # QLocale.Country enum
-    NetherlandsAntilles = int() # QLocale.Country enum
-    NewCaledonia = int() # QLocale.Country enum
-    NewZealand = int() # QLocale.Country enum
-    Nicaragua = int() # QLocale.Country enum
-    Niger = int() # QLocale.Country enum
-    Nigeria = int() # QLocale.Country enum
-    Niue = int() # QLocale.Country enum
-    NorfolkIsland = int() # QLocale.Country enum
-    NorthernMarianaIslands = int() # QLocale.Country enum
-    Norway = int() # QLocale.Country enum
-    Oman = int() # QLocale.Country enum
-    Pakistan = int() # QLocale.Country enum
-    Palau = int() # QLocale.Country enum
-    PalestinianTerritory = int() # QLocale.Country enum
-    Panama = int() # QLocale.Country enum
-    PapuaNewGuinea = int() # QLocale.Country enum
-    Paraguay = int() # QLocale.Country enum
-    Peru = int() # QLocale.Country enum
-    Philippines = int() # QLocale.Country enum
-    Pitcairn = int() # QLocale.Country enum
-    Poland = int() # QLocale.Country enum
-    Portugal = int() # QLocale.Country enum
-    PuertoRico = int() # QLocale.Country enum
-    Qatar = int() # QLocale.Country enum
-    Reunion = int() # QLocale.Country enum
-    Romania = int() # QLocale.Country enum
-    RussianFederation = int() # QLocale.Country enum
-    Rwanda = int() # QLocale.Country enum
-    SaintKittsAndNevis = int() # QLocale.Country enum
-    StLucia = int() # QLocale.Country enum
-    StVincentAndTheGrenadines = int() # QLocale.Country enum
-    Samoa = int() # QLocale.Country enum
-    SanMarino = int() # QLocale.Country enum
-    SaoTomeAndPrincipe = int() # QLocale.Country enum
-    SaudiArabia = int() # QLocale.Country enum
-    Senegal = int() # QLocale.Country enum
-    Seychelles = int() # QLocale.Country enum
-    SierraLeone = int() # QLocale.Country enum
-    Singapore = int() # QLocale.Country enum
-    Slovakia = int() # QLocale.Country enum
-    Slovenia = int() # QLocale.Country enum
-    SolomonIslands = int() # QLocale.Country enum
-    Somalia = int() # QLocale.Country enum
-    SouthAfrica = int() # QLocale.Country enum
-    SouthGeorgiaAndTheSouthSandwichIslands = int() # QLocale.Country enum
-    Spain = int() # QLocale.Country enum
-    SriLanka = int() # QLocale.Country enum
-    StHelena = int() # QLocale.Country enum
-    StPierreAndMiquelon = int() # QLocale.Country enum
-    Sudan = int() # QLocale.Country enum
-    Suriname = int() # QLocale.Country enum
-    SvalbardAndJanMayenIslands = int() # QLocale.Country enum
-    Swaziland = int() # QLocale.Country enum
-    Sweden = int() # QLocale.Country enum
-    Switzerland = int() # QLocale.Country enum
-    SyrianArabRepublic = int() # QLocale.Country enum
-    Taiwan = int() # QLocale.Country enum
-    Tajikistan = int() # QLocale.Country enum
-    Tanzania = int() # QLocale.Country enum
-    Thailand = int() # QLocale.Country enum
-    Togo = int() # QLocale.Country enum
-    Tokelau = int() # QLocale.Country enum
-    TongaCountry = int() # QLocale.Country enum
-    TrinidadAndTobago = int() # QLocale.Country enum
-    Tunisia = int() # QLocale.Country enum
-    Turkey = int() # QLocale.Country enum
-    Turkmenistan = int() # QLocale.Country enum
-    TurksAndCaicosIslands = int() # QLocale.Country enum
-    Tuvalu = int() # QLocale.Country enum
-    Uganda = int() # QLocale.Country enum
-    Ukraine = int() # QLocale.Country enum
-    UnitedArabEmirates = int() # QLocale.Country enum
-    UnitedKingdom = int() # QLocale.Country enum
-    UnitedStates = int() # QLocale.Country enum
-    UnitedStatesMinorOutlyingIslands = int() # QLocale.Country enum
-    Uruguay = int() # QLocale.Country enum
-    Uzbekistan = int() # QLocale.Country enum
-    Vanuatu = int() # QLocale.Country enum
-    VaticanCityState = int() # QLocale.Country enum
-    Venezuela = int() # QLocale.Country enum
-    VietNam = int() # QLocale.Country enum
-    BritishVirginIslands = int() # QLocale.Country enum
-    USVirginIslands = int() # QLocale.Country enum
-    WallisAndFutunaIslands = int() # QLocale.Country enum
-    WesternSahara = int() # QLocale.Country enum
-    Yemen = int() # QLocale.Country enum
-    Yugoslavia = int() # QLocale.Country enum
-    Zambia = int() # QLocale.Country enum
-    Zimbabwe = int() # QLocale.Country enum
-    SerbiaAndMontenegro = int() # QLocale.Country enum
-    Montenegro = int() # QLocale.Country enum
-    Serbia = int() # QLocale.Country enum
-    SaintBarthelemy = int() # QLocale.Country enum
-    SaintMartin = int() # QLocale.Country enum
-    LatinAmericaAndTheCaribbean = int() # QLocale.Country enum
-    LastCountry = int() # QLocale.Country enum
+    # Enum QLocale.Country
+    AnyCountry = 0
+    Afghanistan = 0
+    Albania = 0
+    Algeria = 0
+    AmericanSamoa = 0
+    Andorra = 0
+    Angola = 0
+    Anguilla = 0
+    Antarctica = 0
+    AntiguaAndBarbuda = 0
+    Argentina = 0
+    Armenia = 0
+    Aruba = 0
+    Australia = 0
+    Austria = 0
+    Azerbaijan = 0
+    Bahamas = 0
+    Bahrain = 0
+    Bangladesh = 0
+    Barbados = 0
+    Belarus = 0
+    Belgium = 0
+    Belize = 0
+    Benin = 0
+    Bermuda = 0
+    Bhutan = 0
+    Bolivia = 0
+    BosniaAndHerzegowina = 0
+    Botswana = 0
+    BouvetIsland = 0
+    Brazil = 0
+    BritishIndianOceanTerritory = 0
+    BruneiDarussalam = 0
+    Bulgaria = 0
+    BurkinaFaso = 0
+    Burundi = 0
+    Cambodia = 0
+    Cameroon = 0
+    Canada = 0
+    CapeVerde = 0
+    CaymanIslands = 0
+    CentralAfricanRepublic = 0
+    Chad = 0
+    Chile = 0
+    China = 0
+    ChristmasIsland = 0
+    CocosIslands = 0
+    Colombia = 0
+    Comoros = 0
+    DemocraticRepublicOfCongo = 0
+    PeoplesRepublicOfCongo = 0
+    CookIslands = 0
+    CostaRica = 0
+    IvoryCoast = 0
+    Croatia = 0
+    Cuba = 0
+    Cyprus = 0
+    CzechRepublic = 0
+    Denmark = 0
+    Djibouti = 0
+    Dominica = 0
+    DominicanRepublic = 0
+    EastTimor = 0
+    Ecuador = 0
+    Egypt = 0
+    ElSalvador = 0
+    EquatorialGuinea = 0
+    Eritrea = 0
+    Estonia = 0
+    Ethiopia = 0
+    FalklandIslands = 0
+    FaroeIslands = 0
+    FijiCountry = 0
+    Finland = 0
+    France = 0
+    MetropolitanFrance = 0
+    FrenchGuiana = 0
+    FrenchPolynesia = 0
+    FrenchSouthernTerritories = 0
+    Gabon = 0
+    Gambia = 0
+    Georgia = 0
+    Germany = 0
+    Ghana = 0
+    Gibraltar = 0
+    Greece = 0
+    Greenland = 0
+    Grenada = 0
+    Guadeloupe = 0
+    Guam = 0
+    Guatemala = 0
+    Guinea = 0
+    GuineaBissau = 0
+    Guyana = 0
+    Haiti = 0
+    HeardAndMcDonaldIslands = 0
+    Honduras = 0
+    HongKong = 0
+    Hungary = 0
+    Iceland = 0
+    India = 0
+    Indonesia = 0
+    Iran = 0
+    Iraq = 0
+    Ireland = 0
+    Israel = 0
+    Italy = 0
+    Jamaica = 0
+    Japan = 0
+    Jordan = 0
+    Kazakhstan = 0
+    Kenya = 0
+    Kiribati = 0
+    DemocraticRepublicOfKorea = 0
+    RepublicOfKorea = 0
+    Kuwait = 0
+    Kyrgyzstan = 0
+    Lao = 0
+    Latvia = 0
+    Lebanon = 0
+    Lesotho = 0
+    Liberia = 0
+    LibyanArabJamahiriya = 0
+    Liechtenstein = 0
+    Lithuania = 0
+    Luxembourg = 0
+    Macau = 0
+    Macedonia = 0
+    Madagascar = 0
+    Malawi = 0
+    Malaysia = 0
+    Maldives = 0
+    Mali = 0
+    Malta = 0
+    MarshallIslands = 0
+    Martinique = 0
+    Mauritania = 0
+    Mauritius = 0
+    Mayotte = 0
+    Mexico = 0
+    Micronesia = 0
+    Moldova = 0
+    Monaco = 0
+    Mongolia = 0
+    Montserrat = 0
+    Morocco = 0
+    Mozambique = 0
+    Myanmar = 0
+    Namibia = 0
+    NauruCountry = 0
+    Nepal = 0
+    Netherlands = 0
+    NetherlandsAntilles = 0
+    NewCaledonia = 0
+    NewZealand = 0
+    Nicaragua = 0
+    Niger = 0
+    Nigeria = 0
+    Niue = 0
+    NorfolkIsland = 0
+    NorthernMarianaIslands = 0
+    Norway = 0
+    Oman = 0
+    Pakistan = 0
+    Palau = 0
+    PalestinianTerritory = 0
+    Panama = 0
+    PapuaNewGuinea = 0
+    Paraguay = 0
+    Peru = 0
+    Philippines = 0
+    Pitcairn = 0
+    Poland = 0
+    Portugal = 0
+    PuertoRico = 0
+    Qatar = 0
+    Reunion = 0
+    Romania = 0
+    RussianFederation = 0
+    Rwanda = 0
+    SaintKittsAndNevis = 0
+    StLucia = 0
+    StVincentAndTheGrenadines = 0
+    Samoa = 0
+    SanMarino = 0
+    SaoTomeAndPrincipe = 0
+    SaudiArabia = 0
+    Senegal = 0
+    Seychelles = 0
+    SierraLeone = 0
+    Singapore = 0
+    Slovakia = 0
+    Slovenia = 0
+    SolomonIslands = 0
+    Somalia = 0
+    SouthAfrica = 0
+    SouthGeorgiaAndTheSouthSandwichIslands = 0
+    Spain = 0
+    SriLanka = 0
+    StHelena = 0
+    StPierreAndMiquelon = 0
+    Sudan = 0
+    Suriname = 0
+    SvalbardAndJanMayenIslands = 0
+    Swaziland = 0
+    Sweden = 0
+    Switzerland = 0
+    SyrianArabRepublic = 0
+    Taiwan = 0
+    Tajikistan = 0
+    Tanzania = 0
+    Thailand = 0
+    Togo = 0
+    Tokelau = 0
+    TongaCountry = 0
+    TrinidadAndTobago = 0
+    Tunisia = 0
+    Turkey = 0
+    Turkmenistan = 0
+    TurksAndCaicosIslands = 0
+    Tuvalu = 0
+    Uganda = 0
+    Ukraine = 0
+    UnitedArabEmirates = 0
+    UnitedKingdom = 0
+    UnitedStates = 0
+    UnitedStatesMinorOutlyingIslands = 0
+    Uruguay = 0
+    Uzbekistan = 0
+    Vanuatu = 0
+    VaticanCityState = 0
+    Venezuela = 0
+    VietNam = 0
+    BritishVirginIslands = 0
+    USVirginIslands = 0
+    WallisAndFutunaIslands = 0
+    WesternSahara = 0
+    Yemen = 0
+    Yugoslavia = 0
+    Zambia = 0
+    Zimbabwe = 0
+    SerbiaAndMontenegro = 0
+    Montenegro = 0
+    Serbia = 0
+    SaintBarthelemy = 0
+    SaintMartin = 0
+    LatinAmericaAndTheCaribbean = 0
+    LastCountry = 0
 
-    C = int() # QLocale.Language enum
-    Abkhazian = int() # QLocale.Language enum
-    Afan = int() # QLocale.Language enum
-    Afar = int() # QLocale.Language enum
-    Afrikaans = int() # QLocale.Language enum
-    Albanian = int() # QLocale.Language enum
-    Amharic = int() # QLocale.Language enum
-    Arabic = int() # QLocale.Language enum
-    Armenian = int() # QLocale.Language enum
-    Assamese = int() # QLocale.Language enum
-    Aymara = int() # QLocale.Language enum
-    Azerbaijani = int() # QLocale.Language enum
-    Bashkir = int() # QLocale.Language enum
-    Basque = int() # QLocale.Language enum
-    Bengali = int() # QLocale.Language enum
-    Bhutani = int() # QLocale.Language enum
-    Bihari = int() # QLocale.Language enum
-    Bislama = int() # QLocale.Language enum
-    Breton = int() # QLocale.Language enum
-    Bulgarian = int() # QLocale.Language enum
-    Burmese = int() # QLocale.Language enum
-    Byelorussian = int() # QLocale.Language enum
-    Cambodian = int() # QLocale.Language enum
-    Catalan = int() # QLocale.Language enum
-    Chinese = int() # QLocale.Language enum
-    Corsican = int() # QLocale.Language enum
-    Croatian = int() # QLocale.Language enum
-    Czech = int() # QLocale.Language enum
-    Danish = int() # QLocale.Language enum
-    Dutch = int() # QLocale.Language enum
-    English = int() # QLocale.Language enum
-    Esperanto = int() # QLocale.Language enum
-    Estonian = int() # QLocale.Language enum
-    Faroese = int() # QLocale.Language enum
-    FijiLanguage = int() # QLocale.Language enum
-    Finnish = int() # QLocale.Language enum
-    French = int() # QLocale.Language enum
-    Frisian = int() # QLocale.Language enum
-    Gaelic = int() # QLocale.Language enum
-    Galician = int() # QLocale.Language enum
-    Georgian = int() # QLocale.Language enum
-    German = int() # QLocale.Language enum
-    Greek = int() # QLocale.Language enum
-    Greenlandic = int() # QLocale.Language enum
-    Guarani = int() # QLocale.Language enum
-    Gujarati = int() # QLocale.Language enum
-    Hausa = int() # QLocale.Language enum
-    Hebrew = int() # QLocale.Language enum
-    Hindi = int() # QLocale.Language enum
-    Hungarian = int() # QLocale.Language enum
-    Icelandic = int() # QLocale.Language enum
-    Indonesian = int() # QLocale.Language enum
-    Interlingua = int() # QLocale.Language enum
-    Interlingue = int() # QLocale.Language enum
-    Inuktitut = int() # QLocale.Language enum
-    Inupiak = int() # QLocale.Language enum
-    Irish = int() # QLocale.Language enum
-    Italian = int() # QLocale.Language enum
-    Japanese = int() # QLocale.Language enum
-    Javanese = int() # QLocale.Language enum
-    Kannada = int() # QLocale.Language enum
-    Kashmiri = int() # QLocale.Language enum
-    Kazakh = int() # QLocale.Language enum
-    Kinyarwanda = int() # QLocale.Language enum
-    Kirghiz = int() # QLocale.Language enum
-    Korean = int() # QLocale.Language enum
-    Kurdish = int() # QLocale.Language enum
-    Kurundi = int() # QLocale.Language enum
-    Laothian = int() # QLocale.Language enum
-    Latin = int() # QLocale.Language enum
-    Latvian = int() # QLocale.Language enum
-    Lingala = int() # QLocale.Language enum
-    Lithuanian = int() # QLocale.Language enum
-    Macedonian = int() # QLocale.Language enum
-    Malagasy = int() # QLocale.Language enum
-    Malay = int() # QLocale.Language enum
-    Malayalam = int() # QLocale.Language enum
-    Maltese = int() # QLocale.Language enum
-    Maori = int() # QLocale.Language enum
-    Marathi = int() # QLocale.Language enum
-    Moldavian = int() # QLocale.Language enum
-    Mongolian = int() # QLocale.Language enum
-    NauruLanguage = int() # QLocale.Language enum
-    Nepali = int() # QLocale.Language enum
-    Norwegian = int() # QLocale.Language enum
-    Occitan = int() # QLocale.Language enum
-    Oriya = int() # QLocale.Language enum
-    Pashto = int() # QLocale.Language enum
-    Persian = int() # QLocale.Language enum
-    Polish = int() # QLocale.Language enum
-    Portuguese = int() # QLocale.Language enum
-    Punjabi = int() # QLocale.Language enum
-    Quechua = int() # QLocale.Language enum
-    RhaetoRomance = int() # QLocale.Language enum
-    Romanian = int() # QLocale.Language enum
-    Russian = int() # QLocale.Language enum
-    Samoan = int() # QLocale.Language enum
-    Sangho = int() # QLocale.Language enum
-    Sanskrit = int() # QLocale.Language enum
-    Serbian = int() # QLocale.Language enum
-    SerboCroatian = int() # QLocale.Language enum
-    Sesotho = int() # QLocale.Language enum
-    Setswana = int() # QLocale.Language enum
-    Shona = int() # QLocale.Language enum
-    Sindhi = int() # QLocale.Language enum
-    Singhalese = int() # QLocale.Language enum
-    Siswati = int() # QLocale.Language enum
-    Slovak = int() # QLocale.Language enum
-    Slovenian = int() # QLocale.Language enum
-    Somali = int() # QLocale.Language enum
-    Spanish = int() # QLocale.Language enum
-    Sundanese = int() # QLocale.Language enum
-    Swahili = int() # QLocale.Language enum
-    Swedish = int() # QLocale.Language enum
-    Tagalog = int() # QLocale.Language enum
-    Tajik = int() # QLocale.Language enum
-    Tamil = int() # QLocale.Language enum
-    Tatar = int() # QLocale.Language enum
-    Telugu = int() # QLocale.Language enum
-    Thai = int() # QLocale.Language enum
-    Tibetan = int() # QLocale.Language enum
-    Tigrinya = int() # QLocale.Language enum
-    TongaLanguage = int() # QLocale.Language enum
-    Tsonga = int() # QLocale.Language enum
-    Turkish = int() # QLocale.Language enum
-    Turkmen = int() # QLocale.Language enum
-    Twi = int() # QLocale.Language enum
-    Uigur = int() # QLocale.Language enum
-    Ukrainian = int() # QLocale.Language enum
-    Urdu = int() # QLocale.Language enum
-    Uzbek = int() # QLocale.Language enum
-    Vietnamese = int() # QLocale.Language enum
-    Volapuk = int() # QLocale.Language enum
-    Welsh = int() # QLocale.Language enum
-    Wolof = int() # QLocale.Language enum
-    Xhosa = int() # QLocale.Language enum
-    Yiddish = int() # QLocale.Language enum
-    Yoruba = int() # QLocale.Language enum
-    Zhuang = int() # QLocale.Language enum
-    Zulu = int() # QLocale.Language enum
-    Nynorsk = int() # QLocale.Language enum
-    Bosnian = int() # QLocale.Language enum
-    Divehi = int() # QLocale.Language enum
-    Manx = int() # QLocale.Language enum
-    Cornish = int() # QLocale.Language enum
-    LastLanguage = int() # QLocale.Language enum
-    NorwegianBokmal = int() # QLocale.Language enum
-    NorwegianNynorsk = int() # QLocale.Language enum
-    Akan = int() # QLocale.Language enum
-    Konkani = int() # QLocale.Language enum
-    Ga = int() # QLocale.Language enum
-    Igbo = int() # QLocale.Language enum
-    Kamba = int() # QLocale.Language enum
-    Syriac = int() # QLocale.Language enum
-    Blin = int() # QLocale.Language enum
-    Geez = int() # QLocale.Language enum
-    Koro = int() # QLocale.Language enum
-    Sidamo = int() # QLocale.Language enum
-    Atsam = int() # QLocale.Language enum
-    Tigre = int() # QLocale.Language enum
-    Jju = int() # QLocale.Language enum
-    Friulian = int() # QLocale.Language enum
-    Venda = int() # QLocale.Language enum
-    Ewe = int() # QLocale.Language enum
-    Walamo = int() # QLocale.Language enum
-    Hawaiian = int() # QLocale.Language enum
-    Tyap = int() # QLocale.Language enum
-    Chewa = int() # QLocale.Language enum
-    Filipino = int() # QLocale.Language enum
-    SwissGerman = int() # QLocale.Language enum
-    SichuanYi = int() # QLocale.Language enum
-    Kpelle = int() # QLocale.Language enum
-    LowGerman = int() # QLocale.Language enum
-    SouthNdebele = int() # QLocale.Language enum
-    NorthernSotho = int() # QLocale.Language enum
-    NorthernSami = int() # QLocale.Language enum
-    Taroko = int() # QLocale.Language enum
-    Gusii = int() # QLocale.Language enum
-    Taita = int() # QLocale.Language enum
-    Fulah = int() # QLocale.Language enum
-    Kikuyu = int() # QLocale.Language enum
-    Samburu = int() # QLocale.Language enum
-    Sena = int() # QLocale.Language enum
-    NorthNdebele = int() # QLocale.Language enum
-    Rombo = int() # QLocale.Language enum
-    Tachelhit = int() # QLocale.Language enum
-    Kabyle = int() # QLocale.Language enum
-    Nyankole = int() # QLocale.Language enum
-    Bena = int() # QLocale.Language enum
-    Vunjo = int() # QLocale.Language enum
-    Bambara = int() # QLocale.Language enum
-    Embu = int() # QLocale.Language enum
-    Cherokee = int() # QLocale.Language enum
-    Morisyen = int() # QLocale.Language enum
-    Makonde = int() # QLocale.Language enum
-    Langi = int() # QLocale.Language enum
-    Ganda = int() # QLocale.Language enum
-    Bemba = int() # QLocale.Language enum
-    Kabuverdianu = int() # QLocale.Language enum
-    Meru = int() # QLocale.Language enum
-    Kalenjin = int() # QLocale.Language enum
-    Nama = int() # QLocale.Language enum
-    Machame = int() # QLocale.Language enum
-    Colognian = int() # QLocale.Language enum
-    Masai = int() # QLocale.Language enum
-    Soga = int() # QLocale.Language enum
-    Luyia = int() # QLocale.Language enum
-    Asu = int() # QLocale.Language enum
-    Teso = int() # QLocale.Language enum
-    Saho = int() # QLocale.Language enum
-    KoyraChiini = int() # QLocale.Language enum
-    Rwa = int() # QLocale.Language enum
-    Luo = int() # QLocale.Language enum
-    Chiga = int() # QLocale.Language enum
-    CentralMoroccoTamazight = int() # QLocale.Language enum
-    KoyraboroSenni = int() # QLocale.Language enum
-    Shambala = int() # QLocale.Language enum
+    # Enum QLocale.Language
+    C = 0
+    Abkhazian = 0
+    Afan = 0
+    Afar = 0
+    Afrikaans = 0
+    Albanian = 0
+    Amharic = 0
+    Arabic = 0
+    Armenian = 0
+    Assamese = 0
+    Aymara = 0
+    Azerbaijani = 0
+    Bashkir = 0
+    Basque = 0
+    Bengali = 0
+    Bhutani = 0
+    Bihari = 0
+    Bislama = 0
+    Breton = 0
+    Bulgarian = 0
+    Burmese = 0
+    Byelorussian = 0
+    Cambodian = 0
+    Catalan = 0
+    Chinese = 0
+    Corsican = 0
+    Croatian = 0
+    Czech = 0
+    Danish = 0
+    Dutch = 0
+    English = 0
+    Esperanto = 0
+    Estonian = 0
+    Faroese = 0
+    FijiLanguage = 0
+    Finnish = 0
+    French = 0
+    Frisian = 0
+    Gaelic = 0
+    Galician = 0
+    Georgian = 0
+    German = 0
+    Greek = 0
+    Greenlandic = 0
+    Guarani = 0
+    Gujarati = 0
+    Hausa = 0
+    Hebrew = 0
+    Hindi = 0
+    Hungarian = 0
+    Icelandic = 0
+    Indonesian = 0
+    Interlingua = 0
+    Interlingue = 0
+    Inuktitut = 0
+    Inupiak = 0
+    Irish = 0
+    Italian = 0
+    Japanese = 0
+    Javanese = 0
+    Kannada = 0
+    Kashmiri = 0
+    Kazakh = 0
+    Kinyarwanda = 0
+    Kirghiz = 0
+    Korean = 0
+    Kurdish = 0
+    Kurundi = 0
+    Laothian = 0
+    Latin = 0
+    Latvian = 0
+    Lingala = 0
+    Lithuanian = 0
+    Macedonian = 0
+    Malagasy = 0
+    Malay = 0
+    Malayalam = 0
+    Maltese = 0
+    Maori = 0
+    Marathi = 0
+    Moldavian = 0
+    Mongolian = 0
+    NauruLanguage = 0
+    Nepali = 0
+    Norwegian = 0
+    Occitan = 0
+    Oriya = 0
+    Pashto = 0
+    Persian = 0
+    Polish = 0
+    Portuguese = 0
+    Punjabi = 0
+    Quechua = 0
+    RhaetoRomance = 0
+    Romanian = 0
+    Russian = 0
+    Samoan = 0
+    Sangho = 0
+    Sanskrit = 0
+    Serbian = 0
+    SerboCroatian = 0
+    Sesotho = 0
+    Setswana = 0
+    Shona = 0
+    Sindhi = 0
+    Singhalese = 0
+    Siswati = 0
+    Slovak = 0
+    Slovenian = 0
+    Somali = 0
+    Spanish = 0
+    Sundanese = 0
+    Swahili = 0
+    Swedish = 0
+    Tagalog = 0
+    Tajik = 0
+    Tamil = 0
+    Tatar = 0
+    Telugu = 0
+    Thai = 0
+    Tibetan = 0
+    Tigrinya = 0
+    TongaLanguage = 0
+    Tsonga = 0
+    Turkish = 0
+    Turkmen = 0
+    Twi = 0
+    Uigur = 0
+    Ukrainian = 0
+    Urdu = 0
+    Uzbek = 0
+    Vietnamese = 0
+    Volapuk = 0
+    Welsh = 0
+    Wolof = 0
+    Xhosa = 0
+    Yiddish = 0
+    Yoruba = 0
+    Zhuang = 0
+    Zulu = 0
+    Nynorsk = 0
+    Bosnian = 0
+    Divehi = 0
+    Manx = 0
+    Cornish = 0
+    LastLanguage = 0
+    NorwegianBokmal = 0
+    NorwegianNynorsk = 0
+    Akan = 0
+    Konkani = 0
+    Ga = 0
+    Igbo = 0
+    Kamba = 0
+    Syriac = 0
+    Blin = 0
+    Geez = 0
+    Koro = 0
+    Sidamo = 0
+    Atsam = 0
+    Tigre = 0
+    Jju = 0
+    Friulian = 0
+    Venda = 0
+    Ewe = 0
+    Walamo = 0
+    Hawaiian = 0
+    Tyap = 0
+    Chewa = 0
+    Filipino = 0
+    SwissGerman = 0
+    SichuanYi = 0
+    Kpelle = 0
+    LowGerman = 0
+    SouthNdebele = 0
+    NorthernSotho = 0
+    NorthernSami = 0
+    Taroko = 0
+    Gusii = 0
+    Taita = 0
+    Fulah = 0
+    Kikuyu = 0
+    Samburu = 0
+    Sena = 0
+    NorthNdebele = 0
+    Rombo = 0
+    Tachelhit = 0
+    Kabyle = 0
+    Nyankole = 0
+    Bena = 0
+    Vunjo = 0
+    Bambara = 0
+    Embu = 0
+    Cherokee = 0
+    Morisyen = 0
+    Makonde = 0
+    Langi = 0
+    Ganda = 0
+    Bemba = 0
+    Kabuverdianu = 0
+    Meru = 0
+    Kalenjin = 0
+    Nama = 0
+    Machame = 0
+    Colognian = 0
+    Masai = 0
+    Soga = 0
+    Luyia = 0
+    Asu = 0
+    Teso = 0
+    Saho = 0
+    KoyraChiini = 0
+    Rwa = 0
+    Luo = 0
+    Chiga = 0
+    CentralMoroccoTamazight = 0
+    KoyraboroSenni = 0
+    Shambala = 0
 
     def __init__(self):
-        """None QLocale.__init__(None self)"""
-        return None
-    def __init__(self, _name):
-        """None QLocale.__init__(None self, QString _name)"""
-        return None
-    def __init__(self, _language, _country):
-        """None QLocale.__init__(None self, QLocale.Language _language, QLocale.Country _country)"""
-        return None
-    def __init__(self, _other):
-        """None QLocale.__init__(None self, QLocale _other)"""
-        return None
+        '''void QLocale.__init__()'''
+    def __init__(self, name):
+        '''void QLocale.__init__(QString name)'''
+    def __init__(self, language, country = QLocale.AnyCountry):
+        '''void QLocale.__init__(QLocale.Language language, QLocale.Country country = QLocale.AnyCountry)'''
+    def __init__(self, other):
+        '''void QLocale.__init__(QLocale other)'''
     def textDirection(self):
-        """Qt.LayoutDirection QLocale.textDirection(None self)"""
+        '''Qt.LayoutDirection QLocale.textDirection()'''
         return Qt.LayoutDirection()
     def pmText(self):
-        """QString QLocale.pmText(None self)"""
+        '''QString QLocale.pmText()'''
         return QString()
     def amText(self):
-        """QString QLocale.amText(None self)"""
+        '''QString QLocale.amText()'''
         return QString()
-    def standaloneDayName(self, _format):
-        """int QLocale.standaloneDayName(None self, QLocale.FormatType _format)"""
+    def standaloneDayName(self, format = QLocale.LongFormat):
+        '''int QLocale.standaloneDayName(QLocale.FormatType format = QLocale.LongFormat)'''
         return int()
-    def standaloneMonthName(self, _format):
-        """int QLocale.standaloneMonthName(None self, QLocale.FormatType _format)"""
+    def standaloneMonthName(self, format = QLocale.LongFormat):
+        '''int QLocale.standaloneMonthName(QLocale.FormatType format = QLocale.LongFormat)'''
         return int()
     def positiveSign(self):
-        """QChar QLocale.positiveSign(None self)"""
+        '''QChar QLocale.positiveSign()'''
         return QChar()
     def measurementSystem(self):
-        """QLocale.MeasurementSystem QLocale.measurementSystem(None self)"""
+        '''QLocale.MeasurementSystem QLocale.measurementSystem()'''
         return QLocale.MeasurementSystem()
-    def countriesForLanguage(self, _lang):
-        """list-of-QLocale.Country QLocale.countriesForLanguage(None self, QLocale.Language _lang)"""
+    def countriesForLanguage(self, lang):
+        '''static list-of-QLocale.Country QLocale.countriesForLanguage(QLocale.Language lang)'''
         return [QLocale.Country()]
     def numberOptions(self):
-        """QLocale.NumberOptions QLocale.numberOptions(None self)"""
+        '''QLocale.NumberOptions QLocale.numberOptions()'''
         return QLocale.NumberOptions()
-    def setNumberOptions(self, _options):
-        """None QLocale.setNumberOptions(None self, QLocale.NumberOptions _options)"""
-        return None
-    def dayName(self, _format):
-        """int QLocale.dayName(None self, QLocale.FormatType _format)"""
+    def setNumberOptions(self, options):
+        '''void QLocale.setNumberOptions(QLocale.NumberOptions options)'''
+    def dayName(self, format = QLocale.LongFormat):
+        '''int QLocale.dayName(QLocale.FormatType format = QLocale.LongFormat)'''
         return int()
-    def monthName(self, _format):
-        """int QLocale.monthName(None self, QLocale.FormatType _format)"""
+    def monthName(self, format = QLocale.LongFormat):
+        '''int QLocale.monthName(QLocale.FormatType format = QLocale.LongFormat)'''
         return int()
     def exponential(self):
-        """QChar QLocale.exponential(None self)"""
+        '''QChar QLocale.exponential()'''
         return QChar()
     def negativeSign(self):
-        """QChar QLocale.negativeSign(None self)"""
+        '''QChar QLocale.negativeSign()'''
         return QChar()
     def zeroDigit(self):
-        """QChar QLocale.zeroDigit(None self)"""
+        '''QChar QLocale.zeroDigit()'''
         return QChar()
     def percent(self):
-        """QChar QLocale.percent(None self)"""
+        '''QChar QLocale.percent()'''
         return QChar()
     def groupSeparator(self):
-        """QChar QLocale.groupSeparator(None self)"""
+        '''QChar QLocale.groupSeparator()'''
         return QChar()
     def decimalPoint(self):
-        """QChar QLocale.decimalPoint(None self)"""
+        '''QChar QLocale.decimalPoint()'''
         return QChar()
-    def toDateTime(self, _string, _format):
-        """QDateTime QLocale.toDateTime(None self, QString _string, QLocale.FormatType _format)"""
+    def toDateTime(self, string, format = QLocale.LongFormat):
+        '''QDateTime QLocale.toDateTime(QString string, QLocale.FormatType format = QLocale.LongFormat)'''
         return QDateTime()
-    def toDateTime(self, _string, _format):
-        """QDateTime QLocale.toDateTime(None self, QString _string, QString _format)"""
+    def toDateTime(self, string, format):
+        '''QDateTime QLocale.toDateTime(QString string, QString format)'''
         return QDateTime()
-    def toTime(self, _string, _format):
-        """QTime QLocale.toTime(None self, QString _string, QLocale.FormatType _format)"""
+    def toTime(self, string, format = QLocale.LongFormat):
+        '''QTime QLocale.toTime(QString string, QLocale.FormatType format = QLocale.LongFormat)'''
         return QTime()
-    def toTime(self, _string, _format):
-        """QTime QLocale.toTime(None self, QString _string, QString _format)"""
+    def toTime(self, string, format):
+        '''QTime QLocale.toTime(QString string, QString format)'''
         return QTime()
-    def toDate(self, _string, _format):
-        """QDate QLocale.toDate(None self, QString _string, QLocale.FormatType _format)"""
+    def toDate(self, string, format = QLocale.LongFormat):
+        '''QDate QLocale.toDate(QString string, QLocale.FormatType format = QLocale.LongFormat)'''
         return QDate()
-    def toDate(self, _string, _format):
-        """QDate QLocale.toDate(None self, QString _string, QString _format)"""
+    def toDate(self, string, format):
+        '''QDate QLocale.toDate(QString string, QString format)'''
         return QDate()
-    def dateTimeFormat(self, _format):
-        """QString QLocale.dateTimeFormat(None self, QLocale.FormatType _format)"""
+    def dateTimeFormat(self, format = QLocale.LongFormat):
+        '''QString QLocale.dateTimeFormat(QLocale.FormatType format = QLocale.LongFormat)'''
         return QString()
-    def timeFormat(self, _format):
-        """QString QLocale.timeFormat(None self, QLocale.FormatType _format)"""
+    def timeFormat(self, format = QLocale.LongFormat):
+        '''QString QLocale.timeFormat(QLocale.FormatType format = QLocale.LongFormat)'''
         return QString()
-    def dateFormat(self, _format):
-        """QString QLocale.dateFormat(None self, QLocale.FormatType _format)"""
+    def dateFormat(self, format = QLocale.LongFormat):
+        '''QString QLocale.dateFormat(QLocale.FormatType format = QLocale.LongFormat)'''
         return QString()
     def system(self):
-        """QLocale QLocale.system(None self)"""
+        '''static QLocale QLocale.system()'''
         return QLocale()
     def c(self):
-        """QLocale QLocale.c(None self)"""
+        '''static QLocale QLocale.c()'''
         return QLocale()
-    def setDefault(self, _locale):
-        """None QLocale.setDefault(None self, QLocale _locale)"""
-        return None
-    def countryToString(self, _country):
-        """QString QLocale.countryToString(None self, QLocale.Country _country)"""
+    def setDefault(self, locale):
+        '''static void QLocale.setDefault(QLocale locale)'''
+    def countryToString(self, country):
+        '''static QString QLocale.countryToString(QLocale.Country country)'''
         return QString()
-    def languageToString(self, _language):
-        """QString QLocale.languageToString(None self, QLocale.Language _language)"""
+    def languageToString(self, language):
+        '''static QString QLocale.languageToString(QLocale.Language language)'''
         return QString()
-    def __ne__(self, _other):
-        """bool QLocale.__ne__(None self, QLocale _other)"""
+    def __ne__(self, other):
+        '''bool QLocale.__ne__(QLocale other)'''
         return bool()
-    def __eq__(self, _other):
-        """bool QLocale.__eq__(None self, QLocale _other)"""
+    def __eq__(self, other):
+        '''bool QLocale.__eq__(QLocale other)'''
         return bool()
-    def toString(self, _i):
-        """QString QLocale.toString(None self, int _i)"""
+    def toString(self, i):
+        '''QString QLocale.toString(int i)'''
         return QString()
-    def toString(self, _i, _format, _precision):
-        """QString QLocale.toString(None self, float _i, str _format, int _precision)"""
+    def toString(self, i, format = 'g', precision = 6):
+        '''QString QLocale.toString(float i, str format = 'g', int precision = 6)'''
         return QString()
-    def toString(self, _i):
-        """QString QLocale.toString(None self, int _i)"""
+    def toString(self, i):
+        '''QString QLocale.toString(int i)'''
         return QString()
-    def toString(self, _i):
-        """QString QLocale.toString(None self, int _i)"""
+    def toString(self, i):
+        '''QString QLocale.toString(int i)'''
         return QString()
-    def toString(self, _dateTime, _format):
-        """QString QLocale.toString(None self, QDateTime _dateTime, QString _format)"""
+    def toString(self, dateTime, format):
+        '''QString QLocale.toString(QDateTime dateTime, QString format)'''
         return QString()
-    def toString(self, _dateTime, _format):
-        """QString QLocale.toString(None self, QDateTime _dateTime, QLocale.FormatType _format)"""
+    def toString(self, dateTime, format = QLocale.LongFormat):
+        '''QString QLocale.toString(QDateTime dateTime, QLocale.FormatType format = QLocale.LongFormat)'''
         return QString()
-    def toString(self, _date, _formatStr):
-        """QString QLocale.toString(None self, QDate _date, QString _formatStr)"""
+    def toString(self, date, formatStr):
+        '''QString QLocale.toString(QDate date, QString formatStr)'''
         return QString()
-    def toString(self, _date, _format):
-        """QString QLocale.toString(None self, QDate _date, QLocale.FormatType _format)"""
+    def toString(self, date, format = QLocale.LongFormat):
+        '''QString QLocale.toString(QDate date, QLocale.FormatType format = QLocale.LongFormat)'''
         return QString()
-    def toString(self, _time, _formatStr):
-        """QString QLocale.toString(None self, QTime _time, QString _formatStr)"""
+    def toString(self, time, formatStr):
+        '''QString QLocale.toString(QTime time, QString formatStr)'''
         return QString()
-    def toString(self, _time, _format):
-        """QString QLocale.toString(None self, QTime _time, QLocale.FormatType _format)"""
+    def toString(self, time, format = QLocale.LongFormat):
+        '''QString QLocale.toString(QTime time, QLocale.FormatType format = QLocale.LongFormat)'''
         return QString()
-    def toDouble(self, _s, _ok):
-        """float QLocale.toDouble(None self, QString _s, bool _ok)"""
+    def toDouble(self, s, ok):
+        '''float QLocale.toDouble(QString s, bool ok)'''
         return float()
-    def toFloat(self, _s, _ok):
-        """float QLocale.toFloat(None self, QString _s, bool _ok)"""
+    def toFloat(self, s, ok):
+        '''float QLocale.toFloat(QString s, bool ok)'''
         return float()
-    def toULongLong(self, _s, _ok, _base):
-        """int QLocale.toULongLong(None self, QString _s, bool _ok, int _base)"""
+    def toULongLong(self, s, ok, base = 0):
+        '''int QLocale.toULongLong(QString s, bool ok, int base = 0)'''
         return int()
-    def toLongLong(self, _s, _ok, _base):
-        """int QLocale.toLongLong(None self, QString _s, bool _ok, int _base)"""
+    def toLongLong(self, s, ok, base = 0):
+        '''int QLocale.toLongLong(QString s, bool ok, int base = 0)'''
         return int()
-    def toUInt(self, _s, _ok, _base):
-        """int QLocale.toUInt(None self, QString _s, bool _ok, int _base)"""
+    def toUInt(self, s, ok, base = 0):
+        '''int QLocale.toUInt(QString s, bool ok, int base = 0)'''
         return int()
-    def toInt(self, _s, _ok, _base):
-        """int QLocale.toInt(None self, QString _s, bool _ok, int _base)"""
+    def toInt(self, s, ok, base = 0):
+        '''int QLocale.toInt(QString s, bool ok, int base = 0)'''
         return int()
-    def toUShort(self, _s, _ok, _base):
-        """int QLocale.toUShort(None self, QString _s, bool _ok, int _base)"""
+    def toUShort(self, s, ok, base = 0):
+        '''int QLocale.toUShort(QString s, bool ok, int base = 0)'''
         return int()
-    def toShort(self, _s, _ok, _base):
-        """int QLocale.toShort(None self, QString _s, bool _ok, int _base)"""
+    def toShort(self, s, ok, base = 0):
+        '''int QLocale.toShort(QString s, bool ok, int base = 0)'''
         return int()
     def name(self):
-        """QString QLocale.name(None self)"""
+        '''QString QLocale.name()'''
         return QString()
     def country(self):
-        """QLocale.Country QLocale.country(None self)"""
+        '''QLocale.Country QLocale.country()'''
         return QLocale.Country()
     def language(self):
-        """QLocale.Language QLocale.language(None self)"""
+        '''QLocale.Language QLocale.language()'''
         return QLocale.Language()
+    class NumberOptions():
+        """"""
+        def __init__(self):
+            '''QLocale.NumberOptions QLocale.NumberOptions.__init__()'''
+            return QLocale.NumberOptions()
+        def __init__(self):
+            '''int QLocale.NumberOptions.__init__()'''
+            return int()
+        def __init__(self):
+            '''void QLocale.NumberOptions.__init__()'''
+        def __bool__(self):
+            '''int QLocale.NumberOptions.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool QLocale.NumberOptions.__ne__(QLocale.NumberOptions f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool QLocale.NumberOptions.__eq__(QLocale.NumberOptions f)'''
+            return bool()
+        def __invert__(self):
+            '''QLocale.NumberOptions QLocale.NumberOptions.__invert__()'''
+            return QLocale.NumberOptions()
+        def __and__(self, mask):
+            '''QLocale.NumberOptions QLocale.NumberOptions.__and__(int mask)'''
+            return QLocale.NumberOptions()
+        def __xor__(self, f):
+            '''QLocale.NumberOptions QLocale.NumberOptions.__xor__(QLocale.NumberOptions f)'''
+            return QLocale.NumberOptions()
+        def __xor__(self, f):
+            '''QLocale.NumberOptions QLocale.NumberOptions.__xor__(int f)'''
+            return QLocale.NumberOptions()
+        def __or__(self, f):
+            '''QLocale.NumberOptions QLocale.NumberOptions.__or__(QLocale.NumberOptions f)'''
+            return QLocale.NumberOptions()
+        def __or__(self, f):
+            '''QLocale.NumberOptions QLocale.NumberOptions.__or__(int f)'''
+            return QLocale.NumberOptions()
+        def __int__(self):
+            '''int QLocale.NumberOptions.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''QLocale.NumberOptions QLocale.NumberOptions.__ixor__(QLocale.NumberOptions f)'''
+            return QLocale.NumberOptions()
+        def __ior__(self, f):
+            '''QLocale.NumberOptions QLocale.NumberOptions.__ior__(QLocale.NumberOptions f)'''
+            return QLocale.NumberOptions()
+        def __iand__(self, mask):
+            '''QLocale.NumberOptions QLocale.NumberOptions.__iand__(int mask)'''
+            return QLocale.NumberOptions()
 
 
 class QSystemLocale():
     """"""
-    LanguageId = int() # QSystemLocale.QueryType enum
-    CountryId = int() # QSystemLocale.QueryType enum
-    DecimalPoint = int() # QSystemLocale.QueryType enum
-    GroupSeparator = int() # QSystemLocale.QueryType enum
-    ZeroDigit = int() # QSystemLocale.QueryType enum
-    NegativeSign = int() # QSystemLocale.QueryType enum
-    DateFormatLong = int() # QSystemLocale.QueryType enum
-    DateFormatShort = int() # QSystemLocale.QueryType enum
-    TimeFormatLong = int() # QSystemLocale.QueryType enum
-    TimeFormatShort = int() # QSystemLocale.QueryType enum
-    DayNameLong = int() # QSystemLocale.QueryType enum
-    DayNameShort = int() # QSystemLocale.QueryType enum
-    MonthNameLong = int() # QSystemLocale.QueryType enum
-    MonthNameShort = int() # QSystemLocale.QueryType enum
-    DateToStringLong = int() # QSystemLocale.QueryType enum
-    DateToStringShort = int() # QSystemLocale.QueryType enum
-    TimeToStringLong = int() # QSystemLocale.QueryType enum
-    TimeToStringShort = int() # QSystemLocale.QueryType enum
-    DateTimeFormatLong = int() # QSystemLocale.QueryType enum
-    DateTimeFormatShort = int() # QSystemLocale.QueryType enum
-    DateTimeToStringLong = int() # QSystemLocale.QueryType enum
-    DateTimeToStringShort = int() # QSystemLocale.QueryType enum
-    MeasurementSystem = int() # QSystemLocale.QueryType enum
-    PositiveSign = int() # QSystemLocale.QueryType enum
-    AMText = int() # QSystemLocale.QueryType enum
-    PMText = int() # QSystemLocale.QueryType enum
+    # Enum QSystemLocale.QueryType
+    LanguageId = 0
+    CountryId = 0
+    DecimalPoint = 0
+    GroupSeparator = 0
+    ZeroDigit = 0
+    NegativeSign = 0
+    DateFormatLong = 0
+    DateFormatShort = 0
+    TimeFormatLong = 0
+    TimeFormatShort = 0
+    DayNameLong = 0
+    DayNameShort = 0
+    MonthNameLong = 0
+    MonthNameShort = 0
+    DateToStringLong = 0
+    DateToStringShort = 0
+    TimeToStringLong = 0
+    TimeToStringShort = 0
+    DateTimeFormatLong = 0
+    DateTimeFormatShort = 0
+    DateTimeToStringLong = 0
+    DateTimeToStringShort = 0
+    MeasurementSystem = 0
+    PositiveSign = 0
+    AMText = 0
+    PMText = 0
 
     def __init__(self):
-        """None QSystemLocale.__init__(None self)"""
-        return None
+        '''void QSystemLocale.__init__()'''
     def __init__(self):
-        """QSystemLocale QSystemLocale.__init__(None self)"""
+        '''QSystemLocale QSystemLocale.__init__()'''
         return QSystemLocale()
     def fallbackLocale(self):
-        """QLocale QSystemLocale.fallbackLocale(None self)"""
+        '''QLocale QSystemLocale.fallbackLocale()'''
         return QLocale()
-    def query(self, _type, _in):
-        """QVariant QSystemLocale.query(None self, QSystemLocale.QueryType _type, QVariant _in)"""
+    def query(self, type, in_):
+        '''QVariant QSystemLocale.query(QSystemLocale.QueryType type, QVariant in)'''
         return QVariant()
 
 
 class QMargins():
     """"""
     def __init__(self):
-        """None QMargins.__init__(None self)"""
-        return None
-    def __init__(self, _aleft, _atop, _aright, _abottom):
-        """None QMargins.__init__(None self, int _aleft, int _atop, int _aright, int _abottom)"""
-        return None
+        '''void QMargins.__init__()'''
+    def __init__(self, aleft, atop, aright, abottom):
+        '''void QMargins.__init__(int aleft, int atop, int aright, int abottom)'''
     def __init__(self):
-        """QMargins QMargins.__init__(None self)"""
+        '''QMargins QMargins.__init__()'''
         return QMargins()
-    def __eq__(self, _m2):
-        """bool QMargins.__eq__(None self, QMargins _m2)"""
+    def __eq__(self, m2):
+        '''bool QMargins.__eq__(QMargins m2)'''
         return bool()
-    def __ne__(self, _m2):
-        """bool QMargins.__ne__(None self, QMargins _m2)"""
+    def __ne__(self, m2):
+        '''bool QMargins.__ne__(QMargins m2)'''
         return bool()
-    def setBottom(self, _abottom):
-        """None QMargins.setBottom(None self, int _abottom)"""
-        return None
-    def setRight(self, _aright):
-        """None QMargins.setRight(None self, int _aright)"""
-        return None
-    def setTop(self, _atop):
-        """None QMargins.setTop(None self, int _atop)"""
-        return None
-    def setLeft(self, _aleft):
-        """None QMargins.setLeft(None self, int _aleft)"""
-        return None
+    def setBottom(self, abottom):
+        '''void QMargins.setBottom(int abottom)'''
+    def setRight(self, aright):
+        '''void QMargins.setRight(int aright)'''
+    def setTop(self, atop):
+        '''void QMargins.setTop(int atop)'''
+    def setLeft(self, aleft):
+        '''void QMargins.setLeft(int aleft)'''
     def bottom(self):
-        """int QMargins.bottom(None self)"""
+        '''int QMargins.bottom()'''
         return int()
     def right(self):
-        """int QMargins.right(None self)"""
+        '''int QMargins.right()'''
         return int()
     def top(self):
-        """int QMargins.top(None self)"""
+        '''int QMargins.top()'''
         return int()
     def left(self):
-        """int QMargins.left(None self)"""
+        '''int QMargins.left()'''
         return int()
     def isNull(self):
-        """bool QMargins.isNull(None self)"""
+        '''bool QMargins.isNull()'''
         return bool()
 
 
 class QMetaMethod():
     """"""
-    Method = int() # QMetaMethod.MethodType enum
-    Signal = int() # QMetaMethod.MethodType enum
-    Slot = int() # QMetaMethod.MethodType enum
-    Constructor = int() # QMetaMethod.MethodType enum
+    # Enum QMetaMethod.MethodType
+    Method = 0
+    Signal = 0
+    Slot = 0
+    Constructor = 0
 
-    Private = int() # QMetaMethod.Access enum
-    Protected = int() # QMetaMethod.Access enum
-    Public = int() # QMetaMethod.Access enum
+    # Enum QMetaMethod.Access
+    Private = 0
+    Protected = 0
+    Public = 0
 
     def __init__(self):
-        """None QMetaMethod.__init__(None self)"""
-        return None
+        '''void QMetaMethod.__init__()'''
     def __init__(self):
-        """QMetaMethod QMetaMethod.__init__(None self)"""
+        '''QMetaMethod QMetaMethod.__init__()'''
         return QMetaMethod()
     def methodIndex(self):
-        """int QMetaMethod.methodIndex(None self)"""
+        '''int QMetaMethod.methodIndex()'''
         return int()
-    def invoke(self, _object, _connectionType, _returnValue, _value0, _value1, _value2, _value3, _value4, _value5, _value6, _value7, _value8, _value9):
-        """object QMetaMethod.invoke(None self, QObject _object, Qt.ConnectionType _connectionType, QGenericReturnArgument _returnValue, QGenericArgument _value0, QGenericArgument _value1, QGenericArgument _value2, QGenericArgument _value3, QGenericArgument _value4, QGenericArgument _value5, QGenericArgument _value6, QGenericArgument _value7, QGenericArgument _value8, QGenericArgument _value9)"""
+    def invoke(self, object, connectionType, returnValue, value0 = QGenericArgument(0,0), value1 = QGenericArgument(0,0), value2 = QGenericArgument(0,0), value3 = QGenericArgument(0,0), value4 = QGenericArgument(0,0), value5 = QGenericArgument(0,0), value6 = QGenericArgument(0,0), value7 = QGenericArgument(0,0), value8 = QGenericArgument(0,0), value9 = QGenericArgument(0,0)):
+        '''object QMetaMethod.invoke(QObject object, Qt.ConnectionType connectionType, QGenericReturnArgument returnValue, QGenericArgument value0 = QGenericArgument(0,0), QGenericArgument value1 = QGenericArgument(0,0), QGenericArgument value2 = QGenericArgument(0,0), QGenericArgument value3 = QGenericArgument(0,0), QGenericArgument value4 = QGenericArgument(0,0), QGenericArgument value5 = QGenericArgument(0,0), QGenericArgument value6 = QGenericArgument(0,0), QGenericArgument value7 = QGenericArgument(0,0), QGenericArgument value8 = QGenericArgument(0,0), QGenericArgument value9 = QGenericArgument(0,0))'''
         return object()
-    def invoke(self, _object, _returnValue, _value0, _value1, _value2, _value3, _value4, _value5, _value6, _value7, _value8, _value9):
-        """object QMetaMethod.invoke(None self, QObject _object, QGenericReturnArgument _returnValue, QGenericArgument _value0, QGenericArgument _value1, QGenericArgument _value2, QGenericArgument _value3, QGenericArgument _value4, QGenericArgument _value5, QGenericArgument _value6, QGenericArgument _value7, QGenericArgument _value8, QGenericArgument _value9)"""
+    def invoke(self, object, returnValue, value0 = QGenericArgument(0,0), value1 = QGenericArgument(0,0), value2 = QGenericArgument(0,0), value3 = QGenericArgument(0,0), value4 = QGenericArgument(0,0), value5 = QGenericArgument(0,0), value6 = QGenericArgument(0,0), value7 = QGenericArgument(0,0), value8 = QGenericArgument(0,0), value9 = QGenericArgument(0,0)):
+        '''object QMetaMethod.invoke(QObject object, QGenericReturnArgument returnValue, QGenericArgument value0 = QGenericArgument(0,0), QGenericArgument value1 = QGenericArgument(0,0), QGenericArgument value2 = QGenericArgument(0,0), QGenericArgument value3 = QGenericArgument(0,0), QGenericArgument value4 = QGenericArgument(0,0), QGenericArgument value5 = QGenericArgument(0,0), QGenericArgument value6 = QGenericArgument(0,0), QGenericArgument value7 = QGenericArgument(0,0), QGenericArgument value8 = QGenericArgument(0,0), QGenericArgument value9 = QGenericArgument(0,0))'''
         return object()
-    def invoke(self, _object, _connectionType, _value0, _value1, _value2, _value3, _value4, _value5, _value6, _value7, _value8, _value9):
-        """object QMetaMethod.invoke(None self, QObject _object, Qt.ConnectionType _connectionType, QGenericArgument _value0, QGenericArgument _value1, QGenericArgument _value2, QGenericArgument _value3, QGenericArgument _value4, QGenericArgument _value5, QGenericArgument _value6, QGenericArgument _value7, QGenericArgument _value8, QGenericArgument _value9)"""
+    def invoke(self, object, connectionType, value0 = QGenericArgument(0,0), value1 = QGenericArgument(0,0), value2 = QGenericArgument(0,0), value3 = QGenericArgument(0,0), value4 = QGenericArgument(0,0), value5 = QGenericArgument(0,0), value6 = QGenericArgument(0,0), value7 = QGenericArgument(0,0), value8 = QGenericArgument(0,0), value9 = QGenericArgument(0,0)):
+        '''object QMetaMethod.invoke(QObject object, Qt.ConnectionType connectionType, QGenericArgument value0 = QGenericArgument(0,0), QGenericArgument value1 = QGenericArgument(0,0), QGenericArgument value2 = QGenericArgument(0,0), QGenericArgument value3 = QGenericArgument(0,0), QGenericArgument value4 = QGenericArgument(0,0), QGenericArgument value5 = QGenericArgument(0,0), QGenericArgument value6 = QGenericArgument(0,0), QGenericArgument value7 = QGenericArgument(0,0), QGenericArgument value8 = QGenericArgument(0,0), QGenericArgument value9 = QGenericArgument(0,0))'''
         return object()
-    def invoke(self, _object, _value0, _value1, _value2, _value3, _value4, _value5, _value6, _value7, _value8, _value9):
-        """object QMetaMethod.invoke(None self, QObject _object, QGenericArgument _value0, QGenericArgument _value1, QGenericArgument _value2, QGenericArgument _value3, QGenericArgument _value4, QGenericArgument _value5, QGenericArgument _value6, QGenericArgument _value7, QGenericArgument _value8, QGenericArgument _value9)"""
+    def invoke(self, object, value0 = QGenericArgument(0,0), value1 = QGenericArgument(0,0), value2 = QGenericArgument(0,0), value3 = QGenericArgument(0,0), value4 = QGenericArgument(0,0), value5 = QGenericArgument(0,0), value6 = QGenericArgument(0,0), value7 = QGenericArgument(0,0), value8 = QGenericArgument(0,0), value9 = QGenericArgument(0,0)):
+        '''object QMetaMethod.invoke(QObject object, QGenericArgument value0 = QGenericArgument(0,0), QGenericArgument value1 = QGenericArgument(0,0), QGenericArgument value2 = QGenericArgument(0,0), QGenericArgument value3 = QGenericArgument(0,0), QGenericArgument value4 = QGenericArgument(0,0), QGenericArgument value5 = QGenericArgument(0,0), QGenericArgument value6 = QGenericArgument(0,0), QGenericArgument value7 = QGenericArgument(0,0), QGenericArgument value8 = QGenericArgument(0,0), QGenericArgument value9 = QGenericArgument(0,0))'''
         return object()
     def methodType(self):
-        """QMetaMethod.MethodType QMetaMethod.methodType(None self)"""
+        '''QMetaMethod.MethodType QMetaMethod.methodType()'''
         return QMetaMethod.MethodType()
     def access(self):
-        """QMetaMethod.Access QMetaMethod.access(None self)"""
+        '''QMetaMethod.Access QMetaMethod.access()'''
         return QMetaMethod.Access()
     def tag(self):
-        """str QMetaMethod.tag(None self)"""
+        '''str QMetaMethod.tag()'''
         return str()
     def parameterNames(self):
-        """list-of-QByteArray QMetaMethod.parameterNames(None self)"""
+        '''list-of-QByteArray QMetaMethod.parameterNames()'''
         return [QByteArray()]
     def parameterTypes(self):
-        """list-of-QByteArray QMetaMethod.parameterTypes(None self)"""
+        '''list-of-QByteArray QMetaMethod.parameterTypes()'''
         return [QByteArray()]
     def typeName(self):
-        """str QMetaMethod.typeName(None self)"""
+        '''str QMetaMethod.typeName()'''
         return str()
     def signature(self):
-        """str QMetaMethod.signature(None self)"""
+        '''str QMetaMethod.signature()'''
         return str()
 
 
 class QMetaEnum():
     """"""
     def __init__(self):
-        """None QMetaEnum.__init__(None self)"""
-        return None
+        '''void QMetaEnum.__init__()'''
     def __init__(self):
-        """QMetaEnum QMetaEnum.__init__(None self)"""
+        '''QMetaEnum QMetaEnum.__init__()'''
         return QMetaEnum()
     def isValid(self):
-        """bool QMetaEnum.isValid(None self)"""
+        '''bool QMetaEnum.isValid()'''
         return bool()
-    def valueToKeys(self, _value):
-        """QByteArray QMetaEnum.valueToKeys(None self, int _value)"""
+    def valueToKeys(self, value):
+        '''QByteArray QMetaEnum.valueToKeys(int value)'''
         return QByteArray()
-    def keysToValue(self, _keys):
-        """int QMetaEnum.keysToValue(None self, str _keys)"""
+    def keysToValue(self, keys):
+        '''int QMetaEnum.keysToValue(str keys)'''
         return int()
-    def valueToKey(self, _value):
-        """str QMetaEnum.valueToKey(None self, int _value)"""
+    def valueToKey(self, value):
+        '''str QMetaEnum.valueToKey(int value)'''
         return str()
-    def keyToValue(self, _key):
-        """int QMetaEnum.keyToValue(None self, str _key)"""
+    def keyToValue(self, key):
+        '''int QMetaEnum.keyToValue(str key)'''
         return int()
     def scope(self):
-        """str QMetaEnum.scope(None self)"""
+        '''str QMetaEnum.scope()'''
         return str()
-    def value(self, _index):
-        """int QMetaEnum.value(None self, int _index)"""
+    def value(self, index):
+        '''int QMetaEnum.value(int index)'''
         return int()
-    def key(self, _index):
-        """str QMetaEnum.key(None self, int _index)"""
+    def key(self, index):
+        '''str QMetaEnum.key(int index)'''
         return str()
     def keyCount(self):
-        """int QMetaEnum.keyCount(None self)"""
+        '''int QMetaEnum.keyCount()'''
         return int()
     def isFlag(self):
-        """bool QMetaEnum.isFlag(None self)"""
+        '''bool QMetaEnum.isFlag()'''
         return bool()
     def name(self):
-        """str QMetaEnum.name(None self)"""
+        '''str QMetaEnum.name()'''
         return str()
 
 
 class QMetaProperty():
     """"""
     def __init__(self):
-        """None QMetaProperty.__init__(None self)"""
-        return None
+        '''void QMetaProperty.__init__()'''
     def __init__(self):
-        """QMetaProperty QMetaProperty.__init__(None self)"""
+        '''QMetaProperty QMetaProperty.__init__()'''
         return QMetaProperty()
     def isFinal(self):
-        """bool QMetaProperty.isFinal(None self)"""
+        '''bool QMetaProperty.isFinal()'''
         return bool()
     def isConstant(self):
-        """bool QMetaProperty.isConstant(None self)"""
+        '''bool QMetaProperty.isConstant()'''
         return bool()
     def propertyIndex(self):
-        """int QMetaProperty.propertyIndex(None self)"""
+        '''int QMetaProperty.propertyIndex()'''
         return int()
     def notifySignalIndex(self):
-        """int QMetaProperty.notifySignalIndex(None self)"""
+        '''int QMetaProperty.notifySignalIndex()'''
         return int()
     def notifySignal(self):
-        """QMetaMethod QMetaProperty.notifySignal(None self)"""
+        '''QMetaMethod QMetaProperty.notifySignal()'''
         return QMetaMethod()
     def hasNotifySignal(self):
-        """bool QMetaProperty.hasNotifySignal(None self)"""
+        '''bool QMetaProperty.hasNotifySignal()'''
         return bool()
     def userType(self):
-        """int QMetaProperty.userType(None self)"""
+        '''int QMetaProperty.userType()'''
         return int()
-    def isUser(self, _object):
-        """bool QMetaProperty.isUser(None self, QObject _object)"""
+    def isUser(self, object = None):
+        '''bool QMetaProperty.isUser(QObject object = None)'''
         return bool()
     def isResettable(self):
-        """bool QMetaProperty.isResettable(None self)"""
+        '''bool QMetaProperty.isResettable()'''
         return bool()
     def isValid(self):
-        """bool QMetaProperty.isValid(None self)"""
+        '''bool QMetaProperty.isValid()'''
         return bool()
     def hasStdCppSet(self):
-        """bool QMetaProperty.hasStdCppSet(None self)"""
+        '''bool QMetaProperty.hasStdCppSet()'''
         return bool()
-    def reset(self, _obj):
-        """bool QMetaProperty.reset(None self, QObject _obj)"""
+    def reset(self, obj):
+        '''bool QMetaProperty.reset(QObject obj)'''
         return bool()
-    def write(self, _obj, _value):
-        """bool QMetaProperty.write(None self, QObject _obj, QVariant _value)"""
+    def write(self, obj, value):
+        '''bool QMetaProperty.write(QObject obj, QVariant value)'''
         return bool()
-    def read(self, _obj):
-        """QVariant QMetaProperty.read(None self, QObject _obj)"""
+    def read(self, obj):
+        '''QVariant QMetaProperty.read(QObject obj)'''
         return QVariant()
     def enumerator(self):
-        """QMetaEnum QMetaProperty.enumerator(None self)"""
+        '''QMetaEnum QMetaProperty.enumerator()'''
         return QMetaEnum()
     def isEnumType(self):
-        """bool QMetaProperty.isEnumType(None self)"""
+        '''bool QMetaProperty.isEnumType()'''
         return bool()
     def isFlagType(self):
-        """bool QMetaProperty.isFlagType(None self)"""
+        '''bool QMetaProperty.isFlagType()'''
         return bool()
-    def isEditable(self, _object):
-        """bool QMetaProperty.isEditable(None self, QObject _object)"""
+    def isEditable(self, object = None):
+        '''bool QMetaProperty.isEditable(QObject object = None)'''
         return bool()
-    def isStored(self, _object):
-        """bool QMetaProperty.isStored(None self, QObject _object)"""
+    def isStored(self, object = None):
+        '''bool QMetaProperty.isStored(QObject object = None)'''
         return bool()
-    def isScriptable(self, _object):
-        """bool QMetaProperty.isScriptable(None self, QObject _object)"""
+    def isScriptable(self, object = None):
+        '''bool QMetaProperty.isScriptable(QObject object = None)'''
         return bool()
-    def isDesignable(self, _object):
-        """bool QMetaProperty.isDesignable(None self, QObject _object)"""
+    def isDesignable(self, object = None):
+        '''bool QMetaProperty.isDesignable(QObject object = None)'''
         return bool()
     def isWritable(self):
-        """bool QMetaProperty.isWritable(None self)"""
+        '''bool QMetaProperty.isWritable()'''
         return bool()
     def isReadable(self):
-        """bool QMetaProperty.isReadable(None self)"""
+        '''bool QMetaProperty.isReadable()'''
         return bool()
     def type(self):
-        """Type QMetaProperty.type(None self)"""
+        '''Type QMetaProperty.type()'''
         return Type()
     def typeName(self):
-        """str QMetaProperty.typeName(None self)"""
+        '''str QMetaProperty.typeName()'''
         return str()
     def name(self):
-        """str QMetaProperty.name(None self)"""
+        '''str QMetaProperty.name()'''
         return str()
 
 
 class QMetaClassInfo():
     """"""
     def __init__(self):
-        """None QMetaClassInfo.__init__(None self)"""
-        return None
+        '''void QMetaClassInfo.__init__()'''
     def __init__(self):
-        """QMetaClassInfo QMetaClassInfo.__init__(None self)"""
+        '''QMetaClassInfo QMetaClassInfo.__init__()'''
         return QMetaClassInfo()
     def value(self):
-        """str QMetaClassInfo.value(None self)"""
+        '''str QMetaClassInfo.value()'''
         return str()
     def name(self):
-        """str QMetaClassInfo.name(None self)"""
+        '''str QMetaClassInfo.name()'''
         return str()
 
 
 class QMetaType():
     """"""
-    Void = int() # QMetaType.Type enum
-    Bool = int() # QMetaType.Type enum
-    Int = int() # QMetaType.Type enum
-    UInt = int() # QMetaType.Type enum
-    LongLong = int() # QMetaType.Type enum
-    ULongLong = int() # QMetaType.Type enum
-    Double = int() # QMetaType.Type enum
-    QChar = int() # QMetaType.Type enum
-    QVariantMap = int() # QMetaType.Type enum
-    QVariantList = int() # QMetaType.Type enum
-    QVariantHash = int() # QMetaType.Type enum
-    QString = int() # QMetaType.Type enum
-    QStringList = int() # QMetaType.Type enum
-    QByteArray = int() # QMetaType.Type enum
-    QBitArray = int() # QMetaType.Type enum
-    QDate = int() # QMetaType.Type enum
-    QTime = int() # QMetaType.Type enum
-    QDateTime = int() # QMetaType.Type enum
-    QUrl = int() # QMetaType.Type enum
-    QLocale = int() # QMetaType.Type enum
-    QRect = int() # QMetaType.Type enum
-    QRectF = int() # QMetaType.Type enum
-    QSize = int() # QMetaType.Type enum
-    QSizeF = int() # QMetaType.Type enum
-    QLine = int() # QMetaType.Type enum
-    QLineF = int() # QMetaType.Type enum
-    QPoint = int() # QMetaType.Type enum
-    QPointF = int() # QMetaType.Type enum
-    QRegExp = int() # QMetaType.Type enum
-    LastCoreType = int() # QMetaType.Type enum
-    FirstGuiType = int() # QMetaType.Type enum
-    QFont = int() # QMetaType.Type enum
-    QPixmap = int() # QMetaType.Type enum
-    QBrush = int() # QMetaType.Type enum
-    QColor = int() # QMetaType.Type enum
-    QPalette = int() # QMetaType.Type enum
-    QIcon = int() # QMetaType.Type enum
-    QImage = int() # QMetaType.Type enum
-    QPolygon = int() # QMetaType.Type enum
-    QRegion = int() # QMetaType.Type enum
-    QBitmap = int() # QMetaType.Type enum
-    QCursor = int() # QMetaType.Type enum
-    QSizePolicy = int() # QMetaType.Type enum
-    QKeySequence = int() # QMetaType.Type enum
-    QPen = int() # QMetaType.Type enum
-    QTextLength = int() # QMetaType.Type enum
-    QTextFormat = int() # QMetaType.Type enum
-    QMatrix = int() # QMetaType.Type enum
-    QTransform = int() # QMetaType.Type enum
-    VoidStar = int() # QMetaType.Type enum
-    Long = int() # QMetaType.Type enum
-    Short = int() # QMetaType.Type enum
-    Char = int() # QMetaType.Type enum
-    ULong = int() # QMetaType.Type enum
-    UShort = int() # QMetaType.Type enum
-    UChar = int() # QMetaType.Type enum
-    Float = int() # QMetaType.Type enum
-    QObjectStar = int() # QMetaType.Type enum
-    QWidgetStar = int() # QMetaType.Type enum
-    QMatrix4x4 = int() # QMetaType.Type enum
-    QVector2D = int() # QMetaType.Type enum
-    QVector3D = int() # QMetaType.Type enum
-    QVector4D = int() # QMetaType.Type enum
-    QQuaternion = int() # QMetaType.Type enum
-    QEasingCurve = int() # QMetaType.Type enum
-    QVariant = int() # QMetaType.Type enum
-    User = int() # QMetaType.Type enum
+    # Enum QMetaType.Type
+    Void = 0
+    Bool = 0
+    Int = 0
+    UInt = 0
+    LongLong = 0
+    ULongLong = 0
+    Double = 0
+    QChar = 0
+    QVariantMap = 0
+    QVariantList = 0
+    QVariantHash = 0
+    QString = 0
+    QStringList = 0
+    QByteArray = 0
+    QBitArray = 0
+    QDate = 0
+    QTime = 0
+    QDateTime = 0
+    QUrl = 0
+    QLocale = 0
+    QRect = 0
+    QRectF = 0
+    QSize = 0
+    QSizeF = 0
+    QLine = 0
+    QLineF = 0
+    QPoint = 0
+    QPointF = 0
+    QRegExp = 0
+    LastCoreType = 0
+    FirstGuiType = 0
+    QFont = 0
+    QPixmap = 0
+    QBrush = 0
+    QColor = 0
+    QPalette = 0
+    QIcon = 0
+    QImage = 0
+    QPolygon = 0
+    QRegion = 0
+    QBitmap = 0
+    QCursor = 0
+    QSizePolicy = 0
+    QKeySequence = 0
+    QPen = 0
+    QTextLength = 0
+    QTextFormat = 0
+    QMatrix = 0
+    QTransform = 0
+    VoidStar = 0
+    Long = 0
+    Short = 0
+    Char = 0
+    ULong = 0
+    UShort = 0
+    UChar = 0
+    Float = 0
+    QObjectStar = 0
+    QWidgetStar = 0
+    QMatrix4x4 = 0
+    QVector2D = 0
+    QVector3D = 0
+    QVector4D = 0
+    QQuaternion = 0
+    QEasingCurve = 0
+    QVariant = 0
+    User = 0
 
     def __init__(self):
-        """None QMetaType.__init__(None self)"""
-        return None
+        '''void QMetaType.__init__()'''
     def __init__(self):
-        """QMetaType QMetaType.__init__(None self)"""
+        '''QMetaType QMetaType.__init__()'''
         return QMetaType()
-    def isRegistered(self, _type):
-        """bool QMetaType.isRegistered(None self, int _type)"""
+    def isRegistered(self, type):
+        '''static bool QMetaType.isRegistered(int type)'''
         return bool()
-    def typeName(self, _type):
-        """str QMetaType.typeName(None self, int _type)"""
+    def typeName(self, type):
+        '''static str QMetaType.typeName(int type)'''
         return str()
-    def type(self, _typeName):
-        """int QMetaType.type(None self, str _typeName)"""
+    def type(self, typeName):
+        '''static int QMetaType.type(str typeName)'''
         return int()
 
 
 class QMimeData(QObject):
     """"""
     def __init__(self):
-        """None QMimeData.__init__(None self)"""
-        return None
-    def retrieveData(self, _mimetype, _preferredType):
-        """QVariant QMimeData.retrieveData(None self, QString _mimetype, Type _preferredType)"""
+        '''void QMimeData.__init__()'''
+    def retrieveData(self, mimetype, preferredType):
+        '''QVariant QMimeData.retrieveData(QString mimetype, Type preferredType)'''
         return QVariant()
-    def removeFormat(self, _mimetype):
-        """None QMimeData.removeFormat(None self, QString _mimetype)"""
-        return None
+    def removeFormat(self, mimetype):
+        '''void QMimeData.removeFormat(QString mimetype)'''
     def clear(self):
-        """None QMimeData.clear(None self)"""
-        return None
+        '''void QMimeData.clear()'''
     def formats(self):
-        """QStringList QMimeData.formats(None self)"""
+        '''QStringList QMimeData.formats()'''
         return QStringList()
-    def hasFormat(self, _mimetype):
-        """bool QMimeData.hasFormat(None self, QString _mimetype)"""
+    def hasFormat(self, mimetype):
+        '''bool QMimeData.hasFormat(QString mimetype)'''
         return bool()
-    def setData(self, _mimetype, _data):
-        """None QMimeData.setData(None self, QString _mimetype, QByteArray _data)"""
-        return None
-    def data(self, _mimetype):
-        """QByteArray QMimeData.data(None self, QString _mimetype)"""
+    def setData(self, mimetype, data):
+        '''void QMimeData.setData(QString mimetype, QByteArray data)'''
+    def data(self, mimetype):
+        '''QByteArray QMimeData.data(QString mimetype)'''
         return QByteArray()
     def hasColor(self):
-        """bool QMimeData.hasColor(None self)"""
+        '''bool QMimeData.hasColor()'''
         return bool()
-    def setColorData(self, _color):
-        """None QMimeData.setColorData(None self, QVariant _color)"""
-        return None
+    def setColorData(self, color):
+        '''void QMimeData.setColorData(QVariant color)'''
     def colorData(self):
-        """QVariant QMimeData.colorData(None self)"""
+        '''QVariant QMimeData.colorData()'''
         return QVariant()
     def hasImage(self):
-        """bool QMimeData.hasImage(None self)"""
+        '''bool QMimeData.hasImage()'''
         return bool()
-    def setImageData(self, _image):
-        """None QMimeData.setImageData(None self, QVariant _image)"""
-        return None
+    def setImageData(self, image):
+        '''void QMimeData.setImageData(QVariant image)'''
     def imageData(self):
-        """QVariant QMimeData.imageData(None self)"""
+        '''QVariant QMimeData.imageData()'''
         return QVariant()
     def hasHtml(self):
-        """bool QMimeData.hasHtml(None self)"""
+        '''bool QMimeData.hasHtml()'''
         return bool()
-    def setHtml(self, _html):
-        """None QMimeData.setHtml(None self, QString _html)"""
-        return None
+    def setHtml(self, html):
+        '''void QMimeData.setHtml(QString html)'''
     def html(self):
-        """QString QMimeData.html(None self)"""
+        '''QString QMimeData.html()'''
         return QString()
     def hasText(self):
-        """bool QMimeData.hasText(None self)"""
+        '''bool QMimeData.hasText()'''
         return bool()
-    def setText(self, _text):
-        """None QMimeData.setText(None self, QString _text)"""
-        return None
+    def setText(self, text):
+        '''void QMimeData.setText(QString text)'''
     def text(self):
-        """QString QMimeData.text(None self)"""
+        '''QString QMimeData.text()'''
         return QString()
     def hasUrls(self):
-        """bool QMimeData.hasUrls(None self)"""
+        '''bool QMimeData.hasUrls()'''
         return bool()
-    def setUrls(self, _urls):
-        """None QMimeData.setUrls(None self, list-of-QUrl _urls)"""
-        return None
+    def setUrls(self, urls):
+        '''void QMimeData.setUrls(list-of-QUrl urls)'''
     def urls(self):
-        """list-of-QUrl QMimeData.urls(None self)"""
+        '''list-of-QUrl QMimeData.urls()'''
         return [QUrl()]
 
 
 class QMutex():
     """"""
-    NonRecursive = int() # QMutex.RecursionMode enum
-    Recursive = int() # QMutex.RecursionMode enum
+    # Enum QMutex.RecursionMode
+    NonRecursive = 0
+    Recursive = 0
 
-    def __init__(self, _mode):
-        """None QMutex.__init__(None self, QMutex.RecursionMode _mode)"""
-        return None
+    def __init__(self, mode = QMutex.NonRecursive):
+        '''void QMutex.__init__(QMutex.RecursionMode mode = QMutex.NonRecursive)'''
     def unlock(self):
-        """None QMutex.unlock(None self)"""
-        return None
+        '''void QMutex.unlock()'''
     def tryLock(self):
-        """bool QMutex.tryLock(None self)"""
+        '''bool QMutex.tryLock()'''
         return bool()
-    def tryLock(self, _timeout):
-        """bool QMutex.tryLock(None self, int _timeout)"""
+    def tryLock(self, timeout):
+        '''bool QMutex.tryLock(int timeout)'''
         return bool()
     def lock(self):
-        """None QMutex.lock(None self)"""
-        return None
+        '''void QMutex.lock()'''
 
 
 class QMutexLocker():
     """"""
-    def __init__(self, _m):
-        """None QMutexLocker.__init__(None self, QMutex _m)"""
-        return None
-    def __exit__(self, _type, _value, _traceback):
-        """None QMutexLocker.__exit__(None self, object _type, object _value, object _traceback)"""
-        return None
+    def __init__(self, m):
+        '''void QMutexLocker.__init__(QMutex m)'''
+    def __exit__(self, type, value, traceback):
+        '''void QMutexLocker.__exit__(object type, object value, object traceback)'''
     def __enter__(self):
-        """object QMutexLocker.__enter__(None self)"""
+        '''object QMutexLocker.__enter__()'''
         return object()
     def mutex(self):
-        """QMutex QMutexLocker.mutex(None self)"""
+        '''QMutex QMutexLocker.mutex()'''
         return QMutex()
     def relock(self):
-        """None QMutexLocker.relock(None self)"""
-        return None
+        '''void QMutexLocker.relock()'''
     def unlock(self):
-        """None QMutexLocker.unlock(None self)"""
-        return None
+        '''void QMutexLocker.unlock()'''
 
 
 class QObjectCleanupHandler(QObject):
     """"""
     def __init__(self):
-        """None QObjectCleanupHandler.__init__(None self)"""
-        return None
+        '''void QObjectCleanupHandler.__init__()'''
     def clear(self):
-        """None QObjectCleanupHandler.clear(None self)"""
-        return None
+        '''void QObjectCleanupHandler.clear()'''
     def isEmpty(self):
-        """bool QObjectCleanupHandler.isEmpty(None self)"""
+        '''bool QObjectCleanupHandler.isEmpty()'''
         return bool()
-    def remove(self, _object):
-        """None QObjectCleanupHandler.remove(None self, QObject _object)"""
-        return None
-    def add(self, _object):
-        """QObject QObjectCleanupHandler.add(None self, QObject _object)"""
+    def remove(self, object):
+        '''void QObjectCleanupHandler.remove(QObject object)'''
+    def add(self, object):
+        '''QObject QObjectCleanupHandler.add(QObject object)'''
         return QObject()
 
 
 class QMetaObject():
     """"""
     def __init__(self):
-        """None QMetaObject.__init__(None self)"""
-        return None
+        '''void QMetaObject.__init__()'''
     def __init__(self):
-        """QMetaObject QMetaObject.__init__(None self)"""
+        '''QMetaObject QMetaObject.__init__()'''
         return QMetaObject()
-    def newInstance(self, _value0, _value1, _value2, _value3, _value4, _value5, _value6, _value7, _value8, _value9):
-        """QObject QMetaObject.newInstance(None self, QGenericArgument _value0, QGenericArgument _value1, QGenericArgument _value2, QGenericArgument _value3, QGenericArgument _value4, QGenericArgument _value5, QGenericArgument _value6, QGenericArgument _value7, QGenericArgument _value8, QGenericArgument _value9)"""
+    def newInstance(self, value0 = QGenericArgument(0,0), value1 = QGenericArgument(0,0), value2 = QGenericArgument(0,0), value3 = QGenericArgument(0,0), value4 = QGenericArgument(0,0), value5 = QGenericArgument(0,0), value6 = QGenericArgument(0,0), value7 = QGenericArgument(0,0), value8 = QGenericArgument(0,0), value9 = QGenericArgument(0,0)):
+        '''QObject QMetaObject.newInstance(QGenericArgument value0 = QGenericArgument(0,0), QGenericArgument value1 = QGenericArgument(0,0), QGenericArgument value2 = QGenericArgument(0,0), QGenericArgument value3 = QGenericArgument(0,0), QGenericArgument value4 = QGenericArgument(0,0), QGenericArgument value5 = QGenericArgument(0,0), QGenericArgument value6 = QGenericArgument(0,0), QGenericArgument value7 = QGenericArgument(0,0), QGenericArgument value8 = QGenericArgument(0,0), QGenericArgument value9 = QGenericArgument(0,0))'''
         return QObject()
-    def constructor(self, _index):
-        """QMetaMethod QMetaObject.constructor(None self, int _index)"""
+    def constructor(self, index):
+        '''QMetaMethod QMetaObject.constructor(int index)'''
         return QMetaMethod()
-    def indexOfConstructor(self, _constructor):
-        """int QMetaObject.indexOfConstructor(None self, str _constructor)"""
+    def indexOfConstructor(self, constructor):
+        '''int QMetaObject.indexOfConstructor(str constructor)'''
         return int()
     def constructorCount(self):
-        """int QMetaObject.constructorCount(None self)"""
+        '''int QMetaObject.constructorCount()'''
         return int()
-    def invokeMethod(self, _obj, _member, _type, _ret, _value0, _value1, _value2, _value3, _value4, _value5, _value6, _value7, _value8, _value9):
-        """object QMetaObject.invokeMethod(None self, QObject _obj, str _member, Qt.ConnectionType _type, QGenericReturnArgument _ret, QGenericArgument _value0, QGenericArgument _value1, QGenericArgument _value2, QGenericArgument _value3, QGenericArgument _value4, QGenericArgument _value5, QGenericArgument _value6, QGenericArgument _value7, QGenericArgument _value8, QGenericArgument _value9)"""
+    def invokeMethod(self, obj, member, type, ret, value0 = QGenericArgument(0,0), value1 = QGenericArgument(0,0), value2 = QGenericArgument(0,0), value3 = QGenericArgument(0,0), value4 = QGenericArgument(0,0), value5 = QGenericArgument(0,0), value6 = QGenericArgument(0,0), value7 = QGenericArgument(0,0), value8 = QGenericArgument(0,0), value9 = QGenericArgument(0,0)):
+        '''static object QMetaObject.invokeMethod(QObject obj, str member, Qt.ConnectionType type, QGenericReturnArgument ret, QGenericArgument value0 = QGenericArgument(0,0), QGenericArgument value1 = QGenericArgument(0,0), QGenericArgument value2 = QGenericArgument(0,0), QGenericArgument value3 = QGenericArgument(0,0), QGenericArgument value4 = QGenericArgument(0,0), QGenericArgument value5 = QGenericArgument(0,0), QGenericArgument value6 = QGenericArgument(0,0), QGenericArgument value7 = QGenericArgument(0,0), QGenericArgument value8 = QGenericArgument(0,0), QGenericArgument value9 = QGenericArgument(0,0))'''
         return object()
-    def invokeMethod(self, _obj, _member, _ret, _value0, _value1, _value2, _value3, _value4, _value5, _value6, _value7, _value8, _value9):
-        """object QMetaObject.invokeMethod(None self, QObject _obj, str _member, QGenericReturnArgument _ret, QGenericArgument _value0, QGenericArgument _value1, QGenericArgument _value2, QGenericArgument _value3, QGenericArgument _value4, QGenericArgument _value5, QGenericArgument _value6, QGenericArgument _value7, QGenericArgument _value8, QGenericArgument _value9)"""
+    def invokeMethod(self, obj, member, ret, value0 = QGenericArgument(0,0), value1 = QGenericArgument(0,0), value2 = QGenericArgument(0,0), value3 = QGenericArgument(0,0), value4 = QGenericArgument(0,0), value5 = QGenericArgument(0,0), value6 = QGenericArgument(0,0), value7 = QGenericArgument(0,0), value8 = QGenericArgument(0,0), value9 = QGenericArgument(0,0)):
+        '''static object QMetaObject.invokeMethod(QObject obj, str member, QGenericReturnArgument ret, QGenericArgument value0 = QGenericArgument(0,0), QGenericArgument value1 = QGenericArgument(0,0), QGenericArgument value2 = QGenericArgument(0,0), QGenericArgument value3 = QGenericArgument(0,0), QGenericArgument value4 = QGenericArgument(0,0), QGenericArgument value5 = QGenericArgument(0,0), QGenericArgument value6 = QGenericArgument(0,0), QGenericArgument value7 = QGenericArgument(0,0), QGenericArgument value8 = QGenericArgument(0,0), QGenericArgument value9 = QGenericArgument(0,0))'''
         return object()
-    def invokeMethod(self, _obj, _member, _type, _value0, _value1, _value2, _value3, _value4, _value5, _value6, _value7, _value8, _value9):
-        """object QMetaObject.invokeMethod(None self, QObject _obj, str _member, Qt.ConnectionType _type, QGenericArgument _value0, QGenericArgument _value1, QGenericArgument _value2, QGenericArgument _value3, QGenericArgument _value4, QGenericArgument _value5, QGenericArgument _value6, QGenericArgument _value7, QGenericArgument _value8, QGenericArgument _value9)"""
+    def invokeMethod(self, obj, member, type, value0 = QGenericArgument(0,0), value1 = QGenericArgument(0,0), value2 = QGenericArgument(0,0), value3 = QGenericArgument(0,0), value4 = QGenericArgument(0,0), value5 = QGenericArgument(0,0), value6 = QGenericArgument(0,0), value7 = QGenericArgument(0,0), value8 = QGenericArgument(0,0), value9 = QGenericArgument(0,0)):
+        '''static object QMetaObject.invokeMethod(QObject obj, str member, Qt.ConnectionType type, QGenericArgument value0 = QGenericArgument(0,0), QGenericArgument value1 = QGenericArgument(0,0), QGenericArgument value2 = QGenericArgument(0,0), QGenericArgument value3 = QGenericArgument(0,0), QGenericArgument value4 = QGenericArgument(0,0), QGenericArgument value5 = QGenericArgument(0,0), QGenericArgument value6 = QGenericArgument(0,0), QGenericArgument value7 = QGenericArgument(0,0), QGenericArgument value8 = QGenericArgument(0,0), QGenericArgument value9 = QGenericArgument(0,0))'''
         return object()
-    def invokeMethod(self, _obj, _member, _value0, _value1, _value2, _value3, _value4, _value5, _value6, _value7, _value8, _value9):
-        """object QMetaObject.invokeMethod(None self, QObject _obj, str _member, QGenericArgument _value0, QGenericArgument _value1, QGenericArgument _value2, QGenericArgument _value3, QGenericArgument _value4, QGenericArgument _value5, QGenericArgument _value6, QGenericArgument _value7, QGenericArgument _value8, QGenericArgument _value9)"""
+    def invokeMethod(self, obj, member, value0 = QGenericArgument(0,0), value1 = QGenericArgument(0,0), value2 = QGenericArgument(0,0), value3 = QGenericArgument(0,0), value4 = QGenericArgument(0,0), value5 = QGenericArgument(0,0), value6 = QGenericArgument(0,0), value7 = QGenericArgument(0,0), value8 = QGenericArgument(0,0), value9 = QGenericArgument(0,0)):
+        '''static object QMetaObject.invokeMethod(QObject obj, str member, QGenericArgument value0 = QGenericArgument(0,0), QGenericArgument value1 = QGenericArgument(0,0), QGenericArgument value2 = QGenericArgument(0,0), QGenericArgument value3 = QGenericArgument(0,0), QGenericArgument value4 = QGenericArgument(0,0), QGenericArgument value5 = QGenericArgument(0,0), QGenericArgument value6 = QGenericArgument(0,0), QGenericArgument value7 = QGenericArgument(0,0), QGenericArgument value8 = QGenericArgument(0,0), QGenericArgument value9 = QGenericArgument(0,0))'''
         return object()
-    def normalizedType(self, _type):
-        """QByteArray QMetaObject.normalizedType(None self, str _type)"""
+    def normalizedType(self, type):
+        '''static QByteArray QMetaObject.normalizedType(str type)'''
         return QByteArray()
-    def normalizedSignature(self, _method):
-        """QByteArray QMetaObject.normalizedSignature(None self, str _method)"""
+    def normalizedSignature(self, method):
+        '''static QByteArray QMetaObject.normalizedSignature(str method)'''
         return QByteArray()
-    def connectSlotsByName(self, _o):
-        """None QMetaObject.connectSlotsByName(None self, QObject _o)"""
-        return None
-    def checkConnectArgs(self, _signal, _method):
-        """bool QMetaObject.checkConnectArgs(None self, str _signal, str _method)"""
+    def connectSlotsByName(self, o):
+        '''static void QMetaObject.connectSlotsByName(QObject o)'''
+    def checkConnectArgs(self, signal, method):
+        '''static bool QMetaObject.checkConnectArgs(str signal, str method)'''
         return bool()
-    def classInfo(self, _index):
-        """QMetaClassInfo QMetaObject.classInfo(None self, int _index)"""
+    def classInfo(self, index):
+        '''QMetaClassInfo QMetaObject.classInfo(int index)'''
         return QMetaClassInfo()
-    def property(self, _index):
-        """QMetaProperty QMetaObject.property(None self, int _index)"""
+    def property(self, index):
+        '''QMetaProperty QMetaObject.property(int index)'''
         return QMetaProperty()
-    def enumerator(self, _index):
-        """QMetaEnum QMetaObject.enumerator(None self, int _index)"""
+    def enumerator(self, index):
+        '''QMetaEnum QMetaObject.enumerator(int index)'''
         return QMetaEnum()
-    def method(self, _index):
-        """QMetaMethod QMetaObject.method(None self, int _index)"""
+    def method(self, index):
+        '''QMetaMethod QMetaObject.method(int index)'''
         return QMetaMethod()
-    def indexOfClassInfo(self, _name):
-        """int QMetaObject.indexOfClassInfo(None self, str _name)"""
+    def indexOfClassInfo(self, name):
+        '''int QMetaObject.indexOfClassInfo(str name)'''
         return int()
-    def indexOfProperty(self, _name):
-        """int QMetaObject.indexOfProperty(None self, str _name)"""
+    def indexOfProperty(self, name):
+        '''int QMetaObject.indexOfProperty(str name)'''
         return int()
-    def indexOfEnumerator(self, _name):
-        """int QMetaObject.indexOfEnumerator(None self, str _name)"""
+    def indexOfEnumerator(self, name):
+        '''int QMetaObject.indexOfEnumerator(str name)'''
         return int()
-    def indexOfSlot(self, _slot):
-        """int QMetaObject.indexOfSlot(None self, str _slot)"""
+    def indexOfSlot(self, slot):
+        '''int QMetaObject.indexOfSlot(str slot)'''
         return int()
-    def indexOfSignal(self, _signal):
-        """int QMetaObject.indexOfSignal(None self, str _signal)"""
+    def indexOfSignal(self, signal):
+        '''int QMetaObject.indexOfSignal(str signal)'''
         return int()
-    def indexOfMethod(self, _method):
-        """int QMetaObject.indexOfMethod(None self, str _method)"""
+    def indexOfMethod(self, method):
+        '''int QMetaObject.indexOfMethod(str method)'''
         return int()
     def classInfoCount(self):
-        """int QMetaObject.classInfoCount(None self)"""
+        '''int QMetaObject.classInfoCount()'''
         return int()
     def propertyCount(self):
-        """int QMetaObject.propertyCount(None self)"""
+        '''int QMetaObject.propertyCount()'''
         return int()
     def enumeratorCount(self):
-        """int QMetaObject.enumeratorCount(None self)"""
+        '''int QMetaObject.enumeratorCount()'''
         return int()
     def methodCount(self):
-        """int QMetaObject.methodCount(None self)"""
+        '''int QMetaObject.methodCount()'''
         return int()
     def classInfoOffset(self):
-        """int QMetaObject.classInfoOffset(None self)"""
+        '''int QMetaObject.classInfoOffset()'''
         return int()
     def propertyOffset(self):
-        """int QMetaObject.propertyOffset(None self)"""
+        '''int QMetaObject.propertyOffset()'''
         return int()
     def enumeratorOffset(self):
-        """int QMetaObject.enumeratorOffset(None self)"""
+        '''int QMetaObject.enumeratorOffset()'''
         return int()
     def methodOffset(self):
-        """int QMetaObject.methodOffset(None self)"""
+        '''int QMetaObject.methodOffset()'''
         return int()
     def userProperty(self):
-        """QMetaProperty QMetaObject.userProperty(None self)"""
+        '''QMetaProperty QMetaObject.userProperty()'''
         return QMetaProperty()
     def superClass(self):
-        """QMetaObject QMetaObject.superClass(None self)"""
+        '''QMetaObject QMetaObject.superClass()'''
         return QMetaObject()
     def className(self):
-        """str QMetaObject.className(None self)"""
+        '''str QMetaObject.className()'''
         return str()
 
 
@@ -6693,4733 +7736,4649 @@ class QGenericReturnArgument():
 
 class QParallelAnimationGroup(QAnimationGroup):
     """"""
-    def __init__(self, _parent):
-        """None QParallelAnimationGroup.__init__(None self, QObject _parent)"""
-        return None
-    def updateDirection(self, _direction):
-        """None QParallelAnimationGroup.updateDirection(None self, QAbstractAnimation.Direction _direction)"""
-        return None
-    def updateState(self, _newState, _oldState):
-        """None QParallelAnimationGroup.updateState(None self, QAbstractAnimation.State _newState, QAbstractAnimation.State _oldState)"""
-        return None
-    def updateCurrentTime(self, _currentTime):
-        """None QParallelAnimationGroup.updateCurrentTime(None self, int _currentTime)"""
-        return None
-    def event(self, _event):
-        """bool QParallelAnimationGroup.event(None self, QEvent _event)"""
+    def __init__(self, parent = None):
+        '''void QParallelAnimationGroup.__init__(QObject parent = None)'''
+    def updateDirection(self, direction):
+        '''void QParallelAnimationGroup.updateDirection(QAbstractAnimation.Direction direction)'''
+    def updateState(self, newState, oldState):
+        '''void QParallelAnimationGroup.updateState(QAbstractAnimation.State newState, QAbstractAnimation.State oldState)'''
+    def updateCurrentTime(self, currentTime):
+        '''void QParallelAnimationGroup.updateCurrentTime(int currentTime)'''
+    def event(self, event):
+        '''bool QParallelAnimationGroup.event(QEvent event)'''
         return bool()
     def duration(self):
-        """int QParallelAnimationGroup.duration(None self)"""
+        '''int QParallelAnimationGroup.duration()'''
         return int()
 
 
 class QPauseAnimation(QAbstractAnimation):
     """"""
-    def __init__(self, _parent):
-        """None QPauseAnimation.__init__(None self, QObject _parent)"""
-        return None
-    def __init__(self, _msecs, _parent):
-        """None QPauseAnimation.__init__(None self, int _msecs, QObject _parent)"""
-        return None
+    def __init__(self, parent = None):
+        '''void QPauseAnimation.__init__(QObject parent = None)'''
+    def __init__(self, msecs, parent = None):
+        '''void QPauseAnimation.__init__(int msecs, QObject parent = None)'''
     def updateCurrentTime(self):
-        """int QPauseAnimation.updateCurrentTime(None self)"""
+        '''int QPauseAnimation.updateCurrentTime()'''
         return int()
-    def event(self, _e):
-        """bool QPauseAnimation.event(None self, QEvent _e)"""
+    def event(self, e):
+        '''bool QPauseAnimation.event(QEvent e)'''
         return bool()
-    def setDuration(self, _msecs):
-        """None QPauseAnimation.setDuration(None self, int _msecs)"""
-        return None
+    def setDuration(self, msecs):
+        '''void QPauseAnimation.setDuration(int msecs)'''
     def duration(self):
-        """int QPauseAnimation.duration(None self)"""
+        '''int QPauseAnimation.duration()'''
         return int()
 
 
 class QVariantAnimation(QAbstractAnimation):
     """"""
-    def __init__(self, _parent):
-        """None QVariantAnimation.__init__(None self, QObject _parent)"""
-        return None
-    def interpolated(self, _from, _to, _progress):
-        """QVariant QVariantAnimation.interpolated(None self, QVariant _from, QVariant _to, float _progress)"""
+    def __init__(self, parent = None):
+        '''void QVariantAnimation.__init__(QObject parent = None)'''
+    def interpolated(self, from_, to, progress):
+        '''QVariant QVariantAnimation.interpolated(QVariant from, QVariant to, float progress)'''
         return QVariant()
-    def updateCurrentValue(self, _value):
-        """abstract None QVariantAnimation.updateCurrentValue(None self, QVariant _value)"""
-        return None
-    def updateState(self, _newState, _oldState):
-        """None QVariantAnimation.updateState(None self, QAbstractAnimation.State _newState, QAbstractAnimation.State _oldState)"""
-        return None
+    def updateCurrentValue(self, value):
+        '''abstract void QVariantAnimation.updateCurrentValue(QVariant value)'''
+    def updateState(self, newState, oldState):
+        '''void QVariantAnimation.updateState(QAbstractAnimation.State newState, QAbstractAnimation.State oldState)'''
     def updateCurrentTime(self):
-        """int QVariantAnimation.updateCurrentTime(None self)"""
+        '''int QVariantAnimation.updateCurrentTime()'''
         return int()
-    def event(self, _event):
-        """bool QVariantAnimation.event(None self, QEvent _event)"""
+    def event(self, event):
+        '''bool QVariantAnimation.event(QEvent event)'''
         return bool()
-    def setEasingCurve(self, _easing):
-        """None QVariantAnimation.setEasingCurve(None self, QEasingCurve _easing)"""
-        return None
+    valueChanged = PyQt4.QtCore.pyqtSignal() # void valueChanged(const QVariant&) - signal
+    def setEasingCurve(self, easing):
+        '''void QVariantAnimation.setEasingCurve(QEasingCurve easing)'''
     def easingCurve(self):
-        """QEasingCurve QVariantAnimation.easingCurve(None self)"""
+        '''QEasingCurve QVariantAnimation.easingCurve()'''
         return QEasingCurve()
-    def setDuration(self, _msecs):
-        """None QVariantAnimation.setDuration(None self, int _msecs)"""
-        return None
+    def setDuration(self, msecs):
+        '''void QVariantAnimation.setDuration(int msecs)'''
     def duration(self):
-        """int QVariantAnimation.duration(None self)"""
+        '''int QVariantAnimation.duration()'''
         return int()
     def currentValue(self):
-        """QVariant QVariantAnimation.currentValue(None self)"""
+        '''QVariant QVariantAnimation.currentValue()'''
         return QVariant()
-    def setKeyValues(self, _values):
-        """None QVariantAnimation.setKeyValues(None self, list-of-tuple-of-float-QVariant _values)"""
-        return None
+    def setKeyValues(self, values):
+        '''void QVariantAnimation.setKeyValues(list-of-tuple-of-float-QVariant values)'''
     def keyValues(self):
-        """list-of-tuple-of-float-QVariant QVariantAnimation.keyValues(None self)"""
+        '''list-of-tuple-of-float-QVariant QVariantAnimation.keyValues()'''
         return [tuple-of-float-QVariant()]
-    def setKeyValueAt(self, _step, _value):
-        """None QVariantAnimation.setKeyValueAt(None self, float _step, QVariant _value)"""
-        return None
-    def keyValueAt(self, _step):
-        """QVariant QVariantAnimation.keyValueAt(None self, float _step)"""
+    def setKeyValueAt(self, step, value):
+        '''void QVariantAnimation.setKeyValueAt(float step, QVariant value)'''
+    def keyValueAt(self, step):
+        '''QVariant QVariantAnimation.keyValueAt(float step)'''
         return QVariant()
-    def setEndValue(self, _value):
-        """None QVariantAnimation.setEndValue(None self, QVariant _value)"""
-        return None
+    def setEndValue(self, value):
+        '''void QVariantAnimation.setEndValue(QVariant value)'''
     def endValue(self):
-        """QVariant QVariantAnimation.endValue(None self)"""
+        '''QVariant QVariantAnimation.endValue()'''
         return QVariant()
-    def setStartValue(self, _value):
-        """None QVariantAnimation.setStartValue(None self, QVariant _value)"""
-        return None
+    def setStartValue(self, value):
+        '''void QVariantAnimation.setStartValue(QVariant value)'''
     def startValue(self):
-        """QVariant QVariantAnimation.startValue(None self)"""
+        '''QVariant QVariantAnimation.startValue()'''
         return QVariant()
 
 
 class QPropertyAnimation(QVariantAnimation):
     """"""
-    def __init__(self, _parent):
-        """None QPropertyAnimation.__init__(None self, QObject _parent)"""
-        return None
-    def __init__(self, _target, _propertyName, _parent):
-        """None QPropertyAnimation.__init__(None self, QObject _target, QByteArray _propertyName, QObject _parent)"""
-        return None
-    def updateState(self, _newState, _oldState):
-        """None QPropertyAnimation.updateState(None self, QAbstractAnimation.State _newState, QAbstractAnimation.State _oldState)"""
-        return None
-    def updateCurrentValue(self, _value):
-        """None QPropertyAnimation.updateCurrentValue(None self, QVariant _value)"""
-        return None
-    def event(self, _event):
-        """bool QPropertyAnimation.event(None self, QEvent _event)"""
+    def __init__(self, parent = None):
+        '''void QPropertyAnimation.__init__(QObject parent = None)'''
+    def __init__(self, target, propertyName, parent = None):
+        '''void QPropertyAnimation.__init__(QObject target, QByteArray propertyName, QObject parent = None)'''
+    def updateState(self, newState, oldState):
+        '''void QPropertyAnimation.updateState(QAbstractAnimation.State newState, QAbstractAnimation.State oldState)'''
+    def updateCurrentValue(self, value):
+        '''void QPropertyAnimation.updateCurrentValue(QVariant value)'''
+    def event(self, event):
+        '''bool QPropertyAnimation.event(QEvent event)'''
         return bool()
-    def setPropertyName(self, _propertyName):
-        """None QPropertyAnimation.setPropertyName(None self, QByteArray _propertyName)"""
-        return None
+    def setPropertyName(self, propertyName):
+        '''void QPropertyAnimation.setPropertyName(QByteArray propertyName)'''
     def propertyName(self):
-        """QByteArray QPropertyAnimation.propertyName(None self)"""
+        '''QByteArray QPropertyAnimation.propertyName()'''
         return QByteArray()
-    def setTargetObject(self, _target):
-        """None QPropertyAnimation.setTargetObject(None self, QObject _target)"""
-        return None
+    def setTargetObject(self, target):
+        '''void QPropertyAnimation.setTargetObject(QObject target)'''
     def targetObject(self):
-        """QObject QPropertyAnimation.targetObject(None self)"""
+        '''QObject QPropertyAnimation.targetObject()'''
         return QObject()
 
 
 class QPluginLoader(QObject):
     """"""
-    def __init__(self, _parent):
-        """None QPluginLoader.__init__(None self, QObject _parent)"""
-        return None
-    def __init__(self, _fileName, _parent):
-        """None QPluginLoader.__init__(None self, QString _fileName, QObject _parent)"""
-        return None
+    def __init__(self, parent = None):
+        '''void QPluginLoader.__init__(QObject parent = None)'''
+    def __init__(self, fileName, parent = None):
+        '''void QPluginLoader.__init__(QString fileName, QObject parent = None)'''
     def loadHints(self):
-        """QLibrary.LoadHints QPluginLoader.loadHints(None self)"""
+        '''QLibrary.LoadHints QPluginLoader.loadHints()'''
         return QLibrary.LoadHints()
-    def setLoadHints(self, _loadHints):
-        """None QPluginLoader.setLoadHints(None self, QLibrary.LoadHints _loadHints)"""
-        return None
+    def setLoadHints(self, loadHints):
+        '''void QPluginLoader.setLoadHints(QLibrary.LoadHints loadHints)'''
     def errorString(self):
-        """QString QPluginLoader.errorString(None self)"""
+        '''QString QPluginLoader.errorString()'''
         return QString()
     def fileName(self):
-        """QString QPluginLoader.fileName(None self)"""
+        '''QString QPluginLoader.fileName()'''
         return QString()
-    def setFileName(self, _fileName):
-        """None QPluginLoader.setFileName(None self, QString _fileName)"""
-        return None
+    def setFileName(self, fileName):
+        '''void QPluginLoader.setFileName(QString fileName)'''
     def isLoaded(self):
-        """bool QPluginLoader.isLoaded(None self)"""
+        '''bool QPluginLoader.isLoaded()'''
         return bool()
     def unload(self):
-        """bool QPluginLoader.unload(None self)"""
+        '''bool QPluginLoader.unload()'''
         return bool()
     def load(self):
-        """bool QPluginLoader.load(None self)"""
+        '''bool QPluginLoader.load()'''
         return bool()
     def staticInstances(self):
-        """list-of-QObject QPluginLoader.staticInstances(None self)"""
+        '''static list-of-QObject QPluginLoader.staticInstances()'''
         return [QObject()]
     def instance(self):
-        """QObject QPluginLoader.instance(None self)"""
+        '''QObject QPluginLoader.instance()'''
         return QObject()
 
 
 class QPoint():
     """"""
     def __init__(self):
-        """None QPoint.__init__(None self)"""
-        return None
-    def __init__(self, _xpos, _ypos):
-        """None QPoint.__init__(None self, int _xpos, int _ypos)"""
-        return None
+        '''void QPoint.__init__()'''
+    def __init__(self, xpos, ypos):
+        '''void QPoint.__init__(int xpos, int ypos)'''
     def __init__(self):
-        """QPoint QPoint.__init__(None self)"""
+        '''QPoint QPoint.__init__()'''
         return QPoint()
-    def __eq__(self, _p2):
-        """bool QPoint.__eq__(None self, QPoint _p2)"""
+    def __eq__(self, p2):
+        '''bool QPoint.__eq__(QPoint p2)'''
         return bool()
-    def __ne__(self, _p2):
-        """bool QPoint.__ne__(None self, QPoint _p2)"""
+    def __ne__(self, p2):
+        '''bool QPoint.__ne__(QPoint p2)'''
         return bool()
-    def __add__(self, _p2):
-        """QPoint QPoint.__add__(None self, QPoint _p2)"""
+    def __add__(self, p2):
+        '''QPoint QPoint.__add__(QPoint p2)'''
         return QPoint()
-    def __sub__(self, _p2):
-        """QPoint QPoint.__sub__(None self, QPoint _p2)"""
+    def __sub__(self, p2):
+        '''QPoint QPoint.__sub__(QPoint p2)'''
         return QPoint()
-    def __mul__(self, _c):
-        """QPoint QPoint.__mul__(None self, float _c)"""
+    def __mul__(self, c):
+        '''QPoint QPoint.__mul__(float c)'''
         return QPoint()
     def __neg__(self):
-        """QPoint QPoint.__neg__(None self)"""
+        '''QPoint QPoint.__neg__()'''
         return QPoint()
-    def __div__(self, _c):
-        """QPoint QPoint.__div__(None self, float _c)"""
+    def __div__(self, c):
+        '''QPoint QPoint.__div__(float c)'''
         return QPoint()
-    def __idiv__(self, _c):
-        """QPoint QPoint.__idiv__(None self, float _c)"""
+    def __idiv__(self, c):
+        '''QPoint QPoint.__idiv__(float c)'''
         return QPoint()
-    def __imul__(self, _c):
-        """QPoint QPoint.__imul__(None self, float _c)"""
+    def __imul__(self, c):
+        '''QPoint QPoint.__imul__(float c)'''
         return QPoint()
-    def __isub__(self, _p):
-        """QPoint QPoint.__isub__(None self, QPoint _p)"""
+    def __isub__(self, p):
+        '''QPoint QPoint.__isub__(QPoint p)'''
         return QPoint()
-    def __iadd__(self, _p):
-        """QPoint QPoint.__iadd__(None self, QPoint _p)"""
+    def __iadd__(self, p):
+        '''QPoint QPoint.__iadd__(QPoint p)'''
         return QPoint()
-    def setY(self, _ypos):
-        """None QPoint.setY(None self, int _ypos)"""
-        return None
-    def setX(self, _xpos):
-        """None QPoint.setX(None self, int _xpos)"""
-        return None
+    def setY(self, ypos):
+        '''void QPoint.setY(int ypos)'''
+    def setX(self, xpos):
+        '''void QPoint.setX(int xpos)'''
     def y(self):
-        """int QPoint.y(None self)"""
+        '''int QPoint.y()'''
         return int()
     def x(self):
-        """int QPoint.x(None self)"""
+        '''int QPoint.x()'''
         return int()
     def __bool__(self):
-        """int QPoint.__bool__(None self)"""
+        '''int QPoint.__bool__()'''
         return int()
     def isNull(self):
-        """bool QPoint.isNull(None self)"""
+        '''bool QPoint.isNull()'''
         return bool()
     def __repr__(self):
-        """str QPoint.__repr__(None self)"""
+        '''str QPoint.__repr__()'''
         return str()
     def manhattanLength(self):
-        """int QPoint.manhattanLength(None self)"""
+        '''int QPoint.manhattanLength()'''
         return int()
 
 
 class QPointF():
     """"""
     def __init__(self):
-        """None QPointF.__init__(None self)"""
-        return None
-    def __init__(self, _xpos, _ypos):
-        """None QPointF.__init__(None self, float _xpos, float _ypos)"""
-        return None
-    def __init__(self, _p):
-        """None QPointF.__init__(None self, QPoint _p)"""
-        return None
+        '''void QPointF.__init__()'''
+    def __init__(self, xpos, ypos):
+        '''void QPointF.__init__(float xpos, float ypos)'''
+    def __init__(self, p):
+        '''void QPointF.__init__(QPoint p)'''
     def __init__(self):
-        """QPointF QPointF.__init__(None self)"""
+        '''QPointF QPointF.__init__()'''
         return QPointF()
-    def __eq__(self, _p2):
-        """bool QPointF.__eq__(None self, QPointF _p2)"""
+    def __eq__(self, p2):
+        '''bool QPointF.__eq__(QPointF p2)'''
         return bool()
-    def __ne__(self, _p2):
-        """bool QPointF.__ne__(None self, QPointF _p2)"""
+    def __ne__(self, p2):
+        '''bool QPointF.__ne__(QPointF p2)'''
         return bool()
-    def __add__(self, _p2):
-        """QPointF QPointF.__add__(None self, QPointF _p2)"""
+    def __add__(self, p2):
+        '''QPointF QPointF.__add__(QPointF p2)'''
         return QPointF()
-    def __sub__(self, _p2):
-        """QPointF QPointF.__sub__(None self, QPointF _p2)"""
+    def __sub__(self, p2):
+        '''QPointF QPointF.__sub__(QPointF p2)'''
         return QPointF()
-    def __mul__(self, _c):
-        """QPointF QPointF.__mul__(None self, float _c)"""
+    def __mul__(self, c):
+        '''QPointF QPointF.__mul__(float c)'''
         return QPointF()
     def __neg__(self):
-        """QPointF QPointF.__neg__(None self)"""
+        '''QPointF QPointF.__neg__()'''
         return QPointF()
-    def __div__(self, _c):
-        """QPointF QPointF.__div__(None self, float _c)"""
+    def __div__(self, c):
+        '''QPointF QPointF.__div__(float c)'''
         return QPointF()
     def manhattanLength(self):
-        """float QPointF.manhattanLength(None self)"""
+        '''float QPointF.manhattanLength()'''
         return float()
     def toPoint(self):
-        """QPoint QPointF.toPoint(None self)"""
+        '''QPoint QPointF.toPoint()'''
         return QPoint()
-    def __idiv__(self, _c):
-        """QPointF QPointF.__idiv__(None self, float _c)"""
+    def __idiv__(self, c):
+        '''QPointF QPointF.__idiv__(float c)'''
         return QPointF()
-    def __imul__(self, _c):
-        """QPointF QPointF.__imul__(None self, float _c)"""
+    def __imul__(self, c):
+        '''QPointF QPointF.__imul__(float c)'''
         return QPointF()
-    def __isub__(self, _p):
-        """QPointF QPointF.__isub__(None self, QPointF _p)"""
+    def __isub__(self, p):
+        '''QPointF QPointF.__isub__(QPointF p)'''
         return QPointF()
-    def __iadd__(self, _p):
-        """QPointF QPointF.__iadd__(None self, QPointF _p)"""
+    def __iadd__(self, p):
+        '''QPointF QPointF.__iadd__(QPointF p)'''
         return QPointF()
-    def setY(self, _ypos):
-        """None QPointF.setY(None self, float _ypos)"""
-        return None
-    def setX(self, _xpos):
-        """None QPointF.setX(None self, float _xpos)"""
-        return None
+    def setY(self, ypos):
+        '''void QPointF.setY(float ypos)'''
+    def setX(self, xpos):
+        '''void QPointF.setX(float xpos)'''
     def y(self):
-        """float QPointF.y(None self)"""
+        '''float QPointF.y()'''
         return float()
     def x(self):
-        """float QPointF.x(None self)"""
+        '''float QPointF.x()'''
         return float()
     def __bool__(self):
-        """int QPointF.__bool__(None self)"""
+        '''int QPointF.__bool__()'''
         return int()
     def isNull(self):
-        """bool QPointF.isNull(None self)"""
+        '''bool QPointF.isNull()'''
         return bool()
     def __repr__(self):
-        """str QPointF.__repr__(None self)"""
+        '''str QPointF.__repr__()'''
         return str()
 
 
 class QProcess(QIODevice):
     """"""
-    SeparateChannels = int() # QProcess.ProcessChannelMode enum
-    MergedChannels = int() # QProcess.ProcessChannelMode enum
-    ForwardedChannels = int() # QProcess.ProcessChannelMode enum
+    # Enum QProcess.ProcessChannelMode
+    SeparateChannels = 0
+    MergedChannels = 0
+    ForwardedChannels = 0
 
-    StandardOutput = int() # QProcess.ProcessChannel enum
-    StandardError = int() # QProcess.ProcessChannel enum
+    # Enum QProcess.ProcessChannel
+    StandardOutput = 0
+    StandardError = 0
 
-    NotRunning = int() # QProcess.ProcessState enum
-    Starting = int() # QProcess.ProcessState enum
-    Running = int() # QProcess.ProcessState enum
+    # Enum QProcess.ProcessState
+    NotRunning = 0
+    Starting = 0
+    Running = 0
 
-    FailedToStart = int() # QProcess.ProcessError enum
-    Crashed = int() # QProcess.ProcessError enum
-    Timedout = int() # QProcess.ProcessError enum
-    ReadError = int() # QProcess.ProcessError enum
-    WriteError = int() # QProcess.ProcessError enum
-    UnknownError = int() # QProcess.ProcessError enum
+    # Enum QProcess.ProcessError
+    FailedToStart = 0
+    Crashed = 0
+    Timedout = 0
+    ReadError = 0
+    WriteError = 0
+    UnknownError = 0
 
-    NormalExit = int() # QProcess.ExitStatus enum
-    CrashExit = int() # QProcess.ExitStatus enum
+    # Enum QProcess.ExitStatus
+    NormalExit = 0
+    CrashExit = 0
 
-    def __init__(self, _parent):
-        """None QProcess.__init__(None self, QObject _parent)"""
-        return None
+    def __init__(self, parent = None):
+        '''void QProcess.__init__(QObject parent = None)'''
     def processEnvironment(self):
-        """QProcessEnvironment QProcess.processEnvironment(None self)"""
+        '''QProcessEnvironment QProcess.processEnvironment()'''
         return QProcessEnvironment()
-    def setProcessEnvironment(self, _environment):
-        """None QProcess.setProcessEnvironment(None self, QProcessEnvironment _environment)"""
-        return None
-    def writeData(self, _data):
-        """int QProcess.writeData(None self, str _data)"""
+    def setProcessEnvironment(self, environment):
+        '''void QProcess.setProcessEnvironment(QProcessEnvironment environment)'''
+    def writeData(self, data):
+        '''int QProcess.writeData(str data)'''
         return int()
-    def readData(self, _maxlen):
-        """str QProcess.readData(None self, int _maxlen)"""
+    def readData(self, maxlen):
+        '''str QProcess.readData(int maxlen)'''
         return str()
     def setupChildProcess(self):
-        """None QProcess.setupChildProcess(None self)"""
-        return None
-    def setProcessState(self, _state):
-        """None QProcess.setProcessState(None self, QProcess.ProcessState _state)"""
-        return None
+        '''void QProcess.setupChildProcess()'''
+    def setProcessState(self, state):
+        '''void QProcess.setProcessState(QProcess.ProcessState state)'''
+    readyReadStandardError = PyQt4.QtCore.pyqtSignal() # void readyReadStandardError() - signal
+    readyReadStandardOutput = PyQt4.QtCore.pyqtSignal() # void readyReadStandardOutput() - signal
+    stateChanged = PyQt4.QtCore.pyqtSignal() # void stateChanged(QProcess::ProcessState) - signal
+    finished = PyQt4.QtCore.pyqtSignal() # void finished(int,QProcess::ExitStatus) - signal
+    finished = PyQt4.QtCore.pyqtSignal() # void finished(int) - signal
+    started = PyQt4.QtCore.pyqtSignal() # void started() - signal
     def kill(self):
-        """None QProcess.kill(None self)"""
-        return None
+        '''void QProcess.kill()'''
     def terminate(self):
-        """None QProcess.terminate(None self)"""
-        return None
-    def setStandardOutputProcess(self, _destination):
-        """None QProcess.setStandardOutputProcess(None self, QProcess _destination)"""
-        return None
-    def setStandardErrorFile(self, _fileName, _mode):
-        """None QProcess.setStandardErrorFile(None self, QString _fileName, QIODevice.OpenMode _mode)"""
-        return None
-    def setStandardOutputFile(self, _fileName, _mode):
-        """None QProcess.setStandardOutputFile(None self, QString _fileName, QIODevice.OpenMode _mode)"""
-        return None
-    def setStandardInputFile(self, _fileName):
-        """None QProcess.setStandardInputFile(None self, QString _fileName)"""
-        return None
-    def setProcessChannelMode(self, _mode):
-        """None QProcess.setProcessChannelMode(None self, QProcess.ProcessChannelMode _mode)"""
-        return None
+        '''void QProcess.terminate()'''
+    def setStandardOutputProcess(self, destination):
+        '''void QProcess.setStandardOutputProcess(QProcess destination)'''
+    def setStandardErrorFile(self, fileName, mode = QIODevice.Truncate):
+        '''void QProcess.setStandardErrorFile(QString fileName, QIODevice.OpenMode mode = QIODevice.Truncate)'''
+    def setStandardOutputFile(self, fileName, mode = QIODevice.Truncate):
+        '''void QProcess.setStandardOutputFile(QString fileName, QIODevice.OpenMode mode = QIODevice.Truncate)'''
+    def setStandardInputFile(self, fileName):
+        '''void QProcess.setStandardInputFile(QString fileName)'''
+    def setProcessChannelMode(self, mode):
+        '''void QProcess.setProcessChannelMode(QProcess.ProcessChannelMode mode)'''
     def processChannelMode(self):
-        """QProcess.ProcessChannelMode QProcess.processChannelMode(None self)"""
+        '''QProcess.ProcessChannelMode QProcess.processChannelMode()'''
         return QProcess.ProcessChannelMode()
     def systemEnvironment(self):
-        """QStringList QProcess.systemEnvironment(None self)"""
+        '''static QStringList QProcess.systemEnvironment()'''
         return QStringList()
-    def startDetached(self, _program, _arguments, _workingDirectory, _pid):
-        """bool QProcess.startDetached(None self, QString _program, QStringList _arguments, QString _workingDirectory, int _pid)"""
+    def startDetached(self, program, arguments, workingDirectory, pid):
+        '''static bool QProcess.startDetached(QString program, QStringList arguments, QString workingDirectory, int pid)'''
         return bool()
-    def startDetached(self, _program, _arguments):
-        """bool QProcess.startDetached(None self, QString _program, QStringList _arguments)"""
+    def startDetached(self, program, arguments):
+        '''static bool QProcess.startDetached(QString program, QStringList arguments)'''
         return bool()
-    def startDetached(self, _program):
-        """bool QProcess.startDetached(None self, QString _program)"""
+    def startDetached(self, program):
+        '''static bool QProcess.startDetached(QString program)'''
         return bool()
-    def execute(self, _program, _arguments):
-        """int QProcess.execute(None self, QString _program, QStringList _arguments)"""
+    def execute(self, program, arguments):
+        '''static int QProcess.execute(QString program, QStringList arguments)'''
         return int()
-    def execute(self, _program):
-        """int QProcess.execute(None self, QString _program)"""
+    def execute(self, program):
+        '''static int QProcess.execute(QString program)'''
         return int()
     def atEnd(self):
-        """bool QProcess.atEnd(None self)"""
+        '''bool QProcess.atEnd()'''
         return bool()
     def close(self):
-        """None QProcess.close(None self)"""
-        return None
+        '''void QProcess.close()'''
     def canReadLine(self):
-        """bool QProcess.canReadLine(None self)"""
+        '''bool QProcess.canReadLine()'''
         return bool()
     def isSequential(self):
-        """bool QProcess.isSequential(None self)"""
+        '''bool QProcess.isSequential()'''
         return bool()
     def bytesToWrite(self):
-        """int QProcess.bytesToWrite(None self)"""
+        '''int QProcess.bytesToWrite()'''
         return int()
     def bytesAvailable(self):
-        """int QProcess.bytesAvailable(None self)"""
+        '''int QProcess.bytesAvailable()'''
         return int()
     def exitStatus(self):
-        """QProcess.ExitStatus QProcess.exitStatus(None self)"""
+        '''QProcess.ExitStatus QProcess.exitStatus()'''
         return QProcess.ExitStatus()
     def exitCode(self):
-        """int QProcess.exitCode(None self)"""
+        '''int QProcess.exitCode()'''
         return int()
     def readAllStandardError(self):
-        """QByteArray QProcess.readAllStandardError(None self)"""
+        '''QByteArray QProcess.readAllStandardError()'''
         return QByteArray()
     def readAllStandardOutput(self):
-        """QByteArray QProcess.readAllStandardOutput(None self)"""
+        '''QByteArray QProcess.readAllStandardOutput()'''
         return QByteArray()
-    def waitForFinished(self, _msecs):
-        """bool QProcess.waitForFinished(None self, int _msecs)"""
+    def waitForFinished(self, msecs = 30000):
+        '''bool QProcess.waitForFinished(int msecs = 30000)'''
         return bool()
-    def waitForBytesWritten(self, _msecs):
-        """bool QProcess.waitForBytesWritten(None self, int _msecs)"""
+    def waitForBytesWritten(self, msecs = 30000):
+        '''bool QProcess.waitForBytesWritten(int msecs = 30000)'''
         return bool()
-    def waitForReadyRead(self, _msecs):
-        """bool QProcess.waitForReadyRead(None self, int _msecs)"""
+    def waitForReadyRead(self, msecs = 30000):
+        '''bool QProcess.waitForReadyRead(int msecs = 30000)'''
         return bool()
-    def waitForStarted(self, _msecs):
-        """bool QProcess.waitForStarted(None self, int _msecs)"""
+    def waitForStarted(self, msecs = 30000):
+        '''bool QProcess.waitForStarted(int msecs = 30000)'''
         return bool()
     def pid(self):
-        """int QProcess.pid(None self)"""
+        '''int QProcess.pid()'''
         return int()
     def state(self):
-        """QProcess.ProcessState QProcess.state(None self)"""
+        '''QProcess.ProcessState QProcess.state()'''
         return QProcess.ProcessState()
     def error(self):
-        """QProcess.ProcessError QProcess.error(None self)"""
+        '''QProcess.ProcessError QProcess.error()'''
         return QProcess.ProcessError()
+    error = PyQt4.QtCore.pyqtSignal() # void error(QProcess::ProcessError) - signal
     def environment(self):
-        """QStringList QProcess.environment(None self)"""
+        '''QStringList QProcess.environment()'''
         return QStringList()
-    def setEnvironment(self, _environment):
-        """None QProcess.setEnvironment(None self, QStringList _environment)"""
-        return None
-    def setWorkingDirectory(self, _dir):
-        """None QProcess.setWorkingDirectory(None self, QString _dir)"""
-        return None
+    def setEnvironment(self, environment):
+        '''void QProcess.setEnvironment(QStringList environment)'''
+    def setWorkingDirectory(self, dir):
+        '''void QProcess.setWorkingDirectory(QString dir)'''
     def workingDirectory(self):
-        """QString QProcess.workingDirectory(None self)"""
+        '''QString QProcess.workingDirectory()'''
         return QString()
     def closeWriteChannel(self):
-        """None QProcess.closeWriteChannel(None self)"""
-        return None
-    def closeReadChannel(self, _channel):
-        """None QProcess.closeReadChannel(None self, QProcess.ProcessChannel _channel)"""
-        return None
-    def setReadChannel(self, _channel):
-        """None QProcess.setReadChannel(None self, QProcess.ProcessChannel _channel)"""
-        return None
+        '''void QProcess.closeWriteChannel()'''
+    def closeReadChannel(self, channel):
+        '''void QProcess.closeReadChannel(QProcess.ProcessChannel channel)'''
+    def setReadChannel(self, channel):
+        '''void QProcess.setReadChannel(QProcess.ProcessChannel channel)'''
     def readChannel(self):
-        """QProcess.ProcessChannel QProcess.readChannel(None self)"""
+        '''QProcess.ProcessChannel QProcess.readChannel()'''
         return QProcess.ProcessChannel()
-    def setReadChannelMode(self, _mode):
-        """None QProcess.setReadChannelMode(None self, QProcess.ProcessChannelMode _mode)"""
-        return None
+    def setReadChannelMode(self, mode):
+        '''void QProcess.setReadChannelMode(QProcess.ProcessChannelMode mode)'''
     def readChannelMode(self):
-        """QProcess.ProcessChannelMode QProcess.readChannelMode(None self)"""
+        '''QProcess.ProcessChannelMode QProcess.readChannelMode()'''
         return QProcess.ProcessChannelMode()
-    def start(self, _program, _arguments, _mode):
-        """None QProcess.start(None self, QString _program, QStringList _arguments, QIODevice.OpenMode _mode)"""
-        return None
-    def start(self, _program, _mode):
-        """None QProcess.start(None self, QString _program, QIODevice.OpenMode _mode)"""
-        return None
+    def start(self, program, arguments, mode = QIODevice.ReadWrite):
+        '''void QProcess.start(QString program, QStringList arguments, QIODevice.OpenMode mode = QIODevice.ReadWrite)'''
+    def start(self, program, mode = QIODevice.ReadWrite):
+        '''void QProcess.start(QString program, QIODevice.OpenMode mode = QIODevice.ReadWrite)'''
 
 
 class QProcessEnvironment():
     """"""
     def __init__(self):
-        """None QProcessEnvironment.__init__(None self)"""
-        return None
-    def __init__(self, _other):
-        """None QProcessEnvironment.__init__(None self, QProcessEnvironment _other)"""
-        return None
+        '''void QProcessEnvironment.__init__()'''
+    def __init__(self, other):
+        '''void QProcessEnvironment.__init__(QProcessEnvironment other)'''
     def systemEnvironment(self):
-        """QProcessEnvironment QProcessEnvironment.systemEnvironment(None self)"""
+        '''static QProcessEnvironment QProcessEnvironment.systemEnvironment()'''
         return QProcessEnvironment()
     def toStringList(self):
-        """QStringList QProcessEnvironment.toStringList(None self)"""
+        '''QStringList QProcessEnvironment.toStringList()'''
         return QStringList()
-    def value(self, _name, _defaultValue):
-        """QString QProcessEnvironment.value(None self, QString _name, QString _defaultValue)"""
+    def value(self, name, defaultValue = QString()):
+        '''QString QProcessEnvironment.value(QString name, QString defaultValue = QString())'''
         return QString()
-    def remove(self, _name):
-        """None QProcessEnvironment.remove(None self, QString _name)"""
-        return None
-    def insert(self, _name, _value):
-        """None QProcessEnvironment.insert(None self, QString _name, QString _value)"""
-        return None
-    def contains(self, _name):
-        """bool QProcessEnvironment.contains(None self, QString _name)"""
+    def remove(self, name):
+        '''void QProcessEnvironment.remove(QString name)'''
+    def insert(self, name, value):
+        '''void QProcessEnvironment.insert(QString name, QString value)'''
+    def contains(self, name):
+        '''bool QProcessEnvironment.contains(QString name)'''
         return bool()
     def clear(self):
-        """None QProcessEnvironment.clear(None self)"""
-        return None
+        '''void QProcessEnvironment.clear()'''
     def isEmpty(self):
-        """bool QProcessEnvironment.isEmpty(None self)"""
+        '''bool QProcessEnvironment.isEmpty()'''
         return bool()
-    def __ne__(self, _other):
-        """bool QProcessEnvironment.__ne__(None self, QProcessEnvironment _other)"""
+    def __ne__(self, other):
+        '''bool QProcessEnvironment.__ne__(QProcessEnvironment other)'''
         return bool()
-    def __eq__(self, _other):
-        """bool QProcessEnvironment.__eq__(None self, QProcessEnvironment _other)"""
+    def __eq__(self, other):
+        '''bool QProcessEnvironment.__eq__(QProcessEnvironment other)'''
         return bool()
 
 
 class QReadWriteLock():
     """"""
-    NonRecursive = int() # QReadWriteLock.RecursionMode enum
-    Recursive = int() # QReadWriteLock.RecursionMode enum
+    # Enum QReadWriteLock.RecursionMode
+    NonRecursive = 0
+    Recursive = 0
 
     def __init__(self):
-        """None QReadWriteLock.__init__(None self)"""
-        return None
-    def __init__(self, _recursionMode):
-        """None QReadWriteLock.__init__(None self, QReadWriteLock.RecursionMode _recursionMode)"""
-        return None
+        '''void QReadWriteLock.__init__()'''
+    def __init__(self, recursionMode):
+        '''void QReadWriteLock.__init__(QReadWriteLock.RecursionMode recursionMode)'''
     def unlock(self):
-        """None QReadWriteLock.unlock(None self)"""
-        return None
+        '''void QReadWriteLock.unlock()'''
     def tryLockForWrite(self):
-        """bool QReadWriteLock.tryLockForWrite(None self)"""
+        '''bool QReadWriteLock.tryLockForWrite()'''
         return bool()
-    def tryLockForWrite(self, _timeout):
-        """bool QReadWriteLock.tryLockForWrite(None self, int _timeout)"""
+    def tryLockForWrite(self, timeout):
+        '''bool QReadWriteLock.tryLockForWrite(int timeout)'''
         return bool()
     def lockForWrite(self):
-        """None QReadWriteLock.lockForWrite(None self)"""
-        return None
+        '''void QReadWriteLock.lockForWrite()'''
     def tryLockForRead(self):
-        """bool QReadWriteLock.tryLockForRead(None self)"""
+        '''bool QReadWriteLock.tryLockForRead()'''
         return bool()
-    def tryLockForRead(self, _timeout):
-        """bool QReadWriteLock.tryLockForRead(None self, int _timeout)"""
+    def tryLockForRead(self, timeout):
+        '''bool QReadWriteLock.tryLockForRead(int timeout)'''
         return bool()
     def lockForRead(self):
-        """None QReadWriteLock.lockForRead(None self)"""
-        return None
+        '''void QReadWriteLock.lockForRead()'''
 
 
 class QReadLocker():
     """"""
-    def __init__(self, _areadWriteLock):
-        """None QReadLocker.__init__(None self, QReadWriteLock _areadWriteLock)"""
-        return None
-    def __exit__(self, _type, _value, _traceback):
-        """None QReadLocker.__exit__(None self, object _type, object _value, object _traceback)"""
-        return None
+    def __init__(self, areadWriteLock):
+        '''void QReadLocker.__init__(QReadWriteLock areadWriteLock)'''
+    def __exit__(self, type, value, traceback):
+        '''void QReadLocker.__exit__(object type, object value, object traceback)'''
     def __enter__(self):
-        """object QReadLocker.__enter__(None self)"""
+        '''object QReadLocker.__enter__()'''
         return object()
     def readWriteLock(self):
-        """QReadWriteLock QReadLocker.readWriteLock(None self)"""
+        '''QReadWriteLock QReadLocker.readWriteLock()'''
         return QReadWriteLock()
     def relock(self):
-        """None QReadLocker.relock(None self)"""
-        return None
+        '''void QReadLocker.relock()'''
     def unlock(self):
-        """None QReadLocker.unlock(None self)"""
-        return None
+        '''void QReadLocker.unlock()'''
 
 
 class QWriteLocker():
     """"""
-    def __init__(self, _areadWriteLock):
-        """None QWriteLocker.__init__(None self, QReadWriteLock _areadWriteLock)"""
-        return None
-    def __exit__(self, _type, _value, _traceback):
-        """None QWriteLocker.__exit__(None self, object _type, object _value, object _traceback)"""
-        return None
+    def __init__(self, areadWriteLock):
+        '''void QWriteLocker.__init__(QReadWriteLock areadWriteLock)'''
+    def __exit__(self, type, value, traceback):
+        '''void QWriteLocker.__exit__(object type, object value, object traceback)'''
     def __enter__(self):
-        """object QWriteLocker.__enter__(None self)"""
+        '''object QWriteLocker.__enter__()'''
         return object()
     def readWriteLock(self):
-        """QReadWriteLock QWriteLocker.readWriteLock(None self)"""
+        '''QReadWriteLock QWriteLocker.readWriteLock()'''
         return QReadWriteLock()
     def relock(self):
-        """None QWriteLocker.relock(None self)"""
-        return None
+        '''void QWriteLocker.relock()'''
     def unlock(self):
-        """None QWriteLocker.unlock(None self)"""
-        return None
+        '''void QWriteLocker.unlock()'''
 
 
 class QRect():
     """"""
     def __init__(self):
-        """None QRect.__init__(None self)"""
-        return None
-    def __init__(self, _aleft, _atop, _awidth, _aheight):
-        """None QRect.__init__(None self, int _aleft, int _atop, int _awidth, int _aheight)"""
-        return None
-    def __init__(self, _atopLeft, _abottomRight):
-        """None QRect.__init__(None self, QPoint _atopLeft, QPoint _abottomRight)"""
-        return None
-    def __init__(self, _atopLeft, _asize):
-        """None QRect.__init__(None self, QPoint _atopLeft, QSize _asize)"""
-        return None
+        '''void QRect.__init__()'''
+    def __init__(self, aleft, atop, awidth, aheight):
+        '''void QRect.__init__(int aleft, int atop, int awidth, int aheight)'''
+    def __init__(self, atopLeft, abottomRight):
+        '''void QRect.__init__(QPoint atopLeft, QPoint abottomRight)'''
+    def __init__(self, atopLeft, asize):
+        '''void QRect.__init__(QPoint atopLeft, QSize asize)'''
     def __init__(self):
-        """QRect QRect.__init__(None self)"""
+        '''QRect QRect.__init__()'''
         return QRect()
-    def __eq__(self, _r2):
-        """bool QRect.__eq__(None self, QRect _r2)"""
+    def __eq__(self, r2):
+        '''bool QRect.__eq__(QRect r2)'''
         return bool()
-    def __ne__(self, _r2):
-        """bool QRect.__ne__(None self, QRect _r2)"""
+    def __ne__(self, r2):
+        '''bool QRect.__ne__(QRect r2)'''
         return bool()
-    def united(self, _r):
-        """QRect QRect.united(None self, QRect _r)"""
+    def united(self, r):
+        '''QRect QRect.united(QRect r)'''
         return QRect()
-    def intersected(self, _other):
-        """QRect QRect.intersected(None self, QRect _other)"""
+    def intersected(self, other):
+        '''QRect QRect.intersected(QRect other)'''
         return QRect()
-    def unite(self, _r):
-        """QRect QRect.unite(None self, QRect _r)"""
+    def unite(self, r):
+        '''QRect QRect.unite(QRect r)'''
         return QRect()
-    def intersect(self, _r):
-        """QRect QRect.intersect(None self, QRect _r)"""
+    def intersect(self, r):
+        '''QRect QRect.intersect(QRect r)'''
         return QRect()
-    def __iand__(self, _r):
-        """QRect QRect.__iand__(None self, QRect _r)"""
+    def __iand__(self, r):
+        '''QRect QRect.__iand__(QRect r)'''
         return QRect()
-    def __ior__(self, _r):
-        """QRect QRect.__ior__(None self, QRect _r)"""
+    def __ior__(self, r):
+        '''QRect QRect.__ior__(QRect r)'''
         return QRect()
-    def setSize(self, _s):
-        """None QRect.setSize(None self, QSize _s)"""
-        return None
-    def setHeight(self, _h):
-        """None QRect.setHeight(None self, int _h)"""
-        return None
-    def setWidth(self, _w):
-        """None QRect.setWidth(None self, int _w)"""
-        return None
-    def adjust(self, _dx1, _dy1, _dx2, _dy2):
-        """None QRect.adjust(None self, int _dx1, int _dy1, int _dx2, int _dy2)"""
-        return None
-    def adjusted(self, _xp1, _yp1, _xp2, _yp2):
-        """QRect QRect.adjusted(None self, int _xp1, int _yp1, int _xp2, int _yp2)"""
+    def setSize(self, s):
+        '''void QRect.setSize(QSize s)'''
+    def setHeight(self, h):
+        '''void QRect.setHeight(int h)'''
+    def setWidth(self, w):
+        '''void QRect.setWidth(int w)'''
+    def adjust(self, dx1, dy1, dx2, dy2):
+        '''void QRect.adjust(int dx1, int dy1, int dx2, int dy2)'''
+    def adjusted(self, xp1, yp1, xp2, yp2):
+        '''QRect QRect.adjusted(int xp1, int yp1, int xp2, int yp2)'''
         return QRect()
-    def setCoords(self, _xp1, _yp1, _xp2, _yp2):
-        """None QRect.setCoords(None self, int _xp1, int _yp1, int _xp2, int _yp2)"""
-        return None
-    def getCoords(self, _xp1, _yp1, _xp2, _yp2):
-        """None QRect.getCoords(None self, int _xp1, int _yp1, int _xp2, int _yp2)"""
-        return None
-    def setRect(self, _ax, _ay, _aw, _ah):
-        """None QRect.setRect(None self, int _ax, int _ay, int _aw, int _ah)"""
-        return None
-    def getRect(self, _ax, _ay, _aw, _ah):
-        """None QRect.getRect(None self, int _ax, int _ay, int _aw, int _ah)"""
-        return None
-    def moveBottomLeft(self, _p):
-        """None QRect.moveBottomLeft(None self, QPoint _p)"""
-        return None
-    def moveTopRight(self, _p):
-        """None QRect.moveTopRight(None self, QPoint _p)"""
-        return None
-    def moveBottomRight(self, _p):
-        """None QRect.moveBottomRight(None self, QPoint _p)"""
-        return None
-    def moveTopLeft(self, _p):
-        """None QRect.moveTopLeft(None self, QPoint _p)"""
-        return None
-    def moveBottom(self, _pos):
-        """None QRect.moveBottom(None self, int _pos)"""
-        return None
-    def moveRight(self, _pos):
-        """None QRect.moveRight(None self, int _pos)"""
-        return None
-    def moveTop(self, _pos):
-        """None QRect.moveTop(None self, int _pos)"""
-        return None
-    def moveLeft(self, _pos):
-        """None QRect.moveLeft(None self, int _pos)"""
-        return None
-    def moveTo(self, _ax, _ay):
-        """None QRect.moveTo(None self, int _ax, int _ay)"""
-        return None
-    def moveTo(self, _p):
-        """None QRect.moveTo(None self, QPoint _p)"""
-        return None
-    def translated(self, _dx, _dy):
-        """QRect QRect.translated(None self, int _dx, int _dy)"""
+    def setCoords(self, xp1, yp1, xp2, yp2):
+        '''void QRect.setCoords(int xp1, int yp1, int xp2, int yp2)'''
+    def getCoords(self, xp1, yp1, xp2, yp2):
+        '''void QRect.getCoords(int xp1, int yp1, int xp2, int yp2)'''
+    def setRect(self, ax, ay, aw, ah):
+        '''void QRect.setRect(int ax, int ay, int aw, int ah)'''
+    def getRect(self, ax, ay, aw, ah):
+        '''void QRect.getRect(int ax, int ay, int aw, int ah)'''
+    def moveBottomLeft(self, p):
+        '''void QRect.moveBottomLeft(QPoint p)'''
+    def moveTopRight(self, p):
+        '''void QRect.moveTopRight(QPoint p)'''
+    def moveBottomRight(self, p):
+        '''void QRect.moveBottomRight(QPoint p)'''
+    def moveTopLeft(self, p):
+        '''void QRect.moveTopLeft(QPoint p)'''
+    def moveBottom(self, pos):
+        '''void QRect.moveBottom(int pos)'''
+    def moveRight(self, pos):
+        '''void QRect.moveRight(int pos)'''
+    def moveTop(self, pos):
+        '''void QRect.moveTop(int pos)'''
+    def moveLeft(self, pos):
+        '''void QRect.moveLeft(int pos)'''
+    def moveTo(self, ax, ay):
+        '''void QRect.moveTo(int ax, int ay)'''
+    def moveTo(self, p):
+        '''void QRect.moveTo(QPoint p)'''
+    def translated(self, dx, dy):
+        '''QRect QRect.translated(int dx, int dy)'''
         return QRect()
-    def translated(self, _p):
-        """QRect QRect.translated(None self, QPoint _p)"""
+    def translated(self, p):
+        '''QRect QRect.translated(QPoint p)'''
         return QRect()
-    def translate(self, _dx, _dy):
-        """None QRect.translate(None self, int _dx, int _dy)"""
-        return None
-    def translate(self, _p):
-        """None QRect.translate(None self, QPoint _p)"""
-        return None
+    def translate(self, dx, dy):
+        '''void QRect.translate(int dx, int dy)'''
+    def translate(self, p):
+        '''void QRect.translate(QPoint p)'''
     def size(self):
-        """QSize QRect.size(None self)"""
+        '''QSize QRect.size()'''
         return QSize()
     def height(self):
-        """int QRect.height(None self)"""
+        '''int QRect.height()'''
         return int()
     def width(self):
-        """int QRect.width(None self)"""
+        '''int QRect.width()'''
         return int()
     def center(self):
-        """QPoint QRect.center(None self)"""
+        '''QPoint QRect.center()'''
         return QPoint()
     def bottomLeft(self):
-        """QPoint QRect.bottomLeft(None self)"""
+        '''QPoint QRect.bottomLeft()'''
         return QPoint()
     def topRight(self):
-        """QPoint QRect.topRight(None self)"""
+        '''QPoint QRect.topRight()'''
         return QPoint()
     def bottomRight(self):
-        """QPoint QRect.bottomRight(None self)"""
+        '''QPoint QRect.bottomRight()'''
         return QPoint()
     def topLeft(self):
-        """QPoint QRect.topLeft(None self)"""
+        '''QPoint QRect.topLeft()'''
         return QPoint()
-    def setY(self, _ay):
-        """None QRect.setY(None self, int _ay)"""
-        return None
-    def setX(self, _ax):
-        """None QRect.setX(None self, int _ax)"""
-        return None
-    def setBottomLeft(self, _p):
-        """None QRect.setBottomLeft(None self, QPoint _p)"""
-        return None
-    def setTopRight(self, _p):
-        """None QRect.setTopRight(None self, QPoint _p)"""
-        return None
-    def setBottomRight(self, _p):
-        """None QRect.setBottomRight(None self, QPoint _p)"""
-        return None
-    def setTopLeft(self, _p):
-        """None QRect.setTopLeft(None self, QPoint _p)"""
-        return None
-    def setBottom(self, _pos):
-        """None QRect.setBottom(None self, int _pos)"""
-        return None
-    def setRight(self, _pos):
-        """None QRect.setRight(None self, int _pos)"""
-        return None
-    def setTop(self, _pos):
-        """None QRect.setTop(None self, int _pos)"""
-        return None
-    def setLeft(self, _pos):
-        """None QRect.setLeft(None self, int _pos)"""
-        return None
+    def setY(self, ay):
+        '''void QRect.setY(int ay)'''
+    def setX(self, ax):
+        '''void QRect.setX(int ax)'''
+    def setBottomLeft(self, p):
+        '''void QRect.setBottomLeft(QPoint p)'''
+    def setTopRight(self, p):
+        '''void QRect.setTopRight(QPoint p)'''
+    def setBottomRight(self, p):
+        '''void QRect.setBottomRight(QPoint p)'''
+    def setTopLeft(self, p):
+        '''void QRect.setTopLeft(QPoint p)'''
+    def setBottom(self, pos):
+        '''void QRect.setBottom(int pos)'''
+    def setRight(self, pos):
+        '''void QRect.setRight(int pos)'''
+    def setTop(self, pos):
+        '''void QRect.setTop(int pos)'''
+    def setLeft(self, pos):
+        '''void QRect.setLeft(int pos)'''
     def y(self):
-        """int QRect.y(None self)"""
+        '''int QRect.y()'''
         return int()
     def x(self):
-        """int QRect.x(None self)"""
+        '''int QRect.x()'''
         return int()
     def bottom(self):
-        """int QRect.bottom(None self)"""
+        '''int QRect.bottom()'''
         return int()
     def right(self):
-        """int QRect.right(None self)"""
+        '''int QRect.right()'''
         return int()
     def top(self):
-        """int QRect.top(None self)"""
+        '''int QRect.top()'''
         return int()
     def left(self):
-        """int QRect.left(None self)"""
+        '''int QRect.left()'''
         return int()
     def __bool__(self):
-        """int QRect.__bool__(None self)"""
+        '''int QRect.__bool__()'''
         return int()
     def isValid(self):
-        """bool QRect.isValid(None self)"""
+        '''bool QRect.isValid()'''
         return bool()
     def isEmpty(self):
-        """bool QRect.isEmpty(None self)"""
+        '''bool QRect.isEmpty()'''
         return bool()
     def isNull(self):
-        """bool QRect.isNull(None self)"""
+        '''bool QRect.isNull()'''
         return bool()
     def __repr__(self):
-        """str QRect.__repr__(None self)"""
+        '''str QRect.__repr__()'''
         return str()
-    def intersects(self, _r):
-        """bool QRect.intersects(None self, QRect _r)"""
+    def intersects(self, r):
+        '''bool QRect.intersects(QRect r)'''
         return bool()
-    def __contains__(self, _p):
-        """int QRect.__contains__(None self, QPoint _p)"""
+    def __contains__(self, p):
+        '''int QRect.__contains__(QPoint p)'''
         return int()
-    def __contains__(self, _r):
-        """int QRect.__contains__(None self, QRect _r)"""
+    def __contains__(self, r):
+        '''int QRect.__contains__(QRect r)'''
         return int()
-    def contains(self, _point, _proper):
-        """bool QRect.contains(None self, QPoint _point, bool _proper)"""
+    def contains(self, point, proper = False):
+        '''bool QRect.contains(QPoint point, bool proper = False)'''
         return bool()
-    def contains(self, _rectangle, _proper):
-        """bool QRect.contains(None self, QRect _rectangle, bool _proper)"""
+    def contains(self, rectangle, proper = False):
+        '''bool QRect.contains(QRect rectangle, bool proper = False)'''
         return bool()
-    def contains(self, _ax, _ay, _aproper):
-        """bool QRect.contains(None self, int _ax, int _ay, bool _aproper)"""
+    def contains(self, ax, ay, aproper):
+        '''bool QRect.contains(int ax, int ay, bool aproper)'''
         return bool()
-    def contains(self, _ax, _ay):
-        """bool QRect.contains(None self, int _ax, int _ay)"""
+    def contains(self, ax, ay):
+        '''bool QRect.contains(int ax, int ay)'''
         return bool()
-    def __and__(self, _r):
-        """QRect QRect.__and__(None self, QRect _r)"""
+    def __and__(self, r):
+        '''QRect QRect.__and__(QRect r)'''
         return QRect()
-    def __or__(self, _r):
-        """QRect QRect.__or__(None self, QRect _r)"""
+    def __or__(self, r):
+        '''QRect QRect.__or__(QRect r)'''
         return QRect()
-    def moveCenter(self, _p):
-        """None QRect.moveCenter(None self, QPoint _p)"""
-        return None
+    def moveCenter(self, p):
+        '''void QRect.moveCenter(QPoint p)'''
     def normalized(self):
-        """QRect QRect.normalized(None self)"""
+        '''QRect QRect.normalized()'''
         return QRect()
 
 
 class QRectF():
     """"""
     def __init__(self):
-        """None QRectF.__init__(None self)"""
-        return None
-    def __init__(self, _atopLeft, _asize):
-        """None QRectF.__init__(None self, QPointF _atopLeft, QSizeF _asize)"""
-        return None
-    def __init__(self, _atopLeft, _abottomRight):
-        """None QRectF.__init__(None self, QPointF _atopLeft, QPointF _abottomRight)"""
-        return None
-    def __init__(self, _aleft, _atop, _awidth, _aheight):
-        """None QRectF.__init__(None self, float _aleft, float _atop, float _awidth, float _aheight)"""
-        return None
-    def __init__(self, _r):
-        """None QRectF.__init__(None self, QRect _r)"""
-        return None
+        '''void QRectF.__init__()'''
+    def __init__(self, atopLeft, asize):
+        '''void QRectF.__init__(QPointF atopLeft, QSizeF asize)'''
+    def __init__(self, atopLeft, abottomRight):
+        '''void QRectF.__init__(QPointF atopLeft, QPointF abottomRight)'''
+    def __init__(self, aleft, atop, awidth, aheight):
+        '''void QRectF.__init__(float aleft, float atop, float awidth, float aheight)'''
+    def __init__(self, r):
+        '''void QRectF.__init__(QRect r)'''
     def __init__(self):
-        """QRectF QRectF.__init__(None self)"""
+        '''QRectF QRectF.__init__()'''
         return QRectF()
-    def __eq__(self, _r2):
-        """bool QRectF.__eq__(None self, QRectF _r2)"""
+    def __eq__(self, r2):
+        '''bool QRectF.__eq__(QRectF r2)'''
         return bool()
-    def __ne__(self, _r2):
-        """bool QRectF.__ne__(None self, QRectF _r2)"""
+    def __ne__(self, r2):
+        '''bool QRectF.__ne__(QRectF r2)'''
         return bool()
-    def united(self, _r):
-        """QRectF QRectF.united(None self, QRectF _r)"""
+    def united(self, r):
+        '''QRectF QRectF.united(QRectF r)'''
         return QRectF()
-    def intersected(self, _r):
-        """QRectF QRectF.intersected(None self, QRectF _r)"""
+    def intersected(self, r):
+        '''QRectF QRectF.intersected(QRectF r)'''
         return QRectF()
     def toRect(self):
-        """QRect QRectF.toRect(None self)"""
+        '''QRect QRectF.toRect()'''
         return QRect()
     def toAlignedRect(self):
-        """QRect QRectF.toAlignedRect(None self)"""
+        '''QRect QRectF.toAlignedRect()'''
         return QRect()
-    def unite(self, _r):
-        """QRectF QRectF.unite(None self, QRectF _r)"""
+    def unite(self, r):
+        '''QRectF QRectF.unite(QRectF r)'''
         return QRectF()
-    def intersect(self, _r):
-        """QRectF QRectF.intersect(None self, QRectF _r)"""
+    def intersect(self, r):
+        '''QRectF QRectF.intersect(QRectF r)'''
         return QRectF()
-    def __iand__(self, _r):
-        """QRectF QRectF.__iand__(None self, QRectF _r)"""
+    def __iand__(self, r):
+        '''QRectF QRectF.__iand__(QRectF r)'''
         return QRectF()
-    def __ior__(self, _r):
-        """QRectF QRectF.__ior__(None self, QRectF _r)"""
+    def __ior__(self, r):
+        '''QRectF QRectF.__ior__(QRectF r)'''
         return QRectF()
-    def setSize(self, _s):
-        """None QRectF.setSize(None self, QSizeF _s)"""
-        return None
-    def setHeight(self, _ah):
-        """None QRectF.setHeight(None self, float _ah)"""
-        return None
-    def setWidth(self, _aw):
-        """None QRectF.setWidth(None self, float _aw)"""
-        return None
-    def adjusted(self, _xp1, _yp1, _xp2, _yp2):
-        """QRectF QRectF.adjusted(None self, float _xp1, float _yp1, float _xp2, float _yp2)"""
+    def setSize(self, s):
+        '''void QRectF.setSize(QSizeF s)'''
+    def setHeight(self, ah):
+        '''void QRectF.setHeight(float ah)'''
+    def setWidth(self, aw):
+        '''void QRectF.setWidth(float aw)'''
+    def adjusted(self, xp1, yp1, xp2, yp2):
+        '''QRectF QRectF.adjusted(float xp1, float yp1, float xp2, float yp2)'''
         return QRectF()
-    def adjust(self, _xp1, _yp1, _xp2, _yp2):
-        """None QRectF.adjust(None self, float _xp1, float _yp1, float _xp2, float _yp2)"""
-        return None
-    def setCoords(self, _xp1, _yp1, _xp2, _yp2):
-        """None QRectF.setCoords(None self, float _xp1, float _yp1, float _xp2, float _yp2)"""
-        return None
-    def getCoords(self, _xp1, _yp1, _xp2, _yp2):
-        """None QRectF.getCoords(None self, float _xp1, float _yp1, float _xp2, float _yp2)"""
-        return None
-    def setRect(self, _ax, _ay, _aaw, _aah):
-        """None QRectF.setRect(None self, float _ax, float _ay, float _aaw, float _aah)"""
-        return None
-    def getRect(self, _ax, _ay, _aaw, _aah):
-        """None QRectF.getRect(None self, float _ax, float _ay, float _aaw, float _aah)"""
-        return None
-    def translated(self, _dx, _dy):
-        """QRectF QRectF.translated(None self, float _dx, float _dy)"""
+    def adjust(self, xp1, yp1, xp2, yp2):
+        '''void QRectF.adjust(float xp1, float yp1, float xp2, float yp2)'''
+    def setCoords(self, xp1, yp1, xp2, yp2):
+        '''void QRectF.setCoords(float xp1, float yp1, float xp2, float yp2)'''
+    def getCoords(self, xp1, yp1, xp2, yp2):
+        '''void QRectF.getCoords(float xp1, float yp1, float xp2, float yp2)'''
+    def setRect(self, ax, ay, aaw, aah):
+        '''void QRectF.setRect(float ax, float ay, float aaw, float aah)'''
+    def getRect(self, ax, ay, aaw, aah):
+        '''void QRectF.getRect(float ax, float ay, float aaw, float aah)'''
+    def translated(self, dx, dy):
+        '''QRectF QRectF.translated(float dx, float dy)'''
         return QRectF()
-    def translated(self, _p):
-        """QRectF QRectF.translated(None self, QPointF _p)"""
+    def translated(self, p):
+        '''QRectF QRectF.translated(QPointF p)'''
         return QRectF()
-    def moveTo(self, _ax, _ay):
-        """None QRectF.moveTo(None self, float _ax, float _ay)"""
-        return None
-    def moveTo(self, _p):
-        """None QRectF.moveTo(None self, QPointF _p)"""
-        return None
-    def translate(self, _dx, _dy):
-        """None QRectF.translate(None self, float _dx, float _dy)"""
-        return None
-    def translate(self, _p):
-        """None QRectF.translate(None self, QPointF _p)"""
-        return None
+    def moveTo(self, ax, ay):
+        '''void QRectF.moveTo(float ax, float ay)'''
+    def moveTo(self, p):
+        '''void QRectF.moveTo(QPointF p)'''
+    def translate(self, dx, dy):
+        '''void QRectF.translate(float dx, float dy)'''
+    def translate(self, p):
+        '''void QRectF.translate(QPointF p)'''
     def size(self):
-        """QSizeF QRectF.size(None self)"""
+        '''QSizeF QRectF.size()'''
         return QSizeF()
     def height(self):
-        """float QRectF.height(None self)"""
+        '''float QRectF.height()'''
         return float()
     def width(self):
-        """float QRectF.width(None self)"""
+        '''float QRectF.width()'''
         return float()
-    def moveCenter(self, _p):
-        """None QRectF.moveCenter(None self, QPointF _p)"""
-        return None
-    def moveBottomRight(self, _p):
-        """None QRectF.moveBottomRight(None self, QPointF _p)"""
-        return None
-    def moveBottomLeft(self, _p):
-        """None QRectF.moveBottomLeft(None self, QPointF _p)"""
-        return None
-    def moveTopRight(self, _p):
-        """None QRectF.moveTopRight(None self, QPointF _p)"""
-        return None
-    def moveTopLeft(self, _p):
-        """None QRectF.moveTopLeft(None self, QPointF _p)"""
-        return None
-    def moveBottom(self, _pos):
-        """None QRectF.moveBottom(None self, float _pos)"""
-        return None
-    def moveRight(self, _pos):
-        """None QRectF.moveRight(None self, float _pos)"""
-        return None
-    def moveTop(self, _pos):
-        """None QRectF.moveTop(None self, float _pos)"""
-        return None
-    def moveLeft(self, _pos):
-        """None QRectF.moveLeft(None self, float _pos)"""
-        return None
+    def moveCenter(self, p):
+        '''void QRectF.moveCenter(QPointF p)'''
+    def moveBottomRight(self, p):
+        '''void QRectF.moveBottomRight(QPointF p)'''
+    def moveBottomLeft(self, p):
+        '''void QRectF.moveBottomLeft(QPointF p)'''
+    def moveTopRight(self, p):
+        '''void QRectF.moveTopRight(QPointF p)'''
+    def moveTopLeft(self, p):
+        '''void QRectF.moveTopLeft(QPointF p)'''
+    def moveBottom(self, pos):
+        '''void QRectF.moveBottom(float pos)'''
+    def moveRight(self, pos):
+        '''void QRectF.moveRight(float pos)'''
+    def moveTop(self, pos):
+        '''void QRectF.moveTop(float pos)'''
+    def moveLeft(self, pos):
+        '''void QRectF.moveLeft(float pos)'''
     def center(self):
-        """QPointF QRectF.center(None self)"""
+        '''QPointF QRectF.center()'''
         return QPointF()
-    def setBottomRight(self, _p):
-        """None QRectF.setBottomRight(None self, QPointF _p)"""
-        return None
-    def setBottomLeft(self, _p):
-        """None QRectF.setBottomLeft(None self, QPointF _p)"""
-        return None
-    def setTopRight(self, _p):
-        """None QRectF.setTopRight(None self, QPointF _p)"""
-        return None
-    def setTopLeft(self, _p):
-        """None QRectF.setTopLeft(None self, QPointF _p)"""
-        return None
-    def setBottom(self, _pos):
-        """None QRectF.setBottom(None self, float _pos)"""
-        return None
-    def setTop(self, _pos):
-        """None QRectF.setTop(None self, float _pos)"""
-        return None
-    def setRight(self, _pos):
-        """None QRectF.setRight(None self, float _pos)"""
-        return None
-    def setLeft(self, _pos):
-        """None QRectF.setLeft(None self, float _pos)"""
-        return None
+    def setBottomRight(self, p):
+        '''void QRectF.setBottomRight(QPointF p)'''
+    def setBottomLeft(self, p):
+        '''void QRectF.setBottomLeft(QPointF p)'''
+    def setTopRight(self, p):
+        '''void QRectF.setTopRight(QPointF p)'''
+    def setTopLeft(self, p):
+        '''void QRectF.setTopLeft(QPointF p)'''
+    def setBottom(self, pos):
+        '''void QRectF.setBottom(float pos)'''
+    def setTop(self, pos):
+        '''void QRectF.setTop(float pos)'''
+    def setRight(self, pos):
+        '''void QRectF.setRight(float pos)'''
+    def setLeft(self, pos):
+        '''void QRectF.setLeft(float pos)'''
     def y(self):
-        """float QRectF.y(None self)"""
+        '''float QRectF.y()'''
         return float()
     def x(self):
-        """float QRectF.x(None self)"""
+        '''float QRectF.x()'''
         return float()
     def __bool__(self):
-        """int QRectF.__bool__(None self)"""
+        '''int QRectF.__bool__()'''
         return int()
     def isValid(self):
-        """bool QRectF.isValid(None self)"""
+        '''bool QRectF.isValid()'''
         return bool()
     def isEmpty(self):
-        """bool QRectF.isEmpty(None self)"""
+        '''bool QRectF.isEmpty()'''
         return bool()
     def isNull(self):
-        """bool QRectF.isNull(None self)"""
+        '''bool QRectF.isNull()'''
         return bool()
-    def intersects(self, _r):
-        """bool QRectF.intersects(None self, QRectF _r)"""
+    def intersects(self, r):
+        '''bool QRectF.intersects(QRectF r)'''
         return bool()
-    def __contains__(self, _p):
-        """int QRectF.__contains__(None self, QPointF _p)"""
+    def __contains__(self, p):
+        '''int QRectF.__contains__(QPointF p)'''
         return int()
-    def __contains__(self, _r):
-        """int QRectF.__contains__(None self, QRectF _r)"""
+    def __contains__(self, r):
+        '''int QRectF.__contains__(QRectF r)'''
         return int()
-    def contains(self, _p):
-        """bool QRectF.contains(None self, QPointF _p)"""
+    def contains(self, p):
+        '''bool QRectF.contains(QPointF p)'''
         return bool()
-    def contains(self, _r):
-        """bool QRectF.contains(None self, QRectF _r)"""
+    def contains(self, r):
+        '''bool QRectF.contains(QRectF r)'''
         return bool()
-    def contains(self, _ax, _ay):
-        """bool QRectF.contains(None self, float _ax, float _ay)"""
+    def contains(self, ax, ay):
+        '''bool QRectF.contains(float ax, float ay)'''
         return bool()
-    def __and__(self, _r):
-        """QRectF QRectF.__and__(None self, QRectF _r)"""
+    def __and__(self, r):
+        '''QRectF QRectF.__and__(QRectF r)'''
         return QRectF()
-    def __or__(self, _r):
-        """QRectF QRectF.__or__(None self, QRectF _r)"""
+    def __or__(self, r):
+        '''QRectF QRectF.__or__(QRectF r)'''
         return QRectF()
     def bottomLeft(self):
-        """QPointF QRectF.bottomLeft(None self)"""
+        '''QPointF QRectF.bottomLeft()'''
         return QPointF()
     def topRight(self):
-        """QPointF QRectF.topRight(None self)"""
+        '''QPointF QRectF.topRight()'''
         return QPointF()
     def bottomRight(self):
-        """QPointF QRectF.bottomRight(None self)"""
+        '''QPointF QRectF.bottomRight()'''
         return QPointF()
     def topLeft(self):
-        """QPointF QRectF.topLeft(None self)"""
+        '''QPointF QRectF.topLeft()'''
         return QPointF()
-    def setY(self, _pos):
-        """None QRectF.setY(None self, float _pos)"""
-        return None
-    def setX(self, _pos):
-        """None QRectF.setX(None self, float _pos)"""
-        return None
+    def setY(self, pos):
+        '''void QRectF.setY(float pos)'''
+    def setX(self, pos):
+        '''void QRectF.setX(float pos)'''
     def bottom(self):
-        """float QRectF.bottom(None self)"""
+        '''float QRectF.bottom()'''
         return float()
     def right(self):
-        """float QRectF.right(None self)"""
+        '''float QRectF.right()'''
         return float()
     def top(self):
-        """float QRectF.top(None self)"""
+        '''float QRectF.top()'''
         return float()
     def left(self):
-        """float QRectF.left(None self)"""
+        '''float QRectF.left()'''
         return float()
     def normalized(self):
-        """QRectF QRectF.normalized(None self)"""
+        '''QRectF QRectF.normalized()'''
         return QRectF()
     def __repr__(self):
-        """str QRectF.__repr__(None self)"""
+        '''str QRectF.__repr__()'''
         return str()
 
 
 class QRegExp():
     """"""
-    CaretAtZero = int() # QRegExp.CaretMode enum
-    CaretAtOffset = int() # QRegExp.CaretMode enum
-    CaretWontMatch = int() # QRegExp.CaretMode enum
+    # Enum QRegExp.CaretMode
+    CaretAtZero = 0
+    CaretAtOffset = 0
+    CaretWontMatch = 0
 
-    RegExp = int() # QRegExp.PatternSyntax enum
-    RegExp2 = int() # QRegExp.PatternSyntax enum
-    Wildcard = int() # QRegExp.PatternSyntax enum
-    FixedString = int() # QRegExp.PatternSyntax enum
-    WildcardUnix = int() # QRegExp.PatternSyntax enum
-    W3CXmlSchema11 = int() # QRegExp.PatternSyntax enum
+    # Enum QRegExp.PatternSyntax
+    RegExp = 0
+    RegExp2 = 0
+    Wildcard = 0
+    FixedString = 0
+    WildcardUnix = 0
+    W3CXmlSchema11 = 0
 
     def __init__(self):
-        """None QRegExp.__init__(None self)"""
-        return None
-    def __init__(self, _pattern, _cs, _syntax):
-        """None QRegExp.__init__(None self, QString _pattern, Qt.CaseSensitivity _cs, QRegExp.PatternSyntax _syntax)"""
-        return None
-    def __init__(self, _rx):
-        """None QRegExp.__init__(None self, QRegExp _rx)"""
-        return None
+        '''void QRegExp.__init__()'''
+    def __init__(self, pattern, cs = Qt.CaseSensitive, syntax = QRegExp.RegExp):
+        '''void QRegExp.__init__(QString pattern, Qt.CaseSensitivity cs = Qt.CaseSensitive, QRegExp.PatternSyntax syntax = QRegExp.RegExp)'''
+    def __init__(self, rx):
+        '''void QRegExp.__init__(QRegExp rx)'''
     def captureCount(self):
-        """int QRegExp.captureCount(None self)"""
+        '''int QRegExp.captureCount()'''
         return int()
-    def escape(self, _str):
-        """QString QRegExp.escape(None self, QString _str)"""
+    def escape(self, str):
+        '''static QString QRegExp.escape(QString str)'''
         return QString()
     def errorString(self):
-        """QString QRegExp.errorString(None self)"""
+        '''QString QRegExp.errorString()'''
         return QString()
-    def pos(self, _nth):
-        """int QRegExp.pos(None self, int _nth)"""
+    def pos(self, nth = 0):
+        '''int QRegExp.pos(int nth = 0)'''
         return int()
-    def cap(self, _nth):
-        """QString QRegExp.cap(None self, int _nth)"""
+    def cap(self, nth = 0):
+        '''QString QRegExp.cap(int nth = 0)'''
         return QString()
     def capturedTexts(self):
-        """QStringList QRegExp.capturedTexts(None self)"""
+        '''QStringList QRegExp.capturedTexts()'''
         return QStringList()
     def numCaptures(self):
-        """int QRegExp.numCaptures(None self)"""
+        '''int QRegExp.numCaptures()'''
         return int()
     def matchedLength(self):
-        """int QRegExp.matchedLength(None self)"""
+        '''int QRegExp.matchedLength()'''
         return int()
-    def lastIndexIn(self, _str, _offset, _caretMode):
-        """int QRegExp.lastIndexIn(None self, QString _str, int _offset, QRegExp.CaretMode _caretMode)"""
+    def lastIndexIn(self, str, offset = -1, caretMode = QRegExp.CaretAtZero):
+        '''int QRegExp.lastIndexIn(QString str, int offset = -1, QRegExp.CaretMode caretMode = QRegExp.CaretAtZero)'''
         return int()
-    def indexIn(self, _str, _offset, _caretMode):
-        """int QRegExp.indexIn(None self, QString _str, int _offset, QRegExp.CaretMode _caretMode)"""
+    def indexIn(self, str, offset = 0, caretMode = QRegExp.CaretAtZero):
+        '''int QRegExp.indexIn(QString str, int offset = 0, QRegExp.CaretMode caretMode = QRegExp.CaretAtZero)'''
         return int()
-    def exactMatch(self, _str):
-        """bool QRegExp.exactMatch(None self, QString _str)"""
+    def exactMatch(self, str):
+        '''bool QRegExp.exactMatch(QString str)'''
         return bool()
-    def setMinimal(self, _minimal):
-        """None QRegExp.setMinimal(None self, bool _minimal)"""
-        return None
+    def setMinimal(self, minimal):
+        '''void QRegExp.setMinimal(bool minimal)'''
     def isMinimal(self):
-        """bool QRegExp.isMinimal(None self)"""
+        '''bool QRegExp.isMinimal()'''
         return bool()
-    def setPatternSyntax(self, _syntax):
-        """None QRegExp.setPatternSyntax(None self, QRegExp.PatternSyntax _syntax)"""
-        return None
+    def setPatternSyntax(self, syntax):
+        '''void QRegExp.setPatternSyntax(QRegExp.PatternSyntax syntax)'''
     def patternSyntax(self):
-        """QRegExp.PatternSyntax QRegExp.patternSyntax(None self)"""
+        '''QRegExp.PatternSyntax QRegExp.patternSyntax()'''
         return QRegExp.PatternSyntax()
-    def setCaseSensitivity(self, _cs):
-        """None QRegExp.setCaseSensitivity(None self, Qt.CaseSensitivity _cs)"""
-        return None
+    def setCaseSensitivity(self, cs):
+        '''void QRegExp.setCaseSensitivity(Qt.CaseSensitivity cs)'''
     def caseSensitivity(self):
-        """Qt.CaseSensitivity QRegExp.caseSensitivity(None self)"""
+        '''Qt.CaseSensitivity QRegExp.caseSensitivity()'''
         return Qt.CaseSensitivity()
-    def setPattern(self, _pattern):
-        """None QRegExp.setPattern(None self, QString _pattern)"""
-        return None
+    def setPattern(self, pattern):
+        '''void QRegExp.setPattern(QString pattern)'''
     def pattern(self):
-        """QString QRegExp.pattern(None self)"""
+        '''QString QRegExp.pattern()'''
         return QString()
     def isValid(self):
-        """bool QRegExp.isValid(None self)"""
+        '''bool QRegExp.isValid()'''
         return bool()
     def isEmpty(self):
-        """bool QRegExp.isEmpty(None self)"""
+        '''bool QRegExp.isEmpty()'''
         return bool()
-    def __ne__(self, _rx):
-        """bool QRegExp.__ne__(None self, QRegExp _rx)"""
+    def __ne__(self, rx):
+        '''bool QRegExp.__ne__(QRegExp rx)'''
         return bool()
-    def __eq__(self, _rx):
-        """bool QRegExp.__eq__(None self, QRegExp _rx)"""
+    def __eq__(self, rx):
+        '''bool QRegExp.__eq__(QRegExp rx)'''
         return bool()
     def __repr__(self):
-        """str QRegExp.__repr__(None self)"""
+        '''str QRegExp.__repr__()'''
         return str()
 
 
 class QResource():
     """"""
-    def __init__(self, _fileName, _locale):
-        """None QResource.__init__(None self, QString _fileName, QLocale _locale)"""
-        return None
+    def __init__(self, fileName = QString(), locale = QLocale()):
+        '''void QResource.__init__(QString fileName = QString(), QLocale locale = QLocale())'''
     def isFile(self):
-        """bool QResource.isFile(None self)"""
+        '''bool QResource.isFile()'''
         return bool()
     def isDir(self):
-        """bool QResource.isDir(None self)"""
+        '''bool QResource.isDir()'''
         return bool()
     def children(self):
-        """QStringList QResource.children(None self)"""
+        '''QStringList QResource.children()'''
         return QStringList()
-    def unregisterResourceData(self, _rccData, _mapRoot):
-        """bool QResource.unregisterResourceData(None self, str _rccData, QString _mapRoot)"""
+    def unregisterResourceData(self, rccData, mapRoot = QString()):
+        '''static bool QResource.unregisterResourceData(str rccData, QString mapRoot = QString())'''
         return bool()
-    def unregisterResource(self, _rccFileName, _mapRoot):
-        """bool QResource.unregisterResource(None self, QString _rccFileName, QString _mapRoot)"""
+    def unregisterResource(self, rccFileName, mapRoot = QString()):
+        '''static bool QResource.unregisterResource(QString rccFileName, QString mapRoot = QString())'''
         return bool()
     def searchPaths(self):
-        """QStringList QResource.searchPaths(None self)"""
+        '''static QStringList QResource.searchPaths()'''
         return QStringList()
-    def registerResourceData(self, _rccData, _mapRoot):
-        """bool QResource.registerResourceData(None self, str _rccData, QString _mapRoot)"""
+    def registerResourceData(self, rccData, mapRoot = QString()):
+        '''static bool QResource.registerResourceData(str rccData, QString mapRoot = QString())'''
         return bool()
-    def registerResource(self, _rccFileName, _mapRoot):
-        """bool QResource.registerResource(None self, QString _rccFileName, QString _mapRoot)"""
+    def registerResource(self, rccFileName, mapRoot = QString()):
+        '''static bool QResource.registerResource(QString rccFileName, QString mapRoot = QString())'''
         return bool()
-    def addSearchPath(self, _path):
-        """None QResource.addSearchPath(None self, QString _path)"""
-        return None
+    def addSearchPath(self, path):
+        '''static void QResource.addSearchPath(QString path)'''
     def size(self):
-        """int QResource.size(None self)"""
+        '''int QResource.size()'''
         return int()
-    def setLocale(self, _locale):
-        """None QResource.setLocale(None self, QLocale _locale)"""
-        return None
-    def setFileName(self, _file):
-        """None QResource.setFileName(None self, QString _file)"""
-        return None
+    def setLocale(self, locale):
+        '''void QResource.setLocale(QLocale locale)'''
+    def setFileName(self, file):
+        '''void QResource.setFileName(QString file)'''
     def locale(self):
-        """QLocale QResource.locale(None self)"""
+        '''QLocale QResource.locale()'''
         return QLocale()
     def isValid(self):
-        """bool QResource.isValid(None self)"""
+        '''bool QResource.isValid()'''
         return bool()
     def isCompressed(self):
-        """bool QResource.isCompressed(None self)"""
+        '''bool QResource.isCompressed()'''
         return bool()
     def fileName(self):
-        """QString QResource.fileName(None self)"""
+        '''QString QResource.fileName()'''
         return QString()
     def data(self):
-        """str QResource.data(None self)"""
+        '''str QResource.data()'''
         return str()
     def absoluteFilePath(self):
-        """QString QResource.absoluteFilePath(None self)"""
+        '''QString QResource.absoluteFilePath()'''
         return QString()
 
 
 class QRunnable():
     """"""
     def __init__(self):
-        """None QRunnable.__init__(None self)"""
-        return None
+        '''void QRunnable.__init__()'''
     def __init__(self):
-        """QRunnable QRunnable.__init__(None self)"""
+        '''QRunnable QRunnable.__init__()'''
         return QRunnable()
-    def setAutoDelete(self, __autoDelete):
-        """None QRunnable.setAutoDelete(None self, bool __autoDelete)"""
-        return None
+    def setAutoDelete(self, _autoDelete):
+        '''void QRunnable.setAutoDelete(bool _autoDelete)'''
     def autoDelete(self):
-        """bool QRunnable.autoDelete(None self)"""
+        '''bool QRunnable.autoDelete()'''
         return bool()
     def run(self):
-        """abstract None QRunnable.run(None self)"""
-        return None
+        '''abstract void QRunnable.run()'''
 
 
 class QSemaphore():
     """"""
-    def __init__(self, _n):
-        """None QSemaphore.__init__(None self, int _n)"""
-        return None
+    def __init__(self, n = 0):
+        '''void QSemaphore.__init__(int n = 0)'''
     def available(self):
-        """int QSemaphore.available(None self)"""
+        '''int QSemaphore.available()'''
         return int()
-    def release(self, _n):
-        """None QSemaphore.release(None self, int _n)"""
-        return None
-    def tryAcquire(self, _n):
-        """bool QSemaphore.tryAcquire(None self, int _n)"""
+    def release(self, n = 1):
+        '''void QSemaphore.release(int n = 1)'''
+    def tryAcquire(self, n = 1):
+        '''bool QSemaphore.tryAcquire(int n = 1)'''
         return bool()
-    def tryAcquire(self, _n, _timeout):
-        """bool QSemaphore.tryAcquire(None self, int _n, int _timeout)"""
+    def tryAcquire(self, n, timeout):
+        '''bool QSemaphore.tryAcquire(int n, int timeout)'''
         return bool()
-    def acquire(self, _n):
-        """None QSemaphore.acquire(None self, int _n)"""
-        return None
+    def acquire(self, n = 1):
+        '''void QSemaphore.acquire(int n = 1)'''
 
 
 class QSequentialAnimationGroup(QAnimationGroup):
     """"""
-    def __init__(self, _parent):
-        """None QSequentialAnimationGroup.__init__(None self, QObject _parent)"""
-        return None
-    def updateDirection(self, _direction):
-        """None QSequentialAnimationGroup.updateDirection(None self, QAbstractAnimation.Direction _direction)"""
-        return None
-    def updateState(self, _newState, _oldState):
-        """None QSequentialAnimationGroup.updateState(None self, QAbstractAnimation.State _newState, QAbstractAnimation.State _oldState)"""
-        return None
+    def __init__(self, parent = None):
+        '''void QSequentialAnimationGroup.__init__(QObject parent = None)'''
+    def updateDirection(self, direction):
+        '''void QSequentialAnimationGroup.updateDirection(QAbstractAnimation.Direction direction)'''
+    def updateState(self, newState, oldState):
+        '''void QSequentialAnimationGroup.updateState(QAbstractAnimation.State newState, QAbstractAnimation.State oldState)'''
     def updateCurrentTime(self):
-        """int QSequentialAnimationGroup.updateCurrentTime(None self)"""
+        '''int QSequentialAnimationGroup.updateCurrentTime()'''
         return int()
-    def event(self, _event):
-        """bool QSequentialAnimationGroup.event(None self, QEvent _event)"""
+    def event(self, event):
+        '''bool QSequentialAnimationGroup.event(QEvent event)'''
         return bool()
+    currentAnimationChanged = PyQt4.QtCore.pyqtSignal() # void currentAnimationChanged(QAbstractAnimation *) - signal
     def duration(self):
-        """int QSequentialAnimationGroup.duration(None self)"""
+        '''int QSequentialAnimationGroup.duration()'''
         return int()
     def currentAnimation(self):
-        """QAbstractAnimation QSequentialAnimationGroup.currentAnimation(None self)"""
+        '''QAbstractAnimation QSequentialAnimationGroup.currentAnimation()'''
         return QAbstractAnimation()
-    def insertPause(self, _index, _msecs):
-        """QPauseAnimation QSequentialAnimationGroup.insertPause(None self, int _index, int _msecs)"""
+    def insertPause(self, index, msecs):
+        '''QPauseAnimation QSequentialAnimationGroup.insertPause(int index, int msecs)'''
         return QPauseAnimation()
-    def addPause(self, _msecs):
-        """QPauseAnimation QSequentialAnimationGroup.addPause(None self, int _msecs)"""
+    def addPause(self, msecs):
+        '''QPauseAnimation QSequentialAnimationGroup.addPause(int msecs)'''
         return QPauseAnimation()
 
 
 class QSettings(QObject):
     """"""
-    UserScope = int() # QSettings.Scope enum
-    SystemScope = int() # QSettings.Scope enum
+    # Enum QSettings.Scope
+    UserScope = 0
+    SystemScope = 0
 
-    NativeFormat = int() # QSettings.Format enum
-    IniFormat = int() # QSettings.Format enum
-    InvalidFormat = int() # QSettings.Format enum
+    # Enum QSettings.Format
+    NativeFormat = 0
+    IniFormat = 0
+    InvalidFormat = 0
 
-    NoError = int() # QSettings.Status enum
-    AccessError = int() # QSettings.Status enum
-    FormatError = int() # QSettings.Status enum
+    # Enum QSettings.Status
+    NoError = 0
+    AccessError = 0
+    FormatError = 0
 
-    def __init__(self, _organization, _application, _parent):
-        """None QSettings.__init__(None self, QString _organization, QString _application, QObject _parent)"""
-        return None
-    def __init__(self, _scope, _organization, _application, _parent):
-        """None QSettings.__init__(None self, QSettings.Scope _scope, QString _organization, QString _application, QObject _parent)"""
-        return None
-    def __init__(self, _format, _scope, _organization, _application, _parent):
-        """None QSettings.__init__(None self, QSettings.Format _format, QSettings.Scope _scope, QString _organization, QString _application, QObject _parent)"""
-        return None
-    def __init__(self, _fileName, _format, _parent):
-        """None QSettings.__init__(None self, QString _fileName, QSettings.Format _format, QObject _parent)"""
-        return None
-    def __init__(self, _parent):
-        """None QSettings.__init__(None self, QObject _parent)"""
-        return None
-    def event(self, _event):
-        """bool QSettings.event(None self, QEvent _event)"""
+    def __init__(self, organization, application = QString(), parent = None):
+        '''void QSettings.__init__(QString organization, QString application = QString(), QObject parent = None)'''
+    def __init__(self, scope, organization, application = QString(), parent = None):
+        '''void QSettings.__init__(QSettings.Scope scope, QString organization, QString application = QString(), QObject parent = None)'''
+    def __init__(self, format, scope, organization, application = QString(), parent = None):
+        '''void QSettings.__init__(QSettings.Format format, QSettings.Scope scope, QString organization, QString application = QString(), QObject parent = None)'''
+    def __init__(self, fileName, format, parent = None):
+        '''void QSettings.__init__(QString fileName, QSettings.Format format, QObject parent = None)'''
+    def __init__(self, parent = None):
+        '''void QSettings.__init__(QObject parent = None)'''
+    def event(self, event):
+        '''bool QSettings.event(QEvent event)'''
         return bool()
     def iniCodec(self):
-        """QTextCodec QSettings.iniCodec(None self)"""
+        '''QTextCodec QSettings.iniCodec()'''
         return QTextCodec()
-    def setIniCodec(self, _codec):
-        """None QSettings.setIniCodec(None self, QTextCodec _codec)"""
-        return None
-    def setIniCodec(self, _codecName):
-        """None QSettings.setIniCodec(None self, str _codecName)"""
-        return None
+    def setIniCodec(self, codec):
+        '''void QSettings.setIniCodec(QTextCodec codec)'''
+    def setIniCodec(self, codecName):
+        '''void QSettings.setIniCodec(str codecName)'''
     def defaultFormat(self):
-        """QSettings.Format QSettings.defaultFormat(None self)"""
+        '''static QSettings.Format QSettings.defaultFormat()'''
         return QSettings.Format()
-    def setDefaultFormat(self, _format):
-        """None QSettings.setDefaultFormat(None self, QSettings.Format _format)"""
-        return None
+    def setDefaultFormat(self, format):
+        '''static void QSettings.setDefaultFormat(QSettings.Format format)'''
     def applicationName(self):
-        """QString QSettings.applicationName(None self)"""
+        '''QString QSettings.applicationName()'''
         return QString()
     def organizationName(self):
-        """QString QSettings.organizationName(None self)"""
+        '''QString QSettings.organizationName()'''
         return QString()
     def scope(self):
-        """QSettings.Scope QSettings.scope(None self)"""
+        '''QSettings.Scope QSettings.scope()'''
         return QSettings.Scope()
     def format(self):
-        """QSettings.Format QSettings.format(None self)"""
+        '''QSettings.Format QSettings.format()'''
         return QSettings.Format()
-    def setPath(self, _format, _scope, _path):
-        """None QSettings.setPath(None self, QSettings.Format _format, QSettings.Scope _scope, QString _path)"""
-        return None
-    def setUserIniPath(self, _dir):
-        """None QSettings.setUserIniPath(None self, QString _dir)"""
-        return None
-    def setSystemIniPath(self, _dir):
-        """None QSettings.setSystemIniPath(None self, QString _dir)"""
-        return None
+    def setPath(self, format, scope, path):
+        '''static void QSettings.setPath(QSettings.Format format, QSettings.Scope scope, QString path)'''
+    def setUserIniPath(self, dir):
+        '''static void QSettings.setUserIniPath(QString dir)'''
+    def setSystemIniPath(self, dir):
+        '''static void QSettings.setSystemIniPath(QString dir)'''
     def fileName(self):
-        """QString QSettings.fileName(None self)"""
+        '''QString QSettings.fileName()'''
         return QString()
     def fallbacksEnabled(self):
-        """bool QSettings.fallbacksEnabled(None self)"""
+        '''bool QSettings.fallbacksEnabled()'''
         return bool()
-    def setFallbacksEnabled(self, _b):
-        """None QSettings.setFallbacksEnabled(None self, bool _b)"""
-        return None
-    def contains(self, _key):
-        """bool QSettings.contains(None self, QString _key)"""
+    def setFallbacksEnabled(self, b):
+        '''void QSettings.setFallbacksEnabled(bool b)'''
+    def contains(self, key):
+        '''bool QSettings.contains(QString key)'''
         return bool()
-    def remove(self, _key):
-        """None QSettings.remove(None self, QString _key)"""
-        return None
-    def value(self, _key, _defaultValue, _type):
-        """object QSettings.value(None self, QString _key, QVariant _defaultValue, object _type)"""
+    def remove(self, key):
+        '''void QSettings.remove(QString key)'''
+    def value(self, key, defaultValue = QVariant(), type = None):
+        '''object QSettings.value(QString key, QVariant defaultValue = QVariant(), object type = None)'''
         return object()
-    def setValue(self, _key, _value):
-        """None QSettings.setValue(None self, QString _key, QVariant _value)"""
-        return None
+    def setValue(self, key, value):
+        '''void QSettings.setValue(QString key, QVariant value)'''
     def isWritable(self):
-        """bool QSettings.isWritable(None self)"""
+        '''bool QSettings.isWritable()'''
         return bool()
     def childGroups(self):
-        """QStringList QSettings.childGroups(None self)"""
+        '''QStringList QSettings.childGroups()'''
         return QStringList()
     def childKeys(self):
-        """QStringList QSettings.childKeys(None self)"""
+        '''QStringList QSettings.childKeys()'''
         return QStringList()
     def allKeys(self):
-        """QStringList QSettings.allKeys(None self)"""
+        '''QStringList QSettings.allKeys()'''
         return QStringList()
-    def setArrayIndex(self, _i):
-        """None QSettings.setArrayIndex(None self, int _i)"""
-        return None
+    def setArrayIndex(self, i):
+        '''void QSettings.setArrayIndex(int i)'''
     def endArray(self):
-        """None QSettings.endArray(None self)"""
-        return None
-    def beginWriteArray(self, _prefix, _size):
-        """None QSettings.beginWriteArray(None self, QString _prefix, int _size)"""
-        return None
-    def beginReadArray(self, _prefix):
-        """int QSettings.beginReadArray(None self, QString _prefix)"""
+        '''void QSettings.endArray()'''
+    def beginWriteArray(self, prefix, size = -1):
+        '''void QSettings.beginWriteArray(QString prefix, int size = -1)'''
+    def beginReadArray(self, prefix):
+        '''int QSettings.beginReadArray(QString prefix)'''
         return int()
     def group(self):
-        """QString QSettings.group(None self)"""
+        '''QString QSettings.group()'''
         return QString()
     def endGroup(self):
-        """None QSettings.endGroup(None self)"""
-        return None
-    def beginGroup(self, _prefix):
-        """None QSettings.beginGroup(None self, QString _prefix)"""
-        return None
+        '''void QSettings.endGroup()'''
+    def beginGroup(self, prefix):
+        '''void QSettings.beginGroup(QString prefix)'''
     def status(self):
-        """QSettings.Status QSettings.status(None self)"""
+        '''QSettings.Status QSettings.status()'''
         return QSettings.Status()
     def sync(self):
-        """None QSettings.sync(None self)"""
-        return None
+        '''void QSettings.sync()'''
     def clear(self):
-        """None QSettings.clear(None self)"""
-        return None
+        '''void QSettings.clear()'''
 
 
 class QSharedMemory(QObject):
     """"""
-    NoError = int() # QSharedMemory.SharedMemoryError enum
-    PermissionDenied = int() # QSharedMemory.SharedMemoryError enum
-    InvalidSize = int() # QSharedMemory.SharedMemoryError enum
-    KeyError = int() # QSharedMemory.SharedMemoryError enum
-    AlreadyExists = int() # QSharedMemory.SharedMemoryError enum
-    NotFound = int() # QSharedMemory.SharedMemoryError enum
-    LockError = int() # QSharedMemory.SharedMemoryError enum
-    OutOfResources = int() # QSharedMemory.SharedMemoryError enum
-    UnknownError = int() # QSharedMemory.SharedMemoryError enum
+    # Enum QSharedMemory.SharedMemoryError
+    NoError = 0
+    PermissionDenied = 0
+    InvalidSize = 0
+    KeyError = 0
+    AlreadyExists = 0
+    NotFound = 0
+    LockError = 0
+    OutOfResources = 0
+    UnknownError = 0
 
-    ReadOnly = int() # QSharedMemory.AccessMode enum
-    ReadWrite = int() # QSharedMemory.AccessMode enum
+    # Enum QSharedMemory.AccessMode
+    ReadOnly = 0
+    ReadWrite = 0
 
-    def __init__(self, _parent):
-        """None QSharedMemory.__init__(None self, QObject _parent)"""
-        return None
-    def __init__(self, _key, _parent):
-        """None QSharedMemory.__init__(None self, QString _key, QObject _parent)"""
-        return None
+    def __init__(self, parent = None):
+        '''void QSharedMemory.__init__(QObject parent = None)'''
+    def __init__(self, key, parent = None):
+        '''void QSharedMemory.__init__(QString key, QObject parent = None)'''
     def errorString(self):
-        """QString QSharedMemory.errorString(None self)"""
+        '''QString QSharedMemory.errorString()'''
         return QString()
     def error(self):
-        """QSharedMemory.SharedMemoryError QSharedMemory.error(None self)"""
+        '''QSharedMemory.SharedMemoryError QSharedMemory.error()'''
         return QSharedMemory.SharedMemoryError()
     def unlock(self):
-        """bool QSharedMemory.unlock(None self)"""
+        '''bool QSharedMemory.unlock()'''
         return bool()
     def lock(self):
-        """bool QSharedMemory.lock(None self)"""
+        '''bool QSharedMemory.lock()'''
         return bool()
     def constData(self):
-        """sip.voidptr QSharedMemory.constData(None self)"""
+        '''sip.voidptr QSharedMemory.constData()'''
         return sip.voidptr()
     def data(self):
-        """sip.voidptr QSharedMemory.data(None self)"""
+        '''sip.voidptr QSharedMemory.data()'''
         return sip.voidptr()
     def detach(self):
-        """bool QSharedMemory.detach(None self)"""
+        '''bool QSharedMemory.detach()'''
         return bool()
     def isAttached(self):
-        """bool QSharedMemory.isAttached(None self)"""
+        '''bool QSharedMemory.isAttached()'''
         return bool()
-    def attach(self, _mode):
-        """bool QSharedMemory.attach(None self, QSharedMemory.AccessMode _mode)"""
+    def attach(self, mode = QSharedMemory.ReadWrite):
+        '''bool QSharedMemory.attach(QSharedMemory.AccessMode mode = QSharedMemory.ReadWrite)'''
         return bool()
     def size(self):
-        """int QSharedMemory.size(None self)"""
+        '''int QSharedMemory.size()'''
         return int()
-    def create(self, _size, _mode):
-        """bool QSharedMemory.create(None self, int _size, QSharedMemory.AccessMode _mode)"""
+    def create(self, size, mode = QSharedMemory.ReadWrite):
+        '''bool QSharedMemory.create(int size, QSharedMemory.AccessMode mode = QSharedMemory.ReadWrite)'''
         return bool()
     def key(self):
-        """QString QSharedMemory.key(None self)"""
+        '''QString QSharedMemory.key()'''
         return QString()
-    def setKey(self, _key):
-        """None QSharedMemory.setKey(None self, QString _key)"""
-        return None
+    def setKey(self, key):
+        '''void QSharedMemory.setKey(QString key)'''
 
 
 class QSignalMapper(QObject):
     """"""
-    def __init__(self, _parent):
-        """None QSignalMapper.__init__(None self, QObject _parent)"""
-        return None
+    def __init__(self, parent = None):
+        '''void QSignalMapper.__init__(QObject parent = None)'''
     def map(self):
-        """None QSignalMapper.map(None self)"""
-        return None
-    def map(self, _sender):
-        """None QSignalMapper.map(None self, QObject _sender)"""
-        return None
-    def mapping(self, _id):
-        """QObject QSignalMapper.mapping(None self, int _id)"""
+        '''void QSignalMapper.map()'''
+    def map(self, sender):
+        '''void QSignalMapper.map(QObject sender)'''
+    mapped = PyQt4.QtCore.pyqtSignal() # void mapped(int) - signal
+    mapped = PyQt4.QtCore.pyqtSignal() # void mapped(const QString&) - signal
+    mapped = PyQt4.QtCore.pyqtSignal() # void mapped(QWidget *) - signal
+    mapped = PyQt4.QtCore.pyqtSignal() # void mapped(QObject *) - signal
+    def mapping(self, id):
+        '''QObject QSignalMapper.mapping(int id)'''
         return QObject()
-    def mapping(self, _text):
-        """QObject QSignalMapper.mapping(None self, QString _text)"""
+    def mapping(self, text):
+        '''QObject QSignalMapper.mapping(QString text)'''
         return QObject()
-    def mapping(self, _widget):
-        """QObject QSignalMapper.mapping(None self, QWidget _widget)"""
+    def mapping(self, widget):
+        '''QObject QSignalMapper.mapping(QWidget widget)'''
         return QObject()
-    def mapping(self, _object):
-        """QObject QSignalMapper.mapping(None self, QObject _object)"""
+    def mapping(self, object):
+        '''QObject QSignalMapper.mapping(QObject object)'''
         return QObject()
-    def removeMappings(self, _sender):
-        """None QSignalMapper.removeMappings(None self, QObject _sender)"""
-        return None
-    def setMapping(self, _sender, _id):
-        """None QSignalMapper.setMapping(None self, QObject _sender, int _id)"""
-        return None
-    def setMapping(self, _sender, _text):
-        """None QSignalMapper.setMapping(None self, QObject _sender, QString _text)"""
-        return None
-    def setMapping(self, _sender, _widget):
-        """None QSignalMapper.setMapping(None self, QObject _sender, QWidget _widget)"""
-        return None
-    def setMapping(self, _sender, _object):
-        """None QSignalMapper.setMapping(None self, QObject _sender, QObject _object)"""
-        return None
+    def removeMappings(self, sender):
+        '''void QSignalMapper.removeMappings(QObject sender)'''
+    def setMapping(self, sender, id):
+        '''void QSignalMapper.setMapping(QObject sender, int id)'''
+    def setMapping(self, sender, text):
+        '''void QSignalMapper.setMapping(QObject sender, QString text)'''
+    def setMapping(self, sender, widget):
+        '''void QSignalMapper.setMapping(QObject sender, QWidget widget)'''
+    def setMapping(self, sender, object):
+        '''void QSignalMapper.setMapping(QObject sender, QObject object)'''
 
 
 class QSignalTransition(QAbstractTransition):
     """"""
-    def __init__(self, _sourceState):
-        """None QSignalTransition.__init__(None self, QState _sourceState)"""
-        return None
-    def __init__(self, _sender, _signal, _sourceState):
-        """None QSignalTransition.__init__(None self, QObject _sender, SIGNAL() _signal, QState _sourceState)"""
-        return None
-    def __init__(self, _signal, _sourceState):
-        """None QSignalTransition.__init__(None self, signal _signal, QState _sourceState)"""
-        return None
-    def event(self, _e):
-        """bool QSignalTransition.event(None self, QEvent _e)"""
+    def __init__(self, sourceState = None):
+        '''void QSignalTransition.__init__(QState sourceState = None)'''
+    def __init__(self, sender, signal, sourceState = None):
+        '''void QSignalTransition.__init__(QObject sender, SIGNAL() signal, QState sourceState = None)'''
+    def __init__(self, signal, sourceState = None):
+        '''void QSignalTransition.__init__(signal signal, QState sourceState = None)'''
+    def event(self, e):
+        '''bool QSignalTransition.event(QEvent e)'''
         return bool()
-    def onTransition(self, _event):
-        """None QSignalTransition.onTransition(None self, QEvent _event)"""
-        return None
-    def eventTest(self, _event):
-        """bool QSignalTransition.eventTest(None self, QEvent _event)"""
+    def onTransition(self, event):
+        '''void QSignalTransition.onTransition(QEvent event)'''
+    def eventTest(self, event):
+        '''bool QSignalTransition.eventTest(QEvent event)'''
         return bool()
-    def setSignal(self, _signal):
-        """None QSignalTransition.setSignal(None self, QByteArray _signal)"""
-        return None
+    def setSignal(self, signal):
+        '''void QSignalTransition.setSignal(QByteArray signal)'''
     def signal(self):
-        """QByteArray QSignalTransition.signal(None self)"""
+        '''QByteArray QSignalTransition.signal()'''
         return QByteArray()
-    def setSenderObject(self, _sender):
-        """None QSignalTransition.setSenderObject(None self, QObject _sender)"""
-        return None
+    def setSenderObject(self, sender):
+        '''void QSignalTransition.setSenderObject(QObject sender)'''
     def senderObject(self):
-        """QObject QSignalTransition.senderObject(None self)"""
+        '''QObject QSignalTransition.senderObject()'''
         return QObject()
 
 
 class QSize():
     """"""
     def __init__(self):
-        """None QSize.__init__(None self)"""
-        return None
-    def __init__(self, _w, _h):
-        """None QSize.__init__(None self, int _w, int _h)"""
-        return None
+        '''void QSize.__init__()'''
+    def __init__(self, w, h):
+        '''void QSize.__init__(int w, int h)'''
     def __init__(self):
-        """QSize QSize.__init__(None self)"""
+        '''QSize QSize.__init__()'''
         return QSize()
-    def __eq__(self, _s2):
-        """bool QSize.__eq__(None self, QSize _s2)"""
+    def __eq__(self, s2):
+        '''bool QSize.__eq__(QSize s2)'''
         return bool()
-    def __ne__(self, _s2):
-        """bool QSize.__ne__(None self, QSize _s2)"""
+    def __ne__(self, s2):
+        '''bool QSize.__ne__(QSize s2)'''
         return bool()
-    def __add__(self, _s2):
-        """QSize QSize.__add__(None self, QSize _s2)"""
+    def __add__(self, s2):
+        '''QSize QSize.__add__(QSize s2)'''
         return QSize()
-    def __sub__(self, _s2):
-        """QSize QSize.__sub__(None self, QSize _s2)"""
+    def __sub__(self, s2):
+        '''QSize QSize.__sub__(QSize s2)'''
         return QSize()
-    def __mul__(self, _c):
-        """QSize QSize.__mul__(None self, float _c)"""
+    def __mul__(self, c):
+        '''QSize QSize.__mul__(float c)'''
         return QSize()
-    def __mul__(self, _s):
-        """QSize QSize.__mul__(None self, QSize _s)"""
+    def __mul__(self, s):
+        '''QSize QSize.__mul__(QSize s)'''
         return QSize()
-    def __div__(self, _c):
-        """QSize QSize.__div__(None self, float _c)"""
+    def __div__(self, c):
+        '''QSize QSize.__div__(float c)'''
         return QSize()
-    def boundedTo(self, _otherSize):
-        """QSize QSize.boundedTo(None self, QSize _otherSize)"""
+    def boundedTo(self, otherSize):
+        '''QSize QSize.boundedTo(QSize otherSize)'''
         return QSize()
-    def expandedTo(self, _otherSize):
-        """QSize QSize.expandedTo(None self, QSize _otherSize)"""
+    def expandedTo(self, otherSize):
+        '''QSize QSize.expandedTo(QSize otherSize)'''
         return QSize()
-    def __idiv__(self, _c):
-        """QSize QSize.__idiv__(None self, float _c)"""
+    def __idiv__(self, c):
+        '''QSize QSize.__idiv__(float c)'''
         return QSize()
-    def __imul__(self, _c):
-        """QSize QSize.__imul__(None self, float _c)"""
+    def __imul__(self, c):
+        '''QSize QSize.__imul__(float c)'''
         return QSize()
-    def __isub__(self, _s):
-        """QSize QSize.__isub__(None self, QSize _s)"""
+    def __isub__(self, s):
+        '''QSize QSize.__isub__(QSize s)'''
         return QSize()
-    def __iadd__(self, _s):
-        """QSize QSize.__iadd__(None self, QSize _s)"""
+    def __iadd__(self, s):
+        '''QSize QSize.__iadd__(QSize s)'''
         return QSize()
-    def setHeight(self, _h):
-        """None QSize.setHeight(None self, int _h)"""
-        return None
-    def setWidth(self, _w):
-        """None QSize.setWidth(None self, int _w)"""
-        return None
+    def setHeight(self, h):
+        '''void QSize.setHeight(int h)'''
+    def setWidth(self, w):
+        '''void QSize.setWidth(int w)'''
     def height(self):
-        """int QSize.height(None self)"""
+        '''int QSize.height()'''
         return int()
     def width(self):
-        """int QSize.width(None self)"""
+        '''int QSize.width()'''
         return int()
     def __bool__(self):
-        """int QSize.__bool__(None self)"""
+        '''int QSize.__bool__()'''
         return int()
     def isValid(self):
-        """bool QSize.isValid(None self)"""
+        '''bool QSize.isValid()'''
         return bool()
     def isEmpty(self):
-        """bool QSize.isEmpty(None self)"""
+        '''bool QSize.isEmpty()'''
         return bool()
     def isNull(self):
-        """bool QSize.isNull(None self)"""
+        '''bool QSize.isNull()'''
         return bool()
     def __repr__(self):
-        """str QSize.__repr__(None self)"""
+        '''str QSize.__repr__()'''
         return str()
-    def scale(self, _s, _mode):
-        """None QSize.scale(None self, QSize _s, Qt.AspectRatioMode _mode)"""
-        return None
-    def scale(self, _w, _h, _mode):
-        """None QSize.scale(None self, int _w, int _h, Qt.AspectRatioMode _mode)"""
-        return None
+    def scale(self, s, mode):
+        '''void QSize.scale(QSize s, Qt.AspectRatioMode mode)'''
+    def scale(self, w, h, mode):
+        '''void QSize.scale(int w, int h, Qt.AspectRatioMode mode)'''
     def transpose(self):
-        """None QSize.transpose(None self)"""
-        return None
+        '''void QSize.transpose()'''
 
 
 class QSizeF():
     """"""
     def __init__(self):
-        """None QSizeF.__init__(None self)"""
-        return None
-    def __init__(self, _sz):
-        """None QSizeF.__init__(None self, QSize _sz)"""
-        return None
-    def __init__(self, _w, _h):
-        """None QSizeF.__init__(None self, float _w, float _h)"""
-        return None
+        '''void QSizeF.__init__()'''
+    def __init__(self, sz):
+        '''void QSizeF.__init__(QSize sz)'''
+    def __init__(self, w, h):
+        '''void QSizeF.__init__(float w, float h)'''
     def __init__(self):
-        """QSizeF QSizeF.__init__(None self)"""
+        '''QSizeF QSizeF.__init__()'''
         return QSizeF()
-    def __eq__(self, _s2):
-        """bool QSizeF.__eq__(None self, QSizeF _s2)"""
+    def __eq__(self, s2):
+        '''bool QSizeF.__eq__(QSizeF s2)'''
         return bool()
-    def __ne__(self, _s2):
-        """bool QSizeF.__ne__(None self, QSizeF _s2)"""
+    def __ne__(self, s2):
+        '''bool QSizeF.__ne__(QSizeF s2)'''
         return bool()
-    def __add__(self, _s2):
-        """QSizeF QSizeF.__add__(None self, QSizeF _s2)"""
+    def __add__(self, s2):
+        '''QSizeF QSizeF.__add__(QSizeF s2)'''
         return QSizeF()
-    def __sub__(self, _s2):
-        """QSizeF QSizeF.__sub__(None self, QSizeF _s2)"""
+    def __sub__(self, s2):
+        '''QSizeF QSizeF.__sub__(QSizeF s2)'''
         return QSizeF()
-    def __mul__(self, _c):
-        """QSizeF QSizeF.__mul__(None self, float _c)"""
+    def __mul__(self, c):
+        '''QSizeF QSizeF.__mul__(float c)'''
         return QSizeF()
-    def __mul__(self, _s):
-        """QSizeF QSizeF.__mul__(None self, QSizeF _s)"""
+    def __mul__(self, s):
+        '''QSizeF QSizeF.__mul__(QSizeF s)'''
         return QSizeF()
-    def __div__(self, _c):
-        """QSizeF QSizeF.__div__(None self, float _c)"""
+    def __div__(self, c):
+        '''QSizeF QSizeF.__div__(float c)'''
         return QSizeF()
     def toSize(self):
-        """QSize QSizeF.toSize(None self)"""
+        '''QSize QSizeF.toSize()'''
         return QSize()
-    def boundedTo(self, _otherSize):
-        """QSizeF QSizeF.boundedTo(None self, QSizeF _otherSize)"""
+    def boundedTo(self, otherSize):
+        '''QSizeF QSizeF.boundedTo(QSizeF otherSize)'''
         return QSizeF()
-    def expandedTo(self, _otherSize):
-        """QSizeF QSizeF.expandedTo(None self, QSizeF _otherSize)"""
+    def expandedTo(self, otherSize):
+        '''QSizeF QSizeF.expandedTo(QSizeF otherSize)'''
         return QSizeF()
-    def __idiv__(self, _c):
-        """QSizeF QSizeF.__idiv__(None self, float _c)"""
+    def __idiv__(self, c):
+        '''QSizeF QSizeF.__idiv__(float c)'''
         return QSizeF()
-    def __imul__(self, _c):
-        """QSizeF QSizeF.__imul__(None self, float _c)"""
+    def __imul__(self, c):
+        '''QSizeF QSizeF.__imul__(float c)'''
         return QSizeF()
-    def __isub__(self, _s):
-        """QSizeF QSizeF.__isub__(None self, QSizeF _s)"""
+    def __isub__(self, s):
+        '''QSizeF QSizeF.__isub__(QSizeF s)'''
         return QSizeF()
-    def __iadd__(self, _s):
-        """QSizeF QSizeF.__iadd__(None self, QSizeF _s)"""
+    def __iadd__(self, s):
+        '''QSizeF QSizeF.__iadd__(QSizeF s)'''
         return QSizeF()
-    def setHeight(self, _h):
-        """None QSizeF.setHeight(None self, float _h)"""
-        return None
-    def setWidth(self, _w):
-        """None QSizeF.setWidth(None self, float _w)"""
-        return None
+    def setHeight(self, h):
+        '''void QSizeF.setHeight(float h)'''
+    def setWidth(self, w):
+        '''void QSizeF.setWidth(float w)'''
     def height(self):
-        """float QSizeF.height(None self)"""
+        '''float QSizeF.height()'''
         return float()
     def width(self):
-        """float QSizeF.width(None self)"""
+        '''float QSizeF.width()'''
         return float()
     def __bool__(self):
-        """int QSizeF.__bool__(None self)"""
+        '''int QSizeF.__bool__()'''
         return int()
     def isValid(self):
-        """bool QSizeF.isValid(None self)"""
+        '''bool QSizeF.isValid()'''
         return bool()
     def isEmpty(self):
-        """bool QSizeF.isEmpty(None self)"""
+        '''bool QSizeF.isEmpty()'''
         return bool()
     def isNull(self):
-        """bool QSizeF.isNull(None self)"""
+        '''bool QSizeF.isNull()'''
         return bool()
     def __repr__(self):
-        """str QSizeF.__repr__(None self)"""
+        '''str QSizeF.__repr__()'''
         return str()
-    def scale(self, _s, _mode):
-        """None QSizeF.scale(None self, QSizeF _s, Qt.AspectRatioMode _mode)"""
-        return None
-    def scale(self, _w, _h, _mode):
-        """None QSizeF.scale(None self, float _w, float _h, Qt.AspectRatioMode _mode)"""
-        return None
+    def scale(self, s, mode):
+        '''void QSizeF.scale(QSizeF s, Qt.AspectRatioMode mode)'''
+    def scale(self, w, h, mode):
+        '''void QSizeF.scale(float w, float h, Qt.AspectRatioMode mode)'''
     def transpose(self):
-        """None QSizeF.transpose(None self)"""
-        return None
+        '''void QSizeF.transpose()'''
 
 
 class QSocketNotifier(QObject):
     """"""
-    Read = int() # QSocketNotifier.Type enum
-    Write = int() # QSocketNotifier.Type enum
-    Exception = int() # QSocketNotifier.Type enum
+    # Enum QSocketNotifier.Type
+    Read = 0
+    Write = 0
+    Exception = 0
 
-    def __init__(self, _socket, _type, _parent):
-        """None QSocketNotifier.__init__(None self, int _socket, QSocketNotifier.Type _type, QObject _parent)"""
-        return None
+    def __init__(self, socket, type, parent = None):
+        '''void QSocketNotifier.__init__(int socket, QSocketNotifier.Type type, QObject parent = None)'''
     def event(self):
-        """QEvent QSocketNotifier.event(None self)"""
+        '''QEvent QSocketNotifier.event()'''
         return QEvent()
+    activated = PyQt4.QtCore.pyqtSignal() # void activated(int) - signal
     def setEnabled(self):
-        """bool QSocketNotifier.setEnabled(None self)"""
+        '''bool QSocketNotifier.setEnabled()'''
         return bool()
     def isEnabled(self):
-        """bool QSocketNotifier.isEnabled(None self)"""
+        '''bool QSocketNotifier.isEnabled()'''
         return bool()
     def type(self):
-        """QSocketNotifier.Type QSocketNotifier.type(None self)"""
+        '''QSocketNotifier.Type QSocketNotifier.type()'''
         return QSocketNotifier.Type()
     def socket(self):
-        """int QSocketNotifier.socket(None self)"""
+        '''int QSocketNotifier.socket()'''
         return int()
 
 
 class QState(QAbstractState):
     """"""
-    ExclusiveStates = int() # QState.ChildMode enum
-    ParallelStates = int() # QState.ChildMode enum
+    # Enum QState.ChildMode
+    ExclusiveStates = 0
+    ParallelStates = 0
 
-    def __init__(self, _parent):
-        """None QState.__init__(None self, QState _parent)"""
-        return None
-    def __init__(self, _childMode, _parent):
-        """None QState.__init__(None self, QState.ChildMode _childMode, QState _parent)"""
-        return None
-    def event(self, _e):
-        """bool QState.event(None self, QEvent _e)"""
+    def __init__(self, parent = None):
+        '''void QState.__init__(QState parent = None)'''
+    def __init__(self, childMode, parent = None):
+        '''void QState.__init__(QState.ChildMode childMode, QState parent = None)'''
+    def event(self, e):
+        '''bool QState.event(QEvent e)'''
         return bool()
-    def onExit(self, _event):
-        """None QState.onExit(None self, QEvent _event)"""
-        return None
-    def onEntry(self, _event):
-        """None QState.onEntry(None self, QEvent _event)"""
-        return None
-    def assignProperty(self, _object, _name, _value):
-        """None QState.assignProperty(None self, QObject _object, str _name, QVariant _value)"""
-        return None
-    def setChildMode(self, _mode):
-        """None QState.setChildMode(None self, QState.ChildMode _mode)"""
-        return None
+    def onExit(self, event):
+        '''void QState.onExit(QEvent event)'''
+    def onEntry(self, event):
+        '''void QState.onEntry(QEvent event)'''
+    propertiesAssigned = PyQt4.QtCore.pyqtSignal() # void propertiesAssigned() - signal
+    finished = PyQt4.QtCore.pyqtSignal() # void finished() - signal
+    def assignProperty(self, object, name, value):
+        '''void QState.assignProperty(QObject object, str name, QVariant value)'''
+    def setChildMode(self, mode):
+        '''void QState.setChildMode(QState.ChildMode mode)'''
     def childMode(self):
-        """QState.ChildMode QState.childMode(None self)"""
+        '''QState.ChildMode QState.childMode()'''
         return QState.ChildMode()
-    def setInitialState(self, _state):
-        """None QState.setInitialState(None self, QAbstractState _state)"""
-        return None
+    def setInitialState(self, state):
+        '''void QState.setInitialState(QAbstractState state)'''
     def initialState(self):
-        """QAbstractState QState.initialState(None self)"""
+        '''QAbstractState QState.initialState()'''
         return QAbstractState()
     def transitions(self):
-        """list-of-QAbstractTransition QState.transitions(None self)"""
+        '''list-of-QAbstractTransition QState.transitions()'''
         return [QAbstractTransition()]
-    def removeTransition(self, _transition):
-        """None QState.removeTransition(None self, QAbstractTransition _transition)"""
-        return None
-    def addTransition(self, _transition):
-        """None QState.addTransition(None self, QAbstractTransition _transition)"""
-        return None
-    def addTransition(self, _sender, _signal, _target):
-        """QSignalTransition QState.addTransition(None self, QObject _sender, SIGNAL() _signal, QAbstractState _target)"""
+    def removeTransition(self, transition):
+        '''void QState.removeTransition(QAbstractTransition transition)'''
+    def addTransition(self, transition):
+        '''void QState.addTransition(QAbstractTransition transition)'''
+    def addTransition(self, sender, signal, target):
+        '''QSignalTransition QState.addTransition(QObject sender, SIGNAL() signal, QAbstractState target)'''
         return QSignalTransition()
-    def addTransition(self, _signal, _target):
-        """QSignalTransition QState.addTransition(None self, signal _signal, QAbstractState _target)"""
+    def addTransition(self, signal, target):
+        '''QSignalTransition QState.addTransition(signal signal, QAbstractState target)'''
         return QSignalTransition()
-    def addTransition(self, _target):
-        """QAbstractTransition QState.addTransition(None self, QAbstractState _target)"""
+    def addTransition(self, target):
+        '''QAbstractTransition QState.addTransition(QAbstractState target)'''
         return QAbstractTransition()
-    def setErrorState(self, _state):
-        """None QState.setErrorState(None self, QAbstractState _state)"""
-        return None
+    def setErrorState(self, state):
+        '''void QState.setErrorState(QAbstractState state)'''
     def errorState(self):
-        """QAbstractState QState.errorState(None self)"""
+        '''QAbstractState QState.errorState()'''
         return QAbstractState()
 
 
 class QStateMachine(QState):
     """"""
-    NoError = int() # QStateMachine.Error enum
-    NoInitialStateError = int() # QStateMachine.Error enum
-    NoDefaultStateInHistoryStateError = int() # QStateMachine.Error enum
-    NoCommonAncestorForTransitionError = int() # QStateMachine.Error enum
+    # Enum QStateMachine.Error
+    NoError = 0
+    NoInitialStateError = 0
+    NoDefaultStateInHistoryStateError = 0
+    NoCommonAncestorForTransitionError = 0
 
-    DontRestoreProperties = int() # QStateMachine.RestorePolicy enum
-    RestoreProperties = int() # QStateMachine.RestorePolicy enum
+    # Enum QStateMachine.RestorePolicy
+    DontRestoreProperties = 0
+    RestoreProperties = 0
 
-    NormalPriority = int() # QStateMachine.EventPriority enum
-    HighPriority = int() # QStateMachine.EventPriority enum
+    # Enum QStateMachine.EventPriority
+    NormalPriority = 0
+    HighPriority = 0
 
-    def __init__(self, _parent):
-        """None QStateMachine.__init__(None self, QObject _parent)"""
-        return None
-    def event(self, _e):
-        """bool QStateMachine.event(None self, QEvent _e)"""
+    def __init__(self, parent = None):
+        '''void QStateMachine.__init__(QObject parent = None)'''
+    def event(self, e):
+        '''bool QStateMachine.event(QEvent e)'''
         return bool()
-    def onExit(self, _event):
-        """None QStateMachine.onExit(None self, QEvent _event)"""
-        return None
-    def onEntry(self, _event):
-        """None QStateMachine.onEntry(None self, QEvent _event)"""
-        return None
+    def onExit(self, event):
+        '''void QStateMachine.onExit(QEvent event)'''
+    def onEntry(self, event):
+        '''void QStateMachine.onEntry(QEvent event)'''
+    stopped = PyQt4.QtCore.pyqtSignal() # void stopped() - signal
+    started = PyQt4.QtCore.pyqtSignal() # void started() - signal
     def stop(self):
-        """None QStateMachine.stop(None self)"""
-        return None
+        '''void QStateMachine.stop()'''
     def start(self):
-        """None QStateMachine.start(None self)"""
-        return None
-    def eventFilter(self, _watched, _event):
-        """bool QStateMachine.eventFilter(None self, QObject _watched, QEvent _event)"""
+        '''void QStateMachine.start()'''
+    def eventFilter(self, watched, event):
+        '''bool QStateMachine.eventFilter(QObject watched, QEvent event)'''
         return bool()
     def configuration(self):
-        """list-of-QAbstractState QStateMachine.configuration(None self)"""
+        '''list-of-QAbstractState QStateMachine.configuration()'''
         return [QAbstractState()]
-    def cancelDelayedEvent(self, _id):
-        """bool QStateMachine.cancelDelayedEvent(None self, int _id)"""
+    def cancelDelayedEvent(self, id):
+        '''bool QStateMachine.cancelDelayedEvent(int id)'''
         return bool()
-    def postDelayedEvent(self, _event, _delay):
-        """int QStateMachine.postDelayedEvent(None self, QEvent _event, int _delay)"""
+    def postDelayedEvent(self, event, delay):
+        '''int QStateMachine.postDelayedEvent(QEvent event, int delay)'''
         return int()
-    def postEvent(self, _event, _priority):
-        """None QStateMachine.postEvent(None self, QEvent _event, QStateMachine.EventPriority _priority)"""
-        return None
-    def setGlobalRestorePolicy(self, _restorePolicy):
-        """None QStateMachine.setGlobalRestorePolicy(None self, QStateMachine.RestorePolicy _restorePolicy)"""
-        return None
+    def postEvent(self, event, priority = QStateMachine.NormalPriority):
+        '''void QStateMachine.postEvent(QEvent event, QStateMachine.EventPriority priority = QStateMachine.NormalPriority)'''
+    def setGlobalRestorePolicy(self, restorePolicy):
+        '''void QStateMachine.setGlobalRestorePolicy(QStateMachine.RestorePolicy restorePolicy)'''
     def globalRestorePolicy(self):
-        """QStateMachine.RestorePolicy QStateMachine.globalRestorePolicy(None self)"""
+        '''QStateMachine.RestorePolicy QStateMachine.globalRestorePolicy()'''
         return QStateMachine.RestorePolicy()
-    def removeDefaultAnimation(self, _animation):
-        """None QStateMachine.removeDefaultAnimation(None self, QAbstractAnimation _animation)"""
-        return None
+    def removeDefaultAnimation(self, animation):
+        '''void QStateMachine.removeDefaultAnimation(QAbstractAnimation animation)'''
     def defaultAnimations(self):
-        """list-of-QAbstractAnimation QStateMachine.defaultAnimations(None self)"""
+        '''list-of-QAbstractAnimation QStateMachine.defaultAnimations()'''
         return [QAbstractAnimation()]
-    def addDefaultAnimation(self, _animation):
-        """None QStateMachine.addDefaultAnimation(None self, QAbstractAnimation _animation)"""
-        return None
-    def setAnimated(self, _enabled):
-        """None QStateMachine.setAnimated(None self, bool _enabled)"""
-        return None
+    def addDefaultAnimation(self, animation):
+        '''void QStateMachine.addDefaultAnimation(QAbstractAnimation animation)'''
+    def setAnimated(self, enabled):
+        '''void QStateMachine.setAnimated(bool enabled)'''
     def isAnimated(self):
-        """bool QStateMachine.isAnimated(None self)"""
+        '''bool QStateMachine.isAnimated()'''
         return bool()
     def isRunning(self):
-        """bool QStateMachine.isRunning(None self)"""
+        '''bool QStateMachine.isRunning()'''
         return bool()
     def clearError(self):
-        """None QStateMachine.clearError(None self)"""
-        return None
+        '''void QStateMachine.clearError()'''
     def errorString(self):
-        """QString QStateMachine.errorString(None self)"""
+        '''QString QStateMachine.errorString()'''
         return QString()
     def error(self):
-        """QStateMachine.Error QStateMachine.error(None self)"""
+        '''QStateMachine.Error QStateMachine.error()'''
         return QStateMachine.Error()
-    def removeState(self, _state):
-        """None QStateMachine.removeState(None self, QAbstractState _state)"""
-        return None
-    def addState(self, _state):
-        """None QStateMachine.addState(None self, QAbstractState _state)"""
-        return None
+    def removeState(self, state):
+        '''void QStateMachine.removeState(QAbstractState state)'''
+    def addState(self, state):
+        '''void QStateMachine.addState(QAbstractState state)'''
+    class WrappedEvent(QEvent):
+        """"""
+        def event(self):
+            '''QEvent QStateMachine.WrappedEvent.event()'''
+            return QEvent()
+        def object(self):
+            '''QObject QStateMachine.WrappedEvent.object()'''
+            return QObject()
+    class SignalEvent(QEvent):
+        """"""
+        def arguments(self):
+            '''list-of-QVariant QStateMachine.SignalEvent.arguments()'''
+            return [QVariant()]
+        def signalIndex(self):
+            '''int QStateMachine.SignalEvent.signalIndex()'''
+            return int()
+        def sender(self):
+            '''QObject QStateMachine.SignalEvent.sender()'''
+            return QObject()
 
 
 class QString():
     """"""
-    NormalizationForm_D = int() # QString.NormalizationForm enum
-    NormalizationForm_C = int() # QString.NormalizationForm enum
-    NormalizationForm_KD = int() # QString.NormalizationForm enum
-    NormalizationForm_KC = int() # QString.NormalizationForm enum
+    # Enum QString.NormalizationForm
+    NormalizationForm_D = 0
+    NormalizationForm_C = 0
+    NormalizationForm_KD = 0
+    NormalizationForm_KC = 0
 
-    KeepEmptyParts = int() # QString.SplitBehavior enum
-    SkipEmptyParts = int() # QString.SplitBehavior enum
+    # Enum QString.SplitBehavior
+    KeepEmptyParts = 0
+    SkipEmptyParts = 0
 
-    SectionDefault = int() # QString.SectionFlag enum
-    SectionSkipEmpty = int() # QString.SectionFlag enum
-    SectionIncludeLeadingSep = int() # QString.SectionFlag enum
-    SectionIncludeTrailingSep = int() # QString.SectionFlag enum
-    SectionCaseInsensitiveSeps = int() # QString.SectionFlag enum
+    # Enum QString.SectionFlag
+    SectionDefault = 0
+    SectionSkipEmpty = 0
+    SectionIncludeLeadingSep = 0
+    SectionIncludeTrailingSep = 0
+    SectionCaseInsensitiveSeps = 0
 
     def __init__(self):
-        """None QString.__init__(None self)"""
-        return None
-    def __init__(self, _size, _c):
-        """None QString.__init__(None self, int _size, QChar _c)"""
-        return None
-    def __init__(self, _s):
-        """None QString.__init__(None self, QString _s)"""
-        return None
-    def __init__(self, _a):
-        """None QString.__init__(None self, QByteArray _a)"""
-        return None
+        '''void QString.__init__()'''
+    def __init__(self, size, c):
+        '''void QString.__init__(int size, QChar c)'''
+    def __init__(self, s):
+        '''void QString.__init__(QString s)'''
+    def __init__(self, a):
+        '''void QString.__init__(QByteArray a)'''
     def __init__(self):
-        """QUuid QString.__init__(None self)"""
+        '''QUuid QString.__init__()'''
         return QUuid()
-    def __add__(self, _s2):
-        """QString QString.__add__(None self, QString _s2)"""
+    def __add__(self, s2):
+        '''QString QString.__add__(QString s2)'''
         return QString()
-    def __add__(self, _ba):
-        """QString QString.__add__(None self, QByteArray _ba)"""
+    def __add__(self, ba):
+        '''QString QString.__add__(QByteArray ba)'''
         return QString()
-    def repeated(self, _times):
-        """QString QString.repeated(None self, int _times)"""
+    def repeated(self, times):
+        '''QString QString.repeated(int times)'''
         return QString()
     def toCaseFolded(self):
-        """QString QString.toCaseFolded(None self)"""
+        '''QString QString.toCaseFolded()'''
         return QString()
-    def reserve(self, _asize):
-        """None QString.reserve(None self, int _asize)"""
-        return None
+    def reserve(self, asize):
+        '''void QString.reserve(int asize)'''
     def capacity(self):
-        """int QString.capacity(None self)"""
+        '''int QString.capacity()'''
         return int()
     def clear(self):
-        """None QString.clear(None self)"""
-        return None
+        '''void QString.clear()'''
     def isEmpty(self):
-        """bool QString.isEmpty(None self)"""
+        '''bool QString.isEmpty()'''
         return bool()
-    def __imul__(self, _m):
-        """QString QString.__imul__(None self, int _m)"""
+    def __imul__(self, m):
+        '''QString QString.__imul__(int m)'''
         return QString()
-    def __mul__(self, _m):
-        """QString QString.__mul__(None self, int _m)"""
+    def __mul__(self, m):
+        '''QString QString.__mul__(int m)'''
         return QString()
     def __hash__(self):
-        """int QString.__hash__(None self)"""
+        '''int QString.__hash__()'''
         return int()
     def __str__(self):
-        """str QString.__str__(None self)"""
+        '''str QString.__str__()'''
         return str()
     def __unicode__(self):
-        """unicode QString.__unicode__(None self)"""
+        '''unicode QString.__unicode__()'''
         return unicode()
-    def __contains__(self, _s):
-        """int QString.__contains__(None self, QString _s)"""
+    def __contains__(self, s):
+        '''int QString.__contains__(QString s)'''
         return int()
-    def __getitem__(self, _i):
-        """QString QString.__getitem__(None self, int _i)"""
+    def __getitem__(self, i):
+        '''QString QString.__getitem__(int i)'''
         return QString()
-    def __getitem__(self, _slice):
-        """QString QString.__getitem__(None self, slice _slice)"""
+    def __getitem__(self, slice):
+        '''QString QString.__getitem__(slice slice)'''
         return QString()
-    def at(self, _i):
-        """QChar QString.at(None self, int _i)"""
+    def at(self, i):
+        '''QChar QString.at(int i)'''
         return QChar()
     def length(self):
-        """int QString.length(None self)"""
+        '''int QString.length()'''
         return int()
     def isRightToLeft(self):
-        """bool QString.isRightToLeft(None self)"""
+        '''bool QString.isRightToLeft()'''
         return bool()
     def isSimpleText(self):
-        """bool QString.isSimpleText(None self)"""
+        '''bool QString.isSimpleText()'''
         return bool()
     def isNull(self):
-        """bool QString.isNull(None self)"""
+        '''bool QString.isNull()'''
         return bool()
-    def push_front(self, _s):
-        """None QString.push_front(None self, QString _s)"""
-        return None
-    def push_back(self, _s):
-        """None QString.push_back(None self, QString _s)"""
-        return None
-    def __ge__(self, _s):
-        """bool QString.__ge__(None self, QString _s)"""
+    def push_front(self, s):
+        '''void QString.push_front(QString s)'''
+    def push_back(self, s):
+        '''void QString.push_back(QString s)'''
+    def __ge__(self, s):
+        '''bool QString.__ge__(QString s)'''
         return bool()
-    def __ge__(self, _s):
-        """bool QString.__ge__(None self, QLatin1String _s)"""
+    def __ge__(self, s):
+        '''bool QString.__ge__(QLatin1String s)'''
         return bool()
-    def __ge__(self, _s):
-        """bool QString.__ge__(None self, QByteArray _s)"""
+    def __ge__(self, s):
+        '''bool QString.__ge__(QByteArray s)'''
         return bool()
-    def __le__(self, _s):
-        """bool QString.__le__(None self, QString _s)"""
+    def __le__(self, s):
+        '''bool QString.__le__(QString s)'''
         return bool()
-    def __le__(self, _s):
-        """bool QString.__le__(None self, QLatin1String _s)"""
+    def __le__(self, s):
+        '''bool QString.__le__(QLatin1String s)'''
         return bool()
-    def __le__(self, _s):
-        """bool QString.__le__(None self, QByteArray _s)"""
+    def __le__(self, s):
+        '''bool QString.__le__(QByteArray s)'''
         return bool()
-    def __ne__(self, _s):
-        """bool QString.__ne__(None self, QString _s)"""
+    def __ne__(self, s):
+        '''bool QString.__ne__(QString s)'''
         return bool()
-    def __ne__(self, _s):
-        """bool QString.__ne__(None self, QLatin1String _s)"""
+    def __ne__(self, s):
+        '''bool QString.__ne__(QLatin1String s)'''
         return bool()
-    def __ne__(self, _s):
-        """bool QString.__ne__(None self, QByteArray _s)"""
+    def __ne__(self, s):
+        '''bool QString.__ne__(QByteArray s)'''
         return bool()
-    def __ne__(self, _s2):
-        """bool QString.__ne__(None self, QStringRef _s2)"""
+    def __ne__(self, s2):
+        '''bool QString.__ne__(QStringRef s2)'''
         return bool()
-    def __gt__(self, _s):
-        """bool QString.__gt__(None self, QString _s)"""
+    def __gt__(self, s):
+        '''bool QString.__gt__(QString s)'''
         return bool()
-    def __gt__(self, _s):
-        """bool QString.__gt__(None self, QLatin1String _s)"""
+    def __gt__(self, s):
+        '''bool QString.__gt__(QLatin1String s)'''
         return bool()
-    def __gt__(self, _s):
-        """bool QString.__gt__(None self, QByteArray _s)"""
+    def __gt__(self, s):
+        '''bool QString.__gt__(QByteArray s)'''
         return bool()
-    def __lt__(self, _s):
-        """bool QString.__lt__(None self, QString _s)"""
+    def __lt__(self, s):
+        '''bool QString.__lt__(QString s)'''
         return bool()
-    def __lt__(self, _s):
-        """bool QString.__lt__(None self, QLatin1String _s)"""
+    def __lt__(self, s):
+        '''bool QString.__lt__(QLatin1String s)'''
         return bool()
-    def __lt__(self, _s):
-        """bool QString.__lt__(None self, QByteArray _s)"""
+    def __lt__(self, s):
+        '''bool QString.__lt__(QByteArray s)'''
         return bool()
-    def __eq__(self, _s):
-        """bool QString.__eq__(None self, QString _s)"""
+    def __eq__(self, s):
+        '''bool QString.__eq__(QString s)'''
         return bool()
-    def __eq__(self, _s):
-        """bool QString.__eq__(None self, QLatin1String _s)"""
+    def __eq__(self, s):
+        '''bool QString.__eq__(QLatin1String s)'''
         return bool()
-    def __eq__(self, _s):
-        """bool QString.__eq__(None self, QByteArray _s)"""
+    def __eq__(self, s):
+        '''bool QString.__eq__(QByteArray s)'''
         return bool()
-    def __eq__(self, _s2):
-        """bool QString.__eq__(None self, QStringRef _s2)"""
+    def __eq__(self, s2):
+        '''bool QString.__eq__(QStringRef s2)'''
         return bool()
-    def number(self, _n, _base):
-        """QString QString.number(None self, int _n, int _base)"""
+    def number(self, n, base = 10):
+        '''static QString QString.number(int n, int base = 10)'''
         return QString()
-    def number(self, _n, _format, _precision):
-        """QString QString.number(None self, float _n, str _format, int _precision)"""
+    def number(self, n, format = 'g', precision = 6):
+        '''static QString QString.number(float n, str format = 'g', int precision = 6)'''
         return QString()
-    def number(self, _n, _base):
-        """QString QString.number(None self, int _n, int _base)"""
+    def number(self, n, base = 10):
+        '''static QString QString.number(int n, int base = 10)'''
         return QString()
-    def number(self, _n, _base):
-        """QString QString.number(None self, int _n, int _base)"""
+    def number(self, n, base = 10):
+        '''static QString QString.number(int n, int base = 10)'''
         return QString()
-    def setNum(self, _n, _base):
-        """QString QString.setNum(None self, int _n, int _base)"""
+    def setNum(self, n, base = 10):
+        '''QString QString.setNum(int n, int base = 10)'''
         return QString()
-    def setNum(self, _n, _format, _precision):
-        """QString QString.setNum(None self, float _n, str _format, int _precision)"""
+    def setNum(self, n, format = 'g', precision = 6):
+        '''QString QString.setNum(float n, str format = 'g', int precision = 6)'''
         return QString()
-    def setNum(self, _n, _base):
-        """QString QString.setNum(None self, int _n, int _base)"""
+    def setNum(self, n, base = 10):
+        '''QString QString.setNum(int n, int base = 10)'''
         return QString()
-    def setNum(self, _n, _base):
-        """QString QString.setNum(None self, int _n, int _base)"""
+    def setNum(self, n, base = 10):
+        '''QString QString.setNum(int n, int base = 10)'''
         return QString()
-    def toDouble(self, _ok):
-        """float QString.toDouble(None self, bool _ok)"""
+    def toDouble(self, ok):
+        '''float QString.toDouble(bool ok)'''
         return float()
-    def toFloat(self, _ok):
-        """float QString.toFloat(None self, bool _ok)"""
+    def toFloat(self, ok):
+        '''float QString.toFloat(bool ok)'''
         return float()
-    def toULongLong(self, _ok, _base):
-        """int QString.toULongLong(None self, bool _ok, int _base)"""
+    def toULongLong(self, ok, base = 10):
+        '''int QString.toULongLong(bool ok, int base = 10)'''
         return int()
-    def toLongLong(self, _ok, _base):
-        """int QString.toLongLong(None self, bool _ok, int _base)"""
+    def toLongLong(self, ok, base = 10):
+        '''int QString.toLongLong(bool ok, int base = 10)'''
         return int()
-    def toULong(self, _ok, _base):
-        """int QString.toULong(None self, bool _ok, int _base)"""
+    def toULong(self, ok, base = 10):
+        '''int QString.toULong(bool ok, int base = 10)'''
         return int()
-    def toLong(self, _ok, _base):
-        """int QString.toLong(None self, bool _ok, int _base)"""
+    def toLong(self, ok, base = 10):
+        '''int QString.toLong(bool ok, int base = 10)'''
         return int()
-    def toUInt(self, _ok, _base):
-        """int QString.toUInt(None self, bool _ok, int _base)"""
+    def toUInt(self, ok, base = 10):
+        '''int QString.toUInt(bool ok, int base = 10)'''
         return int()
-    def toInt(self, _ok, _base):
-        """int QString.toInt(None self, bool _ok, int _base)"""
+    def toInt(self, ok, base = 10):
+        '''int QString.toInt(bool ok, int base = 10)'''
         return int()
-    def toUShort(self, _ok, _base):
-        """int QString.toUShort(None self, bool _ok, int _base)"""
+    def toUShort(self, ok, base = 10):
+        '''int QString.toUShort(bool ok, int base = 10)'''
         return int()
-    def toShort(self, _ok, _base):
-        """int QString.toShort(None self, bool _ok, int _base)"""
+    def toShort(self, ok, base = 10):
+        '''int QString.toShort(bool ok, int base = 10)'''
         return int()
-    def localeAwareCompare(self, _s):
-        """int QString.localeAwareCompare(None self, QString _s)"""
+    def localeAwareCompare(self, s):
+        '''int QString.localeAwareCompare(QString s)'''
         return int()
-    def localeAwareCompare(self, _s):
-        """int QString.localeAwareCompare(None self, QStringRef _s)"""
+    def localeAwareCompare(self, s):
+        '''int QString.localeAwareCompare(QStringRef s)'''
         return int()
-    def localeAwareCompare(self, _s1, _s2):
-        """int QString.localeAwareCompare(None self, QString _s1, QString _s2)"""
+    def localeAwareCompare(self, s1, s2):
+        '''static int QString.localeAwareCompare(QString s1, QString s2)'''
         return int()
-    def localeAwareCompare(self, _s1, _s2):
-        """int QString.localeAwareCompare(None self, QString _s1, QStringRef _s2)"""
+    def localeAwareCompare(self, s1, s2):
+        '''static int QString.localeAwareCompare(QString s1, QStringRef s2)'''
         return int()
-    def compare(self, _s):
-        """int QString.compare(None self, QString _s)"""
+    def compare(self, s):
+        '''int QString.compare(QString s)'''
         return int()
-    def compare(self, _s, _cs):
-        """int QString.compare(None self, QString _s, Qt.CaseSensitivity _cs)"""
+    def compare(self, s, cs):
+        '''int QString.compare(QString s, Qt.CaseSensitivity cs)'''
         return int()
-    def compare(self, _other, _cs):
-        """int QString.compare(None self, QLatin1String _other, Qt.CaseSensitivity _cs)"""
+    def compare(self, other, cs = Qt.CaseSensitive):
+        '''int QString.compare(QLatin1String other, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def compare(self, _ref, _cs):
-        """int QString.compare(None self, QStringRef _ref, Qt.CaseSensitivity _cs)"""
+    def compare(self, ref, cs = Qt.CaseSensitive):
+        '''int QString.compare(QStringRef ref, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def compare(self, _s1, _s2):
-        """int QString.compare(None self, QString _s1, QString _s2)"""
+    def compare(self, s1, s2):
+        '''static int QString.compare(QString s1, QString s2)'''
         return int()
-    def compare(self, _s1, _s2, _cs):
-        """int QString.compare(None self, QString _s1, QString _s2, Qt.CaseSensitivity _cs)"""
+    def compare(self, s1, s2, cs):
+        '''static int QString.compare(QString s1, QString s2, Qt.CaseSensitivity cs)'''
         return int()
-    def compare(self, _s1, _s2, _cs):
-        """int QString.compare(None self, QString _s1, QLatin1String _s2, Qt.CaseSensitivity _cs)"""
+    def compare(self, s1, s2, cs = Qt.CaseSensitive):
+        '''static int QString.compare(QString s1, QLatin1String s2, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def compare(self, _s1, _s2, _cs):
-        """int QString.compare(None self, QLatin1String _s1, QString _s2, Qt.CaseSensitivity _cs)"""
+    def compare(self, s1, s2, cs = Qt.CaseSensitive):
+        '''static int QString.compare(QLatin1String s1, QString s2, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def compare(self, _s1, _s2, _cs):
-        """int QString.compare(None self, QString _s1, QStringRef _s2, Qt.CaseSensitivity _cs)"""
+    def compare(self, s1, s2, cs = Qt.CaseSensitive):
+        '''static int QString.compare(QString s1, QStringRef s2, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def fromLocal8Bit(self, _str, _size):
-        """QString QString.fromLocal8Bit(None self, str _str, int _size)"""
+    def fromLocal8Bit(self, str, size = -1):
+        '''static QString QString.fromLocal8Bit(str str, int size = -1)'''
         return QString()
-    def fromUtf8(self, _str, _size):
-        """QString QString.fromUtf8(None self, str _str, int _size)"""
+    def fromUtf8(self, str, size = -1):
+        '''static QString QString.fromUtf8(str str, int size = -1)'''
         return QString()
-    def fromLatin1(self, _str, _size):
-        """QString QString.fromLatin1(None self, str _str, int _size)"""
+    def fromLatin1(self, str, size = -1):
+        '''static QString QString.fromLatin1(str str, int size = -1)'''
         return QString()
-    def fromAscii(self, _str, _size):
-        """QString QString.fromAscii(None self, str _str, int _size)"""
+    def fromAscii(self, str, size = -1):
+        '''static QString QString.fromAscii(str str, int size = -1)'''
         return QString()
     def toLocal8Bit(self):
-        """QByteArray QString.toLocal8Bit(None self)"""
+        '''QByteArray QString.toLocal8Bit()'''
         return QByteArray()
     def toUtf8(self):
-        """QByteArray QString.toUtf8(None self)"""
+        '''QByteArray QString.toUtf8()'''
         return QByteArray()
     def toLatin1(self):
-        """QByteArray QString.toLatin1(None self)"""
+        '''QByteArray QString.toLatin1()'''
         return QByteArray()
     def toAscii(self):
-        """QByteArray QString.toAscii(None self)"""
+        '''QByteArray QString.toAscii()'''
         return QByteArray()
-    def normalized(self, _mode):
-        """QString QString.normalized(None self, QString.NormalizationForm _mode)"""
+    def normalized(self, mode):
+        '''QString QString.normalized(QString.NormalizationForm mode)'''
         return QString()
-    def normalized(self, _mode, _version):
-        """QString QString.normalized(None self, QString.NormalizationForm _mode, QChar.UnicodeVersion _version)"""
+    def normalized(self, mode, version):
+        '''QString QString.normalized(QString.NormalizationForm mode, QChar.UnicodeVersion version)'''
         return QString()
-    def split(self, _sep, _behavior, _cs):
-        """QStringList QString.split(None self, QString _sep, QString.SplitBehavior _behavior, Qt.CaseSensitivity _cs)"""
+    def split(self, sep, behavior = QString.KeepEmptyParts, cs = Qt.CaseSensitive):
+        '''QStringList QString.split(QString sep, QString.SplitBehavior behavior = QString.KeepEmptyParts, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return QStringList()
-    def split(self, _sep, _behavior):
-        """QStringList QString.split(None self, QRegExp _sep, QString.SplitBehavior _behavior)"""
+    def split(self, sep, behavior = QString.KeepEmptyParts):
+        '''QStringList QString.split(QRegExp sep, QString.SplitBehavior behavior = QString.KeepEmptyParts)'''
         return QStringList()
-    def replace(self, _i, _len, _after):
-        """QString QString.replace(None self, int _i, int _len, QString _after)"""
+    def replace(self, i, len, after):
+        '''QString QString.replace(int i, int len, QString after)'''
         return QString()
-    def replace(self, _before, _after, _cs):
-        """QString QString.replace(None self, QString _before, QString _after, Qt.CaseSensitivity _cs)"""
+    def replace(self, before, after, cs = Qt.CaseSensitive):
+        '''QString QString.replace(QString before, QString after, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return QString()
-    def replace(self, _rx, _after):
-        """QString QString.replace(None self, QRegExp _rx, QString _after)"""
+    def replace(self, rx, after):
+        '''QString QString.replace(QRegExp rx, QString after)'''
         return QString()
-    def replace(self, _before, _after, _cs):
-        """QString QString.replace(None self, QLatin1String _before, QLatin1String _after, Qt.CaseSensitivity _cs)"""
+    def replace(self, before, after, cs = Qt.CaseSensitive):
+        '''QString QString.replace(QLatin1String before, QLatin1String after, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return QString()
-    def replace(self, _before, _after, _cs):
-        """QString QString.replace(None self, QLatin1String _before, QString _after, Qt.CaseSensitivity _cs)"""
+    def replace(self, before, after, cs = Qt.CaseSensitive):
+        '''QString QString.replace(QLatin1String before, QString after, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return QString()
-    def replace(self, _before, _after, _cs):
-        """QString QString.replace(None self, QString _before, QLatin1String _after, Qt.CaseSensitivity _cs)"""
+    def replace(self, before, after, cs = Qt.CaseSensitive):
+        '''QString QString.replace(QString before, QLatin1String after, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return QString()
-    def remove(self, _i, _len):
-        """QString QString.remove(None self, int _i, int _len)"""
+    def remove(self, i, len):
+        '''QString QString.remove(int i, int len)'''
         return QString()
-    def remove(self, _str, _cs):
-        """QString QString.remove(None self, QString _str, Qt.CaseSensitivity _cs)"""
+    def remove(self, str, cs = Qt.CaseSensitive):
+        '''QString QString.remove(QString str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return QString()
-    def remove(self, _rx):
-        """QString QString.remove(None self, QRegExp _rx)"""
+    def remove(self, rx):
+        '''QString QString.remove(QRegExp rx)'''
         return QString()
-    def __iadd__(self, _c):
-        """QString QString.__iadd__(None self, QChar.SpecialCharacter _c)"""
+    def __iadd__(self, c):
+        '''QString QString.__iadd__(QChar.SpecialCharacter c)'''
         return QString()
-    def __iadd__(self, _s):
-        """QString QString.__iadd__(None self, QString _s)"""
+    def __iadd__(self, s):
+        '''QString QString.__iadd__(QString s)'''
         return QString()
-    def __iadd__(self, _s):
-        """QString QString.__iadd__(None self, QLatin1String _s)"""
+    def __iadd__(self, s):
+        '''QString QString.__iadd__(QLatin1String s)'''
         return QString()
-    def __iadd__(self, _s):
-        """QString QString.__iadd__(None self, QByteArray _s)"""
+    def __iadd__(self, s):
+        '''QString QString.__iadd__(QByteArray s)'''
         return QString()
-    def prepend(self, _s):
-        """QString QString.prepend(None self, QString _s)"""
+    def prepend(self, s):
+        '''QString QString.prepend(QString s)'''
         return QString()
-    def prepend(self, _s):
-        """QString QString.prepend(None self, QLatin1String _s)"""
+    def prepend(self, s):
+        '''QString QString.prepend(QLatin1String s)'''
         return QString()
-    def prepend(self, _s):
-        """QString QString.prepend(None self, QByteArray _s)"""
+    def prepend(self, s):
+        '''QString QString.prepend(QByteArray s)'''
         return QString()
-    def append(self, _s):
-        """QString QString.append(None self, QString _s)"""
+    def append(self, s):
+        '''QString QString.append(QString s)'''
         return QString()
-    def append(self, _s):
-        """QString QString.append(None self, QLatin1String _s)"""
+    def append(self, s):
+        '''QString QString.append(QLatin1String s)'''
         return QString()
-    def append(self, _s):
-        """QString QString.append(None self, QByteArray _s)"""
+    def append(self, s):
+        '''QString QString.append(QByteArray s)'''
         return QString()
-    def insert(self, _i, _s):
-        """QString QString.insert(None self, int _i, QString _s)"""
+    def insert(self, i, s):
+        '''QString QString.insert(int i, QString s)'''
         return QString()
-    def insert(self, _i, _s):
-        """QString QString.insert(None self, int _i, QLatin1String _s)"""
+    def insert(self, i, s):
+        '''QString QString.insert(int i, QLatin1String s)'''
         return QString()
     def simplified(self):
-        """QString QString.simplified(None self)"""
+        '''QString QString.simplified()'''
         return QString()
     def trimmed(self):
-        """QString QString.trimmed(None self)"""
+        '''QString QString.trimmed()'''
         return QString()
     def toUpper(self):
-        """QString QString.toUpper(None self)"""
+        '''QString QString.toUpper()'''
         return QString()
     def toLower(self):
-        """QString QString.toLower(None self)"""
+        '''QString QString.toLower()'''
         return QString()
-    def rightJustified(self, _width, _fillChar, _truncate):
-        """QString QString.rightJustified(None self, int _width, QChar _fillChar, bool _truncate)"""
+    def rightJustified(self, width, fillChar = QLatin1Char(' '), truncate = False):
+        '''QString QString.rightJustified(int width, QChar fillChar = QLatin1Char(' '), bool truncate = False)'''
         return QString()
-    def leftJustified(self, _width, _fillChar, _truncate):
-        """QString QString.leftJustified(None self, int _width, QChar _fillChar, bool _truncate)"""
+    def leftJustified(self, width, fillChar = QLatin1Char(' '), truncate = False):
+        '''QString QString.leftJustified(int width, QChar fillChar = QLatin1Char(' '), bool truncate = False)'''
         return QString()
-    def endsWith(self, _s, _cs):
-        """bool QString.endsWith(None self, QString _s, Qt.CaseSensitivity _cs)"""
+    def endsWith(self, s, cs = Qt.CaseSensitive):
+        '''bool QString.endsWith(QString s, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
-    def endsWith(self, _s, _cs):
-        """bool QString.endsWith(None self, QLatin1String _s, Qt.CaseSensitivity _cs)"""
+    def endsWith(self, s, cs = Qt.CaseSensitive):
+        '''bool QString.endsWith(QLatin1String s, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
-    def startsWith(self, _s, _cs):
-        """bool QString.startsWith(None self, QString _s, Qt.CaseSensitivity _cs)"""
+    def startsWith(self, s, cs = Qt.CaseSensitive):
+        '''bool QString.startsWith(QString s, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
-    def startsWith(self, _s, _cs):
-        """bool QString.startsWith(None self, QLatin1String _s, Qt.CaseSensitivity _cs)"""
+    def startsWith(self, s, cs = Qt.CaseSensitive):
+        '''bool QString.startsWith(QLatin1String s, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
-    def mid(self, _position, _n):
-        """QString QString.mid(None self, int _position, int _n)"""
+    def mid(self, position, n = -1):
+        '''QString QString.mid(int position, int n = -1)'''
         return QString()
-    def right(self, _len):
-        """QString QString.right(None self, int _len)"""
+    def right(self, len):
+        '''QString QString.right(int len)'''
         return QString()
-    def left(self, _len):
-        """QString QString.left(None self, int _len)"""
+    def left(self, len):
+        '''QString QString.left(int len)'''
         return QString()
-    def section(self, _sep, _start, _end, _flags):
-        """QString QString.section(None self, QString _sep, int _start, int _end, QString.SectionFlags _flags)"""
+    def section(self, sep, start, end = -1, flags = QString.SectionDefault):
+        '''QString QString.section(QString sep, int start, int end = -1, QString.SectionFlags flags = QString.SectionDefault)'''
         return QString()
-    def section(self, _reg, _start, _end, _flags):
-        """QString QString.section(None self, QRegExp _reg, int _start, int _end, QString.SectionFlags _flags)"""
+    def section(self, reg, start, end = -1, flags = QString.SectionDefault):
+        '''QString QString.section(QRegExp reg, int start, int end = -1, QString.SectionFlags flags = QString.SectionDefault)'''
         return QString()
-    def contains(self, _str, _cs):
-        """bool QString.contains(None self, QString _str, Qt.CaseSensitivity _cs)"""
+    def contains(self, str, cs = Qt.CaseSensitive):
+        '''bool QString.contains(QString str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
-    def contains(self, _rx):
-        """bool QString.contains(None self, QRegExp _rx)"""
+    def contains(self, rx):
+        '''bool QString.contains(QRegExp rx)'''
         return bool()
-    def lastIndexOf(self, _str, _from, _cs):
-        """int QString.lastIndexOf(None self, QString _str, int _from, Qt.CaseSensitivity _cs)"""
+    def lastIndexOf(self, str, from_ = -1, cs = Qt.CaseSensitive):
+        '''int QString.lastIndexOf(QString str, int from = -1, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def lastIndexOf(self, _str, _from, _cs):
-        """int QString.lastIndexOf(None self, QLatin1String _str, int _from, Qt.CaseSensitivity _cs)"""
+    def lastIndexOf(self, str, from_ = -1, cs = Qt.CaseSensitive):
+        '''int QString.lastIndexOf(QLatin1String str, int from = -1, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def lastIndexOf(self, _rx, _from):
-        """int QString.lastIndexOf(None self, QRegExp _rx, int _from)"""
+    def lastIndexOf(self, rx, from_ = -1):
+        '''int QString.lastIndexOf(QRegExp rx, int from = -1)'''
         return int()
-    def indexOf(self, _str, _from, _cs):
-        """int QString.indexOf(None self, QString _str, int _from, Qt.CaseSensitivity _cs)"""
+    def indexOf(self, str, from_ = 0, cs = Qt.CaseSensitive):
+        '''int QString.indexOf(QString str, int from = 0, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def indexOf(self, _str, _from, _cs):
-        """int QString.indexOf(None self, QLatin1String _str, int _from, Qt.CaseSensitivity _cs)"""
+    def indexOf(self, str, from_ = 0, cs = Qt.CaseSensitive):
+        '''int QString.indexOf(QLatin1String str, int from = 0, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def indexOf(self, _rx, _from):
-        """int QString.indexOf(None self, QRegExp _rx, int _from)"""
+    def indexOf(self, rx, from_ = 0):
+        '''int QString.indexOf(QRegExp rx, int from = 0)'''
         return int()
-    def arg(self, _a, _fieldWidth, _base, _fillChar):
-        """QString QString.arg(None self, int _a, int _fieldWidth, int _base, QChar _fillChar)"""
+    def arg(self, a, fieldWidth = 0, base = 10, fillChar = QLatin1Char(' ')):
+        '''QString QString.arg(int a, int fieldWidth = 0, int base = 10, QChar fillChar = QLatin1Char(' '))'''
         return QString()
-    def arg(self, _a, _fieldWidth, _format, _precision, _fillChar):
-        """QString QString.arg(None self, float _a, int _fieldWidth, str _format, int _precision, QChar _fillChar)"""
+    def arg(self, a, fieldWidth = 0, format = 'g', precision = -1, fillChar = QLatin1Char(' ')):
+        '''QString QString.arg(float a, int fieldWidth = 0, str format = 'g', int precision = -1, QChar fillChar = QLatin1Char(' '))'''
         return QString()
-    def arg(self, _a, _fieldWidth, _base, _fillChar):
-        """QString QString.arg(None self, int _a, int _fieldWidth, int _base, QChar _fillChar)"""
+    def arg(self, a, fieldWidth = 0, base = 10, fillChar = QLatin1Char(' ')):
+        '''QString QString.arg(int a, int fieldWidth = 0, int base = 10, QChar fillChar = QLatin1Char(' '))'''
         return QString()
-    def arg(self, _a, _fieldWidth, _base, _fillChar):
-        """QString QString.arg(None self, int _a, int _fieldWidth, int _base, QChar _fillChar)"""
+    def arg(self, a, fieldWidth = 0, base = 10, fillChar = QLatin1Char(' ')):
+        '''QString QString.arg(int a, int fieldWidth = 0, int base = 10, QChar fillChar = QLatin1Char(' '))'''
         return QString()
-    def arg(self, _a, _fieldWidth, _fillChar):
-        """QString QString.arg(None self, QString _a, int _fieldWidth, QChar _fillChar)"""
+    def arg(self, a, fieldWidth = 0, fillChar = QLatin1Char(' ')):
+        '''QString QString.arg(QString a, int fieldWidth = 0, QChar fillChar = QLatin1Char(' '))'''
         return QString()
-    def arg(self, _a1, _a2):
-        """QString QString.arg(None self, QString _a1, QString _a2)"""
+    def arg(self, a1, a2):
+        '''QString QString.arg(QString a1, QString a2)'''
         return QString()
-    def arg(self, _a1, _a2, _a3):
-        """QString QString.arg(None self, QString _a1, QString _a2, QString _a3)"""
+    def arg(self, a1, a2, a3):
+        '''QString QString.arg(QString a1, QString a2, QString a3)'''
         return QString()
-    def arg(self, _a1, _a2, _a3, _a4):
-        """QString QString.arg(None self, QString _a1, QString _a2, QString _a3, QString _a4)"""
+    def arg(self, a1, a2, a3, a4):
+        '''QString QString.arg(QString a1, QString a2, QString a3, QString a4)'''
         return QString()
-    def arg(self, _a1, _a2, _a3, _a4, _a5):
-        """QString QString.arg(None self, QString _a1, QString _a2, QString _a3, QString _a4, QString _a5)"""
+    def arg(self, a1, a2, a3, a4, a5):
+        '''QString QString.arg(QString a1, QString a2, QString a3, QString a4, QString a5)'''
         return QString()
-    def arg(self, _a1, _a2, _a3, _a4, _a5, _a6):
-        """QString QString.arg(None self, QString _a1, QString _a2, QString _a3, QString _a4, QString _a5, QString _a6)"""
+    def arg(self, a1, a2, a3, a4, a5, a6):
+        '''QString QString.arg(QString a1, QString a2, QString a3, QString a4, QString a5, QString a6)'''
         return QString()
-    def arg(self, _a1, _a2, _a3, _a4, _a5, _a6, _a7):
-        """QString QString.arg(None self, QString _a1, QString _a2, QString _a3, QString _a4, QString _a5, QString _a6, QString _a7)"""
+    def arg(self, a1, a2, a3, a4, a5, a6, a7):
+        '''QString QString.arg(QString a1, QString a2, QString a3, QString a4, QString a5, QString a6, QString a7)'''
         return QString()
-    def arg(self, _a1, _a2, _a3, _a4, _a5, _a6, _a7, _a8):
-        """QString QString.arg(None self, QString _a1, QString _a2, QString _a3, QString _a4, QString _a5, QString _a6, QString _a7, QString _a8)"""
+    def arg(self, a1, a2, a3, a4, a5, a6, a7, a8):
+        '''QString QString.arg(QString a1, QString a2, QString a3, QString a4, QString a5, QString a6, QString a7, QString a8)'''
         return QString()
-    def arg(self, _a1, _a2, _a3, _a4, _a5, _a6, _a7, _a8, _a9):
-        """QString QString.arg(None self, QString _a1, QString _a2, QString _a3, QString _a4, QString _a5, QString _a6, QString _a7, QString _a8, QString _a9)"""
+    def arg(self, a1, a2, a3, a4, a5, a6, a7, a8, a9):
+        '''QString QString.arg(QString a1, QString a2, QString a3, QString a4, QString a5, QString a6, QString a7, QString a8, QString a9)'''
         return QString()
     def squeeze(self):
-        """None QString.squeeze(None self)"""
-        return None
-    def chop(self, _n):
-        """None QString.chop(None self, int _n)"""
-        return None
-    def truncate(self, _pos):
-        """None QString.truncate(None self, int _pos)"""
-        return None
-    def fill(self, _ch, _size):
-        """QString QString.fill(None self, QChar _ch, int _size)"""
+        '''void QString.squeeze()'''
+    def chop(self, n):
+        '''void QString.chop(int n)'''
+    def truncate(self, pos):
+        '''void QString.truncate(int pos)'''
+    def fill(self, ch, size = -1):
+        '''QString QString.fill(QChar ch, int size = -1)'''
         return QString()
-    def resize(self, _size):
-        """None QString.resize(None self, int _size)"""
-        return None
+    def resize(self, size):
+        '''void QString.resize(int size)'''
     def __len__(self):
-        """ QString.__len__(None self)"""
+        ''' QString.__len__()'''
         return ()
     def count(self):
-        """int QString.count(None self)"""
+        '''int QString.count()'''
         return int()
-    def count(self, _str, _cs):
-        """int QString.count(None self, QString _str, Qt.CaseSensitivity _cs)"""
+    def count(self, str, cs = Qt.CaseSensitive):
+        '''int QString.count(QString str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
     def count(self):
-        """QRegExp QString.count(None self)"""
+        '''QRegExp QString.count()'''
         return QRegExp()
     def size(self):
-        """int QString.size(None self)"""
+        '''int QString.size()'''
         return int()
     def __repr__(self):
-        """str QString.__repr__(None self)"""
+        '''str QString.__repr__()'''
         return str()
+    class SectionFlags():
+        """"""
+        def __init__(self):
+            '''QString.SectionFlags QString.SectionFlags.__init__()'''
+            return QString.SectionFlags()
+        def __init__(self):
+            '''int QString.SectionFlags.__init__()'''
+            return int()
+        def __init__(self):
+            '''void QString.SectionFlags.__init__()'''
+        def __bool__(self):
+            '''int QString.SectionFlags.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool QString.SectionFlags.__ne__(QString.SectionFlags f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool QString.SectionFlags.__eq__(QString.SectionFlags f)'''
+            return bool()
+        def __invert__(self):
+            '''QString.SectionFlags QString.SectionFlags.__invert__()'''
+            return QString.SectionFlags()
+        def __and__(self, mask):
+            '''QString.SectionFlags QString.SectionFlags.__and__(int mask)'''
+            return QString.SectionFlags()
+        def __xor__(self, f):
+            '''QString.SectionFlags QString.SectionFlags.__xor__(QString.SectionFlags f)'''
+            return QString.SectionFlags()
+        def __xor__(self, f):
+            '''QString.SectionFlags QString.SectionFlags.__xor__(int f)'''
+            return QString.SectionFlags()
+        def __or__(self, f):
+            '''QString.SectionFlags QString.SectionFlags.__or__(QString.SectionFlags f)'''
+            return QString.SectionFlags()
+        def __or__(self, f):
+            '''QString.SectionFlags QString.SectionFlags.__or__(int f)'''
+            return QString.SectionFlags()
+        def __int__(self):
+            '''int QString.SectionFlags.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''QString.SectionFlags QString.SectionFlags.__ixor__(QString.SectionFlags f)'''
+            return QString.SectionFlags()
+        def __ior__(self, f):
+            '''QString.SectionFlags QString.SectionFlags.__ior__(QString.SectionFlags f)'''
+            return QString.SectionFlags()
+        def __iand__(self, mask):
+            '''QString.SectionFlags QString.SectionFlags.__iand__(int mask)'''
+            return QString.SectionFlags()
 
 
 class QLatin1String():
     """"""
-    def __init__(self, _s):
-        """None QLatin1String.__init__(None self, str _s)"""
-        return None
+    def __init__(self, s):
+        '''void QLatin1String.__init__(str s)'''
     def __init__(self):
-        """QLatin1String QLatin1String.__init__(None self)"""
+        '''QLatin1String QLatin1String.__init__()'''
         return QLatin1String()
-    def __le__(self, _s):
-        """bool QLatin1String.__le__(None self, QString _s)"""
+    def __le__(self, s):
+        '''bool QLatin1String.__le__(QString s)'''
         return bool()
-    def __le__(self, _s2):
-        """bool QLatin1String.__le__(None self, QLatin1String _s2)"""
+    def __le__(self, s2):
+        '''bool QLatin1String.__le__(QLatin1String s2)'''
         return bool()
-    def __ge__(self, _s):
-        """bool QLatin1String.__ge__(None self, QString _s)"""
+    def __ge__(self, s):
+        '''bool QLatin1String.__ge__(QString s)'''
         return bool()
-    def __ge__(self, _s2):
-        """bool QLatin1String.__ge__(None self, QLatin1String _s2)"""
+    def __ge__(self, s2):
+        '''bool QLatin1String.__ge__(QLatin1String s2)'''
         return bool()
-    def __lt__(self, _s):
-        """bool QLatin1String.__lt__(None self, QString _s)"""
+    def __lt__(self, s):
+        '''bool QLatin1String.__lt__(QString s)'''
         return bool()
-    def __lt__(self, _s2):
-        """bool QLatin1String.__lt__(None self, QLatin1String _s2)"""
+    def __lt__(self, s2):
+        '''bool QLatin1String.__lt__(QLatin1String s2)'''
         return bool()
-    def __gt__(self, _s):
-        """bool QLatin1String.__gt__(None self, QString _s)"""
+    def __gt__(self, s):
+        '''bool QLatin1String.__gt__(QString s)'''
         return bool()
-    def __gt__(self, _s2):
-        """bool QLatin1String.__gt__(None self, QLatin1String _s2)"""
+    def __gt__(self, s2):
+        '''bool QLatin1String.__gt__(QLatin1String s2)'''
         return bool()
-    def __ne__(self, _s):
-        """bool QLatin1String.__ne__(None self, QString _s)"""
+    def __ne__(self, s):
+        '''bool QLatin1String.__ne__(QString s)'''
         return bool()
-    def __ne__(self, _s2):
-        """bool QLatin1String.__ne__(None self, QLatin1String _s2)"""
+    def __ne__(self, s2):
+        '''bool QLatin1String.__ne__(QLatin1String s2)'''
         return bool()
-    def __ne__(self, _s2):
-        """bool QLatin1String.__ne__(None self, QStringRef _s2)"""
+    def __ne__(self, s2):
+        '''bool QLatin1String.__ne__(QStringRef s2)'''
         return bool()
-    def __eq__(self, _s):
-        """bool QLatin1String.__eq__(None self, QString _s)"""
+    def __eq__(self, s):
+        '''bool QLatin1String.__eq__(QString s)'''
         return bool()
-    def __eq__(self, _s2):
-        """bool QLatin1String.__eq__(None self, QLatin1String _s2)"""
+    def __eq__(self, s2):
+        '''bool QLatin1String.__eq__(QLatin1String s2)'''
         return bool()
-    def __eq__(self, _s2):
-        """bool QLatin1String.__eq__(None self, QStringRef _s2)"""
+    def __eq__(self, s2):
+        '''bool QLatin1String.__eq__(QStringRef s2)'''
         return bool()
     def latin1(self):
-        """str QLatin1String.latin1(None self)"""
+        '''str QLatin1String.latin1()'''
         return str()
     def __repr__(self):
-        """str QLatin1String.__repr__(None self)"""
+        '''str QLatin1String.__repr__()'''
         return str()
 
 
 class QStringRef():
     """"""
     def __init__(self):
-        """None QStringRef.__init__(None self)"""
-        return None
-    def __init__(self, _aString, _aPosition, _aSize):
-        """None QStringRef.__init__(None self, QString _aString, int _aPosition, int _aSize)"""
-        return None
-    def __init__(self, _aString):
-        """None QStringRef.__init__(None self, QString _aString)"""
-        return None
-    def __init__(self, _other):
-        """None QStringRef.__init__(None self, QStringRef _other)"""
-        return None
-    def __eq__(self, _s2):
-        """bool QStringRef.__eq__(None self, QStringRef _s2)"""
+        '''void QStringRef.__init__()'''
+    def __init__(self, aString, aPosition, aSize):
+        '''void QStringRef.__init__(QString aString, int aPosition, int aSize)'''
+    def __init__(self, aString):
+        '''void QStringRef.__init__(QString aString)'''
+    def __init__(self, other):
+        '''void QStringRef.__init__(QStringRef other)'''
+    def __eq__(self, s2):
+        '''bool QStringRef.__eq__(QStringRef s2)'''
         return bool()
-    def __eq__(self, _s2):
-        """bool QStringRef.__eq__(None self, QString _s2)"""
+    def __eq__(self, s2):
+        '''bool QStringRef.__eq__(QString s2)'''
         return bool()
-    def __eq__(self, _s2):
-        """bool QStringRef.__eq__(None self, QLatin1String _s2)"""
+    def __eq__(self, s2):
+        '''bool QStringRef.__eq__(QLatin1String s2)'''
         return bool()
-    def __ne__(self, _s2):
-        """bool QStringRef.__ne__(None self, QStringRef _s2)"""
+    def __ne__(self, s2):
+        '''bool QStringRef.__ne__(QStringRef s2)'''
         return bool()
-    def __ne__(self, _s2):
-        """bool QStringRef.__ne__(None self, QString _s2)"""
+    def __ne__(self, s2):
+        '''bool QStringRef.__ne__(QString s2)'''
         return bool()
-    def __ne__(self, _s2):
-        """bool QStringRef.__ne__(None self, QLatin1String _s2)"""
+    def __ne__(self, s2):
+        '''bool QStringRef.__ne__(QLatin1String s2)'''
         return bool()
-    def __lt__(self, _s2):
-        """bool QStringRef.__lt__(None self, QStringRef _s2)"""
+    def __lt__(self, s2):
+        '''bool QStringRef.__lt__(QStringRef s2)'''
         return bool()
-    def __le__(self, _s2):
-        """bool QStringRef.__le__(None self, QStringRef _s2)"""
+    def __le__(self, s2):
+        '''bool QStringRef.__le__(QStringRef s2)'''
         return bool()
-    def __gt__(self, _s2):
-        """bool QStringRef.__gt__(None self, QStringRef _s2)"""
+    def __gt__(self, s2):
+        '''bool QStringRef.__gt__(QStringRef s2)'''
         return bool()
-    def __ge__(self, _s2):
-        """bool QStringRef.__ge__(None self, QStringRef _s2)"""
+    def __ge__(self, s2):
+        '''bool QStringRef.__ge__(QStringRef s2)'''
         return bool()
     def __str__(self):
-        """str QStringRef.__str__(None self)"""
+        '''str QStringRef.__str__()'''
         return str()
     def __unicode__(self):
-        """unicode QStringRef.__unicode__(None self)"""
+        '''unicode QStringRef.__unicode__()'''
         return unicode()
-    def localeAwareCompare(self, _s):
-        """int QStringRef.localeAwareCompare(None self, QString _s)"""
+    def localeAwareCompare(self, s):
+        '''int QStringRef.localeAwareCompare(QString s)'''
         return int()
-    def localeAwareCompare(self, _s):
-        """int QStringRef.localeAwareCompare(None self, QStringRef _s)"""
+    def localeAwareCompare(self, s):
+        '''int QStringRef.localeAwareCompare(QStringRef s)'''
         return int()
-    def localeAwareCompare(self, _s1, _s2):
-        """int QStringRef.localeAwareCompare(None self, QStringRef _s1, QString _s2)"""
+    def localeAwareCompare(self, s1, s2):
+        '''static int QStringRef.localeAwareCompare(QStringRef s1, QString s2)'''
         return int()
-    def localeAwareCompare(self, _s1, _s2):
-        """int QStringRef.localeAwareCompare(None self, QStringRef _s1, QStringRef _s2)"""
+    def localeAwareCompare(self, s1, s2):
+        '''static int QStringRef.localeAwareCompare(QStringRef s1, QStringRef s2)'''
         return int()
-    def compare(self, _other, _cs):
-        """int QStringRef.compare(None self, QString _other, Qt.CaseSensitivity _cs)"""
+    def compare(self, other, cs = Qt.CaseSensitive):
+        '''int QStringRef.compare(QString other, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def compare(self, _other, _cs):
-        """int QStringRef.compare(None self, QStringRef _other, Qt.CaseSensitivity _cs)"""
+    def compare(self, other, cs = Qt.CaseSensitive):
+        '''int QStringRef.compare(QStringRef other, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def compare(self, _other, _cs):
-        """int QStringRef.compare(None self, QLatin1String _other, Qt.CaseSensitivity _cs)"""
+    def compare(self, other, cs = Qt.CaseSensitive):
+        '''int QStringRef.compare(QLatin1String other, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def compare(self, _s1, _s2, _cs):
-        """int QStringRef.compare(None self, QStringRef _s1, QString _s2, Qt.CaseSensitivity _cs)"""
+    def compare(self, s1, s2, cs = Qt.CaseSensitive):
+        '''static int QStringRef.compare(QStringRef s1, QString s2, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def compare(self, _s1, _s2, _cs):
-        """int QStringRef.compare(None self, QStringRef _s1, QStringRef _s2, Qt.CaseSensitivity _cs)"""
+    def compare(self, s1, s2, cs = Qt.CaseSensitive):
+        '''static int QStringRef.compare(QStringRef s1, QStringRef s2, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def compare(self, _s1, _s2, _cs):
-        """int QStringRef.compare(None self, QStringRef _s1, QLatin1String _s2, Qt.CaseSensitivity _cs)"""
+    def compare(self, s1, s2, cs = Qt.CaseSensitive):
+        '''static int QStringRef.compare(QStringRef s1, QLatin1String s2, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def at(self, _i):
-        """QChar QStringRef.at(None self, int _i)"""
+    def at(self, i):
+        '''QChar QStringRef.at(int i)'''
         return QChar()
-    def appendTo(self, _string):
-        """QStringRef QStringRef.appendTo(None self, QString _string)"""
+    def appendTo(self, string):
+        '''QStringRef QStringRef.appendTo(QString string)'''
         return QStringRef()
     def isNull(self):
-        """bool QStringRef.isNull(None self)"""
+        '''bool QStringRef.isNull()'''
         return bool()
     def isEmpty(self):
-        """bool QStringRef.isEmpty(None self)"""
+        '''bool QStringRef.isEmpty()'''
         return bool()
     def toString(self):
-        """QString QStringRef.toString(None self)"""
+        '''QString QStringRef.toString()'''
         return QString()
     def clear(self):
-        """None QStringRef.clear(None self)"""
-        return None
+        '''void QStringRef.clear()'''
     def constData(self):
-        """QChar QStringRef.constData(None self)"""
+        '''QChar QStringRef.constData()'''
         return QChar()
     def data(self):
-        """QChar QStringRef.data(None self)"""
+        '''QChar QStringRef.data()'''
         return QChar()
     def unicode(self):
-        """QChar QStringRef.unicode(None self)"""
+        '''QChar QStringRef.unicode()'''
         return QChar()
     def length(self):
-        """int QStringRef.length(None self)"""
+        '''int QStringRef.length()'''
         return int()
     def __len__(self):
-        """ QStringRef.__len__(None self)"""
+        ''' QStringRef.__len__()'''
         return ()
     def count(self):
-        """int QStringRef.count(None self)"""
+        '''int QStringRef.count()'''
         return int()
     def size(self):
-        """int QStringRef.size(None self)"""
+        '''int QStringRef.size()'''
         return int()
     def position(self):
-        """int QStringRef.position(None self)"""
+        '''int QStringRef.position()'''
         return int()
     def string(self):
-        """QString QStringRef.string(None self)"""
+        '''QString QStringRef.string()'''
         return QString()
 
 
 class QStringList():
     """"""
     def __init__(self):
-        """None QStringList.__init__(None self)"""
-        return None
-    def __init__(self, _i):
-        """None QStringList.__init__(None self, QString _i)"""
-        return None
-    def __init__(self, _l):
-        """None QStringList.__init__(None self, QStringList _l)"""
-        return None
-    def __iadd__(self, _other):
-        """QStringList QStringList.__iadd__(None self, QStringList _other)"""
+        '''void QStringList.__init__()'''
+    def __init__(self, i):
+        '''void QStringList.__init__(QString i)'''
+    def __init__(self, l):
+        '''void QStringList.__init__(QStringList l)'''
+    def __iadd__(self, other):
+        '''QStringList QStringList.__iadd__(QStringList other)'''
         return QStringList()
-    def __iadd__(self, _value):
-        """QStringList QStringList.__iadd__(None self, QString _value)"""
+    def __iadd__(self, value):
+        '''QStringList QStringList.__iadd__(QString value)'''
         return QStringList()
-    def mid(self, _pos, _length):
-        """QStringList QStringList.mid(None self, int _pos, int _length)"""
+    def mid(self, pos, length = -1):
+        '''QStringList QStringList.mid(int pos, int length = -1)'''
         return QStringList()
     def last(self):
-        """QString QStringList.last(None self)"""
+        '''QString QStringList.last()'''
         return QString()
     def first(self):
-        """QString QStringList.first(None self)"""
+        '''QString QStringList.first()'''
         return QString()
     def __len__(self):
-        """ QStringList.__len__(None self)"""
+        ''' QStringList.__len__()'''
         return ()
-    def count(self, _str):
-        """int QStringList.count(None self, QString _str)"""
+    def count(self, str):
+        '''int QStringList.count(QString str)'''
         return int()
     def count(self):
-        """int QStringList.count(None self)"""
+        '''int QStringList.count()'''
         return int()
-    def swap(self, _i, _j):
-        """None QStringList.swap(None self, int _i, int _j)"""
-        return None
-    def move(self, _from, _to):
-        """None QStringList.move(None self, int _from, int _to)"""
-        return None
+    def swap(self, i, j):
+        '''void QStringList.swap(int i, int j)'''
+    def move(self, from_, to):
+        '''void QStringList.move(int from, int to)'''
     def takeLast(self):
-        """QString QStringList.takeLast(None self)"""
+        '''QString QStringList.takeLast()'''
         return QString()
     def takeFirst(self):
-        """QString QStringList.takeFirst(None self)"""
+        '''QString QStringList.takeFirst()'''
         return QString()
-    def takeAt(self, _i):
-        """QString QStringList.takeAt(None self, int _i)"""
+    def takeAt(self, i):
+        '''QString QStringList.takeAt(int i)'''
         return QString()
-    def removeAll(self, _str):
-        """int QStringList.removeAll(None self, QString _str)"""
+    def removeAll(self, str):
+        '''int QStringList.removeAll(QString str)'''
         return int()
-    def removeAt(self, _i):
-        """None QStringList.removeAt(None self, int _i)"""
-        return None
-    def replace(self, _i, _str):
-        """None QStringList.replace(None self, int _i, QString _str)"""
-        return None
-    def insert(self, _i, _str):
-        """None QStringList.insert(None self, int _i, QString _str)"""
-        return None
-    def prepend(self, _str):
-        """None QStringList.prepend(None self, QString _str)"""
-        return None
-    def append(self, _str):
-        """None QStringList.append(None self, QString _str)"""
-        return None
+    def removeAt(self, i):
+        '''void QStringList.removeAt(int i)'''
+    def replace(self, i, str):
+        '''void QStringList.replace(int i, QString str)'''
+    def insert(self, i, str):
+        '''void QStringList.insert(int i, QString str)'''
+    def prepend(self, str):
+        '''void QStringList.prepend(QString str)'''
+    def append(self, str):
+        '''void QStringList.append(QString str)'''
     def isEmpty(self):
-        """bool QStringList.isEmpty(None self)"""
+        '''bool QStringList.isEmpty()'''
         return bool()
     def clear(self):
-        """None QStringList.clear(None self)"""
-        return None
-    def __ne__(self, _other):
-        """bool QStringList.__ne__(None self, QStringList _other)"""
+        '''void QStringList.clear()'''
+    def __ne__(self, other):
+        '''bool QStringList.__ne__(QStringList other)'''
         return bool()
-    def __eq__(self, _other):
-        """bool QStringList.__eq__(None self, QStringList _other)"""
+    def __eq__(self, other):
+        '''bool QStringList.__eq__(QStringList other)'''
         return bool()
-    def __imul__(self, _by):
-        """QStringList QStringList.__imul__(None self, int _by)"""
+    def __imul__(self, by):
+        '''QStringList QStringList.__imul__(int by)'''
         return QStringList()
-    def __mul__(self, _by):
-        """QStringList QStringList.__mul__(None self, int _by)"""
+    def __mul__(self, by):
+        '''QStringList QStringList.__mul__(int by)'''
         return QStringList()
-    def __add__(self, _other):
-        """QStringList QStringList.__add__(None self, QStringList _other)"""
+    def __add__(self, other):
+        '''QStringList QStringList.__add__(QStringList other)'''
         return QStringList()
-    def __contains__(self, _str):
-        """int QStringList.__contains__(None self, QString _str)"""
+    def __contains__(self, str):
+        '''int QStringList.__contains__(QString str)'''
         return int()
-    def __getitem__(self, _i):
-        """QString QStringList.__getitem__(None self, int _i)"""
+    def __getitem__(self, i):
+        '''QString QStringList.__getitem__(int i)'''
         return QString()
-    def __getitem__(self, _slice):
-        """QStringList QStringList.__getitem__(None self, slice _slice)"""
+    def __getitem__(self, slice):
+        '''QStringList QStringList.__getitem__(slice slice)'''
         return QStringList()
-    def __delitem__(self, _i):
-        """None QStringList.__delitem__(None self, int _i)"""
-        return None
-    def __delitem__(self, _slice):
-        """None QStringList.__delitem__(None self, slice _slice)"""
-        return None
-    def __setitem__(self, _i, _str):
-        """None QStringList.__setitem__(None self, int _i, QString _str)"""
-        return None
-    def __setitem__(self, _slice, _list):
-        """None QStringList.__setitem__(None self, slice _slice, QStringList _list)"""
-        return None
+    def __delitem__(self, i):
+        '''void QStringList.__delitem__(int i)'''
+    def __delitem__(self, slice):
+        '''void QStringList.__delitem__(slice slice)'''
+    def __setitem__(self, i, str):
+        '''void QStringList.__setitem__(int i, QString str)'''
+    def __setitem__(self, slice, list):
+        '''void QStringList.__setitem__(slice slice, QStringList list)'''
     def removeDuplicates(self):
-        """int QStringList.removeDuplicates(None self)"""
+        '''int QStringList.removeDuplicates()'''
         return int()
-    def lastIndexOf(self, _value, _from):
-        """int QStringList.lastIndexOf(None self, QString _value, int _from)"""
+    def lastIndexOf(self, value, from_ = -1):
+        '''int QStringList.lastIndexOf(QString value, int from = -1)'''
         return int()
-    def lastIndexOf(self, _rx, _from):
-        """int QStringList.lastIndexOf(None self, QRegExp _rx, int _from)"""
+    def lastIndexOf(self, rx, from_ = -1):
+        '''int QStringList.lastIndexOf(QRegExp rx, int from = -1)'''
         return int()
-    def indexOf(self, _value, _from):
-        """int QStringList.indexOf(None self, QString _value, int _from)"""
+    def indexOf(self, value, from_ = 0):
+        '''int QStringList.indexOf(QString value, int from = 0)'''
         return int()
-    def indexOf(self, _rx, _from):
-        """int QStringList.indexOf(None self, QRegExp _rx, int _from)"""
+    def indexOf(self, rx, from_ = 0):
+        '''int QStringList.indexOf(QRegExp rx, int from = 0)'''
         return int()
-    def replaceInStrings(self, _before, _after, _cs):
-        """QStringList QStringList.replaceInStrings(None self, QString _before, QString _after, Qt.CaseSensitivity _cs)"""
+    def replaceInStrings(self, before, after, cs = Qt.CaseSensitive):
+        '''QStringList QStringList.replaceInStrings(QString before, QString after, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return QStringList()
-    def replaceInStrings(self, _rx, _after):
-        """QStringList QStringList.replaceInStrings(None self, QRegExp _rx, QString _after)"""
+    def replaceInStrings(self, rx, after):
+        '''QStringList QStringList.replaceInStrings(QRegExp rx, QString after)'''
         return QStringList()
-    def contains(self, _str, _cs):
-        """bool QStringList.contains(None self, QString _str, Qt.CaseSensitivity _cs)"""
+    def contains(self, str, cs = Qt.CaseSensitive):
+        '''bool QStringList.contains(QString str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
-    def filter(self, _str, _cs):
-        """QStringList QStringList.filter(None self, QString _str, Qt.CaseSensitivity _cs)"""
+    def filter(self, str, cs = Qt.CaseSensitive):
+        '''QStringList QStringList.filter(QString str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return QStringList()
-    def filter(self, _rx):
-        """QStringList QStringList.filter(None self, QRegExp _rx)"""
+    def filter(self, rx):
+        '''QStringList QStringList.filter(QRegExp rx)'''
         return QStringList()
-    def join(self, _sep):
-        """QString QStringList.join(None self, QString _sep)"""
+    def join(self, sep):
+        '''QString QStringList.join(QString sep)'''
         return QString()
     def sort(self):
-        """None QStringList.sort(None self)"""
-        return None
-    def __lshift__(self, _str):
-        """QStringList QStringList.__lshift__(None self, QString _str)"""
+        '''void QStringList.sort()'''
+    def __lshift__(self, str):
+        '''QStringList QStringList.__lshift__(QString str)'''
         return QStringList()
-    def __lshift__(self, _l):
-        """QStringList QStringList.__lshift__(None self, QStringList _l)"""
+    def __lshift__(self, l):
+        '''QStringList QStringList.__lshift__(QStringList l)'''
         return QStringList()
 
 
 class QStringMatcher():
     """"""
     def __init__(self):
-        """None QStringMatcher.__init__(None self)"""
-        return None
-    def __init__(self, _pattern, _cs):
-        """None QStringMatcher.__init__(None self, QString _pattern, Qt.CaseSensitivity _cs)"""
-        return None
-    def __init__(self, _other):
-        """None QStringMatcher.__init__(None self, QStringMatcher _other)"""
-        return None
+        '''void QStringMatcher.__init__()'''
+    def __init__(self, pattern, cs = Qt.CaseSensitive):
+        '''void QStringMatcher.__init__(QString pattern, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+    def __init__(self, other):
+        '''void QStringMatcher.__init__(QStringMatcher other)'''
     def caseSensitivity(self):
-        """Qt.CaseSensitivity QStringMatcher.caseSensitivity(None self)"""
+        '''Qt.CaseSensitivity QStringMatcher.caseSensitivity()'''
         return Qt.CaseSensitivity()
     def pattern(self):
-        """QString QStringMatcher.pattern(None self)"""
+        '''QString QStringMatcher.pattern()'''
         return QString()
-    def indexIn(self, _str, _from):
-        """int QStringMatcher.indexIn(None self, QString _str, int _from)"""
+    def indexIn(self, str, from_ = 0):
+        '''int QStringMatcher.indexIn(QString str, int from = 0)'''
         return int()
-    def setCaseSensitivity(self, _cs):
-        """None QStringMatcher.setCaseSensitivity(None self, Qt.CaseSensitivity _cs)"""
-        return None
-    def setPattern(self, _pattern):
-        """None QStringMatcher.setPattern(None self, QString _pattern)"""
-        return None
+    def setCaseSensitivity(self, cs):
+        '''void QStringMatcher.setCaseSensitivity(Qt.CaseSensitivity cs)'''
+    def setPattern(self, pattern):
+        '''void QStringMatcher.setPattern(QString pattern)'''
 
 
 class QSystemSemaphore():
     """"""
-    NoError = int() # QSystemSemaphore.SystemSemaphoreError enum
-    PermissionDenied = int() # QSystemSemaphore.SystemSemaphoreError enum
-    KeyError = int() # QSystemSemaphore.SystemSemaphoreError enum
-    AlreadyExists = int() # QSystemSemaphore.SystemSemaphoreError enum
-    NotFound = int() # QSystemSemaphore.SystemSemaphoreError enum
-    OutOfResources = int() # QSystemSemaphore.SystemSemaphoreError enum
-    UnknownError = int() # QSystemSemaphore.SystemSemaphoreError enum
+    # Enum QSystemSemaphore.SystemSemaphoreError
+    NoError = 0
+    PermissionDenied = 0
+    KeyError = 0
+    AlreadyExists = 0
+    NotFound = 0
+    OutOfResources = 0
+    UnknownError = 0
 
-    Open = int() # QSystemSemaphore.AccessMode enum
-    Create = int() # QSystemSemaphore.AccessMode enum
+    # Enum QSystemSemaphore.AccessMode
+    Open = 0
+    Create = 0
 
-    def __init__(self, _key, _initialValue, _mode):
-        """None QSystemSemaphore.__init__(None self, QString _key, int _initialValue, QSystemSemaphore.AccessMode _mode)"""
-        return None
+    def __init__(self, key, initialValue = 0, mode = QSystemSemaphore.Open):
+        '''void QSystemSemaphore.__init__(QString key, int initialValue = 0, QSystemSemaphore.AccessMode mode = QSystemSemaphore.Open)'''
     def errorString(self):
-        """QString QSystemSemaphore.errorString(None self)"""
+        '''QString QSystemSemaphore.errorString()'''
         return QString()
     def error(self):
-        """QSystemSemaphore.SystemSemaphoreError QSystemSemaphore.error(None self)"""
+        '''QSystemSemaphore.SystemSemaphoreError QSystemSemaphore.error()'''
         return QSystemSemaphore.SystemSemaphoreError()
-    def release(self, _n):
-        """bool QSystemSemaphore.release(None self, int _n)"""
+    def release(self, n = 1):
+        '''bool QSystemSemaphore.release(int n = 1)'''
         return bool()
     def acquire(self):
-        """bool QSystemSemaphore.acquire(None self)"""
+        '''bool QSystemSemaphore.acquire()'''
         return bool()
     def key(self):
-        """QString QSystemSemaphore.key(None self)"""
+        '''QString QSystemSemaphore.key()'''
         return QString()
-    def setKey(self, _key, _initialValue, _mode):
-        """None QSystemSemaphore.setKey(None self, QString _key, int _initialValue, QSystemSemaphore.AccessMode _mode)"""
-        return None
+    def setKey(self, key, initialValue = 0, mode = QSystemSemaphore.Open):
+        '''void QSystemSemaphore.setKey(QString key, int initialValue = 0, QSystemSemaphore.AccessMode mode = QSystemSemaphore.Open)'''
 
 
 class QTemporaryFile(QFile):
     """"""
     def __init__(self):
-        """None QTemporaryFile.__init__(None self)"""
-        return None
-    def __init__(self, _templateName):
-        """None QTemporaryFile.__init__(None self, QString _templateName)"""
-        return None
-    def __init__(self, _parent):
-        """None QTemporaryFile.__init__(None self, QObject _parent)"""
-        return None
-    def __init__(self, _templateName, _parent):
-        """None QTemporaryFile.__init__(None self, QString _templateName, QObject _parent)"""
-        return None
+        '''void QTemporaryFile.__init__()'''
+    def __init__(self, templateName):
+        '''void QTemporaryFile.__init__(QString templateName)'''
+    def __init__(self, parent):
+        '''void QTemporaryFile.__init__(QObject parent)'''
+    def __init__(self, templateName, parent):
+        '''void QTemporaryFile.__init__(QString templateName, QObject parent)'''
     def fileEngine(self):
-        """QAbstractFileEngine QTemporaryFile.fileEngine(None self)"""
+        '''QAbstractFileEngine QTemporaryFile.fileEngine()'''
         return QAbstractFileEngine()
-    def createLocalFile(self, _fileName):
-        """QTemporaryFile QTemporaryFile.createLocalFile(None self, QString _fileName)"""
+    def createLocalFile(self, fileName):
+        '''static QTemporaryFile QTemporaryFile.createLocalFile(QString fileName)'''
         return QTemporaryFile()
-    def createLocalFile(self, _file):
-        """QTemporaryFile QTemporaryFile.createLocalFile(None self, QFile _file)"""
+    def createLocalFile(self, file):
+        '''static QTemporaryFile QTemporaryFile.createLocalFile(QFile file)'''
         return QTemporaryFile()
-    def setFileTemplate(self, _name):
-        """None QTemporaryFile.setFileTemplate(None self, QString _name)"""
-        return None
+    def setFileTemplate(self, name):
+        '''void QTemporaryFile.setFileTemplate(QString name)'''
     def fileTemplate(self):
-        """QString QTemporaryFile.fileTemplate(None self)"""
+        '''QString QTemporaryFile.fileTemplate()'''
         return QString()
     def fileName(self):
-        """QString QTemporaryFile.fileName(None self)"""
+        '''QString QTemporaryFile.fileName()'''
         return QString()
     def open(self):
-        """bool QTemporaryFile.open(None self)"""
+        '''bool QTemporaryFile.open()'''
         return bool()
-    def open(self, _flags):
-        """bool QTemporaryFile.open(None self, QIODevice.OpenMode _flags)"""
+    def open(self, flags):
+        '''bool QTemporaryFile.open(QIODevice.OpenMode flags)'''
         return bool()
-    def setAutoRemove(self, _b):
-        """None QTemporaryFile.setAutoRemove(None self, bool _b)"""
-        return None
+    def setAutoRemove(self, b):
+        '''void QTemporaryFile.setAutoRemove(bool b)'''
     def autoRemove(self):
-        """bool QTemporaryFile.autoRemove(None self)"""
+        '''bool QTemporaryFile.autoRemove()'''
         return bool()
 
 
 class QTextBoundaryFinder():
     """"""
-    Grapheme = int() # QTextBoundaryFinder.BoundaryType enum
-    Word = int() # QTextBoundaryFinder.BoundaryType enum
-    Line = int() # QTextBoundaryFinder.BoundaryType enum
-    Sentence = int() # QTextBoundaryFinder.BoundaryType enum
+    # Enum QTextBoundaryFinder.BoundaryType
+    Grapheme = 0
+    Word = 0
+    Line = 0
+    Sentence = 0
 
-    NotAtBoundary = int() # QTextBoundaryFinder.BoundaryReason enum
-    StartWord = int() # QTextBoundaryFinder.BoundaryReason enum
-    EndWord = int() # QTextBoundaryFinder.BoundaryReason enum
+    # Enum QTextBoundaryFinder.BoundaryReason
+    NotAtBoundary = 0
+    StartWord = 0
+    EndWord = 0
 
     def __init__(self):
-        """None QTextBoundaryFinder.__init__(None self)"""
-        return None
-    def __init__(self, _other):
-        """None QTextBoundaryFinder.__init__(None self, QTextBoundaryFinder _other)"""
-        return None
-    def __init__(self, _type, _string):
-        """None QTextBoundaryFinder.__init__(None self, QTextBoundaryFinder.BoundaryType _type, QString _string)"""
-        return None
+        '''void QTextBoundaryFinder.__init__()'''
+    def __init__(self, other):
+        '''void QTextBoundaryFinder.__init__(QTextBoundaryFinder other)'''
+    def __init__(self, type, string):
+        '''void QTextBoundaryFinder.__init__(QTextBoundaryFinder.BoundaryType type, QString string)'''
     def boundaryReasons(self):
-        """QTextBoundaryFinder.BoundaryReasons QTextBoundaryFinder.boundaryReasons(None self)"""
+        '''QTextBoundaryFinder.BoundaryReasons QTextBoundaryFinder.boundaryReasons()'''
         return QTextBoundaryFinder.BoundaryReasons()
     def isAtBoundary(self):
-        """bool QTextBoundaryFinder.isAtBoundary(None self)"""
+        '''bool QTextBoundaryFinder.isAtBoundary()'''
         return bool()
     def toPreviousBoundary(self):
-        """int QTextBoundaryFinder.toPreviousBoundary(None self)"""
+        '''int QTextBoundaryFinder.toPreviousBoundary()'''
         return int()
     def toNextBoundary(self):
-        """int QTextBoundaryFinder.toNextBoundary(None self)"""
+        '''int QTextBoundaryFinder.toNextBoundary()'''
         return int()
-    def setPosition(self, _position):
-        """None QTextBoundaryFinder.setPosition(None self, int _position)"""
-        return None
+    def setPosition(self, position):
+        '''void QTextBoundaryFinder.setPosition(int position)'''
     def position(self):
-        """int QTextBoundaryFinder.position(None self)"""
+        '''int QTextBoundaryFinder.position()'''
         return int()
     def toEnd(self):
-        """None QTextBoundaryFinder.toEnd(None self)"""
-        return None
+        '''void QTextBoundaryFinder.toEnd()'''
     def toStart(self):
-        """None QTextBoundaryFinder.toStart(None self)"""
-        return None
+        '''void QTextBoundaryFinder.toStart()'''
     def string(self):
-        """QString QTextBoundaryFinder.string(None self)"""
+        '''QString QTextBoundaryFinder.string()'''
         return QString()
     def type(self):
-        """QTextBoundaryFinder.BoundaryType QTextBoundaryFinder.type(None self)"""
+        '''QTextBoundaryFinder.BoundaryType QTextBoundaryFinder.type()'''
         return QTextBoundaryFinder.BoundaryType()
     def isValid(self):
-        """bool QTextBoundaryFinder.isValid(None self)"""
+        '''bool QTextBoundaryFinder.isValid()'''
         return bool()
+    class BoundaryReasons():
+        """"""
+        def __init__(self):
+            '''QTextBoundaryFinder.BoundaryReasons QTextBoundaryFinder.BoundaryReasons.__init__()'''
+            return QTextBoundaryFinder.BoundaryReasons()
+        def __init__(self):
+            '''int QTextBoundaryFinder.BoundaryReasons.__init__()'''
+            return int()
+        def __init__(self):
+            '''void QTextBoundaryFinder.BoundaryReasons.__init__()'''
+        def __bool__(self):
+            '''int QTextBoundaryFinder.BoundaryReasons.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool QTextBoundaryFinder.BoundaryReasons.__ne__(QTextBoundaryFinder.BoundaryReasons f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool QTextBoundaryFinder.BoundaryReasons.__eq__(QTextBoundaryFinder.BoundaryReasons f)'''
+            return bool()
+        def __invert__(self):
+            '''QTextBoundaryFinder.BoundaryReasons QTextBoundaryFinder.BoundaryReasons.__invert__()'''
+            return QTextBoundaryFinder.BoundaryReasons()
+        def __and__(self, mask):
+            '''QTextBoundaryFinder.BoundaryReasons QTextBoundaryFinder.BoundaryReasons.__and__(int mask)'''
+            return QTextBoundaryFinder.BoundaryReasons()
+        def __xor__(self, f):
+            '''QTextBoundaryFinder.BoundaryReasons QTextBoundaryFinder.BoundaryReasons.__xor__(QTextBoundaryFinder.BoundaryReasons f)'''
+            return QTextBoundaryFinder.BoundaryReasons()
+        def __xor__(self, f):
+            '''QTextBoundaryFinder.BoundaryReasons QTextBoundaryFinder.BoundaryReasons.__xor__(int f)'''
+            return QTextBoundaryFinder.BoundaryReasons()
+        def __or__(self, f):
+            '''QTextBoundaryFinder.BoundaryReasons QTextBoundaryFinder.BoundaryReasons.__or__(QTextBoundaryFinder.BoundaryReasons f)'''
+            return QTextBoundaryFinder.BoundaryReasons()
+        def __or__(self, f):
+            '''QTextBoundaryFinder.BoundaryReasons QTextBoundaryFinder.BoundaryReasons.__or__(int f)'''
+            return QTextBoundaryFinder.BoundaryReasons()
+        def __int__(self):
+            '''int QTextBoundaryFinder.BoundaryReasons.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''QTextBoundaryFinder.BoundaryReasons QTextBoundaryFinder.BoundaryReasons.__ixor__(QTextBoundaryFinder.BoundaryReasons f)'''
+            return QTextBoundaryFinder.BoundaryReasons()
+        def __ior__(self, f):
+            '''QTextBoundaryFinder.BoundaryReasons QTextBoundaryFinder.BoundaryReasons.__ior__(QTextBoundaryFinder.BoundaryReasons f)'''
+            return QTextBoundaryFinder.BoundaryReasons()
+        def __iand__(self, mask):
+            '''QTextBoundaryFinder.BoundaryReasons QTextBoundaryFinder.BoundaryReasons.__iand__(int mask)'''
+            return QTextBoundaryFinder.BoundaryReasons()
 
 
 class QTextCodec():
     """"""
-    DefaultConversion = int() # QTextCodec.ConversionFlag enum
-    ConvertInvalidToNull = int() # QTextCodec.ConversionFlag enum
-    IgnoreHeader = int() # QTextCodec.ConversionFlag enum
+    # Enum QTextCodec.ConversionFlag
+    DefaultConversion = 0
+    ConvertInvalidToNull = 0
+    IgnoreHeader = 0
 
     def __init__(self):
-        """None QTextCodec.__init__(None self)"""
-        return None
-    def setCodecForCStrings(self, _c):
-        """None QTextCodec.setCodecForCStrings(None self, QTextCodec _c)"""
-        return None
+        '''void QTextCodec.__init__()'''
+    def setCodecForCStrings(self, c):
+        '''static void QTextCodec.setCodecForCStrings(QTextCodec c)'''
     def codecForCStrings(self):
-        """QTextCodec QTextCodec.codecForCStrings(None self)"""
+        '''static QTextCodec QTextCodec.codecForCStrings()'''
         return QTextCodec()
-    def setCodecForTr(self, _c):
-        """None QTextCodec.setCodecForTr(None self, QTextCodec _c)"""
-        return None
+    def setCodecForTr(self, c):
+        '''static void QTextCodec.setCodecForTr(QTextCodec c)'''
     def codecForTr(self):
-        """QTextCodec QTextCodec.codecForTr(None self)"""
+        '''static QTextCodec QTextCodec.codecForTr()'''
         return QTextCodec()
-    def convertToUnicode(self, _in, _state):
-        """abstract QString QTextCodec.convertToUnicode(None self, str _in, QTextCodec.ConverterState _state)"""
+    def convertToUnicode(self, in_, state):
+        '''abstract QString QTextCodec.convertToUnicode(str in, QTextCodec.ConverterState state)'''
         return QString()
     def mibEnum(self):
-        """abstract int QTextCodec.mibEnum(None self)"""
+        '''abstract int QTextCodec.mibEnum()'''
         return int()
     def aliases(self):
-        """list-of-QByteArray QTextCodec.aliases(None self)"""
+        '''list-of-QByteArray QTextCodec.aliases()'''
         return [QByteArray()]
     def name(self):
-        """abstract QByteArray QTextCodec.name(None self)"""
+        '''abstract QByteArray QTextCodec.name()'''
         return QByteArray()
-    def fromUnicode(self, _uc):
-        """QByteArray QTextCodec.fromUnicode(None self, QString _uc)"""
+    def fromUnicode(self, uc):
+        '''QByteArray QTextCodec.fromUnicode(QString uc)'''
         return QByteArray()
     def toUnicode(self):
-        """QByteArray QTextCodec.toUnicode(None self)"""
+        '''QByteArray QTextCodec.toUnicode()'''
         return QByteArray()
-    def toUnicode(self, _chars):
-        """QString QTextCodec.toUnicode(None self, str _chars)"""
+    def toUnicode(self, chars):
+        '''QString QTextCodec.toUnicode(str chars)'''
         return QString()
-    def toUnicode(self, _in, _state):
-        """QString QTextCodec.toUnicode(None self, str _in, QTextCodec.ConverterState _state)"""
+    def toUnicode(self, in_, state = None):
+        '''QString QTextCodec.toUnicode(str in, QTextCodec.ConverterState state = None)'''
         return QString()
     def canEncode(self):
-        """QString QTextCodec.canEncode(None self)"""
+        '''QString QTextCodec.canEncode()'''
         return QString()
     def makeEncoder(self):
-        """QTextEncoder QTextCodec.makeEncoder(None self)"""
+        '''QTextEncoder QTextCodec.makeEncoder()'''
         return QTextEncoder()
-    def makeEncoder(self, _flags):
-        """QTextEncoder QTextCodec.makeEncoder(None self, QTextCodec.ConversionFlags _flags)"""
+    def makeEncoder(self, flags):
+        '''QTextEncoder QTextCodec.makeEncoder(QTextCodec.ConversionFlags flags)'''
         return QTextEncoder()
     def makeDecoder(self):
-        """QTextDecoder QTextCodec.makeDecoder(None self)"""
+        '''QTextDecoder QTextCodec.makeDecoder()'''
         return QTextDecoder()
-    def makeDecoder(self, _flags):
-        """QTextDecoder QTextCodec.makeDecoder(None self, QTextCodec.ConversionFlags _flags)"""
+    def makeDecoder(self, flags):
+        '''QTextDecoder QTextCodec.makeDecoder(QTextCodec.ConversionFlags flags)'''
         return QTextDecoder()
-    def setCodecForLocale(self, _c):
-        """None QTextCodec.setCodecForLocale(None self, QTextCodec _c)"""
-        return None
+    def setCodecForLocale(self, c):
+        '''static void QTextCodec.setCodecForLocale(QTextCodec c)'''
     def codecForLocale(self):
-        """QTextCodec QTextCodec.codecForLocale(None self)"""
+        '''static QTextCodec QTextCodec.codecForLocale()'''
         return QTextCodec()
     def availableMibs(self):
-        """list-of-int QTextCodec.availableMibs(None self)"""
+        '''static list-of-int QTextCodec.availableMibs()'''
         return [int()]
     def availableCodecs(self):
-        """list-of-QByteArray QTextCodec.availableCodecs(None self)"""
+        '''static list-of-QByteArray QTextCodec.availableCodecs()'''
         return [QByteArray()]
-    def codecForUtfText(self, _ba):
-        """QTextCodec QTextCodec.codecForUtfText(None self, QByteArray _ba)"""
+    def codecForUtfText(self, ba):
+        '''static QTextCodec QTextCodec.codecForUtfText(QByteArray ba)'''
         return QTextCodec()
-    def codecForUtfText(self, _ba, _defaultCodec):
-        """QTextCodec QTextCodec.codecForUtfText(None self, QByteArray _ba, QTextCodec _defaultCodec)"""
+    def codecForUtfText(self, ba, defaultCodec):
+        '''static QTextCodec QTextCodec.codecForUtfText(QByteArray ba, QTextCodec defaultCodec)'''
         return QTextCodec()
-    def codecForHtml(self, _ba):
-        """QTextCodec QTextCodec.codecForHtml(None self, QByteArray _ba)"""
+    def codecForHtml(self, ba):
+        '''static QTextCodec QTextCodec.codecForHtml(QByteArray ba)'''
         return QTextCodec()
-    def codecForHtml(self, _ba, _defaultCodec):
-        """QTextCodec QTextCodec.codecForHtml(None self, QByteArray _ba, QTextCodec _defaultCodec)"""
+    def codecForHtml(self, ba, defaultCodec):
+        '''static QTextCodec QTextCodec.codecForHtml(QByteArray ba, QTextCodec defaultCodec)'''
         return QTextCodec()
-    def codecForMib(self, _mib):
-        """QTextCodec QTextCodec.codecForMib(None self, int _mib)"""
+    def codecForMib(self, mib):
+        '''static QTextCodec QTextCodec.codecForMib(int mib)'''
         return QTextCodec()
-    def codecForName(self, _name):
-        """QTextCodec QTextCodec.codecForName(None self, QByteArray _name)"""
+    def codecForName(self, name):
+        '''static QTextCodec QTextCodec.codecForName(QByteArray name)'''
         return QTextCodec()
-    def codecForName(self, _name):
-        """QTextCodec QTextCodec.codecForName(None self, str _name)"""
+    def codecForName(self, name):
+        '''static QTextCodec QTextCodec.codecForName(str name)'''
         return QTextCodec()
+    class ConversionFlags():
+        """"""
+        def __init__(self):
+            '''QTextCodec.ConversionFlags QTextCodec.ConversionFlags.__init__()'''
+            return QTextCodec.ConversionFlags()
+        def __init__(self):
+            '''int QTextCodec.ConversionFlags.__init__()'''
+            return int()
+        def __init__(self):
+            '''void QTextCodec.ConversionFlags.__init__()'''
+        def __bool__(self):
+            '''int QTextCodec.ConversionFlags.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool QTextCodec.ConversionFlags.__ne__(QTextCodec.ConversionFlags f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool QTextCodec.ConversionFlags.__eq__(QTextCodec.ConversionFlags f)'''
+            return bool()
+        def __invert__(self):
+            '''QTextCodec.ConversionFlags QTextCodec.ConversionFlags.__invert__()'''
+            return QTextCodec.ConversionFlags()
+        def __and__(self, mask):
+            '''QTextCodec.ConversionFlags QTextCodec.ConversionFlags.__and__(int mask)'''
+            return QTextCodec.ConversionFlags()
+        def __xor__(self, f):
+            '''QTextCodec.ConversionFlags QTextCodec.ConversionFlags.__xor__(QTextCodec.ConversionFlags f)'''
+            return QTextCodec.ConversionFlags()
+        def __xor__(self, f):
+            '''QTextCodec.ConversionFlags QTextCodec.ConversionFlags.__xor__(int f)'''
+            return QTextCodec.ConversionFlags()
+        def __or__(self, f):
+            '''QTextCodec.ConversionFlags QTextCodec.ConversionFlags.__or__(QTextCodec.ConversionFlags f)'''
+            return QTextCodec.ConversionFlags()
+        def __or__(self, f):
+            '''QTextCodec.ConversionFlags QTextCodec.ConversionFlags.__or__(int f)'''
+            return QTextCodec.ConversionFlags()
+        def __int__(self):
+            '''int QTextCodec.ConversionFlags.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''QTextCodec.ConversionFlags QTextCodec.ConversionFlags.__ixor__(QTextCodec.ConversionFlags f)'''
+            return QTextCodec.ConversionFlags()
+        def __ior__(self, f):
+            '''QTextCodec.ConversionFlags QTextCodec.ConversionFlags.__ior__(QTextCodec.ConversionFlags f)'''
+            return QTextCodec.ConversionFlags()
+        def __iand__(self, mask):
+            '''QTextCodec.ConversionFlags QTextCodec.ConversionFlags.__iand__(int mask)'''
+            return QTextCodec.ConversionFlags()
+    class ConverterState():
+        """"""
+        def __init__(self, flags = QTextCodec.DefaultConversion):
+            '''void QTextCodec.ConverterState.__init__(QTextCodec.ConversionFlags flags = QTextCodec.DefaultConversion)'''
 
 
 class QTextEncoder():
     """"""
-    def __init__(self, _codec):
-        """None QTextEncoder.__init__(None self, QTextCodec _codec)"""
-        return None
-    def __init__(self, _codec, _flags):
-        """None QTextEncoder.__init__(None self, QTextCodec _codec, QTextCodec.ConversionFlags _flags)"""
-        return None
-    def fromUnicode(self, _str):
-        """QByteArray QTextEncoder.fromUnicode(None self, QString _str)"""
+    def __init__(self, codec):
+        '''void QTextEncoder.__init__(QTextCodec codec)'''
+    def __init__(self, codec, flags):
+        '''void QTextEncoder.__init__(QTextCodec codec, QTextCodec.ConversionFlags flags)'''
+    def fromUnicode(self, str):
+        '''QByteArray QTextEncoder.fromUnicode(QString str)'''
         return QByteArray()
 
 
 class QTextDecoder():
     """"""
-    def __init__(self, _codec):
-        """None QTextDecoder.__init__(None self, QTextCodec _codec)"""
-        return None
-    def __init__(self, _codec, _flags):
-        """None QTextDecoder.__init__(None self, QTextCodec _codec, QTextCodec.ConversionFlags _flags)"""
-        return None
-    def toUnicode(self, _chars):
-        """QString QTextDecoder.toUnicode(None self, str _chars)"""
+    def __init__(self, codec):
+        '''void QTextDecoder.__init__(QTextCodec codec)'''
+    def __init__(self, codec, flags):
+        '''void QTextDecoder.__init__(QTextCodec codec, QTextCodec.ConversionFlags flags)'''
+    def toUnicode(self, chars):
+        '''QString QTextDecoder.toUnicode(str chars)'''
         return QString()
-    def toUnicode(self, _target, _chars):
-        """None QTextDecoder.toUnicode(None self, QString _target, str _chars)"""
-        return None
-    def toUnicode(self, _ba):
-        """QString QTextDecoder.toUnicode(None self, QByteArray _ba)"""
+    def toUnicode(self, target, chars):
+        '''void QTextDecoder.toUnicode(QString target, str chars)'''
+    def toUnicode(self, ba):
+        '''QString QTextDecoder.toUnicode(QByteArray ba)'''
         return QString()
 
 
 class QTextStream():
     """"""
-    Ok = int() # QTextStream.Status enum
-    ReadPastEnd = int() # QTextStream.Status enum
-    ReadCorruptData = int() # QTextStream.Status enum
+    # Enum QTextStream.Status
+    Ok = 0
+    ReadPastEnd = 0
+    ReadCorruptData = 0
 
-    ShowBase = int() # QTextStream.NumberFlag enum
-    ForcePoint = int() # QTextStream.NumberFlag enum
-    ForceSign = int() # QTextStream.NumberFlag enum
-    UppercaseBase = int() # QTextStream.NumberFlag enum
-    UppercaseDigits = int() # QTextStream.NumberFlag enum
+    # Enum QTextStream.NumberFlag
+    ShowBase = 0
+    ForcePoint = 0
+    ForceSign = 0
+    UppercaseBase = 0
+    UppercaseDigits = 0
 
-    AlignLeft = int() # QTextStream.FieldAlignment enum
-    AlignRight = int() # QTextStream.FieldAlignment enum
-    AlignCenter = int() # QTextStream.FieldAlignment enum
-    AlignAccountingStyle = int() # QTextStream.FieldAlignment enum
+    # Enum QTextStream.FieldAlignment
+    AlignLeft = 0
+    AlignRight = 0
+    AlignCenter = 0
+    AlignAccountingStyle = 0
 
-    SmartNotation = int() # QTextStream.RealNumberNotation enum
-    FixedNotation = int() # QTextStream.RealNumberNotation enum
-    ScientificNotation = int() # QTextStream.RealNumberNotation enum
+    # Enum QTextStream.RealNumberNotation
+    SmartNotation = 0
+    FixedNotation = 0
+    ScientificNotation = 0
 
     def __init__(self):
-        """None QTextStream.__init__(None self)"""
-        return None
-    def __init__(self, _device):
-        """None QTextStream.__init__(None self, QIODevice _device)"""
-        return None
-    def __init__(self, _string, _mode):
-        """None QTextStream.__init__(None self, QString _string, QIODevice.OpenMode _mode)"""
-        return None
-    def __init__(self, _array, _mode):
-        """None QTextStream.__init__(None self, QByteArray _array, QIODevice.OpenMode _mode)"""
-        return None
+        '''void QTextStream.__init__()'''
+    def __init__(self, device):
+        '''void QTextStream.__init__(QIODevice device)'''
+    def __init__(self, string, mode = QIODevice.ReadWrite):
+        '''void QTextStream.__init__(QString string, QIODevice.OpenMode mode = QIODevice.ReadWrite)'''
+    def __init__(self, array, mode = QIODevice.ReadWrite):
+        '''void QTextStream.__init__(QByteArray array, QIODevice.OpenMode mode = QIODevice.ReadWrite)'''
     def locale(self):
-        """QLocale QTextStream.locale(None self)"""
+        '''QLocale QTextStream.locale()'''
         return QLocale()
-    def setLocale(self, _locale):
-        """None QTextStream.setLocale(None self, QLocale _locale)"""
-        return None
-    def __lshift__(self, _f):
-        """QTextStream QTextStream.__lshift__(None self, float _f)"""
+    def setLocale(self, locale):
+        '''void QTextStream.setLocale(QLocale locale)'''
+    def __lshift__(self, f):
+        '''QTextStream QTextStream.__lshift__(float f)'''
         return QTextStream()
-    def __lshift__(self, _b):
-        """QTextStream QTextStream.__lshift__(None self, bool _b)"""
+    def __lshift__(self, b):
+        '''QTextStream QTextStream.__lshift__(bool b)'''
         return QTextStream()
-    def __lshift__(self, _i):
-        """QTextStream QTextStream.__lshift__(None self, int _i)"""
+    def __lshift__(self, i):
+        '''QTextStream QTextStream.__lshift__(int i)'''
         return QTextStream()
-    def __lshift__(self, _i):
-        """QTextStream QTextStream.__lshift__(None self, int _i)"""
+    def __lshift__(self, i):
+        '''QTextStream QTextStream.__lshift__(int i)'''
         return QTextStream()
-    def __lshift__(self, _i):
-        """QTextStream QTextStream.__lshift__(None self, int _i)"""
+    def __lshift__(self, i):
+        '''QTextStream QTextStream.__lshift__(int i)'''
         return QTextStream()
-    def __lshift__(self, _s):
-        """QTextStream QTextStream.__lshift__(None self, QString _s)"""
+    def __lshift__(self, s):
+        '''QTextStream QTextStream.__lshift__(QString s)'''
         return QTextStream()
-    def __lshift__(self, _array):
-        """QTextStream QTextStream.__lshift__(None self, QByteArray _array)"""
+    def __lshift__(self, array):
+        '''QTextStream QTextStream.__lshift__(QByteArray array)'''
         return QTextStream()
-    def __lshift__(self, _m):
-        """QTextStream QTextStream.__lshift__(None self, QTextStreamManipulator _m)"""
+    def __lshift__(self, m):
+        '''QTextStream QTextStream.__lshift__(QTextStreamManipulator m)'''
         return QTextStream()
-    def __rshift__(self, _ch):
-        """QTextStream QTextStream.__rshift__(None self, QChar _ch)"""
+    def __rshift__(self, ch):
+        '''QTextStream QTextStream.__rshift__(QChar ch)'''
         return QTextStream()
-    def __rshift__(self, _s):
-        """QTextStream QTextStream.__rshift__(None self, QString _s)"""
+    def __rshift__(self, s):
+        '''QTextStream QTextStream.__rshift__(QString s)'''
         return QTextStream()
-    def __rshift__(self, _array):
-        """QTextStream QTextStream.__rshift__(None self, QByteArray _array)"""
+    def __rshift__(self, array):
+        '''QTextStream QTextStream.__rshift__(QByteArray array)'''
         return QTextStream()
     def pos(self):
-        """int QTextStream.pos(None self)"""
+        '''int QTextStream.pos()'''
         return int()
     def resetStatus(self):
-        """None QTextStream.resetStatus(None self)"""
-        return None
-    def setStatus(self, _status):
-        """None QTextStream.setStatus(None self, QTextStream.Status _status)"""
-        return None
+        '''void QTextStream.resetStatus()'''
+    def setStatus(self, status):
+        '''void QTextStream.setStatus(QTextStream.Status status)'''
     def status(self):
-        """QTextStream.Status QTextStream.status(None self)"""
+        '''QTextStream.Status QTextStream.status()'''
         return QTextStream.Status()
     def realNumberPrecision(self):
-        """int QTextStream.realNumberPrecision(None self)"""
+        '''int QTextStream.realNumberPrecision()'''
         return int()
-    def setRealNumberPrecision(self, _precision):
-        """None QTextStream.setRealNumberPrecision(None self, int _precision)"""
-        return None
+    def setRealNumberPrecision(self, precision):
+        '''void QTextStream.setRealNumberPrecision(int precision)'''
     def realNumberNotation(self):
-        """QTextStream.RealNumberNotation QTextStream.realNumberNotation(None self)"""
+        '''QTextStream.RealNumberNotation QTextStream.realNumberNotation()'''
         return QTextStream.RealNumberNotation()
-    def setRealNumberNotation(self, _notation):
-        """None QTextStream.setRealNumberNotation(None self, QTextStream.RealNumberNotation _notation)"""
-        return None
+    def setRealNumberNotation(self, notation):
+        '''void QTextStream.setRealNumberNotation(QTextStream.RealNumberNotation notation)'''
     def integerBase(self):
-        """int QTextStream.integerBase(None self)"""
+        '''int QTextStream.integerBase()'''
         return int()
-    def setIntegerBase(self, _base):
-        """None QTextStream.setIntegerBase(None self, int _base)"""
-        return None
+    def setIntegerBase(self, base):
+        '''void QTextStream.setIntegerBase(int base)'''
     def numberFlags(self):
-        """QTextStream.NumberFlags QTextStream.numberFlags(None self)"""
+        '''QTextStream.NumberFlags QTextStream.numberFlags()'''
         return QTextStream.NumberFlags()
-    def setNumberFlags(self, _flags):
-        """None QTextStream.setNumberFlags(None self, QTextStream.NumberFlags _flags)"""
-        return None
+    def setNumberFlags(self, flags):
+        '''void QTextStream.setNumberFlags(QTextStream.NumberFlags flags)'''
     def fieldWidth(self):
-        """int QTextStream.fieldWidth(None self)"""
+        '''int QTextStream.fieldWidth()'''
         return int()
-    def setFieldWidth(self, _width):
-        """None QTextStream.setFieldWidth(None self, int _width)"""
-        return None
+    def setFieldWidth(self, width):
+        '''void QTextStream.setFieldWidth(int width)'''
     def padChar(self):
-        """QChar QTextStream.padChar(None self)"""
+        '''QChar QTextStream.padChar()'''
         return QChar()
-    def setPadChar(self, _ch):
-        """None QTextStream.setPadChar(None self, QChar _ch)"""
-        return None
+    def setPadChar(self, ch):
+        '''void QTextStream.setPadChar(QChar ch)'''
     def fieldAlignment(self):
-        """QTextStream.FieldAlignment QTextStream.fieldAlignment(None self)"""
+        '''QTextStream.FieldAlignment QTextStream.fieldAlignment()'''
         return QTextStream.FieldAlignment()
-    def setFieldAlignment(self, _alignment):
-        """None QTextStream.setFieldAlignment(None self, QTextStream.FieldAlignment _alignment)"""
-        return None
+    def setFieldAlignment(self, alignment):
+        '''void QTextStream.setFieldAlignment(QTextStream.FieldAlignment alignment)'''
     def readAll(self):
-        """QString QTextStream.readAll(None self)"""
+        '''QString QTextStream.readAll()'''
         return QString()
-    def readLine(self, _maxLength):
-        """QString QTextStream.readLine(None self, int _maxLength)"""
+    def readLine(self, maxLength = 0):
+        '''QString QTextStream.readLine(int maxLength = 0)'''
         return QString()
-    def read(self, _maxlen):
-        """QString QTextStream.read(None self, int _maxlen)"""
+    def read(self, maxlen):
+        '''QString QTextStream.read(int maxlen)'''
         return QString()
     def skipWhiteSpace(self):
-        """None QTextStream.skipWhiteSpace(None self)"""
-        return None
-    def seek(self, _pos):
-        """bool QTextStream.seek(None self, int _pos)"""
+        '''void QTextStream.skipWhiteSpace()'''
+    def seek(self, pos):
+        '''bool QTextStream.seek(int pos)'''
         return bool()
     def flush(self):
-        """None QTextStream.flush(None self)"""
-        return None
+        '''void QTextStream.flush()'''
     def reset(self):
-        """None QTextStream.reset(None self)"""
-        return None
+        '''void QTextStream.reset()'''
     def atEnd(self):
-        """bool QTextStream.atEnd(None self)"""
+        '''bool QTextStream.atEnd()'''
         return bool()
     def string(self):
-        """QString QTextStream.string(None self)"""
+        '''QString QTextStream.string()'''
         return QString()
-    def setString(self, _string, _mode):
-        """None QTextStream.setString(None self, QString _string, QIODevice.OpenMode _mode)"""
-        return None
+    def setString(self, string, mode = QIODevice.ReadWrite):
+        '''void QTextStream.setString(QString string, QIODevice.OpenMode mode = QIODevice.ReadWrite)'''
     def device(self):
-        """QIODevice QTextStream.device(None self)"""
+        '''QIODevice QTextStream.device()'''
         return QIODevice()
-    def setDevice(self, _device):
-        """None QTextStream.setDevice(None self, QIODevice _device)"""
-        return None
+    def setDevice(self, device):
+        '''void QTextStream.setDevice(QIODevice device)'''
     def generateByteOrderMark(self):
-        """bool QTextStream.generateByteOrderMark(None self)"""
+        '''bool QTextStream.generateByteOrderMark()'''
         return bool()
-    def setGenerateByteOrderMark(self, _generate):
-        """None QTextStream.setGenerateByteOrderMark(None self, bool _generate)"""
-        return None
+    def setGenerateByteOrderMark(self, generate):
+        '''void QTextStream.setGenerateByteOrderMark(bool generate)'''
     def autoDetectUnicode(self):
-        """bool QTextStream.autoDetectUnicode(None self)"""
+        '''bool QTextStream.autoDetectUnicode()'''
         return bool()
-    def setAutoDetectUnicode(self, _enabled):
-        """None QTextStream.setAutoDetectUnicode(None self, bool _enabled)"""
-        return None
+    def setAutoDetectUnicode(self, enabled):
+        '''void QTextStream.setAutoDetectUnicode(bool enabled)'''
     def codec(self):
-        """QTextCodec QTextStream.codec(None self)"""
+        '''QTextCodec QTextStream.codec()'''
         return QTextCodec()
-    def setCodec(self, _codec):
-        """None QTextStream.setCodec(None self, QTextCodec _codec)"""
-        return None
-    def setCodec(self, _codecName):
-        """None QTextStream.setCodec(None self, str _codecName)"""
-        return None
+    def setCodec(self, codec):
+        '''void QTextStream.setCodec(QTextCodec codec)'''
+    def setCodec(self, codecName):
+        '''void QTextStream.setCodec(str codecName)'''
+    class NumberFlags():
+        """"""
+        def __init__(self):
+            '''QTextStream.NumberFlags QTextStream.NumberFlags.__init__()'''
+            return QTextStream.NumberFlags()
+        def __init__(self):
+            '''int QTextStream.NumberFlags.__init__()'''
+            return int()
+        def __init__(self):
+            '''void QTextStream.NumberFlags.__init__()'''
+        def __bool__(self):
+            '''int QTextStream.NumberFlags.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool QTextStream.NumberFlags.__ne__(QTextStream.NumberFlags f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool QTextStream.NumberFlags.__eq__(QTextStream.NumberFlags f)'''
+            return bool()
+        def __invert__(self):
+            '''QTextStream.NumberFlags QTextStream.NumberFlags.__invert__()'''
+            return QTextStream.NumberFlags()
+        def __and__(self, mask):
+            '''QTextStream.NumberFlags QTextStream.NumberFlags.__and__(int mask)'''
+            return QTextStream.NumberFlags()
+        def __xor__(self, f):
+            '''QTextStream.NumberFlags QTextStream.NumberFlags.__xor__(QTextStream.NumberFlags f)'''
+            return QTextStream.NumberFlags()
+        def __xor__(self, f):
+            '''QTextStream.NumberFlags QTextStream.NumberFlags.__xor__(int f)'''
+            return QTextStream.NumberFlags()
+        def __or__(self, f):
+            '''QTextStream.NumberFlags QTextStream.NumberFlags.__or__(QTextStream.NumberFlags f)'''
+            return QTextStream.NumberFlags()
+        def __or__(self, f):
+            '''QTextStream.NumberFlags QTextStream.NumberFlags.__or__(int f)'''
+            return QTextStream.NumberFlags()
+        def __int__(self):
+            '''int QTextStream.NumberFlags.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''QTextStream.NumberFlags QTextStream.NumberFlags.__ixor__(QTextStream.NumberFlags f)'''
+            return QTextStream.NumberFlags()
+        def __ior__(self, f):
+            '''QTextStream.NumberFlags QTextStream.NumberFlags.__ior__(QTextStream.NumberFlags f)'''
+            return QTextStream.NumberFlags()
+        def __iand__(self, mask):
+            '''QTextStream.NumberFlags QTextStream.NumberFlags.__iand__(int mask)'''
+            return QTextStream.NumberFlags()
 
 
 class QThread(QObject):
     """"""
-    IdlePriority = int() # QThread.Priority enum
-    LowestPriority = int() # QThread.Priority enum
-    LowPriority = int() # QThread.Priority enum
-    NormalPriority = int() # QThread.Priority enum
-    HighPriority = int() # QThread.Priority enum
-    HighestPriority = int() # QThread.Priority enum
-    TimeCriticalPriority = int() # QThread.Priority enum
-    InheritPriority = int() # QThread.Priority enum
+    # Enum QThread.Priority
+    IdlePriority = 0
+    LowestPriority = 0
+    LowPriority = 0
+    NormalPriority = 0
+    HighPriority = 0
+    HighestPriority = 0
+    TimeCriticalPriority = 0
+    InheritPriority = 0
 
-    def __init__(self, _parent):
-        """None QThread.__init__(None self, QObject _parent)"""
-        return None
+    def __init__(self, parent = None):
+        '''void QThread.__init__(QObject parent = None)'''
     def usleep(self):
-        """int QThread.usleep(None self)"""
+        '''static int QThread.usleep()'''
         return int()
     def msleep(self):
-        """int QThread.msleep(None self)"""
+        '''static int QThread.msleep()'''
         return int()
     def sleep(self):
-        """int QThread.sleep(None self)"""
+        '''static int QThread.sleep()'''
         return int()
-    def setTerminationEnabled(self, _enabled):
-        """None QThread.setTerminationEnabled(None self, bool _enabled)"""
-        return None
+    def setTerminationEnabled(self, enabled = True):
+        '''static void QThread.setTerminationEnabled(bool enabled = True)'''
     def exec_(self):
-        """int QThread.exec_(None self)"""
+        '''int QThread.exec_()'''
         return int()
     def run(self):
-        """None QThread.run(None self)"""
-        return None
-    def wait(self, _msecs):
-        """bool QThread.wait(None self, int _msecs)"""
+        '''void QThread.run()'''
+    terminated = PyQt4.QtCore.pyqtSignal() # void terminated() - signal
+    finished = PyQt4.QtCore.pyqtSignal() # void finished() - signal
+    started = PyQt4.QtCore.pyqtSignal() # void started() - signal
+    def wait(self, msecs = ULONG_MAX):
+        '''bool QThread.wait(int msecs = ULONG_MAX)'''
         return bool()
     def quit(self):
-        """None QThread.quit(None self)"""
-        return None
+        '''void QThread.quit()'''
     def terminate(self):
-        """None QThread.terminate(None self)"""
-        return None
-    def start(self, _priority):
-        """None QThread.start(None self, QThread.Priority _priority)"""
-        return None
-    def exit(self, _returnCode):
-        """None QThread.exit(None self, int _returnCode)"""
-        return None
+        '''void QThread.terminate()'''
+    def start(self, priority = QThread.InheritPriority):
+        '''void QThread.start(QThread.Priority priority = QThread.InheritPriority)'''
+    def exit(self, returnCode = 0):
+        '''void QThread.exit(int returnCode = 0)'''
     def stackSize(self):
-        """int QThread.stackSize(None self)"""
+        '''int QThread.stackSize()'''
         return int()
-    def setStackSize(self, _stackSize):
-        """None QThread.setStackSize(None self, int _stackSize)"""
-        return None
+    def setStackSize(self, stackSize):
+        '''void QThread.setStackSize(int stackSize)'''
     def priority(self):
-        """QThread.Priority QThread.priority(None self)"""
+        '''QThread.Priority QThread.priority()'''
         return QThread.Priority()
-    def setPriority(self, _priority):
-        """None QThread.setPriority(None self, QThread.Priority _priority)"""
-        return None
+    def setPriority(self, priority):
+        '''void QThread.setPriority(QThread.Priority priority)'''
     def isRunning(self):
-        """bool QThread.isRunning(None self)"""
+        '''bool QThread.isRunning()'''
         return bool()
     def isFinished(self):
-        """bool QThread.isFinished(None self)"""
+        '''bool QThread.isFinished()'''
         return bool()
     def yieldCurrentThread(self):
-        """None QThread.yieldCurrentThread(None self)"""
-        return None
+        '''static void QThread.yieldCurrentThread()'''
     def idealThreadCount(self):
-        """int QThread.idealThreadCount(None self)"""
+        '''static int QThread.idealThreadCount()'''
         return int()
     def currentThreadId(self):
-        """int QThread.currentThreadId(None self)"""
+        '''static int QThread.currentThreadId()'''
         return int()
     def currentThread(self):
-        """QThread QThread.currentThread(None self)"""
+        '''static QThread QThread.currentThread()'''
         return QThread()
 
 
 class QThreadPool(QObject):
     """"""
-    def __init__(self, _parent):
-        """None QThreadPool.__init__(None self, QObject _parent)"""
-        return None
+    def __init__(self, parent = None):
+        '''void QThreadPool.__init__(QObject parent = None)'''
     def waitForDone(self):
-        """None QThreadPool.waitForDone(None self)"""
-        return None
+        '''void QThreadPool.waitForDone()'''
     def releaseThread(self):
-        """None QThreadPool.releaseThread(None self)"""
-        return None
+        '''void QThreadPool.releaseThread()'''
     def reserveThread(self):
-        """None QThreadPool.reserveThread(None self)"""
-        return None
+        '''void QThreadPool.reserveThread()'''
     def activeThreadCount(self):
-        """int QThreadPool.activeThreadCount(None self)"""
+        '''int QThreadPool.activeThreadCount()'''
         return int()
-    def setMaxThreadCount(self, _maxThreadCount):
-        """None QThreadPool.setMaxThreadCount(None self, int _maxThreadCount)"""
-        return None
+    def setMaxThreadCount(self, maxThreadCount):
+        '''void QThreadPool.setMaxThreadCount(int maxThreadCount)'''
     def maxThreadCount(self):
-        """int QThreadPool.maxThreadCount(None self)"""
+        '''int QThreadPool.maxThreadCount()'''
         return int()
-    def setExpiryTimeout(self, _expiryTimeout):
-        """None QThreadPool.setExpiryTimeout(None self, int _expiryTimeout)"""
-        return None
+    def setExpiryTimeout(self, expiryTimeout):
+        '''void QThreadPool.setExpiryTimeout(int expiryTimeout)'''
     def expiryTimeout(self):
-        """int QThreadPool.expiryTimeout(None self)"""
+        '''int QThreadPool.expiryTimeout()'''
         return int()
-    def tryStart(self, _runnable):
-        """bool QThreadPool.tryStart(None self, QRunnable _runnable)"""
+    def tryStart(self, runnable):
+        '''bool QThreadPool.tryStart(QRunnable runnable)'''
         return bool()
-    def start(self, _runnable, _priority):
-        """None QThreadPool.start(None self, QRunnable _runnable, int _priority)"""
-        return None
+    def start(self, runnable, priority = 0):
+        '''void QThreadPool.start(QRunnable runnable, int priority = 0)'''
     def globalInstance(self):
-        """QThreadPool QThreadPool.globalInstance(None self)"""
+        '''static QThreadPool QThreadPool.globalInstance()'''
         return QThreadPool()
 
 
 class QTimeLine(QObject):
     """"""
-    NotRunning = int() # QTimeLine.State enum
-    Paused = int() # QTimeLine.State enum
-    Running = int() # QTimeLine.State enum
+    # Enum QTimeLine.State
+    NotRunning = 0
+    Paused = 0
+    Running = 0
 
-    Forward = int() # QTimeLine.Direction enum
-    Backward = int() # QTimeLine.Direction enum
+    # Enum QTimeLine.Direction
+    Forward = 0
+    Backward = 0
 
-    EaseInCurve = int() # QTimeLine.CurveShape enum
-    EaseOutCurve = int() # QTimeLine.CurveShape enum
-    EaseInOutCurve = int() # QTimeLine.CurveShape enum
-    LinearCurve = int() # QTimeLine.CurveShape enum
-    SineCurve = int() # QTimeLine.CurveShape enum
-    CosineCurve = int() # QTimeLine.CurveShape enum
+    # Enum QTimeLine.CurveShape
+    EaseInCurve = 0
+    EaseOutCurve = 0
+    EaseInOutCurve = 0
+    LinearCurve = 0
+    SineCurve = 0
+    CosineCurve = 0
 
-    def __init__(self, _duration, _parent):
-        """None QTimeLine.__init__(None self, int _duration, QObject _parent)"""
-        return None
-    def setEasingCurve(self, _curve):
-        """None QTimeLine.setEasingCurve(None self, QEasingCurve _curve)"""
-        return None
+    def __init__(self, duration = 1000, parent = None):
+        '''void QTimeLine.__init__(int duration = 1000, QObject parent = None)'''
+    def setEasingCurve(self, curve):
+        '''void QTimeLine.setEasingCurve(QEasingCurve curve)'''
     def easingCurve(self):
-        """QEasingCurve QTimeLine.easingCurve(None self)"""
+        '''QEasingCurve QTimeLine.easingCurve()'''
         return QEasingCurve()
-    def timerEvent(self, _event):
-        """None QTimeLine.timerEvent(None self, QTimerEvent _event)"""
-        return None
+    def timerEvent(self, event):
+        '''void QTimeLine.timerEvent(QTimerEvent event)'''
+    valueChanged = PyQt4.QtCore.pyqtSignal() # void valueChanged(qreal) - signal
+    stateChanged = PyQt4.QtCore.pyqtSignal() # void stateChanged(QTimeLine::State) - signal
+    frameChanged = PyQt4.QtCore.pyqtSignal() # void frameChanged(int) - signal
+    finished = PyQt4.QtCore.pyqtSignal() # void finished() - signal
     def toggleDirection(self):
-        """None QTimeLine.toggleDirection(None self)"""
-        return None
+        '''void QTimeLine.toggleDirection()'''
     def stop(self):
-        """None QTimeLine.stop(None self)"""
-        return None
+        '''void QTimeLine.stop()'''
     def start(self):
-        """None QTimeLine.start(None self)"""
-        return None
-    def setPaused(self, _paused):
-        """None QTimeLine.setPaused(None self, bool _paused)"""
-        return None
-    def setCurrentTime(self, _msec):
-        """None QTimeLine.setCurrentTime(None self, int _msec)"""
-        return None
+        '''void QTimeLine.start()'''
+    def setPaused(self, paused):
+        '''void QTimeLine.setPaused(bool paused)'''
+    def setCurrentTime(self, msec):
+        '''void QTimeLine.setCurrentTime(int msec)'''
     def resume(self):
-        """None QTimeLine.resume(None self)"""
-        return None
-    def valueForTime(self, _msec):
-        """float QTimeLine.valueForTime(None self, int _msec)"""
+        '''void QTimeLine.resume()'''
+    def valueForTime(self, msec):
+        '''float QTimeLine.valueForTime(int msec)'''
         return float()
-    def frameForTime(self, _msec):
-        """int QTimeLine.frameForTime(None self, int _msec)"""
+    def frameForTime(self, msec):
+        '''int QTimeLine.frameForTime(int msec)'''
         return int()
     def currentValue(self):
-        """float QTimeLine.currentValue(None self)"""
+        '''float QTimeLine.currentValue()'''
         return float()
     def currentFrame(self):
-        """int QTimeLine.currentFrame(None self)"""
+        '''int QTimeLine.currentFrame()'''
         return int()
     def currentTime(self):
-        """int QTimeLine.currentTime(None self)"""
+        '''int QTimeLine.currentTime()'''
         return int()
-    def setCurveShape(self, _shape):
-        """None QTimeLine.setCurveShape(None self, QTimeLine.CurveShape _shape)"""
-        return None
+    def setCurveShape(self, shape):
+        '''void QTimeLine.setCurveShape(QTimeLine.CurveShape shape)'''
     def curveShape(self):
-        """QTimeLine.CurveShape QTimeLine.curveShape(None self)"""
+        '''QTimeLine.CurveShape QTimeLine.curveShape()'''
         return QTimeLine.CurveShape()
-    def setUpdateInterval(self, _interval):
-        """None QTimeLine.setUpdateInterval(None self, int _interval)"""
-        return None
+    def setUpdateInterval(self, interval):
+        '''void QTimeLine.setUpdateInterval(int interval)'''
     def updateInterval(self):
-        """int QTimeLine.updateInterval(None self)"""
+        '''int QTimeLine.updateInterval()'''
         return int()
-    def setFrameRange(self, _startFrame, _endFrame):
-        """None QTimeLine.setFrameRange(None self, int _startFrame, int _endFrame)"""
-        return None
-    def setEndFrame(self, _frame):
-        """None QTimeLine.setEndFrame(None self, int _frame)"""
-        return None
+    def setFrameRange(self, startFrame, endFrame):
+        '''void QTimeLine.setFrameRange(int startFrame, int endFrame)'''
+    def setEndFrame(self, frame):
+        '''void QTimeLine.setEndFrame(int frame)'''
     def endFrame(self):
-        """int QTimeLine.endFrame(None self)"""
+        '''int QTimeLine.endFrame()'''
         return int()
-    def setStartFrame(self, _frame):
-        """None QTimeLine.setStartFrame(None self, int _frame)"""
-        return None
+    def setStartFrame(self, frame):
+        '''void QTimeLine.setStartFrame(int frame)'''
     def startFrame(self):
-        """int QTimeLine.startFrame(None self)"""
+        '''int QTimeLine.startFrame()'''
         return int()
-    def setDuration(self, _duration):
-        """None QTimeLine.setDuration(None self, int _duration)"""
-        return None
+    def setDuration(self, duration):
+        '''void QTimeLine.setDuration(int duration)'''
     def duration(self):
-        """int QTimeLine.duration(None self)"""
+        '''int QTimeLine.duration()'''
         return int()
-    def setDirection(self, _direction):
-        """None QTimeLine.setDirection(None self, QTimeLine.Direction _direction)"""
-        return None
+    def setDirection(self, direction):
+        '''void QTimeLine.setDirection(QTimeLine.Direction direction)'''
     def direction(self):
-        """QTimeLine.Direction QTimeLine.direction(None self)"""
+        '''QTimeLine.Direction QTimeLine.direction()'''
         return QTimeLine.Direction()
-    def setLoopCount(self, _count):
-        """None QTimeLine.setLoopCount(None self, int _count)"""
-        return None
+    def setLoopCount(self, count):
+        '''void QTimeLine.setLoopCount(int count)'''
     def loopCount(self):
-        """int QTimeLine.loopCount(None self)"""
+        '''int QTimeLine.loopCount()'''
         return int()
     def state(self):
-        """QTimeLine.State QTimeLine.state(None self)"""
+        '''QTimeLine.State QTimeLine.state()'''
         return QTimeLine.State()
 
 
 class QTimer(QObject):
     """"""
-    def __init__(self, _parent):
-        """None QTimer.__init__(None self, QObject _parent)"""
-        return None
+    def __init__(self, parent = None):
+        '''void QTimer.__init__(QObject parent = None)'''
     def timerEvent(self):
-        """QTimerEvent QTimer.timerEvent(None self)"""
+        '''QTimerEvent QTimer.timerEvent()'''
         return QTimerEvent()
+    timeout = PyQt4.QtCore.pyqtSignal() # void timeout() - signal
     def stop(self):
-        """None QTimer.stop(None self)"""
-        return None
-    def start(self, _msec):
-        """None QTimer.start(None self, int _msec)"""
-        return None
+        '''void QTimer.stop()'''
+    def start(self, msec):
+        '''void QTimer.start(int msec)'''
     def start(self):
-        """None QTimer.start(None self)"""
-        return None
-    def singleShot(self, _msec, _receiver, _member):
-        """None QTimer.singleShot(None self, int _msec, QObject _receiver, SLOT()SLOT() _member)"""
-        return None
-    def singleShot(self, _msec, _receiver):
-        """None QTimer.singleShot(None self, int _msec, callable _receiver)"""
-        return None
-    def setSingleShot(self, _asingleShot):
-        """None QTimer.setSingleShot(None self, bool _asingleShot)"""
-        return None
+        '''void QTimer.start()'''
+    def singleShot(self, msec, receiver, member):
+        '''static void QTimer.singleShot(int msec, QObject receiver, SLOT()SLOT() member)'''
+    def singleShot(self, msec, receiver):
+        '''static void QTimer.singleShot(int msec, callable receiver)'''
+    def setSingleShot(self, asingleShot):
+        '''void QTimer.setSingleShot(bool asingleShot)'''
     def isSingleShot(self):
-        """bool QTimer.isSingleShot(None self)"""
+        '''bool QTimer.isSingleShot()'''
         return bool()
     def interval(self):
-        """int QTimer.interval(None self)"""
+        '''int QTimer.interval()'''
         return int()
-    def setInterval(self, _msec):
-        """None QTimer.setInterval(None self, int _msec)"""
-        return None
+    def setInterval(self, msec):
+        '''void QTimer.setInterval(int msec)'''
     def timerId(self):
-        """int QTimer.timerId(None self)"""
+        '''int QTimer.timerId()'''
         return int()
     def isActive(self):
-        """bool QTimer.isActive(None self)"""
+        '''bool QTimer.isActive()'''
         return bool()
 
 
 class QTranslator(QObject):
     """"""
-    def __init__(self, _parent):
-        """None QTranslator.__init__(None self, QObject _parent)"""
-        return None
-    def loadFromData(self, _data):
-        """bool QTranslator.loadFromData(None self, str _data)"""
+    def __init__(self, parent = None):
+        '''void QTranslator.__init__(QObject parent = None)'''
+    def loadFromData(self, data):
+        '''bool QTranslator.loadFromData(str data)'''
         return bool()
-    def load(self, _fileName, _directory, _searchDelimiters, _suffix):
-        """bool QTranslator.load(None self, QString _fileName, QString _directory, QString _searchDelimiters, QString _suffix)"""
+    def load(self, fileName, directory = QString(), searchDelimiters = QString(), suffix = QString()):
+        '''bool QTranslator.load(QString fileName, QString directory = QString(), QString searchDelimiters = QString(), QString suffix = QString())'''
         return bool()
     def isEmpty(self):
-        """bool QTranslator.isEmpty(None self)"""
+        '''bool QTranslator.isEmpty()'''
         return bool()
-    def translate(self, _context, _sourceText, _disambiguation):
-        """QString QTranslator.translate(None self, str _context, str _sourceText, str _disambiguation)"""
+    def translate(self, context, sourceText, disambiguation = None):
+        '''QString QTranslator.translate(str context, str sourceText, str disambiguation = None)'''
         return QString()
-    def translate(self, _context, _sourceText, _comment, _n):
-        """QString QTranslator.translate(None self, str _context, str _sourceText, str _comment, int _n)"""
+    def translate(self, context, sourceText, comment, n):
+        '''QString QTranslator.translate(str context, str sourceText, str comment, int n)'''
         return QString()
 
 
 class QUrl():
     """"""
-    TolerantMode = int() # QUrl.ParsingMode enum
-    StrictMode = int() # QUrl.ParsingMode enum
+    # Enum QUrl.ParsingMode
+    TolerantMode = 0
+    StrictMode = 0
 
-    __kdevpythondocumentation_builtin_None = int() # QUrl.FormattingOption enum
-    RemoveScheme = int() # QUrl.FormattingOption enum
-    RemovePassword = int() # QUrl.FormattingOption enum
-    RemoveUserInfo = int() # QUrl.FormattingOption enum
-    RemovePort = int() # QUrl.FormattingOption enum
-    RemoveAuthority = int() # QUrl.FormattingOption enum
-    RemovePath = int() # QUrl.FormattingOption enum
-    RemoveQuery = int() # QUrl.FormattingOption enum
-    RemoveFragment = int() # QUrl.FormattingOption enum
-    StripTrailingSlash = int() # QUrl.FormattingOption enum
+    # Enum QUrl.FormattingOption
+    __kdevpythondocumentation_builtin_None = 0
+    RemoveScheme = 0
+    RemovePassword = 0
+    RemoveUserInfo = 0
+    RemovePort = 0
+    RemoveAuthority = 0
+    RemovePath = 0
+    RemoveQuery = 0
+    RemoveFragment = 0
+    StripTrailingSlash = 0
 
     def __init__(self):
-        """None QUrl.__init__(None self)"""
-        return None
-    def __init__(self, _url):
-        """None QUrl.__init__(None self, QString _url)"""
-        return None
-    def __init__(self, _copy):
-        """None QUrl.__init__(None self, QUrl _copy)"""
-        return None
-    def __init__(self, _url, _mode):
-        """None QUrl.__init__(None self, QString _url, QUrl.ParsingMode _mode)"""
-        return None
-    def __ge__(self, _url):
-        """bool QUrl.__ge__(None self, QUrl _url)"""
+        '''void QUrl.__init__()'''
+    def __init__(self, url):
+        '''void QUrl.__init__(QString url)'''
+    def __init__(self, copy):
+        '''void QUrl.__init__(QUrl copy)'''
+    def __init__(self, url, mode):
+        '''void QUrl.__init__(QString url, QUrl.ParsingMode mode)'''
+    def __ge__(self, url):
+        '''bool QUrl.__ge__(QUrl url)'''
         return bool()
-    def fromUserInput(self, _userInput):
-        """QUrl QUrl.fromUserInput(None self, QString _userInput)"""
+    def fromUserInput(self, userInput):
+        '''static QUrl QUrl.fromUserInput(QString userInput)'''
         return QUrl()
     def encodedFragment(self):
-        """QByteArray QUrl.encodedFragment(None self)"""
+        '''QByteArray QUrl.encodedFragment()'''
         return QByteArray()
-    def setEncodedFragment(self, _fragment):
-        """None QUrl.setEncodedFragment(None self, QByteArray _fragment)"""
-        return None
-    def removeAllEncodedQueryItems(self, _key):
-        """None QUrl.removeAllEncodedQueryItems(None self, QByteArray _key)"""
-        return None
-    def removeEncodedQueryItem(self, _key):
-        """None QUrl.removeEncodedQueryItem(None self, QByteArray _key)"""
-        return None
-    def allEncodedQueryItemValues(self, _key):
-        """list-of-QByteArray QUrl.allEncodedQueryItemValues(None self, QByteArray _key)"""
+    def setEncodedFragment(self, fragment):
+        '''void QUrl.setEncodedFragment(QByteArray fragment)'''
+    def removeAllEncodedQueryItems(self, key):
+        '''void QUrl.removeAllEncodedQueryItems(QByteArray key)'''
+    def removeEncodedQueryItem(self, key):
+        '''void QUrl.removeEncodedQueryItem(QByteArray key)'''
+    def allEncodedQueryItemValues(self, key):
+        '''list-of-QByteArray QUrl.allEncodedQueryItemValues(QByteArray key)'''
         return [QByteArray()]
-    def encodedQueryItemValue(self, _key):
-        """QByteArray QUrl.encodedQueryItemValue(None self, QByteArray _key)"""
+    def encodedQueryItemValue(self, key):
+        '''QByteArray QUrl.encodedQueryItemValue(QByteArray key)'''
         return QByteArray()
-    def hasEncodedQueryItem(self, _key):
-        """bool QUrl.hasEncodedQueryItem(None self, QByteArray _key)"""
+    def hasEncodedQueryItem(self, key):
+        '''bool QUrl.hasEncodedQueryItem(QByteArray key)'''
         return bool()
     def encodedQueryItems(self):
-        """list-of-tuple-of-QByteArray-QByteArray QUrl.encodedQueryItems(None self)"""
+        '''list-of-tuple-of-QByteArray-QByteArray QUrl.encodedQueryItems()'''
         return [tuple-of-QByteArray-QByteArray()]
-    def addEncodedQueryItem(self, _key, _value):
-        """None QUrl.addEncodedQueryItem(None self, QByteArray _key, QByteArray _value)"""
-        return None
-    def setEncodedQueryItems(self, _query):
-        """None QUrl.setEncodedQueryItems(None self, list-of-tuple-of-QByteArray-QByteArray _query)"""
-        return None
+    def addEncodedQueryItem(self, key, value):
+        '''void QUrl.addEncodedQueryItem(QByteArray key, QByteArray value)'''
+    def setEncodedQueryItems(self, query):
+        '''void QUrl.setEncodedQueryItems(list-of-tuple-of-QByteArray-QByteArray query)'''
     def encodedPath(self):
-        """QByteArray QUrl.encodedPath(None self)"""
+        '''QByteArray QUrl.encodedPath()'''
         return QByteArray()
-    def setEncodedPath(self, _path):
-        """None QUrl.setEncodedPath(None self, QByteArray _path)"""
-        return None
+    def setEncodedPath(self, path):
+        '''void QUrl.setEncodedPath(QByteArray path)'''
     def encodedHost(self):
-        """QByteArray QUrl.encodedHost(None self)"""
+        '''QByteArray QUrl.encodedHost()'''
         return QByteArray()
-    def setEncodedHost(self, _host):
-        """None QUrl.setEncodedHost(None self, QByteArray _host)"""
-        return None
+    def setEncodedHost(self, host):
+        '''void QUrl.setEncodedHost(QByteArray host)'''
     def encodedPassword(self):
-        """QByteArray QUrl.encodedPassword(None self)"""
+        '''QByteArray QUrl.encodedPassword()'''
         return QByteArray()
-    def setEncodedPassword(self, _password):
-        """None QUrl.setEncodedPassword(None self, QByteArray _password)"""
-        return None
+    def setEncodedPassword(self, password):
+        '''void QUrl.setEncodedPassword(QByteArray password)'''
     def encodedUserName(self):
-        """QByteArray QUrl.encodedUserName(None self)"""
+        '''QByteArray QUrl.encodedUserName()'''
         return QByteArray()
-    def setEncodedUserName(self, _userName):
-        """None QUrl.setEncodedUserName(None self, QByteArray _userName)"""
-        return None
+    def setEncodedUserName(self, userName):
+        '''void QUrl.setEncodedUserName(QByteArray userName)'''
     def setIdnWhitelist(self):
-        """QStringList QUrl.setIdnWhitelist(None self)"""
+        '''static QStringList QUrl.setIdnWhitelist()'''
         return QStringList()
     def idnWhitelist(self):
-        """QStringList QUrl.idnWhitelist(None self)"""
+        '''static QStringList QUrl.idnWhitelist()'''
         return QStringList()
     def toAce(self):
-        """QString QUrl.toAce(None self)"""
+        '''static QString QUrl.toAce()'''
         return QString()
     def fromAce(self):
-        """QByteArray QUrl.fromAce(None self)"""
+        '''static QByteArray QUrl.fromAce()'''
         return QByteArray()
     def errorString(self):
-        """QString QUrl.errorString(None self)"""
+        '''QString QUrl.errorString()'''
         return QString()
     def hasFragment(self):
-        """bool QUrl.hasFragment(None self)"""
+        '''bool QUrl.hasFragment()'''
         return bool()
     def hasQuery(self):
-        """bool QUrl.hasQuery(None self)"""
+        '''bool QUrl.hasQuery()'''
         return bool()
     def toPunycode(self):
-        """QString QUrl.toPunycode(None self)"""
+        '''static QString QUrl.toPunycode()'''
         return QString()
     def fromPunycode(self):
-        """QByteArray QUrl.fromPunycode(None self)"""
+        '''static QByteArray QUrl.fromPunycode()'''
         return QByteArray()
-    def toPercentEncoding(self, _input, _exclude, _include):
-        """QByteArray QUrl.toPercentEncoding(None self, QString _input, QByteArray _exclude, QByteArray _include)"""
+    def toPercentEncoding(self, input, exclude = QByteArray(), include = QByteArray()):
+        '''static QByteArray QUrl.toPercentEncoding(QString input, QByteArray exclude = QByteArray(), QByteArray include = QByteArray())'''
         return QByteArray()
     def fromPercentEncoding(self):
-        """QByteArray QUrl.fromPercentEncoding(None self)"""
+        '''static QByteArray QUrl.fromPercentEncoding()'''
         return QByteArray()
-    def __ne__(self, _url):
-        """bool QUrl.__ne__(None self, QUrl _url)"""
+    def __ne__(self, url):
+        '''bool QUrl.__ne__(QUrl url)'''
         return bool()
-    def __eq__(self, _url):
-        """bool QUrl.__eq__(None self, QUrl _url)"""
+    def __eq__(self, url):
+        '''bool QUrl.__eq__(QUrl url)'''
         return bool()
-    def __lt__(self, _url):
-        """bool QUrl.__lt__(None self, QUrl _url)"""
+    def __lt__(self, url):
+        '''bool QUrl.__lt__(QUrl url)'''
         return bool()
     def isDetached(self):
-        """bool QUrl.isDetached(None self)"""
+        '''bool QUrl.isDetached()'''
         return bool()
     def detach(self):
-        """None QUrl.detach(None self)"""
-        return None
-    def fromEncoded(self, _url):
-        """QUrl QUrl.fromEncoded(None self, QByteArray _url)"""
+        '''void QUrl.detach()'''
+    def fromEncoded(self, url):
+        '''static QUrl QUrl.fromEncoded(QByteArray url)'''
         return QUrl()
-    def fromEncoded(self, _url, _mode):
-        """QUrl QUrl.fromEncoded(None self, QByteArray _url, QUrl.ParsingMode _mode)"""
+    def fromEncoded(self, url, mode):
+        '''static QUrl QUrl.fromEncoded(QByteArray url, QUrl.ParsingMode mode)'''
         return QUrl()
-    def toEncoded(self, _options):
-        """QByteArray QUrl.toEncoded(None self, QUrl.FormattingOptions _options)"""
+    def toEncoded(self, options = QUrl.None):
+        '''QByteArray QUrl.toEncoded(QUrl.FormattingOptions options = QUrl.None)'''
         return QByteArray()
-    def toString(self, _options):
-        """QString QUrl.toString(None self, QUrl.FormattingOptions _options)"""
+    def toString(self, options = QUrl.None):
+        '''QString QUrl.toString(QUrl.FormattingOptions options = QUrl.None)'''
         return QString()
     def toLocalFile(self):
-        """QString QUrl.toLocalFile(None self)"""
+        '''QString QUrl.toLocalFile()'''
         return QString()
-    def fromLocalFile(self, _localfile):
-        """QUrl QUrl.fromLocalFile(None self, QString _localfile)"""
+    def fromLocalFile(self, localfile):
+        '''static QUrl QUrl.fromLocalFile(QString localfile)'''
         return QUrl()
-    def isParentOf(self, _url):
-        """bool QUrl.isParentOf(None self, QUrl _url)"""
+    def isParentOf(self, url):
+        '''bool QUrl.isParentOf(QUrl url)'''
         return bool()
     def isRelative(self):
-        """bool QUrl.isRelative(None self)"""
+        '''bool QUrl.isRelative()'''
         return bool()
-    def resolved(self, _relative):
-        """QUrl QUrl.resolved(None self, QUrl _relative)"""
+    def resolved(self, relative):
+        '''QUrl QUrl.resolved(QUrl relative)'''
         return QUrl()
     def fragment(self):
-        """QString QUrl.fragment(None self)"""
+        '''QString QUrl.fragment()'''
         return QString()
-    def setFragment(self, _fragment):
-        """None QUrl.setFragment(None self, QString _fragment)"""
-        return None
-    def removeAllQueryItems(self, _key):
-        """None QUrl.removeAllQueryItems(None self, QString _key)"""
-        return None
-    def removeQueryItem(self, _key):
-        """None QUrl.removeQueryItem(None self, QString _key)"""
-        return None
-    def allQueryItemValues(self, _key):
-        """QStringList QUrl.allQueryItemValues(None self, QString _key)"""
+    def setFragment(self, fragment):
+        '''void QUrl.setFragment(QString fragment)'''
+    def removeAllQueryItems(self, key):
+        '''void QUrl.removeAllQueryItems(QString key)'''
+    def removeQueryItem(self, key):
+        '''void QUrl.removeQueryItem(QString key)'''
+    def allQueryItemValues(self, key):
+        '''QStringList QUrl.allQueryItemValues(QString key)'''
         return QStringList()
-    def queryItemValue(self, _key):
-        """QString QUrl.queryItemValue(None self, QString _key)"""
+    def queryItemValue(self, key):
+        '''QString QUrl.queryItemValue(QString key)'''
         return QString()
-    def hasQueryItem(self, _key):
-        """bool QUrl.hasQueryItem(None self, QString _key)"""
+    def hasQueryItem(self, key):
+        '''bool QUrl.hasQueryItem(QString key)'''
         return bool()
     def queryItems(self):
-        """list-of-tuple-of-QString-QString QUrl.queryItems(None self)"""
+        '''list-of-tuple-of-QString-QString QUrl.queryItems()'''
         return [tuple-of-QString-QString()]
-    def addQueryItem(self, _key, _value):
-        """None QUrl.addQueryItem(None self, QString _key, QString _value)"""
-        return None
-    def setQueryItems(self, _query):
-        """None QUrl.setQueryItems(None self, list-of-tuple-of-QString-QString _query)"""
-        return None
+    def addQueryItem(self, key, value):
+        '''void QUrl.addQueryItem(QString key, QString value)'''
+    def setQueryItems(self, query):
+        '''void QUrl.setQueryItems(list-of-tuple-of-QString-QString query)'''
     def queryPairDelimiter(self):
-        """str QUrl.queryPairDelimiter(None self)"""
+        '''str QUrl.queryPairDelimiter()'''
         return str()
     def queryValueDelimiter(self):
-        """str QUrl.queryValueDelimiter(None self)"""
+        '''str QUrl.queryValueDelimiter()'''
         return str()
-    def setQueryDelimiters(self, _valueDelimiter, _pairDelimiter):
-        """None QUrl.setQueryDelimiters(None self, str _valueDelimiter, str _pairDelimiter)"""
-        return None
+    def setQueryDelimiters(self, valueDelimiter, pairDelimiter):
+        '''void QUrl.setQueryDelimiters(str valueDelimiter, str pairDelimiter)'''
     def encodedQuery(self):
-        """QByteArray QUrl.encodedQuery(None self)"""
+        '''QByteArray QUrl.encodedQuery()'''
         return QByteArray()
-    def setEncodedQuery(self, _query):
-        """None QUrl.setEncodedQuery(None self, QByteArray _query)"""
-        return None
+    def setEncodedQuery(self, query):
+        '''void QUrl.setEncodedQuery(QByteArray query)'''
     def path(self):
-        """QString QUrl.path(None self)"""
+        '''QString QUrl.path()'''
         return QString()
-    def setPath(self, _path):
-        """None QUrl.setPath(None self, QString _path)"""
-        return None
+    def setPath(self, path):
+        '''void QUrl.setPath(QString path)'''
     def port(self):
-        """int QUrl.port(None self)"""
+        '''int QUrl.port()'''
         return int()
-    def port(self, _defaultPort):
-        """int QUrl.port(None self, int _defaultPort)"""
+    def port(self, defaultPort):
+        '''int QUrl.port(int defaultPort)'''
         return int()
-    def setPort(self, _port):
-        """None QUrl.setPort(None self, int _port)"""
-        return None
+    def setPort(self, port):
+        '''void QUrl.setPort(int port)'''
     def host(self):
-        """QString QUrl.host(None self)"""
+        '''QString QUrl.host()'''
         return QString()
-    def setHost(self, _host):
-        """None QUrl.setHost(None self, QString _host)"""
-        return None
+    def setHost(self, host):
+        '''void QUrl.setHost(QString host)'''
     def password(self):
-        """QString QUrl.password(None self)"""
+        '''QString QUrl.password()'''
         return QString()
-    def setPassword(self, _password):
-        """None QUrl.setPassword(None self, QString _password)"""
-        return None
+    def setPassword(self, password):
+        '''void QUrl.setPassword(QString password)'''
     def userName(self):
-        """QString QUrl.userName(None self)"""
+        '''QString QUrl.userName()'''
         return QString()
-    def setUserName(self, _userName):
-        """None QUrl.setUserName(None self, QString _userName)"""
-        return None
+    def setUserName(self, userName):
+        '''void QUrl.setUserName(QString userName)'''
     def userInfo(self):
-        """QString QUrl.userInfo(None self)"""
+        '''QString QUrl.userInfo()'''
         return QString()
-    def setUserInfo(self, _userInfo):
-        """None QUrl.setUserInfo(None self, QString _userInfo)"""
-        return None
+    def setUserInfo(self, userInfo):
+        '''void QUrl.setUserInfo(QString userInfo)'''
     def authority(self):
-        """QString QUrl.authority(None self)"""
+        '''QString QUrl.authority()'''
         return QString()
-    def setAuthority(self, _authority):
-        """None QUrl.setAuthority(None self, QString _authority)"""
-        return None
+    def setAuthority(self, authority):
+        '''void QUrl.setAuthority(QString authority)'''
     def scheme(self):
-        """QString QUrl.scheme(None self)"""
+        '''QString QUrl.scheme()'''
         return QString()
-    def setScheme(self, _scheme):
-        """None QUrl.setScheme(None self, QString _scheme)"""
-        return None
+    def setScheme(self, scheme):
+        '''void QUrl.setScheme(QString scheme)'''
     def clear(self):
-        """None QUrl.clear(None self)"""
-        return None
+        '''void QUrl.clear()'''
     def isEmpty(self):
-        """bool QUrl.isEmpty(None self)"""
+        '''bool QUrl.isEmpty()'''
         return bool()
     def isValid(self):
-        """bool QUrl.isValid(None self)"""
+        '''bool QUrl.isValid()'''
         return bool()
-    def setEncodedUrl(self, _url):
-        """None QUrl.setEncodedUrl(None self, QByteArray _url)"""
-        return None
-    def setEncodedUrl(self, _url, _mode):
-        """None QUrl.setEncodedUrl(None self, QByteArray _url, QUrl.ParsingMode _mode)"""
-        return None
-    def setUrl(self, _url):
-        """None QUrl.setUrl(None self, QString _url)"""
-        return None
-    def setUrl(self, _url, _mode):
-        """None QUrl.setUrl(None self, QString _url, QUrl.ParsingMode _mode)"""
-        return None
+    def setEncodedUrl(self, url):
+        '''void QUrl.setEncodedUrl(QByteArray url)'''
+    def setEncodedUrl(self, url, mode):
+        '''void QUrl.setEncodedUrl(QByteArray url, QUrl.ParsingMode mode)'''
+    def setUrl(self, url):
+        '''void QUrl.setUrl(QString url)'''
+    def setUrl(self, url, mode):
+        '''void QUrl.setUrl(QString url, QUrl.ParsingMode mode)'''
     def __hash__(self):
-        """int QUrl.__hash__(None self)"""
+        '''int QUrl.__hash__()'''
         return int()
     def __repr__(self):
-        """str QUrl.__repr__(None self)"""
+        '''str QUrl.__repr__()'''
         return str()
+    class FormattingOptions():
+        """"""
+        def __init__(self):
+            '''QUrl.FormattingOptions QUrl.FormattingOptions.__init__()'''
+            return QUrl.FormattingOptions()
+        def __init__(self):
+            '''int QUrl.FormattingOptions.__init__()'''
+            return int()
+        def __init__(self):
+            '''void QUrl.FormattingOptions.__init__()'''
+        def __bool__(self):
+            '''int QUrl.FormattingOptions.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool QUrl.FormattingOptions.__ne__(QUrl.FormattingOptions f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool QUrl.FormattingOptions.__eq__(QUrl.FormattingOptions f)'''
+            return bool()
+        def __invert__(self):
+            '''QUrl.FormattingOptions QUrl.FormattingOptions.__invert__()'''
+            return QUrl.FormattingOptions()
+        def __and__(self, mask):
+            '''QUrl.FormattingOptions QUrl.FormattingOptions.__and__(int mask)'''
+            return QUrl.FormattingOptions()
+        def __xor__(self, f):
+            '''QUrl.FormattingOptions QUrl.FormattingOptions.__xor__(QUrl.FormattingOptions f)'''
+            return QUrl.FormattingOptions()
+        def __xor__(self, f):
+            '''QUrl.FormattingOptions QUrl.FormattingOptions.__xor__(int f)'''
+            return QUrl.FormattingOptions()
+        def __or__(self, f):
+            '''QUrl.FormattingOptions QUrl.FormattingOptions.__or__(QUrl.FormattingOptions f)'''
+            return QUrl.FormattingOptions()
+        def __or__(self, f):
+            '''QUrl.FormattingOptions QUrl.FormattingOptions.__or__(int f)'''
+            return QUrl.FormattingOptions()
+        def __int__(self):
+            '''int QUrl.FormattingOptions.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''QUrl.FormattingOptions QUrl.FormattingOptions.__ixor__(QUrl.FormattingOptions f)'''
+            return QUrl.FormattingOptions()
+        def __ior__(self, f):
+            '''QUrl.FormattingOptions QUrl.FormattingOptions.__ior__(QUrl.FormattingOptions f)'''
+            return QUrl.FormattingOptions()
+        def __iand__(self, mask):
+            '''QUrl.FormattingOptions QUrl.FormattingOptions.__iand__(int mask)'''
+            return QUrl.FormattingOptions()
 
 
 class QUuid():
     """"""
-    VerUnknown = int() # QUuid.Version enum
-    Time = int() # QUuid.Version enum
-    EmbeddedPOSIX = int() # QUuid.Version enum
-    Name = int() # QUuid.Version enum
-    Random = int() # QUuid.Version enum
+    # Enum QUuid.Version
+    VerUnknown = 0
+    Time = 0
+    EmbeddedPOSIX = 0
+    Name = 0
+    Random = 0
 
-    VarUnknown = int() # QUuid.Variant enum
-    NCS = int() # QUuid.Variant enum
-    DCE = int() # QUuid.Variant enum
-    Microsoft = int() # QUuid.Variant enum
-    Reserved = int() # QUuid.Variant enum
+    # Enum QUuid.Variant
+    VarUnknown = 0
+    NCS = 0
+    DCE = 0
+    Microsoft = 0
+    Reserved = 0
 
     def __init__(self):
-        """None QUuid.__init__(None self)"""
-        return None
-    def __init__(self, _l, _w1, _w2, _b1, _b2, _b3, _b4, _b5, _b6, _b7, _b8):
-        """None QUuid.__init__(None self, int _l, int _w1, int _w2, str _b1, str _b2, str _b3, str _b4, str _b5, str _b6, str _b7, str _b8)"""
-        return None
+        '''void QUuid.__init__()'''
+    def __init__(self, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8):
+        '''void QUuid.__init__(int l, int w1, int w2, str b1, str b2, str b3, str b4, str b5, str b6, str b7, str b8)'''
     def __init__(self):
-        """QString QUuid.__init__(None self)"""
+        '''QString QUuid.__init__()'''
         return QString()
     def __init__(self):
-        """QUuid QUuid.__init__(None self)"""
+        '''QUuid QUuid.__init__()'''
         return QUuid()
-    def __ge__(self, _other):
-        """bool QUuid.__ge__(None self, QUuid _other)"""
+    def __ge__(self, other):
+        '''bool QUuid.__ge__(QUuid other)'''
         return bool()
-    def __le__(self, _other):
-        """bool QUuid.__le__(None self, QUuid _other)"""
+    def __le__(self, other):
+        '''bool QUuid.__le__(QUuid other)'''
         return bool()
     def version(self):
-        """QUuid.Version QUuid.version(None self)"""
+        '''QUuid.Version QUuid.version()'''
         return QUuid.Version()
     def variant(self):
-        """QUuid.Variant QUuid.variant(None self)"""
+        '''QUuid.Variant QUuid.variant()'''
         return QUuid.Variant()
     def createUuid(self):
-        """QUuid QUuid.createUuid(None self)"""
+        '''static QUuid QUuid.createUuid()'''
         return QUuid()
-    def __gt__(self, _other):
-        """bool QUuid.__gt__(None self, QUuid _other)"""
+    def __gt__(self, other):
+        '''bool QUuid.__gt__(QUuid other)'''
         return bool()
-    def __lt__(self, _other):
-        """bool QUuid.__lt__(None self, QUuid _other)"""
+    def __lt__(self, other):
+        '''bool QUuid.__lt__(QUuid other)'''
         return bool()
-    def __ne__(self, _orig):
-        """bool QUuid.__ne__(None self, QUuid _orig)"""
+    def __ne__(self, orig):
+        '''bool QUuid.__ne__(QUuid orig)'''
         return bool()
-    def __eq__(self, _orig):
-        """bool QUuid.__eq__(None self, QUuid _orig)"""
+    def __eq__(self, orig):
+        '''bool QUuid.__eq__(QUuid orig)'''
         return bool()
     def isNull(self):
-        """bool QUuid.isNull(None self)"""
+        '''bool QUuid.isNull()'''
         return bool()
     def toString(self):
-        """QString QUuid.toString(None self)"""
+        '''QString QUuid.toString()'''
         return QString()
     def __repr__(self):
-        """str QUuid.__repr__(None self)"""
+        '''str QUuid.__repr__()'''
         return str()
 
 
 class QVariant():
     """"""
-    Invalid = int() # QVariant.Type enum
-    Bool = int() # QVariant.Type enum
-    Int = int() # QVariant.Type enum
-    UInt = int() # QVariant.Type enum
-    LongLong = int() # QVariant.Type enum
-    ULongLong = int() # QVariant.Type enum
-    Double = int() # QVariant.Type enum
-    Char = int() # QVariant.Type enum
-    Map = int() # QVariant.Type enum
-    List = int() # QVariant.Type enum
-    String = int() # QVariant.Type enum
-    StringList = int() # QVariant.Type enum
-    ByteArray = int() # QVariant.Type enum
-    BitArray = int() # QVariant.Type enum
-    Date = int() # QVariant.Type enum
-    Time = int() # QVariant.Type enum
-    DateTime = int() # QVariant.Type enum
-    Url = int() # QVariant.Type enum
-    Locale = int() # QVariant.Type enum
-    Rect = int() # QVariant.Type enum
-    RectF = int() # QVariant.Type enum
-    Size = int() # QVariant.Type enum
-    SizeF = int() # QVariant.Type enum
-    Line = int() # QVariant.Type enum
-    LineF = int() # QVariant.Type enum
-    Point = int() # QVariant.Type enum
-    PointF = int() # QVariant.Type enum
-    RegExp = int() # QVariant.Type enum
-    Font = int() # QVariant.Type enum
-    Pixmap = int() # QVariant.Type enum
-    Brush = int() # QVariant.Type enum
-    Color = int() # QVariant.Type enum
-    Palette = int() # QVariant.Type enum
-    Icon = int() # QVariant.Type enum
-    Image = int() # QVariant.Type enum
-    Polygon = int() # QVariant.Type enum
-    Region = int() # QVariant.Type enum
-    Bitmap = int() # QVariant.Type enum
-    Cursor = int() # QVariant.Type enum
-    SizePolicy = int() # QVariant.Type enum
-    KeySequence = int() # QVariant.Type enum
-    Pen = int() # QVariant.Type enum
-    TextLength = int() # QVariant.Type enum
-    TextFormat = int() # QVariant.Type enum
-    Matrix = int() # QVariant.Type enum
-    Transform = int() # QVariant.Type enum
-    Hash = int() # QVariant.Type enum
-    Matrix4x4 = int() # QVariant.Type enum
-    Vector2D = int() # QVariant.Type enum
-    Vector3D = int() # QVariant.Type enum
-    Vector4D = int() # QVariant.Type enum
-    Quaternion = int() # QVariant.Type enum
-    EasingCurve = int() # QVariant.Type enum
-    UserType = int() # QVariant.Type enum
+    # Enum QVariant.Type
+    Invalid = 0
+    Bool = 0
+    Int = 0
+    UInt = 0
+    LongLong = 0
+    ULongLong = 0
+    Double = 0
+    Char = 0
+    Map = 0
+    List = 0
+    String = 0
+    StringList = 0
+    ByteArray = 0
+    BitArray = 0
+    Date = 0
+    Time = 0
+    DateTime = 0
+    Url = 0
+    Locale = 0
+    Rect = 0
+    RectF = 0
+    Size = 0
+    SizeF = 0
+    Line = 0
+    LineF = 0
+    Point = 0
+    PointF = 0
+    RegExp = 0
+    Font = 0
+    Pixmap = 0
+    Brush = 0
+    Color = 0
+    Palette = 0
+    Icon = 0
+    Image = 0
+    Polygon = 0
+    Region = 0
+    Bitmap = 0
+    Cursor = 0
+    SizePolicy = 0
+    KeySequence = 0
+    Pen = 0
+    TextLength = 0
+    TextFormat = 0
+    Matrix = 0
+    Transform = 0
+    Hash = 0
+    Matrix4x4 = 0
+    Vector2D = 0
+    Vector3D = 0
+    Vector4D = 0
+    Quaternion = 0
+    EasingCurve = 0
+    UserType = 0
 
     def __init__(self):
-        """None QVariant.__init__(None self)"""
-        return None
-    def __init__(self, _type):
-        """None QVariant.__init__(None self, Type _type)"""
-        return None
-    def __init__(self, _typeOrUserType, _copy):
-        """None QVariant.__init__(None self, int _typeOrUserType, sip.voidptr _copy)"""
-        return None
-    def __init__(self, _other):
-        """None QVariant.__init__(None self, QVariant _other)"""
-        return None
+        '''void QVariant.__init__()'''
+    def __init__(self, type):
+        '''void QVariant.__init__(Type type)'''
+    def __init__(self, typeOrUserType, copy):
+        '''void QVariant.__init__(int typeOrUserType, sip.voidptr copy)'''
+    def __init__(self, other):
+        '''void QVariant.__init__(QVariant other)'''
     def __init__(self):
-        """object QVariant.__init__(None self)"""
+        '''object QVariant.__init__()'''
         return object()
     def toEasingCurve(self):
-        """QEasingCurve QVariant.toEasingCurve(None self)"""
+        '''QEasingCurve QVariant.toEasingCurve()'''
         return QEasingCurve()
-    def toReal(self, _ok):
-        """float QVariant.toReal(None self, bool _ok)"""
+    def toReal(self, ok):
+        '''float QVariant.toReal(bool ok)'''
         return float()
-    def toFloat(self, _ok):
-        """float QVariant.toFloat(None self, bool _ok)"""
+    def toFloat(self, ok):
+        '''float QVariant.toFloat(bool ok)'''
         return float()
-    def __ne__(self, _v):
-        """bool QVariant.__ne__(None self, QVariant _v)"""
+    def __ne__(self, v):
+        '''bool QVariant.__ne__(QVariant v)'''
         return bool()
-    def __eq__(self, _v):
-        """bool QVariant.__eq__(None self, QVariant _v)"""
+    def __eq__(self, v):
+        '''bool QVariant.__eq__(QVariant v)'''
         return bool()
     def data(self):
-        """sip.voidptr QVariant.data(None self)"""
+        '''sip.voidptr QVariant.data()'''
         return sip.voidptr()
-    def nameToType(self, _name):
-        """Type QVariant.nameToType(None self, str _name)"""
+    def nameToType(self, name):
+        '''static Type QVariant.nameToType(str name)'''
         return Type()
-    def typeToName(self, _type):
-        """str QVariant.typeToName(None self, Type _type)"""
+    def typeToName(self, type):
+        '''static str QVariant.typeToName(Type type)'''
         return str()
-    def save(self, _ds):
-        """None QVariant.save(None self, QDataStream _ds)"""
-        return None
-    def load(self, _ds):
-        """None QVariant.load(None self, QDataStream _ds)"""
-        return None
+    def save(self, ds):
+        '''void QVariant.save(QDataStream ds)'''
+    def load(self, ds):
+        '''void QVariant.load(QDataStream ds)'''
     def toPyObject(self):
-        """object QVariant.toPyObject(None self)"""
+        '''object QVariant.toPyObject()'''
         return object()
     def toRegExp(self):
-        """QRegExp QVariant.toRegExp(None self)"""
+        '''QRegExp QVariant.toRegExp()'''
         return QRegExp()
     def toLocale(self):
-        """QLocale QVariant.toLocale(None self)"""
+        '''QLocale QVariant.toLocale()'''
         return QLocale()
     def toUrl(self):
-        """QUrl QVariant.toUrl(None self)"""
+        '''QUrl QVariant.toUrl()'''
         return QUrl()
     def toRectF(self):
-        """QRectF QVariant.toRectF(None self)"""
+        '''QRectF QVariant.toRectF()'''
         return QRectF()
     def toRect(self):
-        """QRect QVariant.toRect(None self)"""
+        '''QRect QVariant.toRect()'''
         return QRect()
     def toLineF(self):
-        """QLineF QVariant.toLineF(None self)"""
+        '''QLineF QVariant.toLineF()'''
         return QLineF()
     def toLine(self):
-        """QLine QVariant.toLine(None self)"""
+        '''QLine QVariant.toLine()'''
         return QLine()
     def toSizeF(self):
-        """QSizeF QVariant.toSizeF(None self)"""
+        '''QSizeF QVariant.toSizeF()'''
         return QSizeF()
     def toSize(self):
-        """QSize QVariant.toSize(None self)"""
+        '''QSize QVariant.toSize()'''
         return QSize()
     def toPointF(self):
-        """QPointF QVariant.toPointF(None self)"""
+        '''QPointF QVariant.toPointF()'''
         return QPointF()
     def toPoint(self):
-        """QPoint QVariant.toPoint(None self)"""
+        '''QPoint QVariant.toPoint()'''
         return QPoint()
     def toHash(self):
-        """dict-of-QString-QVariant QVariant.toHash(None self)"""
+        '''dict-of-QString-QVariant QVariant.toHash()'''
         return dict-of-QString-QVariant()
     def toMap(self):
-        """dict-of-QString-QVariant QVariant.toMap(None self)"""
+        '''dict-of-QString-QVariant QVariant.toMap()'''
         return dict-of-QString-QVariant()
     def toList(self):
-        """list-of-QVariant QVariant.toList(None self)"""
+        '''list-of-QVariant QVariant.toList()'''
         return [QVariant()]
     def toDateTime(self):
-        """QDateTime QVariant.toDateTime(None self)"""
+        '''QDateTime QVariant.toDateTime()'''
         return QDateTime()
     def toTime(self):
-        """QTime QVariant.toTime(None self)"""
+        '''QTime QVariant.toTime()'''
         return QTime()
     def toDate(self):
-        """QDate QVariant.toDate(None self)"""
+        '''QDate QVariant.toDate()'''
         return QDate()
     def toChar(self):
-        """QChar QVariant.toChar(None self)"""
+        '''QChar QVariant.toChar()'''
         return QChar()
     def toStringList(self):
-        """QStringList QVariant.toStringList(None self)"""
+        '''QStringList QVariant.toStringList()'''
         return QStringList()
     def toString(self):
-        """QString QVariant.toString(None self)"""
+        '''QString QVariant.toString()'''
         return QString()
     def toBitArray(self):
-        """QBitArray QVariant.toBitArray(None self)"""
+        '''QBitArray QVariant.toBitArray()'''
         return QBitArray()
     def toByteArray(self):
-        """QByteArray QVariant.toByteArray(None self)"""
+        '''QByteArray QVariant.toByteArray()'''
         return QByteArray()
-    def toDouble(self, _ok):
-        """float QVariant.toDouble(None self, bool _ok)"""
+    def toDouble(self, ok):
+        '''float QVariant.toDouble(bool ok)'''
         return float()
     def toBool(self):
-        """bool QVariant.toBool(None self)"""
+        '''bool QVariant.toBool()'''
         return bool()
-    def toULongLong(self, _ok):
-        """int QVariant.toULongLong(None self, bool _ok)"""
+    def toULongLong(self, ok):
+        '''int QVariant.toULongLong(bool ok)'''
         return int()
-    def toLongLong(self, _ok):
-        """int QVariant.toLongLong(None self, bool _ok)"""
+    def toLongLong(self, ok):
+        '''int QVariant.toLongLong(bool ok)'''
         return int()
-    def toUInt(self, _ok):
-        """int QVariant.toUInt(None self, bool _ok)"""
+    def toUInt(self, ok):
+        '''int QVariant.toUInt(bool ok)'''
         return int()
-    def toInt(self, _ok):
-        """int QVariant.toInt(None self, bool _ok)"""
+    def toInt(self, ok):
+        '''int QVariant.toInt(bool ok)'''
         return int()
     def isDetached(self):
-        """bool QVariant.isDetached(None self)"""
+        '''bool QVariant.isDetached()'''
         return bool()
     def detach(self):
-        """None QVariant.detach(None self)"""
-        return None
+        '''void QVariant.detach()'''
     def clear(self):
-        """None QVariant.clear(None self)"""
-        return None
+        '''void QVariant.clear()'''
     def isNull(self):
-        """bool QVariant.isNull(None self)"""
+        '''bool QVariant.isNull()'''
         return bool()
     def isValid(self):
-        """bool QVariant.isValid(None self)"""
+        '''bool QVariant.isValid()'''
         return bool()
-    def convert(self, _t):
-        """bool QVariant.convert(None self, Type _t)"""
+    def convert(self, t):
+        '''bool QVariant.convert(Type t)'''
         return bool()
-    def canConvert(self, _t):
-        """bool QVariant.canConvert(None self, Type _t)"""
+    def canConvert(self, t):
+        '''bool QVariant.canConvert(Type t)'''
         return bool()
     def typeName(self):
-        """str QVariant.typeName(None self)"""
+        '''str QVariant.typeName()'''
         return str()
     def userType(self):
-        """int QVariant.userType(None self)"""
+        '''int QVariant.userType()'''
         return int()
     def type(self):
-        """Type QVariant.type(None self)"""
+        '''Type QVariant.type()'''
         return Type()
-    def fromMap(self, _map):
-        """QVariant QVariant.fromMap(None self, dict-of-QString-QVariant _map)"""
+    def fromMap(self, map):
+        '''static QVariant QVariant.fromMap(dict-of-QString-QVariant map)'''
         return QVariant()
-    def fromList(self, _list):
-        """QVariant QVariant.fromList(None self, list-of-QVariant _list)"""
+    def fromList(self, list):
+        '''static QVariant QVariant.fromList(list-of-QVariant list)'''
         return QVariant()
 
 
 class QWaitCondition():
     """"""
     def __init__(self):
-        """None QWaitCondition.__init__(None self)"""
-        return None
+        '''void QWaitCondition.__init__()'''
     def wakeAll(self):
-        """None QWaitCondition.wakeAll(None self)"""
-        return None
+        '''void QWaitCondition.wakeAll()'''
     def wakeOne(self):
-        """None QWaitCondition.wakeOne(None self)"""
-        return None
-    def wait(self, _mutex, _msecs):
-        """bool QWaitCondition.wait(None self, QMutex _mutex, int _msecs)"""
+        '''void QWaitCondition.wakeOne()'''
+    def wait(self, mutex, msecs = ULONG_MAX):
+        '''bool QWaitCondition.wait(QMutex mutex, int msecs = ULONG_MAX)'''
         return bool()
-    def wait(self, _readWriteLock, _msecs):
-        """bool QWaitCondition.wait(None self, QReadWriteLock _readWriteLock, int _msecs)"""
+    def wait(self, readWriteLock, msecs = ULONG_MAX):
+        '''bool QWaitCondition.wait(QReadWriteLock readWriteLock, int msecs = ULONG_MAX)'''
         return bool()
 
 
 class QXmlStreamAttribute():
     """"""
     def __init__(self):
-        """None QXmlStreamAttribute.__init__(None self)"""
-        return None
-    def __init__(self, _qualifiedName, _value):
-        """None QXmlStreamAttribute.__init__(None self, QString _qualifiedName, QString _value)"""
-        return None
-    def __init__(self, _namespaceUri, _name, _value):
-        """None QXmlStreamAttribute.__init__(None self, QString _namespaceUri, QString _name, QString _value)"""
-        return None
+        '''void QXmlStreamAttribute.__init__()'''
+    def __init__(self, qualifiedName, value):
+        '''void QXmlStreamAttribute.__init__(QString qualifiedName, QString value)'''
+    def __init__(self, namespaceUri, name, value):
+        '''void QXmlStreamAttribute.__init__(QString namespaceUri, QString name, QString value)'''
     def __init__(self):
-        """QXmlStreamAttribute QXmlStreamAttribute.__init__(None self)"""
+        '''QXmlStreamAttribute QXmlStreamAttribute.__init__()'''
         return QXmlStreamAttribute()
-    def __ne__(self, _other):
-        """bool QXmlStreamAttribute.__ne__(None self, QXmlStreamAttribute _other)"""
+    def __ne__(self, other):
+        '''bool QXmlStreamAttribute.__ne__(QXmlStreamAttribute other)'''
         return bool()
-    def __eq__(self, _other):
-        """bool QXmlStreamAttribute.__eq__(None self, QXmlStreamAttribute _other)"""
+    def __eq__(self, other):
+        '''bool QXmlStreamAttribute.__eq__(QXmlStreamAttribute other)'''
         return bool()
     def isDefault(self):
-        """bool QXmlStreamAttribute.isDefault(None self)"""
+        '''bool QXmlStreamAttribute.isDefault()'''
         return bool()
     def value(self):
-        """QStringRef QXmlStreamAttribute.value(None self)"""
+        '''QStringRef QXmlStreamAttribute.value()'''
         return QStringRef()
     def prefix(self):
-        """QStringRef QXmlStreamAttribute.prefix(None self)"""
+        '''QStringRef QXmlStreamAttribute.prefix()'''
         return QStringRef()
     def qualifiedName(self):
-        """QStringRef QXmlStreamAttribute.qualifiedName(None self)"""
+        '''QStringRef QXmlStreamAttribute.qualifiedName()'''
         return QStringRef()
     def name(self):
-        """QStringRef QXmlStreamAttribute.name(None self)"""
+        '''QStringRef QXmlStreamAttribute.name()'''
         return QStringRef()
     def namespaceUri(self):
-        """QStringRef QXmlStreamAttribute.namespaceUri(None self)"""
+        '''QStringRef QXmlStreamAttribute.namespaceUri()'''
         return QStringRef()
 
 
 class QXmlStreamAttributes():
     """"""
     def __init__(self):
-        """None QXmlStreamAttributes.__init__(None self)"""
-        return None
+        '''void QXmlStreamAttributes.__init__()'''
     def __init__(self):
-        """QXmlStreamAttributes QXmlStreamAttributes.__init__(None self)"""
+        '''QXmlStreamAttributes QXmlStreamAttributes.__init__()'''
         return QXmlStreamAttributes()
-    def __contains__(self, _value):
-        """int QXmlStreamAttributes.__contains__(None self, QXmlStreamAttribute _value)"""
+    def __contains__(self, value):
+        '''int QXmlStreamAttributes.__contains__(QXmlStreamAttribute value)'''
         return int()
-    def __delitem__(self, _i):
-        """None QXmlStreamAttributes.__delitem__(None self, int _i)"""
-        return None
-    def __delitem__(self, _slice):
-        """None QXmlStreamAttributes.__delitem__(None self, slice _slice)"""
-        return None
-    def __setitem__(self, _i, _value):
-        """None QXmlStreamAttributes.__setitem__(None self, int _i, QXmlStreamAttribute _value)"""
-        return None
-    def __setitem__(self, _slice, _list):
-        """None QXmlStreamAttributes.__setitem__(None self, slice _slice, QXmlStreamAttributes _list)"""
-        return None
-    def __getitem__(self, _i):
-        """QXmlStreamAttribute QXmlStreamAttributes.__getitem__(None self, int _i)"""
+    def __delitem__(self, i):
+        '''void QXmlStreamAttributes.__delitem__(int i)'''
+    def __delitem__(self, slice):
+        '''void QXmlStreamAttributes.__delitem__(slice slice)'''
+    def __setitem__(self, i, value):
+        '''void QXmlStreamAttributes.__setitem__(int i, QXmlStreamAttribute value)'''
+    def __setitem__(self, slice, list):
+        '''void QXmlStreamAttributes.__setitem__(slice slice, QXmlStreamAttributes list)'''
+    def __getitem__(self, i):
+        '''QXmlStreamAttribute QXmlStreamAttributes.__getitem__(int i)'''
         return QXmlStreamAttribute()
-    def __getitem__(self, _slice):
-        """QXmlStreamAttributes QXmlStreamAttributes.__getitem__(None self, slice _slice)"""
+    def __getitem__(self, slice):
+        '''QXmlStreamAttributes QXmlStreamAttributes.__getitem__(slice slice)'''
         return QXmlStreamAttributes()
-    def __eq__(self, _other):
-        """bool QXmlStreamAttributes.__eq__(None self, QXmlStreamAttributes _other)"""
+    def __eq__(self, other):
+        '''bool QXmlStreamAttributes.__eq__(QXmlStreamAttributes other)'''
         return bool()
-    def __iadd__(self, _other):
-        """QXmlStreamAttributes QXmlStreamAttributes.__iadd__(None self, QXmlStreamAttributes _other)"""
+    def __iadd__(self, other):
+        '''QXmlStreamAttributes QXmlStreamAttributes.__iadd__(QXmlStreamAttributes other)'''
         return QXmlStreamAttributes()
-    def __iadd__(self, _value):
-        """QXmlStreamAttributes QXmlStreamAttributes.__iadd__(None self, QXmlStreamAttribute _value)"""
+    def __iadd__(self, value):
+        '''QXmlStreamAttributes QXmlStreamAttributes.__iadd__(QXmlStreamAttribute value)'''
         return QXmlStreamAttributes()
-    def __ne__(self, _other):
-        """bool QXmlStreamAttributes.__ne__(None self, QXmlStreamAttributes _other)"""
+    def __ne__(self, other):
+        '''bool QXmlStreamAttributes.__ne__(QXmlStreamAttributes other)'''
         return bool()
     def size(self):
-        """int QXmlStreamAttributes.size(None self)"""
+        '''int QXmlStreamAttributes.size()'''
         return int()
-    def replace(self, _i, _value):
-        """None QXmlStreamAttributes.replace(None self, int _i, QXmlStreamAttribute _value)"""
-        return None
-    def remove(self, _i):
-        """None QXmlStreamAttributes.remove(None self, int _i)"""
-        return None
-    def remove(self, _i, _count):
-        """None QXmlStreamAttributes.remove(None self, int _i, int _count)"""
-        return None
-    def prepend(self, _value):
-        """None QXmlStreamAttributes.prepend(None self, QXmlStreamAttribute _value)"""
-        return None
-    def lastIndexOf(self, _value, _from):
-        """int QXmlStreamAttributes.lastIndexOf(None self, QXmlStreamAttribute _value, int _from)"""
+    def replace(self, i, value):
+        '''void QXmlStreamAttributes.replace(int i, QXmlStreamAttribute value)'''
+    def remove(self, i):
+        '''void QXmlStreamAttributes.remove(int i)'''
+    def remove(self, i, count):
+        '''void QXmlStreamAttributes.remove(int i, int count)'''
+    def prepend(self, value):
+        '''void QXmlStreamAttributes.prepend(QXmlStreamAttribute value)'''
+    def lastIndexOf(self, value, from_ = -1):
+        '''int QXmlStreamAttributes.lastIndexOf(QXmlStreamAttribute value, int from = -1)'''
         return int()
     def last(self):
-        """QXmlStreamAttribute QXmlStreamAttributes.last(None self)"""
+        '''QXmlStreamAttribute QXmlStreamAttributes.last()'''
         return QXmlStreamAttribute()
     def isEmpty(self):
-        """bool QXmlStreamAttributes.isEmpty(None self)"""
+        '''bool QXmlStreamAttributes.isEmpty()'''
         return bool()
-    def insert(self, _i, _value):
-        """None QXmlStreamAttributes.insert(None self, int _i, QXmlStreamAttribute _value)"""
-        return None
-    def indexOf(self, _value, _from):
-        """int QXmlStreamAttributes.indexOf(None self, QXmlStreamAttribute _value, int _from)"""
+    def insert(self, i, value):
+        '''void QXmlStreamAttributes.insert(int i, QXmlStreamAttribute value)'''
+    def indexOf(self, value, from_ = 0):
+        '''int QXmlStreamAttributes.indexOf(QXmlStreamAttribute value, int from = 0)'''
         return int()
     def first(self):
-        """QXmlStreamAttribute QXmlStreamAttributes.first(None self)"""
+        '''QXmlStreamAttribute QXmlStreamAttributes.first()'''
         return QXmlStreamAttribute()
-    def fill(self, _value, _size):
-        """None QXmlStreamAttributes.fill(None self, QXmlStreamAttribute _value, int _size)"""
-        return None
+    def fill(self, value, size = -1):
+        '''void QXmlStreamAttributes.fill(QXmlStreamAttribute value, int size = -1)'''
     def data(self):
-        """sip.voidptr QXmlStreamAttributes.data(None self)"""
+        '''sip.voidptr QXmlStreamAttributes.data()'''
         return sip.voidptr()
     def __len__(self):
-        """ QXmlStreamAttributes.__len__(None self)"""
+        ''' QXmlStreamAttributes.__len__()'''
         return ()
-    def count(self, _value):
-        """int QXmlStreamAttributes.count(None self, QXmlStreamAttribute _value)"""
+    def count(self, value):
+        '''int QXmlStreamAttributes.count(QXmlStreamAttribute value)'''
         return int()
     def count(self):
-        """int QXmlStreamAttributes.count(None self)"""
+        '''int QXmlStreamAttributes.count()'''
         return int()
-    def contains(self, _value):
-        """bool QXmlStreamAttributes.contains(None self, QXmlStreamAttribute _value)"""
+    def contains(self, value):
+        '''bool QXmlStreamAttributes.contains(QXmlStreamAttribute value)'''
         return bool()
     def clear(self):
-        """None QXmlStreamAttributes.clear(None self)"""
-        return None
-    def at(self, _i):
-        """QXmlStreamAttribute QXmlStreamAttributes.at(None self, int _i)"""
+        '''void QXmlStreamAttributes.clear()'''
+    def at(self, i):
+        '''QXmlStreamAttribute QXmlStreamAttributes.at(int i)'''
         return QXmlStreamAttribute()
-    def hasAttribute(self, _qualifiedName):
-        """bool QXmlStreamAttributes.hasAttribute(None self, QString _qualifiedName)"""
+    def hasAttribute(self, qualifiedName):
+        '''bool QXmlStreamAttributes.hasAttribute(QString qualifiedName)'''
         return bool()
-    def hasAttribute(self, _namespaceUri, _name):
-        """bool QXmlStreamAttributes.hasAttribute(None self, QString _namespaceUri, QString _name)"""
+    def hasAttribute(self, namespaceUri, name):
+        '''bool QXmlStreamAttributes.hasAttribute(QString namespaceUri, QString name)'''
         return bool()
-    def append(self, _namespaceUri, _name, _value):
-        """None QXmlStreamAttributes.append(None self, QString _namespaceUri, QString _name, QString _value)"""
-        return None
-    def append(self, _qualifiedName, _value):
-        """None QXmlStreamAttributes.append(None self, QString _qualifiedName, QString _value)"""
-        return None
-    def append(self, _attribute):
-        """None QXmlStreamAttributes.append(None self, QXmlStreamAttribute _attribute)"""
-        return None
-    def value(self, _namespaceUri, _name):
-        """QStringRef QXmlStreamAttributes.value(None self, QString _namespaceUri, QString _name)"""
+    def append(self, namespaceUri, name, value):
+        '''void QXmlStreamAttributes.append(QString namespaceUri, QString name, QString value)'''
+    def append(self, qualifiedName, value):
+        '''void QXmlStreamAttributes.append(QString qualifiedName, QString value)'''
+    def append(self, attribute):
+        '''void QXmlStreamAttributes.append(QXmlStreamAttribute attribute)'''
+    def value(self, namespaceUri, name):
+        '''QStringRef QXmlStreamAttributes.value(QString namespaceUri, QString name)'''
         return QStringRef()
-    def value(self, _qualifiedName):
-        """QStringRef QXmlStreamAttributes.value(None self, QString _qualifiedName)"""
+    def value(self, qualifiedName):
+        '''QStringRef QXmlStreamAttributes.value(QString qualifiedName)'''
         return QStringRef()
 
 
 class QXmlStreamNamespaceDeclaration():
     """"""
     def __init__(self):
-        """None QXmlStreamNamespaceDeclaration.__init__(None self)"""
-        return None
+        '''void QXmlStreamNamespaceDeclaration.__init__()'''
     def __init__(self):
-        """QXmlStreamNamespaceDeclaration QXmlStreamNamespaceDeclaration.__init__(None self)"""
+        '''QXmlStreamNamespaceDeclaration QXmlStreamNamespaceDeclaration.__init__()'''
         return QXmlStreamNamespaceDeclaration()
-    def __init__(self, _prefix, _namespaceUri):
-        """None QXmlStreamNamespaceDeclaration.__init__(None self, QString _prefix, QString _namespaceUri)"""
-        return None
-    def __ne__(self, _other):
-        """bool QXmlStreamNamespaceDeclaration.__ne__(None self, QXmlStreamNamespaceDeclaration _other)"""
+    def __init__(self, prefix, namespaceUri):
+        '''void QXmlStreamNamespaceDeclaration.__init__(QString prefix, QString namespaceUri)'''
+    def __ne__(self, other):
+        '''bool QXmlStreamNamespaceDeclaration.__ne__(QXmlStreamNamespaceDeclaration other)'''
         return bool()
-    def __eq__(self, _other):
-        """bool QXmlStreamNamespaceDeclaration.__eq__(None self, QXmlStreamNamespaceDeclaration _other)"""
+    def __eq__(self, other):
+        '''bool QXmlStreamNamespaceDeclaration.__eq__(QXmlStreamNamespaceDeclaration other)'''
         return bool()
     def namespaceUri(self):
-        """QStringRef QXmlStreamNamespaceDeclaration.namespaceUri(None self)"""
+        '''QStringRef QXmlStreamNamespaceDeclaration.namespaceUri()'''
         return QStringRef()
     def prefix(self):
-        """QStringRef QXmlStreamNamespaceDeclaration.prefix(None self)"""
+        '''QStringRef QXmlStreamNamespaceDeclaration.prefix()'''
         return QStringRef()
 
 
 class QXmlStreamNotationDeclaration():
     """"""
     def __init__(self):
-        """None QXmlStreamNotationDeclaration.__init__(None self)"""
-        return None
+        '''void QXmlStreamNotationDeclaration.__init__()'''
     def __init__(self):
-        """QXmlStreamNotationDeclaration QXmlStreamNotationDeclaration.__init__(None self)"""
+        '''QXmlStreamNotationDeclaration QXmlStreamNotationDeclaration.__init__()'''
         return QXmlStreamNotationDeclaration()
-    def __ne__(self, _other):
-        """bool QXmlStreamNotationDeclaration.__ne__(None self, QXmlStreamNotationDeclaration _other)"""
+    def __ne__(self, other):
+        '''bool QXmlStreamNotationDeclaration.__ne__(QXmlStreamNotationDeclaration other)'''
         return bool()
-    def __eq__(self, _other):
-        """bool QXmlStreamNotationDeclaration.__eq__(None self, QXmlStreamNotationDeclaration _other)"""
+    def __eq__(self, other):
+        '''bool QXmlStreamNotationDeclaration.__eq__(QXmlStreamNotationDeclaration other)'''
         return bool()
     def publicId(self):
-        """QStringRef QXmlStreamNotationDeclaration.publicId(None self)"""
+        '''QStringRef QXmlStreamNotationDeclaration.publicId()'''
         return QStringRef()
     def systemId(self):
-        """QStringRef QXmlStreamNotationDeclaration.systemId(None self)"""
+        '''QStringRef QXmlStreamNotationDeclaration.systemId()'''
         return QStringRef()
     def name(self):
-        """QStringRef QXmlStreamNotationDeclaration.name(None self)"""
+        '''QStringRef QXmlStreamNotationDeclaration.name()'''
         return QStringRef()
 
 
 class QXmlStreamEntityDeclaration():
     """"""
     def __init__(self):
-        """None QXmlStreamEntityDeclaration.__init__(None self)"""
-        return None
+        '''void QXmlStreamEntityDeclaration.__init__()'''
     def __init__(self):
-        """QXmlStreamEntityDeclaration QXmlStreamEntityDeclaration.__init__(None self)"""
+        '''QXmlStreamEntityDeclaration QXmlStreamEntityDeclaration.__init__()'''
         return QXmlStreamEntityDeclaration()
-    def __ne__(self, _other):
-        """bool QXmlStreamEntityDeclaration.__ne__(None self, QXmlStreamEntityDeclaration _other)"""
+    def __ne__(self, other):
+        '''bool QXmlStreamEntityDeclaration.__ne__(QXmlStreamEntityDeclaration other)'''
         return bool()
-    def __eq__(self, _other):
-        """bool QXmlStreamEntityDeclaration.__eq__(None self, QXmlStreamEntityDeclaration _other)"""
+    def __eq__(self, other):
+        '''bool QXmlStreamEntityDeclaration.__eq__(QXmlStreamEntityDeclaration other)'''
         return bool()
     def value(self):
-        """QStringRef QXmlStreamEntityDeclaration.value(None self)"""
+        '''QStringRef QXmlStreamEntityDeclaration.value()'''
         return QStringRef()
     def publicId(self):
-        """QStringRef QXmlStreamEntityDeclaration.publicId(None self)"""
+        '''QStringRef QXmlStreamEntityDeclaration.publicId()'''
         return QStringRef()
     def systemId(self):
-        """QStringRef QXmlStreamEntityDeclaration.systemId(None self)"""
+        '''QStringRef QXmlStreamEntityDeclaration.systemId()'''
         return QStringRef()
     def notationName(self):
-        """QStringRef QXmlStreamEntityDeclaration.notationName(None self)"""
+        '''QStringRef QXmlStreamEntityDeclaration.notationName()'''
         return QStringRef()
     def name(self):
-        """QStringRef QXmlStreamEntityDeclaration.name(None self)"""
+        '''QStringRef QXmlStreamEntityDeclaration.name()'''
         return QStringRef()
 
 
 class QXmlStreamEntityResolver():
     """"""
     def __init__(self):
-        """None QXmlStreamEntityResolver.__init__(None self)"""
-        return None
+        '''void QXmlStreamEntityResolver.__init__()'''
     def __init__(self):
-        """QXmlStreamEntityResolver QXmlStreamEntityResolver.__init__(None self)"""
+        '''QXmlStreamEntityResolver QXmlStreamEntityResolver.__init__()'''
         return QXmlStreamEntityResolver()
-    def resolveUndeclaredEntity(self, _name):
-        """QString QXmlStreamEntityResolver.resolveUndeclaredEntity(None self, QString _name)"""
+    def resolveUndeclaredEntity(self, name):
+        '''QString QXmlStreamEntityResolver.resolveUndeclaredEntity(QString name)'''
         return QString()
 
 
 class QXmlStreamReader():
     """"""
-    ErrorOnUnexpectedElement = int() # QXmlStreamReader.ReadElementTextBehaviour enum
-    IncludeChildElements = int() # QXmlStreamReader.ReadElementTextBehaviour enum
-    SkipChildElements = int() # QXmlStreamReader.ReadElementTextBehaviour enum
+    # Enum QXmlStreamReader.ReadElementTextBehaviour
+    ErrorOnUnexpectedElement = 0
+    IncludeChildElements = 0
+    SkipChildElements = 0
 
-    NoError = int() # QXmlStreamReader.Error enum
-    UnexpectedElementError = int() # QXmlStreamReader.Error enum
-    CustomError = int() # QXmlStreamReader.Error enum
-    NotWellFormedError = int() # QXmlStreamReader.Error enum
-    PrematureEndOfDocumentError = int() # QXmlStreamReader.Error enum
+    # Enum QXmlStreamReader.Error
+    NoError = 0
+    UnexpectedElementError = 0
+    CustomError = 0
+    NotWellFormedError = 0
+    PrematureEndOfDocumentError = 0
 
-    NoToken = int() # QXmlStreamReader.TokenType enum
-    Invalid = int() # QXmlStreamReader.TokenType enum
-    StartDocument = int() # QXmlStreamReader.TokenType enum
-    EndDocument = int() # QXmlStreamReader.TokenType enum
-    StartElement = int() # QXmlStreamReader.TokenType enum
-    EndElement = int() # QXmlStreamReader.TokenType enum
-    Characters = int() # QXmlStreamReader.TokenType enum
-    Comment = int() # QXmlStreamReader.TokenType enum
-    DTD = int() # QXmlStreamReader.TokenType enum
-    EntityReference = int() # QXmlStreamReader.TokenType enum
-    ProcessingInstruction = int() # QXmlStreamReader.TokenType enum
+    # Enum QXmlStreamReader.TokenType
+    NoToken = 0
+    Invalid = 0
+    StartDocument = 0
+    EndDocument = 0
+    StartElement = 0
+    EndElement = 0
+    Characters = 0
+    Comment = 0
+    DTD = 0
+    EntityReference = 0
+    ProcessingInstruction = 0
 
     def __init__(self):
-        """None QXmlStreamReader.__init__(None self)"""
-        return None
-    def __init__(self, _device):
-        """None QXmlStreamReader.__init__(None self, QIODevice _device)"""
-        return None
-    def __init__(self, _data):
-        """None QXmlStreamReader.__init__(None self, QByteArray _data)"""
-        return None
-    def __init__(self, _data):
-        """None QXmlStreamReader.__init__(None self, QString _data)"""
-        return None
+        '''void QXmlStreamReader.__init__()'''
+    def __init__(self, device):
+        '''void QXmlStreamReader.__init__(QIODevice device)'''
+    def __init__(self, data):
+        '''void QXmlStreamReader.__init__(QByteArray data)'''
+    def __init__(self, data):
+        '''void QXmlStreamReader.__init__(QString data)'''
     def skipCurrentElement(self):
-        """None QXmlStreamReader.skipCurrentElement(None self)"""
-        return None
+        '''void QXmlStreamReader.skipCurrentElement()'''
     def readNextStartElement(self):
-        """bool QXmlStreamReader.readNextStartElement(None self)"""
+        '''bool QXmlStreamReader.readNextStartElement()'''
         return bool()
     def entityResolver(self):
-        """QXmlStreamEntityResolver QXmlStreamReader.entityResolver(None self)"""
+        '''QXmlStreamEntityResolver QXmlStreamReader.entityResolver()'''
         return QXmlStreamEntityResolver()
-    def setEntityResolver(self, _resolver):
-        """None QXmlStreamReader.setEntityResolver(None self, QXmlStreamEntityResolver _resolver)"""
-        return None
+    def setEntityResolver(self, resolver):
+        '''void QXmlStreamReader.setEntityResolver(QXmlStreamEntityResolver resolver)'''
     def hasError(self):
-        """bool QXmlStreamReader.hasError(None self)"""
+        '''bool QXmlStreamReader.hasError()'''
         return bool()
     def error(self):
-        """QXmlStreamReader.Error QXmlStreamReader.error(None self)"""
+        '''QXmlStreamReader.Error QXmlStreamReader.error()'''
         return QXmlStreamReader.Error()
     def errorString(self):
-        """QString QXmlStreamReader.errorString(None self)"""
+        '''QString QXmlStreamReader.errorString()'''
         return QString()
-    def raiseError(self, _message):
-        """None QXmlStreamReader.raiseError(None self, QString _message)"""
-        return None
+    def raiseError(self, message = QString()):
+        '''void QXmlStreamReader.raiseError(QString message = QString())'''
     def dtdSystemId(self):
-        """QStringRef QXmlStreamReader.dtdSystemId(None self)"""
+        '''QStringRef QXmlStreamReader.dtdSystemId()'''
         return QStringRef()
     def dtdPublicId(self):
-        """QStringRef QXmlStreamReader.dtdPublicId(None self)"""
+        '''QStringRef QXmlStreamReader.dtdPublicId()'''
         return QStringRef()
     def dtdName(self):
-        """QStringRef QXmlStreamReader.dtdName(None self)"""
+        '''QStringRef QXmlStreamReader.dtdName()'''
         return QStringRef()
     def entityDeclarations(self):
-        """list-of-QXmlStreamEntityDeclaration QXmlStreamReader.entityDeclarations(None self)"""
+        '''list-of-QXmlStreamEntityDeclaration QXmlStreamReader.entityDeclarations()'''
         return [QXmlStreamEntityDeclaration()]
     def notationDeclarations(self):
-        """list-of-QXmlStreamNotationDeclaration QXmlStreamReader.notationDeclarations(None self)"""
+        '''list-of-QXmlStreamNotationDeclaration QXmlStreamReader.notationDeclarations()'''
         return [QXmlStreamNotationDeclaration()]
-    def addExtraNamespaceDeclarations(self, _extraNamespaceDeclaractions):
-        """None QXmlStreamReader.addExtraNamespaceDeclarations(None self, list-of-QXmlStreamNamespaceDeclaration _extraNamespaceDeclaractions)"""
-        return None
-    def addExtraNamespaceDeclaration(self, _extraNamespaceDeclaraction):
-        """None QXmlStreamReader.addExtraNamespaceDeclaration(None self, QXmlStreamNamespaceDeclaration _extraNamespaceDeclaraction)"""
-        return None
+    def addExtraNamespaceDeclarations(self, extraNamespaceDeclaractions):
+        '''void QXmlStreamReader.addExtraNamespaceDeclarations(list-of-QXmlStreamNamespaceDeclaration extraNamespaceDeclaractions)'''
+    def addExtraNamespaceDeclaration(self, extraNamespaceDeclaraction):
+        '''void QXmlStreamReader.addExtraNamespaceDeclaration(QXmlStreamNamespaceDeclaration extraNamespaceDeclaraction)'''
     def namespaceDeclarations(self):
-        """list-of-QXmlStreamNamespaceDeclaration QXmlStreamReader.namespaceDeclarations(None self)"""
+        '''list-of-QXmlStreamNamespaceDeclaration QXmlStreamReader.namespaceDeclarations()'''
         return [QXmlStreamNamespaceDeclaration()]
     def text(self):
-        """QStringRef QXmlStreamReader.text(None self)"""
+        '''QStringRef QXmlStreamReader.text()'''
         return QStringRef()
     def processingInstructionData(self):
-        """QStringRef QXmlStreamReader.processingInstructionData(None self)"""
+        '''QStringRef QXmlStreamReader.processingInstructionData()'''
         return QStringRef()
     def processingInstructionTarget(self):
-        """QStringRef QXmlStreamReader.processingInstructionTarget(None self)"""
+        '''QStringRef QXmlStreamReader.processingInstructionTarget()'''
         return QStringRef()
     def prefix(self):
-        """QStringRef QXmlStreamReader.prefix(None self)"""
+        '''QStringRef QXmlStreamReader.prefix()'''
         return QStringRef()
     def qualifiedName(self):
-        """QStringRef QXmlStreamReader.qualifiedName(None self)"""
+        '''QStringRef QXmlStreamReader.qualifiedName()'''
         return QStringRef()
     def namespaceUri(self):
-        """QStringRef QXmlStreamReader.namespaceUri(None self)"""
+        '''QStringRef QXmlStreamReader.namespaceUri()'''
         return QStringRef()
     def name(self):
-        """QStringRef QXmlStreamReader.name(None self)"""
+        '''QStringRef QXmlStreamReader.name()'''
         return QStringRef()
     def readElementText(self):
-        """QString QXmlStreamReader.readElementText(None self)"""
+        '''QString QXmlStreamReader.readElementText()'''
         return QString()
-    def readElementText(self, _behaviour):
-        """QString QXmlStreamReader.readElementText(None self, QXmlStreamReader.ReadElementTextBehaviour _behaviour)"""
+    def readElementText(self, behaviour):
+        '''QString QXmlStreamReader.readElementText(QXmlStreamReader.ReadElementTextBehaviour behaviour)'''
         return QString()
     def attributes(self):
-        """QXmlStreamAttributes QXmlStreamReader.attributes(None self)"""
+        '''QXmlStreamAttributes QXmlStreamReader.attributes()'''
         return QXmlStreamAttributes()
     def characterOffset(self):
-        """int QXmlStreamReader.characterOffset(None self)"""
+        '''int QXmlStreamReader.characterOffset()'''
         return int()
     def columnNumber(self):
-        """int QXmlStreamReader.columnNumber(None self)"""
+        '''int QXmlStreamReader.columnNumber()'''
         return int()
     def lineNumber(self):
-        """int QXmlStreamReader.lineNumber(None self)"""
+        '''int QXmlStreamReader.lineNumber()'''
         return int()
     def documentEncoding(self):
-        """QStringRef QXmlStreamReader.documentEncoding(None self)"""
+        '''QStringRef QXmlStreamReader.documentEncoding()'''
         return QStringRef()
     def documentVersion(self):
-        """QStringRef QXmlStreamReader.documentVersion(None self)"""
+        '''QStringRef QXmlStreamReader.documentVersion()'''
         return QStringRef()
     def isStandaloneDocument(self):
-        """bool QXmlStreamReader.isStandaloneDocument(None self)"""
+        '''bool QXmlStreamReader.isStandaloneDocument()'''
         return bool()
     def isProcessingInstruction(self):
-        """bool QXmlStreamReader.isProcessingInstruction(None self)"""
+        '''bool QXmlStreamReader.isProcessingInstruction()'''
         return bool()
     def isEntityReference(self):
-        """bool QXmlStreamReader.isEntityReference(None self)"""
+        '''bool QXmlStreamReader.isEntityReference()'''
         return bool()
     def isDTD(self):
-        """bool QXmlStreamReader.isDTD(None self)"""
+        '''bool QXmlStreamReader.isDTD()'''
         return bool()
     def isComment(self):
-        """bool QXmlStreamReader.isComment(None self)"""
+        '''bool QXmlStreamReader.isComment()'''
         return bool()
     def isCDATA(self):
-        """bool QXmlStreamReader.isCDATA(None self)"""
+        '''bool QXmlStreamReader.isCDATA()'''
         return bool()
     def isWhitespace(self):
-        """bool QXmlStreamReader.isWhitespace(None self)"""
+        '''bool QXmlStreamReader.isWhitespace()'''
         return bool()
     def isCharacters(self):
-        """bool QXmlStreamReader.isCharacters(None self)"""
+        '''bool QXmlStreamReader.isCharacters()'''
         return bool()
     def isEndElement(self):
-        """bool QXmlStreamReader.isEndElement(None self)"""
+        '''bool QXmlStreamReader.isEndElement()'''
         return bool()
     def isStartElement(self):
-        """bool QXmlStreamReader.isStartElement(None self)"""
+        '''bool QXmlStreamReader.isStartElement()'''
         return bool()
     def isEndDocument(self):
-        """bool QXmlStreamReader.isEndDocument(None self)"""
+        '''bool QXmlStreamReader.isEndDocument()'''
         return bool()
     def isStartDocument(self):
-        """bool QXmlStreamReader.isStartDocument(None self)"""
+        '''bool QXmlStreamReader.isStartDocument()'''
         return bool()
     def namespaceProcessing(self):
-        """bool QXmlStreamReader.namespaceProcessing(None self)"""
+        '''bool QXmlStreamReader.namespaceProcessing()'''
         return bool()
     def setNamespaceProcessing(self):
-        """bool QXmlStreamReader.setNamespaceProcessing(None self)"""
+        '''bool QXmlStreamReader.setNamespaceProcessing()'''
         return bool()
     def tokenString(self):
-        """QString QXmlStreamReader.tokenString(None self)"""
+        '''QString QXmlStreamReader.tokenString()'''
         return QString()
     def tokenType(self):
-        """QXmlStreamReader.TokenType QXmlStreamReader.tokenType(None self)"""
+        '''QXmlStreamReader.TokenType QXmlStreamReader.tokenType()'''
         return QXmlStreamReader.TokenType()
     def readNext(self):
-        """QXmlStreamReader.TokenType QXmlStreamReader.readNext(None self)"""
+        '''QXmlStreamReader.TokenType QXmlStreamReader.readNext()'''
         return QXmlStreamReader.TokenType()
     def atEnd(self):
-        """bool QXmlStreamReader.atEnd(None self)"""
+        '''bool QXmlStreamReader.atEnd()'''
         return bool()
     def clear(self):
-        """None QXmlStreamReader.clear(None self)"""
-        return None
-    def addData(self, _data):
-        """None QXmlStreamReader.addData(None self, QByteArray _data)"""
-        return None
-    def addData(self, _data):
-        """None QXmlStreamReader.addData(None self, QString _data)"""
-        return None
+        '''void QXmlStreamReader.clear()'''
+    def addData(self, data):
+        '''void QXmlStreamReader.addData(QByteArray data)'''
+    def addData(self, data):
+        '''void QXmlStreamReader.addData(QString data)'''
     def device(self):
-        """QIODevice QXmlStreamReader.device(None self)"""
+        '''QIODevice QXmlStreamReader.device()'''
         return QIODevice()
-    def setDevice(self, _device):
-        """None QXmlStreamReader.setDevice(None self, QIODevice _device)"""
-        return None
+    def setDevice(self, device):
+        '''void QXmlStreamReader.setDevice(QIODevice device)'''
 
 
 class QXmlStreamWriter():
     """"""
     def __init__(self):
-        """None QXmlStreamWriter.__init__(None self)"""
-        return None
-    def __init__(self, _device):
-        """None QXmlStreamWriter.__init__(None self, QIODevice _device)"""
-        return None
-    def __init__(self, _array):
-        """None QXmlStreamWriter.__init__(None self, QByteArray _array)"""
-        return None
-    def __init__(self, _string):
-        """None QXmlStreamWriter.__init__(None self, QString _string)"""
-        return None
-    def writeCurrentToken(self, _reader):
-        """None QXmlStreamWriter.writeCurrentToken(None self, QXmlStreamReader _reader)"""
-        return None
-    def writeStartElement(self, _qualifiedName):
-        """None QXmlStreamWriter.writeStartElement(None self, QString _qualifiedName)"""
-        return None
-    def writeStartElement(self, _namespaceUri, _name):
-        """None QXmlStreamWriter.writeStartElement(None self, QString _namespaceUri, QString _name)"""
-        return None
+        '''void QXmlStreamWriter.__init__()'''
+    def __init__(self, device):
+        '''void QXmlStreamWriter.__init__(QIODevice device)'''
+    def __init__(self, array):
+        '''void QXmlStreamWriter.__init__(QByteArray array)'''
+    def __init__(self, string):
+        '''void QXmlStreamWriter.__init__(QString string)'''
+    def writeCurrentToken(self, reader):
+        '''void QXmlStreamWriter.writeCurrentToken(QXmlStreamReader reader)'''
+    def writeStartElement(self, qualifiedName):
+        '''void QXmlStreamWriter.writeStartElement(QString qualifiedName)'''
+    def writeStartElement(self, namespaceUri, name):
+        '''void QXmlStreamWriter.writeStartElement(QString namespaceUri, QString name)'''
     def writeStartDocument(self):
-        """None QXmlStreamWriter.writeStartDocument(None self)"""
-        return None
-    def writeStartDocument(self, _version):
-        """None QXmlStreamWriter.writeStartDocument(None self, QString _version)"""
-        return None
-    def writeStartDocument(self, _version, _standalone):
-        """None QXmlStreamWriter.writeStartDocument(None self, QString _version, bool _standalone)"""
-        return None
-    def writeProcessingInstruction(self, _target, _data):
-        """None QXmlStreamWriter.writeProcessingInstruction(None self, QString _target, QString _data)"""
-        return None
-    def writeDefaultNamespace(self, _namespaceUri):
-        """None QXmlStreamWriter.writeDefaultNamespace(None self, QString _namespaceUri)"""
-        return None
-    def writeNamespace(self, _namespaceUri, _prefix):
-        """None QXmlStreamWriter.writeNamespace(None self, QString _namespaceUri, QString _prefix)"""
-        return None
-    def writeEntityReference(self, _name):
-        """None QXmlStreamWriter.writeEntityReference(None self, QString _name)"""
-        return None
+        '''void QXmlStreamWriter.writeStartDocument()'''
+    def writeStartDocument(self, version):
+        '''void QXmlStreamWriter.writeStartDocument(QString version)'''
+    def writeStartDocument(self, version, standalone):
+        '''void QXmlStreamWriter.writeStartDocument(QString version, bool standalone)'''
+    def writeProcessingInstruction(self, target, data = QString()):
+        '''void QXmlStreamWriter.writeProcessingInstruction(QString target, QString data = QString())'''
+    def writeDefaultNamespace(self, namespaceUri):
+        '''void QXmlStreamWriter.writeDefaultNamespace(QString namespaceUri)'''
+    def writeNamespace(self, namespaceUri, prefix = QString()):
+        '''void QXmlStreamWriter.writeNamespace(QString namespaceUri, QString prefix = QString())'''
+    def writeEntityReference(self, name):
+        '''void QXmlStreamWriter.writeEntityReference(QString name)'''
     def writeEndElement(self):
-        """None QXmlStreamWriter.writeEndElement(None self)"""
-        return None
+        '''void QXmlStreamWriter.writeEndElement()'''
     def writeEndDocument(self):
-        """None QXmlStreamWriter.writeEndDocument(None self)"""
-        return None
-    def writeTextElement(self, _qualifiedName, _text):
-        """None QXmlStreamWriter.writeTextElement(None self, QString _qualifiedName, QString _text)"""
-        return None
-    def writeTextElement(self, _namespaceUri, _name, _text):
-        """None QXmlStreamWriter.writeTextElement(None self, QString _namespaceUri, QString _name, QString _text)"""
-        return None
-    def writeEmptyElement(self, _qualifiedName):
-        """None QXmlStreamWriter.writeEmptyElement(None self, QString _qualifiedName)"""
-        return None
-    def writeEmptyElement(self, _namespaceUri, _name):
-        """None QXmlStreamWriter.writeEmptyElement(None self, QString _namespaceUri, QString _name)"""
-        return None
-    def writeDTD(self, _dtd):
-        """None QXmlStreamWriter.writeDTD(None self, QString _dtd)"""
-        return None
-    def writeComment(self, _text):
-        """None QXmlStreamWriter.writeComment(None self, QString _text)"""
-        return None
-    def writeCharacters(self, _text):
-        """None QXmlStreamWriter.writeCharacters(None self, QString _text)"""
-        return None
-    def writeCDATA(self, _text):
-        """None QXmlStreamWriter.writeCDATA(None self, QString _text)"""
-        return None
-    def writeAttributes(self, _attributes):
-        """None QXmlStreamWriter.writeAttributes(None self, QXmlStreamAttributes _attributes)"""
-        return None
-    def writeAttribute(self, _qualifiedName, _value):
-        """None QXmlStreamWriter.writeAttribute(None self, QString _qualifiedName, QString _value)"""
-        return None
-    def writeAttribute(self, _namespaceUri, _name, _value):
-        """None QXmlStreamWriter.writeAttribute(None self, QString _namespaceUri, QString _name, QString _value)"""
-        return None
-    def writeAttribute(self, _attribute):
-        """None QXmlStreamWriter.writeAttribute(None self, QXmlStreamAttribute _attribute)"""
-        return None
+        '''void QXmlStreamWriter.writeEndDocument()'''
+    def writeTextElement(self, qualifiedName, text):
+        '''void QXmlStreamWriter.writeTextElement(QString qualifiedName, QString text)'''
+    def writeTextElement(self, namespaceUri, name, text):
+        '''void QXmlStreamWriter.writeTextElement(QString namespaceUri, QString name, QString text)'''
+    def writeEmptyElement(self, qualifiedName):
+        '''void QXmlStreamWriter.writeEmptyElement(QString qualifiedName)'''
+    def writeEmptyElement(self, namespaceUri, name):
+        '''void QXmlStreamWriter.writeEmptyElement(QString namespaceUri, QString name)'''
+    def writeDTD(self, dtd):
+        '''void QXmlStreamWriter.writeDTD(QString dtd)'''
+    def writeComment(self, text):
+        '''void QXmlStreamWriter.writeComment(QString text)'''
+    def writeCharacters(self, text):
+        '''void QXmlStreamWriter.writeCharacters(QString text)'''
+    def writeCDATA(self, text):
+        '''void QXmlStreamWriter.writeCDATA(QString text)'''
+    def writeAttributes(self, attributes):
+        '''void QXmlStreamWriter.writeAttributes(QXmlStreamAttributes attributes)'''
+    def writeAttribute(self, qualifiedName, value):
+        '''void QXmlStreamWriter.writeAttribute(QString qualifiedName, QString value)'''
+    def writeAttribute(self, namespaceUri, name, value):
+        '''void QXmlStreamWriter.writeAttribute(QString namespaceUri, QString name, QString value)'''
+    def writeAttribute(self, attribute):
+        '''void QXmlStreamWriter.writeAttribute(QXmlStreamAttribute attribute)'''
     def autoFormattingIndent(self):
-        """int QXmlStreamWriter.autoFormattingIndent(None self)"""
+        '''int QXmlStreamWriter.autoFormattingIndent()'''
         return int()
-    def setAutoFormattingIndent(self, _spaces):
-        """None QXmlStreamWriter.setAutoFormattingIndent(None self, int _spaces)"""
-        return None
+    def setAutoFormattingIndent(self, spaces):
+        '''void QXmlStreamWriter.setAutoFormattingIndent(int spaces)'''
     def autoFormatting(self):
-        """bool QXmlStreamWriter.autoFormatting(None self)"""
+        '''bool QXmlStreamWriter.autoFormatting()'''
         return bool()
     def setAutoFormatting(self):
-        """bool QXmlStreamWriter.setAutoFormatting(None self)"""
+        '''bool QXmlStreamWriter.setAutoFormatting()'''
         return bool()
     def codec(self):
-        """QTextCodec QXmlStreamWriter.codec(None self)"""
+        '''QTextCodec QXmlStreamWriter.codec()'''
         return QTextCodec()
-    def setCodec(self, _codec):
-        """None QXmlStreamWriter.setCodec(None self, QTextCodec _codec)"""
-        return None
-    def setCodec(self, _codecName):
-        """None QXmlStreamWriter.setCodec(None self, str _codecName)"""
-        return None
+    def setCodec(self, codec):
+        '''void QXmlStreamWriter.setCodec(QTextCodec codec)'''
+    def setCodec(self, codecName):
+        '''void QXmlStreamWriter.setCodec(str codecName)'''
     def device(self):
-        """QIODevice QXmlStreamWriter.device(None self)"""
+        '''QIODevice QXmlStreamWriter.device()'''
         return QIODevice()
-    def setDevice(self, _device):
-        """None QXmlStreamWriter.setDevice(None self, QIODevice _device)"""
-        return None
+    def setDevice(self, device):
+        '''void QXmlStreamWriter.setDevice(QIODevice device)'''
 
 
 class QPyNullVariant():
     """"""
-    def __init__(self, _type):
-        """None QPyNullVariant.__init__(None self, object _type)"""
-        return None
+    def __init__(self, type):
+        '''void QPyNullVariant.__init__(object type)'''
     def isNull(self):
-        """bool QPyNullVariant.isNull(None self)"""
+        '''bool QPyNullVariant.isNull()'''
         return bool()
     def typeName(self):
-        """str QPyNullVariant.typeName(None self)"""
+        '''str QPyNullVariant.typeName()'''
         return str()
     def userType(self):
-        """int QPyNullVariant.userType(None self)"""
+        '''int QPyNullVariant.userType()'''
         return int()
     def type(self):
-        """Type QPyNullVariant.type(None self)"""
+        '''Type QPyNullVariant.type()'''
         return Type()
+
+
+# Enum Type
+Invalid = 0
+Bool = 0
+Int = 0
+UInt = 0
+LongLong = 0
+ULongLong = 0
+Double = 0
+Char = 0
+Map = 0
+List = 0
+String = 0
+StringList = 0
+ByteArray = 0
+BitArray = 0
+Date = 0
+Time = 0
+DateTime = 0
+Url = 0
+Locale = 0
+Rect = 0
+RectF = 0
+Size = 0
+SizeF = 0
+Line = 0
+LineF = 0
+Point = 0
+PointF = 0
+RegExp = 0
+Font = 0
+Pixmap = 0
+Brush = 0
+Color = 0
+Palette = 0
+Icon = 0
+Image = 0
+Polygon = 0
+Region = 0
+Bitmap = 0
+Cursor = 0
+SizePolicy = 0
+KeySequence = 0
+Pen = 0
+TextLength = 0
+TextFormat = 0
+Matrix = 0
+Transform = 0
+Hash = 0
+Matrix4x4 = 0
+Vector2D = 0
+Vector3D = 0
+Vector4D = 0
+Quaternion = 0
+EasingCurve = 0
+UserType = 0
+
+
+# Enum QtMsgType
+QtDebugMsg = 0
+QtWarningMsg = 0
+QtCriticalMsg = 0
+QtFatalMsg = 0
+QtSystemMsg = 0
 
 
 PYQT_VERSION = None # int member
@@ -11430,311 +12389,311 @@ QT_VERSION = None # int member
 
 QT_VERSION_STR = None # str member
 
-def qSetRealNumberPrecision(_precision):
-    """QTextStreamManipulator .qSetRealNumberPrecision(int _precision)"""
+def qSetRealNumberPrecision(precision):
+    '''static QTextStreamManipulator qSetRealNumberPrecision(int precision)'''
     return QTextStreamManipulator()
 
-def qSetPadChar(_ch):
-    """QTextStreamManipulator .qSetPadChar(QChar _ch)"""
+def qSetPadChar(ch):
+    '''static QTextStreamManipulator qSetPadChar(QChar ch)'''
     return QTextStreamManipulator()
 
-def qSetFieldWidth(_width):
-    """QTextStreamManipulator .qSetFieldWidth(int _width)"""
+def qSetFieldWidth(width):
+    '''static QTextStreamManipulator qSetFieldWidth(int width)'''
     return QTextStreamManipulator()
 
-def ws(_s):
-    """QTextStream .ws(QTextStream _s)"""
+def ws(s):
+    '''static QTextStream ws(QTextStream s)'''
     return QTextStream()
 
-def bom(_s):
-    """QTextStream .bom(QTextStream _s)"""
+def bom(s):
+    '''static QTextStream bom(QTextStream s)'''
     return QTextStream()
 
-def reset(_s):
-    """QTextStream .reset(QTextStream _s)"""
+def reset(s):
+    '''static QTextStream reset(QTextStream s)'''
     return QTextStream()
 
-def flush(_s):
-    """QTextStream .flush(QTextStream _s)"""
+def flush(s):
+    '''static QTextStream flush(QTextStream s)'''
     return QTextStream()
 
-def endl(_s):
-    """QTextStream .endl(QTextStream _s)"""
+def endl(s):
+    '''static QTextStream endl(QTextStream s)'''
     return QTextStream()
 
-def center(_s):
-    """QTextStream .center(QTextStream _s)"""
+def center(s):
+    '''static QTextStream center(QTextStream s)'''
     return QTextStream()
 
-def right(_s):
-    """QTextStream .right(QTextStream _s)"""
+def right(s):
+    '''static QTextStream right(QTextStream s)'''
     return QTextStream()
 
-def left(_s):
-    """QTextStream .left(QTextStream _s)"""
+def left(s):
+    '''static QTextStream left(QTextStream s)'''
     return QTextStream()
 
-def scientific(_s):
-    """QTextStream .scientific(QTextStream _s)"""
+def scientific(s):
+    '''static QTextStream scientific(QTextStream s)'''
     return QTextStream()
 
-def fixed(_s):
-    """QTextStream .fixed(QTextStream _s)"""
+def fixed(s):
+    '''static QTextStream fixed(QTextStream s)'''
     return QTextStream()
 
-def lowercasedigits(_s):
-    """QTextStream .lowercasedigits(QTextStream _s)"""
+def lowercasedigits(s):
+    '''static QTextStream lowercasedigits(QTextStream s)'''
     return QTextStream()
 
-def lowercasebase(_s):
-    """QTextStream .lowercasebase(QTextStream _s)"""
+def lowercasebase(s):
+    '''static QTextStream lowercasebase(QTextStream s)'''
     return QTextStream()
 
-def uppercasedigits(_s):
-    """QTextStream .uppercasedigits(QTextStream _s)"""
+def uppercasedigits(s):
+    '''static QTextStream uppercasedigits(QTextStream s)'''
     return QTextStream()
 
-def uppercasebase(_s):
-    """QTextStream .uppercasebase(QTextStream _s)"""
+def uppercasebase(s):
+    '''static QTextStream uppercasebase(QTextStream s)'''
     return QTextStream()
 
-def noforcepoint(_s):
-    """QTextStream .noforcepoint(QTextStream _s)"""
+def noforcepoint(s):
+    '''static QTextStream noforcepoint(QTextStream s)'''
     return QTextStream()
 
-def noforcesign(_s):
-    """QTextStream .noforcesign(QTextStream _s)"""
+def noforcesign(s):
+    '''static QTextStream noforcesign(QTextStream s)'''
     return QTextStream()
 
-def noshowbase(_s):
-    """QTextStream .noshowbase(QTextStream _s)"""
+def noshowbase(s):
+    '''static QTextStream noshowbase(QTextStream s)'''
     return QTextStream()
 
-def forcepoint(_s):
-    """QTextStream .forcepoint(QTextStream _s)"""
+def forcepoint(s):
+    '''static QTextStream forcepoint(QTextStream s)'''
     return QTextStream()
 
-def forcesign(_s):
-    """QTextStream .forcesign(QTextStream _s)"""
+def forcesign(s):
+    '''static QTextStream forcesign(QTextStream s)'''
     return QTextStream()
 
-def showbase(_s):
-    """QTextStream .showbase(QTextStream _s)"""
+def showbase(s):
+    '''static QTextStream showbase(QTextStream s)'''
     return QTextStream()
 
-def hex_(_s):
-    """QTextStream .hex_(QTextStream _s)"""
+def hex_(s):
+    '''static QTextStream hex_(QTextStream s)'''
     return QTextStream()
 
-def hex(_s):
-    """QTextStream .hex(QTextStream _s)"""
+def hex(s):
+    '''static QTextStream hex(QTextStream s)'''
     return QTextStream()
 
-def dec(_s):
-    """QTextStream .dec(QTextStream _s)"""
+def dec(s):
+    '''static QTextStream dec(QTextStream s)'''
     return QTextStream()
 
-def oct_(_s):
-    """QTextStream .oct_(QTextStream _s)"""
+def oct_(s):
+    '''static QTextStream oct_(QTextStream s)'''
     return QTextStream()
 
-def oct(_s):
-    """QTextStream .oct(QTextStream _s)"""
+def oct(s):
+    '''static QTextStream oct(QTextStream s)'''
     return QTextStream()
 
-def bin_(_s):
-    """QTextStream .bin_(QTextStream _s)"""
+def bin_(s):
+    '''static QTextStream bin_(QTextStream s)'''
     return QTextStream()
 
-def bin(_s):
-    """QTextStream .bin(QTextStream _s)"""
+def bin(s):
+    '''static QTextStream bin(QTextStream s)'''
     return QTextStream()
 
-def Q_RETURN_ARG(_type):
-    """QGenericReturnArgument .Q_RETURN_ARG(object _type)"""
+def Q_RETURN_ARG(type):
+    '''static QGenericReturnArgument Q_RETURN_ARG(object type)'''
     return QGenericReturnArgument()
 
-def Q_ARG(_type, _data):
-    """QGenericArgument .Q_ARG(object _type, object _data)"""
+def Q_ARG(type, data):
+    '''static QGenericArgument Q_ARG(object type, object data)'''
     return QGenericArgument()
 
-def pyqtSignature(_signature, _result):
-    """object .pyqtSignature(str _signature, str _result)"""
+def pyqtSignature(signature, result = None):
+    '''static object pyqtSignature(str signature, str result = None)'''
     return object()
 
-def pyqtSlot(_signature, _name, _result):
-    """object .pyqtSlot(str _signature, str _name, str _result)"""
+def pyqtSlot(signature, name = None, result = None):
+    '''static object pyqtSlot(str signature, str name = None, str result = None)'''
     return object()
 
 def SIGNAL():
-    """str .SIGNAL()"""
+    '''static str SIGNAL()'''
     return str()
 
 def SLOT():
-    """str .SLOT()"""
+    '''static str SLOT()'''
     return str()
 
 def QT_TRANSLATE_NOOP():
-    """str .QT_TRANSLATE_NOOP()"""
+    '''static str QT_TRANSLATE_NOOP()'''
     return str()
 
 def QT_TR_NOOP_UTF8():
-    """str .QT_TR_NOOP_UTF8()"""
+    '''static str QT_TR_NOOP_UTF8()'''
     return str()
 
 def QT_TR_NOOP():
-    """str .QT_TR_NOOP()"""
+    '''static str QT_TR_NOOP()'''
     return str()
 
 def Q_FLAGS(*args):
-    """ .Q_FLAGS(... *args)"""
+    '''static  Q_FLAGS(... *args)'''
     return ()
 
 def Q_ENUMS(*args):
-    """ .Q_ENUMS(... *args)"""
+    '''static  Q_ENUMS(... *args)'''
     return ()
 
 def qQNaN():
-    """float .qQNaN()"""
+    '''static float qQNaN()'''
     return float()
 
 def qSNaN():
-    """float .qSNaN()"""
+    '''static float qSNaN()'''
     return float()
 
 def qInf():
-    """float .qInf()"""
+    '''static float qInf()'''
     return float()
 
-def qIsNaN(_d):
-    """bool .qIsNaN(float _d)"""
+def qIsNaN(d):
+    '''static bool qIsNaN(float d)'''
     return bool()
 
-def qIsFinite(_d):
-    """bool .qIsFinite(float _d)"""
+def qIsFinite(d):
+    '''static bool qIsFinite(float d)'''
     return bool()
 
-def qIsInf(_d):
-    """bool .qIsInf(float _d)"""
+def qIsInf(d):
+    '''static bool qIsInf(float d)'''
     return bool()
 
 def pyqtRestoreInputHook():
-    """None .pyqtRestoreInputHook()"""
-    return None
+    '''static void pyqtRestoreInputHook()'''
+
 
 def pyqtRemoveInputHook():
-    """None .pyqtRemoveInputHook()"""
-    return None
+    '''static void pyqtRemoveInputHook()'''
+
 
 def qRemovePostRoutine():
-    """callable .qRemovePostRoutine()"""
+    '''static callable qRemovePostRoutine()'''
     return callable()
 
 def qAddPostRoutine():
-    """callable .qAddPostRoutine()"""
+    '''static callable qAddPostRoutine()'''
     return callable()
 
-def qUncompress(_data):
-    """QByteArray .qUncompress(QByteArray _data)"""
+def qUncompress(data):
+    '''static QByteArray qUncompress(QByteArray data)'''
     return QByteArray()
 
-def qCompress(_data, _compressionLevel):
-    """QByteArray .qCompress(QByteArray _data, int _compressionLevel)"""
+def qCompress(data, compressionLevel = -1):
+    '''static QByteArray qCompress(QByteArray data, int compressionLevel = -1)'''
     return QByteArray()
 
-def qChecksum(_s):
-    """int .qChecksum(str _s)"""
+def qChecksum(s):
+    '''static int qChecksum(str s)'''
     return int()
 
-def qSwap(_value1, _value2):
-    """None .qSwap(QBitArray _value1, QBitArray _value2)"""
-    return None
+def qSwap(value1, value2):
+    '''static void qSwap(QBitArray value1, QBitArray value2)'''
 
-def qSwap(_value1, _value2):
-    """None .qSwap(QByteArray _value1, QByteArray _value2)"""
-    return None
 
-def qSwap(_value1, _value2):
-    """None .qSwap(QString _value1, QString _value2)"""
-    return None
+def qSwap(value1, value2):
+    '''static void qSwap(QByteArray value1, QByteArray value2)'''
 
-def qSwap(_value1, _value2):
-    """None .qSwap(QUrl _value1, QUrl _value2)"""
-    return None
 
-def qSwap(_value1, _value2):
-    """None .qSwap(QVariant _value1, QVariant _value2)"""
-    return None
+def qSwap(value1, value2):
+    '''static void qSwap(QString value1, QString value2)'''
+
+
+def qSwap(value1, value2):
+    '''static void qSwap(QUrl value1, QUrl value2)'''
+
+
+def qSwap(value1, value2):
+    '''static void qSwap(QVariant value1, QVariant value2)'''
+
 
 def qrand():
-    """int .qrand()"""
+    '''static int qrand()'''
     return int()
 
-def qsrand(_seed):
-    """None .qsrand(int _seed)"""
-    return None
+def qsrand(seed):
+    '''static void qsrand(int seed)'''
 
-def qIsNull(_d):
-    """bool .qIsNull(float _d)"""
+
+def qIsNull(d):
+    '''static bool qIsNull(float d)'''
     return bool()
 
-def qFuzzyCompare(_p1, _p2):
-    """bool .qFuzzyCompare(float _p1, float _p2)"""
+def qFuzzyCompare(p1, p2):
+    '''static bool qFuzzyCompare(float p1, float p2)'''
     return bool()
 
 def qUnregisterResourceData():
-    """str .qUnregisterResourceData()"""
+    '''static str qUnregisterResourceData()'''
     return str()
 
 def qRegisterResourceData():
-    """str .qRegisterResourceData()"""
+    '''static str qRegisterResourceData()'''
     return str()
 
 def qInstallMsgHandler():
-    """callable .qInstallMsgHandler()"""
+    '''static callable qInstallMsgHandler()'''
     return callable()
 
-def qErrnoWarning(_code, _msg):
-    """None .qErrnoWarning(int _code, str _msg)"""
-    return None
+def qErrnoWarning(code, msg):
+    '''static void qErrnoWarning(int code, str msg)'''
 
-def qErrnoWarning(_msg):
-    """None .qErrnoWarning(str _msg)"""
-    return None
+
+def qErrnoWarning(msg):
+    '''static void qErrnoWarning(str msg)'''
+
 
 def qFatal():
-    """str .qFatal()"""
+    '''static str qFatal()'''
     return str()
 
 def qCritical():
-    """str .qCritical()"""
+    '''static str qCritical()'''
     return str()
 
 def qWarning():
-    """str .qWarning()"""
+    '''static str qWarning()'''
     return str()
 
 def qDebug():
-    """str .qDebug()"""
+    '''static str qDebug()'''
     return str()
 
 def qSharedBuild():
-    """bool .qSharedBuild()"""
+    '''static bool qSharedBuild()'''
     return bool()
 
 def qVersion():
-    """str .qVersion()"""
+    '''static str qVersion()'''
     return str()
 
-def qRound64(_d):
-    """int .qRound64(float _d)"""
+def qRound64(d):
+    '''static int qRound64(float d)'''
     return int()
 
-def qRound(_d):
-    """int .qRound(float _d)"""
+def qRound(d):
+    '''static int qRound(float d)'''
     return int()
 
-def qAbs(_t):
-    """float .qAbs(float _t)"""
+def qAbs(t):
+    '''static float qAbs(float t)'''
     return float()
 

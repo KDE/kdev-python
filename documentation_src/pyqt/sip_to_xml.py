@@ -1,37 +1,29 @@
 #!/usr/bin/env python2.7
 # This file is part of KDevelop
-# Copyright 2011 by Victor Varvariuc <victor.varvariuc@gmail.com>
+# Copyright 2011 by Victor Varvariuc <victor.varvariuc@gmail.com>, Sven Brauch <svenbrauch@googlemail.com>
 
-import os, subprocess
+import os, sys, subprocess
 from xml.dom import minidom, NotFoundErr
 
 import sipconfig
 from PyQt4 import pyqtconfig
 
-qtgui_outfile = 'QtGuimod.xml'
-qtgui_infile = '/usr/share/sip/PyQt4/QtGui/QtGuimod.sip'
-qtcore_outfile = 'QtCoremod.xml'
-qtcore_infile = '/usr/share/sip/PyQt4/QtCore/QtCoremod.sip'
-
 config = pyqtconfig.Configuration() # Get the PyQt configuration information.
 
-for infileName, outfileName in [(qtgui_infile, qtgui_outfile), (qtcore_infile, qtcore_outfile)]:
-    command = [config.sip_bin, '-m', outfileName, '-I', config.pyqt_sip_dir]
+def convertSipToXML(inFilePath, outFilePath):
+    command = [config.sip_bin, '-m', outFilePath, '-I', config.pyqt_sip_dir]
     command.extend(config.pyqt_sip_flags.split())
-    command.append(infileName)
+    command.append(inFilePath)
 
-    fileName = outfileName
-
-    print ' '.join(command)
+    print '\nConverting sip to xml:\n%s' % ' '.join(command)
     try:
-        print subprocess.check_output(command, stderr=subprocess.STDOUT)
+        print subprocess.check_output(command, stderr = subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
         print 'There was an error when running the command:'
         print e.output
 
-
     print 'Opening and parsing XML document...'
-    xmlDoc = minidom.parse(fileName)
+    xmlDoc = minidom.parse(outFilePath)
 
     module = xmlDoc.firstChild
     assert module.nodeName == 'Module'
@@ -43,7 +35,7 @@ for infileName, outfileName in [(qtgui_infile, qtgui_outfile), (qtcore_infile, q
         for node in node.childNodes:
             if node.nodeType == node.ELEMENT_NODE: # only element nodes
                 try:
-                    node.setIdAttribute('name') 
+                    node.setIdAttribute('name')
                 except NotFoundErr:
                     pass
                 setIds(node)
@@ -71,6 +63,22 @@ for infileName, outfileName in [(qtgui_infile, qtgui_outfile), (qtcore_infile, q
         parentClassNode.appendChild(node)
 
     print 'Saving changes...'
-    with open(fileName, 'w') as f:
+    with open(outFilePath, 'w') as f:
         xmlDoc.writexml(f)
 
+
+sipDir = config.pyqt_sip_dir
+if not os.path.isdir(sipDir):
+    print 'Could not find sip direcotry: %s' % sipDir
+    print 'Looks like package "python-qt-dev" is not installed.'
+    sys.exit()
+
+modules = sys.argv[1:] # ['QtGui.xml', 'QtCore.xml'] # files to convert
+
+for moduleName in modules:
+    sipFilePath = os.path.join(sipDir, moduleName, moduleName + 'mod.sip')
+    xmlFilePath = moduleName + '.xml'
+    if os.path.isfile(sipFilePath):
+        convertSipToXML(sipFilePath, xmlFilePath)
+    else:
+        print 'Input sip file does not exist: %s' % sipFilePath

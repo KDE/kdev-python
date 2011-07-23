@@ -127,11 +127,92 @@ class __kdevpythondocumentation_builtin_float(self,):
 class __kdevpythondocumentation_builtin_int(self,):
     pass
 
-class AttributeError():
+class BaseException():
+    args = ()
+
+class AttributeError(BaseException):
     pass
-class IndexError():
+class IndexError(BaseException):
     pass
-class IOError():
+class IOError(BaseException):
+    pass
+class StandardError(BaseException):
+    pass
+class Exception(BaseException):
+    pass
+class BufferError(BaseException):
+    pass
+class LookupError(BaseException):
+    pass
+class EnvironmentError(BaseException):
+    pass
+class AssertionError(BaseException):
+    pass
+class EOFError(BaseException):
+    pass
+class FloatingPointError(BaseException):
+    pass
+class GeneratorExit(BaseException):
+    pass
+class ImportError(BaseException):
+    pass
+class KeyError(BaseException):
+    pass
+class MemoryError(BaseException):
+    pass
+class NotImplementedError(BaseException):
+    pass
+class OSError(BaseException):
+    pass
+class OverflowError(BaseException):
+    pass
+class ReferenceError(BaseException):
+    pass
+class RuntimeError(BaseException):
+    pass
+class StopIteration(BaseException):
+    pass
+class SyntaxError(BaseException):
+    pass
+class IndentationError(BaseException):
+    pass
+class TabError(BaseException):
+    pass
+class SystemError(BaseException):
+    pass
+class SystemExit(BaseException):
+    pass
+class TypeError(BaseException):
+    pass
+class UnboundLocalError(BaseException):
+    pass
+class UnicodeError(BaseException):
+    pass
+class UnicodeEncodeError(BaseException):
+    pass
+class UnicodeDecodeError(BaseException):
+    pass
+class UnicodeTranslateError(BaseException):
+    pass
+class ValueError(BaseException):
+    pass
+class ZeroDivisionError(BaseException):
+    pass
+class Warning():
+    pass
+class UserWarning(Warning):
+    pass
+class DeprecationWarning(Warning):
+    pass
+class PendingDeprecationWarning(Warning):
+    pass
+class RuntimeWarning(Warning):
+    pass
+class FutureWarning(Warning):
+    pass
+class ImportWarning(Warning):
+    pass
+class UnicodeWarning(Warning):
     pass
 
 @IndexedTypeContainer

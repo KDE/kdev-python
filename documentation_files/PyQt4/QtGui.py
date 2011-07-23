@@ -1,4 +1,5 @@
-import PyQt4.QtCore.pyqtSignal
+import QtCore.pyqtSignal
+from QtCore import *
 
 class QPaintDevice():
     """"""
@@ -4274,7 +4275,7 @@ class QColorDialog(QDialog):
     def customCount(self):
         '''static int QColorDialog.customCount()'''
         return int()
-    def getRgba(self, initial = 4294967295, ok, parent = None):
+    def getRgba(self, initial = 4294967295, ok = None, parent = None):
         '''static int QColorDialog.getRgba(int initial = 4294967295, bool ok, QWidget parent = None)'''
         return int()
     def getColor(self, initial = Qt.white, parent = None):
@@ -7333,7 +7334,7 @@ class QFontDialog(QDialog):
     def getFont(self, ok, initial, parent, title, options):
         '''static QFont QFontDialog.getFont(bool ok, QFont initial, QWidget parent, QString title, QFontDialog.FontDialogOptions options)'''
         return QFont()
-    def getFont(self, ok, def, parent, caption):
+    def getFont(self, ok, def_, parent, caption):
         '''static QFont QFontDialog.getFont(bool ok, QFont def, QWidget parent, QString caption)'''
         return QFont()
     def getFont(self, ok, initial, parent = None):
@@ -8715,7 +8716,7 @@ class QGraphicsEffect(QObject):
 
     def __init__(self, parent = None):
         '''void QGraphicsEffect.__init__(QObject parent = None)'''
-    def sourcePixmap(self, system = Qt.LogicalCoordinates, offset, mode = QGraphicsEffect.PadToEffectiveBoundingRect):
+    def sourcePixmap(self, system = Qt.LogicalCoordinates, offset = None, mode = QGraphicsEffect.PadToEffectiveBoundingRect):
         '''QPixmap QGraphicsEffect.sourcePixmap(Qt.CoordinateSystem system = Qt.LogicalCoordinates, QPoint offset, QGraphicsEffect.PixmapPadMode mode = QGraphicsEffect.PadToEffectiveBoundingRect)'''
         return QPixmap()
     def drawSource(self, painter):
@@ -12975,19 +12976,19 @@ class QInputDialog(QDialog):
         return QInputDialog.InputMode()
     def setInputMode(self, mode):
         '''void QInputDialog.setInputMode(QInputDialog.InputMode mode)'''
-    def getItem(self, parent, title, label, list, current = 0, editable = True, ok, flags = 0):
+    def getItem(self, parent, title, label, list, current = 0, editable = True, ok = None, flags = 0):
         '''static QString QInputDialog.getItem(QWidget parent, QString title, QString label, QStringList list, int current = 0, bool editable = True, bool ok, Qt.WindowFlags flags = 0)'''
         return QString()
-    def getDouble(self, parent, title, label, value = 0, min = -2147483647, max = 2147483647, decimals = 1, ok, flags = 0):
+    def getDouble(self, parent, title, label, value = 0, min = -2147483647, max = 2147483647, decimals = 1, ok = None, flags = 0):
         '''static float QInputDialog.getDouble(QWidget parent, QString title, QString label, float value = 0, float min = -2147483647, float max = 2147483647, int decimals = 1, bool ok, Qt.WindowFlags flags = 0)'''
         return float()
-    def getInteger(self, parent, title, label, value = 0, min = -2147483647, max = 2147483647, step = 1, ok, flags = 0):
+    def getInteger(self, parent, title, label, value = 0, min = -2147483647, max = 2147483647, step = 1, ok = None, flags = 0):
         '''static int QInputDialog.getInteger(QWidget parent, QString title, QString label, int value = 0, int min = -2147483647, int max = 2147483647, int step = 1, bool ok, Qt.WindowFlags flags = 0)'''
         return int()
-    def getInt(self, parent, title, label, value = 0, min = -2147483647, max = 2147483647, step = 1, ok, flags = 0):
+    def getInt(self, parent, title, label, value = 0, min = -2147483647, max = 2147483647, step = 1, ok = None, flags = 0):
         '''static int QInputDialog.getInt(QWidget parent, QString title, QString label, int value = 0, int min = -2147483647, int max = 2147483647, int step = 1, bool ok, Qt.WindowFlags flags = 0)'''
         return int()
-    def getText(self, parent, title, label, mode = QLineEdit.Normal, text = QString(), ok, flags = 0):
+    def getText(self, parent, title, label, mode = QLineEdit.Normal, text = QString(), ok = None, flags = 0):
         '''static QString QInputDialog.getText(QWidget parent, QString title, QString label, QLineEdit.EchoMode mode = QLineEdit.Normal, QString text = QString(), bool ok, Qt.WindowFlags flags = 0)'''
         return QString()
     class InputDialogOptions():

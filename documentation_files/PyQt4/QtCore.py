@@ -1,4 +1,5 @@
-import PyQt4.QtCore.pyqtSignal
+import QtCore.pyqtSignal
+from QtCore import *
 
 class QSysInfo():
     """"""

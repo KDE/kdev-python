@@ -32,6 +32,8 @@ public:
     
     static QList<KUrl> cachedSearchPaths;
     
+    static UnsureType::Ptr extractTypeHints(AbstractType::Ptr type);
+    
     /**
      * @brief merge two types into one unsure type
      *

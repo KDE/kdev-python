@@ -189,27 +189,6 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     }
     existingDeclarations = remainingDeclarations;
     
-//     if ( dec || ! existingDeclarations.isEmpty() ) {
-//         Declaration* d = dec ? dec : existingDeclarations.first();
-//         Q_ASSERT(d);
-//         d = Helper::resolveAliasDeclaration(d);
-//         if ( d && d->abstractType() && lastType() && lastType()->whichType() != AbstractType::TypeFunction && d->isFunctionDeclaration() ) {
-//             kWarning() << "Found re-declaration, reporting error";
-//             kDebug() << d->abstractType()->toString() << lastType()->toString() << d->abstractType()->whichType() << lastType()->whichType();
-//             // assigning e.g. an integral value to something that was a function definition previously
-//             // is difficult to handle and most likely not what you want, so we just report an error.
-//             KDevelop::Problem *p = new KDevelop::Problem();
-//             p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(
-//                                 node->startLine, node->startCol, node->startLine, (node->startLine == node->endLine ? node->endCol + 1 : 100))));
-//             p->setSource(KDevelop::ProblemData::SemanticAnalysis);
-//             p->setSeverity(KDevelop::ProblemData::Error);
-//             p->setDescription(i18n("Re-declaration of \"%1\" shadows a previous declaration with different type", node->value));
-//             ProblemPointer ptr(p);
-//             topContext()->addProblem(ptr);
-//             return 0;
-//         }
-//     }
-    
     kDebug() << "VARIABLE CONTEXT: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange() << currentContext()->type() << DUContext::Class;
     
     bool noFittingDeclaration = existingDeclarations.isEmpty() || ( ! existingDeclarations.isEmpty() && ! dynamic_cast<T*>(existingDeclarations.last()) );
@@ -224,7 +203,9 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         kDebug() << "Creating variable declaration for " << node->value << node->startLine << ":" << node->startCol << "->" << node->endLine << ":" << node->endCol;
         if ( ! dec ) dec = openDeclaration<T>(node, originalAst ? originalAst : node);
         DeclarationBuilderBase::closeDeclaration();
-        dec->setType(lastType());
+        UnsureType::Ptr hints = Helper::extractTypeHints(dec->abstractType());
+        AbstractType::Ptr newType = Helper::mergeTypes(hints.cast<AbstractType>(), lastType());
+        dec->setType(newType);
         dec->setKind(KDevelop::Declaration::Instance); // everything is an object in python
     } else {
         kDebug() << "Existing declarations are not empty. count: " << existingDeclarations.count();

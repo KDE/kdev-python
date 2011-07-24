@@ -68,7 +68,7 @@ template<typename T> void ExpressionVisitor::encounter(TypePtr< T > type)
 }
 
 Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegrator* editor)
-    : m_lastType(0), m_ctx(ctx), m_editor(editor), m_lastAccessedReturnType(0), m_shouldBeKnown(true)
+    : m_lastType(0), m_ctx(ctx), m_editor(editor), m_shouldBeKnown(true), m_lastAccessedReturnType(0)
 {
     if(s_defaultTypes.isEmpty()) {
         s_defaultTypes.insert(KDevelop::Identifier("True"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));

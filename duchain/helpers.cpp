@@ -15,6 +15,7 @@
 #include <language/duchain/classdeclaration.h>
 #include <language/duchain/aliasdeclaration.h>
 #include <ast.h>
+#include "types/hintedtype.h"
 
 using namespace KDevelop;
 
@@ -23,6 +24,23 @@ namespace Python {
 QList<KUrl> Helper::cachedSearchPaths;
 QString Helper::dataDir = QString::null;
 QString Helper::documentationFile = QString::null;
+
+UnsureType::Ptr Helper::extractTypeHints(AbstractType::Ptr type)
+{
+    UnsureType::Ptr result(new UnsureType());
+    if ( type.cast<HintedType>() ) {
+        result->addType(type->indexed());
+    }
+    else if ( UnsureType::Ptr unsure = type.cast<UnsureType>() ) {
+        int len = unsure->typesSize();
+        for ( int i = 0; i < len; i++ ) {
+            if ( HintedType::Ptr hinted = unsure->types()[i].abstractType().cast<HintedType>() ) {
+                result->addType(hinted->indexed());
+            }
+        }
+    }
+    return result;
+}
 
 Declaration* Helper::declarationForName(NameAst* ast, const QualifiedIdentifier& identifier, const RangeInRevision& nodeRange, DUContextPointer context)
 {
@@ -217,14 +235,12 @@ AbstractType::Ptr Helper::mergeTypes(AbstractType::Ptr type, AbstractType::Ptr n
         }
         ret = unsure;
     }
-#warning remove me: lock
-    DUChainReadLocker lock(DUChain::lock());
-    if ( ret->typesSize() == 1 && ret->types()[0].abstractType() ) {
-        kDebug() << "Returning merged type:" << ret->types()[0].abstractType()->toString();
+    if ( ret->typesSize() == 1 ) {
         return ret->types()[0].abstractType();
     }
-    kDebug() << "Returning real merged type:" << ret->toString();
-    return AbstractType::Ptr::staticCast(ret);
+    else {
+        return AbstractType::Ptr::staticCast(ret);
+    }
 }
 
 }

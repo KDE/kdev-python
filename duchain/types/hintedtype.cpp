@@ -25,6 +25,7 @@
 #include <KLocalizedString>
 #include <language/duchain/parsingenvironment.h>
 #include <language/duchain/types/typesystem.h>
+#include <language/duchain/types/typealiastype.h>
 
 using namespace KDevelop;
 
@@ -32,35 +33,31 @@ namespace Python {
     
 REGISTER_TYPE(HintedType);
 
-HintedType::HintedType() : KDevelop::AbstractType(createData<HintedType>())
+HintedType::HintedType() : KDevelop::TypeAliasType(createData<HintedType>())
 {
 }
 
 HintedType::HintedType(const HintedType& rhs)
-    : AbstractType(copyData<HintedType>(*rhs.d_func()))
+    : TypeAliasType(copyData<HintedType>(*rhs.d_func()))
 {
 
 }
 
-HintedType::HintedType(AbstractTypeData& data): AbstractType(data)
+HintedType::HintedType(TypeAliasTypeData& data): TypeAliasType(data)
 {
 
 }
 
-const IndexedType& HintedType::typeHinted() const
+void HintedType::setCreatedBy(TopDUContext* context)
 {
-    return d_func()->m_hintedType;
+    d_func_dynamic()->m_createdByContext = context->indexed();
+    d_func_dynamic()->m_modificationRevision = context->parsingEnvironmentFile()->modificationRevision();
 }
     
 KDevelop::AbstractType* HintedType::clone() const
 {
     HintedType* n = new HintedType(*this);
     return n;
-}
-
-void HintedType::accept0(TypeVisitor* v) const
-{
-    v->visit(d_func()->m_hintedType.abstractType().unsafeData());
 }
 
 bool HintedType::equals(const AbstractType* rhs) const
@@ -75,7 +72,7 @@ bool HintedType::equals(const AbstractType* rhs) const
     if ( ! c ) {
         return false;
     }
-    if ( c->typeHinted() != d_func()->m_hintedType ) {
+    if ( c->type()->indexed() != d_func()->m_type ) {
         return false;
     }
     return true;
@@ -83,7 +80,7 @@ bool HintedType::equals(const AbstractType* rhs) const
 
 uint HintedType::hash() const
 {
-    return AbstractType::hash() + 1 + ( typeHinted().abstractType() ? typeHinted().abstractType()->hash() : 0 );
+    return AbstractType::hash() + 1 + ( type() ? type()->hash() : 0 );
 }
 
 }

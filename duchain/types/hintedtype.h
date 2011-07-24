@@ -28,31 +28,32 @@
 #include <language/editor/modificationrevision.h>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/types/typesystem.h>
+#include <language/duchain/types/typesystemdata.h>
+#include <language/duchain/types/typealiastype.h>
 
 using namespace KDevelop;
 
 namespace Python {
     
-class KDEVPYTHONDUCHAIN_EXPORT HintedTypeData : public KDevelop::AbstractTypeData
+class KDEVPYTHONDUCHAIN_EXPORT HintedTypeData : public KDevelop::TypeAliasTypeData
 {
 public:
     /// Constructor
     HintedTypeData()
-        : KDevelop::AbstractTypeData(), m_hintedType(0), m_createdByContext((TopDUContext*) 0), m_modificationRevision()
+        : KDevelop::TypeAliasTypeData(), m_createdByContext((TopDUContext*) 0), m_modificationRevision()
     {
     }
     /// Copy constructor. \param rhs data to copy
     HintedTypeData( const HintedTypeData& rhs )
-        : KDevelop::AbstractTypeData(rhs), m_hintedType(rhs.m_hintedType), m_createdByContext(rhs.m_createdByContext), m_modificationRevision(rhs.m_modificationRevision)
+        : KDevelop::TypeAliasTypeData(rhs), m_createdByContext(rhs.m_createdByContext), m_modificationRevision(rhs.m_modificationRevision)
     {
     }
     
-    HintedTypeData(const AbstractTypeData& rhs)
-        : KDevelop::AbstractTypeData(rhs), m_hintedType(0), m_createdByContext((TopDUContext*) 0), m_modificationRevision()
+    HintedTypeData(const TypeAliasTypeData& rhs)
+        : KDevelop::TypeAliasTypeData(rhs), m_createdByContext((TopDUContext*) 0), m_modificationRevision()
     {
     };
     
-    IndexedType m_hintedType;
     IndexedTopDUContext m_createdByContext;
     ModificationRevision m_modificationRevision;
 };
@@ -62,19 +63,24 @@ public:
 * Describes a type which is a hint, and thus kept between parser passes and only deleted if the context which created it
 * goes away or is reparsed (it'll create a new one in case the hint still exists)
 **/
-class KDEVPYTHONDUCHAIN_EXPORT HintedType : public KDevelop::AbstractType
+class KDEVPYTHONDUCHAIN_EXPORT HintedType : public KDevelop::TypeAliasType
 {
 public:
     typedef TypePtr<HintedType> Ptr;
     
     HintedType();
     HintedType(const HintedType& rhs);
-    HintedType(AbstractTypeData& data);
-    void setCreatedBy(TopDUContext* context, int use);
+    HintedType(TypeAliasTypeData& data);
+    
+    /**
+     * @brief Sets the creating topDUContext for this type hint. Also uses that contexts current modification revision as creation time.
+     *
+     * @param context the topDUContext to usef
+     * @return void
+     **/
+    void setCreatedBy(TopDUContext* context);
     virtual AbstractType* clone() const;
     virtual uint hash() const;
-    const IndexedType& typeHinted() const;
-    virtual void accept0(TypeVisitor* v) const;
     
     virtual bool equals(const AbstractType* rhs) const;
     
@@ -84,7 +90,7 @@ public:
     };
     
     typedef HintedTypeData Data;
-    typedef KDevelop::AbstractType BaseType;
+    typedef KDevelop::TypeAliasType BaseType;
     
 protected:
     TYPE_DECLARE_DATA(HintedType);

@@ -52,6 +52,7 @@
 #include "types/variablelengthcontainer.h"
 #include "declarations/decorateddeclaration.h"
 #include <language/duchain/duchainutils.h>
+#include "types/hintedtype.h"
 
 using namespace KTextEditor;
 
@@ -496,13 +497,16 @@ void DeclarationBuilder::visitCall(CallAst* node)
                         kDebug() << "Got type for function argument: " << v.lastType();
                         if ( v.lastType() ) {
                             kDebug() << "last type: " << v.lastType()->toString();
-                            AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(atParam)->abstractType(), v.lastType());
+                            HintedType::Ptr addType = HintedType::Ptr(new HintedType());
+                            addType->setType(v.lastType());
+                            addType->setCreatedBy(topContext());
+                            AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(atParam)->abstractType(), addType.cast<AbstractType>());
                             kDebug() << "new type: " << newType->toString();
                             kDebug() << "at index: " << atParam;
                             parameters.at(atParam)->setAbstractType(newType);
                             kDebug() << "~old type: " << func->type<FunctionType>()->arguments()[atParam]->toString();
                             kDebug() << "~old type2: " << functiontype->arguments()[atParam]->toString();
-			    functiontype->removeArgument(atParam);
+                            functiontype->removeArgument(atParam);
                             functiontype->addArgument(newType, atParam);
                             func->setAbstractType(functiontype.cast<AbstractType>());
                             kDebug() << "~new type2: " << functiontype->arguments()[atParam]->toString();

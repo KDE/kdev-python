@@ -83,6 +83,7 @@ void UseBuilder::visitName(NameAst* node)
     }
     /// end debug
     UseBuilderBase::newUse(node, useRange, DeclarationPointer(declaration));
+//     kDebug() << "USE FOUND:" << topContext()->findUseAt(useRange.start) << "for declaration" << declaration->toString();
 }
 
 
@@ -109,6 +110,7 @@ void UseBuilder::visitAttribute(AttributeAst* node)
         topContext()->addProblem(ptr);
     }
     UseBuilderBase::newUse(node, useRange, declaration);
+//     currentContext()->findUseAt();
 }
 
 

@@ -5,7 +5,8 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
 
 set(duchain_SRCS
     declarations/decorateddeclaration.cpp
-    types/variablelengthcontainer.cpp 
+    types/variablelengthcontainer.cpp
+    types/hintedtype.cpp
     expressionvisitor.cpp 
     helpers.cpp
     pythonducontext.cpp 

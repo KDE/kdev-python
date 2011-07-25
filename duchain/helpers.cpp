@@ -27,17 +27,35 @@ QString Helper::documentationFile = QString::null;
 
 UnsureType::Ptr Helper::extractTypeHints(AbstractType::Ptr type)
 {
+    kDebug();
     UnsureType::Ptr result(new UnsureType());
-    if ( type.cast<HintedType>() ) {
-        result->addType(type->indexed());
+    QList<HintedType::Ptr> scheduledForDeletion;
+    if ( HintedType::Ptr hinted = type.cast<HintedType>() ) {
+        if ( hinted->isValid() ) {
+            kDebug() << "Adding type hint: " << hinted->toString();
+            result->addType(type->indexed());
+        }
+        else {
+            scheduledForDeletion << hinted;
+        }
     }
     else if ( UnsureType::Ptr unsure = type.cast<UnsureType>() ) {
         int len = unsure->typesSize();
         for ( int i = 0; i < len; i++ ) {
             if ( HintedType::Ptr hinted = unsure->types()[i].abstractType().cast<HintedType>() ) {
-                result->addType(hinted->indexed());
+                if ( ! hinted->isValid() ) {
+                    scheduledForDeletion << hinted;
+                }
+                else {
+                    kDebug() << "Adding type hint (multi): " << hinted->toString();
+                    result->addType(hinted->indexed());
+                }
             }
         }
+    }
+    foreach ( HintedType::Ptr ptr, scheduledForDeletion ) {
+        kDebug() << "Users of type hint:" << ptr.count();
+        ptr.clear();
     }
     return result;
 }

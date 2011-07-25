@@ -48,6 +48,20 @@ HintedType::HintedType(TypeAliasTypeData& data): TypeAliasType(data)
 
 }
 
+bool HintedType::isValid()
+{
+    TopDUContext* creator = d_func()->m_createdByContext.data();
+    if ( ! creator ) {
+        return false;
+    }
+    kDebug() << "current: " << creator->parsingEnvironmentFile()->modificationRevision().revision << "; created:" << d_func()->m_modificationRevision.revision;
+    if ( creator->parsingEnvironmentFile()->modificationRevision() != d_func()->m_modificationRevision ) {
+        kDebug() << "modification revision mismatch, invalidating";
+        return false;
+    }
+    return true;
+}
+
 void HintedType::setCreatedBy(TopDUContext* context)
 {
     d_func_dynamic()->m_createdByContext = context->indexed();

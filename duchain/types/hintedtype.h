@@ -81,6 +81,13 @@ public:
     void setCreatedBy(TopDUContext* context);
     virtual AbstractType* clone() const;
     virtual uint hash() const;
+    /**
+     * @brief Checks whether this hint is still valid, and returns false if it is not
+     * @warning The DUChain must be at least read-locked for this
+     * 
+     * @return bool true if valid, false otherwise
+     **/
+    bool isValid();
     
     virtual bool equals(const AbstractType* rhs) const;
     

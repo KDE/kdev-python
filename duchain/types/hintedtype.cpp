@@ -54,18 +54,21 @@ bool HintedType::isValid()
     if ( ! creator ) {
         return false;
     }
+    KDEBUG_BLOCK
     kDebug() << "current: " << creator->parsingEnvironmentFile()->modificationRevision().revision << "; created:" << d_func()->m_modificationRevision.revision;
-    if ( creator->parsingEnvironmentFile()->modificationRevision() != d_func()->m_modificationRevision ) {
+    kDebug() << "current: " << creator->parsingEnvironmentFile()->modificationRevision().modificationTime << "; created:" << d_func()->m_modificationRevision.modificationTime;
+    if (    creator->parsingEnvironmentFile()->modificationRevision() == d_func()->m_modificationRevision or
+            creator->parsingEnvironmentFile()->modificationRevision() < d_func()->m_modificationRevision ) {
         kDebug() << "modification revision mismatch, invalidating";
         return false;
     }
     return true;
 }
 
-void HintedType::setCreatedBy(TopDUContext* context)
+void HintedType::setCreatedBy(TopDUContext* context, const ModificationRevision& revision)
 {
     d_func_dynamic()->m_createdByContext = context->indexed();
-    d_func_dynamic()->m_modificationRevision = context->parsingEnvironmentFile()->modificationRevision();
+    d_func_dynamic()->m_modificationRevision = revision;
 }
     
 KDevelop::AbstractType* HintedType::clone() const

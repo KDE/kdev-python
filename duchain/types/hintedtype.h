@@ -78,7 +78,7 @@ public:
      * @param context the topDUContext to usef
      * @return void
      **/
-    void setCreatedBy(TopDUContext* context);
+    void setCreatedBy(TopDUContext* context, const ModificationRevision& revision);
     virtual AbstractType* clone() const;
     virtual uint hash() const;
     /**

@@ -51,6 +51,15 @@ IndexedString ParseSession::currentDocument()
     return m_currentDocument;
 }
 
+const ModificationRevision& ParseSession::futureModificationRevision() const
+{
+    return m_futureModificationRevision;
+}
+
+void ParseSession::setFutureModificationRevision(const ModificationRevision& revision)
+{
+    m_futureModificationRevision = revision;
+}
 
 QString ParseSession::contents() const
 {

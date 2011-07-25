@@ -3,6 +3,8 @@
 
 #include <QString>
 #include <language/duchain/ducontext.h>
+#include <language/editor/modificationrevision.h>
+
 class QWidget;
 
 namespace KDevelop

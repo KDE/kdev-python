@@ -201,7 +201,13 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         dec->setKind(KDevelop::Declaration::Instance);
     } else if ( noFittingDeclaration ) {
         kDebug() << "Creating variable declaration for " << node->value << node->startLine << ":" << node->startCol << "->" << node->endLine << ":" << node->endCol;
-        if ( ! dec ) dec = openDeclaration<T>(node, originalAst ? originalAst : node);
+        if ( ! dec ) {
+            kDebug() << "This declaration is a new one";
+            dec = openDeclaration<T>(node, originalAst ? originalAst : node);
+        }
+        else {
+            kDebug() << "This declaration is old, and has the following type: " << dec->abstractType()->toString();
+        }
         DeclarationBuilderBase::closeDeclaration();
         UnsureType::Ptr hints = Helper::extractTypeHints(dec->abstractType());
         AbstractType::Ptr newType = Helper::mergeTypes(hints.cast<AbstractType>(), lastType());
@@ -244,8 +250,10 @@ void DeclarationBuilder::visitCode(CodeAst* node)
 void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
 {
     if ( dynamic_cast<NameAst*>(node->name) ) {
-        openType(AbstractType::Ptr(0)); // TODO set exception type
-        setLastType(AbstractType::Ptr(0));
+        ExpressionVisitor v(currentContext(), editor());
+        v.visitNode(node->type);
+        openType(v.lastType());
+        setLastType(v.lastType());
         visitVariableDeclaration<Declaration>(node->name); // except Error as <vardecl>
         closeType();
     }
@@ -443,7 +451,6 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
 void DeclarationBuilder::visitCall(CallAst* node)
 {
     Python::AstDefaultVisitor::visitCall(node);
-    if ( m_prebuilding ) return;
     kDebug() << "Trying to update function argument types based on call";
     ExpressionVisitor v(currentContext(), editor());
     v.visitNode(node);
@@ -479,8 +486,10 @@ void DeclarationBuilder::visitCall(CallAst* node)
                         if ( v.lastType() ) {
                             kDebug() << "last type: " << v.lastType()->toString();
                             HintedType::Ptr addType = HintedType::Ptr(new HintedType());
+                            openType(addType);
                             addType->setType(v.lastType());
-                            addType->setCreatedBy(topContext());
+                            addType->setCreatedBy(topContext(), editor()->parseSession()->futureModificationRevision());
+                            closeType();
                             AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(atParam)->abstractType(), addType.cast<AbstractType>());
                             kDebug() << "new type: " << newType->toString();
                             kDebug() << "at index: " << atParam;
@@ -858,6 +867,7 @@ QString DeclarationBuilder::getDocstring(QList< Ast* > body)
 
 void DeclarationBuilder::visitReturn(ReturnAst* node)
 {
+    kDebug() << "visiting return statement";
     ExpressionVisitor v(currentContext(), editor());
     v.visitNode(node->value);
     setLastType(v.lastType());

@@ -34,6 +34,7 @@
 
 #include <language/interfaces/iproblem.h>
 #include <language/editor/rangeinrevision.h>
+#include <language/editor/modificationrevision.h>
 
 using namespace KDevelop;
 
@@ -59,6 +60,11 @@ public:
     QPair<CodeAst*, bool> parse( Python::CodeAst* ast );
     
     QList<KDevelop::ProblemPointer> m_problems;
+    
+    ModificationRevision m_futureModificationRevision;
+    
+    const ModificationRevision& futureModificationRevision() const;
+    void setFutureModificationRevision(const ModificationRevision& revision);
     
     void mapAstUse(Ast* node, const SimpleUse& use)
     {

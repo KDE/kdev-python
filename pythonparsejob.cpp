@@ -118,6 +118,7 @@ void ParseJob::run()
     m_session->setContents( QString::fromUtf8(contents().contents) + "\n" ); // append a newline in case the parser doesnt like it without one
     Q_ASSERT(m_url.isValid());
     m_session->setCurrentDocument(m_url);
+    m_session->setFutureModificationRevision(contents().modification);
     
     if ( abortRequested() )
         return abortJob();

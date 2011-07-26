@@ -57,8 +57,7 @@ bool HintedType::isValid()
     KDEBUG_BLOCK
     kDebug() << "current: " << creator->parsingEnvironmentFile()->modificationRevision().revision << "; created:" << d_func()->m_modificationRevision.revision;
     kDebug() << "current: " << creator->parsingEnvironmentFile()->modificationRevision().modificationTime << "; created:" << d_func()->m_modificationRevision.modificationTime;
-    if (    creator->parsingEnvironmentFile()->modificationRevision() == d_func()->m_modificationRevision or
-            creator->parsingEnvironmentFile()->modificationRevision() < d_func()->m_modificationRevision ) {
+    if ( d_func()->m_modificationRevision < creator->parsingEnvironmentFile()->modificationRevision() ) {
         kDebug() << "modification revision mismatch, invalidating";
         return false;
     }
@@ -92,12 +91,16 @@ bool HintedType::equals(const AbstractType* rhs) const
     if ( c->type()->indexed() != d_func()->m_type ) {
         return false;
     }
+    if ( c->d_func()->m_modificationRevision != d_func()->m_modificationRevision ) {
+        return false;
+    }
     return true;
 }
 
 uint HintedType::hash() const
 {
-    return AbstractType::hash() + 1 + ( type() ? type()->hash() : 0 );
+    return AbstractType::hash() + 1 + ( type() ? type()->hash() : 0 ) + d_func()->m_createdByContext.index()
+                                + d_func()->m_modificationRevision.modificationTime % 17 + (d_func()->m_modificationRevision.revision * 19) % 13;
 }
 
 }

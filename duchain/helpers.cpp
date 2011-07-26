@@ -206,6 +206,17 @@ AbstractType::Ptr Helper::mergeTypes(AbstractType::Ptr type, AbstractType::Ptr n
     UnsureType::Ptr unsure = UnsureType::Ptr::dynamicCast(type);
     UnsureType::Ptr newUnsure = UnsureType::Ptr::dynamicCast(newType);
     UnsureType::Ptr ret;
+    
+    if ( unsure ) {
+        int len = unsure->typesSize();
+        for ( int i = len; i > 0; i-- ) {
+            HintedType::Ptr hinted = unsure.cast<HintedType>();
+            if ( hinted and ! hinted->isValid() ) {
+                unsure->removeType(hinted->indexed());
+            }
+        }
+    }
+    
     // both types are unsure, so join the list of possible types.
     if ( unsure && newUnsure ) {
         int len = newUnsure->typesSize();
@@ -231,11 +242,11 @@ AbstractType::Ptr Helper::mergeTypes(AbstractType::Ptr type, AbstractType::Ptr n
     }
     else {
         unsure = UnsureType::Ptr(new UnsureType());
-        if ( isUsefulType(newType) ) {
-            unsure->addType(newType->indexed());
-        }
         if ( isUsefulType(type) ) {
             unsure->addType(type->indexed());
+        }
+        if ( isUsefulType(newType) ) {
+            unsure->addType(newType->indexed());
         }
         if ( ! unsure.count() ) {
             return AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));

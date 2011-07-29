@@ -34,7 +34,7 @@ using namespace KTextEditor;
 namespace Python
 {
 
-PythonEditorIntegrator::PythonEditorIntegrator()
+PythonEditorIntegrator::PythonEditorIntegrator() : m_session(0)
 {
 }
 

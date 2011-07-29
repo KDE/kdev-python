@@ -64,7 +64,7 @@ TopDUContext* ParseJob::m_internalFunctions;
 
 ParseJob::ParseJob(LanguageSupport* parent, const KUrl &url )
         : KDevelop::ParseJob( url )
-        , m_session( new ParseSession )
+        , m_session( new ParseSession() )
         , m_ast( 0 )
         , m_readFromDisk( false )
         , m_duContext( 0 )
@@ -137,11 +137,11 @@ void ParseJob::run()
         if ( abortRequested() )
             return abortJob();
         
-        PythonEditorIntegrator editor;
-        DeclarationBuilder builder( &editor );
+        QSharedPointer<PythonEditorIntegrator> editor = QSharedPointer<PythonEditorIntegrator>(new PythonEditorIntegrator());
+        editor->setParseSession(m_session);
+        DeclarationBuilder builder( editor.data() );
         builder.m_currentlyParsedDocument = filename;
         
-        editor.setParseSession(m_session);
         
         Q_ASSERT(m_session->currentDocument().toUrl().isValid());
         m_duContext = builder.build(filename, m_ast, m_duContext);
@@ -151,7 +151,7 @@ void ParseJob::run()
         if ( abortRequested() )
             return abortJob();
         Q_ASSERT(m_session->currentDocument().toUrl().isValid());
-        UseBuilder usebuilder( &editor );
+        UseBuilder usebuilder( editor.data() );
         usebuilder.m_currentlyParsedDocument = filename;
         usebuilder.buildUses(m_ast);
         

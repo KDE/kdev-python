@@ -485,7 +485,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
                         }
                         v.visitNode(arg);
                         kDebug() << "Got type for function argument: " << v.lastType();
-                        if ( v.lastType() ) {
+                        if ( v.lastType() and editor()->parseSession() ) {
                             kDebug() << "last type: " << v.lastType()->toString();
                             HintedType::Ptr addType = HintedType::Ptr(new HintedType());
                             openType(addType);

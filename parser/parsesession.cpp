@@ -34,7 +34,7 @@ using namespace KDevelop;
 namespace Python
 {
 
-ParseSession::ParseSession()
+ParseSession::ParseSession() : m_futureModificationRevision()
 {
 }
 ParseSession::~ParseSession()

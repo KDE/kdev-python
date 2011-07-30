@@ -7,6 +7,7 @@ set(duchain_SRCS
     declarations/decorateddeclaration.cpp
     types/variablelengthcontainer.cpp
     types/hintedtype.cpp
+    types/unsuretype.cpp
     expressionvisitor.cpp 
     helpers.cpp
     pythonducontext.cpp 

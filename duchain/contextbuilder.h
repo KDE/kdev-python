@@ -73,6 +73,7 @@ public:
     bool m_hasUnresolvedImports;
     static RangeInRevision rangeForNode(Ast* node, bool moveRight);
     static RangeInRevision rangeForNode(Identifier* node, bool moveRight);
+    ModificationRevision m_futureModificationRevision;
 
 protected:
     PythonEditorIntegrator* editor() const;

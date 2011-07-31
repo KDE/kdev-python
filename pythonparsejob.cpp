@@ -64,7 +64,7 @@ TopDUContext* ParseJob::m_internalFunctions;
 
 ParseJob::ParseJob(LanguageSupport* parent, const KUrl &url )
         : KDevelop::ParseJob( url )
-        , m_session( new ParseSession() )
+        , m_session( 0 )
         , m_ast( 0 )
         , m_readFromDisk( false )
         , m_duContext( 0 )
@@ -99,7 +99,8 @@ bool ParseJob::wasReadFromDisk() const
 void ParseJob::run()
 {
     qDebug() << " ====> PARSING ====> " << m_url;
-    
+
+    m_session = new ParseSession();    
     LanguageSupport* lang = python();
     ILanguage* ilang = lang->language();
     
@@ -118,7 +119,8 @@ void ParseJob::run()
     m_session->setContents( QString::fromUtf8(contents().contents) + "\n" ); // append a newline in case the parser doesnt like it without one
     Q_ASSERT(m_url.isValid());
     m_session->setCurrentDocument(m_url);
-    m_session->setFutureModificationRevision(contents().modification);
+    kDebug() << "MODIFICATION: " << contents().modification;
+//     m_session->setFutureModificationRevision(ModificationRevision(contents().modification));
     
     if ( abortRequested() )
         return abortJob();
@@ -141,7 +143,7 @@ void ParseJob::run()
         editor->setParseSession(m_session);
         DeclarationBuilder builder( editor.data() );
         builder.m_currentlyParsedDocument = filename;
-        
+        builder.m_futureModificationRevision = contents().modification;
         
         Q_ASSERT(m_session->currentDocument().toUrl().isValid());
         m_duContext = builder.build(filename, m_ast, m_duContext);

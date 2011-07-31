@@ -485,24 +485,18 @@ void DeclarationBuilder::visitCall(CallAst* node)
                         }
                         v.visitNode(arg);
                         kDebug() << "Got type for function argument: " << v.lastType();
-                        if ( v.lastType() and editor()->parseSession() ) {
+                        if ( v.lastType() ) {
                             kDebug() << "last type: " << v.lastType()->toString();
                             HintedType::Ptr addType = HintedType::Ptr(new HintedType());
                             openType(addType);
                             addType->setType(v.lastType());
-                            addType->setCreatedBy(topContext(), editor()->parseSession()->futureModificationRevision());
+                            addType->setCreatedBy(topContext(), m_futureModificationRevision);
                             closeType();
                             AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(atParam)->abstractType(), addType.cast<AbstractType>());
-                            kDebug() << "new type: " << newType->toString();
-                            kDebug() << "at index: " << atParam;
                             parameters.at(atParam)->setAbstractType(newType);
-                            kDebug() << "~old type: " << func->type<FunctionType>()->arguments()[atParam]->toString();
-                            kDebug() << "~old type2: " << functiontype->arguments()[atParam]->toString();
                             functiontype->removeArgument(atParam);
                             functiontype->addArgument(newType, atParam);
                             func->setAbstractType(functiontype.cast<AbstractType>());
-                            kDebug() << "~new type2: " << functiontype->arguments()[atParam]->toString();
-                            kDebug() << "~new type: " << func->type<FunctionType>()->arguments()[atParam]->toString();
                         }
                         atParam++;
                     }

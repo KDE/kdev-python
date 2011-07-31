@@ -98,6 +98,7 @@ void UseBuilder::visitAttribute(AttributeAst* node)
     
     RangeInRevision useRange(node->attribute->startLine, node->attribute->startCol, node->attribute->endLine, node->attribute->endCol + 1);
     
+    DUChainWriteLocker lock(DUChain::lock());
     DeclarationPointer declaration = v.lastDeclaration();
     if ( declaration && declaration->range() == useRange ) return;
     if ( ! declaration && v.shouldBeKnown() ) {

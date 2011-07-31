@@ -136,12 +136,12 @@ void ContextBuilder::setEditor(PythonEditorIntegrator* editor)
     ContextBuilder::m_editor = editor;
 }
 
-void ContextBuilder::setEditor(ParseSession* /*session*/)
-{
-    PythonEditorIntegrator* e = new PythonEditorIntegrator(/*session*/);
+// void ContextBuilder::setEditor(ParseSession* /*session*/)
+// {
+//     PythonEditorIntegrator* e = new PythonEditorIntegrator(/*session*/);
     //m_identifierCompiler = new IdentifierCompiler(e->parseSession());
-    setEditor(e);
-}
+//     setEditor(e);
+// }
 
 void ContextBuilder::startVisiting( Ast* node )
 {

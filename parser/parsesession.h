@@ -61,8 +61,6 @@ public:
     
     QList<KDevelop::ProblemPointer> m_problems;
     
-    ModificationRevision m_futureModificationRevision;
-    
     const ModificationRevision& futureModificationRevision() const;
     void setFutureModificationRevision(const ModificationRevision& revision);
     
@@ -75,6 +73,7 @@ public:
 private:
     QString m_contents;
     KDevelop::IndexedString m_currentDocument;
+    ModificationRevision m_futureModificationRevision;
 
 };
 

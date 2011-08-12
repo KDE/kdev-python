@@ -71,8 +71,11 @@ void UseBuilder::visitName(NameAst* node)
         p->setSource(KDevelop::ProblemData::SemanticAnalysis);
         p->setSeverity(KDevelop::ProblemData::Hint);
         p->setDescription(i18n("Undefined variable: %1", node->identifier->value));
-        ProblemPointer ptr(p);
-        topContext()->addProblem(ptr);
+        {
+            DUChainWriteLocker wlock(DUChain::lock());
+            ProblemPointer ptr(p);
+            topContext()->addProblem(ptr);
+        }
     }
     
     /// debug

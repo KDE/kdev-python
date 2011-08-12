@@ -383,8 +383,11 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
         p->setSource(KDevelop::ProblemData::SemanticAnalysis);
         p->setSeverity(KDevelop::ProblemData::Warning);
         p->setDescription(i18n("Module \"%1\" not found", dottedName));
-        ProblemPointer ptr(p);
-        topContext()->addProblem(ptr);
+        {
+            DUChainWriteLocker wlock(DUChain::lock());
+            ProblemPointer ptr(p);
+            topContext()->addProblem(ptr);
+        }
         return 0;
     }
     if ( ! moduleContext ) {

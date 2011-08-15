@@ -28,10 +28,6 @@
 #include <language/duchain/types/typealiastype.h>
 #include <language/duchain/types/unsuretype.h>
 
-namespace KDevelop {
-    DEFINE_LIST_MEMBER_HASH(UnsureTypeData, m_types, IndexedType)
-}
-
 namespace Python {
     
 REGISTER_TYPE(UnsureType);

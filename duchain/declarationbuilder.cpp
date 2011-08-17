@@ -50,9 +50,10 @@
 #include "expressionvisitor.h"
 #include "helpers.h"
 #include "types/variablelengthcontainer.h"
+#include "types/hintedtype.h"
+#include "types/unsuretype.h"
 #include "declarations/decorateddeclaration.h"
 #include <language/duchain/duchainutils.h>
-#include "types/hintedtype.h"
 
 using namespace KTextEditor;
 
@@ -201,6 +202,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         dec->setKind(KDevelop::Declaration::Instance);
     } else if ( noFittingDeclaration ) {
         kDebug() << "Creating variable declaration for " << node->value << node->startLine << ":" << node->startCol << "->" << node->endLine << ":" << node->endCol;
+        kDebug() << "which has type" << ( dec && dec->abstractType() ? dec->abstractType()->toString() : "none" );
         if ( ! dec ) {
             kDebug() << "This declaration is a new one";
             dec = openDeclaration<T>(node, originalAst ? originalAst : node);
@@ -212,7 +214,9 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         */
         DeclarationBuilderBase::closeDeclaration();
         UnsureType::Ptr hints = Helper::extractTypeHints(dec->abstractType());
+        kDebug() << "Type Hints: " << hints->toString();
         AbstractType::Ptr newType = Helper::mergeTypes(hints.cast<AbstractType>(), lastType());
+        kDebug() << "Resulting type: " << newType->toString();
         dec->setType(newType);
         dec->setKind(KDevelop::Declaration::Instance); // everything is an object in python
     } else {
@@ -456,6 +460,9 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
 void DeclarationBuilder::visitCall(CallAst* node)
 {
     Python::AstDefaultVisitor::visitCall(node);
+    if ( ! m_prebuilding ) {
+        return;
+    }
     kDebug() << "Trying to update function argument types based on call";
     ExpressionVisitor v(currentContext(), editor());
     v.visitNode(node);
@@ -496,10 +503,13 @@ void DeclarationBuilder::visitCall(CallAst* node)
                             addType->setCreatedBy(topContext(), m_futureModificationRevision);
                             closeType();
                             AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(atParam)->abstractType(), addType.cast<AbstractType>());
-                            parameters.at(atParam)->setAbstractType(newType);
+                            kDebug() << "new type: " << newType->toString();
                             functiontype->removeArgument(atParam);
                             functiontype->addArgument(newType, atParam);
                             func->setAbstractType(functiontype.cast<AbstractType>());
+                            parameters.at(atParam)->setType(newType);
+                            kDebug() << newType->indexed().hash() << parameters.at(atParam)->indexedType().hash();
+                            kDebug() << "Declaration has type: " << parameters.at(atParam) << parameters.at(atParam)->abstractType()->toString();
                         }
                         atParam++;
                     }

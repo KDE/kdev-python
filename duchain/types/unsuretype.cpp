@@ -47,6 +47,31 @@ UnsureType::UnsureType(KDevelop::UnsureTypeData& data): KDevelop::UnsureType(dat
 
 }
 
+QString UnsureType::toString() const
+{
+    QString ret = "py_unsure (";
+    bool first = true;
+    QList<IndexedType> encountered;
+    FOREACH_FUNCTION(const IndexedType& type, d_func()->m_types) {
+        if ( ! first )
+            ret += ", ";
+        first = false;
+        
+        if ( encountered.contains(type) )
+            continue;
+        encountered << type;
+        
+        AbstractType::Ptr t = type.abstractType();
+        if ( t )
+            ret += t->toString();
+        else
+            ret += "none";
+    }
+    ret += ')';
+
+    return ret;
+}
+
 KDevelop::AbstractType* UnsureType::clone() const
 {
     UnsureType* n = new UnsureType(*this);
@@ -58,7 +83,10 @@ bool UnsureType::equals(const AbstractType* rhs) const
     if ( this == rhs ) {
         return true;
     }
-    if ( ! KDevelop::AbstractType::equals(rhs) ) {
+    if ( ! dynamic_cast<const UnsureType*>(rhs) ) {
+        return false;
+    }
+    if ( ! KDevelop::UnsureType::equals(rhs) ) {
         return false;
     }
     return true;
@@ -66,7 +94,7 @@ bool UnsureType::equals(const AbstractType* rhs) const
 
 uint UnsureType::hash() const
 {
-    return AbstractType::hash() + 1;
+    return KDevelop::UnsureType::hash() + 1;
 }
 
 }

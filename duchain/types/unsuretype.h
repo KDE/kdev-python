@@ -33,22 +33,6 @@
 #include <language/duchain/types/unsuretype.h>
 
 namespace Python {
-    
-// class KDEVPYTHONDUCHAIN_EXPORT UnsureTypeData : public KDevelop::UnsureTypeData
-// {
-// public:
-//     /// Constructor
-//     UnsureTypeData()
-//         : KDevelop::UnsureTypeData()
-//     {
-//     }
-//     /// Copy constructor. \param rhs data to copy
-//     UnsureTypeData( const UnsureTypeData& rhs )
-//         : KDevelop::UnsureTypeData(rhs)
-//     {
-//     }
-// };
-
 
 /**
 * Describes a type which is a hint, and thus kept between parser passes and only deleted if the context which created it
@@ -65,6 +49,7 @@ public:
     
     virtual AbstractType* clone() const;
     virtual uint hash() const;
+    virtual QString toString() const;
     
     virtual bool equals(const AbstractType* rhs) const;
     

@@ -1,19 +1,20 @@
 #ifndef GLOBALHELPERS_H
 #define GLOBALHELPERS_H
 
+#include <QList>
+#include <KUrl>
+#include <KDebug>
+
 #include <interfaces/iproject.h>
+#include <language/duchain/declaration.h>
 #include <language/duchain/types/unsuretype.h>
 #include <language/editor/simplerange.h>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/types/structuretype.h>
 
-#include <QList>
-#include <KUrl>
-#include <KDebug>
-
 #include "pythonduchainexport.h"
-#include <language/duchain/declaration.h>
-#include <ast.h>
+#include "types/unsuretype.h"
+#include "ast.h"
 
 using namespace KDevelop;
 

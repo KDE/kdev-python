@@ -2,20 +2,23 @@
 
 #include <QList>
 #include <KUrl>
-#include <interfaces/iproject.h>
-#include <interfaces/icore.h>
-#include <interfaces/iprojectcontroller.h>
 #include <KDebug>
 #include <KStandardDirs>
 #include <QProcess>
+
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/types/integraltype.h>
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/duchain.h>
 #include <language/duchain/classdeclaration.h>
 #include <language/duchain/aliasdeclaration.h>
-#include <ast.h>
+#include <interfaces/iproject.h>
+#include <interfaces/icore.h>
+#include <interfaces/iprojectcontroller.h>
+
+#include "ast.h"
 #include "types/hintedtype.h"
+#include "types/unsuretype.h"
 
 using namespace KDevelop;
 
@@ -27,22 +30,37 @@ QString Helper::documentationFile = QString::null;
 
 UnsureType::Ptr Helper::extractTypeHints(AbstractType::Ptr type)
 {
-    kDebug();
+    if ( type ) {
+        kDebug() << type->toString();
+    }
+    else {
+        kDebug();
+    }
     UnsureType::Ptr result(new UnsureType());
     if ( HintedType::Ptr hinted = type.cast<HintedType>() ) {
         if ( hinted->isValid() ) {
             kDebug() << "Adding type hint: " << hinted->toString();
             result->addType(type->indexed());
         }
+        else {
+            kDebug() << "Discarding type hint: " << hinted->toString();
+        }
     }
     else if ( UnsureType::Ptr unsure = type.cast<UnsureType>() ) {
         int len = unsure->typesSize();
+        kDebug() << "Extracting hints from " << len << "types";
         for ( int i = 0; i < len; i++ ) {
             if ( HintedType::Ptr hinted = unsure->types()[i].abstractType().cast<HintedType>() ) {
                 if ( hinted->isValid() ) {
                     kDebug() << "Adding type hint (multi): " << hinted->toString();
                     result->addType(hinted->indexed());
                 }
+                else {
+                    kDebug() << "Discarding type hint (multi): " << hinted->toString();
+                }
+            }
+            else {
+                kDebug() << "Skipping non-hint of unsure type: " << hinted->toString();
             }
         }
     }

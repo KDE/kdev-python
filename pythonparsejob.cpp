@@ -120,7 +120,7 @@ void ParseJob::run()
     Q_ASSERT(m_url.isValid());
     m_session->setCurrentDocument(m_url);
     kDebug() << "MODIFICATION: " << contents().modification;
-//     m_session->setFutureModificationRevision(ModificationRevision(contents().modification));
+    kDebug() << contents().modification.modificationTime << contents().modification.revision;
     
     if ( abortRequested() )
         return abortJob();

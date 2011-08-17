@@ -55,9 +55,10 @@ bool HintedType::isValid()
         return false;
     }
     KDEBUG_BLOCK
-    kDebug() << "current: " << creator->parsingEnvironmentFile()->modificationRevision().revision << "; created:" << d_func()->m_modificationRevision.revision;
-    kDebug() << "current: " << creator->parsingEnvironmentFile()->modificationRevision().modificationTime << "; created:" << d_func()->m_modificationRevision.modificationTime;
-    if ( d_func()->m_modificationRevision < creator->parsingEnvironmentFile()->modificationRevision() ) {
+    ModificationRevision current(creator->parsingEnvironmentFile()->modificationRevision());
+    kDebug() << "current: " << current.revision << "; created:" << d_func()->m_modificationRevision.revision;
+    kDebug() << "current: " << current.modificationTime << "; created:" << d_func()->m_modificationRevision.modificationTime;
+    if ( d_func()->m_modificationRevision < current ) {
         kDebug() << "modification revision mismatch, invalidating";
         return false;
     }
@@ -68,6 +69,8 @@ void HintedType::setCreatedBy(TopDUContext* context, const ModificationRevision&
 {
     d_func_dynamic()->m_createdByContext = context->indexed();
     d_func_dynamic()->m_modificationRevision = revision;
+    kDebug() << "new HintedType with modification time: " << d_func()->m_modificationRevision.modificationTime 
+             << "; " << d_func()->m_modificationRevision.revision;
 }
     
 KDevelop::AbstractType* HintedType::clone() const

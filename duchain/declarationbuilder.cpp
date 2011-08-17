@@ -91,6 +91,7 @@ ReferencedTopDUContext DeclarationBuilder::build(const IndexedString& url, Ast* 
         DeclarationBuilder* prebuilder = new DeclarationBuilder(editor());
         prebuilder->m_currentlyParsedDocument = currentlyParsedDocument();
         prebuilder->setPrebuilding(true);
+        prebuilder->m_futureModificationRevision = m_futureModificationRevision;
         updateContext = prebuilder->build(url, node, updateContext);
         kDebug() << "pre-builder finished";
     }

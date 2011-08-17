@@ -87,7 +87,7 @@ public:
      * 
      * @return bool true if valid, false otherwise
      **/
-    bool isValid();
+    bool isValid(TopDUContext* current);
     
     virtual bool equals(const AbstractType* rhs) const;
     

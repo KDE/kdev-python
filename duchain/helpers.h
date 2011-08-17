@@ -33,7 +33,7 @@ public:
     
     static QList<KUrl> cachedSearchPaths;
     
-    static UnsureType::Ptr extractTypeHints(AbstractType::Ptr type);
+    static UnsureType::Ptr extractTypeHints(AbstractType::Ptr type, TopDUContext* current);
     
     /**
      * @brief merge two types into one unsure type
@@ -45,7 +45,7 @@ public:
      * @warning Although this looks symmetrical, it is NOT: the first argument might be modified, the second one won't be.
      * So if you do something like a = mergeTypes(a, b) make sure you pass "a" as first argument.
      **/
-    static AbstractType::Ptr mergeTypes(AbstractType::Ptr type, AbstractType::Ptr newType);
+    static AbstractType::Ptr mergeTypes(AbstractType::Ptr type, AbstractType::Ptr newType, TopDUContext* ctx = 0);
     
     /** check whether the argument is a null, mixed, or none integral type **/
     static bool isUsefulType(AbstractType::Ptr type);

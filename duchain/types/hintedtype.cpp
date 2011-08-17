@@ -48,18 +48,22 @@ HintedType::HintedType(TypeAliasTypeData& data): TypeAliasType(data)
 
 }
 
-bool HintedType::isValid()
+bool HintedType::isValid(TopDUContext* current)
 {
     TopDUContext* creator = d_func()->m_createdByContext.data();
     if ( ! creator ) {
         return false;
     }
     KDEBUG_BLOCK
-    ModificationRevision current(creator->parsingEnvironmentFile()->modificationRevision());
-    kDebug() << "current: " << current.revision << "; created:" << d_func()->m_modificationRevision.revision;
-    kDebug() << "current: " << current.modificationTime << "; created:" << d_func()->m_modificationRevision.modificationTime;
-    if ( d_func()->m_modificationRevision < current ) {
+    ModificationRevision rev(creator->parsingEnvironmentFile()->modificationRevision());
+    kDebug() << "current: " << rev.revision << "; created:" << d_func()->m_modificationRevision.revision;
+    kDebug() << "current: " << rev.modificationTime << "; created:" << d_func()->m_modificationRevision.modificationTime;
+    if ( d_func()->m_modificationRevision < rev ) {
         kDebug() << "modification revision mismatch, invalidating";
+        return false;
+    }
+    if ( creator == current && d_func()->m_modificationRevision == rev ) {
+        kDebug() << "modification revision exact match, but same context, invalidating";
         return false;
     }
     return true;

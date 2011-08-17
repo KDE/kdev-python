@@ -214,9 +214,9 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         }
         */
         DeclarationBuilderBase::closeDeclaration();
-        UnsureType::Ptr hints = Helper::extractTypeHints(dec->abstractType());
+        UnsureType::Ptr hints = Helper::extractTypeHints(dec->abstractType(), topContext());
         kDebug() << "Type Hints: " << hints->toString();
-        AbstractType::Ptr newType = Helper::mergeTypes(hints.cast<AbstractType>(), lastType());
+        AbstractType::Ptr newType = Helper::mergeTypes(hints.cast<AbstractType>(), lastType(), topContext());
         kDebug() << "Resulting type: " << newType->toString();
         dec->setType(newType);
         dec->setKind(KDevelop::Declaration::Instance); // everything is an object in python
@@ -231,7 +231,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
                 if ( integral &&  integral->dataType() == IntegralType::TypeMixed ) {
                     dec->setType(newType);
                 } else {
-                    dec->setType(Helper::mergeTypes(currentType, newType));
+                    dec->setType(Helper::mergeTypes(currentType, newType, topContext()));
                 }
             } else {
                 kDebug() << "Existing declaration with no type from last declaration.";
@@ -503,7 +503,8 @@ void DeclarationBuilder::visitCall(CallAst* node)
                             addType->setType(v.lastType());
                             addType->setCreatedBy(topContext(), m_futureModificationRevision);
                             closeType();
-                            AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(atParam)->abstractType(), addType.cast<AbstractType>());
+                            AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(atParam)->abstractType(), 
+                                                                           addType.cast<AbstractType>(), topContext());
                             kDebug() << "new type: " << newType->toString();
                             functiontype->removeArgument(atParam);
                             functiontype->addArgument(newType, atParam);

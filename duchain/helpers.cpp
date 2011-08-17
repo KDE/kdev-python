@@ -28,7 +28,7 @@ QList<KUrl> Helper::cachedSearchPaths;
 QString Helper::dataDir = QString::null;
 QString Helper::documentationFile = QString::null;
 
-UnsureType::Ptr Helper::extractTypeHints(AbstractType::Ptr type)
+UnsureType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* current)
 {
     if ( type ) {
         kDebug() << type->toString();
@@ -38,7 +38,7 @@ UnsureType::Ptr Helper::extractTypeHints(AbstractType::Ptr type)
     }
     UnsureType::Ptr result(new UnsureType());
     if ( HintedType::Ptr hinted = type.cast<HintedType>() ) {
-        if ( hinted->isValid() ) {
+        if ( hinted->isValid(current) ) {
             kDebug() << "Adding type hint: " << hinted->toString();
             result->addType(type->indexed());
         }
@@ -51,7 +51,7 @@ UnsureType::Ptr Helper::extractTypeHints(AbstractType::Ptr type)
         kDebug() << "Extracting hints from " << len << "types";
         for ( int i = 0; i < len; i++ ) {
             if ( HintedType::Ptr hinted = unsure->types()[i].abstractType().cast<HintedType>() ) {
-                if ( hinted->isValid() ) {
+                if ( hinted->isValid(current) ) {
                     kDebug() << "Adding type hint (multi): " << hinted->toString();
                     result->addType(hinted->indexed());
                 }
@@ -219,7 +219,7 @@ bool Helper::isUsefulType(AbstractType::Ptr type)
     return false;
 }
 
-AbstractType::Ptr Helper::mergeTypes(AbstractType::Ptr type, AbstractType::Ptr newType)
+AbstractType::Ptr Helper::mergeTypes(AbstractType::Ptr type, AbstractType::Ptr newType, TopDUContext* ctx)
 {
     UnsureType::Ptr unsure = UnsureType::Ptr::dynamicCast(type);
     UnsureType::Ptr newUnsure = UnsureType::Ptr::dynamicCast(newType);
@@ -229,7 +229,7 @@ AbstractType::Ptr Helper::mergeTypes(AbstractType::Ptr type, AbstractType::Ptr n
         int len = unsure->typesSize();
         for ( int i = len; i > 0; i-- ) {
             HintedType::Ptr hinted = unsure.cast<HintedType>();
-            if ( hinted and ! hinted->isValid() ) {
+            if ( hinted and ! hinted->isValid(ctx) ) {
                 unsure->removeType(hinted->indexed());
             }
         }

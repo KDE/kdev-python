@@ -33,13 +33,13 @@
 #include <language/duchain/types/typesystemdata.h>
 #include <language/duchain/types/typeregister.h>
 #include <language/duchain/duchainpointer.h>
+#include <language/duchain/declaration.h>
+#include <language/duchain/types/structuretype.h>
 
 #include "astdefaultvisitor.h"
 #include "pythonduchainexport.h"
 #include "pythoneditorintegrator.h"
-#include <language/duchain/declaration.h>
-#include <language/duchain/types/structuretype.h>
-
+#include "declarations/decorateddeclaration.h"
 
 namespace KDevelop {
     class Identifier;
@@ -119,10 +119,10 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         inline KDevelop::AbstractType::Ptr lastType() const {
             return m_lastType;
         }
-        inline KDevelop::DeclarationPointer lastDeclaration() const {
+        inline DeclarationPointer lastDeclaration() const {
             return ( m_lastAccessedDeclaration.isEmpty() ? DeclarationPointer(0) : m_lastAccessedDeclaration.last() );
         }
-        inline KDevelop::DeclarationPointer lastFunctionDeclaration() const {
+        inline FunctionDeclarationPointer lastFunctionDeclaration() const {
             return m_firstAccessedFunctionDeclaration;
         };
         template<typename T> static TypePtr<T> typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx);
@@ -148,7 +148,10 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
             m_lastAccessedAttributeDeclaration << d;
         };
         inline void setLastAccessedDeclaration(DeclarationPointer d) {
-            if ( d && ! m_firstAccessedFunctionDeclaration && d->isFunctionDeclaration() ) m_firstAccessedFunctionDeclaration = d;
+            if ( d && ! m_firstAccessedFunctionDeclaration && d->isFunctionDeclaration() ) {
+                m_firstAccessedFunctionDeclaration = d.dynamicCast<FunctionDeclaration>();
+                Q_ASSERT(m_firstAccessedFunctionDeclaration);
+            }
             m_lastAccessedDeclaration.clear();
             m_lastAccessedDeclaration << d;
         };
@@ -156,7 +159,8 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
             if ( ! m_firstAccessedFunctionDeclaration ) {
                 foreach ( const DeclarationPointer& p, ds ) {
                     if ( p->isFunctionDeclaration() ) {
-                        m_firstAccessedFunctionDeclaration = p;
+                        m_firstAccessedFunctionDeclaration = p.dynamicCast<FunctionDeclaration>();
+                        Q_ASSERT(m_firstAccessedFunctionDeclaration);
                         break;
                     }
                 }
@@ -186,7 +190,7 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         bool m_shouldBeKnown;
         
         AbstractType::Ptr m_lastAccessedReturnType;
-        DeclarationPointer m_firstAccessedFunctionDeclaration;
+        FunctionDeclarationPointer m_firstAccessedFunctionDeclaration;
         QList<DeclarationPointer> m_lastAccessedNameDeclaration;
         QList<DeclarationPointer> m_lastAccessedDeclaration;
         QList<DeclarationPointer> m_lastAccessedAttributeDeclaration;  // this is in general not what the expression visitor is meant for,

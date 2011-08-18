@@ -461,17 +461,52 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
 void DeclarationBuilder::visitCall(CallAst* node)
 {
     Python::AstDefaultVisitor::visitCall(node);
+    kDebug();
+    ExpressionVisitor functionVisitor(currentContext(), editor());
+    functionVisitor.visitNode(node);
+    if ( node->function && node->function->astType == Ast::AttributeAstType && functionVisitor.lastFunctionDeclaration() ) {
+        kDebug() << "Checking for list content updates...";
+        ExpressionVisitor v(currentContext(), editor());
+        v.visitNode(static_cast<AttributeAst*>(node->function)->value);
+        if ( VariableLengthContainer::Ptr container = v.lastType().cast<VariableLengthContainer>() ) {
+            kDebug() << "Got container type for eventual update: " << container->toString();
+            kDebug() << "Eventual function declaration: " << functionVisitor.lastFunctionDeclaration()->toString();
+            kDebug() << functionVisitor.lastFunctionDeclaration()->isFunctionDeclaration();
+            if ( functionVisitor.lastFunctionDeclaration()->isFunctionDeclaration() ) {
+                FunctionDeclaration* f = static_cast<FunctionDeclaration*>(functionVisitor.lastFunctionDeclaration().data());
+                kDebug() << "Got function which is being called: " << f->toString();
+                foreach ( const Decorator& d, f->decorators ) {
+                    kDebug() << " < with decorator" << d.name;
+                }
+                if ( const Decorator* d = f->findDecoratorByName("addsTypeOfArg") ) {
+                    kDebug() << "Found AddsTypeOfArg decorator";
+                    Q_ASSERT(d->args[0].canConvert(QVariant::Int));
+                    register const int offset = d->args[0].toInt();
+                    if ( node->arguments.length() <= offset ) {
+                        kDebug() << "too few arguments, skipping";
+                    }
+                    else {
+                        ExpressionVisitor argVisitor(currentContext(), editor());
+                        argVisitor.visitNode(node->arguments.at(offset));
+                        if ( argVisitor.lastType() ) {
+                            kDebug() << "Adding content type: " << argVisitor.lastType()->toString();
+                            container->addContentType(argVisitor.lastType());
+                            v.lastDeclaration()->setType(container);
+                        }
+                    }
+                }
+            }
+        }
+    }
     if ( ! m_prebuilding ) {
         return;
     }
+    KDEBUG_BLOCK
     kDebug() << "Trying to update function argument types based on call";
-    ExpressionVisitor v(currentContext(), editor());
-    v.visitNode(node);
-    kDebug() << "---";
     DUChainWriteLocker lock(DUChain::lock());
-    if ( v.lastFunctionDeclaration() ) {
-        kDebug() << "got declaration:" << v.lastFunctionDeclaration()->toString();
-        if ( FunctionDeclarationPointer func = v.lastFunctionDeclaration().dynamicCast<FunctionDeclaration>() ) {
+    if ( functionVisitor.lastFunctionDeclaration() ) {
+        kDebug() << "got declaration:" << functionVisitor.lastFunctionDeclaration()->toString();
+        if ( FunctionDeclarationPointer func = functionVisitor.lastFunctionDeclaration().dynamicCast<FunctionDeclaration>() ) {
             if ( func->topContext()->url() == IndexedString(Helper::getDocumentationFile()) ) {
                 kDebug() << "in documentation file, not modifying args";
                 return;
@@ -494,13 +529,13 @@ void DeclarationBuilder::visitCall(CallAst* node)
                         if ( atParam >= functiontype->arguments().size() || atParam >= parameters.size() ) {
                             break;
                         }
-                        v.visitNode(arg);
-                        kDebug() << "Got type for function argument: " << v.lastType();
-                        if ( v.lastType() ) {
-                            kDebug() << "last type: " << v.lastType()->toString();
+                        functionVisitor.visitNode(arg);
+                        kDebug() << "Got type for function argument: " << functionVisitor.lastType();
+                        if ( functionVisitor.lastType() ) {
+                            kDebug() << "last type: " << functionVisitor.lastType()->toString();
                             HintedType::Ptr addType = HintedType::Ptr(new HintedType());
                             openType(addType);
-                            addType->setType(v.lastType());
+                            addType->setType(functionVisitor.lastType());
                             addType->setCreatedBy(topContext(), m_futureModificationRevision);
                             closeType();
                             AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(atParam)->abstractType(), 
@@ -757,7 +792,9 @@ void DeclarationBuilder::visitDecorators(QList< ExpressionAst* > decorators, Dec
         if ( decorator->astType == Ast::CallAstType ) {
             CallAst* call = static_cast<CallAst*>(decorator);
             Decorator d;
-            if ( call->function->astType != Ast::NameAstType ) continue;
+            if ( call->function->astType != Ast::NameAstType ) {
+                continue;
+            }
             d.name = *static_cast<NameAst*>(call->function)->identifier;
             foreach ( ExpressionAst* arg, call->arguments ) {
                 if ( arg->astType == Ast::NumberAstType ) {

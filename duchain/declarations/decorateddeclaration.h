@@ -40,6 +40,13 @@ public:
 class DecoratedDeclaration {
 public:
     QList<Decorator> decorators;
+    inline const Decorator* findDecoratorByName(const QString& name) const {
+        foreach ( const Decorator& d, decorators ) {
+            if ( d.name == name )
+                return &d;
+        }
+        return 0;
+    }
 };
 
 class PythonFunctionDeclaration : public KDevelop::FunctionDeclaration, public DecoratedDeclaration {

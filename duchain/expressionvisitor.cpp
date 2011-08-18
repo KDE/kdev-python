@@ -34,12 +34,13 @@
 #include <language/duchain/functiondeclaration.h>
 #include <language/duchain/types/functiontype.h>
 #include <language/duchain/classdeclaration.h>
+#include <language/duchain/aliasdeclaration.h>
 
 #include "pythonduchainexport.h"
 #include "expressionvisitor.h"
 #include "pythoneditorintegrator.h"
-#include <language/duchain/aliasdeclaration.h>
 #include "types/variablelengthcontainer.h"
+#include "declarations/decorateddeclaration.h"
 #include "helpers.h"
 
 using namespace KDevelop;

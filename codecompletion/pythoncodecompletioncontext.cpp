@@ -23,6 +23,7 @@
 #include <language/duchain/duchainpointer.h>
 #include <language/duchain/declaration.h>
 #include <language/duchain/functiondeclaration.h>
+#include <language/duchain/classdeclaration.h>
 #include <language/codecompletion/codecompletionitem.h>
 #include <language/codecompletion/normaldeclarationcompletionitem.h>
 #include <language/codecompletion/abstractincludefilecompletionitem.h>

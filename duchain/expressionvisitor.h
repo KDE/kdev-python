@@ -35,11 +35,11 @@
 #include <language/duchain/duchainpointer.h>
 #include <language/duchain/declaration.h>
 #include <language/duchain/types/structuretype.h>
+#include <language/duchain/functiondeclaration.h>
 
 #include "astdefaultvisitor.h"
 #include "pythonduchainexport.h"
 #include "pythoneditorintegrator.h"
-#include "declarations/decorateddeclaration.h"
 
 namespace KDevelop {
     class Identifier;
@@ -49,7 +49,9 @@ using namespace KDevelop;
 
 namespace Python
 {
-
+    
+typedef DUChainPointer<FunctionDeclaration> FunctionDeclarationPointer;
+    
 typedef KDevelop::IntegralTypeData IntegralTypeExtendedData;
 class KDEVPYTHONDUCHAIN_EXPORT IntegralTypeExtended : public KDevelop::IntegralType {
 public:

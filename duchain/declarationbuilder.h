@@ -79,7 +79,7 @@ protected:
     virtual void visitCall(CallAst* node);
     virtual void visitWith(WithAst* node);
     
-    void visitDecorators(QList<ExpressionAst*> decorators, DecoratedDeclaration* addTo);
+    template<typename T> void visitDecorators(QList<ExpressionAst*> decorators, T* addTo);
     
     QString getDocstring(QList<Ast*> body);
     

@@ -11,6 +11,7 @@
 #include <language/editor/simplerange.h>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/types/structuretype.h>
+#include <language/duchain/decorator.h>
 
 #include "pythonduchainexport.h"
 #include "types/unsuretype.h"
@@ -36,6 +37,15 @@ public:
     static UnsureType::Ptr extractTypeHints(AbstractType::Ptr type, TopDUContext* current);
     
     static AbstractType::Ptr resolveType(AbstractType::Ptr type);
+    
+    template<typename T> static const Decorator* findDecoratorByName(T* inDeclaration, const QString& name) {
+        register uint count = inDeclaration->decoratorsSize();
+        for ( int i = 0; i < count; i++ ) {
+            if ( inDeclaration->decorators()[i].name() == name )
+                return &(inDeclaration->decorators()[i]);
+        }
+        return 0;
+    };
     
     /**
      * @brief merge two types into one unsure type

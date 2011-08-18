@@ -43,6 +43,7 @@
 #include <language/duchain/builders/abstracttypebuilder.h>
 #include <language/duchain/aliasdeclaration.h>
 #include <language/duchain/declaration.h>
+#include <language/duchain/decorator.h>
 
 #include "contextbuilder.h"
 #include "declarationbuilder.h"
@@ -475,13 +476,9 @@ void DeclarationBuilder::visitCall(CallAst* node)
             if ( functionVisitor.lastFunctionDeclaration()->isFunctionDeclaration() ) {
                 FunctionDeclaration* f = static_cast<FunctionDeclaration*>(functionVisitor.lastFunctionDeclaration().data());
                 kDebug() << "Got function which is being called: " << f->toString();
-                foreach ( const Decorator& d, f->decorators ) {
-                    kDebug() << " < with decorator" << d.name;
-                }
-                if ( const Decorator* d = f->findDecoratorByName("addsTypeOfArg") ) {
+                if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(f, "addsTypeOfArg") ) {
                     kDebug() << "Found AddsTypeOfArg decorator";
-                    Q_ASSERT(d->args[0].canConvert(QVariant::Int));
-                    register const int offset = d->args[0].toInt();
+                    register const int offset = d->arguments()[0].toInt();
                     if ( node->arguments.length() <= offset ) {
                         kDebug() << "too few arguments, skipping";
                     }
@@ -730,7 +727,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     
     DUChainWriteLocker lock(DUChain::lock());
     ClassDeclaration* dec = openDeclaration<ClassDeclaration>( node->name, node );
-    visitDecorators(node->decorators, dec);
+    visitDecorators<ClassDeclaration>(node->decorators, dec);
     eventuallyAssignInternalContext();
     
     dec->setKind(KDevelop::Declaration::Type);
@@ -751,11 +748,9 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     
     // check whether this is a type container (list, dict, ...) or just a "normal" class
     StructureType::Ptr type(0);
-    foreach ( const Decorator& d, dec->decorators ) {
-        kDebug() << "Decorator for class: " << d.name;
-        if ( d.name == "TypeContainer" ) {
-            type = StructureType::Ptr(new VariableLengthContainer());
-        }
+    const Decorator* d = Helper::findDecoratorByName<ClassDeclaration>(dec, "TypeContainer");
+    if ( d ) {
+        type = StructureType::Ptr(new VariableLengthContainer());
     }
     if ( ! type ) {
         type = StructureType::Ptr(new StructureType());
@@ -786,7 +781,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     dec->setComment(getDocstring(node->body));
 }
 
-void DeclarationBuilder::visitDecorators(QList< ExpressionAst* > decorators, DecoratedDeclaration* addTo) {
+template<typename T> void DeclarationBuilder::visitDecorators(QList< Python::ExpressionAst* > decorators, T* addTo) {
     foreach ( ExpressionAst* decorator, decorators ) {
         kDebug() << "decorator type: " << decorator->astType << "(name: " << Ast::NameAstType << ", call: " << Ast::CallAstType << ")";
         if ( decorator->astType == Ast::CallAstType ) {
@@ -795,24 +790,25 @@ void DeclarationBuilder::visitDecorators(QList< ExpressionAst* > decorators, Dec
             if ( call->function->astType != Ast::NameAstType ) {
                 continue;
             }
-            d.name = *static_cast<NameAst*>(call->function)->identifier;
+            d.setName(*static_cast<NameAst*>(call->function)->identifier);
             foreach ( ExpressionAst* arg, call->arguments ) {
                 if ( arg->astType == Ast::NumberAstType ) {
-                    d.args << static_cast<NumberAst*>(arg)->value;
+#warning fixme
+                    d.addArgument(static_cast<NumberAst*>(arg)->value);
                 }
                 else if ( arg->astType == Ast::StringAstType ) {
-                    d.args << static_cast<StringAst*>(arg)->value;
+                    d.addArgument(static_cast<StringAst*>(arg)->value);
                 }
             }
-            kDebug() << "call decorator identifier: " << d.name << *static_cast<NameAst*>(call->function)->identifier;
-            addTo->decorators.append(d);
+            kDebug() << "call decorator identifier: " << d.name() << *static_cast<NameAst*>(call->function)->identifier;
+            addTo->addDecorator(d);
         }
         else if ( decorator->astType == Ast::NameAstType ) {
             NameAst* name = static_cast<NameAst*>(decorator);
             Decorator d;
-            d.name = *(name->identifier);
-            kDebug() << "name decorator identifier: " << d.name << *(name->identifier);
-            addTo->decorators.append(d);
+            d.setName(*(name->identifier));
+            kDebug() << "name decorator identifier: " << d.name() << *(name->identifier);
+            addTo->addDecorator(d);
         }
     }
 }
@@ -839,7 +835,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     DUChainWriteLocker lock(DUChain::lock());
     bool hasFirstArgument = false;
     
-    visitDecorators(node->decorators, dec);
+    visitDecorators<FunctionDeclaration>(node->decorators, dec);
     visitFunctionArguments(node);
     
     // this must be done here, because the type of self must be known when parsing the body

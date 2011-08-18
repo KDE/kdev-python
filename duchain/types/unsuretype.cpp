@@ -49,7 +49,7 @@ UnsureType::UnsureType(KDevelop::UnsureTypeData& data): KDevelop::UnsureType(dat
 
 QString UnsureType::toString() const
 {
-    QString ret = "py_unsure (";
+    QString ret = "unsure (";
     bool first = true;
     QList<IndexedType> encountered;
     FOREACH_FUNCTION(const IndexedType& type, d_func()->m_types) {
@@ -76,6 +76,11 @@ KDevelop::AbstractType* UnsureType::clone() const
 {
     UnsureType* n = new UnsureType(*this);
     return n;
+}
+
+AbstractType::WhichType UnsureType::whichType() const
+{
+    return AbstractType::TypeUnsure;
 }
 
 bool UnsureType::equals(const AbstractType* rhs) const

@@ -35,6 +35,8 @@ public:
     
     static UnsureType::Ptr extractTypeHints(AbstractType::Ptr type, TopDUContext* current);
     
+    static AbstractType::Ptr resolveType(AbstractType::Ptr type);
+    
     /**
      * @brief merge two types into one unsure type
      *

@@ -62,7 +62,7 @@ bool HintedType::isValid(TopDUContext* current)
         kDebug() << "modification revision mismatch, invalidating";
         return false;
     }
-    if ( creator == current && d_func()->m_modificationRevision == rev ) {
+    if ( creator == current && d_func()->m_modificationRevision == rev && rev.revision != 0 ) {
         kDebug() << "modification revision exact match, but same context, invalidating";
         return false;
     }

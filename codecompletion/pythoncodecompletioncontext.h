@@ -21,11 +21,12 @@
 
 #include <language/codecompletion/codecompletioncontext.h>
 #include <language/duchain/duchainpointer.h>
-#include <qstack.h>
+#include <QStack>
 
 #include "importfileitem.h"
 #include "pythoncodecompletionworker.h"
 #include "pythoncompletionexport.h"
+#include "types/unsuretype.h"
 
 using namespace KDevelop;
 

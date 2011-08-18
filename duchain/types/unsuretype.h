@@ -47,6 +47,8 @@ public:
     UnsureType(const UnsureType& rhs);
     UnsureType(KDevelop::UnsureTypeData& data);
     
+    virtual WhichType whichType() const;
+    
     virtual AbstractType* clone() const;
     virtual uint hash() const;
     virtual QString toString() const;

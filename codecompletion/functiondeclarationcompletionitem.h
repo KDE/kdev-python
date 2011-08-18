@@ -33,6 +33,7 @@ class FunctionDeclarationCompletionItem : public Python::PythonDeclarationComple
 public:
     FunctionDeclarationCompletionItem(DeclarationPointer decl);
     virtual ~FunctionDeclarationCompletionItem();
+    virtual int argumentHintDepth() const;
     virtual int atArgument() const;
     void setAtArgument(int d);
     

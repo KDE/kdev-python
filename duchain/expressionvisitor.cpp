@@ -54,6 +54,7 @@ QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> ExpressionVisitor::s_de
 
 void ExpressionVisitor::encounter(AbstractType::Ptr type, bool merge)
 {
+    type = Helper::resolveType(type);
     if ( merge ) {
         m_lastType = Helper::mergeTypes(m_lastType, type);
     }
@@ -119,13 +120,16 @@ void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclara
 QList< TypePtr< StructureType > > ExpressionVisitor::possibleStructureTypes(AbstractType::Ptr type)
 {
     QList< TypePtr< StructureType > > result;
-    if ( ! type ) return result;
+    type = Helper::resolveType(type);
+    if ( ! type ) {
+        return result;
+    }
     if ( type->whichType() == KDevelop::AbstractType::TypeUnsure ) {
         AbstractType::Ptr current;
         UnsureType::Ptr possible = type.cast<UnsureType>();
         int amount = possible->typesSize();
         for ( int i = 0; i < amount; i++ ) {
-            StructureType::Ptr current = possible->types()[i].abstractType().cast<StructureType>();
+            StructureType::Ptr current = Helper::resolveType(possible->types()[i].abstractType()).cast<StructureType>();
             if ( current ) {
                 result << current;
             }

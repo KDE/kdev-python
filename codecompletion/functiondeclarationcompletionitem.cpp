@@ -36,7 +36,8 @@ using namespace KTextEditor;
 
 namespace Python {
 
-FunctionDeclarationCompletionItem::FunctionDeclarationCompletionItem(DeclarationPointer decl) : PythonDeclarationCompletionItem(decl), m_atArgument(0) { }
+FunctionDeclarationCompletionItem::FunctionDeclarationCompletionItem(DeclarationPointer decl) 
+    : PythonDeclarationCompletionItem(decl), m_atArgument(-1) { }
 
 int FunctionDeclarationCompletionItem::atArgument() const
 {
@@ -46,6 +47,11 @@ int FunctionDeclarationCompletionItem::atArgument() const
 void FunctionDeclarationCompletionItem::setAtArgument(int d)
 {
     m_atArgument = d;
+}
+
+int FunctionDeclarationCompletionItem::argumentHintDepth() const
+{
+    return m_atArgument >= 0;
 }
 
 QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const

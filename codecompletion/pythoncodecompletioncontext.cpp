@@ -16,8 +16,9 @@
  *****************************************************************************
  */
 
-#include <qprocess.h>
-#include <QtCore/QRegExp>
+#include <QProcess>
+#include <QRegExp>
+#include <KStandardDirs>
 
 #include <language/duchain/duchainpointer.h>
 #include <language/duchain/declaration.h>
@@ -28,7 +29,7 @@
 #include <language/codecompletion/codecompletionitem.h>
 #include <language/util/includeitem.h>
 #include <language/codecompletion/codecompletionitemgrouper.h>
-
+#include <language/duchain/aliasdeclaration.h>
 #include <interfaces/icore.h>
 #include <interfaces/iprojectcontroller.h>
 #include <interfaces/iproject.h>
@@ -45,10 +46,8 @@
 #include "pythoneditorintegrator.h"
 #include "duchain/declarationbuilder.h"
 #include "implementfunctioncompletionitem.h"
-
+#include "types/unsuretype.h"
 #include "duchain/helpers.h"
-#include <language/duchain/aliasdeclaration.h>
-#include <KStandardDirs>
 
 using namespace KTextEditor;
 using namespace KDevelop;
@@ -346,9 +345,11 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
 QList< CompletionTreeItemPointer > PythonCodeCompletionContext::getCompletionItemsForType(AbstractType::Ptr type, DeclarationPointer declaration)
 {
     QList<CompletionTreeItemPointer> result;
+    type = Helper::resolveType(type);
     if ( type->whichType() == AbstractType::TypeUnsure ) {
         UnsureType::Ptr unsure = type.cast<UnsureType>();
         int count = unsure->typesSize();
+        kDebug() << "Getting completion items for " << count << "types of unsure type " << unsure;
         for ( int i = 0; i < count; i++ ) {
             result.append(getCompletionItemsForOneType(unsure->types()[i].abstractType(), declaration));
         }
@@ -361,6 +362,7 @@ QList< CompletionTreeItemPointer > PythonCodeCompletionContext::getCompletionIte
 
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItemsForOneType(AbstractType::Ptr type, DeclarationPointer /*declaration*/)
 {
+    type = Helper::resolveType(type);
     if ( type->whichType() == AbstractType::TypeStructure ) {
         // find properties of class declaration
         TypePtr<StructureType> cls = StructureType::Ptr::dynamicCast(type);

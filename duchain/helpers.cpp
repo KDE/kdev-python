@@ -28,6 +28,15 @@ QList<KUrl> Helper::cachedSearchPaths;
 QString Helper::dataDir = QString::null;
 QString Helper::documentationFile = QString::null;
 
+AbstractType::Ptr Helper::resolveType(AbstractType::Ptr type)
+{
+    if ( type && type->whichType() == AbstractType::TypeAlias ) {
+        return type.cast<TypeAliasType>()->type();
+    }
+    else
+        return type;
+}
+
 UnsureType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* current)
 {
     if ( type ) {
@@ -60,7 +69,7 @@ UnsureType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* c
                 }
             }
             else {
-                kDebug() << "Skipping non-hint of unsure type: " << hinted->toString();
+                kDebug() << "Skipping non-hint of unsure type: "; 
             }
         }
     }

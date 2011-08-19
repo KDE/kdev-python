@@ -680,8 +680,7 @@ bool PythonCodeCompletionContext::scanExpressionBackwards(QString line, QStringL
     QList<QChar> openingBrackets; QList<QChar> closingBrackets;
     openingBrackets << lbrace << lbracket << ldic;
     closingBrackets << rbrace << rbracket << rdic;
-    QChar searchingForMatching('!');
-    QChar invalid('!');
+    QStack<QChar> searchingForMatching;
     QString scanned = "";
     while ( i > 0 ) {
         c = line.at(i);
@@ -696,16 +695,16 @@ bool PythonCodeCompletionContext::scanExpressionBackwards(QString line, QStringL
             else success = false;
             atEnd = false;
         }
-        if ( searchingForMatching != invalid && c == searchingForMatching ) {
+        if ( ! searchingForMatching.isEmpty() && c == searchingForMatching.top() ) {
             kDebug() << "Found matching " << c << "token";
-            searchingForMatching = invalid;
-        }
-        else if ( searchingForMatching != invalid ) {
-            // do nothing, this is in another expression, we don't care about it
+            searchingForMatching.pop();
         }
         else if ( closingBrackets.contains(c) ) {
             kDebug() << "Searching for opening " << c << "token";
-            searchingForMatching = openingBrackets.at(closingBrackets.indexOf(c));
+            searchingForMatching.push(openingBrackets.at(closingBrackets.indexOf(c)));
+        }
+        else if ( ! searchingForMatching.isEmpty() ) {
+            // do nothing, this is in another expression, we don't care about it
         }
         else if ( openingBrackets.contains(c) ) {
             scanned[0] = ' ';

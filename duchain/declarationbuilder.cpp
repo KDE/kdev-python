@@ -478,7 +478,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
                 kDebug() << "Got function which is being called: " << f->toString();
                 if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(f, "addsTypeOfArg") ) {
                     kDebug() << "Found AddsTypeOfArg decorator";
-                    register const int offset = d->arguments()[0].toInt();
+                    register const int offset = d->additionalInformation().str().toInt();
                     if ( node->arguments.length() <= offset ) {
                         kDebug() << "too few arguments, skipping";
                     }
@@ -793,12 +793,12 @@ template<typename T> void DeclarationBuilder::visitDecorators(QList< Python::Exp
             d.setName(*static_cast<NameAst*>(call->function)->identifier);
             foreach ( ExpressionAst* arg, call->arguments ) {
                 if ( arg->astType == Ast::NumberAstType ) {
-#warning fixme
-                    d.addArgument(static_cast<NumberAst*>(arg)->value);
+                    d.setAdditionalInformation(static_cast<NumberAst*>(arg)->value);
                 }
                 else if ( arg->astType == Ast::StringAstType ) {
-                    d.addArgument(static_cast<StringAst*>(arg)->value);
+                    d.setAdditionalInformation(static_cast<StringAst*>(arg)->value);
                 }
+                break; // we only need the first argument for documentation analysis
             }
             kDebug() << "call decorator identifier: " << d.name() << *static_cast<NameAst*>(call->function)->identifier;
             addTo->addDecorator(d);

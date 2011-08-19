@@ -3,9 +3,11 @@ class Exception:
 	pass
 
 @TypeContainer
-@addsTypeOfArg("__setitem__", 1)
-@getsType("__getitem__")
 class __kdevpythondocumentation_builtin_list(self,):
+    @addsTypeOfArg(2)
+    def __setitem__(self, key, value): pass
+    @getsType
+    def __getitem__(self, key): pass
     @addsTypeOfArg(1)
     def append(self,obj): pass
     @addsTypeOfArgContent(1)
@@ -43,10 +45,12 @@ class __kdevpythondocumentation_builtin_fileObject(self,):
     softspace = True
     
 @TypeContainer
-@addsTypeOfArg("__setitem__", 1)
-@addsKeyTypeOfArg("__setitem__", 0)
-@getsType("__getitem__")
 class __kdevpythondocumentation_builtin_dict(self,):
+    @addsTypeOfArg(2)
+    @addsKeyTypeOfArg(1)
+    def __setitem__(self, key, value): pass
+    @getsType
+    def __getitem__(self, key): pass
     def clear(self,): return None
     def copy(self,): return {}
     @addsKeyTypeOfArgContent(1)

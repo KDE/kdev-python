@@ -1,5 +1,7 @@
 /*****************************************************************************
+ * This file is part of KDDevelop                                            *
  * Copyright 2010 (c) Miquel Canes Gonzalez <miquelcanes@gmail.com>          *
+ * Copyright 2011 by Sven Brauch <svenbrauch@googlemail.com>                 *
  *                                                                           *
  * Permission is hereby granted, free of charge, to any person obtaining     *
  * a copy of this software and associated documentation files (the           *
@@ -93,14 +95,17 @@ void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclara
     if ( classDecl ) {
         encounter(classDecl->abstractType(), extendUnsureTypes);
         if ( extendUnsureTypes )
-            m_lastAccessedReturnType.push(Helper::mergeTypes(m_lastAccessedReturnType.pop(), classDecl->abstractType()));
+            m_lastAccessedReturnType.push(Helper::mergeTypes(
+                m_lastAccessedReturnType.isEmpty() ? AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)) : m_lastAccessedReturnType.pop(),
+                classDecl->abstractType()
+            ));
         else
             m_lastAccessedReturnType.push(classDecl->abstractType());
     }
     else if ( funcDecl && funcDecl->type<FunctionType>() ) {
         if ( node->belongsToCall ) {
             AbstractType::Ptr type = funcDecl->type<FunctionType>()->returnType();
-            kDebug() << "Using function return type: " << type->toString();
+            kDebug() << "Using function return type: " << ( type ? type->toString() : "(none)" );
             // check for list content stuff
             if ( funcDecl->decoratorsSize() > 0 ) {
                 kDebug() << "Got function declaration with decorators, checking for list content type...";
@@ -110,20 +115,29 @@ void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclara
                         kDebug() << "Found container, using type";
                         type = t->contentType().abstractType();
                     }
-                    else return unknownTypeEncountered();
+                    else {
+                        m_lastAccessedReturnType.push(AbstractType::Ptr(0));
+                        return unknownTypeEncountered();
+                    }
                 }
             }
             // otherwise, it's not a container, and the default return type will be used.
             encounter(type, extendUnsureTypes);
             if ( extendUnsureTypes ) 
-                m_lastAccessedReturnType.push(Helper::mergeTypes(m_lastAccessedReturnType.pop(), type));
+                m_lastAccessedReturnType.push(Helper::mergeTypes(
+                    m_lastAccessedReturnType.isEmpty() ? AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)) : m_lastAccessedReturnType.pop(),
+                    type
+                ));
             else
                 m_lastAccessedReturnType.push(type);
         }
         else {
             encounter(funcDecl->abstractType(), extendUnsureTypes);
             if ( extendUnsureTypes )
-                m_lastAccessedReturnType.push(Helper::mergeTypes(m_lastAccessedReturnType.pop(), funcDecl->abstractType()));
+                m_lastAccessedReturnType.push(Helper::mergeTypes(
+                    m_lastAccessedReturnType.isEmpty() ? AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)) : m_lastAccessedReturnType.pop(),
+                    funcDecl->abstractType()
+                ));
             else
                 m_lastAccessedReturnType.push(funcDecl->abstractType()); // TODO check this
         }
@@ -271,6 +285,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     }
     else if ( accessingAttributeOfType.isEmpty() ) {
         kDebug() << "No declaration found to look up type of attribute in.";
+        kDebug() << "call: " << node->belongsToCall;
         setLastAccessedAttributeDeclaration(DeclarationPointer(0));
         setLastAccessedDeclaration(DeclarationPointer(0));
         m_lastType = AbstractType::Ptr(0);
@@ -339,17 +354,23 @@ void ExpressionVisitor::visitCall(CallAst* node)
 {
     KDEBUG_BLOCK
     kDebug();
+    kDebug() << "types count BEFORE visitor call: " << m_lastAccessedReturnType.size();
+    int previousSize = m_lastAccessedReturnType.size();
     Python::AstDefaultVisitor::visitCall(node);
+    kDebug() << "types count AFTER visitor call: " << m_lastAccessedReturnType.size();
     // if it's not written like foo() but like foo[3](), then we don't attempt to guess a type
     if ( node->function->astType == Ast::AttributeAstType ) {
         // a bit confusing, but visitAttribute() already has taken care of this.
-        kDebug() << "skipping update, already done";
-        Q_ASSERT(! m_lastAccessedReturnType.isEmpty() || ! m_shouldBeKnown);
-        if ( ! m_lastAccessedReturnType.isEmpty() ) {
-            kDebug() << "applying type" << m_lastAccessedReturnType.top()->toString();
+        kDebug() << "checking if type was provided";
+        if ( m_lastAccessedReturnType.size() > previousSize ) {
+            kDebug() << "type was provided";
+            kDebug() << "applying type" << ( m_lastAccessedReturnType.top() ? m_lastAccessedReturnType.top()->toString() : "(none)" );
             encounter(m_lastAccessedReturnType.pop());
+            return;
         }
-        return;
+        else {
+            return unknownTypeEncountered();
+        }
     }
     if ( ! ( node->function->astType == Ast::NameAstType ) ) {
         m_shouldBeKnown = false;

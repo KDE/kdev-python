@@ -31,6 +31,7 @@
 #include <language/duchain/types/typesystemdata.h>
 #include <language/duchain/types/typealiastype.h>
 #include <language/duchain/types/unsuretype.h>
+#include <language/duchain/types/indexedtype.h>
 
 namespace Python {
 
@@ -52,6 +53,7 @@ public:
     virtual AbstractType* clone() const;
     virtual uint hash() const;
     virtual QString toString() const;
+    const QList<AbstractType::Ptr> typesRecursive() const;
     
     virtual bool equals(const AbstractType* rhs) const;
     

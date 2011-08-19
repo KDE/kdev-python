@@ -39,7 +39,7 @@ public:
     static AbstractType::Ptr resolveType(AbstractType::Ptr type);
     
     template<typename T> static const Decorator* findDecoratorByName(T* inDeclaration, const QString& name) {
-        register uint count = inDeclaration->decoratorsSize();
+        register int count = inDeclaration->decoratorsSize();
         for ( int i = 0; i < count; i++ ) {
             if ( inDeclaration->decorators()[i].name() == name )
                 return &(inDeclaration->decorators()[i]);

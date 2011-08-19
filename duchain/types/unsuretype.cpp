@@ -47,25 +47,42 @@ UnsureType::UnsureType(KDevelop::UnsureTypeData& data): KDevelop::UnsureType(dat
 
 }
 
+const QList<AbstractType::Ptr> UnsureType::typesRecursive() const
+{
+    QList<AbstractType::Ptr> results;
+    FOREACH_FUNCTION ( const IndexedType& type, d_func()->m_types ) {
+        AbstractType::Ptr current = type.abstractType();
+        AbstractType::Ptr resolved = Helper::resolveType(current);
+        if ( resolved->whichType() == AbstractType::TypeUnsure ) {
+            results.append(resolved.cast<UnsureType>()->typesRecursive());
+        }
+        else
+            results.append(current);
+    }
+    return results;
+}
+
 QString UnsureType::toString() const
 {
     QString ret = "unsure (";
     bool first = true;
     QList<IndexedType> encountered;
-    FOREACH_FUNCTION(const IndexedType& type, d_func()->m_types) {
+    foreach ( AbstractType::Ptr type, typesRecursive() ) {
+        if ( ! type ) {
+            kWarning() << "Invalid type: " << type.unsafeData();
+            continue;
+        }
+        
+        IndexedType indexed = Helper::resolveType(type)->indexed();
+        if ( encountered.contains(indexed) )
+            continue;
+        encountered << indexed;
+        
         if ( ! first )
             ret += ", ";
         first = false;
         
-        if ( encountered.contains(type) )
-            continue;
-        encountered << type;
-        
-        AbstractType::Ptr t = type.abstractType();
-        if ( t )
-            ret += t->toString();
-        else
-            ret += "none";
+        ret += type->toString();
     }
     ret += ')';
 

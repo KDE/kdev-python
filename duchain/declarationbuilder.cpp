@@ -439,7 +439,6 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
                 if ( dynamic_cast<AliasDeclaration*>(resultingDeclaration) ) {
                     static_cast<AliasDeclaration*>(resultingDeclaration)->setAliasedDeclaration(originalDeclaration);
                     kDebug() << "Resulting alias: " << resultingDeclaration->toString();
-    #warning Add code to handle dependencies correctly
                 }
                 else
                     kWarning() << "import declaration is being overwritten!";
@@ -515,7 +514,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
                 }
                 int atParam = 0;
                 if ( parameters.size() >= node->arguments.size() &&
-                        functiontype->arguments().length() + func->defaultParametersSize() >= node->arguments.size() )
+                        functiontype->arguments().length() + func->defaultParametersSize() >= (uint) node->arguments.size() )
                 {
                     kDebug() << "... and they match the parameter size";
                     foreach ( ExpressionAst* arg, node->arguments ) {
@@ -524,7 +523,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
                         }
                         functionVisitor.visitNode(arg);
                         kDebug() << "Got type for function argument: " << functionVisitor.lastType();
-                        if ( functionVisitor.lastType() ) {
+                        if ( functionVisitor.lastType() && Helper::isUsefulType(functionVisitor.lastType().cast<AbstractType>()) ) {
                             kDebug() << "last type: " << functionVisitor.lastType()->toString();
                             HintedType::Ptr addType = HintedType::Ptr(new HintedType());
                             openType(addType);
@@ -538,8 +537,6 @@ void DeclarationBuilder::visitCall(CallAst* node)
                             functiontype->addArgument(newType, atParam);
                             func->setAbstractType(functiontype.cast<AbstractType>());
                             parameters.at(atParam)->setType(newType);
-                            kDebug() << newType->indexed().hash() << parameters.at(atParam)->indexedType().hash();
-                            kDebug() << "Declaration has type: " << parameters.at(atParam) << parameters.at(atParam)->abstractType()->toString();
                         }
                         atParam++;
                     }
@@ -835,7 +832,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     visitFunctionArguments(node);
     
     // this must be done here, because the type of self must be known when parsing the body
-    kDebug() << "Checking weather we have to change argument types...";
+    kDebug() << "Checking whether we have to change argument types...";
     kDebug() <<  eventualParentDeclaration.data() << currentType<FunctionType>()->arguments().length() << m_firstAttributeDeclaration.data() << currentContext()->type() << DUContext::Class;
     if ( eventualParentDeclaration.data() && currentType<FunctionType>()->arguments().length() 
             && m_firstAttributeDeclaration.data() && currentContext()->type() == DUContext::Class ) {
@@ -899,7 +896,7 @@ QString DeclarationBuilder::getDocstring(QList< Ast* > body)
     if ( body.length() && body.first()->astType == Ast::ExpressionAstType 
             && static_cast<ExpressionAst*>(body.first())->value->astType == Ast::StringAstType ) {
         StringAst* docstring = static_cast<StringAst*>(static_cast<ExpressionAst*>(body.first())->value);
-        kDebug() << "Got docstring for declaration: " << docstring->value;
+        kDebug() << "Got docstring for declaration";
         return docstring->value;
     }
     return QString("");

@@ -47,7 +47,7 @@ UnsureType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* c
     }
     UnsureType::Ptr result(new UnsureType());
     if ( HintedType::Ptr hinted = type.cast<HintedType>() ) {
-        if ( hinted->isValid(current) ) {
+        if ( hinted->isValid(current) && isUsefulType(hinted.cast<AbstractType>()) ) {
             kDebug() << "Adding type hint: " << hinted->toString();
             result->addType(type->indexed());
         }
@@ -214,6 +214,7 @@ QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
 
 bool Helper::isUsefulType(AbstractType::Ptr type)
 {
+    type = resolveType(type);
     if ( ! type ) {
         return false;
     }

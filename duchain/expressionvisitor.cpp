@@ -69,7 +69,7 @@ template<typename T> void ExpressionVisitor::encounter(TypePtr< T > type)
 }
 
 Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegrator* editor)
-    : m_lastType(0), m_ctx(ctx), m_editor(editor), m_shouldBeKnown(true), m_lastAccessedReturnType(0)
+    : m_lastType(0), m_ctx(ctx), m_editor(editor), m_shouldBeKnown(true)
 {
     if(s_defaultTypes.isEmpty()) {
         s_defaultTypes.insert(KDevelop::Identifier("True"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
@@ -85,20 +85,22 @@ void ExpressionVisitor::unknownTypeEncountered() {
 void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclaration, AttributeAst* node, bool extendUnsureTypes)
 {
     // if it's a function call, the result of that call will be the return type
-    // TODO check weather we need to distinguish bettween foo.bar and foo.bar() here
+    // TODO check whether we need to distinguish bettween foo.bar and foo.bar() here
     DUChainPointer<ClassDeclaration> classDecl = actualDeclaration.dynamicCast<ClassDeclaration>();
     DUChainPointer<FunctionDeclaration> funcDecl = actualDeclaration.dynamicCast<FunctionDeclaration>();
+    kDebug() << "Determining type for eventual function call";
     
     if ( classDecl ) {
         encounter(classDecl->abstractType(), extendUnsureTypes);
         if ( extendUnsureTypes )
-            m_lastAccessedReturnType = Helper::mergeTypes(m_lastAccessedReturnType, classDecl->abstractType());
+            m_lastAccessedReturnType.push(Helper::mergeTypes(m_lastAccessedReturnType.pop(), classDecl->abstractType()));
         else
-            m_lastAccessedReturnType = classDecl->abstractType();
+            m_lastAccessedReturnType.push(classDecl->abstractType());
     }
     else if ( funcDecl && funcDecl->type<FunctionType>() ) {
         if ( node->belongsToCall ) {
             AbstractType::Ptr type = funcDecl->type<FunctionType>()->returnType();
+            kDebug() << "Using function return type: " << type->toString();
             // check for list content stuff
             if ( funcDecl->decoratorsSize() > 0 ) {
                 kDebug() << "Got function declaration with decorators, checking for list content type...";
@@ -114,16 +116,16 @@ void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclara
             // otherwise, it's not a container, and the default return type will be used.
             encounter(type, extendUnsureTypes);
             if ( extendUnsureTypes ) 
-                m_lastAccessedReturnType = Helper::mergeTypes(m_lastAccessedReturnType, type);
+                m_lastAccessedReturnType.push(Helper::mergeTypes(m_lastAccessedReturnType.pop(), type));
             else
-                m_lastAccessedReturnType = type;
+                m_lastAccessedReturnType.push(type);
         }
         else {
             encounter(funcDecl->abstractType(), extendUnsureTypes);
             if ( extendUnsureTypes )
-                m_lastAccessedReturnType = Helper::mergeTypes(m_lastAccessedReturnType, funcDecl->abstractType());
+                m_lastAccessedReturnType.push(Helper::mergeTypes(m_lastAccessedReturnType.pop(), funcDecl->abstractType()));
             else
-                m_lastAccessedReturnType = funcDecl->abstractType(); // TODO check this
+                m_lastAccessedReturnType.push(funcDecl->abstractType()); // TODO check this
         }
     }
     else {
@@ -249,7 +251,9 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     }
     else if ( accessingAttributeOf->astType == Ast::CallAstType ) {
         availableDeclarations.clear();
-        accessingAttributeOfType.append(possibleStructureTypes(m_lastAccessedReturnType));
+        accessingAttributeOfType.append(possibleStructureTypes(
+            m_lastAccessedReturnType.isEmpty() ? AbstractType::Ptr(0) : m_lastAccessedReturnType.top()
+        ));
     }
     else if ( m_lastType && m_lastType.cast<StructureType>() ) {
         accessingAttributeOfType.append(m_lastType.cast<StructureType>());
@@ -335,11 +339,16 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
 
 void ExpressionVisitor::visitCall(CallAst* node)
 {
+    KDEBUG_BLOCK
+    kDebug();
     Python::AstDefaultVisitor::visitCall(node);
     // if it's not written like foo() but like foo[3](), then we don't attempt to guess a type
     if ( node->function->astType == Ast::AttributeAstType ) {
         // a bit confusing, but visitAttribute() already has taken care of this.
-        encounter(m_lastAccessedReturnType);
+        kDebug() << "skipping update, already done";
+        Q_ASSERT(! m_lastAccessedReturnType.isEmpty());
+        kDebug() << "applying type" << m_lastAccessedReturnType.top()->toString();
+        encounter(m_lastAccessedReturnType.pop());
         return;
     }
     if ( ! ( node->function->astType == Ast::NameAstType ) ) {
@@ -347,7 +356,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
         return unknownTypeEncountered();
     }
     
-    QString functionName = dynamic_cast<NameAst*>(node->function)->identifier->value;
+    QString functionName = static_cast<NameAst*>(node->function)->identifier->value;
     kDebug() << "Visiting call of function " << functionName;
     
     DUChainReadLocker lock(DUChain::lock());
@@ -364,18 +373,17 @@ void ExpressionVisitor::visitCall(CallAst* node)
         
         if ( classDecl ) {
             encounter(classDecl->abstractType());
-            m_lastAccessedReturnType = classDecl->abstractType();
         }
         else if ( funcDecl && funcDecl->type<FunctionType>() ) {
             AbstractType::Ptr type = funcDecl->type<FunctionType>()->returnType();
             encounter(type);
-            m_lastAccessedReturnType = type;
         }
         else {
             kDebug() << "Declaraton for " << functionName << " is not a class or function declaration";
             return unknownTypeEncountered();
         }
     }
+    kDebug() << "Done, remaining return type: " << ( ! m_lastAccessedReturnType.isEmpty() ? m_lastAccessedReturnType.top()->toString() : "(none)" );
 }
 
 void ExpressionVisitor::visitSubscript(SubscriptAst* node)

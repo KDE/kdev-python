@@ -552,6 +552,8 @@ void DeclarationBuilder::visitCall(CallAst* node)
 
 void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 {
+    KDEBUG_BLOCK
+    kDebug();
     AstDefaultVisitor::visitAssignment(node);
     QList<ExpressionAst*> realTargets;
     QList<AbstractType::Ptr> realValues;

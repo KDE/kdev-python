@@ -191,7 +191,7 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         
         bool m_shouldBeKnown;
         
-        AbstractType::Ptr m_lastAccessedReturnType;
+        QStack<AbstractType::Ptr> m_lastAccessedReturnType;
         FunctionDeclarationPointer m_firstAccessedFunctionDeclaration;
         QList<DeclarationPointer> m_lastAccessedNameDeclaration;
         QList<DeclarationPointer> m_lastAccessedDeclaration;

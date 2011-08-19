@@ -40,7 +40,6 @@
 #include "expressionvisitor.h"
 #include "pythoneditorintegrator.h"
 #include "types/variablelengthcontainer.h"
-#include "declarations/decorateddeclaration.h"
 #include "helpers.h"
 
 using namespace KDevelop;
@@ -99,11 +98,25 @@ void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclara
     }
     else if ( funcDecl && funcDecl->type<FunctionType>() ) {
         if ( node->belongsToCall ) {
-            encounter(funcDecl->type<FunctionType>()->returnType(), extendUnsureTypes);
+            AbstractType::Ptr type = funcDecl->type<FunctionType>()->returnType();
+            // check for list content stuff
+            if ( funcDecl->decoratorsSize() > 0 ) {
+                kDebug() << "Got function declaration with decorators, checking for list content type...";
+                if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(funcDecl.data(), "getsType") ) {
+                    kDebug() << "Found decorator";
+                    if ( VariableLengthContainer::Ptr t = lastType().cast<VariableLengthContainer>() ) {
+                        kDebug() << "Found container, using type";
+                        type = t->contentType().abstractType();
+                    }
+                    else return unknownTypeEncountered();
+                }
+            }
+            // otherwise, it's not a container, and the default return type will be used.
+            encounter(type, extendUnsureTypes);
             if ( extendUnsureTypes ) 
-                m_lastAccessedReturnType = Helper::mergeTypes(m_lastAccessedReturnType, funcDecl->type<FunctionType>()->returnType());
+                m_lastAccessedReturnType = Helper::mergeTypes(m_lastAccessedReturnType, type);
             else
-                m_lastAccessedReturnType = funcDecl->type<FunctionType>()->returnType();
+                m_lastAccessedReturnType = type;
         }
         else {
             encounter(funcDecl->abstractType(), extendUnsureTypes);
@@ -346,7 +359,6 @@ void ExpressionVisitor::visitCall(CallAst* node)
     }
     else {
         Declaration* actualDeclaration = Helper::resolveAliasDeclaration(decls.last());
-        kDebug() << "Resolved alias declaration: " << decls.last()->toString();
         ClassDeclaration* classDecl = dynamic_cast<ClassDeclaration*>(actualDeclaration);
         FunctionDeclaration* funcDecl = dynamic_cast<FunctionDeclaration*>(actualDeclaration);
         
@@ -355,8 +367,9 @@ void ExpressionVisitor::visitCall(CallAst* node)
             m_lastAccessedReturnType = classDecl->abstractType();
         }
         else if ( funcDecl && funcDecl->type<FunctionType>() ) {
-            encounter(funcDecl->type<FunctionType>()->returnType());
-            m_lastAccessedReturnType = funcDecl->type<FunctionType>()->returnType();
+            AbstractType::Ptr type = funcDecl->type<FunctionType>()->returnType();
+            encounter(type);
+            m_lastAccessedReturnType = type;
         }
         else {
             kDebug() << "Declaraton for " << functionName << " is not a class or function declaration";
@@ -428,7 +441,6 @@ void ExpressionVisitor::visitDict(DictAst* node)
 
 void ExpressionVisitor::visitNumber(Python::NumberAst* number)
 {
-    kDebug() << "NUMBER: is int:" << number->isInt;
     AbstractType::Ptr type;
     if ( number->isInt ) {
         type = typeObjectForIntegralType<AbstractType>("int", m_ctx);
@@ -466,7 +478,6 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
     lock.unlock();
 //     Q_ASSERT(!d.isEmpty());
  
-    kDebug() << "visitName" << node->identifier->value << d.count();   
     if ( ! d.isEmpty() ) {
         DeclarationPointer ptr = DeclarationPointer(d.last());
         encounter(ptr->abstractType());

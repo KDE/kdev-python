@@ -89,7 +89,6 @@ bool VariableLengthContainer::equals(const AbstractType* rhs) const
     if ( ! c ) {
         return false;
     }
-    kDebug() << c->contentType() << d_func()->m_contentType;
     if ( c->contentType() != d_func()->m_contentType ) {
         return false;
     }

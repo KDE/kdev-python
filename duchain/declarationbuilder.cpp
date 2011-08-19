@@ -53,7 +53,6 @@
 #include "types/variablelengthcontainer.h"
 #include "types/hintedtype.h"
 #include "types/unsuretype.h"
-#include "declarations/decorateddeclaration.h"
 #include <language/duchain/duchainutils.h>
 
 using namespace KTextEditor;
@@ -462,7 +461,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
 void DeclarationBuilder::visitCall(CallAst* node)
 {
     Python::AstDefaultVisitor::visitCall(node);
-    kDebug();
+    KDEBUG_BLOCK
     ExpressionVisitor functionVisitor(currentContext(), editor());
     functionVisitor.visitNode(node);
     if ( node->function && node->function->astType == Ast::AttributeAstType && functionVisitor.lastFunctionDeclaration() ) {
@@ -470,19 +469,16 @@ void DeclarationBuilder::visitCall(CallAst* node)
         ExpressionVisitor v(currentContext(), editor());
         v.visitNode(static_cast<AttributeAst*>(node->function)->value);
         if ( VariableLengthContainer::Ptr container = v.lastType().cast<VariableLengthContainer>() ) {
+            /// DEBUG
             kDebug() << "Got container type for eventual update: " << container->toString();
             kDebug() << "Eventual function declaration: " << functionVisitor.lastFunctionDeclaration()->toString();
             kDebug() << functionVisitor.lastFunctionDeclaration()->isFunctionDeclaration();
+            /// END DEBUG
             if ( functionVisitor.lastFunctionDeclaration()->isFunctionDeclaration() ) {
                 FunctionDeclaration* f = static_cast<FunctionDeclaration*>(functionVisitor.lastFunctionDeclaration().data());
-                kDebug() << "Got function which is being called: " << f->toString();
                 if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(f, "addsTypeOfArg") ) {
-                    kDebug() << "Found AddsTypeOfArg decorator";
                     register const int offset = d->additionalInformation().str().toInt();
-                    if ( node->arguments.length() <= offset ) {
-                        kDebug() << "too few arguments, skipping";
-                    }
-                    else {
+                    if ( node->arguments.length() > offset ) {
                         ExpressionVisitor argVisitor(currentContext(), editor());
                         argVisitor.visitNode(node->arguments.at(offset));
                         if ( argVisitor.lastType() ) {
@@ -498,7 +494,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
     if ( ! m_prebuilding ) {
         return;
     }
-    KDEBUG_BLOCK
+    kDebug() << "--";
     kDebug() << "Trying to update function argument types based on call";
     DUChainWriteLocker lock(DUChain::lock());
     if ( functionVisitor.lastFunctionDeclaration() ) {
@@ -559,6 +555,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
 
 void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 {
+    AstDefaultVisitor::visitAssignment(node);
     QList<ExpressionAst*> realTargets;
     QList<AbstractType::Ptr> realValues;
     QList<DeclarationPointer> realDeclarations;
@@ -637,7 +634,6 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                 if ( tupleElementType && dec ) {
                     VariableLengthContainer* type = dynamic_cast<VariableLengthContainer*>(dec->abstractType().unsafeData());
                     kDebug() << "type is: " << dec->abstractType().unsafeData() << type << dynamic_cast<VariableLengthContainer*>(tupleElementType.unsafeData());
-                    kDebug() << "indexed: " << tupleElementType->indexed().hash() << "<>" << dec->indexedType().hash();
                     kDebug() << "Container: " << dynamic_cast<VariableLengthContainer*>(dec->abstractType().unsafeData());
                     Q_ASSERT(dec->abstractType());
                 }

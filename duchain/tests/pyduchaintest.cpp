@@ -44,7 +44,6 @@
 #include "astbuilder.h"
 
 #include "types/variablelengthcontainer.h"
-#include "duchain/declarations/decorateddeclaration.h"
 
 QTEST_MAIN(PyDUChainTest)
 

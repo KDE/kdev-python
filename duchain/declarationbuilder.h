@@ -35,7 +35,6 @@
 #include "contextbuilder.h"
 #include "typebuilder.h"
 #include <language/duchain/types/unsuretype.h>
-#include "declarations/decorateddeclaration.h"
 
 namespace Python
 {

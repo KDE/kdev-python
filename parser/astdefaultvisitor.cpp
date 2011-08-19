@@ -43,8 +43,6 @@ void AstDefaultVisitor::visitString(StringAst* node) { Q_UNUSED(node); }
 
 void AstDefaultVisitor::visitCode(CodeAst* node)
 {
-    kDebug() << "Visiting code:" << node;
-    kDebug() << node->body;
     foreach (Ast* statement, node->body) {
         visitNode(statement);
     }

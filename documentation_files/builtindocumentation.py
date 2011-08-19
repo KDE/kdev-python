@@ -272,7 +272,7 @@ def open(filename, mode = None, bufsize = None): return __kdevpythondocumentatio
 def ord(c): return 0
 def pow(x, y, z = 0): return 0.0
 def property(fget = 0, fset = 0, fdel = 0, doc = 0): return 0
-def range(start = 0, stop = 0, step = 0): return []
+def range(start = 0, stop = 0, step = 0): return [0]
 def raw_input(prompt = ""): return ""
 def reduce(function, iterable, init = None): return None
 def reload(module) : return None
@@ -292,7 +292,7 @@ def type(object): return  __kdevpythondocumentation_builtin_typeObject()
 def unichr(i): return ""
 def unicode(obj = None, encoding = None, errors = None): return ""
 def vars(obj): return None
-def xrange(start = 0, stop = 0, step = 0): return []
+def xrange(start = 0, stop = 0, step = 0): return [0]
 def zip(iterable = None): return []
 def __import__(name, globa = None, loca = None, fromlist = None, level = 0): return None
 

@@ -251,9 +251,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     }
     else if ( accessingAttributeOf->astType == Ast::CallAstType ) {
         availableDeclarations.clear();
-        accessingAttributeOfType.append(possibleStructureTypes(
-            m_lastAccessedReturnType.isEmpty() ? AbstractType::Ptr(0) : m_lastAccessedReturnType.top()
-        ));
+        accessingAttributeOfType.append(possibleStructureTypes(m_lastType));
     }
     else if ( m_lastType && m_lastType.cast<StructureType>() ) {
         accessingAttributeOfType.append(m_lastType.cast<StructureType>());
@@ -264,7 +262,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
         setLastAccessedDeclaration(DeclarationPointer(0));
         m_lastType = AbstractType::Ptr(0);
         m_shouldBeKnown = false;
-        return;
+        return unknownTypeEncountered();
     }
     
     // Step 2: Select a declaration from those which were found.
@@ -346,9 +344,11 @@ void ExpressionVisitor::visitCall(CallAst* node)
     if ( node->function->astType == Ast::AttributeAstType ) {
         // a bit confusing, but visitAttribute() already has taken care of this.
         kDebug() << "skipping update, already done";
-        Q_ASSERT(! m_lastAccessedReturnType.isEmpty());
-        kDebug() << "applying type" << m_lastAccessedReturnType.top()->toString();
-        encounter(m_lastAccessedReturnType.pop());
+        Q_ASSERT(! m_lastAccessedReturnType.isEmpty() || ! m_shouldBeKnown);
+        if ( ! m_lastAccessedReturnType.isEmpty() ) {
+            kDebug() << "applying type" << m_lastAccessedReturnType.top()->toString();
+            encounter(m_lastAccessedReturnType.pop());
+        }
         return;
     }
     if ( ! ( node->function->astType == Ast::NameAstType ) ) {
@@ -383,7 +383,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
             return unknownTypeEncountered();
         }
     }
-    kDebug() << "Done, remaining return type: " << ( ! m_lastAccessedReturnType.isEmpty() ? m_lastAccessedReturnType.top()->toString() : "(none)" );
+    kDebug() << "Done";
 }
 
 void ExpressionVisitor::visitSubscript(SubscriptAst* node)

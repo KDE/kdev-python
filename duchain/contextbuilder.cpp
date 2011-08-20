@@ -95,19 +95,17 @@ IndexedString ContextBuilder::currentlyParsedDocument() const
 
 RangeInRevision ContextBuilder::rangeForNode(Ast* node, bool moveRight)
 {
-    RangeInRevision range;
-    if ( moveRight ) {
-        range = RangeInRevision(node->startLine, node->startCol, node->endLine, node->endCol + 1);
-    }
-    else {
-        range = RangeInRevision(node->startLine, node->startCol, node->endLine, node->endCol);
-    }
-    return range;
+    return RangeInRevision(node->startLine, node->startCol, node->endLine, node->endCol + (int) moveRight);
 }
 
 RangeInRevision ContextBuilder::rangeForNode(Identifier* node, bool moveRight)
 {
     return rangeForNode(static_cast<Ast*>(node), moveRight);
+}
+
+SimpleRange ContextBuilder::simpleRangeForNode(Ast* node, bool moveRight)
+{
+    return SimpleRange(node->startLine, node->startCol, node->endLine, node->endCol + (int) moveRight);
 }
 
 TopDUContext* ContextBuilder::newTopContext(const RangeInRevision& range, ParsingEnvironmentFile* file) 

@@ -588,6 +588,18 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         v.visitNode(node->value);
         realValues << v.lastType();
         realDeclarations << v.lastDeclaration();
+        if ( node->value && node->value->astType == Ast::CallAstType && ! node->targets.isEmpty() ) {
+            if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeIntegral 
+                              && v.lastType().cast<IntegralType>()->dataType() == (uint) IntegralType::TypeVoid ) {
+                KDevelop::Problem *p = new KDevelop::Problem();
+                p->setFinalLocation(DocumentRange(currentlyParsedDocument(), simpleRangeForNode(node->targets.at(0), true)));
+                p->setSource(KDevelop::ProblemData::SemanticAnalysis);
+                p->setSeverity(KDevelop::ProblemData::Warning);
+                p->setDescription(i18n("Assignment to call returning nothing"));
+                ProblemPointer ptr(p);
+                topContext()->addProblem(ptr);
+            }
+        }
         DUChainReadLocker lock(DUChain::lock());
         kDebug() << ( v.lastType() ? v.lastType()->toString() : "< no last type >" ) << ( v.lastDeclaration() ? v.lastDeclaration()->toString() : "< no last declaration >" );
     }

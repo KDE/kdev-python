@@ -162,9 +162,6 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         /**DBG**/
         kDebug() << "Current context: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
         kDebug() << "Looking for node identifier:" << identifierForNode(node) << identifierForNode(node).last();
-        foreach ( p d, currentContext()->allDeclarations(CursorInRevision::invalid(), topContext(), false) ) {
-            kDebug() << d.first->toString() << d.first->range().castToSimpleRange();
-        }
         /** /DBG **/
         existingDeclarations = currentContext()->findDeclarations(identifierForNode(node).last(),  // <- WARNING first / last?
                                                                     CursorInRevision::invalid(), 0, 

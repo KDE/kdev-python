@@ -338,12 +338,12 @@ RangeInRevision ContextBuilder::rangeForArgumentsContext(FunctionDefinitionAst* 
         start = CursorInRevision(node->arguments->arg_lineno, node->arguments->arg_col_offset);
     
     if ( node->arguments->kwarg )
-        end = CursorInRevision(node->arguments->arg_lineno, node->arguments->arg_col_offset + node->arguments->kwarg->value.length());
+        end = CursorInRevision(node->arguments->arg_lineno, node->arguments->arg_col_offset + node->arguments->kwarg->value.length() + 1);
     else if ( node->arguments->vararg )
-        end = CursorInRevision(node->arguments->vararg_lineno, node->arguments->vararg_col_offset + node->arguments->vararg->value.length());
+        end = CursorInRevision(node->arguments->vararg_lineno, node->arguments->vararg_col_offset + node->arguments->vararg->value.length() + 1);
     else if ( node->arguments->arguments.count() ) {
         Ast* last = node->arguments->arguments.last();
-        end = CursorInRevision(last->endLine, last->endCol);
+        end = CursorInRevision(last->endLine, last->endCol + 1);
     }
     
     if ( node->arguments->arguments.isEmpty() && ! node->arguments->kwarg && ! node->arguments->vararg ) {

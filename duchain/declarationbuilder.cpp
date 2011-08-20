@@ -880,29 +880,34 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         DUChainWriteLocker lock(DUChain::lock());
         dec->setType(type);
     }
+    
+    DUContext* args = DUChainUtils::getArgumentContext(dec);
+    if ( args )  {
+        QVector<Declaration*> parameters = args->localDeclarations();
 
-    if ( eventualParentDeclaration.data() && currentContext()->type() == DUContext::Class && m_firstAttributeDeclaration.data()
-          && ( type->arguments().length() || hasFirstArgument ) ) {
-        if ( m_firstAttributeDeclaration->identifier().identifier() != IndexedString("self") ) {
+        if ( currentContext()->type() == DUContext::Class && ! parameters.isEmpty() ) {
+            if ( parameters[0]->identifier().identifier() != IndexedString("self") ) {
+                kDebug() << "argument is not called self, but instead:" << parameters[0]->identifier().identifier().str();
+                KDevelop::Problem *p = new KDevelop::Problem();
+                p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(node->startLine, node->startCol, node->startLine, 10000)));
+                p->setSource(KDevelop::ProblemData::SemanticAnalysis);
+                p->setSeverity(KDevelop::ProblemData::Warning);
+                p->setDescription(i18n("First argument of class method is not called self, this is deprecated"));
+                ProblemPointer ptr(p);
+                topContext()->addProblem(ptr);
+            }
+            m_firstAttributeDeclaration = DeclarationPointer(0);
+        }
+        else if ( currentContext()->type() == DUContext::Class && parameters.isEmpty() ) {
+            DUChainWriteLocker lock(DUChain::lock());
             KDevelop::Problem *p = new KDevelop::Problem();
-            p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(node->startLine, node->startCol, node->startLine, 10000)));
+            p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(node->startLine, node->startCol, node->startLine, 10000))); // only mark first line
             p->setSource(KDevelop::ProblemData::SemanticAnalysis);
             p->setSeverity(KDevelop::ProblemData::Warning);
-            p->setDescription(i18n("First argument of class method is not called self, this is deprecated"));
+            p->setDescription(i18n("Non-static class method without arguments, must have at least one (self)"));
             ProblemPointer ptr(p);
             topContext()->addProblem(ptr);
         }
-        m_firstAttributeDeclaration = DeclarationPointer(0);
-    }
-    else if ( currentContext()->type() == DUContext::Class ) {
-        DUChainWriteLocker lock(DUChain::lock());
-        KDevelop::Problem *p = new KDevelop::Problem();
-        p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(node->startLine, node->startCol, node->startLine, 10000))); // only mark first line
-        p->setSource(KDevelop::ProblemData::SemanticAnalysis);
-        p->setSeverity(KDevelop::ProblemData::Warning);
-        p->setDescription(i18n("Non-static class method without arguments, must have at least one (self)"));
-        ProblemPointer ptr(p);
-        topContext()->addProblem(ptr);
     }
     
     // check for documentation

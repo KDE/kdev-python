@@ -199,14 +199,18 @@ void ContextBuilder::activateAlreadyOpenedContext(DUContextPointer context)
     Q_ASSERT(m_temporarilyClosedContexts.isEmpty());
     Q_ASSERT(contextAlreayOpen(context));
     DUContext* current = currentContext();
+    bool reallyCompilingContexts = compilingContexts();
+    setCompilingContexts(false); // TODO this is very hackish.
     while ( current ) {
         if ( current == context.data() ) {
+            setCompilingContexts(reallyCompilingContexts);
             return;
         }
         m_temporarilyClosedContexts.append(DUContextPointer(current));
         closeContext();
         current = currentContext();
     }
+    setCompilingContexts(reallyCompilingContexts);
 }
 
 bool ContextBuilder::contextAlreayOpen(DUContextPointer context)

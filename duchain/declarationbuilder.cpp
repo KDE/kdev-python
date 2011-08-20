@@ -161,7 +161,10 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     else {
         /**DBG**/
         kDebug() << "Current context: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
-        kDebug() << "Looking for node identifier:" << identifierForNode(node);
+        kDebug() << "Looking for node identifier:" << identifierForNode(node) << identifierForNode(node).last();
+        foreach ( p d, currentContext()->allDeclarations(CursorInRevision::invalid(), topContext(), false) ) {
+            kDebug() << d.first->toString() << d.first->range().castToSimpleRange();
+        }
         /** /DBG **/
         existingDeclarations = currentContext()->findDeclarations(identifierForNode(node).last(),  // <- WARNING first / last?
                                                                     CursorInRevision::invalid(), 0, 
@@ -172,6 +175,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
                                                                                       CursorInRevision::invalid(), 0, DUContext::DontSearchInParent);
             existingDeclarations.append(args);
         }
+        kDebug() << "Found " << existingDeclarations.length() << "declarations";
     }
     QList<Declaration*> remainingDeclarations;
     foreach ( Declaration* d, existingDeclarations ) {

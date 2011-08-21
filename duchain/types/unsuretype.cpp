@@ -85,7 +85,9 @@ QString UnsureType::toString() const
         ret += type->toString();
     }
     ret += ')';
-
+    
+    if ( first )
+        return "mixed";
     return ret;
 }
 

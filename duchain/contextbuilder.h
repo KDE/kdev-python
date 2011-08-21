@@ -110,13 +110,9 @@ protected:
     TopDUContext* newTopContext(const RangeInRevision& range, ParsingEnvironmentFile* file);
     virtual KDevelop::DUContext* newContext(const KDevelop::RangeInRevision& range);
 
-    template <typename T> void visitNodeList( const QList<T*>& l )
-    {
-        typename QList<T*>::ConstIterator it, end = l.end();
-
-        for ( it = l.begin(); it != end; ++it )
-        {
-            visitNode(( *it ) );
+    template <typename T> void visitNodeList( const QList<T*>& l ) {
+        foreach ( T& node, l ) {
+            visitNode(node);
         }
     }
     

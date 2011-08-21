@@ -61,7 +61,7 @@ void UseBuilder::visitName(NameAst* node)
     
     Q_ASSERT(node->identifier);
     Q_ASSERT(node->hasUsefulRangeInformation); // TODO remove this!
-    RangeInRevision useRange(node->identifier->startLine, node->identifier->startCol, node->identifier->endLine, node->identifier->endCol + 1);
+    RangeInRevision useRange = rangeForNode(node->identifier, true);
     
     if ( declaration && declaration->range() == useRange ) return;
     

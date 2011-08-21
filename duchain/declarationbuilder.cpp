@@ -821,6 +821,27 @@ template<typename T> void DeclarationBuilder::visitDecorators(QList< Python::Exp
     }
 }
 
+void DeclarationBuilder::visitListComprehension(ListComprehensionAst* node)
+{
+    if ( ! node->generators.isEmpty() ) {
+        RangeInRevision range = editorFindRange(node->element, node->generators.last()->iterator);
+        openContext(node, range, KDevelop::DUContext::Other);
+        currentContext()->setPropagateDeclarations(false);
+        kDebug() << "Opening context for list comprehension, with range" << range.castToSimpleRange();
+        foreach ( ComprehensionAst* comprehension, node->generators ) {
+            if ( comprehension->target->astType == Ast::NameAstType ) {
+                // TODO this is disabled because it doesn't work.
+//                 visitVariableDeclaration<Declaration>(static_cast<NameAst*>(comprehension->target)->identifier);
+            }
+            else kDebug() << "List comprehension with non-name AST target, skipping";
+        }
+        closeContext();
+        kDebug() << "Closing context for list comprehension";
+    }
+    else kDebug() << "comprehension with empty generators list, skipping";
+    DeclarationBuilderBase::visitListComprehension(node);
+}
+
 void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
     kDebug() << "opening function definition" << node->startLine << node->endLine;

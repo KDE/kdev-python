@@ -83,7 +83,12 @@ Declaration* Helper::declarationForName(NameAst* ast, const QualifiedIdentifier&
     QList<Declaration*> importedLocalDeclarations;
     {
         DUChainReadLocker lock(DUChain::lock());
-        declarations = context->topContext()->findDeclarations(identifier, CursorInRevision::invalid());
+        if ( context.data() == context->topContext() ) {
+            declarations = context->topContext()->findDeclarations(identifier, nodeRange.end);
+        }
+        else {
+            declarations = context->topContext()->findDeclarations(identifier, CursorInRevision::invalid());
+        }
         localDeclarations = context->findLocalDeclarations(identifier.last(), nodeRange.end);
         importedLocalDeclarations = context->findDeclarations(identifier.last(), nodeRange.end);
     }

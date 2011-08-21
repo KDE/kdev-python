@@ -591,10 +591,11 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                 KDevelop::Problem *p = new KDevelop::Problem();
                 p->setFinalLocation(DocumentRange(currentlyParsedDocument(), simpleRangeForNode(node->targets.at(0), true)));
                 p->setSource(KDevelop::ProblemData::SemanticAnalysis);
-                p->setSeverity(KDevelop::ProblemData::Warning);
+                p->setSeverity(KDevelop::ProblemData::Hint);
                 p->setDescription(i18n("Assignment to call returning nothing"));
                 ProblemPointer ptr(p);
-                topContext()->addProblem(ptr);
+                kDebug() << "Not adding return hint, documentation data is not good enough yet";
+//                 topContext()->addProblem(ptr);
             }
         }
         DUChainReadLocker lock(DUChain::lock());
@@ -831,6 +832,7 @@ void DeclarationBuilder::visitListComprehension(ListComprehensionAst* node)
         foreach ( ComprehensionAst* comprehension, node->generators ) {
             if ( comprehension->target->astType == Ast::NameAstType ) {
                 // TODO this is disabled because it doesn't work.
+                kWarning() << "implement me: list generator";
 //                 visitVariableDeclaration<Declaration>(static_cast<NameAst*>(comprehension->target)->identifier);
             }
             else kDebug() << "List comprehension with non-name AST target, skipping";

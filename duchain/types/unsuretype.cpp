@@ -64,8 +64,8 @@ const QList<AbstractType::Ptr> UnsureType::typesRecursive() const
 
 QString UnsureType::toString() const
 {
-    QString ret = "unsure (";
-    bool first = true;
+    QString typeList = "";
+    int count = 0;
     QList<IndexedType> encountered;
     foreach ( AbstractType::Ptr type, typesRecursive() ) {
         if ( ! type ) {
@@ -78,17 +78,19 @@ QString UnsureType::toString() const
             continue;
         encountered << indexed;
         
-        if ( ! first )
-            ret += ", ";
-        first = false;
+        if ( count )
+            typeList += ", ";
+        count += 1;
         
-        ret += type->toString();
+        typeList += type->toString();
     }
-    ret += ')';
     
-    if ( first )
+    if ( count == 0 )
         return "mixed";
-    return ret;
+    if ( count == 1 )
+        return typeList;
+    else
+        return "unsure (" + typeList + ")";
 }
 
 KDevelop::AbstractType* UnsureType::clone() const

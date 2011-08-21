@@ -111,7 +111,7 @@ protected:
     virtual KDevelop::DUContext* newContext(const KDevelop::RangeInRevision& range);
 
     template <typename T> void visitNodeList( const QList<T*>& l ) {
-        foreach ( T& node, l ) {
+        foreach ( T* node, l ) {
             visitNode(node);
         }
     }

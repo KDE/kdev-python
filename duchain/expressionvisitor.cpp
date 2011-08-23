@@ -313,6 +313,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
                 haveOneUsefulType = true;
             }
             QList<DUContext*> searchContexts = Helper::inernalContextsForClass(currentStructureType, m_ctx->topContext());
+            kDebug() << "Searching declarations in contexts: " << searchContexts;
             foreach ( DUContext* currentInternalContext, searchContexts ) {
                 if ( currentInternalContext ) {
                     foundDecls.append(currentInternalContext->findDeclarations(QualifiedIdentifier(node->attribute->value), CursorInRevision::invalid()));

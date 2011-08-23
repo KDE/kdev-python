@@ -488,6 +488,22 @@ void DeclarationBuilder::visitCall(CallAst* node)
                         }
                     }
                 }
+                if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(f, "addsTypeOfArgContent") ) {
+                    register const int offset = d->additionalInformation().str().toInt();
+                    if ( node->arguments.length() > offset ) {
+                        ExpressionVisitor argVisitor(currentContext(), editor());
+                        argVisitor.visitNode(node->arguments.at(offset));
+                        if ( argVisitor.lastType() ) {
+                            if ( VariableLengthContainer::Ptr sourceContainer = argVisitor.lastType().cast<VariableLengthContainer>() ) {
+                                if ( AbstractType::Ptr contentType = sourceContainer->contentType().abstractType() ) {
+                                    kDebug() << "Adding content type: " << contentType->toString();
+                                    container->addContentType(contentType);
+                                    v.lastDeclaration()->setType(container);
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -666,7 +682,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             // however, if there's an earlier declaration which does not match the current position
             // (so it's really a different declaration) we skip this.
             Declaration* haveDeclaration = 0;
-            if ( unknown.data() ) {
+            if ( unknown ) {
                 kDebug() << "Declaration is already created";
                 haveDeclaration = unknown.data();
             }
@@ -692,12 +708,13 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                 kDebug() << "Accessing class type through an instance, searching original declaration of type...";
                 type = parentObjectDeclaration->abstractType();
                 StructureType::Ptr structure(dynamic_cast<StructureType*>(type.unsafeData()));
-                if ( ! structure.unsafeData() || ! structure->declaration(topContext()) ) continue;
+                if ( ! structure || ! structure->declaration(topContext()) )
+                    continue;
                 parentObjectDeclaration = structure->declaration(topContext());
                 internal = parentObjectDeclaration->internalContext();
                 kDebug() << "... ok!";
             }
-            if ( ! internal.data() ) {
+            if ( ! internal ) {
                 kWarning() << "No internal context for structure type, aborting creation of attribute declaration";
                 continue;
             }

@@ -49,13 +49,12 @@ QList< KSharedPtr< CompletionTreeElement > > PythonCodeCompletionWorker::compute
         KSharedPtr<CompletionTreeElement> currentElement(dynamic_cast<CompletionTreeElement*>(currentItem.data()));
         Declaration* currentDeclaration = currentItem->declaration().data();
         if ( currentDeclaration ) {
-            if ( items.lastIndexOf(currentItem) != currentIndex ) continue;
+            if ( items.lastIndexOf(currentItem) != currentIndex )
+                continue;
             if ( currentDeclaration->context() == completionContext.data()->duContext() ) {
-                kDebug() << "Adding " << currentDeclaration->toString() << "to local declarations";
                 localDeclarations->appendChild(currentElement);
             }
             else {
-                kDebug() << "Adding " << currentDeclaration->toString() << "to global declarations";
                 globalDeclarations->appendChild(currentElement);
             }
         }
@@ -65,9 +64,12 @@ QList< KSharedPtr< CompletionTreeElement > > PythonCodeCompletionWorker::compute
         currentIndex += 1;
     }
     
-    if ( localDeclarations->children.length() ) tree << KSharedPtr<CompletionTreeElement>(dynamic_cast<CompletionTreeElement*>(localDeclarations));
-    if ( globalDeclarations->children.length() ) tree << KSharedPtr<CompletionTreeElement>(dynamic_cast<CompletionTreeElement*>(globalDeclarations));
-    if ( stuff->children.length() ) tree << KSharedPtr<CompletionTreeElement>(dynamic_cast<CompletionTreeElement*>(stuff));
+    if ( localDeclarations->children.length() )
+        tree << KSharedPtr<CompletionTreeElement>(static_cast<CompletionTreeElement*>(localDeclarations));
+    if ( globalDeclarations->children.length() )
+        tree << KSharedPtr<CompletionTreeElement>(static_cast<CompletionTreeElement*>(globalDeclarations));
+    if ( stuff->children.length() )
+        tree << KSharedPtr<CompletionTreeElement>(static_cast<CompletionTreeElement*>(stuff));
     return tree;
 }
 

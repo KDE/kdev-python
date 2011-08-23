@@ -290,7 +290,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             
             QList<CompletionTreeItemPointer> calltipItems = declarationListToItemList(realCalltips_withDepth);
             foreach ( CompletionTreeItemPointer current, calltipItems ) {
-                kDebug() << "Adding calltip item"; 
+                kDebug() << "Adding calltip item, at argument:" << m_alreadyGivenParametersCount+1; 
                 static_cast<FunctionDeclarationCompletionItem*>(current.data())->setAtArgument(m_alreadyGivenParametersCount + 1);
             }
             
@@ -319,7 +319,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
             continue;
         }
         currentDeclaration = DeclarationPointer(declarations.at(i).first);
-        
+        kDebug() << declarations.first().first->comment();
         
         PythonDeclarationCompletionItem* item;
         AliasDeclaration* alias = dynamic_cast<AliasDeclaration*>(currentDeclaration.data());
@@ -337,7 +337,6 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
         else {
             item = new PythonDeclarationCompletionItem(currentDeclaration, KDevelop::CodeCompletionContext::Ptr(this));
         }
-        kDebug() << item->declaration().data()->identifier().identifier().str();
         items << CompletionTreeItemPointer(item);
     }
     return items;
@@ -361,14 +360,14 @@ QList< CompletionTreeItemPointer > PythonCodeCompletionContext::getCompletionIte
     return result;
 }
 
-QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItemsForOneType(AbstractType::Ptr type, DeclarationPointer /*declaration*/)
+QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItemsForOneType(AbstractType::Ptr type, DeclarationPointer declaration)
 {
     type = Helper::resolveType(type);
     if ( type->whichType() == AbstractType::TypeStructure ) {
         // find properties of class declaration
         TypePtr<StructureType> cls = StructureType::Ptr::dynamicCast(type);
         kDebug() << "Finding completion items for class type";
-//         kDebug() << cls->internalContext(m_context->topContext()) << cls->internalContext(declaration->context()->topContext());
+        kDebug() << cls->internalContext(m_context->topContext()) << cls->internalContext(declaration->context()->topContext());
         if ( ! cls || ! cls->internalContext(m_context->topContext()) ) {
             kWarning() << "No class type available, no completion offered";
             kDebug() << cls;
@@ -628,7 +627,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     }
     
     if ( context->type() == DUContext::Class ) {
-        QRegExp defcompletion("(.*)\n([\\s]*)(def)[\\s]*$");
+        QRegExp defcompletion("(.*)\n([\\s]*)(def)[\\s]*[\\D]*$");
         defcompletion.setMinimal(true);
         bool is_defcompletion = defcompletion.exactMatch(currentLine);
         if ( is_defcompletion ) {

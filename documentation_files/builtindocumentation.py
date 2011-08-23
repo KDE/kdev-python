@@ -3,7 +3,7 @@ class Exception:
 	pass
 
 @TypeContainer
-class __kdevpythondocumentation_builtin_list(self,):
+class __kdevpythondocumentation_builtin_list():
     @addsTypeOfArg(2)
     def __setitem__(self, key, value): pass
     @getsType
@@ -22,7 +22,7 @@ class __kdevpythondocumentation_builtin_list(self,):
     def sort(self,): return self
     def reverse(self,): return self
 
-class __kdevpythondocumentation_builtin_fileObject(self,):
+class __kdevpythondocumentation_builtin_fileObject():
     def close(self,): return None
     def flush(self,): return None
     def fileno(self,): return None
@@ -45,7 +45,7 @@ class __kdevpythondocumentation_builtin_fileObject(self,):
     softspace = True
     
 @TypeContainer
-class __kdevpythondocumentation_builtin_dict(self,):
+class __kdevpythondocumentation_builtin_dict():
     @addsTypeOfArg(2)
     @addsKeyTypeOfArg(1)
     def __setitem__(self, key, value): pass
@@ -81,7 +81,7 @@ class __kdevpythondocumentation_builtin_dict(self,):
     def viewvalues(self,): return None
     
 
-class __kdevpythondocumentation_builtin_string(self,):
+class __kdevpythondocumentation_builtin_string():
     def replace(self,before, after): return ""
     def capitalize(self,): return ""
     def center(self,width, fillchar = None): return ""
@@ -121,14 +121,17 @@ class __kdevpythondocumentation_builtin_string(self,):
     def upper(self,): return ""
     def zfill(self,width): return ""
     
-class __kdevpythondocumentation_builtin_float(self,):
+class __kdevpythondocumentation_builtin_float():
     def bit_length(self,): return 0
     def as_integer_ration(self,): return (self,0, 0)
     def is_integer(self,): return True
     def hex(self,): return 0x0
     def fromhex(self,s): return 0
 
-class __kdevpythondocumentation_builtin_int(self,):
+class __kdevpythondocumentation_builtin_int():
+    pass
+
+class __kdevpythondocumentation_builtin_complex():
     pass
 
 class BaseException():
@@ -235,7 +238,7 @@ def chr(i): return ""
 def classmethod(function): return None
 def cmp(x, y): return 0
 def compile(source, filename, mode, flags = None, dont_inherit = None): return None
-def complex(real = 0, imag = 0): return 1+3j
+def complex(real = 0, imag = 0): return __kdevpythondocumentation_builtin_complex()
 def delattr(obj, name): return None
 def dir(obj = None): return {"string" : None}
 def divmod(a, b): return 0

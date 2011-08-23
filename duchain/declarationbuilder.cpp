@@ -458,6 +458,33 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
     return resultingDeclaration;
 }
 
+void DeclarationBuilder::visitYield(YieldAst* node)
+{
+    kDebug() << "visiting yield statement";
+    ExpressionVisitor v(currentContext(), editor());
+    v.visitNode(node->value);
+    setLastType(v.lastType());
+    if ( node->value ) {
+        if ( TypePtr<FunctionType> t = currentType<FunctionType>() ) {
+            AbstractType::Ptr encountered = v.lastType();
+            if ( VariableLengthContainer::Ptr previous = t->returnType().cast<VariableLengthContainer>() ) {
+                previous->addContentType(encountered);
+                t->setReturnType(previous.cast<AbstractType>());
+            }
+            else {
+                VariableLengthContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType<VariableLengthContainer>("list", currentContext());
+                if ( container ) {
+                    openType<VariableLengthContainer>(container);
+                    container->addContentType(encountered);
+                    t->setReturnType(Helper::mergeTypes(t->returnType(), container.cast<AbstractType>()));
+                    closeType();
+                }
+            }
+        }
+    }
+    setLastType(AbstractType::Ptr(0));
+}
+
 void DeclarationBuilder::visitCall(CallAst* node)
 {
     Python::AstDefaultVisitor::visitCall(node);
@@ -886,7 +913,6 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     Q_ASSERT(dec->isFunctionDeclaration());
     
     type = FunctionType::Ptr(new FunctionType());
-    type->setReturnType(AbstractType::Ptr(new IntegralType(IntegralType::TypeVoid)));
     {
         DUChainWriteLocker lock;
         dec->setType(type);
@@ -929,6 +955,9 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     
     {
         DUChainWriteLocker lock(DUChain::lock());
+        if ( ! type->returnType() ) {
+            type->setReturnType(AbstractType::Ptr(new IntegralType(IntegralType::TypeVoid)));
+        }
         dec->setType(type);
     }
     
@@ -996,7 +1025,7 @@ void DeclarationBuilder::visitReturn(ReturnAst* node)
         TypePtr<FunctionType> t = currentType<FunctionType>();
         AbstractType::Ptr encountered = v.lastType();
 //         kDebug() << "Found type: " << encountered->toString();
-        t->setReturnType(encountered);
+        t->setReturnType(Helper::mergeTypes(t->returnType(), encountered));
     }
     setLastType(AbstractType::Ptr(0));
 }

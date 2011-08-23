@@ -40,6 +40,7 @@
 #include "astdefaultvisitor.h"
 #include "pythonduchainexport.h"
 #include "pythoneditorintegrator.h"
+#include <language/duchain/classdeclaration.h>
 
 namespace KDevelop {
     class Identifier;
@@ -127,6 +128,9 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         inline FunctionDeclarationPointer lastFunctionDeclaration() const {
             return m_firstAccessedFunctionDeclaration;
         };
+        inline const DUChainPointer<ClassDeclaration> lastClassDeclaration() const {
+            return m_firstAccessedClassDeclaration;
+        };
         template<typename T> static TypePtr<T> typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx);
         /**
          * @brief Takes a declaration and a node as arguments, and determines whether the function is called or assigned to.
@@ -153,6 +157,11 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
             if ( d && ! m_firstAccessedFunctionDeclaration && d->isFunctionDeclaration() ) {
                 m_firstAccessedFunctionDeclaration = d.dynamicCast<FunctionDeclaration>();
                 Q_ASSERT(m_firstAccessedFunctionDeclaration);
+            }
+            if ( d && ! m_firstAccessedClassDeclaration && d->abstractType() && d->abstractType()->whichType() == AbstractType::TypeStructure ) {
+                if ( DUChainPointer<ClassDeclaration> c = d.dynamicCast<ClassDeclaration>() ) {
+                    m_firstAccessedClassDeclaration = c;
+                }
             }
             m_lastAccessedDeclaration.clear();
             m_lastAccessedDeclaration << d;
@@ -196,6 +205,7 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         QList<DeclarationPointer> m_lastAccessedNameDeclaration;
         QList<DeclarationPointer> m_lastAccessedDeclaration;
         QList<DeclarationPointer> m_lastAccessedAttributeDeclaration;  // this is in general not what the expression visitor is meant for,
+        DUChainPointer<ClassDeclaration> m_firstAccessedClassDeclaration;
                                                                 // but the processes to find those declarations and the types are pretty much the same
                                                                 // and are both pretty long, so we can avoid dulicated code with this.
 };

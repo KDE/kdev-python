@@ -512,55 +512,69 @@ void DeclarationBuilder::visitCall(CallAst* node)
     }
     kDebug() << "--";
     kDebug() << "Trying to update function argument types based on call";
-    DUChainWriteLocker lock(DUChain::lock());
-    if ( functionVisitor.lastFunctionDeclaration() ) {
-        kDebug() << "got declaration:" << functionVisitor.lastFunctionDeclaration()->toString();
-        if ( FunctionDeclarationPointer func = functionVisitor.lastFunctionDeclaration().dynamicCast<FunctionDeclaration>() ) {
-            if ( func->topContext()->url() == IndexedString(Helper::getDocumentationFile()) ) {
-                kDebug() << "in documentation file, not modifying args";
-                return;
+    FunctionDeclarationPointer lastFunctionDeclaration = functionVisitor.lastFunctionDeclaration();
+    if ( ! lastFunctionDeclaration && functionVisitor.lastClassDeclaration() ) {
+        kDebug() << "No function declaration, looking for class constructor";
+        DUChainPointer<ClassDeclaration> eventualClassDeclaration = functionVisitor.lastClassDeclaration();
+        kDebug() << "Class declaration: " << eventualClassDeclaration;
+        if ( eventualClassDeclaration && eventualClassDeclaration->internalContext() ) {
+            kDebug() << "ok, looking for constructor";
+            QList<Declaration*> constructors = eventualClassDeclaration->internalContext()->findDeclarations(QualifiedIdentifier("__init__"));
+            kDebug() << "Found constructors: " << constructors;
+            if ( ! constructors.isEmpty() ) {
+                lastFunctionDeclaration = dynamic_cast<FunctionDeclaration*>(constructors.first());
+                kDebug() << "new function declaration: " << lastFunctionDeclaration;
             }
-            kDebug() << "... and yep, it's a function declaration";
-            DUContext* args = DUChainUtils::getArgumentContext(func.data());
-            FunctionType::Ptr functiontype = func->type<FunctionType>();
-            if ( args && functiontype ) {
-                kDebug() << "got arguments";
-                QVector<Declaration*> parameters = args->localDeclarations();
-                if ( functiontype->arguments().length() < parameters.size() ) {
-                    parameters.remove(0);
-                }
-                int atParam = 0;
-                if ( parameters.size() >= node->arguments.size() &&
-                        functiontype->arguments().length() + func->defaultParametersSize() >= (uint) node->arguments.size() )
-                {
-                    kDebug() << "... and they match the parameter size";
-                    foreach ( ExpressionAst* arg, node->arguments ) {
-                        if ( atParam >= functiontype->arguments().size() || atParam >= parameters.size() ) {
-                            break;
-                        }
-                        functionVisitor.visitNode(arg);
-                        kDebug() << "Got type for function argument: " << functionVisitor.lastType();
-                        if ( functionVisitor.lastType() && Helper::isUsefulType(functionVisitor.lastType().cast<AbstractType>()) ) {
-                            kDebug() << "last type: " << functionVisitor.lastType()->toString();
-                            HintedType::Ptr addType = HintedType::Ptr(new HintedType());
-                            openType(addType);
-                            addType->setType(functionVisitor.lastType());
-                            addType->setCreatedBy(topContext(), m_futureModificationRevision);
-                            closeType();
-                            AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(atParam)->abstractType(), 
-                                                                           addType.cast<AbstractType>(), topContext());
-                            kDebug() << "new type: " << newType->toString();
-                            functiontype->removeArgument(atParam);
-                            functiontype->addArgument(newType, atParam);
-                            func->setAbstractType(functiontype.cast<AbstractType>());
-                            parameters.at(atParam)->setType(newType);
-                        }
-                        atParam++;
+        }
+    }
+    DUChainWriteLocker lock(DUChain::lock());
+    if ( lastFunctionDeclaration ) {
+        kDebug() << "got declaration:" << lastFunctionDeclaration->toString();
+        if ( lastFunctionDeclaration->topContext()->url() == IndexedString(Helper::getDocumentationFile()) ) {
+            kDebug() << "in documentation file, not modifying args";
+            return;
+        }
+        kDebug() << "... and yep, it's a function declaration";
+        DUContext* args = DUChainUtils::getArgumentContext(lastFunctionDeclaration.data());
+        FunctionType::Ptr functiontype = lastFunctionDeclaration->type<FunctionType>();
+        if ( args && functiontype ) {
+            kDebug() << "got arguments";
+            QVector<Declaration*> parameters = args->localDeclarations();
+            if ( lastFunctionDeclaration->context()->type() == DUContext::Class && ! parameters.isEmpty() ) {
+                parameters.remove(0);
+            }
+            int atParam = 0;
+            if ( parameters.size() >= node->arguments.size() &&
+                    functiontype->arguments().length() + lastFunctionDeclaration->defaultParametersSize() >= (uint) node->arguments.size() )
+            {
+                kDebug() << "... and they match the parameter size";
+                foreach ( ExpressionAst* arg, node->arguments ) {
+                    if ( atParam >= functiontype->arguments().size() || atParam >= parameters.size() ) {
+                        break;
                     }
+                    ExpressionVisitor argumentVisitor(currentContext(), editor());
+                    argumentVisitor.visitNode(arg);
+                    kDebug() << "Got type for function argument: " << argumentVisitor.lastType();
+                    if ( argumentVisitor.lastType() && Helper::isUsefulType(argumentVisitor.lastType().cast<AbstractType>()) ) {
+                        kDebug() << "last type: " << argumentVisitor.lastType()->toString();
+                        HintedType::Ptr addType = HintedType::Ptr(new HintedType());
+                        openType(addType);
+                        addType->setType(argumentVisitor.lastType());
+                        addType->setCreatedBy(topContext(), m_futureModificationRevision);
+                        closeType();
+                        AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(atParam)->abstractType(), 
+                                                                        addType.cast<AbstractType>(), topContext());
+                        kDebug() << "new type: " << newType->toString();
+                        functiontype->removeArgument(atParam);
+                        functiontype->addArgument(newType, atParam);
+                        lastFunctionDeclaration->setAbstractType(functiontype.cast<AbstractType>());
+                        parameters.at(atParam)->setType(newType);
+                    }
+                    atParam++;
                 }
-                else {
-                    kWarning() << "Arguments size mismatch, not updating type" << parameters << node->arguments;
-                }
+            }
+            else {
+                kWarning() << "Arguments size mismatch, not updating type" << parameters << node->arguments;
             }
         }
     }

@@ -373,7 +373,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
             return unknownTypeEncountered();
         }
     }
-    if ( ! ( node->function->astType == Ast::NameAstType ) ) {
+    if ( node->function->astType != Ast::NameAstType ) {
         m_shouldBeKnown = false;
         return unknownTypeEncountered();
     }

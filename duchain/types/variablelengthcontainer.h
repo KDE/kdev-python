@@ -71,6 +71,12 @@ public:
     virtual uint hash() const;
     const IndexedType& contentType() const;
     const IndexedType& keyType() const;
+    virtual QString toString() const;
+    // "toString"s only the container type, not the content; used in declarationnavigationcontext to create
+    // seperate links for the content and container type
+    // by keeping toString seperate, it is possible to have a pretty type in unsure types etc. without additional
+    // efforts being necessary
+    QString containerToString() const;
     
     virtual bool equals(const AbstractType* rhs) const;
     

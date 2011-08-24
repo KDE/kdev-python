@@ -43,7 +43,7 @@ DeclarationNavigationContext::DeclarationNavigationContext(DeclarationPointer de
 void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, const IdentifiedType* idType)
 {
     if ( VariableLengthContainer::Ptr t = VariableLengthContainer::Ptr::dynamicCast(type) ) {
-        makeLink(t->toString(), DeclarationPointer(idType->declaration(m_topContext.data())), NavigationAction::NavigateDeclaration );
+        makeLink(t->containerToString(), DeclarationPointer(idType->declaration(m_topContext.data())), NavigationAction::NavigateDeclaration );
         modifyHtml() += i18n(" of ");
         if ( AbstractType::Ptr contents = t->contentType().abstractType() ) {
             IdentifiedType* identifiedContent = dynamic_cast<IdentifiedType*>(contents.unsafeData());

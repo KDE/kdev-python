@@ -266,8 +266,7 @@ AbstractType::Ptr Helper::mergeTypes(AbstractType::Ptr type, AbstractType::Ptr n
         ret = unsure;
     }
     else if ( newUnsure ) {
-        AbstractType::Ptr createdType = AbstractType::Ptr(newUnsure->clone());
-        UnsureType::Ptr createdUnsureType = UnsureType::Ptr::dynamicCast(newType);
+        UnsureType::Ptr createdUnsureType = UnsureType::Ptr(static_cast<UnsureType*>(newUnsure->clone()));
         if ( isUsefulType(type) ) {
             createdUnsureType->addType(type->indexed());
         }

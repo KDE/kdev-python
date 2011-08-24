@@ -528,6 +528,21 @@ void DeclarationBuilder::visitCall(CallAst* node)
                                     v.lastDeclaration()->setType(container);
                                 }
                             }
+                            else if ( argVisitor.lastType()->whichType() == AbstractType::TypeUnsure ) {
+                                UnsureType::Ptr sourceUnsure = argVisitor.lastType().cast<UnsureType>();
+                                FOREACH_FUNCTION ( const IndexedType& type, sourceUnsure->types ) {
+                                    if ( AbstractType::Ptr p = type.abstractType() ) {
+                                        if ( VariableLengthContainer::Ptr sourceContainer = p.cast<VariableLengthContainer>() ) {
+                                            if ( AbstractType::Ptr contentType = sourceContainer->contentType().abstractType() ) {
+                                                kDebug() << "Adding content type: " << contentType->toString();
+                                                container->addContentType(contentType);
+                                                v.lastDeclaration()->setType(container);
+                                            }
+                                        }
+                                    }
+                                }
+                                v.lastDeclaration()->setType(container);
+                            }
                         }
                     }
                 }

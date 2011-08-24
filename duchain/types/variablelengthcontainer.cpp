@@ -77,6 +77,21 @@ KDevelop::AbstractType* VariableLengthContainer::clone() const
     return n;
 }
 
+QString VariableLengthContainer::toString() const
+{
+    QString prefix = KDevelop::StructureType::toString();
+    if ( AbstractType::Ptr content = contentType().abstractType() ) {
+        return prefix + " " + i18n("of") + " " + content->toString();
+    }
+    else
+        return prefix;
+}
+
+QString VariableLengthContainer::containerToString() const
+{
+    return KDevelop::StructureType::toString();
+}
+
 bool VariableLengthContainer::equals(const AbstractType* rhs) const
 {
     if ( this == rhs ) {

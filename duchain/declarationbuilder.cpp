@@ -561,7 +561,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
         kDebug() << "Class declaration: " << eventualClassDeclaration;
         if ( eventualClassDeclaration && eventualClassDeclaration->internalContext() ) {
             kDebug() << "ok, looking for constructor";
-            QList<Declaration*> constructors = eventualClassDeclaration->internalContext()->findDeclarations(QualifiedIdentifier("__init__"));
+            QList<Declaration*> constructors = eventualClassDeclaration->internalContext()->findDeclarations(KDevelop::Identifier("__init__"));
             kDebug() << "Found constructors: " << constructors;
             if ( ! constructors.isEmpty() ) {
                 lastFunctionDeclaration = dynamic_cast<FunctionDeclaration*>(constructors.first());

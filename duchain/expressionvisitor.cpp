@@ -43,6 +43,7 @@
 #include "pythoneditorintegrator.h"
 #include "types/variablelengthcontainer.h"
 #include "helpers.h"
+#include "declarations/functiondeclaration.h"
 
 using namespace KDevelop;
 using namespace Python;

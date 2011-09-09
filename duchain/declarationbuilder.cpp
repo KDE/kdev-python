@@ -43,8 +43,9 @@
 #include <language/duchain/builders/abstracttypebuilder.h>
 #include <language/duchain/aliasdeclaration.h>
 #include <language/duchain/declaration.h>
-#include <language/duchain/decorator.h>
+#include <language/duchain/duchainutils.h>
 
+#include "duchain/declarations/decorator.h"
 #include "contextbuilder.h"
 #include "declarationbuilder.h"
 #include "pythoneditorintegrator.h"
@@ -53,7 +54,8 @@
 #include "types/variablelengthcontainer.h"
 #include "types/hintedtype.h"
 #include "types/unsuretype.h"
-#include <language/duchain/duchainutils.h>
+#include "duchain/declarations/functiondeclaration.h"
+#include "duchain/declarations/classdeclaration.h"
 
 using namespace KTextEditor;
 

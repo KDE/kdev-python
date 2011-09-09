@@ -11,7 +11,7 @@
 #include <language/editor/simplerange.h>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/types/structuretype.h>
-#include <language/duchain/decorator.h>
+#include "duchain/declarations/decorator.h"
 
 #include "pythonduchainexport.h"
 #include "types/unsuretype.h"

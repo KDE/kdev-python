@@ -4,9 +4,13 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
     )
 
 set(duchain_SRCS
+    declarations/functiondeclaration.cpp
+    declarations/classdeclaration.cpp
+    
     types/variablelengthcontainer.cpp
     types/hintedtype.cpp
     types/unsuretype.cpp
+    
     expressionvisitor.cpp 
     helpers.cpp
     pythonducontext.cpp 
@@ -18,8 +22,7 @@ set(duchain_SRCS
     
     navigation/navigationwidget.cpp 
     navigation/declarationnavigationcontext.cpp
-#     typebuilder.cpp
-    )
+)
 
 
 kde4_add_library( kdev4pythonduchain SHARED ${duchain_SRCS} )

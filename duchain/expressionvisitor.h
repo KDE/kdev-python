@@ -40,7 +40,9 @@
 #include "astdefaultvisitor.h"
 #include "pythonduchainexport.h"
 #include "pythoneditorintegrator.h"
-#include <language/duchain/classdeclaration.h>
+
+#include "duchain/declarations/classdeclaration.h"
+#include "duchain/declarations/functiondeclaration.h"
 
 namespace KDevelop {
     class Identifier;

@@ -94,6 +94,8 @@ void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclara
     kDebug() << "Determining type for eventual function call";
     
     if ( classDecl ) {
+        // we denote with this that the last call AST node was not a function, but a class "call"
+        m_callStack.push(FunctionDeclarationPointer(0));
         encounter(classDecl->abstractType(), extendUnsureTypes);
         if ( extendUnsureTypes )
             m_lastAccessedReturnType.push(Helper::mergeTypes(
@@ -104,6 +106,7 @@ void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclara
             m_lastAccessedReturnType.push(classDecl->abstractType());
     }
     else if ( funcDecl && funcDecl->type<FunctionType>() ) {
+        m_callStack.push(funcDecl);
         if ( node->belongsToCall ) {
             AbstractType::Ptr type = funcDecl->type<FunctionType>()->returnType();
             kDebug() << "Using function return type: " << ( type ? type->toString() : "(none)" );
@@ -360,7 +363,6 @@ void ExpressionVisitor::visitCall(CallAst* node)
     int previousSize = m_lastAccessedReturnType.size();
     Python::AstDefaultVisitor::visitCall(node);
     kDebug() << "types count AFTER visitor call: " << m_lastAccessedReturnType.size();
-    // if it's not written like foo() but like foo[3](), then we don't attempt to guess a type
     if ( node->function->astType == Ast::AttributeAstType ) {
         // a bit confusing, but visitAttribute() already has taken care of this.
         kDebug() << "checking if type was provided";
@@ -368,13 +370,14 @@ void ExpressionVisitor::visitCall(CallAst* node)
             kDebug() << "type was provided";
             kDebug() << "applying type" << ( m_lastAccessedReturnType.top() ? m_lastAccessedReturnType.top()->toString() : "(none)" );
             encounter(m_lastAccessedReturnType.pop());
+            m_firstAccessedFunctionDeclaration = m_callStack.pop();
             return;
         }
         else {
             return unknownTypeEncountered();
         }
     }
-    if ( node->function->astType != Ast::NameAstType ) {
+    if ( node->function->astType != Ast::NameAstType ) { // TODO we could fix this now
         m_shouldBeKnown = false;
         return unknownTypeEncountered();
     }
@@ -396,13 +399,16 @@ void ExpressionVisitor::visitCall(CallAst* node)
         
         if ( classDecl ) {
             encounter(classDecl->abstractType());
+            m_firstAccessedFunctionDeclaration = FunctionDeclarationPointer(0);
         }
         else if ( funcDecl && funcDecl->type<FunctionType>() ) {
             AbstractType::Ptr type = funcDecl->type<FunctionType>()->returnType();
             encounter(type);
+            m_firstAccessedFunctionDeclaration = FunctionDeclarationPointer(funcDecl);
         }
         else {
             kDebug() << "Declaraton for " << functionName << " is not a class or function declaration";
+            m_firstAccessedFunctionDeclaration = FunctionDeclarationPointer(0);
             return unknownTypeEncountered();
         }
     }

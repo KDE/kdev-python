@@ -556,6 +556,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
     }
     kDebug() << "--";
     kDebug() << "Trying to update function argument types based on call";
+    bool isConstructor = false;
     FunctionDeclarationPointer lastFunctionDeclaration = functionVisitor.lastFunctionDeclaration();
     if ( ! lastFunctionDeclaration && functionVisitor.lastClassDeclaration() ) {
         kDebug() << "No function declaration, looking for class constructor";
@@ -567,6 +568,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
             kDebug() << "Found constructors: " << constructors;
             if ( ! constructors.isEmpty() ) {
                 lastFunctionDeclaration = dynamic_cast<FunctionDeclaration*>(constructors.first());
+                isConstructor = true;
                 kDebug() << "new function declaration: " << lastFunctionDeclaration;
             }
         }
@@ -584,7 +586,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
         if ( args && functiontype ) {
             kDebug() << "got arguments";
             QVector<Declaration*> parameters = args->localDeclarations();
-            if ( lastFunctionDeclaration->context()->type() == DUContext::Class && ! parameters.isEmpty() ) {
+            if ( ( lastFunctionDeclaration->context()->type() == DUContext::Class || isConstructor ) && ! parameters.isEmpty() ) {
                 parameters.remove(0);
             }
             int atParam = 0;

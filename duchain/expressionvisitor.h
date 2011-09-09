@@ -156,10 +156,10 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
             m_lastAccessedAttributeDeclaration << d;
         };
         inline void setLastAccessedDeclaration(DeclarationPointer d) {
-            if ( d && ! m_firstAccessedFunctionDeclaration && d->isFunctionDeclaration() ) {
-                m_firstAccessedFunctionDeclaration = d.dynamicCast<FunctionDeclaration>();
-                Q_ASSERT(m_firstAccessedFunctionDeclaration);
-            }
+//             if ( d && ! m_firstAccessedFunctionDeclaration && d->isFunctionDeclaration() ) {
+//                 m_firstAccessedFunctionDeclaration = d.dynamicCast<FunctionDeclaration>();
+//                 Q_ASSERT(m_firstAccessedFunctionDeclaration);
+//             }
             if ( d && ! m_firstAccessedClassDeclaration && d->abstractType() && d->abstractType()->whichType() == AbstractType::TypeStructure ) {
                 if ( DUChainPointer<ClassDeclaration> c = d.dynamicCast<ClassDeclaration>() ) {
                     m_firstAccessedClassDeclaration = c;
@@ -169,15 +169,15 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
             m_lastAccessedDeclaration << d;
         };
         inline void setLastAccessedDeclaration(QList<DeclarationPointer> ds) {
-            if ( ! m_firstAccessedFunctionDeclaration ) {
-                foreach ( const DeclarationPointer& p, ds ) {
-                    if ( p->isFunctionDeclaration() ) {
-                        m_firstAccessedFunctionDeclaration = p.dynamicCast<FunctionDeclaration>();
-                        Q_ASSERT(m_firstAccessedFunctionDeclaration);
-                        break;
-                    }
-                }
-            }
+//             if ( ! m_firstAccessedFunctionDeclaration ) {
+//                 foreach ( const DeclarationPointer& p, ds ) {
+//                     if ( p->isFunctionDeclaration() ) {
+//                         m_firstAccessedFunctionDeclaration = p.dynamicCast<FunctionDeclaration>();
+//                         Q_ASSERT(m_firstAccessedFunctionDeclaration);
+//                         break;
+//                     }
+//                 }
+//             }
             m_lastAccessedDeclaration = ds;
         };
         
@@ -203,6 +203,7 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         bool m_shouldBeKnown;
         
         QStack<AbstractType::Ptr> m_lastAccessedReturnType;
+        QStack<FunctionDeclarationPointer> m_callStack;
         FunctionDeclarationPointer m_firstAccessedFunctionDeclaration;
         QList<DeclarationPointer> m_lastAccessedNameDeclaration;
         QList<DeclarationPointer> m_lastAccessedDeclaration;

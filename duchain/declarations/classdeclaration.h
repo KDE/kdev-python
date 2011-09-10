@@ -64,7 +64,7 @@ public:
     ClassDeclaration(ClassDeclarationData& data, const KDevelop::RangeInRevision& range, KDevelop::DUContext* context);
     ~ClassDeclaration();
     enum {
-        Identity = 65
+        Identity = 125
     };
     
     inline const Decorator* decorators() {

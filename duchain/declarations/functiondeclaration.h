@@ -65,7 +65,7 @@ public:
     ~FunctionDeclaration();
     
     enum {
-        Identity = 64
+        Identity = 126
     };
     
     inline const Decorator* decorators() {

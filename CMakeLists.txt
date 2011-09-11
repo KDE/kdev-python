@@ -1,5 +1,7 @@
 PROJECT(kdevpython)
 
+message("** Important: ** If you have trouble building this, please read the INSTALL file first.")
+
 cmake_minimum_required(VERSION 2.8)
 
 enable_testing()

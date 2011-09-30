@@ -64,3 +64,5 @@ install(FILES kdevpythonsupport.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 install(DIRECTORY documentation_files DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)
 install(DIRECTORY python-src/Lib/encodings DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport/encodings)
 
+
+add_subdirectory(documentation_src/numpy)

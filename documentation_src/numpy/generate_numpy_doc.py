@@ -50,16 +50,17 @@ def make_documentation(class_or_module):
     for item_name in dir(class_or_module):
         if item_name in ['__abstractmethods__', '__class__']:
             continue
-        if item_name[:1] == '_' and item_name[:2] != '__':
-            # skip private properties
+        if item_name[:1] == '_':
+            # skip private properties and stuff like __get__
             continue
         item = getattr(class_or_module, item_name)
         if type(item) in [types.FunctionType, types.BuiltinFunctionType, types.UnboundMethodType] \
            or str(type(item)) in ['<type \'method_descriptor\'>', '<type \'wrapper_descriptor\'>', '<type \'numpy.ufunc\'>']:
-            parameters = try_parse_func_docstring(item.__doc__)
+            parameters = try_parse_func_docstring(item.__doc__, item_name)
+            parameters = parameters if parameters is not None else []
             if in_class > 0:
-                parameters = ['self'].extend(parameters)
-            result += "def %s(%s):\n" % ( item_name, ','.join(parameters) )
+                parameters.insert(0, 'self')
+            result += "def %s(%s):\n" % ( str(item_name), ','.join(parameters) )
             result += indent('"""%s"""\n\n' % remove_indent(escape_docstring(item.__doc__)))
         elif type(item) == types.TypeType:
             result += "class %s:\n" % item_name
@@ -79,13 +80,21 @@ def make_documentation(class_or_module):
             except TypeError:
                 default_value = "None"
             result += "%s = %s\n" % (item_name, default_value)
+    if result == "":
+        result = "pass"
     return result
 
-def try_parse_func_docstring(docstring):
+def sanitizeParamName(name):
+    return name.replace(' ', '').replace('\t', '').replace('\\', '') \
+               .replace('.', '_').replace('[', '').replace(']', '') \
+               .replace('*', '').replace('-', '_')
+
+def try_parse_func_docstring(docstring, funcname):
     if type(docstring) == types.StringType:
         indent = 0
         atLineBeginning = True
-        paramListBegin = paramListEnd = 0
+        paramListBegin = paramListEnd = False
+        atPartBeginning = 2
         for offset in xrange(0, len(docstring)):
             if docstring[offset] == "\n":
                 indent = 0
@@ -93,10 +102,14 @@ def try_parse_func_docstring(docstring):
                 indent += 1
             else:
                 atLineBeginning = False
+            
             if docstring[offset:offset+len("Parameters")] == "Parameters":
                 paramListBegin = offset
-            if docstring[offset:offset+len("---")] == "---":
+            if paramListBegin is not False and docstring[offset] == "\n" and atPartBeginning != 0:
+                atPartBeginning -= 1
+            if docstring[offset:offset+len("---")] == "---" and atPartBeginning == 0:
                 paramListEnd = offset
+                break
         relevantPart = docstring[paramListBegin:paramListEnd].split("\n")[2:]
         if len(relevantPart):
             firstIndent = get_indent(relevantPart[0])
@@ -108,9 +121,7 @@ def try_parse_func_docstring(docstring):
                         name = s[0]
                         type_string = s[1]
                         doc_for_param = None # TODO extract this, and display it in some way... or not
-                        parameter_name = name.replace(' ', '').replace('\t', '').replace('\\', '') \
-                                             .replace('.', '_').replace('[', '').replace(']', '') \
-                                             .replace('*', '').replace('-', '_')
+                        parameter_name = sanitizeParamName(name)
                         try:
                             t = int(parameter_name[0])
                             parameter_name = '_' + parameter_name
@@ -122,7 +133,21 @@ def try_parse_func_docstring(docstring):
                         parameter_name_list.append(parameter_name)
             return parameter_name_list
         else:
-            return []
+            try:
+                firstType = docstring.split("\n")[0].split('.')[-1]
+                if firstType.find(funcname) == -1:
+                    raise IndexError()
+                firstType = firstType.split('->')[0]
+                firstType = firstType.split('(')[1:]
+                firstType = ')'.join('('.join(firstType).split(')')[:-1])
+                paramList = firstType.split(',')
+                cleanedParamList = []
+                for item in paramList:
+                    if item.find('...') == -1:
+                        cleanedParamList.append(item)
+                return [sanitizeParamName(x) for x in cleanedParamList]
+            except IndexError:
+                return []
     else:
         return []
 

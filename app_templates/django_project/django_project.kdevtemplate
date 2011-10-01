@@ -7,4 +7,4 @@ Category=Python
 Comment=Generate filestructure to start a Django project
 Comment[el]=Δημιουργία δομής αρχείων για την εκκίνηση νέου Django project
 Comment[en_GB]=Generate filestructure to start a Django project
-ShowFilesAfterGeneration=%{dest}/%{APPNAMELC}.php
+ShowFilesAfterGeneration=%{dest}/urls.py

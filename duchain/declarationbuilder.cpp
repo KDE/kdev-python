@@ -498,52 +498,54 @@ void DeclarationBuilder::visitCall(CallAst* node)
         ExpressionVisitor v(currentContext(), editor());
         v.visitNode(static_cast<AttributeAst*>(node->function)->value);
         if ( VariableLengthContainer::Ptr container = v.lastType().cast<VariableLengthContainer>() ) {
-            /// DEBUG
-            kDebug() << "Got container type for eventual update: " << container->toString();
-            kDebug() << "Eventual function declaration: " << functionVisitor.lastFunctionDeclaration()->toString();
-            kDebug() << functionVisitor.lastFunctionDeclaration()->isFunctionDeclaration();
-            /// END DEBUG
-            if ( functionVisitor.lastFunctionDeclaration()->isFunctionDeclaration() ) {
-                FunctionDeclaration* f = static_cast<FunctionDeclaration*>(functionVisitor.lastFunctionDeclaration().data());
-                if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(f, "addsTypeOfArg") ) {
-                    register const int offset = d->additionalInformation().str().toInt();
-                    if ( node->arguments.length() > offset ) {
-                        ExpressionVisitor argVisitor(currentContext(), editor());
-                        argVisitor.visitNode(node->arguments.at(offset));
-                        if ( argVisitor.lastType() ) {
-                            kDebug() << "Adding content type: " << argVisitor.lastType()->toString();
-                            container->addContentType(argVisitor.lastType());
-                            v.lastDeclaration()->setType(container);
+            if ( v.lastDeclaration() ) {
+//                 /// DEBUG
+//                 kDebug() << "Got container type for eventual update: " << container->toString();
+//                 kDebug() << "Eventual function declaration: " << functionVisitor.lastFunctionDeclaration()->toString();
+//                 kDebug() << functionVisitor.lastFunctionDeclaration()->isFunctionDeclaration();
+//                 /// END DEBUG
+                if ( functionVisitor.lastFunctionDeclaration()->isFunctionDeclaration() ) {
+                    FunctionDeclaration* f = static_cast<FunctionDeclaration*>(functionVisitor.lastFunctionDeclaration().data());
+                    if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(f, "addsTypeOfArg") ) {
+                        register const int offset = d->additionalInformation().str().toInt();
+                        if ( node->arguments.length() > offset ) {
+                            ExpressionVisitor argVisitor(currentContext(), editor());
+                            argVisitor.visitNode(node->arguments.at(offset));
+                            if ( argVisitor.lastType() ) {
+                                kDebug() << "Adding content type: " << argVisitor.lastType()->toString();
+                                container->addContentType(argVisitor.lastType());
+                                v.lastDeclaration()->setType(container);
+                            }
                         }
                     }
-                }
-                if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(f, "addsTypeOfArgContent") ) {
-                    register const int offset = d->additionalInformation().str().toInt();
-                    if ( node->arguments.length() > offset ) {
-                        ExpressionVisitor argVisitor(currentContext(), editor());
-                        argVisitor.visitNode(node->arguments.at(offset));
-                        if ( argVisitor.lastType() ) {
-                            if ( VariableLengthContainer::Ptr sourceContainer = argVisitor.lastType().cast<VariableLengthContainer>() ) {
-                                if ( AbstractType::Ptr contentType = sourceContainer->contentType().abstractType() ) {
-                                    kDebug() << "Adding content type: " << contentType->toString();
-                                    container->addContentType(contentType);
-                                    v.lastDeclaration()->setType(container);
+                    if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(f, "addsTypeOfArgContent") ) {
+                        register const int offset = d->additionalInformation().str().toInt();
+                        if ( node->arguments.length() > offset ) {
+                            ExpressionVisitor argVisitor(currentContext(), editor());
+                            argVisitor.visitNode(node->arguments.at(offset));
+                            if ( argVisitor.lastType() ) {
+                                if ( VariableLengthContainer::Ptr sourceContainer = argVisitor.lastType().cast<VariableLengthContainer>() ) {
+                                    if ( AbstractType::Ptr contentType = sourceContainer->contentType().abstractType() ) {
+                                        kDebug() << "Adding content type: " << contentType->toString();
+                                        container->addContentType(contentType);
+                                        v.lastDeclaration()->setType(container);
+                                    }
                                 }
-                            }
-                            else if ( argVisitor.lastType()->whichType() == AbstractType::TypeUnsure ) {
-                                UnsureType::Ptr sourceUnsure = argVisitor.lastType().cast<UnsureType>();
-                                FOREACH_FUNCTION ( const IndexedType& type, sourceUnsure->types ) {
-                                    if ( AbstractType::Ptr p = type.abstractType() ) {
-                                        if ( VariableLengthContainer::Ptr sourceContainer = p.cast<VariableLengthContainer>() ) {
-                                            if ( AbstractType::Ptr contentType = sourceContainer->contentType().abstractType() ) {
-                                                kDebug() << "Adding content type: " << contentType->toString();
-                                                container->addContentType(contentType);
-                                                v.lastDeclaration()->setType(container);
+                                else if ( argVisitor.lastType()->whichType() == AbstractType::TypeUnsure ) {
+                                    UnsureType::Ptr sourceUnsure = argVisitor.lastType().cast<UnsureType>();
+                                    FOREACH_FUNCTION ( const IndexedType& type, sourceUnsure->types ) {
+                                        if ( AbstractType::Ptr p = type.abstractType() ) {
+                                            if ( VariableLengthContainer::Ptr sourceContainer = p.cast<VariableLengthContainer>() ) {
+                                                if ( AbstractType::Ptr contentType = sourceContainer->contentType().abstractType() ) {
+                                                    kDebug() << "Adding content type: " << contentType->toString();
+                                                    container->addContentType(contentType);
+                                                    v.lastDeclaration()->setType(container);
+                                                }
                                             }
                                         }
                                     }
+                                    v.lastDeclaration()->setType(container);
                                 }
-                                v.lastDeclaration()->setType(container);
                             }
                         }
                     }

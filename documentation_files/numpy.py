@@ -27,6 +27,7 @@ class DataSource:
         """
         
         
+        return str()
     def exists(self,path):
         """       Test if path exists.
                Test if `path` exists as (and in this order):
@@ -52,6 +53,7 @@ class DataSource:
         """
         
         
+        return bool()
     def open(self,path,mode):
         """       Open and return file-like object.
                If `path` is an URL, it will be downloaded, stored in the `DataSource`
@@ -72,6 +74,7 @@ class DataSource:
         """
         
         
+        return file()
     
 
 ERR_CALL = 0
@@ -164,6 +167,7 @@ class Tester:
         """
         
         
+        return bool()
     def prepare_test_args(self):
         """       Run tests for module using nose.
                This method does the heavy lifting for the `test` method. It takes all
@@ -175,6 +179,7 @@ class Tester:
         """
         
         
+        return None
     def test(self,label,verbose,extra_argv,doctests,coverage):
         """       Run tests for module using nose.
                Parameters
@@ -225,6 +230,7 @@ class Tester:
         """
         
         
+        return object()
     
 
 True_ = False
@@ -263,6 +269,7 @@ def abs(x):
     """
     
     
+    return ndarray()
 def absolute(x):
     """absolute(x[, out])
     Calculate the absolute value element-wise.
@@ -295,6 +302,7 @@ def absolute(x):
     """
     
     
+    return ndarray()
 def add(x1,x2):
     """add(x1, x2[, out])
     Add arguments element-wise.
@@ -325,6 +333,7 @@ def add(x1,x2):
     """
     
     
+    return ndarray()
 def add_docstring():
     """docstring(obj, docstring)
        Add a docstring to a built-in obj if possible.
@@ -334,6 +343,7 @@ def add_docstring():
     """
     
     
+    return None
 def add_newdoc():
     """Adds documentation to obj which is in module place.
        If doc is a string add it to obj as a docstring
@@ -348,6 +358,7 @@ def add_newdoc():
     """
     
     
+    return None
 add_newdocs = None
 def alen(a):
     """   Return the length of the first dimension of the input array.
@@ -373,6 +384,7 @@ def alen(a):
     """
     
     
+    return int()
 def all(a,axis,out):
     """   Test whether all array elements along a given axis evaluate to True.
        Parameters
@@ -421,6 +433,7 @@ def all(a,axis,out):
     """
     
     
+    return ndarray()
 def allclose(a,b,rtol,atol):
     """   Returns True if two arrays are element-wise equal within a tolerance.
        The tolerance values are positive, typically very small numbers.  The
@@ -466,6 +479,7 @@ def allclose(a,b,rtol,atol):
     """
     
     
+    return bool()
 def alltrue():
     """   Check if all elements of input array are true.
        See Also
@@ -475,6 +489,7 @@ def alltrue():
     """
     
     
+    return None
 def alterdot():
     """Change `dot`, `vdot`, and `innerproduct` to use accelerated BLAS functions.
        Typically, as a user of Numpy, you do not explicitly call this function. If
@@ -492,6 +507,7 @@ def alterdot():
     """
     
     
+    return None
 def amax(a,axis,out):
     """   Return the maximum of an array or maximum along an axis.
        Parameters
@@ -540,6 +556,7 @@ def amax(a,axis,out):
     """
     
     
+    return ndarray()
 def amin(a,axis,out):
     """   Return the minimum of an array or minimum along an axis.
        Parameters
@@ -589,6 +606,7 @@ def amin(a,axis,out):
     """
     
     
+    return ndarray()
 def angle(z,deg):
     """   Return the angle of the complex argument.
        Parameters
@@ -616,6 +634,7 @@ def angle(z,deg):
     """
     
     
+    return ndarray()
 def any(a,axis,out):
     """   Test whether any array element along a given axis evaluates to True.
        Returns single boolean unless `axis` is not ``None``
@@ -670,6 +689,7 @@ def any(a,axis,out):
     """
     
     
+    return bool()
 def append(arr,values,axis):
     """   Append values to the end of an array.
        Parameters
@@ -711,6 +731,7 @@ def append(arr,values,axis):
     """
     
     
+    return ndarray()
 def apply_along_axis(func1d,axis,arr,args):
     """   Apply a function to 1-D slices along the given axis.
        Execute `func1d(a, *args)` where `func1d` operates on 1-D arrays and `a`
@@ -760,6 +781,7 @@ def apply_along_axis(func1d,axis,arr,args):
     """
     
     
+    return ndarray()
 def apply_over_axes(func,a,axes):
     """   Apply a function repeatedly over multiple axes.
        `func` is called as `res = func(a, axis)`, where `axis` is the first
@@ -806,6 +828,7 @@ def apply_over_axes(func,a,axes):
     """
     
     
+    return ndarray()
 def arange(start,stop,step,dtype):
     """arange([start,] stop[, step,], dtype=None)
        Return evenly spaced values within a given interval.
@@ -854,6 +877,7 @@ def arange(start,stop,step,dtype):
     """
     
     
+    return ndarray()
 def arccos(x,out):
     """arccos(x[, out])
     Trigonometric inverse cosine, element-wise.
@@ -906,6 +930,7 @@ def arccos(x,out):
     """
     
     
+    return ndarray()
 def arccosh(x,out):
     """arccosh(x[, out])
     Inverse hyperbolic cosine, elementwise.
@@ -949,6 +974,7 @@ def arccosh(x,out):
     """
     
     
+    return ndarray()
 def arcsin(x,out):
     """arcsin(x[, out])
     Inverse sine, element-wise.
@@ -996,6 +1022,7 @@ def arcsin(x,out):
     """
     
     
+    return ndarray()
 def arcsinh(x,out):
     """arcsinh(x[, out])
     Inverse hyperbolic sine elementwise.
@@ -1035,6 +1062,7 @@ def arcsinh(x,out):
     """
     
     
+    return ndarray()
 def arctan(x):
     """arctan(x[, out])
     Trigonometric inverse tangent, element-wise.
@@ -1087,6 +1115,7 @@ def arctan(x):
     """
     
     
+    return ndarray()
 def arctan2(x1,x2):
     """arctan2(x1, x2[, out])
     Element-wise arc tangent of ``x1/x2`` choosing the quadrant correctly.
@@ -1151,6 +1180,7 @@ def arctan2(x1,x2):
     """
     
     
+    return ndarray()
 def arctanh(x):
     """arctanh(x[, out])
     Inverse hyperbolic tangent elementwise.
@@ -1190,6 +1220,7 @@ def arctanh(x):
     """
     
     
+    return ndarray()
 def argmax(a,axis):
     """   Indices of the maximum values along an axis.
        Parameters
@@ -1235,6 +1266,7 @@ def argmax(a,axis):
     """
     
     
+    return ndarray()
 def argmin():
     """   Return the indices of the minimum values along an axis.
        See Also
@@ -1245,6 +1277,7 @@ def argmin():
     """
     
     
+    return None
 def argsort(a,axis,kind,order):
     """   Returns the indices that would sort an array.
        Perform an indirect sort along the given axis using the algorithm specified
@@ -1308,6 +1341,7 @@ def argsort(a,axis,kind,order):
     """
     
     
+    return ndarray()
 def argwhere(a):
     """   Find the indices of array elements that are non-zero, grouped by element.
        Parameters
@@ -1341,6 +1375,7 @@ def argwhere(a):
     """
     
     
+    return ndarray()
 def around(a,decimals,out):
     """   Evenly round to the given number of decimals.
        Parameters
@@ -1399,6 +1434,7 @@ def around(a,decimals,out):
     """
     
     
+    return ndarray()
 def array(object,dtype,copy,order,subok,ndmin):
     """array(object, dtype=None, copy=True, order=None, subok=False, ndmin=0)
        Create an array.
@@ -1465,6 +1501,7 @@ def array(object,dtype,copy,order,subok,ndmin):
     """
     
     
+    return None
 def array2string(a,max_line_width,precision,suppress_small,separator,prefix,style):
     """   Return a string representation of an array.
        Parameters
@@ -1507,6 +1544,7 @@ def array2string(a,max_line_width,precision,suppress_small,separator,prefix,styl
     """
     
     
+    return str()
 def array_equal(a1,a2):
     """   True if two arrays have the same shape and elements, False otherwise.
        Parameters
@@ -1537,6 +1575,7 @@ def array_equal(a1,a2):
     """
     
     
+    return bool()
 def array_equiv(a1,a2):
     """   Returns True if input arrays are shape consistent and all elements equal.
        Shape consistent means they are either the same shape, or one input array
@@ -1566,6 +1605,7 @@ def array_equiv(a1,a2):
     """
     
     
+    return bool()
 def array_repr(arr,max_line_width,precision,suppress_small):
     """   Return the string representation of an array.
        Parameters
@@ -1604,6 +1644,7 @@ def array_repr(arr,max_line_width,precision,suppress_small):
     """
     
     
+    return str()
 def array_split():
     """   Split an array into multiple sub-arrays of equal or near-equal size.
        Please refer to the ``split`` documentation.  The only difference
@@ -1622,6 +1663,7 @@ def array_split():
     """
     
     
+    return None
 def array_str(a,max_line_width,precision,suppress_small):
     """   Return a string representation of the data in an array.
        The data in the array is returned as a single string.  This function is
@@ -1653,6 +1695,7 @@ def array_str(a,max_line_width,precision,suppress_small):
     """
     
     
+    return None
 def asanyarray(a,dtype,order):
     """   Convert the input to an ndarray, but pass ndarray subclasses through.
        Parameters
@@ -1697,6 +1740,7 @@ def asanyarray(a,dtype,order):
     """
     
     
+    return ndarray()
 def asarray(a,dtype,order):
     """   Convert the input to an array.
        Parameters
@@ -1755,6 +1799,7 @@ def asarray(a,dtype,order):
     """
     
     
+    return ndarray()
 def asarray_chkfinite(a,dtype,order):
     """   Convert the input to an array, checking for NaNs or Infs.
        Parameters
@@ -1808,6 +1853,7 @@ def asarray_chkfinite(a,dtype,order):
     """
     
     
+    return ndarray()
 def ascontiguousarray(a,dtype):
     """   Return a contiguous array in memory (C order).
        Parameters
@@ -1839,6 +1885,7 @@ def ascontiguousarray(a,dtype):
     """
     
     
+    return ndarray()
 def asfarray(a,dtype):
     """   Return an array converted to a float type.
        Parameters
@@ -1864,6 +1911,7 @@ def asfarray(a,dtype):
     """
     
     
+    return ndarray()
 def asfortranarray(a,dtype):
     """   Return an array laid out in Fortran order in memory.
        Parameters
@@ -1895,6 +1943,7 @@ def asfortranarray(a,dtype):
     """
     
     
+    return ndarray()
 def asmatrix(data):
     """   Interpret the input as a matrix.
        Unlike `matrix`, `asmatrix` does not make a copy if the input is already
@@ -1919,6 +1968,7 @@ def asmatrix(data):
     """
     
     
+    return matrix()
 def asscalar(a):
     """   Convert an array of size 1 to its scalar equivalent.
        Parameters
@@ -1937,6 +1987,7 @@ def asscalar(a):
     """
     
     
+    return scalar()
 def atleast_1d(array1,array2,___):
     """   Convert inputs to arrays with at least one dimension.
        Scalar inputs are converted to 1-dimensional arrays, whilst
@@ -1970,6 +2021,7 @@ def atleast_1d(array1,array2,___):
     """
     
     
+    return ndarray()
 def atleast_2d(array1,array2,___):
     """   View inputs as arrays with at least two dimensions.
        Parameters
@@ -2002,6 +2054,7 @@ def atleast_2d(array1,array2,___):
     """
     
     
+    return ndarray()
 def atleast_3d(array1,array2,___):
     """   View inputs as arrays with at least three dimensions.
        Parameters
@@ -2045,6 +2098,7 @@ def atleast_3d(array1,array2,___):
     """
     
     
+    return ndarray()
 def average(a,axis,weights,returned):
     """   Compute the weighted average along the specified axis.
        Parameters
@@ -2111,6 +2165,7 @@ def average(a,axis,weights,returned):
     """
     
     
+    return array_type()
 def bartlett(M):
     """   Return the Bartlett window.
        The Bartlett window is very similar to a triangular window, except
@@ -2200,6 +2255,7 @@ def bartlett(M):
     """
     
     
+    return array()
 def base_repr(number,base,padding):
     """   Return a string representation of a number in the given base system.
        Parameters
@@ -2234,6 +2290,7 @@ def base_repr(number,base,padding):
     """
     
     
+    return str()
 def bench(label,verbose,extra_argv):
     """       Run benchmarks for module using nose.
            Parameters
@@ -2285,6 +2342,7 @@ def bench(label,verbose,extra_argv):
     """
     
     
+    return bool()
 def binary_repr(num,width):
     """   Return the binary representation of the input number as a string.
        For negative numbers, if width is not given, a minus sign is added to the
@@ -2334,6 +2392,7 @@ def binary_repr(num,width):
     """
     
     
+    return str()
 def bincount(x,weights):
     """bincount(x, weights=None)
        Count number of occurrences of each value in array of non-negative ints.
@@ -2385,6 +2444,7 @@ def bincount(x,weights):
     """
     
     
+    return ndarray()
 def bitwise_and(x1,x2):
     """bitwise_and(x1, x2[, out])
     Compute the bit-wise AND of two arrays element-wise.
@@ -2428,6 +2488,7 @@ def bitwise_and(x1,x2):
     """
     
     
+    return array_like()
 def bitwise_not(x1):
     """invert(x[, out])
     Compute bit-wise inversion, or bit-wise NOT, element-wise.
@@ -2492,6 +2553,7 @@ def bitwise_not(x1):
     """
     
     
+    return array_like()
 def bitwise_or(x1,x2,out):
     """bitwise_or(x1, x2[, out])
     Compute the bit-wise OR of two arrays element-wise.
@@ -2543,6 +2605,7 @@ def bitwise_or(x1,x2,out):
     """
     
     
+    return array_like()
 def bitwise_xor(x1,x2):
     """bitwise_xor(x1, x2[, out])
     Compute the bit-wise XOR of two arrays element-wise.
@@ -2584,6 +2647,7 @@ def bitwise_xor(x1,x2):
     """
     
     
+    return array_like()
 def blackman(M):
     """   Return the Blackman window.
        The Blackman window is a taper formed by using the the first three
@@ -2664,6 +2728,7 @@ def blackman(M):
     """
     
     
+    return ndarray()
 def bmat(obj):
     """   Build a matrix object from a string, nested sequence, or array.
        Parameters
@@ -2704,12 +2769,14 @@ def bmat(obj):
     """
     
     
+    return matrix()
 class bool:
     def conjugate(self):
         """Returns self, the complex conjugate of any int.
         """
         
         
+        return None
     denominator = None
     imag = None
     numerator = None
@@ -2729,6 +2796,7 @@ class bool8:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -2740,6 +2808,7 @@ class bool8:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -2751,6 +2820,7 @@ class bool8:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -2762,6 +2832,7 @@ class bool8:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -2773,6 +2844,7 @@ class bool8:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -2784,6 +2856,7 @@ class bool8:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -2796,6 +2869,7 @@ class bool8:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -2807,6 +2881,7 @@ class bool8:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -2818,6 +2893,7 @@ class bool8:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -2829,10 +2905,12 @@ class bool8:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -2844,6 +2922,7 @@ class bool8:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -2855,6 +2934,7 @@ class bool8:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -2866,6 +2946,7 @@ class bool8:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -2877,6 +2958,7 @@ class bool8:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -2889,6 +2971,7 @@ class bool8:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -2901,6 +2984,7 @@ class bool8:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -2912,6 +2996,7 @@ class bool8:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -2923,6 +3008,7 @@ class bool8:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -2936,6 +3022,7 @@ class bool8:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -2947,6 +3034,7 @@ class bool8:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -2959,6 +3047,7 @@ class bool8:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -2970,6 +3059,7 @@ class bool8:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -2982,6 +3072,7 @@ class bool8:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -2993,6 +3084,7 @@ class bool8:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3004,6 +3096,7 @@ class bool8:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -3031,6 +3124,7 @@ class bool8:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3042,6 +3136,7 @@ class bool8:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3053,6 +3148,7 @@ class bool8:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3064,6 +3160,7 @@ class bool8:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3075,6 +3172,7 @@ class bool8:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3086,6 +3184,7 @@ class bool8:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -3098,6 +3197,7 @@ class bool8:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3109,6 +3209,7 @@ class bool8:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3120,6 +3221,7 @@ class bool8:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3131,6 +3233,7 @@ class bool8:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3142,6 +3245,7 @@ class bool8:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3153,6 +3257,7 @@ class bool8:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3164,6 +3269,7 @@ class bool8:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -3177,6 +3283,7 @@ class bool8:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3188,6 +3295,7 @@ class bool8:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3199,6 +3307,7 @@ class bool8:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -3211,6 +3320,7 @@ class bool8:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3222,6 +3332,7 @@ class bool8:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3233,6 +3344,7 @@ class bool8:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3244,6 +3356,7 @@ class bool8:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3255,6 +3368,7 @@ class bool8:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3266,6 +3380,7 @@ class bool8:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3277,6 +3392,7 @@ class bool8:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3288,6 +3404,7 @@ class bool8:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3299,6 +3416,7 @@ class bool8:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3310,6 +3428,7 @@ class bool8:
         """
         
         
+        return None
     
 
 class bool_:
@@ -3325,6 +3444,7 @@ class bool_:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3336,6 +3456,7 @@ class bool_:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3347,6 +3468,7 @@ class bool_:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3358,6 +3480,7 @@ class bool_:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3369,6 +3492,7 @@ class bool_:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3380,6 +3504,7 @@ class bool_:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -3392,6 +3517,7 @@ class bool_:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3403,6 +3529,7 @@ class bool_:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3414,6 +3541,7 @@ class bool_:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3425,10 +3553,12 @@ class bool_:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3440,6 +3570,7 @@ class bool_:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3451,6 +3582,7 @@ class bool_:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3462,6 +3594,7 @@ class bool_:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3473,6 +3606,7 @@ class bool_:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -3485,6 +3619,7 @@ class bool_:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -3497,6 +3632,7 @@ class bool_:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3508,6 +3644,7 @@ class bool_:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3519,6 +3656,7 @@ class bool_:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -3532,6 +3670,7 @@ class bool_:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3543,6 +3682,7 @@ class bool_:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -3555,6 +3695,7 @@ class bool_:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3566,6 +3707,7 @@ class bool_:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -3578,6 +3720,7 @@ class bool_:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3589,6 +3732,7 @@ class bool_:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3600,6 +3744,7 @@ class bool_:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -3627,6 +3772,7 @@ class bool_:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3638,6 +3784,7 @@ class bool_:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3649,6 +3796,7 @@ class bool_:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3660,6 +3808,7 @@ class bool_:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3671,6 +3820,7 @@ class bool_:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3682,6 +3832,7 @@ class bool_:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -3694,6 +3845,7 @@ class bool_:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3705,6 +3857,7 @@ class bool_:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3716,6 +3869,7 @@ class bool_:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3727,6 +3881,7 @@ class bool_:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3738,6 +3893,7 @@ class bool_:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3749,6 +3905,7 @@ class bool_:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3760,6 +3917,7 @@ class bool_:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -3773,6 +3931,7 @@ class bool_:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3784,6 +3943,7 @@ class bool_:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3795,6 +3955,7 @@ class bool_:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -3807,6 +3968,7 @@ class bool_:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3818,6 +3980,7 @@ class bool_:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3829,6 +3992,7 @@ class bool_:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3840,6 +4004,7 @@ class bool_:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3851,6 +4016,7 @@ class bool_:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3862,6 +4028,7 @@ class bool_:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3873,6 +4040,7 @@ class bool_:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3884,6 +4052,7 @@ class bool_:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3895,6 +4064,7 @@ class bool_:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3906,6 +4076,7 @@ class bool_:
         """
         
         
+        return None
     
 
 class broadcast:
@@ -3917,11 +4088,13 @@ class broadcast:
         """
         
         
+        return None
     numiter = None
     def reset(self):
         """None"""
         
         
+        return None
     shape = None
     size = None
     
@@ -3961,6 +4134,7 @@ def broadcast_arrays(args):
     """
     
     
+    return list()
 class byte:
     T = None
     def all(self):
@@ -3974,6 +4148,7 @@ class byte:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3985,6 +4160,7 @@ class byte:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -3996,6 +4172,7 @@ class byte:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4007,6 +4184,7 @@ class byte:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4018,6 +4196,7 @@ class byte:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4029,6 +4208,7 @@ class byte:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -4041,6 +4221,7 @@ class byte:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4052,6 +4233,7 @@ class byte:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4063,6 +4245,7 @@ class byte:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4074,10 +4257,12 @@ class byte:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4089,6 +4274,7 @@ class byte:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4100,6 +4286,7 @@ class byte:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4111,6 +4298,7 @@ class byte:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4122,6 +4310,7 @@ class byte:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -4134,6 +4323,7 @@ class byte:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -4146,6 +4336,7 @@ class byte:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4157,6 +4348,7 @@ class byte:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4168,6 +4360,7 @@ class byte:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -4181,6 +4374,7 @@ class byte:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4192,6 +4386,7 @@ class byte:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -4204,6 +4399,7 @@ class byte:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4215,6 +4411,7 @@ class byte:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -4227,6 +4424,7 @@ class byte:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4238,6 +4436,7 @@ class byte:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4249,6 +4448,7 @@ class byte:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -4276,6 +4476,7 @@ class byte:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4287,6 +4488,7 @@ class byte:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4298,6 +4500,7 @@ class byte:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4309,6 +4512,7 @@ class byte:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4320,6 +4524,7 @@ class byte:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4331,6 +4536,7 @@ class byte:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -4343,6 +4549,7 @@ class byte:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4354,6 +4561,7 @@ class byte:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4365,6 +4573,7 @@ class byte:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4376,6 +4585,7 @@ class byte:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4387,6 +4597,7 @@ class byte:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4398,6 +4609,7 @@ class byte:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4409,6 +4621,7 @@ class byte:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -4422,6 +4635,7 @@ class byte:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4433,6 +4647,7 @@ class byte:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4444,6 +4659,7 @@ class byte:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -4456,6 +4672,7 @@ class byte:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4467,6 +4684,7 @@ class byte:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4478,6 +4696,7 @@ class byte:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4489,6 +4708,7 @@ class byte:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4500,6 +4720,7 @@ class byte:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4511,6 +4732,7 @@ class byte:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4522,6 +4744,7 @@ class byte:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4533,6 +4756,7 @@ class byte:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4544,6 +4768,7 @@ class byte:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4555,6 +4780,7 @@ class byte:
         """
         
         
+        return None
     
 
 def byte_bounds(a):
@@ -4585,6 +4811,7 @@ def byte_bounds(a):
     """
     
     
+    return tuple()
 class bytes_:
     T = None
     def all(self):
@@ -4598,6 +4825,7 @@ class bytes_:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4609,6 +4837,7 @@ class bytes_:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4620,6 +4849,7 @@ class bytes_:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4631,6 +4861,7 @@ class bytes_:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4642,6 +4873,7 @@ class bytes_:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4653,6 +4885,7 @@ class bytes_:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -4665,6 +4898,7 @@ class bytes_:
         """
         
         
+        return None
     def capitalize(self,):
         """S.capitalize() -> string
         Return a copy of the string S with only its first character
@@ -4672,6 +4906,7 @@ class bytes_:
         """
         
         
+        return None
     def center(self,width,fillchar):
         """S.center(width[, fillchar]) -> string
         Return S centered in a string of length width. Padding is
@@ -4679,6 +4914,7 @@ class bytes_:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4690,6 +4926,7 @@ class bytes_:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4701,6 +4938,7 @@ class bytes_:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4712,10 +4950,12 @@ class bytes_:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4727,6 +4967,7 @@ class bytes_:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4738,6 +4979,7 @@ class bytes_:
         """
         
         
+        return None
     def count(self,sub,start,end):
         """S.count(sub[, start[, end]]) -> int
         Return the number of non-overlapping occurrences of substring sub in
@@ -4746,6 +4988,7 @@ class bytes_:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4757,6 +5000,7 @@ class bytes_:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4768,6 +5012,7 @@ class bytes_:
         """
         
         
+        return None
     data = None
     def decode(self,encoding,errors):
         """S.decode([encoding[,errors]]) -> object
@@ -4780,6 +5025,7 @@ class bytes_:
         """
         
         
+        return None
     def diagonal(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4791,6 +5037,7 @@ class bytes_:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -4803,6 +5050,7 @@ class bytes_:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4814,6 +5062,7 @@ class bytes_:
         """
         
         
+        return None
     def encode(self,encoding,errors):
         """S.encode([encoding[,errors]]) -> object
         Encodes S using the codec registered for encoding. encoding defaults
@@ -4825,6 +5074,7 @@ class bytes_:
         """
         
         
+        return None
     def endswith(self,suffix,start,end):
         """S.endswith(suffix[, start[, end]]) -> bool
         Return True if S ends with the specified suffix, False otherwise.
@@ -4834,6 +5084,7 @@ class bytes_:
         """
         
         
+        return None
     def expandtabs(self,tabsize):
         """S.expandtabs([tabsize]) -> string
         Return a copy of S where all tab characters are expanded using spaces.
@@ -4841,6 +5092,7 @@ class bytes_:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4852,6 +5104,7 @@ class bytes_:
         """
         
         
+        return None
     def find(self,sub,start,end):
         """S.find(sub [,start [,end]]) -> int
         Return the lowest index in S where substring sub is found,
@@ -4861,6 +5114,7 @@ class bytes_:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -4874,11 +5128,13 @@ class bytes_:
         """
         
         
+        return None
     def format(self,args,kwargs):
         """S.format(*args, **kwargs) -> string
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4890,6 +5146,7 @@ class bytes_:
         """
         
         
+        return None
     imag = None
     def index(self,sub,start,end):
         """S.index(sub [,start [,end]]) -> int
@@ -4897,6 +5154,7 @@ class bytes_:
         """
         
         
+        return None
     def isalnum(self,):
         """S.isalnum() -> bool
         Return True if all characters in S are alphanumeric
@@ -4904,6 +5162,7 @@ class bytes_:
         """
         
         
+        return None
     def isalpha(self,):
         """S.isalpha() -> bool
         Return True if all characters in S are alphabetic
@@ -4911,6 +5170,7 @@ class bytes_:
         """
         
         
+        return None
     def isdigit(self,):
         """S.isdigit() -> bool
         Return True if all characters in S are digits
@@ -4918,6 +5178,7 @@ class bytes_:
         """
         
         
+        return None
     def islower(self,):
         """S.islower() -> bool
         Return True if all cased characters in S are lowercase and there is
@@ -4925,6 +5186,7 @@ class bytes_:
         """
         
         
+        return None
     def isspace(self,):
         """S.isspace() -> bool
         Return True if all characters in S are whitespace
@@ -4932,6 +5194,7 @@ class bytes_:
         """
         
         
+        return None
     def istitle(self,):
         """S.istitle() -> bool
         Return True if S is a titlecased string and there is at least one
@@ -4941,6 +5204,7 @@ class bytes_:
         """
         
         
+        return None
     def isupper(self,):
         """S.isupper() -> bool
         Return True if all cased characters in S are uppercase and there is
@@ -4948,6 +5212,7 @@ class bytes_:
         """
         
         
+        return None
     def item(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4959,6 +5224,7 @@ class bytes_:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -4970,6 +5236,7 @@ class bytes_:
         """
         
         
+        return None
     itemsize = None
     def join(self,iterable):
         """S.join(iterable) -> string
@@ -4978,6 +5245,7 @@ class bytes_:
         """
         
         
+        return None
     def ljust(self,width,fillchar):
         """S.ljust(width[, fillchar]) -> string
         Return S left-justified in a string of length width. Padding is
@@ -4985,12 +5253,14 @@ class bytes_:
         """
         
         
+        return None
     def lower(self,):
         """S.lower() -> string
         Return a copy of the string S converted to lowercase.
         """
         
         
+        return None
     def lstrip(self,chars):
         """S.lstrip([chars]) -> string or unicode
         Return a copy of the string S with leading whitespace removed.
@@ -4999,6 +5269,7 @@ class bytes_:
         """
         
         
+        return None
     def max(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5010,6 +5281,7 @@ class bytes_:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5021,6 +5293,7 @@ class bytes_:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5032,6 +5305,7 @@ class bytes_:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -5059,6 +5333,7 @@ class bytes_:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5070,6 +5345,7 @@ class bytes_:
         """
         
         
+        return None
     def partition(self,sep):
         """S.partition(sep) -> (head, sep, tail)
         Search for the separator sep in S, and return the part before it,
@@ -5078,6 +5354,7 @@ class bytes_:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5089,6 +5366,7 @@ class bytes_:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5100,6 +5378,7 @@ class bytes_:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5111,6 +5390,7 @@ class bytes_:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5122,6 +5402,7 @@ class bytes_:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -5134,6 +5415,7 @@ class bytes_:
         """
         
         
+        return None
     def replace(self,old,new,count):
         """S.replace(old, new[, count]) -> string
         Return a copy of string S with all occurrences of substring
@@ -5142,6 +5424,7 @@ class bytes_:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5153,6 +5436,7 @@ class bytes_:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5164,6 +5448,7 @@ class bytes_:
         """
         
         
+        return None
     def rfind(self,sub,start,end):
         """S.rfind(sub [,start [,end]]) -> int
         Return the highest index in S where substring sub is found,
@@ -5173,12 +5458,14 @@ class bytes_:
         """
         
         
+        return None
     def rindex(self,sub,start,end):
         """S.rindex(sub [,start [,end]]) -> int
         Like S.rfind() but raise ValueError when the substring is not found.
         """
         
         
+        return None
     def rjust(self,width,fillchar):
         """S.rjust(width[, fillchar]) -> string
         Return S right-justified in a string of length width. Padding is
@@ -5186,6 +5473,7 @@ class bytes_:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5197,6 +5485,7 @@ class bytes_:
         """
         
         
+        return None
     def rpartition(self,sep):
         """S.rpartition(sep) -> (head, sep, tail)
         Search for the separator sep in S, starting at the end of S, and return
@@ -5205,6 +5494,7 @@ class bytes_:
         """
         
         
+        return None
     def rsplit(self,sep,maxsplit):
         """S.rsplit([sep [,maxsplit]]) -> list of strings
         Return a list of the words in the string S, using sep as the
@@ -5215,6 +5505,7 @@ class bytes_:
         """
         
         
+        return None
     def rstrip(self,chars):
         """S.rstrip([chars]) -> string or unicode
         Return a copy of the string S with trailing whitespace removed.
@@ -5223,6 +5514,7 @@ class bytes_:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5234,6 +5526,7 @@ class bytes_:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5245,6 +5538,7 @@ class bytes_:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5256,6 +5550,7 @@ class bytes_:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -5269,6 +5564,7 @@ class bytes_:
         """
         
         
+        return None
     def split(self,sep,maxsplit):
         """S.split([sep [,maxsplit]]) -> list of strings
         Return a list of the words in the string S, using sep as the
@@ -5279,6 +5575,7 @@ class bytes_:
         """
         
         
+        return None
     def splitlines(self,keepends):
         """S.splitlines([keepends]) -> list of strings
         Return a list of the lines in S, breaking at line boundaries.
@@ -5287,6 +5584,7 @@ class bytes_:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5298,6 +5596,7 @@ class bytes_:
         """
         
         
+        return None
     def startswith(self,prefix,start,end):
         """S.startswith(prefix[, start[, end]]) -> bool
         Return True if S starts with the specified prefix, False otherwise.
@@ -5307,6 +5606,7 @@ class bytes_:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5318,6 +5618,7 @@ class bytes_:
         """
         
         
+        return None
     strides = None
     def strip(self,chars):
         """S.strip([chars]) -> string or unicode
@@ -5328,6 +5629,7 @@ class bytes_:
         """
         
         
+        return None
     def sum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5339,6 +5641,7 @@ class bytes_:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5350,6 +5653,7 @@ class bytes_:
         """
         
         
+        return None
     def swapcase(self,):
         """S.swapcase() -> string
         Return a copy of the string S with uppercase characters
@@ -5357,6 +5661,7 @@ class bytes_:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5368,6 +5673,7 @@ class bytes_:
         """
         
         
+        return None
     def title(self,):
         """S.title() -> string
         Return a titlecased version of S, i.e. words start with uppercase
@@ -5375,6 +5681,7 @@ class bytes_:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5386,6 +5693,7 @@ class bytes_:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5397,6 +5705,7 @@ class bytes_:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5408,6 +5717,7 @@ class bytes_:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5419,6 +5729,7 @@ class bytes_:
         """
         
         
+        return None
     def translate(self,table,deletechars):
         """S.translate(table [,deletechars]) -> string
         Return a copy of the string S, where all characters occurring
@@ -5428,6 +5739,7 @@ class bytes_:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5439,12 +5751,14 @@ class bytes_:
         """
         
         
+        return None
     def upper(self,):
         """S.upper() -> string
         Return a copy of the string S converted to uppercase.
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5456,6 +5770,7 @@ class bytes_:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5467,6 +5782,7 @@ class bytes_:
         """
         
         
+        return None
     def zfill(self,width):
         """S.zfill(width) -> string
         Pad a numeric string S with zeros on the left, to fill a field
@@ -5474,6 +5790,7 @@ class bytes_:
         """
         
         
+        return None
     
 
 c_ = None
@@ -5507,6 +5824,7 @@ def can_cast(fromtype,totype):
     """
     
     
+    return bool()
 cast = {}
 class cdouble:
     T = None
@@ -5521,6 +5839,7 @@ class cdouble:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5532,6 +5851,7 @@ class cdouble:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5543,6 +5863,7 @@ class cdouble:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5554,6 +5875,7 @@ class cdouble:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5565,6 +5887,7 @@ class cdouble:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5576,6 +5899,7 @@ class cdouble:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -5588,6 +5912,7 @@ class cdouble:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5599,6 +5924,7 @@ class cdouble:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5610,6 +5936,7 @@ class cdouble:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5621,10 +5948,12 @@ class cdouble:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5636,6 +5965,7 @@ class cdouble:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5647,6 +5977,7 @@ class cdouble:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5658,6 +5989,7 @@ class cdouble:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5669,6 +6001,7 @@ class cdouble:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -5681,6 +6014,7 @@ class cdouble:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -5693,6 +6027,7 @@ class cdouble:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5704,6 +6039,7 @@ class cdouble:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5715,6 +6051,7 @@ class cdouble:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -5728,6 +6065,7 @@ class cdouble:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5739,6 +6077,7 @@ class cdouble:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -5751,6 +6090,7 @@ class cdouble:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5762,6 +6102,7 @@ class cdouble:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -5774,6 +6115,7 @@ class cdouble:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5785,6 +6127,7 @@ class cdouble:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5796,6 +6139,7 @@ class cdouble:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -5823,6 +6167,7 @@ class cdouble:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5834,6 +6179,7 @@ class cdouble:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5845,6 +6191,7 @@ class cdouble:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5856,6 +6203,7 @@ class cdouble:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5867,6 +6215,7 @@ class cdouble:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5878,6 +6227,7 @@ class cdouble:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -5890,6 +6240,7 @@ class cdouble:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5901,6 +6252,7 @@ class cdouble:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5912,6 +6264,7 @@ class cdouble:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5923,6 +6276,7 @@ class cdouble:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5934,6 +6288,7 @@ class cdouble:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5945,6 +6300,7 @@ class cdouble:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5956,6 +6312,7 @@ class cdouble:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -5969,6 +6326,7 @@ class cdouble:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5980,6 +6338,7 @@ class cdouble:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -5991,6 +6350,7 @@ class cdouble:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -6003,6 +6363,7 @@ class cdouble:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6014,6 +6375,7 @@ class cdouble:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6025,6 +6387,7 @@ class cdouble:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6036,6 +6399,7 @@ class cdouble:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6047,6 +6411,7 @@ class cdouble:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6058,6 +6423,7 @@ class cdouble:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6069,6 +6435,7 @@ class cdouble:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6080,6 +6447,7 @@ class cdouble:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6091,6 +6459,7 @@ class cdouble:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6102,6 +6471,7 @@ class cdouble:
         """
         
         
+        return None
     
 
 def ceil(x):
@@ -6128,6 +6498,7 @@ def ceil(x):
     """
     
     
+    return ndarray()
 class cfloat:
     T = None
     def all(self):
@@ -6141,6 +6512,7 @@ class cfloat:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6152,6 +6524,7 @@ class cfloat:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6163,6 +6536,7 @@ class cfloat:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6174,6 +6548,7 @@ class cfloat:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6185,6 +6560,7 @@ class cfloat:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6196,6 +6572,7 @@ class cfloat:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -6208,6 +6585,7 @@ class cfloat:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6219,6 +6597,7 @@ class cfloat:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6230,6 +6609,7 @@ class cfloat:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6241,10 +6621,12 @@ class cfloat:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6256,6 +6638,7 @@ class cfloat:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6267,6 +6650,7 @@ class cfloat:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6278,6 +6662,7 @@ class cfloat:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6289,6 +6674,7 @@ class cfloat:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -6301,6 +6687,7 @@ class cfloat:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -6313,6 +6700,7 @@ class cfloat:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6324,6 +6712,7 @@ class cfloat:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6335,6 +6724,7 @@ class cfloat:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -6348,6 +6738,7 @@ class cfloat:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6359,6 +6750,7 @@ class cfloat:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -6371,6 +6763,7 @@ class cfloat:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6382,6 +6775,7 @@ class cfloat:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -6394,6 +6788,7 @@ class cfloat:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6405,6 +6800,7 @@ class cfloat:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6416,6 +6812,7 @@ class cfloat:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -6443,6 +6840,7 @@ class cfloat:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6454,6 +6852,7 @@ class cfloat:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6465,6 +6864,7 @@ class cfloat:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6476,6 +6876,7 @@ class cfloat:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6487,6 +6888,7 @@ class cfloat:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6498,6 +6900,7 @@ class cfloat:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -6510,6 +6913,7 @@ class cfloat:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6521,6 +6925,7 @@ class cfloat:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6532,6 +6937,7 @@ class cfloat:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6543,6 +6949,7 @@ class cfloat:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6554,6 +6961,7 @@ class cfloat:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6565,6 +6973,7 @@ class cfloat:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6576,6 +6985,7 @@ class cfloat:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -6589,6 +6999,7 @@ class cfloat:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6600,6 +7011,7 @@ class cfloat:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6611,6 +7023,7 @@ class cfloat:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -6623,6 +7036,7 @@ class cfloat:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6634,6 +7048,7 @@ class cfloat:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6645,6 +7060,7 @@ class cfloat:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6656,6 +7072,7 @@ class cfloat:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6667,6 +7084,7 @@ class cfloat:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6678,6 +7096,7 @@ class cfloat:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6689,6 +7108,7 @@ class cfloat:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6700,6 +7120,7 @@ class cfloat:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6711,6 +7132,7 @@ class cfloat:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6722,6 +7144,7 @@ class cfloat:
         """
         
         
+        return None
     
 
 char = None
@@ -6738,6 +7161,7 @@ class character:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6749,6 +7173,7 @@ class character:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6760,6 +7185,7 @@ class character:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6771,6 +7197,7 @@ class character:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6782,6 +7209,7 @@ class character:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6793,6 +7221,7 @@ class character:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -6805,6 +7234,7 @@ class character:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6816,6 +7246,7 @@ class character:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6827,6 +7258,7 @@ class character:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6838,10 +7270,12 @@ class character:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6853,6 +7287,7 @@ class character:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6864,6 +7299,7 @@ class character:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6875,6 +7311,7 @@ class character:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6886,6 +7323,7 @@ class character:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -6898,6 +7336,7 @@ class character:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -6910,6 +7349,7 @@ class character:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6921,6 +7361,7 @@ class character:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6932,6 +7373,7 @@ class character:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -6945,6 +7387,7 @@ class character:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6956,6 +7399,7 @@ class character:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -6968,6 +7412,7 @@ class character:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -6979,6 +7424,7 @@ class character:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -6991,6 +7437,7 @@ class character:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7002,6 +7449,7 @@ class character:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7013,6 +7461,7 @@ class character:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -7040,6 +7489,7 @@ class character:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7051,6 +7501,7 @@ class character:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7062,6 +7513,7 @@ class character:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7073,6 +7525,7 @@ class character:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7084,6 +7537,7 @@ class character:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7095,6 +7549,7 @@ class character:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -7107,6 +7562,7 @@ class character:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7118,6 +7574,7 @@ class character:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7129,6 +7586,7 @@ class character:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7140,6 +7598,7 @@ class character:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7151,6 +7610,7 @@ class character:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7162,6 +7622,7 @@ class character:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7173,6 +7634,7 @@ class character:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -7186,6 +7648,7 @@ class character:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7197,6 +7660,7 @@ class character:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7208,6 +7672,7 @@ class character:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -7220,6 +7685,7 @@ class character:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7231,6 +7697,7 @@ class character:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7242,6 +7709,7 @@ class character:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7253,6 +7721,7 @@ class character:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7264,6 +7733,7 @@ class character:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7275,6 +7745,7 @@ class character:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7286,6 +7757,7 @@ class character:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7297,6 +7769,7 @@ class character:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7308,6 +7781,7 @@ class character:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -7319,6 +7793,7 @@ class character:
         """
         
         
+        return None
     
 
 class chararray:
@@ -7333,6 +7808,7 @@ class chararray:
         """
         
         
+        return None
     def any(self,axis=None,out=None):
         """a.any(axis=None, out=None)
            Returns True if any of the elements of `a` evaluate to True.
@@ -7343,6 +7819,7 @@ class chararray:
         """
         
         
+        return None
     def argmax(self,axis=None,out=None):
         """a.argmax(axis=None, out=None)
            Return indices of the maximum values along the given axis.
@@ -7353,6 +7830,7 @@ class chararray:
         """
         
         
+        return None
     def argmin(self,axis=None,out=None):
         """a.argmin(axis=None, out=None)
            Return indices of the minimum values along the given axis of `a`.
@@ -7363,10 +7841,12 @@ class chararray:
         """
         
         
+        return None
     def argsort(self):
         """None"""
         
         
+        return None
     def astype(self,t):
         """a.astype(t)
            Copy of the array, cast to a specified type.
@@ -7384,6 +7864,7 @@ class chararray:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """a.byteswap(inplace)
@@ -7416,6 +7897,7 @@ class chararray:
         """
         
         
+        return None
     def capitalize(self):
         """       Return a copy of `self` with only the first character of each element
                capitalized.
@@ -7426,6 +7908,7 @@ class chararray:
         """
         
         
+        return None
     def center(self):
         """           Return a copy of `self` with its elements centered in a
                    string of length `width`.
@@ -7436,6 +7919,7 @@ class chararray:
         """
         
         
+        return None
     def choose(self,choices,out=None,mode='raise'):
         """a.choose(choices, out=None, mode='raise')
            Use an index array to construct a new array from a set of choices.
@@ -7446,6 +7930,7 @@ class chararray:
         """
         
         
+        return None
     def clip(self,a_min,a_max,out=None):
         """a.clip(a_min, a_max, out=None)
            Return an array whose values are limited to ``[a_min, a_max]``.
@@ -7456,6 +7941,7 @@ class chararray:
         """
         
         
+        return None
     def compress(self,condition,axis=None,out=None):
         """a.compress(condition, axis=None, out=None)
            Return selected slices of this array along given axis.
@@ -7466,6 +7952,7 @@ class chararray:
         """
         
         
+        return None
     def conj(self,):
         """a.conj()
            Complex-conjugate all elements.
@@ -7476,6 +7963,7 @@ class chararray:
         """
         
         
+        return None
     def conjugate(self,):
         """a.conjugate()
            Return the complex conjugate, element-wise.
@@ -7486,6 +7974,7 @@ class chararray:
         """
         
         
+        return None
     def copy(self,order):
         """a.copy(order='C')
            Return a copy of the array.
@@ -7512,6 +8001,7 @@ class chararray:
         """
         
         
+        return None
     def count(self):
         """       Returns an array with the number of non-overlapping occurrences of
                substring `sub` in the range [`start`, `end`].
@@ -7522,6 +8012,7 @@ class chararray:
         """
         
         
+        return None
     ctypes = None
     def cumprod(self,axis=None,dtype=None,out=None):
         """a.cumprod(axis=None, dtype=None, out=None)
@@ -7533,6 +8024,7 @@ class chararray:
         """
         
         
+        return None
     def cumsum(self,axis=None,dtype=None,out=None):
         """a.cumsum(axis=None, dtype=None, out=None)
            Return the cumulative sum of the elements along the given axis.
@@ -7543,6 +8035,7 @@ class chararray:
         """
         
         
+        return None
     data = None
     def decode(self):
         """       Calls `str.decode` element-wise.
@@ -7553,6 +8046,7 @@ class chararray:
         """
         
         
+        return None
     def diagonal(self,offset=0,axis1=0,axis2=1):
         """a.diagonal(offset=0, axis1=0, axis2=1)
            Return specified diagonals.
@@ -7563,10 +8057,12 @@ class chararray:
         """
         
         
+        return None
     def dot(self):
         """None"""
         
         
+        return None
     dtype = None
     def dump(self,file):
         """a.dump(file)
@@ -7579,6 +8075,7 @@ class chararray:
         """
         
         
+        return None
     def dumps(self,):
         """a.dumps()
            Returns the pickle of the array as a string.
@@ -7589,6 +8086,7 @@ class chararray:
         """
         
         
+        return None
     def encode(self):
         """       Calls `str.encode` element-wise.
                See also
@@ -7598,6 +8096,7 @@ class chararray:
         """
         
         
+        return None
     def endswith(self):
         """       Returns a boolean array which is `True` where the string element
                in `self` ends with `suffix`, otherwise `False`.
@@ -7608,6 +8107,7 @@ class chararray:
         """
         
         
+        return None
     def expandtabs(self):
         """       Return a copy of each string element where all tab characters are
                replaced by one or more spaces.
@@ -7618,6 +8118,7 @@ class chararray:
         """
         
         
+        return None
     def fill(self,value):
         """a.fill(value)
            Fill the array with a scalar value.
@@ -7638,6 +8139,7 @@ class chararray:
         """
         
         
+        return None
     def find(self):
         """       For each element, return the lowest index in the string where
                substring `sub` is found.
@@ -7648,6 +8150,7 @@ class chararray:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self,order):
@@ -7676,6 +8179,7 @@ class chararray:
         """
         
         
+        return ndarray()
     def getfield(self,dtype,offset):
         """a.getfield(dtype, offset)
            Returns a field of the given array as a certain type.
@@ -7720,6 +8224,7 @@ class chararray:
         """
         
         
+        return None
     imag = None
     def index(self):
         """       Like `find`, but raises `ValueError` when the substring is not found.
@@ -7730,6 +8235,7 @@ class chararray:
         """
         
         
+        return None
     def isalnum(self):
         """       Returns true for each element if all characters in the string
                are alphanumeric and there is at least one character, false
@@ -7741,6 +8247,7 @@ class chararray:
         """
         
         
+        return None
     def isalpha(self):
         """       Returns true for each element if all characters in the string
                are alphabetic and there is at least one character, false
@@ -7752,6 +8259,7 @@ class chararray:
         """
         
         
+        return None
     def isdecimal(self):
         """       For each element in `self`, return True if there are only
                decimal characters in the element.
@@ -7762,6 +8270,7 @@ class chararray:
         """
         
         
+        return None
     def isdigit(self):
         """       Returns true for each element if all characters in the string are
                digits and there is at least one character, false otherwise.
@@ -7772,6 +8281,7 @@ class chararray:
         """
         
         
+        return None
     def islower(self):
         """       Returns true for each element if all cased characters in the
                string are lowercase and there is at least one cased character,
@@ -7783,6 +8293,7 @@ class chararray:
         """
         
         
+        return None
     def isnumeric(self):
         """       For each element in `self`, return True if there are only
                numeric characters in the element.
@@ -7793,6 +8304,7 @@ class chararray:
         """
         
         
+        return None
     def isspace(self):
         """       Returns true for each element if there are only whitespace
                characters in the string and there is at least one character,
@@ -7804,6 +8316,7 @@ class chararray:
         """
         
         
+        return None
     def istitle(self):
         """       Returns true for each element if the element is a titlecased
                string and there is at least one character, false otherwise.
@@ -7814,6 +8327,7 @@ class chararray:
         """
         
         
+        return None
     def isupper(self):
         """       Returns true for each element if all cased characters in the
                string are uppercase and there is at least one character, false
@@ -7825,6 +8339,7 @@ class chararray:
         """
         
         
+        return None
     def item(self,args):
         """a.item(*args)
            Copy an element of an array to a standard Python scalar and return it.
@@ -7872,6 +8387,7 @@ class chararray:
         """
         
         
+        return Standard()
     def itemset(self,args):
         """a.itemset(*args)
            Insert scalar into an array (scalar is cast to array's dtype, if possible)
@@ -7911,6 +8427,7 @@ class chararray:
         """
         
         
+        return None
     itemsize = None
     def join(self):
         """       Return a string which is the concatenation of the strings in the
@@ -7922,6 +8439,7 @@ class chararray:
         """
         
         
+        return None
     def ljust(self):
         """           Return an array with the elements of `self` left-justified in a
                    string of length `width`.
@@ -7932,6 +8450,7 @@ class chararray:
         """
         
         
+        return None
     def lower(self):
         """       Return an array with the elements of `self` converted to
                lowercase.
@@ -7942,6 +8461,7 @@ class chararray:
         """
         
         
+        return None
     def lstrip(self):
         """       For each element in `self`, return a copy with the leading characters
                removed.
@@ -7952,6 +8472,7 @@ class chararray:
         """
         
         
+        return None
     def max(self,axis=None,out=None):
         """a.max(axis=None, out=None)
            Return the maximum along a given axis.
@@ -7962,6 +8483,7 @@ class chararray:
         """
         
         
+        return None
     def mean(self,axis=None,dtype=None,out=None):
         """a.mean(axis=None, dtype=None, out=None)
            Returns the average of the array elements along given axis.
@@ -7972,6 +8494,7 @@ class chararray:
         """
         
         
+        return None
     def min(self,axis=None,out=None):
         """a.min(axis=None, out=None)
            Return the minimum along a given axis.
@@ -7982,6 +8505,7 @@ class chararray:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -8013,6 +8537,7 @@ class chararray:
         """
         
         
+        return array()
     def nonzero(self,):
         """a.nonzero()
            Return the indices of the elements that are non-zero.
@@ -8023,6 +8548,7 @@ class chararray:
         """
         
         
+        return None
     def partition(self):
         """           Partition each element in `self` around `sep`.
                    See also
@@ -8032,6 +8558,7 @@ class chararray:
         """
         
         
+        return None
     def prod(self,axis=None,dtype=None,out=None):
         """a.prod(axis=None, dtype=None, out=None)
            Return the product of the array elements over the given axis
@@ -8042,6 +8569,7 @@ class chararray:
         """
         
         
+        return None
     def ptp(self,axis=None,out=None):
         """a.ptp(axis=None, out=None)
            Peak to peak (maximum - minimum) value along a given axis.
@@ -8052,6 +8580,7 @@ class chararray:
         """
         
         
+        return None
     def put(self,indices,values,mode='raise'):
         """a.put(indices, values, mode='raise')
            Set ``a.flat[n] = values[n]`` for all `n` in indices.
@@ -8062,6 +8591,7 @@ class chararray:
         """
         
         
+        return None
     def ravel(self,order):
         """a.ravel([order])
            Return a flattened array.
@@ -8073,6 +8603,7 @@ class chararray:
         """
         
         
+        return None
     real = None
     def repeat(self,repeats,axis=None):
         """a.repeat(repeats, axis=None)
@@ -8084,6 +8615,7 @@ class chararray:
         """
         
         
+        return None
     def replace(self):
         """       For each element in `self`, return a copy of the string with all
                occurrences of substring `old` replaced by `new`.
@@ -8094,6 +8626,7 @@ class chararray:
         """
         
         
+        return None
     def reshape(self,shape,order='C'):
         """a.reshape(shape, order='C')
            Returns an array containing the same data with a new shape.
@@ -8104,6 +8637,7 @@ class chararray:
         """
         
         
+        return None
     def resize(self,new_shape,refcheck):
         """a.resize(new_shape, refcheck=True)
            Change shape and size of array in-place.
@@ -8173,6 +8707,7 @@ class chararray:
         """
         
         
+        return None
     def rfind(self):
         """       For each element in `self`, return the highest index in the string
                where substring `sub` is found, such that `sub` is contained
@@ -8184,6 +8719,7 @@ class chararray:
         """
         
         
+        return None
     def rindex(self):
         """       Like `rfind`, but raises `ValueError` when the substring `sub` is
                not found.
@@ -8194,6 +8730,7 @@ class chararray:
         """
         
         
+        return None
     def rjust(self):
         """           Return an array with the elements of `self`
                    right-justified in a string of length `width`.
@@ -8204,6 +8741,7 @@ class chararray:
         """
         
         
+        return None
     def round(self,decimals=0,out=None):
         """a.round(decimals=0, out=None)
            Return `a` with each element rounded to the given number of decimals.
@@ -8214,6 +8752,7 @@ class chararray:
         """
         
         
+        return None
     def rpartition(self):
         """           Partition each element in `self` around `sep`.
                    See also
@@ -8223,6 +8762,7 @@ class chararray:
         """
         
         
+        return None
     def rsplit(self):
         """           For each element in `self`, return a list of the words in
                    the string, using `sep` as the delimiter string.
@@ -8233,6 +8773,7 @@ class chararray:
         """
         
         
+        return None
     def rstrip(self):
         """       For each element in `self`, return a copy with the trailing
                characters removed.
@@ -8243,6 +8784,7 @@ class chararray:
         """
         
         
+        return None
     def searchsorted(self,v,side='left'):
         """a.searchsorted(v, side='left')
            Find indices where elements of v should be inserted in a to maintain order.
@@ -8253,6 +8795,7 @@ class chararray:
         """
         
         
+        return None
     def setfield(self,val,dtype,offset):
         """a.setfield(val, dtype, offset=0)
            Put a value into a specified place in a field defined by a data-type.
@@ -8296,6 +8839,7 @@ class chararray:
         """
         
         
+        return None
     def setflags(self,write,align,uic):
         """a.setflags(write=None, align=None, uic=None)
            Set array flags WRITEABLE, ALIGNED, and UPDATEIFCOPY, respectively.
@@ -8357,6 +8901,7 @@ class chararray:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self,axis,kind,order):
@@ -8403,6 +8948,7 @@ class chararray:
         """
         
         
+        return None
     def split(self):
         """       For each element in `self`, return a list of the words in the
                string, using `sep` as the delimiter string.
@@ -8413,6 +8959,7 @@ class chararray:
         """
         
         
+        return None
     def splitlines(self):
         """       For each element in `self`, return a list of the lines in the
                element, breaking at line boundaries.
@@ -8423,6 +8970,7 @@ class chararray:
         """
         
         
+        return None
     def squeeze(self,):
         """a.squeeze()
            Remove single-dimensional entries from the shape of `a`.
@@ -8433,6 +8981,7 @@ class chararray:
         """
         
         
+        return None
     def startswith(self):
         """       Returns a boolean array which is `True` where the string element
                in `self` starts with `prefix`, otherwise `False`.
@@ -8443,6 +8992,7 @@ class chararray:
         """
         
         
+        return None
     def std(self,axis=None,dtype=None,out=None,ddof=0):
         """a.std(axis=None, dtype=None, out=None, ddof=0)
            Returns the standard deviation of the array elements along given axis.
@@ -8453,6 +9003,7 @@ class chararray:
         """
         
         
+        return None
     strides = None
     def strip(self):
         """       For each element in `self`, return a copy with the leading and
@@ -8464,6 +9015,7 @@ class chararray:
         """
         
         
+        return None
     def sum(self,axis=None,dtype=None,out=None):
         """a.sum(axis=None, dtype=None, out=None)
            Return the sum of the array elements over the given axis.
@@ -8474,6 +9026,7 @@ class chararray:
         """
         
         
+        return None
     def swapaxes(self,axis1,axis2):
         """a.swapaxes(axis1, axis2)
            Return a view of the array with `axis1` and `axis2` interchanged.
@@ -8484,6 +9037,7 @@ class chararray:
         """
         
         
+        return None
     def swapcase(self):
         """       For each element in `self`, return a copy of the string with
                uppercase characters converted to lowercase and vice versa.
@@ -8494,6 +9048,7 @@ class chararray:
         """
         
         
+        return None
     def take(self,indices,axis=None,out=None,mode='raise'):
         """a.take(indices, axis=None, out=None, mode='raise')
            Return an array formed from the elements of `a` at the given indices.
@@ -8504,6 +9059,7 @@ class chararray:
         """
         
         
+        return None
     def title(self):
         """       For each element in `self`, return a titlecased version of the
                string: words start with uppercase characters, all remaining cased
@@ -8515,6 +9071,7 @@ class chararray:
         """
         
         
+        return None
     def tofile(self,fid,sep,format):
         """a.tofile(fid, sep="", format="%s")
            Write array to a file as text or binary (default).
@@ -8544,6 +9101,7 @@ class chararray:
         """
         
         
+        return None
     def tolist(self):
         """a.tolist()
            Return the array as a (possibly nested) list.
@@ -8572,6 +9130,7 @@ class chararray:
         """
         
         
+        return list()
     def tostring(self,order):
         """a.tostring(order='C')
            Construct a Python string containing the raw data bytes in the array.
@@ -8601,6 +9160,7 @@ class chararray:
         """
         
         
+        return str()
     def trace(self,offset=0,axis1=0,axis2=1,dtype=None,out=None):
         """a.trace(offset=0, axis1=0, axis2=1, dtype=None, out=None)
            Return the sum along diagonals of the array.
@@ -8611,6 +9171,7 @@ class chararray:
         """
         
         
+        return None
     def translate(self):
         """       For each element in `self`, return a copy of the string where
                all characters occurring in the optional argument
@@ -8623,6 +9184,7 @@ class chararray:
         """
         
         
+        return None
     def transpose(self,axes):
         """a.transpose(*axes)
            Returns a view of the array with axes transposed.
@@ -8666,6 +9228,7 @@ class chararray:
         """
         
         
+        return ndarray()
     def upper(self):
         """       Return an array with the elements of `self` converted to
                uppercase.
@@ -8676,6 +9239,7 @@ class chararray:
         """
         
         
+        return None
     def var(self,axis=None,dtype=None,out=None,ddof=0):
         """a.var(axis=None, dtype=None, out=None, ddof=0)
            Returns the variance of the array elements, along given axis.
@@ -8686,6 +9250,7 @@ class chararray:
         """
         
         
+        return None
     def view(self,dtype,type):
         """a.view(dtype=None, type=None)
            New view of array with the same data.
@@ -8740,6 +9305,7 @@ class chararray:
         """
         
         
+        return None
     def zfill(self):
         """       Return the numeric string left-filled with zeros in a string of
                length `width`.
@@ -8750,6 +9316,7 @@ class chararray:
         """
         
         
+        return None
     
 
 def choose(a,choices,out,mode):
@@ -8854,6 +9421,7 @@ def choose(a,choices,out,mode):
     """
     
     
+    return array()
 def clip(a,a_min,a_max,out):
     """   Clip (limit) the values in an array.
        Given an interval, values outside the interval are clipped to
@@ -8900,6 +9468,7 @@ def clip(a,a_min,a_max,out):
     """
     
     
+    return ndarray()
 class clongdouble:
     T = None
     def all(self):
@@ -8913,6 +9482,7 @@ class clongdouble:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -8924,6 +9494,7 @@ class clongdouble:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -8935,6 +9506,7 @@ class clongdouble:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -8946,6 +9518,7 @@ class clongdouble:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -8957,6 +9530,7 @@ class clongdouble:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -8968,6 +9542,7 @@ class clongdouble:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -8980,6 +9555,7 @@ class clongdouble:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -8991,6 +9567,7 @@ class clongdouble:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9002,6 +9579,7 @@ class clongdouble:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9013,10 +9591,12 @@ class clongdouble:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9028,6 +9608,7 @@ class clongdouble:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9039,6 +9620,7 @@ class clongdouble:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9050,6 +9632,7 @@ class clongdouble:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9061,6 +9644,7 @@ class clongdouble:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -9073,6 +9657,7 @@ class clongdouble:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -9085,6 +9670,7 @@ class clongdouble:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9096,6 +9682,7 @@ class clongdouble:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9107,6 +9694,7 @@ class clongdouble:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -9120,6 +9708,7 @@ class clongdouble:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9131,6 +9720,7 @@ class clongdouble:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -9143,6 +9733,7 @@ class clongdouble:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9154,6 +9745,7 @@ class clongdouble:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -9166,6 +9758,7 @@ class clongdouble:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9177,6 +9770,7 @@ class clongdouble:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9188,6 +9782,7 @@ class clongdouble:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -9215,6 +9810,7 @@ class clongdouble:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9226,6 +9822,7 @@ class clongdouble:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9237,6 +9834,7 @@ class clongdouble:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9248,6 +9846,7 @@ class clongdouble:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9259,6 +9858,7 @@ class clongdouble:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9270,6 +9870,7 @@ class clongdouble:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -9282,6 +9883,7 @@ class clongdouble:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9293,6 +9895,7 @@ class clongdouble:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9304,6 +9907,7 @@ class clongdouble:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9315,6 +9919,7 @@ class clongdouble:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9326,6 +9931,7 @@ class clongdouble:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9337,6 +9943,7 @@ class clongdouble:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9348,6 +9955,7 @@ class clongdouble:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -9361,6 +9969,7 @@ class clongdouble:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9372,6 +9981,7 @@ class clongdouble:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9383,6 +9993,7 @@ class clongdouble:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -9395,6 +10006,7 @@ class clongdouble:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9406,6 +10018,7 @@ class clongdouble:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9417,6 +10030,7 @@ class clongdouble:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9428,6 +10042,7 @@ class clongdouble:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9439,6 +10054,7 @@ class clongdouble:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9450,6 +10066,7 @@ class clongdouble:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9461,6 +10078,7 @@ class clongdouble:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9472,6 +10090,7 @@ class clongdouble:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9483,6 +10102,7 @@ class clongdouble:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9494,6 +10114,7 @@ class clongdouble:
         """
         
         
+        return None
     
 
 class clongfloat:
@@ -9509,6 +10130,7 @@ class clongfloat:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9520,6 +10142,7 @@ class clongfloat:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9531,6 +10154,7 @@ class clongfloat:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9542,6 +10166,7 @@ class clongfloat:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9553,6 +10178,7 @@ class clongfloat:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9564,6 +10190,7 @@ class clongfloat:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -9576,6 +10203,7 @@ class clongfloat:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9587,6 +10215,7 @@ class clongfloat:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9598,6 +10227,7 @@ class clongfloat:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9609,10 +10239,12 @@ class clongfloat:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9624,6 +10256,7 @@ class clongfloat:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9635,6 +10268,7 @@ class clongfloat:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9646,6 +10280,7 @@ class clongfloat:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9657,6 +10292,7 @@ class clongfloat:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -9669,6 +10305,7 @@ class clongfloat:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -9681,6 +10318,7 @@ class clongfloat:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9692,6 +10330,7 @@ class clongfloat:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9703,6 +10342,7 @@ class clongfloat:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -9716,6 +10356,7 @@ class clongfloat:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9727,6 +10368,7 @@ class clongfloat:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -9739,6 +10381,7 @@ class clongfloat:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9750,6 +10393,7 @@ class clongfloat:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -9762,6 +10406,7 @@ class clongfloat:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9773,6 +10418,7 @@ class clongfloat:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9784,6 +10430,7 @@ class clongfloat:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -9811,6 +10458,7 @@ class clongfloat:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9822,6 +10470,7 @@ class clongfloat:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9833,6 +10482,7 @@ class clongfloat:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9844,6 +10494,7 @@ class clongfloat:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9855,6 +10506,7 @@ class clongfloat:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9866,6 +10518,7 @@ class clongfloat:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -9878,6 +10531,7 @@ class clongfloat:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9889,6 +10543,7 @@ class clongfloat:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9900,6 +10555,7 @@ class clongfloat:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9911,6 +10567,7 @@ class clongfloat:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9922,6 +10579,7 @@ class clongfloat:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9933,6 +10591,7 @@ class clongfloat:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9944,6 +10603,7 @@ class clongfloat:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -9957,6 +10617,7 @@ class clongfloat:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9968,6 +10629,7 @@ class clongfloat:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -9979,6 +10641,7 @@ class clongfloat:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -9991,6 +10654,7 @@ class clongfloat:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10002,6 +10666,7 @@ class clongfloat:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10013,6 +10678,7 @@ class clongfloat:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10024,6 +10690,7 @@ class clongfloat:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10035,6 +10702,7 @@ class clongfloat:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10046,6 +10714,7 @@ class clongfloat:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10057,6 +10726,7 @@ class clongfloat:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10068,6 +10738,7 @@ class clongfloat:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10079,6 +10750,7 @@ class clongfloat:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10090,6 +10762,7 @@ class clongfloat:
         """
         
         
+        return None
     
 
 def column_stack(tup):
@@ -10124,6 +10797,7 @@ def column_stack(tup):
     """
     
     
+    return _2_D()
 def common_type(array1,array2,___):
     """   Return a scalar type which is common to the input arrays.
        The return type will always be an inexact (i.e. floating point) scalar
@@ -10155,10 +10829,12 @@ def common_type(array1,array2,___):
     """
     
     
+    return data()
 def compare_chararrays():
     """None"""
     
     
+    return None
 compat = None
 class complex:
     def conjugate(self,):
@@ -10167,6 +10843,7 @@ class complex:
         """
         
         
+        return None
     imag = None
     real = None
     
@@ -10184,6 +10861,7 @@ class complex128:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10195,6 +10873,7 @@ class complex128:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10206,6 +10885,7 @@ class complex128:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10217,6 +10897,7 @@ class complex128:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10228,6 +10909,7 @@ class complex128:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10239,6 +10921,7 @@ class complex128:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -10251,6 +10934,7 @@ class complex128:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10262,6 +10946,7 @@ class complex128:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10273,6 +10958,7 @@ class complex128:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10284,10 +10970,12 @@ class complex128:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10299,6 +10987,7 @@ class complex128:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10310,6 +10999,7 @@ class complex128:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10321,6 +11011,7 @@ class complex128:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10332,6 +11023,7 @@ class complex128:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -10344,6 +11036,7 @@ class complex128:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -10356,6 +11049,7 @@ class complex128:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10367,6 +11061,7 @@ class complex128:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10378,6 +11073,7 @@ class complex128:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -10391,6 +11087,7 @@ class complex128:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10402,6 +11099,7 @@ class complex128:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -10414,6 +11112,7 @@ class complex128:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10425,6 +11124,7 @@ class complex128:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -10437,6 +11137,7 @@ class complex128:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10448,6 +11149,7 @@ class complex128:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10459,6 +11161,7 @@ class complex128:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -10486,6 +11189,7 @@ class complex128:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10497,6 +11201,7 @@ class complex128:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10508,6 +11213,7 @@ class complex128:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10519,6 +11225,7 @@ class complex128:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10530,6 +11237,7 @@ class complex128:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10541,6 +11249,7 @@ class complex128:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -10553,6 +11262,7 @@ class complex128:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10564,6 +11274,7 @@ class complex128:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10575,6 +11286,7 @@ class complex128:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10586,6 +11298,7 @@ class complex128:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10597,6 +11310,7 @@ class complex128:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10608,6 +11322,7 @@ class complex128:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10619,6 +11334,7 @@ class complex128:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -10632,6 +11348,7 @@ class complex128:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10643,6 +11360,7 @@ class complex128:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10654,6 +11372,7 @@ class complex128:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -10666,6 +11385,7 @@ class complex128:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10677,6 +11397,7 @@ class complex128:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10688,6 +11409,7 @@ class complex128:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10699,6 +11421,7 @@ class complex128:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10710,6 +11433,7 @@ class complex128:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10721,6 +11445,7 @@ class complex128:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10732,6 +11457,7 @@ class complex128:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10743,6 +11469,7 @@ class complex128:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10754,6 +11481,7 @@ class complex128:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10765,6 +11493,7 @@ class complex128:
         """
         
         
+        return None
     
 
 class complex192:
@@ -10780,6 +11509,7 @@ class complex192:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10791,6 +11521,7 @@ class complex192:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10802,6 +11533,7 @@ class complex192:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10813,6 +11545,7 @@ class complex192:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10824,6 +11557,7 @@ class complex192:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10835,6 +11569,7 @@ class complex192:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -10847,6 +11582,7 @@ class complex192:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10858,6 +11594,7 @@ class complex192:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10869,6 +11606,7 @@ class complex192:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10880,10 +11618,12 @@ class complex192:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10895,6 +11635,7 @@ class complex192:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10906,6 +11647,7 @@ class complex192:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10917,6 +11659,7 @@ class complex192:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10928,6 +11671,7 @@ class complex192:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -10940,6 +11684,7 @@ class complex192:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -10952,6 +11697,7 @@ class complex192:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10963,6 +11709,7 @@ class complex192:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10974,6 +11721,7 @@ class complex192:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -10987,6 +11735,7 @@ class complex192:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -10998,6 +11747,7 @@ class complex192:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -11010,6 +11760,7 @@ class complex192:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11021,6 +11772,7 @@ class complex192:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -11033,6 +11785,7 @@ class complex192:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11044,6 +11797,7 @@ class complex192:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11055,6 +11809,7 @@ class complex192:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -11082,6 +11837,7 @@ class complex192:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11093,6 +11849,7 @@ class complex192:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11104,6 +11861,7 @@ class complex192:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11115,6 +11873,7 @@ class complex192:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11126,6 +11885,7 @@ class complex192:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11137,6 +11897,7 @@ class complex192:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -11149,6 +11910,7 @@ class complex192:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11160,6 +11922,7 @@ class complex192:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11171,6 +11934,7 @@ class complex192:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11182,6 +11946,7 @@ class complex192:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11193,6 +11958,7 @@ class complex192:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11204,6 +11970,7 @@ class complex192:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11215,6 +11982,7 @@ class complex192:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -11228,6 +11996,7 @@ class complex192:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11239,6 +12008,7 @@ class complex192:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11250,6 +12020,7 @@ class complex192:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -11262,6 +12033,7 @@ class complex192:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11273,6 +12045,7 @@ class complex192:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11284,6 +12057,7 @@ class complex192:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11295,6 +12069,7 @@ class complex192:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11306,6 +12081,7 @@ class complex192:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11317,6 +12093,7 @@ class complex192:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11328,6 +12105,7 @@ class complex192:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11339,6 +12117,7 @@ class complex192:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11350,6 +12129,7 @@ class complex192:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11361,6 +12141,7 @@ class complex192:
         """
         
         
+        return None
     
 
 class complex64:
@@ -11376,6 +12157,7 @@ class complex64:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11387,6 +12169,7 @@ class complex64:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11398,6 +12181,7 @@ class complex64:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11409,6 +12193,7 @@ class complex64:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11420,6 +12205,7 @@ class complex64:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11431,6 +12217,7 @@ class complex64:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -11443,6 +12230,7 @@ class complex64:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11454,6 +12242,7 @@ class complex64:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11465,6 +12254,7 @@ class complex64:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11476,10 +12266,12 @@ class complex64:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11491,6 +12283,7 @@ class complex64:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11502,6 +12295,7 @@ class complex64:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11513,6 +12307,7 @@ class complex64:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11524,6 +12319,7 @@ class complex64:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -11536,6 +12332,7 @@ class complex64:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -11548,6 +12345,7 @@ class complex64:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11559,6 +12357,7 @@ class complex64:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11570,6 +12369,7 @@ class complex64:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -11583,6 +12383,7 @@ class complex64:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11594,6 +12395,7 @@ class complex64:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -11606,6 +12408,7 @@ class complex64:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11617,6 +12420,7 @@ class complex64:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -11629,6 +12433,7 @@ class complex64:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11640,6 +12445,7 @@ class complex64:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11651,6 +12457,7 @@ class complex64:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -11678,6 +12485,7 @@ class complex64:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11689,6 +12497,7 @@ class complex64:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11700,6 +12509,7 @@ class complex64:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11711,6 +12521,7 @@ class complex64:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11722,6 +12533,7 @@ class complex64:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11733,6 +12545,7 @@ class complex64:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -11745,6 +12558,7 @@ class complex64:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11756,6 +12570,7 @@ class complex64:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11767,6 +12582,7 @@ class complex64:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11778,6 +12594,7 @@ class complex64:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11789,6 +12606,7 @@ class complex64:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11800,6 +12618,7 @@ class complex64:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11811,6 +12630,7 @@ class complex64:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -11824,6 +12644,7 @@ class complex64:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11835,6 +12656,7 @@ class complex64:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11846,6 +12668,7 @@ class complex64:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -11858,6 +12681,7 @@ class complex64:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11869,6 +12693,7 @@ class complex64:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11880,6 +12705,7 @@ class complex64:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11891,6 +12717,7 @@ class complex64:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11902,6 +12729,7 @@ class complex64:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11913,6 +12741,7 @@ class complex64:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11924,6 +12753,7 @@ class complex64:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11935,6 +12765,7 @@ class complex64:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11946,6 +12777,7 @@ class complex64:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11957,6 +12789,7 @@ class complex64:
         """
         
         
+        return None
     
 
 class complex_:
@@ -11972,6 +12805,7 @@ class complex_:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11983,6 +12817,7 @@ class complex_:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -11994,6 +12829,7 @@ class complex_:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12005,6 +12841,7 @@ class complex_:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12016,6 +12853,7 @@ class complex_:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12027,6 +12865,7 @@ class complex_:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -12039,6 +12878,7 @@ class complex_:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12050,6 +12890,7 @@ class complex_:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12061,6 +12902,7 @@ class complex_:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12072,10 +12914,12 @@ class complex_:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12087,6 +12931,7 @@ class complex_:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12098,6 +12943,7 @@ class complex_:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12109,6 +12955,7 @@ class complex_:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12120,6 +12967,7 @@ class complex_:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -12132,6 +12980,7 @@ class complex_:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -12144,6 +12993,7 @@ class complex_:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12155,6 +13005,7 @@ class complex_:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12166,6 +13017,7 @@ class complex_:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -12179,6 +13031,7 @@ class complex_:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12190,6 +13043,7 @@ class complex_:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -12202,6 +13056,7 @@ class complex_:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12213,6 +13068,7 @@ class complex_:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -12225,6 +13081,7 @@ class complex_:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12236,6 +13093,7 @@ class complex_:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12247,6 +13105,7 @@ class complex_:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -12274,6 +13133,7 @@ class complex_:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12285,6 +13145,7 @@ class complex_:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12296,6 +13157,7 @@ class complex_:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12307,6 +13169,7 @@ class complex_:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12318,6 +13181,7 @@ class complex_:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12329,6 +13193,7 @@ class complex_:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -12341,6 +13206,7 @@ class complex_:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12352,6 +13218,7 @@ class complex_:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12363,6 +13230,7 @@ class complex_:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12374,6 +13242,7 @@ class complex_:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12385,6 +13254,7 @@ class complex_:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12396,6 +13266,7 @@ class complex_:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12407,6 +13278,7 @@ class complex_:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -12420,6 +13292,7 @@ class complex_:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12431,6 +13304,7 @@ class complex_:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12442,6 +13316,7 @@ class complex_:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -12454,6 +13329,7 @@ class complex_:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12465,6 +13341,7 @@ class complex_:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12476,6 +13353,7 @@ class complex_:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12487,6 +13365,7 @@ class complex_:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12498,6 +13377,7 @@ class complex_:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12509,6 +13389,7 @@ class complex_:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12520,6 +13401,7 @@ class complex_:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12531,6 +13413,7 @@ class complex_:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12542,6 +13425,7 @@ class complex_:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12553,6 +13437,7 @@ class complex_:
         """
         
         
+        return None
     
 
 class complexfloating:
@@ -12568,6 +13453,7 @@ class complexfloating:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12579,6 +13465,7 @@ class complexfloating:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12590,6 +13477,7 @@ class complexfloating:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12601,6 +13489,7 @@ class complexfloating:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12612,6 +13501,7 @@ class complexfloating:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12623,6 +13513,7 @@ class complexfloating:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -12635,6 +13526,7 @@ class complexfloating:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12646,6 +13538,7 @@ class complexfloating:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12657,6 +13550,7 @@ class complexfloating:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12668,10 +13562,12 @@ class complexfloating:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12683,6 +13579,7 @@ class complexfloating:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12694,6 +13591,7 @@ class complexfloating:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12705,6 +13603,7 @@ class complexfloating:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12716,6 +13615,7 @@ class complexfloating:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -12728,6 +13628,7 @@ class complexfloating:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -12740,6 +13641,7 @@ class complexfloating:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12751,6 +13653,7 @@ class complexfloating:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12762,6 +13665,7 @@ class complexfloating:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -12775,6 +13679,7 @@ class complexfloating:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12786,6 +13691,7 @@ class complexfloating:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -12798,6 +13704,7 @@ class complexfloating:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12809,6 +13716,7 @@ class complexfloating:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -12821,6 +13729,7 @@ class complexfloating:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12832,6 +13741,7 @@ class complexfloating:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12843,6 +13753,7 @@ class complexfloating:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -12870,6 +13781,7 @@ class complexfloating:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12881,6 +13793,7 @@ class complexfloating:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12892,6 +13805,7 @@ class complexfloating:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12903,6 +13817,7 @@ class complexfloating:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12914,6 +13829,7 @@ class complexfloating:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12925,6 +13841,7 @@ class complexfloating:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -12937,6 +13854,7 @@ class complexfloating:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12948,6 +13866,7 @@ class complexfloating:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12959,6 +13878,7 @@ class complexfloating:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12970,6 +13890,7 @@ class complexfloating:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12981,6 +13902,7 @@ class complexfloating:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -12992,6 +13914,7 @@ class complexfloating:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13003,6 +13926,7 @@ class complexfloating:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -13016,6 +13940,7 @@ class complexfloating:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13027,6 +13952,7 @@ class complexfloating:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13038,6 +13964,7 @@ class complexfloating:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -13050,6 +13977,7 @@ class complexfloating:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13061,6 +13989,7 @@ class complexfloating:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13072,6 +14001,7 @@ class complexfloating:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13083,6 +14013,7 @@ class complexfloating:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13094,6 +14025,7 @@ class complexfloating:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13105,6 +14037,7 @@ class complexfloating:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13116,6 +14049,7 @@ class complexfloating:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13127,6 +14061,7 @@ class complexfloating:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13138,6 +14073,7 @@ class complexfloating:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13149,6 +14085,7 @@ class complexfloating:
         """
         
         
+        return None
     
 
 def compress(condition,a,axis,out):
@@ -13204,6 +14141,7 @@ def compress(condition,a,axis,out):
     """
     
     
+    return ndarray()
 def concatenate(a1,a2,___,axis):
     """concatenate((a1, a2, ...), axis=0)
        Join a sequence of arrays together.
@@ -13269,6 +14207,7 @@ def concatenate(a1,a2,___,axis):
     """
     
     
+    return ndarray()
 def conj(x):
     """conjugate(x[, out])
     Return the complex conjugate, element-wise.
@@ -13293,6 +14232,7 @@ def conj(x):
     """
     
     
+    return ndarray()
 def conjugate(x):
     """conjugate(x[, out])
     Return the complex conjugate, element-wise.
@@ -13317,6 +14257,7 @@ def conjugate(x):
     """
     
     
+    return ndarray()
 def convolve(a,v,mode):
     """   Returns the discrete, linear convolution of two one-dimensional sequences.
        The convolution operator is often seen in signal processing, where it
@@ -13385,6 +14326,7 @@ def convolve(a,v,mode):
     """
     
     
+    return ndarray()
 def copy(a):
     """   Return an array copy of the given object.
        Parameters
@@ -13415,6 +14357,7 @@ def copy(a):
     """
     
     
+    return ndarray()
 def copysign(out):
     """copysign(x1, x2[, out])
     Change the sign of x1 to that of x2, element-wise.
@@ -13449,6 +14392,7 @@ def copysign(out):
     """
     
     
+    return array_like()
 core = None
 def corrcoef(m,y,rowvar,bias,ddof):
     """   Return correlation coefficients.
@@ -13492,6 +14436,7 @@ def corrcoef(m,y,rowvar,bias,ddof):
     """
     
     
+    return ndarray()
 def correlate(a,v,mode,old_behavior):
     """   Cross-correlation of two 1-dimensional sequences.
        This function computes the correlation as generally defined in signal
@@ -13525,6 +14470,7 @@ def correlate(a,v,mode,old_behavior):
     """
     
     
+    return None
 def cos(x,out):
     """cos(x[, out])
     Cosine elementwise.
@@ -13568,6 +14514,7 @@ def cos(x,out):
     """
     
     
+    return ndarray()
 def cosh(x):
     """cosh(x[, out])
     Hyperbolic cosine, element-wise.
@@ -13592,6 +14539,7 @@ def cosh(x):
     """
     
     
+    return ndarray()
 def cov(m,y,rowvar,bias,ddof):
     """   Estimate a covariance matrix, given data.
        Covariance indicates the level to which two variables vary together.
@@ -13661,6 +14609,7 @@ def cov(m,y,rowvar,bias,ddof):
     """
     
     
+    return ndarray()
 def cross(a,b,axisa,axisb,axisc,axis):
     """   Return the cross product of two (arrays of) vectors.
        The cross product of `a` and `b` in :math:`R^3` is a vector perpendicular
@@ -13749,6 +14698,7 @@ def cross(a,b,axisa,axisb,axisc,axis):
     """
     
     
+    return ndarray()
 class csingle:
     T = None
     def all(self):
@@ -13762,6 +14712,7 @@ class csingle:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13773,6 +14724,7 @@ class csingle:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13784,6 +14736,7 @@ class csingle:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13795,6 +14748,7 @@ class csingle:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13806,6 +14760,7 @@ class csingle:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13817,6 +14772,7 @@ class csingle:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -13829,6 +14785,7 @@ class csingle:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13840,6 +14797,7 @@ class csingle:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13851,6 +14809,7 @@ class csingle:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13862,10 +14821,12 @@ class csingle:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13877,6 +14838,7 @@ class csingle:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13888,6 +14850,7 @@ class csingle:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13899,6 +14862,7 @@ class csingle:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13910,6 +14874,7 @@ class csingle:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -13922,6 +14887,7 @@ class csingle:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -13934,6 +14900,7 @@ class csingle:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13945,6 +14912,7 @@ class csingle:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13956,6 +14924,7 @@ class csingle:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -13969,6 +14938,7 @@ class csingle:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -13980,6 +14950,7 @@ class csingle:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -13992,6 +14963,7 @@ class csingle:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14003,6 +14975,7 @@ class csingle:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -14015,6 +14988,7 @@ class csingle:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14026,6 +15000,7 @@ class csingle:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14037,6 +15012,7 @@ class csingle:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -14064,6 +15040,7 @@ class csingle:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14075,6 +15052,7 @@ class csingle:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14086,6 +15064,7 @@ class csingle:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14097,6 +15076,7 @@ class csingle:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14108,6 +15088,7 @@ class csingle:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14119,6 +15100,7 @@ class csingle:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -14131,6 +15113,7 @@ class csingle:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14142,6 +15125,7 @@ class csingle:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14153,6 +15137,7 @@ class csingle:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14164,6 +15149,7 @@ class csingle:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14175,6 +15161,7 @@ class csingle:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14186,6 +15173,7 @@ class csingle:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14197,6 +15185,7 @@ class csingle:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -14210,6 +15199,7 @@ class csingle:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14221,6 +15211,7 @@ class csingle:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14232,6 +15223,7 @@ class csingle:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -14244,6 +15236,7 @@ class csingle:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14255,6 +15248,7 @@ class csingle:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14266,6 +15260,7 @@ class csingle:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14277,6 +15272,7 @@ class csingle:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14288,6 +15284,7 @@ class csingle:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14299,6 +15296,7 @@ class csingle:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14310,6 +15308,7 @@ class csingle:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14321,6 +15320,7 @@ class csingle:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14332,6 +15332,7 @@ class csingle:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -14343,6 +15344,7 @@ class csingle:
         """
         
         
+        return None
     
 
 ctypeslib = None
@@ -14398,6 +15400,7 @@ def cumprod(a,axis,dtype,out):
     """
     
     
+    return ndarray()
 def cumproduct():
     """   Return the cumulative product over the given axis.
        See Also
@@ -14407,6 +15410,7 @@ def cumproduct():
     """
     
     
+    return None
 def cumsum(a,axis,dtype,out):
     """   Return the cumulative sum of the elements along a given axis.
        Parameters
@@ -14462,12 +15466,14 @@ def cumsum(a,axis,dtype,out):
     """
     
     
+    return ndarray_()
 def datetime_data():
     """Return (unit, numerator, denominator, events) from a datetime dtype
        
     """
     
     
+    return None
 def deg2rad(x):
     """deg2rad(x[, out])
     Convert angles from degrees to radians.
@@ -14494,6 +15500,7 @@ def deg2rad(x):
     """
     
     
+    return ndarray()
 def degrees(x,out):
     """degrees(x[, out])
     Convert angles from radians to degrees.
@@ -14525,6 +15532,7 @@ def degrees(x,out):
     """
     
     
+    return ndarray()
 def delete(arr,obj,axis):
     """   Return a new array with sub-arrays along an axis deleted.
        Parameters
@@ -14566,6 +15574,7 @@ def delete(arr,obj,axis):
     """
     
     
+    return ndarray()
 def deprecate(func,old_name,new_name,message):
     """   Issues a DeprecationWarning, adds warning to `old_name`'s
        docstring, rebinds ``old_name.__name__`` and returns the new
@@ -14603,11 +15612,13 @@ def deprecate(func,old_name,new_name,message):
     """
     
     
+    return function()
 def deprecate_with_doc():
     """message
     """
     
     
+    return None
 def diag(v,k):
     """   Extract a diagonal or construct a diagonal array.
        Parameters
@@ -14652,6 +15663,7 @@ def diag(v,k):
     """
     
     
+    return ndarray()
 def diag_indices(n,ndim):
     """   Return the indices to access the main diagonal of an array.
        This returns a tuple of indices that can be used to access the main
@@ -14706,6 +15718,7 @@ def diag_indices(n,ndim):
     """
     
     
+    return None
 def diag_indices_from(arr):
     """   Return the indices to access the main diagonal of an n-dimensional array.
        See `diag_indices` for full details.
@@ -14722,6 +15735,7 @@ def diag_indices_from(arr):
     """
     
     
+    return None
 def diagflat(v,k):
     """   Create a two-dimensional array with the flattened input as a diagonal.
        Parameters
@@ -14757,6 +15771,7 @@ def diagflat(v,k):
     """
     
     
+    return ndarray()
 def diagonal(a,offset,axis1,axis2):
     """   Return specified diagonals.
        If `a` is 2-D, returns the diagonal of `a` with the given offset,
@@ -14829,6 +15844,7 @@ def diagonal(a,offset,axis1,axis2):
     """
     
     
+    return ndarray()
 def diff(a,n,axis):
     """   Calculate the n-th order discrete difference along given axis.
        The first order difference is given by ``out[n] = a[n+1] - a[n]`` along
@@ -14867,6 +15883,7 @@ def diff(a,n,axis):
     """
     
     
+    return ndarray()
 def digitize(x,bins):
     """digitize(x, bins)
        Return the indices of the bins to which each value in input array belongs.
@@ -14915,6 +15932,7 @@ def digitize(x,bins):
     """
     
     
+    return ndarray()
 def disp(mesg,device,linefeed):
     """   Display a message on a device.
        Parameters
@@ -14944,6 +15962,7 @@ def disp(mesg,device,linefeed):
     """
     
     
+    return None
 def divide(x1,x2,out):
     """divide(x1, x2[, out])
     Divide arguments element-wise.
@@ -15003,6 +16022,7 @@ def divide(x1,x2,out):
     """
     
     
+    return ndarray()
 def dot(a,b):
     """dot(a, b)
        Dot product of two arrays.
@@ -15054,6 +16074,7 @@ def dot(a,b):
     """
     
     
+    return ndarray()
 class double:
     T = None
     def all(self):
@@ -15067,6 +16088,7 @@ class double:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15078,6 +16100,7 @@ class double:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15089,6 +16112,7 @@ class double:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15100,6 +16124,7 @@ class double:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15111,6 +16136,7 @@ class double:
         """
         
         
+        return None
     def as_integer_ratio(self,):
         """float.as_integer_ratio() -> (int, int)
         Returns a pair of integers, whose ratio is exactly equal to the original
@@ -15125,6 +16151,7 @@ class double:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15136,6 +16163,7 @@ class double:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -15148,6 +16176,7 @@ class double:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15159,6 +16188,7 @@ class double:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15170,6 +16200,7 @@ class double:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15181,10 +16212,12 @@ class double:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15196,6 +16229,7 @@ class double:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15207,6 +16241,7 @@ class double:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15218,6 +16253,7 @@ class double:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15229,6 +16265,7 @@ class double:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -15241,6 +16278,7 @@ class double:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -15253,6 +16291,7 @@ class double:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15264,6 +16303,7 @@ class double:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15275,6 +16315,7 @@ class double:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -15288,6 +16329,7 @@ class double:
         """
         
         
+        return None
     def fromhex(self,string):
         """float.fromhex(string) -> float
         Create a floating-point number from a hexadecimal string.
@@ -15298,6 +16340,7 @@ class double:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15309,6 +16352,7 @@ class double:
         """
         
         
+        return None
     def hex(self,):
         """float.hex() -> string
         Return a hexadecimal representation of a floating-point number.
@@ -15319,12 +16363,14 @@ class double:
         """
         
         
+        return None
     imag = None
     def is_integer(self):
         """Returns True if the float is an integer.
         """
         
         
+        return None
     def item(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15336,6 +16382,7 @@ class double:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15347,6 +16394,7 @@ class double:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -15359,6 +16407,7 @@ class double:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15370,6 +16419,7 @@ class double:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15381,6 +16431,7 @@ class double:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -15408,6 +16459,7 @@ class double:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15419,6 +16471,7 @@ class double:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15430,6 +16483,7 @@ class double:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15441,6 +16495,7 @@ class double:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15452,6 +16507,7 @@ class double:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15463,6 +16519,7 @@ class double:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -15475,6 +16532,7 @@ class double:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15486,6 +16544,7 @@ class double:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15497,6 +16556,7 @@ class double:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15508,6 +16568,7 @@ class double:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15519,6 +16580,7 @@ class double:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15530,6 +16592,7 @@ class double:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15541,6 +16604,7 @@ class double:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -15554,6 +16618,7 @@ class double:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15565,6 +16630,7 @@ class double:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15576,6 +16642,7 @@ class double:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -15588,6 +16655,7 @@ class double:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15599,6 +16667,7 @@ class double:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15610,6 +16679,7 @@ class double:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15621,6 +16691,7 @@ class double:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15632,6 +16703,7 @@ class double:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15643,6 +16715,7 @@ class double:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15654,6 +16727,7 @@ class double:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15665,6 +16739,7 @@ class double:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15676,6 +16751,7 @@ class double:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -15687,6 +16763,7 @@ class double:
         """
         
         
+        return None
     
 
 def dsplit():
@@ -15728,6 +16805,7 @@ def dsplit():
     """
     
     
+    return None
 def dstack(tup):
     """   Stack arrays in sequence depth wise (along third axis).
        Takes a sequence of arrays and stack them along the third axis
@@ -15770,6 +16848,7 @@ def dstack(tup):
     """
     
     
+    return ndarray()
 class dtype:
     alignment = None
     base = None
@@ -15843,6 +16922,7 @@ class dtype:
         """
         
         
+        return dtype()
     num = None
     shape = None
     str = None
@@ -15887,6 +16967,7 @@ def ediff1d(ary,to_end,to_begin):
     """
     
     
+    return ndarray()
 emath = None
 def empty(shape,dtype,order):
     """empty(shape, dtype=float, order='C')
@@ -15920,6 +17001,7 @@ def empty(shape,dtype,order):
     """
     
     
+    return None
 def empty_like(a):
     """   Return a new array with the same shape and type as a given array.
        Parameters
@@ -15957,6 +17039,7 @@ def empty_like(a):
     """
     
     
+    return ndarray()
 def equal(x1,x2):
     """equal(x1, x2[, out])
     Return (x1 == x2) element-wise.
@@ -15982,6 +17065,7 @@ def equal(x1,x2):
     """
     
     
+    return ndarray()
 class errstate:
     pass
 
@@ -16037,6 +17121,7 @@ def exp(x):
     """
     
     
+    return ndarray()
 def exp2(x,out):
     """exp2(x[, out])
     Calculate `2**p` for all `p` in the input array.
@@ -16063,6 +17148,7 @@ def exp2(x,out):
     """
     
     
+    return ndarray()
 def expand_dims(a,axis):
     """   Expand the shape of an array.
        Insert a new axis, corresponding to a given position in the array shape.
@@ -16105,6 +17191,7 @@ def expand_dims(a,axis):
     """
     
     
+    return ndarray()
 def expm1(x):
     """expm1(x[, out])
     Calculate ``exp(x) - 1`` for all elements in the array.
@@ -16135,6 +17222,7 @@ def expm1(x):
     """
     
     
+    return ndarray()
 def extract(condition,arr):
     """   Return the elements of an array that satisfy some condition.
        This is equivalent to ``np.compress(ravel(condition), ravel(arr))``.  If
@@ -16170,6 +17258,7 @@ def extract(condition,arr):
     """
     
     
+    return None
 def eye(N,M,k,dtype):
     """   Return a 2-D array with ones on the diagonal and zeros elsewhere.
        Parameters
@@ -16206,6 +17295,7 @@ def eye(N,M,k,dtype):
     """
     
     
+    return ndarray()
 def fabs(x,out):
     """fabs(x[, out])
     Compute the absolute values elementwise.
@@ -16236,11 +17326,13 @@ def fabs(x,out):
     """
     
     
+    return ndarray()
 def fastCopyAndTranspose(a):
     """_fastCopyAndTranspose(a)
     """
     
     
+    return None
 fft = None
 def fill_diagonal(a,val):
     """   Fill the main diagonal of the given array of any dimensionality.
@@ -16291,6 +17383,7 @@ def fill_diagonal(a,val):
     """
     
     
+    return None
 def find_common_type(array_types,scalar_types):
     """   Determine common type following standard coercion rules.
        Parameters
@@ -16333,6 +17426,7 @@ def find_common_type(array_types,scalar_types):
     """
     
     
+    return dtype()
 class finfo:
     pass
 
@@ -16366,6 +17460,7 @@ def fix(x,y):
     """
     
     
+    return ndarray()
 class flatiter:
     base = None
     coords = None
@@ -16384,12 +17479,14 @@ class flatiter:
         """
         
         
+        return None
     index = None
     def next(self,):
         """x.next() -> the next value, or raise StopIteration
         """
         
         
+        return None
     
 
 def flatnonzero(a):
@@ -16423,6 +17520,7 @@ def flatnonzero(a):
     """
     
     
+    return ndarray()
 class flexible:
     T = None
     def all(self):
@@ -16436,6 +17534,7 @@ class flexible:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16447,6 +17546,7 @@ class flexible:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16458,6 +17558,7 @@ class flexible:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16469,6 +17570,7 @@ class flexible:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16480,6 +17582,7 @@ class flexible:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16491,6 +17594,7 @@ class flexible:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -16503,6 +17607,7 @@ class flexible:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16514,6 +17619,7 @@ class flexible:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16525,6 +17631,7 @@ class flexible:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16536,10 +17643,12 @@ class flexible:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16551,6 +17660,7 @@ class flexible:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16562,6 +17672,7 @@ class flexible:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16573,6 +17684,7 @@ class flexible:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16584,6 +17696,7 @@ class flexible:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -16596,6 +17709,7 @@ class flexible:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -16608,6 +17722,7 @@ class flexible:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16619,6 +17734,7 @@ class flexible:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16630,6 +17746,7 @@ class flexible:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -16643,6 +17760,7 @@ class flexible:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16654,6 +17772,7 @@ class flexible:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -16666,6 +17785,7 @@ class flexible:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16677,6 +17797,7 @@ class flexible:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -16689,6 +17810,7 @@ class flexible:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16700,6 +17822,7 @@ class flexible:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16711,6 +17834,7 @@ class flexible:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -16738,6 +17862,7 @@ class flexible:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16749,6 +17874,7 @@ class flexible:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16760,6 +17886,7 @@ class flexible:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16771,6 +17898,7 @@ class flexible:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16782,6 +17910,7 @@ class flexible:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16793,6 +17922,7 @@ class flexible:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -16805,6 +17935,7 @@ class flexible:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16816,6 +17947,7 @@ class flexible:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16827,6 +17959,7 @@ class flexible:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16838,6 +17971,7 @@ class flexible:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16849,6 +17983,7 @@ class flexible:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16860,6 +17995,7 @@ class flexible:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16871,6 +18007,7 @@ class flexible:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -16884,6 +18021,7 @@ class flexible:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16895,6 +18033,7 @@ class flexible:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16906,6 +18045,7 @@ class flexible:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -16918,6 +18058,7 @@ class flexible:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16929,6 +18070,7 @@ class flexible:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16940,6 +18082,7 @@ class flexible:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16951,6 +18094,7 @@ class flexible:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16962,6 +18106,7 @@ class flexible:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16973,6 +18118,7 @@ class flexible:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16984,6 +18130,7 @@ class flexible:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -16995,6 +18142,7 @@ class flexible:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17006,6 +18154,7 @@ class flexible:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17017,6 +18166,7 @@ class flexible:
         """
         
         
+        return None
     
 
 def fliplr(m):
@@ -17058,6 +18208,7 @@ def fliplr(m):
     """
     
     
+    return ndarray()
 def flipud(m):
     """   Flip array in the up/down direction.
        Flip the entries in each column in the up/down direction.
@@ -17099,6 +18250,7 @@ def flipud(m):
     """
     
     
+    return array_like()
 class float:
     def as_integer_ratio(self,):
         """float.as_integer_ratio() -> (int, int)
@@ -17114,11 +18266,13 @@ class float:
         """
         
         
+        return None
     def conjugate(self):
         """Returns self, the complex conjugate of any float.
         """
         
         
+        return None
     def fromhex(self,string):
         """float.fromhex(string) -> float
         Create a floating-point number from a hexadecimal string.
@@ -17129,6 +18283,7 @@ class float:
         """
         
         
+        return None
     def hex(self,):
         """float.hex() -> string
         Return a hexadecimal representation of a floating-point number.
@@ -17139,12 +18294,14 @@ class float:
         """
         
         
+        return None
     imag = None
     def is_integer(self):
         """Returns True if the float is an integer.
         """
         
         
+        return None
     real = None
     
 
@@ -17161,6 +18318,7 @@ class float32:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17172,6 +18330,7 @@ class float32:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17183,6 +18342,7 @@ class float32:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17194,6 +18354,7 @@ class float32:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17205,6 +18366,7 @@ class float32:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17216,6 +18378,7 @@ class float32:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -17228,6 +18391,7 @@ class float32:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17239,6 +18403,7 @@ class float32:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17250,6 +18415,7 @@ class float32:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17261,10 +18427,12 @@ class float32:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17276,6 +18444,7 @@ class float32:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17287,6 +18456,7 @@ class float32:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17298,6 +18468,7 @@ class float32:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17309,6 +18480,7 @@ class float32:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -17321,6 +18493,7 @@ class float32:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -17333,6 +18506,7 @@ class float32:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17344,6 +18518,7 @@ class float32:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17355,6 +18530,7 @@ class float32:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -17368,6 +18544,7 @@ class float32:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17379,6 +18556,7 @@ class float32:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -17391,6 +18569,7 @@ class float32:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17402,6 +18581,7 @@ class float32:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -17414,6 +18594,7 @@ class float32:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17425,6 +18606,7 @@ class float32:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17436,6 +18618,7 @@ class float32:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -17463,6 +18646,7 @@ class float32:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17474,6 +18658,7 @@ class float32:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17485,6 +18670,7 @@ class float32:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17496,6 +18682,7 @@ class float32:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17507,6 +18694,7 @@ class float32:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17518,6 +18706,7 @@ class float32:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -17530,6 +18719,7 @@ class float32:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17541,6 +18731,7 @@ class float32:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17552,6 +18743,7 @@ class float32:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17563,6 +18755,7 @@ class float32:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17574,6 +18767,7 @@ class float32:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17585,6 +18779,7 @@ class float32:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17596,6 +18791,7 @@ class float32:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -17609,6 +18805,7 @@ class float32:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17620,6 +18817,7 @@ class float32:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17631,6 +18829,7 @@ class float32:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -17643,6 +18842,7 @@ class float32:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17654,6 +18854,7 @@ class float32:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17665,6 +18866,7 @@ class float32:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17676,6 +18878,7 @@ class float32:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17687,6 +18890,7 @@ class float32:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17698,6 +18902,7 @@ class float32:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17709,6 +18914,7 @@ class float32:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17720,6 +18926,7 @@ class float32:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17731,6 +18938,7 @@ class float32:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17742,6 +18950,7 @@ class float32:
         """
         
         
+        return None
     
 
 class float64:
@@ -17757,6 +18966,7 @@ class float64:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17768,6 +18978,7 @@ class float64:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17779,6 +18990,7 @@ class float64:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17790,6 +19002,7 @@ class float64:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17801,6 +19014,7 @@ class float64:
         """
         
         
+        return None
     def as_integer_ratio(self,):
         """float.as_integer_ratio() -> (int, int)
         Returns a pair of integers, whose ratio is exactly equal to the original
@@ -17815,6 +19029,7 @@ class float64:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17826,6 +19041,7 @@ class float64:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -17838,6 +19054,7 @@ class float64:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17849,6 +19066,7 @@ class float64:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17860,6 +19078,7 @@ class float64:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17871,10 +19090,12 @@ class float64:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17886,6 +19107,7 @@ class float64:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17897,6 +19119,7 @@ class float64:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17908,6 +19131,7 @@ class float64:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17919,6 +19143,7 @@ class float64:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -17931,6 +19156,7 @@ class float64:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -17943,6 +19169,7 @@ class float64:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17954,6 +19181,7 @@ class float64:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17965,6 +19193,7 @@ class float64:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -17978,6 +19207,7 @@ class float64:
         """
         
         
+        return None
     def fromhex(self,string):
         """float.fromhex(string) -> float
         Create a floating-point number from a hexadecimal string.
@@ -17988,6 +19218,7 @@ class float64:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -17999,6 +19230,7 @@ class float64:
         """
         
         
+        return None
     def hex(self,):
         """float.hex() -> string
         Return a hexadecimal representation of a floating-point number.
@@ -18009,12 +19241,14 @@ class float64:
         """
         
         
+        return None
     imag = None
     def is_integer(self):
         """Returns True if the float is an integer.
         """
         
         
+        return None
     def item(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18026,6 +19260,7 @@ class float64:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18037,6 +19272,7 @@ class float64:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -18049,6 +19285,7 @@ class float64:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18060,6 +19297,7 @@ class float64:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18071,6 +19309,7 @@ class float64:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -18098,6 +19337,7 @@ class float64:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18109,6 +19349,7 @@ class float64:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18120,6 +19361,7 @@ class float64:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18131,6 +19373,7 @@ class float64:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18142,6 +19385,7 @@ class float64:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18153,6 +19397,7 @@ class float64:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -18165,6 +19410,7 @@ class float64:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18176,6 +19422,7 @@ class float64:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18187,6 +19434,7 @@ class float64:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18198,6 +19446,7 @@ class float64:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18209,6 +19458,7 @@ class float64:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18220,6 +19470,7 @@ class float64:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18231,6 +19482,7 @@ class float64:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -18244,6 +19496,7 @@ class float64:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18255,6 +19508,7 @@ class float64:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18266,6 +19520,7 @@ class float64:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -18278,6 +19533,7 @@ class float64:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18289,6 +19545,7 @@ class float64:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18300,6 +19557,7 @@ class float64:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18311,6 +19569,7 @@ class float64:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18322,6 +19581,7 @@ class float64:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18333,6 +19593,7 @@ class float64:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18344,6 +19605,7 @@ class float64:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18355,6 +19617,7 @@ class float64:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18366,6 +19629,7 @@ class float64:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18377,6 +19641,7 @@ class float64:
         """
         
         
+        return None
     
 
 class float96:
@@ -18392,6 +19657,7 @@ class float96:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18403,6 +19669,7 @@ class float96:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18414,6 +19681,7 @@ class float96:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18425,6 +19693,7 @@ class float96:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18436,6 +19705,7 @@ class float96:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18447,6 +19717,7 @@ class float96:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -18459,6 +19730,7 @@ class float96:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18470,6 +19742,7 @@ class float96:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18481,6 +19754,7 @@ class float96:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18492,10 +19766,12 @@ class float96:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18507,6 +19783,7 @@ class float96:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18518,6 +19795,7 @@ class float96:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18529,6 +19807,7 @@ class float96:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18540,6 +19819,7 @@ class float96:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -18552,6 +19832,7 @@ class float96:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -18564,6 +19845,7 @@ class float96:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18575,6 +19857,7 @@ class float96:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18586,6 +19869,7 @@ class float96:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -18599,6 +19883,7 @@ class float96:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18610,6 +19895,7 @@ class float96:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -18622,6 +19908,7 @@ class float96:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18633,6 +19920,7 @@ class float96:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -18645,6 +19933,7 @@ class float96:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18656,6 +19945,7 @@ class float96:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18667,6 +19957,7 @@ class float96:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -18694,6 +19985,7 @@ class float96:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18705,6 +19997,7 @@ class float96:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18716,6 +20009,7 @@ class float96:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18727,6 +20021,7 @@ class float96:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18738,6 +20033,7 @@ class float96:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18749,6 +20045,7 @@ class float96:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -18761,6 +20058,7 @@ class float96:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18772,6 +20070,7 @@ class float96:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18783,6 +20082,7 @@ class float96:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18794,6 +20094,7 @@ class float96:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18805,6 +20106,7 @@ class float96:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18816,6 +20118,7 @@ class float96:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18827,6 +20130,7 @@ class float96:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -18840,6 +20144,7 @@ class float96:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18851,6 +20156,7 @@ class float96:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18862,6 +20168,7 @@ class float96:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -18874,6 +20181,7 @@ class float96:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18885,6 +20193,7 @@ class float96:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18896,6 +20205,7 @@ class float96:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18907,6 +20217,7 @@ class float96:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18918,6 +20229,7 @@ class float96:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18929,6 +20241,7 @@ class float96:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18940,6 +20253,7 @@ class float96:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18951,6 +20265,7 @@ class float96:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18962,6 +20277,7 @@ class float96:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18973,6 +20289,7 @@ class float96:
         """
         
         
+        return None
     
 
 class float_:
@@ -18988,6 +20305,7 @@ class float_:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -18999,6 +20317,7 @@ class float_:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19010,6 +20329,7 @@ class float_:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19021,6 +20341,7 @@ class float_:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19032,6 +20353,7 @@ class float_:
         """
         
         
+        return None
     def as_integer_ratio(self,):
         """float.as_integer_ratio() -> (int, int)
         Returns a pair of integers, whose ratio is exactly equal to the original
@@ -19046,6 +20368,7 @@ class float_:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19057,6 +20380,7 @@ class float_:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -19069,6 +20393,7 @@ class float_:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19080,6 +20405,7 @@ class float_:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19091,6 +20417,7 @@ class float_:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19102,10 +20429,12 @@ class float_:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19117,6 +20446,7 @@ class float_:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19128,6 +20458,7 @@ class float_:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19139,6 +20470,7 @@ class float_:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19150,6 +20482,7 @@ class float_:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -19162,6 +20495,7 @@ class float_:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -19174,6 +20508,7 @@ class float_:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19185,6 +20520,7 @@ class float_:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19196,6 +20532,7 @@ class float_:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -19209,6 +20546,7 @@ class float_:
         """
         
         
+        return None
     def fromhex(self,string):
         """float.fromhex(string) -> float
         Create a floating-point number from a hexadecimal string.
@@ -19219,6 +20557,7 @@ class float_:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19230,6 +20569,7 @@ class float_:
         """
         
         
+        return None
     def hex(self,):
         """float.hex() -> string
         Return a hexadecimal representation of a floating-point number.
@@ -19240,12 +20580,14 @@ class float_:
         """
         
         
+        return None
     imag = None
     def is_integer(self):
         """Returns True if the float is an integer.
         """
         
         
+        return None
     def item(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19257,6 +20599,7 @@ class float_:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19268,6 +20611,7 @@ class float_:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -19280,6 +20624,7 @@ class float_:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19291,6 +20636,7 @@ class float_:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19302,6 +20648,7 @@ class float_:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -19329,6 +20676,7 @@ class float_:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19340,6 +20688,7 @@ class float_:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19351,6 +20700,7 @@ class float_:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19362,6 +20712,7 @@ class float_:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19373,6 +20724,7 @@ class float_:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19384,6 +20736,7 @@ class float_:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -19396,6 +20749,7 @@ class float_:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19407,6 +20761,7 @@ class float_:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19418,6 +20773,7 @@ class float_:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19429,6 +20785,7 @@ class float_:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19440,6 +20797,7 @@ class float_:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19451,6 +20809,7 @@ class float_:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19462,6 +20821,7 @@ class float_:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -19475,6 +20835,7 @@ class float_:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19486,6 +20847,7 @@ class float_:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19497,6 +20859,7 @@ class float_:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -19509,6 +20872,7 @@ class float_:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19520,6 +20884,7 @@ class float_:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19531,6 +20896,7 @@ class float_:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19542,6 +20908,7 @@ class float_:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19553,6 +20920,7 @@ class float_:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19564,6 +20932,7 @@ class float_:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19575,6 +20944,7 @@ class float_:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19586,6 +20956,7 @@ class float_:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19597,6 +20968,7 @@ class float_:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19608,6 +20980,7 @@ class float_:
         """
         
         
+        return None
     
 
 class floating:
@@ -19623,6 +20996,7 @@ class floating:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19634,6 +21008,7 @@ class floating:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19645,6 +21020,7 @@ class floating:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19656,6 +21032,7 @@ class floating:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19667,6 +21044,7 @@ class floating:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19678,6 +21056,7 @@ class floating:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -19690,6 +21069,7 @@ class floating:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19701,6 +21081,7 @@ class floating:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19712,6 +21093,7 @@ class floating:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19723,10 +21105,12 @@ class floating:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19738,6 +21122,7 @@ class floating:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19749,6 +21134,7 @@ class floating:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19760,6 +21146,7 @@ class floating:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19771,6 +21158,7 @@ class floating:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -19783,6 +21171,7 @@ class floating:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -19795,6 +21184,7 @@ class floating:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19806,6 +21196,7 @@ class floating:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19817,6 +21208,7 @@ class floating:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -19830,6 +21222,7 @@ class floating:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19841,6 +21234,7 @@ class floating:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -19853,6 +21247,7 @@ class floating:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19864,6 +21259,7 @@ class floating:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -19876,6 +21272,7 @@ class floating:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19887,6 +21284,7 @@ class floating:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19898,6 +21296,7 @@ class floating:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -19925,6 +21324,7 @@ class floating:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19936,6 +21336,7 @@ class floating:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19947,6 +21348,7 @@ class floating:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19958,6 +21360,7 @@ class floating:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19969,6 +21372,7 @@ class floating:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -19980,6 +21384,7 @@ class floating:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -19992,6 +21397,7 @@ class floating:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20003,6 +21409,7 @@ class floating:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20014,6 +21421,7 @@ class floating:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20025,6 +21433,7 @@ class floating:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20036,6 +21445,7 @@ class floating:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20047,6 +21457,7 @@ class floating:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20058,6 +21469,7 @@ class floating:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -20071,6 +21483,7 @@ class floating:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20082,6 +21495,7 @@ class floating:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20093,6 +21507,7 @@ class floating:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -20105,6 +21520,7 @@ class floating:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20116,6 +21532,7 @@ class floating:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20127,6 +21544,7 @@ class floating:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20138,6 +21556,7 @@ class floating:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20149,6 +21568,7 @@ class floating:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20160,6 +21580,7 @@ class floating:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20171,6 +21592,7 @@ class floating:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20182,6 +21604,7 @@ class floating:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20193,6 +21616,7 @@ class floating:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20204,6 +21628,7 @@ class floating:
         """
         
         
+        return None
     
 
 def floor(x):
@@ -20235,6 +21660,7 @@ def floor(x):
     """
     
     
+    return ndarray()
 def floor_divide(x1,x2):
     """floor_divide(x1, x2[, out])
     Return the largest integer smaller or equal to the division of the inputs.
@@ -20262,6 +21688,7 @@ def floor_divide(x1,x2):
     """
     
     
+    return ndarray()
 def fmax(x1,x2):
     """fmax(x1, x2[, out])
     Element-wise maximum of array elements.
@@ -20306,6 +21733,7 @@ def fmax(x1,x2):
     """
     
     
+    return ndarray()
 def fmin(x1,x2):
     """fmin(x1, x2[, out])
     fmin(x1, x2[, out])
@@ -20351,6 +21779,7 @@ def fmin(x1,x2):
     """
     
     
+    return ndarray()
 def fmod(x1,x2):
     """fmod(x1, x2[, out])
     Return the element-wise remainder of division.
@@ -20395,6 +21824,7 @@ def fmod(x1,x2):
     """
     
     
+    return array_like()
 format_parser = format_parser()
 def frexp(x,out1,out2):
     """frexp(x[, out1, out2])
@@ -20402,6 +21832,7 @@ def frexp(x,out1,out2):
     """
     
     
+    return None
 def frombuffer(dtype,count,offset):
     """frombuffer(buffer, dtype=float, count=-1, offset=0)
        Interpret a buffer as a 1-dimensional array.
@@ -20433,6 +21864,7 @@ def frombuffer(dtype,count,offset):
     """
     
     
+    return None
 def fromfile(file,dtype,count,sep):
     """fromfile(file, dtype=float, count=-1, sep='')
        Construct an array from data in a text or binary file.
@@ -20494,6 +21926,7 @@ def fromfile(file,dtype,count,sep):
     """
     
     
+    return None
 def fromfunction(function,shape,dtype):
     """   Construct an array by executing a function over each coordinate.
        The resulting array therefore has a value ``fn(x, y, z)`` at
@@ -20539,6 +21972,7 @@ def fromfunction(function,shape,dtype):
     """
     
     
+    return any()
 def fromiter(iterable,dtype,count):
     """fromiter(iterable, dtype, count=-1)
        Create a new 1-dimensional array from an iterable object.
@@ -20568,6 +22002,7 @@ def fromiter(iterable,dtype,count):
     """
     
     
+    return ndarray()
 def frompyfunc(func,nin,nout):
     """frompyfunc(func, nin, nout)
        Takes an arbitrary Python function and returns a Numpy ufunc.
@@ -20600,6 +22035,7 @@ def frompyfunc(func,nin,nout):
     """
     
     
+    return ufunc()
 def fromregex(file,regexp,dtype):
     """   Construct an array from a text file, using regular expression parsing.
        The returned array is always a structured array, and is constructed from
@@ -20648,6 +22084,7 @@ def fromregex(file,regexp,dtype):
     """
     
     
+    return ndarray()
 def fromstring(string,dtype,count,sep):
     """fromstring(string, dtype=float, count=-1, sep='')
        Return a new 1-D array initialized from raw binary or text data in string.
@@ -20698,6 +22135,7 @@ def fromstring(string,dtype,count,sep):
     """
     
     
+    return array()
 def fv(rate,nper,pmt,pv,when):
     """   Compute the future value.
        Given:
@@ -20766,6 +22204,7 @@ def fv(rate,nper,pmt,pv,when):
     """
     
     
+    return ndarray()
 class generic:
     T = None
     def all(self):
@@ -20779,6 +22218,7 @@ class generic:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20790,6 +22230,7 @@ class generic:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20801,6 +22242,7 @@ class generic:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20812,6 +22254,7 @@ class generic:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20823,6 +22266,7 @@ class generic:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20834,6 +22278,7 @@ class generic:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -20846,6 +22291,7 @@ class generic:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20857,6 +22303,7 @@ class generic:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20868,6 +22315,7 @@ class generic:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20879,10 +22327,12 @@ class generic:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20894,6 +22344,7 @@ class generic:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20905,6 +22356,7 @@ class generic:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20916,6 +22368,7 @@ class generic:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20927,6 +22380,7 @@ class generic:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -20939,6 +22393,7 @@ class generic:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -20951,6 +22406,7 @@ class generic:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20962,6 +22418,7 @@ class generic:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20973,6 +22430,7 @@ class generic:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -20986,6 +22444,7 @@ class generic:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -20997,6 +22456,7 @@ class generic:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -21009,6 +22469,7 @@ class generic:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21020,6 +22481,7 @@ class generic:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -21032,6 +22494,7 @@ class generic:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21043,6 +22506,7 @@ class generic:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21054,6 +22518,7 @@ class generic:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -21081,6 +22546,7 @@ class generic:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21092,6 +22558,7 @@ class generic:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21103,6 +22570,7 @@ class generic:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21114,6 +22582,7 @@ class generic:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21125,6 +22594,7 @@ class generic:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21136,6 +22606,7 @@ class generic:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -21148,6 +22619,7 @@ class generic:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21159,6 +22631,7 @@ class generic:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21170,6 +22643,7 @@ class generic:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21181,6 +22655,7 @@ class generic:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21192,6 +22667,7 @@ class generic:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21203,6 +22679,7 @@ class generic:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21214,6 +22691,7 @@ class generic:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -21227,6 +22705,7 @@ class generic:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21238,6 +22717,7 @@ class generic:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21249,6 +22729,7 @@ class generic:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -21261,6 +22742,7 @@ class generic:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21272,6 +22754,7 @@ class generic:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21283,6 +22766,7 @@ class generic:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21294,6 +22778,7 @@ class generic:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21305,6 +22790,7 @@ class generic:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21316,6 +22802,7 @@ class generic:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21327,6 +22814,7 @@ class generic:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21338,6 +22826,7 @@ class generic:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21349,6 +22838,7 @@ class generic:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -21360,6 +22850,7 @@ class generic:
         """
         
         
+        return None
     
 
 def genfromtxt(fname,dtype,comments,delimiter,skip_header,skip_footer,converters,missing_values,filling_values,usecols,names,excludelist,deletechars,defaultfmt,autostrip,replace_space,case_sensitive,unpack,usemask,invalid_raise):
@@ -21484,6 +22975,7 @@ def genfromtxt(fname,dtype,comments,delimiter,skip_header,skip_footer,converters
     """
     
     
+    return ndarray()
 def get_array_wrap():
     """Find the wrapper for the array with the highest priority.
        In case of ties, leftmost wins. If no wrapper is found, return None
@@ -21491,6 +22983,7 @@ def get_array_wrap():
     """
     
     
+    return None
 def get_include():
     """   Return the directory that contains the NumPy \*.h header files.
        Extension modules that need to compile against NumPy should use this
@@ -21508,6 +23001,7 @@ def get_include():
     """
     
     
+    return None
 def get_numarray_include(type):
     """   Return the directory that contains the numarray \*.h header files.
        Extension modules that need to compile against numarray should use this
@@ -21538,6 +23032,7 @@ def get_numarray_include(type):
     """
     
     
+    return str()
 def get_numpy_include():
     """`get_numpy_include` is deprecated, use `get_include` instead!
        Return the directory that contains the NumPy \*.h header files.
@@ -21556,6 +23051,7 @@ def get_numpy_include():
     """
     
     
+    return None
 def get_printoptions():
     """   Return the current print options.
        Returns
@@ -21577,6 +23073,7 @@ def get_printoptions():
     """
     
     
+    return None
 def getbuffer(obj,offset,size):
     """getbuffer(obj [,offset[, size]])
        Create a buffer object from the given object referencing a slice of
@@ -21603,12 +23100,14 @@ def getbuffer(obj,offset,size):
     """
     
     
+    return buffer()
 def getbufsize():
     """Return the size of the buffer used in ufuncs.
        
     """
     
     
+    return None
 def geterr():
     """   Get the current way of handling floating-point errors.
        Returns
@@ -21642,6 +23141,7 @@ def geterr():
     """
     
     
+    return None
 def geterrcall():
     """   Return the current callback function used on floating-point errors.
        When the error handling for a floating-point error (one of "divide",
@@ -21678,6 +23178,7 @@ def geterrcall():
     """
     
     
+    return None
 def geterrobj():
     """geterrobj()
        Return the current object that defines floating-point error handling.
@@ -21731,6 +23232,7 @@ def geterrobj():
     """
     
     
+    return None
 def gradient(f,varargs):
     """   Return the gradient of an N-dimensional array.
        The gradient is computed using central differences in the interior
@@ -21764,6 +23266,7 @@ def gradient(f,varargs):
     """
     
     
+    return ndarray()
 def greater(x1,x2):
     """greater(x1, x2[, out])
     Return the truth value of (x1 > x2) element-wise.
@@ -21792,6 +23295,7 @@ def greater(x1,x2):
     """
     
     
+    return bool()
 def greater_equal(x1,x2):
     """greater_equal(x1, x2[, out])
     Return the truth value of (x1 >= x2) element-wise.
@@ -21815,6 +23319,7 @@ def greater_equal(x1,x2):
     """
     
     
+    return bool()
 def hamming(M):
     """   Return the Hamming window.
        The Hamming window is a taper formed by using a weighted cosine.
@@ -21895,6 +23400,7 @@ def hamming(M):
     """
     
     
+    return ndarray()
 def hanning(M):
     """   Return the Hanning window.
        The Hanning window is a taper formed by using a weighted cosine.
@@ -21976,6 +23482,7 @@ def hanning(M):
     """
     
     
+    return ndarray()
 def histogram(a,bins,range,normed,weights):
     """   Compute the histogram of a set of data.
        Parameters
@@ -22041,6 +23548,7 @@ def histogram(a,bins,range,normed,weights):
     """
     
     
+    return array()
 def histogram2d(x,y,bins,range,normed,weights):
     """   Compute the bi-dimensional histogram of two data samples.
        Parameters
@@ -22113,6 +23621,7 @@ def histogram2d(x,y,bins,range,normed,weights):
     """
     
     
+    return ndarray()
 def histogramdd(sample,bins,range,normed,weights):
     """   Compute the multidimensional histogram of some data.
        Parameters
@@ -22159,6 +23668,7 @@ def histogramdd(sample,bins,range,normed,weights):
     """
     
     
+    return ndarray()
 def hsplit():
     """   Split an array into multiple sub-arrays horizontally (column-wise).
        Please refer to the `split` documentation.  `hsplit` is equivalent
@@ -22210,6 +23720,7 @@ def hsplit():
     """
     
     
+    return None
 def hstack(tup):
     """   Stack arrays in sequence horizontally (column wise).
        Take a sequence of arrays and stack them horizontally to make
@@ -22247,6 +23758,7 @@ def hstack(tup):
     """
     
     
+    return ndarray()
 def hypot(x1,x2,out):
     """hypot(x1, x2[, out])
     Given the "legs" of a right triangle, return its hypotenuse.
@@ -22279,6 +23791,7 @@ def hypot(x1,x2,out):
     """
     
     
+    return ndarray()
 def i0(x):
     """   Modified Bessel function of the first kind, order 0.
        Usually denoted :math:`I_0`.  This function does broadcast, but will *not*
@@ -22326,6 +23839,7 @@ def i0(x):
     """
     
     
+    return ndarray()
 def identity(n,dtype):
     """   Return the identity array.
        The identity array is a square array with ones on
@@ -22351,6 +23865,7 @@ def identity(n,dtype):
     """
     
     
+    return ndarray()
 iinfo = iinfo()
 def imag(val):
     """   Return the imaginary part of the elements of the array.
@@ -22378,6 +23893,7 @@ def imag(val):
     """
     
     
+    return ndarray()
 def in1d(ar1,ar2,assume_unique):
     """   Test whether each element of a 1D array is also present in a second array.
        Returns a boolean array the same length as `ar1` that is True
@@ -22418,6 +23934,7 @@ def in1d(ar1,ar2,assume_unique):
     """
     
     
+    return ndarray()
 index_exp = None
 def indices(dimensions,dtype):
     """   Return an array representing the indices of a grid.
@@ -22469,6 +23986,7 @@ def indices(dimensions,dtype):
     """
     
     
+    return ndarray()
 class inexact:
     T = None
     def all(self):
@@ -22482,6 +24000,7 @@ class inexact:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22493,6 +24012,7 @@ class inexact:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22504,6 +24024,7 @@ class inexact:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22515,6 +24036,7 @@ class inexact:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22526,6 +24048,7 @@ class inexact:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22537,6 +24060,7 @@ class inexact:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -22549,6 +24073,7 @@ class inexact:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22560,6 +24085,7 @@ class inexact:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22571,6 +24097,7 @@ class inexact:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22582,10 +24109,12 @@ class inexact:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22597,6 +24126,7 @@ class inexact:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22608,6 +24138,7 @@ class inexact:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22619,6 +24150,7 @@ class inexact:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22630,6 +24162,7 @@ class inexact:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -22642,6 +24175,7 @@ class inexact:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -22654,6 +24188,7 @@ class inexact:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22665,6 +24200,7 @@ class inexact:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22676,6 +24212,7 @@ class inexact:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -22689,6 +24226,7 @@ class inexact:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22700,6 +24238,7 @@ class inexact:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -22712,6 +24251,7 @@ class inexact:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22723,6 +24263,7 @@ class inexact:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -22735,6 +24276,7 @@ class inexact:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22746,6 +24288,7 @@ class inexact:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22757,6 +24300,7 @@ class inexact:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -22784,6 +24328,7 @@ class inexact:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22795,6 +24340,7 @@ class inexact:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22806,6 +24352,7 @@ class inexact:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22817,6 +24364,7 @@ class inexact:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22828,6 +24376,7 @@ class inexact:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22839,6 +24388,7 @@ class inexact:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -22851,6 +24401,7 @@ class inexact:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22862,6 +24413,7 @@ class inexact:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22873,6 +24425,7 @@ class inexact:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22884,6 +24437,7 @@ class inexact:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22895,6 +24449,7 @@ class inexact:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22906,6 +24461,7 @@ class inexact:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22917,6 +24473,7 @@ class inexact:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -22930,6 +24487,7 @@ class inexact:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22941,6 +24499,7 @@ class inexact:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22952,6 +24511,7 @@ class inexact:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -22964,6 +24524,7 @@ class inexact:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22975,6 +24536,7 @@ class inexact:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22986,6 +24548,7 @@ class inexact:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -22997,6 +24560,7 @@ class inexact:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23008,6 +24572,7 @@ class inexact:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23019,6 +24584,7 @@ class inexact:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23030,6 +24596,7 @@ class inexact:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23041,6 +24608,7 @@ class inexact:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23052,6 +24620,7 @@ class inexact:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23063,6 +24632,7 @@ class inexact:
         """
         
         
+        return None
     
 
 inf = 0.0
@@ -23109,6 +24679,7 @@ def info(object,maxwidth,output,toplevel):
     """
     
     
+    return None
 infty = 0.0
 def inner(a,b):
     """inner(a, b)
@@ -23162,6 +24733,7 @@ def inner(a,b):
     """
     
     
+    return ndarray()
 def insert(arr,obj,values,axis):
     """   Insert values along the given axis before the given indices.
        Parameters
@@ -23218,12 +24790,14 @@ def insert(arr,obj,values,axis):
     """
     
     
+    return ndarray()
 class int:
     def conjugate(self):
         """Returns self, the complex conjugate of any int.
         """
         
         
+        return None
     denominator = None
     imag = None
     numerator = None
@@ -23243,6 +24817,7 @@ class int0:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23254,6 +24829,7 @@ class int0:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23265,6 +24841,7 @@ class int0:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23276,6 +24853,7 @@ class int0:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23287,6 +24865,7 @@ class int0:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23298,6 +24877,7 @@ class int0:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -23310,6 +24890,7 @@ class int0:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23321,6 +24902,7 @@ class int0:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23332,6 +24914,7 @@ class int0:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23343,10 +24926,12 @@ class int0:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23358,6 +24943,7 @@ class int0:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23369,6 +24955,7 @@ class int0:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23380,6 +24967,7 @@ class int0:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23391,6 +24979,7 @@ class int0:
         """
         
         
+        return None
     data = None
     denominator = None
     def diagonal(self):
@@ -23404,6 +24993,7 @@ class int0:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -23416,6 +25006,7 @@ class int0:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23427,6 +25018,7 @@ class int0:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23438,6 +25030,7 @@ class int0:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -23451,6 +25044,7 @@ class int0:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23462,6 +25056,7 @@ class int0:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -23474,6 +25069,7 @@ class int0:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23485,6 +25081,7 @@ class int0:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -23497,6 +25094,7 @@ class int0:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23508,6 +25106,7 @@ class int0:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23519,6 +25118,7 @@ class int0:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -23546,6 +25146,7 @@ class int0:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23557,6 +25158,7 @@ class int0:
         """
         
         
+        return None
     numerator = None
     def prod(self):
         """Not implemented (virtual attribute)
@@ -23569,6 +25171,7 @@ class int0:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23580,6 +25183,7 @@ class int0:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23591,6 +25195,7 @@ class int0:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23602,6 +25207,7 @@ class int0:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -23614,6 +25220,7 @@ class int0:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23625,6 +25232,7 @@ class int0:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23636,6 +25244,7 @@ class int0:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23647,6 +25256,7 @@ class int0:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23658,6 +25268,7 @@ class int0:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23669,6 +25280,7 @@ class int0:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23680,6 +25292,7 @@ class int0:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -23693,6 +25306,7 @@ class int0:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23704,6 +25318,7 @@ class int0:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23715,6 +25330,7 @@ class int0:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -23727,6 +25343,7 @@ class int0:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23738,6 +25355,7 @@ class int0:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23749,6 +25367,7 @@ class int0:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23760,6 +25379,7 @@ class int0:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23771,6 +25391,7 @@ class int0:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23782,6 +25403,7 @@ class int0:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23793,6 +25415,7 @@ class int0:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23804,6 +25427,7 @@ class int0:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23815,6 +25439,7 @@ class int0:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23826,6 +25451,7 @@ class int0:
         """
         
         
+        return None
     
 
 class int16:
@@ -23841,6 +25467,7 @@ class int16:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23852,6 +25479,7 @@ class int16:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23863,6 +25491,7 @@ class int16:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23874,6 +25503,7 @@ class int16:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23885,6 +25515,7 @@ class int16:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23896,6 +25527,7 @@ class int16:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -23908,6 +25540,7 @@ class int16:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23919,6 +25552,7 @@ class int16:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23930,6 +25564,7 @@ class int16:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23941,10 +25576,12 @@ class int16:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23956,6 +25593,7 @@ class int16:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23967,6 +25605,7 @@ class int16:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23978,6 +25617,7 @@ class int16:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -23989,6 +25629,7 @@ class int16:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -24001,6 +25642,7 @@ class int16:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -24013,6 +25655,7 @@ class int16:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24024,6 +25667,7 @@ class int16:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24035,6 +25679,7 @@ class int16:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -24048,6 +25693,7 @@ class int16:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24059,6 +25705,7 @@ class int16:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -24071,6 +25718,7 @@ class int16:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24082,6 +25730,7 @@ class int16:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -24094,6 +25743,7 @@ class int16:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24105,6 +25755,7 @@ class int16:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24116,6 +25767,7 @@ class int16:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -24143,6 +25795,7 @@ class int16:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24154,6 +25807,7 @@ class int16:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24165,6 +25819,7 @@ class int16:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24176,6 +25831,7 @@ class int16:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24187,6 +25843,7 @@ class int16:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24198,6 +25855,7 @@ class int16:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -24210,6 +25868,7 @@ class int16:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24221,6 +25880,7 @@ class int16:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24232,6 +25892,7 @@ class int16:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24243,6 +25904,7 @@ class int16:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24254,6 +25916,7 @@ class int16:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24265,6 +25928,7 @@ class int16:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24276,6 +25940,7 @@ class int16:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -24289,6 +25954,7 @@ class int16:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24300,6 +25966,7 @@ class int16:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24311,6 +25978,7 @@ class int16:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -24323,6 +25991,7 @@ class int16:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24334,6 +26003,7 @@ class int16:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24345,6 +26015,7 @@ class int16:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24356,6 +26027,7 @@ class int16:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24367,6 +26039,7 @@ class int16:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24378,6 +26051,7 @@ class int16:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24389,6 +26063,7 @@ class int16:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24400,6 +26075,7 @@ class int16:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24411,6 +26087,7 @@ class int16:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24422,6 +26099,7 @@ class int16:
         """
         
         
+        return None
     
 
 class int32:
@@ -24437,6 +26115,7 @@ class int32:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24448,6 +26127,7 @@ class int32:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24459,6 +26139,7 @@ class int32:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24470,6 +26151,7 @@ class int32:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24481,6 +26163,7 @@ class int32:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24492,6 +26175,7 @@ class int32:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -24504,6 +26188,7 @@ class int32:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24515,6 +26200,7 @@ class int32:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24526,6 +26212,7 @@ class int32:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24537,10 +26224,12 @@ class int32:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24552,6 +26241,7 @@ class int32:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24563,6 +26253,7 @@ class int32:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24574,6 +26265,7 @@ class int32:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24585,6 +26277,7 @@ class int32:
         """
         
         
+        return None
     data = None
     denominator = None
     def diagonal(self):
@@ -24598,6 +26291,7 @@ class int32:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -24610,6 +26304,7 @@ class int32:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24621,6 +26316,7 @@ class int32:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24632,6 +26328,7 @@ class int32:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -24645,6 +26342,7 @@ class int32:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24656,6 +26354,7 @@ class int32:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -24668,6 +26367,7 @@ class int32:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24679,6 +26379,7 @@ class int32:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -24691,6 +26392,7 @@ class int32:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24702,6 +26404,7 @@ class int32:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24713,6 +26416,7 @@ class int32:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -24740,6 +26444,7 @@ class int32:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24751,6 +26456,7 @@ class int32:
         """
         
         
+        return None
     numerator = None
     def prod(self):
         """Not implemented (virtual attribute)
@@ -24763,6 +26469,7 @@ class int32:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24774,6 +26481,7 @@ class int32:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24785,6 +26493,7 @@ class int32:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24796,6 +26505,7 @@ class int32:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -24808,6 +26518,7 @@ class int32:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24819,6 +26530,7 @@ class int32:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24830,6 +26542,7 @@ class int32:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24841,6 +26554,7 @@ class int32:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24852,6 +26566,7 @@ class int32:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24863,6 +26578,7 @@ class int32:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24874,6 +26590,7 @@ class int32:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -24887,6 +26604,7 @@ class int32:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24898,6 +26616,7 @@ class int32:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24909,6 +26628,7 @@ class int32:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -24921,6 +26641,7 @@ class int32:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24932,6 +26653,7 @@ class int32:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24943,6 +26665,7 @@ class int32:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24954,6 +26677,7 @@ class int32:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24965,6 +26689,7 @@ class int32:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24976,6 +26701,7 @@ class int32:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24987,6 +26713,7 @@ class int32:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -24998,6 +26725,7 @@ class int32:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25009,6 +26737,7 @@ class int32:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25020,6 +26749,7 @@ class int32:
         """
         
         
+        return None
     
 
 class int64:
@@ -25035,6 +26765,7 @@ class int64:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25046,6 +26777,7 @@ class int64:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25057,6 +26789,7 @@ class int64:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25068,6 +26801,7 @@ class int64:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25079,6 +26813,7 @@ class int64:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25090,6 +26825,7 @@ class int64:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -25102,6 +26838,7 @@ class int64:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25113,6 +26850,7 @@ class int64:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25124,6 +26862,7 @@ class int64:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25135,10 +26874,12 @@ class int64:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25150,6 +26891,7 @@ class int64:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25161,6 +26903,7 @@ class int64:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25172,6 +26915,7 @@ class int64:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25183,6 +26927,7 @@ class int64:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -25195,6 +26940,7 @@ class int64:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -25207,6 +26953,7 @@ class int64:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25218,6 +26965,7 @@ class int64:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25229,6 +26977,7 @@ class int64:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -25242,6 +26991,7 @@ class int64:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25253,6 +27003,7 @@ class int64:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -25265,6 +27016,7 @@ class int64:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25276,6 +27028,7 @@ class int64:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -25288,6 +27041,7 @@ class int64:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25299,6 +27053,7 @@ class int64:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25310,6 +27065,7 @@ class int64:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -25337,6 +27093,7 @@ class int64:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25348,6 +27105,7 @@ class int64:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25359,6 +27117,7 @@ class int64:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25370,6 +27129,7 @@ class int64:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25381,6 +27141,7 @@ class int64:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25392,6 +27153,7 @@ class int64:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -25404,6 +27166,7 @@ class int64:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25415,6 +27178,7 @@ class int64:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25426,6 +27190,7 @@ class int64:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25437,6 +27202,7 @@ class int64:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25448,6 +27214,7 @@ class int64:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25459,6 +27226,7 @@ class int64:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25470,6 +27238,7 @@ class int64:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -25483,6 +27252,7 @@ class int64:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25494,6 +27264,7 @@ class int64:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25505,6 +27276,7 @@ class int64:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -25517,6 +27289,7 @@ class int64:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25528,6 +27301,7 @@ class int64:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25539,6 +27313,7 @@ class int64:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25550,6 +27325,7 @@ class int64:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25561,6 +27337,7 @@ class int64:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25572,6 +27349,7 @@ class int64:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25583,6 +27361,7 @@ class int64:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25594,6 +27373,7 @@ class int64:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25605,6 +27385,7 @@ class int64:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25616,6 +27397,7 @@ class int64:
         """
         
         
+        return None
     
 
 class int8:
@@ -25631,6 +27413,7 @@ class int8:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25642,6 +27425,7 @@ class int8:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25653,6 +27437,7 @@ class int8:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25664,6 +27449,7 @@ class int8:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25675,6 +27461,7 @@ class int8:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25686,6 +27473,7 @@ class int8:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -25698,6 +27486,7 @@ class int8:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25709,6 +27498,7 @@ class int8:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25720,6 +27510,7 @@ class int8:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25731,10 +27522,12 @@ class int8:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25746,6 +27539,7 @@ class int8:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25757,6 +27551,7 @@ class int8:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25768,6 +27563,7 @@ class int8:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25779,6 +27575,7 @@ class int8:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -25791,6 +27588,7 @@ class int8:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -25803,6 +27601,7 @@ class int8:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25814,6 +27613,7 @@ class int8:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25825,6 +27625,7 @@ class int8:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -25838,6 +27639,7 @@ class int8:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25849,6 +27651,7 @@ class int8:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -25861,6 +27664,7 @@ class int8:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25872,6 +27676,7 @@ class int8:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -25884,6 +27689,7 @@ class int8:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25895,6 +27701,7 @@ class int8:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25906,6 +27713,7 @@ class int8:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -25933,6 +27741,7 @@ class int8:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25944,6 +27753,7 @@ class int8:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25955,6 +27765,7 @@ class int8:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25966,6 +27777,7 @@ class int8:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25977,6 +27789,7 @@ class int8:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -25988,6 +27801,7 @@ class int8:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -26000,6 +27814,7 @@ class int8:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26011,6 +27826,7 @@ class int8:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26022,6 +27838,7 @@ class int8:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26033,6 +27850,7 @@ class int8:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26044,6 +27862,7 @@ class int8:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26055,6 +27874,7 @@ class int8:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26066,6 +27886,7 @@ class int8:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -26079,6 +27900,7 @@ class int8:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26090,6 +27912,7 @@ class int8:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26101,6 +27924,7 @@ class int8:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -26113,6 +27937,7 @@ class int8:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26124,6 +27949,7 @@ class int8:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26135,6 +27961,7 @@ class int8:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26146,6 +27973,7 @@ class int8:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26157,6 +27985,7 @@ class int8:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26168,6 +27997,7 @@ class int8:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26179,6 +28009,7 @@ class int8:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26190,6 +28021,7 @@ class int8:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26201,6 +28033,7 @@ class int8:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26212,6 +28045,7 @@ class int8:
         """
         
         
+        return None
     
 
 class int_:
@@ -26227,6 +28061,7 @@ class int_:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26238,6 +28073,7 @@ class int_:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26249,6 +28085,7 @@ class int_:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26260,6 +28097,7 @@ class int_:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26271,6 +28109,7 @@ class int_:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26282,6 +28121,7 @@ class int_:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -26294,6 +28134,7 @@ class int_:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26305,6 +28146,7 @@ class int_:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26316,6 +28158,7 @@ class int_:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26327,10 +28170,12 @@ class int_:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26342,6 +28187,7 @@ class int_:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26353,6 +28199,7 @@ class int_:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26364,6 +28211,7 @@ class int_:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26375,6 +28223,7 @@ class int_:
         """
         
         
+        return None
     data = None
     denominator = None
     def diagonal(self):
@@ -26388,6 +28237,7 @@ class int_:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -26400,6 +28250,7 @@ class int_:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26411,6 +28262,7 @@ class int_:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26422,6 +28274,7 @@ class int_:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -26435,6 +28288,7 @@ class int_:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26446,6 +28300,7 @@ class int_:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -26458,6 +28313,7 @@ class int_:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26469,6 +28325,7 @@ class int_:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -26481,6 +28338,7 @@ class int_:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26492,6 +28350,7 @@ class int_:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26503,6 +28362,7 @@ class int_:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -26530,6 +28390,7 @@ class int_:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26541,6 +28402,7 @@ class int_:
         """
         
         
+        return None
     numerator = None
     def prod(self):
         """Not implemented (virtual attribute)
@@ -26553,6 +28415,7 @@ class int_:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26564,6 +28427,7 @@ class int_:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26575,6 +28439,7 @@ class int_:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26586,6 +28451,7 @@ class int_:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -26598,6 +28464,7 @@ class int_:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26609,6 +28476,7 @@ class int_:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26620,6 +28488,7 @@ class int_:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26631,6 +28500,7 @@ class int_:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26642,6 +28512,7 @@ class int_:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26653,6 +28524,7 @@ class int_:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26664,6 +28536,7 @@ class int_:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -26677,6 +28550,7 @@ class int_:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26688,6 +28562,7 @@ class int_:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26699,6 +28574,7 @@ class int_:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -26711,6 +28587,7 @@ class int_:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26722,6 +28599,7 @@ class int_:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26733,6 +28611,7 @@ class int_:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26744,6 +28623,7 @@ class int_:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26755,6 +28635,7 @@ class int_:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26766,6 +28647,7 @@ class int_:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26777,6 +28659,7 @@ class int_:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26788,6 +28671,7 @@ class int_:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26799,6 +28683,7 @@ class int_:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26810,12 +28695,14 @@ class int_:
         """
         
         
+        return None
     
 
 def int_asbuffer():
     """None"""
     
     
+    return None
 class intc:
     T = None
     def all(self):
@@ -26829,6 +28716,7 @@ class intc:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26840,6 +28728,7 @@ class intc:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26851,6 +28740,7 @@ class intc:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26862,6 +28752,7 @@ class intc:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26873,6 +28764,7 @@ class intc:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26884,6 +28776,7 @@ class intc:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -26896,6 +28789,7 @@ class intc:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26907,6 +28801,7 @@ class intc:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26918,6 +28813,7 @@ class intc:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26929,10 +28825,12 @@ class intc:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26944,6 +28842,7 @@ class intc:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26955,6 +28854,7 @@ class intc:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26966,6 +28866,7 @@ class intc:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -26977,6 +28878,7 @@ class intc:
         """
         
         
+        return None
     data = None
     denominator = None
     def diagonal(self):
@@ -26990,6 +28892,7 @@ class intc:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -27002,6 +28905,7 @@ class intc:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27013,6 +28917,7 @@ class intc:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27024,6 +28929,7 @@ class intc:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -27037,6 +28943,7 @@ class intc:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27048,6 +28955,7 @@ class intc:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -27060,6 +28968,7 @@ class intc:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27071,6 +28980,7 @@ class intc:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -27083,6 +28993,7 @@ class intc:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27094,6 +29005,7 @@ class intc:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27105,6 +29017,7 @@ class intc:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -27132,6 +29045,7 @@ class intc:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27143,6 +29057,7 @@ class intc:
         """
         
         
+        return None
     numerator = None
     def prod(self):
         """Not implemented (virtual attribute)
@@ -27155,6 +29070,7 @@ class intc:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27166,6 +29082,7 @@ class intc:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27177,6 +29094,7 @@ class intc:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27188,6 +29106,7 @@ class intc:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -27200,6 +29119,7 @@ class intc:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27211,6 +29131,7 @@ class intc:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27222,6 +29143,7 @@ class intc:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27233,6 +29155,7 @@ class intc:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27244,6 +29167,7 @@ class intc:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27255,6 +29179,7 @@ class intc:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27266,6 +29191,7 @@ class intc:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -27279,6 +29205,7 @@ class intc:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27290,6 +29217,7 @@ class intc:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27301,6 +29229,7 @@ class intc:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -27313,6 +29242,7 @@ class intc:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27324,6 +29254,7 @@ class intc:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27335,6 +29266,7 @@ class intc:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27346,6 +29278,7 @@ class intc:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27357,6 +29290,7 @@ class intc:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27368,6 +29302,7 @@ class intc:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27379,6 +29314,7 @@ class intc:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27390,6 +29326,7 @@ class intc:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27401,6 +29338,7 @@ class intc:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27412,6 +29350,7 @@ class intc:
         """
         
         
+        return None
     
 
 class integer:
@@ -27427,6 +29366,7 @@ class integer:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27438,6 +29378,7 @@ class integer:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27449,6 +29390,7 @@ class integer:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27460,6 +29402,7 @@ class integer:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27471,6 +29414,7 @@ class integer:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27482,6 +29426,7 @@ class integer:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -27494,6 +29439,7 @@ class integer:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27505,6 +29451,7 @@ class integer:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27516,6 +29463,7 @@ class integer:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27527,10 +29475,12 @@ class integer:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27542,6 +29492,7 @@ class integer:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27553,6 +29504,7 @@ class integer:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27564,6 +29516,7 @@ class integer:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27575,6 +29528,7 @@ class integer:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -27587,6 +29541,7 @@ class integer:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -27599,6 +29554,7 @@ class integer:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27610,6 +29566,7 @@ class integer:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27621,6 +29578,7 @@ class integer:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -27634,6 +29592,7 @@ class integer:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27645,6 +29604,7 @@ class integer:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -27657,6 +29617,7 @@ class integer:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27668,6 +29629,7 @@ class integer:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -27680,6 +29642,7 @@ class integer:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27691,6 +29654,7 @@ class integer:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27702,6 +29666,7 @@ class integer:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -27729,6 +29694,7 @@ class integer:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27740,6 +29706,7 @@ class integer:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27751,6 +29718,7 @@ class integer:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27762,6 +29730,7 @@ class integer:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27773,6 +29742,7 @@ class integer:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27784,6 +29754,7 @@ class integer:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -27796,6 +29767,7 @@ class integer:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27807,6 +29779,7 @@ class integer:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27818,6 +29791,7 @@ class integer:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27829,6 +29803,7 @@ class integer:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27840,6 +29815,7 @@ class integer:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27851,6 +29827,7 @@ class integer:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27862,6 +29839,7 @@ class integer:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -27875,6 +29853,7 @@ class integer:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27886,6 +29865,7 @@ class integer:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27897,6 +29877,7 @@ class integer:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -27909,6 +29890,7 @@ class integer:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27920,6 +29902,7 @@ class integer:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27931,6 +29914,7 @@ class integer:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27942,6 +29926,7 @@ class integer:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27953,6 +29938,7 @@ class integer:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27964,6 +29950,7 @@ class integer:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27975,6 +29962,7 @@ class integer:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27986,6 +29974,7 @@ class integer:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -27997,6 +29986,7 @@ class integer:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28008,6 +29998,7 @@ class integer:
         """
         
         
+        return None
     
 
 def interp(x,xp,fp,left,right):
@@ -28066,6 +30057,7 @@ def interp(x,xp,fp,left,right):
     """
     
     
+    return float()
 def intersect1d(ar1,ar2,assume_unique):
     """   Find the intersection of two arrays.
        Return the sorted, unique values that are in both of the input arrays.
@@ -28092,6 +30084,7 @@ def intersect1d(ar1,ar2,assume_unique):
     """
     
     
+    return ndarray()
 def intersect1d_nu():
     """`intersect1d_nu` is deprecated!
        This function is deprecated.  Use intersect1d()
@@ -28100,6 +30093,7 @@ def intersect1d_nu():
     """
     
     
+    return None
 class intp:
     T = None
     def all(self):
@@ -28113,6 +30107,7 @@ class intp:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28124,6 +30119,7 @@ class intp:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28135,6 +30131,7 @@ class intp:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28146,6 +30143,7 @@ class intp:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28157,6 +30155,7 @@ class intp:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28168,6 +30167,7 @@ class intp:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -28180,6 +30180,7 @@ class intp:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28191,6 +30192,7 @@ class intp:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28202,6 +30204,7 @@ class intp:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28213,10 +30216,12 @@ class intp:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28228,6 +30233,7 @@ class intp:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28239,6 +30245,7 @@ class intp:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28250,6 +30257,7 @@ class intp:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28261,6 +30269,7 @@ class intp:
         """
         
         
+        return None
     data = None
     denominator = None
     def diagonal(self):
@@ -28274,6 +30283,7 @@ class intp:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -28286,6 +30296,7 @@ class intp:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28297,6 +30308,7 @@ class intp:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28308,6 +30320,7 @@ class intp:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -28321,6 +30334,7 @@ class intp:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28332,6 +30346,7 @@ class intp:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -28344,6 +30359,7 @@ class intp:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28355,6 +30371,7 @@ class intp:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -28367,6 +30384,7 @@ class intp:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28378,6 +30396,7 @@ class intp:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28389,6 +30408,7 @@ class intp:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -28416,6 +30436,7 @@ class intp:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28427,6 +30448,7 @@ class intp:
         """
         
         
+        return None
     numerator = None
     def prod(self):
         """Not implemented (virtual attribute)
@@ -28439,6 +30461,7 @@ class intp:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28450,6 +30473,7 @@ class intp:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28461,6 +30485,7 @@ class intp:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28472,6 +30497,7 @@ class intp:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -28484,6 +30510,7 @@ class intp:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28495,6 +30522,7 @@ class intp:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28506,6 +30534,7 @@ class intp:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28517,6 +30546,7 @@ class intp:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28528,6 +30558,7 @@ class intp:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28539,6 +30570,7 @@ class intp:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28550,6 +30582,7 @@ class intp:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -28563,6 +30596,7 @@ class intp:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28574,6 +30608,7 @@ class intp:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28585,6 +30620,7 @@ class intp:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -28597,6 +30633,7 @@ class intp:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28608,6 +30645,7 @@ class intp:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28619,6 +30657,7 @@ class intp:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28630,6 +30669,7 @@ class intp:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28641,6 +30681,7 @@ class intp:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28652,6 +30693,7 @@ class intp:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28663,6 +30705,7 @@ class intp:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28674,6 +30717,7 @@ class intp:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28685,6 +30729,7 @@ class intp:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -28696,6 +30741,7 @@ class intp:
         """
         
         
+        return None
     
 
 def invert(x1):
@@ -28762,6 +30808,7 @@ def invert(x1):
     """
     
     
+    return array_like()
 def ipmt(rate,per,nper,pv,fv,when):
     """   Not implemented. Compute the payment portion for loan interest.
        Parameters
@@ -28798,6 +30845,7 @@ def ipmt(rate,per,nper,pv,fv,when):
     """
     
     
+    return ndarray()
 def irr(values):
     """   Return the Internal Rate of Return (IRR).
        This is the "average" periodically compounded rate of return
@@ -28842,6 +30890,7 @@ def irr(values):
     """
     
     
+    return float()
 def iscomplex(x):
     """   Returns a bool array, where True if input element is complex.
        What is tested is whether the input has a non-zero imaginary part, not if
@@ -28867,6 +30916,7 @@ def iscomplex(x):
     """
     
     
+    return ndarray()
 def iscomplexobj(x):
     """   Return True if x is a complex type or an array of complex numbers.
        The type of the input is checked, not the value. So even if the input
@@ -28895,6 +30945,7 @@ def iscomplexobj(x):
     """
     
     
+    return bool()
 def isfinite(x,out):
     """isfinite(x[, out])
     Test element-wise for finite-ness (not infinity or not Not a Number).
@@ -28952,6 +31003,7 @@ def isfinite(x,out):
     """
     
     
+    return ndarray()
 def isfortran(a):
     """   Returns True if array is arranged in Fortran-order in memory
        and dimension > 1.
@@ -28997,6 +31049,7 @@ def isfortran(a):
     """
     
     
+    return None
 def isinf(x,out):
     """isinf(x[, out])
     Test element-wise for positive or negative infinity.
@@ -29051,6 +31104,7 @@ def isinf(x,out):
     """
     
     
+    return bool()
 def isnan(x):
     """isnan(x[, out])
     Test element-wise for Not a Number (NaN), return result as a bool array.
@@ -29084,6 +31138,7 @@ def isnan(x):
     """
     
     
+    return ndarray()
 def isneginf(x,y):
     """   Test element-wise for negative infinity, return result as bool array.
        Parameters
@@ -29134,6 +31189,7 @@ def isneginf(x,y):
     """
     
     
+    return ndarray()
 def isposinf(x,y):
     """   Test element-wise for positive infinity, return result as bool array.
        Parameters
@@ -29183,6 +31239,7 @@ def isposinf(x,y):
     """
     
     
+    return ndarray()
 def isreal(x):
     """   Returns a bool array, where True if input element is real.
        If element has complex type with zero complex part, the return value
@@ -29207,6 +31264,7 @@ def isreal(x):
     """
     
     
+    return ndarray()
 def isrealobj(x):
     """   Return True if x is a not complex type or an array of complex numbers.
        The type of the input is checked, not the value. So even if the input
@@ -29235,6 +31293,7 @@ def isrealobj(x):
     """
     
     
+    return bool()
 def isscalar(num):
     """   Returns True if the type of `num` is a scalar type.
        Parameters
@@ -29257,6 +31316,7 @@ def isscalar(num):
     """
     
     
+    return bool()
 def issctype(rep):
     """   Determines whether the given object represents a scalar data-type.
        Parameters
@@ -29283,10 +31343,12 @@ def issctype(rep):
     """
     
     
+    return bool()
 def issubclass_():
     """None"""
     
     
+    return None
 def issubdtype(arg1,arg2):
     """   Returns True if first argument is a typecode lower/equal in type hierarchy.
        Parameters
@@ -29310,6 +31372,7 @@ def issubdtype(arg1,arg2):
     """
     
     
+    return bool()
 def issubsctype(arg1,arg2):
     """   Determine if the first argument is a subclass of the second argument.
        Parameters
@@ -29335,6 +31398,7 @@ def issubsctype(arg1,arg2):
     """
     
     
+    return bool()
 def iterable(y):
     """   Check whether or not an object can be iterated over.
        Parameters
@@ -29356,6 +31420,7 @@ def iterable(y):
     """
     
     
+    return _0()
 def ix_(args):
     """   Construct an open mesh from multiple sequences.
        This function takes N 1-D sequences and returns N outputs with N
@@ -29395,6 +31460,7 @@ def ix_(args):
     """
     
     
+    return tuple()
 def kaiser(M,beta):
     """   Return the Kaiser window.
        The Kaiser window is a taper formed by using a Bessel function.
@@ -29499,6 +31565,7 @@ def kaiser(M,beta):
     """
     
     
+    return array()
 def kron(a,b):
     """   Kronecker product of two arrays.
        Computes the Kronecker product, a composite array made of blocks of the
@@ -29554,12 +31621,14 @@ def kron(a,b):
     """
     
     
+    return ndarray()
 def ldexp(x1,x2,out):
     """ldexp(x1, x2[, out])
     Compute y = x1 * 2**x2.
     """
     
     
+    return None
 def left_shift(x1,x2):
     """left_shift(x1, x2[, out])
     Shift the bits of an integer to the left.
@@ -29594,6 +31663,7 @@ def left_shift(x1,x2):
     """
     
     
+    return array()
 def less(x1,x2):
     """less(x1, x2[, out])
     Return the truth value of (x1 < x2) element-wise.
@@ -29617,6 +31687,7 @@ def less(x1,x2):
     """
     
     
+    return bool()
 def less_equal(x1,x2):
     """less_equal(x1, x2[, out])
     Return the truth value of (x1 =< x2) element-wise.
@@ -29640,6 +31711,7 @@ def less_equal(x1,x2):
     """
     
     
+    return bool()
 def lexsort(keys,axis):
     """lexsort(keys, axis=-1)
        Perform an indirect sort using a sequence of keys.
@@ -29698,6 +31770,7 @@ def lexsort(keys,axis):
     """
     
     
+    return N()
 lib = None
 linalg = None
 def linspace(start,stop,num,endpoint,retstep):
@@ -29760,6 +31833,7 @@ def linspace(start,stop,num,endpoint,retstep):
     """
     
     
+    return ndarray()
 little_endian = False
 def load(file):
     """   Load a pickled, ``.npy``, or ``.npz`` binary file.
@@ -29813,11 +31887,13 @@ def load(file):
     """
     
     
+    return array()
 def loads(string):
     """loads(string) -- Load a pickle from the given string
     """
     
     
+    return None
 def loadtxt(fname,dtype,comments,delimiter,converters,skiprows,usecols,unpack):
     """   Load data from a text file.
        Each row in the text file must have the same number of values.
@@ -29888,6 +31964,7 @@ def loadtxt(fname,dtype,comments,delimiter,converters,skiprows,usecols,unpack):
     """
     
     
+    return ndarray()
 def log(x):
     """log(x[, out])
     Natural logarithm, element-wise.
@@ -29928,6 +32005,7 @@ def log(x):
     """
     
     
+    return ndarray()
 def log10(x):
     """log10(x[, out])
     Return the base 10 logarithm of the input array, element-wise.
@@ -29967,6 +32045,7 @@ def log10(x):
     """
     
     
+    return ndarray()
 def log1p(x):
     """log1p(x[, out])
     Return the natural logarithm of one plus the input array, element-wise.
@@ -30010,6 +32089,7 @@ def log1p(x):
     """
     
     
+    return ndarray()
 def log2(x):
     """log2(x[, out])
     Base-2 logarithm of `x`.
@@ -30048,6 +32128,7 @@ def log2(x):
     """
     
     
+    return ndarray()
 def logaddexp(x1,x2):
     """logaddexp(x1, x2[, out])
     Logarithm of the sum of exponentiations of the inputs.
@@ -30082,6 +32163,7 @@ def logaddexp(x1,x2):
     """
     
     
+    return ndarray()
 def logaddexp2(x1,x2,out):
     """logaddexp2(x1, x2[, out])
     Logarithm of the sum of exponentiations of the inputs in base-2.
@@ -30118,6 +32200,7 @@ def logaddexp2(x1,x2,out):
     """
     
     
+    return ndarray()
 def logical_and(x1,x2):
     """logical_and(x1, x2[, out])
     Compute the truth value of x1 AND x2 elementwise.
@@ -30146,6 +32229,7 @@ def logical_and(x1,x2):
     """
     
     
+    return ndarray()
 def logical_not(x):
     """logical_not(x[, out])
     Compute the truth value of NOT x elementwise.
@@ -30173,6 +32257,7 @@ def logical_not(x):
     """
     
     
+    return bool()
 def logical_or(x1,x2):
     """logical_or(x1, x2[, out])
     Compute the truth value of x1 OR x2 elementwise.
@@ -30202,6 +32287,7 @@ def logical_or(x1,x2):
     """
     
     
+    return ndarray()
 def logical_xor(x1,x2):
     """logical_xor(x1, x2[, out])
     Compute the truth value of x1 XOR x2, element-wise.
@@ -30235,6 +32321,7 @@ def logical_xor(x1,x2):
     """
     
     
+    return bool()
 def logspace(start,stop,num,endpoint,base):
     """   Return numbers spaced evenly on a log scale.
        In linear space, the sequence starts at ``base ** start``
@@ -30301,12 +32388,14 @@ def logspace(start,stop,num,endpoint,base):
     """
     
     
+    return ndarray()
 class long:
     def conjugate(self):
         """Returns self, the complex conjugate of any long.
         """
         
         
+        return None
     denominator = None
     imag = None
     numerator = None
@@ -30326,6 +32415,7 @@ class longcomplex:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30337,6 +32427,7 @@ class longcomplex:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30348,6 +32439,7 @@ class longcomplex:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30359,6 +32451,7 @@ class longcomplex:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30370,6 +32463,7 @@ class longcomplex:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30381,6 +32475,7 @@ class longcomplex:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -30393,6 +32488,7 @@ class longcomplex:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30404,6 +32500,7 @@ class longcomplex:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30415,6 +32512,7 @@ class longcomplex:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30426,10 +32524,12 @@ class longcomplex:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30441,6 +32541,7 @@ class longcomplex:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30452,6 +32553,7 @@ class longcomplex:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30463,6 +32565,7 @@ class longcomplex:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30474,6 +32577,7 @@ class longcomplex:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -30486,6 +32590,7 @@ class longcomplex:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -30498,6 +32603,7 @@ class longcomplex:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30509,6 +32615,7 @@ class longcomplex:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30520,6 +32627,7 @@ class longcomplex:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -30533,6 +32641,7 @@ class longcomplex:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30544,6 +32653,7 @@ class longcomplex:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -30556,6 +32666,7 @@ class longcomplex:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30567,6 +32678,7 @@ class longcomplex:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -30579,6 +32691,7 @@ class longcomplex:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30590,6 +32703,7 @@ class longcomplex:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30601,6 +32715,7 @@ class longcomplex:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -30628,6 +32743,7 @@ class longcomplex:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30639,6 +32755,7 @@ class longcomplex:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30650,6 +32767,7 @@ class longcomplex:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30661,6 +32779,7 @@ class longcomplex:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30672,6 +32791,7 @@ class longcomplex:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30683,6 +32803,7 @@ class longcomplex:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -30695,6 +32816,7 @@ class longcomplex:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30706,6 +32828,7 @@ class longcomplex:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30717,6 +32840,7 @@ class longcomplex:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30728,6 +32852,7 @@ class longcomplex:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30739,6 +32864,7 @@ class longcomplex:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30750,6 +32876,7 @@ class longcomplex:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30761,6 +32888,7 @@ class longcomplex:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -30774,6 +32902,7 @@ class longcomplex:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30785,6 +32914,7 @@ class longcomplex:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30796,6 +32926,7 @@ class longcomplex:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -30808,6 +32939,7 @@ class longcomplex:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30819,6 +32951,7 @@ class longcomplex:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30830,6 +32963,7 @@ class longcomplex:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30841,6 +32975,7 @@ class longcomplex:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30852,6 +32987,7 @@ class longcomplex:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30863,6 +32999,7 @@ class longcomplex:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30874,6 +33011,7 @@ class longcomplex:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30885,6 +33023,7 @@ class longcomplex:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30896,6 +33035,7 @@ class longcomplex:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30907,6 +33047,7 @@ class longcomplex:
         """
         
         
+        return None
     
 
 class longdouble:
@@ -30922,6 +33063,7 @@ class longdouble:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30933,6 +33075,7 @@ class longdouble:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30944,6 +33087,7 @@ class longdouble:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30955,6 +33099,7 @@ class longdouble:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30966,6 +33111,7 @@ class longdouble:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -30977,6 +33123,7 @@ class longdouble:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -30989,6 +33136,7 @@ class longdouble:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31000,6 +33148,7 @@ class longdouble:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31011,6 +33160,7 @@ class longdouble:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31022,10 +33172,12 @@ class longdouble:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31037,6 +33189,7 @@ class longdouble:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31048,6 +33201,7 @@ class longdouble:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31059,6 +33213,7 @@ class longdouble:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31070,6 +33225,7 @@ class longdouble:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -31082,6 +33238,7 @@ class longdouble:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -31094,6 +33251,7 @@ class longdouble:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31105,6 +33263,7 @@ class longdouble:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31116,6 +33275,7 @@ class longdouble:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -31129,6 +33289,7 @@ class longdouble:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31140,6 +33301,7 @@ class longdouble:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -31152,6 +33314,7 @@ class longdouble:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31163,6 +33326,7 @@ class longdouble:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -31175,6 +33339,7 @@ class longdouble:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31186,6 +33351,7 @@ class longdouble:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31197,6 +33363,7 @@ class longdouble:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -31224,6 +33391,7 @@ class longdouble:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31235,6 +33403,7 @@ class longdouble:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31246,6 +33415,7 @@ class longdouble:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31257,6 +33427,7 @@ class longdouble:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31268,6 +33439,7 @@ class longdouble:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31279,6 +33451,7 @@ class longdouble:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -31291,6 +33464,7 @@ class longdouble:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31302,6 +33476,7 @@ class longdouble:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31313,6 +33488,7 @@ class longdouble:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31324,6 +33500,7 @@ class longdouble:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31335,6 +33512,7 @@ class longdouble:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31346,6 +33524,7 @@ class longdouble:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31357,6 +33536,7 @@ class longdouble:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -31370,6 +33550,7 @@ class longdouble:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31381,6 +33562,7 @@ class longdouble:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31392,6 +33574,7 @@ class longdouble:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -31404,6 +33587,7 @@ class longdouble:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31415,6 +33599,7 @@ class longdouble:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31426,6 +33611,7 @@ class longdouble:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31437,6 +33623,7 @@ class longdouble:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31448,6 +33635,7 @@ class longdouble:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31459,6 +33647,7 @@ class longdouble:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31470,6 +33659,7 @@ class longdouble:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31481,6 +33671,7 @@ class longdouble:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31492,6 +33683,7 @@ class longdouble:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31503,6 +33695,7 @@ class longdouble:
         """
         
         
+        return None
     
 
 class longfloat:
@@ -31518,6 +33711,7 @@ class longfloat:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31529,6 +33723,7 @@ class longfloat:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31540,6 +33735,7 @@ class longfloat:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31551,6 +33747,7 @@ class longfloat:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31562,6 +33759,7 @@ class longfloat:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31573,6 +33771,7 @@ class longfloat:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -31585,6 +33784,7 @@ class longfloat:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31596,6 +33796,7 @@ class longfloat:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31607,6 +33808,7 @@ class longfloat:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31618,10 +33820,12 @@ class longfloat:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31633,6 +33837,7 @@ class longfloat:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31644,6 +33849,7 @@ class longfloat:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31655,6 +33861,7 @@ class longfloat:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31666,6 +33873,7 @@ class longfloat:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -31678,6 +33886,7 @@ class longfloat:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -31690,6 +33899,7 @@ class longfloat:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31701,6 +33911,7 @@ class longfloat:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31712,6 +33923,7 @@ class longfloat:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -31725,6 +33937,7 @@ class longfloat:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31736,6 +33949,7 @@ class longfloat:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -31748,6 +33962,7 @@ class longfloat:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31759,6 +33974,7 @@ class longfloat:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -31771,6 +33987,7 @@ class longfloat:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31782,6 +33999,7 @@ class longfloat:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31793,6 +34011,7 @@ class longfloat:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -31820,6 +34039,7 @@ class longfloat:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31831,6 +34051,7 @@ class longfloat:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31842,6 +34063,7 @@ class longfloat:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31853,6 +34075,7 @@ class longfloat:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31864,6 +34087,7 @@ class longfloat:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31875,6 +34099,7 @@ class longfloat:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -31887,6 +34112,7 @@ class longfloat:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31898,6 +34124,7 @@ class longfloat:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31909,6 +34136,7 @@ class longfloat:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31920,6 +34148,7 @@ class longfloat:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31931,6 +34160,7 @@ class longfloat:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31942,6 +34172,7 @@ class longfloat:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31953,6 +34184,7 @@ class longfloat:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -31966,6 +34198,7 @@ class longfloat:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31977,6 +34210,7 @@ class longfloat:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -31988,6 +34222,7 @@ class longfloat:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -32000,6 +34235,7 @@ class longfloat:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32011,6 +34247,7 @@ class longfloat:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32022,6 +34259,7 @@ class longfloat:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32033,6 +34271,7 @@ class longfloat:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32044,6 +34283,7 @@ class longfloat:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32055,6 +34295,7 @@ class longfloat:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32066,6 +34307,7 @@ class longfloat:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32077,6 +34319,7 @@ class longfloat:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32088,6 +34331,7 @@ class longfloat:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32099,6 +34343,7 @@ class longfloat:
         """
         
         
+        return None
     
 
 class longlong:
@@ -32114,6 +34359,7 @@ class longlong:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32125,6 +34371,7 @@ class longlong:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32136,6 +34383,7 @@ class longlong:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32147,6 +34395,7 @@ class longlong:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32158,6 +34407,7 @@ class longlong:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32169,6 +34419,7 @@ class longlong:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -32181,6 +34432,7 @@ class longlong:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32192,6 +34444,7 @@ class longlong:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32203,6 +34456,7 @@ class longlong:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32214,10 +34468,12 @@ class longlong:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32229,6 +34485,7 @@ class longlong:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32240,6 +34497,7 @@ class longlong:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32251,6 +34509,7 @@ class longlong:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32262,6 +34521,7 @@ class longlong:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -32274,6 +34534,7 @@ class longlong:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -32286,6 +34547,7 @@ class longlong:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32297,6 +34559,7 @@ class longlong:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32308,6 +34571,7 @@ class longlong:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -32321,6 +34585,7 @@ class longlong:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32332,6 +34597,7 @@ class longlong:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -32344,6 +34610,7 @@ class longlong:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32355,6 +34622,7 @@ class longlong:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -32367,6 +34635,7 @@ class longlong:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32378,6 +34647,7 @@ class longlong:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32389,6 +34659,7 @@ class longlong:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -32416,6 +34687,7 @@ class longlong:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32427,6 +34699,7 @@ class longlong:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32438,6 +34711,7 @@ class longlong:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32449,6 +34723,7 @@ class longlong:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32460,6 +34735,7 @@ class longlong:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32471,6 +34747,7 @@ class longlong:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -32483,6 +34760,7 @@ class longlong:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32494,6 +34772,7 @@ class longlong:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32505,6 +34784,7 @@ class longlong:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32516,6 +34796,7 @@ class longlong:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32527,6 +34808,7 @@ class longlong:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32538,6 +34820,7 @@ class longlong:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32549,6 +34832,7 @@ class longlong:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -32562,6 +34846,7 @@ class longlong:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32573,6 +34858,7 @@ class longlong:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32584,6 +34870,7 @@ class longlong:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -32596,6 +34883,7 @@ class longlong:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32607,6 +34895,7 @@ class longlong:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32618,6 +34907,7 @@ class longlong:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32629,6 +34919,7 @@ class longlong:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32640,6 +34931,7 @@ class longlong:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32651,6 +34943,7 @@ class longlong:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32662,6 +34955,7 @@ class longlong:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32673,6 +34967,7 @@ class longlong:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32684,6 +34979,7 @@ class longlong:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -32695,6 +34991,7 @@ class longlong:
         """
         
         
+        return None
     
 
 def lookfor(what,module,import_modules,regenerate,output):
@@ -32738,6 +35035,7 @@ def lookfor(what,module,import_modules,regenerate,output):
     """
     
     
+    return None
 ma = None
 def mafromtxt():
     """   Load ASCII data stored in a text file and return a masked array.
@@ -32749,6 +35047,7 @@ def mafromtxt():
     """
     
     
+    return None
 def mask_indices(n,mask_func,k):
     """   Return the indices to access (n, n) arrays, given a masking function.
        Assume `mask_func` is a function that, for a square array a of size
@@ -32802,6 +35101,7 @@ def mask_indices(n,mask_func,k):
     """
     
     
+    return tuple()
 def mat(data):
     """   Interpret the input as a matrix.
        Unlike `matrix`, `asmatrix` does not make a copy if the input is already
@@ -32826,6 +35126,7 @@ def mat(data):
     """
     
     
+    return matrix()
 math = None
 class matrix:
     A = None
@@ -32868,6 +35169,7 @@ class matrix:
         """
         
         
+        return None
     def any(self):
         """       Test whether any array element along a given axis evaluates to True.
                Refer to `numpy.any` for full documentation.
@@ -32887,6 +35189,7 @@ class matrix:
         """
         
         
+        return bool()
     def argmax(self):
         """       Indices of the maximum values along an axis.
                Parameters
@@ -32917,6 +35220,7 @@ class matrix:
         """
         
         
+        return None
     def argmin(self):
         """       Return the indices of the minimum values along an axis.
                Parameters
@@ -32947,6 +35251,7 @@ class matrix:
         """
         
         
+        return None
     def argsort(self,axis=_1,kind='quicksort',order=None):
         """a.argsort(axis=-1, kind='quicksort', order=None)
            Returns the indices that would sort this array.
@@ -32957,6 +35262,7 @@ class matrix:
         """
         
         
+        return None
     def astype(self,t):
         """a.astype(t)
            Copy of the array, cast to a specified type.
@@ -32974,6 +35280,7 @@ class matrix:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """a.byteswap(inplace)
@@ -33006,6 +35313,7 @@ class matrix:
         """
         
         
+        return None
     def choose(self,choices,out=None,mode='raise'):
         """a.choose(choices, out=None, mode='raise')
            Use an index array to construct a new array from a set of choices.
@@ -33016,6 +35324,7 @@ class matrix:
         """
         
         
+        return None
     def clip(self,a_min,a_max,out=None):
         """a.clip(a_min, a_max, out=None)
            Return an array whose values are limited to ``[a_min, a_max]``.
@@ -33026,6 +35335,7 @@ class matrix:
         """
         
         
+        return None
     def compress(self,condition,axis=None,out=None):
         """a.compress(condition, axis=None, out=None)
            Return selected slices of this array along given axis.
@@ -33036,6 +35346,7 @@ class matrix:
         """
         
         
+        return None
     def conj(self,):
         """a.conj()
            Complex-conjugate all elements.
@@ -33046,6 +35357,7 @@ class matrix:
         """
         
         
+        return None
     def conjugate(self,):
         """a.conjugate()
            Return the complex conjugate, element-wise.
@@ -33056,6 +35368,7 @@ class matrix:
         """
         
         
+        return None
     def copy(self,order):
         """a.copy(order='C')
            Return a copy of the array.
@@ -33082,6 +35395,7 @@ class matrix:
         """
         
         
+        return None
     ctypes = None
     def cumprod(self,axis=None,dtype=None,out=None):
         """a.cumprod(axis=None, dtype=None, out=None)
@@ -33093,6 +35407,7 @@ class matrix:
         """
         
         
+        return None
     def cumsum(self,axis=None,dtype=None,out=None):
         """a.cumsum(axis=None, dtype=None, out=None)
            Return the cumulative sum of the elements along the given axis.
@@ -33103,6 +35418,7 @@ class matrix:
         """
         
         
+        return None
     data = None
     def diagonal(self,offset=0,axis1=0,axis2=1):
         """a.diagonal(offset=0, axis1=0, axis2=1)
@@ -33114,10 +35430,12 @@ class matrix:
         """
         
         
+        return None
     def dot(self):
         """None"""
         
         
+        return None
     dtype = None
     def dump(self,file):
         """a.dump(file)
@@ -33130,6 +35448,7 @@ class matrix:
         """
         
         
+        return None
     def dumps(self,):
         """a.dumps()
            Returns the pickle of the array as a string.
@@ -33140,6 +35459,7 @@ class matrix:
         """
         
         
+        return None
     def fill(self,value):
         """a.fill(value)
            Fill the array with a scalar value.
@@ -33160,6 +35480,7 @@ class matrix:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self,order):
@@ -33188,6 +35509,7 @@ class matrix:
         """
         
         
+        return ndarray()
     def getA(self):
         """       Return `self` as an `ndarray` object.
                Equivalent to ``np.asarray(self)``.
@@ -33212,6 +35534,7 @@ class matrix:
         """
         
         
+        return ndarray()
     def getA1(self):
         """       Return `self` as a flattened `ndarray`.
                Equivalent to ``np.asarray(x).ravel()``
@@ -33234,6 +35557,7 @@ class matrix:
         """
         
         
+        return ndarray()
     def getH(self):
         """       Returns the (complex) conjugate transpose of `self`.
                Equivalent to ``np.transpose(self)`` if `self` is real-valued.
@@ -33260,6 +35584,7 @@ class matrix:
         """
         
         
+        return matrix()
     def getI(self):
         """       Returns the (multiplicative) inverse of invertible `self`.
                Parameters
@@ -33293,6 +35618,7 @@ class matrix:
         """
         
         
+        return matrix()
     def getT(self):
         """       Returns the transpose of the matrix.
                Does *not* conjugate!  For the complex conjugate transpose, use `getH`.
@@ -33319,6 +35645,7 @@ class matrix:
         """
         
         
+        return matrix()
     def getfield(self,dtype,offset):
         """a.getfield(dtype, offset)
            Returns a field of the given array as a certain type.
@@ -33363,6 +35690,7 @@ class matrix:
         """
         
         
+        return None
     imag = None
     def item(self,args):
         """a.item(*args)
@@ -33411,6 +35739,7 @@ class matrix:
         """
         
         
+        return Standard()
     def itemset(self,args):
         """a.itemset(*args)
            Insert scalar into an array (scalar is cast to array's dtype, if possible)
@@ -33450,6 +35779,7 @@ class matrix:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """       Return the maximum value along an axis.
@@ -33481,6 +35811,7 @@ class matrix:
         """
         
         
+        return None
     def mean(self):
         """       Returns the average of the matrix elements along the given axis.
                Refer to `numpy.mean` for full documentation.
@@ -33510,6 +35841,7 @@ class matrix:
         """
         
         
+        return None
     def min(self):
         """       Return the minimum value along an axis.
                Parameters
@@ -33540,6 +35872,7 @@ class matrix:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -33571,6 +35904,7 @@ class matrix:
         """
         
         
+        return array()
     def nonzero(self,):
         """a.nonzero()
            Return the indices of the elements that are non-zero.
@@ -33581,6 +35915,7 @@ class matrix:
         """
         
         
+        return None
     def prod(self):
         """       Return the product of the array elements over the given axis.
                Refer to `prod` for full documentation.
@@ -33609,6 +35944,7 @@ class matrix:
         """
         
         
+        return None
     def ptp(self):
         """       Peak-to-peak (maximum - minimum) value along the given axis.
                Refer to `numpy.ptp` for full documentation.
@@ -33637,6 +35973,7 @@ class matrix:
         """
         
         
+        return None
     def put(self,indices,values,mode='raise'):
         """a.put(indices, values, mode='raise')
            Set ``a.flat[n] = values[n]`` for all `n` in indices.
@@ -33647,6 +35984,7 @@ class matrix:
         """
         
         
+        return None
     def ravel(self,order):
         """a.ravel([order])
            Return a flattened array.
@@ -33658,6 +35996,7 @@ class matrix:
         """
         
         
+        return None
     real = None
     def repeat(self,repeats,axis=None):
         """a.repeat(repeats, axis=None)
@@ -33669,6 +36008,7 @@ class matrix:
         """
         
         
+        return None
     def reshape(self,shape,order='C'):
         """a.reshape(shape, order='C')
            Returns an array containing the same data with a new shape.
@@ -33679,6 +36019,7 @@ class matrix:
         """
         
         
+        return None
     def resize(self,new_shape,refcheck):
         """a.resize(new_shape, refcheck=True)
            Change shape and size of array in-place.
@@ -33748,6 +36089,7 @@ class matrix:
         """
         
         
+        return None
     def round(self,decimals=0,out=None):
         """a.round(decimals=0, out=None)
            Return `a` with each element rounded to the given number of decimals.
@@ -33758,6 +36100,7 @@ class matrix:
         """
         
         
+        return None
     def searchsorted(self,v,side='left'):
         """a.searchsorted(v, side='left')
            Find indices where elements of v should be inserted in a to maintain order.
@@ -33768,6 +36111,7 @@ class matrix:
         """
         
         
+        return None
     def setfield(self,val,dtype,offset):
         """a.setfield(val, dtype, offset=0)
            Put a value into a specified place in a field defined by a data-type.
@@ -33811,6 +36155,7 @@ class matrix:
         """
         
         
+        return None
     def setflags(self,write,align,uic):
         """a.setflags(write=None, align=None, uic=None)
            Set array flags WRITEABLE, ALIGNED, and UPDATEIFCOPY, respectively.
@@ -33872,6 +36217,7 @@ class matrix:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self,axis,kind,order):
@@ -33918,6 +36264,7 @@ class matrix:
         """
         
         
+        return None
     def squeeze(self,):
         """a.squeeze()
            Remove single-dimensional entries from the shape of `a`.
@@ -33928,6 +36275,7 @@ class matrix:
         """
         
         
+        return None
     def std(self):
         """       Return the standard deviation of the array elements along the given axis.
                Refer to `numpy.std` for full documentation.
@@ -33957,6 +36305,7 @@ class matrix:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """       Returns the sum of the matrix elements, along the given axis.
@@ -33987,6 +36336,7 @@ class matrix:
         """
         
         
+        return None
     def swapaxes(self,axis1,axis2):
         """a.swapaxes(axis1, axis2)
            Return a view of the array with `axis1` and `axis2` interchanged.
@@ -33997,6 +36347,7 @@ class matrix:
         """
         
         
+        return None
     def take(self,indices,axis=None,out=None,mode='raise'):
         """a.take(indices, axis=None, out=None, mode='raise')
            Return an array formed from the elements of `a` at the given indices.
@@ -34007,6 +36358,7 @@ class matrix:
         """
         
         
+        return None
     def tofile(self,fid,sep,format):
         """a.tofile(fid, sep="", format="%s")
            Write array to a file as text or binary (default).
@@ -34036,6 +36388,7 @@ class matrix:
         """
         
         
+        return None
     def tolist(self):
         """       Return the matrix as a (possibly nested) list.
                See `ndarray.tolist` for full documentation.
@@ -34054,6 +36407,7 @@ class matrix:
         """
         
         
+        return None
     def tostring(self,order):
         """a.tostring(order='C')
            Construct a Python string containing the raw data bytes in the array.
@@ -34083,6 +36437,7 @@ class matrix:
         """
         
         
+        return str()
     def trace(self,offset=0,axis1=0,axis2=1,dtype=None,out=None):
         """a.trace(offset=0, axis1=0, axis2=1, dtype=None, out=None)
            Return the sum along diagonals of the array.
@@ -34093,6 +36448,7 @@ class matrix:
         """
         
         
+        return None
     def transpose(self,axes):
         """a.transpose(*axes)
            Returns a view of the array with axes transposed.
@@ -34136,6 +36492,7 @@ class matrix:
         """
         
         
+        return ndarray()
     def var(self):
         """       Returns the variance of the matrix elements, along the given axis.
                Refer to `numpy.var` for full documentation.
@@ -34165,6 +36522,7 @@ class matrix:
         """
         
         
+        return None
     def view(self,dtype,type):
         """a.view(dtype=None, type=None)
            New view of array with the same data.
@@ -34219,6 +36577,7 @@ class matrix:
         """
         
         
+        return None
     
 
 matrixlib = None
@@ -34270,6 +36629,7 @@ def max(a,axis,out):
     """
     
     
+    return ndarray()
 def maximum(x1,x2):
     """maximum(x1, x2[, out])
     Element-wise maximum of array elements.
@@ -34317,6 +36677,7 @@ def maximum(x1,x2):
     """
     
     
+    return ndarray()
 def maximum_sctype(t):
     """   Return the scalar type of highest precision of the same kind as the input.
        Parameters
@@ -34350,6 +36711,7 @@ def maximum_sctype(t):
     """
     
     
+    return dtype()
 def may_share_memory(a,b):
     """   Determine if two arrays can share memory
        The memory-bounds of a and b are computed.  If they overlap then
@@ -34370,6 +36732,7 @@ def may_share_memory(a,b):
     """
     
     
+    return bool()
 def mean(a,axis,dtype,out):
     """   Compute the arithmetic mean along the specified axis.
        Returns the average of the array elements.  The average is taken over
@@ -34431,6 +36794,7 @@ def mean(a,axis,dtype,out):
     """
     
     
+    return ndarray()
 def median(a,axis,out,overwrite_input):
     """   Compute the median along the specified axis.
        Returns the median of the array elements.
@@ -34500,6 +36864,7 @@ def median(a,axis,out,overwrite_input):
     """
     
     
+    return ndarray()
 class memmap:
     T = None
     def all(self,axis=None,out=None):
@@ -34512,6 +36877,7 @@ class memmap:
         """
         
         
+        return None
     def any(self,axis=None,out=None):
         """a.any(axis=None, out=None)
            Returns True if any of the elements of `a` evaluate to True.
@@ -34522,6 +36888,7 @@ class memmap:
         """
         
         
+        return None
     def argmax(self,axis=None,out=None):
         """a.argmax(axis=None, out=None)
            Return indices of the maximum values along the given axis.
@@ -34532,6 +36899,7 @@ class memmap:
         """
         
         
+        return None
     def argmin(self,axis=None,out=None):
         """a.argmin(axis=None, out=None)
            Return indices of the minimum values along the given axis of `a`.
@@ -34542,6 +36910,7 @@ class memmap:
         """
         
         
+        return None
     def argsort(self,axis=_1,kind='quicksort',order=None):
         """a.argsort(axis=-1, kind='quicksort', order=None)
            Returns the indices that would sort this array.
@@ -34552,6 +36921,7 @@ class memmap:
         """
         
         
+        return None
     def astype(self,t):
         """a.astype(t)
            Copy of the array, cast to a specified type.
@@ -34569,6 +36939,7 @@ class memmap:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """a.byteswap(inplace)
@@ -34601,6 +36972,7 @@ class memmap:
         """
         
         
+        return None
     def choose(self,choices,out=None,mode='raise'):
         """a.choose(choices, out=None, mode='raise')
            Use an index array to construct a new array from a set of choices.
@@ -34611,6 +36983,7 @@ class memmap:
         """
         
         
+        return None
     def clip(self,a_min,a_max,out=None):
         """a.clip(a_min, a_max, out=None)
            Return an array whose values are limited to ``[a_min, a_max]``.
@@ -34621,11 +36994,13 @@ class memmap:
         """
         
         
+        return None
     def close(self):
         """Close the memmap file. Does nothing.
         """
         
         
+        return None
     def compress(self,condition,axis=None,out=None):
         """a.compress(condition, axis=None, out=None)
            Return selected slices of this array along given axis.
@@ -34636,6 +37011,7 @@ class memmap:
         """
         
         
+        return None
     def conj(self,):
         """a.conj()
            Complex-conjugate all elements.
@@ -34646,6 +37022,7 @@ class memmap:
         """
         
         
+        return None
     def conjugate(self,):
         """a.conjugate()
            Return the complex conjugate, element-wise.
@@ -34656,6 +37033,7 @@ class memmap:
         """
         
         
+        return None
     def copy(self,order):
         """a.copy(order='C')
            Return a copy of the array.
@@ -34682,6 +37060,7 @@ class memmap:
         """
         
         
+        return None
     ctypes = None
     def cumprod(self,axis=None,dtype=None,out=None):
         """a.cumprod(axis=None, dtype=None, out=None)
@@ -34693,6 +37072,7 @@ class memmap:
         """
         
         
+        return None
     def cumsum(self,axis=None,dtype=None,out=None):
         """a.cumsum(axis=None, dtype=None, out=None)
            Return the cumulative sum of the elements along the given axis.
@@ -34703,6 +37083,7 @@ class memmap:
         """
         
         
+        return None
     data = None
     def diagonal(self,offset=0,axis1=0,axis2=1):
         """a.diagonal(offset=0, axis1=0, axis2=1)
@@ -34714,10 +37095,12 @@ class memmap:
         """
         
         
+        return None
     def dot(self):
         """None"""
         
         
+        return None
     dtype = None
     def dump(self,file):
         """a.dump(file)
@@ -34730,6 +37113,7 @@ class memmap:
         """
         
         
+        return None
     def dumps(self,):
         """a.dumps()
            Returns the pickle of the array as a string.
@@ -34740,6 +37124,7 @@ class memmap:
         """
         
         
+        return None
     def fill(self,value):
         """a.fill(value)
            Fill the array with a scalar value.
@@ -34760,6 +37145,7 @@ class memmap:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self,order):
@@ -34788,6 +37174,7 @@ class memmap:
         """
         
         
+        return ndarray()
     def flush(self):
         """       Write any changes in the array to the file on disk.
                For further information, see `memmap`.
@@ -34801,6 +37188,7 @@ class memmap:
         """
         
         
+        return None
     def getfield(self,dtype,offset):
         """a.getfield(dtype, offset)
            Returns a field of the given array as a certain type.
@@ -34845,6 +37233,7 @@ class memmap:
         """
         
         
+        return None
     imag = None
     def item(self,args):
         """a.item(*args)
@@ -34893,6 +37282,7 @@ class memmap:
         """
         
         
+        return Standard()
     def itemset(self,args):
         """a.itemset(*args)
            Insert scalar into an array (scalar is cast to array's dtype, if possible)
@@ -34932,6 +37322,7 @@ class memmap:
         """
         
         
+        return None
     itemsize = None
     def max(self,axis=None,out=None):
         """a.max(axis=None, out=None)
@@ -34943,6 +37334,7 @@ class memmap:
         """
         
         
+        return None
     def mean(self,axis=None,dtype=None,out=None):
         """a.mean(axis=None, dtype=None, out=None)
            Returns the average of the array elements along given axis.
@@ -34953,6 +37345,7 @@ class memmap:
         """
         
         
+        return None
     def min(self,axis=None,out=None):
         """a.min(axis=None, out=None)
            Return the minimum along a given axis.
@@ -34963,6 +37356,7 @@ class memmap:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -34994,6 +37388,7 @@ class memmap:
         """
         
         
+        return array()
     def nonzero(self,):
         """a.nonzero()
            Return the indices of the elements that are non-zero.
@@ -35004,6 +37399,7 @@ class memmap:
         """
         
         
+        return None
     def prod(self,axis=None,dtype=None,out=None):
         """a.prod(axis=None, dtype=None, out=None)
            Return the product of the array elements over the given axis
@@ -35014,6 +37410,7 @@ class memmap:
         """
         
         
+        return None
     def ptp(self,axis=None,out=None):
         """a.ptp(axis=None, out=None)
            Peak to peak (maximum - minimum) value along a given axis.
@@ -35024,6 +37421,7 @@ class memmap:
         """
         
         
+        return None
     def put(self,indices,values,mode='raise'):
         """a.put(indices, values, mode='raise')
            Set ``a.flat[n] = values[n]`` for all `n` in indices.
@@ -35034,6 +37432,7 @@ class memmap:
         """
         
         
+        return None
     def ravel(self,order):
         """a.ravel([order])
            Return a flattened array.
@@ -35045,6 +37444,7 @@ class memmap:
         """
         
         
+        return None
     real = None
     def repeat(self,repeats,axis=None):
         """a.repeat(repeats, axis=None)
@@ -35056,6 +37456,7 @@ class memmap:
         """
         
         
+        return None
     def reshape(self,shape,order='C'):
         """a.reshape(shape, order='C')
            Returns an array containing the same data with a new shape.
@@ -35066,6 +37467,7 @@ class memmap:
         """
         
         
+        return None
     def resize(self,new_shape,refcheck):
         """a.resize(new_shape, refcheck=True)
            Change shape and size of array in-place.
@@ -35135,6 +37537,7 @@ class memmap:
         """
         
         
+        return None
     def round(self,decimals=0,out=None):
         """a.round(decimals=0, out=None)
            Return `a` with each element rounded to the given number of decimals.
@@ -35145,6 +37548,7 @@ class memmap:
         """
         
         
+        return None
     def searchsorted(self,v,side='left'):
         """a.searchsorted(v, side='left')
            Find indices where elements of v should be inserted in a to maintain order.
@@ -35155,6 +37559,7 @@ class memmap:
         """
         
         
+        return None
     def setfield(self,val,dtype,offset):
         """a.setfield(val, dtype, offset=0)
            Put a value into a specified place in a field defined by a data-type.
@@ -35198,6 +37603,7 @@ class memmap:
         """
         
         
+        return None
     def setflags(self,write,align,uic):
         """a.setflags(write=None, align=None, uic=None)
            Set array flags WRITEABLE, ALIGNED, and UPDATEIFCOPY, respectively.
@@ -35259,6 +37665,7 @@ class memmap:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self,axis,kind,order):
@@ -35305,6 +37712,7 @@ class memmap:
         """
         
         
+        return None
     def squeeze(self,):
         """a.squeeze()
            Remove single-dimensional entries from the shape of `a`.
@@ -35315,6 +37723,7 @@ class memmap:
         """
         
         
+        return None
     def std(self,axis=None,dtype=None,out=None,ddof=0):
         """a.std(axis=None, dtype=None, out=None, ddof=0)
            Returns the standard deviation of the array elements along given axis.
@@ -35325,6 +37734,7 @@ class memmap:
         """
         
         
+        return None
     strides = None
     def sum(self,axis=None,dtype=None,out=None):
         """a.sum(axis=None, dtype=None, out=None)
@@ -35336,6 +37746,7 @@ class memmap:
         """
         
         
+        return None
     def swapaxes(self,axis1,axis2):
         """a.swapaxes(axis1, axis2)
            Return a view of the array with `axis1` and `axis2` interchanged.
@@ -35346,11 +37757,13 @@ class memmap:
         """
         
         
+        return None
     def sync(self):
         """This method is deprecated, use `flush`.
         """
         
         
+        return None
     def take(self,indices,axis=None,out=None,mode='raise'):
         """a.take(indices, axis=None, out=None, mode='raise')
            Return an array formed from the elements of `a` at the given indices.
@@ -35361,6 +37774,7 @@ class memmap:
         """
         
         
+        return None
     def tofile(self,fid,sep,format):
         """a.tofile(fid, sep="", format="%s")
            Write array to a file as text or binary (default).
@@ -35390,6 +37804,7 @@ class memmap:
         """
         
         
+        return None
     def tolist(self):
         """a.tolist()
            Return the array as a (possibly nested) list.
@@ -35418,6 +37833,7 @@ class memmap:
         """
         
         
+        return list()
     def tostring(self,order):
         """a.tostring(order='C')
            Construct a Python string containing the raw data bytes in the array.
@@ -35447,6 +37863,7 @@ class memmap:
         """
         
         
+        return str()
     def trace(self,offset=0,axis1=0,axis2=1,dtype=None,out=None):
         """a.trace(offset=0, axis1=0, axis2=1, dtype=None, out=None)
            Return the sum along diagonals of the array.
@@ -35457,6 +37874,7 @@ class memmap:
         """
         
         
+        return None
     def transpose(self,axes):
         """a.transpose(*axes)
            Returns a view of the array with axes transposed.
@@ -35500,6 +37918,7 @@ class memmap:
         """
         
         
+        return ndarray()
     def var(self,axis=None,dtype=None,out=None,ddof=0):
         """a.var(axis=None, dtype=None, out=None, ddof=0)
            Returns the variance of the array elements, along given axis.
@@ -35510,6 +37929,7 @@ class memmap:
         """
         
         
+        return None
     def view(self,dtype,type):
         """a.view(dtype=None, type=None)
            New view of array with the same data.
@@ -35564,6 +37984,7 @@ class memmap:
         """
         
         
+        return None
     
 
 def meshgrid(x,y):
@@ -35607,6 +38028,7 @@ def meshgrid(x,y):
     """
     
     
+    return ndarray()
 mgrid = None
 def min(a,axis,out):
     """   Return the minimum of an array or minimum along an axis.
@@ -35657,6 +38079,7 @@ def min(a,axis,out):
     """
     
     
+    return ndarray()
 def minimum(x1,x2):
     """minimum(x1, x2[, out])
     Element-wise minimum of array elements.
@@ -35700,6 +38123,7 @@ def minimum(x1,x2):
     """
     
     
+    return ndarray()
 def mintypecode(typechars,typeset,default):
     """   Return the character for the minimum-size type to which given types can
        be safely cast.
@@ -35738,6 +38162,7 @@ def mintypecode(typechars,typeset,default):
     """
     
     
+    return str()
 def mirr(values,finance_rate,reinvest_rate):
     """   Modified internal rate of return.
        Parameters
@@ -35757,6 +38182,7 @@ def mirr(values,finance_rate,reinvest_rate):
     """
     
     
+    return float()
 def mod(x1,x2,out):
     """remainder(x1, x2[, out])
     Return element-wise remainder of division.
@@ -35790,6 +38216,7 @@ def mod(x1,x2,out):
     """
     
     
+    return ndarray()
 def modf(x):
     """modf(x[, out1, out2])
     Return the fractional and integral parts of an array, element-wise.
@@ -35817,6 +38244,7 @@ def modf(x):
     """
     
     
+    return ndarray()
 def msort(a):
     """   Return a copy of an array sorted along the first axis.
        Parameters
@@ -35837,6 +38265,7 @@ def msort(a):
     """
     
     
+    return ndarray()
 def multiply(x1,x2):
     """multiply(x1, x2[, out])
     Multiply arguments element-wise.
@@ -35865,6 +38294,7 @@ def multiply(x1,x2):
     """
     
     
+    return ndarray()
 nan = 0.0
 def nan_to_num(x):
     """   Replace nan with zero and inf with finite numbers.
@@ -35905,6 +38335,7 @@ def nan_to_num(x):
     """
     
     
+    return ndarray()
 def nanargmax(a,axis):
     """   Return indices of the maximum values over an axis, ignoring NaNs.
        Parameters
@@ -35935,6 +38366,7 @@ def nanargmax(a,axis):
     """
     
     
+    return ndarray()
 def nanargmin(a,axis):
     """   Return indices of the minimum values over an axis, ignoring NaNs.
        Parameters
@@ -35965,6 +38397,7 @@ def nanargmin(a,axis):
     """
     
     
+    return ndarray()
 def nanmax(a,axis):
     """   Return the maximum of an array or maximum along an axis ignoring any NaNs.
        Parameters
@@ -36014,6 +38447,7 @@ def nanmax(a,axis):
     """
     
     
+    return ndarray()
 def nanmin(a,axis):
     """   Return the minimum of an array or minimum along an axis ignoring any NaNs.
        Parameters
@@ -36060,6 +38494,7 @@ def nanmin(a,axis):
     """
     
     
+    return ndarray()
 def nansum(a,axis):
     """   Return the sum of array elements over a given axis treating
        Not a Numbers (NaNs) as zero.
@@ -36118,6 +38553,7 @@ def nansum(a,axis):
     """
     
     
+    return ndarray()
 nbytes = {}
 class ndarray:
     T = None
@@ -36131,6 +38567,7 @@ class ndarray:
         """
         
         
+        return None
     def any(self,axis=None,out=None):
         """a.any(axis=None, out=None)
            Returns True if any of the elements of `a` evaluate to True.
@@ -36141,6 +38578,7 @@ class ndarray:
         """
         
         
+        return None
     def argmax(self,axis=None,out=None):
         """a.argmax(axis=None, out=None)
            Return indices of the maximum values along the given axis.
@@ -36151,6 +38589,7 @@ class ndarray:
         """
         
         
+        return None
     def argmin(self,axis=None,out=None):
         """a.argmin(axis=None, out=None)
            Return indices of the minimum values along the given axis of `a`.
@@ -36161,6 +38600,7 @@ class ndarray:
         """
         
         
+        return None
     def argsort(self,axis=_1,kind='quicksort',order=None):
         """a.argsort(axis=-1, kind='quicksort', order=None)
            Returns the indices that would sort this array.
@@ -36171,6 +38611,7 @@ class ndarray:
         """
         
         
+        return None
     def astype(self,t):
         """a.astype(t)
            Copy of the array, cast to a specified type.
@@ -36188,6 +38629,7 @@ class ndarray:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """a.byteswap(inplace)
@@ -36220,6 +38662,7 @@ class ndarray:
         """
         
         
+        return None
     def choose(self,choices,out=None,mode='raise'):
         """a.choose(choices, out=None, mode='raise')
            Use an index array to construct a new array from a set of choices.
@@ -36230,6 +38673,7 @@ class ndarray:
         """
         
         
+        return None
     def clip(self,a_min,a_max,out=None):
         """a.clip(a_min, a_max, out=None)
            Return an array whose values are limited to ``[a_min, a_max]``.
@@ -36240,6 +38684,7 @@ class ndarray:
         """
         
         
+        return None
     def compress(self,condition,axis=None,out=None):
         """a.compress(condition, axis=None, out=None)
            Return selected slices of this array along given axis.
@@ -36250,6 +38695,7 @@ class ndarray:
         """
         
         
+        return None
     def conj(self,):
         """a.conj()
            Complex-conjugate all elements.
@@ -36260,6 +38706,7 @@ class ndarray:
         """
         
         
+        return None
     def conjugate(self,):
         """a.conjugate()
            Return the complex conjugate, element-wise.
@@ -36270,6 +38717,7 @@ class ndarray:
         """
         
         
+        return None
     def copy(self,order):
         """a.copy(order='C')
            Return a copy of the array.
@@ -36296,6 +38744,7 @@ class ndarray:
         """
         
         
+        return None
     ctypes = None
     def cumprod(self,axis=None,dtype=None,out=None):
         """a.cumprod(axis=None, dtype=None, out=None)
@@ -36307,6 +38756,7 @@ class ndarray:
         """
         
         
+        return None
     def cumsum(self,axis=None,dtype=None,out=None):
         """a.cumsum(axis=None, dtype=None, out=None)
            Return the cumulative sum of the elements along the given axis.
@@ -36317,6 +38767,7 @@ class ndarray:
         """
         
         
+        return None
     data = None
     def diagonal(self,offset=0,axis1=0,axis2=1):
         """a.diagonal(offset=0, axis1=0, axis2=1)
@@ -36328,10 +38779,12 @@ class ndarray:
         """
         
         
+        return None
     def dot(self):
         """None"""
         
         
+        return None
     dtype = None
     def dump(self,file):
         """a.dump(file)
@@ -36344,6 +38797,7 @@ class ndarray:
         """
         
         
+        return None
     def dumps(self,):
         """a.dumps()
            Returns the pickle of the array as a string.
@@ -36354,6 +38808,7 @@ class ndarray:
         """
         
         
+        return None
     def fill(self,value):
         """a.fill(value)
            Fill the array with a scalar value.
@@ -36374,6 +38829,7 @@ class ndarray:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self,order):
@@ -36402,6 +38858,7 @@ class ndarray:
         """
         
         
+        return ndarray()
     def getfield(self,dtype,offset):
         """a.getfield(dtype, offset)
            Returns a field of the given array as a certain type.
@@ -36446,6 +38903,7 @@ class ndarray:
         """
         
         
+        return None
     imag = None
     def item(self,args):
         """a.item(*args)
@@ -36494,6 +38952,7 @@ class ndarray:
         """
         
         
+        return Standard()
     def itemset(self,args):
         """a.itemset(*args)
            Insert scalar into an array (scalar is cast to array's dtype, if possible)
@@ -36533,6 +38992,7 @@ class ndarray:
         """
         
         
+        return None
     itemsize = None
     def max(self,axis=None,out=None):
         """a.max(axis=None, out=None)
@@ -36544,6 +39004,7 @@ class ndarray:
         """
         
         
+        return None
     def mean(self,axis=None,dtype=None,out=None):
         """a.mean(axis=None, dtype=None, out=None)
            Returns the average of the array elements along given axis.
@@ -36554,6 +39015,7 @@ class ndarray:
         """
         
         
+        return None
     def min(self,axis=None,out=None):
         """a.min(axis=None, out=None)
            Return the minimum along a given axis.
@@ -36564,6 +39026,7 @@ class ndarray:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -36595,6 +39058,7 @@ class ndarray:
         """
         
         
+        return array()
     def nonzero(self,):
         """a.nonzero()
            Return the indices of the elements that are non-zero.
@@ -36605,6 +39069,7 @@ class ndarray:
         """
         
         
+        return None
     def prod(self,axis=None,dtype=None,out=None):
         """a.prod(axis=None, dtype=None, out=None)
            Return the product of the array elements over the given axis
@@ -36615,6 +39080,7 @@ class ndarray:
         """
         
         
+        return None
     def ptp(self,axis=None,out=None):
         """a.ptp(axis=None, out=None)
            Peak to peak (maximum - minimum) value along a given axis.
@@ -36625,6 +39091,7 @@ class ndarray:
         """
         
         
+        return None
     def put(self,indices,values,mode='raise'):
         """a.put(indices, values, mode='raise')
            Set ``a.flat[n] = values[n]`` for all `n` in indices.
@@ -36635,6 +39102,7 @@ class ndarray:
         """
         
         
+        return None
     def ravel(self,order):
         """a.ravel([order])
            Return a flattened array.
@@ -36646,6 +39114,7 @@ class ndarray:
         """
         
         
+        return None
     real = None
     def repeat(self,repeats,axis=None):
         """a.repeat(repeats, axis=None)
@@ -36657,6 +39126,7 @@ class ndarray:
         """
         
         
+        return None
     def reshape(self,shape,order='C'):
         """a.reshape(shape, order='C')
            Returns an array containing the same data with a new shape.
@@ -36667,6 +39137,7 @@ class ndarray:
         """
         
         
+        return None
     def resize(self,new_shape,refcheck):
         """a.resize(new_shape, refcheck=True)
            Change shape and size of array in-place.
@@ -36736,6 +39207,7 @@ class ndarray:
         """
         
         
+        return None
     def round(self,decimals=0,out=None):
         """a.round(decimals=0, out=None)
            Return `a` with each element rounded to the given number of decimals.
@@ -36746,6 +39218,7 @@ class ndarray:
         """
         
         
+        return None
     def searchsorted(self,v,side='left'):
         """a.searchsorted(v, side='left')
            Find indices where elements of v should be inserted in a to maintain order.
@@ -36756,6 +39229,7 @@ class ndarray:
         """
         
         
+        return None
     def setfield(self,val,dtype,offset):
         """a.setfield(val, dtype, offset=0)
            Put a value into a specified place in a field defined by a data-type.
@@ -36799,6 +39273,7 @@ class ndarray:
         """
         
         
+        return None
     def setflags(self,write,align,uic):
         """a.setflags(write=None, align=None, uic=None)
            Set array flags WRITEABLE, ALIGNED, and UPDATEIFCOPY, respectively.
@@ -36860,6 +39335,7 @@ class ndarray:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self,axis,kind,order):
@@ -36906,6 +39382,7 @@ class ndarray:
         """
         
         
+        return None
     def squeeze(self,):
         """a.squeeze()
            Remove single-dimensional entries from the shape of `a`.
@@ -36916,6 +39393,7 @@ class ndarray:
         """
         
         
+        return None
     def std(self,axis=None,dtype=None,out=None,ddof=0):
         """a.std(axis=None, dtype=None, out=None, ddof=0)
            Returns the standard deviation of the array elements along given axis.
@@ -36926,6 +39404,7 @@ class ndarray:
         """
         
         
+        return None
     strides = None
     def sum(self,axis=None,dtype=None,out=None):
         """a.sum(axis=None, dtype=None, out=None)
@@ -36937,6 +39416,7 @@ class ndarray:
         """
         
         
+        return None
     def swapaxes(self,axis1,axis2):
         """a.swapaxes(axis1, axis2)
            Return a view of the array with `axis1` and `axis2` interchanged.
@@ -36947,6 +39427,7 @@ class ndarray:
         """
         
         
+        return None
     def take(self,indices,axis=None,out=None,mode='raise'):
         """a.take(indices, axis=None, out=None, mode='raise')
            Return an array formed from the elements of `a` at the given indices.
@@ -36957,6 +39438,7 @@ class ndarray:
         """
         
         
+        return None
     def tofile(self,fid,sep,format):
         """a.tofile(fid, sep="", format="%s")
            Write array to a file as text or binary (default).
@@ -36986,6 +39468,7 @@ class ndarray:
         """
         
         
+        return None
     def tolist(self):
         """a.tolist()
            Return the array as a (possibly nested) list.
@@ -37014,6 +39497,7 @@ class ndarray:
         """
         
         
+        return list()
     def tostring(self,order):
         """a.tostring(order='C')
            Construct a Python string containing the raw data bytes in the array.
@@ -37043,6 +39527,7 @@ class ndarray:
         """
         
         
+        return str()
     def trace(self,offset=0,axis1=0,axis2=1,dtype=None,out=None):
         """a.trace(offset=0, axis1=0, axis2=1, dtype=None, out=None)
            Return the sum along diagonals of the array.
@@ -37053,6 +39538,7 @@ class ndarray:
         """
         
         
+        return None
     def transpose(self,axes):
         """a.transpose(*axes)
            Returns a view of the array with axes transposed.
@@ -37096,6 +39582,7 @@ class ndarray:
         """
         
         
+        return ndarray()
     def var(self,axis=None,dtype=None,out=None,ddof=0):
         """a.var(axis=None, dtype=None, out=None, ddof=0)
            Returns the variance of the array elements, along given axis.
@@ -37106,6 +39593,7 @@ class ndarray:
         """
         
         
+        return None
     def view(self,dtype,type):
         """a.view(dtype=None, type=None)
            New view of array with the same data.
@@ -37160,6 +39648,7 @@ class ndarray:
         """
         
         
+        return None
     
 
 class ndenumerate:
@@ -37175,6 +39664,7 @@ class ndenumerate:
         """
         
         
+        return None
     
 
 def ndfromtxt():
@@ -37188,6 +39678,7 @@ def ndfromtxt():
     """
     
     
+    return None
 def ndim(a):
     """   Return the number of dimensions of an array.
        Parameters
@@ -37216,6 +39707,7 @@ def ndim(a):
     """
     
     
+    return int()
 class ndindex:
     def ndincr(self):
         """       Increment the multi-dimensional index by one.
@@ -37225,6 +39717,7 @@ class ndindex:
         """
         
         
+        return None
     def next(self):
         """       Standard iterator method, updates the index and returns the index tuple.
                Returns
@@ -37235,6 +39728,7 @@ class ndindex:
         """
         
         
+        return None
     
 
 def negative(x):
@@ -37255,6 +39749,7 @@ def negative(x):
     """
     
     
+    return ndarray()
 newaxis = None
 def newbuffer(size):
     """newbuffer(size)
@@ -37262,6 +39757,7 @@ def newbuffer(size):
     """
     
     
+    return None
 def nextafter(x1,x2,out):
     """nextafter(x1, x2[, out])
     Return the next representable floating-point value after x1 in the direction
@@ -37289,6 +39785,7 @@ def nextafter(x1,x2,out):
     """
     
     
+    return array_like()
 def nonzero(a):
     """   Return the indices of the elements that are non-zero.
        Returns a tuple of arrays, one for each dimension of `a`, containing
@@ -37347,6 +39844,7 @@ def nonzero(a):
     """
     
     
+    return tuple()
 def not_equal(x1,x2,out):
     """not_equal(x1, x2[, out])
     Return (x1 != x2) element-wise.
@@ -37375,6 +39873,7 @@ def not_equal(x1,x2,out):
     """
     
     
+    return ndarray()
 def nper(rate,pmt,pv,fv,when):
     """   Compute the number of periodic payments.
        Parameters
@@ -37415,6 +39914,7 @@ def nper(rate,pmt,pv,fv,when):
     """
     
     
+    return None
 def npv(rate,values):
     """   Returns the NPV (Net Present Value) of a cash flow series.
        Parameters
@@ -37451,6 +39951,7 @@ def npv(rate,values):
     """
     
     
+    return float()
 class number:
     T = None
     def all(self):
@@ -37464,6 +39965,7 @@ class number:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37475,6 +39977,7 @@ class number:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37486,6 +39989,7 @@ class number:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37497,6 +40001,7 @@ class number:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37508,6 +40013,7 @@ class number:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37519,6 +40025,7 @@ class number:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -37531,6 +40038,7 @@ class number:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37542,6 +40050,7 @@ class number:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37553,6 +40062,7 @@ class number:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37564,10 +40074,12 @@ class number:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37579,6 +40091,7 @@ class number:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37590,6 +40103,7 @@ class number:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37601,6 +40115,7 @@ class number:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37612,6 +40127,7 @@ class number:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -37624,6 +40140,7 @@ class number:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -37636,6 +40153,7 @@ class number:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37647,6 +40165,7 @@ class number:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37658,6 +40177,7 @@ class number:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -37671,6 +40191,7 @@ class number:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37682,6 +40203,7 @@ class number:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -37694,6 +40216,7 @@ class number:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37705,6 +40228,7 @@ class number:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -37717,6 +40241,7 @@ class number:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37728,6 +40253,7 @@ class number:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37739,6 +40265,7 @@ class number:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -37766,6 +40293,7 @@ class number:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37777,6 +40305,7 @@ class number:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37788,6 +40317,7 @@ class number:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37799,6 +40329,7 @@ class number:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37810,6 +40341,7 @@ class number:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37821,6 +40353,7 @@ class number:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -37833,6 +40366,7 @@ class number:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37844,6 +40378,7 @@ class number:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37855,6 +40390,7 @@ class number:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37866,6 +40402,7 @@ class number:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37877,6 +40414,7 @@ class number:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37888,6 +40426,7 @@ class number:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37899,6 +40438,7 @@ class number:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -37912,6 +40452,7 @@ class number:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37923,6 +40464,7 @@ class number:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37934,6 +40476,7 @@ class number:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -37946,6 +40489,7 @@ class number:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37957,6 +40501,7 @@ class number:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37968,6 +40513,7 @@ class number:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37979,6 +40525,7 @@ class number:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -37990,6 +40537,7 @@ class number:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38001,6 +40549,7 @@ class number:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38012,6 +40561,7 @@ class number:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38023,6 +40573,7 @@ class number:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38034,6 +40585,7 @@ class number:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38045,12 +40597,14 @@ class number:
         """
         
         
+        return None
     
 
 def obj2sctype():
     """None"""
     
     
+    return None
 class object:
     pass
 
@@ -38067,6 +40621,7 @@ class object0:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38078,6 +40633,7 @@ class object0:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38089,6 +40645,7 @@ class object0:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38100,6 +40657,7 @@ class object0:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38111,6 +40669,7 @@ class object0:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38122,6 +40681,7 @@ class object0:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -38134,6 +40694,7 @@ class object0:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38145,6 +40706,7 @@ class object0:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38156,6 +40718,7 @@ class object0:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38167,10 +40730,12 @@ class object0:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38182,6 +40747,7 @@ class object0:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38193,6 +40759,7 @@ class object0:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38204,6 +40771,7 @@ class object0:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38215,6 +40783,7 @@ class object0:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -38227,6 +40796,7 @@ class object0:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -38239,6 +40809,7 @@ class object0:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38250,6 +40821,7 @@ class object0:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38261,6 +40833,7 @@ class object0:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -38274,6 +40847,7 @@ class object0:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38285,6 +40859,7 @@ class object0:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -38297,6 +40872,7 @@ class object0:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38308,6 +40884,7 @@ class object0:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -38320,6 +40897,7 @@ class object0:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38331,6 +40909,7 @@ class object0:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38342,6 +40921,7 @@ class object0:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -38369,6 +40949,7 @@ class object0:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38380,6 +40961,7 @@ class object0:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38391,6 +40973,7 @@ class object0:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38402,6 +40985,7 @@ class object0:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38413,6 +40997,7 @@ class object0:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38424,6 +41009,7 @@ class object0:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -38436,6 +41022,7 @@ class object0:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38447,6 +41034,7 @@ class object0:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38458,6 +41046,7 @@ class object0:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38469,6 +41058,7 @@ class object0:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38480,6 +41070,7 @@ class object0:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38491,6 +41082,7 @@ class object0:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38502,6 +41094,7 @@ class object0:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -38515,6 +41108,7 @@ class object0:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38526,6 +41120,7 @@ class object0:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38537,6 +41132,7 @@ class object0:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -38549,6 +41145,7 @@ class object0:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38560,6 +41157,7 @@ class object0:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38571,6 +41169,7 @@ class object0:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38582,6 +41181,7 @@ class object0:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38593,6 +41193,7 @@ class object0:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38604,6 +41205,7 @@ class object0:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38615,6 +41217,7 @@ class object0:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38626,6 +41229,7 @@ class object0:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38637,6 +41241,7 @@ class object0:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38648,6 +41253,7 @@ class object0:
         """
         
         
+        return None
     
 
 class object_:
@@ -38663,6 +41269,7 @@ class object_:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38674,6 +41281,7 @@ class object_:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38685,6 +41293,7 @@ class object_:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38696,6 +41305,7 @@ class object_:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38707,6 +41317,7 @@ class object_:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38718,6 +41329,7 @@ class object_:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -38730,6 +41342,7 @@ class object_:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38741,6 +41354,7 @@ class object_:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38752,6 +41366,7 @@ class object_:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38763,10 +41378,12 @@ class object_:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38778,6 +41395,7 @@ class object_:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38789,6 +41407,7 @@ class object_:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38800,6 +41419,7 @@ class object_:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38811,6 +41431,7 @@ class object_:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -38823,6 +41444,7 @@ class object_:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -38835,6 +41457,7 @@ class object_:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38846,6 +41469,7 @@ class object_:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38857,6 +41481,7 @@ class object_:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -38870,6 +41495,7 @@ class object_:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38881,6 +41507,7 @@ class object_:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -38893,6 +41520,7 @@ class object_:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38904,6 +41532,7 @@ class object_:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -38916,6 +41545,7 @@ class object_:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38927,6 +41557,7 @@ class object_:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38938,6 +41569,7 @@ class object_:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -38965,6 +41597,7 @@ class object_:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38976,6 +41609,7 @@ class object_:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38987,6 +41621,7 @@ class object_:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -38998,6 +41633,7 @@ class object_:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -39009,6 +41645,7 @@ class object_:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -39020,6 +41657,7 @@ class object_:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -39032,6 +41670,7 @@ class object_:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -39043,6 +41682,7 @@ class object_:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -39054,6 +41694,7 @@ class object_:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -39065,6 +41706,7 @@ class object_:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -39076,6 +41718,7 @@ class object_:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -39087,6 +41730,7 @@ class object_:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -39098,6 +41742,7 @@ class object_:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -39111,6 +41756,7 @@ class object_:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -39122,6 +41768,7 @@ class object_:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -39133,6 +41780,7 @@ class object_:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -39145,6 +41793,7 @@ class object_:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -39156,6 +41805,7 @@ class object_:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -39167,6 +41817,7 @@ class object_:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -39178,6 +41829,7 @@ class object_:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -39189,6 +41841,7 @@ class object_:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -39200,6 +41853,7 @@ class object_:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -39211,6 +41865,7 @@ class object_:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -39222,6 +41877,7 @@ class object_:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -39233,6 +41889,7 @@ class object_:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -39244,6 +41901,7 @@ class object_:
         """
         
         
+        return None
     
 
 ogrid = None
@@ -39270,6 +41928,7 @@ def ones():
     """
     
     
+    return None
 def ones_like(x,out):
     """ones_like(x[, out])
     Returns an array of ones with the same shape and type as a given array.
@@ -39287,6 +41946,7 @@ def ones_like(x,out):
     """
     
     
+    return None
 def outer(a,b):
     """   Compute the outer product of two vectors.
        Given two vectors, ``a = [a0, a1, ..., aM]`` and
@@ -39344,6 +42004,7 @@ def outer(a,b):
     """
     
     
+    return ndarray()
 def packbits(myarray,axis):
     """packbits(myarray, axis=None)
        Packs the elements of a binary-valued array into bits in a uint8 array.
@@ -39380,6 +42041,7 @@ def packbits(myarray,axis):
     """
     
     
+    return ndarray()
 def percentile(a,q,axis,out,overwrite_input):
     """   Compute the qth percentile of the data along the specified axis.
        Returns the qth percentile of the array elements.
@@ -39452,6 +42114,7 @@ def percentile(a,q,axis,out,overwrite_input):
     """
     
     
+    return ndarray()
 pi = 0.0
 def piecewise(x,condlist,funclist,args,kw):
     """   Evaluate a piecewise-defined function.
@@ -39521,6 +42184,7 @@ def piecewise(x,condlist,funclist,args,kw):
     """
     
     
+    return ndarray()
 def pkgload():
     """Load one or more packages into parent package top-level namespace.
           This function is intended to shorten the need to import many
@@ -39550,6 +42214,7 @@ def pkgload():
     """
     
     
+    return None
 def place(arr,mask,vals):
     """   Change elements of an array based on conditional and input values.
        Similar to ``np.putmask(arr, mask, vals)``, the difference is that `place`
@@ -39580,6 +42245,7 @@ def place(arr,mask,vals):
     """
     
     
+    return None
 def pmt(rate,nper,pv,fv,when):
     """   Compute the payment against loan principal plus interest.
        Given:
@@ -39650,6 +42316,7 @@ def pmt(rate,nper,pv,fv,when):
     """
     
     
+    return ndarray()
 def poly(seq_of_zeros):
     """   Find the coefficients of a polynomial with the given sequence of roots.
        Returns the coefficients of the polynomial whose leading coefficient
@@ -39722,6 +42389,7 @@ def poly(seq_of_zeros):
     """
     
     
+    return ndarray()
 class poly1d:
     coeffs = None
     def deriv(self):
@@ -39734,6 +42402,7 @@ class poly1d:
         """
         
         
+        return None
     def integ(self):
         """       Return an antiderivative (indefinite integral) of this polynomial.
                Refer to `polyint` for full documentation.
@@ -39744,6 +42413,7 @@ class poly1d:
         """
         
         
+        return None
     order = None
     variable = None
     
@@ -39786,6 +42456,7 @@ def polyadd(a1,a2):
     """
     
     
+    return ndarray()
 def polyder(p,m):
     """   Return the derivative of the specified order of a polynomial.
        Parameters
@@ -39828,6 +42499,7 @@ def polyder(p,m):
     """
     
     
+    return poly1d()
 def polydiv(u,v):
     """   Returns the quotient and remainder of polynomial division.
        The input arrays are the coefficients (including any coefficients
@@ -39866,6 +42538,7 @@ def polydiv(u,v):
     """
     
     
+    return ndarray()
 def polyfit(x,y,deg,rcond,full):
     """   Least squares polynomial fit.
        Fit a polynomial ``p(x) = p[0] * x**deg + ... + p[deg]`` of degree `deg`
@@ -39978,6 +42651,7 @@ def polyfit(x,y,deg,rcond,full):
     """
     
     
+    return ndarray()
 def polyint(p,m,k):
     """   Return an antiderivative (indefinite integral) of a polynomial.
        The returned order `m` antiderivative `P` of polynomial `p` satisfies
@@ -40034,6 +42708,7 @@ def polyint(p,m,k):
     """
     
     
+    return None
 def polymul(a1,a2):
     """   Find the product of two polynomials.
        Finds the polynomial resulting from the multiplication of the two input
@@ -40075,6 +42750,7 @@ def polymul(a1,a2):
     """
     
     
+    return ndarray()
 polynomial = None
 def polysub(a1,a2):
     """   Difference (subtraction) of two polynomials.
@@ -40101,6 +42777,7 @@ def polysub(a1,a2):
     """
     
     
+    return ndarray()
 def polyval(p,x):
     """   Evaluate a polynomial at specific values.
        If `p` is of length N, this function returns the value:
@@ -40152,6 +42829,7 @@ def polyval(p,x):
     """
     
     
+    return ndarray()
 def power(x1,x2):
     """power(x1, x2[, out])
     First array elements raised to powers from second array, element-wise.
@@ -40190,6 +42868,7 @@ def power(x1,x2):
     """
     
     
+    return ndarray()
 def ppmt(rate,per,nper,pv,fv,when):
     """   Not implemented. Compute the payment against loan principal.
        Parameters
@@ -40214,6 +42893,7 @@ def ppmt(rate,per,nper,pv,fv,when):
     """
     
     
+    return None
 def prod(a,axis,dtype,out):
     """   Return the product of array elements over a given axis.
        Parameters
@@ -40274,6 +42954,7 @@ def prod(a,axis,dtype,out):
     """
     
     
+    return ndarray()
 def product():
     """   Return the product of array elements over a given axis.
        See Also
@@ -40283,6 +42964,7 @@ def product():
     """
     
     
+    return None
 def ptp(a,axis,out):
     """   Range of values (maximum - minimum) along an axis.
        The name of the function comes from the acronym for 'peak to peak'.
@@ -40316,6 +42998,7 @@ def ptp(a,axis,out):
     """
     
     
+    return ndarray()
 def put(a,ind,v,mode):
     """   Replaces specified elements of an array with given values.
        The indexing works on the flattened target array. `put` is roughly
@@ -40356,6 +43039,7 @@ def put(a,ind,v,mode):
     """
     
     
+    return None
 def putmask(a,mask,values):
     """putmask(a, mask, values)
        Changes elements of an array based on conditional and input values.
@@ -40389,6 +43073,7 @@ def putmask(a,mask,values):
     """
     
     
+    return None
 def pv(rate,nper,pmt,fv,when):
     """   Compute the present value.
        Given:
@@ -40460,6 +43145,7 @@ def pv(rate,nper,pmt,fv,when):
     """
     
     
+    return ndarray()
 r_ = None
 def rad2deg(x,out):
     """rad2deg(x[, out])
@@ -40490,6 +43176,7 @@ def rad2deg(x,out):
     """
     
     
+    return ndarray()
 def radians(x,out):
     """radians(x[, out])
     Convert angles from degrees to radians.
@@ -40521,6 +43208,7 @@ def radians(x,out):
     """
     
     
+    return ndarray()
 random = None
 def rank(a):
     """   Return the number of dimensions of an array.
@@ -40557,6 +43245,7 @@ def rank(a):
     """
     
     
+    return int()
 def rate(nper,pmt,pv,fv,when,guess,tol,maxiter):
     """   Compute the rate of interest per period.
        Parameters
@@ -40596,6 +43285,7 @@ def rate(nper,pmt,pv,fv,when,guess,tol,maxiter):
     """
     
     
+    return None
 def ravel(a,order):
     """   Return a flattened array.
        A 1-D array, containing the elements of the input, is returned.  A copy is
@@ -40641,6 +43331,7 @@ def ravel(a,order):
     """
     
     
+    return ndarray()
 def real(val):
     """   Return the real part of the elements of the array.
        Parameters
@@ -40670,6 +43361,7 @@ def real(val):
     """
     
     
+    return ndarray()
 def real_if_close(a,tol):
     """   If complex input returns a real array if complex parts are close to zero.
        "Close to zero" is defined as `tol` * (machine epsilon of the type for
@@ -40707,6 +43399,7 @@ def real_if_close(a,tol):
     """
     
     
+    return ndarray()
 rec = None
 class recarray:
     T = None
@@ -40720,6 +43413,7 @@ class recarray:
         """
         
         
+        return None
     def any(self,axis=None,out=None):
         """a.any(axis=None, out=None)
            Returns True if any of the elements of `a` evaluate to True.
@@ -40730,6 +43424,7 @@ class recarray:
         """
         
         
+        return None
     def argmax(self,axis=None,out=None):
         """a.argmax(axis=None, out=None)
            Return indices of the maximum values along the given axis.
@@ -40740,6 +43435,7 @@ class recarray:
         """
         
         
+        return None
     def argmin(self,axis=None,out=None):
         """a.argmin(axis=None, out=None)
            Return indices of the minimum values along the given axis of `a`.
@@ -40750,6 +43446,7 @@ class recarray:
         """
         
         
+        return None
     def argsort(self,axis=_1,kind='quicksort',order=None):
         """a.argsort(axis=-1, kind='quicksort', order=None)
            Returns the indices that would sort this array.
@@ -40760,6 +43457,7 @@ class recarray:
         """
         
         
+        return None
     def astype(self,t):
         """a.astype(t)
            Copy of the array, cast to a specified type.
@@ -40777,6 +43475,7 @@ class recarray:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """a.byteswap(inplace)
@@ -40809,6 +43508,7 @@ class recarray:
         """
         
         
+        return None
     def choose(self,choices,out=None,mode='raise'):
         """a.choose(choices, out=None, mode='raise')
            Use an index array to construct a new array from a set of choices.
@@ -40819,6 +43519,7 @@ class recarray:
         """
         
         
+        return None
     def clip(self,a_min,a_max,out=None):
         """a.clip(a_min, a_max, out=None)
            Return an array whose values are limited to ``[a_min, a_max]``.
@@ -40829,6 +43530,7 @@ class recarray:
         """
         
         
+        return None
     def compress(self,condition,axis=None,out=None):
         """a.compress(condition, axis=None, out=None)
            Return selected slices of this array along given axis.
@@ -40839,6 +43541,7 @@ class recarray:
         """
         
         
+        return None
     def conj(self,):
         """a.conj()
            Complex-conjugate all elements.
@@ -40849,6 +43552,7 @@ class recarray:
         """
         
         
+        return None
     def conjugate(self,):
         """a.conjugate()
            Return the complex conjugate, element-wise.
@@ -40859,6 +43563,7 @@ class recarray:
         """
         
         
+        return None
     def copy(self,order):
         """a.copy(order='C')
            Return a copy of the array.
@@ -40885,6 +43590,7 @@ class recarray:
         """
         
         
+        return None
     ctypes = None
     def cumprod(self,axis=None,dtype=None,out=None):
         """a.cumprod(axis=None, dtype=None, out=None)
@@ -40896,6 +43602,7 @@ class recarray:
         """
         
         
+        return None
     def cumsum(self,axis=None,dtype=None,out=None):
         """a.cumsum(axis=None, dtype=None, out=None)
            Return the cumulative sum of the elements along the given axis.
@@ -40906,6 +43613,7 @@ class recarray:
         """
         
         
+        return None
     data = None
     def diagonal(self,offset=0,axis1=0,axis2=1):
         """a.diagonal(offset=0, axis1=0, axis2=1)
@@ -40917,10 +43625,12 @@ class recarray:
         """
         
         
+        return None
     def dot(self):
         """None"""
         
         
+        return None
     dtype = None
     def dump(self,file):
         """a.dump(file)
@@ -40933,6 +43643,7 @@ class recarray:
         """
         
         
+        return None
     def dumps(self,):
         """a.dumps()
            Returns the pickle of the array as a string.
@@ -40943,10 +43654,12 @@ class recarray:
         """
         
         
+        return None
     def field(self):
         """None"""
         
         
+        return None
     def fill(self,value):
         """a.fill(value)
            Fill the array with a scalar value.
@@ -40967,6 +43680,7 @@ class recarray:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self,order):
@@ -40995,6 +43709,7 @@ class recarray:
         """
         
         
+        return ndarray()
     def getfield(self,dtype,offset):
         """a.getfield(dtype, offset)
            Returns a field of the given array as a certain type.
@@ -41039,6 +43754,7 @@ class recarray:
         """
         
         
+        return None
     imag = None
     def item(self,args):
         """a.item(*args)
@@ -41087,6 +43803,7 @@ class recarray:
         """
         
         
+        return Standard()
     def itemset(self,args):
         """a.itemset(*args)
            Insert scalar into an array (scalar is cast to array's dtype, if possible)
@@ -41126,6 +43843,7 @@ class recarray:
         """
         
         
+        return None
     itemsize = None
     def max(self,axis=None,out=None):
         """a.max(axis=None, out=None)
@@ -41137,6 +43855,7 @@ class recarray:
         """
         
         
+        return None
     def mean(self,axis=None,dtype=None,out=None):
         """a.mean(axis=None, dtype=None, out=None)
            Returns the average of the array elements along given axis.
@@ -41147,6 +43866,7 @@ class recarray:
         """
         
         
+        return None
     def min(self,axis=None,out=None):
         """a.min(axis=None, out=None)
            Return the minimum along a given axis.
@@ -41157,6 +43877,7 @@ class recarray:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -41188,6 +43909,7 @@ class recarray:
         """
         
         
+        return array()
     def nonzero(self,):
         """a.nonzero()
            Return the indices of the elements that are non-zero.
@@ -41198,6 +43920,7 @@ class recarray:
         """
         
         
+        return None
     def prod(self,axis=None,dtype=None,out=None):
         """a.prod(axis=None, dtype=None, out=None)
            Return the product of the array elements over the given axis
@@ -41208,6 +43931,7 @@ class recarray:
         """
         
         
+        return None
     def ptp(self,axis=None,out=None):
         """a.ptp(axis=None, out=None)
            Peak to peak (maximum - minimum) value along a given axis.
@@ -41218,6 +43942,7 @@ class recarray:
         """
         
         
+        return None
     def put(self,indices,values,mode='raise'):
         """a.put(indices, values, mode='raise')
            Set ``a.flat[n] = values[n]`` for all `n` in indices.
@@ -41228,6 +43953,7 @@ class recarray:
         """
         
         
+        return None
     def ravel(self,order):
         """a.ravel([order])
            Return a flattened array.
@@ -41239,6 +43965,7 @@ class recarray:
         """
         
         
+        return None
     real = None
     def repeat(self,repeats,axis=None):
         """a.repeat(repeats, axis=None)
@@ -41250,6 +43977,7 @@ class recarray:
         """
         
         
+        return None
     def reshape(self,shape,order='C'):
         """a.reshape(shape, order='C')
            Returns an array containing the same data with a new shape.
@@ -41260,6 +43988,7 @@ class recarray:
         """
         
         
+        return None
     def resize(self,new_shape,refcheck):
         """a.resize(new_shape, refcheck=True)
            Change shape and size of array in-place.
@@ -41329,6 +44058,7 @@ class recarray:
         """
         
         
+        return None
     def round(self,decimals=0,out=None):
         """a.round(decimals=0, out=None)
            Return `a` with each element rounded to the given number of decimals.
@@ -41339,6 +44069,7 @@ class recarray:
         """
         
         
+        return None
     def searchsorted(self,v,side='left'):
         """a.searchsorted(v, side='left')
            Find indices where elements of v should be inserted in a to maintain order.
@@ -41349,6 +44080,7 @@ class recarray:
         """
         
         
+        return None
     def setfield(self,val,dtype,offset):
         """a.setfield(val, dtype, offset=0)
            Put a value into a specified place in a field defined by a data-type.
@@ -41392,6 +44124,7 @@ class recarray:
         """
         
         
+        return None
     def setflags(self,write,align,uic):
         """a.setflags(write=None, align=None, uic=None)
            Set array flags WRITEABLE, ALIGNED, and UPDATEIFCOPY, respectively.
@@ -41453,6 +44186,7 @@ class recarray:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self,axis,kind,order):
@@ -41499,6 +44233,7 @@ class recarray:
         """
         
         
+        return None
     def squeeze(self,):
         """a.squeeze()
            Remove single-dimensional entries from the shape of `a`.
@@ -41509,6 +44244,7 @@ class recarray:
         """
         
         
+        return None
     def std(self,axis=None,dtype=None,out=None,ddof=0):
         """a.std(axis=None, dtype=None, out=None, ddof=0)
            Returns the standard deviation of the array elements along given axis.
@@ -41519,6 +44255,7 @@ class recarray:
         """
         
         
+        return None
     strides = None
     def sum(self,axis=None,dtype=None,out=None):
         """a.sum(axis=None, dtype=None, out=None)
@@ -41530,6 +44267,7 @@ class recarray:
         """
         
         
+        return None
     def swapaxes(self,axis1,axis2):
         """a.swapaxes(axis1, axis2)
            Return a view of the array with `axis1` and `axis2` interchanged.
@@ -41540,6 +44278,7 @@ class recarray:
         """
         
         
+        return None
     def take(self,indices,axis=None,out=None,mode='raise'):
         """a.take(indices, axis=None, out=None, mode='raise')
            Return an array formed from the elements of `a` at the given indices.
@@ -41550,6 +44289,7 @@ class recarray:
         """
         
         
+        return None
     def tofile(self,fid,sep,format):
         """a.tofile(fid, sep="", format="%s")
            Write array to a file as text or binary (default).
@@ -41579,6 +44319,7 @@ class recarray:
         """
         
         
+        return None
     def tolist(self):
         """a.tolist()
            Return the array as a (possibly nested) list.
@@ -41607,6 +44348,7 @@ class recarray:
         """
         
         
+        return list()
     def tostring(self,order):
         """a.tostring(order='C')
            Construct a Python string containing the raw data bytes in the array.
@@ -41636,6 +44378,7 @@ class recarray:
         """
         
         
+        return str()
     def trace(self,offset=0,axis1=0,axis2=1,dtype=None,out=None):
         """a.trace(offset=0, axis1=0, axis2=1, dtype=None, out=None)
            Return the sum along diagonals of the array.
@@ -41646,6 +44389,7 @@ class recarray:
         """
         
         
+        return None
     def transpose(self,axes):
         """a.transpose(*axes)
            Returns a view of the array with axes transposed.
@@ -41689,6 +44433,7 @@ class recarray:
         """
         
         
+        return ndarray()
     def var(self,axis=None,dtype=None,out=None,ddof=0):
         """a.var(axis=None, dtype=None, out=None, ddof=0)
            Returns the variance of the array elements, along given axis.
@@ -41699,10 +44444,12 @@ class recarray:
         """
         
         
+        return None
     def view(self):
         """None"""
         
         
+        return None
     
 
 def recfromcsv():
@@ -41718,6 +44465,7 @@ def recfromcsv():
     """
     
     
+    return None
 def recfromtxt():
     """   Load ASCII data from a file and return it in a record array.
        If ``usemask=False`` a standard `recarray` is returned,
@@ -41735,6 +44483,7 @@ def recfromtxt():
     """
     
     
+    return None
 def reciprocal(x):
     """reciprocal(x[, out])
     Return the reciprocal of the argument, element-wise.
@@ -41763,6 +44512,7 @@ def reciprocal(x):
     """
     
     
+    return ndarray()
 class record:
     T = None
     def all(self):
@@ -41776,6 +44526,7 @@ class record:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -41787,6 +44538,7 @@ class record:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -41798,6 +44550,7 @@ class record:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -41809,6 +44562,7 @@ class record:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -41820,6 +44574,7 @@ class record:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -41831,6 +44586,7 @@ class record:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -41843,6 +44599,7 @@ class record:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -41854,6 +44611,7 @@ class record:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -41865,6 +44623,7 @@ class record:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -41876,10 +44635,12 @@ class record:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -41891,6 +44652,7 @@ class record:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -41902,6 +44664,7 @@ class record:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -41913,6 +44676,7 @@ class record:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -41924,6 +44688,7 @@ class record:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -41936,6 +44701,7 @@ class record:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -41948,6 +44714,7 @@ class record:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -41959,6 +44726,7 @@ class record:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -41970,6 +44738,7 @@ class record:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -41983,10 +44752,12 @@ class record:
         """
         
         
+        return None
     def getfield(self):
         """None"""
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -41999,6 +44770,7 @@ class record:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42010,6 +44782,7 @@ class record:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -42022,6 +44795,7 @@ class record:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42033,6 +44807,7 @@ class record:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42044,6 +44819,7 @@ class record:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -42071,6 +44847,7 @@ class record:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42082,11 +44859,13 @@ class record:
         """
         
         
+        return None
     def pprint(self):
         """Pretty-print all fields.
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42098,6 +44877,7 @@ class record:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42109,6 +44889,7 @@ class record:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42120,6 +44901,7 @@ class record:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42131,6 +44913,7 @@ class record:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -42143,6 +44926,7 @@ class record:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42154,6 +44938,7 @@ class record:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42165,6 +44950,7 @@ class record:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42176,6 +44962,7 @@ class record:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42187,10 +44974,12 @@ class record:
         """
         
         
+        return None
     def setfield(self):
         """None"""
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42202,6 +44991,7 @@ class record:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -42215,6 +45005,7 @@ class record:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42226,6 +45017,7 @@ class record:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42237,6 +45029,7 @@ class record:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -42249,6 +45042,7 @@ class record:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42260,6 +45054,7 @@ class record:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42271,6 +45066,7 @@ class record:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42282,6 +45078,7 @@ class record:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42293,6 +45090,7 @@ class record:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42304,6 +45102,7 @@ class record:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42315,6 +45114,7 @@ class record:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42326,6 +45126,7 @@ class record:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42337,6 +45138,7 @@ class record:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -42348,6 +45150,7 @@ class record:
         """
         
         
+        return None
     
 
 def remainder(x1,x2,out):
@@ -42383,6 +45186,7 @@ def remainder(x1,x2,out):
     """
     
     
+    return ndarray()
 def repeat(a,repeats,axis):
     """   Repeat elements of an array.
        Parameters
@@ -42419,6 +45223,7 @@ def repeat(a,repeats,axis):
     """
     
     
+    return ndarray()
 def require(a,dtype,requirements):
     """   Return an ndarray of the provided type that satisfies requirements.
        This function is useful to be sure that an array with the correct flags
@@ -42470,6 +45275,7 @@ def require(a,dtype,requirements):
     """
     
     
+    return None
 def reshape(a,newshape,order):
     """   Gives a new shape to an array without changing its data.
        Parameters
@@ -42520,6 +45326,7 @@ def reshape(a,newshape,order):
     """
     
     
+    return ndarray()
 def resize(a,new_shape):
     """   Return a new array with the specified shape.
        If the new array is larger than the original array, then the new
@@ -42553,6 +45360,7 @@ def resize(a,new_shape):
     """
     
     
+    return ndarray()
 def restoredot():
     """Restore `dot`, `vdot`, and `innerproduct` to the default non-BLAS
        implementations.
@@ -42566,6 +45374,7 @@ def restoredot():
     """
     
     
+    return None
 def right_shift(x1,x2):
     """right_shift(x1, x2[, out])
     Shift the bits of an integer to the right.
@@ -42600,6 +45409,7 @@ def right_shift(x1,x2):
     """
     
     
+    return ndarray()
 def rint(x):
     """rint(x[, out])
     Round elements of the array to the nearest integer.
@@ -42622,6 +45432,7 @@ def rint(x):
     """
     
     
+    return ndarray()
 def roll(a,shift,axis):
     """   Roll array elements along a given axis.
        Elements that roll beyond the last position are re-introduced at
@@ -42666,6 +45477,7 @@ def roll(a,shift,axis):
     """
     
     
+    return ndarray()
 def rollaxis(a,axis,start):
     """   Roll the specified axis backwards, until it lies in a given position.
        Parameters
@@ -42699,6 +45511,7 @@ def rollaxis(a,axis,start):
     """
     
     
+    return ndarray()
 def roots(p):
     """   Return the roots of a polynomial with coefficients given in p.
        The values in the rank-1 array `p` are coefficients of a polynomial.
@@ -42740,6 +45553,7 @@ def roots(p):
     """
     
     
+    return ndarray()
 def rot90(m,k):
     """   Rotate an array by 90 degrees in the counter-clockwise direction.
        The first two dimensions are rotated; therefore, the array must be at
@@ -42774,6 +45588,7 @@ def rot90(m,k):
     """
     
     
+    return ndarray()
 def round():
     """   Round an array to the given number of decimals.
        Refer to `around` for full documentation.
@@ -42784,6 +45599,7 @@ def round():
     """
     
     
+    return None
 def round_():
     """   Round an array to the given number of decimals.
        Refer to `around` for full documentation.
@@ -42794,6 +45610,7 @@ def round_():
     """
     
     
+    return None
 def row_stack(tup):
     """   Stack arrays in sequence vertically (row wise).
        Take a sequence of arrays and stack them vertically to make a single
@@ -42836,6 +45653,7 @@ def row_stack(tup):
     """
     
     
+    return ndarray()
 s_ = None
 def safe_eval(source):
     """   Protected string evaluation.
@@ -42874,6 +45692,7 @@ def safe_eval(source):
     """
     
     
+    return object()
 def save(file,arr):
     """   Save an array to a binary file in NumPy ``.npy`` format.
        Parameters
@@ -42905,6 +45724,7 @@ def save(file,arr):
     """
     
     
+    return None
 def savetxt(fname,X,fmt,delimiter,newline):
     """   Save an array to a text file.
        Parameters
@@ -42973,6 +45793,7 @@ def savetxt(fname,X,fmt,delimiter,newline):
     """
     
     
+    return None
 def savez(file,args,kwds):
     """   Save several arrays into a single, archive file in ``.npz`` format.
        If arguments are passed in with no keywords, the corresponding variable
@@ -43037,6 +45858,7 @@ def savez(file,args,kwds):
     """
     
     
+    return None
 def sctype2char(sctype):
     """   Return the string representation of a scalar dtype.
        Parameters
@@ -43074,6 +45896,7 @@ def sctype2char(sctype):
     """
     
     
+    return str()
 sctypeDict = {}
 sctypeNA = {}
 sctypes = {}
@@ -43117,6 +45940,7 @@ def searchsorted(a,v,side):
     """
     
     
+    return array()
 def select(condlist,choicelist,default):
     """   Return an array drawn from elements in choicelist, depending on conditions.
        Parameters
@@ -43151,6 +45975,7 @@ def select(condlist,choicelist,default):
     """
     
     
+    return ndarray()
 def set_numeric_ops(op1,op2,___):
     """set_numeric_ops(op1=func1, op2=func2, ...)
        Set numerical operators for array objects.
@@ -43186,6 +46011,7 @@ def set_numeric_ops(op1,op2,___):
     """
     
     
+    return list()
 def set_printoptions(precision,threshold,edgeitems,linewidth,suppress,nanstr,infstr):
     """   Set printing options.
        These options determine the way floating point numbers, arrays and
@@ -43239,6 +46065,7 @@ def set_printoptions(precision,threshold,edgeitems,linewidth,suppress,nanstr,inf
     """
     
     
+    return None
 def set_string_function(f,repr):
     """   Set a Python function to be used when pretty printing arrays.
        Parameters
@@ -43284,6 +46111,7 @@ def set_string_function(f,repr):
     """
     
     
+    return None
 def setbufsize():
     """   Set the size of the buffer used in ufuncs.
        Parameters
@@ -43294,6 +46122,7 @@ def setbufsize():
     """
     
     
+    return None
 def setdiff1d(ar1,ar2,assume_unique):
     """   Find the set difference of two arrays.
        Return the sorted, unique values in `ar1` that are not in `ar2`.
@@ -43324,6 +46153,7 @@ def setdiff1d(ar1,ar2,assume_unique):
     """
     
     
+    return ndarray()
 def seterr(all,divide,over,under,invalid):
     """   Set how floating-point errors are handled.
        Note that operations on integer scalar types (such as `int16`) are
@@ -43390,6 +46220,7 @@ def seterr(all,divide,over,under,invalid):
     """
     
     
+    return dict()
 def seterrcall(func):
     """   Set the floating-point error callback function or log object.
        There are two ways to capture floating-point error messages.  The first
@@ -43453,6 +46284,7 @@ def seterrcall(func):
     """
     
     
+    return callable()
 def seterrobj(errobj):
     """seterrobj(errobj)
        Set the object that defines floating-point error handling.
@@ -43502,6 +46334,7 @@ def seterrobj(errobj):
     """
     
     
+    return None
 def setmember1d():
     """`setmember1d` is deprecated!
        This function is deprecated.  Use in1d(assume_unique=True)
@@ -43510,6 +46343,7 @@ def setmember1d():
     """
     
     
+    return None
 def setxor1d(ar1,ar2,assume_unique):
     """   Find the set exclusive-or of two arrays.
        Return the sorted, unique values that are in only one (not both) of the
@@ -43536,6 +46370,7 @@ def setxor1d(ar1,ar2,assume_unique):
     """
     
     
+    return ndarray()
 def shape(a):
     """   Return the shape of an array.
        Parameters
@@ -43570,6 +46405,7 @@ def shape(a):
     """
     
     
+    return tuple()
 class short:
     T = None
     def all(self):
@@ -43583,6 +46419,7 @@ class short:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43594,6 +46431,7 @@ class short:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43605,6 +46443,7 @@ class short:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43616,6 +46455,7 @@ class short:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43627,6 +46467,7 @@ class short:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43638,6 +46479,7 @@ class short:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -43650,6 +46492,7 @@ class short:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43661,6 +46504,7 @@ class short:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43672,6 +46516,7 @@ class short:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43683,10 +46528,12 @@ class short:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43698,6 +46545,7 @@ class short:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43709,6 +46557,7 @@ class short:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43720,6 +46569,7 @@ class short:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43731,6 +46581,7 @@ class short:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -43743,6 +46594,7 @@ class short:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -43755,6 +46607,7 @@ class short:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43766,6 +46619,7 @@ class short:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43777,6 +46631,7 @@ class short:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -43790,6 +46645,7 @@ class short:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43801,6 +46657,7 @@ class short:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -43813,6 +46670,7 @@ class short:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43824,6 +46682,7 @@ class short:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -43836,6 +46695,7 @@ class short:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43847,6 +46707,7 @@ class short:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43858,6 +46719,7 @@ class short:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -43885,6 +46747,7 @@ class short:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43896,6 +46759,7 @@ class short:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43907,6 +46771,7 @@ class short:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43918,6 +46783,7 @@ class short:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43929,6 +46795,7 @@ class short:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43940,6 +46807,7 @@ class short:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -43952,6 +46820,7 @@ class short:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43963,6 +46832,7 @@ class short:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43974,6 +46844,7 @@ class short:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43985,6 +46856,7 @@ class short:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -43996,6 +46868,7 @@ class short:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44007,6 +46880,7 @@ class short:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44018,6 +46892,7 @@ class short:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -44031,6 +46906,7 @@ class short:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44042,6 +46918,7 @@ class short:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44053,6 +46930,7 @@ class short:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -44065,6 +46943,7 @@ class short:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44076,6 +46955,7 @@ class short:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44087,6 +46967,7 @@ class short:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44098,6 +46979,7 @@ class short:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44109,6 +46991,7 @@ class short:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44120,6 +47003,7 @@ class short:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44131,6 +47015,7 @@ class short:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44142,6 +47027,7 @@ class short:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44153,6 +47039,7 @@ class short:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44164,12 +47051,14 @@ class short:
         """
         
         
+        return None
     
 
 def show_config():
     """None"""
     
     
+    return None
 def sign(x):
     """sign(x[, out])
     Returns an element-wise indication of the sign of a number.
@@ -44191,6 +47080,7 @@ def sign(x):
     """
     
     
+    return ndarray()
 def signbit(out):
     """signbit(x[, out])
     Returns element-wise True where signbit is set (less than zero).
@@ -44215,6 +47105,7 @@ def signbit(out):
     """
     
     
+    return ndarray()
 class signedinteger:
     T = None
     def all(self):
@@ -44228,6 +47119,7 @@ class signedinteger:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44239,6 +47131,7 @@ class signedinteger:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44250,6 +47143,7 @@ class signedinteger:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44261,6 +47155,7 @@ class signedinteger:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44272,6 +47167,7 @@ class signedinteger:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44283,6 +47179,7 @@ class signedinteger:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -44295,6 +47192,7 @@ class signedinteger:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44306,6 +47204,7 @@ class signedinteger:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44317,6 +47216,7 @@ class signedinteger:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44328,10 +47228,12 @@ class signedinteger:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44343,6 +47245,7 @@ class signedinteger:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44354,6 +47257,7 @@ class signedinteger:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44365,6 +47269,7 @@ class signedinteger:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44376,6 +47281,7 @@ class signedinteger:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -44388,6 +47294,7 @@ class signedinteger:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -44400,6 +47307,7 @@ class signedinteger:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44411,6 +47319,7 @@ class signedinteger:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44422,6 +47331,7 @@ class signedinteger:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -44435,6 +47345,7 @@ class signedinteger:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44446,6 +47357,7 @@ class signedinteger:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -44458,6 +47370,7 @@ class signedinteger:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44469,6 +47382,7 @@ class signedinteger:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -44481,6 +47395,7 @@ class signedinteger:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44492,6 +47407,7 @@ class signedinteger:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44503,6 +47419,7 @@ class signedinteger:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -44530,6 +47447,7 @@ class signedinteger:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44541,6 +47459,7 @@ class signedinteger:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44552,6 +47471,7 @@ class signedinteger:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44563,6 +47483,7 @@ class signedinteger:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44574,6 +47495,7 @@ class signedinteger:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44585,6 +47507,7 @@ class signedinteger:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -44597,6 +47520,7 @@ class signedinteger:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44608,6 +47532,7 @@ class signedinteger:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44619,6 +47544,7 @@ class signedinteger:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44630,6 +47556,7 @@ class signedinteger:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44641,6 +47568,7 @@ class signedinteger:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44652,6 +47580,7 @@ class signedinteger:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44663,6 +47592,7 @@ class signedinteger:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -44676,6 +47606,7 @@ class signedinteger:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44687,6 +47618,7 @@ class signedinteger:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44698,6 +47630,7 @@ class signedinteger:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -44710,6 +47643,7 @@ class signedinteger:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44721,6 +47655,7 @@ class signedinteger:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44732,6 +47667,7 @@ class signedinteger:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44743,6 +47679,7 @@ class signedinteger:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44754,6 +47691,7 @@ class signedinteger:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44765,6 +47703,7 @@ class signedinteger:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44776,6 +47715,7 @@ class signedinteger:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44787,6 +47727,7 @@ class signedinteger:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44798,6 +47739,7 @@ class signedinteger:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44809,6 +47751,7 @@ class signedinteger:
         """
         
         
+        return None
     
 
 def sin(x):
@@ -44857,6 +47800,7 @@ def sin(x):
     """
     
     
+    return array_like()
 def sinc(x):
     """   Return the sinc function.
        The sinc function is :math:`\sin(\pi x)/(\pi x)`.
@@ -44921,6 +47865,7 @@ def sinc(x):
     """
     
     
+    return ndarray()
 class single:
     T = None
     def all(self):
@@ -44934,6 +47879,7 @@ class single:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44945,6 +47891,7 @@ class single:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44956,6 +47903,7 @@ class single:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44967,6 +47915,7 @@ class single:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44978,6 +47927,7 @@ class single:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -44989,6 +47939,7 @@ class single:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -45001,6 +47952,7 @@ class single:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45012,6 +47964,7 @@ class single:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45023,6 +47976,7 @@ class single:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45034,10 +47988,12 @@ class single:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45049,6 +48005,7 @@ class single:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45060,6 +48017,7 @@ class single:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45071,6 +48029,7 @@ class single:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45082,6 +48041,7 @@ class single:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -45094,6 +48054,7 @@ class single:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -45106,6 +48067,7 @@ class single:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45117,6 +48079,7 @@ class single:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45128,6 +48091,7 @@ class single:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -45141,6 +48105,7 @@ class single:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45152,6 +48117,7 @@ class single:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -45164,6 +48130,7 @@ class single:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45175,6 +48142,7 @@ class single:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -45187,6 +48155,7 @@ class single:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45198,6 +48167,7 @@ class single:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45209,6 +48179,7 @@ class single:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -45236,6 +48207,7 @@ class single:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45247,6 +48219,7 @@ class single:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45258,6 +48231,7 @@ class single:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45269,6 +48243,7 @@ class single:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45280,6 +48255,7 @@ class single:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45291,6 +48267,7 @@ class single:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -45303,6 +48280,7 @@ class single:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45314,6 +48292,7 @@ class single:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45325,6 +48304,7 @@ class single:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45336,6 +48316,7 @@ class single:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45347,6 +48328,7 @@ class single:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45358,6 +48340,7 @@ class single:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45369,6 +48352,7 @@ class single:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -45382,6 +48366,7 @@ class single:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45393,6 +48378,7 @@ class single:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45404,6 +48390,7 @@ class single:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -45416,6 +48403,7 @@ class single:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45427,6 +48415,7 @@ class single:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45438,6 +48427,7 @@ class single:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45449,6 +48439,7 @@ class single:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45460,6 +48451,7 @@ class single:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45471,6 +48463,7 @@ class single:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45482,6 +48475,7 @@ class single:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45493,6 +48487,7 @@ class single:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45504,6 +48499,7 @@ class single:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45515,6 +48511,7 @@ class single:
         """
         
         
+        return None
     
 
 class singlecomplex:
@@ -45530,6 +48527,7 @@ class singlecomplex:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45541,6 +48539,7 @@ class singlecomplex:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45552,6 +48551,7 @@ class singlecomplex:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45563,6 +48563,7 @@ class singlecomplex:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45574,6 +48575,7 @@ class singlecomplex:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45585,6 +48587,7 @@ class singlecomplex:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -45597,6 +48600,7 @@ class singlecomplex:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45608,6 +48612,7 @@ class singlecomplex:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45619,6 +48624,7 @@ class singlecomplex:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45630,10 +48636,12 @@ class singlecomplex:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45645,6 +48653,7 @@ class singlecomplex:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45656,6 +48665,7 @@ class singlecomplex:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45667,6 +48677,7 @@ class singlecomplex:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45678,6 +48689,7 @@ class singlecomplex:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -45690,6 +48702,7 @@ class singlecomplex:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -45702,6 +48715,7 @@ class singlecomplex:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45713,6 +48727,7 @@ class singlecomplex:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45724,6 +48739,7 @@ class singlecomplex:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -45737,6 +48753,7 @@ class singlecomplex:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45748,6 +48765,7 @@ class singlecomplex:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -45760,6 +48778,7 @@ class singlecomplex:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45771,6 +48790,7 @@ class singlecomplex:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -45783,6 +48803,7 @@ class singlecomplex:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45794,6 +48815,7 @@ class singlecomplex:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45805,6 +48827,7 @@ class singlecomplex:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -45832,6 +48855,7 @@ class singlecomplex:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45843,6 +48867,7 @@ class singlecomplex:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45854,6 +48879,7 @@ class singlecomplex:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45865,6 +48891,7 @@ class singlecomplex:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45876,6 +48903,7 @@ class singlecomplex:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45887,6 +48915,7 @@ class singlecomplex:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -45899,6 +48928,7 @@ class singlecomplex:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45910,6 +48940,7 @@ class singlecomplex:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45921,6 +48952,7 @@ class singlecomplex:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45932,6 +48964,7 @@ class singlecomplex:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45943,6 +48976,7 @@ class singlecomplex:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45954,6 +48988,7 @@ class singlecomplex:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45965,6 +49000,7 @@ class singlecomplex:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -45978,6 +49014,7 @@ class singlecomplex:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -45989,6 +49026,7 @@ class singlecomplex:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -46000,6 +49038,7 @@ class singlecomplex:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -46012,6 +49051,7 @@ class singlecomplex:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -46023,6 +49063,7 @@ class singlecomplex:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -46034,6 +49075,7 @@ class singlecomplex:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -46045,6 +49087,7 @@ class singlecomplex:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -46056,6 +49099,7 @@ class singlecomplex:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -46067,6 +49111,7 @@ class singlecomplex:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -46078,6 +49123,7 @@ class singlecomplex:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -46089,6 +49135,7 @@ class singlecomplex:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -46100,6 +49147,7 @@ class singlecomplex:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -46111,6 +49159,7 @@ class singlecomplex:
         """
         
         
+        return None
     
 
 def sinh(x,out):
@@ -46161,6 +49210,7 @@ def sinh(x,out):
     """
     
     
+    return ndarray()
 def size(a,axis):
     """   Return the number of elements along a given axis.
        Parameters
@@ -46192,6 +49242,7 @@ def size(a,axis):
     """
     
     
+    return int()
 def sometrue():
     """   Check whether some values are true.
        Refer to `any` for full documentation.
@@ -46202,6 +49253,7 @@ def sometrue():
     """
     
     
+    return None
 def sort(a,axis,kind,order):
     """   Return a sorted copy of an array.
        Parameters
@@ -46287,6 +49339,7 @@ def sort(a,axis,kind,order):
     """
     
     
+    return ndarray()
 def sort_complex(a):
     """   Sort a complex array using the real part first, then the imaginary part.
        Parameters
@@ -46307,6 +49360,7 @@ def sort_complex(a):
     """
     
     
+    return complex()
 def source(object,output):
     """   Print or write to a file the source code for a Numpy object.
        The source code is only returned for objects written in Python. Many
@@ -46340,6 +49394,7 @@ def source(object,output):
     """
     
     
+    return None
 def spacing():
     """spacing(x[, out])
     Return the distance between x and the nearest adjacent number.
@@ -46365,6 +49420,7 @@ def spacing():
     """
     
     
+    return array_like()
 def split(ary,indices_or_sections,axis):
     """   Split an array into multiple sub-arrays of equal size.
        Parameters
@@ -46422,6 +49478,7 @@ def split(ary,indices_or_sections,axis):
     """
     
     
+    return list()
 def sqrt(x,out):
     """sqrt(x[, out])
     Return the positive square-root of an array, element-wise.
@@ -46462,6 +49519,7 @@ def sqrt(x,out):
     """
     
     
+    return ndarray()
 def square(x):
     """square(x[, out])
     Return the element-wise square of the input.
@@ -46486,6 +49544,7 @@ def square(x):
     """
     
     
+    return ndarray()
 def squeeze(a):
     """   Remove single-dimensional entries from the shape of an array.
        Parameters
@@ -46508,6 +49567,7 @@ def squeeze(a):
     """
     
     
+    return ndarray()
 def std(a,axis,dtype,out,ddof):
     """   Compute the standard deviation along the specified axis.
        Returns the standard deviation, a measure of the spread of a distribution,
@@ -46582,6 +49642,7 @@ def std(a,axis,dtype,out,ddof):
     """
     
     
+    return ndarray()
 class str:
     def capitalize(self,):
         """S.capitalize() -> string
@@ -46590,6 +49651,7 @@ class str:
         """
         
         
+        return None
     def center(self,width,fillchar):
         """S.center(width[, fillchar]) -> string
         Return S centered in a string of length width. Padding is
@@ -46597,6 +49659,7 @@ class str:
         """
         
         
+        return None
     def count(self,sub,start,end):
         """S.count(sub[, start[, end]]) -> int
         Return the number of non-overlapping occurrences of substring sub in
@@ -46605,6 +49668,7 @@ class str:
         """
         
         
+        return None
     def decode(self,encoding,errors):
         """S.decode([encoding[,errors]]) -> object
         Decodes S using the codec registered for encoding. encoding defaults
@@ -46616,6 +49680,7 @@ class str:
         """
         
         
+        return None
     def encode(self,encoding,errors):
         """S.encode([encoding[,errors]]) -> object
         Encodes S using the codec registered for encoding. encoding defaults
@@ -46627,6 +49692,7 @@ class str:
         """
         
         
+        return None
     def endswith(self,suffix,start,end):
         """S.endswith(suffix[, start[, end]]) -> bool
         Return True if S ends with the specified suffix, False otherwise.
@@ -46636,6 +49702,7 @@ class str:
         """
         
         
+        return None
     def expandtabs(self,tabsize):
         """S.expandtabs([tabsize]) -> string
         Return a copy of S where all tab characters are expanded using spaces.
@@ -46643,6 +49710,7 @@ class str:
         """
         
         
+        return None
     def find(self,sub,start,end):
         """S.find(sub [,start [,end]]) -> int
         Return the lowest index in S where substring sub is found,
@@ -46652,17 +49720,20 @@ class str:
         """
         
         
+        return None
     def format(self,args,kwargs):
         """S.format(*args, **kwargs) -> string
         """
         
         
+        return None
     def index(self,sub,start,end):
         """S.index(sub [,start [,end]]) -> int
         Like S.find() but raise ValueError when the substring is not found.
         """
         
         
+        return None
     def isalnum(self,):
         """S.isalnum() -> bool
         Return True if all characters in S are alphanumeric
@@ -46670,6 +49741,7 @@ class str:
         """
         
         
+        return None
     def isalpha(self,):
         """S.isalpha() -> bool
         Return True if all characters in S are alphabetic
@@ -46677,6 +49749,7 @@ class str:
         """
         
         
+        return None
     def isdigit(self,):
         """S.isdigit() -> bool
         Return True if all characters in S are digits
@@ -46684,6 +49757,7 @@ class str:
         """
         
         
+        return None
     def islower(self,):
         """S.islower() -> bool
         Return True if all cased characters in S are lowercase and there is
@@ -46691,6 +49765,7 @@ class str:
         """
         
         
+        return None
     def isspace(self,):
         """S.isspace() -> bool
         Return True if all characters in S are whitespace
@@ -46698,6 +49773,7 @@ class str:
         """
         
         
+        return None
     def istitle(self,):
         """S.istitle() -> bool
         Return True if S is a titlecased string and there is at least one
@@ -46707,6 +49783,7 @@ class str:
         """
         
         
+        return None
     def isupper(self,):
         """S.isupper() -> bool
         Return True if all cased characters in S are uppercase and there is
@@ -46714,6 +49791,7 @@ class str:
         """
         
         
+        return None
     def join(self,iterable):
         """S.join(iterable) -> string
         Return a string which is the concatenation of the strings in the
@@ -46721,6 +49799,7 @@ class str:
         """
         
         
+        return None
     def ljust(self,width,fillchar):
         """S.ljust(width[, fillchar]) -> string
         Return S left-justified in a string of length width. Padding is
@@ -46728,12 +49807,14 @@ class str:
         """
         
         
+        return None
     def lower(self,):
         """S.lower() -> string
         Return a copy of the string S converted to lowercase.
         """
         
         
+        return None
     def lstrip(self,chars):
         """S.lstrip([chars]) -> string or unicode
         Return a copy of the string S with leading whitespace removed.
@@ -46742,6 +49823,7 @@ class str:
         """
         
         
+        return None
     def partition(self,sep):
         """S.partition(sep) -> (head, sep, tail)
         Search for the separator sep in S, and return the part before it,
@@ -46750,6 +49832,7 @@ class str:
         """
         
         
+        return None
     def replace(self,old,new,count):
         """S.replace(old, new[, count]) -> string
         Return a copy of string S with all occurrences of substring
@@ -46758,6 +49841,7 @@ class str:
         """
         
         
+        return None
     def rfind(self,sub,start,end):
         """S.rfind(sub [,start [,end]]) -> int
         Return the highest index in S where substring sub is found,
@@ -46767,12 +49851,14 @@ class str:
         """
         
         
+        return None
     def rindex(self,sub,start,end):
         """S.rindex(sub [,start [,end]]) -> int
         Like S.rfind() but raise ValueError when the substring is not found.
         """
         
         
+        return None
     def rjust(self,width,fillchar):
         """S.rjust(width[, fillchar]) -> string
         Return S right-justified in a string of length width. Padding is
@@ -46780,6 +49866,7 @@ class str:
         """
         
         
+        return None
     def rpartition(self,sep):
         """S.rpartition(sep) -> (head, sep, tail)
         Search for the separator sep in S, starting at the end of S, and return
@@ -46788,6 +49875,7 @@ class str:
         """
         
         
+        return None
     def rsplit(self,sep,maxsplit):
         """S.rsplit([sep [,maxsplit]]) -> list of strings
         Return a list of the words in the string S, using sep as the
@@ -46798,6 +49886,7 @@ class str:
         """
         
         
+        return None
     def rstrip(self,chars):
         """S.rstrip([chars]) -> string or unicode
         Return a copy of the string S with trailing whitespace removed.
@@ -46806,6 +49895,7 @@ class str:
         """
         
         
+        return None
     def split(self,sep,maxsplit):
         """S.split([sep [,maxsplit]]) -> list of strings
         Return a list of the words in the string S, using sep as the
@@ -46816,6 +49906,7 @@ class str:
         """
         
         
+        return None
     def splitlines(self,keepends):
         """S.splitlines([keepends]) -> list of strings
         Return a list of the lines in S, breaking at line boundaries.
@@ -46824,6 +49915,7 @@ class str:
         """
         
         
+        return None
     def startswith(self,prefix,start,end):
         """S.startswith(prefix[, start[, end]]) -> bool
         Return True if S starts with the specified prefix, False otherwise.
@@ -46833,6 +49925,7 @@ class str:
         """
         
         
+        return None
     def strip(self,chars):
         """S.strip([chars]) -> string or unicode
         Return a copy of the string S with leading and trailing
@@ -46842,6 +49935,7 @@ class str:
         """
         
         
+        return None
     def swapcase(self,):
         """S.swapcase() -> string
         Return a copy of the string S with uppercase characters
@@ -46849,6 +49943,7 @@ class str:
         """
         
         
+        return None
     def title(self,):
         """S.title() -> string
         Return a titlecased version of S, i.e. words start with uppercase
@@ -46856,6 +49951,7 @@ class str:
         """
         
         
+        return None
     def translate(self,table,deletechars):
         """S.translate(table [,deletechars]) -> string
         Return a copy of the string S, where all characters occurring
@@ -46865,12 +49961,14 @@ class str:
         """
         
         
+        return None
     def upper(self,):
         """S.upper() -> string
         Return a copy of the string S converted to uppercase.
         """
         
         
+        return None
     def zfill(self,width):
         """S.zfill(width) -> string
         Pad a numeric string S with zeros on the left, to fill a field
@@ -46878,6 +49976,7 @@ class str:
         """
         
         
+        return None
     
 
 class str_:
@@ -46893,6 +49992,7 @@ class str_:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -46904,6 +50004,7 @@ class str_:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -46915,6 +50016,7 @@ class str_:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -46926,6 +50028,7 @@ class str_:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -46937,6 +50040,7 @@ class str_:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -46948,6 +50052,7 @@ class str_:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -46960,6 +50065,7 @@ class str_:
         """
         
         
+        return None
     def capitalize(self,):
         """S.capitalize() -> string
         Return a copy of the string S with only its first character
@@ -46967,6 +50073,7 @@ class str_:
         """
         
         
+        return None
     def center(self,width,fillchar):
         """S.center(width[, fillchar]) -> string
         Return S centered in a string of length width. Padding is
@@ -46974,6 +50081,7 @@ class str_:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -46985,6 +50093,7 @@ class str_:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -46996,6 +50105,7 @@ class str_:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47007,10 +50117,12 @@ class str_:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47022,6 +50134,7 @@ class str_:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47033,6 +50146,7 @@ class str_:
         """
         
         
+        return None
     def count(self,sub,start,end):
         """S.count(sub[, start[, end]]) -> int
         Return the number of non-overlapping occurrences of substring sub in
@@ -47041,6 +50155,7 @@ class str_:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47052,6 +50167,7 @@ class str_:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47063,6 +50179,7 @@ class str_:
         """
         
         
+        return None
     data = None
     def decode(self,encoding,errors):
         """S.decode([encoding[,errors]]) -> object
@@ -47075,6 +50192,7 @@ class str_:
         """
         
         
+        return None
     def diagonal(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47086,6 +50204,7 @@ class str_:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -47098,6 +50217,7 @@ class str_:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47109,6 +50229,7 @@ class str_:
         """
         
         
+        return None
     def encode(self,encoding,errors):
         """S.encode([encoding[,errors]]) -> object
         Encodes S using the codec registered for encoding. encoding defaults
@@ -47120,6 +50241,7 @@ class str_:
         """
         
         
+        return None
     def endswith(self,suffix,start,end):
         """S.endswith(suffix[, start[, end]]) -> bool
         Return True if S ends with the specified suffix, False otherwise.
@@ -47129,6 +50251,7 @@ class str_:
         """
         
         
+        return None
     def expandtabs(self,tabsize):
         """S.expandtabs([tabsize]) -> string
         Return a copy of S where all tab characters are expanded using spaces.
@@ -47136,6 +50259,7 @@ class str_:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47147,6 +50271,7 @@ class str_:
         """
         
         
+        return None
     def find(self,sub,start,end):
         """S.find(sub [,start [,end]]) -> int
         Return the lowest index in S where substring sub is found,
@@ -47156,6 +50281,7 @@ class str_:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -47169,11 +50295,13 @@ class str_:
         """
         
         
+        return None
     def format(self,args,kwargs):
         """S.format(*args, **kwargs) -> string
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47185,6 +50313,7 @@ class str_:
         """
         
         
+        return None
     imag = None
     def index(self,sub,start,end):
         """S.index(sub [,start [,end]]) -> int
@@ -47192,6 +50321,7 @@ class str_:
         """
         
         
+        return None
     def isalnum(self,):
         """S.isalnum() -> bool
         Return True if all characters in S are alphanumeric
@@ -47199,6 +50329,7 @@ class str_:
         """
         
         
+        return None
     def isalpha(self,):
         """S.isalpha() -> bool
         Return True if all characters in S are alphabetic
@@ -47206,6 +50337,7 @@ class str_:
         """
         
         
+        return None
     def isdigit(self,):
         """S.isdigit() -> bool
         Return True if all characters in S are digits
@@ -47213,6 +50345,7 @@ class str_:
         """
         
         
+        return None
     def islower(self,):
         """S.islower() -> bool
         Return True if all cased characters in S are lowercase and there is
@@ -47220,6 +50353,7 @@ class str_:
         """
         
         
+        return None
     def isspace(self,):
         """S.isspace() -> bool
         Return True if all characters in S are whitespace
@@ -47227,6 +50361,7 @@ class str_:
         """
         
         
+        return None
     def istitle(self,):
         """S.istitle() -> bool
         Return True if S is a titlecased string and there is at least one
@@ -47236,6 +50371,7 @@ class str_:
         """
         
         
+        return None
     def isupper(self,):
         """S.isupper() -> bool
         Return True if all cased characters in S are uppercase and there is
@@ -47243,6 +50379,7 @@ class str_:
         """
         
         
+        return None
     def item(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47254,6 +50391,7 @@ class str_:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47265,6 +50403,7 @@ class str_:
         """
         
         
+        return None
     itemsize = None
     def join(self,iterable):
         """S.join(iterable) -> string
@@ -47273,6 +50412,7 @@ class str_:
         """
         
         
+        return None
     def ljust(self,width,fillchar):
         """S.ljust(width[, fillchar]) -> string
         Return S left-justified in a string of length width. Padding is
@@ -47280,12 +50420,14 @@ class str_:
         """
         
         
+        return None
     def lower(self,):
         """S.lower() -> string
         Return a copy of the string S converted to lowercase.
         """
         
         
+        return None
     def lstrip(self,chars):
         """S.lstrip([chars]) -> string or unicode
         Return a copy of the string S with leading whitespace removed.
@@ -47294,6 +50436,7 @@ class str_:
         """
         
         
+        return None
     def max(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47305,6 +50448,7 @@ class str_:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47316,6 +50460,7 @@ class str_:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47327,6 +50472,7 @@ class str_:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -47354,6 +50500,7 @@ class str_:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47365,6 +50512,7 @@ class str_:
         """
         
         
+        return None
     def partition(self,sep):
         """S.partition(sep) -> (head, sep, tail)
         Search for the separator sep in S, and return the part before it,
@@ -47373,6 +50521,7 @@ class str_:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47384,6 +50533,7 @@ class str_:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47395,6 +50545,7 @@ class str_:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47406,6 +50557,7 @@ class str_:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47417,6 +50569,7 @@ class str_:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -47429,6 +50582,7 @@ class str_:
         """
         
         
+        return None
     def replace(self,old,new,count):
         """S.replace(old, new[, count]) -> string
         Return a copy of string S with all occurrences of substring
@@ -47437,6 +50591,7 @@ class str_:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47448,6 +50603,7 @@ class str_:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47459,6 +50615,7 @@ class str_:
         """
         
         
+        return None
     def rfind(self,sub,start,end):
         """S.rfind(sub [,start [,end]]) -> int
         Return the highest index in S where substring sub is found,
@@ -47468,12 +50625,14 @@ class str_:
         """
         
         
+        return None
     def rindex(self,sub,start,end):
         """S.rindex(sub [,start [,end]]) -> int
         Like S.rfind() but raise ValueError when the substring is not found.
         """
         
         
+        return None
     def rjust(self,width,fillchar):
         """S.rjust(width[, fillchar]) -> string
         Return S right-justified in a string of length width. Padding is
@@ -47481,6 +50640,7 @@ class str_:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47492,6 +50652,7 @@ class str_:
         """
         
         
+        return None
     def rpartition(self,sep):
         """S.rpartition(sep) -> (head, sep, tail)
         Search for the separator sep in S, starting at the end of S, and return
@@ -47500,6 +50661,7 @@ class str_:
         """
         
         
+        return None
     def rsplit(self,sep,maxsplit):
         """S.rsplit([sep [,maxsplit]]) -> list of strings
         Return a list of the words in the string S, using sep as the
@@ -47510,6 +50672,7 @@ class str_:
         """
         
         
+        return None
     def rstrip(self,chars):
         """S.rstrip([chars]) -> string or unicode
         Return a copy of the string S with trailing whitespace removed.
@@ -47518,6 +50681,7 @@ class str_:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47529,6 +50693,7 @@ class str_:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47540,6 +50705,7 @@ class str_:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47551,6 +50717,7 @@ class str_:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -47564,6 +50731,7 @@ class str_:
         """
         
         
+        return None
     def split(self,sep,maxsplit):
         """S.split([sep [,maxsplit]]) -> list of strings
         Return a list of the words in the string S, using sep as the
@@ -47574,6 +50742,7 @@ class str_:
         """
         
         
+        return None
     def splitlines(self,keepends):
         """S.splitlines([keepends]) -> list of strings
         Return a list of the lines in S, breaking at line boundaries.
@@ -47582,6 +50751,7 @@ class str_:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47593,6 +50763,7 @@ class str_:
         """
         
         
+        return None
     def startswith(self,prefix,start,end):
         """S.startswith(prefix[, start[, end]]) -> bool
         Return True if S starts with the specified prefix, False otherwise.
@@ -47602,6 +50773,7 @@ class str_:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47613,6 +50785,7 @@ class str_:
         """
         
         
+        return None
     strides = None
     def strip(self,chars):
         """S.strip([chars]) -> string or unicode
@@ -47623,6 +50796,7 @@ class str_:
         """
         
         
+        return None
     def sum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47634,6 +50808,7 @@ class str_:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47645,6 +50820,7 @@ class str_:
         """
         
         
+        return None
     def swapcase(self,):
         """S.swapcase() -> string
         Return a copy of the string S with uppercase characters
@@ -47652,6 +50828,7 @@ class str_:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47663,6 +50840,7 @@ class str_:
         """
         
         
+        return None
     def title(self,):
         """S.title() -> string
         Return a titlecased version of S, i.e. words start with uppercase
@@ -47670,6 +50848,7 @@ class str_:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47681,6 +50860,7 @@ class str_:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47692,6 +50872,7 @@ class str_:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47703,6 +50884,7 @@ class str_:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47714,6 +50896,7 @@ class str_:
         """
         
         
+        return None
     def translate(self,table,deletechars):
         """S.translate(table [,deletechars]) -> string
         Return a copy of the string S, where all characters occurring
@@ -47723,6 +50906,7 @@ class str_:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47734,12 +50918,14 @@ class str_:
         """
         
         
+        return None
     def upper(self,):
         """S.upper() -> string
         Return a copy of the string S converted to uppercase.
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47751,6 +50937,7 @@ class str_:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47762,6 +50949,7 @@ class str_:
         """
         
         
+        return None
     def zfill(self,width):
         """S.zfill(width) -> string
         Pad a numeric string S with zeros on the left, to fill a field
@@ -47769,6 +50957,7 @@ class str_:
         """
         
         
+        return None
     
 
 class string0:
@@ -47784,6 +50973,7 @@ class string0:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47795,6 +50985,7 @@ class string0:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47806,6 +50997,7 @@ class string0:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47817,6 +51009,7 @@ class string0:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47828,6 +51021,7 @@ class string0:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47839,6 +51033,7 @@ class string0:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -47851,6 +51046,7 @@ class string0:
         """
         
         
+        return None
     def capitalize(self,):
         """S.capitalize() -> string
         Return a copy of the string S with only its first character
@@ -47858,6 +51054,7 @@ class string0:
         """
         
         
+        return None
     def center(self,width,fillchar):
         """S.center(width[, fillchar]) -> string
         Return S centered in a string of length width. Padding is
@@ -47865,6 +51062,7 @@ class string0:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47876,6 +51074,7 @@ class string0:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47887,6 +51086,7 @@ class string0:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47898,10 +51098,12 @@ class string0:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47913,6 +51115,7 @@ class string0:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47924,6 +51127,7 @@ class string0:
         """
         
         
+        return None
     def count(self,sub,start,end):
         """S.count(sub[, start[, end]]) -> int
         Return the number of non-overlapping occurrences of substring sub in
@@ -47932,6 +51136,7 @@ class string0:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47943,6 +51148,7 @@ class string0:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47954,6 +51160,7 @@ class string0:
         """
         
         
+        return None
     data = None
     def decode(self,encoding,errors):
         """S.decode([encoding[,errors]]) -> object
@@ -47966,6 +51173,7 @@ class string0:
         """
         
         
+        return None
     def diagonal(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -47977,6 +51185,7 @@ class string0:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -47989,6 +51198,7 @@ class string0:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48000,6 +51210,7 @@ class string0:
         """
         
         
+        return None
     def encode(self,encoding,errors):
         """S.encode([encoding[,errors]]) -> object
         Encodes S using the codec registered for encoding. encoding defaults
@@ -48011,6 +51222,7 @@ class string0:
         """
         
         
+        return None
     def endswith(self,suffix,start,end):
         """S.endswith(suffix[, start[, end]]) -> bool
         Return True if S ends with the specified suffix, False otherwise.
@@ -48020,6 +51232,7 @@ class string0:
         """
         
         
+        return None
     def expandtabs(self,tabsize):
         """S.expandtabs([tabsize]) -> string
         Return a copy of S where all tab characters are expanded using spaces.
@@ -48027,6 +51240,7 @@ class string0:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48038,6 +51252,7 @@ class string0:
         """
         
         
+        return None
     def find(self,sub,start,end):
         """S.find(sub [,start [,end]]) -> int
         Return the lowest index in S where substring sub is found,
@@ -48047,6 +51262,7 @@ class string0:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -48060,11 +51276,13 @@ class string0:
         """
         
         
+        return None
     def format(self,args,kwargs):
         """S.format(*args, **kwargs) -> string
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48076,6 +51294,7 @@ class string0:
         """
         
         
+        return None
     imag = None
     def index(self,sub,start,end):
         """S.index(sub [,start [,end]]) -> int
@@ -48083,6 +51302,7 @@ class string0:
         """
         
         
+        return None
     def isalnum(self,):
         """S.isalnum() -> bool
         Return True if all characters in S are alphanumeric
@@ -48090,6 +51310,7 @@ class string0:
         """
         
         
+        return None
     def isalpha(self,):
         """S.isalpha() -> bool
         Return True if all characters in S are alphabetic
@@ -48097,6 +51318,7 @@ class string0:
         """
         
         
+        return None
     def isdigit(self,):
         """S.isdigit() -> bool
         Return True if all characters in S are digits
@@ -48104,6 +51326,7 @@ class string0:
         """
         
         
+        return None
     def islower(self,):
         """S.islower() -> bool
         Return True if all cased characters in S are lowercase and there is
@@ -48111,6 +51334,7 @@ class string0:
         """
         
         
+        return None
     def isspace(self,):
         """S.isspace() -> bool
         Return True if all characters in S are whitespace
@@ -48118,6 +51342,7 @@ class string0:
         """
         
         
+        return None
     def istitle(self,):
         """S.istitle() -> bool
         Return True if S is a titlecased string and there is at least one
@@ -48127,6 +51352,7 @@ class string0:
         """
         
         
+        return None
     def isupper(self,):
         """S.isupper() -> bool
         Return True if all cased characters in S are uppercase and there is
@@ -48134,6 +51360,7 @@ class string0:
         """
         
         
+        return None
     def item(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48145,6 +51372,7 @@ class string0:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48156,6 +51384,7 @@ class string0:
         """
         
         
+        return None
     itemsize = None
     def join(self,iterable):
         """S.join(iterable) -> string
@@ -48164,6 +51393,7 @@ class string0:
         """
         
         
+        return None
     def ljust(self,width,fillchar):
         """S.ljust(width[, fillchar]) -> string
         Return S left-justified in a string of length width. Padding is
@@ -48171,12 +51401,14 @@ class string0:
         """
         
         
+        return None
     def lower(self,):
         """S.lower() -> string
         Return a copy of the string S converted to lowercase.
         """
         
         
+        return None
     def lstrip(self,chars):
         """S.lstrip([chars]) -> string or unicode
         Return a copy of the string S with leading whitespace removed.
@@ -48185,6 +51417,7 @@ class string0:
         """
         
         
+        return None
     def max(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48196,6 +51429,7 @@ class string0:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48207,6 +51441,7 @@ class string0:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48218,6 +51453,7 @@ class string0:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -48245,6 +51481,7 @@ class string0:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48256,6 +51493,7 @@ class string0:
         """
         
         
+        return None
     def partition(self,sep):
         """S.partition(sep) -> (head, sep, tail)
         Search for the separator sep in S, and return the part before it,
@@ -48264,6 +51502,7 @@ class string0:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48275,6 +51514,7 @@ class string0:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48286,6 +51526,7 @@ class string0:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48297,6 +51538,7 @@ class string0:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48308,6 +51550,7 @@ class string0:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -48320,6 +51563,7 @@ class string0:
         """
         
         
+        return None
     def replace(self,old,new,count):
         """S.replace(old, new[, count]) -> string
         Return a copy of string S with all occurrences of substring
@@ -48328,6 +51572,7 @@ class string0:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48339,6 +51584,7 @@ class string0:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48350,6 +51596,7 @@ class string0:
         """
         
         
+        return None
     def rfind(self,sub,start,end):
         """S.rfind(sub [,start [,end]]) -> int
         Return the highest index in S where substring sub is found,
@@ -48359,12 +51606,14 @@ class string0:
         """
         
         
+        return None
     def rindex(self,sub,start,end):
         """S.rindex(sub [,start [,end]]) -> int
         Like S.rfind() but raise ValueError when the substring is not found.
         """
         
         
+        return None
     def rjust(self,width,fillchar):
         """S.rjust(width[, fillchar]) -> string
         Return S right-justified in a string of length width. Padding is
@@ -48372,6 +51621,7 @@ class string0:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48383,6 +51633,7 @@ class string0:
         """
         
         
+        return None
     def rpartition(self,sep):
         """S.rpartition(sep) -> (head, sep, tail)
         Search for the separator sep in S, starting at the end of S, and return
@@ -48391,6 +51642,7 @@ class string0:
         """
         
         
+        return None
     def rsplit(self,sep,maxsplit):
         """S.rsplit([sep [,maxsplit]]) -> list of strings
         Return a list of the words in the string S, using sep as the
@@ -48401,6 +51653,7 @@ class string0:
         """
         
         
+        return None
     def rstrip(self,chars):
         """S.rstrip([chars]) -> string or unicode
         Return a copy of the string S with trailing whitespace removed.
@@ -48409,6 +51662,7 @@ class string0:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48420,6 +51674,7 @@ class string0:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48431,6 +51686,7 @@ class string0:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48442,6 +51698,7 @@ class string0:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -48455,6 +51712,7 @@ class string0:
         """
         
         
+        return None
     def split(self,sep,maxsplit):
         """S.split([sep [,maxsplit]]) -> list of strings
         Return a list of the words in the string S, using sep as the
@@ -48465,6 +51723,7 @@ class string0:
         """
         
         
+        return None
     def splitlines(self,keepends):
         """S.splitlines([keepends]) -> list of strings
         Return a list of the lines in S, breaking at line boundaries.
@@ -48473,6 +51732,7 @@ class string0:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48484,6 +51744,7 @@ class string0:
         """
         
         
+        return None
     def startswith(self,prefix,start,end):
         """S.startswith(prefix[, start[, end]]) -> bool
         Return True if S starts with the specified prefix, False otherwise.
@@ -48493,6 +51754,7 @@ class string0:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48504,6 +51766,7 @@ class string0:
         """
         
         
+        return None
     strides = None
     def strip(self,chars):
         """S.strip([chars]) -> string or unicode
@@ -48514,6 +51777,7 @@ class string0:
         """
         
         
+        return None
     def sum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48525,6 +51789,7 @@ class string0:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48536,6 +51801,7 @@ class string0:
         """
         
         
+        return None
     def swapcase(self,):
         """S.swapcase() -> string
         Return a copy of the string S with uppercase characters
@@ -48543,6 +51809,7 @@ class string0:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48554,6 +51821,7 @@ class string0:
         """
         
         
+        return None
     def title(self,):
         """S.title() -> string
         Return a titlecased version of S, i.e. words start with uppercase
@@ -48561,6 +51829,7 @@ class string0:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48572,6 +51841,7 @@ class string0:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48583,6 +51853,7 @@ class string0:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48594,6 +51865,7 @@ class string0:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48605,6 +51877,7 @@ class string0:
         """
         
         
+        return None
     def translate(self,table,deletechars):
         """S.translate(table [,deletechars]) -> string
         Return a copy of the string S, where all characters occurring
@@ -48614,6 +51887,7 @@ class string0:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48625,12 +51899,14 @@ class string0:
         """
         
         
+        return None
     def upper(self,):
         """S.upper() -> string
         Return a copy of the string S converted to uppercase.
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48642,6 +51918,7 @@ class string0:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48653,6 +51930,7 @@ class string0:
         """
         
         
+        return None
     def zfill(self,width):
         """S.zfill(width) -> string
         Pad a numeric string S with zeros on the left, to fill a field
@@ -48660,6 +51938,7 @@ class string0:
         """
         
         
+        return None
     
 
 class string_:
@@ -48675,6 +51954,7 @@ class string_:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48686,6 +51966,7 @@ class string_:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48697,6 +51978,7 @@ class string_:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48708,6 +51990,7 @@ class string_:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48719,6 +52002,7 @@ class string_:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48730,6 +52014,7 @@ class string_:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -48742,6 +52027,7 @@ class string_:
         """
         
         
+        return None
     def capitalize(self,):
         """S.capitalize() -> string
         Return a copy of the string S with only its first character
@@ -48749,6 +52035,7 @@ class string_:
         """
         
         
+        return None
     def center(self,width,fillchar):
         """S.center(width[, fillchar]) -> string
         Return S centered in a string of length width. Padding is
@@ -48756,6 +52043,7 @@ class string_:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48767,6 +52055,7 @@ class string_:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48778,6 +52067,7 @@ class string_:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48789,10 +52079,12 @@ class string_:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48804,6 +52096,7 @@ class string_:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48815,6 +52108,7 @@ class string_:
         """
         
         
+        return None
     def count(self,sub,start,end):
         """S.count(sub[, start[, end]]) -> int
         Return the number of non-overlapping occurrences of substring sub in
@@ -48823,6 +52117,7 @@ class string_:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48834,6 +52129,7 @@ class string_:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48845,6 +52141,7 @@ class string_:
         """
         
         
+        return None
     data = None
     def decode(self,encoding,errors):
         """S.decode([encoding[,errors]]) -> object
@@ -48857,6 +52154,7 @@ class string_:
         """
         
         
+        return None
     def diagonal(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48868,6 +52166,7 @@ class string_:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -48880,6 +52179,7 @@ class string_:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48891,6 +52191,7 @@ class string_:
         """
         
         
+        return None
     def encode(self,encoding,errors):
         """S.encode([encoding[,errors]]) -> object
         Encodes S using the codec registered for encoding. encoding defaults
@@ -48902,6 +52203,7 @@ class string_:
         """
         
         
+        return None
     def endswith(self,suffix,start,end):
         """S.endswith(suffix[, start[, end]]) -> bool
         Return True if S ends with the specified suffix, False otherwise.
@@ -48911,6 +52213,7 @@ class string_:
         """
         
         
+        return None
     def expandtabs(self,tabsize):
         """S.expandtabs([tabsize]) -> string
         Return a copy of S where all tab characters are expanded using spaces.
@@ -48918,6 +52221,7 @@ class string_:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48929,6 +52233,7 @@ class string_:
         """
         
         
+        return None
     def find(self,sub,start,end):
         """S.find(sub [,start [,end]]) -> int
         Return the lowest index in S where substring sub is found,
@@ -48938,6 +52243,7 @@ class string_:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -48951,11 +52257,13 @@ class string_:
         """
         
         
+        return None
     def format(self,args,kwargs):
         """S.format(*args, **kwargs) -> string
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -48967,6 +52275,7 @@ class string_:
         """
         
         
+        return None
     imag = None
     def index(self,sub,start,end):
         """S.index(sub [,start [,end]]) -> int
@@ -48974,6 +52283,7 @@ class string_:
         """
         
         
+        return None
     def isalnum(self,):
         """S.isalnum() -> bool
         Return True if all characters in S are alphanumeric
@@ -48981,6 +52291,7 @@ class string_:
         """
         
         
+        return None
     def isalpha(self,):
         """S.isalpha() -> bool
         Return True if all characters in S are alphabetic
@@ -48988,6 +52299,7 @@ class string_:
         """
         
         
+        return None
     def isdigit(self,):
         """S.isdigit() -> bool
         Return True if all characters in S are digits
@@ -48995,6 +52307,7 @@ class string_:
         """
         
         
+        return None
     def islower(self,):
         """S.islower() -> bool
         Return True if all cased characters in S are lowercase and there is
@@ -49002,6 +52315,7 @@ class string_:
         """
         
         
+        return None
     def isspace(self,):
         """S.isspace() -> bool
         Return True if all characters in S are whitespace
@@ -49009,6 +52323,7 @@ class string_:
         """
         
         
+        return None
     def istitle(self,):
         """S.istitle() -> bool
         Return True if S is a titlecased string and there is at least one
@@ -49018,6 +52333,7 @@ class string_:
         """
         
         
+        return None
     def isupper(self,):
         """S.isupper() -> bool
         Return True if all cased characters in S are uppercase and there is
@@ -49025,6 +52341,7 @@ class string_:
         """
         
         
+        return None
     def item(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49036,6 +52353,7 @@ class string_:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49047,6 +52365,7 @@ class string_:
         """
         
         
+        return None
     itemsize = None
     def join(self,iterable):
         """S.join(iterable) -> string
@@ -49055,6 +52374,7 @@ class string_:
         """
         
         
+        return None
     def ljust(self,width,fillchar):
         """S.ljust(width[, fillchar]) -> string
         Return S left-justified in a string of length width. Padding is
@@ -49062,12 +52382,14 @@ class string_:
         """
         
         
+        return None
     def lower(self,):
         """S.lower() -> string
         Return a copy of the string S converted to lowercase.
         """
         
         
+        return None
     def lstrip(self,chars):
         """S.lstrip([chars]) -> string or unicode
         Return a copy of the string S with leading whitespace removed.
@@ -49076,6 +52398,7 @@ class string_:
         """
         
         
+        return None
     def max(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49087,6 +52410,7 @@ class string_:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49098,6 +52422,7 @@ class string_:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49109,6 +52434,7 @@ class string_:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -49136,6 +52462,7 @@ class string_:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49147,6 +52474,7 @@ class string_:
         """
         
         
+        return None
     def partition(self,sep):
         """S.partition(sep) -> (head, sep, tail)
         Search for the separator sep in S, and return the part before it,
@@ -49155,6 +52483,7 @@ class string_:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49166,6 +52495,7 @@ class string_:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49177,6 +52507,7 @@ class string_:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49188,6 +52519,7 @@ class string_:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49199,6 +52531,7 @@ class string_:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -49211,6 +52544,7 @@ class string_:
         """
         
         
+        return None
     def replace(self,old,new,count):
         """S.replace(old, new[, count]) -> string
         Return a copy of string S with all occurrences of substring
@@ -49219,6 +52553,7 @@ class string_:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49230,6 +52565,7 @@ class string_:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49241,6 +52577,7 @@ class string_:
         """
         
         
+        return None
     def rfind(self,sub,start,end):
         """S.rfind(sub [,start [,end]]) -> int
         Return the highest index in S where substring sub is found,
@@ -49250,12 +52587,14 @@ class string_:
         """
         
         
+        return None
     def rindex(self,sub,start,end):
         """S.rindex(sub [,start [,end]]) -> int
         Like S.rfind() but raise ValueError when the substring is not found.
         """
         
         
+        return None
     def rjust(self,width,fillchar):
         """S.rjust(width[, fillchar]) -> string
         Return S right-justified in a string of length width. Padding is
@@ -49263,6 +52602,7 @@ class string_:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49274,6 +52614,7 @@ class string_:
         """
         
         
+        return None
     def rpartition(self,sep):
         """S.rpartition(sep) -> (head, sep, tail)
         Search for the separator sep in S, starting at the end of S, and return
@@ -49282,6 +52623,7 @@ class string_:
         """
         
         
+        return None
     def rsplit(self,sep,maxsplit):
         """S.rsplit([sep [,maxsplit]]) -> list of strings
         Return a list of the words in the string S, using sep as the
@@ -49292,6 +52634,7 @@ class string_:
         """
         
         
+        return None
     def rstrip(self,chars):
         """S.rstrip([chars]) -> string or unicode
         Return a copy of the string S with trailing whitespace removed.
@@ -49300,6 +52643,7 @@ class string_:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49311,6 +52655,7 @@ class string_:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49322,6 +52667,7 @@ class string_:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49333,6 +52679,7 @@ class string_:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -49346,6 +52693,7 @@ class string_:
         """
         
         
+        return None
     def split(self,sep,maxsplit):
         """S.split([sep [,maxsplit]]) -> list of strings
         Return a list of the words in the string S, using sep as the
@@ -49356,6 +52704,7 @@ class string_:
         """
         
         
+        return None
     def splitlines(self,keepends):
         """S.splitlines([keepends]) -> list of strings
         Return a list of the lines in S, breaking at line boundaries.
@@ -49364,6 +52713,7 @@ class string_:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49375,6 +52725,7 @@ class string_:
         """
         
         
+        return None
     def startswith(self,prefix,start,end):
         """S.startswith(prefix[, start[, end]]) -> bool
         Return True if S starts with the specified prefix, False otherwise.
@@ -49384,6 +52735,7 @@ class string_:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49395,6 +52747,7 @@ class string_:
         """
         
         
+        return None
     strides = None
     def strip(self,chars):
         """S.strip([chars]) -> string or unicode
@@ -49405,6 +52758,7 @@ class string_:
         """
         
         
+        return None
     def sum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49416,6 +52770,7 @@ class string_:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49427,6 +52782,7 @@ class string_:
         """
         
         
+        return None
     def swapcase(self,):
         """S.swapcase() -> string
         Return a copy of the string S with uppercase characters
@@ -49434,6 +52790,7 @@ class string_:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49445,6 +52802,7 @@ class string_:
         """
         
         
+        return None
     def title(self,):
         """S.title() -> string
         Return a titlecased version of S, i.e. words start with uppercase
@@ -49452,6 +52810,7 @@ class string_:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49463,6 +52822,7 @@ class string_:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49474,6 +52834,7 @@ class string_:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49485,6 +52846,7 @@ class string_:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49496,6 +52858,7 @@ class string_:
         """
         
         
+        return None
     def translate(self,table,deletechars):
         """S.translate(table [,deletechars]) -> string
         Return a copy of the string S, where all characters occurring
@@ -49505,6 +52868,7 @@ class string_:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49516,12 +52880,14 @@ class string_:
         """
         
         
+        return None
     def upper(self,):
         """S.upper() -> string
         Return a copy of the string S converted to uppercase.
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49533,6 +52899,7 @@ class string_:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -49544,6 +52911,7 @@ class string_:
         """
         
         
+        return None
     def zfill(self,width):
         """S.zfill(width) -> string
         Pad a numeric string S with zeros on the left, to fill a field
@@ -49551,6 +52919,7 @@ class string_:
         """
         
         
+        return None
     
 
 def subtract(x1,x2):
@@ -49581,6 +52950,7 @@ def subtract(x1,x2):
     """
     
     
+    return ndarray()
 def sum(a,axis,dtype,out):
     """   Sum of array elements over a given axis.
        Parameters
@@ -49638,6 +53008,7 @@ def sum(a,axis,dtype,out):
     """
     
     
+    return ndarray()
 def swapaxes(a,axis1,axis2):
     """   Interchange two axes of an array.
        Parameters
@@ -49675,6 +53046,7 @@ def swapaxes(a,axis1,axis2):
     """
     
     
+    return ndarray()
 def take(a,indices,axis,out,mode):
     """   Take elements from an array along an axis.
        This function does the same thing as "fancy" indexing (indexing arrays
@@ -49721,6 +53093,7 @@ def take(a,indices,axis,out,mode):
     """
     
     
+    return ndarray()
 def tan(x,out):
     """tan(x[, out])
     Compute tangent element-wise.
@@ -49767,6 +53140,7 @@ def tan(x,out):
     """
     
     
+    return ndarray()
 def tanh(x,out):
     """tanh(x[, out])
     Compute hyperbolic tangent element-wise.
@@ -49814,6 +53188,7 @@ def tanh(x,out):
     """
     
     
+    return ndarray()
 def tensordot(a,b,axes):
     """   Compute tensor dot product along specified axes for arrays >= 1-D.
        Given two tensors (arrays of dimension greater than or equal to one),
@@ -49911,6 +53286,7 @@ def tensordot(a,b,axes):
     """
     
     
+    return None
 def test(label,verbose,extra_argv,doctests,coverage):
     """       Run tests for module using nose.
            Parameters
@@ -49961,6 +53337,7 @@ def test(label,verbose,extra_argv,doctests,coverage):
     """
     
     
+    return object()
 testing = None
 def tile(A,reps):
     """   Construct an array by repeating A the number of times given by reps.
@@ -50011,6 +53388,7 @@ def tile(A,reps):
     """
     
     
+    return ndarray()
 def trace(a,offset,axis1,axis2,dtype,out):
     """   Return the sum along diagonals of the array.
        If `a` is 2-D, the sum along its diagonal with the given offset
@@ -50061,6 +53439,7 @@ def trace(a,offset,axis1,axis2,dtype,out):
     """
     
     
+    return ndarray()
 def transpose(a,axes):
     """   Permute the dimensions of an array.
        Parameters
@@ -50094,6 +53473,7 @@ def transpose(a,axes):
     """
     
     
+    return ndarray()
 def trapz(y,x,dx,axis):
     """   Integrate along the given axis using the composite trapezoidal rule.
        Integrate `y` (`x`) along given axis.
@@ -50145,6 +53525,7 @@ def trapz(y,x,dx,axis):
     """
     
     
+    return float()
 def tri(N,M,k,dtype):
     """   An array with ones at and below the given diagonal and zeros elsewhere.
        Parameters
@@ -50179,6 +53560,7 @@ def tri(N,M,k,dtype):
     """
     
     
+    return ndarray()
 def tril(m,k):
     """   Lower triangle of an array.
        Return a copy of an array with elements above the `k`-th diagonal zeroed.
@@ -50207,6 +53589,7 @@ def tril(m,k):
     """
     
     
+    return ndarray()
 def tril_indices(n,k):
     """   Return the indices for the lower-triangle of an (n, n) array.
        Parameters
@@ -50264,6 +53647,7 @@ def tril_indices(n,k):
     """
     
     
+    return tuple()
 def tril_indices_from(arr,k):
     """   Return the indices for the lower-triangle of arr.
        See `tril_indices` for full details.
@@ -50284,6 +53668,7 @@ def tril_indices_from(arr,k):
     """
     
     
+    return None
 def trim_zeros(filt,trim):
     """   Trim the leading and/or trailing zeros from a 1-D array or sequence.
        Parameters
@@ -50312,6 +53697,7 @@ def trim_zeros(filt,trim):
     """
     
     
+    return _1_D()
 def triu():
     """   Upper triangle of an array.
        Return a copy of a matrix with the elements below the `k`-th diagonal
@@ -50331,6 +53717,7 @@ def triu():
     """
     
     
+    return None
 def triu_indices(n,k):
     """   Return the indices for the upper-triangle of an (n, n) array.
        Parameters
@@ -50389,6 +53776,7 @@ def triu_indices(n,k):
     """
     
     
+    return tuple()
 def triu_indices_from(arr,k):
     """   Return the indices for the upper-triangle of an (n, n) array.
        See `triu_indices` for full details.
@@ -50409,6 +53797,7 @@ def triu_indices_from(arr,k):
     """
     
     
+    return None
 def true_divide(x1,x2):
     """true_divide(x1, x2[, out])
     Returns a true division of the inputs, element-wise.
@@ -50451,6 +53840,7 @@ def true_divide(x1,x2):
     """
     
     
+    return ndarray()
 def trunc(x):
     """trunc(x[, out])
     Return the truncated value of the input, element-wise.
@@ -50479,6 +53869,7 @@ def trunc(x):
     """
     
     
+    return ndarray()
 typeDict = {}
 typeNA = {}
 typecodes = {}
@@ -50528,6 +53919,7 @@ def typename(char):
     """
     
     
+    return str()
 class ubyte:
     T = None
     def all(self):
@@ -50541,6 +53933,7 @@ class ubyte:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50552,6 +53945,7 @@ class ubyte:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50563,6 +53957,7 @@ class ubyte:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50574,6 +53969,7 @@ class ubyte:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50585,6 +53981,7 @@ class ubyte:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50596,6 +53993,7 @@ class ubyte:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -50608,6 +54006,7 @@ class ubyte:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50619,6 +54018,7 @@ class ubyte:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50630,6 +54030,7 @@ class ubyte:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50641,10 +54042,12 @@ class ubyte:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50656,6 +54059,7 @@ class ubyte:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50667,6 +54071,7 @@ class ubyte:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50678,6 +54083,7 @@ class ubyte:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50689,6 +54095,7 @@ class ubyte:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -50701,6 +54108,7 @@ class ubyte:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -50713,6 +54121,7 @@ class ubyte:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50724,6 +54133,7 @@ class ubyte:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50735,6 +54145,7 @@ class ubyte:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -50748,6 +54159,7 @@ class ubyte:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50759,6 +54171,7 @@ class ubyte:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -50771,6 +54184,7 @@ class ubyte:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50782,6 +54196,7 @@ class ubyte:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -50794,6 +54209,7 @@ class ubyte:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50805,6 +54221,7 @@ class ubyte:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50816,6 +54233,7 @@ class ubyte:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -50843,6 +54261,7 @@ class ubyte:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50854,6 +54273,7 @@ class ubyte:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50865,6 +54285,7 @@ class ubyte:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50876,6 +54297,7 @@ class ubyte:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50887,6 +54309,7 @@ class ubyte:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50898,6 +54321,7 @@ class ubyte:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -50910,6 +54334,7 @@ class ubyte:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50921,6 +54346,7 @@ class ubyte:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50932,6 +54358,7 @@ class ubyte:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50943,6 +54370,7 @@ class ubyte:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50954,6 +54382,7 @@ class ubyte:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50965,6 +54394,7 @@ class ubyte:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -50976,6 +54406,7 @@ class ubyte:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -50989,6 +54420,7 @@ class ubyte:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51000,6 +54432,7 @@ class ubyte:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51011,6 +54444,7 @@ class ubyte:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -51023,6 +54457,7 @@ class ubyte:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51034,6 +54469,7 @@ class ubyte:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51045,6 +54481,7 @@ class ubyte:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51056,6 +54493,7 @@ class ubyte:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51067,6 +54505,7 @@ class ubyte:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51078,6 +54517,7 @@ class ubyte:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51089,6 +54529,7 @@ class ubyte:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51100,6 +54541,7 @@ class ubyte:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51111,6 +54553,7 @@ class ubyte:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51122,6 +54565,7 @@ class ubyte:
         """
         
         
+        return None
     
 
 class ufunc:
@@ -51183,6 +54627,7 @@ class ufunc:
         """
         
         
+        return ndarray()
     identity = None
     nargs = None
     nin = None
@@ -51238,6 +54683,7 @@ class ufunc:
         """
         
         
+        return ndarray()
     def reduce(self,a,axis,dtype,out):
         """reduce(a, axis=0, dtype=None, out=None)
            Reduces `a`'s dimension by one, by applying ufunc along one axis.
@@ -51295,6 +54741,7 @@ class ufunc:
         """
         
         
+        return ndarray()
     def reduceat(self,a,indices,axis,dtype,out):
         """reduceat(a, indices, axis=0, dtype=None, out=None)
            Performs a (local) reduce with specified slices over a single axis.
@@ -51376,6 +54823,7 @@ class ufunc:
         """
         
         
+        return ndarray()
     signature = None
     types = None
     
@@ -51393,6 +54841,7 @@ class uint:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51404,6 +54853,7 @@ class uint:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51415,6 +54865,7 @@ class uint:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51426,6 +54877,7 @@ class uint:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51437,6 +54889,7 @@ class uint:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51448,6 +54901,7 @@ class uint:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -51460,6 +54914,7 @@ class uint:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51471,6 +54926,7 @@ class uint:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51482,6 +54938,7 @@ class uint:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51493,10 +54950,12 @@ class uint:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51508,6 +54967,7 @@ class uint:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51519,6 +54979,7 @@ class uint:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51530,6 +54991,7 @@ class uint:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51541,6 +55003,7 @@ class uint:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -51553,6 +55016,7 @@ class uint:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -51565,6 +55029,7 @@ class uint:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51576,6 +55041,7 @@ class uint:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51587,6 +55053,7 @@ class uint:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -51600,6 +55067,7 @@ class uint:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51611,6 +55079,7 @@ class uint:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -51623,6 +55092,7 @@ class uint:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51634,6 +55104,7 @@ class uint:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -51646,6 +55117,7 @@ class uint:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51657,6 +55129,7 @@ class uint:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51668,6 +55141,7 @@ class uint:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -51695,6 +55169,7 @@ class uint:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51706,6 +55181,7 @@ class uint:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51717,6 +55193,7 @@ class uint:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51728,6 +55205,7 @@ class uint:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51739,6 +55217,7 @@ class uint:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51750,6 +55229,7 @@ class uint:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -51762,6 +55242,7 @@ class uint:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51773,6 +55254,7 @@ class uint:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51784,6 +55266,7 @@ class uint:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51795,6 +55278,7 @@ class uint:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51806,6 +55290,7 @@ class uint:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51817,6 +55302,7 @@ class uint:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51828,6 +55314,7 @@ class uint:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -51841,6 +55328,7 @@ class uint:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51852,6 +55340,7 @@ class uint:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51863,6 +55352,7 @@ class uint:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -51875,6 +55365,7 @@ class uint:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51886,6 +55377,7 @@ class uint:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51897,6 +55389,7 @@ class uint:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51908,6 +55401,7 @@ class uint:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51919,6 +55413,7 @@ class uint:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51930,6 +55425,7 @@ class uint:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51941,6 +55437,7 @@ class uint:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51952,6 +55449,7 @@ class uint:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51963,6 +55461,7 @@ class uint:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -51974,6 +55473,7 @@ class uint:
         """
         
         
+        return None
     
 
 class uint0:
@@ -51989,6 +55489,7 @@ class uint0:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52000,6 +55501,7 @@ class uint0:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52011,6 +55513,7 @@ class uint0:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52022,6 +55525,7 @@ class uint0:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52033,6 +55537,7 @@ class uint0:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52044,6 +55549,7 @@ class uint0:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -52056,6 +55562,7 @@ class uint0:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52067,6 +55574,7 @@ class uint0:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52078,6 +55586,7 @@ class uint0:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52089,10 +55598,12 @@ class uint0:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52104,6 +55615,7 @@ class uint0:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52115,6 +55627,7 @@ class uint0:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52126,6 +55639,7 @@ class uint0:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52137,6 +55651,7 @@ class uint0:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -52149,6 +55664,7 @@ class uint0:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -52161,6 +55677,7 @@ class uint0:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52172,6 +55689,7 @@ class uint0:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52183,6 +55701,7 @@ class uint0:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -52196,6 +55715,7 @@ class uint0:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52207,6 +55727,7 @@ class uint0:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -52219,6 +55740,7 @@ class uint0:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52230,6 +55752,7 @@ class uint0:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -52242,6 +55765,7 @@ class uint0:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52253,6 +55777,7 @@ class uint0:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52264,6 +55789,7 @@ class uint0:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -52291,6 +55817,7 @@ class uint0:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52302,6 +55829,7 @@ class uint0:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52313,6 +55841,7 @@ class uint0:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52324,6 +55853,7 @@ class uint0:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52335,6 +55865,7 @@ class uint0:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52346,6 +55877,7 @@ class uint0:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -52358,6 +55890,7 @@ class uint0:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52369,6 +55902,7 @@ class uint0:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52380,6 +55914,7 @@ class uint0:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52391,6 +55926,7 @@ class uint0:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52402,6 +55938,7 @@ class uint0:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52413,6 +55950,7 @@ class uint0:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52424,6 +55962,7 @@ class uint0:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -52437,6 +55976,7 @@ class uint0:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52448,6 +55988,7 @@ class uint0:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52459,6 +56000,7 @@ class uint0:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -52471,6 +56013,7 @@ class uint0:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52482,6 +56025,7 @@ class uint0:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52493,6 +56037,7 @@ class uint0:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52504,6 +56049,7 @@ class uint0:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52515,6 +56061,7 @@ class uint0:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52526,6 +56073,7 @@ class uint0:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52537,6 +56085,7 @@ class uint0:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52548,6 +56097,7 @@ class uint0:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52559,6 +56109,7 @@ class uint0:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52570,6 +56121,7 @@ class uint0:
         """
         
         
+        return None
     
 
 class uint16:
@@ -52585,6 +56137,7 @@ class uint16:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52596,6 +56149,7 @@ class uint16:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52607,6 +56161,7 @@ class uint16:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52618,6 +56173,7 @@ class uint16:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52629,6 +56185,7 @@ class uint16:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52640,6 +56197,7 @@ class uint16:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -52652,6 +56210,7 @@ class uint16:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52663,6 +56222,7 @@ class uint16:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52674,6 +56234,7 @@ class uint16:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52685,10 +56246,12 @@ class uint16:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52700,6 +56263,7 @@ class uint16:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52711,6 +56275,7 @@ class uint16:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52722,6 +56287,7 @@ class uint16:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52733,6 +56299,7 @@ class uint16:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -52745,6 +56312,7 @@ class uint16:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -52757,6 +56325,7 @@ class uint16:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52768,6 +56337,7 @@ class uint16:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52779,6 +56349,7 @@ class uint16:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -52792,6 +56363,7 @@ class uint16:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52803,6 +56375,7 @@ class uint16:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -52815,6 +56388,7 @@ class uint16:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52826,6 +56400,7 @@ class uint16:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -52838,6 +56413,7 @@ class uint16:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52849,6 +56425,7 @@ class uint16:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52860,6 +56437,7 @@ class uint16:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -52887,6 +56465,7 @@ class uint16:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52898,6 +56477,7 @@ class uint16:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52909,6 +56489,7 @@ class uint16:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52920,6 +56501,7 @@ class uint16:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52931,6 +56513,7 @@ class uint16:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52942,6 +56525,7 @@ class uint16:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -52954,6 +56538,7 @@ class uint16:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52965,6 +56550,7 @@ class uint16:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52976,6 +56562,7 @@ class uint16:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52987,6 +56574,7 @@ class uint16:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -52998,6 +56586,7 @@ class uint16:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53009,6 +56598,7 @@ class uint16:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53020,6 +56610,7 @@ class uint16:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -53033,6 +56624,7 @@ class uint16:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53044,6 +56636,7 @@ class uint16:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53055,6 +56648,7 @@ class uint16:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -53067,6 +56661,7 @@ class uint16:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53078,6 +56673,7 @@ class uint16:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53089,6 +56685,7 @@ class uint16:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53100,6 +56697,7 @@ class uint16:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53111,6 +56709,7 @@ class uint16:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53122,6 +56721,7 @@ class uint16:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53133,6 +56733,7 @@ class uint16:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53144,6 +56745,7 @@ class uint16:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53155,6 +56757,7 @@ class uint16:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53166,6 +56769,7 @@ class uint16:
         """
         
         
+        return None
     
 
 class uint32:
@@ -53181,6 +56785,7 @@ class uint32:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53192,6 +56797,7 @@ class uint32:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53203,6 +56809,7 @@ class uint32:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53214,6 +56821,7 @@ class uint32:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53225,6 +56833,7 @@ class uint32:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53236,6 +56845,7 @@ class uint32:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -53248,6 +56858,7 @@ class uint32:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53259,6 +56870,7 @@ class uint32:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53270,6 +56882,7 @@ class uint32:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53281,10 +56894,12 @@ class uint32:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53296,6 +56911,7 @@ class uint32:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53307,6 +56923,7 @@ class uint32:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53318,6 +56935,7 @@ class uint32:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53329,6 +56947,7 @@ class uint32:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -53341,6 +56960,7 @@ class uint32:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -53353,6 +56973,7 @@ class uint32:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53364,6 +56985,7 @@ class uint32:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53375,6 +56997,7 @@ class uint32:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -53388,6 +57011,7 @@ class uint32:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53399,6 +57023,7 @@ class uint32:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -53411,6 +57036,7 @@ class uint32:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53422,6 +57048,7 @@ class uint32:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -53434,6 +57061,7 @@ class uint32:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53445,6 +57073,7 @@ class uint32:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53456,6 +57085,7 @@ class uint32:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -53483,6 +57113,7 @@ class uint32:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53494,6 +57125,7 @@ class uint32:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53505,6 +57137,7 @@ class uint32:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53516,6 +57149,7 @@ class uint32:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53527,6 +57161,7 @@ class uint32:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53538,6 +57173,7 @@ class uint32:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -53550,6 +57186,7 @@ class uint32:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53561,6 +57198,7 @@ class uint32:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53572,6 +57210,7 @@ class uint32:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53583,6 +57222,7 @@ class uint32:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53594,6 +57234,7 @@ class uint32:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53605,6 +57246,7 @@ class uint32:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53616,6 +57258,7 @@ class uint32:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -53629,6 +57272,7 @@ class uint32:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53640,6 +57284,7 @@ class uint32:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53651,6 +57296,7 @@ class uint32:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -53663,6 +57309,7 @@ class uint32:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53674,6 +57321,7 @@ class uint32:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53685,6 +57333,7 @@ class uint32:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53696,6 +57345,7 @@ class uint32:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53707,6 +57357,7 @@ class uint32:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53718,6 +57369,7 @@ class uint32:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53729,6 +57381,7 @@ class uint32:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53740,6 +57393,7 @@ class uint32:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53751,6 +57405,7 @@ class uint32:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53762,6 +57417,7 @@ class uint32:
         """
         
         
+        return None
     
 
 class uint64:
@@ -53777,6 +57433,7 @@ class uint64:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53788,6 +57445,7 @@ class uint64:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53799,6 +57457,7 @@ class uint64:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53810,6 +57469,7 @@ class uint64:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53821,6 +57481,7 @@ class uint64:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53832,6 +57493,7 @@ class uint64:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -53844,6 +57506,7 @@ class uint64:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53855,6 +57518,7 @@ class uint64:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53866,6 +57530,7 @@ class uint64:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53877,10 +57542,12 @@ class uint64:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53892,6 +57559,7 @@ class uint64:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53903,6 +57571,7 @@ class uint64:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53914,6 +57583,7 @@ class uint64:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53925,6 +57595,7 @@ class uint64:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -53937,6 +57608,7 @@ class uint64:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -53949,6 +57621,7 @@ class uint64:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53960,6 +57633,7 @@ class uint64:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53971,6 +57645,7 @@ class uint64:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -53984,6 +57659,7 @@ class uint64:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -53995,6 +57671,7 @@ class uint64:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -54007,6 +57684,7 @@ class uint64:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54018,6 +57696,7 @@ class uint64:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -54030,6 +57709,7 @@ class uint64:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54041,6 +57721,7 @@ class uint64:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54052,6 +57733,7 @@ class uint64:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -54079,6 +57761,7 @@ class uint64:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54090,6 +57773,7 @@ class uint64:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54101,6 +57785,7 @@ class uint64:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54112,6 +57797,7 @@ class uint64:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54123,6 +57809,7 @@ class uint64:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54134,6 +57821,7 @@ class uint64:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -54146,6 +57834,7 @@ class uint64:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54157,6 +57846,7 @@ class uint64:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54168,6 +57858,7 @@ class uint64:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54179,6 +57870,7 @@ class uint64:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54190,6 +57882,7 @@ class uint64:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54201,6 +57894,7 @@ class uint64:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54212,6 +57906,7 @@ class uint64:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -54225,6 +57920,7 @@ class uint64:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54236,6 +57932,7 @@ class uint64:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54247,6 +57944,7 @@ class uint64:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -54259,6 +57957,7 @@ class uint64:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54270,6 +57969,7 @@ class uint64:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54281,6 +57981,7 @@ class uint64:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54292,6 +57993,7 @@ class uint64:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54303,6 +58005,7 @@ class uint64:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54314,6 +58017,7 @@ class uint64:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54325,6 +58029,7 @@ class uint64:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54336,6 +58041,7 @@ class uint64:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54347,6 +58053,7 @@ class uint64:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54358,6 +58065,7 @@ class uint64:
         """
         
         
+        return None
     
 
 class uint8:
@@ -54373,6 +58081,7 @@ class uint8:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54384,6 +58093,7 @@ class uint8:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54395,6 +58105,7 @@ class uint8:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54406,6 +58117,7 @@ class uint8:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54417,6 +58129,7 @@ class uint8:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54428,6 +58141,7 @@ class uint8:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -54440,6 +58154,7 @@ class uint8:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54451,6 +58166,7 @@ class uint8:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54462,6 +58178,7 @@ class uint8:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54473,10 +58190,12 @@ class uint8:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54488,6 +58207,7 @@ class uint8:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54499,6 +58219,7 @@ class uint8:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54510,6 +58231,7 @@ class uint8:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54521,6 +58243,7 @@ class uint8:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -54533,6 +58256,7 @@ class uint8:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -54545,6 +58269,7 @@ class uint8:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54556,6 +58281,7 @@ class uint8:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54567,6 +58293,7 @@ class uint8:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -54580,6 +58307,7 @@ class uint8:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54591,6 +58319,7 @@ class uint8:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -54603,6 +58332,7 @@ class uint8:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54614,6 +58344,7 @@ class uint8:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -54626,6 +58357,7 @@ class uint8:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54637,6 +58369,7 @@ class uint8:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54648,6 +58381,7 @@ class uint8:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -54675,6 +58409,7 @@ class uint8:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54686,6 +58421,7 @@ class uint8:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54697,6 +58433,7 @@ class uint8:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54708,6 +58445,7 @@ class uint8:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54719,6 +58457,7 @@ class uint8:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54730,6 +58469,7 @@ class uint8:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -54742,6 +58482,7 @@ class uint8:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54753,6 +58494,7 @@ class uint8:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54764,6 +58506,7 @@ class uint8:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54775,6 +58518,7 @@ class uint8:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54786,6 +58530,7 @@ class uint8:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54797,6 +58542,7 @@ class uint8:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54808,6 +58554,7 @@ class uint8:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -54821,6 +58568,7 @@ class uint8:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54832,6 +58580,7 @@ class uint8:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54843,6 +58592,7 @@ class uint8:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -54855,6 +58605,7 @@ class uint8:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54866,6 +58617,7 @@ class uint8:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54877,6 +58629,7 @@ class uint8:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54888,6 +58641,7 @@ class uint8:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54899,6 +58653,7 @@ class uint8:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54910,6 +58665,7 @@ class uint8:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54921,6 +58677,7 @@ class uint8:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54932,6 +58689,7 @@ class uint8:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54943,6 +58701,7 @@ class uint8:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54954,6 +58713,7 @@ class uint8:
         """
         
         
+        return None
     
 
 class uintc:
@@ -54969,6 +58729,7 @@ class uintc:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54980,6 +58741,7 @@ class uintc:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -54991,6 +58753,7 @@ class uintc:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55002,6 +58765,7 @@ class uintc:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55013,6 +58777,7 @@ class uintc:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55024,6 +58789,7 @@ class uintc:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -55036,6 +58802,7 @@ class uintc:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55047,6 +58814,7 @@ class uintc:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55058,6 +58826,7 @@ class uintc:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55069,10 +58838,12 @@ class uintc:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55084,6 +58855,7 @@ class uintc:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55095,6 +58867,7 @@ class uintc:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55106,6 +58879,7 @@ class uintc:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55117,6 +58891,7 @@ class uintc:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -55129,6 +58904,7 @@ class uintc:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -55141,6 +58917,7 @@ class uintc:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55152,6 +58929,7 @@ class uintc:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55163,6 +58941,7 @@ class uintc:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -55176,6 +58955,7 @@ class uintc:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55187,6 +58967,7 @@ class uintc:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -55199,6 +58980,7 @@ class uintc:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55210,6 +58992,7 @@ class uintc:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -55222,6 +59005,7 @@ class uintc:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55233,6 +59017,7 @@ class uintc:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55244,6 +59029,7 @@ class uintc:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -55271,6 +59057,7 @@ class uintc:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55282,6 +59069,7 @@ class uintc:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55293,6 +59081,7 @@ class uintc:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55304,6 +59093,7 @@ class uintc:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55315,6 +59105,7 @@ class uintc:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55326,6 +59117,7 @@ class uintc:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -55338,6 +59130,7 @@ class uintc:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55349,6 +59142,7 @@ class uintc:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55360,6 +59154,7 @@ class uintc:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55371,6 +59166,7 @@ class uintc:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55382,6 +59178,7 @@ class uintc:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55393,6 +59190,7 @@ class uintc:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55404,6 +59202,7 @@ class uintc:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -55417,6 +59216,7 @@ class uintc:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55428,6 +59228,7 @@ class uintc:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55439,6 +59240,7 @@ class uintc:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -55451,6 +59253,7 @@ class uintc:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55462,6 +59265,7 @@ class uintc:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55473,6 +59277,7 @@ class uintc:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55484,6 +59289,7 @@ class uintc:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55495,6 +59301,7 @@ class uintc:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55506,6 +59313,7 @@ class uintc:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55517,6 +59325,7 @@ class uintc:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55528,6 +59337,7 @@ class uintc:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55539,6 +59349,7 @@ class uintc:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55550,6 +59361,7 @@ class uintc:
         """
         
         
+        return None
     
 
 class uintp:
@@ -55565,6 +59377,7 @@ class uintp:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55576,6 +59389,7 @@ class uintp:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55587,6 +59401,7 @@ class uintp:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55598,6 +59413,7 @@ class uintp:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55609,6 +59425,7 @@ class uintp:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55620,6 +59437,7 @@ class uintp:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -55632,6 +59450,7 @@ class uintp:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55643,6 +59462,7 @@ class uintp:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55654,6 +59474,7 @@ class uintp:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55665,10 +59486,12 @@ class uintp:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55680,6 +59503,7 @@ class uintp:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55691,6 +59515,7 @@ class uintp:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55702,6 +59527,7 @@ class uintp:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55713,6 +59539,7 @@ class uintp:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -55725,6 +59552,7 @@ class uintp:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -55737,6 +59565,7 @@ class uintp:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55748,6 +59577,7 @@ class uintp:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55759,6 +59589,7 @@ class uintp:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -55772,6 +59603,7 @@ class uintp:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55783,6 +59615,7 @@ class uintp:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -55795,6 +59628,7 @@ class uintp:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55806,6 +59640,7 @@ class uintp:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -55818,6 +59653,7 @@ class uintp:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55829,6 +59665,7 @@ class uintp:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55840,6 +59677,7 @@ class uintp:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -55867,6 +59705,7 @@ class uintp:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55878,6 +59717,7 @@ class uintp:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55889,6 +59729,7 @@ class uintp:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55900,6 +59741,7 @@ class uintp:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55911,6 +59753,7 @@ class uintp:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55922,6 +59765,7 @@ class uintp:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -55934,6 +59778,7 @@ class uintp:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55945,6 +59790,7 @@ class uintp:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55956,6 +59802,7 @@ class uintp:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55967,6 +59814,7 @@ class uintp:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55978,6 +59826,7 @@ class uintp:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -55989,6 +59838,7 @@ class uintp:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56000,6 +59850,7 @@ class uintp:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -56013,6 +59864,7 @@ class uintp:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56024,6 +59876,7 @@ class uintp:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56035,6 +59888,7 @@ class uintp:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -56047,6 +59901,7 @@ class uintp:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56058,6 +59913,7 @@ class uintp:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56069,6 +59925,7 @@ class uintp:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56080,6 +59937,7 @@ class uintp:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56091,6 +59949,7 @@ class uintp:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56102,6 +59961,7 @@ class uintp:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56113,6 +59973,7 @@ class uintp:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56124,6 +59985,7 @@ class uintp:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56135,6 +59997,7 @@ class uintp:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56146,6 +60009,7 @@ class uintp:
         """
         
         
+        return None
     
 
 class ulonglong:
@@ -56161,6 +60025,7 @@ class ulonglong:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56172,6 +60037,7 @@ class ulonglong:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56183,6 +60049,7 @@ class ulonglong:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56194,6 +60061,7 @@ class ulonglong:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56205,6 +60073,7 @@ class ulonglong:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56216,6 +60085,7 @@ class ulonglong:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -56228,6 +60098,7 @@ class ulonglong:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56239,6 +60110,7 @@ class ulonglong:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56250,6 +60122,7 @@ class ulonglong:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56261,10 +60134,12 @@ class ulonglong:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56276,6 +60151,7 @@ class ulonglong:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56287,6 +60163,7 @@ class ulonglong:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56298,6 +60175,7 @@ class ulonglong:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56309,6 +60187,7 @@ class ulonglong:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -56321,6 +60200,7 @@ class ulonglong:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -56333,6 +60213,7 @@ class ulonglong:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56344,6 +60225,7 @@ class ulonglong:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56355,6 +60237,7 @@ class ulonglong:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -56368,6 +60251,7 @@ class ulonglong:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56379,6 +60263,7 @@ class ulonglong:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -56391,6 +60276,7 @@ class ulonglong:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56402,6 +60288,7 @@ class ulonglong:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -56414,6 +60301,7 @@ class ulonglong:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56425,6 +60313,7 @@ class ulonglong:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56436,6 +60325,7 @@ class ulonglong:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -56463,6 +60353,7 @@ class ulonglong:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56474,6 +60365,7 @@ class ulonglong:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56485,6 +60377,7 @@ class ulonglong:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56496,6 +60389,7 @@ class ulonglong:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56507,6 +60401,7 @@ class ulonglong:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56518,6 +60413,7 @@ class ulonglong:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -56530,6 +60426,7 @@ class ulonglong:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56541,6 +60438,7 @@ class ulonglong:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56552,6 +60450,7 @@ class ulonglong:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56563,6 +60462,7 @@ class ulonglong:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56574,6 +60474,7 @@ class ulonglong:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56585,6 +60486,7 @@ class ulonglong:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56596,6 +60498,7 @@ class ulonglong:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -56609,6 +60512,7 @@ class ulonglong:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56620,6 +60524,7 @@ class ulonglong:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56631,6 +60536,7 @@ class ulonglong:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -56643,6 +60549,7 @@ class ulonglong:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56654,6 +60561,7 @@ class ulonglong:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56665,6 +60573,7 @@ class ulonglong:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56676,6 +60585,7 @@ class ulonglong:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56687,6 +60597,7 @@ class ulonglong:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56698,6 +60609,7 @@ class ulonglong:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56709,6 +60621,7 @@ class ulonglong:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56720,6 +60633,7 @@ class ulonglong:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56731,6 +60645,7 @@ class ulonglong:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -56742,6 +60657,7 @@ class ulonglong:
         """
         
         
+        return None
     
 
 class unicode:
@@ -56752,6 +60668,7 @@ class unicode:
         """
         
         
+        return None
     def center(self,width,fillchar):
         """S.center(width[, fillchar]) -> unicode
         Return S centered in a Unicode string of length width. Padding is
@@ -56759,6 +60676,7 @@ class unicode:
         """
         
         
+        return None
     def count(self,sub,start,end):
         """S.count(sub[, start[, end]]) -> int
         Return the number of non-overlapping occurrences of substring sub in
@@ -56767,6 +60685,7 @@ class unicode:
         """
         
         
+        return None
     def decode(self,encoding,errors):
         """S.decode([encoding[,errors]]) -> string or unicode
         Decodes S using the codec registered for encoding. encoding defaults
@@ -56778,6 +60697,7 @@ class unicode:
         """
         
         
+        return None
     def encode(self,encoding,errors):
         """S.encode([encoding[,errors]]) -> string or unicode
         Encodes S using the codec registered for encoding. encoding defaults
@@ -56789,6 +60709,7 @@ class unicode:
         """
         
         
+        return None
     def endswith(self,suffix,start,end):
         """S.endswith(suffix[, start[, end]]) -> bool
         Return True if S ends with the specified suffix, False otherwise.
@@ -56798,6 +60719,7 @@ class unicode:
         """
         
         
+        return None
     def expandtabs(self,tabsize):
         """S.expandtabs([tabsize]) -> unicode
         Return a copy of S where all tab characters are expanded using spaces.
@@ -56805,6 +60727,7 @@ class unicode:
         """
         
         
+        return None
     def find(self,sub,start,end):
         """S.find(sub [,start [,end]]) -> int
         Return the lowest index in S where substring sub is found,
@@ -56814,17 +60737,20 @@ class unicode:
         """
         
         
+        return None
     def format(self,args,kwargs):
         """S.format(*args, **kwargs) -> unicode
         """
         
         
+        return None
     def index(self,sub,start,end):
         """S.index(sub [,start [,end]]) -> int
         Like S.find() but raise ValueError when the substring is not found.
         """
         
         
+        return None
     def isalnum(self,):
         """S.isalnum() -> bool
         Return True if all characters in S are alphanumeric
@@ -56832,6 +60758,7 @@ class unicode:
         """
         
         
+        return None
     def isalpha(self,):
         """S.isalpha() -> bool
         Return True if all characters in S are alphabetic
@@ -56839,6 +60766,7 @@ class unicode:
         """
         
         
+        return None
     def isdecimal(self,):
         """S.isdecimal() -> bool
         Return True if there are only decimal characters in S,
@@ -56846,6 +60774,7 @@ class unicode:
         """
         
         
+        return None
     def isdigit(self,):
         """S.isdigit() -> bool
         Return True if all characters in S are digits
@@ -56853,6 +60782,7 @@ class unicode:
         """
         
         
+        return None
     def islower(self,):
         """S.islower() -> bool
         Return True if all cased characters in S are lowercase and there is
@@ -56860,6 +60790,7 @@ class unicode:
         """
         
         
+        return None
     def isnumeric(self,):
         """S.isnumeric() -> bool
         Return True if there are only numeric characters in S,
@@ -56867,6 +60798,7 @@ class unicode:
         """
         
         
+        return None
     def isspace(self,):
         """S.isspace() -> bool
         Return True if all characters in S are whitespace
@@ -56874,6 +60806,7 @@ class unicode:
         """
         
         
+        return None
     def istitle(self,):
         """S.istitle() -> bool
         Return True if S is a titlecased string and there is at least one
@@ -56883,6 +60816,7 @@ class unicode:
         """
         
         
+        return None
     def isupper(self,):
         """S.isupper() -> bool
         Return True if all cased characters in S are uppercase and there is
@@ -56890,6 +60824,7 @@ class unicode:
         """
         
         
+        return None
     def join(self,iterable):
         """S.join(iterable) -> unicode
         Return a string which is the concatenation of the strings in the
@@ -56897,6 +60832,7 @@ class unicode:
         """
         
         
+        return None
     def ljust(self,width,fillchar):
         """S.ljust(width[, fillchar]) -> int
         Return S left-justified in a Unicode string of length width. Padding is
@@ -56904,12 +60840,14 @@ class unicode:
         """
         
         
+        return None
     def lower(self,):
         """S.lower() -> unicode
         Return a copy of the string S converted to lowercase.
         """
         
         
+        return None
     def lstrip(self,chars):
         """S.lstrip([chars]) -> unicode
         Return a copy of the string S with leading whitespace removed.
@@ -56918,6 +60856,7 @@ class unicode:
         """
         
         
+        return None
     def partition(self,sep):
         """S.partition(sep) -> (head, sep, tail)
         Search for the separator sep in S, and return the part before it,
@@ -56926,6 +60865,7 @@ class unicode:
         """
         
         
+        return None
     def replace(self,old,new,count):
         """S.replace(old, new[, count]) -> unicode
         Return a copy of S with all occurrences of substring
@@ -56934,6 +60874,7 @@ class unicode:
         """
         
         
+        return None
     def rfind(self,sub,start,end):
         """S.rfind(sub [,start [,end]]) -> int
         Return the highest index in S where substring sub is found,
@@ -56943,12 +60884,14 @@ class unicode:
         """
         
         
+        return None
     def rindex(self,sub,start,end):
         """S.rindex(sub [,start [,end]]) -> int
         Like S.rfind() but raise ValueError when the substring is not found.
         """
         
         
+        return None
     def rjust(self,width,fillchar):
         """S.rjust(width[, fillchar]) -> unicode
         Return S right-justified in a Unicode string of length width. Padding is
@@ -56956,6 +60899,7 @@ class unicode:
         """
         
         
+        return None
     def rpartition(self,sep):
         """S.rpartition(sep) -> (head, sep, tail)
         Search for the separator sep in S, starting at the end of S, and return
@@ -56964,6 +60908,7 @@ class unicode:
         """
         
         
+        return None
     def rsplit(self,sep,maxsplit):
         """S.rsplit([sep [,maxsplit]]) -> list of strings
         Return a list of the words in S, using sep as the
@@ -56974,6 +60919,7 @@ class unicode:
         """
         
         
+        return None
     def rstrip(self,chars):
         """S.rstrip([chars]) -> unicode
         Return a copy of the string S with trailing whitespace removed.
@@ -56982,6 +60928,7 @@ class unicode:
         """
         
         
+        return None
     def split(self,sep,maxsplit):
         """S.split([sep [,maxsplit]]) -> list of strings
         Return a list of the words in S, using sep as the
@@ -56992,6 +60939,7 @@ class unicode:
         """
         
         
+        return None
     def splitlines(self,keepends):
         """S.splitlines([keepends]) -> list of strings
         Return a list of the lines in S, breaking at line boundaries.
@@ -57000,6 +60948,7 @@ class unicode:
         """
         
         
+        return None
     def startswith(self,prefix,start,end):
         """S.startswith(prefix[, start[, end]]) -> bool
         Return True if S starts with the specified prefix, False otherwise.
@@ -57009,6 +60958,7 @@ class unicode:
         """
         
         
+        return None
     def strip(self,chars):
         """S.strip([chars]) -> unicode
         Return a copy of the string S with leading and trailing
@@ -57018,6 +60968,7 @@ class unicode:
         """
         
         
+        return None
     def swapcase(self,):
         """S.swapcase() -> unicode
         Return a copy of S with uppercase characters converted to lowercase
@@ -57025,6 +60976,7 @@ class unicode:
         """
         
         
+        return None
     def title(self,):
         """S.title() -> unicode
         Return a titlecased version of S, i.e. words start with title case
@@ -57032,6 +60984,7 @@ class unicode:
         """
         
         
+        return None
     def translate(self,table):
         """S.translate(table) -> unicode
         Return a copy of the string S, where all characters have been mapped
@@ -57042,12 +60995,14 @@ class unicode:
         """
         
         
+        return None
     def upper(self,):
         """S.upper() -> unicode
         Return a copy of S converted to uppercase.
         """
         
         
+        return None
     def zfill(self,width):
         """S.zfill(width) -> unicode
         Pad a numeric string S with zeros on the left, to fill a field
@@ -57055,6 +61010,7 @@ class unicode:
         """
         
         
+        return None
     
 
 class unicode0:
@@ -57070,6 +61026,7 @@ class unicode0:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57081,6 +61038,7 @@ class unicode0:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57092,6 +61050,7 @@ class unicode0:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57103,6 +61062,7 @@ class unicode0:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57114,6 +61074,7 @@ class unicode0:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57125,6 +61086,7 @@ class unicode0:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -57137,6 +61099,7 @@ class unicode0:
         """
         
         
+        return None
     def capitalize(self,):
         """S.capitalize() -> unicode
         Return a capitalized version of S, i.e. make the first character
@@ -57144,6 +61107,7 @@ class unicode0:
         """
         
         
+        return None
     def center(self,width,fillchar):
         """S.center(width[, fillchar]) -> unicode
         Return S centered in a Unicode string of length width. Padding is
@@ -57151,6 +61115,7 @@ class unicode0:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57162,6 +61127,7 @@ class unicode0:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57173,6 +61139,7 @@ class unicode0:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57184,10 +61151,12 @@ class unicode0:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57199,6 +61168,7 @@ class unicode0:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57210,6 +61180,7 @@ class unicode0:
         """
         
         
+        return None
     def count(self,sub,start,end):
         """S.count(sub[, start[, end]]) -> int
         Return the number of non-overlapping occurrences of substring sub in
@@ -57218,6 +61189,7 @@ class unicode0:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57229,6 +61201,7 @@ class unicode0:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57240,6 +61213,7 @@ class unicode0:
         """
         
         
+        return None
     data = None
     def decode(self,encoding,errors):
         """S.decode([encoding[,errors]]) -> string or unicode
@@ -57252,6 +61226,7 @@ class unicode0:
         """
         
         
+        return None
     def diagonal(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57263,6 +61238,7 @@ class unicode0:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -57275,6 +61251,7 @@ class unicode0:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57286,6 +61263,7 @@ class unicode0:
         """
         
         
+        return None
     def encode(self,encoding,errors):
         """S.encode([encoding[,errors]]) -> string or unicode
         Encodes S using the codec registered for encoding. encoding defaults
@@ -57297,6 +61275,7 @@ class unicode0:
         """
         
         
+        return None
     def endswith(self,suffix,start,end):
         """S.endswith(suffix[, start[, end]]) -> bool
         Return True if S ends with the specified suffix, False otherwise.
@@ -57306,6 +61285,7 @@ class unicode0:
         """
         
         
+        return None
     def expandtabs(self,tabsize):
         """S.expandtabs([tabsize]) -> unicode
         Return a copy of S where all tab characters are expanded using spaces.
@@ -57313,6 +61293,7 @@ class unicode0:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57324,6 +61305,7 @@ class unicode0:
         """
         
         
+        return None
     def find(self,sub,start,end):
         """S.find(sub [,start [,end]]) -> int
         Return the lowest index in S where substring sub is found,
@@ -57333,6 +61315,7 @@ class unicode0:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -57346,11 +61329,13 @@ class unicode0:
         """
         
         
+        return None
     def format(self,args,kwargs):
         """S.format(*args, **kwargs) -> unicode
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57362,6 +61347,7 @@ class unicode0:
         """
         
         
+        return None
     imag = None
     def index(self,sub,start,end):
         """S.index(sub [,start [,end]]) -> int
@@ -57369,6 +61355,7 @@ class unicode0:
         """
         
         
+        return None
     def isalnum(self,):
         """S.isalnum() -> bool
         Return True if all characters in S are alphanumeric
@@ -57376,6 +61363,7 @@ class unicode0:
         """
         
         
+        return None
     def isalpha(self,):
         """S.isalpha() -> bool
         Return True if all characters in S are alphabetic
@@ -57383,6 +61371,7 @@ class unicode0:
         """
         
         
+        return None
     def isdecimal(self,):
         """S.isdecimal() -> bool
         Return True if there are only decimal characters in S,
@@ -57390,6 +61379,7 @@ class unicode0:
         """
         
         
+        return None
     def isdigit(self,):
         """S.isdigit() -> bool
         Return True if all characters in S are digits
@@ -57397,6 +61387,7 @@ class unicode0:
         """
         
         
+        return None
     def islower(self,):
         """S.islower() -> bool
         Return True if all cased characters in S are lowercase and there is
@@ -57404,6 +61395,7 @@ class unicode0:
         """
         
         
+        return None
     def isnumeric(self,):
         """S.isnumeric() -> bool
         Return True if there are only numeric characters in S,
@@ -57411,6 +61403,7 @@ class unicode0:
         """
         
         
+        return None
     def isspace(self,):
         """S.isspace() -> bool
         Return True if all characters in S are whitespace
@@ -57418,6 +61411,7 @@ class unicode0:
         """
         
         
+        return None
     def istitle(self,):
         """S.istitle() -> bool
         Return True if S is a titlecased string and there is at least one
@@ -57427,6 +61421,7 @@ class unicode0:
         """
         
         
+        return None
     def isupper(self,):
         """S.isupper() -> bool
         Return True if all cased characters in S are uppercase and there is
@@ -57434,6 +61429,7 @@ class unicode0:
         """
         
         
+        return None
     def item(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57445,6 +61441,7 @@ class unicode0:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57456,6 +61453,7 @@ class unicode0:
         """
         
         
+        return None
     itemsize = None
     def join(self,iterable):
         """S.join(iterable) -> unicode
@@ -57464,6 +61462,7 @@ class unicode0:
         """
         
         
+        return None
     def ljust(self,width,fillchar):
         """S.ljust(width[, fillchar]) -> int
         Return S left-justified in a Unicode string of length width. Padding is
@@ -57471,12 +61470,14 @@ class unicode0:
         """
         
         
+        return None
     def lower(self,):
         """S.lower() -> unicode
         Return a copy of the string S converted to lowercase.
         """
         
         
+        return None
     def lstrip(self,chars):
         """S.lstrip([chars]) -> unicode
         Return a copy of the string S with leading whitespace removed.
@@ -57485,6 +61486,7 @@ class unicode0:
         """
         
         
+        return None
     def max(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57496,6 +61498,7 @@ class unicode0:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57507,6 +61510,7 @@ class unicode0:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57518,6 +61522,7 @@ class unicode0:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -57545,6 +61550,7 @@ class unicode0:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57556,6 +61562,7 @@ class unicode0:
         """
         
         
+        return None
     def partition(self,sep):
         """S.partition(sep) -> (head, sep, tail)
         Search for the separator sep in S, and return the part before it,
@@ -57564,6 +61571,7 @@ class unicode0:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57575,6 +61583,7 @@ class unicode0:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57586,6 +61595,7 @@ class unicode0:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57597,6 +61607,7 @@ class unicode0:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57608,6 +61619,7 @@ class unicode0:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -57620,6 +61632,7 @@ class unicode0:
         """
         
         
+        return None
     def replace(self,old,new,count):
         """S.replace(old, new[, count]) -> unicode
         Return a copy of S with all occurrences of substring
@@ -57628,6 +61641,7 @@ class unicode0:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57639,6 +61653,7 @@ class unicode0:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57650,6 +61665,7 @@ class unicode0:
         """
         
         
+        return None
     def rfind(self,sub,start,end):
         """S.rfind(sub [,start [,end]]) -> int
         Return the highest index in S where substring sub is found,
@@ -57659,12 +61675,14 @@ class unicode0:
         """
         
         
+        return None
     def rindex(self,sub,start,end):
         """S.rindex(sub [,start [,end]]) -> int
         Like S.rfind() but raise ValueError when the substring is not found.
         """
         
         
+        return None
     def rjust(self,width,fillchar):
         """S.rjust(width[, fillchar]) -> unicode
         Return S right-justified in a Unicode string of length width. Padding is
@@ -57672,6 +61690,7 @@ class unicode0:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57683,6 +61702,7 @@ class unicode0:
         """
         
         
+        return None
     def rpartition(self,sep):
         """S.rpartition(sep) -> (head, sep, tail)
         Search for the separator sep in S, starting at the end of S, and return
@@ -57691,6 +61711,7 @@ class unicode0:
         """
         
         
+        return None
     def rsplit(self,sep,maxsplit):
         """S.rsplit([sep [,maxsplit]]) -> list of strings
         Return a list of the words in S, using sep as the
@@ -57701,6 +61722,7 @@ class unicode0:
         """
         
         
+        return None
     def rstrip(self,chars):
         """S.rstrip([chars]) -> unicode
         Return a copy of the string S with trailing whitespace removed.
@@ -57709,6 +61731,7 @@ class unicode0:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57720,6 +61743,7 @@ class unicode0:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57731,6 +61755,7 @@ class unicode0:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57742,6 +61767,7 @@ class unicode0:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -57755,6 +61781,7 @@ class unicode0:
         """
         
         
+        return None
     def split(self,sep,maxsplit):
         """S.split([sep [,maxsplit]]) -> list of strings
         Return a list of the words in S, using sep as the
@@ -57765,6 +61792,7 @@ class unicode0:
         """
         
         
+        return None
     def splitlines(self,keepends):
         """S.splitlines([keepends]) -> list of strings
         Return a list of the lines in S, breaking at line boundaries.
@@ -57773,6 +61801,7 @@ class unicode0:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57784,6 +61813,7 @@ class unicode0:
         """
         
         
+        return None
     def startswith(self,prefix,start,end):
         """S.startswith(prefix[, start[, end]]) -> bool
         Return True if S starts with the specified prefix, False otherwise.
@@ -57793,6 +61823,7 @@ class unicode0:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57804,6 +61835,7 @@ class unicode0:
         """
         
         
+        return None
     strides = None
     def strip(self,chars):
         """S.strip([chars]) -> unicode
@@ -57814,6 +61846,7 @@ class unicode0:
         """
         
         
+        return None
     def sum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57825,6 +61858,7 @@ class unicode0:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57836,6 +61870,7 @@ class unicode0:
         """
         
         
+        return None
     def swapcase(self,):
         """S.swapcase() -> unicode
         Return a copy of S with uppercase characters converted to lowercase
@@ -57843,6 +61878,7 @@ class unicode0:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57854,6 +61890,7 @@ class unicode0:
         """
         
         
+        return None
     def title(self,):
         """S.title() -> unicode
         Return a titlecased version of S, i.e. words start with title case
@@ -57861,6 +61898,7 @@ class unicode0:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57872,6 +61910,7 @@ class unicode0:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57883,6 +61922,7 @@ class unicode0:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57894,6 +61934,7 @@ class unicode0:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57905,6 +61946,7 @@ class unicode0:
         """
         
         
+        return None
     def translate(self,table):
         """S.translate(table) -> unicode
         Return a copy of the string S, where all characters have been mapped
@@ -57915,6 +61957,7 @@ class unicode0:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57926,12 +61969,14 @@ class unicode0:
         """
         
         
+        return None
     def upper(self,):
         """S.upper() -> unicode
         Return a copy of S converted to uppercase.
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57943,6 +61988,7 @@ class unicode0:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57954,6 +62000,7 @@ class unicode0:
         """
         
         
+        return None
     def zfill(self,width):
         """S.zfill(width) -> unicode
         Pad a numeric string S with zeros on the left, to fill a field
@@ -57961,6 +62008,7 @@ class unicode0:
         """
         
         
+        return None
     
 
 class unicode_:
@@ -57976,6 +62024,7 @@ class unicode_:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57987,6 +62036,7 @@ class unicode_:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -57998,6 +62048,7 @@ class unicode_:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58009,6 +62060,7 @@ class unicode_:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58020,6 +62072,7 @@ class unicode_:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58031,6 +62084,7 @@ class unicode_:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -58043,6 +62097,7 @@ class unicode_:
         """
         
         
+        return None
     def capitalize(self,):
         """S.capitalize() -> unicode
         Return a capitalized version of S, i.e. make the first character
@@ -58050,6 +62105,7 @@ class unicode_:
         """
         
         
+        return None
     def center(self,width,fillchar):
         """S.center(width[, fillchar]) -> unicode
         Return S centered in a Unicode string of length width. Padding is
@@ -58057,6 +62113,7 @@ class unicode_:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58068,6 +62125,7 @@ class unicode_:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58079,6 +62137,7 @@ class unicode_:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58090,10 +62149,12 @@ class unicode_:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58105,6 +62166,7 @@ class unicode_:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58116,6 +62178,7 @@ class unicode_:
         """
         
         
+        return None
     def count(self,sub,start,end):
         """S.count(sub[, start[, end]]) -> int
         Return the number of non-overlapping occurrences of substring sub in
@@ -58124,6 +62187,7 @@ class unicode_:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58135,6 +62199,7 @@ class unicode_:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58146,6 +62211,7 @@ class unicode_:
         """
         
         
+        return None
     data = None
     def decode(self,encoding,errors):
         """S.decode([encoding[,errors]]) -> string or unicode
@@ -58158,6 +62224,7 @@ class unicode_:
         """
         
         
+        return None
     def diagonal(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58169,6 +62236,7 @@ class unicode_:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -58181,6 +62249,7 @@ class unicode_:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58192,6 +62261,7 @@ class unicode_:
         """
         
         
+        return None
     def encode(self,encoding,errors):
         """S.encode([encoding[,errors]]) -> string or unicode
         Encodes S using the codec registered for encoding. encoding defaults
@@ -58203,6 +62273,7 @@ class unicode_:
         """
         
         
+        return None
     def endswith(self,suffix,start,end):
         """S.endswith(suffix[, start[, end]]) -> bool
         Return True if S ends with the specified suffix, False otherwise.
@@ -58212,6 +62283,7 @@ class unicode_:
         """
         
         
+        return None
     def expandtabs(self,tabsize):
         """S.expandtabs([tabsize]) -> unicode
         Return a copy of S where all tab characters are expanded using spaces.
@@ -58219,6 +62291,7 @@ class unicode_:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58230,6 +62303,7 @@ class unicode_:
         """
         
         
+        return None
     def find(self,sub,start,end):
         """S.find(sub [,start [,end]]) -> int
         Return the lowest index in S where substring sub is found,
@@ -58239,6 +62313,7 @@ class unicode_:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -58252,11 +62327,13 @@ class unicode_:
         """
         
         
+        return None
     def format(self,args,kwargs):
         """S.format(*args, **kwargs) -> unicode
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58268,6 +62345,7 @@ class unicode_:
         """
         
         
+        return None
     imag = None
     def index(self,sub,start,end):
         """S.index(sub [,start [,end]]) -> int
@@ -58275,6 +62353,7 @@ class unicode_:
         """
         
         
+        return None
     def isalnum(self,):
         """S.isalnum() -> bool
         Return True if all characters in S are alphanumeric
@@ -58282,6 +62361,7 @@ class unicode_:
         """
         
         
+        return None
     def isalpha(self,):
         """S.isalpha() -> bool
         Return True if all characters in S are alphabetic
@@ -58289,6 +62369,7 @@ class unicode_:
         """
         
         
+        return None
     def isdecimal(self,):
         """S.isdecimal() -> bool
         Return True if there are only decimal characters in S,
@@ -58296,6 +62377,7 @@ class unicode_:
         """
         
         
+        return None
     def isdigit(self,):
         """S.isdigit() -> bool
         Return True if all characters in S are digits
@@ -58303,6 +62385,7 @@ class unicode_:
         """
         
         
+        return None
     def islower(self,):
         """S.islower() -> bool
         Return True if all cased characters in S are lowercase and there is
@@ -58310,6 +62393,7 @@ class unicode_:
         """
         
         
+        return None
     def isnumeric(self,):
         """S.isnumeric() -> bool
         Return True if there are only numeric characters in S,
@@ -58317,6 +62401,7 @@ class unicode_:
         """
         
         
+        return None
     def isspace(self,):
         """S.isspace() -> bool
         Return True if all characters in S are whitespace
@@ -58324,6 +62409,7 @@ class unicode_:
         """
         
         
+        return None
     def istitle(self,):
         """S.istitle() -> bool
         Return True if S is a titlecased string and there is at least one
@@ -58333,6 +62419,7 @@ class unicode_:
         """
         
         
+        return None
     def isupper(self,):
         """S.isupper() -> bool
         Return True if all cased characters in S are uppercase and there is
@@ -58340,6 +62427,7 @@ class unicode_:
         """
         
         
+        return None
     def item(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58351,6 +62439,7 @@ class unicode_:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58362,6 +62451,7 @@ class unicode_:
         """
         
         
+        return None
     itemsize = None
     def join(self,iterable):
         """S.join(iterable) -> unicode
@@ -58370,6 +62460,7 @@ class unicode_:
         """
         
         
+        return None
     def ljust(self,width,fillchar):
         """S.ljust(width[, fillchar]) -> int
         Return S left-justified in a Unicode string of length width. Padding is
@@ -58377,12 +62468,14 @@ class unicode_:
         """
         
         
+        return None
     def lower(self,):
         """S.lower() -> unicode
         Return a copy of the string S converted to lowercase.
         """
         
         
+        return None
     def lstrip(self,chars):
         """S.lstrip([chars]) -> unicode
         Return a copy of the string S with leading whitespace removed.
@@ -58391,6 +62484,7 @@ class unicode_:
         """
         
         
+        return None
     def max(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58402,6 +62496,7 @@ class unicode_:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58413,6 +62508,7 @@ class unicode_:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58424,6 +62520,7 @@ class unicode_:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -58451,6 +62548,7 @@ class unicode_:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58462,6 +62560,7 @@ class unicode_:
         """
         
         
+        return None
     def partition(self,sep):
         """S.partition(sep) -> (head, sep, tail)
         Search for the separator sep in S, and return the part before it,
@@ -58470,6 +62569,7 @@ class unicode_:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58481,6 +62581,7 @@ class unicode_:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58492,6 +62593,7 @@ class unicode_:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58503,6 +62605,7 @@ class unicode_:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58514,6 +62617,7 @@ class unicode_:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -58526,6 +62630,7 @@ class unicode_:
         """
         
         
+        return None
     def replace(self,old,new,count):
         """S.replace(old, new[, count]) -> unicode
         Return a copy of S with all occurrences of substring
@@ -58534,6 +62639,7 @@ class unicode_:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58545,6 +62651,7 @@ class unicode_:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58556,6 +62663,7 @@ class unicode_:
         """
         
         
+        return None
     def rfind(self,sub,start,end):
         """S.rfind(sub [,start [,end]]) -> int
         Return the highest index in S where substring sub is found,
@@ -58565,12 +62673,14 @@ class unicode_:
         """
         
         
+        return None
     def rindex(self,sub,start,end):
         """S.rindex(sub [,start [,end]]) -> int
         Like S.rfind() but raise ValueError when the substring is not found.
         """
         
         
+        return None
     def rjust(self,width,fillchar):
         """S.rjust(width[, fillchar]) -> unicode
         Return S right-justified in a Unicode string of length width. Padding is
@@ -58578,6 +62688,7 @@ class unicode_:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58589,6 +62700,7 @@ class unicode_:
         """
         
         
+        return None
     def rpartition(self,sep):
         """S.rpartition(sep) -> (head, sep, tail)
         Search for the separator sep in S, starting at the end of S, and return
@@ -58597,6 +62709,7 @@ class unicode_:
         """
         
         
+        return None
     def rsplit(self,sep,maxsplit):
         """S.rsplit([sep [,maxsplit]]) -> list of strings
         Return a list of the words in S, using sep as the
@@ -58607,6 +62720,7 @@ class unicode_:
         """
         
         
+        return None
     def rstrip(self,chars):
         """S.rstrip([chars]) -> unicode
         Return a copy of the string S with trailing whitespace removed.
@@ -58615,6 +62729,7 @@ class unicode_:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58626,6 +62741,7 @@ class unicode_:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58637,6 +62753,7 @@ class unicode_:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58648,6 +62765,7 @@ class unicode_:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -58661,6 +62779,7 @@ class unicode_:
         """
         
         
+        return None
     def split(self,sep,maxsplit):
         """S.split([sep [,maxsplit]]) -> list of strings
         Return a list of the words in S, using sep as the
@@ -58671,6 +62790,7 @@ class unicode_:
         """
         
         
+        return None
     def splitlines(self,keepends):
         """S.splitlines([keepends]) -> list of strings
         Return a list of the lines in S, breaking at line boundaries.
@@ -58679,6 +62799,7 @@ class unicode_:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58690,6 +62811,7 @@ class unicode_:
         """
         
         
+        return None
     def startswith(self,prefix,start,end):
         """S.startswith(prefix[, start[, end]]) -> bool
         Return True if S starts with the specified prefix, False otherwise.
@@ -58699,6 +62821,7 @@ class unicode_:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58710,6 +62833,7 @@ class unicode_:
         """
         
         
+        return None
     strides = None
     def strip(self,chars):
         """S.strip([chars]) -> unicode
@@ -58720,6 +62844,7 @@ class unicode_:
         """
         
         
+        return None
     def sum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58731,6 +62856,7 @@ class unicode_:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58742,6 +62868,7 @@ class unicode_:
         """
         
         
+        return None
     def swapcase(self,):
         """S.swapcase() -> unicode
         Return a copy of S with uppercase characters converted to lowercase
@@ -58749,6 +62876,7 @@ class unicode_:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58760,6 +62888,7 @@ class unicode_:
         """
         
         
+        return None
     def title(self,):
         """S.title() -> unicode
         Return a titlecased version of S, i.e. words start with title case
@@ -58767,6 +62896,7 @@ class unicode_:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58778,6 +62908,7 @@ class unicode_:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58789,6 +62920,7 @@ class unicode_:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58800,6 +62932,7 @@ class unicode_:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58811,6 +62944,7 @@ class unicode_:
         """
         
         
+        return None
     def translate(self,table):
         """S.translate(table) -> unicode
         Return a copy of the string S, where all characters have been mapped
@@ -58821,6 +62955,7 @@ class unicode_:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58832,12 +62967,14 @@ class unicode_:
         """
         
         
+        return None
     def upper(self,):
         """S.upper() -> unicode
         Return a copy of S converted to uppercase.
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58849,6 +62986,7 @@ class unicode_:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -58860,6 +62998,7 @@ class unicode_:
         """
         
         
+        return None
     def zfill(self,width):
         """S.zfill(width) -> unicode
         Pad a numeric string S with zeros on the left, to fill a field
@@ -58867,6 +63006,7 @@ class unicode_:
         """
         
         
+        return None
     
 
 def union1d(ar1,ar2):
@@ -58893,6 +63033,7 @@ def union1d(ar1,ar2):
     """
     
     
+    return ndarray()
 def unique(ar,return_index,return_inverse):
     """   Find the unique elements of an array.
        Returns the sorted unique elements of an array. There are two optional
@@ -58954,6 +63095,7 @@ def unique(ar,return_index,return_inverse):
     """
     
     
+    return ndarray()
 def unique1d():
     """`unique1d` is deprecated!
        This function is deprecated. Use unique() instead.
@@ -58961,6 +63103,7 @@ def unique1d():
     """
     
     
+    return None
 def unpackbits(myarray,axis):
     """unpackbits(myarray, axis=None)
        Unpacks elements of a uint8 array into a binary-valued output array.
@@ -58997,6 +63140,7 @@ def unpackbits(myarray,axis):
     """
     
     
+    return ndarray()
 def unravel_index(x,dims):
     """   Convert a flat index to an index tuple for an array of given shape.
        Parameters
@@ -59036,6 +63180,7 @@ def unravel_index(x,dims):
     """
     
     
+    return tuple()
 class unsignedinteger:
     T = None
     def all(self):
@@ -59049,6 +63194,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59060,6 +63206,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59071,6 +63218,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59082,6 +63230,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59093,6 +63242,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59104,6 +63254,7 @@ class unsignedinteger:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -59116,6 +63267,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59127,6 +63279,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59138,6 +63291,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59149,10 +63303,12 @@ class unsignedinteger:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59164,6 +63320,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59175,6 +63332,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59186,6 +63344,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59197,6 +63356,7 @@ class unsignedinteger:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -59209,6 +63369,7 @@ class unsignedinteger:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -59221,6 +63382,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59232,6 +63394,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59243,6 +63406,7 @@ class unsignedinteger:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -59256,6 +63420,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59267,6 +63432,7 @@ class unsignedinteger:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -59279,6 +63445,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59290,6 +63457,7 @@ class unsignedinteger:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -59302,6 +63470,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59313,6 +63482,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59324,6 +63494,7 @@ class unsignedinteger:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -59351,6 +63522,7 @@ class unsignedinteger:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59362,6 +63534,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59373,6 +63546,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59384,6 +63558,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59395,6 +63570,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59406,6 +63582,7 @@ class unsignedinteger:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -59418,6 +63595,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59429,6 +63607,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59440,6 +63619,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59451,6 +63631,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59462,6 +63643,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59473,6 +63655,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59484,6 +63667,7 @@ class unsignedinteger:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -59497,6 +63681,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59508,6 +63693,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59519,6 +63705,7 @@ class unsignedinteger:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -59531,6 +63718,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59542,6 +63730,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59553,6 +63742,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59564,6 +63754,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59575,6 +63766,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59586,6 +63778,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59597,6 +63790,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59608,6 +63802,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59619,6 +63814,7 @@ class unsignedinteger:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59630,6 +63826,7 @@ class unsignedinteger:
         """
         
         
+        return None
     
 
 def unwrap(p,discont,axis):
@@ -59668,6 +63865,7 @@ def unwrap(p,discont,axis):
     """
     
     
+    return ndarray()
 class ushort:
     T = None
     def all(self):
@@ -59681,6 +63879,7 @@ class ushort:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59692,6 +63891,7 @@ class ushort:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59703,6 +63903,7 @@ class ushort:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59714,6 +63915,7 @@ class ushort:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59725,6 +63927,7 @@ class ushort:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59736,6 +63939,7 @@ class ushort:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -59748,6 +63952,7 @@ class ushort:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59759,6 +63964,7 @@ class ushort:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59770,6 +63976,7 @@ class ushort:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59781,10 +63988,12 @@ class ushort:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59796,6 +64005,7 @@ class ushort:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59807,6 +64017,7 @@ class ushort:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59818,6 +64029,7 @@ class ushort:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59829,6 +64041,7 @@ class ushort:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -59841,6 +64054,7 @@ class ushort:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -59853,6 +64067,7 @@ class ushort:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59864,6 +64079,7 @@ class ushort:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59875,6 +64091,7 @@ class ushort:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -59888,6 +64105,7 @@ class ushort:
         """
         
         
+        return None
     def getfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59899,6 +64117,7 @@ class ushort:
         """
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -59911,6 +64130,7 @@ class ushort:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59922,6 +64142,7 @@ class ushort:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -59934,6 +64155,7 @@ class ushort:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59945,6 +64167,7 @@ class ushort:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59956,6 +64179,7 @@ class ushort:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -59983,6 +64207,7 @@ class ushort:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -59994,6 +64219,7 @@ class ushort:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60005,6 +64231,7 @@ class ushort:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60016,6 +64243,7 @@ class ushort:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60027,6 +64255,7 @@ class ushort:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60038,6 +64267,7 @@ class ushort:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -60050,6 +64280,7 @@ class ushort:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60061,6 +64292,7 @@ class ushort:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60072,6 +64304,7 @@ class ushort:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60083,6 +64316,7 @@ class ushort:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60094,6 +64328,7 @@ class ushort:
         """
         
         
+        return None
     def setfield(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60105,6 +64340,7 @@ class ushort:
         """
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60116,6 +64352,7 @@ class ushort:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -60129,6 +64366,7 @@ class ushort:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60140,6 +64378,7 @@ class ushort:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60151,6 +64390,7 @@ class ushort:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -60163,6 +64403,7 @@ class ushort:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60174,6 +64415,7 @@ class ushort:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60185,6 +64427,7 @@ class ushort:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60196,6 +64439,7 @@ class ushort:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60207,6 +64451,7 @@ class ushort:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60218,6 +64463,7 @@ class ushort:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60229,6 +64475,7 @@ class ushort:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60240,6 +64487,7 @@ class ushort:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60251,6 +64499,7 @@ class ushort:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60262,6 +64511,7 @@ class ushort:
         """
         
         
+        return None
     
 
 def vander(x,N):
@@ -60313,6 +64563,7 @@ def vander(x,N):
     """
     
     
+    return ndarray()
 def var(a,axis,dtype,out,ddof):
     """   Compute the variance along the specified axis.
        Returns the variance of the array elements, a measure of the spread of a
@@ -60389,6 +64640,7 @@ def var(a,axis,dtype,out,ddof):
     """
     
     
+    return ndarray()
 def vdot(a,b):
     """Return the dot product of two vectors.
        The vdot(`a`, `b`) function handles complex numbers differently than
@@ -60433,6 +64685,7 @@ def vdot(a,b):
     """
     
     
+    return ndarray()
 class vectorize:
     pass
 
@@ -60450,6 +64703,7 @@ class void:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60461,6 +64715,7 @@ class void:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60472,6 +64727,7 @@ class void:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60483,6 +64739,7 @@ class void:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60494,6 +64751,7 @@ class void:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60505,6 +64763,7 @@ class void:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -60517,6 +64776,7 @@ class void:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60528,6 +64788,7 @@ class void:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60539,6 +64800,7 @@ class void:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60550,10 +64812,12 @@ class void:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60565,6 +64829,7 @@ class void:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60576,6 +64841,7 @@ class void:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60587,6 +64853,7 @@ class void:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60598,6 +64865,7 @@ class void:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -60610,6 +64878,7 @@ class void:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -60622,6 +64891,7 @@ class void:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60633,6 +64903,7 @@ class void:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60644,6 +64915,7 @@ class void:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -60657,10 +64929,12 @@ class void:
         """
         
         
+        return None
     def getfield(self):
         """None"""
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -60673,6 +64947,7 @@ class void:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60684,6 +64959,7 @@ class void:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -60696,6 +64972,7 @@ class void:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60707,6 +64984,7 @@ class void:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60718,6 +64996,7 @@ class void:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -60745,6 +65024,7 @@ class void:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60756,6 +65036,7 @@ class void:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60767,6 +65048,7 @@ class void:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60778,6 +65060,7 @@ class void:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60789,6 +65072,7 @@ class void:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60800,6 +65084,7 @@ class void:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -60812,6 +65097,7 @@ class void:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60823,6 +65109,7 @@ class void:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60834,6 +65121,7 @@ class void:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60845,6 +65133,7 @@ class void:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60856,10 +65145,12 @@ class void:
         """
         
         
+        return None
     def setfield(self):
         """None"""
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60871,6 +65162,7 @@ class void:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -60884,6 +65176,7 @@ class void:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60895,6 +65188,7 @@ class void:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60906,6 +65200,7 @@ class void:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -60918,6 +65213,7 @@ class void:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60929,6 +65225,7 @@ class void:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60940,6 +65237,7 @@ class void:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60951,6 +65249,7 @@ class void:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60962,6 +65261,7 @@ class void:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60973,6 +65273,7 @@ class void:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60984,6 +65285,7 @@ class void:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -60995,6 +65297,7 @@ class void:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61006,6 +65309,7 @@ class void:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61017,6 +65321,7 @@ class void:
         """
         
         
+        return None
     
 
 class void0:
@@ -61032,6 +65337,7 @@ class void0:
         """
         
         
+        return None
     def any(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61043,6 +65349,7 @@ class void0:
         """
         
         
+        return None
     def argmax(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61054,6 +65361,7 @@ class void0:
         """
         
         
+        return None
     def argmin(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61065,6 +65373,7 @@ class void0:
         """
         
         
+        return None
     def argsort(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61076,6 +65385,7 @@ class void0:
         """
         
         
+        return None
     def astype(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61087,6 +65397,7 @@ class void0:
         """
         
         
+        return None
     base = None
     def byteswap(self):
         """Not implemented (virtual attribute)
@@ -61099,6 +65410,7 @@ class void0:
         """
         
         
+        return None
     def choose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61110,6 +65422,7 @@ class void0:
         """
         
         
+        return None
     def clip(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61121,6 +65434,7 @@ class void0:
         """
         
         
+        return None
     def compress(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61132,10 +65446,12 @@ class void0:
         """
         
         
+        return None
     def conj(self):
         """None"""
         
         
+        return None
     def conjugate(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61147,6 +65463,7 @@ class void0:
         """
         
         
+        return None
     def copy(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61158,6 +65475,7 @@ class void0:
         """
         
         
+        return None
     def cumprod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61169,6 +65487,7 @@ class void0:
         """
         
         
+        return None
     def cumsum(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61180,6 +65499,7 @@ class void0:
         """
         
         
+        return None
     data = None
     def diagonal(self):
         """Not implemented (virtual attribute)
@@ -61192,6 +65512,7 @@ class void0:
         """
         
         
+        return None
     dtype = None
     def dump(self):
         """Not implemented (virtual attribute)
@@ -61204,6 +65525,7 @@ class void0:
         """
         
         
+        return None
     def dumps(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61215,6 +65537,7 @@ class void0:
         """
         
         
+        return None
     def fill(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61226,6 +65549,7 @@ class void0:
         """
         
         
+        return None
     flags = None
     flat = None
     def flatten(self):
@@ -61239,10 +65563,12 @@ class void0:
         """
         
         
+        return None
     def getfield(self):
         """None"""
         
         
+        return None
     imag = None
     def item(self):
         """Not implemented (virtual attribute)
@@ -61255,6 +65581,7 @@ class void0:
         """
         
         
+        return None
     def itemset(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61266,6 +65593,7 @@ class void0:
         """
         
         
+        return None
     itemsize = None
     def max(self):
         """Not implemented (virtual attribute)
@@ -61278,6 +65606,7 @@ class void0:
         """
         
         
+        return None
     def mean(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61289,6 +65618,7 @@ class void0:
         """
         
         
+        return None
     def min(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61300,6 +65630,7 @@ class void0:
         """
         
         
+        return None
     nbytes = None
     ndim = None
     def newbyteorder(self,new_order):
@@ -61327,6 +65658,7 @@ class void0:
         """
         
         
+        return dtype()
     def nonzero(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61338,6 +65670,7 @@ class void0:
         """
         
         
+        return None
     def prod(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61349,6 +65682,7 @@ class void0:
         """
         
         
+        return None
     def ptp(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61360,6 +65694,7 @@ class void0:
         """
         
         
+        return None
     def put(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61371,6 +65706,7 @@ class void0:
         """
         
         
+        return None
     def ravel(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61382,6 +65718,7 @@ class void0:
         """
         
         
+        return None
     real = None
     def repeat(self):
         """Not implemented (virtual attribute)
@@ -61394,6 +65731,7 @@ class void0:
         """
         
         
+        return None
     def reshape(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61405,6 +65743,7 @@ class void0:
         """
         
         
+        return None
     def resize(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61416,6 +65755,7 @@ class void0:
         """
         
         
+        return None
     def round(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61427,6 +65767,7 @@ class void0:
         """
         
         
+        return None
     def searchsorted(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61438,10 +65779,12 @@ class void0:
         """
         
         
+        return None
     def setfield(self):
         """None"""
         
         
+        return None
     def setflags(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61453,6 +65796,7 @@ class void0:
         """
         
         
+        return None
     shape = None
     size = None
     def sort(self):
@@ -61466,6 +65810,7 @@ class void0:
         """
         
         
+        return None
     def squeeze(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61477,6 +65822,7 @@ class void0:
         """
         
         
+        return None
     def std(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61488,6 +65834,7 @@ class void0:
         """
         
         
+        return None
     strides = None
     def sum(self):
         """Not implemented (virtual attribute)
@@ -61500,6 +65847,7 @@ class void0:
         """
         
         
+        return None
     def swapaxes(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61511,6 +65859,7 @@ class void0:
         """
         
         
+        return None
     def take(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61522,6 +65871,7 @@ class void0:
         """
         
         
+        return None
     def tofile(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61533,6 +65883,7 @@ class void0:
         """
         
         
+        return None
     def tolist(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61544,6 +65895,7 @@ class void0:
         """
         
         
+        return None
     def tostring(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61555,6 +65907,7 @@ class void0:
         """
         
         
+        return None
     def trace(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61566,6 +65919,7 @@ class void0:
         """
         
         
+        return None
     def transpose(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61577,6 +65931,7 @@ class void0:
         """
         
         
+        return None
     def var(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61588,6 +65943,7 @@ class void0:
         """
         
         
+        return None
     def view(self):
         """Not implemented (virtual attribute)
            Class generic exists solely to derive numpy scalars from, and possesses,
@@ -61599,6 +65955,7 @@ class void0:
         """
         
         
+        return None
     
 
 def vsplit():
@@ -61644,6 +66001,7 @@ def vsplit():
     """
     
     
+    return None
 def vstack(tup):
     """   Stack arrays in sequence vertically (row wise).
        Take a sequence of arrays and stack them vertically to make a single
@@ -61686,6 +66044,7 @@ def vstack(tup):
     """
     
     
+    return ndarray()
 def where(condition,x,y):
     """where(condition, [x, y])
        Return elements, either from `x` or `y`, depending on `condition`.
@@ -61734,6 +66093,7 @@ def where(condition,x,y):
     """
     
     
+    return ndarray()
 def who(vardict):
     """   Print the Numpy arrays in the given dictionary.
        If there is no dictionary passed in or `vardict` is None then returns
@@ -61773,6 +66133,7 @@ def who(vardict):
     """
     
     
+    return None()
 def zeros(shape,dtype,order):
     """zeros(shape, dtype=float, order='C')
        Return a new array of given shape and type, filled with zeros.
@@ -61816,6 +66177,7 @@ def zeros(shape,dtype,order):
     """
     
     
+    return ndarray()
 def zeros_like(a):
     """   Return an array of zeros with the same shape and type as a given array.
        Equivalent to ``a.copy().fill(0)``.
@@ -61854,4 +66216,5 @@ def zeros_like(a):
     """
     
     
+    return ndarray()
 

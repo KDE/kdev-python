@@ -88,7 +88,8 @@ def make_documentation(class_or_module):
 def sanitizeParamName(name):
     parameter_name = name.replace(' ', '').replace('\t', '').replace('\\', '') \
                .replace('.', '_').replace('[', '').replace(']', '') \
-               .replace('*', '').replace('-', '_')
+               .replace('*', '').replace('-', '_').replace('{', '').replace('}', '') \
+               .replace('(', '').replace(')', '')
     try:
         t = int(parameter_name[0])
         parameter_name = '_' + parameter_name

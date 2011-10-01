@@ -560,6 +560,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
     kDebug() << "Trying to update function argument types based on call";
     bool isConstructor = false;
     FunctionDeclarationPointer lastFunctionDeclaration = functionVisitor.lastFunctionDeclaration();
+    DUChainWriteLocker lock(DUChain::lock());
     if ( ! lastFunctionDeclaration && functionVisitor.lastClassDeclaration() ) {
         kDebug() << "No function declaration, looking for class constructor";
         DUChainPointer<ClassDeclaration> eventualClassDeclaration = functionVisitor.lastClassDeclaration();
@@ -575,7 +576,6 @@ void DeclarationBuilder::visitCall(CallAst* node)
             }
         }
     }
-    DUChainWriteLocker lock(DUChain::lock());
     if ( lastFunctionDeclaration ) {
         kDebug() << "got declaration:" << lastFunctionDeclaration->toString();
         if ( lastFunctionDeclaration->topContext()->url() == IndexedString(Helper::getDocumentationFile()) ) {

@@ -512,6 +512,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
                             ExpressionVisitor argVisitor(currentContext(), editor());
                             argVisitor.visitNode(node->arguments.at(offset));
                             if ( argVisitor.lastType() ) {
+                                DUChainWriteLocker lock(DUChain::lock());
                                 kDebug() << "Adding content type: " << argVisitor.lastType()->toString();
                                 container->addContentType(argVisitor.lastType());
                                 v.lastDeclaration()->setType(container);
@@ -523,6 +524,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
                         if ( node->arguments.length() > offset ) {
                             ExpressionVisitor argVisitor(currentContext(), editor());
                             argVisitor.visitNode(node->arguments.at(offset));
+                            DUChainWriteLocker lock(DUChain::lock());
                             if ( argVisitor.lastType() ) {
                                 if ( VariableLengthContainer::Ptr sourceContainer = argVisitor.lastType().cast<VariableLengthContainer>() ) {
                                     if ( AbstractType::Ptr contentType = sourceContainer->contentType().abstractType() ) {
@@ -904,6 +906,7 @@ template<typename T> void DeclarationBuilder::visitDecorators(QList< Python::Exp
 void DeclarationBuilder::visitListComprehension(ListComprehensionAst* node)
 {
     if ( ! node->generators.isEmpty() ) {
+        DUChainWriteLocker lock(DUChain::lock());
         RangeInRevision range = editorFindRange(node->element, node->generators.last()->iterator);
         openContext(node, range, KDevelop::DUContext::Other);
         currentContext()->setPropagateDeclarations(false);
@@ -1063,43 +1066,45 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
     if ( function ) {
         static_cast<FunctionDeclaration*>(currentDeclaration())->clearDefaultParameters();
         FunctionType::Ptr type = currentType<FunctionType>();
-        NameAst* realParam;
-        bool isFirst = true;
-        int defaultParametersCount = node->defaultValues.length();
-        int parametersCount = node->arguments.length();
-        int firstDefaultParameterOffset = parametersCount - defaultParametersCount;
-        int currentIndex = 0;
-        kDebug() << "variable argument ranges: " << node->arg_lineno << node->arg_col_offset << node->vararg_lineno << node->vararg_col_offset;
-        foreach ( ExpressionAst* expression, node->arguments ) {
-            currentIndex += 1;
-            realParam = dynamic_cast<NameAst*>(expression);
-            
-            if ( ! realParam || realParam->context != ExpressionAst::Parameter ) continue;
-            
-            setLastType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
-            Declaration* paramDeclaration = visitVariableDeclaration<Declaration>(realParam);
-            
-            if ( type && paramDeclaration && currentIndex > firstDefaultParameterOffset ) {
-                kDebug() << "Adding default argument: " << realParam->identifier->value << paramDeclaration->abstractType();
-                // find type of given default value
-                ExpressionVisitor v(currentContext());
-                v.visitNode(node->defaultValues.at(currentIndex - firstDefaultParameterOffset - 1));
-                if ( v.lastType() ) {
-                    type->addArgument(v.lastType());
+        if ( type ) {
+            NameAst* realParam;
+            bool isFirst = true;
+            int defaultParametersCount = node->defaultValues.length();
+            int parametersCount = node->arguments.length();
+            int firstDefaultParameterOffset = parametersCount - defaultParametersCount;
+            int currentIndex = 0;
+            kDebug() << "variable argument ranges: " << node->arg_lineno << node->arg_col_offset << node->vararg_lineno << node->vararg_col_offset;
+            foreach ( ExpressionAst* expression, node->arguments ) {
+                currentIndex += 1;
+                realParam = dynamic_cast<NameAst*>(expression);
+                
+                if ( ! realParam || realParam->context != ExpressionAst::Parameter ) continue;
+                
+                setLastType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+                Declaration* paramDeclaration = visitVariableDeclaration<Declaration>(realParam);
+                
+                if ( type && paramDeclaration && currentIndex > firstDefaultParameterOffset ) {
+                    kDebug() << "Adding default argument: " << realParam->identifier->value << paramDeclaration->abstractType();
+                    // find type of given default value
+                    ExpressionVisitor v(currentContext());
+                    v.visitNode(node->defaultValues.at(currentIndex - firstDefaultParameterOffset - 1));
+                    if ( v.lastType() ) {
+                        type->addArgument(v.lastType());
+                    }
+                    else {
+                        type->addArgument(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+                    }
+                    static_cast<FunctionDeclaration*>(currentDeclaration())->addDefaultParameter(paramDeclaration->identifier().identifier());
+                    kDebug() << "Arguments count: " << type->arguments().length();
                 }
                 else {
+                    kDebug() << "Not a default argument: " << realParam->identifier->value;
                     type->addArgument(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
                 }
-                static_cast<FunctionDeclaration*>(currentDeclaration())->addDefaultParameter(paramDeclaration->identifier().identifier());
-                kDebug() << "Arguments count: " << type->arguments().length();
-            }
-            else {
-                kDebug() << "Not a default argument: " << realParam->identifier->value;
-                type->addArgument(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
-            }
-            if ( isFirst ) {
-                m_firstAttributeDeclaration = DeclarationPointer(paramDeclaration);
-                isFirst = false;
+                if ( isFirst ) {
+                    m_firstAttributeDeclaration = DeclarationPointer(paramDeclaration);
+                    isFirst = false;
+                }
             }
         }
         if ( node->vararg ) {

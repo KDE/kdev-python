@@ -368,7 +368,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
         kDebug() << "checking if type was provided";
         if ( m_lastAccessedReturnType.size() > previousSize ) {
             kDebug() << "type was provided";
-            kDebug() << "applying type" << ( m_lastAccessedReturnType.top() ? m_lastAccessedReturnType.top()->toString() : "(none)" );
+//             kDebug() << "applying type" << ( m_lastAccessedReturnType.top() ? m_lastAccessedReturnType.top()->toString() : "(none)" );
             encounter(m_lastAccessedReturnType.pop());
             m_firstAccessedFunctionDeclaration = m_callStack.pop();
             return;

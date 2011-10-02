@@ -362,6 +362,9 @@ void AstDefaultVisitor::visitCall(CallAst* node)
     foreach (ExpressionAst* argument, node->arguments) {
         visitNode(argument);
     }
+    foreach (KeywordAst* kwd, node->keywords) {
+        visitNode(kwd);
+    }
 }
 
 void AstDefaultVisitor::visitFunctionDefinition(FunctionDefinitionAst* node)

@@ -2,6 +2,8 @@
 # -*- Coding:utf-8 -*-
 import sys
 
+from api.structure import *
+
 accept_commands = ["data::", "function::", "method::", "class::", "module::"]
 
 class DocumentationParser():
@@ -9,7 +11,7 @@ class DocumentationParser():
     last_module = None
     def __init__(self, filename):
         self.filename = filename
-        with open(self.filename) as f:
+        with open(self.filename, 'r') as f:
             self.text = f.read()
         self.text = self.text.replace("...", "more")
         self.handlers = {
@@ -39,30 +41,34 @@ class DocumentationParser():
         path = identifier[:-1]
         identifier = identifier[-1]
         module, class_ = self.resolve_path(path)
-        pass
+        self.last_class = Class(class_)
+        self.last_module.addChild(self.last_class)
     
     def save_module(self, identifier, documentation):
-        pass
+        assert self.last_module == None
+        self.last_module = Module(identifier)
     
     def save_function(self, identifier, documentation):
         identifier = identifier.split(".")
         path = identifier[:-1]
         identifier = identifier[-1]
         module, class_ = self.resolve_path(path)
+        func = Function(identifier)
         if class_ is None:
-            pass
+            self.last_module.addChild(func)
         else:
-            pass
+            self.last_class.addMethod(func)
     
     def save_data(self, identifier, documentation):
         identifier = identifier.split(".")
         path = identifier[:-1]
         identifier = identifier[-1]
         module, class_ = self.resolve_path(path)
+        data = Member(identifier)
         if class_ is None:
-            pass
+            self.last_module.addChild(data)
         else:
-            pass
+            self.last_class.addMember(data)
     
     def tokenize(self):
         cmdstring = '.. '
@@ -136,24 +142,15 @@ class DocumentationParser():
                     args, token = self.readLine(tokenStream, token)
                     #print commandName, args
                     documentation, token = self.readBlock(tokenStream, token)
-                    if commandName == "module::":
-                        self.last_module = args
-                    if commandName == "class::":
-                        self.last_class = args
                     if commandName in self.handlers:
                         try:
                             self.handlers[commandName](args, documentation)
                         except Exception as e:
                             print "Error calling handler:", e
                             print "Arguments:", commandName, args, documentation
+                    else:
+                        print "Skipping command name:", commandName
                 else:
                     token = tokenStream.next()
         except StopIteration:
-            pass
-
-p = DocumentationParser(sys.argv[1])
-p.parse()
-
-conn.commit()
-c.close()
-conn.close()
+            return self.last_module

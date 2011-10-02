@@ -10,7 +10,7 @@ class NoDefaultValue():
     '''Unique object for marking absence of a default value for a function argument.'''
 
 def indentCode(code, level):
-    '''Undent given source code.'''
+    '''Indent given source code.'''
     return '\n'.join('    ' * level + line for line in code.splitlines())
 
 def getNodeNames(node):

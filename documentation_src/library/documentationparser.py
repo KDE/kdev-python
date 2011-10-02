@@ -1,16 +1,6 @@
 #!/usr/bin/env python2.7
 # -*- Coding:utf-8 -*-
-import sqlite3
 import sys
-
-conn = sqlite3.connect('documentation.db')
-c = conn.cursor()
-c.execute("CREATE TABLE IF NOT EXISTS modules (modulename text, documentation text)")
-c.execute("CREATE TABLE IF NOT EXISTS classes (modulename text, classname text, documentation text)")
-c.execute("CREATE TABLE IF NOT EXISTS methods (modulename text, classname text, methodname text, documentation text)")
-c.execute("CREATE TABLE IF NOT EXISTS properties (modulename text, classname text, propertyname text, documentation text)")
-c.execute("CREATE TABLE IF NOT EXISTS modulefunctions (modulename text, functionname text, documentation text)")
-c.execute("CREATE TABLE IF NOT EXISTS moduleproperties (modulename text, propertyname text, documentation text)")
 
 accept_commands = ["data::", "function::", "method::", "class::", "module::"]
 
@@ -18,8 +8,8 @@ class DocumentationParser():
     last_class = None
     last_module = None
     def __init__(self, filename):
-    	self.filename = filename
-    	with open(self.filename) as f:
+        self.filename = filename
+        with open(self.filename) as f:
             self.text = f.read()
         self.text = self.text.replace("...", "more")
         self.handlers = {
@@ -49,12 +39,10 @@ class DocumentationParser():
         path = identifier[:-1]
         identifier = identifier[-1]
         module, class_ = self.resolve_path(path)
-        c.execute("""INSERT INTO classes (modulename, classname, documentation) VALUES (?, ?, ?)""",
-                  (module.decode("utf-8"), class_.split('(')[0].decode("utf-8"), documentation.decode("utf-8")))
+        pass
     
     def save_module(self, identifier, documentation):
-        c.execute("""INSERT INTO modules (modulename, documentation) VALUES (?, ?)""",
-                  (identifier.decode("utf-8"), documentation.decode("utf-8")))
+        pass
     
     def save_function(self, identifier, documentation):
         identifier = identifier.split(".")
@@ -62,12 +50,9 @@ class DocumentationParser():
         identifier = identifier[-1]
         module, class_ = self.resolve_path(path)
         if class_ is None:
-            c.execute("""INSERT INTO modulefunctions (modulename, functionname, documentation)
-                         VALUES (?, ?, ?)""", (module.decode("utf-8"), identifier.decode("utf-8"), documentation.decode("utf-8")))
+            pass
         else:
-            c.execute("""INSERT INTO methods (modulename, classname, methodname, documentation)
-                         VALUES (?, ?, ?, ?)""", (module.decode("utf-8"), class_.split('(')[0].decode("utf-8"),
-                         identifier.decode("utf-8"), documentation.decode("utf-8")))
+            pass
     
     def save_data(self, identifier, documentation):
         identifier = identifier.split(".")
@@ -75,13 +60,9 @@ class DocumentationParser():
         identifier = identifier[-1]
         module, class_ = self.resolve_path(path)
         if class_ is None:
-            c.execute("""INSERT INTO moduleproperties ( modulename, propertyname, 
-                       documentation ) VALUES (?, ?, ?)""", ( module.decode("utf-8"), 
-                       identifier.decode("utf-8"), documentation.decode("utf-8")))
+            pass
         else:
-            c.execute("""INSERT INTO properties ( modulename, propertyname, classname,
-                       documentation ) VALUES (?, ?, ?, ?)""", (module.decode("utf-8"), 
-                       identifier.decode("utf-8"), class_.split('(')[0].decode("utf-8"), documentation.decode("utf-8")))
+            pass
     
     def tokenize(self):
         cmdstring = '.. '

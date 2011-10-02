@@ -89,7 +89,6 @@ void UseBuilder::visitName(NameAst* node)
 //     kDebug() << "USE FOUND:" << topContext()->findUseAt(useRange.start) << "for declaration" << declaration->toString();
 }
 
-
 void UseBuilder::visitAttribute(AttributeAst* node)
 {
     ExpressionVisitor v(currentContext(), editor());

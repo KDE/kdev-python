@@ -9,6 +9,9 @@ class Class():
         self.children = []
         self.baseClasses = []
     
+    def __repr__(self):
+        return "<Class ('%s') : %s>" % ( self.name, str(self.baseClasses) )
+    
     def setInheritsFrom(self, nameOrList):
         if type(nameOrList) == types.ListType:
             self.baseClasses.extend(nameOrList)
@@ -33,6 +36,9 @@ class Function():
         self.arguments = []
         self.returnType = "None"
     
+    def __repr__(self):
+        return "<Function ('%s', %s) :: %s>" % ( self.name, str(self.arguments), self.returnType )
+    
     def setReturnType(self, returnType):
         self.returnType = returnType
     
@@ -50,9 +56,16 @@ class Argument():
     def __init__(self, name):
         self.name = name
         self.type = "None"
+        self.defaultValue = None
+    
+    def __repr__(self):
+        return "<Argument ('%s' = %s)>" % ( self.name, str(self.defaultValue) )
     
     def setType(self, type):
         self.type = type
+    
+    def setDefaultValue(self, defaultValue):
+        self.defaultValue = str(defaultValue)
     
     def toXml(self):
         return etree.Element("Argument", name = str(self.name), typename = str(self.type))
@@ -61,6 +74,9 @@ class Module():
     def __init__(self, name):
         self.name = name
         self.children = []
+    
+    def __repr__(self):
+        return "<Module ('%s')>" % ( self.name )
     
     def addChild(self, arg):
         self.children.append(arg)
@@ -78,6 +94,9 @@ class Member():
     def __init__(self, name):
         self.name = name
         self.type = "None"
+    
+    def __repr__(self):
+        return "<Member ('%s')>" % ( self.name )
     
     def setType(self, type):
         self.type = type

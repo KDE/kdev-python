@@ -11,31 +11,6 @@ c = conn.cursor()
 
 basepath = "../documentation_files/"
 
-def indent(code):
-    l = []
-    for line in code.split("\n"):
-        l.append("\t" + line)
-    return "\n".join(l) + "\n"
-
-def sanitize(expr):
-    replace = {
-        '*':'', '[':'', ']':'',
-        'from':'_from', 'class':'_class', '-':'_',
-        '\\':'ESC', ' ':'', "<":'"', ">":'"', "self,":"", "self":"",
-        ",,":","
-    }
-    result = expr
-    for before, after in replace.iteritems():
-        result = result.replace(before, after)
-    result = result.replace("=,", "=[],").replace("=)", "=[])")
-    return result
-
-def strict_sanitize(expr):
-    expr = sanitize(expr)
-    expr = expr.replace("=()", "")
-    expr = expr.replace('(', '').replace(')', '')
-    return expr
-
 def add_self_arg(expr):
     if expr.find('self') == -1:
         l = expr.split('(')

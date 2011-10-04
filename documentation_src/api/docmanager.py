@@ -35,6 +35,7 @@ def isSpace(char):
 
 def removeAtCorner(string, char, direction):
     i = 0
+    assert direction in ['<', '>']
     if direction == '>':
         iterator = range(0, len(string))
         def r(s, a): return s[a-1:]
@@ -73,7 +74,8 @@ def parse_synopsis(funcdef):
         # extract the name of the param
         param = param.replace(' ', '').replace('\t', '')
         # check for default values
-        if param.startswith('[') or param.find('=') != -1:
+        if removeAtCorner(param, '[', '>') != removeAtCorner(param, ' ', '>') or param.find('=') != -1:
+            # default parameter list starts  or continues with this parameter
             atDefault = True
         if atDefault:
             if param.find('=') != -1:
@@ -82,8 +84,13 @@ def parse_synopsis(funcdef):
                 param = param.split('=')[0]
             else:
                 # just write anything, otherwise it's syntactically invalid
-                defaultValue = "None"
+                defaultValue = "__unknown"
+        if removeAtCorner(param, '[', '<') != removeAtCorner(param, ' ', '<'):
+            # default parameter list starts or continues after this parameter
+            atDefault = True
         param = strict_sanitize(param)
+        if param == '':
+            continue
         arg = structure.Argument(param)
         arg.defaultValue = defaultValue
         resultingParamList.append(arg)

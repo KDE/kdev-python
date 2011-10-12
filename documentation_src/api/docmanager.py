@@ -6,6 +6,8 @@ from lxml import etree
 import structure
 import subprocess
 
+from os import path
+
 def indent(code):
     l = []
     for line in code.split("\n"):
@@ -98,15 +100,16 @@ def parse_synopsis(funcdef):
     return resultingParamList, returnType
 
 class DocumentationManager():
-    def __init__(self, sourcefile, moduleName, parser, submoduleList):
+    def __init__(self, sourceDirectory, moduleName, parser, fileList):
         self.moduleName = moduleName
-        self.parser = parser(sourcefile)
-        self.callParserWithArgs = submoduleList
+        self.callParserWithArgs = fileList
         self.data = None
+        self.sourceDirectory = sourceDirectory
         self.originalDirectory = moduleName
         self.originalXmlDirectory = moduleName + "_xml"
         self.modifiedDirectory = moduleName + "_modified"
         self.modifiedXmlDirectory = moduleName + "_xml_modified"
+        self.parserClass = parser
     
     def downloadDocumentationData(self):
         raise NotImplementedError()
@@ -115,23 +118,24 @@ class DocumentationManager():
         self.applyPatch(self.moduleName, self.originalDirectory, self.modifiedDirectory)
     
     def restoreXmlState(self):
-        self.applyPatch(self.moduleName, self.originalXmlDirectory, self.modifiedXmlDirectory)
+        self.applyPatch(self.moduleName + "_xml", self.originalXmlDirectory, self.modifiedXmlDirectory)
     
     def saveImmediateState(self):
         self.makePatch(self.moduleName, self.originalDirectory, self.modifiedDirectory)
     
     def saveXmlState(self):
-        self.makePatch(self.moduleName, self.originalXmlDirectory, self.modifiedXmlDirectory)
-    
-    def parse(self):
-        return self.parser.parse()
+        self.makePatch(self.moduleName + "_xml", self.originalXmlDirectory, self.modifiedXmlDirectory)
     
     def makePatch(self, patchfile, originalDirectory, modifiedDirectory):
-        print "Generating patchfile %s." % patchfile
+        print "Generating patchfile %s.diff." % patchfile
         subprocess.call("diff --recursive --context %s %s/ > %s.diff" % (originalDirectory, modifiedDirectory, patchfile), shell = True)
     
     def applyPatch(self, patchfile, originalDirectory, modifiedDirectory):
-        print "Applying patchfile %s to directory %s." % patchfile, originalDirectory
+        print "Applying patchfile %s.diff to directory %s." % ( patchfile, originalDirectory )
+        if path.exists(modifiedDirectory):
+            print "%s already exists, please delete it manually if you want to lose your changes there!" % modifiedDirectory
+            print "Not doing anything."
+            return
         # first, copy the original files
         subprocess.call(["cp", "-R", originalDirectory, "ORIGINAL"])
         # then patch it
@@ -139,6 +143,7 @@ class DocumentationManager():
         # then swap the two directories
         subprocess.call(["mv", originalDirectory, modifiedDirectory])
         subprocess.call(["mv", "ORIGINAL", originalDirectory])
+        print "Updated data written to directory %s." % modifiedDirectory
     
     def runCommand(self, cmdline):
         try:
@@ -147,21 +152,23 @@ class DocumentationManager():
             raise ValueError("Invalid command line")
         if command == "saveSource":
             self.saveImmediateState()
-        if command == "restoreSource":
+        elif command == "restoreSource":
             self.restoreImmediateState()
-        if command == "saveXml":
+        elif command == "saveXml":
             self.saveXmlState()
-        if command == "restoreXml":
+        elif command == "restoreXml":
             self.restoreXmlState()
-        if command == "download":
+        elif command == "download":
             self.downloadDocumentationData()
-        if command == "parseSourcefiles":
+        elif command == "parseSourcefiles":
             try:
                 os.mkdir("xml")
             except OSError:
                 pass
-            xmltree = self.parse()
-            with open("xml/" + self.moduleName + ".xml", 'w') as fileptr:
-                fileptr.write(xmltree.toString())
+            for currentFile in self.callParserWithArgs:
+                parser = self.parserClass(currentFile)
+                xmltree = parser.parse().toXml()
+                with open("xml/" + currentFile + ".xml", 'w') as fileptr:
+                    fileptr.write(xmltree.toString())
         else:
             raise ValueError("Unknown command: %s" % command)

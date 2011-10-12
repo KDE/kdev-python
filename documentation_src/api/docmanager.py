@@ -4,6 +4,7 @@ import os
 from lxml import etree
 
 import structure
+import subprocess
 
 def indent(code):
     l = []
@@ -97,34 +98,61 @@ def parse_synopsis(funcdef):
     return resultingParamList, returnType
 
 class DocumentationManager():
-    def __init__(self, sourcefile, moduleName, parser):
+    def __init__(self, sourcefile, moduleName, parser, submoduleList):
         self.moduleName = moduleName
         self.parser = parser(sourcefile)
+        self.callParserWithArgs = submoduleList
         self.data = None
+        self.originalDirectory = moduleName
+        self.originalXmlDirectory = moduleName + "_xml"
+        self.modifiedDirectory = moduleName + "_modified"
+        self.modifiedXmlDirectory = moduleName + "_xml_modified"
     
     def downloadDocumentationData(self):
         raise NotImplementedError()
     
-    def applyImmediatePatches(self):
-        pass
+    def restoreImmediateState(self):
+        self.applyPatch(self.moduleName, self.originalDirectory, self.modifiedDirectory)
     
-    def applyXmlPatches(self):
-        pass
+    def restoreXmlState(self):
+        self.applyPatch(self.moduleName, self.originalXmlDirectory, self.modifiedXmlDirectory)
     
     def saveImmediateState(self):
-        pass
+        self.makePatch(self.moduleName, self.originalDirectory, self.modifiedDirectory)
     
     def saveXmlState(self):
-        pass
+        self.makePatch(self.moduleName, self.originalXmlDirectory, self.modifiedXmlDirectory)
     
     def parse(self):
         return self.parser.parse()
+    
+    def makePatch(self, patchfile, originalDirectory, modifiedDirectory):
+        print "Generating patchfile %s." % patchfile
+        subprocess.call("diff --recursive --context %s %s/ > %s.diff" % (originalDirectory, modifiedDirectory, patchfile), shell = True)
+    
+    def applyPatch(self, patchfile, originalDirectory, modifiedDirectory):
+        print "Applying patchfile %s to directory %s." % patchfile, originalDirectory
+        # first, copy the original files
+        subprocess.call(["cp", "-R", originalDirectory, "ORIGINAL"])
+        # then patch it
+        subprocess.call("cat %s.diff |patch -p0" % patchfile, shell = True)
+        # then swap the two directories
+        subprocess.call(["mv", originalDirectory, modifiedDirectory])
+        subprocess.call(["mv", "ORIGINAL", originalDirectory])
     
     def runCommand(self, cmdline):
         try:
             command = cmdline[1]
         except IndexError:
             raise ValueError("Invalid command line")
+        if command == "saveSource":
+            self.saveImmediateState()
+        if command == "restoreSource":
+            self.restoreImmediateState()
+        if command == "saveXml":
+            self.saveXmlState()
+        if command == "restoreXml":
+            self.restoreXmlState()
         if command == "download":
             self.downloadDocumentationData()
         if command == "parseSourcefiles":

@@ -20,5 +20,5 @@ class LibraryDocumentationManager(DocumentationManager):
         print "Deleting old files..."
         subprocess.call(["rm", "-Rf", "docs.python.org"])
 
-manager = LibraryDocumentationManager("src/random.txt", "random", DocumentationParser)
+manager = LibraryDocumentationManager("src", "library", DocumentationParser, ["random.txt"])
 manager.runCommand(sys.argv)

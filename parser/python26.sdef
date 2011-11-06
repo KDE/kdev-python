@@ -52,6 +52,7 @@ RULE_FOR _expr;KIND Subscript_kind;ACTIONS create|SubscriptAst set|value->Expres
 RULE_FOR _expr;KIND Name_kind;ACTIONS create|NameAst set|identifier~>id set|context*>Context,ctx;;
 RULE_FOR _expr;KIND List_kind;ACTIONS create|ListAst set|elements=>ExpressionAst,elts set|context*>Context,ctx;;
 RULE_FOR _expr;KIND Tuple_kind;ACTIONS create|TupleAst set|elements=>ExpressionAst,elts set|context*>Context,ctx;;
+RULE_FOR _expr;KIND Set_kind;ACTIONS create|SetAst set|elements=>ExpressionAst,elts;;
 
 RULE_FOR _slice;KIND Slice_kind;ACTIONS create|SliceAst set|lower->ExpressionAst,lower set|upper->ExpressionAst,upper set|step->ExpressionAst,step;;
 RULE_FOR _slice;KIND ExtSlice_kind;ACTIONS create|ExtendedSliceAst set|dims=>SliceAst,dims;;

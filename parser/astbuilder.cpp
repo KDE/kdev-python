@@ -211,7 +211,7 @@ v->function->belongsToCall = v;
             }
         case Num_kind: {
                 NumberAst* v = new NumberAst(parent());
-                v->isInt = PyInt_Check(node->v.Num.n);
+v->isInt = PyInt_Check(node->v.Num.n);
                 result = v;
                 break;
             }
@@ -269,6 +269,12 @@ v->function->belongsToCall = v;
                 TupleAst* v = new TupleAst(parent());
                 nodeStack.push(v); v->elements = visitNodeList<_expr, ExpressionAst>(node->v.Tuple.elts); nodeStack.pop();
                 v->context = (ExpressionAst::Context) node->v.Tuple.ctx;
+                result = v;
+                break;
+            }
+        case Set_kind: {
+                SetAst* v = new SetAst(parent());
+                nodeStack.push(v); v->elements = visitNodeList<_expr, ExpressionAst>(node->v.Set.elts); nodeStack.pop();
                 result = v;
                 break;
             }

@@ -370,6 +370,7 @@ void DeclarationBuilder::visitImport(ImportAst* node)
 Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedName, Identifier* declarationIdentifier, Ast* rangeNode)
 {
     QPair<KUrl, QStringList> moduleInfo = findModulePath(dottedName);
+    kDebug() << dottedName;
     RangeInRevision range(RangeInRevision::invalid());
     if ( rangeNode ) {
         range = rangeForNode(rangeNode, false);
@@ -380,6 +381,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
     Q_ASSERT(range.isValid());
     
     kDebug() << "Found module path [path/path in file]: " << moduleInfo;
+    kDebug() << "Declaration identifier:" << declarationIdentifier->value;
     DUChainWriteLocker lock(DUChain::lock());
     ReferencedTopDUContext moduleContext = DUChain::self()->chainForDocument(IndexedString(moduleInfo.first));
     lock.unlock();

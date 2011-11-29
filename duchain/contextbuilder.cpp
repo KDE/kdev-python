@@ -296,7 +296,13 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
         tmp = currentPath;
         leftNameComponents = nameComponents;
         foreach ( QString component, nameComponents ) {
-            leftNameComponents.removeFirst();
+            if ( component == "*" ) {
+                component = "__init__";
+            }
+            // only empty the list if not importing *
+            else {
+                leftNameComponents.removeFirst();
+            }
             QString testFilename = tmp.path(KUrl::AddTrailingSlash) + component;
             KUrl sourceUrl = testFilename + ".py";
             QFile sourcefile(testFilename + ".py"); // we can only parse those, so we don't care about anything else for now.

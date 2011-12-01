@@ -167,6 +167,11 @@ private:
                 result = v;
                 break;
             }
+        case DictComp_kind: {
+                DictionaryComprehensionAst* v = new DictionaryComprehensionAst(parent());
+                result = v;
+                break;
+            }
         case GeneratorExp_kind: {
                 GeneratorExpressionAst* v = new GeneratorExpressionAst(parent());
                 nodeStack.push(v); v->element = static_cast<ExpressionAst*>(visitNode(node->v.GeneratorExp.elt)); nodeStack.pop();

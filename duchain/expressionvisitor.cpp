@@ -463,6 +463,33 @@ void ExpressionVisitor::visitList(ListAst* node)
     encounter<VariableLengthContainer>(type);
 }
 
+void ExpressionVisitor::visitDictComprehension(DictionaryComprehensionAst* node)
+{
+    AstDefaultVisitor::visitDictionaryComprehension(node);
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("dict", m_ctx);
+    encounter<VariableLengthContainer>(type);
+}
+
+void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
+{
+    kDebug() << "visiting list comprehension";
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
+    if ( type ) {
+        foreach ( ComprehensionAst* comprehension, node->generators ) {
+            visitNode(comprehension->iterator);
+            if ( VariableLengthContainer::Ptr iteratingOver = VariableLengthContainer::Ptr::dynamicCast(lastType()) ) {
+                type->addContentType(iteratingOver->contentType().abstractType());
+            }
+        }
+    }
+    else {
+        unknownTypeEncountered();
+    }
+    if ( type )
+        kDebug() << "Got type for List Comprehension:" << type->toString();
+    encounter<VariableLengthContainer>(type);
+}
+
 void ExpressionVisitor::visitTuple(TupleAst* node) {
     AstDefaultVisitor::visitTuple(node);
     AbstractType::Ptr type = typeObjectForIntegralType<AbstractType>("tuple", m_ctx);

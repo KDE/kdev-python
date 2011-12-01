@@ -46,7 +46,7 @@ using namespace KDevelop;
 
 namespace Python {
 
-UseBuilder::UseBuilder (PythonEditorIntegrator* editor) : UseBuilderBase()
+UseBuilder::UseBuilder (PythonEditorIntegrator* editor) : UseBuilderBase(), m_errorReportingEnabled(true)
 {
     setEditor(editor);
 }
@@ -65,7 +65,7 @@ void UseBuilder::visitName(NameAst* node)
     
     if ( declaration && declaration->range() == useRange ) return;
     
-    if ( ! declaration && ! keywords.contains(node->identifier->value) ) {
+    if ( ! declaration && ! keywords.contains(node->identifier->value) && m_errorReportingEnabled ) {
         KDevelop::Problem *p = new KDevelop::Problem();
         p->setFinalLocation(DocumentRange(currentlyParsedDocument(), useRange.castToSimpleRange())); // TODO ok?
         p->setSource(KDevelop::ProblemData::SemanticAnalysis);
@@ -87,6 +87,25 @@ void UseBuilder::visitName(NameAst* node)
     /// end debug
     UseBuilderBase::newUse(node, useRange, DeclarationPointer(declaration));
 //     kDebug() << "USE FOUND:" << topContext()->findUseAt(useRange.start) << "for declaration" << declaration->toString();
+}
+
+void UseBuilder::visitListComprehension(ListComprehensionAst* node)
+{
+    // TODO fix this properly
+    // due to duchain limitations, we currently cannot declare the "x"
+    // in "[x for x in range(3)]" properly. Thus, it's always reported as an error;
+    // we at least avoid this here, so it's displayed in plain black with no
+    // language support whatsoever.
+    disableErrorReporting();
+    AstDefaultVisitor::visitListComprehension(node);
+    enableErrorReporting();
+}
+
+void UseBuilder::visitDictionaryComprehension(DictionaryComprehensionAst* node)
+{
+    disableErrorReporting();
+    AstDefaultVisitor::visitDictionaryComprehension(node);
+    enableErrorReporting();
 }
 
 void UseBuilder::visitAttribute(AttributeAst* node)

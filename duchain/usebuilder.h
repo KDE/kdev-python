@@ -45,6 +45,8 @@ public:
 protected:
     virtual void visitName(NameAst* node);
     virtual void visitAttribute(AttributeAst* node);
+    virtual void visitListComprehension(ListComprehensionAst* node);
+    virtual void visitDictionaryComprehension(DictionaryComprehensionAst* node);
 private:
     ParseSession* m_session;
     PythonEditorIntegrator* m_editor;
@@ -53,6 +55,13 @@ private:
         return m_nextUseStack.top();
     }
     QStack<int> m_nextUseStack;
+    bool m_errorReportingEnabled;
+    inline void disableErrorReporting() {
+        m_errorReportingEnabled = false;
+    };
+    inline void enableErrorReporting() {
+        m_errorReportingEnabled = true;
+    };
 };
 
 }

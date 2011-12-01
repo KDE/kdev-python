@@ -1,6 +1,9 @@
 def func(foo, bar, *args, **kwargs):
     pass
 
+    
+comprehended_list = [x for x in [1, 2, 3] if x in ('a')]
+    
 def func(**kwargs):
     for item in kwargs.iterkeys():
         print item

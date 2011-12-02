@@ -477,8 +477,13 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
     if ( type ) {
         foreach ( ComprehensionAst* comprehension, node->generators ) {
             visitNode(comprehension->iterator);
+            kDebug() << lastType()->toString();
             if ( VariableLengthContainer::Ptr iteratingOver = VariableLengthContainer::Ptr::dynamicCast(lastType()) ) {
                 type->addContentType(iteratingOver->contentType().abstractType());
+            }
+            // iterating over strings expands to strings
+            else if ( lastType()->indexed() == typeObjectForIntegralType<AbstractType>("string", m_ctx)->indexed() ) {
+                type->addContentType(typeObjectForIntegralType<AbstractType>("string", m_ctx));
             }
         }
     }

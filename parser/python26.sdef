@@ -39,7 +39,7 @@ RULE_FOR _expr;KIND Lambda_kind;ACTIONS create|LambdaAst set|arguments->Argument
 RULE_FOR _expr;KIND IfExp_kind;ACTIONS create|IfExpressionAst set|condition->ExpressionAst,test set|body->ExpressionAst,body set|orelse->ExpressionAst,orelse;;
 RULE_FOR _expr;KIND Dict_kind;ACTIONS create|DictAst set|keys=>ExpressionAst,keys set|values=>ExpressionAst,values;;
 RULE_FOR _expr;KIND ListComp_kind;ACTIONS create|ListComprehensionAst set|element->ExpressionAst,elt set|generators=>ComprehensionAst,generators;;
-RULE_FOR _expr;KIND DictComp_kind;ACTIONS create|DictionaryComprehensionAst set|element->ExpressionAst,elt set|generators=>ComprehensionAst,generators;;
+RULE_FOR _expr;KIND DictComp_kind;ACTIONS create|DictionaryComprehensionAst set|key->ExpressionAst,key set|value->ExpressionAst,value set|generators=>ComprehensionAst,generators;;
 RULE_FOR _expr;KIND GeneratorExp_kind;ACTIONS create|GeneratorExpressionAst set|element->ExpressionAst,elt set|generators=>ComprehensionAst,generators;;
 RULE_FOR _expr;KIND Yield_kind;ACTIONS create|YieldAst set|value->ExpressionAst,value;;
 RULE_FOR _expr;KIND Compare_kind;ACTIONS create|CompareAst set|leftmostElement->ExpressionAst,left set|operators#>ComparisonOperatorTypes,ops set|comparands=>ExpressionAst,comparators;;

@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "ast.h"
+#include "astbuilder.h"
 
 namespace Python
 {
@@ -27,7 +28,7 @@ namespace Python
 // so we provide pseudo implementations
 // there's nothing happening here, don't bother reading the code
     
-Ast::Ast( Ast* parent, Ast::AstType type ) : parent(parent), astType( type ), startCol(0), startLine(-5), endCol(0), endLine(0), hasUsefulRangeInformation(false), context(0) { }
+Ast::Ast( Ast* parent, Ast::AstType type ) : parent(parent), astType( type ), startCol(0), startLine(tline(-5)), endCol(0), endLine(0), hasUsefulRangeInformation(false), context(0) { }
 Ast::Ast() :  parent(0), startCol(0), startLine(-5), endCol(0), endLine(0), hasUsefulRangeInformation(false), context(0) { }
 Ast::~Ast() { }
 

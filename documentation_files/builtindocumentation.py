@@ -224,8 +224,29 @@ class UnicodeWarning(Warning):
     pass
 
 @IndexedTypeContainer
-class __kdevpythondocumentation_builtin_tuple(self,):
+class __kdevpythondocumentation_builtin_tuple():
     pass
+
+@TypeContainer
+class __kdevpythondocumentation_builtin_set():
+    def len(self): return 0
+    def isdisjoint(self, other): return True
+    def issubset(self, other): return True
+    def issuperset(self, other): return True
+    def union(self, other, *others): return __kdevpythondocumentation_builtin_set()
+    def intersetion(self, other, *others): return __kdevpythondocumentation_builtin_set()
+    def difference(self, other, *others): return __kdevpythondocumentation_builtin_set()
+    def symmetric_difference(self, other): return __kdevpythondocumentation_builtin_set()
+    def copy(self): return __kdevpythondocumentation_builtin_set()
+    def update(self, other): pass
+    def intersection_update(self, other, *others): pass
+    def difference_update(self, other, *others): pass
+    def symmetric_difference_update(self, other, *others): pass
+    def add(self, elem): pass
+    def remove(self, elem): pass
+    def discard(self, elem): pass
+    def pop(self): pass
+    def clear(self): pass
 
 def abs(x): return 0
 def int(x): return 0
@@ -250,7 +271,7 @@ def file(filename, mode = None, bufsize = None): return None
 def filter(function, iterable): return []
 def float(x = 0): return 0.0
 def format(value, format_spec = None): return ""
-def frozenset(iterable = None): return ()
+def frozenset(iterable = None): return __kdevpythondocumentation_builtin_set()
 def getattr(obj, name, default = None): return None
 def globals(): return {}
 def hasattr(obj, name): return bool
@@ -283,7 +304,7 @@ def reload(module) : return None
 def repr(object): return ""
 def reversed(seq): return __kdevpythondocumentation_builtin_iterator()
 def round(x, n=0): return 0.0
-def set(iterable = None): return ( )
+def set(iterable = None): return __kdevpythondocumentation_builtin_set()
 def setattr(obj, name, value): return None
 def slice(start = 0, stop = 0, step = 0): return __kdevpythondocumentation_builtin_sliceObject()
 def sorted(iterable, cmpre = None, key = None, reverse = False): return []

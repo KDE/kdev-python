@@ -21,6 +21,7 @@ class __kdevpythondocumentation_builtin_list():
     def count(self,x): return 0
     def sort(self,): return self
     def reverse(self,): return self
+    def remove(self, x): pass
 
 class __kdevpythondocumentation_builtin_fileObject():
     def close(self,): return None

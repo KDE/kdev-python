@@ -3,6 +3,7 @@ def func(foo, bar, *args, **kwargs):
 
     
 comprehended_list = [x for x in [1, 2, 3] if x in ('a')]
+print x
     
 def func(**kwargs):
     for item in kwargs.iterkeys():

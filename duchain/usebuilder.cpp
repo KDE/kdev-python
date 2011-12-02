@@ -108,6 +108,13 @@ void UseBuilder::visitDictionaryComprehension(DictionaryComprehensionAst* node)
     enableErrorReporting();
 }
 
+void UseBuilder::visitGeneratorExpression(GeneratorExpressionAst* node)
+{
+    disableErrorReporting();
+    Python::AstDefaultVisitor::visitGeneratorExpression(node);
+    enableErrorReporting();
+}
+
 void UseBuilder::visitAttribute(AttributeAst* node)
 {
     ExpressionVisitor v(currentContext(), editor());

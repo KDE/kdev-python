@@ -493,8 +493,10 @@ void DeclarationBuilder::visitCall(CallAst* node)
 {
     Python::AstDefaultVisitor::visitCall(node);
     KDEBUG_BLOCK
+    kDebug() << "Visiting call";
     ExpressionVisitor functionVisitor(currentContext(), editor());
     functionVisitor.visitNode(node);
+    kDebug() << functionVisitor.lastFunctionDeclaration();
     if ( node->function && node->function->astType == Ast::AttributeAstType && functionVisitor.lastFunctionDeclaration() ) {
         kDebug() << "Checking for list content updates...";
         ExpressionVisitor v(currentContext(), editor());

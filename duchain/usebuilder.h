@@ -47,6 +47,7 @@ protected:
     virtual void visitAttribute(AttributeAst* node);
     virtual void visitListComprehension(ListComprehensionAst* node);
     virtual void visitDictionaryComprehension(DictionaryComprehensionAst* node);
+    virtual void visitGeneratorExpression(GeneratorExpressionAst* node);
 private:
     ParseSession* m_session;
     PythonEditorIntegrator* m_editor;

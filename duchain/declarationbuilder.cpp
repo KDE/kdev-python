@@ -223,13 +223,16 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         if ( ! dec ) {
             kDebug() << "This declaration is a new one";
             dec = openDeclaration<T>(node, originalAst ? originalAst : node);
+            declarationOpened = true;
         }
         /*
         else {
             kDebug() << "This declaration is old, and has the following type: " << dec->abstractType()->toString();
         }
         */
-        DeclarationBuilderBase::closeDeclaration();
+        if ( declarationOpened ) {
+            DeclarationBuilderBase::closeDeclaration();
+        }
         UnsureType::Ptr hints = Helper::extractTypeHints(dec->abstractType(), topContext());
         kDebug() << "Type Hints: " << hints->toString();
         AbstractType::Ptr newType = Helper::mergeTypes(hints.cast<AbstractType>(), lastType(), topContext());

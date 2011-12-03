@@ -158,6 +158,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     // specified from outside
     if ( previous ) {
         existingDeclarations << previous;
+        kDebug() << previous->toString();
     }
     // find decls by ourselves
     else {
@@ -177,14 +178,21 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         kDebug() << "Found " << existingDeclarations.length() << "declarations";
     }
     QList<Declaration*> remainingDeclarations;
+    bool declarationOpened = false;
     foreach ( Declaration* d, existingDeclarations ) {
         Declaration* fitting = dynamic_cast<T*>(d);
         kDebug() << "last one: " << d << d->toString() << dynamic_cast<T*>(d) << wasEncountered(d);
         bool invalidType = d && d->abstractType() && lastType() && lastType()->whichType() != AbstractType::TypeFunction && d->isFunctionDeclaration();
         if ( fitting && ! wasEncountered(d) && ! invalidType ) {
-            kDebug() << "Opening previously existing declaration for " << d->toString();
-            openDeclarationInternal(d);
-            d->setRange(editorFindRange(node, node));
+            if ( d->topContext() == currentContext()->topContext() ) {
+                kDebug() << "Opening previously existing declaration for " << d->toString();
+                openDeclarationInternal(d);
+                d->setRange(editorFindRange(node, node));
+                declarationOpened = true;
+            }
+            else {
+                kDebug() << "Not opening previously existing declaration because it's in another top context";
+            }
             setEncountered(d);
             dec = d;
         }
@@ -200,8 +208,13 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     if ( currentContext() && currentContext()->type() == DUContext::Class && noFittingDeclaration ) {
         kDebug() << "Creating class member declaration for " << node->value << node->startLine << ":" << node->startCol;
         kDebug() << "Context type: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
-        if ( ! dec ) dec = openDeclaration<ClassMemberDeclaration>(node, originalAst ? originalAst : node);
-        DeclarationBuilderBase::closeDeclaration();
+        if ( ! dec ) {
+            dec = openDeclaration<ClassMemberDeclaration>(node, originalAst ? originalAst : node);
+            declarationOpened = true;
+        }
+        if ( declarationOpened ) {
+            DeclarationBuilderBase::closeDeclaration();
+        }
         dec->setType(lastType());
         dec->setKind(KDevelop::Declaration::Instance);
     } else if ( noFittingDeclaration ) {

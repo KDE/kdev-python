@@ -42,13 +42,60 @@ namespace Python
 {
 
 #include "generated.h"
+#include <interfaces/icore.h>
+#include <interfaces/iprojectcontroller.h>
+#include <interfaces/iproject.h>
 
 QMutex AstBuilder::pyInitLock;
 QString AstBuilder::pyHomeDir = KStandardDirs::locate("data", "");
 
-QString fileHeaderHack(const QString& contents, const KUrl& filename)
+QPair<QString, int> fileHeaderHack(const QString& contents, const KUrl& filename)
 {
-    return contents;
+    IProject* proj = ICore::self()->projectController()->findProjectForUrl(filename);
+    // the file is not in a project, don't apply hack
+    if ( ! proj ) {
+        return;
+    }
+    const KUrl headerFileUrl = proj->folder().path(KUrl::AddTrailingSlash) + ".kdev_python_header";
+    const QFile headerFile(headerFileUrl.path());
+    if ( headerFile.exists() ) {
+        headerFile.open(QIODevice::ReadOnly);
+        QString headerFileContents = headerFile.readAll();
+        headerFile.close();
+        kDebug() << "Found header file, applying hack";
+        int insertAt = 0;
+        bool endOfCommentsReached = false;
+        bool commentSignEncountered = false;
+        bool atLineBeginning = true;
+        int lastLineBeginning = 0;
+        int l = contents.length();
+        do {
+            if ( insertAt >= l ) {
+                kDebug() << "File consist only of comments, not applying hack";
+                return contents;
+            }
+            if ( contents.at(insertAt) == '#' ) {
+                commentSignEncountered = true;
+            }
+            if ( not contents.at(insertAt).isSpace() ) {
+                atLineBeginning = false;
+                if ( not commentSignEncountered ) {
+                    endOfCommentsReached = true;
+                }
+            }
+            if ( contents.at(insertAt) == '\n' ) {
+                atLineBeginning = true;
+                commentSignEncountered = false;
+                lastLineBeginning = insertAt;
+            }
+            insertAt += 1;
+        } while ( not endOfCommentsReached );
+        kDebug() << "Inserting contents at char" << lastLineBeginning << "of file";
+        contents = contents.left(lastLineBeginning) 
+                   + "\n" + headerFileContents + "\n" 
+                   + contents.right(lastLineBeginning + headerFileContents.length() + 2);
+    }
+    
 }
 
 CodeAst* AstBuilder::parse(KUrl filename, QString& contents)

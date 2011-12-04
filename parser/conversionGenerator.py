@@ -56,6 +56,7 @@ direct_assignment_line_any = '''                v->%{TARGET} = node->v.%{VALUE};
 cast_operator_line = '''                v->%{TARGET} = (ExpressionAst::%{AST_TYPE}) node->v.%{KIND_W/O_SUFFIX}.%{VALUE};'''
 resolve_string = '''                v->%{TARGET} = PyString_AsString(PyObject_Str(node->v.%{KIND_W/O_SUFFIX}.%{VALUE}));'''
 assign_mindless = '''              v->%{TARGET} = node->%{VALUE};'''
+assign_linetransform = '''              v->%{TARGET} = tline(node->%{VALUE});'''
 resolve_oplist_block = '''
                 for ( int _i = 0; _i < node->v.%{KIND_W/O_SUFFIX}.%{VALUE}->size; _i++ ) {
                     v->%{TARGET}.append((ExpressionAst::%{AST_TYPE}) node->v.%{KIND_W/O_SUFFIX}.%{VALUE}->elements[_i]);
@@ -134,7 +135,7 @@ for rule in contents:
             
             
             # commands with one argument
-            if commandType in ['~', ':', '$', '+']:
+            if commandType in ['~', ':', '$', '+', 'l']:
                 if commandType == ':':
                     raw = direct_assignment_line if not any else direct_assignment_line_any
                 if commandType == '~':
@@ -145,6 +146,8 @@ for rule in contents:
                     raw = resolve_string
                 if commandType == '+':
                     raw = assign_mindless;
+                if commandType == 'l':
+                    raw = assign_linetransform;
                 value = s[0]
             # commands with two arguments
             else:

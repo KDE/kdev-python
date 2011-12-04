@@ -17,9 +17,9 @@ public:
     }
     // Shift lines by some fixed amount
     inline int tline(int line) {
-        if ( line == -5 ) {
+        if ( line == -99999 ) {
             // don't touch the marker
-            return -5;
+            return -99999;
         }
         return line + m_lineOffset;
     };
@@ -246,7 +246,7 @@ v->isInt = PyInt_Check(node->v.Num.n);
                     parent->endLine = result->endLine;
                     parent->endCol = result->endCol;
                 }
-                if ( ! parent->hasUsefulRangeInformation && parent->startLine == tline(-5) ) {
+                if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
                     parent->startLine = result->startLine;
                     parent->startCol = result->startCol;
                 }
@@ -291,7 +291,7 @@ v->isInt = PyInt_Check(node->v.Num.n);
                     parent->endLine = result->endLine;
                     parent->endCol = result->endCol;
                 }
-                if ( ! parent->hasUsefulRangeInformation && parent->startLine == tline(-5) ) {
+                if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
                     parent->startLine = result->startLine;
                     parent->startCol = result->startCol;
                 }
@@ -566,7 +566,7 @@ v->isInt = PyInt_Check(node->v.Num.n);
                     parent->endLine = result->endLine;
                     parent->endCol = result->endCol;
                 }
-                if ( ! parent->hasUsefulRangeInformation && parent->startLine == tline(-5) ) {
+                if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
                     parent->startLine = result->startLine;
                     parent->startCol = result->startCol;
                 }
@@ -628,7 +628,7 @@ v->isInt = PyInt_Check(node->v.Num.n);
                     parent->endLine = result->endLine;
                     parent->endCol = result->endCol;
                 }
-                if ( ! parent->hasUsefulRangeInformation && parent->startLine == tline(-5) ) {
+                if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
                     parent->startLine = result->startLine;
                     parent->startCol = result->startCol;
                 }
@@ -655,9 +655,9 @@ v->isInt = PyInt_Check(node->v.Num.n);
             v->kwarg = node->kwarg ? new Python::Identifier(PyString_AsString(PyObject_Str(node->kwarg))) : 0;
             nodeStack.push(v); v->arguments = visitNodeList<_expr, ExpressionAst>(node->args); nodeStack.pop();
             nodeStack.push(v); v->defaultValues = visitNodeList<_expr, ExpressionAst>(node->defaults); nodeStack.pop();
-              v->arg_lineno = node->arg_lineno;
+              v->arg_lineno = tline(node->arg_lineno);
               v->arg_col_offset = node->arg_col_offset;
-              v->vararg_lineno = node->vararg_lineno;
+              v->vararg_lineno = tline(node->vararg_lineno);
               v->vararg_col_offset = node->vararg_col_offset;
         return v;
     }

@@ -867,22 +867,17 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     }
     type->setDeclaration(dec);
     dec->setType(type);
-    lock.unlock();
     
     openType(type);
     
     // needs to be done here, so the assignment of the internal context happens before visiting the body
     
     openContextForClassDefinition(node);
-    lock.lock();
     dec->setInternalContext(currentContext());
-    lock.unlock();
     // yes, we do not call the context builder here, because contexts are already open
     AstDefaultVisitor::visitClassDefinition( node );
-    lock.lock();
     kDebug() << " --- closing CLASS context: " << currentContext()->range().castToSimpleRange();
     closeContext();
-    lock.unlock();
     
     closeType();
     

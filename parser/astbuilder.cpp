@@ -35,6 +35,10 @@
 
 #include "python_header.h"
 
+#include <interfaces/icore.h>
+#include <interfaces/iprojectcontroller.h>
+#include <interfaces/iproject.h>
+
 using namespace KDevelop;
 extern grammar _PyParser_Grammar;
 
@@ -42,25 +46,23 @@ namespace Python
 {
 
 #include "generated.h"
-#include <interfaces/icore.h>
-#include <interfaces/iprojectcontroller.h>
-#include <interfaces/iproject.h>
 
 QMutex AstBuilder::pyInitLock;
 QString AstBuilder::pyHomeDir = KStandardDirs::locate("data", "");
 
-QPair<QString, int> fileHeaderHack(const QString& contents, const KUrl& filename)
+QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
 {
     IProject* proj = ICore::self()->projectController()->findProjectForUrl(filename);
     // the file is not in a project, don't apply hack
     if ( ! proj ) {
-        return;
+        return QPair<QString, int>(contents, 0);
     }
     const KUrl headerFileUrl = proj->folder().path(KUrl::AddTrailingSlash) + ".kdev_python_header";
-    const QFile headerFile(headerFileUrl.path());
+    QFile headerFile(headerFileUrl.path());
+    QString headerFileContents;
     if ( headerFile.exists() ) {
         headerFile.open(QIODevice::ReadOnly);
-        QString headerFileContents = headerFile.readAll();
+        headerFileContents = headerFile.readAll();
         headerFile.close();
         kDebug() << "Found header file, applying hack";
         int insertAt = 0;
@@ -68,11 +70,12 @@ QPair<QString, int> fileHeaderHack(const QString& contents, const KUrl& filename
         bool commentSignEncountered = false;
         bool atLineBeginning = true;
         int lastLineBeginning = 0;
+        int newlineCount = 0;
         int l = contents.length();
         do {
             if ( insertAt >= l ) {
                 kDebug() << "File consist only of comments, not applying hack";
-                return contents;
+                return QPair<QString, int>(contents, 0);
             }
             if ( contents.at(insertAt) == '#' ) {
                 commentSignEncountered = true;
@@ -87,22 +90,32 @@ QPair<QString, int> fileHeaderHack(const QString& contents, const KUrl& filename
                 atLineBeginning = true;
                 commentSignEncountered = false;
                 lastLineBeginning = insertAt;
+                newlineCount += 1;
+            }
+            if ( newlineCount == 2 ) {
+                endOfCommentsReached = true;
             }
             insertAt += 1;
         } while ( not endOfCommentsReached );
         kDebug() << "Inserting contents at char" << lastLineBeginning << "of file";
         contents = contents.left(lastLineBeginning) 
-                   + "\n" + headerFileContents + "\n" 
-                   + contents.right(lastLineBeginning + headerFileContents.length() + 2);
+                   + "\n" + headerFileContents + "\n#\n" 
+                   + contents.right(contents.length() - lastLineBeginning);
+        kDebug() << contents;
+        return QPair<QString, int>(contents, - ( headerFileContents.count('\n') + 3 ));
     }
-    
+    else {
+        return QPair<QString, int>(contents, 0);
+    }
 }
 
 CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
 {
     Py_NoSiteFlag = 1;
     
-    contents = fileHeaderHack(contents, filename);
+    QPair<QString, int> hacked = fileHeaderHack(contents, filename);
+    contents = hacked.first;
+    int lineOffset = hacked.second;
     
     AstBuilder::pyInitLock.lock();
     Py_SetPythonHome(AstBuilder::pyHomeDir.toAscii().data());
@@ -155,8 +168,8 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
         int colno = PyInt_AsLong(colnoobj);
         
         ProblemPointer p(new Problem());
-        SimpleCursor start(lineno, (colno-4 > 0 ? colno-4 : 0));
-        SimpleCursor end(lineno, (colno+4 > 4 ? colno+4 : 4));
+        SimpleCursor start(lineno + lineOffset, (colno-4 > 0 ? colno-4 : 0));
+        SimpleCursor end(lineno + lineOffset, (colno+4 > 4 ? colno+4 : 4));
         SimpleRange range(start, end);
         kDebug() << "Problem range: " << range;
         DocumentRange location(IndexedString(filename.path()), range);
@@ -287,7 +300,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     }
     kDebug() << "Got syntax tree from python parser:" << syntaxtree->kind << Module_kind;
 
-    PythonAstTransformer* t = new PythonAstTransformer();
+    PythonAstTransformer* t = new PythonAstTransformer(lineOffset);
     t->run(syntaxtree, filename.fileName().replace(".py", ""));
     kDebug() << t->ast;
     

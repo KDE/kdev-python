@@ -43,12 +43,7 @@ namespace Python
 
 typedef QMap<QString, QString> stringDictionary;
 
-// Shift lines by some fixed amount
-inline int tline(int line) {
-    return line;
-};
-
-QString fileHeaderHack(const QString& contents, const KUrl& filename);
+QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename);
 
 class KDEVPYTHONPARSER_EXPORT AstBuilder
 {

@@ -6,6 +6,7 @@
 class PythonAstTransformer {
 public:
     CodeAst* ast;
+    PythonAstTransformer(int lineOffset) : m_lineOffset(lineOffset) {};
     void run(mod_ty syntaxtree, QString moduleName) {
         ast = new CodeAst();
         ast->name = new Identifier(moduleName);
@@ -14,8 +15,17 @@ public:
         nodeStack.pop();
         Q_ASSERT(nodeStack.isEmpty());
     }
+    // Shift lines by some fixed amount
+    inline int tline(int line) {
+        if ( line == -5 ) {
+            // don't touch the marker
+            return -5;
+        }
+        return line + m_lineOffset;
+    };
 private:
     QStack<Ast*> nodeStack;
+    int m_lineOffset;
     
     Ast* parent() {
         return nodeStack.top();

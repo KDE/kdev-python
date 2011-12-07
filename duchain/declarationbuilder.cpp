@@ -120,16 +120,22 @@ void DeclarationBuilder::closeDeclaration()
 
 template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, Declaration* previous)
 {
-    NameAst* currentVariableDefinition = dynamic_cast<NameAst*>(node);
-    // those contexts can invoke a variable declaration
-    // this prevents "bar" from being declared in something like "foo = bar"
-    QList<ExpressionAst::Context> declaringContexts;
-    declaringContexts << ExpressionAst::Store << ExpressionAst::Parameter << ExpressionAst::AugStore;
-    if ( ! declaringContexts.contains(currentVariableDefinition->context) ) {
-            return 0;
+    if ( node->astType == Ast::NameAstType ) {
+        NameAst* currentVariableDefinition = static_cast<NameAst*>(node);
+        // those contexts can invoke a variable declaration
+        // this prevents "bar" from being declared in something like "foo = bar"
+        QList<ExpressionAst::Context> declaringContexts;
+        declaringContexts << ExpressionAst::Store << ExpressionAst::Parameter << ExpressionAst::AugStore;
+        if ( ! declaringContexts.contains(currentVariableDefinition->context) ) {
+                return 0;
+        }
+        Identifier* id = currentVariableDefinition->identifier;
+        return visitVariableDeclaration<T>(id, currentVariableDefinition, previous);
     }
-    Identifier* id = currentVariableDefinition->identifier;
-    return visitVariableDeclaration<T>(id, currentVariableDefinition, previous);
+    else {
+        kWarning() << "cannot create variable declaration for non-name AST, this is a programming error";
+        return static_cast<T*>(0);
+    }
 }
 
 template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, RangeInRevision range)
@@ -428,6 +434,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
         kDebug() << "Got module, importing it" << declarationIdentifier->value;
         Declaration* lastDeclaration = 0;
         QStringList nameComponents = declarationIdentifier->value.split('.');
+        int depth = 0;
         
         for ( int i = nameComponents.length() - 1; i >= 0; i-- ) {
             QStringList currentName;
@@ -436,52 +443,71 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
             }
             lastDeclaration = findDeclarationInContext(currentName, topContext());
             if ( lastDeclaration and lastDeclaration->range() < range ) {
+                depth = i;
                 break;
             }
         }
         
-        if ( not lastDeclaration ) {
-            // no similar import exists yet, so proceed normally
-            QList<Declaration*> openedDeclarations;
-            QList<StructureType::Ptr> openedTypes;
-            QList<DUContext*> openedContexts;
-            bool extendingPreviousImports = true;
-            DUContext* extendingPreviousImportCtx = currentContext()->topContext();
-            
-            DUChainWriteLocker lock(DUChain::lock());
-            for ( int i = 0; i < nameComponents.length(); i++ ) {
-                const QString& component = nameComponents.at(i);
-                kDebug() << "creating context for " << component;
-                Identifier* temporaryIdentifier = new Identifier(component);
-                Declaration* d = 0;
-                StructureType::Ptr moduleType;
-                QList<Declaration*> decls = extendingPreviousImportCtx->findDeclarations(KDevelop::Identifier(component));
-                extendingPreviousImports = false;
-                if ( not extendingPreviousImports ) {
-                    moduleType = StructureType::Ptr(new StructureType());
-                    temporaryIdentifier->copyRange(declarationIdentifier);
-                    openType(moduleType);
-                    d = visitVariableDeclaration<Declaration>(temporaryIdentifier, range);
-                    openedContexts.append(openContext(declarationIdentifier, KDevelop::DUContext::Other));
-                }
-                if ( i == nameComponents.length() - 1 ) {
-                    currentContext()->addImportedParentContext(moduleContext);
-                }
-                openedDeclarations.append(d);
-                openedTypes.append(moduleType);
+        DUContext* extendingPreviousImportCtx = 0;
+        QStringList remainingNameComponents;
+        bool injectingContext = false;
+        if ( lastDeclaration and lastDeclaration->internalContext() ) {
+            kDebug() << "Found existing import statement while creating declaration for " << declarationIdentifier->value;
+            for ( int i = depth; i < nameComponents.length(); i++ ) {
+                remainingNameComponents.append(nameComponents.at(i));
             }
-            for ( int i = nameComponents.length() - 1; i >= 0; i-- ) {
-                kDebug() << "closing context";
-                closeType();
-                closeContext();
-                Declaration* d = openedDeclarations.at(i);
-                openedTypes[i]->setDeclaration(d);
-                d->setType(openedTypes.at(i));
-                d->setInternalContext(openedContexts.at(i));
-            }
+            extendingPreviousImportCtx = lastDeclaration->internalContext();
+            injectContext(extendingPreviousImportCtx);
+            injectingContext = true;
         }
         else {
-            kDebug() << "Found existing import statement while creating declaration for " << declarationIdentifier->value;
+            remainingNameComponents = nameComponents;
+            extendingPreviousImportCtx = topContext();
+        }
+        
+        // now, proceed normally
+        QList<Declaration*> openedDeclarations;
+        QList<StructureType::Ptr> openedTypes;
+        QList<DUContext*> openedContexts;
+        bool extendingPreviousImports = true;
+        
+        DUChainWriteLocker lock(DUChain::lock());
+        for ( int i = 0; i < remainingNameComponents.length(); i++ ) {
+            const QString& component = remainingNameComponents.at(i);
+            kDebug() << "creating context for " << component;
+            Identifier* temporaryIdentifier = new Identifier(component);
+            Declaration* d = 0;
+            StructureType::Ptr moduleType;
+            moduleType = StructureType::Ptr(new StructureType());
+            temporaryIdentifier->copyRange(declarationIdentifier);
+            openType(moduleType);
+            d = visitVariableDeclaration<Declaration>(temporaryIdentifier);
+            if ( d ) {
+                if ( topContext() != extendingPreviousImportCtx ) {
+                    d->setRange(RangeInRevision(extendingPreviousImportCtx->range().start, extendingPreviousImportCtx->range().start));
+                }
+                d->setAutoDeclaration(true);
+//                 currentContext()->createUse(d->ownIndex(), editorFindRange(attrib, attrib));
+            }
+            openedContexts.append(openContext(declarationIdentifier, KDevelop::DUContext::Other));
+            if ( i == remainingNameComponents.length() - 1 ) {
+                currentContext()->addImportedParentContext(moduleContext);
+            }
+            openedDeclarations.append(d);
+            openedTypes.append(moduleType);
+        }
+        for ( int i = remainingNameComponents.length() - 1; i >= 0; i-- ) {
+            kDebug() << "closing context";
+            closeType();
+            closeContext();
+            Declaration* d = openedDeclarations.at(i);
+            openedTypes[i]->setDeclaration(d);
+            d->setType(openedTypes.at(i));
+            d->setInternalContext(openedContexts.at(i));
+        }
+        
+        if ( injectingContext ) {
+            closeInjectedContext();
         }
     }
     else {

@@ -425,23 +425,64 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
     }
     if ( moduleInfo.second.isEmpty() ) {
         // import the whole module
-        kDebug() << "Got module, importing it";
-        StructureType::Ptr moduleType(new StructureType());
-        openType(moduleType);
-        DUChainWriteLocker lock(DUChain::lock());
-        setLastType(AbstractType::Ptr(0));
-        resultingDeclaration = visitVariableDeclaration<Declaration>(declarationIdentifier, range);
-        Q_ASSERT(resultingDeclaration);
-        closeType();
-        // create a wrapper context, import the context for the file into that context, and add it using a declaration
-        DUContext* wrapperContext = openContext(declarationIdentifier, KDevelop::DUContext::Other);
-        closeContext();
-        wrapperContext->addImportedParentContext(moduleContext);
-        moduleType->setDeclaration(resultingDeclaration);
-        resultingDeclaration->setType(moduleType);
-        if ( m_builtinFunctionsContext )
-            wrapperContext->removeImportedParentContext(m_builtinFunctionsContext.data());
-        resultingDeclaration->setInternalContext(wrapperContext);
+        kDebug() << "Got module, importing it" << declarationIdentifier->value;
+        Declaration* lastDeclaration = 0;
+        QStringList nameComponents = declarationIdentifier->value.split('.');
+        
+        for ( int i = nameComponents.length() - 1; i >= 0; i-- ) {
+            QStringList currentName;
+            for ( int j = 0; j < i; j++ ) {
+                currentName.append(nameComponents.at(j));
+            }
+            lastDeclaration = findDeclarationInContext(currentName, topContext());
+            if ( lastDeclaration and lastDeclaration->range() < range ) {
+                break;
+            }
+        }
+        
+        if ( not lastDeclaration ) {
+            // no similar import exists yet, so proceed normally
+            QList<Declaration*> openedDeclarations;
+            QList<StructureType::Ptr> openedTypes;
+            QList<DUContext*> openedContexts;
+            bool extendingPreviousImports = true;
+            DUContext* extendingPreviousImportCtx = currentContext()->topContext();
+            
+            DUChainWriteLocker lock(DUChain::lock());
+            for ( int i = 0; i < nameComponents.length(); i++ ) {
+                const QString& component = nameComponents.at(i);
+                kDebug() << "creating context for " << component;
+                Identifier* temporaryIdentifier = new Identifier(component);
+                Declaration* d = 0;
+                StructureType::Ptr moduleType;
+                QList<Declaration*> decls = extendingPreviousImportCtx->findDeclarations(KDevelop::Identifier(component));
+                extendingPreviousImports = false;
+                if ( not extendingPreviousImports ) {
+                    moduleType = StructureType::Ptr(new StructureType());
+                    temporaryIdentifier->copyRange(declarationIdentifier);
+                    openType(moduleType);
+                    d = visitVariableDeclaration<Declaration>(temporaryIdentifier, range);
+                    openedContexts.append(openContext(declarationIdentifier, KDevelop::DUContext::Other));
+                }
+                if ( i == nameComponents.length() - 1 ) {
+                    currentContext()->addImportedParentContext(moduleContext);
+                }
+                openedDeclarations.append(d);
+                openedTypes.append(moduleType);
+            }
+            for ( int i = nameComponents.length() - 1; i >= 0; i-- ) {
+                kDebug() << "closing context";
+                closeType();
+                closeContext();
+                Declaration* d = openedDeclarations.at(i);
+                openedTypes[i]->setDeclaration(d);
+                d->setType(openedTypes.at(i));
+                d->setInternalContext(openedContexts.at(i));
+            }
+        }
+        else {
+            kDebug() << "Found existing import statement while creating declaration for " << declarationIdentifier->value;
+        }
     }
     else {
         // import a specific declaration from the given file
@@ -777,7 +818,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             DUContextPointer internal(0);
             DeclarationPointer parentObjectDeclaration = checkPreviousAttributes.lastDeclaration();
             AbstractType::Ptr type = checkPreviousAttributes.lastType();
-        
+            
             if ( ! parentObjectDeclaration ) {
                 kWarning() << "No declaration for attribute base, aborting creation of attribute";
                 continue;

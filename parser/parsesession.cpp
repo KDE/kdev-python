@@ -34,7 +34,7 @@ using namespace KDevelop;
 namespace Python
 {
 
-ParseSession::ParseSession() : m_futureModificationRevision()
+ParseSession::ParseSession() : m_futureModificationRevision(), m_currentDocument(KDevelop::IndexedString("<invalid>"))
 {
 }
 ParseSession::~ParseSession()

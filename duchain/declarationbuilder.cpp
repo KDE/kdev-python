@@ -493,6 +493,8 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
             if ( i == remainingNameComponents.length() - 1 ) {
                 currentContext()->addImportedParentContext(moduleContext);
             }
+            // TODO this sucks
+            currentContext()->setLocalScopeIdentifier(QualifiedIdentifier("__kdevpythonlanguagesupport_import_helper"));
             openedDeclarations.append(d);
             openedTypes.append(moduleType);
         }

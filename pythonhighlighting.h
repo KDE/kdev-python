@@ -1,6 +1,7 @@
 /*****************************************************************************
  * Copyright (c) 2007 Piyush verma <piyush.verma@gmail.com>                  *
- *   Copyright 2007 Andreas Pakulat <apaku@gmx.de>                           *
+ * Copyright (c) 2007 Andreas Pakulat <apaku@gmx.de>                         *
+ * Copyright (c) 2011 Sven Brauch <svenbrauch@gmail.com>                     *
  *                                                                           *
  * Permission is hereby granted, free of charge, to any person obtaining     *
  * a copy of this software and associated documentation files (the           *
@@ -21,24 +22,34 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION     *
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
-#ifndef KDEVCPPHIGHLIGHTING_H
-#define KDEVCPPHIGHLIGHTING_H
+#ifndef KDEVPYTHONHIGHLIGHTING_H
+#define KDEVPYTHONHIGHLIGHTING_H
 
 #include <QObject>
 #include <QHash>
 #include <QModelIndex>
 
 #include <language/highlighting/codehighlighting.h>
+#include <language/duchain/topducontext.h>
 
 namespace Python
 {
+    
+class Highlighting;
 
-class Highlighting : public KDevelop::CodeHighlighting
-{
-    Q_OBJECT
+class CodeHighlightingInstance : public KDevelop::CodeHighlightingInstance {
 public:
-    Highlighting( QObject* parent );
+    CodeHighlightingInstance(const Highlighting* highlighting);
+    virtual void highlightUse(KDevelop::DUContext* context, int index, const QColor& color);
 };
 
+    
+class Highlighting : public KDevelop::CodeHighlighting
+{
+Q_OBJECT
+public:
+    Highlighting( QObject* parent );
+    virtual CodeHighlightingInstance* createInstance() const;
+};
 }
 #endif

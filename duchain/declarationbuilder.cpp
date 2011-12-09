@@ -487,7 +487,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
                     d->setRange(RangeInRevision(extendingPreviousImportCtx->range().start, extendingPreviousImportCtx->range().start));
                 }
                 d->setAutoDeclaration(true);
-//                 currentContext()->createUse(d->ownIndex(), editorFindRange(attrib, attrib));
+                currentContext()->createUse(d->ownIndex(), editorFindRange(declarationIdentifier, declarationIdentifier));
             }
             openedContexts.append(openContext(declarationIdentifier, KDevelop::DUContext::Other));
             if ( i == remainingNameComponents.length() - 1 ) {

@@ -287,8 +287,19 @@ void ContextBuilder::visitCode(CodeAst* node) {
 QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
 {
     QStringList nameComponents = name.split(".");
+    bool useCurrentDirOnly = false;
+    if ( name.startsWith('.') ) {
+        nameComponents.removeFirst();
+        useCurrentDirOnly = true;
+    }
     kDebug() << "FINDING MODULE: " << nameComponents;
-    QList<KUrl> searchPaths = Helper::getSearchPaths(currentlyParsedDocument().toUrl());
+    QList<KUrl> searchPaths;
+    if ( useCurrentDirOnly ) {
+        searchPaths << currentlyParsedDocument().toUrl().directory();
+    }
+    else {
+        searchPaths = Helper::getSearchPaths(currentlyParsedDocument().toUrl());    
+    }
     KUrl tmp;
     QStringList leftNameComponents;
     QString dirFound("<invalid>");

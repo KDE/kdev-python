@@ -369,7 +369,7 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
             moduleName = node->module->value + "." + name->name->value;
         }
         else {
-            moduleName = name->name->value;
+            moduleName = "." + name->name->value;
         }
         Identifier* declarationIdentifier = name->asName ? name->asName : name->name;
         createModuleImportDeclaration(moduleName, declarationIdentifier);
@@ -480,6 +480,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
             StructureType::Ptr moduleType;
             moduleType = StructureType::Ptr(new StructureType());
             temporaryIdentifier->copyRange(declarationIdentifier);
+            temporaryIdentifier->endCol = temporaryIdentifier->startCol - 1;
             openType(moduleType);
             d = visitVariableDeclaration<Declaration>(temporaryIdentifier);
             if ( d ) {

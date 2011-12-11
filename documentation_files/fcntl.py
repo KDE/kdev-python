@@ -1,141 +1,158 @@
-#!/usr/bin/env python2.7
-# -*- coding: utf-8 -*-
-""":platform: Unix
-:synopsis: The fcntl() and ioctl() system calls.
-"""
-def fcntl(fd,op,arg):
-	"""
-	Perform the requested operation on file descriptor *fd* (file objects providing
-	a :meth:`fileno` method are accepted as well). The operation is defined by *op*
-	and is operating system dependent.  These codes are also found in the
-	:mod:`fcntl` module. The argument *arg* is optional, and defaults to the integer
-	value ``0``.  When present, it can either be an integer value, or a string.
-	With the argument missing or an integer value, the return value of this function
-	is the integer return value of the C :cfunc:`fcntl` call.  When the argument is
-	a string it represents a binary structure, e.g. created by :func:`struct.pack`.
-	The binary data is copied to a buffer whose address is passed to the C
-	:cfunc:`fcntl` call.  The return value after a successful call is the contents
-	of the buffer, converted to a string object.  The length of the returned string
-	will be the same as the length of the *arg* argument.  This is limited to 1024
-	bytes.  If the information returned in the buffer by the operating system is
-	larger than 1024 bytes, this is most likely to result in a segmentation
-	violation or a more subtle data corruption.
-	
-	If the :cfunc:`fcntl` fails, an :exc:`IOError` is raised.
-	
-	
-	"""
-	pass
-	
-def ioctl(fd,op,arg,mutate_flag):
-	"""
-	This function is identical to the :func:`fcntl` function, except that the
-	operations are typically defined in the library module :mod:`termios` and the
-	argument handling is even more complicated.
-	
-	The op parameter is limited to values that can fit in 32-bits.
-	
-	The parameter *arg* can be one of an integer, absent (treated identically to the
-	integer ``0``), an object supporting the read-only buffer interface (most likely
-	a plain Python string) or an object supporting the read-write buffer interface.
-	
-	In all but the last case, behaviour is as for the :func:`fcntl` function.
-	
-	If a mutable buffer is passed, then the behaviour is determined by the value of
-	the *mutate_flag* parameter.
-	
-	If it is false, the buffer's mutability is ignored and behaviour is as for a
-	read-only buffer, except that the 1024 byte limit mentioned above is avoided --
-	so long as the buffer you pass is as least as long as what the operating system
-	wants to put there, things should work.
-	
-	If *mutate_flag* is true, then the buffer is (in effect) passed to the
-	underlying :func:`ioctl` system call, the latter's return code is passed back to
-	the calling Python, and the buffer's new contents reflect the action of the
-	:func:`ioctl`.  This is a slight simplification, because if the supplied buffer
-	is less than 1024 bytes long it is first copied into a static buffer 1024 bytes
-	long which is then passed to :func:`ioctl` and copied back into the supplied
-	buffer.
-	
-	If *mutate_flag* is not supplied, then from Python 2.5 it defaults to true,
-	which is a change from versions 2.3 and 2.4. Supply the argument explicitly if
-	version portability is a priority.
-	
-	An example::
-	
-	>>> import array, fcntl, struct, termios, os
-	>>> os.getpgrp()
-	13341
-	>>> struct.unpack('h', fcntl.ioctl(0, termios.TIOCGPGRP, "  "))[0]
-	13341
-	>>> buf = array.array('h', [0])
-	>>> fcntl.ioctl(0, termios.TIOCGPGRP, buf, 1)
-	0
-	>>> buf
-	array('h', [13341])
-	
-	
-	"""
-	pass
-	
-def flock(fd,op):
-	"""
-	Perform the lock operation *op* on file descriptor *fd* (file objects providing
-	a :meth:`fileno` method are accepted as well). See the Unix manual
-	:manpage:`flock(2)` for details.  (On some systems, this function is emulated
-	using :cfunc:`fcntl`.)
-	
-	
-	"""
-	pass
-	
-def lockf(fd,operation,length,start,whence):
-	"""
-	This is essentially a wrapper around the :func:`fcntl` locking calls.  *fd* is
-	the file descriptor of the file to lock or unlock, and *operation* is one of the
-	following values:
-	
-	* :const:`LOCK_UN` -- unlock
-	* :const:`LOCK_SH` -- acquire a shared lock
-	* :const:`LOCK_EX` -- acquire an exclusive lock
-	
-	When *operation* is :const:`LOCK_SH` or :const:`LOCK_EX`, it can also be
-	bitwise ORed with :const:`LOCK_NB` to avoid blocking on lock acquisition.
-	If :const:`LOCK_NB` is used and the lock cannot be acquired, an
-	:exc:`IOError` will be raised and the exception will have an *errno*
-	attribute set to :const:`EACCES` or :const:`EAGAIN` (depending on the
-	operating system; for portability, check for both values).  On at least some
-	systems, :const:`LOCK_EX` can only be used if the file descriptor refers to a
-	file opened for writing.
-	
-	*length* is the number of bytes to lock, *start* is the byte offset at which the
-	lock starts, relative to *whence*, and *whence* is as with :func:`fileobj.seek`,
-	specifically:
-	
-	* :const:`0` -- relative to the start of the file (:const:`SEEK_SET`)
-	* :const:`1` -- relative to the current buffer position (:const:`SEEK_CUR`)
-	* :const:`2` -- relative to the end of the file (:const:`SEEK_END`)
-	
-	The default for *start* is 0, which means to start at the beginning of the file.
-	The default for *length* is 0 which means to lock to the end of the file.  The
-	default for *whence* is also 0.
-	
-	Examples (all on a SVR4 compliant system)::
-	
-	import struct, fcntl, os
-	
-	f = open(more)
-	rv = fcntl.fcntl(f, fcntl.F_SETFL, os.O_NDELAY)
-	
-	lockdata = struct.pack('hhllhh', fcntl.F_WRLCK, 0, 0, 0, 0, 0)
-	rv = fcntl.fcntl(f, fcntl.F_SETLKW, lockdata)
-	
-	Note that in the first example the return value variable *rv* will hold an
-	integer value; in the second example it will hold a string value.  The structure
-	lay-out for the *lockdata* variable is system dependent --- therefore using the
-	:func:`flock` call may be better.
-	
-	
-	"""
-	pass
-	
+# AUTO-GENERATED FILE -- DO NOT EDIT
+
+""" This module performs file control and I/O control on file 
+descriptors.  It is an interface to the fcntl() and ioctl() Unix
+routines.  File descriptors can be obtained with the fileno() method of
+a file or socket object. """
+
+DN_ACCESS = 1
+DN_ATTRIB = 32
+DN_CREATE = 4
+DN_DELETE = 8
+DN_MODIFY = 2
+DN_MULTISHOT = 2147483648
+DN_RENAME = 16
+FASYNC = 8192
+FD_CLOEXEC = 1
+F_DUPFD = 0
+F_EXLCK = 4
+F_GETFD = 1
+F_GETFL = 3
+F_GETLEASE = 1025
+F_GETLK = 5
+F_GETLK64 = 5
+F_GETOWN = 9
+F_GETSIG = 11
+F_NOTIFY = 1026
+F_RDLCK = 0
+F_SETFD = 2
+F_SETFL = 4
+F_SETLEASE = 1024
+F_SETLK = 6
+F_SETLK64 = 6
+F_SETLKW = 7
+F_SETLKW64 = 7
+F_SETOWN = 8
+F_SETSIG = 10
+F_SHLCK = 8
+F_UNLCK = 2
+F_WRLCK = 1
+I_ATMARK = 21279
+I_CANPUT = 21282
+I_CKBAND = 21277
+I_FDINSERT = 21264
+I_FIND = 21259
+I_FLUSH = 21253
+I_FLUSHBAND = 21276
+I_GETBAND = 21278
+I_GETCLTIME = 21281
+I_GETSIG = 21258
+I_GRDOPT = 21255
+I_GWROPT = 21268
+I_LINK = 21260
+I_LIST = 21269
+I_LOOK = 21252
+I_NREAD = 21249
+I_PEEK = 21263
+I_PLINK = 21270
+I_POP = 21251
+I_PUNLINK = 21271
+I_PUSH = 21250
+I_RECVFD = 21262
+I_SENDFD = 21265
+I_SETCLTIME = 21280
+I_SETSIG = 21257
+I_SRDOPT = 21254
+I_STR = 21256
+I_SWROPT = 21267
+I_UNLINK = 21261
+LOCK_EX = 2
+LOCK_MAND = 32
+LOCK_NB = 4
+LOCK_READ = 64
+LOCK_RW = 192
+LOCK_SH = 1
+LOCK_UN = 8
+LOCK_WRITE = 128
+__package__ = None
+
+def fcntl(fd, opt, arg=None):
+  """ fcntl(fd, opt, [arg])
+  
+  Perform the requested operation on file descriptor fd.  The operation
+  is defined by op and is operating system dependent.  These constants are
+  available from the fcntl module.  The argument arg is optional, and
+  defaults to 0; it may be an int or a string.  If arg is given as a string,
+  the return value of fcntl is a string of that length, containing the
+  resulting value put in the arg buffer by the operating system.  The length
+  of the arg string is not allowed to exceed 1024 bytes.  If the arg given
+  is an integer or if none is specified, the result value is an integer
+  corresponding to the return value of the fcntl call in the C code. """
+  pass
+
+def flock(fd, operation):
+  """ flock(fd, operation)
+  
+  Perform the lock operation op on file descriptor fd.  See the Unix 
+  manual page for flock(3) for details.  (On some systems, this function is
+  emulated using fcntl().) """
+  pass
+
+def ioctl(fd, opt, arg=None, mutate_flag=None):
+  """ ioctl(fd, opt[, arg[, mutate_flag]])
+  
+  Perform the requested operation on file descriptor fd.  The operation is
+  defined by opt and is operating system dependent.  Typically these codes are
+  retrieved from the fcntl or termios library modules.
+  
+  The argument arg is optional, and defaults to 0; it may be an int or a
+  buffer containing character data (most likely a string or an array). 
+  
+  If the argument is a mutable buffer (such as an array) and if the
+  mutate_flag argument (which is only allowed in this case) is true then the
+  buffer is (in effect) passed to the operating system and changes made by
+  the OS will be reflected in the contents of the buffer after the call has
+  returned.  The return value is the integer returned by the ioctl system
+  call.
+  
+  If the argument is a mutable buffer and the mutable_flag argument is not
+  passed or is false, the behavior is as if a string had been passed.  This
+  behavior will change in future releases of Python.
+  
+  If the argument is an immutable buffer (most likely a string) then a copy
+  of the buffer is passed to the operating system and the return value is a
+  string of the same length containing whatever the operating system put in
+  the buffer.  The length of the arg buffer in this case is not allowed to
+  exceed 1024 bytes.
+  
+  If the arg given is an integer or if none is specified, the result value is
+  an integer corresponding to the return value of the ioctl call in the C
+  code. """
+  pass
+
+def lockf():
+  """ lockf (fd, operation, length=0, start=0, whence=0)
+  
+  This is essentially a wrapper around the fcntl() locking calls.  fd is the
+  file descriptor of the file to lock or unlock, and operation is one of the
+  following values:
+  
+      LOCK_UN - unlock
+      LOCK_SH - acquire a shared lock
+      LOCK_EX - acquire an exclusive lock
+  
+  When operation is LOCK_SH or LOCK_EX, it can also be bitwise ORed with
+  LOCK_NB to avoid blocking on lock acquisition.  If LOCK_NB is used and the
+  lock cannot be acquired, an IOError will be raised and the exception will
+  have an errno attribute set to EACCES or EAGAIN (depending on the operating
+  system -- for portability, check for either value).
+  
+  length is the number of bytes to lock, with the default meaning to lock to
+  EOF.  start is the byte offset, relative to whence, to that the lock
+  starts.  whence is as with fileobj.seek(), specifically:
+  
+      0 - relative to the start of the file (SEEK_SET)
+      1 - relative to the current buffer position (SEEK_CUR)
+      2 - relative to the end of the file (SEEK_END) """
+  pass
+

@@ -1,106 +1,46 @@
-#!/usr/bin/env python2.7
-# -*- coding: utf-8 -*-
-""":platform: Unix
-:synopsis: GNU's reinterpretation of dbm.
+# AUTO-GENERATED FILE -- DO NOT EDIT
 
-"""
-def open(filename,flag,mode):
-	"""
-	Open a ``gdbm`` database and return a ``gdbm`` object.  The *filename* argument
-	is the name of the database file.
-	
-	The optional *flag* argument can be:
-	
-	+---------+-------------------------------------------+
-	| Value   | Meaning                                   |
-	+=========+===========================================+
-	| ``'r'`` | Open existing database for reading only   |
-	|         | (default)                                 |
-	+---------+-------------------------------------------+
-	| ``'w'`` | Open existing database for reading and    |
-	|         | writing                                   |
-	+---------+-------------------------------------------+
-	| ``'c'`` | Open database for reading and writing,    |
-	|         | creating it if it doesn't exist           |
-	+---------+-------------------------------------------+
-	| ``'n'`` | Always create a new, empty database, open |
-	|         | for reading and writing                   |
-	+---------+-------------------------------------------+
-	
-	The following additional characters may be appended to the flag to control
-	how the database is opened:
-	
-	+---------+--------------------------------------------+
-	| Value   | Meaning                                    |
-	+=========+============================================+
-	| ``'f'`` | Open the database in fast mode.  Writes    |
-	|         | to the database will not be synchronized.  |
-	+---------+--------------------------------------------+
-	| ``'s'`` | Synchronized mode. This will cause changes |
-	|         | to the database to be immediately written  |
-	|         | to the file.                               |
-	+---------+--------------------------------------------+
-	| ``'u'`` | Do not lock database.                      |
-	+---------+--------------------------------------------+
-	
-	Not all flags are valid for all versions of ``gdbm``.  The module constant
-	:const:`open_flags` is a string of supported flag characters.  The exception
-	:exc:`error` is raised if an invalid flag is specified.
-	
-	The optional *mode* argument is the Unix mode of the file, used only when the
-	database has to be created.  It defaults to octal ``0666``.
-	
-	In addition to the dictionary-like methods, ``gdbm`` objects have the following
-	methods:
-	
-	
-	"""
-	pass
-	
-def firstkey():
-	"""
-	It's possible to loop over every key in the database using this method  and the
-	:meth:`nextkey` method.  The traversal is ordered by ``gdbm``'s internal hash
-	values, and won't be sorted by the key values.  This method returns the starting
-	key.
-	
-	
-	"""
-	pass
-	
-def nextkey(key):
-	"""
-	Returns the key that follows *key* in the traversal.  The following code prints
-	every key in the database ``db``, without having to create a list in memory that
-	contains them all::
-	
-	k = db.firstkey()
-	while k != None:
-	print k
-	k = db.nextkey(k)
-	
-	
-	"""
-	pass
-	
-def reorganize():
-	"""
-	If you have carried out a lot of deletions and would like to shrink the space
-	used by the ``gdbm`` file, this routine will reorganize the database.  ``gdbm``
-	will not shorten the length of a database file except by using this
-	reorganization; otherwise, deleted file space will be kept and reused as new
-	(key, value) pairs are added.
-	
-	
-	"""
-	pass
-	
-def sync():
-	"""
-	When the database has been opened in fast mode, this method forces any
-	unwritten data to be written to the disk.
-	
-	
-	"""
-	pass
-	
+""" This module provides an interface to the GNU DBM (GDBM) library.
+
+This module is quite similar to the dbm module, but uses GDBM instead to
+provide some additional functionality. Please note that the file formats
+created by GDBM and dbm are incompatible. 
+
+GDBM objects behave like mappings (dictionaries), except that keys and
+values are always strings. Printing a GDBM object doesn't print the
+keys and values, and the items() and values() methods are not
+supported. """
+
+__package__ = None
+
+class error(Exception):
+
+  pass
+
+def open(filename, flags=None, mode=None):
+  """ open(filename, [flags, [mode]])  -> dbm_object
+  Open a dbm database and return a dbm object. The filename argument is
+  the name of the database file.
+  
+  The optional flags argument can be 'r' (to open an existing database
+  for reading only -- default), 'w' (to open an existing database for
+  reading and writing), 'c' (which creates the database if it doesn't
+  exist), or 'n' (which always creates a new empty database).
+  
+  Some versions of gdbm support additional flags which must be
+  appended to one of the flags described above. The module constant
+  'open_flags' is a string of valid additional flags. The 'f' flag
+  opens the database in fast mode; altered data will not automatically
+  be written to the disk after every change. This results in faster
+  writes to the database, but may result in an inconsistent database
+  if the program crashes while the database is still open. Use the
+  sync() method to force any unwritten data to be written to the disk.
+  The 's' flag causes all database operations to be synchronized to
+  disk. The 'u' flag disables locking of the database file.
+  
+  The optional mode argument is the Unix mode of the file, used only
+  when the database has to be created. It defaults to octal 0666.  """
+  return None
+
+open_flags = 'rwcnfsu'
+

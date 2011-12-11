@@ -1,537 +1,482 @@
-#!/usr/bin/env python2.7
-# -*- coding: utf-8 -*-
-""":synopsis: Functions corresponding to the standard operators.
-"""
-def lt(a,b):
-	"""le(a, b)
-	eq(a, b)
-	ne(a, b)
-	ge(a, b)
-	gt(a, b)
-	__lt__(a, b)
-	__le__(a, b)
-	__eq__(a, b)
-	__ne__(a, b)
-	__ge__(a, b)
-	__gt__(a, b)
-	
-	Perform "rich comparisons" between *a* and *b*. Specifically, ``lt(a, b)`` is
-	equivalent to ``a < b``, ``le(a, b)`` is equivalent to ``a <= b``, ``eq(a,
-	b)`` is equivalent to ``a == b``, ``ne(a, b)`` is equivalent to ``a != b``,
-	``gt(a, b)`` is equivalent to ``a > b`` and ``ge(a, b)`` is equivalent to ``a
-	>= b``.  Note that unlike the built-in :func:`cmp`, these functions can
-	return any value, which may or may not be interpretable as a Boolean value.
-	See :ref:`comparisons` for more information about rich comparisons.
-	
-	"""
-	pass
-	
-def not_(obj):
-	"""__not__(obj)
-	
-	Return the outcome of :keyword:`not` *obj*.  (Note that there is no
-	:meth:`__not__` method for object instances; only the interpreter core defines
-	this operation.  The result is affected by the :meth:`__nonzero__` and
-	:meth:`__len__` methods.)
-	
-	
-	"""
-	pass
-	
-def truth(obj):
-	"""
-	Return :const:`True` if *obj* is true, and :const:`False` otherwise.  This is
-	equivalent to using the :class:`bool` constructor.
-	
-	
-	"""
-	pass
-	
-def is_(a,b):
-	"""
-	Return ``a is b``.  Tests object identity.
-	
-	"""
-	pass
-	
-def is_not(a,b):
-	"""
-	Return ``a is not b``.  Tests object identity.
-	
-	"""
-	pass
-	
-def abs(obj):
-	"""__abs__(obj)
-	
-	Return the absolute value of *obj*.
-	
-	
-	"""
-	pass
-	
-def add(a,b):
-	"""__add__(a, b)
-	
-	Return ``a + b``, for *a* and *b* numbers.
-	
-	
-	"""
-	pass
-	
-def and_(a,b):
-	"""__and__(a, b)
-	
-	Return the bitwise and of *a* and *b*.
-	
-	
-	"""
-	pass
-	
-def div(a,b):
-	"""__div__(a, b)
-	
-	Return ``a / b`` when ``__future__.division`` is not in effect.  This is
-	also known as "classic" division.
-	
-	
-	"""
-	pass
-	
-def floordiv(a,b):
-	"""__floordiv__(a, b)
-	
-	Return ``a // b``.
-	
-	"""
-	pass
-	
+# AUTO-GENERATED FILE -- DO NOT EDIT
+
+""" Operator interface.
+
+This module exports a set of functions implemented in C corresponding
+to the intrinsic operators of Python.  For example, operator.add(x, y)
+is equivalent to the expression x+y.  The function names are those
+used for special methods; variants without leading and trailing
+'__' are also provided for convenience. """
+
+def __abs__(a):
+  """ abs(a) -- Same as abs(a). """
+  return None
+
+def __add__(a, b):
+  """ add(a, b) -- Same as a + b. """
+  return None
+
+def __and__(a, b):
+  """ and_(a, b) -- Same as a & b. """
+  return None
+
+def __concat__(a, b):
+  """ concat(a, b) -- Same as a + b, for a and b sequences. """
+  return None
+
+def __contains__(a, b):
+  """ contains(a, b) -- Same as b in a (note reversed operands). """
+  return None
+
+def __delitem__(a, b):
+  """ delitem(a, b) -- Same as del a[b]. """
+  return None
+
+def __delslice__(a, b, c):
+  """ delslice(a, b, c) -- Same as del a[b:c]. """
+  return None
+
+def __div__(a, b):
+  """ div(a, b) -- Same as a / b when __future__.division is not in effect. """
+  return None
+
+def __eq__(a, b):
+  """ eq(a, b) -- Same as a==b. """
+  return None
+
+def __floordiv__(a, b):
+  """ floordiv(a, b) -- Same as a // b. """
+  return None
+
+def __ge__(a, b):
+  """ ge(a, b) -- Same as a>=b. """
+  return None
+
+def __getitem__(a, b):
+  """ getitem(a, b) -- Same as a[b]. """
+  return None
+
+def __getslice__(a, b, c):
+  """ getslice(a, b, c) -- Same as a[b:c]. """
+  return None
+
+def __gt__(a, b):
+  """ gt(a, b) -- Same as a>b. """
+  return None
+
+def __iadd__(a, b):
+  """ a = iadd(a, b) -- Same as a += b. """
+  return None
+
+def __iand__(a, b):
+  """ a = iand(a, b) -- Same as a &= b. """
+  return None
+
+def __iconcat__(a, b):
+  """ a = iconcat(a, b) -- Same as a += b, for a and b sequences. """
+  return None
+
+def __idiv__(a, b):
+  """ a = idiv(a, b) -- Same as a /= b when __future__.division is not in effect. """
+  return None
+
+def __ifloordiv__(a, b):
+  """ a = ifloordiv(a, b) -- Same as a //= b. """
+  return None
+
+def __ilshift__(a, b):
+  """ a = ilshift(a, b) -- Same as a <<= b. """
+  return None
+
+def __imod__(a, b):
+  """ a = imod(a, b) -- Same as a %= b. """
+  return None
+
+def __imul__(a, b):
+  """ a = imul(a, b) -- Same as a *= b. """
+  return None
+
+def __index__(a):
+  """ index(a) -- Same as a.__index__() """
+  return None
+
+def __inv__(a):
+  """ inv(a) -- Same as ~a. """
+  return None
+
+def __invert__(a):
+  """ invert(a) -- Same as ~a. """
+  return None
+
+def __ior__(a, b):
+  """ a = ior(a, b) -- Same as a |= b. """
+  return None
+
+def __ipow__(a, b):
+  """ a = ipow(a, b) -- Same as a **= b. """
+  return None
+
+def __irepeat__(a, b):
+  """ a = irepeat(a, b) -- Same as a *= b, where a is a sequence, and b is an integer. """
+  return 1
+
+def __irshift__(a, b):
+  """ a = irshift(a, b) -- Same as a >>= b. """
+  return None
+
+def __isub__(a, b):
+  """ a = isub(a, b) -- Same as a -= b. """
+  return None
+
+def __itruediv__(a, b):
+  """ a = itruediv(a, b) -- Same as a /= b when __future__.division is in effect. """
+  return None
+
+def __ixor__(a, b):
+  """ a = ixor(a, b) -- Same as a ^= b. """
+  return None
+
+def __le__(a, b):
+  """ le(a, b) -- Same as a<=b. """
+  return None
+
+def __lshift__(a, b):
+  """ lshift(a, b) -- Same as a << b. """
+  return None
+
+def __lt__(a, b):
+  """ lt(a, b) -- Same as a<b. """
+  return None
+
+def __mod__(a, b):
+  """ mod(a, b) -- Same as a % b. """
+  return None
+
+def __mul__(a, b):
+  """ mul(a, b) -- Same as a * b. """
+  return None
+
+def __ne__(a, b):
+  """ ne(a, b) -- Same as a!=b. """
+  return None
+
+def __neg__(a):
+  """ neg(a) -- Same as -a. """
+  return None
+
+def __not__(a):
+  """ not_(a) -- Same as not a. """
+  return None
+
+def __or__(a, b):
+  """ or_(a, b) -- Same as a | b. """
+  return None
+
+__package__ = None
+
+def __pos__(a):
+  """ pos(a) -- Same as +a. """
+  return None
+
+def __pow__(a, b):
+  """ pow(a, b) -- Same as a ** b. """
+  return None
+
+def __repeat__(a, b):
+  """ repeat(a, b) -- Return a * b, where a is a sequence, and b is an integer. """
+  return 1
+
+def __rshift__(a, b):
+  """ rshift(a, b) -- Same as a >> b. """
+  return None
+
+def __setitem__(a, b, c):
+  """ setitem(a, b, c) -- Same as a[b] = c. """
+  return None
+
+def __setslice__(a, b, c, d):
+  """ setslice(a, b, c, d) -- Same as a[b:c] = d. """
+  return None
+
+def __sub__(a, b):
+  """ sub(a, b) -- Same as a - b. """
+  return None
+
+def __truediv__(a, b):
+  """ truediv(a, b) -- Same as a / b when __future__.division is in effect. """
+  return None
+
+def __xor__(a, b):
+  """ xor(a, b) -- Same as a ^ b. """
+  return None
+
+def abs(a):
+  """ abs(a) -- Same as abs(a). """
+  return None
+
+def add(a, b):
+  """ add(a, b) -- Same as a + b. """
+  return None
+
+def and_(a, b):
+  """ and_(a, b) -- Same as a & b. """
+  return None
+
+class attrgetter(object):
+  """ attrgetter(attr, ...) --> attrgetter object
+  
+  Return a callable object that fetches the given attribute(s) from its operand.
+  After, f=attrgetter('name'), the call f(r) returns r.name.
+  After, g=attrgetter('name', 'date'), the call g(r) returns (r.name, r.date).
+  After, h=attrgetter('name.first', 'name.last'), the call h(r) returns
+  (r.name.first, r.name.last). """
+
+  pass
+
+def concat(a, b):
+  """ concat(a, b) -- Same as a + b, for a and b sequences. """
+  return None
+
+def contains(a, b):
+  """ contains(a, b) -- Same as b in a (note reversed operands). """
+  return None
+
+def countOf(a, b):
+  """ countOf(a, b) -- Return the number of times b occurs in a. """
+  return None
+
+def delitem(a, b):
+  """ delitem(a, b) -- Same as del a[b]. """
+  return None
+
+def delslice(a, b, c):
+  """ delslice(a, b, c) -- Same as del a[b:c]. """
+  return None
+
+def div(a, b):
+  """ div(a, b) -- Same as a / b when __future__.division is not in effect. """
+  return None
+
+def eq(a, b):
+  """ eq(a, b) -- Same as a==b. """
+  return None
+
+def floordiv(a, b):
+  """ floordiv(a, b) -- Same as a // b. """
+  return None
+
+def ge(a, b):
+  """ ge(a, b) -- Same as a>=b. """
+  return None
+
+def getitem(a, b):
+  """ getitem(a, b) -- Same as a[b]. """
+  return None
+
+def getslice(a, b, c):
+  """ getslice(a, b, c) -- Same as a[b:c]. """
+  return None
+
+def gt(a, b):
+  """ gt(a, b) -- Same as a>b. """
+  return None
+
+def iadd(a, b):
+  """ a = iadd(a, b) -- Same as a += b. """
+  return None
+
+def iand(a, b):
+  """ a = iand(a, b) -- Same as a &= b. """
+  return None
+
+def iconcat(a, b):
+  """ a = iconcat(a, b) -- Same as a += b, for a and b sequences. """
+  return None
+
+def idiv(a, b):
+  """ a = idiv(a, b) -- Same as a /= b when __future__.division is not in effect. """
+  return None
+
+def ifloordiv(a, b):
+  """ a = ifloordiv(a, b) -- Same as a //= b. """
+  return None
+
+def ilshift(a, b):
+  """ a = ilshift(a, b) -- Same as a <<= b. """
+  return None
+
+def imod(a, b):
+  """ a = imod(a, b) -- Same as a %= b. """
+  return None
+
+def imul(a, b):
+  """ a = imul(a, b) -- Same as a *= b. """
+  return None
+
 def index(a):
-	"""__index__(a)
-	
-	Return *a* converted to an integer.  Equivalent to ``a.__index__()``.
-	
-	"""
-	pass
-	
-def inv(obj):
-	"""invert(obj)
-	__inv__(obj)
-	__invert__(obj)
-	
-	Return the bitwise inverse of the number *obj*.  This is equivalent to ``~obj``.
-	
-	"""
-	pass
-	
-def lshift(a,b):
-	"""__lshift__(a, b)
-	
-	Return *a* shifted left by *b*.
-	
-	
-	"""
-	pass
-	
-def mod(a,b):
-	"""__mod__(a, b)
-	
-	Return ``a % b``.
-	
-	
-	"""
-	pass
-	
-def mul(a,b):
-	"""__mul__(a, b)
-	
-	Return ``a * b``, for *a* and *b* numbers.
-	
-	
-	"""
-	pass
-	
-def neg(obj):
-	"""__neg__(obj)
-	
-	Return *obj* negated (``-obj``).
-	
-	
-	"""
-	pass
-	
-def or_(a,b):
-	"""__or__(a, b)
-	
-	Return the bitwise or of *a* and *b*.
-	
-	
-	"""
-	pass
-	
-def pos(obj):
-	"""__pos__(obj)
-	
-	Return *obj* positive (``+obj``).
-	
-	
-	"""
-	pass
-	
-def pow(a,b):
-	"""__pow__(a, b)
-	
-	Return ``a ** b``, for *a* and *b* numbers.
-	
-	"""
-	pass
-	
-def rshift(a,b):
-	"""__rshift__(a, b)
-	
-	Return *a* shifted right by *b*.
-	
-	
-	"""
-	pass
-	
-def sub(a,b):
-	"""__sub__(a, b)
-	
-	Return ``a - b``.
-	
-	
-	"""
-	pass
-	
-def truediv(a,b):
-	"""__truediv__(a, b)
-	
-	Return ``a / b`` when ``__future__.division`` is in effect.  This is also
-	known as "true" division.
-	
-	"""
-	pass
-	
-def xor(a,b):
-	"""__xor__(a, b)
-	
-	Return the bitwise exclusive or of *a* and *b*.
-	
-	
-	Operations which work with sequences (some of them with mappings too) include:
-	
-	"""
-	pass
-	
-def concat(a,b):
-	"""__concat__(a, b)
-	
-	Return ``a + b`` for *a* and *b* sequences.
-	
-	
-	"""
-	pass
-	
-def contains(a,b):
-	"""__contains__(a, b)
-	
-	Return the outcome of the test ``b in a``. Note the reversed operands.
-	
-	"""
-	pass
-	
-def countOf(a,b):
-	"""
-	Return the number of occurrences of *b* in *a*.
-	
-	
-	"""
-	pass
-	
-def delitem(a,b):
-	"""__delitem__(a, b)
-	
-	Remove the value of *a* at index *b*.
-	
-	
-	"""
-	pass
-	
-def delslice(a,b,c):
-	"""__delslice__(a, b, c)
-	
-	Delete the slice of *a* from index *b* to index *c-1*.
-	
-	"""
-	pass
-	
-def getitem(a,b):
-	"""__getitem__(a, b)
-	
-	Return the value of *a* at index *b*.
-	
-	
-	"""
-	pass
-	
-def getslice(a,b,c):
-	"""__getslice__(a, b, c)
-	
-	Return the slice of *a* from index *b* to index *c-1*.
-	
-	"""
-	pass
-	
-def indexOf(a,b):
-	"""
-	Return the index of the first of occurrence of *b* in *a*.
-	
-	
-	"""
-	pass
-	
-def repeat(a,b):
-	"""__repeat__(a, b)
-	
-	"""
-	pass
-	
-def sequenceIncludes(more):
-	"""
-	"""
-	pass
-	
-def setitem(a,b,c):
-	"""__setitem__(a, b, c)
-	
-	Set the value of *a* at index *b* to *c*.
-	
-	
-	"""
-	pass
-	
-def setslice(a,b,c,v):
-	"""__setslice__(a, b, c, v)
-	
-	Set the slice of *a* from index *b* to index *c-1* to the sequence *v*.
-	
-	"""
-	pass
-	
-def iadd(a,b):
-	"""__iadd__(a, b)
-	
-	``a = iadd(a, b)`` is equivalent to ``a += b``.
-	
-	"""
-	pass
-	
-def iand(a,b):
-	"""__iand__(a, b)
-	
-	``a = iand(a, b)`` is equivalent to ``a &= b``.
-	
-	"""
-	pass
-	
-def iconcat(a,b):
-	"""__iconcat__(a, b)
-	
-	``a = iconcat(a, b)`` is equivalent to ``a += b`` for *a* and *b* sequences.
-	
-	"""
-	pass
-	
-def idiv(a,b):
-	"""__idiv__(a, b)
-	
-	``a = idiv(a, b)`` is equivalent to ``a /= b`` when ``__future__.division`` is
-	not in effect.
-	
-	"""
-	pass
-	
-def ifloordiv(a,b):
-	"""__ifloordiv__(a, b)
-	
-	``a = ifloordiv(a, b)`` is equivalent to ``a //= b``.
-	
-	"""
-	pass
-	
-def ilshift(a,b):
-	"""__ilshift__(a, b)
-	
-	``a = ilshift(a, b)`` is equivalent to ``a <<= b``.
-	
-	"""
-	pass
-	
-def imod(a,b):
-	"""__imod__(a, b)
-	
-	``a = imod(a, b)`` is equivalent to ``a %= b``.
-	
-	"""
-	pass
-	
-def imul(a,b):
-	"""__imul__(a, b)
-	
-	``a = imul(a, b)`` is equivalent to ``a *= b``.
-	
-	"""
-	pass
-	
-def ior(a,b):
-	"""__ior__(a, b)
-	
-	``a = ior(a, b)`` is equivalent to ``a |= b``.
-	
-	"""
-	pass
-	
-def ipow(a,b):
-	"""__ipow__(a, b)
-	
-	``a = ipow(a, b)`` is equivalent to ``a **= b``.
-	
-	"""
-	pass
-	
-def irepeat(a,b):
-	"""__irepeat__(a, b)
-	
-	"""
-	pass
-	
-def irshift(a,b):
-	"""__irshift__(a, b)
-	
-	``a = irshift(a, b)`` is equivalent to ``a >>= b``.
-	
-	"""
-	pass
-	
-def isub(a,b):
-	"""__isub__(a, b)
-	
-	``a = isub(a, b)`` is equivalent to ``a -= b``.
-	
-	"""
-	pass
-	
-def itruediv(a,b):
-	"""__itruediv__(a, b)
-	
-	``a = itruediv(a, b)`` is equivalent to ``a /= b`` when ``__future__.division``
-	is in effect.
-	
-	"""
-	pass
-	
-def ixor(a,b):
-	"""__ixor__(a, b)
-	
-	``a = ixor(a, b)`` is equivalent to ``a ^= b``.
-	
-	"""
-	pass
-	
-def isCallable(obj):
-	"""
-	"""
-	pass
-	
-def isMappingType(obj):
-	"""
-	"""
-	pass
-	
-def isNumberType(obj):
-	"""
-	"""
-	pass
-	
-def isSequenceType(obj):
-	"""
-	"""
-	pass
-	
-def attrgetter(attr,argsmore):
-	"""
-	Return a callable object that fetches *attr* from its operand. If more than one
-	attribute is requested, returns a tuple of attributes. After,
-	``f = attrgetter('name')``, the call ``f(b)`` returns ``b.name``.  After,
-	``f = attrgetter('name', 'date')``, the call ``f(b)`` returns ``(b.name,
-	b.date)``.  Equivalent to::
-	
-	def attrgetter(*items):
-	if len(items) == 1:
-	attr = items[0]
-	def g(obj):
-	return resolve_attr(obj, attr)
-	else:
-	def g(obj):
-	return tuple(resolve_att(obj, attr) for attr in items)
-	return g
-	
-	def resolve_attr(obj, attr):
-	for name in attr.split("."):
-	obj = getattr(obj, name)
-	return obj
-	
-	
-	The attribute names can also contain dots; after ``f = attrgetter('date.month')``,
-	the call ``f(b)`` returns ``b.date.month``.
-	
-	"""
-	pass
-	
-def itemgetter(item,argsmore):
-	"""
-	Return a callable object that fetches *item* from its operand using the
-	operand's :meth:`__getitem__` method.  If multiple items are specified,
-	returns a tuple of lookup values.  Equivalent to::
-	
-	def itemgetter(*items):
-	if len(items) == 1:
-	item = items[0]
-	def g(obj):
-	return obj[item]
-	else:
-	def g(obj):
-	return tuple(obj[item] for item in items)
-	return g
-	
-	The items can be any type accepted by the operand's :meth:`__getitem__`
-	method.  Dictionaries accept any hashable value.  Lists, tuples, and
-	strings accept an index or a slice:
-	
-	>>> itemgetter(1)('ABCDEFG')
-	'B'
-	>>> itemgetter(1,3,5)('ABCDEFG')
-	('B', 'D', 'F')
-	>>> itemgetter(slice(2,None))('ABCDEFG')
-	'CDEFG'
-	
-	"""
-	pass
-	
-def methodcaller(name,argsmore):
-	"""
-	Return a callable object that calls the method *name* on its operand.  If
-	additional arguments and/or keyword arguments are given, they will be given
-	to the method as well.  After ``f = methodcaller('name')``, the call ``f(b)``
-	returns ``b.name()``.  After ``f = methodcaller('name', 'foo', bar=1)``, the
-	call ``f(b)`` returns ``b.name('foo', bar=1)``.  Equivalent to::
-	
-	def methodcaller(name, *args, **kwargs):
-	def caller(obj):
-	return getattr(obj, name)(*args, **kwargs)
-	return caller
-	
-	"""
-	pass
-	
+  """ index(a) -- Same as a.__index__() """
+  return None
+
+def indexOf(a, b):
+  """ indexOf(a, b) -- Return the first index of b in a. """
+  return None
+
+def inv(a):
+  """ inv(a) -- Same as ~a. """
+  return None
+
+def invert(a):
+  """ invert(a) -- Same as ~a. """
+  return None
+
+def ior(a, b):
+  """ a = ior(a, b) -- Same as a |= b. """
+  return None
+
+def ipow(a, b):
+  """ a = ipow(a, b) -- Same as a **= b. """
+  return None
+
+def irepeat(a, b):
+  """ a = irepeat(a, b) -- Same as a *= b, where a is a sequence, and b is an integer. """
+  return 1
+
+def irshift(a, b):
+  """ a = irshift(a, b) -- Same as a >>= b. """
+  return None
+
+def isCallable(a):
+  """ isCallable(a) -- Same as callable(a). """
+  return None
+
+def isMappingType(a):
+  """ isMappingType(a) -- Return True if a has a mapping type, False otherwise. """
+  return None
+
+def isNumberType(a):
+  """ isNumberType(a) -- Return True if a has a numeric type, False otherwise. """
+  return None
+
+def isSequenceType(a):
+  """ isSequenceType(a) -- Return True if a has a sequence type, False otherwise. """
+  return None
+
+def is_(a, b):
+  """ is_(a, b) -- Same as a is b. """
+  return None
+
+def is_not(a, b):
+  """ is_not(a, b) -- Same as a is not b. """
+  return None
+
+def isub(a, b):
+  """ a = isub(a, b) -- Same as a -= b. """
+  return None
+
+class itemgetter(object):
+  """ itemgetter(item, ...) --> itemgetter object
+  
+  Return a callable object that fetches the given item(s) from its operand.
+  After, f=itemgetter(2), the call f(r) returns r[2].
+  After, g=itemgetter(2,5,3), the call g(r) returns (r[2], r[5], r[3]) """
+
+  pass
+
+def itruediv(a, b):
+  """ a = itruediv(a, b) -- Same as a /= b when __future__.division is in effect. """
+  return None
+
+def ixor(a, b):
+  """ a = ixor(a, b) -- Same as a ^= b. """
+  return None
+
+def le(a, b):
+  """ le(a, b) -- Same as a<=b. """
+  return None
+
+def lshift(a, b):
+  """ lshift(a, b) -- Same as a << b. """
+  return None
+
+def lt(a, b):
+  """ lt(a, b) -- Same as a<b. """
+  return None
+
+class methodcaller(object):
+  """ methodcaller(name, ...) --> methodcaller object
+  
+  Return a callable object that calls the given method on its operand.
+  After, f = methodcaller('name'), the call f(r) returns r.name().
+  After, g = methodcaller('name', 'date', foo=1), the call g(r) returns
+  r.name('date', foo=1). """
+
+  pass
+
+def mod(a, b):
+  """ mod(a, b) -- Same as a % b. """
+  return None
+
+def mul(a, b):
+  """ mul(a, b) -- Same as a * b. """
+  return None
+
+def ne(a, b):
+  """ ne(a, b) -- Same as a!=b. """
+  return None
+
+def neg(a):
+  """ neg(a) -- Same as -a. """
+  return None
+
+def not_(a):
+  """ not_(a) -- Same as not a. """
+  return None
+
+def or_(a, b):
+  """ or_(a, b) -- Same as a | b. """
+  return None
+
+def pos(a):
+  """ pos(a) -- Same as +a. """
+  return None
+
+def pow(a, b):
+  """ pow(a, b) -- Same as a ** b. """
+  return None
+
+def repeat(a, b):
+  """ repeat(a, b) -- Return a * b, where a is a sequence, and b is an integer. """
+  return 1
+
+def rshift(a, b):
+  """ rshift(a, b) -- Same as a >> b. """
+  return None
+
+def sequenceIncludes(a, b):
+  """ sequenceIncludes(a, b) -- Same as b in a (note reversed operands; deprecated). """
+  return None
+
+def setitem(a, b, c):
+  """ setitem(a, b, c) -- Same as a[b] = c. """
+  return None
+
+def setslice(a, b, c, d):
+  """ setslice(a, b, c, d) -- Same as a[b:c] = d. """
+  return None
+
+def sub(a, b):
+  """ sub(a, b) -- Same as a - b. """
+  return None
+
+def truediv(a, b):
+  """ truediv(a, b) -- Same as a / b when __future__.division is in effect. """
+  return None
+
+def truth(a):
+  """ truth(a) -- Return True if a is true, False otherwise. """
+  return None
+
+def xor(a, b):
+  """ xor(a, b) -- Same as a ^ b. """
+  return None
+

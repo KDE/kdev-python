@@ -1,80 +1,132 @@
-#!/usr/bin/env python2.7
-# -*- coding: utf-8 -*-
-""":synopsis: Wait for I/O completion on multiple streams.
+# AUTO-GENERATED FILE -- DO NOT EDIT
+
+""" This module supports asynchronous I/O on multiple file descriptors.
+
+*** IMPORTANT NOTICE ***
+On Windows and OpenVMS, only sockets are supported; on Unix, all file descriptors. """
+
+EPOLLERR = 8
+EPOLLET = -2147483648
+EPOLLHUP = 16
+EPOLLIN = 1
+EPOLLMSG = 1024
+EPOLLONESHOT = 1073741824
+EPOLLOUT = 4
+EPOLLPRI = 2
+EPOLLRDBAND = 128
+EPOLLRDNORM = 64
+EPOLLWRBAND = 512
+EPOLLWRNORM = 256
+PIPE_BUF = 4096
+POLLERR = 8
+POLLHUP = 16
+POLLIN = 1
+POLLMSG = 1024
+POLLNVAL = 32
+POLLOUT = 4
+POLLPRI = 2
+POLLRDBAND = 128
+POLLRDNORM = 64
+POLLWRBAND = 512
+POLLWRNORM = 256
+__package__ = None
+
+class epoll(object):
+  """ select.epoll([sizehint=-1])
+  
+  Returns an epolling object
+  
+  sizehint must be a positive integer or -1 for the default size. The
+  sizehint is used to optimize internal data structures. It doesn't limit
+  the maximum number of monitored events. """
+
+  def close(self):
+    """ close() -> None
+    
+    Close the epoll control file descriptor. Further operations on the epoll
+    object will raise an exception. """
+    return None
+
+  closed = property(None, None, None,
+                    """ True if the epoll handler is closed """
+                    )
 
 
-This module provides access to the :cfunc:`select` and :cfunc:`poll` functions
-available in most operating systems, :cfunc:`epoll` available on Linux 2.5+ and
-:cfunc:`kqueue` available on most BSD.
-Note that on Windows, it only works for sockets; on other operating systems,
-it also works for other file types (in particular, on Unix, it works on pipes).
-It cannot be used on regular files to determine whether a file has grown since
-it was last read.
+  def fileno(self):
+    """ fileno() -> int
+    
+    Return the epoll control file descriptor. """
+    return 1
 
-The module defines the following:
+  def fromfd(self, fd):
+    """ fromfd(fd) -> epoll
+    
+    Create an epoll object from a given control fd. """
+    return None
 
+  def modify(self, fd, eventmask):
+    """ modify(fd, eventmask) -> None
+    
+    fd is the target file descriptor of the operation
+    events is a bit set composed of the various EPOLL constants """
+    return None
 
-"""
-def epoll(sizehint=_1):
-	"""
-	(Only supported on Linux 2.5.44 and newer.)  Returns an edge polling object,
-	which can be used as Edge or Level Triggered interface for I/O events; see
-	section :ref:`epoll-objects` below for the methods supported by epolling
-	objects.
-	
-	"""
-	pass
-	
+  def poll(self, timeout=_1, maxevents=_1):
+    """ poll([timeout=-1[, maxevents=-1]]) -> [(fd, events), (...)]
+    
+    Wait for events on the epoll file descriptor for a maximum time of timeout
+    in seconds (as float). -1 makes poll wait indefinitely.
+    Up to maxevents are returned to the caller. """
+    return []
+
+  def register(self, fd, eventmask=None):
+    """ register(fd[, eventmask]) -> None
+    
+    Registers a new fd or modifies an already registered fd.
+    fd is the target file descriptor of the operation.
+    events is a bit set composed of the various EPOLL constants; the default
+    is EPOLL_IN | EPOLL_OUT | EPOLL_PRI.
+    
+    The epoll interface supports all file descriptors that support poll. """
+    return None
+
+  def unregister(self, fd):
+    """ unregister(fd) -> None
+    
+    fd is the target file descriptor of the operation. """
+    return None
+
+class error(Exception):
+
+  pass
+
 def poll():
-	"""
-	(Not supported by all operating systems.)  Returns a polling object, which
-	supports registering and unregistering file descriptors, and then polling them
-	for I/O events; see section :ref:`poll-objects` below for the methods supported
-	by polling objects.
-	
-	
-	"""
-	pass
-	
-def kqueue():
-	"""
-	(Only supported on BSD.)  Returns a kernel queue object; see section
-	:ref:`kqueue-objects` below for the methods supported by kqueue objects.
-	
-	"""
-	pass
-	
-def kevent(ident,filter=KQ_FILTER_READ,flags=KQ_EV_ADD,fflags=0,data=0,udata=0):
-	"""
-	(Only supported on BSD.)  Returns a kernel event object; see section
-	:ref:`kevent-objects` below for the methods supported by kevent objects.
-	
-	"""
-	pass
-	
-def select(rlist,wlist,xlist,timeout):
-	"""
-	This is a straightforward interface to the Unix :cfunc:`select` system call.
-	The first three arguments are sequences of 'waitable objects': either
-	integers representing file descriptors or objects with a parameterless method
-	named :meth:`fileno` returning such an integer:
-	
-	* *rlist*: wait until ready for reading
-	* *wlist*: wait until ready for writing
-	* *xlist*: wait for an "exceptional condition" (see the manual page for what
-	your system considers such a condition)
-	
-	Empty sequences are allowed, but acceptance of three empty sequences is
-	platform-dependent. (It is known to work on Unix but not on Windows.)  The
-	optional *timeout* argument specifies a time-out as a floating point number
-	in seconds.  When the *timeout* argument is omitted the function blocks until
-	at least one file descriptor is ready.  A time-out value of zero specifies a
-	poll and never blocks.
-	
-	The return value is a triple of lists of objects that are ready: subsets of the
-	first three arguments.  When the time-out is reached without a file descriptor
-	becoming ready, three empty lists are returned.
-	
-	"""
-	pass
-	
+  """ Returns a polling object, which supports registering and
+  unregistering file descriptors, and then polling them for I/O events. """
+  pass
+
+def select(rlist, wlist, xlist, timeout=None):
+  """ select(rlist, wlist, xlist[, timeout]) -> (rlist, wlist, xlist)
+  
+  Wait until one or more file descriptors are ready for some kind of I/O.
+  The first three arguments are sequences of file descriptors to be waited for:
+  rlist -- wait until ready for reading
+  wlist -- wait until ready for writing
+  xlist -- wait for an ``exceptional condition''
+  If only one kind of condition is required, pass [] for the other lists.
+  A file descriptor is either a socket or file object, or a small integer
+  gotten from a fileno() method call on one of those.
+  
+  The optional 4th argument specifies a timeout in seconds; it may be
+  a floating point number to specify fractions of seconds.  If it is absent
+  or None, the call will never time out.
+  
+  The return value is a tuple of three lists corresponding to the first three
+  arguments; each contains the subset of the corresponding file descriptors
+  that are ready.
+  
+  *** IMPORTANT NOTICE ***
+  On Windows and OpenVMS, only sockets are supported; on Unix, all file
+  descriptors can be used. """
+  return ([], [], [])
+

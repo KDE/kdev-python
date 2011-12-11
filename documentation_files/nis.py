@@ -1,42 +1,40 @@
-#!/usr/bin/env python2.7
-# -*- coding: utf-8 -*-
-""":platform: Unix
-:synopsis: Interface to Sun's NIS (Yellow Pages) library.
-"""
-def match(key,mapname,domain=default_domain):
-	"""
-	Return the match for *key* in map *mapname*, or raise an error
-	(:exc:`nis.error`) if there is none. Both should be strings, *key* is 8-bit
-	clean. Return value is an arbitrary array of bytes (may contain ``NULL`` and
-	other joys).
-	
-	Note that *mapname* is first checked if it is an alias to another name.
-	
-	"""
-	pass
-	
-def cat(mapname,domain=default_domain):
-	"""
-	Return a dictionary mapping *key* to *value* such that ``match(key,
-	mapname)==value``. Note that both keys and values of the dictionary are
-	arbitrary arrays of bytes.
-	
-	Note that *mapname* is first checked if it is an alias to another name.
-	
-	"""
-	pass
-	
-def maps(domain=default_domain):
-	"""
-	Return a list of all valid maps.
-	
-	"""
-	pass
-	
+# AUTO-GENERATED FILE -- DO NOT EDIT
+
+""" This module contains functions for accessing NIS maps.
+ """
+
+__package__ = None
+
+def cat():
+  """ cat(map, domain = defaultdomain)
+  Returns the entire map as a dictionary. Optionally domain can be
+  specified but it defaults to the system default domain.
+   """
+  pass
+
+class error(Exception):
+
+  pass
+
 def get_default_domain():
-	"""
-	Return the system default NIS domain.
-	
-	"""
-	pass
-	
+  """ get_default_domain() -> str
+  Corresponds to the C library yp_get_default_domain() call, returning
+  the default NIS domain.
+   """
+  return ""
+
+def maps(arg0):
+  """ maps(domain = defaultdomain)
+  Returns an array of all available NIS maps within a domain. If domain
+  is not specified it defaults to the system default domain.
+   """
+  return None
+
+def match():
+  """ match(key, map, domain = defaultdomain)
+  Corresponds to the C library yp_match() call, returning the value of
+  key in the given map. Optionally domain can be specified but it
+  defaults to the system default domain.
+   """
+  pass
+

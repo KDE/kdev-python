@@ -1,64 +1,56 @@
-#!/usr/bin/env python2.7
-# -*- coding: utf-8 -*-
-""":platform: Unix
-:synopsis: An interface to the Unix syslog library routines.
+# AUTO-GENERATED FILE -- DO NOT EDIT
 
 
-This module provides an interface to the Unix ``syslog`` library routines.
-Refer to the Unix manual pages for a detailed description of the ``syslog``
-facility.
+LOG_ALERT = 1
+LOG_AUTH = 32
+LOG_CONS = 2
+LOG_CRIT = 2
+LOG_CRON = 72
+LOG_DAEMON = 24
+LOG_DEBUG = 7
+LOG_EMERG = 0
+LOG_ERR = 3
+LOG_INFO = 6
+LOG_KERN = 0
+LOG_LOCAL0 = 128
+LOG_LOCAL1 = 136
+LOG_LOCAL2 = 144
+LOG_LOCAL3 = 152
+LOG_LOCAL4 = 160
+LOG_LOCAL5 = 168
+LOG_LOCAL6 = 176
+LOG_LOCAL7 = 184
+LOG_LPR = 48
+LOG_MAIL = 16
 
-This module wraps the system ``syslog`` family of routines.  A pure Python
-library that can speak to a syslog server is available in the
-:mod:`logging.handlers` module as :class:`SysLogHandler`.
+def LOG_MASK():
+  pass
 
-The module defines the following functions:
+LOG_NDELAY = 8
+LOG_NEWS = 56
+LOG_NOTICE = 5
+LOG_NOWAIT = 16
+LOG_PERROR = 32
+LOG_PID = 1
+LOG_SYSLOG = 40
 
+def LOG_UPTO():
+  pass
 
-"""
-def syslog(priority,message):
-	"""
-	Send the string *message* to the system logger.  A trailing newline is added
-	if necessary.  Each message is tagged with a priority composed of a
-	*facility* and a *level*.  The optional *priority* argument, which defaults
-	to :const:`LOG_INFO`, determines the message priority.  If the facility is
-	not encoded in *priority* using logical-or (``LOG_INFO | LOG_USER``), the
-	value given in the :func:`openlog` call is used.
-	
-	If :func:`openlog` has not been called prior to the call to :func:`syslog`,
-	``openlog()`` will be called with no arguments.
-	
-	
-	"""
-	pass
-	
-def openlog(ident,logopt,facility):
-	"""
-	Logging options of subsequent :func:`syslog` calls can be set by calling
-	:func:`openlog`.  :func:`syslog` will call :func:`openlog` with no arguments
-	if the log is not currently open.
-	
-	The optional *ident* keyword argument is a string which is prepended to every
-	message, and defaults to ``sys.argv[0]`` with leading path components
-	stripped.  The optional *logopt* keyword argument (default is 0) is a bit
-	field -- see below for possible values to combine.  The optional *facility*
-	keyword argument (default is :const:`LOG_USER`) sets the default facility for
-	messages which do not have a facility explicitly encoded.
-	
-	
-	"""
-	pass
-	
+LOG_USER = 8
+LOG_UUCP = 64
+LOG_WARNING = 4
+__package__ = None
+
 def closelog():
-	"""
-	Reset the syslog module values and call the system library ``closelog()``.
-	
-	This causes the module to behave as it does when initially imported.  For
-	example, :func:`openlog` will be called on the first :func:`syslog` call (if
-	:func:`openlog` hasn't already been called), and *ident* and other
-	:func:`openlog` parameters are reset to defaults.
-	
-	
-	"""
-	pass
-	
+  pass
+
+def openlog():
+  pass
+
+def setlogmask():
+  pass
+
+def syslog():
+  pass
+

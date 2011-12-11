@@ -1,237 +1,167 @@
-#!/usr/bin/env python2.7
-# -*- coding: utf-8 -*-
-""":synopsis: Time access and conversions.
+# AUTO-GENERATED FILE -- DO NOT EDIT
 
+""" This module provides various functions to manipulate time values.
 
-This module provides various time-related functions. For related
-functionality, see also the :mod:`datetime` and :mod:`calendar` modules.
+There are two standard representations of time.  One is the number
+of seconds since the Epoch, in UTC (a.k.a. GMT).  It may be an integer
+or a floating point number (to represent fractions of seconds).
+The Epoch is system-defined; on Unix, it is generally January 1st, 1970.
+The actual value can be retrieved by calling gmtime(0).
 
-Although this module is always available,
-not all functions are available on all platforms.  Most of the functions
-defined in this module call platform C library functions with the same name.  It
-may sometimes be helpful to consult the platform documentation, because the
-semantics of these functions varies among platforms.
+The other representation is a tuple of 9 integers giving local time.
+The tuple items are:
+  year (four digits, e.g. 1998)
+  month (1-12)
+  day (1-31)
+  hours (0-23)
+  minutes (0-59)
+  seconds (0-59)
+  weekday (0-6, Monday is 0)
+  Julian day (day in the year, 1-366)
+  DST (Daylight Savings Time) flag (-1, 0 or 1)
+If the DST flag is 0, the time is given in the regular time zone;
+if it is 1, the time is given in the DST time zone;
+if it is -1, mktime() should guess based on the date and time.
 
-An explanation of some terminology and conventions is in order.
+Variables:
 
-"""
-"""
-Boolean value indicating whether two-digit year values will be accepted.  This
-is true by default, but will be set to false if the environment variable
-:envvar:`PYTHONY2K` has been set to a non-empty string.  It may also be modified
-at run time.
+timezone -- difference in seconds between UTC and local standard time
+altzone -- difference in  seconds between UTC and local DST time
+daylight -- whether local time should reflect DST
+tzname -- tuple of (standard time zone name, DST time zone name)
 
+Functions:
 
-"""
-accept2dyear = None
-"""
-The offset of the local DST timezone, in seconds west of UTC, if one is defined.
-This is negative if the local DST timezone is east of UTC (as in Western Europe,
-including the UK).  Only use this if ``daylight`` is nonzero.
+time() -- return current time in seconds since the Epoch as a float
+clock() -- return CPU time since process start as a float
+sleep() -- delay for a number of seconds given as a float
+gmtime() -- convert seconds since Epoch to UTC tuple
+localtime() -- convert seconds since Epoch to local time tuple
+asctime() -- convert time tuple to string
+ctime() -- convert time in seconds to string
+mktime() -- convert local time tuple to seconds since Epoch
+strftime() -- convert time tuple to string according to format specification
+strptime() -- parse string to time tuple according to format specification
+tzset() -- change the local timezone """
 
+__package__ = None
+accept2dyear = 1
+altzone = -7200
 
-"""
-altzone = None
-"""
-Nonzero if a DST timezone is defined.
+def asctime(tuple=None):
+  """ asctime([tuple]) -> string
+  
+  Convert a time tuple to a string, e.g. 'Sat Jun 06 16:26:11 1998'.
+  When the time tuple is not present, current time as returned by localtime()
+  is used. """
+  return ""
 
-
-"""
-daylight = None
-def asctime(t):
-	"""
-	Convert a tuple or :class:`struct_time` representing a time as returned by
-	:func:`gmtime` or :func:`localtime` to a 24-character string of the following
-	form: ``'Sun Jun 20 23:21:05 1993'``.  If *t* is not provided, the current time
-	as returned by :func:`localtime` is used. Locale information is not used by
-	:func:`asctime`.
-	
-	"""
-	pass
-	
 def clock():
-	"""
-	"""
-	pass
-	
-def ctime(secs):
-	"""
-	Convert a time expressed in seconds since the epoch to a string representing
-	local time. If *secs* is not provided or :const:`None`, the current time as
-	returned by :func:`time` is used.  ``ctime(secs)`` is equivalent to
-	``asctime(localtime(secs))``. Locale information is not used by :func:`ctime`.
-	
-	"""
-	pass
-	
-def gmtime(secs):
-	"""
-	Convert a time expressed in seconds since the epoch to a :class:`struct_time` in
-	UTC in which the dst flag is always zero.  If *secs* is not provided or
-	:const:`None`, the current time as returned by :func:`time` is used.  Fractions
-	of a second are ignored.  See above for a description of the
-	:class:`struct_time` object. See :func:`calendar.timegm` for the inverse of this
-	function.
-	
-	"""
-	pass
-	
-def localtime(secs):
-	"""
-	Like :func:`gmtime` but converts to local time.  If *secs* is not provided or
-	:const:`None`, the current time as returned by :func:`time` is used.  The dst
-	flag is set to ``1`` when DST applies to the given time.
-	
-	"""
-	pass
-	
-def mktime(t):
-	"""
-	This is the inverse function of :func:`localtime`.  Its argument is the
-	:class:`struct_time` or full 9-tuple (since the dst flag is needed; use ``-1``
-	as the dst flag if it is unknown) which expresses the time in *local* time, not
-	UTC.  It returns a floating point number, for compatibility with :func:`time`.
-	If the input value cannot be represented as a valid time, either
-	:exc:`OverflowError` or :exc:`ValueError` will be raised (which depends on
-	whether the invalid value is caught by Python or the underlying C libraries).
-	The earliest date for which it can generate a time is platform-dependent.
-	
-	
-	"""
-	pass
-	
-def sleep(secs):
-	"""
-	Suspend execution for the given number of seconds.  The argument may be a
-	floating point number to indicate a more precise sleep time. The actual
-	suspension time may be less than that requested because any caught signal will
-	terminate the :func:`sleep` following execution of that signal's catching
-	routine.  Also, the suspension time may be longer than requested by an arbitrary
-	amount because of the scheduling of other activity in the system.
-	
-	
-	"""
-	pass
-	
-def strftime(format,t):
-	"""
-	Convert a tuple or :class:`struct_time` representing a time as returned by
-	:func:`gmtime` or :func:`localtime` to a string as specified by the *format*
-	argument.  If *t* is not provided, the current time as returned by
-	:func:`localtime` is used.  *format* must be a string.  :exc:`ValueError` is
-	raised if any field in *t* is outside of the allowed range.
-	
-	"""
-	pass
-	
-def strptime(string,format):
-	"""
-	Parse a string representing a time according to a format.  The return  value is
-	a :class:`struct_time` as returned by :func:`gmtime` or :func:`localtime`.
-	
-	The *format* parameter uses the same directives as those used by
-	:func:`strftime`; it defaults to ``"%a %b %d %H:%M:%S %Y"`` which matches the
-	formatting returned by :func:`ctime`. If *string* cannot be parsed according to
-	*format*, or if it has excess data after parsing, :exc:`ValueError` is raised.
-	The default values used to fill in any missing data when more accurate values
-	cannot be inferred are ``(1900, 1, 1, 0, 0, 0, 0, 1, -1)``.
-	
-	For example:
-	
-	>>> import time
-	>>> time.strptime("30 Nov 00", "%d %b %y")   # doctest: +NORMALIZE_WHITESPACE
-	time.struct_time(tm_year=2000, tm_mon=11, tm_mday=30, tm_hour=0, tm_min=0,
-	tm_sec=0, tm_wday=3, tm_yday=335, tm_isdst=-1)
-	
-	Support for the ``%Z`` directive is based on the values contained in ``tzname``
-	and whether ``daylight`` is true.  Because of this, it is platform-specific
-	except for recognizing UTC and GMT which are always known (and are considered to
-	be non-daylight savings timezones).
-	
-	Only the directives specified in the documentation are supported.  Because
-	``strftime()`` is implemented per platform it can sometimes offer more
-	directives than those listed.  But ``strptime()`` is independent of any platform
-	and thus does not necessarily support all directives available that are not
-	documented as supported.
-	
-	
-	"""
-	pass
-	
-class struct_time:
+  """ clock() -> floating point number
+  
+  Return the CPU time or real time since the start of the process or since
+  the first call to clock().  This has as much precision as the system
+  records. """
+  return 1
 
+def ctime(seconds):
+  """ ctime(seconds) -> string
+  
+  Convert a time in seconds since the Epoch to a string in local time.
+  This is equivalent to asctime(localtime(seconds)). When the time tuple is
+  not present, current time as returned by localtime() is used. """
+  return ""
 
-	"""
-	The type of the time value sequence returned by :func:`gmtime`,
-	:func:`localtime`, and :func:`strptime`.  It is an object with a :term:`named
-	tuple` interface: values can be accessed by index and by attribute name.  The
-	following values are present:
-	
-	+-------+-------------------+---------------------------------+
-	| Index | Attribute         | Values                          |
-	+=======+===================+=================================+
-	| 0     | :attr:`tm_year`   | (for example, 1993)             |
-	+-------+-------------------+---------------------------------+
-	| 1     | :attr:`tm_mon`    | range [1, 12]                   |
-	+-------+-------------------+---------------------------------+
-	| 2     | :attr:`tm_mday`   | range [1, 31]                   |
-	+-------+-------------------+---------------------------------+
-	| 3     | :attr:`tm_hour`   | range [0, 23]                   |
-	+-------+-------------------+---------------------------------+
-	| 4     | :attr:`tm_min`    | range [0, 59]                   |
-	+-------+-------------------+---------------------------------+
-	| 5     | :attr:`tm_sec`    | range [0, 61]; see **(1)** in   |
-	|       |                   | :func:`strftime` description    |
-	+-------+-------------------+---------------------------------+
-	| 6     | :attr:`tm_wday`   | range [0, 6], Monday is 0       |
-	+-------+-------------------+---------------------------------+
-	| 7     | :attr:`tm_yday`   | range [1, 366]                  |
-	+-------+-------------------+---------------------------------+
-	| 8     | :attr:`tm_isdst`  | 0, 1 or -1; see below           |
-	+-------+-------------------+---------------------------------+
-	
-	"""
-	
-	
-	def __init__(self, ):
-		pass
-	
-	def time(self, ):
-		"""
-		Return the time as a floating point number expressed in seconds since the epoch,
-		in UTC.  Note that even though the time is always returned as a floating point
-		number, not all systems provide time with a better precision than 1 second.
-		While this function normally returns non-decreasing values, it can return a
-		lower value than a previous call if the system clock has been set back between
-		the two calls.
-		
-		
-		"""
-		pass
-		
-	def tzset(self, ):
-		"""
-		Resets the time conversion rules used by the library routines. The environment
-		variable :envvar:`TZ` specifies how this is done.
-		
-		"""
-		pass
-		
-	"""
-	The offset of the local (non-DST) timezone, in seconds west of UTC (negative in
-	most of Western Europe, positive in the US, zero in the UK).
-	
-	
-	"""
-	timezone = None
-	"""
-	A tuple of two strings: the first is the name of the local non-DST timezone, the
-	second is the name of the local DST timezone.  If no DST timezone is defined,
-	the second string should not be used.
-	
-	
-	"""
-	tzname = None
-	
+daylight = 1
 
+def gmtime(seconds=None):
+  """ gmtime([seconds]) -> (tm_year, tm_mon, tm_mday, tm_hour, tm_min,
+                         tm_sec, tm_wday, tm_yday, tm_isdst)
+  
+  Convert seconds since the Epoch to a time tuple expressing UTC (a.k.a.
+  GMT).  When 'seconds' is not passed in, convert the current time instead. """
+  return (None, None, None, None, None, None, None, None, None)
+
+def localtime(seconds=None):
+  """ localtime([seconds]) -> (tm_year,tm_mon,tm_mday,tm_hour,tm_min,
+                            tm_sec,tm_wday,tm_yday,tm_isdst)
+  
+  Convert seconds since the Epoch to a time tuple expressing local time.
+  When 'seconds' is not passed in, convert the current time instead. """
+  return (None, None, None, None, None, None, None, None, None)
+
+def mktime(tuple):
+  """ mktime(tuple) -> floating point number
+  
+  Convert a time tuple in local time to seconds since the Epoch. """
+  return 1
+
+def sleep(seconds):
+  """ sleep(seconds)
+  
+  Delay execution for a given number of seconds.  The argument may be
+  a floating point number for subsecond precision. """
+  pass
+
+def strftime(format, tuple=None):
+  """ strftime(format[, tuple]) -> string
+  
+  Convert a time tuple to a string according to a format specification.
+  See the library reference manual for formatting codes. When the time tuple
+  is not present, current time as returned by localtime() is used. """
+  return ""
+
+def strptime(string, format):
+  """ strptime(string, format) -> struct_time
+  
+  Parse a string to a time tuple according to a format specification.
+  See the library reference manual for formatting codes (same as strftime()). """
+  return ""
+
+class struct_time(object):
+  """ The time value as returned by gmtime(), localtime(), and strptime(), and
+   accepted by asctime(), mktime() and strftime().  May be considered as a
+   sequence of 9 integers.
+  
+   Note that several fields' values are not the same as those defined by
+   the C language standard for struct tm.  For example, the value of the
+   field tm_year is the actual year, not year - 1900.  See individual
+   fields' descriptions for details. """
+
+  n_fields = 9
+  n_sequence_fields = 9
+  n_unnamed_fields = 0
+  tm_hour = None
+  tm_isdst = None
+  tm_mday = None
+  tm_min = None
+  tm_mon = None
+  tm_sec = None
+  tm_wday = None
+  tm_yday = None
+  tm_year = None
+
+def time():
+  """ time() -> floating point number
+  
+  Return the current time in seconds since the Epoch.
+  Fractions of a second may be present if the system clock provides them. """
+  return 1
+
+timezone = -3600
+tzname = ()
+
+def tzset():
+  """ tzset()
+  
+  Initialize, or reinitialize, the local timezone to the value stored in
+  os.environ['TZ']. The TZ environment variable should be specified in
+  standard Unix timezone format as documented in the tzset man page
+  (eg. 'US/Eastern', 'Europe/Amsterdam'). Unknown timezones will silently
+  fall back to UTC. If the TZ environment variable is not set, the local
+  timezone is set to the systems best guess of wallclock time.
+  Changing the TZ environment variable without calling tzset *may* change
+  the local timezone used by methods such as localtime, but this behaviour
+  should not be relied on. """
+  pass
 

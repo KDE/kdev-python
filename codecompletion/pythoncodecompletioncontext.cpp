@@ -475,7 +475,8 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
 {
     kDebug() << "Text: " << text;
     m_workingOnDocument = parent->parent->m_currentDocument;
-    QString currentLine = "\n" + text.split("\n").last(); // we'll only look at the last line, as 99% of python statements are limited to one line
+    QString currentLine = "\n" + text.split("\n").last(); // we'll only look at the last line for now, as 
+                                                          // 99% of python statements are limited to one line TODO fix this
     int atLine = position.line;
     kDebug() << "Doing auto-completion context scan for: " << currentLine << "@line" << atLine << "@context" << context->range().castToSimpleRange();
     
@@ -491,7 +492,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         }
     }
     
-    // okay, so our contexts end too early. They end at the last valid token of a function or such,
+    // Our contexts end too early. They end at the last valid token of a function or such,
     // but not at the DEDENT token. This means, if a function ends with 5 empty but indented lines, and you
     // place your cursor in the 3rd one and start typing, there's no completion for variables local to the function.
     // Thus, we walk back in the text line-by-line, searching for some context which has the same
@@ -560,6 +561,14 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         else {
             kDebug() << "Indents mismatch, so the given context is correct.";
         }
+    }
+    
+    QRegExp isComment("(.*)#(.*)$");
+    isComment.setMinimal(true);
+    bool isCommentLine = isComment.exactMatch(currentLine);
+    if ( isCommentLine ) {
+        m_operation = PythonCodeCompletionContext::NoCompletion;
+        return;
     }
     
     QRegExp raise("^[\\s]*raise(.*)$");

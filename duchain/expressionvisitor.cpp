@@ -405,6 +405,26 @@ void ExpressionVisitor::visitCall(CallAst* node)
             AbstractType::Ptr type = funcDecl->type<FunctionType>()->returnType();
             encounter(type);
             m_firstAccessedFunctionDeclaration = FunctionDeclarationPointer(funcDecl);
+            if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(
+                                              funcDecl, "returnContentEqualsContentOf") ) {
+                kDebug() << "Found argument dependent decorator, checking argument type";
+                int argNum = d->additionalInformation().str().toInt();
+                if ( node->arguments.length() > argNum ) {
+                    ExpressionAst* relevantArgument = node->arguments.at(argNum);
+                    ExpressionVisitor v(m_ctx);
+                    v.visitNode(relevantArgument);
+                    if ( v.lastType() ) {
+                        if ( VariableLengthContainer* target = dynamic_cast<VariableLengthContainer*>(type.unsafeData()) ) {
+                            if ( VariableLengthContainer* source = dynamic_cast<VariableLengthContainer*>(v.lastType().unsafeData()) ) {
+                                VariableLengthContainer* newType = static_cast<VariableLengthContainer*>(source->clone());
+                                Q_ASSERT(newType);
+                                newType->addContentType(source->contentType().abstractType());
+                                encounter(AbstractType::Ptr(newType));
+                            }
+                        }
+                    }
+                }
+            }
         }
         else {
             kDebug() << "Declaraton for " << functionName << " is not a class or function declaration";

@@ -283,6 +283,7 @@ def isinstance(obj, cls): return True
 def issubclass(cls, info): return True
 def iter(o, s = None): return __kdevpythondocumentation_builtin_iterator()
 def len(s): return 0
+@returnContentEqualsContentOf(0)
 def list(i = None): return []
 def locals(): return {}
 def long(x = None, base = None): return 0L

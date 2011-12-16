@@ -492,6 +492,48 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         }
     }
     
+    // check if the current position is inside a multi-line comment / string
+    bool insideSingleQuotes = false;
+    bool insideDoubleQuotes = false;
+    bool insideMultiLineComment = false;
+    bool insideSingleLineComment = false;
+    const int max_len = text.length();
+    kDebug() << "Checking for comment line or string literal...";
+    for ( int atChar = 0; atChar < max_len; atChar++ ) {
+        const QChar& c = text.at(atChar);
+        QString t("");
+        if ( max_len - atChar > 2 ) {
+            for ( int i = 0; i < 3; i++ ) {
+                t.append(text.at(atChar+i));
+            }
+        }
+        kDebug() << atChar << t;
+        if ( c == '#' ) {
+            insideSingleLineComment = true;
+            continue;
+        }
+        if ( c == '\n' ) {
+            insideSingleLineComment = false;
+            continue;
+        }
+        if ( t == "\"\"\"" ) {
+            insideMultiLineComment = !insideMultiLineComment;
+            continue;
+        }
+        if ( c == '\'' ) {
+            insideSingleQuotes = !insideSingleQuotes;
+            continue;
+        }
+        if ( c == '"' ) {
+            insideDoubleQuotes = !insideDoubleQuotes;
+            continue;
+        }
+    }
+    
+    if ( insideSingleLineComment || insideSingleQuotes || insideMultiLineComment || insideDoubleQuotes ) {
+        m_operation = PythonCodeCompletionContext::NoCompletion;
+    }
+    
     // Our contexts end too early. They end at the last valid token of a function or such,
     // but not at the DEDENT token. This means, if a function ends with 5 empty but indented lines, and you
     // place your cursor in the 3rd one and start typing, there's no completion for variables local to the function.
@@ -561,14 +603,6 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         else {
             kDebug() << "Indents mismatch, so the given context is correct.";
         }
-    }
-    
-    QRegExp isComment("(.*)#(.*)$");
-    isComment.setMinimal(true);
-    bool isCommentLine = isComment.exactMatch(currentLine);
-    if ( isCommentLine ) {
-        m_operation = PythonCodeCompletionContext::NoCompletion;
-        return;
     }
     
     QRegExp raise("^[\\s]*raise(.*)$");

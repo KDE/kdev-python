@@ -67,11 +67,15 @@ ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node
     if (!updateContext) {
         DUChainReadLocker lock(DUChain::lock());
         updateContext = DUChain::self()->chainForDocument(url);
+        if ( updateContext ) {
+            Q_ASSERT(updateContext->type() == DUContext::Global);
+        }
     }
     if (updateContext) {
         qDebug() << "re-compiling" << url.str();
         qDebug() << "*******************************************";
         DUChainWriteLocker lock(DUChain::lock());
+        Q_ASSERT(updateContext->type() == DUContext::Global);
         updateContext->clearImportedParentContexts();
         updateContext->parsingEnvironmentFile()->clearModificationRevisions();
         updateContext->clearProblems();

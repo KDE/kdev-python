@@ -206,7 +206,9 @@ void ParseJob::run()
             static const IndexedString langString("python");
             file->setLanguage(langString);
             m_duContext = new TopDUContext(document(), RangeInRevision(0, 0, INT_MAX, INT_MAX), file);
+            m_duContext->setType(DUContext::Global);
             DUChain::self()->addDocumentChain(m_duContext);
+            Q_ASSERT(m_duContext->type() == DUContext::Global);
         }
         
         setDuChain(m_duContext);

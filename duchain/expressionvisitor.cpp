@@ -106,8 +106,8 @@ void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclara
             m_lastAccessedReturnType.push(classDecl->abstractType());
     }
     else if ( funcDecl && funcDecl->type<FunctionType>() ) {
+        m_callStack.push(funcDecl);
         if ( node->belongsToCall ) {
-            m_callStack.push(funcDecl);
             AbstractType::Ptr type = funcDecl->type<FunctionType>()->returnType();
             kDebug() << "Using function return type: " << ( type ? type->toString() : "(none)" );
             // check for list content stuff

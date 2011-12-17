@@ -17,13 +17,19 @@ REGISTER_DUCHAIN_ITEM_WITH_DATA(PythonNormalDUContext, DUContextData);
 
 template<>
 QWidget* PythonTopDUContext::createNavigationWidget(Declaration* decl, TopDUContext* topContext, const QString& htmlPrefix, const QString& htmlSuffix) const {
-    if ( ! decl ) return 0;
+    if ( ! decl ) {
+        kDebug() << "no declaration, not returning navigationwidget";
+        return 0;
+    }
     return new NavigationWidget(DeclarationPointer(decl), TopDUContextPointer(topContext), htmlPrefix, htmlSuffix);
 }
 
 template<>
 QWidget* PythonNormalDUContext::createNavigationWidget(Declaration* decl, TopDUContext* topContext, const QString& htmlPrefix, const QString& htmlSuffix) const {
-    if ( ! decl ) return 0;
+    if ( ! decl ) {
+        kDebug() << "no declaration, not returning navigationwidget";
+        return 0;
+    }
     return new NavigationWidget(DeclarationPointer(decl), TopDUContextPointer(topContext), htmlPrefix, htmlSuffix);
 }
 

@@ -802,6 +802,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         /** END DEBUG **/
         i += 1;
         setLastType(tupleElementType); // TODO fix this for x, y = a, b, i.e. if node->value->astType == TupleAstType
+        // a = 3
         if ( target->astType == Ast::NameAstType ) {
             if ( tupleElementType && tupleElementType->whichType() == AbstractType::TypeFunction ) {
                 if ( tupleElementDeclaration ) {
@@ -826,7 +827,23 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                 /** END DEBUG **/
             }
         }
-        if ( target->astType == Ast::AttributeAstType ) {
+        // a[0] = 3
+        else if ( target->astType == Ast::SubscriptAstType ) {
+            ExpressionAst* v = static_cast<SubscriptAst*>(target)->value;
+            if ( v->astType == Ast::NameAstType ) {
+                if ( tupleElementType ) {
+                    ExpressionVisitor targetVisitor(currentContext());
+                    targetVisitor.visitNode(v);
+                    VariableLengthContainer::Ptr cont = VariableLengthContainer::Ptr::dynamicCast(targetVisitor.lastType());
+                    if ( cont ) {
+                        cont->addContentType(tupleElementType);
+                    }
+                    targetVisitor.lastDeclaration()->setAbstractType(cont.cast<AbstractType>());
+                }
+            }
+        }
+        // a.b = 3
+        else if ( target->astType == Ast::AttributeAstType ) {
             AttributeAst* attrib = static_cast<AttributeAst*>(target);
             kDebug() << "Visiting attribute: " << attrib->attribute->value;
             // check whether the current attribute is undeclared, but the previos ones known

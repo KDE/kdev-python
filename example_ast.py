@@ -20,6 +20,13 @@ def my_func():
     my_var_02 = 2
     my_var_03 = 3
 
+class cls():
+    def myfunc(self):
+        some_var = my_func
+    
+    def another(self):
+        print self
+
 import os
 
 def ASDF(arg, arg2):

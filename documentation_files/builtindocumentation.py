@@ -321,5 +321,5 @@ def vars(obj): return None
 def xrange(start = 0, stop = 0, step = 0): return [0]
 def zip(iterable = None): return []
 def __import__(name, globa = None, loca = None, fromlist = None, level = 0): return None
-
-dict = __kdevpythondocumentation_builtin_dict
+@returnContentEqualsContentOf(0)
+def dict(): return {}

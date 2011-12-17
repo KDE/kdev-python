@@ -527,6 +527,13 @@ void ExpressionVisitor::visitDict(DictAst* node)
 {
     AstDefaultVisitor::visitDict(node);
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("dict", m_ctx);
+    ExpressionVisitor contentVisitor(m_ctx);
+    if ( type ) {
+        foreach ( ExpressionAst* content, node->values ) {
+            contentVisitor.visitNode(content);
+            type->addContentType(contentVisitor.lastType());
+        }
+    }
     encounter<VariableLengthContainer>(type);
 }
 

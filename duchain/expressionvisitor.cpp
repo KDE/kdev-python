@@ -106,8 +106,8 @@ void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclara
             m_lastAccessedReturnType.push(classDecl->abstractType());
     }
     else if ( funcDecl && funcDecl->type<FunctionType>() ) {
-        m_callStack.push(funcDecl);
         if ( node->belongsToCall ) {
+            m_callStack.push(funcDecl);
             AbstractType::Ptr type = funcDecl->type<FunctionType>()->returnType();
             kDebug() << "Using function return type: " << ( type ? type->toString() : "(none)" );
             // check for list content stuff
@@ -137,13 +137,15 @@ void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclara
         }
         else {
             encounter(funcDecl->abstractType(), extendUnsureTypes);
-            if ( extendUnsureTypes )
+            if ( extendUnsureTypes ) {
                 m_lastAccessedReturnType.push(Helper::mergeTypes(
                     m_lastAccessedReturnType.isEmpty() ? AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)) : m_lastAccessedReturnType.pop(),
                     funcDecl->abstractType()
                 ));
-            else
+            }
+            else {
                 m_lastAccessedReturnType.push(funcDecl->abstractType()); // TODO check this
+            }
         }
     }
     else {

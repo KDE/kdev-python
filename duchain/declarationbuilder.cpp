@@ -783,7 +783,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         } else if (realTargets.length() == 1) {
             ExpressionVisitor v(currentContext(), editor());
             v.visitNode(node->value);
-            tupleElementType =  v.lastType();
+            tupleElementType = v.lastType();
         } else {
             tupleElementType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
             tupleElementDeclaration = 0;
@@ -806,8 +806,11 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             if ( tupleElementType && tupleElementType->whichType() == AbstractType::TypeFunction ) {
                 if ( tupleElementDeclaration ) {
                     DUChainWriteLocker lock(DUChain::lock());
+                    kDebug() << "creating alias declaration for " << static_cast<NameAst*>(target)->identifier->value;
+//                     visitVariableDeclaration<FunctionDeclaration>(static_cast<NameAst*>(target)->identifier, target);
                     AliasDeclaration* decl = openDeclaration<AliasDeclaration>(static_cast<NameAst*>(target)->identifier, target);
                     decl->setAliasedDeclaration(tupleElementDeclaration.data());
+                    closeDeclaration();
                 }
             }
             else {

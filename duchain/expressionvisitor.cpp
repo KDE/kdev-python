@@ -384,18 +384,21 @@ void ExpressionVisitor::visitCall(CallAst* node)
         return unknownTypeEncountered();
     }
     
-    QString functionName = static_cast<NameAst*>(node->function)->identifier->value;
+    NameAst* name = static_cast<NameAst*>(node->function);
+    QString functionName = name->identifier->value;
     kDebug() << "Visiting call of function " << functionName;
     
     DUChainReadLocker lock(DUChain::lock());
-    QList<Declaration*> decls = m_ctx->topContext()->findDeclarations(QualifiedIdentifier(functionName));
-    if ( decls.length() == 0 ) {
+    Declaration* actualDeclaration = Helper::declarationForName(
+                                     name, QualifiedIdentifier(functionName), 
+                                     RangeInRevision::invalid(), DUContextPointer(m_ctx));
+    if ( not actualDeclaration ) {
         kDebug() << "No declaration for " << functionName;
         m_shouldBeKnown = false;
         return unknownTypeEncountered();
     }
     else {
-        Declaration* actualDeclaration = Helper::resolveAliasDeclaration(decls.last());
+        actualDeclaration = Helper::resolveAliasDeclaration(actualDeclaration);
         ClassDeclaration* classDecl = dynamic_cast<ClassDeclaration*>(actualDeclaration);
         FunctionDeclaration* funcDecl = dynamic_cast<FunctionDeclaration*>(actualDeclaration);
         

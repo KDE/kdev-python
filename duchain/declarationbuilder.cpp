@@ -1157,6 +1157,7 @@ void DeclarationBuilder::visitReturn(ReturnAst* node)
         t->setReturnType(Helper::mergeTypes(t->returnType(), encountered));
     }
     setLastType(AbstractType::Ptr(0));
+    DeclarationBuilderBase::visitReturn(node);
 }
 
 void DeclarationBuilder::visitArguments( ArgumentsAst* node )

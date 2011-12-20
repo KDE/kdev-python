@@ -112,7 +112,9 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         
         // whether type of expression should be known or not, i.e. if at the point where the chain breaks the previous type
         // was already unknown, then this is an IDE error, otherwise probably the user's code is wrong; used for error reporting
-        bool shouldBeKnown() { return m_shouldBeKnown; };
+        inline bool shouldBeKnown() const {
+            return m_shouldBeKnown;
+        };
         
         /**
          * @brief Resolve the given declaration if it is an alias declaration.
@@ -124,17 +126,20 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         Declaration* resolveAliasDeclaration(Declaration* decl);
         
         inline KDevelop::AbstractType::Ptr lastType() const {
-            return m_lastType;
+            return ( m_lastType.isEmpty() ? AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)) : m_lastType.last());
         }
         inline DeclarationPointer lastDeclaration() const {
-            return ( m_lastAccessedDeclaration.isEmpty() ? DeclarationPointer(0) : m_lastAccessedDeclaration.last() );
+            if ( m_lastDeclaration.isEmpty() ) {
+                return DeclarationPointer(0);
+            }
+            return m_lastDeclaration.last().last();
         }
-        inline FunctionDeclarationPointer lastFunctionDeclaration() const {
-            return m_firstAccessedFunctionDeclaration;
-        };
-        inline const DUChainPointer<ClassDeclaration> lastClassDeclaration() const {
-            return m_firstAccessedClassDeclaration;
-        };
+        inline QList<DeclarationPointer> lastDeclarations() const {
+            if ( m_lastDeclaration.isEmpty() ) {
+                return QList<DeclarationPointer>() << DeclarationPointer(0);
+            }
+            return m_lastDeclaration.last();
+        }
         template<typename T> static TypePtr<T> typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx);
         /**
          * @brief Takes a declaration and a node as arguments, and determines whether the function is called or assigned to.
@@ -146,49 +151,18 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
          * @return void
          **/
         void setTypesForEventualCall(DeclarationPointer actualDeclaration, Python::AttributeAst* node, bool extendUnsureTypes = false);
+    
     private:
         static QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> s_defaultTypes;
         
-        inline void setLastAccessedNameDeclaration(DeclarationPointer d) {
-            m_lastAccessedNameDeclaration.clear();
-            m_lastAccessedNameDeclaration << d;
-        };
-        inline void setLastAccessedAttributeDeclaration(DeclarationPointer d) {
-            m_lastAccessedAttributeDeclaration.clear();
-            m_lastAccessedAttributeDeclaration << d;
-        };
-        inline void setLastAccessedDeclaration(DeclarationPointer d) {
-//             if ( d && ! m_firstAccessedFunctionDeclaration && d->isFunctionDeclaration() ) {
-//                 m_firstAccessedFunctionDeclaration = d.dynamicCast<FunctionDeclaration>();
-//                 Q_ASSERT(m_firstAccessedFunctionDeclaration);
-//             }
-            if ( d && ! m_firstAccessedClassDeclaration && d->abstractType() && d->abstractType()->whichType() == AbstractType::TypeStructure ) {
-                if ( DUChainPointer<ClassDeclaration> c = d.dynamicCast<ClassDeclaration>() ) {
-                    m_firstAccessedClassDeclaration = c;
-                }
-            }
-            m_lastAccessedDeclaration.clear();
-            m_lastAccessedDeclaration << d;
-        };
-        inline void setLastAccessedDeclaration(QList<DeclarationPointer> ds) {
-//             if ( ! m_firstAccessedFunctionDeclaration ) {
-//                 foreach ( const DeclarationPointer& p, ds ) {
-//                     if ( p->isFunctionDeclaration() ) {
-//                         m_firstAccessedFunctionDeclaration = p.dynamicCast<FunctionDeclaration>();
-//                         Q_ASSERT(m_firstAccessedFunctionDeclaration);
-//                         break;
-//                     }
-//                 }
-//             }
-            m_lastAccessedDeclaration = ds;
-        };
-        
-        KDevelop::AbstractType::Ptr m_lastType;
         KDevelop::DUContext* m_ctx;
         PythonEditorIntegrator* m_editor;
         
         void encounter(AbstractType::Ptr type, bool merge=false);
         template<typename T> void encounter(TypePtr<T> type);
+        void encounterDeclaration(DeclarationPointer ptr);
+        void encounterDeclaration(Declaration* ptr);
+        void encounterDeclarations(QList<DeclarationPointer> ptrs);
         
         void unknownTypeEncountered();
         QList< TypePtr< StructureType > > possibleStructureTypes(AbstractType::Ptr type);
@@ -204,15 +178,9 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         
         bool m_shouldBeKnown;
         
-        QStack<AbstractType::Ptr> m_lastAccessedReturnType;
+        QStack<KDevelop::AbstractType::Ptr> m_lastType;
+        QStack< QList<DeclarationPointer> > m_lastDeclaration;
         QStack<FunctionDeclarationPointer> m_callStack;
-        FunctionDeclarationPointer m_firstAccessedFunctionDeclaration;
-        QList<DeclarationPointer> m_lastAccessedNameDeclaration;
-        QList<DeclarationPointer> m_lastAccessedDeclaration;
-        QList<DeclarationPointer> m_lastAccessedAttributeDeclaration;  // this is in general not what the expression visitor is meant for,
-        DUChainPointer<ClassDeclaration> m_firstAccessedClassDeclaration;
-                                                                // but the processes to find those declarations and the types are pretty much the same
-                                                                // and are both pretty long, so we can avoid dulicated code with this.
 };
 
 }

@@ -838,6 +838,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                     if ( cont ) {
                         cont->addContentType(tupleElementType);
                     }
+                    DUChainWriteLocker lock(DUChain::lock());
                     targetVisitor.lastDeclaration()->setAbstractType(cont.cast<AbstractType>());
                 }
             }
@@ -926,7 +927,8 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     kDebug() << "opening class definition";
     
     DUChainWriteLocker lock(DUChain::lock());
-    ClassDeclaration* dec = openDeclaration<ClassDeclaration>( node->name, node );
+    ClassDeclaration* dec = openDeclaration<ClassDeclaration>(identifierForNode(node->name),
+                                                              editorFindRange(node->name, node->name));
     visitDecorators<ClassDeclaration>(node->decorators, dec);
     eventuallyAssignInternalContext();
     
@@ -1038,18 +1040,17 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     FunctionType::Ptr type;
     QList<Declaration*> existing;
     
-    FunctionDeclaration* dec = openDeclaration<FunctionDeclaration>( node->name, node );
+    DUChainWriteLocker lock(DUChain::lock());
+    kDebug() << identifierForNode(node->name).toString();
+    FunctionDeclaration* dec = openDeclaration<FunctionDeclaration>(identifierForNode(node->name),
+                                                                    editorFindRange(node->name, node->name));
     Q_ASSERT(dec->isFunctionDeclaration());
     
     type = FunctionType::Ptr(new FunctionType());
-    {
-        DUChainWriteLocker lock;
-        dec->setType(type);
-    }
-    
-    openType(type);
     kDebug() << " <<< open function type";
-    DUChainWriteLocker lock(DUChain::lock());
+    openType(type);
+    dec->setType(type);
+    
     bool hasFirstArgument = false;
     
     visitDecorators<FunctionDeclaration>(node->decorators, dec);
@@ -1057,7 +1058,8 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     
     // this must be done here, because the type of self must be known when parsing the body
     kDebug() << "Checking whether we have to change argument types...";
-    kDebug() <<  eventualParentDeclaration.data() << currentType<FunctionType>()->arguments().length() << m_firstAttributeDeclaration.data() << currentContext()->type() << DUContext::Class;
+    kDebug() <<  eventualParentDeclaration.data() << currentType<FunctionType>()->arguments().length() 
+             << m_firstAttributeDeclaration.data() << currentContext()->type() << DUContext::Class;
     if ( eventualParentDeclaration.data() && currentType<FunctionType>()->arguments().length() 
             && m_firstAttributeDeclaration.data() && currentContext()->type() == DUContext::Class ) {
         kDebug() << "Changing self argument type";

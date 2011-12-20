@@ -582,8 +582,8 @@ void DeclarationBuilder::visitCall(CallAst* node)
     kDebug() << "Visiting call";
     ExpressionVisitor functionVisitor(currentContext(), editor());
     functionVisitor.visitNode(node);
-    kDebug() << functionVisitor.lastFunctionDeclaration();
-    if ( node->function && node->function->astType == Ast::AttributeAstType && functionVisitor.lastFunctionDeclaration() ) {
+    kDebug() << functionVisitor.lastDeclaration();
+    if ( node->function && node->function->astType == Ast::AttributeAstType && functionVisitor.lastDeclaration() ) {
         kDebug() << "Checking for list content updates...";
         ExpressionVisitor v(currentContext(), editor());
         v.visitNode(static_cast<AttributeAst*>(node->function)->value);
@@ -594,8 +594,8 @@ void DeclarationBuilder::visitCall(CallAst* node)
 //                 kDebug() << "Eventual function declaration: " << functionVisitor.lastFunctionDeclaration()->toString();
 //                 kDebug() << functionVisitor.lastFunctionDeclaration()->isFunctionDeclaration();
 //                 /// END DEBUG
-                if ( functionVisitor.lastFunctionDeclaration()->isFunctionDeclaration() ) {
-                    FunctionDeclaration* f = static_cast<FunctionDeclaration*>(functionVisitor.lastFunctionDeclaration().data());
+                if ( functionVisitor.lastDeclaration()->isFunctionDeclaration() ) {
+                    FunctionDeclaration* f = static_cast<FunctionDeclaration*>(functionVisitor.lastDeclaration().data());
                     if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(f, "addsTypeOfArg") ) {
                         register const int offset = d->additionalInformation().str().toInt();
                         if ( node->arguments.length() > offset ) {
@@ -651,15 +651,16 @@ void DeclarationBuilder::visitCall(CallAst* node)
     kDebug() << "--";
     kDebug() << "Trying to update function argument types based on call";
     bool isConstructor = false;
-    FunctionDeclarationPointer lastFunctionDeclaration = functionVisitor.lastFunctionDeclaration();
+    DeclarationPointer lastFunctionDeclaration = functionVisitor.lastDeclaration();
     DUChainWriteLocker lock(DUChain::lock());
-    if ( ! lastFunctionDeclaration && functionVisitor.lastClassDeclaration() ) {
+    if ( ! lastFunctionDeclaration->isFunctionDeclaration() && lastFunctionDeclaration )
+    {
         kDebug() << "No function declaration, looking for class constructor";
-        DUChainPointer<ClassDeclaration> eventualClassDeclaration = functionVisitor.lastClassDeclaration();
-        kDebug() << "Class declaration: " << eventualClassDeclaration;
-        if ( eventualClassDeclaration && eventualClassDeclaration->internalContext() ) {
+        kDebug() << "Class declaration: " << lastFunctionDeclaration;
+        if ( lastFunctionDeclaration && lastFunctionDeclaration->internalContext() ) {
             kDebug() << "ok, looking for constructor";
-            QList<Declaration*> constructors = eventualClassDeclaration->internalContext()->findDeclarations(KDevelop::Identifier("__init__"));
+            QList<Declaration*> constructors = lastFunctionDeclaration->internalContext()
+                                               ->findDeclarations(KDevelop::Identifier("__init__"));
             kDebug() << "Found constructors: " << constructors;
             if ( ! constructors.isEmpty() ) {
                 lastFunctionDeclaration = dynamic_cast<FunctionDeclaration*>(constructors.first());
@@ -685,7 +686,9 @@ void DeclarationBuilder::visitCall(CallAst* node)
             }
             int atParam = 0;
             if ( parameters.size() >= node->arguments.size() &&
-                    functiontype->arguments().length() + lastFunctionDeclaration->defaultParametersSize() >= (uint) node->arguments.size() )
+                    functiontype->arguments().length() + static_cast<FunctionDeclarationPointer>(lastFunctionDeclaration)
+                                                         ->defaultParametersSize() 
+                        >= (uint) node->arguments.size() )
             {
                 kDebug() << "... and they match the parameter size";
                 foreach ( ExpressionAst* arg, node->arguments ) {

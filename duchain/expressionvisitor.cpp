@@ -76,6 +76,11 @@ void ExpressionVisitor::encounterDeclaration(DeclarationPointer ptr)
     m_lastDeclaration.push(QList<DeclarationPointer>() << ptr);
 }
 
+void ExpressionVisitor::encounterDeclarations(QList< DeclarationPointer > ptrs)
+{
+    m_lastDeclaration.push(ptrs);
+}
+
 void ExpressionVisitor::encounterDeclaration(Declaration* ptr)
 {
     m_lastDeclaration.push(QList<DeclarationPointer>() << DeclarationPointer(ptr));

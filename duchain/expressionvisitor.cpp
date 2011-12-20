@@ -307,7 +307,11 @@ void ExpressionVisitor::visitCall(CallAst* node)
         if ( m_callStack.size() > previousSize ) {
             kDebug() << "type was provided";
             FunctionDeclarationPointer funcptr = m_callStack.pop();
+            /** DEBUG **/
+            DUChainWriteLocker lock(DUChain::lock());
             kDebug() << "setting type: " << funcptr->type<FunctionType>()->returnType()->toString();
+            /** / DEBUG **/
+            encounterDeclaration(static_cast<DeclarationPointer>(funcptr));
             return encounter(funcptr->type<FunctionType>()->returnType());
         }
         else {

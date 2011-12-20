@@ -363,7 +363,7 @@ QList< CompletionTreeItemPointer > PythonCodeCompletionContext::getCompletionIte
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItemsForOneType(AbstractType::Ptr type, DeclarationPointer declaration)
 {
     type = Helper::resolveType(type);
-    if ( type->whichType() == AbstractType::TypeStructure ) {
+    if ( declaration and type->whichType() == AbstractType::TypeStructure ) {
         // find properties of class declaration
         TypePtr<StructureType> cls = StructureType::Ptr::dynamicCast(type);
         kDebug() << "Finding completion items for class type";

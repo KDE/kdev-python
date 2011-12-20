@@ -653,7 +653,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
     bool isConstructor = false;
     DeclarationPointer lastFunctionDeclaration = functionVisitor.lastDeclaration();
     DUChainWriteLocker lock(DUChain::lock());
-    if ( ! lastFunctionDeclaration->isFunctionDeclaration() && lastFunctionDeclaration )
+    if ( lastFunctionDeclaration and not lastFunctionDeclaration->isFunctionDeclaration() )
     {
         kDebug() << "No function declaration, looking for class constructor";
         kDebug() << "Class declaration: " << lastFunctionDeclaration;

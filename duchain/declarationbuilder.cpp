@@ -653,23 +653,27 @@ void DeclarationBuilder::visitCall(CallAst* node)
     kDebug() << "--";
     kDebug() << "Trying to update function argument types based on call";
     bool isConstructor = false;
-    DeclarationPointer lastFunctionDeclaration = functionVisitor.lastDeclaration();
+    DeclarationPointer lastCalledDeclaration = functionVisitor.lastDeclaration();
     DUChainWriteLocker lock(DUChain::lock());
-    if ( lastFunctionDeclaration and not lastFunctionDeclaration->isFunctionDeclaration() )
+    if ( lastCalledDeclaration and not lastCalledDeclaration->isFunctionDeclaration() )
     {
         kDebug() << "No function declaration, looking for class constructor";
-        kDebug() << "Class declaration: " << lastFunctionDeclaration;
-        if ( lastFunctionDeclaration && lastFunctionDeclaration->internalContext() ) {
+        kDebug() << "Class declaration: " << lastCalledDeclaration;
+        if ( lastCalledDeclaration && lastCalledDeclaration->internalContext() ) {
             kDebug() << "ok, looking for constructor";
-            QList<Declaration*> constructors = lastFunctionDeclaration->internalContext()
+            QList<Declaration*> constructors = lastCalledDeclaration->internalContext()
                                                ->findDeclarations(KDevelop::Identifier("__init__"));
             kDebug() << "Found constructors: " << constructors;
             if ( ! constructors.isEmpty() ) {
-                lastFunctionDeclaration = dynamic_cast<FunctionDeclaration*>(constructors.first());
+                lastCalledDeclaration = dynamic_cast<FunctionDeclaration*>(constructors.first());
                 isConstructor = true;
-                kDebug() << "new function declaration: " << lastFunctionDeclaration;
+                kDebug() << "new function declaration: " << lastCalledDeclaration;
             }
         }
+    }
+    FunctionDeclaration::Ptr lastFunctionDeclaration;
+    if ( lastCalledDeclaration ) {
+        lastFunctionDeclaration = lastCalledDeclaration.dynamicCast<FunctionDeclaration>();
     }
     if ( lastFunctionDeclaration ) {
         kDebug() << "got declaration:" << lastFunctionDeclaration->toString();
@@ -844,7 +848,9 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                         cont->addContentType(tupleElementType);
                     }
                     DUChainWriteLocker lock(DUChain::lock());
-                    targetVisitor.lastDeclaration()->setAbstractType(cont.cast<AbstractType>());
+                    if ( DeclarationPointer lastDecl = targetVisitor.lastDeclaration() ) {
+                        lastDecl->setAbstractType(cont.cast<AbstractType>());
+                    }
                 }
             }
         }

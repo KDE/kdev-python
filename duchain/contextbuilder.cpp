@@ -114,8 +114,8 @@ SimpleRange ContextBuilder::simpleRangeForNode(Ast* node, bool moveRight)
 
 TopDUContext* ContextBuilder::newTopContext(const RangeInRevision& range, ParsingEnvironmentFile* file) 
 {
-    IndexedString currentDocumentUrl = ContextBuilder::m_editor->parseSession()->currentDocument();
-    kDebug() << currentDocumentUrl.str();
+    IndexedString currentDocumentUrl = currentlyParsedDocument();
+    kDebug() << "Current document: " << currentDocumentUrl.str();
     
     if ( !file ) {
         file = new ParsingEnvironmentFile(currentDocumentUrl);

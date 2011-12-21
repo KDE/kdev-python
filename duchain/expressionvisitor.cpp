@@ -307,12 +307,11 @@ void ExpressionVisitor::visitCall(CallAst* node)
         if ( m_callStack.size() > previousSize ) {
             kDebug() << "type was provided";
             FunctionDeclarationPointer funcptr = m_callStack.pop();
-            /** DEBUG **/
-            DUChainWriteLocker lock(DUChain::lock());
-            kDebug() << "setting type: " << funcptr->type<FunctionType>()->returnType()->toString();
-            /** / DEBUG **/
             encounterDeclaration(static_cast<DeclarationPointer>(funcptr));
-            return encounter(funcptr->type<FunctionType>()->returnType());
+            if ( funcptr && funcptr->type<FunctionType>() ) {
+                return encounter(funcptr->type<FunctionType>()->returnType());
+            }
+            else return unknownTypeEncountered();
         }
         else {
             return unknownTypeEncountered();
@@ -343,7 +342,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
         
         if ( classDecl ) {
             encounter(classDecl->abstractType());
-            encounterDeclaration(0);
+            encounterDeclaration(classDecl);
         }
         else if ( funcDecl && funcDecl->type<FunctionType>() ) {
             AbstractType::Ptr type = funcDecl->type<FunctionType>()->returnType();
@@ -445,7 +444,6 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
     if ( type ) {
         foreach ( ComprehensionAst* comprehension, node->generators ) {
             visitNode(comprehension->iterator);
-            kDebug() << lastType()->toString();
             if ( VariableLengthContainer::Ptr iteratingOver = VariableLengthContainer::Ptr::dynamicCast(lastType()) ) {
                 type->addContentType(iteratingOver->contentType().abstractType());
             }
@@ -458,8 +456,10 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
     else {
         unknownTypeEncountered();
     }
-    if ( type )
+    if ( type ) {
+        DUChainReadLocker lock(DUChain::lock());
         kDebug() << "Got type for List Comprehension:" << type->toString();
+    }
     encounter<VariableLengthContainer>(type);
 }
 

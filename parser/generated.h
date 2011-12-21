@@ -221,6 +221,13 @@ v->isInt = PyInt_Check(node->v.Num.n);
                 result = v;
                 break;
             }
+        case SetComp_kind: {
+                SetComprehensionAst* v = new SetComprehensionAst(parent());
+                nodeStack.push(v); v->element = static_cast<ExpressionAst*>(visitNode(node->v.SetComp.elt)); nodeStack.pop();
+                nodeStack.push(v); v->generators = visitNodeList<_comprehension, ComprehensionAst>(node->v.SetComp.generators); nodeStack.pop();
+                result = v;
+                break;
+            }
         default:
             kWarning() << "Unsupported statement AST type: " << node->kind;
             Q_ASSERT(false);

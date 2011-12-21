@@ -58,11 +58,11 @@ QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> ExpressionVisitor::s_de
 void ExpressionVisitor::encounter(AbstractType::Ptr type, bool merge)
 {
     type = Helper::resolveType(type);
-    if ( merge ) {
-        m_lastType = Helper::mergeTypes(m_lastType, type);
+    if ( merge and not m_lastType.isEmpty() ) {
+        m_lastType.push(Helper::mergeTypes(m_lastType.pop(), type));
     }
     else {
-        m_lastType = type;
+        m_lastType.push(type);
     }
 }
 
@@ -71,10 +71,25 @@ template<typename T> void ExpressionVisitor::encounter(TypePtr< T > type)
     encounter(AbstractType::Ptr::staticCast(type));
 }
 
-Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegrator* editor)
-    : m_lastType(0), m_ctx(ctx), m_editor(editor), m_shouldBeKnown(true)
+void ExpressionVisitor::encounterDeclaration(DeclarationPointer ptr)
 {
-    if(s_defaultTypes.isEmpty()) {
+    m_lastDeclaration.push(QList<DeclarationPointer>() << ptr);
+}
+
+void ExpressionVisitor::encounterDeclarations(QList< DeclarationPointer > ptrs)
+{
+    m_lastDeclaration.push(ptrs);
+}
+
+void ExpressionVisitor::encounterDeclaration(Declaration* ptr)
+{
+    m_lastDeclaration.push(QList<DeclarationPointer>() << DeclarationPointer(ptr));
+}
+
+Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegrator* editor)
+    : m_ctx(ctx), m_editor(editor), m_shouldBeKnown(true)
+{
+    if ( s_defaultTypes.isEmpty() ) {
         s_defaultTypes.insert(KDevelop::Identifier("True"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
         s_defaultTypes.insert(KDevelop::Identifier("False"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
         s_defaultTypes.insert(KDevelop::Identifier("None"), AbstractType::Ptr(new IntegralType(IntegralType::TypeVoid)));
@@ -88,7 +103,6 @@ void ExpressionVisitor::unknownTypeEncountered() {
 void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclaration, AttributeAst* node, bool extendUnsureTypes)
 {
     // if it's a function call, the result of that call will be the return type
-    // TODO check whether we need to distinguish bettween foo.bar and foo.bar() here
     DUChainPointer<ClassDeclaration> classDecl = actualDeclaration.dynamicCast<ClassDeclaration>();
     DUChainPointer<FunctionDeclaration> funcDecl = actualDeclaration.dynamicCast<FunctionDeclaration>();
     kDebug() << "Determining type for eventual function call";
@@ -96,18 +110,11 @@ void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclara
     if ( classDecl ) {
         // we denote with this that the last call AST node was not a function, but a class "call"
         m_callStack.push(FunctionDeclarationPointer(0));
-        encounter(classDecl->abstractType(), extendUnsureTypes);
-        if ( extendUnsureTypes )
-            m_lastAccessedReturnType.push(Helper::mergeTypes(
-                m_lastAccessedReturnType.isEmpty() ? AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)) : m_lastAccessedReturnType.pop(),
-                classDecl->abstractType()
-            ));
-        else
-            m_lastAccessedReturnType.push(classDecl->abstractType());
+        return encounter(classDecl->abstractType(), extendUnsureTypes);
     }
     else if ( funcDecl && funcDecl->type<FunctionType>() ) {
-        m_callStack.push(funcDecl);
         if ( node->belongsToCall ) {
+            m_callStack.push(funcDecl);
             AbstractType::Ptr type = funcDecl->type<FunctionType>()->returnType();
             kDebug() << "Using function return type: " << ( type ? type->toString() : "(none)" );
             // check for list content stuff
@@ -120,36 +127,20 @@ void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclara
                         type = t->contentType().abstractType();
                     }
                     else {
-                        m_lastAccessedReturnType.push(AbstractType::Ptr(0));
                         return unknownTypeEncountered();
                     }
                 }
             }
             // otherwise, it's not a container, and the default return type will be used.
-            encounter(type, extendUnsureTypes);
-            if ( extendUnsureTypes ) 
-                m_lastAccessedReturnType.push(Helper::mergeTypes(
-                    m_lastAccessedReturnType.isEmpty() ? AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)) : m_lastAccessedReturnType.pop(),
-                    type
-                ));
-            else
-                m_lastAccessedReturnType.push(type);
+            return encounter(type, extendUnsureTypes);
         }
         else {
-            encounter(funcDecl->abstractType(), extendUnsureTypes);
-            if ( extendUnsureTypes ) {
-                m_lastAccessedReturnType.push(Helper::mergeTypes(
-                    m_lastAccessedReturnType.isEmpty() ? AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)) : m_lastAccessedReturnType.pop(),
-                    funcDecl->abstractType()
-                ));
-            }
-            else {
-                m_lastAccessedReturnType.push(funcDecl->abstractType()); // TODO check this
-            }
+            kDebug() << "function is not being called, using function type";
+            return encounter(funcDecl->abstractType(), extendUnsureTypes);
         }
     }
     else {
-        encounter(actualDeclaration->abstractType());
+        return encounter(actualDeclaration->abstractType());
     }
 }
 
@@ -182,7 +173,7 @@ QList< TypePtr< StructureType > > ExpressionVisitor::possibleStructureTypes(Abst
 
 QList< TypePtr< StructureType > > ExpressionVisitor::typeListForDeclarationList(QList< DeclarationPointer > decls)
 {
-    QList< TypePtr< StructureType > > result;
+    QList<StructureType::Ptr> result;
     foreach ( const DeclarationPointer& ptr, decls ) {
         result.append(possibleStructureTypes(ptr->abstractType()));
     }
@@ -191,61 +182,14 @@ QList< TypePtr< StructureType > > ExpressionVisitor::typeListForDeclarationList(
 
 void ExpressionVisitor::visitAttribute(AttributeAst* node)
 {
-    // check whether this is explicitly imported like "import a.b.c"
-    AttributeAst* ptr = node;
-    QList<Identifier*> nameComponents;
-    bool success = false;
-    while ( ptr && ptr->astType == Ast::AttributeAstType ) {
-        nameComponents.prepend(ptr->attribute);
-        if ( ptr->value && ptr->value->astType == Ast::AttributeAstType ) {
-            ptr = static_cast<AttributeAst*>(ptr->value);
-        }
-        else if ( ptr->value && ptr->value->astType == Ast::NameAstType ) {
-            nameComponents.prepend(static_cast<NameAst*>(ptr->value)->identifier);
-            ptr = 0;
-            success = true;
-        }
-        else {
-            ptr = 0;
-        }
-    }
-    
-    kDebug() << "IS DOTTED: " << success;
-    
-    // this actually is an imported dotted name
-    if ( success ) {
-        RangeInRevision range = RangeInRevision(nameComponents.first()->startLine, nameComponents.first()->startCol,
-                                                nameComponents.first()->endLine, nameComponents.first()->endCol);
-        QStringList stringNameComponents;
-        foreach ( const Identifier* i, nameComponents ) {
-            stringNameComponents.append(i->value);
-        }
-        QString name = stringNameComponents.join(".");
-        DUChainReadLocker lock(DUChain::lock());
-        QList<Declaration*> found = m_ctx->findDeclarations(QualifiedIdentifier(name).first(), range.start);
-        lock.unlock();
-        kDebug() << "Found declarations for dotted name import: " << found;
-        if ( ! found.isEmpty() ) {
-            Declaration* real = Helper::resolveAliasDeclaration(found.last());
-            DeclarationPointer ptr = DeclarationPointer(real);
-            setLastAccessedDeclaration(ptr);
-            setLastAccessedAttributeDeclaration(ptr);
-            DUChainReadLocker lock(DUChain::lock());
-            encounter(real->abstractType());
-            setTypesForEventualCall(ptr, node);
-            return;
-        }
-        else kDebug() << "None found, defaulting to normal behaviour";
-    }
-    
-    // This is not an imported dotted name, proceed with normal operation
     ExpressionAst* accessingAttributeOf = node->value;
-    Identifier* identifier;
+    Identifier* identifier = 0;
     QList<DeclarationPointer> availableDeclarations;
     
     kDebug() << "Processing attribute: " << node->attribute->value;
     
-    RangeInRevision useRange(node->attribute->startLine, node->attribute->startCol, node->attribute->endLine, node->attribute->endCol + 1);
+    RangeInRevision useRange(node->attribute->startLine, node->attribute->startCol,
+                             node->attribute->endLine, node->attribute->endCol + 1);
     
     QList<DeclarationPointer> accessingAttributeOfDeclaration;
     QList< TypePtr< StructureType > > accessingAttributeOfType;
@@ -257,8 +201,8 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
         identifier = dynamic_cast<AttributeAst*>(accessingAttributeOf)->attribute;
         // checking for "last" makes sense as the list either contains one invalid declaration,
         // or one or more valid ones (but never valid AND invalid ones)
-        if ( ! m_lastAccessedAttributeDeclaration.isEmpty() && m_lastAccessedAttributeDeclaration.last() ) {
-            availableDeclarations = m_lastAccessedAttributeDeclaration;
+        if ( ! lastDeclarations().isEmpty() ) {
+            availableDeclarations = lastDeclarations();
         }
         else {
             kDebug() << "No type set for accessed attribute";
@@ -267,21 +211,18 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
         }
     }
     else if ( accessingAttributeOf->astType == Ast::NameAstType ) {
-        availableDeclarations = m_lastAccessedNameDeclaration;
+        availableDeclarations = lastDeclarations();
     }
     else if ( accessingAttributeOf->astType == Ast::CallAstType ) {
         availableDeclarations.clear();
-        accessingAttributeOfType.append(possibleStructureTypes(m_lastType));
+        accessingAttributeOfType.append(possibleStructureTypes(lastType()));
     }
-    else if ( m_lastType && m_lastType.cast<StructureType>() ) {
-        accessingAttributeOfType.append(m_lastType.cast<StructureType>());
+    else if ( not lastType().isNull() && lastType().cast<StructureType>() ) {
+        accessingAttributeOfType.append(lastType().cast<StructureType>());
     }
     else {
         kWarning() << "Unsupported attribute access method";
-        setLastAccessedAttributeDeclaration(DeclarationPointer(0));
-        setLastAccessedDeclaration(DeclarationPointer(0));
-        m_lastType = AbstractType::Ptr(0);
-        m_shouldBeKnown = false;
+        encounterDeclaration(0);
         return unknownTypeEncountered();
     }
     
@@ -292,10 +233,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     else if ( accessingAttributeOfType.isEmpty() ) {
         kDebug() << "No declaration found to look up type of attribute in.";
         kDebug() << "call: " << node->belongsToCall;
-        setLastAccessedAttributeDeclaration(DeclarationPointer(0));
-        setLastAccessedDeclaration(DeclarationPointer(0));
-        m_lastType = AbstractType::Ptr(0);
-        m_shouldBeKnown = false;
+        encounterDeclaration(0);
         return unknownTypeEncountered();
     }
     
@@ -310,7 +248,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     // Like, for A.B.C where B is an instance of foo, when processing C, find all properties of foo which are called C.
     
     // maybe our attribute isn't a class at all, then that's an error by definition for now
-    success = false;
+    bool success = false;
     bool haveOneUsefulType = false;
     DUChainReadLocker lock(DUChain::lock());
     if ( ! accessingAttributeOfType.isEmpty() ) {
@@ -339,8 +277,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     DeclarationPointer actualDeclaration(0);
     if ( foundDecls.length() > 0 ) {
         actualDeclaration = DeclarationPointer(Helper::resolveAliasDeclaration(foundDecls.last()));
-        m_lastAccessedAttributeDeclaration = toSharedPtrList(foundDecls);
-        setLastAccessedDeclaration(toSharedPtrList(foundDecls));
+        encounterDeclarations(toSharedPtrList(foundDecls));
         bool extendUnsure = false;
         foreach ( Declaration* decl, foundDecls ) {
             setTypesForEventualCall(DeclarationPointer(decl), node, extendUnsure);
@@ -349,8 +286,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     }
     else {
         kDebug() << "No declaration found for attribute";
-        setLastAccessedAttributeDeclaration(DeclarationPointer(0));
-        setLastAccessedDeclaration(DeclarationPointer(0));
+        encounterDeclaration(0);
         return unknownTypeEncountered();
     }
     kDebug() << "Last encountered type: " << ( lastType().unsafeData() ? lastType()->toString() : "<none>" );
@@ -361,19 +297,21 @@ void ExpressionVisitor::visitCall(CallAst* node)
 {
     KDEBUG_BLOCK
     kDebug();
-    kDebug() << "types count BEFORE visitor call: " << m_lastAccessedReturnType.size();
-    int previousSize = m_lastAccessedReturnType.size();
+    kDebug() << "types count BEFORE visitor call: " << m_callStack.size();
+    int previousSize = m_callStack.size();
     Python::AstDefaultVisitor::visitCall(node);
-    kDebug() << "types count AFTER visitor call: " << m_lastAccessedReturnType.size();
+    kDebug() << "types count AFTER visitor call: " << m_callStack.size();
     if ( node->function->astType == Ast::AttributeAstType ) {
         // a bit confusing, but visitAttribute() already has taken care of this.
         kDebug() << "checking if type was provided";
-        if ( m_lastAccessedReturnType.size() > previousSize ) {
+        if ( m_callStack.size() > previousSize ) {
             kDebug() << "type was provided";
-//             kDebug() << "applying type" << ( m_lastAccessedReturnType.top() ? m_lastAccessedReturnType.top()->toString() : "(none)" );
-            encounter(m_lastAccessedReturnType.pop());
-            m_firstAccessedFunctionDeclaration = m_callStack.pop();
-            return;
+            FunctionDeclarationPointer funcptr = m_callStack.pop();
+            encounterDeclaration(static_cast<DeclarationPointer>(funcptr));
+            if ( funcptr && funcptr->type<FunctionType>() ) {
+                return encounter(funcptr->type<FunctionType>()->returnType());
+            }
+            else return unknownTypeEncountered();
         }
         else {
             return unknownTypeEncountered();
@@ -404,12 +342,12 @@ void ExpressionVisitor::visitCall(CallAst* node)
         
         if ( classDecl ) {
             encounter(classDecl->abstractType());
-            m_firstAccessedFunctionDeclaration = FunctionDeclarationPointer(0);
+            encounterDeclaration(classDecl);
         }
         else if ( funcDecl && funcDecl->type<FunctionType>() ) {
             AbstractType::Ptr type = funcDecl->type<FunctionType>()->returnType();
-            encounter(type);
-            m_firstAccessedFunctionDeclaration = FunctionDeclarationPointer(funcDecl);
+            encounterDeclaration(DeclarationPointer(funcDecl));
+            bool success = false;
             if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(
                                               funcDecl, "returnContentEqualsContentOf") ) {
                 kDebug() << "Found argument dependent decorator, checking argument type";
@@ -424,16 +362,20 @@ void ExpressionVisitor::visitCall(CallAst* node)
                                 VariableLengthContainer* newType = static_cast<VariableLengthContainer*>(source->clone());
                                 Q_ASSERT(newType);
                                 newType->addContentType(source->contentType().abstractType());
-                                encounter(AbstractType::Ptr(newType));
+                                success = true; // just for clarity, doesn't do anything
+                                return encounter(AbstractType::Ptr(newType));
                             }
                         }
                     }
                 }
             }
+            if ( not success ) {
+                return encounter(type);
+            }
         }
         else {
             kDebug() << "Declaraton for " << functionName << " is not a class or function declaration";
-            m_firstAccessedFunctionDeclaration = FunctionDeclarationPointer(0);
+            encounterDeclaration(0);
             return unknownTypeEncountered();
         }
     }
@@ -502,7 +444,6 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
     if ( type ) {
         foreach ( ComprehensionAst* comprehension, node->generators ) {
             visitNode(comprehension->iterator);
-            kDebug() << lastType()->toString();
             if ( VariableLengthContainer::Ptr iteratingOver = VariableLengthContainer::Ptr::dynamicCast(lastType()) ) {
                 type->addContentType(iteratingOver->contentType().abstractType());
             }
@@ -515,8 +456,10 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
     else {
         unknownTypeEncountered();
     }
-    if ( type )
+    if ( type ) {
+        DUChainReadLocker lock(DUChain::lock());
         kDebug() << "Got type for List Comprehension:" << type->toString();
+    }
     encounter<VariableLengthContainer>(type);
 }
 
@@ -569,8 +512,7 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
     KDevelop::Identifier id(node->identifier->value);
     QHash < KDevelop::Identifier, AbstractType::Ptr >::const_iterator defId = s_defaultTypes.constFind(id);
     if ( defId != s_defaultTypes.constEnd() ) {
-        m_lastType = *defId;
-        return;
+        return encounter(*defId);
     }
     
     DUChainReadLocker lock(DUChain::lock());
@@ -582,33 +524,26 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
     if ( ! d.isEmpty() ) {
         DeclarationPointer ptr = DeclarationPointer(d.last());
         encounter(ptr->abstractType());
-        setLastAccessedNameDeclaration(ptr);
-        setLastAccessedDeclaration(ptr);
+        encounterDeclaration(ptr);
         DUChainReadLocker lock(DUChain::lock());
         kDebug() << "Found declaration: " << d.last()->toString() << d.last() << d.last()->abstractType() << dynamic_cast<VariableLengthContainer*>(d.last()->abstractType().unsafeData());
+        return;
     }
     else {
         kDebug() << "VistName type not found";
-        unknownTypeEncountered();
+        return unknownTypeEncountered();
     }
 }
 
 void ExpressionVisitor::visitBinaryOperation(Python::BinaryOperationAst* node)
 {
     visitNode(node->lhs);
-    KDevelop::AbstractType::Ptr leftType = m_lastType;
+    KDevelop::AbstractType::Ptr leftType = lastType();
     
     visitNode(node->rhs);
-    KDevelop::AbstractType::Ptr rightType = m_lastType;
+    KDevelop::AbstractType::Ptr rightType = lastType();
     
-    if ( leftType && leftType->whichType() == AbstractType::TypeIntegral ) 
-    {
-        encounter(leftType);
-    }
-    else 
-    {
-        encounter(AbstractType::Ptr(new UnsureType));
-    }
+    encounter(leftType); // TODO this is wrong.
 }
 
 void ExpressionVisitor::visitUnaryOperation(Python::UnaryOperationAst* node)
@@ -620,21 +555,8 @@ void ExpressionVisitor::visitUnaryOperation(Python::UnaryOperationAst* node)
 
 void ExpressionVisitor::visitBooleanOperation(Python::BooleanOperationAst* node)
 {
-//    
     foreach (ExpressionAst* expression, node->values) {
         visitNode(expression);
-//         if(m_lastType->whichType() != AbstractType::TypeIntegral || m_lastType.cast<IntegralType>()->dataType() != IntegralType::TypeBoolean){
-//             problem = true;
-//             qDebug() << "VistBooleanOperation type not match";
-//             RangeInRevision r = nodeRange(expression);
-//             ProblemPointer p(new Problem);
-//             p->setRange(r);
-//             p->setDescription(i18n("wrong type '%1'", m_lastType->toString()));
-//             p->setFinalLocation(DocumentRange(m_ctx->topContext()->url(), r.castToSimpleRange()));
-//             p->setSeverity(ProblemData::Error);
-//             p->setSource(KDevelop::ProblemData::SemanticAnalysis);
-//             m_ctx->topContext()->addProblem(p);
-//         }
     }
     
     encounter(AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));

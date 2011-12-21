@@ -4,6 +4,8 @@
 # sdef example line:
 # RULE_FOR _stmt;KIND Expr_kind;ACTIONS create|ExpressionAst set|value->ExpressionAst,value;CODE;;
 
+import sys
+
 contents = open('python26.sdef').read().replace("\n", "").split(';;')
 
 func_structure = '''
@@ -94,7 +96,10 @@ def pluginAstToPythonAstType(plugintypestr):
     if plugintypestr == 'AliasAst': return '_alias'
     if plugintypestr == 'SliceAst': return '_slice'
     if plugintypestr == 'Ast': return '_stmt' # not sure about this
-    else: return '<ERROR>'
+    if plugintypestr == 'GeneratorExpressionAst': return '_expr'
+    else:
+        sys.stderr.write("W: Could not decode name %s\n" % plugintypestr)
+        return '<ERROR>'
 
 for rule in contents:
     outline = rule.split(';')

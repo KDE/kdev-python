@@ -584,8 +584,8 @@ void DeclarationBuilder::visitCall(CallAst* node)
     kDebug() << "Visiting call";
     ExpressionVisitor functionVisitor(currentContext(), editor());
     functionVisitor.visitNode(node);
-    kDebug() << functionVisitor.lastFunctionDeclaration();
-    if ( node->function && node->function->astType == Ast::AttributeAstType && functionVisitor.lastFunctionDeclaration() ) {
+    kDebug() << functionVisitor.lastDeclaration();
+    if ( node->function && node->function->astType == Ast::AttributeAstType && functionVisitor.lastDeclaration() ) {
         kDebug() << "Checking for list content updates...";
         ExpressionVisitor v(currentContext(), editor());
         v.visitNode(static_cast<AttributeAst*>(node->function)->value);
@@ -596,8 +596,8 @@ void DeclarationBuilder::visitCall(CallAst* node)
 //                 kDebug() << "Eventual function declaration: " << functionVisitor.lastFunctionDeclaration()->toString();
 //                 kDebug() << functionVisitor.lastFunctionDeclaration()->isFunctionDeclaration();
 //                 /// END DEBUG
-                if ( functionVisitor.lastFunctionDeclaration()->isFunctionDeclaration() ) {
-                    FunctionDeclaration* f = static_cast<FunctionDeclaration*>(functionVisitor.lastFunctionDeclaration().data());
+                if ( functionVisitor.lastDeclaration()->isFunctionDeclaration() ) {
+                    FunctionDeclaration* f = static_cast<FunctionDeclaration*>(functionVisitor.lastDeclaration().data());
                     if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(f, "addsTypeOfArg") ) {
                         register const int offset = d->additionalInformation().str().toInt();
                         if ( node->arguments.length() > offset ) {
@@ -653,22 +653,27 @@ void DeclarationBuilder::visitCall(CallAst* node)
     kDebug() << "--";
     kDebug() << "Trying to update function argument types based on call";
     bool isConstructor = false;
-    FunctionDeclarationPointer lastFunctionDeclaration = functionVisitor.lastFunctionDeclaration();
+    DeclarationPointer lastCalledDeclaration = functionVisitor.lastDeclaration();
     DUChainWriteLocker lock(DUChain::lock());
-    if ( ! lastFunctionDeclaration && functionVisitor.lastClassDeclaration() ) {
+    if ( lastCalledDeclaration and not lastCalledDeclaration->isFunctionDeclaration() )
+    {
         kDebug() << "No function declaration, looking for class constructor";
-        DUChainPointer<ClassDeclaration> eventualClassDeclaration = functionVisitor.lastClassDeclaration();
-        kDebug() << "Class declaration: " << eventualClassDeclaration;
-        if ( eventualClassDeclaration && eventualClassDeclaration->internalContext() ) {
+        kDebug() << "Class declaration: " << lastCalledDeclaration;
+        if ( lastCalledDeclaration && lastCalledDeclaration->internalContext() ) {
             kDebug() << "ok, looking for constructor";
-            QList<Declaration*> constructors = eventualClassDeclaration->internalContext()->findDeclarations(KDevelop::Identifier("__init__"));
+            QList<Declaration*> constructors = lastCalledDeclaration->internalContext()
+                                               ->findDeclarations(KDevelop::Identifier("__init__"));
             kDebug() << "Found constructors: " << constructors;
             if ( ! constructors.isEmpty() ) {
-                lastFunctionDeclaration = dynamic_cast<FunctionDeclaration*>(constructors.first());
+                lastCalledDeclaration = dynamic_cast<FunctionDeclaration*>(constructors.first());
                 isConstructor = true;
-                kDebug() << "new function declaration: " << lastFunctionDeclaration;
+                kDebug() << "new function declaration: " << lastCalledDeclaration;
             }
         }
+    }
+    FunctionDeclaration::Ptr lastFunctionDeclaration;
+    if ( lastCalledDeclaration ) {
+        lastFunctionDeclaration = lastCalledDeclaration.dynamicCast<FunctionDeclaration>();
     }
     if ( lastFunctionDeclaration ) {
         kDebug() << "got declaration:" << lastFunctionDeclaration->toString();
@@ -687,7 +692,9 @@ void DeclarationBuilder::visitCall(CallAst* node)
             }
             int atParam = 0;
             if ( parameters.size() >= node->arguments.size() &&
-                    functiontype->arguments().length() + lastFunctionDeclaration->defaultParametersSize() >= (uint) node->arguments.size() )
+                    functiontype->arguments().length() + static_cast<FunctionDeclarationPointer>(lastFunctionDeclaration)
+                                                         ->defaultParametersSize() 
+                        >= (uint) node->arguments.size() )
             {
                 kDebug() << "... and they match the parameter size";
                 foreach ( ExpressionAst* arg, node->arguments ) {
@@ -840,7 +847,10 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                     if ( cont ) {
                         cont->addContentType(tupleElementType);
                     }
-                    targetVisitor.lastDeclaration()->setAbstractType(cont.cast<AbstractType>());
+                    DUChainWriteLocker lock(DUChain::lock());
+                    if ( DeclarationPointer lastDecl = targetVisitor.lastDeclaration() ) {
+                        lastDecl->setAbstractType(cont.cast<AbstractType>());
+                    }
                 }
             }
         }
@@ -928,7 +938,8 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     kDebug() << "opening class definition";
     
     DUChainWriteLocker lock(DUChain::lock());
-    ClassDeclaration* dec = openDeclaration<ClassDeclaration>( node->name, node );
+    ClassDeclaration* dec = openDeclaration<ClassDeclaration>(identifierForNode(node->name),
+                                                              editorFindRange(node->name, node->name));
     visitDecorators<ClassDeclaration>(node->decorators, dec);
     eventuallyAssignInternalContext();
     
@@ -1040,18 +1051,17 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     FunctionType::Ptr type;
     QList<Declaration*> existing;
     
-    FunctionDeclaration* dec = openDeclaration<FunctionDeclaration>( node->name, node );
+    DUChainWriteLocker lock(DUChain::lock());
+    kDebug() << identifierForNode(node->name).toString();
+    FunctionDeclaration* dec = openDeclaration<FunctionDeclaration>(identifierForNode(node->name),
+                                                                    editorFindRange(node->name, node->name));
     Q_ASSERT(dec->isFunctionDeclaration());
     
     type = FunctionType::Ptr(new FunctionType());
-    {
-        DUChainWriteLocker lock;
-        dec->setType(type);
-    }
-    
-    openType(type);
     kDebug() << " <<< open function type";
-    DUChainWriteLocker lock(DUChain::lock());
+    openType(type);
+    dec->setType(type);
+    
     bool hasFirstArgument = false;
     
     visitDecorators<FunctionDeclaration>(node->decorators, dec);
@@ -1059,7 +1069,8 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     
     // this must be done here, because the type of self must be known when parsing the body
     kDebug() << "Checking whether we have to change argument types...";
-    kDebug() <<  eventualParentDeclaration.data() << currentType<FunctionType>()->arguments().length() << m_firstAttributeDeclaration.data() << currentContext()->type() << DUContext::Class;
+    kDebug() <<  eventualParentDeclaration.data() << currentType<FunctionType>()->arguments().length() 
+             << m_firstAttributeDeclaration.data() << currentContext()->type() << DUContext::Class;
     if ( eventualParentDeclaration.data() && currentType<FunctionType>()->arguments().length() 
             && m_firstAttributeDeclaration.data() && currentContext()->type() == DUContext::Class ) {
         kDebug() << "Changing self argument type";

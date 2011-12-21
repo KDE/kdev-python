@@ -217,6 +217,9 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
         availableDeclarations.clear();
         accessingAttributeOfType.append(possibleStructureTypes(lastType()));
     }
+    else if ( accessingAttributeOf->astType == Ast::SliceAstType ) {
+        availableDeclarations = lastDeclarations();
+    }
     else if ( not lastType().isNull() && lastType().cast<StructureType>() ) {
         accessingAttributeOfType.append(lastType().cast<StructureType>());
     }

@@ -554,12 +554,14 @@ void DeclarationBuilder::visitYield(YieldAst* node)
     ExpressionVisitor v(currentContext(), editor());
     v.visitNode(node->value);
     setLastType(v.lastType());
+    AbstractType::Ptr encountered = v.lastType();
     if ( node->value ) {
-        if ( TypePtr<FunctionType> t = currentType<FunctionType>() ) {
-            AbstractType::Ptr encountered = v.lastType();
-            if ( VariableLengthContainer::Ptr previous = t->returnType().cast<VariableLengthContainer>() ) {
-                previous->addContentType(encountered);
-                t->setReturnType(previous.cast<AbstractType>());
+        if ( hasCurrentType() ) {
+            if ( TypePtr<FunctionType> t = currentType<FunctionType>() ) {
+                if ( VariableLengthContainer::Ptr previous = t->returnType().cast<VariableLengthContainer>() ) {
+                    previous->addContentType(encountered);
+                    t->setReturnType(previous.cast<AbstractType>());
+                }
             }
             else {
                 VariableLengthContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType<VariableLengthContainer>("list", currentContext());

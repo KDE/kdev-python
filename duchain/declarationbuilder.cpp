@@ -1049,7 +1049,6 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     kDebug() << "opening function definition" << node->startLine << node->endLine;
     DeclarationPointer eventualParentDeclaration(currentDeclaration()); // an eventual containing class declaration
     FunctionType::Ptr type;
-    QList<Declaration*> existing;
     
     DUChainWriteLocker lock(DUChain::lock());
     kDebug() << identifierForNode(node->name).toString();
@@ -1060,6 +1059,8 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     type = FunctionType::Ptr(new FunctionType());
     kDebug() << " <<< open function type";
     openType(type);
+    dec->setInSymbolTable(false);
+    kDebug() << "Declaration in symbol table:" << dec->inSymbolTable();
     dec->setType(type);
     
     bool hasFirstArgument = false;
@@ -1134,6 +1135,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     
     // check for documentation
     dec->setComment(getDocstring(node->body));
+    dec->setInSymbolTable(true);
 }
 
 QString DeclarationBuilder::getDocstring(QList< Ast* > body)

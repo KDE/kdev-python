@@ -362,7 +362,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
                     if ( v.lastType() ) {
                         if ( VariableLengthContainer* target = dynamic_cast<VariableLengthContainer*>(type.unsafeData()) ) {
                             if ( VariableLengthContainer* source = dynamic_cast<VariableLengthContainer*>(v.lastType().unsafeData()) ) {
-                                VariableLengthContainer* newType = static_cast<VariableLengthContainer*>(source->clone());
+                                VariableLengthContainer* newType = static_cast<VariableLengthContainer*>(target->clone());
                                 Q_ASSERT(newType);
                                 newType->addContentType(source->contentType().abstractType());
                                 success = true; // just for clarity, doesn't do anything

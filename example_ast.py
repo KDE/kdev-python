@@ -2,6 +2,9 @@ def func(foo, bar, *args, **kwargs):
     pass
 
     
+mydict = dict()
+mylist = list(mydict)
+    
 comprehended_list = [x for x in [1, 2, 3] if x in ('a')]
 print x
     

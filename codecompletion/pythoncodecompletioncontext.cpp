@@ -438,6 +438,11 @@ QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems(QList<KUrl>
     kDebug() << "Gathering include file autocompletions...";
     
     foreach (KUrl currentPath, searchPaths) {
+        currentPath.cleanPath();
+        if ( currentPath.path(KUrl::AddTrailingSlash).startsWith(Helper::getDataDir()) ) {
+            // don't suggest stuff from the docfiles directory
+            continue;
+        }
         kDebug() << "Processing path: " << currentPath;
         QDir currentDir(currentPath.path());
         QFileInfoList files = currentDir.entryInfoList();

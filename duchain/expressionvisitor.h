@@ -159,12 +159,14 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         PythonEditorIntegrator* m_editor;
         
         void encounter(AbstractType::Ptr type, bool merge=false);
+        AbstractType::Ptr encounterPreprocess(AbstractType::Ptr type, bool merge = false);
         template<typename T> void encounter(TypePtr<T> type);
         void encounterDeclaration(DeclarationPointer ptr);
         void encounterDeclaration(Declaration* ptr);
         void encounterDeclarations(QList<DeclarationPointer> ptrs);
         
         void unknownTypeEncountered();
+        AbstractType::Ptr unknownType();
         QList< TypePtr< StructureType > > possibleStructureTypes(AbstractType::Ptr type);
         QList< TypePtr< StructureType > > typeListForDeclarationList(QList< DeclarationPointer > decls);
         
@@ -180,7 +182,8 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         
         QStack<KDevelop::AbstractType::Ptr> m_lastType;
         QStack< QList<DeclarationPointer> > m_lastDeclaration;
-        QStack<FunctionDeclarationPointer> m_callStack;
+        QStack<AbstractType::Ptr> m_callTypeStack;
+        QStack<DeclarationPointer> m_callStack;
 };
 
 }

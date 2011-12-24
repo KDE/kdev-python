@@ -1072,7 +1072,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     kDebug() << "Checking whether we have to change argument types...";
     kDebug() <<  eventualParentDeclaration.data() << currentType<FunctionType>()->arguments().length() 
              << m_firstAttributeDeclaration.data() << currentContext()->type() << DUContext::Class;
-    if ( eventualParentDeclaration.data() && currentType<FunctionType>()->arguments().length() 
+    if ( eventualParentDeclaration && currentType<FunctionType>()->arguments().length() 
             && m_firstAttributeDeclaration.data() && currentContext()->type() == DUContext::Class ) {
         kDebug() << "Changing self argument type";
         kDebug() << "Arguments left: " << currentType<FunctionType>()->arguments().count();
@@ -1082,7 +1082,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         m_firstAttributeDeclaration->setAbstractType(eventualParentDeclaration->abstractType());
         hasFirstArgument = true;
     }
-    
+        
     visitFunctionBody(node);
 
     closeDeclaration();

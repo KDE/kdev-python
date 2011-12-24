@@ -55,15 +55,22 @@ REGISTER_TYPE(IntegralTypeExtended);
 
 QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> ExpressionVisitor::s_defaultTypes;
 
-void ExpressionVisitor::encounter(AbstractType::Ptr type, bool merge)
+AbstractType::Ptr ExpressionVisitor::encounterPreprocess(AbstractType::Ptr type, bool merge)
 {
     type = Helper::resolveType(type);
+    AbstractType::Ptr res;
     if ( merge and not m_lastType.isEmpty() ) {
-        m_lastType.push(Helper::mergeTypes(m_lastType.pop(), type));
+        res = Helper::mergeTypes(m_lastType.pop(), type);
     }
     else {
-        m_lastType.push(type);
+        res = type;
     }
+    return res;
+}
+
+void ExpressionVisitor::encounter(AbstractType::Ptr type, bool merge)
+{
+    m_lastType.push(encounterPreprocess(type, merge));
 }
 
 template<typename T> void ExpressionVisitor::encounter(TypePtr< T > type)
@@ -96,8 +103,13 @@ Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegra
     }
 }
 
+AbstractType::Ptr ExpressionVisitor::unknownType()
+{
+    return AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
+}
+
 void ExpressionVisitor::unknownTypeEncountered() {
-    encounter(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+    encounter(unknownType());
 }
 
 void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclaration, AttributeAst* node, bool extendUnsureTypes)
@@ -109,12 +121,23 @@ void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclara
     
     if ( classDecl ) {
         // we denote with this that the last call AST node was not a function, but a class "call"
-        m_callStack.push(FunctionDeclarationPointer(0));
-        return encounter(classDecl->abstractType(), extendUnsureTypes);
+        // push a null ptr to the call stack so the visitCall function doesn't change the encountered type
+        m_callTypeStack.push(encounterPreprocess(classDecl->abstractType(), extendUnsureTypes));
+        bool have_ctor = false;
+        if ( classDecl->internalContext() ) {
+            QList<Declaration*> ctors = classDecl->internalContext()->findDeclarations(QualifiedIdentifier("__init__"));
+            if ( not ctors.isEmpty() ) {
+                m_callStack.push(DeclarationPointer(ctors.first()));
+                have_ctor = true;
+            }
+        }
+        if ( not have_ctor ) {
+            m_callStack.push(DeclarationPointer(0));
+        }
+        return;
     }
     else if ( funcDecl && funcDecl->type<FunctionType>() ) {
         if ( node->belongsToCall ) {
-            m_callStack.push(funcDecl);
             AbstractType::Ptr type = funcDecl->type<FunctionType>()->returnType();
             kDebug() << "Using function return type: " << ( type ? type->toString() : "(none)" );
             // check for list content stuff
@@ -127,12 +150,14 @@ void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclara
                         type = t->contentType().abstractType();
                     }
                     else {
-                        return unknownTypeEncountered();
+                        m_callStack.push(static_cast<DeclarationPointer>(funcDecl));
+                        return m_callTypeStack.push(unknownType());
                     }
                 }
             }
             // otherwise, it's not a container, and the default return type will be used.
-            return encounter(type, extendUnsureTypes);
+            m_callStack.push(static_cast<DeclarationPointer>(funcDecl));
+            return m_callTypeStack.push(encounterPreprocess(type, extendUnsureTypes));
         }
         else {
             kDebug() << "function is not being called, using function type";
@@ -300,19 +325,19 @@ void ExpressionVisitor::visitCall(CallAst* node)
 {
     KDEBUG_BLOCK
     kDebug();
-    kDebug() << "types count BEFORE visitor call: " << m_callStack.size();
-    int previousSize = m_callStack.size();
+    kDebug() << "types count BEFORE visitor call: " << m_callTypeStack.size();
+    int previousSize = m_callTypeStack.size();
     Python::AstDefaultVisitor::visitCall(node);
-    kDebug() << "types count AFTER visitor call: " << m_callStack.size();
+    kDebug() << "types count AFTER visitor call: " << m_callTypeStack.size();
     if ( node->function->astType == Ast::AttributeAstType ) {
         // a bit confusing, but visitAttribute() already has taken care of this.
         kDebug() << "checking if type was provided";
-        if ( m_callStack.size() > previousSize ) {
+        if ( m_callTypeStack.size() > previousSize ) {
             kDebug() << "type was provided";
-            FunctionDeclarationPointer funcptr = m_callStack.pop();
-            encounterDeclaration(static_cast<DeclarationPointer>(funcptr));
-            if ( funcptr && funcptr->type<FunctionType>() ) {
-                return encounter(funcptr->type<FunctionType>()->returnType());
+            AbstractType::Ptr typeptr = m_callTypeStack.pop();
+            encounterDeclaration(m_callStack.pop()); // TODO fixme, urgent!
+            if ( typeptr ) {
+                return encounter(typeptr);
             }
             else return unknownTypeEncountered();
         }

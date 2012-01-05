@@ -335,7 +335,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
         if ( m_callTypeStack.size() > previousSize ) {
             kDebug() << "type was provided";
             AbstractType::Ptr typeptr = m_callTypeStack.pop();
-            encounterDeclaration(m_callStack.pop()); // TODO fixme, urgent!
+            encounterDeclaration(m_callStack.pop());
             if ( typeptr ) {
                 return encounter(typeptr);
             }

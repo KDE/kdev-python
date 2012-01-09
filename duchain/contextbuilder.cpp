@@ -420,15 +420,4 @@ void ContextBuilder::visitFunctionBody(FunctionDefinitionAst* node)
     m_mostRecentArgumentsContext = DUContextPointer(0);
 }
 
-void ContextBuilder::visitWith( WithAst * node )
-{
-    m_importedParentContexts = QList<DUContext*>() << openContext( node->contextExpression, DUContext::Other );
-    kDebug() << " +++ opening context: " << node->startLine - 1 << ":" << node->startCol << " -- " << node->endLine + 1 << "inf";
-    visitNode( node->contextExpression );
-    closeContext();
-
-    openContextForStatementList( node->body );
-    m_importedParentContexts.clear();
-}
-
 }

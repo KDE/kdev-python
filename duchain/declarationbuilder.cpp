@@ -1150,12 +1150,10 @@ QString DeclarationBuilder::getDocstring(QList< Ast* > body)
         leadingSpace = trailingSpace = 0;
         // scan from back and front
         for ( int direction = -1; direction <= 1; direction += 2 ) {
-            kDebug() << "d:" << direction;
             for ( int i = direction == -1 ? docstringRaw.length()-1 : 0;
                   direction == -1 ? i >= 0 : i < docstringRaw.length();
                   i += direction )
             {
-                kDebug() << i;
                 if ( docstringRaw.at(i).isSpace() ) {
                     direction == -1 ? trailingSpace++ : leadingSpace++;
                 }
@@ -1166,9 +1164,6 @@ QString DeclarationBuilder::getDocstring(QList< Ast* > body)
         }
         docstringRaw.remove(0, leadingSpace);
         docstringRaw.remove(docstringRaw.length()-trailingSpace, trailingSpace);
-        kDebug() << leadingSpace << trailingSpace;
-        kDebug() << docstring->value;
-        kDebug() << docstringRaw;
         return docstringRaw;
     }
     return QString("");

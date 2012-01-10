@@ -562,14 +562,14 @@ void DeclarationBuilder::visitYield(YieldAst* node)
                     previous->addContentType(encountered);
                     t->setReturnType(previous.cast<AbstractType>());
                 }
-            }
-            else {
-                VariableLengthContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType<VariableLengthContainer>("list", currentContext());
-                if ( container ) {
-                    openType<VariableLengthContainer>(container);
-                    container->addContentType(encountered);
-                    t->setReturnType(Helper::mergeTypes(t->returnType(), container.cast<AbstractType>()));
-                    closeType();
+                else {
+                    VariableLengthContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType<VariableLengthContainer>("list", currentContext());
+                    if ( container ) {
+                        openType<VariableLengthContainer>(container);
+                        container->addContentType(encountered);
+                        t->setReturnType(Helper::mergeTypes(t->returnType(), container.cast<AbstractType>()));
+                        closeType();
+                    }
                 }
             }
         }

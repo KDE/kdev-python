@@ -13,6 +13,9 @@ def func(**kwargs):
         print item
     return kwargs
 
+def yieldTest():
+    yield "foo"
+    
 def my_func():
     my_var_04 = 5
     my_var_01 = 1

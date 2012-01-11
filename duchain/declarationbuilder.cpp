@@ -580,8 +580,8 @@ void DeclarationBuilder::visitYield(YieldAst* node)
 void DeclarationBuilder::visitLambda(LambdaAst* node)
 {
     Python::AstDefaultVisitor::visitLambda(node);
-    openContext(node->body, editorFindRange(node, node->body), DUContext::Other);
-    kDebug() << "Lambda range:" << editorFindRange(node, node->body);
+    DUChainWriteLocker lock(DUChain::lock());
+    openContext(node, editorFindRange(node, node->body), DUContext::Other);
     foreach ( ExpressionAst* argument, node->arguments->arguments ) {
         if ( argument->astType == Ast::NameAstType ) {
             Declaration* d = visitVariableDeclaration<Declaration>(static_cast<NameAst*>(argument));
@@ -1007,6 +1007,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 
 template<typename T> void DeclarationBuilder::visitDecorators(QList< Python::ExpressionAst* > decorators, T* addTo) {
     foreach ( ExpressionAst* decorator, decorators ) {
+        AstDefaultVisitor::visitNode(decorator);
         kDebug() << "decorator type: " << decorator->astType << "(name: " << Ast::NameAstType << ", call: " << Ast::CallAstType << ")";
         if ( decorator->astType == Ast::CallAstType ) {
             CallAst* call = static_cast<CallAst*>(decorator);

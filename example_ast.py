@@ -136,6 +136,7 @@ simple_func()
 
 def func_without_param():
     pass
+    [(lambda foo: foo) for fdlksh in [1, 2, 3]]
 
 func_without_param()
 

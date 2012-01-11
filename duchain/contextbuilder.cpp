@@ -346,8 +346,11 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
 
 void ContextBuilder::visitLambda(LambdaAst* node)
 {
-    openContext(node->body, editorFindRange(node, node->body), DUContext::Other);
+    DUChainWriteLocker lock(DUChain::lock());
+    openContext(node, editorFindRange(node, node->body), DUContext::Other);
+    lock.unlock();
     Python::AstDefaultVisitor::visitLambda(node);
+    lock.lock();
     closeContext();
 }
 

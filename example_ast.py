@@ -119,7 +119,7 @@ def func(foo, bar, baz, bang, foobang, foobar, foobazbar, foobazbarbang):
     print foobazbarbang
     
     import asynchat
-    obj = asynchat.async_chat
+    obj = asynchat.async_chat()
     obj.collect_incoming_data()
     import _winreg
     _winreg.CreateKey()

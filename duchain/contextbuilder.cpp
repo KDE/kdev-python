@@ -344,6 +344,13 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
     return QPair<KUrl, QStringList>(KUrl(), QStringList());
 }
 
+void ContextBuilder::visitLambda(LambdaAst* node)
+{
+    openContext(node->body, editorFindRange(node, node->body), DUContext::Other);
+    Python::AstDefaultVisitor::visitLambda(node);
+    closeContext();
+}
+
 RangeInRevision ContextBuilder::rangeForArgumentsContext(FunctionDefinitionAst* node)
 {
     // construct the range for the arguments context... due to stupid args / varargs this is pretty complicated

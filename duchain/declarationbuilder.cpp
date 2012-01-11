@@ -577,6 +577,22 @@ void DeclarationBuilder::visitYield(YieldAst* node)
     setLastType(AbstractType::Ptr(0));
 }
 
+void DeclarationBuilder::visitLambda(LambdaAst* node)
+{
+    Python::AstDefaultVisitor::visitLambda(node);
+    openContext(node->body, editorFindRange(node, node->body), DUContext::Other);
+    kDebug() << "Lambda range:" << editorFindRange(node, node->body);
+    foreach ( ExpressionAst* argument, node->arguments->arguments ) {
+        if ( argument->astType == Ast::NameAstType ) {
+            Declaration* d = visitVariableDeclaration<Declaration>(static_cast<NameAst*>(argument));
+            if ( d )  {
+                d->setAbstractType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+            }
+        }
+    }
+    closeContext();
+}
+
 void DeclarationBuilder::visitCall(CallAst* node)
 {
     Python::AstDefaultVisitor::visitCall(node);

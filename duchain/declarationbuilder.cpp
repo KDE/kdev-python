@@ -1161,27 +1161,7 @@ QString DeclarationBuilder::getDocstring(QList< Ast* > body)
             && static_cast<ExpressionAst*>(body.first())->value->astType == Ast::StringAstType ) {
         StringAst* docstring = static_cast<StringAst*>(static_cast<ExpressionAst*>(body.first())->value);
         kDebug() << "Got docstring for declaration";
-        QString docstringRaw = docstring->value;
-        // remove empty lines at the beginning and end of the docstring
-        int leadingSpace, trailingSpace;
-        leadingSpace = trailingSpace = 0;
-        // scan from back and front
-        for ( int direction = -1; direction <= 1; direction += 2 ) {
-            for ( int i = direction == -1 ? docstringRaw.length()-1 : 0;
-                  direction == -1 ? i >= 0 : i < docstringRaw.length();
-                  i += direction )
-            {
-                if ( docstringRaw.at(i).isSpace() ) {
-                    direction == -1 ? trailingSpace++ : leadingSpace++;
-                }
-                else {
-                    break;
-                }
-            }
-        }
-        docstringRaw.remove(0, leadingSpace);
-        docstringRaw.remove(docstringRaw.length()-trailingSpace, trailingSpace);
-        return docstringRaw;
+        return docstring->value.trimmed();
     }
     return QString("");
 }

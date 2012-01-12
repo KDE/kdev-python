@@ -38,7 +38,7 @@ void ImplementFunctionCompletionItem::execute(KTextEditor::Document* document, c
 {
     const QString finalText = m_name + "(" + m_writeArguments + "):";
     document->replaceText(word, finalText);
-    document->insertLine(word.start().line() + 1, m_previousIndent + "\t"); // 4 spaces is indentation for python. everyone does it like this. you must, too.
+    document->insertLine(word.start().line() + 1, m_previousIndent + "    "); // 4 spaces is indentation for python. everyone does it like this. you must, too.
     if ( View* view = document->activeView() ) {
         view->setCursorPosition(Cursor(word.end().line() + 1, m_previousIndent.length() + 4));
     }

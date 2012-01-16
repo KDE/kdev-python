@@ -550,6 +550,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
 
 void DeclarationBuilder::visitYield(YieldAst* node)
 {
+    AstDefaultVisitor::visitYield(node);
     kDebug() << "visiting yield statement";
     ExpressionVisitor v(currentContext(), editor());
     v.visitNode(node->value);

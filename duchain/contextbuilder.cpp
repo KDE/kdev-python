@@ -276,6 +276,7 @@ void ContextBuilder::visitComprehensionCommon(Ast* node)
         range.start.column -= 1;
         kDebug() << "opening comprehension context" << range;
         openContext(node, range, KDevelop::DUContext::Other);
+        currentContext()->setLocalScopeIdentifier(QualifiedIdentifier("<generator>"));
         lock.unlock();
         if ( node->astType == Ast::DictionaryComprehensionAstType )
             Python::AstDefaultVisitor::visitDictionaryComprehension(static_cast<DictionaryComprehensionAst*>(node));

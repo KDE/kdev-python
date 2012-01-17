@@ -385,10 +385,42 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
 {
     Python::AstDefaultVisitor::visitComprehension(node);
     kDebug() << "visiting comprehension" << currentContext()->range();
+    RangeInRevision declarationRange(currentContext()->range().start, currentContext()->range().start);
+    declarationRange.start.column += 1;
+    
+    AbstractType::Ptr targetType;
+    if ( node->iterator ) {
+        ExpressionVisitor v(currentContext());
+        v.visitNode(node->iterator);
+        if ( VariableLengthContainer* container = dynamic_cast<VariableLengthContainer*>(v.lastType().unsafeData()) ) {
+            targetType = container->contentType().abstractType();
+        }
+    }
+    
     if ( node->target->astType == Ast::NameAstType ) {
-        RangeInRevision declarationRange(currentContext()->range().start, currentContext()->range().start);
-        declarationRange.start.column += 1;
-        visitVariableDeclaration<Declaration>(static_cast<NameAst*>(node->target)->identifier, declarationRange);
+        Declaration* d = visitVariableDeclaration<Declaration>(static_cast<NameAst*>(node->target)->identifier, declarationRange);
+        if ( d and targetType ) {
+            d->setAbstractType(targetType);
+        }
+        else {
+            d->setAbstractType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+        }
+    }
+    if ( node->target->astType == Ast::TupleAstType ) {
+        foreach ( ExpressionAst* tupleElt, static_cast<TupleAst*>(node->target)->elements ) {
+            if ( tupleElt->astType == Ast::NameAstType ) {
+                NameAst* n = static_cast<NameAst*>(tupleElt);
+                Declaration* d = visitVariableDeclaration<Declaration>(n->identifier, declarationRange);
+                // TODO: Fix this as soon as tuple type support is implemented.
+                d->setAbstractType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+//                 if ( d and targetType ) {
+//                     d->setAbstractType(targetType);
+//                 }
+//                 else {
+//                     d->setAbstractType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+//                 }
+            }
+        }
     }
 }
 

@@ -458,27 +458,41 @@ void ExpressionVisitor::visitList(ListAst* node)
     encounter<VariableLengthContainer>(type);
 }
 
-void ExpressionVisitor::visitDictComprehension(DictionaryComprehensionAst* node)
+void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst* node)
 {
     AstDefaultVisitor::visitDictionaryComprehension(node);
+    kDebug() << "visiting dictionary comprehension";
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("dict", m_ctx);
+    if ( type ) {
+        DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol));
+        ExpressionVisitor v(comprehensionContext);
+        v.visitNode(node->value);
+        if ( v.lastType() ) {
+            type->addContentType(v.lastType());
+        }
+        ExpressionVisitor k(comprehensionContext);
+        k.visitNode(node->key);
+        if ( v.lastType() ) {
+            type->addKeyType(v.lastType());
+        }
+    }
+    else {
+        return unknownTypeEncountered();
+    }
     encounter<VariableLengthContainer>(type);
 }
 
 void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
 {
     kDebug() << "visiting list comprehension";
+    AstDefaultVisitor::visitListComprehension(node);
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
     if ( type ) {
-        foreach ( ComprehensionAst* comprehension, node->generators ) {
-            visitNode(comprehension->iterator);
-            if ( VariableLengthContainer::Ptr iteratingOver = VariableLengthContainer::Ptr::dynamicCast(lastType()) ) {
-                type->addContentType(iteratingOver->contentType().abstractType());
-            }
-            // iterating over strings expands to strings
-            else if ( lastType()->indexed() == typeObjectForIntegralType<AbstractType>("string", m_ctx)->indexed() ) {
-                type->addContentType(typeObjectForIntegralType<AbstractType>("string", m_ctx));
-            }
+        DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol));
+        ExpressionVisitor v(comprehensionContext);
+        v.visitNode(node->element);
+        if ( v.lastType() ) {
+            type->addContentType(v.lastType());
         }
     }
     else {
@@ -537,25 +551,26 @@ RangeInRevision nodeRange(Python::Ast* node)
 
 void ExpressionVisitor::visitName(Python::NameAst* node)
 {
+    // "True", "False", "None" etc.
     KDevelop::Identifier id(node->identifier->value);
     QHash < KDevelop::Identifier, AbstractType::Ptr >::const_iterator defId = s_defaultTypes.constFind(id);
     if ( defId != s_defaultTypes.constEnd() ) {
         return encounter(*defId);
     }
     
-    DUChainReadLocker lock(DUChain::lock());
-    QList< Declaration* > d = m_ctx->topContext()->findDeclarations(id);
-    d.append(m_ctx->findDeclarations(id));
-    lock.unlock();
-//     Q_ASSERT(!d.isEmpty());
- 
-    if ( ! d.isEmpty() ) {
-        DeclarationPointer ptr = DeclarationPointer(d.last());
-        encounter(ptr->abstractType());
-        encounterDeclaration(ptr);
+    kDebug() << "Finding declaration for" << node->identifier->value;
+    Declaration* d = Helper::declarationForName(node, QualifiedIdentifier(node->identifier->value),
+                                                RangeInRevision(node->startLine, node->startCol, node->endLine, node->endCol),
+                                                DUContextPointer(m_ctx));
+    
+    if ( d ) {
+        /** DEBUG **/
         DUChainReadLocker lock(DUChain::lock());
-        kDebug() << "Found declaration: " << d.last()->toString() << d.last() << d.last()->abstractType() << dynamic_cast<VariableLengthContainer*>(d.last()->abstractType().unsafeData());
-        return;
+        kDebug() << "Found declaration: " << d->toString() << d
+                 << d->abstractType() << dynamic_cast<VariableLengthContainer*>(d->abstractType().unsafeData());
+        /** / DEBUG **/
+        encounterDeclaration(DeclarationPointer(d));
+        return encounter(d->abstractType());
     }
     else {
         kDebug() << "VistName type not found";

@@ -225,10 +225,72 @@ bool ContextBuilder::contextAlreayOpen(DUContextPointer context)
     return false;
 }
 
+void ContextBuilder::visitListComprehension(ListComprehensionAst* node)
+{
+    visitComprehensionCommon(node);
+}
+
+void ContextBuilder::visitDictionaryComprehension(DictionaryComprehensionAst* node)
+{
+    visitComprehensionCommon(node);
+}
+
+void ContextBuilder::visitGeneratorExpression(GeneratorExpressionAst* node)
+{
+    visitComprehensionCommon(node);
+}
+
+void ContextBuilder::visitComprehensionCommon(Ast* node)
+{
+    QList<ComprehensionAst*> generators;
+    Ast* element = 0;
+    bool generatorFound = false;
+    RangeInRevision range;
+    if ( node->astType == Ast::ListComprehensionAstType ) {
+        ListComprehensionAst* c = static_cast<ListComprehensionAst*>(node);
+        generators = c->generators;
+        element = c->element;
+        if ( not generators.isEmpty() ) {
+            range = editorFindRange(element, generators.last()->iterator);
+            generatorFound = true;
+        }
+    }
+    if ( node->astType == Ast::DictionaryComprehensionAstType ) {
+        DictionaryComprehensionAst* c = static_cast<DictionaryComprehensionAst*>(node);
+        generators = c->generators;
+        if ( not generators.isEmpty() ) {
+            range = editorFindRange(c->key, generators.last()->iterator);
+            generatorFound = true;
+        }
+    }
+    if ( node->astType == Ast::GeneratorExpressionAstType ) {
+        GeneratorExpressionAst* c = static_cast<GeneratorExpressionAst*>(node);
+        generators = c->generators;
+        if ( not generators.isEmpty() ) {
+            range = editorFindRange(c->element, generators.last()->iterator);
+            generatorFound = true;
+        }
+    }
+    if ( generatorFound ) {
+        DUChainWriteLocker lock(DUChain::lock());
+        range.start.column -= 1;
+        kDebug() << "opening comprehension context" << range;
+        openContext(node, range, KDevelop::DUContext::Other);
+        lock.unlock();
+        if ( node->astType == Ast::DictionaryComprehensionAstType )
+            Python::AstDefaultVisitor::visitDictionaryComprehension(static_cast<DictionaryComprehensionAst*>(node));
+        if ( node->astType == Ast::ListComprehensionAstType )
+            Python::AstDefaultVisitor::visitListComprehension(static_cast<ListComprehensionAst*>(node));
+        if ( node->astType == Ast::GeneratorExpressionAstType )
+            Python::AstDefaultVisitor::visitGeneratorExpression(static_cast<GeneratorExpressionAst*>(node));
+        lock.lock();
+        closeContext();
+    }
+}
+
 void ContextBuilder::openContextForStatementList( const QList<Ast*>& l, DUContext::ContextType /*type*/)
 {
-    if ( l.count() > 0 )
-    {
+    if ( l.count() > 0 ) {
         Ast* first = l.first();
         Ast* last = l.last();
         Q_ASSERT(first->hasUsefulRangeInformation); // TODO remove this

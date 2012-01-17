@@ -92,6 +92,11 @@ protected:
     virtual void visitClassDefinition( ClassDefinitionAst* );
     virtual void visitCode(CodeAst* node);
     virtual void visitLambda(LambdaAst* node);
+    virtual void visitListComprehension(ListComprehensionAst* node);
+    virtual void visitDictionaryComprehension(DictionaryComprehensionAst* node);
+    virtual void visitGeneratorExpression(GeneratorExpressionAst* node);
+    
+    void visitComprehensionCommon(Ast* node);
     
     // helpers, because they need to be called seperately from DeclarationBuilder... well
     virtual void visitFunctionArguments(FunctionDefinitionAst* node);

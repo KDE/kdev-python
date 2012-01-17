@@ -77,9 +77,9 @@ protected:
     virtual void visitCode(CodeAst* node);
     virtual void visitCall(CallAst* node);
     virtual void visitWith(WithAst* node);
-    virtual void visitListComprehension(ListComprehensionAst* node);
     virtual void visitYield(YieldAst* node);
     virtual void visitLambda(LambdaAst* node);
+    virtual void visitComprehension(ComprehensionAst* node);
     
     template<typename T> void visitDecorators(QList<ExpressionAst*> decorators, T* addTo);
     

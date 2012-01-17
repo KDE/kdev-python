@@ -224,12 +224,17 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         dec->setType(lastType());
         dec->setKind(KDevelop::Declaration::Instance);
     } else if ( noFittingDeclaration ) {
-        kDebug() << "Creating variable declaration for " << node->value << node->startLine << ":" << node->startCol << "->" << node->endLine << ":" << node->endCol;
+        Ast* rangeNode = originalAst ? originalAst : node;
+        RangeInRevision range = editorFindRange(rangeNode, rangeNode);
+        kDebug() << "Creating variable declaration for " << range;
         kDebug() << "which has type" << ( dec && dec->abstractType() ? dec->abstractType()->toString() : "none" );
         if ( ! dec ) {
-            kDebug() << "This declaration is a new one";
-            dec = openDeclaration<T>(node, originalAst ? originalAst : node);
+            kDebug() << "This declaration is a new one, with range" << range;
+            dec = openDeclaration<T>(node, rangeNode);
             declarationOpened = true;
+        }
+        else {
+            dec->setRange(range);
         }
         /*
         else {
@@ -376,6 +381,16 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
     }
 }
 
+void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
+{
+    Python::AstDefaultVisitor::visitComprehension(node);
+    kDebug() << "visiting comprehension" << currentContext()->range();
+    if ( node->target->astType == Ast::NameAstType ) {
+        RangeInRevision declarationRange(currentContext()->range().start, currentContext()->range().start);
+        declarationRange.start.column += 1;
+        visitVariableDeclaration<Declaration>(static_cast<NameAst*>(node->target)->identifier, declarationRange);
+    }
+}
 
 void DeclarationBuilder::visitImport(ImportAst* node)
 {
@@ -1037,29 +1052,6 @@ template<typename T> void DeclarationBuilder::visitDecorators(QList< Python::Exp
             addTo->addDecorator(d);
         }
     }
-}
-
-void DeclarationBuilder::visitListComprehension(ListComprehensionAst* node)
-{
-    if ( ! node->generators.isEmpty() ) {
-        DUChainWriteLocker lock(DUChain::lock());
-        RangeInRevision range = editorFindRange(node->element, node->generators.last()->iterator);
-        openContext(node, range, KDevelop::DUContext::Other);
-        currentContext()->setPropagateDeclarations(false);
-        kDebug() << "Opening context for list comprehension, with range" << range.castToSimpleRange();
-        foreach ( ComprehensionAst* comprehension, node->generators ) {
-            if ( comprehension->target->astType == Ast::NameAstType ) {
-                // TODO this is disabled because it doesn't work.
-                kWarning() << "implement me: list generator";
-//                 visitVariableDeclaration<Declaration>(static_cast<NameAst*>(comprehension->target)->identifier);
-            }
-            else kDebug() << "List comprehension with non-name AST target, skipping";
-        }
-        closeContext();
-        kDebug() << "Closing context for list comprehension";
-    }
-    else kDebug() << "comprehension with empty generators list, skipping";
-    DeclarationBuilderBase::visitListComprehension(node);
 }
 
 void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )

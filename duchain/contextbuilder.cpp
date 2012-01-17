@@ -165,6 +165,13 @@ RangeInRevision ContextBuilder::editorFindRange( Ast* fromNode, Ast* toNode )
     return editor()->findRange(fromNode, toNode);
 }
 
+CursorInRevision ContextBuilder::editorFindPositionSafe(Ast* node) {
+    if ( not node ) {
+        return CursorInRevision::invalid();
+    }
+    return editor()->findPosition(node);
+}
+
 CursorInRevision ContextBuilder::startPos( Ast* node )
 {
     return m_editor->findPosition(node, PythonEditorIntegrator::FrontEdge);
@@ -252,6 +259,7 @@ void ContextBuilder::visitComprehensionCommon(Ast* node)
         element = c->element;
         if ( not generators.isEmpty() ) {
             range = editorFindRange(element, generators.last()->iterator);
+            kDebug() << "List Comprehension End: " << range.end;
             generatorFound = true;
         }
     }
@@ -271,20 +279,23 @@ void ContextBuilder::visitComprehensionCommon(Ast* node)
             generatorFound = true;
         }
     }
+    range.start.column -= 1;
+//     range.end.column = 10000;
     if ( generatorFound ) {
         DUChainWriteLocker lock(DUChain::lock());
-        range.start.column -= 1;
         kDebug() << "opening comprehension context" << range;
+        if ( currentContext()->range().end > range.end ) {
+            currentContext()->range().end = range.end;
+        }
         openContext(node, range, KDevelop::DUContext::Other);
         currentContext()->setLocalScopeIdentifier(QualifiedIdentifier("<generator>"));
-        lock.unlock();
         if ( node->astType == Ast::DictionaryComprehensionAstType )
             Python::AstDefaultVisitor::visitDictionaryComprehension(static_cast<DictionaryComprehensionAst*>(node));
         if ( node->astType == Ast::ListComprehensionAstType )
             Python::AstDefaultVisitor::visitListComprehension(static_cast<ListComprehensionAst*>(node));
         if ( node->astType == Ast::GeneratorExpressionAstType )
             Python::AstDefaultVisitor::visitGeneratorExpression(static_cast<GeneratorExpressionAst*>(node));
-        lock.lock();
+        lock.unlock();
         closeContext();
     }
 }
@@ -454,7 +465,7 @@ void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
 {
     RangeInRevision range = rangeForArgumentsContext(node);
     
-    DUContext* funcctx = openContext( node->arguments, range, DUContext::Function, node->name);
+    DUContext* funcctx = openContext(node->arguments, range, DUContext::Function, node->name);
     kDebug() << funcctx;
     kDebug() << " +++ opening FUNCTION ARGUMENTS context: " << funcctx->range().castToSimpleRange() << node->name->value << range;
     visitNode(node->arguments);
@@ -466,12 +477,8 @@ void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
 void ContextBuilder::visitFunctionDefinition(FunctionDefinitionAst* node)
 {
     kDebug() << " Building function definition context: " << node->name->value;
-    DUChainWriteLocker lock(DUChain::lock());
-    
-    visitNodeList( node->decorators );
-    
+    visitNodeList(node->decorators);
     visitFunctionArguments(node);
-    
     visitFunctionBody(node);
 }
 

@@ -386,7 +386,7 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
     Python::AstDefaultVisitor::visitComprehension(node);
     kDebug() << "visiting comprehension" << currentContext()->range();
     RangeInRevision declarationRange(currentContext()->range().start, currentContext()->range().start);
-    declarationRange.start.column += 1;
+    declarationRange.end.column -= 1;
     
     AbstractType::Ptr targetType;
     if ( node->iterator ) {
@@ -1273,7 +1273,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 AbstractType::Ptr listType = ExpressionVisitor::typeObjectForIntegralType<AbstractType>("list", currentContext());
                 type->addArgument(listType);
                 node->vararg->startCol = node->vararg_col_offset; node->vararg->endCol = node->vararg_col_offset + node->vararg->value.length() - 1;
-                node->vararg->startLine = node->vararg_lineno - 1; node->vararg->endLine = node->vararg_lineno - 1;
+                node->vararg->startLine = node->vararg_lineno; node->vararg->endLine = node->vararg_lineno;
                 Declaration* d = visitVariableDeclaration<Declaration>(node->vararg);
                 Q_ASSERT(d);
                 d->setAbstractType(listType);
@@ -1282,7 +1282,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 AbstractType::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType<AbstractType>("dict", currentContext());
                 type->addArgument(dictType);
                 node->kwarg->startCol = node->arg_col_offset; node->kwarg->endCol = node->arg_col_offset + node->kwarg->value.length() - 1;
-                node->kwarg->startLine = node->arg_lineno - 1; node->kwarg->endLine = node->arg_lineno - 1;
+                node->kwarg->startLine = node->arg_lineno; node->kwarg->endLine = node->arg_lineno;
                 Declaration* d = visitVariableDeclaration<Declaration>(node->kwarg);
                 Q_ASSERT(d);
                 d->setAbstractType(dictType);

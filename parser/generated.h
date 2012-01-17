@@ -662,9 +662,9 @@ v->isInt = PyInt_Check(node->v.Num.n);
             v->kwarg = node->kwarg ? new Python::Identifier(PyString_AsString(PyObject_Str(node->kwarg))) : 0;
             nodeStack.push(v); v->arguments = visitNodeList<_expr, ExpressionAst>(node->args); nodeStack.pop();
             nodeStack.push(v); v->defaultValues = visitNodeList<_expr, ExpressionAst>(node->defaults); nodeStack.pop();
-              v->arg_lineno = tline(node->arg_lineno);
+              v->arg_lineno = tline(node->arg_lineno - 1);
               v->arg_col_offset = node->arg_col_offset;
-              v->vararg_lineno = tline(node->vararg_lineno);
+              v->vararg_lineno = tline(node->vararg_lineno - 1);
               v->vararg_col_offset = node->vararg_col_offset;
         return v;
     }

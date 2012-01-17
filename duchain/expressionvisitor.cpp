@@ -93,7 +93,7 @@ void ExpressionVisitor::encounterDeclaration(Declaration* ptr)
     m_lastDeclaration.push(QList<DeclarationPointer>() << DeclarationPointer(ptr));
 }
 
-Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegrator* editor)
+ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegrator* editor)
     : m_ctx(ctx), m_editor(editor), m_shouldBeKnown(true)
 {
     if ( s_defaultTypes.isEmpty() ) {
@@ -101,6 +101,7 @@ Python::ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegra
         s_defaultTypes.insert(KDevelop::Identifier("False"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
         s_defaultTypes.insert(KDevelop::Identifier("None"), AbstractType::Ptr(new IntegralType(IntegralType::TypeVoid)));
     }
+    Q_ASSERT(m_ctx);
 }
 
 AbstractType::Ptr ExpressionVisitor::unknownType()
@@ -464,7 +465,7 @@ void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst*
     kDebug() << "visiting dictionary comprehension";
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("dict", m_ctx);
     if ( type ) {
-        DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol));
+        DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol + 1));
         ExpressionVisitor v(comprehensionContext);
         v.visitNode(node->value);
         if ( v.lastType() ) {
@@ -488,7 +489,7 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
     AstDefaultVisitor::visitListComprehension(node);
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
     if ( type ) {
-        DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol));
+        DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol + 1), true);
         ExpressionVisitor v(comprehensionContext);
         v.visitNode(node->element);
         if ( v.lastType() ) {

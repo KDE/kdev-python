@@ -58,7 +58,7 @@ direct_assignment_line_any = '''                v->%{TARGET} = node->v.%{VALUE};
 cast_operator_line = '''                v->%{TARGET} = (ExpressionAst::%{AST_TYPE}) node->v.%{KIND_W/O_SUFFIX}.%{VALUE};'''
 resolve_string = '''                v->%{TARGET} = PyString_AsString(PyObject_Str(node->v.%{KIND_W/O_SUFFIX}.%{VALUE}));'''
 assign_mindless = '''              v->%{TARGET} = node->%{VALUE};'''
-assign_linetransform = '''              v->%{TARGET} = tline(node->%{VALUE});'''
+assign_linetransform = '''              v->%{TARGET} = tline(node->%{VALUE} - 1);'''
 resolve_oplist_block = '''
                 for ( int _i = 0; _i < node->v.%{KIND_W/O_SUFFIX}.%{VALUE}->size; _i++ ) {
                     v->%{TARGET}.append((ExpressionAst::%{AST_TYPE}) node->v.%{KIND_W/O_SUFFIX}.%{VALUE}->elements[_i]);

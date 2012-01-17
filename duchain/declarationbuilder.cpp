@@ -96,6 +96,7 @@ ReferencedTopDUContext DeclarationBuilder::build(const IndexedString& url, Ast* 
         prebuilder->m_futureModificationRevision = m_futureModificationRevision;
         updateContext = prebuilder->build(url, node, updateContext);
         kDebug() << "pre-builder finished";
+        delete prebuilder;
     }
     else {
         kDebug() << "prebuilding";
@@ -530,6 +531,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
             temporaryIdentifier->endCol = temporaryIdentifier->startCol - 1;
             openType(moduleType);
             d = visitVariableDeclaration<Declaration>(temporaryIdentifier);
+            delete temporaryIdentifier;
             if ( d ) {
                 if ( topContext() != extendingPreviousImportCtx ) {
                     d->setRange(RangeInRevision(extendingPreviousImportCtx->range().start, extendingPreviousImportCtx->range().start));

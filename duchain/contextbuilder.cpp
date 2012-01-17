@@ -280,13 +280,13 @@ void ContextBuilder::visitComprehensionCommon(Ast* node)
         }
     }
     range.start.column -= 1;
-//     range.end.column = 10000;
     if ( generatorFound ) {
         DUChainWriteLocker lock(DUChain::lock());
         kDebug() << "opening comprehension context" << range;
-        if ( currentContext()->range().end > range.end ) {
-            currentContext()->range().end = range.end;
+        if ( currentContext()->range().end < range.end ) {
+            currentContext()->setRange(RangeInRevision(currentContext()->range().start, range.end));
         }
+        kDebug() << "previous context new range: " << currentContext()->range();
         openContext(node, range, KDevelop::DUContext::Other);
         currentContext()->setLocalScopeIdentifier(QualifiedIdentifier("<generator>"));
         if ( node->astType == Ast::DictionaryComprehensionAstType )

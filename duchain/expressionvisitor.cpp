@@ -94,7 +94,7 @@ void ExpressionVisitor::encounterDeclaration(Declaration* ptr)
 }
 
 ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegrator* editor)
-    : m_ctx(ctx), m_editor(editor), m_shouldBeKnown(true)
+    : m_ctx(ctx), m_editor(editor), m_shouldBeKnown(true), m_forceGlobalSearching(false)
 {
     if ( s_defaultTypes.isEmpty() ) {
         s_defaultTypes.insert(KDevelop::Identifier("True"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
@@ -560,9 +560,14 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
     }
     
     kDebug() << "Finding declaration for" << node->identifier->value;
-    Declaration* d = Helper::declarationForName(node, QualifiedIdentifier(node->identifier->value),
-                                                RangeInRevision(node->startLine, node->startCol, node->endLine, node->endCol),
-                                                DUContextPointer(m_ctx));
+    RangeInRevision range;
+    if ( ! m_forceGlobalSearching ) {
+        range = RangeInRevision(node->startLine, node->startCol, node->endLine, node->endCol);
+    }
+    else {
+        range = RangeInRevision::invalid();
+    }
+    Declaration* d = Helper::declarationForName(node, QualifiedIdentifier(node->identifier->value), range, DUContextPointer(m_ctx));
     
     if ( d ) {
         /** DEBUG **/

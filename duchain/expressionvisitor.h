@@ -151,6 +151,9 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
          * @return void
          **/
         void setTypesForEventualCall(DeclarationPointer actualDeclaration, Python::AttributeAst* node, bool extendUnsureTypes = false);
+        
+        // used by autocompletion to disable range checks on declaration searches
+        bool m_forceGlobalSearching;
     
     private:
         static QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> s_defaultTypes;

@@ -235,8 +235,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         AstBuilder* builder = new AstBuilder();
         CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
         if ( tmpAst ) {
-            PythonEditorIntegrator* ed = new PythonEditorIntegrator();
-            ExpressionVisitor* v = new ExpressionVisitor(m_context.data(), ed);
+            ExpressionVisitor* v = new ExpressionVisitor(m_context.data());
+            v->m_forceGlobalSearching = true;
             v->visitCode(tmpAst);
             if ( v->lastType() ) {
                 kDebug() << v->lastType()->toString();
@@ -245,10 +245,13 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             else {
                 kWarning() << "Did not receive a type from expression visitor! Not offering autocompletion.";
             }
+            delete v;
         }
         else {
             kWarning() << "Completion requested for syntactically invalid expression, not offering anything";
         }
+        delete tmpAst;
+        delete builder;
     }
     else {
         // it's stupid to display a 3-letter completion item on manually invoked code completion and makes everything look crowded
@@ -270,6 +273,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
             if ( tmpAst ) {
                 ExpressionVisitor* v = new ExpressionVisitor(m_context.data());
+                v->m_forceGlobalSearching = true;
                 v->visitCode(tmpAst);
                 if ( v->lastDeclaration().data() ) {
                     calltips << v->lastDeclaration().data();
@@ -277,6 +281,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
                 else {
                     kWarning() << "Did not receive a function declaration from expression visitor! Not offering call tips.";
                 }
+                delete v;
             }
             
             QList<DeclarationDepthPair> realCalltips_withDepth;

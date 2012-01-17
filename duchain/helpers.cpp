@@ -84,7 +84,7 @@ Declaration* Helper::declarationForName(NameAst* ast, const QualifiedIdentifier&
     kDebug() << "Finding declaration for name in range " << nodeRange << ", in context" << context->range();
     {
         DUChainReadLocker lock(DUChain::lock());
-        if ( context.data() == context->topContext() ) {
+        if ( context.data() == context->topContext() and nodeRange.isValid() ) {
             declarations = context->topContext()->findDeclarations(identifier, nodeRange.end);
         }
         else {

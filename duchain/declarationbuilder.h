@@ -104,7 +104,6 @@ protected:
     
     QStack<TopDUContextPointer> m_importContextsForImportStatement;
     DeclarationPointer m_firstAttributeDeclaration;
-    bool m_prebuilding;
 private:
     int& nextDeclaration();
 };

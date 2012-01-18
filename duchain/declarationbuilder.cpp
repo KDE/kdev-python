@@ -65,13 +65,13 @@ namespace Python
 {
 
 DeclarationBuilder::DeclarationBuilder()
-        : DeclarationBuilderBase(), m_prebuilding(false)
+        : DeclarationBuilderBase()
 {
     kDebug() << "Building Declarations";
 }
 
 DeclarationBuilder::DeclarationBuilder( PythonEditorIntegrator* editor )
-        : DeclarationBuilderBase( ), m_prebuilding(false)
+        : DeclarationBuilderBase( )
 {
     setEditor(editor);
     kDebug() << "Building Declarations";
@@ -157,6 +157,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
 {
     DUChainWriteLocker lock(DUChain::lock());
     Q_ASSERT(node);
+    Ast* rangeNode = originalAst ? originalAst : node;
     
     kDebug() << "Parsing variable declaration: " << node->value;
     
@@ -194,7 +195,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
             if ( d->topContext() == currentContext()->topContext() ) {
                 kDebug() << "Opening previously existing declaration for " << d->toString();
                 openDeclarationInternal(d);
-                d->setRange(editorFindRange(node, node));
+                d->setRange(editorFindRange(rangeNode, rangeNode));
                 declarationOpened = true;
             }
             else {
@@ -225,7 +226,6 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         dec->setType(lastType());
         dec->setKind(KDevelop::Declaration::Instance);
     } else if ( noFittingDeclaration ) {
-        Ast* rangeNode = originalAst ? originalAst : node;
         RangeInRevision range = editorFindRange(rangeNode, rangeNode);
         kDebug() << "Creating variable declaration for " << range;
         kDebug() << "which has type" << ( dec && dec->abstractType() ? dec->abstractType()->toString() : "none" );
@@ -388,6 +388,7 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
     kDebug() << "visiting comprehension" << currentContext()->range();
     RangeInRevision declarationRange(currentContext()->range().start, currentContext()->range().start);
     declarationRange.end.column -= 1;
+    kDebug() << "declaration range: " << declarationRange;
     
     AbstractType::Ptr targetType;
     if ( node->iterator ) {

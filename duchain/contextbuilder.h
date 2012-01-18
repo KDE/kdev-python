@@ -75,6 +75,7 @@ public:
     static RangeInRevision rangeForNode(Identifier* node, bool moveRight);
     static SimpleRange simpleRangeForNode(Python::Ast* node, bool moveRight);
     ModificationRevision m_futureModificationRevision;
+    bool m_prebuilding;
 
 protected:
     PythonEditorIntegrator* editor() const;
@@ -127,10 +128,12 @@ protected:
     DUContextPointer m_moduleContext;
     TopDUContextPointer m_builtinFunctionsContext;
     DUContextPointer m_mostRecentArgumentsContext;
+    RangeInRevision m_lastGeneratorRange;
 
 private:
     void openContextForStatementList( const QList<Ast*>&, DUContext::ContextType type = DUContext::Other);
     bool m_isScheduledForReparsing;
+    RangeInRevision comprehensionRange(Ast* node);
 
     QList<KDevelop::DUContext*> m_importedParentContexts;
 };

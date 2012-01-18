@@ -247,12 +247,12 @@ void ContextBuilder::visitGeneratorExpression(GeneratorExpressionAst* node)
     visitComprehensionCommon(node);
 }
 
-void ContextBuilder::visitComprehensionCommon(Ast* node)
+RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
 {
-    QList<ComprehensionAst*> generators;
-    Ast* element = 0;
     bool generatorFound = false;
     RangeInRevision range;
+    QList<ComprehensionAst*> generators;
+    Ast* element = 0;
     if ( node->astType == Ast::ListComprehensionAstType ) {
         ListComprehensionAst* c = static_cast<ListComprehensionAst*>(node);
         generators = c->generators;
@@ -279,15 +279,24 @@ void ContextBuilder::visitComprehensionCommon(Ast* node)
             generatorFound = true;
         }
     }
-    range.start.column -= 1;
-    if ( generatorFound ) {
-        DUChainWriteLocker lock(DUChain::lock());
-        kDebug() << "opening comprehension context" << range;
-        if ( currentContext()->range().end < range.end ) {
-            currentContext()->setRange(RangeInRevision(currentContext()->range().start, range.end));
+    if ( not generators.isEmpty() ) {
+        RangeInRevision containedComprehensionRange = comprehensionRange(generators.last()->iterator);
+        if ( containedComprehensionRange.isValid() ) {
+            range.end = containedComprehensionRange.end;
         }
-        kDebug() << "previous context new range: " << currentContext()->range();
-        openContext(node, range, KDevelop::DUContext::Other);
+    }
+    return range;
+}
+
+void ContextBuilder::visitComprehensionCommon(Ast* node)
+{
+    RangeInRevision range = comprehensionRange(node);
+    if ( range.isValid() ) {
+        range.start.column -= 1;
+        DUChainWriteLocker lock(DUChain::lock());
+        kDebug() << "opening comprehension context" << range << "(previous was" << currentContext()->range() << ")";
+        openContext(node, RangeInRevision(range.start, topContext()->range().end), KDevelop::DUContext::Other);
+        lock.unlock();
         currentContext()->setLocalScopeIdentifier(QualifiedIdentifier("<generator>"));
         if ( node->astType == Ast::DictionaryComprehensionAstType )
             Python::AstDefaultVisitor::visitDictionaryComprehension(static_cast<DictionaryComprehensionAst*>(node));
@@ -295,7 +304,7 @@ void ContextBuilder::visitComprehensionCommon(Ast* node)
             Python::AstDefaultVisitor::visitListComprehension(static_cast<ListComprehensionAst*>(node));
         if ( node->astType == Ast::GeneratorExpressionAstType )
             Python::AstDefaultVisitor::visitGeneratorExpression(static_cast<GeneratorExpressionAst*>(node));
-        lock.unlock();
+        lock.lock();
         closeContext();
     }
 }

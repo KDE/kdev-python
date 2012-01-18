@@ -249,6 +249,8 @@ void ContextBuilder::visitGeneratorExpression(GeneratorExpressionAst* node)
 
 RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
 {
+    // This is not right, it must be something like the ast visitor... but that's too complicated :(
+    // it seems to work okay so far, but should be replaced when possible.
     bool generatorFound = false;
     RangeInRevision range;
     QList<ComprehensionAst*> generators;

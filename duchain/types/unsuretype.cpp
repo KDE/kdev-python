@@ -89,6 +89,11 @@ QString UnsureType::toString() const
         return "mixed";
     if ( count == 1 )
         return typeList;
+    if ( count > 5 )  {
+        typeList.truncate(80);
+        typeList += "...";
+        return "unsure (" + typeList + ")";
+    }
     else
         return "unsure (" + typeList + ")";
 }

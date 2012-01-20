@@ -488,6 +488,8 @@ void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
 void ContextBuilder::visitFunctionDefinition(FunctionDefinitionAst* node)
 {
     kDebug() << " Building function definition context: " << node->name->value;
+
+    DUChainWriteLocker lock(DUChain::lock());
     visitNodeList(node->decorators);
     visitFunctionArguments(node);
     visitFunctionBody(node);

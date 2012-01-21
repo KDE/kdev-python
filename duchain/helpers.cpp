@@ -46,6 +46,7 @@ UnsureType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* c
         kDebug();
     }
     UnsureType::Ptr result(new UnsureType());
+    unsigned short maxHints = 7;
     if ( HintedType::Ptr hinted = type.cast<HintedType>() ) {
         if ( hinted->isValid(current) && isUsefulType(hinted.cast<AbstractType>()) ) {
             kDebug() << "Adding type hint: " << hinted->toString();
@@ -58,7 +59,7 @@ UnsureType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* c
     else if ( UnsureType::Ptr unsure = type.cast<UnsureType>() ) {
         int len = unsure->typesSize();
         kDebug() << "Extracting hints from " << len << "types";
-        for ( int i = 0; i < len; i++ ) {
+        for ( int i = 0; i < len and i < maxHints; i++ ) {
             if ( HintedType::Ptr hinted = unsure->types()[i].abstractType().cast<HintedType>() ) {
                 if ( hinted->isValid(current) ) {
                     kDebug() << "Adding type hint (multi): " << hinted->toString();
@@ -66,10 +67,11 @@ UnsureType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* c
                 }
                 else {
                     kDebug() << "Discarding type hint (multi): " << hinted->toString();
+                    maxHints += 1;
                 }
             }
             else {
-                kDebug() << "Skipping non-hint of unsure type: "; 
+                maxHints += 1;
             }
         }
     }

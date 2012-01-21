@@ -44,9 +44,12 @@ a = a and a
 a = a or b
 
 class some_class(foo, bar):
-	attr1 = 3
-	attr2 = 5
-	attr3 = 'str'
+    def __init__(self):
+        pass
+    
+    attr1 = 3
+    attr2 = 5
+    attr3 = 'str'
 
 argarg = 2
 
@@ -136,12 +139,12 @@ simple_func()
 
 def func_without_param():
     pass
-    [(lambda foo: foo) for fdlksh in [1, 2, 3]]
+    return [(lambda foo: foo) for fdlksh in [1, 2, 3]]
 
 func_without_param()
 
 def another_function(param):
-    print param
+    return [3 for x in param]
 
 a = 5
 

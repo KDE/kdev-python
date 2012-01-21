@@ -562,18 +562,19 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     // cool, we found something. Now we need to compare its indent to the current one; if they don't match, then 
     // we ignore it and use the one provided as an argument to this function. Otherwise, we use what we found.
     if ( currentlyChecked ) {
-        int previousEndsAtLine = currentlyChecked->range().castToSimpleRange().end.line;
-        kDebug() << "Previous context ends at line" << previousEndsAtLine;
+        int previousStartsAtLine = currentlyChecked->range().castToSimpleRange().start.line + 1;
+        kDebug() << "Previous context starts at line" << previousStartsAtLine;
         kDebug() << "Previous / Current context ranges: " << currentlyChecked->range().castToSimpleRange() << context->range().castToSimpleRange();
-        int skipLinesBack = atLine - previousEndsAtLine; // how many lines to skip backwards
+        int skipLinesBack = atLine - previousStartsAtLine; // how many lines to skip backwards
         int i = text.length();
-        QChar newline = QString("\n").at(0);
+        QChar newline('\n');
         
         // init indents array
         QMap<int, int> indentForLine;
         const int invalid = -1;
-        indentForLine[atLine] = invalid; indentForLine[previousEndsAtLine] = invalid;
+        indentForLine[atLine] = invalid; indentForLine[previousStartsAtLine] = invalid;
         
+        // check if the previous context uses the same indent like the current line
         int currentIndent = 0;
         int skippedLines = 0;
         QChar c;
@@ -597,13 +598,13 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
                 break;
             }
         }
-        kDebug() << indentForLine << skipLinesBack << skippedLines << "Previous ends at: " << previousEndsAtLine  << "- 1";
+        kDebug() << indentForLine << skipLinesBack << skippedLines << "Previous ends at: " << previousStartsAtLine;
         
         // if the indents match, use the context which was found.
         // if those are still "invalid", then the scanner has not reached them, meaning it aborted scanning because
         // even a match would not have meant that the context has to be replaced
-        if (   previousEndsAtLine-1 != atLine && ( indentForLine[previousEndsAtLine - 2] != invalid ) && 
-             ( indentForLine[atLine] != invalid ) && ( indentForLine[previousEndsAtLine - 2] == indentForLine[atLine] ) ) {
+        if ( previousStartsAtLine != atLine && ( indentForLine[previousStartsAtLine] != invalid ) && 
+             ( indentForLine[previousStartsAtLine] == indentForLine[atLine] ) ) {
             kDebug() << "Indents match, replacing context by" << currentlyChecked;
             context = DUContextPointer(currentlyChecked);
             m_duContext = context;

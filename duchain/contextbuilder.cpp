@@ -329,7 +329,7 @@ void ContextBuilder::openContextForStatementList( const QList<Ast*>& l, DUContex
 
 void ContextBuilder::openContextForClassDefinition(ClassDefinitionAst* node)
 {
-    RangeInRevision range(node->startLine, node->startCol, node->body.last()->endLine + 1, 0);
+    RangeInRevision range(node->startLine, node->startCol, node->body.last()->endLine + 1, 1);
     DUChainWriteLocker lock(DUChain::lock());
     openContext( node, range, DUContext::Class, node->name);
     currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));

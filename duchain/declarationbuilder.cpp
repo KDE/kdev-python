@@ -401,6 +401,7 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
     
     if ( node->target->astType == Ast::NameAstType ) {
         Declaration* d = visitVariableDeclaration<Declaration>(static_cast<NameAst*>(node->target)->identifier, declarationRange);
+        DUChainWriteLocker lock(DUChain::lock());
         if ( d and targetType ) {
             d->setAbstractType(targetType);
         }
@@ -414,6 +415,7 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
                 NameAst* n = static_cast<NameAst*>(tupleElt);
                 Declaration* d = visitVariableDeclaration<Declaration>(n->identifier, declarationRange);
                 // TODO: Fix this as soon as tuple type support is implemented.
+                DUChainWriteLocker lock(DUChain::lock());
                 d->setAbstractType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
 //                 if ( d and targetType ) {
 //                     d->setAbstractType(targetType);

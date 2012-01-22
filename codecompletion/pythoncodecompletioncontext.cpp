@@ -16,9 +16,12 @@
  *****************************************************************************
  */
 
+#include <math.h>
+
 #include <QProcess>
 #include <QRegExp>
 #include <KStandardDirs>
+#include <KTextEditor/View>
 
 #include <language/duchain/duchainpointer.h>
 #include <language/duchain/declaration.h>
@@ -34,6 +37,7 @@
 #include <interfaces/icore.h>
 #include <interfaces/iprojectcontroller.h>
 #include <interfaces/iproject.h>
+#include <interfaces/idocumentcontroller.h>
 #include <project/projectmodel.h>
 
 #include "keyworditem.h"
@@ -73,7 +77,45 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
 //     }
     
     if ( m_operation == PythonCodeCompletionContext::NoCompletion ) {
-            
+        
+    }
+    else if ( m_operation == PythonCodeCompletionContext::GeneratorVariableCompletion ) {
+        QList<KeywordItem*> completionItems;
+        AstBuilder* builder = new AstBuilder();
+        CodeAst* tmpAst = builder->parse(KUrl(), m_remainingExpression);
+        if ( tmpAst ) {
+            ExpressionVisitor* v = new ExpressionVisitor(m_context.data());
+            v->m_forceGlobalSearching = true;
+            v->m_reportUnknownNames = true;
+            v->visitCode(tmpAst);
+            if ( not v->m_unknownNames.isEmpty() ) {
+                if ( v->m_unknownNames.size() >= 2 ) {
+                    // we only take the first two, and only two. It gets too much items otherwise.
+                    QStringList combinations;
+                    combinations << v->m_unknownNames.at(0) + ", " + v->m_unknownNames.at(1);
+                    combinations << v->m_unknownNames.at(1) + ", " + v->m_unknownNames.at(0);
+                    foreach ( const QString& c, combinations ) {
+                        completionItems << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + c + " in ");
+                    }
+                }
+                foreach ( const QString& n, v->m_unknownNames ) {
+                    completionItems << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + n + " in ");
+                }
+            }
+            else {
+                kWarning() << "No unknown names in generator completion; nothing to do.";
+            }
+            delete v;
+        }
+        delete tmpAst;
+        delete builder;
+        
+        foreach ( KeywordItem* item, completionItems ) {
+            items << CompletionTreeItemPointer(item);
+        }
+        
+//         IDocument* doc = KDevelop::ICore::self()->documentController()->documentForUrl(m_context->topContext()->url().toUrl());
+//         QMetaObject::invokeMethod(doc->textDocument()->activeView(), "userInvokedCompletion");
     }
     else if ( m_operation == PythonCodeCompletionContext::DefineCompletion ) {
         QList<implementFunctionDescription> funcs;
@@ -719,10 +761,26 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         return;
     }
     
-    kDebug() << "Is import file: " << is_importfile;
+    QRegExp couldBeGeneratorCompletion("(.*)[\\[\\{](.*)[\\s]*for[\\s]+");
+    couldBeGeneratorCompletion.setMinimal(true);
+    bool is_couldBeGeneratorCompletion = couldBeGeneratorCompletion.exactMatch(currentLine);
+    if ( is_couldBeGeneratorCompletion ) {
+        bool is_generatorCompletion = scanExpressionBackwards(strippedLine, QStringList(), QStringList(), QStringList(), QStringList() << "{" << "[" << "(", true);
+        if ( is_generatorCompletion ) {
+            kDebug() << "remaining expression for GeneratorVariableCompletion: " << m_remainingExpression;
+            m_remainingExpression = strippedLine.remove(0, m_remainingExpression.length());
+            if ( m_remainingExpression.length() >= 3 ) {
+                m_remainingExpression = m_remainingExpression.trimmed();
+                m_remainingExpression.remove(m_remainingExpression.length()-3, 3);
+            }
+            kDebug() << "use unknown names in: " << m_remainingExpression;
+            m_operation = PythonCodeCompletionContext::GeneratorVariableCompletion;
+            return;
+        }
+    }
 }
 
-bool PythonCodeCompletionContext::scanExpressionBackwards(QString line, QStringList stopTokens, QStringList stopAtSpaceWithout, QStringList mustEndWithToken, QStringList ignoreAtEnd)
+bool PythonCodeCompletionContext::scanExpressionBackwards(QString line, QStringList stopTokens, QStringList stopAtSpaceWithout, QStringList mustEndWithToken, QStringList ignoreAtEnd, bool ignoreWhitespace)
 {
     int i = line.length() - 1;
     bool success = false;
@@ -763,7 +821,7 @@ bool PythonCodeCompletionContext::scanExpressionBackwards(QString line, QStringL
             scanned[0] = ' ';
             break;
         }
-        else if ( previousWasSpace && ! c.isSpace() && ! stopAtSpaceWithout.contains(c) ) {
+        else if ( ! ignoreWhitespace && previousWasSpace && ! c.isSpace() && ! stopAtSpaceWithout.contains(c) ) {
             kDebug() << "Previous char was space, current is " << c << " -- break";
             scanned[0] = ' ';
             break;

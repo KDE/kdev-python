@@ -53,7 +53,8 @@ public:
         ShebangLineCompletion,
         FunctionCallCompletion,
         InheritanceCompletion,
-        RaiseExceptionCompletion
+        RaiseExceptionCompletion,
+        GeneratorVariableCompletion
     };
     
     PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position, int depth, const PythonCodeCompletionWorker* parent);
@@ -70,7 +71,7 @@ public:
     // there's two cases in which the search will stop: a space without a token mentioned in stopAtSpaceWithout (for "while foo.bar.")
     // or any unmatched left parenthesis (for "foo(bar.baz.").
     // remaining expression can be found in m_guessTypeOfExpression after calling
-    bool scanExpressionBackwards(QString line, QStringList stopTokens, QStringList stopAtSpaceWithout, QStringList mustEndWithToken, QStringList ignoreAtEnd);
+    bool scanExpressionBackwards(QString line, QStringList stopTokens, QStringList stopAtSpaceWithout, QStringList mustEndWithToken, QStringList ignoreAtEnd, bool ignoreWhitespace = false);
     
     CompletionContextType m_operation;
     QStack<ProjectFolderItem*> m_folderStack;

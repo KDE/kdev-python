@@ -154,6 +154,9 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         
         // used by autocompletion to disable range checks on declaration searches
         bool m_forceGlobalSearching;
+        // used by autocompletion to detect unknown NameAst elements in expressions
+        bool m_reportUnknownNames;
+        QList<QString> m_unknownNames;
     
     private:
         static QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> s_defaultTypes;

@@ -489,7 +489,9 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
     AstDefaultVisitor::visitListComprehension(node);
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
     if ( type ) {
+        DUChainReadLocker lock(DUChain::lock());
         DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol + 1), true);
+        lock.unlock();
         ExpressionVisitor v(comprehensionContext);
         v.visitNode(node->element);
         if ( v.lastType() ) {
@@ -580,6 +582,9 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
     }
     else {
         kDebug() << "VistName type not found";
+        if ( m_reportUnknownNames ) {
+            m_unknownNames.append(node->identifier->value);
+        }
         return unknownTypeEncountered();
     }
 }

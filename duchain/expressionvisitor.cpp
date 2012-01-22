@@ -466,6 +466,7 @@ void ExpressionVisitor::visitList(ListAst* node)
         unknownTypeEncountered();
         kWarning() << " [ !!! ] did not get a typetrack container object when expecting one! Fix code / setup.";
     }
+    encounterDeclaration(0);
     encounter<VariableLengthContainer>(type);
 }
 
@@ -475,7 +476,9 @@ void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst*
     kDebug() << "visiting dictionary comprehension";
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("dict", m_ctx);
     if ( type ) {
+        DUChainReadLocker lock(DUChain::lock());
         DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol + 1));
+        lock.unlock();
         ExpressionVisitor v(comprehensionContext);
         v.visitNode(node->value);
         if ( v.lastType() ) {
@@ -490,6 +493,7 @@ void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst*
     else {
         return unknownTypeEncountered();
     }
+    encounterDeclaration(0);
     encounter<VariableLengthContainer>(type);
 }
 
@@ -515,12 +519,14 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
         DUChainReadLocker lock(DUChain::lock());
         kDebug() << "Got type for List Comprehension:" << type->toString();
     }
+    encounterDeclaration(0);
     encounter<VariableLengthContainer>(type);
 }
 
 void ExpressionVisitor::visitTuple(TupleAst* node) {
     AstDefaultVisitor::visitTuple(node);
     AbstractType::Ptr type = typeObjectForIntegralType<AbstractType>("tuple", m_ctx);
+    encounterDeclaration(0);
     encounter(type);
 }
 
@@ -551,6 +557,7 @@ void ExpressionVisitor::visitDict(DictAst* node)
             type->addContentType(contentVisitor.lastType());
         }
     }
+    encounterDeclaration(0);
     encounter<VariableLengthContainer>(type);
 }
 
@@ -563,12 +570,14 @@ void ExpressionVisitor::visitNumber(Python::NumberAst* number)
     else {
         type = typeObjectForIntegralType<AbstractType>("float", m_ctx);
     }
+    encounterDeclaration(0);
     encounter(type);
 }
 
 void ExpressionVisitor::visitString(Python::StringAst* )
 {
     AbstractType::Ptr type = typeObjectForIntegralType<AbstractType>("string", m_ctx);
+    encounterDeclaration(0);
     encounter(type);
 }
 

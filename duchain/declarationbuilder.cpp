@@ -841,10 +841,17 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
     bool canUnpack = realTargets.length() == realValues.length();
     int i = 0;
     foreach ( ExpressionAst* target, realTargets ) {
-        if ( canUnpack or realDeclarations.length() == 1 ) {
+        if ( canUnpack ) {
             tupleElementType = realValues.at(i);
             tupleElementDeclaration = realDeclarations.at(i);
-        } else {
+        }
+        else if ( realValues.length() == 1 ) {
+            ExpressionVisitor v(currentContext());
+            v.visitNode(node->value);
+            tupleElementType = v.lastType();
+            tupleElementDeclaration = v.lastDeclaration();
+        }
+        else {
             tupleElementType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
             tupleElementDeclaration = 0;
         }
@@ -867,7 +874,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                                   and (    tupleElementType->whichType() == AbstractType::TypeFunction 
                                         or tupleElementType->whichType() == AbstractType::TypeStructure 
                                       )
-                                  and realNodes.at(i)->astType != Ast::CallAstType
+                                  and i < realNodes.length() and realNodes.at(i)->astType != Ast::CallAstType
                )
             {
 //                 if ( not tupleElementDeclaration and tupleElementType->whichType() == AbstractType::TypeStructure ) {

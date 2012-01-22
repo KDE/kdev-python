@@ -265,6 +265,16 @@ RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
             generatorFound = true;
         }
     }
+    if ( node->astType == Ast::SetComprehensionAstType ) {
+        SetComprehensionAst* c = static_cast<SetComprehensionAst*>(node);
+        generators = c->generators;
+        element = c->element;
+        if ( not generators.isEmpty() ) {
+            range = editorFindRange(element, generators.last()->iterator);
+            kDebug() << "Set comprehension range: " << range;
+            generatorFound = true;
+        }
+    }
     if ( node->astType == Ast::DictionaryComprehensionAstType ) {
         DictionaryComprehensionAst* c = static_cast<DictionaryComprehensionAst*>(node);
         generators = c->generators;
@@ -306,6 +316,8 @@ void ContextBuilder::visitComprehensionCommon(Ast* node)
             Python::AstDefaultVisitor::visitListComprehension(static_cast<ListComprehensionAst*>(node));
         if ( node->astType == Ast::GeneratorExpressionAstType )
             Python::AstDefaultVisitor::visitGeneratorExpression(static_cast<GeneratorExpressionAst*>(node));
+        if ( node->astType == Ast::SetComprehensionAstType )
+            Python::AstDefaultVisitor::visitSetComprehension(static_cast<SetComprehensionAst*>(node));
         lock.lock();
         closeContext();
     }

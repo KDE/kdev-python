@@ -383,14 +383,16 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
         else {
             checkDeclaration = currentDeclaration;
         }
-        AbstractType::Ptr type = checkDeclaration->abstractType();
-        if ( type && ( type->whichType() == AbstractType::TypeFunction || type->whichType() == AbstractType::TypeStructure ) ) {
-            item = new FunctionDeclarationCompletionItem(currentDeclaration);
+        if ( checkDeclaration ) {
+            AbstractType::Ptr type = checkDeclaration->abstractType();
+            if ( type && ( type->whichType() == AbstractType::TypeFunction || type->whichType() == AbstractType::TypeStructure ) ) {
+                item = new FunctionDeclarationCompletionItem(currentDeclaration);
+            }
+            else {
+                item = new PythonDeclarationCompletionItem(currentDeclaration, KDevelop::CodeCompletionContext::Ptr(this));
+            }
+            items << CompletionTreeItemPointer(item);
         }
-        else {
-            item = new PythonDeclarationCompletionItem(currentDeclaration, KDevelop::CodeCompletionContext::Ptr(this));
-        }
-        items << CompletionTreeItemPointer(item);
     }
     return items;
 }

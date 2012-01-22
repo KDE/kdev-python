@@ -496,6 +496,23 @@ void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst*
     encounter<VariableLengthContainer>(type);
 }
 
+void ExpressionVisitor::visitSetComprehension(SetComprehensionAst* node)
+{
+    kDebug() << "visiting set comprehension";
+    Python::AstDefaultVisitor::visitSetComprehension(node);
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("set", m_ctx);
+    if ( type ) {
+        DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol+1), true);
+        ExpressionVisitor v(comprehensionContext);
+        v.visitNode(node->element);
+        if ( v.lastType() ) {
+            type->addContentType(v.lastType());
+        }
+    }
+    encounterDeclaration(0);
+    encounter<VariableLengthContainer>(type);
+}
+
 void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
 {
     kDebug() << "visiting list comprehension";

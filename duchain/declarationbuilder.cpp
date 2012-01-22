@@ -301,9 +301,11 @@ void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
 void DeclarationBuilder::visitWith(WithAst* node)
 {
     if ( node->optionalVars ) {
+        DUChainReadLocker lock(DUChain::lock());
         ExpressionVisitor v(currentContext(), editor());
         v.visitNode(node->contextExpression);
         setLastType(v.lastType());
+        lock.unlock();
         visitVariableDeclaration<Declaration>(node->optionalVars);
     }
     Python::ContextBuilder::visitWith(node);

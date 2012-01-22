@@ -761,7 +761,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         return;
     }
     
-    QRegExp couldBeGeneratorCompletion("(.*)[\\[\\{](.*)[\\s]*for[\\s]+");
+    QRegExp couldBeGeneratorCompletion("(.*)[\\[\\{](.*)[\\s]*for[\\s]*$");
     couldBeGeneratorCompletion.setMinimal(true);
     bool is_couldBeGeneratorCompletion = couldBeGeneratorCompletion.exactMatch(currentLine);
     if ( is_couldBeGeneratorCompletion ) {
@@ -773,6 +773,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
                 m_remainingExpression = m_remainingExpression.trimmed();
                 m_remainingExpression.remove(m_remainingExpression.length()-3, 3);
             }
+            m_remainingExpression = '{' + m_remainingExpression + '}';
             kDebug() << "use unknown names in: " << m_remainingExpression;
             m_operation = PythonCodeCompletionContext::GeneratorVariableCompletion;
             return;

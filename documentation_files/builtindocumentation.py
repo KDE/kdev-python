@@ -323,3 +323,4 @@ def zip(iterable = None): return []
 def __import__(name, globa = None, loca = None, fromlist = None, level = 0): return None
 @returnContentEqualsContentOf(0)
 def dict(): return {}
+def exit(status): return None

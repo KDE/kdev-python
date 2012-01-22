@@ -514,6 +514,22 @@ void ExpressionVisitor::visitTuple(TupleAst* node) {
     encounter(type);
 }
 
+void ExpressionVisitor::visitIfExpression(IfExpressionAst* node)
+{
+    AstDefaultVisitor::visitIfExpression(node);
+    if ( node->body and node->orelse ) {
+        ExpressionVisitor v(m_ctx);
+        v.visitNode(node->body);
+        AbstractType::Ptr first = v.lastType();
+        DeclarationPointer firstDecl = v.lastDeclaration();
+        v.visitNode(node->orelse);
+        AbstractType::Ptr second = v.lastType();
+        DeclarationPointer secondDecl = v.lastDeclaration();
+        encounterDeclarations(QList<DeclarationPointer>() << firstDecl << secondDecl);
+        encounter(Helper::mergeTypes(first, second));
+    }
+}
+
 void ExpressionVisitor::visitDict(DictAst* node)
 {
     AstDefaultVisitor::visitDict(node);

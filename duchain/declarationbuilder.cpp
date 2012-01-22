@@ -721,29 +721,12 @@ void DeclarationBuilder::visitCall(CallAst* node)
     }
     kDebug() << "--";
     kDebug() << "Trying to update function argument types based on call";
-    bool isConstructor = false;
-    DeclarationPointer lastCalledDeclaration = functionVisitor.lastDeclaration();
-    DUChainWriteLocker lock(DUChain::lock());
-    if ( lastCalledDeclaration and not lastCalledDeclaration->isFunctionDeclaration() )
-    {
-        kDebug() << "No function declaration, looking for class constructor";
-        kDebug() << "Class declaration: " << lastCalledDeclaration;
-        if ( lastCalledDeclaration && lastCalledDeclaration->internalContext() ) {
-            kDebug() << "ok, looking for constructor";
-            QList<Declaration*> constructors = lastCalledDeclaration->internalContext()
-                                               ->findDeclarations(KDevelop::Identifier("__init__"));
-            kDebug() << "Found constructors: " << constructors;
-            if ( ! constructors.isEmpty() ) {
-                lastCalledDeclaration = dynamic_cast<FunctionDeclaration*>(constructors.first());
-                isConstructor = true;
-                kDebug() << "new function declaration: " << lastCalledDeclaration;
-            }
-        }
-    }
-    FunctionDeclaration::Ptr lastFunctionDeclaration;
-    if ( lastCalledDeclaration ) {
-        lastFunctionDeclaration = lastCalledDeclaration.dynamicCast<FunctionDeclaration>();
-    }
+    
+    DUChainWriteLocker lock(DUChain::lock());    
+    QPair<FunctionDeclaration::Ptr, bool> lastFunctionDeclarationP = Helper::functionDeclarationForCalledDeclaration(functionVisitor.lastDeclaration());
+    FunctionDeclaration::Ptr lastFunctionDeclaration = lastFunctionDeclarationP.first;
+    bool isConstructor = lastFunctionDeclarationP.second;
+    
     if ( lastFunctionDeclaration ) {
         kDebug() << "got declaration:" << lastFunctionDeclaration->toString();
         if ( lastFunctionDeclaration->topContext()->url() == IndexedString(Helper::getDocumentationFile()) ) {
@@ -807,6 +790,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
     QList<ExpressionAst*> realTargets;
     QList<AbstractType::Ptr> realValues;
     QList<DeclarationPointer> realDeclarations;
+    QList<Ast*> realNodes;
     
     foreach ( ExpressionAst* target, node->targets ) {
         if ( target->astType == Ast::TupleAstType ) {
@@ -825,6 +809,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             ExpressionVisitor v(currentContext(), editor());
             v.visitNode(value);
             realValues << v.lastType();
+            realNodes << value;
             realDeclarations << v.lastDeclaration();
         }
     }
@@ -832,6 +817,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         ExpressionVisitor v(currentContext(), editor());
         v.visitNode(node->value);
         realValues << v.lastType();
+        realNodes << node->value;
         realDeclarations << v.lastDeclaration();
         if ( node->value && node->value->astType == Ast::CallAstType && ! node->targets.isEmpty() ) {
             if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeIntegral 
@@ -855,13 +841,9 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
     bool canUnpack = realTargets.length() == realValues.length();
     int i = 0;
     foreach ( ExpressionAst* target, realTargets ) {
-        if ( canUnpack ) {
+        if ( canUnpack or realDeclarations.length() == 1 ) {
             tupleElementType = realValues.at(i);
             tupleElementDeclaration = realDeclarations.at(i);
-        } else if (realTargets.length() == 1) {
-            ExpressionVisitor v(currentContext(), editor());
-            v.visitNode(node->value);
-            tupleElementType = v.lastType();
         } else {
             tupleElementType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
             tupleElementDeclaration = 0;
@@ -878,22 +860,29 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             }
         }
         /** END DEBUG **/
-        i += 1;
         setLastType(tupleElementType); // TODO fix this for x, y = a, b, i.e. if node->value->astType == TupleAstType
         // a = 3
         if ( target->astType == Ast::NameAstType ) {
-            if ( tupleElementType && tupleElementType->whichType() == AbstractType::TypeFunction ) {
-                if ( tupleElementDeclaration ) {
-                    DUChainWriteLocker lock(DUChain::lock());
-                    kDebug() << "creating alias declaration for " << static_cast<NameAst*>(target)->identifier->value;
+            if ( tupleElementType and tupleElementDeclaration
+                                  and (    tupleElementType->whichType() == AbstractType::TypeFunction 
+                                        or tupleElementType->whichType() == AbstractType::TypeStructure 
+                                      )
+                                  and realNodes.at(i)->astType != Ast::CallAstType
+               )
+            {
+//                 if ( not tupleElementDeclaration and tupleElementType->whichType() == AbstractType::TypeStructure ) {
+//                     tupleElementDeclaration = DeclarationPointer(static_cast<StructureType*>(tupleElementType.unsafeData())->declaration(topContext()));
+//                 }
+                DUChainWriteLocker lock(DUChain::lock());
+                kDebug() << "creating alias declaration for " << static_cast<NameAst*>(target)->identifier->value;
 //                     visitVariableDeclaration<FunctionDeclaration>(static_cast<NameAst*>(target)->identifier, target);
-                    AliasDeclaration* decl = openDeclaration<AliasDeclaration>(static_cast<NameAst*>(target)->identifier, target);
-                    decl->setAliasedDeclaration(tupleElementDeclaration.data());
-                    closeDeclaration();
-                }
+                AliasDeclaration* decl = openDeclaration<AliasDeclaration>(static_cast<NameAst*>(target)->identifier, target);
+                decl->setAliasedDeclaration(tupleElementDeclaration.data());
+                closeDeclaration();
             }
             else {
                 DUChainWriteLocker lock(DUChain::lock());
+                kDebug() << "Creating normal declaration with type" << ( tupleElementType ? tupleElementType->toString() : "<none>" );
                 Declaration* dec = visitVariableDeclaration<Declaration>(target);
                 /** DEBUG **/
                 if ( tupleElementType && dec ) {
@@ -999,6 +988,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                 closeInjectedContext();
             }
         }
+        i += 1;
     }
 }
 

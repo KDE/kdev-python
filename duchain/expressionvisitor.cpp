@@ -367,15 +367,21 @@ void ExpressionVisitor::visitCall(CallAst* node)
     else {
         actualDeclaration = Helper::resolveAliasDeclaration(actualDeclaration);
         ClassDeclaration* classDecl = dynamic_cast<ClassDeclaration*>(actualDeclaration);
-        FunctionDeclaration* funcDecl = dynamic_cast<FunctionDeclaration*>(actualDeclaration);
+        QPair<FunctionDeclarationPointer, bool> d = Helper::functionDeclarationForCalledDeclaration(
+                                                    DeclarationPointer(actualDeclaration));
+        FunctionDeclaration* funcDecl = d.first.data();
+        bool isConstructor = d.second;
         
-        if ( classDecl ) {
-            encounter(classDecl->abstractType());
-            encounterDeclaration(classDecl);
-        }
-        else if ( funcDecl && funcDecl->type<FunctionType>() ) {
-            AbstractType::Ptr type = funcDecl->type<FunctionType>()->returnType();
-            encounterDeclaration(DeclarationPointer(funcDecl));
+        if ( funcDecl && funcDecl->type<FunctionType>() ) {
+            AbstractType::Ptr type;
+            if ( isConstructor and classDecl ) {
+                type = classDecl->abstractType();
+                encounterDeclaration(classDecl);
+            }
+            else {
+                type = funcDecl->type<FunctionType>()->returnType();
+                encounterDeclaration(funcDecl);
+            }
             bool success = false;
             if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(
                                               funcDecl, "returnContentEqualsContentOf") ) {
@@ -401,6 +407,10 @@ void ExpressionVisitor::visitCall(CallAst* node)
             if ( not success ) {
                 return encounter(type);
             }
+        }
+        else if ( classDecl ) {
+            encounter(classDecl->abstractType());
+            encounterDeclaration(classDecl);
         }
         else {
             kDebug() << "Declaraton for " << functionName << " is not a class or function declaration";

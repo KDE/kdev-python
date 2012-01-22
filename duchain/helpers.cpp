@@ -78,6 +78,34 @@ UnsureType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* c
     return result;
 }
 
+QPair<FunctionDeclarationPointer, bool> Helper::functionDeclarationForCalledDeclaration(DeclarationPointer ptr)
+{
+    bool isConstructor;
+    DeclarationPointer lastCalledDeclaration = ptr;
+    if ( lastCalledDeclaration and not lastCalledDeclaration->isFunctionDeclaration() )
+    {
+        kDebug() << "No function declaration, looking for class constructor";
+        kDebug() << "Class declaration: " << lastCalledDeclaration;
+        if ( lastCalledDeclaration && lastCalledDeclaration->internalContext() ) {
+            kDebug() << "ok, looking for constructor";
+            QList<Declaration*> constructors = lastCalledDeclaration->internalContext()
+                                               ->findDeclarations(KDevelop::Identifier("__init__"));
+            kDebug() << "Found constructors: " << constructors;
+            if ( ! constructors.isEmpty() ) {
+                lastCalledDeclaration = dynamic_cast<FunctionDeclaration*>(constructors.first());
+                isConstructor = true;
+                kDebug() << "new function declaration: " << lastCalledDeclaration;
+            }
+        }
+    }
+    FunctionDeclarationPointer lastFunctionDeclaration;
+    if ( lastCalledDeclaration ) {
+        lastFunctionDeclaration = FunctionDeclarationPointer(dynamic_cast<FunctionDeclaration*>(lastCalledDeclaration.data()));
+    }
+    else lastFunctionDeclaration = FunctionDeclarationPointer(dynamic_cast<FunctionDeclaration*>(ptr.data()));
+    return QPair<FunctionDeclarationPointer, bool>(lastFunctionDeclaration, isConstructor);
+}
+
 Declaration* Helper::declarationForName(NameAst* ast, const QualifiedIdentifier& identifier, const RangeInRevision& nodeRange, DUContextPointer context)
 {
     QList<Declaration*> declarations;

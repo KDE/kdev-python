@@ -4,6 +4,9 @@ class Exception:
 
 @TypeContainer
 class __kdevpythondocumentation_builtin_list():
+    @returnContentEqualsContentOf(1)
+    def __init__(self, items):
+        return []
     @addsTypeOfArg(2)
     def __setitem__(self, key, value): pass
     @getsType
@@ -20,6 +23,7 @@ class __kdevpythondocumentation_builtin_list():
     def index(self,x): return 0
     def count(self,x): return 0
     def sort(self,): return self
+    @getsList
     def reverse(self,): return self
     def remove(self, x): pass
 
@@ -47,6 +51,9 @@ class __kdevpythondocumentation_builtin_fileObject():
     
 @TypeContainer
 class __kdevpythondocumentation_builtin_dict():
+    @returnContentEqualsContentOf(0)
+    def __init__(self, items):
+        return {}
     @addsTypeOfArg(2)
     @addsKeyTypeOfArg(1)
     def __setitem__(self, key, value): pass
@@ -83,6 +90,8 @@ class __kdevpythondocumentation_builtin_dict():
     
 
 class __kdevpythondocumentation_builtin_string():
+    def __init__(self, obj):
+        pass
     def replace(self,before, after): return ""
     def capitalize(self,): return ""
     def center(self,width, fillchar = None): return ""
@@ -133,7 +142,8 @@ class __kdevpythondocumentation_builtin_int():
     pass
 
 class __kdevpythondocumentation_builtin_complex():
-    pass
+    real = 3
+    imag = 5
 
 class BaseException():
     args = ()
@@ -229,6 +239,9 @@ class __kdevpythondocumentation_builtin_tuple():
 
 @TypeContainer
 class __kdevpythondocumentation_builtin_set():
+    @returnContentEqualsContentOf(1)
+    def __init__(self, objects):
+        pass
     def len(self): return 0
     def isdisjoint(self, other): return True
     def issubset(self, other): return True
@@ -283,8 +296,6 @@ def isinstance(obj, cls): return True
 def issubclass(cls, info): return True
 def iter(o, s = None): return __kdevpythondocumentation_builtin_iterator()
 def len(s): return 0
-@returnContentEqualsContentOf(0)
-def list(i = None): return []
 def locals(): return {}
 def long(x = None, base = None): return 0L
 def map(func, iterab): return []
@@ -305,12 +316,10 @@ def reload(module) : return None
 def repr(object): return ""
 def reversed(seq): return __kdevpythondocumentation_builtin_iterator()
 def round(x, n=0): return 0.0
-def set(iterable = None): return __kdevpythondocumentation_builtin_set()
 def setattr(obj, name, value): return None
 def slice(start = 0, stop = 0, step = 0): return __kdevpythondocumentation_builtin_sliceObject()
 def sorted(iterable, cmpre = None, key = None, reverse = False): return []
 def staticmethod(function): return function
-def str(obj = None): return ""
 def sum(iterable): return 0.0
 def super(_type, obj = None): return None
 def tuple(iterable = None): return ()
@@ -321,6 +330,8 @@ def vars(obj): return None
 def xrange(start = 0, stop = 0, step = 0): return [0]
 def zip(iterable = None): return []
 def __import__(name, globa = None, loca = None, fromlist = None, level = 0): return None
-@returnContentEqualsContentOf(0)
-def dict(): return {}
+dict = __kdevpythondocumentation_builtin_dict
+set = __kdevpythondocumentation_builtin_set
+str = __kdevpythondocumentation_builtin_string
+list = __kdevpythondocumentation_builtin_list
 def exit(status): return None

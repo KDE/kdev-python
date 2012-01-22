@@ -11,7 +11,8 @@
 #include <language/editor/simplerange.h>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/types/structuretype.h>
-#include "duchain/declarations/decorator.h"
+#include <language/duchain/functiondeclaration.h>
+#include <duchain/declarations/decorator.h>
 
 #include "pythonduchainexport.h"
 #include "types/unsuretype.h"
@@ -37,6 +38,14 @@ public:
     static UnsureType::Ptr extractTypeHints(AbstractType::Ptr type, TopDUContext* current);
     
     static AbstractType::Ptr resolveType(AbstractType::Ptr type);
+    
+    /**
+     * @brief Finds whether the specified called declaration is a function declaration, and, if not, checks for a class declaration; then returns the constructor
+     *
+     * @param ptr the declaration to check
+     * @return the function pointer which was found, or an invalid pointer
+     **/
+    static QPair<FunctionDeclarationPointer, bool> functionDeclarationForCalledDeclaration(DeclarationPointer ptr);
     
     template<typename T> static const Decorator* findDecoratorByName(T* inDeclaration, const QString& name) {
         register int count = inDeclaration->decoratorsSize();

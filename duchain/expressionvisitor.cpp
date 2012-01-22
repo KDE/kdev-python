@@ -70,6 +70,10 @@ AbstractType::Ptr ExpressionVisitor::encounterPreprocess(AbstractType::Ptr type,
 
 void ExpressionVisitor::encounter(AbstractType::Ptr type, bool merge)
 {
+    if ( type )
+        kDebug() << "type encountered: " << type->toString();
+    else
+        kDebug() << "unknown type encountered";
     m_lastType.push(encounterPreprocess(type, merge));
 }
 
@@ -110,6 +114,7 @@ AbstractType::Ptr ExpressionVisitor::unknownType()
 }
 
 void ExpressionVisitor::unknownTypeEncountered() {
+    encounterDeclaration(0);
     encounter(unknownType());
 }
 

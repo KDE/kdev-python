@@ -35,7 +35,7 @@ class __kdevpythondocumentation_builtin_fileObject():
     def next(self,): return None
     def read(self,size = 0): return ""
     def readline(self,size = 0): return ""
-    def readlines(self,sizehint = 0): return ""
+    def readlines(self,sizehint = 0): return [""]
     def xreadlines(self,): return None
     def seek(self,offset, whence = 0): return None
     def tell(self,): return None

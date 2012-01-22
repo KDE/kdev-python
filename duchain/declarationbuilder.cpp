@@ -288,11 +288,14 @@ void DeclarationBuilder::visitCode(CodeAst* node)
 void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
 {
     if ( dynamic_cast<NameAst*>(node->name) ) {
+        DUChainReadLocker lock(DUChain::lock());
         ExpressionVisitor v(currentContext(), editor());
         v.visitNode(node->type);
         openType(v.lastType());
         setLastType(v.lastType());
+        lock.unlock();
         visitVariableDeclaration<Declaration>(node->name); // except Error as <vardecl>
+        lock.lock();
         closeType();
     }
     DeclarationBuilderBase::visitExceptionHandler(node);
@@ -687,18 +690,17 @@ void DeclarationBuilder::visitCall(CallAst* node)
                             argVisitor.visitNode(node->arguments.at(offset));
                             lock.unlock();
                             if ( argVisitor.lastType() ) {
-                                lock.lock();
+                                DUChainWriteLocker wlock(DUChain::lock());
                                 kDebug() << "Adding content type: " << argVisitor.lastType()->toString();
                                 container->addContentType(argVisitor.lastType());
                                 v.lastDeclaration()->setType(container);
-                                lock.unlock();
                             }
                         }
                     }
                     if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(f, "addsTypeOfArgContent") ) {
                         register const int offset = d->additionalInformation().str().toInt();
                         if ( node->arguments.length() > offset ) {
-                            lock.lock();
+                            DUChainWriteLocker wlock(DUChain::lock());
                             ExpressionVisitor argVisitor(currentContext(), editor());
                             argVisitor.visitNode(node->arguments.at(offset));
                             if ( argVisitor.lastType() ) {

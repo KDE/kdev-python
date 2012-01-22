@@ -11,7 +11,7 @@ class __kdevpythondocumentation_builtin_list():
     @addsTypeOfArg(1)
     def append(self,obj): pass
     @addsTypeOfArgContent(1)
-    def extend(self,obj): return []
+    def extend(self,obj): return None
     @addsTypeOfArg(1)
     def insert(self,i, x): return None
     @getsType

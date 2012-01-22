@@ -311,8 +311,10 @@ void DeclarationBuilder::visitWith(WithAst* node)
 
 void DeclarationBuilder::visitFor(ForAst* node)
 {
+    DUChainWriteLocker lock(DUChain::lock());
     ExpressionVisitor v(currentContext(), editor());
     v.visitNode(node->iterator);
+    lock.unlock();
     VariableLengthContainer::Ptr type = v.lastType().cast<VariableLengthContainer>();
     if ( node->target->astType == Ast::NameAstType ) {
         if ( type && type->contentType() ) {
@@ -392,8 +394,10 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
     
     AbstractType::Ptr targetType;
     if ( node->iterator ) {
+        DUChainReadLocker lock(DUChain::lock());
         ExpressionVisitor v(currentContext());
         v.visitNode(node->iterator);
+        lock.unlock();
         if ( VariableLengthContainer* container = dynamic_cast<VariableLengthContainer*>(v.lastType().unsafeData()) ) {
             targetType = container->contentType().abstractType();
         }
@@ -604,8 +608,10 @@ void DeclarationBuilder::visitYield(YieldAst* node)
 {
     AstDefaultVisitor::visitYield(node);
     kDebug() << "visiting yield statement";
+    DUChainReadLocker lock(DUChain::lock());
     ExpressionVisitor v(currentContext(), editor());
     v.visitNode(node->value);
+    lock.unlock();
     setLastType(v.lastType());
     AbstractType::Ptr encountered = v.lastType();
     if ( node->value ) {
@@ -651,13 +657,17 @@ void DeclarationBuilder::visitCall(CallAst* node)
     Python::AstDefaultVisitor::visitCall(node);
     KDEBUG_BLOCK
     kDebug() << "Visiting call";
+    DUChainReadLocker lock(DUChain::lock());
     ExpressionVisitor functionVisitor(currentContext(), editor());
     functionVisitor.visitNode(node);
+    lock.unlock();
     kDebug() << functionVisitor.lastDeclaration();
     if ( node->function && node->function->astType == Ast::AttributeAstType && functionVisitor.lastDeclaration() ) {
         kDebug() << "Checking for list content updates...";
+        lock.lock();
         ExpressionVisitor v(currentContext(), editor());
         v.visitNode(static_cast<AttributeAst*>(node->function)->value);
+        lock.unlock();
         if ( VariableLengthContainer::Ptr container = v.lastType().cast<VariableLengthContainer>() ) {
             if ( v.lastDeclaration() ) {
 //                 /// DEBUG
@@ -670,22 +680,25 @@ void DeclarationBuilder::visitCall(CallAst* node)
                     if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(f, "addsTypeOfArg") ) {
                         register const int offset = d->additionalInformation().str().toInt();
                         if ( node->arguments.length() > offset ) {
+                            lock.lock();
                             ExpressionVisitor argVisitor(currentContext(), editor());
                             argVisitor.visitNode(node->arguments.at(offset));
+                            lock.unlock();
                             if ( argVisitor.lastType() ) {
-                                DUChainWriteLocker lock(DUChain::lock());
+                                lock.lock();
                                 kDebug() << "Adding content type: " << argVisitor.lastType()->toString();
                                 container->addContentType(argVisitor.lastType());
                                 v.lastDeclaration()->setType(container);
+                                lock.unlock();
                             }
                         }
                     }
                     if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(f, "addsTypeOfArgContent") ) {
                         register const int offset = d->additionalInformation().str().toInt();
                         if ( node->arguments.length() > offset ) {
+                            lock.lock();
                             ExpressionVisitor argVisitor(currentContext(), editor());
                             argVisitor.visitNode(node->arguments.at(offset));
-                            DUChainWriteLocker lock(DUChain::lock());
                             if ( argVisitor.lastType() ) {
                                 if ( VariableLengthContainer::Ptr sourceContainer = argVisitor.lastType().cast<VariableLengthContainer>() ) {
                                     if ( AbstractType::Ptr contentType = sourceContainer->contentType().abstractType() ) {
@@ -722,7 +735,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
     kDebug() << "--";
     kDebug() << "Trying to update function argument types based on call";
     
-    DUChainWriteLocker lock(DUChain::lock());    
+    lock.lock();   
     QPair<FunctionDeclaration::Ptr, bool> lastFunctionDeclarationP = Helper::functionDeclarationForCalledDeclaration(functionVisitor.lastDeclaration());
     FunctionDeclaration::Ptr lastFunctionDeclaration = lastFunctionDeclarationP.first;
     bool isConstructor = lastFunctionDeclarationP.second;
@@ -749,6 +762,8 @@ void DeclarationBuilder::visitCall(CallAst* node)
                         >= (uint) node->arguments.size() )
             {
                 kDebug() << "... and they match the parameter size";
+                lock.unlock();
+                DUChainWriteLocker wlock(DUChain::lock());
                 foreach ( ExpressionAst* arg, node->arguments ) {
                     if ( atParam >= functiontype->arguments().size() || atParam >= parameters.size() ) {
                         break;
@@ -773,6 +788,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
                     }
                     atParam++;
                 }
+                lock.unlock();
             }
             else {
                 kWarning() << "Arguments size mismatch, not updating type" << parameters << node->arguments;
@@ -805,6 +821,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
     }
     
     if ( node->value && node->value->astType == Ast::TupleAstType ) {
+        DUChainReadLocker lock(DUChain::lock());
         foreach ( ExpressionAst* value, static_cast<TupleAst*>(node->value)->elements ) {
             ExpressionVisitor v(currentContext(), editor());
             v.visitNode(value);
@@ -812,10 +829,13 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             realNodes << value;
             realDeclarations << v.lastDeclaration();
         }
+        lock.unlock();
     }
     else {
+        DUChainReadLocker lock(DUChain::lock());
         ExpressionVisitor v(currentContext(), editor());
         v.visitNode(node->value);
+        lock.unlock();
         realValues << v.lastType();
         realNodes << node->value;
         realDeclarations << v.lastDeclaration();
@@ -832,7 +852,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 //                 topContext()->addProblem(ptr);
             }
         }
-        DUChainReadLocker lock(DUChain::lock());
+        lock.lock();
         kDebug() << ( v.lastType() ? v.lastType()->toString() : "< no last type >" ) << ( v.lastDeclaration() ? v.lastDeclaration()->toString() : "< no last declaration >" );
     }
     
@@ -846,8 +866,10 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             tupleElementDeclaration = realDeclarations.at(i);
         }
         else if ( realValues.length() == 1 ) {
+            DUChainReadLocker lock(DUChain::lock());
             ExpressionVisitor v(currentContext());
             v.visitNode(node->value);
+            lock.unlock();
             tupleElementType = v.lastType();
             tupleElementDeclaration = v.lastDeclaration();
         }
@@ -906,13 +928,15 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             ExpressionAst* v = static_cast<SubscriptAst*>(target)->value;
             if ( v->astType == Ast::NameAstType ) {
                 if ( tupleElementType ) {
+                    DUChainReadLocker lock(DUChain::lock());
                     ExpressionVisitor targetVisitor(currentContext());
                     targetVisitor.visitNode(v);
+                    lock.unlock();
                     VariableLengthContainer::Ptr cont = VariableLengthContainer::Ptr::dynamicCast(targetVisitor.lastType());
                     if ( cont ) {
                         cont->addContentType(tupleElementType);
                     }
-                    DUChainWriteLocker lock(DUChain::lock());
+                    DUChainWriteLocker wlock(DUChain::lock());
                     if ( DeclarationPointer lastDecl = targetVisitor.lastDeclaration() ) {
                         lastDecl->setAbstractType(cont.cast<AbstractType>());
                     }
@@ -925,6 +949,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             kDebug() << "Visiting attribute: " << attrib->attribute->value;
             // check whether the current attribute is undeclared, but the previos ones known
             // like in X.Y.Z = 3 where X and Y are defined, but Z isn't; then declare Z.
+            DUChainReadLocker lock(DUChain::lock());
             ExpressionVisitor checkForUnknownAttribute(currentContext(), editor());
             checkForUnknownAttribute.visitNode(attrib);
             DeclarationPointer unknown = checkForUnknownAttribute.lastDeclaration();
@@ -940,6 +965,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             
             ExpressionVisitor checkPreviousAttributes(currentContext(), editor());
             checkPreviousAttributes.visitNode(attrib->value); // go "down one level", so only visit "X.Y"
+            lock.unlock();
             
             DUContextPointer internal(0);
             DeclarationPointer parentObjectDeclaration = checkPreviousAttributes.lastDeclaration();
@@ -1013,6 +1039,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     dec->clearBaseClasses();
     dec->setClassType(ClassDeclarationData::Class);
     
+    lock.lock();
     foreach ( ExpressionAst* c, node->baseClasses ) {
         ExpressionVisitor v(currentContext(), editor());
         v.visitNode(c);
@@ -1044,7 +1071,9 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     openContextForClassDefinition(node);
     dec->setInternalContext(currentContext());
     // yes, we do not call the context builder here, because contexts are already open
+    lock.unlock();
     AstDefaultVisitor::visitClassDefinition( node );
+    lock.lock();
     kDebug() << " --- closing CLASS context: " << currentContext()->range().castToSimpleRange();
     closeContext();
     
@@ -1196,8 +1225,10 @@ QString DeclarationBuilder::getDocstring(QList< Ast* > body)
 void DeclarationBuilder::visitReturn(ReturnAst* node)
 {
     kDebug() << "visiting return statement";
+    DUChainReadLocker lock(DUChain::lock());
     ExpressionVisitor v(currentContext(), editor());
     v.visitNode(node->value);
+    lock.unlock();
     setLastType(v.lastType());
     if ( node->value ) {
         if ( ! hasCurrentType() ) {
@@ -1251,8 +1282,10 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 if ( type && paramDeclaration && currentIndex > firstDefaultParameterOffset ) {
                     kDebug() << "Adding default argument: " << realParam->identifier->value << paramDeclaration->abstractType();
                     // find type of given default value
+                    DUChainReadLocker lock(DUChain::lock());
                     ExpressionVisitor v(currentContext());
                     v.visitNode(node->defaultValues.at(currentIndex - firstDefaultParameterOffset - 1));
+                    lock.unlock();
                     if ( v.lastType() ) {
                         type->addArgument(v.lastType());
                     }
@@ -1272,7 +1305,9 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 }
             }
             if ( node->vararg ) {
+                DUChainReadLocker lock(DUChain::lock());
                 AbstractType::Ptr listType = ExpressionVisitor::typeObjectForIntegralType<AbstractType>("list", currentContext());
+                lock.unlock();
                 type->addArgument(listType);
                 node->vararg->startCol = node->vararg_col_offset; node->vararg->endCol = node->vararg_col_offset + node->vararg->value.length() - 1;
                 node->vararg->startLine = node->vararg_lineno; node->vararg->endLine = node->vararg_lineno;
@@ -1281,7 +1316,9 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 d->setAbstractType(listType);
             }
             if ( node->kwarg ) {
+                DUChainReadLocker lock(DUChain::lock());
                 AbstractType::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType<AbstractType>("dict", currentContext());
+                lock.unlock();
                 type->addArgument(dictType);
                 node->kwarg->startCol = node->arg_col_offset; node->kwarg->endCol = node->arg_col_offset + node->kwarg->value.length() - 1;
                 node->kwarg->startLine = node->arg_lineno; node->kwarg->endLine = node->arg_lineno;

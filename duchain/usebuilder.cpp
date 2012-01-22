@@ -94,12 +94,14 @@ void UseBuilder::visitAttribute(AttributeAst* node)
     UseBuilderBase::visitAttribute(node);
     kDebug() << "Visit Attribute base end";
     
+    DUChainReadLocker lock(DUChain::lock());
     v.visitNode(node);
+    lock.unlock();
     
     RangeInRevision useRange(node->attribute->startLine, node->attribute->startCol, node->attribute->endLine, node->attribute->endCol + 1);
     
-    DUChainWriteLocker lock(DUChain::lock());
     DeclarationPointer declaration = v.lastDeclaration();
+    DUChainWriteLocker wlock(DUChain::lock());
     if ( declaration && declaration->range() == useRange ) return;
     if ( ! declaration && v.shouldBeKnown() ) {
         KDevelop::Problem *p = new KDevelop::Problem();

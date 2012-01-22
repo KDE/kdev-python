@@ -84,10 +84,12 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         AstBuilder* builder = new AstBuilder();
         CodeAst* tmpAst = builder->parse(KUrl(), m_remainingExpression);
         if ( tmpAst ) {
+            DUChainReadLocker lock(DUChain::lock());
             ExpressionVisitor* v = new ExpressionVisitor(m_context.data());
             v->m_forceGlobalSearching = true;
             v->m_reportUnknownNames = true;
             v->visitCode(tmpAst);
+            lock.unlock();
             if ( not v->m_unknownNames.isEmpty() ) {
                 if ( v->m_unknownNames.size() >= 2 ) {
                     // we only take the first two, and only two. It gets too much items otherwise.
@@ -277,9 +279,11 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         AstBuilder* builder = new AstBuilder();
         CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
         if ( tmpAst ) {
+            DUChainReadLocker lock(DUChain::lock());
             ExpressionVisitor* v = new ExpressionVisitor(m_context.data());
             v->m_forceGlobalSearching = true;
             v->visitCode(tmpAst);
+            lock.unlock();
             if ( v->lastType() ) {
                 kDebug() << v->lastType()->toString();
                 items = getCompletionItemsForType(v->lastType(), v->lastDeclaration());
@@ -314,9 +318,11 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             AstBuilder* builder = new AstBuilder();
             CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
             if ( tmpAst ) {
+                DUChainReadLocker lock(DUChain::lock());
                 ExpressionVisitor* v = new ExpressionVisitor(m_context.data());
                 v->m_forceGlobalSearching = true;
                 v->visitCode(tmpAst);
+                lock.unlock();
                 if ( v->lastDeclaration().data() ) {
                     calltips << v->lastDeclaration().data();
                 }

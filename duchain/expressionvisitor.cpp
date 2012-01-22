@@ -279,7 +279,6 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     // maybe our attribute isn't a class at all, then that's an error by definition for now
     bool success = false;
     bool haveOneUsefulType = false;
-    DUChainReadLocker lock(DUChain::lock());
     if ( ! accessingAttributeOfType.isEmpty() ) {
         foreach ( StructureType::Ptr currentStructureType, accessingAttributeOfType ) {
             if ( Helper::isUsefulType(currentStructureType.cast<AbstractType>()) ) {
@@ -355,7 +354,6 @@ void ExpressionVisitor::visitCall(CallAst* node)
     QString functionName = name->identifier->value;
     kDebug() << "Visiting call of function " << functionName;
     
-    DUChainReadLocker lock(DUChain::lock());
     Declaration* actualDeclaration = Helper::declarationForName(
                                      name, QualifiedIdentifier(functionName), 
                                      RangeInRevision::invalid(), DUContextPointer(m_ctx));
@@ -430,7 +428,6 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
         encounter(lastType());
     }
     else {
-        DUChainReadLocker lock(DUChain::lock());
         kDebug() << "LAST TYPE for slice access:" << lastType() << ( lastType() ? lastType()->toString() : "<null>" );
         VariableLengthContainer::Ptr t = lastType().cast<VariableLengthContainer>();
         kDebug() << "Is container: " << t;
@@ -443,7 +440,6 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
 
 template<typename T> TypePtr<T> ExpressionVisitor::typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx)
 {
-    DUChainReadLocker lock(DUChain::lock());
     QList<Declaration*> decls = ctx->topContext()->findDeclarations(
         QualifiedIdentifier("__kdevpythondocumentation_builtin_" + typeDescriptor));
     Declaration* decl = decls.isEmpty() ? 0 : dynamic_cast<Declaration*>(decls.first());
@@ -476,9 +472,7 @@ void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst*
     kDebug() << "visiting dictionary comprehension";
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("dict", m_ctx);
     if ( type ) {
-        DUChainReadLocker lock(DUChain::lock());
         DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol + 1));
-        lock.unlock();
         ExpressionVisitor v(comprehensionContext);
         v.visitNode(node->value);
         if ( v.lastType() ) {
@@ -503,9 +497,7 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
     AstDefaultVisitor::visitListComprehension(node);
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
     if ( type ) {
-        DUChainReadLocker lock(DUChain::lock());
         DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol + 1), true);
-        lock.unlock();
         ExpressionVisitor v(comprehensionContext);
         v.visitNode(node->element);
         if ( v.lastType() ) {
@@ -516,7 +508,6 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
         unknownTypeEncountered();
     }
     if ( type ) {
-        DUChainReadLocker lock(DUChain::lock());
         kDebug() << "Got type for List Comprehension:" << type->toString();
     }
     encounterDeclaration(0);
@@ -608,7 +599,6 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
     
     if ( d ) {
         /** DEBUG **/
-        DUChainReadLocker lock(DUChain::lock());
         kDebug() << "Found declaration: " << d->toString() << d
                  << d->abstractType() << dynamic_cast<VariableLengthContainer*>(d->abstractType().unsafeData());
         /** / DEBUG **/

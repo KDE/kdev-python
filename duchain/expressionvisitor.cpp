@@ -644,6 +644,11 @@ void ExpressionVisitor::visitBinaryOperation(Python::BinaryOperationAst* node)
     visitNode(node->rhs);
     KDevelop::AbstractType::Ptr rightType = lastType();
     
+    if ( leftType->indexed() != rightType->indexed() ) {
+        return unknownTypeEncountered();
+    }
+    
+    encounterDeclaration(0);
     encounter(leftType); // TODO this is wrong.
 }
 

@@ -33,6 +33,17 @@ class cls():
     def another(self):
         print self
 
+new_threads = cls()
+
+try:
+    known_threads = {line.strip() for line  in ["foo"] if line.strip()}
+except IOError:
+    pass
+    known_threads = set()
+
+# Remove threads already in the cache so we can write the new ones only.
+new_threads = new_threads - known_threads
+        
 import os
 
 def ASDF(arg, arg2):

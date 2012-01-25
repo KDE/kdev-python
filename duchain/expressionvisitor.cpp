@@ -430,6 +430,7 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
     if ( node->slice && node->slice->astType != Ast::IndexAstType ) {
         kDebug() << "Found slice, will use ListType for assignment";
         kDebug() << "LAST DECLARATION:" << lastDeclaration();
+        encounterDeclaration(0);
         encounter(lastType());
     }
     else {
@@ -439,6 +440,7 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
         if ( ! t ) {
             return unknownTypeEncountered();
         }
+        encounterDeclaration(0);
         encounter(t->contentType().abstractType());
     }
 }

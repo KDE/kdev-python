@@ -1043,7 +1043,6 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     dec->clearBaseClasses();
     dec->setClassType(ClassDeclarationData::Class);
     
-    lock.lock();
     foreach ( ExpressionAst* c, node->baseClasses ) {
         ExpressionVisitor v(currentContext(), editor());
         v.visitNode(c);

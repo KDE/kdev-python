@@ -1257,13 +1257,12 @@ void DeclarationBuilder::visitReturn(ReturnAst* node)
 void DeclarationBuilder::visitArguments( ArgumentsAst* node )
 {
     DUChainWriteLocker lock(DUChain::lock());
-    AbstractFunctionDeclaration* function = dynamic_cast<AbstractFunctionDeclaration*>(currentDeclaration());
     kDebug() << "Current context for parameters: " << currentContext();
     kDebug() << currentContext()->scopeIdentifier().toString();
     if ( currentDeclaration() ) kDebug() << currentDeclaration()->identifier().toString();
     
     
-    if ( function ) {
+    if ( currentDeclaration() and currentDeclaration()->isFunctionDeclaration() ) {
         static_cast<FunctionDeclaration*>(currentDeclaration())->clearDefaultParameters();
         if ( hasCurrentType() and currentType<FunctionType>() ) {
             FunctionType::Ptr type = currentType<FunctionType>();
@@ -1286,10 +1285,8 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 if ( type && paramDeclaration && currentIndex > firstDefaultParameterOffset ) {
                     kDebug() << "Adding default argument: " << realParam->identifier->value << paramDeclaration->abstractType();
                     // find type of given default value
-                    DUChainReadLocker lock(DUChain::lock());
                     ExpressionVisitor v(currentContext());
                     v.visitNode(node->defaultValues.at(currentIndex - firstDefaultParameterOffset - 1));
-                    lock.unlock();
                     if ( v.lastType() ) {
                         type->addArgument(v.lastType());
                     }

@@ -212,7 +212,8 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     
     kDebug() << "VARIABLE CONTEXT: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange() << currentContext()->type() << DUContext::Class;
     
-    bool noFittingDeclaration = existingDeclarations.isEmpty() || ( ! existingDeclarations.isEmpty() && ! dynamic_cast<T*>(existingDeclarations.last()) );
+    bool noFittingDeclaration = existingDeclarations.isEmpty() || existingDeclarations.last()->topContext() != topContext() ||
+                                ( ! existingDeclarations.isEmpty() && ! dynamic_cast<T*>(existingDeclarations.last()) );
     if ( currentContext() && currentContext()->type() == DUContext::Class && noFittingDeclaration ) {
         kDebug() << "Creating class member declaration for " << node->value << node->startLine << ":" << node->startCol;
         kDebug() << "Context type: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();

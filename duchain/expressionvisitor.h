@@ -107,6 +107,7 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         virtual void visitName(NameAst* node);
         virtual void visitList(ListAst* node);
         virtual void visitDict(DictAst* node);
+        virtual void visitSet(SetAst* node);
         virtual void visitSubscript(SubscriptAst* node);
         virtual void visitCall(CallAst* node);
         virtual void visitAttribute(AttributeAst* node);

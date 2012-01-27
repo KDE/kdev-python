@@ -561,6 +561,21 @@ void ExpressionVisitor::visitIfExpression(IfExpressionAst* node)
     }
 }
 
+void ExpressionVisitor::visitSet(SetAst* node)
+{
+    Python::AstDefaultVisitor::visitSet(node);
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("set", m_ctx);
+    ExpressionVisitor contentVisitor(m_ctx);
+    if ( type ) {
+        foreach ( ExpressionAst* content, node->elements ) {
+            contentVisitor.visitNode(content);
+            type->addContentType(contentVisitor.lastType());
+        }
+    }
+    encounterDeclaration(0);
+    encounter<VariableLengthContainer>(type);
+}
+
 void ExpressionVisitor::visitDict(DictAst* node)
 {
     AstDefaultVisitor::visitDict(node);

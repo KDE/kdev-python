@@ -595,11 +595,14 @@ void PyDUChainTest::testContainerTypes_data()
     QTest::addColumn<bool>("use_type");
     
     QTest::newRow("list_of_int") << "checkme = [1, 2, 3]" << "int" << false;
+    QTest::newRow("list_of_int_call") << "checkme = list([1, 2, 3])" << "int" << false;
     QTest::newRow("generator") << "checkme = [i for i in [1, 2, 3]]" << "int" << false;
     QTest::newRow("list_access") << "list = [1, 2, 3]\ncheckme = list[0]" << "int" << true;
     QTest::newRow("set_of_int") << "checkme = {1, 2, 3}" << "int" << false;
+    QTest::newRow("set_of_int_call") << "checkme = set({1, 2, 3})" << "int" << false;
     QTest::newRow("set_generator") << "checkme = {i for i in [1, 2, 3]}" << "int" << false;
     QTest::newRow("dict_of_int") << "checkme = {a:1, b:2, c:3}" << "int" << false;
+    QTest::newRow("dict_of_int_call") << "checkme = dict({a:1, b:2, c:3})" << "int" << false;
     QTest::newRow("dict_generator") << "checkme = {\"Foo\":i for i in [1, 2, 3]}" << "int" << false;
     QTest::newRow("dict_access") << "list = {a:1, b:2, c:3}\ncheckme = list[0]" << "int" << true;
 }

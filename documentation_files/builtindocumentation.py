@@ -335,3 +335,5 @@ set = __kdevpythondocumentation_builtin_set
 str = __kdevpythondocumentation_builtin_string
 list = __kdevpythondocumentation_builtin_list
 def exit(status): return None
+__name__ = "none"
+__file__ = "none"

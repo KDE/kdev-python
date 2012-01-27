@@ -57,7 +57,7 @@ void UseBuilder::visitName(NameAst* node)
                                                           editorFindRange(node, node), DUContextPointer(currentContext()));
     
     QStringList keywords;
-    keywords << "None" << "True" << "False" << "__name__" << "print";
+    keywords << "None" << "True" << "False" << "print";
     
     Q_ASSERT(node->identifier);
     Q_ASSERT(node->hasUsefulRangeInformation); // TODO remove this!

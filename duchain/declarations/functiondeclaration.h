@@ -28,7 +28,7 @@
 
 namespace Python {
 
-DECLARE_LIST_MEMBER_HASH(FunctionDeclarationData, m_decorators, Decorator);
+KDEVPYTHONDUCHAIN_EXPORT DECLARE_LIST_MEMBER_HASH(FunctionDeclarationData, m_decorators, Decorator);
 
 class KDEVPYTHONDUCHAIN_EXPORT FunctionDeclarationData : public KDevelop::FunctionDeclarationData
 {

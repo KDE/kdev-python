@@ -212,8 +212,19 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     
     kDebug() << "VARIABLE CONTEXT: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange() << currentContext()->type() << DUContext::Class;
     
-    bool noFittingDeclaration = existingDeclarations.isEmpty() || existingDeclarations.last()->topContext() != topContext() ||
-                                ( ! existingDeclarations.isEmpty() && ! dynamic_cast<T*>(existingDeclarations.last()) );
+    // tells whether the declaration found for updating is in the same top context
+    bool inSameTopContext = true;
+    // tells whether there's fitting declarations to update (update is not the same as re-open! one is for
+    // code which uses the same variable twice, the other is for multiple passes of the parser)
+    bool noFittingDeclaration = true;
+    if ( ! existingDeclarations.isEmpty() ) {
+        if ( Helper::resolveAliasDeclaration(existingDeclarations.last())->topContext() != topContext() ) {
+            inSameTopContext = false;
+        }
+        if ( dynamic_cast<T*>(existingDeclarations.last()) ) {
+            noFittingDeclaration = false;
+        }
+    }
     if ( currentContext() && currentContext()->type() == DUContext::Class && noFittingDeclaration ) {
         kDebug() << "Creating class member declaration for " << node->value << node->startLine << ":" << node->startCol;
         kDebug() << "Context type: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
@@ -252,7 +263,8 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         kDebug() << "Resulting type: " << newType->toString();
         dec->setType(newType);
         dec->setKind(KDevelop::Declaration::Instance); // everything is an object in python
-    } else {
+    }
+    else if ( inSameTopContext ) {
         kDebug() << "Existing declarations are not empty. count: " << existingDeclarations.count();
         dec = existingDeclarations.last();
         AbstractType::Ptr currentType = dec->abstractType();

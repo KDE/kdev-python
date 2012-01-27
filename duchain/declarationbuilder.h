@@ -89,7 +89,13 @@ protected:
     template<typename T> T* visitVariableDeclaration(Identifier* node, Ast* originalAst = 0, Declaration* previous = 0);
     template<typename T> T* visitVariableDeclaration(Identifier* node, RangeInRevision range);
     
-    Declaration* createModuleImportDeclaration( QString dottedName, Python::Identifier* declarationIdentifier, Python::Ast* rangeNode = 0);
+    enum ProblemPolicy {
+        CreateProblems,
+        DontCreateProblems
+    };
+    
+    Declaration* createModuleImportDeclaration(QString dottedName, Python::Identifier* declarationIdentifier,
+                                               Python::Ast* rangeNode = 0, ProblemPolicy createProblem = CreateProblems);
     
     /**
      * @brief Find a declaration specified by "foo.bar.baz" in the given top context.

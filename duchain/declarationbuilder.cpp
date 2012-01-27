@@ -397,8 +397,18 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
         else {
             moduleName = "." + name->name->value;
         }
-        Identifier* declarationIdentifier = name->asName ? name->asName : name->name;
-        createModuleImportDeclaration(moduleName, declarationIdentifier);
+        Identifier* declarationIdentifier = 0;
+        if ( name->asName ) {
+            declarationIdentifier = name->asName;
+        }
+        else {
+            declarationIdentifier = name->name;
+        }
+        Declaration* success = createModuleImportDeclaration(moduleName, declarationIdentifier, 0, DontCreateProblems);
+        if ( not success and node->module ) {
+            moduleName = node->module->value + ".__init__." + name->name->value;
+            createModuleImportDeclaration(moduleName, declarationIdentifier);
+        }
     }
 }
 
@@ -462,7 +472,7 @@ void DeclarationBuilder::visitImport(ImportAst* node)
     }
 }
 
-Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedName, Identifier* declarationIdentifier, Ast* rangeNode)
+Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedName, Identifier* declarationIdentifier, Ast* rangeNode, ProblemPolicy createProblem)
 {
     QPair<KUrl, QStringList> moduleInfo = findModulePath(dottedName);
     kDebug() << dottedName;
@@ -471,7 +481,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
         range = rangeForNode(rangeNode, false);
     }
     else {
-        range = rangeForNode(declarationIdentifier, true);
+        range = rangeForNode(declarationIdentifier, false);
     }
     Q_ASSERT(range.isValid());
     
@@ -483,15 +493,17 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
     Declaration* resultingDeclaration = 0;
     if ( ! moduleInfo.first.isValid() ) {
         kWarning() << "invalid or non-existent URL:" << moduleInfo;
-        KDevelop::Problem *p = new KDevelop::Problem();
-        p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange())); // TODO ok?
-        p->setSource(KDevelop::ProblemData::SemanticAnalysis);
-        p->setSeverity(KDevelop::ProblemData::Warning);
-        p->setDescription(i18n("Module \"%1\" not found", dottedName));
-        {
-            DUChainWriteLocker wlock(DUChain::lock());
-            ProblemPointer ptr(p);
-            topContext()->addProblem(ptr);
+        if ( createProblem != DontCreateProblems ) {
+            KDevelop::Problem *p = new KDevelop::Problem();
+            p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange())); // TODO ok?
+            p->setSource(KDevelop::ProblemData::SemanticAnalysis);
+            p->setSeverity(KDevelop::ProblemData::Warning);
+            p->setDescription(i18n("Module \"%1\" not found", dottedName));
+            {
+                DUChainWriteLocker wlock(DUChain::lock());
+                ProblemPointer ptr(p);
+                topContext()->addProblem(ptr);
+            }
         }
         return 0;
     }
@@ -608,7 +620,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
                 else
                     kWarning() << "import declaration is being overwritten!";
             }
-            else {
+            else if ( createProblem != DontCreateProblems ) {
                 KDevelop::Problem *p = new KDevelop::Problem();
                 p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange())); // TODO ok?
                 p->setSource(KDevelop::ProblemData::SemanticAnalysis);

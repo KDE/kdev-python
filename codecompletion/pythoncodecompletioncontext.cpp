@@ -350,6 +350,11 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             items.append(calltipItems);
         }
         QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
+        foreach ( DeclarationDepthPair d, declarations ) {
+            if ( d.first and d.first->context()->type() == DUContext::Class ) {
+                declarations.removeAll(d);
+            }
+        }
         items.append(declarationListToItemList(declarations));
     }
     

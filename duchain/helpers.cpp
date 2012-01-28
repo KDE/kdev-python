@@ -129,7 +129,17 @@ Declaration* Helper::declarationForName(NameAst* ast, const QualifiedIdentifier&
         kDebug() << "Using local declaration";
     }
     else if ( importedLocalDeclarations.length() ) {
-        declaration = importedLocalDeclarations.last();
+        // don't use declarations from class decls, they must be referenced through "self.<foo>"
+        do {
+            declaration = importedLocalDeclarations.last();
+            importedLocalDeclarations.pop_back();
+            if ( not declaration or declaration->context()->type() == DUContext::Class ) {
+                declaration = 0;
+            }
+            if ( importedLocalDeclarations.isEmpty() ) {
+                break;
+            }
+        } while ( not importedLocalDeclarations.isEmpty() );
         kDebug() << "Using imported local declaration (i.e., argument)";
     }
     else if ( declarations.length() ) {

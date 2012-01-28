@@ -140,6 +140,23 @@ void PyDUChainTest::testCrashes_data() {
     QTest::newRow("unicode escape char") << "print u\"\\xe9\"";
 }
 
+void PyDUChainTest::testClassVariables()
+{
+    ReferencedTopDUContext ctx = parse("class c():\n myvar = 3;\n def meth(self):\n  print myvar", "classvars");
+    QVERIFY(ctx.data());
+    DUChainWriteLocker lock(DUChain::lock());
+    CursorInRevision relevantPosition(3, 10);
+    DUContext* c = ctx->findContextAt(relevantPosition);
+    QVERIFY(c);
+    int useIndex = c->findUseAt(relevantPosition);
+    if ( useIndex != -1 ) {
+//         QVERIFY(useIndex != -1);
+        QVERIFY(useIndex < c->usesCount());
+        const Use* u = &(c->uses()[useIndex]);
+        QVERIFY(not u->usedDeclaration(c->topContext()));
+    }
+}
+
 void PyDUChainTest::testFlickering()
 {
     QFETCH(QStringList, code);

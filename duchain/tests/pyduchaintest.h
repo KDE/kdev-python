@@ -70,6 +70,7 @@ class PyDUChainTest : public QObject
         void testDecorators_data();
         void testInheritance();
         void testInheritance_data();
+        void testClassVariables();
         
 //         void testFunctionStuff();
 //         void testFunctionStuff_data();

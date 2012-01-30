@@ -1069,7 +1069,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     dec->setClassType(ClassDeclarationData::Class);
     
     foreach ( ExpressionAst* c, node->baseClasses ) {
-        ExpressionVisitor v(currentContext(), editor());
+        ExpressionVisitor v(currentContext());
         v.visitNode(c);
         if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeStructure ) {
             StructureType::Ptr baseClassType = v.lastType().cast<StructureType>();

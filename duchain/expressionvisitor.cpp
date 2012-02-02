@@ -98,7 +98,7 @@ void ExpressionVisitor::encounterDeclaration(Declaration* ptr)
 }
 
 ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegrator* editor)
-    : m_ctx(ctx), m_editor(editor), m_shouldBeKnown(true), m_forceGlobalSearching(false)
+    : m_forceGlobalSearching(false), m_ctx(ctx), m_editor(editor), m_shouldBeKnown(true)
 {
     if ( s_defaultTypes.isEmpty() ) {
         s_defaultTypes.insert(KDevelop::Identifier("True"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
@@ -151,7 +151,7 @@ void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclara
                 bool decoratorFound = false;
                 bool typeFound = false;
                 kDebug() << "Got function declaration with decorators, checking for list content type...";
-                if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(funcDecl.data(), "getsType") ) {
+                if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl.data(), "getsType") ) {
                     decoratorFound = true;
                     kDebug() << "Found decorator";
                     if ( VariableLengthContainer::Ptr t = lastType().cast<VariableLengthContainer>() ) {
@@ -160,7 +160,7 @@ void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclara
                         typeFound = true;
                     }
                 }
-                if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(funcDecl.data(), "getsList") ) {
+                if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl.data(), "getsList") ) {
                     decoratorFound = true;
                     kDebug() << "Got getsList decorator, checking container";
                     if ( VariableLengthContainer::Ptr t = lastType().cast<VariableLengthContainer>() ) {
@@ -229,7 +229,7 @@ QList< TypePtr< StructureType > > ExpressionVisitor::typeListForDeclarationList(
 void ExpressionVisitor::visitAttribute(AttributeAst* node)
 {
     ExpressionAst* accessingAttributeOf = node->value;
-    Identifier* identifier = 0;
+//     Identifier* identifier = 0;
     QList<DeclarationPointer> availableDeclarations;
     
     kDebug() << "Processing attribute: " << node->attribute->value;
@@ -244,7 +244,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     // Query information about its type or declaration from previously visited stuff.
     Python::AstDefaultVisitor::visitAttribute(node);
     if ( accessingAttributeOf->astType == Ast::AttributeAstType ) {
-        identifier = dynamic_cast<AttributeAst*>(accessingAttributeOf)->attribute;
+//         identifier = dynamic_cast<AttributeAst*>(accessingAttributeOf)->attribute;
         // checking for "last" makes sense as the list either contains one invalid declaration,
         // or one or more valid ones (but never valid AND invalid ones)
         if ( ! lastDeclarations().isEmpty() ) {

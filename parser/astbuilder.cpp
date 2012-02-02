@@ -68,7 +68,7 @@ QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
         int insertAt = 0;
         bool endOfCommentsReached = false;
         bool commentSignEncountered = false;
-        bool atLineBeginning = true;
+//         bool atLineBeginning = true;
         int lastLineBeginning = 0;
         int newlineCount = 0;
         int l = contents.length();
@@ -81,13 +81,13 @@ QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
                 commentSignEncountered = true;
             }
             if ( not contents.at(insertAt).isSpace() ) {
-                atLineBeginning = false;
+//                 atLineBeginning = false;
                 if ( not commentSignEncountered ) {
                     endOfCommentsReached = true;
                 }
             }
             if ( contents.at(insertAt) == '\n' ) {
-                atLineBeginning = true;
+//                 atLineBeginning = true;
                 commentSignEncountered = false;
                 lastLineBeginning = insertAt;
                 newlineCount += 1;
@@ -189,7 +189,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
         QString currentLineContents;
         QChar c;
         QChar newline('\n');
-        int emptySince = 0; int emptySinceLine = 0; int emptyLinesSince = 0; int emptyLinesSinceLine = 0; int lastNonemptyLineBeginning = 0;
+        int emptySince = 0; int emptySinceLine = 0; int emptyLinesSince = 0; int emptyLinesSinceLine = 0;
         unsigned short currentLineIndent = 0;
         bool atLineBeginning = true;
         QList<unsigned short> indents;
@@ -212,7 +212,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
                     currentLineBeginning = i+1;
                     // this line has had content, so reset the "empty lines since" counter
                     if ( ! atLineBeginning ) {
-                        lastNonemptyLineBeginning = emptyLinesSince;
+//                         lastNonemptyLineBeginning = emptyLinesSince;
                         emptyLinesSince = i;
                         emptyLinesSinceLine = currentLine;
                     }

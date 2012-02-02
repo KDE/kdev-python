@@ -251,7 +251,7 @@ RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
 {
     // This is not right, it must be something like the ast visitor... but that's too complicated :(
     // it seems to work okay so far, but should be replaced when possible.
-    bool generatorFound = false;
+//     bool generatorFound = false;
     RangeInRevision range;
     QList<ComprehensionAst*> generators;
     Ast* element = 0;
@@ -262,7 +262,7 @@ RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
         if ( not generators.isEmpty() ) {
             range = editorFindRange(element, generators.last()->iterator);
             kDebug() << "List Comprehension End: " << range.end;
-            generatorFound = true;
+//             generatorFound = true;
         }
     }
     if ( node->astType == Ast::SetComprehensionAstType ) {
@@ -272,7 +272,7 @@ RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
         if ( not generators.isEmpty() ) {
             range = editorFindRange(element, generators.last()->iterator);
             kDebug() << "Set comprehension range: " << range;
-            generatorFound = true;
+//             generatorFound = true;
         }
     }
     if ( node->astType == Ast::DictionaryComprehensionAstType ) {
@@ -280,7 +280,7 @@ RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
         generators = c->generators;
         if ( not generators.isEmpty() ) {
             range = editorFindRange(c->key, generators.last()->iterator);
-            generatorFound = true;
+//             generatorFound = true;
         }
     }
     if ( node->astType == Ast::GeneratorExpressionAstType ) {
@@ -288,7 +288,7 @@ RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
         generators = c->generators;
         if ( not generators.isEmpty() ) {
             range = editorFindRange(c->element, generators.last()->iterator);
-            generatorFound = true;
+//             generatorFound = true;
         }
     }
     if ( not generators.isEmpty() ) {

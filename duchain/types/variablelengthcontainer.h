@@ -81,7 +81,7 @@ public:
     virtual bool equals(const AbstractType* rhs) const;
     
     enum {
-#warning check identity value (61)
+// #warning check identity value (61)
         Identity = 61
     };
     

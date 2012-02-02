@@ -22,7 +22,7 @@
 
 namespace Python {
 
-KDEVPYTHONDUCHAIN_EXPORT DEFINE_LIST_MEMBER_HASH(FunctionDeclarationData, m_decorators, Decorator);
+DEFINE_LIST_MEMBER_HASH(FunctionDeclarationData, m_decorators, Decorator);
 REGISTER_DUCHAIN_ITEM(FunctionDeclaration);
 
 FunctionDeclaration::FunctionDeclaration(const FunctionDeclaration& rhs)

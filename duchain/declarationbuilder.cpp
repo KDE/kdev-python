@@ -554,7 +554,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
         QList<Declaration*> openedDeclarations;
         QList<StructureType::Ptr> openedTypes;
         QList<DUContext*> openedContexts;
-        bool extendingPreviousImports = true;
+//         bool extendingPreviousImports = true;
         
         DUChainWriteLocker lock(DUChain::lock());
         for ( int i = 0; i < remainingNameComponents.length(); i++ ) {
@@ -1163,7 +1163,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     kDebug() << "Declaration in symbol table:" << dec->inSymbolTable();
     dec->setType(type);
     
-    bool hasFirstArgument = false;
+//     bool hasFirstArgument = false;
     
     visitDecorators<FunctionDeclaration>(node->decorators, dec);
     visitFunctionArguments(node);
@@ -1180,7 +1180,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         kDebug() << "Arguments left: " << currentType<FunctionType>()->arguments().count();
         DUChainWriteLocker lock(DUChain::lock());
         m_firstAttributeDeclaration->setAbstractType(eventualParentDeclaration->abstractType());
-        hasFirstArgument = true;
+//         hasFirstArgument = true;
     }
         
     visitFunctionBody(node);

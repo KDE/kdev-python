@@ -545,17 +545,17 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     int atLine = position.line;
     kDebug() << "Doing auto-completion context scan for: " << currentLine << "@line" << atLine << "@context" << context->range().castToSimpleRange();
     
-    bool currentLineIsEmpty = true;
-    {
-        QChar c;
-        for ( int i = currentLine.length() - 1; i >= 0; i-- ) {
-            c = currentLine.at(i);
-            if ( ! c.isSpace() ) {
-                currentLineIsEmpty = false;
-                break;
-            }
-        }
-    }
+//     bool currentLineIsEmpty = true;
+//     {
+//         QChar c;
+//         for ( int i = currentLine.length() - 1; i >= 0; i-- ) {
+//             c = currentLine.at(i);
+//             if ( ! c.isSpace() ) {
+//                 currentLineIsEmpty = false;
+//                 break;
+//             }
+//         }
+//     }
     
     // check if the current position is inside a multi-line comment / string
     bool insideSingleQuotes = false;

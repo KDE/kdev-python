@@ -505,7 +505,7 @@ void PyDUChainTest::testAutocompletionFlickering()
 void PyDUChainTest::testDecorators()
 {
     QFETCH(QString, code);
-    QFETCH(int, amountOfDecorators);
+//     QFETCH(int, amountOfDecorators);
     QFETCH(QStringList, names);
     ReferencedTopDUContext ctx = parse(code);
     QVERIFY(ctx);

@@ -955,20 +955,18 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         // a[0] = 3
         else if ( target->astType == Ast::SubscriptAstType ) {
             ExpressionAst* v = static_cast<SubscriptAst*>(target)->value;
-            if ( v->astType == Ast::NameAstType ) {
-                if ( tupleElementType ) {
-                    DUChainReadLocker lock(DUChain::lock());
-                    ExpressionVisitor targetVisitor(currentContext());
-                    targetVisitor.visitNode(v);
-                    lock.unlock();
-                    VariableLengthContainer::Ptr cont = VariableLengthContainer::Ptr::dynamicCast(targetVisitor.lastType());
-                    if ( cont ) {
-                        cont->addContentType(tupleElementType);
-                    }
+            if ( tupleElementType ) {
+                DUChainReadLocker lock(DUChain::lock());
+                ExpressionVisitor targetVisitor(currentContext());
+                targetVisitor.visitNode(v);
+                lock.unlock();
+                VariableLengthContainer::Ptr cont = VariableLengthContainer::Ptr::dynamicCast(targetVisitor.lastType());
+                if ( cont ) {
+                    cont->addContentType(tupleElementType);
+                }
+                if ( DeclarationPointer lastDecl = targetVisitor.lastDeclaration() ) {
                     DUChainWriteLocker wlock(DUChain::lock());
-                    if ( DeclarationPointer lastDecl = targetVisitor.lastDeclaration() ) {
-                        lastDecl->setAbstractType(cont.cast<AbstractType>());
-                    }
+                    lastDecl->setAbstractType(cont.cast<AbstractType>());
                 }
             }
         }

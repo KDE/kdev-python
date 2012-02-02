@@ -148,17 +148,32 @@ void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclara
             kDebug() << "Using function return type: " << ( type ? type->toString() : "(none)" );
             // check for list content stuff
             if ( funcDecl->decoratorsSize() > 0 ) {
+                bool decoratorFound = false;
+                bool typeFound = false;
                 kDebug() << "Got function declaration with decorators, checking for list content type...";
                 if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(funcDecl.data(), "getsType") ) {
+                    decoratorFound = true;
                     kDebug() << "Found decorator";
                     if ( VariableLengthContainer::Ptr t = lastType().cast<VariableLengthContainer>() ) {
                         kDebug() << "Found container, using type";
                         type = t->contentType().abstractType();
+                        typeFound = true;
                     }
-                    else {
-                        m_callStack.push(static_cast<DeclarationPointer>(funcDecl));
-                        return m_callTypeStack.push(unknownType());
+                }
+                if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(funcDecl.data(), "getsList") ) {
+                    decoratorFound = true;
+                    kDebug() << "Got getsList decorator, checking container";
+                    if ( VariableLengthContainer::Ptr t = lastType().cast<VariableLengthContainer>() ) {
+                        kDebug() << "Got container:" << t->toString();
+                        VariableLengthContainer::Ptr newType = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
+                        newType->addContentType(t->contentType().abstractType());
+                        type = newType.cast<AbstractType>();
+                        typeFound = true;
                     }
+                }
+                if ( decoratorFound and not typeFound ) {
+                    m_callStack.push(static_cast<DeclarationPointer>(funcDecl));
+                    return m_callTypeStack.push(unknownType());
                 }
             }
             // otherwise, it's not a container, and the default return type will be used.
@@ -309,14 +324,15 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     // Step 5: Construct the type of the declaration which was found.
     DeclarationPointer actualDeclaration(0);
     if ( foundDecls.length() > 0 ) {
+        bool extendUnsure = false;
+        // this function evaluates the previously encountered type, so only change it afterwards // |
+        foreach ( Declaration* decl, foundDecls ) {                                              // |
+            setTypesForEventualCall(DeclarationPointer(decl), node, extendUnsure);               // |
+            extendUnsure = true;                                                                 // |
+        }                                                                                        // v
         actualDeclaration = DeclarationPointer(Helper::resolveAliasDeclaration(foundDecls.last()));
         encounterDeclarations(toSharedPtrList(foundDecls));
         encounter(foundDecls.last()->abstractType());
-        bool extendUnsure = false;
-        foreach ( Declaration* decl, foundDecls ) {
-            setTypesForEventualCall(DeclarationPointer(decl), node, extendUnsure);
-            extendUnsure = true;
-        }
     }
     else {
         kDebug() << "No declaration found for attribute";

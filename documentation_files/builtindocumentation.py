@@ -22,9 +22,10 @@ class __kdevpythondocumentation_builtin_list():
     @getsType
     def index(self,x): return 0
     def count(self,x): return 0
-    def sort(self,): return self
     @getsList
-    def reverse(self,): return self
+    def sort(self,): return []
+    @getsList
+    def reverse(self,): return []
     def remove(self, x): pass
 
 class __kdevpythondocumentation_builtin_fileObject():
@@ -67,13 +68,14 @@ class __kdevpythondocumentation_builtin_dict():
     @getsType
     def get(self,key, default = ""): return None
     def has_key(self,key): return True
-    def items(self,): return [(self,)]
     @getsListOfBoth
-    def iteritems(self,): return __kdevpythondocumentation_builtin_iterator
+    def items(self,): return {}
+    @getsListOfBoth
+    def iteritems(self,): return []
     @getsListOfKeys
-    def iterkeys(self,): return __kdevpythondocumentation_builtin_iterator
+    def iterkeys(self,): return []
     @getsList
-    def itervalues(self,): return __kdevpythondocumentation_builtin_iterator
+    def itervalues(self,): return []
     @getsListOfKeys
     def keys(self,): return []
     @getsType

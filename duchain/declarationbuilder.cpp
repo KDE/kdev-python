@@ -894,7 +894,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             tupleElementType = realValues.at(i);
             tupleElementDeclaration = realDeclarations.at(i);
         }
-        else if ( realValues.length() == 1 ) {
+        else if ( realTargets.length() == 1 ) {
             DUChainReadLocker lock(DUChain::lock());
             ExpressionVisitor v(currentContext());
             v.visitNode(node->value);
@@ -903,6 +903,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             tupleElementDeclaration = v.lastDeclaration();
         }
         else {
+            // add code for unpacking tuples here, once those are implemented.
             tupleElementType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
             tupleElementDeclaration = 0;
         }

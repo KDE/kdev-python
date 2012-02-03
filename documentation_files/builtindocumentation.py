@@ -316,7 +316,8 @@ def raw_input(prompt = ""): return ""
 def reduce(function, iterable, init = None): return None
 def reload(module) : return None
 def repr(object): return ""
-def reversed(seq): return __kdevpythondocumentation_builtin_iterator()
+@returnContentEqualsContentOf(0)
+def reversed(seq): return None
 def round(x, n=0): return 0.0
 def setattr(obj, name, value): return None
 def slice(start = 0, stop = 0, step = 0): return __kdevpythondocumentation_builtin_sliceObject()

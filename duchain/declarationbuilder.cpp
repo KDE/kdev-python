@@ -590,9 +590,11 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
             closeType();
             closeContext();
             Declaration* d = openedDeclarations.at(i);
-            openedTypes[i]->setDeclaration(d);
-            d->setType(openedTypes.at(i));
-            d->setInternalContext(openedContexts.at(i));
+            if ( d ) {
+                openedTypes[i]->setDeclaration(d);
+                d->setType(openedTypes.at(i));
+                d->setInternalContext(openedContexts.at(i));
+            }
         }
         
         if ( injectingContext ) {

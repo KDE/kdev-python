@@ -412,14 +412,20 @@ void ExpressionVisitor::visitCall(CallAst* node)
                     ExpressionVisitor v(m_ctx);
                     v.visitNode(relevantArgument);
                     if ( v.lastType() ) {
+                        VariableLengthContainer* realTarget = 0;
                         if ( VariableLengthContainer* target = dynamic_cast<VariableLengthContainer*>(type.unsafeData()) ) {
-                            if ( VariableLengthContainer* source = dynamic_cast<VariableLengthContainer*>(v.lastType().unsafeData()) ) {
-                                VariableLengthContainer* newType = static_cast<VariableLengthContainer*>(target->clone());
-                                Q_ASSERT(newType);
-                                newType->addContentType(source->contentType().abstractType());
-                                success = true; // just for clarity, doesn't do anything
-                                return encounter(AbstractType::Ptr(newType));
+                            realTarget = target;
+                        }
+                        if ( VariableLengthContainer* source = dynamic_cast<VariableLengthContainer*>(v.lastType().unsafeData()) ) {
+                            if ( ! realTarget ) {
+                                // if the function does not force a return type, just copy the source (like for reversed())
+                                realTarget = source;
                             }
+                            VariableLengthContainer* newType = static_cast<VariableLengthContainer*>(realTarget->clone());
+                            Q_ASSERT(newType);
+                            newType->addContentType(source->contentType().abstractType());
+                            success = true; // just for clarity, doesn't do anything
+                            return encounter(AbstractType::Ptr(newType));
                         }
                     }
                 }

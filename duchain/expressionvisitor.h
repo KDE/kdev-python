@@ -164,6 +164,9 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         // used by autocompletion to detect unknown NameAst elements in expressions
         bool m_reportUnknownNames;
         QList<QString> m_unknownNames;
+        
+        // this tells the difference between "class foo" and "instance of foo" -- TODO need a better solution!
+        bool m_isAlias;
     
     private:
         static QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> s_defaultTypes;
@@ -174,9 +177,9 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         void encounter(AbstractType::Ptr type, bool merge=false);
         AbstractType::Ptr encounterPreprocess(AbstractType::Ptr type, bool merge = false);
         template<typename T> void encounter(TypePtr<T> type);
-        void encounterDeclaration(DeclarationPointer ptr);
-        void encounterDeclaration(Declaration* ptr);
-        void encounterDeclarations(QList<DeclarationPointer> ptrs);
+        void encounterDeclaration(DeclarationPointer ptr, bool isAlias = false);
+        void encounterDeclaration(Declaration* ptr, bool isAlias = false);
+        void encounterDeclarations(QList<DeclarationPointer> ptrs, bool isAlias = false);
         
         void unknownTypeEncountered();
         AbstractType::Ptr unknownType();

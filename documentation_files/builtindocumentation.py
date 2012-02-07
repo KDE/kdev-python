@@ -224,6 +224,8 @@ class UserWarning(Warning):
     pass
 class DeprecationWarning(Warning):
     pass
+class KeyboardInterrupt(Exception):
+    pass
 class PendingDeprecationWarning(Warning):
     pass
 class RuntimeWarning(Warning):

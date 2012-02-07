@@ -82,23 +82,26 @@ template<typename T> void ExpressionVisitor::encounter(TypePtr< T > type)
     encounter(AbstractType::Ptr::staticCast(type));
 }
 
-void ExpressionVisitor::encounterDeclaration(DeclarationPointer ptr)
+void ExpressionVisitor::encounterDeclaration(DeclarationPointer ptr, bool isAlias)
 {
+    m_isAlias = isAlias;
     m_lastDeclaration.push(QList<DeclarationPointer>() << ptr);
 }
 
-void ExpressionVisitor::encounterDeclarations(QList< DeclarationPointer > ptrs)
+void ExpressionVisitor::encounterDeclarations(QList< DeclarationPointer > ptrs, bool isAlias)
 {
+    m_isAlias = isAlias;
     m_lastDeclaration.push(ptrs);
 }
 
-void ExpressionVisitor::encounterDeclaration(Declaration* ptr)
+void ExpressionVisitor::encounterDeclaration(Declaration* ptr, bool isAlias)
 {
+    m_isAlias = isAlias;
     m_lastDeclaration.push(QList<DeclarationPointer>() << DeclarationPointer(ptr));
 }
 
 ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegrator* editor)
-    : m_forceGlobalSearching(false), m_ctx(ctx), m_editor(editor), m_shouldBeKnown(true)
+    : m_forceGlobalSearching(false), m_isAlias(false), m_ctx(ctx), m_editor(editor), m_shouldBeKnown(true)
 {
     if ( s_defaultTypes.isEmpty() ) {
         s_defaultTypes.insert(KDevelop::Identifier("True"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
@@ -114,6 +117,7 @@ AbstractType::Ptr ExpressionVisitor::unknownType()
 }
 
 void ExpressionVisitor::unknownTypeEncountered() {
+    m_isAlias = false;
     encounterDeclaration(0);
     encounter(unknownType());
 }
@@ -664,7 +668,9 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
         kDebug() << "Found declaration: " << d->toString() << d
                  << d->abstractType() << dynamic_cast<VariableLengthContainer*>(d->abstractType().unsafeData());
         /** / DEBUG **/
-        encounterDeclaration(DeclarationPointer(d));
+        bool isAlias = d->abstractType()->whichType() == AbstractType::TypeFunction or
+                       d->abstractType()->whichType() == AbstractType::TypeStructure;
+        encounterDeclaration(d, isAlias);
         return encounter(d->abstractType());
     }
     else {

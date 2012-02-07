@@ -30,6 +30,7 @@
 #include <language/duchain/duchainutils.h>
 #include <types/variablelengthcontainer.h>
 #include <language/duchain/types/typepointer.h>
+#include <language/duchain/aliasdeclaration.h>
 
 namespace Python
 {
@@ -62,6 +63,10 @@ void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, co
 QString DeclarationNavigationContext::html(bool shorten)
 {
     QString h = KDevelop::AbstractDeclarationNavigationContext::html(shorten);
+//     if ( dynamic_cast<AliasDeclaration*>(declaration().data()) ) {
+//         prefix = "Alias for ";
+//     }
+//     h = prefix + h;
     return h.replace("__kdevpythondocumentation_builtin_", "");
 }
 

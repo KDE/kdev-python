@@ -837,6 +837,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
     QList<ExpressionAst*> realTargets;
     QList<AbstractType::Ptr> realValues;
     QList<DeclarationPointer> realDeclarations;
+    QList<bool> isAlias;
     QList<Ast*> realNodes;
     
     foreach ( ExpressionAst* target, node->targets ) {
@@ -859,6 +860,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             realValues << v.lastType();
             realNodes << value;
             realDeclarations << v.lastDeclaration();
+            isAlias << v.m_isAlias;
         }
         lock.unlock();
     }
@@ -870,6 +872,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         realValues << v.lastType();
         realNodes << node->value;
         realDeclarations << v.lastDeclaration();
+        isAlias << v.m_isAlias;
         if ( node->value && node->value->astType == Ast::CallAstType && ! node->targets.isEmpty() ) {
             if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeIntegral 
                               && v.lastType().cast<IntegralType>()->dataType() == (uint) IntegralType::TypeVoid ) {
@@ -922,21 +925,11 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         }
         /** END DEBUG **/
         setLastType(tupleElementType); // TODO fix this for x, y = a, b, i.e. if node->value->astType == TupleAstType
-        // a = 3
+        // "a = 3"
         if ( target->astType == Ast::NameAstType ) {
-            if ( tupleElementType and tupleElementDeclaration
-                                  and (    tupleElementType->whichType() == AbstractType::TypeFunction 
-                                        or tupleElementType->whichType() == AbstractType::TypeStructure 
-                                      )
-                                  and i < realNodes.length() and realNodes.at(i)->astType != Ast::CallAstType
-               )
-            {
-//                 if ( not tupleElementDeclaration and tupleElementType->whichType() == AbstractType::TypeStructure ) {
-//                     tupleElementDeclaration = DeclarationPointer(static_cast<StructureType*>(tupleElementType.unsafeData())->declaration(topContext()));
-//                 }
+            if ( isAlias.at(i) == true ) {
                 DUChainWriteLocker lock(DUChain::lock());
                 kDebug() << "creating alias declaration for " << static_cast<NameAst*>(target)->identifier->value;
-//                     visitVariableDeclaration<FunctionDeclaration>(static_cast<NameAst*>(target)->identifier, target);
                 AliasDeclaration* decl = openDeclaration<AliasDeclaration>(static_cast<NameAst*>(target)->identifier, target);
                 decl->setAliasedDeclaration(tupleElementDeclaration.data());
                 closeDeclaration();

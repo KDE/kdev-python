@@ -668,8 +668,9 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
         kDebug() << "Found declaration: " << d->toString() << d
                  << d->abstractType() << dynamic_cast<VariableLengthContainer*>(d->abstractType().unsafeData());
         /** / DEBUG **/
-        bool isAlias = d->abstractType()->whichType() == AbstractType::TypeFunction or
-                       d->abstractType()->whichType() == AbstractType::TypeStructure;
+        bool isAlias = d->abstractType() and (
+                       d->abstractType()->whichType() == AbstractType::TypeFunction or
+                       d->abstractType()->whichType() == AbstractType::TypeStructure );
         encounterDeclaration(d, isAlias);
         return encounter(d->abstractType());
     }

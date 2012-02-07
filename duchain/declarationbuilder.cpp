@@ -893,11 +893,13 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
     AbstractType::Ptr tupleElementType(0);
     DeclarationPointer tupleElementDeclaration(0);
     bool canUnpack = realTargets.length() == realValues.length();
+    bool currentIsAlias = false;
     int i = 0;
     foreach ( ExpressionAst* target, realTargets ) {
         if ( canUnpack ) {
             tupleElementType = realValues.at(i);
             tupleElementDeclaration = realDeclarations.at(i);
+            currentIsAlias = isAlias.at(i);
         }
         else if ( realTargets.length() == 1 ) {
             DUChainReadLocker lock(DUChain::lock());
@@ -906,6 +908,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             lock.unlock();
             tupleElementType = v.lastType();
             tupleElementDeclaration = v.lastDeclaration();
+            currentIsAlias = v.m_isAlias;
         }
         else {
             // add code for unpacking tuples here, once those are implemented.
@@ -927,7 +930,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         setLastType(tupleElementType); // TODO fix this for x, y = a, b, i.e. if node->value->astType == TupleAstType
         // "a = 3"
         if ( target->astType == Ast::NameAstType ) {
-            if ( isAlias.at(i) == true ) {
+            if ( currentIsAlias ) {
                 DUChainWriteLocker lock(DUChain::lock());
                 kDebug() << "creating alias declaration for " << static_cast<NameAst*>(target)->identifier->value;
                 AliasDeclaration* decl = openDeclaration<AliasDeclaration>(static_cast<NameAst*>(target)->identifier, target);

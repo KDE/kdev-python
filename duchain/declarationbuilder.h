@@ -51,6 +51,7 @@ public:
     virtual ~DeclarationBuilder();
     void setPrebuilding(bool arg1);
     virtual ReferencedTopDUContext build(const IndexedString& url, Ast* node, ReferencedTopDUContext updateContext = ReferencedTopDUContext());
+    int m_ownPriority;
 
 protected:
     template<class T> T* openDeclaration(Identifier* name, Ast* range, DeclarationFlags flags = NoFlags) {

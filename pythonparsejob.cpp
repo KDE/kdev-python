@@ -142,6 +142,7 @@ void ParseJob::run()
         QSharedPointer<PythonEditorIntegrator> editor = QSharedPointer<PythonEditorIntegrator>(new PythonEditorIntegrator());
         editor->setParseSession(m_session);
         DeclarationBuilder builder( editor.data() );
+        builder.m_ownPriority = priority();
         builder.m_currentlyParsedDocument = filename;
         builder.m_futureModificationRevision = contents().modification;
         
@@ -165,7 +166,7 @@ void ParseJob::run()
                 DUChainWriteLocker lock(DUChain::lock());
                 m_duContext->setFeatures(minimumFeatures());
                 KDevelop::ICore::self()->languageController()->backgroundParser()->addDocument(document().toUrl(), 
-                                     static_cast<TopDUContext::Features>(minimumFeatures() | Rescheduled), 10000);
+                                     static_cast<TopDUContext::Features>(minimumFeatures() | Rescheduled), priority() + 1);
             }
         }
         

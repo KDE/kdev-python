@@ -511,7 +511,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
         // schedule the include file for parsing, and schedule the current one for reparsing after that is done
         kDebug() << "No module context, recompiling";
         m_hasUnresolvedImports = true;
-        DUChain::self()->updateContextForUrl(IndexedString(moduleInfo.first), TopDUContext::AllDeclarationsContextsAndUses, 0, -20);
+        DUChain::self()->updateContextForUrl(IndexedString(moduleInfo.first), TopDUContext::AllDeclarationsContextsAndUses, 0, m_ownPriority - 1);
         return 0;
     }
     if ( moduleInfo.second.isEmpty() ) {

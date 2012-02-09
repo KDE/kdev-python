@@ -364,7 +364,7 @@ void ContextBuilder::visitCode(CodeAst* node) {
     Q_ASSERT(currentlyParsedDocument().toUrl().isValid());
     kDebug() << "Internal functions file: " << currentlyParsedDocument().toUrl().path() << doc.toUrl().path();
     if ( currentlyParsedDocument() != doc ) {
-        TopDUContext* internal;
+        TopDUContext* internal = 0;
         {
             DUChainReadLocker lock(DUChain::lock());
             internal = DUChain::self()->chainForDocument(doc); // TODO add startup-check and error message, this must exist
@@ -373,7 +373,7 @@ void ContextBuilder::visitCode(CodeAst* node) {
         
         if ( ! internal ) {
             m_hasUnresolvedImports = true;
-            DUChain::self()->updateContextForUrl(doc, TopDUContext::AllDeclarationsContextsAndUses);
+            DUChain::self()->updateContextForUrl(doc, TopDUContext::AllDeclarationsContextsAndUses, 0, -10000);
         }
         else {
             kDebug() << "Adding builtin function context...";

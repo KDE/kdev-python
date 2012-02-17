@@ -44,6 +44,9 @@
 #include <language/duchain/aliasdeclaration.h>
 #include <language/duchain/declaration.h>
 #include <language/duchain/duchainutils.h>
+#include <language/backgroundparser/backgroundparser.h>
+#include <language/backgroundparser/parsejob.h>
+#include <interfaces/ilanguagecontroller.h>
 
 #include "duchain/declarations/decorator.h"
 #include "contextbuilder.h"
@@ -511,7 +514,13 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
         // schedule the include file for parsing, and schedule the current one for reparsing after that is done
         kDebug() << "No module context, recompiling";
         m_hasUnresolvedImports = true;
-        DUChain::self()->updateContextForUrl(IndexedString(moduleInfo.first), TopDUContext::AllDeclarationsContextsAndUses, 0, m_ownPriority - 1);
+        if ( KDevelop::ICore::self()->languageController()->backgroundParser()->isQueued(moduleInfo.first) ) {
+            KDevelop::ICore::self()->languageController()->backgroundParser()->removeDocument(moduleInfo.first);
+        }
+        KDevelop::ICore::self()->languageController()->backgroundParser()
+                                   ->addDocument(moduleInfo.first, TopDUContext::AllDeclarationsContextsAndUses, m_ownPriority - 1);
+//         KDevelop::ICore::self()->languageController()->backgroundParser()->parseDocuments();
+//         DUChain::self()->updateContextForUrl(IndexedString(moduleInfo.first), TopDUContext::AllDeclarationsContextsAndUses, 0, m_ownPriority - 1);
         return 0;
     }
     if ( moduleInfo.second.isEmpty() ) {

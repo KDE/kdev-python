@@ -125,13 +125,13 @@ void ExpressionVisitor::unknownTypeEncountered() {
 void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclaration, AttributeAst* node, bool extendUnsureTypes)
 {
     // if it's a function call, the result of that call will be the return type
+    actualDeclaration = DeclarationPointer(Helper::resolveAliasDeclaration(actualDeclaration.data()));
     DUChainPointer<ClassDeclaration> classDecl = actualDeclaration.dynamicCast<ClassDeclaration>();
     DUChainPointer<FunctionDeclaration> funcDecl = actualDeclaration.dynamicCast<FunctionDeclaration>();
-    kDebug() << "Determining type for eventual function call";
+    kDebug() << "Determining type for eventual function call" << classDecl << funcDecl;
     
     if ( classDecl ) {
         // we denote with this that the last call AST node was not a function, but a class "call"
-        // push a null ptr to the call stack so the visitCall function doesn't change the encountered type
         m_callTypeStack.push(encounterPreprocess(classDecl->abstractType(), extendUnsureTypes));
         bool have_ctor = false;
         if ( classDecl->internalContext() ) {
@@ -335,7 +335,10 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
             extendUnsure = true;                                                                 // |
         }                                                                                        // v
         actualDeclaration = DeclarationPointer(Helper::resolveAliasDeclaration(foundDecls.last()));
-        encounterDeclarations(toSharedPtrList(foundDecls));
+        bool isAlias = foundDecls.last()->abstractType() and (
+                       foundDecls.last()->abstractType()->whichType() == AbstractType::TypeFunction or
+                       foundDecls.last()->abstractType()->whichType() == AbstractType::TypeStructure );
+        encounterDeclarations(toSharedPtrList(foundDecls), isAlias);
         encounter(foundDecls.last()->abstractType());
     }
     else {

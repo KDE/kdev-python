@@ -122,78 +122,6 @@ void ExpressionVisitor::unknownTypeEncountered() {
     encounter(unknownType());
 }
 
-void ExpressionVisitor::setTypesForEventualCall(DeclarationPointer actualDeclaration, AttributeAst* node, bool extendUnsureTypes)
-{
-    // if it's a function call, the result of that call will be the return type
-    actualDeclaration = DeclarationPointer(Helper::resolveAliasDeclaration(actualDeclaration.data()));
-    DUChainPointer<ClassDeclaration> classDecl = actualDeclaration.dynamicCast<ClassDeclaration>();
-    DUChainPointer<FunctionDeclaration> funcDecl = actualDeclaration.dynamicCast<FunctionDeclaration>();
-    kDebug() << "Determining type for eventual function call" << classDecl << funcDecl;
-    
-    if ( classDecl ) {
-        // we denote with this that the last call AST node was not a function, but a class "call"
-        m_callTypeStack.push(encounterPreprocess(classDecl->abstractType(), extendUnsureTypes));
-        bool have_ctor = false;
-        if ( classDecl->internalContext() ) {
-            QList<Declaration*> ctors = classDecl->internalContext()->findDeclarations(QualifiedIdentifier("__init__"));
-            if ( not ctors.isEmpty() ) {
-                m_callStack.push(DeclarationPointer(ctors.first()));
-                have_ctor = true;
-            }
-        }
-        if ( not have_ctor ) {
-            m_callStack.push(DeclarationPointer(0));
-        }
-        return;
-    }
-    else if ( funcDecl && funcDecl->type<FunctionType>() ) {
-        if ( node->belongsToCall ) {
-            AbstractType::Ptr type = funcDecl->type<FunctionType>()->returnType();
-            kDebug() << "Using function return type: " << ( type ? type->toString() : "(none)" );
-            // check for list content stuff
-            if ( funcDecl->decoratorsSize() > 0 ) {
-                bool decoratorFound = false;
-                bool typeFound = false;
-                kDebug() << "Got function declaration with decorators, checking for list content type...";
-                if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl.data(), "getsType") ) {
-                    decoratorFound = true;
-                    kDebug() << "Found decorator";
-                    if ( VariableLengthContainer::Ptr t = lastType().cast<VariableLengthContainer>() ) {
-                        kDebug() << "Found container, using type";
-                        type = t->contentType().abstractType();
-                        typeFound = true;
-                    }
-                }
-                if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl.data(), "getsList") ) {
-                    decoratorFound = true;
-                    kDebug() << "Got getsList decorator, checking container";
-                    if ( VariableLengthContainer::Ptr t = lastType().cast<VariableLengthContainer>() ) {
-                        kDebug() << "Got container:" << t->toString();
-                        VariableLengthContainer::Ptr newType = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
-                        newType->addContentType(t->contentType().abstractType());
-                        type = newType.cast<AbstractType>();
-                        typeFound = true;
-                    }
-                }
-                if ( decoratorFound and not typeFound ) {
-                    m_callStack.push(static_cast<DeclarationPointer>(funcDecl));
-                    return m_callTypeStack.push(unknownType());
-                }
-            }
-            // otherwise, it's not a container, and the default return type will be used.
-            m_callStack.push(static_cast<DeclarationPointer>(funcDecl));
-            return m_callTypeStack.push(encounterPreprocess(type, extendUnsureTypes));
-        }
-        else {
-            kDebug() << "function is not being called, using function type";
-            return encounter(funcDecl->abstractType(), extendUnsureTypes);
-        }
-    }
-    else {
-        return encounter(actualDeclaration->abstractType());
-    }
-}
-
 QList< TypePtr< StructureType > > ExpressionVisitor::possibleStructureTypes(AbstractType::Ptr type)
 {
     QList< TypePtr< StructureType > > result;
@@ -328,12 +256,6 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     // Step 5: Construct the type of the declaration which was found.
     DeclarationPointer actualDeclaration(0);
     if ( foundDecls.length() > 0 ) {
-        bool extendUnsure = false;
-        // this function evaluates the previously encountered type, so only change it afterwards // |
-        foreach ( Declaration* decl, foundDecls ) {                                              // |
-            setTypesForEventualCall(DeclarationPointer(decl), node, extendUnsure);               // |
-            extendUnsure = true;                                                                 // |
-        }                                                                                        // v
         actualDeclaration = DeclarationPointer(Helper::resolveAliasDeclaration(foundDecls.last()));
         bool isAlias = foundDecls.last()->abstractType() and (
                        foundDecls.last()->abstractType()->whichType() == AbstractType::TypeFunction or
@@ -354,40 +276,19 @@ void ExpressionVisitor::visitCall(CallAst* node)
 {
     KDEBUG_BLOCK
     kDebug();
-    kDebug() << "types count BEFORE visitor call: " << m_callTypeStack.size();
-    int previousSize = m_callTypeStack.size();
-    Python::AstDefaultVisitor::visitCall(node);
-    kDebug() << "types count AFTER visitor call: " << m_callTypeStack.size();
-    if ( node->function->astType == Ast::AttributeAstType ) {
-        // a bit confusing, but visitAttribute() already has taken care of this.
-        kDebug() << "checking if type was provided";
-        if ( m_callTypeStack.size() > previousSize ) {
-            kDebug() << "type was provided";
-            AbstractType::Ptr typeptr = m_callTypeStack.pop();
-            encounterDeclaration(m_callStack.pop());
-            if ( typeptr ) {
-                return encounter(typeptr);
-            }
-            else return unknownTypeEncountered();
-        }
-        else {
-            return unknownTypeEncountered();
-        }
+    ExpressionVisitor v(m_ctx);
+    v.visitNode(node->function);
+    kDebug() << "function being called: " << v.lastDeclaration();
+    Declaration* actualDeclaration = 0;
+    if ( ! v.m_isAlias ) {
+        kWarning() << "non-function / structure type is being called";
     }
-    if ( node->function->astType != Ast::NameAstType ) { // TODO we could fix this now
-        m_shouldBeKnown = false;
-        return unknownTypeEncountered();
+    else {
+        actualDeclaration = v.lastDeclaration().data();
     }
     
-    NameAst* name = static_cast<NameAst*>(node->function);
-    QString functionName = name->identifier->value;
-    kDebug() << "Visiting call of function " << functionName;
-    
-    Declaration* actualDeclaration = Helper::declarationForName(
-                                     name, QualifiedIdentifier(functionName), 
-                                     RangeInRevision::invalid(), DUContextPointer(m_ctx));
     if ( not actualDeclaration ) {
-        kDebug() << "No declaration for " << functionName;
+//         kDebug() << "No declaration for " << functionName;
         m_shouldBeKnown = false;
         return unknownTypeEncountered();
     }
@@ -409,44 +310,84 @@ void ExpressionVisitor::visitCall(CallAst* node)
                 type = funcDecl->type<FunctionType>()->returnType();
                 encounterDeclaration(funcDecl);
             }
-            bool success = false;
-            if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(
-                                              funcDecl, "returnContentEqualsContentOf") ) {
-                kDebug() << "Found argument dependent decorator, checking argument type";
-                int argNum = d->additionalInformation().str().toInt();
-                if ( node->arguments.length() > argNum ) {
-                    ExpressionAst* relevantArgument = node->arguments.at(argNum);
-                    ExpressionVisitor v(m_ctx);
-                    v.visitNode(relevantArgument);
-                    if ( v.lastType() ) {
-                        VariableLengthContainer* realTarget = 0;
-                        if ( VariableLengthContainer* target = dynamic_cast<VariableLengthContainer*>(type.unsafeData()) ) {
-                            realTarget = target;
-                        }
-                        if ( VariableLengthContainer* source = dynamic_cast<VariableLengthContainer*>(v.lastType().unsafeData()) ) {
-                            if ( ! realTarget ) {
-                                // if the function does not force a return type, just copy the source (like for reversed())
-                                realTarget = source;
-                            }
-                            VariableLengthContainer* newType = static_cast<VariableLengthContainer*>(realTarget->clone());
-                            Q_ASSERT(newType);
-                            newType->addContentType(source->contentType().abstractType());
-                            success = true; // just for clarity, doesn't do anything
-                            return encounter(AbstractType::Ptr(newType));
+            
+            bool decoratorFound = false;
+            bool typeFound = false;
+            if ( funcDecl->decoratorsSize() > 0 ) {
+                kDebug() << "Got function declaration with decorators, checking for list content type...";
+                if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsType") ) {
+                    decoratorFound = true;
+                    kDebug() << "Found decorator";
+                    if ( node->function->astType == Ast::AttributeAstType ) {
+                        ExpressionVisitor baseTypeVisitor(m_ctx);
+                        // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
+                        baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
+                        if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
+                            kDebug() << "Found container, using type";
+                            AbstractType::Ptr newType = t->contentType().abstractType();
+                            return encounter(newType);
                         }
                     }
                 }
+                if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsList") ) {
+                    decoratorFound = true;
+                    kDebug() << "Got getsList decorator, checking container";
+                    if ( node->function->astType == Ast::AttributeAstType ) {
+                        ExpressionVisitor baseTypeVisitor(m_ctx);
+                        // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
+                        baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
+                        if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
+                            kDebug() << "Got container:" << t->toString();
+                            VariableLengthContainer::Ptr newType = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
+                            newType->addContentType(t->contentType().abstractType());
+                            AbstractType::Ptr resultingType = newType.cast<AbstractType>();
+                            return encounter(resultingType);
+                        }
+                    }
+                }
+                if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(
+                                              funcDecl, "returnContentEqualsContentOf") )
+                {
+                    kDebug() << "Found argument dependent decorator, checking argument type";
+                    decoratorFound = true;
+                    int argNum = d->additionalInformation().str().toInt();
+                    if ( node->arguments.length() > argNum ) {
+                        ExpressionAst* relevantArgument = node->arguments.at(argNum);
+                        ExpressionVisitor v(m_ctx);
+                        v.visitNode(relevantArgument);
+                        if ( v.lastType() ) {
+                            VariableLengthContainer* realTarget = 0;
+                            if ( VariableLengthContainer* target = dynamic_cast<VariableLengthContainer*>(type.unsafeData()) ) {
+                                realTarget = target;
+                            }
+                            if ( VariableLengthContainer* source = dynamic_cast<VariableLengthContainer*>(v.lastType().unsafeData()) ) {
+                                if ( ! realTarget ) {
+                                    // if the function does not force a return type, just copy the source (like for reversed())
+                                    realTarget = source;
+                                }
+                                VariableLengthContainer* newType = static_cast<VariableLengthContainer*>(realTarget->clone());
+                                Q_ASSERT(newType);
+                                newType->addContentType(source->contentType().abstractType());
+                                typeFound = true;
+                                return encounter(AbstractType::Ptr(newType));
+                            }
+                        }
+                    }
+                }
+                if ( decoratorFound and not typeFound ) {
+                    return unknownTypeEncountered();
+                }
             }
-            if ( not success ) {
-                return encounter(type);
-            }
+            
+            // if none of the above decorator-finding methods worked, just use the ordinary return type.
+            return encounter(type);
         }
         else if ( classDecl ) {
             encounter(classDecl->abstractType());
             encounterDeclaration(classDecl);
         }
         else {
-            kDebug() << "Declaraton for " << functionName << " is not a class or function declaration";
+            kDebug() << "Declaraton " << actualDeclaration->toString() << " is not a class or function declaration";
             encounterDeclaration(0);
             return unknownTypeEncountered();
         }

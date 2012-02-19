@@ -373,6 +373,9 @@ void ExpressionVisitor::visitCall(CallAst* node)
                             }
                         }
                     }
+                    else if ( type ) {
+                        return encounter(type);
+                    }
                 }
                 if ( decoratorFound and not typeFound ) {
                     return unknownTypeEncountered();

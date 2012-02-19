@@ -373,9 +373,11 @@ void PyDUChainTest::testTypes_data()
     QTest::addColumn<QString>("expectedType");
     
     QTest::newRow("listtype") << "checkme = []" << "list";
+    QTest::newRow("listtype_func") << "checkme = list()" << "list";
     QTest::newRow("listtype_with_contents") << "checkme = [1, 2, 3, 4, 5]" << "list of int";
     QTest::newRow("listtype_extended") << "some_misc_var = []; checkme = some_misc_var" << "list";
     QTest::newRow("dicttype") << "checkme = {}" << "dict";
+    QTest::newRow("dicttype_func") << "checkme = dict()" << "dict";
     QTest::newRow("dicttype_extended") << "some_misc_var = {}; checkme = some_misc_var" << "dict";
     QTest::newRow("bool") << "checkme = True" << "bool";
     QTest::newRow("float") << "checkme = 3.7" << "float";

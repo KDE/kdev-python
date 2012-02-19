@@ -24,6 +24,11 @@
  *****************************************************************************/
 #include "pythonhighlighting.h"
 
+#include <language/duchain/declaration.h>
+#include <language/duchain/types/abstracttype.h>
+
+using namespace KDevelop;
+
 namespace Python
 {
 
@@ -46,6 +51,11 @@ void CodeHighlightingInstance::highlightUse(KDevelop::DUContext* context, int in
 CodeHighlightingInstance::CodeHighlightingInstance(const Highlighting* highlighting)
     : KDevelop::CodeHighlightingInstance(highlighting)
 {
+}
+
+bool CodeHighlightingInstance::useRainbowColor(KDevelop::Declaration* dec) const
+{
+    return KDevelop::CodeHighlightingInstance::useRainbowColor(dec);
 }
 
 CodeHighlightingInstance* Highlighting::createInstance() const

@@ -171,7 +171,7 @@ void ParseJob::run()
                     break;
                 }
             }
-            if ( /* ! ( minimumFeatures() & Rescheduled ) && */ dependencyInQueue ) {
+            if ( ! ( minimumFeatures() & Rescheduled ) && dependencyInQueue ) {
                 qDebug() << "Document will be reparsed";
                 DUChainWriteLocker lock(DUChain::lock());
                 m_duContext->setFeatures(minimumFeatures());

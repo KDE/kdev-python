@@ -41,6 +41,7 @@ class CodeHighlightingInstance : public KDevelop::CodeHighlightingInstance {
 public:
     CodeHighlightingInstance(const Highlighting* highlighting);
     virtual void highlightUse(KDevelop::DUContext* context, int index, const QColor& color);
+    virtual bool useRainbowColor(KDevelop::Declaration* dec) const;
 };
 
     

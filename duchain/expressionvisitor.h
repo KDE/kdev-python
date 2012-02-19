@@ -148,16 +148,6 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
             return m_lastDeclaration.last();
         }
         template<typename T> static TypePtr<T> typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx);
-        /**
-         * @brief Takes a declaration and a node as arguments, and determines whether the function is called or assigned to.
-         * Then sets m_lastFoo types appropriately.
-         *
-         * @param eventualFunction The declaration to inspect.
-         * @param node The node to use for determining whether the function is called or assigned.
-         * @param extendUnsureTypes If true, do not overwrite type attributes, but extend them to UnsureTypes
-         * @return void
-         **/
-        void setTypesForEventualCall(DeclarationPointer actualDeclaration, Python::AttributeAst* node, bool extendUnsureTypes = false);
         
         // used by autocompletion to disable range checks on declaration searches
         bool m_forceGlobalSearching;

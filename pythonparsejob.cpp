@@ -98,8 +98,6 @@ bool ParseJob::wasReadFromDisk() const
 
 void ParseJob::run()
 {
-    qDebug() << " ====> PARSING ====> " << m_url;
-
     m_session = new ParseSession();    
     LanguageSupport* lang = python();
     ILanguage* ilang = lang->language();
@@ -139,16 +137,20 @@ void ParseJob::run()
         if ( abortRequested() )
             return abortJob();
         
+//         Q_ASSERT(KDevelop::ICore::self()->languageController()->backgroundParser()->isQueued(m_url));
+//         int ownPriority = KDevelop::ICore::self()->languageController()->backgroundParser()->priorityForDocument(m_url);
+        qDebug() << " ====> PARSING ====> " << m_url << "(priority" << ownPriority() << ")";
+        
         QSharedPointer<PythonEditorIntegrator> editor = QSharedPointer<PythonEditorIntegrator>(new PythonEditorIntegrator());
         editor->setParseSession(m_session);
         DeclarationBuilder builder( editor.data() );
-        builder.m_ownPriority = priority();
+        builder.m_ownPriority = ownPriority();
         builder.m_currentlyParsedDocument = filename;
         builder.m_futureModificationRevision = contents().modification;
         
         Q_ASSERT(m_session->currentDocument().toUrl().isValid());
         m_duContext = builder.build(filename, m_ast, m_duContext);
-        bool needsReparse = builder.m_hasUnresolvedImports;
+        bool needsReparse = ! builder.m_unresolvedImports.isEmpty();
         setDuChain(m_duContext);
         
         if ( abortRequested() )
@@ -162,12 +164,19 @@ void ParseJob::run()
             return abortJob();
         qDebug() << "Document needs update because of unresolved identifiers: " << needsReparse;
         if ( needsReparse ) {
-            if ( ! ( minimumFeatures() & Rescheduled ) && KDevelop::ICore::self()->languageController()->backgroundParser()->queuedCount() ) {
+            bool dependencyInQueue = false;
+            foreach ( const KUrl& url, builder.m_unresolvedImports ) {
+                dependencyInQueue = KDevelop::ICore::self()->languageController()->backgroundParser()->isQueued(url);
+                if ( dependencyInQueue ) {
+                    break;
+                }
+            }
+            if ( /* ! ( minimumFeatures() & Rescheduled ) && */ dependencyInQueue ) {
                 qDebug() << "Document will be reparsed";
                 DUChainWriteLocker lock(DUChain::lock());
                 m_duContext->setFeatures(minimumFeatures());
                 KDevelop::ICore::self()->languageController()->backgroundParser()->addDocument(document().toUrl(), 
-                                     static_cast<TopDUContext::Features>(minimumFeatures() | Rescheduled), priority() + 1);
+                                     static_cast<TopDUContext::Features>(minimumFeatures() | Rescheduled), ownPriority());
             }
             else {
                 qDebug() << "Document will *not* be reparsed";

@@ -297,7 +297,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
 void DeclarationBuilder::visitCode(CodeAst* node)
 {
     Q_ASSERT(currentlyParsedDocument().toUrl().isValid());
-    m_hasUnresolvedImports = false;
+    m_unresolvedImports.clear();
     DeclarationBuilderBase::visitCode(node);
 }
 
@@ -513,7 +513,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
     if ( ! moduleContext ) {
         // schedule the include file for parsing, and schedule the current one for reparsing after that is done
         kDebug() << "No module context, recompiling";
-        m_hasUnresolvedImports = true;
+        m_unresolvedImports.append(moduleInfo.first);
         if ( KDevelop::ICore::self()->languageController()->backgroundParser()->isQueued(moduleInfo.first) ) {
             KDevelop::ICore::self()->languageController()->backgroundParser()->removeDocument(moduleInfo.first);
         }

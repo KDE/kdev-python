@@ -90,17 +90,6 @@ QPair<CodeAst*, bool> Driver::parse( Python::CodeAst* /* ast */)
     return matched;
 }
 
-
-void Driver::setTokenStream( KDevPG::TokenStream* ts )
-{
-    m_tokenstream = ts;
-}
-
-void Driver::setMemoryPool( KDevPG::MemoryPool* pool )
-{
-    m_pool = pool;
-}
-
 }
 
 // kate: space-indent on; indent-width 4; tab-width 4; replace-tabs on; auto-insert-doxygen on

@@ -616,8 +616,11 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     
     // cool, we found something. Now we need to compare its indent to the current one; if they don't match, then 
     // we ignore it and use the one provided as an argument to this function. Otherwise, we use what we found.
-    if ( currentlyChecked ) {
-        int previousStartsAtLine = currentlyChecked->range().castToSimpleRange().start.line + 1;
+    if ( currentlyChecked and currentlyChecked->range().start.line < currentlyChecked->range().end.line ) {
+        int previousStartsAtLine = currentlyChecked->range().castToSimpleRange().start.line;
+        if ( currentlyChecked->type() != DUContext::Class ) {
+            previousStartsAtLine += 1;
+        }
         kDebug() << "Previous context starts at line" << previousStartsAtLine;
         kDebug() << "Previous / Current context ranges: " << currentlyChecked->range().castToSimpleRange() << context->range().castToSimpleRange();
         int skipLinesBack = atLine - previousStartsAtLine; // how many lines to skip backwards

@@ -371,6 +371,9 @@ void ExpressionVisitor::visitCall(CallAst* node)
                                 typeFound = true;
                                 return encounter(AbstractType::Ptr(newType));
                             }
+                            else if ( type ) {
+                                return encounter(type);
+                            }
                         }
                     }
                     else if ( type ) {

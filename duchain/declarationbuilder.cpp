@@ -663,7 +663,7 @@ void DeclarationBuilder::visitYield(YieldAst* node)
                     t->setReturnType(previous.cast<AbstractType>());
                 }
                 else {
-                    VariableLengthContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType<VariableLengthContainer>("list", currentContext());
+                    VariableLengthContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType("list", currentContext());
                     if ( container ) {
                         openType<VariableLengthContainer>(container);
                         container->addContentType(encountered);
@@ -962,16 +962,31 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         }
         // a[0] = 3
         else if ( target->astType == Ast::SubscriptAstType ) {
-            ExpressionAst* v = static_cast<SubscriptAst*>(target)->value;
+            SubscriptAst* subscript = static_cast<SubscriptAst*>(target);
+            ExpressionAst* v = subscript->value;
             if ( tupleElementType ) {
                 DUChainReadLocker lock(DUChain::lock());
                 ExpressionVisitor targetVisitor(currentContext());
                 targetVisitor.visitNode(v);
-                lock.unlock();
                 VariableLengthContainer::Ptr cont = VariableLengthContainer::Ptr::dynamicCast(targetVisitor.lastType());
+                if ( cont ) {
+                    kDebug() << "has key type:" << cont->hasKeyType() << cont->toString();
+                    kDebug() << cont.unsafeData();
+                }
                 if ( cont ) {
                     cont->addContentType(tupleElementType);
                 }
+                if ( cont and cont->hasKeyType() ) {
+                    if ( subscript->slice and subscript->slice->astType == Ast::IndexAstType ) {
+                        ExpressionVisitor keyVisitor(currentContext());
+                        keyVisitor.visitNode(static_cast<IndexAst*>(subscript->slice)->value);
+                        AbstractType::Ptr key = keyVisitor.lastType();
+                        if ( key ) {
+                            cont->addKeyType(key);
+                        }
+                    }
+                }
+                lock.unlock();
                 if ( DeclarationPointer lastDecl = targetVisitor.lastDeclaration() ) {
                     DUChainWriteLocker wlock(DUChain::lock());
                     lastDecl->setAbstractType(cont.cast<AbstractType>());
@@ -1090,7 +1105,11 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     StructureType::Ptr type(0);
     const Decorator* d = Helper::findDecoratorByName<ClassDeclaration>(dec, "TypeContainer");
     if ( d ) {
-        type = StructureType::Ptr(new VariableLengthContainer());
+        VariableLengthContainer* container = new VariableLengthContainer();
+        if ( Helper::findDecoratorByName<ClassDeclaration>(dec, "hasTypedKeys") ) {
+            container->setHasKeyType(true);
+        }
+        type = StructureType::Ptr(container);
     }
     if ( ! type ) {
         type = StructureType::Ptr(new StructureType());
@@ -1337,7 +1356,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             }
             if ( node->vararg ) {
                 DUChainReadLocker lock(DUChain::lock());
-                AbstractType::Ptr listType = ExpressionVisitor::typeObjectForIntegralType<AbstractType>("list", currentContext());
+                AbstractType::Ptr listType = ExpressionVisitor::typeObjectForIntegralType("list", currentContext()).cast<AbstractType>();
                 lock.unlock();
                 type->addArgument(listType);
                 node->vararg->startCol = node->vararg_col_offset; node->vararg->endCol = node->vararg_col_offset + node->vararg->value.length() - 1;
@@ -1348,7 +1367,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             }
             if ( node->kwarg ) {
                 DUChainReadLocker lock(DUChain::lock());
-                AbstractType::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType<AbstractType>("dict", currentContext());
+                AbstractType::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType("dict", currentContext()).cast<AbstractType>();
                 lock.unlock();
                 type->addArgument(dictType);
                 node->kwarg->startCol = node->arg_col_offset; node->kwarg->endCol = node->arg_col_offset + node->kwarg->value.length() - 1;

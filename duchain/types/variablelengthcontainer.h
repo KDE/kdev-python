@@ -34,22 +34,23 @@ class KDEVPYTHONDUCHAIN_EXPORT VariableLengthContainerData : public KDevelop::St
 public:
     /// Constructor
     VariableLengthContainerData()
-        : KDevelop::StructureTypeData(), m_keyType(0), m_contentType(0)
+        : KDevelop::StructureTypeData(), m_keyType(0), m_contentType(0), m_hasKeyType(false)
     {
     }
     /// Copy constructor. \param rhs data to copy
     VariableLengthContainerData( const VariableLengthContainerData& rhs )
-        : KDevelop::StructureTypeData(rhs), m_keyType(rhs.m_keyType), m_contentType(rhs.m_contentType)
+        : KDevelop::StructureTypeData(rhs), m_keyType(rhs.m_keyType), m_contentType(rhs.m_contentType), m_hasKeyType(rhs.m_hasKeyType)
     {
     }
     
     VariableLengthContainerData(const StructureTypeData& rhs)
-        : KDevelop::StructureTypeData(rhs), m_keyType(0), m_contentType(0)
+        : KDevelop::StructureTypeData(rhs), m_keyType(0), m_contentType(0), m_hasKeyType(false)
     {
     };
     
     IndexedType m_keyType;
     IndexedType m_contentType;
+    bool m_hasKeyType;
 };
 
 
@@ -77,6 +78,9 @@ public:
     // by keeping toString seperate, it is possible to have a pretty type in unsure types etc. without additional
     // efforts being necessary
     QString containerToString() const;
+    
+    void setHasKeyType(bool hasKeyType);
+    bool hasKeyType() const;
     
     virtual bool equals(const AbstractType* rhs) const;
     

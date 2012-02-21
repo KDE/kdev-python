@@ -51,6 +51,7 @@ class __kdevpythondocumentation_builtin_fileObject():
     softspace = True
     
 @TypeContainer
+@hasTypedKeys
 class __kdevpythondocumentation_builtin_dict():
     @returnContentEqualsContentOf(0)
     def __init__(self, items):

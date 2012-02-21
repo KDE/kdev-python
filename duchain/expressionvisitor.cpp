@@ -338,7 +338,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
                         baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
                         if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
                             kDebug() << "Got container:" << t->toString();
-                            VariableLengthContainer::Ptr newType = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
+                            VariableLengthContainer::Ptr newType = typeObjectForIntegralType("list", m_ctx);
                             newType->addContentType(t->contentType().abstractType());
                             AbstractType::Ptr resultingType = newType.cast<AbstractType>();
                             return encounter(resultingType);
@@ -422,6 +422,26 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
     }
 }
 
+TypePtr<VariableLengthContainer> ExpressionVisitor::typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx) {
+    QList<Declaration*> decls = ctx->topContext()->findDeclarations(
+        QualifiedIdentifier("__kdevpythondocumentation_builtin_" + typeDescriptor));
+    Declaration* decl = decls.isEmpty() ? 0 : dynamic_cast<Declaration*>(decls.first());
+    AbstractType::Ptr type = decl ? decl->abstractType() : AbstractType::Ptr(0);
+    TypePtr<VariableLengthContainer> result = type.cast<VariableLengthContainer>();
+//     if ( decl and result ) {
+//         if ( ClassDeclaration* d = dynamic_cast<ClassDeclaration*>(decl) ) {
+//             if ( Helper::findDecoratorByName<ClassDeclaration>(d, "hasTypedKeys") ) {
+//                 result->setHasKeyType(true);
+//             }
+//         }
+//     }
+//     if ( result ) {
+//         kDebug() << "resulting type: " << result->toString() << result->hasKeyType();
+//         kDebug() << "resulting type pointer:" << result.unsafeData();
+//     }
+    return result;
+}
+
 template<typename T> TypePtr<T> ExpressionVisitor::typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx)
 {
     QList<Declaration*> decls = ctx->topContext()->findDeclarations(
@@ -434,7 +454,7 @@ template<typename T> TypePtr<T> ExpressionVisitor::typeObjectForIntegralType(QSt
 void ExpressionVisitor::visitList(ListAst* node)
 {
     AstDefaultVisitor::visitList(node);
-    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("list", m_ctx);
     ExpressionVisitor contentVisitor(m_ctx);
     if ( type ) {
         foreach ( ExpressionAst* content, node->elements ) {
@@ -454,7 +474,7 @@ void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst*
 {
     AstDefaultVisitor::visitDictionaryComprehension(node);
     kDebug() << "visiting dictionary comprehension";
-    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("dict", m_ctx);
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("dict", m_ctx);
     if ( type ) {
         DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol + 1));
         ExpressionVisitor v(comprehensionContext);
@@ -464,8 +484,8 @@ void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst*
         }
         ExpressionVisitor k(comprehensionContext);
         k.visitNode(node->key);
-        if ( v.lastType() ) {
-            type->addKeyType(v.lastType());
+        if ( k.lastType() ) {
+            type->addKeyType(k.lastType());
         }
     }
     else {
@@ -479,7 +499,7 @@ void ExpressionVisitor::visitSetComprehension(SetComprehensionAst* node)
 {
     kDebug() << "visiting set comprehension";
     Python::AstDefaultVisitor::visitSetComprehension(node);
-    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("set", m_ctx);
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("set", m_ctx);
     if ( type ) {
         DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol+1), true);
         ExpressionVisitor v(comprehensionContext);
@@ -496,7 +516,7 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
 {
     kDebug() << "visiting list comprehension";
     AstDefaultVisitor::visitListComprehension(node);
-    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("list", m_ctx);
     if ( type ) {
         DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol + 1), true);
         ExpressionVisitor v(comprehensionContext);
@@ -541,7 +561,7 @@ void ExpressionVisitor::visitIfExpression(IfExpressionAst* node)
 void ExpressionVisitor::visitSet(SetAst* node)
 {
     Python::AstDefaultVisitor::visitSet(node);
-    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("set", m_ctx);
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("set", m_ctx);
     ExpressionVisitor contentVisitor(m_ctx);
     if ( type ) {
         foreach ( ExpressionAst* content, node->elements ) {
@@ -556,12 +576,18 @@ void ExpressionVisitor::visitSet(SetAst* node)
 void ExpressionVisitor::visitDict(DictAst* node)
 {
     AstDefaultVisitor::visitDict(node);
-    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("dict", m_ctx);
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("dict", m_ctx);
     ExpressionVisitor contentVisitor(m_ctx);
+    ExpressionVisitor keyVisitor(m_ctx);
     if ( type ) {
+        Q_ASSERT(type->hasKeyType());
         foreach ( ExpressionAst* content, node->values ) {
             contentVisitor.visitNode(content);
             type->addContentType(contentVisitor.lastType());
+        }
+        foreach ( ExpressionAst* key, node->keys ) {
+            keyVisitor.visitNode(key);
+            type->addKeyType(keyVisitor.lastType());
         }
     }
     encounterDeclaration(0);

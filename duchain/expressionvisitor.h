@@ -43,6 +43,7 @@
 
 #include "duchain/declarations/classdeclaration.h"
 #include "duchain/declarations/functiondeclaration.h"
+#include "types/variablelengthcontainer.h"
 
 namespace KDevelop {
     class Identifier;
@@ -147,7 +148,9 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
             }
             return m_lastDeclaration.last();
         }
+        
         template<typename T> static TypePtr<T> typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx);
+        static TypePtr<VariableLengthContainer> typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx);
         
         // used by autocompletion to disable range checks on declaration searches
         bool m_forceGlobalSearching;

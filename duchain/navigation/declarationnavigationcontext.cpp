@@ -43,17 +43,40 @@ DeclarationNavigationContext::DeclarationNavigationContext(DeclarationPointer de
 
 void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, const IdentifiedType* idType)
 {
+    // TODO this code is duplicate of variablelengthcontainer::toString, resolve that somehow
     if ( VariableLengthContainer::Ptr t = VariableLengthContainer::Ptr::dynamicCast(type) ) {
         makeLink(t->containerToString(), DeclarationPointer(idType->declaration(m_topContext.data())), NavigationAction::NavigateDeclaration );
         modifyHtml() += i18n(" of ");
+        if ( t->hasKeyType() ) {
+            if ( AbstractType::Ptr key = t->keyType().abstractType() ) {
+                IdentifiedType* identifiedKey = dynamic_cast<IdentifiedType*>(key.unsafeData());
+                if ( identifiedKey ) {
+                    makeLink(key->toString(), DeclarationPointer(
+                        identifiedKey->declaration(m_topContext.data())),
+                        NavigationAction::NavigateDeclaration
+                    );
+                }
+                else {
+                    modifyHtml() += key->toString();
+                }
+                modifyHtml() += " : ";
+            }
+        }
         if ( AbstractType::Ptr contents = t->contentType().abstractType() ) {
             IdentifiedType* identifiedContent = dynamic_cast<IdentifiedType*>(contents.unsafeData());
             if ( identifiedContent ) {
-                makeLink(contents->toString(), DeclarationPointer(identifiedContent->declaration(m_topContext.data())), NavigationAction::NavigateDeclaration );
+                makeLink(contents->toString(), DeclarationPointer(
+                    identifiedContent->declaration(m_topContext.data())),
+                    NavigationAction::NavigateDeclaration
+                );
             }
-            else modifyHtml() += contents->toString();
+            else {
+                modifyHtml() += contents->toString();
+            }
         }
-        else modifyHtml() += i18n("unknown");
+        else {
+            modifyHtml() += i18n("unknown");
+        }
     }
     else {
         KDevelop::AbstractDeclarationNavigationContext::htmlIdentifiedType(type, idType);

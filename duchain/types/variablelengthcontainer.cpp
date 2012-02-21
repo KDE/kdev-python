@@ -63,6 +63,9 @@ void Python::VariableLengthContainer::addKeyType(AbstractType::Ptr typeToAdd)
     d_func_dynamic()->m_keyType = Helper::mergeTypes(keyType().abstractType(), typeToAdd)->indexed();
     DUChainReadLocker lock(DUChain::lock());
     kDebug() << "CONTAINER :: new key type: " << keyType().abstractType()->toString();
+    if ( ! hasKeyType() ) {
+        kWarning() << "warning: you're adding key types to an object which should not have typed keys";
+    }
 }
 
 const IndexedType& Python::VariableLengthContainer::keyType() const
@@ -77,10 +80,25 @@ KDevelop::AbstractType* VariableLengthContainer::clone() const
     return n;
 }
 
+void VariableLengthContainer::setHasKeyType(bool hasKeyType)
+{
+    d_func_dynamic()->m_hasKeyType = hasKeyType;
+}
+
+bool VariableLengthContainer::hasKeyType() const
+{
+    return d_func()->m_hasKeyType;
+}
+
 QString VariableLengthContainer::toString() const
 {
     QString prefix = KDevelop::StructureType::toString();
-    if ( AbstractType::Ptr content = contentType().abstractType() ) {
+    AbstractType::Ptr content = contentType().abstractType();
+    AbstractType::Ptr key = keyType().abstractType();
+    if ( hasKeyType() and content and key ) {
+        return prefix + " " + i18n("of") + " " + key->toString() + " : " + content->toString();
+    }
+    if ( content ) {
         return prefix + " " + i18n("of") + " " + content->toString();
     }
     else

@@ -139,12 +139,12 @@ void ParseJob::run()
         
 //         Q_ASSERT(KDevelop::ICore::self()->languageController()->backgroundParser()->isQueued(m_url));
 //         int ownPriority = KDevelop::ICore::self()->languageController()->backgroundParser()->priorityForDocument(m_url);
-        qDebug() << " ====> PARSING ====> " << m_url << "(priority" << ownPriority() << ")";
+        qDebug() << " ====> PARSING ====> " << m_url << "(priority" << parsePriority() << ")";
         
         QSharedPointer<PythonEditorIntegrator> editor = QSharedPointer<PythonEditorIntegrator>(new PythonEditorIntegrator());
         editor->setParseSession(m_session);
         DeclarationBuilder builder( editor.data() );
-        builder.m_ownPriority = ownPriority();
+        builder.m_ownPriority = parsePriority();
         builder.m_currentlyParsedDocument = filename;
         builder.m_futureModificationRevision = contents().modification;
         
@@ -176,7 +176,8 @@ void ParseJob::run()
                 DUChainWriteLocker lock(DUChain::lock());
                 m_duContext->setFeatures(minimumFeatures());
                 KDevelop::ICore::self()->languageController()->backgroundParser()->addDocument(document().toUrl(), 
-                                     static_cast<TopDUContext::Features>(minimumFeatures() | Rescheduled), ownPriority());
+                                     static_cast<TopDUContext::Features>(minimumFeatures() | Rescheduled), parsePriority(),
+                                     0, ParseJob::RequiresSequentialProcessing);
             }
             else {
                 qDebug() << "Document will *not* be reparsed";

@@ -329,7 +329,9 @@ void ExpressionVisitor::visitCall(CallAst* node)
                         }
                     }
                 }
-                if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsList") ) {
+                if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsList")
+                    or Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsListOfKeys")
+                ) {
                     decoratorFound = true;
                     kDebug() << "Got getsList decorator, checking container";
                     if ( node->function->astType == Ast::AttributeAstType ) {
@@ -339,7 +341,14 @@ void ExpressionVisitor::visitCall(CallAst* node)
                         if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
                             kDebug() << "Got container:" << t->toString();
                             VariableLengthContainer::Ptr newType = typeObjectForIntegralType("list", m_ctx);
-                            newType->addContentType(t->contentType().abstractType());
+                            AbstractType::Ptr contentType;
+                            if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsList") ) {
+                                contentType = t->contentType().abstractType();
+                            }
+                            else {
+                                contentType = t->keyType().abstractType();
+                            }
+                            newType->addContentType(contentType);
                             AbstractType::Ptr resultingType = newType.cast<AbstractType>();
                             return encounter(resultingType);
                         }

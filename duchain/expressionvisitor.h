@@ -167,9 +167,14 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         KDevelop::DUContext* m_ctx;
         PythonEditorIntegrator* m_editor;
         
-        void encounter(AbstractType::Ptr type, bool merge=false);
+        enum EncounterFlags {
+            MergeTypes = 1,
+            AutomaticallyDetermineDeclaration = 2
+        };
+        
+        void encounter(AbstractType::Ptr type, EncounterFlags flags = (EncounterFlags) 0);
         AbstractType::Ptr encounterPreprocess(AbstractType::Ptr type, bool merge = false);
-        template<typename T> void encounter(TypePtr<T> type);
+        template<typename T> void encounter(TypePtr<T> type, EncounterFlags flags = (EncounterFlags) 0);
         void encounterDeclaration(DeclarationPointer ptr, bool isAlias = false);
         void encounterDeclaration(Declaration* ptr, bool isAlias = false);
         void encounterDeclarations(QList<DeclarationPointer> ptrs, bool isAlias = false);

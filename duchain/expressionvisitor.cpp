@@ -68,18 +68,27 @@ AbstractType::Ptr ExpressionVisitor::encounterPreprocess(AbstractType::Ptr type,
     return res;
 }
 
-void ExpressionVisitor::encounter(AbstractType::Ptr type, bool merge)
+void ExpressionVisitor::encounter(AbstractType::Ptr type, EncounterFlags flags)
 {
     if ( type )
         kDebug() << "type encountered: " << type->toString();
     else
         kDebug() << "unknown type encountered";
-    m_lastType.push(encounterPreprocess(type, merge));
+    if ( flags & AutomaticallyDetermineDeclaration ) {
+        StructureType::Ptr t = type.cast<StructureType>();
+        if ( t ) {
+            encounterDeclaration(t->declaration(m_ctx->topContext()));
+        }
+        else {
+            encounterDeclaration(0);
+        }
+    }
+    m_lastType.push(encounterPreprocess(type, flags & MergeTypes));
 }
 
-template<typename T> void ExpressionVisitor::encounter(TypePtr< T > type)
+template<typename T> void ExpressionVisitor::encounter(TypePtr< T > type, EncounterFlags flags)
 {
-    encounter(AbstractType::Ptr::staticCast(type));
+    encounter(AbstractType::Ptr::staticCast(type), flags);
 }
 
 void ExpressionVisitor::encounterDeclaration(DeclarationPointer ptr, bool isAlias)
@@ -203,7 +212,6 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     }
     else {
         kWarning() << "Unsupported attribute access method";
-        encounterDeclaration(0);
         return unknownTypeEncountered();
     }
     
@@ -214,7 +222,6 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     else if ( accessingAttributeOfType.isEmpty() ) {
         kDebug() << "No declaration found to look up type of attribute in.";
         kDebug() << "call: " << node->belongsToCall;
-        encounterDeclaration(0);
         return unknownTypeEncountered();
     }
     
@@ -265,7 +272,6 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     }
     else {
         kDebug() << "No declaration found for attribute";
-        encounterDeclaration(0);
         return unknownTypeEncountered();
     }
     kDebug() << "Last encountered type: " << ( lastType().unsafeData() ? lastType()->toString() : "<none>" );
@@ -403,7 +409,6 @@ void ExpressionVisitor::visitCall(CallAst* node)
         }
         else {
             kDebug() << "Declaraton " << actualDeclaration->toString() << " is not a class or function declaration";
-            encounterDeclaration(0);
             return unknownTypeEncountered();
         }
     }
@@ -416,7 +421,6 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
     if ( node->slice && node->slice->astType != Ast::IndexAstType ) {
         kDebug() << "Found slice, will use ListType for assignment";
         kDebug() << "LAST DECLARATION:" << lastDeclaration();
-        encounterDeclaration(0);
         encounter(lastType());
     }
     else {
@@ -437,17 +441,6 @@ TypePtr<VariableLengthContainer> ExpressionVisitor::typeObjectForIntegralType(QS
     Declaration* decl = decls.isEmpty() ? 0 : dynamic_cast<Declaration*>(decls.first());
     AbstractType::Ptr type = decl ? decl->abstractType() : AbstractType::Ptr(0);
     TypePtr<VariableLengthContainer> result = type.cast<VariableLengthContainer>();
-//     if ( decl and result ) {
-//         if ( ClassDeclaration* d = dynamic_cast<ClassDeclaration*>(decl) ) {
-//             if ( Helper::findDecoratorByName<ClassDeclaration>(d, "hasTypedKeys") ) {
-//                 result->setHasKeyType(true);
-//             }
-//         }
-//     }
-//     if ( result ) {
-//         kDebug() << "resulting type: " << result->toString() << result->hasKeyType();
-//         kDebug() << "resulting type pointer:" << result.unsafeData();
-//     }
     return result;
 }
 
@@ -475,8 +468,7 @@ void ExpressionVisitor::visitList(ListAst* node)
         unknownTypeEncountered();
         kWarning() << " [ !!! ] did not get a typetrack container object when expecting one! Fix code / setup.";
     }
-    encounterDeclaration(0);
-    encounter<VariableLengthContainer>(type);
+    encounter<VariableLengthContainer>(type, AutomaticallyDetermineDeclaration);
 }
 
 void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst* node)
@@ -500,8 +492,7 @@ void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst*
     else {
         return unknownTypeEncountered();
     }
-    encounterDeclaration(0);
-    encounter<VariableLengthContainer>(type);
+    encounter<VariableLengthContainer>(type, AutomaticallyDetermineDeclaration);
 }
 
 void ExpressionVisitor::visitSetComprehension(SetComprehensionAst* node)
@@ -517,8 +508,7 @@ void ExpressionVisitor::visitSetComprehension(SetComprehensionAst* node)
             type->addContentType(v.lastType());
         }
     }
-    encounterDeclaration(0);
-    encounter<VariableLengthContainer>(type);
+    encounter<VariableLengthContainer>(type, AutomaticallyDetermineDeclaration);
 }
 
 void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
@@ -540,15 +530,13 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
     if ( type ) {
         kDebug() << "Got type for List Comprehension:" << type->toString();
     }
-    encounterDeclaration(0);
-    encounter<VariableLengthContainer>(type);
+    encounter<VariableLengthContainer>(type, AutomaticallyDetermineDeclaration);
 }
 
 void ExpressionVisitor::visitTuple(TupleAst* node) {
     AstDefaultVisitor::visitTuple(node);
     AbstractType::Ptr type = typeObjectForIntegralType<AbstractType>("tuple", m_ctx);
-    encounterDeclaration(0);
-    encounter(type);
+    encounter(type, AutomaticallyDetermineDeclaration);
 }
 
 void ExpressionVisitor::visitIfExpression(IfExpressionAst* node)
@@ -578,8 +566,7 @@ void ExpressionVisitor::visitSet(SetAst* node)
             type->addContentType(contentVisitor.lastType());
         }
     }
-    encounterDeclaration(0);
-    encounter<VariableLengthContainer>(type);
+    encounter<VariableLengthContainer>(type, AutomaticallyDetermineDeclaration);
 }
 
 void ExpressionVisitor::visitDict(DictAst* node)
@@ -599,8 +586,7 @@ void ExpressionVisitor::visitDict(DictAst* node)
             type->addKeyType(keyVisitor.lastType());
         }
     }
-    encounterDeclaration(0);
-    encounter<VariableLengthContainer>(type);
+    encounter<VariableLengthContainer>(type, AutomaticallyDetermineDeclaration);
 }
 
 void ExpressionVisitor::visitNumber(Python::NumberAst* number)
@@ -612,15 +598,13 @@ void ExpressionVisitor::visitNumber(Python::NumberAst* number)
     else {
         type = typeObjectForIntegralType<AbstractType>("float", m_ctx);
     }
-    encounterDeclaration(0);
-    encounter(type);
+    encounter(type, AutomaticallyDetermineDeclaration);
 }
 
 void ExpressionVisitor::visitString(Python::StringAst* )
 {
-    AbstractType::Ptr type = typeObjectForIntegralType<AbstractType>("string", m_ctx);
-    encounterDeclaration(0);
-    encounter(type);
+    StructureType::Ptr type = typeObjectForIntegralType<StructureType>("string", m_ctx);
+    encounter(type, AutomaticallyDetermineDeclaration);
 }
 
 RangeInRevision nodeRange(Python::Ast* node)

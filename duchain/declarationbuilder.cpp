@@ -220,8 +220,9 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     // tells whether there's fitting declarations to update (update is not the same as re-open! one is for
     // code which uses the same variable twice, the other is for multiple passes of the parser)
     bool noFittingDeclaration = true;
-    if ( ! existingDeclarations.isEmpty() ) {
-        if ( Helper::resolveAliasDeclaration(existingDeclarations.last())->topContext() != topContext() ) {
+    if ( ! existingDeclarations.isEmpty() and existingDeclarations.last() ) {
+        Declaration* d = Helper::resolveAliasDeclaration(existingDeclarations.last());
+        if ( d and d->topContext() != topContext() ) {
             inSameTopContext = false;
         }
         if ( dynamic_cast<T*>(existingDeclarations.last()) ) {

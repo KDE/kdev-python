@@ -200,12 +200,12 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
                 openDeclarationInternal(d);
                 d->setRange(editorFindRange(rangeNode, rangeNode));
                 declarationOpened = true;
+                setEncountered(d);
+                dec = d;
             }
             else {
                 kDebug() << "Not opening previously existing declaration because it's in another top context";
             }
-            setEncountered(d);
-            dec = d;
         }
         else if ( fitting && ! invalidType ) {
            remainingDeclarations << fitting;

@@ -378,7 +378,7 @@ Declaration* DeclarationBuilder::findDeclarationInContext(QStringList dottedName
                                                                             CursorInRevision::invalid(), 0, DUContext::DontSearchInParent);
         // break if the list of identifiers is not yet totally worked through and no declaration with an internal context was found
         if ( declarations.isEmpty() || ( ! declarations.first()->internalContext() && currentIdentifier != dottedNameIdentifier.last() ) ) {
-            kWarning() << "Declaration not found: " << dottedNameIdentifier << "in top context" << ctx->url().toUrl().path();
+            kDebug() << "Declaration not found: " << dottedNameIdentifier << "in top context" << ctx->url().toUrl().path();
             return 0;
         }
         else {
@@ -495,7 +495,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
     lock.unlock();
     Declaration* resultingDeclaration = 0;
     if ( ! moduleInfo.first.isValid() ) {
-        kWarning() << "invalid or non-existent URL:" << moduleInfo;
+        kDebug() << "invalid or non-existent URL:" << moduleInfo;
         if ( createProblem != DontCreateProblems ) {
             KDevelop::Problem *p = new KDevelop::Problem();
             p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange())); // TODO ok?
@@ -832,7 +832,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
                 lock.unlock();
             }
             else {
-                kWarning() << "Arguments size mismatch, not updating type" << parameters << node->arguments;
+                kDebug() << "Arguments size mismatch, not updating type" << parameters << node->arguments;
             }
         }
     }
@@ -1023,7 +1023,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             AbstractType::Ptr type = checkPreviousAttributes.lastType();
             
             if ( ! parentObjectDeclaration ) {
-                kWarning() << "No declaration for attribute base, aborting creation of attribute";
+                kDebug() << "No declaration for attribute base, aborting creation of attribute";
                 continue;
             }
             // if foo is a class, this is like foo.bar = 3
@@ -1043,7 +1043,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                 kDebug() << "... ok!";
             }
             if ( ! internal ) {
-                kWarning() << "No internal context for structure type, aborting creation of attribute declaration";
+                kDebug() << "No internal context for structure type, aborting creation of attribute declaration";
                 continue;
             }
             kDebug() << "Fine, got an internal context.";

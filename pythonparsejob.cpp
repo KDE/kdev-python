@@ -102,6 +102,8 @@ void ParseJob::run()
     LanguageSupport* lang = python();
     ILanguage* ilang = lang->language();
     
+    qDebug() << " ====> PARSING ====> parsing file " << m_url.path() << "; has priority" << parsePriority();
+    
     if ( !python() || !python()->language()) {
         kWarning() << "Language support is NULL";
         return abortJob();
@@ -139,7 +141,6 @@ void ParseJob::run()
         
 //         Q_ASSERT(KDevelop::ICore::self()->languageController()->backgroundParser()->isQueued(m_url));
 //         int ownPriority = KDevelop::ICore::self()->languageController()->backgroundParser()->priorityForDocument(m_url);
-        qDebug() << " ====> PARSING ====> " << m_url << "(priority" << parsePriority() << ")";
         
         QSharedPointer<PythonEditorIntegrator> editor = QSharedPointer<PythonEditorIntegrator>(new PythonEditorIntegrator());
         editor->setParseSession(m_session);
@@ -162,7 +163,7 @@ void ParseJob::run()
         
         if ( abortRequested() )
             return abortJob();
-        qDebug() << "Document needs update because of unresolved identifiers: " << needsReparse;
+        kDebug() << "Document needs update because of unresolved identifiers: " << needsReparse;
         if ( needsReparse ) {
             bool dependencyInQueue = false;
             foreach ( const KUrl& url, builder.m_unresolvedImports ) {

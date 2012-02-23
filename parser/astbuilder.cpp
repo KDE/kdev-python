@@ -111,6 +111,8 @@ QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
 
 CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
 {
+    qDebug() << " ====> AST     ====>     building abstract syntax tree for " << filename.path();
+    
     Py_NoSiteFlag = 1;
     
     QPair<QString, int> hacked = fileHeaderHack(contents, filename);
@@ -136,9 +138,9 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     
     PyObject *exception, *value, *backtrace;
     PyErr_Fetch(&exception, &value, &backtrace);
-    kDebug() << "Errors before starting parser:";
-    PyObject_Print(value, stderr, Py_PRINT_RAW);
-    kDebug();
+//     kDebug() << "Errors before starting parser:";
+//     PyObject_Print(value, stderr, Py_PRINT_RAW);
+//     kDebug();
     mod_ty syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);
 
     if ( ! syntaxtree ) {

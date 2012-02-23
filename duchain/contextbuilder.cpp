@@ -72,16 +72,14 @@ ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node
         }
     }
     if (updateContext) {
-        qDebug() << "re-compiling" << url.str();
-        qDebug() << "*******************************************";
+        qDebug() << " ====> DUCHAIN ====>     rebuilding duchain for" << url.str() << "(was built before)";
         DUChainWriteLocker lock(DUChain::lock());
         Q_ASSERT(updateContext->type() == DUContext::Global);
         updateContext->clearImportedParentContexts();
         updateContext->parsingEnvironmentFile()->clearModificationRevisions();
         updateContext->clearProblems();
     } else {
-        kDebug() << "compiling" << url.str();
-//         DUChain::self()->updateContextForUrl(currentlyParsedDocument(), TopDUContext::AllDeclarationsContextsAndUses, 0, 5);
+        qDebug() << " ====> DUCHAIN ====>     building duchain for" << url.str();
     }
     m_isScheduledForReparsing = false;
     return ContextBuilderBase::build(url, node, updateContext);

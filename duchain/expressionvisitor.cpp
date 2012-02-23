@@ -211,7 +211,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
         accessingAttributeOfType.append(lastType().cast<StructureType>());
     }
     else {
-        kWarning() << "Unsupported attribute access method";
+        kDebug() << "Warning: Unsupported attribute access method";
         return unknownTypeEncountered();
     }
     
@@ -288,7 +288,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
     kDebug() << "function being called: " << v.lastDeclaration();
     Declaration* actualDeclaration = 0;
     if ( ! v.m_isAlias ) {
-        kWarning() << "non-function / structure type is being called";
+        kDebug() << "non-function / structure type is being called";
     }
     else {
         actualDeclaration = v.lastDeclaration().data();

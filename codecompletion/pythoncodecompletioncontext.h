@@ -62,8 +62,8 @@ public:
     QList<ImportFileItem*> includeFileItems(QList<KUrl> searchPaths);
     QList<ImportFileItem*> includeFileItemsForSubmodule(QString submodule);
     
-    QList<CompletionTreeItemPointer> getCompletionItemsForType(AbstractType::Ptr type, DeclarationPointer declaration);
-    QList<CompletionTreeItemPointer> getCompletionItemsForOneType(AbstractType::Ptr type, DeclarationPointer declaration);
+    QList<CompletionTreeItemPointer> getCompletionItemsForType(AbstractType::Ptr type);
+    QList<CompletionTreeItemPointer> getCompletionItemsForOneType(AbstractType::Ptr type);
     
     QList<CompletionTreeItemPointer> declarationListToItemList(QList<DeclarationDepthPair> declarations, int maxDepth = 0);
     

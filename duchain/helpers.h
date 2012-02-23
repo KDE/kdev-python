@@ -78,7 +78,7 @@ public:
     * @param context TopContext for finding the declarations for types
     * @return list of contexts which were found
     **/
-    static QList<DUContext*> inernalContextsForClass(KDevelop::StructureType::Ptr klassType, TopDUContext* context, int depth = 0);
+    static QList<DUContext*> internalContextsForClass(KDevelop::StructureType::Ptr klassType, TopDUContext* context, int depth = 0);
     
     /**
         * @brief Resolve the given declaration if it is an alias declaration.

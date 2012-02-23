@@ -286,7 +286,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             lock.unlock();
             if ( v->lastType() ) {
                 kDebug() << v->lastType()->toString();
-                items = getCompletionItemsForType(v->lastType(), v->lastDeclaration());
+                items = getCompletionItemsForType(v->lastType());
             }
             else {
                 kWarning() << "Did not receive a type from expression visitor! Not offering autocompletion.";
@@ -402,7 +402,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
     return items;
 }
 
-QList< CompletionTreeItemPointer > PythonCodeCompletionContext::getCompletionItemsForType(AbstractType::Ptr type, DeclarationPointer declaration)
+QList< CompletionTreeItemPointer > PythonCodeCompletionContext::getCompletionItemsForType(AbstractType::Ptr type)
 {
     QList<CompletionTreeItemPointer> result;
     type = Helper::resolveType(type);
@@ -411,29 +411,28 @@ QList< CompletionTreeItemPointer > PythonCodeCompletionContext::getCompletionIte
         int count = unsure->typesSize();
         kDebug() << "Getting completion items for " << count << "types of unsure type " << unsure;
         for ( int i = 0; i < count; i++ ) {
-            result.append(getCompletionItemsForOneType(unsure->types()[i].abstractType(), declaration));
+            result.append(getCompletionItemsForOneType(unsure->types()[i].abstractType()));
         }
     }
     else {
-        result = getCompletionItemsForOneType(type, declaration);
+        result = getCompletionItemsForOneType(type);
     }
     return result;
 }
 
-QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItemsForOneType(AbstractType::Ptr type, DeclarationPointer declaration)
+QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItemsForOneType(AbstractType::Ptr type)
 {
     type = Helper::resolveType(type);
-    if ( declaration and type->whichType() == AbstractType::TypeStructure ) {
+    if ( type->whichType() == AbstractType::TypeStructure ) {
         // find properties of class declaration
         TypePtr<StructureType> cls = StructureType::Ptr::dynamicCast(type);
         kDebug() << "Finding completion items for class type";
-        kDebug() << cls->internalContext(m_context->topContext()) << cls->internalContext(declaration->context()->topContext());
         if ( ! cls || ! cls->internalContext(m_context->topContext()) ) {
             kWarning() << "No class type available, no completion offered";
             kDebug() << cls;
             return QList<CompletionTreeItemPointer>();
         }
-        QList<DUContext*> searchContexts = Helper::inernalContextsForClass(cls, m_context->topContext());
+        QList<DUContext*> searchContexts = Helper::internalContextsForClass(cls, m_context->topContext());
         QList<DeclarationDepthPair> keepDeclarations;
         foreach ( const DUContext* currentlySearchedContext, searchContexts ) {
             QList<DeclarationDepthPair> declarations = currentlySearchedContext->allDeclarations(CursorInRevision::invalid(), m_context->topContext(), false);
@@ -443,7 +442,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
             url.cleanPath();
             QString u = url.path();
             foreach ( DeclarationDepthPair current, declarations ) {
-                if ( current.first->context() != DUChain::self()->chainForDocument(u) ) {
+                if ( current.first->context() != DUChain::self()->chainForDocument(url) ) {
                     kDebug() << "Keeping declaration" << current.first->toString();
                     keepDeclarations.append(current);
                 }
@@ -453,10 +452,6 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
             }
         }
         return declarationListToItemList(keepDeclarations);
-    }
-    
-    if ( type->whichType() == AbstractType::TypeIntegral ) {
-        kDebug() << "Finding completion items for integral type";
     }
     
     QList<CompletionTreeItemPointer> items;

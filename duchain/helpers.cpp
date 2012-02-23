@@ -150,7 +150,7 @@ Declaration* Helper::declarationForName(NameAst* /*ast*/, const QualifiedIdentif
     return declaration;
 }
 
-QList< DUContext* > Helper::inernalContextsForClass(StructureType::Ptr klassType, TopDUContext* context, int depth)
+QList< DUContext* > Helper::internalContextsForClass(StructureType::Ptr klassType, TopDUContext* context, int depth)
 {
     QList<DUContext*> searchContexts;
     if ( ! klassType ) {
@@ -167,7 +167,7 @@ QList< DUContext* > Helper::inernalContextsForClass(StructureType::Ptr klassType
             kDebug() << "Base class type: " << baseClassType;
             // recursive call, because the base class will have more base classes eventually
             if ( depth < 10 ) {
-                searchContexts.append(Helper::inernalContextsForClass(baseClassType, context, depth + 1));
+                searchContexts.append(Helper::internalContextsForClass(baseClassType, context, depth + 1));
             }
         }
     }

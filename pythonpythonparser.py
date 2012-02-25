@@ -7,6 +7,11 @@
 # Licensed under the GNU GPL
 #
 
+# This script once was used for parsing documents; that implementation is long gone.
+# It's just kept for looking at the AST created by some code quickly; you can do this:
+# echo 'foo = baz.bar(3, "str")' |./pythonpythonparser.py
+# or similar to quickly see the AST for that code.
+
 import ast
 from xml.dom.minidom import Document
 from lxml import etree

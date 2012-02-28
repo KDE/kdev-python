@@ -520,7 +520,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
         }
         KDevelop::ICore::self()->languageController()->backgroundParser()
                                    ->addDocument(moduleInfo.first, TopDUContext::AllDeclarationsContextsAndUses, m_ownPriority - 1,
-                                                 0, ParseJob::RespectsSequentialProcessing);
+                                                 0/*, ParseJob::RespectsSequentialProcessing | ParseJob::RequiresSequentialProcessing*/);
 //         KDevelop::ICore::self()->languageController()->backgroundParser()->parseDocuments();
 //         DUChain::self()->updateContextForUrl(IndexedString(moduleInfo.first), TopDUContext::AllDeclarationsContextsAndUses, 0, m_ownPriority - 1);
         return 0;

@@ -28,13 +28,14 @@
 #include <language/duchain/builders/abstractdeclarationbuilder.h>
 #include <language/duchain/classfunctiondeclaration.h>
 #include <language/duchain/builders/abstracttypebuilder.h>
+#include <language/duchain/types/unsuretype.h>
+#include <language/duchain/ducontext.h>
 #include <interfaces/iproject.h>
 #include <interfaces/icore.h>
 #include <interfaces/iprojectcontroller.h>
 
 #include "contextbuilder.h"
 #include "typebuilder.h"
-#include <language/duchain/types/unsuretype.h>
 
 namespace Python
 {

@@ -103,7 +103,7 @@ void ParseJob::run()
     LanguageSupport* lang = python();
     ILanguage* ilang = lang->language();
     
-    qDebug() << " ====> PARSING ====> parsing file " << m_url.path() << "; has priority" << parsePriority();
+    qDebug() << " ====> PARSING ====> parsing file " << m_url.path() << "; has priority [!]"; // << parsePriority();
     
     if ( !python() || !python()->language()) {
         kWarning() << "Language support is NULL";
@@ -146,7 +146,7 @@ void ParseJob::run()
         QSharedPointer<PythonEditorIntegrator> editor = QSharedPointer<PythonEditorIntegrator>(new PythonEditorIntegrator());
         editor->setParseSession(m_session);
         DeclarationBuilder builder( editor.data() );
-        builder.m_ownPriority = parsePriority();
+        builder.m_ownPriority = 0 /*parsePriority()*/;
         builder.m_currentlyParsedDocument = filename;
         builder.m_futureModificationRevision = contents().modification;
         
@@ -178,8 +178,8 @@ void ParseJob::run()
                 DUChainWriteLocker lock(DUChain::lock());
                 m_duContext->setFeatures(minimumFeatures());
                 KDevelop::ICore::self()->languageController()->backgroundParser()->addDocument(document().toUrl(), 
-                                     static_cast<TopDUContext::Features>(minimumFeatures() | Rescheduled), parsePriority(),
-                                     0, ParseJob::RequiresSequentialProcessing);
+                                     static_cast<TopDUContext::Features>(minimumFeatures() | Rescheduled), /*parsePriority()*/ 0,
+                                     0/*, ParseJob::RequiresSequentialProcessing | ParseJob::RespectsSequentialProcessing*/);
             }
             else {
                 qDebug() << "Document will *not* be reparsed";

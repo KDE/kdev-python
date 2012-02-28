@@ -9,7 +9,7 @@ enable_testing()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${kdevpython_SOURCE_DIR}/cmake/)
 
 find_package(KDE4 REQUIRED)
-find_package(KDevPlatform 1.2.60 REQUIRED)
+find_package(KDevPlatform 1.3.60 REQUIRED)
 
 set(CMAKE_CXX_FLAGS_DEBUG "-Wfatal-errors -Wall")
 

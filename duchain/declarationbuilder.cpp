@@ -372,18 +372,23 @@ Declaration* DeclarationBuilder::findDeclarationInContext(QStringList dottedName
 {
     DUChainReadLocker lock(DUChain::lock());
     DUContext* currentContext = ctx;
-    Q_ASSERT(currentContext);
+    // TODO make this a bit faster, it wastes time
     Declaration* lastAccessedDeclaration = 0;
+    int i = 0;
+    int identifierCount = dottedNameIdentifier.length();
     foreach ( QString currentIdentifier, dottedNameIdentifier ) {
+        Q_ASSERT(currentContext);
+        i++;
         QList<Declaration*> declarations = currentContext->findDeclarations(QualifiedIdentifier(currentIdentifier).first(),
-                                                                            CursorInRevision::invalid(), 0, DUContext::DontSearchInParent);
-        // break if the list of identifiers is not yet totally worked through and no declaration with an internal context was found
-        if ( declarations.isEmpty() || ( ! declarations.first()->internalContext() && currentIdentifier != dottedNameIdentifier.last() ) ) {
+                                                                            CursorInRevision::invalid(), 0, DUContext::NoFiltering);
+        // break if the list of identifiers is not yet totally worked through and no
+        // declaration with an internal context was found
+        if ( declarations.isEmpty() or ( not declarations.last()->internalContext() and identifierCount != i ) ) {
             kDebug() << "Declaration not found: " << dottedNameIdentifier << "in top context" << ctx->url().toUrl().path();
             return 0;
         }
         else {
-            lastAccessedDeclaration = declarations.first();
+            lastAccessedDeclaration = declarations.last();
             currentContext = lastAccessedDeclaration->internalContext();
         }
     }

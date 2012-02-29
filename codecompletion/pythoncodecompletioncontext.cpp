@@ -269,7 +269,11 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
         QList<DeclarationDepthPair> remainingDeclarations;
         foreach ( DeclarationDepthPair d, declarations ) {
-            if ( d.first && dynamic_cast<ClassDeclaration*>(d.first) ) {
+            Declaration* r = Helper::resolveAliasDeclaration(d.first);
+            if ( r and r->identifier().identifier().str().contains("__kdevpythondocumentation_builtin") ) {
+                continue;
+            }
+            if ( r && dynamic_cast<ClassDeclaration*>(r) ) {
                 remainingDeclarations << d;
             }
         }
@@ -352,6 +356,9 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
         foreach ( DeclarationDepthPair d, declarations ) {
             if ( d.first and d.first->context()->type() == DUContext::Class ) {
+                declarations.removeAll(d);
+            }
+            if ( d.first and d.first->identifier().identifier().str().contains("__kdevpythondocumentation_builtin") ) {
                 declarations.removeAll(d);
             }
         }

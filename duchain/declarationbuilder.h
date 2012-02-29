@@ -96,15 +96,44 @@ protected:
         DontCreateProblems
     };
     
-    Declaration* createModuleImportDeclaration(QString dottedName, Python::Identifier* declarationIdentifier,
+    /**
+     * @brief Create a declaration for an import statement.
+     *
+     * @param dottedName The dotted name of the module, like "random.randint".
+     * @param declarationIdentifier provides the name and range
+     * @param rangeNode can be used to override the declarationIdentifier's range, if required. Defaults to 0.
+     * @param createProblem whether or not to create DUChain problems Defaults to CreateProblems.
+     * @return :Declaration* the declaration created, or 0 if none was found.
+     **/
+    Declaration* createModuleImportDeclaration(QString dottedName, QString declarationName, Python::Identifier* declarationIdentifier,
                                                Python::Ast* rangeNode = 0, ProblemPolicy createProblem = CreateProblems);
+    /**
+     * @brief Create a tree of declarations for the specified list.
+     * Give the list ["foo","bar","baz"], and you'll get a declaration "foo" containing "bar" in its internal context,
+     * "bar" containing "baz" etc.
+     * This is used in import handling.
+     * This function automatically updates existing declaration trees to the maximum level possible! Thus,
+     * if you call this with ["foo", "bar"], then ["foo", "baz"], "baz" will be added to "foo".
+     * 
+     * @warning The DUChain must not be locked when this is called.
+     * 
+     * @param nameComponents the list of names to create declarations for
+     * @param declarationIdentifier provides the name and range
+     * @param innerCtx the internalContext() to set on the last created declaration. Either this or aliasDeclaration must be provided!
+     * @param aliasDeclaration the declaration to alias with the last created declaration
+     * @param rangeNode can be used to override the declarationIdentifier's range, if required. Defaults to 0.
+     * @return :Declaration* the top level declaration created
+     **/
+    Declaration* createDeclarationTree(const QStringList& nameComponents, Identifier* declarationIdentifier,
+                                       const ReferencedTopDUContext& innerCtx, Declaration* aliasDeclaration = 0,
+                                       const RangeInRevision& range = RangeInRevision::invalid());
     
     /**
      * @brief Find a declaration specified by "foo.bar.baz" in the given top context.
      *
      * @param dottedNameIdentifier string list of module names, starting with the most general one.
      * @param ctx top context to search
-     * @return :Declaration* declaration if found, 0x0 otherwise.
+     * @return :Declaration* declaration if found, 0 otherwise.
      * 
      * @note The DUChain must not be locked.
      **/

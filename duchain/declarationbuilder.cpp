@@ -399,6 +399,7 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
 {
     Python::AstDefaultVisitor::visitImportFrom(node);
     QString moduleName;
+    QString declarationName;
     foreach ( AliasAst* name, node->names ) {
         if ( node->module ) {
             moduleName = node->module->value + "." + name->name->value;
@@ -407,16 +408,19 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
             moduleName = "." + name->name->value;
         }
         Identifier* declarationIdentifier = 0;
+        declarationName = "";
         if ( name->asName ) {
             declarationIdentifier = name->asName;
+            declarationName = name->asName->value;
         }
         else {
             declarationIdentifier = name->name;
+            declarationName = name->name->value;
         }
-        Declaration* success = createModuleImportDeclaration(moduleName, declarationIdentifier, 0, DontCreateProblems);
+        Declaration* success = createModuleImportDeclaration(moduleName, declarationName, declarationIdentifier, 0, DontCreateProblems);
         if ( not success and node->module ) {
-            moduleName = node->module->value + ".__init__." + name->name->value;
-            createModuleImportDeclaration(moduleName, declarationIdentifier);
+            QString modifiedModuleName = node->module->value + ".__init__." + name->name->value;
+            createModuleImportDeclaration(modifiedModuleName, declarationName, declarationIdentifier);
         }
     }
 }
@@ -477,14 +481,129 @@ void DeclarationBuilder::visitImport(ImportAst* node)
         QString moduleName = name->name->value;
         // use alias if available, name otherwise
         Identifier* declarationIdentifier = name->asName ? name->asName : name->name;
-        createModuleImportDeclaration(moduleName, declarationIdentifier);
+        createModuleImportDeclaration(moduleName, declarationIdentifier->value, declarationIdentifier);
     }
 }
 
-Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedName, Identifier* declarationIdentifier, Ast* rangeNode, ProblemPolicy createProblem)
+Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameComponents, Identifier* declarationIdentifier,
+                                       const ReferencedTopDUContext& innerCtx, Declaration* aliasDeclaration,
+                                       const RangeInRevision& range)
 {
-    QPair<KUrl, QStringList> moduleInfo = findModulePath(dottedName);
-    kDebug() << dottedName;
+    Q_ASSERT( ( innerCtx.data() or aliasDeclaration ) && "exactly one of innerCtx or aliasDeclaration must be provided");
+    Q_ASSERT( ( not innerCtx.data() or not aliasDeclaration ) && "exactly one of innerCtx or aliasDeclaration must be provided");
+    
+    kDebug() << "creating declaration tree for" << nameComponents;
+    
+    Declaration* lastDeclaration = 0;
+    int depth = 0;
+    
+    // check for already existing trees to update
+    for ( int i = nameComponents.length() - 1; i >= 0; i-- ) {
+        QStringList currentName;
+        for ( int j = 0; j < i; j++ ) {
+            currentName.append(nameComponents.at(j));
+        }
+        lastDeclaration = findDeclarationInContext(currentName, topContext());
+        if ( lastDeclaration and lastDeclaration->range() < range ) {
+            depth = i;
+            break;
+        }
+    }
+    
+    DUContext* extendingPreviousImportCtx = 0;
+    QStringList remainingNameComponents;
+    bool injectingContext = false;
+    if ( lastDeclaration and lastDeclaration->internalContext() ) {
+        kDebug() << "Found existing import statement while creating declaration for " << declarationIdentifier->value;
+        for ( int i = depth; i < nameComponents.length(); i++ ) {
+            remainingNameComponents.append(nameComponents.at(i));
+        }
+        extendingPreviousImportCtx = lastDeclaration->internalContext();
+        injectContext(extendingPreviousImportCtx);
+        injectingContext = true;
+    }
+    else {
+        remainingNameComponents = nameComponents;
+        extendingPreviousImportCtx = topContext();
+    }
+    
+    // now, proceed normally
+    QList<Declaration*> openedDeclarations;
+    QList<StructureType::Ptr> openedTypes;
+    QList<DUContext*> openedContexts;
+    
+    DUChainWriteLocker lock(DUChain::lock());
+    for ( int i = 0; i < remainingNameComponents.length(); i++ ) {
+        const QString& component = remainingNameComponents.at(i);
+        kDebug() << "creating context for " << component;
+        Identifier* temporaryIdentifier = new Identifier(component);
+        Declaration* d = 0;
+        StructureType::Ptr moduleType = StructureType::Ptr(new StructureType());
+        temporaryIdentifier->copyRange(declarationIdentifier);
+        temporaryIdentifier->endCol = temporaryIdentifier->startCol - 1;
+        openType(moduleType);
+        if ( i != remainingNameComponents.length() - 1 or not aliasDeclaration ) {
+            d = visitVariableDeclaration<Declaration>(temporaryIdentifier);
+            if ( d ) {
+                if ( topContext() != extendingPreviousImportCtx ) {
+                    d->setRange(RangeInRevision(extendingPreviousImportCtx->range().start, extendingPreviousImportCtx->range().start));
+                }
+                d->setAutoDeclaration(true);
+                currentContext()->createUse(d->ownIndex(), editorFindRange(declarationIdentifier, declarationIdentifier));
+            }
+        }
+        else {
+            AliasDeclaration* adecl = visitVariableDeclaration<AliasDeclaration>(temporaryIdentifier, range);
+            if ( adecl ) {
+                adecl->setAliasedDeclaration(aliasDeclaration);
+            }
+            d = adecl;
+        }
+        
+        openedContexts.append(openContext(declarationIdentifier, KDevelop::DUContext::Other));
+        openedDeclarations.append(d);
+        openedTypes.append(moduleType);
+        if ( i == remainingNameComponents.length() - 1 ) {
+            if ( innerCtx ) {
+                kDebug() << "adding imported context to inner declaration";
+                currentContext()->addImportedParentContext(innerCtx);
+            }
+            else if ( aliasDeclaration ) {
+                kDebug() << "setting alias declaration on inner declaration";
+            }
+        }
+        // TODO this sucks
+        currentContext()->setLocalScopeIdentifier(QualifiedIdentifier("__kdevpythonlanguagesupport_import_helper"));
+        delete temporaryIdentifier;
+    }
+    for ( int i = remainingNameComponents.length() - 1; i >= 0; i-- ) {
+        kDebug() << "closing context";
+        closeType();
+        closeContext();
+        Declaration* d = openedDeclarations.at(i);
+        if ( d and ( i != 0 or not aliasDeclaration ) ) {
+            openedTypes[i]->setDeclaration(d);
+            d->setType(openedTypes.at(i));
+            d->setInternalContext(openedContexts.at(i));
+        }
+    }
+    
+    if ( injectingContext ) {
+        closeInjectedContext();
+    }
+    
+    if ( ! openedDeclarations.isEmpty() ) {
+        return openedDeclarations.last();
+    }
+    else return 0;
+}
+
+Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleName, QString declarationName,
+                                                               Identifier* declarationIdentifier,
+                                                               Ast* rangeNode, ProblemPolicy createProblem)
+{
+    QPair<KUrl, QStringList> moduleInfo = findModulePath(moduleName);
+    kDebug() << moduleName;
     RangeInRevision range(RangeInRevision::invalid());
     if ( rangeNode ) {
         range = rangeForNode(rangeNode, false);
@@ -507,7 +626,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
             p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange())); // TODO ok?
             p->setSource(KDevelop::ProblemData::SemanticAnalysis);
             p->setSeverity(KDevelop::ProblemData::Warning);
-            p->setDescription(i18n("Module \"%1\" not found", dottedName));
+            p->setDescription(i18n("Module \"%1\" not found", moduleName));
             {
                 DUChainWriteLocker wlock(DUChain::lock());
                 ProblemPointer ptr(p);
@@ -533,89 +652,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
     if ( moduleInfo.second.isEmpty() ) {
         // import the whole module
         kDebug() << "Got module, importing it" << declarationIdentifier->value;
-        Declaration* lastDeclaration = 0;
-        QStringList nameComponents = declarationIdentifier->value.split('.');
-        int depth = 0;
-        
-        for ( int i = nameComponents.length() - 1; i >= 0; i-- ) {
-            QStringList currentName;
-            for ( int j = 0; j < i; j++ ) {
-                currentName.append(nameComponents.at(j));
-            }
-            lastDeclaration = findDeclarationInContext(currentName, topContext());
-            if ( lastDeclaration and lastDeclaration->range() < range ) {
-                depth = i;
-                break;
-            }
-        }
-        
-        DUContext* extendingPreviousImportCtx = 0;
-        QStringList remainingNameComponents;
-        bool injectingContext = false;
-        if ( lastDeclaration and lastDeclaration->internalContext() ) {
-            kDebug() << "Found existing import statement while creating declaration for " << declarationIdentifier->value;
-            for ( int i = depth; i < nameComponents.length(); i++ ) {
-                remainingNameComponents.append(nameComponents.at(i));
-            }
-            extendingPreviousImportCtx = lastDeclaration->internalContext();
-            injectContext(extendingPreviousImportCtx);
-            injectingContext = true;
-        }
-        else {
-            remainingNameComponents = nameComponents;
-            extendingPreviousImportCtx = topContext();
-        }
-        
-        // now, proceed normally
-        QList<Declaration*> openedDeclarations;
-        QList<StructureType::Ptr> openedTypes;
-        QList<DUContext*> openedContexts;
-//         bool extendingPreviousImports = true;
-        
-        DUChainWriteLocker lock(DUChain::lock());
-        for ( int i = 0; i < remainingNameComponents.length(); i++ ) {
-            const QString& component = remainingNameComponents.at(i);
-            kDebug() << "creating context for " << component;
-            Identifier* temporaryIdentifier = new Identifier(component);
-            Declaration* d = 0;
-            StructureType::Ptr moduleType;
-            moduleType = StructureType::Ptr(new StructureType());
-            temporaryIdentifier->copyRange(declarationIdentifier);
-            temporaryIdentifier->endCol = temporaryIdentifier->startCol - 1;
-            openType(moduleType);
-            d = visitVariableDeclaration<Declaration>(temporaryIdentifier);
-            delete temporaryIdentifier;
-            if ( d ) {
-                if ( topContext() != extendingPreviousImportCtx ) {
-                    d->setRange(RangeInRevision(extendingPreviousImportCtx->range().start, extendingPreviousImportCtx->range().start));
-                }
-                d->setAutoDeclaration(true);
-                currentContext()->createUse(d->ownIndex(), editorFindRange(declarationIdentifier, declarationIdentifier));
-            }
-            openedContexts.append(openContext(declarationIdentifier, KDevelop::DUContext::Other));
-            if ( i == remainingNameComponents.length() - 1 ) {
-                currentContext()->addImportedParentContext(moduleContext);
-            }
-            // TODO this sucks
-            currentContext()->setLocalScopeIdentifier(QualifiedIdentifier("__kdevpythonlanguagesupport_import_helper"));
-            openedDeclarations.append(d);
-            openedTypes.append(moduleType);
-        }
-        for ( int i = remainingNameComponents.length() - 1; i >= 0; i-- ) {
-            kDebug() << "closing context";
-            closeType();
-            closeContext();
-            Declaration* d = openedDeclarations.at(i);
-            if ( d ) {
-                openedTypes[i]->setDeclaration(d);
-                d->setType(openedTypes.at(i));
-                d->setInternalContext(openedContexts.at(i));
-            }
-        }
-        
-        if ( injectingContext ) {
-            closeInjectedContext();
-        }
+        resultingDeclaration = createDeclarationTree(declarationName.split("."), declarationIdentifier, moduleContext, 0, range);
     }
     else {
         // import a specific declaration from the given file
@@ -630,13 +667,14 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString dottedNam
             kDebug() << "Result: " << originalDeclaration;
             if ( originalDeclaration ) {
                 DUChainWriteLocker lock(DUChain::lock());
-                resultingDeclaration = visitVariableDeclaration<AliasDeclaration>(declarationIdentifier, range);
+                resultingDeclaration = createDeclarationTree(declarationName.split("."), declarationIdentifier, ReferencedTopDUContext(0), originalDeclaration);
+                /** DEBUG **/
                 if ( dynamic_cast<AliasDeclaration*>(resultingDeclaration) ) {
-                    static_cast<AliasDeclaration*>(resultingDeclaration)->setAliasedDeclaration(originalDeclaration);
                     kDebug() << "Resulting alias: " << resultingDeclaration->toString();
                 }
                 else
                     kWarning() << "import declaration is being overwritten!";
+                /** END DEBUG **/
             }
             else if ( createProblem != DontCreateProblems ) {
                 KDevelop::Problem *p = new KDevelop::Problem();

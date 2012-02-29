@@ -181,9 +181,13 @@ QList< DUContext* > Helper::internalContextsForClass(StructureType::Ptr klassTyp
         return searchContexts;
     }
     searchContexts << klassType->internalContext(context);
-    Declaration* decl = klassType->declaration(context);
+    Declaration* decl = Helper::resolveAliasDeclaration(klassType->declaration(context));
     ClassDeclaration* klass = dynamic_cast<ClassDeclaration*>(decl);
-    kDebug() << "Got class Declaration:" << klass;
+    kDebug() << "Got class Declaration:" << klass << decl;
+    if ( decl ) {
+        kDebug() << decl->toString();
+    }
+    kDebug() << klassType->internalContext(context)->allDeclarations(CursorInRevision::invalid(), context).length();
     if ( klass ) {
         kDebug() << "Base classes: " << klass->baseClassesSize();
         FOREACH_FUNCTION ( const BaseClassInstance& base, klass->baseClasses ) {

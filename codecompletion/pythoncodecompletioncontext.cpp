@@ -435,7 +435,10 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
         QList<DUContext*> searchContexts = Helper::internalContextsForClass(cls, m_context->topContext());
         QList<DeclarationDepthPair> keepDeclarations;
         foreach ( const DUContext* currentlySearchedContext, searchContexts ) {
+            kDebug() << "searching context " << currentlySearchedContext->scopeIdentifier() << "for autocompletion items";
             QList<DeclarationDepthPair> declarations = currentlySearchedContext->allDeclarations(CursorInRevision::invalid(), m_context->topContext(), false);
+            kDebug() << "found" << declarations.length() << "declarations";
+            
             // filter out those which are builtin functions, and those which were imported; we don't want those here
             // TODO rework this, it's maybe not the most elegant solution possible
             KUrl url = KUrl(KStandardDirs::locate("data", "kdevpythonsupport/documentation_files/builtindocumentation.py"));

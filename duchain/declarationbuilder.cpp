@@ -644,7 +644,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
         }
         KDevelop::ICore::self()->languageController()->backgroundParser()
                                    ->addDocument(moduleInfo.first, TopDUContext::AllDeclarationsContextsAndUses, m_ownPriority - 1,
-                                                 0/*, ParseJob::RespectsSequentialProcessing | ParseJob::RequiresSequentialProcessing*/);
+                                                 0, ParseJob::RespectsSequentialProcessing);
 //         KDevelop::ICore::self()->languageController()->backgroundParser()->parseDocuments();
 //         DUChain::self()->updateContextForUrl(IndexedString(moduleInfo.first), TopDUContext::AllDeclarationsContextsAndUses, 0, m_ownPriority - 1);
         return 0;

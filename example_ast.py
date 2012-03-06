@@ -17,14 +17,14 @@ def yieldTest():
     yield "foo"
     
 def my_func():
-    my_var_01 = 5
-    my_var_02 = 1
-    my_var_03 = 12
-    my_var_04 = 12
-    my_var_05 = 12
-    my_var_06 = 2
-    my_var_07 = 2
-    my_var_08 = 3
+    my_var_04 = 5
+    my_var_01 = 1
+    my_var_07 = 12
+    my_var_07 = 12
+    my_var_07 = 12
+    more_vars = 2
+    my_var_02 = 2
+    my_var_03 = 3
 
 class cls():
     def myfunc(self):

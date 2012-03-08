@@ -373,8 +373,7 @@ void ContextBuilder::visitCode(CodeAst* node) {
             m_unresolvedImports.append(doc_url);
             KDevelop::ICore::self()->languageController()->backgroundParser()
                                    ->addDocument(doc_url, KDevelop::TopDUContext::AllDeclarationsContextsAndUses,
-                                                 BackgroundParser::BestPriority);
-//             DUChain::self()->updateContextForUrl(doc, TopDUContext::AllDeclarationsContextsAndUses, 0, BackgroundParser::BestPriority);
+                                                 BackgroundParser::BestPriority, 0, ParseJob::FullSequentialProcessing);
         }
         else {
             kDebug() << "Adding builtin function context...";

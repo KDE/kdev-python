@@ -219,17 +219,17 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     bool inSameTopContext = true;
     // tells whether there's fitting declarations to update (update is not the same as re-open! one is for
     // code which uses the same variable twice, the other is for multiple passes of the parser)
-    bool noFittingDeclaration = true;
+    bool haveFittingDeclaration = false;
     if ( ! existingDeclarations.isEmpty() and existingDeclarations.last() ) {
         Declaration* d = Helper::resolveAliasDeclaration(existingDeclarations.last());
         if ( d and d->topContext() != topContext() ) {
             inSameTopContext = false;
         }
         if ( dynamic_cast<T*>(existingDeclarations.last()) ) {
-            noFittingDeclaration = false;
+            haveFittingDeclaration = true;
         }
     }
-    if ( currentContext() && currentContext()->type() == DUContext::Class && noFittingDeclaration ) {
+    if ( currentContext() && currentContext()->type() == DUContext::Class && ! haveFittingDeclaration ) {
         kDebug() << "Creating class member declaration for " << node->value << node->startLine << ":" << node->startCol;
         kDebug() << "Context type: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
         if ( ! dec ) {
@@ -241,7 +241,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         }
         dec->setType(lastType());
         dec->setKind(KDevelop::Declaration::Instance);
-    } else if ( noFittingDeclaration ) {
+    } else if ( ! haveFittingDeclaration ) {
         RangeInRevision range = editorFindRange(rangeNode, rangeNode);
         kDebug() << "Creating variable declaration for " << range;
         kDebug() << "which has type" << ( dec && dec->abstractType() ? dec->abstractType()->toString() : "none" );
@@ -1256,9 +1256,9 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     if ( isMemberFunction && currentType<FunctionType>()->arguments().length() && m_firstAttributeDeclaration.data() ) {
         kDebug() << "Changing self argument type";
         kDebug() << "Arguments left: " << currentType<FunctionType>()->arguments().count();
+        DUChainWriteLocker lock(DUChain::lock());
         currentType<FunctionType>()->removeArgument(0);
         kDebug() << "Arguments left: " << currentType<FunctionType>()->arguments().count();
-        DUChainWriteLocker lock(DUChain::lock());
         m_firstAttributeDeclaration->setAbstractType(eventualParentDeclaration->abstractType());
 //         hasFirstArgument = true;
     }

@@ -21,6 +21,7 @@
 #define PYTHONFUNCTIONDECLARATION_H
 
 #include <language/duchain/functiondeclaration.h>
+#include <language/duchain/classfunctiondeclaration.h>
 #include <language/duchain/indexedstring.h>
 
 #include "pythonduchainexport.h"
@@ -84,6 +85,67 @@ public:
     
 private:
     DUCHAIN_DECLARE_DATA(FunctionDeclaration);
+};
+
+
+
+
+KDEVPYTHONDUCHAIN_EXPORT DECLARE_LIST_MEMBER_HASH(ClassFunctionDeclarationData, m_decorators, Decorator);
+
+class KDEVPYTHONDUCHAIN_EXPORT ClassFunctionDeclarationData : public KDevelop::ClassFunctionDeclarationData
+{
+public:
+    ClassFunctionDeclarationData()
+        : KDevelop::ClassFunctionDeclarationData() 
+    {
+        initializeAppendedLists();
+    }
+
+    ClassFunctionDeclarationData(const ClassFunctionDeclarationData& rhs)
+        : KDevelop::ClassFunctionDeclarationData(rhs) 
+    {
+        initializeAppendedLists();
+        copyListsFrom(rhs);
+    }
+    
+    ~ClassFunctionDeclarationData() {
+        freeAppendedLists();
+    }
+
+    START_APPENDED_LISTS_BASE(ClassFunctionDeclarationData, KDevelop::ClassFunctionDeclarationData);
+    APPENDED_LIST_FIRST(ClassFunctionDeclarationData, Decorator, m_decorators);
+    END_APPENDED_LISTS(ClassFunctionDeclarationData, m_decorators);
+};
+    
+class KDEVPYTHONDUCHAIN_EXPORT ClassFunctionDeclaration : public KDevelop::ClassFunctionDeclaration
+{
+public:
+    ClassFunctionDeclaration(const ClassFunctionDeclaration &rhs);
+    ClassFunctionDeclaration(const KDevelop::RangeInRevision &range, KDevelop::DUContext *context);
+    ClassFunctionDeclaration(ClassFunctionDeclarationData &data);
+    ClassFunctionDeclaration(ClassFunctionDeclarationData &data, const KDevelop::RangeInRevision &range, KDevelop::DUContext *context);
+    ~ClassFunctionDeclaration();
+    
+    enum {
+        Identity = 127
+    };
+    
+    inline const Decorator* decorators() {
+        return d_func()->m_decorators();
+    };
+    
+    inline unsigned int decoratorsSize() {
+        return d_func()->m_decoratorsSize();
+    };
+    
+    inline void addDecorator(const Decorator& d) {
+        d_func_dynamic()->m_decoratorsList().insert(0, d);
+    }
+    
+    typedef DUChainPointer<ClassFunctionDeclaration> Ptr;
+    
+private:
+    DUCHAIN_DECLARE_DATA(ClassFunctionDeclaration);
 };
 
 } // namespace Python

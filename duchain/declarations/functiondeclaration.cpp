@@ -56,40 +56,4 @@ FunctionDeclaration::~FunctionDeclaration()
 {
 }
 
-
-DEFINE_LIST_MEMBER_HASH(ClassFunctionDeclarationData, m_decorators, Decorator);
-REGISTER_DUCHAIN_ITEM(ClassFunctionDeclaration);
-
-ClassFunctionDeclaration::ClassFunctionDeclaration(const ClassFunctionDeclaration& rhs)
-        : KDevelop::ClassFunctionDeclaration(*new ClassFunctionDeclarationData(*rhs.d_func()))
-{
-}
-
-ClassFunctionDeclaration::ClassFunctionDeclaration(const KDevelop::RangeInRevision& range, KDevelop::DUContext* context)
-        : KDevelop::ClassFunctionDeclaration(*new ClassFunctionDeclarationData, range, context)
-{
-    d_func_dynamic()->setClassId(this);
-    if (context) {
-        setContext(context);
-    }
-}
-
-ClassFunctionDeclaration::ClassFunctionDeclaration(ClassFunctionDeclarationData& data)
-        : KDevelop::ClassFunctionDeclaration(data)
-{
-}
-
-ClassFunctionDeclaration::ClassFunctionDeclaration(ClassFunctionDeclarationData& data, const KDevelop::RangeInRevision& range, KDevelop::DUContext* context)
-        : KDevelop::ClassFunctionDeclaration(data, range, context)
-{
-    if (context) {
-        setContext(context);
-    }
-}
-
-ClassFunctionDeclaration::~ClassFunctionDeclaration()
-{
-}
-
-
 }

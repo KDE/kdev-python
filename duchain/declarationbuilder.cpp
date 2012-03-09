@@ -1221,17 +1221,10 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     DeclarationPointer eventualParentDeclaration(currentDeclaration()); // an eventual containing class declaration
     FunctionType::Ptr type;
     
-    bool isMemberFunction = eventualParentDeclaration && currentContext()->type() == DUContext::Class;
-    
     DUChainWriteLocker lock(DUChain::lock());
     kDebug() << identifierForNode(node->name).toString();
-    Declaration* dec = 0;
-    if ( isMemberFunction ) {
-        dec = openDeclaration<ClassFunctionDeclaration>(identifierForNode(node->name), editorFindRange(node->name, node->name));
-    }
-    else {
-        dec = openDeclaration<FunctionDeclaration>(identifierForNode(node->name), editorFindRange(node->name, node->name));
-    }
+    FunctionDeclaration* dec = openDeclaration<FunctionDeclaration>(identifierForNode(node->name),
+                                                                    editorFindRange(node->name, node->name));
     Q_ASSERT(dec->isFunctionDeclaration());
     
     type = FunctionType::Ptr(new FunctionType());
@@ -1241,19 +1234,17 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     kDebug() << "Declaration in symbol table:" << dec->inSymbolTable();
     dec->setType(type);
     
-    if ( isMemberFunction ) {
-        visitDecorators<ClassFunctionDeclaration>(node->decorators, static_cast<ClassFunctionDeclaration*>(dec));
-    }
-    else {
-        visitDecorators<FunctionDeclaration>(node->decorators, static_cast<FunctionDeclaration*>(dec));
-    }
+//     bool hasFirstArgument = false;
+    
+    visitDecorators<FunctionDeclaration>(node->decorators, dec);
     visitFunctionArguments(node);
     
     // this must be done here, because the type of self must be known when parsing the body
     kDebug() << "Checking whether we have to change argument types...";
     kDebug() <<  eventualParentDeclaration.data() << currentType<FunctionType>()->arguments().length() 
              << m_firstAttributeDeclaration.data() << currentContext()->type() << DUContext::Class;
-    if ( isMemberFunction && currentType<FunctionType>()->arguments().length() && m_firstAttributeDeclaration.data() ) {
+    if ( eventualParentDeclaration && currentType<FunctionType>()->arguments().length() 
+            && m_firstAttributeDeclaration.data() && currentContext()->type() == DUContext::Class ) {
         kDebug() << "Changing self argument type";
         kDebug() << "Arguments left: " << currentType<FunctionType>()->arguments().count();
         DUChainWriteLocker lock(DUChain::lock());
@@ -1282,7 +1273,6 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
             type->setReturnType(AbstractType::Ptr(new IntegralType(IntegralType::TypeVoid)));
         }
         dec->setType(type);
-        dec->setInSymbolTable(true);
     }
     
     DUContext* args = DUChainUtils::getArgumentContext(dec);

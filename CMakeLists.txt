@@ -40,6 +40,7 @@ add_subdirectory(duchain)
 add_subdirectory(codecompletion)
 add_subdirectory(python-src)
 add_subdirectory(codegen)
+add_subdirectory(debugger)
 
 set(kdevpythonlanguagesupport_PART_SRCS
     codegen/simplerefactoring.cpp

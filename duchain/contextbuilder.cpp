@@ -60,8 +60,6 @@ Python::PythonEditorIntegrator* Python::ContextBuilder::m_editor;
 namespace Python
 {
     
-TopDUContext* ParseJob::m_internalFunctions;
-
 ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node, ReferencedTopDUContext updateContext)
 {
     if (!updateContext) {

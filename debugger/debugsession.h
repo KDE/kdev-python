@@ -20,8 +20,9 @@
 #ifndef PDBDEBUGSESSION_H
 #define PDBDEBUGSESSION_H
 
-#include </home/sven/install/include/kdevplatform/debugger/interfaces/idebugsession.h>
+#include <debugger/interfaces/idebugsession.h>
 
+namespace Python {
 
 class DebugSession : public KDevelop::IDebugSession
 {
@@ -44,5 +45,7 @@ public:
     virtual bool restartAvaliable() const;
     virtual KDevelop::IDebugSession::DebuggerState state() const;
 };
+
+}
 
 #endif // DEBUGSESSION_H

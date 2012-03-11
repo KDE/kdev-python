@@ -19,6 +19,8 @@
 
 #include "debugsession.h"
 
+namespace Python {
+
 KDevelop::IFrameStackModel* DebugSession::createFrameStackModel()
 {
 
@@ -69,6 +71,7 @@ void DebugSession::interruptDebugger()
 
 }
 
+
 void DebugSession::stopDebugger()
 {
 
@@ -90,4 +93,4 @@ KDevelop::IDebugSession::DebuggerState DebugSession::state() const
 }
 
 
-
+}

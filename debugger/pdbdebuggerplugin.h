@@ -21,14 +21,19 @@
 #define PDBDEBUGGERPLUGIN_H
 
 #include <interfaces/iplugin.h>
+#include "pythondebugexport.h"
+#include <QVariantList>
 
+namespace Python {
 
 class PdbDebuggerPlugin : public KDevelop::IPlugin
 {
-
+Q_OBJECT
 public:
-    PdbDebuggerPlugin(QObject* parent, const QVariantList&);
-    virtual ~PdbDebuggerPlugin();
+    PdbDebuggerPlugin(QObject* parent, const QVariantList& = QVariantList());
+    ~PdbDebuggerPlugin();
 };
+
+}
 
 #endif // PDBDEBUGGERPLUGIN_H

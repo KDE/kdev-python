@@ -1,8 +1,9 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Service
 Exec=blubb
 Comment=This plugin provides a frontend for PDB
-Name=PDB Support
+Name=kdevpdb
 GenericName=Python Debugger Frontend
 Icon=debugger
 X-KDE-Library=kdevpdb
@@ -12,6 +13,4 @@ X-KDE-PluginInfo-Name=kdevpdb
 X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-Category=Debugging
 ServiceTypes=KDevelop/Plugin
-X-KDevelop-Interfaces=org.kdevelop.IStatus
-X-KDevelop-IRequired=org.kdevelop.IExecutePlugin
 X-KDevelop-Mode=GUI

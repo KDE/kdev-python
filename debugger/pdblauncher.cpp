@@ -25,6 +25,11 @@
 #include <KDebug>
 
 namespace Python {
+    
+PdbLauncher::PdbLauncher()
+{
+
+}
 
 QList< KDevelop::LaunchConfigurationPageFactory* > PdbLauncher::configPages() const
 {

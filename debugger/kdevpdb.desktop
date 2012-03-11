@@ -12,5 +12,6 @@ X-KDevelop-Version=14
 X-KDE-PluginInfo-Name=kdevpdb
 X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-Category=Debugging
+X-KDevelop-IRequired=org.kdevelop.IExecuteScriptPlugin
 ServiceTypes=KDevelop/Plugin
 X-KDevelop-Mode=GUI

@@ -27,6 +27,7 @@ namespace Python {
 class PdbLauncher : public KDevelop::ILauncher
 {
 public:
+    PdbLauncher();
     virtual QList< KDevelop::LaunchConfigurationPageFactory* > configPages() const;
     virtual QString description() const;
     virtual QString id();

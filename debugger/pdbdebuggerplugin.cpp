@@ -23,7 +23,7 @@
 
 #include "pdbdebuggerplugin.h"
 #include "pdblauncher.h"
-#include <executescript/executescriptplugin.h>
+#include <executescript/iexecutescriptplugin.h>
 #include <execute/iexecuteplugin.h>
 #include <interfaces/launchconfigurationtype.h>
 #include <interfaces/icore.h>

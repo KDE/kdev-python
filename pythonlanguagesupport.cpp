@@ -50,6 +50,9 @@
 #include "pythonhighlighting.h"
 #include "duchain/pythoneditorintegrator.h"
 #include "codecompletion/pythoncodecompletionmodel.h"
+#include "codegen/simplerefactoring.h"
+#include <interfaces/context.h>
+#include <interfaces/contextmenuextension.h>
 
 #include <stdio.h>
 #include <QWidget>
@@ -66,6 +69,13 @@ namespace Python
 {
     
 LanguageSupport* LanguageSupport::m_self = 0;
+
+KDevelop::ContextMenuExtension LanguageSupport::contextMenuExtension(KDevelop::Context* context)
+{
+    ContextMenuExtension cm;
+    SimpleRefactoring::self().doContextMenu(cm, context);
+    return cm;
+}
 
 LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ )
         : KDevelop::IPlugin( KDevPythonSupportFactory::componentData(), parent ),

@@ -37,8 +37,10 @@ add_subdirectory(parser)
 add_subdirectory(duchain)
 add_subdirectory(codecompletion)
 add_subdirectory(python-src)
+add_subdirectory(codegen)
 
 set(kdevpythonlanguagesupport_PART_SRCS
+    codegen/simplerefactoring.cpp
     pythonlanguagesupport.cpp
     pythonparsejob.cpp
     pythonhighlighting.cpp

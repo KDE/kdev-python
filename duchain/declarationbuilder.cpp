@@ -842,10 +842,12 @@ void DeclarationBuilder::visitCall(CallAst* node)
         if ( args && functiontype ) {
             kDebug() << "got arguments";
             QVector<Declaration*> parameters = args->localDeclarations();
+            kDebug() << args->range() << args->localDeclarations().count() << isConstructor;
             if ( ( lastFunctionDeclaration->context()->type() == DUContext::Class || isConstructor ) && ! parameters.isEmpty() ) {
                 parameters.remove(0);
             }
             int atParam = 0;
+            kDebug() << parameters.size() << node->arguments.size() << functiontype->arguments().length();
             if ( parameters.size() >= node->arguments.size() &&
                     functiontype->arguments().length() + static_cast<FunctionDeclarationPointer>(lastFunctionDeclaration)
                                                          ->defaultParametersSize() 
@@ -1244,6 +1246,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     visitDecorators<FunctionDeclaration>(node->decorators, dec);
     visitFunctionArguments(node);
     
+    
     // this must be done here, because the type of self must be known when parsing the body
     kDebug() << "Checking whether we have to change argument types...";
     kDebug() <<  eventualParentDeclaration.data() << currentType<FunctionType>()->arguments().length() 
@@ -1284,6 +1287,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     DUContext* args = DUChainUtils::getArgumentContext(dec);
     if ( args )  {
         QVector<Declaration*> parameters = args->localDeclarations();
+        kDebug() << "checking function with" << parameters.size() << "arguments";
 
         if ( currentContext()->type() == DUContext::Class && ! parameters.isEmpty() ) {
             if ( parameters[0]->identifier().identifier() != IndexedString("self") ) {
@@ -1422,6 +1426,8 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             }
         }
     }
+    
+    kDebug() << "Got " << currentContext()->localDeclarations().size() << "declarations in arguments.";
     
     DeclarationBuilderBase::visitArguments(node);
 }

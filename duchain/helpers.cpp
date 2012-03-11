@@ -104,7 +104,7 @@ UnsureType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* c
 
 QPair<FunctionDeclarationPointer, bool> Helper::functionDeclarationForCalledDeclaration(DeclarationPointer ptr)
 {
-    bool isConstructor;
+    bool isConstructor = false;
     DeclarationPointer lastCalledDeclaration = ptr;
     if ( lastCalledDeclaration and not lastCalledDeclaration->isFunctionDeclaration() )
     {

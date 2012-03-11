@@ -370,7 +370,7 @@ void ContextBuilder::visitCode(CodeAst* node) {
         if ( ! internal ) {
             m_unresolvedImports.append(doc_url);
             KDevelop::ICore::self()->languageController()->backgroundParser()
-                                   ->addDocument(doc_url, KDevelop::TopDUContext::AllDeclarationsContextsAndUses,
+                                   ->addDocument(doc_url, KDevelop::TopDUContext::ForceUpdate,
                                                  BackgroundParser::BestPriority, 0, ParseJob::FullSequentialProcessing);
         }
         else {

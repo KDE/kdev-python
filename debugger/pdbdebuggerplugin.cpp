@@ -22,6 +22,13 @@
 #include <KAboutData>
 
 #include "pdbdebuggerplugin.h"
+#include "pdblauncher.h"
+#include <executescript/executescriptplugin.h>
+#include <execute/iexecuteplugin.h>
+#include <interfaces/launchconfigurationtype.h>
+#include <interfaces/icore.h>
+#include <interfaces/iplugincontroller.h>
+#include <interfaces/iruncontroller.h>
 
 namespace Python {
 
@@ -31,7 +38,13 @@ K_EXPORT_PLUGIN(PdbDebuggerPluginFactory(KAboutData("kdevpdb", "kdevpdb", ki18n(
 PdbDebuggerPlugin::PdbDebuggerPlugin(QObject* parent, const QVariantList&) 
     : IPlugin(PdbDebuggerPluginFactory::componentData(), parent)
 {
-
+    IExecuteScriptPlugin* iface = KDevelop::ICore::self()->pluginController()
+                            ->pluginForExtension("org.kdevelop.IExecuteScriptPlugin")->extension<IExecuteScriptPlugin>();
+    Q_ASSERT(iface);
+    KDevelop::LaunchConfigurationType* type = core()->runController()
+                                              ->launchConfigurationTypeForId(iface->scriptAppConfigTypeId());
+    Q_ASSERT(type);
+    type->addLauncher(new PdbLauncher());
 }
 
 PdbDebuggerPlugin::~PdbDebuggerPlugin()

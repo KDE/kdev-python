@@ -19,6 +19,7 @@
 
 
 #include "simplerefactoring.h"
+#include <helpers.h>
 #include <language/codegen/documentchangeset.h>
 #include <language/duchain/navigation/useswidget.h>
 #include <language/duchain/navigation/abstractnavigationwidget.h>
@@ -62,6 +63,9 @@ class SimpleRefactoringCollector : public KDevelop::UsesWidget::UsesWidgetCollec
     }
 
     virtual void processUses(KDevelop::ReferencedTopDUContext topContext) {
+        if ( topContext == Helper::getDocumentationFileContext() ) {
+            return;
+        }
         m_allUsingContexts << IndexedTopDUContext(topContext.data());
         UsesWidgetCollector::processUses(topContext);
     }
@@ -80,6 +84,10 @@ void SimpleRefactoring::doContextMenu(KDevelop::ContextMenuExtension& extension,
 
         if ( declaration ) {
             QFileInfo finfo(declaration->topContext()->url().str());
+            if ( declaration->topContext() == Helper::getDocumentationFileContext() ) {
+                kDebug() << "in doc file, not offering rename action";
+                return;
+            }
             if (finfo.isWritable()) {
                 QAction* action = new QAction(i18n("Rename \"%1\"...", declaration->qualifiedIdentifier().toString()), this);
                 action->setData(QVariant::fromValue(IndexedDeclaration(declaration)));

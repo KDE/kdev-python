@@ -19,7 +19,10 @@
 
 #ifndef PDBLAUNCHER_H
 #define PDBLAUNCHER_H
+
 #include <interfaces/ilauncher.h>
+
+namespace Python {
 
 class PdbLauncher : public KDevelop::ILauncher
 {
@@ -31,5 +34,7 @@ public:
     virtual KJob* start(const QString& launchMode, KDevelop::ILaunchConfiguration* cfg);
     virtual QStringList supportedModes() const;
 };
+
+}
 
 #endif // PDBLAUNCHER_H

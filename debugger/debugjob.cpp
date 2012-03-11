@@ -19,6 +19,8 @@
 
 #include "debugjob.h"
 
+namespace Python {
+
 void DebugJob::start()
 {
 
@@ -34,3 +36,4 @@ DebugJob::~DebugJob()
 
 }
 
+}

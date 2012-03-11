@@ -22,6 +22,8 @@
 
 #include <outputview/outputjob.h>
 
+namespace Python {
+
 
 class DebugJob : public KDevelop::OutputJob
 {
@@ -31,5 +33,7 @@ public:
     DebugJob();
     virtual ~DebugJob();
 };
+
+}
 
 #endif // DEBUGJOB_H

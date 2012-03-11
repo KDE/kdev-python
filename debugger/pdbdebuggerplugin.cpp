@@ -23,12 +23,22 @@
 
 #include "pdbdebuggerplugin.h"
 
-K_PLUGIN_FACTORY(PdbDebuggerFactory, registerPlugin<PdbDebuggerPlugin>(); )
-K_EXPORT_PLUGIN(PdbDebuggerFactory(KAboutData("kdevgdb","kdevgdb", ki18n("GDB Support"), "0.1", ki18n("Support for running apps in GDB"), KAboutData::License_GPL)))
+namespace Python {
+
+K_PLUGIN_FACTORY(PdbDebuggerPluginFactory, registerPlugin<PdbDebuggerPlugin>(); )
+K_EXPORT_PLUGIN(PdbDebuggerPluginFactory(KAboutData("kdevpdb", "kdevpdb", ki18n("PDB Support"), "0.1", ki18n("Support for running apps in PDB"), KAboutData::License_GPL)))
 
 PdbDebuggerPlugin::PdbDebuggerPlugin(QObject* parent, const QVariantList&) 
-    : IPlugin(PdbDebuggerFactory::componentData(), parent)
+    : IPlugin(PdbDebuggerPluginFactory::componentData(), parent)
 {
 
 }
 
+PdbDebuggerPlugin::~PdbDebuggerPlugin()
+{
+
+}
+
+}
+
+#include "pdbdebuggerplugin.moc"

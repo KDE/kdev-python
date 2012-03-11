@@ -24,6 +24,8 @@
 
 #include <KDebug>
 
+namespace Python {
+
 QList< KDevelop::LaunchConfigurationPageFactory* > PdbLauncher::configPages() const
 {
     return QList<KDevelop::LaunchConfigurationPageFactory*>();
@@ -54,4 +56,4 @@ QStringList PdbLauncher::supportedModes() const
     return QStringList() << "debug";
 }
 
-
+}

@@ -1,6 +1,0 @@
-# KDE Config File
-[General]
-Name=Simple Qt GUI application using Designer
-Category=Python
-Comment=An example application using Qt Designer. If you edit mainwindow.ui, regenerate mainwindow.py by calling pyuic4.
-ShowFilesAfterGeneration=%{dest}/%{APPNAME}.py

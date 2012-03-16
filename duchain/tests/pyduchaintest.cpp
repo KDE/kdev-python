@@ -625,5 +625,6 @@ void PyDUChainTest::testContainerTypes_data()
     QTest::newRow("dict_of_int_call") << "checkme = dict({a:1, b:2, c:3})" << "int" << false;
     QTest::newRow("dict_generator") << "checkme = {\"Foo\":i for i in [1, 2, 3]}" << "int" << false;
     QTest::newRow("dict_access") << "list = {a:1, b:2, c:3}\ncheckme = list[0]" << "int" << true;
+    QTest::newRow("generator_attribute") << "checkme = [item.capitalize() for item in ['foobar']]" << "string" << false;
 }
 

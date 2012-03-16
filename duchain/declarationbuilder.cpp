@@ -239,6 +239,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         kDebug() << "Context type: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
         if ( ! dec ) {
             dec = openDeclaration<ClassMemberDeclaration>(node, originalAst ? originalAst : node);
+            Q_ASSERT(! declarationOpened);
             declarationOpened = true;
         }
         if ( declarationOpened ) {
@@ -253,6 +254,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         if ( ! dec ) {
             kDebug() << "This declaration is a new one, with range" << range;
             dec = openDeclaration<T>(node, rangeNode);
+            Q_ASSERT(! declarationOpened);
             declarationOpened = true;
         }
         else {
@@ -1365,7 +1367,8 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
     
     
     if ( currentDeclaration() and currentDeclaration()->isFunctionDeclaration() ) {
-        static_cast<FunctionDeclaration*>(currentDeclaration())->clearDefaultParameters();
+        FunctionDeclaration* workingOnDeclaration = static_cast<FunctionDeclaration*>(Helper::resolveAliasDeclaration(currentDeclaration()));
+        workingOnDeclaration->clearDefaultParameters();
         if ( hasCurrentType() and currentType<FunctionType>() ) {
             FunctionType::Ptr type = currentType<FunctionType>();
             NameAst* realParam = 0;
@@ -1379,7 +1382,9 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 currentIndex += 1;
                 realParam = dynamic_cast<NameAst*>(expression);
                 
-                if ( ! realParam || realParam->context != ExpressionAst::Parameter ) continue;
+                if ( ! realParam || realParam->context != ExpressionAst::Parameter ) {
+                    continue;
+                }
                 
                 Declaration* paramDeclaration = visitVariableDeclaration<Declaration>(realParam);
                 
@@ -1394,7 +1399,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                     else {
                         type->addArgument(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
                     }
-                    static_cast<FunctionDeclaration*>(currentDeclaration())->addDefaultParameter(paramDeclaration->identifier().identifier());
+                    workingOnDeclaration->addDefaultParameter(paramDeclaration->identifier().identifier());
                     kDebug() << "Arguments count: " << type->arguments().length();
                 }
                 else {

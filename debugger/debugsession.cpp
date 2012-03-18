@@ -18,12 +18,68 @@
 
 
 #include "debugsession.h"
+#include <debugger/framestack/framestackmodel.h>
+#include <QTimer>
+#include <QApplication>
+
+using namespace KDevelop;
 
 namespace Python {
 
 KDevelop::IFrameStackModel* DebugSession::createFrameStackModel()
 {
+    return 0;
+}
 
+DebugSession::DebugSession(QStringList program)
+{
+    lockProcess();
+    m_debuggerProcess = new KProcess(this);
+    m_debuggerProcess->setProgram(program);
+    m_debuggerProcess->start();
+    setState(IDebugSession::ActiveState);
+    unlockProcess();
+}
+
+void DebugSession::setState(IDebugSession::DebuggerState state)
+{
+    m_state = state;
+}
+
+bool DebugSession::lockWhenReady(int msecs)
+{
+    QTimer t;
+    t.setSingleShot(true);
+    t.start(msecs);
+    while ( t.isActive() and state() != IDebugSession::PausedState ) {
+        QApplication::processEvents();
+    }
+    if ( state() == IDebugSession::PausedState ) {
+        lockProcess();
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+void DebugSession::lockProcess()
+{
+    m_processLocker.lock();
+}
+
+void DebugSession::unlockProcess()
+{
+    m_processLocker.unlock();
+}
+
+void DebugSession::writeWhenReady(const QByteArray& cmd)
+{
+    bool canExecute = lockWhenReady();
+    if ( canExecute ) {
+        m_debuggerProcess->write(cmd);
+    }
+    unlockProcess();
 }
 
 void DebugSession::stepOut()
@@ -48,7 +104,8 @@ void DebugSession::stepIntoInstruction()
 
 void DebugSession::stepOver()
 {
-
+    writeWhenReady("next");
+    setState(IDebugSession::ActiveState);
 }
 
 void DebugSession::jumpToCursor()
@@ -84,12 +141,12 @@ void DebugSession::restartDebugger()
 
 bool DebugSession::restartAvaliable() const
 {
-
+    return false;
 }
 
 KDevelop::IDebugSession::DebuggerState DebugSession::state() const
 {
-
+    return IDebugSession::NotStartedState;
 }
 
 

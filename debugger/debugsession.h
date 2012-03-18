@@ -20,7 +20,12 @@
 #ifndef PDBDEBUGSESSION_H
 #define PDBDEBUGSESSION_H
 
+#include <KProcess>
+#include <QMutexLocker>
+
 #include <debugger/interfaces/idebugsession.h>
+
+using namespace KDevelop;
 
 namespace Python {
 
@@ -31,6 +36,7 @@ protected:
     virtual KDevelop::IFrameStackModel* createFrameStackModel();
 
 public:
+    DebugSession(QStringList program);
     virtual void stepOut();
     virtual void stepOverInstruction();
     virtual void stepInto();
@@ -43,7 +49,17 @@ public:
     virtual void stopDebugger();
     virtual void restartDebugger();
     virtual bool restartAvaliable() const;
-    virtual KDevelop::IDebugSession::DebuggerState state() const;
+    virtual IDebugSession::DebuggerState state() const;
+    void setState(IDebugSession::DebuggerState state);
+    
+    void lockProcess();
+    void unlockProcess();
+    bool lockWhenReady(int msecs = 2000);
+private:
+    KProcess* m_debuggerProcess;
+    QMutex m_processLocker;
+    IDebugSession::DebuggerState m_state;
+    void writeWhenReady(const QByteArray& cmd);
 };
 
 }

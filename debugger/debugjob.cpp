@@ -16,14 +16,25 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <KDebug>
 
 #include "debugjob.h"
 
 namespace Python {
 
+
 void DebugJob::start()
 {
+    QStringList program;
+    program << m_interpreter << "-m" << "pdb" << m_scriptUrl.path(KUrl::RemoveTrailingSlash) << m_args;
+    m_session = new DebugSession(program);
+    kDebug() << "starting program:" << program;
+}
 
+bool DebugJob::doKill()
+{
+    m_session->stopDebugger();
+    return KJob::doKill();
 }
 
 DebugJob::DebugJob()

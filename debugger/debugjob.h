@@ -21,17 +21,30 @@
 #define PDBDEBUGJOB_H
 
 #include <outputview/outputjob.h>
+#include "debugsession.h"
+#include <KUrl>
 
 namespace Python {
-
 
 class DebugJob : public KDevelop::OutputJob
 {
 
 public:
-    virtual void start();
     DebugJob();
     virtual ~DebugJob();
+    
+    virtual void start();
+    virtual bool doKill();
+    
+    void lockProcess();
+    void unlockProcess();
+    
+    KUrl m_scriptUrl;
+    QString m_interpreter;
+    QStringList m_args;
+
+private:
+    DebugSession* m_session;
 };
 
 }

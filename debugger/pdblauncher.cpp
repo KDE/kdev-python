@@ -18,11 +18,18 @@
 
 
 #include "pdblauncher.h"
+#include "debugjob.h"
+#include <util/executecompositejob.h>
 
+#include <executescript/iexecutescriptplugin.h>
 #include <interfaces/launchconfigurationpage.h>
+#include <interfaces/ilaunchconfiguration.h>
+#include <interfaces/icore.h>
+#include <interfaces/iplugincontroller.h>
 #include <KLocalizedString>
 
 #include <KDebug>
+#include <KConfigGroup>
 
 namespace Python {
     
@@ -54,6 +61,21 @@ QString PdbLauncher::name() const
 KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfiguration* cfg)
 {
     kDebug() << "start of debugger process requested";
+    if ( launchMode == "debug" ) {
+        DebugJob* job = new DebugJob();
+        IExecuteScriptPlugin* iface = KDevelop::ICore::self()->pluginController()
+                                      ->pluginForExtension("org.kdevelop.IExecuteScriptPlugin")->extension<IExecuteScriptPlugin>();
+        Q_ASSERT(iface);
+        QString err;
+        job->m_scriptUrl = iface->script(cfg, err);
+        job->m_interpreter = iface->interpreter(cfg, err);
+        job->m_args = iface->arguments(cfg, err);
+        QList<KJob*> l;
+        l << job;
+        return new KDevelop::ExecuteCompositeJob( KDevelop::ICore::self()->runController(), l );
+    }
+    kDebug() << "unknown launch mode";
+    return 0;
 }
 
 QStringList PdbLauncher::supportedModes() const

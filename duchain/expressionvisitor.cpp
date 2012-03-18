@@ -118,6 +118,7 @@ ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegrator* edi
         s_defaultTypes.insert(KDevelop::Identifier("None"), AbstractType::Ptr(new IntegralType(IntegralType::TypeVoid)));
     }
     Q_ASSERT(m_ctx);
+    Q_ASSERT(m_ctx->topContext());
 }
 
 AbstractType::Ptr ExpressionVisitor::unknownType()
@@ -424,6 +425,7 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
     if ( node->slice && node->slice->astType != Ast::IndexAstType ) {
         kDebug() << "Found slice, will use ListType for assignment";
         kDebug() << "LAST DECLARATION:" << lastDeclaration();
+        encounterDeclaration(0);
         encounter(lastType());
     }
     else {

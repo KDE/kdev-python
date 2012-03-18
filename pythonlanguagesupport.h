@@ -62,6 +62,8 @@ public:
     /*the code highlighter*/
     KDevelop::ICodeHighlighting* codeHighlighting() const;
     
+    KDevelop::ContextMenuExtension contextMenuExtension(KDevelop::Context* context);
+    
     static LanguageSupport* self();
     
 //     virtual QWidget* specialLanguageObjectNavigationWidget(const KUrl& url, const KDevelop::SimpleCursor& position);

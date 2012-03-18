@@ -258,10 +258,11 @@ RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
         if ( not generators.isEmpty() ) {
             range = editorFindRange(element, generators.last()->iterator);
             kDebug() << "List Comprehension End: " << range.end;
+            kDebug() << "List Comprehension Start: " << range.start;
 //             generatorFound = true;
         }
     }
-    if ( node->astType == Ast::SetComprehensionAstType ) {
+    else if ( node->astType == Ast::SetComprehensionAstType ) {
         SetComprehensionAst* c = static_cast<SetComprehensionAst*>(node);
         generators = c->generators;
         element = c->element;
@@ -271,7 +272,7 @@ RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
 //             generatorFound = true;
         }
     }
-    if ( node->astType == Ast::DictionaryComprehensionAstType ) {
+    else if ( node->astType == Ast::DictionaryComprehensionAstType ) {
         DictionaryComprehensionAst* c = static_cast<DictionaryComprehensionAst*>(node);
         generators = c->generators;
         if ( not generators.isEmpty() ) {
@@ -279,7 +280,7 @@ RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
 //             generatorFound = true;
         }
     }
-    if ( node->astType == Ast::GeneratorExpressionAstType ) {
+    else if ( node->astType == Ast::GeneratorExpressionAstType ) {
         GeneratorExpressionAst* c = static_cast<GeneratorExpressionAst*>(node);
         generators = c->generators;
         if ( not generators.isEmpty() ) {
@@ -287,12 +288,18 @@ RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
 //             generatorFound = true;
         }
     }
-    if ( not generators.isEmpty() ) {
+    else if ( not generators.isEmpty() ) {
         RangeInRevision containedComprehensionRange = comprehensionRange(generators.last()->iterator);
         if ( containedComprehensionRange.isValid() ) {
             range.end = containedComprehensionRange.end;
         }
     }
+    else {
+        range = editorFindRange(node, node);
+    }
+    CursorInRevision start = editorFindPositionSafe(node);
+    range.start = start;
+    range.start.column -= 1;
     return range;
 }
 
@@ -370,7 +377,7 @@ void ContextBuilder::visitCode(CodeAst* node) {
         if ( ! internal ) {
             m_unresolvedImports.append(doc_url);
             KDevelop::ICore::self()->languageController()->backgroundParser()
-                                   ->addDocument(doc_url, KDevelop::TopDUContext::AllDeclarationsContextsAndUses,
+                                   ->addDocument(doc_url, KDevelop::TopDUContext::ForceUpdate,
                                                  BackgroundParser::BestPriority, 0, ParseJob::FullSequentialProcessing);
         }
         else {

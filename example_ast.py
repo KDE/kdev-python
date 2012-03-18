@@ -4,6 +4,11 @@ def func(foo, bar, *args, **kwargs):
     
 mydict = dict()
 mylist = list(mydict)
+
+class c():
+    attr = 5
+
+another_comprehended_list = [item.attr for item in [c(), c(), c()]]
     
 comprehended_list = [x for x in [1, 2, 3] if x in ('a')]
 print x

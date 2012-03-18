@@ -122,7 +122,7 @@ void DeclarationBuilder::closeDeclaration()
     DeclarationBuilderBase::closeDeclaration();
 }
 
-template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, Declaration* previous)
+template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, Declaration* previous, AbstractType::Ptr type)
 {
     if ( node->astType == Ast::NameAstType ) {
         NameAst* currentVariableDefinition = static_cast<NameAst*>(node);
@@ -131,10 +131,10 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, 
         QList<ExpressionAst::Context> declaringContexts;
         declaringContexts << ExpressionAst::Store << ExpressionAst::Parameter << ExpressionAst::AugStore;
         if ( ! declaringContexts.contains(currentVariableDefinition->context) ) {
-                return 0;
+            return 0;
         }
         Identifier* id = currentVariableDefinition->identifier;
-        return visitVariableDeclaration<T>(id, currentVariableDefinition, previous);
+        return visitVariableDeclaration<T>(id, currentVariableDefinition, previous, type);
     }
     else {
         kWarning() << "cannot create variable declaration for non-name AST, this is a programming error";
@@ -142,12 +142,12 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, 
     }
 }
 
-template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, RangeInRevision range)
+template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, RangeInRevision range, AbstractType::Ptr type)
 {
     Ast* pseudo = new Ast();
     pseudo->startLine = range.start.line; pseudo->startCol = range.start.column;
     pseudo->endLine = range.end.line; pseudo->endCol = range.end.column;
-    T* result = visitVariableDeclaration<T>(node, pseudo, 0);
+    T* result = visitVariableDeclaration<T>(node, pseudo, 0, type);
     delete pseudo;
     return result;
 }
@@ -156,11 +156,15 @@ typedef QPair<Declaration*, int> p;
 /*
  * WARNING: This will return a nullpointer if another than the expected type of variable was found!
  * */
-template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast* originalAst, Declaration* previous)
+template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast* originalAst, Declaration* previous, AbstractType::Ptr type)
 {
     DUChainWriteLocker lock(DUChain::lock());
     Q_ASSERT(node);
     Ast* rangeNode = originalAst ? originalAst : node;
+    
+    if ( ! type ) {
+        type = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
+    }
     
     kDebug() << "Parsing variable declaration: " << node->value;
     
@@ -193,7 +197,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     foreach ( Declaration* d, existingDeclarations ) {
         Declaration* fitting = dynamic_cast<T*>(d);
         kDebug() << "last one: " << d << d->toString() << dynamic_cast<T*>(d) << wasEncountered(d);
-        bool invalidType = d && d->abstractType() && lastType() && lastType()->whichType() != AbstractType::TypeFunction && d->isFunctionDeclaration();
+        bool invalidType = d && d->abstractType() && type && type != AbstractType::TypeFunction && d->isFunctionDeclaration();
         if ( fitting && ! wasEncountered(d) && ! invalidType ) {
             if ( d->topContext() == currentContext()->topContext() ) {
                 kDebug() << "Opening previously existing declaration for " << d->toString();
@@ -202,6 +206,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
                 declarationOpened = true;
                 setEncountered(d);
                 dec = d;
+                break;
             }
             else {
                 kDebug() << "Not opening previously existing declaration because it's in another top context";
@@ -234,12 +239,13 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         kDebug() << "Context type: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
         if ( ! dec ) {
             dec = openDeclaration<ClassMemberDeclaration>(node, originalAst ? originalAst : node);
+            Q_ASSERT(! declarationOpened);
             declarationOpened = true;
         }
         if ( declarationOpened ) {
             DeclarationBuilderBase::closeDeclaration();
         }
-        dec->setType(lastType());
+        dec->setType(type);
         dec->setKind(KDevelop::Declaration::Instance);
     } else if ( ! haveFittingDeclaration ) {
         RangeInRevision range = editorFindRange(rangeNode, rangeNode);
@@ -248,6 +254,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         if ( ! dec ) {
             kDebug() << "This declaration is a new one, with range" << range;
             dec = openDeclaration<T>(node, rangeNode);
+            Q_ASSERT(! declarationOpened);
             declarationOpened = true;
         }
         else {
@@ -263,7 +270,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         }
         UnsureType::Ptr hints = Helper::extractTypeHints(dec->abstractType(), topContext());
         kDebug() << "Type Hints: " << hints->toString();
-        AbstractType::Ptr newType = Helper::mergeTypes(hints.cast<AbstractType>(), lastType(), topContext());
+        AbstractType::Ptr newType = Helper::mergeTypes(hints.cast<AbstractType>(), type, topContext());
         kDebug() << "Resulting type: " << newType->toString();
         dec->setType(newType);
         dec->setKind(KDevelop::Declaration::Instance); // everything is an object in python
@@ -272,7 +279,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         kDebug() << "Existing declarations are not empty. count: " << existingDeclarations.count();
         dec = existingDeclarations.last();
         AbstractType::Ptr currentType = dec->abstractType();
-        AbstractType::Ptr newType = lastType();
+        AbstractType::Ptr newType = type;
         if ( newType ) {
             if ( currentType && !currentType->equals(newType.unsafeData()) ) {
                 IntegralType::Ptr integral = IntegralType::Ptr::dynamicCast(currentType);
@@ -283,7 +290,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
                 }
             } else {
                 kDebug() << "Existing declaration with no type from last declaration.";
-                dec->setType(lastType());
+                dec->setType(type);
             }
         } else {
             kDebug() << "Existing declaration with no type.";
@@ -308,12 +315,8 @@ void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
         DUChainReadLocker lock(DUChain::lock());
         ExpressionVisitor v(currentContext(), editor());
         v.visitNode(node->type);
-        openType(v.lastType());
-        setLastType(v.lastType());
         lock.unlock();
-        visitVariableDeclaration<Declaration>(node->name); // except Error as <vardecl>
-        lock.lock();
-        closeType();
+        Declaration* d = visitVariableDeclaration<Declaration>(node->name, 0, v.lastType()); // except Error as <vardecl>
     }
     DeclarationBuilderBase::visitExceptionHandler(node);
 }
@@ -324,9 +327,8 @@ void DeclarationBuilder::visitWith(WithAst* node)
         DUChainReadLocker lock(DUChain::lock());
         ExpressionVisitor v(currentContext(), editor());
         v.visitNode(node->contextExpression);
-        setLastType(v.lastType());
         lock.unlock();
-        visitVariableDeclaration<Declaration>(node->optionalVars);
+        Declaration* d = visitVariableDeclaration<Declaration>(node->optionalVars, 0, v.lastType());
     }
     Python::ContextBuilder::visitWith(node);
 }
@@ -339,28 +341,43 @@ void DeclarationBuilder::visitFor(ForAst* node)
     lock.unlock();
     VariableLengthContainer::Ptr type = v.lastType().cast<VariableLengthContainer>();
     if ( node->target->astType == Ast::NameAstType ) {
+        AbstractType::Ptr newType;
         if ( type && type->contentType() ) {
-            setLastType(type->contentType().abstractType());
+            newType = type->contentType().abstractType();
+        }
+        else if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeUnsure ) {
+            UnsureType::Ptr u = v.lastType().cast<UnsureType>();
+            for ( int i = 0; i < u->typesSize(); i++ ) {
+                if ( VariableLengthContainer::Ptr typeInUnsure = u->types()[i].abstractType().cast<VariableLengthContainer>() ) {
+                    if ( ! newType ) {
+                        newType = typeInUnsure->contentType().abstractType();
+                    }
+                    else {
+                        newType = Helper::mergeTypes(newType, typeInUnsure->contentType().abstractType());
+                    }
+                }
+            }
         }
         else {
-            setLastType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+            newType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
         }
-        visitVariableDeclaration<Declaration>(node->target);
+        visitVariableDeclaration<Declaration>(node->target, 0, newType);
     }
     else if ( node->target->astType == Ast::TupleAstType ) {
         short atElement = 0;
         foreach ( ExpressionAst* tupleMember, dynamic_cast<TupleAst*>(node->target)->elements ) {
             if ( tupleMember->astType == Ast::NameAstType ) {
+                AbstractType::Ptr newType;
                 if ( atElement == 0 && type && type->keyType() ) {
-                    setLastType(type->keyType().abstractType());
+                    newType = type->keyType().abstractType();
                 }
                 else if ( atElement == 1 && type && type->contentType() ) {
-                    setLastType(type->contentType().abstractType());
+                    newType = type->contentType().abstractType();
                 }
                 else {
-                    setLastType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+                    newType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
                 }
-                visitVariableDeclaration<Declaration>(tupleMember);
+                visitVariableDeclaration<Declaration>(tupleMember, 0, newType);
             }
             ++atElement;
         }
@@ -445,14 +462,9 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
     }
     
     if ( node->target->astType == Ast::NameAstType ) {
-        Declaration* d = visitVariableDeclaration<Declaration>(static_cast<NameAst*>(node->target)->identifier, declarationRange);
-        DUChainWriteLocker lock(DUChain::lock());
-        if ( d and targetType ) {
-            d->setAbstractType(targetType);
-        }
-        else {
-            d->setAbstractType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
-        }
+        Declaration* d = visitVariableDeclaration<Declaration>(
+            static_cast<NameAst*>(node->target)->identifier, declarationRange, targetType
+        );
     }
     if ( node->target->astType == Ast::TupleAstType ) {
         foreach ( ExpressionAst* tupleElt, static_cast<TupleAst*>(node->target)->elements ) {
@@ -460,8 +472,8 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
                 NameAst* n = static_cast<NameAst*>(tupleElt);
                 Declaration* d = visitVariableDeclaration<Declaration>(n->identifier, declarationRange);
                 // TODO: Fix this as soon as tuple type support is implemented.
-                DUChainWriteLocker lock(DUChain::lock());
-                d->setAbstractType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+//                 DUChainWriteLocker lock(DUChain::lock());
+//                 d->setAbstractType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
 //                 if ( d and targetType ) {
 //                     d->setAbstractType(targetType);
 //                 }
@@ -643,8 +655,8 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
             KDevelop::ICore::self()->languageController()->backgroundParser()->removeDocument(moduleInfo.first);
         }
         KDevelop::ICore::self()->languageController()->backgroundParser()
-                                   ->addDocument(moduleInfo.first, TopDUContext::AllDeclarationsContextsAndUses, m_ownPriority - 1,
-                                                 0, ParseJob::RespectsSequentialProcessing);
+                                   ->addDocument(moduleInfo.first, TopDUContext::ForceUpdate, m_ownPriority - 1,
+                                                 0, ParseJob::FullSequentialProcessing);
 //         KDevelop::ICore::self()->languageController()->backgroundParser()->parseDocuments();
 //         DUChain::self()->updateContextForUrl(IndexedString(moduleInfo.first), TopDUContext::AllDeclarationsContextsAndUses, 0, m_ownPriority - 1);
         return 0;
@@ -698,7 +710,6 @@ void DeclarationBuilder::visitYield(YieldAst* node)
     ExpressionVisitor v(currentContext(), editor());
     v.visitNode(node->value);
     lock.unlock();
-    setLastType(v.lastType());
     AbstractType::Ptr encountered = v.lastType();
     if ( node->value ) {
         if ( hasCurrentType() ) {
@@ -719,7 +730,6 @@ void DeclarationBuilder::visitYield(YieldAst* node)
             }
         }
     }
-    setLastType(AbstractType::Ptr(0));
 }
 
 void DeclarationBuilder::visitLambda(LambdaAst* node)
@@ -730,9 +740,6 @@ void DeclarationBuilder::visitLambda(LambdaAst* node)
     foreach ( ExpressionAst* argument, node->arguments->arguments ) {
         if ( argument->astType == Ast::NameAstType ) {
             Declaration* d = visitVariableDeclaration<Declaration>(static_cast<NameAst*>(argument));
-            if ( d )  {
-                d->setAbstractType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
-            }
         }
     }
     closeContext();
@@ -837,10 +844,12 @@ void DeclarationBuilder::visitCall(CallAst* node)
         if ( args && functiontype ) {
             kDebug() << "got arguments";
             QVector<Declaration*> parameters = args->localDeclarations();
+            kDebug() << args->range() << args->localDeclarations().count() << isConstructor;
             if ( ( lastFunctionDeclaration->context()->type() == DUContext::Class || isConstructor ) && ! parameters.isEmpty() ) {
                 parameters.remove(0);
             }
             int atParam = 0;
+            kDebug() << parameters.size() << node->arguments.size() << functiontype->arguments().length();
             if ( parameters.size() >= node->arguments.size() &&
                     functiontype->arguments().length() + static_cast<FunctionDeclarationPointer>(lastFunctionDeclaration)
                                                          ->defaultParametersSize() 
@@ -981,7 +990,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             }
         }
         /** END DEBUG **/
-        setLastType(tupleElementType); // TODO fix this for x, y = a, b, i.e. if node->value->astType == TupleAstType
+        // TODO fix this for x, y = a, b, i.e. if node->value->astType == TupleAstType
         // "a = 3"
         if ( target->astType == Ast::NameAstType ) {
             if ( currentIsAlias ) {
@@ -994,7 +1003,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             else {
                 DUChainWriteLocker lock(DUChain::lock());
                 kDebug() << "Creating normal declaration with type" << ( tupleElementType ? tupleElementType->toString() : "<none>" );
-                Declaration* dec = visitVariableDeclaration<Declaration>(target);
+                Declaration* dec = visitVariableDeclaration<Declaration>(target, 0, tupleElementType);
                 /** DEBUG **/
                 if ( tupleElementType && dec ) {
                     VariableLengthContainer* type = dynamic_cast<VariableLengthContainer*>(dec->abstractType().unsafeData());
@@ -1097,13 +1106,13 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             bool isAlreadyOpen = contextAlreayOpen(internal);
             if ( isAlreadyOpen ) {
                 activateAlreadyOpenedContext(internal);
-                visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target, haveDeclaration);
+                Declaration* d = visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target, haveDeclaration, tupleElementType);
                 closeAlreadyOpenedContext(internal);
             }
             else {
                 injectContext(internal.data());
                 
-                Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target, haveDeclaration);
+                Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target, haveDeclaration, tupleElementType);
                 if ( dec ) {
                     dec->setRange(RangeInRevision(internal->range().start, internal->range().start));
                     dec->setAutoDeclaration(true);
@@ -1239,6 +1248,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     visitDecorators<FunctionDeclaration>(node->decorators, dec);
     visitFunctionArguments(node);
     
+    
     // this must be done here, because the type of self must be known when parsing the body
     kDebug() << "Checking whether we have to change argument types...";
     kDebug() <<  eventualParentDeclaration.data() << currentType<FunctionType>()->arguments().length() 
@@ -1250,6 +1260,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         DUChainWriteLocker lock(DUChain::lock());
         currentType<FunctionType>()->removeArgument(0);
         kDebug() << "Arguments left: " << currentType<FunctionType>()->arguments().count();
+        kDebug() << "new type for attribute: " << eventualParentDeclaration->abstractType()->toString();
         m_firstAttributeDeclaration->setAbstractType(eventualParentDeclaration->abstractType());
 //         hasFirstArgument = true;
     }
@@ -1278,6 +1289,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     DUContext* args = DUChainUtils::getArgumentContext(dec);
     if ( args )  {
         QVector<Declaration*> parameters = args->localDeclarations();
+        kDebug() << "checking function with" << parameters.size() << "arguments";
 
         if ( currentContext()->type() == DUContext::Class && ! parameters.isEmpty() ) {
             if ( parameters[0]->identifier().identifier() != IndexedString("self") ) {
@@ -1327,7 +1339,6 @@ void DeclarationBuilder::visitReturn(ReturnAst* node)
     ExpressionVisitor v(currentContext(), editor());
     v.visitNode(node->value);
     lock.unlock();
-    setLastType(v.lastType());
     if ( node->value ) {
         if ( ! hasCurrentType() ) {
             DUChainWriteLocker lock(DUChain::lock());
@@ -1344,7 +1355,6 @@ void DeclarationBuilder::visitReturn(ReturnAst* node)
 //         kDebug() << "Found type: " << encountered->toString();
         t->setReturnType(Helper::mergeTypes(t->returnType(), encountered));
     }
-    setLastType(AbstractType::Ptr(0));
     DeclarationBuilderBase::visitReturn(node);
 }
 
@@ -1357,7 +1367,8 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
     
     
     if ( currentDeclaration() and currentDeclaration()->isFunctionDeclaration() ) {
-        static_cast<FunctionDeclaration*>(currentDeclaration())->clearDefaultParameters();
+        FunctionDeclaration* workingOnDeclaration = static_cast<FunctionDeclaration*>(Helper::resolveAliasDeclaration(currentDeclaration()));
+        workingOnDeclaration->clearDefaultParameters();
         if ( hasCurrentType() and currentType<FunctionType>() ) {
             FunctionType::Ptr type = currentType<FunctionType>();
             NameAst* realParam = 0;
@@ -1371,9 +1382,10 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 currentIndex += 1;
                 realParam = dynamic_cast<NameAst*>(expression);
                 
-                if ( ! realParam || realParam->context != ExpressionAst::Parameter ) continue;
+                if ( ! realParam || realParam->context != ExpressionAst::Parameter ) {
+                    continue;
+                }
                 
-                setLastType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
                 Declaration* paramDeclaration = visitVariableDeclaration<Declaration>(realParam);
                 
                 if ( type && paramDeclaration && currentIndex > firstDefaultParameterOffset ) {
@@ -1387,7 +1399,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                     else {
                         type->addArgument(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
                     }
-                    static_cast<FunctionDeclaration*>(currentDeclaration())->addDefaultParameter(paramDeclaration->identifier().identifier());
+                    workingOnDeclaration->addDefaultParameter(paramDeclaration->identifier().identifier());
                     kDebug() << "Arguments count: " << type->arguments().length();
                 }
                 else {
@@ -1406,9 +1418,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 type->addArgument(listType);
                 node->vararg->startCol = node->vararg_col_offset; node->vararg->endCol = node->vararg_col_offset + node->vararg->value.length() - 1;
                 node->vararg->startLine = node->vararg_lineno; node->vararg->endLine = node->vararg_lineno;
-                Declaration* d = visitVariableDeclaration<Declaration>(node->vararg);
-                Q_ASSERT(d);
-                d->setAbstractType(listType);
+                Declaration* d = visitVariableDeclaration<Declaration>(node->vararg, 0, listType);
             }
             if ( node->kwarg ) {
                 DUChainReadLocker lock(DUChain::lock());
@@ -1417,12 +1427,12 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 type->addArgument(dictType);
                 node->kwarg->startCol = node->arg_col_offset; node->kwarg->endCol = node->arg_col_offset + node->kwarg->value.length() - 1;
                 node->kwarg->startLine = node->arg_lineno; node->kwarg->endLine = node->arg_lineno;
-                Declaration* d = visitVariableDeclaration<Declaration>(node->kwarg);
-                Q_ASSERT(d);
-                d->setAbstractType(dictType);
+                Declaration* d = visitVariableDeclaration<Declaration>(node->kwarg, 0, dictType);
             }
         }
     }
+    
+    kDebug() << "Got " << currentContext()->localDeclarations().size() << "declarations in arguments.";
     
     DeclarationBuilderBase::visitArguments(node);
 }

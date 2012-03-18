@@ -168,8 +168,8 @@ void ParseJob::run()
             if ( ! ( minimumFeatures() & Rescheduled ) && dependencyInQueue ) {
                 DUChainWriteLocker lock(DUChain::lock());
                 KDevelop::ICore::self()->languageController()->backgroundParser()->addDocument(document().toUrl(), 
-                                     static_cast<TopDUContext::Features>(minimumFeatures() | Rescheduled), parsePriority(),
-                                     0, ParseJob::RequiresSequentialProcessing);
+                                     static_cast<TopDUContext::Features>(TopDUContext::ForceUpdate | Rescheduled), parsePriority(),
+                                     0, ParseJob::FullSequentialProcessing);
             }
         }
         

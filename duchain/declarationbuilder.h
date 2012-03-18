@@ -86,9 +86,9 @@ protected:
     
     QString getDocstring(QList<Ast*> body);
     
-    template<typename T> T* visitVariableDeclaration(Python::Ast* node, Declaration* previous = 0);
-    template<typename T> T* visitVariableDeclaration(Identifier* node, Ast* originalAst = 0, Declaration* previous = 0);
-    template<typename T> T* visitVariableDeclaration(Identifier* node, RangeInRevision range);
+    template<typename T> T* visitVariableDeclaration(Python::Ast* node, Declaration* previous = 0, AbstractType::Ptr type = AbstractType::Ptr(0));
+    template<typename T> T* visitVariableDeclaration(Identifier* node, Ast* originalAst = 0, Declaration* previous = 0, AbstractType::Ptr type = AbstractType::Ptr(0));
+    template<typename T> T* visitVariableDeclaration(Identifier* node, RangeInRevision range, AbstractType::Ptr type = AbstractType::Ptr(0));
     
     enum ProblemPolicy {
         CreateProblems,

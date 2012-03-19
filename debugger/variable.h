@@ -16,41 +16,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <KDebug>
 
-#include <interfaces/idebugcontroller.h>
-#include <interfaces/icore.h>
+#ifndef VARIABLE_H
+#define VARIABLE_H
 
-#include "debugjob.h"
+#include <debugger/variable/variablecollection.h>
 
 namespace Python {
 
-
-void DebugJob::start()
+class Variable : public KDevelop::Variable
 {
-    QStringList program;
-    program << m_interpreter << "-u" << "-m" << "pdb" << m_scriptUrl.path(KUrl::RemoveTrailingSlash) << m_args;
-    m_session = new DebugSession(program);
-    KDevelop::ICore::self()->debugController()->addSession(m_session);
-    m_session->start();
-    kDebug() << "starting program:" << program;
-}
-
-bool DebugJob::doKill()
-{
-    kDebug() << "kill signal received";
-    m_session->stopDebugger();
-    return KJob::doKill();
-}
-
-DebugJob::DebugJob()
-{
+public:
+    Variable(KDevelop::TreeModel* model, TreeItem* parent, const QString& expression, const QString& display = "");
+    virtual void attachMaybe(QObject* callback = 0, const char* callbackMethod = 0);
+    virtual void fetchMoreChildren();
+};
 
 }
 
-DebugJob::~DebugJob()
-{
-
-}
-
-}
+#endif // VARIABLE_H

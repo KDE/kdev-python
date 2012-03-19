@@ -16,41 +16,37 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <KDebug>
 
-#include <interfaces/idebugcontroller.h>
-#include <interfaces/icore.h>
+#include "pdbframestackmodel.h"
 
-#include "debugjob.h"
+using namespace KDevelop;
 
 namespace Python {
-
-
-void DebugJob::start()
+    
+PdbFrameStackModel::PdbFrameStackModel(IDebugSession* session): FrameStackModel(session)
 {
-    QStringList program;
-    program << m_interpreter << "-u" << "-m" << "pdb" << m_scriptUrl.path(KUrl::RemoveTrailingSlash) << m_args;
-    m_session = new DebugSession(program);
-    KDevelop::ICore::self()->debugController()->addSession(m_session);
-    m_session->start();
-    kDebug() << "starting program:" << program;
+    
 }
 
-bool DebugJob::doKill()
+void PdbFrameStackModel::fetchFrames(int threadNumber, int from, int to)
 {
-    kDebug() << "kill signal received";
-    m_session->stopDebugger();
-    return KJob::doKill();
+    QList<FrameItem> frames;
+    FrameItem testFrame;
+    testFrame.file = "test.py";
+    testFrame.line = 3;
+    testFrame.name = "foo";
+    frames << testFrame;
+    setFrames(0, frames);
 }
 
-DebugJob::DebugJob()
+void PdbFrameStackModel::fetchThreads()
 {
-
-}
-
-DebugJob::~DebugJob()
-{
-
+    QList<ThreadItem> threads;
+    ThreadItem testThread;
+    testThread.nr = 0;
+    testThread.name = "test thread";
+    threads << testThread;
+    setThreads(threads);
 }
 
 }

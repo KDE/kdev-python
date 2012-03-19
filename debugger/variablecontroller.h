@@ -16,41 +16,27 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <KDebug>
 
-#include <interfaces/idebugcontroller.h>
-#include <interfaces/icore.h>
+#ifndef VARIABLECONTROLLER_H
+#define VARIABLECONTROLLER_H
+#include <debugger/interfaces/ivariablecontroller.h>
+#include <debugger/interfaces/idebugsession.h>
 
-#include "debugjob.h"
+using namespace KDevelop;
 
 namespace Python {
 
-
-void DebugJob::start()
+class VariableController : public KDevelop::IVariableController
 {
-    QStringList program;
-    program << m_interpreter << "-u" << "-m" << "pdb" << m_scriptUrl.path(KUrl::RemoveTrailingSlash) << m_args;
-    m_session = new DebugSession(program);
-    KDevelop::ICore::self()->debugController()->addSession(m_session);
-    m_session->start();
-    kDebug() << "starting program:" << program;
-}
-
-bool DebugJob::doKill()
-{
-    kDebug() << "kill signal received";
-    m_session->stopDebugger();
-    return KJob::doKill();
-}
-
-DebugJob::DebugJob()
-{
+public:
+    VariableController(IDebugSession* parent);
+    virtual void addWatch(KDevelop::Variable* variable);
+    virtual void addWatchpoint(KDevelop::Variable* variable);
+    virtual KDevelop::Variable* createVariable(KDevelop::TreeModel* model, KDevelop::TreeItem* parent, const QString& expression, const QString& display = "");
+    virtual QString expressionUnderCursor(KTextEditor::Document* doc, const KTextEditor::Cursor& cursor);
+    virtual void update();
+};
 
 }
 
-DebugJob::~DebugJob()
-{
-
-}
-
-}
+#endif // VARIABLECONTROLLER_H

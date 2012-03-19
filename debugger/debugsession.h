@@ -24,6 +24,7 @@
 #include <QMutexLocker>
 
 #include <debugger/interfaces/idebugsession.h>
+#include <debugger/interfaces/ivariablecontroller.h>
 
 using namespace KDevelop;
 
@@ -37,6 +38,10 @@ protected:
 
 public:
     DebugSession(QStringList program);
+    void start();
+    
+    virtual IVariableController* variableController();
+    
     virtual void stepOut();
     virtual void stepOverInstruction();
     virtual void stepInto();
@@ -51,10 +56,18 @@ public:
     virtual bool restartAvaliable() const;
     virtual IDebugSession::DebuggerState state() const;
     void setState(IDebugSession::DebuggerState state);
+    void updateLocation();
     
     void lockProcess();
     void unlockProcess();
     bool lockWhenReady(int msecs = 2000);
+    
+    enum WriteFlag {
+        NoFlags = 0,
+        KeepLocked = 1,
+        ClearBuffer = 2
+    };
+    Q_DECLARE_FLAGS(WriteFlags, WriteFlag);
 
 public slots:
     void dataAvailable();
@@ -63,8 +76,16 @@ private:
     KProcess* m_debuggerProcess;
     QMutex m_processLocker;
     IDebugSession::DebuggerState m_state;
-    void writeWhenReady(const QByteArray& cmd);
+    QByteArray m_buffer;
+    bool m_locationUpdateRequired;
+    QStringList m_program;
+    
+    void writeWhenReady(const QByteArray& cmd, WriteFlags flags = NoFlags);
+    void clearOutputBuffer();
+    bool waitForState(DebuggerState state_, int msecs = 3000);
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(DebugSession::WriteFlags);
 
 }
 

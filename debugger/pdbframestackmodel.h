@@ -16,41 +16,24 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <KDebug>
 
-#include <interfaces/idebugcontroller.h>
-#include <interfaces/icore.h>
+#ifndef PDBFRAMESTACKMODEL_H
+#define PDBFRAMESTACKMODEL_H
 
-#include "debugjob.h"
+#include <debugger/framestack/framestackmodel.h>
+
+using namespace KDevelop;
 
 namespace Python {
 
-
-void DebugJob::start()
+class PdbFrameStackModel : public KDevelop::FrameStackModel
 {
-    QStringList program;
-    program << m_interpreter << "-u" << "-m" << "pdb" << m_scriptUrl.path(KUrl::RemoveTrailingSlash) << m_args;
-    m_session = new DebugSession(program);
-    KDevelop::ICore::self()->debugController()->addSession(m_session);
-    m_session->start();
-    kDebug() << "starting program:" << program;
-}
-
-bool DebugJob::doKill()
-{
-    kDebug() << "kill signal received";
-    m_session->stopDebugger();
-    return KJob::doKill();
-}
-
-DebugJob::DebugJob()
-{
+public:
+    PdbFrameStackModel(IDebugSession* session);
+    virtual void fetchFrames(int threadNumber, int from, int to);
+    virtual void fetchThreads();
+};
 
 }
 
-DebugJob::~DebugJob()
-{
-
-}
-
-}
+#endif // PDBFRAMESTACKMODEL_H

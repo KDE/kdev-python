@@ -25,6 +25,7 @@
 
 #include <debugger/interfaces/idebugsession.h>
 #include <debugger/interfaces/ivariablecontroller.h>
+#include "variable.h"
 
 using namespace KDevelop;
 
@@ -42,6 +43,8 @@ public:
     
     virtual IVariableController* variableController();
     
+    void runDefaultCommand(const QString& cmd);
+    
     virtual void stepOut();
     virtual void stepOverInstruction();
     virtual void stepInto();
@@ -57,6 +60,7 @@ public:
     virtual IDebugSession::DebuggerState state() const;
     void setState(IDebugSession::DebuggerState state);
     void updateLocation();
+    void setLocationChanged();
     
     void lockProcess();
     void unlockProcess();
@@ -71,6 +75,7 @@ public:
 
 public slots:
     void dataAvailable();
+    void createVariable(Python::Variable* variable, QObject* callback, const char* callbackMethod);
 
 private:
     KProcess* m_debuggerProcess;

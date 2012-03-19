@@ -22,10 +22,13 @@
 #include <KDebug>
 
 #include <debugger/framestack/framestackmodel.h>
+#include <interfaces/icore.h>
+#include <interfaces/idocumentcontroller.h>
 
 #include "debugsession.h"
 #include "pdbframestackmodel.h"
 #include "variablecontroller.h"
+#include "variable.h"
 
 using namespace KDevelop;
 
@@ -154,50 +157,93 @@ void DebugSession::writeWhenReady(const QByteArray& cmd, Python::DebugSession::W
 
 void DebugSession::stepOut()
 {
-
+    // TODO this only steps out of functions; use temporary breakpoints for loops maybe?
+    runDefaultCommand("return");
 }
 
 void DebugSession::stepOverInstruction()
 {
-
+    runDefaultCommand("next");
 }
 
 void DebugSession::stepInto()
 {
-
+    runDefaultCommand("step");
 }
 
 void DebugSession::stepIntoInstruction()
 {
-
+    runDefaultCommand("step");
 }
 
 void DebugSession::stepOver()
 {
-    writeWhenReady("next\n", KeepLocked);
-    setState(IDebugSession::ActiveState);
-    m_locationUpdateRequired = true;
-    unlockProcess();
+    runDefaultCommand("next");
 }
 
 void DebugSession::jumpToCursor()
 {
-
+    if (KDevelop::IDocument* doc = KDevelop::ICore::self()->documentController()->activeDocument()) {
+        KTextEditor::Cursor cursor = doc->cursorPosition();
+        if ( cursor.isValid() ) {
+            // TODO disable all other breakpoints
+            runDefaultCommand(QString("jump " + QString::number(cursor.line() + 1)).toAscii());
+        }
+    }
 }
 
 void DebugSession::runToCursor()
 {
-
+    if (KDevelop::IDocument* doc = KDevelop::ICore::self()->documentController()->activeDocument()) {
+        KTextEditor::Cursor cursor = doc->cursorPosition();
+        if ( cursor.isValid() ) {
+            // TODO disable all other breakpoints
+            QString temporaryBreakpointLocation = doc->url().path() + QString(":") + QString::number(cursor.line() + 1);
+            writeWhenReady(QString("tbreak " + temporaryBreakpointLocation + "\n").toAscii());
+            runDefaultCommand("continue");
+        }
+    }
 }
 
 void DebugSession::run()
 {
-
+    runDefaultCommand("run");
 }
 
 void DebugSession::interruptDebugger()
 {
 
+}
+
+void DebugSession::setLocationChanged()
+{
+    m_locationUpdateRequired = true;
+}
+
+void DebugSession::runDefaultCommand(const QString& cmd)
+{
+    writeWhenReady((cmd + "\n").toAscii(), KeepLocked);
+    setState(IDebugSession::ActiveState);
+    setLocationChanged();
+    unlockProcess();
+}
+
+void DebugSession::createVariable(Python::Variable* variable, QObject* callback, const char* callbackMethod)
+{
+    kDebug() << "asked to create variable";
+    writeWhenReady(("print " + variable->expression() + "\n").toAscii(), KeepLocked | ClearBuffer);
+    setState(ActiveState);
+    waitForState(PausedState);
+    QList<QByteArray> buffer = m_buffer.split('\n');
+    buffer.removeLast();
+    QByteArray value;
+    foreach ( const QByteArray item, buffer ) {
+        value.append(item);
+    }
+    variable->setValue(value);
+    kDebug() << "value set to" << m_buffer << ", calling update method";
+    QMetaObject::invokeMethod(callback, callbackMethod, Qt::QueuedConnection, Q_ARG(bool, true));
+    unlockProcess();
 }
 
 void DebugSession::clearOutputBuffer()
@@ -221,8 +267,8 @@ void DebugSession::updateLocation()
         QRegExp m("^> (/.*\\.py)\\((\\d*)\\).*$");
         m.setMinimal(true);
         m.exactMatch(where);
-        setCurrentPosition(KUrl(m.capturedTexts().at(1)), m.capturedTexts().at(2).toInt(), "<unknown>");
-        kDebug() << "New position: " << m.capturedTexts().at(1) << m.capturedTexts().at(2).toInt() << m.capturedTexts() << where;
+        setCurrentPosition(KUrl(m.capturedTexts().at(1)), m.capturedTexts().at(2).toInt() - 1 , "<unknown>");
+        kDebug() << "New position: " << m.capturedTexts().at(1) << m.capturedTexts().at(2).toInt() - 1 << m.capturedTexts() << where;
     }
     unlockProcess();
 }

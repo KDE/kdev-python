@@ -21,6 +21,7 @@
 #include "variable.h"
 
 #include <debugger/variable/variablecollection.h>
+#include <QStack>
 
 using namespace KDevelop;
 
@@ -48,8 +49,61 @@ KDevelop::Variable* VariableController::createVariable(KDevelop::TreeModel* mode
 
 QString VariableController::expressionUnderCursor(KTextEditor::Document* doc, const KTextEditor::Cursor& cursor)
 {
-    kDebug() << "expressionUnderCursor requested (not implemented)";
-    return "not implemented: expressionUnderCursor";
+    QString line = doc->line(cursor.line());
+    int index = cursor.column();
+    QChar c = line[index];
+    if ( ! c.isLetterOrNumber() && c != '_' ) {
+        return QString();
+    }
+
+    int end = index;
+    for (; end < line.size(); ++end)
+    {
+        QChar c = line[end];
+        if ( ! ( c.isLetterOrNumber() || c == '_' ) ) {
+            break;
+        }
+    }
+    int start = index;
+    QStringList openingBrackets = QStringList() << "(" << "[" << "{" << "\"" << "'";
+    QStringList closingBrackets = QStringList() << ")" << "]" << "}" << "\"" << "'";
+    QStringList sliceChars = QStringList() << "." << "(" << "["; // chars which are allowed to be preceded by a space
+    QStack<QString> brackets;
+    bool lastWasSlice = false;
+    while ( start > 0 ) {
+        QChar c = line[start];
+        int bracket = closingBrackets.indexOf(c);
+        kDebug() << bracket << c;
+        if ( ! brackets.isEmpty() && brackets.top() == c ) {
+            brackets.pop();
+        }
+        else if ( bracket != -1 ) {
+            brackets.push(openingBrackets.at(bracket));
+        }
+        else if ( openingBrackets.contains(c) ) {
+            break;
+        }
+        
+        if ( brackets.isEmpty() && c.isSpace() && ! lastWasSlice ) {
+            break;
+        }
+        
+        if ( sliceChars.contains(c) ) {
+            lastWasSlice = true;
+        }
+        else {
+            lastWasSlice = false;
+        }
+        start --;
+    }
+    if ( ! ( start < end ) ) {
+        return QString();
+    }
+
+    QString expression(line.mid(start, end-start));
+    expression = expression.trimmed();
+    kDebug() << "expression found:" << expression;
+    return expression;
 }
 
 void VariableController::update()

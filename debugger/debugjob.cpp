@@ -39,7 +39,9 @@ void DebugJob::start()
 bool DebugJob::doKill()
 {
     kDebug() << "kill signal received";
-    m_session->stopDebugger();
+    if ( m_session ) {
+        m_session->stopDebugger();
+    }
     return KJob::doKill();
 }
 

@@ -10,6 +10,7 @@ include_directories(
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  ${KDE4_ENABLE_EXCEPTIONS}")
 
 set(kdevpdb_PART_SRCS
+    pdbframestackmodel.cpp
     pdblauncher.cpp
     debugjob.cpp
     debugsession.cpp

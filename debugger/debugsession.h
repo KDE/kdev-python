@@ -31,7 +31,7 @@ namespace Python {
 
 class DebugSession : public KDevelop::IDebugSession
 {
-
+Q_OBJECT
 protected:
     virtual KDevelop::IFrameStackModel* createFrameStackModel();
 
@@ -55,6 +55,10 @@ public:
     void lockProcess();
     void unlockProcess();
     bool lockWhenReady(int msecs = 2000);
+
+public slots:
+    void dataAvailable();
+
 private:
     KProcess* m_debuggerProcess;
     QMutex m_processLocker;

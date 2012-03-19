@@ -26,13 +26,14 @@ namespace Python {
 void DebugJob::start()
 {
     QStringList program;
-    program << m_interpreter << "-m" << "pdb" << m_scriptUrl.path(KUrl::RemoveTrailingSlash) << m_args;
+    program << m_interpreter << /*"-u" << "-m" << "pdb" <<*/ m_scriptUrl.path(KUrl::RemoveTrailingSlash) << m_args;
     m_session = new DebugSession(program);
     kDebug() << "starting program:" << program;
 }
 
 bool DebugJob::doKill()
 {
+    kDebug() << "kill signal received";
     m_session->stopDebugger();
     return KJob::doKill();
 }

@@ -18,6 +18,8 @@
 
 
 #include "variable.h"
+#include "debugsession.h"
+#include <interfaces/icore.h>
 
 namespace Python {
 
@@ -29,7 +31,9 @@ Variable::Variable(KDevelop::TreeModel* model, KDevelop::TreeItem* parent, const
 
 void Variable::attachMaybe(QObject* callback, const char* callbackMethod)
 {
-
+    IDebugSession* is = ICore::self()->debugController()->currentSession();
+    DebugSession* s = static_cast<DebugSession*>(is);
+    s->createVariable(this, callback, callbackMethod);
 }
 
 void Variable::fetchMoreChildren()

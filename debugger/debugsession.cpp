@@ -17,12 +17,17 @@
 */
 
 
-#include "debugsession.h"
-#include <debugger/framestack/framestackmodel.h>
 #include <QTimer>
 #include <QApplication>
+#include <KDebug>
+
+#include <debugger/framestack/framestackmodel.h>
+
+#include "debugsession.h"
 
 using namespace KDevelop;
+
+static QByteArray debuggerPrompt = "\n(Pdb) ";
 
 namespace Python {
 
@@ -36,14 +41,30 @@ DebugSession::DebugSession(QStringList program)
     lockProcess();
     m_debuggerProcess = new KProcess(this);
     m_debuggerProcess->setProgram(program);
+    m_debuggerProcess->setOutputChannelMode(KProcess::SeparateChannels);
+    connect(m_debuggerProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(dataAvailable()));
     m_debuggerProcess->start();
+    m_debuggerProcess->waitForStarted();
     setState(IDebugSession::ActiveState);
+    unlockProcess();
+}
+
+void DebugSession::dataAvailable()
+{
+    kDebug() << "data available";
+    lockProcess();
+    QByteArray data = m_debuggerProcess->readAllStandardOutput();
+    kDebug() << "data arrived:" << data;
+    if ( data.endsWith(debuggerPrompt) ) {
+        setState(IDebugSession::PausedState);
+    }
     unlockProcess();
 }
 
 void DebugSession::setState(IDebugSession::DebuggerState state)
 {
     m_state = state;
+    kDebug() << "debugger state changed to" << state;
 }
 
 bool DebugSession::lockWhenReady(int msecs)
@@ -131,7 +152,14 @@ void DebugSession::interruptDebugger()
 
 void DebugSession::stopDebugger()
 {
-
+    writeWhenReady("quit");
+    lockProcess();
+    if ( ! m_debuggerProcess->waitForFinished(200) ) {
+        m_debuggerProcess->kill();
+    }
+    kDebug() << "killed debugger";
+    setState(IDebugSession::EndedState);
+    unlockProcess();
 }
 
 void DebugSession::restartDebugger()
@@ -146,8 +174,10 @@ bool DebugSession::restartAvaliable() const
 
 KDevelop::IDebugSession::DebuggerState DebugSession::state() const
 {
-    return IDebugSession::NotStartedState;
+    return m_state;
 }
 
 
 }
+
+#include "debugsession.moc"

@@ -47,6 +47,8 @@ public:
     void addBreakpoint(Breakpoint* bp);
     void removeBreakpoint(Breakpoint* bp);
     
+    virtual IVariableController* variableController();
+    
     virtual void stepOut();
     virtual void stepOverInstruction();
     virtual void stepInto();

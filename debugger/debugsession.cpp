@@ -56,6 +56,13 @@ DebugSession::DebugSession(QStringList program) :
     m_variableController = new Python::VariableController(this);
     m_breakpointController = new Python::BreakpointController(this);
     m_program = program;
+    m_program = program;
+    m_variableController = new VariableController(this);
+}
+
+IVariableController* DebugSession::variableController()
+{
+    return m_variableController;
 }
 
 void DebugSession::start()

@@ -29,6 +29,7 @@
 #include "pdbframestackmodel.h"
 #include "variablecontroller.h"
 #include "variable.h"
+#include "breakpointcontroller.h"
 
 using namespace KDevelop;
 
@@ -41,17 +42,20 @@ KDevelop::IFrameStackModel* DebugSession::createFrameStackModel()
     return new PdbFrameStackModel(this);
 }
 
+DebugSession::DebugSession()
+{
+    m_variableController = new Python::VariableController(this);
+    m_breakpointController = new Python::BreakpointController(this);
+}
+
 DebugSession::DebugSession(QStringList program) :
     IDebugSession(),
     m_locationUpdateRequired(true)
 {
+    kDebug() << "creating debug session";
+    m_variableController = new Python::VariableController(this);
+    m_breakpointController = new Python::BreakpointController(this);
     m_program = program;
-    m_variableController = new VariableController(this);
-}
-
-IVariableController* DebugSession::variableController()
-{
-    return m_variableController;
 }
 
 void DebugSession::start()
@@ -207,7 +211,7 @@ void DebugSession::runToCursor()
 
 void DebugSession::run()
 {
-    runDefaultCommand("run");
+    runDefaultCommand("continue");
 }
 
 void DebugSession::interruptDebugger()
@@ -222,10 +226,26 @@ void DebugSession::setLocationChanged()
 
 void DebugSession::runDefaultCommand(const QString& cmd)
 {
-    writeWhenReady((cmd + "\n").toAscii(), KeepLocked);
+    QByteArray data = (cmd + "\n").toAscii();
+    kDebug() << "sending command: " << data;
+    writeWhenReady(data, KeepLocked);
     setState(IDebugSession::ActiveState);
     setLocationChanged();
     unlockProcess();
+}
+
+void DebugSession::addBreakpoint(Breakpoint* bp)
+{
+    QString location = bp->url().path() + ":" + QString::number(bp->line() + 1);
+    kDebug() << "adding breakpoint" << location;
+    runDefaultCommand("break " + location);
+}
+
+void DebugSession::removeBreakpoint(Breakpoint* bp)
+{
+    QString location = bp->url().path() + ":" + QString::number(bp->line() + 1);
+    kDebug() << "deleting breakpoint" << location;
+    runDefaultCommand("clear " + location);
 }
 
 void DebugSession::createVariable(Python::Variable* variable, QObject* callback, const char* callbackMethod)

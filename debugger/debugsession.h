@@ -25,6 +25,7 @@
 
 #include <debugger/interfaces/idebugsession.h>
 #include <debugger/interfaces/ivariablecontroller.h>
+#include <debugger/interfaces/ibreakpointcontroller.h>
 #include "variable.h"
 
 using namespace KDevelop;
@@ -39,11 +40,12 @@ protected:
 
 public:
     DebugSession(QStringList program);
+    DebugSession();
     void start();
     
-    virtual IVariableController* variableController();
-    
     void runDefaultCommand(const QString& cmd);
+    void addBreakpoint(Breakpoint* bp);
+    void removeBreakpoint(Breakpoint* bp);
     
     virtual void stepOut();
     virtual void stepOverInstruction();

@@ -21,6 +21,7 @@
 
 #include <language/codecompletion/codecompletioncontext.h>
 #include <language/duchain/duchainpointer.h>
+#include <kdev-pg-memory-pool.h>
 #include <QStack>
 
 #include "importfileitem.h"
@@ -91,6 +92,8 @@ public:
     int m_alreadyGivenParametersCount;
     
     DUContextPointer m_context;
+    
+    KDevPG::MemoryPool m_pool;
     
 private:
     bool m_dontAddMe;

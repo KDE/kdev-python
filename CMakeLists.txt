@@ -10,6 +10,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${kdevpython_SOURCE_DIR}/cmake/)
 
 find_package(KDE4 REQUIRED)
 find_package(KDevPlatform 1.3.60 REQUIRED)
+find_package(KDevelop-PG-Qt REQUIRED)
 
 set(CMAKE_CXX_FLAGS_DEBUG "-Wfatal-errors -Wall")
 
@@ -24,6 +25,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/parser
     ${CMAKE_CURRENT_SOURCE_DIR}/python-src
     ${CMAKE_CURRENT_BINARY_DIR}/parser
+    ${KDEVPGQT_INCLUDE_DIR}
 )
 
 add_definitions( -DKDE_DEFAULT_DEBUG_AREA=9011 )

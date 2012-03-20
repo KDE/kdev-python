@@ -85,7 +85,8 @@ void PyDUChainTest::initShell()
 
 void PyDUChainTest::parse_int(const QString& code, const QString& suffix)
 {
-    ParseSession* session = new ParseSession;
+    KDevPG::MemoryPool pool;
+    ParseSession* session = new ParseSession(&pool);
     session->setContents( code + "\n" ); // append a newline in case the parser doesnt like it without one
     
     static int mytest=0;
@@ -105,7 +106,7 @@ void PyDUChainTest::parse_int(const QString& code, const QString& suffix)
                                                    static_cast<TopDUContext::Features>(TopDUContext::AllDeclarationsContextsAndUses | TopDUContext::ForceUpdate),
                                                    this, 1);
     
-    AstBuilder* a = new AstBuilder();
+    AstBuilder* a = new AstBuilder(&pool);
     m_ast = a->parse(filename, const_cast<QString&>(code));
 }
 

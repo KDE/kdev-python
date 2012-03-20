@@ -25,14 +25,15 @@
 #ifndef PYTHON_PARSEJOB_H
 #define PYTHON_PARSEJOB_H
 
-#include <language/backgroundparser/parsejob.h>
 #include "ast.h"
+#include "kdevelop-pg-qt/kdev-pg-memory-pool.h"
 
 #include <QStringList>
 
 #include <ksharedptr.h>
 #include <ktexteditor/range.h>
 
+#include <language/backgroundparser/parsejob.h>
 #include <language/duchain/duchainpointer.h>
 #include <language/duchain/topducontext.h>
 
@@ -79,6 +80,7 @@ private:
     KDevelop::ReferencedTopDUContext m_duContext;
     KUrl m_url;
     KTextEditor::Range m_textRangeToParse;
+    KDevPG::MemoryPool m_pool;
 };
 
 }

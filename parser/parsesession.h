@@ -31,6 +31,7 @@
 #include <language/editor/documentrange.h>
 #include "ast.h"
 #include "kurl.h"
+#include <kdevelop-pg-qt/kdev-pg-memory-pool.h>
 
 #include <language/interfaces/iproblem.h>
 #include <language/editor/rangeinrevision.h>
@@ -48,11 +49,13 @@ namespace Python
 class KDEVPYTHONPARSER_EXPORT ParseSession
 {
 public:
-    ParseSession();
+    ParseSession(KDevPG::MemoryPool* pool);
     ~ParseSession();
 
     void setContents( const QString& contents );
     QString contents() const;
+    
+    KDevPG::MemoryPool* m_pool;
     
     void setCurrentDocument(KUrl& filename);
     IndexedString currentDocument();

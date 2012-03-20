@@ -81,7 +81,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     }
     else if ( m_operation == PythonCodeCompletionContext::GeneratorVariableCompletion ) {
         QList<KeywordItem*> completionItems;
-        AstBuilder* builder = new AstBuilder();
+        AstBuilder* builder = new AstBuilder(&m_pool);
         CodeAst* tmpAst = builder->parse(KUrl(), m_remainingExpression);
         if ( tmpAst ) {
             DUChainReadLocker lock(DUChain::lock());
@@ -280,7 +280,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         items.append(declarationListToItemList(remainingDeclarations));
     }
     else if ( m_operation == PythonCodeCompletionContext::MemberAccessCompletion ) {
-        AstBuilder* builder = new AstBuilder();
+        AstBuilder* builder = new AstBuilder(&m_pool);
         CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
         if ( tmpAst ) {
             DUChainReadLocker lock(DUChain::lock());
@@ -319,7 +319,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         if ( m_operation == PythonCodeCompletionContext::FunctionCallCompletion ) {
             // gather additional items to show above the real ones (for parameters, and stuff)
             QList<Declaration*> calltips;
-            AstBuilder* builder = new AstBuilder();
+            AstBuilder* builder = new AstBuilder(&m_pool);
             CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
             if ( tmpAst ) {
                 DUChainReadLocker lock(DUChain::lock());
@@ -540,8 +540,13 @@ QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems(QList<KUrl>
 // decide what kind of completion will be offered based on the code before the current cursor position
 // lazy as we are, we use regular expression matching for this
 PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position, 
-                                                         int depth, const PythonCodeCompletionWorker* parent): CodeCompletionContext(context, text, position, depth),
-                                                         m_operation(PythonCodeCompletionContext::DefaultCompletion), parent(parent), m_position(position), m_context(context)
+                                                         int depth, const PythonCodeCompletionWorker* parent)
+    : CodeCompletionContext(context, text, position, depth)
+    , m_operation(PythonCodeCompletionContext::DefaultCompletion)
+    , parent(parent)
+    , m_position(position)
+    , m_context(context)
+    , m_pool(KDevPG::MemoryPool())
 {
     kDebug() << "Text: " << text;
     m_workingOnDocument = parent->parent->m_currentDocument;

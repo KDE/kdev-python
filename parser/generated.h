@@ -6,10 +6,11 @@
 class PythonAstTransformer {
 public:
     CodeAst* ast;
-    PythonAstTransformer(int lineOffset) : m_lineOffset(lineOffset) {};
+    KDevPG::MemoryPool* m_pool;
+    PythonAstTransformer(int lineOffset, KDevPG::MemoryPool* pool) : m_lineOffset(lineOffset), m_pool(pool) {};
     void run(mod_ty syntaxtree, QString moduleName) {
-        ast = new CodeAst();
-        ast->name = new Identifier(moduleName);
+        ast = new (m_pool->allocate(sizeof(CodeAst))) CodeAst();
+        ast->name = new (m_pool->allocate(sizeof(Identifier))) Identifier(moduleName);
         nodeStack.push(ast);
         ast->body = visitNodeList<_stmt, Ast>(syntaxtree->v.Module.body);
         nodeStack.pop();
@@ -52,14 +53,14 @@ private:
         Ast* result = 0;
         switch ( node->kind ) {
         case BoolOp_kind: {
-                BooleanOperationAst* v = new BooleanOperationAst(parent());
+                BooleanOperationAst* v = new (m_pool->allocate(sizeof(BooleanOperationAst))) BooleanOperationAst(parent());
                 v->type = (ExpressionAst::BooleanOperationTypes) node->v.BoolOp.op;
                 nodeStack.push(v); v->values = visitNodeList<_expr, ExpressionAst>(node->v.BoolOp.values); nodeStack.pop();
                 result = v;
                 break;
             }
         case BinOp_kind: {
-                BinaryOperationAst* v = new BinaryOperationAst(parent());
+                BinaryOperationAst* v = new (m_pool->allocate(sizeof(BinaryOperationAst))) BinaryOperationAst(parent());
                 v->type = (ExpressionAst::OperatorTypes) node->v.BinOp.op;
                 nodeStack.push(v); v->lhs = static_cast<ExpressionAst*>(visitNode(node->v.BinOp.left)); nodeStack.pop();
                 nodeStack.push(v); v->rhs = static_cast<ExpressionAst*>(visitNode(node->v.BinOp.right)); nodeStack.pop();
@@ -67,21 +68,21 @@ private:
                 break;
             }
         case UnaryOp_kind: {
-                UnaryOperationAst* v = new UnaryOperationAst(parent());
+                UnaryOperationAst* v = new (m_pool->allocate(sizeof(UnaryOperationAst))) UnaryOperationAst(parent());
                 v->type = (ExpressionAst::UnaryOperatorTypes) node->v.UnaryOp.op;
                 nodeStack.push(v); v->operand = static_cast<ExpressionAst*>(visitNode(node->v.UnaryOp.operand)); nodeStack.pop();
                 result = v;
                 break;
             }
         case Lambda_kind: {
-                LambdaAst* v = new LambdaAst(parent());
+                LambdaAst* v = new (m_pool->allocate(sizeof(LambdaAst))) LambdaAst(parent());
                 nodeStack.push(v); v->arguments = static_cast<ArgumentsAst*>(visitNode(node->v.Lambda.args)); nodeStack.pop();
                 nodeStack.push(v); v->body = static_cast<ExpressionAst*>(visitNode(node->v.Lambda.body)); nodeStack.pop();
                 result = v;
                 break;
             }
         case IfExp_kind: {
-                IfExpressionAst* v = new IfExpressionAst(parent());
+                IfExpressionAst* v = new (m_pool->allocate(sizeof(IfExpressionAst))) IfExpressionAst(parent());
                 nodeStack.push(v); v->condition = static_cast<ExpressionAst*>(visitNode(node->v.IfExp.test)); nodeStack.pop();
                 nodeStack.push(v); v->body = static_cast<ExpressionAst*>(visitNode(node->v.IfExp.body)); nodeStack.pop();
                 nodeStack.push(v); v->orelse = static_cast<ExpressionAst*>(visitNode(node->v.IfExp.orelse)); nodeStack.pop();
@@ -89,21 +90,21 @@ private:
                 break;
             }
         case Dict_kind: {
-                DictAst* v = new DictAst(parent());
+                DictAst* v = new (m_pool->allocate(sizeof(DictAst))) DictAst(parent());
                 nodeStack.push(v); v->keys = visitNodeList<_expr, ExpressionAst>(node->v.Dict.keys); nodeStack.pop();
                 nodeStack.push(v); v->values = visitNodeList<_expr, ExpressionAst>(node->v.Dict.values); nodeStack.pop();
                 result = v;
                 break;
             }
         case ListComp_kind: {
-                ListComprehensionAst* v = new ListComprehensionAst(parent());
+                ListComprehensionAst* v = new (m_pool->allocate(sizeof(ListComprehensionAst))) ListComprehensionAst(parent());
                 nodeStack.push(v); v->element = static_cast<ExpressionAst*>(visitNode(node->v.ListComp.elt)); nodeStack.pop();
                 nodeStack.push(v); v->generators = visitNodeList<_comprehension, ComprehensionAst>(node->v.ListComp.generators); nodeStack.pop();
                 result = v;
                 break;
             }
         case DictComp_kind: {
-                DictionaryComprehensionAst* v = new DictionaryComprehensionAst(parent());
+                DictionaryComprehensionAst* v = new (m_pool->allocate(sizeof(DictionaryComprehensionAst))) DictionaryComprehensionAst(parent());
                 nodeStack.push(v); v->key = static_cast<ExpressionAst*>(visitNode(node->v.DictComp.key)); nodeStack.pop();
                 nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.DictComp.value)); nodeStack.pop();
                 nodeStack.push(v); v->generators = visitNodeList<_comprehension, ComprehensionAst>(node->v.DictComp.generators); nodeStack.pop();
@@ -111,20 +112,20 @@ private:
                 break;
             }
         case GeneratorExp_kind: {
-                GeneratorExpressionAst* v = new GeneratorExpressionAst(parent());
+                GeneratorExpressionAst* v = new (m_pool->allocate(sizeof(GeneratorExpressionAst))) GeneratorExpressionAst(parent());
                 nodeStack.push(v); v->element = static_cast<ExpressionAst*>(visitNode(node->v.GeneratorExp.elt)); nodeStack.pop();
                 nodeStack.push(v); v->generators = visitNodeList<_comprehension, ComprehensionAst>(node->v.GeneratorExp.generators); nodeStack.pop();
                 result = v;
                 break;
             }
         case Yield_kind: {
-                YieldAst* v = new YieldAst(parent());
+                YieldAst* v = new (m_pool->allocate(sizeof(YieldAst))) YieldAst(parent());
                 nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.Yield.value)); nodeStack.pop();
                 result = v;
                 break;
             }
         case Compare_kind: {
-                CompareAst* v = new CompareAst(parent());
+                CompareAst* v = new (m_pool->allocate(sizeof(CompareAst))) CompareAst(parent());
                 nodeStack.push(v); v->leftmostElement = static_cast<ExpressionAst*>(visitNode(node->v.Compare.left)); nodeStack.pop();
 
                 for ( int _i = 0; _i < node->v.Compare.ops->size; _i++ ) {
@@ -136,7 +137,7 @@ private:
                 break;
             }
         case Call_kind: {
-                CallAst* v = new CallAst(parent());
+                CallAst* v = new (m_pool->allocate(sizeof(CallAst))) CallAst(parent());
                 nodeStack.push(v); v->function = static_cast<ExpressionAst*>(visitNode(node->v.Call.func)); nodeStack.pop();
                 nodeStack.push(v); v->arguments = visitNodeList<_expr, ExpressionAst>(node->v.Call.args); nodeStack.pop();
                 nodeStack.push(v); v->keywords = visitNodeList<_keyword, KeywordAst>(node->v.Call.keywords); nodeStack.pop();
@@ -147,26 +148,26 @@ v->function->belongsToCall = v;
                 break;
             }
         case Repr_kind: {
-                ReprAst* v = new ReprAst(parent());
+                ReprAst* v = new (m_pool->allocate(sizeof(ReprAst))) ReprAst(parent());
                 nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.Repr.value)); nodeStack.pop();
                 result = v;
                 break;
             }
         case Num_kind: {
-                NumberAst* v = new NumberAst(parent());
+                NumberAst* v = new (m_pool->allocate(sizeof(NumberAst))) NumberAst(parent());
 v->isInt = PyInt_Check(node->v.Num.n);
                 result = v;
                 break;
             }
         case Str_kind: {
-                StringAst* v = new StringAst(parent());
+                StringAst* v = new (m_pool->allocate(sizeof(StringAst))) StringAst(parent());
                 v->value = PyString_AsString(PyObject_Str(node->v.Str.s));
                 result = v;
                 break;
             }
         case Attribute_kind: {
-                AttributeAst* v = new AttributeAst(parent());
-                v->attribute = node->v.Attribute.attr ? new Python::Identifier(PyString_AsString(PyObject_Str(node->v.Attribute.attr))) : 0;
+                AttributeAst* v = new (m_pool->allocate(sizeof(AttributeAst))) AttributeAst(parent());
+                v->attribute = node->v.Attribute.attr ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyString_AsString(PyObject_Str(node->v.Attribute.attr))) : 0;
                 if ( v->attribute ) {
                     v->attribute->startCol = node->col_offset; v->startCol = v->attribute->startCol;
                     v->attribute->startLine = tline(node->lineno - 1);  v->startLine = v->attribute->startLine;
@@ -180,7 +181,7 @@ v->isInt = PyInt_Check(node->v.Num.n);
                 break;
             }
         case Subscript_kind: {
-                SubscriptAst* v = new SubscriptAst(parent());
+                SubscriptAst* v = new (m_pool->allocate(sizeof(SubscriptAst))) SubscriptAst(parent());
                 nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.Subscript.value)); nodeStack.pop();
                 nodeStack.push(v); v->slice = static_cast<SliceAst*>(visitNode(node->v.Subscript.slice)); nodeStack.pop();
                 v->context = (ExpressionAst::Context) node->v.Subscript.ctx;
@@ -188,8 +189,8 @@ v->isInt = PyInt_Check(node->v.Num.n);
                 break;
             }
         case Name_kind: {
-                NameAst* v = new NameAst(parent());
-                v->identifier = node->v.Name.id ? new Python::Identifier(PyString_AsString(PyObject_Str(node->v.Name.id))) : 0;
+                NameAst* v = new (m_pool->allocate(sizeof(NameAst))) NameAst(parent());
+                v->identifier = node->v.Name.id ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyString_AsString(PyObject_Str(node->v.Name.id))) : 0;
                 if ( v->identifier ) {
                     v->identifier->startCol = node->col_offset; v->startCol = v->identifier->startCol;
                     v->identifier->startLine = tline(node->lineno - 1);  v->startLine = v->identifier->startLine;
@@ -202,27 +203,27 @@ v->isInt = PyInt_Check(node->v.Num.n);
                 break;
             }
         case List_kind: {
-                ListAst* v = new ListAst(parent());
+                ListAst* v = new (m_pool->allocate(sizeof(ListAst))) ListAst(parent());
                 nodeStack.push(v); v->elements = visitNodeList<_expr, ExpressionAst>(node->v.List.elts); nodeStack.pop();
                 v->context = (ExpressionAst::Context) node->v.List.ctx;
                 result = v;
                 break;
             }
         case Tuple_kind: {
-                TupleAst* v = new TupleAst(parent());
+                TupleAst* v = new (m_pool->allocate(sizeof(TupleAst))) TupleAst(parent());
                 nodeStack.push(v); v->elements = visitNodeList<_expr, ExpressionAst>(node->v.Tuple.elts); nodeStack.pop();
                 v->context = (ExpressionAst::Context) node->v.Tuple.ctx;
                 result = v;
                 break;
             }
         case Set_kind: {
-                SetAst* v = new SetAst(parent());
+                SetAst* v = new (m_pool->allocate(sizeof(SetAst))) SetAst(parent());
                 nodeStack.push(v); v->elements = visitNodeList<_expr, ExpressionAst>(node->v.Set.elts); nodeStack.pop();
                 result = v;
                 break;
             }
         case SetComp_kind: {
-                SetComprehensionAst* v = new SetComprehensionAst(parent());
+                SetComprehensionAst* v = new (m_pool->allocate(sizeof(SetComprehensionAst))) SetComprehensionAst(parent());
                 nodeStack.push(v); v->element = static_cast<ExpressionAst*>(visitNode(node->v.SetComp.elt)); nodeStack.pop();
                 nodeStack.push(v); v->generators = visitNodeList<_comprehension, ComprehensionAst>(node->v.SetComp.generators); nodeStack.pop();
                 result = v;
@@ -278,7 +279,7 @@ v->isInt = PyInt_Check(node->v.Num.n);
         Ast* result = 0;
         switch ( node->kind ) {
         case ExceptHandler_kind: {
-                ExceptionHandlerAst* v = new ExceptionHandlerAst(parent());
+                ExceptionHandlerAst* v = new (m_pool->allocate(sizeof(ExceptionHandlerAst))) ExceptionHandlerAst(parent());
                 nodeStack.push(v); v->type = static_cast<ExpressionAst*>(visitNode(node->v.ExceptHandler.type)); nodeStack.pop();
                 nodeStack.push(v); v->name = static_cast<ExpressionAst*>(visitNode(node->v.ExceptHandler.name)); nodeStack.pop();
                 nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.ExceptHandler.body); nodeStack.pop();
@@ -320,7 +321,7 @@ v->isInt = PyInt_Check(node->v.Num.n);
     Ast* visitNode(_comprehension* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
         if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
-                ComprehensionAst* v = new ComprehensionAst(parent());
+                ComprehensionAst* v = new (m_pool->allocate(sizeof(ComprehensionAst))) ComprehensionAst(parent());
             nodeStack.push(v); v->target = static_cast<ExpressionAst*>(visitNode(node->target)); nodeStack.pop();
             nodeStack.push(v); v->iterator = static_cast<ExpressionAst*>(visitNode(node->iter)); nodeStack.pop();
             nodeStack.push(v); v->conditions = visitNodeList<_expr, ExpressionAst>(node->ifs); nodeStack.pop();
@@ -331,8 +332,8 @@ v->isInt = PyInt_Check(node->v.Num.n);
     Ast* visitNode(_alias* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
         if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
-                AliasAst* v = new AliasAst(parent());
-            v->name = node->name ? new Python::Identifier(PyString_AsString(PyObject_Str(node->name))) : 0;
+                AliasAst* v = new (m_pool->allocate(sizeof(AliasAst))) AliasAst(parent());
+            v->name = node->name ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyString_AsString(PyObject_Str(node->name))) : 0;
                 if ( v->name ) {
                     v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
                     v->name->startLine = tline(node->lineno - 1);  v->startLine = v->name->startLine;
@@ -340,7 +341,7 @@ v->isInt = PyInt_Check(node->v.Num.n);
                     v->name->endLine = tline(node->lineno - 1);  v->endLine = v->name->endLine;
                     ranges_copied = true;
                 }
-            v->asName = node->asname ? new Python::Identifier(PyString_AsString(PyObject_Str(node->asname))) : 0;
+            v->asName = node->asname ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyString_AsString(PyObject_Str(node->asname))) : 0;
                 if ( v->asName ) {
                     v->asName->startCol = node->col_offset; v->startCol = v->asName->startCol;
                     v->asName->startLine = tline(node->lineno - 1);  v->startLine = v->asName->startLine;
@@ -358,14 +359,14 @@ v->isInt = PyInt_Check(node->v.Num.n);
         Ast* result = 0;
         switch ( node->kind ) {
         case Expr_kind: {
-                ExpressionAst* v = new ExpressionAst(parent());
+                ExpressionAst* v = new (m_pool->allocate(sizeof(ExpressionAst))) ExpressionAst(parent());
                 nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.Expr.value)); nodeStack.pop();
                 result = v;
                 break;
             }
         case FunctionDef_kind: {
-                FunctionDefinitionAst* v = new FunctionDefinitionAst(parent());
-                v->name = node->v.FunctionDef.name ? new Python::Identifier(PyString_AsString(PyObject_Str(node->v.FunctionDef.name))) : 0;
+                FunctionDefinitionAst* v = new (m_pool->allocate(sizeof(FunctionDefinitionAst))) FunctionDefinitionAst(parent());
+                v->name = node->v.FunctionDef.name ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyString_AsString(PyObject_Str(node->v.FunctionDef.name))) : 0;
                 if ( v->name ) {
                     v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
                     v->name->startLine = tline(node->lineno - 1);  v->startLine = v->name->startLine;
@@ -380,8 +381,8 @@ v->isInt = PyInt_Check(node->v.Num.n);
                 break;
             }
         case ClassDef_kind: {
-                ClassDefinitionAst* v = new ClassDefinitionAst(parent());
-                v->name = node->v.ClassDef.name ? new Python::Identifier(PyString_AsString(PyObject_Str(node->v.ClassDef.name))) : 0;
+                ClassDefinitionAst* v = new (m_pool->allocate(sizeof(ClassDefinitionAst))) ClassDefinitionAst(parent());
+                v->name = node->v.ClassDef.name ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyString_AsString(PyObject_Str(node->v.ClassDef.name))) : 0;
                 if ( v->name ) {
                     v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
                     v->name->startLine = tline(node->lineno - 1);  v->startLine = v->name->startLine;
@@ -396,26 +397,26 @@ v->isInt = PyInt_Check(node->v.Num.n);
                 break;
             }
         case Return_kind: {
-                ReturnAst* v = new ReturnAst(parent());
+                ReturnAst* v = new (m_pool->allocate(sizeof(ReturnAst))) ReturnAst(parent());
                 nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.Return.value)); nodeStack.pop();
                 result = v;
                 break;
             }
         case Delete_kind: {
-                DeleteAst* v = new DeleteAst(parent());
+                DeleteAst* v = new (m_pool->allocate(sizeof(DeleteAst))) DeleteAst(parent());
                 nodeStack.push(v); v->targets = visitNodeList<_expr, ExpressionAst>(node->v.Delete.targets); nodeStack.pop();
                 result = v;
                 break;
             }
         case Assign_kind: {
-                AssignmentAst* v = new AssignmentAst(parent());
+                AssignmentAst* v = new (m_pool->allocate(sizeof(AssignmentAst))) AssignmentAst(parent());
                 nodeStack.push(v); v->targets = visitNodeList<_expr, ExpressionAst>(node->v.Assign.targets); nodeStack.pop();
                 nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.Assign.value)); nodeStack.pop();
                 result = v;
                 break;
             }
         case AugAssign_kind: {
-                AugmentedAssignmentAst* v = new AugmentedAssignmentAst(parent());
+                AugmentedAssignmentAst* v = new (m_pool->allocate(sizeof(AugmentedAssignmentAst))) AugmentedAssignmentAst(parent());
                 nodeStack.push(v); v->target = static_cast<ExpressionAst*>(visitNode(node->v.AugAssign.target)); nodeStack.pop();
                 v->op = (ExpressionAst::OperatorTypes) node->v.AugAssign.op;
                 nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.AugAssign.value)); nodeStack.pop();
@@ -423,7 +424,7 @@ v->isInt = PyInt_Check(node->v.Num.n);
                 break;
             }
         case Print_kind: {
-                PrintAst* v = new PrintAst(parent());
+                PrintAst* v = new (m_pool->allocate(sizeof(PrintAst))) PrintAst(parent());
                 nodeStack.push(v); v->destination = static_cast<ExpressionAst*>(visitNode(node->v.Print.dest)); nodeStack.pop();
                 nodeStack.push(v); v->values = visitNodeList<_expr, ExpressionAst>(node->v.Print.values); nodeStack.pop();
                 v->newline = node->v.Print.nl;
@@ -431,7 +432,7 @@ v->isInt = PyInt_Check(node->v.Num.n);
                 break;
             }
         case For_kind: {
-                ForAst* v = new ForAst(parent());
+                ForAst* v = new (m_pool->allocate(sizeof(ForAst))) ForAst(parent());
                 nodeStack.push(v); v->target = static_cast<ExpressionAst*>(visitNode(node->v.For.target)); nodeStack.pop();
                 nodeStack.push(v); v->iterator = static_cast<ExpressionAst*>(visitNode(node->v.For.iter)); nodeStack.pop();
                 nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.For.body); nodeStack.pop();
@@ -440,7 +441,7 @@ v->isInt = PyInt_Check(node->v.Num.n);
                 break;
             }
         case While_kind: {
-                WhileAst* v = new WhileAst(parent());
+                WhileAst* v = new (m_pool->allocate(sizeof(WhileAst))) WhileAst(parent());
                 nodeStack.push(v); v->condition = static_cast<ExpressionAst*>(visitNode(node->v.While.test)); nodeStack.pop();
                 nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.While.body); nodeStack.pop();
                 nodeStack.push(v); v->orelse = visitNodeList<_stmt, Ast>(node->v.While.orelse); nodeStack.pop();
@@ -448,7 +449,7 @@ v->isInt = PyInt_Check(node->v.Num.n);
                 break;
             }
         case If_kind: {
-                IfAst* v = new IfAst(parent());
+                IfAst* v = new (m_pool->allocate(sizeof(IfAst))) IfAst(parent());
                 nodeStack.push(v); v->condition = static_cast<ExpressionAst*>(visitNode(node->v.If.test)); nodeStack.pop();
                 nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.If.body); nodeStack.pop();
                 nodeStack.push(v); v->orelse = visitNodeList<_stmt, Ast>(node->v.If.orelse); nodeStack.pop();
@@ -456,7 +457,7 @@ v->isInt = PyInt_Check(node->v.Num.n);
                 break;
             }
         case With_kind: {
-                WithAst* v = new WithAst(parent());
+                WithAst* v = new (m_pool->allocate(sizeof(WithAst))) WithAst(parent());
                 nodeStack.push(v); v->contextExpression = static_cast<ExpressionAst*>(visitNode(node->v.With.context_expr)); nodeStack.pop();
                 nodeStack.push(v); v->optionalVars = static_cast<ExpressionAst*>(visitNode(node->v.With.optional_vars)); nodeStack.pop();
                 nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.With.body); nodeStack.pop();
@@ -464,13 +465,13 @@ v->isInt = PyInt_Check(node->v.Num.n);
                 break;
             }
         case Raise_kind: {
-                RaiseAst* v = new RaiseAst(parent());
+                RaiseAst* v = new (m_pool->allocate(sizeof(RaiseAst))) RaiseAst(parent());
                 nodeStack.push(v); v->type = static_cast<ExpressionAst*>(visitNode(node->v.Raise.type)); nodeStack.pop();
                 result = v;
                 break;
             }
         case TryExcept_kind: {
-                TryExceptAst* v = new TryExceptAst(parent());
+                TryExceptAst* v = new (m_pool->allocate(sizeof(TryExceptAst))) TryExceptAst(parent());
                 nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.TryExcept.body); nodeStack.pop();
                 nodeStack.push(v); v->orelse = visitNodeList<_stmt, Ast>(node->v.TryExcept.orelse); nodeStack.pop();
                 nodeStack.push(v); v->handlers = visitNodeList<_excepthandler, ExceptionHandlerAst>(node->v.TryExcept.handlers); nodeStack.pop();
@@ -478,28 +479,28 @@ v->isInt = PyInt_Check(node->v.Num.n);
                 break;
             }
         case TryFinally_kind: {
-                TryFinallyAst* v = new TryFinallyAst(parent());
+                TryFinallyAst* v = new (m_pool->allocate(sizeof(TryFinallyAst))) TryFinallyAst(parent());
                 nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.TryFinally.body); nodeStack.pop();
                 nodeStack.push(v); v->finalbody = visitNodeList<_stmt, Ast>(node->v.TryFinally.finalbody); nodeStack.pop();
                 result = v;
                 break;
             }
         case Assert_kind: {
-                AssertionAst* v = new AssertionAst(parent());
+                AssertionAst* v = new (m_pool->allocate(sizeof(AssertionAst))) AssertionAst(parent());
                 nodeStack.push(v); v->condition = static_cast<ExpressionAst*>(visitNode(node->v.Assert.test)); nodeStack.pop();
                 nodeStack.push(v); v->message = static_cast<ExpressionAst*>(visitNode(node->v.Assert.msg)); nodeStack.pop();
                 result = v;
                 break;
             }
         case Import_kind: {
-                ImportAst* v = new ImportAst(parent());
+                ImportAst* v = new (m_pool->allocate(sizeof(ImportAst))) ImportAst(parent());
                 nodeStack.push(v); v->names = visitNodeList<_alias, AliasAst>(node->v.Import.names); nodeStack.pop();
                 result = v;
                 break;
             }
         case ImportFrom_kind: {
-                ImportFromAst* v = new ImportFromAst(parent());
-                v->module = node->v.ImportFrom.module ? new Python::Identifier(PyString_AsString(PyObject_Str(node->v.ImportFrom.module))) : 0;
+                ImportFromAst* v = new (m_pool->allocate(sizeof(ImportFromAst))) ImportFromAst(parent());
+                v->module = node->v.ImportFrom.module ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyString_AsString(PyObject_Str(node->v.ImportFrom.module))) : 0;
                 if ( v->module ) {
                     v->module->startCol = node->col_offset; v->startCol = v->module->startCol;
                     v->module->startLine = tline(node->lineno - 1);  v->startLine = v->module->startLine;
@@ -513,7 +514,7 @@ v->isInt = PyInt_Check(node->v.Num.n);
                 break;
             }
         case Exec_kind: {
-                ExecAst* v = new ExecAst(parent());
+                ExecAst* v = new (m_pool->allocate(sizeof(ExecAst))) ExecAst(parent());
                 nodeStack.push(v); v->body = static_cast<ExpressionAst*>(visitNode(node->v.Exec.body)); nodeStack.pop();
                 nodeStack.push(v); v->globals = static_cast<ExpressionAst*>(visitNode(node->v.Exec.globals)); nodeStack.pop();
                 nodeStack.push(v); v->locals = static_cast<ExpressionAst*>(visitNode(node->v.Exec.locals)); nodeStack.pop();
@@ -521,10 +522,10 @@ v->isInt = PyInt_Check(node->v.Num.n);
                 break;
             }
         case Global_kind: {
-                GlobalAst* v = new GlobalAst(parent());
+                GlobalAst* v = new (m_pool->allocate(sizeof(GlobalAst))) GlobalAst(parent());
 
                 for ( int _i = 0; _i < node->v.Global.names->size; _i++ ) {
-                    Python::Identifier* id = new Python::Identifier(PyString_AsString(PyObject_Str(
+                    Python::Identifier* id = new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyString_AsString(PyObject_Str(
                                     static_cast<PyObject*>(node->v.Global.names->elements[_i])
                             )));
                     v->names.append(id);
@@ -534,17 +535,17 @@ v->isInt = PyInt_Check(node->v.Num.n);
                 break;
             }
         case Break_kind: {
-                BreakAst* v = new BreakAst(parent());
+                BreakAst* v = new (m_pool->allocate(sizeof(BreakAst))) BreakAst(parent());
                 result = v;
                 break;
             }
         case Continue_kind: {
-                ContinueAst* v = new ContinueAst(parent());
+                ContinueAst* v = new (m_pool->allocate(sizeof(ContinueAst))) ContinueAst(parent());
                 result = v;
                 break;
             }
         case Pass_kind: {
-                PassAst* v = new PassAst(parent());
+                PassAst* v = new (m_pool->allocate(sizeof(PassAst))) PassAst(parent());
                 result = v;
                 break;
             }
@@ -598,7 +599,7 @@ v->isInt = PyInt_Check(node->v.Num.n);
         Ast* result = 0;
         switch ( node->kind ) {
         case Slice_kind: {
-                SliceAst* v = new SliceAst(parent());
+                SliceAst* v = new (m_pool->allocate(sizeof(SliceAst))) SliceAst(parent());
                 nodeStack.push(v); v->lower = static_cast<ExpressionAst*>(visitNode(node->v.Slice.lower)); nodeStack.pop();
                 nodeStack.push(v); v->upper = static_cast<ExpressionAst*>(visitNode(node->v.Slice.upper)); nodeStack.pop();
                 nodeStack.push(v); v->step = static_cast<ExpressionAst*>(visitNode(node->v.Slice.step)); nodeStack.pop();
@@ -606,19 +607,19 @@ v->isInt = PyInt_Check(node->v.Num.n);
                 break;
             }
         case ExtSlice_kind: {
-                ExtendedSliceAst* v = new ExtendedSliceAst(parent());
+                ExtendedSliceAst* v = new (m_pool->allocate(sizeof(ExtendedSliceAst))) ExtendedSliceAst(parent());
                 nodeStack.push(v); v->dims = visitNodeList<_slice, SliceAst>(node->v.ExtSlice.dims); nodeStack.pop();
                 result = v;
                 break;
             }
         case Index_kind: {
-                IndexAst* v = new IndexAst(parent());
+                IndexAst* v = new (m_pool->allocate(sizeof(IndexAst))) IndexAst(parent());
                 nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.Index.value)); nodeStack.pop();
                 result = v;
                 break;
             }
         case Ellipsis_kind: {
-                EllipsisAst* v = new EllipsisAst(parent());
+                EllipsisAst* v = new (m_pool->allocate(sizeof(EllipsisAst))) EllipsisAst(parent());
                 result = v;
                 break;
             }
@@ -657,9 +658,9 @@ v->isInt = PyInt_Check(node->v.Num.n);
     Ast* visitNode(_arguments* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
         if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
-                ArgumentsAst* v = new ArgumentsAst(parent());
-            v->vararg = node->vararg ? new Python::Identifier(PyString_AsString(PyObject_Str(node->vararg))) : 0;
-            v->kwarg = node->kwarg ? new Python::Identifier(PyString_AsString(PyObject_Str(node->kwarg))) : 0;
+                ArgumentsAst* v = new (m_pool->allocate(sizeof(ArgumentsAst))) ArgumentsAst(parent());
+            v->vararg = node->vararg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyString_AsString(PyObject_Str(node->vararg))) : 0;
+            v->kwarg = node->kwarg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyString_AsString(PyObject_Str(node->kwarg))) : 0;
             nodeStack.push(v); v->arguments = visitNodeList<_expr, ExpressionAst>(node->args); nodeStack.pop();
             nodeStack.push(v); v->defaultValues = visitNodeList<_expr, ExpressionAst>(node->defaults); nodeStack.pop();
               v->arg_lineno = tline(node->arg_lineno - 1);
@@ -673,8 +674,8 @@ v->isInt = PyInt_Check(node->v.Num.n);
     Ast* visitNode(_keyword* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
         if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
-                KeywordAst* v = new KeywordAst(parent());
-            v->argumentName = node->arg ? new Python::Identifier(PyString_AsString(PyObject_Str(node->arg))) : 0;
+                KeywordAst* v = new (m_pool->allocate(sizeof(KeywordAst))) KeywordAst(parent());
+            v->argumentName = node->arg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyString_AsString(PyObject_Str(node->arg))) : 0;
             nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->value)); nodeStack.pop();
         return v;
     }

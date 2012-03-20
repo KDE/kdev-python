@@ -23,12 +23,13 @@
 #define ASTBUILDER_H
 
 #include "ast.h"
-#include <kurl.h>
-#include <QDomDocument>
-#include "kdebug.h"
-#include "QXmlStreamReader"
-#include <language/duchain/topducontext.h>
 #include "parserexport.h"
+
+#include <KDebug>
+#include <KUrl>
+#include <kdev-pg-memory-pool.h>
+
+#include <language/duchain/topducontext.h>
 
 namespace PythonParser
 {
@@ -47,10 +48,11 @@ QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename);
 
 class KDEVPYTHONPARSER_EXPORT AstBuilder
 {
-    
 public:
+    AstBuilder(KDevPG::MemoryPool* pool);
     CodeAst* parse(KUrl filename, QString& contents);
     QList<KDevelop::ProblemPointer> m_problems;
+    KDevPG::MemoryPool* m_pool;
 private:
     static QMutex pyInitLock;
     static QString pyHomeDir;

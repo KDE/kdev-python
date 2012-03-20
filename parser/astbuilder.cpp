@@ -109,6 +109,12 @@ QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
     }
 }
 
+AstBuilder::AstBuilder(KDevPG::MemoryPool* pool)
+    : m_pool(pool)
+{
+
+}
+
 CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
 {
     qDebug() << " ====> AST     ====>     building abstract syntax tree for " << filename.path();
@@ -303,7 +309,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     }
     kDebug() << "Got syntax tree from python parser:" << syntaxtree->kind << Module_kind;
 
-    PythonAstTransformer t(lineOffset);
+    PythonAstTransformer t(lineOffset, m_pool);
     t.run(syntaxtree, filename.fileName().replace(".py", ""));
     
     PyArena_Free(arena);

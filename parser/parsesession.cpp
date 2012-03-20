@@ -23,10 +23,10 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
 #include "parsesession.h"
-#include <kdebug.h>
 
-#include "pythondriver.h"
+#include <KDebug>
 #include <language/duchain/indexedstring.h>
+
 #include "astbuilder.h"
 
 using namespace KDevelop;
@@ -34,7 +34,10 @@ using namespace KDevelop;
 namespace Python
 {
 
-ParseSession::ParseSession() : m_currentDocument(KDevelop::IndexedString("<invalid>")), m_futureModificationRevision()
+ParseSession::ParseSession(KDevPG::MemoryPool* pool)
+    : m_currentDocument(KDevelop::IndexedString("<invalid>"))
+    , m_pool(pool)
+    , m_futureModificationRevision()
 {
 }
 ParseSession::~ParseSession()
@@ -71,14 +74,24 @@ void ParseSession::setContents( const QString& contents )
     m_contents = contents;
 }
 
-QPair<CodeAst*, bool> ParseSession::parse( Python::CodeAst* ast )
+QPair<CodeAst*, bool> ParseSession::parse(Python::CodeAst* ast)
 {
-    Driver driver;
-    driver.setCurrentDocument(m_currentDocument.toUrl());
-    driver.setContent(m_contents);
-    QPair<CodeAst*, bool> result = driver.parse(ast);
-    m_problems = driver.m_problems;
-    return result;
+    AstBuilder pythonparser(m_pool);
+    QPair<CodeAst*, bool> matched;
+    matched.first = pythonparser.parse(m_currentDocument.toUrl(), m_contents);
+    matched.second = matched.first ? true : false; // check wether an AST was returned and react accordingly
+    
+    m_problems = pythonparser.m_problems;
+    
+    if( matched.second )
+    {
+        kDebug() << "Sucessfully parsed";
+    }else
+    {
+        matched.first = 0;
+        kDebug() << "Couldn't parse content";
+    }
+    return matched;
 }
 
 }

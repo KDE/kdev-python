@@ -63,7 +63,6 @@ namespace Python
 
 ParseJob::ParseJob(LanguageSupport* parent, const KUrl &url)
         : KDevelop::ParseJob(url)
-        , m_session(0)
         , m_ast(0)
         , m_readFromDisk(false)
         , m_duContext(0)
@@ -96,7 +95,7 @@ bool ParseJob::wasReadFromDisk() const
 
 void ParseJob::run()
 {
-    m_session = new ParseSession(&m_pool);
+    ParseSession currentSession(&m_pool);
     LanguageSupport* lang = python();
     ILanguage* ilang = lang->language();
     
@@ -113,14 +112,13 @@ void ParseJob::run()
     
     readContents();
     
-    // append a newline in case the parser doesnt like files without one
-    m_session->setContents( QString::fromUtf8(contents().contents) + "\n" );
-    m_session->setCurrentDocument(m_url);
+    currentSession.setContents( QString::fromUtf8(contents().contents) );
+    currentSession.setCurrentDocument(m_url);
     
     IndexedString filename = KDevelop::IndexedString(m_url.pathOrUrl());
     
     // call the python API and the AST transformer to populate the syntax tree
-    QPair<CodeAst*, bool> parserResults = m_session->parse(m_ast);
+    QPair<CodeAst*, bool> parserResults = currentSession.parse(m_ast);
     m_ast = parserResults.first;
     
     if ( abortRequested() ) {
@@ -131,7 +129,7 @@ void ParseJob::run()
     if ( parserResults.second )
     {
         QSharedPointer<PythonEditorIntegrator> editor = QSharedPointer<PythonEditorIntegrator>(new PythonEditorIntegrator());
-        editor->setParseSession(m_session);
+        editor->setParseSession(&currentSession);
         // set up the declaration builder, it gets the parsePriority so it can re-schedule imported files with a better priority
         DeclarationBuilder builder( editor.data() );
         builder.m_ownPriority = parsePriority();
@@ -230,16 +228,11 @@ void ParseJob::run()
     
     // The parser might have given us some syntax errors, which are now added to the document.
     DUChainWriteLocker lock(DUChain::lock());
-    foreach ( ProblemPointer p, m_session->m_problems ) {
+    foreach ( ProblemPointer p, currentSession.m_problems ) {
         m_duContext->addProblem(p);
     }
     
     setDuChain(m_duContext);
-}
-
-ParseSession *ParseJob::parseSession() const
-{
-    return m_session;
 }
 
 }

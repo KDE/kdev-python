@@ -65,7 +65,6 @@ public:
     const KTextEditor::Range& textRangeToParse() const;
 
     LanguageSupport* python() const;
-    ParseSession* parseSession() const;
     bool wasReadFromDisk() const;
     
     const LanguageSupport* m_parent;
@@ -74,7 +73,6 @@ protected:
     virtual void run();
 
 private:
-    ParseSession *m_session;
     CodeAst *m_ast;
     bool m_readFromDisk;
     KDevelop::ReferencedTopDUContext m_duContext;

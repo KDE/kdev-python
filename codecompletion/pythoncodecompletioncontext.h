@@ -93,8 +93,6 @@ public:
     
     DUContextPointer m_context;
     
-    KDevPG::MemoryPool m_pool;
-    
 private:
     bool m_dontAddMe;
 };

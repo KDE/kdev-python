@@ -81,7 +81,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     }
     else if ( m_operation == PythonCodeCompletionContext::GeneratorVariableCompletion ) {
         QList<KeywordItem*> completionItems;
-        AstBuilder* builder = new AstBuilder(&m_pool);
+        KDevPG::MemoryPool pool;
+        AstBuilder* builder = new AstBuilder(&pool);
         CodeAst* tmpAst = builder->parse(KUrl(), m_remainingExpression);
         if ( tmpAst ) {
             DUChainReadLocker lock(DUChain::lock());
@@ -109,7 +110,6 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             }
             delete v;
         }
-        delete tmpAst;
         delete builder;
         
         foreach ( KeywordItem* item, completionItems ) {
@@ -280,7 +280,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         items.append(declarationListToItemList(remainingDeclarations));
     }
     else if ( m_operation == PythonCodeCompletionContext::MemberAccessCompletion ) {
-        AstBuilder* builder = new AstBuilder(&m_pool);
+        KDevPG::MemoryPool pool;
+        AstBuilder* builder = new AstBuilder(&pool);
         CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
         if ( tmpAst ) {
             DUChainReadLocker lock(DUChain::lock());
@@ -300,7 +301,6 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         else {
             kWarning() << "Completion requested for syntactically invalid expression, not offering anything";
         }
-        delete tmpAst;
         delete builder;
     }
     else {
@@ -319,7 +319,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         if ( m_operation == PythonCodeCompletionContext::FunctionCallCompletion ) {
             // gather additional items to show above the real ones (for parameters, and stuff)
             QList<Declaration*> calltips;
-            AstBuilder* builder = new AstBuilder(&m_pool);
+            KDevPG::MemoryPool pool;
+            AstBuilder* builder = new AstBuilder(&pool);
             CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
             if ( tmpAst ) {
                 DUChainReadLocker lock(DUChain::lock());
@@ -546,7 +547,6 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     , parent(parent)
     , m_position(position)
     , m_context(context)
-    , m_pool(KDevPG::MemoryPool())
 {
     kDebug() << "Text: " << text;
     m_workingOnDocument = parent->parent->m_currentDocument;

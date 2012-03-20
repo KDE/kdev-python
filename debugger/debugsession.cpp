@@ -76,7 +76,6 @@ void DebugSession::start()
     connect(m_debuggerProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(dataAvailable()));
     m_debuggerProcess->start();
     m_debuggerProcess->waitForStarted();
-    setState(ActiveState);
     m_debuggerProcess->blockSignals(false);
     unlockProcess();
 }
@@ -91,7 +90,13 @@ void DebugSession::dataAvailable()
     // I don't think a python statement like print "FooBar" will ever break the output into two parts.
     // TODO find explicit documentation for this somewhere.
     if ( data.endsWith(debuggerPrompt) ) {
-        setState(PausedState);
+        if ( state() == StartingState ) {
+            setState(PausedState);
+            raiseEvent(connected_to_program);
+        }
+        else {
+            setState(PausedState);
+        }
     }
 }
 

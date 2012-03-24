@@ -38,6 +38,7 @@ void PdbFrameStackModel::framesFetched(QByteArray framelist)
     QList<FrameItem> frames;
     bool parsingLocation = false;
     FrameItem* currentFrame = 0;
+    int number = 0;
     foreach ( const QString& line, lines ) {
         if ( line.startsWith("-> ") ) {
             parsingLocation = true;
@@ -45,13 +46,21 @@ void PdbFrameStackModel::framesFetched(QByteArray framelist)
                 frames << *currentFrame;
             }
             currentFrame = new FrameItem();
-            currentFrame->name = line;
+            currentFrame->nr = number;
+            number += 1;
         }
         else if ( parsingLocation ) {
-            QRegExp location("(.*)\\(\\D*\\)(.*)");
-            location.setMinimal(true);
+            QRegExp location("\\>?\\s*(.*)\\(([0-9]+)\\)(.*)");
+            // version 1 has some *really* weird "greedy" ruleset which makes no sense at all for me
+            location.setPatternSyntax(QRegExp::RegExp2);
             if ( location.exactMatch(line) ) {
                 kDebug() << location.capturedTexts();
+                currentFrame->file = location.capturedTexts().at(1);
+                currentFrame->line = location.capturedTexts().at(2).toInt() - 1;
+                currentFrame->name = location.capturedTexts().at(3);
+            }
+            else {
+                kDebug() << "regular expression mismatches" << line;
             }
         }
     }

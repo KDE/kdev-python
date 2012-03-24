@@ -31,6 +31,7 @@ void DebugJob::start()
     QStringList program;
     program << m_interpreter << "-u" << "-m" << "pdb" << m_scriptUrl.path(KUrl::RemoveTrailingSlash) << m_args;
     m_session = new DebugSession(program);
+    connect(m_session, SIGNAL(finished()), SLOT(done()) );
     KDevelop::ICore::self()->debugController()->addSession(m_session);
     m_session->start();
     kDebug() << "starting program:" << program;
@@ -39,10 +40,8 @@ void DebugJob::start()
 bool DebugJob::doKill()
 {
     kDebug() << "kill signal received";
-    if ( m_session ) {
-        m_session->stopDebugger();
-    }
-    return KJob::doKill();
+    m_session->stopDebugger();
+    return true;
 }
 
 DebugJob::DebugJob()

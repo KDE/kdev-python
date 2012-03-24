@@ -116,7 +116,7 @@ void DebugSession::notifyNext()
 {
     if ( m_nextNotifyMethod and m_nextNotifyObject ) {
         kDebug() << "Calling:" << m_nextNotifyMethod << m_nextNotifyObject;
-        QMetaObject::invokeMethod(m_nextNotifyObject, m_nextNotifyMethod, Qt::QueuedConnection, Q_ARG(QByteArray, m_buffer));
+        QMetaObject::invokeMethod(m_nextNotifyObject, m_nextNotifyMethod, Qt::DirectConnection, Q_ARG(QByteArray, m_buffer));
     }
     else {
         kWarning() << "notify called, but nothing to notify!";
@@ -129,8 +129,8 @@ void DebugSession::notifyNext()
 void DebugSession::processNextCommand()
 {
     kDebug() << "processing next debugger command in queue";
-    if ( m_processBusy ) {
-        kDebug() << "process is busy, aborting";
+    if ( m_processBusy or m_state == EndedState ) {
+        kDebug() << "process is busy or ended, aborting";
         return;
     }
     m_processBusy = true;
@@ -152,13 +152,11 @@ void DebugSession::processNextCommand()
 
 void DebugSession::setState(DebuggerState state)
 {
-    kDebug() << "Setting state to" << state << ActiveState << PausedState;
+    kDebug() << "Setting state to" << state;
     if ( state == m_state ) {
         return;
     }
     m_state = state;
-    emit stateChanged(m_state);
-    raiseEvent(program_state_changed);
     if ( m_state == EndedState ) {
         raiseEvent(debugger_exited);
         emit finished();
@@ -174,6 +172,8 @@ void DebugSession::setState(DebuggerState state)
         raiseEvent(debugger_ready);
     }
     kDebug() << "debugger state changed to" << m_state;
+    raiseEvent(program_state_changed);
+    emit stateChanged(m_state);
 }
 
 bool DebugSession::waitForState(IDebugSession::DebuggerState state_, int msecs)
@@ -267,6 +267,9 @@ void DebugSession::interruptDebugger()
 
 void DebugSession::addCommand(PdbCommand* cmd)
 {
+    if ( m_state == EndedState ) {
+        return;
+    }
     kDebug() << " +++  adding command to queue:" << cmd;
     m_commandQueue.append(cmd);
     emit commandAdded();
@@ -368,10 +371,16 @@ void DebugSession::locationUpdateReady(QByteArray data) {
 
 void DebugSession::stopDebugger()
 {
+    m_commandQueue.clear();
+    setState(StoppingState);
     UserPdbCommand* cmd = new UserPdbCommand(0, 0, "quit\n");
+    addCommand(cmd);
     if ( ! m_debuggerProcess->waitForFinished(200) ) {
         m_debuggerProcess->kill();
     }
+    m_commandQueue.clear();
+    m_nextNotifyMethod = 0;
+    m_nextNotifyObject = 0;
     kDebug() << "killed debugger";
     setState(IDebugSession::EndedState);
 }

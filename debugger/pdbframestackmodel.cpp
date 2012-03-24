@@ -67,9 +67,16 @@ void PdbFrameStackModel::framesFetched(QByteArray framelist)
     setFrames(0, frames);
 }
 
-void PdbFrameStackModel::threadsFetched(QByteArray threads)
+void PdbFrameStackModel::threadsFetched(QByteArray threadsData)
 {
-    kDebug() << "threads fetched" << threads;
+    kDebug() << "threads fetched" << threadsData;
+    QList<ThreadItem> threads;
+    ThreadItem testThread;
+    testThread.nr = 0;
+    testThread.name = "test thread";
+    threads << testThread;
+    setThreads(threads);
+    setCurrentThread(0);
 }
 
 void PdbFrameStackModel::fetchFrames(int threadNumber, int from, int to)
@@ -82,13 +89,8 @@ void PdbFrameStackModel::fetchFrames(int threadNumber, int from, int to)
 void PdbFrameStackModel::fetchThreads()
 {
     kDebug() << "threads requested";
-    QList<ThreadItem> threads;
-    ThreadItem testThread;
-    testThread.nr = 0;
-    testThread.name = "test thread";
-    threads << testThread;
-    setThreads(threads);
-    setCurrentThread(0);
+    InternalPdbCommand* cmd = new InternalPdbCommand(this, "threadsFetched", "pass\n");
+    static_cast<DebugSession*>(session())->addCommand(cmd);
 }
 
 }

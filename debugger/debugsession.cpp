@@ -261,13 +261,13 @@ void DebugSession::run()
 
 void DebugSession::interruptDebugger()
 {
-    addSimpleUserCommand("quit");
+    addSimpleInternalCommand("quit");
     setState(IDebugSession::EndedState);
 }
 
 void DebugSession::addCommand(PdbCommand* cmd)
 {
-    if ( m_state == EndedState ) {
+    if ( m_state == EndedState || m_state == StoppingState ) {
         return;
     }
     kDebug() << " +++  adding command to queue:" << cmd;
@@ -372,9 +372,9 @@ void DebugSession::locationUpdateReady(QByteArray data) {
 void DebugSession::stopDebugger()
 {
     m_commandQueue.clear();
-    setState(StoppingState);
-    UserPdbCommand* cmd = new UserPdbCommand(0, 0, "quit\n");
+    InternalPdbCommand* cmd = new InternalPdbCommand(0, 0, "quit\n");
     addCommand(cmd);
+    setState(StoppingState);
     if ( ! m_debuggerProcess->waitForFinished(200) ) {
         m_debuggerProcess->kill();
     }

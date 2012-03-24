@@ -32,6 +32,8 @@ using namespace KDevelop;
 
 namespace Python {
 
+class PdbCommand;
+    
 class DebugSession : public KDevelop::IDebugSession
 {
 Q_OBJECT
@@ -43,9 +45,12 @@ public:
     DebugSession();
     void start();
     
-    void runDefaultCommand(const QString& cmd);
+    void addCommand(PdbCommand* cmd);
+    void addSimpleUserCommand(const QString& cmd);
+    void addSimpleInternalCommand(const QString& cmd);
     void addBreakpoint(Breakpoint* bp);
     void removeBreakpoint(Breakpoint* bp);
+    QByteArray getFrameList();
     
     virtual IVariableController* variableController();
     
@@ -66,20 +71,27 @@ public:
     void updateLocation();
     void setLocationChanged();
     
-    void lockProcess();
-    void unlockProcess();
-    bool lockWhenReady(int msecs = 2000);
-    
     enum WriteFlag {
         NoFlags = 0,
         KeepLocked = 1,
         ClearBuffer = 2
     };
     Q_DECLARE_FLAGS(WriteFlags, WriteFlag);
+    
+    void lockProcess();
+    void unlockProcess();
+    bool lockWhenReady(int msecs = 2000);
+    void write(const QByteArray& cmd);
 
 public slots:
     void dataAvailable();
     void createVariable(Python::Variable* variable, QObject* callback, const char* callbackMethod);
+    void checkCommandQueue();
+    void locationUpdateReady(QByteArray data);
+
+signals:
+    void debuggerReady();
+    void commandAdded();
 
 private:
     KProcess* m_debuggerProcess;
@@ -88,13 +100,91 @@ private:
     QByteArray m_buffer;
     bool m_locationUpdateRequired;
     QStringList m_program;
+    QList<PdbCommand*> m_commandQueue;
+    QObject* m_nextNotifyObject;
+    const char* m_nextNotifyMethod;
+    bool m_processBusy;
     
-    void writeWhenReady(const QByteArray& cmd, WriteFlags flags = NoFlags);
+    void setNotifyNext(QObject* object, const char* method);
+    void notifyNext();
+    void processNextCommand();
     void clearOutputBuffer();
     bool waitForState(DebuggerState state_, int msecs = 3000);
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(DebugSession::WriteFlags);
+
+struct PdbCommand {
+public:
+    // notifyMethod must have a QByteArray argument, which is the 
+    // output produced by the command.
+    PdbCommand(QObject* notifyObject, const char* notifyMethod) :
+      m_notifyObject(notifyObject)
+    , m_notifyMethod(notifyMethod)
+    , m_output(QByteArray()) {};
+    
+    // process is already locked and ready when this is called.
+    // Don't acquire or release the lock here.
+    virtual void run(DebugSession* session) = 0;
+    virtual ~PdbCommand() {};
+    void setOutput(QByteArray output) {
+        m_output = output;
+    };
+    QObject* notifyObject() {
+        return m_notifyObject;
+    };
+    const char* notifyMethod() {
+        return m_notifyMethod;
+    };
+    
+    enum Type {
+        InvalidType,
+        InternalType,
+        UserType
+    };
+    
+    inline Type type() {
+        return m_type;
+    };
+
+protected:
+    Type m_type;
+    QObject* m_notifyObject;
+    const char* m_notifyMethod;
+    QByteArray m_output;
+};
+
+struct SimplePdbCommand : public PdbCommand {
+public:
+    SimplePdbCommand(QObject* notifyObject, const char* notifyMethod, const QString& command) :
+      PdbCommand(notifyObject, notifyMethod)
+    , m_command(command) {
+        m_type = InvalidType;
+    };
+    void run(DebugSession* session) {
+        Q_ASSERT(m_command.endsWith('\n'));
+        kDebug() << "running command:" << m_command.toAscii() << m_notifyMethod;
+        session->write(m_command.toAscii());
+    }
+private:
+    QString m_command;
+};
+
+struct InternalPdbCommand : public SimplePdbCommand {
+public:
+    InternalPdbCommand(QObject* notifyObject, const char* notifyMethod, const QString& command) :
+      SimplePdbCommand(notifyObject, notifyMethod, command) {
+        m_type = InternalType;
+    } ;
+};
+
+struct UserPdbCommand : public SimplePdbCommand {
+public:
+    UserPdbCommand(QObject* notifyObject, const char* notifyMethod, const QString& command) :
+      SimplePdbCommand(notifyObject, notifyMethod, command) {
+          m_type = UserType;
+    } ;
+};
 
 }
 

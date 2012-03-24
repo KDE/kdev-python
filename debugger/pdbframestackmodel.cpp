@@ -18,6 +18,9 @@
 
 
 #include "pdbframestackmodel.h"
+#include "debugsession.h"
+#include <KDebug>
+#include <QRegExp>
 
 using namespace KDevelop;
 
@@ -28,25 +31,57 @@ PdbFrameStackModel::PdbFrameStackModel(IDebugSession* session): FrameStackModel(
     
 }
 
+void PdbFrameStackModel::framesFetched(QByteArray framelist)
+{
+    kDebug() << "frames fetched:" << framelist;
+    QList<QByteArray> lines = framelist.split('\n');
+    QList<FrameItem> frames;
+    bool parsingLocation = false;
+    FrameItem* currentFrame = 0;
+    foreach ( const QString& line, lines ) {
+        if ( line.startsWith("-> ") ) {
+            parsingLocation = true;
+            if ( currentFrame ) {
+                frames << *currentFrame;
+            }
+            currentFrame = new FrameItem();
+            currentFrame->name = line;
+        }
+        else if ( parsingLocation ) {
+            QRegExp location("(.*)\\(\\D*\\)(.*)");
+            location.setMinimal(true);
+            if ( location.exactMatch(line) ) {
+                kDebug() << location.capturedTexts();
+            }
+        }
+    }
+    setFrames(0, frames);
+}
+
+void PdbFrameStackModel::threadsFetched(QByteArray threads)
+{
+    kDebug() << "threads fetched" << threads;
+}
+
 void PdbFrameStackModel::fetchFrames(int threadNumber, int from, int to)
 {
-    QList<FrameItem> frames;
-    FrameItem testFrame;
-    testFrame.file = "test.py";
-    testFrame.line = 3;
-    testFrame.name = "foo";
-    frames << testFrame;
-    setFrames(0, frames);
+    kDebug() << "frames requested";
+    InternalPdbCommand* cmd = new InternalPdbCommand(this, "framesFetched", "where\n");
+    static_cast<DebugSession*>(session())->addCommand(cmd);
 }
 
 void PdbFrameStackModel::fetchThreads()
 {
+    kDebug() << "threads requested";
     QList<ThreadItem> threads;
     ThreadItem testThread;
     testThread.nr = 0;
     testThread.name = "test thread";
     threads << testThread;
     setThreads(threads);
+    setCurrentThread(0);
 }
 
 }
+
+#include "pdbframestackmodel.moc"

@@ -28,10 +28,14 @@ namespace Python {
 
 class PdbFrameStackModel : public KDevelop::FrameStackModel
 {
+Q_OBJECT
 public:
     PdbFrameStackModel(IDebugSession* session);
     virtual void fetchFrames(int threadNumber, int from, int to);
     virtual void fetchThreads();
+public slots:
+    void framesFetched(QByteArray frames);
+    void threadsFetched(QByteArray threads);
 };
 
 }

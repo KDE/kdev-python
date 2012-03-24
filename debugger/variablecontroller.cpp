@@ -94,8 +94,9 @@ QString VariableController::expressionUnderCursor(KTextEditor::Document* doc, co
         else {
             lastWasSlice = false;
         }
-        start --;
+        start--;
     }
+    start += 1;
     if ( ! ( start < end ) ) {
         return QString();
     }

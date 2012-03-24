@@ -49,8 +49,10 @@ DebugSession::DebugSession()
 }
 
 DebugSession::DebugSession(QStringList program) :
-    IDebugSession(),
-    m_locationUpdateRequired(true)
+    IDebugSession()
+    , m_locationUpdateRequired(true)
+    , m_nextNotifyObject(0)
+    , m_nextNotifyMethod(0)
 {
     kDebug() << "creating debug session";
     m_variableController = new Python::VariableController(this);
@@ -68,16 +70,16 @@ IVariableController* DebugSession::variableController()
 void DebugSession::start()
 {
     setState(StartingState);
-    lockProcess();
     m_debuggerProcess = new KProcess(this);
     m_debuggerProcess->setProgram(m_program);
     m_debuggerProcess->setOutputChannelMode(KProcess::SeparateChannels);
     m_debuggerProcess->blockSignals(true);
     connect(m_debuggerProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(dataAvailable()));
+    connect(this, SIGNAL(debuggerReady()), SLOT(checkCommandQueue()));
+    connect(this, SIGNAL(commandAdded()), SLOT(checkCommandQueue()));
     m_debuggerProcess->start();
     m_debuggerProcess->waitForStarted();
     m_debuggerProcess->blockSignals(false);
-    unlockProcess();
 }
 
 void DebugSession::dataAvailable()
@@ -95,13 +97,65 @@ void DebugSession::dataAvailable()
             raiseEvent(connected_to_program);
         }
         else {
+            notifyNext();
             setState(PausedState);
         }
+        m_processBusy = false;
+        emit debuggerReady();
+    }
+}
+
+void DebugSession::setNotifyNext(QObject* object, const char* method)
+{
+    kDebug() << "Notify next:" << object << method;
+    m_nextNotifyObject = object;
+    m_nextNotifyMethod = method;
+}
+
+void DebugSession::notifyNext()
+{
+    if ( m_nextNotifyMethod and m_nextNotifyObject ) {
+        kDebug() << "Calling:" << m_nextNotifyMethod << m_nextNotifyObject;
+        QMetaObject::invokeMethod(m_nextNotifyObject, m_nextNotifyMethod, Qt::QueuedConnection, Q_ARG(QByteArray, m_buffer));
+    }
+    else {
+        kWarning() << "notify called, but nothing to notify!";
+    }
+    m_buffer.clear();
+    m_nextNotifyMethod = 0;
+    m_nextNotifyObject = 0;
+}
+
+void DebugSession::processNextCommand()
+{
+    kDebug() << "processing next debugger command in queue";
+    if ( m_processBusy ) {
+        kDebug() << "process is busy, aborting";
+        return;
+    }
+    m_processBusy = true;
+    PdbCommand* cmd = m_commandQueue.first();
+    Q_ASSERT(cmd->type() != PdbCommand::InvalidType);
+    if ( cmd->type() == PdbCommand::UserType ) {
+        setState(ActiveState);
+        setLocationChanged();
+    }
+    m_commandQueue.removeFirst();
+    setNotifyNext(cmd->notifyObject(), cmd->notifyMethod());
+    cmd->run(this);
+    kDebug() << "command executed, deleting it.";
+    delete cmd;
+    if ( ! m_commandQueue.isEmpty() ) {
+        processNextCommand();
     }
 }
 
 void DebugSession::setState(DebuggerState state)
 {
+    kDebug() << "Setting state to" << state << ActiveState << PausedState;
+    if ( state == m_state ) {
+        return;
+    }
     m_state = state;
     emit stateChanged(m_state);
     raiseEvent(program_state_changed);
@@ -130,71 +184,49 @@ bool DebugSession::waitForState(IDebugSession::DebuggerState state_, int msecs)
     while ( t.isActive() and state() != state_ ) {
         QApplication::processEvents();
     }
-    if ( state() == state_ ) {
-        return true;
-    }
-    else {
-        return false;
-    }
+    kDebug() << "state" << state_ << "reached:" << ( state_ == state() );
+    return state() == state_;
 }
 
 bool DebugSession::lockWhenReady(int msecs)
 {
     bool result = waitForState(PausedState, msecs);
     if ( result ) {
-        lockProcess();
+        setState(ActiveState);
     }
     return result;
 }
 
-void DebugSession::lockProcess()
+void DebugSession::write(const QByteArray& cmd)
 {
-    m_processLocker.lock();
-}
-
-void DebugSession::unlockProcess()
-{
-    m_processLocker.unlock();
-}
-
-void DebugSession::writeWhenReady(const QByteArray& cmd, Python::DebugSession::WriteFlags flags)
-{
-    bool canExecute = lockWhenReady();
-    if ( flags & ClearBuffer ) {
-        m_buffer.clear();
-    }
-    if ( canExecute ) {
-        m_debuggerProcess->write(cmd);
-    }
-    if ( ! flags & KeepLocked ) {
-        unlockProcess();
-    }
+    kDebug() << " >>> WRITE:" << cmd;
+    m_debuggerProcess->write(cmd);
 }
 
 void DebugSession::stepOut()
 {
     // TODO this only steps out of functions; use temporary breakpoints for loops maybe?
-    runDefaultCommand("return");
+    addSimpleUserCommand("return");
 }
 
 void DebugSession::stepOverInstruction()
 {
-    runDefaultCommand("next");
+    addSimpleUserCommand("next");
 }
 
 void DebugSession::stepInto()
 {
-    runDefaultCommand("step");
+    addSimpleUserCommand("step");
 }
 
 void DebugSession::stepIntoInstruction()
 {
-    runDefaultCommand("step");
+    addSimpleUserCommand("step");
 }
 
 void DebugSession::stepOver()
 {
-    runDefaultCommand("next");
+    addSimpleUserCommand("next");
 }
 
 void DebugSession::jumpToCursor()
@@ -203,7 +235,7 @@ void DebugSession::jumpToCursor()
         KTextEditor::Cursor cursor = doc->cursorPosition();
         if ( cursor.isValid() ) {
             // TODO disable all other breakpoints
-            runDefaultCommand(QString("jump " + QString::number(cursor.line() + 1)).toAscii());
+            addSimpleUserCommand(QString("jump " + QString::number(cursor.line() + 1)).toAscii());
         }
     }
 }
@@ -215,20 +247,38 @@ void DebugSession::runToCursor()
         if ( cursor.isValid() ) {
             // TODO disable all other breakpoints
             QString temporaryBreakpointLocation = doc->url().path() + QString(":") + QString::number(cursor.line() + 1);
-            writeWhenReady(QString("tbreak " + temporaryBreakpointLocation + "\n").toAscii());
-            runDefaultCommand("continue");
+            InternalPdbCommand* temporaryBreakpointCmd = new InternalPdbCommand(0, 0, "tbreak " + temporaryBreakpointLocation + "\n");
+            addCommand(temporaryBreakpointCmd);
+            addSimpleInternalCommand("continue");
         }
     }
 }
 
 void DebugSession::run()
 {
-    runDefaultCommand("continue");
+    addSimpleUserCommand("continue");
 }
 
 void DebugSession::interruptDebugger()
 {
+    addSimpleUserCommand("quit");
+    setState(IDebugSession::EndedState);
+}
 
+void DebugSession::addCommand(PdbCommand* cmd)
+{
+    kDebug() << " +++  adding command to queue:" << cmd;
+    m_commandQueue.append(cmd);
+    emit commandAdded();
+}
+
+void DebugSession::checkCommandQueue()
+{
+    kDebug() << "items in queue:" << m_commandQueue.length();
+    if ( m_commandQueue.isEmpty() ) {
+        return;
+    }
+    processNextCommand();
 }
 
 void DebugSession::setLocationChanged()
@@ -236,46 +286,49 @@ void DebugSession::setLocationChanged()
     m_locationUpdateRequired = true;
 }
 
-void DebugSession::runDefaultCommand(const QString& cmd)
+void DebugSession::addSimpleUserCommand(const QString& cmd)
 {
-    QByteArray data = (cmd + "\n").toAscii();
-    kDebug() << "sending command: " << data;
-    writeWhenReady(data, KeepLocked);
-    setState(IDebugSession::ActiveState);
-    setLocationChanged();
-    unlockProcess();
+    UserPdbCommand* cmdObject = new UserPdbCommand(0, 0, cmd + "\n");
+    Q_ASSERT(cmdObject->type() == PdbCommand::UserType);
+    addCommand(cmdObject);
+}
+
+void DebugSession::addSimpleInternalCommand(const QString& cmd)
+{
+    Q_ASSERT( ! cmd.endsWith('\n') );
+    InternalPdbCommand* cmdObject = new InternalPdbCommand(0, 0, cmd + "\n");
+    Q_ASSERT(cmdObject->type() == PdbCommand::InternalType);
+    addCommand(cmdObject);
 }
 
 void DebugSession::addBreakpoint(Breakpoint* bp)
 {
     QString location = bp->url().path() + ":" + QString::number(bp->line() + 1);
     kDebug() << "adding breakpoint" << location;
-    runDefaultCommand("break " + location);
+    addSimpleInternalCommand("break " + location);
 }
 
 void DebugSession::removeBreakpoint(Breakpoint* bp)
 {
     QString location = bp->url().path() + ":" + QString::number(bp->line() + 1);
     kDebug() << "deleting breakpoint" << location;
-    runDefaultCommand("clear " + location);
+    addSimpleInternalCommand("clear " + location);
 }
 
 void DebugSession::createVariable(Python::Variable* variable, QObject* callback, const char* callbackMethod)
 {
     kDebug() << "asked to create variable";
-    writeWhenReady(("print " + variable->expression() + "\n").toAscii(), KeepLocked | ClearBuffer);
-    setState(ActiveState);
-    waitForState(PausedState);
-    QList<QByteArray> buffer = m_buffer.split('\n');
-    buffer.removeLast();
-    QByteArray value;
-    foreach ( const QByteArray item, buffer ) {
-        value.append(item);
-    }
-    variable->setValue(value);
-    kDebug() << "value set to" << m_buffer << ", calling update method";
-    QMetaObject::invokeMethod(callback, callbackMethod, Qt::QueuedConnection, Q_ARG(bool, true));
-    unlockProcess();
+//     writeWhenReady(("print " + variable->expression() + "\n").toAscii(), KeepLocked | ClearBuffer);
+//     waitForState(PausedState);
+//     QList<QByteArray> buffer = m_buffer.split('\n');
+//     buffer.removeLast();
+//     QByteArray value;
+//     foreach ( const QByteArray item, buffer ) {
+//         value.append(item);
+//     }
+//     variable->setValue(value);
+//     kDebug() << "value set to" << m_buffer << ", calling update method";
+//     QMetaObject::invokeMethod(callback, callbackMethod, Qt::QueuedConnection, Q_ARG(bool, true));
 }
 
 void DebugSession::clearOutputBuffer()
@@ -286,11 +339,13 @@ void DebugSession::clearOutputBuffer()
 void DebugSession::updateLocation()
 {
     kDebug() << "updating location";
-    writeWhenReady("where\n", KeepLocked | ClearBuffer);
-    setState(ActiveState);
-    waitForState(PausedState, 1000);
-    kDebug() << "Got where information: " << m_buffer;
-    QList<QByteArray> lines = m_buffer.split('\n');
+    InternalPdbCommand* cmd = new InternalPdbCommand(this, "locationUpdateReady", "where\n");
+    addCommand(cmd);
+}
+
+void DebugSession::locationUpdateReady(QByteArray data) {
+    kDebug() << "Got where information: " << data;
+    QList<QByteArray> lines = data.split('\n');
     if ( lines.length() >= 3 ) {
         lines.removeLast(); // prompt
         lines.removeLast(); // source line
@@ -302,19 +357,16 @@ void DebugSession::updateLocation()
         setCurrentPosition(KUrl(m.capturedTexts().at(1)), m.capturedTexts().at(2).toInt() - 1 , "<unknown>");
         kDebug() << "New position: " << m.capturedTexts().at(1) << m.capturedTexts().at(2).toInt() - 1 << m.capturedTexts() << where;
     }
-    unlockProcess();
 }
 
 void DebugSession::stopDebugger()
 {
-    writeWhenReady("quit\n");
-    lockProcess();
+    UserPdbCommand* cmd = new UserPdbCommand(0, 0, "quit\n");
     if ( ! m_debuggerProcess->waitForFinished(200) ) {
         m_debuggerProcess->kill();
     }
     kDebug() << "killed debugger";
     setState(IDebugSession::EndedState);
-    unlockProcess();
 }
 
 void DebugSession::restartDebugger()

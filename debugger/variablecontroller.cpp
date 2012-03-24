@@ -81,10 +81,12 @@ QString VariableController::expressionUnderCursor(KTextEditor::Document* doc, co
             brackets.push(openingBrackets.at(bracket));
         }
         else if ( openingBrackets.contains(c) ) {
+            start += 1;
             break;
         }
         
         if ( brackets.isEmpty() && c.isSpace() && ! lastWasSlice ) {
+            start += 1;
             break;
         }
         
@@ -96,7 +98,6 @@ QString VariableController::expressionUnderCursor(KTextEditor::Document* doc, co
         }
         start--;
     }
-    start += 1;
     if ( ! ( start < end ) ) {
         return QString();
     }

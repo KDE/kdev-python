@@ -318,17 +318,24 @@ void DebugSession::removeBreakpoint(Breakpoint* bp)
 void DebugSession::createVariable(Python::Variable* variable, QObject* callback, const char* callbackMethod)
 {
     kDebug() << "asked to create variable";
-//     writeWhenReady(("print " + variable->expression() + "\n").toAscii(), KeepLocked | ClearBuffer);
-//     waitForState(PausedState);
-//     QList<QByteArray> buffer = m_buffer.split('\n');
-//     buffer.removeLast();
-//     QByteArray value;
-//     foreach ( const QByteArray item, buffer ) {
-//         value.append(item);
-//     }
-//     variable->setValue(value);
-//     kDebug() << "value set to" << m_buffer << ", calling update method";
-//     QMetaObject::invokeMethod(callback, callbackMethod, Qt::QueuedConnection, Q_ARG(bool, true));
+    InternalPdbCommand* cmd = new InternalPdbCommand(this, "createVariableInternal", ("print " + variable->expression() + "\n").toAscii());
+    m_nextNotifyVarObject = callback;
+    m_nextNotifyVarMethod = callbackMethod;
+    m_nextUpdateVar = variable;
+    addCommand(cmd);
+}
+
+void DebugSession::createVariableInternal(QByteArray rawData)
+{
+    QList<QByteArray> data = rawData.split('\n');
+    data.removeLast();
+    QByteArray value;
+    foreach ( const QByteArray item, data ) {
+        value.append(item);
+    }
+    m_nextUpdateVar->setValue(value);
+    kDebug() << "value set to" << value << ", calling update method";
+    QMetaObject::invokeMethod(m_nextNotifyVarObject, m_nextNotifyVarMethod, Qt::QueuedConnection, Q_ARG(bool, true));
 }
 
 void DebugSession::clearOutputBuffer()

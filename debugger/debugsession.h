@@ -89,6 +89,9 @@ public slots:
     void checkCommandQueue();
     void locationUpdateReady(QByteArray data);
 
+private slots:
+    void createVariableInternal(QByteArray data);
+
 signals:
     void debuggerReady();
     void commandAdded();
@@ -102,7 +105,10 @@ private:
     QStringList m_program;
     QList<PdbCommand*> m_commandQueue;
     QObject* m_nextNotifyObject;
+    QObject* m_nextNotifyVarObject;
     const char* m_nextNotifyMethod;
+    const char* m_nextNotifyVarMethod;
+    Variable* m_nextUpdateVar;
     bool m_processBusy;
     
     void setNotifyNext(QObject* object, const char* method);

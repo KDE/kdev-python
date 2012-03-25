@@ -69,7 +69,6 @@ public:
     virtual IDebugSession::DebuggerState state() const;
     void setState(IDebugSession::DebuggerState state);
     void updateLocation();
-    void setLocationChanged();
     
     enum WriteFlag {
         NoFlags = 0,
@@ -98,9 +97,10 @@ private:
     QMutex m_processLocker;
     IDebugSession::DebuggerState m_state;
     QByteArray m_buffer;
-    bool m_locationUpdateRequired;
     QStringList m_program;
+public: // TODO for debugging
     QList<PdbCommand*> m_commandQueue;
+private:
     QObject* m_nextNotifyObject;
     const char* m_nextNotifyMethod;
     bool m_processBusy;

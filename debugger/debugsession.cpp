@@ -52,7 +52,6 @@ DebugSession::DebugSession() :
 
 DebugSession::DebugSession(QStringList program) :
     IDebugSession()
-    , m_locationUpdateRequired(true)
     , m_nextNotifyObject(0)
     , m_nextNotifyMethod(0)
 {
@@ -82,6 +81,7 @@ void DebugSession::start()
     m_debuggerProcess->start();
     m_debuggerProcess->waitForStarted();
     m_debuggerProcess->blockSignals(false);
+    updateLocation();
 }
 
 void DebugSession::dataAvailable()
@@ -100,7 +100,10 @@ void DebugSession::dataAvailable()
         }
         else {
             notifyNext();
-            setState(PausedState);
+            if ( m_commandQueue.isEmpty() ) {
+                kDebug() << "Changing state to PausedState";
+                setState(PausedState);
+            }
         }
         m_processBusy = false;
         emit debuggerReady();
@@ -139,7 +142,6 @@ void DebugSession::processNextCommand()
     Q_ASSERT(cmd->type() != PdbCommand::InvalidType);
     if ( cmd->type() == PdbCommand::UserType ) {
         setState(ActiveState);
-        setLocationChanged();
     }
     m_commandQueue.removeFirst();
     setNotifyNext(cmd->notifyObject(), cmd->notifyMethod());
@@ -154,6 +156,7 @@ void DebugSession::processNextCommand()
 void DebugSession::setState(DebuggerState state)
 {
     kDebug() << "Setting state to" << state;
+    
     if ( state == m_state ) {
         return;
     }
@@ -166,12 +169,12 @@ void DebugSession::setState(DebuggerState state)
         raiseEvent(debugger_busy);
     }
     else if ( m_state == PausedState ) {
-        if ( m_locationUpdateRequired ) {
-            m_locationUpdateRequired = false;
-            updateLocation();
-        }
         raiseEvent(debugger_ready);
+        if ( currentUrl().isValid() ) {
+            emit showStepInSource(currentUrl(), currentLine(), currentAddr());
+        }
     }
+    
     kDebug() << "debugger state changed to" << m_state;
     raiseEvent(program_state_changed);
     emit stateChanged(m_state);
@@ -272,6 +275,10 @@ void DebugSession::addCommand(PdbCommand* cmd)
         return;
     }
     kDebug() << " +++  adding command to queue:" << cmd;
+    if ( cmd->type() == PdbCommand::UserType ) {
+        // this is queued and will run after the command is executed.
+        updateLocation();
+    }
     m_commandQueue.append(cmd);
     emit commandAdded();
 }
@@ -283,11 +290,6 @@ void DebugSession::checkCommandQueue()
         return;
     }
     processNextCommand();
-}
-
-void DebugSession::setLocationChanged()
-{
-    m_locationUpdateRequired = true;
 }
 
 void DebugSession::addSimpleUserCommand(const QString& cmd)

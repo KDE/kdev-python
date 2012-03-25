@@ -20,6 +20,7 @@
 #include "variablecontroller.h"
 #include "variable.h"
 #include "debugsession.h"
+#include <language/duchain/duchainlock.h>
 #include <language/duchain/declaration.h>
 #include <language/duchain/duchain.h>
 #include <interfaces/ilanguagecontroller.h>
@@ -122,12 +123,14 @@ void VariableController::update()
 {
     kDebug() << "update requested";
     DebugSession* d = static_cast<DebugSession*>(parent());
+    kDebug() << d->m_commandQueue.length() << "commands in queue";
+    DUChainReadLocker lock;
     TopDUContext* topContext = DUChain::self()->chainForDocument(d->currentUrl());
     if ( ! topContext ) {
         kDebug() << "no top context, aborting";
         return;
     }
-    CursorInRevision loc = CursorInRevision(d->currentLine() + 1, 0);
+    CursorInRevision loc = CursorInRevision(d->currentLine(), 0);
     if ( DUContext* currentContext = topContext->findContextAt(loc) ) {
         QList<DeclarationDepthPair> decls = currentContext->allDeclarations(loc, topContext);
         QStringList vars;

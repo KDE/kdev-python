@@ -21,6 +21,7 @@
 #define VARIABLECONTROLLER_H
 #include <debugger/interfaces/ivariablecontroller.h>
 #include <debugger/interfaces/idebugsession.h>
+#include "variable.h"
 
 using namespace KDevelop;
 
@@ -35,6 +36,8 @@ public:
     virtual KDevelop::Variable* createVariable(KDevelop::TreeModel* model, KDevelop::TreeItem* parent, const QString& expression, const QString& display = "");
     virtual QString expressionUnderCursor(KTextEditor::Document* doc, const KTextEditor::Cursor& cursor);
     virtual void update();
+private:
+    QList<Variable*> m_watchVariables;
 };
 
 }

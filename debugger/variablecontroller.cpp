@@ -19,9 +19,17 @@
 
 #include "variablecontroller.h"
 #include "variable.h"
+#include "debugsession.h"
+#include <language/duchain/declaration.h>
+#include <language/duchain/duchain.h>
+#include <interfaces/ilanguagecontroller.h>
 
 #include <debugger/variable/variablecollection.h>
+#include <interfaces/icore.h>
 #include <QStack>
+#include <KMessageBox>
+#include <KLocalizedString>
+#include <X11/X.h>
 
 using namespace KDevelop;
 
@@ -34,12 +42,12 @@ VariableController::VariableController(IDebugSession* parent) : IVariableControl
 
 void VariableController::addWatch(KDevelop::Variable* variable)
 {
-    kDebug() << "addWatch requested (not implemented)";
+    kWarning() << "addWatch requested (not implemented)";
 }
 
 void VariableController::addWatchpoint(KDevelop::Variable* variable)
 {
-    kDebug() << "addWatchpoint requested (not implemented)";
+    kWarning() << "addWatchpoint requested (not implemented)";
 }
 
 KDevelop::Variable* VariableController::createVariable(KDevelop::TreeModel* model, KDevelop::TreeItem* parent, const QString& expression, const QString& display)
@@ -108,9 +116,38 @@ QString VariableController::expressionUnderCursor(KTextEditor::Document* doc, co
     return expression;
 }
 
+typedef QPair<Declaration*, int> DeclarationDepthPair;
+
 void VariableController::update()
 {
-    kDebug() << "update requested (not implemented)";
+    kDebug() << "update requested";
+    DebugSession* d = static_cast<DebugSession*>(parent());
+    TopDUContext* topContext = DUChain::self()->chainForDocument(d->currentUrl());
+    if ( ! topContext ) {
+        kDebug() << "no top context, aborting";
+        return;
+    }
+    CursorInRevision loc = CursorInRevision(d->currentLine(), 0);
+    if ( DUContext* currentContext = topContext->findContextAt(loc) ) {
+        QList<DeclarationDepthPair> decls = currentContext->allDeclarations(loc, topContext);
+        QStringList vars;
+        foreach ( DeclarationDepthPair dp, decls ) {
+            Declaration* d = dp.first;
+            if ( ! d ) {
+                continue;
+            }
+            kDebug() << "adding var:" << d->identifier().toString().replace("::", ".");
+            vars << d->identifier().toString();
+        }
+        QList<KDevelop::Variable*> variables = KDevelop::ICore::self()->debugController()->variableCollection()
+                                     ->locals()->updateLocals(vars);
+        foreach ( KDevelop::Variable* v, variables ) {
+            v->attachMaybe();
+        }
+    }
+    else {
+        kDebug() << "no context found";
+    }
 }
 
 }

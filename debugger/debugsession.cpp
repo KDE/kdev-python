@@ -42,7 +42,9 @@ KDevelop::IFrameStackModel* DebugSession::createFrameStackModel()
     return new PdbFrameStackModel(this);
 }
 
-DebugSession::DebugSession()
+DebugSession::DebugSession() :
+      m_nextNotifyObject(0)
+    , m_nextNotifyMethod(0)
 {
     m_variableController = new Python::VariableController(this);
     m_breakpointController = new Python::BreakpointController(this);
@@ -107,7 +109,6 @@ void DebugSession::dataAvailable()
 
 void DebugSession::setNotifyNext(QObject* object, const char* method)
 {
-    kDebug() << "Notify next:" << object << method;
     m_nextNotifyObject = object;
     m_nextNotifyMethod = method;
 }

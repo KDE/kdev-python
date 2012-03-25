@@ -127,17 +127,21 @@ void VariableController::update()
         kDebug() << "no top context, aborting";
         return;
     }
-    CursorInRevision loc = CursorInRevision(d->currentLine(), 0);
+    CursorInRevision loc = CursorInRevision(d->currentLine() + 1, 0);
     if ( DUContext* currentContext = topContext->findContextAt(loc) ) {
         QList<DeclarationDepthPair> decls = currentContext->allDeclarations(loc, topContext);
         QStringList vars;
+        QStringList lateVars;
         foreach ( DeclarationDepthPair dp, decls ) {
             Declaration* d = dp.first;
             if ( ! d ) {
                 continue;
             }
-            kDebug() << "adding var:" << d->identifier().toString().replace("::", ".");
-            vars << d->identifier().toString();
+            if (  ( d->context() == currentContext || d->context()->type() == DUContext::Function ) 
+                 && d->context()->type() != DUContext::Class )
+            {
+                vars << d->identifier().toString();
+            }
         }
         QList<KDevelop::Variable*> variables = KDevelop::ICore::self()->debugController()->variableCollection()
                                      ->locals()->updateLocals(vars);

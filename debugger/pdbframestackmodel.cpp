@@ -89,6 +89,7 @@ void PdbFrameStackModel::fetchFrames(int threadNumber, int from, int to)
 void PdbFrameStackModel::fetchThreads()
 {
     kDebug() << "threads requested";
+    // pdb doesn't support threads.
     InternalPdbCommand* cmd = new InternalPdbCommand(this, "threadsFetched", "pass\n");
     static_cast<DebugSession*>(session())->addCommand(cmd);
 }

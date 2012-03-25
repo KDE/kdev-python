@@ -1,4 +1,6 @@
-import QtCore.pyqtSignal
+class pyqtSignal():
+ def connect(self, targetSignal): pass
+ def emit(self, *args): pass
 from QtCore import *
 
 class QPaintDevice():
@@ -339,7 +341,7 @@ class QWidget(QObject, QPaintDevice):
     def event(self):
         '''QEvent QWidget.event()'''
         return QEvent()
-    customContextMenuRequested = PyQt4.QtCore.pyqtSignal() # void customContextMenuRequested(const QPoint&) - signal
+    customContextMenuRequested = pyqtSignal() # void customContextMenuRequested(const QPoint&) - signal
     def isAncestorOf(self, child):
         '''bool QWidget.isAncestorOf(QWidget child)'''
         return bool()
@@ -902,10 +904,10 @@ class QAbstractButton(QWidget):
         return bool()
     def paintEvent(self, e):
         '''abstract void QAbstractButton.paintEvent(QPaintEvent e)'''
-    toggled = PyQt4.QtCore.pyqtSignal() # void toggled(bool) - signal
-    clicked = PyQt4.QtCore.pyqtSignal() # void clicked(bool = 0) - signal
-    released = PyQt4.QtCore.pyqtSignal() # void released() - signal
-    pressed = PyQt4.QtCore.pyqtSignal() # void pressed() - signal
+    toggled = pyqtSignal() # void toggled(bool) - signal
+    clicked = pyqtSignal() # void clicked(bool = 0) - signal
+    released = pyqtSignal() # void released() - signal
+    pressed = pyqtSignal() # void pressed() - signal
     def setChecked(self):
         '''bool QAbstractButton.setChecked()'''
         return bool()
@@ -990,9 +992,9 @@ class QAbstractItemDelegate(QObject):
 
     def __init__(self, parent = None):
         '''void QAbstractItemDelegate.__init__(QObject parent = None)'''
-    sizeHintChanged = PyQt4.QtCore.pyqtSignal() # void sizeHintChanged(const QModelIndex&) - signal
-    closeEditor = PyQt4.QtCore.pyqtSignal() # void closeEditor(QWidget *,QAbstractItemDelegate::EndEditHint = QAbstractItemDelegate.NoHint) - signal
-    commitData = PyQt4.QtCore.pyqtSignal() # void commitData(QWidget *) - signal
+    sizeHintChanged = pyqtSignal() # void sizeHintChanged(const QModelIndex&) - signal
+    closeEditor = pyqtSignal() # void closeEditor(QWidget *,QAbstractItemDelegate::EndEditHint = QAbstractItemDelegate.NoHint) - signal
+    commitData = pyqtSignal() # void commitData(QWidget *) - signal
     def helpEvent(self, event, view, option, index):
         '''bool QAbstractItemDelegate.helpEvent(QHelpEvent event, QAbstractItemView view, QStyleOptionViewItem option, QModelIndex index)'''
         return bool()
@@ -1407,12 +1409,12 @@ class QAbstractItemView(QAbstractScrollArea):
         return int()
     def setHorizontalStepsPerItem(self, steps):
         '''void QAbstractItemView.setHorizontalStepsPerItem(int steps)'''
-    viewportEntered = PyQt4.QtCore.pyqtSignal() # void viewportEntered() - signal
-    entered = PyQt4.QtCore.pyqtSignal() # void entered(const QModelIndex&) - signal
-    activated = PyQt4.QtCore.pyqtSignal() # void activated(const QModelIndex&) - signal
-    doubleClicked = PyQt4.QtCore.pyqtSignal() # void doubleClicked(const QModelIndex&) - signal
-    clicked = PyQt4.QtCore.pyqtSignal() # void clicked(const QModelIndex&) - signal
-    pressed = PyQt4.QtCore.pyqtSignal() # void pressed(const QModelIndex&) - signal
+    viewportEntered = pyqtSignal() # void viewportEntered() - signal
+    entered = pyqtSignal() # void entered(const QModelIndex&) - signal
+    activated = pyqtSignal() # void activated(const QModelIndex&) - signal
+    doubleClicked = pyqtSignal() # void doubleClicked(const QModelIndex&) - signal
+    clicked = pyqtSignal() # void clicked(const QModelIndex&) - signal
+    pressed = pyqtSignal() # void pressed(const QModelIndex&) - signal
     def editorDestroyed(self, editor):
         '''void QAbstractItemView.editorDestroyed(QObject editor)'''
     def commitData(self, editor):
@@ -1647,9 +1649,9 @@ class QDialog(QWidget):
     def keyPressEvent(self):
         '''QKeyEvent QDialog.keyPressEvent()'''
         return QKeyEvent()
-    rejected = PyQt4.QtCore.pyqtSignal() # void rejected() - signal
-    finished = PyQt4.QtCore.pyqtSignal() # void finished(int) - signal
-    accepted = PyQt4.QtCore.pyqtSignal() # void accepted() - signal
+    rejected = pyqtSignal() # void rejected() - signal
+    finished = pyqtSignal() # void finished(int) - signal
+    accepted = pyqtSignal() # void accepted() - signal
     def open(self):
         '''void QDialog.open()'''
     def showExtension(self):
@@ -1812,6 +1814,34 @@ class QAbstractProxyModel(QAbstractItemModel):
     """"""
     def __init__(self, parent = None):
         '''void QAbstractProxyModel.__init__(QObject parent = None)'''
+    def supportedDropActions(self):
+        '''Qt.DropActions QAbstractProxyModel.supportedDropActions()'''
+        return Qt.DropActions()
+    def mimeTypes(self):
+        '''QStringList QAbstractProxyModel.mimeTypes()'''
+        return QStringList()
+    def mimeData(self, indexes):
+        '''QMimeData QAbstractProxyModel.mimeData(list-of-QModelIndex indexes)'''
+        return QMimeData()
+    def hasChildren(self, parent = QModelIndex()):
+        '''bool QAbstractProxyModel.hasChildren(QModelIndex parent = QModelIndex())'''
+        return bool()
+    def span(self, index):
+        '''QSize QAbstractProxyModel.span(QModelIndex index)'''
+        return QSize()
+    def sort(self, column, order = Qt.AscendingOrder):
+        '''void QAbstractProxyModel.sort(int column, Qt.SortOrder order = Qt.AscendingOrder)'''
+    def fetchMore(self, parent):
+        '''void QAbstractProxyModel.fetchMore(QModelIndex parent)'''
+    def canFetchMore(self, parent):
+        '''bool QAbstractProxyModel.canFetchMore(QModelIndex parent)'''
+        return bool()
+    def buddy(self, index):
+        '''QModelIndex QAbstractProxyModel.buddy(QModelIndex index)'''
+        return QModelIndex()
+    def setItemData(self, index, roles):
+        '''bool QAbstractProxyModel.setItemData(QModelIndex index, dict-of-int-QVariant roles)'''
+        return bool()
     def flags(self, index):
         '''Qt.ItemFlags QAbstractProxyModel.flags(QModelIndex index)'''
         return Qt.ItemFlags()
@@ -1935,7 +1965,7 @@ class QAbstractSpinBox(QWidget):
         '''void QAbstractSpinBox.keyPressEvent(QKeyEvent e)'''
     def resizeEvent(self, e):
         '''void QAbstractSpinBox.resizeEvent(QResizeEvent e)'''
-    editingFinished = PyQt4.QtCore.pyqtSignal() # void editingFinished() - signal
+    editingFinished = pyqtSignal() # void editingFinished() - signal
     def clear(self):
         '''void QAbstractSpinBox.clear()'''
     def selectAll(self):
@@ -2091,12 +2121,12 @@ class QAbstractSlider(QWidget):
         return QAbstractSlider.SliderAction()
     def setRepeatAction(self, action, thresholdTime = 500, repeatTime = 50):
         '''void QAbstractSlider.setRepeatAction(QAbstractSlider.SliderAction action, int thresholdTime = 500, int repeatTime = 50)'''
-    actionTriggered = PyQt4.QtCore.pyqtSignal() # void actionTriggered(int) - signal
-    rangeChanged = PyQt4.QtCore.pyqtSignal() # void rangeChanged(int,int) - signal
-    sliderReleased = PyQt4.QtCore.pyqtSignal() # void sliderReleased() - signal
-    sliderMoved = PyQt4.QtCore.pyqtSignal() # void sliderMoved(int) - signal
-    sliderPressed = PyQt4.QtCore.pyqtSignal() # void sliderPressed() - signal
-    valueChanged = PyQt4.QtCore.pyqtSignal() # void valueChanged(int) - signal
+    actionTriggered = pyqtSignal() # void actionTriggered(int) - signal
+    rangeChanged = pyqtSignal() # void rangeChanged(int,int) - signal
+    sliderReleased = pyqtSignal() # void sliderReleased() - signal
+    sliderMoved = pyqtSignal() # void sliderMoved(int) - signal
+    sliderPressed = pyqtSignal() # void sliderPressed() - signal
+    valueChanged = pyqtSignal() # void valueChanged(int) - signal
     def setOrientation(self):
         '''Qt.Orientation QAbstractSlider.setOrientation()'''
         return Qt.Orientation()
@@ -2183,10 +2213,10 @@ class QAbstractTextDocumentLayout(QObject):
         '''void QAbstractTextDocumentLayout.resizeInlineObject(QTextInlineObject item, int posInDocument, QTextFormat format)'''
     def documentChanged(self, from_, charsRemoved, charsAdded):
         '''abstract void QAbstractTextDocumentLayout.documentChanged(int from, int charsRemoved, int charsAdded)'''
-    updateBlock = PyQt4.QtCore.pyqtSignal() # void updateBlock(const QTextBlock&) - signal
-    pageCountChanged = PyQt4.QtCore.pyqtSignal() # void pageCountChanged(int) - signal
-    documentSizeChanged = PyQt4.QtCore.pyqtSignal() # void documentSizeChanged(const QSizeF&) - signal
-    update = PyQt4.QtCore.pyqtSignal() # void update(const QRectF& = QRectF(0,0,1e+09,1e+09)) - signal
+    updateBlock = pyqtSignal() # void updateBlock(const QTextBlock&) - signal
+    pageCountChanged = pyqtSignal() # void pageCountChanged(int) - signal
+    documentSizeChanged = pyqtSignal() # void documentSizeChanged(const QSizeF&) - signal
+    update = pyqtSignal() # void update(const QRectF& = QRectF(0,0,1e+09,1e+09)) - signal
     def handlerForObject(self, objectType):
         '''QTextObjectInterface QAbstractTextDocumentLayout.handlerForObject(int objectType)'''
         return QTextObjectInterface()
@@ -2328,10 +2358,10 @@ class QAction(QObject):
     def setShortcuts(self):
         '''QKeySequence.StandardKey QAction.setShortcuts()'''
         return QKeySequence.StandardKey()
-    toggled = PyQt4.QtCore.pyqtSignal() # void toggled(bool) - signal
-    hovered = PyQt4.QtCore.pyqtSignal() # void hovered() - signal
-    triggered = PyQt4.QtCore.pyqtSignal() # void triggered(bool = 0) - signal
-    changed = PyQt4.QtCore.pyqtSignal() # void changed() - signal
+    toggled = pyqtSignal() # void toggled(bool) - signal
+    hovered = pyqtSignal() # void hovered() - signal
+    triggered = pyqtSignal() # void triggered(bool = 0) - signal
+    changed = pyqtSignal() # void changed() - signal
     def setVisible(self):
         '''bool QAction.setVisible()'''
         return bool()
@@ -2446,9 +2476,9 @@ class QActionGroup(QObject):
     """"""
     def __init__(self, parent):
         '''void QActionGroup.__init__(QObject parent)'''
-    hovered = PyQt4.QtCore.pyqtSignal() # void hovered(QAction *) - signal
-    selected = PyQt4.QtCore.pyqtSignal() # void selected(QAction *) - signal
-    triggered = PyQt4.QtCore.pyqtSignal() # void triggered(QAction *) - signal
+    hovered = pyqtSignal() # void hovered(QAction *) - signal
+    selected = pyqtSignal() # void selected(QAction *) - signal
+    triggered = pyqtSignal() # void triggered(QAction *) - signal
     def setExclusive(self):
         '''bool QActionGroup.setExclusive()'''
         return bool()
@@ -2511,6 +2541,9 @@ class QApplication(QCoreApplication):
         '''void QApplication.__init__(Display display, int visual = 0, int colormap = 0)'''
     def __init__(self, dpy, argv, visual = 0, cmap = 0):
         '''void QApplication.__init__(Display dpy, list-of-str argv, int visual = 0, int cmap = 0)'''
+    def queryKeyboardModifiers(self):
+        '''static Qt.KeyboardModifiers QApplication.queryKeyboardModifiers()'''
+        return Qt.KeyboardModifiers()
     def autoSipEnabled(self):
         '''bool QApplication.autoSipEnabled()'''
         return bool()
@@ -2548,11 +2581,11 @@ class QApplication(QCoreApplication):
         '''static void QApplication.closeAllWindows()'''
     def aboutQt(self):
         '''static void QApplication.aboutQt()'''
-    fontDatabaseChanged = PyQt4.QtCore.pyqtSignal() # void fontDatabaseChanged() - signal
-    saveStateRequest = PyQt4.QtCore.pyqtSignal() # void saveStateRequest(QSessionManager&) - signal
-    lastWindowClosed = PyQt4.QtCore.pyqtSignal() # void lastWindowClosed() - signal
-    focusChanged = PyQt4.QtCore.pyqtSignal() # void focusChanged(QWidget *,QWidget *) - signal
-    commitDataRequest = PyQt4.QtCore.pyqtSignal() # void commitDataRequest(QSessionManager&) - signal
+    fontDatabaseChanged = pyqtSignal() # void fontDatabaseChanged() - signal
+    saveStateRequest = pyqtSignal() # void saveStateRequest(QSessionManager&) - signal
+    lastWindowClosed = pyqtSignal() # void lastWindowClosed() - signal
+    focusChanged = pyqtSignal() # void focusChanged(QWidget *,QWidget *) - signal
+    commitDataRequest = pyqtSignal() # void commitDataRequest(QSessionManager&) - signal
     def quitOnLastWindowClosed(self):
         '''static bool QApplication.quitOnLastWindowClosed()'''
         return bool()
@@ -2773,6 +2806,8 @@ class QPixmap(QPaintDevice):
         return QPixmap()
     def __init__(self, variant):
         '''void QPixmap.__init__(QVariant variant)'''
+    def swap(self, other):
+        '''void QPixmap.swap(QPixmap other)'''
     def scroll(self, dx, dy, rect, exposed):
         '''void QPixmap.scroll(int dx, int dy, QRect rect, QRegion exposed)'''
     def scroll(self, dx, dy, x, y, width, height, exposed):
@@ -2950,6 +2985,8 @@ class QBitmap(QPixmap):
     def __init__(self):
         '''QBitmap QBitmap.__init__()'''
         return QBitmap()
+    def swap(self, other):
+        '''void QBitmap.swap(QBitmap other)'''
     def transformed(self):
         '''QMatrix QBitmap.transformed()'''
         return QMatrix()
@@ -3665,6 +3702,8 @@ class QBrush():
         '''void QBrush.__init__(QBrush brush)'''
     def __init__(self, variant):
         '''void QBrush.__init__(QVariant variant)'''
+    def swap(self, other):
+        '''void QBrush.swap(QBrush other)'''
     def transform(self):
         '''QTransform QBrush.transform()'''
         return QTransform()
@@ -3797,15 +3836,29 @@ class QRadialGradient(QGradient):
         '''void QRadialGradient.__init__()'''
     def __init__(self, center, radius, focalPoint):
         '''void QRadialGradient.__init__(QPointF center, float radius, QPointF focalPoint)'''
+    def __init__(self, center, centerRadius, focalPoint, focalRadius):
+        '''void QRadialGradient.__init__(QPointF center, float centerRadius, QPointF focalPoint, float focalRadius)'''
     def __init__(self, center, radius):
         '''void QRadialGradient.__init__(QPointF center, float radius)'''
     def __init__(self, cx, cy, radius, fx, fy):
         '''void QRadialGradient.__init__(float cx, float cy, float radius, float fx, float fy)'''
+    def __init__(self, cx, cy, centerRadius, fx, fy, focalRadius):
+        '''void QRadialGradient.__init__(float cx, float cy, float centerRadius, float fx, float fy, float focalRadius)'''
     def __init__(self, cx, cy, radius):
         '''void QRadialGradient.__init__(float cx, float cy, float radius)'''
     def __init__(self):
         '''QRadialGradient QRadialGradient.__init__()'''
         return QRadialGradient()
+    def setFocalRadius(self, radius):
+        '''void QRadialGradient.setFocalRadius(float radius)'''
+    def focalRadius(self):
+        '''float QRadialGradient.focalRadius()'''
+        return float()
+    def setCenterRadius(self, radius):
+        '''void QRadialGradient.setCenterRadius(float radius)'''
+    def centerRadius(self):
+        '''float QRadialGradient.centerRadius()'''
+        return float()
     def setRadius(self, radius):
         '''void QRadialGradient.setRadius(float radius)'''
     def setFocalPoint(self, focalPoint):
@@ -3856,12 +3909,12 @@ class QButtonGroup(QObject):
     """"""
     def __init__(self, parent = None):
         '''void QButtonGroup.__init__(QObject parent = None)'''
-    buttonReleased = PyQt4.QtCore.pyqtSignal() # void buttonReleased(QAbstractButton *) - signal
-    buttonReleased = PyQt4.QtCore.pyqtSignal() # void buttonReleased(int) - signal
-    buttonPressed = PyQt4.QtCore.pyqtSignal() # void buttonPressed(QAbstractButton *) - signal
-    buttonPressed = PyQt4.QtCore.pyqtSignal() # void buttonPressed(int) - signal
-    buttonClicked = PyQt4.QtCore.pyqtSignal() # void buttonClicked(QAbstractButton *) - signal
-    buttonClicked = PyQt4.QtCore.pyqtSignal() # void buttonClicked(int) - signal
+    buttonReleased = pyqtSignal() # void buttonReleased(QAbstractButton *) - signal
+    buttonReleased = pyqtSignal() # void buttonReleased(int) - signal
+    buttonPressed = pyqtSignal() # void buttonPressed(QAbstractButton *) - signal
+    buttonPressed = pyqtSignal() # void buttonPressed(int) - signal
+    buttonClicked = pyqtSignal() # void buttonClicked(QAbstractButton *) - signal
+    buttonClicked = pyqtSignal() # void buttonClicked(int) - signal
     def checkedId(self):
         '''int QButtonGroup.checkedId()'''
         return int()
@@ -3929,10 +3982,10 @@ class QCalendarWidget(QWidget):
     def isNavigationBarVisible(self):
         '''bool QCalendarWidget.isNavigationBarVisible()'''
         return bool()
-    selectionChanged = PyQt4.QtCore.pyqtSignal() # void selectionChanged() - signal
-    currentPageChanged = PyQt4.QtCore.pyqtSignal() # void currentPageChanged(int,int) - signal
-    clicked = PyQt4.QtCore.pyqtSignal() # void clicked(const QDate&) - signal
-    activated = PyQt4.QtCore.pyqtSignal() # void activated(const QDate&) - signal
+    selectionChanged = pyqtSignal() # void selectionChanged() - signal
+    currentPageChanged = pyqtSignal() # void currentPageChanged(int,int) - signal
+    clicked = pyqtSignal() # void clicked(const QDate&) - signal
+    activated = pyqtSignal() # void activated(const QDate&) - signal
     def showToday(self):
         '''void QCalendarWidget.showToday()'''
     def showSelectedDate(self):
@@ -4068,7 +4121,10 @@ class QCheckBox(QAbstractButton):
     def hitButton(self, pos):
         '''bool QCheckBox.hitButton(QPoint pos)'''
         return bool()
-    stateChanged = PyQt4.QtCore.pyqtSignal() # void stateChanged(int) - signal
+    stateChanged = pyqtSignal() # void stateChanged(int) - signal
+    def minimumSizeHint(self):
+        '''QSize QCheckBox.minimumSizeHint()'''
+        return QSize()
     def setCheckState(self, state):
         '''void QCheckBox.setCheckState(Qt.CheckState state)'''
     def checkState(self):
@@ -4097,10 +4153,10 @@ class QClipboard(QObject):
     def connectNotify(self):
         '''SIGNAL() QClipboard.connectNotify()'''
         return SIGNAL()()
-    selectionChanged = PyQt4.QtCore.pyqtSignal() # void selectionChanged() - signal
-    findBufferChanged = PyQt4.QtCore.pyqtSignal() # void findBufferChanged() - signal
-    dataChanged = PyQt4.QtCore.pyqtSignal() # void dataChanged() - signal
-    changed = PyQt4.QtCore.pyqtSignal() # void changed(QClipboard::Mode) - signal
+    selectionChanged = pyqtSignal() # void selectionChanged() - signal
+    findBufferChanged = pyqtSignal() # void findBufferChanged() - signal
+    dataChanged = pyqtSignal() # void dataChanged() - signal
+    changed = pyqtSignal() # void changed(QClipboard::Mode) - signal
     def setPixmap(self, mode = QClipboard.Clipboard):
         '''QPixmap QClipboard.setPixmap(QClipboard.Mode mode = QClipboard.Clipboard)'''
         return QPixmap()
@@ -4183,7 +4239,7 @@ class QColumnView(QAbstractItemView):
     def createColumn(self, rootIndex):
         '''QAbstractItemView QColumnView.createColumn(QModelIndex rootIndex)'''
         return QAbstractItemView()
-    updatePreviewWidget = PyQt4.QtCore.pyqtSignal() # void updatePreviewWidget(const QModelIndex&) - signal
+    updatePreviewWidget = pyqtSignal() # void updatePreviewWidget(const QModelIndex&) - signal
     def selectAll(self):
         '''void QColumnView.selectAll()'''
     def setRootIndex(self, index):
@@ -4261,8 +4317,8 @@ class QColorDialog(QDialog):
         '''void QColorDialog.done(int result)'''
     def changeEvent(self, e):
         '''void QColorDialog.changeEvent(QEvent e)'''
-    currentColorChanged = PyQt4.QtCore.pyqtSignal() # void currentColorChanged(const QColor&) - signal
-    colorSelected = PyQt4.QtCore.pyqtSignal() # void colorSelected(const QColor&) - signal
+    currentColorChanged = pyqtSignal() # void currentColorChanged(const QColor&) - signal
+    colorSelected = pyqtSignal() # void colorSelected(const QColor&) - signal
     def setStandardColor(self):
         '''static int QColorDialog.setStandardColor()'''
         return int()
@@ -4388,13 +4444,13 @@ class QComboBox(QWidget):
         '''void QComboBox.focusInEvent(QFocusEvent e)'''
     def initStyleOption(self, option):
         '''void QComboBox.initStyleOption(QStyleOptionComboBox option)'''
-    highlighted = PyQt4.QtCore.pyqtSignal() # void highlighted(int) - signal
-    highlighted = PyQt4.QtCore.pyqtSignal() # void highlighted(const QString&) - signal
-    currentIndexChanged = PyQt4.QtCore.pyqtSignal() # void currentIndexChanged(int) - signal
-    currentIndexChanged = PyQt4.QtCore.pyqtSignal() # void currentIndexChanged(const QString&) - signal
-    activated = PyQt4.QtCore.pyqtSignal() # void activated(int) - signal
-    activated = PyQt4.QtCore.pyqtSignal() # void activated(const QString&) - signal
-    editTextChanged = PyQt4.QtCore.pyqtSignal() # void editTextChanged(const QString&) - signal
+    highlighted = pyqtSignal() # void highlighted(int) - signal
+    highlighted = pyqtSignal() # void highlighted(const QString&) - signal
+    currentIndexChanged = pyqtSignal() # void currentIndexChanged(int) - signal
+    currentIndexChanged = pyqtSignal() # void currentIndexChanged(const QString&) - signal
+    activated = pyqtSignal() # void activated(int) - signal
+    activated = pyqtSignal() # void activated(const QString&) - signal
+    editTextChanged = pyqtSignal() # void editTextChanged(const QString&) - signal
     def setEditText(self, text):
         '''void QComboBox.setEditText(QString text)'''
     def clearEditText(self):
@@ -4563,6 +4619,826 @@ class QComboBox(QWidget):
         return int()
 
 
+class QStyle(QObject):
+    """"""
+    # Enum QStyle.RequestSoftwareInputPanel
+    RSIP_OnMouseClickAndAlreadyFocused = 0
+    RSIP_OnMouseClick = 0
+
+    # Enum QStyle.StandardPixmap
+    SP_TitleBarMenuButton = 0
+    SP_TitleBarMinButton = 0
+    SP_TitleBarMaxButton = 0
+    SP_TitleBarCloseButton = 0
+    SP_TitleBarNormalButton = 0
+    SP_TitleBarShadeButton = 0
+    SP_TitleBarUnshadeButton = 0
+    SP_TitleBarContextHelpButton = 0
+    SP_DockWidgetCloseButton = 0
+    SP_MessageBoxInformation = 0
+    SP_MessageBoxWarning = 0
+    SP_MessageBoxCritical = 0
+    SP_MessageBoxQuestion = 0
+    SP_DesktopIcon = 0
+    SP_TrashIcon = 0
+    SP_ComputerIcon = 0
+    SP_DriveFDIcon = 0
+    SP_DriveHDIcon = 0
+    SP_DriveCDIcon = 0
+    SP_DriveDVDIcon = 0
+    SP_DriveNetIcon = 0
+    SP_DirOpenIcon = 0
+    SP_DirClosedIcon = 0
+    SP_DirLinkIcon = 0
+    SP_FileIcon = 0
+    SP_FileLinkIcon = 0
+    SP_ToolBarHorizontalExtensionButton = 0
+    SP_ToolBarVerticalExtensionButton = 0
+    SP_FileDialogStart = 0
+    SP_FileDialogEnd = 0
+    SP_FileDialogToParent = 0
+    SP_FileDialogNewFolder = 0
+    SP_FileDialogDetailedView = 0
+    SP_FileDialogInfoView = 0
+    SP_FileDialogContentsView = 0
+    SP_FileDialogListView = 0
+    SP_FileDialogBack = 0
+    SP_DirIcon = 0
+    SP_DialogOkButton = 0
+    SP_DialogCancelButton = 0
+    SP_DialogHelpButton = 0
+    SP_DialogOpenButton = 0
+    SP_DialogSaveButton = 0
+    SP_DialogCloseButton = 0
+    SP_DialogApplyButton = 0
+    SP_DialogResetButton = 0
+    SP_DialogDiscardButton = 0
+    SP_DialogYesButton = 0
+    SP_DialogNoButton = 0
+    SP_ArrowUp = 0
+    SP_ArrowDown = 0
+    SP_ArrowLeft = 0
+    SP_ArrowRight = 0
+    SP_ArrowBack = 0
+    SP_ArrowForward = 0
+    SP_DirHomeIcon = 0
+    SP_CommandLink = 0
+    SP_VistaShield = 0
+    SP_BrowserReload = 0
+    SP_BrowserStop = 0
+    SP_MediaPlay = 0
+    SP_MediaStop = 0
+    SP_MediaPause = 0
+    SP_MediaSkipForward = 0
+    SP_MediaSkipBackward = 0
+    SP_MediaSeekForward = 0
+    SP_MediaSeekBackward = 0
+    SP_MediaVolume = 0
+    SP_MediaVolumeMuted = 0
+    SP_CustomBase = 0
+
+    # Enum QStyle.StyleHint
+    SH_EtchDisabledText = 0
+    SH_DitherDisabledText = 0
+    SH_ScrollBar_MiddleClickAbsolutePosition = 0
+    SH_ScrollBar_ScrollWhenPointerLeavesControl = 0
+    SH_TabBar_SelectMouseType = 0
+    SH_TabBar_Alignment = 0
+    SH_Header_ArrowAlignment = 0
+    SH_Slider_SnapToValue = 0
+    SH_Slider_SloppyKeyEvents = 0
+    SH_ProgressDialog_CenterCancelButton = 0
+    SH_ProgressDialog_TextLabelAlignment = 0
+    SH_PrintDialog_RightAlignButtons = 0
+    SH_MainWindow_SpaceBelowMenuBar = 0
+    SH_FontDialog_SelectAssociatedText = 0
+    SH_Menu_AllowActiveAndDisabled = 0
+    SH_Menu_SpaceActivatesItem = 0
+    SH_Menu_SubMenuPopupDelay = 0
+    SH_ScrollView_FrameOnlyAroundContents = 0
+    SH_MenuBar_AltKeyNavigation = 0
+    SH_ComboBox_ListMouseTracking = 0
+    SH_Menu_MouseTracking = 0
+    SH_MenuBar_MouseTracking = 0
+    SH_ItemView_ChangeHighlightOnFocus = 0
+    SH_Widget_ShareActivation = 0
+    SH_Workspace_FillSpaceOnMaximize = 0
+    SH_ComboBox_Popup = 0
+    SH_TitleBar_NoBorder = 0
+    SH_ScrollBar_StopMouseOverSlider = 0
+    SH_BlinkCursorWhenTextSelected = 0
+    SH_RichText_FullWidthSelection = 0
+    SH_Menu_Scrollable = 0
+    SH_GroupBox_TextLabelVerticalAlignment = 0
+    SH_GroupBox_TextLabelColor = 0
+    SH_Menu_SloppySubMenus = 0
+    SH_Table_GridLineColor = 0
+    SH_LineEdit_PasswordCharacter = 0
+    SH_DialogButtons_DefaultButton = 0
+    SH_ToolBox_SelectedPageTitleBold = 0
+    SH_TabBar_PreferNoArrows = 0
+    SH_ScrollBar_LeftClickAbsolutePosition = 0
+    SH_Q3ListViewExpand_SelectMouseType = 0
+    SH_UnderlineShortcut = 0
+    SH_SpinBox_AnimateButton = 0
+    SH_SpinBox_KeyPressAutoRepeatRate = 0
+    SH_SpinBox_ClickAutoRepeatRate = 0
+    SH_Menu_FillScreenWithScroll = 0
+    SH_ToolTipLabel_Opacity = 0
+    SH_DrawMenuBarSeparator = 0
+    SH_TitleBar_ModifyNotification = 0
+    SH_Button_FocusPolicy = 0
+    SH_MenuBar_DismissOnSecondClick = 0
+    SH_MessageBox_UseBorderForButtonSpacing = 0
+    SH_TitleBar_AutoRaise = 0
+    SH_ToolButton_PopupDelay = 0
+    SH_FocusFrame_Mask = 0
+    SH_RubberBand_Mask = 0
+    SH_WindowFrame_Mask = 0
+    SH_SpinControls_DisableOnBounds = 0
+    SH_Dial_BackgroundRole = 0
+    SH_ComboBox_LayoutDirection = 0
+    SH_ItemView_EllipsisLocation = 0
+    SH_ItemView_ShowDecorationSelected = 0
+    SH_ItemView_ActivateItemOnSingleClick = 0
+    SH_ScrollBar_ContextMenu = 0
+    SH_ScrollBar_RollBetweenButtons = 0
+    SH_Slider_StopMouseOverSlider = 0
+    SH_Slider_AbsoluteSetButtons = 0
+    SH_Slider_PageSetButtons = 0
+    SH_Menu_KeyboardSearch = 0
+    SH_TabBar_ElideMode = 0
+    SH_DialogButtonLayout = 0
+    SH_ComboBox_PopupFrameStyle = 0
+    SH_MessageBox_TextInteractionFlags = 0
+    SH_DialogButtonBox_ButtonsHaveIcons = 0
+    SH_SpellCheckUnderlineStyle = 0
+    SH_MessageBox_CenterButtons = 0
+    SH_Menu_SelectionWrap = 0
+    SH_ItemView_MovementWithoutUpdatingSelection = 0
+    SH_ToolTip_Mask = 0
+    SH_FocusFrame_AboveWidget = 0
+    SH_TextControl_FocusIndicatorTextCharFormat = 0
+    SH_WizardStyle = 0
+    SH_ItemView_ArrowKeysNavigateIntoChildren = 0
+    SH_Menu_Mask = 0
+    SH_Menu_FlashTriggeredItem = 0
+    SH_Menu_FadeOutOnHide = 0
+    SH_SpinBox_ClickAutoRepeatThreshold = 0
+    SH_ItemView_PaintAlternatingRowColorsForEmptyArea = 0
+    SH_FormLayoutWrapPolicy = 0
+    SH_TabWidget_DefaultTabPosition = 0
+    SH_ToolBar_Movable = 0
+    SH_FormLayoutFieldGrowthPolicy = 0
+    SH_FormLayoutFormAlignment = 0
+    SH_FormLayoutLabelAlignment = 0
+    SH_ItemView_DrawDelegateFrame = 0
+    SH_TabBar_CloseButtonPosition = 0
+    SH_DockWidget_ButtonsHaveFrame = 0
+    SH_ToolButtonStyle = 0
+    SH_RequestSoftwareInputPanel = 0
+    SH_CustomBase = 0
+
+    # Enum QStyle.ContentsType
+    CT_PushButton = 0
+    CT_CheckBox = 0
+    CT_RadioButton = 0
+    CT_ToolButton = 0
+    CT_ComboBox = 0
+    CT_Splitter = 0
+    CT_Q3DockWindow = 0
+    CT_ProgressBar = 0
+    CT_MenuItem = 0
+    CT_MenuBarItem = 0
+    CT_MenuBar = 0
+    CT_Menu = 0
+    CT_TabBarTab = 0
+    CT_Slider = 0
+    CT_ScrollBar = 0
+    CT_Q3Header = 0
+    CT_LineEdit = 0
+    CT_SpinBox = 0
+    CT_SizeGrip = 0
+    CT_TabWidget = 0
+    CT_DialogButtons = 0
+    CT_HeaderSection = 0
+    CT_GroupBox = 0
+    CT_MdiControls = 0
+    CT_ItemViewItem = 0
+    CT_CustomBase = 0
+
+    # Enum QStyle.PixelMetric
+    PM_ButtonMargin = 0
+    PM_ButtonDefaultIndicator = 0
+    PM_MenuButtonIndicator = 0
+    PM_ButtonShiftHorizontal = 0
+    PM_ButtonShiftVertical = 0
+    PM_DefaultFrameWidth = 0
+    PM_SpinBoxFrameWidth = 0
+    PM_ComboBoxFrameWidth = 0
+    PM_MaximumDragDistance = 0
+    PM_ScrollBarExtent = 0
+    PM_ScrollBarSliderMin = 0
+    PM_SliderThickness = 0
+    PM_SliderControlThickness = 0
+    PM_SliderLength = 0
+    PM_SliderTickmarkOffset = 0
+    PM_SliderSpaceAvailable = 0
+    PM_DockWidgetSeparatorExtent = 0
+    PM_DockWidgetHandleExtent = 0
+    PM_DockWidgetFrameWidth = 0
+    PM_TabBarTabOverlap = 0
+    PM_TabBarTabHSpace = 0
+    PM_TabBarTabVSpace = 0
+    PM_TabBarBaseHeight = 0
+    PM_TabBarBaseOverlap = 0
+    PM_ProgressBarChunkWidth = 0
+    PM_SplitterWidth = 0
+    PM_TitleBarHeight = 0
+    PM_MenuScrollerHeight = 0
+    PM_MenuHMargin = 0
+    PM_MenuVMargin = 0
+    PM_MenuPanelWidth = 0
+    PM_MenuTearoffHeight = 0
+    PM_MenuDesktopFrameWidth = 0
+    PM_MenuBarPanelWidth = 0
+    PM_MenuBarItemSpacing = 0
+    PM_MenuBarVMargin = 0
+    PM_MenuBarHMargin = 0
+    PM_IndicatorWidth = 0
+    PM_IndicatorHeight = 0
+    PM_ExclusiveIndicatorWidth = 0
+    PM_ExclusiveIndicatorHeight = 0
+    PM_CheckListButtonSize = 0
+    PM_CheckListControllerSize = 0
+    PM_DialogButtonsSeparator = 0
+    PM_DialogButtonsButtonWidth = 0
+    PM_DialogButtonsButtonHeight = 0
+    PM_MdiSubWindowFrameWidth = 0
+    PM_MDIFrameWidth = 0
+    PM_MdiSubWindowMinimizedWidth = 0
+    PM_MDIMinimizedWidth = 0
+    PM_HeaderMargin = 0
+    PM_HeaderMarkSize = 0
+    PM_HeaderGripMargin = 0
+    PM_TabBarTabShiftHorizontal = 0
+    PM_TabBarTabShiftVertical = 0
+    PM_TabBarScrollButtonWidth = 0
+    PM_ToolBarFrameWidth = 0
+    PM_ToolBarHandleExtent = 0
+    PM_ToolBarItemSpacing = 0
+    PM_ToolBarItemMargin = 0
+    PM_ToolBarSeparatorExtent = 0
+    PM_ToolBarExtensionExtent = 0
+    PM_SpinBoxSliderHeight = 0
+    PM_DefaultTopLevelMargin = 0
+    PM_DefaultChildMargin = 0
+    PM_DefaultLayoutSpacing = 0
+    PM_ToolBarIconSize = 0
+    PM_ListViewIconSize = 0
+    PM_IconViewIconSize = 0
+    PM_SmallIconSize = 0
+    PM_LargeIconSize = 0
+    PM_FocusFrameVMargin = 0
+    PM_FocusFrameHMargin = 0
+    PM_ToolTipLabelFrameWidth = 0
+    PM_CheckBoxLabelSpacing = 0
+    PM_TabBarIconSize = 0
+    PM_SizeGripSize = 0
+    PM_DockWidgetTitleMargin = 0
+    PM_MessageBoxIconSize = 0
+    PM_ButtonIconSize = 0
+    PM_DockWidgetTitleBarButtonMargin = 0
+    PM_RadioButtonLabelSpacing = 0
+    PM_LayoutLeftMargin = 0
+    PM_LayoutTopMargin = 0
+    PM_LayoutRightMargin = 0
+    PM_LayoutBottomMargin = 0
+    PM_LayoutHorizontalSpacing = 0
+    PM_LayoutVerticalSpacing = 0
+    PM_TabBar_ScrollButtonOverlap = 0
+    PM_TextCursorWidth = 0
+    PM_TabCloseIndicatorWidth = 0
+    PM_TabCloseIndicatorHeight = 0
+    PM_ScrollView_ScrollBarSpacing = 0
+    PM_SubMenuOverlap = 0
+    PM_CustomBase = 0
+
+    # Enum QStyle.SubControl
+    SC_None = 0
+    SC_ScrollBarAddLine = 0
+    SC_ScrollBarSubLine = 0
+    SC_ScrollBarAddPage = 0
+    SC_ScrollBarSubPage = 0
+    SC_ScrollBarFirst = 0
+    SC_ScrollBarLast = 0
+    SC_ScrollBarSlider = 0
+    SC_ScrollBarGroove = 0
+    SC_SpinBoxUp = 0
+    SC_SpinBoxDown = 0
+    SC_SpinBoxFrame = 0
+    SC_SpinBoxEditField = 0
+    SC_ComboBoxFrame = 0
+    SC_ComboBoxEditField = 0
+    SC_ComboBoxArrow = 0
+    SC_ComboBoxListBoxPopup = 0
+    SC_SliderGroove = 0
+    SC_SliderHandle = 0
+    SC_SliderTickmarks = 0
+    SC_ToolButton = 0
+    SC_ToolButtonMenu = 0
+    SC_TitleBarSysMenu = 0
+    SC_TitleBarMinButton = 0
+    SC_TitleBarMaxButton = 0
+    SC_TitleBarCloseButton = 0
+    SC_TitleBarNormalButton = 0
+    SC_TitleBarShadeButton = 0
+    SC_TitleBarUnshadeButton = 0
+    SC_TitleBarContextHelpButton = 0
+    SC_TitleBarLabel = 0
+    SC_Q3ListView = 0
+    SC_Q3ListViewBranch = 0
+    SC_Q3ListViewExpand = 0
+    SC_DialGroove = 0
+    SC_DialHandle = 0
+    SC_DialTickmarks = 0
+    SC_GroupBoxCheckBox = 0
+    SC_GroupBoxLabel = 0
+    SC_GroupBoxContents = 0
+    SC_GroupBoxFrame = 0
+    SC_MdiMinButton = 0
+    SC_MdiNormalButton = 0
+    SC_MdiCloseButton = 0
+    SC_CustomBase = 0
+    SC_All = 0
+
+    # Enum QStyle.ComplexControl
+    CC_SpinBox = 0
+    CC_ComboBox = 0
+    CC_ScrollBar = 0
+    CC_Slider = 0
+    CC_ToolButton = 0
+    CC_TitleBar = 0
+    CC_Q3ListView = 0
+    CC_Dial = 0
+    CC_GroupBox = 0
+    CC_MdiControls = 0
+    CC_CustomBase = 0
+
+    # Enum QStyle.SubElement
+    SE_PushButtonContents = 0
+    SE_PushButtonFocusRect = 0
+    SE_CheckBoxIndicator = 0
+    SE_CheckBoxContents = 0
+    SE_CheckBoxFocusRect = 0
+    SE_CheckBoxClickRect = 0
+    SE_RadioButtonIndicator = 0
+    SE_RadioButtonContents = 0
+    SE_RadioButtonFocusRect = 0
+    SE_RadioButtonClickRect = 0
+    SE_ComboBoxFocusRect = 0
+    SE_SliderFocusRect = 0
+    SE_Q3DockWindowHandleRect = 0
+    SE_ProgressBarGroove = 0
+    SE_ProgressBarContents = 0
+    SE_ProgressBarLabel = 0
+    SE_DialogButtonAccept = 0
+    SE_DialogButtonReject = 0
+    SE_DialogButtonApply = 0
+    SE_DialogButtonHelp = 0
+    SE_DialogButtonAll = 0
+    SE_DialogButtonAbort = 0
+    SE_DialogButtonIgnore = 0
+    SE_DialogButtonRetry = 0
+    SE_DialogButtonCustom = 0
+    SE_ToolBoxTabContents = 0
+    SE_HeaderLabel = 0
+    SE_HeaderArrow = 0
+    SE_TabWidgetTabBar = 0
+    SE_TabWidgetTabPane = 0
+    SE_TabWidgetTabContents = 0
+    SE_TabWidgetLeftCorner = 0
+    SE_TabWidgetRightCorner = 0
+    SE_ViewItemCheckIndicator = 0
+    SE_TabBarTearIndicator = 0
+    SE_TreeViewDisclosureItem = 0
+    SE_LineEditContents = 0
+    SE_FrameContents = 0
+    SE_DockWidgetCloseButton = 0
+    SE_DockWidgetFloatButton = 0
+    SE_DockWidgetTitleBarText = 0
+    SE_DockWidgetIcon = 0
+    SE_CheckBoxLayoutItem = 0
+    SE_ComboBoxLayoutItem = 0
+    SE_DateTimeEditLayoutItem = 0
+    SE_DialogButtonBoxLayoutItem = 0
+    SE_LabelLayoutItem = 0
+    SE_ProgressBarLayoutItem = 0
+    SE_PushButtonLayoutItem = 0
+    SE_RadioButtonLayoutItem = 0
+    SE_SliderLayoutItem = 0
+    SE_SpinBoxLayoutItem = 0
+    SE_ToolButtonLayoutItem = 0
+    SE_FrameLayoutItem = 0
+    SE_GroupBoxLayoutItem = 0
+    SE_TabWidgetLayoutItem = 0
+    SE_ItemViewItemCheckIndicator = 0
+    SE_ItemViewItemDecoration = 0
+    SE_ItemViewItemText = 0
+    SE_ItemViewItemFocusRect = 0
+    SE_TabBarTabLeftButton = 0
+    SE_TabBarTabRightButton = 0
+    SE_TabBarTabText = 0
+    SE_ShapedFrameContents = 0
+    SE_ToolBarHandle = 0
+    SE_CustomBase = 0
+
+    # Enum QStyle.ControlElement
+    CE_PushButton = 0
+    CE_PushButtonBevel = 0
+    CE_PushButtonLabel = 0
+    CE_CheckBox = 0
+    CE_CheckBoxLabel = 0
+    CE_RadioButton = 0
+    CE_RadioButtonLabel = 0
+    CE_TabBarTab = 0
+    CE_TabBarTabShape = 0
+    CE_TabBarTabLabel = 0
+    CE_ProgressBar = 0
+    CE_ProgressBarGroove = 0
+    CE_ProgressBarContents = 0
+    CE_ProgressBarLabel = 0
+    CE_MenuItem = 0
+    CE_MenuScroller = 0
+    CE_MenuVMargin = 0
+    CE_MenuHMargin = 0
+    CE_MenuTearoff = 0
+    CE_MenuEmptyArea = 0
+    CE_MenuBarItem = 0
+    CE_MenuBarEmptyArea = 0
+    CE_ToolButtonLabel = 0
+    CE_Header = 0
+    CE_HeaderSection = 0
+    CE_HeaderLabel = 0
+    CE_Q3DockWindowEmptyArea = 0
+    CE_ToolBoxTab = 0
+    CE_SizeGrip = 0
+    CE_Splitter = 0
+    CE_RubberBand = 0
+    CE_DockWidgetTitle = 0
+    CE_ScrollBarAddLine = 0
+    CE_ScrollBarSubLine = 0
+    CE_ScrollBarAddPage = 0
+    CE_ScrollBarSubPage = 0
+    CE_ScrollBarSlider = 0
+    CE_ScrollBarFirst = 0
+    CE_ScrollBarLast = 0
+    CE_FocusFrame = 0
+    CE_ComboBoxLabel = 0
+    CE_ToolBar = 0
+    CE_ToolBoxTabShape = 0
+    CE_ToolBoxTabLabel = 0
+    CE_HeaderEmptyArea = 0
+    CE_ColumnViewGrip = 0
+    CE_ItemViewItem = 0
+    CE_ShapedFrame = 0
+    CE_CustomBase = 0
+
+    # Enum QStyle.PrimitiveElement
+    PE_Q3CheckListController = 0
+    PE_Q3CheckListExclusiveIndicator = 0
+    PE_Q3CheckListIndicator = 0
+    PE_Q3DockWindowSeparator = 0
+    PE_Q3Separator = 0
+    PE_Frame = 0
+    PE_FrameDefaultButton = 0
+    PE_FrameDockWidget = 0
+    PE_FrameFocusRect = 0
+    PE_FrameGroupBox = 0
+    PE_FrameLineEdit = 0
+    PE_FrameMenu = 0
+    PE_FrameStatusBar = 0
+    PE_FrameTabWidget = 0
+    PE_FrameWindow = 0
+    PE_FrameButtonBevel = 0
+    PE_FrameButtonTool = 0
+    PE_FrameTabBarBase = 0
+    PE_PanelButtonCommand = 0
+    PE_PanelButtonBevel = 0
+    PE_PanelButtonTool = 0
+    PE_PanelMenuBar = 0
+    PE_PanelToolBar = 0
+    PE_PanelLineEdit = 0
+    PE_IndicatorArrowDown = 0
+    PE_IndicatorArrowLeft = 0
+    PE_IndicatorArrowRight = 0
+    PE_IndicatorArrowUp = 0
+    PE_IndicatorBranch = 0
+    PE_IndicatorButtonDropDown = 0
+    PE_IndicatorViewItemCheck = 0
+    PE_IndicatorCheckBox = 0
+    PE_IndicatorDockWidgetResizeHandle = 0
+    PE_IndicatorHeaderArrow = 0
+    PE_IndicatorMenuCheckMark = 0
+    PE_IndicatorProgressChunk = 0
+    PE_IndicatorRadioButton = 0
+    PE_IndicatorSpinDown = 0
+    PE_IndicatorSpinMinus = 0
+    PE_IndicatorSpinPlus = 0
+    PE_IndicatorSpinUp = 0
+    PE_IndicatorToolBarHandle = 0
+    PE_IndicatorToolBarSeparator = 0
+    PE_PanelTipLabel = 0
+    PE_IndicatorTabTear = 0
+    PE_PanelScrollAreaCorner = 0
+    PE_Widget = 0
+    PE_IndicatorColumnViewArrow = 0
+    PE_FrameStatusBarItem = 0
+    PE_IndicatorItemViewItemCheck = 0
+    PE_IndicatorItemViewItemDrop = 0
+    PE_PanelItemViewItem = 0
+    PE_PanelItemViewRow = 0
+    PE_PanelStatusBar = 0
+    PE_IndicatorTabClose = 0
+    PE_PanelMenu = 0
+    PE_CustomBase = 0
+
+    # Enum QStyle.StateFlag
+    State_None = 0
+    State_Enabled = 0
+    State_Raised = 0
+    State_Sunken = 0
+    State_Off = 0
+    State_NoChange = 0
+    State_On = 0
+    State_DownArrow = 0
+    State_Horizontal = 0
+    State_HasFocus = 0
+    State_Top = 0
+    State_Bottom = 0
+    State_FocusAtBorder = 0
+    State_AutoRaise = 0
+    State_MouseOver = 0
+    State_UpArrow = 0
+    State_Selected = 0
+    State_Active = 0
+    State_Open = 0
+    State_Children = 0
+    State_Item = 0
+    State_Sibling = 0
+    State_Editing = 0
+    State_KeyboardFocusChange = 0
+    State_ReadOnly = 0
+    State_Window = 0
+    State_Small = 0
+    State_Mini = 0
+
+    def __init__(self):
+        '''void QStyle.__init__()'''
+    def proxy(self):
+        '''QStyle QStyle.proxy()'''
+        return QStyle()
+    def layoutSpacingImplementation(self, control1, control2, orientation, option = None, widget = None):
+        '''int QStyle.layoutSpacingImplementation(QSizePolicy.ControlType control1, QSizePolicy.ControlType control2, Qt.Orientation orientation, QStyleOption option = None, QWidget widget = None)'''
+        return int()
+    def standardIconImplementation(self, standardIcon, option = None, widget = None):
+        '''QIcon QStyle.standardIconImplementation(QStyle.StandardPixmap standardIcon, QStyleOption option = None, QWidget widget = None)'''
+        return QIcon()
+    def combinedLayoutSpacing(self, controls1, controls2, orientation, option = None, widget = None):
+        '''int QStyle.combinedLayoutSpacing(QSizePolicy.ControlTypes controls1, QSizePolicy.ControlTypes controls2, Qt.Orientation orientation, QStyleOption option = None, QWidget widget = None)'''
+        return int()
+    def layoutSpacing(self, control1, control2, orientation, option = None, widget = None):
+        '''int QStyle.layoutSpacing(QSizePolicy.ControlType control1, QSizePolicy.ControlType control2, Qt.Orientation orientation, QStyleOption option = None, QWidget widget = None)'''
+        return int()
+    def alignedRect(self, direction, alignment, size, rectangle):
+        '''static QRect QStyle.alignedRect(Qt.LayoutDirection direction, Qt.Alignment alignment, QSize size, QRect rectangle)'''
+        return QRect()
+    def visualAlignment(self, direction, alignment):
+        '''static Qt.Alignment QStyle.visualAlignment(Qt.LayoutDirection direction, Qt.Alignment alignment)'''
+        return Qt.Alignment()
+    def sliderValueFromPosition(self, min, max, position, span, upsideDown = False):
+        '''static int QStyle.sliderValueFromPosition(int min, int max, int position, int span, bool upsideDown = False)'''
+        return int()
+    def sliderPositionFromValue(self, min, max, logicalValue, span, upsideDown = False):
+        '''static int QStyle.sliderPositionFromValue(int min, int max, int logicalValue, int span, bool upsideDown = False)'''
+        return int()
+    def visualPos(self, direction, boundingRect, logicalPos):
+        '''static QPoint QStyle.visualPos(Qt.LayoutDirection direction, QRect boundingRect, QPoint logicalPos)'''
+        return QPoint()
+    def visualRect(self, direction, boundingRect, logicalRect):
+        '''static QRect QStyle.visualRect(Qt.LayoutDirection direction, QRect boundingRect, QRect logicalRect)'''
+        return QRect()
+    def generatedIconPixmap(self, iconMode, pixmap, opt):
+        '''abstract QPixmap QStyle.generatedIconPixmap(QIcon.Mode iconMode, QPixmap pixmap, QStyleOption opt)'''
+        return QPixmap()
+    def standardIcon(self, standardIcon, option = None, widget = None):
+        '''QIcon QStyle.standardIcon(QStyle.StandardPixmap standardIcon, QStyleOption option = None, QWidget widget = None)'''
+        return QIcon()
+    def standardPixmap(self, standardPixmap, option = None, widget = None):
+        '''abstract QPixmap QStyle.standardPixmap(QStyle.StandardPixmap standardPixmap, QStyleOption option = None, QWidget widget = None)'''
+        return QPixmap()
+    def styleHint(self, stylehint, option = None, widget = None, returnData = None):
+        '''abstract int QStyle.styleHint(QStyle.StyleHint stylehint, QStyleOption option = None, QWidget widget = None, QStyleHintReturn returnData = None)'''
+        return int()
+    def sizeFromContents(self, ct, opt, contentsSize, widget = None):
+        '''abstract QSize QStyle.sizeFromContents(QStyle.ContentsType ct, QStyleOption opt, QSize contentsSize, QWidget widget = None)'''
+        return QSize()
+    def pixelMetric(self, metric, option = None, widget = None):
+        '''abstract int QStyle.pixelMetric(QStyle.PixelMetric metric, QStyleOption option = None, QWidget widget = None)'''
+        return int()
+    def subControlRect(self, cc, opt, sc, widget = None):
+        '''abstract QRect QStyle.subControlRect(QStyle.ComplexControl cc, QStyleOptionComplex opt, QStyle.SubControl sc, QWidget widget = None)'''
+        return QRect()
+    def hitTestComplexControl(self, cc, opt, pt, widget = None):
+        '''abstract QStyle.SubControl QStyle.hitTestComplexControl(QStyle.ComplexControl cc, QStyleOptionComplex opt, QPoint pt, QWidget widget = None)'''
+        return QStyle.SubControl()
+    def drawComplexControl(self, cc, opt, p, widget = None):
+        '''abstract void QStyle.drawComplexControl(QStyle.ComplexControl cc, QStyleOptionComplex opt, QPainter p, QWidget widget = None)'''
+    def subElementRect(self, subElement, option, widget = None):
+        '''abstract QRect QStyle.subElementRect(QStyle.SubElement subElement, QStyleOption option, QWidget widget = None)'''
+        return QRect()
+    def drawControl(self, element, opt, p, widget = None):
+        '''abstract void QStyle.drawControl(QStyle.ControlElement element, QStyleOption opt, QPainter p, QWidget widget = None)'''
+    def drawPrimitive(self, pe, opt, p, widget = None):
+        '''abstract void QStyle.drawPrimitive(QStyle.PrimitiveElement pe, QStyleOption opt, QPainter p, QWidget widget = None)'''
+    def standardPalette(self):
+        '''QPalette QStyle.standardPalette()'''
+        return QPalette()
+    def drawItemPixmap(self, painter, rect, alignment, pixmap):
+        '''void QStyle.drawItemPixmap(QPainter painter, QRect rect, int alignment, QPixmap pixmap)'''
+    def drawItemText(self, painter, rectangle, alignment, palette, enabled, text, textRole = QPalette.NoRole):
+        '''void QStyle.drawItemText(QPainter painter, QRect rectangle, int alignment, QPalette palette, bool enabled, QString text, QPalette.ColorRole textRole = QPalette.NoRole)'''
+    def itemPixmapRect(self, r, flags, pixmap):
+        '''QRect QStyle.itemPixmapRect(QRect r, int flags, QPixmap pixmap)'''
+        return QRect()
+    def itemTextRect(self, fm, r, flags, enabled, text):
+        '''QRect QStyle.itemTextRect(QFontMetrics fm, QRect r, int flags, bool enabled, QString text)'''
+        return QRect()
+    def unpolish(self):
+        '''QWidget QStyle.unpolish()'''
+        return QWidget()
+    def unpolish(self):
+        '''QApplication QStyle.unpolish()'''
+        return QApplication()
+    def polish(self):
+        '''QWidget QStyle.polish()'''
+        return QWidget()
+    def polish(self):
+        '''QApplication QStyle.polish()'''
+        return QApplication()
+    def polish(self):
+        '''QPalette QStyle.polish()'''
+        return QPalette()
+    class SubControls():
+        """"""
+        def __init__(self):
+            '''QStyle.SubControls QStyle.SubControls.__init__()'''
+            return QStyle.SubControls()
+        def __init__(self):
+            '''int QStyle.SubControls.__init__()'''
+            return int()
+        def __init__(self):
+            '''void QStyle.SubControls.__init__()'''
+        def __bool__(self):
+            '''int QStyle.SubControls.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool QStyle.SubControls.__ne__(QStyle.SubControls f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool QStyle.SubControls.__eq__(QStyle.SubControls f)'''
+            return bool()
+        def __invert__(self):
+            '''QStyle.SubControls QStyle.SubControls.__invert__()'''
+            return QStyle.SubControls()
+        def __and__(self, mask):
+            '''QStyle.SubControls QStyle.SubControls.__and__(int mask)'''
+            return QStyle.SubControls()
+        def __xor__(self, f):
+            '''QStyle.SubControls QStyle.SubControls.__xor__(QStyle.SubControls f)'''
+            return QStyle.SubControls()
+        def __xor__(self, f):
+            '''QStyle.SubControls QStyle.SubControls.__xor__(int f)'''
+            return QStyle.SubControls()
+        def __or__(self, f):
+            '''QStyle.SubControls QStyle.SubControls.__or__(QStyle.SubControls f)'''
+            return QStyle.SubControls()
+        def __or__(self, f):
+            '''QStyle.SubControls QStyle.SubControls.__or__(int f)'''
+            return QStyle.SubControls()
+        def __int__(self):
+            '''int QStyle.SubControls.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''QStyle.SubControls QStyle.SubControls.__ixor__(QStyle.SubControls f)'''
+            return QStyle.SubControls()
+        def __ior__(self, f):
+            '''QStyle.SubControls QStyle.SubControls.__ior__(QStyle.SubControls f)'''
+            return QStyle.SubControls()
+        def __iand__(self, mask):
+            '''QStyle.SubControls QStyle.SubControls.__iand__(int mask)'''
+            return QStyle.SubControls()
+    class State():
+        """"""
+        def __init__(self):
+            '''QStyle.State QStyle.State.__init__()'''
+            return QStyle.State()
+        def __init__(self):
+            '''int QStyle.State.__init__()'''
+            return int()
+        def __init__(self):
+            '''void QStyle.State.__init__()'''
+        def __bool__(self):
+            '''int QStyle.State.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool QStyle.State.__ne__(QStyle.State f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool QStyle.State.__eq__(QStyle.State f)'''
+            return bool()
+        def __invert__(self):
+            '''QStyle.State QStyle.State.__invert__()'''
+            return QStyle.State()
+        def __and__(self, mask):
+            '''QStyle.State QStyle.State.__and__(int mask)'''
+            return QStyle.State()
+        def __xor__(self, f):
+            '''QStyle.State QStyle.State.__xor__(QStyle.State f)'''
+            return QStyle.State()
+        def __xor__(self, f):
+            '''QStyle.State QStyle.State.__xor__(int f)'''
+            return QStyle.State()
+        def __or__(self, f):
+            '''QStyle.State QStyle.State.__or__(QStyle.State f)'''
+            return QStyle.State()
+        def __or__(self, f):
+            '''QStyle.State QStyle.State.__or__(int f)'''
+            return QStyle.State()
+        def __int__(self):
+            '''int QStyle.State.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''QStyle.State QStyle.State.__ixor__(QStyle.State f)'''
+            return QStyle.State()
+        def __ior__(self, f):
+            '''QStyle.State QStyle.State.__ior__(QStyle.State f)'''
+            return QStyle.State()
+        def __iand__(self, mask):
+            '''QStyle.State QStyle.State.__iand__(int mask)'''
+            return QStyle.State()
+
+
+class QCommonStyle(QStyle):
+    """"""
+    def __init__(self):
+        '''void QCommonStyle.__init__()'''
+    def standardIconImplementation(self, standardIcon, option = None, widget = None):
+        '''QIcon QCommonStyle.standardIconImplementation(QStyle.StandardPixmap standardIcon, QStyleOption option = None, QWidget widget = None)'''
+        return QIcon()
+    def generatedIconPixmap(self, iconMode, pixmap, opt):
+        '''QPixmap QCommonStyle.generatedIconPixmap(QIcon.Mode iconMode, QPixmap pixmap, QStyleOption opt)'''
+        return QPixmap()
+    def standardPixmap(self, sp, option = None, widget = None):
+        '''QPixmap QCommonStyle.standardPixmap(QStyle.StandardPixmap sp, QStyleOption option = None, QWidget widget = None)'''
+        return QPixmap()
+    def styleHint(self, sh, option = None, widget = None, returnData = None):
+        '''int QCommonStyle.styleHint(QStyle.StyleHint sh, QStyleOption option = None, QWidget widget = None, QStyleHintReturn returnData = None)'''
+        return int()
+    def pixelMetric(self, m, option = None, widget = None):
+        '''int QCommonStyle.pixelMetric(QStyle.PixelMetric m, QStyleOption option = None, QWidget widget = None)'''
+        return int()
+    def sizeFromContents(self, ct, opt, contentsSize, widget = None):
+        '''QSize QCommonStyle.sizeFromContents(QStyle.ContentsType ct, QStyleOption opt, QSize contentsSize, QWidget widget = None)'''
+        return QSize()
+    def subControlRect(self, cc, opt, sc, widget = None):
+        '''QRect QCommonStyle.subControlRect(QStyle.ComplexControl cc, QStyleOptionComplex opt, QStyle.SubControl sc, QWidget widget = None)'''
+        return QRect()
+    def hitTestComplexControl(self, cc, opt, pt, widget = None):
+        '''QStyle.SubControl QCommonStyle.hitTestComplexControl(QStyle.ComplexControl cc, QStyleOptionComplex opt, QPoint pt, QWidget widget = None)'''
+        return QStyle.SubControl()
+    def drawComplexControl(self, cc, opt, p, widget = None):
+        '''void QCommonStyle.drawComplexControl(QStyle.ComplexControl cc, QStyleOptionComplex opt, QPainter p, QWidget widget = None)'''
+    def subElementRect(self, r, opt, widget = None):
+        '''QRect QCommonStyle.subElementRect(QStyle.SubElement r, QStyleOption opt, QWidget widget = None)'''
+        return QRect()
+    def drawControl(self, element, opt, p, widget = None):
+        '''void QCommonStyle.drawControl(QStyle.ControlElement element, QStyleOption opt, QPainter p, QWidget widget = None)'''
+    def drawPrimitive(self, pe, opt, p, widget = None):
+        '''void QCommonStyle.drawPrimitive(QStyle.PrimitiveElement pe, QStyleOption opt, QPainter p, QWidget widget = None)'''
+    def unpolish(self, widget):
+        '''void QCommonStyle.unpolish(QWidget widget)'''
+    def unpolish(self, application):
+        '''void QCommonStyle.unpolish(QApplication application)'''
+    def polish(self, widget):
+        '''void QCommonStyle.polish(QWidget widget)'''
+    def polish(self, app):
+        '''void QCommonStyle.polish(QApplication app)'''
+    def polish(self):
+        '''QPalette QCommonStyle.polish()'''
+        return QPalette()
+
+
 class QCompleter(QObject):
     """"""
     # Enum QCompleter.ModelSorting
@@ -4586,10 +5462,10 @@ class QCompleter(QObject):
     def maxVisibleItems(self):
         '''int QCompleter.maxVisibleItems()'''
         return int()
-    highlighted = PyQt4.QtCore.pyqtSignal() # void highlighted(const QString&) - signal
-    highlighted = PyQt4.QtCore.pyqtSignal() # void highlighted(const QModelIndex&) - signal
-    activated = PyQt4.QtCore.pyqtSignal() # void activated(const QString&) - signal
-    activated = PyQt4.QtCore.pyqtSignal() # void activated(const QModelIndex&) - signal
+    highlighted = pyqtSignal() # void highlighted(const QString&) - signal
+    highlighted = pyqtSignal() # void highlighted(const QModelIndex&) - signal
+    activated = pyqtSignal() # void activated(const QString&) - signal
+    activated = pyqtSignal() # void activated(const QModelIndex&) - signal
     def event(self):
         '''QEvent QCompleter.event()'''
         return QEvent()
@@ -4722,7 +5598,7 @@ class QDataWidgetMapper(QObject):
 
     def __init__(self, parent = None):
         '''void QDataWidgetMapper.__init__(QObject parent = None)'''
-    currentIndexChanged = PyQt4.QtCore.pyqtSignal() # void currentIndexChanged(int) - signal
+    currentIndexChanged = pyqtSignal() # void currentIndexChanged(int) - signal
     def toPrevious(self):
         '''void QDataWidgetMapper.toPrevious()'''
     def toNext(self):
@@ -4876,9 +5752,9 @@ class QDateTimeEdit(QAbstractSpinBox):
         '''void QDateTimeEdit.setDate(QDate date)'''
     def setDateTime(self, dateTime):
         '''void QDateTimeEdit.setDateTime(QDateTime dateTime)'''
-    dateChanged = PyQt4.QtCore.pyqtSignal() # void dateChanged(const QDate&) - signal
-    timeChanged = PyQt4.QtCore.pyqtSignal() # void timeChanged(const QTime&) - signal
-    dateTimeChanged = PyQt4.QtCore.pyqtSignal() # void dateTimeChanged(const QDateTime&) - signal
+    dateChanged = pyqtSignal() # void dateChanged(const QDate&) - signal
+    timeChanged = pyqtSignal() # void timeChanged(const QTime&) - signal
+    dateTimeChanged = pyqtSignal() # void dateTimeChanged(const QDateTime&) - signal
     def sectionCount(self):
         '''int QDateTimeEdit.sectionCount()'''
         return int()
@@ -5074,9 +5950,9 @@ class QDesktopWidget(QWidget):
         '''void QDesktopWidget.__init__()'''
     def resizeEvent(self, e):
         '''void QDesktopWidget.resizeEvent(QResizeEvent e)'''
-    screenCountChanged = PyQt4.QtCore.pyqtSignal() # void screenCountChanged(int) - signal
-    workAreaResized = PyQt4.QtCore.pyqtSignal() # void workAreaResized(int) - signal
-    resized = PyQt4.QtCore.pyqtSignal() # void resized(int) - signal
+    screenCountChanged = pyqtSignal() # void screenCountChanged(int) - signal
+    workAreaResized = pyqtSignal() # void workAreaResized(int) - signal
+    resized = pyqtSignal() # void resized(int) - signal
     def availableGeometry(self, screen = -1):
         '''QRect QDesktopWidget.availableGeometry(int screen = -1)'''
         return QRect()
@@ -5217,10 +6093,10 @@ class QDialogButtonBox(QWidget):
         return bool()
     def changeEvent(self, event):
         '''void QDialogButtonBox.changeEvent(QEvent event)'''
-    rejected = PyQt4.QtCore.pyqtSignal() # void rejected() - signal
-    helpRequested = PyQt4.QtCore.pyqtSignal() # void helpRequested() - signal
-    clicked = PyQt4.QtCore.pyqtSignal() # void clicked(QAbstractButton *) - signal
-    accepted = PyQt4.QtCore.pyqtSignal() # void accepted() - signal
+    rejected = pyqtSignal() # void rejected() - signal
+    helpRequested = pyqtSignal() # void helpRequested() - signal
+    clicked = pyqtSignal() # void clicked(QAbstractButton *) - signal
+    accepted = pyqtSignal() # void accepted() - signal
     def centerButtons(self):
         '''bool QDialogButtonBox.centerButtons()'''
         return bool()
@@ -5457,11 +6333,11 @@ class QDockWidget(QWidget):
         '''void QDockWidget.changeEvent(QEvent event)'''
     def initStyleOption(self, option):
         '''void QDockWidget.initStyleOption(QStyleOptionDockWidget option)'''
-    visibilityChanged = PyQt4.QtCore.pyqtSignal() # void visibilityChanged(bool) - signal
-    dockLocationChanged = PyQt4.QtCore.pyqtSignal() # void dockLocationChanged(Qt::DockWidgetArea) - signal
-    allowedAreasChanged = PyQt4.QtCore.pyqtSignal() # void allowedAreasChanged(Qt::DockWidgetAreas) - signal
-    topLevelChanged = PyQt4.QtCore.pyqtSignal() # void topLevelChanged(bool) - signal
-    featuresChanged = PyQt4.QtCore.pyqtSignal() # void featuresChanged(QDockWidget::DockWidgetFeatures) - signal
+    visibilityChanged = pyqtSignal() # void visibilityChanged(bool) - signal
+    dockLocationChanged = pyqtSignal() # void dockLocationChanged(Qt::DockWidgetArea) - signal
+    allowedAreasChanged = pyqtSignal() # void allowedAreasChanged(Qt::DockWidgetAreas) - signal
+    topLevelChanged = pyqtSignal() # void topLevelChanged(bool) - signal
+    featuresChanged = pyqtSignal() # void featuresChanged(QDockWidget::DockWidgetFeatures) - signal
     def titleBarWidget(self):
         '''QWidget QDockWidget.titleBarWidget()'''
         return QWidget()
@@ -5548,8 +6424,8 @@ class QDrag(QObject):
     """"""
     def __init__(self, dragSource):
         '''void QDrag.__init__(QWidget dragSource)'''
-    targetChanged = PyQt4.QtCore.pyqtSignal() # void targetChanged(QWidget *) - signal
-    actionChanged = PyQt4.QtCore.pyqtSignal() # void actionChanged(Qt::DropAction) - signal
+    targetChanged = pyqtSignal() # void targetChanged(QWidget *) - signal
+    actionChanged = pyqtSignal() # void actionChanged(Qt::DropAction) - signal
     def setDragCursor(self, cursor, action):
         '''void QDrag.setDragCursor(QPixmap cursor, Qt.DropAction action)'''
     def start(self, supportedActions = Qt.CopyAction):
@@ -6182,6 +7058,9 @@ class QActionEvent(QEvent):
 
 class QFileOpenEvent(QEvent):
     """"""
+    def openFile(self, file, flags):
+        '''bool QFileOpenEvent.openFile(QFile file, QIODevice.OpenMode flags)'''
+        return bool()
     def url(self):
         '''QUrl QFileOpenEvent.url()'''
         return QUrl()
@@ -6486,11 +7365,11 @@ class QFileDialog(QDialog):
     def getExistingDirectory(self, parent = None, caption = QString(), directory = QString(), options = QFileDialog.ShowDirsOnly):
         '''static QString QFileDialog.getExistingDirectory(QWidget parent = None, QString caption = QString(), QString directory = QString(), QFileDialog.Options options = QFileDialog.ShowDirsOnly)'''
         return QString()
-    fileSelected = PyQt4.QtCore.pyqtSignal() # void fileSelected(const QString&) - signal
-    filterSelected = PyQt4.QtCore.pyqtSignal() # void filterSelected(const QString&) - signal
-    filesSelected = PyQt4.QtCore.pyqtSignal() # void filesSelected(const QStringList&) - signal
-    directoryEntered = PyQt4.QtCore.pyqtSignal() # void directoryEntered(const QString&) - signal
-    currentChanged = PyQt4.QtCore.pyqtSignal() # void currentChanged(const QString&) - signal
+    fileSelected = pyqtSignal() # void fileSelected(const QString&) - signal
+    filterSelected = pyqtSignal() # void filterSelected(const QString&) - signal
+    filesSelected = pyqtSignal() # void filesSelected(const QStringList&) - signal
+    directoryEntered = pyqtSignal() # void directoryEntered(const QString&) - signal
+    currentChanged = pyqtSignal() # void currentChanged(const QString&) - signal
     def labelText(self, label):
         '''QString QFileDialog.labelText(QFileDialog.DialogLabel label)'''
         return QString()
@@ -6662,9 +7541,9 @@ class QFileSystemModel(QAbstractItemModel):
     def event(self, event):
         '''bool QFileSystemModel.event(QEvent event)'''
         return bool()
-    directoryLoaded = PyQt4.QtCore.pyqtSignal() # void directoryLoaded(const QString&) - signal
-    rootPathChanged = PyQt4.QtCore.pyqtSignal() # void rootPathChanged(const QString&) - signal
-    fileRenamed = PyQt4.QtCore.pyqtSignal() # void fileRenamed(const QString&,const QString&,const QString&) - signal
+    directoryLoaded = pyqtSignal() # void directoryLoaded(const QString&) - signal
+    rootPathChanged = pyqtSignal() # void rootPathChanged(const QString&) - signal
+    fileRenamed = pyqtSignal() # void fileRenamed(const QString&,const QString&,const QString&) - signal
     def remove(self, aindex):
         '''bool QFileSystemModel.remove(QModelIndex aindex)'''
         return bool()
@@ -6818,6 +7697,12 @@ class QFocusFrame(QWidget):
 
 class QFont():
     """"""
+    # Enum QFont.HintingPreference
+    PreferDefaultHinting = 0
+    PreferNoHinting = 0
+    PreferVerticalHinting = 0
+    PreferFullHinting = 0
+
     # Enum QFont.SpacingType
     PercentageSpacing = 0
     AbsoluteSpacing = 0
@@ -6896,6 +7781,16 @@ class QFont():
     def __ge__(self):
         '''QFont QFont.__ge__()'''
         return QFont()
+    def hintingPreference(self):
+        '''QFont.HintingPreference QFont.hintingPreference()'''
+        return QFont.HintingPreference()
+    def setHintingPreference(self, hintingPreference):
+        '''void QFont.setHintingPreference(QFont.HintingPreference hintingPreference)'''
+    def setStyleName(self, styleName):
+        '''void QFont.setStyleName(QString styleName)'''
+    def styleName(self):
+        '''QString QFont.styleName()'''
+        return QString()
     def capitalization(self):
         '''QFont.Capitalization QFont.capitalization()'''
         return QFont.Capitalization()
@@ -7097,7 +7992,7 @@ class QFontComboBox(QComboBox):
     def event(self, e):
         '''bool QFontComboBox.event(QEvent e)'''
         return bool()
-    currentFontChanged = PyQt4.QtCore.pyqtSignal() # void currentFontChanged(const QFont&) - signal
+    currentFontChanged = pyqtSignal() # void currentFontChanged(const QFont&) - signal
     def setCurrentFont(self, f):
         '''void QFontComboBox.setCurrentFont(QFont f)'''
     def sizeHint(self):
@@ -7299,8 +8194,8 @@ class QFontDialog(QDialog):
         '''void QFontDialog.__init__(QWidget parent = None)'''
     def __init__(self, initial, parent = None):
         '''void QFontDialog.__init__(QFont initial, QWidget parent = None)'''
-    fontSelected = PyQt4.QtCore.pyqtSignal() # void fontSelected(const QFont&) - signal
-    currentFontChanged = PyQt4.QtCore.pyqtSignal() # void currentFontChanged(const QFont&) - signal
+    fontSelected = pyqtSignal() # void fontSelected(const QFont&) - signal
+    currentFontChanged = pyqtSignal() # void currentFontChanged(const QFont&) - signal
     def setVisible(self, visible):
         '''void QFontDialog.setVisible(bool visible)'''
     def open(self):
@@ -7402,6 +8297,9 @@ class QFontInfo():
     def __init__(self):
         '''QFontInfo QFontInfo.__init__()'''
         return QFontInfo()
+    def styleName(self):
+        '''QString QFontInfo.styleName()'''
+        return QString()
     def exactMatch(self):
         '''bool QFontInfo.exactMatch()'''
         return bool()
@@ -7451,6 +8349,9 @@ class QFontMetrics():
     def __init__(self):
         '''QFontMetrics QFontMetrics.__init__()'''
         return QFontMetrics()
+    def inFontUcs4(self, character):
+        '''bool QFontMetrics.inFontUcs4(int character)'''
+        return bool()
     def tightBoundingRect(self, text):
         '''QRect QFontMetrics.tightBoundingRect(QString text)'''
         return QRect()
@@ -7560,6 +8461,9 @@ class QFontMetricsF():
     def __init__(self):
         '''QFontMetricsF QFontMetricsF.__init__()'''
         return QFontMetricsF()
+    def inFontUcs4(self, character):
+        '''bool QFontMetricsF.inFontUcs4(int character)'''
+        return bool()
     def tightBoundingRect(self, text):
         '''QRectF QFontMetricsF.tightBoundingRect(QString text)'''
         return QRectF()
@@ -8508,6 +9412,52 @@ class QGestureRecognizer():
             return QGestureRecognizer.Result()
 
 
+class QGlyphRun():
+    """"""
+    def __init__(self):
+        '''void QGlyphRun.__init__()'''
+    def __init__(self, other):
+        '''void QGlyphRun.__init__(QGlyphRun other)'''
+    def strikeOut(self):
+        '''bool QGlyphRun.strikeOut()'''
+        return bool()
+    def setStrikeOut(self, strikeOut):
+        '''void QGlyphRun.setStrikeOut(bool strikeOut)'''
+    def underline(self):
+        '''bool QGlyphRun.underline()'''
+        return bool()
+    def setUnderline(self, underline):
+        '''void QGlyphRun.setUnderline(bool underline)'''
+    def overline(self):
+        '''bool QGlyphRun.overline()'''
+        return bool()
+    def setOverline(self, overline):
+        '''void QGlyphRun.setOverline(bool overline)'''
+    def __ne__(self, other):
+        '''bool QGlyphRun.__ne__(QGlyphRun other)'''
+        return bool()
+    def __eq__(self, other):
+        '''bool QGlyphRun.__eq__(QGlyphRun other)'''
+        return bool()
+    def clear(self):
+        '''void QGlyphRun.clear()'''
+    def setPositions(self, positions):
+        '''void QGlyphRun.setPositions(list-of-QPointF positions)'''
+    def positions(self):
+        '''list-of-QPointF QGlyphRun.positions()'''
+        return [QPointF()]
+    def setGlyphIndexes(self, glyphIndexes):
+        '''void QGlyphRun.setGlyphIndexes(list-of-int glyphIndexes)'''
+    def glyphIndexes(self):
+        '''list-of-int QGlyphRun.glyphIndexes()'''
+        return [int()]
+    def setRawFont(self, rawFont):
+        '''void QGlyphRun.setRawFont(QRawFont rawFont)'''
+    def rawFont(self):
+        '''QRawFont QGlyphRun.rawFont()'''
+        return QRawFont()
+
+
 class QGraphicsAnchor(QObject):
     """"""
     def sizePolicy(self):
@@ -8733,7 +9683,7 @@ class QGraphicsEffect(QObject):
         '''void QGraphicsEffect.sourceChanged(QGraphicsEffect.ChangeFlags flags)'''
     def draw(self, painter):
         '''abstract void QGraphicsEffect.draw(QPainter painter)'''
-    enabledChanged = PyQt4.QtCore.pyqtSignal() # void enabledChanged(bool) - signal
+    enabledChanged = pyqtSignal() # void enabledChanged(bool) - signal
     def update(self):
         '''void QGraphicsEffect.update()'''
     def setEnabled(self, enable):
@@ -8804,8 +9754,8 @@ class QGraphicsColorizeEffect(QGraphicsEffect):
         '''void QGraphicsColorizeEffect.__init__(QObject parent = None)'''
     def draw(self, painter):
         '''void QGraphicsColorizeEffect.draw(QPainter painter)'''
-    strengthChanged = PyQt4.QtCore.pyqtSignal() # void strengthChanged(qreal) - signal
-    colorChanged = PyQt4.QtCore.pyqtSignal() # void colorChanged(const QColor&) - signal
+    strengthChanged = pyqtSignal() # void strengthChanged(qreal) - signal
+    colorChanged = pyqtSignal() # void colorChanged(const QColor&) - signal
     def setStrength(self, strength):
         '''void QGraphicsColorizeEffect.setStrength(float strength)'''
     def setColor(self, c):
@@ -8829,8 +9779,8 @@ class QGraphicsBlurEffect(QGraphicsEffect):
         '''void QGraphicsBlurEffect.__init__(QObject parent = None)'''
     def draw(self, painter):
         '''void QGraphicsBlurEffect.draw(QPainter painter)'''
-    blurHintsChanged = PyQt4.QtCore.pyqtSignal() # void blurHintsChanged(QGraphicsBlurEffect::BlurHints) - signal
-    blurRadiusChanged = PyQt4.QtCore.pyqtSignal() # void blurRadiusChanged(qreal) - signal
+    blurHintsChanged = pyqtSignal() # void blurHintsChanged(QGraphicsBlurEffect::BlurHints) - signal
+    blurRadiusChanged = pyqtSignal() # void blurRadiusChanged(qreal) - signal
     def setBlurHints(self, hints):
         '''void QGraphicsBlurEffect.setBlurHints(QGraphicsBlurEffect.BlurHints hints)'''
     def setBlurRadius(self, blurRadius):
@@ -8901,9 +9851,9 @@ class QGraphicsDropShadowEffect(QGraphicsEffect):
         '''void QGraphicsDropShadowEffect.__init__(QObject parent = None)'''
     def draw(self, painter):
         '''void QGraphicsDropShadowEffect.draw(QPainter painter)'''
-    colorChanged = PyQt4.QtCore.pyqtSignal() # void colorChanged(const QColor&) - signal
-    blurRadiusChanged = PyQt4.QtCore.pyqtSignal() # void blurRadiusChanged(qreal) - signal
-    offsetChanged = PyQt4.QtCore.pyqtSignal() # void offsetChanged(const QPointF&) - signal
+    colorChanged = pyqtSignal() # void colorChanged(const QColor&) - signal
+    blurRadiusChanged = pyqtSignal() # void blurRadiusChanged(qreal) - signal
+    offsetChanged = pyqtSignal() # void offsetChanged(const QPointF&) - signal
     def setColor(self, color):
         '''void QGraphicsDropShadowEffect.setColor(QColor color)'''
     def setBlurRadius(self, blurRadius):
@@ -8944,8 +9894,8 @@ class QGraphicsOpacityEffect(QGraphicsEffect):
         '''void QGraphicsOpacityEffect.__init__(QObject parent = None)'''
     def draw(self, painter):
         '''void QGraphicsOpacityEffect.draw(QPainter painter)'''
-    opacityMaskChanged = PyQt4.QtCore.pyqtSignal() # void opacityMaskChanged(const QBrush&) - signal
-    opacityChanged = PyQt4.QtCore.pyqtSignal() # void opacityChanged(qreal) - signal
+    opacityMaskChanged = pyqtSignal() # void opacityMaskChanged(const QBrush&) - signal
+    opacityChanged = pyqtSignal() # void opacityChanged(qreal) - signal
     def setOpacityMask(self, mask):
         '''void QGraphicsOpacityEffect.setOpacityMask(QBrush mask)'''
     def setOpacity(self, opacity):
@@ -8962,6 +9912,8 @@ class QGraphicsGridLayout(QGraphicsLayout):
     """"""
     def __init__(self, parent = None):
         '''void QGraphicsGridLayout.__init__(QGraphicsLayoutItem parent = None)'''
+    def removeItem(self, item):
+        '''void QGraphicsGridLayout.removeItem(QGraphicsLayoutItem item)'''
     def sizeHint(self, which, constraint = QSizeF()):
         '''QSizeF QGraphicsGridLayout.sizeHint(Qt.SizeHint which, QSizeF constraint = QSizeF())'''
         return QSizeF()
@@ -10088,15 +11040,15 @@ class QGraphicsObject(QObject, QGraphicsItem):
         '''void QGraphicsObject.__init__(QGraphicsItem parent = None)'''
     def updateMicroFocus(self):
         '''void QGraphicsObject.updateMicroFocus()'''
-    scaleChanged = PyQt4.QtCore.pyqtSignal() # void scaleChanged() - signal
-    rotationChanged = PyQt4.QtCore.pyqtSignal() # void rotationChanged() - signal
-    zChanged = PyQt4.QtCore.pyqtSignal() # void zChanged() - signal
-    yChanged = PyQt4.QtCore.pyqtSignal() # void yChanged() - signal
-    xChanged = PyQt4.QtCore.pyqtSignal() # void xChanged() - signal
-    enabledChanged = PyQt4.QtCore.pyqtSignal() # void enabledChanged() - signal
-    visibleChanged = PyQt4.QtCore.pyqtSignal() # void visibleChanged() - signal
-    opacityChanged = PyQt4.QtCore.pyqtSignal() # void opacityChanged() - signal
-    parentChanged = PyQt4.QtCore.pyqtSignal() # void parentChanged() - signal
+    scaleChanged = pyqtSignal() # void scaleChanged() - signal
+    rotationChanged = pyqtSignal() # void rotationChanged() - signal
+    zChanged = pyqtSignal() # void zChanged() - signal
+    yChanged = pyqtSignal() # void yChanged() - signal
+    xChanged = pyqtSignal() # void xChanged() - signal
+    enabledChanged = pyqtSignal() # void enabledChanged() - signal
+    visibleChanged = pyqtSignal() # void visibleChanged() - signal
+    opacityChanged = pyqtSignal() # void opacityChanged() - signal
+    parentChanged = pyqtSignal() # void parentChanged() - signal
     def ungrabGesture(self, type):
         '''void QGraphicsObject.ungrabGesture(Qt.GestureType type)'''
     def grabGesture(self, type, flags = Qt.GestureFlags(0)):
@@ -10149,8 +11101,8 @@ class QGraphicsTextItem(QGraphicsObject):
     def sceneEvent(self, event):
         '''bool QGraphicsTextItem.sceneEvent(QEvent event)'''
         return bool()
-    linkHovered = PyQt4.QtCore.pyqtSignal() # void linkHovered(const QString&) - signal
-    linkActivated = PyQt4.QtCore.pyqtSignal() # void linkActivated(const QString&) - signal
+    linkHovered = pyqtSignal() # void linkHovered(const QString&) - signal
+    linkActivated = pyqtSignal() # void linkActivated(const QString&) - signal
     def textCursor(self):
         '''QTextCursor QGraphicsTextItem.textCursor()'''
         return QTextCursor()
@@ -10365,7 +11317,7 @@ class QGraphicsWidget(QGraphicsObject, QGraphicsLayoutItem):
     """"""
     def __init__(self, parent = None, flags = 0):
         '''void QGraphicsWidget.__init__(QGraphicsItem parent = None, Qt.WindowFlags flags = 0)'''
-    geometryChanged = PyQt4.QtCore.pyqtSignal() # void geometryChanged() - signal
+    geometryChanged = pyqtSignal() # void geometryChanged() - signal
     def setAutoFillBackground(self, enabled):
         '''void QGraphicsWidget.setAutoFillBackground(bool enabled)'''
     def autoFillBackground(self):
@@ -10759,9 +11711,9 @@ class QGraphicsScene(QObject):
     def event(self, event):
         '''bool QGraphicsScene.event(QEvent event)'''
         return bool()
-    selectionChanged = PyQt4.QtCore.pyqtSignal() # void selectionChanged() - signal
-    sceneRectChanged = PyQt4.QtCore.pyqtSignal() # void sceneRectChanged(const QRectF&) - signal
-    changed = PyQt4.QtCore.pyqtSignal() # void changed(const QList<QRectF>&) - signal
+    selectionChanged = pyqtSignal() # void selectionChanged() - signal
+    sceneRectChanged = pyqtSignal() # void sceneRectChanged(const QRectF&) - signal
+    changed = pyqtSignal() # void changed(const QList<QRectF>&) - signal
     def clear(self):
         '''void QGraphicsScene.clear()'''
     def invalidate(self, rect = QRectF(), layers = QGraphicsScene.AllLayers):
@@ -11195,11 +12147,11 @@ class QGraphicsScale(QGraphicsTransform):
     """"""
     def __init__(self, parent = None):
         '''void QGraphicsScale.__init__(QObject parent = None)'''
-    zScaleChanged = PyQt4.QtCore.pyqtSignal() # void zScaleChanged() - signal
-    yScaleChanged = PyQt4.QtCore.pyqtSignal() # void yScaleChanged() - signal
-    xScaleChanged = PyQt4.QtCore.pyqtSignal() # void xScaleChanged() - signal
-    scaleChanged = PyQt4.QtCore.pyqtSignal() # void scaleChanged() - signal
-    originChanged = PyQt4.QtCore.pyqtSignal() # void originChanged() - signal
+    zScaleChanged = pyqtSignal() # void zScaleChanged() - signal
+    yScaleChanged = pyqtSignal() # void yScaleChanged() - signal
+    xScaleChanged = pyqtSignal() # void xScaleChanged() - signal
+    scaleChanged = pyqtSignal() # void scaleChanged() - signal
+    originChanged = pyqtSignal() # void originChanged() - signal
     def applyTo(self, matrix):
         '''void QGraphicsScale.applyTo(QMatrix4x4 matrix)'''
     def setZScale(self):
@@ -11231,9 +12183,9 @@ class QGraphicsRotation(QGraphicsTransform):
     """"""
     def __init__(self, parent = None):
         '''void QGraphicsRotation.__init__(QObject parent = None)'''
-    axisChanged = PyQt4.QtCore.pyqtSignal() # void axisChanged() - signal
-    angleChanged = PyQt4.QtCore.pyqtSignal() # void angleChanged() - signal
-    originChanged = PyQt4.QtCore.pyqtSignal() # void originChanged() - signal
+    axisChanged = pyqtSignal() # void axisChanged() - signal
+    angleChanged = pyqtSignal() # void angleChanged() - signal
+    originChanged = pyqtSignal() # void originChanged() - signal
     def applyTo(self, matrix):
         '''void QGraphicsRotation.applyTo(QMatrix4x4 matrix)'''
     def setAxis(self, axis):
@@ -11795,8 +12747,8 @@ class QGroupBox(QWidget):
         return QEvent()
     def initStyleOption(self, option):
         '''void QGroupBox.initStyleOption(QStyleOptionGroupBox option)'''
-    toggled = PyQt4.QtCore.pyqtSignal() # void toggled(bool) - signal
-    clicked = PyQt4.QtCore.pyqtSignal() # void clicked(bool = 0) - signal
+    toggled = pyqtSignal() # void toggled(bool) - signal
+    clicked = pyqtSignal() # void clicked(bool = 0) - signal
     def setChecked(self, b):
         '''void QGroupBox.setChecked(bool b)'''
     def isChecked(self):
@@ -11842,8 +12794,8 @@ class QHeaderView(QAbstractItemView):
         '''void QHeaderView.__init__(Qt.Orientation orientation, QWidget parent = None)'''
     def initStyleOption(self, option):
         '''void QHeaderView.initStyleOption(QStyleOptionHeader option)'''
-    sortIndicatorChanged = PyQt4.QtCore.pyqtSignal() # void sortIndicatorChanged(int,Qt::SortOrder) - signal
-    sectionEntered = PyQt4.QtCore.pyqtSignal() # void sectionEntered(int) - signal
+    sortIndicatorChanged = pyqtSignal() # void sortIndicatorChanged(int,Qt::SortOrder) - signal
+    sectionEntered = pyqtSignal() # void sectionEntered(int) - signal
     def setOffsetToLastSection(self):
         '''void QHeaderView.setOffsetToLastSection()'''
     def reset(self):
@@ -11959,15 +12911,15 @@ class QHeaderView(QAbstractItemView):
         '''void QHeaderView.resizeSections(QHeaderView.ResizeMode mode)'''
     def updateSection(self, logicalIndex):
         '''void QHeaderView.updateSection(int logicalIndex)'''
-    sectionAutoResize = PyQt4.QtCore.pyqtSignal() # void sectionAutoResize(int,QHeaderView::ResizeMode) - signal
-    sectionHandleDoubleClicked = PyQt4.QtCore.pyqtSignal() # void sectionHandleDoubleClicked(int) - signal
-    sectionCountChanged = PyQt4.QtCore.pyqtSignal() # void sectionCountChanged(int,int) - signal
-    sectionDoubleClicked = PyQt4.QtCore.pyqtSignal() # void sectionDoubleClicked(int) - signal
-    sectionClicked = PyQt4.QtCore.pyqtSignal() # void sectionClicked(int) - signal
-    sectionPressed = PyQt4.QtCore.pyqtSignal() # void sectionPressed(int) - signal
-    sectionResized = PyQt4.QtCore.pyqtSignal() # void sectionResized(int,int,int) - signal
-    sectionMoved = PyQt4.QtCore.pyqtSignal() # void sectionMoved(int,int,int) - signal
-    geometriesChanged = PyQt4.QtCore.pyqtSignal() # void geometriesChanged() - signal
+    sectionAutoResize = pyqtSignal() # void sectionAutoResize(int,QHeaderView::ResizeMode) - signal
+    sectionHandleDoubleClicked = pyqtSignal() # void sectionHandleDoubleClicked(int) - signal
+    sectionCountChanged = pyqtSignal() # void sectionCountChanged(int,int) - signal
+    sectionDoubleClicked = pyqtSignal() # void sectionDoubleClicked(int) - signal
+    sectionClicked = pyqtSignal() # void sectionClicked(int) - signal
+    sectionPressed = pyqtSignal() # void sectionPressed(int) - signal
+    sectionResized = pyqtSignal() # void sectionResized(int,int,int) - signal
+    sectionMoved = pyqtSignal() # void sectionMoved(int,int,int) - signal
+    geometriesChanged = pyqtSignal() # void geometriesChanged() - signal
     def setOffsetToSectionPosition(self, visualIndex):
         '''void QHeaderView.setOffsetToSectionPosition(int visualIndex)'''
     def headerDataChanged(self, orientation, logicalFirst, logicalLast):
@@ -12109,6 +13061,8 @@ class QIcon():
         '''void QIcon.__init__(QIconEngineV2 engine)'''
     def __init__(self, variant):
         '''void QIcon.__init__(QVariant variant)'''
+    def swap(self, other):
+        '''void QIcon.swap(QIcon other)'''
     def name(self):
         '''QString QIcon.name()'''
         return QString()
@@ -12227,6 +13181,56 @@ class QIconEngineV2(QIconEngine):
             return QIconEngineV2.AvailableSizesArgument()
 
 
+class QIdentityProxyModel(QAbstractProxyModel):
+    """"""
+    def __init__(self, parent = None):
+        '''void QIdentityProxyModel.__init__(QObject parent = None)'''
+    def removeRows(self, row, count, parent = QModelIndex()):
+        '''bool QIdentityProxyModel.removeRows(int row, int count, QModelIndex parent = QModelIndex())'''
+        return bool()
+    def removeColumns(self, column, count, parent = QModelIndex()):
+        '''bool QIdentityProxyModel.removeColumns(int column, int count, QModelIndex parent = QModelIndex())'''
+        return bool()
+    def insertRows(self, row, count, parent = QModelIndex()):
+        '''bool QIdentityProxyModel.insertRows(int row, int count, QModelIndex parent = QModelIndex())'''
+        return bool()
+    def insertColumns(self, column, count, parent = QModelIndex()):
+        '''bool QIdentityProxyModel.insertColumns(int column, int count, QModelIndex parent = QModelIndex())'''
+        return bool()
+    def setSourceModel(self, sourceModel):
+        '''void QIdentityProxyModel.setSourceModel(QAbstractItemModel sourceModel)'''
+    def match(self, start, role, value, hits = 1, flags = Qt.MatchStartsWith|Qt.MatchWrap):
+        '''list-of-QModelIndex QIdentityProxyModel.match(QModelIndex start, int role, QVariant value, int hits = 1, Qt.MatchFlags flags = Qt.MatchStartsWith|Qt.MatchWrap)'''
+        return [QModelIndex()]
+    def mapSelectionToSource(self, selection):
+        '''QItemSelection QIdentityProxyModel.mapSelectionToSource(QItemSelection selection)'''
+        return QItemSelection()
+    def mapSelectionFromSource(self, selection):
+        '''QItemSelection QIdentityProxyModel.mapSelectionFromSource(QItemSelection selection)'''
+        return QItemSelection()
+    def dropMimeData(self, data, action, row, column, parent):
+        '''bool QIdentityProxyModel.dropMimeData(QMimeData data, Qt.DropAction action, int row, int column, QModelIndex parent)'''
+        return bool()
+    def rowCount(self, parent = QModelIndex()):
+        '''int QIdentityProxyModel.rowCount(QModelIndex parent = QModelIndex())'''
+        return int()
+    def parent(self, child):
+        '''QModelIndex QIdentityProxyModel.parent(QModelIndex child)'''
+        return QModelIndex()
+    def mapToSource(self, proxyIndex):
+        '''QModelIndex QIdentityProxyModel.mapToSource(QModelIndex proxyIndex)'''
+        return QModelIndex()
+    def mapFromSource(self, sourceIndex):
+        '''QModelIndex QIdentityProxyModel.mapFromSource(QModelIndex sourceIndex)'''
+        return QModelIndex()
+    def index(self, row, column, parent = QModelIndex()):
+        '''QModelIndex QIdentityProxyModel.index(int row, int column, QModelIndex parent = QModelIndex())'''
+        return QModelIndex()
+    def columnCount(self, parent = QModelIndex()):
+        '''int QIdentityProxyModel.columnCount(QModelIndex parent = QModelIndex())'''
+        return int()
+
+
 class QImage(QPaintDevice):
     """"""
     # Enum QImage.Format
@@ -12274,6 +13278,8 @@ class QImage(QPaintDevice):
         return QImage()
     def __init__(self, variant):
         '''void QImage.__init__(QVariant variant)'''
+    def swap(self, other):
+        '''void QImage.swap(QImage other)'''
     def bitPlaneCount(self):
         '''int QImage.bitPlaneCount()'''
         return int()
@@ -12397,6 +13403,10 @@ class QImage(QPaintDevice):
     def hasAlphaChannel(self):
         '''bool QImage.hasAlphaChannel()'''
         return bool()
+    def fill(self, color):
+        '''void QImage.fill(Qt.GlobalColor color)'''
+    def fill(self, color):
+        '''void QImage.fill(QColor color)'''
     def fill(self, pixel):
         '''void QImage.fill(int pixel)'''
     def setColorTable(self, colors):
@@ -12860,12 +13870,12 @@ class QInputDialog(QDialog):
 
     def __init__(self, parent = None, flags = 0):
         '''void QInputDialog.__init__(QWidget parent = None, Qt.WindowFlags flags = 0)'''
-    doubleValueSelected = PyQt4.QtCore.pyqtSignal() # void doubleValueSelected(double) - signal
-    doubleValueChanged = PyQt4.QtCore.pyqtSignal() # void doubleValueChanged(double) - signal
-    intValueSelected = PyQt4.QtCore.pyqtSignal() # void intValueSelected(int) - signal
-    intValueChanged = PyQt4.QtCore.pyqtSignal() # void intValueChanged(int) - signal
-    textValueSelected = PyQt4.QtCore.pyqtSignal() # void textValueSelected(const QString&) - signal
-    textValueChanged = PyQt4.QtCore.pyqtSignal() # void textValueChanged(const QString&) - signal
+    doubleValueSelected = pyqtSignal() # void doubleValueSelected(double) - signal
+    doubleValueChanged = pyqtSignal() # void doubleValueChanged(double) - signal
+    intValueSelected = pyqtSignal() # void intValueSelected(int) - signal
+    intValueChanged = pyqtSignal() # void intValueChanged(int) - signal
+    textValueSelected = pyqtSignal() # void textValueSelected(const QString&) - signal
+    textValueChanged = pyqtSignal() # void textValueChanged(const QString&) - signal
     def done(self, result):
         '''void QInputDialog.done(int result)'''
     def setVisible(self, visible):
@@ -12979,6 +13989,9 @@ class QInputDialog(QDialog):
     def getItem(self, parent, title, label, list, current = 0, editable = True, ok = None, flags = 0):
         '''static QString QInputDialog.getItem(QWidget parent, QString title, QString label, QStringList list, int current = 0, bool editable = True, bool ok, Qt.WindowFlags flags = 0)'''
         return QString()
+    def getItem(self, parent, title, label, list, current, editable, ok, flags, inputMethodHints):
+        '''static QString QInputDialog.getItem(QWidget parent, QString title, QString label, QStringList list, int current, bool editable, bool ok, Qt.WindowFlags flags, Qt.InputMethodHints inputMethodHints)'''
+        return QString()
     def getDouble(self, parent, title, label, value = 0, min = -2147483647, max = 2147483647, decimals = 1, ok = None, flags = 0):
         '''static float QInputDialog.getDouble(QWidget parent, QString title, QString label, float value = 0, float min = -2147483647, float max = 2147483647, int decimals = 1, bool ok, Qt.WindowFlags flags = 0)'''
         return float()
@@ -12990,6 +14003,9 @@ class QInputDialog(QDialog):
         return int()
     def getText(self, parent, title, label, mode = QLineEdit.Normal, text = QString(), ok = None, flags = 0):
         '''static QString QInputDialog.getText(QWidget parent, QString title, QString label, QLineEdit.EchoMode mode = QLineEdit.Normal, QString text = QString(), bool ok, Qt.WindowFlags flags = 0)'''
+        return QString()
+    def getText(self, parent, title, label, mode, text, ok, flags, inputMethodHints):
+        '''static QString QInputDialog.getText(QWidget parent, QString title, QString label, QLineEdit.EchoMode mode, QString text, bool ok, Qt.WindowFlags flags, Qt.InputMethodHints inputMethodHints)'''
         return QString()
     class InputDialogOptions():
         """"""
@@ -13135,6 +14151,12 @@ class QItemSelectionRange():
         '''void QItemSelectionRange.__init__(QModelIndex atopLeft, QModelIndex abottomRight)'''
     def __init__(self, index):
         '''void QItemSelectionRange.__init__(QModelIndex index)'''
+    def __ge__(self, other):
+        '''bool QItemSelectionRange.__ge__(QItemSelectionRange other)'''
+        return bool()
+    def __lt__(self, other):
+        '''bool QItemSelectionRange.__lt__(QItemSelectionRange other)'''
+        return bool()
     def isEmpty(self):
         '''bool QItemSelectionRange.isEmpty()'''
         return bool()
@@ -13230,10 +14252,10 @@ class QItemSelectionModel(QObject):
         return bool()
     def emitSelectionChanged(self, newSelection, oldSelection):
         '''void QItemSelectionModel.emitSelectionChanged(QItemSelection newSelection, QItemSelection oldSelection)'''
-    currentColumnChanged = PyQt4.QtCore.pyqtSignal() # void currentColumnChanged(const QModelIndex&,const QModelIndex&) - signal
-    currentRowChanged = PyQt4.QtCore.pyqtSignal() # void currentRowChanged(const QModelIndex&,const QModelIndex&) - signal
-    currentChanged = PyQt4.QtCore.pyqtSignal() # void currentChanged(const QModelIndex&,const QModelIndex&) - signal
-    selectionChanged = PyQt4.QtCore.pyqtSignal() # void selectionChanged(const QItemSelection&,const QItemSelection&) - signal
+    currentColumnChanged = pyqtSignal() # void currentColumnChanged(const QModelIndex&,const QModelIndex&) - signal
+    currentRowChanged = pyqtSignal() # void currentRowChanged(const QModelIndex&,const QModelIndex&) - signal
+    currentChanged = pyqtSignal() # void currentChanged(const QModelIndex&,const QModelIndex&) - signal
+    selectionChanged = pyqtSignal() # void selectionChanged(const QItemSelection&,const QItemSelection&) - signal
     def setCurrentIndex(self, index, command):
         '''void QItemSelectionModel.setCurrentIndex(QModelIndex index, QItemSelectionModel.SelectionFlags command)'''
     def select(self, index, command):
@@ -13540,6 +14562,8 @@ class QKeySequence():
         '''void QKeySequence.__init__(int k1, int key2 = 0, int key3 = 0, int key4 = 0)'''
     def __init__(self, variant):
         '''void QKeySequence.__init__(QVariant variant)'''
+    def swap(self, other):
+        '''void QKeySequence.swap(QKeySequence other)'''
     def keyBindings(self, key):
         '''static list-of-QKeySequence QKeySequence.keyBindings(QKeySequence.StandardKey key)'''
         return [QKeySequence()]
@@ -13637,8 +14661,8 @@ class QLabel(QFrame):
     def event(self, e):
         '''bool QLabel.event(QEvent e)'''
         return bool()
-    linkHovered = PyQt4.QtCore.pyqtSignal() # void linkHovered(const QString&) - signal
-    linkActivated = PyQt4.QtCore.pyqtSignal() # void linkActivated(const QString&) - signal
+    linkHovered = pyqtSignal() # void linkHovered(const QString&) - signal
+    linkActivated = pyqtSignal() # void linkActivated(const QString&) - signal
     def setText(self):
         '''QString QLabel.setText()'''
         return QString()
@@ -13831,7 +14855,7 @@ class QLCDNumber(QFrame):
     def event(self, e):
         '''bool QLCDNumber.event(QEvent e)'''
         return bool()
-    overflow = PyQt4.QtCore.pyqtSignal() # void overflow() - signal
+    overflow = pyqtSignal() # void overflow() - signal
     def setSmallDecimalPoint(self):
         '''bool QLCDNumber.setSmallDecimalPoint()'''
         return bool()
@@ -13898,6 +14922,11 @@ class QLineEdit(QWidget):
         '''void QLineEdit.__init__(QWidget parent = None)'''
     def __init__(self, contents, parent = None):
         '''void QLineEdit.__init__(QString contents, QWidget parent = None)'''
+    def cursorMoveStyle(self):
+        '''Qt.CursorMoveStyle QLineEdit.cursorMoveStyle()'''
+        return Qt.CursorMoveStyle()
+    def setCursorMoveStyle(self, style):
+        '''void QLineEdit.setCursorMoveStyle(Qt.CursorMoveStyle style)'''
     def setPlaceholderText(self):
         '''QString QLineEdit.setPlaceholderText()'''
         return QString()
@@ -13972,12 +15001,12 @@ class QLineEdit(QWidget):
         return QMouseEvent()
     def initStyleOption(self, option):
         '''void QLineEdit.initStyleOption(QStyleOptionFrame option)'''
-    selectionChanged = PyQt4.QtCore.pyqtSignal() # void selectionChanged() - signal
-    editingFinished = PyQt4.QtCore.pyqtSignal() # void editingFinished() - signal
-    returnPressed = PyQt4.QtCore.pyqtSignal() # void returnPressed() - signal
-    cursorPositionChanged = PyQt4.QtCore.pyqtSignal() # void cursorPositionChanged(int,int) - signal
-    textEdited = PyQt4.QtCore.pyqtSignal() # void textEdited(const QString&) - signal
-    textChanged = PyQt4.QtCore.pyqtSignal() # void textChanged(const QString&) - signal
+    selectionChanged = pyqtSignal() # void selectionChanged() - signal
+    editingFinished = pyqtSignal() # void editingFinished() - signal
+    returnPressed = pyqtSignal() # void returnPressed() - signal
+    cursorPositionChanged = pyqtSignal() # void cursorPositionChanged(int,int) - signal
+    textEdited = pyqtSignal() # void textEdited(const QString&) - signal
+    textChanged = pyqtSignal() # void textChanged(const QString&) - signal
     def createStandardContextMenu(self):
         '''QMenu QLineEdit.createStandardContextMenu()'''
         return QMenu()
@@ -14217,7 +15246,7 @@ class QListView(QAbstractItemView):
         '''void QListView.dataChanged(QModelIndex topLeft, QModelIndex bottomRight)'''
     def scrollContentsBy(self, dx, dy):
         '''void QListView.scrollContentsBy(int dx, int dy)'''
-    indexesMoved = PyQt4.QtCore.pyqtSignal() # void indexesMoved(const QModelIndexList&) - signal
+    indexesMoved = pyqtSignal() # void indexesMoved(const QModelIndexList&) - signal
     def setRootIndex(self, index):
         '''void QListView.setRootIndex(QModelIndex index)'''
     def reset(self):
@@ -14448,16 +15477,16 @@ class QListWidget(QListView):
     def mimeTypes(self):
         '''QStringList QListWidget.mimeTypes()'''
         return QStringList()
-    itemSelectionChanged = PyQt4.QtCore.pyqtSignal() # void itemSelectionChanged() - signal
-    currentRowChanged = PyQt4.QtCore.pyqtSignal() # void currentRowChanged(int) - signal
-    currentTextChanged = PyQt4.QtCore.pyqtSignal() # void currentTextChanged(const QString&) - signal
-    currentItemChanged = PyQt4.QtCore.pyqtSignal() # void currentItemChanged(QListWidgetItem *,QListWidgetItem *) - signal
-    itemChanged = PyQt4.QtCore.pyqtSignal() # void itemChanged(QListWidgetItem *) - signal
-    itemEntered = PyQt4.QtCore.pyqtSignal() # void itemEntered(QListWidgetItem *) - signal
-    itemActivated = PyQt4.QtCore.pyqtSignal() # void itemActivated(QListWidgetItem *) - signal
-    itemDoubleClicked = PyQt4.QtCore.pyqtSignal() # void itemDoubleClicked(QListWidgetItem *) - signal
-    itemClicked = PyQt4.QtCore.pyqtSignal() # void itemClicked(QListWidgetItem *) - signal
-    itemPressed = PyQt4.QtCore.pyqtSignal() # void itemPressed(QListWidgetItem *) - signal
+    itemSelectionChanged = pyqtSignal() # void itemSelectionChanged() - signal
+    currentRowChanged = pyqtSignal() # void currentRowChanged(int) - signal
+    currentTextChanged = pyqtSignal() # void currentTextChanged(const QString&) - signal
+    currentItemChanged = pyqtSignal() # void currentItemChanged(QListWidgetItem *,QListWidgetItem *) - signal
+    itemChanged = pyqtSignal() # void itemChanged(QListWidgetItem *) - signal
+    itemEntered = pyqtSignal() # void itemEntered(QListWidgetItem *) - signal
+    itemActivated = pyqtSignal() # void itemActivated(QListWidgetItem *) - signal
+    itemDoubleClicked = pyqtSignal() # void itemDoubleClicked(QListWidgetItem *) - signal
+    itemClicked = pyqtSignal() # void itemClicked(QListWidgetItem *) - signal
+    itemPressed = pyqtSignal() # void itemPressed(QListWidgetItem *) - signal
     def scrollToItem(self, item, hint = QAbstractItemView.EnsureVisible):
         '''void QListWidget.scrollToItem(QListWidgetItem item, QAbstractItemView.ScrollHint hint = QAbstractItemView.EnsureVisible)'''
     def clear(self):
@@ -14611,8 +15640,8 @@ class QMainWindow(QWidget):
         return bool()
     def contextMenuEvent(self, event):
         '''void QMainWindow.contextMenuEvent(QContextMenuEvent event)'''
-    toolButtonStyleChanged = PyQt4.QtCore.pyqtSignal() # void toolButtonStyleChanged(Qt::ToolButtonStyle) - signal
-    iconSizeChanged = PyQt4.QtCore.pyqtSignal() # void iconSizeChanged(const QSize&) - signal
+    toolButtonStyleChanged = pyqtSignal() # void toolButtonStyleChanged(Qt::ToolButtonStyle) - signal
+    iconSizeChanged = pyqtSignal() # void iconSizeChanged(const QSize&) - signal
     def setDockNestingEnabled(self, enabled):
         '''void QMainWindow.setDockNestingEnabled(bool enabled)'''
     def setAnimated(self, enabled):
@@ -15041,6 +16070,16 @@ class QMdiArea(QAbstractScrollArea):
 
     def __init__(self, parent = None):
         '''void QMdiArea.__init__(QWidget parent = None)'''
+    def tabsMovable(self):
+        '''bool QMdiArea.tabsMovable()'''
+        return bool()
+    def setTabsMovable(self, movable):
+        '''void QMdiArea.setTabsMovable(bool movable)'''
+    def tabsClosable(self):
+        '''bool QMdiArea.tabsClosable()'''
+        return bool()
+    def setTabsClosable(self, closable):
+        '''void QMdiArea.setTabsClosable(bool closable)'''
     def setDocumentMode(self, enabled):
         '''void QMdiArea.setDocumentMode(bool enabled)'''
     def documentMode(self):
@@ -15103,7 +16142,7 @@ class QMdiArea(QAbstractScrollArea):
         '''void QMdiArea.tileSubWindows()'''
     def setActiveSubWindow(self, window):
         '''void QMdiArea.setActiveSubWindow(QMdiSubWindow window)'''
-    subWindowActivated = PyQt4.QtCore.pyqtSignal() # void subWindowActivated(QMdiSubWindow *) - signal
+    subWindowActivated = pyqtSignal() # void subWindowActivated(QMdiSubWindow *) - signal
     def testOption(self, opton):
         '''bool QMdiArea.testOption(QMdiArea.AreaOption opton)'''
         return bool()
@@ -15239,8 +16278,8 @@ class QMdiSubWindow(QWidget):
         '''void QMdiSubWindow.showShaded()'''
     def showSystemMenu(self):
         '''void QMdiSubWindow.showSystemMenu()'''
-    aboutToActivate = PyQt4.QtCore.pyqtSignal() # void aboutToActivate() - signal
-    windowStateChanged = PyQt4.QtCore.pyqtSignal() # void windowStateChanged(Qt::WindowStates,Qt::WindowStates) - signal
+    aboutToActivate = pyqtSignal() # void aboutToActivate() - signal
+    windowStateChanged = pyqtSignal() # void windowStateChanged(Qt::WindowStates,Qt::WindowStates) - signal
     def mdiArea(self):
         '''QMdiArea QMdiSubWindow.mdiArea()'''
         return QMdiArea()
@@ -15390,10 +16429,10 @@ class QMenu(QWidget):
     def columnCount(self):
         '''int QMenu.columnCount()'''
         return int()
-    triggered = PyQt4.QtCore.pyqtSignal() # void triggered(QAction *) - signal
-    hovered = PyQt4.QtCore.pyqtSignal() # void hovered(QAction *) - signal
-    aboutToShow = PyQt4.QtCore.pyqtSignal() # void aboutToShow() - signal
-    aboutToHide = PyQt4.QtCore.pyqtSignal() # void aboutToHide() - signal
+    triggered = pyqtSignal() # void triggered(QAction *) - signal
+    hovered = pyqtSignal() # void hovered(QAction *) - signal
+    aboutToShow = pyqtSignal() # void aboutToShow() - signal
+    aboutToHide = pyqtSignal() # void aboutToHide() - signal
     def setNoReplayFor(self, widget):
         '''void QMenu.setNoReplayFor(QWidget widget)'''
     def setIcon(self, icon):
@@ -15549,10 +16588,15 @@ class QMenuBar(QWidget):
         return QEvent()
     def initStyleOption(self, option, action):
         '''void QMenuBar.initStyleOption(QStyleOptionMenuItem option, QAction action)'''
-    hovered = PyQt4.QtCore.pyqtSignal() # void hovered(QAction *) - signal
-    triggered = PyQt4.QtCore.pyqtSignal() # void triggered(QAction *) - signal
+    hovered = pyqtSignal() # void hovered(QAction *) - signal
+    triggered = pyqtSignal() # void triggered(QAction *) - signal
     def setVisible(self, visible):
         '''void QMenuBar.setVisible(bool visible)'''
+    def cornerWidget(self, corner = Qt.TopRightCorner):
+        '''QWidget QMenuBar.cornerWidget(Qt.Corner corner = Qt.TopRightCorner)'''
+        return QWidget()
+    def setCornerWidget(self, widget, corner = Qt.TopRightCorner):
+        '''void QMenuBar.setCornerWidget(QWidget widget, Qt.Corner corner = Qt.TopRightCorner)'''
     def actionAt(self):
         '''QPoint QMenuBar.actionAt()'''
         return QPoint()
@@ -15668,7 +16712,7 @@ class QMessageBox(QDialog):
         '''void QMessageBox.__init__(QMessageBox.Icon icon, QString title, QString text, QMessageBox.StandardButtons buttons = QMessageBox.NoButton, QWidget parent = None, Qt.WindowFlags flags = Qt.Dialog|Qt.MSWindowsFixedSizeDialogHint)'''
     def __init__(self, title, text, icon, button0, button1, button2, parent = None, flags = Qt.Dialog|Qt.MSWindowsFixedSizeDialogHint):
         '''void QMessageBox.__init__(QString title, QString text, QMessageBox.Icon icon, int button0, int button1, int button2, QWidget parent = None, Qt.WindowFlags flags = Qt.Dialog|Qt.MSWindowsFixedSizeDialogHint)'''
-    buttonClicked = PyQt4.QtCore.pyqtSignal() # void buttonClicked(QAbstractButton *) - signal
+    buttonClicked = pyqtSignal() # void buttonClicked(QAbstractButton *) - signal
     def buttonRole(self, button):
         '''QMessageBox.ButtonRole QMessageBox.buttonRole(QAbstractButton button)'''
         return QMessageBox.ButtonRole()
@@ -15932,13 +16976,13 @@ class QMovie(QObject):
         return bool()
     def start(self):
         '''void QMovie.start()'''
-    frameChanged = PyQt4.QtCore.pyqtSignal() # void frameChanged(int) - signal
-    finished = PyQt4.QtCore.pyqtSignal() # void finished() - signal
-    error = PyQt4.QtCore.pyqtSignal() # void error(QImageReader::ImageReaderError) - signal
-    stateChanged = PyQt4.QtCore.pyqtSignal() # void stateChanged(QMovie::MovieState) - signal
-    updated = PyQt4.QtCore.pyqtSignal() # void updated(const QRect&) - signal
-    resized = PyQt4.QtCore.pyqtSignal() # void resized(const QSize&) - signal
-    started = PyQt4.QtCore.pyqtSignal() # void started() - signal
+    frameChanged = pyqtSignal() # void frameChanged(int) - signal
+    finished = pyqtSignal() # void finished() - signal
+    error = pyqtSignal() # void error(QImageReader::ImageReaderError) - signal
+    stateChanged = pyqtSignal() # void stateChanged(QMovie::MovieState) - signal
+    updated = pyqtSignal() # void updated(const QRect&) - signal
+    resized = pyqtSignal() # void resized(const QSize&) - signal
+    started = pyqtSignal() # void started() - signal
     def setCacheMode(self, mode):
         '''void QMovie.setCacheMode(QMovie.CacheMode mode)'''
     def cacheMode(self):
@@ -16154,6 +17198,11 @@ class QPainter():
     def __init__(self):
         '''QPaintDevice QPainter.__init__()'''
         return QPaintDevice()
+    def drawGlyphRun(self, position, glyphRun):
+        '''void QPainter.drawGlyphRun(QPointF position, QGlyphRun glyphRun)'''
+    def clipBoundingRect(self):
+        '''QRectF QPainter.clipBoundingRect()'''
+        return QRectF()
     def drawStaticText(self, topLeftPosition, staticText):
         '''void QPainter.drawStaticText(QPointF topLeftPosition, QStaticText staticText)'''
     def drawStaticText(self, p, staticText):
@@ -16161,7 +17210,9 @@ class QPainter():
     def drawStaticText(self, x, y, staticText):
         '''void QPainter.drawStaticText(int x, int y, QStaticText staticText)'''
     def drawPixmapFragments(self, fragments, pixmap, hints = 0):
-        '''void QPainter.drawPixmapFragments(list fragments, QPixmap pixmap, QPainter.PixmapFragmentHints hints = 0)'''
+        '''void QPainter.drawPixmapFragments(list-of-QPainter.PixmapFragment fragments, QPixmap pixmap, QPainter.PixmapFragmentHints hints = 0)'''
+    def drawPixmapFragments(self, targetRects, sourceRects, pixmap, hints = 0):
+        '''void QPainter.drawPixmapFragments(list-of-QRectF targetRects, list-of-QRectF sourceRects, QPixmap pixmap, QPainter.PixmapFragmentHints hints = 0)'''
     def endNativePainting(self):
         '''void QPainter.endNativePainting()'''
     def beginNativePainting(self):
@@ -16822,6 +17873,7 @@ class QPaintEngine():
     OpenVG = 0
     OpenGL2 = 0
     PaintBuffer = 0
+    Blitter = 0
     User = 0
     MaxUser = 0
 
@@ -17114,6 +18166,8 @@ class QPainterPath():
     def __mul__(self, m):
         '''QPainterPath QPainterPath.__mul__(QTransform m)'''
         return QPainterPath()
+    def swap(self, other):
+        '''void QPainterPath.swap(QPainterPath other)'''
     def translated(self, dx, dy):
         '''QPainterPath QPainterPath.translated(float dx, float dy)'''
         return QPainterPath()
@@ -17567,6 +18621,8 @@ class QPen():
         '''void QPen.__init__(QPen pen)'''
     def __init__(self, variant):
         '''void QPen.__init__(QVariant variant)'''
+    def swap(self, other):
+        '''void QPen.swap(QPen other)'''
     def setCosmetic(self, cosmetic):
         '''void QPen.setCosmetic(bool cosmetic)'''
     def isCosmetic(self):
@@ -17641,6 +18697,8 @@ class QPicture(QPaintDevice):
     def __init__(self):
         '''QPicture QPicture.__init__()'''
         return QPicture()
+    def swap(self, other):
+        '''void QPicture.swap(QPicture other)'''
     def metric(self, m):
         '''int QPicture.metric(QPaintDevice.PaintDeviceMetric m)'''
         return int()
@@ -17927,15 +18985,15 @@ class QPlainTextEdit(QAbstractScrollArea):
     def event(self, e):
         '''bool QPlainTextEdit.event(QEvent e)'''
         return bool()
-    modificationChanged = PyQt4.QtCore.pyqtSignal() # void modificationChanged(bool) - signal
-    blockCountChanged = PyQt4.QtCore.pyqtSignal() # void blockCountChanged(int) - signal
-    updateRequest = PyQt4.QtCore.pyqtSignal() # void updateRequest(const QRect&,int) - signal
-    cursorPositionChanged = PyQt4.QtCore.pyqtSignal() # void cursorPositionChanged() - signal
-    selectionChanged = PyQt4.QtCore.pyqtSignal() # void selectionChanged() - signal
-    copyAvailable = PyQt4.QtCore.pyqtSignal() # void copyAvailable(bool) - signal
-    redoAvailable = PyQt4.QtCore.pyqtSignal() # void redoAvailable(bool) - signal
-    undoAvailable = PyQt4.QtCore.pyqtSignal() # void undoAvailable(bool) - signal
-    textChanged = PyQt4.QtCore.pyqtSignal() # void textChanged() - signal
+    modificationChanged = pyqtSignal() # void modificationChanged(bool) - signal
+    blockCountChanged = pyqtSignal() # void blockCountChanged(int) - signal
+    updateRequest = pyqtSignal() # void updateRequest(const QRect&,int) - signal
+    cursorPositionChanged = pyqtSignal() # void cursorPositionChanged() - signal
+    selectionChanged = pyqtSignal() # void selectionChanged() - signal
+    copyAvailable = pyqtSignal() # void copyAvailable(bool) - signal
+    redoAvailable = pyqtSignal() # void redoAvailable(bool) - signal
+    undoAvailable = pyqtSignal() # void undoAvailable(bool) - signal
+    textChanged = pyqtSignal() # void textChanged() - signal
     def centerCursor(self):
         '''void QPlainTextEdit.centerCursor()'''
     def appendHtml(self, html):
@@ -18140,6 +19198,8 @@ class QPolygon():
     def __mul__(self, m):
         '''QPolygon QPolygon.__mul__(QTransform m)'''
         return QPolygon()
+    def swap(self, other):
+        '''void QPolygon.swap(QPolygon other)'''
     def __contains__(self, value):
         '''int QPolygon.__contains__(QPoint value)'''
         return int()
@@ -18298,6 +19358,8 @@ class QPolygonF():
     def __mul__(self, m):
         '''QPolygonF QPolygonF.__mul__(QTransform m)'''
         return QPolygonF()
+    def swap(self, other):
+        '''void QPolygonF.swap(QPolygonF other)'''
     def __contains__(self, value):
         '''int QPolygonF.__contains__(QPointF value)'''
         return int()
@@ -18731,7 +19793,7 @@ class QPrintDialog(QAbstractPrintDialog):
         '''void QPrintDialog.__init__(QWidget parent = None)'''
     def accepted(self):
         '''void QPrintDialog.accepted()'''
-    accepted = PyQt4.QtCore.pyqtSignal() # void accepted(QPrinter *) - signal
+    accepted = pyqtSignal() # void accepted(QPrinter *) - signal
     def open(self):
         '''void QPrintDialog.open()'''
     def open(self, receiver, member):
@@ -18850,7 +19912,7 @@ class QPrintPreviewDialog(QDialog):
         '''void QPrintPreviewDialog.__init__(QWidget parent = None, Qt.WindowFlags flags = 0)'''
     def __init__(self, printer, parent = None, flags = 0):
         '''void QPrintPreviewDialog.__init__(QPrinter printer, QWidget parent = None, Qt.WindowFlags flags = 0)'''
-    paintRequested = PyQt4.QtCore.pyqtSignal() # void paintRequested(QPrinter *) - signal
+    paintRequested = pyqtSignal() # void paintRequested(QPrinter *) - signal
     def done(self, result):
         '''void QPrintPreviewDialog.done(int result)'''
     def printer(self):
@@ -18885,8 +19947,8 @@ class QPrintPreviewWidget(QWidget):
     def pageCount(self):
         '''int QPrintPreviewWidget.pageCount()'''
         return int()
-    previewChanged = PyQt4.QtCore.pyqtSignal() # void previewChanged() - signal
-    paintRequested = PyQt4.QtCore.pyqtSignal() # void paintRequested(QPrinter *) - signal
+    previewChanged = pyqtSignal() # void previewChanged() - signal
+    paintRequested = pyqtSignal() # void paintRequested(QPrinter *) - signal
     def updatePreview(self):
         '''void QPrintPreviewWidget.updatePreview()'''
     def setAllPagesViewMode(self):
@@ -18957,7 +20019,7 @@ class QProgressBar(QWidget):
         return bool()
     def initStyleOption(self, option):
         '''void QProgressBar.initStyleOption(QStyleOptionProgressBar option)'''
-    valueChanged = PyQt4.QtCore.pyqtSignal() # void valueChanged(int) - signal
+    valueChanged = pyqtSignal() # void valueChanged(int) - signal
     def setOrientation(self):
         '''Qt.Orientation QProgressBar.setOrientation()'''
         return Qt.Orientation()
@@ -19044,7 +20106,7 @@ class QProgressDialog(QDialog):
     def resizeEvent(self):
         '''QResizeEvent QProgressDialog.resizeEvent()'''
         return QResizeEvent()
-    canceled = PyQt4.QtCore.pyqtSignal() # void canceled() - signal
+    canceled = pyqtSignal() # void canceled() - signal
     def setMinimumDuration(self, ms):
         '''void QProgressDialog.setMinimumDuration(int ms)'''
     def setCancelButtonText(self):
@@ -19326,9 +20388,109 @@ class QRadioButton(QAbstractButton):
         return QPoint()
     def initStyleOption(self, button):
         '''void QRadioButton.initStyleOption(QStyleOptionButton button)'''
+    def minimumSizeHint(self):
+        '''QSize QRadioButton.minimumSizeHint()'''
+        return QSize()
     def sizeHint(self):
         '''QSize QRadioButton.sizeHint()'''
         return QSize()
+
+
+class QRawFont():
+    """"""
+    # Enum QRawFont.AntialiasingType
+    PixelAntialiasing = 0
+    SubPixelAntialiasing = 0
+
+    def __init__(self):
+        '''void QRawFont.__init__()'''
+    def __init__(self, fileName, pixelSize, hintingPreference = QFont.PreferDefaultHinting):
+        '''void QRawFont.__init__(QString fileName, float pixelSize, QFont.HintingPreference hintingPreference = QFont.PreferDefaultHinting)'''
+    def __init__(self, fontData, pixelSize, hintingPreference = QFont.PreferDefaultHinting):
+        '''void QRawFont.__init__(QByteArray fontData, float pixelSize, QFont.HintingPreference hintingPreference = QFont.PreferDefaultHinting)'''
+    def __init__(self, other):
+        '''void QRawFont.__init__(QRawFont other)'''
+    def fromFont(self, font, writingSystem = QFontDatabase.Any):
+        '''static QRawFont QRawFont.fromFont(QFont font, QFontDatabase.WritingSystem writingSystem = QFontDatabase.Any)'''
+        return QRawFont()
+    def fontTable(self, tagName):
+        '''QByteArray QRawFont.fontTable(str tagName)'''
+        return QByteArray()
+    def supportedWritingSystems(self):
+        '''list-of-QFontDatabase.WritingSystem QRawFont.supportedWritingSystems()'''
+        return [QFontDatabase.WritingSystem()]
+    def supportsCharacter(self, ucs4):
+        '''bool QRawFont.supportsCharacter(int ucs4)'''
+        return bool()
+    def supportsCharacter(self, character):
+        '''bool QRawFont.supportsCharacter(QChar character)'''
+        return bool()
+    def loadFromData(self, fontData, pixelSize, hintingPreference):
+        '''void QRawFont.loadFromData(QByteArray fontData, float pixelSize, QFont.HintingPreference hintingPreference)'''
+    def loadFromFile(self, fileName, pixelSize, hintingPreference):
+        '''void QRawFont.loadFromFile(QString fileName, float pixelSize, QFont.HintingPreference hintingPreference)'''
+    def unitsPerEm(self):
+        '''float QRawFont.unitsPerEm()'''
+        return float()
+    def maxCharWidth(self):
+        '''float QRawFont.maxCharWidth()'''
+        return float()
+    def averageCharWidth(self):
+        '''float QRawFont.averageCharWidth()'''
+        return float()
+    def xHeight(self):
+        '''float QRawFont.xHeight()'''
+        return float()
+    def leading(self):
+        '''float QRawFont.leading()'''
+        return float()
+    def descent(self):
+        '''float QRawFont.descent()'''
+        return float()
+    def ascent(self):
+        '''float QRawFont.ascent()'''
+        return float()
+    def hintingPreference(self):
+        '''QFont.HintingPreference QRawFont.hintingPreference()'''
+        return QFont.HintingPreference()
+    def pixelSize(self):
+        '''float QRawFont.pixelSize()'''
+        return float()
+    def setPixelSize(self, pixelSize):
+        '''void QRawFont.setPixelSize(float pixelSize)'''
+    def pathForGlyph(self, glyphIndex):
+        '''QPainterPath QRawFont.pathForGlyph(int glyphIndex)'''
+        return QPainterPath()
+    def alphaMapForGlyph(self, glyphIndex, antialiasingType = QRawFont.SubPixelAntialiasing, transform = QTransform()):
+        '''QImage QRawFont.alphaMapForGlyph(int glyphIndex, QRawFont.AntialiasingType antialiasingType = QRawFont.SubPixelAntialiasing, QTransform transform = QTransform())'''
+        return QImage()
+    def advancesForGlyphIndexes(self, glyphIndexes):
+        '''list-of-QPointF QRawFont.advancesForGlyphIndexes(list-of-int glyphIndexes)'''
+        return [QPointF()]
+    def glyphIndexesForString(self, text):
+        '''list-of-int QRawFont.glyphIndexesForString(QString text)'''
+        return [int()]
+    def weight(self):
+        '''int QRawFont.weight()'''
+        return int()
+    def style(self):
+        '''QFont.Style QRawFont.style()'''
+        return QFont.Style()
+    def styleName(self):
+        '''QString QRawFont.styleName()'''
+        return QString()
+    def familyName(self):
+        '''QString QRawFont.familyName()'''
+        return QString()
+    def __ne__(self, other):
+        '''bool QRawFont.__ne__(QRawFont other)'''
+        return bool()
+    def __eq__(self, other):
+        '''bool QRawFont.__eq__(QRawFont other)'''
+        return bool()
+    def isValid(self):
+        '''bool QRawFont.isValid()'''
+        return bool()
 
 
 class QRegion():
@@ -19357,6 +20519,8 @@ class QRegion():
     def __mul__(self, m):
         '''QRegion QRegion.__mul__(QTransform m)'''
         return QRegion()
+    def swap(self, other):
+        '''void QRegion.swap(QRegion other)'''
     def rectCount(self):
         '''int QRegion.rectCount()'''
         return int()
@@ -19673,8 +20837,8 @@ class QShortcut(QObject):
     def event(self, e):
         '''bool QShortcut.event(QEvent e)'''
         return bool()
-    activatedAmbiguously = PyQt4.QtCore.pyqtSignal() # void activatedAmbiguously() - signal
-    activated = PyQt4.QtCore.pyqtSignal() # void activated() - signal
+    activatedAmbiguously = pyqtSignal() # void activatedAmbiguously() - signal
+    activated = pyqtSignal() # void activated() - signal
     def autoRepeat(self):
         '''bool QShortcut.autoRepeat()'''
         return bool()
@@ -19788,6 +20952,11 @@ class QSizePolicy():
     def __init__(self):
         '''QSizePolicy QSizePolicy.__init__()'''
         return QSizePolicy()
+    def hasWidthForHeight(self):
+        '''bool QSizePolicy.hasWidthForHeight()'''
+        return bool()
+    def setWidthForHeight(self, b):
+        '''void QSizePolicy.setWidthForHeight(bool b)'''
     def setControlType(self, type):
         '''void QSizePolicy.setControlType(QSizePolicy.ControlType type)'''
     def controlType(self):
@@ -20121,8 +21290,8 @@ class QSpinBox(QAbstractSpinBox):
     """"""
     def __init__(self, parent = None):
         '''void QSpinBox.__init__(QWidget parent = None)'''
-    valueChanged = PyQt4.QtCore.pyqtSignal() # void valueChanged(int) - signal
-    valueChanged = PyQt4.QtCore.pyqtSignal() # void valueChanged(const QString&) - signal
+    valueChanged = pyqtSignal() # void valueChanged(int) - signal
+    valueChanged = pyqtSignal() # void valueChanged(const QString&) - signal
     def setValue(self, val):
         '''void QSpinBox.setValue(int val)'''
     def event(self, e):
@@ -20183,8 +21352,8 @@ class QDoubleSpinBox(QAbstractSpinBox):
     """"""
     def __init__(self, parent = None):
         '''void QDoubleSpinBox.__init__(QWidget parent = None)'''
-    valueChanged = PyQt4.QtCore.pyqtSignal() # void valueChanged(double) - signal
-    valueChanged = PyQt4.QtCore.pyqtSignal() # void valueChanged(const QString&) - signal
+    valueChanged = pyqtSignal() # void valueChanged(double) - signal
+    valueChanged = pyqtSignal() # void valueChanged(const QString&) - signal
     def setValue(self, val):
         '''void QDoubleSpinBox.setValue(float val)'''
     def fixup(self, str):
@@ -20257,7 +21426,7 @@ class QSplashScreen(QWidget):
         return bool()
     def drawContents(self, painter):
         '''void QSplashScreen.drawContents(QPainter painter)'''
-    messageChanged = PyQt4.QtCore.pyqtSignal() # void messageChanged(const QString&) - signal
+    messageChanged = pyqtSignal() # void messageChanged(const QString&) - signal
     def clearMessage(self):
         '''void QSplashScreen.clearMessage()'''
     def showMessage(self, message, alignment = Qt.AlignLeft, color = Qt.black):
@@ -20301,7 +21470,7 @@ class QSplitter(QFrame):
     def createHandle(self):
         '''QSplitterHandle QSplitter.createHandle()'''
         return QSplitterHandle()
-    splitterMoved = PyQt4.QtCore.pyqtSignal() # void splitterMoved(int,int) - signal
+    splitterMoved = pyqtSignal() # void splitterMoved(int,int) - signal
     def setStretchFactor(self, index, stretch):
         '''void QSplitter.setStretchFactor(int index, int stretch)'''
     def handle(self, index):
@@ -20440,8 +21609,8 @@ class QStackedLayout(QLayout):
         '''void QStackedLayout.setCurrentWidget(QWidget w)'''
     def setCurrentIndex(self, index):
         '''void QStackedLayout.setCurrentIndex(int index)'''
-    currentChanged = PyQt4.QtCore.pyqtSignal() # void currentChanged(int) - signal
-    widgetRemoved = PyQt4.QtCore.pyqtSignal() # void widgetRemoved(int) - signal
+    currentChanged = pyqtSignal() # void currentChanged(int) - signal
+    widgetRemoved = pyqtSignal() # void widgetRemoved(int) - signal
     def setGeometry(self, rect):
         '''void QStackedLayout.setGeometry(QRect rect)'''
     def takeAt(self):
@@ -20488,8 +21657,8 @@ class QStackedWidget(QFrame):
     def event(self, e):
         '''bool QStackedWidget.event(QEvent e)'''
         return bool()
-    widgetRemoved = PyQt4.QtCore.pyqtSignal() # void widgetRemoved(int) - signal
-    currentChanged = PyQt4.QtCore.pyqtSignal() # void currentChanged(int) - signal
+    widgetRemoved = pyqtSignal() # void widgetRemoved(int) - signal
+    currentChanged = pyqtSignal() # void currentChanged(int) - signal
     def setCurrentWidget(self, w):
         '''void QStackedWidget.setCurrentWidget(QWidget w)'''
     def setCurrentIndex(self, index):
@@ -20528,7 +21697,7 @@ class QStandardItemModel(QAbstractItemModel):
         '''void QStandardItemModel.__init__(QObject parent = None)'''
     def __init__(self, rows, columns, parent = None):
         '''void QStandardItemModel.__init__(int rows, int columns, QObject parent = None)'''
-    itemChanged = PyQt4.QtCore.pyqtSignal() # void itemChanged(QStandardItem *) - signal
+    itemChanged = pyqtSignal() # void itemChanged(QStandardItem *) - signal
     def dropMimeData(self, data, action, row, column, parent):
         '''bool QStandardItemModel.dropMimeData(QMimeData data, Qt.DropAction action, int row, int column, QModelIndex parent)'''
         return bool()
@@ -20968,7 +22137,7 @@ class QStatusBar(QWidget):
     def paintEvent(self):
         '''QPaintEvent QStatusBar.paintEvent()'''
         return QPaintEvent()
-    messageChanged = PyQt4.QtCore.pyqtSignal() # void messageChanged(const QString&) - signal
+    messageChanged = pyqtSignal() # void messageChanged(const QString&) - signal
     def clearMessage(self):
         '''void QStatusBar.clearMessage()'''
     def showMessage(self, message, msecs = 0):
@@ -21030,776 +22199,6 @@ class QStringListModel(QAbstractListModel):
     def rowCount(self, parent = QModelIndex()):
         '''int QStringListModel.rowCount(QModelIndex parent = QModelIndex())'''
         return int()
-
-
-class QStyle(QObject):
-    """"""
-    # Enum QStyle.RequestSoftwareInputPanel
-    RSIP_OnMouseClickAndAlreadyFocused = 0
-    RSIP_OnMouseClick = 0
-
-    # Enum QStyle.StandardPixmap
-    SP_TitleBarMenuButton = 0
-    SP_TitleBarMinButton = 0
-    SP_TitleBarMaxButton = 0
-    SP_TitleBarCloseButton = 0
-    SP_TitleBarNormalButton = 0
-    SP_TitleBarShadeButton = 0
-    SP_TitleBarUnshadeButton = 0
-    SP_TitleBarContextHelpButton = 0
-    SP_DockWidgetCloseButton = 0
-    SP_MessageBoxInformation = 0
-    SP_MessageBoxWarning = 0
-    SP_MessageBoxCritical = 0
-    SP_MessageBoxQuestion = 0
-    SP_DesktopIcon = 0
-    SP_TrashIcon = 0
-    SP_ComputerIcon = 0
-    SP_DriveFDIcon = 0
-    SP_DriveHDIcon = 0
-    SP_DriveCDIcon = 0
-    SP_DriveDVDIcon = 0
-    SP_DriveNetIcon = 0
-    SP_DirOpenIcon = 0
-    SP_DirClosedIcon = 0
-    SP_DirLinkIcon = 0
-    SP_FileIcon = 0
-    SP_FileLinkIcon = 0
-    SP_ToolBarHorizontalExtensionButton = 0
-    SP_ToolBarVerticalExtensionButton = 0
-    SP_FileDialogStart = 0
-    SP_FileDialogEnd = 0
-    SP_FileDialogToParent = 0
-    SP_FileDialogNewFolder = 0
-    SP_FileDialogDetailedView = 0
-    SP_FileDialogInfoView = 0
-    SP_FileDialogContentsView = 0
-    SP_FileDialogListView = 0
-    SP_FileDialogBack = 0
-    SP_DirIcon = 0
-    SP_DialogOkButton = 0
-    SP_DialogCancelButton = 0
-    SP_DialogHelpButton = 0
-    SP_DialogOpenButton = 0
-    SP_DialogSaveButton = 0
-    SP_DialogCloseButton = 0
-    SP_DialogApplyButton = 0
-    SP_DialogResetButton = 0
-    SP_DialogDiscardButton = 0
-    SP_DialogYesButton = 0
-    SP_DialogNoButton = 0
-    SP_ArrowUp = 0
-    SP_ArrowDown = 0
-    SP_ArrowLeft = 0
-    SP_ArrowRight = 0
-    SP_ArrowBack = 0
-    SP_ArrowForward = 0
-    SP_DirHomeIcon = 0
-    SP_CommandLink = 0
-    SP_VistaShield = 0
-    SP_BrowserReload = 0
-    SP_BrowserStop = 0
-    SP_MediaPlay = 0
-    SP_MediaStop = 0
-    SP_MediaPause = 0
-    SP_MediaSkipForward = 0
-    SP_MediaSkipBackward = 0
-    SP_MediaSeekForward = 0
-    SP_MediaSeekBackward = 0
-    SP_MediaVolume = 0
-    SP_MediaVolumeMuted = 0
-    SP_CustomBase = 0
-
-    # Enum QStyle.StyleHint
-    SH_EtchDisabledText = 0
-    SH_DitherDisabledText = 0
-    SH_ScrollBar_MiddleClickAbsolutePosition = 0
-    SH_ScrollBar_ScrollWhenPointerLeavesControl = 0
-    SH_TabBar_SelectMouseType = 0
-    SH_TabBar_Alignment = 0
-    SH_Header_ArrowAlignment = 0
-    SH_Slider_SnapToValue = 0
-    SH_Slider_SloppyKeyEvents = 0
-    SH_ProgressDialog_CenterCancelButton = 0
-    SH_ProgressDialog_TextLabelAlignment = 0
-    SH_PrintDialog_RightAlignButtons = 0
-    SH_MainWindow_SpaceBelowMenuBar = 0
-    SH_FontDialog_SelectAssociatedText = 0
-    SH_Menu_AllowActiveAndDisabled = 0
-    SH_Menu_SpaceActivatesItem = 0
-    SH_Menu_SubMenuPopupDelay = 0
-    SH_ScrollView_FrameOnlyAroundContents = 0
-    SH_MenuBar_AltKeyNavigation = 0
-    SH_ComboBox_ListMouseTracking = 0
-    SH_Menu_MouseTracking = 0
-    SH_MenuBar_MouseTracking = 0
-    SH_ItemView_ChangeHighlightOnFocus = 0
-    SH_Widget_ShareActivation = 0
-    SH_Workspace_FillSpaceOnMaximize = 0
-    SH_ComboBox_Popup = 0
-    SH_TitleBar_NoBorder = 0
-    SH_ScrollBar_StopMouseOverSlider = 0
-    SH_BlinkCursorWhenTextSelected = 0
-    SH_RichText_FullWidthSelection = 0
-    SH_Menu_Scrollable = 0
-    SH_GroupBox_TextLabelVerticalAlignment = 0
-    SH_GroupBox_TextLabelColor = 0
-    SH_Menu_SloppySubMenus = 0
-    SH_Table_GridLineColor = 0
-    SH_LineEdit_PasswordCharacter = 0
-    SH_DialogButtons_DefaultButton = 0
-    SH_ToolBox_SelectedPageTitleBold = 0
-    SH_TabBar_PreferNoArrows = 0
-    SH_ScrollBar_LeftClickAbsolutePosition = 0
-    SH_Q3ListViewExpand_SelectMouseType = 0
-    SH_UnderlineShortcut = 0
-    SH_SpinBox_AnimateButton = 0
-    SH_SpinBox_KeyPressAutoRepeatRate = 0
-    SH_SpinBox_ClickAutoRepeatRate = 0
-    SH_Menu_FillScreenWithScroll = 0
-    SH_ToolTipLabel_Opacity = 0
-    SH_DrawMenuBarSeparator = 0
-    SH_TitleBar_ModifyNotification = 0
-    SH_Button_FocusPolicy = 0
-    SH_MenuBar_DismissOnSecondClick = 0
-    SH_MessageBox_UseBorderForButtonSpacing = 0
-    SH_TitleBar_AutoRaise = 0
-    SH_ToolButton_PopupDelay = 0
-    SH_FocusFrame_Mask = 0
-    SH_RubberBand_Mask = 0
-    SH_WindowFrame_Mask = 0
-    SH_SpinControls_DisableOnBounds = 0
-    SH_Dial_BackgroundRole = 0
-    SH_ComboBox_LayoutDirection = 0
-    SH_ItemView_EllipsisLocation = 0
-    SH_ItemView_ShowDecorationSelected = 0
-    SH_ItemView_ActivateItemOnSingleClick = 0
-    SH_ScrollBar_ContextMenu = 0
-    SH_ScrollBar_RollBetweenButtons = 0
-    SH_Slider_StopMouseOverSlider = 0
-    SH_Slider_AbsoluteSetButtons = 0
-    SH_Slider_PageSetButtons = 0
-    SH_Menu_KeyboardSearch = 0
-    SH_TabBar_ElideMode = 0
-    SH_DialogButtonLayout = 0
-    SH_ComboBox_PopupFrameStyle = 0
-    SH_MessageBox_TextInteractionFlags = 0
-    SH_DialogButtonBox_ButtonsHaveIcons = 0
-    SH_SpellCheckUnderlineStyle = 0
-    SH_MessageBox_CenterButtons = 0
-    SH_Menu_SelectionWrap = 0
-    SH_ItemView_MovementWithoutUpdatingSelection = 0
-    SH_ToolTip_Mask = 0
-    SH_FocusFrame_AboveWidget = 0
-    SH_TextControl_FocusIndicatorTextCharFormat = 0
-    SH_WizardStyle = 0
-    SH_ItemView_ArrowKeysNavigateIntoChildren = 0
-    SH_Menu_Mask = 0
-    SH_Menu_FlashTriggeredItem = 0
-    SH_Menu_FadeOutOnHide = 0
-    SH_SpinBox_ClickAutoRepeatThreshold = 0
-    SH_ItemView_PaintAlternatingRowColorsForEmptyArea = 0
-    SH_FormLayoutWrapPolicy = 0
-    SH_TabWidget_DefaultTabPosition = 0
-    SH_ToolBar_Movable = 0
-    SH_FormLayoutFieldGrowthPolicy = 0
-    SH_FormLayoutFormAlignment = 0
-    SH_FormLayoutLabelAlignment = 0
-    SH_ItemView_DrawDelegateFrame = 0
-    SH_TabBar_CloseButtonPosition = 0
-    SH_DockWidget_ButtonsHaveFrame = 0
-    SH_ToolButtonStyle = 0
-    SH_RequestSoftwareInputPanel = 0
-    SH_CustomBase = 0
-
-    # Enum QStyle.ContentsType
-    CT_PushButton = 0
-    CT_CheckBox = 0
-    CT_RadioButton = 0
-    CT_ToolButton = 0
-    CT_ComboBox = 0
-    CT_Splitter = 0
-    CT_Q3DockWindow = 0
-    CT_ProgressBar = 0
-    CT_MenuItem = 0
-    CT_MenuBarItem = 0
-    CT_MenuBar = 0
-    CT_Menu = 0
-    CT_TabBarTab = 0
-    CT_Slider = 0
-    CT_ScrollBar = 0
-    CT_Q3Header = 0
-    CT_LineEdit = 0
-    CT_SpinBox = 0
-    CT_SizeGrip = 0
-    CT_TabWidget = 0
-    CT_DialogButtons = 0
-    CT_HeaderSection = 0
-    CT_GroupBox = 0
-    CT_MdiControls = 0
-    CT_ItemViewItem = 0
-    CT_CustomBase = 0
-
-    # Enum QStyle.PixelMetric
-    PM_ButtonMargin = 0
-    PM_ButtonDefaultIndicator = 0
-    PM_MenuButtonIndicator = 0
-    PM_ButtonShiftHorizontal = 0
-    PM_ButtonShiftVertical = 0
-    PM_DefaultFrameWidth = 0
-    PM_SpinBoxFrameWidth = 0
-    PM_ComboBoxFrameWidth = 0
-    PM_MaximumDragDistance = 0
-    PM_ScrollBarExtent = 0
-    PM_ScrollBarSliderMin = 0
-    PM_SliderThickness = 0
-    PM_SliderControlThickness = 0
-    PM_SliderLength = 0
-    PM_SliderTickmarkOffset = 0
-    PM_SliderSpaceAvailable = 0
-    PM_DockWidgetSeparatorExtent = 0
-    PM_DockWidgetHandleExtent = 0
-    PM_DockWidgetFrameWidth = 0
-    PM_TabBarTabOverlap = 0
-    PM_TabBarTabHSpace = 0
-    PM_TabBarTabVSpace = 0
-    PM_TabBarBaseHeight = 0
-    PM_TabBarBaseOverlap = 0
-    PM_ProgressBarChunkWidth = 0
-    PM_SplitterWidth = 0
-    PM_TitleBarHeight = 0
-    PM_MenuScrollerHeight = 0
-    PM_MenuHMargin = 0
-    PM_MenuVMargin = 0
-    PM_MenuPanelWidth = 0
-    PM_MenuTearoffHeight = 0
-    PM_MenuDesktopFrameWidth = 0
-    PM_MenuBarPanelWidth = 0
-    PM_MenuBarItemSpacing = 0
-    PM_MenuBarVMargin = 0
-    PM_MenuBarHMargin = 0
-    PM_IndicatorWidth = 0
-    PM_IndicatorHeight = 0
-    PM_ExclusiveIndicatorWidth = 0
-    PM_ExclusiveIndicatorHeight = 0
-    PM_CheckListButtonSize = 0
-    PM_CheckListControllerSize = 0
-    PM_DialogButtonsSeparator = 0
-    PM_DialogButtonsButtonWidth = 0
-    PM_DialogButtonsButtonHeight = 0
-    PM_MdiSubWindowFrameWidth = 0
-    PM_MDIFrameWidth = 0
-    PM_MdiSubWindowMinimizedWidth = 0
-    PM_MDIMinimizedWidth = 0
-    PM_HeaderMargin = 0
-    PM_HeaderMarkSize = 0
-    PM_HeaderGripMargin = 0
-    PM_TabBarTabShiftHorizontal = 0
-    PM_TabBarTabShiftVertical = 0
-    PM_TabBarScrollButtonWidth = 0
-    PM_ToolBarFrameWidth = 0
-    PM_ToolBarHandleExtent = 0
-    PM_ToolBarItemSpacing = 0
-    PM_ToolBarItemMargin = 0
-    PM_ToolBarSeparatorExtent = 0
-    PM_ToolBarExtensionExtent = 0
-    PM_SpinBoxSliderHeight = 0
-    PM_DefaultTopLevelMargin = 0
-    PM_DefaultChildMargin = 0
-    PM_DefaultLayoutSpacing = 0
-    PM_ToolBarIconSize = 0
-    PM_ListViewIconSize = 0
-    PM_IconViewIconSize = 0
-    PM_SmallIconSize = 0
-    PM_LargeIconSize = 0
-    PM_FocusFrameVMargin = 0
-    PM_FocusFrameHMargin = 0
-    PM_ToolTipLabelFrameWidth = 0
-    PM_CheckBoxLabelSpacing = 0
-    PM_TabBarIconSize = 0
-    PM_SizeGripSize = 0
-    PM_DockWidgetTitleMargin = 0
-    PM_MessageBoxIconSize = 0
-    PM_ButtonIconSize = 0
-    PM_DockWidgetTitleBarButtonMargin = 0
-    PM_RadioButtonLabelSpacing = 0
-    PM_LayoutLeftMargin = 0
-    PM_LayoutTopMargin = 0
-    PM_LayoutRightMargin = 0
-    PM_LayoutBottomMargin = 0
-    PM_LayoutHorizontalSpacing = 0
-    PM_LayoutVerticalSpacing = 0
-    PM_TabBar_ScrollButtonOverlap = 0
-    PM_TextCursorWidth = 0
-    PM_TabCloseIndicatorWidth = 0
-    PM_TabCloseIndicatorHeight = 0
-    PM_ScrollView_ScrollBarSpacing = 0
-    PM_SubMenuOverlap = 0
-    PM_CustomBase = 0
-
-    # Enum QStyle.SubControl
-    SC_None = 0
-    SC_ScrollBarAddLine = 0
-    SC_ScrollBarSubLine = 0
-    SC_ScrollBarAddPage = 0
-    SC_ScrollBarSubPage = 0
-    SC_ScrollBarFirst = 0
-    SC_ScrollBarLast = 0
-    SC_ScrollBarSlider = 0
-    SC_ScrollBarGroove = 0
-    SC_SpinBoxUp = 0
-    SC_SpinBoxDown = 0
-    SC_SpinBoxFrame = 0
-    SC_SpinBoxEditField = 0
-    SC_ComboBoxFrame = 0
-    SC_ComboBoxEditField = 0
-    SC_ComboBoxArrow = 0
-    SC_ComboBoxListBoxPopup = 0
-    SC_SliderGroove = 0
-    SC_SliderHandle = 0
-    SC_SliderTickmarks = 0
-    SC_ToolButton = 0
-    SC_ToolButtonMenu = 0
-    SC_TitleBarSysMenu = 0
-    SC_TitleBarMinButton = 0
-    SC_TitleBarMaxButton = 0
-    SC_TitleBarCloseButton = 0
-    SC_TitleBarNormalButton = 0
-    SC_TitleBarShadeButton = 0
-    SC_TitleBarUnshadeButton = 0
-    SC_TitleBarContextHelpButton = 0
-    SC_TitleBarLabel = 0
-    SC_Q3ListView = 0
-    SC_Q3ListViewBranch = 0
-    SC_Q3ListViewExpand = 0
-    SC_DialGroove = 0
-    SC_DialHandle = 0
-    SC_DialTickmarks = 0
-    SC_GroupBoxCheckBox = 0
-    SC_GroupBoxLabel = 0
-    SC_GroupBoxContents = 0
-    SC_GroupBoxFrame = 0
-    SC_MdiMinButton = 0
-    SC_MdiNormalButton = 0
-    SC_MdiCloseButton = 0
-    SC_CustomBase = 0
-    SC_All = 0
-
-    # Enum QStyle.ComplexControl
-    CC_SpinBox = 0
-    CC_ComboBox = 0
-    CC_ScrollBar = 0
-    CC_Slider = 0
-    CC_ToolButton = 0
-    CC_TitleBar = 0
-    CC_Q3ListView = 0
-    CC_Dial = 0
-    CC_GroupBox = 0
-    CC_MdiControls = 0
-    CC_CustomBase = 0
-
-    # Enum QStyle.SubElement
-    SE_PushButtonContents = 0
-    SE_PushButtonFocusRect = 0
-    SE_CheckBoxIndicator = 0
-    SE_CheckBoxContents = 0
-    SE_CheckBoxFocusRect = 0
-    SE_CheckBoxClickRect = 0
-    SE_RadioButtonIndicator = 0
-    SE_RadioButtonContents = 0
-    SE_RadioButtonFocusRect = 0
-    SE_RadioButtonClickRect = 0
-    SE_ComboBoxFocusRect = 0
-    SE_SliderFocusRect = 0
-    SE_Q3DockWindowHandleRect = 0
-    SE_ProgressBarGroove = 0
-    SE_ProgressBarContents = 0
-    SE_ProgressBarLabel = 0
-    SE_DialogButtonAccept = 0
-    SE_DialogButtonReject = 0
-    SE_DialogButtonApply = 0
-    SE_DialogButtonHelp = 0
-    SE_DialogButtonAll = 0
-    SE_DialogButtonAbort = 0
-    SE_DialogButtonIgnore = 0
-    SE_DialogButtonRetry = 0
-    SE_DialogButtonCustom = 0
-    SE_ToolBoxTabContents = 0
-    SE_HeaderLabel = 0
-    SE_HeaderArrow = 0
-    SE_TabWidgetTabBar = 0
-    SE_TabWidgetTabPane = 0
-    SE_TabWidgetTabContents = 0
-    SE_TabWidgetLeftCorner = 0
-    SE_TabWidgetRightCorner = 0
-    SE_ViewItemCheckIndicator = 0
-    SE_TabBarTearIndicator = 0
-    SE_TreeViewDisclosureItem = 0
-    SE_LineEditContents = 0
-    SE_FrameContents = 0
-    SE_DockWidgetCloseButton = 0
-    SE_DockWidgetFloatButton = 0
-    SE_DockWidgetTitleBarText = 0
-    SE_DockWidgetIcon = 0
-    SE_CheckBoxLayoutItem = 0
-    SE_ComboBoxLayoutItem = 0
-    SE_DateTimeEditLayoutItem = 0
-    SE_DialogButtonBoxLayoutItem = 0
-    SE_LabelLayoutItem = 0
-    SE_ProgressBarLayoutItem = 0
-    SE_PushButtonLayoutItem = 0
-    SE_RadioButtonLayoutItem = 0
-    SE_SliderLayoutItem = 0
-    SE_SpinBoxLayoutItem = 0
-    SE_ToolButtonLayoutItem = 0
-    SE_FrameLayoutItem = 0
-    SE_GroupBoxLayoutItem = 0
-    SE_TabWidgetLayoutItem = 0
-    SE_ItemViewItemCheckIndicator = 0
-    SE_ItemViewItemDecoration = 0
-    SE_ItemViewItemText = 0
-    SE_ItemViewItemFocusRect = 0
-    SE_TabBarTabLeftButton = 0
-    SE_TabBarTabRightButton = 0
-    SE_TabBarTabText = 0
-    SE_ShapedFrameContents = 0
-    SE_ToolBarHandle = 0
-    SE_CustomBase = 0
-
-    # Enum QStyle.ControlElement
-    CE_PushButton = 0
-    CE_PushButtonBevel = 0
-    CE_PushButtonLabel = 0
-    CE_CheckBox = 0
-    CE_CheckBoxLabel = 0
-    CE_RadioButton = 0
-    CE_RadioButtonLabel = 0
-    CE_TabBarTab = 0
-    CE_TabBarTabShape = 0
-    CE_TabBarTabLabel = 0
-    CE_ProgressBar = 0
-    CE_ProgressBarGroove = 0
-    CE_ProgressBarContents = 0
-    CE_ProgressBarLabel = 0
-    CE_MenuItem = 0
-    CE_MenuScroller = 0
-    CE_MenuVMargin = 0
-    CE_MenuHMargin = 0
-    CE_MenuTearoff = 0
-    CE_MenuEmptyArea = 0
-    CE_MenuBarItem = 0
-    CE_MenuBarEmptyArea = 0
-    CE_ToolButtonLabel = 0
-    CE_Header = 0
-    CE_HeaderSection = 0
-    CE_HeaderLabel = 0
-    CE_Q3DockWindowEmptyArea = 0
-    CE_ToolBoxTab = 0
-    CE_SizeGrip = 0
-    CE_Splitter = 0
-    CE_RubberBand = 0
-    CE_DockWidgetTitle = 0
-    CE_ScrollBarAddLine = 0
-    CE_ScrollBarSubLine = 0
-    CE_ScrollBarAddPage = 0
-    CE_ScrollBarSubPage = 0
-    CE_ScrollBarSlider = 0
-    CE_ScrollBarFirst = 0
-    CE_ScrollBarLast = 0
-    CE_FocusFrame = 0
-    CE_ComboBoxLabel = 0
-    CE_ToolBar = 0
-    CE_ToolBoxTabShape = 0
-    CE_ToolBoxTabLabel = 0
-    CE_HeaderEmptyArea = 0
-    CE_ColumnViewGrip = 0
-    CE_ItemViewItem = 0
-    CE_ShapedFrame = 0
-    CE_CustomBase = 0
-
-    # Enum QStyle.PrimitiveElement
-    PE_Q3CheckListController = 0
-    PE_Q3CheckListExclusiveIndicator = 0
-    PE_Q3CheckListIndicator = 0
-    PE_Q3DockWindowSeparator = 0
-    PE_Q3Separator = 0
-    PE_Frame = 0
-    PE_FrameDefaultButton = 0
-    PE_FrameDockWidget = 0
-    PE_FrameFocusRect = 0
-    PE_FrameGroupBox = 0
-    PE_FrameLineEdit = 0
-    PE_FrameMenu = 0
-    PE_FrameStatusBar = 0
-    PE_FrameTabWidget = 0
-    PE_FrameWindow = 0
-    PE_FrameButtonBevel = 0
-    PE_FrameButtonTool = 0
-    PE_FrameTabBarBase = 0
-    PE_PanelButtonCommand = 0
-    PE_PanelButtonBevel = 0
-    PE_PanelButtonTool = 0
-    PE_PanelMenuBar = 0
-    PE_PanelToolBar = 0
-    PE_PanelLineEdit = 0
-    PE_IndicatorArrowDown = 0
-    PE_IndicatorArrowLeft = 0
-    PE_IndicatorArrowRight = 0
-    PE_IndicatorArrowUp = 0
-    PE_IndicatorBranch = 0
-    PE_IndicatorButtonDropDown = 0
-    PE_IndicatorViewItemCheck = 0
-    PE_IndicatorCheckBox = 0
-    PE_IndicatorDockWidgetResizeHandle = 0
-    PE_IndicatorHeaderArrow = 0
-    PE_IndicatorMenuCheckMark = 0
-    PE_IndicatorProgressChunk = 0
-    PE_IndicatorRadioButton = 0
-    PE_IndicatorSpinDown = 0
-    PE_IndicatorSpinMinus = 0
-    PE_IndicatorSpinPlus = 0
-    PE_IndicatorSpinUp = 0
-    PE_IndicatorToolBarHandle = 0
-    PE_IndicatorToolBarSeparator = 0
-    PE_PanelTipLabel = 0
-    PE_IndicatorTabTear = 0
-    PE_PanelScrollAreaCorner = 0
-    PE_Widget = 0
-    PE_IndicatorColumnViewArrow = 0
-    PE_FrameStatusBarItem = 0
-    PE_IndicatorItemViewItemCheck = 0
-    PE_IndicatorItemViewItemDrop = 0
-    PE_PanelItemViewItem = 0
-    PE_PanelItemViewRow = 0
-    PE_PanelStatusBar = 0
-    PE_IndicatorTabClose = 0
-    PE_PanelMenu = 0
-    PE_CustomBase = 0
-
-    # Enum QStyle.StateFlag
-    State_None = 0
-    State_Enabled = 0
-    State_Raised = 0
-    State_Sunken = 0
-    State_Off = 0
-    State_NoChange = 0
-    State_On = 0
-    State_DownArrow = 0
-    State_Horizontal = 0
-    State_HasFocus = 0
-    State_Top = 0
-    State_Bottom = 0
-    State_FocusAtBorder = 0
-    State_AutoRaise = 0
-    State_MouseOver = 0
-    State_UpArrow = 0
-    State_Selected = 0
-    State_Active = 0
-    State_Open = 0
-    State_Children = 0
-    State_Item = 0
-    State_Sibling = 0
-    State_Editing = 0
-    State_KeyboardFocusChange = 0
-    State_ReadOnly = 0
-    State_Window = 0
-    State_Small = 0
-    State_Mini = 0
-
-    def __init__(self):
-        '''void QStyle.__init__()'''
-    def proxy(self):
-        '''QStyle QStyle.proxy()'''
-        return QStyle()
-    def layoutSpacingImplementation(self, control1, control2, orientation, option = None, widget = None):
-        '''int QStyle.layoutSpacingImplementation(QSizePolicy.ControlType control1, QSizePolicy.ControlType control2, Qt.Orientation orientation, QStyleOption option = None, QWidget widget = None)'''
-        return int()
-    def standardIconImplementation(self, standardIcon, option = None, widget = None):
-        '''QIcon QStyle.standardIconImplementation(QStyle.StandardPixmap standardIcon, QStyleOption option = None, QWidget widget = None)'''
-        return QIcon()
-    def combinedLayoutSpacing(self, controls1, controls2, orientation, option = None, widget = None):
-        '''int QStyle.combinedLayoutSpacing(QSizePolicy.ControlTypes controls1, QSizePolicy.ControlTypes controls2, Qt.Orientation orientation, QStyleOption option = None, QWidget widget = None)'''
-        return int()
-    def layoutSpacing(self, control1, control2, orientation, option = None, widget = None):
-        '''int QStyle.layoutSpacing(QSizePolicy.ControlType control1, QSizePolicy.ControlType control2, Qt.Orientation orientation, QStyleOption option = None, QWidget widget = None)'''
-        return int()
-    def alignedRect(self, direction, alignment, size, rectangle):
-        '''static QRect QStyle.alignedRect(Qt.LayoutDirection direction, Qt.Alignment alignment, QSize size, QRect rectangle)'''
-        return QRect()
-    def visualAlignment(self, direction, alignment):
-        '''static Qt.Alignment QStyle.visualAlignment(Qt.LayoutDirection direction, Qt.Alignment alignment)'''
-        return Qt.Alignment()
-    def sliderValueFromPosition(self, min, max, position, span, upsideDown = False):
-        '''static int QStyle.sliderValueFromPosition(int min, int max, int position, int span, bool upsideDown = False)'''
-        return int()
-    def sliderPositionFromValue(self, min, max, logicalValue, span, upsideDown = False):
-        '''static int QStyle.sliderPositionFromValue(int min, int max, int logicalValue, int span, bool upsideDown = False)'''
-        return int()
-    def visualPos(self, direction, boundingRect, logicalPos):
-        '''static QPoint QStyle.visualPos(Qt.LayoutDirection direction, QRect boundingRect, QPoint logicalPos)'''
-        return QPoint()
-    def visualRect(self, direction, boundingRect, logicalRect):
-        '''static QRect QStyle.visualRect(Qt.LayoutDirection direction, QRect boundingRect, QRect logicalRect)'''
-        return QRect()
-    def generatedIconPixmap(self, iconMode, pixmap, opt):
-        '''abstract QPixmap QStyle.generatedIconPixmap(QIcon.Mode iconMode, QPixmap pixmap, QStyleOption opt)'''
-        return QPixmap()
-    def standardIcon(self, standardIcon, option = None, widget = None):
-        '''QIcon QStyle.standardIcon(QStyle.StandardPixmap standardIcon, QStyleOption option = None, QWidget widget = None)'''
-        return QIcon()
-    def standardPixmap(self, standardPixmap, option = None, widget = None):
-        '''abstract QPixmap QStyle.standardPixmap(QStyle.StandardPixmap standardPixmap, QStyleOption option = None, QWidget widget = None)'''
-        return QPixmap()
-    def styleHint(self, stylehint, option = None, widget = None, returnData = None):
-        '''abstract int QStyle.styleHint(QStyle.StyleHint stylehint, QStyleOption option = None, QWidget widget = None, QStyleHintReturn returnData = None)'''
-        return int()
-    def sizeFromContents(self, ct, opt, contentsSize, widget = None):
-        '''abstract QSize QStyle.sizeFromContents(QStyle.ContentsType ct, QStyleOption opt, QSize contentsSize, QWidget widget = None)'''
-        return QSize()
-    def pixelMetric(self, metric, option = None, widget = None):
-        '''abstract int QStyle.pixelMetric(QStyle.PixelMetric metric, QStyleOption option = None, QWidget widget = None)'''
-        return int()
-    def subControlRect(self, cc, opt, sc, widget = None):
-        '''abstract QRect QStyle.subControlRect(QStyle.ComplexControl cc, QStyleOptionComplex opt, QStyle.SubControl sc, QWidget widget = None)'''
-        return QRect()
-    def hitTestComplexControl(self, cc, opt, pt, widget = None):
-        '''abstract QStyle.SubControl QStyle.hitTestComplexControl(QStyle.ComplexControl cc, QStyleOptionComplex opt, QPoint pt, QWidget widget = None)'''
-        return QStyle.SubControl()
-    def drawComplexControl(self, cc, opt, p, widget = None):
-        '''abstract void QStyle.drawComplexControl(QStyle.ComplexControl cc, QStyleOptionComplex opt, QPainter p, QWidget widget = None)'''
-    def subElementRect(self, subElement, option, widget = None):
-        '''abstract QRect QStyle.subElementRect(QStyle.SubElement subElement, QStyleOption option, QWidget widget = None)'''
-        return QRect()
-    def drawControl(self, element, opt, p, widget = None):
-        '''abstract void QStyle.drawControl(QStyle.ControlElement element, QStyleOption opt, QPainter p, QWidget widget = None)'''
-    def drawPrimitive(self, pe, opt, p, widget = None):
-        '''abstract void QStyle.drawPrimitive(QStyle.PrimitiveElement pe, QStyleOption opt, QPainter p, QWidget widget = None)'''
-    def standardPalette(self):
-        '''QPalette QStyle.standardPalette()'''
-        return QPalette()
-    def drawItemPixmap(self, painter, rect, alignment, pixmap):
-        '''void QStyle.drawItemPixmap(QPainter painter, QRect rect, int alignment, QPixmap pixmap)'''
-    def drawItemText(self, painter, rectangle, alignment, palette, enabled, text, textRole = QPalette.NoRole):
-        '''void QStyle.drawItemText(QPainter painter, QRect rectangle, int alignment, QPalette palette, bool enabled, QString text, QPalette.ColorRole textRole = QPalette.NoRole)'''
-    def itemPixmapRect(self, r, flags, pixmap):
-        '''QRect QStyle.itemPixmapRect(QRect r, int flags, QPixmap pixmap)'''
-        return QRect()
-    def itemTextRect(self, fm, r, flags, enabled, text):
-        '''QRect QStyle.itemTextRect(QFontMetrics fm, QRect r, int flags, bool enabled, QString text)'''
-        return QRect()
-    def unpolish(self):
-        '''QWidget QStyle.unpolish()'''
-        return QWidget()
-    def unpolish(self):
-        '''QApplication QStyle.unpolish()'''
-        return QApplication()
-    def polish(self):
-        '''QWidget QStyle.polish()'''
-        return QWidget()
-    def polish(self):
-        '''QApplication QStyle.polish()'''
-        return QApplication()
-    def polish(self):
-        '''QPalette QStyle.polish()'''
-        return QPalette()
-    class SubControls():
-        """"""
-        def __init__(self):
-            '''QStyle.SubControls QStyle.SubControls.__init__()'''
-            return QStyle.SubControls()
-        def __init__(self):
-            '''int QStyle.SubControls.__init__()'''
-            return int()
-        def __init__(self):
-            '''void QStyle.SubControls.__init__()'''
-        def __bool__(self):
-            '''int QStyle.SubControls.__bool__()'''
-            return int()
-        def __ne__(self, f):
-            '''bool QStyle.SubControls.__ne__(QStyle.SubControls f)'''
-            return bool()
-        def __eq__(self, f):
-            '''bool QStyle.SubControls.__eq__(QStyle.SubControls f)'''
-            return bool()
-        def __invert__(self):
-            '''QStyle.SubControls QStyle.SubControls.__invert__()'''
-            return QStyle.SubControls()
-        def __and__(self, mask):
-            '''QStyle.SubControls QStyle.SubControls.__and__(int mask)'''
-            return QStyle.SubControls()
-        def __xor__(self, f):
-            '''QStyle.SubControls QStyle.SubControls.__xor__(QStyle.SubControls f)'''
-            return QStyle.SubControls()
-        def __xor__(self, f):
-            '''QStyle.SubControls QStyle.SubControls.__xor__(int f)'''
-            return QStyle.SubControls()
-        def __or__(self, f):
-            '''QStyle.SubControls QStyle.SubControls.__or__(QStyle.SubControls f)'''
-            return QStyle.SubControls()
-        def __or__(self, f):
-            '''QStyle.SubControls QStyle.SubControls.__or__(int f)'''
-            return QStyle.SubControls()
-        def __int__(self):
-            '''int QStyle.SubControls.__int__()'''
-            return int()
-        def __ixor__(self, f):
-            '''QStyle.SubControls QStyle.SubControls.__ixor__(QStyle.SubControls f)'''
-            return QStyle.SubControls()
-        def __ior__(self, f):
-            '''QStyle.SubControls QStyle.SubControls.__ior__(QStyle.SubControls f)'''
-            return QStyle.SubControls()
-        def __iand__(self, mask):
-            '''QStyle.SubControls QStyle.SubControls.__iand__(int mask)'''
-            return QStyle.SubControls()
-    class State():
-        """"""
-        def __init__(self):
-            '''QStyle.State QStyle.State.__init__()'''
-            return QStyle.State()
-        def __init__(self):
-            '''int QStyle.State.__init__()'''
-            return int()
-        def __init__(self):
-            '''void QStyle.State.__init__()'''
-        def __bool__(self):
-            '''int QStyle.State.__bool__()'''
-            return int()
-        def __ne__(self, f):
-            '''bool QStyle.State.__ne__(QStyle.State f)'''
-            return bool()
-        def __eq__(self, f):
-            '''bool QStyle.State.__eq__(QStyle.State f)'''
-            return bool()
-        def __invert__(self):
-            '''QStyle.State QStyle.State.__invert__()'''
-            return QStyle.State()
-        def __and__(self, mask):
-            '''QStyle.State QStyle.State.__and__(int mask)'''
-            return QStyle.State()
-        def __xor__(self, f):
-            '''QStyle.State QStyle.State.__xor__(QStyle.State f)'''
-            return QStyle.State()
-        def __xor__(self, f):
-            '''QStyle.State QStyle.State.__xor__(int f)'''
-            return QStyle.State()
-        def __or__(self, f):
-            '''QStyle.State QStyle.State.__or__(QStyle.State f)'''
-            return QStyle.State()
-        def __or__(self, f):
-            '''QStyle.State QStyle.State.__or__(int f)'''
-            return QStyle.State()
-        def __int__(self):
-            '''int QStyle.State.__int__()'''
-            return int()
-        def __ixor__(self, f):
-            '''QStyle.State QStyle.State.__ixor__(QStyle.State f)'''
-            return QStyle.State()
-        def __ior__(self, f):
-            '''QStyle.State QStyle.State.__ior__(QStyle.State f)'''
-            return QStyle.State()
-        def __iand__(self, mask):
-            '''QStyle.State QStyle.State.__iand__(int mask)'''
-            return QStyle.State()
 
 
 class QStyledItemDelegate(QAbstractItemDelegate):
@@ -23089,8 +23488,8 @@ class QSystemTrayIcon(QObject):
     def event(self, event):
         '''bool QSystemTrayIcon.event(QEvent event)'''
         return bool()
-    messageClicked = PyQt4.QtCore.pyqtSignal() # void messageClicked() - signal
-    activated = PyQt4.QtCore.pyqtSignal() # void activated(QSystemTrayIcon::ActivationReason) - signal
+    messageClicked = pyqtSignal() # void messageClicked() - signal
+    activated = pyqtSignal() # void activated(QSystemTrayIcon::ActivationReason) - signal
     def show(self):
         '''void QSystemTrayIcon.show()'''
     def setVisible(self, visible):
@@ -23156,8 +23555,8 @@ class QTabBar(QWidget):
     def hideEvent(self):
         '''QHideEvent QTabBar.hideEvent()'''
         return QHideEvent()
-    tabMoved = PyQt4.QtCore.pyqtSignal() # void tabMoved(int,int) - signal
-    tabCloseRequested = PyQt4.QtCore.pyqtSignal() # void tabCloseRequested(int) - signal
+    tabMoved = pyqtSignal() # void tabMoved(int,int) - signal
+    tabCloseRequested = pyqtSignal() # void tabCloseRequested(int) - signal
     def setDocumentMode(self, set):
         '''void QTabBar.setDocumentMode(bool set)'''
     def documentMode(self):
@@ -23228,7 +23627,7 @@ class QTabBar(QWidget):
         return QSize()
     def initStyleOption(self, option, tabIndex):
         '''void QTabBar.initStyleOption(QStyleOptionTab option, int tabIndex)'''
-    currentChanged = PyQt4.QtCore.pyqtSignal() # void currentChanged(int) - signal
+    currentChanged = pyqtSignal() # void currentChanged(int) - signal
     def setCurrentIndex(self, index):
         '''void QTabBar.setCurrentIndex(int index)'''
     def usesScrollButtons(self):
@@ -23689,21 +24088,21 @@ class QTableWidget(QTableView):
     def mimeTypes(self):
         '''QStringList QTableWidget.mimeTypes()'''
         return QStringList()
-    currentCellChanged = PyQt4.QtCore.pyqtSignal() # void currentCellChanged(int,int,int,int) - signal
-    cellChanged = PyQt4.QtCore.pyqtSignal() # void cellChanged(int,int) - signal
-    cellEntered = PyQt4.QtCore.pyqtSignal() # void cellEntered(int,int) - signal
-    cellActivated = PyQt4.QtCore.pyqtSignal() # void cellActivated(int,int) - signal
-    cellDoubleClicked = PyQt4.QtCore.pyqtSignal() # void cellDoubleClicked(int,int) - signal
-    cellClicked = PyQt4.QtCore.pyqtSignal() # void cellClicked(int,int) - signal
-    cellPressed = PyQt4.QtCore.pyqtSignal() # void cellPressed(int,int) - signal
-    itemSelectionChanged = PyQt4.QtCore.pyqtSignal() # void itemSelectionChanged() - signal
-    currentItemChanged = PyQt4.QtCore.pyqtSignal() # void currentItemChanged(QTableWidgetItem *,QTableWidgetItem *) - signal
-    itemChanged = PyQt4.QtCore.pyqtSignal() # void itemChanged(QTableWidgetItem *) - signal
-    itemEntered = PyQt4.QtCore.pyqtSignal() # void itemEntered(QTableWidgetItem *) - signal
-    itemActivated = PyQt4.QtCore.pyqtSignal() # void itemActivated(QTableWidgetItem *) - signal
-    itemDoubleClicked = PyQt4.QtCore.pyqtSignal() # void itemDoubleClicked(QTableWidgetItem *) - signal
-    itemClicked = PyQt4.QtCore.pyqtSignal() # void itemClicked(QTableWidgetItem *) - signal
-    itemPressed = PyQt4.QtCore.pyqtSignal() # void itemPressed(QTableWidgetItem *) - signal
+    currentCellChanged = pyqtSignal() # void currentCellChanged(int,int,int,int) - signal
+    cellChanged = pyqtSignal() # void cellChanged(int,int) - signal
+    cellEntered = pyqtSignal() # void cellEntered(int,int) - signal
+    cellActivated = pyqtSignal() # void cellActivated(int,int) - signal
+    cellDoubleClicked = pyqtSignal() # void cellDoubleClicked(int,int) - signal
+    cellClicked = pyqtSignal() # void cellClicked(int,int) - signal
+    cellPressed = pyqtSignal() # void cellPressed(int,int) - signal
+    itemSelectionChanged = pyqtSignal() # void itemSelectionChanged() - signal
+    currentItemChanged = pyqtSignal() # void currentItemChanged(QTableWidgetItem *,QTableWidgetItem *) - signal
+    itemChanged = pyqtSignal() # void itemChanged(QTableWidgetItem *) - signal
+    itemEntered = pyqtSignal() # void itemEntered(QTableWidgetItem *) - signal
+    itemActivated = pyqtSignal() # void itemActivated(QTableWidgetItem *) - signal
+    itemDoubleClicked = pyqtSignal() # void itemDoubleClicked(QTableWidgetItem *) - signal
+    itemClicked = pyqtSignal() # void itemClicked(QTableWidgetItem *) - signal
+    itemPressed = pyqtSignal() # void itemPressed(QTableWidgetItem *) - signal
     def clearContents(self):
         '''void QTableWidget.clearContents()'''
     def clear(self):
@@ -23851,7 +24250,10 @@ class QTabWidget(QWidget):
 
     def __init__(self, parent = None):
         '''void QTabWidget.__init__(QWidget parent = None)'''
-    tabCloseRequested = PyQt4.QtCore.pyqtSignal() # void tabCloseRequested(int) - signal
+    def heightForWidth(self, width):
+        '''int QTabWidget.heightForWidth(int width)'''
+        return int()
+    tabCloseRequested = pyqtSignal() # void tabCloseRequested(int) - signal
     def setDocumentMode(self, set):
         '''void QTabWidget.setDocumentMode(bool set)'''
     def documentMode(self):
@@ -23913,7 +24315,7 @@ class QTabWidget(QWidget):
         '''void QTabWidget.tabInserted(int index)'''
     def initStyleOption(self, option):
         '''void QTabWidget.initStyleOption(QStyleOptionTabWidgetFrame option)'''
-    currentChanged = PyQt4.QtCore.pyqtSignal() # void currentChanged(int) - signal
+    currentChanged = pyqtSignal() # void currentChanged(int) - signal
     def setCurrentWidget(self, widget):
         '''void QTabWidget.setCurrentWidget(QWidget widget)'''
     def setCurrentIndex(self, index):
@@ -24087,13 +24489,13 @@ class QTextEdit(QAbstractScrollArea):
     def event(self, e):
         '''bool QTextEdit.event(QEvent e)'''
         return bool()
-    cursorPositionChanged = PyQt4.QtCore.pyqtSignal() # void cursorPositionChanged() - signal
-    selectionChanged = PyQt4.QtCore.pyqtSignal() # void selectionChanged() - signal
-    copyAvailable = PyQt4.QtCore.pyqtSignal() # void copyAvailable(bool) - signal
-    currentCharFormatChanged = PyQt4.QtCore.pyqtSignal() # void currentCharFormatChanged(const QTextCharFormat&) - signal
-    redoAvailable = PyQt4.QtCore.pyqtSignal() # void redoAvailable(bool) - signal
-    undoAvailable = PyQt4.QtCore.pyqtSignal() # void undoAvailable(bool) - signal
-    textChanged = PyQt4.QtCore.pyqtSignal() # void textChanged() - signal
+    cursorPositionChanged = pyqtSignal() # void cursorPositionChanged() - signal
+    selectionChanged = pyqtSignal() # void selectionChanged() - signal
+    copyAvailable = pyqtSignal() # void copyAvailable(bool) - signal
+    currentCharFormatChanged = pyqtSignal() # void currentCharFormatChanged(const QTextCharFormat&) - signal
+    redoAvailable = pyqtSignal() # void redoAvailable(bool) - signal
+    undoAvailable = pyqtSignal() # void undoAvailable(bool) - signal
+    textChanged = pyqtSignal() # void textChanged() - signal
     def zoomOut(self, range = 1):
         '''void QTextEdit.zoomOut(int range = 1)'''
     def zoomIn(self, range = 1):
@@ -24356,7 +24758,7 @@ class QTextBrowser(QTextEdit):
     """"""
     def __init__(self, parent = None):
         '''void QTextBrowser.__init__(QWidget parent = None)'''
-    historyChanged = PyQt4.QtCore.pyqtSignal() # void historyChanged() - signal
+    historyChanged = pyqtSignal() # void historyChanged() - signal
     def forwardHistoryCount(self):
         '''int QTextBrowser.forwardHistoryCount()'''
         return int()
@@ -24405,12 +24807,12 @@ class QTextBrowser(QTextEdit):
     def event(self, e):
         '''bool QTextBrowser.event(QEvent e)'''
         return bool()
-    anchorClicked = PyQt4.QtCore.pyqtSignal() # void anchorClicked(const QUrl&) - signal
-    highlighted = PyQt4.QtCore.pyqtSignal() # void highlighted(const QUrl&) - signal
-    highlighted = PyQt4.QtCore.pyqtSignal() # void highlighted(const QString&) - signal
-    sourceChanged = PyQt4.QtCore.pyqtSignal() # void sourceChanged(const QUrl&) - signal
-    forwardAvailable = PyQt4.QtCore.pyqtSignal() # void forwardAvailable(bool) - signal
-    backwardAvailable = PyQt4.QtCore.pyqtSignal() # void backwardAvailable(bool) - signal
+    anchorClicked = pyqtSignal() # void anchorClicked(const QUrl&) - signal
+    highlighted = pyqtSignal() # void highlighted(const QUrl&) - signal
+    highlighted = pyqtSignal() # void highlighted(const QString&) - signal
+    sourceChanged = pyqtSignal() # void sourceChanged(const QUrl&) - signal
+    forwardAvailable = pyqtSignal() # void forwardAvailable(bool) - signal
+    backwardAvailable = pyqtSignal() # void backwardAvailable(bool) - signal
     def reload(self):
         '''void QTextBrowser.reload()'''
     def home(self):
@@ -24720,6 +25122,11 @@ class QTextDocument(QObject):
         '''void QTextDocument.__init__(QObject parent = None)'''
     def __init__(self, text, parent = None):
         '''void QTextDocument.__init__(QString text, QObject parent = None)'''
+    def setDefaultCursorMoveStyle(self, style):
+        '''void QTextDocument.setDefaultCursorMoveStyle(Qt.CursorMoveStyle style)'''
+    def defaultCursorMoveStyle(self):
+        '''Qt.CursorMoveStyle QTextDocument.defaultCursorMoveStyle()'''
+        return Qt.CursorMoveStyle()
     def clearUndoRedoStacks(self, stacks = QTextDocument.UndoAndRedoStacks):
         '''void QTextDocument.clearUndoRedoStacks(QTextDocument.Stacks stacks = QTextDocument.UndoAndRedoStacks)'''
     def availableRedoSteps(self):
@@ -24742,8 +25149,8 @@ class QTextDocument(QObject):
     def characterAt(self, pos):
         '''QChar QTextDocument.characterAt(int pos)'''
         return QChar()
-    documentLayoutChanged = PyQt4.QtCore.pyqtSignal() # void documentLayoutChanged() - signal
-    undoCommandAdded = PyQt4.QtCore.pyqtSignal() # void undoCommandAdded() - signal
+    documentLayoutChanged = pyqtSignal() # void documentLayoutChanged() - signal
+    undoCommandAdded = pyqtSignal() # void undoCommandAdded() - signal
     def setIndentWidth(self, width):
         '''void QTextDocument.setIndentWidth(float width)'''
     def indentWidth(self):
@@ -24813,13 +25220,13 @@ class QTextDocument(QObject):
         '''void QTextDocument.undo()'''
     def undo(self, cursor):
         '''void QTextDocument.undo(QTextCursor cursor)'''
-    undoAvailable = PyQt4.QtCore.pyqtSignal() # void undoAvailable(bool) - signal
-    redoAvailable = PyQt4.QtCore.pyqtSignal() # void redoAvailable(bool) - signal
-    modificationChanged = PyQt4.QtCore.pyqtSignal() # void modificationChanged(bool) - signal
-    cursorPositionChanged = PyQt4.QtCore.pyqtSignal() # void cursorPositionChanged(const QTextCursor&) - signal
-    contentsChanged = PyQt4.QtCore.pyqtSignal() # void contentsChanged() - signal
-    contentsChange = PyQt4.QtCore.pyqtSignal() # void contentsChange(int,int,int) - signal
-    blockCountChanged = PyQt4.QtCore.pyqtSignal() # void blockCountChanged(int) - signal
+    undoAvailable = pyqtSignal() # void undoAvailable(bool) - signal
+    redoAvailable = pyqtSignal() # void redoAvailable(bool) - signal
+    modificationChanged = pyqtSignal() # void modificationChanged(bool) - signal
+    cursorPositionChanged = pyqtSignal() # void cursorPositionChanged(const QTextCursor&) - signal
+    contentsChanged = pyqtSignal() # void contentsChanged() - signal
+    contentsChange = pyqtSignal() # void contentsChange(int,int,int) - signal
+    blockCountChanged = pyqtSignal() # void blockCountChanged(int) - signal
     def useDesignMetrics(self):
         '''bool QTextDocument.useDesignMetrics()'''
         return bool()
@@ -25156,6 +25563,11 @@ class QTextFormat():
     FontStyleHint = 0
     FontStyleStrategy = 0
     FontKerning = 0
+    LineHeight = 0
+    LineHeightType = 0
+    FontHintingPreference = 0
+    ListNumberPrefix = 0
+    ListNumberSuffix = 0
     UserProperty = 0
 
     # Enum QTextFormat.PageBreakFlag
@@ -25387,12 +25799,18 @@ class QTextCharFormat(QTextFormat):
     AlignMiddle = 0
     AlignTop = 0
     AlignBottom = 0
+    AlignBaseline = 0
 
     def __init__(self):
         '''void QTextCharFormat.__init__()'''
     def __init__(self):
         '''QTextCharFormat QTextCharFormat.__init__()'''
         return QTextCharFormat()
+    def fontHintingPreference(self):
+        '''QFont.HintingPreference QTextCharFormat.fontHintingPreference()'''
+        return QFont.HintingPreference()
+    def setFontHintingPreference(self, hintingPreference):
+        '''void QTextCharFormat.setFontHintingPreference(QFont.HintingPreference hintingPreference)'''
     def fontKerning(self):
         '''bool QTextCharFormat.fontKerning()'''
         return bool()
@@ -25530,11 +25948,29 @@ class QTextCharFormat(QTextFormat):
 
 class QTextBlockFormat(QTextFormat):
     """"""
+    # Enum QTextBlockFormat.LineHeightTypes
+    SingleHeight = 0
+    ProportionalHeight = 0
+    FixedHeight = 0
+    MinimumHeight = 0
+    LineDistanceHeight = 0
+
     def __init__(self):
         '''void QTextBlockFormat.__init__()'''
     def __init__(self):
         '''QTextBlockFormat QTextBlockFormat.__init__()'''
         return QTextBlockFormat()
+    def lineHeightType(self):
+        '''int QTextBlockFormat.lineHeightType()'''
+        return int()
+    def lineHeight(self, scriptLineHeight, scaling):
+        '''float QTextBlockFormat.lineHeight(float scriptLineHeight, float scaling)'''
+        return float()
+    def lineHeight(self):
+        '''float QTextBlockFormat.lineHeight()'''
+        return float()
+    def setLineHeight(self, height, heightType):
+        '''void QTextBlockFormat.setLineHeight(float height, int heightType)'''
     def tabPositions(self):
         '''list-of-QTextOption.Tab QTextBlockFormat.tabPositions()'''
         return [QTextOption.Tab()]
@@ -25607,6 +26043,16 @@ class QTextListFormat(QTextFormat):
     def __init__(self):
         '''QTextListFormat QTextListFormat.__init__()'''
         return QTextListFormat()
+    def setNumberSuffix(self, ns):
+        '''void QTextListFormat.setNumberSuffix(QString ns)'''
+    def setNumberPrefix(self, np):
+        '''void QTextListFormat.setNumberPrefix(QString np)'''
+    def numberSuffix(self):
+        '''QString QTextListFormat.numberSuffix()'''
+        return QString()
+    def numberPrefix(self):
+        '''QString QTextListFormat.numberPrefix()'''
+        return QString()
     def setIndent(self, aindent):
         '''void QTextListFormat.setIndent(int aindent)'''
     def setStyle(self, astyle):
@@ -25885,6 +26331,20 @@ class QTextLayout():
         '''void QTextLayout.__init__(QString text, QFont font, QPaintDevice paintDevice = None)'''
     def __init__(self, b):
         '''void QTextLayout.__init__(QTextBlock b)'''
+    def glyphRuns(self):
+        '''list-of-QGlyphRun QTextLayout.glyphRuns()'''
+        return [QGlyphRun()]
+    def rightCursorPosition(self, oldPos):
+        '''int QTextLayout.rightCursorPosition(int oldPos)'''
+        return int()
+    def leftCursorPosition(self, oldPos):
+        '''int QTextLayout.leftCursorPosition(int oldPos)'''
+        return int()
+    def cursorMoveStyle(self):
+        '''Qt.CursorMoveStyle QTextLayout.cursorMoveStyle()'''
+        return Qt.CursorMoveStyle()
+    def setCursorMoveStyle(self, style):
+        '''void QTextLayout.setCursorMoveStyle(Qt.CursorMoveStyle style)'''
     def clearLayout(self):
         '''void QTextLayout.clearLayout()'''
     def maximumWidth(self):
@@ -26338,6 +26798,9 @@ class QTextFragment():
     def __ge__(self, o):
         '''bool QTextFragment.__ge__(QTextFragment o)'''
         return bool()
+    def glyphRuns(self):
+        '''list-of-QGlyphRun QTextFragment.glyphRuns()'''
+        return [QGlyphRun()]
     def text(self):
         '''QString QTextFragment.text()'''
         return QString()
@@ -26640,14 +27103,14 @@ class QToolBar(QWidget):
         '''void QToolBar.actionEvent(QActionEvent event)'''
     def initStyleOption(self, option):
         '''void QToolBar.initStyleOption(QStyleOptionToolBar option)'''
-    visibilityChanged = PyQt4.QtCore.pyqtSignal() # void visibilityChanged(bool) - signal
-    topLevelChanged = PyQt4.QtCore.pyqtSignal() # void topLevelChanged(bool) - signal
-    toolButtonStyleChanged = PyQt4.QtCore.pyqtSignal() # void toolButtonStyleChanged(Qt::ToolButtonStyle) - signal
-    iconSizeChanged = PyQt4.QtCore.pyqtSignal() # void iconSizeChanged(const QSize&) - signal
-    orientationChanged = PyQt4.QtCore.pyqtSignal() # void orientationChanged(Qt::Orientation) - signal
-    allowedAreasChanged = PyQt4.QtCore.pyqtSignal() # void allowedAreasChanged(Qt::ToolBarAreas) - signal
-    movableChanged = PyQt4.QtCore.pyqtSignal() # void movableChanged(bool) - signal
-    actionTriggered = PyQt4.QtCore.pyqtSignal() # void actionTriggered(QAction *) - signal
+    visibilityChanged = pyqtSignal() # void visibilityChanged(bool) - signal
+    topLevelChanged = pyqtSignal() # void topLevelChanged(bool) - signal
+    toolButtonStyleChanged = pyqtSignal() # void toolButtonStyleChanged(Qt::ToolButtonStyle) - signal
+    iconSizeChanged = pyqtSignal() # void iconSizeChanged(const QSize&) - signal
+    orientationChanged = pyqtSignal() # void orientationChanged(Qt::Orientation) - signal
+    allowedAreasChanged = pyqtSignal() # void allowedAreasChanged(Qt::ToolBarAreas) - signal
+    movableChanged = pyqtSignal() # void movableChanged(bool) - signal
+    actionTriggered = pyqtSignal() # void actionTriggered(QAction *) - signal
     def setToolButtonStyle(self, toolButtonStyle):
         '''void QToolBar.setToolButtonStyle(Qt.ToolButtonStyle toolButtonStyle)'''
     def setIconSize(self, iconSize):
@@ -26743,7 +27206,7 @@ class QToolBox(QFrame):
         '''void QToolBox.itemRemoved(int index)'''
     def itemInserted(self, index):
         '''void QToolBox.itemInserted(int index)'''
-    currentChanged = PyQt4.QtCore.pyqtSignal() # void currentChanged(int) - signal
+    currentChanged = pyqtSignal() # void currentChanged(int) - signal
     def setCurrentWidget(self, widget):
         '''void QToolBox.setCurrentWidget(QWidget widget)'''
     def setCurrentIndex(self, index):
@@ -26845,7 +27308,7 @@ class QToolButton(QAbstractButton):
         return bool()
     def initStyleOption(self, option):
         '''void QToolButton.initStyleOption(QStyleOptionToolButton option)'''
-    triggered = PyQt4.QtCore.pyqtSignal() # void triggered(QAction *) - signal
+    triggered = pyqtSignal() # void triggered(QAction *) - signal
     def setDefaultAction(self):
         '''QAction QToolButton.setDefaultAction()'''
         return QAction()
@@ -27268,8 +27731,8 @@ class QTreeView(QAbstractItemView):
         '''void QTreeView.hideColumn(int column)'''
     def dataChanged(self, topLeft, bottomRight):
         '''void QTreeView.dataChanged(QModelIndex topLeft, QModelIndex bottomRight)'''
-    collapsed = PyQt4.QtCore.pyqtSignal() # void collapsed(const QModelIndex&) - signal
-    expanded = PyQt4.QtCore.pyqtSignal() # void expanded(const QModelIndex&) - signal
+    collapsed = pyqtSignal() # void collapsed(const QModelIndex&) - signal
+    expanded = pyqtSignal() # void expanded(const QModelIndex&) - signal
     def reset(self):
         '''void QTreeView.reset()'''
     def doItemsLayout(self):
@@ -27587,16 +28050,16 @@ class QTreeWidget(QTreeView):
     def mimeTypes(self):
         '''QStringList QTreeWidget.mimeTypes()'''
         return QStringList()
-    itemSelectionChanged = PyQt4.QtCore.pyqtSignal() # void itemSelectionChanged() - signal
-    currentItemChanged = PyQt4.QtCore.pyqtSignal() # void currentItemChanged(QTreeWidgetItem *,QTreeWidgetItem *) - signal
-    itemCollapsed = PyQt4.QtCore.pyqtSignal() # void itemCollapsed(QTreeWidgetItem *) - signal
-    itemExpanded = PyQt4.QtCore.pyqtSignal() # void itemExpanded(QTreeWidgetItem *) - signal
-    itemChanged = PyQt4.QtCore.pyqtSignal() # void itemChanged(QTreeWidgetItem *,int) - signal
-    itemEntered = PyQt4.QtCore.pyqtSignal() # void itemEntered(QTreeWidgetItem *,int) - signal
-    itemActivated = PyQt4.QtCore.pyqtSignal() # void itemActivated(QTreeWidgetItem *,int) - signal
-    itemDoubleClicked = PyQt4.QtCore.pyqtSignal() # void itemDoubleClicked(QTreeWidgetItem *,int) - signal
-    itemClicked = PyQt4.QtCore.pyqtSignal() # void itemClicked(QTreeWidgetItem *,int) - signal
-    itemPressed = PyQt4.QtCore.pyqtSignal() # void itemPressed(QTreeWidgetItem *,int) - signal
+    itemSelectionChanged = pyqtSignal() # void itemSelectionChanged() - signal
+    currentItemChanged = pyqtSignal() # void currentItemChanged(QTreeWidgetItem *,QTreeWidgetItem *) - signal
+    itemCollapsed = pyqtSignal() # void itemCollapsed(QTreeWidgetItem *) - signal
+    itemExpanded = pyqtSignal() # void itemExpanded(QTreeWidgetItem *) - signal
+    itemChanged = pyqtSignal() # void itemChanged(QTreeWidgetItem *,int) - signal
+    itemEntered = pyqtSignal() # void itemEntered(QTreeWidgetItem *,int) - signal
+    itemActivated = pyqtSignal() # void itemActivated(QTreeWidgetItem *,int) - signal
+    itemDoubleClicked = pyqtSignal() # void itemDoubleClicked(QTreeWidgetItem *,int) - signal
+    itemClicked = pyqtSignal() # void itemClicked(QTreeWidgetItem *,int) - signal
+    itemPressed = pyqtSignal() # void itemPressed(QTreeWidgetItem *,int) - signal
     def clear(self):
         '''void QTreeWidget.clear()'''
     def collapseItem(self, item):
@@ -27796,13 +28259,13 @@ class QUndoGroup(QObject):
     """"""
     def __init__(self, parent = None):
         '''void QUndoGroup.__init__(QObject parent = None)'''
-    undoTextChanged = PyQt4.QtCore.pyqtSignal() # void undoTextChanged(const QString&) - signal
-    redoTextChanged = PyQt4.QtCore.pyqtSignal() # void redoTextChanged(const QString&) - signal
-    indexChanged = PyQt4.QtCore.pyqtSignal() # void indexChanged(int) - signal
-    cleanChanged = PyQt4.QtCore.pyqtSignal() # void cleanChanged(bool) - signal
-    canUndoChanged = PyQt4.QtCore.pyqtSignal() # void canUndoChanged(bool) - signal
-    canRedoChanged = PyQt4.QtCore.pyqtSignal() # void canRedoChanged(bool) - signal
-    activeStackChanged = PyQt4.QtCore.pyqtSignal() # void activeStackChanged(QUndoStack *) - signal
+    undoTextChanged = pyqtSignal() # void undoTextChanged(const QString&) - signal
+    redoTextChanged = pyqtSignal() # void redoTextChanged(const QString&) - signal
+    indexChanged = pyqtSignal() # void indexChanged(int) - signal
+    cleanChanged = pyqtSignal() # void cleanChanged(bool) - signal
+    canUndoChanged = pyqtSignal() # void canUndoChanged(bool) - signal
+    canRedoChanged = pyqtSignal() # void canRedoChanged(bool) - signal
+    activeStackChanged = pyqtSignal() # void activeStackChanged(QUndoStack *) - signal
     def undo(self):
         '''void QUndoGroup.undo()'''
     def setActiveStack(self, stack):
@@ -27848,6 +28311,9 @@ class QUndoCommand():
         '''void QUndoCommand.__init__(QUndoCommand parent = None)'''
     def __init__(self, text, parent = None):
         '''void QUndoCommand.__init__(QString text, QUndoCommand parent = None)'''
+    def actionText(self):
+        '''QString QUndoCommand.actionText()'''
+        return QString()
     def child(self, index):
         '''QUndoCommand QUndoCommand.child(int index)'''
         return QUndoCommand()
@@ -27883,12 +28349,12 @@ class QUndoStack(QObject):
         return int()
     def setUndoLimit(self, limit):
         '''void QUndoStack.setUndoLimit(int limit)'''
-    undoTextChanged = PyQt4.QtCore.pyqtSignal() # void undoTextChanged(const QString&) - signal
-    redoTextChanged = PyQt4.QtCore.pyqtSignal() # void redoTextChanged(const QString&) - signal
-    indexChanged = PyQt4.QtCore.pyqtSignal() # void indexChanged(int) - signal
-    cleanChanged = PyQt4.QtCore.pyqtSignal() # void cleanChanged(bool) - signal
-    canUndoChanged = PyQt4.QtCore.pyqtSignal() # void canUndoChanged(bool) - signal
-    canRedoChanged = PyQt4.QtCore.pyqtSignal() # void canRedoChanged(bool) - signal
+    undoTextChanged = pyqtSignal() # void undoTextChanged(const QString&) - signal
+    redoTextChanged = pyqtSignal() # void redoTextChanged(const QString&) - signal
+    indexChanged = pyqtSignal() # void indexChanged(int) - signal
+    cleanChanged = pyqtSignal() # void cleanChanged(bool) - signal
+    canUndoChanged = pyqtSignal() # void canUndoChanged(bool) - signal
+    canRedoChanged = pyqtSignal() # void canRedoChanged(bool) - signal
     def undo(self):
         '''void QUndoStack.undo()'''
     def setIndex(self, idx):
@@ -28009,8 +28475,8 @@ class QIntValidator(QValidator):
     """"""
     def __init__(self, parent = None):
         '''void QIntValidator.__init__(QObject parent = None)'''
-    def __init__(self, bottom, top, parent):
-        '''void QIntValidator.__init__(int bottom, int top, QObject parent)'''
+    def __init__(self, bottom, top, parent = None):
+        '''void QIntValidator.__init__(int bottom, int top, QObject parent = None)'''
     def top(self):
         '''int QIntValidator.top()'''
         return int()
@@ -28045,8 +28511,8 @@ class QDoubleValidator(QValidator):
 
     def __init__(self, parent = None):
         '''void QDoubleValidator.__init__(QObject parent = None)'''
-    def __init__(self, bottom, top, decimals, parent):
-        '''void QDoubleValidator.__init__(float bottom, float top, int decimals, QObject parent)'''
+    def __init__(self, bottom, top, decimals, parent = None):
+        '''void QDoubleValidator.__init__(float bottom, float top, int decimals, QObject parent = None)'''
     def notation(self):
         '''QDoubleValidator.Notation QDoubleValidator.notation()'''
         return QDoubleValidator.Notation()
@@ -28085,8 +28551,8 @@ class QRegExpValidator(QValidator):
     """"""
     def __init__(self, parent = None):
         '''void QRegExpValidator.__init__(QObject parent = None)'''
-    def __init__(self, rx, parent):
-        '''void QRegExpValidator.__init__(QRegExp rx, QObject parent)'''
+    def __init__(self, rx, parent = None):
+        '''void QRegExpValidator.__init__(QRegExp rx, QObject parent = None)'''
     def regExp(self):
         '''QRegExp QRegExpValidator.regExp()'''
         return QRegExp()
@@ -28557,8 +29023,8 @@ class QWizard(QDialog):
 
     def __init__(self, parent = None, flags = 0):
         '''void QWizard.__init__(QWidget parent = None, Qt.WindowFlags flags = 0)'''
-    pageRemoved = PyQt4.QtCore.pyqtSignal() # void pageRemoved(int) - signal
-    pageAdded = PyQt4.QtCore.pyqtSignal() # void pageAdded(int) - signal
+    pageRemoved = pyqtSignal() # void pageRemoved(int) - signal
+    pageAdded = pyqtSignal() # void pageAdded(int) - signal
     def sideWidget(self):
         '''QWidget QWizard.sideWidget()'''
         return QWidget()
@@ -28588,9 +29054,9 @@ class QWizard(QDialog):
         '''void QWizard.next()'''
     def back(self):
         '''void QWizard.back()'''
-    customButtonClicked = PyQt4.QtCore.pyqtSignal() # void customButtonClicked(int) - signal
-    helpRequested = PyQt4.QtCore.pyqtSignal() # void helpRequested() - signal
-    currentIdChanged = PyQt4.QtCore.pyqtSignal() # void currentIdChanged(int) - signal
+    customButtonClicked = pyqtSignal() # void customButtonClicked(int) - signal
+    helpRequested = pyqtSignal() # void helpRequested() - signal
+    currentIdChanged = pyqtSignal() # void currentIdChanged(int) - signal
     def sizeHint(self):
         '''QSize QWizard.sizeHint()'''
         return QSize()
@@ -28743,7 +29209,7 @@ class QWizardPage(QWidget):
         return QVariant()
     def setField(self, name, value):
         '''void QWizardPage.setField(QString name, QVariant value)'''
-    completeChanged = PyQt4.QtCore.pyqtSignal() # void completeChanged() - signal
+    completeChanged = pyqtSignal() # void completeChanged() - signal
     def nextId(self):
         '''int QWizardPage.nextId()'''
         return int()
@@ -28836,7 +29302,7 @@ class QWorkspace(QWidget):
         '''void QWorkspace.cascade()'''
     def setActiveWindow(self, w):
         '''void QWorkspace.setActiveWindow(QWidget w)'''
-    windowActivated = PyQt4.QtCore.pyqtSignal() # void windowActivated(QWidget *) - signal
+    windowActivated = pyqtSignal() # void windowActivated(QWidget *) - signal
     def background(self):
         '''QBrush QWorkspace.background()'''
         return QBrush()
@@ -28879,12 +29345,12 @@ class QX11EmbedWidget(QWidget):
     def eventFilter(self):
         '''QEvent QX11EmbedWidget.eventFilter()'''
         return QEvent()
-    embedded = PyQt4.QtCore.pyqtSignal() # void embedded() - signal
-    containerClosed = PyQt4.QtCore.pyqtSignal() # void containerClosed() - signal
+    embedded = pyqtSignal() # void embedded() - signal
+    containerClosed = pyqtSignal() # void containerClosed() - signal
     def error(self):
         '''QX11EmbedWidget.Error QX11EmbedWidget.error()'''
         return QX11EmbedWidget.Error()
-    error = PyQt4.QtCore.pyqtSignal() # void error(QX11EmbedWidget::Error) - signal
+    error = pyqtSignal() # void error(QX11EmbedWidget::Error) - signal
     def containerWinId(self):
         '''int QX11EmbedWidget.containerWinId()'''
         return int()
@@ -28918,15 +29384,15 @@ class QX11EmbedContainer(QWidget):
     def eventFilter(self):
         '''QEvent QX11EmbedContainer.eventFilter()'''
         return QEvent()
-    clientIsEmbedded = PyQt4.QtCore.pyqtSignal() # void clientIsEmbedded() - signal
-    clientClosed = PyQt4.QtCore.pyqtSignal() # void clientClosed() - signal
+    clientIsEmbedded = pyqtSignal() # void clientIsEmbedded() - signal
+    clientClosed = pyqtSignal() # void clientClosed() - signal
     def minimumSizeHint(self):
         '''QSize QX11EmbedContainer.minimumSizeHint()'''
         return QSize()
     def error(self):
         '''QX11EmbedContainer.Error QX11EmbedContainer.error()'''
         return QX11EmbedContainer.Error()
-    error = PyQt4.QtCore.pyqtSignal() # void error(QX11EmbedContainer::Error) - signal
+    error = pyqtSignal() # void error(QX11EmbedContainer::Error) - signal
     def embedClient(self, id):
         '''void QX11EmbedContainer.embedClient(int id)'''
     def discardClient(self):

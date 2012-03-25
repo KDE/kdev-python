@@ -126,7 +126,7 @@ def parseClass(classNode):
             elif node.nodeName == 'Class':
                 text += indentCode(parseClass(node), 1) + '\n'
             elif node.nodeName == 'Signal':
-                text += '    %s = PyQt4.QtCore.pyqtSignal() # %s - signal\n' % (getNodeNames(node)[0], node.attributes['sig'].value)
+                text += '    %s = pyqtSignal() # %s - signal\n' % (getNodeNames(node)[0], node.attributes['sig'].value)
             else:
                 print 'Unhandled sub-node type in class %s: %s' % (classFullName, node.nodeName)
     return text
@@ -147,7 +147,7 @@ def convertXmlToPy(inFilePath):
     stats = {}
 
     with open(outFilePath, 'w') as file:
-        file.write('import QtCore.pyqtSignal\n')
+        file.write('class pyqtSignal():\n def connect(self, targetSignal): pass\n def emit(self, *args): pass\n')
         file.write('from QtCore import *\n\n')
         for node in module.childNodes:
             if node.nodeType != node.ELEMENT_NODE:

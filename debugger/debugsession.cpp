@@ -275,11 +275,11 @@ void DebugSession::addCommand(PdbCommand* cmd)
         return;
     }
     kDebug() << " +++  adding command to queue:" << cmd;
+    m_commandQueue.append(cmd);
     if ( cmd->type() == PdbCommand::UserType ) {
         // this is queued and will run after the command is executed.
         updateLocation();
     }
-    m_commandQueue.append(cmd);
     emit commandAdded();
 }
 

@@ -26,10 +26,17 @@ namespace Python {
 
 class Variable : public KDevelop::Variable
 {
+Q_OBJECT
 public:
     Variable(KDevelop::TreeModel* model, TreeItem* parent, const QString& expression, const QString& display = "");
     virtual void attachMaybe(QObject* callback = 0, const char* callbackMethod = 0);
     virtual void fetchMoreChildren();
+    
+    QObject* m_notifyCreated;
+    const char* m_notifyCreatedMethod;
+public slots:
+    void dataFetched(QByteArray rawData);
+    void moreChildrenFetched(QByteArray rawData);
 };
 
 }

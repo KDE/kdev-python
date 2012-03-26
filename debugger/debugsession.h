@@ -43,11 +43,13 @@ protected:
 public:
     DebugSession(QStringList program);
     DebugSession();
+    virtual ~DebugSession();
     void start();
     
     void addCommand(PdbCommand* cmd);
     void addSimpleUserCommand(const QString& cmd);
     void addSimpleInternalCommand(const QString& cmd);
+    void runImmediately(const QString& cmd);
     void addBreakpoint(Breakpoint* bp);
     void removeBreakpoint(Breakpoint* bp);
     QByteArray getFrameList();
@@ -101,11 +103,11 @@ private:
 public: // TODO for debugging
     QList<PdbCommand*> m_commandQueue;
 private:
-    QObject* m_nextNotifyObject;
+    QWeakPointer<QObject> m_nextNotifyObject;
     const char* m_nextNotifyMethod;
     bool m_processBusy;
     
-    void setNotifyNext(QObject* object, const char* method);
+    void setNotifyNext(QWeakPointer<QObject> object, const char* method);
     void notifyNext();
     void processNextCommand();
     void clearOutputBuffer();
@@ -130,7 +132,7 @@ public:
     void setOutput(QByteArray output) {
         m_output = output;
     };
-    QObject* notifyObject() {
+    QWeakPointer<QObject> notifyObject() {
         return m_notifyObject;
     };
     const char* notifyMethod() {
@@ -149,7 +151,7 @@ public:
 
 protected:
     Type m_type;
-    QObject* m_notifyObject;
+    QWeakPointer<QObject> m_notifyObject;
     const char* m_notifyMethod;
     QByteArray m_output;
 };
@@ -162,7 +164,7 @@ public:
         m_type = InvalidType;
     };
     void run(DebugSession* session) {
-        Q_ASSERT(m_command.endsWith('\n'));
+        Q_ASSERT(m_command.endsWith('\n') && "command must end with a newline");
         kDebug() << "running command:" << m_command.toAscii() << m_notifyMethod;
         session->write(m_command.toAscii());
     }

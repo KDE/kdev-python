@@ -20,6 +20,8 @@
 #include <QTimer>
 #include <QApplication>
 #include <KDebug>
+#include <KStandardDirs>
+#include <signal.h>
 
 #include <debugger/framestack/framestackmodel.h>
 #include <interfaces/icore.h>
@@ -43,8 +45,7 @@ KDevelop::IFrameStackModel* DebugSession::createFrameStackModel()
 }
 
 DebugSession::DebugSession() :
-      m_nextNotifyObject(0)
-    , m_nextNotifyMethod(0)
+    m_nextNotifyMethod(0)
 {
     m_variableController = new Python::VariableController(this);
     m_breakpointController = new Python::BreakpointController(this);
@@ -52,7 +53,6 @@ DebugSession::DebugSession() :
 
 DebugSession::DebugSession(QStringList program) :
     IDebugSession()
-    , m_nextNotifyObject(0)
     , m_nextNotifyMethod(0)
 {
     kDebug() << "creating debug session";
@@ -80,8 +80,13 @@ void DebugSession::start()
     connect(this, SIGNAL(commandAdded()), SLOT(checkCommandQueue()));
     m_debuggerProcess->start();
     m_debuggerProcess->waitForStarted();
-    m_debuggerProcess->blockSignals(false);
+    InternalPdbCommand* path = new InternalPdbCommand(0, 0,
+        "import sys; sys.path.append('"+KStandardDirs::locate("data", "kdevpythonsupport/__kdevpython_debugger_utils/")+"')\n");
+    InternalPdbCommand* cmd = new InternalPdbCommand(0, 0, "import utils\n");
+    addCommand(path);
+    addCommand(cmd);
     updateLocation();
+    m_debuggerProcess->blockSignals(false);
 }
 
 void DebugSession::dataAvailable()
@@ -110,24 +115,26 @@ void DebugSession::dataAvailable()
     }
 }
 
-void DebugSession::setNotifyNext(QObject* object, const char* method)
+void DebugSession::setNotifyNext(QWeakPointer<QObject> object, const char* method)
 {
+    kDebug() << "set notify next:" << object << method;
     m_nextNotifyObject = object;
     m_nextNotifyMethod = method;
 }
 
 void DebugSession::notifyNext()
 {
+    QSharedPointer<QObject> lock = m_nextNotifyObject.toStrongRef();
+    kDebug() << "notify next:" << m_nextNotifyObject << m_nextNotifyObject.data() << this;
     if ( m_nextNotifyMethod and m_nextNotifyObject ) {
-        kDebug() << "Calling:" << m_nextNotifyMethod << m_nextNotifyObject;
-        QMetaObject::invokeMethod(m_nextNotifyObject, m_nextNotifyMethod, Qt::DirectConnection, Q_ARG(QByteArray, m_buffer));
+        QMetaObject::invokeMethod(m_nextNotifyObject.data(), m_nextNotifyMethod, Qt::DirectConnection, Q_ARG(QByteArray, m_buffer));
     }
     else {
-        kWarning() << "notify called, but nothing to notify!";
+        kDebug() << "notify called, but nothing to notify!";
     }
     m_buffer.clear();
     m_nextNotifyMethod = 0;
-    m_nextNotifyObject = 0;
+    m_nextNotifyObject.clear();
 }
 
 void DebugSession::processNextCommand()
@@ -254,6 +261,7 @@ void DebugSession::runToCursor()
             InternalPdbCommand* temporaryBreakpointCmd = new InternalPdbCommand(0, 0, "tbreak " + temporaryBreakpointLocation + "\n");
             addCommand(temporaryBreakpointCmd);
             addSimpleInternalCommand("continue");
+            updateLocation();
         }
     }
 }
@@ -307,18 +315,35 @@ void DebugSession::addSimpleInternalCommand(const QString& cmd)
     addCommand(cmdObject);
 }
 
+void DebugSession::runImmediately(const QString& cmd)
+{
+    Q_ASSERT(cmd.endsWith('\n'));
+    if ( state() == ActiveState ) {
+        m_nextNotifyMethod = 0;
+        m_nextNotifyObject.clear(); // TODO is this correct?
+        kDebug() << "interrupting debugger";
+        kill(m_debuggerProcess->pid(), SIGINT);
+        write(cmd.toAscii());
+        write("continue\n");
+        updateLocation();
+    }
+    else {
+        addCommand(new InternalPdbCommand(0, 0, cmd));
+    }
+}
+
 void DebugSession::addBreakpoint(Breakpoint* bp)
 {
     QString location = bp->url().path() + ":" + QString::number(bp->line() + 1);
     kDebug() << "adding breakpoint" << location;
-    addSimpleInternalCommand("break " + location);
+    runImmediately("break " + location + "\n");
 }
 
 void DebugSession::removeBreakpoint(Breakpoint* bp)
 {
     QString location = bp->url().path() + ":" + QString::number(bp->line() + 1);
     kDebug() << "deleting breakpoint" << location;
-    addSimpleInternalCommand("clear " + location);
+    runImmediately("clear " + location + "\n");
 }
 
 void DebugSession::createVariable(Python::Variable* variable, QObject* callback, const char* callbackMethod)
@@ -361,7 +386,7 @@ void DebugSession::locationUpdateReady(QByteArray data) {
 void DebugSession::stopDebugger()
 {
     m_commandQueue.clear();
-    InternalPdbCommand* cmd = new InternalPdbCommand(0, 0, "quit\n");
+    InternalPdbCommand* cmd = new InternalPdbCommand(0, 0, "quit\nquit\n");
     addCommand(cmd);
     setState(StoppingState);
     if ( ! m_debuggerProcess->waitForFinished(200) ) {
@@ -369,9 +394,14 @@ void DebugSession::stopDebugger()
     }
     m_commandQueue.clear();
     m_nextNotifyMethod = 0;
-    m_nextNotifyObject = 0;
+    m_nextNotifyObject.clear();
     kDebug() << "killed debugger";
     setState(IDebugSession::EndedState);
+}
+
+DebugSession::~DebugSession()
+{
+    m_debuggerProcess->kill();
 }
 
 void DebugSession::restartDebugger()

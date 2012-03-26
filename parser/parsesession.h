@@ -31,7 +31,7 @@
 #include <language/editor/documentrange.h>
 #include "ast.h"
 #include "kurl.h"
-#include <kdevelop-pg-qt/kdev-pg-memory-pool.h>
+#include <kdev-pg-memory-pool.h>
 
 #include <language/interfaces/iproblem.h>
 #include <language/editor/rangeinrevision.h>

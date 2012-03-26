@@ -26,12 +26,12 @@
 #define PYTHON_PARSEJOB_H
 
 #include "ast.h"
-#include "kdevelop-pg-qt/kdev-pg-memory-pool.h"
 
 #include <QStringList>
 
 #include <ksharedptr.h>
 #include <ktexteditor/range.h>
+#include <kdev-pg-memory-pool.h>
 
 #include <language/backgroundparser/parsejob.h>
 #include <language/duchain/duchainpointer.h>

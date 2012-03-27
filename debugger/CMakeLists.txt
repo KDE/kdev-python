@@ -36,3 +36,6 @@ target_link_libraries(kdevpdb sublime
 install(TARGETS kdevpdb DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES kdevpdb.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+
+install(FILES __kdevpython_debugger_utils.py DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport/debugger)
+install(FILES kdevpdb.py DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport/debugger)

@@ -1,4 +1,7 @@
 # This file is imported from within the debugger
+
+from kdevpdb import kdevOutputFormatter
+
 def debug_trace(*args):
     '''Set a tracepoint in the Python debugger that works with Qt'''
     try:
@@ -9,9 +12,9 @@ def debug_trace(*args):
     from pdb import set_trace
     set_trace()
     
-def format_locals(locals):
+def format_locals(locals_):
     '''Print local variables in a machine-readable format'''
-    for key, value in locals.iteritems():
+    for key, value in locals_.iteritems():
         if key == '__kdevpython_debugger_utils':
             continue
         value = str(value).replace('\n', r'\n')

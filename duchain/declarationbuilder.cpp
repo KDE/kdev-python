@@ -365,7 +365,7 @@ void DeclarationBuilder::visitFor(ForAst* node)
     }
     else if ( node->target->astType == Ast::TupleAstType ) {
         short atElement = 0;
-        foreach ( ExpressionAst* tupleMember, dynamic_cast<TupleAst*>(node->target)->elements ) {
+        foreach ( ExpressionAst* tupleMember, static_cast<TupleAst*>(node->target)->elements ) {
             if ( tupleMember->astType == Ast::NameAstType ) {
                 AbstractType::Ptr newType;
                 if ( atElement == 0 && type && type->keyType() ) {

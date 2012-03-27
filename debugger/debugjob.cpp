@@ -17,11 +17,13 @@
 */
 
 #include <KDebug>
+#include <KStandardDirs>
 
 #include <interfaces/idebugcontroller.h>
 #include <interfaces/icore.h>
 
 #include "debugjob.h"
+#include <util/processlinemaker.h>
 
 namespace Python {
 
@@ -29,12 +31,43 @@ namespace Python {
 void DebugJob::start()
 {
     QStringList program;
-    program << m_interpreter << "-u" << "-m" << "pdb" << m_scriptUrl.path(KUrl::RemoveTrailingSlash) << m_args;
+    QString debuggerUrl = KStandardDirs::locate("data", "kdevpythonsupport/debugger/") + "/kdevpdb.py";
+    program << m_interpreter << "-u" << debuggerUrl << m_scriptUrl.path(KUrl::RemoveTrailingSlash) << m_args;
     m_session = new DebugSession(program);
-    connect(m_session, SIGNAL(finished()), SLOT(done()) );
+    
+    setStandardToolView(KDevelop::IOutputView::DebugView);
+    setBehaviours(KDevelop::IOutputView::Behaviours(KDevelop::IOutputView::AllowUserClose) | KDevelop::IOutputView::AutoScroll);
+    setModel(new KDevelop::OutputModel(), KDevelop::IOutputView::TakeOwnership);
+    setTitle(m_interpreter + m_scriptUrl.path());
+    
+    startOutput();
+    
+    kDebug() << "connecting standardOutputReceived";
+    connect(m_session, SIGNAL(realDataReceived(QStringList)), this, SLOT(standardOutputReceived(QStringList)));
+    connect(m_session, SIGNAL(stderrReceived(QStringList)), this, SLOT(standardErrorReceived(QStringList)));
     KDevelop::ICore::self()->debugController()->addSession(m_session);
     m_session->start();
     kDebug() << "starting program:" << program;
+}
+
+void DebugJob::standardErrorReceived(QStringList lines)
+{
+    if ( OutputModel* m = outputModel() ) {
+        m->appendLines(lines);
+    }
+}
+
+void DebugJob::standardOutputReceived(QStringList lines)
+{
+    kDebug() << "standard output received:" << lines << outputModel();
+    if ( OutputModel* m = outputModel() ) {
+        m->appendLines(lines);
+    }
+}
+
+OutputModel* DebugJob::outputModel()
+{
+    return dynamic_cast<OutputModel*>(model());
 }
 
 bool DebugJob::doKill()

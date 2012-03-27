@@ -66,7 +66,6 @@ install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES kdevpythonsupport.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
-install(FILES debugger/__kdevpython_debugger_utils.py DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport/debugger)
 install(DIRECTORY documentation_files DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)
 install(DIRECTORY python-src/Lib/encodings DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport/encodings)
 

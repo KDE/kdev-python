@@ -191,12 +191,16 @@ public slots:
      * This is used by updateLocation().
      **/
     void locationUpdateReady(QByteArray data);
+    void debuggerQuit(int);
 
 signals:
     /// Emitted when the debugger becomes ready to process a new command, i.e. shows its prompt
     void debuggerReady();
     /// Emitted when a new command is added to the queue
     void commandAdded();
+    /// Emitted when real data from the program is received (needs improvement)
+    void realDataReceived(QStringList);
+    void stderrReceived(QStringList);
 
 private:
     KProcess* m_debuggerProcess;
@@ -232,6 +236,10 @@ private:
      * @brief Clear the data accumulated in m_buffer.
      **/
     void clearOutputBuffer();
+    
+    /// stores whether the data currently received comes from the debugger
+    /// or the debuggee.
+    bool m_inDebuggerData;
 };
 
 /**

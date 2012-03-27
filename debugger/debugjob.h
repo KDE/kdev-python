@@ -21,6 +21,7 @@
 #define PDBDEBUGJOB_H
 
 #include <outputview/outputjob.h>
+#include <outputview/outputmodel.h>
 #include "debugsession.h"
 #include <KUrl>
 
@@ -28,7 +29,7 @@ namespace Python {
 
 class DebugJob : public KDevelop::OutputJob
 {
-
+Q_OBJECT
 public:
     DebugJob();
     virtual ~DebugJob();
@@ -45,7 +46,12 @@ public:
     QString m_interpreter;
     QStringList m_args;
 
+private slots:
+    void standardOutputReceived(QStringList lines);
+    void standardErrorReceived(QStringList lines);
+
 private:
+    OutputModel* outputModel();
     DebugSession* m_session;
 };
 

@@ -35,7 +35,9 @@
 
 using namespace KDevelop;
 
-static QByteArray debuggerPrompt = "(Pdb) ";
+static QByteArray debuggerPrompt = "__KDEVPYTHON_DEBUGGER_PROMPT";
+static QByteArray debuggerOutputBegin = "__KDEVPYTHON_BEGIN_DEBUGGER_OUTPUT>>>";
+static QByteArray debuggerOutputEnd = "<<<__KDEVPYTHON_END___DEBUGGER_OUTPUT";
 
 namespace Python {
 
@@ -45,7 +47,8 @@ KDevelop::IFrameStackModel* DebugSession::createFrameStackModel()
 }
 
 DebugSession::DebugSession() :
-    m_nextNotifyMethod(0)
+      m_nextNotifyMethod(0)
+    , m_inDebuggerData(false)
 {
     m_variableController = new Python::VariableController(this);
     m_breakpointController = new Python::BreakpointController(this);
@@ -54,6 +57,7 @@ DebugSession::DebugSession() :
 DebugSession::DebugSession(QStringList program) :
     IDebugSession()
     , m_nextNotifyMethod(0)
+    , m_inDebuggerData(false)
 {
     kDebug() << "creating debug session";
     m_variableController = new Python::VariableController(this);
@@ -76,6 +80,7 @@ void DebugSession::start()
     m_debuggerProcess->setOutputChannelMode(KProcess::SeparateChannels);
     m_debuggerProcess->blockSignals(true);
     connect(m_debuggerProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(dataAvailable()));
+    connect(m_debuggerProcess, SIGNAL(finished(int)), this, SLOT(debuggerQuit(int)));
     connect(this, SIGNAL(debuggerReady()), SLOT(checkCommandQueue()));
     connect(this, SIGNAL(commandAdded()), SLOT(checkCommandQueue()));
     m_debuggerProcess->start();
@@ -89,16 +94,82 @@ void DebugSession::start()
     m_debuggerProcess->blockSignals(false);
 }
 
+void DebugSession::debuggerQuit(int )
+{
+    setState(EndedState);
+}
+
+QStringList byteArrayToStringList(const QByteArray& r) {
+    QStringList items;
+    foreach ( const QByteArray& item, r.split('\n') ) {
+        items << item.data();
+    }
+    if ( r.endsWith('\n') ) {
+        items.pop_back();
+    }
+    return items;
+}
+
 void DebugSession::dataAvailable()
 {
     kDebug() << "data available";
     QByteArray data = m_debuggerProcess->readAllStandardOutput();
     kDebug() << "data arrived:" << data;
-    m_buffer.append(data);
+    
+    // remove pointless state changes
+    data.replace(debuggerOutputBegin+debuggerOutputEnd, "");
+    data.replace(debuggerOutputEnd+debuggerOutputBegin, "");
+    kDebug() << "data arrived (replaced):" << data;
+    
+    bool endsWithPrompt = false;
+    if ( data.endsWith(debuggerPrompt) ) {
+        endsWithPrompt = true;
+        // remove the prompt
+        data = data.mid(0, data.length() - debuggerPrompt.length());
+    }
+    
+    // scan the data, and seperate program output from debugger output
+    int len = data.length();
+    int delimiterSkip = debuggerOutputEnd.length();
+    int i = 0;
+    QByteArray realData;
+    while ( i < len ) {
+        int nextChangeAt = data.indexOf(m_inDebuggerData ? debuggerOutputEnd : debuggerOutputBegin, i);
+        bool atLastChange = nextChangeAt == -1;
+        nextChangeAt = atLastChange ? len : qMin(nextChangeAt, len);
+        
+        if ( m_inDebuggerData ) {
+            if ( i == 0 ) {
+                i = delimiterSkip;
+            }
+            m_buffer.append(data.mid(i, nextChangeAt - i));
+            kDebug() << i << nextChangeAt - i;
+            kDebug() << m_buffer;
+        }
+        else {
+            QByteArray d = data.mid(i, nextChangeAt - i);
+            if ( d.length() > 0 ) {
+                kDebug() << "real data:" << realData << d << d.length();
+                realData.append(d);
+            }
+        }
+        
+        i = nextChangeAt + delimiterSkip;
+        m_inDebuggerData = !m_inDebuggerData;
+        
+        if ( atLastChange ) {
+            break;
+        }
+    }
+    
+    if ( ! realData.isEmpty() ) {
+        emit realDataReceived(byteArrayToStringList(realData));
+    }
+    
     // Although unbuffered, it seems guaranteed that the debugger prompt is written at once.
     // I don't think a python statement like print "FooBar" will ever break the output into two parts.
     // TODO find explicit documentation for this somewhere.
-    if ( data.endsWith(debuggerPrompt) ) {
+    if ( endsWithPrompt ) {
         if ( state() == StartingState ) {
             setState(PausedState);
             raiseEvent(connected_to_program);
@@ -112,6 +183,11 @@ void DebugSession::dataAvailable()
         }
         m_processBusy = false;
         emit debuggerReady();
+    }
+    
+    data = m_debuggerProcess->readAllStandardError();
+    if ( ! data.isEmpty() ) {
+        emit stderrReceived(byteArrayToStringList(data));
     }
 }
 

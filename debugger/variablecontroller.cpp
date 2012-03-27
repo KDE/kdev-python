@@ -167,11 +167,17 @@ void VariableController::update()
 {
     kDebug() << "update requested";
     DebugSession* d = static_cast<DebugSession*>(parent());
-    // TODO find a more elegant solution for this import!
-    InternalPdbCommand* import = new InternalPdbCommand(0, 0, "import __kdevpython_debugger_utils\n");
-    InternalPdbCommand* cmd = new InternalPdbCommand(this, "localsUpdateReady", "__kdevpython_debugger_utils.format_locals(locals())\n");
-    d->addCommand(import);
-    d->addCommand(cmd);
+    if (autoUpdate() & UpdateWatches) {
+        variableCollection()->watches()->reinstall();
+    }
+
+   if (autoUpdate() & UpdateLocals) {
+        // TODO find a more elegant solution for this import!
+        InternalPdbCommand* import = new InternalPdbCommand(0, 0, "import __kdevpython_debugger_utils\n");
+        InternalPdbCommand* cmd = new InternalPdbCommand(this, "localsUpdateReady", "__kdevpython_debugger_utils.format_locals(locals())\n");
+        d->addCommand(import);
+        d->addCommand(cmd);
+   }
 }
 
 }

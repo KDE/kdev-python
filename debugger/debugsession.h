@@ -72,16 +72,6 @@ public:
     void setState(IDebugSession::DebuggerState state);
     void updateLocation();
     
-    enum WriteFlag {
-        NoFlags = 0,
-        KeepLocked = 1,
-        ClearBuffer = 2
-    };
-    Q_DECLARE_FLAGS(WriteFlags, WriteFlag);
-    
-    void lockProcess();
-    void unlockProcess();
-    bool lockWhenReady(int msecs = 2000);
     void write(const QByteArray& cmd);
 
 public slots:
@@ -96,11 +86,9 @@ signals:
 
 private:
     KProcess* m_debuggerProcess;
-    QMutex m_processLocker;
     IDebugSession::DebuggerState m_state;
     QByteArray m_buffer;
     QStringList m_program;
-public: // TODO for debugging
     QList<PdbCommand*> m_commandQueue;
 private:
     QWeakPointer<QObject> m_nextNotifyObject;
@@ -111,10 +99,7 @@ private:
     void notifyNext();
     void processNextCommand();
     void clearOutputBuffer();
-    bool waitForState(DebuggerState state_, int msecs = 3000);
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(DebugSession::WriteFlags);
 
 struct PdbCommand {
 public:

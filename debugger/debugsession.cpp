@@ -187,27 +187,6 @@ void DebugSession::setState(DebuggerState state)
     emit stateChanged(m_state);
 }
 
-bool DebugSession::waitForState(IDebugSession::DebuggerState state_, int msecs)
-{
-    QTimer t;
-    t.setSingleShot(true);
-    t.start(msecs);
-    while ( t.isActive() and state() != state_ ) {
-        QApplication::processEvents();
-    }
-    kDebug() << "state" << state_ << "reached:" << ( state_ == state() );
-    return state() == state_;
-}
-
-bool DebugSession::lockWhenReady(int msecs)
-{
-    bool result = waitForState(PausedState, msecs);
-    if ( result ) {
-        setState(ActiveState);
-    }
-    return result;
-}
-
 void DebugSession::write(const QByteArray& cmd)
 {
     kDebug() << " >>> WRITE:" << cmd;

@@ -33,9 +33,13 @@ public:
     PdbFrameStackModel(IDebugSession* session);
     virtual void fetchFrames(int threadNumber, int from, int to);
     virtual void fetchThreads();
+    int debuggerAtFrame() const;
+    void setDebuggerAtFrame(int newFrame);
 public slots:
     void framesFetched(QByteArray frames);
     void threadsFetched(QByteArray threads);
+private:
+    int m_debuggerAtFrame;
 };
 
 }

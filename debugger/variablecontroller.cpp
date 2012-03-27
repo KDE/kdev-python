@@ -20,12 +20,14 @@
 #include "variablecontroller.h"
 #include "variable.h"
 #include "debugsession.h"
+#include "pdbframestackmodel.h"
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/declaration.h>
 #include <language/duchain/duchain.h>
 #include <interfaces/ilanguagecontroller.h>
 
 #include <debugger/variable/variablecollection.h>
+#include <debugger/framestack/framestackmodel.h>
 #include <interfaces/icore.h>
 #include <QStack>
 #include <KMessageBox>
@@ -49,6 +51,23 @@ void VariableController::addWatch(KDevelop::Variable* variable)
 void VariableController::addWatchpoint(KDevelop::Variable* variable)
 {
     kWarning() << "addWatchpoint requested (not implemented)";
+}
+
+void VariableController::handleEvent(IDebugSession::event_t event)
+{
+    if ( event == IDebugSession::thread_or_frame_changed ) {
+        DebugSession* s = static_cast<DebugSession*>(session());
+        PdbFrameStackModel* model = static_cast<PdbFrameStackModel*>(s->frameStackModel());
+        int delta = model->currentFrame() - model->debuggerAtFrame();
+        model->setDebuggerAtFrame(model->currentFrame());
+        bool positive = delta > 0;
+        kDebug() << "changing frame by" << delta;
+        for ( int i = delta; i != 0; i += ( positive ? -1 : 1 ) ) {
+            kDebug() << ( positive ? "up" : "down" ) << model->currentFrame() << model->debuggerAtFrame();
+            s->addSimpleInternalCommand(positive ? "up" : "down");
+        }
+    }
+    KDevelop::IVariableController::handleEvent(event);
 }
 
 KDevelop::Variable* VariableController::createVariable(KDevelop::TreeModel* model, KDevelop::TreeItem* parent, const QString& expression, const QString& display)
@@ -123,7 +142,6 @@ void VariableController::update()
 {
     kDebug() << "update requested";
     DebugSession* d = static_cast<DebugSession*>(parent());
-    kDebug() << d->m_commandQueue.length() << "commands in queue";
     DUChainReadLocker lock;
     TopDUContext* topContext = DUChain::self()->chainForDocument(d->currentUrl());
     if ( ! topContext ) {

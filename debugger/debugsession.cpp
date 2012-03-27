@@ -48,7 +48,7 @@ KDevelop::IFrameStackModel* DebugSession::createFrameStackModel()
 
 DebugSession::DebugSession() :
       m_nextNotifyMethod(0)
-    , m_inDebuggerData(false)
+    , m_inDebuggerData(-1)
 {
     m_variableController = new Python::VariableController(this);
     m_breakpointController = new Python::BreakpointController(this);
@@ -57,7 +57,7 @@ DebugSession::DebugSession() :
 DebugSession::DebugSession(QStringList program) :
     IDebugSession()
     , m_nextNotifyMethod(0)
-    , m_inDebuggerData(false)
+    , m_inDebuggerData(-1)
 {
     kDebug() << "creating debug session";
     m_variableController = new Python::VariableController(this);
@@ -115,6 +115,9 @@ void DebugSession::dataAvailable()
     kDebug() << "data available";
     QByteArray data = m_debuggerProcess->readAllStandardOutput();
     kDebug() << "data arrived:" << data;
+    for ( int i = 0; i < 15; i++ ) {
+        kDebug() << data.at(i) << data[i] << data.data() << data.data()[i];
+    }
     
     // remove pointless state changes
     data.replace(debuggerOutputBegin+debuggerOutputEnd, "");
@@ -138,7 +141,7 @@ void DebugSession::dataAvailable()
         bool atLastChange = nextChangeAt == -1;
         nextChangeAt = atLastChange ? len : qMin(nextChangeAt, len);
         
-        if ( m_inDebuggerData ) {
+        if ( m_inDebuggerData == 1 ) {
             if ( i == 0 ) {
                 i = delimiterSkip;
             }
@@ -146,16 +149,21 @@ void DebugSession::dataAvailable()
             kDebug() << i << nextChangeAt - i;
             kDebug() << m_buffer;
         }
-        else {
+        else if ( m_inDebuggerData == 0 ) {
             QByteArray d = data.mid(i, nextChangeAt - i);
             if ( d.length() > 0 ) {
                 kDebug() << "real data:" << realData << d << d.length();
+                kDebug() << i << nextChangeAt - i;
+                for ( int i = 0; i < 15; i++ ) {
+                    kDebug() << data.at(i);
+                }
                 realData.append(d);
             }
         }
         
         i = nextChangeAt + delimiterSkip;
-        m_inDebuggerData = !m_inDebuggerData;
+        if ( m_inDebuggerData != 1 ) m_inDebuggerData = 1;
+        else m_inDebuggerData = 0;
         
         if ( atLastChange ) {
             break;

@@ -239,7 +239,7 @@ private:
     
     /// stores whether the data currently received comes from the debugger
     /// or the debuggee.
-    bool m_inDebuggerData;
+    int m_inDebuggerData;
 };
 
 /**

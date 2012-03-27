@@ -81,8 +81,8 @@ void DebugSession::start()
     m_debuggerProcess->start();
     m_debuggerProcess->waitForStarted();
     InternalPdbCommand* path = new InternalPdbCommand(0, 0,
-        "import sys; sys.path.append('"+KStandardDirs::locate("data", "kdevpythonsupport/__kdevpython_debugger_utils/")+"')\n");
-    InternalPdbCommand* cmd = new InternalPdbCommand(0, 0, "import utils\n");
+        "import sys; sys.path.append('"+KStandardDirs::locate("data", "kdevpythonsupport/debugger/")+"')\n");
+    InternalPdbCommand* cmd = new InternalPdbCommand(0, 0, "import __kdevpython_debugger_utils\n");
     addCommand(path);
     addCommand(cmd);
     updateLocation();

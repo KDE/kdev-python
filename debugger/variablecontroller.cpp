@@ -136,44 +136,44 @@ QString VariableController::expressionUnderCursor(KTextEditor::Document* doc, co
     return expression;
 }
 
-typedef QPair<Declaration*, int> DeclarationDepthPair;
+void VariableController::localsUpdateReady(QByteArray rawData)
+{
+    QRegExp formatExtract("([a-zA-Z0-9_]+) \\=\\> (.*)");
+    QList<QByteArray> data = rawData.split('\n');
+    
+    int i = 0;
+    QStringList vars;
+    QMap<QString, QString> values;
+    while ( i < data.length() ) {
+        QByteArray d = data.at(i);
+        if ( formatExtract.exactMatch(d) ) {
+            QString key = formatExtract.capturedTexts().at(1);
+            vars << key;
+            values[key] = formatExtract.capturedTexts().at(2);
+        }
+        else kWarning() << "mismatch:" << d;
+        i++;
+    }
+    QList<KDevelop::Variable*> variableObjects = KDevelop::ICore::self()->debugController()->variableCollection()
+                                                 ->locals()->updateLocals(vars);
+    for ( int i = 0; i < variableObjects.length(); i++ ) {
+        KDevelop::Variable* v = variableObjects[i];
+        v->setValue(values[v->expression()]);
+        v->setHasMoreInitial(true);
+    }
+}
 
 void VariableController::update()
 {
     kDebug() << "update requested";
     DebugSession* d = static_cast<DebugSession*>(parent());
-    DUChainReadLocker lock;
-    TopDUContext* topContext = DUChain::self()->chainForDocument(d->currentUrl());
-    if ( ! topContext ) {
-        kDebug() << "no top context, aborting";
-        return;
-    }
-    CursorInRevision loc = CursorInRevision(d->currentLine(), 0);
-    if ( DUContext* currentContext = topContext->findContextAt(loc) ) {
-        QList<DeclarationDepthPair> decls = currentContext->allDeclarations(loc, topContext);
-        QStringList vars;
-        QStringList lateVars;
-        foreach ( DeclarationDepthPair dp, decls ) {
-            Declaration* d = dp.first;
-            if ( ! d ) {
-                continue;
-            }
-            if (  ( d->context() == currentContext || d->context()->type() == DUContext::Function ) 
-                 && d->context()->type() != DUContext::Class )
-            {
-                vars << d->identifier().toString();
-            }
-        }
-        QList<KDevelop::Variable*> variables = KDevelop::ICore::self()->debugController()->variableCollection()
-                                     ->locals()->updateLocals(vars);
-        foreach ( KDevelop::Variable* v, variables ) {
-            v->attachMaybe();
-        }
-    }
-    else {
-        kDebug() << "no context found";
-    }
+    // TODO find a more elegant solution for this import!
+    InternalPdbCommand* import = new InternalPdbCommand(0, 0, "import __kdevpython_debugger_utils\n");
+    InternalPdbCommand* cmd = new InternalPdbCommand(this, "localsUpdateReady", "__kdevpython_debugger_utils.format_locals(locals())\n");
+    d->addCommand(import);
+    d->addCommand(cmd);
 }
 
 }
 
+#include "variablecontroller.moc"

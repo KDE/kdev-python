@@ -29,6 +29,7 @@ namespace Python {
 
 class VariableController : public KDevelop::IVariableController
 {
+Q_OBJECT
 public:
     VariableController(IDebugSession* parent);
     virtual void addWatch(KDevelop::Variable* variable);
@@ -40,6 +41,8 @@ protected:
     virtual void handleEvent(IDebugSession::event_t event);
 private:
     QList<Variable*> m_watchVariables;
+private slots:
+    void localsUpdateReady(QByteArray rawData);
 };
 
 }

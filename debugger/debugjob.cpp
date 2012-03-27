@@ -45,9 +45,15 @@ void DebugJob::start()
     kDebug() << "connecting standardOutputReceived";
     connect(m_session, SIGNAL(realDataReceived(QStringList)), this, SLOT(standardOutputReceived(QStringList)));
     connect(m_session, SIGNAL(stderrReceived(QStringList)), this, SLOT(standardErrorReceived(QStringList)));
+    connect(m_session, SIGNAL(finished()), this, SLOT(sessionFinished()));
     KDevelop::ICore::self()->debugController()->addSession(m_session);
     m_session->start();
     kDebug() << "starting program:" << program;
+}
+
+void DebugJob::sessionFinished()
+{
+    emitResult();
 }
 
 void DebugJob::standardErrorReceived(QStringList lines)

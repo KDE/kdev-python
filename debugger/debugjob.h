@@ -53,6 +53,8 @@ private slots:
 private:
     OutputModel* outputModel();
     DebugSession* m_session;
+public slots:
+    void sessionFinished();
 };
 
 }

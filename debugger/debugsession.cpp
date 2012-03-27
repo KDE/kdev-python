@@ -112,17 +112,12 @@ QStringList byteArrayToStringList(const QByteArray& r) {
 
 void DebugSession::dataAvailable()
 {
-    kDebug() << "data available";
     QByteArray data = m_debuggerProcess->readAllStandardOutput();
-    kDebug() << "data arrived:" << data;
-    for ( int i = 0; i < 15; i++ ) {
-        kDebug() << data.at(i) << data[i] << data.data() << data.data()[i];
-    }
+    kDebug() << data.length() << "bytes of data available";
     
     // remove pointless state changes
     data.replace(debuggerOutputBegin+debuggerOutputEnd, "");
     data.replace(debuggerOutputEnd+debuggerOutputBegin, "");
-    kDebug() << "data arrived (replaced):" << data;
     
     bool endsWithPrompt = false;
     if ( data.endsWith(debuggerPrompt) ) {
@@ -152,11 +147,6 @@ void DebugSession::dataAvailable()
         else if ( m_inDebuggerData == 0 ) {
             QByteArray d = data.mid(i, nextChangeAt - i);
             if ( d.length() > 0 ) {
-                kDebug() << "real data:" << realData << d << d.length();
-                kDebug() << i << nextChangeAt - i;
-                for ( int i = 0; i < 15; i++ ) {
-                    kDebug() << data.at(i);
-                }
                 realData.append(d);
             }
         }

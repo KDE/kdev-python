@@ -1,4 +1,6 @@
-import QtCore.pyqtSignal
+class pyqtSignal():
+ def connect(self, targetSignal): pass
+ def emit(self, *args): pass
 from QtCore import *
 
 class QSysInfo():
@@ -20,6 +22,10 @@ class QSysInfo():
 
 class Qt():
     """"""
+    # Enum Qt.CursorMoveStyle
+    LogicalMoveStyle = 0
+    VisualMoveStyle = 0
+
     # Enum Qt.NavigationMode
     NavigationModeNone = 0
     NavigationModeKeypadTabOrder = 0
@@ -148,6 +154,9 @@ class Qt():
     AA_DontUseNativeMenuBar = 0
     AA_MacDontSwapCtrlAndMeta = 0
     AA_S60DontConstructApplicationPanes = 0
+    AA_S60DisablePartialScreenInputMode = 0
+    AA_X11InitThreads = 0
+    AA_CaptureMultimediaKeys = 0
 
     # Enum Qt.WindowModality
     NonModal = 0
@@ -193,6 +202,7 @@ class Qt():
     AccessibleTextRole = 0
     AccessibleDescriptionRole = 0
     SizeHintRole = 0
+    InitialSortOrderRole = 0
     UserRole = 0
 
     # Enum Qt.CheckState
@@ -860,20 +870,15 @@ class Qt():
     OpaqueMode = 0
 
     # Enum Qt.ImageConversionFlag
-    ColorMode_Mask = 0
     AutoColor = 0
     ColorOnly = 0
     MonoOnly = 0
-    AlphaDither_Mask = 0
     ThresholdAlphaDither = 0
     OrderedAlphaDither = 0
     DiffuseAlphaDither = 0
-    NoAlpha = 0
-    Dither_Mask = 0
     DiffuseDither = 0
     OrderedDither = 0
     ThresholdDither = 0
-    DitherMode_Mask = 0
     AutoDither = 0
     PreferDither = 0
     AvoidDither = 0
@@ -980,6 +985,10 @@ class Qt():
     WA_MergeSoftkeys = 0
     WA_MergeSoftkeysRecursively = 0
     WA_X11DoNotAcceptFocus = 0
+    WA_LockPortraitOrientation = 0
+    WA_LockLandscapeOrientation = 0
+    WA_AutoOrientation = 0
+    WA_MacNoShadow = 0
 
     # Enum Qt.WindowState
     WindowNoState = 0
@@ -1912,6 +1921,9 @@ class QObject():
     staticMetaObject = None # QMetaObject - member
     def __init__(self, parent = None):
         '''void QObject.__init__(QObject parent = None)'''
+    def senderSignalIndex(self):
+        '''int QObject.senderSignalIndex()'''
+        return int()
     def disconnectNotify(self, signal):
         '''void QObject.disconnectNotify(SIGNAL() signal)'''
     def connectNotify(self, signal):
@@ -1939,7 +1951,7 @@ class QObject():
     def parent(self):
         '''QObject QObject.parent()'''
         return QObject()
-    destroyed = PyQt4.QtCore.pyqtSignal() # void destroyed(QObject * = 0) - signal
+    destroyed = pyqtSignal() # void destroyed(QObject * = 0) - signal
     def property(self, name):
         '''QVariant QObject.property(str name)'''
         return QVariant()
@@ -2010,11 +2022,20 @@ class QObject():
     def findChildren(self, type, name = QString()):
         '''list-of-QObject QObject.findChildren(type type, QString name = QString())'''
         return [QObject()]
+    def findChildren(self, types, name = QString()):
+        '''list-of-QObject QObject.findChildren(tuple types, QString name = QString())'''
+        return [QObject()]
     def findChildren(self, type, regExp):
         '''list-of-QObject QObject.findChildren(type type, QRegExp regExp)'''
         return [QObject()]
+    def findChildren(self, types, regExp):
+        '''list-of-QObject QObject.findChildren(tuple types, QRegExp regExp)'''
+        return [QObject()]
     def findChild(self, type, name = QString()):
         '''QObject QObject.findChild(type type, QString name = QString())'''
+        return QObject()
+    def findChild(self, types, name = QString()):
+        '''QObject QObject.findChild(tuple types, QString name = QString())'''
         return QObject()
     def trUtf8(self, sourceText, disambiguation = None, n = -1):
         '''QString QObject.trUtf8(str sourceText, str disambiguation = None, int n = -1)'''
@@ -2078,10 +2099,10 @@ class QAbstractAnimation(QObject):
         '''void QAbstractAnimation.pause()'''
     def start(self, policy = QAbstractAnimation.KeepWhenStopped):
         '''void QAbstractAnimation.start(QAbstractAnimation.DeletionPolicy policy = QAbstractAnimation.KeepWhenStopped)'''
-    directionChanged = PyQt4.QtCore.pyqtSignal() # void directionChanged(QAbstractAnimation::Direction) - signal
-    currentLoopChanged = PyQt4.QtCore.pyqtSignal() # void currentLoopChanged(int) - signal
-    stateChanged = PyQt4.QtCore.pyqtSignal() # void stateChanged(QAbstractAnimation::State,QAbstractAnimation::State) - signal
-    finished = PyQt4.QtCore.pyqtSignal() # void finished() - signal
+    directionChanged = pyqtSignal() # void directionChanged(QAbstractAnimation::Direction) - signal
+    currentLoopChanged = pyqtSignal() # void currentLoopChanged(int) - signal
+    stateChanged = pyqtSignal() # void stateChanged(QAbstractAnimation::State,QAbstractAnimation::State) - signal
+    finished = pyqtSignal() # void finished() - signal
     def totalDuration(self):
         '''int QAbstractAnimation.totalDuration()'''
         return int()
@@ -2119,8 +2140,14 @@ class QAbstractEventDispatcher(QObject):
     """"""
     def __init__(self, parent = None):
         '''void QAbstractEventDispatcher.__init__(QObject parent = None)'''
-    awake = PyQt4.QtCore.pyqtSignal() # void awake() - signal
-    aboutToBlock = PyQt4.QtCore.pyqtSignal() # void aboutToBlock() - signal
+    awake = pyqtSignal() # void awake() - signal
+    aboutToBlock = pyqtSignal() # void aboutToBlock() - signal
+    def filterEvent(self, message):
+        '''bool QAbstractEventDispatcher.filterEvent(sip.voidptr message)'''
+        return bool()
+    def setEventFilter(self, filter):
+        '''callable QAbstractEventDispatcher.setEventFilter(callable filter)'''
+        return callable()
     def closingDown(self):
         '''void QAbstractEventDispatcher.closingDown()'''
     def startingUp(self):
@@ -2237,6 +2264,9 @@ class QAbstractFileEngine():
     def read(self, maxlen):
         '''str QAbstractFileEngine.read(int maxlen)'''
         return str()
+    def beginEntryList(self, filters, filterNames):
+        '''QAbstractFileEngineIterator QAbstractFileEngine.beginEntryList(QDir.Filters filters, QStringList filterNames)'''
+        return QAbstractFileEngineIterator()
     def handle(self):
         '''int QAbstractFileEngine.handle()'''
         return int()
@@ -2544,10 +2574,10 @@ class QAbstractItemModel(QObject):
     def beginMoveRows(self, sourceParent, sourceFirst, sourceLast, destinationParent, destinationRow):
         '''bool QAbstractItemModel.beginMoveRows(QModelIndex sourceParent, int sourceFirst, int sourceLast, QModelIndex destinationParent, int destinationRow)'''
         return bool()
-    columnsMoved = PyQt4.QtCore.pyqtSignal() # void columnsMoved(const QModelIndex&,int,int,const QModelIndex&,int) - signal
-    columnsAboutToBeMoved = PyQt4.QtCore.pyqtSignal() # void columnsAboutToBeMoved(const QModelIndex&,int,int,const QModelIndex&,int) - signal
-    rowsMoved = PyQt4.QtCore.pyqtSignal() # void rowsMoved(const QModelIndex&,int,int,const QModelIndex&,int) - signal
-    rowsAboutToBeMoved = PyQt4.QtCore.pyqtSignal() # void rowsAboutToBeMoved(const QModelIndex&,int,int,const QModelIndex&,int) - signal
+    columnsMoved = pyqtSignal() # void columnsMoved(const QModelIndex&,int,int,const QModelIndex&,int) - signal
+    columnsAboutToBeMoved = pyqtSignal() # void columnsAboutToBeMoved(const QModelIndex&,int,int,const QModelIndex&,int) - signal
+    rowsMoved = pyqtSignal() # void rowsMoved(const QModelIndex&,int,int,const QModelIndex&,int) - signal
+    rowsAboutToBeMoved = pyqtSignal() # void rowsAboutToBeMoved(const QModelIndex&,int,int,const QModelIndex&,int) - signal
     def createIndex(self, row, column, object = 0):
         '''QModelIndex QAbstractItemModel.createIndex(int row, int column, object object = 0)'''
         return QModelIndex()
@@ -2602,25 +2632,27 @@ class QAbstractItemModel(QObject):
         return bool()
     def encodeData(self, indexes, stream):
         '''void QAbstractItemModel.encodeData(list-of-QModelIndex indexes, QDataStream stream)'''
+    def resetInternalData(self):
+        '''void QAbstractItemModel.resetInternalData()'''
     def revert(self):
         '''void QAbstractItemModel.revert()'''
     def submit(self):
         '''bool QAbstractItemModel.submit()'''
         return bool()
-    modelReset = PyQt4.QtCore.pyqtSignal() # void modelReset() - signal
-    modelAboutToBeReset = PyQt4.QtCore.pyqtSignal() # void modelAboutToBeReset() - signal
-    columnsRemoved = PyQt4.QtCore.pyqtSignal() # void columnsRemoved(const QModelIndex&,int,int) - signal
-    columnsAboutToBeRemoved = PyQt4.QtCore.pyqtSignal() # void columnsAboutToBeRemoved(const QModelIndex&,int,int) - signal
-    columnsInserted = PyQt4.QtCore.pyqtSignal() # void columnsInserted(const QModelIndex&,int,int) - signal
-    columnsAboutToBeInserted = PyQt4.QtCore.pyqtSignal() # void columnsAboutToBeInserted(const QModelIndex&,int,int) - signal
-    rowsRemoved = PyQt4.QtCore.pyqtSignal() # void rowsRemoved(const QModelIndex&,int,int) - signal
-    rowsAboutToBeRemoved = PyQt4.QtCore.pyqtSignal() # void rowsAboutToBeRemoved(const QModelIndex&,int,int) - signal
-    rowsInserted = PyQt4.QtCore.pyqtSignal() # void rowsInserted(const QModelIndex&,int,int) - signal
-    rowsAboutToBeInserted = PyQt4.QtCore.pyqtSignal() # void rowsAboutToBeInserted(const QModelIndex&,int,int) - signal
-    layoutChanged = PyQt4.QtCore.pyqtSignal() # void layoutChanged() - signal
-    layoutAboutToBeChanged = PyQt4.QtCore.pyqtSignal() # void layoutAboutToBeChanged() - signal
-    headerDataChanged = PyQt4.QtCore.pyqtSignal() # void headerDataChanged(Qt::Orientation,int,int) - signal
-    dataChanged = PyQt4.QtCore.pyqtSignal() # void dataChanged(const QModelIndex&,const QModelIndex&) - signal
+    modelReset = pyqtSignal() # void modelReset() - signal
+    modelAboutToBeReset = pyqtSignal() # void modelAboutToBeReset() - signal
+    columnsRemoved = pyqtSignal() # void columnsRemoved(const QModelIndex&,int,int) - signal
+    columnsAboutToBeRemoved = pyqtSignal() # void columnsAboutToBeRemoved(const QModelIndex&,int,int) - signal
+    columnsInserted = pyqtSignal() # void columnsInserted(const QModelIndex&,int,int) - signal
+    columnsAboutToBeInserted = pyqtSignal() # void columnsAboutToBeInserted(const QModelIndex&,int,int) - signal
+    rowsRemoved = pyqtSignal() # void rowsRemoved(const QModelIndex&,int,int) - signal
+    rowsAboutToBeRemoved = pyqtSignal() # void rowsAboutToBeRemoved(const QModelIndex&,int,int) - signal
+    rowsInserted = pyqtSignal() # void rowsInserted(const QModelIndex&,int,int) - signal
+    rowsAboutToBeInserted = pyqtSignal() # void rowsAboutToBeInserted(const QModelIndex&,int,int) - signal
+    layoutChanged = pyqtSignal() # void layoutChanged() - signal
+    layoutAboutToBeChanged = pyqtSignal() # void layoutAboutToBeChanged() - signal
+    headerDataChanged = pyqtSignal() # void headerDataChanged(Qt::Orientation,int,int) - signal
+    dataChanged = pyqtSignal() # void dataChanged(const QModelIndex&,const QModelIndex&) - signal
     def span(self, index):
         '''QSize QAbstractItemModel.span(QModelIndex index)'''
         return QSize()
@@ -2743,8 +2775,8 @@ class QAbstractState(QObject):
         '''abstract void QAbstractState.onExit(QEvent event)'''
     def onEntry(self, event):
         '''abstract void QAbstractState.onEntry(QEvent event)'''
-    exited = PyQt4.QtCore.pyqtSignal() # void exited() - signal
-    entered = PyQt4.QtCore.pyqtSignal() # void entered() - signal
+    exited = pyqtSignal() # void exited() - signal
+    entered = pyqtSignal() # void entered() - signal
     def machine(self):
         '''QStateMachine QAbstractState.machine()'''
         return QStateMachine()
@@ -2765,7 +2797,7 @@ class QAbstractTransition(QObject):
     def eventTest(self, event):
         '''abstract bool QAbstractTransition.eventTest(QEvent event)'''
         return bool()
-    triggered = PyQt4.QtCore.pyqtSignal() # void triggered() - signal
+    triggered = pyqtSignal() # void triggered() - signal
     def animations(self):
         '''list-of-QAbstractAnimation QAbstractTransition.animations()'''
         return [QAbstractAnimation()]
@@ -2856,6 +2888,8 @@ class QBitArray():
     def __xor__(self):
         '''QBitArray QBitArray.__xor__()'''
         return QBitArray()
+    def swap(self, other):
+        '''void QBitArray.swap(QBitArray other)'''
     def __hash__(self):
         '''int QBitArray.__hash__()'''
         return int()
@@ -2960,10 +2994,10 @@ class QIODevice(QObject):
     def readData(self, maxlen):
         '''abstract str QIODevice.readData(int maxlen)'''
         return str()
-    readChannelFinished = PyQt4.QtCore.pyqtSignal() # void readChannelFinished() - signal
-    aboutToClose = PyQt4.QtCore.pyqtSignal() # void aboutToClose() - signal
-    bytesWritten = PyQt4.QtCore.pyqtSignal() # void bytesWritten(qint64) - signal
-    readyRead = PyQt4.QtCore.pyqtSignal() # void readyRead() - signal
+    readChannelFinished = pyqtSignal() # void readChannelFinished() - signal
+    aboutToClose = pyqtSignal() # void aboutToClose() - signal
+    bytesWritten = pyqtSignal() # void bytesWritten(qint64) - signal
+    readyRead = pyqtSignal() # void readyRead() - signal
     def errorString(self):
         '''QString QIODevice.errorString()'''
         return QString()
@@ -3162,6 +3196,8 @@ class QByteArray():
     def __add__(self, s):
         '''QString QByteArray.__add__(QString s)'''
         return QString()
+    def swap(self, other):
+        '''void QByteArray.swap(QByteArray other)'''
     def repeated(self, times):
         '''QByteArray QByteArray.repeated(int times)'''
         return QByteArray()
@@ -3633,6 +3669,9 @@ class QChar():
     def __add__(self, s2):
         '''QString QChar.__add__(QString s2)'''
         return QString()
+    def currentUnicodeVersion(self):
+        '''static QChar.UnicodeVersion QChar.currentUnicodeVersion()'''
+        return QChar.UnicodeVersion()
     def requiresSurrogates(self, ucs4):
         '''static bool QChar.requiresSurrogates(int ucs4)'''
         return bool()
@@ -3833,7 +3872,7 @@ class QCoreApplication(QObject):
     def event(self):
         '''QEvent QCoreApplication.event()'''
         return QEvent()
-    aboutToQuit = PyQt4.QtCore.pyqtSignal() # void aboutToQuit() - signal
+    aboutToQuit = pyqtSignal() # void aboutToQuit() - signal
     def quit(self):
         '''static void QCoreApplication.quit()'''
     def testAttribute(self, attribute):
@@ -4178,6 +4217,7 @@ class QDataStream():
     Ok = 0
     ReadPastEnd = 0
     ReadCorruptData = 0
+    WriteFailed = 0
 
     # Enum QDataStream.ByteOrder
     BigEndian = 0
@@ -4198,6 +4238,7 @@ class QDataStream():
     Qt_4_5 = 0
     Qt_4_6 = 0
     Qt_4_7 = 0
+    Qt_4_8 = 0
 
     def __init__(self):
         '''void QDataStream.__init__()'''
@@ -5394,6 +5435,7 @@ class QElapsedTimer():
     MonotonicClock = 0
     TickCounter = 0
     MachAbsoluteTime = 0
+    PerformanceCounter = 0
 
     def __init__(self):
         '''void QElapsedTimer.__init__()'''
@@ -5406,6 +5448,9 @@ class QElapsedTimer():
     def __lt__(self, v2):
         '''bool QElapsedTimer.__lt__(QElapsedTimer v2)'''
         return bool()
+    def nsecsElapsed(self):
+        '''int QElapsedTimer.nsecsElapsed()'''
+        return int()
     def __ne__(self, other):
         '''bool QElapsedTimer.__ne__(QElapsedTimer other)'''
         return bool()
@@ -5553,6 +5598,10 @@ class QEventTransition(QAbstractTransition):
 
 class QFile(QIODevice):
     """"""
+    # Enum QFile.FileHandleFlag
+    AutoCloseHandle = 0
+    DontCloseHandle = 0
+
     # Enum QFile.Permission
     ReadOwner = 0
     WriteOwner = 0
@@ -5663,6 +5712,9 @@ class QFile(QIODevice):
     def open(self, fd, flags):
         '''bool QFile.open(int fd, QIODevice.OpenMode flags)'''
         return bool()
+    def open(self, fd, flags, handleFlags):
+        '''bool QFile.open(int fd, QIODevice.OpenMode flags, QFile.FileHandleFlags handleFlags)'''
+        return bool()
     def isSequential(self):
         '''bool QFile.isSequential()'''
         return bool()
@@ -5721,6 +5773,55 @@ class QFile(QIODevice):
     def error(self):
         '''QFile.FileError QFile.error()'''
         return QFile.FileError()
+    class FileHandleFlags():
+        """"""
+        def __init__(self):
+            '''QFile.FileHandleFlags QFile.FileHandleFlags.__init__()'''
+            return QFile.FileHandleFlags()
+        def __init__(self):
+            '''int QFile.FileHandleFlags.__init__()'''
+            return int()
+        def __init__(self):
+            '''void QFile.FileHandleFlags.__init__()'''
+        def __bool__(self):
+            '''int QFile.FileHandleFlags.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool QFile.FileHandleFlags.__ne__(QFile.FileHandleFlags f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool QFile.FileHandleFlags.__eq__(QFile.FileHandleFlags f)'''
+            return bool()
+        def __invert__(self):
+            '''QFile.FileHandleFlags QFile.FileHandleFlags.__invert__()'''
+            return QFile.FileHandleFlags()
+        def __and__(self, mask):
+            '''QFile.FileHandleFlags QFile.FileHandleFlags.__and__(int mask)'''
+            return QFile.FileHandleFlags()
+        def __xor__(self, f):
+            '''QFile.FileHandleFlags QFile.FileHandleFlags.__xor__(QFile.FileHandleFlags f)'''
+            return QFile.FileHandleFlags()
+        def __xor__(self, f):
+            '''QFile.FileHandleFlags QFile.FileHandleFlags.__xor__(int f)'''
+            return QFile.FileHandleFlags()
+        def __or__(self, f):
+            '''QFile.FileHandleFlags QFile.FileHandleFlags.__or__(QFile.FileHandleFlags f)'''
+            return QFile.FileHandleFlags()
+        def __or__(self, f):
+            '''QFile.FileHandleFlags QFile.FileHandleFlags.__or__(int f)'''
+            return QFile.FileHandleFlags()
+        def __int__(self):
+            '''int QFile.FileHandleFlags.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''QFile.FileHandleFlags QFile.FileHandleFlags.__ixor__(QFile.FileHandleFlags f)'''
+            return QFile.FileHandleFlags()
+        def __ior__(self, f):
+            '''QFile.FileHandleFlags QFile.FileHandleFlags.__ior__(QFile.FileHandleFlags f)'''
+            return QFile.FileHandleFlags()
+        def __iand__(self, mask):
+            '''QFile.FileHandleFlags QFile.FileHandleFlags.__iand__(int mask)'''
+            return QFile.FileHandleFlags()
     class Permissions():
         """"""
         def __init__(self):
@@ -5930,8 +6031,8 @@ class QFileSystemWatcher(QObject):
         '''void QFileSystemWatcher.__init__(QObject parent = None)'''
     def __init__(self, paths, parent = None):
         '''void QFileSystemWatcher.__init__(QStringList paths, QObject parent = None)'''
-    fileChanged = PyQt4.QtCore.pyqtSignal() # void fileChanged(const QString&) - signal
-    directoryChanged = PyQt4.QtCore.pyqtSignal() # void directoryChanged(const QString&) - signal
+    fileChanged = pyqtSignal() # void fileChanged(const QString&) - signal
+    directoryChanged = pyqtSignal() # void directoryChanged(const QString&) - signal
     def removePaths(self, files):
         '''void QFileSystemWatcher.removePaths(QStringList files)'''
     def removePath(self, file):
@@ -6067,6 +6168,9 @@ class QFSFileEngine(QAbstractFileEngine):
         return bool()
     def open(self, openMode):
         '''bool QFSFileEngine.open(QIODevice.OpenMode openMode)'''
+        return bool()
+    def open(self, openMode, fd, handleFlags):
+        '''bool QFSFileEngine.open(QIODevice.OpenMode openMode, int fd, QFile.FileHandleFlags handleFlags)'''
         return bool()
     def open(self, flags, fd):
         '''bool QFSFileEngine.open(QIODevice.OpenMode flags, int fd)'''
@@ -6428,6 +6532,29 @@ class QLibrary(QObject):
 
 class QLocale():
     """"""
+    # Enum QLocale.QuotationStyle
+    StandardQuotation = 0
+    AlternateQuotation = 0
+
+    # Enum QLocale.CurrencySymbolFormat
+    CurrencyIsoCode = 0
+    CurrencySymbol = 0
+    CurrencyDisplayName = 0
+
+    # Enum QLocale.Script
+    AnyScript = 0
+    ArabicScript = 0
+    CyrillicScript = 0
+    DeseretScript = 0
+    GurmukhiScript = 0
+    SimplifiedHanScript = 0
+    TraditionalHanScript = 0
+    LatinScript = 0
+    MongolianScript = 0
+    TifinaghScript = 0
+    SimplifiedChineseScript = 0
+    TraditionalChineseScript = 0
+
     # Enum QLocale.MeasurementSystem
     MetricSystem = 0
     ImperialSystem = 0
@@ -6909,6 +7036,7 @@ class QLocale():
     CentralMoroccoTamazight = 0
     KoyraboroSenni = 0
     Shambala = 0
+    AnyLanguage = 0
 
     def __init__(self):
         '''void QLocale.__init__()'''
@@ -6918,6 +7046,62 @@ class QLocale():
         '''void QLocale.__init__(QLocale.Language language, QLocale.Country country = QLocale.AnyCountry)'''
     def __init__(self, other):
         '''void QLocale.__init__(QLocale other)'''
+    def __init__(self, language, script, country):
+        '''void QLocale.__init__(QLocale.Language language, QLocale.Script script, QLocale.Country country)'''
+    def createSeparatedList(self, list):
+        '''QString QLocale.createSeparatedList(QStringList list)'''
+        return QString()
+    def quoteString(self, str, style = QLocale.StandardQuotation):
+        '''QString QLocale.quoteString(QString str, QLocale.QuotationStyle style = QLocale.StandardQuotation)'''
+        return QString()
+    def matchingLocales(self, language, script, country):
+        '''static list-of-QLocale QLocale.matchingLocales(QLocale.Language language, QLocale.Script script, QLocale.Country country)'''
+        return [QLocale()]
+    def scriptToString(self, script):
+        '''static QString QLocale.scriptToString(QLocale.Script script)'''
+        return QString()
+    def uiLanguages(self):
+        '''QStringList QLocale.uiLanguages()'''
+        return QStringList()
+    def toCurrencyString(self, value, symbol = QString()):
+        '''QString QLocale.toCurrencyString(int value, QString symbol = QString())'''
+        return QString()
+    def toCurrencyString(self, value, symbol = QString()):
+        '''QString QLocale.toCurrencyString(float value, QString symbol = QString())'''
+        return QString()
+    def toCurrencyString(self, value, symbol = QString()):
+        '''QString QLocale.toCurrencyString(int value, QString symbol = QString())'''
+        return QString()
+    def toCurrencyString(self, value, symbol = QString()):
+        '''QString QLocale.toCurrencyString(int value, QString symbol = QString())'''
+        return QString()
+    def currencySymbol(self, format = QLocale.CurrencySymbol):
+        '''QString QLocale.currencySymbol(QLocale.CurrencySymbolFormat format = QLocale.CurrencySymbol)'''
+        return QString()
+    def toLower(self, str):
+        '''QString QLocale.toLower(QString str)'''
+        return QString()
+    def toUpper(self, str):
+        '''QString QLocale.toUpper(QString str)'''
+        return QString()
+    def weekdays(self):
+        '''list-of-Qt.DayOfWeek QLocale.weekdays()'''
+        return [Qt.DayOfWeek()]
+    def firstDayOfWeek(self):
+        '''Qt.DayOfWeek QLocale.firstDayOfWeek()'''
+        return Qt.DayOfWeek()
+    def nativeCountryName(self):
+        '''QString QLocale.nativeCountryName()'''
+        return QString()
+    def nativeLanguageName(self):
+        '''QString QLocale.nativeLanguageName()'''
+        return QString()
+    def bcp47Name(self):
+        '''QString QLocale.bcp47Name()'''
+        return QString()
+    def script(self):
+        '''QLocale.Script QLocale.script()'''
+        return QLocale.Script()
     def textDirection(self):
         '''Qt.LayoutDirection QLocale.textDirection()'''
         return Qt.LayoutDirection()
@@ -7136,6 +7320,7 @@ class QSystemLocale():
     """"""
     # Enum QSystemLocale.QueryType
     LanguageId = 0
+    ScriptId = 0
     CountryId = 0
     DecimalPoint = 0
     GroupSeparator = 0
@@ -7161,6 +7346,17 @@ class QSystemLocale():
     PositiveSign = 0
     AMText = 0
     PMText = 0
+    FirstDayOfWeek = 0
+    Weekdays = 0
+    CurrencySymbol = 0
+    CurrencyToString = 0
+    UILanguages = 0
+    StringToStandardQuotation = 0
+    StringToAlternateQuotation = 0
+    ListToSeparatedString = 0
+    LocaleChanged = 0
+    NativeLanguageName = 0
+    NativeCountryName = 0
 
     def __init__(self):
         '''void QSystemLocale.__init__()'''
@@ -7789,7 +7985,7 @@ class QVariantAnimation(QAbstractAnimation):
     def event(self, event):
         '''bool QVariantAnimation.event(QEvent event)'''
         return bool()
-    valueChanged = PyQt4.QtCore.pyqtSignal() # void valueChanged(const QVariant&) - signal
+    valueChanged = pyqtSignal() # void valueChanged(const QVariant&) - signal
     def setEasingCurve(self, easing):
         '''void QVariantAnimation.setEasingCurve(QEasingCurve easing)'''
     def easingCurve(self):
@@ -7908,7 +8104,16 @@ class QPoint():
         '''QPoint QPoint.__sub__(QPoint p2)'''
         return QPoint()
     def __mul__(self, c):
+        '''QPoint QPoint.__mul__(int c)'''
+        return QPoint()
+    def __mul__(self, p):
+        '''QPoint QPoint.__mul__(QPoint p)'''
+        return QPoint()
+    def __mul__(self, c):
         '''QPoint QPoint.__mul__(float c)'''
+        return QPoint()
+    def __mul__(self, p):
+        '''QPoint QPoint.__mul__(QPoint p)'''
         return QPoint()
     def __neg__(self):
         '''QPoint QPoint.__neg__()'''
@@ -7918,6 +8123,9 @@ class QPoint():
         return QPoint()
     def __idiv__(self, c):
         '''QPoint QPoint.__idiv__(float c)'''
+        return QPoint()
+    def __imul__(self, c):
+        '''QPoint QPoint.__imul__(int c)'''
         return QPoint()
     def __imul__(self, c):
         '''QPoint QPoint.__imul__(float c)'''
@@ -8068,12 +8276,12 @@ class QProcess(QIODevice):
         '''void QProcess.setupChildProcess()'''
     def setProcessState(self, state):
         '''void QProcess.setProcessState(QProcess.ProcessState state)'''
-    readyReadStandardError = PyQt4.QtCore.pyqtSignal() # void readyReadStandardError() - signal
-    readyReadStandardOutput = PyQt4.QtCore.pyqtSignal() # void readyReadStandardOutput() - signal
-    stateChanged = PyQt4.QtCore.pyqtSignal() # void stateChanged(QProcess::ProcessState) - signal
-    finished = PyQt4.QtCore.pyqtSignal() # void finished(int,QProcess::ExitStatus) - signal
-    finished = PyQt4.QtCore.pyqtSignal() # void finished(int) - signal
-    started = PyQt4.QtCore.pyqtSignal() # void started() - signal
+    readyReadStandardError = pyqtSignal() # void readyReadStandardError() - signal
+    readyReadStandardOutput = pyqtSignal() # void readyReadStandardOutput() - signal
+    stateChanged = pyqtSignal() # void stateChanged(QProcess::ProcessState) - signal
+    finished = pyqtSignal() # void finished(int,QProcess::ExitStatus) - signal
+    finished = pyqtSignal() # void finished(int) - signal
+    started = pyqtSignal() # void started() - signal
     def kill(self):
         '''void QProcess.kill()'''
     def terminate(self):
@@ -8159,7 +8367,7 @@ class QProcess(QIODevice):
     def error(self):
         '''QProcess.ProcessError QProcess.error()'''
         return QProcess.ProcessError()
-    error = PyQt4.QtCore.pyqtSignal() # void error(QProcess::ProcessError) - signal
+    error = pyqtSignal() # void error(QProcess::ProcessError) - signal
     def environment(self):
         '''QStringList QProcess.environment()'''
         return QStringList()
@@ -8196,6 +8404,9 @@ class QProcessEnvironment():
         '''void QProcessEnvironment.__init__()'''
     def __init__(self, other):
         '''void QProcessEnvironment.__init__(QProcessEnvironment other)'''
+    def keys(self):
+        '''QStringList QProcessEnvironment.keys()'''
+        return QStringList()
     def systemEnvironment(self):
         '''static QProcessEnvironment QProcessEnvironment.systemEnvironment()'''
         return QProcessEnvironment()
@@ -8209,6 +8420,8 @@ class QProcessEnvironment():
         '''void QProcessEnvironment.remove(QString name)'''
     def insert(self, name, value):
         '''void QProcessEnvironment.insert(QString name, QString value)'''
+    def insert(self, e):
+        '''void QProcessEnvironment.insert(QProcessEnvironment e)'''
     def contains(self, name):
         '''bool QProcessEnvironment.contains(QString name)'''
         return bool()
@@ -8711,6 +8924,8 @@ class QRegExp():
         '''void QRegExp.__init__(QString pattern, Qt.CaseSensitivity cs = Qt.CaseSensitive, QRegExp.PatternSyntax syntax = QRegExp.RegExp)'''
     def __init__(self, rx):
         '''void QRegExp.__init__(QRegExp rx)'''
+    def swap(self, other):
+        '''void QRegExp.swap(QRegExp other)'''
     def captureCount(self):
         '''int QRegExp.captureCount()'''
         return int()
@@ -8887,7 +9102,7 @@ class QSequentialAnimationGroup(QAnimationGroup):
     def event(self, event):
         '''bool QSequentialAnimationGroup.event(QEvent event)'''
         return bool()
-    currentAnimationChanged = PyQt4.QtCore.pyqtSignal() # void currentAnimationChanged(QAbstractAnimation *) - signal
+    currentAnimationChanged = pyqtSignal() # void currentAnimationChanged(QAbstractAnimation *) - signal
     def duration(self):
         '''int QSequentialAnimationGroup.duration()'''
         return int()
@@ -9037,6 +9252,11 @@ class QSharedMemory(QObject):
         '''void QSharedMemory.__init__(QObject parent = None)'''
     def __init__(self, key, parent = None):
         '''void QSharedMemory.__init__(QString key, QObject parent = None)'''
+    def nativeKey(self):
+        '''QString QSharedMemory.nativeKey()'''
+        return QString()
+    def setNativeKey(self, key):
+        '''void QSharedMemory.setNativeKey(QString key)'''
     def errorString(self):
         '''QString QSharedMemory.errorString()'''
         return QString()
@@ -9085,10 +9305,10 @@ class QSignalMapper(QObject):
         '''void QSignalMapper.map()'''
     def map(self, sender):
         '''void QSignalMapper.map(QObject sender)'''
-    mapped = PyQt4.QtCore.pyqtSignal() # void mapped(int) - signal
-    mapped = PyQt4.QtCore.pyqtSignal() # void mapped(const QString&) - signal
-    mapped = PyQt4.QtCore.pyqtSignal() # void mapped(QWidget *) - signal
-    mapped = PyQt4.QtCore.pyqtSignal() # void mapped(QObject *) - signal
+    mapped = pyqtSignal() # void mapped(int) - signal
+    mapped = pyqtSignal() # void mapped(const QString&) - signal
+    mapped = pyqtSignal() # void mapped(QWidget *) - signal
+    mapped = pyqtSignal() # void mapped(QObject *) - signal
     def mapping(self, id):
         '''QObject QSignalMapper.mapping(int id)'''
         return QObject()
@@ -9320,7 +9540,7 @@ class QSocketNotifier(QObject):
     def event(self):
         '''QEvent QSocketNotifier.event()'''
         return QEvent()
-    activated = PyQt4.QtCore.pyqtSignal() # void activated(int) - signal
+    activated = pyqtSignal() # void activated(int) - signal
     def setEnabled(self):
         '''bool QSocketNotifier.setEnabled()'''
         return bool()
@@ -9352,8 +9572,8 @@ class QState(QAbstractState):
         '''void QState.onExit(QEvent event)'''
     def onEntry(self, event):
         '''void QState.onEntry(QEvent event)'''
-    propertiesAssigned = PyQt4.QtCore.pyqtSignal() # void propertiesAssigned() - signal
-    finished = PyQt4.QtCore.pyqtSignal() # void finished() - signal
+    propertiesAssigned = pyqtSignal() # void propertiesAssigned() - signal
+    finished = pyqtSignal() # void finished() - signal
     def assignProperty(self, object, name, value):
         '''void QState.assignProperty(QObject object, str name, QVariant value)'''
     def setChildMode(self, mode):
@@ -9414,8 +9634,8 @@ class QStateMachine(QState):
         '''void QStateMachine.onExit(QEvent event)'''
     def onEntry(self, event):
         '''void QStateMachine.onEntry(QEvent event)'''
-    stopped = PyQt4.QtCore.pyqtSignal() # void stopped() - signal
-    started = PyQt4.QtCore.pyqtSignal() # void started() - signal
+    stopped = pyqtSignal() # void stopped() - signal
+    started = pyqtSignal() # void started() - signal
     def stop(self):
         '''void QStateMachine.stop()'''
     def start(self):
@@ -9523,6 +9743,8 @@ class QString():
     def __add__(self, ba):
         '''QString QString.__add__(QByteArray ba)'''
         return QString()
+    def swap(self, other):
+        '''void QString.swap(QString other)'''
     def repeated(self, times):
         '''QString QString.repeated(int times)'''
         return QString()
@@ -9856,10 +10078,16 @@ class QString():
         '''bool QString.endsWith(QString s, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
     def endsWith(self, s, cs = Qt.CaseSensitive):
+        '''bool QString.endsWith(QStringRef s, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+        return bool()
+    def endsWith(self, s, cs = Qt.CaseSensitive):
         '''bool QString.endsWith(QLatin1String s, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
     def startsWith(self, s, cs = Qt.CaseSensitive):
         '''bool QString.startsWith(QString s, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+        return bool()
+    def startsWith(self, s, cs = Qt.CaseSensitive):
+        '''bool QString.startsWith(QStringRef s, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
     def startsWith(self, s, cs = Qt.CaseSensitive):
         '''bool QString.startsWith(QLatin1String s, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
@@ -9882,11 +10110,17 @@ class QString():
     def contains(self, str, cs = Qt.CaseSensitive):
         '''bool QString.contains(QString str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
+    def contains(self, s, cs = Qt.CaseSensitive):
+        '''bool QString.contains(QStringRef s, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+        return bool()
     def contains(self, rx):
         '''bool QString.contains(QRegExp rx)'''
         return bool()
     def lastIndexOf(self, str, from_ = -1, cs = Qt.CaseSensitive):
         '''int QString.lastIndexOf(QString str, int from = -1, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+        return int()
+    def lastIndexOf(self, str, from_ = -1, cs = Qt.CaseSensitive):
+        '''int QString.lastIndexOf(QStringRef str, int from = -1, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
     def lastIndexOf(self, str, from_ = -1, cs = Qt.CaseSensitive):
         '''int QString.lastIndexOf(QLatin1String str, int from = -1, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
@@ -9896,6 +10130,9 @@ class QString():
         return int()
     def indexOf(self, str, from_ = 0, cs = Qt.CaseSensitive):
         '''int QString.indexOf(QString str, int from = 0, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+        return int()
+    def indexOf(self, str, from_ = 0, cs = Qt.CaseSensitive):
+        '''int QString.indexOf(QStringRef str, int from = 0, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
     def indexOf(self, str, from_ = 0, cs = Qt.CaseSensitive):
         '''int QString.indexOf(QLatin1String str, int from = 0, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
@@ -9961,6 +10198,9 @@ class QString():
         return int()
     def count(self, str, cs = Qt.CaseSensitive):
         '''int QString.count(QString str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+        return int()
+    def count(self, str, cs = Qt.CaseSensitive):
+        '''int QString.count(QStringRef str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
     def count(self):
         '''QRegExp QString.count()'''
@@ -10119,6 +10359,66 @@ class QStringRef():
     def __ge__(self, s2):
         '''bool QStringRef.__ge__(QStringRef s2)'''
         return bool()
+    def contains(self, str, cs = Qt.CaseSensitive):
+        '''bool QStringRef.contains(QString str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+        return bool()
+    def contains(self, str, cs = Qt.CaseSensitive):
+        '''bool QStringRef.contains(QLatin1String str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+        return bool()
+    def contains(self, str, cs = Qt.CaseSensitive):
+        '''bool QStringRef.contains(QStringRef str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+        return bool()
+    def toUcs4(self):
+        '''list-of-int QStringRef.toUcs4()'''
+        return [int()]
+    def toLocal8Bit(self):
+        '''QByteArray QStringRef.toLocal8Bit()'''
+        return QByteArray()
+    def toUtf8(self):
+        '''QByteArray QStringRef.toUtf8()'''
+        return QByteArray()
+    def toLatin1(self):
+        '''QByteArray QStringRef.toLatin1()'''
+        return QByteArray()
+    def toAscii(self):
+        '''QByteArray QStringRef.toAscii()'''
+        return QByteArray()
+    def endsWith(self, str, cs = Qt.CaseSensitive):
+        '''bool QStringRef.endsWith(QString str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+        return bool()
+    def endsWith(self, str, cs = Qt.CaseSensitive):
+        '''bool QStringRef.endsWith(QLatin1String str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+        return bool()
+    def endsWith(self, str, cs = Qt.CaseSensitive):
+        '''bool QStringRef.endsWith(QStringRef str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+        return bool()
+    def startsWith(self, str, cs = Qt.CaseSensitive):
+        '''bool QStringRef.startsWith(QString str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+        return bool()
+    def startsWith(self, str, cs = Qt.CaseSensitive):
+        '''bool QStringRef.startsWith(QLatin1String str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+        return bool()
+    def startsWith(self, str, cs = Qt.CaseSensitive):
+        '''bool QStringRef.startsWith(QStringRef str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+        return bool()
+    def lastIndexOf(self, str, from_ = -1, cs = Qt.CaseSensitive):
+        '''int QStringRef.lastIndexOf(QString str, int from = -1, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+        return int()
+    def lastIndexOf(self, str, from_ = -1, cs = Qt.CaseSensitive):
+        '''int QStringRef.lastIndexOf(QLatin1String str, int from = -1, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+        return int()
+    def lastIndexOf(self, str, from_ = -1, cs = Qt.CaseSensitive):
+        '''int QStringRef.lastIndexOf(QStringRef str, int from = -1, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+        return int()
+    def indexOf(self, str, from_ = 0, cs = Qt.CaseSensitive):
+        '''int QStringRef.indexOf(QString str, int from = 0, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+        return int()
+    def indexOf(self, str, from_ = 0, cs = Qt.CaseSensitive):
+        '''int QStringRef.indexOf(QLatin1String str, int from = 0, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+        return int()
+    def indexOf(self, str, from_ = 0, cs = Qt.CaseSensitive):
+        '''int QStringRef.indexOf(QStringRef str, int from = 0, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+        return int()
     def __str__(self):
         '''str QStringRef.__str__()'''
         return str()
@@ -10189,6 +10489,12 @@ class QStringRef():
         return ()
     def count(self):
         '''int QStringRef.count()'''
+        return int()
+    def count(self, str, cs = Qt.CaseSensitive):
+        '''int QStringRef.count(QString str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
+        return int()
+    def count(self, str, cs = Qt.CaseSensitive):
+        '''int QStringRef.count(QStringRef str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
     def size(self):
         '''int QStringRef.size()'''
@@ -10716,6 +11022,7 @@ class QTextStream():
     Ok = 0
     ReadPastEnd = 0
     ReadCorruptData = 0
+    WriteFailed = 0
 
     # Enum QTextStream.NumberFlag
     ShowBase = 0
@@ -10955,9 +11262,9 @@ class QThread(QObject):
         return int()
     def run(self):
         '''void QThread.run()'''
-    terminated = PyQt4.QtCore.pyqtSignal() # void terminated() - signal
-    finished = PyQt4.QtCore.pyqtSignal() # void finished() - signal
-    started = PyQt4.QtCore.pyqtSignal() # void started() - signal
+    terminated = pyqtSignal() # void terminated() - signal
+    finished = pyqtSignal() # void finished() - signal
+    started = pyqtSignal() # void started() - signal
     def wait(self, msecs = ULONG_MAX):
         '''bool QThread.wait(int msecs = ULONG_MAX)'''
         return bool()
@@ -11004,6 +11311,9 @@ class QThreadPool(QObject):
         '''void QThreadPool.__init__(QObject parent = None)'''
     def waitForDone(self):
         '''void QThreadPool.waitForDone()'''
+    def waitForDone(self, msecs):
+        '''bool QThreadPool.waitForDone(int msecs)'''
+        return bool()
     def releaseThread(self):
         '''void QThreadPool.releaseThread()'''
     def reserveThread(self):
@@ -11059,10 +11369,10 @@ class QTimeLine(QObject):
         return QEasingCurve()
     def timerEvent(self, event):
         '''void QTimeLine.timerEvent(QTimerEvent event)'''
-    valueChanged = PyQt4.QtCore.pyqtSignal() # void valueChanged(qreal) - signal
-    stateChanged = PyQt4.QtCore.pyqtSignal() # void stateChanged(QTimeLine::State) - signal
-    frameChanged = PyQt4.QtCore.pyqtSignal() # void frameChanged(int) - signal
-    finished = PyQt4.QtCore.pyqtSignal() # void finished() - signal
+    valueChanged = pyqtSignal() # void valueChanged(qreal) - signal
+    stateChanged = pyqtSignal() # void stateChanged(QTimeLine::State) - signal
+    frameChanged = pyqtSignal() # void frameChanged(int) - signal
+    finished = pyqtSignal() # void finished() - signal
     def toggleDirection(self):
         '''void QTimeLine.toggleDirection()'''
     def stop(self):
@@ -11139,7 +11449,7 @@ class QTimer(QObject):
     def timerEvent(self):
         '''QTimerEvent QTimer.timerEvent()'''
         return QTimerEvent()
-    timeout = PyQt4.QtCore.pyqtSignal() # void timeout() - signal
+    timeout = pyqtSignal() # void timeout() - signal
     def stop(self):
         '''void QTimer.stop()'''
     def start(self, msec):
@@ -11177,6 +11487,9 @@ class QTranslator(QObject):
         return bool()
     def load(self, fileName, directory = QString(), searchDelimiters = QString(), suffix = QString()):
         '''bool QTranslator.load(QString fileName, QString directory = QString(), QString searchDelimiters = QString(), QString suffix = QString())'''
+        return bool()
+    def load(self, locale, fileName, prefix = QString(), directory = QString(), suffix = QString()):
+        '''bool QTranslator.load(QLocale locale, QString fileName, QString prefix = QString(), QString directory = QString(), QString suffix = QString())'''
         return bool()
     def isEmpty(self):
         '''bool QTranslator.isEmpty()'''
@@ -11218,6 +11531,14 @@ class QUrl():
     def __ge__(self, url):
         '''bool QUrl.__ge__(QUrl url)'''
         return bool()
+    def isLocalFile(self):
+        '''bool QUrl.isLocalFile()'''
+        return bool()
+    def topLevelDomain(self):
+        '''QString QUrl.topLevelDomain()'''
+        return QString()
+    def swap(self, other):
+        '''void QUrl.swap(QUrl other)'''
     def fromUserInput(self, userInput):
         '''static QUrl QUrl.fromUserInput(QString userInput)'''
         return QUrl()
@@ -11518,6 +11839,9 @@ class QUuid():
         '''QString QUuid.__init__()'''
         return QString()
     def __init__(self):
+        '''QByteArray QUuid.__init__()'''
+        return QByteArray()
+    def __init__(self):
         '''QUuid QUuid.__init__()'''
         return QUuid()
     def __ge__(self, other):
@@ -11526,6 +11850,15 @@ class QUuid():
     def __le__(self, other):
         '''bool QUuid.__le__(QUuid other)'''
         return bool()
+    def fromRfc4122(self):
+        '''static QByteArray QUuid.fromRfc4122()'''
+        return QByteArray()
+    def toRfc4122(self):
+        '''QByteArray QUuid.toRfc4122()'''
+        return QByteArray()
+    def toByteArray(self):
+        '''QByteArray QUuid.toByteArray()'''
+        return QByteArray()
     def version(self):
         '''QUuid.Version QUuid.version()'''
         return QUuid.Version()
@@ -11627,6 +11960,8 @@ class QVariant():
     def __init__(self):
         '''object QVariant.__init__()'''
         return object()
+    def swap(self, other):
+        '''void QVariant.swap(QVariant other)'''
     def toEasingCurve(self):
         '''QEasingCurve QVariant.toEasingCurve()'''
         return QEasingCurve()
@@ -12226,6 +12561,9 @@ class QXmlStreamWriter():
         '''void QXmlStreamWriter.__init__(QByteArray array)'''
     def __init__(self, string):
         '''void QXmlStreamWriter.__init__(QString string)'''
+    def hasError(self):
+        '''bool QXmlStreamWriter.hasError()'''
+        return bool()
     def writeCurrentToken(self, reader):
         '''void QXmlStreamWriter.writeCurrentToken(QXmlStreamReader reader)'''
     def writeStartElement(self, qualifiedName):
@@ -12552,6 +12890,10 @@ def Q_FLAGS(*args):
 
 def Q_ENUMS(*args):
     '''static  Q_ENUMS(... *args)'''
+    return ()
+
+def Q_CLASSINFO(name, value):
+    '''static  Q_CLASSINFO(str name, str value)'''
     return ()
 
 def qQNaN():

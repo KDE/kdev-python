@@ -187,7 +187,6 @@ QList< DUContext* > Helper::internalContextsForClass(StructureType::Ptr klassTyp
     if ( decl ) {
         kDebug() << decl->toString();
     }
-    kDebug() << klassType->internalContext(context)->allDeclarations(CursorInRevision::invalid(), context).length();
     if ( klass ) {
         kDebug() << "Base classes: " << klass->baseClassesSize();
         FOREACH_FUNCTION ( const BaseClassInstance& base, klass->baseClasses ) {

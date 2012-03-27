@@ -316,7 +316,7 @@ void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
         ExpressionVisitor v(currentContext(), editor());
         v.visitNode(node->type);
         lock.unlock();
-        Declaration* d = visitVariableDeclaration<Declaration>(node->name, 0, v.lastType()); // except Error as <vardecl>
+        visitVariableDeclaration<Declaration>(node->name, 0, v.lastType()); // except Error as <vardecl>
     }
     DeclarationBuilderBase::visitExceptionHandler(node);
 }
@@ -328,7 +328,7 @@ void DeclarationBuilder::visitWith(WithAst* node)
         ExpressionVisitor v(currentContext(), editor());
         v.visitNode(node->contextExpression);
         lock.unlock();
-        Declaration* d = visitVariableDeclaration<Declaration>(node->optionalVars, 0, v.lastType());
+        visitVariableDeclaration<Declaration>(node->optionalVars, 0, v.lastType());
     }
     Python::ContextBuilder::visitWith(node);
 }
@@ -347,7 +347,7 @@ void DeclarationBuilder::visitFor(ForAst* node)
         }
         else if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeUnsure ) {
             UnsureType::Ptr u = v.lastType().cast<UnsureType>();
-            for ( int i = 0; i < u->typesSize(); i++ ) {
+            for ( uint i = 0; i < u->typesSize(); i++ ) {
                 if ( VariableLengthContainer::Ptr typeInUnsure = u->types()[i].abstractType().cast<VariableLengthContainer>() ) {
                     if ( ! newType ) {
                         newType = typeInUnsure->contentType().abstractType();
@@ -365,7 +365,7 @@ void DeclarationBuilder::visitFor(ForAst* node)
     }
     else if ( node->target->astType == Ast::TupleAstType ) {
         short atElement = 0;
-        foreach ( ExpressionAst* tupleMember, dynamic_cast<TupleAst*>(node->target)->elements ) {
+        foreach ( ExpressionAst* tupleMember, static_cast<TupleAst*>(node->target)->elements ) {
             if ( tupleMember->astType == Ast::NameAstType ) {
                 AbstractType::Ptr newType;
                 if ( atElement == 0 && type && type->keyType() ) {
@@ -462,7 +462,7 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
     }
     
     if ( node->target->astType == Ast::NameAstType ) {
-        Declaration* d = visitVariableDeclaration<Declaration>(
+        visitVariableDeclaration<Declaration>(
             static_cast<NameAst*>(node->target)->identifier, declarationRange, targetType
         );
     }
@@ -470,7 +470,7 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
         foreach ( ExpressionAst* tupleElt, static_cast<TupleAst*>(node->target)->elements ) {
             if ( tupleElt->astType == Ast::NameAstType ) {
                 NameAst* n = static_cast<NameAst*>(tupleElt);
-                Declaration* d = visitVariableDeclaration<Declaration>(n->identifier, declarationRange);
+                visitVariableDeclaration<Declaration>(n->identifier, declarationRange);
                 // TODO: Fix this as soon as tuple type support is implemented.
 //                 DUChainWriteLocker lock(DUChain::lock());
 //                 d->setAbstractType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
@@ -739,7 +739,7 @@ void DeclarationBuilder::visitLambda(LambdaAst* node)
     openContext(node, editorFindRange(node, node->body), DUContext::Other);
     foreach ( ExpressionAst* argument, node->arguments->arguments ) {
         if ( argument->astType == Ast::NameAstType ) {
-            Declaration* d = visitVariableDeclaration<Declaration>(static_cast<NameAst*>(argument));
+            visitVariableDeclaration<Declaration>(static_cast<NameAst*>(argument));
         }
     }
     closeContext();
@@ -1106,7 +1106,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             bool isAlreadyOpen = contextAlreayOpen(internal);
             if ( isAlreadyOpen ) {
                 activateAlreadyOpenedContext(internal);
-                Declaration* d = visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target, haveDeclaration, tupleElementType);
+                visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target, haveDeclaration, tupleElementType);
                 closeAlreadyOpenedContext(internal);
             }
             else {
@@ -1418,7 +1418,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 type->addArgument(listType);
                 node->vararg->startCol = node->vararg_col_offset; node->vararg->endCol = node->vararg_col_offset + node->vararg->value.length() - 1;
                 node->vararg->startLine = node->vararg_lineno; node->vararg->endLine = node->vararg_lineno;
-                Declaration* d = visitVariableDeclaration<Declaration>(node->vararg, 0, listType);
+                visitVariableDeclaration<Declaration>(node->vararg, 0, listType);
             }
             if ( node->kwarg ) {
                 DUChainReadLocker lock(DUChain::lock());
@@ -1427,7 +1427,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 type->addArgument(dictType);
                 node->kwarg->startCol = node->arg_col_offset; node->kwarg->endCol = node->arg_col_offset + node->kwarg->value.length() - 1;
                 node->kwarg->startLine = node->arg_lineno; node->kwarg->endLine = node->arg_lineno;
-                Declaration* d = visitVariableDeclaration<Declaration>(node->kwarg, 0, dictType);
+                visitVariableDeclaration<Declaration>(node->kwarg, 0, dictType);
             }
         }
     }

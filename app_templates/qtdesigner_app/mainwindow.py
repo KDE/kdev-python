@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Sat Jun 18 16:07:16 2011
-#      by: PyQt4 UI code generator 4.8.3
+# Created: Sun Mar 11 03:52:59 2012
+#      by: PyQt4 UI code generator 4.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(393, 405)
+        MainWindow.resize(294, 123)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
@@ -26,15 +26,14 @@ class Ui_MainWindow(object):
         self.pushButton.setObjectName(_fromUtf8("pushButton"))
         self.verticalLayout.addWidget(self.pushButton)
         self.progressBar = QtGui.QProgressBar(self.centralwidget)
-        self.progressBar.setProperty(_fromUtf8("value"), 24)
+        self.progressBar.setProperty("value", 24)
         self.progressBar.setObjectName(_fromUtf8("progressBar"))
         self.verticalLayout.addWidget(self.progressBar)
-        self.kplotwidget = KPlotWidget(self.centralwidget)
-        self.kplotwidget.setObjectName(_fromUtf8("kplotwidget"))
-        self.verticalLayout.addWidget(self.kplotwidget)
+        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 393, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 294, 22))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
@@ -57,4 +56,3 @@ class Ui_MainWindow(object):
         self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
         self.actionQuit.setText(QtGui.QApplication.translate("MainWindow", "Quit", None, QtGui.QApplication.UnicodeUTF8))
 
-from PyKDE4.kdeui import KPlotWidget

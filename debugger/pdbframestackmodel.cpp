@@ -101,7 +101,7 @@ void PdbFrameStackModel::threadsFetched(QByteArray threadsData)
     setCurrentThread(0);
 }
 
-void PdbFrameStackModel::fetchFrames(int threadNumber, int from, int to)
+void PdbFrameStackModel::fetchFrames(int /*threadNumber*/, int /*from*/, int /*to*/)
 {
     kDebug() << "frames requested";
     InternalPdbCommand* cmd = new InternalPdbCommand(this, "framesFetched", "where\n");

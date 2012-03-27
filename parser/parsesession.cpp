@@ -35,8 +35,8 @@ namespace Python
 {
 
 ParseSession::ParseSession(KDevPG::MemoryPool* pool)
-    : m_currentDocument(KDevelop::IndexedString("<invalid>"))
-    , m_pool(pool)
+    : m_pool(pool)
+    , m_currentDocument(KDevelop::IndexedString("<invalid>"))
     , m_futureModificationRevision()
 {
 }
@@ -74,7 +74,7 @@ void ParseSession::setContents( const QString& contents )
     m_contents = contents;
 }
 
-QPair<CodeAst*, bool> ParseSession::parse(Python::CodeAst* ast)
+QPair<CodeAst*, bool> ParseSession::parse(Python::CodeAst* /*ast*/)
 {
     AstBuilder pythonparser(m_pool);
     QPair<CodeAst*, bool> matched;

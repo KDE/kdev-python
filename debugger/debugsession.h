@@ -215,10 +215,12 @@ private:
      * @brief Set the object to notify when the next command is done processing
      **/
     void setNotifyNext(QWeakPointer<QObject> object, const char* method);
+    
     /**
      * @brief Invoke the method given by setNotifyNext, and clear it
      **/
     void notifyNext();
+    
     /**
      * @brief Process the next command in the queue.
      * WARNING: The queue must be non-empty when this is called.
@@ -247,7 +249,8 @@ public:
     /**
      * @brief Implement this method in your sub-class to execute the command in the given session.
      * WARNING: The process is already locked and ready when this is called.
-     * Don't acquire or release the lock here.
+     * Don't acquire or release any locks or do fancy checking here, just do your business (write data
+     * to the process, ...). Everything else is handled from outside.
      * @param session the debug session to run the command in
      **/
     virtual void run(DebugSession* session) = 0;
@@ -268,7 +271,7 @@ public:
         UserType
     };
     
-    inline Type type() {
+    inline Type type() const {
         return m_type;
     };
 

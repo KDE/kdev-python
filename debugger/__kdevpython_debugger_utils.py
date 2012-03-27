@@ -10,6 +10,7 @@ def debug_trace(*args):
     set_trace()
     
 def format_locals(locals):
+    '''Print local variables in a machine-readable format'''
     for key, value in locals.iteritems():
         if key == '__kdevpython_debugger_utils':
             continue

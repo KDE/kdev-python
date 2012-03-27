@@ -252,8 +252,9 @@ void DebugSession::run()
 
 void DebugSession::interruptDebugger()
 {
-    addSimpleInternalCommand("quit");
-    setState(IDebugSession::EndedState);
+    kill(m_debuggerProcess->pid(), SIGINT);
+    updateLocation();
+    setState(PausedState);
 }
 
 void DebugSession::addCommand(PdbCommand* cmd)
@@ -385,7 +386,7 @@ DebugSession::~DebugSession()
 
 void DebugSession::restartDebugger()
 {
-
+    addSimpleUserCommand("run");
 }
 
 bool DebugSession::restartAvaliable() const

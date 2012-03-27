@@ -34,14 +34,40 @@ public:
     VariableController(IDebugSession* parent);
     virtual void addWatch(KDevelop::Variable* variable);
     virtual void addWatchpoint(KDevelop::Variable* variable);
+    
+    /**
+     * @brief This just calls the Variable constructor and returns a new, empty \a Variable object.
+     **/
     virtual KDevelop::Variable* createVariable(KDevelop::TreeModel* model, KDevelop::TreeItem* parent, const QString& expression, const QString& display = "");
+    
+    /**
+     * @brief Mini-parser which gives the expression under the cursor.
+     * Example: _I_ = cursor
+     * self.fo_I_obar(something) # should return "self.foobar"
+     * self.foobar(some_I_thing) # should return "something"
+     * The expressions returned by this are "print"ed by the debugger, and then displayed in the tooltip.
+     * @param doc The document to operate on
+     * @param cursor the cursor position
+     * @return The expression to print. Should be an (at least syntactically) valid python expression
+     **/
     virtual QString expressionUnderCursor(KTextEditor::Document* doc, const KTextEditor::Cursor& cursor);
+    
+    /**
+     * @brief Update locals and/or watches, as indicated by autoUpdate().
+     **/
     virtual void update();
 protected:
+    /**
+     * @brief Overriden to handle frame change events (when the user clicks the frame list).
+     * This then enqueues many "up" or "down" commands to react to the frame change.
+     **/
     virtual void handleEvent(IDebugSession::event_t event);
 private:
     QList<Variable*> m_watchVariables;
 private slots:
+    /**
+     * @brief Parse the debugger output, and perform an update of the local variables.
+     **/
     void localsUpdateReady(QByteArray rawData);
 };
 

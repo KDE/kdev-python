@@ -33,8 +33,24 @@ Q_OBJECT
 public:
     BreakpointController(IDebugSession* parent);
 public slots:
+    /**
+     * @brief Handles events in the debug session.
+     * It is used here to send breakpoints to the debugger which were created by the user
+     * before the program was started.
+     * 
+     * @param evt passed by kdevplatform, specifies the type of the event.
+     * @return void
+     **/
     void slotEvent(IDebugSession::event_t evt);
 protected:
+    /**
+     * @brief Notify the debugger about a breakpoint update.
+     * This is triggered if the user clicks the breakpoint bar.
+     * Deleting breakpoints is also handled here.
+     * 
+     * @param breakpoint The breakpoint to update.
+     * @return void
+     **/
     virtual void sendMaybe(KDevelop::Breakpoint* breakpoint);
     DebugSession* session();
 };

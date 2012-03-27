@@ -33,11 +33,13 @@ public:
     DebugJob();
     virtual ~DebugJob();
     
+    /**
+     * @brief Create a debug session and start it.
+     *
+     * @return void
+     **/
     virtual void start();
     virtual bool doKill();
-    
-    void lockProcess();
-    void unlockProcess();
     
     KUrl m_scriptUrl;
     QString m_interpreter;

@@ -26,6 +26,9 @@ using namespace KDevelop;
 
 namespace Python {
 
+/**
+* @brief The Frame Stack Model, which contains and controls the frame stack ("backtrace").
+**/
 class PdbFrameStackModel : public KDevelop::FrameStackModel
 {
 Q_OBJECT
@@ -33,6 +36,9 @@ public:
     PdbFrameStackModel(IDebugSession* session);
     virtual void fetchFrames(int threadNumber, int from, int to);
     virtual void fetchThreads();
+    
+    /// pdb does not support "select-frame n", so we have to use "up" and "down" repeatedly
+    /// to select frames. Those two functions tell at which frame the debugger is internally.
     int debuggerAtFrame() const;
     void setDebuggerAtFrame(int newFrame);
 public slots:

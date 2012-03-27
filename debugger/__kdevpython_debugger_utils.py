@@ -2,6 +2,8 @@
 
 from kdevpdb import kdevOutputFormatter
 
+__kdevpython_builtin_locals = locals
+
 def debug_trace(*args):
     '''Set a tracepoint in the Python debugger that works with Qt'''
     try:

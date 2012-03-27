@@ -175,7 +175,8 @@ void VariableController::update()
    if (autoUpdate() & UpdateLocals) {
         // TODO find a more elegant solution for this import!
         InternalPdbCommand* import = new InternalPdbCommand(0, 0, "import __kdevpython_debugger_utils\n");
-        InternalPdbCommand* cmd = new InternalPdbCommand(this, "localsUpdateReady", "__kdevpython_debugger_utils.format_locals(locals())\n");
+        InternalPdbCommand* cmd = new InternalPdbCommand(this, "localsUpdateReady",
+                                  "__kdevpython_debugger_utils.format_locals(__kdevpython_debugger_utils.__kdevpython_builtin_locals())\n");
         d->addCommand(import);
         d->addCommand(cmd);
    }

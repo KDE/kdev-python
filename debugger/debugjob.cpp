@@ -23,6 +23,8 @@
 #include <interfaces/icore.h>
 
 #include "debugjob.h"
+#include <interfaces/iuicontroller.h>
+#include <sublime/view.h>
 #include <util/processlinemaker.h>
 
 namespace Python {

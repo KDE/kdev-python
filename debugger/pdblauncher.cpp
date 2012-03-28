@@ -26,10 +26,15 @@
 #include <interfaces/ilaunchconfiguration.h>
 #include <interfaces/icore.h>
 #include <interfaces/iplugincontroller.h>
-#include <KLocalizedString>
+#include <interfaces/icore.h>
+#include <interfaces/iuicontroller.h>
 
+#include <KLocalizedString>
+#include <KMessageBox>
+#include <KParts/MainWindow>
 #include <KDebug>
 #include <KConfigGroup>
+
 
 namespace Python {
     
@@ -62,13 +67,29 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
 {
     kDebug() << "start of debugger process requested";
     if ( launchMode == "debug" ) {
-        DebugJob* job = new DebugJob();
         IExecuteScriptPlugin* iface = KDevelop::ICore::self()->pluginController()
                                       ->pluginForExtension("org.kdevelop.IExecuteScriptPlugin")->extension<IExecuteScriptPlugin>();
-        Q_ASSERT(iface);
         QString err;
+        QString interpreter = iface->interpreter(cfg, err);
+        
+        // check the interpreter
+        QProcess p;
+        p.start(interpreter, QStringList() << "--version");
+        p.waitForFinished(500);
+        QByteArray version = p.readAllStandardError();
+        kDebug() << "interpreter version:" << version;
+        if ( ! version.startsWith("Python 2.") ) {
+            KMessageBox::error(ICore::self()->uiController()->activeMainWindow(),
+                            i18n("Sorry, debugging is only supported for Python 2.x applications."),
+                            i18n("Unsupported interpreter"));
+            return 0;
+        }
+        
+        DebugJob* job = new DebugJob();
+        
+        Q_ASSERT(iface);
         job->m_scriptUrl = iface->script(cfg, err);
-        job->m_interpreter = iface->interpreter(cfg, err);
+        job->m_interpreter = interpreter;
         job->m_args = iface->arguments(cfg, err);
         QList<KJob*> l;
         l << job;

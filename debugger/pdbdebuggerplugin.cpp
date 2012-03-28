@@ -33,7 +33,7 @@
 namespace Python {
 
 K_PLUGIN_FACTORY(PdbDebuggerPluginFactory, registerPlugin<PdbDebuggerPlugin>(); )
-K_EXPORT_PLUGIN(PdbDebuggerPluginFactory(KAboutData("kdevpdb", "kdevpdb", ki18n("PDB Support"), "0.1", ki18n("Support for running apps in PDB"), KAboutData::License_GPL)))
+K_EXPORT_PLUGIN(PdbDebuggerPluginFactory(KAboutData("kdevpdb", "kdevpdb", ki18n("PDB Support"), "0.1", ki18n("Support for running applications in PDB"), KAboutData::License_GPL)))
 
 PdbDebuggerPlugin::PdbDebuggerPlugin(QObject* parent, const QVariantList&) 
     : IPlugin(PdbDebuggerPluginFactory::componentData(), parent)

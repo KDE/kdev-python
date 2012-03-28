@@ -45,7 +45,7 @@ QList< KDevelop::LaunchConfigurationPageFactory* > PdbLauncher::configPages() co
 
 QString PdbLauncher::description() const
 {
-    return i18n("A plugin to debug python applications with pdb.");
+    return i18n("A plugin to debug Python applications with pdb.");
 }
 
 QString PdbLauncher::id()

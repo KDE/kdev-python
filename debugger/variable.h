@@ -57,6 +57,13 @@ public slots:
      * @brief Parse the debugger output and add children to this variable.
      **/
     void moreChildrenFetched(QByteArray rawData);
+    /**
+     * @brief Set this object's python ID
+     **/
+    void setId(long unsigned int id);
+private:
+    /// A unique ID of the python object pointed to by this variable.
+    unsigned long int m_pythonPtr;
 };
 
 }

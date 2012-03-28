@@ -160,6 +160,11 @@ public:
     void updateLocation();
     
     /**
+     * @brief Clears the table of object IDs stored in the debugger script
+     **/
+    void clearObjectTable();
+    
+    /**
      * @brief Write raw data to the debugger process' stdin.
      * Remember that you have to terminate your input by "\n" for the debugger to process it.
      * 

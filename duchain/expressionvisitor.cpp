@@ -412,7 +412,9 @@ void ExpressionVisitor::visitCall(CallAst* node)
             encounterDeclaration(classDecl);
         }
         else {
-            kDebug() << "Declaraton " << actualDeclaration->toString() << " is not a class or function declaration";
+            if ( actualDeclaration ) {
+                kDebug() << "Declaraton " << actualDeclaration->toString() << " is not a class or function declaration";
+            }
             return unknownTypeEncountered();
         }
     }

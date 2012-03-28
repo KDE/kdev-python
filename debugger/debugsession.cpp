@@ -354,8 +354,14 @@ void DebugSession::checkCommandQueue()
     processNextCommand();
 }
 
+void DebugSession::clearObjectTable()
+{
+    addSimpleInternalCommand("__kdevpython_debugger_utils.cleanup()");
+}
+
 void DebugSession::addSimpleUserCommand(const QString& cmd)
 {
+    clearObjectTable();
     UserPdbCommand* cmdObject = new UserPdbCommand(0, 0, cmd + "\n");
     Q_ASSERT(cmdObject->type() == PdbCommand::UserType);
     addCommand(cmdObject);
@@ -365,7 +371,6 @@ void DebugSession::addSimpleInternalCommand(const QString& cmd)
 {
     Q_ASSERT( ! cmd.endsWith('\n') );
     InternalPdbCommand* cmdObject = new InternalPdbCommand(0, 0, cmd + "\n");
-    Q_ASSERT(cmdObject->type() == PdbCommand::InternalType);
     addCommand(cmdObject);
 }
 

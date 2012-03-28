@@ -96,10 +96,10 @@ QString VariableLengthContainer::toString() const
     AbstractType::Ptr content = contentType().abstractType();
     AbstractType::Ptr key = keyType().abstractType();
     if ( hasKeyType() and content and key ) {
-        return prefix + " " + i18n("of") + " " + key->toString() + " : " + content->toString();
+        return i18n("%1 of %2 : %3", prefix, key->toString(), content->toString());
     }
     if ( content ) {
-        return prefix + " " + i18n("of") + " " + content->toString();
+        return i18n("%1 of %2", prefix, content->toString());
     }
     else
         return prefix;

@@ -69,6 +69,7 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
     if ( launchMode == "debug" ) {
         IExecuteScriptPlugin* iface = KDevelop::ICore::self()->pluginController()
                                       ->pluginForExtension("org.kdevelop.IExecuteScriptPlugin")->extension<IExecuteScriptPlugin>();
+        Q_ASSERT(iface);
         QString err;
         QString interpreter = iface->interpreter(cfg, err);
         
@@ -87,7 +88,6 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
         
         DebugJob* job = new DebugJob();
         
-        Q_ASSERT(iface);
         job->m_scriptUrl = iface->script(cfg, err);
         job->m_interpreter = interpreter;
         job->m_args = iface->arguments(cfg, err);

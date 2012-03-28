@@ -86,10 +86,10 @@ void Variable::moreChildrenFetched(QByteArray rawData)
             realValue = formatExtract.capturedTexts().at(2);
         }
         Variable* v = new Variable(model_, this, childName);
-        v->setValue(! realValue.isNull() ? realValue : d);
-        kDebug() << "adding child:" << expression() << i << d;
-        v->setHasMoreInitial(true);
         appendChild(v);
+        kDebug() << "adding child:" << expression() << i << d;
+        v->setValue(! realValue.isNull() ? realValue : d);
+        v->setHasMoreInitial(true);
         i++;
     }
 }

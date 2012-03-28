@@ -160,8 +160,13 @@ void DebugSession::dataAvailable()
         }
     }
     
+    while (int index = realData.indexOf(debuggerPrompt) != -1 ) {
+        realData.remove(index-1, debuggerPrompt.length());
+    }
     if ( ! realData.isEmpty() ) {
-        emit realDataReceived(byteArrayToStringList(realData));
+        // FIXME this is not very elegant.
+        QStringList items = byteArrayToStringList(realData);
+        emit realDataReceived(items);
     }
     
     // Although unbuffered, it seems guaranteed that the debugger prompt is written at once.

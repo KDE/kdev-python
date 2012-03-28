@@ -14,7 +14,19 @@ class kdevPdb(Pdb):
         Pdb.__init__(self)
         self.stdout = kdevOutputFormatter()
         self.prompt = "__KDEVPYTHON_DEBUGGER_PROMPT"
+    
+    def debug_trace(self, *args):
+        '''Set a tracepoint in the Python debugger that works with Qt'''
+        try:
+            from PyQt4.QtCore import pyqtRemoveInputHook
+            pyqtRemoveInputHook()
+        except ImportError:
+            pass
+        self.set_trace(sys._getframe().f_back)
+    
     def _runscript(self, filename):
+        import signal
+        signal.signal(signal.SIGINT, self.debug_trace)
         Pdb._runscript(self, filename)
         self._user_requested_quit = 1
 

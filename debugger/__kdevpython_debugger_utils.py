@@ -7,16 +7,6 @@ __kdevpython_builtin_locals = locals
 # TODO: weakref those, but python can't in general :(
 objectTable = {}
 
-def debug_trace(*args):
-    '''Set a tracepoint in the Python debugger that works with Qt'''
-    try:
-        from PyQt4.QtCore import pyqtRemoveInputHook
-        pyqtRemoveInputHook()
-    except ImportError:
-        pass
-    from pdb import set_trace
-    set_trace()
-
 def cleanup():
     objectTable.clear()
 
@@ -59,6 +49,3 @@ def format_object_children(expr):
             objectTable[id(obj)] = obj
     print '\n'.join(output)
 
-import signal, pdb
-# Support "Ctrl+C"
-signal.signal(signal.SIGINT, debug_trace)

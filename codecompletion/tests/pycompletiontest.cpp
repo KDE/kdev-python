@@ -95,12 +95,13 @@ QList< CompletionTreeItemPointer > PyCompletionTest::invokeCompletionOn(const QS
         }
     }
     Q_ASSERT(cursorAt.isValid());
-    allCode = allCode.replace("%CURSOR", "");
+    // codeCompletionContext only gets passed the text until the place where completion is invoked
+    QString snip = allCode.mid(0, allCode.indexOf("%CURSOR"));
     
     DUContextPointer contextAtCursor = DUContextPointer(topContext->findContextAt(cursorAt, true));
     Q_ASSERT(contextAtCursor);
     
-    PythonCodeCompletionContext codeCompletionContext(contextAtCursor, allCode, cursorAt, 0, 0);
+    PythonCodeCompletionContext codeCompletionContext(contextAtCursor, snip, cursorAt, 0, 0);
     bool abort = false;
     return codeCompletionContext.completionItems(abort, true);
 }

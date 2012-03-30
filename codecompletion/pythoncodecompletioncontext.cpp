@@ -568,9 +568,10 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
 //     }
     
     // check if the current position is inside a multi-line comment / string
-    bool insideSingleQuotes = false;
-    bool insideDoubleQuotes = false;
-    bool insideMultiLineComment = false;
+    bool insideSQ = false;
+    bool insideDQ = false;
+    bool insideMultiLineSQComment = false;
+    bool insideMultiLineDQComment = false;
     bool insideSingleLineComment = false;
     const int max_len = text.length();
     kDebug() << "Checking for comment line or string literal...";
@@ -582,7 +583,6 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
                 t.append(text.at(atChar+i));
             }
         }
-        kDebug() << atChar << t;
         if ( c == '#' ) {
             insideSingleLineComment = true;
             continue;
@@ -592,21 +592,30 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
             continue;
         }
         if ( t == "\"\"\"" ) {
-            insideMultiLineComment = !insideMultiLineComment;
+            insideMultiLineSQComment = !insideMultiLineSQComment;
+            continue;
+        }
+        if ( t == "'''" ) {
+            insideMultiLineSQComment = !insideMultiLineSQComment;
             continue;
         }
         if ( c == '\'' ) {
-            insideSingleQuotes = !insideSingleQuotes;
+            insideSQ = !insideSQ;
             continue;
         }
         if ( c == '"' ) {
-            insideDoubleQuotes = !insideDoubleQuotes;
+            insideDQ = !insideDQ;
+            continue;
+        }
+        if ( c == '\\' ) {
+            atChar ++;
             continue;
         }
     }
     
-    if ( insideSingleLineComment || insideSingleQuotes || insideMultiLineComment || insideDoubleQuotes ) {
+    if ( insideSingleLineComment || insideSQ || insideMultiLineSQComment || insideDQ || insideMultiLineDQComment ) {
         m_operation = PythonCodeCompletionContext::NoCompletion;
+        return;
     }
     
     // Our contexts end too early. They end at the last valid token of a function or such,

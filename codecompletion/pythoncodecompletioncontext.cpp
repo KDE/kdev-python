@@ -549,7 +549,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     , m_context(context)
 {
     kDebug() << "Text: " << text;
-    m_workingOnDocument = parent->parent->m_currentDocument;
+    m_workingOnDocument = context->topContext()->url().toUrl();
     QString currentLine = "\n" + text.split("\n").last(); // we'll only look at the last line for now, as 
                                                           // 99% of python statements are limited to one line TODO fix this
     int atLine = position.line;

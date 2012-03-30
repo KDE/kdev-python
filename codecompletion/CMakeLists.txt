@@ -32,3 +32,5 @@ target_link_libraries(kdev4pythoncompletion
 )
 
 install(TARGETS kdev4pythoncompletion DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
+
+add_subdirectory(tests)

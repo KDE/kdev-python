@@ -33,6 +33,8 @@
 #include <KStandardDirs>
 #include <language/duchain/types/functiontype.h>
 #include <language/duchain/aliasdeclaration.h>
+#include <language/backgroundparser/backgroundparser.h>
+#include <interfaces/ilanguagecontroller.h>
 
 #include "parsesession.h"
 #include "pythoneditorintegrator.h"
@@ -104,7 +106,7 @@ void PyDUChainTest::parse_int(const QString& code, const QString& suffix)
     KDevelop::DUChain::self()->updateContextForUrl(KDevelop::IndexedString(filename), 
                                                    static_cast<TopDUContext::Features>(TopDUContext::AllDeclarationsContextsAndUses | TopDUContext::ForceUpdate),
                                                    this, 1);
-    
+    ICore::self()->languageController()->backgroundParser()->parseDocuments();
     AstBuilder* a = new AstBuilder(&m_pool);
     m_ast = a->parse(filename, const_cast<QString&>(code));
 }

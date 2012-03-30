@@ -233,6 +233,8 @@ void ParseJob::run()
     }
     
     setDuChain(m_duContext);
+    
+    qDebug() << "DONE parsing.";
 }
 
 }

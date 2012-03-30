@@ -17,6 +17,8 @@
 
 #include "pycompletiontest.h"
 #include <pythoncodecompletioncontext.h>
+#include <language/backgroundparser/backgroundparser.h>
+#include <interfaces/ilanguagecontroller.h>
 #include <language/duchain/declaration.h>
 #include <language/codegen/coderepresentation.h>
 #include <language/duchain/duchain.h>
@@ -73,7 +75,9 @@ QList< CompletionTreeItemPointer > PyCompletionTest::invokeCompletionOn(const QS
     fileptr.open(QIODevice::WriteOnly);
     fileptr.write(initCode.toAscii().replace("%INVOKE", ""));
     fileptr.close();
+    
     DUChain::self()->updateContextForUrl(IndexedString(filename), KDevelop::TopDUContext::ForceUpdate);
+    ICore::self()->languageController()->backgroundParser()->parseDocuments();
     ReferencedTopDUContext topContext = DUChain::self()->waitForUpdate(IndexedString(filename),
                                                                        KDevelop::TopDUContext::AllDeclarationsAndContexts);
     

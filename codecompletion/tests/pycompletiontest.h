@@ -35,9 +35,18 @@ class PyCompletionTest : public QObject
         
         QList<CompletionTreeItemPointer> invokeCompletionOn(const QString& initCode, const QString& invokeCode);
         bool containsItemForDeclarationNamed(QList<CompletionTreeItemPointer> items, QString itemName);
+        // convenience function
+        bool declarationInCompletionList(const QString& initCode, const QString& invokeCode, QString itemName);
+        // convenience function
+        bool completionListIsEmpty(const QString& initCode, const QString& invokeCode);
         
     private slots:
         void testIntegralTypesImmediate();
+        void testIntegralTypesImmediate_data();
+        void testIntegralExpressionsDifferentContexts();
+        void testIntegralExpressionsDifferentContexts_data();
+        void testNoCompletionInCommentsOrStrings();
+        void testNoCompletionInCommentsOrStrings_data();
     
 };
 

@@ -113,9 +113,83 @@ bool PyCompletionTest::containsItemForDeclarationNamed(QList< CompletionTreeItem
     return false;
 }
 
+bool PyCompletionTest::declarationInCompletionList(const QString& initCode, const QString& invokeCode, QString itemName)
+{
+    return containsItemForDeclarationNamed(invokeCompletionOn(initCode, invokeCode), itemName);
+}
+
+bool PyCompletionTest::completionListIsEmpty(const QString& initCode, const QString& invokeCode)
+{
+    return invokeCompletionOn(initCode, invokeCode).isEmpty();
+}
+
 void PyCompletionTest::testIntegralTypesImmediate()
 {
-    QVERIFY(containsItemForDeclarationNamed(invokeCompletionOn("[]%INVOKE", ".%CURSOR"), "append"));
+    QFETCH(QString, invokeCode);
+    QFETCH(QString, completionCode);
+    QFETCH(QString, expectedDeclaration);
+    
+    QVERIFY(declarationInCompletionList(invokeCode, completionCode, expectedDeclaration));
+}
+
+void PyCompletionTest::testIntegralTypesImmediate_data()
+{
+    QTest::addColumn<QString>("invokeCode");
+    QTest::addColumn<QString>("completionCode");
+    QTest::addColumn<QString>("expectedDeclaration");
+    
+    QTest::newRow("list_syntax") << "[]%INVOKE" << ".%CURSOR" << "append";
+    QTest::newRow("dict_syntax") << "{}%INVOKE" << ".%CURSOR" << "items";
+    QTest::newRow("string_syntax") << "\"\"%INVOKE" << ".%CURSOR" << "capitalize";
+    QTest::newRow("list_class") << "list()%INVOKE" << ".%CURSOR" << "append";
+    QTest::newRow("dict_class") << "dict()%INVOKE" << ".%CURSOR" << "items";
+    QTest::newRow("string_class") << "str()%INVOKE" << ".%CURSOR" << "capitalize";
+}
+
+void PyCompletionTest::testIntegralExpressionsDifferentContexts()
+{
+    QFETCH(QString, invokeCode);
+    QFETCH(QString, completionCode);
+    QFETCH(QString, expectedDeclaration);
+    
+    QVERIFY(declarationInCompletionList(invokeCode, completionCode, expectedDeclaration));
+}
+
+void PyCompletionTest::testIntegralExpressionsDifferentContexts_data()
+{
+    QTest::addColumn<QString>("invokeCode");
+    QTest::addColumn<QString>("completionCode");
+    QTest::addColumn<QString>("expectedDeclaration");
+    
+    QTest::newRow("function_call") << "foo([]%INVOKE)" << ".%CURSOR" << "append";
+    QTest::newRow("function_call_multi") << "foo(bar(baz(bang([]%INVOKE))))" << ".%CURSOR" << "append";
+    QTest::newRow("empty_list") << "[[]%INVOKE]" << ".%CURSOR" << "append";
+    QTest::newRow("list") << "[1, 2, 3, 4, 5, []%INVOKE]" << ".%CURSOR" << "append";
+    QTest::newRow("list_with_fancy_string") << "[\"FooFObar\\\", 3)\", []%INVOKE]" << ".%CURSOR" << "append";
+    QTest::newRow("empty_dict") << "{[]%INVOKE}" << ".%CURSOR" << "append";
+    QTest::newRow("print_stmt") << "print []%INVOKE" << ".%CURSOR" << "append";
+}
+
+void PyCompletionTest::testNoCompletionInCommentsOrStrings()
+{
+    QFETCH(QString, invokeCode);
+    QFETCH(QString, completionCode);
+    
+    QVERIFY(completionListIsEmpty(invokeCode, completionCode));
+}
+
+void PyCompletionTest::testNoCompletionInCommentsOrStrings_data()
+{
+    QTest::addColumn<QString>("invokeCode");
+    QTest::addColumn<QString>("completionCode");
+    
+    QTest::newRow("single_comment") << "# []%INVOKE" << ".%CURSOR";
+    QTest::newRow("stringDQ") << "\"[]%INVOKE\"" << ".%CURSOR";
+    QTest::newRow("stringSQ") << "\'[]%INVOKE\'" << ".%CURSOR";
+    QTest::newRow("multilineDQ") << "\"\"\"[]%INVOKE\"\"\"" << ".%CURSOR";
+    QTest::newRow("multilineSQ") << "\'\'\'[]%INVOKE\'\'\'" << ".%CURSOR";
+    QTest::newRow("multilineDQ_newlines") << "\"\"\"\n\n[]%INVOKE\n\n\n\"\"\"" << ".%CURSOR";
+    QTest::newRow("multilineSQ_newlines") << "\'\'\'\n\n[]%INVOKE\n\n\n\'\'\'" << ".%CURSOR";
 }
 
 }

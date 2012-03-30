@@ -87,6 +87,12 @@ class TestRunner():
                 function = fail.groups()[0]
                 self.failed_tests.append(FailedTest(function))
                 last_failed = True
+            
+            fatal_fail = re.match(r"QFATAL\s*:", line)
+            if fatal_fail:
+                print self.data
+                print red("Fatal error occured, aborting")
+                return
         
         passed, failed = len(self.passed_tests), len(self.failed_tests)
         percent = (float(passed) / (failed+passed)) * 100
@@ -94,11 +100,11 @@ class TestRunner():
         total = white(passed+failed)
         passed, failed = green(passed), red(failed)
         print " Done. Summary: %s tests total, %s passed, %s failed (%s%% passed)." % (total, passed, failed, percent)
-        print " Detailed information:"
+        print " Detailed information:\n"
         print white("  ==="), green("Passed tests:"), white("===")
         namespaceFunctionArgs = r"(.*)::(.*)\((.*)\)"
         
-        if len(self.passed_tests)
+        if len(self.passed_tests):
             for test in self.passed_tests:
                 test = re.match(namespaceFunctionArgs, test)
                 test = test.groups()
@@ -119,7 +125,7 @@ class TestRunner():
         self.process.readyReadStandardOutput.connect(self.writeStdout)
         self.process.readyReadStandardError.connect(self.writeStderr)
         self.process.start(self.testfile)
-        self.process.waitForFinished()
+        self.process.waitForFinished(-1)
         return str(self.data)
     
 if __name__ == '__main__':

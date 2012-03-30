@@ -37,7 +37,7 @@ namespace Python {
     
 
 QString filenameForTestId(const int id) {
-    return "/tmp/__kdevpythoncompletiontest_" + QString::number(id);
+    return "/tmp/__kdevpythoncompletiontest_" + QString::number(id) + ".py";
 }
 
 QString nextFilename() {
@@ -47,7 +47,7 @@ QString nextFilename() {
 
 PyCompletionTest::PyCompletionTest(QObject* parent) : QObject(parent)
 {
-
+    initShell();
 }
 
 void PyCompletionTest::initShell()
@@ -66,26 +66,37 @@ void PyCompletionTest::initShell()
     KDevelop::CodeRepresentation::setDiskChangesForbidden(true);
 }
 
-QList< CompletionTreeItemPointer > PyCompletionTest::invokeCompletionOn(const QString& code, CursorInRevision cursorAt)
+QList< CompletionTreeItemPointer > PyCompletionTest::invokeCompletionOn(const QString& initCode, const QString& invokeCode)
 {
     QString filename = nextFilename();
     QFile fileptr(filename);
     fileptr.open(QIODevice::WriteOnly);
-    fileptr.write(code.toAscii());
+    fileptr.write(initCode.toAscii().replace("%INVOKE", ""));
     fileptr.close();
     DUChain::self()->updateContextForUrl(IndexedString(filename), KDevelop::TopDUContext::ForceUpdate);
     ReferencedTopDUContext topContext = DUChain::self()->waitForUpdate(IndexedString(filename),
                                                                        KDevelop::TopDUContext::AllDeclarationsAndContexts);
     
-    QStringList lines = code.split('\n');
-    QString lastLine = lines.last();
-    if ( ! cursorAt.isValid() ) {
-        cursorAt = CursorInRevision(lines.length() - 1, lastLine.length());
+    Q_ASSERT(topContext);
+    
+    Q_ASSERT(initCode.indexOf("%INVOKE") != -1);
+    QString copy = initCode;
+    QString allCode = copy.replace("%INVOKE", invokeCode);
+    QStringList lines = allCode.split('\n');
+    CursorInRevision cursorAt = CursorInRevision::invalid();
+    for ( int i = 0; i < lines.length(); i++ ) {
+        if ( int j = lines.at(i).indexOf("%CURSOR") != -1 ) {
+            cursorAt = CursorInRevision(i, j);
+            break;
+        }
     }
+    Q_ASSERT(cursorAt.isValid());
+    allCode = allCode.replace("%CURSOR", "");
     
     DUContextPointer contextAtCursor = DUContextPointer(topContext->findContextAt(cursorAt, true));
+    Q_ASSERT(contextAtCursor);
     
-    PythonCodeCompletionContext codeCompletionContext(contextAtCursor, code, cursorAt, 0, 0);
+    PythonCodeCompletionContext codeCompletionContext(contextAtCursor, allCode, cursorAt, 0, 0);
     bool abort = false;
     return codeCompletionContext.completionItems(abort, true);
 }
@@ -104,7 +115,7 @@ bool PyCompletionTest::containsItemForDeclarationNamed(QList< CompletionTreeItem
 
 void PyCompletionTest::testIntegralTypesImmediate()
 {
-    QVERIFY(containsItemForDeclarationNamed(invokeCompletionOn("[]"), "append"));
+    QVERIFY(containsItemForDeclarationNamed(invokeCompletionOn("[]%INVOKE", ".%CURSOR"), "append"));
 }
 
 }

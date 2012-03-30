@@ -33,8 +33,7 @@ class PyCompletionTest : public QObject
         explicit PyCompletionTest(QObject* parent = 0);
         void initShell();
         
-        QList<CompletionTreeItemPointer> invokeCompletionOn(const QString& code,
-                                                            CursorInRevision cursorAt = CursorInRevision::invalid());
+        QList<CompletionTreeItemPointer> invokeCompletionOn(const QString& initCode, const QString& invokeCode);
         bool containsItemForDeclarationNamed(QList<CompletionTreeItemPointer> items, QString itemName);
         
     private slots:

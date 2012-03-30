@@ -4,6 +4,7 @@ include_directories(
 )
 
 set(parser_STAT_SRCS
+    codehelpers.cpp
     parsesession.cpp
     ast.cpp
     astdefaultvisitor.cpp

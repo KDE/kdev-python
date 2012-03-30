@@ -52,7 +52,7 @@ using namespace KDevelop;
 using namespace Python;
 
 
-PyDUChainTest::PyDUChainTest(QObject* parent): QObject(parent)
+PyDUChainTest::PyDUChainTest(QObject* parent): QObject(parent), m_pool()
 {
     initShell();
 }
@@ -85,8 +85,7 @@ void PyDUChainTest::initShell()
 
 void PyDUChainTest::parse_int(const QString& code, const QString& suffix)
 {
-    KDevPG::MemoryPool pool;
-    ParseSession* session = new ParseSession(&pool);
+    ParseSession* session = new ParseSession(&m_pool);
     session->setContents( code + "\n" ); // append a newline in case the parser doesnt like it without one
     
     static int mytest=0;
@@ -106,7 +105,7 @@ void PyDUChainTest::parse_int(const QString& code, const QString& suffix)
                                                    static_cast<TopDUContext::Features>(TopDUContext::AllDeclarationsContextsAndUses | TopDUContext::ForceUpdate),
                                                    this, 1);
     
-    AstBuilder* a = new AstBuilder(&pool);
+    AstBuilder* a = new AstBuilder(&m_pool);
     m_ast = a->parse(filename, const_cast<QString&>(code));
 }
 
@@ -286,7 +285,6 @@ void PyDUChainTest::testRanges()
     QFETCH(QStringList, column_ranges);
     
     ReferencedTopDUContext ctx = parse(code);
-    DUChainWriteLocker lock(DUChain::lock());
     QVERIFY(ctx);
     
     QVERIFY(m_ast);
@@ -303,6 +301,7 @@ void PyDUChainTest::testRanges()
         visitor->visitCode(m_ast);
         
         QCOMPARE(visitor->found, true);
+        delete visitor;
     }
 }
 

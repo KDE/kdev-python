@@ -30,11 +30,12 @@ class PyCompletionTest : public QObject
 {
     Q_OBJECT
     public:
-        explicit PyDUChainTest(QObject* parent = 0);
+        explicit PyCompletionTest(QObject* parent = 0);
         void initShell();
         
         QList<CompletionTreeItemPointer> invokeCompletionOn(const QString& code,
-                                                            const CursorInRevision cursorAt = CursorInRevision::invalid());
+                                                            CursorInRevision cursorAt = CursorInRevision::invalid());
+        bool containsItemForDeclarationNamed(QList<CompletionTreeItemPointer> items, QString itemName);
         
     private slots:
         void testIntegralTypesImmediate();

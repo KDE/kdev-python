@@ -17,6 +17,7 @@
 
 #include "pycompletiontest.h"
 #include <pythoncodecompletioncontext.h>
+#include <language/duchain/declaration.h>
 #include <language/codegen/coderepresentation.h>
 #include <language/duchain/duchain.h>
 #include <tests/testcore.h>
@@ -24,11 +25,16 @@
 #include <KUrl>
 #include <KStandardDirs>
 
+#include <QtTest/QTest>
+
 using namespace KDevelop;
+
+QTEST_MAIN(Python::PyCompletionTest)
 
 static int testId = 0;
 
 namespace Python {
+    
 
 QString filenameForTestId(const int id) {
     return "/tmp/__kdevpythoncompletiontest_" + QString::number(id);
@@ -37,6 +43,11 @@ QString filenameForTestId(const int id) {
 QString nextFilename() {
     testId += 1;
     return filenameForTestId(testId);
+}
+
+PyCompletionTest::PyCompletionTest(QObject* parent) : QObject(parent)
+{
+
 }
 
 void PyCompletionTest::initShell()
@@ -55,12 +66,12 @@ void PyCompletionTest::initShell()
     KDevelop::CodeRepresentation::setDiskChangesForbidden(true);
 }
 
-QList< CompletionTreeItemPointer > PyCompletionTest::invokeCompletionOn(const QString& code, const CursorInRevision cursorAt)
+QList< CompletionTreeItemPointer > PyCompletionTest::invokeCompletionOn(const QString& code, CursorInRevision cursorAt)
 {
     QString filename = nextFilename();
     QFile fileptr(filename);
     fileptr.open(QIODevice::WriteOnly);
-    fileptr.write(code);
+    fileptr.write(code.toAscii());
     fileptr.close();
     DUChain::self()->updateContextForUrl(IndexedString(filename), KDevelop::TopDUContext::ForceUpdate);
     ReferencedTopDUContext topContext = DUChain::self()->waitForUpdate(IndexedString(filename),
@@ -74,11 +85,26 @@ QList< CompletionTreeItemPointer > PyCompletionTest::invokeCompletionOn(const QS
     
     DUContextPointer contextAtCursor = DUContextPointer(topContext->findContextAt(cursorAt, true));
     
-    PythonCodeCompletionModel model(this);
-    PythonCodeCompletionWorker* worker = static_cast<PythonCodeCompletionWorker>(model.createCompletionWorker());
-    worker->computeCompletions(contextAtCursor, cursorAt, "", contextAtCursor->range(), code);
-    
-    PythonCodeCompletionContext codeCompletionContext(contextAtCursor, code, cursorAt, 0);
+    PythonCodeCompletionContext codeCompletionContext(contextAtCursor, code, cursorAt, 0, 0);
+    bool abort = false;
+    return codeCompletionContext.completionItems(abort, true);
+}
+
+bool PyCompletionTest::containsItemForDeclarationNamed(QList< CompletionTreeItemPointer > items, QString itemName)
+{
+    foreach ( const CompletionTreeItemPointer ptr, items ) {
+        if ( ptr->declaration() ) {
+            if ( ptr->declaration()->identifier().toString() == itemName ) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void PyCompletionTest::testIntegralTypesImmediate()
+{
+    QVERIFY(containsItemForDeclarationNamed(invokeCompletionOn("[]"), "append"));
 }
 
 }

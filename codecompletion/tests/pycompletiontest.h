@@ -34,14 +34,14 @@ class PyCompletionTest : public QObject
         explicit PyCompletionTest(QObject* parent = 0);
         void initShell();
         
-        QList<CompletionTreeItemPointer> invokeCompletionOn(const QString& initCode, const QString& invokeCode);
-        bool containsItemForDeclarationNamed(QList<CompletionTreeItemPointer> items, QString itemName);
+        const QList<CompletionTreeItem*> invokeCompletionOn(const QString& initCode, const QString& invokeCode);
+        bool containsItemForDeclarationNamed(const QList< CompletionTreeItem* > items, QString itemName);
         // convenience function
         bool declarationInCompletionList(const QString& initCode, const QString& invokeCode, QString itemName);
         // convenience function
         bool completionListIsEmpty(const QString& initCode, const QString& invokeCode);
         // convenience function
-        bool containsItemStartingWith(QList<CompletionTreeItemPointer> items, const QString& itemName);
+        bool containsItemStartingWith(const QList< CompletionTreeItem* > items, const QString& itemName);
         // convenience function
         bool itemInCompletionList(const QString& initCode, const QString& invokeCode, QString itemName);
         
@@ -55,6 +55,10 @@ class PyCompletionTest : public QObject
         void testImplementMethodCompletion();
         void testImplementMethodCompletion_data();
         void testExceptionCompletion();
+        void testGeneratorCompletion();
+        void testInheritanceCompletion();
+    private:
+        QList<CompletionTreeItemPointer> m_ptrs;
 };
 
 }

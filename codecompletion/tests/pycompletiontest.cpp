@@ -76,7 +76,7 @@ void PyCompletionTest::initShell()
     KDevelop::CodeRepresentation::setDiskChangesForbidden(true);
 }
 
-QList< CompletionTreeItemPointer > PyCompletionTest::invokeCompletionOn(const QString& initCode, const QString& invokeCode)
+const QList<CompletionTreeItem*> PyCompletionTest::invokeCompletionOn(const QString& initCode, const QString& invokeCode)
 {
     QString filename = nextFilename();
     QFile fileptr(filename);
@@ -111,12 +111,18 @@ QList< CompletionTreeItemPointer > PyCompletionTest::invokeCompletionOn(const QS
     
     PythonCodeCompletionContext codeCompletionContext(contextAtCursor, snip, cursorAt, 0, 0);
     bool abort = false;
-    return codeCompletionContext.completionItems(abort, true);
+    QList<CompletionTreeItem*> items;
+    foreach ( CompletionTreeItemPointer ptr, codeCompletionContext.completionItems(abort, true) ) {
+        items << ptr.data();
+        // those are leaked, but it's only a few kb while the tests are running. who cares.
+        m_ptrs << ptr;
+    }
+    return items;
 }
 
-bool PyCompletionTest::containsItemForDeclarationNamed(QList< CompletionTreeItemPointer > items, QString itemName)
+bool PyCompletionTest::containsItemForDeclarationNamed(const QList<CompletionTreeItem*> items, QString itemName)
 {
-    foreach ( const CompletionTreeItemPointer ptr, items ) {
+    foreach ( const CompletionTreeItem* ptr, items ) {
         if ( ptr->declaration() ) {
             if ( ptr->declaration()->identifier().toString() == itemName ) {
                 return true;
@@ -126,10 +132,10 @@ bool PyCompletionTest::containsItemForDeclarationNamed(QList< CompletionTreeItem
     return false;
 }
 
-bool PyCompletionTest::containsItemStartingWith(QList< CompletionTreeItemPointer > items, const QString& itemName)
+bool PyCompletionTest::containsItemStartingWith(const QList<CompletionTreeItem*> items, const QString& itemName)
 {
     QModelIndex idx = fakeModel().index(0, KDevelop::CodeCompletionModel::Name);
-    foreach ( const CompletionTreeItemPointer ptr, items ) {
+    foreach ( const CompletionTreeItem* ptr, items ) {
         if ( ptr->data(idx, Qt::DisplayRole, 0).toString().startsWith(itemName) ) {
             return true;
         }
@@ -139,12 +145,14 @@ bool PyCompletionTest::containsItemStartingWith(QList< CompletionTreeItemPointer
 
 bool PyCompletionTest::itemInCompletionList(const QString& initCode, const QString& invokeCode, QString itemName)
 {
-    return containsItemStartingWith(invokeCompletionOn(initCode, invokeCode), itemName);
+    QList< CompletionTreeItem* > items = invokeCompletionOn(initCode, invokeCode);
+    return containsItemStartingWith(items, itemName);
 }
 
 bool PyCompletionTest::declarationInCompletionList(const QString& initCode, const QString& invokeCode, QString itemName)
 {
-    return containsItemForDeclarationNamed(invokeCompletionOn(initCode, invokeCode), itemName);
+    QList< CompletionTreeItem* > items = invokeCompletionOn(initCode, invokeCode);
+    return containsItemForDeclarationNamed(items, itemName);
 }
 
 bool PyCompletionTest::completionListIsEmpty(const QString& initCode, const QString& invokeCode)
@@ -242,13 +250,27 @@ void PyCompletionTest::testImplementMethodCompletion_data()
 
 void PyCompletionTest::testExceptionCompletion()
 {
-    QList< CompletionTreeItemPointer > items = invokeCompletionOn("localvar = 3\nraise %INVOKE", "%CURSOR");
+    QList< CompletionTreeItem* > items = invokeCompletionOn("localvar = 3\nraise %INVOKE", "%CURSOR");
     QVERIFY(containsItemForDeclarationNamed(items, "Exception"));
     QVERIFY(! containsItemForDeclarationNamed(items, "localvar"));
     
     items = invokeCompletionOn("localvar = 3\n%INVOKE", "try: pass\nexcept %CURSOR");
     QVERIFY(containsItemForDeclarationNamed(items, "Exception"));
     QVERIFY(! containsItemForDeclarationNamed(items, "localvar"));
+}
+
+void PyCompletionTest::testGeneratorCompletion()
+{
+    QVERIFY(itemInCompletionList("%INVOKE", "foobar = [item for %CURSOR", "item in"));
+    QVERIFY(itemInCompletionList("%INVOKE\ndec_l8r=3", "foobar = [dec_l8r for %CURSOR", "dec_l8r in"));
+}
+
+void PyCompletionTest::testInheritanceCompletion()
+{
+    QList< CompletionTreeItem* > items = invokeCompletionOn("class parentClass: pass\n%INVOKE", "class childClass(%CURSOR");
+    QVERIFY(containsItemForDeclarationNamed(items, "parentClass"));
+    items = invokeCompletionOn("class parentClass: pass\nclass childClass(%INVOKE): pass", "%CURSOR");
+    QVERIFY(containsItemForDeclarationNamed(items, "parentClass"));
 }
 
 }

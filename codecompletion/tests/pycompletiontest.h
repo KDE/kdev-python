@@ -54,6 +54,7 @@ class PyCompletionTest : public QObject
         void testNoCompletionInCommentsOrStrings_data();
         void testImplementMethodCompletion();
         void testImplementMethodCompletion_data();
+        void testExceptionCompletion();
 };
 
 }

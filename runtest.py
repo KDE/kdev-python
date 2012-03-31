@@ -38,10 +38,11 @@ def indent(s, level = 1):
     return '\n'.join(["    "*level + line for line in s.splitlines()])
         
 class FailedTest():
-    def __init__(self, name):
+    def __init__(self, name, reason):
         self.filename = '<none>'
         self.lineno = '<none>'
         self.name = name
+        self.reason = reason
         
     def __str__(self):
         return "%s:%s %s" % (self.filename, self.lineno, self.name)
@@ -73,19 +74,24 @@ class TestRunner():
             if success:
                 function = success.groups()[0]
                 self.passed_tests.append(function)
+                last_failed = False
             
             if last_failed:
                 getLocation = re.match(r"\s*Loc:\s*\[(.*)\((\d*)\)]", line)
-                filename = ".../" + '/'.join(getLocation.groups()[0].split('/')[-2:])
-                lineno = getLocation.groups()[1]
-                self.failed_tests[-1].filename = filename
-                self.failed_tests[-1].lineno = lineno
-            last_failed = False
+                if getLocation:
+                    filename = ".../" + '/'.join(getLocation.groups()[0].split('/')[-2:])
+                    lineno = getLocation.groups()[1]
+                    self.failed_tests[-1].filename = filename
+                    self.failed_tests[-1].lineno = lineno
+                    last_failed = False
             
-            fail = re.match(r"FAIL!\s*:\s*(.*)\s'(.*)'", line)
+            fail = re.match(r"FAIL!\s*:\s*(.*)\((.*)\)\s+(.*)", line)
             if fail:
                 function = fail.groups()[0]
-                self.failed_tests.append(FailedTest(function))
+                args = fail.groups()[1]
+                function = function + "(" + args + ")"
+                reason = fail.groups()[2]
+                self.failed_tests.append(FailedTest(function, reason))
                 last_failed = True
             
             fatal_fail = re.match(r"(QFATAL|ASSERT)\s*", line)
@@ -120,8 +126,10 @@ class TestRunner():
                 namespace, function, args = re.match(namespaceFunctionArgs, test.name).groups()
                 filename = test.filename.split('/')[-1]
                 path = '/'.join(test.filename.split('/')[:-1]) + "/"
-                print indent(red("✘ ") + white(filename) + ":" + blue(test.lineno) + " "*(5-len(str(lineno))) + red(function) + "(" + yellow(args) + ")"),
-                print "[in %s]" % namespace
+                print indent(red("✘ ") + white(filename) + ":" + blue(test.lineno) + " "*(5-len(str(lineno))) + red(function) + "(" + yellow(args) + ")")
+                if 'noreason' not in sys.argv:
+                    print indent("Reason of failure:" + blue(" ❮") + white(test.reason) + blue("❯ "), 2)
+                #print "[in %s]" % namespace
     
     def fetchOutputForJob(self):
         self.process = QProcess()

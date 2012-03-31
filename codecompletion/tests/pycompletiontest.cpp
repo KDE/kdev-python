@@ -240,6 +240,16 @@ void PyCompletionTest::testImplementMethodCompletion_data()
                                                    "pass\n %INVOKE" << "def __ini%CURSOR";
 }
 
+void PyCompletionTest::testExceptionCompletion()
+{
+    QList< CompletionTreeItemPointer > items = invokeCompletionOn("localvar = 3\nraise %INVOKE", "%CURSOR");
+    QVERIFY(containsItemForDeclarationNamed(items, "Exception"));
+    QVERIFY(! containsItemForDeclarationNamed(items, "localvar"));
+    
+    items = invokeCompletionOn("localvar = 3\n%INVOKE", "try: pass\nexcept %CURSOR");
+    QVERIFY(containsItemForDeclarationNamed(items, "Exception"));
+    QVERIFY(! containsItemForDeclarationNamed(items, "localvar"));
+}
 
 }
 

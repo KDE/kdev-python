@@ -31,6 +31,7 @@
 #include <language/editor/rangeinrevision.h>
 #include <language/duchain/topducontext.h>
 
+#include "codehelpers.h"
 #include "pythonduchainexport.h"
 #include "pythonducontext.h"
 

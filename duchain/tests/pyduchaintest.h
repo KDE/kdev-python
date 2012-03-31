@@ -74,6 +74,7 @@ class PyDUChainTest : public QObject
         void testInheritance();
         void testInheritance_data();
         void testClassVariables();
+        void testClassContextRanges();
         
 //         void testFunctionStuff();
 //         void testFunctionStuff_data();

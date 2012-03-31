@@ -1,5 +1,5 @@
 #!/usr/bin/env python2.7
-# -*- Coding:utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import sys
 import subprocess
@@ -82,20 +82,23 @@ class TestRunner():
                 self.failed_tests[-1].lineno = lineno
             last_failed = False
             
-            fail = re.match(r"FAIL!\s*:\s*(.*)\s'.*", line)
+            fail = re.match(r"FAIL!\s*:\s*(.*)\s'(.*)'", line)
             if fail:
                 function = fail.groups()[0]
                 self.failed_tests.append(FailedTest(function))
                 last_failed = True
             
-            fatal_fail = re.match(r"QFATAL\s*:", line)
+            fatal_fail = re.match(r"(QFATAL|ASSERT)\s*", line)
             if fatal_fail:
                 print self.data
                 print red("Fatal error occured, aborting")
                 return
         
         passed, failed = len(self.passed_tests), len(self.failed_tests)
-        percent = round((float(passed) / (failed+passed)) * 100)
+        try:
+            percent = round((float(passed) / (failed+passed)) * 100)
+        except ZeroDivisionError:
+            percent = "?"
         percent = green(percent) if percent == 100 else yellow(percent) if percent > 80 else red(percent)
         total = white(passed+failed)
         passed, failed = green(passed), red(failed)
@@ -109,7 +112,7 @@ class TestRunner():
                 test = re.match(namespaceFunctionArgs, test)
                 test = test.groups()
                 test = green(test[1]) + "(" + white(test[2]) + ")" + " [in %s]" % test[0]
-                print indent(test)
+                print  indent(green("✔ ") + test)
         
         if len(self.failed_tests):
             print "\n" + white("  ==="), red("Failed tests:"), white("===")
@@ -117,7 +120,7 @@ class TestRunner():
                 namespace, function, args = re.match(namespaceFunctionArgs, test.name).groups()
                 filename = test.filename.split('/')[-1]
                 path = '/'.join(test.filename.split('/')[:-1]) + "/"
-                print indent(white(filename) + ":" + blue(test.lineno) + " "*(5-len(str(lineno))) + red(function) + "(" + yellow(args) + ")"),
+                print indent(red("✘ ") + white(filename) + ":" + blue(test.lineno) + " "*(5-len(str(lineno))) + red(function) + "(" + yellow(args) + ")"),
                 print "[in %s]" % namespace
     
     def fetchOutputForJob(self):

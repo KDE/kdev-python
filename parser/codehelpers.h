@@ -43,6 +43,31 @@ private:
     KTextEditor::Document* m_document;
 };
 
+class KDEVPYTHONPARSER_EXPORT FileIndentInformation {
+public:
+    FileIndentInformation(const QStringList& lines);
+    FileIndentInformation(KTextEditor::Document* document);
+    FileIndentInformation(const QByteArray& data);
+    FileIndentInformation(const QString& data);
+    
+    enum ScanDirection {
+        Forward,
+        Backward
+    };
+    
+    enum ChangeTypes {
+        Indent,
+        Dedent,
+        AnyChange
+    };
+    
+    int indentForLine(int line) const;
+    int nextChange(int line, ChangeTypes type, ScanDirection direction = Forward) const;
+private:
+    QList<int> m_indents;
+    void initialize(const QStringList& lines);
+};
+
 class KDEVPYTHONPARSER_EXPORT CodeHelpers
 {
     public:
@@ -52,3 +77,5 @@ class KDEVPYTHONPARSER_EXPORT CodeHelpers
 }
 
 #endif // CODEHELPERS_H
+
+class C;

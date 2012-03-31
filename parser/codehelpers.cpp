@@ -21,6 +21,80 @@
 #include <QStack>
 
 namespace Python {
+    
+
+FileIndentInformation::FileIndentInformation(const QStringList& lines)
+{
+    initialize(lines);
+}
+
+void FileIndentInformation::initialize(const QStringList& lines)
+{
+    kDebug() << "initializing:" << lines;
+    for ( int atLine = 0; atLine < lines.length(); atLine++ ) {
+        const QString& currentLine = lines.at(atLine);
+        const int currentLength = currentLine.length();
+        bool lineIsNonempty = false;
+        for ( int indent = 0; indent < currentLength; indent++ ) {
+            if ( ! currentLine.at(indent).isSpace() ) {
+                m_indents.append(indent);
+                lineIsNonempty = true;
+                break;
+            }
+        }
+        if ( ! lineIsNonempty ) {
+            m_indents.append(currentLine.length());
+        }
+    }
+    kDebug() << m_indents;
+}
+
+FileIndentInformation::FileIndentInformation(const QString& data)
+{
+    initialize(data.split('\n'));
+}
+
+FileIndentInformation::FileIndentInformation(const QByteArray& data)
+{
+    initialize(QString(data.data()).split('\n'));
+}
+
+FileIndentInformation::FileIndentInformation(KTextEditor::Document* document)
+{
+    QStringList lines;
+    for ( int i = 0; i < document->lines(); i++ ) {
+        lines << document->line(i);
+    }
+    initialize(lines);
+}
+
+int FileIndentInformation::indentForLine(int line) const
+{
+    return m_indents.at(line);
+}
+
+int FileIndentInformation::nextChange(int line, ChangeTypes type, ScanDirection direction) const
+{
+    kDebug() << "scanning:" << line << m_indents;
+    line = qMin(line, m_indents.length() - 1);
+    line = qMax(line, 0);
+    kDebug() << "capped:" << line;
+    const int currentIndent = m_indents.at(line);
+    const int length = m_indents.length();
+    const char scandir = direction == Forward ? 1 : -1;
+    int atIndent = 0;
+    do {
+        if ( line >= length - 1 || line < 0 ) {
+           break;
+        }
+        line += scandir;
+        atIndent = m_indents.at(line);
+    } while ( type == Indent ? atIndent <= currentIndent :
+              type == Dedent ? atIndent >= currentIndent :
+                               atIndent == currentIndent );
+    kDebug() << "result: " << line;
+    return line;
+}
 
 CodeHelpers::CodeHelpers()
 {

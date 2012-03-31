@@ -27,6 +27,7 @@
 #include "pythonduchainexport.h"
 #include <language/editor/documentrange.h>
 #include "parsesession.h"
+#include <codehelpers.h>
 
 namespace Python
 {
@@ -57,9 +58,11 @@ public:
 
     RangeInRevision findRange( Python::Ast* node, Python::PythonEditorIntegrator::RangeEdge edge = OuterEdge) const;
     RangeInRevision findRange( Python::Ast* from, Python::Ast* to) const;
-
+    
+    const FileIndentInformation* indent();
 private:
     ParseSession* m_session;
+    FileIndentInformation* m_indentInformationCache;
 };
 
 }

@@ -585,6 +585,15 @@ void PyDUChainTest::testInheritance_data()
     QTest::newRow("simple") << "class A():\n\tattr = 3\n\nclass B(A):\n\tpass\n\ninst=B()\ncheckme = inst.attr";
 }
 
+void PyDUChainTest::testClassContextRanges()
+{
+    QString code = "class my_class():\n pass\n \n \n \n \n";
+    ReferencedTopDUContext ctx = parse(code);
+    DUContext* classContext = ctx->findContextAt(CursorInRevision(5, 0));
+    QVERIFY(classContext);
+    QVERIFY(classContext->type() == DUContext::Class);
+}
+
 void PyDUChainTest::testContainerTypes()
 {
     QFETCH(QString, code);

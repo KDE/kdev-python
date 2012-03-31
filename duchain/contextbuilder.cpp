@@ -344,7 +344,9 @@ void ContextBuilder::openContextForStatementList( const QList<Ast*>& l, DUContex
 
 void ContextBuilder::openContextForClassDefinition(ClassDefinitionAst* node)
 {
-    RangeInRevision range(node->startLine, node->startCol, node->body.last()->endLine + 1, 1);
+    // make sure the contexts ends at the next DEDENT token, not at the last statement.
+    int endLine = editor()->indent()->nextChange(node->body.last()->endLine, FileIndentInformation::Dedent);
+    RangeInRevision range(node->startLine, node->startCol, endLine + 1, 0);
     DUChainWriteLocker lock(DUChain::lock());
     openContext( node, range, DUContext::Class, node->name);
     currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));
@@ -514,7 +516,8 @@ void ContextBuilder::visitFunctionDefinition(FunctionDefinitionAst* node)
 
 void ContextBuilder::visitFunctionBody(FunctionDefinitionAst* node)
 {
-    CursorInRevision end = CursorInRevision(node->endLine + 1, 0);
+    int endLine = editor()->indent()->nextChange(node->endLine, FileIndentInformation::Dedent);
+    CursorInRevision end = CursorInRevision(endLine + 1, 0);
     CursorInRevision start = rangeForArgumentsContext(node).end;
     RangeInRevision range(start, end);
     // Done building the function declaration, start building the body now

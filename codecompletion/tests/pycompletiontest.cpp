@@ -36,6 +36,8 @@ using namespace KDevelop;
 QTEST_MAIN(Python::PyCompletionTest)
 
 static int testId = 0;
+static QString basepath = "/tmp/__kdevpythoncompletiontest.dir/";
+static QFSFileEngine fileEngine;
 
 namespace Python {
     
@@ -47,7 +49,7 @@ QStandardItemModel& fakeModel() {
 }
 
 QString filenameForTestId(const int id) {
-    return "/tmp/__kdevpythoncompletiontest_" + QString::number(id) + ".py";
+    return basepath + "test_" + QString::number(id) + ".py";
 }
 
 QString nextFilename() {
@@ -60,20 +62,45 @@ PyCompletionTest::PyCompletionTest(QObject* parent) : QObject(parent)
     initShell();
 }
 
+void makefile(QString filename, QString contents) {
+    QFile fileptr;
+    fileptr.setFileName(basepath + filename);
+    fileptr.open(QIODevice::WriteOnly);
+    fileptr.write(contents.toAscii());
+    fileptr.close();
+    KUrl url = KUrl(filename);
+    url.cleanPath();
+    DUChain::self()->updateContextForUrl(IndexedString(url), KDevelop::TopDUContext::ForceUpdate);
+    ICore::self()->languageController()->backgroundParser()->parseDocuments();
+    DUChain::self()->waitForUpdate(IndexedString(url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
+}
+
 void PyCompletionTest::initShell()
 {
     AutoTestShell::init();
     TestCore* core = new TestCore();
     core->initialize(KDevelop::Core::NoUi);
+    fileEngine.mkdir(basepath, false);
     
     KUrl doc_url = KUrl(KStandardDirs::locate("data", "kdevpythonsupport/documentation_files/builtindocumentation.py"));
     doc_url.cleanPath(KUrl::SimplifyDirSeparators);
     
     DUChain::self()->updateContextForUrl(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
+    ICore::self()->languageController()->backgroundParser()->parseDocuments();
     DUChain::self()->waitForUpdate(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
     
     DUChain::self()->disablePersistentStorage();
     KDevelop::CodeRepresentation::setDiskChangesForbidden(true);
+    
+    // now, create a nice little completion hierarchy
+    fileEngine.mkdir(basepath + "submoduledir", false);
+    fileEngine.mkdir(basepath + "submoduledir/anothersubdir", false);
+    makefile("toplevelmodule.py", "some_var = 3\ndef some_function(): pass\nclass some_class():\n def method(): pass");
+    makefile("submoduledir/__init__.py", "var_in_sub_init = 5");
+    makefile("submoduledir/subfile.py", "var_in_subfile = 5\nclass some_subfile_class():\n def method2(): pass");
+    makefile("submoduledir/anothersubdir/__init__.py", "var_in_subsub_init = 5");
+    makefile("submoduledir/anothersubdir/subsubfile.py", "var_in_subsubfile = 5\nclass another_subfile_class():"
+                                                      "\n def method3(): pass");
 }
 
 const QList<CompletionTreeItem*> PyCompletionTest::invokeCompletionOn(const QString& initCode, const QString& invokeCode)
@@ -158,6 +185,41 @@ bool PyCompletionTest::declarationInCompletionList(const QString& initCode, cons
 bool PyCompletionTest::completionListIsEmpty(const QString& initCode, const QString& invokeCode)
 {
     return invokeCompletionOn(initCode, invokeCode).isEmpty();
+}
+
+void PyCompletionTest::testImportCompletion()
+{
+    QFETCH(QString, invokeCode);
+    QFETCH(QString, completionCode);
+    QFETCH(QString, expectedItem);
+    
+    if ( expectedItem == "EMPTY" ) {
+        QVERIFY(completionListIsEmpty(invokeCode, completionCode));
+    }
+    else {
+        QVERIFY(itemInCompletionList(invokeCode, completionCode, expectedItem));
+    }
+}
+
+void PyCompletionTest::testImportCompletion_data()
+{
+    QTest::addColumn<QString>("invokeCode");
+    QTest::addColumn<QString>("completionCode");
+    QTest::addColumn<QString>("expectedItem");
+    
+    QTest::newRow("same_directory") << "%INVOKE" << "import %CURSOR" << "toplevelmodule";
+    QTest::newRow("same_directory_beginText") << "%INVOKE" << "import toplevelmo%CURSOR" << "toplevelmodule";
+    QTest::newRow("subdirectory_full") << "%INVOKE" << "import %CURSOR" << "submoduledir";
+    QTest::newRow("subdirectory_file") << "%INVOKE" << "import submoduledir.%CURSOR" << "subfile";
+    QTest::newRow("subsubdirectory_file") << "%INVOKE" << "import submoduledir.anothersubdir.%CURSOR" << "subsubfile";
+    QTest::newRow("subdirectory_from") << "%INVOKE" << "from submoduledir import %CURSOR" << "subfile";
+    QTest::newRow("subdirectory_declfromfile") << "%INVOKE" << "from submoduledir.subfile import %CURSOR" << "var_in_subfile";
+    QTest::newRow("declaration_from_init_subdir") << "%INVOKE" << "from submoduledir import %CURSOR" << "var_in_sub_init";
+    QTest::newRow("class_from_file") << "%INVOKE" << "from toplevelmodule import %CURSOR" << "some_class";
+    // TODO implement this or not? It breaks the possibility to easily document modules like PyQT.
+    // maybe enable this behaviour only for doc files?
+//     QTest::newRow("class_property_not") << "%INVOKE" << "import toplevelmodule.some_class.%CURSOR" << "EMPTY";
+    QTest::newRow("class_from_file_in_subdir") << "%INVOKE" << "from submoduledir.subfile import %CURSOR" << "some_subfile_class";
 }
 
 void PyCompletionTest::testIntegralTypesImmediate()

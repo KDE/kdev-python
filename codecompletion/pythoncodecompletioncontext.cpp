@@ -454,7 +454,6 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
             QString u = url.path();
             foreach ( DeclarationDepthPair current, declarations ) {
                 if ( current.first->context() != DUChain::self()->chainForDocument(url) ) {
-                    kDebug() << "Keeping declaration" << current.first->toString();
                     keepDeclarations.append(current);
                 }
                 else {

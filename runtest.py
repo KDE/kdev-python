@@ -95,7 +95,7 @@ class TestRunner():
                 return
         
         passed, failed = len(self.passed_tests), len(self.failed_tests)
-        percent = (float(passed) / (failed+passed)) * 100
+        percent = round((float(passed) / (failed+passed)) * 100)
         percent = green(percent) if percent == 100 else yellow(percent) if percent > 80 else red(percent)
         total = white(passed+failed)
         passed, failed = green(passed), red(failed)
@@ -124,7 +124,7 @@ class TestRunner():
         self.process = QProcess()
         self.process.readyReadStandardOutput.connect(self.writeStdout)
         self.process.readyReadStandardError.connect(self.writeStderr)
-        self.process.start(self.testfile)
+        self.process.start(self.testfile, ["-maxwarnings", "0"])
         self.process.waitForFinished(-1)
         return str(self.data)
     

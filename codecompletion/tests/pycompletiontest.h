@@ -21,6 +21,7 @@
 #include <QtCore/QObject>
 #include <language/editor/cursorinrevision.h>
 #include <language/codecompletion/codecompletioncontext.h>
+#include <pythoncodecompletionmodel.h>
 
 using namespace KDevelop;
 
@@ -39,6 +40,10 @@ class PyCompletionTest : public QObject
         bool declarationInCompletionList(const QString& initCode, const QString& invokeCode, QString itemName);
         // convenience function
         bool completionListIsEmpty(const QString& initCode, const QString& invokeCode);
+        // convenience function
+        bool containsItemStartingWith(QList<CompletionTreeItemPointer> items, const QString& itemName);
+        // convenience function
+        bool itemInCompletionList(const QString& initCode, const QString& invokeCode, QString itemName);
         
     private slots:
         void testIntegralTypesImmediate();
@@ -47,7 +52,8 @@ class PyCompletionTest : public QObject
         void testIntegralExpressionsDifferentContexts_data();
         void testNoCompletionInCommentsOrStrings();
         void testNoCompletionInCommentsOrStrings_data();
-    
+        void testImplementMethodCompletion();
+        void testImplementMethodCompletion_data();
 };
 
 }

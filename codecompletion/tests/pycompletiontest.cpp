@@ -27,6 +27,8 @@
 #include <KUrl>
 #include <KStandardDirs>
 
+#include <language/codecompletion/codecompletiontesthelper.h>
+
 #include <QtTest/QTest>
 
 using namespace KDevelop;
@@ -37,6 +39,12 @@ static int testId = 0;
 
 namespace Python {
     
+QStandardItemModel& fakeModel() {
+  static QStandardItemModel model;
+  model.setColumnCount(10);
+  model.setRowCount(10);
+  return model;
+}
 
 QString filenameForTestId(const int id) {
     return "/tmp/__kdevpythoncompletiontest_" + QString::number(id) + ".py";
@@ -118,6 +126,22 @@ bool PyCompletionTest::containsItemForDeclarationNamed(QList< CompletionTreeItem
     return false;
 }
 
+bool PyCompletionTest::containsItemStartingWith(QList< CompletionTreeItemPointer > items, const QString& itemName)
+{
+    QModelIndex idx = fakeModel().index(0, KDevelop::CodeCompletionModel::Name);
+    foreach ( const CompletionTreeItemPointer ptr, items ) {
+        if ( ptr->data(idx, Qt::DisplayRole, 0).toString().startsWith(itemName) ) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool PyCompletionTest::itemInCompletionList(const QString& initCode, const QString& invokeCode, QString itemName)
+{
+    return containsItemStartingWith(invokeCompletionOn(initCode, invokeCode), itemName);
+}
+
 bool PyCompletionTest::declarationInCompletionList(const QString& initCode, const QString& invokeCode, QString itemName)
 {
     return containsItemForDeclarationNamed(invokeCompletionOn(initCode, invokeCode), itemName);
@@ -196,6 +220,26 @@ void PyCompletionTest::testNoCompletionInCommentsOrStrings_data()
     QTest::newRow("multilineDQ_newlines") << "\"\"\"\n\n[]%INVOKE\n\n\n\"\"\"" << ".%CURSOR";
     QTest::newRow("multilineSQ_newlines") << "\'\'\'\n\n[]%INVOKE\n\n\n\'\'\'" << ".%CURSOR";
 }
+
+void PyCompletionTest::testImplementMethodCompletion()
+{
+    QFETCH(QString, invokeCode);
+    QFETCH(QString, completionCode);
+    QVERIFY(itemInCompletionList(invokeCode, completionCode, "__init__"));
+}
+
+void PyCompletionTest::testImplementMethodCompletion_data()
+{
+    QTest::addColumn<QString>("invokeCode");
+    QTest::addColumn<QString>("completionCode");
+    
+    QTest::newRow("simple_begin") << "class myclass():\n %INVOKE\n pass" << "def %CURSOR";
+    QTest::newRow("text_begin") << "class myclass():\n %INVOKE\n pass" << "def __ini%CURSOR";
+    QTest::newRow("another_method_before") << "class myclass():\n def some_method(param):pass\n %INVOKE" << "def %CURSOR";
+    QTest::newRow("another_method_before_text") << "class myclass():\n def some_method(param):"
+                                                   "pass\n %INVOKE" << "def __ini%CURSOR";
+}
+
 
 }
 

@@ -30,6 +30,7 @@ FileIndentInformation::FileIndentInformation(const QStringList& lines)
 
 void FileIndentInformation::initialize(const QStringList& lines)
 {
+    m_indents.clear();
     for ( int atLine = 0; atLine < lines.length(); atLine++ ) {
         const QString& currentLine = lines.at(atLine);
         const int currentLength = currentLine.length();

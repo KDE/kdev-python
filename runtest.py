@@ -117,7 +117,7 @@ class TestRunner():
             for test in self.passed_tests:
                 test = re.match(namespaceFunctionArgs, test)
                 test = test.groups()
-                test = green(test[1]) + "(" + white(test[2]) + ")" + " [in %s]" % test[0]
+                test = "[%s] " % test[0] + green(test[1]) + "(" + white(test[2]) + ")"
                 print  indent(green("✔ ") + test)
         
         if len(self.failed_tests):

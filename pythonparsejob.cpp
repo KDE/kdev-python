@@ -112,7 +112,7 @@ void ParseJob::run()
     
     readContents();
     
-    currentSession.setContents( QString::fromUtf8(contents().contents) );
+    currentSession.setContents(QString::fromUtf8(contents().contents));
     currentSession.setCurrentDocument(m_url);
     
     IndexedString filename = KDevelop::IndexedString(m_url.pathOrUrl());
@@ -125,13 +125,12 @@ void ParseJob::run()
         return abortJob();
     }
     
+    QSharedPointer<PythonEditorIntegrator> editor = QSharedPointer<PythonEditorIntegrator>(new PythonEditorIntegrator(&currentSession));
     // if parsing succeeded, continue and do semantic analysis
     if ( parserResults.second )
     {
-        QSharedPointer<PythonEditorIntegrator> editor = QSharedPointer<PythonEditorIntegrator>(new PythonEditorIntegrator());
-        editor->setParseSession(&currentSession);
         // set up the declaration builder, it gets the parsePriority so it can re-schedule imported files with a better priority
-        DeclarationBuilder builder( editor.data() );
+        DeclarationBuilder builder(editor.data());
         builder.m_ownPriority = parsePriority();
         builder.m_currentlyParsedDocument = filename;
         builder.m_futureModificationRevision = contents().modification;
@@ -145,7 +144,7 @@ void ParseJob::run()
         setDuChain(m_duContext);
         
         // gather uses of variables and functions on the document
-        UseBuilder usebuilder( editor.data() );
+        UseBuilder usebuilder(editor.data());
         usebuilder.m_currentlyParsedDocument = filename;
         usebuilder.buildUses(m_ast);
         

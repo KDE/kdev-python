@@ -59,6 +59,11 @@ Python::PythonEditorIntegrator* Python::ContextBuilder::m_editor;
 
 namespace Python
 {
+
+ContextBuilder::ContextBuilder() : m_indentInformationCache(0)
+{
+
+}
     
 ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node, ReferencedTopDUContext updateContext)
 {
@@ -85,7 +90,7 @@ ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node
 
 PythonEditorIntegrator* ContextBuilder::editor() const
 {
-    return ContextBuilder::m_editor;
+    return m_editor;
 }
 
 IndexedString ContextBuilder::currentlyParsedDocument() const
@@ -130,33 +135,25 @@ DUContext* ContextBuilder::newContext(const RangeInRevision& range)
 
 void ContextBuilder::setEditor(PythonEditorIntegrator* editor)
 {
-    //m_identifierCompiler = new IdentifierCompiler(editor->parseSession());
-    ContextBuilder::m_editor = editor;
+    m_editor = editor;
 }
 
-// void ContextBuilder::setEditor(ParseSession* /*session*/)
-// {
-//     PythonEditorIntegrator* e = new PythonEditorIntegrator(/*session*/);
-    //m_identifierCompiler = new IdentifierCompiler(e->parseSession());
-//     setEditor(e);
-// }
-
-void ContextBuilder::startVisiting( Ast* node )
+void ContextBuilder::startVisiting(Ast* node)
 {
-    visitNode( node );
+    visitNode(node);
 }
 
-void ContextBuilder::setContextOnNode( Ast* node, DUContext* context )
+void ContextBuilder::setContextOnNode(Ast* node, DUContext* context)
 {
     node->context = context;
 }
 
-DUContext* ContextBuilder::contextFromNode( Ast* node )
+DUContext* ContextBuilder::contextFromNode(Ast* node)
 {
     return node->context;
 }
 
-RangeInRevision ContextBuilder::editorFindRange( Ast* fromNode, Ast* toNode )
+RangeInRevision ContextBuilder::editorFindRange(Ast* fromNode, Ast* toNode)
 {
     return editor()->findRange(fromNode, toNode);
 }
@@ -175,7 +172,7 @@ CursorInRevision ContextBuilder::startPos( Ast* node )
 
 QualifiedIdentifier ContextBuilder::identifierForNode( Python::Identifier* node )
 {
-    return QualifiedIdentifier( node->value );
+    return QualifiedIdentifier(node->value);
 }
 
 void ContextBuilder::addImportedContexts()
@@ -345,7 +342,7 @@ void ContextBuilder::openContextForStatementList( const QList<Ast*>& l, DUContex
 void ContextBuilder::openContextForClassDefinition(ClassDefinitionAst* node)
 {
     // make sure the contexts ends at the next DEDENT token, not at the last statement.
-    int endLine = editor()->indent()->nextChange(node->body.last()->endLine, FileIndentInformation::Dedent);
+    int endLine = indent()->nextChange(node->body.last()->endLine, FileIndentInformation::Dedent);
     RangeInRevision range(node->startLine, node->startCol, endLine + 1, 0);
     DUChainWriteLocker lock(DUChain::lock());
     openContext( node, range, DUContext::Class, node->name);
@@ -516,7 +513,7 @@ void ContextBuilder::visitFunctionDefinition(FunctionDefinitionAst* node)
 
 void ContextBuilder::visitFunctionBody(FunctionDefinitionAst* node)
 {
-    int endLine = editor()->indent()->nextChange(node->endLine, FileIndentInformation::Dedent);
+    int endLine = indent()->nextChange(node->endLine, FileIndentInformation::Dedent);
     CursorInRevision end = CursorInRevision(endLine + 1, 0);
     CursorInRevision start = rangeForArgumentsContext(node).end;
     RangeInRevision range(start, end);

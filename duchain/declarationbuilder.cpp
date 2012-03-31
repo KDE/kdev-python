@@ -67,12 +67,6 @@ using namespace KDevelop;
 namespace Python
 {
 
-DeclarationBuilder::DeclarationBuilder()
-        : DeclarationBuilderBase()
-{
-    kDebug() << "Building Declarations";
-}
-
 DeclarationBuilder::DeclarationBuilder( PythonEditorIntegrator* editor )
         : DeclarationBuilderBase( )
 {

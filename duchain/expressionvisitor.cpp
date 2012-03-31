@@ -110,7 +110,13 @@ void ExpressionVisitor::encounterDeclaration(Declaration* ptr, bool isAlias)
 }
 
 ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegrator* editor)
-    : m_forceGlobalSearching(false), m_isAlias(false), m_ctx(ctx), m_editor(editor), m_shouldBeKnown(true)
+    : m_forceGlobalSearching(false)
+    , m_reportUnknownNames(false)
+    , m_scanUntilCursor(CursorInRevision::invalid())
+    , m_isAlias(false)
+    , m_ctx(ctx)
+    , m_editor(editor)
+    , m_shouldBeKnown(true)
 {
     if ( s_defaultTypes.isEmpty() ) {
         s_defaultTypes.insert(KDevelop::Identifier("True"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
@@ -638,11 +644,14 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
     
     kDebug() << "Finding declaration for" << node->identifier->value;
     RangeInRevision range;
-    if ( ! m_forceGlobalSearching ) {
-        range = RangeInRevision(node->startLine, node->startCol, node->endLine, node->endCol);
+    if ( m_scanUntilCursor.isValid() ) {
+        range = RangeInRevision(CursorInRevision(0, 0), m_scanUntilCursor);
+    }
+    else if ( m_forceGlobalSearching ) {
+        range = RangeInRevision::invalid();
     }
     else {
-        range = RangeInRevision::invalid();
+        range = RangeInRevision(0, 0, node->endLine, node->endCol);
     }
     Declaration* d = Helper::declarationForName(node, QualifiedIdentifier(node->identifier->value), range, DUContextPointer(m_ctx));
     

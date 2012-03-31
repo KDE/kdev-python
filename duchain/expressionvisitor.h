@@ -156,6 +156,7 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         bool m_forceGlobalSearching;
         // used by autocompletion to detect unknown NameAst elements in expressions
         bool m_reportUnknownNames;
+        CursorInRevision m_scanUntilCursor;
         QList<QString> m_unknownNames;
         
         // this tells the difference between "class foo" and "instance of foo" -- TODO need a better solution!

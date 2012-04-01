@@ -174,7 +174,7 @@ Declaration* Helper::declarationForName(NameAst* /*ast*/, const QualifiedIdentif
     return declaration;
 }
 
-QList< DUContext* > Helper::internalContextsForClass(StructureType::Ptr klassType, TopDUContext* context, int depth)
+QList< DUContext* > Helper::internalContextsForClass(StructureType::Ptr klassType, TopDUContext* context, ContextSearchFlags flags, int depth)
 {
     QList<DUContext*> searchContexts;
     if ( ! klassType ) {
@@ -185,10 +185,13 @@ QList< DUContext* > Helper::internalContextsForClass(StructureType::Ptr klassTyp
     ClassDeclaration* klass = dynamic_cast<ClassDeclaration*>(decl);
     if ( klass ) {
         FOREACH_FUNCTION ( const BaseClassInstance& base, klass->baseClasses ) {
+            if ( flags == PublicOnly and base.access == KDevelop::Declaration::Private ) {
+                continue;
+            }
             StructureType::Ptr baseClassType = base.baseClass.type<StructureType>();
             // recursive call, because the base class will have more base classes eventually
             if ( depth < 10 ) {
-                searchContexts.append(Helper::internalContextsForClass(baseClassType, context, depth + 1));
+                searchContexts.append(Helper::internalContextsForClass(baseClassType, context, flags, depth + 1));
             }
         }
     }

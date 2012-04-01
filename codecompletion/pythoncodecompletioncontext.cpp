@@ -371,7 +371,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
             kDebug() << cls;
             return QList<CompletionTreeItemPointer>();
         }
-        QList<DUContext*> searchContexts = Helper::internalContextsForClass(cls, m_context->topContext());
+        // the PublicOnly will filter out non-explictly defined __get__ etc. functions inherited from object
+        QList<DUContext*> searchContexts = Helper::internalContextsForClass(cls, m_context->topContext(), Helper::PublicOnly);
         QList<DeclarationDepthPair> keepDeclarations;
         foreach ( const DUContext* currentlySearchedContext, searchContexts ) {
             kDebug() << "searching context " << currentlySearchedContext->scopeIdentifier() << "for autocompletion items";

@@ -133,6 +133,7 @@ const QList<CompletionTreeItem*> PyCompletionTest::invokeCompletionOn(const QStr
     // codeCompletionContext only gets passed the text until the place where completion is invoked
     QString snip = allCode.mid(0, allCode.indexOf("%CURSOR"));
     
+    DUChainReadLocker lock;
     DUContextPointer contextAtCursor = DUContextPointer(topContext->findContextAt(cursorAt, true));
     Q_ASSERT(contextAtCursor);
     

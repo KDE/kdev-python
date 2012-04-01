@@ -122,6 +122,11 @@ KDevelop::ICodeHighlighting* LanguageSupport::codeHighlighting() const
     return m_highlighting;
 }
 
+bool LanguageSupport::isWhitespaceSensitive() const
+{
+    return true;
+}
+
 // QWidget* LanguageSupport::specialLanguageObjectNavigationWidget(const KUrl& url, const KDevelop::SimpleCursor& position)
 // {
 //     kDebug() << "Navigation widget requested *** ";

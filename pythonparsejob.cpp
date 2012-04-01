@@ -203,7 +203,7 @@ void ParseJob::run()
         m_duContext = DUChain::self()->chainForDocument(document());
         // if there's already a chain for the document, do some cleanup.
         if ( m_duContext ) {
-            m_duContext->parsingEnvironmentFile()->clearModificationRevisions(); // TODO why?
+//             m_duContext->parsingEnvironmentFile()->clearModificationRevisions(); // TODO why?
             m_duContext->clearProblems();
         }
         // otherwise, create a new, empty top context for the file. This serves as a placeholder until

@@ -589,6 +589,7 @@ void PyDUChainTest::testClassContextRanges()
 {
     QString code = "class my_class():\n pass\n \n \n \n \n";
     ReferencedTopDUContext ctx = parse(code);
+    DUChainWriteLocker lock;
     DUContext* classContext = ctx->findContextAt(CursorInRevision(5, 0));
     QVERIFY(classContext);
     QVERIFY(classContext->type() == DUContext::Class);

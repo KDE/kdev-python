@@ -28,13 +28,12 @@ namespace Python {
 class ImplementFunctionCompletionItem : public CompletionTreeItem
 {
 public:
-    ImplementFunctionCompletionItem(const QString& name, const QString& arguments, const QString& writeArguments, const QString& previousIndent);
+    ImplementFunctionCompletionItem(const QString& name, const QStringList& arguments, const QString& previousIndent);
     virtual void execute(KTextEditor::Document* document, const KTextEditor::Range& word);
     virtual QVariant data(const QModelIndex& index, int role, const CodeCompletionModel* model) const;
 
 private:
-    QString m_arguments; // displayed
-    QString m_writeArguments; // written to the file on execute
+    QStringList m_arguments;
     QString m_name;
     QString m_previousIndent;
 };

@@ -37,6 +37,7 @@
 #include <language/duchain/types/structuretype.h>
 #include <language/duchain/functiondeclaration.h>
 #include <duchain/declarations/decorator.h>
+#include "declarations/classdeclaration.h"
 
 #include "pythonduchainexport.h"
 #include "types/unsuretype.h"
@@ -103,7 +104,6 @@ public:
     * @return list of contexts which were found
     **/
     static QList<DUContext*> internalContextsForClass(KDevelop::StructureType::Ptr klassType, TopDUContext* context, int depth = 0);
-    
     /**
         * @brief Resolve the given declaration if it is an alias declaration.
         *

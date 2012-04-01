@@ -34,6 +34,7 @@
 #include <language/util/includeitem.h>
 #include <language/codecompletion/codecompletionitemgrouper.h>
 #include <language/duchain/aliasdeclaration.h>
+#include <language/duchain/duchainutils.h>
 #include <interfaces/icore.h>
 #include <interfaces/iprojectcontroller.h>
 #include <interfaces/iproject.h>
@@ -56,8 +57,6 @@
 
 using namespace KTextEditor;
 using namespace KDevelop;
-
-typedef QStringList implementFunctionDescription;
 
 namespace Python {
 
@@ -121,100 +120,31 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
 //         QMetaObject::invokeMethod(doc->textDocument()->activeView(), "userInvokedCompletion");
     }
     else if ( m_operation == PythonCodeCompletionContext::DefineCompletion ) {
-        QList<implementFunctionDescription> funcs;
-        // well, duh. I didn't think it's that many functions. TODO think of a more sane way to do this
-        {
-        funcs << ( implementFunctionDescription() << "__init__" << "self" << "self" );
-        funcs << ( implementFunctionDescription() << "__new__" << "self" << "self" );
-        funcs << ( implementFunctionDescription() << "__del__" << "self" << "self" );
-        funcs << ( implementFunctionDescription() << "__repr__" << "self" << "self" );
-        funcs << ( implementFunctionDescription() << "__str__" << "self" << "self" );
-        funcs << ( implementFunctionDescription() << "__lt__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__gt__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__le__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__eq__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__ne__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__gt__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__ge__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__cmp__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__hash__" << "self" << "self" );
-        funcs << ( implementFunctionDescription() << "__nonzero__" << "self" << "self" );
-        funcs << ( implementFunctionDescription() << "__unicode__" << "self" << "self" );
-        funcs << ( implementFunctionDescription() << "__getattr__" << "self, <string> name" << "self, name" );
-        funcs << ( implementFunctionDescription() << "__setattr__" << "self, <string> name, <any object> value" << "self, name, value" );
-        funcs << ( implementFunctionDescription() << "__delattr__" << "self, <string> name" << "self, name" );
-        funcs << ( implementFunctionDescription() << "__getattribute__" << "self, <string> name" << "self, name" );
-        funcs << ( implementFunctionDescription() << "__get__" << "self, <any object> instance, <class> owner" << "self, instance, owner" );
-        funcs << ( implementFunctionDescription() << "__set__" << "self, <any object> instance, <any object> value" << "self, instance, value" );
-        funcs << ( implementFunctionDescription() << "__delete__" << "self, <any object> instance" << "self, instance" );
-        funcs << ( implementFunctionDescription() << "__instancecheck__" << "self, <any object> instance" << "self, instance" );
-        funcs << ( implementFunctionDescription() << "__subclasscheck__" << "self, <any object> subclass" << "self, subclass" );
-        funcs << ( implementFunctionDescription() << "__call__" << "self, [...args]" << "self" );
-        funcs << ( implementFunctionDescription() << "__len__" << "self" << "self" );
-        funcs << ( implementFunctionDescription() << "__getitem__" << "self, <string> key" << "self, key" );
-        funcs << ( implementFunctionDescription() << "__setitem__" << "self, <string> key, <any object> value" << "self, key, value" );
-        funcs << ( implementFunctionDescription() << "__delitem__" << "self, <string> key" << "self, key" );
-        funcs << ( implementFunctionDescription() << "__iter__" << "self" << "self" );
-        funcs << ( implementFunctionDescription() << "__reversed__" << "self" << "self" );
-        funcs << ( implementFunctionDescription() << "__contains__" << "self, <any object> item" << "self, item" );
-        funcs << ( implementFunctionDescription() << "__getslice__" << "self, <int> i, <int> j" << "self, i, j" );
-        funcs << ( implementFunctionDescription() << "__delslice__" << "self, <int> i, <int> j" << "self, i, j" );
-        funcs << ( implementFunctionDescription() << "__add__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__sub__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__mul__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__floordiv__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__mod__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__divmod__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__pow__" << "self, <any object> other, [modulo]" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__lshift__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__rshift__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__and__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__xor__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__or__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__div__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__truediv__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__radd__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__rsub__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__rmul__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__rtruediv__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__rfloordiv__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__rmod__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__rdivmod__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__rpow__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__rlshift__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__rrshift__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__rand__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__rxor__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__ror__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__iadd__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__isub__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__imul__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__idiv__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__itruediv__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__ifloordiv__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__imod__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__ipow__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__ilshift__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__irshift__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__iand__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__ixor__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__ior__" << "self, <any object> other" << "self, other" );
-        funcs << ( implementFunctionDescription() << "__neg__" << "self" << "self" );
-        funcs << ( implementFunctionDescription() << "__pos__" << "self" << "self" );
-        funcs << ( implementFunctionDescription() << "__abs__" << "self" << "self" );
-        funcs << ( implementFunctionDescription() << "__invert__" << "self" << "self" );
-        funcs << ( implementFunctionDescription() << "__complex__" << "self" << "self" );
-        funcs << ( implementFunctionDescription() << "__int__" << "self" << "self" );
-        funcs << ( implementFunctionDescription() << "__long__" << "self" << "self" );
-        funcs << ( implementFunctionDescription() << "__float__" << "self" << "self" );
-        funcs << ( implementFunctionDescription() << "__oct__" << "self" << "self" );
-        funcs << ( implementFunctionDescription() << "__hex__" << "self" << "self" );
-        funcs << ( implementFunctionDescription() << "__index__" << "self" << "self" );
-        funcs << ( implementFunctionDescription() << "__coerce__" << "self, <any object> other" << "self, other" );
+        // Find all base classes of the current class context
+        if ( m_context->type() != DUContext::Class ) {
+            kWarning() << "current context is not a class context, not offering define completion";
         }
-
-        foreach ( implementFunctionDescription func, funcs ) {
-            items << CompletionTreeItemPointer(new ImplementFunctionCompletionItem(func.at(0), func.at(1), func.at(2), m_indent));
+        else if ( ClassDeclaration* klass = dynamic_cast<ClassDeclaration*>(m_context->owner()) ) {
+            QList<DUContext*> baseClassContexts = Helper::internalContextsForClass(
+                klass->type<StructureType>(), m_context->topContext()
+            );
+            baseClassContexts.removeAll(m_context.data()); // remove the class' own context
+            Q_ASSERT(baseClassContexts.size() >= 1);
+            foreach ( DUContext* c, baseClassContexts ) {
+                QList<DeclarationDepthPair> declarations = c->allDeclarations(CursorInRevision::invalid(), m_context->topContext(), false);
+                foreach ( DeclarationDepthPair d, declarations ) {
+                    if ( FunctionDeclaration* funcDecl = dynamic_cast<FunctionDeclaration*>(d.first) ) {
+                        QStringList argumentNames;
+                        DUContext* argumentsContext = DUChainUtils::getArgumentContext(funcDecl);
+                        foreach ( Declaration* argument, argumentsContext->localDeclarations() ) {
+                            argumentNames << argument->identifier().toString();
+                        }
+                        items << CompletionTreeItemPointer(new ImplementFunctionCompletionItem(
+                            funcDecl->identifier().toString(), argumentNames, m_indent)
+                        );
+                    }
+                }
+            }
         }
     }
     else if ( m_operation == PythonCodeCompletionContext::ImportFileCompletion ) {

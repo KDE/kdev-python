@@ -38,11 +38,10 @@ class KDEVPYTHONDUCHAIN_EXPORT PythonEditorIntegrator
 {
 
 public:
-    PythonEditorIntegrator(Python::ParseSession* session);
+    PythonEditorIntegrator(ParseSession* session);
     ~PythonEditorIntegrator();
     
     ParseSession* parseSession() const;
-    void setParseSession(Python::ParseSession* session);
 
     enum Edge {
         FrontEdge,
@@ -58,8 +57,12 @@ public:
 
     RangeInRevision findRange( Python::Ast* node, Python::PythonEditorIntegrator::RangeEdge edge = OuterEdge) const;
     RangeInRevision findRange( Python::Ast* from, Python::Ast* to) const;
+    inline FileIndentInformation* indent() const {
+        return m_indentInformationCache;
+    }
 private:
     ParseSession* m_session;
+    FileIndentInformation* m_indentInformationCache;
 };
 
 }

@@ -116,7 +116,7 @@ protected:
     
     QMap<QString, ReferencedTopDUContext> contextsForModules;
 
-    static PythonEditorIntegrator* m_editor;
+    PythonEditorIntegrator* m_editor;
     
     TopDUContext* newTopContext(const RangeInRevision& range, ParsingEnvironmentFile* file);
     virtual KDevelop::DUContext* newContext(const KDevelop::RangeInRevision& range);
@@ -125,15 +125,6 @@ protected:
         foreach ( T* node, l ) {
             visitNode(node);
         }
-    }
-    
-    inline QSharedPointer<FileIndentInformation> indent() {
-        if ( ! m_indentInformationCache ) {
-            m_indentInformationCache = QSharedPointer<FileIndentInformation>(
-                new FileIndentInformation(editor()->parseSession()->contents())
-            );
-        }
-        return m_indentInformationCache;
     }
     
     bool m_mapAst;

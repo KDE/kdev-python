@@ -67,7 +67,7 @@ using namespace KDevelop;
 namespace Python
 {
 
-DeclarationBuilder::DeclarationBuilder( PythonEditorIntegrator* editor )
+DeclarationBuilder::DeclarationBuilder(PythonEditorIntegrator* editor)
         : DeclarationBuilderBase( )
 {
     setEditor(editor);

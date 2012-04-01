@@ -95,7 +95,7 @@ bool ParseJob::wasReadFromDisk() const
 
 void ParseJob::run()
 {
-    ParseSession currentSession(&m_pool);
+    QSharedPointer<ParseSession> currentSession = QSharedPointer<ParseSession>(new ParseSession(&m_pool));
     LanguageSupport* lang = python();
     ILanguage* ilang = lang->language();
     
@@ -112,20 +112,22 @@ void ParseJob::run()
     
     readContents();
     
-    currentSession.setContents(QString::fromUtf8(contents().contents));
-    currentSession.setCurrentDocument(m_url);
+    currentSession->setContents(QString::fromUtf8(contents().contents));
+    currentSession->setCurrentDocument(m_url);
     
     IndexedString filename = KDevelop::IndexedString(m_url.pathOrUrl());
     
     // call the python API and the AST transformer to populate the syntax tree
-    QPair<CodeAst*, bool> parserResults = currentSession.parse(m_ast);
+    QPair<CodeAst*, bool> parserResults = currentSession->parse(m_ast);
     m_ast = parserResults.first;
     
     if ( abortRequested() ) {
         return abortJob();
     }
     
-    QSharedPointer<PythonEditorIntegrator> editor = QSharedPointer<PythonEditorIntegrator>(new PythonEditorIntegrator(&currentSession));
+    QSharedPointer<PythonEditorIntegrator> editor = QSharedPointer<PythonEditorIntegrator>(
+        new PythonEditorIntegrator(currentSession.data())
+    );
     // if parsing succeeded, continue and do semantic analysis
     if ( parserResults.second )
     {
@@ -203,7 +205,7 @@ void ParseJob::run()
         m_duContext = DUChain::self()->chainForDocument(document());
         // if there's already a chain for the document, do some cleanup.
         if ( m_duContext ) {
-//             m_duContext->parsingEnvironmentFile()->clearModificationRevisions(); // TODO why?
+            m_duContext->parsingEnvironmentFile()->clearModificationRevisions(); // TODO why?
             m_duContext->clearProblems();
         }
         // otherwise, create a new, empty top context for the file. This serves as a placeholder until
@@ -227,7 +229,7 @@ void ParseJob::run()
     
     // The parser might have given us some syntax errors, which are now added to the document.
     DUChainWriteLocker lock(DUChain::lock());
-    foreach ( ProblemPointer p, currentSession.m_problems ) {
+    foreach ( ProblemPointer p, currentSession->m_problems ) {
         m_duContext->addProblem(p);
     }
     

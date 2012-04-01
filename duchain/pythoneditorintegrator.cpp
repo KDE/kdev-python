@@ -35,17 +35,21 @@ using namespace KTextEditor;
 namespace Python
 {
 
-PythonEditorIntegrator::PythonEditorIntegrator(ParseSession* session) : m_session(session)
+PythonEditorIntegrator::PythonEditorIntegrator(ParseSession* session) :
+    m_session(session), m_indentInformationCache(new FileIndentInformation(session->contents()))
 {
     
 }
 
 PythonEditorIntegrator::~PythonEditorIntegrator() 
 {
+    delete m_indentInformationCache;
+    m_indentInformationCache = 0;
 }
 
 ParseSession* PythonEditorIntegrator::parseSession() const
 {
+    Q_ASSERT(m_session);
     return m_session;
 }
 

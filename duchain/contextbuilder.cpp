@@ -55,8 +55,6 @@ using namespace KDevelop;
 
 using namespace KTextEditor;
 
-Python::PythonEditorIntegrator* Python::ContextBuilder::m_editor;
-
 namespace Python
 {
 
@@ -342,7 +340,7 @@ void ContextBuilder::openContextForStatementList( const QList<Ast*>& l, DUContex
 void ContextBuilder::openContextForClassDefinition(ClassDefinitionAst* node)
 {
     // make sure the contexts ends at the next DEDENT token, not at the last statement.
-    int endLine = indent()->nextChange(node->body.last()->endLine, FileIndentInformation::Dedent);
+    int endLine = editor()->indent()->nextChange(node->body.last()->endLine, FileIndentInformation::Dedent);
     RangeInRevision range(node->startLine, node->startCol, endLine + 1, 0);
     DUChainWriteLocker lock(DUChain::lock());
     openContext( node, range, DUContext::Class, node->name);
@@ -513,7 +511,7 @@ void ContextBuilder::visitFunctionDefinition(FunctionDefinitionAst* node)
 
 void ContextBuilder::visitFunctionBody(FunctionDefinitionAst* node)
 {
-    int endLine = indent()->nextChange(node->endLine, FileIndentInformation::Dedent);
+    int endLine = editor()->indent()->nextChange(node->endLine, FileIndentInformation::Dedent);
     CursorInRevision end = CursorInRevision(endLine + 1, 0);
     CursorInRevision start = rangeForArgumentsContext(node).end;
     RangeInRevision range(start, end);

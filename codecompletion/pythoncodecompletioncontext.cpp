@@ -613,6 +613,8 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         return;
     }
     
+    kDebug() << context->type() << DUContext::Class << context->localScopeIdentifier().toString();
+    
     if ( context->type() == DUContext::Class ) {
         QRegExp defcompletion("(.*)\n([\\s]*)(def)[\\s]*[\\D]*$");
         defcompletion.setMinimal(true);

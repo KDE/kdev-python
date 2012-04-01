@@ -511,8 +511,13 @@ void ContextBuilder::visitFunctionDefinition(FunctionDefinitionAst* node)
 
 void ContextBuilder::visitFunctionBody(FunctionDefinitionAst* node)
 {
-    int endLine = editor()->indent()->nextChange(node->endLine, FileIndentInformation::Dedent);
-    CursorInRevision end = CursorInRevision(endLine + 1, 0);
+    int endLine = node->endLine;
+    if ( node->endLine != node->startLine ) {
+        kDebug() << "indent at end:" << editor()->indent()->indentForLine(endLine - 1) << endLine;
+        endLine = editor()->indent()->nextChange(endLine, FileIndentInformation::Dedent);
+        kDebug() << "new end line:" << endLine;
+    }
+    CursorInRevision end = CursorInRevision(endLine, 0);
     CursorInRevision start = rangeForArgumentsContext(node).end;
     RangeInRevision range(start, end);
     // Done building the function declaration, start building the body now

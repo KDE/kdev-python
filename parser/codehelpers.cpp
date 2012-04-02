@@ -74,10 +74,8 @@ int FileIndentInformation::indentForLine(int line) const
 
 int FileIndentInformation::nextChange(int line, ChangeTypes type, ScanDirection direction) const
 {
-    kDebug() << "scanning:" << line << m_indents;
     line = qMin(line, m_indents.length() - 1);
     line = qMax(line, 0);
-    kDebug() << "capped:" << line;
     const int currentIndent = m_indents.at(line);
     const int length = m_indents.length();
     const char scandir = direction == Forward ? 1 : -1;
@@ -91,7 +89,6 @@ int FileIndentInformation::nextChange(int line, ChangeTypes type, ScanDirection 
     } while ( type == Indent ? atIndent <= currentIndent :
               type == Dedent ? atIndent >= currentIndent :
                                atIndent == currentIndent );
-    kDebug() << "result: " << line;
     return line;
 }
 

@@ -122,9 +122,9 @@ KDevelop::ICodeHighlighting* LanguageSupport::codeHighlighting() const
     return m_highlighting;
 }
 
-bool LanguageSupport::isWhitespaceSensitive() const
+ILanguageSupport::WhitespaceSensitivity LanguageSupport::whitespaceSensititivy() const
 {
-    return true;
+    return ILanguageSupport::IndentOnly;
 }
 
 // QWidget* LanguageSupport::specialLanguageObjectNavigationWidget(const KUrl& url, const KDevelop::SimpleCursor& position)

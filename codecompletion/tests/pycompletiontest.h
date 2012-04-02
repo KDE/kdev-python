@@ -59,6 +59,7 @@ class PyCompletionTest : public QObject
         void testInheritanceCompletion();
         void testImportCompletion();
         void testImportCompletion_data();
+        void testNoImplicitMagicFunctions();
     private:
         QList<CompletionTreeItemPointer> m_ptrs;
 };

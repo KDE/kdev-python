@@ -1151,17 +1151,20 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     // every python class inherits from "object".
     // We use this to add all the __str__, __get__, ... methods.
     if ( dec->baseClassesSize() == 0 and node->name->value != "__kdevpythondocumentation_builtin_object" ) {
-        QList<Declaration*> object = Helper::getDocumentationFileContext()->findDeclarations(
-            QualifiedIdentifier("__kdevpythondocumentation_builtin_object")
-        );
-        if ( ! object.isEmpty() && object.first()->abstractType() ) {
-            Declaration* objDecl = object.first();
-            BaseClassInstance base;
-            base.baseClass = objDecl->abstractType()->indexed();
-            // this can be queried from autocompletion or elsewhere to hide the items, if required;
-            // of course, it's not private strictly speaking
-            base.access = KDevelop::Declaration::Private;
-            dec->addBaseClass(base);
+        ReferencedTopDUContext docContext = Helper::getDocumentationFileContext();
+        if ( docContext ) {
+            QList<Declaration*> object = docContext->findDeclarations(
+                QualifiedIdentifier("__kdevpythondocumentation_builtin_object")
+            );
+            if ( ! object.isEmpty() && object.first()->abstractType() ) {
+                Declaration* objDecl = object.first();
+                BaseClassInstance base;
+                base.baseClass = objDecl->abstractType()->indexed();
+                // this can be queried from autocompletion or elsewhere to hide the items, if required;
+                // of course, it's not private strictly speaking
+                base.access = KDevelop::Declaration::Private;
+                dec->addBaseClass(base);
+            }
         }
     }
     

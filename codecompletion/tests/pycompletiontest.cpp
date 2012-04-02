@@ -223,6 +223,12 @@ void PyCompletionTest::testImportCompletion_data()
     QTest::newRow("class_from_file_in_subdir") << "%INVOKE" << "from submoduledir.subfile import %CURSOR" << "some_subfile_class";
 }
 
+void PyCompletionTest::testNoImplicitMagicFunctions()
+{
+    QVERIFY(! itemInCompletionList("class my(): pass\nd = my()\n%INVOKE", "d.%CURSOR", "__get__") );
+    QVERIFY(itemInCompletionList("class my():\n def __get__(self): pass\nd = my()\n%INVOKE", "d.%CURSOR", "__get__") );
+}
+
 void PyCompletionTest::testIntegralTypesImmediate()
 {
     QFETCH(QString, invokeCode);

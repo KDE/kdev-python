@@ -42,16 +42,21 @@ QList< KSharedPtr< CompletionTreeElement > > PythonCodeCompletionWorker::compute
     QList< KSharedPtr<CompletionTreeElement> > tree;
     CompletionCustomGroupNode* localDeclarations = new CompletionCustomGroupNode(i18n("Local declarations"));
     CompletionCustomGroupNode* globalDeclarations = new CompletionCustomGroupNode(i18n("Global or imported declarations"));
+    CompletionCustomGroupNode* privateDeclarations = new CompletionCustomGroupNode(i18n("Private or implicitly used declarations"));
     CompletionCustomGroupNode* stuff = new CompletionCustomGroupNode(i18n("Other suggestions"));
     
     int currentIndex = 0;
+    DUChainReadLocker lock;
     foreach (CompletionTreeItemPointer currentItem, items) {
         KSharedPtr<CompletionTreeElement> currentElement(dynamic_cast<CompletionTreeElement*>(currentItem.data()));
         Declaration* currentDeclaration = currentItem->declaration().data();
         if ( currentDeclaration ) {
             if ( items.lastIndexOf(currentItem) != currentIndex )
                 continue;
-            if ( currentDeclaration->context() == completionContext.data()->duContext() ) {
+            if ( currentDeclaration->identifier().toString().startsWith("_") ) {
+                privateDeclarations->appendChild(currentElement);
+            }
+            else if ( currentDeclaration->context() == completionContext.data()->duContext() ) {
                 localDeclarations->appendChild(currentElement);
             }
             else {
@@ -64,11 +69,13 @@ QList< KSharedPtr< CompletionTreeElement > > PythonCodeCompletionWorker::compute
         currentIndex += 1;
     }
     
-    if ( localDeclarations->children.length() )
+    if ( ! localDeclarations->children.isEmpty() )
         tree << KSharedPtr<CompletionTreeElement>(static_cast<CompletionTreeElement*>(localDeclarations));
-    if ( globalDeclarations->children.length() )
+    if ( ! globalDeclarations->children.isEmpty() )
         tree << KSharedPtr<CompletionTreeElement>(static_cast<CompletionTreeElement*>(globalDeclarations));
-    if ( stuff->children.length() )
+    if ( ! privateDeclarations->children.isEmpty() )
+        tree << KSharedPtr<CompletionTreeElement>(static_cast<CompletionTreeElement*>(privateDeclarations));
+    if ( ! stuff->children.isEmpty() )
         tree << KSharedPtr<CompletionTreeElement>(static_cast<CompletionTreeElement*>(stuff));
     return tree;
 }

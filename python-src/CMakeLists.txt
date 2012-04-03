@@ -1,3 +1,4 @@
+if(NOT WIN32)
 add_custom_target(
     parser
     COMMAND /bin/bash ${CMAKE_CURRENT_SOURCE_DIR}/configure --enable-shared --without-pymalloc WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -7,3 +8,5 @@ add_custom_target(
 install(FILES libpython2.7-kdevelop.so DESTINATION ${LIB_INSTALL_DIR})
 install(FILES libpython2.7-kdevelop.so.1.0 DESTINATION ${LIB_INSTALL_DIR})
 
+else(NOT WIN32)
+endif(NOT WIN32)

@@ -1634,7 +1634,7 @@ ast_for_trailer(struct compiling *c, const node *n, expr_ty left_expr)
         if (!attr_id)
             return NULL;
         return Attribute(left_expr, attr_id, Load,
-                         LINENO(n), n->n_col_offset, c->c_arena);
+                         LINENO(CHILD(n, 1)), CHILD(n, 1)->n_col_offset, c->c_arena);
     }
     else {
         REQ(CHILD(n, 0), LSQB);

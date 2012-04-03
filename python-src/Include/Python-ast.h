@@ -381,6 +381,8 @@ struct _keyword {
 struct _alias {
         identifier name;
         identifier asname;
+        int lineno;
+        int col_offset;
 };
 
 
@@ -545,8 +547,8 @@ arguments_ty _Py_arguments(asdl_seq * args, identifier vararg, expr_ty
 arg_ty _Py_arg(identifier arg, expr_ty annotation, PyArena *arena);
 #define keyword(a0, a1, a2) _Py_keyword(a0, a1, a2)
 keyword_ty _Py_keyword(identifier arg, expr_ty value, PyArena *arena);
-#define alias(a0, a1, a2) _Py_alias(a0, a1, a2)
-alias_ty _Py_alias(identifier name, identifier asname, PyArena *arena);
+#define alias(a0, a1, ln, co, a2) _Py_alias(a0, a1, ln, co, a2)
+alias_ty _Py_alias(identifier name, identifier asname, int lineno, int col_offset, PyArena *arena);
 
 PyObject* PyAST_mod2obj(mod_ty t);
 mod_ty PyAST_obj2mod(PyObject* ast, PyArena* arena, int mode);

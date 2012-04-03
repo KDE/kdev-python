@@ -1,0 +1,137 @@
+From 5364675d755ae8b67972d1f2dd44466b5e0ad2b5 Mon Sep 17 00:00:00 2001
+From: Patrick Spendrin <ps_ml@gmx.de>
+Date: Tue, 3 Apr 2012 07:40:52 +0200
+Subject: [PATCH 2/4] fix import alias ranges
+
+---
+ python-src/Include/Python-ast.h |    6 ++++--
+ python-src/Python/Python-ast.c  |    6 ++++--
+ python-src/Python/ast.c         |   14 +++++++++-----
+ 3 files changed, 17 insertions(+), 9 deletions(-)
+
+diff --git a/python-src/Include/Python-ast.h b/python-src/Include/Python-ast.h
+index 0ad788b..cf2a64f 100644
+--- a/python-src/Include/Python-ast.h
++++ b/python-src/Include/Python-ast.h
+@@ -381,6 +381,8 @@ struct _keyword {
+ struct _alias {
+         identifier name;
+         identifier asname;
++        int lineno;
++        int col_offset;
+ };
+ 
+ 
+@@ -545,8 +547,8 @@ arguments_ty _Py_arguments(asdl_seq * args, identifier vararg, expr_ty
+ arg_ty _Py_arg(identifier arg, expr_ty annotation, PyArena *arena);
+ #define keyword(a0, a1, a2) _Py_keyword(a0, a1, a2)
+ keyword_ty _Py_keyword(identifier arg, expr_ty value, PyArena *arena);
+-#define alias(a0, a1, a2) _Py_alias(a0, a1, a2)
+-alias_ty _Py_alias(identifier name, identifier asname, PyArena *arena);
++#define alias(a0, a1, ln, co, a2) _Py_alias(a0, a1, ln, co, a2)
++alias_ty _Py_alias(identifier name, identifier asname, int lineno, int col_offset, PyArena *arena);
+ 
+ PyObject* PyAST_mod2obj(mod_ty t);
+ mod_ty PyAST_obj2mod(PyObject* ast, PyArena* arena, int mode);
+diff --git a/python-src/Python/Python-ast.c b/python-src/Python/Python-ast.c
+index 89c07cd..2cd94b4 100644
+--- a/python-src/Python/Python-ast.c
++++ b/python-src/Python/Python-ast.c
+@@ -2134,7 +2134,7 @@ keyword(identifier arg, expr_ty value, PyArena *arena)
+ }
+ 
+ alias_ty
+-alias(identifier name, identifier asname, PyArena *arena)
++alias(identifier name, identifier asname, int lineno, int col_offset, PyArena *arena)
+ {
+         alias_ty p;
+         if (!name) {
+@@ -2147,6 +2147,8 @@ alias(identifier name, identifier asname, PyArena *arena)
+                 return NULL;
+         p->name = name;
+         p->asname = asname;
++        p->lineno = lineno;
++        p->col_offset = col_offset;
+         return p;
+ }
+ 
+@@ -6731,7 +6733,7 @@ obj2ast_alias(PyObject* obj, alias_ty* out, PyArena* arena)
+         } else {
+                 asname = NULL;
+         }
+-        *out = alias(name, asname, arena);
++        *out = alias(name, asname, 0, 0, arena);
+         return 0;
+ failed:
+         Py_XDECREF(tmp);
+diff --git a/python-src/Python/ast.c b/python-src/Python/ast.c
+index 6269c64..776838d 100644
+--- a/python-src/Python/ast.c
++++ b/python-src/Python/ast.c
+@@ -2287,10 +2287,11 @@ alias_for_import_name(struct compiling *c, const node *n, int store)
+             node *name_node = CHILD(n, 0);
+             str = NULL;
+             name = NEW_IDENTIFIER(name_node);
++            node *str_node = NULL;
+             if (!name)
+                 return NULL;
+             if (NCH(n) == 3) {
+-                node *str_node = CHILD(n, 2);
++                str_node = CHILD(n, 2);
+                 str = NEW_IDENTIFIER(str_node);
+                 if (!str)
+                     return NULL;
+@@ -2301,7 +2302,7 @@ alias_for_import_name(struct compiling *c, const node *n, int store)
+                 if (forbidden_name(name, name_node, 0))
+                     return NULL;
+             }
+-            return alias(name, str, c->c_arena);
++            return alias(name, str, str_node ? str_node->n_lineno : name_node->n_lineno, str_node ? str_node->n_col_offset : name_node->n_col_offset, c->c_arena);
+         }
+         case dotted_as_name:
+             if (NCH(n) == 1) {
+@@ -2310,6 +2311,7 @@ alias_for_import_name(struct compiling *c, const node *n, int store)
+             }
+             else {
+                 node *asname_node = CHILD(n, 2);
++                node *as_trivial_node = CHILD(n, 1);
+                 alias_ty a = alias_for_import_name(c, CHILD(n, 0), 0);
+                 if (!a)
+                     return NULL;
+@@ -2319,6 +2321,8 @@ alias_for_import_name(struct compiling *c, const node *n, int store)
+                     return NULL;
+                 if (forbidden_name(a->asname, asname_node, 0))
+                     return NULL;
++                a->lineno = asname_node->n_lineno;
++                a->col_offset = asname_node->n_col_offset;
+                 return a;
+             }
+             break;
+@@ -2330,7 +2334,7 @@ alias_for_import_name(struct compiling *c, const node *n, int store)
+                     return NULL;
+                 if (store && forbidden_name(name, name_node, 0))
+                     return NULL;
+-                return alias(name, NULL, c->c_arena);
++                return alias(name, NULL, name_node->n_lineno, name_node->n_col_offset, c->c_arena);
+             }
+             else {
+                 /* Create a string of the form "a.b.c" */
+@@ -2367,13 +2371,13 @@ alias_for_import_name(struct compiling *c, const node *n, int store)
+                 str = uni;
+                 PyUnicode_InternInPlace(&str);
+                 PyArena_AddPyObject(c->c_arena, str);
+-                return alias(str, NULL, c->c_arena);
++                return alias(str, NULL, CHILD(n, 0)->n_lineno, CHILD(n, 0)->n_col_offset, c->c_arena);
+             }
+             break;
+         case STAR:
+             str = PyUnicode_InternFromString("*");
+             PyArena_AddPyObject(c->c_arena, str);
+-            return alias(str, NULL, c->c_arena);
++            return alias(str, NULL, 0, 0, c->c_arena);
+         default:
+             PyErr_Format(PyExc_SystemError,
+                          "unexpected import name: %d", TYPE(n));
+-- 
+1.7.4.msysgit.0
+

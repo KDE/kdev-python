@@ -21,6 +21,7 @@
 
 #include "ast.h"
 #include "astbuilder.h"
+#include <language/interfaces/iproblem.h>
 
 namespace Python
 {

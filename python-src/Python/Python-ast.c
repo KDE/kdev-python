@@ -2134,7 +2134,7 @@ keyword(identifier arg, expr_ty value, PyArena *arena)
 }
 
 alias_ty
-alias(identifier name, identifier asname, PyArena *arena)
+alias(identifier name, identifier asname, int lineno, int col_offset, PyArena *arena)
 {
         alias_ty p;
         if (!name) {
@@ -2147,6 +2147,8 @@ alias(identifier name, identifier asname, PyArena *arena)
                 return NULL;
         p->name = name;
         p->asname = asname;
+        p->lineno = lineno;
+        p->col_offset = col_offset;
         return p;
 }
 
@@ -6731,7 +6733,7 @@ obj2ast_alias(PyObject* obj, alias_ty* out, PyArena* arena)
         } else {
                 asname = NULL;
         }
-        *out = alias(name, asname, arena);
+        *out = alias(name, asname, 0, 0, arena);
         return 0;
 failed:
         Py_XDECREF(tmp);

@@ -12,7 +12,9 @@ find_package(KDE4 REQUIRED)
 find_package(KDevPlatform 1.3.60 REQUIRED)
 find_package(KDevelop-PG-Qt REQUIRED)
 
-set(CMAKE_CXX_FLAGS_DEBUG "-Wfatal-errors -Wall")
+if(NOT WIN32)
+    set(CMAKE_CXX_FLAGS_DEBUG "-Wfatal-errors -Wall")
+endif(NOT WIN32)
 
 # then, build the plugin
 include_directories(

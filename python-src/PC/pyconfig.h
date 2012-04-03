@@ -191,12 +191,14 @@ WIN32 is still required for the locale module.
 #endif
 
 /* Define like size_t, omitting the "unsigned" */
+#if defined(_MSC_VER) && _MSC_VER <= 1500
 #ifdef MS_WIN64
 typedef __int64 ssize_t;
 #else
 typedef _W64 int ssize_t;
 #endif
 #define HAVE_SSIZE_T 1
+#endif
 
 #if defined(MS_WIN32) && !defined(MS_WIN64)
 #ifdef _M_IX86

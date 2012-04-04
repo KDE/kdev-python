@@ -1,5 +1,6 @@
 /*****************************************************************************
  * Copyright 2010 (c) Miquel Canes Gonzalez <miquelcanes@gmail.com>          *
+ * Copyright 2012 (c) Sven Brauch <svenbrauch@googlemail.com>                *
  *                                                                           *
  * Permission is hereby granted, free of charge, to any person obtaining     *
  * a copy of this software and associated documentation files (the           *
@@ -190,6 +191,20 @@ void PyDUChainTest::testFlickering_data()
     QTest::addColumn<int>("after");
     
     QTest::newRow("declaration_flicker") << ( QStringList() << "a=2\n" << "b=3\na=2\n" ) << 1 << 2;
+}
+
+void PyDUChainTest::testVarKWArgs()
+{
+    ReferencedTopDUContext ctx = parse("def myfun(arg, *vararg, **kwarg):\n pass\n pass");
+    DUChainWriteLocker lock;
+    QVERIFY(ctx);
+    DUContext* func = ctx->findContextAt(CursorInRevision(1, 0));
+    QVERIFY(func);
+    QVERIFY(! func->findDeclarations(QualifiedIdentifier("arg")).isEmpty());
+    QVERIFY(! func->findDeclarations(QualifiedIdentifier("vararg")).isEmpty());
+    QVERIFY(! func->findDeclarations(QualifiedIdentifier("kwarg")).isEmpty());
+    QVERIFY(func->findDeclarations(QualifiedIdentifier("vararg")).first()->abstractType()->toString() == "__kdevpythondocumentation_builtin_list");
+    QVERIFY(func->findDeclarations(QualifiedIdentifier("kwarg")).first()->abstractType()->toString() == "__kdevpythondocumentation_builtin_dict");
 }
 
 void PyDUChainTest::testSimple()

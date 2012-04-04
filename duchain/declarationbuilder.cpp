@@ -130,8 +130,11 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, 
         Identifier* id = currentVariableDefinition->identifier;
         return visitVariableDeclaration<T>(id, currentVariableDefinition, previous, type);
     }
+    else if ( node->astType == Ast::IdentifierAstType ) {
+        return visitVariableDeclaration<T>(static_cast<Identifier*>(node), 0, previous, type);
+    }
     else {
-        kWarning() << "cannot create variable declaration for non-name AST, this is a programming error";
+        kWarning() << "cannot create variable declaration for non-(name|identifier) AST, this is a programming error";
         return static_cast<T*>(0);
     }
 }
@@ -1424,6 +1427,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                     isFirst = false;
                 }
             }
+            kDebug() << "var/kwarg:" <<  node->vararg << node->kwarg;
             if ( node->vararg ) {
                 DUChainReadLocker lock(DUChain::lock());
                 AbstractType::Ptr listType = ExpressionVisitor::typeObjectForIntegralType("list", currentContext()).cast<AbstractType>();

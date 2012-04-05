@@ -120,39 +120,65 @@ QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher,
     QStringList sliceChars = QStringList() << "." << "(" << "["; // chars which are allowed to be preceded by a space
     QStack<QString> brackets;
     bool lastWasSlice = false;
-    while ( start > 0 ) {
-        QChar c = line[start];
-        int bracket = closingBrackets.indexOf(c);
-        kDebug() << bracket << c;
-        if ( ! brackets.isEmpty() && brackets.top() == c ) {
-            brackets.pop();
+    int linesFetched = 1;
+    QString text;
+    while ( start != 0 ) {
+        while ( start >= 0 ) {
+            QChar c = line[start];
+            int bracket = closingBrackets.indexOf(c);
+            kDebug() << bracket << c;
+            if ( ! brackets.isEmpty() && brackets.top() == c ) {
+                brackets.pop();
+            }
+            else if ( bracket != -1 ) {
+                brackets.push(openingBrackets.at(bracket));
+            }
+            else if ( openingBrackets.contains(c) ) {
+                start += 1;
+                break;
+            }
+            
+            if ( brackets.isEmpty() && c.isSpace() && ! lastWasSlice ) {
+                start += 1;
+                break;
+            }
+            
+            if ( sliceChars.contains(c) ) {
+                lastWasSlice = true;
+            }
+            else {
+                lastWasSlice = false;
+            }
+            start--;
         }
-        else if ( bracket != -1 ) {
-            brackets.push(openingBrackets.at(bracket));
-        }
-        else if ( openingBrackets.contains(c) ) {
-            start += 1;
+        if ( cursor.line() < linesFetched ) {
             break;
         }
-        
-        if ( brackets.isEmpty() && c.isSpace() && ! lastWasSlice ) {
-            start += 1;
-            break;
-        }
-        
-        if ( sliceChars.contains(c) ) {
-            lastWasSlice = true;
+        // store this line for multi-line expressions
+        if ( linesFetched != 1 ) {
+            text.prepend(line);
         }
         else {
-            lastWasSlice = false;
+            text.prepend(line.mid(0, end));
         }
-        start--;
+        line = "";
+        while ( line.isEmpty() && cursor.line() >= linesFetched ) {
+            line = lineFetcher.fetchLine(cursor.line() - linesFetched);
+            linesFetched++;
+            start = line.length() - 1;
+        }
     }
-    if ( ! ( start < end ) ) {
-        return QString();
+    start = qMax(0, start);
+    QString linePart;
+    if ( start > end ) {
+        linePart = QString();
+    }
+    else {
+        kDebug() << line << start << end << end-start << line.length();
+        linePart = line.mid(start, end-start);
     }
 
-    QString expression(line.mid(start, end-start));
+    QString expression(linePart + text);
     expression = expression.trimmed();
     kDebug() << "expression found:" << expression;
     return expression;

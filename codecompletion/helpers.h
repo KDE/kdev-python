@@ -18,8 +18,8 @@
  */
 
 
-#ifndef HELPERS_H
-#define HELPERS_H
+#ifndef PYCOMPLETIONHELPERS_H
+#define PYCOMPLETIONHELPERS_H
 
 #include <language/duchain/declaration.h>
 
@@ -27,11 +27,39 @@
 #include <QList>
 #include <QVariant>
 
+#include "pythoncompletionexport.h"
+
 using namespace KDevelop;
 
 namespace Python {
 
 void createArgumentList(Declaration* dec, QString& ret, QList<QVariant>* highlighting, int atArg = 0);
+
+class KDEVPYTHONCOMPLETION_EXPORT ExpressionParser {
+public:
+    ExpressionParser(QString code);
+    
+    enum Status {
+        NothingFound,
+        ExpressionFound,
+        CommaFound,
+        CallFound,
+        InitializerFound,
+        FromFound,
+        PrintFound,
+        MemberAccessFound,
+        ImportFound,
+        GeneratorFound
+    };
+    
+    QString popExpression(Status* status);
+    QString getRemainingCode();
+    QString getScannedCode();
+    
+private:
+    QString m_code;
+    int m_cursorPositionInString;
+};
 
 }
 

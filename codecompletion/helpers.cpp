@@ -18,6 +18,7 @@
  */
 
 #include "helpers.h"
+#include <codehelpers.h>
 #include <language/duchain/abstractfunctiondeclaration.h>
 #include <language/duchain/duchainutils.h>
 #include <language/duchain/ducontext.h>
@@ -31,6 +32,87 @@
 using namespace KDevelop;
 
 namespace Python {
+
+ExpressionParser::ExpressionParser(QString code)
+    : m_code(code)
+    , m_cursorPositionInString(code.length())
+{
+    
+}
+
+QString ExpressionParser::getRemainingCode()
+{
+    return m_code.mid(0, m_cursorPositionInString);
+}
+
+QString ExpressionParser::getScannedCode()
+{
+    return m_code.mid(m_cursorPositionInString, m_code.length() - m_cursorPositionInString);
+}
+
+QString ExpressionParser::popExpression(ExpressionParser::Status* status)
+{
+    QString operatingOn = getRemainingCode().trimmed();
+    if ( operatingOn.endsWith(',') ) {
+        m_cursorPositionInString -= 1;
+        *status = CommaFound;
+        return "";
+    }
+    if ( operatingOn.endsWith("import") ) {
+        m_cursorPositionInString -= 6;
+        *status = ImportFound;
+        return "";
+    }
+    if ( operatingOn.endsWith("from") ) {
+        m_cursorPositionInString -= 4;
+        *status = FromFound;
+        return "";
+    }
+    if ( operatingOn.endsWith("print") ) {
+        m_cursorPositionInString -= 5;
+        *status = PrintFound;
+        return "";
+    }
+    if ( operatingOn.endsWith('.') ) {
+        m_cursorPositionInString -= 1;
+        *status = MemberAccessFound;
+        return "";
+    }
+    if ( operatingOn.endsWith('(') ) {
+        for ( int index = operatingOn.length() - 2; index >= 0; index-- ) {
+            QChar c = operatingOn.at(index);
+            if ( c.isSpace() ) continue;
+            if ( c.isLetterOrNumber() || c == '_' ) {
+                // call of a function referenced by name
+                *status = CallFound;
+                return "";
+            }
+            else {
+                // not a call, or not one we can deal with
+                break;
+            }
+        }
+    }
+    if ( operatingOn.endsWith('[') || operatingOn.endsWith('{') || operatingOn.endsWith('(') ) {
+        m_cursorPositionInString -= 1;
+        *status = InitializerFound;
+        return "";
+    }
+    // Otherwise, there's a real expression at the cursor, so scan it.
+    QStringList lines = operatingOn.split('\n');
+    Python::TrivialLazyLineFetcher f(lines);
+    int lastLine = lines.length()-1;
+    QString expr = CodeHelpers::expressionUnderCursor(f, KTextEditor::Cursor(lastLine, f.fetchLine(lastLine).length() - 1));
+    if ( expr.isEmpty() ) {
+        *status = NothingFound;
+    }
+    else {
+        *status = ExpressionFound;
+    }
+    m_cursorPositionInString -= expr.length();
+    return expr;
+}
+
 
 // This is stolen from PHP. For credits, see helpers.cpp in PHP.
 void createArgumentList(Declaration* dec, QString& ret, QList<QVariant>* highlighting, int atArg)

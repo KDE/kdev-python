@@ -73,7 +73,8 @@ public:
     // or any unmatched left parenthesis (for "foo(bar.baz.").
     // remaining expression can be found in m_guessTypeOfExpression after calling
     bool scanExpressionBackwards(QString line, QStringList stopTokens, QStringList stopAtSpaceWithout, QStringList mustEndWithToken, QStringList ignoreAtEnd, bool ignoreWhitespace = false);
-    
+
+private:
     CompletionContextType m_operation;
     QStack<ProjectFolderItem*> m_folderStack;
     int m_maxFolderScanDepth;
@@ -92,9 +93,6 @@ public:
     int m_alreadyGivenParametersCount;
     
     DUContextPointer m_context;
-    
-private:
-    bool m_dontAddMe;
 };
 
 }

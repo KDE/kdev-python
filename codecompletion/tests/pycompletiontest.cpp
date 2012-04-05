@@ -31,6 +31,8 @@
 
 #include <QtTest/QTest>
 
+#include "codecompletion/helpers.h"
+
 using namespace KDevelop;
 
 QTEST_MAIN(Python::PyCompletionTest)
@@ -101,6 +103,33 @@ void PyCompletionTest::initShell()
     makefile("submoduledir/anothersubdir/__init__.py", "var_in_subsub_init = 5");
     makefile("submoduledir/anothersubdir/subsubfile.py", "var_in_subsubfile = 5\nclass another_subfile_class():"
                                                       "\n def method3(): pass");
+}
+
+void PyCompletionTest::testExpressionParser()
+{
+    QFETCH(QString, data);
+    QFETCH(int, expectedStatus);
+    QFETCH(QString, expectedExpression);
+    
+    ExpressionParser p(data);
+    ExpressionParser::Status status;
+    QString result = p.popExpression(&status);
+    QCOMPARE((int) status, expectedStatus);
+    QCOMPARE(result, expectedExpression);
+}
+
+void PyCompletionTest::testExpressionParser_data()
+{
+    QTest::addColumn<QString>("data");
+    QTest::addColumn<int>("expectedStatus");
+    QTest::addColumn<QString>("expectedExpression");
+    
+    QTest::newRow("attrExpression") << "foo.bar.baz" << (int) ExpressionParser::ExpressionFound << "foo.bar.baz";
+    QTest::newRow("attrExpressionAccess") << "foo.bar.baz." << (int) ExpressionParser::MemberAccessFound << "";
+    QTest::newRow("attrExpressionCall") << "foo.bar(3, 5, 7, hell0(3)).baz" << (int) ExpressionParser::ExpressionFound << "foo.bar(3, 5, 7, hell0(3)).baz";
+    QTest::newRow("nextArg") << "foo(3, 5, \t" << (int) ExpressionParser::CommaFound << "";
+    QTest::newRow("call") << "fo0barR( \t  " << (int) ExpressionParser::CallFound << "";
+    QTest::newRow("initializer") << "my_list = [" << (int) ExpressionParser::InitializerFound << "";
 }
 
 const QList<CompletionTreeItem*> PyCompletionTest::invokeCompletionOn(const QString& initCode, const QString& invokeCode)

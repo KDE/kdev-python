@@ -259,7 +259,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
                 v->m_forceGlobalSearching = true;
                 v->visitCode(tmpAst);
                 lock.unlock();
-                if ( v->lastDeclaration().data() ) {
+                if ( v->lastDeclaration() ) {
                     calltips << v->lastDeclaration().data();
                 }
                 else {
@@ -267,6 +267,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
                 }
                 delete v;
             }
+            delete tmpAst;
             
             QList<DeclarationDepthPair> realCalltips_withDepth;
             foreach ( Declaration* current, calltips ) {
@@ -316,7 +317,6 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
             continue;
         }
         currentDeclaration = DeclarationPointer(declarations.at(i).first);
-        kDebug() << declarations.first().first->comment();
         
         PythonDeclarationCompletionItem* item;
         AliasDeclaration* alias = dynamic_cast<AliasDeclaration*>(currentDeclaration.data());
@@ -636,12 +636,12 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     bool is_FunctionCall = scanExpressionBackwards(strippedLine, QStringList(), QStringList() << "." << ",", QStringList() << "," << "(", QStringList());
     if ( is_FunctionCall ) {
         m_operation = PythonCodeCompletionContext::FunctionCallCompletion;
-        m_alreadyGivenParametersCount = m_guessTypeOfExpression.count(','); // strings are already replaced by "S", so no risk to count commas
+        // TODO this is wrong. Example: foo(bar(baz, bang), foo, bar, I)
+        m_alreadyGivenParametersCount = m_guessTypeOfExpression.count(',');
         
         scanExpressionBackwards(m_remainingExpression, QStringList(), QStringList() << "." << ",", QStringList(), QStringList() << "("); // get the next item in a chain of calls
                 // for "a(b(c(), d, e" (we want autocompletion for b) the first call will give us "a(b" and "c(), d, e", but we want "b". so we call it again on the first result.
         kDebug() << "Found function call completion item, called function is " << m_guessTypeOfExpression << ", currently at parameter: " << m_alreadyGivenParametersCount;
-        return;
     }
     
     QRegExp nocompletion("(.*)\n[\\s]*(class|def)[\\s]*$");

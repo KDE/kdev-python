@@ -362,6 +362,7 @@ QList< CompletionTreeItemPointer > PythonCodeCompletionContext::getCompletionIte
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItemsForOneType(AbstractType::Ptr type)
 {
     type = Helper::resolveType(type);
+    ReferencedTopDUContext builtinTopContext = Helper::getDocumentationFileContext();
     if ( type->whichType() == AbstractType::TypeStructure ) {
         // find properties of class declaration
         TypePtr<StructureType> cls = StructureType::Ptr::dynamicCast(type);
@@ -381,11 +382,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
             
             // filter out those which are builtin functions, and those which were imported; we don't want those here
             // TODO rework this, it's maybe not the most elegant solution possible
-            KUrl url = KUrl(KStandardDirs::locate("data", "kdevpythonsupport/documentation_files/builtindocumentation.py"));
-            url.cleanPath();
-            QString u = url.path();
             foreach ( DeclarationDepthPair current, declarations ) {
-                if ( current.first->context() != DUChain::self()->chainForDocument(url) ) {
+                if ( current.first->context() != builtinTopContext ) {
                     keepDeclarations.append(current);
                 }
                 else {

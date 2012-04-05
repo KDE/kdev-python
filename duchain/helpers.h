@@ -53,6 +53,7 @@ public:
     static QList<KUrl> getSearchPaths(KUrl workingOnDocument);
     static QString dataDir;
     static QString documentationFile;
+    static DUChainPointer<TopDUContext> documentationFileContext;
     
     static QString getDataDir();
     static QString getDocumentationFile();

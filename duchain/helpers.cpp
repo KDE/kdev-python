@@ -51,6 +51,7 @@ namespace Python {
 QList<KUrl> Helper::cachedSearchPaths;
 QString Helper::dataDir = QString::null;
 QString Helper::documentationFile = QString::null;
+DUChainPointer<TopDUContext> Helper::documentationFileContext = DUChainPointer<TopDUContext>(0);
 
 AbstractType::Ptr Helper::resolveType(AbstractType::Ptr type)
 {
@@ -225,7 +226,15 @@ QString Helper::getDocumentationFile() {
 
 ReferencedTopDUContext Helper::getDocumentationFileContext()
 {
-    return ReferencedTopDUContext(DUChain::self()->chainForDocument(Helper::getDocumentationFile()));
+    if ( Helper::documentationFileContext ) {
+        return ReferencedTopDUContext(Helper::documentationFileContext.data());
+    }
+    else {
+        ReferencedTopDUContext ctx = ReferencedTopDUContext(DUChain::self()->chainForDocument(Helper::getDocumentationFile()));
+        Helper::documentationFileContext = DUChainPointer<TopDUContext>(ctx.data());
+        return ctx;
+    }
+    return ReferencedTopDUContext(0); // c++...
 }
     
 QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)

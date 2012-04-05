@@ -97,16 +97,19 @@ CodeHelpers::CodeHelpers()
     
 }
 
-QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher, KTextEditor::Cursor cursor)
+QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher, KTextEditor::Cursor cursor, bool forceScanExpression)
 {
     QString line = lineFetcher.fetchLine(cursor.line());
     int index = cursor.column();
     QChar c = line[index];
-    if ( ! c.isLetterOrNumber() && c != '_' ) {
-        return QString();
-    }
-
+    
     int end = index;
+    // This flag is used by codecompletion (in contrast to the debugger)
+    if ( ! forceScanExpression ) {
+        if ( ! c.isLetterOrNumber() && c != '_' ) {
+            return QString();
+        }
+    }
     for (; end < line.size(); ++end)
     {
         QChar c = line[end];
@@ -175,7 +178,7 @@ QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher,
     }
     else {
         kDebug() << line << start << end << end-start << line.length();
-        linePart = line.mid(start, end-start);
+        linePart = line.mid(start, end-start + 1);
     }
 
     QString expression(linePart + text);

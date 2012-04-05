@@ -105,6 +105,24 @@ void PyCompletionTest::initShell()
                                                       "\n def method3(): pass");
 }
 
+void PyCompletionTest::testExpressionParserMisc()
+{
+    // in completion, strings are filtered out and never contain " or ' chars.
+    ExpressionParser p("foobar(3, \"some_string\", func(), funcfunc(3, 5), \t");
+    bool ok;
+    int expressionsSkipped = 0;
+    QString call = p.skipUntilStatus(ExpressionParser::CallFound, &ok, &expressionsSkipped);
+    QVERIFY(ok);
+    QCOMPARE(expressionsSkipped, 4); // number of params
+    QCOMPARE(p.getRemainingCode(), QString("foobar"));
+    
+    ExpressionParser q("foo.bar[3].foobar(3, \"some_string\", func(), funcfunc(3, 5), \t");
+    call = q.skipUntilStatus(ExpressionParser::CallFound, &ok, &expressionsSkipped);
+    QVERIFY(ok);
+    QCOMPARE(expressionsSkipped, 4);
+    QCOMPARE(q.getRemainingCode(), QString("foo.bar[3].foobar"));
+}
+
 void PyCompletionTest::testExpressionParser()
 {
     QFETCH(QString, data);

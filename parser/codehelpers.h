@@ -82,7 +82,8 @@ class KDEVPYTHONPARSER_EXPORT CodeHelpers
 {
     public:
         CodeHelpers();
-        static QString expressionUnderCursor(LazyLineFetcher& lineFetcher, KTextEditor::Cursor cursor);
+        static QString expressionUnderCursor(LazyLineFetcher& lineFetcher, KTextEditor::Cursor cursor,
+                                             bool forceScanExpression = false);
     };
 }
 

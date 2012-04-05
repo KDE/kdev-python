@@ -34,8 +34,8 @@ using namespace KDevelop;
 namespace Python {
 
 ExpressionParser::ExpressionParser(QString code)
-    : m_code(code)
-    , m_cursorPositionInString(code.length())
+    : m_code(code.trimmed())
+    , m_cursorPositionInString(m_code.length())
 {
     
 }
@@ -50,9 +50,53 @@ QString ExpressionParser::getScannedCode()
     return m_code.mid(m_cursorPositionInString, m_code.length() - m_cursorPositionInString);
 }
 
+int ExpressionParser::trailingWhitespace()
+{
+    int ws = 0;
+    int index = m_cursorPositionInString - 1;
+    while ( index >= 0 ) {
+        if ( m_code.at(index).isSpace() ) {
+            ws++;
+            index --;
+        }
+        else {
+            break;
+        }
+    }
+    return ws;
+}
+
+void ExpressionParser::reset()
+{
+    m_cursorPositionInString = m_code.length();
+}
+
+QString ExpressionParser::skipUntilStatus(ExpressionParser::Status status, bool* ok, int* expressionsSkipped)
+{
+    if ( expressionsSkipped ) {
+        *expressionsSkipped = 0;
+    }
+    QString lastExpression;
+    Status currentStatus = InvalidStatus;
+    while ( currentStatus != status ) {
+        lastExpression = popExpression(&currentStatus);
+        kDebug() << lastExpression << currentStatus;
+        if ( currentStatus == NothingFound ) {
+            *ok = false;
+            return QString();
+        }
+        if ( expressionsSkipped && currentStatus == ExpressionFound ) {
+            *expressionsSkipped += 1;
+        }
+    }
+    *ok = true;
+    return lastExpression;
+}
+
 QString ExpressionParser::popExpression(ExpressionParser::Status* status)
 {
     QString operatingOn = getRemainingCode().trimmed();
+    m_cursorPositionInString -= trailingWhitespace();
     if ( operatingOn.endsWith(',') ) {
         m_cursorPositionInString -= 1;
         *status = CommaFound;
@@ -84,6 +128,7 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
             if ( c.isSpace() ) continue;
             if ( c.isLetterOrNumber() || c == '_' ) {
                 // call of a function referenced by name
+                m_cursorPositionInString -= 1;
                 *status = CallFound;
                 return "";
             }
@@ -102,7 +147,7 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
     QStringList lines = operatingOn.split('\n');
     Python::TrivialLazyLineFetcher f(lines);
     int lastLine = lines.length()-1;
-    QString expr = CodeHelpers::expressionUnderCursor(f, KTextEditor::Cursor(lastLine, f.fetchLine(lastLine).length() - 1));
+    QString expr = CodeHelpers::expressionUnderCursor(f, KTextEditor::Cursor(lastLine, f.fetchLine(lastLine).length() - 1), true);
     if ( expr.isEmpty() ) {
         *status = NothingFound;
     }

@@ -40,6 +40,7 @@ public:
     ExpressionParser(QString code);
     
     enum Status {
+        InvalidStatus,
         NothingFound,
         ExpressionFound,
         CommaFound,
@@ -55,6 +56,9 @@ public:
     QString popExpression(Status* status);
     QString getRemainingCode();
     QString getScannedCode();
+    QString skipUntilStatus(Status status, bool* ok, int* expressionsSkipped = 0);
+    void reset();
+    int trailingWhitespace();
     
 private:
     QString m_code;

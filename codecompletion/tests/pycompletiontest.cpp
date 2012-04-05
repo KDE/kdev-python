@@ -111,16 +111,23 @@ void PyCompletionTest::testExpressionParserMisc()
     ExpressionParser p("foobar(3, \"some_string\", func(), funcfunc(3, 5), \t");
     bool ok;
     int expressionsSkipped = 0;
-    QString call = p.skipUntilStatus(ExpressionParser::CallFound, &ok, &expressionsSkipped);
+    p.skipUntilStatus(ExpressionParser::CallFound, &ok, &expressionsSkipped);
     QVERIFY(ok);
     QCOMPARE(expressionsSkipped, 4); // number of params
     QCOMPARE(p.getRemainingCode(), QString("foobar"));
+    ExpressionParser::Status s;
+    QString calledFunction = p.popExpression(&s);
+    QVERIFY(s == ExpressionParser::ExpressionFound);
+    QCOMPARE(calledFunction, QString("foobar"));
     
-    ExpressionParser q("foo.bar[3].foobar(3, \"some_string\", func(), funcfunc(3, 5), \t");
-    call = q.skipUntilStatus(ExpressionParser::CallFound, &ok, &expressionsSkipped);
+    ExpressionParser q("hello(world, foo.bar[3].foobar(3, \"some_string\", func(), funcfunc(3, 5), \t");
+    q.skipUntilStatus(ExpressionParser::CallFound, &ok, &expressionsSkipped);
     QVERIFY(ok);
     QCOMPARE(expressionsSkipped, 4);
-    QCOMPARE(q.getRemainingCode(), QString("foo.bar[3].foobar"));
+    QCOMPARE(q.getRemainingCode(), QString("hello(world, foo.bar[3].foobar"));
+    calledFunction = q.popExpression(&s);
+    QCOMPARE(s, ExpressionParser::ExpressionFound);
+    QCOMPARE(calledFunction, QString("foo.bar[3].foobar"));
 }
 
 void PyCompletionTest::testExpressionParser()

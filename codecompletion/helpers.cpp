@@ -96,31 +96,35 @@ QString ExpressionParser::skipUntilStatus(ExpressionParser::Status status, bool*
 QString ExpressionParser::popExpression(ExpressionParser::Status* status)
 {
     QString operatingOn = getRemainingCode().trimmed();
+    if ( operatingOn.isEmpty() ) {
+        *status = NothingFound;
+        return QString();
+    }
     m_cursorPositionInString -= trailingWhitespace();
     if ( operatingOn.endsWith(',') ) {
         m_cursorPositionInString -= 1;
         *status = CommaFound;
-        return "";
+        return QString();
     }
     if ( operatingOn.endsWith("import") ) {
         m_cursorPositionInString -= 6;
         *status = ImportFound;
-        return "";
+        return QString();
     }
     if ( operatingOn.endsWith("from") ) {
         m_cursorPositionInString -= 4;
         *status = FromFound;
-        return "";
+        return QString();
     }
     if ( operatingOn.endsWith("print") ) {
         m_cursorPositionInString -= 5;
         *status = PrintFound;
-        return "";
+        return QString();
     }
     if ( operatingOn.endsWith('.') ) {
         m_cursorPositionInString -= 1;
         *status = MemberAccessFound;
-        return "";
+        return QString();
     }
     if ( operatingOn.endsWith('(') ) {
         for ( int index = operatingOn.length() - 2; index >= 0; index-- ) {
@@ -130,7 +134,7 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
                 // call of a function referenced by name
                 m_cursorPositionInString -= 1;
                 *status = CallFound;
-                return "";
+                return QString();
             }
             else {
                 // not a call, or not one we can deal with
@@ -141,7 +145,7 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
     if ( operatingOn.endsWith('[') || operatingOn.endsWith('{') || operatingOn.endsWith('(') ) {
         m_cursorPositionInString -= 1;
         *status = InitializerFound;
-        return "";
+        return QString();
     }
     // Otherwise, there's a real expression at the cursor, so scan it.
     QStringList lines = operatingOn.split('\n');

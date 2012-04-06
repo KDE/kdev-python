@@ -141,7 +141,7 @@ StatusResultList ExpressionParser::popAll()
     StatusResultList items;
     while ( currentStatus != NothingFound ) {
         QString result = popExpression(&currentStatus);
-        items << StatusResultPair(currentStatus, QPair<QString, int>(result, m_cursorPositionInString));
+        items << TokenListEntry(currentStatus, result, m_cursorPositionInString);
     }
     return items;
 }

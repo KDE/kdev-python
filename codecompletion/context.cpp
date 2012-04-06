@@ -496,7 +496,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     // The expression parser used to determine the type of completion required.
     ExpressionParser parser(text);
     StatusResultList allExpressions = parser.popAll();
-    ExpressionParser::Status firstStatus = allExpressions.last().first;
+    ExpressionParser::Status firstStatus = allExpressions.last().status;
     
     if ( firstStatus == ExpressionParser::MeaninglessKeywordFound ) {
         m_operation = DefaultCompletion;
@@ -543,7 +543,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     if ( firstStatus == ExpressionParser::CallFound ) {
         // 2 is always the case for "def foo(" or class foo(": one names the function, the other is the keyword
         if ( allExpressions.length() == 2 ) {
-            if ( defKeywords.contains(allExpressions.first().first) ) {
+            if ( defKeywords.contains(allExpressions.first().status) ) {
                 // The next thing the user probably wants to type are parameters for his function.
                 // We cannot offer completion for this.
                 m_operation = NoCompletion;
@@ -575,11 +575,11 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         bool ok = true;
         QString text;
         while ( ok && offset > nextInitializer.first ) {
-            ok = allExpressions.at(offset).first == ExpressionParser::ExpressionFound;
+            ok = allExpressions.at(offset).status == ExpressionParser::ExpressionFound;
             if ( ! ok ) break;
-            text.prepend(allExpressions.at(offset).second.first);
+            text.prepend(allExpressions.at(offset).status);
             offset -= 1;
-            ok = allExpressions.at(offset).first == ExpressionParser::CommaFound;
+            ok = allExpressions.at(offset).status == ExpressionParser::CommaFound;
             // the last expression must *not* have a comma
             if ( ! ok && nextInitializer.first == offset ) {
                 ok = true;

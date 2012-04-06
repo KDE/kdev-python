@@ -75,9 +75,18 @@ private:
     int m_cursorPositionInString;
 };
 
-typedef QPair<ExpressionParser::Status, QPair<QString, int> > StatusResultPair;
+struct TokenListEntry {
+public:
+    TokenListEntry(ExpressionParser::Status status_, QString expression_, int charOffset_)
+    : status(status_)
+    , expression(expression_)
+    , charOffset(charOffset_) {};
+    ExpressionParser::Status status;
+    QString expression;
+    int charOffset;
+};
 
-class StatusResultList : public QList<StatusResultPair> {
+class StatusResultList : public QList<TokenListEntry> {
 public:
     // First returned value is the *expression count* index, the second one is the *character count*.
     // Oh yeah, the expressions count from the right, the characters count from the left. Convenient, huh?
@@ -85,8 +94,8 @@ public:
     QPair<int, int> nextIndexOfStatus(ExpressionParser::Status status, int offsetFromEnd = 0) const {
         int currentIndex = length() - 1 - offsetFromEnd;
         while ( currentIndex >= 0 ) {
-            if ( at(currentIndex).first == status ) {
-                return QPair<int, int>(currentIndex, at(currentIndex).second.second);
+            if ( at(currentIndex).status == status ) {
+                return QPair<int, int>(currentIndex, at(currentIndex).charOffset);
             }
             currentIndex -= 1;
         }

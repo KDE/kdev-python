@@ -64,19 +64,17 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     kDebug() << "Line: " << m_position.line;
     
     {
-        KSharedPtr< CodeCompletionContext > p = KDevelop::CodeCompletionContext::Ptr(this);
         KeywordItem::Flags f = KeywordItem::ForceLineBeginning;
         // TODO group those correctly so they appear at the top
         if ( m_position.line == 0 ) {
-            resultingItems << CompletionTreeItemPointer(new KeywordItem(p, "#!/usr/bin/env python", f));
-            resultingItems << CompletionTreeItemPointer(new KeywordItem(p, "#!/usr/bin/env python2.7", f));
-            resultingItems << CompletionTreeItemPointer(new KeywordItem(p, "#!/usr/bin/env python3", f));
+            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python", f));
+            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python2.7", f));
+            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python3", f));
         }
         else if ( m_position.line == 1 ) {
-            resultingItems << CompletionTreeItemPointer(new KeywordItem(p, "# -*- Coding:utf-8 -*-", f));
+            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "# -*- Coding:utf-8 -*-", f));
         }
     }
-    
     
     if ( m_operation == PythonCodeCompletionContext::NoCompletion ) {
         

@@ -55,6 +55,7 @@ public:
         ImportFound,
         GeneratorFound,
         RaiseFound,
+        ForFound,
         ColonFound,
         InFound,
         ClassFound,
@@ -80,6 +81,7 @@ class StatusResultList : public QList<StatusResultPair> {
 public:
     // First returned value is the *expression count* index, the second one is the *character count*.
     // Oh yeah, the expressions count from the right, the characters count from the left. Convenient, huh?
+    // (see PythonCodeCompletionContext::summonParentForEventualCall for an example why that makes sense)
     QPair<int, int> nextIndexOfStatus(ExpressionParser::Status status, int offsetFromEnd = 0) {
         int currentIndex = length() - 1 - offsetFromEnd;
         while ( currentIndex >= 0 ) {

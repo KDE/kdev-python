@@ -61,7 +61,7 @@ ExpressionParser::ExpressionParser(QString code)
 {
     keywordPopulationLock.lock();
     if ( supportedKeywords.isEmpty() ) {
-        noCompletionKeywords << "break" << "class" << "continue" << "for" << "pass" << "try"
+        noCompletionKeywords << "break" << "class" << "continue" << "pass" << "try"
                              << "def" << "else" << "as" << "finally" << "global" << "lambda";
         miscKeywords << "and" << "assert" << "del" << "elif" << "exec" << "if" << "is" << "not" 
                      << "or" << "print" << "return" << "while" << "yield" << "with";
@@ -69,6 +69,7 @@ ExpressionParser::ExpressionParser(QString code)
         supportedKeywords << keyword("from", ExpressionParser::FromFound);
         supportedKeywords << keyword("raise", ExpressionParser::RaiseFound);
         supportedKeywords << keyword("in", ExpressionParser::InFound);
+        supportedKeywords << keyword("for", ExpressionParser::InFound);
         supportedKeywords << keyword("class", ExpressionParser::ClassFound);
         supportedKeywords << keyword("def", ExpressionParser::DefFound);
         controlChars << keyword(":", ExpressionParser::ColonFound);

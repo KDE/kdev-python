@@ -85,7 +85,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         QList<KeywordItem*> completionItems;
         KDevPG::MemoryPool pool;
         AstBuilder* builder = new AstBuilder(&pool);
-        CodeAst* tmpAst = builder->parse(KUrl(), m_remainingExpression);
+        CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
         if ( tmpAst ) {
             ExpressionVisitor* v = new ExpressionVisitor(m_duContext.data());
             v->m_forceGlobalSearching = true;
@@ -118,6 +118,43 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         }
         
     }
+    else if ( m_operation == PythonCodeCompletionContext::FunctionCallCompletion ) {
+            // gather additional items to show above the real ones (for parameters, and stuff)
+            QList<Declaration*> calltips;
+            KDevPG::MemoryPool pool;
+            AstBuilder* builder = new AstBuilder(&pool);
+            CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
+            if ( tmpAst ) {
+                ExpressionVisitor* v = new ExpressionVisitor(m_duContext.data());
+                v->m_forceGlobalSearching = true;
+                v->visitCode(tmpAst);
+                if ( v->lastDeclaration() ) {
+                    calltips << v->lastDeclaration().data();
+                }
+                else {
+                    kWarning() << "Did not receive a function declaration from expression visitor! Not offering call tips.";
+                }
+                delete v;
+            }
+            delete tmpAst;
+            
+            QList<DeclarationDepthPair> realCalltips_withDepth;
+            foreach ( Declaration* current, calltips ) {
+                if ( ! dynamic_cast<FunctionDeclaration*>(current) ) {
+                    kDebug() << "Not a function declaration: " << current->toString();
+                    continue;
+                }
+                realCalltips_withDepth.append(DeclarationDepthPair(current, 0));
+            }
+            
+            QList<CompletionTreeItemPointer> calltipItems = declarationListToItemList(realCalltips_withDepth);
+            foreach ( CompletionTreeItemPointer current, calltipItems ) {
+                kDebug() << "Adding calltip item, at argument:" << m_alreadyGivenParametersCount+1; 
+                static_cast<FunctionDeclarationCompletionItem*>(current.data())->setAtArgument(m_alreadyGivenParametersCount + 1);
+            }
+            
+            resultingItems.append(calltipItems);
+        }
     else if ( m_operation == PythonCodeCompletionContext::DefineCompletion ) {
         // Find all base classes of the current class context
         if ( m_duContext->type() != DUContext::Class ) {
@@ -243,43 +280,6 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         }
         if ( abort ) {
             return QList<CompletionTreeItemPointer>();
-        }
-        if ( m_operation == PythonCodeCompletionContext::FunctionCallCompletion ) {
-            // gather additional items to show above the real ones (for parameters, and stuff)
-            QList<Declaration*> calltips;
-            KDevPG::MemoryPool pool;
-            AstBuilder* builder = new AstBuilder(&pool);
-            CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
-            if ( tmpAst ) {
-                ExpressionVisitor* v = new ExpressionVisitor(m_duContext.data());
-                v->m_forceGlobalSearching = true;
-                v->visitCode(tmpAst);
-                if ( v->lastDeclaration() ) {
-                    calltips << v->lastDeclaration().data();
-                }
-                else {
-                    kWarning() << "Did not receive a function declaration from expression visitor! Not offering call tips.";
-                }
-                delete v;
-            }
-            delete tmpAst;
-            
-            QList<DeclarationDepthPair> realCalltips_withDepth;
-            foreach ( Declaration* current, calltips ) {
-                if ( ! dynamic_cast<FunctionDeclaration*>(current) ) {
-                    kDebug() << "Not a function declaration: " << current->toString();
-                    continue;
-                }
-                realCalltips_withDepth.append(DeclarationDepthPair(current, 0));
-            }
-            
-            QList<CompletionTreeItemPointer> calltipItems = declarationListToItemList(realCalltips_withDepth);
-            foreach ( CompletionTreeItemPointer current, calltipItems ) {
-                kDebug() << "Adding calltip item, at argument:" << m_alreadyGivenParametersCount+1; 
-                static_cast<FunctionDeclarationCompletionItem*>(current.data())->setAtArgument(m_alreadyGivenParametersCount + 1);
-            }
-            
-            resultingItems.append(calltipItems);
         }
         QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
         foreach ( DeclarationDepthPair d, declarations ) {
@@ -473,6 +473,7 @@ void PythonCodeCompletionContext::summonParentForEventualCall(const StatusResult
     QPair<int, int> nextCall = allExpressions.nextIndexOfStatus(ExpressionParser::CallFound);
     if ( nextCall.first != -1 ) {
         m_parentContext = new PythonCodeCompletionContext(m_duContext, text.mid(0, nextCall.second), depth + 1);
+        m_alreadyGivenParametersCount = nextCall.first;
     }
 }
 
@@ -500,15 +501,18 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     StatusResultList allExpressions = parser.popAll();
     ExpressionParser::Status firstStatus = allExpressions.last().first;
     
-    summonParentForEventualCall(allExpressions, text);
+    if ( firstStatus == ExpressionParser::MeaninglessKeywordFound ) {
+        m_operation = DefaultCompletion;
+        return;
+    }
     
     if ( firstStatus == ExpressionParser::RaiseFound ) {
-        m_operation = PythonCodeCompletionContext::RaiseExceptionCompletion;
+        m_operation = RaiseExceptionCompletion;
         return;
     }
 
     if ( firstStatus == ExpressionParser::NothingFound ) {
-        m_operation = PythonCodeCompletionContext::NewStatementCompletion;
+        m_operation = NewStatementCompletion;
         return;
     }
     
@@ -516,109 +520,108 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         bool ok;
         m_guessTypeOfExpression = parser.popExpression(&ok);
         if ( ok ) {
-            m_operation = PythonCodeCompletionContext::MemberAccessCompletion;
+            m_operation = MemberAccessCompletion;
         }
         else {
-            m_operation = PythonCodeCompletionContext::NoCompletion;
+            m_operation = NoCompletion;
         }
         return;
     }
     
-    kDebug() << context->type() << DUContext::Class << context->localScopeIdentifier().toString();
-    
-    if ( context->type() == DUContext::Class ) {
-        QRegExp defcompletion("(.*)\n([\\s]*)(def)[\\s]*[\\D]*$");
-        defcompletion.setMinimal(true);
-        bool is_defcompletion = defcompletion.exactMatch(currentLine);
-        if ( is_defcompletion ) {
-            m_indent = defcompletion.capturedTexts().at(2);
-            m_operation = PythonCodeCompletionContext::DefineCompletion;
-            return;
+    if ( firstStatus == ExpressionParser::DefFound ) {
+        if ( context->type() == DUContext::Class ) {
+            // TODO get and save current indentation level
+            m_indent = 0;
+            m_operation = DefineCompletion;
         }
-    }
-    
-    QRegExp inheritanceCompletion("(.*)\n[\\s]*class[\\s]*(.*)[\\s]*\\([\\s]*$");
-    inheritanceCompletion.setMinimal(true);
-    bool is_inheritance = inheritanceCompletion.exactMatch(currentLine);
-    if ( is_inheritance ) {
-        m_operation = PythonCodeCompletionContext::InheritanceCompletion;
+        else {
+            m_operation = NoCompletion;
+        }
         return;
     }
     
-    kDebug() << "Scanning for function call";
-    bool is_FunctionCall = scanExpressionBackwards(textWithoutStrings, QStringList(), QStringList() << "." << ",", QStringList() << "," << "(", QStringList());
-    if ( is_FunctionCall ) {
-        m_operation = PythonCodeCompletionContext::FunctionCallCompletion;
-        // TODO this is wrong. Example: foo(bar(baz, bang), foo, bar, I)
-        m_alreadyGivenParametersCount = m_guessTypeOfExpression.count(',');
-        
-        scanExpressionBackwards(m_remainingExpression, QStringList(), QStringList() << "." << ",", QStringList(), QStringList() << "("); // get the next item in a chain of calls
-                // for "a(b(c(), d, e" (we want autocompletion for b) the first call will give us "a(b" and "c(), d, e", but we want "b". so we call it again on the first result.
-        kDebug() << "Found function call completion item, called function is " << m_guessTypeOfExpression << ", currently at parameter: " << m_alreadyGivenParametersCount;
-    }
+    QList<ExpressionParser::Status> defKeywords;
+    defKeywords << ExpressionParser::DefFound << ExpressionParser::ClassFound;
     
-    QRegExp nocompletion("(.*)\n[\\s]*(class|def)[\\s]*$");
-    nocompletion.setMinimal(true);
-    bool is_nocompletion = nocompletion.exactMatch(currentLine);
-    if ( is_nocompletion ) {
-        m_operation = PythonCodeCompletionContext::NoCompletion;
-        return;
-    }
-    
-    QRegExp couldBeGeneratorCompletion("(.*)[\\[\\{](.*)[\\s]*for[\\s]*$");
-    couldBeGeneratorCompletion.setMinimal(true);
-    bool is_couldBeGeneratorCompletion = couldBeGeneratorCompletion.exactMatch(currentLine);
-    if ( is_couldBeGeneratorCompletion ) {
-        bool is_generatorCompletion = scanExpressionBackwards(textWithoutStrings, QStringList(), QStringList(), QStringList(), QStringList() << "{" << "[" << "(", true);
-        if ( is_generatorCompletion ) {
-            kDebug() << "remaining expression for GeneratorVariableCompletion: " << m_remainingExpression;
-            m_remainingExpression = textWithoutStrings.remove(0, m_remainingExpression.length());
-            if ( m_remainingExpression.length() >= 3 ) {
-                m_remainingExpression = m_remainingExpression.trimmed();
-                m_remainingExpression.remove(m_remainingExpression.length()-3, 3);
+    if ( firstStatus == ExpressionParser::CallFound ) {
+        // 2 is always the case for "def foo(" or class foo(": one names the function, the other is the keyword
+        if ( allExpressions.length() == 2 ) {
+            if ( defKeywords.contains(allExpressions.first().first) ) {
+                // The next thing the user probably wants to type are parameters for his function.
+                // We cannot offer completion for this.
+                m_operation = NoCompletion;
+                return;
             }
-            m_remainingExpression = '{' + m_remainingExpression + '}';
-            kDebug() << "use unknown names in: " << m_remainingExpression;
-            m_operation = PythonCodeCompletionContext::GeneratorVariableCompletion;
+        }
+    }
+    
+    // For something like "func1(3, 5, func2(7, ", we want to show all calltips recursively
+    // This happens after the previous "if", because the patterns are the same for "foo(..." and "def foo(...",
+    // and the latter must be filtered out first (we don't want calltips for defining a function, that makes no sense).
+    summonParentForEventualCall(allExpressions, text);
+    
+    // The "def in class context" case is handled above already
+    if ( defKeywords.contains(firstStatus) ) {
+        m_operation = NoCompletion;
+        return;
+    }
+    
+    if ( firstStatus == ExpressionParser::ForFound ) {
+        int offset = allExpressions.length() - 2;
+        int nextInitializer = allExpressions.nextIndexOfStatus(ExpressionParser::InitializerFound);
+        if ( nextInitializer == -1 ) {
+            // no opening bracket, so no generator completion.
+            m_operation = NoCompletion;
+            return;
+        }
+        // check that all statements in between are part of a generator initializer list
+        bool ok = true;
+        QString text;
+        while ( ok && offset > nextInitializer ) {
+            ok = allExpressions.at(offset).first == ExpressionParser::ExpressionFound;
+            if ( ! ok ) break;
+            text.prepend(allExpressions.at(offset).second);
+            offset -= 1;
+            ok = allExpressions.at(offset).first == ExpressionParser::CommaFound;
+            // the last expression must *not* have a comma
+            if ( ! ok && nextInitializer == offset ) {
+                ok = true;
+            }
+            offset -= 1;
+        }
+        if ( ok ) {
+            m_remainingExpression = text;
+            m_operation = GeneratorVariableCompletion;
+            return;
+        }
+        else {
+            m_operation = NoCompletion;
             return;
         }
     }
     
-    //                                          v   v   v   v   v allow comma seperated list of imports
-    QRegExp importfile("^[\\s]*import[\\s]*(.*[\\s]*,[\\s]*)*$");
-    importfile.setMinimal(true);
-    bool is_importfile = importfile.exactMatch(currentLine);
-    QRegExp fromimport("^[\\s]*from[\\s]*$");
-    fromimport.setMinimal(true);
-    bool is_fromimport = fromimport.exactMatch(currentLine);
-    if ( is_importfile || is_fromimport ) {
-        kDebug() << "Autocompletion type: import completion";
-        m_operation = PythonCodeCompletionContext::ImportFileCompletion;
-        return;
+    int importIndex = allExpressions.nextIndexOfStatus(ExpressionParser::ImportFound);
+    int fromIndex = allExpressions.nextIndexOfStatus(ExpressionParser::FromFound);
+    
+    if ( ( importIndex != -1 && fromIndex != -1 ) &&
+         ( fromIndex == allExpressions.length() || importIndex == allExpressions.length() ) )
+    {
+        // it's either "import ... from" or "from ... import"
+        if ( fromIndex > importIndex ) {
+            // import ... from
+            m_operation = ImportFileCompletion;
+            return;
+        }
+        else {
+            // from ... import
+            m_operation = ImportSubCompletion;
+            return;
+        }
     }
     
-    //                                                 v   v   v   v   v allow comma seperated list of imports
-    QRegExp importsub("^[\\s]*from(.*)import[\\s]*(.*[\\s]*,[\\s]*)*$");
-    importsub.setMinimal(true);
-    bool is_importSub = importsub.exactMatch(currentLine);
-    QRegExp importsub2("^[\\s]*(from|import)[\\s]*(.*)\\.$");
-    importsub2.setMinimal(true);
-    bool is_importSub2 = importsub2.exactMatch(currentLine);
-    if ( is_importSub || is_importSub2 ) {
-        QStringList for_module_match;
-        if ( is_importSub ) for_module_match = importsub.capturedTexts();
-        else for_module_match = importsub2.capturedTexts();
-        
-        kDebug() << for_module_match;
-        
-        QString for_module;
-        if ( is_importSub ) for_module = for_module_match[1].replace(" ", "");
-        else for_module = for_module_match[2].replace(" ", "");
-        
-        kDebug() << "Matching against module name: " << for_module << is_importSub << is_importSub2;
-        m_operation = PythonCodeCompletionContext::ImportSubCompletion;
-        m_subForModule = for_module;
-        kDebug() << "submodule: " << for_module;
+    if ( fromIndex != -1 || importIndex != -1 ) {
+        // it's either "from ..." or "import ...", which both come down to the same completion offered
+        m_operation = ImportFileCompletion;
         return;
     }
 }

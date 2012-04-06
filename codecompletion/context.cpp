@@ -77,7 +77,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     }
     
     if ( m_operation == PythonCodeCompletionContext::NoCompletion ) {
-        
+        kDebug() << "no code completion";
     }
     else if ( m_operation == PythonCodeCompletionContext::GeneratorVariableCompletion ) {
         QList<KeywordItem*> completionItems;

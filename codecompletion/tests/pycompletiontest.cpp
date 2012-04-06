@@ -337,7 +337,7 @@ void PyCompletionTest::testNoCompletionInCommentsOrStrings()
     QFETCH(QString, invokeCode);
     QFETCH(QString, completionCode);
     
-    QVERIFY(completionListIsEmpty(invokeCode, completionCode));
+    QVERIFY(! declarationInCompletionList(invokeCode, completionCode, "append"));
 }
 
 void PyCompletionTest::testNoCompletionInCommentsOrStrings_data()

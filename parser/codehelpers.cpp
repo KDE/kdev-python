@@ -105,7 +105,7 @@ bool CodeHelpers::endsInsideCommend(const QString& code)
     bool insideMultiLineDQComment = false;
     bool insideSingleLineComment = false;
     const int max_len = code.length();
-    kDebug() << "Checking for comment line or string literal...";
+    kDebug() << "Checking for comment line or string literal:" << code;
     for ( int atChar = 0; atChar < max_len; atChar++ ) {
         const QChar& c = code.at(atChar);
         QString t("");

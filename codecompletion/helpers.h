@@ -35,8 +35,6 @@ namespace Python {
 
 void createArgumentList(Declaration* dec, QString& ret, QList<QVariant>* highlighting, int atArg = 0);
 
-typedef QPair<ExpressionParser::Status, QPair<QString, int> > StatusResultPair;
-
 class StatusResultList;
 
 class KDEVPYTHONCOMPLETION_EXPORT ExpressionParser {
@@ -77,12 +75,14 @@ private:
     int m_cursorPositionInString;
 };
 
+typedef QPair<ExpressionParser::Status, QPair<QString, int> > StatusResultPair;
+
 class StatusResultList : public QList<StatusResultPair> {
 public:
     // First returned value is the *expression count* index, the second one is the *character count*.
     // Oh yeah, the expressions count from the right, the characters count from the left. Convenient, huh?
     // (see PythonCodeCompletionContext::summonParentForEventualCall for an example why that makes sense)
-    QPair<int, int> nextIndexOfStatus(ExpressionParser::Status status, int offsetFromEnd = 0) {
+    QPair<int, int> nextIndexOfStatus(ExpressionParser::Status status, int offsetFromEnd = 0) const {
         int currentIndex = length() - 1 - offsetFromEnd;
         while ( currentIndex >= 0 ) {
             if ( at(currentIndex).first == status ) {

@@ -460,7 +460,7 @@ QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems(QList<KUrl>
     return items;
 }
 
-PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& remainingText, int depth = 0)
+PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& remainingText, int depth)
     : CodeCompletionContext(context, remainingText, CursorInRevision::invalid(), depth)
     , m_operation(FunctionCallCompletion)
 {
@@ -472,7 +472,7 @@ void PythonCodeCompletionContext::summonParentForEventualCall(const StatusResult
 {
     QPair<int, int> nextCall = allExpressions.nextIndexOfStatus(ExpressionParser::CallFound);
     if ( nextCall.first != -1 ) {
-        m_parentContext = new PythonCodeCompletionContext(m_duContext, text.mid(0, nextCall.second), depth + 1);
+        m_parentContext = new PythonCodeCompletionContext(m_duContext, text.mid(0, nextCall.second), depth() + 1);
         m_alreadyGivenParametersCount = nextCall.first;
     }
 }
@@ -487,7 +487,6 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     , m_position(position)
 {
     m_workingOnDocument = context->topContext()->url().toUrl();
-    int atLine = position.line;
     QString textWithoutStrings = CodeHelpers::killStrings(text);
     
     // check if the current position is inside a multi-line comment / string -> no completion if this is the case
@@ -517,9 +516,9 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     }
     
     if ( firstStatus == ExpressionParser::MemberAccessFound ) {
-        bool ok;
-        m_guessTypeOfExpression = parser.popExpression(&ok);
-        if ( ok ) {
+        ExpressionParser::Status status;
+        m_guessTypeOfExpression = parser.popExpression(&status);
+        if ( status == ExpressionParser::ExpressionFound ) {
             m_operation = MemberAccessCompletion;
         }
         else {
@@ -531,7 +530,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     if ( firstStatus == ExpressionParser::DefFound ) {
         if ( context->type() == DUContext::Class ) {
             // TODO get and save current indentation level
-            m_indent = 0;
+            m_indent = "";
             m_operation = DefineCompletion;
         }
         else {
@@ -568,8 +567,8 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     
     if ( firstStatus == ExpressionParser::ForFound ) {
         int offset = allExpressions.length() - 2;
-        int nextInitializer = allExpressions.nextIndexOfStatus(ExpressionParser::InitializerFound);
-        if ( nextInitializer == -1 ) {
+        QPair<int, int> nextInitializer = allExpressions.nextIndexOfStatus(ExpressionParser::InitializerFound);
+        if ( nextInitializer.first == -1 ) {
             // no opening bracket, so no generator completion.
             m_operation = NoCompletion;
             return;
@@ -577,14 +576,14 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         // check that all statements in between are part of a generator initializer list
         bool ok = true;
         QString text;
-        while ( ok && offset > nextInitializer ) {
+        while ( ok && offset > nextInitializer.first ) {
             ok = allExpressions.at(offset).first == ExpressionParser::ExpressionFound;
             if ( ! ok ) break;
-            text.prepend(allExpressions.at(offset).second);
+            text.prepend(allExpressions.at(offset).second.first);
             offset -= 1;
             ok = allExpressions.at(offset).first == ExpressionParser::CommaFound;
             // the last expression must *not* have a comma
-            if ( ! ok && nextInitializer == offset ) {
+            if ( ! ok && nextInitializer.first == offset ) {
                 ok = true;
             }
             offset -= 1;
@@ -600,8 +599,8 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         }
     }
     
-    int importIndex = allExpressions.nextIndexOfStatus(ExpressionParser::ImportFound);
-    int fromIndex = allExpressions.nextIndexOfStatus(ExpressionParser::FromFound);
+    int importIndex = allExpressions.nextIndexOfStatus(ExpressionParser::ImportFound).first;
+    int fromIndex = allExpressions.nextIndexOfStatus(ExpressionParser::FromFound).first;
     
     if ( ( importIndex != -1 && fromIndex != -1 ) &&
          ( fromIndex == allExpressions.length() || importIndex == allExpressions.length() ) )

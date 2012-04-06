@@ -487,6 +487,8 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     m_workingOnDocument = context->topContext()->url().toUrl();
     QString textWithoutStrings = CodeHelpers::killStrings(text);
     
+    kDebug() << text;
+    
     // check if the current position is inside a multi-line comment / string -> no completion if this is the case
     if ( CodeHelpers::endsInsideCommend(text) ) {
         m_operation = PythonCodeCompletionContext::NoCompletion;

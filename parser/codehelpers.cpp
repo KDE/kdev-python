@@ -178,10 +178,12 @@ QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher,
     QStringList openingBrackets = QStringList() << "(" << "[" << "{" << "\"" << "'";
     QStringList closingBrackets = QStringList() << ")" << "]" << "}" << "\"" << "'";
     QStringList sliceChars = QStringList() << "." << "(" << "["; // chars which are allowed to be preceded by a space
+    QStringList seperatorChars = QStringList() << "," << "=" << ":";
     QStack<QString> brackets;
     bool lastWasSlice = false;
     int linesFetched = 1;
     QString text;
+    bool done = false;
     while ( start != 0 ) {
         while ( start >= 0 ) {
             QChar c = line[start];
@@ -195,10 +197,12 @@ QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher,
             }
             else if ( openingBrackets.contains(c) ) {
                 start += 1;
+                done = true;
                 break;
             }
             
-            if ( brackets.isEmpty() && c.isSpace() && ! lastWasSlice ) {
+            if ( brackets.isEmpty() && ( (c.isSpace() && ! lastWasSlice) || seperatorChars.contains(c) ) ) {
+                done = true;
                 start += 1;
                 break;
             }
@@ -210,6 +214,9 @@ QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher,
                 lastWasSlice = false;
             }
             start--;
+        }
+        if ( done ) {
+            break;
         }
         if ( cursor.line() < linesFetched ) {
             break;

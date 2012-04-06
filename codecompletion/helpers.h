@@ -54,6 +54,7 @@ public:
         GeneratorFound,
         RaiseFound,
         ForFound,
+        ExceptFound,
         ColonFound,
         InFound,
         ClassFound,

@@ -507,7 +507,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         return;
     }
     
-    if ( firstStatus == ExpressionParser::RaiseFound ) {
+    if ( firstStatus == ExpressionParser::RaiseFound || firstStatus == ExpressionParser::ExceptFound ) {
         m_operation = RaiseExceptionCompletion;
         return;
     }

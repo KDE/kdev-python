@@ -18,11 +18,12 @@
 
 #ifndef PYTHONCODECOMPLETIONMODEL_H
 #define PYTHONCODECOMPLETIONMODEL_H
+#include "pythoncompletionexport.h"
 
 #include <language/codecompletion/codecompletionmodel.h>
 #include <language/duchain/duchainpointer.h>
-#include "pythoncompletionexport.h"
 #include <KUrl>
+
 
 namespace Python {
 

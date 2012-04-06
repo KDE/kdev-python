@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2010 Sven Brauch <svenbrauch@googlemail.com>                *
+ * Copyright (c) 2011 Sven Brauch <svenbrauch@googlemail.com>                *
  *                                                                           *
  * This program is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU General Public License as            *
@@ -16,26 +16,30 @@
  *****************************************************************************
  */
 
-#ifndef PYTHONCODECOMPLETIONWORKER_H
-#define PYTHONCODECOMPLETIONWORKER_H
+#ifndef IMPORTFILEITEM_H
+#define IMPORTFILEITEM_H
 
-#include "pythoncodecompletionmodel.h"
-#include <language/codecompletion/codecompletionworker.h>
-#include <language/codecompletion/codecompletionitem.h>
-#include "pythoncompletionexport.h"
+#include <language/codecompletion/abstractincludefilecompletionitem.h>
+#include <shell/project.h>
+
+#include "duchain/navigation/navigationwidget.h"
 
 namespace Python {
 
-class KDEVPYTHONCOMPLETION_EXPORT PythonCodeCompletionWorker : public KDevelop::CodeCompletionWorker
+typedef KDevelop::AbstractIncludeFileCompletionItem<NavigationWidget> IncludeFileItemBase;
+
+class ImportFileItem : public IncludeFileItemBase
 {
 
 public:
-    PythonCodeCompletionWorker(PythonCodeCompletionModel *parent, KUrl document);
-    virtual KDevelop::CodeCompletionContext* createCompletionContext(KDevelop::DUContextPointer context, const QString& contextText, const QString& followingText, const KDevelop::CursorInRevision& position) const;
-    virtual QList< KSharedPtr< KDevelop::CompletionTreeElement > > computeGroups(QList< KDevelop::CompletionTreeItemPointer > items, KSharedPtr< KDevelop::CodeCompletionContext > completionContext);
-    PythonCodeCompletionModel* parent;
+    ImportFileItem(const KDevelop::IncludeItem& include);
+    virtual ~ImportFileItem();
+    
+    virtual void execute(KTextEditor::Document* document, const KTextEditor::Range& word);
+    QString moduleName;
+    KDevelop::IProject* fromProject;
 };
 
 }
 
-#endif // PYTHONCODECOMPLETIONWORKER_H
+#endif // IMPORTFILEITEM_H

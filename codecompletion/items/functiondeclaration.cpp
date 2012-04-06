@@ -15,21 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************
  */
+
+#include "functiondeclaration.h"
+
 #include <language/codecompletion/normaldeclarationcompletionitem.h>
-#include <language/duchain/declaration.h>
 #include <language/duchain/functiondeclaration.h>
+#include <language/codecompletion/codecompletionmodel.h>
+#include <language/duchain/types/functiontype.h>
+#include <language/duchain/aliasdeclaration.h>
 
 #include <KTextEditor/View>
 #include <KTextEditor/Document>
 
-#include "functiondeclarationcompletionitem.h"
-#include "navigation/navigationwidget.h"
-#include "pythondeclarationcompletionitem.h"
+#include "duchain/navigation/navigationwidget.h"
+#include "codecompletion/helpers.h"
+#include "declaration.h"
 
-#include <language/codecompletion/codecompletionmodel.h>
-#include <language/duchain/types/functiontype.h>
-#include "helpers.h"
-#include <language/duchain/aliasdeclaration.h>
 
 using namespace KDevelop;
 using namespace KTextEditor;

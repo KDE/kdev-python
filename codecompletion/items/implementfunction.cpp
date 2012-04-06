@@ -18,13 +18,13 @@
 #include <language/codecompletion/codecompletionmodel.h>
 #include <language/duchain/duchainutils.h>
 #include <interfaces/icore.h>
+#include <interfaces/isession.h>
 
 #include <KTextEditor/View>
 #include <KTextEditor/Document>
 #include <KTextEditor/Editor>
 
-#include "implementfunctioncompletionitem.h"
-#include <interfaces/isession.h>
+#include "implementfunction.h"
 
 using namespace KDevelop;
 using namespace KTextEditor;

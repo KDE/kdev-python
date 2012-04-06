@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2011 Sven Brauch <svenbrauch@googlemail.com>                *
+ * Copyright (c) 2010-2012 Sven Brauch <svenbrauch@googlemail.com>           *
  *                                                                           *
  * This program is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU General Public License as            *
@@ -16,30 +16,26 @@
  *****************************************************************************
  */
 
-#include "importfileitem.h"
-#include <ktexteditor/document.h>
-#include <language/codecompletion/abstractincludefilecompletionitem.h>
-#include "navigation/navigationwidget.h"
+#ifndef PYTHONCODECOMPLETIONWORKER_H
+#define PYTHONCODECOMPLETIONWORKER_H
 
-using namespace KDevelop;
+#include "model.h"
+#include <language/codecompletion/codecompletionworker.h>
+#include <language/codecompletion/codecompletionitem.h>
+#include "pythoncompletionexport.h"
 
 namespace Python {
-    
-ImportFileItem::ImportFileItem(const KDevelop::IncludeItem& include): AbstractIncludeFileCompletionItem< NavigationWidget >(include)
-{
-    
-}
 
-ImportFileItem::~ImportFileItem()
+class KDEVPYTHONCOMPLETION_EXPORT PythonCodeCompletionWorker : public KDevelop::CodeCompletionWorker
 {
 
-}
-
-void ImportFileItem::execute(KTextEditor::Document* document, const KTextEditor::Range& word)
-{
-    kDebug() << "ImportFileItem executed";
-    document->replaceText(word, moduleName);
-}
-
+public:
+    PythonCodeCompletionWorker(PythonCodeCompletionModel *parent, KUrl document);
+    virtual KDevelop::CodeCompletionContext* createCompletionContext(KDevelop::DUContextPointer context, const QString& contextText, const QString& followingText, const KDevelop::CursorInRevision& position) const;
+    virtual QList< KSharedPtr< KDevelop::CompletionTreeElement > > computeGroups(QList< KDevelop::CompletionTreeItemPointer > items, KSharedPtr< KDevelop::CodeCompletionContext > completionContext);
+    PythonCodeCompletionModel* parent;
+};
 
 }
+
+#endif // PYTHONCODECOMPLETIONWORKER_H

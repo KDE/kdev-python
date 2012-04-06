@@ -23,37 +23,34 @@
 #include <KStandardDirs>
 #include <KTextEditor/View>
 
-#include <language/duchain/duchainpointer.h>
-#include <language/duchain/declaration.h>
 #include <language/duchain/functiondeclaration.h>
 #include <language/duchain/classdeclaration.h>
-#include <language/codecompletion/codecompletionitem.h>
-#include <language/codecompletion/normaldeclarationcompletionitem.h>
-#include <language/codecompletion/abstractincludefilecompletionitem.h>
-#include <language/codecompletion/codecompletionitem.h>
-#include <language/util/includeitem.h>
-#include <language/codecompletion/codecompletionitemgrouper.h>
 #include <language/duchain/aliasdeclaration.h>
 #include <language/duchain/duchainutils.h>
+#include <language/util/includeitem.h>
+#include <language/codecompletion/normaldeclarationcompletionitem.h>
+#include <language/codecompletion/codecompletionitem.h>
+#include <language/codecompletion/codecompletionitemgrouper.h>
 #include <interfaces/icore.h>
 #include <interfaces/iprojectcontroller.h>
 #include <interfaces/iproject.h>
 #include <interfaces/idocumentcontroller.h>
 #include <project/projectmodel.h>
 
-#include "keyworditem.h"
-#include "pythoncodecompletionworker.h"
-#include "astbuilder.h"
-#include "expressionvisitor.h"
-#include "navigation/navigationwidget.h"
-#include "importfileitem.h"
-#include "functiondeclarationcompletionitem.h"
-#include "pythoncodecompletioncontext.h"
-#include "pythoneditorintegrator.h"
+#include "parser/astbuilder.h"
+#include "duchain/pythoneditorintegrator.h"
+#include "duchain/expressionvisitor.h"
 #include "duchain/declarationbuilder.h"
-#include "implementfunctioncompletionitem.h"
-#include "types/unsuretype.h"
 #include "duchain/helpers.h"
+#include "duchain/types/unsuretype.h"
+#include "duchain/navigation/navigationwidget.h"
+
+#include "worker.h"
+#include "context.h"
+#include "items/keyword.h"
+#include "items/importfile.h"
+#include "items/functiondeclaration.h"
+#include "items/implementfunction.h"
 
 using namespace KTextEditor;
 using namespace KDevelop;

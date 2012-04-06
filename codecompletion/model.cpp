@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2011 Sven Brauch <svenbrauch@googlemail.com>                *
+ * Copyright (c) 2010-2011 Sven Brauch <svenbrauch@googlemail.com>           *
  *                                                                           *
  * This program is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU General Public License as            *
@@ -15,35 +15,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************
  */
-#ifndef FUNCTIONDECLARATIONCOMPLETIONITEM_H
-#define FUNCTIONDECLARATIONCOMPLETIONITEM_H
 
-#include <language/codecompletion/normaldeclarationcompletionitem.h>
-#include <language/duchain/functiondeclaration.h>
+#include "model.h"
 
-#include "pythondeclarationcompletionitem.h"
+#include <KTextEditor/View>
+#include <KTextEditor/Document>
 
-using namespace KDevelop;
+#include "worker.h"
 
 namespace Python {
 
-class FunctionDeclarationCompletionItem : public Python::PythonDeclarationCompletionItem
+PythonCodeCompletionModel::PythonCodeCompletionModel(QObject* parent)
+    : CodeCompletionModel(parent)
 {
-
-public:
-    FunctionDeclarationCompletionItem(DeclarationPointer decl);
-    virtual ~FunctionDeclarationCompletionItem();
-    virtual int argumentHintDepth() const;
-    virtual int atArgument() const;
-    void setAtArgument(int d);
-    
-    virtual QVariant data(const QModelIndex& index, int role, const CodeCompletionModel* model) const;
-    
-    virtual void executed(KTextEditor::Document* document, const KTextEditor::Range& word);
-private:
-    int m_atArgument;
-};
-
+    // This avoids flickering of the completion-list when full code-completion mode is used
+    setForceWaitForModel(true);
 }
 
-#endif // FUNCTIONDECLARATIONCOMPLETIONITEM_H
+PythonCodeCompletionModel::~PythonCodeCompletionModel() { }
+
+
+KTextEditor::Range PythonCodeCompletionModel::completionRange(KTextEditor::View* view, const KTextEditor::Cursor& position)
+{
+    m_currentDocument = view->document()->url();
+    kWarning() << "Current document: " << m_currentDocument;
+    return KTextEditor::CodeCompletionModelControllerInterface3::completionRange(view, position);
+}
+
+KDevelop::CodeCompletionWorker* PythonCodeCompletionModel::createCompletionWorker()
+{
+    return new PythonCodeCompletionWorker(this, m_currentDocument);
+}
+
+}

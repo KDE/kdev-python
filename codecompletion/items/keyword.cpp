@@ -16,11 +16,12 @@
  *****************************************************************************
  */
 
-#include "keyworditem.h"
-#include <language/duchain/ducontext.h>
+#include "keyword.h"
+
 #include <KTextEditor/View>
 #include <KTextEditor/Document>
 #include <KTextEditor/CodeCompletionModel>
+#include <language/duchain/ducontext.h>
 #include <language/codecompletion/codecompletionmodel.h>
 
 using namespace KDevelop;

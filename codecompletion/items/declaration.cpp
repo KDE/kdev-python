@@ -16,7 +16,7 @@
  *****************************************************************************
  */
 
-#include "pythondeclarationcompletionitem.h"
+#include "declaration.h"
 
 #include <language/codecompletion/codecompletionmodel.h>
 #include <language/codecompletion/codecompletioncontext.h>

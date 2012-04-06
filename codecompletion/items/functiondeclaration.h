@@ -15,30 +15,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************
  */
+#ifndef FUNCTIONDECLARATIONCOMPLETIONITEM_H
+#define FUNCTIONDECLARATIONCOMPLETIONITEM_H
 
-#ifndef IMPORTFILEITEM_H
-#define IMPORTFILEITEM_H
+#include <language/codecompletion/normaldeclarationcompletionitem.h>
+#include <language/duchain/functiondeclaration.h>
 
-#include <language/codecompletion/abstractincludefilecompletionitem.h>
-#include "navigation/navigationwidget.h"
-#include <shell/project.h>
+#include "declaration.h"
+
+using namespace KDevelop;
 
 namespace Python {
 
-typedef KDevelop::AbstractIncludeFileCompletionItem<NavigationWidget> IncludeFileItemBase;
-
-class ImportFileItem : public IncludeFileItemBase
+class FunctionDeclarationCompletionItem : public Python::PythonDeclarationCompletionItem
 {
 
 public:
-    ImportFileItem(const KDevelop::IncludeItem& include);
-    virtual ~ImportFileItem();
+    FunctionDeclarationCompletionItem(DeclarationPointer decl);
+    virtual ~FunctionDeclarationCompletionItem();
+    virtual int argumentHintDepth() const;
+    virtual int atArgument() const;
+    void setAtArgument(int d);
     
-    virtual void execute(KTextEditor::Document* document, const KTextEditor::Range& word);
-    QString moduleName;
-    KDevelop::IProject* fromProject;
+    virtual QVariant data(const QModelIndex& index, int role, const CodeCompletionModel* model) const;
+    
+    virtual void executed(KTextEditor::Document* document, const KTextEditor::Range& word);
+private:
+    int m_atArgument;
 };
 
 }
 
-#endif // IMPORTFILEITEM_H
+#endif // FUNCTIONDECLARATIONCOMPLETIONITEM_H

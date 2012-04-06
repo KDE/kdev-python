@@ -24,8 +24,8 @@
 #include <kdev-pg-memory-pool.h>
 #include <QStack>
 
-#include "importfileitem.h"
-#include "pythoncodecompletionworker.h"
+#include "items/importfile.h"
+#include "worker.h"
 #include "pythoncompletionexport.h"
 #include "types/unsuretype.h"
 

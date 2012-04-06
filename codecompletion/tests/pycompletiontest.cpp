@@ -16,21 +16,22 @@
  *****************************************************************************/
 
 #include "pycompletiontest.h"
-#include <pythoncodecompletioncontext.h>
+
 #include <language/backgroundparser/backgroundparser.h>
-#include <interfaces/ilanguagecontroller.h>
+#include <language/codecompletion/codecompletiontesthelper.h>
 #include <language/duchain/declaration.h>
 #include <language/codegen/coderepresentation.h>
 #include <language/duchain/duchain.h>
+#include <interfaces/ilanguagecontroller.h>
+
 #include <tests/testcore.h>
 #include <tests/autotestshell.h>
+
+#include <QtTest/QTest>
 #include <KUrl>
 #include <KStandardDirs>
 
-#include <language/codecompletion/codecompletiontesthelper.h>
-
-#include <QtTest/QTest>
-
+#include "codecompletion/context.h"
 #include "codecompletion/helpers.h"
 
 using namespace KDevelop;

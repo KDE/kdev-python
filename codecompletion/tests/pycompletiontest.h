@@ -19,9 +19,11 @@
 #define PYCOMPLETIONTEST_H
 
 #include <QtCore/QObject>
+
 #include <language/editor/cursorinrevision.h>
 #include <language/codecompletion/codecompletioncontext.h>
-#include <pythoncodecompletionmodel.h>
+
+#include "codecompletion/model.h"
 
 using namespace KDevelop;
 

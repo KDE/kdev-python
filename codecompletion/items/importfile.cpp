@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2010-2011 Sven Brauch <svenbrauch@googlemail.com>           *
+ * Copyright (c) 2011 Sven Brauch <svenbrauch@googlemail.com>                *
  *                                                                           *
  * This program is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU General Public License as            *
@@ -16,33 +16,32 @@
  *****************************************************************************
  */
 
-#include "pythoncodecompletionmodel.h"
-#include "pythoncodecompletionworker.h"
-#include "ktexteditor/view.h"
+#include "importfile.h"
+
 #include <KTextEditor/Document>
+#include <language/codecompletion/abstractincludefilecompletionitem.h>
+
+#include "duchain/navigation/navigationwidget.h"
+
+using namespace KDevelop;
 
 namespace Python {
-
-PythonCodeCompletionModel::PythonCodeCompletionModel(QObject* parent)
-    : CodeCompletionModel(parent)
+    
+ImportFileItem::ImportFileItem(const KDevelop::IncludeItem& include): AbstractIncludeFileCompletionItem< NavigationWidget >(include)
 {
-    // This avoids flickering of the completion-list when full code-completion mode is used
-    setForceWaitForModel(true);
+    
 }
 
-PythonCodeCompletionModel::~PythonCodeCompletionModel() { }
-
-
-KTextEditor::Range PythonCodeCompletionModel::completionRange(KTextEditor::View* view, const KTextEditor::Cursor& position)
+ImportFileItem::~ImportFileItem()
 {
-    m_currentDocument = view->document()->url();
-    kWarning() << "Current document: " << m_currentDocument;
-    return KTextEditor::CodeCompletionModelControllerInterface3::completionRange(view, position);
+
 }
 
-KDevelop::CodeCompletionWorker* PythonCodeCompletionModel::createCompletionWorker()
+void ImportFileItem::execute(KTextEditor::Document* document, const KTextEditor::Range& word)
 {
-    return new PythonCodeCompletionWorker(this, m_currentDocument);
+    kDebug() << "ImportFileItem executed";
+    document->replaceText(word, moduleName);
 }
+
 
 }

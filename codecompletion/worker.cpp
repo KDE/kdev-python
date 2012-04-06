@@ -16,9 +16,9 @@
  *****************************************************************************
  */
 
-#include "pythoncodecompletionworker.h"
-#include "pythoncodecompletionmodel.h"
-#include "pythoncodecompletioncontext.h"
+#include "worker.h"
+#include "model.h"
+#include "context.h"
 #include <language/duchain/declaration.h>
 #include <KLocalizedString>
 

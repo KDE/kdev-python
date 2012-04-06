@@ -26,30 +26,28 @@
 #include <ktexteditor/smartinterface.h>
 #include <ktexteditor/document.h>
 
-#include <language/duchain/duchainlock.h>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/parsingenvironment.h>
+#include <language/backgroundparser/backgroundparser.h>
 #include <language/editor/rangeinrevision.h>
-#include <interfaces/foregroundlock.h>
 #include <interfaces/icore.h>
 #include <interfaces/idocumentcontroller.h>
+#include <interfaces/ilanguagecontroller.h>
 #include <interfaces/iprojectcontroller.h>
 #include <interfaces/iproject.h>
 #include <project/projectmodel.h>
 
+#include <KStandardDirs>
+
+#include "pythonlanguagesupport.h"
 #include "pythoneditorintegrator.h"
 #include "dumpchain.h"
 #include "usebuilder.h"
 #include "contextbuilder.h"
 #include "pythonducontext.h"
-#include "codecompletion/pythoncodecompletioncontext.h"
 #include "pythonparsejob.h"
 #include "declarationbuilder.h"
 #include "helpers.h"
-#include <pythonlanguagesupport.h>
-#include <interfaces/ilanguagecontroller.h>
-#include <language/backgroundparser/backgroundparser.h>
-#include <KStandardDirs>
 
 using namespace KDevelop;
 

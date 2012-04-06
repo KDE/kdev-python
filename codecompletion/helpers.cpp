@@ -18,16 +18,19 @@
  */
 
 #include "helpers.h"
-#include <codehelpers.h>
+
 #include <language/duchain/abstractfunctiondeclaration.h>
 #include <language/duchain/duchainutils.h>
 #include <language/duchain/ducontext.h>
-#include <language/duchain/types/functiontype.h>
-#include <QTextFormat>
-#include <QStringList>
-#include <language/duchain/types/integraltype.h>
 #include <language/duchain/declaration.h>
+#include <language/duchain/types/functiontype.h>
+#include <language/duchain/types/integraltype.h>
 #include <language/codecompletion/normaldeclarationcompletionitem.h>
+
+#include <QStringList>
+#include <QTextFormat>
+
+#include "parser/codehelpers.h"
 
 using namespace KDevelop;
 

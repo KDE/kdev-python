@@ -82,8 +82,30 @@ class KDEVPYTHONPARSER_EXPORT CodeHelpers
 {
     public:
         CodeHelpers();
+        /**
+         * @brief Get the python expression at the specified cursor.
+         *
+         * @param lineFetcher An object which is used to get lines from the document
+         * @param cursor where to search for the expression
+         * @param forceScanExpression Start scanning even if the first char is non-alphanumeric. Defaults to false.
+         * @return QString the expression which was found, as string.
+         **/
         static QString expressionUnderCursor(LazyLineFetcher& lineFetcher, KTextEditor::Cursor cursor,
                                              bool forceScanExpression = false);
+        
+        /**
+         * @brief Replaces all quoted strings with "S" in the given expression.
+         * TODO this does not work correctly, I think.
+         * 
+         * @param stringWithStrings some python code which may contain strings
+         * @return QString the input code, with all strings replaced by "S", so 'foo("fancy\"\"\"''__/string")' -> 'foo("S")'
+         **/
+        static QString killStrings(QString stringWithStrings);
+        
+        /**
+         * @brief Check whether the given code ends inside a comment or string literal.
+         **/
+        static bool endsInsideCommend(const QString& code);
     };
 }
 

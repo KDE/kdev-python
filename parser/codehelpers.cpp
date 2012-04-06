@@ -97,6 +97,63 @@ CodeHelpers::CodeHelpers()
     
 }
 
+bool CodeHelpers::endsInsideCommend(const QString& code)
+{
+    bool insideSQ = false;
+    bool insideDQ = false;
+    bool insideMultiLineSQComment = false;
+    bool insideMultiLineDQComment = false;
+    bool insideSingleLineComment = false;
+    const int max_len = code.length();
+    kDebug() << "Checking for comment line or string literal...";
+    for ( int atChar = 0; atChar < max_len; atChar++ ) {
+        const QChar& c = code.at(atChar);
+        QString t("");
+        if ( max_len - atChar > 2 ) {
+            for ( int i = 0; i < 3; i++ ) {
+                t.append(code.at(atChar+i));
+            }
+        }
+        if ( c == '#' ) {
+            insideSingleLineComment = true;
+            continue;
+        }
+        if ( c == '\n' ) {
+            insideSingleLineComment = false;
+            continue;
+        }
+        if ( t == "\"\"\"" ) {
+            insideMultiLineSQComment = !insideMultiLineSQComment;
+            continue;
+        }
+        if ( t == "'''" ) {
+            insideMultiLineSQComment = !insideMultiLineSQComment;
+            continue;
+        }
+        if ( c == '\'' ) {
+            insideSQ = !insideSQ;
+            continue;
+        }
+        if ( c == '"' ) {
+            insideDQ = !insideDQ;
+            continue;
+        }
+        if ( c == '\\' ) {
+            atChar ++;
+            continue;
+        }
+    }
+    return insideSingleLineComment || insideSQ || insideMultiLineSQComment || insideDQ || insideMultiLineDQComment;
+}
+
+QString CodeHelpers::killStrings(QString stringWithStrings)
+{
+    QRegExp replaceStrings("(\".*\"|\'.*\'|\"\"\".*\"\"\"|\'\'\'.*\'\'\')");
+    replaceStrings.setMinimal(true);
+    QString stripped = stringWithStrings.replace(replaceStrings, "\"S\"");
+    return stripped;
+}
+
 QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher, KTextEditor::Cursor cursor, bool forceScanExpression)
 {
     QString line = lineFetcher.fetchLine(cursor.line());

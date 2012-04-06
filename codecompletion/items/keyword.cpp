@@ -29,14 +29,22 @@ using namespace KTextEditor;
 
 namespace Python {
 
-Python::KeywordItem::KeywordItem(KDevelop::CodeCompletionContext::Ptr context, QString keyword) : NormalDeclarationCompletionItem ( DeclarationPointer(), context, 0 )
+Python::KeywordItem::KeywordItem(KDevelop::CodeCompletionContext::Ptr context, QString keyword, Flags flags)
+    : NormalDeclarationCompletionItem (DeclarationPointer(), context, 0),
+    m_flags(flags)
 {
     m_keyword = keyword;
 }
 
-void Python::KeywordItem::execute ( KTextEditor::Document* document, const KTextEditor::Range& word )
+void Python::KeywordItem::execute(KTextEditor::Document* document, const KTextEditor::Range& word)
 {
-    document->replaceText(word, m_keyword);
+    if ( m_flags == ForceLineBeginning ) {
+        KTextEditor::Range newRange(KTextEditor::Cursor(word.start().line(), 0), word.end());
+        document->replaceText(newRange, m_keyword);
+    }
+    else {
+        document->replaceText(word, m_keyword);
+    }
 }
 
 QVariant KeywordItem::data ( const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model ) const

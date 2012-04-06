@@ -74,18 +74,18 @@ void ExpressionParser::reset()
     m_cursorPositionInString = m_code.length();
 }
 
-QString ExpressionParser::skipUntilStatus(ExpressionParser::Status status, bool* ok, int* expressionsSkipped)
+QString ExpressionParser::skipUntilStatus(ExpressionParser::Status requestedStatus, bool* ok, int* expressionsSkipped)
 {
     if ( expressionsSkipped ) {
         *expressionsSkipped = 0;
     }
     QString lastExpression;
     Status currentStatus = InvalidStatus;
-    while ( currentStatus != status ) {
+    while ( currentStatus != requestedStatus ) {
         lastExpression = popExpression(&currentStatus);
         kDebug() << lastExpression << currentStatus;
         if ( currentStatus == NothingFound ) {
-            *ok = false;
+            *ok = ( requestedStatus == NothingFound ); // ok exactly if the caller requested NothingFound as end status
             return QString();
         }
         if ( expressionsSkipped && currentStatus == ExpressionFound ) {
@@ -122,6 +122,11 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
     if ( operatingOn.endsWith("print") ) {
         m_cursorPositionInString -= 5;
         *status = PrintFound;
+        return QString();
+    }
+    if ( operatingOn.endsWith("raise") ) {
+        m_cursorPositionInString -= 5;
+        *status = RaiseFound;
         return QString();
     }
     if ( operatingOn.endsWith('.') ) {

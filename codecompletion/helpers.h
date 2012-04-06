@@ -50,13 +50,14 @@ public:
         PrintFound,
         MemberAccessFound,
         ImportFound,
-        GeneratorFound
+        GeneratorFound,
+        RaiseFound
     };
     
     QString popExpression(Status* status);
     QString getRemainingCode();
     QString getScannedCode();
-    QString skipUntilStatus(Status status, bool* ok, int* expressionsSkipped = 0);
+    QString skipUntilStatus(Status requestedStatus, bool* ok, int* expressionsSkipped = 0);
     void reset();
     int trailingWhitespace();
     

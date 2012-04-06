@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2011 Sven Brauch <svenbrauch@googlemail.com>                *
+ * Copyright (c) 2011-2012 Sven Brauch <svenbrauch@googlemail.com>           *
  *                                                                           *
  * This program is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU General Public License as            *
@@ -15,8 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************
  */
-
-#include <math.h>
 
 #include <QProcess>
 #include <QRegExp>
@@ -51,6 +49,7 @@
 #include "items/importfile.h"
 #include "items/functiondeclaration.h"
 #include "items/implementfunction.h"
+#include "helpers.h"
 
 using namespace KTextEditor;
 using namespace KDevelop;
@@ -59,18 +58,25 @@ namespace Python {
 
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bool& abort, bool fullCompletion)
 {
-    if ( abort ) 
-        return QList<CompletionTreeItemPointer>();
-    
-    QList<CompletionTreeItemPointer> items;
-    DUChainReadLocker lock(DUChain::lock());
+    QList<CompletionTreeItemPointer> resultingItems;
+    DUChainReadLocker lock;
     
     kDebug() << "Line: " << m_position.line;
-//     if ( m_position.line == 0 ) { // TODO group those correctly so they appear at the top
-//         items << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python"));
-//         items << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python2.6"));
-//         items << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python2.7"));
-//     }
+    
+    {
+        KSharedPtr< CodeCompletionContext > p = KDevelop::CodeCompletionContext::Ptr(this);
+        KeywordItem::Flags f = KeywordItem::ForceLineBeginning;
+        // TODO group those correctly so they appear at the top
+        if ( m_position.line == 0 ) {
+            resultingItems << CompletionTreeItemPointer(new KeywordItem(p, "#!/usr/bin/env python", f));
+            resultingItems << CompletionTreeItemPointer(new KeywordItem(p, "#!/usr/bin/env python2.7", f));
+            resultingItems << CompletionTreeItemPointer(new KeywordItem(p, "#!/usr/bin/env python3", f));
+        }
+        else if ( m_position.line == 1 ) {
+            resultingItems << CompletionTreeItemPointer(new KeywordItem(p, "# -*- Coding:utf-8 -*-", f));
+        }
+    }
+    
     
     if ( m_operation == PythonCodeCompletionContext::NoCompletion ) {
         
@@ -81,13 +87,11 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         AstBuilder* builder = new AstBuilder(&pool);
         CodeAst* tmpAst = builder->parse(KUrl(), m_remainingExpression);
         if ( tmpAst ) {
-            DUChainReadLocker lock(DUChain::lock());
             ExpressionVisitor* v = new ExpressionVisitor(m_context.data());
             v->m_forceGlobalSearching = true;
             v->m_scanUntilCursor = m_position;
             v->m_reportUnknownNames = true;
             v->visitCode(tmpAst);
-            lock.unlock();
             if ( not v->m_unknownNames.isEmpty() ) {
                 if ( v->m_unknownNames.size() >= 2 ) {
                     // we only take the first two, and only two. It gets too much items otherwise.
@@ -110,11 +114,9 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         delete builder;
         
         foreach ( KeywordItem* item, completionItems ) {
-            items << CompletionTreeItemPointer(item);
+            resultingItems << CompletionTreeItemPointer(item);
         }
         
-//         IDocument* doc = KDevelop::ICore::self()->documentController()->documentForUrl(m_context->topContext()->url().toUrl());
-//         QMetaObject::invokeMethod(doc->textDocument()->activeView(), "userInvokedCompletion");
     }
     else if ( m_operation == PythonCodeCompletionContext::DefineCompletion ) {
         // Find all base classes of the current class context
@@ -136,7 +138,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
                         foreach ( Declaration* argument, argumentsContext->localDeclarations() ) {
                             argumentNames << argument->identifier().toString();
                         }
-                        items << CompletionTreeItemPointer(new ImplementFunctionCompletionItem(
+                        resultingItems << CompletionTreeItemPointer(new ImplementFunctionCompletionItem(
                             funcDecl->identifier().toString(), argumentNames, m_indent)
                         );
                     }
@@ -154,7 +156,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             // use whichever one is shorter
             QString useUrl = relativeUrl.length() < absoluteUrl.length() ? relativeUrl : absoluteUrl;
             item->includeItem.name = QString(item->moduleName + " (from " + useUrl + ")");
-            items << CompletionTreeItemPointer( item );
+            resultingItems << CompletionTreeItemPointer( item );
         }
     }
     else if ( m_operation == PythonCodeCompletionContext::RaiseExceptionCompletion ) {
@@ -181,7 +183,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
                     }
                 }
             }
-            items.append(declarationListToItemList(validDeclarations));
+            resultingItems.append(declarationListToItemList(validDeclarations));
         }
     }
     else if ( m_operation == PythonCodeCompletionContext::ImportSubCompletion ) {
@@ -189,7 +191,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         foreach ( ImportFileItem* item, includeFileItemsForSubmodule(m_subForModule) ) {
             Q_ASSERT(item);
             item->includeItem.name = QString(item->moduleName + " (from " + KUrl::relativeUrl(m_workingOnDocument, item->includeItem.basePath) + ")");
-            items << CompletionTreeItemPointer( item );
+            resultingItems << CompletionTreeItemPointer( item );
         }
     }
     else if ( m_operation == PythonCodeCompletionContext::InheritanceCompletion ) {
@@ -205,21 +207,19 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
                 remainingDeclarations << d;
             }
         }
-        items.append(declarationListToItemList(remainingDeclarations));
+        resultingItems.append(declarationListToItemList(remainingDeclarations));
     }
     else if ( m_operation == PythonCodeCompletionContext::MemberAccessCompletion ) {
         KDevPG::MemoryPool pool;
         AstBuilder* builder = new AstBuilder(&pool);
         CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
         if ( tmpAst ) {
-            DUChainReadLocker lock(DUChain::lock());
             ExpressionVisitor* v = new ExpressionVisitor(m_context.data());
             v->m_forceGlobalSearching = true;
             v->visitCode(tmpAst);
-            lock.unlock();
             if ( v->lastType() ) {
                 kDebug() << v->lastType()->toString();
-                items = getCompletionItemsForType(v->lastType());
+                resultingItems = getCompletionItemsForType(v->lastType());
             }
             else {
                 kWarning() << "Did not receive a type from expression visitor! Not offering autocompletion.";
@@ -238,7 +238,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             keywordItems << "def" << "class" << "lambda" << "global" << "print" << "import" << "from" << "while" << "for" << "yield" << "return";
             foreach ( const QString& current, keywordItems ) {
                 KeywordItem* k = new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), current + " ");
-                items << CompletionTreeItemPointer(k);
+                resultingItems << CompletionTreeItemPointer(k);
             }
         }
         if ( abort ) {
@@ -251,11 +251,9 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             AstBuilder* builder = new AstBuilder(&pool);
             CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
             if ( tmpAst ) {
-                DUChainReadLocker lock(DUChain::lock());
                 ExpressionVisitor* v = new ExpressionVisitor(m_context.data());
                 v->m_forceGlobalSearching = true;
                 v->visitCode(tmpAst);
-                lock.unlock();
                 if ( v->lastDeclaration() ) {
                     calltips << v->lastDeclaration().data();
                 }
@@ -281,7 +279,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
                 static_cast<FunctionDeclarationCompletionItem*>(current.data())->setAtArgument(m_alreadyGivenParametersCount + 1);
             }
             
-            items.append(calltipItems);
+            resultingItems.append(calltipItems);
         }
         QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
         foreach ( DeclarationDepthPair d, declarations ) {
@@ -292,13 +290,13 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
                 declarations.removeAll(d);
             }
         }
-        items.append(declarationListToItemList(declarations));
+        resultingItems.append(declarationListToItemList(declarations));
     }
     
     m_searchingForModule.clear();
     m_subForModule.clear();
     
-    return items;
+    return resultingItems;
 }
 
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToItemList(QList<DeclarationDepthPair> declarations, int maxDepth)
@@ -315,10 +313,9 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
         }
         currentDeclaration = DeclarationPointer(declarations.at(i).first);
         
-        PythonDeclarationCompletionItem* item;
+        PythonDeclarationCompletionItem* item = 0;
         AliasDeclaration* alias = dynamic_cast<AliasDeclaration*>(currentDeclaration.data());
         if ( alias ) {
-            DUChainReadLocker lock(DUChain::lock());
             checkDeclaration = DUChainPointer<Declaration>(alias->aliasedDeclaration().declaration());
         }
         else {
@@ -391,8 +388,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
         return declarationListToItemList(keepDeclarations);
     }
     
-    QList<CompletionTreeItemPointer> items;
-    return items;
+    return QList<CompletionTreeItemPointer>();
 }
 
 QList< ImportFileItem* > PythonCodeCompletionContext::includeFileItemsForSubmodule(QString submodule)
@@ -443,11 +439,11 @@ QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems(QList<KUrl>
             kDebug() << "Scanning file: " << file.absoluteFilePath();
             if ( file.fileName() == "." || file.fileName() == ".." ) continue;
             if ( file.fileName().endsWith(".py") || file.fileName().endsWith(".pyc") || file.isDir() ) {
-                IncludeItem includeItem;
-                includeItem.basePath = currentPath.path(KUrl::AddTrailingSlash) + file.baseName();
-                includeItem.name = file.fileName();
-                includeItem.isDirectory = file.isDir();
-                ImportFileItem* item = new ImportFileItem(includeItem);
+                IncludeItem newItem;
+                newItem.basePath = currentPath.path(KUrl::AddTrailingSlash) + file.baseName();
+                newItem.name = file.fileName();
+                newItem.isDirectory = file.isDir();
+                ImportFileItem* item = new ImportFileItem(newItem);
                 item->moduleName = file.fileName().replace(".pyc", "").replace(".pyo", "").replace(".py", "");
                 if ( alreadyFound.contains(item->moduleName) ) {
                     continue;
@@ -465,8 +461,8 @@ QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems(QList<KUrl>
 }
 
 // decide what kind of completion will be offered based on the code before the current cursor position
-// lazy as we are, we use regular expression matching for this
-PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position, 
+PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& text,
+                                                         const KDevelop::CursorInRevision& position, 
                                                          int depth, const PythonCodeCompletionWorker* parent)
     : CodeCompletionContext(context, text, position, depth)
     , m_operation(PythonCodeCompletionContext::DefaultCompletion)
@@ -474,81 +470,113 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     , m_position(position)
     , m_context(context)
 {
-    kDebug() << "Text: " << text;
     m_workingOnDocument = context->topContext()->url().toUrl();
-    QString currentLine = "\n" + text.split("\n").last(); // we'll only look at the last line for now, as 
-                                                          // 99% of python statements are limited to one line TODO fix this
     int atLine = position.line;
-    kDebug() << "Doing auto-completion context scan for: " << currentLine << "@line" << atLine << "@context" << context->range().castToSimpleRange();
+    QString textWithoutStrings = CodeHelpers::killStrings(text);
     
-//     bool currentLineIsEmpty = true;
-//     {
-//         QChar c;
-//         for ( int i = currentLine.length() - 1; i >= 0; i-- ) {
-//             c = currentLine.at(i);
-//             if ( ! c.isSpace() ) {
-//                 currentLineIsEmpty = false;
-//                 break;
-//             }
-//         }
-//     }
-    
-    // check if the current position is inside a multi-line comment / string
-    bool insideSQ = false;
-    bool insideDQ = false;
-    bool insideMultiLineSQComment = false;
-    bool insideMultiLineDQComment = false;
-    bool insideSingleLineComment = false;
-    const int max_len = text.length();
-    kDebug() << "Checking for comment line or string literal...";
-    for ( int atChar = 0; atChar < max_len; atChar++ ) {
-        const QChar& c = text.at(atChar);
-        QString t("");
-        if ( max_len - atChar > 2 ) {
-            for ( int i = 0; i < 3; i++ ) {
-                t.append(text.at(atChar+i));
-            }
-        }
-        if ( c == '#' ) {
-            insideSingleLineComment = true;
-            continue;
-        }
-        if ( c == '\n' ) {
-            insideSingleLineComment = false;
-            continue;
-        }
-        if ( t == "\"\"\"" ) {
-            insideMultiLineSQComment = !insideMultiLineSQComment;
-            continue;
-        }
-        if ( t == "'''" ) {
-            insideMultiLineSQComment = !insideMultiLineSQComment;
-            continue;
-        }
-        if ( c == '\'' ) {
-            insideSQ = !insideSQ;
-            continue;
-        }
-        if ( c == '"' ) {
-            insideDQ = !insideDQ;
-            continue;
-        }
-        if ( c == '\\' ) {
-            atChar ++;
-            continue;
-        }
-    }
-    
-    if ( insideSingleLineComment || insideSQ || insideMultiLineSQComment || insideDQ || insideMultiLineDQComment ) {
+    // check if the current position is inside a multi-line comment / string -> no completion if this is the case
+    if ( CodeHelpers::endsInsideCommend(text) ) {
         m_operation = PythonCodeCompletionContext::NoCompletion;
         return;
     }
     
-    QRegExp raise("^[\\s]*raise(.*)$");
-    raise.setMinimal(true);
-    bool isRaise = raise.exactMatch(currentLine);
-    if ( isRaise ) {
+    // The expression parser used to determine the type of completion required.
+    ExpressionParser parser(text);
+    ExpressionParser::Status firstStatus;
+    parser.popExpression(&firstStatus);
+    
+    if ( firstStatus == ExpressionParser::RaiseFound ) {
         m_operation = PythonCodeCompletionContext::RaiseExceptionCompletion;
+        return;
+    }
+
+    if ( firstStatus == ExpressionParser::NothingFound ) {
+        m_operation = PythonCodeCompletionContext::NewStatementCompletion;
+        return;
+    }
+    
+    if ( firstStatus == ExpressionParser::MemberAccessFound ) {
+        bool ok;
+        m_guessTypeOfExpression = parser.popExpression(&ok);
+        if ( ok ) {
+            m_operation = PythonCodeCompletionContext::MemberAccessCompletion;
+        }
+        else {
+            m_operation = PythonCodeCompletionContext::NoCompletion;
+        }
+        return;
+    }
+    
+    kDebug() << context->type() << DUContext::Class << context->localScopeIdentifier().toString();
+    
+    if ( context->type() == DUContext::Class ) {
+        QRegExp defcompletion("(.*)\n([\\s]*)(def)[\\s]*[\\D]*$");
+        defcompletion.setMinimal(true);
+        bool is_defcompletion = defcompletion.exactMatch(currentLine);
+        if ( is_defcompletion ) {
+            m_indent = defcompletion.capturedTexts().at(2);
+            m_operation = PythonCodeCompletionContext::DefineCompletion;
+            return;
+        }
+    }
+    
+    QRegExp inheritanceCompletion("(.*)\n[\\s]*class[\\s]*(.*)[\\s]*\\([\\s]*$");
+    inheritanceCompletion.setMinimal(true);
+    bool is_inheritance = inheritanceCompletion.exactMatch(currentLine);
+    if ( is_inheritance ) {
+        m_operation = PythonCodeCompletionContext::InheritanceCompletion;
+        return;
+    }
+    
+    kDebug() << "Scanning for function call";
+    bool is_FunctionCall = scanExpressionBackwards(textWithoutStrings, QStringList(), QStringList() << "." << ",", QStringList() << "," << "(", QStringList());
+    if ( is_FunctionCall ) {
+        m_operation = PythonCodeCompletionContext::FunctionCallCompletion;
+        // TODO this is wrong. Example: foo(bar(baz, bang), foo, bar, I)
+        m_alreadyGivenParametersCount = m_guessTypeOfExpression.count(',');
+        
+        scanExpressionBackwards(m_remainingExpression, QStringList(), QStringList() << "." << ",", QStringList(), QStringList() << "("); // get the next item in a chain of calls
+                // for "a(b(c(), d, e" (we want autocompletion for b) the first call will give us "a(b" and "c(), d, e", but we want "b". so we call it again on the first result.
+        kDebug() << "Found function call completion item, called function is " << m_guessTypeOfExpression << ", currently at parameter: " << m_alreadyGivenParametersCount;
+    }
+    
+    QRegExp nocompletion("(.*)\n[\\s]*(class|def)[\\s]*$");
+    nocompletion.setMinimal(true);
+    bool is_nocompletion = nocompletion.exactMatch(currentLine);
+    if ( is_nocompletion ) {
+        m_operation = PythonCodeCompletionContext::NoCompletion;
+        return;
+    }
+    
+    QRegExp couldBeGeneratorCompletion("(.*)[\\[\\{](.*)[\\s]*for[\\s]*$");
+    couldBeGeneratorCompletion.setMinimal(true);
+    bool is_couldBeGeneratorCompletion = couldBeGeneratorCompletion.exactMatch(currentLine);
+    if ( is_couldBeGeneratorCompletion ) {
+        bool is_generatorCompletion = scanExpressionBackwards(textWithoutStrings, QStringList(), QStringList(), QStringList(), QStringList() << "{" << "[" << "(", true);
+        if ( is_generatorCompletion ) {
+            kDebug() << "remaining expression for GeneratorVariableCompletion: " << m_remainingExpression;
+            m_remainingExpression = textWithoutStrings.remove(0, m_remainingExpression.length());
+            if ( m_remainingExpression.length() >= 3 ) {
+                m_remainingExpression = m_remainingExpression.trimmed();
+                m_remainingExpression.remove(m_remainingExpression.length()-3, 3);
+            }
+            m_remainingExpression = '{' + m_remainingExpression + '}';
+            kDebug() << "use unknown names in: " << m_remainingExpression;
+            m_operation = PythonCodeCompletionContext::GeneratorVariableCompletion;
+            return;
+        }
+    }
+    
+    //                                          v   v   v   v   v allow comma seperated list of imports
+    QRegExp importfile("^[\\s]*import[\\s]*(.*[\\s]*,[\\s]*)*$");
+    importfile.setMinimal(true);
+    bool is_importfile = importfile.exactMatch(currentLine);
+    QRegExp fromimport("^[\\s]*from[\\s]*$");
+    fromimport.setMinimal(true);
+    bool is_fromimport = fromimport.exactMatch(currentLine);
+    if ( is_importfile || is_fromimport ) {
+        kDebug() << "Autocompletion type: import completion";
+        m_operation = PythonCodeCompletionContext::ImportFileCompletion;
         return;
     }
     
@@ -575,97 +603,6 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         m_subForModule = for_module;
         kDebug() << "submodule: " << for_module;
         return;
-    }
-    
-    QRegExp newStatementCompletion("(.*)\n[\\s]*$");
-    newStatementCompletion.setMinimal(true);
-    bool isNewStatementCompletion = newStatementCompletion.exactMatch(currentLine);
-    if ( isNewStatementCompletion ) {
-        m_operation = PythonCodeCompletionContext::NewStatementCompletion;
-        return;
-    }
-    
-    //                                          v   v   v   v   v allow comma seperated list of imports
-    QRegExp importfile("^[\\s]*import[\\s]*(.*[\\s]*,[\\s]*)*$");
-    importfile.setMinimal(true);
-    bool is_importfile = importfile.exactMatch(currentLine);
-    QRegExp fromimport("^[\\s]*from[\\s]*$");
-    fromimport.setMinimal(true);
-    bool is_fromimport = fromimport.exactMatch(currentLine);
-    if ( is_importfile || is_fromimport ) {
-        kDebug() << "Autocompletion type: import completion";
-        m_operation = PythonCodeCompletionContext::ImportFileCompletion;
-        return;
-    }
-    
-    QRegExp replaceStrings("(\".*\"|\'.*\'|\"\"\".*\"\"\"|\'\'\'.*\'\'\')");
-    replaceStrings.setMinimal(true);
-    QString strippedLine = currentLine.replace(replaceStrings, "\"S\""); // we don't need string contents, cut them out
-    
-    bool is_attributeAccess = scanExpressionBackwards(strippedLine, QStringList(), QStringList() << ".", QStringList() << ".", QStringList());
-    if ( is_attributeAccess ) {
-        m_operation = PythonCodeCompletionContext::MemberAccessCompletion;
-        return;
-    }
-    
-    kDebug() << context->type() << DUContext::Class << context->localScopeIdentifier().toString();
-    
-    if ( context->type() == DUContext::Class ) {
-        QRegExp defcompletion("(.*)\n([\\s]*)(def)[\\s]*[\\D]*$");
-        defcompletion.setMinimal(true);
-        bool is_defcompletion = defcompletion.exactMatch(currentLine);
-        if ( is_defcompletion ) {
-            m_indent = defcompletion.capturedTexts().at(2);
-            m_operation = PythonCodeCompletionContext::DefineCompletion;
-            return;
-        }
-    }
-    
-    QRegExp inheritanceCompletion("(.*)\n[\\s]*class[\\s]*(.*)[\\s]*\\([\\s]*$");
-    inheritanceCompletion.setMinimal(true);
-    bool is_inheritance = inheritanceCompletion.exactMatch(currentLine);
-    if ( is_inheritance ) {
-        m_operation = PythonCodeCompletionContext::InheritanceCompletion;
-        return;
-    }
-    
-    kDebug() << "Scanning for function call";
-    bool is_FunctionCall = scanExpressionBackwards(strippedLine, QStringList(), QStringList() << "." << ",", QStringList() << "," << "(", QStringList());
-    if ( is_FunctionCall ) {
-        m_operation = PythonCodeCompletionContext::FunctionCallCompletion;
-        // TODO this is wrong. Example: foo(bar(baz, bang), foo, bar, I)
-        m_alreadyGivenParametersCount = m_guessTypeOfExpression.count(',');
-        
-        scanExpressionBackwards(m_remainingExpression, QStringList(), QStringList() << "." << ",", QStringList(), QStringList() << "("); // get the next item in a chain of calls
-                // for "a(b(c(), d, e" (we want autocompletion for b) the first call will give us "a(b" and "c(), d, e", but we want "b". so we call it again on the first result.
-        kDebug() << "Found function call completion item, called function is " << m_guessTypeOfExpression << ", currently at parameter: " << m_alreadyGivenParametersCount;
-    }
-    
-    QRegExp nocompletion("(.*)\n[\\s]*(class|def)[\\s]*$");
-    nocompletion.setMinimal(true);
-    bool is_nocompletion = nocompletion.exactMatch(currentLine);
-    if ( is_nocompletion ) {
-        m_operation = PythonCodeCompletionContext::NoCompletion;
-        return;
-    }
-    
-    QRegExp couldBeGeneratorCompletion("(.*)[\\[\\{](.*)[\\s]*for[\\s]*$");
-    couldBeGeneratorCompletion.setMinimal(true);
-    bool is_couldBeGeneratorCompletion = couldBeGeneratorCompletion.exactMatch(currentLine);
-    if ( is_couldBeGeneratorCompletion ) {
-        bool is_generatorCompletion = scanExpressionBackwards(strippedLine, QStringList(), QStringList(), QStringList(), QStringList() << "{" << "[" << "(", true);
-        if ( is_generatorCompletion ) {
-            kDebug() << "remaining expression for GeneratorVariableCompletion: " << m_remainingExpression;
-            m_remainingExpression = strippedLine.remove(0, m_remainingExpression.length());
-            if ( m_remainingExpression.length() >= 3 ) {
-                m_remainingExpression = m_remainingExpression.trimmed();
-                m_remainingExpression.remove(m_remainingExpression.length()-3, 3);
-            }
-            m_remainingExpression = '{' + m_remainingExpression + '}';
-            kDebug() << "use unknown names in: " << m_remainingExpression;
-            m_operation = PythonCodeCompletionContext::GeneratorVariableCompletion;
-            return;
-        }
     }
 }
 

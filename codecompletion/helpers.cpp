@@ -69,7 +69,7 @@ ExpressionParser::ExpressionParser(QString code)
         supportedKeywords << keyword("from", ExpressionParser::FromFound);
         supportedKeywords << keyword("raise", ExpressionParser::RaiseFound);
         supportedKeywords << keyword("in", ExpressionParser::InFound);
-        supportedKeywords << keyword("for", ExpressionParser::InFound);
+        supportedKeywords << keyword("for", ExpressionParser::ForFound);
         supportedKeywords << keyword("class", ExpressionParser::ClassFound);
         supportedKeywords << keyword("def", ExpressionParser::DefFound);
         supportedKeywords << keyword("except", ExpressionParser::ExceptFound);

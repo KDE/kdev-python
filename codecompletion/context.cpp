@@ -581,7 +581,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         while ( ok && offset > nextInitializer.first ) {
             ok = allExpressions.at(offset).status == ExpressionParser::ExpressionFound;
             if ( ! ok ) break;
-            text.prepend(allExpressions.at(offset).status);
+            text.prepend(allExpressions.at(offset).expression);
             offset -= 1;
             ok = allExpressions.at(offset).status == ExpressionParser::CommaFound;
             // the last expression must *not* have a comma
@@ -591,7 +591,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
             offset -= 1;
         }
         if ( ok ) {
-            m_remainingExpression = text;
+            m_guessTypeOfExpression = text;
             m_operation = GeneratorVariableCompletion;
             return;
         }

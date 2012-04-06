@@ -82,7 +82,6 @@ private:
     KUrl m_workingOnDocument;
     
     QString m_guessTypeOfExpression;
-    QString m_remainingExpression;
     
     QString m_indent;
     KDevelop::CursorInRevision m_position;

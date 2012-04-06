@@ -466,7 +466,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     summonParentForEventualCall(p.popAll(), remainingText);
 }
 
-void PythonCodeCompletionContext::summonParentForEventualCall(const StatusResultList& allExpressions, const QString& text)
+void PythonCodeCompletionContext::summonParentForEventualCall(const TokenList& allExpressions, const QString& text)
 {
     QPair<int, int> nextCall = allExpressions.nextIndexOfStatus(ExpressionParser::CallFound);
     if ( nextCall.first != -1 ) {
@@ -495,7 +495,9 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     
     // The expression parser used to determine the type of completion required.
     ExpressionParser parser(text);
-    StatusResultList allExpressions = parser.popAll();
+    TokenList allExpressions = parser.popAll();
+    allExpressions.reset(1);
+    allExpressions.length();
     ExpressionParser::Status firstStatus = allExpressions.last().status;
     
     if ( firstStatus == ExpressionParser::MeaninglessKeywordFound ) {
@@ -514,9 +516,9 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     }
     
     if ( firstStatus == ExpressionParser::MemberAccessFound ) {
-        ExpressionParser::Status status;
-        m_guessTypeOfExpression = parser.popExpression(&status);
-        if ( status == ExpressionParser::ExpressionFound ) {
+        TokenListEntry item = allExpressions.weakPop();
+        if ( item.status == ExpressionParser::ExpressionFound ) {
+            m_guessTypeOfExpression = item.expression;
             m_operation = MemberAccessCompletion;
         }
         else {

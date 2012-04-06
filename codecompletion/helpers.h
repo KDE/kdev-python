@@ -35,7 +35,7 @@ namespace Python {
 
 void createArgumentList(Declaration* dec, QString& ret, QList<QVariant>* highlighting, int atArg = 0);
 
-class StatusResultList;
+class TokenList;
 
 class KDEVPYTHONCOMPLETION_EXPORT ExpressionParser {
 public:
@@ -66,7 +66,7 @@ public:
     QString getRemainingCode();
     QString getScannedCode();
     QString skipUntilStatus(Status requestedStatus, bool* ok, int* expressionsSkipped = 0);
-    StatusResultList popAll();
+    TokenList popAll();
     void reset();
     int trailingWhitespace();
     
@@ -86,8 +86,32 @@ public:
     int charOffset;
 };
 
-class StatusResultList : public QList<TokenListEntry> {
+class TokenList : public QList<TokenListEntry> {
 public:
+    /**
+     * @brief Reset the internal pointer to the last item, or offsetAtEnd items before
+     **/
+    void reset(int offsetAtEnd = 0) {
+        m_internalPtr = length() - offsetAtEnd;
+    };
+    /**
+     * @brief Set the internal pointer to "index".
+     **/
+    void seek(int index) {
+        m_internalPtr = index;
+    };
+    /**
+     * @brief Get the last item and advance the internal pointer.
+     *
+     * @return :TokenListEntry the item if the internal pointer is valid, an invalid item otherwise
+     **/
+    TokenListEntry weakPop() {
+        m_internalPtr --;
+        if ( m_internalPtr < 0 ) {
+            return TokenListEntry(ExpressionParser::InvalidStatus, QString::null, -1);
+        }
+        return at(m_internalPtr);
+    };
     // First returned value is the *expression count* index, the second one is the *character count*.
     // Oh yeah, the expressions count from the right, the characters count from the left. Convenient, huh?
     // (see PythonCodeCompletionContext::summonParentForEventualCall for an example why that makes sense)
@@ -101,6 +125,8 @@ public:
         }
         return QPair<int, int>(-1, -1);
     };
+private:
+    int m_internalPtr;
 };
 
 }

@@ -78,7 +78,7 @@ public:
 private:
     /// This constructor is only used for recursive calltips
     PythonCodeCompletionContext(DUContextPointer context, const QString& remainingText, int depth = 0);
-    void summonParentForEventualCall(const StatusResultList& tokens, const QString& text);
+    void summonParentForEventualCall(const TokenList& tokens, const QString& text);
     CompletionContextType m_operation;
     QStack<ProjectFolderItem*> m_folderStack;
     int m_maxFolderScanDepth;

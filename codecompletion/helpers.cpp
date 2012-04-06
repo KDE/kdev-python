@@ -135,15 +135,20 @@ QString ExpressionParser::skipUntilStatus(ExpressionParser::Status requestedStat
     return lastExpression;
 }
 
-StatusResultList ExpressionParser::popAll()
+TokenList ExpressionParser::popAll()
 {
     Status currentStatus = InvalidStatus;
-    StatusResultList items;
+    TokenList items;
     while ( currentStatus != NothingFound ) {
         QString result = popExpression(&currentStatus);
         items << TokenListEntry(currentStatus, result, m_cursorPositionInString);
     }
-    return items;
+    // reverse the list
+    TokenList reversedItems;
+    for ( int i = items.length() - 1; i >= 0; i-- ) {
+        reversedItems.append(items.at(i));
+    }
+    return reversedItems;
 }
 
 bool endsWithSeperatedKeyword(const QString& str, const QString& shouldEndWith) {

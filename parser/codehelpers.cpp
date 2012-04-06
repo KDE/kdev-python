@@ -221,6 +221,10 @@ QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher,
         if ( cursor.line() < linesFetched ) {
             break;
         }
+        if ( brackets.isEmpty() && ! lineFetcher.fetchLine(cursor.line() - linesFetched).trimmed().endsWith('\\') ) {
+            // break at newline without previous backslash
+            break;
+        }
         // store this line for multi-line expressions
         if ( linesFetched != 1 ) {
             text.prepend(line);

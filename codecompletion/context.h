@@ -59,7 +59,8 @@ public:
         GeneratorVariableCompletion
     };
     
-    PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position, int depth, const PythonCodeCompletionWorker* parent);
+    PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position,
+                                int depth, const PythonCodeCompletionWorker* parent);
     virtual QList< KDevelop::CompletionTreeItemPointer > completionItems(bool& abort, bool fullCompletion = true);
     QList<ImportFileItem*> includeFileItems(QList<KUrl> searchPaths);
     QList<ImportFileItem*> includeFileItemsForSubmodule(QString submodule);
@@ -71,8 +72,9 @@ public:
     
 private:
     /// This constructor is only used for recursive calltips
-    PythonCodeCompletionContext(DUContextPointer context, const QString& remainingText, int depth = 0);
-    void summonParentForEventualCall(const TokenList& tokens, const QString& text);
+    PythonCodeCompletionContext(DUContextPointer context, const QString& remainingText,
+                                QString calledFunction, int depth, int alreadyGivenParameters);
+    void summonParentForEventualCall(TokenList tokens, const QString& text);
     CompletionContextType m_operation;
     QStack<ProjectFolderItem*> m_folderStack;
     int m_maxFolderScanDepth;

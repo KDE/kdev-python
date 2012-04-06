@@ -36,12 +36,14 @@ public:
     virtual int argumentHintDepth() const;
     virtual int atArgument() const;
     void setAtArgument(int d);
+    void setDepth(int d);
     
     virtual QVariant data(const QModelIndex& index, int role, const CodeCompletionModel* model) const;
     
     virtual void executed(KTextEditor::Document* document, const KTextEditor::Range& word);
 private:
     int m_atArgument;
+    int m_depth;
 };
 
 }

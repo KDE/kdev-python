@@ -63,7 +63,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     
     kDebug() << "Line: " << m_position.line;
     
-    {
+    // Don't show those items in calltips
+    if ( m_operation != FunctionCallCompletion ) {
         KeywordItem::Flags f = KeywordItem::ForceLineBeginning;
         // TODO group those correctly so they appear at the top
         if ( m_position.line == 0 ) {
@@ -74,6 +75,14 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         else if ( m_position.line == 1 ) {
             resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "# -*- Coding:utf-8 -*-", f));
         }
+    }
+    
+    // Find all calltips recursively
+    CodeCompletionContext* parent = parentContext();
+    while ( parent ) {
+        kDebug() << "adding calltips from " << parent;
+        resultingItems.append(parent->completionItems(abort, fullCompletion));
+        parent = parent->parentContext();
     }
     
     if ( m_operation == PythonCodeCompletionContext::NoCompletion ) {
@@ -131,11 +140,13 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
                 }
                 else {
                     kWarning() << "Did not receive a function declaration from expression visitor! Not offering call tips.";
+                    kWarning() << "Tried: " << m_guessTypeOfExpression;
                 }
                 delete v;
             }
-            delete tmpAst;
             
+            // This is just a lazy workaround to use the declarationListToItemList function conveniently.
+            // TODO: improve this.
             QList<DeclarationDepthPair> realCalltips_withDepth;
             foreach ( Declaration* current, calltips ) {
                 if ( ! dynamic_cast<FunctionDeclaration*>(current) ) {
@@ -148,7 +159,9 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             QList<CompletionTreeItemPointer> calltipItems = declarationListToItemList(realCalltips_withDepth);
             foreach ( CompletionTreeItemPointer current, calltipItems ) {
                 kDebug() << "Adding calltip item, at argument:" << m_alreadyGivenParametersCount+1; 
-                static_cast<FunctionDeclarationCompletionItem*>(current.data())->setAtArgument(m_alreadyGivenParametersCount + 1);
+                FunctionDeclarationCompletionItem* item = static_cast<FunctionDeclarationCompletionItem*>(current.data());
+                item->setAtArgument(m_alreadyGivenParametersCount + 1);
+                item->setDepth(depth());
             }
             
             resultingItems.append(calltipItems);
@@ -254,7 +267,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             v->visitCode(tmpAst);
             if ( v->lastType() ) {
                 kDebug() << v->lastType()->toString();
-                resultingItems = getCompletionItemsForType(v->lastType());
+                resultingItems << getCompletionItemsForType(v->lastType());
             }
             else {
                 kWarning() << "Did not receive a type from expression visitor! Not offering autocompletion.";
@@ -458,21 +471,44 @@ QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems(QList<KUrl>
     return items;
 }
 
-PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& remainingText, int depth)
+PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& remainingText, 
+                                                         QString calledFunction, int depth, int alreadyGivenParameters)
     : CodeCompletionContext(context, remainingText, CursorInRevision::invalid(), depth)
     , m_operation(FunctionCallCompletion)
+    , m_guessTypeOfExpression(calledFunction)
+    , m_alreadyGivenParametersCount(alreadyGivenParameters)
 {
     ExpressionParser p(remainingText);
     summonParentForEventualCall(p.popAll(), remainingText);
 }
 
-void PythonCodeCompletionContext::summonParentForEventualCall(const TokenList& allExpressions, const QString& text)
+void PythonCodeCompletionContext::summonParentForEventualCall(TokenList allExpressions, const QString& text)
 {
-    QPair<int, int> nextCall = allExpressions.nextIndexOfStatus(ExpressionParser::CallFound);
-    if ( nextCall.first != -1 ) {
-        m_parentContext = new PythonCodeCompletionContext(m_duContext, text.mid(0, nextCall.second), depth() + 1);
-        m_alreadyGivenParametersCount = nextCall.first;
+    int offset = 0;
+    while ( true ) {
+        QPair<int, int> nextCall = allExpressions.nextIndexOfStatus(ExpressionParser::EventualCallFound, offset);
+        kDebug() << "next call:" << nextCall;
+        kDebug() << allExpressions.toString();
+        if ( nextCall.first != -1 ) {
+            offset = nextCall.first;
+            allExpressions.reset(offset);
+            TokenListEntry eventualFunction = allExpressions.weakPop();
+            kDebug() << eventualFunction.expression << eventualFunction.status;
+            // it's only a call if a "(" bracket is followed (<- direction) by an expression.
+            if ( eventualFunction.status == ExpressionParser::ExpressionFound ) {
+                kDebug() << "Call found! Creating parent-context.";
+                m_parentContext = new PythonCodeCompletionContext(m_duContext, 
+                                                                  text.mid(0, eventualFunction.charOffset),
+                                                                  eventualFunction.expression, depth() + 1,
+                                                                  qMax(0, nextCall.first - 2) // one for the call item, one for starting at 0
+                                                                 );
+                break;
+            }
+            else continue; // not a call, try the next opening "(" bracket
+        }
+        else break; // no more eventual calls
     }
+    allExpressions.reset(1);
 }
 
 // decide what kind of completion will be offered based on the code before the current cursor position
@@ -501,6 +537,9 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     allExpressions.reset(1);
     allExpressions.length();
     ExpressionParser::Status firstStatus = allExpressions.last().status;
+    
+    // For something like "func1(3, 5, func2(7, ", we want to show all calltips recursively
+    summonParentForEventualCall(allExpressions, text);
     
     if ( firstStatus == ExpressionParser::MeaninglessKeywordFound ) {
         m_operation = DefaultCompletion;
@@ -544,7 +583,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     QList<ExpressionParser::Status> defKeywords;
     defKeywords << ExpressionParser::DefFound << ExpressionParser::ClassFound;
     
-    if ( firstStatus == ExpressionParser::CallFound ) {
+    if ( firstStatus == ExpressionParser::EventualCallFound ) {
         // 2 is always the case for "def foo(" or class foo(": one names the function, the other is the keyword
         if ( allExpressions.length() == 2 ) {
             if ( defKeywords.contains(allExpressions.first().status) ) {
@@ -556,11 +595,6 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         }
     }
     
-    // For something like "func1(3, 5, func2(7, ", we want to show all calltips recursively
-    // This happens after the previous "if", because the patterns are the same for "foo(..." and "def foo(...",
-    // and the latter must be filtered out first (we don't want calltips for defining a function, that makes no sense).
-    summonParentForEventualCall(allExpressions, text);
-    
     // The "def in class context" case is handled above already
     if ( defKeywords.contains(firstStatus) ) {
         m_operation = NoCompletion;
@@ -568,7 +602,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     }
     
     if ( firstStatus == ExpressionParser::ForFound ) {
-        int offset = allExpressions.length() - 2;
+        int offset = allExpressions.length() - 2; // one for the "for", and one for the general off-by-one thing
         QPair<int, int> nextInitializer = allExpressions.nextIndexOfStatus(ExpressionParser::InitializerFound);
         if ( nextInitializer.first == -1 ) {
             // no opening bracket, so no generator completion.
@@ -578,14 +612,16 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         // check that all statements in between are part of a generator initializer list
         bool ok = true;
         QString text;
-        while ( ok && offset > nextInitializer.first ) {
+        int currentOffset = 0;
+        while ( ok && offset > currentOffset ) {
             ok = allExpressions.at(offset).status == ExpressionParser::ExpressionFound;
             if ( ! ok ) break;
             text.prepend(allExpressions.at(offset).expression);
             offset -= 1;
             ok = allExpressions.at(offset).status == ExpressionParser::CommaFound;
             // the last expression must *not* have a comma
-            if ( ! ok && nextInitializer.first == offset ) {
+            currentOffset = allExpressions.length() - nextInitializer.first;
+            if ( ! ok && currentOffset == offset ) {
                 ok = true;
             }
             offset -= 1;

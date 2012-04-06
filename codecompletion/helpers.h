@@ -46,7 +46,7 @@ public:
         NothingFound,
         ExpressionFound,
         CommaFound,
-        CallFound,
+        EventualCallFound,
         InitializerFound,
         FromFound,
         MemberAccessFound,
@@ -120,11 +120,26 @@ public:
         int currentIndex = length() - 1 - offsetFromEnd;
         while ( currentIndex >= 0 ) {
             if ( at(currentIndex).status == status ) {
-                return QPair<int, int>(currentIndex, at(currentIndex).charOffset);
+                return QPair<int, int>(length() - currentIndex, at(currentIndex).charOffset);
             }
             currentIndex -= 1;
         }
         return QPair<int, int>(-1, -1);
+    };
+    
+    QString toString() {
+        QString ret;
+        int pos = 0;
+        foreach ( TokenListEntry item, *this ) {
+            ret.append(
+                "offset " + QString::number(item.charOffset) + 
+                " position " + QString::number(pos) +
+                ": status " + QString::number(item.status) +
+                ", expression " + item.expression + "\n"
+            );
+            pos ++;
+        }
+        return ret;
     };
 private:
     int m_internalPtr;

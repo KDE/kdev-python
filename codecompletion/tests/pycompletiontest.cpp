@@ -112,7 +112,7 @@ void PyCompletionTest::testExpressionParserMisc()
     ExpressionParser p("foobar(3, \"some_string\", func(), funcfunc(3, 5), \t");
     bool ok;
     int expressionsSkipped = 0;
-    p.skipUntilStatus(ExpressionParser::CallFound, &ok, &expressionsSkipped);
+    p.skipUntilStatus(ExpressionParser::EventualCallFound, &ok, &expressionsSkipped);
     QVERIFY(ok);
     QCOMPARE(expressionsSkipped, 4); // number of params
     QCOMPARE(p.getRemainingCode(), QString("foobar"));
@@ -122,7 +122,7 @@ void PyCompletionTest::testExpressionParserMisc()
     QCOMPARE(calledFunction, QString("foobar"));
     
     ExpressionParser q("hello(world, foo.bar[3].foobar(3, \"some_string\", func(), funcfunc(3, 5), \t");
-    q.skipUntilStatus(ExpressionParser::CallFound, &ok, &expressionsSkipped);
+    q.skipUntilStatus(ExpressionParser::EventualCallFound, &ok, &expressionsSkipped);
     QVERIFY(ok);
     QCOMPARE(expressionsSkipped, 4);
     QCOMPARE(q.getRemainingCode(), QString("hello(world, foo.bar[3].foobar"));
@@ -154,7 +154,7 @@ void PyCompletionTest::testExpressionParser_data()
     QTest::newRow("attrExpressionAccess") << "foo.bar.baz." << (int) ExpressionParser::MemberAccessFound << "";
     QTest::newRow("attrExpressionCall") << "foo.bar(3, 5, 7, hell0(3)).baz" << (int) ExpressionParser::ExpressionFound << "foo.bar(3, 5, 7, hell0(3)).baz";
     QTest::newRow("nextArg") << "foo(3, 5, \t" << (int) ExpressionParser::CommaFound << "";
-    QTest::newRow("call") << "fo0barR( \t  " << (int) ExpressionParser::CallFound << "";
+    QTest::newRow("call") << "fo0barR( \t  " << (int) ExpressionParser::EventualCallFound << "";
     QTest::newRow("initializer") << "my_list = [" << (int) ExpressionParser::InitializerFound << "";
     QTest::newRow("fancy_initializer") << "my_list = [1, 2, 3, 4, []" << (int) ExpressionParser::ExpressionFound << "[]";
     QTest::newRow("def") << "def " << (int) ExpressionParser::DefFound << "";

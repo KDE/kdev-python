@@ -171,7 +171,7 @@ bool endsWithSeperatedKeyword(const QString& str, const QString& shouldEndWith) 
 QString ExpressionParser::popExpression(ExpressionParser::Status* status)
 {
     QString operatingOn = getRemainingCode().trimmed().replace('\t', ' ');
-    if ( operatingOn.isEmpty() ) {
+    if ( operatingOn.isEmpty() || getRemainingCode().endsWith('\n') ) {
         *status = NothingFound;
         return QString();
     }
@@ -179,20 +179,10 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
     kDebug() << "last space:" << lastCharIsSpace << getRemainingCode() << getRemainingCode().right(1);
     m_cursorPositionInString -= trailingWhitespace();
     if ( operatingOn.endsWith('(') ) {
-        for ( int index = operatingOn.length() - 2; index >= 0; index-- ) {
-            QChar c = operatingOn.at(index);
-            if ( c.isSpace() ) continue;
-            if ( c.isLetterOrNumber() || c == '_' ) {
-                // call of a function referenced by name
-                m_cursorPositionInString -= 1;
-                *status = CallFound;
-                return QString();
-            }
-            else {
-                // not a call, or not one we can deal with
-                break;
-            }
-        }
+        kDebug() << "eventual call found";
+        m_cursorPositionInString -= 1;
+        *status = EventualCallFound;
+        return QString();
     }
     foreach ( keyword kw, controlChars ) {
         if ( operatingOn.endsWith(kw.first) ) {

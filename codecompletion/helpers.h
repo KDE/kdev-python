@@ -35,6 +35,10 @@ namespace Python {
 
 void createArgumentList(Declaration* dec, QString& ret, QList<QVariant>* highlighting, int atArg = 0);
 
+typedef QPair<ExpressionParser::Status, QPair<QString, int> > StatusResultPair;
+
+class StatusResultList;
+
 class KDEVPYTHONCOMPLETION_EXPORT ExpressionParser {
 public:
     ExpressionParser(QString code);
@@ -47,23 +51,45 @@ public:
         CallFound,
         InitializerFound,
         FromFound,
-        PrintFound,
         MemberAccessFound,
         ImportFound,
         GeneratorFound,
-        RaiseFound
+        RaiseFound,
+        ColonFound,
+        InFound,
+        ClassFound,
+        DefFound,
+        MeaninglessKeywordFound, // "and", "if", "return", ...
+        NoCompletionKeywordFound // "for"
     };
     
     QString popExpression(Status* status);
     QString getRemainingCode();
     QString getScannedCode();
     QString skipUntilStatus(Status requestedStatus, bool* ok, int* expressionsSkipped = 0);
+    StatusResultList popAll();
     void reset();
     int trailingWhitespace();
     
 private:
     QString m_code;
     int m_cursorPositionInString;
+};
+
+class StatusResultList : public QList<StatusResultPair> {
+public:
+    // First returned value is the *expression count* index, the second one is the *character count*.
+    // Oh yeah, the expressions count from the right, the characters count from the left. Convenient, huh?
+    QPair<int, int> nextIndexOfStatus(ExpressionParser::Status status, int offsetFromEnd = 0) {
+        int currentIndex = length() - 1 - offsetFromEnd;
+        while ( currentIndex >= 0 ) {
+            if ( at(currentIndex).first == status ) {
+                return QPair<int, int>(currentIndex, at(currentIndex).second.second);
+            }
+            currentIndex -= 1;
+        }
+        return QPair<int, int>(-1, -1);
+    };
 };
 
 }

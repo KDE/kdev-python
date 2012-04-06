@@ -27,6 +27,7 @@
 #include "items/importfile.h"
 #include "worker.h"
 #include "pythoncompletionexport.h"
+#include "helpers.h"
 #include "types/unsuretype.h"
 
 using namespace KDevelop;
@@ -75,12 +76,15 @@ public:
     bool scanExpressionBackwards(QString line, QStringList stopTokens, QStringList stopAtSpaceWithout, QStringList mustEndWithToken, QStringList ignoreAtEnd, bool ignoreWhitespace = false);
 
 private:
+    /// This constructor is only used for recursive calltips
+    PythonCodeCompletionContext(DUContextPointer context, const QString& remainingText, int depth = 0);
+    void summonParentForEventualCall(const StatusResultList& tokens, const QString& text);
     CompletionContextType m_operation;
     QStack<ProjectFolderItem*> m_folderStack;
     int m_maxFolderScanDepth;
     QStringList m_searchingForModule;
     QString m_subForModule;
-    const PythonCodeCompletionWorker* parent;
+    const PythonCodeCompletionWorker* worker;
     KUrl m_workingOnDocument;
     
     QString m_guessTypeOfExpression;
@@ -91,8 +95,6 @@ private:
     
     QString m_calledFunction;
     int m_alreadyGivenParametersCount;
-    
-    DUContextPointer m_context;
 };
 
 }

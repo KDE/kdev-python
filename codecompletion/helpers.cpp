@@ -17,6 +17,9 @@
  *****************************************************************************
  */
 
+// Note to confused people reading this code: This is not the parser.
+// It's just a minimalist helper class for code completion. The parser is in the parser/ directory.
+
 #include "helpers.h"
 
 #include <language/duchain/abstractfunctiondeclaration.h>
@@ -36,11 +39,46 @@ using namespace KDevelop;
 
 namespace Python {
 
+typedef QPair<QString, ExpressionParser::Status> keyword;
+    
+static QList<keyword> supportedKeywords;
+static QList<keyword> controlChars;
+static QList<QString> miscKeywords;
+static QList<QString> noCompletionKeywords;
+static QMutex keywordPopulationLock;
+
+// Keywords known to me:
+// and       del       for       is        raise    
+// assert    elif      from      lambda    return   
+// break     else      global    not       try      
+// class     except    if        or        while    
+// continue  exec      import    pass      yield    
+// def       finally   in        print     with
+    
 ExpressionParser::ExpressionParser(QString code)
     : m_code(code.trimmed())
     , m_cursorPositionInString(m_code.length())
 {
-    
+    keywordPopulationLock.lock();
+    if ( supportedKeywords.isEmpty() ) {
+        noCompletionKeywords << "break" << "class" << "continue" << "for" << "pass" << "try"
+                             << "def" << "else" << "as" << "finally" << "global" << "lambda";
+        miscKeywords << "and" << "assert" << "del" << "elif" << "exec" << "if" << "is" << "not" 
+                     << "or" << "print" << "return" << "while" << "yield" << "with";
+        supportedKeywords << keyword("import", ExpressionParser::ImportFound);
+        supportedKeywords << keyword("from", ExpressionParser::FromFound);
+        supportedKeywords << keyword("raise", ExpressionParser::RaiseFound);
+        supportedKeywords << keyword("in", ExpressionParser::InFound);
+        supportedKeywords << keyword("class", ExpressionParser::ClassFound);
+        supportedKeywords << keyword("def", ExpressionParser::DefFound);
+        controlChars << keyword(":", ExpressionParser::ColonFound);
+        controlChars << keyword(",", ExpressionParser::CommaFound);
+        controlChars << keyword("(", ExpressionParser::InitializerFound);
+        controlChars << keyword("{", ExpressionParser::InitializerFound);
+        controlChars << keyword("[", ExpressionParser::InitializerFound);
+        controlChars << keyword(".", ExpressionParser::MemberAccessFound);
+    }
+    keywordPopulationLock.unlock();
 }
 
 QString ExpressionParser::getRemainingCode()
@@ -96,44 +134,38 @@ QString ExpressionParser::skipUntilStatus(ExpressionParser::Status requestedStat
     return lastExpression;
 }
 
+QList<StatusResultPair> ExpressionParser::popAll()
+{
+    Status currentStatus = InvalidStatus;
+    QList<StatusResultPair> items;
+    while ( currentStatus != NothingFound ) {
+        QString result = popExpression(&currentStatus);
+        items << StatusResultPair(currentStatus, result);
+    }
+    return items;
+}
+
+bool endsWithSeperatedKeyword(const QString& str, const QString& shouldEndWith) {
+    bool endsWith = str.endsWith(shouldEndWith);
+    int l = shouldEndWith.length();
+    if ( str.length() == l ) {
+        return true;
+    }
+    if ( str.right(l + 1).at(0).isSpace() ) {
+        return true;
+    }
+    return false;
+}
+
 QString ExpressionParser::popExpression(ExpressionParser::Status* status)
 {
-    QString operatingOn = getRemainingCode().trimmed();
+    QString operatingOn = getRemainingCode().trimmed().replace('\t', ' ');
+    bool lastCharIsSpace = m_code.right(1).at(0).isSpace();
     if ( operatingOn.isEmpty() ) {
         *status = NothingFound;
         return QString();
     }
     m_cursorPositionInString -= trailingWhitespace();
-    if ( operatingOn.endsWith(',') ) {
-        m_cursorPositionInString -= 1;
-        *status = CommaFound;
-        return QString();
-    }
-    if ( operatingOn.endsWith("import") ) {
-        m_cursorPositionInString -= 6;
-        *status = ImportFound;
-        return QString();
-    }
-    if ( operatingOn.endsWith("from") ) {
-        m_cursorPositionInString -= 4;
-        *status = FromFound;
-        return QString();
-    }
-    if ( operatingOn.endsWith("print") ) {
-        m_cursorPositionInString -= 5;
-        *status = PrintFound;
-        return QString();
-    }
-    if ( operatingOn.endsWith("raise") ) {
-        m_cursorPositionInString -= 5;
-        *status = RaiseFound;
-        return QString();
-    }
-    if ( operatingOn.endsWith('.') ) {
-        m_cursorPositionInString -= 1;
-        *status = MemberAccessFound;
-        return QString();
-    }
     if ( operatingOn.endsWith('(') ) {
         for ( int index = operatingOn.length() - 2; index >= 0; index-- ) {
             QChar c = operatingOn.at(index);
@@ -150,10 +182,35 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
             }
         }
     }
-    if ( operatingOn.endsWith('[') || operatingOn.endsWith('{') || operatingOn.endsWith('(') ) {
-        m_cursorPositionInString -= 1;
-        *status = InitializerFound;
-        return QString();
+    foreach ( keyword kw, controlChars ) {
+        if ( operatingOn.endsWith(kw.first) ) {
+            m_cursorPositionInString -= kw.first.length();
+            *status = kw.second;
+            return QString();
+        }
+    }
+    if ( lastCharIsSpace ) {
+        foreach ( keyword kw, supportedKeywords ) {
+            if ( endsWithSeperatedKeyword(operatingOn, kw.first) ) {
+                m_cursorPositionInString -= kw.first.length();
+                *status = kw.second;
+                return QString();
+            }
+        }
+        foreach ( QString kw, miscKeywords ) {
+            if ( endsWithSeperatedKeyword(operatingOn, kw) ) {
+                m_cursorPositionInString -= kw.length();
+                *status = MeaninglessKeywordFound;
+                return QString();
+            }
+        }
+        foreach ( QString kw, noCompletionKeywords ) {
+            if ( endsWithSeperatedKeyword(operatingOn, kw) ) {
+                m_cursorPositionInString -= kw.length();
+                *status = NoCompletionKeywordFound;
+                return QString();
+            }
+        }
     }
     // Otherwise, there's a real expression at the cursor, so scan it.
     QStringList lines = operatingOn.split('\n');

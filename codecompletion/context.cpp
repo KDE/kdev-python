@@ -87,7 +87,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         AstBuilder* builder = new AstBuilder(&pool);
         CodeAst* tmpAst = builder->parse(KUrl(), m_remainingExpression);
         if ( tmpAst ) {
-            ExpressionVisitor* v = new ExpressionVisitor(m_context.data());
+            ExpressionVisitor* v = new ExpressionVisitor(m_duContext.data());
             v->m_forceGlobalSearching = true;
             v->m_scanUntilCursor = m_position;
             v->m_reportUnknownNames = true;
@@ -120,17 +120,17 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     }
     else if ( m_operation == PythonCodeCompletionContext::DefineCompletion ) {
         // Find all base classes of the current class context
-        if ( m_context->type() != DUContext::Class ) {
+        if ( m_duContext->type() != DUContext::Class ) {
             kWarning() << "current context is not a class context, not offering define completion";
         }
-        else if ( ClassDeclaration* klass = dynamic_cast<ClassDeclaration*>(m_context->owner()) ) {
+        else if ( ClassDeclaration* klass = dynamic_cast<ClassDeclaration*>(m_duContext->owner()) ) {
             QList<DUContext*> baseClassContexts = Helper::internalContextsForClass(
-                klass->type<StructureType>(), m_context->topContext()
+                klass->type<StructureType>(), m_duContext->topContext()
             );
-            baseClassContexts.removeAll(m_context.data()); // remove the class' own context
+            baseClassContexts.removeAll(m_duContext.data()); // remove the class' own context
             Q_ASSERT(baseClassContexts.size() >= 1);
             foreach ( DUContext* c, baseClassContexts ) {
-                QList<DeclarationDepthPair> declarations = c->allDeclarations(CursorInRevision::invalid(), m_context->topContext(), false);
+                QList<DeclarationDepthPair> declarations = c->allDeclarations(CursorInRevision::invalid(), m_duContext->topContext(), false);
                 foreach ( DeclarationDepthPair d, declarations ) {
                     if ( FunctionDeclaration* funcDecl = dynamic_cast<FunctionDeclaration*>(d.first) ) {
                         QStringList argumentNames;
@@ -172,7 +172,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             QList<DeclarationDepthPair> validDeclarations;
             ClassDeclaration* current = 0;
             StructureType::Ptr type;
-            foreach ( DeclarationDepthPair d, m_context->topContext()->allDeclarations(CursorInRevision::invalid(), m_context->topContext()) ) {
+            foreach ( DeclarationDepthPair d, m_duContext->topContext()->allDeclarations(CursorInRevision::invalid(), m_duContext->topContext()) ) {
                 if ( ( current = dynamic_cast<ClassDeclaration*>(d.first) ) ) {
                     if ( current->baseClassesSize() ) {
                         FOREACH_FUNCTION( const BaseClassInstance& base, current->baseClasses ) {
@@ -214,7 +214,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         AstBuilder* builder = new AstBuilder(&pool);
         CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
         if ( tmpAst ) {
-            ExpressionVisitor* v = new ExpressionVisitor(m_context.data());
+            ExpressionVisitor* v = new ExpressionVisitor(m_duContext.data());
             v->m_forceGlobalSearching = true;
             v->visitCode(tmpAst);
             if ( v->lastType() ) {
@@ -251,7 +251,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             AstBuilder* builder = new AstBuilder(&pool);
             CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
             if ( tmpAst ) {
-                ExpressionVisitor* v = new ExpressionVisitor(m_context.data());
+                ExpressionVisitor* v = new ExpressionVisitor(m_duContext.data());
                 v->m_forceGlobalSearching = true;
                 v->visitCode(tmpAst);
                 if ( v->lastDeclaration() ) {
@@ -361,17 +361,17 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
         // find properties of class declaration
         TypePtr<StructureType> cls = StructureType::Ptr::dynamicCast(type);
         kDebug() << "Finding completion items for class type";
-        if ( ! cls || ! cls->internalContext(m_context->topContext()) ) {
+        if ( ! cls || ! cls->internalContext(m_duContext->topContext()) ) {
             kWarning() << "No class type available, no completion offered";
             kDebug() << cls;
             return QList<CompletionTreeItemPointer>();
         }
         // the PublicOnly will filter out non-explictly defined __get__ etc. functions inherited from object
-        QList<DUContext*> searchContexts = Helper::internalContextsForClass(cls, m_context->topContext(), Helper::PublicOnly);
+        QList<DUContext*> searchContexts = Helper::internalContextsForClass(cls, m_duContext->topContext(), Helper::PublicOnly);
         QList<DeclarationDepthPair> keepDeclarations;
         foreach ( const DUContext* currentlySearchedContext, searchContexts ) {
             kDebug() << "searching context " << currentlySearchedContext->scopeIdentifier() << "for autocompletion items";
-            QList<DeclarationDepthPair> declarations = currentlySearchedContext->allDeclarations(CursorInRevision::invalid(), m_context->topContext(), false);
+            QList<DeclarationDepthPair> declarations = currentlySearchedContext->allDeclarations(CursorInRevision::invalid(), m_duContext->topContext(), false);
             kDebug() << "found" << declarations.length() << "declarations";
             
             // filter out those which are builtin functions, and those which were imported; we don't want those here
@@ -460,15 +460,30 @@ QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems(QList<KUrl>
     return items;
 }
 
+PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& remainingText, int depth = 0)
+    : CodeCompletionContext(context, remainingText, CursorInRevision::invalid(), depth)
+    , m_operation(FunctionCallCompletion)
+{
+    ExpressionParser p(remainingText);
+    summonParentForEventualCall(p.popAll(), remainingText);
+}
+
+void PythonCodeCompletionContext::summonParentForEventualCall(const StatusResultList& allExpressions, const QString& text)
+{
+    QPair<int, int> nextCall = allExpressions.nextIndexOfStatus(ExpressionParser::CallFound);
+    if ( nextCall.first != -1 ) {
+        m_parentContext = new PythonCodeCompletionContext(m_duContext, text.mid(0, nextCall.second), depth + 1);
+    }
+}
+
 // decide what kind of completion will be offered based on the code before the current cursor position
 PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& text,
                                                          const KDevelop::CursorInRevision& position, 
                                                          int depth, const PythonCodeCompletionWorker* parent)
     : CodeCompletionContext(context, text, position, depth)
     , m_operation(PythonCodeCompletionContext::DefaultCompletion)
-    , parent(parent)
+    , worker(parent)
     , m_position(position)
-    , m_context(context)
 {
     m_workingOnDocument = context->topContext()->url().toUrl();
     int atLine = position.line;
@@ -482,8 +497,10 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     
     // The expression parser used to determine the type of completion required.
     ExpressionParser parser(text);
-    ExpressionParser::Status firstStatus;
-    parser.popExpression(&firstStatus);
+    StatusResultList allExpressions = parser.popAll();
+    ExpressionParser::Status firstStatus = allExpressions.last().first;
+    
+    summonParentForEventualCall(allExpressions, text);
     
     if ( firstStatus == ExpressionParser::RaiseFound ) {
         m_operation = PythonCodeCompletionContext::RaiseExceptionCompletion;

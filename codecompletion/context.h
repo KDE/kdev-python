@@ -69,12 +69,6 @@ public:
     
     QList<CompletionTreeItemPointer> declarationListToItemList(QList<DeclarationDepthPair> declarations, int maxDepth = 0);
     
-    // go back the current line, and kill everything except an eventual Expression we search for.
-    // there's two cases in which the search will stop: a space without a token mentioned in stopAtSpaceWithout (for "while foo.bar.")
-    // or any unmatched left parenthesis (for "foo(bar.baz.").
-    // remaining expression can be found in m_guessTypeOfExpression after calling
-    bool scanExpressionBackwards(QString line, QStringList stopTokens, QStringList stopAtSpaceWithout, QStringList mustEndWithToken, QStringList ignoreAtEnd, bool ignoreWhitespace = false);
-
 private:
     /// This constructor is only used for recursive calltips
     PythonCodeCompletionContext(DUContextPointer context, const QString& remainingText, int depth = 0);

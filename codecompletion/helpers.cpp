@@ -56,13 +56,13 @@ static QMutex keywordPopulationLock;
 // def       finally   in        print     with
     
 ExpressionParser::ExpressionParser(QString code)
-    : m_code(code.trimmed())
+    : m_code(code)
     , m_cursorPositionInString(m_code.length())
 {
     keywordPopulationLock.lock();
     if ( supportedKeywords.isEmpty() ) {
         noCompletionKeywords << "break" << "class" << "continue" << "pass" << "try"
-                             << "def" << "else" << "as" << "finally" << "global" << "lambda";
+                             << "else" << "as" << "finally" << "global" << "lambda";
         miscKeywords << "and" << "assert" << "del" << "elif" << "exec" << "if" << "is" << "not" 
                      << "or" << "print" << "return" << "while" << "yield" << "with";
         supportedKeywords << keyword("import", ExpressionParser::ImportFound);
@@ -153,6 +153,7 @@ TokenList ExpressionParser::popAll()
 
 bool endsWithSeperatedKeyword(const QString& str, const QString& shouldEndWith) {
     bool endsWith = str.endsWith(shouldEndWith);
+    kDebug() << str << shouldEndWith << endsWith;
     if ( ! endsWith ) {
         return false;
     }
@@ -169,11 +170,12 @@ bool endsWithSeperatedKeyword(const QString& str, const QString& shouldEndWith) 
 QString ExpressionParser::popExpression(ExpressionParser::Status* status)
 {
     QString operatingOn = getRemainingCode().trimmed().replace('\t', ' ');
-    bool lastCharIsSpace = m_code.right(1).at(0).isSpace();
     if ( operatingOn.isEmpty() ) {
         *status = NothingFound;
         return QString();
     }
+    bool lastCharIsSpace = getRemainingCode().right(1).at(0).isSpace();
+    kDebug() << "last space:" << lastCharIsSpace << getRemainingCode() << getRemainingCode().right(1);
     m_cursorPositionInString -= trailingWhitespace();
     if ( operatingOn.endsWith('(') ) {
         for ( int index = operatingOn.length() - 2; index >= 0; index-- ) {

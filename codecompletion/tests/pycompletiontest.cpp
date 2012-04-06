@@ -157,6 +157,7 @@ void PyCompletionTest::testExpressionParser_data()
     QTest::newRow("call") << "fo0barR( \t  " << (int) ExpressionParser::CallFound << "";
     QTest::newRow("initializer") << "my_list = [" << (int) ExpressionParser::InitializerFound << "";
     QTest::newRow("fancy_initializer") << "my_list = [1, 2, 3, 4, []" << (int) ExpressionParser::ExpressionFound << "[]";
+    QTest::newRow("def") << "def " << (int) ExpressionParser::DefFound << "";
 }
 
 const QList<CompletionTreeItem*> PyCompletionTest::invokeCompletionOn(const QString& initCode, const QString& invokeCode)

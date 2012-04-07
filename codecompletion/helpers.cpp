@@ -236,7 +236,8 @@ void createArgumentList(Declaration* dec, QString& ret, QList<QVariant>* highlig
     int textFormatStart = 0;
     QTextFormat normalFormat(QTextFormat::CharFormat);
     QTextFormat highlightFormat(QTextFormat::CharFormat);
-    highlightFormat.setBackground(Qt::green);
+    highlightFormat.setBackground(QColor::fromRgb(142, 186, 255));
+    highlightFormat.setProperty(QTextFormat::FontWeight, 255);
     
     AbstractFunctionDeclaration* decl = dynamic_cast<AbstractFunctionDeclaration*>(dec);
     FunctionType::Ptr functionType = dec->type<FunctionType>();
@@ -282,16 +283,6 @@ void createArgumentList(Declaration* dec, QString& ret, QList<QVariant>* highlig
 
             doHighlight = true;
 
-            if (doHighlight) {
-                if (highlighting && ret.length() != textFormatStart) {
-                    //Add a default-highlighting for the passed text
-                    *highlighting <<  QVariant(textFormatStart);
-                    *highlighting << QVariant(ret.length() - textFormatStart);
-                    *highlighting << QVariant(normalFormat);
-                    textFormatStart = ret.length();
-                }
-            }
-
             if (num < functionType->arguments().count()) {
                 if (AbstractType::Ptr type = functionType->arguments().at(num)) {
                     if ( type->toString() != "<unknown>" ) {
@@ -299,12 +290,22 @@ void createArgumentList(Declaration* dec, QString& ret, QList<QVariant>* highlig
                     }
                 }
             }
+            
+            if (doHighlight) {
+                if (highlighting && ret.length() != textFormatStart) {
+                    //Add a default-highlighting for the passed text
+                    *highlighting << QVariant(textFormatStart);
+                    *highlighting << QVariant(ret.length() - textFormatStart);
+                    *highlighting << QVariant(normalFormat);
+                    textFormatStart = ret.length();
+                }
+            }
 
             ret += dec->identifier().toString();
 
             if (doHighlight) {
                 if (highlighting && ret.length() != textFormatStart) {
-                    *highlighting <<  QVariant(textFormatStart);
+                    *highlighting << QVariant(textFormatStart);
                     *highlighting << QVariant(ret.length() - textFormatStart);
                     *highlighting << doFormat;
                     textFormatStart = ret.length();

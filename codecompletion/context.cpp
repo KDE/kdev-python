@@ -78,11 +78,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     }
     
     // Find all calltips recursively
-    CodeCompletionContext* parent = parentContext();
-    while ( parent ) {
-        kDebug() << "adding calltips from " << parent;
-        resultingItems.append(parent->completionItems(abort, fullCompletion));
-        parent = parent->parentContext();
+    if ( parentContext() ) {
+        resultingItems.append(parentContext()->completionItems(abort, fullCompletion));
     }
     
     if ( m_operation == PythonCodeCompletionContext::NoCompletion ) {
@@ -497,10 +494,20 @@ void PythonCodeCompletionContext::summonParentForEventualCall(TokenList allExpre
             // it's only a call if a "(" bracket is followed (<- direction) by an expression.
             if ( eventualFunction.status == ExpressionParser::ExpressionFound ) {
                 kDebug() << "Call found! Creating parent-context.";
+                // determine the amount of real expressions in between
+                allExpressions.reset(1);
+                int currentOffset = allExpressions.length();
+                int atParameter = -1;
+                while ( currentOffset >= allExpressions.length() - offset ) {
+                    currentOffset -= 1;
+                    if ( allExpressions.weakPop().status == ExpressionParser::ExpressionFound ) {
+                        atParameter += 1;
+                    }
+                }
                 m_parentContext = new PythonCodeCompletionContext(m_duContext, 
                                                                   text.mid(0, eventualFunction.charOffset),
                                                                   eventualFunction.expression, depth() + 1,
-                                                                  qMax(0, nextCall.first - 2) // one for the call item, one for starting at 0
+                                                                  atParameter
                                                                  );
                 break;
             }
@@ -532,14 +539,14 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     }
     
     // The expression parser used to determine the type of completion required.
-    ExpressionParser parser(text);
+    ExpressionParser parser(textWithoutStrings);
     TokenList allExpressions = parser.popAll();
     allExpressions.reset(1);
     allExpressions.length();
     ExpressionParser::Status firstStatus = allExpressions.last().status;
     
     // For something like "func1(3, 5, func2(7, ", we want to show all calltips recursively
-    summonParentForEventualCall(allExpressions, text);
+    summonParentForEventualCall(allExpressions, textWithoutStrings);
     
     if ( firstStatus == ExpressionParser::MeaninglessKeywordFound ) {
         m_operation = DefaultCompletion;

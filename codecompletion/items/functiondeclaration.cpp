@@ -116,7 +116,11 @@ void FunctionDeclarationCompletionItem::executed(KTextEditor::Document* document
         return;
     }
     kDebug() << "declaration data: " << fdecl.data();
-    const QString suffix = "()";
+    QString suffix = "()";
+    KTextEditor::Range checkSuffix(word.end().line(), word.end().column(), word.end().line(), word.end().column() + 2);
+    if ( document->text(checkSuffix) == "()" ) {
+        suffix = ""; // don't insert brackets if they're already there
+    }
     int skip = 2; // place cursor behind bracktes
     if ( fdecl.data()->type<FunctionType>()->arguments().length() != 0 ) {
         skip = 1; // place cursor in brackets if there's parameters

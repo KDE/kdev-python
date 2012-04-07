@@ -176,6 +176,8 @@ QList< TypePtr< StructureType > > ExpressionVisitor::typeListForDeclarationList(
 
 void ExpressionVisitor::visitAttribute(AttributeAst* node)
 {
+    Python::AstDefaultVisitor::visitAttribute(node);
+    
     ExpressionAst* accessingAttributeOf = node->value;
 
     ExpressionVisitor v(m_ctx);

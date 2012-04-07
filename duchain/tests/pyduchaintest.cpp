@@ -394,6 +394,7 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("listtype_with_contents") << "checkme = [1, 2, 3, 4, 5]" << "list of int";
     QTest::newRow("listtype_extended") << "some_misc_var = []; checkme = some_misc_var" << "list";
     QTest::newRow("dicttype") << "checkme = {}" << "dict";
+    QTest::newRow("dicttype_get") << "d = {0.4:5}; checkme = d.get(0)" << "int";
     QTest::newRow("dicttype_func") << "checkme = dict()" << "dict";
     QTest::newRow("dicttype_extended") << "some_misc_var = {}; checkme = some_misc_var" << "dict";
     QTest::newRow("bool") << "checkme = True" << "bool";

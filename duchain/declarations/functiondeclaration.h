@@ -34,7 +34,7 @@ class KDEVPYTHONDUCHAIN_EXPORT FunctionDeclarationData : public KDevelop::Functi
 {
 public:
     FunctionDeclarationData()
-        : KDevelop::FunctionDeclarationData() 
+        : KDevelop::FunctionDeclarationData(), m_isStatic(false)
     {
         initializeAppendedLists();
     }
@@ -49,6 +49,8 @@ public:
     ~FunctionDeclarationData() {
         freeAppendedLists();
     }
+    
+    bool m_isStatic: 1;
 
     START_APPENDED_LISTS_BASE(FunctionDeclarationData, KDevelop::FunctionDeclarationData);
     APPENDED_LIST_FIRST(FunctionDeclarationData, Decorator, m_decorators);
@@ -68,11 +70,19 @@ public:
         Identity = 126
     };
     
-    inline const Decorator* decorators() {
+    inline bool isStatic() const {
+        return d_func()->m_isStatic;
+    }
+    
+    inline void setStatic(bool isStatic) {
+        d_func_dynamic()->m_isStatic = isStatic;
+    }
+    
+    inline const Decorator* decorators() const {
         return d_func()->m_decorators();
     };
     
-    inline unsigned int decoratorsSize() {
+    inline unsigned int decoratorsSize() const {
         return d_func()->m_decoratorsSize();
     };
     

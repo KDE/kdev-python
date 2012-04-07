@@ -533,7 +533,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     m_workingOnDocument = context->topContext()->url().toUrl();
     QString textWithoutStrings = CodeHelpers::killStrings(text);
     
-    kDebug() << text;
+    kDebug() << text << position << context->localScopeIdentifier().toString() << context->range();
     
     // check if the current position is inside a multi-line comment / string -> no completion if this is the case
     if ( CodeHelpers::endsInsideCommend(text) ) {
@@ -553,6 +553,11 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     
     if ( firstStatus == ExpressionParser::MeaninglessKeywordFound ) {
         m_operation = DefaultCompletion;
+        return;
+    }
+    
+    if ( firstStatus == ExpressionParser::NoCompletionKeywordFound ) {
+        m_operation = NoCompletion;
         return;
     }
     

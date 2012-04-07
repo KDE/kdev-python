@@ -177,80 +177,40 @@ QList< TypePtr< StructureType > > ExpressionVisitor::typeListForDeclarationList(
 void ExpressionVisitor::visitAttribute(AttributeAst* node)
 {
     ExpressionAst* accessingAttributeOf = node->value;
-//     Identifier* identifier = 0;
-    QList<DeclarationPointer> availableDeclarations;
-    
-    kDebug() << "Processing attribute: " << node->attribute->value;
-    
-    RangeInRevision useRange(node->attribute->startLine, node->attribute->startCol,
-                             node->attribute->endLine, node->attribute->endCol + 1);
-    
-    QList<DeclarationPointer> accessingAttributeOfDeclaration;
-    QList< TypePtr< StructureType > > accessingAttributeOfType;
-    
-    // Step 1: Find out which kind of attribute is before us in the queue, like foo.bar().baz, foo.bar.baz, foo.bar[].baz, etc.
-    // Query information about its type or declaration from previously visited stuff.
-    Python::AstDefaultVisitor::visitAttribute(node);
-    if ( accessingAttributeOf->astType == Ast::AttributeAstType ) {
-//         identifier = dynamic_cast<AttributeAst*>(accessingAttributeOf)->attribute;
-        // checking for "last" makes sense as the list either contains one invalid declaration,
-        // or one or more valid ones (but never valid AND invalid ones)
-        if ( ! lastDeclarations().isEmpty() ) {
-            availableDeclarations = lastDeclarations();
+
+    ExpressionVisitor v(m_ctx);
+    v.visitNode(accessingAttributeOf);
+    AbstractType::Ptr accessedType = v.lastType();
+    QList<AbstractType::Ptr> accessingAttributeOfType;
+    if ( accessedType->whichType() == AbstractType::TypeUnsure ) {
+        UnsureType::Ptr unsure = accessedType.cast<UnsureType>();
+        int size = unsure->typesSize();
+        for ( int i = 0; i < size; i++ ) {
+            accessingAttributeOfType << unsure->types()[i].abstractType();
         }
-        else {
-            kDebug() << "No type set for accessed attribute";
-            m_shouldBeKnown = false;
-            return unknownTypeEncountered();
-        }
-    }
-    else if ( accessingAttributeOf->astType == Ast::NameAstType ) {
-        availableDeclarations = lastDeclarations();
-    }
-    else if ( accessingAttributeOf->astType == Ast::CallAstType ) {
-        availableDeclarations.clear();
-        accessingAttributeOfType.append(possibleStructureTypes(lastType()));
-    }
-    else if ( accessingAttributeOf->astType == Ast::SliceAstType ) {
-        availableDeclarations = lastDeclarations();
-    }
-    else if ( not lastType().isNull() && lastType().cast<StructureType>() ) {
-        accessingAttributeOfType.append(lastType().cast<StructureType>());
     }
     else {
-        kDebug() << "Warning: Unsupported attribute access method";
-        return unknownTypeEncountered();
-    }
-    
-    // Step 2: Select a declaration from those which were found.
-    if ( availableDeclarations.length() > 0 && availableDeclarations.last().data() ) {
-        accessingAttributeOfDeclaration = availableDeclarations;
-    }
-    else if ( accessingAttributeOfType.isEmpty() ) {
-        kDebug() << "No declaration found to look up type of attribute in.";
-        kDebug() << "call: " << node->belongsToCall;
-        return unknownTypeEncountered();
-    }
-    
-    // Step 3: If no type was found previously, construct it from the Declaration.
-    if ( accessingAttributeOfType.isEmpty() ) {
-        accessingAttributeOfType = typeListForDeclarationList(accessingAttributeOfDeclaration);
+        accessingAttributeOfType << accessedType;
     }
     
     QList<Declaration*> foundDecls;
     
-    // Step 4: Find all matching declarations which are made inside the type of which the accessed object is.
+    // Step 1: Find all matching declarations which are made inside the type of which the accessed object is.
     // Like, for A.B.C where B is an instance of foo, when processing C, find all properties of foo which are called C.
     
     // maybe our attribute isn't a class at all, then that's an error by definition for now
     bool success = false;
     bool haveOneUsefulType = false;
     if ( ! accessingAttributeOfType.isEmpty() ) {
-        foreach ( StructureType::Ptr currentStructureType, accessingAttributeOfType ) {
-            if ( Helper::isUsefulType(currentStructureType.cast<AbstractType>()) ) {
+        foreach ( AbstractType::Ptr current, accessingAttributeOfType ) {
+            if ( current->whichType() != AbstractType::TypeStructure ) {
+                continue;
+            }
+            StructureType::Ptr currentStructure = current.cast<StructureType>();
+            if ( Helper::isUsefulType(current) ) {
                 haveOneUsefulType = true;
             }
-            QList<DUContext*> searchContexts = Helper::internalContextsForClass(currentStructureType, m_ctx->topContext());
+            QList<DUContext*> searchContexts = Helper::internalContextsForClass(currentStructure, m_ctx->topContext());
             kDebug() << "Searching declarations in contexts: " << searchContexts;
             foreach ( DUContext* currentInternalContext, searchContexts ) {
                 if ( currentInternalContext ) {
@@ -267,7 +227,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
         m_shouldBeKnown = false;
     }
     
-    // Step 5: Construct the type of the declaration which was found.
+    // Step 2: Construct the type of the declaration which was found.
     DeclarationPointer actualDeclaration(0);
     if ( foundDecls.length() > 0 ) {
         actualDeclaration = DeclarationPointer(Helper::resolveAliasDeclaration(foundDecls.last()));

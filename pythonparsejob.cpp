@@ -48,12 +48,14 @@
 // #include "contextbuilder.h"
 #include "declarationbuilder.h"
 #include "usebuilder.h"
+#include <interfaces/foregroundlock.h>
 // #include "astprinter.h"
 // #include "usebuilder.h"
 #include <language/highlighting/codehighlighting.h>
 #include <interfaces/icore.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <language/duchain/indexedstring.h>
+#include <language/duchain/duchainutils.h>
 #include <language/backgroundparser/backgroundparser.h>
 
 using namespace KDevelop;
@@ -99,6 +101,10 @@ void ParseJob::run()
     LanguageSupport* lang = python();
     ILanguage* ilang = lang->language();
     
+    if ( abortRequested() || ICore::self()->shuttingDown() ) {
+        return abortJob();
+    }
+    
     qDebug() << " ====> PARSING ====> parsing file " << m_url.path() << "; has priority" << parsePriority();
     
     if ( ! lang || ! ilang ) {
@@ -111,6 +117,14 @@ void ParseJob::run()
     UrlParseLock urlLock(document());
     
     readContents();
+    TopDUContext* toUpdate = 0;
+    {
+        DUChainReadLocker lock;
+        toUpdate = DUChainUtils::standardContextForUrl(document().toUrl());
+    }
+    if ( toUpdate ) {
+        translateDUChainToRevision(toUpdate);
+    }
     
     currentSession.setContents( QString::fromUtf8(contents().contents) );
     currentSession.setCurrentDocument(m_url);
@@ -137,7 +151,7 @@ void ParseJob::run()
         builder.m_futureModificationRevision = contents().modification;
         
         // Run the declaration builder. If necessary, it will run itself again.
-        m_duContext = builder.build(filename, m_ast, m_duContext);
+        m_duContext = builder.build(filename, m_ast, toUpdate);
         if ( abortRequested() ) {
             return abortJob();
         }
@@ -197,14 +211,13 @@ void ParseJob::run()
     else {
         // No syntax tree was received from the parser, the expected reason for this is a syntax error in the document.
         kWarning() << "---- Parsing FAILED ----";
-        if ( abortRequested() ) {
-            return abortJob();
-        }
         DUChainWriteLocker lock;
-        m_duContext = DUChain::self()->chainForDocument(document());
+        m_duContext = toUpdate;
         // if there's already a chain for the document, do some cleanup.
         if ( m_duContext ) {
-            m_duContext->parsingEnvironmentFile()->clearModificationRevisions(); // TODO why?
+//             m_duContext->parsingEnvironmentFile()->clearModificationRevisions(); // TODO why?
+            ParsingEnvironmentFilePointer parsingEnvironmentFile = m_duContext->parsingEnvironmentFile();
+            parsingEnvironmentFile->setModificationRevision(contents().modification);
             m_duContext->clearProblems();
         }
         // otherwise, create a new, empty top context for the file. This serves as a placeholder until

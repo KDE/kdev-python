@@ -154,7 +154,6 @@ TokenList ExpressionParser::popAll()
 
 bool endsWithSeperatedKeyword(const QString& str, const QString& shouldEndWith) {
     bool endsWith = str.endsWith(shouldEndWith);
-    kDebug() << str << shouldEndWith << endsWith;
     if ( ! endsWith ) {
         return false;
     }
@@ -176,7 +175,6 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
         return QString();
     }
     bool lastCharIsSpace = getRemainingCode().right(1).at(0).isSpace();
-    kDebug() << "last space:" << lastCharIsSpace << getRemainingCode() << getRemainingCode().right(1);
     m_cursorPositionInString -= trailingWhitespace();
     if ( operatingOn.endsWith('(') ) {
         kDebug() << "eventual call found";

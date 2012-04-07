@@ -172,12 +172,30 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             QList<DUContext*> baseClassContexts = Helper::internalContextsForClass(
                 klass->type<StructureType>(), m_duContext->topContext()
             );
-            baseClassContexts.removeAll(m_duContext.data()); // remove the class' own context
+            // This class' context is put first in the list, so all functions existing here
+            // can be skipped.
+            baseClassContexts.removeAll(m_duContext.data());
+            baseClassContexts.prepend(m_duContext.data());
             Q_ASSERT(baseClassContexts.size() >= 1);
+            QList<IndexedString> existingIdentifiers;
+            
+            bool isOwnContext = true;
             foreach ( DUContext* c, baseClassContexts ) {
-                QList<DeclarationDepthPair> declarations = c->allDeclarations(CursorInRevision::invalid(), m_duContext->topContext(), false);
+                QList<DeclarationDepthPair> declarations = c->allDeclarations(
+                    CursorInRevision::invalid(), m_duContext->topContext(), false
+                );
                 foreach ( DeclarationDepthPair d, declarations ) {
                     if ( FunctionDeclaration* funcDecl = dynamic_cast<FunctionDeclaration*>(d.first) ) {
+                        // python does not have overloads or similar, so comparing the function names is enough.
+                        const IndexedString identifier = funcDecl->identifier().identifier();
+                        if ( isOwnContext ) {
+                            existingIdentifiers << identifier;
+                        }
+                            
+                        if ( existingIdentifiers.contains(identifier) ) {
+                            continue;
+                        }
+                        existingIdentifiers << identifier;
                         QStringList argumentNames;
                         DUContext* argumentsContext = DUChainUtils::getArgumentContext(funcDecl);
                         foreach ( Declaration* argument, argumentsContext->localDeclarations() ) {
@@ -188,6 +206,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
                         );
                     }
                 }
+                isOwnContext = false;
             }
         }
     }
@@ -548,6 +567,33 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     allExpressions.length();
     ExpressionParser::Status firstStatus = allExpressions.last().status;
     
+    // TODO reuse already calculated information
+    FileIndentInformation indents(text);
+    
+    DUContext* currentlyChecked = context.data();
+    int currentlyCheckedLine = position.line;
+    {
+        DUChainReadLocker lock(DUChain::lock());
+        while ( currentlyChecked == context.data() && currentlyCheckedLine >= 0 ) {
+            currentlyChecked = context->topContext()->findContextAt(CursorInRevision(currentlyCheckedLine, 0), true);
+            currentlyCheckedLine -= 1;
+        }
+        while ( currentlyChecked && context->parentContextOf(currentlyChecked) ) {
+            kDebug() << "checking:" << currentlyChecked->range() << currentlyChecked->type();
+            // FIXME: "<" is not really good, it must be one indent-level less
+            if (    indents.indentForLine(indents.linesCount()-1-(position.line-currentlyChecked->range().start.line)) 
+                 <  indents.indentForLine(indents.linesCount()-1) )
+            {
+                kDebug() << "changing context to" << currentlyChecked->range() << ( currentlyChecked->type() == DUContext::Class );
+                context = currentlyChecked;
+                break;
+            }
+            currentlyChecked = currentlyChecked->parentContext();
+        }
+    }
+    
+    m_duContext = context;
+    
     // For something like "func1(3, 5, func2(7, ", we want to show all calltips recursively
     summonParentForEventualCall(allExpressions, textWithoutStrings);
     
@@ -585,11 +631,11 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     
     if ( firstStatus == ExpressionParser::DefFound ) {
         if ( context->type() == DUContext::Class ) {
-            // TODO get and save current indentation level
-            m_indent = "";
+            m_indent = QString(" ").repeated(indents.indentForLine(indents.linesCount()-1));
             m_operation = DefineCompletion;
         }
         else {
+            kDebug() << "def outside class context";
             m_operation = NoCompletion;
         }
         return;

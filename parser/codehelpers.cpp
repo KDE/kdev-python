@@ -72,6 +72,11 @@ int FileIndentInformation::indentForLine(int line) const
     return m_indents.at(line);
 }
 
+int FileIndentInformation::linesCount() const
+{
+    return m_indents.length();
+}
+
 int FileIndentInformation::nextChange(int line, ChangeTypes type, ScanDirection direction) const
 {
     line = qMin(line, m_indents.length() - 1);

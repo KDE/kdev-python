@@ -367,16 +367,13 @@ void PyCompletionTest::testImplementMethodCompletion_data()
     QTest::addColumn<QString>("invokeCode");
     QTest::addColumn<QString>("completionCode");
     
-    // The commented tests are not required to pass.
     QTest::newRow("simple_begin") << "class myclass():\n %INVOKE\n pass" << "def %CURSOR";
-//     QTest::newRow("text_begin") << "class myclass():\n %INVOKE\n pass" << "def __ini%CURSOR";
     QTest::newRow("another_method_before") << "class myclass():\n def some_method(param):pass\n %INVOKE" << "def %CURSOR";
-//     QTest::newRow("another_method_before_text") << "class myclass():\n def some_method(param):"
-//                                                    "pass\n %INVOKE" << "def __ini%CURSOR";
     QTest::newRow("another_method_before_multiline") << "class myclass():\n def some_method(param):\n  pass\n  pass \n  pass"
                                                         "\n %INVOKE" << "def %CURSOR";
-//     QTest::newRow("another_method_before_text_multiline") << "class myclass():\n def some_method(param):\n"
-//                                                    "  pass\n  pass\n  pass\n %INVOKE" << "def __ini%CURSOR";
+    QTest::newRow("contextskip") << "class myclass():\n def some_method(param):\n  pass\n \n \n \n %INVOKE" << "def %CURSOR";
+    QTest::newRow("contextskip2") << "class myclass():\n def some_method(param): pass\n"
+                                     " def some_method2(param):\n  pass\n  pass\n %INVOKE" << "\n \n \n def %CURSOR";
 }
 
 void PyCompletionTest::testExceptionCompletion()

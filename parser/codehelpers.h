@@ -72,6 +72,7 @@ public:
     };
     
     int indentForLine(int line) const;
+    int linesCount() const;
     int nextChange(int line, ChangeTypes type, ScanDirection direction = Forward) const;
 private:
     QList<int> m_indents;

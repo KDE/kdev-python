@@ -494,14 +494,17 @@ void PythonCodeCompletionContext::summonParentForEventualCall(TokenList allExpre
             // it's only a call if a "(" bracket is followed (<- direction) by an expression.
             if ( eventualFunction.status == ExpressionParser::ExpressionFound ) {
                 kDebug() << "Call found! Creating parent-context.";
-                // determine the amount of real expressions in between
-                allExpressions.reset(1);
-                int currentOffset = allExpressions.length();
-                int atParameter = -1;
-                while ( currentOffset >= allExpressions.length() - offset ) {
-                    currentOffset -= 1;
-                    if ( allExpressions.weakPop().status == ExpressionParser::ExpressionFound ) {
+                // determine the amount of "free" commas in between
+                allExpressions.reset();
+                int atParameter = 0;
+                for ( int i = 0; i < offset-1; i++ ) {
+                    TokenListEntry entry = allExpressions.weakPop();
+                    if ( entry.status == ExpressionParser::CommaFound ) {
                         atParameter += 1;
+                    }
+                    // clear the param count for something like "f([1, 2, 3" (it will be cleared when the "[" is read)
+                    if ( entry.status == ExpressionParser::InitializerFound || entry.status == ExpressionParser::EventualCallFound ) {
+                        atParameter = 0;
                     }
                 }
                 m_parentContext = new PythonCodeCompletionContext(m_duContext, 

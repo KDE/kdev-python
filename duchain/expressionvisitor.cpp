@@ -182,7 +182,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     v.visitNode(accessingAttributeOf);
     AbstractType::Ptr accessedType = v.lastType();
     QList<AbstractType::Ptr> accessingAttributeOfType;
-    if ( accessedType->whichType() == AbstractType::TypeUnsure ) {
+    if ( accessedType && accessedType->whichType() == AbstractType::TypeUnsure ) {
         UnsureType::Ptr unsure = accessedType.cast<UnsureType>();
         int size = unsure->typesSize();
         for ( int i = 0; i < size; i++ ) {
@@ -203,7 +203,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     bool haveOneUsefulType = false;
     if ( ! accessingAttributeOfType.isEmpty() ) {
         foreach ( AbstractType::Ptr current, accessingAttributeOfType ) {
-            if ( current->whichType() != AbstractType::TypeStructure ) {
+            if ( current && current->whichType() != AbstractType::TypeStructure ) {
                 continue;
             }
             StructureType::Ptr currentStructure = current.cast<StructureType>();

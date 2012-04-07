@@ -43,12 +43,10 @@ class PyDUChainTest : public QObject
         explicit PyDUChainTest(QObject* parent = 0);
         void initShell();
         
-        void parse_int(const QString& code, const QString& suffix = QString::null);
+        KDevelop::ReferencedTopDUContext parse_int(const QString& code, const QString& suffix = QString::null);
         KDevelop::ReferencedTopDUContext parse(const QString& code, const QString& suffix = QString::null);
         
         Python::CodeAst* m_ast;
-        KDevelop::ReferencedTopDUContext m_ctx;
-        bool m_finished;
         KDevPG::MemoryPool m_pool;
         
     private slots:
@@ -66,7 +64,6 @@ class PyDUChainTest : public QObject
         void testFlickering_data();
         void testFunctionArgs();
         void testAutocompletionFlickering();
-        void updateReady(KDevelop::IndexedString url, KDevelop::ReferencedTopDUContext topContext);
         void testContainerTypes();
         void testContainerTypes_data();
         void testDecorators();

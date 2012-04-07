@@ -72,6 +72,7 @@ void PyDUChainTest::initShell()
     kDebug() << doc_url;
 
     DUChain::self()->updateContextForUrl(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
+    ICore::self()->languageController()->backgroundParser()->parseDocuments();
     DUChain::self()->waitForUpdate(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
     
     QFile f("/tmp/i.py");
@@ -80,13 +81,14 @@ void PyDUChainTest::initShell()
     f.close();
     
     DUChain::self()->updateContextForUrl(IndexedString("/tmp/i.py"), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
+    ICore::self()->languageController()->backgroundParser()->parseDocuments();
     DUChain::self()->waitForUpdate(IndexedString("/tmp/i.py"), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
     
     DUChain::self()->disablePersistentStorage();
     KDevelop::CodeRepresentation::setDiskChangesForbidden(true);
 }
 
-void PyDUChainTest::parse_int(const QString& code, const QString& suffix)
+ReferencedTopDUContext PyDUChainTest::parse_int(const QString& code, const QString& suffix)
 {
     ParseSession* session = new ParseSession(&m_pool);
     session->setContents( code + "\n" ); // append a newline in case the parser doesnt like it without one
@@ -106,29 +108,17 @@ void PyDUChainTest::parse_int(const QString& code, const QString& suffix)
     
     KDevelop::DUChain::self()->updateContextForUrl(KDevelop::IndexedString(filename), 
                                                    static_cast<TopDUContext::Features>(TopDUContext::AllDeclarationsContextsAndUses | TopDUContext::ForceUpdate),
-                                                   this, 1);
+                                                   this, 1
+                                                  );
     ICore::self()->languageController()->backgroundParser()->parseDocuments();
     AstBuilder* a = new AstBuilder(&m_pool);
     m_ast = a->parse(filename, const_cast<QString&>(code));
+    return DUChain::self()->waitForUpdate(IndexedString(filename), TopDUContext::ForceUpdate);
 }
 
 ReferencedTopDUContext PyDUChainTest::parse(const QString& code, const QString& suffix)
 {
-    m_finished = false;
-    parse_int(code, suffix);
-    QTime t;
-    t.start();
-    while ( ! m_finished ) {
-        Q_ASSERT(t.elapsed() < 60000);
-        QTest::qWait(10);
-    }
-    return m_ctx;
-}
-
-void PyDUChainTest::updateReady(IndexedString /*url*/, ReferencedTopDUContext topContext)
-{
-    m_ctx = topContext;
-    m_finished = true;
+    return parse_int(code, suffix);
 }
 
 void PyDUChainTest::testCrashes() {

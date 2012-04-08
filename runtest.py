@@ -59,6 +59,11 @@ class TestRunner():
         data = self.process.readAllStandardOutput()
         if "debug" in sys.argv:
             sys.stdout.write(data)
+        else:
+            for line in data.split('\n'):
+                if line[:4] == "PASS" or line[:5] == "FAIL!" or line[:5] == "XFAIL":
+                    sys.stdout.write(".")
+                    sys.stdout.flush()
         self.data += data
     
     def writeStderr(self):
@@ -118,7 +123,7 @@ class TestRunner():
         percent = green(percent) if percent == 100 else yellow(percent) if percent > 80 else red(percent)
         total = white(passed+failed)
         passed, failed = green(passed), red(failed)
-        print " Done. Summary: %s tests total, %s passed, %s failed (%s%% passed)." % (total, passed, failed, percent)
+        print "\n Done. Summary: %s tests reported total, %s passed, %s failed (%s%% passed)." % (total, passed, failed, percent)
         print " Detailed information:\n"
         print white("  ==="), green("Passed tests:"), white("===")
         namespaceFunctionArgs = r"(.*)::(.*)\((.*)\)"
@@ -147,6 +152,8 @@ class TestRunner():
         self.process = QProcess()
         self.process.readyReadStandardOutput.connect(self.writeStdout)
         self.process.readyReadStandardError.connect(self.writeStderr)
+        print " Please wait, running tests",
+        sys.stdout.flush()
         self.process.start(self.testfile, ["-maxwarnings", "0"])
         self.process.waitForFinished(-1)
         return str(self.data)

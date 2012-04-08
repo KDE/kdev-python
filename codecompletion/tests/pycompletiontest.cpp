@@ -283,6 +283,7 @@ void PyCompletionTest::testImportCompletion_data()
 void PyCompletionTest::testNoImplicitMagicFunctions()
 {
     QVERIFY(! itemInCompletionList("class my(): pass\nd = my()\n%INVOKE", "d.%CURSOR", "__get__") );
+    QEXPECT_FAIL("", "Sorting needs to be fixed first before magic function completion can be re-enabled", Continue);
     QVERIFY(itemInCompletionList("class my():\n def __get__(self): pass\nd = my()\n%INVOKE", "d.%CURSOR", "__get__") );
 }
 

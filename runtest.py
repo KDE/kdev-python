@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import sys
@@ -43,6 +43,7 @@ class FailedTest():
         self.lineno = '<none>'
         self.name = name
         self.reason = reason
+        self.failExpected = False
         
     def __str__(self):
         return "%s:%s %s" % (self.filename, self.lineno, self.name)
@@ -93,6 +94,15 @@ class TestRunner():
                 reason = fail.groups()[2]
                 self.failed_tests.append(FailedTest(function, reason))
                 last_failed = True
+            xfail = re.match(r"XFAIL\s*:\s*(.*)\((.*)\)\s+(.*)", line)
+            if xfail:
+                function = xfail.groups()[0]
+                args = xfail.groups()[1]
+                function = function + "(" + args + ")"
+                reason = xfail.groups()[2]
+                self.failed_tests.append(FailedTest(function, reason))
+                self.failed_tests[-1].failExpected = True
+                last_failed = True
             
             fatal_fail = re.match(r"(QFATAL|ASSERT)\s*", line)
             if fatal_fail:
@@ -126,9 +136,11 @@ class TestRunner():
                 namespace, function, args = re.match(namespaceFunctionArgs, test.name).groups()
                 filename = test.filename.split('/')[-1]
                 path = '/'.join(test.filename.split('/')[:-1]) + "/"
-                print indent(red("✘ ") + white(filename) + ":" + blue(test.lineno) + " "*(5-len(str(lineno))) + red(function) + "(" + yellow(args) + ")")
+                print indent((yellow("✘ ") if test.failExpected else red("✘ ")) + white(filename) + ":" + blue(test.lineno) +
+                      " "*(5-len(str(lineno))) + red(function) + "(" + yellow(args) + ")")
                 if 'noreason' not in sys.argv:
-                    print indent("Reason of failure:" + blue(" ❮") + white(test.reason) + blue("❯ "), 2)
+                    print indent("Reason of failure:" + blue(" ❮") + white(test.reason) + blue("❯ ") 
+                                 + ( "(Failure expected)" if test.failExpected else "" ), 2)
                 #print "[in %s]" % namespace
     
     def fetchOutputForJob(self):

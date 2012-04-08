@@ -68,6 +68,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     
     kDebug() << "Line: " << m_position.line;
     
+    kDebug() << "Completion type:" << m_operation;
+    
     if ( m_operation != FunctionCallCompletion ) {
         KeywordItem::Flags f = (KeywordItem::Flags) ( KeywordItem::ForceLineBeginning | KeywordItem::ImportantItem );
         // TODO group those correctly so they appear at the top
@@ -214,19 +216,6 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             }
         }
     }
-    else if ( m_operation == PythonCodeCompletionContext::ImportFileCompletion ) {
-        kDebug() << "Preparing to do autocompletion for import...";
-        m_maxFolderScanDepth = 1;
-        foreach ( ImportFileItem* item, includeFileItems(Helper::getSearchPaths(m_workingOnDocument)) ) {
-            Q_ASSERT(item);
-            QString relativeUrl = KUrl::relativeUrl(m_workingOnDocument, item->includeItem.basePath);
-            QString absoluteUrl = item->includeItem.basePath.path();
-            // use whichever one is shorter
-            QString useUrl = relativeUrl.length() < absoluteUrl.length() ? relativeUrl : absoluteUrl;
-            item->includeItem.name = QString(item->moduleName + " (from " + useUrl + ")");
-            resultingItems << CompletionTreeItemPointer( item );
-        }
-    }
     else if ( m_operation == PythonCodeCompletionContext::RaiseExceptionCompletion ) {
         kDebug() << "Finding items for raise statement";
         ReferencedTopDUContext ctx = Helper::getDocumentationFileContext();
@@ -254,13 +243,14 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             resultingItems.append(declarationListToItemList(validDeclarations));
         }
     }
+    else if ( m_operation == PythonCodeCompletionContext::ImportFileCompletion ) {
+        kDebug() << "Preparing to do autocompletion for import...";
+        m_maxFolderScanDepth = 1;
+        resultingItems << includeItemsForSubmodule("");
+    }
     else if ( m_operation == PythonCodeCompletionContext::ImportSubCompletion ) {
-        kDebug() << "Finding items for submodule: " << m_subForModule;
-        foreach ( ImportFileItem* item, includeFileItemsForSubmodule(m_subForModule) ) {
-            Q_ASSERT(item);
-            item->includeItem.name = QString(item->moduleName + " (from " + KUrl::relativeUrl(m_workingOnDocument, item->includeItem.basePath) + ")");
-            resultingItems << CompletionTreeItemPointer( item );
-        }
+        kDebug() << "Finding items for submodule: " << m_searchImportItemsInModule;
+        resultingItems << includeItemsForSubmodule(m_searchImportItemsInModule);
     }
     else if ( m_operation == PythonCodeCompletionContext::InheritanceCompletion ) {
         kDebug() << "InheritanceCompletion";
@@ -325,7 +315,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     }
     
     m_searchingForModule.clear();
-    m_subForModule.clear();
+    m_searchImportItemsInModule.clear();
     
     return resultingItems;
 }
@@ -364,6 +354,15 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
         }
     }
     return items;
+}
+
+QList< CompletionTreeItemPointer > PythonCodeCompletionContext::declarationListToItemList(QList< Declaration* > declarations)
+{
+    QList<DeclarationDepthPair> fakeItems;
+    foreach ( Declaration* d, declarations ) {
+        fakeItems << DeclarationDepthPair(d, 0);
+    }
+    return declarationListToItemList(fakeItems);
 }
 
 QList< CompletionTreeItemPointer > PythonCodeCompletionContext::getCompletionItemsForType(AbstractType::Ptr type)
@@ -426,12 +425,118 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
     return QList<CompletionTreeItemPointer>();
 }
 
-QList< ImportFileItem* > PythonCodeCompletionContext::includeFileItemsForSubmodule(QString submodule)
+QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(IncludeSearchTarget item)
 {
-    QList<ImportFileItem*> items;
+    kDebug() << "TARGET:" << item.directory.pathOrUrl() << item.remainingIdentifiers << item.directory.path();
+    QDir currentDirectory(item.directory.path());
+    QFileInfoList contents = currentDirectory.entryInfoList(QStringList(), QDir::Files | QDir::Dirs);
+    bool atBottom = item.remainingIdentifiers.isEmpty();
+    QList<CompletionTreeItemPointer> items;
+    if ( item.remainingIdentifiers.isEmpty() ) {
+        // check for the __init__ file
+        QFileInfo initFile(item.directory.path(), "__init__.py");
+        if ( initFile.exists() ) {
+            IncludeItem init;
+            init.basePath = item.directory;
+            init.isDirectory = true;
+            init.name = "";
+            items << CompletionTreeItemPointer(new ImportFileItem(init));
+        }
+    }
+    else {
+        QFileInfo file(item.directory.path(), item.remainingIdentifiers.first() + ".py");
+        item.remainingIdentifiers.removeFirst();
+        kDebug() << " CHECK:" << file.absoluteFilePath();
+        if ( file.exists() ) {
+            IndexedString filename(file.absoluteFilePath());
+            TopDUContext* top = DUChain::self()->chainForDocument(filename);
+            kDebug() << top;
+            DUContext* c = internalContextForDeclaration(top, item.remainingIdentifiers);
+            kDebug() << "  GOT:" << c;
+            if ( c ) {
+                items << declarationListToItemList(c->localDeclarations().toList());
+            }
+            else {
+                // do better next time
+                DUChain::self()->updateContextForUrl(filename, TopDUContext::AllDeclarationsAndContexts);
+            }
+        }
+    }
+    
+    if ( atBottom ) {
+        // append all python files in the directory
+        foreach ( QFileInfo file, contents ) {
+            // TODO windows
+            kDebug() << " > CONTENT:" << file.absolutePath() << file.fileName();
+            if ( file.isFile() ) {
+                if ( file.fileName().endsWith(".py") || file.fileName().endsWith(".so") ) {
+                    IncludeItem fileInclude;
+                    fileInclude.basePath = item.directory;
+                    fileInclude.isDirectory = false;
+                    fileInclude.name = file.fileName().mid(0, file.fileName().length() - 3); // remove ".py"
+                    ImportFileItem import(fileInclude);
+                    import.moduleName = "FIXME";
+                    items << CompletionTreeItemPointer(new ImportFileItem(import));
+                }
+            }
+            else {
+                IncludeItem dirInclude;
+                dirInclude.basePath = item.directory;
+                dirInclude.isDirectory = true;
+                dirInclude.name = file.fileName();
+                items << CompletionTreeItemPointer(new ImportFileItem(dirInclude));
+            }
+        }
+    }
+    return items;
+}
+
+QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(QList< Python::IncludeSearchTarget > items)
+{
+    QList<CompletionTreeItemPointer> results;
+    foreach ( const IncludeSearchTarget& item, items ) {
+        results << findIncludeItems(item);
+    }
+    return results;
+}
+
+DUContext* PythonCodeCompletionContext::internalContextForDeclaration(TopDUContext* topContext, QStringList remainingIdentifiers)
+{
+    Declaration* d = 0;
+    DUContext* c = topContext;
+    if ( remainingIdentifiers.isEmpty() ) {
+        return topContext;
+    }
+    do {
+        QList< Declaration* > decls = c->findDeclarations(QualifiedIdentifier(remainingIdentifiers.first()));
+        remainingIdentifiers.removeFirst();
+        if ( decls.isEmpty() ) {
+            return 0;
+        }
+        d = decls.first();
+        if ( (c = d->internalContext()) ) {
+            if ( remainingIdentifiers.isEmpty() ) {
+                return c;
+            }
+        }
+        else return 0;
+        
+    } while ( d && ! remainingIdentifiers.isEmpty() );
+    return 0;
+}
+
+QList<CompletionTreeItemPointer> PythonCodeCompletionContext::includeItemsForSubmodule(QString submodule)
+{
     QList<KUrl> searchPaths = Helper::getSearchPaths(m_workingOnDocument);
-    QStringList subdirs = submodule.split(".");
-    QList<KUrl> foundPaths;
+    
+    QStringList subdirs;
+    if ( ! submodule.isEmpty() ) {
+        subdirs = submodule.split(".");
+    }
+    
+    Q_ASSERT(! subdirs.contains(""));
+    
+    QList<IncludeSearchTarget> foundPaths;
     
     // this is a bit tricky. We need to find every path formed like /.../foo/bar for
     // a query string ("submodule" variable) like foo.bar
@@ -440,59 +545,24 @@ QList< ImportFileItem* > PythonCodeCompletionContext::includeFileItemsForSubmodu
     // and then gather all the items in those paths.
     
     foreach (KUrl currentPath, searchPaths) {
-        bool exists = true;
-        kDebug() << "Searching: " << currentPath;
+        kDebug() << "Searching: " << currentPath << subdirs;
+        int identifiersUsed = 0;
         foreach ( QString subdir, subdirs ) {
-            exists = currentPath.cd(subdir);
-            kDebug() << currentPath;
-            if ( ! exists ) break;
-        }
-        if ( exists ) {
-            foundPaths.append(currentPath);
-            kDebug() << "Found path: exists";
-        }
-    }
-    return includeFileItems(foundPaths);
-}
-
-QList<ImportFileItem*> PythonCodeCompletionContext::includeFileItems(QList<KUrl> searchPaths) {
-    QList<ImportFileItem*> items;
-    
-    kDebug() << "Gathering include file autocompletions...";
-    
-    foreach (KUrl currentPath, searchPaths) {
-        currentPath.cleanPath();
-        if ( currentPath.path(KUrl::AddTrailingSlash).startsWith(Helper::getDataDir()) ) {
-            // don't suggest stuff from the docfiles directory
-            continue;
-        }
-        kDebug() << "Processing path: " << currentPath;
-        QDir currentDir(currentPath.path());
-        QFileInfoList files = currentDir.entryInfoList();
-        QStringList alreadyFound;
-        foreach (QFileInfo file, files) {
-            kDebug() << "Scanning file: " << file.absoluteFilePath();
-            if ( file.fileName() == "." || file.fileName() == ".." ) continue;
-            if ( file.fileName().endsWith(".py") || file.fileName().endsWith(".pyc") || file.isDir() ) {
-                IncludeItem newItem;
-                newItem.basePath = currentPath.path(KUrl::AddTrailingSlash) + file.baseName();
-                newItem.name = file.fileName();
-                newItem.isDirectory = file.isDir();
-                ImportFileItem* item = new ImportFileItem(newItem);
-                item->moduleName = file.fileName().replace(".pyc", "").replace(".pyo", "").replace(".py", "");
-                if ( alreadyFound.contains(item->moduleName) ) {
-                    continue;
-                }
-                else {
-                    alreadyFound << item->moduleName;
-                }
-                items.append(item);
-                kDebug() << "FOUND: " << file.absoluteFilePath();
+            currentPath.cd(subdir);
+            QFileInfo d(currentPath.path());
+            kDebug() << currentPath << d.exists() << d.isDir();
+            if ( ! d.exists() || ! d.isDir() ) {
+                currentPath.cd("..");
+                currentPath.cleanPath();
+                break;
             }
+            identifiersUsed++;
         }
+        QStringList remainingIdentifiers = subdirs.mid(identifiersUsed, -1);
+        foundPaths.append(IncludeSearchTarget(currentPath, remainingIdentifiers));
+        kDebug() << "Found path:" << currentPath << remainingIdentifiers << subdirs;
     }
-    
-    return items;
+    return findIncludeItems(foundPaths);
 }
 
 PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& remainingText, 
@@ -656,18 +726,6 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         return;
     }
     
-    if ( firstStatus == ExpressionParser::MemberAccessFound ) {
-        TokenListEntry item = allExpressions.weakPop();
-        if ( item.status == ExpressionParser::ExpressionFound ) {
-            m_guessTypeOfExpression = item.expression;
-            m_operation = MemberAccessCompletion;
-        }
-        else {
-            m_operation = NoCompletion;
-        }
-        return;
-    }
-    
     if ( firstStatus == ExpressionParser::DefFound ) {
         if ( context->type() == DUContext::Class ) {
             m_indent = QString(" ").repeated(indents.indentForLine(indents.linesCount()-1));
@@ -722,28 +780,83 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         }
     }
     
-    int importIndex = allExpressions.nextIndexOfStatus(ExpressionParser::ImportFound).first;
-    int fromIndex = allExpressions.nextIndexOfStatus(ExpressionParser::FromFound).first;
+    QPair<int, int> import = allExpressions.nextIndexOfStatus(ExpressionParser::ImportFound);
+    QPair<int, int> from = allExpressions.nextIndexOfStatus(ExpressionParser::FromFound);
+    int importIndex = import.first;
+    int fromIndex = from.first;
     
-    if ( ( importIndex != -1 && fromIndex != -1 ) &&
-         ( fromIndex == allExpressions.length() || importIndex == allExpressions.length() ) )
-    {
+    if ( importIndex != -1 && fromIndex != -1 ) {
         // it's either "import ... from" or "from ... import"
+        // we treat both in exactly the same way. This is not quite correct, as python
+        // forbids some combinations. TODO fix this.
+        
+        // There's two relevant pieces of text, the one between the "from...import" (or "import...from"),
+        // and the one behind the "import" or the "from" (at the end of the line).
+        // Both need to be extracted and passed to the completion computer.
+        QString firstPiece, secondPiece;
         if ( fromIndex > importIndex ) {
             // import ... from
-            m_operation = ImportFileCompletion;
-            return;
+            if ( fromIndex == allExpressions.length() ) {
+                // The "from" is the last item in the chain
+                m_operation = ImportFileCompletion;
+                return;
+            }
+            firstPiece = allExpressions.at(allExpressions.length() - importIndex - 1).expression;
         }
         else {
-            // from ... import
-            m_operation = ImportSubCompletion;
-            return;
+            firstPiece = allExpressions.at(allExpressions.length() - fromIndex - 1).expression;
         }
+        // might be "from foo import bar as baz, bang as foobar, ..."
+        if ( allExpressions.length() > 4 ) {
+            secondPiece = allExpressions.at(allExpressions.length() - 2).expression;
+        }
+        
+        if ( fromIndex < importIndex ) {
+            // if it's "from ... import", swap the two pieces.
+            qSwap(firstPiece, secondPiece);
+        }
+        
+        if ( firstPiece.isEmpty() ) {
+            m_searchImportItemsInModule = secondPiece;
+        }
+        else if ( secondPiece.isEmpty() ) {
+            m_searchImportItemsInModule = firstPiece;
+        }
+        else {
+            m_searchImportItemsInModule = firstPiece + "." + secondPiece;
+        }
+        kDebug() << firstPiece << secondPiece;
+        kDebug() << "Got submodule to search:" << m_searchImportItemsInModule << "from text" << textWithoutStrings;
+        m_operation = ImportSubCompletion;
+        return;
+    }
+    
+    if ( firstStatus == ExpressionParser::FromFound || firstStatus == ExpressionParser::ImportFound ) {
+        // it's either "from ..." or "import ...", which both come down to the same completion offered
+        m_operation = ImportFileCompletion;
+        return;
     }
     
     if ( fromIndex != -1 || importIndex != -1 ) {
-        // it's either "from ..." or "import ...", which both come down to the same completion offered
-        m_operation = ImportFileCompletion;
+        if ( firstStatus == ExpressionParser::CommaFound ) {
+            // "import foo.bar, "
+            m_operation = ImportFileCompletion;
+            return;
+        }
+        m_operation = ImportSubCompletion;
+        m_searchImportItemsInModule = allExpressions.at(allExpressions.length() - 2).expression;
+        return;
+    }
+    
+    if ( firstStatus == ExpressionParser::MemberAccessFound ) {
+        TokenListEntry item = allExpressions.weakPop();
+        if ( item.status == ExpressionParser::ExpressionFound ) {
+            m_guessTypeOfExpression = item.expression;
+            m_operation = MemberAccessCompletion;
+        }
+        else {
+            m_operation = NoCompletion;
+        }
         return;
     }
 }

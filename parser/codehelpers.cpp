@@ -176,6 +176,7 @@ QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher,
     {
         QChar c = line[end];
         if ( ! ( c.isLetterOrNumber() || c == '_' ) ) {
+            if ( ! forceScanExpression ) end--;
             break;
         }
     }

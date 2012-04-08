@@ -98,6 +98,8 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
 {
     public:
         ExpressionVisitor(KDevelop::DUContext* ctx, PythonEditorIntegrator* editor = 0);
+        // use this to construct the expression-visitor recursively
+        ExpressionVisitor(ExpressionVisitor* parent);
         
         virtual void visitBinaryOperation(BinaryOperationAst* node);
         virtual void visitUnaryOperation(UnaryOperationAst* node);

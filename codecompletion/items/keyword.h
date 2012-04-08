@@ -30,8 +30,9 @@ class KeywordItem : public NormalDeclarationCompletionItem
 
 public:
     enum Flags {
-        NoFlags,
-        ForceLineBeginning
+        NoFlags = 0x0,
+        ForceLineBeginning = 0x1,
+        ImportantItem = 0x2
     };
     KeywordItem(KDevelop::CodeCompletionContext::Ptr context, QString keyword, Flags flags = NoFlags);
     virtual void execute(KTextEditor::Document* document, const KTextEditor::Range& word);

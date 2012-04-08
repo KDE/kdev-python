@@ -127,6 +127,18 @@ ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegrator* edi
     Q_ASSERT(m_ctx->topContext());
 }
 
+ExpressionVisitor::ExpressionVisitor(ExpressionVisitor* parent)
+    : m_forceGlobalSearching(parent->m_forceGlobalSearching)
+    , m_reportUnknownNames(parent->m_reportUnknownNames)
+    , m_scanUntilCursor(parent->m_scanUntilCursor)
+    , m_isAlias(false)
+    , m_ctx(parent->m_ctx)
+    , m_editor(parent->m_editor)
+    , m_shouldBeKnown(true)
+{
+
+}
+
 AbstractType::Ptr ExpressionVisitor::unknownType()
 {
     return AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
@@ -180,7 +192,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     
     ExpressionAst* accessingAttributeOf = node->value;
 
-    ExpressionVisitor v(m_ctx);
+    ExpressionVisitor v(this);
     v.visitNode(accessingAttributeOf);
     AbstractType::Ptr accessedType = v.lastType();
     QList<AbstractType::Ptr> accessingAttributeOfType;
@@ -230,12 +242,12 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     }
     
     // Step 2: Construct the type of the declaration which was found.
-    DeclarationPointer actualDeclaration(0);
+    Declaration* d;
     if ( foundDecls.length() > 0 ) {
-        actualDeclaration = DeclarationPointer(Helper::resolveAliasDeclaration(foundDecls.last()));
-        bool isAlias = foundDecls.last()->abstractType() and (
-                       foundDecls.last()->abstractType()->whichType() == AbstractType::TypeFunction or
-                       foundDecls.last()->abstractType()->whichType() == AbstractType::TypeStructure );
+        d = DeclarationPointer(Helper::resolveAliasDeclaration(foundDecls.last())).data();
+        bool isAlias =     dynamic_cast<AliasDeclaration*>(d) || d->isFunctionDeclaration()
+                        || dynamic_cast<ClassDeclaration*>(d);
+        kDebug() << dynamic_cast<AliasDeclaration*>(d) <<  d->isFunctionDeclaration() << dynamic_cast<ClassDeclaration*>(d);
         encounterDeclarations(toSharedPtrList(foundDecls), isAlias);
         encounter(foundDecls.last()->abstractType());
     }
@@ -251,8 +263,8 @@ void ExpressionVisitor::visitCall(CallAst* node)
 {
     KDEBUG_BLOCK
     kDebug();
-    ExpressionVisitor v(m_ctx);
-    v.m_forceGlobalSearching = m_forceGlobalSearching;
+    AstDefaultVisitor::visitCall(node);
+    ExpressionVisitor v(this);
     v.visitNode(node->function);
     kDebug() << "function being called: " << v.lastDeclaration();
     Declaration* actualDeclaration = 0;
@@ -295,8 +307,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
                     decoratorFound = true;
                     kDebug() << "Found decorator";
                     if ( node->function->astType == Ast::AttributeAstType ) {
-                        ExpressionVisitor baseTypeVisitor(m_ctx);
-                        baseTypeVisitor.m_forceGlobalSearching = m_forceGlobalSearching;
+                        ExpressionVisitor baseTypeVisitor(this);
                         // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
                         baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
                         if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
@@ -312,7 +323,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
                     decoratorFound = true;
                     kDebug() << "Got getsList decorator, checking container";
                     if ( node->function->astType == Ast::AttributeAstType ) {
-                        ExpressionVisitor baseTypeVisitor(m_ctx);
+                        ExpressionVisitor baseTypeVisitor(this);
                         // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
                         baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
                         if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
@@ -339,8 +350,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
                     int argNum = d->additionalInformation().str().toInt();
                     if ( node->arguments.length() > argNum ) {
                         ExpressionAst* relevantArgument = node->arguments.at(argNum);
-                        ExpressionVisitor v(m_ctx);
-                        v.m_forceGlobalSearching = m_forceGlobalSearching;
+                        ExpressionVisitor v(this);
                         v.visitNode(relevantArgument);
                         if ( v.lastType() ) {
                             VariableLengthContainer* realTarget = 0;
@@ -432,8 +442,7 @@ void ExpressionVisitor::visitList(ListAst* node)
 {
     AstDefaultVisitor::visitList(node);
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("list", m_ctx);
-    ExpressionVisitor contentVisitor(m_ctx);
-    contentVisitor.m_forceGlobalSearching = m_forceGlobalSearching;
+    ExpressionVisitor contentVisitor(this);
     if ( type ) {
         foreach ( ExpressionAst* content, node->elements ) {
             contentVisitor.visitNode(content);
@@ -454,14 +463,14 @@ void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst*
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("dict", m_ctx);
     if ( type ) {
         DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol + 1));
-        ExpressionVisitor v(m_forceGlobalSearching ? m_ctx->topContext() : comprehensionContext);
-        v.m_forceGlobalSearching = m_forceGlobalSearching;
+        ExpressionVisitor v(this);
+        v.m_ctx = m_forceGlobalSearching ? m_ctx->topContext() : comprehensionContext;
         v.visitNode(node->value);
         if ( v.lastType() ) {
             type->addContentType(v.lastType());
         }
-        ExpressionVisitor k(m_forceGlobalSearching ? m_ctx->topContext() : comprehensionContext);
-        k.m_forceGlobalSearching = m_forceGlobalSearching;
+        ExpressionVisitor k(this);
+        v.m_ctx = m_forceGlobalSearching ? m_ctx->topContext() : comprehensionContext;
         k.visitNode(node->key);
         if ( k.lastType() ) {
             type->addKeyType(k.lastType());
@@ -480,8 +489,8 @@ void ExpressionVisitor::visitSetComprehension(SetComprehensionAst* node)
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("set", m_ctx);
     if ( type ) {
         DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol+1), true);
-        ExpressionVisitor v(m_forceGlobalSearching ? m_ctx->topContext() : comprehensionContext);
-        v.m_forceGlobalSearching = m_forceGlobalSearching;
+        ExpressionVisitor v(this);
+        v.m_ctx = m_forceGlobalSearching ? m_ctx->topContext() : comprehensionContext;
         v.visitNode(node->element);
         if ( v.lastType() ) {
             type->addContentType(v.lastType());
@@ -497,8 +506,8 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("list", m_ctx);
     if ( type ) {
         DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol + 1), true);
-        ExpressionVisitor v(m_forceGlobalSearching ? m_ctx->topContext() : comprehensionContext);
-        v.m_forceGlobalSearching = m_forceGlobalSearching;
+        ExpressionVisitor v(this);
+        v.m_ctx = m_forceGlobalSearching ? m_ctx->topContext() : comprehensionContext;
         v.visitNode(node->element);
         if ( v.lastType() ) {
             type->addContentType(v.lastType());
@@ -521,8 +530,7 @@ void ExpressionVisitor::visitIfExpression(IfExpressionAst* node)
 {
     AstDefaultVisitor::visitIfExpression(node);
     if ( node->body and node->orelse ) {
-        ExpressionVisitor v(m_ctx);
-        v.m_forceGlobalSearching = m_forceGlobalSearching;
+        ExpressionVisitor v(this);
         v.visitNode(node->body);
         AbstractType::Ptr first = v.lastType();
         DeclarationPointer firstDecl = v.lastDeclaration();
@@ -538,8 +546,7 @@ void ExpressionVisitor::visitSet(SetAst* node)
 {
     Python::AstDefaultVisitor::visitSet(node);
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("set", m_ctx);
-    ExpressionVisitor contentVisitor(m_ctx);
-    contentVisitor.m_forceGlobalSearching = m_forceGlobalSearching;
+    ExpressionVisitor contentVisitor(this);
     if ( type ) {
         foreach ( ExpressionAst* content, node->elements ) {
             contentVisitor.visitNode(content);
@@ -553,10 +560,8 @@ void ExpressionVisitor::visitDict(DictAst* node)
 {
     AstDefaultVisitor::visitDict(node);
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("dict", m_ctx);
-    ExpressionVisitor contentVisitor(m_ctx);
-    ExpressionVisitor keyVisitor(m_ctx);
-    contentVisitor.m_forceGlobalSearching = m_forceGlobalSearching;
-    keyVisitor.m_forceGlobalSearching = m_forceGlobalSearching;
+    ExpressionVisitor contentVisitor(this);
+    ExpressionVisitor keyVisitor(this);
     if ( type ) {
         Q_ASSERT(type->hasKeyType());
         foreach ( ExpressionAst* content, node->values ) {
@@ -615,16 +620,15 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
     else {
         range = RangeInRevision(0, 0, node->endLine, node->endCol);
     }
-    Declaration* d = Helper::declarationForName(node, QualifiedIdentifier(node->identifier->value), range, DUContextPointer(m_ctx));
+    Declaration* d = Helper::declarationForName(node, QualifiedIdentifier(node->identifier->value),
+                                                range, DUContextPointer(m_ctx));
     
     if ( d ) {
         /** DEBUG **/
         kDebug() << "Found declaration: " << d->toString() << d
                  << d->abstractType() << dynamic_cast<VariableLengthContainer*>(d->abstractType().unsafeData());
         /** / DEBUG **/
-        bool isAlias = d->abstractType() and (
-                       d->abstractType()->whichType() == AbstractType::TypeFunction or
-                       d->abstractType()->whichType() == AbstractType::TypeStructure );
+        bool isAlias = dynamic_cast<AliasDeclaration*>(d) || d->isFunctionDeclaration() || dynamic_cast<ClassDeclaration*>(d);
         encounterDeclaration(d, isAlias);
         return encounter(d->abstractType());
     }

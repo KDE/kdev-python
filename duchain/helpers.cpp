@@ -136,7 +136,7 @@ Declaration* Helper::declarationForName(NameAst* /*ast*/, const QualifiedIdentif
     QList<Declaration*> declarations;
     QList<Declaration*> localDeclarations;
     QList<Declaration*> importedLocalDeclarations;
-    kDebug() << "Finding declaration for name before " << nodeRange.end << ", in context" << context->range();
+    kDebug() << "Finding declaration for name" << identifier.toString() << " before " << nodeRange.end << ", in context" << context->range();
     {
         DUChainReadLocker lock(DUChain::lock());
         if ( context.data() == context->topContext() and nodeRange.isValid() ) {

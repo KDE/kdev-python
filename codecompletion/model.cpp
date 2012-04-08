@@ -34,6 +34,24 @@ PythonCodeCompletionModel::PythonCodeCompletionModel(QObject* parent)
 
 PythonCodeCompletionModel::~PythonCodeCompletionModel() { }
 
+bool PythonCodeCompletionModel::shouldStartCompletion(KTextEditor::View* view, const QString& inserted,
+                                                bool userInsertion, const KTextEditor::Cursor& position)
+{
+    QList<QString> words;
+    words << "for" << "raise" << "except";
+    foreach ( const QString& word, words ) {
+        if ( view->document()->line(position.line()).mid(0, position.column()).endsWith(word + " ") ) {
+            return true;
+        }
+    }
+    // shebang / encoding lines
+    if ( view->document()->line(position.line()).mid(0, position.column()).endsWith("#") && 
+         position.line() < 2 )
+    {
+        return true;
+    }
+    return KDevelop::CodeCompletionModel::shouldStartCompletion(view, inserted, userInsertion, position);
+}
 
 KTextEditor::Range PythonCodeCompletionModel::completionRange(KTextEditor::View* view, const KTextEditor::Cursor& position)
 {

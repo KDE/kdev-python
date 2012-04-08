@@ -29,17 +29,17 @@ using namespace KTextEditor;
 
 namespace Python {
 
-Python::KeywordItem::KeywordItem(KDevelop::CodeCompletionContext::Ptr context, QString keyword, Flags flags)
+KeywordItem::KeywordItem(KDevelop::CodeCompletionContext::Ptr context, QString keyword, Flags flags)
     : NormalDeclarationCompletionItem (DeclarationPointer(), context, 0),
     m_flags(flags)
 {
     m_keyword = keyword;
 }
 
-void Python::KeywordItem::execute(KTextEditor::Document* document, const KTextEditor::Range& word)
+void KeywordItem::execute(Document* document, const Range& word)
 {
-    if ( m_flags == ForceLineBeginning ) {
-        KTextEditor::Range newRange(KTextEditor::Cursor(word.start().line(), 0), word.end());
+    if ( m_flags & ForceLineBeginning ) {
+        Range newRange(Cursor(word.start().line(), 0), word.end());
         document->replaceText(newRange, m_keyword);
     }
     else {
@@ -63,6 +63,13 @@ QVariant KeywordItem::data ( const QModelIndex& index, int role, const KDevelop:
         return QVariant("");
     case KTextEditor::CodeCompletionModel::InheritanceDepth:
         return QVariant(0);
+    case KDevelop::CodeCompletionModel::BestMatchesCount:
+        return 5;
+    case KDevelop::CodeCompletionModel::MatchQuality:
+        if ( m_flags & ImportantItem ) {
+            return 10;
+        }
+        return 0; // most keyword items are not that great for completion
     default:
         //pass
         break;

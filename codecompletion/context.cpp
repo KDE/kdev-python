@@ -65,7 +65,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     
     // Don't show those items in calltips
     if ( m_operation != FunctionCallCompletion ) {
-        KeywordItem::Flags f = KeywordItem::ForceLineBeginning;
+        KeywordItem::Flags f = (KeywordItem::Flags) ( KeywordItem::ForceLineBeginning | KeywordItem::ImportantItem );
         // TODO group those correctly so they appear at the top
         if ( m_position.line == 0 ) {
             resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python", f));
@@ -398,13 +398,17 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
         QList<DeclarationDepthPair> keepDeclarations;
         foreach ( const DUContext* currentlySearchedContext, searchContexts ) {
             kDebug() << "searching context " << currentlySearchedContext->scopeIdentifier() << "for autocompletion items";
-            QList<DeclarationDepthPair> declarations = currentlySearchedContext->allDeclarations(CursorInRevision::invalid(), m_duContext->topContext(), false);
+            QList<DeclarationDepthPair> declarations = currentlySearchedContext->allDeclarations(CursorInRevision::invalid(),
+                                                                                                 m_duContext->topContext(),
+                                                                                                 false);
             kDebug() << "found" << declarations.length() << "declarations";
             
             // filter out those which are builtin functions, and those which were imported; we don't want those here
+            // also, discard all magic functions from autocompletion
             // TODO rework this, it's maybe not the most elegant solution possible
+            // TODO rework the magic functions thing, I want them sorted at the end of the list but KTE doesn't seem to allow that
             foreach ( DeclarationDepthPair current, declarations ) {
-                if ( current.first->context() != builtinTopContext ) {
+                if ( current.first->context() != builtinTopContext && ! current.first->identifier().identifier().str().startsWith("__") ) {
                     keepDeclarations.append(current);
                 }
                 else {
@@ -580,9 +584,9 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         }
         while ( currentlyChecked && context->parentContextOf(currentlyChecked) ) {
             kDebug() << "checking:" << currentlyChecked->range() << currentlyChecked->type();
-            // FIXME: "<" is not really good, it must be one indent-level less
+            // FIXME: "<=" is not really good, it must be exactly one indent-level less
             if (    indents.indentForLine(indents.linesCount()-1-(position.line-currentlyChecked->range().start.line)) 
-                 <  indents.indentForLine(indents.linesCount()-1) )
+                 <= indents.indentForLine(indents.linesCount()-1) )
             {
                 kDebug() << "changing context to" << currentlyChecked->range() << ( currentlyChecked->type() == DUContext::Class );
                 context = currentlyChecked;
@@ -593,6 +597,29 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     }
     
     m_duContext = context;
+    
+    QList<ExpressionParser::Status> defKeywords;
+    defKeywords << ExpressionParser::DefFound << ExpressionParser::ClassFound;
+    
+    if ( allExpressions.nextIndexOfStatus(ExpressionParser::EventualCallFound).first != -1 ) {
+        // 3 is always the case for "def foo(" or class foo(": one names the function, the other is the keyword
+        if ( allExpressions.length() == 4 ) {
+            if ( allExpressions.at(1).status == ExpressionParser::DefFound ) {
+                // The next thing the user probably wants to type are parameters for his function.
+                // We cannot offer completion for this.
+                m_operation = NoCompletion;
+                return;
+            }
+        }
+        if ( allExpressions.length() >= 4 ) {
+            // TODO: optimally, filter out classes we already inherit from. That's a bonus, tough.
+            if ( allExpressions.at(1).status == ExpressionParser::ClassFound ) {
+                // show only items of type "class" for completion
+                m_operation = InheritanceCompletion;
+                return;
+            }
+        }
+    }
     
     // For something like "func1(3, 5, func2(7, ", we want to show all calltips recursively
     summonParentForEventualCall(allExpressions, textWithoutStrings);
@@ -639,21 +666,6 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
             m_operation = NoCompletion;
         }
         return;
-    }
-    
-    QList<ExpressionParser::Status> defKeywords;
-    defKeywords << ExpressionParser::DefFound << ExpressionParser::ClassFound;
-    
-    if ( firstStatus == ExpressionParser::EventualCallFound ) {
-        // 2 is always the case for "def foo(" or class foo(": one names the function, the other is the keyword
-        if ( allExpressions.length() == 2 ) {
-            if ( defKeywords.contains(allExpressions.first().status) ) {
-                // The next thing the user probably wants to type are parameters for his function.
-                // We cannot offer completion for this.
-                m_operation = NoCompletion;
-                return;
-            }
-        }
     }
     
     // The "def in class context" case is handled above already

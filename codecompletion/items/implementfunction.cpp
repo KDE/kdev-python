@@ -52,6 +52,12 @@ void ImplementFunctionCompletionItem::execute(KTextEditor::Document* document, c
 QVariant ImplementFunctionCompletionItem::data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const
 {
     switch ( role ) {
+        case KDevelop::CodeCompletionModel::MatchQuality: {
+            return QVariant(m_name.startsWith("__") ? 0 : 10);
+        }
+        case KDevelop::CodeCompletionModel::BestMatchesCount: {
+            return QVariant(5);
+        }
         case Qt::DisplayRole:
             switch ( index.column() ) {
                 case KDevelop::CodeCompletionModel::Name:

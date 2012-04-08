@@ -28,6 +28,7 @@
 #include <KTextEditor/Document>
 
 #include "duchain/navigation/navigationwidget.h"
+#include <types/variablelengthcontainer.h>
 #include "codecompletion/helpers.h"
 #include "declaration.h"
 
@@ -37,8 +38,8 @@ using namespace KTextEditor;
 
 namespace Python {
 
-FunctionDeclarationCompletionItem::FunctionDeclarationCompletionItem(DeclarationPointer decl) 
-    : PythonDeclarationCompletionItem(decl), m_atArgument(-1), m_depth(0) { }
+FunctionDeclarationCompletionItem::FunctionDeclarationCompletionItem(DeclarationPointer decl, CodeCompletionContext::Ptr context) 
+    : PythonDeclarationCompletionItem(decl, context), m_atArgument(-1), m_depth(0) { }
 
 int FunctionDeclarationCompletionItem::atArgument() const
 {
@@ -93,6 +94,15 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
                 }
                 return QVariant(highlight);
             }
+        }
+        case KDevelop::CodeCompletionModel::MatchQuality: {
+            if (    m_typeHint == PythonCodeCompletionContext::IterableRequested
+                 && dec && dec->type<FunctionType>()
+                 && dynamic_cast<VariableLengthContainer*>(dec->type<FunctionType>()->returnType().unsafeData()) )
+            {
+                return 2 + PythonDeclarationCompletionItem::data(index, role, model).toInt();
+            }
+            return PythonDeclarationCompletionItem::data(index, role, model);
         }
     }
     return Python::PythonDeclarationCompletionItem::data(index, role, model);

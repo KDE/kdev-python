@@ -117,6 +117,7 @@ ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegrator* edi
     , m_ctx(ctx)
     , m_editor(editor)
     , m_shouldBeKnown(true)
+    , m_parentVisitor(0)
 {
     if ( s_defaultTypes.isEmpty() ) {
         s_defaultTypes.insert(KDevelop::Identifier("True"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
@@ -135,6 +136,7 @@ ExpressionVisitor::ExpressionVisitor(ExpressionVisitor* parent)
     , m_ctx(parent->m_ctx)
     , m_editor(parent->m_editor)
     , m_shouldBeKnown(true)
+    , m_parentVisitor(parent)
 {
 
 }
@@ -263,7 +265,13 @@ void ExpressionVisitor::visitCall(CallAst* node)
 {
     KDEBUG_BLOCK
     kDebug();
-    AstDefaultVisitor::visitCall(node);
+    
+    foreach ( ExpressionAst* c, node->arguments ) {
+        Python::AstDefaultVisitor::visitNode(c);
+    }
+    AstDefaultVisitor::visitNode(node->keywordArguments);
+    AstDefaultVisitor::visitNode(node->starArguments);
+    
     ExpressionVisitor v(this);
     v.visitNode(node->function);
     kDebug() << "function being called: " << v.lastDeclaration();
@@ -600,6 +608,18 @@ RangeInRevision nodeRange(Python::Ast* node)
     return RangeInRevision(node->startLine, node->startCol, node->endLine,node->endCol);
 }
 
+void ExpressionVisitor::addUnknownName(const QString& name)
+{
+    if ( m_parentVisitor ) {
+        m_parentVisitor->addUnknownName(name);
+    }
+    else {
+        if ( ! m_unknownNames.contains(name) ) {
+            m_unknownNames.append(name);
+        }
+    }
+}
+
 void ExpressionVisitor::visitName(Python::NameAst* node)
 {
     // "True", "False", "None" etc.
@@ -635,7 +655,7 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
     else {
         kDebug() << "VistName type not found";
         if ( m_reportUnknownNames ) {
-            m_unknownNames.append(node->identifier->value);
+            addUnknownName(node->identifier->value);
         }
         return unknownTypeEncountered();
     }

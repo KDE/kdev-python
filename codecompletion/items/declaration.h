@@ -22,6 +22,7 @@
 #include <language/codecompletion/normaldeclarationcompletionitem.h>
 #include <language/codecompletion/codecompletioncontext.h>
 #include <language/codecompletion/codecompletionmodel.h>
+#include "codecompletion/context.h"
 
 namespace Python {
 
@@ -31,6 +32,9 @@ public:
                                     KSharedPtr<KDevelop::CodeCompletionContext> context = KSharedPtr<KDevelop::CodeCompletionContext>(), 
                                     int inheritanceDepth = 0);
     virtual QVariant data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const;
+    void setTypeHint(PythonCodeCompletionContext::ItemTypeHint type);
+protected:
+    PythonCodeCompletionContext::ItemTypeHint m_typeHint;
 };
 
 } // namespace Python

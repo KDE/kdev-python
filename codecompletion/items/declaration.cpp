@@ -18,6 +18,7 @@
 
 #include "declaration.h"
 #include "duchain/helpers.h"
+#include <types/variablelengthcontainer.h>
 
 #include <language/codecompletion/codecompletionmodel.h>
 #include <language/codecompletion/codecompletioncontext.h>
@@ -35,12 +36,20 @@ namespace Python {
 
 PythonDeclarationCompletionItem::PythonDeclarationCompletionItem(DeclarationPointer decl, KSharedPtr< CodeCompletionContext > context, int inheritanceDepth)
                                : NormalDeclarationCompletionItem(decl, context, inheritanceDepth)
+                               , m_typeHint(PythonCodeCompletionContext::NoHint)
 {
     Q_ASSERT(decl->alwaysForceDirect());
+    if ( context ) {
+        setTypeHint(static_cast<PythonCodeCompletionContext*>(context.data())->itemTypeHint());
+    }
 }
 
+void PythonDeclarationCompletionItem::setTypeHint(PythonCodeCompletionContext::ItemTypeHint type)
+{
+    m_typeHint = type;
+}
     
-QVariant Python::PythonDeclarationCompletionItem::data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const
+QVariant PythonDeclarationCompletionItem::data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const
 {
     QVariant data = KDevelop::NormalDeclarationCompletionItem::data(index, role, model);
     
@@ -52,6 +61,11 @@ QVariant Python::PythonDeclarationCompletionItem::data(const QModelIndex& index,
             }
             if ( declaration()->context()->topContext() == Helper::getDocumentationFileContext() ) {
                 return 0;
+            }
+            if (   m_typeHint == PythonCodeCompletionContext::IterableRequested 
+                && dynamic_cast<VariableLengthContainer*>(declaration()->abstractType().unsafeData()) )
+            {
+                return 10;
             }
             if ( model->completionContext()->duContext() == declaration()->context() ) {
                 return 5;

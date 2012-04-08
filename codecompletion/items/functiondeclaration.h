@@ -31,7 +31,7 @@ class FunctionDeclarationCompletionItem : public Python::PythonDeclarationComple
 {
 
 public:
-    FunctionDeclarationCompletionItem(DeclarationPointer decl);
+    FunctionDeclarationCompletionItem(DeclarationPointer decl, KDevelop::CodeCompletionContext::Ptr context);
     virtual ~FunctionDeclarationCompletionItem();
     virtual int argumentHintDepth() const;
     virtual int atArgument() const;

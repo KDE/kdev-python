@@ -59,8 +59,14 @@ public:
         GeneratorVariableCompletion
     };
     
+    enum ItemTypeHint {
+        NoHint,
+        IterableRequested
+    };
+    
     PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position,
                                 int depth, const PythonCodeCompletionWorker* parent);
+    ItemTypeHint itemTypeHint();
     virtual QList< KDevelop::CompletionTreeItemPointer > completionItems(bool& abort, bool fullCompletion = true);
     QList<ImportFileItem*> includeFileItems(QList<KUrl> searchPaths);
     QList<ImportFileItem*> includeFileItemsForSubmodule(QString submodule);
@@ -76,6 +82,7 @@ private:
                                 QString calledFunction, int depth, int alreadyGivenParameters);
     void summonParentForEventualCall(TokenList tokens, const QString& text);
     CompletionContextType m_operation;
+    ItemTypeHint m_itemTypeHint;
     QStack<ProjectFolderItem*> m_folderStack;
     int m_maxFolderScanDepth;
     QStringList m_searchingForModule;

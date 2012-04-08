@@ -54,7 +54,8 @@ QVariant KeywordItem::data ( const QModelIndex& index, int role, const KDevelop:
         return QVariant(false);
     case Qt::DisplayRole:
         if (index.column() == KTextEditor::CodeCompletionModel::Name) {
-            return QVariant(m_keyword);
+            QString kw = m_keyword;
+            return QVariant(kw.replace("\n", ""));
         } else {
             return QVariant("");
         }

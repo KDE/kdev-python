@@ -56,6 +56,11 @@ using namespace KDevelop;
 
 namespace Python {
 
+PythonCodeCompletionContext::ItemTypeHint PythonCodeCompletionContext::itemTypeHint()
+{
+    return m_itemTypeHint;
+}
+
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bool& abort, bool fullCompletion)
 {
     QList<CompletionTreeItemPointer> resultingItems;
@@ -63,17 +68,16 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     
     kDebug() << "Line: " << m_position.line;
     
-    // Don't show those items in calltips
     if ( m_operation != FunctionCallCompletion ) {
         KeywordItem::Flags f = (KeywordItem::Flags) ( KeywordItem::ForceLineBeginning | KeywordItem::ImportantItem );
         // TODO group those correctly so they appear at the top
         if ( m_position.line == 0 ) {
-            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python", f));
-            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python2.7", f));
-            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python3", f));
+            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python\n", f));
+            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python2.7\n", f));
+            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python3\n", f));
         }
         else if ( m_position.line == 1 ) {
-            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "# -*- Coding:utf-8 -*-", f));
+            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "# -*- Coding:utf-8 -*-\n\n", f));
         }
     }
     
@@ -351,7 +355,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
         if ( checkDeclaration ) {
             AbstractType::Ptr type = checkDeclaration->abstractType();
             if ( type && ( type->whichType() == AbstractType::TypeFunction || type->whichType() == AbstractType::TypeStructure ) ) {
-                item = new FunctionDeclarationCompletionItem(currentDeclaration);
+                item = new FunctionDeclarationCompletionItem(currentDeclaration, KDevelop::CodeCompletionContext::Ptr(this));
             }
             else {
                 item = new PythonDeclarationCompletionItem(currentDeclaration, KDevelop::CodeCompletionContext::Ptr(this));
@@ -495,6 +499,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
                                                          QString calledFunction, int depth, int alreadyGivenParameters)
     : CodeCompletionContext(context, remainingText, CursorInRevision::invalid(), depth)
     , m_operation(FunctionCallCompletion)
+    , m_itemTypeHint(NoHint)
     , m_guessTypeOfExpression(calledFunction)
     , m_alreadyGivenParametersCount(alreadyGivenParameters)
 {
@@ -550,6 +555,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
                                                          int depth, const PythonCodeCompletionWorker* parent)
     : CodeCompletionContext(context, text, position, depth)
     , m_operation(PythonCodeCompletionContext::DefaultCompletion)
+    , m_itemTypeHint(NoHint)
     , worker(parent)
     , m_position(position)
 {
@@ -626,6 +632,12 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     
     if ( firstStatus == ExpressionParser::MeaninglessKeywordFound ) {
         m_operation = DefaultCompletion;
+        return;
+    }
+    
+    if ( firstStatus == ExpressionParser::InFound ) {
+        m_operation = DefaultCompletion;
+        m_itemTypeHint = IterableRequested;
         return;
     }
     

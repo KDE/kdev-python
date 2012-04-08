@@ -120,6 +120,8 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         virtual void visitSetComprehension(SetComprehensionAst* node);
         virtual void visitIfExpression(IfExpressionAst* node);
         
+        void addUnknownName(const QString& name);
+        
         // whether type of expression should be known or not, i.e. if at the point where the chain breaks the previous type
         // was already unknown, then this is an IDE error, otherwise probably the user's code is wrong; used for error reporting
         inline bool shouldBeKnown() const {
@@ -201,6 +203,8 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         QStack< QList<DeclarationPointer> > m_lastDeclaration;
         QStack<AbstractType::Ptr> m_callTypeStack;
         QStack<DeclarationPointer> m_callStack;
+        
+        ExpressionVisitor* m_parentVisitor;
 };
 
 }

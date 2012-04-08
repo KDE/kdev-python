@@ -38,7 +38,7 @@ bool PythonCodeCompletionModel::shouldStartCompletion(KTextEditor::View* view, c
                                                 bool userInsertion, const KTextEditor::Cursor& position)
 {
     QList<QString> words;
-    words << "for" << "raise" << "except";
+    words << "for" << "raise" << "except" << "in";
     foreach ( const QString& word, words ) {
         if ( view->document()->line(position.line()).mid(0, position.column()).endsWith(word + " ") ) {
             return true;

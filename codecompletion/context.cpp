@@ -432,6 +432,9 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
     QFileInfoList contents = currentDirectory.entryInfoList(QStringList(), QDir::Files | QDir::Dirs);
     bool atBottom = item.remainingIdentifiers.isEmpty();
     QList<CompletionTreeItemPointer> items;
+    
+    QString sourceFile;
+    
     if ( item.remainingIdentifiers.isEmpty() ) {
         // check for the __init__ file
         QFileInfo initFile(item.directory.path(), "__init__.py");
@@ -441,6 +444,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
             init.isDirectory = true;
             init.name = "";
             items << CompletionTreeItemPointer(new ImportFileItem(init));
+            sourceFile = initFile.filePath();
         }
     }
     else {
@@ -448,18 +452,22 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
         item.remainingIdentifiers.removeFirst();
         kDebug() << " CHECK:" << file.absoluteFilePath();
         if ( file.exists() ) {
-            IndexedString filename(file.absoluteFilePath());
-            TopDUContext* top = DUChain::self()->chainForDocument(filename);
-            kDebug() << top;
-            DUContext* c = internalContextForDeclaration(top, item.remainingIdentifiers);
-            kDebug() << "  GOT:" << c;
-            if ( c ) {
-                items << declarationListToItemList(c->localDeclarations().toList());
-            }
-            else {
-                // do better next time
-                DUChain::self()->updateContextForUrl(filename, TopDUContext::AllDeclarationsAndContexts);
-            }
+            sourceFile = file.absoluteFilePath();
+        }
+    }
+    
+    if ( ! sourceFile.isEmpty() ) {
+        IndexedString filename(sourceFile);
+        TopDUContext* top = DUChain::self()->chainForDocument(filename);
+        kDebug() << top;
+        DUContext* c = internalContextForDeclaration(top, item.remainingIdentifiers);
+        kDebug() << "  GOT:" << c;
+        if ( c ) {
+            items << declarationListToItemList(c->localDeclarations().toList());
+        }
+        else {
+            // do better next time
+            DUChain::self()->updateContextForUrl(filename, TopDUContext::AllDeclarationsAndContexts);
         }
     }
     

@@ -71,11 +71,12 @@ void makefile(QString filename, QString contents) {
     fileptr.open(QIODevice::WriteOnly);
     fileptr.write(contents.toAscii());
     fileptr.close();
-    KUrl url = KUrl(filename);
+    KUrl url = KUrl(basepath + filename);
     url.cleanPath();
-    DUChain::self()->updateContextForUrl(IndexedString(url), KDevelop::TopDUContext::ForceUpdate);
+    kDebug() <<  "updating duchain for " << url.url() << basepath;
+    DUChain::self()->updateContextForUrl(IndexedString(url.url()), KDevelop::TopDUContext::ForceUpdate);
     ICore::self()->languageController()->backgroundParser()->parseDocuments();
-    DUChain::self()->waitForUpdate(IndexedString(url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
+    DUChain::self()->waitForUpdate(IndexedString(url.url()), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
 }
 
 void PyCompletionTest::initShell()

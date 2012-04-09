@@ -121,6 +121,8 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     
     Py_NoSiteFlag = 1;
     
+    contents.append('\n');
+    
     QPair<QString, int> hacked = fileHeaderHack(contents, filename);
     contents = hacked.first;
     int lineOffset = hacked.second;

@@ -267,7 +267,8 @@ void PyCompletionTest::testImportCompletion_data()
     QTest::addColumn<QString>("expectedItem");
     
     QTest::newRow("same_directory") << "%INVOKE" << "import %CURSOR" << "toplevelmodule";
-    QTest::newRow("same_directory_beginText") << "%INVOKE" << "import toplevelmo%CURSOR" << "toplevelmodule";
+//     QTest::newRow("same_directory_beginText") << "%INVOKE" << "import toplevelmo%CURSOR" << "toplevelmodule";
+    QTest::newRow("nocompletion") << "%INVOKE" << "from toplevelmodule %CURSOR" << "EMPTY";
     QTest::newRow("subdirectory_full") << "%INVOKE" << "import %CURSOR" << "submoduledir";
     QTest::newRow("subdirectory_file") << "%INVOKE" << "import submoduledir.%CURSOR" << "subfile";
     QTest::newRow("subsubdirectory_file") << "%INVOKE" << "import submoduledir.anothersubdir.%CURSOR" << "subsubfile";

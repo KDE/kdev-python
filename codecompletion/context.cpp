@@ -73,12 +73,13 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     if ( m_operation != FunctionCallCompletion ) {
         KeywordItem::Flags f = (KeywordItem::Flags) ( KeywordItem::ForceLineBeginning | KeywordItem::ImportantItem );
         // TODO group those correctly so they appear at the top
-        if ( m_position.line == 0 ) {
+        if ( m_position.line == 0 && m_text.startsWith("#") ) {
             resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python\n", f));
             resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python2.7\n", f));
             resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python3\n", f));
         }
-        else if ( m_position.line == 1 ) {
+        // TODO fixme
+        else if ( m_position.line == 1 && m_text.endsWith("#") ) {
             resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "# -*- Coding:utf-8 -*-\n\n", f));
         }
     }
@@ -443,7 +444,9 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
             init.basePath = item.directory;
             init.isDirectory = true;
             init.name = "";
-            items << CompletionTreeItemPointer(new ImportFileItem(init));
+            ImportFileItem* importfile = new ImportFileItem(init);
+            importfile->moduleName = item.directory.fileName();
+            items << CompletionTreeItemPointer(importfile);
             sourceFile = initFile.filePath();
         }
     }
@@ -475,6 +478,9 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
         // append all python files in the directory
         foreach ( QFileInfo file, contents ) {
             // TODO windows
+            if ( file.fileName().startsWith(".") ) {
+                continue;
+            }
             kDebug() << " > CONTENT:" << file.absolutePath() << file.fileName();
             if ( file.isFile() ) {
                 if ( file.fileName().endsWith(".py") || file.fileName().endsWith(".so") ) {
@@ -482,9 +488,9 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
                     fileInclude.basePath = item.directory;
                     fileInclude.isDirectory = false;
                     fileInclude.name = file.fileName().mid(0, file.fileName().length() - 3); // remove ".py"
-                    ImportFileItem import(fileInclude);
-                    import.moduleName = "FIXME";
-                    items << CompletionTreeItemPointer(new ImportFileItem(import));
+                    ImportFileItem* import = new ImportFileItem(fileInclude);
+                    import->moduleName = fileInclude.name;
+                    items << CompletionTreeItemPointer(import);
                 }
             }
             else {
@@ -492,7 +498,9 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
                 dirInclude.basePath = item.directory;
                 dirInclude.isDirectory = true;
                 dirInclude.name = file.fileName();
-                items << CompletionTreeItemPointer(new ImportFileItem(dirInclude));
+                ImportFileItem* import = new ImportFileItem(dirInclude);
+                import->moduleName = dirInclude.name;
+                items << CompletionTreeItemPointer(import);
             }
         }
     }
@@ -815,7 +823,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
             firstPiece = allExpressions.at(allExpressions.length() - fromIndex - 1).expression;
         }
         // might be "from foo import bar as baz, bang as foobar, ..."
-        if ( allExpressions.length() > 4 ) {
+        if ( allExpressions.length() > 4 && firstStatus == ExpressionParser::MemberAccessFound ) {
             secondPiece = allExpressions.at(allExpressions.length() - 2).expression;
         }
         
@@ -851,8 +859,13 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
             m_operation = ImportFileCompletion;
             return;
         }
-        m_operation = ImportSubCompletion;
-        m_searchImportItemsInModule = allExpressions.at(allExpressions.length() - 2).expression;
+        if ( firstStatus == ExpressionParser::MemberAccessFound ) {
+            m_operation = ImportSubCompletion;
+            m_searchImportItemsInModule = allExpressions.at(allExpressions.length() - 2).expression;
+            return;
+        }
+        // "from foo ..."
+        m_operation = NoCompletion;
         return;
     }
     

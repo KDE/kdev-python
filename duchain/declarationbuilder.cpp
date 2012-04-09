@@ -1070,7 +1070,6 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             
             DUContextPointer internal(0);
             DeclarationPointer parentObjectDeclaration = checkPreviousAttributes.lastDeclaration();
-            AbstractType::Ptr type = checkPreviousAttributes.lastType();
             
             if ( ! parentObjectDeclaration ) {
                 kDebug() << "No declaration for attribute base, aborting creation of attribute";
@@ -1084,7 +1083,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             // while this is like A = foo(); A.bar = 3
             else {
                 kDebug() << "Accessing class type through an instance, searching original declaration of type...";
-                type = parentObjectDeclaration->abstractType();
+                AbstractType::Ptr type = parentObjectDeclaration->abstractType();
                 StructureType::Ptr structure(dynamic_cast<StructureType*>(type.unsafeData()));
                 if ( ! structure || ! structure->declaration(topContext()) )
                     continue;

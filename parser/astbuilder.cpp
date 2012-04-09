@@ -145,7 +145,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     PyObject *exception, *value, *backtrace;
     PyErr_Fetch(&exception, &value, &backtrace);
 
-    mod_ty syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);
+    mod_ty syntaxtree = PyParser_ASTFromString(contents.toUtf8(), "<kdev-editor-contents>", file_input, flags, arena);
 
     if ( ! syntaxtree ) {
         kWarning() << "DID NOT RECEIVE A SYNTAX TREE -- probably parse error.";

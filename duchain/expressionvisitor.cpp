@@ -230,7 +230,9 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
             kDebug() << "Searching declarations in contexts: " << searchContexts;
             foreach ( DUContext* currentInternalContext, searchContexts ) {
                 if ( currentInternalContext ) {
-                    foundDecls.append(currentInternalContext->findDeclarations(QualifiedIdentifier(node->attribute->value), CursorInRevision::invalid()));
+                    foundDecls.append(currentInternalContext->findDeclarations(QualifiedIdentifier(node->attribute->value),
+                                                                               CursorInRevision::invalid(), AbstractType::Ptr(),
+                                                                               0, DUContext::DontSearchInParent));
                     success = true;
                 }
             }

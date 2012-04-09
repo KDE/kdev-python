@@ -541,32 +541,41 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
     QList<StructureType::Ptr> openedTypes;
     QList<DUContext*> openedContexts;
     
+    RangeInRevision displayRange = RangeInRevision::invalid();
+    
     DUChainWriteLocker lock(DUChain::lock());
     for ( int i = 0; i < remainingNameComponents.length(); i++ ) {
         const QString& component = remainingNameComponents.at(i);
         kDebug() << "creating context for " << component;
         Identifier* temporaryIdentifier = new Identifier(component);
         Declaration* d = 0;
-        StructureType::Ptr moduleType = StructureType::Ptr(new StructureType());
         temporaryIdentifier->copyRange(declarationIdentifier);
         temporaryIdentifier->endCol = temporaryIdentifier->startCol - 1;
-        openType(moduleType);
-        if ( i != remainingNameComponents.length() - 1 or not aliasDeclaration ) {
-            d = visitVariableDeclaration<Declaration>(temporaryIdentifier);
-            if ( d ) {
-                if ( topContext() != extendingPreviousImportCtx ) {
-                    d->setRange(RangeInRevision(extendingPreviousImportCtx->range().start, extendingPreviousImportCtx->range().start));
-                }
-                d->setAutoDeclaration(true);
-                currentContext()->createUse(d->ownIndex(), editorFindRange(declarationIdentifier, declarationIdentifier));
-            }
-        }
-        else {
-            AliasDeclaration* adecl = visitVariableDeclaration<AliasDeclaration>(temporaryIdentifier, range);
+        displayRange = editorFindRange(temporaryIdentifier, temporaryIdentifier); // TODO fixme
+        
+        // it's the last level, so if we have an alias declaration create it and stop
+        if ( aliasDeclaration && i == remainingNameComponents.length() - 1 ) {
+            AliasDeclaration* adecl = openDeclaration<AliasDeclaration>(temporaryIdentifier, temporaryIdentifier);
             if ( adecl ) {
                 adecl->setAliasedDeclaration(aliasDeclaration);
             }
             d = adecl;
+            closeDeclaration();
+            openedDeclarations.append(d);
+            break;
+        }
+        
+        // otherwise, create a new "level" entry (a pseudo type + context + declaration which contains all imported items)
+        StructureType::Ptr moduleType = StructureType::Ptr(new StructureType());
+        openType(moduleType);
+        
+        d = visitVariableDeclaration<Declaration>(temporaryIdentifier);
+        if ( d ) {
+            if ( topContext() != extendingPreviousImportCtx ) {
+                d->setRange(RangeInRevision(extendingPreviousImportCtx->range().start, extendingPreviousImportCtx->range().start));
+            }
+            d->setAutoDeclaration(true);
+            currentContext()->createUse(d->ownIndex(), displayRange);
         }
         
         openedContexts.append(openContext(declarationIdentifier, KDevelop::DUContext::Other));
@@ -585,12 +594,13 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
         currentContext()->setLocalScopeIdentifier(QualifiedIdentifier("__kdevpythonlanguagesupport_import_helper"));
         delete temporaryIdentifier;
     }
-    for ( int i = remainingNameComponents.length() - 1; i >= 0; i-- ) {
+    for ( int i = openedContexts.length() - 1; i >= 0; i-- ) {
         kDebug() << "closing context";
         closeType();
         closeContext();
         Declaration* d = openedDeclarations.at(i);
-        if ( d and ( i != 0 or not aliasDeclaration ) ) {
+        // because no context will be opened for an alias declaration, this will not happen if there's one
+        if ( d ) {
             openedTypes[i]->setDeclaration(d);
             d->setType(openedTypes.at(i));
             d->setInternalContext(openedContexts.at(i));
@@ -676,7 +686,9 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
             kDebug() << "Result: " << originalDeclaration;
             if ( originalDeclaration ) {
                 DUChainWriteLocker lock(DUChain::lock());
-                resultingDeclaration = createDeclarationTree(declarationName.split("."), declarationIdentifier, ReferencedTopDUContext(0), originalDeclaration);
+                resultingDeclaration = createDeclarationTree(declarationName.split("."), declarationIdentifier,
+                                                             ReferencedTopDUContext(0), originalDeclaration,
+                                                             editorFindRange(declarationIdentifier, declarationIdentifier));
                 /** DEBUG **/
                 if ( dynamic_cast<AliasDeclaration*>(resultingDeclaration) ) {
                     kDebug() << "Resulting alias: " << resultingDeclaration->toString();

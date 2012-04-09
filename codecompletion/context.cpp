@@ -149,18 +149,17 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
                 delete v;
             }
             
-            // This is just a lazy workaround to use the declarationListToItemList function conveniently.
-            // TODO: improve this.
-            QList<DeclarationDepthPair> realCalltips_withDepth;
+            QList<Declaration*> realCalltips;
             foreach ( Declaration* current, calltips ) {
-                if ( ! dynamic_cast<FunctionDeclaration*>(current) ) {
+                current = Helper::resolveAliasDeclaration(current);
+                if ( ! current->isFunctionDeclaration() ) {
                     kDebug() << "Not a function declaration: " << current->toString();
                     continue;
                 }
-                realCalltips_withDepth.append(DeclarationDepthPair(current, 0));
+                realCalltips.append(current);
             }
             
-            QList<CompletionTreeItemPointer> calltipItems = declarationListToItemList(realCalltips_withDepth);
+            QList<CompletionTreeItemPointer> calltipItems = declarationListToItemList(realCalltips);
             foreach ( CompletionTreeItemPointer current, calltipItems ) {
                 kDebug() << "Adding calltip item, at argument:" << m_alreadyGivenParametersCount+1; 
                 FunctionDeclarationCompletionItem* item = static_cast<FunctionDeclarationCompletionItem*>(current.data());

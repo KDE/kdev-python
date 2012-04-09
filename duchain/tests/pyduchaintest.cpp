@@ -77,7 +77,7 @@ void PyDUChainTest::initShell()
     
     QFile f("/tmp/i.py");
     f.open(QIODevice::WriteOnly);
-    f.write("def checkme(): pass\n");
+    f.write("def checkme(): pass\nlocalvar1 = 3\nlocalvar2 = 5\n");
     f.close();
     
     DUChain::self()->updateContextForUrl(IndexedString("/tmp/i.py"), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
@@ -119,6 +119,20 @@ ReferencedTopDUContext PyDUChainTest::parse_int(const QString& code, const QStri
 ReferencedTopDUContext PyDUChainTest::parse(const QString& code, const QString& suffix)
 {
     return parse_int(code, suffix);
+}
+
+void PyDUChainTest::testMultiFromImport()
+{
+    ReferencedTopDUContext ctx = parse("import i.localvar1\nimport i.localvar2\na=i.localvar1\nb=i.localvar2\n");
+    QVERIFY(ctx);
+    DUChainReadLocker lock;
+    QList<Declaration*> a = ctx->findDeclarations(QualifiedIdentifier("a"));
+    QList<Declaration*> b = ctx->findDeclarations(QualifiedIdentifier("b"));
+    QVERIFY(! a.isEmpty());
+    QVERIFY(! b.isEmpty());
+    kDebug() << a.first()->abstractType()->toString();
+    QVERIFY(b.first()->abstractType()->toString().endsWith("int"));
+    QVERIFY(a.first()->abstractType()->toString().endsWith("int"));
 }
 
 void PyDUChainTest::testCrashes() {

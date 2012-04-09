@@ -530,6 +530,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
         extendingPreviousImportCtx = lastDeclaration->internalContext();
         injectContext(extendingPreviousImportCtx);
         injectingContext = true;
+        kDebug() << "remaining identifiers:" << remainingNameComponents;
     }
     else {
         remainingNameComponents = nameComponents;
@@ -546,7 +547,6 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
     DUChainWriteLocker lock(DUChain::lock());
     for ( int i = 0; i < remainingNameComponents.length(); i++ ) {
         const QString& component = remainingNameComponents.at(i);
-        kDebug() << "creating context for " << component;
         Identifier* temporaryIdentifier = new Identifier(component);
         Declaration* d = 0;
         temporaryIdentifier->copyRange(declarationIdentifier);
@@ -554,29 +554,43 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
         displayRange = editorFindRange(temporaryIdentifier, temporaryIdentifier); // TODO fixme
         
         // it's the last level, so if we have an alias declaration create it and stop
+        bool done = false;
         if ( aliasDeclaration && i == remainingNameComponents.length() - 1 ) {
-            AliasDeclaration* adecl = openDeclaration<AliasDeclaration>(temporaryIdentifier, temporaryIdentifier);
-            if ( adecl ) {
-                adecl->setAliasedDeclaration(aliasDeclaration);
+            if ( aliasDeclaration->isFunctionDeclaration() || dynamic_cast<ClassDeclaration*>(aliasDeclaration) ) {
+                AliasDeclaration* adecl = openDeclaration<AliasDeclaration>(temporaryIdentifier, temporaryIdentifier);
+                if ( adecl ) {
+                    adecl->setAliasedDeclaration(aliasDeclaration);
+                }
+                d = adecl;
+                closeDeclaration();
             }
-            d = adecl;
-            closeDeclaration();
+            else {
+                d = visitVariableDeclaration<Declaration>(temporaryIdentifier);
+                d->setAbstractType(aliasDeclaration->abstractType());
+            }
             openedDeclarations.append(d);
-            break;
+            done = true;
         }
         
-        // otherwise, create a new "level" entry (a pseudo type + context + declaration which contains all imported items)
-        StructureType::Ptr moduleType = StructureType::Ptr(new StructureType());
-        openType(moduleType);
-        
-        d = visitVariableDeclaration<Declaration>(temporaryIdentifier);
+        if ( ! done ) {
+            d = visitVariableDeclaration<Declaration>(temporaryIdentifier);
+        }
         if ( d ) {
             if ( topContext() != extendingPreviousImportCtx ) {
                 d->setRange(RangeInRevision(extendingPreviousImportCtx->range().start, extendingPreviousImportCtx->range().start));
             }
+            else {
+                d->setRange(displayRange);
+            }
             d->setAutoDeclaration(true);
             currentContext()->createUse(d->ownIndex(), displayRange);
         }
+        if ( done ) break;
+        
+        kDebug() << "creating context for " << component;
+        // otherwise, create a new "level" entry (a pseudo type + context + declaration which contains all imported items)
+        StructureType::Ptr moduleType = StructureType::Ptr(new StructureType());
+        openType(moduleType);
         
         openedContexts.append(openContext(declarationIdentifier, KDevelop::DUContext::Other));
         openedDeclarations.append(d);

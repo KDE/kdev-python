@@ -179,6 +179,7 @@ const QList<CompletionTreeItem*> PyCompletionTest::invokeCompletionOn(const QStr
     Q_ASSERT(initCode.indexOf("%INVOKE") != -1);
     QString copy = initCode;
     QString allCode = copy.replace("%INVOKE", invokeCode);
+    
     QStringList lines = allCode.split('\n');
     CursorInRevision cursorAt = CursorInRevision::invalid();
     for ( int i = 0; i < lines.length(); i++ ) {

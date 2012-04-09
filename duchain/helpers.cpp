@@ -51,6 +51,7 @@ namespace Python {
 QList<KUrl> Helper::cachedSearchPaths;
 QString Helper::dataDir = QString::null;
 QString Helper::documentationFile = QString::null;
+DUChainPointer<TopDUContext> Helper::documentationFileContext = DUChainPointer<TopDUContext>(0);
 
 AbstractType::Ptr Helper::resolveType(AbstractType::Ptr type)
 {
@@ -135,7 +136,7 @@ Declaration* Helper::declarationForName(NameAst* /*ast*/, const QualifiedIdentif
     QList<Declaration*> declarations;
     QList<Declaration*> localDeclarations;
     QList<Declaration*> importedLocalDeclarations;
-    kDebug() << "Finding declaration for name before " << nodeRange.end << ", in context" << context->range();
+    kDebug() << "Finding declaration for name" << identifier.toString() << " before " << nodeRange.end << ", in context" << context->range();
     {
         DUChainReadLocker lock(DUChain::lock());
         if ( context.data() == context->topContext() and nodeRange.isValid() ) {
@@ -174,7 +175,7 @@ Declaration* Helper::declarationForName(NameAst* /*ast*/, const QualifiedIdentif
     return declaration;
 }
 
-QList< DUContext* > Helper::internalContextsForClass(StructureType::Ptr klassType, TopDUContext* context, int depth)
+QList< DUContext* > Helper::internalContextsForClass(StructureType::Ptr klassType, TopDUContext* context, ContextSearchFlags flags, int depth)
 {
     QList<DUContext*> searchContexts;
     if ( ! klassType ) {
@@ -183,18 +184,15 @@ QList< DUContext* > Helper::internalContextsForClass(StructureType::Ptr klassTyp
     searchContexts << klassType->internalContext(context);
     Declaration* decl = Helper::resolveAliasDeclaration(klassType->declaration(context));
     ClassDeclaration* klass = dynamic_cast<ClassDeclaration*>(decl);
-    kDebug() << "Got class Declaration:" << klass << decl;
-    if ( decl ) {
-        kDebug() << decl->toString();
-    }
     if ( klass ) {
-        kDebug() << "Base classes: " << klass->baseClassesSize();
         FOREACH_FUNCTION ( const BaseClassInstance& base, klass->baseClasses ) {
+            if ( flags == PublicOnly and base.access == KDevelop::Declaration::Private ) {
+                continue;
+            }
             StructureType::Ptr baseClassType = base.baseClass.type<StructureType>();
-            kDebug() << "Base class type: " << baseClassType;
             // recursive call, because the base class will have more base classes eventually
             if ( depth < 10 ) {
-                searchContexts.append(Helper::internalContextsForClass(baseClassType, context, depth + 1));
+                searchContexts.append(Helper::internalContextsForClass(baseClassType, context, flags, depth + 1));
             }
         }
     }
@@ -228,7 +226,15 @@ QString Helper::getDocumentationFile() {
 
 ReferencedTopDUContext Helper::getDocumentationFileContext()
 {
-    return ReferencedTopDUContext(DUChain::self()->chainForDocument(Helper::getDocumentationFile()));
+    if ( Helper::documentationFileContext ) {
+        return ReferencedTopDUContext(Helper::documentationFileContext.data());
+    }
+    else {
+        ReferencedTopDUContext ctx = ReferencedTopDUContext(DUChain::self()->chainForDocument(Helper::getDocumentationFile()));
+        Helper::documentationFileContext = DUChainPointer<TopDUContext>(ctx.data());
+        return ctx;
+    }
+    return ReferencedTopDUContext(0); // c++...
 }
     
 QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)

@@ -27,38 +27,33 @@
 
 #include <QMutexLocker>
 
-#include <kdebug.h>
-#include <kcomponentdata.h>
-#include <kstandarddirs.h>
-#include <kpluginfactory.h>
-#include <kpluginloader.h>
-#include <ktexteditor/smartinterface.h>
+#include <KDebug>
+#include <KComponentData>
+#include <KStandardDirs>
+#include <KPluginFactory>
+#include <KPluginLoader>
+
+#include <QPushButton>
+#include <QLabel>
+#include <QHBoxLayout>
 
 #include <interfaces/icore.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <interfaces/iplugincontroller.h>
 #include <interfaces/ilanguage.h>
 #include <interfaces/idocument.h>
-#include <language/backgroundparser/backgroundparser.h>
-#include <language/duchain/duchain.h>
 #include <interfaces/idocumentcontroller.h>
-
+#include <interfaces/context.h>
+#include <interfaces/contextmenuextension.h>
+#include <language/duchain/duchain.h>
 #include <language/codecompletion/codecompletion.h>
 #include <language/codecompletion/codecompletionmodel.h>
 
 #include "pythonparsejob.h"
 #include "pythonhighlighting.h"
 #include "duchain/pythoneditorintegrator.h"
-#include "codecompletion/pythoncodecompletionmodel.h"
+#include "codecompletion/model.h"
 #include "codegen/simplerefactoring.h"
-#include <interfaces/context.h>
-#include <interfaces/contextmenuextension.h>
-
-#include <stdio.h>
-#include <QWidget>
-#include <QPushButton>
-#include <qlabel.h>
-#include <qboxlayout.h>
 
 using namespace KDevelop;
 
@@ -120,6 +115,11 @@ KDevelop::ILanguage *LanguageSupport::language()
 KDevelop::ICodeHighlighting* LanguageSupport::codeHighlighting() const
 {
     return m_highlighting;
+}
+
+ILanguageSupport::WhitespaceSensitivity LanguageSupport::whitespaceSensititivy() const
+{
+    return ILanguageSupport::IndentOnly;
 }
 
 // QWidget* LanguageSupport::specialLanguageObjectNavigationWidget(const KUrl& url, const KDevelop::SimpleCursor& position)

@@ -15,33 +15,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************
  */
+
+#include "functiondeclaration.h"
+
 #include <language/codecompletion/normaldeclarationcompletionitem.h>
-#include <language/duchain/declaration.h>
 #include <language/duchain/functiondeclaration.h>
+#include <language/codecompletion/codecompletionmodel.h>
+#include <language/duchain/types/functiontype.h>
+#include <language/duchain/aliasdeclaration.h>
 
 #include <KTextEditor/View>
 #include <KTextEditor/Document>
 
-#include "functiondeclarationcompletionitem.h"
-#include "navigation/navigationwidget.h"
-#include "pythondeclarationcompletionitem.h"
+#include "duchain/navigation/navigationwidget.h"
+#include <types/variablelengthcontainer.h>
+#include "codecompletion/helpers.h"
+#include "declaration.h"
 
-#include <language/codecompletion/codecompletionmodel.h>
-#include <language/duchain/types/functiontype.h>
-#include "helpers.h"
-#include <language/duchain/aliasdeclaration.h>
 
 using namespace KDevelop;
 using namespace KTextEditor;
 
 namespace Python {
 
-FunctionDeclarationCompletionItem::FunctionDeclarationCompletionItem(DeclarationPointer decl) 
-    : PythonDeclarationCompletionItem(decl), m_atArgument(-1) { }
+FunctionDeclarationCompletionItem::FunctionDeclarationCompletionItem(DeclarationPointer decl, CodeCompletionContext::Ptr context) 
+    : PythonDeclarationCompletionItem(decl, context), m_atArgument(-1), m_depth(0) { }
 
 int FunctionDeclarationCompletionItem::atArgument() const
 {
     return m_atArgument;
+}
+
+void FunctionDeclarationCompletionItem::setDepth(int d)
+{
+    m_depth = d;
 }
 
 void FunctionDeclarationCompletionItem::setAtArgument(int d)
@@ -51,7 +58,7 @@ void FunctionDeclarationCompletionItem::setAtArgument(int d)
 
 int FunctionDeclarationCompletionItem::argumentHintDepth() const
 {
-    return m_atArgument >= 0;
+    return m_depth;
 }
 
 QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const
@@ -88,6 +95,15 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
                 return QVariant(highlight);
             }
         }
+        case KDevelop::CodeCompletionModel::MatchQuality: {
+            if (    m_typeHint == PythonCodeCompletionContext::IterableRequested
+                 && dec && dec->type<FunctionType>()
+                 && dynamic_cast<VariableLengthContainer*>(dec->type<FunctionType>()->returnType().unsafeData()) )
+            {
+                return 2 + PythonDeclarationCompletionItem::data(index, role, model).toInt();
+            }
+            return PythonDeclarationCompletionItem::data(index, role, model);
+        }
     }
     return Python::PythonDeclarationCompletionItem::data(index, role, model);
 }
@@ -110,7 +126,11 @@ void FunctionDeclarationCompletionItem::executed(KTextEditor::Document* document
         return;
     }
     kDebug() << "declaration data: " << fdecl.data();
-    const QString suffix = "()";
+    QString suffix = "()";
+    KTextEditor::Range checkSuffix(word.end().line(), word.end().column(), word.end().line(), word.end().column() + 2);
+    if ( document->text(checkSuffix) == "()" ) {
+        suffix = ""; // don't insert brackets if they're already there
+    }
     int skip = 2; // place cursor behind bracktes
     if ( fdecl.data()->type<FunctionType>()->arguments().length() != 0 ) {
         skip = 1; // place cursor in brackets if there's parameters

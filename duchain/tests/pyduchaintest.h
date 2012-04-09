@@ -1,5 +1,6 @@
 /*****************************************************************************
  * Copyright 2010 (c) Miquel Canes Gonzalez <miquelcanes@gmail.com>          *
+ * Copyright 2011-2012 Sven Brauch <svenbrauch@googlemail.com>               *
  *                                                                           *
  * Permission is hereby granted, free of charge, to any person obtaining     *
  * a copy of this software and associated documentation files (the           *
@@ -25,6 +26,7 @@
 #define PYDUCHAINTEST_H
 
 #include <QObject>
+#include <kdev-pg-memory-pool.h>
 #include "ast.h"
 #include <language/duchain/indexedstring.h>
 #include <language/duchain/topducontext.h>
@@ -41,12 +43,11 @@ class PyDUChainTest : public QObject
         explicit PyDUChainTest(QObject* parent = 0);
         void initShell();
         
-        void parse_int(const QString& code, const QString& suffix = QString::null);
+        KDevelop::ReferencedTopDUContext parse_int(const QString& code, const QString& suffix = QString::null);
         KDevelop::ReferencedTopDUContext parse(const QString& code, const QString& suffix = QString::null);
         
         Python::CodeAst* m_ast;
-        KDevelop::ReferencedTopDUContext m_ctx;
-        bool m_finished;
+        KDevPG::MemoryPool m_pool;
         
     private slots:
         void testSimple();
@@ -63,7 +64,6 @@ class PyDUChainTest : public QObject
         void testFlickering_data();
         void testFunctionArgs();
         void testAutocompletionFlickering();
-        void updateReady(KDevelop::IndexedString url, KDevelop::ReferencedTopDUContext topContext);
         void testContainerTypes();
         void testContainerTypes_data();
         void testDecorators();
@@ -71,6 +71,8 @@ class PyDUChainTest : public QObject
         void testInheritance();
         void testInheritance_data();
         void testClassVariables();
+        void testClassContextRanges();
+        void testVarKWArgs();
         
 //         void testFunctionStuff();
 //         void testFunctionStuff_data();

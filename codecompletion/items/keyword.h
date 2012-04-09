@@ -16,23 +16,33 @@
  *****************************************************************************
  */
 
-#ifndef PYTHONDECLARATIONCOMPLETIONITEM_H
-#define PYTHONDECLARATIONCOMPLETIONITEM_H
+#ifndef KEYWORDITEM_H
+#define KEYWORDITEM_H
 
 #include <language/codecompletion/normaldeclarationcompletionitem.h>
-#include <language/codecompletion/codecompletioncontext.h>
-#include <language/codecompletion/codecompletionmodel.h>
+
+using namespace KDevelop;
 
 namespace Python {
 
-class PythonDeclarationCompletionItem : public KDevelop::NormalDeclarationCompletionItem {
+class KeywordItem : public NormalDeclarationCompletionItem
+{
+
 public:
-    PythonDeclarationCompletionItem(KDevelop::DeclarationPointer decl = KDevelop::DeclarationPointer(), 
-                                    KSharedPtr<KDevelop::CodeCompletionContext> context = KSharedPtr<KDevelop::CodeCompletionContext>(), 
-                                    int inheritanceDepth = 0);
+    enum Flags {
+        NoFlags = 0x0,
+        ForceLineBeginning = 0x1,
+        ImportantItem = 0x2
+    };
+    KeywordItem(KDevelop::CodeCompletionContext::Ptr context, QString keyword, Flags flags = NoFlags);
+    virtual void execute(KTextEditor::Document* document, const KTextEditor::Range& word);
     virtual QVariant data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const;
+private:
+    QString m_keyword;
+    Flags m_flags;
+    
 };
 
-} // namespace Python
+}
 
-#endif
+#endif // KEYWORDITEM_H

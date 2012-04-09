@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2011 Sven Brauch <svenbrauch@googlemail.com>                *
+ * Copyright (c) 2010-2012 Sven Brauch <svenbrauch@googlemail.com>           *
  *                                                                           *
  * This program is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU General Public License as            *
@@ -15,30 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************
  */
-#ifndef IMPLEMENTFUNCTIONCOMPLETIONITEM_H
-#define IMPLEMENTFUNCTIONCOMPLETIONITEM_H
 
+#ifndef PYTHONCODECOMPLETIONWORKER_H
+#define PYTHONCODECOMPLETIONWORKER_H
+
+#include "model.h"
+#include <language/codecompletion/codecompletionworker.h>
 #include <language/codecompletion/codecompletionitem.h>
-#include <QStringList>
-
-using namespace KDevelop;
+#include "pythoncompletionexport.h"
 
 namespace Python {
 
-class ImplementFunctionCompletionItem : public CompletionTreeItem
+class KDEVPYTHONCOMPLETION_EXPORT PythonCodeCompletionWorker : public KDevelop::CodeCompletionWorker
 {
-public:
-    ImplementFunctionCompletionItem(const QString& name, const QString& arguments, const QString& writeArguments, const QString& previousIndent);
-    virtual void execute(KTextEditor::Document* document, const KTextEditor::Range& word);
-    virtual QVariant data(const QModelIndex& index, int role, const CodeCompletionModel* model) const;
 
-private:
-    QString m_arguments; // displayed
-    QString m_writeArguments; // written to the file on execute
-    QString m_name;
-    QString m_previousIndent;
+public:
+    PythonCodeCompletionWorker(PythonCodeCompletionModel *parent, KUrl document);
+    virtual KDevelop::CodeCompletionContext* createCompletionContext(KDevelop::DUContextPointer context, const QString& contextText, const QString& followingText, const KDevelop::CursorInRevision& position) const;
+    PythonCodeCompletionModel* parent;
 };
 
-} // namespace Python
+}
 
-#endif // IMPLEMENTFUNCTIONCOMPLETIONITEM_H
+#endif // PYTHONCODECOMPLETIONWORKER_H

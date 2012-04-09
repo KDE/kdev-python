@@ -98,6 +98,8 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
 {
     public:
         ExpressionVisitor(KDevelop::DUContext* ctx, PythonEditorIntegrator* editor = 0);
+        // use this to construct the expression-visitor recursively
+        ExpressionVisitor(ExpressionVisitor* parent);
         
         virtual void visitBinaryOperation(BinaryOperationAst* node);
         virtual void visitUnaryOperation(UnaryOperationAst* node);
@@ -117,6 +119,8 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         virtual void visitDictionaryComprehension(DictionaryComprehensionAst* node);
         virtual void visitSetComprehension(SetComprehensionAst* node);
         virtual void visitIfExpression(IfExpressionAst* node);
+        
+        void addUnknownName(const QString& name);
         
         // whether type of expression should be known or not, i.e. if at the point where the chain breaks the previous type
         // was already unknown, then this is an IDE error, otherwise probably the user's code is wrong; used for error reporting
@@ -156,6 +160,7 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         bool m_forceGlobalSearching;
         // used by autocompletion to detect unknown NameAst elements in expressions
         bool m_reportUnknownNames;
+        CursorInRevision m_scanUntilCursor;
         QList<QString> m_unknownNames;
         
         // this tells the difference between "class foo" and "instance of foo" -- TODO need a better solution!
@@ -198,6 +203,8 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         QStack< QList<DeclarationPointer> > m_lastDeclaration;
         QStack<AbstractType::Ptr> m_callTypeStack;
         QStack<DeclarationPointer> m_callStack;
+        
+        ExpressionVisitor* m_parentVisitor;
 };
 
 }

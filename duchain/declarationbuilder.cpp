@@ -67,13 +67,7 @@ using namespace KDevelop;
 namespace Python
 {
 
-DeclarationBuilder::DeclarationBuilder()
-        : DeclarationBuilderBase()
-{
-    kDebug() << "Building Declarations";
-}
-
-DeclarationBuilder::DeclarationBuilder( PythonEditorIntegrator* editor )
+DeclarationBuilder::DeclarationBuilder(PythonEditorIntegrator* editor)
         : DeclarationBuilderBase( )
 {
     setEditor(editor);
@@ -136,8 +130,11 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, 
         Identifier* id = currentVariableDefinition->identifier;
         return visitVariableDeclaration<T>(id, currentVariableDefinition, previous, type);
     }
+    else if ( node->astType == Ast::IdentifierAstType ) {
+        return visitVariableDeclaration<T>(static_cast<Identifier*>(node), 0, previous, type);
+    }
     else {
-        kWarning() << "cannot create variable declaration for non-name AST, this is a programming error";
+        kWarning() << "cannot create variable declaration for non-(name|identifier) AST, this is a programming error";
         return static_cast<T*>(0);
     }
 }
@@ -1073,7 +1070,6 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             
             DUContextPointer internal(0);
             DeclarationPointer parentObjectDeclaration = checkPreviousAttributes.lastDeclaration();
-            AbstractType::Ptr type = checkPreviousAttributes.lastType();
             
             if ( ! parentObjectDeclaration ) {
                 kDebug() << "No declaration for attribute base, aborting creation of attribute";
@@ -1087,7 +1083,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             // while this is like A = foo(); A.bar = 3
             else {
                 kDebug() << "Accessing class type through an instance, searching original declaration of type...";
-                type = parentObjectDeclaration->abstractType();
+                AbstractType::Ptr type = parentObjectDeclaration->abstractType();
                 StructureType::Ptr structure(dynamic_cast<StructureType*>(type.unsafeData()));
                 if ( ! structure || ! structure->declaration(topContext()) )
                     continue;
@@ -1152,6 +1148,25 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
             base.baseClass = baseClassType->indexed();
             base.access = KDevelop::Declaration::Public;
             dec->addBaseClass(base);
+        }
+    }
+    // every python class inherits from "object".
+    // We use this to add all the __str__, __get__, ... methods.
+    if ( dec->baseClassesSize() == 0 and node->name->value != "__kdevpythondocumentation_builtin_object" ) {
+        ReferencedTopDUContext docContext = Helper::getDocumentationFileContext();
+        if ( docContext ) {
+            QList<Declaration*> object = docContext->findDeclarations(
+                QualifiedIdentifier("__kdevpythondocumentation_builtin_object")
+            );
+            if ( ! object.isEmpty() && object.first()->abstractType() ) {
+                Declaration* objDecl = object.first();
+                BaseClassInstance base;
+                base.baseClass = objDecl->abstractType()->indexed();
+                // this can be queried from autocompletion or elsewhere to hide the items, if required;
+                // of course, it's not private strictly speaking
+                base.access = KDevelop::Declaration::Private;
+                dec->addBaseClass(base);
+            }
         }
     }
     
@@ -1286,34 +1301,40 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         dec->setType(type);
     }
     
-    DUContext* args = DUChainUtils::getArgumentContext(dec);
-    if ( args )  {
-        QVector<Declaration*> parameters = args->localDeclarations();
-        kDebug() << "checking function with" << parameters.size() << "arguments";
-
-        if ( currentContext()->type() == DUContext::Class && ! parameters.isEmpty() ) {
-            if ( parameters[0]->identifier().identifier() != IndexedString("self") ) {
-                kDebug() << "argument is not called self, but instead:" << parameters[0]->identifier().identifier().str();
+    if ( ! Helper::findDecoratorByName<FunctionDeclaration>(dec, "staticmethod") ) {
+        DUContext* args = DUChainUtils::getArgumentContext(dec);
+        if ( args )  {
+            QVector<Declaration*> parameters = args->localDeclarations();
+            kDebug() << "checking function with" << parameters.size() << "arguments";
+            
+            if ( currentContext()->type() == DUContext::Class && ! parameters.isEmpty() ) {
+                if ( parameters[0]->identifier().identifier() != IndexedString("self") ) {
+                    kDebug() << "argument is not called self, but instead:" << parameters[0]->identifier().identifier().str();
+                    KDevelop::Problem *p = new KDevelop::Problem();
+                    p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(node->startLine, node->startCol, node->startLine, 10000)));
+                    p->setSource(KDevelop::ProblemData::SemanticAnalysis);
+                    p->setSeverity(KDevelop::ProblemData::Warning);
+                    p->setDescription(i18n("First argument of class method is not called self, this is deprecated"));
+                    ProblemPointer ptr(p);
+                    topContext()->addProblem(ptr);
+                }
+                m_firstAttributeDeclaration = DeclarationPointer(0);
+            }
+            else if ( currentContext()->type() == DUContext::Class && parameters.isEmpty() ) {
+                DUChainWriteLocker lock(DUChain::lock());
                 KDevelop::Problem *p = new KDevelop::Problem();
-                p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(node->startLine, node->startCol, node->startLine, 10000)));
+                p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(node->startLine, node->startCol, node->startLine, 10000))); // only mark first line
                 p->setSource(KDevelop::ProblemData::SemanticAnalysis);
                 p->setSeverity(KDevelop::ProblemData::Warning);
-                p->setDescription(i18n("First argument of class method is not called self, this is deprecated"));
+                p->setDescription(i18n("Non-static class method without arguments, must have at least one (self)"));
                 ProblemPointer ptr(p);
                 topContext()->addProblem(ptr);
             }
-            m_firstAttributeDeclaration = DeclarationPointer(0);
         }
-        else if ( currentContext()->type() == DUContext::Class && parameters.isEmpty() ) {
-            DUChainWriteLocker lock(DUChain::lock());
-            KDevelop::Problem *p = new KDevelop::Problem();
-            p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(node->startLine, node->startCol, node->startLine, 10000))); // only mark first line
-            p->setSource(KDevelop::ProblemData::SemanticAnalysis);
-            p->setSeverity(KDevelop::ProblemData::Warning);
-            p->setDescription(i18n("Non-static class method without arguments, must have at least one (self)"));
-            ProblemPointer ptr(p);
-            topContext()->addProblem(ptr);
-        }
+    }
+    else {
+        m_firstAttributeDeclaration = DeclarationPointer(0);
+        dec->setStatic(true);
     }
     
     // check for documentation
@@ -1411,6 +1432,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                     isFirst = false;
                 }
             }
+            kDebug() << "var/kwarg:" <<  node->vararg << node->kwarg;
             if ( node->vararg ) {
                 DUChainReadLocker lock(DUChain::lock());
                 AbstractType::Ptr listType = ExpressionVisitor::typeObjectForIntegralType("list", currentContext()).cast<AbstractType>();

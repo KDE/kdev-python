@@ -15,51 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************
  */
+#ifndef FUNCTIONDECLARATIONCOMPLETIONITEM_H
+#define FUNCTIONDECLARATIONCOMPLETIONITEM_H
 
-#include "keyworditem.h"
-#include <language/duchain/ducontext.h>
-#include <KTextEditor/View>
-#include <KTextEditor/Document>
-#include <KTextEditor/CodeCompletionModel>
-#include <language/codecompletion/codecompletionmodel.h>
+#include <language/codecompletion/normaldeclarationcompletionitem.h>
+#include <language/duchain/functiondeclaration.h>
+
+#include "declaration.h"
 
 using namespace KDevelop;
-using namespace KTextEditor;
 
 namespace Python {
 
-Python::KeywordItem::KeywordItem(KDevelop::CodeCompletionContext::Ptr context, QString keyword) : NormalDeclarationCompletionItem ( DeclarationPointer(), context, 0 )
+class FunctionDeclarationCompletionItem : public Python::PythonDeclarationCompletionItem
 {
-    m_keyword = keyword;
-}
 
-void Python::KeywordItem::execute ( KTextEditor::Document* document, const KTextEditor::Range& word )
-{
-    document->replaceText(word, m_keyword);
-}
-
-QVariant KeywordItem::data ( const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model ) const
-{
-    switch (role) {
-    case KDevelop::CodeCompletionModel::IsExpandable:
-        return QVariant(false);
-    case Qt::DisplayRole:
-        if (index.column() == KTextEditor::CodeCompletionModel::Name) {
-            return QVariant(m_keyword);
-        } else {
-            return QVariant("");
-        }
-        break;
-    case KTextEditor::CodeCompletionModel::ItemSelected:
-        return QVariant("");
-    case KTextEditor::CodeCompletionModel::InheritanceDepth:
-        return QVariant(0);
-    default:
-        //pass
-        break;
-    }
-
-    return NormalDeclarationCompletionItem::data(index, role, model);
-}
+public:
+    FunctionDeclarationCompletionItem(DeclarationPointer decl, KDevelop::CodeCompletionContext::Ptr context);
+    virtual ~FunctionDeclarationCompletionItem();
+    virtual int argumentHintDepth() const;
+    virtual int atArgument() const;
+    void setAtArgument(int d);
+    void setDepth(int d);
+    
+    virtual QVariant data(const QModelIndex& index, int role, const CodeCompletionModel* model) const;
+    
+    virtual void executed(KTextEditor::Document* document, const KTextEditor::Range& word);
+private:
+    int m_atArgument;
+    int m_depth;
+};
 
 }
+
+#endif // FUNCTIONDECLARATIONCOMPLETIONITEM_H

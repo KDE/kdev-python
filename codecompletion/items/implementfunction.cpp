@@ -17,28 +17,33 @@
  */
 #include <language/codecompletion/codecompletionmodel.h>
 #include <language/duchain/duchainutils.h>
+#include <interfaces/icore.h>
+#include <interfaces/isession.h>
 
 #include <KTextEditor/View>
 #include <KTextEditor/Document>
+#include <KTextEditor/Editor>
 
-#include "implementfunctioncompletionitem.h"
+#include "implementfunction.h"
 
 using namespace KDevelop;
 using namespace KTextEditor;
 
 namespace Python {
 
-ImplementFunctionCompletionItem::ImplementFunctionCompletionItem(const QString& name, const QString& arguments, const QString& writeArguments, const QString& previousIndent)
-    : m_arguments(arguments), m_writeArguments(writeArguments), m_name(name), m_previousIndent(previousIndent)
+ImplementFunctionCompletionItem::ImplementFunctionCompletionItem(const QString& name, const QStringList& arguments, const QString& previousIndent)
+    : m_arguments(arguments), m_name(name), m_previousIndent(previousIndent)
 {
     
 }
 
 void ImplementFunctionCompletionItem::execute(KTextEditor::Document* document, const KTextEditor::Range& word)
 {
-    const QString finalText = m_name + "(" + m_writeArguments + "):";
+    const QString finalText = m_name + "(" + m_arguments.join(", ") + "):";
     document->replaceText(word, finalText);
-    document->insertLine(word.start().line() + 1, m_previousIndent + "    "); // 4 spaces is indentation for python. everyone does it like this. you must, too.
+    // 4 spaces is indentation for python. everyone does it like this. you must, too.
+    // TODO use kate settings
+    document->insertLine(word.start().line() + 1, m_previousIndent + "    ");
     if ( View* view = document->activeView() ) {
         view->setCursorPosition(Cursor(word.end().line() + 1, m_previousIndent.length() + 4));
     }
@@ -47,14 +52,20 @@ void ImplementFunctionCompletionItem::execute(KTextEditor::Document* document, c
 QVariant ImplementFunctionCompletionItem::data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const
 {
     switch ( role ) {
+        case KDevelop::CodeCompletionModel::MatchQuality: {
+            return QVariant(m_name.startsWith("__") ? 0 : 10);
+        }
+        case KDevelop::CodeCompletionModel::BestMatchesCount: {
+            return QVariant(5);
+        }
         case Qt::DisplayRole:
             switch ( index.column() ) {
                 case KDevelop::CodeCompletionModel::Name:
-                    return m_name + "(" + m_arguments + ")";
+                    return m_name + "(" + m_arguments.join(", ") + ")";
                 case KDevelop::CodeCompletionModel::Postfix:
                     return "";
                 case KDevelop::CodeCompletionModel::Prefix:
-                    return "implement method";
+                    return "Override method";
                 default:
                     return "";
             }

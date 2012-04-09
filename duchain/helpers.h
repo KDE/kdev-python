@@ -37,6 +37,7 @@
 #include <language/duchain/types/structuretype.h>
 #include <language/duchain/functiondeclaration.h>
 #include <duchain/declarations/decorator.h>
+#include "declarations/classdeclaration.h"
 
 #include "pythonduchainexport.h"
 #include "types/unsuretype.h"
@@ -52,6 +53,7 @@ public:
     static QList<KUrl> getSearchPaths(KUrl workingOnDocument);
     static QString dataDir;
     static QString documentationFile;
+    static DUChainPointer<TopDUContext> documentationFileContext;
     
     static QString getDataDir();
     static QString getDocumentationFile();
@@ -95,6 +97,11 @@ public:
     /** check whether the argument is a null, mixed, or none integral type **/
     static bool isUsefulType(AbstractType::Ptr type);
     
+    enum ContextSearchFlags {
+        NoFlags,
+        PublicOnly
+    };
+    
     /**
     * @brief Find all internal contexts for this class and its base classes recursively
     *
@@ -102,8 +109,8 @@ public:
     * @param context TopContext for finding the declarations for types
     * @return list of contexts which were found
     **/
-    static QList<DUContext*> internalContextsForClass(KDevelop::StructureType::Ptr klassType, TopDUContext* context, int depth = 0);
-    
+    static QList<DUContext*> internalContextsForClass(KDevelop::StructureType::Ptr klassType,
+                                                      TopDUContext* context, ContextSearchFlags flags = NoFlags, int depth = 0);
     /**
         * @brief Resolve the given declaration if it is an alias declaration.
         *
@@ -113,7 +120,8 @@ public:
         **/
     static Declaration* resolveAliasDeclaration(Declaration* decl);
     
-    static Declaration* declarationForName(NameAst* ast, const QualifiedIdentifier& identifier, const RangeInRevision& nodeRange, DUContextPointer context);
+    static Declaration* declarationForName(NameAst* ast, const QualifiedIdentifier& identifier,
+                                           const RangeInRevision& nodeRange, DUContextPointer context);
 };
 
 }

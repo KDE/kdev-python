@@ -26,39 +26,40 @@
 #include <ktexteditor/smartinterface.h>
 #include <ktexteditor/document.h>
 
-#include <language/duchain/duchainlock.h>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/parsingenvironment.h>
+#include <language/backgroundparser/backgroundparser.h>
 #include <language/editor/rangeinrevision.h>
-#include <interfaces/foregroundlock.h>
 #include <interfaces/icore.h>
 #include <interfaces/idocumentcontroller.h>
+#include <interfaces/ilanguagecontroller.h>
 #include <interfaces/iprojectcontroller.h>
 #include <interfaces/iproject.h>
 #include <project/projectmodel.h>
 
+#include <KStandardDirs>
+
+#include "pythonlanguagesupport.h"
 #include "pythoneditorintegrator.h"
 #include "dumpchain.h"
 #include "usebuilder.h"
 #include "contextbuilder.h"
 #include "pythonducontext.h"
-#include "codecompletion/pythoncodecompletioncontext.h"
 #include "pythonparsejob.h"
 #include "declarationbuilder.h"
 #include "helpers.h"
-#include <pythonlanguagesupport.h>
-#include <interfaces/ilanguagecontroller.h>
-#include <language/backgroundparser/backgroundparser.h>
-#include <KStandardDirs>
 
 using namespace KDevelop;
 
 using namespace KTextEditor;
 
-Python::PythonEditorIntegrator* Python::ContextBuilder::m_editor;
-
 namespace Python
 {
+
+ContextBuilder::ContextBuilder() : m_indentInformationCache(0)
+{
+
+}
     
 ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node, ReferencedTopDUContext updateContext)
 {
@@ -85,7 +86,7 @@ ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node
 
 PythonEditorIntegrator* ContextBuilder::editor() const
 {
-    return ContextBuilder::m_editor;
+    return m_editor;
 }
 
 IndexedString ContextBuilder::currentlyParsedDocument() const
@@ -130,33 +131,25 @@ DUContext* ContextBuilder::newContext(const RangeInRevision& range)
 
 void ContextBuilder::setEditor(PythonEditorIntegrator* editor)
 {
-    //m_identifierCompiler = new IdentifierCompiler(editor->parseSession());
-    ContextBuilder::m_editor = editor;
+    m_editor = editor;
 }
 
-// void ContextBuilder::setEditor(ParseSession* /*session*/)
-// {
-//     PythonEditorIntegrator* e = new PythonEditorIntegrator(/*session*/);
-    //m_identifierCompiler = new IdentifierCompiler(e->parseSession());
-//     setEditor(e);
-// }
-
-void ContextBuilder::startVisiting( Ast* node )
+void ContextBuilder::startVisiting(Ast* node)
 {
-    visitNode( node );
+    visitNode(node);
 }
 
-void ContextBuilder::setContextOnNode( Ast* node, DUContext* context )
+void ContextBuilder::setContextOnNode(Ast* node, DUContext* context)
 {
     node->context = context;
 }
 
-DUContext* ContextBuilder::contextFromNode( Ast* node )
+DUContext* ContextBuilder::contextFromNode(Ast* node)
 {
     return node->context;
 }
 
-RangeInRevision ContextBuilder::editorFindRange( Ast* fromNode, Ast* toNode )
+RangeInRevision ContextBuilder::editorFindRange(Ast* fromNode, Ast* toNode)
 {
     return editor()->findRange(fromNode, toNode);
 }
@@ -175,7 +168,7 @@ CursorInRevision ContextBuilder::startPos( Ast* node )
 
 QualifiedIdentifier ContextBuilder::identifierForNode( Python::Identifier* node )
 {
-    return QualifiedIdentifier( node->value );
+    return QualifiedIdentifier(node->value);
 }
 
 void ContextBuilder::addImportedContexts()
@@ -310,7 +303,7 @@ void ContextBuilder::visitComprehensionCommon(Ast* node)
         range.start.column -= 1;
         DUChainWriteLocker lock(DUChain::lock());
         kDebug() << "opening comprehension context" << range << "(previous was" << currentContext()->range() << ")";
-        openContext(node, RangeInRevision(range.start, topContext()->range().end), KDevelop::DUContext::Other);
+        openContext(node, RangeInRevision(range.start, range.end), KDevelop::DUContext::Other);
         currentContext()->setLocalScopeIdentifier(QualifiedIdentifier("<generator>"));
         lock.unlock();
         if ( node->astType == Ast::DictionaryComprehensionAstType )
@@ -344,7 +337,14 @@ void ContextBuilder::openContextForStatementList( const QList<Ast*>& l, DUContex
 
 void ContextBuilder::openContextForClassDefinition(ClassDefinitionAst* node)
 {
-    RangeInRevision range(node->startLine, node->startCol, node->body.last()->endLine + 1, 1);
+    // make sure the contexts ends at the next DEDENT token, not at the last statement.
+    // also, make the context begin *after* the parent list and class name.
+    int endLine = editor()->indent()->nextChange(node->body.last()->endLine, FileIndentInformation::Dedent);
+    CursorInRevision start = CursorInRevision(node->body.first()->startLine, node->body.first()->startCol);
+    if ( start.line > node->startLine ) {
+        start = CursorInRevision(node->startLine + 1, 0);
+    }
+    RangeInRevision range(start, CursorInRevision(endLine + 1, 0));
     DUChainWriteLocker lock(DUChain::lock());
     openContext( node, range, DUContext::Class, node->name);
     currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));
@@ -514,8 +514,17 @@ void ContextBuilder::visitFunctionDefinition(FunctionDefinitionAst* node)
 
 void ContextBuilder::visitFunctionBody(FunctionDefinitionAst* node)
 {
-    CursorInRevision end = CursorInRevision(node->endLine + 1, 0);
+    int endLine = node->endLine;
+    if ( node->endLine != node->startLine ) {
+        kDebug() << "indent at end:" << editor()->indent()->indentForLine(endLine - 1) << endLine;
+        endLine = editor()->indent()->nextChange(endLine, FileIndentInformation::Dedent);
+        kDebug() << "new end line:" << endLine;
+    }
+    CursorInRevision end = CursorInRevision(endLine, node->startLine == node->endLine ? INT_MAX : 0);
     CursorInRevision start = rangeForArgumentsContext(node).end;
+    if ( start.line < node->body.first()->startLine ) {
+        start = CursorInRevision(node->startLine + 1, 0);
+    }
     RangeInRevision range(start, end);
     // Done building the function declaration, start building the body now
     DUContext* ctx = openContext(node, range, DUContext::Other, identifierForNode( node->name ) );

@@ -16,29 +16,27 @@
  *****************************************************************************
  */
 
-#ifndef IMPORTFILEITEM_H
-#define IMPORTFILEITEM_H
+#ifndef PYTHONDECLARATIONCOMPLETIONITEM_H
+#define PYTHONDECLARATIONCOMPLETIONITEM_H
 
-#include <language/codecompletion/abstractincludefilecompletionitem.h>
-#include "navigation/navigationwidget.h"
-#include <shell/project.h>
+#include <language/codecompletion/normaldeclarationcompletionitem.h>
+#include <language/codecompletion/codecompletioncontext.h>
+#include <language/codecompletion/codecompletionmodel.h>
+#include "codecompletion/context.h"
 
 namespace Python {
 
-typedef KDevelop::AbstractIncludeFileCompletionItem<NavigationWidget> IncludeFileItemBase;
-
-class ImportFileItem : public IncludeFileItemBase
-{
-
+class PythonDeclarationCompletionItem : public KDevelop::NormalDeclarationCompletionItem {
 public:
-    ImportFileItem(const KDevelop::IncludeItem& include);
-    virtual ~ImportFileItem();
-    
-    virtual void execute(KTextEditor::Document* document, const KTextEditor::Range& word);
-    QString moduleName;
-    KDevelop::IProject* fromProject;
+    PythonDeclarationCompletionItem(KDevelop::DeclarationPointer decl = KDevelop::DeclarationPointer(), 
+                                    KSharedPtr<KDevelop::CodeCompletionContext> context = KSharedPtr<KDevelop::CodeCompletionContext>(), 
+                                    int inheritanceDepth = 0);
+    virtual QVariant data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const;
+    void setTypeHint(PythonCodeCompletionContext::ItemTypeHint type);
+protected:
+    PythonCodeCompletionContext::ItemTypeHint m_typeHint;
 };
 
-}
+} // namespace Python
 
-#endif // IMPORTFILEITEM_H
+#endif

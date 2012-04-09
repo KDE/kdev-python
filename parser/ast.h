@@ -127,7 +127,9 @@ public:
         
         ComprehensionAstType,
         ExceptionHandlerAstType,
-        AliasAstType // for imports
+        AliasAstType, // for imports
+        
+        IdentifierAstType
     };
     
     enum BooleanOperationTypes {

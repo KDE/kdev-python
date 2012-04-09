@@ -1,5 +1,6 @@
 /*****************************************************************************
  * Copyright 2010 (c) Miquel Canes Gonzalez <miquelcanes@gmail.com>          *
+ * Copyright 2012 (c) Sven Brauch <svenbrauch@googlemail.com>                *
  *                                                                           *
  * Permission is hereby granted, free of charge, to any person obtaining     *
  * a copy of this software and associated documentation files (the           *
@@ -33,6 +34,8 @@
 #include <KStandardDirs>
 #include <language/duchain/types/functiontype.h>
 #include <language/duchain/aliasdeclaration.h>
+#include <language/backgroundparser/backgroundparser.h>
+#include <interfaces/ilanguagecontroller.h>
 
 #include "parsesession.h"
 #include "pythoneditorintegrator.h"
@@ -52,7 +55,7 @@ using namespace KDevelop;
 using namespace Python;
 
 
-PyDUChainTest::PyDUChainTest(QObject* parent): QObject(parent)
+PyDUChainTest::PyDUChainTest(QObject* parent): QObject(parent), m_pool()
 {
     initShell();
 }
@@ -69,6 +72,7 @@ void PyDUChainTest::initShell()
     kDebug() << doc_url;
 
     DUChain::self()->updateContextForUrl(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
+    ICore::self()->languageController()->backgroundParser()->parseDocuments();
     DUChain::self()->waitForUpdate(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
     
     QFile f("/tmp/i.py");
@@ -77,16 +81,16 @@ void PyDUChainTest::initShell()
     f.close();
     
     DUChain::self()->updateContextForUrl(IndexedString("/tmp/i.py"), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
+    ICore::self()->languageController()->backgroundParser()->parseDocuments();
     DUChain::self()->waitForUpdate(IndexedString("/tmp/i.py"), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
     
     DUChain::self()->disablePersistentStorage();
     KDevelop::CodeRepresentation::setDiskChangesForbidden(true);
 }
 
-void PyDUChainTest::parse_int(const QString& code, const QString& suffix)
+ReferencedTopDUContext PyDUChainTest::parse_int(const QString& code, const QString& suffix)
 {
-    KDevPG::MemoryPool pool;
-    ParseSession* session = new ParseSession(&pool);
+    ParseSession* session = new ParseSession(&m_pool);
     session->setContents( code + "\n" ); // append a newline in case the parser doesnt like it without one
     
     static int mytest=0;
@@ -104,29 +108,17 @@ void PyDUChainTest::parse_int(const QString& code, const QString& suffix)
     
     KDevelop::DUChain::self()->updateContextForUrl(KDevelop::IndexedString(filename), 
                                                    static_cast<TopDUContext::Features>(TopDUContext::AllDeclarationsContextsAndUses | TopDUContext::ForceUpdate),
-                                                   this, 1);
-    
-    AstBuilder* a = new AstBuilder(&pool);
+                                                   this, 1
+                                                  );
+    ICore::self()->languageController()->backgroundParser()->parseDocuments();
+    AstBuilder* a = new AstBuilder(&m_pool);
     m_ast = a->parse(filename, const_cast<QString&>(code));
+    return DUChain::self()->waitForUpdate(IndexedString(filename), TopDUContext::ForceUpdate);
 }
 
 ReferencedTopDUContext PyDUChainTest::parse(const QString& code, const QString& suffix)
 {
-    m_finished = false;
-    parse_int(code, suffix);
-    QTime t;
-    t.start();
-    while ( ! m_finished ) {
-        Q_ASSERT(t.elapsed() < 60000);
-        QTest::qWait(10);
-    }
-    return m_ctx;
-}
-
-void PyDUChainTest::updateReady(IndexedString /*url*/, ReferencedTopDUContext topContext)
-{
-    m_ctx = topContext;
-    m_finished = true;
+    return parse_int(code, suffix);
 }
 
 void PyDUChainTest::testCrashes() {
@@ -189,6 +181,20 @@ void PyDUChainTest::testFlickering_data()
     QTest::addColumn<int>("after");
     
     QTest::newRow("declaration_flicker") << ( QStringList() << "a=2\n" << "b=3\na=2\n" ) << 1 << 2;
+}
+
+void PyDUChainTest::testVarKWArgs()
+{
+    ReferencedTopDUContext ctx = parse("def myfun(arg, *vararg, **kwarg):\n pass\n pass");
+    DUChainWriteLocker lock;
+    QVERIFY(ctx);
+    DUContext* func = ctx->findContextAt(CursorInRevision(1, 0));
+    QVERIFY(func);
+    QVERIFY(! func->findDeclarations(QualifiedIdentifier("arg")).isEmpty());
+    QVERIFY(! func->findDeclarations(QualifiedIdentifier("vararg")).isEmpty());
+    QVERIFY(! func->findDeclarations(QualifiedIdentifier("kwarg")).isEmpty());
+    QVERIFY(func->findDeclarations(QualifiedIdentifier("vararg")).first()->abstractType()->toString() == "__kdevpythondocumentation_builtin_list");
+    QVERIFY(func->findDeclarations(QualifiedIdentifier("kwarg")).first()->abstractType()->toString() == "__kdevpythondocumentation_builtin_dict");
 }
 
 void PyDUChainTest::testSimple()
@@ -286,7 +292,6 @@ void PyDUChainTest::testRanges()
     QFETCH(QStringList, column_ranges);
     
     ReferencedTopDUContext ctx = parse(code);
-    DUChainWriteLocker lock(DUChain::lock());
     QVERIFY(ctx);
     
     QVERIFY(m_ast);
@@ -303,6 +308,7 @@ void PyDUChainTest::testRanges()
         visitor->visitCode(m_ast);
         
         QCOMPARE(visitor->found, true);
+        delete visitor;
     }
 }
 
@@ -378,6 +384,7 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("listtype_with_contents") << "checkme = [1, 2, 3, 4, 5]" << "list of int";
     QTest::newRow("listtype_extended") << "some_misc_var = []; checkme = some_misc_var" << "list";
     QTest::newRow("dicttype") << "checkme = {}" << "dict";
+    QTest::newRow("dicttype_get") << "d = {0.4:5}; checkme = d.get(0)" << "int";
     QTest::newRow("dicttype_func") << "checkme = dict()" << "dict";
     QTest::newRow("dicttype_extended") << "some_misc_var = {}; checkme = some_misc_var" << "dict";
     QTest::newRow("bool") << "checkme = True" << "bool";
@@ -582,6 +589,16 @@ void PyDUChainTest::testInheritance_data()
     QTest::addColumn<QString>("code");
     
     QTest::newRow("simple") << "class A():\n\tattr = 3\n\nclass B(A):\n\tpass\n\ninst=B()\ncheckme = inst.attr";
+}
+
+void PyDUChainTest::testClassContextRanges()
+{
+    QString code = "class my_class():\n pass\n \n \n \n \n";
+    ReferencedTopDUContext ctx = parse(code);
+    DUChainWriteLocker lock;
+    DUContext* classContext = ctx->findContextAt(CursorInRevision(5, 0));
+    QVERIFY(classContext);
+    QVERIFY(classContext->type() == DUContext::Class);
 }
 
 void PyDUChainTest::testContainerTypes()

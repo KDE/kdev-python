@@ -46,8 +46,7 @@ typedef KDevelop::AbstractDeclarationBuilder<Ast, Identifier, TypeBuilder> Decla
 class KDEVPYTHONDUCHAIN_EXPORT DeclarationBuilder: public DeclarationBuilderBase
 {
 public:
-    DeclarationBuilder();
-    DeclarationBuilder( PythonEditorIntegrator* editor );
+    DeclarationBuilder(PythonEditorIntegrator* editor);
     virtual ~DeclarationBuilder();
     void setPrebuilding(bool arg1);
     virtual ReferencedTopDUContext build(const IndexedString& url, Ast* node, ReferencedTopDUContext updateContext = ReferencedTopDUContext());

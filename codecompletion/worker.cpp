@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2011 Sven Brauch <svenbrauch@googlemail.com>                *
+ * Copyright (c) 2010-2011 Sven Brauch <svenbrauch@googlemail.com>           *
  *                                                                           *
  * This program is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU General Public License as            *
@@ -16,28 +16,26 @@
  *****************************************************************************
  */
 
-#ifndef PYTHONCODECOMPLETIONMODEL_H
-#define PYTHONCODECOMPLETIONMODEL_H
+#include "worker.h"
+#include "model.h"
+#include "context.h"
+#include <language/duchain/declaration.h>
+#include <KLocalizedString>
 
-#include <language/codecompletion/codecompletionmodel.h>
-#include <language/duchain/duchainpointer.h>
-#include "pythoncompletionexport.h"
-#include <KUrl>
 
 namespace Python {
 
-class KDEVPYTHONCOMPLETION_EXPORT PythonCodeCompletionModel : public KDevelop::CodeCompletionModel
+PythonCodeCompletionWorker::PythonCodeCompletionWorker(PythonCodeCompletionModel *parent, KUrl /*document*/)
+    : KDevelop::CodeCompletionWorker(parent), parent(parent)
 {
-
-public:
-    PythonCodeCompletionModel(QObject* parent);
-    virtual ~PythonCodeCompletionModel();
-    
-    virtual KDevelop::CodeCompletionWorker* createCompletionWorker();
-    KTextEditor::Range completionRange(KTextEditor::View* view, const KTextEditor::Cursor &position); 
-    KUrl m_currentDocument;
-};
 
 }
 
-#endif // PYTHONCODECOMPLETIONMODEL_H
+KDevelop::CodeCompletionContext* PythonCodeCompletionWorker::createCompletionContext(KDevelop::DUContextPointer context, const QString& contextText, const QString& /*followingText*/, const KDevelop::CursorInRevision& position) const
+{
+    PythonCodeCompletionContext* completionContext = new PythonCodeCompletionContext(context, contextText, position, 0, this);
+    return completionContext;
+}
+
+
+}

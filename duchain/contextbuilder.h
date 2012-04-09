@@ -31,8 +31,10 @@
 #include <language/editor/rangeinrevision.h>
 #include <language/duchain/topducontext.h>
 
+#include "codehelpers.h"
 #include "pythonduchainexport.h"
 #include "pythonducontext.h"
+#include "pythoneditorintegrator.h"
 
 using namespace KDevelop;
 
@@ -49,6 +51,7 @@ typedef KDevelop::AbstractContextBuilder<Ast, Identifier> ContextBuilderBase;
 class KDEVPYTHONDUCHAIN_EXPORT ContextBuilder: public ContextBuilderBase, public Python::AstDefaultVisitor
 {
 public:
+    ContextBuilder();
     virtual ReferencedTopDUContext build(const KDevelop::IndexedString& url, Ast* node,
                                          ReferencedTopDUContext updateContext = ReferencedTopDUContext());
 
@@ -113,7 +116,7 @@ protected:
     
     QMap<QString, ReferencedTopDUContext> contextsForModules;
 
-    static PythonEditorIntegrator* m_editor;
+    PythonEditorIntegrator* m_editor;
     
     TopDUContext* newTopContext(const RangeInRevision& range, ParsingEnvironmentFile* file);
     virtual KDevelop::DUContext* newContext(const KDevelop::RangeInRevision& range);
@@ -137,6 +140,7 @@ private:
     RangeInRevision comprehensionRange(Ast* node);
 
     QList<KDevelop::DUContext*> m_importedParentContexts;
+    QSharedPointer<FileIndentInformation> m_indentInformationCache;
 };
 
 }

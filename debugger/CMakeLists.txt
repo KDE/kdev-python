@@ -21,7 +21,9 @@ set(kdevpdb_PART_SRCS
 )
 
 kde4_add_plugin(kdevpdb ${kdevpdb_PART_SRCS})
-target_link_libraries(kdevpdb sublime
+target_link_libraries(kdevpdb
+    sublime
+    kdev4pythonparser
     ${KDEVPLATFORM_INTERFACES_LIBRARIES}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${KDEVPLATFORM_DEBUGGER_LIBRARIES}

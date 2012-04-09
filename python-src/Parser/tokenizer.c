@@ -712,7 +712,8 @@ PyTokenizer_FromString(const char *str, int exec_input)
     struct tok_state *tok = tok_new();
     if (tok == NULL)
         return NULL;
-    str = (char *)decode_str(str, exec_input, tok);
+    /// kdevelop change: We don't need this. We can throw in unicode from KTE, which is fine.
+//     str = (char *)decode_str(str, exec_input, tok);
     if (str == NULL) {
         PyTokenizer_Free(tok);
         return NULL;

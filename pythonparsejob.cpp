@@ -124,6 +124,7 @@ void ParseJob::run()
     }
     if ( toUpdate ) {
         translateDUChainToRevision(toUpdate);
+        toUpdate->setRange(RangeInRevision(0, 0, INT_MAX, INT_MAX));
     }
     
     currentSession->setContents(QString::fromUtf8(contents().contents));

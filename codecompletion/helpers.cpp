@@ -315,6 +315,15 @@ void createArgumentList(Declaration* dec, QString& ret, QList<QVariant>* highlig
                 ret += " = " + decl->defaultParameters()[defaultParamNum].str();
                 ++defaultParamNum;
             }
+            
+            if (doHighlight) {
+                if (highlighting && ret.length() != textFormatStart) {
+                    *highlighting << QVariant(textFormatStart);
+                    *highlighting << QVariant(ret.length() - textFormatStart);
+                    *highlighting << doFormat;
+                    textFormatStart = ret.length();
+                }
+            }
 
             ++num;
         }

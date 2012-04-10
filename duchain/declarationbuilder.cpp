@@ -149,60 +149,45 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     return result;
 }
 
-typedef QPair<Declaration*, int> p;
-/*
- * WARNING: This will return a nullpointer if another than the expected type of variable was found!
- * */
-template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast* originalAst, Declaration* previous, AbstractType::Ptr type)
+QList< Declaration* > DeclarationBuilder::existingDeclarationsForNode(Identifier* node)
 {
-    DUChainWriteLocker lock(DUChain::lock());
-    Q_ASSERT(node);
-    Ast* rangeNode = originalAst ? originalAst : node;
-    
-    if ( ! type ) {
-        type = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
+    /**DBG**/
+    kDebug() << "Current context: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
+    kDebug() << "Looking for node identifier:" << identifierForNode(node) << identifierForNode(node).last();
+    /** /DBG **/
+    QList<Declaration*> existingDeclarations = currentContext()->findDeclarations(identifierForNode(node).last(),  // <- WARNING first / last?
+                                                                CursorInRevision::invalid(), 0,
+                                                                DUContext::DontSearchInParent);
+    // append arguments context
+    if ( m_mostRecentArgumentsContext ) {
+        QList<Declaration*> args = m_mostRecentArgumentsContext->findDeclarations(identifierForNode(node).last(),
+                                                                                  CursorInRevision::invalid(), 0, DUContext::DontSearchInParent);
+        existingDeclarations.append(args);
     }
-    
-    kDebug() << "Parsing variable declaration: " << node->value;
-    
-    Declaration* dec = 0;
-    QList<Declaration*> existingDeclarations;
-    // specified from outside
-    if ( previous ) {
-        existingDeclarations << previous;
-        kDebug() << previous->toString();
-    }
-    // find decls by ourselves
-    else {
-        /**DBG**/
-        kDebug() << "Current context: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
-        kDebug() << "Looking for node identifier:" << identifierForNode(node) << identifierForNode(node).last();
-        /** /DBG **/
-        existingDeclarations = currentContext()->findDeclarations(identifierForNode(node).last(),  // <- WARNING first / last?
-                                                                    CursorInRevision::invalid(), 0, 
-                                                                    DUContext::DontSearchInParent);
-        // append arguments context
-        if ( m_mostRecentArgumentsContext ) {
-            QList<Declaration*> args = m_mostRecentArgumentsContext->findDeclarations(identifierForNode(node).last(),
-                                                                                      CursorInRevision::invalid(), 0, DUContext::DontSearchInParent);
-            existingDeclarations.append(args);
-        }
-        kDebug() << "Found " << existingDeclarations.length() << "declarations";
-    }
+    return existingDeclarations;
+}
+
+template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclaration(QList<Declaration*> declarations, AbstractType::Ptr mustFitType,
+                                                                               RangeInRevision updateRangeTo, Declaration** ok)
+{
+    kDebug() << "Found " << declarations.length() << "declarations";
     QList<Declaration*> remainingDeclarations;
-    bool declarationOpened = false;
-    foreach ( Declaration* d, existingDeclarations ) {
+    *ok = 0;
+    foreach ( Declaration* d, declarations ) {
         Declaration* fitting = dynamic_cast<T*>(d);
         kDebug() << "last one: " << d << d->toString() << dynamic_cast<T*>(d) << wasEncountered(d);
-        bool invalidType = d && d->abstractType() && type && type != AbstractType::TypeFunction && d->isFunctionDeclaration();
+        bool invalidType = false;
+        if ( d && d->abstractType() && mustFitType ) {
+            invalidType = ( mustFitType->whichType() == AbstractType::TypeFunction ) != d->isFunctionDeclaration();
+        }
+        
         if ( fitting && ! wasEncountered(d) && ! invalidType ) {
             if ( d->topContext() == currentContext()->topContext() ) {
                 kDebug() << "Opening previously existing declaration for " << d->toString();
                 openDeclarationInternal(d);
-                d->setRange(editorFindRange(rangeNode, rangeNode));
-                declarationOpened = true;
+                d->setRange(updateRangeTo);
+                *ok = d;
                 setEncountered(d);
-                dec = d;
                 break;
             }
             else {
@@ -210,10 +195,40 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
             }
         }
         else if ( fitting && ! invalidType ) {
-           remainingDeclarations << fitting;
+            remainingDeclarations << d;
         }
     }
-    existingDeclarations = remainingDeclarations;
+    return remainingDeclarations;
+}
+
+typedef QPair<Declaration*, int> p;
+template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast* originalAst, Declaration* previous, AbstractType::Ptr type)
+{
+    DUChainWriteLocker lock(DUChain::lock());
+    Ast* rangeNode = originalAst ? originalAst : node;
+    RangeInRevision range = editorFindRange(rangeNode, rangeNode);
+    
+    if ( ! type ) {
+        type = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
+    }
+    
+    kDebug() << "Parsing variable declaration: " << node->value;
+    
+    
+    QList<Declaration*> existingDeclarations;
+    if ( previous ) {
+        existingDeclarations << previous;
+        kDebug() << previous->toString();
+    }
+    else {
+        /// declarations declared at an earlier range in this top-context
+        existingDeclarations = existingDeclarationsForNode(node);
+    }
+    
+    /// declaration existing in a previous version of this top-context
+    Declaration* dec = 0;
+    existingDeclarations = reopenFittingDeclaration<T>(existingDeclarations, type, range, &dec);
+    bool declarationOpened = (bool) dec;
     
     kDebug() << "VARIABLE CONTEXT: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange() << currentContext()->type() << DUContext::Class;
     

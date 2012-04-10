@@ -90,7 +90,7 @@ protected:
     virtual KDevelop::RangeInRevision editorFindRange( Ast* fromNode, Ast* toNode );
     virtual KDevelop::CursorInRevision editorFindPositionSafe(Ast* node);
     virtual KDevelop::CursorInRevision startPos(Ast* node);
-    virtual KDevelop::QualifiedIdentifier identifierForNode( Identifier* node );
+    virtual KDevelop::QualifiedIdentifier identifierForNode(Identifier* node);
     
     void addImportedContexts();
 

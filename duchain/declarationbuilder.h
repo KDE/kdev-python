@@ -94,6 +94,9 @@ protected:
         DontCreateProblems
     };
     
+    template<typename T> QList<Declaration*> reopenFittingDeclaration(QList< Declaration* > declarations, AbstractType::Ptr mustFitType, RangeInRevision updateRangeTo, Declaration** ok);
+    QList<Declaration*> existingDeclarationsForNode(Identifier* node);
+    
     /**
      * @brief Create a declaration for an import statement.
      *

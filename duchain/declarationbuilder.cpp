@@ -556,7 +556,11 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
         // it's the last level, so if we have an alias declaration create it and stop
         bool done = false;
         if ( aliasDeclaration && i == remainingNameComponents.length() - 1 ) {
-            if ( aliasDeclaration->isFunctionDeclaration() || dynamic_cast<ClassDeclaration*>(aliasDeclaration) ) {
+            if (    aliasDeclaration->isFunctionDeclaration() 
+                 || dynamic_cast<ClassDeclaration*>(aliasDeclaration) 
+                 || dynamic_cast<AliasDeclaration*>(aliasDeclaration) 
+               ) {
+                aliasDeclaration = Helper::resolveAliasDeclaration(aliasDeclaration);
                 AliasDeclaration* adecl = openDeclaration<AliasDeclaration>(temporaryIdentifier, temporaryIdentifier);
                 if ( adecl ) {
                     adecl->setAliasedDeclaration(aliasDeclaration);

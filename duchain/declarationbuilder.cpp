@@ -116,6 +116,20 @@ void DeclarationBuilder::closeDeclaration()
     DeclarationBuilderBase::closeDeclaration();
 }
 
+template<typename T> T* DeclarationBuilder::eventuallyReopenDeclaration(Identifier* name, Ast* range, FitDeclarationType mustFitType)
+{
+    QList<Declaration*> existingDeclarations = existingDeclarationsForNode(name);
+    
+    Declaration* dec = 0;
+    reopenFittingDeclaration<T>(existingDeclarations, mustFitType, editorFindRange(range, range), &dec);
+    bool declarationOpened = (bool) dec;
+    if ( ! declarationOpened ) {
+        dec = openDeclaration<T>(name, range);
+    }
+    Q_ASSERT(dynamic_cast<T*>(dec));
+    return static_cast<T*>(dec);
+}
+
 template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, Declaration* previous, AbstractType::Ptr type)
 {
     if ( node->astType == Ast::NameAstType ) {
@@ -167,18 +181,37 @@ QList< Declaration* > DeclarationBuilder::existingDeclarationsForNode(Identifier
     return existingDeclarations;
 }
 
-template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclaration(QList<Declaration*> declarations, AbstractType::Ptr mustFitType,
-                                                                               RangeInRevision updateRangeTo, Declaration** ok)
+DeclarationBuilder::FitDeclarationType DeclarationBuilder::kindForType(AbstractType::Ptr type, bool isAlias)
+{
+    if ( type ) {
+        if ( type->whichType() == AbstractType::TypeFunction ) {
+            return FunctionDeclarationType;
+        }
+    }
+    if ( isAlias ) {
+        return AliasDeclarationType;
+    }
+    return InstanceDeclarationType;
+}
+
+template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclaration(QList<Declaration*> declarations, FitDeclarationType mustFitType,
+                                                                                      RangeInRevision updateRangeTo, Declaration** ok)
 {
     kDebug() << "Found " << declarations.length() << "declarations";
     QList<Declaration*> remainingDeclarations;
     *ok = 0;
     foreach ( Declaration* d, declarations ) {
         Declaration* fitting = dynamic_cast<T*>(d);
+        if ( ! fitting ) {
+            continue;
+        }
         kDebug() << "last one: " << d << d->toString() << dynamic_cast<T*>(d) << wasEncountered(d);
         bool invalidType = false;
-        if ( d && d->abstractType() && mustFitType ) {
-            invalidType = ( mustFitType->whichType() == AbstractType::TypeFunction ) != d->isFunctionDeclaration();
+        if ( d && d->abstractType() && mustFitType != NoTypeRequired ) {
+            invalidType = ( ( d->isFunctionDeclaration() ) != ( mustFitType == FunctionDeclarationType ) );
+            if ( ! invalidType ) {
+                invalidType = ( ( dynamic_cast<AliasDeclaration*>(d) != 0 ) != ( ! mustFitType == AliasDeclarationType ) );
+            }
         }
         
         if ( fitting && ! wasEncountered(d) && ! invalidType ) {
@@ -227,7 +260,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     
     /// declaration existing in a previous version of this top-context
     Declaration* dec = 0;
-    existingDeclarations = reopenFittingDeclaration<T>(existingDeclarations, type, range, &dec);
+    existingDeclarations = reopenFittingDeclaration<T>(existingDeclarations, kindForType(type), range, &dec);
     bool declarationOpened = (bool) dec;
     
     kDebug() << "VARIABLE CONTEXT: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange() << currentContext()->type() << DUContext::Class;
@@ -257,7 +290,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         if ( declarationOpened ) {
             DeclarationBuilderBase::closeDeclaration();
         }
-        dec->setType(type);
+        dec->setType(AbstractType::Ptr(type));
         dec->setKind(KDevelop::Declaration::Instance);
     } else if ( ! haveFittingDeclaration ) {
         RangeInRevision range = editorFindRange(rangeNode, rangeNode);
@@ -302,7 +335,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
                 }
             } else {
                 kDebug() << "Existing declaration with no type from last declaration.";
-                dec->setType(type);
+                dec->setType(AbstractType::Ptr(type));
             }
         } else {
             kDebug() << "Existing declaration with no type.";
@@ -462,7 +495,7 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
     declarationRange.end.column -= 1;
     kDebug() << "declaration range: " << declarationRange;
     
-    AbstractType::Ptr targetType;
+    AbstractType::Ptr targetType(new IntegralType(IntegralType::TypeMixed));
     if ( node->iterator ) {
         DUChainReadLocker lock(DUChain::lock());
         ExpressionVisitor v(currentContext());
@@ -474,9 +507,7 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
     }
     
     if ( node->target->astType == Ast::NameAstType ) {
-        visitVariableDeclaration<Declaration>(
-            static_cast<NameAst*>(node->target)->identifier, declarationRange, targetType
-        );
+        visitVariableDeclaration<Declaration>(static_cast<NameAst*>(node->target)->identifier, declarationRange, targetType);
     }
     if ( node->target->astType == Ast::TupleAstType ) {
         foreach ( ExpressionAst* tupleElt, static_cast<TupleAst*>(node->target)->elements ) {
@@ -576,7 +607,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
                  || dynamic_cast<AliasDeclaration*>(aliasDeclaration) 
                ) {
                 aliasDeclaration = Helper::resolveAliasDeclaration(aliasDeclaration);
-                AliasDeclaration* adecl = openDeclaration<AliasDeclaration>(temporaryIdentifier, temporaryIdentifier);
+                AliasDeclaration* adecl = eventuallyReopenDeclaration<AliasDeclaration>(temporaryIdentifier, temporaryIdentifier, AliasDeclarationType);
                 if ( adecl ) {
                     adecl->setAliasedDeclaration(aliasDeclaration);
                 }
@@ -1038,7 +1069,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             if ( currentIsAlias ) {
                 DUChainWriteLocker lock(DUChain::lock());
                 kDebug() << "creating alias declaration for " << static_cast<NameAst*>(target)->identifier->value;
-                AliasDeclaration* decl = openDeclaration<AliasDeclaration>(static_cast<NameAst*>(target)->identifier, target);
+                AliasDeclaration* decl = eventuallyReopenDeclaration<AliasDeclaration>(static_cast<NameAst*>(target)->identifier, target, AliasDeclarationType);
                 decl->setAliasedDeclaration(tupleElementDeclaration.data());
                 closeDeclaration();
             }
@@ -1174,15 +1205,26 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
     kDebug() << "opening class definition";
     
+    StructureType::Ptr type(new StructureType());
+    
     DUChainWriteLocker lock(DUChain::lock());
-    ClassDeclaration* dec = openDeclaration<ClassDeclaration>(identifierForNode(node->name),
-                                                              editorFindRange(node->name, node->name));
+    ClassDeclaration* dec = eventuallyReopenDeclaration<ClassDeclaration>(node->name, node->name, NoTypeRequired);
     visitDecorators<ClassDeclaration>(node->decorators, dec);
     eventuallyAssignInternalContext();
     
     dec->setKind(KDevelop::Declaration::Type);
     dec->clearBaseClasses();
     dec->setClassType(ClassDeclarationData::Class);
+    
+    // check whether this is a type container (list, dict, ...) or just a "normal" class
+    const Decorator* d = Helper::findDecoratorByName<ClassDeclaration>(dec, "TypeContainer");
+    if ( d ) {
+        VariableLengthContainer* container = new VariableLengthContainer();
+        if ( Helper::findDecoratorByName<ClassDeclaration>(dec, "hasTypedKeys") ) {
+            container->setHasKeyType(true);
+        }
+        type = StructureType::Ptr(container);
+    }
     
     foreach ( ExpressionAst* c, node->baseClasses ) {
         ExpressionVisitor v(currentContext());
@@ -1215,19 +1257,6 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
         }
     }
     
-    // check whether this is a type container (list, dict, ...) or just a "normal" class
-    StructureType::Ptr type(0);
-    const Decorator* d = Helper::findDecoratorByName<ClassDeclaration>(dec, "TypeContainer");
-    if ( d ) {
-        VariableLengthContainer* container = new VariableLengthContainer();
-        if ( Helper::findDecoratorByName<ClassDeclaration>(dec, "hasTypedKeys") ) {
-            container->setHasKeyType(true);
-        }
-        type = StructureType::Ptr(container);
-    }
-    if ( ! type ) {
-        type = StructureType::Ptr(new StructureType());
-    }
     type->setDeclaration(dec);
     dec->setType(type);
     
@@ -1288,22 +1317,18 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
     kDebug() << "opening function definition" << node->startLine << node->endLine;
     DeclarationPointer eventualParentDeclaration(currentDeclaration()); // an eventual containing class declaration
-    FunctionType::Ptr type;
+    FunctionType::Ptr type(new FunctionType());
     
     DUChainWriteLocker lock(DUChain::lock());
     kDebug() << identifierForNode(node->name).toString();
-    FunctionDeclaration* dec = openDeclaration<FunctionDeclaration>(identifierForNode(node->name),
-                                                                    editorFindRange(node->name, node->name));
+    FunctionDeclaration* dec = eventuallyReopenDeclaration<FunctionDeclaration>(node->name, node->name, FunctionDeclarationType);
+    
     Q_ASSERT(dec->isFunctionDeclaration());
     
-    type = FunctionType::Ptr(new FunctionType());
     kDebug() << " <<< open function type";
     openType(type);
     dec->setInSymbolTable(false);
-    kDebug() << "Declaration in symbol table:" << dec->inSymbolTable();
     dec->setType(type);
-    
-//     bool hasFirstArgument = false;
     
     visitDecorators<FunctionDeclaration>(node->decorators, dec);
     visitFunctionArguments(node);

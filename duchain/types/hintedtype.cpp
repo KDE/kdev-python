@@ -62,10 +62,11 @@ bool HintedType::isValid(TopDUContext* current)
         kDebug() << "modification revision mismatch, invalidating";
         return false;
     }
-    if ( creator == current && d_func()->m_modificationRevision == rev && rev.revision != 0 ) {
-        kDebug() << "modification revision exact match, but same context, invalidating";
-        return false;
-    }
+    /// This should not be needed any more since 193f52027fb7
+//     if ( creator == current && d_func()->m_modificationRevision == rev && rev.revision != 0 ) {
+//         kDebug() << "modification revision exact match, but same context, invalidating";
+//         return false;
+//     }
     return true;
 }
 

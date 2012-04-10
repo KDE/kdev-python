@@ -93,9 +93,22 @@ protected:
         CreateProblems,
         DontCreateProblems
     };
+    enum FitDeclarationType {
+        NoTypeRequired,
+        InstanceDeclarationType,
+        AliasDeclarationType,
+        FunctionDeclarationType
+    };
     
-    template<typename T> QList<Declaration*> reopenFittingDeclaration(QList< Declaration* > declarations, AbstractType::Ptr mustFitType, RangeInRevision updateRangeTo, Declaration** ok);
+    template<typename T> QList<Declaration*> reopenFittingDeclaration(QList< Declaration* > declarations, FitDeclarationType mustFitType, RangeInRevision updateRangeTo, Declaration** ok);
     QList<Declaration*> existingDeclarationsForNode(Identifier* node);
+    
+    FitDeclarationType kindForType(AbstractType::Ptr type, bool isAlias = false);
+    
+    /// python-specific version of openDeclaration which scans for existing declarations in previous versions of
+    /// this top-context in a more intelligent way.
+    /// Use this in normal declaratonbuilder code if you can't use visitVariableDeclaration.
+    template<typename T> T* eventuallyReopenDeclaration(Python::Identifier* name, Python::Ast* range, FitDeclarationType mustFitType);
     
     /**
      * @brief Create a declaration for an import statement.

@@ -299,6 +299,7 @@ RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
 void ContextBuilder::visitComprehensionCommon(Ast* node)
 {
     RangeInRevision range = comprehensionRange(node);
+    Q_ASSERT(range.isValid());
     if ( range.isValid() ) {
         range.start.column -= 1;
         DUChainWriteLocker lock(DUChain::lock());
@@ -426,7 +427,7 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
             QFileInfo sourcedir(testFilename);
             tmp.cd(component);
             kDebug() << testFilename << "exists: [file/dir]" << sourcefile.exists() << sourcedir.exists();
-            if ( ! sourcedir.exists() || leftNameComponents.isEmpty() ) {
+            if ( ! sourcedir.exists() || ! sourcedir.isDir() || leftNameComponents.isEmpty() ) {
                 if ( sourcefile.exists() ) {
                     kDebug() << "RESULT:" << sourceUrl;
                     sourceUrl.cleanPath();

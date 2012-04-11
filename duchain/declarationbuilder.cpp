@@ -168,6 +168,10 @@ QList< Declaration* > DeclarationBuilder::existingDeclarationsForNode(Identifier
     /**DBG**/
     kDebug() << "Current context: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
     kDebug() << "Looking for node identifier:" << identifierForNode(node) << identifierForNode(node).last();
+    kDebug() << currentContext()->localDeclarations().size();
+    foreach ( Declaration* d, currentContext()->localDeclarations() ) {
+        kDebug() << d->toString();
+    }
     /** /DBG **/
     QList<Declaration*> existingDeclarations = currentContext()->findDeclarations(identifierForNode(node).last(),  // <- WARNING first / last?
                                                                 CursorInRevision::invalid(), 0,
@@ -596,18 +600,36 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
         Identifier* temporaryIdentifier = new Identifier(component);
         Declaration* d = 0;
         temporaryIdentifier->copyRange(declarationIdentifier);
-        temporaryIdentifier->endCol = temporaryIdentifier->startCol - 1;
+        temporaryIdentifier->endCol = temporaryIdentifier->startCol;
+        temporaryIdentifier->startCol += 1;
         displayRange = editorFindRange(temporaryIdentifier, temporaryIdentifier); // TODO fixme
         
-        // it's the last level, so if we have an alias declaration create it and stop
         bool done = false;
         if ( aliasDeclaration && i == remainingNameComponents.length() - 1 ) {
+            // it's the last level, so if we have an alias declaration create it and stop
             if (    aliasDeclaration->isFunctionDeclaration() 
                  || dynamic_cast<ClassDeclaration*>(aliasDeclaration) 
                  || dynamic_cast<AliasDeclaration*>(aliasDeclaration) 
                ) {
                 aliasDeclaration = Helper::resolveAliasDeclaration(aliasDeclaration);
-                AliasDeclaration* adecl = eventuallyReopenDeclaration<AliasDeclaration>(temporaryIdentifier, temporaryIdentifier, AliasDeclarationType);
+                RangeInRevision declarationRange = editorFindRange(temporaryIdentifier, temporaryIdentifier);
+                Declaration* reopen = 0;
+                // findDeclarations won't do this correctly, it's not meant to be used with alias declarations
+                // like this apparently ... TODO fixme
+                foreach ( Declaration* decl, currentContext()->localDeclarations() ) {
+                    if ( decl->range() == declarationRange && dynamic_cast<AliasDeclaration*>(decl) ) {
+                        reopen = decl;
+                    }
+                }
+                AliasDeclaration* adecl = 0;
+                if ( ! reopen ) {
+                    adecl = openDeclaration<AliasDeclaration>(temporaryIdentifier, temporaryIdentifier);
+                }
+                else {
+                    openDeclarationInternal(reopen);
+                    adecl = static_cast<AliasDeclaration*>(reopen);
+                    setEncountered(adecl);
+                }
                 if ( adecl ) {
                     adecl->setAliasedDeclaration(aliasDeclaration);
                 }

@@ -105,6 +105,10 @@ protected:
     
     FitDeclarationType kindForType(AbstractType::Ptr type, bool isAlias = false);
     
+    /// schedule an object to be deleted when the declaration builder is destroyed
+    /// this is used to bypass the automated duchain cleanup for imports
+    void scheduleForDeletion(DUChainBase* d, bool doschedule = true);
+    
     /// python-specific version of openDeclaration which scans for existing declarations in previous versions of
     /// this top-context in a more intelligent way.
     /// Use this in normal declaratonbuilder code if you can't use visitVariableDeclaration.
@@ -156,7 +160,7 @@ protected:
     QStack<TopDUContextPointer> m_importContextsForImportStatement;
     DeclarationPointer m_firstAttributeDeclaration;
 private:
-    int& nextDeclaration();
+    QList<DUChainBase*> m_scheduledForDeletion;
 };
 
 }

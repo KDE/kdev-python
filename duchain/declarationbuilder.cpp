@@ -76,6 +76,16 @@ DeclarationBuilder::DeclarationBuilder(PythonEditorIntegrator* editor)
 
 DeclarationBuilder:: ~DeclarationBuilder()
 {
+    if ( ! m_scheduledForDeletion.isEmpty() ) {
+        DUChainWriteLocker lock;
+        foreach ( DUChainBase* d, m_scheduledForDeletion ) {
+            kDebug() << "deleting" << d;
+            if ( dynamic_cast<Declaration*>(d) )
+                kDebug() << static_cast<Declaration*>(d)->toString();
+            delete d;
+        }
+        m_scheduledForDeletion.clear();
+    }
 }
 
 void DeclarationBuilder::setPrebuilding(bool prebuilding)
@@ -168,10 +178,6 @@ QList< Declaration* > DeclarationBuilder::existingDeclarationsForNode(Identifier
     /**DBG**/
     kDebug() << "Current context: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
     kDebug() << "Looking for node identifier:" << identifierForNode(node) << identifierForNode(node).last();
-    kDebug() << currentContext()->localDeclarations().size();
-    foreach ( Declaration* d, currentContext()->localDeclarations() ) {
-        kDebug() << d->toString();
-    }
     /** /DBG **/
     QList<Declaration*> existingDeclarations = currentContext()->findDeclarations(identifierForNode(node).last(),  // <- WARNING first / last?
                                                                 CursorInRevision::invalid(), 0,
@@ -207,18 +213,20 @@ template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclar
     foreach ( Declaration* d, declarations ) {
         Declaration* fitting = dynamic_cast<T*>(d);
         if ( ! fitting ) {
+            kDebug() << "skipping" << d->toString() << "which could not be cast to the requested type";
             continue;
         }
-        kDebug() << "last one: " << d << d->toString() << dynamic_cast<T*>(d) << wasEncountered(d);
+        bool reallyEncountered = wasEncountered(d) && ! m_scheduledForDeletion.contains(d);
         bool invalidType = false;
         if ( d && d->abstractType() && mustFitType != NoTypeRequired ) {
             invalidType = ( ( d->isFunctionDeclaration() ) != ( mustFitType == FunctionDeclarationType ) );
             if ( ! invalidType ) {
-                invalidType = ( ( dynamic_cast<AliasDeclaration*>(d) != 0 ) != ( ! mustFitType == AliasDeclarationType ) );
+                invalidType = ( ( dynamic_cast<AliasDeclaration*>(d) != 0 ) != ( mustFitType == AliasDeclarationType ) );
             }
         }
+        kDebug() << "last one: " << d << d->toString() << fitting << reallyEncountered << invalidType;
         
-        if ( fitting && ! wasEncountered(d) && ! invalidType ) {
+        if ( fitting && ! reallyEncountered && ! invalidType ) {
             if ( d->topContext() == currentContext()->topContext() ) {
                 kDebug() << "Opening previously existing declaration for " << d->toString();
                 openDeclarationInternal(d);
@@ -544,6 +552,17 @@ void DeclarationBuilder::visitImport(ImportAst* node)
     }
 }
 
+void DeclarationBuilder::scheduleForDeletion(DUChainBase* d, bool doschedule)
+{
+    if ( doschedule ) {
+        m_scheduledForDeletion.append(d);
+    }
+    else {
+        m_scheduledForDeletion.removeAll(d);
+    }
+}
+
+
 Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameComponents, Identifier* declarationIdentifier,
                                        const ReferencedTopDUContext& innerCtx, Declaration* aliasDeclaration,
                                        const RangeInRevision& range)
@@ -612,24 +631,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
                  || dynamic_cast<AliasDeclaration*>(aliasDeclaration) 
                ) {
                 aliasDeclaration = Helper::resolveAliasDeclaration(aliasDeclaration);
-                RangeInRevision declarationRange = editorFindRange(temporaryIdentifier, temporaryIdentifier);
-                Declaration* reopen = 0;
-                // findDeclarations won't do this correctly, it's not meant to be used with alias declarations
-                // like this apparently ... TODO fixme
-                foreach ( Declaration* decl, currentContext()->localDeclarations() ) {
-                    if ( decl->range() == declarationRange && dynamic_cast<AliasDeclaration*>(decl) ) {
-                        reopen = decl;
-                    }
-                }
-                AliasDeclaration* adecl = 0;
-                if ( ! reopen ) {
-                    adecl = openDeclaration<AliasDeclaration>(temporaryIdentifier, temporaryIdentifier);
-                }
-                else {
-                    openDeclarationInternal(reopen);
-                    adecl = static_cast<AliasDeclaration*>(reopen);
-                    setEncountered(adecl);
-                }
+                AliasDeclaration* adecl = eventuallyReopenDeclaration<AliasDeclaration>(temporaryIdentifier, temporaryIdentifier, AliasDeclarationType);
                 if ( adecl ) {
                     adecl->setAliasedDeclaration(aliasDeclaration);
                 }
@@ -648,14 +650,18 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
             d = visitVariableDeclaration<Declaration>(temporaryIdentifier);
         }
         if ( d ) {
-            if ( topContext() != extendingPreviousImportCtx ) {
-                d->setRange(RangeInRevision(extendingPreviousImportCtx->range().start, extendingPreviousImportCtx->range().start));
+            if ( topContext() != currentContext() ) {
+                d->setRange(RangeInRevision(currentContext()->range().start, currentContext()->range().start));
             }
             else {
                 d->setRange(displayRange);
             }
             d->setAutoDeclaration(true);
             currentContext()->createUse(d->ownIndex(), displayRange);
+            kDebug() << "really encountered:" << d << "; scheduled:" << m_scheduledForDeletion;
+            kDebug() << d->toString();
+            scheduleForDeletion(d, false);
+            kDebug() << "scheduled:" << m_scheduledForDeletion;
         }
         if ( done ) break;
         
@@ -665,6 +671,16 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
         openType(moduleType);
         
         openedContexts.append(openContext(declarationIdentifier, KDevelop::DUContext::Other));
+        
+        foreach ( Declaration* local, currentContext()->localDeclarations() ) {
+            // keep all the declarations until the builder finished
+            // kdevelop would otherwise delete them if the context was closed
+            if ( ! wasEncountered(local) ) {
+                setEncountered(local);
+                scheduleForDeletion(local, true);
+            }
+        }
+        
         openedDeclarations.append(d);
         openedTypes.append(moduleType);
         if ( i == remainingNameComponents.length() - 1 ) {
@@ -775,13 +791,6 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
                 resultingDeclaration = createDeclarationTree(declarationName.split("."), declarationIdentifier,
                                                              ReferencedTopDUContext(0), originalDeclaration,
                                                              editorFindRange(declarationIdentifier, declarationIdentifier));
-                /** DEBUG **/
-                if ( dynamic_cast<AliasDeclaration*>(resultingDeclaration) ) {
-                    kDebug() << "Resulting alias: " << resultingDeclaration->toString();
-                }
-                else
-                    kWarning() << "import declaration is being overwritten!";
-                /** END DEBUG **/
             }
             else if ( createProblem != DontCreateProblems ) {
                 KDevelop::Problem *p = new KDevelop::Problem();
@@ -1056,7 +1065,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
     foreach ( ExpressionAst* target, realTargets ) {
         if ( canUnpack ) {
             tupleElementType = realValues.at(i);
-            tupleElementDeclaration = realDeclarations.at(i);
+            tupleElementDeclaration = DeclarationPointer(Helper::resolveAliasDeclaration(realDeclarations.at(i).data()));
             currentIsAlias = isAlias.at(i);
         }
         else if ( realTargets.length() == 1 ) {
@@ -1065,7 +1074,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             v.visitNode(node->value);
             lock.unlock();
             tupleElementType = v.lastType();
-            tupleElementDeclaration = v.lastDeclaration();
+            tupleElementDeclaration = DeclarationPointer(Helper::resolveAliasDeclaration(v.lastDeclaration().data()));
             currentIsAlias = v.m_isAlias;
         }
         else {

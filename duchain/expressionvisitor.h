@@ -104,6 +104,7 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         virtual void visitBinaryOperation(BinaryOperationAst* node);
         virtual void visitUnaryOperation(UnaryOperationAst* node);
         virtual void visitBooleanOperation(BooleanOperationAst* node);
+        virtual void visitCompare(CompareAst* node);
         
         virtual void visitString(StringAst* node);
         virtual void visitNumber(NumberAst* node);

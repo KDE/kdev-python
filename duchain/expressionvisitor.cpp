@@ -663,8 +663,18 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
     }
 }
 
+void ExpressionVisitor::visitCompare(CompareAst* node)
+{
+    Python::AstDefaultVisitor::visitCompare(node);
+    
+    encounterDeclaration(0);
+    encounter(AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
+}
+
 void ExpressionVisitor::visitBinaryOperation(Python::BinaryOperationAst* node)
 {
+    QList<Ast::BooleanOperationTypes> booleanOperators;
+    
     visitNode(node->lhs);
     KDevelop::AbstractType::Ptr leftType = lastType();
     
@@ -692,6 +702,7 @@ void ExpressionVisitor::visitBooleanOperation(Python::BooleanOperationAst* node)
         visitNode(expression);
     }
     
+    encounterDeclaration(0);
     encounter(AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
 }
 

@@ -149,7 +149,7 @@ void DebugSession::dataAvailable()
                 emit realDataReceived(QStringList() << "*****"
                                                     << "  " + i18n("The program being debugged raised an uncaught exception.")
                                                     << "  " + i18n("You can now inspect the status of the program after it exited.")
-                                                    << "  " + i18n("The debugger will silently stop after the next command is triggered.")
+                                                    << "  " + i18n("The debugger will silently stop when the next command is triggered.")
                                                     << "*****");
             }
         }

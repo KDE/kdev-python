@@ -766,6 +766,7 @@ ast_for_arguments(struct compiling *c, const node *n)
     */
     int i, j, k, nposargs = 0, nkwonlyargs = 0;
     int nposdefaults = 0, found_default = 0;
+    int arg_lineno = 0, arg_col_offset = 0, vararg_lineno = 0, vararg_col_offset = 0;
     asdl_seq *posargs, *posdefaults, *kwonlyargs, *kwdefaults;
     identifier vararg = NULL, kwarg = NULL;
     arg_ty arg;
@@ -775,7 +776,7 @@ ast_for_arguments(struct compiling *c, const node *n)
     if (TYPE(n) == parameters) {
         if (NCH(n) == 2) /* () as argument list */
             return arguments(NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-                             NULL, c->c_arena);
+                             NULL, 0, 0, 0, 0, c->c_arena);
         n = CHILD(n, 1);
     }
     assert(TYPE(n) == typedargslist || TYPE(n) == varargslist);
@@ -882,6 +883,8 @@ ast_for_arguments(struct compiling *c, const node *n)
                 }
                 else {
                     vararg = NEW_IDENTIFIER(CHILD(ch, 0));
+                    vararg_lineno = ch->n_lineno;
+                    vararg_col_offset = ch->n_col_offset;
                     if (!vararg)
                         return NULL;
                     if (forbidden_name(vararg, CHILD(ch, 0), 0))
@@ -907,6 +910,8 @@ ast_for_arguments(struct compiling *c, const node *n)
                 ch = CHILD(n, i+1);  /* tfpdef */
                 assert(TYPE(ch) == tfpdef || TYPE(ch) == vfpdef);
                 kwarg = NEW_IDENTIFIER(CHILD(ch, 0));
+                arg_lineno = ch->n_lineno;
+                arg_col_offset = ch->n_col_offset;
                 if (!kwarg)
                     return NULL;
                 if (NCH(ch) > 1) {
@@ -927,7 +932,8 @@ ast_for_arguments(struct compiling *c, const node *n)
         }
     }
     return arguments(posargs, vararg, varargannotation, kwonlyargs, kwarg,
-                    kwargannotation, posdefaults, kwdefaults, c->c_arena);
+                    kwargannotation, posdefaults, kwdefaults, arg_lineno, 
+                    arg_col_offset, vararg_lineno, vararg_col_offset, c->c_arena);
 }
 
 static expr_ty
@@ -1093,7 +1099,7 @@ ast_for_lambdef(struct compiling *c, const node *n)
 
     if (NCH(n) == 3) {
         args = arguments(NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-                         NULL, c->c_arena);
+                         NULL, 0, 0, 0, 0, c->c_arena);
         if (!args)
             return NULL;
         expression = ast_for_expr(c, CHILD(n, 2));
@@ -2285,9 +2291,9 @@ alias_for_import_name(struct compiling *c, const node *n, int store)
     switch (TYPE(n)) {
         case import_as_name: {
             node *name_node = CHILD(n, 0);
+            node *str_node = NULL;
             str = NULL;
             name = NEW_IDENTIFIER(name_node);
-            node *str_node = NULL;
             if (!name)
                 return NULL;
             if (NCH(n) == 3) {

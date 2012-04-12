@@ -74,13 +74,18 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         KeywordItem::Flags f = (KeywordItem::Flags) ( KeywordItem::ForceLineBeginning | KeywordItem::ImportantItem );
         // TODO group those correctly so they appear at the top
         if ( m_position.line == 0 && m_text.startsWith("#") ) {
-            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python\n", f));
-            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python2.7\n", f));
-            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "#!/usr/bin/env python3\n", f));
+            QString i18ndescr = i18n("insert Shebang line");
+            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                        "#!/usr/bin/env python\n", i18ndescr, f));
+            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                        "#!/usr/bin/env python2.7\n", i18ndescr, f));
+            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                        "#!/usr/bin/env python3\n", i18ndescr, f));
         }
         // TODO fixme
         else if ( m_position.line == 1 && m_text.endsWith("#") ) {
-            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "# -*- Coding:utf-8 -*-\n\n", f));
+            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                        "# -*- Coding:utf-8 -*-\n\n", i18n("specify document encoding"), f));
         }
     }
     
@@ -110,11 +115,11 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
                     combinations << v->m_unknownNames.at(0) + ", " + v->m_unknownNames.at(1);
                     combinations << v->m_unknownNames.at(1) + ", " + v->m_unknownNames.at(0);
                     foreach ( const QString& c, combinations ) {
-                        completionItems << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + c + " in ");
+                        completionItems << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + c + " in ", "");
                     }
                 }
                 foreach ( const QString& n, v->m_unknownNames ) {
-                    completionItems << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + n + " in ");
+                    completionItems << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + n + " in ", "");
                 }
             }
             else {
@@ -182,7 +187,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
                         for ( unsigned int i = 0; i < functionCalled->defaultParametersSize(); i++ ) {
                             QString paramName = functionCalled->defaultParameters()[i].str();
                             resultingItems << CompletionTreeItemPointer(new KeywordItem(CodeCompletionContext::Ptr(m_child),
-                                                                        paramName + "=", KeywordItem::ImportantItem));
+                                                                        paramName + "=", i18n("specify default parameter"),
+                                                                        KeywordItem::ImportantItem));
                         }
                         kDebug() << "adding " << functionCalled->defaultParametersSize() << "default args";
                     }
@@ -316,7 +322,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             QStringList keywordItems;
             keywordItems << "def" << "class" << "lambda" << "global" << "print" << "import" << "from" << "while" << "for" << "yield" << "return";
             foreach ( const QString& current, keywordItems ) {
-                KeywordItem* k = new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), current + " ");
+                KeywordItem* k = new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), current + " ", "");
                 resultingItems << CompletionTreeItemPointer(k);
             }
         }

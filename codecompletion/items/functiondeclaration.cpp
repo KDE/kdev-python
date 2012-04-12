@@ -26,6 +26,7 @@
 
 #include <KTextEditor/View>
 #include <KTextEditor/Document>
+#include <KLocalizedString>
 
 #include "duchain/navigation/navigationwidget.h"
 #include <types/variablelengthcontainer.h>
@@ -39,7 +40,10 @@ using namespace KTextEditor;
 namespace Python {
 
 FunctionDeclarationCompletionItem::FunctionDeclarationCompletionItem(DeclarationPointer decl, CodeCompletionContext::Ptr context) 
-    : PythonDeclarationCompletionItem(decl, context), m_atArgument(-1), m_depth(0) { }
+    : PythonDeclarationCompletionItem(decl, context), m_atArgument(-1), m_depth(0)
+{
+    
+}
 
 int FunctionDeclarationCompletionItem::atArgument() const
 {
@@ -64,17 +68,25 @@ int FunctionDeclarationCompletionItem::argumentHintDepth() const
 QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const
 {
     FunctionDeclaration* dec = dynamic_cast<FunctionDeclaration*>(m_declaration.data());
-    DUChainReadLocker lock(DUChain::lock());
+    DUChainReadLocker lock;
     switch ( role ) {
         case Qt::DisplayRole: {
+            if ( ! dec ) {
+                break; // use the default
+            }
             if ( index.column() == KDevelop::CodeCompletionModel::Arguments ) {
-                if ( ! dec ) return QVariant();
                 if (FunctionType::Ptr functionType = dec->type<FunctionType>()) {
                     QString ret;
                     createArgumentList(dec, ret, 0);
                     return ret.replace("__kdevpythondocumentation_builtin_", "");
                 }
             }
+            if ( index.column() == KDevelop::CodeCompletionModel::Prefix ) {
+                if ( FunctionType::Ptr type = dec->type<FunctionType>() ) {
+                    return i18n("function") + " -> " + type->returnType()->toString().replace("__kdevpythondocumentation_builtin_", "");
+                }
+            }
+            break;
         }
         case KDevelop::CodeCompletionModel::HighlightingMethod: {
             if ( index.column() == KDevelop::CodeCompletionModel::Arguments )

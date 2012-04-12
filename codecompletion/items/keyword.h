@@ -34,11 +34,12 @@ public:
         ForceLineBeginning = 0x1,
         ImportantItem = 0x2
     };
-    KeywordItem(KDevelop::CodeCompletionContext::Ptr context, QString keyword, Flags flags = NoFlags);
+    KeywordItem(CodeCompletionContext::Ptr context, QString keyword, QString descr, Python::KeywordItem::Flags flags = NoFlags);
     virtual void execute(KTextEditor::Document* document, const KTextEditor::Range& word);
     virtual QVariant data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const;
 private:
     QString m_keyword;
+    QString m_description;
     Flags m_flags;
     
 };

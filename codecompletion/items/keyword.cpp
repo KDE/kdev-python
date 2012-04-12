@@ -29,9 +29,10 @@ using namespace KTextEditor;
 
 namespace Python {
 
-KeywordItem::KeywordItem(KDevelop::CodeCompletionContext::Ptr context, QString keyword, Flags flags)
-    : NormalDeclarationCompletionItem (DeclarationPointer(), context, 0),
-    m_flags(flags)
+KeywordItem::KeywordItem(KDevelop::CodeCompletionContext::Ptr context, QString keyword, QString descr, Flags flags)
+    : NormalDeclarationCompletionItem (DeclarationPointer(), context, 0)
+    , m_flags(flags)
+    , m_description(descr)
 {
     m_keyword = keyword;
 }
@@ -56,7 +57,11 @@ QVariant KeywordItem::data ( const QModelIndex& index, int role, const KDevelop:
         if (index.column() == KTextEditor::CodeCompletionModel::Name) {
             QString kw = m_keyword;
             return QVariant(kw.replace("\n", ""));
-        } else {
+        }
+        else if ( index.column() == KTextEditor::CodeCompletionModel::Prefix ) {
+            return QVariant(m_description);
+        }
+        else {
             return QVariant("");
         }
         break;

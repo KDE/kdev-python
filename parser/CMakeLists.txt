@@ -24,6 +24,8 @@ if(NOT WIN32)
     target_link_libraries(kdev4pythonparser
         ${kdevpython_SOURCE_DIR}/python-src/libpython2.7-kdevelop.so
     )
+else(NOT WIN32)
+	target_link_libraries(kdev4pythonparser libpython-kdevelop)
 endif(NOT WIN32)
 
 install(TARGETS kdev4pythonparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})

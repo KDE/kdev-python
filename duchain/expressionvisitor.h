@@ -54,8 +54,6 @@ using namespace KDevelop;
 namespace Python
 {
     
-typedef DUChainPointer<FunctionDeclaration> FunctionDeclarationPointer;
-    
 typedef KDevelop::IntegralTypeData IntegralTypeExtendedData;
 class KDEVPYTHONDUCHAIN_EXPORT IntegralTypeExtended : public KDevelop::IntegralType {
 public:

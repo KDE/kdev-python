@@ -114,6 +114,7 @@ private:
     DUCHAIN_DECLARE_DATA(FunctionDeclaration);
 };
 
+typedef DUChainPointer<FunctionDeclaration> FunctionDeclarationPointer;
 } // namespace Python
 
 #endif // PYTHONFUNCTIONDECLARATION_H

@@ -39,6 +39,9 @@
 #include <ktexteditor/smartinterface.h>
 #include <ktexteditor/document.h>
 
+#include <language/duchain/ducontext.h>
+#include <language/duchain/declaration.h>
+#include <language/duchain/duchainlock.h>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/parsingenvironment.h>
 #include <language/backgroundparser/backgroundparser.h>
@@ -62,7 +65,7 @@ ContextBuilder::ContextBuilder() : m_indentInformationCache(0)
 {
 
 }
-    
+
 ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node, ReferencedTopDUContext updateContext)
 {
     if (!updateContext) {

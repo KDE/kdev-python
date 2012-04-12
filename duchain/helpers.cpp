@@ -150,7 +150,7 @@ AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext*
     return result.cast<AbstractType>();
 }
 
-QPair<FunctionDeclarationPointer, bool> Helper::functionDeclarationForCalledDeclaration(DeclarationPointer ptr)
+QPair<Python::FunctionDeclarationPointer, bool> Helper::functionDeclarationForCalledDeclaration(DeclarationPointer ptr)
 {
     bool isConstructor = false;
     DeclarationPointer lastCalledDeclaration = ptr;

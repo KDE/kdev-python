@@ -43,6 +43,11 @@
 #include <KUrl>
 #include <KDebug>
 
+#include "pythonduchainexport.h"
+#include "types/unsuretype.h"
+#include "declarations/functiondeclaration.h"
+#include "ast.h"
+
 using namespace KDevelop;
 
 namespace Python {

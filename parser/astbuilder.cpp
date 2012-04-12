@@ -154,7 +154,15 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     int lineOffset = hacked.second;
     
     AstBuilder::pyInitLock.lock();
+#ifdef _WIN32
+    QString myHomeDir = AstBuilder::pyHomeDir;
+    wchar_t *we = new wchar_t[AstBuilder::pyHomeDir.size()+1];
+    AstBuilder::pyHomeDir.toWCharArray(we);
+    we[AstBuilder::pyHomeDir.size()] = 0;
+    Py_SetPythonHome(we);
+#else
     Py_SetPythonHome(AstBuilder::pyHomeDir.toAscii().data());
+#endif
     kDebug() << "Not initialized, calling init func.";
     Py_Initialize();
     Q_ASSERT(Py_IsInitialized());
@@ -192,8 +200,8 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
         PyObject_Print(errorMessage_str, stderr, Py_PRINT_RAW);
         
         PyObject* colnoobj = PyTuple_GetItem(errorDetails_tuple, 2);
-        int lineno = PyInt_AsLong(linenoobj) - 1;
-        int colno = PyInt_AsLong(colnoobj);
+        int lineno = PyLong_AsLong(linenoobj) - 1;
+        int colno = PyLong_AsLong(colnoobj);
         
         ProblemPointer p(new Problem());
         SimpleCursor start(lineno + lineOffset, (colno-4 > 0 ? colno-4 : 0));
@@ -202,7 +210,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
         kDebug() << "Problem range: " << range;
         DocumentRange location(IndexedString(filename.path()), range);
         p->setFinalLocation(location);
-        p->setDescription(PyString_AsString(PyObject_Str(errorMessage_str)));
+//        p->setDescription(PyUnicode_AS_DATA(PyObject_Str(errorMessage_str)));
         p->setSource(ProblemData::Parser);
         m_problems.append(p);
         
@@ -340,6 +348,9 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     RangeUpdateVisitor v;
     v.visitNode(t.ast);
 
+#ifdef _WIN32
+    delete[] we;
+#endif
     return t.ast;
 }
 

@@ -25,7 +25,9 @@
 #include <language/duchain/duchainlock.h>
 
 #include "python-src/Include/pyport.h"
+#ifndef _WIN32
 #include "python-src/pyconfig.h"
+#endif
 #include "python-src/Include/node.h"
 
 #include "python-src/Include/Python.h"

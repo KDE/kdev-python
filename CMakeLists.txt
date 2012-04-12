@@ -8,6 +8,10 @@ enable_testing()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${kdevpython_SOURCE_DIR}/cmake/)
 
+# this must go uninterfered with all the include_directories, so have it before
+# finding even KDE
+add_subdirectory(python-src)
+
 find_package(KDE4 REQUIRED)
 find_package(KDevPlatform 1.3.60 REQUIRED)
 find_package(KDevelop-PG-Qt REQUIRED)
@@ -40,7 +44,6 @@ add_subdirectory(app_templates)
 add_subdirectory(parser)
 add_subdirectory(duchain)
 add_subdirectory(codecompletion)
-add_subdirectory(python-src)
 add_subdirectory(debugger)
 add_subdirectory(codegen)
 

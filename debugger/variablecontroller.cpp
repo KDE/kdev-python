@@ -32,7 +32,9 @@
 #include <QStack>
 #include <KMessageBox>
 #include <KLocalizedString>
+#ifdef Q_WS_X11
 #include <X11/X.h>
+#endif
 
 using namespace KDevelop;
 

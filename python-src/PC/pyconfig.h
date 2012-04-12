@@ -191,13 +191,12 @@ WIN32 is still required for the locale module.
 #endif
 
 /* Define like size_t, omitting the "unsigned" */
-#if defined(_MSC_VER) && _MSC_VER <= 1500
-#ifdef MS_WIN64
-typedef __int64 ssize_t;
-#else
-typedef _W64 int ssize_t;
-#endif
+#if !defined(HAVE_SSIZE_T) && !defined(_SSIZE_T_DEFINED)
+#if defined(_MSC_VER)
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
 #define HAVE_SSIZE_T 1
+#endif
 #endif
 
 #if defined(MS_WIN32) && !defined(MS_WIN64)
@@ -314,7 +313,7 @@ Py_NO_ENABLE_SHARED to find out.  Also support MS_NO_COREDLL for b/w compat */
 #define HAVE_DECLSPEC_DLL
 
 /* For an MSVC DLL, we can nominate the .lib files used by extensions */
-#ifdef MS_COREDLL
+#if 0
 #	ifndef Py_BUILD_CORE /* not building the core - must be an ext */
 #		if defined(_MSC_VER)
 			/* So MSVC users need not specify the .lib file in

@@ -59,6 +59,7 @@ public:
         InFound,
         ClassFound,
         DefFound,
+        EqualsFound,
         MeaninglessKeywordFound, // "and", "if", "return", ...
         NoCompletionKeywordFound // "for"
     };

@@ -133,6 +133,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             // gather additional items to show above the real ones (for parameters, and stuff)
             QList<Declaration*> calltips;
             KDevPG::MemoryPool pool;
+            FunctionDeclaration* functionCalled = 0;
             AstBuilder* builder = new AstBuilder(&pool);
             CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
             if ( tmpAst ) {
@@ -141,6 +142,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
                 v->visitCode(tmpAst);
                 if ( v->lastDeclaration() ) {
                     calltips << v->lastDeclaration().data();
+                    functionCalled = dynamic_cast<FunctionDeclaration*>(v->lastDeclaration().data());
                 }
                 else {
                     kWarning() << "Did not receive a function declaration from expression visitor! Not offering call tips.";
@@ -168,6 +170,25 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             }
             
             resultingItems.append(calltipItems);
+            
+            // If this is the top-level calltip, add additional items for the default-parameters of the function,
+            // but only if all non-default arguments (the mandatory ones) already have been provided.
+            // TODO fancy feature: Filter out already provided default-parameters
+            if ( depth() == 1 && functionCalled ) {
+                if ( DUContext* args = DUChainUtils::getArgumentContext(functionCalled) ) {
+                    if ( (unsigned int) ( args->localDeclarations().count() - functionCalled->defaultParametersSize() )
+                                          <= m_alreadyGivenParametersCount )
+                    {
+                        for ( unsigned int i = 0; i < functionCalled->defaultParametersSize(); i++ ) {
+                            QString paramName = functionCalled->defaultParameters()[i].str();
+                            resultingItems << CompletionTreeItemPointer(new KeywordItem(CodeCompletionContext::Ptr(m_child),
+                                                                        paramName + "=", KeywordItem::ImportantItem));
+                        }
+                        kDebug() << "adding " << functionCalled->defaultParametersSize() << "default args";
+                    }
+                    else kDebug() << "Not at default arguments yet";
+                }
+            }
         }
     else if ( m_operation == PythonCodeCompletionContext::DefineCompletion ) {
         // Find all base classes of the current class context
@@ -581,10 +602,12 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::includeItemsForSub
 }
 
 PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& remainingText, 
-                                                         QString calledFunction, int depth, int alreadyGivenParameters)
+                                                         QString calledFunction, int depth, int alreadyGivenParameters,
+                                                         CodeCompletionContext* child)
     : CodeCompletionContext(context, remainingText, CursorInRevision::invalid(), depth)
     , m_operation(FunctionCallCompletion)
     , m_itemTypeHint(NoHint)
+    , m_child(child)
     , m_guessTypeOfExpression(calledFunction)
     , m_alreadyGivenParametersCount(alreadyGivenParameters)
 {
@@ -623,7 +646,7 @@ void PythonCodeCompletionContext::summonParentForEventualCall(TokenList allExpre
                 m_parentContext = new PythonCodeCompletionContext(m_duContext, 
                                                                   text.mid(0, eventualFunction.charOffset),
                                                                   eventualFunction.expression, depth() + 1,
-                                                                  atParameter
+                                                                  atParameter, this
                                                                  );
                 break;
             }
@@ -642,6 +665,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     , m_operation(PythonCodeCompletionContext::DefaultCompletion)
     , m_itemTypeHint(NoHint)
     , worker(parent)
+    , m_child(0)
     , m_position(position)
 {
     m_workingOnDocument = context->topContext()->url().toUrl();

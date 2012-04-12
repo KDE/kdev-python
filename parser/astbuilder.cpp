@@ -131,12 +131,6 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     Py_SetPythonHome(AstBuilder::pyHomeDir.toAscii().data());
     kDebug() << "Not initialized, calling init func.";
     Py_Initialize();
-    QTimer timer;
-    timer.start(1000);
-    while ( ! Py_IsInitialized() && timer.isActive() ) {
-        kWarning() << "Python doesn't say it is initialized yet, waiting -- should not happen!";
-        usleep(100000);
-    }
     Q_ASSERT(Py_IsInitialized());
     
     PyArena* arena = PyArena_New();

@@ -127,7 +127,7 @@ public:
 private:
     /// This constructor is only used for recursive calltips
     PythonCodeCompletionContext(DUContextPointer context, const QString& remainingText,
-                                QString calledFunction, int depth, int alreadyGivenParameters);
+                                QString calledFunction, int depth, int alreadyGivenParameters, CodeCompletionContext* child);
     void summonParentForEventualCall(TokenList tokens, const QString& text);
     CompletionContextType m_operation;
     ItemTypeHint m_itemTypeHint;
@@ -137,6 +137,8 @@ private:
     QString m_searchImportItemsInModule;
     const PythonCodeCompletionWorker* worker;
     KUrl m_workingOnDocument;
+    
+    CodeCompletionContext* m_child;
     
     QString m_guessTypeOfExpression;
     

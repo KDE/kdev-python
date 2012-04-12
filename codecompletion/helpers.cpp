@@ -79,6 +79,7 @@ ExpressionParser::ExpressionParser(QString code)
         controlChars << keyword("{", ExpressionParser::InitializerFound);
         controlChars << keyword("[", ExpressionParser::InitializerFound);
         controlChars << keyword(".", ExpressionParser::MemberAccessFound);
+        controlChars << keyword("=", ExpressionParser::EqualsFound);
     }
     keywordPopulationLock.unlock();
 }

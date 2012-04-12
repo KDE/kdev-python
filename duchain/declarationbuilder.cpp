@@ -866,7 +866,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
         v.visitNode(static_cast<AttributeAst*>(node->function)->value);
         lock.unlock();
         if ( VariableLengthContainer::Ptr container = v.lastType().cast<VariableLengthContainer>() ) {
-            if ( v.lastDeclaration() ) {
+            if ( v.lastDeclaration() && v.lastDeclaration()->topContext() != Helper::getDocumentationFileContext().data() ) {
 //                 /// DEBUG
 //                 kDebug() << "Got container type for eventual update: " << container->toString();
 //                 kDebug() << "Eventual function declaration: " << functionVisitor.lastFunctionDeclaration()->toString();

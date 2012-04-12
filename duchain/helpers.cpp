@@ -102,7 +102,7 @@ UnsureType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* c
     return result;
 }
 
-QPair<FunctionDeclarationPointer, bool> Helper::functionDeclarationForCalledDeclaration(DeclarationPointer ptr)
+QPair<Python::FunctionDeclarationPointer, bool> Helper::functionDeclarationForCalledDeclaration(DeclarationPointer ptr)
 {
     bool isConstructor = false;
     DeclarationPointer lastCalledDeclaration = ptr;

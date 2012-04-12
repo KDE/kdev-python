@@ -26,6 +26,8 @@
 #include <ktexteditor/smartinterface.h>
 #include <ktexteditor/document.h>
 
+#include <language/duchain/ducontext.h>
+#include <language/duchain/declaration.h>
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/parsingenvironment.h>

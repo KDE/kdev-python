@@ -271,9 +271,9 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     // tells whether there's fitting declarations to update (update is not the same as re-open! one is for
     // code which uses the same variable twice, the other is for multiple passes of the parser)
     bool haveFittingDeclaration = false;
-    if ( ! existingDeclarations.isEmpty() and existingDeclarations.last() ) {
+    if ( ! existingDeclarations.isEmpty() && existingDeclarations.last() ) {
         Declaration* d = Helper::resolveAliasDeclaration(existingDeclarations.last());
-        if ( d and d->topContext() != topContext() ) {
+        if ( d && d->topContext() != topContext() ) {
             inSameTopContext = false;
         }
         if ( dynamic_cast<T*>(existingDeclarations.last()) ) {
@@ -492,7 +492,7 @@ Declaration* DeclarationBuilder::findDeclarationInContext(QStringList dottedName
                                                                             CursorInRevision::invalid(), 0, DUContext::NoFiltering);
         // break if the list of identifiers is not yet totally worked through and no
         // declaration with an internal context was found
-        if ( declarations.isEmpty() or ( not declarations.last()->internalContext() and identifierCount != i ) ) {
+        if ( declarations.isEmpty() || ( !declarations.last()->internalContext() && identifierCount != i ) ) {
             kDebug() << "Declaration not found: " << dottedNameIdentifier << "in top context" << ctx->url().toUrl().path();
             return 0;
         }
@@ -532,7 +532,7 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
         // import the name from a module's __init__.py file, and once from a "real" python file
         // TODO improve this code-wise
         Declaration* success = createModuleImportDeclaration(moduleName, declarationName, declarationIdentifier, 0, DontCreateProblems);
-        if ( not success and node->module ) {
+        if ( !success && node->module ) {
             QString modifiedModuleName = node->module->value + ".__init__." + name->name->value;
             createModuleImportDeclaration(modifiedModuleName, declarationName, declarationIdentifier);
         }
@@ -619,8 +619,8 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
     // NOTE: The former case can't actually happen in python, it's not allowed. However,
     // it is still handled here, because it's very useful for documentation files (pyQt for example
     // makes heavy use of that feature).
-    Q_ASSERT( ( innerCtx.data() or aliasDeclaration ) && "exactly one of innerCtx or aliasDeclaration must be provided");
-    Q_ASSERT( ( not innerCtx.data() or not aliasDeclaration ) && "exactly one of innerCtx or aliasDeclaration must be provided");
+    Q_ASSERT( ( innerCtx.data() || aliasDeclaration ) && "exactly one of innerCtx or aliasDeclaration must be provided");
+    Q_ASSERT( ( !innerCtx.data() || !aliasDeclaration ) && "exactly one of innerCtx or aliasDeclaration must be provided");
     
     kDebug() << "creating declaration tree for" << nameComponents;
     
@@ -634,7 +634,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
             currentName.append(nameComponents.at(j));
         }
         lastDeclaration = findDeclarationInContext(currentName, topContext());
-        if ( lastDeclaration and lastDeclaration->range() < range ) {
+        if ( lastDeclaration && lastDeclaration->range() < range ) {
             depth = i;
             break;
         }
@@ -643,7 +643,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
     DUContext* extendingPreviousImportCtx = 0;
     QStringList remainingNameComponents;
     bool injectingContext = false;
-    if ( lastDeclaration and lastDeclaration->internalContext() ) {
+    if ( lastDeclaration && lastDeclaration->internalContext() ) {
         kDebug() << "Found existing import statement while creating declaration for " << declarationIdentifier->value;
         for ( int i = depth; i < nameComponents.length(); i++ ) {
             remainingNameComponents.append(nameComponents.at(i));
@@ -1269,7 +1269,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                 if ( cont ) {
                     cont->addContentType(tupleElementType);
                 }
-                if ( cont and cont->hasKeyType() ) {
+                if ( cont && cont->hasKeyType() ) {
                     if ( subscript->slice and subscript->slice->astType == Ast::IndexAstType ) {
                         lock.unlock();
                         ExpressionVisitor keyVisitor(currentContext());
@@ -1617,10 +1617,10 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
     DUChainWriteLocker lock(DUChain::lock());
     kDebug() << "Current context for parameters: " << currentContext() << currentContext()->scopeIdentifier().toString();
     
-    if ( currentDeclaration() and currentDeclaration()->isFunctionDeclaration() ) {
+    if ( currentDeclaration() && currentDeclaration()->isFunctionDeclaration() ) {
         FunctionDeclaration* workingOnDeclaration = static_cast<FunctionDeclaration*>(Helper::resolveAliasDeclaration(currentDeclaration()));
         workingOnDeclaration->clearDefaultParameters();
-        if ( hasCurrentType() and currentType<FunctionType>() ) {
+        if ( hasCurrentType() && currentType<FunctionType>() ) {
             FunctionType::Ptr type = currentType<FunctionType>();
             NameAst* realParam = 0;
             bool isFirst = true;

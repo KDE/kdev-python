@@ -59,7 +59,7 @@ AbstractType::Ptr ExpressionVisitor::encounterPreprocess(AbstractType::Ptr type,
 {
     type = Helper::resolveType(type);
     AbstractType::Ptr res;
-    if ( merge and not m_lastType.isEmpty() ) {
+    if ( merge && !m_lastType.isEmpty() ) {
         res = Helper::mergeTypes(m_lastType.pop(), type);
     }
     else {
@@ -207,6 +207,19 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
             accessingAttributeOfType << unsure->types()[i].abstractType();
         }
     }
+    else if ( accessingAttributeOf->astType == Ast::NameAstType ) {
+        availableDeclarations = lastDeclarations();
+    }
+    else if ( accessingAttributeOf->astType == Ast::CallAstType ) {
+        availableDeclarations.clear();
+        accessingAttributeOfType.append(possibleStructureTypes(lastType()));
+    }
+    else if ( accessingAttributeOf->astType == Ast::SliceAstType ) {
+        availableDeclarations = lastDeclarations();
+    }
+    else if ( !lastType().isNull() && lastType().cast<StructureType>() ) {
+        accessingAttributeOfType.append(lastType().cast<StructureType>());
+    }
     else {
         accessingAttributeOfType << accessedType;
     }
@@ -292,7 +305,8 @@ void ExpressionVisitor::visitCall(CallAst* node)
         encounterDeclaration(0);
         return;
     }
-    else if ( not actualDeclaration ) {
+    else if ( !actualDeclaration ) {
+//         kDebug() << "No declaration for " << functionName;
         m_shouldBeKnown = false;
         return unknownTypeEncountered();
     }
@@ -307,7 +321,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
         
         if ( funcDecl && funcDecl->type<FunctionType>() ) {
             AbstractType::Ptr type;
-            if ( isConstructor and classDecl ) {
+            if ( isConstructor && classDecl ) {
                 type = classDecl->abstractType();
                 encounterDeclaration(classDecl);
             }
@@ -334,7 +348,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
                     }
                 }
                 if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsList")
-                    or Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsListOfKeys")
+                    || Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsListOfKeys")
                 ) {
                     decoratorFound = true;
                     if ( node->function->astType == Ast::AttributeAstType ) {
@@ -428,7 +442,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
                         return encounter(type);
                     }
                 }
-                if ( decoratorFound and not typeFound ) {
+                if ( decoratorFound && !typeFound ) {
                     return unknownTypeEncountered();
                 }
             }
@@ -607,7 +621,7 @@ void ExpressionVisitor::visitTuple(TupleAst* node) {
 void ExpressionVisitor::visitIfExpression(IfExpressionAst* node)
 {
     AstDefaultVisitor::visitIfExpression(node);
-    if ( node->body and node->orelse ) {
+    if ( node->body && node->orelse ) {
         ExpressionVisitor v(this);
         v.visitNode(node->body);
         AbstractType::Ptr first = v.lastType();

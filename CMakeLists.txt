@@ -2,6 +2,10 @@ PROJECT(kdevpython)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${kdevpython_SOURCE_DIR}/cmake/)
 
+# this must go uninterfered with all the include_directories, so have it before
+# finding even KDE
+add_subdirectory(python-src)
+
 find_package(KDE4 REQUIRED)
 find_package(KDevPlatform 1.5.60 REQUIRED)
 find_package(KDevelop-PG-Qt REQUIRED)

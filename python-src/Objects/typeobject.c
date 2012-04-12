@@ -2345,7 +2345,7 @@ PyObject* PyType_FromSpec(PyType_Spec *spec)
     res->ht_type.tp_itemsize = spec->itemsize;
     res->ht_type.tp_flags = spec->flags | Py_TPFLAGS_HEAPTYPE;
 
-    for (slot = spec->slots; slot->slot; slot++) {
+    for (slot = spec->_slots; slot->slot; slot++) {
 	if (slot->slot >= sizeof(slotoffsets)/sizeof(slotoffsets[0])) {
 	    PyErr_SetString(PyExc_RuntimeError, "invalid slot offset");
 	    goto fail;

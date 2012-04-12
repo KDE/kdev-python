@@ -1510,11 +1510,13 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 
                 Declaration* paramDeclaration = visitVariableDeclaration<Declaration>(realParam);
                 
+                DUChainWriteLocker lock;
                 if ( type && paramDeclaration && currentIndex > firstDefaultParameterOffset ) {
                     kDebug() << "Adding default argument: " << realParam->identifier->value << paramDeclaration->abstractType();
                     // find type of given default value
                     ExpressionVisitor v(currentContext());
                     v.visitNode(node->defaultValues.at(currentIndex - firstDefaultParameterOffset - 1));
+                    paramDeclaration->setAbstractType(v.lastType());
                     if ( v.lastType() ) {
                         type->addArgument(v.lastType());
                         workingOnDeclaration->addDefaultParameter(IndexedString(v.lastType()->toString()));

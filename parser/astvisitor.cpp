@@ -2,6 +2,7 @@
  *   This file is part of KDevelop                                         *
  *   Copyright 2007 Andreas Pakulat <apaku@gmx.de>                         *
  *   Copyright 2011 Sven Brauch <svenbrauch@googlemail.com>                *
+ *   Copyright 2012 Patrick Spendrin <ps_ml@gmx.de>                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Library General Public License as       *
@@ -54,12 +55,11 @@ void AstVisitor::visitNode(Ast* node)
         case Ast::AssertionAstType:                             this->visitAssertion(dynamic_cast<AssertionAst*>(node)); break;
         case Ast::ImportAstType:                                this->visitImport(dynamic_cast<ImportAst*>(node)); break;
         case Ast::ImportFromAstType:                            this->visitImportFrom(dynamic_cast<ImportFromAst*>(node)); break;
-        case Ast::ExecAstType:                                  this->visitExec(dynamic_cast<ExecAst*>(node)); break;
         case Ast::GlobalAstType:                                this->visitGlobal(dynamic_cast<GlobalAst*>(node)); break;
         case Ast::BreakAstType:                                 this->visitBreak(dynamic_cast<BreakAst*>(node)); break;
         case Ast::ContinueAstType:                              this->visitContinue(dynamic_cast<ContinueAst*>(node)); break;
-        case Ast::PrintAstType:                                 this->visitPrint(dynamic_cast<PrintAst*>(node)); break;
         case Ast::PassAstType:                                  this->visitPass(dynamic_cast<PassAst*>(node)); break;
+        case Ast::NonlocalAstType:                              this->visitNonlocal(dynamic_cast<NonlocalAst*>(node)); break;
         case Ast::BooleanOperationAstType:                      this->visitBooleanOperation(dynamic_cast<BooleanOperationAst*>(node)); break;
         case Ast::BinaryOperationAstType:                       this->visitBinaryOperation(dynamic_cast<BinaryOperationAst*>(node)); break;
         case Ast::UnaryOperationAstType:                        this->visitUnaryOperation(dynamic_cast<UnaryOperationAst*>(node)); break;
@@ -72,14 +72,15 @@ void AstVisitor::visitNode(Ast* node)
         case Ast::DictionaryComprehensionAstType:               this->visitDictionaryComprehension(dynamic_cast<DictionaryComprehensionAst*>(node)); break;
         case Ast::GeneratorExpressionAstType:                   this->visitGeneratorExpression(dynamic_cast<GeneratorExpressionAst*>(node)); break;
         case Ast::CompareAstType:                               this->visitCompare(dynamic_cast<CompareAst*>(node)); break;
-        case Ast::ReprAstType:                                  this->visitRepr(dynamic_cast<ReprAst*>(node)); break;
         case Ast::NumberAstType:                                this->visitNumber(dynamic_cast<NumberAst*>(node)); break;
         case Ast::StringAstType:                                this->visitString(dynamic_cast<StringAst*>(node)); break;
+        case Ast::BytesAstType:                                 this->visitBytes(dynamic_cast<BytesAst*>(node)); break;
         case Ast::YieldAstType:                                 this->visitYield(dynamic_cast<YieldAst*>(node)); break;
         case Ast::NameAstType:                                  this->visitName(dynamic_cast<NameAst*>(node)); break;
         case Ast::CallAstType:                                  this->visitCall(dynamic_cast<CallAst*>(node)); break;
         case Ast::AttributeAstType:                             this->visitAttribute(dynamic_cast<AttributeAst*>(node)); break;
         case Ast::SubscriptAstType:                             this->visitSubscript(dynamic_cast<SubscriptAst*>(node)); break;
+        case Ast::StarredAstType:                               this->visitStarred(dynamic_cast<StarredAst*>(node)); break;
         case Ast::ListAstType:                                  this->visitList(dynamic_cast<ListAst*>(node)); break;
         case Ast::TupleAstType:                                 this->visitTuple(dynamic_cast<TupleAst*>(node)); break;
         case Ast::EllipsisAstType:                              this->visitEllipsis(dynamic_cast<EllipsisAst*>(node)); break;
@@ -88,6 +89,7 @@ void AstVisitor::visitNode(Ast* node)
         case Ast::IndexAstType:                                 this->visitIndex(dynamic_cast<IndexAst*>(node)); break;
         case Ast::ArgumentsAstType:                             this->visitArguments(dynamic_cast<ArgumentsAst*>(node)); break;
         case Ast::KeywordAstType:                               this->visitKeyword(dynamic_cast<KeywordAst*>(node)); break;
+        case Ast::ArgAstType:                                   this->visitArg(dynamic_cast<ArgAst*>(node)); break;
         case Ast::ComprehensionAstType:                         this->visitComprehension(dynamic_cast<ComprehensionAst*>(node)); break;
         case Ast::ExceptionHandlerAstType:                      this->visitExceptionHandler(dynamic_cast<ExceptionHandlerAst*>(node)); break;
         case Ast::AliasAstType:                                 this->visitAlias(dynamic_cast<AliasAst*>(node)); break;

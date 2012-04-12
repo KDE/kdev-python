@@ -1,6 +1,7 @@
 /***************************************************************************
  *   This file is part of KDevelop                                         *
  *   Copyright 2007 Andreas Pakulat <apaku@gmx.de>                         *
+ *   Copyright 2012 Patrick Spendrin <ps_ml@gmx.de>                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Library General Public License as       *
@@ -60,12 +61,11 @@ public:
     virtual void visitAssertion(AssertionAst* node) { Q_UNUSED(node); };
     virtual void visitImport(ImportAst* node) { Q_UNUSED(node); };
     virtual void visitImportFrom(ImportFromAst* node) { Q_UNUSED(node); };
-    virtual void visitExec(ExecAst* node) { Q_UNUSED(node); };
     virtual void visitGlobal(GlobalAst* node) { Q_UNUSED(node); };
     virtual void visitBreak(BreakAst* node) { Q_UNUSED(node); };
     virtual void visitContinue(ContinueAst* node) { Q_UNUSED(node); };
-    virtual void visitPrint(PrintAst* node) { Q_UNUSED(node); };
     virtual void visitPass(PassAst* node) { Q_UNUSED(node); };
+    virtual void visitNonlocal(NonlocalAst* node) { Q_UNUSED(node); };
     virtual void visitExpression(ExpressionAst* node) { Q_UNUSED(node); };
     virtual void visitBooleanOperation(BooleanOperationAst* node) { Q_UNUSED(node); };
     virtual void visitBinaryOperation(BinaryOperationAst* node) { Q_UNUSED(node); };
@@ -79,14 +79,15 @@ public:
     virtual void visitDictionaryComprehension(DictionaryComprehensionAst* node) { Q_UNUSED(node); };
     virtual void visitGeneratorExpression(GeneratorExpressionAst* node) { Q_UNUSED(node); };
     virtual void visitCompare(CompareAst* node) { Q_UNUSED(node); };
-    virtual void visitRepr(ReprAst* node) { Q_UNUSED(node); };
     virtual void visitNumber(NumberAst* node) { Q_UNUSED(node); };
     virtual void visitString(StringAst* node) { Q_UNUSED(node); };
+    virtual void visitBytes(BytesAst* node) { Q_UNUSED(node); };
     virtual void visitYield(YieldAst* node) { Q_UNUSED(node); };
     virtual void visitName(NameAst* node) { Q_UNUSED(node); };
     virtual void visitCall(CallAst* node) { Q_UNUSED(node); };
     virtual void visitAttribute(AttributeAst* node) { Q_UNUSED(node); };
     virtual void visitSubscript(SubscriptAst* node) { Q_UNUSED(node); };
+    virtual void visitStarred(StarredAst* node) { Q_UNUSED(node); };
     virtual void visitList(ListAst* node) { Q_UNUSED(node); };
     virtual void visitTuple(TupleAst* node) { Q_UNUSED(node); };
     virtual void visitEllipsis(EllipsisAst* node) { Q_UNUSED(node); };
@@ -95,6 +96,7 @@ public:
     virtual void visitIndex(IndexAst* node) { Q_UNUSED(node); };
     virtual void visitArguments(ArgumentsAst* node) { Q_UNUSED(node); };
     virtual void visitKeyword(KeywordAst* node) { Q_UNUSED(node); };
+    virtual void visitArg(ArgAst* node) { Q_UNUSED(node); };
     virtual void visitComprehension(ComprehensionAst* node) { Q_UNUSED(node); };
     virtual void visitExceptionHandler(ExceptionHandlerAst* node) { Q_UNUSED(node); };
     virtual void visitAlias(AliasAst* node) { Q_UNUSED(node); };

@@ -1,6 +1,7 @@
 /***************************************************************************
  *   This file is part of KDevelop                                         *
  *   Copyright 2007 Andreas Pakulat <apaku@gmx.de>                         *
+ *   Copyright 2012 Patrick Spendrin <ps_ml@gmx.de>                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Library General Public License as       *
@@ -18,7 +19,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
 
-// The Python 2.6 Language Reference was used as basis for this AST
+// The Python 3.2 Language Reference was used as basis for this AST
 
 #ifndef PYTHON_AST_H
 #define PYTHON_AST_H
@@ -40,8 +41,8 @@ namespace Python {
     class StatementAst;
     class FunctionDefinitionAst;
     class AssignmentAst;
-    class PrintAst;
     class PassAst;
+    class NonlocalAst;
     class ExpressionAst;
     class NameAst;
     class CallAst;
@@ -71,12 +72,13 @@ public:
     {
         FunctionDefinitionAstType,
         AssignmentAstType,
-        PrintAstType,
         PassAstType,
+        NonlocalAstType,
         NameAstType,
         CallAstType,
         AttributeAstType,
         ArgumentsAstType,
+        ArgAstType,
         KeywordAstType,
         ClassDefinitionAstType,
         ReturnAstType,
@@ -90,7 +92,6 @@ public:
         TryFinallyAstType,
         ImportAstType,
         ImportFromAstType,
-        ExecAstType,
         GlobalAstType,
         BreakAstType,
         ContinueAstType,
@@ -114,10 +115,11 @@ public:
         GeneratorExpressionAstType,
         YieldAstType,
         CompareAstType,
-        ReprAstType,
         NumberAstType,
         StringAstType,
+        BytesAstType,
         SubscriptAstType,
+        StarredAstType,
         ListAstType,
         TupleAstType,
         
@@ -359,14 +361,6 @@ public:
     int level;
 };
 
-class KDEVPYTHONPARSER_EXPORT ExecAst : public StatementAst {
-public:
-    ExecAst(Ast* parent);
-    ExpressionAst* body;
-    ExpressionAst* globals;
-    ExpressionAst* locals;
-};
-
 class KDEVPYTHONPARSER_EXPORT GlobalAst : public StatementAst {
 public:
     GlobalAst(Ast* parent);
@@ -385,17 +379,14 @@ public:
     ContinueAst(Ast* parent);
 };
 
-class KDEVPYTHONPARSER_EXPORT PrintAst : public StatementAst {
-public:
-    PrintAst(Ast* parent);
-    ExpressionAst* destination;
-    QList<ExpressionAst*> values;
-    bool newline;
-};
-
 class KDEVPYTHONPARSER_EXPORT PassAst : public StatementAst {
 public:
     PassAst(Ast* parent);
+};
+
+class KDEVPYTHONPARSER_EXPORT NonlocalAst : public StatementAst {
+public:
+    NonlocalAst(Ast* parent);
 };
 
 
@@ -522,6 +513,12 @@ public:
     QString value;
 };
 
+class KDEVPYTHONPARSER_EXPORT BytesAst : public ExpressionAst {
+public:
+    BytesAst(Ast* parent);
+    QString value;
+};
+
 class KDEVPYTHONPARSER_EXPORT YieldAst : public ExpressionAst {
 public:
     YieldAst(Ast* parent);
@@ -560,6 +557,11 @@ public:
     ExpressionAst* value;
     SliceAstBase* slice;
     ExpressionAst::Context context;
+};
+
+class KDEVPYTHONPARSER_EXPORT StarredAst : public ExpressionAst {
+public:
+    StarredAst(Ast* parent);
 };
 
 class KDEVPYTHONPARSER_EXPORT ListAst : public ExpressionAst {
@@ -626,6 +628,13 @@ public:
     ExpressionAst* value;
 };
 
+class KDEVPYTHONPARSER_EXPORT ArgAst : public Ast {
+public:
+    ArgAst(Ast* parent);
+    Identifier* argumentName;
+    ExpressionAst* annotation;
+};
+
 class KDEVPYTHONPARSER_EXPORT ComprehensionAst : public Ast {
 public:
     ComprehensionAst(Ast* parent);
@@ -638,7 +647,7 @@ class KDEVPYTHONPARSER_EXPORT ExceptionHandlerAst : public Ast {
 public:
     ExceptionHandlerAst(Ast* parent);
     ExpressionAst* type;
-    ExpressionAst* name;
+    Identifier* name;
     QList<Ast*> body;
 };
 

@@ -2,6 +2,7 @@
  *   This file is part of KDevelop                                         *
  *   Copyright 2007 Andreas Pakulat <apaku@gmx.de>                         *
  * Copyright 2010 Sven Brauch <svenbrauch@googlemail.com>                  *
+ *   Copyright 2012 Patrick Spendrin <ps_ml@gmx.de>                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Library General Public License as       *
@@ -33,6 +34,7 @@ AstDefaultVisitor::~AstDefaultVisitor() { }
 // note that Identifier is not a node in this Ast
 void AstDefaultVisitor::visitName(NameAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitPass(PassAst* node) { Q_UNUSED(node); }
+void AstDefaultVisitor::visitNonlocal(NonlocalAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitAlias(AliasAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitBreak(BreakAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitContinue(ContinueAst* node) { Q_UNUSED(node); }
@@ -40,6 +42,9 @@ void AstDefaultVisitor::visitEllipsis(EllipsisAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitGlobal(GlobalAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitNumber(NumberAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitString(StringAst* node) { Q_UNUSED(node); }
+void AstDefaultVisitor::visitBytes(BytesAst* node) { Q_UNUSED(node); }
+void AstDefaultVisitor::visitStarred(StarredAst* node) { Q_UNUSED(node); }
+void AstDefaultVisitor::visitArg(ArgAst* node) { Q_UNUSED(node); }
 
 void AstDefaultVisitor::visitCode(CodeAst* node)
 {
@@ -64,13 +69,6 @@ void AstDefaultVisitor::visitDelete(DeleteAst* node)
     foreach (ExpressionAst* expression, node->targets) {
         visitNode(expression);
     }
-}
-
-void AstDefaultVisitor::visitExec(ExecAst* node)
-{
-    visitNode(node->body);
-    visitNode(node->globals);
-    visitNode(node->locals);
 }
 
 void AstDefaultVisitor::visitExtendedSlice(ExtendedSliceAst* node)
@@ -146,11 +144,6 @@ void AstDefaultVisitor::visitLambda(LambdaAst* node)
 void AstDefaultVisitor::visitRaise(RaiseAst* node)
 {
     visitNode(node->type);
-}
-
-void AstDefaultVisitor::visitRepr(ReprAst* node)
-{
-    visitNode(node->value);
 }
 
 void AstDefaultVisitor::visitReturn(ReturnAst* node)
@@ -344,14 +337,6 @@ void AstDefaultVisitor::visitAssignment(AssignmentAst* node)
         visitNode(expression);
     };
     visitNode(node->value);
-}
-
-void AstDefaultVisitor::visitPrint(PrintAst* node)
-{
-    visitNode(node->destination);
-    foreach (ExpressionAst* expression, node->values) {
-        visitNode(expression);
-    }
 }
 
 void AstDefaultVisitor::visitCall(CallAst* node)

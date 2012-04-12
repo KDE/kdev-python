@@ -2,6 +2,7 @@
  *   This file is part of KDevelop                                         *
  *   Copyright 2007 Andreas Pakulat <apaku@gmx.de>                         *
  *   Copyright 2010-2011 Sven Brauch <svenbrauch@googlemail.com>           *
+ *   Copyright 2012 Patrick Spendrin <ps_ml@gmx.de>                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Library General Public License as       *
@@ -56,12 +57,11 @@ public:
     virtual void visitAssertion(AssertionAst* node);
     virtual void visitImport(ImportAst* node);
     virtual void visitImportFrom(ImportFromAst* node);
-    virtual void visitExec(ExecAst* node);
     virtual void visitGlobal(GlobalAst* node);
     virtual void visitBreak(BreakAst* node);
     virtual void visitContinue(ContinueAst* node);
-    virtual void visitPrint(PrintAst* node);
     virtual void visitPass(PassAst* node);
+    virtual void visitNonlocal(NonlocalAst* node);
     virtual void visitBooleanOperation(BooleanOperationAst* node);
     virtual void visitBinaryOperation(BinaryOperationAst* node);
     virtual void visitUnaryOperation(UnaryOperationAst* node);
@@ -74,14 +74,15 @@ public:
     virtual void visitDictionaryComprehension(DictionaryComprehensionAst* node);
     virtual void visitGeneratorExpression(GeneratorExpressionAst* node);
     virtual void visitCompare(CompareAst* node);
-    virtual void visitRepr(ReprAst* node);
     virtual void visitNumber(NumberAst* node);
     virtual void visitString(StringAst* node);
+    virtual void visitBytes(BytesAst* node);
     virtual void visitYield(YieldAst* node);
     virtual void visitName(NameAst* node);
     virtual void visitCall(CallAst* node);
     virtual void visitAttribute(AttributeAst* node);
     virtual void visitSubscript(SubscriptAst* node);
+    virtual void visitStarred(StarredAst* node);
     virtual void visitList(ListAst* node);
     virtual void visitTuple(TupleAst* node);
     virtual void visitEllipsis(EllipsisAst* node);
@@ -89,6 +90,7 @@ public:
     virtual void visitExtendedSlice(ExtendedSliceAst* node);
     virtual void visitIndex(IndexAst* node);
     virtual void visitArguments(ArgumentsAst* node);
+    virtual void visitArg(ArgAst* node);
     virtual void visitKeyword(KeywordAst* node);
     virtual void visitComprehension(ComprehensionAst* node);
     virtual void visitExceptionHandler(ExceptionHandlerAst* node);

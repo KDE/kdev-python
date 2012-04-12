@@ -1,7 +1,11 @@
 /***************************************************************************
  *   This file is part of KDevelop                                         *
  *   Copyright 2007 Andreas Pakulat <apaku@gmx.de>                         *
+<<<<<<< HEAD
  *   Copyright 2010-2012 Sven Brauch <svenbrauch@googlemail.com>           *
+=======
+ *   Copyright 2012 Patrick Spendrin <ps_ml@gmx.de>                        *
+>>>>>>> adapt to new objects in python 3.2
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Library General Public License as       *
@@ -139,11 +143,6 @@ ExceptionHandlerAst::ExceptionHandlerAst(Ast* parent): Ast(parent, Ast::Exceptio
     
 }
 
-ExecAst::ExecAst(Ast* parent): StatementAst(parent, Ast::ExecAstType), body(0), globals(0), locals(0)
-{
-    
-}
-
 ListComprehensionAst::ListComprehensionAst(Ast* parent): ExpressionAst(parent, Ast::ListComprehensionAstType), element(0)
 {
 
@@ -234,17 +233,12 @@ PassAst::PassAst(Ast* parent): StatementAst(parent, Ast::PassAstType)
     
 }
 
-PrintAst::PrintAst(Ast* parent): StatementAst(parent, Ast::PrintAstType), destination(0), newline(0)
+NonlocalAst::NonlocalAst(Ast* parent): StatementAst(parent, Ast::NonlocalAstType)
 {
     
 }
 
 RaiseAst::RaiseAst(Ast* parent): StatementAst(parent, Ast::RaiseAstType), type(0)
-{
-    
-}
-
-ReprAst::ReprAst(Ast* parent): ExpressionAst(parent, Ast::ReprAstType), value(0)
 {
     
 }
@@ -279,7 +273,17 @@ StringAst::StringAst(Ast* parent): ExpressionAst(parent, Ast::StringAstType), va
     
 }
 
+BytesAst::BytesAst(Ast* parent): ExpressionAst(parent, Ast::BytesAstType), value("")
+{
+    
+}
+
 SubscriptAst::SubscriptAst(Ast* parent): ExpressionAst(parent, Ast::SubscriptAstType), value(0), slice(0)
+{
+    
+}
+
+StarredAst::StarredAst(Ast* parent): ExpressionAst(parent, Ast::StarredAstType)
 {
     
 }

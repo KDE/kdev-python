@@ -230,7 +230,7 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
 
 
 // This is stolen from PHP. For credits, see helpers.cpp in PHP.
-void createArgumentList(Declaration* dec, QString& ret, QList<QVariant>* highlighting, int atArg)
+void createArgumentList(Declaration* dec, QString& ret, QList< QVariant >* highlighting, int atArg, bool includeTypes)
 {
     int textFormatStart = 0;
     QTextFormat normalFormat(QTextFormat::CharFormat);
@@ -281,25 +281,33 @@ void createArgumentList(Declaration* dec, QString& ret, QList<QVariant>* highlig
                 doFormat = normalFormat;
 
             doHighlight = true;
-
-            if (num < functionType->arguments().count()) {
-                if (AbstractType::Ptr type = functionType->arguments().at(num)) {
-                    if ( type->toString() != "<unknown>" ) {
-                        ret += type->toString() + ' ';
+            
+            if ( num == firstDefaultParam ) {
+                ret += "[";
+                ++defaultParamNum;
+            }
+            
+            if ( includeTypes ) {
+                if (num < functionType->arguments().count()) {
+                    if (AbstractType::Ptr type = functionType->arguments().at(num)) {
+                        if ( type->toString() != "<unknown>" ) {
+                            ret += type->toString() + ' ';
+                        }
+                    }
+                }
+                
+                if (doHighlight) {
+                    if (highlighting && ret.length() != textFormatStart) {
+                        //Add a default-highlighting for the passed text
+                        *highlighting << QVariant(textFormatStart);
+                        *highlighting << QVariant(ret.length() - textFormatStart);
+                        *highlighting << QVariant(normalFormat);
+                        textFormatStart = ret.length();
                     }
                 }
             }
             
-            if (doHighlight) {
-                if (highlighting && ret.length() != textFormatStart) {
-                    //Add a default-highlighting for the passed text
-                    *highlighting << QVariant(textFormatStart);
-                    *highlighting << QVariant(ret.length() - textFormatStart);
-                    *highlighting << QVariant(normalFormat);
-                    textFormatStart = ret.length();
-                }
-            }
-
+            
             ret += dec->identifier().toString();
 
             if (doHighlight) {
@@ -309,12 +317,6 @@ void createArgumentList(Declaration* dec, QString& ret, QList<QVariant>* highlig
                     *highlighting << doFormat;
                     textFormatStart = ret.length();
                 }
-            }
-
-
-            if (num >= firstDefaultParam) {
-                ret += " = " + decl->defaultParameters()[defaultParamNum].str();
-                ++defaultParamNum;
             }
             
             if (doHighlight) {
@@ -327,6 +329,9 @@ void createArgumentList(Declaration* dec, QString& ret, QList<QVariant>* highlig
             }
 
             ++num;
+        }
+        if ( defaultParamNum != 0 ) {
+            ret += "]";
         }
         ret += ')';
 

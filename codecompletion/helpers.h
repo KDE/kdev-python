@@ -33,7 +33,7 @@ using namespace KDevelop;
 
 namespace Python {
 
-void createArgumentList(Declaration* dec, QString& ret, QList<QVariant>* highlighting, int atArg = 0);
+void createArgumentList(Declaration* dec, QString& ret, QList<QVariant>* highlighting, int atArg = 0, bool includeTypes = true);
 
 class TokenList;
 

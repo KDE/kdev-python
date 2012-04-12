@@ -77,7 +77,7 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
             if ( index.column() == KDevelop::CodeCompletionModel::Arguments ) {
                 if (FunctionType::Ptr functionType = dec->type<FunctionType>()) {
                     QString ret;
-                    createArgumentList(dec, ret, 0);
+                    createArgumentList(dec, ret, 0, 0, ( m_depth > 0 ) );
                     return ret.replace("__kdevpythondocumentation_builtin_", "");
                 }
             }

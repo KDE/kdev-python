@@ -181,11 +181,11 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             // TODO fancy feature: Filter out already provided default-parameters
             if ( depth() == 1 && functionCalled ) {
                 if ( DUContext* args = DUChainUtils::getArgumentContext(functionCalled) ) {
-                    if ( (unsigned int) ( args->localDeclarations().count() - functionCalled->defaultParametersSize() )
-                                          <= m_alreadyGivenParametersCount )
+                    int normalParameters = args->localDeclarations().count() - functionCalled->defaultParametersSize();
+                    if ( normalParameters <= m_alreadyGivenParametersCount )
                     {
                         for ( unsigned int i = 0; i < functionCalled->defaultParametersSize(); i++ ) {
-                            QString paramName = functionCalled->defaultParameters()[i].str();
+                            QString paramName = args->localDeclarations().at(normalParameters + i)->identifier().toString();
                             resultingItems << CompletionTreeItemPointer(new KeywordItem(CodeCompletionContext::Ptr(m_child),
                                                                         paramName + "=", i18n("specify default parameter"),
                                                                         KeywordItem::ImportantItem));

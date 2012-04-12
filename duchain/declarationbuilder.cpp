@@ -866,12 +866,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
         v.visitNode(static_cast<AttributeAst*>(node->function)->value);
         lock.unlock();
         if ( VariableLengthContainer::Ptr container = v.lastType().cast<VariableLengthContainer>() ) {
-            if ( v.lastDeclaration() && v.lastDeclaration()->topContext() != Helper::getDocumentationFileContext().data() ) {
-//                 /// DEBUG
-//                 kDebug() << "Got container type for eventual update: " << container->toString();
-//                 kDebug() << "Eventual function declaration: " << functionVisitor.lastFunctionDeclaration()->toString();
-//                 kDebug() << functionVisitor.lastFunctionDeclaration()->isFunctionDeclaration();
-//                 /// END DEBUG
+            if ( v.lastDeclaration() && v.lastDeclaration()->topContext()->url() != IndexedString(Helper::getDocumentationFile()) ) {
                 if ( functionVisitor.lastDeclaration()->isFunctionDeclaration() ) {
                     FunctionDeclaration* f = static_cast<FunctionDeclaration*>(functionVisitor.lastDeclaration().data());
                     if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(f, "addsTypeOfArg") ) {
@@ -1519,12 +1514,12 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                     paramDeclaration->setAbstractType(v.lastType());
                     if ( v.lastType() ) {
                         type->addArgument(v.lastType());
-                        workingOnDeclaration->addDefaultParameter(IndexedString(v.lastType()->toString()));
                     }
                     else {
                         type->addArgument(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
-                        workingOnDeclaration->addDefaultParameter(IndexedString("..."));
                     }
+                    // TODO add the real expression from the document here as default value
+                    workingOnDeclaration->addDefaultParameter(IndexedString("..."));
                     kDebug() << "Arguments count: " << type->arguments().length();
                 }
                 else {

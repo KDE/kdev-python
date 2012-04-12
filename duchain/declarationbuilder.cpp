@@ -1517,11 +1517,12 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                     v.visitNode(node->defaultValues.at(currentIndex - firstDefaultParameterOffset - 1));
                     if ( v.lastType() ) {
                         type->addArgument(v.lastType());
+                        workingOnDeclaration->addDefaultParameter(IndexedString(v.lastType()->toString()));
                     }
                     else {
                         type->addArgument(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+                        workingOnDeclaration->addDefaultParameter(IndexedString("..."));
                     }
-                    workingOnDeclaration->addDefaultParameter(paramDeclaration->identifier().identifier());
                     kDebug() << "Arguments count: " << type->arguments().length();
                 }
                 else {

@@ -162,7 +162,7 @@ RangeInRevision ContextBuilder::editorFindRange( Ast* fromNode, Ast* toNode )
 }
 
 CursorInRevision ContextBuilder::editorFindPositionSafe(Ast* node) {
-    if ( not node ) {
+    if ( !node ) {
         return CursorInRevision::invalid();
     }
     return editor()->findPosition(node);
@@ -255,7 +255,7 @@ RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
         ListComprehensionAst* c = static_cast<ListComprehensionAst*>(node);
         generators = c->generators;
         element = c->element;
-        if ( not generators.isEmpty() ) {
+        if ( !generators.isEmpty() ) {
             range = editorFindRange(element, generators.last()->iterator);
             kDebug() << "List Comprehension End: " << range.end;
             kDebug() << "List Comprehension Start: " << range.start;
@@ -266,7 +266,7 @@ RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
         SetComprehensionAst* c = static_cast<SetComprehensionAst*>(node);
         generators = c->generators;
         element = c->element;
-        if ( not generators.isEmpty() ) {
+        if ( !generators.isEmpty() ) {
             range = editorFindRange(element, generators.last()->iterator);
             kDebug() << "Set comprehension range: " << range;
 //             generatorFound = true;
@@ -275,7 +275,7 @@ RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
     else if ( node->astType == Ast::DictionaryComprehensionAstType ) {
         DictionaryComprehensionAst* c = static_cast<DictionaryComprehensionAst*>(node);
         generators = c->generators;
-        if ( not generators.isEmpty() ) {
+        if ( !generators.isEmpty() ) {
             range = editorFindRange(c->key, generators.last()->iterator);
 //             generatorFound = true;
         }
@@ -283,12 +283,12 @@ RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
     else if ( node->astType == Ast::GeneratorExpressionAstType ) {
         GeneratorExpressionAst* c = static_cast<GeneratorExpressionAst*>(node);
         generators = c->generators;
-        if ( not generators.isEmpty() ) {
+        if ( !generators.isEmpty() ) {
             range = editorFindRange(c->element, generators.last()->iterator);
 //             generatorFound = true;
         }
     }
-    else if ( not generators.isEmpty() ) {
+    else if ( !generators.isEmpty() ) {
         RangeInRevision containedComprehensionRange = comprehensionRange(generators.last()->iterator);
         if ( containedComprehensionRange.isValid() ) {
             range.end = containedComprehensionRange.end;

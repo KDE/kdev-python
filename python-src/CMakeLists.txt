@@ -1,17 +1,44 @@
-if(NOT WIN32)
-add_custom_target(
-    parser
-    COMMAND /bin/bash ${CMAKE_CURRENT_SOURCE_DIR}/configure --enable-shared --without-pymalloc WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMAND /usr/bin/env make -C ${CMAKE_CURRENT_SOURCE_DIR}
-)
+# determine the PYTHON version from Include/patchlevel.h
 
-install(FILES libpython2.7-kdevelop.so DESTINATION ${LIB_INSTALL_DIR})
-install(FILES libpython2.7-kdevelop.so.1.0 DESTINATION ${LIB_INSTALL_DIR})
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/_usedpythonversion.cpp 
+"#include <patchlevel.h>\n"
+"#include <stdio.h>\n"
+"int main() { printf(\"%i.%i.%i\", PY_MAJOR_VERSION, PY_MINOR_VERSION, PY_MICRO_VERSION); return 0; }")
+
+set(CMAKE_REQUIRED_INCLUDES )
+try_run(_VERSION_RUN_RESULT
+        _VERSION_COMPILE_RESULT
+        ${CMAKE_CURRENT_BINARY_DIR}
+        ${CMAKE_CURRENT_BINARY_DIR}/_usedpythonversion.cpp
+        COMPILE_DEFINITIONS -IC:/kde/git/kdev-python/python-src/Include
+        RUN_OUTPUT_VARIABLE run_output
+        COMPILE_OUTPUT_VARIABLE compile_output
+)
+string(REGEX REPLACE "([0-9])\\.([0-9])\\.([0-9])" "\\1" PYTHON_MAJOR_VERSION ${run_output})
+string(REGEX REPLACE "([0-9])\\.([0-9])\\.([0-9])" "\\2" PYTHON_MINOR_VERSION ${run_output})
+string(REGEX REPLACE "([0-9])\\.([0-9])\\.([0-9])" "\\3" PYTHON_MICRO_VERSION ${run_output})
+
+if(NOT WIN32)
+
+    add_custom_target(
+        python_target
+        COMMAND /bin/bash ${CMAKE_CURRENT_SOURCE_DIR}/configure --enable-shared --without-pymalloc WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMAND /usr/bin/env make -C ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+    add_library(python-kdevelop SHARED IMPORTED)
+    set_target_properties(python-kdevelop PROPERTIES
+        IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/libpython${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}-kdevelop.so.1.0"
+        IMPORTED_SONAME "libpython${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}-kdevelop.so"
+    )
+    add_dependencies(python-kdevelop python_target)
+
+    install(FILES libpython${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}-kdevelop.so DESTINATION ${LIB_INSTALL_DIR})
+    install(FILES libpython${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}-kdevelop.so.1.0 DESTINATION ${LIB_INSTALL_DIR})
 
 else(NOT WIN32)
     include_directories(Python Modules/zlib Include PC)
-	add_executable(make_versioninfo PC/make_versioninfo.c)
-	add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/pythonnt_rc.h COMMAND ${CMAKE_CURRENT_BINARY_DIR}/make_versioninfo.exe > ${CMAKE_CURRENT_BINARY_DIR}/pythonnt_rc.h)
+    add_executable(make_versioninfo PC/make_versioninfo.c)
+    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/pythonnt_rc.h COMMAND ${CMAKE_CURRENT_BINARY_DIR}/make_versioninfo.exe > ${CMAKE_CURRENT_BINARY_DIR}/pythonnt_rc.h)
 
     set(PYTHON_SRCS
         Python/traceback.c
@@ -181,18 +208,19 @@ else(NOT WIN32)
         Modules/_collectionsmodule.c
         Modules/_codecsmodule.c
         Modules/_bisectmodule.c
-		${CMAKE_CURRENT_BINARY_DIR}/pythonnt_rc.h
-		PC/python_nt.rc
+        ${CMAKE_CURRENT_BINARY_DIR}/pythonnt_rc.h
+        PC/python_nt.rc
     )
 
-	# that file is normally compiled by make_buildinfo so that it can be configured at buildtime
-	# (God bless cmake ;-))
-	list(APPEND PYTHON_SRCS
-		Modules/getbuildinfo.c
-	)
+    # that file is normally compiled by make_buildinfo so that it can be configured at buildtime
+    # (God bless cmake ;-))
+    list(APPEND PYTHON_SRCS
+        Modules/getbuildinfo.c
+    )
 
     add_definitions(-D_USRDLL -DPy_BUILD_CORE -DPy_ENABLE_SHARED)
-    add_library(libpython-kdevelop SHARED ${PYTHON_SRCS})
-    target_link_libraries(libpython-kdevelop kernel32 user32 gdi32 winspool comdlg32 advapi32 shell32 ole32 oleaut32 uuid odbc32 odbccp32)
-	install(TARGETS libpython-kdevelop RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
+    add_library(python-kdevelop SHARED ${PYTHON_SRCS})
+    target_link_libraries(python-kdevelop kernel32 user32 gdi32 winspool comdlg32 advapi32 shell32 ole32 oleaut32 uuid odbc32 odbccp32)
+    set_target_properties(python-kdevelop PROPERTIES OUTPUT_NAME python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}-kdevelop)
+    install(TARGETS python-kdevelop RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
 endif(NOT WIN32)

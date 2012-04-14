@@ -50,6 +50,14 @@ namespace Python
 QMutex AstBuilder::pyInitLock;
 QString AstBuilder::pyHomeDir = KStandardDirs::locate("data", "");
 
+QString PyUnicodeObjectToQString(PyObject* obj) {
+#ifdef Q_OS_WIN32
+	return QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(obj)));
+#else
+	return QLatin1String(PyObject_Str(obj));
+#endif
+}
+
 QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
 {
     IProject* proj = ICore::self()->projectController()->findProjectForUrl(filename);
@@ -190,7 +198,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
         kDebug() << "Problem range: " << range;
         DocumentRange location(IndexedString(filename.path()), range);
         p->setFinalLocation(location);
-//        p->setDescription(PyUnicode_AS_DATA(PyObject_Str(errorMessage_str)));
+        p->setDescription(PyUnicodeObjectToQString(errorMessage_str));
         p->setSource(ProblemData::Parser);
         m_problems.append(p);
         

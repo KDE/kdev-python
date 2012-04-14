@@ -47,16 +47,16 @@ switch_line = '''        case %{KIND}: {
             }'''
 
 create_ast_line = '''                %{AST_TYPE}* v = new (m_pool->allocate(sizeof(%{AST_TYPE}))) %{AST_TYPE}(parent());'''
-create_identifier_line = '''                v->%{TARGET} = node->v.%{KIND_W/O_SUFFIX}.%{VALUE} ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(node->v.%{KIND_W/O_SUFFIX}.%{VALUE})))) : 0;'''
+create_identifier_line = '''                v->%{TARGET} = node->v.%{KIND_W/O_SUFFIX}.%{VALUE} ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->v.%{KIND_W/O_SUFFIX}.%{VALUE})) : 0;'''
 set_attribute_line = '''                nodeStack.push(v); v->%{TARGET} = static_cast<%{AST_TYPE}*>(visitNode(node->v.%{KIND_W/O_SUFFIX}.%{VALUE})); nodeStack.pop();'''
 resolve_list_line = '''                nodeStack.push(v); v->%{TARGET} = visitNodeList<%{PYTHON_AST_TYPE}, %{AST_TYPE}>(node->v.%{KIND_W/O_SUFFIX}.%{VALUE}); nodeStack.pop();'''
-create_identifier_line_any = '''            v->%{TARGET} = node->%{VALUE} ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(node->%{VALUE})))) : 0;'''
+create_identifier_line_any = '''            v->%{TARGET} = node->%{VALUE} ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->%{VALUE})) : 0;'''
 set_attribute_line_any = '''            nodeStack.push(v); v->%{TARGET} = static_cast<%{AST_TYPE}*>(visitNode(node->%{VALUE})); nodeStack.pop();'''
 resolve_list_line_any = '''            nodeStack.push(v); v->%{TARGET} = visitNodeList<%{PYTHON_AST_TYPE}, %{AST_TYPE}>(node->%{VALUE}); nodeStack.pop();'''
 direct_assignment_line = '''                v->%{TARGET} = node->v.%{KIND_W/O_SUFFIX}.%{VALUE};'''
 direct_assignment_line_any = '''                v->%{TARGET} = node->v.%{VALUE};'''
 cast_operator_line = '''                v->%{TARGET} = (ExpressionAst::%{AST_TYPE}) node->v.%{KIND_W/O_SUFFIX}.%{VALUE};'''
-resolve_string = '''                v->%{TARGET} = QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(node->v.%{KIND_W/O_SUFFIX}.%{VALUE})));'''
+resolve_string = '''                v->%{TARGET} = PyUnicodeObjectToQString(node->v.%{KIND_W/O_SUFFIX}.%{VALUE});'''
 assign_mindless = '''              v->%{TARGET} = node->%{VALUE};'''
 assign_linetransform = '''              v->%{TARGET} = tline(node->%{VALUE} - 1);'''
 resolve_oplist_block = '''
@@ -66,9 +66,9 @@ resolve_oplist_block = '''
 '''
 resolve_identifier_block = '''
                 for ( int _i = 0; _i < node->v.%{KIND_W/O_SUFFIX}.%{VALUE}->size; _i++ ) {
-                    Python::Identifier* id = new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(
+                    Python::Identifier* id = new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(
                                     static_cast<PyObject*>(node->v.%{KIND_W/O_SUFFIX}.%{VALUE}->elements[_i])
-                            ))));
+                            ));
                     v->%{TARGET}.append(id);
                 }
 '''

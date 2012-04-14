@@ -210,7 +210,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
         kDebug() << "Problem range: " << range;
         DocumentRange location(IndexedString(filename.path()), range);
         p->setFinalLocation(location);
-//        p->setDescription(PyUnicode_AS_DATA(PyObject_Str(errorMessage_str)));
+        p->setDescription(PyUnicodeObjectToQString(errorMessage_str));
         p->setSource(ProblemData::Parser);
         m_problems.append(p);
         

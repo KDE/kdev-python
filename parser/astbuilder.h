@@ -31,6 +31,8 @@
 
 #include <language/duchain/topducontext.h>
 
+typedef struct _object PyObject;
+
 namespace PythonParser
 {
     class Parser;
@@ -45,6 +47,8 @@ namespace Python
 typedef QMap<QString, QString> stringDictionary;
 
 QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename);
+
+QString PyUnicodeObjectToQString(PyObject* obj);
 
 class KDEVPYTHONPARSER_EXPORT AstBuilder
 {

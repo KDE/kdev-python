@@ -47,27 +47,11 @@ private:
 
 
 
-    Ast* visitNode(_arguments* node) {
-        bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
-                ArgumentsAst* v = new (m_pool->allocate(sizeof(ArgumentsAst))) ArgumentsAst(parent());
-            v->vararg = node->vararg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(node->vararg)))) : 0;
-            v->kwarg = node->kwarg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(node->kwarg)))) : 0;
-            nodeStack.push(v); v->arguments = visitNodeList<_expr, ExpressionAst>(node->args); nodeStack.pop();
-            nodeStack.push(v); v->defaultValues = visitNodeList<_expr, ExpressionAst>(node->defaults); nodeStack.pop();
-              v->arg_lineno = tline(node->arg_lineno - 1);
-              v->arg_col_offset = node->arg_col_offset;
-              v->vararg_lineno = tline(node->vararg_lineno - 1);
-              v->vararg_col_offset = node->vararg_col_offset;
-        return v;
-    }
-
-
     Ast* visitNode(_alias* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
         if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
                 AliasAst* v = new (m_pool->allocate(sizeof(AliasAst))) AliasAst(parent());
-            v->name = node->name ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(node->name)))) : 0;
+            v->name = node->name ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->name)) : 0;
                 if ( v->name ) {
                     v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
                     v->name->startLine = tline(node->lineno - 1);  v->startLine = v->name->startLine;
@@ -75,7 +59,7 @@ private:
                     v->name->endLine = tline(node->lineno - 1);  v->endLine = v->name->endLine;
                     ranges_copied = true;
                 }
-            v->asName = node->asname ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(node->asname)))) : 0;
+            v->asName = node->asname ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->asname)) : 0;
                 if ( v->asName ) {
                     v->asName->startCol = node->col_offset; v->startCol = v->asName->startCol;
                     v->asName->startLine = tline(node->lineno - 1);  v->startLine = v->asName->startLine;
@@ -87,12 +71,64 @@ private:
     }
 
 
-    Ast* visitNode(_keyword* node) {
+    Ast* visitNode(_excepthandler* node) {
+        if ( ! node ) return 0;
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
+        Ast* result = 0;
+        switch ( node->kind ) {
+        case ExceptHandler_kind: {
+                ExceptionHandlerAst* v = new (m_pool->allocate(sizeof(ExceptionHandlerAst))) ExceptionHandlerAst(parent());
+                nodeStack.push(v); v->type = static_cast<ExpressionAst*>(visitNode(node->v.ExceptHandler.type)); nodeStack.pop();
+                v->name = node->v.ExceptHandler.name ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->v.ExceptHandler.name)) : 0;
+                if ( v->name ) {
+                    v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
+                    v->name->startLine = tline(node->lineno - 1);  v->startLine = v->name->startLine;
+                    v->name->endCol = node->col_offset + v->name->value.length() - 1;  v->endCol = v->name->endCol;
+                    v->name->endLine = tline(node->lineno - 1);  v->endLine = v->name->endLine;
+                    ranges_copied = true;
+                }
+                nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.ExceptHandler.body); nodeStack.pop();
+                result = v;
+                break;
+            }
+        default:
+            kWarning() << "Unsupported statement AST type: " << node->kind;
+            Q_ASSERT(false);
+        }
+
+        // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
+        if ( result->hasUsefulRangeInformation ) {
+            Ast* parent = result->parent;
+            while ( parent ) {
+                if ( parent->endLine < result->endLine ) {
+                    parent->endLine = result->endLine;
+                    parent->endCol = result->endCol;
+                }
+                if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
+                    parent->startLine = result->startLine;
+                    parent->startCol = result->startCol;
+                }
+                parent = parent->parent;
+            }
+        }
+    
+        NameAst* r = dynamic_cast<NameAst*>(result);
+        if ( r ) {
+            r->startCol = r->identifier->startCol;
+            r->endCol = r->identifier->endCol;
+            r->startLine = r->identifier->startLine;
+            r->endLine = r->identifier->endLine;
+        }
+        return result;
+    }
+
+
+    Ast* visitNode(_arg* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
         if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
-                KeywordAst* v = new (m_pool->allocate(sizeof(KeywordAst))) KeywordAst(parent());
-            v->argumentName = node->arg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(node->arg)))) : 0;
-            nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->value)); nodeStack.pop();
+                ArgAst* v = new (m_pool->allocate(sizeof(ArgAst))) ArgAst(parent());
+            v->argumentName = node->arg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->arg)) : 0;
+            nodeStack.push(v); v->annotation = static_cast<ExpressionAst*>(visitNode(node->annotation)); nodeStack.pop();
         return v;
     }
 
@@ -218,19 +254,19 @@ v->isInt = PyLong_Check(node->v.Num.n);
             }
         case Str_kind: {
                 StringAst* v = new (m_pool->allocate(sizeof(StringAst))) StringAst(parent());
-                v->value = QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(node->v.Str.s)));
+                v->value = PyUnicodeObjectToQString(node->v.Str.s);
                 result = v;
                 break;
             }
         case Bytes_kind: {
                 BytesAst* v = new (m_pool->allocate(sizeof(BytesAst))) BytesAst(parent());
-                v->value = QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(node->v.Bytes.s)));
+                v->value = PyUnicodeObjectToQString(node->v.Bytes.s);
                 result = v;
                 break;
             }
         case Attribute_kind: {
                 AttributeAst* v = new (m_pool->allocate(sizeof(AttributeAst))) AttributeAst(parent());
-                v->attribute = node->v.Attribute.attr ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(node->v.Attribute.attr)))) : 0;
+                v->attribute = node->v.Attribute.attr ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->v.Attribute.attr)) : 0;
                 if ( v->attribute ) {
                     v->attribute->startCol = node->col_offset; v->startCol = v->attribute->startCol;
                     v->attribute->startLine = tline(node->lineno - 1);  v->startLine = v->attribute->startLine;
@@ -258,7 +294,7 @@ v->isInt = PyLong_Check(node->v.Num.n);
             }
         case Name_kind: {
                 NameAst* v = new (m_pool->allocate(sizeof(NameAst))) NameAst(parent());
-                v->identifier = node->v.Name.id ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(node->v.Name.id)))) : 0;
+                v->identifier = node->v.Name.id ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->v.Name.id)) : 0;
                 if ( v->identifier ) {
                     v->identifier->startCol = node->col_offset; v->startCol = v->identifier->startCol;
                     v->identifier->startLine = tline(node->lineno - 1);  v->startLine = v->identifier->startLine;
@@ -328,16 +364,6 @@ v->isInt = PyLong_Check(node->v.Num.n);
     }
 
 
-    Ast* visitNode(_arg* node) {
-        bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
-                ArgAst* v = new (m_pool->allocate(sizeof(ArgAst))) ArgAst(parent());
-            v->argumentName = node->arg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(node->arg)))) : 0;
-            nodeStack.push(v); v->annotation = static_cast<ExpressionAst*>(visitNode(node->annotation)); nodeStack.pop();
-        return v;
-    }
-
-
     Ast* visitNode(_slice* node) {
         if ( ! node ) return 0;
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
@@ -400,69 +426,6 @@ v->isInt = PyLong_Check(node->v.Num.n);
     }
 
 
-    Ast* visitNode(_comprehension* node) {
-        bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
-                ComprehensionAst* v = new (m_pool->allocate(sizeof(ComprehensionAst))) ComprehensionAst(parent());
-            nodeStack.push(v); v->target = static_cast<ExpressionAst*>(visitNode(node->target)); nodeStack.pop();
-            nodeStack.push(v); v->iterator = static_cast<ExpressionAst*>(visitNode(node->iter)); nodeStack.pop();
-            nodeStack.push(v); v->conditions = visitNodeList<_expr, ExpressionAst>(node->ifs); nodeStack.pop();
-        return v;
-    }
-
-
-    Ast* visitNode(_excepthandler* node) {
-        if ( ! node ) return 0;
-        bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        Ast* result = 0;
-        switch ( node->kind ) {
-        case ExceptHandler_kind: {
-                ExceptionHandlerAst* v = new (m_pool->allocate(sizeof(ExceptionHandlerAst))) ExceptionHandlerAst(parent());
-                nodeStack.push(v); v->type = static_cast<ExpressionAst*>(visitNode(node->v.ExceptHandler.type)); nodeStack.pop();
-                v->name = node->v.ExceptHandler.name ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(node->v.ExceptHandler.name)))) : 0;
-                if ( v->name ) {
-                    v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
-                    v->name->startLine = tline(node->lineno - 1);  v->startLine = v->name->startLine;
-                    v->name->endCol = node->col_offset + v->name->value.length() - 1;  v->endCol = v->name->endCol;
-                    v->name->endLine = tline(node->lineno - 1);  v->endLine = v->name->endLine;
-                    ranges_copied = true;
-                }
-                nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.ExceptHandler.body); nodeStack.pop();
-                result = v;
-                break;
-            }
-        default:
-            kWarning() << "Unsupported statement AST type: " << node->kind;
-            Q_ASSERT(false);
-        }
-
-        // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
-        if ( result->hasUsefulRangeInformation ) {
-            Ast* parent = result->parent;
-            while ( parent ) {
-                if ( parent->endLine < result->endLine ) {
-                    parent->endLine = result->endLine;
-                    parent->endCol = result->endCol;
-                }
-                if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
-                    parent->startLine = result->startLine;
-                    parent->startCol = result->startCol;
-                }
-                parent = parent->parent;
-            }
-        }
-    
-        NameAst* r = dynamic_cast<NameAst*>(result);
-        if ( r ) {
-            r->startCol = r->identifier->startCol;
-            r->endCol = r->identifier->endCol;
-            r->startLine = r->identifier->startLine;
-            r->endLine = r->identifier->endLine;
-        }
-        return result;
-    }
-
-
     Ast* visitNode(_stmt* node) {
         if ( ! node ) return 0;
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
@@ -476,7 +439,7 @@ v->isInt = PyLong_Check(node->v.Num.n);
             }
         case FunctionDef_kind: {
                 FunctionDefinitionAst* v = new (m_pool->allocate(sizeof(FunctionDefinitionAst))) FunctionDefinitionAst(parent());
-                v->name = node->v.FunctionDef.name ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(node->v.FunctionDef.name)))) : 0;
+                v->name = node->v.FunctionDef.name ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->v.FunctionDef.name)) : 0;
                 if ( v->name ) {
                     v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
                     v->name->startLine = tline(node->lineno - 1);  v->startLine = v->name->startLine;
@@ -492,7 +455,7 @@ v->isInt = PyLong_Check(node->v.Num.n);
             }
         case ClassDef_kind: {
                 ClassDefinitionAst* v = new (m_pool->allocate(sizeof(ClassDefinitionAst))) ClassDefinitionAst(parent());
-                v->name = node->v.ClassDef.name ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(node->v.ClassDef.name)))) : 0;
+                v->name = node->v.ClassDef.name ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->v.ClassDef.name)) : 0;
                 if ( v->name ) {
                     v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
                     v->name->startLine = tline(node->lineno - 1);  v->startLine = v->name->startLine;
@@ -602,7 +565,7 @@ v->isInt = PyLong_Check(node->v.Num.n);
             }
         case ImportFrom_kind: {
                 ImportFromAst* v = new (m_pool->allocate(sizeof(ImportFromAst))) ImportFromAst(parent());
-                v->module = node->v.ImportFrom.module ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(node->v.ImportFrom.module)))) : 0;
+                v->module = node->v.ImportFrom.module ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->v.ImportFrom.module)) : 0;
                 if ( v->module ) {
                     v->module->startCol = node->col_offset; v->startCol = v->module->startCol;
                     v->module->startLine = tline(node->lineno - 1);  v->startLine = v->module->startLine;
@@ -619,9 +582,9 @@ v->isInt = PyLong_Check(node->v.Num.n);
                 GlobalAst* v = new (m_pool->allocate(sizeof(GlobalAst))) GlobalAst(parent());
 
                 for ( int _i = 0; _i < node->v.Global.names->size; _i++ ) {
-                    Python::Identifier* id = new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(
+                    Python::Identifier* id = new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(
                                     static_cast<PyObject*>(node->v.Global.names->elements[_i])
-                            ))));
+                            ));
                     v->names.append(id);
                 }
 
@@ -689,6 +652,43 @@ v->isInt = PyLong_Check(node->v.Num.n);
             r->endLine = r->identifier->endLine;
         }
         return result;
+    }
+
+
+    Ast* visitNode(_comprehension* node) {
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
+        if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
+                ComprehensionAst* v = new (m_pool->allocate(sizeof(ComprehensionAst))) ComprehensionAst(parent());
+            nodeStack.push(v); v->target = static_cast<ExpressionAst*>(visitNode(node->target)); nodeStack.pop();
+            nodeStack.push(v); v->iterator = static_cast<ExpressionAst*>(visitNode(node->iter)); nodeStack.pop();
+            nodeStack.push(v); v->conditions = visitNodeList<_expr, ExpressionAst>(node->ifs); nodeStack.pop();
+        return v;
+    }
+
+
+    Ast* visitNode(_keyword* node) {
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
+        if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
+                KeywordAst* v = new (m_pool->allocate(sizeof(KeywordAst))) KeywordAst(parent());
+            v->argumentName = node->arg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->arg)) : 0;
+            nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->value)); nodeStack.pop();
+        return v;
+    }
+
+
+    Ast* visitNode(_arguments* node) {
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
+        if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
+                ArgumentsAst* v = new (m_pool->allocate(sizeof(ArgumentsAst))) ArgumentsAst(parent());
+            v->vararg = node->vararg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->vararg)) : 0;
+            v->kwarg = node->kwarg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->kwarg)) : 0;
+            nodeStack.push(v); v->arguments = visitNodeList<_expr, ExpressionAst>(node->args); nodeStack.pop();
+            nodeStack.push(v); v->defaultValues = visitNodeList<_expr, ExpressionAst>(node->defaults); nodeStack.pop();
+              v->arg_lineno = tline(node->arg_lineno - 1);
+              v->arg_col_offset = node->arg_col_offset;
+              v->vararg_lineno = tline(node->vararg_lineno - 1);
+              v->vararg_col_offset = node->vararg_col_offset;
+        return v;
     }
 
 };

@@ -48,7 +48,7 @@ HintedType::HintedType(TypeAliasTypeData& data): TypeAliasType(data)
 
 }
 
-bool HintedType::isValid(TopDUContext* current)
+bool HintedType::isValid(TopDUContext* /*current*/)
 {
     TopDUContext* creator = d_func()->m_createdByContext.data();
     if ( ! creator ) {

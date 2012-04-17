@@ -181,7 +181,7 @@ QList< Declaration* > DeclarationBuilder::existingDeclarationsForNode(Identifier
     /** /DBG **/
     QList<Declaration*> existingDeclarations = currentContext()->findDeclarations(identifierForNode(node).last(),  // <- WARNING first / last?
                                                                 CursorInRevision::invalid(), 0,
-                                                                DUContext::DontSearchInParent);
+                                                                (DUContext::SearchFlag) ( DUContext::DontSearchInParent | DUContext::DontResolveAliases) );
     // append arguments context
     if ( m_mostRecentArgumentsContext ) {
         QList<Declaration*> args = m_mostRecentArgumentsContext->findDeclarations(identifierForNode(node).last(),

@@ -145,7 +145,8 @@ Declaration* Helper::declarationForName(NameAst* /*ast*/, const QualifiedIdentif
         else {
             declarations = context->topContext()->findDeclarations(identifier, CursorInRevision::invalid());
         }
-        localDeclarations = context->findLocalDeclarations(identifier.last(), nodeRange.end);
+        localDeclarations = context->findLocalDeclarations(identifier.last(), nodeRange.end, 0,
+                                                           AbstractType::Ptr(0), DUContext::DontResolveAliases);
         importedLocalDeclarations = context->findDeclarations(identifier.last(), nodeRange.end);
     }
     Declaration* declaration;

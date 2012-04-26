@@ -73,7 +73,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     if ( m_operation != FunctionCallCompletion ) {
         KeywordItem::Flags f = (KeywordItem::Flags) ( KeywordItem::ForceLineBeginning | KeywordItem::ImportantItem );
         // TODO group those correctly so they appear at the top
-        if ( m_position.line == 0 && m_text.startsWith("#") ) {
+        if ( m_position.line == 0 && ( m_text.startsWith("#") || m_text.isEmpty() ) ) {
             QString i18ndescr = i18n("insert Shebang line");
             resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
                                                         "#!/usr/bin/env python\n", i18ndescr, f));

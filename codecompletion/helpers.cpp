@@ -261,6 +261,9 @@ void createArgumentList(Declaration* dec, QString& ret, QList< QVariant >* highl
             skipFirst = true;
         }
         
+        // disable highlighting when in default arguments, it doesn't make much sense then
+        bool disableHighlighting = false;
+        
         foreach(Declaration* dec, parameters) {
             if ( skipFirst ) {
                 skipFirst = false;
@@ -279,12 +282,15 @@ void createArgumentList(Declaration* dec, QString& ret, QList< QVariant >* highl
                 doFormat = highlightFormat;
             else
                 doFormat = normalFormat;
-
-            doHighlight = true;
             
             if ( num == firstDefaultParam ) {
                 ret += "[";
                 ++defaultParamNum;
+                disableHighlighting = true;
+            }
+            
+            if ( ! disableHighlighting ) {
+                doHighlight = true;
             }
             
             if ( includeTypes ) {

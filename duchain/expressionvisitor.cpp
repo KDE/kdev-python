@@ -249,6 +249,9 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     Declaration* d;
     if ( foundDecls.length() > 0 ) {
         d = DeclarationPointer(Helper::resolveAliasDeclaration(foundDecls.last())).data();
+        if ( ! d ) {
+            return unknownTypeEncountered();
+        }
         bool isAlias =     dynamic_cast<AliasDeclaration*>(d) || d->isFunctionDeclaration()
                         || dynamic_cast<ClassDeclaration*>(d);
         kDebug() << dynamic_cast<AliasDeclaration*>(d) <<  d->isFunctionDeclaration() << dynamic_cast<ClassDeclaration*>(d);

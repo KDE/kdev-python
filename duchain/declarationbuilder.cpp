@@ -773,7 +773,8 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
     if ( moduleInfo.second.isEmpty() ) {
         // import the whole module
         kDebug() << "Got module, importing it" << declarationIdentifier->value;
-        resultingDeclaration = createDeclarationTree(declarationName.split("."), declarationIdentifier, moduleContext, 0, range);
+        resultingDeclaration = createDeclarationTree(declarationName.split("."),
+                                                     declarationIdentifier, moduleContext, 0, range);
     }
     else {
         // import a specific declaration from the given file
@@ -815,21 +816,19 @@ void DeclarationBuilder::visitYield(YieldAst* node)
     v.visitNode(node->value);
     lock.unlock();
     AbstractType::Ptr encountered = v.lastType();
-    if ( node->value ) {
-        if ( hasCurrentType() ) {
-            if ( TypePtr<FunctionType> t = currentType<FunctionType>() ) {
-                if ( VariableLengthContainer::Ptr previous = t->returnType().cast<VariableLengthContainer>() ) {
-                    previous->addContentType(encountered);
-                    t->setReturnType(previous.cast<AbstractType>());
-                }
-                else {
-                    VariableLengthContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType("list", currentContext());
-                    if ( container ) {
-                        openType<VariableLengthContainer>(container);
-                        container->addContentType(encountered);
-                        t->setReturnType(Helper::mergeTypes(t->returnType(), container.cast<AbstractType>()));
-                        closeType();
-                    }
+    if ( node->value && hasCurrentType() ) {
+        if ( TypePtr<FunctionType> t = currentType<FunctionType>() ) {
+            if ( VariableLengthContainer::Ptr previous = t->returnType().cast<VariableLengthContainer>() ) {
+                previous->addContentType(encountered);
+                t->setReturnType(previous.cast<AbstractType>());
+            }
+            else {
+                VariableLengthContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType("list", currentContext());
+                if ( container ) {
+                    openType<VariableLengthContainer>(container);
+                    container->addContentType(encountered);
+                    t->setReturnType(Helper::mergeTypes(t->returnType(), container.cast<AbstractType>()));
+                    closeType();
                 }
             }
         }

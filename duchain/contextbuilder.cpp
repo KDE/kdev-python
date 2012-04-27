@@ -30,6 +30,7 @@
 #include <language/duchain/parsingenvironment.h>
 #include <language/backgroundparser/backgroundparser.h>
 #include <language/editor/rangeinrevision.h>
+#include <language/editor/cursorinrevision.h>
 #include <interfaces/icore.h>
 #include <interfaces/idocumentcontroller.h>
 #include <interfaces/ilanguagecontroller.h>
@@ -238,61 +239,32 @@ void ContextBuilder::visitGeneratorExpression(GeneratorExpressionAst* node)
 
 RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
 {
-    // This is not right, it must be something like the ast visitor... but that's too complicated :(
-    // it seems to work okay so far, but should be replaced when possible.
-//     bool generatorFound = false;
+    class RangeVisitor : public AstDefaultVisitor {
+        public:
+            virtual void visitNode(Ast* node) {
+                if ( node ) {
+                    CursorInRevision end(node->endLine, node->endCol);
+                    if ( end > m_end || ! m_end.isValid() ) {
+                        m_end = end;
+                    }
+                }
+                AstDefaultVisitor::visitNode(node);
+            };
+            CursorInRevision m_end;
+    };
+    
     RangeInRevision range;
-    QList<ComprehensionAst*> generators;
-    Ast* element = 0;
-    if ( node->astType == Ast::ListComprehensionAstType ) {
-        ListComprehensionAst* c = static_cast<ListComprehensionAst*>(node);
-        generators = c->generators;
-        element = c->element;
-        if ( not generators.isEmpty() ) {
-            range = editorFindRange(element, generators.last()->iterator);
-            kDebug() << "List Comprehension End: " << range.end;
-            kDebug() << "List Comprehension Start: " << range.start;
-//             generatorFound = true;
-        }
-    }
-    else if ( node->astType == Ast::SetComprehensionAstType ) {
-        SetComprehensionAst* c = static_cast<SetComprehensionAst*>(node);
-        generators = c->generators;
-        element = c->element;
-        if ( not generators.isEmpty() ) {
-            range = editorFindRange(element, generators.last()->iterator);
-            kDebug() << "Set comprehension range: " << range;
-//             generatorFound = true;
-        }
-    }
-    else if ( node->astType == Ast::DictionaryComprehensionAstType ) {
-        DictionaryComprehensionAst* c = static_cast<DictionaryComprehensionAst*>(node);
-        generators = c->generators;
-        if ( not generators.isEmpty() ) {
-            range = editorFindRange(c->key, generators.last()->iterator);
-//             generatorFound = true;
-        }
-    }
-    else if ( node->astType == Ast::GeneratorExpressionAstType ) {
-        GeneratorExpressionAst* c = static_cast<GeneratorExpressionAst*>(node);
-        generators = c->generators;
-        if ( not generators.isEmpty() ) {
-            range = editorFindRange(c->element, generators.last()->iterator);
-//             generatorFound = true;
-        }
-    }
-    else if ( not generators.isEmpty() ) {
-        RangeInRevision containedComprehensionRange = comprehensionRange(generators.last()->iterator);
-        if ( containedComprehensionRange.isValid() ) {
-            range.end = containedComprehensionRange.end;
-        }
-    }
-    else {
-        range = editorFindRange(node, node);
-    }
     CursorInRevision start = editorFindPositionSafe(node);
+    RangeVisitor v;
+    v.visitNode(node);
+    CursorInRevision end = v.m_end;
+    
     range.start = start;
     range.start.column -= 1;
+    range.end = end;
+    
+    kDebug() << range;
+    
     return range;
 }
 
@@ -346,8 +318,8 @@ void ContextBuilder::openContextForClassDefinition(ClassDefinitionAst* node)
         start = CursorInRevision(node->startLine + 1, 0);
     }
     RangeInRevision range(start, CursorInRevision(endLine + 1, 0));
-    DUChainWriteLocker lock(DUChain::lock());
-    openContext( node, range, DUContext::Class, node->name);
+    DUChainWriteLocker lock;
+    openContext(node, range, DUContext::Class, node->name);
     currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));
     lock.unlock();
     kDebug() << " +++ opening CLASS context: " << range.castToSimpleRange() << node->name;
@@ -372,7 +344,6 @@ void ContextBuilder::visitCode(CodeAst* node) {
         {
             DUChainReadLocker lock(DUChain::lock());
             internal = DUChain::self()->chainForDocument(doc); // TODO add startup-check and error message, this must exist
-            // ICore::languageController()->backgroundParser()->parseJobForDocument();
         }
         
         if ( ! internal ) {
@@ -380,6 +351,8 @@ void ContextBuilder::visitCode(CodeAst* node) {
             KDevelop::ICore::self()->languageController()->backgroundParser()
                                    ->addDocument(doc_url, KDevelop::TopDUContext::ForceUpdate,
                                                  BackgroundParser::BestPriority, 0, ParseJob::FullSequentialProcessing);
+            KDevelop::ICore::self()->languageController()->backgroundParser()->parseDocuments();
+            return;
         }
         else {
             kDebug() << "Adding builtin function context...";

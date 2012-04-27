@@ -40,7 +40,7 @@ public:
 
     typedef void (AstVisitor::*visitFunc)(Ast *);
     
-    void visitNode(Ast* node);
+    virtual void visitNode(Ast* node);
 
     virtual void visitCode(CodeAst* node) { Q_UNUSED(node); };
     virtual void visitStatement(StatementAst* node) { Q_UNUSED(node); };

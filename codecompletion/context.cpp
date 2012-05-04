@@ -83,7 +83,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
                                                         "#!/usr/bin/env python3\n", i18ndescr, f));
         }
         // TODO fixme
-        else if ( m_position.line == 1 && m_text.endsWith("#") ) {
+        else if ( m_position.line <= 1 && m_text.endsWith("#") ) {
             resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
                                                         "# -*- Coding:utf-8 -*-\n\n", i18n("specify document encoding"), f));
         }

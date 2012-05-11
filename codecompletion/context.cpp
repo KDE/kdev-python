@@ -706,7 +706,12 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         while ( currentlyChecked && context->parentContextOf(currentlyChecked) ) {
             kDebug() << "checking:" << currentlyChecked->range() << currentlyChecked->type();
             // FIXME: "<=" is not really good, it must be exactly one indent-level less
-            if (    indents.indentForLine(indents.linesCount()-1-(position.line-currentlyChecked->range().start.line)) 
+            int offset = position.line-currentlyChecked->range().start.line;
+            // If the check leaves the current context, abort.
+            if ( offset >= indents.linesCount() ) {
+                break;
+            }
+            if (    indents.indentForLine(indents.linesCount()-1-offset)
                  <= indents.indentForLine(indents.linesCount()-1) )
             {
                 kDebug() << "changing context to" << currentlyChecked->range() << ( currentlyChecked->type() == DUContext::Class );

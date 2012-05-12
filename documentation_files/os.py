@@ -46,6 +46,9 @@ process and user.
 
 
 """
+
+import os.path as path
+
 name = None
 """
 A mapping object representing the string environment. For example,

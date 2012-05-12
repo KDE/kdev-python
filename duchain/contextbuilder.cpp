@@ -351,7 +351,7 @@ void ContextBuilder::visitCode(CodeAst* node) {
             KDevelop::ICore::self()->languageController()->backgroundParser()
                                    ->addDocument(doc_url, KDevelop::TopDUContext::ForceUpdate,
                                                  BackgroundParser::BestPriority, 0, ParseJob::FullSequentialProcessing);
-            KDevelop::ICore::self()->languageController()->backgroundParser()->parseDocuments();
+//             KDevelop::ICore::self()->languageController()->backgroundParser()->parseDocuments();
             return;
         }
         else {

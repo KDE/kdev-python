@@ -65,6 +65,8 @@ class PyCompletionTest : public QObject
         void testExpressionParser();
         void testExpressionParser_data();
         void testExpressionParserMisc();
+        void testCompletionAfterQuotes();
+        void testCompletionAfterQuotes_data();
     private:
         QList<CompletionTreeItemPointer> m_ptrs;
 };

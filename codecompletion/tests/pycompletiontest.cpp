@@ -283,6 +283,29 @@ void PyCompletionTest::testImportCompletion_data()
     QTest::newRow("class_from_file_in_subdir") << "%INVOKE" << "from submoduledir.subfile import %CURSOR" << "some_subfile_class";
 }
 
+void PyCompletionTest::testCompletionAfterQuotes()
+{
+    QFETCH(QString, invokeCode);
+    QFETCH(QString, completionCode);
+    invokeCode = "testvar = 3\n" + invokeCode;
+    QVERIFY( ! completionListIsEmpty(invokeCode, completionCode) );
+}
+
+
+void PyCompletionTest::testCompletionAfterQuotes_data()
+{
+    QTest::addColumn<QString>("invokeCode");
+    QTest::addColumn<QString>("completionCode");
+    
+    QTest::newRow("nothing") << "\n%INVOKE" << "%CURSOR";
+    QTest::newRow("sq_in_string") << "\"foo'bar\"\n%INVOKE" << "%CURSOR";
+    QTest::newRow("sq_in_sl_comment") << "#foo'bar\n%INVOKE" << "%CURSOR";
+    QTest::newRow("sq_in_ml_string") << "\"\"\"foo'bar\n\n' \n'\"\"\"\n%INVOKE" << "%CURSOR";
+    QTest::newRow("dq_in_string") << "'foo\"bar'\n%INVOKE" << "%CURSOR";
+    QTest::newRow("dq_in_comment") << "# \" foo\n%INVOKE" << "%CURSOR";
+    QTest::newRow("dq_in_ml_string") << "\'\'\'foo \n\"\n\n \'\'\'\n%INVOKE" << "%CURSOR";
+}
+
 void PyCompletionTest::testNoImplicitMagicFunctions()
 {
     QVERIFY(! itemInCompletionList("class my(): pass\nd = my()\n%INVOKE", "d.%CURSOR", "__get__") );

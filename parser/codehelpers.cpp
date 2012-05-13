@@ -102,22 +102,19 @@ CodeHelpers::CodeHelpers()
     
 }
 
-bool CodeHelpers::endsInsideCommend(const QString& code)
+bool CodeHelpers::endsInsideComment(const QString& code)
 {
-    bool insideSQ = false;
-    bool insideDQ = false;
-    bool insideMultiLineSQComment = false;
-    bool insideMultiLineDQComment = false;
     bool insideSingleLineComment = false;
+    QStringList stringDelimiters;
+    stringDelimiters << "\"\"\"" << "\'\'\'" << "'" << "\"";
+    QStack<QString> stringStack;
     const int max_len = code.length();
     kDebug() << "Checking for comment line or string literal:" << code;
     for ( int atChar = 0; atChar < max_len; atChar++ ) {
         const QChar& c = code.at(atChar);
-        QString t("");
+        QString t;
         if ( max_len - atChar > 2 ) {
-            for ( int i = 0; i < 3; i++ ) {
-                t.append(code.at(atChar+i));
-            }
+            t = code.mid(atChar, 3);
         }
         if ( c == '#' ) {
             insideSingleLineComment = true;
@@ -127,28 +124,30 @@ bool CodeHelpers::endsInsideCommend(const QString& code)
             insideSingleLineComment = false;
             continue;
         }
-        if ( t == "\"\"\"" ) {
-            insideMultiLineSQComment = !insideMultiLineSQComment;
+        if ( insideSingleLineComment ) {
+            // don't count string delimiters in a comment line
             continue;
         }
-        if ( t == "'''" ) {
-            insideMultiLineSQComment = !insideMultiLineSQComment;
-            continue;
-        }
-        if ( c == '\'' ) {
-            insideSQ = !insideSQ;
-            continue;
-        }
-        if ( c == '"' ) {
-            insideDQ = !insideDQ;
-            continue;
+        foreach ( const QString& check, stringDelimiters ) {
+            if ( t == check || QString(c) == check ) {
+                if ( stringStack.isEmpty() ) {
+                    stringStack.push(check);
+                    break;
+                }
+                else {
+                    if ( stringStack.top() == check ) {
+                        stringStack.pop();
+                        break;
+                    }
+                }
+            }
         }
         if ( c == '\\' ) {
             atChar ++;
             continue;
         }
     }
-    return insideSingleLineComment || insideSQ || insideMultiLineSQComment || insideDQ || insideMultiLineDQComment;
+    return ! stringStack.isEmpty();
 }
 
 QString CodeHelpers::killStrings(QString stringWithStrings)

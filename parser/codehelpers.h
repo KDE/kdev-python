@@ -106,7 +106,7 @@ class KDEVPYTHONPARSER_EXPORT CodeHelpers
         /**
          * @brief Check whether the given code ends inside a comment or string literal.
          **/
-        static bool endsInsideCommend(const QString& code);
+        static bool endsInsideComment(const QString& code);
     };
 }
 

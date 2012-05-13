@@ -680,7 +680,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     kDebug() << text << position << context->localScopeIdentifier().toString() << context->range();
     
     // check if the current position is inside a multi-line comment / string -> no completion if this is the case
-    if ( CodeHelpers::endsInsideCommend(text) ) {
+    if ( CodeHelpers::endsInsideComment(text) ) {
         m_operation = PythonCodeCompletionContext::NoCompletion;
         return;
     }

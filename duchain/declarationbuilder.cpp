@@ -692,8 +692,6 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
                 kDebug() << "setting alias declaration on inner declaration";
             }
         }
-        // TODO this sucks
-        currentContext()->setLocalScopeIdentifier(QualifiedIdentifier("__kdevpythonlanguagesupport_import_helper"));
         delete temporaryIdentifier;
     }
     for ( int i = openedContexts.length() - 1; i >= 0; i-- ) {

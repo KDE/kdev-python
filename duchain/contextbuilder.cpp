@@ -277,7 +277,7 @@ void ContextBuilder::visitComprehensionCommon(Ast* node)
         DUChainWriteLocker lock(DUChain::lock());
         kDebug() << "opening comprehension context" << range << "(previous was" << currentContext()->range() << ")";
         openContext(node, RangeInRevision(range.start, range.end), KDevelop::DUContext::Other);
-        currentContext()->setLocalScopeIdentifier(QualifiedIdentifier("<generator>"));
+//         currentContext()->setLocalScopeIdentifier(QualifiedIdentifier("<generator>"));
         lock.unlock();
         if ( node->astType == Ast::DictionaryComprehensionAstType )
             Python::AstDefaultVisitor::visitDictionaryComprehension(static_cast<DictionaryComprehensionAst*>(node));

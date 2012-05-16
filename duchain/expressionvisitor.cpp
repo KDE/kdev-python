@@ -520,7 +520,9 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
     if ( type ) {
         DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol + 1), true);
         ExpressionVisitor v(this);
-        v.m_ctx = m_forceGlobalSearching ? m_ctx->topContext() : comprehensionContext;
+        v.m_ctx = comprehensionContext;
+        kDebug() << "Searching iterator variable in context: " << comprehensionContext->range() 
+                 << "found at" << node->startLine << node->startCol;
         v.visitNode(node->element);
         if ( v.lastType() ) {
             type->addContentType(v.lastType());

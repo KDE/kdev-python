@@ -696,7 +696,10 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     FileIndentInformation indents(text);
     
     DUContext* currentlyChecked = context.data();
-    int currentlyCheckedLine = position.line;
+    // This will set the line to use for the completion to the beginning of the expression.
+    // In reality, the line we're in might mismatch the beginning of the current expression,
+    // for example in multi-line list initializers.
+    int currentlyCheckedLine = position.line - text.mid(text.length() - allExpressions.first().charOffset).count('\n');
     {
         DUChainReadLocker lock(DUChain::lock());
         while ( currentlyChecked == context.data() && currentlyCheckedLine >= 0 ) {
@@ -714,7 +717,8 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
             if (    indents.indentForLine(indents.linesCount()-1-offset)
                  <= indents.indentForLine(indents.linesCount()-1) )
             {
-                kDebug() << "changing context to" << currentlyChecked->range() << ( currentlyChecked->type() == DUContext::Class );
+                kDebug() << "changing context to" << currentlyChecked->range() 
+                        << ( currentlyChecked->type() == DUContext::Class );
                 context = currentlyChecked;
                 break;
             }

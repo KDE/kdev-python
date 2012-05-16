@@ -34,15 +34,15 @@ void FileIndentInformation::initialize(const QStringList& lines)
     for ( int atLine = 0; atLine < lines.length(); atLine++ ) {
         const QString& currentLine = lines.at(atLine);
         const int currentLength = currentLine.length();
-        bool lineIsNonempty = false;
+        bool lineIsEmpty = true;
         for ( int indent = 0; indent < currentLength; indent++ ) {
             if ( ! currentLine.at(indent).isSpace() ) {
                 m_indents.append(indent);
-                lineIsNonempty = true;
+                lineIsEmpty = false;
                 break;
             }
         }
-        if ( ! lineIsNonempty ) {
+        if ( lineIsEmpty ) {
             m_indents.append(currentLine.length());
         }
     }

@@ -27,22 +27,13 @@
 #include <KUrl>
 
 #include <language/duchain/functiondeclaration.h>
-#include <language/duchain/classfunctiondeclaration.h>
 #include <language/duchain/declaration.h>
 #include <language/duchain/duchain.h>
-#include <language/duchain/duchainlock.h>
-#include <language/duchain/types/functiontype.h>
 #include <language/duchain/types/alltypes.h>
-#include <language/duchain/types/abstracttype.h>
-#include <language/duchain/types/integraltype.h>
 #include <language/duchain/classdeclaration.h>
-#include <language/duchain/classfunctiondeclaration.h>
-#include <language/duchain/classmemberdeclaration.h>
-#include <language/duchain/classmemberdeclarationdata.h>
-#include <language/duchain/types/unsuretype.h>
+#include <language/duchain/declaration.h>
 #include <language/duchain/builders/abstracttypebuilder.h>
 #include <language/duchain/aliasdeclaration.h>
-#include <language/duchain/declaration.h>
 #include <language/duchain/duchainutils.h>
 #include <language/backgroundparser/backgroundparser.h>
 #include <language/backgroundparser/parsejob.h>
@@ -79,9 +70,6 @@ DeclarationBuilder:: ~DeclarationBuilder()
     if ( ! m_scheduledForDeletion.isEmpty() ) {
         DUChainWriteLocker lock;
         foreach ( DUChainBase* d, m_scheduledForDeletion ) {
-            kDebug() << "deleting" << d;
-            if ( dynamic_cast<Declaration*>(d) )
-                kDebug() << static_cast<Declaration*>(d)->toString();
             delete d;
         }
         m_scheduledForDeletion.clear();
@@ -95,6 +83,8 @@ void DeclarationBuilder::setPrebuilding(bool prebuilding)
 
 ReferencedTopDUContext DeclarationBuilder::build(const IndexedString& url, Ast* node, ReferencedTopDUContext updateContext)
 {
+    // The declaration builder needs to run twice, so it can resolve uses of e.g. functions
+    // which are called before they are defined (which is easily possible, due to python's dynamic nature).
     if ( ! m_prebuilding ) {
         kDebug() << "building, but running pre-builder first";
         DeclarationBuilder* prebuilder = new DeclarationBuilder(editor());
@@ -113,10 +103,9 @@ ReferencedTopDUContext DeclarationBuilder::build(const IndexedString& url, Ast* 
 
 void DeclarationBuilder::closeDeclaration()
 {
-    if ( lastContext() )
-    {
-        DUChainReadLocker lock( DUChain::lock() );
-        currentDeclaration()->setKind( Declaration::Type );
+    if ( lastContext() ) {
+        DUChainReadLocker lock(DUChain::lock());
+        currentDeclaration()->setKind(Declaration::Type);
     }
     
     Q_ASSERT(currentDeclaration()->alwaysForceDirect());
@@ -146,6 +135,8 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, 
         NameAst* currentVariableDefinition = static_cast<NameAst*>(node);
         // those contexts can invoke a variable declaration
         // this prevents "bar" from being declared in something like "foo = bar"
+        // This is just a sanity check, the code should never request creation of a variable
+        // in such cases.
         QList<ExpressionAst::Context> declaringContexts;
         declaringContexts << ExpressionAst::Store << ExpressionAst::Parameter << ExpressionAst::AugStore;
         if ( ! declaringContexts.contains(currentVariableDefinition->context) ) {
@@ -207,15 +198,20 @@ DeclarationBuilder::FitDeclarationType DeclarationBuilder::kindForType(AbstractT
 template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclaration(QList<Declaration*> declarations, FitDeclarationType mustFitType,
                                                                                       RangeInRevision updateRangeTo, Declaration** ok)
 {
+    // Search for a declaration from a previous parse pass which should be re-used
     kDebug() << "Found " << declarations.length() << "declarations";
     QList<Declaration*> remainingDeclarations;
     *ok = 0;
     foreach ( Declaration* d, declarations ) {
         Declaration* fitting = dynamic_cast<T*>(d);
         if ( ! fitting ) {
+            // Only use a declaration if the type matches
             kDebug() << "skipping" << d->toString() << "which could not be cast to the requested type";
             continue;
         }
+        // Do not use declarations which have been encountered previously;
+        // this function only handles declarations from previous parser passes which have not
+        // been encountered yet in this pass
         bool reallyEncountered = wasEncountered(d) && ! m_scheduledForDeletion.contains(d);
         bool invalidType = false;
         if ( d && d->abstractType() && mustFitType != NoTypeRequired ) {
@@ -253,24 +249,23 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     Ast* rangeNode = originalAst ? originalAst : node;
     RangeInRevision range = editorFindRange(rangeNode, rangeNode);
     
+    // If no type is known, display "mixed".
     if ( ! type ) {
         type = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
     }
     
     kDebug() << "Parsing variable declaration: " << node->value;
     
-    
     QList<Declaration*> existingDeclarations;
     if ( previous ) {
         existingDeclarations << previous;
-        kDebug() << previous->toString();
     }
     else {
-        /// declarations declared at an earlier range in this top-context
+        // declarations declared at an earlier range in this top-context
         existingDeclarations = existingDeclarationsForNode(node);
     }
     
-    /// declaration existing in a previous version of this top-context
+    // declaration existing in a previous version of this top-context
     Declaration* dec = 0;
     existingDeclarations = reopenFittingDeclaration<T>(existingDeclarations, kindForType(type), range, &dec);
     bool declarationOpened = (bool) dec;
@@ -292,6 +287,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         }
     }
     if ( currentContext() && currentContext()->type() == DUContext::Class && ! haveFittingDeclaration ) {
+        // If the current context is a class, then this is a class member variable.
         kDebug() << "Creating class member declaration for " << node->value << node->startLine << ":" << node->startCol;
         kDebug() << "Context type: " << currentContext()->scopeIdentifier() << currentContext()->range().castToSimpleRange();
         if ( ! dec ) {
@@ -305,9 +301,11 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         dec->setType(AbstractType::Ptr(type));
         dec->setKind(KDevelop::Declaration::Instance);
     } else if ( ! haveFittingDeclaration ) {
+        // This name did not previously appear in the user code, so a new variable is declared
         RangeInRevision range = editorFindRange(rangeNode, rangeNode);
         kDebug() << "Creating variable declaration for " << range;
         kDebug() << "which has type" << ( dec && dec->abstractType() ? dec->abstractType()->toString() : "none" );
+        // check whether a declaration from a previous parser pass must be updated
         if ( ! dec ) {
             kDebug() << "This declaration is a new one, with range" << range;
             dec = openDeclaration<T>(node, rangeNode);
@@ -317,39 +315,36 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         else {
             dec->setRange(range);
         }
-        /*
-        else {
-            kDebug() << "This declaration is old, and has the following type: " << dec->abstractType()->toString();
-        }
-        */
         if ( declarationOpened ) {
             DeclarationBuilderBase::closeDeclaration();
         }
+        // check for argument type hints (those are created when calling functions)
         UnsureType::Ptr hints = Helper::extractTypeHints(dec->abstractType(), topContext());
         kDebug() << "Type Hints: " << hints->toString();
         AbstractType::Ptr newType = Helper::mergeTypes(hints.cast<AbstractType>(), type, topContext());
         kDebug() << "Resulting type: " << newType->toString();
         dec->setType(newType);
-        dec->setKind(KDevelop::Declaration::Instance); // everything is an object in python
+        dec->setKind(KDevelop::Declaration::Instance);
     }
     else if ( inSameTopContext ) {
+        // The name appeared previously in the user code, so no new variable is declared, but just
+        // the type is modified accordingly.
         kDebug() << "Existing declarations are not empty. count: " << existingDeclarations.count();
         dec = existingDeclarations.last();
         AbstractType::Ptr currentType = dec->abstractType();
         AbstractType::Ptr newType = type;
         if ( newType ) {
-            if ( currentType && !currentType->equals(newType.unsafeData()) ) {
-                IntegralType::Ptr integral = IntegralType::Ptr::dynamicCast(currentType);
-                if ( integral &&  integral->dataType() == IntegralType::TypeMixed ) {
-                    dec->setType(newType);
-                } else {
-                    dec->setType(Helper::mergeTypes(currentType, newType, topContext()));
-                }
-            } else {
+            if ( currentType && currentType->indexed() != newType->indexed() ) {
+                // If the previous and new type are different, use an unsure type
+                dec->setType(Helper::mergeTypes(currentType, newType, topContext()));
+            }
+            else {
+                // If no type was set previously, use only the new one.
                 kDebug() << "Existing declaration with no type from last declaration.";
                 dec->setType(AbstractType::Ptr(type));
             }
-        } else {
+        }
+        else {
             kDebug() << "Existing declaration with no type.";
         }
     }
@@ -368,12 +363,13 @@ void DeclarationBuilder::visitCode(CodeAst* node)
 
 void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
 {
-    if ( dynamic_cast<NameAst*>(node->name) ) {
+    if ( node->name && node->name->astType == Ast::NameAstType ) {
+        // Python allows to assign the caught exception to a variable; create that variable if required.
         DUChainReadLocker lock(DUChain::lock());
         ExpressionVisitor v(currentContext(), editor());
         v.visitNode(node->type);
         lock.unlock();
-        visitVariableDeclaration<Declaration>(node->name, 0, v.lastType()); // except Error as <vardecl>
+        visitVariableDeclaration<Declaration>(node->name, 0, v.lastType());
     }
     DeclarationBuilderBase::visitExceptionHandler(node);
 }
@@ -381,6 +377,7 @@ void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
 void DeclarationBuilder::visitWith(WithAst* node)
 {
     if ( node->optionalVars ) {
+        // For statements like "with open(f) as x", a new variable must be created; do this here.
         DUChainReadLocker lock(DUChain::lock());
         ExpressionVisitor v(currentContext(), editor());
         v.visitNode(node->contextExpression);
@@ -396,40 +393,48 @@ void DeclarationBuilder::visitFor(ForAst* node)
     ExpressionVisitor v(currentContext(), editor());
     v.visitNode(node->iterator);
     lock.unlock();
-    VariableLengthContainer::Ptr type = v.lastType().cast<VariableLengthContainer>();
+    VariableLengthContainer::Ptr iteratorList = v.lastType().cast<VariableLengthContainer>();
     if ( node->target->astType == Ast::NameAstType ) {
-        AbstractType::Ptr newType;
-        if ( type && type->contentType() ) {
-            newType = type->contentType().abstractType();
+        // In case the iterator variable is a Name ("for x in range(3)"), just create a declaration for it.
+        // The following code tries to figure out the type of "x" from the object that is being iterated over.
+        AbstractType::Ptr iteratorType;
+        if ( iteratorList && iteratorList->contentType() ) {
+            // If the object being iterated over is a simple list or similar, use its content type.
+            iteratorType = iteratorList->contentType().abstractType();
         }
         else if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeUnsure ) {
+            // If the object being iterated over *might* be a list, consider all possibilities.
             UnsureType::Ptr u = v.lastType().cast<UnsureType>();
             for ( uint i = 0; i < u->typesSize(); i++ ) {
                 if ( VariableLengthContainer::Ptr typeInUnsure = u->types()[i].abstractType().cast<VariableLengthContainer>() ) {
-                    if ( ! newType ) {
-                        newType = typeInUnsure->contentType().abstractType();
+                    if ( ! iteratorType ) {
+                        iteratorType = typeInUnsure->contentType().abstractType();
                     }
                     else {
-                        newType = Helper::mergeTypes(newType, typeInUnsure->contentType().abstractType());
+                        iteratorType = Helper::mergeTypes(iteratorType, typeInUnsure->contentType().abstractType());
                     }
                 }
             }
         }
         else {
-            newType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
+            // No list type whatsoever was available for the iterator list, so just display "mixed".
+            iteratorType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
         }
-        visitVariableDeclaration<Declaration>(node->target, 0, newType);
+        // Create the variable declaration for the iterator variable with the type that has been determined.
+        visitVariableDeclaration<Declaration>(node->target, 0, iteratorType);
     }
     else if ( node->target->astType == Ast::TupleAstType ) {
+        // If the target is a tuple ("for x, y, z in ..."), multiple variables must be declared.
+        // For now, types of those variables will only be determined if the iterator list is a dictionary.
         short atElement = 0;
         foreach ( ExpressionAst* tupleMember, static_cast<TupleAst*>(node->target)->elements ) {
             if ( tupleMember->astType == Ast::NameAstType ) {
                 AbstractType::Ptr newType;
-                if ( atElement == 0 && type && type->keyType() ) {
-                    newType = type->keyType().abstractType();
+                if ( atElement == 0 && iteratorList && iteratorList->keyType() ) {
+                    newType = iteratorList->keyType().abstractType();
                 }
-                else if ( atElement == 1 && type && type->contentType() ) {
-                    newType = type->contentType().abstractType();
+                else if ( atElement == 1 && iteratorList && iteratorList->contentType() ) {
+                    newType = iteratorList->contentType().abstractType();
                 }
                 else {
                     newType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));

@@ -239,6 +239,10 @@ void ContextBuilder::visitGeneratorExpression(GeneratorExpressionAst* node)
 
 RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
 {
+    // Finding the range of a List comprehension is especially difficult,
+    // as there's many possibilities for the elements it might have.
+    // As the python parser doesn't give "end" cursors at all,
+    // this visitor will do that manually.
     class RangeVisitor : public AstDefaultVisitor {
         public:
             virtual void visitNode(Ast* node) {
@@ -334,12 +338,12 @@ void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
 }
 
 void ContextBuilder::visitCode(CodeAst* node) {
-    KUrl doc_url = KUrl(KStandardDirs::locate("data", "kdevpythonsupport/documentation_files/builtindocumentation.py"));
-    doc_url.cleanPath(KUrl::SimplifyDirSeparators);
+    KUrl doc_url = KUrl(Helper::getDocumentationFile());
     IndexedString doc = IndexedString(doc_url.path());
     Q_ASSERT(currentlyParsedDocument().toUrl().isValid());
     kDebug() << "Internal functions file: " << currentlyParsedDocument().toUrl().path() << doc.toUrl().path();
     if ( currentlyParsedDocument() != doc ) {
+        // Search for the python built-in functions file, and dump its contents into the current file.
         TopDUContext* internal = 0;
         {
             DUChainReadLocker lock(DUChain::lock());
@@ -347,11 +351,14 @@ void ContextBuilder::visitCode(CodeAst* node) {
         }
         
         if ( ! internal ) {
+            // If the built-in functions file is not yet parsed, schedule it with a high priority and abort.
             m_unresolvedImports.append(doc_url);
             KDevelop::ICore::self()->languageController()->backgroundParser()
                                    ->addDocument(doc_url, KDevelop::TopDUContext::ForceUpdate,
                                                  BackgroundParser::BestPriority, 0, ParseJob::FullSequentialProcessing);
-//             KDevelop::ICore::self()->languageController()->backgroundParser()->parseDocuments();
+            // This must NOT be called from parse threads! It's only meant to be used from the foreground thread, and will
+            // cause thread starvation if called from here.
+            // KDevelop::ICore::self()->languageController()->backgroundParser()->parseDocuments();
             return;
         }
         else {
@@ -367,40 +374,45 @@ void ContextBuilder::visitCode(CodeAst* node) {
 QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
 {
     QStringList nameComponents = name.split(".");
-    bool useCurrentDirOnly = false;
-    if ( name.startsWith('.') ) {
-        nameComponents.removeFirst();
-        useCurrentDirOnly = true;
-    }
     kDebug() << "FINDING MODULE: " << nameComponents;
     QList<KUrl> searchPaths;
-    if ( useCurrentDirOnly ) {
+    if ( name.startsWith('.') ) {
+        // This is used for "from .foo import" or similar (relative imports)
+        nameComponents.removeFirst();
         searchPaths << currentlyParsedDocument().toUrl().directory();
     }
     else {
-        searchPaths = Helper::getSearchPaths(currentlyParsedDocument().toUrl());    
+        // If this is not a relative import, use the project directory,
+        // the current directory, and all system include paths.
+        searchPaths = Helper::getSearchPaths(currentlyParsedDocument().toUrl());
     }
+    // Loop over all the name components, and find matching folders or files.
     KUrl tmp;
     QStringList leftNameComponents;
-    QString dirFound("<invalid>");
     foreach ( KUrl currentPath, searchPaths ) {
         tmp = currentPath;
         leftNameComponents = nameComponents;
         foreach ( QString component, nameComponents ) {
             if ( component == "*" ) {
+                // For "from ... import *", if "..." is a directory, use the "__init__.py" file
                 component = "__init__";
             }
-            // only empty the list if not importing *
             else {
+                // only empty the list if not importing *, this is convenient later on
                 leftNameComponents.removeFirst();
             }
             QString testFilename = tmp.path(KUrl::AddTrailingSlash) + component;
             KUrl sourceUrl = testFilename + ".py";
-            QFile sourcefile(testFilename + ".py"); // we can only parse those, so we don't care about anything else for now.
+            // we can only parse those, so we don't care about anything else for now.
+            // Any C modules (.so, .dll) will be ignored, and highlighted as "not found". TODO fix this
+            QFile sourcefile(testFilename + ".py");
             QFileInfo sourcedir(testFilename);
             tmp.cd(component);
             kDebug() << testFilename << "exists: [file/dir]" << sourcefile.exists() << sourcedir.exists();
             if ( ! sourcedir.exists() || ! sourcedir.isDir() || leftNameComponents.isEmpty() ) {
+                // If the search cannot continue further down into a hierarchy of directories,
+                // the file matching the next name component will be returned,
+                // toegether with a list of names which must be resolved inside that file.
                 if ( sourcefile.exists() ) {
                     kDebug() << "RESULT:" << sourceUrl;
                     sourceUrl.cleanPath();
@@ -422,6 +434,7 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
 
 void ContextBuilder::visitLambda(LambdaAst* node)
 {
+    // Lambda functions need their own context for parameters
     DUChainWriteLocker lock(DUChain::lock());
     openContext(node, editorFindRange(node, node->body), DUContext::Other);
     lock.unlock();
@@ -432,7 +445,10 @@ void ContextBuilder::visitLambda(LambdaAst* node)
 
 RangeInRevision ContextBuilder::rangeForArgumentsContext(FunctionDefinitionAst* node)
 {
-    // construct the range for the arguments context... due to stupid args / varargs this is pretty complicated
+    // The python parser has extra syntax features for *args and **kwargs. 
+    // We need to know where the function arguments context ends (the location of the closing ")" paren would
+    // be optimal), so this does some pretty ugly checks whether the * or ** arguments are present,
+    // and adjusts the range as needed.
     RangeInRevision range;
     CursorInRevision start, end;
     if ( node->arguments->arguments.count() ) {
@@ -467,12 +483,15 @@ void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
 {
     RangeInRevision range = rangeForArgumentsContext(node);
     
+    // The DUChain expects the context containing a function's arguments to be of type Function.
+    // The function body will have DUContext::Other as type, as it contains only code.
     DUContext* funcctx = openContext(node->arguments, range, DUContext::Function, node->name);
     kDebug() << funcctx;
     kDebug() << " +++ opening FUNCTION ARGUMENTS context: " << funcctx->range().castToSimpleRange() << node->name->value << range;
     visitNode(node->arguments);
     closeContext();
-    m_importedParentContexts.append( funcctx );
+    // the parameters should be visible in the function body, so import that context there
+    m_importedParentContexts.append(funcctx);
     m_mostRecentArgumentsContext = DUContextPointer(funcctx);
 }
 
@@ -488,11 +507,10 @@ void ContextBuilder::visitFunctionDefinition(FunctionDefinitionAst* node)
 
 void ContextBuilder::visitFunctionBody(FunctionDefinitionAst* node)
 {
+    // The function should end at the next DEDENT token, not at the body's last statement
     int endLine = node->endLine;
     if ( node->endLine != node->startLine ) {
-        kDebug() << "indent at end:" << editor()->indent()->indentForLine(endLine - 1) << endLine;
         endLine = editor()->indent()->nextChange(endLine, FileIndentInformation::Dedent);
-        kDebug() << "new end line:" << endLine;
     }
     CursorInRevision end = CursorInRevision(endLine, node->startLine == node->endLine ? INT_MAX : 0);
     CursorInRevision start = rangeForArgumentsContext(node).end;
@@ -500,10 +518,13 @@ void ContextBuilder::visitFunctionBody(FunctionDefinitionAst* node)
         start = CursorInRevision(node->startLine + 1, 0);
     }
     RangeInRevision range(start, end);
-    // Done building the function declaration, start building the body now
-    DUContext* ctx = openContext(node, range, DUContext::Other, identifierForNode( node->name ) );
+    
+    // Open the context for the function body (the list of statements)
+    // It's of type Other, as it contains only code
+    DUContext* ctx = openContext(node, range, DUContext::Other, identifierForNode(node->name));
     currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));
     kDebug() << " +++ opening context (function definition): " << range.castToSimpleRange();
+    // import the parameters into the function body
     addImportedContexts();
     
     visitNodeList(node->body);

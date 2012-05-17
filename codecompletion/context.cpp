@@ -700,6 +700,15 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     // In reality, the line we're in might mismatch the beginning of the current expression,
     // for example in multi-line list initializers.
     int currentlyCheckedLine = position.line - text.mid(text.length() - allExpressions.first().charOffset).count('\n');
+    
+    // The following code will check whether the DUContext directly at the cursor should be used, or a previous one.
+    // The latter might be the case if there's code like this:
+    /* class foo():
+     * ..pass
+     * .
+     * ..# completion requested here; note that there's less indent in the previous line!
+     * */
+    // In that case, the DUContext of "foo" would end at line 2, but should still be used for completion.
     {
         DUChainReadLocker lock(DUChain::lock());
         while ( currentlyChecked == context.data() && currentlyCheckedLine >= 0 ) {

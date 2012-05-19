@@ -148,6 +148,23 @@ void PyDUChainTest::testCrashes_data() {
     QTest::newRow("fancy generator context range") << "c1_list = sorted(letter for (letter, meanings) \\\n"
                "in ambiguous_nucleotide_values.iteritems() \\\n"
                "if set([codon[0] for codon in codons]).issuperset(set(meanings)))";
+    QTest::newRow("fancy class range") << "class SchemeLexer(RegexLexer):\n"
+                                          "  valid_name = r'[a-zA-Z0-9!$%&*+,/:<=>?@^_~|-]+'\n"
+                                          "\n"
+                                          "  tokens = {\n"
+                                          "      'root' : [\n"
+                                          "          # the comments - always starting with semicolon\n"
+                                          "          # and going to the end of the line\n"
+                                          "          (r';.*$', Comment.Single),\n"
+                                          "\n"
+                                          "          # whitespaces - usually not relevant\n"
+                                          "          (r'\\s+', Text),\n"
+                                          "\n"
+                                          "          # numbers\n"
+                                          "          (r'-?\\d+\\.\\d+', Number.Float),\n"
+                                          "          (r'-?\\d+', Number.Integer)\n"
+                                          "      ],\n"
+                                          "  }\n";
 }
 
 void PyDUChainTest::testClassVariables()

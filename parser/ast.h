@@ -18,7 +18,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
 
-// The Python 2.6 Language Reference was used as basis for this AST
+// The Python 2.7 Language Reference was used as basis for this AST
 
 #ifndef PYTHON_AST_H
 #define PYTHON_AST_H
@@ -181,6 +181,13 @@ public:
     virtual ~Ast();
     Ast* parent;
     AstType astType;
+    
+    void copyRange(const Ast* other) {
+        startCol = other->startCol;
+        endCol = other->endCol;
+        startLine = other->startLine;
+        endLine = other->endLine;
+    }
 
     qint64 startCol;
     qint64 startLine;
@@ -205,12 +212,6 @@ public:
         hasUsefulRangeInformation = other.hasUsefulRangeInformation;
         return *this;
     };
-    void copyRange(const Identifier* other) {
-        startCol = other->startCol;
-        endCol = other->endCol;
-        startLine = other->startLine;
-        endLine = other->endLine;
-    }
     bool operator==(const Identifier& rhs) const {
         return value == rhs.value;
     };

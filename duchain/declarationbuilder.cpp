@@ -764,7 +764,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
     
     kDebug() << "Found module path [path/path in file]: " << moduleInfo;
     kDebug() << "Declaration identifier:" << declarationIdentifier->value;
-    DUChainWriteLocker lock(DUChain::lock());
+    DUChainWriteLocker lock;
     ReferencedTopDUContext moduleContext = DUChain::self()->chainForDocument(IndexedString(moduleInfo.first));
     lock.unlock();
     Declaration* resultingDeclaration = 0;

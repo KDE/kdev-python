@@ -476,6 +476,7 @@ void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst*
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("dict", m_ctx);
     if ( type ) {
         DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol + 1));
+        Q_ASSERT(comprehensionContext);
         ExpressionVisitor v(this);
         v.m_ctx = m_forceGlobalSearching ? m_ctx->topContext() : comprehensionContext;
         v.visitNode(node->value);

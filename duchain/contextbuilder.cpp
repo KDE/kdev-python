@@ -243,33 +243,33 @@ RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
     // as there's many possibilities for the elements it might have.
     // As the python parser doesn't give "end" cursors at all,
     // this visitor will do that manually.
-    class RangeVisitor : public AstDefaultVisitor {
-        public:
-            virtual void visitNode(Ast* node) {
-                if ( node ) {
-                    CursorInRevision end(node->endLine, node->endCol);
-                    if ( end > m_end || ! m_end.isValid() ) {
-                        m_end = end;
-                    }
-                }
-                AstDefaultVisitor::visitNode(node);
-            };
-            CursorInRevision m_end;
-    };
+//     class RangeVisitor : public AstDefaultVisitor {
+//         public:
+//             virtual void visitNode(Ast* node) {
+//                 if ( node ) {
+//                     CursorInRevision end(node->endLine, node->endCol);
+//                     if ( end > m_end || ! m_end.isValid() ) {
+//                         m_end = end;
+//                     }
+//                 }
+//                 AstDefaultVisitor::visitNode(node);
+//             };
+//             CursorInRevision m_end;
+//     };
+//     
+//     RangeInRevision range;
+//     CursorInRevision start = editorFindPositionSafe(node);
+// //     RangeVisitor v;
+// //     v.visitNode(node);
+//     CursorInRevision end = v.m_end;
+//     
+//     range.start = start;
+//     range.start.column -= 1;
+//     range.end = end;
+//     
+//     kDebug() << range;
     
-    RangeInRevision range;
-    CursorInRevision start = editorFindPositionSafe(node);
-    RangeVisitor v;
-    v.visitNode(node);
-    CursorInRevision end = v.m_end;
-    
-    range.start = start;
-    range.start.column -= 1;
-    range.end = end;
-    
-    kDebug() << range;
-    
-    return range;
+    return editorFindRange(node, node);
 }
 
 void ContextBuilder::visitComprehensionCommon(Ast* node)
@@ -316,7 +316,7 @@ void ContextBuilder::openContextForClassDefinition(ClassDefinitionAst* node)
 {
     // make sure the contexts ends at the next DEDENT token, not at the last statement.
     // also, make the context begin *after* the parent list and class name.
-    int endLine = editor()->indent()->nextChange(node->body.last()->endLine, FileIndentInformation::Dedent);
+    int endLine = editor()->indent()->nextChange(node->endLine, FileIndentInformation::Dedent);
     CursorInRevision start = CursorInRevision(node->body.first()->startLine, node->body.first()->startCol);
     if ( start.line > node->startLine ) {
         start = CursorInRevision(node->startLine + 1, 0);

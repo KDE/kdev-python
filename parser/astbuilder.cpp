@@ -34,6 +34,7 @@
 #include <language/duchain/duchain.h>
 
 #include "python_header.h"
+#include "astdefaultvisitor.h"
 
 #include <interfaces/icore.h>
 #include <interfaces/iprojectcontroller.h>
@@ -44,6 +45,21 @@ extern grammar _PyParser_Grammar;
 
 namespace Python
 {
+
+// Update the "end" cursors of all nodes in the given tree.
+class RangeUpdateVisitor : public AstDefaultVisitor {
+public:
+    virtual void visitNode(Ast* node) {
+        AstDefaultVisitor::visitNode(node);
+        if ( node && node->parent ) {
+            if ( node->parent->endLine <= node->endLine && node->parent->endCol <= node->endCol ) {
+                qDebug() << "updating:" << node->endLine << node->endCol << "( parent" << node->parent->endLine << node->parent->endCol <<")";
+                node->parent->endLine = node->endLine;
+                node->parent->endCol = node->endCol;
+            }
+        }
+    };
+};
 
 #include "generated.h"
 
@@ -310,6 +326,9 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     Py_Finalize();
     
     AstBuilder::pyInitLock.unlock();
+    
+    RangeUpdateVisitor v;
+    v.visitNode(t.ast);
 
     return t.ast;
 }

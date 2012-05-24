@@ -239,36 +239,6 @@ void ContextBuilder::visitGeneratorExpression(GeneratorExpressionAst* node)
 
 RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
 {
-    // Finding the range of a List comprehension is especially difficult,
-    // as there's many possibilities for the elements it might have.
-    // As the python parser doesn't give "end" cursors at all,
-    // this visitor will do that manually.
-//     class RangeVisitor : public AstDefaultVisitor {
-//         public:
-//             virtual void visitNode(Ast* node) {
-//                 if ( node ) {
-//                     CursorInRevision end(node->endLine, node->endCol);
-//                     if ( end > m_end || ! m_end.isValid() ) {
-//                         m_end = end;
-//                     }
-//                 }
-//                 AstDefaultVisitor::visitNode(node);
-//             };
-//             CursorInRevision m_end;
-//     };
-//     
-//     RangeInRevision range;
-//     CursorInRevision start = editorFindPositionSafe(node);
-// //     RangeVisitor v;
-// //     v.visitNode(node);
-//     CursorInRevision end = v.m_end;
-//     
-//     range.start = start;
-//     range.start.column -= 1;
-//     range.end = end;
-//     
-//     kDebug() << range;
-    
     return editorFindRange(node, node);
 }
 

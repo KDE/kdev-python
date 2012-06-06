@@ -236,7 +236,7 @@ void createArgumentList(Declaration* dec, QString& ret, QList< QVariant >* highl
     QTextFormat normalFormat(QTextFormat::CharFormat);
     QTextFormat highlightFormat(QTextFormat::CharFormat);
     highlightFormat.setBackground(QColor::fromRgb(142, 186, 255));
-    highlightFormat.setProperty(QTextFormat::FontWeight, 255);
+    highlightFormat.setProperty(QTextFormat::FontWeight, 99);
     
     AbstractFunctionDeclaration* decl = dynamic_cast<AbstractFunctionDeclaration*>(dec);
     FunctionType::Ptr functionType = dec->type<FunctionType>();

@@ -423,30 +423,30 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
         encounterDeclaration(0);
         encounter(lastType());
     }
-    else {
+    else if ( node->slice ) {
         kDebug() << "LAST TYPE for slice access:" << lastType() << ( lastType() ? lastType()->toString() : "<null>" );
         
         if ( IndexedContainer::Ptr indexed = lastType().cast<IndexedContainer>() ) {
             encounterDeclaration(0);
-            if ( node->value->astType == Ast::NumberAstType ) {
-                NumberAst* number = static_cast<NumberAst*>(node->value);
-                int sliceIndex = number->value;
-                if ( sliceIndex < indexed->typesCount() ) {
-                    encounter(indexed->typeAt(sliceIndex).abstractType());
+            if ( IndexAst* sliceIndexAst = static_cast<IndexAst*>(node->slice) ) {
+                if ( sliceIndexAst->value && sliceIndexAst->value->astType == Ast::NumberAstType ) {
+                    NumberAst* number = static_cast<NumberAst*>(sliceIndexAst->value);
+                    int sliceIndex = number->value;
+                    if ( sliceIndex < indexed->typesCount() ) {
+                        return encounter(indexed->typeAt(sliceIndex).abstractType());
+                    }
                 }
             }
-            else {
-                // the exact index is unknown, use unsure
-                encounter(indexed->asUnsureType().cast<AbstractType>());
-            }
+            // the exact index is unknown, use unsure
+            encounter(indexed->asUnsureType().cast<AbstractType>());
         }
         else if ( VariableLengthContainer::Ptr variableLength = lastType().cast<VariableLengthContainer>() ) {
             encounterDeclaration(0);
             encounter(variableLength->contentType().abstractType());
         }
-        else {
-            return unknownTypeEncountered();
-        }
+    }
+    else {
+        return unknownTypeEncountered();
     }
 }
 

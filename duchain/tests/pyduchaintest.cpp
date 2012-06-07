@@ -450,6 +450,16 @@ void PyDUChainTest::testTypes_data()
 //    QTest::newRow("funccall_dict") << "def foo(): return foo; checkme = foo();" << (uint) IntegralType::TypeFunction;
     
     QTest::newRow("tuple_simple") << "mytuple = 3, 5.5\ncheckme, foobar = mytuple" << "int";
+    QTest::newRow("tuple_simple2") << "mytuple = 3, 5.5\nfoobar, checkme = mytuple" << "float";
+    QTest::newRow("tuple_simple3") << "mytuple = 3, 5.5, \"str\", 3, \"str\"\na, b, c, d, checkme = mytuple" << "string";
+    
+    QTest::newRow("tuple_funcret") << "def myfun(): return 3, 5\ncheckme, a = myfun()" << "int";
+    QTest::newRow("tuple_funcret2") << "def myfun():\n t = 3, 5\n return t\ncheckme, a = myfun()" << "int";
+    
+    QTest::newRow("tuple_indexaccess") << "t = 3, 5.5\ncheckme = t[0]" << "int";
+    QTest::newRow("tuple_indexaccess2") << "t = 3, 5.5\ncheckme = t[1]" << "float";
+    
+    QTest::newRow("tuple_listof") << "l = [(1, 2), (3, 4)]\ncheckme = l[1][0]" << "int";
 }
 
 typedef QPair<Declaration*, int> pair;
@@ -686,5 +696,7 @@ void PyDUChainTest::testContainerTypes_data()
     QTest::newRow("generator_attribute") << "checkme = [item.capitalize() for item in ['foobar']]" << "string" << false;
     QTest::newRow("cannot_change_type") << "checkme = [\"Foo\", \"Bar\"]" << "string" << false;
     QTest::newRow("cannot_change_type") << "[1, 2, 3].append(5)\ncheckme = [\"Foo\", \"Bar\"]" << "string" << false;
+    
+    QTest::newRow("list_append") << "d = []\nd.append(3)\ncheckme = d[0]" << "int" << true;
 }
 

@@ -33,6 +33,7 @@
 #include <language/duchain/types/typeregister.h>
 #include <language/duchain/types/integraltype.h>
 #include <language/duchain/types/typesystemdata.h>
+#include <language/duchain/types/unsuretype.h>
 #include <language/duchain/functiondeclaration.h>
 #include <language/duchain/types/functiontype.h>
 #include <language/duchain/classdeclaration.h>
@@ -424,13 +425,28 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
     }
     else {
         kDebug() << "LAST TYPE for slice access:" << lastType() << ( lastType() ? lastType()->toString() : "<null>" );
-        VariableLengthContainer::Ptr t = lastType().cast<VariableLengthContainer>();
-        kDebug() << "Is container: " << t;
-        if ( ! t ) {
+        
+        if ( IndexedContainer::Ptr indexed = lastType().cast<IndexedContainer>() ) {
+            encounterDeclaration(0);
+            if ( node->value->astType == Ast::NumberAstType ) {
+                NumberAst* number = static_cast<NumberAst*>(node->value);
+                int sliceIndex = number->value;
+                if ( sliceIndex < indexed->typesCount() ) {
+                    encounter(indexed->typeAt(sliceIndex).abstractType());
+                }
+            }
+            else {
+                // the exact index is unknown, use unsure
+                encounter(indexed->asUnsureType().cast<AbstractType>());
+            }
+        }
+        else if ( VariableLengthContainer::Ptr variableLength = lastType().cast<VariableLengthContainer>() ) {
+            encounterDeclaration(0);
+            encounter(variableLength->contentType().abstractType());
+        }
+        else {
             return unknownTypeEncountered();
         }
-        encounterDeclaration(0);
-        encounter(t->contentType().abstractType());
     }
 }
 

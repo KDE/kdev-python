@@ -1403,7 +1403,7 @@ template<typename T> void DeclarationBuilder::visitDecorators(QList< Python::Exp
             d.setName(*static_cast<NameAst*>(call->function)->identifier);
             foreach ( ExpressionAst* arg, call->arguments ) {
                 if ( arg->astType == Ast::NumberAstType ) {
-                    d.setAdditionalInformation(static_cast<NumberAst*>(arg)->value);
+                    d.setAdditionalInformation(QString::number(static_cast<NumberAst*>(arg)->value));
                 }
                 else if ( arg->astType == Ast::StringAstType ) {
                     d.setAdditionalInformation(static_cast<StringAst*>(arg)->value);

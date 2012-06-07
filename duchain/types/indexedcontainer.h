@@ -23,6 +23,7 @@
 #include <language/duchain/types/structuretype.h>
 #include <language/duchain/types/typesystemdata.h>
 
+#include "types/unsuretype.h"
 #include "pythonduchainexport.h"
 
 using namespace KDevelop;
@@ -78,6 +79,7 @@ public:
     virtual uint hash() const;
     int typesCount() const;
     const IndexedType& typeAt(int index) const;
+    AbstractType::Ptr asUnsureType() const;
     virtual QString toString() const;
     // "toString"s only the container type, not the content; used in declarationnavigationcontext to create
     // seperate links for the content and container type

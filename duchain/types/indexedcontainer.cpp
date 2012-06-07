@@ -20,6 +20,7 @@
 
 #include "indexedcontainer.h"
 #include "helpers.h"
+#include "types/unsuretype.h"
 #include <language/duchain/duchain.h>
 #include <language/duchain/duchainlock.h>
 #include <KLocalizedString>
@@ -70,6 +71,15 @@ QString IndexedContainer::toString() const
 {
     QString prefix = KDevelop::StructureType::toString();
     return prefix;
+}
+
+AbstractType::Ptr IndexedContainer::asUnsureType() const
+{
+    AbstractType::Ptr unsure = AbstractType::Ptr(new UnsureType);
+    for ( int i = 0; i < typesCount(); i++ ) {
+        unsure = Helper::mergeTypes(unsure, typeAt(i).abstractType());
+    }
+    return unsure;
 }
 
 QString IndexedContainer::containerToString() const

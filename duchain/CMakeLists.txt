@@ -10,6 +10,7 @@ set(duchain_SRCS
     types/variablelengthcontainer.cpp
     types/hintedtype.cpp
     types/unsuretype.cpp
+    types/indexedcontainer.cpp
     
     expressionvisitor.cpp 
     helpers.cpp

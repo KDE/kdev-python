@@ -69,7 +69,7 @@ KDevelop::AbstractType* IndexedContainer::clone() const
 QString IndexedContainer::toString() const
 {
     QString prefix = KDevelop::StructureType::toString();
-    return "(indexed container with " + QString::number(d_func()->m_valuesSize()) + "entries)";
+    return prefix;
 }
 
 QString IndexedContainer::containerToString() const

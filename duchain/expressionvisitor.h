@@ -155,7 +155,6 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         }
         
         template<typename T> static TypePtr<T> typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx);
-        static TypePtr<VariableLengthContainer> typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx);
         
         // used by autocompletion to disable range checks on declaration searches
         bool m_forceGlobalSearching;

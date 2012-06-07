@@ -448,6 +448,8 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("diff_local_classattr3") << "attr=3.5\nclass c(): attr = 1\ninst=c()\ncheckme = c.attr" << "int";
 //     QTest::newRow("class_method_self") << "class c:\n def func(checkme, arg, arg2):\n  pass\n" << "c";
 //    QTest::newRow("funccall_dict") << "def foo(): return foo; checkme = foo();" << (uint) IntegralType::TypeFunction;
+    
+    QTest::newRow("tuple_simple") << "mytuple = 3, 5.5\ncheckme, foobar = mytuple" << "int";
 }
 
 typedef QPair<Declaration*, int> pair;

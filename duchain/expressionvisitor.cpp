@@ -42,6 +42,7 @@
 #include "expressionvisitor.h"
 #include "pythoneditorintegrator.h"
 #include "types/variablelengthcontainer.h"
+#include "types/indexedcontainer.h"
 #include "helpers.h"
 #include "declarations/functiondeclaration.h"
 
@@ -341,7 +342,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
                         baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
                         if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
                             kDebug() << "Got container:" << t->toString();
-                            VariableLengthContainer::Ptr newType = typeObjectForIntegralType("list", m_ctx);
+                            VariableLengthContainer::Ptr newType = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
                             AbstractType::Ptr contentType;
                             if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsList") ) {
                                 contentType = t->contentType().abstractType();
@@ -433,15 +434,6 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
     }
 }
 
-TypePtr<VariableLengthContainer> ExpressionVisitor::typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx) {
-    QList<Declaration*> decls = ctx->topContext()->findDeclarations(
-        QualifiedIdentifier("__kdevpythondocumentation_builtin_" + typeDescriptor));
-    Declaration* decl = decls.isEmpty() ? 0 : dynamic_cast<Declaration*>(decls.first());
-    AbstractType::Ptr type = decl ? decl->abstractType() : AbstractType::Ptr(0);
-    TypePtr<VariableLengthContainer> result = type.cast<VariableLengthContainer>();
-    return result;
-}
-
 template<typename T> TypePtr<T> ExpressionVisitor::typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx)
 {
     QList<Declaration*> decls = ctx->topContext()->findDeclarations(
@@ -454,7 +446,7 @@ template<typename T> TypePtr<T> ExpressionVisitor::typeObjectForIntegralType(QSt
 void ExpressionVisitor::visitList(ListAst* node)
 {
     AstDefaultVisitor::visitList(node);
-    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("list", m_ctx);
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
     ExpressionVisitor contentVisitor(this);
     if ( type ) {
         foreach ( ExpressionAst* content, node->elements ) {
@@ -473,7 +465,7 @@ void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst*
 {
     AstDefaultVisitor::visitDictionaryComprehension(node);
     kDebug() << "visiting dictionary comprehension";
-    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("dict", m_ctx);
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("dict", m_ctx);
     if ( type ) {
         DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol + 1));
         Q_ASSERT(comprehensionContext);
@@ -500,7 +492,7 @@ void ExpressionVisitor::visitSetComprehension(SetComprehensionAst* node)
 {
     kDebug() << "visiting set comprehension";
     Python::AstDefaultVisitor::visitSetComprehension(node);
-    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("set", m_ctx);
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("set", m_ctx);
     if ( type ) {
         DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol+1), true);
         ExpressionVisitor v(this);
@@ -517,7 +509,7 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
 {
     kDebug() << "visiting list comprehension";
     AstDefaultVisitor::visitListComprehension(node);
-    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("list", m_ctx);
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
     if ( type ) {
         DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol + 1), true);
         ExpressionVisitor v(this);
@@ -538,8 +530,19 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
 
 void ExpressionVisitor::visitTuple(TupleAst* node) {
     AstDefaultVisitor::visitTuple(node);
-    AbstractType::Ptr type = typeObjectForIntegralType<AbstractType>("tuple", m_ctx);
-    encounter(type, AutomaticallyDetermineDeclaration);
+    IndexedContainer::Ptr type = typeObjectForIntegralType<IndexedContainer>("tuple", m_ctx);
+    if ( type ) {
+        foreach ( ExpressionAst* expr, node->elements ) {
+            ExpressionVisitor v(this);
+            v.visitNode(expr);
+            type->addEntry(v.lastType());
+        }
+        encounter(type.cast<AbstractType>(), AutomaticallyDetermineDeclaration);
+    }
+    else {
+        return unknownTypeEncountered();
+        kWarning() << "tuple type object is not available";
+    }
 }
 
 void ExpressionVisitor::visitIfExpression(IfExpressionAst* node)
@@ -561,7 +564,7 @@ void ExpressionVisitor::visitIfExpression(IfExpressionAst* node)
 void ExpressionVisitor::visitSet(SetAst* node)
 {
     Python::AstDefaultVisitor::visitSet(node);
-    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("set", m_ctx);
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("set", m_ctx);
     ExpressionVisitor contentVisitor(this);
     if ( type ) {
         foreach ( ExpressionAst* content, node->elements ) {
@@ -575,7 +578,7 @@ void ExpressionVisitor::visitSet(SetAst* node)
 void ExpressionVisitor::visitDict(DictAst* node)
 {
     AstDefaultVisitor::visitDict(node);
-    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("dict", m_ctx);
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("dict", m_ctx);
     ExpressionVisitor contentVisitor(this);
     ExpressionVisitor keyVisitor(this);
     if ( type ) {

@@ -43,11 +43,11 @@ IndexedContainer::IndexedContainer(const IndexedContainer& rhs)
 
 }
 
-IndexedContainer::IndexedContainer(StructureTypeData& data): StructureType(data)
+IndexedContainer::IndexedContainer(IndexedContainerData& data)
+    : StructureType(data)
 {
 
 }
-    
 
 void IndexedContainer::addEntry(AbstractType::Ptr typeToAdd)
 {
@@ -70,7 +70,17 @@ KDevelop::AbstractType* IndexedContainer::clone() const
 QString IndexedContainer::toString() const
 {
     QString prefix = KDevelop::StructureType::toString();
-    return prefix;
+    QStringList typesArray;
+    for ( int i = 0; i < typesCount(); i++ ) {
+        if ( i > 5 ) {
+            // Don't print more than five types explicitly
+            typesArray << "...";
+            break;
+        }
+        typesArray << typeAt(i).abstractType()->toString();
+    }
+    QString typesArrayString = typesArray.join(", ");
+    return i18n("%1 of ( %2 )", prefix, typesArrayString);
 }
 
 AbstractType::Ptr IndexedContainer::asUnsureType() const

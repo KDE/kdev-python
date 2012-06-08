@@ -49,13 +49,6 @@ public:
         copyListsFrom(rhs);
     }
     
-    IndexedContainerData(const StructureTypeData& rhs)
-        : KDevelop::StructureTypeData(rhs)
-    {
-//         initializeAppendedLists();
-//         copyListsFrom(rhs);
-    };
-    
     ~IndexedContainerData() {
         freeAppendedLists();
     };
@@ -73,7 +66,7 @@ public:
     
     IndexedContainer();
     IndexedContainer(const IndexedContainer& rhs);
-    IndexedContainer(StructureTypeData& data);
+    IndexedContainer(IndexedContainerData& data);
     void addEntry(AbstractType::Ptr typeToAdd);
     virtual AbstractType* clone() const;
     virtual uint hash() const;

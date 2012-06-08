@@ -383,7 +383,7 @@ public:
         kDebug() << "Declaration: " << node->identifier->value << d->type<StructureType>();
         QVERIFY(d->abstractType());
         kDebug() << "found: " << node->identifier->value << "is" << d->abstractType()->toString() << "should be" << searchingForType;
-        if ( d->abstractType()->toString().replace("__kdevpythondocumentation_builtin_", "") == searchingForType ) {
+        if ( d->abstractType()->toString().replace("__kdevpythondocumentation_builtin_", "").startsWith(searchingForType) ) {
             found = true;
             return;
         }

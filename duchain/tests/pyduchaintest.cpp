@@ -165,6 +165,11 @@ void PyDUChainTest::testCrashes_data() {
                                           "          (r'-?\\d+', Number.Integer)\n"
                                           "      ],\n"
                                           "  }\n";
+    QTest::newRow("another fancy range") << "setup_args['data_files'] = [\n"
+                                          "     (os.path.dirname(os.path.join(install_base_dir, pattern)),\n"
+                                          "     [ f for f in glob.glob(pattern) ])\n"
+                                          "        for pattern in patterns\n"
+                                          "]\n";
 }
 
 void PyDUChainTest::testClassVariables()

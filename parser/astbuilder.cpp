@@ -52,7 +52,9 @@ public:
     virtual void visitNode(Ast* node) {
         AstDefaultVisitor::visitNode(node);
         if ( node && node->parent ) {
-            if ( node->parent->endLine <= node->endLine && node->parent->endCol <= node->endCol ) {
+            if ( ( node->parent->endLine <= node->endLine && node->parent->endCol <= node->endCol )
+                 || node->parent->endLine < node->endLine )
+            {
                 qDebug() << "updating:" << node->endLine << node->endCol << "( parent" << node->parent->endLine << node->parent->endCol <<")";
                 node->parent->endLine = node->endLine;
                 node->parent->endCol = node->endCol;

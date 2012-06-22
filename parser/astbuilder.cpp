@@ -55,7 +55,6 @@ public:
             if ( ( node->parent->endLine <= node->endLine && node->parent->endCol <= node->endCol )
                  || node->parent->endLine < node->endLine )
             {
-                qDebug() << "updating:" << node->endLine << node->endCol << "( parent" << node->parent->endLine << node->parent->endCol <<")";
                 node->parent->endLine = node->endLine;
                 node->parent->endCol = node->endCol;
             }

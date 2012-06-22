@@ -182,6 +182,7 @@ QList< TypePtr< StructureType > > ExpressionVisitor::possibleStructureTypes(Abst
 QList< TypePtr< StructureType > > ExpressionVisitor::typeListForDeclarationList(QList< DeclarationPointer > decls)
 {
     QList<StructureType::Ptr> result;
+    DUChainReadLocker lock;
     foreach ( const DeclarationPointer& ptr, decls ) {
         result.append(possibleStructureTypes(ptr->abstractType()));
     }
@@ -201,6 +202,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     if ( accessedType && accessedType->whichType() == AbstractType::TypeUnsure ) {
         UnsureType::Ptr unsure = accessedType.cast<UnsureType>();
         int size = unsure->typesSize();
+        DUChainReadLocker lock;
         for ( int i = 0; i < size; i++ ) {
             accessingAttributeOfType << unsure->types()[i].abstractType();
         }
@@ -226,6 +228,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
             if ( Helper::isUsefulType(current) ) {
                 haveOneUsefulType = true;
             }
+            DUChainReadLocker lock;
             QList<DUContext*> searchContexts = Helper::internalContextsForClass(currentStructure, m_ctx->topContext());
             kDebug() << "Searching declarations in contexts: " << searchContexts;
             foreach ( DUContext* currentInternalContext, searchContexts ) {
@@ -294,6 +297,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
         return unknownTypeEncountered();
     }
     else {
+        DUChainReadLocker lock;
         actualDeclaration = Helper::resolveAliasDeclaration(actualDeclaration);
         ClassDeclaration* classDecl = dynamic_cast<ClassDeclaration*>(actualDeclaration);
         QPair<FunctionDeclarationPointer, bool> d = Helper::functionDeclarationForCalledDeclaration(
@@ -320,9 +324,11 @@ void ExpressionVisitor::visitCall(CallAst* node)
                     decoratorFound = true;
                     kDebug() << "Found decorator";
                     if ( node->function->astType == Ast::AttributeAstType ) {
+                        lock.unlock();
                         ExpressionVisitor baseTypeVisitor(this);
                         // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
                         baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
+                        lock.lock();
                         if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
                             kDebug() << "Found container, using type";
                             AbstractType::Ptr newType = t->contentType().abstractType();
@@ -336,9 +342,11 @@ void ExpressionVisitor::visitCall(CallAst* node)
                     decoratorFound = true;
                     kDebug() << "Got getsList decorator, checking container";
                     if ( node->function->astType == Ast::AttributeAstType ) {
+                        lock.unlock();
                         ExpressionVisitor baseTypeVisitor(this);
                         // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
                         baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
+                        lock.lock();
                         if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
                             kDebug() << "Got container:" << t->toString();
                             VariableLengthContainer::Ptr newType = typeObjectForIntegralType("list", m_ctx);
@@ -363,8 +371,10 @@ void ExpressionVisitor::visitCall(CallAst* node)
                     int argNum = d->additionalInformation().str().toInt();
                     if ( node->arguments.length() > argNum ) {
                         ExpressionAst* relevantArgument = node->arguments.at(argNum);
+                        lock.unlock();
                         ExpressionVisitor v(this);
                         v.visitNode(relevantArgument);
+                        lock.lock();
                         if ( v.lastType() ) {
                             VariableLengthContainer* realTarget = 0;
                             if ( VariableLengthContainer* target = dynamic_cast<VariableLengthContainer*>(type.unsafeData()) ) {
@@ -454,7 +464,9 @@ template<typename T> TypePtr<T> ExpressionVisitor::typeObjectForIntegralType(QSt
 void ExpressionVisitor::visitList(ListAst* node)
 {
     AstDefaultVisitor::visitList(node);
+    DUChainReadLocker lock;
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("list", m_ctx);
+    lock.unlock();
     ExpressionVisitor contentVisitor(this);
     if ( type ) {
         foreach ( ExpressionAst* content, node->elements ) {
@@ -473,9 +485,11 @@ void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst*
 {
     AstDefaultVisitor::visitDictionaryComprehension(node);
     kDebug() << "visiting dictionary comprehension";
+    DUChainReadLocker lock;
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("dict", m_ctx);
     if ( type ) {
         DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol + 1));
+        lock.unlock();
         Q_ASSERT(comprehensionContext);
         ExpressionVisitor v(this);
         v.m_ctx = m_forceGlobalSearching ? m_ctx->topContext() : comprehensionContext;
@@ -500,9 +514,11 @@ void ExpressionVisitor::visitSetComprehension(SetComprehensionAst* node)
 {
     kDebug() << "visiting set comprehension";
     Python::AstDefaultVisitor::visitSetComprehension(node);
+    DUChainReadLocker lock;
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("set", m_ctx);
     if ( type ) {
         DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol+1), true);
+        lock.unlock();
         ExpressionVisitor v(this);
         v.m_ctx = m_forceGlobalSearching ? m_ctx->topContext() : comprehensionContext;
         v.visitNode(node->element);
@@ -517,9 +533,11 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
 {
     kDebug() << "visiting list comprehension";
     AstDefaultVisitor::visitListComprehension(node);
+    DUChainReadLocker lock;
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("list", m_ctx);
     if ( type ) {
         DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol + 1), true);
+        lock.unlock();
         ExpressionVisitor v(this);
         v.m_ctx = comprehensionContext;
         kDebug() << "Searching iterator variable in context: " << comprehensionContext->range() 
@@ -538,6 +556,7 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
 
 void ExpressionVisitor::visitTuple(TupleAst* node) {
     AstDefaultVisitor::visitTuple(node);
+    DUChainReadLocker lock;
     AbstractType::Ptr type = typeObjectForIntegralType<AbstractType>("tuple", m_ctx);
     encounter(type, AutomaticallyDetermineDeclaration);
 }
@@ -561,7 +580,9 @@ void ExpressionVisitor::visitIfExpression(IfExpressionAst* node)
 void ExpressionVisitor::visitSet(SetAst* node)
 {
     Python::AstDefaultVisitor::visitSet(node);
+    DUChainReadLocker lock;
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("set", m_ctx);
+    lock.unlock();
     ExpressionVisitor contentVisitor(this);
     if ( type ) {
         foreach ( ExpressionAst* content, node->elements ) {
@@ -575,7 +596,9 @@ void ExpressionVisitor::visitSet(SetAst* node)
 void ExpressionVisitor::visitDict(DictAst* node)
 {
     AstDefaultVisitor::visitDict(node);
+    DUChainReadLocker lock;
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("dict", m_ctx);
+    lock.unlock();
     ExpressionVisitor contentVisitor(this);
     ExpressionVisitor keyVisitor(this);
     if ( type ) {
@@ -595,6 +618,7 @@ void ExpressionVisitor::visitDict(DictAst* node)
 void ExpressionVisitor::visitNumber(Python::NumberAst* number)
 {
     AbstractType::Ptr type;
+    DUChainReadLocker lock;
     if ( number->isInt ) {
         type = typeObjectForIntegralType<AbstractType>("int", m_ctx);
     }
@@ -606,6 +630,7 @@ void ExpressionVisitor::visitNumber(Python::NumberAst* number)
 
 void ExpressionVisitor::visitString(Python::StringAst* )
 {
+    DUChainReadLocker lock;
     StructureType::Ptr type = typeObjectForIntegralType<StructureType>("string", m_ctx);
     encounter(type, AutomaticallyDetermineDeclaration);
 }
@@ -648,6 +673,7 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
     else {
         range = RangeInRevision(0, 0, node->endLine, node->endCol);
     }
+    DUChainReadLocker lock;
     Declaration* d = Helper::declarationForName(node, QualifiedIdentifier(node->identifier->value),
                                                 range, DUContextPointer(m_ctx));
     

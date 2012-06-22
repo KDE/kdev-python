@@ -93,9 +93,7 @@ void UseBuilder::visitAttribute(AttributeAst* node)
     UseBuilderBase::visitAttribute(node);
     kDebug() << "Visit Attribute base end";
     
-    DUChainReadLocker lock(DUChain::lock());
     v.visitNode(node);
-    lock.unlock();
     
     RangeInRevision useRange(node->attribute->startLine, node->attribute->startCol, node->attribute->endLine, node->attribute->endCol + 1);
     
@@ -112,7 +110,6 @@ void UseBuilder::visitAttribute(AttributeAst* node)
         topContext()->addProblem(ptr);
     }
     UseBuilderBase::newUse(node, useRange, declaration);
-//     currentContext()->findUseAt();
 }
 
 

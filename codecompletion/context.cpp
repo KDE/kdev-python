@@ -103,11 +103,13 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         AstBuilder* builder = new AstBuilder(&pool);
         CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
         if ( tmpAst ) {
+            lock.unlock();
             ExpressionVisitor* v = new ExpressionVisitor(m_duContext.data());
             v->m_forceGlobalSearching = true;
             v->m_scanUntilCursor = m_position;
             v->m_reportUnknownNames = true;
             v->visitCode(tmpAst);
+            lock.lock();
             if ( not v->m_unknownNames.isEmpty() ) {
                 if ( v->m_unknownNames.size() >= 2 ) {
                     // we only take the first two, and only two. It gets too much items otherwise.
@@ -142,9 +144,11 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             AstBuilder* builder = new AstBuilder(&pool);
             CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
             if ( tmpAst ) {
+                lock.unlock();
                 ExpressionVisitor* v = new ExpressionVisitor(m_duContext.data());
                 v->m_forceGlobalSearching = true;
                 v->visitCode(tmpAst);
+                lock.lock();
                 if ( v->lastDeclaration() ) {
                     calltips << v->lastDeclaration().data();
                     functionCalled = dynamic_cast<FunctionDeclaration*>(v->lastDeclaration().data());
@@ -299,9 +303,11 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         AstBuilder* builder = new AstBuilder(&pool);
         CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
         if ( tmpAst ) {
+            lock.unlock();
             ExpressionVisitor* v = new ExpressionVisitor(m_duContext.data());
             v->m_forceGlobalSearching = true;
             v->visitCode(tmpAst);
+            lock.lock();
             if ( v->lastType() ) {
                 kDebug() << v->lastType()->toString();
                 resultingItems << getCompletionItemsForType(v->lastType());
@@ -330,6 +336,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             return QList<CompletionTreeItemPointer>();
         }
         QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
+        qDebug() << "1";
         foreach ( DeclarationDepthPair d, declarations ) {
             if ( d.first and d.first->context()->type() == DUContext::Class ) {
                 declarations.removeAll(d);
@@ -338,6 +345,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
                 declarations.removeAll(d);
             }
         }
+        qDebug() << "2";
         resultingItems.append(declarationListToItemList(declarations));
     }
     

@@ -374,6 +374,7 @@ void PyCompletionTest::testNoCompletionInCommentsOrStrings_data()
     QTest::addColumn<QString>("completionCode");
     
     QTest::newRow("single_comment") << "# []%INVOKE" << ".%CURSOR";
+    QTest::newRow("single_comment_local") << "local=3\n# %INVOKE" << "%CURSOR";
     QTest::newRow("stringDQ") << "\"[]%INVOKE\"" << ".%CURSOR";
     QTest::newRow("stringSQ") << "\'[]%INVOKE\'" << ".%CURSOR";
     QTest::newRow("multilineDQ") << "\"\"\"[]%INVOKE\"\"\"" << ".%CURSOR";

@@ -147,7 +147,7 @@ bool CodeHelpers::endsInsideComment(const QString& code)
             continue;
         }
     }
-    return ! stringStack.isEmpty();
+    return ! stringStack.isEmpty() || insideSingleLineComment;
 }
 
 QString CodeHelpers::killStrings(QString stringWithStrings)

@@ -265,6 +265,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
         kDebug() << "No declaration found for attribute";
         return unknownTypeEncountered();
     }
+    DUChainReadLocker lock;
     kDebug() << "Last encountered type: " << ( lastType().unsafeData() ? lastType()->toString() : "<none>" );
     kDebug() << "VisitAttribute end";
 }
@@ -426,12 +427,14 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
 {
     AstDefaultVisitor::visitNode(node->value);
     if ( node->slice && node->slice->astType != Ast::IndexAstType ) {
+        DUChainReadLocker lock; // only for debug output
         kDebug() << "Found slice, will use ListType for assignment";
         kDebug() << "LAST DECLARATION:" << lastDeclaration();
         encounterDeclaration(0);
         encounter(lastType());
     }
     else {
+        DUChainReadLocker lock; // only for debug output
         kDebug() << "LAST TYPE for slice access:" << lastType() << ( lastType() ? lastType()->toString() : "<null>" );
         VariableLengthContainer::Ptr t = lastType().cast<VariableLengthContainer>();
         kDebug() << "Is container: " << t;
@@ -550,7 +553,10 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
     else {
         return unknownTypeEncountered();
     }
-    kDebug() << "Got type for List Comprehension:" << type->toString();
+    {
+        DUChainReadLocker lock; // debug
+        kDebug() << "Got type for List Comprehension:" << type->toString();
+    }
     encounter<VariableLengthContainer>(type, AutomaticallyDetermineDeclaration);
 }
 

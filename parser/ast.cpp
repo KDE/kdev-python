@@ -48,7 +48,7 @@ AssignmentAst::AssignmentAst(Ast* parent): StatementAst(parent, Ast::AssignmentA
     
 }
 
-AttributeAst::AttributeAst(Ast* parent): ExpressionAst(parent, Ast::AttributeAstType), value(0), depth(0)
+AttributeAst::AttributeAst(Ast* parent): ExpressionAst(parent, Ast::AttributeAstType), value(0)
 {
     
 }

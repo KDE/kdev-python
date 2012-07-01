@@ -70,10 +70,10 @@ AbstractType::Ptr ExpressionVisitor::encounterPreprocess(AbstractType::Ptr type,
 
 void ExpressionVisitor::encounter(AbstractType::Ptr type, EncounterFlags flags)
 {
-    if ( type )
-        kDebug() << "type encountered: " << type->toString();
-    else
-        kDebug() << "unknown type encountered";
+//     if ( type )
+//         kDebug() << "type encountered: " << type->toString();
+//     else
+//         kDebug() << "unknown type encountered";
     if ( flags & AutomaticallyDetermineDeclaration ) {
         StructureType::Ptr t = type.cast<StructureType>();
         if ( t ) {

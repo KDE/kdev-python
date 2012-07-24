@@ -39,13 +39,13 @@ public:
     IndexedContainerData()
         : KDevelop::StructureTypeData()
     {
-        initializeAppendedLists();
+        initializeAppendedLists(m_dynamic);
     }
     /// Copy constructor. \param rhs data to copy
     IndexedContainerData( const IndexedContainerData& rhs )
         : KDevelop::StructureTypeData(rhs)
     {
-        initializeAppendedLists();
+        initializeAppendedLists(m_dynamic);
         copyListsFrom(rhs);
     }
     

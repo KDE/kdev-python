@@ -515,7 +515,7 @@ public:
 class KDEVPYTHONPARSER_EXPORT NumberAst : public ExpressionAst {
 public:
     NumberAst(Ast* parent);
-    QString value; // unused!
+    long value; // only used for ints
     bool isInt; // otherwise it's a float
 };
 

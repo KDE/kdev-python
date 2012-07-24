@@ -95,18 +95,18 @@ object = __kdevpythondocumentation_builtin_object
 
 @TypeContainer
 class __kdevpythondocumentation_builtin_list():
-    @returnContentEqualsContentOf(1)
+    @returnContentEqualsContentOf(0)
     def __init__(self, items):
         return []
-    @addsTypeOfArg(2)
+    @addsTypeOfArg(1)
     def __setitem__(self, key, value): pass
     @getsType
     def __getitem__(self, key): pass
-    @addsTypeOfArg(1)
+    @addsTypeOfArg(0)
     def append(self,obj): pass
-    @addsTypeOfArgContent(1)
+    @addsTypeOfArgContent(0)
     def extend(self,obj): return None
-    @addsTypeOfArg(1)
+    @addsTypeOfArg(0)
     def insert(self,i, x): return None
     @getsType
     def pop(self,i): return None
@@ -147,15 +147,15 @@ class __kdevpythondocumentation_builtin_dict():
     @returnContentEqualsContentOf(0)
     def __init__(self, items):
         return {}
-    @addsTypeOfArg(2)
-    @addsKeyTypeOfArg(1)
+    @addsTypeOfArg(1)
+    @addsKeyTypeOfArg(0)
     def __setitem__(self, key, value): pass
     @getsType
     def __getitem__(self, key): pass
     def clear(self,): return None
     def copy(self,): return {}
-    @addsKeyTypeOfArgContent(1)
-    @addsTypeOfArg(2)
+    @addsKeyTypeOfArgContent(0)
+    @addsTypeOfArg(1)
     def fromkeys(self,seq, value = None): return {}
     @getsType
     def get(self,key, default = ""): return None
@@ -335,7 +335,7 @@ class __kdevpythondocumentation_builtin_tuple():
 
 @TypeContainer
 class __kdevpythondocumentation_builtin_set():
-    @returnContentEqualsContentOf(1)
+    @returnContentEqualsContentOf(0)
     def __init__(self, objects):
         pass
     def len(self): return 0

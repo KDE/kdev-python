@@ -35,10 +35,6 @@
 
 namespace Python {
 
-/**
-* Describes a type which is a hint, and thus kept between parser passes and only deleted if the context which created it
-* goes away or is reparsed (it'll create a new one in case the hint still exists)
-**/
 class KDEVPYTHONDUCHAIN_EXPORT UnsureType : public KDevelop::UnsureType
 {
 public:

@@ -223,7 +223,7 @@ NameAst::NameAst(Ast* parent): ExpressionAst(parent, Ast::NameAstType), identifi
     
 }
 
-NumberAst::NumberAst(Ast* parent): ExpressionAst(parent, Ast::NumberAstType), value("0")
+NumberAst::NumberAst(Ast* parent): ExpressionAst(parent, Ast::NumberAstType), value(0)
 {
     
 }

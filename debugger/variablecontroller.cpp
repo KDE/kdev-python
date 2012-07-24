@@ -33,7 +33,6 @@
 #include <QStack>
 #include <KMessageBox>
 #include <KLocalizedString>
-#include <X11/X.h>
 
 using namespace KDevelop;
 

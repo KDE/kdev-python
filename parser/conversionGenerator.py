@@ -115,7 +115,7 @@ for rule in contents:
     actions = outline[2].split(' ')[1:]
     code = False
     if len(outline) > 3:
-        code = ' '.join(outline[3].split(' ')[1:]) + ";"
+        code = ' '.join(';'.join(outline[3:]).split(' ')[1:]) + ";"
     
     if not results.has_key(rule_for):
         results[rule_for] = list()

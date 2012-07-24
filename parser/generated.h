@@ -155,7 +155,7 @@ v->function->belongsToCall = v;
             }
         case Num_kind: {
                 NumberAst* v = new (m_pool->allocate(sizeof(NumberAst))) NumberAst(parent());
-v->isInt = PyInt_Check(node->v.Num.n);
+v->isInt = PyInt_Check(node->v.Num.n); v->value = PyInt_AsLong(node->v.Num.n);
                 result = v;
                 break;
             }

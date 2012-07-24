@@ -33,6 +33,7 @@
 #include <language/duchain/types/typeregister.h>
 #include <language/duchain/types/integraltype.h>
 #include <language/duchain/types/typesystemdata.h>
+#include <language/duchain/types/unsuretype.h>
 #include <language/duchain/functiondeclaration.h>
 #include <language/duchain/types/functiontype.h>
 #include <language/duchain/classdeclaration.h>
@@ -42,6 +43,7 @@
 #include "expressionvisitor.h"
 #include "pythoneditorintegrator.h"
 #include "types/variablelengthcontainer.h"
+#include "types/indexedcontainer.h"
 #include "helpers.h"
 #include "declarations/functiondeclaration.h"
 
@@ -350,7 +352,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
                         lock.lock();
                         if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
                             kDebug() << "Got container:" << t->toString();
-                            VariableLengthContainer::Ptr newType = typeObjectForIntegralType("list", m_ctx);
+                            VariableLengthContainer::Ptr newType = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
                             AbstractType::Ptr contentType;
                             if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsList") ) {
                                 contentType = t->contentType().abstractType();
@@ -433,26 +435,32 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
         encounterDeclaration(0);
         encounter(lastType());
     }
-    else {
-        DUChainReadLocker lock; // only for debug output
+    else if ( node->slice ) {
+        DUChainReadLocker lock;
         kDebug() << "LAST TYPE for slice access:" << lastType() << ( lastType() ? lastType()->toString() : "<null>" );
-        VariableLengthContainer::Ptr t = lastType().cast<VariableLengthContainer>();
-        kDebug() << "Is container: " << t;
-        if ( ! t ) {
-            return unknownTypeEncountered();
+        
+        if ( IndexedContainer::Ptr indexed = lastType().cast<IndexedContainer>() ) {
+            encounterDeclaration(0);
+            if ( IndexAst* sliceIndexAst = static_cast<IndexAst*>(node->slice) ) {
+                if ( sliceIndexAst->value && sliceIndexAst->value->astType == Ast::NumberAstType ) {
+                    NumberAst* number = static_cast<NumberAst*>(sliceIndexAst->value);
+                    int sliceIndex = number->value;
+                    if ( sliceIndex < indexed->typesCount() ) {
+                        return encounter(indexed->typeAt(sliceIndex).abstractType());
+                    }
+                }
+            }
+            // the exact index is unknown, use unsure
+            encounter(indexed->asUnsureType().cast<AbstractType>());
         }
-        encounterDeclaration(0);
-        encounter(t->contentType().abstractType());
+        else if ( VariableLengthContainer::Ptr variableLength = lastType().cast<VariableLengthContainer>() ) {
+            encounterDeclaration(0);
+            encounter(variableLength->contentType().abstractType());
+        }
     }
-}
-
-TypePtr<VariableLengthContainer> ExpressionVisitor::typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx) {
-    QList<Declaration*> decls = ctx->topContext()->findDeclarations(
-        QualifiedIdentifier("__kdevpythondocumentation_builtin_" + typeDescriptor));
-    Declaration* decl = decls.isEmpty() ? 0 : dynamic_cast<Declaration*>(decls.first());
-    AbstractType::Ptr type = decl ? decl->abstractType() : AbstractType::Ptr(0);
-    TypePtr<VariableLengthContainer> result = type.cast<VariableLengthContainer>();
-    return result;
+    else {
+        return unknownTypeEncountered();
+    }
 }
 
 template<typename T> TypePtr<T> ExpressionVisitor::typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx)
@@ -467,9 +475,13 @@ template<typename T> TypePtr<T> ExpressionVisitor::typeObjectForIntegralType(QSt
 void ExpressionVisitor::visitList(ListAst* node)
 {
     AstDefaultVisitor::visitList(node);
+<<<<<<< HEAD
     DUChainReadLocker lock;
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("list", m_ctx);
     lock.unlock();
+=======
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
+>>>>>>> indexedtypes
     ExpressionVisitor contentVisitor(this);
     if ( type ) {
         foreach ( ExpressionAst* content, node->elements ) {
@@ -488,8 +500,12 @@ void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst*
 {
     AstDefaultVisitor::visitDictionaryComprehension(node);
     kDebug() << "visiting dictionary comprehension";
+<<<<<<< HEAD
     DUChainReadLocker lock;
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("dict", m_ctx);
+=======
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("dict", m_ctx);
+>>>>>>> indexedtypes
     if ( type ) {
         DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol + 1));
         lock.unlock();
@@ -517,8 +533,12 @@ void ExpressionVisitor::visitSetComprehension(SetComprehensionAst* node)
 {
     kDebug() << "visiting set comprehension";
     Python::AstDefaultVisitor::visitSetComprehension(node);
+<<<<<<< HEAD
     DUChainReadLocker lock;
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("set", m_ctx);
+=======
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("set", m_ctx);
+>>>>>>> indexedtypes
     if ( type ) {
         DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol+1), true);
         lock.unlock();
@@ -536,8 +556,12 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
 {
     kDebug() << "visiting list comprehension";
     AstDefaultVisitor::visitListComprehension(node);
+<<<<<<< HEAD
     DUChainReadLocker lock;
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("list", m_ctx);
+=======
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
+>>>>>>> indexedtypes
     if ( type ) {
         DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol + 1), true);
         lock.unlock();
@@ -562,9 +586,25 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
 
 void ExpressionVisitor::visitTuple(TupleAst* node) {
     AstDefaultVisitor::visitTuple(node);
+<<<<<<< HEAD
     DUChainReadLocker lock;
     AbstractType::Ptr type = typeObjectForIntegralType<AbstractType>("tuple", m_ctx);
     encounter(type, AutomaticallyDetermineDeclaration);
+=======
+    IndexedContainer::Ptr type = typeObjectForIntegralType<IndexedContainer>("tuple", m_ctx);
+    if ( type ) {
+        foreach ( ExpressionAst* expr, node->elements ) {
+            ExpressionVisitor v(this);
+            v.visitNode(expr);
+            type->addEntry(v.lastType());
+        }
+        encounter(type.cast<AbstractType>(), AutomaticallyDetermineDeclaration);
+    }
+    else {
+        return unknownTypeEncountered();
+        kWarning() << "tuple type object is not available";
+    }
+>>>>>>> indexedtypes
 }
 
 void ExpressionVisitor::visitIfExpression(IfExpressionAst* node)
@@ -586,9 +626,13 @@ void ExpressionVisitor::visitIfExpression(IfExpressionAst* node)
 void ExpressionVisitor::visitSet(SetAst* node)
 {
     Python::AstDefaultVisitor::visitSet(node);
+<<<<<<< HEAD
     DUChainReadLocker lock;
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("set", m_ctx);
     lock.unlock();
+=======
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("set", m_ctx);
+>>>>>>> indexedtypes
     ExpressionVisitor contentVisitor(this);
     if ( type ) {
         foreach ( ExpressionAst* content, node->elements ) {
@@ -602,9 +646,13 @@ void ExpressionVisitor::visitSet(SetAst* node)
 void ExpressionVisitor::visitDict(DictAst* node)
 {
     AstDefaultVisitor::visitDict(node);
+<<<<<<< HEAD
     DUChainReadLocker lock;
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType("dict", m_ctx);
     lock.unlock();
+=======
+    TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("dict", m_ctx);
+>>>>>>> indexedtypes
     ExpressionVisitor contentVisitor(this);
     ExpressionVisitor keyVisitor(this);
     if ( type ) {

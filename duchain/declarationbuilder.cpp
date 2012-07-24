@@ -48,6 +48,7 @@
 #include "types/variablelengthcontainer.h"
 #include "types/hintedtype.h"
 #include "types/unsuretype.h"
+#include "types/indexedcontainer.h"
 #include "duchain/declarations/functiondeclaration.h"
 #include "duchain/declarations/classdeclaration.h"
 
@@ -854,7 +855,7 @@ void DeclarationBuilder::visitYield(YieldAst* node)
             }
             else {
                 // Otherwise, create a new container type, and set it as the function's return type.
-                VariableLengthContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType("list", currentContext());
+                VariableLengthContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType<VariableLengthContainer>("list", currentContext());
                 if ( container ) {
                     openType<VariableLengthContainer>(container);
                     container->addContentType(encountered);
@@ -1121,9 +1122,28 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             currentIsAlias = v.m_isAlias;
         }
         else {
-            // add code for unpacking tuples here, once those are implemented.
-            tupleElementType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
-            tupleElementDeclaration = 0;
+            if ( ! realValues.isEmpty() && realTargets.length() == 1 ) {
+                // the assignment is of the form "foo = ..."
+                DUChainReadLocker lock;
+                IndexedContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType<IndexedContainer>("tuple", currentContext());
+                foreach ( AbstractType::Ptr ptr, realValues ) {
+                    container->addEntry(ptr);
+                }
+                tupleElementType = container.cast<AbstractType>();
+            }
+            else if ( ! realValues.isEmpty() ) {
+                // the assignment is of the form "foo, bar, ... = ..." (tuple unpacking)
+                if ( const IndexedContainer* container = dynamic_cast<const IndexedContainer*>(realValues.at(0).unsafeData()) ) {
+                    if ( container->typesCount() == realTargets.length() ) {
+                        tupleElementType = container->typeAt(i).abstractType();
+                    }
+                }
+            }
+            if ( ! tupleElementType ) {
+                // use mixed if none of the previous ways of determining the type worked.
+                tupleElementType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
+                tupleElementDeclaration = 0;
+            }
         }
         /** DEBUG **/
         if ( tupleElementType ) {
@@ -1302,6 +1322,10 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
         }
         type = StructureType::Ptr(container);
     }
+    if ( Helper::findDecoratorByName<ClassDeclaration>(dec, "IndexedTypeContainer") ) {
+        IndexedContainer* container = new IndexedContainer();
+        type = StructureType::Ptr(container);
+    }
     
     lock.unlock();
     foreach ( ExpressionAst* c, node->baseClasses ) {
@@ -1374,7 +1398,7 @@ template<typename T> void DeclarationBuilder::visitDecorators(QList< Python::Exp
             d.setName(*static_cast<NameAst*>(call->function)->identifier);
             foreach ( ExpressionAst* arg, call->arguments ) {
                 if ( arg->astType == Ast::NumberAstType ) {
-                    d.setAdditionalInformation(static_cast<NumberAst*>(arg)->value);
+                    d.setAdditionalInformation(QString::number(static_cast<NumberAst*>(arg)->value));
                 }
                 else if ( arg->astType == Ast::StringAstType ) {
                     d.setAdditionalInformation(static_cast<StringAst*>(arg)->value);
@@ -1602,7 +1626,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             kDebug() << "var/kwarg:" <<  node->vararg << node->kwarg;
             if ( node->vararg ) {
                 DUChainReadLocker lock(DUChain::lock());
-                AbstractType::Ptr listType = ExpressionVisitor::typeObjectForIntegralType("list", currentContext()).cast<AbstractType>();
+                AbstractType::Ptr listType = ExpressionVisitor::typeObjectForIntegralType<VariableLengthContainer>("list", currentContext()).cast<AbstractType>();
                 lock.unlock();
                 type->addArgument(listType);
                 node->vararg->startCol = node->vararg_col_offset; node->vararg->endCol = node->vararg_col_offset + node->vararg->value.length() - 1;
@@ -1611,7 +1635,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             }
             if ( node->kwarg ) {
                 DUChainReadLocker lock(DUChain::lock());
-                AbstractType::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType("dict", currentContext()).cast<AbstractType>();
+                AbstractType::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType<VariableLengthContainer>("dict", currentContext()).cast<AbstractType>();
                 lock.unlock();
                 type->addArgument(dictType);
                 node->kwarg->startCol = node->arg_col_offset; node->kwarg->endCol = node->arg_col_offset + node->kwarg->value.length() - 1;

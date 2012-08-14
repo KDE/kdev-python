@@ -445,7 +445,10 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
                 if ( sliceIndexAst->value && sliceIndexAst->value->astType == Ast::NumberAstType ) {
                     NumberAst* number = static_cast<NumberAst*>(sliceIndexAst->value);
                     int sliceIndex = number->value;
-                    if ( sliceIndex < indexed->typesCount() ) {
+                    if ( sliceIndex < 0 && sliceIndex + indexed->typesCount() > 0 ) {
+                        sliceIndex += indexed->typesCount();
+                    }
+                    if ( sliceIndex < indexed->typesCount() && sliceIndex >= 0 ) {
                         return encounter(indexed->typeAt(sliceIndex).abstractType());
                     }
                 }

@@ -145,6 +145,7 @@ void PyDUChainTest::testCrashes_data() {
     QTest::addColumn<QString>("code");
     
     QTest::newRow("unicode escape char") << "print u\"\\xe9\"";
+    QTest::newRow("negative slice index") << "t = (1, 2, 3)\nd = t[-1]";
     QTest::newRow("fancy generator context range") << "c1_list = sorted(letter for (letter, meanings) \\\n"
                "in ambiguous_nucleotide_values.iteritems() \\\n"
                "if set([codon[0] for codon in codons]).issuperset(set(meanings)))";

@@ -579,7 +579,12 @@ void ExpressionVisitor::visitTuple(TupleAst* node) {
         foreach ( ExpressionAst* expr, node->elements ) {
             ExpressionVisitor v(this);
             v.visitNode(expr);
-            type->addEntry(v.lastType());
+            if ( v.lastType() ) {
+                type->addEntry(v.lastType());
+            }
+            else {
+                type->addEntry(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+            }
         }
         encounter(type.cast<AbstractType>(), AutomaticallyDetermineDeclaration);
     }

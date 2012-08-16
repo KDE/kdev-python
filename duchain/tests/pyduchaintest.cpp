@@ -466,6 +466,14 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("tuple_indexaccess2") << "t = 3, 5.5\ncheckme = t[1]" << "float";
     
     QTest::newRow("tuple_listof") << "l = [(1, 2), (3, 4)]\ncheckme = l[1][0]" << "int";
+    
+    QTest::newRow("functionCall_functionArg") << "def getstr(): return \"foo\"\n"
+                                                 "def identity(f): return f\n"
+                                                 "f1 = getstr\n"
+                                                 "f2 = identity(getstr)\n"
+                                                 "a = getstr()\n"
+                                                 "b = f1()\n"
+                                                 "checkme = f2()\n" << "string";
 }
 
 typedef QPair<Declaration*, int> pair;

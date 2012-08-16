@@ -287,15 +287,25 @@ void ExpressionVisitor::visitCall(CallAst* node)
     v.visitNode(node->function);
     kDebug() << "function being called: " << v.lastDeclaration();
     Declaration* actualDeclaration = 0;
+    FunctionType::Ptr unidentifiedFunctionType;
     if ( ! v.m_isAlias ) {
-        kDebug() << "non-function / structure type is being called";
+        kDebug() << "non-identified-function / structure type is being called";
+        if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeFunction ) {
+            unidentifiedFunctionType = v.lastType().cast<FunctionType>();
+            DUChainReadLocker lock;
+            kDebug() << "got unidentified type:" << unidentifiedFunctionType->toString();
+        }
     }
     else {
         actualDeclaration = v.lastDeclaration().data();
     }
     
-    if ( not actualDeclaration ) {
-//         kDebug() << "No declaration for " << functionName;
+    if ( unidentifiedFunctionType ) {
+        encounter(unidentifiedFunctionType->returnType());
+        encounterDeclaration(0);
+        return;
+    }
+    else if ( not actualDeclaration ) {
         m_shouldBeKnown = false;
         return unknownTypeEncountered();
     }
@@ -549,11 +559,12 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
     AstDefaultVisitor::visitListComprehension(node);
     DUChainReadLocker lock;
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
-    if ( type ) {
+    if ( type && ! m_forceGlobalSearching ) { // TODO fixme
         DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol + 1), true);
         lock.unlock();
         ExpressionVisitor v(this);
         v.m_ctx = comprehensionContext;
+        Q_ASSERT(comprehensionContext);
         kDebug() << "Searching iterator variable in context: " << comprehensionContext->range() 
                  << "found at" << node->startLine << node->startCol;
         v.visitNode(node->element);

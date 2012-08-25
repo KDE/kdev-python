@@ -1047,25 +1047,23 @@ void DeclarationBuilder::visitCall(CallAst* node)
 void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 {
     KDEBUG_BLOCK
-    kDebug();
-    // TODO this urgently needs to be refactored.
-    // It has grown crappier and crappier over time.
     AstDefaultVisitor::visitAssignment(node);
-    QList<ExpressionAst*> realTargets;
-    QList<AbstractType::Ptr> realValues;
-    QList<DeclarationPointer> realDeclarations;
-    QList<bool> isAlias;
-    QList<Ast*> realNodes;
+    // Because of tuple unpacking, it is required to gather the left- and right hand side
+    // expressions / types first, then match them together in a second step.
+    QList<ExpressionAst*> lhsExpressions;
+    QList<AbstractType::Ptr> rhsTypes;
+    QList<DeclarationPointer> rhsDeclarations;
+    QList<bool> rhsEntryIsAliasDeclaration;
     
     foreach ( ExpressionAst* target, node->targets ) {
         if ( target->astType == Ast::TupleAstType ) {
             TupleAst* tuple = static_cast<TupleAst*>(target);
             foreach ( ExpressionAst* ast, tuple->elements ) {
-                realTargets << ast;
+                lhsExpressions << ast;
             }
         }
         else {
-            realTargets << target;
+            lhsExpressions << target;
         }
     }
     
@@ -1073,48 +1071,40 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         foreach ( ExpressionAst* value, static_cast<TupleAst*>(node->value)->elements ) {
             ExpressionVisitor v(currentContext(), editor());
             v.visitNode(value);
-            realValues << v.lastType();
-            realNodes << value;
-            realDeclarations << v.lastDeclaration();
-            isAlias << v.m_isAlias;
+            rhsTypes << v.lastType();
+            rhsDeclarations << v.lastDeclaration();
+            rhsEntryIsAliasDeclaration << v.m_isAlias;
         }
     }
     else {
         ExpressionVisitor v(currentContext(), editor());
         v.visitNode(node->value);
-        realValues << v.lastType();
-        realNodes << node->value;
-        realDeclarations << v.lastDeclaration();
-        isAlias << v.m_isAlias;
-        if ( node->value && node->value->astType == Ast::CallAstType && ! node->targets.isEmpty() ) {
-            if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeIntegral 
-                              && v.lastType().cast<IntegralType>()->dataType() == (uint) IntegralType::TypeVoid ) {
-                KDevelop::Problem *p = new KDevelop::Problem();
-                p->setFinalLocation(DocumentRange(currentlyParsedDocument(), simpleRangeForNode(node->targets.at(0), true)));
-                p->setSource(KDevelop::ProblemData::SemanticAnalysis);
-                p->setSeverity(KDevelop::ProblemData::Hint);
-                p->setDescription(i18n("Assignment to call returning nothing"));
-                ProblemPointer ptr(p);
-                kDebug() << "Not adding return hint, documentation data is not good enough yet";
-//                 topContext()->addProblem(ptr);
-            }
-        }
+        rhsTypes << v.lastType();
+        rhsDeclarations << v.lastDeclaration();
+        rhsEntryIsAliasDeclaration << v.m_isAlias;
         DUChainReadLocker lock;
         kDebug() << ( v.lastType() ? v.lastType()->toString() : "< no last type >" ) << ( v.lastDeclaration() ? v.lastDeclaration()->toString() : "< no last declaration >" );
     }
     
-    AbstractType::Ptr tupleElementType(0);
-    DeclarationPointer tupleElementDeclaration(0);
-    bool canUnpack = realTargets.length() == realValues.length();
-    bool currentIsAlias = false;
+    // Now all the information about left- and right hand side entries is ready,
+    // and creation / updating of variables can start.
+    bool canUnpack = lhsExpressions.length() == rhsTypes.length();
     int i = 0;
-    foreach ( ExpressionAst* target, realTargets ) {
+    foreach ( ExpressionAst* target, lhsExpressions ) {
+        AbstractType::Ptr tupleElementType;
+        DeclarationPointer tupleElementDeclaration;
+        bool currentIsAlias = false;
+        // If the length of the right and the left side matches, exact unpacking can be done.
+        // example code: a, b, c = 3, 4, 5
         if ( canUnpack ) {
-            tupleElementType = realValues.at(i);
-            tupleElementDeclaration = DeclarationPointer(Helper::resolveAliasDeclaration(realDeclarations.at(i).data()));
-            currentIsAlias = isAlias.at(i);
+            tupleElementType = rhsTypes.at(i);
+            tupleElementDeclaration = DeclarationPointer(Helper::resolveAliasDeclaration(rhsDeclarations.at(i).data()));
+            currentIsAlias = rhsEntryIsAliasDeclaration.at(i);
         }
-        else if ( realTargets.length() == 1 ) {
+        // If the left side only contains one entry, unpacking never happens, and the left side
+        // is instead assigned a container type if applicable
+        // example code: a = 3, 4, 5
+        else if ( lhsExpressions.length() == 1 ) {
             ExpressionVisitor v(currentContext());
             v.visitNode(node->value);
             tupleElementType = v.lastType();
@@ -1122,19 +1112,22 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             currentIsAlias = v.m_isAlias;
         }
         else {
-            if ( ! realValues.isEmpty() && realTargets.length() == 1 ) {
+            if ( ! rhsTypes.isEmpty() && lhsExpressions.length() == 1 ) {
                 // the assignment is of the form "foo = ..."
                 DUChainReadLocker lock;
                 IndexedContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType<IndexedContainer>("tuple", currentContext());
-                foreach ( AbstractType::Ptr ptr, realValues ) {
+                foreach ( AbstractType::Ptr ptr, rhsTypes ) {
                     container->addEntry(ptr);
                 }
                 tupleElementType = container.cast<AbstractType>();
             }
-            else if ( ! realValues.isEmpty() ) {
+            else if ( ! rhsTypes.isEmpty() ) {
                 // the assignment is of the form "foo, bar, ... = ..." (tuple unpacking)
-                if ( const IndexedContainer* container = dynamic_cast<const IndexedContainer*>(realValues.at(0).unsafeData()) ) {
-                    if ( container->typesCount() == realTargets.length() ) {
+                // this one is for the case that the tuple unpacking is not written down explicitly, for example
+                // a = (1, 2, 3); b, c, d = a
+                // the other case (b, c, d = 1, 2, 3) is handled above.
+                if ( const IndexedContainer* container = dynamic_cast<const IndexedContainer*>(rhsTypes.at(0).unsafeData()) ) {
+                    if ( container->typesCount() == lhsExpressions.length() ) {
                         tupleElementType = container->typeAt(i).abstractType();
                     }
                 }
@@ -1145,20 +1138,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                 tupleElementDeclaration = 0;
             }
         }
-        /** DEBUG **/
-        if ( tupleElementType ) {
-            VariableLengthContainer* d = dynamic_cast<VariableLengthContainer*>(tupleElementType.unsafeData());
-            if ( d ) {
-                DUChainReadLocker lock(DUChain::lock());
-                kDebug() << "Got container type for declaration creation: " << tupleElementType << d->contentType();
-                if ( d->contentType() ) {
-                    kDebug() << "Content type: " << d->contentType().abstractType()->toString();
-                }
-            }
-        }
-        /** END DEBUG **/
-        // TODO fix this for x, y = a, b, i.e. if node->value->astType == TupleAstType
-        // TODO can't this be handled in a more general way, using the Expression Visitor?
+        // Handling the tuple unpacking stuff is done now, and we can proceed as if there was no tuple unpacking involved.
         // Assignments of the form "a = 3"
         if ( target->astType == Ast::NameAstType ) {
             if ( currentIsAlias ) {

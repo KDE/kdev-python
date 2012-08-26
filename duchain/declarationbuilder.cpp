@@ -420,8 +420,7 @@ void DeclarationBuilder::visitFor(ForAst* node)
     }
     else if ( node->target->astType == Ast::TupleAstType ) {
         // If the target is a tuple ("for x, y, z in ..."), multiple variables must be declared.
-        // For now, types of those variables will only be determined if the iterator list is a dictionary,
-        // or a list of tuples.
+        // For now, types of those variables will only be determined if the iterator is a list of tuples.
         QList<ExpressionAst*> targetElements = static_cast<TupleAst*>(node->target)->elements;
         int targetElementsCount = targetElements.count();
         QList<AbstractType::Ptr> targetTypes;

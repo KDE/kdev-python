@@ -116,7 +116,7 @@ bool CodeHelpers::endsInsideComment(const QString& code)
         if ( max_len - atChar > 2 ) {
             t = code.mid(atChar, 3);
         }
-        if ( c == '#' ) {
+        if ( stringStack.isEmpty() && c == '#' ) {
             insideSingleLineComment = true;
             continue;
         }

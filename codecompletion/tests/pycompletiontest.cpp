@@ -360,6 +360,11 @@ void PyCompletionTest::testIntegralExpressionsDifferentContexts_data()
     QTest::newRow("print_stmt") << "print []%INVOKE" << ".%CURSOR" << "append";
 }
 
+void PyCompletionTest::testIgnoreCommentSignsInStringLiterals()
+{
+    QVERIFY( ! completionListIsEmpty("'#'%INVOKE", ".%CURSOR") );
+}
+
 void PyCompletionTest::testNoCompletionInCommentsOrStrings()
 {
     QFETCH(QString, invokeCode);

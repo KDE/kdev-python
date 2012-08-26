@@ -231,6 +231,7 @@ ReferencedTopDUContext Helper::getDocumentationFileContext()
         return ReferencedTopDUContext(Helper::documentationFileContext.data());
     }
     else {
+        DUChainReadLocker lock;
         ReferencedTopDUContext ctx = ReferencedTopDUContext(DUChain::self()->chainForDocument(Helper::getDocumentationFile()));
         Helper::documentationFileContext = DUChainPointer<TopDUContext>(ctx.data());
         return ctx;

@@ -376,6 +376,30 @@ void ExpressionVisitor::visitCall(CallAst* node)
                         }
                     }
                 }
+                if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsListOfBoth") ) {
+                    decoratorFound = true;
+                    kDebug() << "Got getsListOfBoth decorator, checking container";
+                    if ( node->function->astType == Ast::AttributeAstType ) {
+                        lock.unlock();
+                        ExpressionVisitor baseTypeVisitor(this);
+                        // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
+                        baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
+                        lock.lock();
+                        if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
+                            kDebug() << "Got container:" << t->toString();
+                            VariableLengthContainer::Ptr newType = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
+                            AbstractType::Ptr contentType, keyType;
+                            contentType = t->contentType().abstractType();
+                            keyType = t->keyType().abstractType();
+                            IndexedContainer::Ptr newContents = typeObjectForIntegralType<IndexedContainer>("tuple", m_ctx);
+                            newContents->addEntry(keyType);
+                            newContents->addEntry(contentType);
+                            newType->addContentType(newContents.cast<AbstractType>());
+                            AbstractType::Ptr resultingType = newType.cast<AbstractType>();
+                            return encounter(resultingType);
+                        }
+                    }
+                }
                 if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(
                                               funcDecl, "returnContentEqualsContentOf") )
                 {

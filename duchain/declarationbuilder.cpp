@@ -420,16 +420,57 @@ void DeclarationBuilder::visitFor(ForAst* node)
     }
     else if ( node->target->astType == Ast::TupleAstType ) {
         // If the target is a tuple ("for x, y, z in ..."), multiple variables must be declared.
-        // For now, types of those variables will only be determined if the iterator list is a dictionary.
+        // For now, types of those variables will only be determined if the iterator list is a dictionary,
+        // or a list of tuples.
+        QList<ExpressionAst*> targetElements = static_cast<TupleAst*>(node->target)->elements;
+        int targetElementsCount = targetElements.count();
+        QList<AbstractType::Ptr> targetTypes;
+        if ( iteratorList ) {
+            QList<IndexedContainer::Ptr> gatherFromTuples;
+            AbstractType::Ptr contentType = iteratorList->contentType().abstractType();
+            if ( contentType->whichType() == AbstractType::TypeUnsure ) {
+                // The list content type is unsure, iterate over it and find all fitting tuple types.
+                UnsureType::Ptr unsureContentType = contentType.cast<UnsureType>();
+                for ( unsigned int i = 0; i < unsureContentType->typesSize(); i++ ) {
+                    AbstractType::Ptr t = unsureContentType->types()[i].abstractType();
+                    if ( IndexedContainer::Ptr tuple = IndexedContainer::Ptr::dynamicCast(t) ) {
+                        if ( tuple->typesCount() == targetElementsCount ) {
+                            // The length of the unpacked tuple and the loop variables matches, so unpacking can be performed.
+                            gatherFromTuples << tuple;
+                        }
+                    }
+                }
+            }
+            else {
+                // The list has one defined type, only try to expand that as a tuple.
+                if ( IndexedContainer::Ptr tuple = IndexedContainer::Ptr::dynamicCast(contentType) ) {
+                    if ( tuple->typesCount() == targetElementsCount ) {
+                        gatherFromTuples << tuple;
+                    }
+                }
+            }
+            // Now, iterate over all possible tuples, and extract their types
+            int i = 0;
+            foreach ( IndexedContainer::Ptr tuple, gatherFromTuples ) {
+                for ( int j = 0; j < tuple->typesCount(); j++ ) {
+                    if ( i == 0 ) {
+                        targetTypes.append(tuple->typeAt(j).abstractType());
+                    }
+                    else {
+                        targetTypes[j] = Helper::mergeTypes(targetTypes[j], tuple->typeAt(j).abstractType());
+                    }
+                }
+                i++;
+            }
+        }
         short atElement = 0;
-        foreach ( ExpressionAst* tupleMember, static_cast<TupleAst*>(node->target)->elements ) {
+        bool haveTypeInformation = ! targetTypes.isEmpty();
+        Q_ASSERT( ! haveTypeInformation || targetTypes.length() == targetElementsCount );
+        foreach ( ExpressionAst* tupleMember, targetElements ) {
             if ( tupleMember->astType == Ast::NameAstType ) {
                 AbstractType::Ptr newType;
-                if ( atElement == 0 && iteratorList && iteratorList->keyType() ) {
-                    newType = iteratorList->keyType().abstractType();
-                }
-                else if ( atElement == 1 && iteratorList && iteratorList->contentType() ) {
-                    newType = iteratorList->contentType().abstractType();
+                if ( haveTypeInformation ) {
+                    newType = targetTypes.at(atElement);
                 }
                 else {
                     newType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));

@@ -363,16 +363,19 @@ void ExpressionVisitor::visitCall(CallAst* node)
                         if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
                             kDebug() << "Got container:" << t->toString();
                             VariableLengthContainer::Ptr newType = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
-                            AbstractType::Ptr contentType;
-                            if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsList") ) {
-                                contentType = t->contentType().abstractType();
+                            if ( newType ) {
+                                AbstractType::Ptr contentType;
+                                if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsList") ) {
+                                    contentType = t->contentType().abstractType();
+                                }
+                                else {
+                                    contentType = t->keyType().abstractType();
+                                }
+                                newType->addContentType(contentType);
+                                AbstractType::Ptr resultingType = newType.cast<AbstractType>();
+                                return encounter(resultingType);
                             }
-                            else {
-                                contentType = t->keyType().abstractType();
-                            }
-                            newType->addContentType(contentType);
-                            AbstractType::Ptr resultingType = newType.cast<AbstractType>();
-                            return encounter(resultingType);
+                            else return unknownTypeEncountered();
                         }
                     }
                 }
@@ -388,15 +391,18 @@ void ExpressionVisitor::visitCall(CallAst* node)
                         if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
                             kDebug() << "Got container:" << t->toString();
                             VariableLengthContainer::Ptr newType = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
-                            AbstractType::Ptr contentType, keyType;
-                            contentType = t->contentType().abstractType();
-                            keyType = t->keyType().abstractType();
                             IndexedContainer::Ptr newContents = typeObjectForIntegralType<IndexedContainer>("tuple", m_ctx);
-                            newContents->addEntry(keyType);
-                            newContents->addEntry(contentType);
-                            newType->addContentType(newContents.cast<AbstractType>());
-                            AbstractType::Ptr resultingType = newType.cast<AbstractType>();
-                            return encounter(resultingType);
+                            if ( newType && newContents ) {
+                                AbstractType::Ptr contentType, keyType;
+                                contentType = t->contentType().abstractType();
+                                keyType = t->keyType().abstractType();
+                                newContents->addEntry(keyType);
+                                newContents->addEntry(contentType);
+                                newType->addContentType(newContents.cast<AbstractType>());
+                                AbstractType::Ptr resultingType = newType.cast<AbstractType>();
+                                return encounter(resultingType);
+                            }
+                            else return unknownTypeEncountered();
                         }
                     }
                 }

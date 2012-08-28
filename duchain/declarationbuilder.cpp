@@ -427,14 +427,15 @@ void DeclarationBuilder::visitFor(ForAst* node)
         if ( iteratorList ) {
             QList<IndexedContainer::Ptr> gatherFromTuples;
             AbstractType::Ptr contentType = iteratorList->contentType().abstractType();
-            if ( contentType->whichType() == AbstractType::TypeUnsure ) {
+            if ( contentType && contentType->whichType() == AbstractType::TypeUnsure ) {
                 // The list content type is unsure, iterate over it and find all fitting tuple types.
                 UnsureType::Ptr unsureContentType = contentType.cast<UnsureType>();
                 for ( unsigned int i = 0; i < unsureContentType->typesSize(); i++ ) {
                     AbstractType::Ptr t = unsureContentType->types()[i].abstractType();
                     if ( IndexedContainer::Ptr tuple = IndexedContainer::Ptr::dynamicCast(t) ) {
                         if ( tuple->typesCount() == targetElementsCount ) {
-                            // The length of the unpacked tuple and the loop variables matches, so unpacking can be performed.
+                            // The length of the unpacked tuple and the amount of loop variables matches,
+                            // so unpacking can be performed.
                             gatherFromTuples << tuple;
                         }
                     }

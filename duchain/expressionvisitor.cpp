@@ -395,7 +395,13 @@ void ExpressionVisitor::visitCall(CallAst* node)
                             if ( newType && newContents ) {
                                 AbstractType::Ptr contentType, keyType;
                                 contentType = t->contentType().abstractType();
+                                if ( ! contentType ) {
+                                    contentType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
+                                }
                                 keyType = t->keyType().abstractType();
+                                if ( ! keyType ) {
+                                    keyType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
+                                }
                                 newContents->addEntry(keyType);
                                 newContents->addEntry(contentType);
                                 newType->addContentType(newContents.cast<AbstractType>());

@@ -51,6 +51,7 @@ IndexedContainer::IndexedContainer(IndexedContainerData& data)
 
 void IndexedContainer::addEntry(AbstractType::Ptr typeToAdd)
 {
+    Q_ASSERT(typeToAdd && "trying to add a null type to indexedContainer");
     d_func_dynamic()->m_valuesList().append(typeToAdd->indexed());
 }
 

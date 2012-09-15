@@ -1603,7 +1603,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 
                 if ( ! realParam || realParam->context != ExpressionAst::Parameter ) {
                     // def myfun(x, y, (z, a, b), d): pass
-                    // this case is not handeled currently, but it could be implemented.
+                    // this case is not handled currently, but it could be implemented.
                     continue;
                 }
                 

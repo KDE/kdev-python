@@ -79,7 +79,7 @@ QPair<CodeAst*, bool> ParseSession::parse(Python::CodeAst* /*ast*/)
     AstBuilder pythonparser(m_pool);
     QPair<CodeAst*, bool> matched;
     matched.first = pythonparser.parse(m_currentDocument.toUrl(), m_contents);
-    matched.second = matched.first ? true : false; // check wether an AST was returned and react accordingly
+    matched.second = matched.first ? true : false; // check whether an AST was returned and react accordingly
     
     m_problems = pythonparser.m_problems;
     

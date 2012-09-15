@@ -1602,8 +1602,8 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 realParam = dynamic_cast<NameAst*>(expression);
                 
                 if ( ! realParam || realParam->context != ExpressionAst::Parameter ) {
-                    // I'm still not totally sure how non-name parameters might look like,
-                    // but better check for it here.
+                    // def myfun(x, y, (z, a, b), d): pass
+                    // this case is not handeled currently, but it could be implemented.
                     continue;
                 }
                 

@@ -76,7 +76,6 @@ const IndexedType& Python::VariableLengthContainer::keyType() const
 KDevelop::AbstractType* VariableLengthContainer::clone() const
 {
     VariableLengthContainer* n = new VariableLengthContainer(*this);
-    DUChainReadLocker lock(DUChain::lock());
     return n;
 }
 
@@ -135,7 +134,7 @@ uint VariableLengthContainer::hash() const
 {
     return StructureType::hash() + 
         ( contentType().abstractType() ? contentType().abstractType()->hash() : 0 ) + 
-        ( contentType().abstractType() ? contentType().abstractType()->hash() : 0 );
+        ( keyType().abstractType() ? keyType().abstractType()->hash() : 0 );
 }
 
 }

@@ -34,7 +34,7 @@
 using namespace KDevelop;
 
 namespace Python {
-    
+
 class KDEVPYTHONDUCHAIN_EXPORT HintedTypeData : public KDevelop::TypeAliasTypeData
 {
 public:
@@ -45,7 +45,8 @@ public:
     }
     /// Copy constructor. \param rhs data to copy
     HintedTypeData( const HintedTypeData& rhs )
-        : KDevelop::TypeAliasTypeData(rhs), m_createdByContext(rhs.m_createdByContext), m_modificationRevision(rhs.m_modificationRevision)
+        : KDevelop::TypeAliasTypeData(rhs), m_createdByContext(rhs.m_createdByContext)
+        , m_modificationRevision(rhs.m_modificationRevision)
     {
     }
     
@@ -73,9 +74,10 @@ public:
     HintedType(TypeAliasTypeData& data);
     
     /**
-     * @brief Sets the creating topDUContext for this type hint. Also uses that contexts current modification revision as creation time.
+     * @brief Sets the creating topDUContext for this type hint.
+     * Also uses that contexts current modification revision as creation time.
      *
-     * @param context the topDUContext to usef
+     * @param context the topDUContext to use
      * @return void
      **/
     void setCreatedBy(TopDUContext* context, const ModificationRevision& revision);

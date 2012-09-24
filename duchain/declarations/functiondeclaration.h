@@ -34,13 +34,13 @@ class KDEVPYTHONDUCHAIN_EXPORT FunctionDeclarationData : public KDevelop::Functi
 {
 public:
     FunctionDeclarationData()
-        : KDevelop::FunctionDeclarationData(), m_isStatic(false)
+        : KDevelop::FunctionDeclarationData(), m_isStatic(false), m_hasKwarg(false), m_hasVararg(false)
     {
         initializeAppendedLists();
     }
 
     FunctionDeclarationData(const FunctionDeclarationData& rhs)
-        : KDevelop::FunctionDeclarationData(rhs) 
+        : KDevelop::FunctionDeclarationData(rhs), m_isStatic(rhs.m_isStatic), m_hasVararg(rhs.m_hasVararg), m_hasKwarg(rhs.m_hasKwarg)
     {
         initializeAppendedLists();
         copyListsFrom(rhs);
@@ -51,6 +51,8 @@ public:
     }
     
     bool m_isStatic: 1;
+    bool m_hasVararg: 1;
+    bool m_hasKwarg: 1;
 
     START_APPENDED_LISTS_BASE(FunctionDeclarationData, KDevelop::FunctionDeclarationData);
     APPENDED_LIST_FIRST(FunctionDeclarationData, Decorator, m_decorators);
@@ -69,6 +71,22 @@ public:
     enum {
         Identity = 126
     };
+    
+    inline void setHasVararg(bool hasVararg) {
+        d_func_dynamic()->m_hasVararg = hasVararg;
+    }
+    
+    inline bool hasVararg() const {
+        return d_func()->m_hasVararg;
+    }
+    
+    inline void setHasKwarg(bool hasKwarg) {
+        d_func_dynamic()->m_hasKwarg = hasKwarg;
+    }
+    
+    inline bool hasKwarg() const {
+        return d_func()->m_hasKwarg;
+    }
     
     inline bool isStatic() const {
         return d_func()->m_isStatic;

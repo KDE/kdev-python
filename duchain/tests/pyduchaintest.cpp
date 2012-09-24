@@ -469,6 +469,8 @@ void PyDUChainTest::testTypes_data()
     
     QTest::newRow("tuple_loop") << "t = [(1, \"str\")]\nfor checkme, a in t: pass" << "int";
     
+    QTest::newRow("args_type") << "def myfun(*args): checkme = args\nmyfun(3)" << "list of string";
+    
     QTest::newRow("tuple_listof") << "l = [(1, 2), (3, 4)]\ncheckme = l[1][0]" << "int";
     
     QTest::newRow("functionCall_functionArg") << "def getstr(): return \"foo\"\n"

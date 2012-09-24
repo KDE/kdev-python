@@ -45,11 +45,17 @@ VariableLengthContainer::VariableLengthContainer(StructureTypeData& data): Struc
 {
 
 }
-    
+
 void Python::VariableLengthContainer::addContentType(AbstractType::Ptr typeToAdd)
 {
-    d_func_dynamic()->m_contentType = Helper::mergeTypes(contentType().abstractType(), typeToAdd)->indexed();
-    DUChainReadLocker lock(DUChain::lock());
+    AbstractType::Ptr newContentType = Helper::mergeTypes(contentType().abstractType(), typeToAdd);
+    DUChainReadLocker lock;
+    qDebug() << newContentType->toString();
+    qDebug() << this;
+    qDebug() << d_func();
+    qDebug() << d_func_dynamic()->m_contentType;
+    qDebug() << d_func_dynamic();
+    d_func_dynamic()->m_contentType = newContentType->indexed();
     kDebug() << "CONTAINER :: new content type: " << contentType().abstractType()->toString();
 }
 

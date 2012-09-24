@@ -30,11 +30,12 @@
 using namespace KDevelop;
 
 namespace Python {
-    
+
 REGISTER_TYPE(HintedType);
 
 HintedType::HintedType() : KDevelop::TypeAliasType(createData<HintedType>())
 {
+
 }
 
 HintedType::HintedType(const HintedType& rhs)
@@ -77,7 +78,7 @@ void HintedType::setCreatedBy(TopDUContext* context, const ModificationRevision&
     kDebug() << "new HintedType with modification time: " << d_func()->m_modificationRevision.modificationTime 
              << "; " << d_func()->m_modificationRevision.revision;
 }
-    
+
 KDevelop::AbstractType* HintedType::clone() const
 {
     HintedType* n = new HintedType(*this);
@@ -100,6 +101,9 @@ bool HintedType::equals(const AbstractType* rhs) const
         return false;
     }
     if ( c->d_func()->m_modificationRevision != d_func()->m_modificationRevision ) {
+        return false;
+    }
+    if ( c->d_func()->m_createdByContext != d_func()->m_createdByContext ) {
         return false;
     }
     return true;

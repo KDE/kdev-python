@@ -1037,23 +1037,35 @@ void DeclarationBuilder::visitCall(CallAst* node)
                 parameters.remove(0);
             }
             int atParam = 0;
+            bool atVarKwarg = false;
             // Check that there's enough known parameters which can be updated
-            // TODO handle vararg/kwarg for this, it doesn't work correctly
             uint typeParametersSize = functiontype->arguments().length();
             typeParametersSize += static_cast<FunctionDeclarationPointer>(lastFunctionDeclaration)->defaultParametersSize();
+            int specialParamsCount = lastFunctionDeclaration->hasVararg() + lastFunctionDeclaration->hasKwarg();
             if ( parameters.size() >= node->arguments.size() && typeParametersSize >= (uint) node->arguments.size() ) {
                 foreach ( ExpressionAst* arg, node->arguments ) {
                     // Iterate over all the arguments, trying to guess the type of the object being
                     // passed as an argument, and update the parameter accordingly.
-                    if ( atParam >= functiontype->arguments().size() || atParam >= parameters.size() ) {
-                        break;
+                    
+                    // If more params are passed than the function has args, maybe it's a var/kwarg.
+                    if ( atParam >= functiontype->arguments().size() - specialParamsCount || atParam >= parameters.size() - specialParamsCount ) {
+                        if ( lastFunctionDeclaration->hasVararg() || lastFunctionDeclaration->hasKwarg() ) {
+                            atVarKwarg = true;
+                        }
+                        else {
+                            break;
+                        }
                     }
+                    
+                    bool isKeywordArgument = (arg->astType == Ast::KeywordAstType);
+                    
                     // Get the type of the argument
                     ExpressionVisitor argumentVisitor(currentContext(), editor());
                     argumentVisitor.visitNode(arg);
                     lock.unlock();
                     DUChainWriteLocker wlock;
                     kDebug() << "Got type for function argument: " << argumentVisitor.lastType();
+                    kDebug() << "at var/kwarg:" << atVarKwarg;
                     if ( argumentVisitor.lastType() && Helper::isUsefulType(argumentVisitor.lastType().cast<AbstractType>()) ) {
                         // Update the parameter type: change both the type of the function argument,
                         // and the type of the declaration which belongs to that argument
@@ -1063,14 +1075,34 @@ void DeclarationBuilder::visitCall(CallAst* node)
                         addType->setType(argumentVisitor.lastType());
                         addType->setCreatedBy(topContext(), m_futureModificationRevision);
                         closeType();
-                        AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(atParam)->abstractType(), 
-                                                                        addType.cast<AbstractType>(), topContext());
-                        kDebug() << "new type: " << newType->toString();
-                        // TODO this does not correctly update the types in quickopen! Investigate why.
-                        functiontype->removeArgument(atParam);
-                        functiontype->addArgument(newType, atParam);
-                        lastFunctionDeclaration->setAbstractType(functiontype.cast<AbstractType>());
-                        parameters.at(atParam)->setType(newType);
+                        
+                        if ( atVarKwarg ) {
+                            if ( isKeywordArgument ) {
+                                AbstractType::Ptr param = parameters.last()->abstractType();
+                                if ( VariableLengthContainer* c = dynamic_cast<VariableLengthContainer*>(param.unsafeData()) )
+                                {
+                                    c->addContentType(addType.cast<AbstractType>());
+                                }
+                            }
+                            else {
+                                int offset = lastFunctionDeclaration->hasKwarg() ? parameters.size() - 2 : parameters.size() - 1;
+                                if ( VariableLengthContainer* c = dynamic_cast<VariableLengthContainer*>(
+                                                                  parameters.at(offset)->abstractType().unsafeData()) )
+                                {
+                                    c->addContentType(addType.cast<AbstractType>());
+                                }
+                            }
+                        }
+                        else {
+                            AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(atParam)->abstractType(),
+                                                                            addType.cast<AbstractType>(), topContext());
+                            kDebug() << "new type: " << newType->toString();
+                            // TODO this does not correctly update the types in quickopen! Investigate why.
+                            functiontype->removeArgument(atParam);
+                            functiontype->addArgument(newType, atParam);
+                            lastFunctionDeclaration->setAbstractType(functiontype.cast<AbstractType>());
+                            parameters.at(atParam)->setType(newType);
+                        }
                     }
                     wlock.unlock();
                     atParam++;
@@ -1646,22 +1678,24 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             // Handle *args, **kwargs, and assign them a list / dictionary type.
             kDebug() << "var/kwarg:" <<  node->vararg << node->kwarg;
             if ( node->vararg ) {
-                DUChainReadLocker lock(DUChain::lock());
-                AbstractType::Ptr listType = ExpressionVisitor::typeObjectForIntegralType<VariableLengthContainer>("list", currentContext()).cast<AbstractType>();
+                DUChainWriteLocker lock;
+                VariableLengthContainer::Ptr listType = ExpressionVisitor::typeObjectForIntegralType<VariableLengthContainer>("list", currentContext());
                 lock.unlock();
-                type->addArgument(listType);
                 node->vararg->startCol = node->vararg_col_offset; node->vararg->endCol = node->vararg_col_offset + node->vararg->value.length() - 1;
                 node->vararg->startLine = node->vararg_lineno; node->vararg->endLine = node->vararg_lineno;
-                visitVariableDeclaration<Declaration>(node->vararg, 0, listType);
+                visitVariableDeclaration<Declaration>(node->vararg, 0, listType.cast<AbstractType>());
+                workingOnDeclaration->setHasVararg(true);
+                type->addArgument(listType.cast<AbstractType>());
             }
             if ( node->kwarg ) {
-                DUChainReadLocker lock(DUChain::lock());
+                DUChainWriteLocker lock;
                 AbstractType::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType<VariableLengthContainer>("dict", currentContext()).cast<AbstractType>();
                 lock.unlock();
-                type->addArgument(dictType);
                 node->kwarg->startCol = node->arg_col_offset; node->kwarg->endCol = node->arg_col_offset + node->kwarg->value.length() - 1;
                 node->kwarg->startLine = node->arg_lineno; node->kwarg->endLine = node->arg_lineno;
                 visitVariableDeclaration<Declaration>(node->kwarg, 0, dictType);
+                workingOnDeclaration->setHasKwarg(true);
+                type->addArgument(dictType);
             }
         }
     }

@@ -319,17 +319,23 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         if ( declarationOpened ) {
             DeclarationBuilderBase::closeDeclaration();
         }
-        // check for argument type hints (those are created when calling functions)
-        AbstractType::Ptr hints = Helper::extractTypeHints(dec->abstractType(), topContext());
-        kDebug() << "Type Hints: " << hints->toString();
+        
         AbstractType::Ptr newType;
-        if ( hints.cast<IndexedContainer>() || hints.cast<VariableLengthContainer>() ) {
-            // This only happens when the type hint is a tuple, which means the vararg/kwarg of a function is being processed.
-            newType = hints;
+        if ( currentContext()->type() == DUContext::Function ) {
+            // check for argument type hints (those are created when calling functions)
+            AbstractType::Ptr hints = Helper::extractTypeHints(dec->abstractType(), topContext());
+            kDebug() << "Type Hints: " << hints->toString();
+            if ( hints.cast<IndexedContainer>() || hints.cast<VariableLengthContainer>() ) {
+                // This only happens when the type hint is a tuple, which means the vararg/kwarg of a function is being processed.
+                newType = hints;
+            }
+            else {
+                newType = Helper::mergeTypes(hints, type, topContext());
+                kDebug() << "Resulting type: " << newType->toString();
+            }
         }
         else {
-            newType = Helper::mergeTypes(hints, type, topContext());
-            kDebug() << "Resulting type: " << newType->toString();
+            newType = type;
         }
         dec->setType(newType);
         dec->setKind(KDevelop::Declaration::Instance);

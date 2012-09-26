@@ -61,7 +61,7 @@ public:
     
     static QList<KUrl> cachedSearchPaths;
     
-    static UnsureType::Ptr extractTypeHints(AbstractType::Ptr type, TopDUContext* current);
+    static AbstractType::Ptr extractTypeHints(AbstractType::Ptr type, TopDUContext* current);
     
     static AbstractType::Ptr resolveType(AbstractType::Ptr type);
     

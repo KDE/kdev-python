@@ -50,11 +50,6 @@ void Python::VariableLengthContainer::addContentType(AbstractType::Ptr typeToAdd
 {
     AbstractType::Ptr newContentType = Helper::mergeTypes(contentType().abstractType(), typeToAdd);
     DUChainReadLocker lock;
-    qDebug() << newContentType->toString();
-    qDebug() << this;
-    qDebug() << d_func();
-    qDebug() << d_func_dynamic()->m_contentType;
-    qDebug() << d_func_dynamic();
     d_func_dynamic()->m_contentType = newContentType->indexed();
     kDebug() << "CONTAINER :: new content type: " << contentType().abstractType()->toString();
 }
@@ -72,6 +67,11 @@ void Python::VariableLengthContainer::addKeyType(AbstractType::Ptr typeToAdd)
     if ( ! hasKeyType() ) {
         kWarning() << "warning: you're adding key types to an object which should not have typed keys";
     }
+}
+
+VariableLengthContainer::~VariableLengthContainer()
+{
+    qDebug() << "DELETING CONTAINER INSTANCE";
 }
 
 const IndexedType& Python::VariableLengthContainer::keyType() const

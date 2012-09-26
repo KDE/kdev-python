@@ -66,6 +66,7 @@ public:
     VariableLengthContainer();
     VariableLengthContainer(const VariableLengthContainer& rhs);
     VariableLengthContainer(StructureTypeData& data);
+    virtual ~VariableLengthContainer();
     void addContentType(AbstractType::Ptr typeToAdd);
     void addKeyType(AbstractType::Ptr typeToAdd);
     virtual AbstractType* clone() const;

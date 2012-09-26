@@ -43,6 +43,8 @@
 #include "ast.h"
 #include "types/hintedtype.h"
 #include "types/unsuretype.h"
+#include "types/variablelengthcontainer.h"
+#include "types/indexedcontainer.h"
 
 using namespace KDevelop;
 
@@ -62,7 +64,7 @@ AbstractType::Ptr Helper::resolveType(AbstractType::Ptr type)
         return type;
 }
 
-UnsureType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* current)
+AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* current)
 {
     if ( type ) {
         kDebug() << type->toString();
@@ -100,7 +102,19 @@ UnsureType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* c
             }
         }
     }
-    return result;
+    else if ( IndexedContainer::Ptr indexed = type.cast<IndexedContainer>() ) {
+        // TODO this is bad because it is slow. Make it faster!
+        IndexedContainer::Ptr edit = IndexedContainer::Ptr(static_cast<IndexedContainer*>(indexed->clone()));
+        for ( int i = 0; i < indexed->typesCount(); i++ ) {
+            if ( HintedType::Ptr p = indexed->typeAt(i).abstractType().cast<HintedType>() ) {
+                if ( ! p->isValid(current) ) {
+                    edit->replaceType(i, AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+                }
+            }
+        }
+        return edit.cast<AbstractType>();
+    }
+    return result.cast<AbstractType>();
 }
 
 QPair<FunctionDeclarationPointer, bool> Helper::functionDeclarationForCalledDeclaration(DeclarationPointer ptr)

@@ -72,6 +72,7 @@ public:
     virtual uint hash() const;
     int typesCount() const;
     const IndexedType& typeAt(int index) const;
+    void replaceType(int index, AbstractType::Ptr newType);
     AbstractType::Ptr asUnsureType() const;
     virtual QString toString() const;
     // "toString"s only the container type, not the content; used in declarationnavigationcontext to create

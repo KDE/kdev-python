@@ -320,10 +320,17 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
             DeclarationBuilderBase::closeDeclaration();
         }
         // check for argument type hints (those are created when calling functions)
-        UnsureType::Ptr hints = Helper::extractTypeHints(dec->abstractType(), topContext());
+        AbstractType::Ptr hints = Helper::extractTypeHints(dec->abstractType(), topContext());
         kDebug() << "Type Hints: " << hints->toString();
-        AbstractType::Ptr newType = Helper::mergeTypes(hints.cast<AbstractType>(), type, topContext());
-        kDebug() << "Resulting type: " << newType->toString();
+        AbstractType::Ptr newType;
+        if ( hints.cast<IndexedContainer>() ) {
+            // This only happens when the type hint is a tuple, which means the vararg is being processed.
+            newType = hints;
+        }
+        else {
+            newType = Helper::mergeTypes(hints, type, topContext());
+            kDebug() << "Resulting type: " << newType->toString();
+        }
         dec->setType(newType);
         dec->setKind(KDevelop::Declaration::Instance);
     }
@@ -1079,17 +1086,27 @@ void DeclarationBuilder::visitCall(CallAst* node)
                         if ( atVarKwarg ) {
                             if ( isKeywordArgument ) {
                                 AbstractType::Ptr param = parameters.last()->abstractType();
-                                if ( VariableLengthContainer* c = dynamic_cast<VariableLengthContainer*>(param.unsafeData()) )
-                                {
-                                    c->addContentType(addType.cast<AbstractType>());
+                                VariableLengthContainer::Ptr variable = param.cast<VariableLengthContainer>();
+                                if ( variable ) {
+                                    variable->addContentType(addType.cast<AbstractType>());
+                                    parameters.last()->setAbstractType(variable.cast<AbstractType>());
                                 }
                             }
                             else {
-                                int offset = lastFunctionDeclaration->hasKwarg() ? parameters.size() - 2 : parameters.size() - 1;
-                                if ( VariableLengthContainer* c = dynamic_cast<VariableLengthContainer*>(
-                                                                  parameters.at(offset)->abstractType().unsafeData()) )
-                                {
-                                    c->addContentType(addType.cast<AbstractType>());
+                                const int offset = lastFunctionDeclaration->hasKwarg() ? parameters.size() - 2 : parameters.size() - 1;
+                                AbstractType::Ptr param = parameters.at(offset)->abstractType();
+                                IndexedContainer::Ptr indexed = param.cast<IndexedContainer>();
+                                if ( indexed ) {
+                                    int number = atParam - (functiontype->arguments().size() - specialParamsCount);
+                                    if ( indexed->typesCount() > number ) {
+                                        AbstractType::Ptr oldType = indexed->typeAt(number).abstractType();
+                                        AbstractType::Ptr newType = Helper::mergeTypes(oldType, addType.cast<AbstractType>());
+                                        indexed->replaceType(number, newType);
+                                    }
+                                    else {
+                                        indexed->addEntry(addType.cast<AbstractType>());
+                                    }
+                                    parameters.at(offset)->setAbstractType(indexed.cast<AbstractType>());
                                 }
                             }
                         }
@@ -1679,17 +1696,19 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             kDebug() << "var/kwarg:" <<  node->vararg << node->kwarg;
             if ( node->vararg ) {
                 DUChainWriteLocker lock;
-                VariableLengthContainer::Ptr listType = ExpressionVisitor::typeObjectForIntegralType<VariableLengthContainer>("list", currentContext());
+                IndexedContainer::Ptr tupleType = ExpressionVisitor::typeObjectForIntegralType
+                                                                     <IndexedContainer>("tuple", currentContext());
                 lock.unlock();
                 node->vararg->startCol = node->vararg_col_offset; node->vararg->endCol = node->vararg_col_offset + node->vararg->value.length() - 1;
                 node->vararg->startLine = node->vararg_lineno; node->vararg->endLine = node->vararg_lineno;
-                visitVariableDeclaration<Declaration>(node->vararg, 0, listType.cast<AbstractType>());
+                visitVariableDeclaration<Declaration>(node->vararg, 0, tupleType.cast<AbstractType>());
                 workingOnDeclaration->setHasVararg(true);
-                type->addArgument(listType.cast<AbstractType>());
+                type->addArgument(tupleType.cast<AbstractType>());
             }
             if ( node->kwarg ) {
                 DUChainWriteLocker lock;
-                AbstractType::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType<VariableLengthContainer>("dict", currentContext()).cast<AbstractType>();
+                AbstractType::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType
+                                                                <VariableLengthContainer>("dict", currentContext()).cast<AbstractType>();
                 lock.unlock();
                 node->kwarg->startCol = node->arg_col_offset; node->kwarg->endCol = node->arg_col_offset + node->kwarg->value.length() - 1;
                 node->kwarg->startLine = node->arg_lineno; node->kwarg->endLine = node->arg_lineno;

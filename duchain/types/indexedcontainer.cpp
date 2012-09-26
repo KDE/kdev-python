@@ -61,10 +61,15 @@ const IndexedType& IndexedContainer::typeAt(int index) const
     return d_func()->m_values()[index];
 }
 
+void IndexedContainer::replaceType(int index, AbstractType::Ptr newType)
+{
+    Q_ASSERT((uint) index < d_func()->m_valuesSize());
+    d_func_dynamic()->m_valuesList()[index] = newType->indexed();
+}
+
 KDevelop::AbstractType* IndexedContainer::clone() const
 {
     IndexedContainer* n = new IndexedContainer(*this);
-    DUChainReadLocker lock(DUChain::lock());
     return n;
 }
 

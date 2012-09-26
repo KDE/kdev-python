@@ -323,8 +323,8 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         AbstractType::Ptr hints = Helper::extractTypeHints(dec->abstractType(), topContext());
         kDebug() << "Type Hints: " << hints->toString();
         AbstractType::Ptr newType;
-        if ( hints.cast<IndexedContainer>() ) {
-            // This only happens when the type hint is a tuple, which means the vararg is being processed.
+        if ( hints.cast<IndexedContainer>() || hints.cast<VariableLengthContainer>() ) {
+            // This only happens when the type hint is a tuple, which means the vararg/kwarg of a function is being processed.
             newType = hints;
         }
         else {
@@ -1064,8 +1064,6 @@ void DeclarationBuilder::visitCall(CallAst* node)
                         }
                     }
                     
-                    bool isKeywordArgument = (arg->astType == Ast::KeywordAstType);
-                    
                     // Get the type of the argument
                     ExpressionVisitor argumentVisitor(currentContext(), editor());
                     argumentVisitor.visitNode(arg);
@@ -1073,7 +1071,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
                     DUChainWriteLocker wlock;
                     kDebug() << "Got type for function argument: " << argumentVisitor.lastType();
                     kDebug() << "at var/kwarg:" << atVarKwarg;
-                    if ( argumentVisitor.lastType() && Helper::isUsefulType(argumentVisitor.lastType().cast<AbstractType>()) ) {
+                    if ( argumentVisitor.lastType() ) {
                         // Update the parameter type: change both the type of the function argument,
                         // and the type of the declaration which belongs to that argument
                         kDebug() << "last type: " << argumentVisitor.lastType()->toString();
@@ -1084,30 +1082,20 @@ void DeclarationBuilder::visitCall(CallAst* node)
                         closeType();
                         
                         if ( atVarKwarg ) {
-                            if ( isKeywordArgument ) {
-                                AbstractType::Ptr param = parameters.last()->abstractType();
-                                VariableLengthContainer::Ptr variable = param.cast<VariableLengthContainer>();
-                                if ( variable ) {
-                                    variable->addContentType(addType.cast<AbstractType>());
-                                    parameters.last()->setAbstractType(variable.cast<AbstractType>());
+                            const int offset = lastFunctionDeclaration->hasKwarg() ? parameters.size() - 2 : parameters.size() - 1;
+                            AbstractType::Ptr param = parameters.at(offset)->abstractType();
+                            IndexedContainer::Ptr indexed = param.cast<IndexedContainer>();
+                            if ( indexed ) {
+                                int number = atParam - (functiontype->arguments().size() - specialParamsCount);
+                                if ( indexed->typesCount() > number ) {
+                                    AbstractType::Ptr oldType = indexed->typeAt(number).abstractType();
+                                    AbstractType::Ptr newType = Helper::mergeTypes(oldType, addType.cast<AbstractType>());
+                                    indexed->replaceType(number, newType);
                                 }
-                            }
-                            else {
-                                const int offset = lastFunctionDeclaration->hasKwarg() ? parameters.size() - 2 : parameters.size() - 1;
-                                AbstractType::Ptr param = parameters.at(offset)->abstractType();
-                                IndexedContainer::Ptr indexed = param.cast<IndexedContainer>();
-                                if ( indexed ) {
-                                    int number = atParam - (functiontype->arguments().size() - specialParamsCount);
-                                    if ( indexed->typesCount() > number ) {
-                                        AbstractType::Ptr oldType = indexed->typeAt(number).abstractType();
-                                        AbstractType::Ptr newType = Helper::mergeTypes(oldType, addType.cast<AbstractType>());
-                                        indexed->replaceType(number, newType);
-                                    }
-                                    else {
-                                        indexed->addEntry(addType.cast<AbstractType>());
-                                    }
-                                    parameters.at(offset)->setAbstractType(indexed.cast<AbstractType>());
+                                else {
+                                    indexed->addEntry(addType.cast<AbstractType>());
                                 }
+                                parameters.at(offset)->setAbstractType(indexed.cast<AbstractType>());
                             }
                         }
                         else {
@@ -1125,6 +1113,24 @@ void DeclarationBuilder::visitCall(CallAst* node)
                     atParam++;
                 }
                 lock.unlock();
+                DUChainWriteLocker wlock;
+                foreach ( KeywordAst* keyword, node->keywords ) {
+                    AbstractType::Ptr param = parameters.last()->abstractType();
+                    VariableLengthContainer::Ptr variable = param.cast<VariableLengthContainer>();
+                    if ( variable ) {
+                        ExpressionVisitor argumentVisitor(currentContext(), editor());
+                        argumentVisitor.visitNode(keyword->value);
+                        if ( argumentVisitor.lastType() ) {
+                            HintedType::Ptr addType = HintedType::Ptr(new HintedType());
+                            openType(addType);
+                            addType->setType(argumentVisitor.lastType());
+                            addType->setCreatedBy(topContext(), m_futureModificationRevision);
+                            closeType();
+                            variable->addContentType(addType.cast<AbstractType>());
+                            parameters.last()->setAbstractType(variable.cast<AbstractType>());
+                        }
+                    }
+                }
             }
             else {
                 kDebug() << "Arguments size mismatch, not updating type" << parameters << node->arguments;
@@ -1695,7 +1701,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             // Handle *args, **kwargs, and assign them a list / dictionary type.
             kDebug() << "var/kwarg:" <<  node->vararg << node->kwarg;
             if ( node->vararg ) {
-                DUChainWriteLocker lock;
+                DUChainReadLocker lock;
                 IndexedContainer::Ptr tupleType = ExpressionVisitor::typeObjectForIntegralType
                                                                      <IndexedContainer>("tuple", currentContext());
                 lock.unlock();
@@ -1706,15 +1712,18 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 type->addArgument(tupleType.cast<AbstractType>());
             }
             if ( node->kwarg ) {
-                DUChainWriteLocker lock;
-                AbstractType::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType
-                                                                <VariableLengthContainer>("dict", currentContext()).cast<AbstractType>();
+                DUChainReadLocker lock;
+                AbstractType::Ptr stringType = ExpressionVisitor::typeObjectForIntegralType
+                                                                  <AbstractType>("string", currentContext());
+                VariableLengthContainer::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType
+                                                                  <VariableLengthContainer>("dict", currentContext());
                 lock.unlock();
+                dictType->addKeyType(stringType);
                 node->kwarg->startCol = node->arg_col_offset; node->kwarg->endCol = node->arg_col_offset + node->kwarg->value.length() - 1;
                 node->kwarg->startLine = node->arg_lineno; node->kwarg->endLine = node->arg_lineno;
-                visitVariableDeclaration<Declaration>(node->kwarg, 0, dictType);
+                visitVariableDeclaration<Declaration>(node->kwarg, 0, dictType.cast<AbstractType>());
                 workingOnDeclaration->setHasKwarg(true);
-                type->addArgument(dictType);
+                type->addArgument(dictType.cast<AbstractType>());
             }
         }
     }

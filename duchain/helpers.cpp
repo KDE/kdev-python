@@ -104,6 +104,8 @@ AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext*
     }
     else if ( IndexedContainer::Ptr indexed = type.cast<IndexedContainer>() ) {
         // TODO this is bad because it is slow. Make it faster!
+        // TODO this would really be an important thing, as it will be called quite often.
+        // TODO "how" is simple, just avoid cloning stuff if nothing needs to be changed (i.e. no hints exist).
         IndexedContainer::Ptr edit = IndexedContainer::Ptr(static_cast<IndexedContainer*>(indexed->clone()));
         for ( int i = 0; i < indexed->typesCount(); i++ ) {
             if ( HintedType::Ptr p = indexed->typeAt(i).abstractType().cast<HintedType>() ) {
@@ -111,6 +113,37 @@ AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext*
                     edit->replaceType(i, AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
                 }
             }
+        }
+        return edit.cast<AbstractType>();
+    }
+    else if ( VariableLengthContainer::Ptr variable = type.cast<VariableLengthContainer>() ) {
+        VariableLengthContainer::Ptr edit = VariableLengthContainer::Ptr(static_cast<VariableLengthContainer*>(variable->clone()));
+        UnsureType::Ptr newContentType(new UnsureType());
+        AbstractType::Ptr oldContentType = edit->contentType().abstractType();
+        bool isHint = false;
+        if ( oldContentType ) {
+            if ( UnsureType::Ptr oldUnsure = oldContentType.cast<UnsureType>() ) {
+                for ( unsigned int i = 0; i < oldUnsure->typesSize(); i++ ) {
+                    if ( HintedType::Ptr hinted = oldUnsure->types()[i].abstractType().cast<HintedType>() ) {
+                        isHint = true;
+                        if ( ! hinted->isValid(current) ) {
+                            continue;
+                        }
+                    }
+                    newContentType->addType(oldUnsure->types()[i]);
+                }
+            }
+            else if ( HintedType::Ptr hinted = oldContentType.cast<HintedType>() ) {
+                isHint = true;
+                if ( hinted->isValid(current) ) {
+                    newContentType->addType(hinted->indexed());
+                }
+            }
+            if ( ! isHint ) {
+                return result.cast<AbstractType>();
+            }
+            edit->replaceContentType(newContentType.cast<AbstractType>());
+            edit->replaceKeyType(variable->keyType().abstractType());
         }
         return edit.cast<AbstractType>();
     }

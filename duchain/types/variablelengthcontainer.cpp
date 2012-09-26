@@ -54,6 +54,16 @@ void Python::VariableLengthContainer::addContentType(AbstractType::Ptr typeToAdd
     kDebug() << "CONTAINER :: new content type: " << contentType().abstractType()->toString();
 }
 
+void VariableLengthContainer::replaceContentType(AbstractType::Ptr newType)
+{
+    d_func_dynamic()->m_contentType = newType->indexed();
+}
+
+void VariableLengthContainer::replaceKeyType(AbstractType::Ptr newType)
+{
+    d_func_dynamic()->m_keyType = newType->indexed();
+}
+
 const IndexedType& Python::VariableLengthContainer::contentType() const
 {
     return d_func()->m_contentType;

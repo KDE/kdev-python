@@ -1120,20 +1120,22 @@ void DeclarationBuilder::visitCall(CallAst* node)
                 }
                 lock.unlock();
                 DUChainWriteLocker wlock;
-                foreach ( KeywordAst* keyword, node->keywords ) {
-                    AbstractType::Ptr param = parameters.last()->abstractType();
-                    VariableLengthContainer::Ptr variable = param.cast<VariableLengthContainer>();
-                    if ( variable ) {
-                        ExpressionVisitor argumentVisitor(currentContext(), editor());
-                        argumentVisitor.visitNode(keyword->value);
-                        if ( argumentVisitor.lastType() ) {
-                            HintedType::Ptr addType = HintedType::Ptr(new HintedType());
-                            openType(addType);
-                            addType->setType(argumentVisitor.lastType());
-                            addType->setCreatedBy(topContext(), m_futureModificationRevision);
-                            closeType();
-                            variable->addContentType(addType.cast<AbstractType>());
-                            parameters.last()->setAbstractType(variable.cast<AbstractType>());
+                if ( lastFunctionDeclaration->hasKwarg() ) {
+                    foreach ( KeywordAst* keyword, node->keywords ) {
+                        AbstractType::Ptr param = parameters.last()->abstractType();
+                        VariableLengthContainer::Ptr variable = param.cast<VariableLengthContainer>();
+                        if ( variable ) {
+                            ExpressionVisitor argumentVisitor(currentContext(), editor());
+                            argumentVisitor.visitNode(keyword->value);
+                            if ( argumentVisitor.lastType() ) {
+                                HintedType::Ptr addType = HintedType::Ptr(new HintedType());
+                                openType(addType);
+                                addType->setType(argumentVisitor.lastType());
+                                addType->setCreatedBy(topContext(), m_futureModificationRevision);
+                                closeType();
+                                variable->addContentType(addType.cast<AbstractType>());
+                                parameters.last()->setAbstractType(variable.cast<AbstractType>());
+                            }
                         }
                     }
                 }

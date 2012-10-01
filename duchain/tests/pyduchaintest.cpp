@@ -171,6 +171,7 @@ void PyDUChainTest::testCrashes_data() {
                                           "     [ f for f in glob.glob(pattern) ])\n"
                                           "        for pattern in patterns\n"
                                           "]\n";
+    QTest::newRow("kwarg_empty_crash") << "def myfun(): return\ncheckme = myfun(kw=something)";
 }
 
 void PyDUChainTest::testClassVariables()

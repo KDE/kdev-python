@@ -1569,7 +1569,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
                 if ( parameters[0]->identifier().identifier() != IndexedString("self") ) {
                     kDebug() << "argument is not called self, but instead:" << parameters[0]->identifier().identifier().str();
                     KDevelop::Problem *p = new KDevelop::Problem();
-                    p->setFinalLocation(DocumentRange(currentlyParsedDocument(), simpleRangeForNode(node->arguments->arguments[0], true)));
+                    p->setFinalLocation(DocumentRange(currentlyParsedDocument(), parameters[0]->range().castToSimpleRange()));
                     p->setSource(KDevelop::ProblemData::SemanticAnalysis);
                     p->setSeverity(KDevelop::ProblemData::Warning);
                     p->setDescription(i18n("First argument of class method is not called self, this is deprecated"));

@@ -81,7 +81,6 @@ void Python::VariableLengthContainer::addKeyType(AbstractType::Ptr typeToAdd)
 
 VariableLengthContainer::~VariableLengthContainer()
 {
-    qDebug() << "DELETING CONTAINER INSTANCE";
 }
 
 const IndexedType& Python::VariableLengthContainer::keyType() const

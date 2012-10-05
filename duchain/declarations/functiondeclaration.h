@@ -34,7 +34,7 @@ class KDEVPYTHONDUCHAIN_EXPORT FunctionDeclarationData : public KDevelop::Functi
 {
 public:
     FunctionDeclarationData()
-        : KDevelop::FunctionDeclarationData(), m_isStatic(false), m_hasKwarg(false), m_hasVararg(false)
+        : KDevelop::FunctionDeclarationData(), m_isStatic(false), m_hasVararg(false), m_hasKwarg(false)
     {
         initializeAppendedLists();
     }

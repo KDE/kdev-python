@@ -1534,6 +1534,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     visitFunctionArguments(node);
     
     const bool isStatic = Helper::findDecoratorByName<FunctionDeclaration>(dec, "staticmethod");
+    const bool isClassMethod = Helper::findDecoratorByName<FunctionDeclaration>(dec, "classmethod");
     
     // If this is a member function, set the type of the first argument (the "self") to be
     // an instance of the class.
@@ -1574,7 +1575,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
             QVector<Declaration*> parameters = args->localDeclarations();
             kDebug() << "checking function with" << parameters.size() << "arguments";
             
-            if ( currentContext()->type() == DUContext::Class && ! parameters.isEmpty() ) {
+            if ( currentContext()->type() == DUContext::Class && ! parameters.isEmpty() && ! isClassMethod ) {
                 if ( parameters[0]->identifier().identifier() != IndexedString("self") ) {
                     kDebug() << "argument is not called self, but instead:" << parameters[0]->identifier().identifier().str();
                     KDevelop::Problem *p = new KDevelop::Problem();

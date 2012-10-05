@@ -1045,16 +1045,23 @@ void DeclarationBuilder::visitCall(CallAst* node)
         if ( args && functiontype ) {
             // The declaration which was found is a function declaration, and has a valid arguments list assigned.
             QVector<Declaration*> parameters = args->localDeclarations();
+            const int specialParamsCount = lastFunctionDeclaration->hasVararg() + lastFunctionDeclaration->hasKwarg();
+            
             // Remove the "self" from the argument list, the type of that should not be updated.
-            if ( ( lastFunctionDeclaration->context()->type() == DUContext::Class || isConstructor ) && ! parameters.isEmpty() ) {
-                parameters.remove(0);
+            if ( ( lastFunctionDeclaration->context()->type() == DUContext::Class || isConstructor ) 
+                 && ! parameters.isEmpty() && ! lastFunctionDeclaration->isStatic() )
+            {
+                // ... unless for some reason the function only has *vararg, **kwarg as arguments
+                if ( specialParamsCount < parameters.size() ) {
+                    parameters.remove(0);
+                }
             }
+            
             int atParam = 0;
             bool atVarKwarg = false;
             // Check that there's enough known parameters which can be updated
             uint typeParametersSize = functiontype->arguments().length();
             typeParametersSize += static_cast<FunctionDeclarationPointer>(lastFunctionDeclaration)->defaultParametersSize();
-            int specialParamsCount = lastFunctionDeclaration->hasVararg() + lastFunctionDeclaration->hasKwarg();
             if ( parameters.size() >= node->arguments.size() && typeParametersSize >= (uint) node->arguments.size() ) {
                 foreach ( ExpressionAst* arg, node->arguments ) {
                     // Iterate over all the arguments, trying to guess the type of the object being

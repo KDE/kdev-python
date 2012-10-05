@@ -1052,13 +1052,15 @@ void DeclarationBuilder::visitCall(CallAst* node)
                  && ! parameters.isEmpty() && ! lastFunctionDeclaration->isStatic() )
             {
                 // ... unless for some reason the function only has *vararg, **kwarg as arguments
+                // (this could happen for example if the method is static but kdev-python does not know,
+                // or if the user just made a mistake in his code)
                 if ( specialParamsCount < parameters.size() ) {
                     parameters.remove(0);
                 }
             }
             
             int atParam = 0;
-            bool atVarKwarg = false;
+            bool atVararg = false;
             // Check that there's enough known parameters which can be updated
             uint typeParametersSize = functiontype->arguments().length();
             typeParametersSize += static_cast<FunctionDeclarationPointer>(lastFunctionDeclaration)->defaultParametersSize();
@@ -1067,10 +1069,10 @@ void DeclarationBuilder::visitCall(CallAst* node)
                     // Iterate over all the arguments, trying to guess the type of the object being
                     // passed as an argument, and update the parameter accordingly.
                     
-                    // If more params are passed than the function has args, maybe it's a var/kwarg.
+                    // If more params are passed than the function has args, maybe it's a vararg
                     if ( atParam >= functiontype->arguments().size() - specialParamsCount || atParam >= parameters.size() - specialParamsCount ) {
-                        if ( lastFunctionDeclaration->hasVararg() || lastFunctionDeclaration->hasKwarg() ) {
-                            atVarKwarg = true;
+                        if ( lastFunctionDeclaration->hasVararg() ) {
+                            atVararg = true;
                         }
                         else {
                             break;
@@ -1083,7 +1085,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
                     lock.unlock();
                     DUChainWriteLocker wlock;
                     kDebug() << "Got type for function argument: " << argumentVisitor.lastType();
-                    kDebug() << "at var/kwarg:" << atVarKwarg;
+                    kDebug() << "at var/kwarg:" << atVararg;
                     if ( argumentVisitor.lastType() ) {
                         // Update the parameter type: change both the type of the function argument,
                         // and the type of the declaration which belongs to that argument
@@ -1094,7 +1096,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
                         addType->setCreatedBy(topContext(), m_futureModificationRevision);
                         closeType();
                         
-                        if ( atVarKwarg ) {
+                        if ( atVararg ) {
                             const int offset = lastFunctionDeclaration->hasKwarg() ? parameters.size() - 2 : parameters.size() - 1;
                             AbstractType::Ptr param = parameters.at(offset)->abstractType();
                             IndexedContainer::Ptr indexed = param.cast<IndexedContainer>();

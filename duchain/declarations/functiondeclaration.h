@@ -58,7 +58,7 @@ public:
     APPENDED_LIST_FIRST(FunctionDeclarationData, Decorator, m_decorators);
     END_APPENDED_LISTS(FunctionDeclarationData, m_decorators);
 };
-    
+
 class KDEVPYTHONDUCHAIN_EXPORT FunctionDeclaration : public KDevelop::FunctionDeclaration
 {
 public:

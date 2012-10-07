@@ -53,7 +53,6 @@
 #include "duchain/declarations/classdeclaration.h"
 
 using namespace KTextEditor;
-
 using namespace KDevelop;
 
 namespace Python

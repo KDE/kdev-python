@@ -77,13 +77,23 @@ void UseBuilder::visitName(NameAst* node)
         }
     }
     
-    /// debug
-    kDebug() << " Registering use for " << node->identifier->value << " at " 
-             << useRange.castToSimpleRange() << "with dec" << declaration
-             << "in context" << currentContext()->range();
-    /// end debug
+    if ( declaration && declaration->abstractType() && declaration->abstractType()->whichType() == AbstractType::TypeStructure ) {
+        if ( node->belongsToCall ) {
+            DUChainReadLocker lock;
+            QPair< Python::FunctionDeclarationPointer, bool > constructor = Helper::
+                             functionDeclarationForCalledDeclaration(DeclarationPointer(declaration));
+            lock.unlock();
+            bool isConstructor = constructor.second;
+            if ( isConstructor ) {
+                RangeInRevision constructorRange;
+                constructorRange.start = CursorInRevision(node->endLine, node->endCol + 1);
+                constructorRange.end = CursorInRevision(node->endLine, node->endCol + 2);
+                UseBuilderBase::newUse(node, constructorRange, DeclarationPointer(constructor.first));
+            }
+        }
+    }
+    
     UseBuilderBase::newUse(node, useRange, DeclarationPointer(declaration));
-//     kDebug() << "USE FOUND:" << topContext()->findUseAt(useRange.start) << "for declaration" << declaration->toString();
 }
 
 void UseBuilder::visitAttribute(AttributeAst* node)

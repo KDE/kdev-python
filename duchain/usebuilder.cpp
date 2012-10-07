@@ -86,6 +86,7 @@ void UseBuilder::visitName(NameAst* node)
             bool isConstructor = constructor.second;
             if ( isConstructor ) {
                 RangeInRevision constructorRange;
+                // TODO fixme! this does not necessarily use the opening bracket as it should
                 constructorRange.start = CursorInRevision(node->endLine, node->endCol + 1);
                 constructorRange.end = CursorInRevision(node->endLine, node->endCol + 2);
                 UseBuilderBase::newUse(node, constructorRange, DeclarationPointer(constructor.first));

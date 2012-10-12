@@ -32,11 +32,14 @@
 #include <language/duchain/duchain.h>
 #include <QtTest/QtTest>
 #include <KStandardDirs>
+#include <QtGui/QApplication>
 #include <language/duchain/types/functiontype.h>
 #include <language/duchain/aliasdeclaration.h>
 #include <language/backgroundparser/backgroundparser.h>
 #include <interfaces/ilanguagecontroller.h>
 
+// copied from kdevplatform since it is not installed
+#include "waitforupdate.h"
 #include "parsesession.h"
 #include "pythoneditorintegrator.h"
 #include "declarationbuilder.h"
@@ -113,7 +116,29 @@ ReferencedTopDUContext PyDUChainTest::parse_int(const QString& code, const QStri
     ICore::self()->languageController()->backgroundParser()->parseDocuments();
     AstBuilder* a = new AstBuilder(&m_pool);
     m_ast = a->parse(filename, const_cast<QString&>(code));
-    return DUChain::self()->waitForUpdate(IndexedString(filename), TopDUContext::ForceUpdate);
+    
+    WaitForUpdate waiter;
+  
+    waiter.m_dataMutex.lock();
+    
+    {
+        DUChainReadLocker readLock(DUChain::lock());
+        DUChain::self()->updateContextForUrl(IndexedString(filename), TopDUContext::ForceUpdate, &waiter);
+    }
+    
+    QTimer t;
+    t.setSingleShot(true);
+    t.start(2000);
+    while( ! waiter.m_ready && t.isActive() ) {
+        QApplication::processEvents();
+        usleep(1000);
+    }
+    
+    // if parsing hangs, all tests must be aborted since there's no easy way
+    // to kill the hanging parser thread.
+    Q_ASSERT(waiter.m_ready && "Timed out waiting for parser results, aborting all tests");
+    
+    return waiter.m_topContext;
 }
 
 ReferencedTopDUContext PyDUChainTest::parse(const QString& code, const QString& suffix)
@@ -172,6 +197,57 @@ void PyDUChainTest::testCrashes_data() {
                                           "        for pattern in patterns\n"
                                           "]\n";
     QTest::newRow("kwarg_empty_crash") << "def myfun(): return\ncheckme = myfun(kw=something)";
+    QTest::newRow("very_large_tuple_hang") << "tree = "
+        "(257,"
+         "(264,"
+          "(285,"
+           "(259,"
+            "(1, 'def'),"
+            "(1, 'f'),"
+            "(260, (7, '('), (8, ')')),"
+            "(11, ':'),"
+            "(291,"
+             "(4, ''),"
+             "(5, ''),"
+             "(264,"
+              "(265,"
+               "(266,"
+                "(272,"
+                 "(275,"
+                  "(1, 'return'),"
+                  "(313,"
+                   "(292,"
+                    "(293,"
+                     "(294,"
+                      "(295,"
+                       "(297,"
+                        "(298,"
+                         "(299,"
+                          "(300,"
+                           "(301,"
+                            "(302, (303, (304, (305, (2, '1')))))))))))))))))),"
+               "(264,"
+                "(265,"
+                 "(266,"
+                  "(272,"
+                   "(276,"
+                   "(1, 'yield'),"
+                    "(313,"
+                     "(292,"
+                      "(293,"
+                       "(294,"
+                        "(295,"
+                         "(297,"
+                          "(298,"
+                           "(299,"
+                            "(300,"
+                             "(301,"
+                              "(302,"
+                               "(303, (304, (305, (2, '1')))))))))))))))))),"
+                 "(4, ''))),"
+               "(6, ''))))),"
+           "(4, ''),"
+           "(0, ''))))";
 }
 
 void PyDUChainTest::testClassVariables()

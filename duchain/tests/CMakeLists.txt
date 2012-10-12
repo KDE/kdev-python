@@ -1,4 +1,5 @@
-kde4_add_unit_test(pyduchaintest pyduchaintest.cpp)
+automoc4(pyduchaintest waitforupdate.cpp)
+kde4_add_unit_test(pyduchaintest pyduchaintest.cpp waitforupdate.cpp)
 
 target_link_libraries(pyduchaintest
     kdev4pythonduchain

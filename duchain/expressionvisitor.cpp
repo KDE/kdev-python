@@ -619,7 +619,6 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
 }
 
 void ExpressionVisitor::visitTuple(TupleAst* node) {
-    AstDefaultVisitor::visitTuple(node);
     DUChainReadLocker lock;
     IndexedContainer::Ptr type = typeObjectForIntegralType<IndexedContainer>("tuple", m_ctx);
     if ( type ) {
@@ -639,6 +638,7 @@ void ExpressionVisitor::visitTuple(TupleAst* node) {
         kWarning() << "tuple type object is not available";
         return unknownTypeEncountered();
     }
+    AstDefaultVisitor::visitTuple(node);
 }
 
 void ExpressionVisitor::visitIfExpression(IfExpressionAst* node)

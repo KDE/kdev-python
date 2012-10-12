@@ -1101,7 +1101,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
                             IndexedContainer::Ptr indexed = param.cast<IndexedContainer>();
                             if ( indexed ) {
                                 int number = atParam - (parameters.size() - specialParamsCount);
-                                if ( indexed->typesCount() > number ) {
+                                if ( number > 0 && indexed->typesCount() > number ) {
                                     AbstractType::Ptr oldType = indexed->typeAt(number).abstractType();
                                     AbstractType::Ptr newType = Helper::mergeTypes(oldType, addType.cast<AbstractType>());
                                     indexed->replaceType(number, newType);

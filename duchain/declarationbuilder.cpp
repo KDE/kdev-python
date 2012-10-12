@@ -1100,7 +1100,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
                             AbstractType::Ptr param = parameters.at(offset)->abstractType();
                             IndexedContainer::Ptr indexed = param.cast<IndexedContainer>();
                             if ( indexed ) {
-                                int number = atParam - (functiontype->arguments().size() - specialParamsCount);
+                                int number = atParam - (parameters.size() - specialParamsCount);
                                 if ( indexed->typesCount() > number ) {
                                     AbstractType::Ptr oldType = indexed->typeAt(number).abstractType();
                                     AbstractType::Ptr newType = Helper::mergeTypes(oldType, addType.cast<AbstractType>());

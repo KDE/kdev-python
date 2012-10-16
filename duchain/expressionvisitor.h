@@ -205,6 +205,7 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         QStack<DeclarationPointer> m_callStack;
         
         ExpressionVisitor* m_parentVisitor;
+        int m_depth;
 };
 
 }

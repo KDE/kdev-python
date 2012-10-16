@@ -120,6 +120,7 @@ ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegrator* edi
     , m_editor(editor)
     , m_shouldBeKnown(true)
     , m_parentVisitor(0)
+    , m_depth(0)
 {
     if ( s_defaultTypes.isEmpty() ) {
         s_defaultTypes.insert(KDevelop::Identifier("True"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
@@ -139,6 +140,7 @@ ExpressionVisitor::ExpressionVisitor(ExpressionVisitor* parent)
     , m_editor(parent->m_editor)
     , m_shouldBeKnown(true)
     , m_parentVisitor(parent)
+    , m_depth(parent->m_depth + 1)
 {
 
 }
@@ -622,6 +624,7 @@ void ExpressionVisitor::visitTuple(TupleAst* node) {
     DUChainReadLocker lock;
     IndexedContainer::Ptr type = typeObjectForIntegralType<IndexedContainer>("tuple", m_ctx);
     if ( type ) {
+        qDebug() << "elts to visit:" << node->elements.size() << "at depth" << m_depth;
         foreach ( ExpressionAst* expr, node->elements ) {
             ExpressionVisitor v(this);
             v.visitNode(expr);
@@ -638,7 +641,6 @@ void ExpressionVisitor::visitTuple(TupleAst* node) {
         kWarning() << "tuple type object is not available";
         return unknownTypeEncountered();
     }
-    AstDefaultVisitor::visitTuple(node);
 }
 
 void ExpressionVisitor::visitIfExpression(IfExpressionAst* node)
@@ -659,7 +661,7 @@ void ExpressionVisitor::visitIfExpression(IfExpressionAst* node)
 
 void ExpressionVisitor::visitSet(SetAst* node)
 {
-    Python::AstDefaultVisitor::visitSet(node);
+    AstDefaultVisitor::visitSet(node);
     DUChainReadLocker lock;
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("set", m_ctx);
     lock.unlock();

@@ -624,7 +624,6 @@ void ExpressionVisitor::visitTuple(TupleAst* node) {
     DUChainReadLocker lock;
     IndexedContainer::Ptr type = typeObjectForIntegralType<IndexedContainer>("tuple", m_ctx);
     if ( type ) {
-        qDebug() << "elts to visit:" << node->elements.size() << "at depth" << m_depth;
         foreach ( ExpressionAst* expr, node->elements ) {
             ExpressionVisitor v(this);
             v.visitNode(expr);

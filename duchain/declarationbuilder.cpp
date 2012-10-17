@@ -811,7 +811,8 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
     kDebug() << "Found module path [path/path in file]: " << moduleInfo;
     kDebug() << "Declaration identifier:" << declarationIdentifier->value;
     DUChainWriteLocker lock;
-    ReferencedTopDUContext moduleContext = DUChain::self()->chainForDocument(IndexedString(moduleInfo.first));
+    const IndexedString modulePath = IndexedString(moduleInfo.first);
+    ReferencedTopDUContext moduleContext = DUChain::self()->chainForDocument(modulePath);
     lock.unlock();
     Declaration* resultingDeclaration = 0;
     if ( ! moduleInfo.first.isValid() ) {
@@ -837,11 +838,11 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
         // schedule the include file for parsing, and schedule the current one for reparsing after that is done
         kDebug() << "No module context, recompiling";
         m_unresolvedImports.append(moduleInfo.first);
-        if ( KDevelop::ICore::self()->languageController()->backgroundParser()->isQueued(moduleInfo.first) ) {
-            KDevelop::ICore::self()->languageController()->backgroundParser()->removeDocument(moduleInfo.first);
+        if ( KDevelop::ICore::self()->languageController()->backgroundParser()->isQueued(modulePath) ) {
+            KDevelop::ICore::self()->languageController()->backgroundParser()->removeDocument(modulePath);
         }
         KDevelop::ICore::self()->languageController()->backgroundParser()
-                                   ->addDocument(moduleInfo.first, TopDUContext::ForceUpdate, m_ownPriority - 1,
+                                   ->addDocument(modulePath, TopDUContext::ForceUpdate, m_ownPriority - 1,
                                                  0, ParseJob::FullSequentialProcessing);
         // parseDocuments() must *not* be called from a background thread!
         // KDevelop::ICore::self()->languageController()->backgroundParser()->parseDocuments();

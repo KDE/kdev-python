@@ -660,7 +660,6 @@ void ExpressionVisitor::visitIfExpression(IfExpressionAst* node)
 
 void ExpressionVisitor::visitSet(SetAst* node)
 {
-    AstDefaultVisitor::visitSet(node);
     DUChainReadLocker lock;
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("set", m_ctx);
     lock.unlock();
@@ -676,7 +675,6 @@ void ExpressionVisitor::visitSet(SetAst* node)
 
 void ExpressionVisitor::visitDict(DictAst* node)
 {
-    AstDefaultVisitor::visitDict(node);
     DUChainReadLocker lock;
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("dict", m_ctx);
     lock.unlock();

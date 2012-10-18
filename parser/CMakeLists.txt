@@ -13,12 +13,13 @@ set(parser_STAT_SRCS
 )
 
 kde4_add_library( kdev4pythonparser SHARED ${parser_SRCS} ${parser_STAT_SRCS} )
-target_link_libraries(kdev4pythonparser 
-    ${KDE4_KDECORE_LIBS} 
+target_link_libraries(kdev4pythonparser
+    ${KDE4_KDECORE_LIBS}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
-    ${QT_QTCORE_LIBRARY} 
+    ${QT_QTCORE_LIBRARY}
     ${kdevpython_SOURCE_DIR}/python-src/libpython2.7-kdevelop.so
 )
 
+add_dependencies(kdev4pythonparser parser)
 install(TARGETS kdev4pythonparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
 

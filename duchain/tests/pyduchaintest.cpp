@@ -93,7 +93,7 @@ void PyDUChainTest::initShell()
 
 ReferencedTopDUContext PyDUChainTest::parse(const QString& code)
 {
-    TestFile* testfile = new TestFile(code + "\n", "py");
+    TestFile* testfile = new TestFile(code + "\n", "py", 0, "/tmp/");
     testfile->parse((TopDUContext::Features) (TopDUContext::ForceUpdate | TopDUContext::AST) );
     testfile->waitForParsed(500);
     

@@ -70,7 +70,6 @@ ParseJob::ParseJob(LanguageSupport* parent, const KUrl &url)
         , m_readFromDisk(false)
         , m_duContext(0)
         , m_url(url)
-        , m_pool(KDevPG::MemoryPool())
 {
     m_parent = parent;
 }
@@ -98,7 +97,7 @@ bool ParseJob::wasReadFromDisk() const
 
 void ParseJob::run()
 {
-    ParseSession* currentSession = new ParseSession(&m_pool);
+    ParseSession* currentSession = new ParseSession();
     LanguageSupport* lang = python();
     ILanguage* ilang = lang->language();
     

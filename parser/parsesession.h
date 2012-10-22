@@ -50,7 +50,7 @@ namespace Python
 class KDEVPYTHONPARSER_EXPORT ParseSession : public IAstContainer
 {
 public:
-    ParseSession(KDevPG::MemoryPool* pool);
+    ParseSession();
     ~ParseSession();
 
     void setContents( const QString& contents );

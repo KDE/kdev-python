@@ -34,8 +34,8 @@ using namespace KDevelop;
 namespace Python
 {
 
-ParseSession::ParseSession(KDevPG::MemoryPool* pool)
-    : m_pool(pool)
+ParseSession::ParseSession()
+    : m_pool(new KDevPG::MemoryPool())
     , m_currentDocument(KDevelop::IndexedString("<invalid>"))
     , m_futureModificationRevision()
     , ast(0)

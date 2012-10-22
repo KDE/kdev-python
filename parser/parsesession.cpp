@@ -38,6 +38,7 @@ ParseSession::ParseSession(KDevPG::MemoryPool* pool)
     : m_pool(pool)
     , m_currentDocument(KDevelop::IndexedString("<invalid>"))
     , m_futureModificationRevision()
+    , ast(0)
 {
 }
 ParseSession::~ParseSession()

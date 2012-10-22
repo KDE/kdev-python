@@ -36,10 +36,10 @@
 #include <language/duchain/types/functiontype.h>
 #include <language/duchain/aliasdeclaration.h>
 #include <language/backgroundparser/backgroundparser.h>
+#include <language/interfaces/iastcontainer.h>
 #include <interfaces/ilanguagecontroller.h>
+#include <tests/testfile.h>
 
-// copied from kdevplatform since it is not installed
-#include "waitforupdate.h"
 #include "parsesession.h"
 #include "pythoneditorintegrator.h"
 #include "declarationbuilder.h"
@@ -91,59 +91,18 @@ void PyDUChainTest::initShell()
     KDevelop::CodeRepresentation::setDiskChangesForbidden(true);
 }
 
-ReferencedTopDUContext PyDUChainTest::parse_int(const QString& code, const QString& suffix)
+ReferencedTopDUContext PyDUChainTest::parse(const QString& code)
 {
-    ParseSession* session = new ParseSession(&m_pool);
-    session->setContents( code + "\n" ); // append a newline in case the parser doesnt like it without one
+    TestFile* testfile = new TestFile(code + "\n", "py");
+    testfile->parse((TopDUContext::Features) (TopDUContext::ForceUpdate | TopDUContext::AST) );
+    testfile->waitForParsed(500);
     
-    static int mytest=0;
-    KUrl filename;
-    if ( suffix.isNull() ) {
-        filename = "/tmp/pyduchaintest" + QString::number(mytest++) + ".py";
+    if ( testfile->isReady() ) {
+        m_ast = static_cast<Python::ParseSession*>(testfile->topContext()->ast().data())->ast;
+        return testfile->topContext();
     }
-    else {
-        filename = "/tmp/pyduchaintest__" + suffix + ".py";
-    }
-    QFile f(filename.path());
-    f.open(QIODevice::WriteOnly);
-    f.write(code.toAscii());
-    f.close();
-    
-    KDevelop::DUChain::self()->updateContextForUrl(KDevelop::IndexedString(filename), 
-                                                   static_cast<TopDUContext::Features>(TopDUContext::AllDeclarationsContextsAndUses | TopDUContext::ForceUpdate),
-                                                   this, 1
-                                                  );
-    ICore::self()->languageController()->backgroundParser()->parseDocuments();
-    AstBuilder* a = new AstBuilder(&m_pool);
-    m_ast = a->parse(filename, const_cast<QString&>(code));
-    
-    WaitForUpdate waiter;
-  
-    waiter.m_dataMutex.lock();
-    
-    {
-        DUChainReadLocker readLock(DUChain::lock());
-        DUChain::self()->updateContextForUrl(IndexedString(filename), TopDUContext::ForceUpdate, &waiter);
-    }
-    
-    QTimer t;
-    t.setSingleShot(true);
-    t.start(2000);
-    while( ! waiter.m_ready && t.isActive() ) {
-        QApplication::processEvents();
-        usleep(1000);
-    }
-    
-    // if parsing hangs, all tests must be aborted since there's no easy way
-    // to kill the hanging parser thread.
-    Q_ASSERT(waiter.m_ready && "Timed out waiting for parser results, aborting all tests");
-    
-    return waiter.m_topContext;
-}
-
-ReferencedTopDUContext PyDUChainTest::parse(const QString& code, const QString& suffix)
-{
-    return parse_int(code, suffix);
+    else Q_ASSERT(false && "Timed out waiting for parser results, aborting all tests");
+    return 0;
 }
 
 void PyDUChainTest::testMultiFromImport()
@@ -316,7 +275,7 @@ void PyDUChainTest::testCrashes_data() {
 
 void PyDUChainTest::testClassVariables()
 {
-    ReferencedTopDUContext ctx = parse("class c():\n myvar = 3;\n def meth(self):\n  print myvar", "classvars");
+    ReferencedTopDUContext ctx = parse("class c():\n myvar = 3;\n def meth(self):\n  print myvar");
     QVERIFY(ctx.data());
     DUChainWriteLocker lock(DUChain::lock());
     CursorInRevision relevantPosition(3, 10);
@@ -337,13 +296,25 @@ void PyDUChainTest::testFlickering()
     QFETCH(int, before);
     QFETCH(int, after);
     
-    ReferencedTopDUContext ctx = parse(code[0], "flickering");
+    TestFile f(code[0], "py");
+    f.parse(TopDUContext::ForceUpdate);
+    f.waitForParsed(500);
+    
+    ReferencedTopDUContext ctx = f.topContext();
+    QVERIFY(ctx);
+    
     DUChainWriteLocker lock(DUChain::lock());
     int count = ctx->localDeclarations().size();
     qDebug() << "Declaration count before: " << count;
     QVERIFY(count == before);
     lock.unlock();
-    ctx = parse(code[1], "flickering");
+    
+    f.setFileContents(code[1]);
+    f.parse(TopDUContext::ForceUpdate);
+    f.waitForParsed(500);
+    ctx = f.topContext();
+    QVERIFY(ctx);
+    
     lock.lock();
     count = ctx->localDeclarations().size();
     qDebug() << "Declaration count afterwards: " << count;
@@ -388,7 +359,7 @@ void PyDUChainTest::testSimple()
     DUChainWriteLocker lock(DUChain::lock());
     QVERIFY(ctx);
     
-    QVector< Declaration* > declarations = ctx->localDeclarations(ctx);
+    QVector< Declaration* > declarations = ctx->localDeclarations();
     
     QCOMPARE(declarations.size(), decls);
     
@@ -685,7 +656,11 @@ typedef QPair<Declaration*, int> p;
 
 void PyDUChainTest::testAutocompletionFlickering()
 {
-    ReferencedTopDUContext ctx1 = parse("foo = 3\nfoo2 = 2\nfo", "autocompletion1");
+    TestFile f("foo = 3\nfoo2 = 2\nfo", "py");
+    f.parse(TopDUContext::ForceUpdate);
+    f.waitForParsed(500);
+    
+    ReferencedTopDUContext ctx1 = f.topContext();
     DUChainWriteLocker lock(DUChain::lock());
     QVERIFY(ctx1);
     QList<p> decls1 = ctx1->allDeclarations(CursorInRevision::invalid(), ctx1->topContext());
@@ -694,7 +669,12 @@ void PyDUChainTest::testAutocompletionFlickering()
         declIds << d.first->id();
     }
     lock.unlock();
-    ReferencedTopDUContext ctx2 = parse("foo = 3\nfoo2 = 2\nfoo", "autocompletion1");
+    
+    f.setFileContents("foo = 3\nfoo2 = 2\nfoo");
+    f.parse(TopDUContext::ForceUpdate);
+    f.waitForParsed(500);
+    
+    ReferencedTopDUContext ctx2 = f.topContext();
     QVERIFY(ctx2);
     lock.lock();
     QList<p> decls2 = ctx2->allDeclarations(CursorInRevision::invalid(), ctx2->topContext());
@@ -707,7 +687,11 @@ void PyDUChainTest::testAutocompletionFlickering()
     
     qDebug() << "=========================";
     
-    ctx1 = parse("def func():\n\tfoo = 3\n\tfoo2 = 2\n\tfo", "autocompletion2");
+    TestFile g("def func():\n\tfoo = 3\n\tfoo2 = 2\n\tfo", "py");
+    g.parse(TopDUContext::ForceUpdate);
+    g.waitForParsed(500);
+    
+    ctx1 = g.topContext();
     lock.lock();
     QVERIFY(ctx1);
     decls1 = ctx1->allDeclarations(CursorInRevision::invalid(), ctx1->topContext(), false).first().first->internalContext()
@@ -717,7 +701,12 @@ void PyDUChainTest::testAutocompletionFlickering()
         declIds << d.first->id();
     }
     lock.unlock();
-    ctx2 = parse("def func():\n\tfoo = 3\n\tfoo2 = 2\n\tfoo", "autocompletion2");
+    
+    g.setFileContents("def func():\n\tfoo = 3\n\tfoo2 = 2\n\tfoo");
+    g.parse(TopDUContext::ForceUpdate);
+    g.waitForParsed(500);
+    
+    ctx2 = g.topContext();
     QVERIFY(ctx2);
     lock.lock();
     decls2 = ctx2->allDeclarations(CursorInRevision::invalid(), ctx2->topContext(), false).first().first->internalContext()

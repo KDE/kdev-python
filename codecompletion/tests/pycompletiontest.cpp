@@ -74,9 +74,10 @@ void makefile(QString filename, QString contents) {
     KUrl url = KUrl(basepath + filename);
     url.cleanPath();
     kDebug() <<  "updating duchain for " << url.url() << basepath;
-    DUChain::self()->updateContextForUrl(IndexedString(url.url()), KDevelop::TopDUContext::ForceUpdate);
+    const IndexedString urlstring(url.url());
+    DUChain::self()->updateContextForUrl(urlstring, KDevelop::TopDUContext::ForceUpdate);
     ICore::self()->languageController()->backgroundParser()->parseDocuments();
-    DUChain::self()->waitForUpdate(IndexedString(url.url()), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
+    DUChain::self()->waitForUpdate(urlstring, KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
 }
 
 void PyCompletionTest::initShell()

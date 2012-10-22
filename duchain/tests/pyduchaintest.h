@@ -30,11 +30,14 @@
 #include "ast.h"
 #include <language/duchain/indexedstring.h>
 #include <language/duchain/topducontext.h>
+#include <tests/testfile.h>
 
 namespace KDevelop {
 class TopDUContext;
 class ReferencedTopDUContext;
 }
+
+using namespace KDevelop;
 
 class PyDUChainTest : public QObject
 {
@@ -43,8 +46,7 @@ class PyDUChainTest : public QObject
         explicit PyDUChainTest(QObject* parent = 0);
         void initShell();
         
-        KDevelop::ReferencedTopDUContext parse_int(const QString& code, const QString& suffix = QString::null);
-        KDevelop::ReferencedTopDUContext parse(const QString& code, const QString& suffix = QString::null);
+        KDevelop::ReferencedTopDUContext parse(const QString& code);
         
         Python::CodeAst* m_ast;
         KDevPG::MemoryPool m_pool;
@@ -74,7 +76,7 @@ class PyDUChainTest : public QObject
         void testClassContextRanges();
         void testVarKWArgs();
         void testMultiFromImport();
-        
+    
 //         void testFunctionStuff();
 //         void testFunctionStuff_data();
 };

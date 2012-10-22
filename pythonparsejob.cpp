@@ -57,6 +57,7 @@
 #include <language/duchain/indexedstring.h>
 #include <language/duchain/duchainutils.h>
 #include <language/backgroundparser/backgroundparser.h>
+#include <language/interfaces/iastcontainer.h>
 
 using namespace KDevelop;
 
@@ -97,7 +98,7 @@ bool ParseJob::wasReadFromDisk() const
 
 void ParseJob::run()
 {
-    QSharedPointer<ParseSession> currentSession = QSharedPointer<ParseSession>(new ParseSession(&m_pool));
+    ParseSession* currentSession = new ParseSession(&m_pool);
     LanguageSupport* lang = python();
     ILanguage* ilang = lang->language();
     
@@ -141,7 +142,7 @@ void ParseJob::run()
     }
     
     QSharedPointer<PythonEditorIntegrator> editor = QSharedPointer<PythonEditorIntegrator>(
-        new PythonEditorIntegrator(currentSession.data())
+        new PythonEditorIntegrator(currentSession)
     );
     // if parsing succeeded, continue and do semantic analysis
     if ( parserResults.second )
@@ -246,6 +247,15 @@ void ParseJob::run()
     DUChainWriteLocker lock(DUChain::lock());
     foreach ( ProblemPointer p, currentSession->m_problems ) {
         m_duContext->addProblem(p);
+    }
+    
+    if ( minimumFeatures() & TopDUContext::AST ) {
+        DUChainWriteLocker lock;
+        currentSession->ast = m_ast;
+        m_duContext->setAst(KSharedPtr<IAstContainer>(currentSession));
+    }
+    else {
+        delete currentSession;
     }
     
     setDuChain(m_duContext);

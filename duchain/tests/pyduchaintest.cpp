@@ -524,7 +524,6 @@ void PyDUChainTest::testTypes()
     visitor->searchingForType = expectedType;
     visitor->visitCode(m_ast);
     
-    QEXPECT_FAIL("args_type", "The feature itself is supposed to work but the output is broken", Continue);
     QCOMPARE(visitor->found, true);
 }
 

@@ -77,8 +77,24 @@ KDevelop::Variable* VariableController::createVariable(KDevelop::TreeModel* mode
 
 QString VariableController::expressionUnderCursor(KTextEditor::Document* doc, const KTextEditor::Cursor& cursor)
 {
+    QString prefix = "";
+    DUChainReadLocker lock;
+    if ( ! doc->isModified() ) {
+        if ( TopDUContext* context = DUChain::self()->chainForDocument(doc->url()) ) {
+            DUContext* contextAtCursor = context->findContextAt(CursorInRevision(cursor.line(), cursor.column()));
+            if ( contextAtCursor and contextAtCursor->type() == DUContext::Class ) {
+                if ( contextAtCursor->owner() and ! contextAtCursor->owner()->identifier().isEmpty() ) {
+                    prefix = contextAtCursor->owner()->identifier().toString() + ".";
+                }
+            }
+        }
+    }
+    else {
+        kDebug() << "duchain unavailable for document" << doc->url() << "or document out of date";
+    }
+    
     TextDocumentLazyLineFetcher linefetcher(doc);
-    return CodeHelpers::expressionUnderCursor(linefetcher, cursor);
+    return prefix + CodeHelpers::expressionUnderCursor(linefetcher, cursor);
 }
 
 void VariableController::localsUpdateReady(QByteArray rawData)

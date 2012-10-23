@@ -38,7 +38,7 @@ int PdbFrameStackModel::debuggerAtFrame() const
 
 void PdbFrameStackModel::setDebuggerAtFrame(int newFrame)
 {
-    Q_ASSERT(newFrame >= 0);
+//     Q_ASSERT(newFrame >= 0);
     m_debuggerAtFrame = newFrame;
 }
 

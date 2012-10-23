@@ -43,7 +43,7 @@ static QString basepath = "/tmp/__kdevpythoncompletiontest.dir/";
 static QFSFileEngine fileEngine;
 
 namespace Python {
-    
+
 QStandardItemModel& fakeModel() {
   static QStandardItemModel model;
   model.setColumnCount(10);
@@ -74,7 +74,7 @@ void makefile(QString filename, QString contents) {
     KUrl url = KUrl(basepath + filename);
     url.cleanPath();
     kDebug() <<  "updating duchain for " << url.url() << basepath;
-    const IndexedString urlstring(url.url());
+    const IndexedString urlstring(url);
     DUChain::self()->updateContextForUrl(urlstring, KDevelop::TopDUContext::ForceUpdate);
     ICore::self()->languageController()->backgroundParser()->parseDocuments();
     DUChain::self()->waitForUpdate(urlstring, KDevelop::TopDUContext::AllDeclarationsContextsAndUses);

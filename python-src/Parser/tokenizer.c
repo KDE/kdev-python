@@ -753,7 +753,6 @@ decode_str(const char *input, int single, struct tok_state *tok)
 //                 return error_ret(tok);
 //         }
 //     }
-#ifdef Py_USING_UNICODE
     if (tok->enc != NULL) {
         assert(utf8 == NULL);
         utf8 = translate_into_utf8(str, tok->enc);
@@ -776,16 +775,8 @@ PyTokenizer_FromString(const char *str, int exec_input)
     struct tok_state *tok = tok_new();
     if (tok == NULL)
         return NULL;
-<<<<<<< HEAD
-//     str = (char *)decode_str(str, exec_input, tok);
-    if (str == NULL) {
-        PyTokenizer_Free(tok);
-        return NULL;
-    }
-=======
     /// kdevelop change: We don't need this. We can throw in unicode from KTE, which is fine.
-    str = (char *)decode_str(str, exec_input, tok);
->>>>>>> master
+//     str = (char *)decode_str(str, exec_input, tok);
 
     /* XXX: constify members. */
     tok->buf = tok->cur = tok->end = tok->inp = (char*)str;

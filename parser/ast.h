@@ -131,7 +131,6 @@ public:
         ComprehensionAstType,
         ExceptionHandlerAstType,
         AliasAstType, // for imports
-        IdentifierAstType,
         LastAstType // the largest one, not valid!
     };
     

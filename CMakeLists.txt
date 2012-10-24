@@ -27,7 +27,6 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/duchain
     ${CMAKE_CURRENT_SOURCE_DIR}/parser
     ${CMAKE_CURRENT_SOURCE_DIR}/python-src
-    ${CMAKE_CURRENT_BINARY_DIR}/parser
     ${KDEVPGQT_INCLUDE_DIR}
 )
 
@@ -37,8 +36,6 @@ add_definitions( -DKDE_DEFAULT_DEBUG_AREA=9011 )
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}/parser
 )
-
-add_subdirectory(python-src)
 
 add_subdirectory(app_templates)
 add_subdirectory(python-src)

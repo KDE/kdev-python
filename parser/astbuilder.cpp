@@ -88,9 +88,9 @@ QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
             if ( contents.at(insertAt) == '#' ) {
                 commentSignEncountered = true;
             }
-            if ( !contents.at(insertAt).isSpace() ) {
+            if ( not contents.at(insertAt).isSpace() ) {
 //                 atLineBeginning = false;
-                if ( !commentSignEncountered ) {
+                if ( not commentSignEncountered ) {
                     endOfCommentsReached = true;
                 }
             }
@@ -104,7 +104,7 @@ QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
                 endOfCommentsReached = true;
             }
             insertAt += 1;
-        } while ( !endOfCommentsReached );
+        } while ( not endOfCommentsReached );
         kDebug() << "Inserting contents at char" << lastLineBeginning << "of file";
         contents = contents.left(lastLineBeginning) 
                    + "\n" + headerFileContents + "\n#\n" 

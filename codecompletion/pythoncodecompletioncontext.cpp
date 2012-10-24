@@ -91,7 +91,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             v->m_reportUnknownNames = true;
             v->visitCode(tmpAst);
             lock.unlock();
-            if ( !v->m_unknownNames.isEmpty() ) {
+            if ( not v->m_unknownNames.isEmpty() ) {
                 if ( v->m_unknownNames.size() >= 2 ) {
                     // we only take the first two, and only two. It gets too much items otherwise.
                     QStringList combinations;
@@ -270,7 +270,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         QList<DeclarationDepthPair> remainingDeclarations;
         foreach ( DeclarationDepthPair d, declarations ) {
             Declaration* r = Helper::resolveAliasDeclaration(d.first);
-            if ( r && r->identifier().identifier().str().contains("__kdevpythondocumentation_builtin") ) {
+            if ( r and r->identifier().identifier().str().contains("__kdevpythondocumentation_builtin") ) {
                 continue;
             }
             if ( r && dynamic_cast<ClassDeclaration*>(r) ) {
@@ -356,10 +356,10 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         }
         QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
         foreach ( DeclarationDepthPair d, declarations ) {
-            if ( d.first && d.first->context()->type() == DUContext::Class ) {
+            if ( d.first and d.first->context()->type() == DUContext::Class ) {
                 declarations.removeAll(d);
             }
-            if ( d.first && d.first->identifier().identifier().str().contains("__kdevpythondocumentation_builtin") ) {
+            if ( d.first and d.first->identifier().identifier().str().contains("__kdevpythondocumentation_builtin") ) {
                 declarations.removeAll(d);
             }
         }
@@ -626,7 +626,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     
     // cool, we found something. Now we need to compare its indent to the current one; if they don't match, then 
     // we ignore it and use the one provided as an argument to this function. Otherwise, we use what we found.
-    if ( currentlyChecked && currentlyChecked->range().start.line < currentlyChecked->range().end.line ) {
+    if ( currentlyChecked and currentlyChecked->range().start.line < currentlyChecked->range().end.line ) {
         int previousStartsAtLine = currentlyChecked->range().castToSimpleRange().start.line;
         if ( currentlyChecked->type() != DUContext::Class ) {
             previousStartsAtLine += 1;

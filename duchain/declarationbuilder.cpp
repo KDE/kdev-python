@@ -225,9 +225,9 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     // tells whether there's fitting declarations to update (update is not the same as re-open! one is for
     // code which uses the same variable twice, the other is for multiple passes of the parser)
     bool haveFittingDeclaration = false;
-    if ( ! existingDeclarations.isEmpty() && existingDeclarations.last() ) {
+    if ( ! existingDeclarations.isEmpty() and existingDeclarations.last() ) {
         Declaration* d = Helper::resolveAliasDeclaration(existingDeclarations.last());
-        if ( d && d->topContext() != topContext() ) {
+        if ( d and d->topContext() != topContext() ) {
             inSameTopContext = false;
         }
         if ( dynamic_cast<T*>(existingDeclarations.last()) ) {
@@ -400,7 +400,7 @@ Declaration* DeclarationBuilder::findDeclarationInContext(QStringList dottedName
                                                                             CursorInRevision::invalid(), 0, DUContext::NoFiltering);
         // break if the list of identifiers is not yet totally worked through and no
         // declaration with an internal context was found
-        if ( declarations.isEmpty() || ( !declarations.last()->internalContext() && identifierCount != i ) ) {
+        if ( declarations.isEmpty() or ( not declarations.last()->internalContext() and identifierCount != i ) ) {
             kDebug() << "Declaration not found: " << dottedNameIdentifier << "in top context" << ctx->url().toUrl().path();
             return 0;
         }
@@ -435,7 +435,7 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
             declarationName = name->name->value;
         }
         Declaration* success = createModuleImportDeclaration(moduleName, declarationName, declarationIdentifier, 0, DontCreateProblems);
-        if ( !success && node->module ) {
+        if ( not success and node->module ) {
             QString modifiedModuleName = node->module->value + ".__init__." + name->name->value;
             createModuleImportDeclaration(modifiedModuleName, declarationName, declarationIdentifier);
         }
@@ -501,8 +501,8 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
                                        const ReferencedTopDUContext& innerCtx, Declaration* aliasDeclaration,
                                        const RangeInRevision& range)
 {
-    Q_ASSERT( ( innerCtx.data() || aliasDeclaration ) && "exactly one of innerCtx or aliasDeclaration must be provided");
-    Q_ASSERT( ( !innerCtx.data() || !aliasDeclaration ) && "exactly one of innerCtx or aliasDeclaration must be provided");
+    Q_ASSERT( ( innerCtx.data() or aliasDeclaration ) && "exactly one of innerCtx or aliasDeclaration must be provided");
+    Q_ASSERT( ( not innerCtx.data() or not aliasDeclaration ) && "exactly one of innerCtx or aliasDeclaration must be provided");
     
     kDebug() << "creating declaration tree for" << nameComponents;
     
@@ -516,7 +516,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
             currentName.append(nameComponents.at(j));
         }
         lastDeclaration = findDeclarationInContext(currentName, topContext());
-        if ( lastDeclaration && lastDeclaration->range() < range ) {
+        if ( lastDeclaration and lastDeclaration->range() < range ) {
             depth = i;
             break;
         }
@@ -525,7 +525,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
     DUContext* extendingPreviousImportCtx = 0;
     QStringList remainingNameComponents;
     bool injectingContext = false;
-    if ( lastDeclaration && lastDeclaration->internalContext() ) {
+    if ( lastDeclaration and lastDeclaration->internalContext() ) {
         kDebug() << "Found existing import statement while creating declaration for " << declarationIdentifier->value;
         for ( int i = depth; i < nameComponents.length(); i++ ) {
             remainingNameComponents.append(nameComponents.at(i));
@@ -554,7 +554,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
         temporaryIdentifier->copyRange(declarationIdentifier);
         temporaryIdentifier->endCol = temporaryIdentifier->startCol - 1;
         openType(moduleType);
-        if ( i != remainingNameComponents.length() - 1 || !aliasDeclaration ) {
+        if ( i != remainingNameComponents.length() - 1 or not aliasDeclaration ) {
             d = visitVariableDeclaration<Declaration>(temporaryIdentifier);
             if ( d ) {
                 if ( topContext() != extendingPreviousImportCtx ) {
@@ -593,7 +593,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
         closeType();
         closeContext();
         Declaration* d = openedDeclarations.at(i);
-        if ( d && ( i != 0 || !aliasDeclaration ) ) {
+        if ( d and ( i != 0 or not aliasDeclaration ) ) {
             openedTypes[i]->setDeclaration(d);
             d->setType(openedTypes.at(i));
             d->setInternalContext(openedContexts.at(i));
@@ -1030,8 +1030,8 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                 if ( cont ) {
                     cont->addContentType(tupleElementType);
                 }
-                if ( cont && cont->hasKeyType() ) {
-                    if ( subscript->slice && subscript->slice->astType == Ast::IndexAstType ) {
+                if ( cont and cont->hasKeyType() ) {
+                    if ( subscript->slice and subscript->slice->astType == Ast::IndexAstType ) {
                         ExpressionVisitor keyVisitor(currentContext());
                         keyVisitor.visitNode(static_cast<IndexAst*>(subscript->slice)->value);
                         AbstractType::Ptr key = keyVisitor.lastType();
@@ -1366,10 +1366,10 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
     if ( currentDeclaration() ) kDebug() << currentDeclaration()->identifier().toString();
     
     
-    if ( currentDeclaration() && currentDeclaration()->isFunctionDeclaration() ) {
+    if ( currentDeclaration() and currentDeclaration()->isFunctionDeclaration() ) {
         FunctionDeclaration* workingOnDeclaration = static_cast<FunctionDeclaration*>(Helper::resolveAliasDeclaration(currentDeclaration()));
         workingOnDeclaration->clearDefaultParameters();
-        if ( hasCurrentType() && currentType<FunctionType>() ) {
+        if ( hasCurrentType() and currentType<FunctionType>() ) {
             FunctionType::Ptr type = currentType<FunctionType>();
             NameAst* realParam = 0;
             bool isFirst = true;

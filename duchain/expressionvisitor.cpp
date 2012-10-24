@@ -59,7 +59,7 @@ AbstractType::Ptr ExpressionVisitor::encounterPreprocess(AbstractType::Ptr type,
 {
     type = Helper::resolveType(type);
     AbstractType::Ptr res;
-    if ( merge && !m_lastType.isEmpty() ) {
+    if ( merge and not m_lastType.isEmpty() ) {
         res = Helper::mergeTypes(m_lastType.pop(), type);
     }
     else {
@@ -208,7 +208,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     else if ( accessingAttributeOf->astType == Ast::SliceAstType ) {
         availableDeclarations = lastDeclarations();
     }
-    else if ( !lastType().isNull() && lastType().cast<StructureType>() ) {
+    else if ( not lastType().isNull() && lastType().cast<StructureType>() ) {
         accessingAttributeOfType.append(lastType().cast<StructureType>());
     }
     else {
@@ -265,8 +265,8 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     DeclarationPointer actualDeclaration(0);
     if ( foundDecls.length() > 0 ) {
         actualDeclaration = DeclarationPointer(Helper::resolveAliasDeclaration(foundDecls.last()));
-        bool isAlias = foundDecls.last()->abstractType() && (
-                       foundDecls.last()->abstractType()->whichType() == AbstractType::TypeFunction ||
+        bool isAlias = foundDecls.last()->abstractType() and (
+                       foundDecls.last()->abstractType()->whichType() == AbstractType::TypeFunction or
                        foundDecls.last()->abstractType()->whichType() == AbstractType::TypeStructure );
         encounterDeclarations(toSharedPtrList(foundDecls), isAlias);
         encounter(foundDecls.last()->abstractType());
@@ -295,7 +295,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
         actualDeclaration = v.lastDeclaration().data();
     }
     
-    if ( !actualDeclaration ) {
+    if ( not actualDeclaration ) {
 //         kDebug() << "No declaration for " << functionName;
         m_shouldBeKnown = false;
         return unknownTypeEncountered();
@@ -310,7 +310,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
         
         if ( funcDecl && funcDecl->type<FunctionType>() ) {
             AbstractType::Ptr type;
-            if ( isConstructor && classDecl ) {
+            if ( isConstructor and classDecl ) {
                 type = classDecl->abstractType();
                 encounterDeclaration(classDecl);
             }
@@ -339,7 +339,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
                     }
                 }
                 if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsList")
-                    || Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsListOfKeys")
+                    or Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsListOfKeys")
                 ) {
                     decoratorFound = true;
                     kDebug() << "Got getsList decorator, checking container";
@@ -399,7 +399,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
                         return encounter(type);
                     }
                 }
-                if ( decoratorFound && !typeFound ) {
+                if ( decoratorFound and not typeFound ) {
                     return unknownTypeEncountered();
                 }
             }
@@ -552,7 +552,7 @@ void ExpressionVisitor::visitTuple(TupleAst* node) {
 void ExpressionVisitor::visitIfExpression(IfExpressionAst* node)
 {
     AstDefaultVisitor::visitIfExpression(node);
-    if ( node->body && node->orelse ) {
+    if ( node->body and node->orelse ) {
         ExpressionVisitor v(m_ctx);
         v.m_forceGlobalSearching = m_forceGlobalSearching;
         v.visitNode(node->body);
@@ -651,8 +651,8 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
         kDebug() << "Found declaration: " << d->toString() << d
                  << d->abstractType() << dynamic_cast<VariableLengthContainer*>(d->abstractType().unsafeData());
         /** / DEBUG **/
-        bool isAlias = d->abstractType() && (
-                       d->abstractType()->whichType() == AbstractType::TypeFunction ||
+        bool isAlias = d->abstractType() and (
+                       d->abstractType()->whichType() == AbstractType::TypeFunction or
                        d->abstractType()->whichType() == AbstractType::TypeStructure );
         encounterDeclaration(d, isAlias);
         return encounter(d->abstractType());

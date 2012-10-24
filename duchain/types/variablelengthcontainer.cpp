@@ -95,7 +95,7 @@ QString VariableLengthContainer::toString() const
     QString prefix = KDevelop::StructureType::toString();
     AbstractType::Ptr content = contentType().abstractType();
     AbstractType::Ptr key = keyType().abstractType();
-    if ( hasKeyType() && content && key ) {
+    if ( hasKeyType() and content and key ) {
         return i18n("%1 of %2 : %3", prefix, key->toString(), content->toString());
     }
     if ( content ) {

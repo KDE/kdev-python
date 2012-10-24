@@ -63,7 +63,7 @@ RULE_FOR _slice;KIND Index_kind;ACTIONS create|IndexAst set|value->ExpressionAst
 
 RULE_FOR _comprehension;KIND any;ACTIONS create|ComprehensionAst set|target->ExpressionAst,target set|iterator->ExpressionAst,iter set|conditions=>ExpressionAst,ifs;;
 RULE_FOR _excepthandler;KIND ExceptHandler_kind;ACTIONS create|ExceptionHandlerAst set|type->ExpressionAst,type set|name~>name set|body=>Ast,body;;
-RULE_FOR _arguments;KIND any;ACTIONS create|ArgumentsAst set|vararg~>vararg set|kwarg~>kwarg set|arguments=>ExpressionAst,args set|defaultValues=>ExpressionAst,defaults
+RULE_FOR _arguments;KIND any;ACTIONS create|ArgumentsAst set|vararg~>vararg set|kwarg~>kwarg set|arguments=>ArgAst,args set|defaultValues=>ExpressionAst,defaults
                                      set|arg_linenol>arg_lineno set|arg_col_offset+>arg_col_offset set|vararg_linenol>vararg_lineno set|vararg_col_offset+>vararg_col_offset;;
 RULE_FOR _arg;KIND any;ACTIONS create|ArgAst set|argumentName~>arg set|annotation->ExpressionAst,annotation;;
 RULE_FOR _keyword;KIND any;ACTIONS create|KeywordAst set|argumentName~>arg set|value->ExpressionAst,value;;

@@ -19,11 +19,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
 
-<<<<<<< HEAD
-// The Python 2.7 Language Reference was used as basis for this AST
-=======
 // The Python 3.2 Language Reference was used as basis for this AST
->>>>>>> adapt to new objects in python 3.2
 
 #ifndef PYTHON_AST_H
 #define PYTHON_AST_H
@@ -134,8 +130,12 @@ public:
         ComprehensionAstType,
         ExceptionHandlerAstType,
         AliasAstType, // for imports
+<<<<<<< HEAD
         
         IdentifierAstType
+=======
+        LastAstType // the largest one, not valid!
+>>>>>>> add unit tests for AST
     };
     
     enum BooleanOperationTypes {
@@ -616,10 +616,18 @@ public:
 };
 
 /** Independent classes **/
+
+class KDEVPYTHONPARSER_EXPORT ArgAst : public Ast {
+public:
+    ArgAst(Ast* parent);
+    Identifier* argumentName;
+    ExpressionAst* annotation;
+};
+
 class KDEVPYTHONPARSER_EXPORT ArgumentsAst : public Ast {
 public:
     ArgumentsAst(Ast* parent);
-    QList<ExpressionAst*> arguments;
+    QList<ArgAst*> arguments;
     QList<ExpressionAst*> defaultValues;
     Identifier* vararg;
     Identifier* kwarg;
@@ -632,13 +640,6 @@ public:
     KeywordAst(Ast* parent);
     Identifier* argumentName;
     ExpressionAst* value;
-};
-
-class KDEVPYTHONPARSER_EXPORT ArgAst : public Ast {
-public:
-    ArgAst(Ast* parent);
-    Identifier* argumentName;
-    ExpressionAst* annotation;
 };
 
 class KDEVPYTHONPARSER_EXPORT ComprehensionAst : public Ast {

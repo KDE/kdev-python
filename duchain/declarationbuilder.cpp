@@ -922,10 +922,11 @@ void DeclarationBuilder::visitLambda(LambdaAst* node)
     // A context must be opened, because the lamdba's arguments are local to the lambda:
     // d = lambda x: x*2; print x # <- gives an error
     openContext(node, editorFindRange(node, node->body), DUContext::Other);
-    foreach ( ExpressionAst* argument, node->arguments->arguments ) {
+    foreach ( ArgAst* argument, node->arguments->arguments ) {
+#warning this cannot work correctly
         // Create variable declarations for the lambda's arguments, so they aren't displayed as errors
         if ( argument->astType == Ast::NameAstType ) {
-            visitVariableDeclaration<Declaration>(static_cast<NameAst*>(argument));
+//             visitVariableDeclaration<Declaration>(static_cast<NameAst*>(argument));
         }
     }
     closeContext();
@@ -1629,9 +1630,15 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             int firstDefaultParameterOffset = parametersCount - defaultParametersCount;
             int currentIndex = 0;
             kDebug() << "variable argument ranges: " << node->arg_lineno << node->arg_col_offset << node->vararg_lineno << node->vararg_col_offset;
+<<<<<<< HEAD
             foreach ( ExpressionAst* expression, node->arguments ) {
                 // Iterate over all the function's arguments, create declarations, and add the arguments
                 // to the functions FunctionType.
+=======
+            foreach ( ArgAst* arg, node->arguments ) {
+                ExpressionAst* expression = 0; //arg->argumentName;
+#warning this cannot work
+>>>>>>> add unit tests for AST
                 currentIndex += 1;
                 realParam = dynamic_cast<NameAst*>(expression);
                 

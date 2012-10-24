@@ -353,6 +353,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     
     RangeUpdateVisitor v;
     v.visitNode(t.ast);
+    free(homedir);
 
 #ifdef _WIN32
     delete[] we;

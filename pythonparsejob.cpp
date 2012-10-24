@@ -64,25 +64,17 @@ using namespace KDevelop;
 namespace Python
 {
 
-ParseJob::ParseJob(LanguageSupport* parent, const KUrl &url)
-        : KDevelop::ParseJob(url)
+ParseJob::ParseJob(const IndexedString &url, ILanguageSupport* languageSupport)
+        : KDevelop::ParseJob(url, languageSupport)
         , m_ast(0)
         , m_readFromDisk(false)
         , m_duContext(0)
-        , m_url(url)
 {
-    m_parent = parent;
 }
 
 ParseJob::~ParseJob()
 {
 }
-
-LanguageSupport *ParseJob::python() const
-{
-    return LanguageSupport::self();
-}
-
 
 CodeAst *ParseJob::ast() const
 {
@@ -98,22 +90,15 @@ bool ParseJob::wasReadFromDisk() const
 void ParseJob::run()
 {
     ParseSession* currentSession = new ParseSession();
-    LanguageSupport* lang = python();
-    ILanguage* ilang = lang->language();
     
     if ( abortRequested() || ICore::self()->shuttingDown() ) {
         return abortJob();
     }
     
-    qDebug() << " ====> PARSING ====> parsing file " << m_url.path() << "; has priority" << parsePriority();
-    
-    if ( ! lang || ! ilang ) {
-        kWarning() << "Language support is NULL";
-        return abortJob();
-    }
+    qDebug() << " ====> PARSING ====> parsing file " << document().toUrl() << "; has priority" << parsePriority();
     
     // lock the URL so no other parse job can run on this document
-    QReadLocker parselock(ilang->parseLock());
+    QReadLocker parselock(languageSupport()->language()->parseLock());
     UrlParseLock urlLock(document());
     
     readContents();
@@ -128,9 +113,7 @@ void ParseJob::run()
     }
     
     currentSession->setContents(QString::fromUtf8(contents().contents));
-    currentSession->setCurrentDocument(m_url);
-    
-    IndexedString filename = KDevelop::IndexedString(m_url.pathOrUrl());
+    currentSession->setCurrentDocument(document());
     
     // call the python API and the AST transformer to populate the syntax tree
     QPair<CodeAst*, bool> parserResults = currentSession->parse(m_ast);
@@ -149,11 +132,11 @@ void ParseJob::run()
         // set up the declaration builder, it gets the parsePriority so it can re-schedule imported files with a better priority
         DeclarationBuilder builder(editor.data());
         builder.m_ownPriority = parsePriority();
-        builder.m_currentlyParsedDocument = filename;
+        builder.m_currentlyParsedDocument = document();
         builder.m_futureModificationRevision = contents().modification;
         
         // Run the declaration builder. If necessary, it will run itself again.
-        m_duContext = builder.build(filename, m_ast, toUpdate);
+        m_duContext = builder.build(document(), m_ast, toUpdate);
         if ( abortRequested() ) {
             return abortJob();
         }
@@ -162,7 +145,7 @@ void ParseJob::run()
         
         // gather uses of variables and functions on the document
         UseBuilder usebuilder(editor.data());
-        usebuilder.m_currentlyParsedDocument = filename;
+        usebuilder.m_currentlyParsedDocument = document();
         usebuilder.buildUses(m_ast);
         
         // check whether any unresolved imports were encountered
@@ -205,11 +188,7 @@ void ParseJob::run()
         }
         
         // start the code highlighter if parsing was successful.
-        if ( m_parent && m_parent->codeHighlighting() ) {
-            kDebug() << "Starting highlighter...";
-            KDevelop::ICodeHighlighting* hl = m_parent->codeHighlighting();
-            hl->highlightDUChain(m_duContext);
-        }
+        highlightDUChain();
     }
     else {
         // No syntax tree was received from the parser, the expected reason for this is a syntax error in the document.

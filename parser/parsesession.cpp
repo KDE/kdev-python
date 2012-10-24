@@ -45,9 +45,9 @@ ParseSession::~ParseSession()
 {
 }
 
-void ParseSession::setCurrentDocument(KUrl& filename)
+void ParseSession::setCurrentDocument(const IndexedString& url)
 {
-    m_currentDocument = KDevelop::IndexedString(filename);
+    m_currentDocument = url;
 }
 
 IndexedString ParseSession::currentDocument()

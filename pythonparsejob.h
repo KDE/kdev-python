@@ -56,7 +56,7 @@ public:
     enum {
         Rescheduled = KDevelop::TopDUContext::LastFeature
     };
-    ParseJob(LanguageSupport* parent, const KUrl &url );
+    ParseJob(const IndexedString& url, ILanguageSupport* languageSupport );
     virtual ~ParseJob();
 
     void setAST( CodeAst* ast );
@@ -64,11 +64,8 @@ public:
 
     const KTextEditor::Range& textRangeToParse() const;
 
-    LanguageSupport* python() const;
     bool wasReadFromDisk() const;
-    
-    const LanguageSupport* m_parent;
-    
+
 protected:
     virtual void run();
 
@@ -76,7 +73,6 @@ private:
     CodeAst *m_ast;
     bool m_readFromDisk;
     KDevelop::ReferencedTopDUContext m_duContext;
-    KUrl m_url;
     KTextEditor::Range m_textRangeToParse;
 };
 

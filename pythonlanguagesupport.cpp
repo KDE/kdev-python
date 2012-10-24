@@ -91,9 +91,9 @@ LanguageSupport::~LanguageSupport()
     m_highlighting = 0;
 }
 
-KDevelop::ParseJob *LanguageSupport::createParseJob( const KUrl &url )
+KDevelop::ParseJob *LanguageSupport::createParseJob( const IndexedString& url )
 {
-    return new ParseJob(this, url);
+    return new ParseJob(url, this);
 }
 
 QString LanguageSupport::name() const

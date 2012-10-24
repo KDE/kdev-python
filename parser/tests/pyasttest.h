@@ -40,6 +40,14 @@ class PyAstTest : public QObject
         void testCode(QString code);
     private slots:
         void testClass();
+        void testStatements();
+        void testStatements_data();
+        void testExpressions();
+        void testExpressions_data();
+        void testSlices();
+        void testSlices_data();
+        void testOther();
+        void testOther_data();
 };
 
 }

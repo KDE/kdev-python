@@ -129,7 +129,8 @@ public:
         
         ComprehensionAstType,
         ExceptionHandlerAstType,
-        AliasAstType // for imports
+        AliasAstType, // for imports
+        LastAstType // the largest one, not valid!
     };
     
     enum BooleanOperationTypes {
@@ -610,10 +611,18 @@ public:
 };
 
 /** Independent classes **/
+
+class KDEVPYTHONPARSER_EXPORT ArgAst : public Ast {
+public:
+    ArgAst(Ast* parent);
+    Identifier* argumentName;
+    ExpressionAst* annotation;
+};
+
 class KDEVPYTHONPARSER_EXPORT ArgumentsAst : public Ast {
 public:
     ArgumentsAst(Ast* parent);
-    QList<ExpressionAst*> arguments;
+    QList<ArgAst*> arguments;
     QList<ExpressionAst*> defaultValues;
     Identifier* vararg;
     Identifier* kwarg;
@@ -626,13 +635,6 @@ public:
     KeywordAst(Ast* parent);
     Identifier* argumentName;
     ExpressionAst* value;
-};
-
-class KDEVPYTHONPARSER_EXPORT ArgAst : public Ast {
-public:
-    ArgAst(Ast* parent);
-    Identifier* argumentName;
-    ExpressionAst* annotation;
 };
 
 class KDEVPYTHONPARSER_EXPORT ComprehensionAst : public Ast {

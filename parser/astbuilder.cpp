@@ -337,6 +337,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     Py_Finalize();
     
     AstBuilder::pyInitLock.unlock();
+    free(homedir);
 
 #ifdef _WIN32
     delete[] we;

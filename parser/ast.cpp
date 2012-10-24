@@ -39,6 +39,11 @@ ArgumentsAst::ArgumentsAst(Ast* parent): Ast(parent, Ast::ArgumentsAstType), arg
     
 }
 
+ArgAst::ArgAst(Ast* parent): Ast(parent, Ast::ArgAstType), argumentName(0), annotation(0)
+{
+
+}
+
 AssertionAst::AssertionAst(Ast* parent): StatementAst(parent, Ast::AssertionAstType) 
 {
     

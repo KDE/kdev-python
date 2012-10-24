@@ -375,7 +375,7 @@ void AstDefaultVisitor::visitKeyword(KeywordAst* node)
 
 void AstDefaultVisitor::visitArguments(ArgumentsAst* node)
 {
-    foreach (ExpressionAst* expression, node->arguments) {
+    foreach (ArgAst* expression, node->arguments) {
         visitNode(expression);
     }
 }

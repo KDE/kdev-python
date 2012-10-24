@@ -48,7 +48,7 @@ class KDevelopNodeVisitor(ast.NodeVisitor):
         searching_locally = []
         for field in fields:
             value = getattr(node, field)
-            if type(value) not in [types.IntType, types.StringType, types.FloatType, types.BooleanType]:
+            if type(value) not in [type(0), type(""), type(0.0), type(False)]:
                 continue
             try:
                 node_xmlrepr.set(field.lower(), str(value))
@@ -63,8 +63,8 @@ class KDevelopNodeVisitor(ast.NodeVisitor):
         for field in fields:
             multiple_keys = []
             value = getattr(node, field)
-            if type(value) not in [types.IntType, types.StringType, types.FloatType, types.BooleanType]:
-                if type(value) == types.ListType:
+            if type(value) not in [type(0), type(""), type(0.0), type(False)]:
+                if type(value) == type([]):
                     for currentValue in value:
                         try:
                             multiple_keys.append(str(self.childNodeMap[currentValue]))
@@ -95,4 +95,4 @@ except Exception as e:
         sys.stderr.write('?:::?:::'+str(e)+':::?')
 else:
     v.visit(parsetree)
-    sys.stdout.write(etree.tostring(v.basenode, xml_declaration=True, pretty_print=True, encoding='UTF-8'))
+    print(str(etree.tostring(v.basenode, xml_declaration=True, pretty_print=True, encoding='UTF-8')).replace('\\n', '\n'))

@@ -37,7 +37,6 @@ private:
         if ( ! node ) return nodelist;
         for ( int i=0; i < node->size; i++ ) {
             T* currentNode = static_cast<T*>(node->elements[i]);
-            Q_ASSERT(currentNode);
             Ast* result = visitNode(currentNode);
             K* transformedNode = static_cast<K*>(result);
             nodelist.append(transformedNode);
@@ -672,7 +671,7 @@ v->isInt = PyLong_Check(node->v.Num.n);
                 ArgumentsAst* v = new (m_pool->allocate(sizeof(ArgumentsAst))) ArgumentsAst(parent());
             v->vararg = node->vararg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->vararg)) : 0;
             v->kwarg = node->kwarg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->kwarg)) : 0;
-            nodeStack.push(v); v->arguments = visitNodeList<_expr, ExpressionAst>(node->args); nodeStack.pop();
+            nodeStack.push(v); v->arguments = visitNodeList<_arg, ArgAst>(node->args); nodeStack.pop();
             nodeStack.push(v); v->defaultValues = visitNodeList<_expr, ExpressionAst>(node->defaults); nodeStack.pop();
               v->arg_lineno = tline(node->arg_lineno - 1);
               v->arg_col_offset = node->arg_col_offset;

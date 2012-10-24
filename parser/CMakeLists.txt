@@ -24,3 +24,5 @@ target_link_libraries(kdev4pythonparser
 )
 
 install(TARGETS kdev4pythonparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
+
+add_subdirectory(tests)

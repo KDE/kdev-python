@@ -96,7 +96,6 @@ void AstVisitor::visitNode(Ast* node)
         case Ast::ExpressionAstType:                            this->visitExpression(dynamic_cast<ExpressionAst*>(node)); break;
         case Ast::IdentifierAstType:                            break;
         case Ast::StatementAstType:                             break;
-        case Ast::IdentifierAstType:                            break;
     }
 }
 

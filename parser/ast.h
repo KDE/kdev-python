@@ -131,12 +131,8 @@ public:
         ComprehensionAstType,
         ExceptionHandlerAstType,
         AliasAstType, // for imports
-<<<<<<< HEAD
-        
-        IdentifierAstType
-=======
+        IdentifierAstType,
         LastAstType // the largest one, not valid!
->>>>>>> add unit tests for AST
     };
     
     enum BooleanOperationTypes {

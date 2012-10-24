@@ -48,6 +48,8 @@ class PyAstTest : public QObject
         void testSlices_data();
         void testOther();
         void testOther_data();
+        void testNewPython3();
+        void testNewPython3_data();
 };
 
 }

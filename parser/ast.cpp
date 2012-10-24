@@ -179,7 +179,7 @@ GlobalAst::GlobalAst(Ast* parent): StatementAst(parent, Ast::GlobalAstType)
     
 }
 
-Identifier::Identifier(QString value) : value(value)
+Identifier::Identifier(QString value) : Ast(0, Ast::IdentifierAstType), value(value)
 {
     
 }

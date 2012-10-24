@@ -29,6 +29,7 @@
 #include <KLocale>
 #include <QDir>
 #include <QTimer>
+#include <malloc.h>
 #include <language/duchain/topducontext.h>
 #include <language/interfaces/iproblem.h>
 #include <language/duchain/duchain.h>
@@ -76,6 +77,7 @@ QString PyUnicodeObjectToQString(PyObject* obj) {
     return QString::fromUtf16(data);
 #endif
 }
+
 QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
 {
     IProject* proj = ICore::self()->projectController()->findProjectForUrl(filename);
@@ -161,7 +163,11 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     we[AstBuilder::pyHomeDir.size()] = 0;
     Py_SetPythonHome(we);
 #else
-    Py_SetPythonHome(AstBuilder::pyHomeDir.toAscii().data());
+    wchar_t* homedir = (wchar_t*) malloc((AstBuilder::pyHomeDir.size() + 1) * sizeof(wchar_t));
+    AstBuilder::pyHomeDir.toWCharArray(homedir);
+    homedir[AstBuilder::pyHomeDir.size()] = 0x0;
+    kWarning() << AstBuilder::pyHomeDir;
+    Py_SetPythonHome(homedir);
 #endif
     kDebug() << "Not initialized, calling init func.";
     Py_Initialize();

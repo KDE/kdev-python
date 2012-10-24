@@ -1,29 +1,12 @@
-# determine the PYTHON version from Include/patchlevel.h
-
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/_usedpythonversion.cpp 
-"#include <patchlevel.h>\n"
-"#include <stdio.h>\n"
-"int main() { printf(\"%i.%i.%i\", PY_MAJOR_VERSION, PY_MINOR_VERSION, PY_MICRO_VERSION); return 0; }")
-
-set(CMAKE_REQUIRED_INCLUDES )
-try_run(_VERSION_RUN_RESULT
-        _VERSION_COMPILE_RESULT
-        ${CMAKE_CURRENT_BINARY_DIR}
-        ${CMAKE_CURRENT_BINARY_DIR}/_usedpythonversion.cpp
-        COMPILE_DEFINITIONS -IC:/kde/git/kdev-python/python-src/Include
-        RUN_OUTPUT_VARIABLE run_output
-        COMPILE_OUTPUT_VARIABLE compile_output
-)
-string(REGEX REPLACE "([0-9])\\.([0-9])\\.([0-9])" "\\1" PYTHON_MAJOR_VERSION ${run_output})
-string(REGEX REPLACE "([0-9])\\.([0-9])\\.([0-9])" "\\2" PYTHON_MINOR_VERSION ${run_output})
-string(REGEX REPLACE "([0-9])\\.([0-9])\\.([0-9])" "\\3" PYTHON_MICRO_VERSION ${run_output})
+set(PYTHON_MAJOR_VERSION 3)
+set(PYTHON_MINOR_VERSION 2)
 
 if(NOT WIN32)
-
     add_custom_target(
         python_target
         COMMAND /bin/bash ${CMAKE_CURRENT_SOURCE_DIR}/configure --enable-shared --without-pymalloc WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         COMMAND /usr/bin/env make -C ${CMAKE_CURRENT_SOURCE_DIR}
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/libpython3.2-kdevelop.so
     )
     add_library(python-kdevelop SHARED IMPORTED)
     set_target_properties(python-kdevelop PROPERTIES

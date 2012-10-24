@@ -3,9 +3,7 @@ PROJECT(kdevpython)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${kdevpython_SOURCE_DIR}/cmake/)
 
 # this must go uninterfered with all the include_directories, so have it before
-# finding even KDE
-add_subdirectory(python-src)
-
+# finding even KDE # TODO what?
 find_package(KDE4 REQUIRED)
 find_package(KDevPlatform 1.5.60 REQUIRED)
 find_package(KDevelop-PG-Qt REQUIRED)
@@ -41,9 +39,12 @@ include_directories(
 
 add_definitions( -DKDE_DEFAULT_DEBUG_AREA=9011 )
 
+
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}/parser
 )
+
+add_subdirectory(python-src)
 
 add_subdirectory(app_templates)
 add_subdirectory(python-src)

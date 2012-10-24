@@ -156,19 +156,12 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     int lineOffset = hacked.second;
     
     AstBuilder::pyInitLock.lock();
-#ifdef _WIN32
-    QString myHomeDir = AstBuilder::pyHomeDir;
-    wchar_t *we = new wchar_t[AstBuilder::pyHomeDir.size()+1];
-    AstBuilder::pyHomeDir.toWCharArray(we);
-    we[AstBuilder::pyHomeDir.size()] = 0;
-    Py_SetPythonHome(we);
-#else
+    
     wchar_t* homedir = (wchar_t*) malloc((AstBuilder::pyHomeDir.size() + 1) * sizeof(wchar_t));
     AstBuilder::pyHomeDir.toWCharArray(homedir);
     homedir[AstBuilder::pyHomeDir.size()] = 0x0;
     kWarning() << AstBuilder::pyHomeDir;
     Py_SetPythonHome(homedir);
-#endif
     kDebug() << "Not initialized, calling init func.";
     Py_Initialize();
     Q_ASSERT(Py_IsInitialized());
@@ -355,9 +348,6 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     v.visitNode(t.ast);
     free(homedir);
 
-#ifdef _WIN32
-    delete[] we;
-#endif
     return t.ast;
 }
 

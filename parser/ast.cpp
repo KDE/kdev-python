@@ -1,11 +1,8 @@
 /***************************************************************************
  *   This file is part of KDevelop                                         *
  *   Copyright 2007 Andreas Pakulat <apaku@gmx.de>                         *
-<<<<<<< HEAD
  *   Copyright 2010-2012 Sven Brauch <svenbrauch@googlemail.com>           *
-=======
  *   Copyright 2012 Patrick Spendrin <ps_ml@gmx.de>                        *
->>>>>>> adapt to new objects in python 3.2
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Library General Public License as       *
@@ -183,7 +180,7 @@ GlobalAst::GlobalAst(Ast* parent): StatementAst(parent, Ast::GlobalAstType)
     
 }
 
-Identifier::Identifier(QString value) :  Ast(0, Ast::IdentifierAstType), value(value)
+Identifier::Identifier(QString value) : Ast(0, Ast::IdentifierAstType), value(value)
 {
     
 }

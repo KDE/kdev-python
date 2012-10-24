@@ -192,6 +192,25 @@ void PyAstTest::testExpressions_data()
     QTest::newRow("tuple") << "()";
 }
 
+void PyAstTest::testNewPython3()
+{
+    QFETCH(QString, code);
+    testCode(code);
+}
+
+void PyAstTest::testNewPython3_data()
+{
+    QTest::addColumn<QString>("code");
+    QTest::newRow("funcannotation1") << "def haul(item: Haulable, *vargs: PackAnimal) -> Distance: pass";
+    QTest::newRow("funcannotation2") << "def foo() -> expr: pass";
+    QTest::newRow("funcannotation3") << "def foo(a: 'x', b: 5 + 6, c: list) -> max(2, 9): pass";
+    QTest::newRow("kwonly1") << "def compare(a, b, *, key=None): pass";
+    QTest::newRow("kwonly2") << "def foo(a: 'x', b: 5 + 6, c: list) -> max(2, 9): pass";
+    QTest::newRow("listunpack") << "(a, *rest, b) = range(5)";
+    QTest::newRow("metaclass") << "class C(metaclass=M): pass";
+    QTest::newRow("exception_chain") << "raise SecondaryException() from primary_exception";
+}
+
 void PyAstTest::testClass()
 {
     testCode("class c: pass");

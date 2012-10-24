@@ -16,7 +16,9 @@
  *****************************************************************************
  */
 
-#include "pythondeclarationcompletionitem.h"
+#include "declaration.h"
+#include "duchain/helpers.h"
+#include <types/variablelengthcontainer.h>
 
 #include <language/codecompletion/codecompletionmodel.h>
 #include <language/codecompletion/codecompletioncontext.h>
@@ -34,16 +36,52 @@ namespace Python {
 
 PythonDeclarationCompletionItem::PythonDeclarationCompletionItem(DeclarationPointer decl, KSharedPtr< CodeCompletionContext > context, int inheritanceDepth)
                                : NormalDeclarationCompletionItem(decl, context, inheritanceDepth)
+                               , m_typeHint(PythonCodeCompletionContext::NoHint)
 {
     Q_ASSERT(decl->alwaysForceDirect());
+    if ( context ) {
+        setTypeHint(static_cast<PythonCodeCompletionContext*>(context.data())->itemTypeHint());
+    }
 }
 
-    
-QVariant Python::PythonDeclarationCompletionItem::data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const
+void PythonDeclarationCompletionItem::setTypeHint(PythonCodeCompletionContext::ItemTypeHint type)
 {
+    m_typeHint = type;
+}
+    
+QVariant PythonDeclarationCompletionItem::data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const
+{
+    QVariant data = KDevelop::NormalDeclarationCompletionItem::data(index, role, model);
+    
+    switch ( role ) {
+        case KDevelop::CodeCompletionModel::MatchQuality: {
+            if ( ! declaration() ) return 0;
+            if ( declaration()->identifier().identifier().str().startsWith('_') ) {
+                return 0;
+            }
+            if ( declaration()->context()->topContext() == Helper::getDocumentationFileContext() ) {
+                return 0;
+            }
+            if (   m_typeHint == PythonCodeCompletionContext::IterableRequested 
+                && dynamic_cast<VariableLengthContainer*>(declaration()->abstractType().unsafeData()) )
+            {
+                return 10;
+            }
+            if ( model->completionContext()->duContext() == declaration()->context() ) {
+                return 5;
+            }
+            if ( model->completionContext()->duContext()->topContext() == declaration()->context()->topContext() ) {
+                return 3;
+            }
+            return 0;
+        }
+        case KDevelop::CodeCompletionModel::BestMatchesCount: {
+            return 5;
+        }
+    }
+    
     // this looks a bit hackish; still, this is the sort of stuff I think it's not worth doing clean, as the clean way
     // does not really provide objective advantages (except for being clean) and is definitely way more difficult to implement
-    QVariant data = KDevelop::NormalDeclarationCompletionItem::data(index, role, model);
     if ( data.canConvert<QString>() ) {
         QString s = data.toString();
         s.replace("__kdevpythondocumentation_builtin_", "").replace("<unknown>", "?");

@@ -1,21 +1,112 @@
 # This file denotes the built-in python API. It is imported into every file which is parsed.
-class Exception:
+class Exception(object):
 	pass
+
+class __kdevpythondocumentation_builtin_object():
+    def __init__(self): pass
+    def __new__(self): pass
+    def __del__(self): pass
+    def __repr__(self): pass
+    def __str__(self): pass
+    def __lt__(self, other): pass
+    def __gt__(self, other): pass
+    def __le__(self, other): pass
+    def __eq__(self, other): pass
+    def __ne__(self, other): pass
+    def __gt__(self, other): pass
+    def __ge__(self, other): pass
+    def __cmp__(self, other): pass
+    def __hash__(self): pass
+    def __nonzero__(self): pass
+    def __unicode__(self): pass
+    def __getattr__(self, name): pass
+    def __setattr__(self, name, value): pass
+    def __delattr__(self, name): pass
+    def __getattribute__(self, name): pass
+    def __get__(self, instance, owner): pass
+    def __set__(self, instance, value): pass
+    def __delete__(self, instance): pass
+    def __instancecheck__(self, instance): pass
+    def __subclasscheck__(self, subclass): pass
+    def __call__(self): pass
+    def __len__(self): pass
+    def __getitem__(self, key): pass
+    def __setitem__(self, key, value): pass
+    def __delitem__(self, key): pass
+    def __iter__(self): pass
+    def __reversed__(self): pass
+    def __contains__(self, item): pass
+    def __getslice__(self, i, j): pass
+    def __delslice__(self, i, j): pass
+    def __add__(self, other): pass
+    def __sub__(self, other): pass
+    def __mul__(self, other): pass
+    def __floordiv__(self, other): pass
+    def __mod__(self, other): pass
+    def __divmod__(self, other): pass
+    def __pow__(self, other): pass
+    def __lshift__(self, other): pass
+    def __rshift__(self, other): pass
+    def __and__(self, other): pass
+    def __xor__(self, other): pass
+    def __or__(self, other): pass
+    def __div__(self, other): pass
+    def __truediv__(self, other): pass
+    def __radd__(self, other): pass
+    def __rsub__(self, other): pass
+    def __rmul__(self, other): pass
+    def __rtruediv__(self, other): pass
+    def __rfloordiv__(self, other): pass
+    def __rmod__(self, other): pass
+    def __rdivmod__(self, other): pass
+    def __rpow__(self, other): pass
+    def __rlshift__(self, other): pass
+    def __rrshift__(self, other): pass
+    def __rand__(self, other): pass
+    def __rxor__(self, other): pass
+    def __ror__(self, other): pass
+    def __iadd__(self, other): pass
+    def __isub__(self, other): pass
+    def __imul__(self, other): pass
+    def __idiv__(self, other): pass
+    def __itruediv__(self, other): pass
+    def __ifloordiv__(self, other): pass
+    def __imod__(self, other): pass
+    def __ipow__(self, other): pass
+    def __ilshift__(self, other): pass
+    def __irshift__(self, other): pass
+    def __iand__(self, other): pass
+    def __ixor__(self, other): pass
+    def __ior__(self, other): pass
+    def __neg__(self): pass
+    def __pos__(self): pass
+    def __abs__(self): pass
+    def __invert__(self): pass
+    def __complex__(self): pass
+    def __int__(self): pass
+    def __long__(self): pass
+    def __float__(self): pass
+    def __oct__(self): pass
+    def __hex__(self): pass
+    def __index__(self): pass
+    def __coerce__(self, other): pass
+
+object = __kdevpythondocumentation_builtin_object
 
 @TypeContainer
 class __kdevpythondocumentation_builtin_list():
-    @returnContentEqualsContentOf(1)
+    @returnContentEqualsContentOf(0)
     def __init__(self, items):
         return []
-    @addsTypeOfArg(2)
+    @addsTypeOfArg(1)
     def __setitem__(self, key, value): pass
     @getsType
     def __getitem__(self, key): pass
-    @addsTypeOfArg(1)
+    @addsTypeOfArg(0)
     def append(self,obj): pass
-    @addsTypeOfArgContent(1)
+    @addsTypeOfArgContent(0)
     def extend(self,obj): return None
-    @addsTypeOfArg(1)
+    @addsTypeOfArg(0)
     def insert(self,i, x): return None
     @getsType
     def pop(self,i): return None
@@ -56,15 +147,15 @@ class __kdevpythondocumentation_builtin_dict():
     @returnContentEqualsContentOf(0)
     def __init__(self, items):
         return {}
-    @addsTypeOfArg(2)
-    @addsKeyTypeOfArg(1)
+    @addsTypeOfArg(1)
+    @addsKeyTypeOfArg(0)
     def __setitem__(self, key, value): pass
     @getsType
     def __getitem__(self, key): pass
     def clear(self,): return None
     def copy(self,): return {}
-    @addsKeyTypeOfArgContent(1)
-    @addsTypeOfArg(2)
+    @addsKeyTypeOfArgContent(0)
+    @addsTypeOfArg(1)
     def fromkeys(self,seq, value = None): return {}
     @getsType
     def get(self,key, default = ""): return None
@@ -244,7 +335,7 @@ class __kdevpythondocumentation_builtin_tuple():
 
 @TypeContainer
 class __kdevpythondocumentation_builtin_set():
-    @returnContentEqualsContentOf(1)
+    @returnContentEqualsContentOf(0)
     def __init__(self, objects):
         pass
     def len(self): return 0
@@ -308,7 +399,6 @@ def max(lst, args = None, key = None): return 0
 def memoryview(obj): return None
 def min(lst, default = None): return 0
 def next(iterator, default = None): return iterator[0]
-def object(): return None
 def oct(x): return 0o0
 def open(filename, mode = None, bufsize = None): return __kdevpythondocumentation_builtin_fileObject()
 def ord(c): return 0

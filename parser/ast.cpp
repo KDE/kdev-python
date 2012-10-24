@@ -2,6 +2,7 @@
  *   This file is part of KDevelop                                         *
  *   Copyright 2007 Andreas Pakulat <apaku@gmx.de>                         *
  *   Copyright 2012 Patrick Spendrin <ps_ml@gmx.de>                        *
+ *   Copyright 2010-2012 Sven Brauch <svenbrauch@googlemail.com>           *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Library General Public License as       *
@@ -54,7 +55,7 @@ AssignmentAst::AssignmentAst(Ast* parent): StatementAst(parent, Ast::AssignmentA
     
 }
 
-AttributeAst::AttributeAst(Ast* parent): ExpressionAst(parent, Ast::AttributeAstType), value(0), depth(0)
+AttributeAst::AttributeAst(Ast* parent): ExpressionAst(parent, Ast::AttributeAstType), value(0)
 {
     
 }
@@ -224,7 +225,7 @@ NameAst::NameAst(Ast* parent): ExpressionAst(parent, Ast::NameAstType), identifi
     
 }
 
-NumberAst::NumberAst(Ast* parent): ExpressionAst(parent, Ast::NumberAstType), value("0")
+NumberAst::NumberAst(Ast* parent): ExpressionAst(parent, Ast::NumberAstType), value(0)
 {
     
 }

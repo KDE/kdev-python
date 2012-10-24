@@ -66,14 +66,17 @@ public:
     VariableLengthContainer();
     VariableLengthContainer(const VariableLengthContainer& rhs);
     VariableLengthContainer(StructureTypeData& data);
+    virtual ~VariableLengthContainer();
     void addContentType(AbstractType::Ptr typeToAdd);
+    void replaceContentType(AbstractType::Ptr newType);
     void addKeyType(AbstractType::Ptr typeToAdd);
+    void replaceKeyType(AbstractType::Ptr newType);
     virtual AbstractType* clone() const;
     virtual uint hash() const;
     const IndexedType& contentType() const;
     const IndexedType& keyType() const;
     virtual QString toString() const;
-    // "toString"s only the container type, not the content; used in declarationnavigationcontext to create
+    // prints only the container type, not the content; used in declarationnavigationcontext to create
     // seperate links for the content and container type
     // by keeping toString seperate, it is possible to have a pretty type in unsure types etc. without additional
     // efforts being necessary

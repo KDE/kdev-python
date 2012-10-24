@@ -131,6 +131,7 @@ public:
         ComprehensionAstType,
         ExceptionHandlerAstType,
         AliasAstType, // for imports
+        IdentifierAstType,
         LastAstType // the largest one, not valid!
     };
     
@@ -183,6 +184,13 @@ public:
     virtual ~Ast();
     Ast* parent;
     AstType astType;
+    
+    void copyRange(const Ast* other) {
+        startCol = other->startCol;
+        endCol = other->endCol;
+        startLine = other->startLine;
+        endLine = other->endLine;
+    }
 
     qint64 startCol;
     qint64 startLine;
@@ -207,12 +215,6 @@ public:
         hasUsefulRangeInformation = other.hasUsefulRangeInformation;
         return *this;
     };
-    void copyRange(const Identifier* other) {
-        startCol = other->startCol;
-        endCol = other->endCol;
-        startLine = other->startLine;
-        endLine = other->endLine;
-    }
     bool operator==(const Identifier& rhs) const {
         return value == rhs.value;
     };
@@ -505,7 +507,7 @@ public:
 class KDEVPYTHONPARSER_EXPORT NumberAst : public ExpressionAst {
 public:
     NumberAst(Ast* parent);
-    QString value; // unused!
+    long value; // only used for ints
     bool isInt; // otherwise it's a float
 };
 
@@ -550,7 +552,6 @@ public:
     ExpressionAst* value;
     Identifier* attribute;
     ExpressionAst::Context context;
-    int depth; // foo.bar.baz -> foo has depth 1, bar has depth 2, baz 3; needed for range analysis
 };
 
 class KDEVPYTHONPARSER_EXPORT SubscriptAst : public ExpressionAst {

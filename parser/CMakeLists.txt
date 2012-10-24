@@ -8,6 +8,7 @@ include_directories(
 
 
 set(parser_STAT_SRCS
+    codehelpers.cpp
     parsesession.cpp
     ast.cpp
     astdefaultvisitor.cpp
@@ -23,6 +24,7 @@ target_link_libraries(kdev4pythonparser
     ${kdevpython_SOURCE_DIR}/python-src/libpython3.2-kdevelop.so
 )
 
+add_dependencies(kdev4pythonparser parser)
 install(TARGETS kdev4pythonparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 add_subdirectory(tests)

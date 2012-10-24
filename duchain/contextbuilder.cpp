@@ -31,36 +31,39 @@
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/parsingenvironment.h>
+#include <language/backgroundparser/backgroundparser.h>
 #include <language/editor/rangeinrevision.h>
-#include <interfaces/foregroundlock.h>
+#include <language/editor/cursorinrevision.h>
 #include <interfaces/icore.h>
 #include <interfaces/idocumentcontroller.h>
+#include <interfaces/ilanguagecontroller.h>
 #include <interfaces/iprojectcontroller.h>
 #include <interfaces/iproject.h>
 #include <project/projectmodel.h>
 
+#include <KStandardDirs>
+
+#include "pythonlanguagesupport.h"
 #include "pythoneditorintegrator.h"
 #include "dumpchain.h"
 #include "usebuilder.h"
 #include "contextbuilder.h"
 #include "pythonducontext.h"
-#include "codecompletion/pythoncodecompletioncontext.h"
 #include "pythonparsejob.h"
 #include "declarationbuilder.h"
 #include "helpers.h"
-#include <pythonlanguagesupport.h>
-#include <interfaces/ilanguagecontroller.h>
-#include <language/backgroundparser/backgroundparser.h>
-#include <KStandardDirs>
 
 using namespace KDevelop;
 
 using namespace KTextEditor;
 
-Python::PythonEditorIntegrator* Python::ContextBuilder::m_editor;
-
 namespace Python
 {
+
+ContextBuilder::ContextBuilder() : m_indentInformationCache(0)
+{
+
+}
     
 ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node, ReferencedTopDUContext updateContext)
 {
@@ -87,7 +90,7 @@ ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node
 
 PythonEditorIntegrator* ContextBuilder::editor() const
 {
-    return ContextBuilder::m_editor;
+    return m_editor;
 }
 
 IndexedString ContextBuilder::currentlyParsedDocument() const
@@ -113,8 +116,6 @@ SimpleRange ContextBuilder::simpleRangeForNode(Ast* node, bool moveRight)
 TopDUContext* ContextBuilder::newTopContext(const RangeInRevision& range, ParsingEnvironmentFile* file) 
 {
     IndexedString currentDocumentUrl = currentlyParsedDocument();
-    kDebug() << "Current document: " << currentDocumentUrl.str();
-    
     if ( !file ) {
         file = new ParsingEnvironmentFile(currentDocumentUrl);
         file->setLanguage(IndexedString("python"));
@@ -132,33 +133,25 @@ DUContext* ContextBuilder::newContext(const RangeInRevision& range)
 
 void ContextBuilder::setEditor(PythonEditorIntegrator* editor)
 {
-    //m_identifierCompiler = new IdentifierCompiler(editor->parseSession());
-    ContextBuilder::m_editor = editor;
+    m_editor = editor;
 }
 
-// void ContextBuilder::setEditor(ParseSession* /*session*/)
-// {
-//     PythonEditorIntegrator* e = new PythonEditorIntegrator(/*session*/);
-    //m_identifierCompiler = new IdentifierCompiler(e->parseSession());
-//     setEditor(e);
-// }
-
-void ContextBuilder::startVisiting( Ast* node )
+void ContextBuilder::startVisiting(Ast* node)
 {
-    visitNode( node );
+    visitNode(node);
 }
 
-void ContextBuilder::setContextOnNode( Ast* node, DUContext* context )
+void ContextBuilder::setContextOnNode(Ast* node, DUContext* context)
 {
     node->context = context;
 }
 
-DUContext* ContextBuilder::contextFromNode( Ast* node )
+DUContext* ContextBuilder::contextFromNode(Ast* node)
 {
     return node->context;
 }
 
-RangeInRevision ContextBuilder::editorFindRange( Ast* fromNode, Ast* toNode )
+RangeInRevision ContextBuilder::editorFindRange(Ast* fromNode, Ast* toNode)
 {
     return editor()->findRange(fromNode, toNode);
 }
@@ -177,7 +170,7 @@ CursorInRevision ContextBuilder::startPos( Ast* node )
 
 QualifiedIdentifier ContextBuilder::identifierForNode( Python::Identifier* node )
 {
-    return QualifiedIdentifier( node->value );
+    return QualifiedIdentifier(node->value);
 }
 
 void ContextBuilder::addImportedContexts()
@@ -247,73 +240,18 @@ void ContextBuilder::visitGeneratorExpression(GeneratorExpressionAst* node)
 
 RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
 {
-    // This is not right, it must be something like the ast visitor... but that's too complicated :(
-    // it seems to work okay so far, but should be replaced when possible.
-//     bool generatorFound = false;
-    RangeInRevision range;
-    QList<ComprehensionAst*> generators;
-    Ast* element = 0;
-    if ( node->astType == Ast::ListComprehensionAstType ) {
-        ListComprehensionAst* c = static_cast<ListComprehensionAst*>(node);
-        generators = c->generators;
-        element = c->element;
-        if ( not generators.isEmpty() ) {
-            range = editorFindRange(element, generators.last()->iterator);
-            kDebug() << "List Comprehension End: " << range.end;
-            kDebug() << "List Comprehension Start: " << range.start;
-//             generatorFound = true;
-        }
-    }
-    else if ( node->astType == Ast::SetComprehensionAstType ) {
-        SetComprehensionAst* c = static_cast<SetComprehensionAst*>(node);
-        generators = c->generators;
-        element = c->element;
-        if ( not generators.isEmpty() ) {
-            range = editorFindRange(element, generators.last()->iterator);
-            kDebug() << "Set comprehension range: " << range;
-//             generatorFound = true;
-        }
-    }
-    else if ( node->astType == Ast::DictionaryComprehensionAstType ) {
-        DictionaryComprehensionAst* c = static_cast<DictionaryComprehensionAst*>(node);
-        generators = c->generators;
-        if ( not generators.isEmpty() ) {
-            range = editorFindRange(c->key, generators.last()->iterator);
-//             generatorFound = true;
-        }
-    }
-    else if ( node->astType == Ast::GeneratorExpressionAstType ) {
-        GeneratorExpressionAst* c = static_cast<GeneratorExpressionAst*>(node);
-        generators = c->generators;
-        if ( not generators.isEmpty() ) {
-            range = editorFindRange(c->element, generators.last()->iterator);
-//             generatorFound = true;
-        }
-    }
-    else if ( not generators.isEmpty() ) {
-        RangeInRevision containedComprehensionRange = comprehensionRange(generators.last()->iterator);
-        if ( containedComprehensionRange.isValid() ) {
-            range.end = containedComprehensionRange.end;
-        }
-    }
-    else {
-        range = editorFindRange(node, node);
-    }
-    CursorInRevision start = editorFindPositionSafe(node);
-    range.start = start;
-    range.start.column -= 1;
-    return range;
+    return editorFindRange(node, node);
 }
 
 void ContextBuilder::visitComprehensionCommon(Ast* node)
 {
     RangeInRevision range = comprehensionRange(node);
+    Q_ASSERT(range.isValid());
     if ( range.isValid() ) {
         range.start.column -= 1;
         DUChainWriteLocker lock(DUChain::lock());
-        kDebug() << "opening comprehension context" << range << "(previous was" << currentContext()->range() << ")";
-        openContext(node, RangeInRevision(range.start, topContext()->range().end), KDevelop::DUContext::Other);
-        currentContext()->setLocalScopeIdentifier(QualifiedIdentifier("<generator>"));
+        openContext(node, RangeInRevision(range.start, range.end), KDevelop::DUContext::Other);
+//         currentContext()->setLocalScopeIdentifier(QualifiedIdentifier("<generator>"));
         lock.unlock();
         if ( node->astType == Ast::DictionaryComprehensionAstType )
             Python::AstDefaultVisitor::visitDictionaryComprehension(static_cast<DictionaryComprehensionAst*>(node));
@@ -335,23 +273,27 @@ void ContextBuilder::openContextForStatementList( const QList<Ast*>& l, DUContex
         Ast* last = l.last();
         Q_ASSERT(first->hasUsefulRangeInformation); // TODO remove this
         RangeInRevision range(RangeInRevision(first->startLine - 1, first->startCol, last->endLine + 1, 10000));
-        DUContext* rangectx = openContext(first, range, DUContext::Other );
-        kDebug() << " +++ opening context (stmlist): " << range.castToSimpleRange();
+        openContext(first, range, DUContext::Other );
         addImportedContexts();
         visitNodeList( l );
         closeContext();
-        kDebug() << " --- closed context (stmlist): line " << rangectx->range().castToSimpleRange();
     }
 }
 
 void ContextBuilder::openContextForClassDefinition(ClassDefinitionAst* node)
 {
-    RangeInRevision range(node->startLine, node->startCol, node->body.last()->endLine + 1, 1);
-    DUChainWriteLocker lock(DUChain::lock());
-    openContext( node, range, DUContext::Class, node->name);
+    // make sure the contexts ends at the next DEDENT token, not at the last statement.
+    // also, make the context begin *after* the parent list and class name.
+    int endLine = editor()->indent()->nextChange(node->endLine, FileIndentInformation::Dedent);
+    CursorInRevision start = CursorInRevision(node->body.first()->startLine, node->body.first()->startCol);
+    if ( start.line > node->startLine ) {
+        start = CursorInRevision(node->startLine + 1, 0);
+    }
+    RangeInRevision range(start, CursorInRevision(endLine + 1, 0));
+    DUChainWriteLocker lock;
+    openContext(node, range, DUContext::Class, node->name);
     currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));
     lock.unlock();
-    kDebug() << " +++ opening CLASS context: " << range.castToSimpleRange() << node->name;
     addImportedContexts();
 }
 
@@ -363,27 +305,29 @@ void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
 }
 
 void ContextBuilder::visitCode(CodeAst* node) {
-    KUrl doc_url = KUrl(KStandardDirs::locate("data", "kdevpythonsupport/documentation_files/builtindocumentation.py"));
-    doc_url.cleanPath(KUrl::SimplifyDirSeparators);
+    KUrl doc_url = KUrl(Helper::getDocumentationFile());
     IndexedString doc = IndexedString(doc_url.path());
     Q_ASSERT(currentlyParsedDocument().toUrl().isValid());
-    kDebug() << "Internal functions file: " << currentlyParsedDocument().toUrl().path() << doc.toUrl().path();
     if ( currentlyParsedDocument() != doc ) {
+        // Search for the python built-in functions file, and dump its contents into the current file.
         TopDUContext* internal = 0;
         {
             DUChainReadLocker lock(DUChain::lock());
             internal = DUChain::self()->chainForDocument(doc); // TODO add startup-check and error message, this must exist
-            // ICore::languageController()->backgroundParser()->parseJobForDocument();
         }
         
         if ( ! internal ) {
+            // If the built-in functions file is not yet parsed, schedule it with a high priority and abort.
             m_unresolvedImports.append(doc_url);
             KDevelop::ICore::self()->languageController()->backgroundParser()
-                                   ->addDocument(doc_url, KDevelop::TopDUContext::ForceUpdate,
+                                   ->addDocument(doc, KDevelop::TopDUContext::ForceUpdate,
                                                  BackgroundParser::BestPriority, 0, ParseJob::FullSequentialProcessing);
+            // This must NOT be called from parse threads! It's only meant to be used from the foreground thread, and will
+            // cause thread starvation if called from here.
+            // KDevelop::ICore::self()->languageController()->backgroundParser()->parseDocuments();
+            return;
         }
         else {
-            kDebug() << "Adding builtin function context...";
             DUChainWriteLocker wlock(DUChain::lock());
             currentContext()->addImportedParentContext(internal);
             m_builtinFunctionsContext = TopDUContextPointer(internal);
@@ -395,47 +339,49 @@ void ContextBuilder::visitCode(CodeAst* node) {
 QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
 {
     QStringList nameComponents = name.split(".");
-    bool useCurrentDirOnly = false;
-    if ( name.startsWith('.') ) {
-        nameComponents.removeFirst();
-        useCurrentDirOnly = true;
-    }
-    kDebug() << "FINDING MODULE: " << nameComponents;
     QList<KUrl> searchPaths;
-    if ( useCurrentDirOnly ) {
+    if ( name.startsWith('.') ) {
+        // This is used for "from .foo import" or similar (relative imports)
+        nameComponents.removeFirst();
         searchPaths << currentlyParsedDocument().toUrl().directory();
     }
     else {
-        searchPaths = Helper::getSearchPaths(currentlyParsedDocument().toUrl());    
+        // If this is not a relative import, use the project directory,
+        // the current directory, and all system include paths.
+        searchPaths = Helper::getSearchPaths(currentlyParsedDocument().toUrl());
     }
+    // Loop over all the name components, and find matching folders or files.
     KUrl tmp;
     QStringList leftNameComponents;
-    QString dirFound("<invalid>");
     foreach ( KUrl currentPath, searchPaths ) {
         tmp = currentPath;
         leftNameComponents = nameComponents;
         foreach ( QString component, nameComponents ) {
             if ( component == "*" ) {
+                // For "from ... import *", if "..." is a directory, use the "__init__.py" file
                 component = "__init__";
             }
-            // only empty the list if not importing *
             else {
+                // only empty the list if not importing *, this is convenient later on
                 leftNameComponents.removeFirst();
             }
             QString testFilename = tmp.path(KUrl::AddTrailingSlash) + component;
             KUrl sourceUrl = testFilename + ".py";
-            QFile sourcefile(testFilename + ".py"); // we can only parse those, so we don't care about anything else for now.
+            // we can only parse those, so we don't care about anything else for now.
+            // Any C modules (.so, .dll) will be ignored, and highlighted as "not found". TODO fix this
+            QFile sourcefile(testFilename + ".py");
             QFileInfo sourcedir(testFilename);
             tmp.cd(component);
             kDebug() << testFilename << "exists: [file/dir]" << sourcefile.exists() << sourcedir.exists();
-            if ( ! sourcedir.exists() || leftNameComponents.isEmpty() ) {
+            if ( ! sourcedir.exists() || ! sourcedir.isDir() || leftNameComponents.isEmpty() ) {
+                // If the search cannot continue further down into a hierarchy of directories,
+                // the file matching the next name component will be returned,
+                // toegether with a list of names which must be resolved inside that file.
                 if ( sourcefile.exists() ) {
-                    kDebug() << "RESULT:" << sourceUrl;
                     sourceUrl.cleanPath();
                     return QPair<KUrl, QStringList>(sourceUrl, leftNameComponents);
                 }
                 else if ( sourcedir.exists() && sourcedir.isDir() ) {
-                    kDebug() << "RESULT:" << testFilename + "/__init__.py";
                     KUrl path(testFilename + "/__init__.py");
                     path.cleanPath();
                     return QPair<KUrl, QStringList>(path, leftNameComponents);
@@ -450,6 +396,7 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
 
 void ContextBuilder::visitLambda(LambdaAst* node)
 {
+    // Lambda functions need their own context for parameters
     DUChainWriteLocker lock(DUChain::lock());
     openContext(node, editorFindRange(node, node->body), DUContext::Other);
     lock.unlock();
@@ -460,7 +407,10 @@ void ContextBuilder::visitLambda(LambdaAst* node)
 
 RangeInRevision ContextBuilder::rangeForArgumentsContext(FunctionDefinitionAst* node)
 {
-    // construct the range for the arguments context... due to stupid args / varargs this is pretty complicated
+    // The python parser has extra syntax features for *args and **kwargs. 
+    // We need to know where the function arguments context ends (the location of the closing ")" paren would
+    // be optimal), so this does some pretty ugly checks whether the * or ** arguments are present,
+    // and adjusts the range as needed.
     RangeInRevision range;
     CursorInRevision start, end;
     if ( node->arguments->arguments.count() ) {
@@ -495,19 +445,19 @@ void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
 {
     RangeInRevision range = rangeForArgumentsContext(node);
     
+    // The DUChain expects the context containing a function's arguments to be of type Function.
+    // The function body will have DUContext::Other as type, as it contains only code.
     DUContext* funcctx = openContext(node->arguments, range, DUContext::Function, node->name);
     kDebug() << funcctx;
-    kDebug() << " +++ opening FUNCTION ARGUMENTS context: " << funcctx->range().castToSimpleRange() << node->name->value << range;
     visitNode(node->arguments);
     closeContext();
-    m_importedParentContexts.append( funcctx );
+    // the parameters should be visible in the function body, so import that context there
+    m_importedParentContexts.append(funcctx);
     m_mostRecentArgumentsContext = DUContextPointer(funcctx);
 }
 
 void ContextBuilder::visitFunctionDefinition(FunctionDefinitionAst* node)
 {
-    kDebug() << " Building function definition context: " << node->name->value;
-
     DUChainWriteLocker lock(DUChain::lock());
     visitNodeList(node->decorators);
     visitFunctionArguments(node);
@@ -516,19 +466,28 @@ void ContextBuilder::visitFunctionDefinition(FunctionDefinitionAst* node)
 
 void ContextBuilder::visitFunctionBody(FunctionDefinitionAst* node)
 {
-    CursorInRevision end = CursorInRevision(node->endLine + 1, 0);
+    // The function should end at the next DEDENT token, not at the body's last statement
+    int endLine = node->endLine;
+    if ( node->endLine != node->startLine ) {
+        endLine = editor()->indent()->nextChange(endLine, FileIndentInformation::Dedent);
+    }
+    CursorInRevision end = CursorInRevision(endLine, node->startLine == node->endLine ? INT_MAX : 0);
     CursorInRevision start = rangeForArgumentsContext(node).end;
+    if ( start.line < node->body.first()->startLine ) {
+        start = CursorInRevision(node->startLine + 1, 0);
+    }
     RangeInRevision range(start, end);
-    // Done building the function declaration, start building the body now
-    DUContext* ctx = openContext(node, range, DUContext::Other, identifierForNode( node->name ) );
+    
+    // Open the context for the function body (the list of statements)
+    // It's of type Other, as it contains only code
+    openContext(node, range, DUContext::Other, identifierForNode(node->name));
     currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));
-    kDebug() << " +++ opening context (function definition): " << range.castToSimpleRange();
+    // import the parameters into the function body
     addImportedContexts();
     
     visitNodeList(node->body);
     
     closeContext();
-    kDebug() << " --- closed context (function definition): " << ctx->range().castToSimpleRange();
     m_mostRecentArgumentsContext = DUContextPointer(0);
 }
 

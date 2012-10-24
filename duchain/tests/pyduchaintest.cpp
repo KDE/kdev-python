@@ -1,5 +1,6 @@
 /*****************************************************************************
  * Copyright 2010 (c) Miquel Canes Gonzalez <miquelcanes@gmail.com>          *
+ * Copyright 2012 (c) Sven Brauch <svenbrauch@googlemail.com>                *
  *                                                                           *
  * Permission is hereby granted, free of charge, to any person obtaining     *
  * a copy of this software and associated documentation files (the           *
@@ -31,8 +32,13 @@
 #include <language/duchain/duchain.h>
 #include <QtTest/QtTest>
 #include <KStandardDirs>
+#include <QtGui/QApplication>
 #include <language/duchain/types/functiontype.h>
 #include <language/duchain/aliasdeclaration.h>
+#include <language/backgroundparser/backgroundparser.h>
+#include <language/interfaces/iastcontainer.h>
+#include <interfaces/ilanguagecontroller.h>
+#include <tests/testfile.h>
 
 #include "parsesession.h"
 #include "pythoneditorintegrator.h"
@@ -52,7 +58,7 @@ using namespace KDevelop;
 using namespace Python;
 
 
-PyDUChainTest::PyDUChainTest(QObject* parent): QObject(parent)
+PyDUChainTest::PyDUChainTest(QObject* parent): QObject(parent), m_pool()
 {
     initShell();
 }
@@ -69,64 +75,48 @@ void PyDUChainTest::initShell()
     kDebug() << doc_url;
 
     DUChain::self()->updateContextForUrl(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
+    ICore::self()->languageController()->backgroundParser()->parseDocuments();
     DUChain::self()->waitForUpdate(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
     
     QFile f("/tmp/i.py");
     f.open(QIODevice::WriteOnly);
-    f.write("def checkme(): pass\n");
+    f.write("def checkme(): pass\nlocalvar1 = 3\nlocalvar2 = 5\n");
     f.close();
     
     DUChain::self()->updateContextForUrl(IndexedString("/tmp/i.py"), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
+    ICore::self()->languageController()->backgroundParser()->parseDocuments();
     DUChain::self()->waitForUpdate(IndexedString("/tmp/i.py"), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
     
     DUChain::self()->disablePersistentStorage();
     KDevelop::CodeRepresentation::setDiskChangesForbidden(true);
 }
 
-void PyDUChainTest::parse_int(const QString& code, const QString& suffix)
+ReferencedTopDUContext PyDUChainTest::parse(const QString& code)
 {
-    KDevPG::MemoryPool pool;
-    ParseSession* session = new ParseSession(&pool);
-    session->setContents( code + "\n" ); // append a newline in case the parser doesnt like it without one
+    TestFile* testfile = new TestFile(code + "\n", "py", 0, "/tmp/");
+    testfile->parse((TopDUContext::Features) (TopDUContext::ForceUpdate | TopDUContext::AST) );
+    testfile->waitForParsed(500);
     
-    static int mytest=0;
-    KUrl filename;
-    if ( suffix.isNull() ) {
-        filename = "/tmp/pyduchaintest" + QString::number(mytest++) + ".py";
+    if ( testfile->isReady() ) {
+        m_ast = static_cast<Python::ParseSession*>(testfile->topContext()->ast().data())->ast;
+        return testfile->topContext();
     }
-    else {
-        filename = "/tmp/pyduchaintest__" + suffix + ".py";
-    }
-    QFile f(filename.path());
-    f.open(QIODevice::WriteOnly);
-    f.write(code.toAscii());
-    f.close();
-    
-    KDevelop::DUChain::self()->updateContextForUrl(KDevelop::IndexedString(filename), 
-                                                   static_cast<TopDUContext::Features>(TopDUContext::AllDeclarationsContextsAndUses | TopDUContext::ForceUpdate),
-                                                   this, 1);
-    
-    AstBuilder* a = new AstBuilder(&pool);
-    m_ast = a->parse(filename, const_cast<QString&>(code));
+    else Q_ASSERT(false && "Timed out waiting for parser results, aborting all tests");
+    return 0;
 }
 
-ReferencedTopDUContext PyDUChainTest::parse(const QString& code, const QString& suffix)
+void PyDUChainTest::testMultiFromImport()
 {
-    m_finished = false;
-    parse_int(code, suffix);
-    QTime t;
-    t.start();
-    while ( ! m_finished ) {
-        Q_ASSERT(t.elapsed() < 60000);
-        QTest::qWait(10);
-    }
-    return m_ctx;
-}
-
-void PyDUChainTest::updateReady(IndexedString /*url*/, ReferencedTopDUContext topContext)
-{
-    m_ctx = topContext;
-    m_finished = true;
+    ReferencedTopDUContext ctx = parse("import i.localvar1\nimport i.localvar2\na=i.localvar1\nb=i.localvar2\n");
+    QVERIFY(ctx);
+    DUChainReadLocker lock;
+    QList<Declaration*> a = ctx->findDeclarations(QualifiedIdentifier("a"));
+    QList<Declaration*> b = ctx->findDeclarations(QualifiedIdentifier("b"));
+    QVERIFY(! a.isEmpty());
+    QVERIFY(! b.isEmpty());
+    kDebug() << a.first()->abstractType()->toString();
+    QVERIFY(b.first()->abstractType()->toString().endsWith("int"));
+    QVERIFY(a.first()->abstractType()->toString().endsWith("int"));
 }
 
 void PyDUChainTest::testCrashes() {
@@ -139,11 +129,153 @@ void PyDUChainTest::testCrashes_data() {
     QTest::addColumn<QString>("code");
     
     QTest::newRow("unicode escape char") << "print u\"\\xe9\"";
+    QTest::newRow("negative slice index") << "t = (1, 2, 3)\nd = t[-1]";
+    QTest::newRow("fancy generator context range") << "c1_list = sorted(letter for (letter, meanings) \\\n"
+               "in ambiguous_nucleotide_values.iteritems() \\\n"
+               "if set([codon[0] for codon in codons]).issuperset(set(meanings)))";
+    QTest::newRow("fancy class range") << "class SchemeLexer(RegexLexer):\n"
+                                          "  valid_name = r'[a-zA-Z0-9!$%&*+,/:<=>?@^_~|-]+'\n"
+                                          "\n"
+                                          "  tokens = {\n"
+                                          "      'root' : [\n"
+                                          "          # the comments - always starting with semicolon\n"
+                                          "          # and going to the end of the line\n"
+                                          "          (r';.*$', Comment.Single),\n"
+                                          "\n"
+                                          "          # whitespaces - usually not relevant\n"
+                                          "          (r'\\s+', Text),\n"
+                                          "\n"
+                                          "          # numbers\n"
+                                          "          (r'-?\\d+\\.\\d+', Number.Float),\n"
+                                          "          (r'-?\\d+', Number.Integer)\n"
+                                          "      ],\n"
+                                          "  }\n";
+    QTest::newRow("another fancy range") << "setup_args['data_files'] = [\n"
+                                          "     (os.path.dirname(os.path.join(install_base_dir, pattern)),\n"
+                                          "     [ f for f in glob.glob(pattern) ])\n"
+                                          "        for pattern in patterns\n"
+                                          "]\n";
+    QTest::newRow("kwarg_empty_crash") << "def myfun(): return\ncheckme = myfun(kw=something)";
+    QTest::newRow("stacked_tuple_hang") << "tree = (1,(2,(3,(4,(5,'Foo')))))";
+    QTest::newRow("stacked_tuple_hang2") << "tree = (257,"
+         "(264,"
+          "(285,"
+           "(259,"
+            "(272,"
+              "(275,"
+               "(1, 'return')))))))";
+    QTest::newRow("larger_tuple_hang") << "tree = (257,"
+         "(264,"
+          "(285,"
+           "(259,"
+             "(264,"
+              "(265,"
+               "(266,"
+                "(272,"
+                 "(275,"
+                  "(1, 'return'))))))))))";
+    QTest::newRow("quite_large_tuple_hang") << "tree = (257,\n"
+         "(264,\n"
+          "(285,\n"
+           "(259,\n"
+            "(1, 'def'),\n"
+            "(1, 'f'),\n"
+            "(260, (7, '('), (8, ')')),\n"
+            "(11, ':'),\n"
+            "(291,\n"
+             "(4, ''),\n"
+             "(5, ''),\n"
+             "(264,\n"
+              "(265,\n"
+               "(266,\n"
+                "(272,\n"
+                 "(275,\n"
+                  "(1, 'return')))))))))))";
+    QTest::newRow("large_tuple_hang") << "tree = "
+        "(257,"
+         "(264,"
+          "(285,"
+           "(259,"
+            "(1, 'def'),"
+            "(1, 'f'),"
+            "(260, (7, '('), (8, ')')),"
+            "(11, ':'),"
+            "(291,"
+             "(4, ''),"
+             "(5, ''),"
+             "(264,"
+              "(265,"
+               "(266,"
+                "(272,"
+                 "(275,"
+                  "(1, 'return'),"
+                  "(313,"
+                   "(292,"
+                    "(293,"
+                     "(294,"
+                      "(295,"
+                       "(297,"
+                        "(298,"
+                         "(299,"
+                          "(300,"
+                           "(301,"
+                            "(302, (303, (304, (305, (2, '1')))))))))))))))))))))))))";
+    QTest::newRow("very_large_tuple_hang") << "tree = "
+        "(257,"
+         "(264,"
+          "(285,"
+           "(259,"
+            "(1, 'def'),"
+            "(1, 'f'),"
+            "(260, (7, '('), (8, ')')),"
+            "(11, ':'),"
+            "(291,"
+             "(4, ''),"
+             "(5, ''),"
+             "(264,"
+              "(265,"
+               "(266,"
+                "(272,"
+                 "(275,"
+                  "(1, 'return'),"
+                  "(313,"
+                   "(292,"
+                    "(293,"
+                     "(294,"
+                      "(295,"
+                       "(297,"
+                        "(298,"
+                         "(299,"
+                          "(300,"
+                           "(301,"
+                            "(302, (303, (304, (305, (2, '1')))))))))))))))))),"
+               "(264,"
+                "(265,"
+                 "(266,"
+                  "(272,"
+                   "(276,"
+                   "(1, 'yield'),"
+                    "(313,"
+                     "(292,"
+                      "(293,"
+                       "(294,"
+                        "(295,"
+                         "(297,"
+                          "(298,"
+                           "(299,"
+                            "(300,"
+                             "(301,"
+                              "(302,"
+                               "(303, (304, (305, (2, '1')))))))))))))))))),"
+                 "(4, ''))),"
+               "(6, ''))))),"
+           "(4, ''),"
+           "(0, ''))))";
 }
 
 void PyDUChainTest::testClassVariables()
 {
-    ReferencedTopDUContext ctx = parse("class c():\n myvar = 3;\n def meth(self):\n  print myvar", "classvars");
+    ReferencedTopDUContext ctx = parse("class c():\n myvar = 3;\n def meth(self):\n  print myvar");
     QVERIFY(ctx.data());
     DUChainWriteLocker lock(DUChain::lock());
     CursorInRevision relevantPosition(3, 10);
@@ -164,13 +296,25 @@ void PyDUChainTest::testFlickering()
     QFETCH(int, before);
     QFETCH(int, after);
     
-    ReferencedTopDUContext ctx = parse(code[0], "flickering");
+    TestFile f(code[0], "py");
+    f.parse(TopDUContext::ForceUpdate);
+    f.waitForParsed(500);
+    
+    ReferencedTopDUContext ctx = f.topContext();
+    QVERIFY(ctx);
+    
     DUChainWriteLocker lock(DUChain::lock());
     int count = ctx->localDeclarations().size();
     qDebug() << "Declaration count before: " << count;
     QVERIFY(count == before);
     lock.unlock();
-    ctx = parse(code[1], "flickering");
+    
+    f.setFileContents(code[1]);
+    f.parse(TopDUContext::ForceUpdate);
+    f.waitForParsed(500);
+    ctx = f.topContext();
+    QVERIFY(ctx);
+    
     lock.lock();
     count = ctx->localDeclarations().size();
     qDebug() << "Declaration count afterwards: " << count;
@@ -191,6 +335,20 @@ void PyDUChainTest::testFlickering_data()
     QTest::newRow("declaration_flicker") << ( QStringList() << "a=2\n" << "b=3\na=2\n" ) << 1 << 2;
 }
 
+void PyDUChainTest::testVarKWArgs()
+{
+    ReferencedTopDUContext ctx = parse("def myfun(arg, *vararg, **kwarg):\n pass\n pass");
+    DUChainWriteLocker lock;
+    QVERIFY(ctx);
+    DUContext* func = ctx->findContextAt(CursorInRevision(1, 0));
+    QVERIFY(func);
+    QVERIFY(! func->findDeclarations(QualifiedIdentifier("arg")).isEmpty());
+    QVERIFY(! func->findDeclarations(QualifiedIdentifier("vararg")).isEmpty());
+    QVERIFY(! func->findDeclarations(QualifiedIdentifier("kwarg")).isEmpty());
+    QVERIFY(func->findDeclarations(QualifiedIdentifier("vararg")).first()->abstractType()->toString().startsWith("__kdevpythondocumentation_builtin_tuple"));
+    QVERIFY(func->findDeclarations(QualifiedIdentifier("kwarg")).first()->abstractType()->toString() == "__kdevpythondocumentation_builtin_dict");
+}
+
 void PyDUChainTest::testSimple()
 {
     QFETCH(QString, code);
@@ -201,7 +359,7 @@ void PyDUChainTest::testSimple()
     DUChainWriteLocker lock(DUChain::lock());
     QVERIFY(ctx);
     
-    QVector< Declaration* > declarations = ctx->localDeclarations(ctx);
+    QVector< Declaration* > declarations = ctx->localDeclarations();
     
     QCOMPARE(declarations.size(), decls);
     
@@ -286,7 +444,6 @@ void PyDUChainTest::testRanges()
     QFETCH(QStringList, column_ranges);
     
     ReferencedTopDUContext ctx = parse(code);
-    DUChainWriteLocker lock(DUChain::lock());
     QVERIFY(ctx);
     
     QVERIFY(m_ast);
@@ -303,6 +460,7 @@ void PyDUChainTest::testRanges()
         visitor->visitCode(m_ast);
         
         QCOMPARE(visitor->found, true);
+        delete visitor;
     }
 }
 
@@ -343,7 +501,7 @@ public:
         kDebug() << "Declaration: " << node->identifier->value << d->type<StructureType>();
         QVERIFY(d->abstractType());
         kDebug() << "found: " << node->identifier->value << "is" << d->abstractType()->toString() << "should be" << searchingForType;
-        if ( d->abstractType()->toString().replace("__kdevpythondocumentation_builtin_", "") == searchingForType ) {
+        if ( d->abstractType()->toString().replace("__kdevpythondocumentation_builtin_", "").startsWith(searchingForType) ) {
             found = true;
             return;
         }
@@ -352,6 +510,7 @@ public:
 
 void PyDUChainTest::testTypes()
 {
+    
     QFETCH(QString, code);
     QFETCH(QString, expectedType);
     
@@ -378,6 +537,7 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("listtype_with_contents") << "checkme = [1, 2, 3, 4, 5]" << "list of int";
     QTest::newRow("listtype_extended") << "some_misc_var = []; checkme = some_misc_var" << "list";
     QTest::newRow("dicttype") << "checkme = {}" << "dict";
+    QTest::newRow("dicttype_get") << "d = {0.4:5}; checkme = d.get(0)" << "int";
     QTest::newRow("dicttype_func") << "checkme = dict()" << "dict";
     QTest::newRow("dicttype_extended") << "some_misc_var = {}; checkme = some_misc_var" << "dict";
     QTest::newRow("bool") << "checkme = True" << "bool";
@@ -399,10 +559,45 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("tuple2") << "foo, checkme = 3, \"str\"" << "string";
     QTest::newRow("tuple_type") << "checkme = 1, 2" << "tuple";
     
+    QTest::newRow("dict_iteritems") << "d = {1:2, 3:4}\nfor checkme, k in d.iteritems(): pass" << "int";
+    
     QTest::newRow("class_method_import") << "class c:\n attr = \"foo\"\n def m():\n  return attr;\n  return 3;\ni=c()\ncheckme=i.m()" << "int";
     QTest::newRow("getsListDecorator") << "foo = [1, 2, 3]\ncheckme = foo.reverse()" << "list of int";
+    
+    QTest::newRow("diff_local_classattr") << "class c(): attr = 1\ninst=c()\ncheckme = c.attr" << "int";
+    QTest::newRow("diff_local_classattr2") << "local=3\nclass c(): attr = 1\ninst=c()\ncheckme = c.local" << "mixed";
+    QTest::newRow("diff_local_classattr3") << "attr=3.5\nclass c(): attr = 1\ninst=c()\ncheckme = c.attr" << "int";
 //     QTest::newRow("class_method_self") << "class c:\n def func(checkme, arg, arg2):\n  pass\n" << "c";
 //    QTest::newRow("funccall_dict") << "def foo(): return foo; checkme = foo();" << (uint) IntegralType::TypeFunction;
+    
+    QTest::newRow("tuple_simple") << "mytuple = 3, 5.5\ncheckme, foobar = mytuple" << "int";
+    QTest::newRow("tuple_simple2") << "mytuple = 3, 5.5\nfoobar, checkme = mytuple" << "float";
+    QTest::newRow("tuple_simple3") << "mytuple = 3, 5.5, \"str\", 3, \"str\"\na, b, c, d, checkme = mytuple" << "string";
+    
+    QTest::newRow("tuple_funcret") << "def myfun(): return 3, 5\ncheckme, a = myfun()" << "int";
+    QTest::newRow("tuple_funcret2") << "def myfun():\n t = 3, 5\n return t\ncheckme, a = myfun()" << "int";
+    
+    QTest::newRow("tuple_indexaccess") << "t = 3, 5.5\ncheckme = t[0]" << "int";
+    QTest::newRow("tuple_indexaccess2") << "t = 3, 5.5\ncheckme = t[1]" << "float";
+    
+    QTest::newRow("tuple_loop") << "t = [(1, \"str\")]\nfor checkme, a in t: pass" << "int";
+    
+    QTest::newRow("args_type") << "def myfun(*args): return args[0]\ncheckme = myfun(3)" << "int";
+    QTest::newRow("kwarg_type") << "def myfun(**args): return args[0]\ncheckme = myfun(a=3)" << "int";
+    
+    QTest::newRow("tuple_listof") << "l = [(1, 2), (3, 4)]\ncheckme = l[1][0]" << "int";
+    
+    QTest::newRow("constructor_type_deduction") << "class myclass:\n"
+                                                   "\tdef __init__(self, param): self.foo=param\n"
+                                                   "checkme = myclass(3).foo" << "int";
+    
+    QTest::newRow("functionCall_functionArg") << "def getstr(): return \"foo\"\n"
+                                                 "def identity(f): return f\n"
+                                                 "f1 = getstr\n"
+                                                 "f2 = identity(getstr)\n"
+                                                 "a = getstr()\n"
+                                                 "b = f1()\n"
+                                                 "checkme = f2()\n" << "string";
 }
 
 typedef QPair<Declaration*, int> pair;
@@ -460,7 +655,11 @@ typedef QPair<Declaration*, int> p;
 
 void PyDUChainTest::testAutocompletionFlickering()
 {
-    ReferencedTopDUContext ctx1 = parse("foo = 3\nfoo2 = 2\nfo", "autocompletion1");
+    TestFile f("foo = 3\nfoo2 = 2\nfo", "py");
+    f.parse(TopDUContext::ForceUpdate);
+    f.waitForParsed(500);
+    
+    ReferencedTopDUContext ctx1 = f.topContext();
     DUChainWriteLocker lock(DUChain::lock());
     QVERIFY(ctx1);
     QList<p> decls1 = ctx1->allDeclarations(CursorInRevision::invalid(), ctx1->topContext());
@@ -469,7 +668,12 @@ void PyDUChainTest::testAutocompletionFlickering()
         declIds << d.first->id();
     }
     lock.unlock();
-    ReferencedTopDUContext ctx2 = parse("foo = 3\nfoo2 = 2\nfoo", "autocompletion1");
+    
+    f.setFileContents("foo = 3\nfoo2 = 2\nfoo");
+    f.parse(TopDUContext::ForceUpdate);
+    f.waitForParsed(500);
+    
+    ReferencedTopDUContext ctx2 = f.topContext();
     QVERIFY(ctx2);
     lock.lock();
     QList<p> decls2 = ctx2->allDeclarations(CursorInRevision::invalid(), ctx2->topContext());
@@ -482,7 +686,11 @@ void PyDUChainTest::testAutocompletionFlickering()
     
     qDebug() << "=========================";
     
-    ctx1 = parse("def func():\n\tfoo = 3\n\tfoo2 = 2\n\tfo", "autocompletion2");
+    TestFile g("def func():\n\tfoo = 3\n\tfoo2 = 2\n\tfo", "py");
+    g.parse(TopDUContext::ForceUpdate);
+    g.waitForParsed(500);
+    
+    ctx1 = g.topContext();
     lock.lock();
     QVERIFY(ctx1);
     decls1 = ctx1->allDeclarations(CursorInRevision::invalid(), ctx1->topContext(), false).first().first->internalContext()
@@ -492,7 +700,12 @@ void PyDUChainTest::testAutocompletionFlickering()
         declIds << d.first->id();
     }
     lock.unlock();
-    ctx2 = parse("def func():\n\tfoo = 3\n\tfoo2 = 2\n\tfoo", "autocompletion2");
+    
+    g.setFileContents("def func():\n\tfoo = 3\n\tfoo2 = 2\n\tfoo");
+    g.parse(TopDUContext::ForceUpdate);
+    g.waitForParsed(500);
+    
+    ctx2 = g.topContext();
     QVERIFY(ctx2);
     lock.lock();
     decls2 = ctx2->allDeclarations(CursorInRevision::invalid(), ctx2->topContext(), false).first().first->internalContext()
@@ -584,6 +797,16 @@ void PyDUChainTest::testInheritance_data()
     QTest::newRow("simple") << "class A():\n\tattr = 3\n\nclass B(A):\n\tpass\n\ninst=B()\ncheckme = inst.attr";
 }
 
+void PyDUChainTest::testClassContextRanges()
+{
+    QString code = "class my_class():\n pass\n \n \n \n \n";
+    ReferencedTopDUContext ctx = parse(code);
+    DUChainWriteLocker lock;
+    DUContext* classContext = ctx->findContextAt(CursorInRevision(5, 0));
+    QVERIFY(classContext);
+    QVERIFY(classContext->type() == DUContext::Class);
+}
+
 void PyDUChainTest::testContainerTypes()
 {
     QFETCH(QString, code);
@@ -627,5 +850,9 @@ void PyDUChainTest::testContainerTypes_data()
     QTest::newRow("dict_generator") << "checkme = {\"Foo\":i for i in [1, 2, 3]}" << "int" << false;
     QTest::newRow("dict_access") << "list = {a:1, b:2, c:3}\ncheckme = list[0]" << "int" << true;
     QTest::newRow("generator_attribute") << "checkme = [item.capitalize() for item in ['foobar']]" << "string" << false;
+    QTest::newRow("cannot_change_type") << "checkme = [\"Foo\", \"Bar\"]" << "string" << false;
+    QTest::newRow("cannot_change_type") << "[1, 2, 3].append(5)\ncheckme = [\"Foo\", \"Bar\"]" << "string" << false;
+    
+    QTest::newRow("list_append") << "d = []\nd.append(3)\ncheckme = d[0]" << "int" << true;
 }
 

@@ -1,6 +1,6 @@
 /*
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) 2012  <copyright holder> <email>
+    This file is part of kdev-python, the python language plugin for KDevelop
+    Copyright (C) 2012  Sven Brauch <svenbrauch@googlemail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include <QApplication>
 #include <KDebug>
 #include <KStandardDirs>
+#include <KLocalizedString>
 #include <signal.h>
 
 #include <debugger/framestack/framestackmodel.h>
@@ -136,13 +137,21 @@ void DebugSession::dataAvailable()
         bool atLastChange = nextChangeAt == -1;
         nextChangeAt = atLastChange ? len : qMin(nextChangeAt, len);
         
+        kDebug() << data;
+        
         if ( m_inDebuggerData == 1 ) {
             if ( i == 0 ) {
                 i = delimiterSkip;
             }
-            m_buffer.append(data.mid(i, nextChangeAt - i));
-            kDebug() << i << nextChangeAt - i;
-            kDebug() << m_buffer;
+            QString newDebuggerData = data.mid(i, nextChangeAt - i);
+            m_buffer.append(newDebuggerData);
+            if ( data.indexOf("Uncaught exception. Entering post mortem debugging") != -1 ) {
+                emit realDataReceived(QStringList() << "*****"
+                                                    << "  " + i18n("The program being debugged raised an uncaught exception.")
+                                                    << "  " + i18n("You can now inspect the status of the program after it exited.")
+                                                    << "  " + i18n("The debugger will silently stop when the next command is triggered.")
+                                                    << "*****");
+            }
         }
         else if ( m_inDebuggerData == 0 ) {
             QByteArray d = data.mid(i, nextChangeAt - i);

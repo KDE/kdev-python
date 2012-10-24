@@ -16,30 +16,31 @@
  *****************************************************************************
  */
 
-#include "importfileitem.h"
-#include <ktexteditor/document.h>
-#include <language/codecompletion/abstractincludefilecompletionitem.h>
-#include "navigation/navigationwidget.h"
+#ifndef PYTHONCODECOMPLETIONMODEL_H
+#define PYTHONCODECOMPLETIONMODEL_H
+#include "pythoncompletionexport.h"
 
-using namespace KDevelop;
+#include <language/codecompletion/codecompletionmodel.h>
+#include <language/duchain/duchainpointer.h>
+#include <KUrl>
+
 
 namespace Python {
+
+class KDEVPYTHONCOMPLETION_EXPORT PythonCodeCompletionModel : public KDevelop::CodeCompletionModel
+{
+
+public:
+    PythonCodeCompletionModel(QObject* parent);
+    virtual ~PythonCodeCompletionModel();
     
-ImportFileItem::ImportFileItem(const KDevelop::IncludeItem& include): AbstractIncludeFileCompletionItem< NavigationWidget >(include)
-{
-    
-}
-
-ImportFileItem::~ImportFileItem()
-{
-
-}
-
-void ImportFileItem::execute(KTextEditor::Document* document, const KTextEditor::Range& word)
-{
-    kDebug() << "ImportFileItem executed";
-    document->replaceText(word, moduleName);
-}
-
+    virtual KDevelop::CodeCompletionWorker* createCompletionWorker();
+    KTextEditor::Range completionRange(KTextEditor::View* view, const KTextEditor::Cursor &position);
+    bool shouldStartCompletion(KTextEditor::View* view, const QString& inserted,
+                                                     bool userInsertion, const KTextEditor::Cursor& position);
+    KUrl m_currentDocument;
+};
 
 }
+
+#endif // PYTHONCODECOMPLETIONMODEL_H

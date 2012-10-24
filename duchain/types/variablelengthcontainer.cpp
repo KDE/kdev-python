@@ -45,12 +45,23 @@ VariableLengthContainer::VariableLengthContainer(StructureTypeData& data): Struc
 {
 
 }
-    
+
 void Python::VariableLengthContainer::addContentType(AbstractType::Ptr typeToAdd)
 {
-    d_func_dynamic()->m_contentType = Helper::mergeTypes(contentType().abstractType(), typeToAdd)->indexed();
-    DUChainReadLocker lock(DUChain::lock());
+    AbstractType::Ptr newContentType = Helper::mergeTypes(contentType().abstractType(), typeToAdd);
+    DUChainReadLocker lock;
+    d_func_dynamic()->m_contentType = newContentType->indexed();
     kDebug() << "CONTAINER :: new content type: " << contentType().abstractType()->toString();
+}
+
+void VariableLengthContainer::replaceContentType(AbstractType::Ptr newType)
+{
+    d_func_dynamic()->m_contentType = newType->indexed();
+}
+
+void VariableLengthContainer::replaceKeyType(AbstractType::Ptr newType)
+{
+    d_func_dynamic()->m_keyType = newType->indexed();
 }
 
 const IndexedType& Python::VariableLengthContainer::contentType() const
@@ -68,6 +79,10 @@ void Python::VariableLengthContainer::addKeyType(AbstractType::Ptr typeToAdd)
     }
 }
 
+VariableLengthContainer::~VariableLengthContainer()
+{
+}
+
 const IndexedType& Python::VariableLengthContainer::keyType() const
 {
     return d_func()->m_keyType;
@@ -76,7 +91,6 @@ const IndexedType& Python::VariableLengthContainer::keyType() const
 KDevelop::AbstractType* VariableLengthContainer::clone() const
 {
     VariableLengthContainer* n = new VariableLengthContainer(*this);
-    DUChainReadLocker lock(DUChain::lock());
     return n;
 }
 
@@ -135,7 +149,7 @@ uint VariableLengthContainer::hash() const
 {
     return StructureType::hash() + 
         ( contentType().abstractType() ? contentType().abstractType()->hash() : 0 ) + 
-        ( contentType().abstractType() ? contentType().abstractType()->hash() : 0 );
+        ( keyType().abstractType() ? keyType().abstractType()->hash() : 0 );
 }
 
 }

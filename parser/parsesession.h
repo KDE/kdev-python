@@ -34,6 +34,7 @@
 #include <kdev-pg-memory-pool.h>
 
 #include <language/interfaces/iproblem.h>
+#include <language/interfaces/iastcontainer.h>
 #include <language/editor/rangeinrevision.h>
 #include <language/editor/modificationrevision.h>
 
@@ -46,10 +47,10 @@ namespace Python
     class CodeAst;
     class Ast;
 
-class KDEVPYTHONPARSER_EXPORT ParseSession
+class KDEVPYTHONPARSER_EXPORT ParseSession : public IAstContainer
 {
 public:
-    ParseSession(KDevPG::MemoryPool* pool);
+    ParseSession();
     ~ParseSession();
 
     void setContents( const QString& contents );
@@ -72,6 +73,8 @@ public:
         Q_UNUSED(node);
         Q_UNUSED(use);
     }
+    
+    CodeAst* ast;
     
 private:
     QString m_contents;

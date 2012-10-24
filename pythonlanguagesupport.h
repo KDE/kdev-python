@@ -66,6 +66,8 @@ public:
     
     static LanguageSupport* self();
     
+    virtual WhitespaceSensitivity whitespaceSensititivy() const;
+    
 //     virtual QWidget* specialLanguageObjectNavigationWidget(const KUrl& url, const KDevelop::SimpleCursor& position);
 
 private:

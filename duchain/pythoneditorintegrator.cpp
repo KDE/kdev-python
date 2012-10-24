@@ -35,24 +35,23 @@ using namespace KTextEditor;
 namespace Python
 {
 
-PythonEditorIntegrator::PythonEditorIntegrator() : m_session(0)
+PythonEditorIntegrator::PythonEditorIntegrator(ParseSession* session) :
+    m_session(session), m_indentInformationCache(new FileIndentInformation(session->contents()))
 {
+    
 }
 
 PythonEditorIntegrator::~PythonEditorIntegrator() 
 {
+    delete m_indentInformationCache;
+    m_indentInformationCache = 0;
 }
 
 ParseSession* PythonEditorIntegrator::parseSession() const
 {
+    Q_ASSERT(m_session);
     return m_session;
 }
-
-void PythonEditorIntegrator::setParseSession(ParseSession* session)
-{
-    m_session = session;
-}
-
 
 CursorInRevision PythonEditorIntegrator::findPosition( Ast* node , Edge edge ) const
 {
@@ -71,7 +70,6 @@ CursorInRevision PythonEditorIntegrator::findPosition( Ast* node , Edge edge ) c
 RangeInRevision PythonEditorIntegrator::findRange( Ast * node, RangeEdge edge ) const
 {
     Q_UNUSED( edge );
-    kDebug() << "Finding Range ==================";
     return RangeInRevision( findPosition( node, FrontEdge ), findPosition( node, BackEdge ) );
 }
 

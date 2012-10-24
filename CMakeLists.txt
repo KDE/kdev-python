@@ -15,9 +15,7 @@ find_package(KDE4 REQUIRED)
 find_package(KDevPlatform 1.3.60 REQUIRED)
 find_package(KDevelop-PG-Qt REQUIRED)
 
-if(NOT WIN32)
-    set(CMAKE_CXX_FLAGS_DEBUG "-Wfatal-errors -Wall")
-endif(NOT WIN32)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wfatal-errors -Wall")
 
 # then, build the plugin
 include_directories(
@@ -43,6 +41,7 @@ include_directories(
 add_subdirectory(python-src)
 
 add_subdirectory(app_templates)
+add_subdirectory(python-src)
 add_subdirectory(parser)
 add_subdirectory(duchain)
 add_subdirectory(codecompletion)

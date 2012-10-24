@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2010-2011 Sven Brauch <svenbrauch@googlemail.com>           *
+ * Copyright (c) 2011 Sven Brauch <svenbrauch@googlemail.com>                *
  *                                                                           *
  * This program is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU General Public License as            *
@@ -15,34 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************
  */
+#ifndef IMPLEMENTFUNCTIONCOMPLETIONITEM_H
+#define IMPLEMENTFUNCTIONCOMPLETIONITEM_H
 
-#include "pythoncodecompletionmodel.h"
-#include "pythoncodecompletionworker.h"
-#include "ktexteditor/view.h"
-#include <KTextEditor/Document>
+#include <language/codecompletion/codecompletionitem.h>
+#include <QStringList>
+
+using namespace KDevelop;
 
 namespace Python {
 
-PythonCodeCompletionModel::PythonCodeCompletionModel(QObject* parent)
-    : CodeCompletionModel(parent)
+class ImplementFunctionCompletionItem : public CompletionTreeItem
 {
-    // This avoids flickering of the completion-list when full code-completion mode is used
-    setForceWaitForModel(true);
-}
+public:
+    ImplementFunctionCompletionItem(const QString& name, const QStringList& arguments, const QString& previousIndent);
+    virtual void execute(KTextEditor::Document* document, const KTextEditor::Range& word);
+    virtual QVariant data(const QModelIndex& index, int role, const CodeCompletionModel* model) const;
 
-PythonCodeCompletionModel::~PythonCodeCompletionModel() { }
+private:
+    QStringList m_arguments;
+    QString m_name;
+    QString m_previousIndent;
+};
 
+} // namespace Python
 
-KTextEditor::Range PythonCodeCompletionModel::completionRange(KTextEditor::View* view, const KTextEditor::Cursor& position)
-{
-    m_currentDocument = view->document()->url();
-    kWarning() << "Current document: " << m_currentDocument;
-    return KTextEditor::CodeCompletionModelControllerInterface3::completionRange(view, position);
-}
-
-KDevelop::CodeCompletionWorker* PythonCodeCompletionModel::createCompletionWorker()
-{
-    return new PythonCodeCompletionWorker(this, m_currentDocument);
-}
-
-}
+#endif // IMPLEMENTFUNCTIONCOMPLETIONITEM_H

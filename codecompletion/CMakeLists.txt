@@ -4,15 +4,16 @@ include_directories(
 )
 
 set(completion_SRCS
-    implementfunctioncompletionitem.cpp 
-    keyworditem.cpp 
-    functiondeclarationcompletionitem.cpp 
-    importfileitem.cpp
-    pythoncodecompletioncontext.cpp
-    pythoncodecompletionmodel.cpp
-    pythoncodecompletionworker.cpp
+    context.cpp 
+    model.cpp
+    worker.cpp
     helpers.cpp
-    pythondeclarationcompletionitem.cpp
+    
+    items/declaration.cpp
+    items/functiondeclaration.cpp
+    items/implementfunction.cpp
+    items/importfile.cpp
+    items/keyword.cpp
 )
 
 kde4_add_library(kdev4pythoncompletion SHARED ${completion_SRCS})
@@ -32,3 +33,5 @@ target_link_libraries(kdev4pythoncompletion
 )
 
 install(TARGETS kdev4pythoncompletion DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
+
+add_subdirectory(tests)

@@ -40,12 +40,7 @@ Highlighting::Highlighting( QObject * parent )
 
 void CodeHighlightingInstance::highlightUse(KDevelop::DUContext* context, int index, const QColor& color)
 {
-    if ( context->localScopeIdentifier() == KDevelop::QualifiedIdentifier("__kdevpythonlanguagesupport_import_helper") ) {
-        KDevelop::CodeHighlightingInstance::highlightUse(context, index, QColor(70, 180, 20));
-    }
-    else {
-        KDevelop::CodeHighlightingInstance::highlightUse(context, index, color);
-    }
+    KDevelop::CodeHighlightingInstance::highlightUse(context, index, color);
 }
 
 CodeHighlightingInstance::CodeHighlightingInstance(const Highlighting* highlighting)

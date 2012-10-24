@@ -43,6 +43,8 @@
 #include "ast.h"
 #include "types/hintedtype.h"
 #include "types/unsuretype.h"
+#include "types/variablelengthcontainer.h"
+#include "types/indexedcontainer.h"
 
 using namespace KDevelop;
 
@@ -51,6 +53,7 @@ namespace Python {
 QList<KUrl> Helper::cachedSearchPaths;
 QString Helper::dataDir = QString::null;
 QString Helper::documentationFile = QString::null;
+DUChainPointer<TopDUContext> Helper::documentationFileContext = DUChainPointer<TopDUContext>(0);
 
 AbstractType::Ptr Helper::resolveType(AbstractType::Ptr type)
 {
@@ -61,7 +64,7 @@ AbstractType::Ptr Helper::resolveType(AbstractType::Ptr type)
         return type;
 }
 
-UnsureType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* current)
+AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* current)
 {
     if ( type ) {
         kDebug() << type->toString();
@@ -99,7 +102,52 @@ UnsureType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* c
             }
         }
     }
-    return result;
+    else if ( IndexedContainer::Ptr indexed = type.cast<IndexedContainer>() ) {
+        // TODO this is bad because it is slow. Make it faster!
+        // TODO this would really be an important thing, as it will be called quite often.
+        // TODO "how" is simple, just avoid cloning stuff if nothing needs to be changed (i.e. no hints exist).
+        IndexedContainer::Ptr edit = IndexedContainer::Ptr(static_cast<IndexedContainer*>(indexed->clone()));
+        for ( int i = 0; i < indexed->typesCount(); i++ ) {
+            if ( HintedType::Ptr p = indexed->typeAt(i).abstractType().cast<HintedType>() ) {
+                if ( ! p->isValid(current) ) {
+                    edit->replaceType(i, AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+                }
+            }
+        }
+        return edit.cast<AbstractType>();
+    }
+    else if ( VariableLengthContainer::Ptr variable = type.cast<VariableLengthContainer>() ) {
+        VariableLengthContainer::Ptr edit = VariableLengthContainer::Ptr(static_cast<VariableLengthContainer*>(variable->clone()));
+        UnsureType::Ptr newContentType(new UnsureType());
+        AbstractType::Ptr oldContentType = edit->contentType().abstractType();
+        bool isHint = false;
+        if ( oldContentType ) {
+            if ( UnsureType::Ptr oldUnsure = oldContentType.cast<UnsureType>() ) {
+                for ( unsigned int i = 0; i < oldUnsure->typesSize(); i++ ) {
+                    if ( HintedType::Ptr hinted = oldUnsure->types()[i].abstractType().cast<HintedType>() ) {
+                        isHint = true;
+                        if ( ! hinted->isValid(current) ) {
+                            continue;
+                        }
+                    }
+                    newContentType->addType(oldUnsure->types()[i]);
+                }
+            }
+            else if ( HintedType::Ptr hinted = oldContentType.cast<HintedType>() ) {
+                isHint = true;
+                if ( hinted->isValid(current) ) {
+                    newContentType->addType(hinted->indexed());
+                }
+            }
+            if ( ! isHint ) {
+                return result.cast<AbstractType>();
+            }
+            edit->replaceContentType(newContentType.cast<AbstractType>());
+            edit->replaceKeyType(variable->keyType().abstractType());
+        }
+        return edit.cast<AbstractType>();
+    }
+    return result.cast<AbstractType>();
 }
 
 QPair<Python::FunctionDeclarationPointer, bool> Helper::functionDeclarationForCalledDeclaration(DeclarationPointer ptr)
@@ -135,7 +183,7 @@ Declaration* Helper::declarationForName(NameAst* /*ast*/, const QualifiedIdentif
     QList<Declaration*> declarations;
     QList<Declaration*> localDeclarations;
     QList<Declaration*> importedLocalDeclarations;
-    kDebug() << "Finding declaration for name before " << nodeRange.end << ", in context" << context->range();
+    kDebug() << "Finding declaration for name" << identifier.toString() << " before " << nodeRange.end << ", in context" << context->range();
     {
         DUChainReadLocker lock(DUChain::lock());
         if ( context.data() == context->topContext() and nodeRange.isValid() ) {
@@ -144,7 +192,8 @@ Declaration* Helper::declarationForName(NameAst* /*ast*/, const QualifiedIdentif
         else {
             declarations = context->topContext()->findDeclarations(identifier, CursorInRevision::invalid());
         }
-        localDeclarations = context->findLocalDeclarations(identifier.last(), nodeRange.end);
+        localDeclarations = context->findLocalDeclarations(identifier.last(), nodeRange.end, 0,
+                                                           AbstractType::Ptr(0), DUContext::DontResolveAliases);
         importedLocalDeclarations = context->findDeclarations(identifier.last(), nodeRange.end);
     }
     Declaration* declaration;
@@ -174,7 +223,7 @@ Declaration* Helper::declarationForName(NameAst* /*ast*/, const QualifiedIdentif
     return declaration;
 }
 
-QList< DUContext* > Helper::internalContextsForClass(StructureType::Ptr klassType, TopDUContext* context, int depth)
+QList< DUContext* > Helper::internalContextsForClass(StructureType::Ptr klassType, TopDUContext* context, ContextSearchFlags flags, int depth)
 {
     QList<DUContext*> searchContexts;
     if ( ! klassType ) {
@@ -183,18 +232,15 @@ QList< DUContext* > Helper::internalContextsForClass(StructureType::Ptr klassTyp
     searchContexts << klassType->internalContext(context);
     Declaration* decl = Helper::resolveAliasDeclaration(klassType->declaration(context));
     ClassDeclaration* klass = dynamic_cast<ClassDeclaration*>(decl);
-    kDebug() << "Got class Declaration:" << klass << decl;
-    if ( decl ) {
-        kDebug() << decl->toString();
-    }
     if ( klass ) {
-        kDebug() << "Base classes: " << klass->baseClassesSize();
         FOREACH_FUNCTION ( const BaseClassInstance& base, klass->baseClasses ) {
+            if ( flags == PublicOnly and base.access == KDevelop::Declaration::Private ) {
+                continue;
+            }
             StructureType::Ptr baseClassType = base.baseClass.type<StructureType>();
-            kDebug() << "Base class type: " << baseClassType;
             // recursive call, because the base class will have more base classes eventually
             if ( depth < 10 ) {
-                searchContexts.append(Helper::internalContextsForClass(baseClassType, context, depth + 1));
+                searchContexts.append(Helper::internalContextsForClass(baseClassType, context, flags, depth + 1));
             }
         }
     }
@@ -228,7 +274,16 @@ QString Helper::getDocumentationFile() {
 
 ReferencedTopDUContext Helper::getDocumentationFileContext()
 {
-    return ReferencedTopDUContext(DUChain::self()->chainForDocument(Helper::getDocumentationFile()));
+    if ( Helper::documentationFileContext ) {
+        return ReferencedTopDUContext(Helper::documentationFileContext.data());
+    }
+    else {
+        DUChainReadLocker lock;
+        ReferencedTopDUContext ctx = ReferencedTopDUContext(DUChain::self()->chainForDocument(Helper::getDocumentationFile()));
+        Helper::documentationFileContext = DUChainPointer<TopDUContext>(ctx.data());
+        return ctx;
+    }
+    return ReferencedTopDUContext(0); // c++...
 }
     
 QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)

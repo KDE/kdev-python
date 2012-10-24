@@ -37,6 +37,7 @@ private:
         if ( ! node ) return nodelist;
         for ( int i=0; i < node->size; i++ ) {
             T* currentNode = static_cast<T*>(node->elements[i]);
+            Q_ASSERT(currentNode);
             Ast* result = visitNode(currentNode);
             K* transformedNode = static_cast<K*>(result);
             nodelist.append(transformedNode);

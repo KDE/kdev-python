@@ -60,7 +60,6 @@ void UseBuilder::visitName(NameAst* node)
     keywords << "None" << "True" << "False" << "print";
     
     Q_ASSERT(node->identifier);
-    Q_ASSERT(node->hasUsefulRangeInformation); // TODO remove this!
     RangeInRevision useRange = rangeForNode(node->identifier, true);
     
     if ( declaration && declaration->range() == useRange ) return;
@@ -78,13 +77,24 @@ void UseBuilder::visitName(NameAst* node)
         }
     }
     
-    /// debug
-    kDebug() << " Registering use for " << node->identifier->value << " at " 
-             << useRange.castToSimpleRange() << "with dec" << declaration
-             << "in context" << currentContext()->range();
-    /// end debug
+    if ( declaration && declaration->abstractType() && declaration->abstractType()->whichType() == AbstractType::TypeStructure ) {
+        if ( node->belongsToCall ) {
+            DUChainReadLocker lock;
+            QPair< Python::FunctionDeclarationPointer, bool > constructor = Helper::
+                             functionDeclarationForCalledDeclaration(DeclarationPointer(declaration));
+            lock.unlock();
+            bool isConstructor = constructor.second;
+            if ( isConstructor ) {
+                RangeInRevision constructorRange;
+                // TODO fixme! this does not necessarily use the opening bracket as it should
+                constructorRange.start = CursorInRevision(node->endLine, node->endCol + 1);
+                constructorRange.end = CursorInRevision(node->endLine, node->endCol + 2);
+                UseBuilderBase::newUse(node, constructorRange, DeclarationPointer(constructor.first));
+            }
+        }
+    }
+    
     UseBuilderBase::newUse(node, useRange, DeclarationPointer(declaration));
-//     kDebug() << "USE FOUND:" << topContext()->findUseAt(useRange.start) << "for declaration" << declaration->toString();
 }
 
 void UseBuilder::visitAttribute(AttributeAst* node)
@@ -94,9 +104,7 @@ void UseBuilder::visitAttribute(AttributeAst* node)
     UseBuilderBase::visitAttribute(node);
     kDebug() << "Visit Attribute base end";
     
-    DUChainReadLocker lock(DUChain::lock());
     v.visitNode(node);
-    lock.unlock();
     
     RangeInRevision useRange(node->attribute->startLine, node->attribute->startCol, node->attribute->endLine, node->attribute->endCol + 1);
     
@@ -113,7 +121,6 @@ void UseBuilder::visitAttribute(AttributeAst* node)
         topContext()->addProblem(ptr);
     }
     UseBuilderBase::newUse(node, useRange, declaration);
-//     currentContext()->findUseAt();
 }
 
 

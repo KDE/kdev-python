@@ -35,6 +35,7 @@
 #include <language/duchain/duchain.h>
 
 #include "python_header.h"
+#include "astdefaultvisitor.h"
 
 #include <interfaces/icore.h>
 #include <interfaces/iprojectcontroller.h>
@@ -45,6 +46,22 @@ extern grammar _PyParser_Grammar;
 
 namespace Python
 {
+
+// Update the "end" cursors of all nodes in the given tree.
+class RangeUpdateVisitor : public AstDefaultVisitor {
+public:
+    virtual void visitNode(Ast* node) {
+        AstDefaultVisitor::visitNode(node);
+        if ( node && node->parent ) {
+            if ( ( node->parent->endLine <= node->endLine && node->parent->endCol <= node->endCol )
+                 || node->parent->endLine < node->endLine )
+            {
+                node->parent->endLine = node->endLine;
+                node->parent->endCol = node->endCol;
+            }
+        }
+    };
+};
 
 #include "generated.h"
 
@@ -130,6 +147,8 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     
     Py_NoSiteFlag = 1;
     
+    contents.append('\n');
+    
     QPair<QString, int> hacked = fileHeaderHack(contents, filename);
     contents = hacked.first;
     int lineOffset = hacked.second;
@@ -150,12 +169,6 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
 #endif
     kDebug() << "Not initialized, calling init func.";
     Py_Initialize();
-    QTimer timer;
-    timer.start(1000);
-    while ( ! Py_IsInitialized() && timer.isActive() ) {
-        kWarning() << "Python doesn't say it is initialized yet, waiting -- should not happen!";
-        usleep(100000);
-    }
     Q_ASSERT(Py_IsInitialized());
     
     PyArena* arena = PyArena_New();
@@ -165,10 +178,8 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     
     PyObject *exception, *value, *backtrace;
     PyErr_Fetch(&exception, &value, &backtrace);
-//     kDebug() << "Errors before starting parser:";
-//     PyObject_Print(value, stderr, Py_PRINT_RAW);
-//     kDebug();
-    mod_ty syntaxtree = PyParser_ASTFromString(contents.toAscii(), "<kdev-editor-contents>", file_input, flags, arena);
+
+    mod_ty syntaxtree = PyParser_ASTFromString(contents.toAscii().data(), "<kdev-editor-contents>", file_input, flags, arena);
 
     if ( ! syntaxtree ) {
         kWarning() << "DID NOT RECEIVE A SYNTAX TREE -- probably parse error.";
@@ -338,6 +349,9 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     
     AstBuilder::pyInitLock.unlock();
     free(homedir);
+    
+    RangeUpdateVisitor v;
+    v.visitNode(t.ast);
 
 #ifdef _WIN32
     delete[] we;

@@ -78,7 +78,6 @@ private:
     KDevelop::ReferencedTopDUContext m_duContext;
     KUrl m_url;
     KTextEditor::Range m_textRangeToParse;
-    KDevPG::MemoryPool m_pool;
 };
 
 }

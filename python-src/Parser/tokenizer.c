@@ -6,6 +6,7 @@
 
 #include <ctype.h>
 #include <assert.h>
+#include <stdio.h>
 
 #include "tokenizer.h"
 #include "errcode.h"
@@ -731,27 +732,28 @@ decode_str(const char *input, int single, struct tok_state *tok)
             return error_ret(tok);
         str = PyBytes_AsString(utf8);
     }
-    for (s = str;; s++) {
-        if (*s == '\0') break;
-        else if (*s == '\n') {
-            assert(lineno < 2);
-            newl[lineno] = s;
-            lineno++;
-            if (lineno == 2) break;
-        }
-    }
-    tok->enc = NULL;
-    /* need to check line 1 and 2 separately since check_coding_spec
-       assumes a single line as input */
-    if (newl[0]) {
-        if (!check_coding_spec(str, newl[0] - str, tok, buf_setreadl))
-            return error_ret(tok);
-        if (tok->enc == NULL && newl[1]) {
-            if (!check_coding_spec(newl[0]+1, newl[1] - newl[0],
-                                   tok, buf_setreadl))
-                return error_ret(tok);
-        }
-    }
+//     for (s = str;; s++) {
+//         if (*s == '\0') break;
+//         else if (*s == '\n') {
+//             assert(lineno < 2);
+//             newl[lineno] = s;
+//             lineno++;
+//             if (lineno == 2) break;
+//         }
+//     }
+//     tok->enc = NULL;
+//     /* need to check line 1 and 2 separately since check_coding_spec
+//        assumes a single line as input */
+//     if (newl[0]) {
+//         if (!check_coding_spec(str, newl[0] - str, tok, buf_setreadl))
+//             return error_ret(tok);
+//         if (tok->enc == NULL && newl[1]) {
+//             if (!check_coding_spec(newl[0]+1, newl[1] - newl[0],
+//                                    tok, buf_setreadl))
+//                 return error_ret(tok);
+//         }
+//     }
+#ifdef Py_USING_UNICODE
     if (tok->enc != NULL) {
         assert(utf8 == NULL);
         utf8 = translate_into_utf8(str, tok->enc);
@@ -774,11 +776,16 @@ PyTokenizer_FromString(const char *str, int exec_input)
     struct tok_state *tok = tok_new();
     if (tok == NULL)
         return NULL;
+<<<<<<< HEAD
 //     str = (char *)decode_str(str, exec_input, tok);
     if (str == NULL) {
         PyTokenizer_Free(tok);
         return NULL;
     }
+=======
+    /// kdevelop change: We don't need this. We can throw in unicode from KTE, which is fine.
+    str = (char *)decode_str(str, exec_input, tok);
+>>>>>>> master
 
     /* XXX: constify members. */
     tok->buf = tok->cur = tok->end = tok->inp = (char*)str;

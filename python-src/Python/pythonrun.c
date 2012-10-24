@@ -294,16 +294,16 @@ Py_InitializeEx(int install_sigs)
 
     _PyTime_Init();
 
-    if (initfsencoding(interp) < 0)
-        Py_FatalError("Py_Initialize: unable to load the file system codec");
+//     if (initfsencoding(interp) < 0)
+//         Py_FatalError("Py_Initialize: unable to load the file system codec");
 
     if (install_sigs)
         initsigs(); /* Signal handling stuff, including initintr() */
 
     initmain(); /* Module __main__ */
-    if (initstdio() < 0)
-        Py_FatalError(
-            "Py_Initialize: can't initialize sys standard streams");
+//     if (initstdio() < 0)
+//         Py_FatalError(
+//             "Py_Initialize: can't initialize sys standard streams");
 
     /* Initialize warnings. */
     if (PySys_HasWarnOptions()) {

@@ -29,6 +29,7 @@
 #include <KLocale>
 #include <QDir>
 #include <QTimer>
+#include <malloc.h>
 #include <language/duchain/topducontext.h>
 #include <language/interfaces/iproblem.h>
 #include <language/duchain/duchain.h>
@@ -52,9 +53,9 @@ QString AstBuilder::pyHomeDir = KStandardDirs::locate("data", "");
 
 QString PyUnicodeObjectToQString(PyObject* obj) {
 #ifdef Q_OS_WIN32
-	return QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(obj)));
+    return QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(obj)));
 #else
-	return QLatin1String(PyObject_Str(obj));
+    return QLatin1String((char*)PyUnicode_AS_DATA(PyObject_Str(obj)));
 #endif
 }
 
@@ -141,7 +142,11 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     we[AstBuilder::pyHomeDir.size()] = 0;
     Py_SetPythonHome(we);
 #else
-    Py_SetPythonHome(AstBuilder::pyHomeDir.toAscii().data());
+    wchar_t* homedir = (wchar_t*) malloc((AstBuilder::pyHomeDir.size() + 1) * sizeof(wchar_t));
+    AstBuilder::pyHomeDir.toWCharArray(homedir);
+    homedir[AstBuilder::pyHomeDir.size()] = 0x0;
+    kWarning() << AstBuilder::pyHomeDir;
+    Py_SetPythonHome(homedir);
 #endif
     kDebug() << "Not initialized, calling init func.";
     Py_Initialize();

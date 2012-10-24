@@ -302,7 +302,7 @@ def issubclass(cls, info): return True
 def iter(o, s = None): return __kdevpythondocumentation_builtin_iterator()
 def len(s): return 0
 def locals(): return {}
-def long(x = None, base = None): return 0L
+def long(x = None, base = None): return 0
 def map(func, iterab): return []
 def max(lst, args = None, key = None): return 0
 def memoryview(obj): return None

@@ -70,15 +70,21 @@ CodeAst* PyAstTest::getAst(QString code)
 
 class VerifyVisitor : public AstDefaultVisitor {
 public:
-    VerifyVisitor() : AstDefaultVisitor() { };
+    VerifyVisitor() : AstDefaultVisitor(), m_nodecount(0) { };
     virtual void visitNode(Ast* node) {
-        QVERIFY(node);
-        QVERIFY(node->astType <= Ast::LastAstType);
+        m_nodecount += 1;
+        QVERIFY(! node || node->astType <= Ast::LastAstType);
         AstDefaultVisitor::visitNode(node);
     };
     virtual void visitName(NameAst* node) {
         QVERIFY(! node->identifier->value.isNull());
+        AstDefaultVisitor::visitName(node);
     };
+    virtual void visitCode(CodeAst* node) {
+        AstDefaultVisitor::visitCode(node);
+        qDebug() << "done, nodes visited:" << m_nodecount;
+    };
+    int m_nodecount;
 };
 
 void PyAstTest::testCode(QString code)
@@ -86,6 +92,104 @@ void PyAstTest::testCode(QString code)
     CodeAst* ast = getAst(code);
     VerifyVisitor v;
     v.visitCode(ast);
+}
+
+void PyAstTest::testStatements()
+{
+    QFETCH(QString, code);
+    testCode(code);
+}
+
+void PyAstTest::testStatements_data()
+{
+    QTest::addColumn<QString>("code");
+    QTest::newRow("assign_int") << "a = 3";
+    QTest::newRow("funcdef") << "def myfun(): pass";
+    QTest::newRow("funcdef_args") << "def myfun(arg1, arg2): pass";
+    QTest::newRow("funcdef_vararg") << "def myfun(arg1, *arg): pass";
+    QTest::newRow("funcdef_kwarg") << "def myfun(**arg): pass";
+    QTest::newRow("classdef_inheritance") << "class myclass(parent): pass";
+    QTest::newRow("return") << "return 3";
+    QTest::newRow("for") << "for i in 1, 2, 3: pass";
+    QTest::newRow("while") << "while True: pass";
+    QTest::newRow("if") << "if True: pass";
+    QTest::newRow("ifElse") << "if True: pass\nelse:pass";
+    QTest::newRow("with") << "with x as y: pass";
+    QTest::newRow("raise") << "raise Exception";
+    QTest::newRow("tryexcept") << "try:pass\nexcept:pass";
+    QTest::newRow("tryexceptfinally") << "try:pass\nexcept:pass\nfinally:pass";
+    QTest::newRow("assert") << "assert false";
+    QTest::newRow("import") << "import foobar";
+    QTest::newRow("importfrom") << "from foobar import bazbang";
+    QTest::newRow("global") << "global x";
+    QTest::newRow("break") << "while True: break";
+    QTest::newRow("continue") << "while True: continue";
+    QTest::newRow("pass") << "pass";
+    QTest::newRow("nonlocal") << "nonlocal x";
+}
+
+void PyAstTest::testSlices()
+{
+    QFETCH(QString, code);
+    testCode(code);
+}
+
+void PyAstTest::testSlices_data()
+{
+    QTest::addColumn<QString>("code");
+    QTest::newRow("slice1") << "x[1]";
+    QTest::newRow("slice2") << "x[2:3]";
+    QTest::newRow("slice3") << "x[::]";
+    QTest::newRow("slice4") << "x[1:2:3]";
+}
+
+void PyAstTest::testOther()
+{
+    QFETCH(QString, code);
+    testCode(code);
+}
+
+void PyAstTest::testOther_data()
+{
+    QTest::addColumn<QString>("code");
+    QTest::newRow("args") << "foo(bar, baz, *bang, **baa)";
+    QTest::newRow("kws") << "foo(bar=baz, bang=3)";
+    QTest::newRow("excpthandler") << "try:pass\nexcept foo as bar: pass";
+    QTest::newRow("alias") << "import foo as bar";
+}
+
+void PyAstTest::testExpressions()
+{
+    QFETCH(QString, code);
+    testCode(code);
+}
+
+void PyAstTest::testExpressions_data()
+{
+    QTest::addColumn<QString>("code");
+    
+    QTest::newRow("boolop") << "b or c";
+    QTest::newRow("binop") << "b ^ c";
+    QTest::newRow("unop") << "not a";
+    QTest::newRow("lambda") << "lambda x: y";
+    QTest::newRow("ifexpr") << "3 if 4 else 5";
+    QTest::newRow("dict") << "{}";
+    QTest::newRow("set") << "(3, 5)";
+    QTest::newRow("listcomp") << "[x for x in y]";
+    QTest::newRow("setcomp") << "(x for x in y)";
+    QTest::newRow("dictcomp") << "{x:y for x, y in z}";
+    QTest::newRow("comp") << "x < y";
+    QTest::newRow("number") << "3";
+    QTest::newRow("string") << "\"foo\"";
+    QTest::newRow("bytes") << "b\"bytes\"";
+    QTest::newRow("yield") << "yield x";
+    QTest::newRow("name") << "foo";
+    QTest::newRow("call") << "foo()";
+    QTest::newRow("attribute") << "foo.bar";
+    QTest::newRow("subscript") << "foo[3]";
+    QTest::newRow("starred") << "*[1, 2, 3 ,4]";
+    QTest::newRow("list") << "[]";
+    QTest::newRow("tuple") << "()";
 }
 
 void PyAstTest::testClass()

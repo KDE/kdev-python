@@ -1630,15 +1630,11 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             int firstDefaultParameterOffset = parametersCount - defaultParametersCount;
             int currentIndex = 0;
             kDebug() << "variable argument ranges: " << node->arg_lineno << node->arg_col_offset << node->vararg_lineno << node->vararg_col_offset;
-<<<<<<< HEAD
-            foreach ( ExpressionAst* expression, node->arguments ) {
+            foreach ( ArgAst* arg, node->arguments ) {
                 // Iterate over all the function's arguments, create declarations, and add the arguments
                 // to the functions FunctionType.
-=======
-            foreach ( ArgAst* arg, node->arguments ) {
                 ExpressionAst* expression = 0; //arg->argumentName;
 #warning this cannot work
->>>>>>> add unit tests for AST
                 currentIndex += 1;
                 realParam = dynamic_cast<NameAst*>(expression);
                 
@@ -1703,8 +1699,13 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                                                                 <AbstractType>("str", currentContext());
                 VariableLengthContainer::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType
                                                                   <VariableLengthContainer>("dict", currentContext());
+<<<<<<< HEAD
                 if ( dictType && stringType ) {
                     lock.unlock();
+=======
+                lock.unlock();
+                if ( dictType ) {
+>>>>>>> fix a crash when parsing of the doc file fails
                     dictType->addKeyType(stringType);
                     node->kwarg->startCol = node->arg_col_offset; node->kwarg->endCol = node->arg_col_offset + node->kwarg->value.length() - 1;
                     node->kwarg->startLine = node->arg_lineno; node->kwarg->endLine = node->arg_lineno;

@@ -86,7 +86,7 @@ AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext*
     else if ( UnsureType::Ptr unsure = type.cast<UnsureType>() ) {
         int len = unsure->typesSize();
         kDebug() << "Extracting hints from " << len << "types";
-        for ( int i = 0; i < len && i < maxHints; i++ ) {
+        for ( int i = 0; i < len and i < maxHints; i++ ) {
             if ( HintedType::Ptr hinted = unsure->types()[i].abstractType().cast<HintedType>() ) {
                 if ( hinted->isValid(current) ) {
                     kDebug() << "Adding type hint (multi): " << hinted->toString();
@@ -154,7 +154,7 @@ QPair<Python::FunctionDeclarationPointer, bool> Helper::functionDeclarationForCa
 {
     bool isConstructor = false;
     DeclarationPointer lastCalledDeclaration = ptr;
-    if ( lastCalledDeclaration && !lastCalledDeclaration->isFunctionDeclaration() )
+    if ( lastCalledDeclaration and not lastCalledDeclaration->isFunctionDeclaration() )
     {
         kDebug() << "No function declaration, looking for class constructor";
         kDebug() << "Class declaration: " << lastCalledDeclaration;
@@ -185,7 +185,7 @@ Declaration* Helper::declarationForName(NameAst* /*ast*/, const QualifiedIdentif
     QList<Declaration*> importedLocalDeclarations;
     {
         DUChainReadLocker lock(DUChain::lock());
-        if ( context.data() == context->topContext() && nodeRange.isValid() ) {
+        if ( context.data() == context->topContext() and nodeRange.isValid() ) {
             declarations = context->topContext()->findDeclarations(identifier, nodeRange.end);
         }
         else {
@@ -204,7 +204,7 @@ Declaration* Helper::declarationForName(NameAst* /*ast*/, const QualifiedIdentif
         do {
             declaration = importedLocalDeclarations.last();
             importedLocalDeclarations.pop_back();
-            if ( !declaration || declaration->context()->type() == DUContext::Class ) {
+            if ( not declaration or declaration->context()->type() == DUContext::Class ) {
                 declaration = 0;
             }
             if ( importedLocalDeclarations.isEmpty() ) {
@@ -365,7 +365,7 @@ AbstractType::Ptr Helper::mergeTypes(AbstractType::Ptr type, AbstractType::Ptr n
         int len = unsure->typesSize();
         for ( int i = len; i > 0; i-- ) {
             HintedType::Ptr hinted = unsure.cast<HintedType>();
-            if ( hinted && !hinted->isValid(ctx) ) {
+            if ( hinted and ! hinted->isValid(ctx) ) {
                 unsure->removeType(hinted->indexed());
             }
         }

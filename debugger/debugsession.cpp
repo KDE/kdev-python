@@ -214,7 +214,7 @@ void DebugSession::notifyNext()
 {
     QSharedPointer<QObject> lock = m_nextNotifyObject.toStrongRef();
     kDebug() << "notify next:" << m_nextNotifyObject << m_nextNotifyObject.data() << this;
-    if ( m_nextNotifyMethod && m_nextNotifyObject ) {
+    if ( m_nextNotifyMethod and m_nextNotifyObject ) {
         QMetaObject::invokeMethod(m_nextNotifyObject.data(), m_nextNotifyMethod, Qt::DirectConnection, Q_ARG(QByteArray, m_buffer));
     }
     else {
@@ -228,7 +228,7 @@ void DebugSession::notifyNext()
 void DebugSession::processNextCommand()
 {
     kDebug() << "processing next debugger command in queue";
-    if ( m_processBusy && m_state == EndedState ) {
+    if ( m_processBusy or m_state == EndedState ) {
         kDebug() << "process is busy or ended, aborting";
         return;
     }

@@ -158,7 +158,7 @@ RangeInRevision ContextBuilder::editorFindRange(Ast* fromNode, Ast* toNode)
 }
 
 CursorInRevision ContextBuilder::editorFindPositionSafe(Ast* node) {
-    if ( !node ) {
+    if ( not node ) {
         return CursorInRevision::invalid();
     }
     return editor()->findPosition(node);

@@ -59,7 +59,7 @@ AbstractType::Ptr ExpressionVisitor::encounterPreprocess(AbstractType::Ptr type,
 {
     type = Helper::resolveType(type);
     AbstractType::Ptr res;
-    if ( merge && !m_lastType.isEmpty() ) {
+    if ( merge and not m_lastType.isEmpty() ) {
         res = Helper::mergeTypes(m_lastType.pop(), type);
     }
     else {
@@ -217,7 +217,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     else if ( accessingAttributeOf->astType == Ast::SliceAstType ) {
         availableDeclarations = lastDeclarations();
     }
-    else if ( !lastType().isNull() && lastType().cast<StructureType>() ) {
+    else if ( not lastType().isNull() && lastType().cast<StructureType>() ) {
         accessingAttributeOfType.append(lastType().cast<StructureType>());
     }
     else {
@@ -300,12 +300,16 @@ void ExpressionVisitor::visitCall(CallAst* node)
         actualDeclaration = v.lastDeclaration().data();
     }
     
+<<<<<<< HEAD
     if ( unidentifiedFunctionType ) {
         encounter(unidentifiedFunctionType->returnType());
         encounterDeclaration(0);
         return;
     }
     else if ( !actualDeclaration ) {
+=======
+    if ( not actualDeclaration ) {
+>>>>>>> Revert "replace all occurances of named boolean operators (and->&&, or->||, not->\!"
 //         kDebug() << "No declaration for " << functionName;
         m_shouldBeKnown = false;
         return unknownTypeEncountered();
@@ -321,7 +325,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
         
         if ( funcDecl && funcDecl->type<FunctionType>() ) {
             AbstractType::Ptr type;
-            if ( isConstructor && classDecl ) {
+            if ( isConstructor and classDecl ) {
                 type = classDecl->abstractType();
                 encounterDeclaration(classDecl);
             }
@@ -348,7 +352,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
                     }
                 }
                 if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsList")
-                    || Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsListOfKeys")
+                    or Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsListOfKeys")
                 ) {
                     decoratorFound = true;
                     if ( node->function->astType == Ast::AttributeAstType ) {
@@ -442,7 +446,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
                         return encounter(type);
                     }
                 }
-                if ( decoratorFound && !typeFound ) {
+                if ( decoratorFound and not typeFound ) {
                     return unknownTypeEncountered();
                 }
             }
@@ -621,8 +625,14 @@ void ExpressionVisitor::visitTuple(TupleAst* node) {
 void ExpressionVisitor::visitIfExpression(IfExpressionAst* node)
 {
     AstDefaultVisitor::visitIfExpression(node);
+<<<<<<< HEAD
     if ( node->body && node->orelse ) {
         ExpressionVisitor v(this);
+=======
+    if ( node->body and node->orelse ) {
+        ExpressionVisitor v(m_ctx);
+        v.m_forceGlobalSearching = m_forceGlobalSearching;
+>>>>>>> Revert "replace all occurances of named boolean operators (and->&&, or->||, not->\!"
         v.visitNode(node->body);
         AbstractType::Ptr first = v.lastType();
         DeclarationPointer firstDecl = v.lastDeclaration();
@@ -732,7 +742,17 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
                                                 range, DUContextPointer(m_ctx));
     
     if ( d ) {
+<<<<<<< HEAD
         bool isAlias = dynamic_cast<AliasDeclaration*>(d) || d->isFunctionDeclaration() || dynamic_cast<ClassDeclaration*>(d);
+=======
+        /** DEBUG **/
+        kDebug() << "Found declaration: " << d->toString() << d
+                 << d->abstractType() << dynamic_cast<VariableLengthContainer*>(d->abstractType().unsafeData());
+        /** / DEBUG **/
+        bool isAlias = d->abstractType() and (
+                       d->abstractType()->whichType() == AbstractType::TypeFunction or
+                       d->abstractType()->whichType() == AbstractType::TypeStructure );
+>>>>>>> Revert "replace all occurances of named boolean operators (and->&&, or->||, not->\!"
         encounterDeclaration(d, isAlias);
         return encounter(d->abstractType());
     }

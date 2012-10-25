@@ -36,9 +36,9 @@ namespace Python
 
 ParseSession::ParseSession()
     : m_pool(new KDevPG::MemoryPool())
+    , ast(0)
     , m_currentDocument(KDevelop::IndexedString("<invalid>"))
     , m_futureModificationRevision()
-    , ast(0)
 {
 }
 ParseSession::~ParseSession()

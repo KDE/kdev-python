@@ -92,6 +92,7 @@ void ParseJob::run()
     ParseSession* currentSession = new ParseSession();
     
     if ( abortRequested() || ICore::self()->shuttingDown() ) {
+        delete currentSession;
         return abortJob();
     }
     
@@ -120,6 +121,7 @@ void ParseJob::run()
     m_ast = parserResults.first;
     
     if ( abortRequested() ) {
+        delete currentSession;
         return abortJob();
     }
     
@@ -138,6 +140,7 @@ void ParseJob::run()
         // Run the declaration builder. If necessary, it will run itself again.
         m_duContext = builder.build(document(), m_ast, toUpdate);
         if ( abortRequested() ) {
+            delete currentSession;
             return abortJob();
         }
         
@@ -184,6 +187,7 @@ void ParseJob::run()
         kDebug() << "---- Parsing Succeded ----";
         
         if ( abortRequested() ) {
+            delete currentSession;
             return abortJob();
         }
         
@@ -218,6 +222,7 @@ void ParseJob::run()
     }
     
     if ( abortRequested() ) {
+        delete currentSession;
         return abortJob();
     }
     

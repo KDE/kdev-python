@@ -591,8 +591,17 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("constructor_type_deduction") << "class myclass:\n"
                                                    "\tdef __init__(self, param): self.foo=param\n"
                                                    "checkme = myclass(3).foo" << "int";
-    
-    QTest::newRow("functionCall_functionArg") << "def getstr(): return \"foo\"\n"
+    QTest::newRow("simpe_type_deduction") << "def myfunc(arg): return arg\n"
+                                             "checkme = myfunc(3)" << "int";
+    QTest::newRow("functionCall_functionArg_part1") << "def getstr(): return \"foo\"\n"
+                                                 "def identity(f): return f\n"
+                                                 "f1 = getstr\n"
+                                                 "checkme = f1()" << "string";
+    QTest::newRow("functionCall_functionArg_part2") << "def getstr(): return \"foo\"\n"
+                                                 "def identity(f): return f\n"
+                                                 "f1 = identity(getstr)\n"
+                                                 "checkme = f1()\n" << "string";
+    QTest::newRow("functionCall_functionArg_full") << "def getstr(): return \"foo\"\n"
                                                  "def identity(f): return f\n"
                                                  "f1 = getstr\n"
                                                  "f2 = identity(getstr)\n"

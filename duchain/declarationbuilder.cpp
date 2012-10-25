@@ -166,7 +166,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
 
 QList< Declaration* > DeclarationBuilder::existingDeclarationsForNode(Identifier* node)
 {
-    QList<Declaration*> existingDeclarations = currentContext()->findDeclarations(identifierForNode(node).last(),  // <- WARNING first / last?
+    QList<Declaration*> existingDeclarations = currentContext()->findDeclarations(identifierForNode(node).last(),
                                                                 CursorInRevision::invalid(), 0,
                                                                 (DUContext::SearchFlag) ( DUContext::DontSearchInParent | DUContext::DontResolveAliases) );
     // append arguments context
@@ -309,6 +309,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         if ( currentContext()->type() == DUContext::Function ) {
             // check for argument type hints (those are created when calling functions)
             AbstractType::Ptr hints = Helper::extractTypeHints(dec->abstractType(), topContext());
+            kDebug() << hints->toString();
             if ( hints.cast<IndexedContainer>() || hints.cast<VariableLengthContainer>() ) {
                 // This only happens when the type hint is a tuple, which means the vararg/kwarg of a function is being processed.
                 newType = hints;

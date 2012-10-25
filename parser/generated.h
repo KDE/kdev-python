@@ -332,7 +332,7 @@ v->isInt = PyLong_Check(node->v.Num.n); v->value = PyLong_AsLong(node->v.Num.n);
 
     Ast* visitNode(_comprehension* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
+        if ( ! node ) return 0;
                 ComprehensionAst* v = new (m_pool->allocate(sizeof(ComprehensionAst))) ComprehensionAst(parent());
             nodeStack.push(v); v->target = static_cast<ExpressionAst*>(visitNode(node->target)); nodeStack.pop();
             nodeStack.push(v); v->iterator = static_cast<ExpressionAst*>(visitNode(node->iter)); nodeStack.pop();
@@ -343,7 +343,7 @@ v->isInt = PyLong_Check(node->v.Num.n); v->value = PyLong_AsLong(node->v.Num.n);
 
     Ast* visitNode(_arg* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
+        if ( ! node ) return 0;
                 ArgAst* v = new (m_pool->allocate(sizeof(ArgAst))) ArgAst(parent());
             v->argumentName = node->arg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->arg)) : 0;
             nodeStack.push(v); v->annotation = static_cast<ExpressionAst*>(visitNode(node->annotation)); nodeStack.pop();
@@ -353,7 +353,7 @@ v->isInt = PyLong_Check(node->v.Num.n); v->value = PyLong_AsLong(node->v.Num.n);
 
     Ast* visitNode(_alias* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
+        if ( ! node ) return 0;
                 AliasAst* v = new (m_pool->allocate(sizeof(AliasAst))) AliasAst(parent());
             v->name = node->name ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->name)) : 0;
                 if ( v->name ) {
@@ -668,7 +668,7 @@ v->isInt = PyLong_Check(node->v.Num.n); v->value = PyLong_AsLong(node->v.Num.n);
 
     Ast* visitNode(_arguments* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
+        if ( ! node ) return 0;
                 ArgumentsAst* v = new (m_pool->allocate(sizeof(ArgumentsAst))) ArgumentsAst(parent());
             v->vararg = node->vararg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->vararg)) : 0;
             v->kwarg = node->kwarg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->kwarg)) : 0;
@@ -684,7 +684,7 @@ v->isInt = PyLong_Check(node->v.Num.n); v->value = PyLong_AsLong(node->v.Num.n);
 
     Ast* visitNode(_keyword* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
+        if ( ! node ) return 0;
                 KeywordAst* v = new (m_pool->allocate(sizeof(KeywordAst))) KeywordAst(parent());
             v->argumentName = node->arg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->arg)) : 0;
             nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->value)); nodeStack.pop();

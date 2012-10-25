@@ -1055,8 +1055,8 @@ ast_for_funcdef(struct compiling *c, const node *n, asdl_seq *decorator_seq)
     if (!body)
         return NULL;
 
-    return FunctionDef(name, args, body, decorator_seq, returns, LINENO(n),
-                       n->n_col_offset, c->c_arena);
+    return FunctionDef(name, args, body, decorator_seq, returns, LINENO(CHILD(n, 1)),
+                       CHILD(n, 1)->n_col_offset, c->c_arena);
 }
 
 static stmt_ty
@@ -1082,10 +1082,11 @@ ast_for_decorated(struct compiling *c, const node *n)
     }
     /* we count the decorators in when talking about the class' or
      * function's line number */
-    if (thing) {
-        thing->lineno = LINENO(n);
-        thing->col_offset = n->n_col_offset;
-    }
+    /// Kdevelop change: no.
+//     if (thing) {
+//         thing->lineno = LINENO(n);
+//         thing->col_offset = n->n_col_offset;
+//     }
     return thing;
 }
 
@@ -1741,8 +1742,8 @@ ast_for_power(struct compiling *c, const node *n)
         tmp = ast_for_trailer(c, ch, e);
         if (!tmp)
             return NULL;
-        tmp->lineno = e->lineno;
-        tmp->col_offset = e->col_offset;
+//         tmp->lineno = e->lineno;
+//         tmp->col_offset = e->col_offset;
         e = tmp;
     }
     if (TYPE(CHILD(n, NCH(n) - 1)) == factor) {

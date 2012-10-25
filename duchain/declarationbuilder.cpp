@@ -1037,7 +1037,6 @@ void DeclarationBuilder::visitCall(CallAst* node)
             bool atVararg = false;
             // Check that there's enough known parameters which can be updated
             uint typeParametersSize = functiontype->arguments().length();
-            typeParametersSize += static_cast<FunctionDeclarationPointer>(lastFunctionDeclaration)->defaultParametersSize();
             if ( parameters.size() >= node->arguments.size() && typeParametersSize >= (uint) node->arguments.size() ) {
                 foreach ( ExpressionAst* arg, node->arguments ) {
                     // Iterate over all the arguments, trying to guess the type of the object being

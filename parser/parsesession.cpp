@@ -43,6 +43,7 @@ ParseSession::ParseSession()
 }
 ParseSession::~ParseSession()
 {
+    delete m_pool;
 }
 
 void ParseSession::setCurrentDocument(const IndexedString& url)

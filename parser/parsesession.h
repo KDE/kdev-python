@@ -58,7 +58,7 @@ public:
     
     KDevPG::MemoryPool* m_pool;
     
-    void setCurrentDocument(KUrl& filename);
+    void setCurrentDocument(const IndexedString& url);
     IndexedString currentDocument();
 
     QPair<CodeAst*, bool> parse( Python::CodeAst* ast );

@@ -255,6 +255,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     // Step 2: Construct the type of the declaration which was found.
     Declaration* d;
     if ( foundDecls.length() > 0 ) {
+        DUChainReadLocker lock;
         d = DeclarationPointer(Helper::resolveAliasDeclaration(foundDecls.last())).data();
         if ( ! d ) {
             return unknownTypeEncountered();

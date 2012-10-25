@@ -36,18 +36,19 @@ namespace Python
 
 ParseSession::ParseSession()
     : m_pool(new KDevPG::MemoryPool())
+    , ast(0)
     , m_currentDocument(KDevelop::IndexedString("<invalid>"))
     , m_futureModificationRevision()
-    , ast(0)
 {
 }
 ParseSession::~ParseSession()
 {
+    delete m_pool;
 }
 
-void ParseSession::setCurrentDocument(KUrl& filename)
+void ParseSession::setCurrentDocument(const IndexedString& url)
 {
-    m_currentDocument = KDevelop::IndexedString(filename);
+    m_currentDocument = url;
 }
 
 IndexedString ParseSession::currentDocument()

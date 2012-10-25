@@ -128,7 +128,7 @@ void PyDUChainTest::testCrashes() {
 void PyDUChainTest::testCrashes_data() {
     QTest::addColumn<QString>("code");
     
-    QTest::newRow("unicode escape char") << "print u\"\\xe9\"";
+    QTest::newRow("unicode escape char") << "print(u\"\\xe9\")";
     QTest::newRow("negative slice index") << "t = (1, 2, 3)\nd = t[-1]";
     QTest::newRow("fancy generator context range") << "c1_list = sorted(letter for (letter, meanings) \\\n"
                "in ambiguous_nucleotide_values.iteritems() \\\n"
@@ -275,7 +275,7 @@ void PyDUChainTest::testCrashes_data() {
 
 void PyDUChainTest::testClassVariables()
 {
-    ReferencedTopDUContext ctx = parse("class c():\n myvar = 3;\n def meth(self):\n  print myvar");
+    ReferencedTopDUContext ctx = parse("class c():\n myvar = 3;\n def meth(self):\n  print(myvar)");
     QVERIFY(ctx.data());
     DUChainWriteLocker lock(DUChain::lock());
     CursorInRevision relevantPosition(3, 10);
@@ -579,6 +579,7 @@ void PyDUChainTest::testTypes_data()
     
     QTest::newRow("tuple_indexaccess") << "t = 3, 5.5\ncheckme = t[0]" << "int";
     QTest::newRow("tuple_indexaccess2") << "t = 3, 5.5\ncheckme = t[1]" << "float";
+    QTest::newRow("tuple_indexaccess3") << "t = 3, 4\ncheckme = t[1]" << "int";
     
     QTest::newRow("tuple_loop") << "t = [(1, \"str\")]\nfor checkme, a in t: pass" << "int";
     

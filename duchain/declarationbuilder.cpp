@@ -1044,7 +1044,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
                     // passed as an argument, and update the parameter accordingly.
                     
                     // If more params are passed than the function has args, maybe it's a vararg
-                    if ( atParam >= functiontype->arguments().size() - specialParamsCount || atParam >= parameters.size() - specialParamsCount ) {
+                    if ( atParam >= functiontype->arguments().size() - specialParamsCount && atParam >= parameters.size() - specialParamsCount ) {
                         if ( lastFunctionDeclaration->hasVararg() ) {
                             atVararg = true;
                         }

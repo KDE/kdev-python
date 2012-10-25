@@ -375,6 +375,8 @@ struct _arguments {
 struct _arg {
         identifier arg;
         expr_ty annotation;
+        int lineno;
+        int col_offset;
 };
 
 struct _keyword {
@@ -549,8 +551,8 @@ arguments_ty _Py_arguments(asdl_seq * args, identifier vararg, expr_ty
                            asdl_seq * kw_defaults, int arg_lineno, int
                            arg_col_offset, int vararg_lineno, int
                            vararg_col_offset, PyArena *arena);
-#define arg(a0, a1, a2) _Py_arg(a0, a1, a2)
-arg_ty _Py_arg(identifier arg, expr_ty annotation, PyArena *arena);
+#define arg(a0, a1, a2, a3, a4) _Py_arg(a0, a1, a2, a3, a4)
+arg_ty _Py_arg(identifier arg, expr_ty annotation, int lineno, int col_offset, PyArena *arena);
 #define keyword(a0, a1, a2) _Py_keyword(a0, a1, a2)
 keyword_ty _Py_keyword(identifier arg, expr_ty value, PyArena *arena);
 #define alias(a0, a1, ln, co, a2) _Py_alias(a0, a1, ln, co, a2)

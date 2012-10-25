@@ -2106,7 +2106,7 @@ arguments(asdl_seq * args, identifier vararg, expr_ty varargannotation,
 }
 
 arg_ty
-arg(identifier arg, expr_ty annotation, PyArena *arena)
+arg(identifier arg, expr_ty annotation, int lineno, int col_offset, PyArena *arena)
 {
         arg_ty p;
         if (!arg) {
@@ -2119,6 +2119,8 @@ arg(identifier arg, expr_ty annotation, PyArena *arena)
                 return NULL;
         p->arg = arg;
         p->annotation = annotation;
+        p->lineno = lineno;
+        p->col_offset = col_offset;
         return p;
 }
 
@@ -6718,7 +6720,7 @@ obj2ast_arg(PyObject* obj, arg_ty* out, PyArena* arena)
         } else {
                 annotation = NULL;
         }
-        *out = arg(arg, annotation, arena);
+        *out = arg(arg, annotation, 0, 0, arena);
         return 0;
 failed:
         Py_XDECREF(tmp);

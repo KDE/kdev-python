@@ -54,15 +54,20 @@
 #include "duchain/pythoneditorintegrator.h"
 #include "codecompletion/model.h"
 #include "codegen/simplerefactoring.h"
+#include "kdevpythonversion.h"
 
 using namespace KDevelop;
 
 K_PLUGIN_FACTORY( KDevPythonSupportFactory, registerPlugin<Python::LanguageSupport>(); )
-K_EXPORT_PLUGIN( KDevPythonSupportFactory( "kdevpythonsupport" ) )
+
+K_EXPORT_PLUGIN(KDevPythonSupportFactory(
+    KAboutData("kdevpythonsupport", "kdevpython", ki18n("Python Support"),
+               KDEVPYTHON_VERSION_STR, ki18n("Support for the Python Scripting Language"), KAboutData::License_GPL)
+    .addAuthor(ki18n("Sven Brauch"), ki18n("Author"), "svenbrauch@googlemail.com", "")
+))
 
 namespace Python
 {
-    
 LanguageSupport* LanguageSupport::m_self = 0;
 
 KDevelop::ContextMenuExtension LanguageSupport::contextMenuExtension(KDevelop::Context* context)

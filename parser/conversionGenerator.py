@@ -34,7 +34,7 @@ func_structure = '''
 simple_func_structure = '''
     Ast* visitNode(%{RULE_FOR}* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
+        if ( ! node ) return 0;
 %{SWITCH_LINES}
         return v;
     }

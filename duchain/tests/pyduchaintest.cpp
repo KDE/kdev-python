@@ -633,21 +633,30 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("constructor_type_deduction") << "class myclass:\n"
                                                    "\tdef __init__(self, param): self.foo=param\n"
                                                    "checkme = myclass(3).foo" << "int";
-    QTest::newRow("functionCall_functionArg") << "def getstr(): return \"foo\"\n"
+    QTest::newRow("simpe_type_deduction") << "def myfunc(arg): return arg\n"
+                                             "checkme = myfunc(3)" << "int";
+    QTest::newRow("functionCall_functionArg_part1") << "def getstr(): return \"foo\"\n"
+                                                 "def identity(f): return f\n"
+                                                 "f1 = getstr\n"
+                                                 "checkme = f1()" << "string";
+    QTest::newRow("functionCall_functionArg_part2") << "def getstr(): return \"foo\"\n"
+                                                 "def identity(f): return f\n"
+                                                 "f1 = identity(getstr)\n"
+                                                 "checkme = f1()\n" << "string";
+    QTest::newRow("functionCall_functionArg_full") << "def getstr(): return \"foo\"\n"
                                                  "def identity(f): return f\n"
                                                  "f1 = getstr\n"
                                                  "f2 = identity(getstr)\n"
                                                  "a = getstr()\n"
                                                  "b = f1()\n"
                                                  "checkme = f2()\n" << "str";
-    // TODO PYTHON3 those got in through a failed commit... re-enable for python 3 support!
-//     QTest::newRow("vararg_before_other_args") << "def myfun(a, b, *z, x): return z[0]\n"
-//                                                  "checkme = myfun(False, False, 1, x = False)" << "int";
-//     QTest::newRow("vararg_before_other_args2") << "def myfun(a, b, *z, x): return z[3]\n"
-//                                                   "checkme = myfun(False, False, 1, 2, 3, \"str\", x = False)" << "str";
-//     QTest::newRow("vararg_constructor") << "class myclass():\n"
-//                                            "  def __init__(self, *arg): self.prop = arg[0]\n"
-//                                            "obj = myclass(3, 5); checkme = obj.prop" << "int";
+    QTest::newRow("vararg_before_other_args") << "def myfun(a, b, *z, x): return z[0]\n"
+                                                 "checkme = myfun(False, False, 1, x = False)" << "int";
+    QTest::newRow("vararg_before_other_args2") << "def myfun(a, b, *z, x): return z[3]\n"
+                                                  "checkme = myfun(False, False, 1, 2, 3, \"str\", x = False)" << "str";
+    QTest::newRow("vararg_constructor") << "class myclass():\n"
+                                           "  def __init__(self, *arg): self.prop = arg[0]\n"
+                                           "obj = myclass(3, 5); checkme = obj.prop" << "int";
 }
 
 typedef QPair<Declaration*, int> pair;

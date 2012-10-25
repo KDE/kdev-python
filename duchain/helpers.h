@@ -75,7 +75,7 @@ public:
     static QPair<FunctionDeclarationPointer, bool> functionDeclarationForCalledDeclaration(DeclarationPointer ptr);
     
     template<typename T> static const Decorator* findDecoratorByName(T* inDeclaration, const QString& name) {
-        register int count = inDeclaration->decoratorsSize();
+        const int count = inDeclaration->decoratorsSize();
         for ( int i = 0; i < count; i++ ) {
             if ( inDeclaration->decorators()[i].name() == name )
                 return &(inDeclaration->decorators()[i]);

@@ -1,6 +1,9 @@
 PROJECT(kdevpython)
 
-message("** Important: ** If you have trouble building this, please read the INSTALL file first.")
+# write the plugin version to a file
+set(KDEVPYTHON_VERSION_MAJOR 1)
+set(KDEVPYTHON_VERSION_MINOR 3)
+set(KDEVPYTHON_VERSION_PATCH 80)
 
 cmake_minimum_required(VERSION 2.8)
 
@@ -27,6 +30,8 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}/parser
     ${KDEVPGQT_INCLUDE_DIR}
 )
+
+configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpython_BINARY_DIR}/kdevpythonversion.h" @ONLY )
 
 add_definitions( -DKDE_DEFAULT_DEBUG_AREA=9011 )
 

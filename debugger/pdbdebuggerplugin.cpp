@@ -30,10 +30,16 @@
 #include <interfaces/iplugincontroller.h>
 #include <interfaces/iruncontroller.h>
 
+#include "kdevpythonversion.h"
+
 namespace Python {
 
 K_PLUGIN_FACTORY(PdbDebuggerPluginFactory, registerPlugin<PdbDebuggerPlugin>(); )
-K_EXPORT_PLUGIN(PdbDebuggerPluginFactory(KAboutData("kdevpdb", "kdevpdb", ki18n("PDB Support"), "0.1", ki18n("Support for running applications in PDB"), KAboutData::License_GPL)))
+K_EXPORT_PLUGIN(PdbDebuggerPluginFactory(
+    KAboutData("kdevpdbsupport", "kdevpdb", ki18n("Python Debugger (pdb) Support"),
+               KDEVPYTHON_VERSION_STR, ki18n("Support for the Python Debugger"), KAboutData::License_GPL)
+    .addAuthor(ki18n("Sven Brauch"), ki18n("Author"), "svenbrauch@googlemail.com", "")
+))
 
 PdbDebuggerPlugin::PdbDebuggerPlugin(QObject* parent, const QVariantList&) 
     : IPlugin(PdbDebuggerPluginFactory::componentData(), parent)

@@ -43,6 +43,7 @@ ParseSession::ParseSession()
 }
 ParseSession::~ParseSession()
 {
+    delete m_pool;
 }
 
 void ParseSession::setCurrentDocument(KUrl& filename)

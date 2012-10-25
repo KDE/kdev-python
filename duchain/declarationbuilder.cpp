@@ -906,11 +906,7 @@ void DeclarationBuilder::visitLambda(LambdaAst* node)
     // d = lambda x: x*2; print x # <- gives an error
     openContext(node, editorFindRange(node, node->body), DUContext::Other);
     foreach ( ArgAst* argument, node->arguments->arguments ) {
-#warning this cannot work correctl
-        // Create variable declarations for the lambda's arguments, so they aren't displayed as errors
-        if ( argument->astType == Ast::NameAstType ) {
-//             visitVariableDeclaration<Declaration>(static_cast<NameAst*>(argument));
-        }
+        visitVariableDeclaration<Declaration>(argument->argumentName);
     }
     closeContext();
 }
@@ -1607,7 +1603,6 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         workingOnDeclaration->clearDefaultParameters();
         if ( hasCurrentType() and currentType<FunctionType>() ) {
             FunctionType::Ptr type = currentType<FunctionType>();
-            NameAst* realParam = 0;
             bool isFirst = true;
             int defaultParametersCount = node->defaultValues.length();
             int parametersCount = node->arguments.length();
@@ -1615,25 +1610,20 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             int currentIndex = 0;
             kDebug() << "variable argument ranges: " << node->arg_lineno << node->arg_col_offset << node->vararg_lineno << node->vararg_col_offset;
             foreach ( ArgAst* arg, node->arguments ) {
-                ExpressionAst* expression = 0; //arg->argumentName;
-#warning this cannot work
                 // Iterate over all the function's arguments, create declarations, and add the arguments
                 // to the functions FunctionType.
                 currentIndex += 1;
-                realParam = dynamic_cast<NameAst*>(expression);
                 
-                if ( ! realParam || realParam->context != ExpressionAst::Parameter ) {
-                    // def myfun(x, y, (z, a, b), d): pass
-                    // this case is not handled currently, but it could be implemented.
+                if ( ! arg->argumentName ) {
                     continue;
                 }
-                
+
                 // Create a variable declaration for the parameter, to be used in the function body.
-                Declaration* paramDeclaration = visitVariableDeclaration<Declaration>(realParam);
+                Declaration* paramDeclaration = visitVariableDeclaration<Declaration>(arg->argumentName);
                 
                 if ( type && paramDeclaration && currentIndex > firstDefaultParameterOffset ) {
                     // Handle arguments with default values, like def foo(bar = 3): pass
-                    kDebug() << "Adding default argument: " << realParam->identifier->value << paramDeclaration->abstractType();
+                    kDebug() << "Adding default argument: " << arg->argumentName->value << paramDeclaration->abstractType();
                     // Find type of given default value, and assign it to the declaration
                     // TODO does this actually work?
                     ExpressionVisitor v(currentContext());
@@ -1651,7 +1641,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                     kDebug() << "Arguments count: " << type->arguments().length();
                 }
                 else {
-                    kDebug() << "Not a default argument: " << realParam->identifier->value;
+                    kDebug() << "Not a default argument: " << arg->argumentName->value;
                     // For now, we cannot know the type, thus we write "mixed".
                     // As soon as a call to the function is encountered, this type might be updated.
                     DUChainWriteLocker lock;

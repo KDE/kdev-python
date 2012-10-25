@@ -1,7 +1,7 @@
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/libpython3.2-kdevelop.so
     COMMAND /bin/bash ${CMAKE_CURRENT_SOURCE_DIR}/configure --enable-shared --without-pymalloc WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMAND /usr/bin/env make -C ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMAND /usr/bin/env make -C ${CMAKE_CURRENT_SOURCE_DIR} python
 )
 
 add_custom_target(

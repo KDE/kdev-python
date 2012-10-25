@@ -146,7 +146,7 @@ for rule in contents:
                     raw = direct_assignment_line if not any else direct_assignment_line_any
                 if commandType == '~':
                     raw = create_identifier_line if not any else create_identifier_line_any
-                    if rule_for in ['_expr', '_stmt', '_excepthandler', '_alias']:
+                    if rule_for in ['_expr', '_stmt', '_excepthandler', '_alias', '_arg']:
                         raw += copy_ident_ranges
                 if commandType == '$':
                     raw = resolve_string

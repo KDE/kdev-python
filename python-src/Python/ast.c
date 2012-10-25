@@ -665,7 +665,7 @@ compiler_arg(struct compiling *c, const node *n)
             return NULL;
     }
 
-    return arg(name, annotation, c->c_arena);
+    return arg(name, annotation, LINENO(n), n->n_col_offset, c->c_arena);
 #if 0
     result = Tuple(args, Store, LINENO(n), n->n_col_offset, c->c_arena);
     if (!set_context(c, result, Store, n))
@@ -726,7 +726,7 @@ handle_keywordonly_args(struct compiling *c, const node *n, int start,
                     goto error;
                 if (forbidden_name(argname, ch, 0))
                     goto error;
-                arg = arg(argname, annotation, c->c_arena);
+                arg = arg(argname, annotation, LINENO(n), n->n_col_offset, c->c_arena);
                 if (!arg)
                     goto error;
                 asdl_seq_SET(kwonlyargs, j++, arg);

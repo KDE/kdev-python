@@ -346,6 +346,13 @@ v->isInt = PyLong_Check(node->v.Num.n); v->value = PyLong_AsLong(node->v.Num.n);
         if ( ! node ) return 0;
                 ArgAst* v = new (m_pool->allocate(sizeof(ArgAst))) ArgAst(parent());
             v->argumentName = node->arg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->arg)) : 0;
+                if ( v->argumentName ) {
+                    v->argumentName->startCol = node->col_offset; v->startCol = v->argumentName->startCol;
+                    v->argumentName->startLine = tline(node->lineno - 1);  v->startLine = v->argumentName->startLine;
+                    v->argumentName->endCol = node->col_offset + v->argumentName->value.length() - 1;  v->endCol = v->argumentName->endCol;
+                    v->argumentName->endLine = tline(node->lineno - 1);  v->endLine = v->argumentName->endLine;
+                    ranges_copied = true;
+                }
             nodeStack.push(v); v->annotation = static_cast<ExpressionAst*>(visitNode(node->annotation)); nodeStack.pop();
         return v;
     }

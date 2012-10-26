@@ -68,6 +68,7 @@ public:
 QMutex AstBuilder::pyInitLock;
 QString AstBuilder::pyHomeDir = KStandardDirs::locate("data", "");
 
+
 QString PyUnicodeObjectToQString(PyObject* obj) {
 #ifdef Q_OS_WIN32
     // TODO: does this work?

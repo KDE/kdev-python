@@ -517,8 +517,7 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
 
 template<typename T> TypePtr<T> ExpressionVisitor::typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx)
 {
-    QList<Declaration*> decls = ctx->topContext()->findDeclarations(
-        QualifiedIdentifier("__kdevpythondocumentation_builtin_" + typeDescriptor));
+    QList<Declaration*> decls = ctx->topContext()->findDeclarations(QualifiedIdentifier(typeDescriptor));
     Declaration* decl = decls.isEmpty() ? 0 : dynamic_cast<Declaration*>(decls.first());
     AbstractType::Ptr type = decl ? decl->abstractType() : AbstractType::Ptr(0);
     return type.cast<T>();
@@ -711,7 +710,7 @@ void ExpressionVisitor::visitNumber(Python::NumberAst* number)
 void ExpressionVisitor::visitString(Python::StringAst* )
 {
     DUChainReadLocker lock;
-    StructureType::Ptr type = typeObjectForIntegralType<StructureType>("string", m_ctx);
+    StructureType::Ptr type = typeObjectForIntegralType<StructureType>("str", m_ctx);
     encounter(type, AutomaticallyDetermineDeclaration);
 }
 

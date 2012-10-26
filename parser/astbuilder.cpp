@@ -74,7 +74,6 @@ QString PyUnicodeObjectToQString(PyObject* obj) {
     // TODO: does this work?
     return QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(obj)));
 #else
-
     ushort* data = (ushort*) PyUnicode_AS_DATA(PyObject_Str(obj));
     return QString::fromUtf16(data);
 #endif

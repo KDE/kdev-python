@@ -335,6 +335,18 @@ void PyDUChainTest::testFlickering_data()
     QTest::newRow("declaration_flicker") << ( QStringList() << "a=2\n" << "b=3\na=2\n" ) << 1 << 2;
 }
 
+void PyDUChainTest::testCannotOverwriteBuiltins()
+{
+    ReferencedTopDUContext ctx = parse("class list(): pass\nmylist = []\nmylist.append(3)");
+    DUChainWriteLocker lock;
+    QList<Declaration*> ds = ctx->findDeclarations(QualifiedIdentifier("mylist"));
+    QVERIFY(!ds.isEmpty());
+    Declaration* d = ds.first();
+    QVERIFY(d);
+    QVERIFY(d->abstractType());
+    QVERIFY(d->abstractType()->toString() == "list of int");
+}
+
 void PyDUChainTest::testVarKWArgs()
 {
     ReferencedTopDUContext ctx = parse("def myfun(arg, *vararg, **kwarg):\n pass\n pass");
@@ -345,8 +357,8 @@ void PyDUChainTest::testVarKWArgs()
     QVERIFY(! func->findDeclarations(QualifiedIdentifier("arg")).isEmpty());
     QVERIFY(! func->findDeclarations(QualifiedIdentifier("vararg")).isEmpty());
     QVERIFY(! func->findDeclarations(QualifiedIdentifier("kwarg")).isEmpty());
-    QVERIFY(func->findDeclarations(QualifiedIdentifier("vararg")).first()->abstractType()->toString().startsWith("__kdevpythondocumentation_builtin_tuple"));
-    QVERIFY(func->findDeclarations(QualifiedIdentifier("kwarg")).first()->abstractType()->toString() == "__kdevpythondocumentation_builtin_dict");
+    QVERIFY(func->findDeclarations(QualifiedIdentifier("vararg")).first()->abstractType()->toString().startsWith("tuple"));
+    QVERIFY(func->findDeclarations(QualifiedIdentifier("kwarg")).first()->abstractType()->toString() == "dict");
 }
 
 void PyDUChainTest::testSimple()
@@ -551,12 +563,12 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("list_access_singleItem") << "some_list = []; checkme = some_list[42]" << "mixed";
     
     QTest::newRow("funccall_number") << "def foo(): return 3; \ncheckme = foo();" << "int";
-    QTest::newRow("funccall_string") << "def foo(): return 'a'; \ncheckme = foo();" << "string";
+    QTest::newRow("funccall_string") << "def foo(): return 'a'; \ncheckme = foo();" << "str";
     QTest::newRow("funccall_list") << "def foo(): return []; \ncheckme = foo();" << "list";
     QTest::newRow("funccall_dict") << "def foo(): return {}; \ncheckme = foo();" << "dict";
     
     QTest::newRow("tuple1") << "checkme, foo = 3, \"str\"" << "int";
-    QTest::newRow("tuple2") << "foo, checkme = 3, \"str\"" << "string";
+    QTest::newRow("tuple2") << "foo, checkme = 3, \"str\"" << "str";
     QTest::newRow("tuple_type") << "checkme = 1, 2" << "tuple";
     
     QTest::newRow("dict_iteritems") << "d = {1:2, 3:4}\nfor checkme, k in d.iteritems(): pass" << "int";
@@ -572,7 +584,7 @@ void PyDUChainTest::testTypes_data()
     
     QTest::newRow("tuple_simple") << "mytuple = 3, 5.5\ncheckme, foobar = mytuple" << "int";
     QTest::newRow("tuple_simple2") << "mytuple = 3, 5.5\nfoobar, checkme = mytuple" << "float";
-    QTest::newRow("tuple_simple3") << "mytuple = 3, 5.5, \"str\", 3, \"str\"\na, b, c, d, checkme = mytuple" << "string";
+    QTest::newRow("tuple_simple3") << "mytuple = 3, 5.5, \"str\", 3, \"str\"\na, b, c, d, checkme = mytuple" << "str";
     
     QTest::newRow("tuple_funcret") << "def myfun(): return 3, 5\ncheckme, a = myfun()" << "int";
     QTest::newRow("tuple_funcret2") << "def myfun():\n t = 3, 5\n return t\ncheckme, a = myfun()" << "int";
@@ -596,22 +608,22 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("functionCall_functionArg_part1") << "def getstr(): return \"foo\"\n"
                                                  "def identity(f): return f\n"
                                                  "f1 = getstr\n"
-                                                 "checkme = f1()" << "string";
+                                                 "checkme = f1()" << "str";
     QTest::newRow("functionCall_functionArg_part2") << "def getstr(): return \"foo\"\n"
                                                  "def identity(f): return f\n"
                                                  "f1 = identity(getstr)\n"
-                                                 "checkme = f1()\n" << "string";
+                                                 "checkme = f1()\n" << "str";
     QTest::newRow("functionCall_functionArg_full") << "def getstr(): return \"foo\"\n"
                                                  "def identity(f): return f\n"
                                                  "f1 = getstr\n"
                                                  "f2 = identity(getstr)\n"
                                                  "a = getstr()\n"
                                                  "b = f1()\n"
-                                                 "checkme = f2()\n" << "string";
+                                                 "checkme = f2()\n" << "str";
     QTest::newRow("vararg_before_other_args") << "def myfun(a, b, *z, x): return z[0]\n"
                                                  "checkme = myfun(False, False, 1, x = False)" << "int";
     QTest::newRow("vararg_before_other_args2") << "def myfun(a, b, *z, x): return z[3]\n"
-                                                  "checkme = myfun(False, False, 1, 2, 3, \"str\", x = False)" << "string";
+                                                  "checkme = myfun(False, False, 1, 2, 3, \"str\", x = False)" << "str";
     QTest::newRow("vararg_constructor") << "class myclass():\n"
                                            "  def __init__(self, *arg): self.prop = arg[0]\n"
                                            "obj = myclass(3, 5); checkme = obj.prop" << "int";
@@ -800,7 +812,7 @@ void PyDUChainTest::testInheritance()
     foreach ( const p& item, decls ) {
         kDebug() << "Checking declaration: " << item.first->identifier() << item.first->abstractType()->toString();
         if ( item.first->identifier().toString() == "checkme" ) {
-            QVERIFY(item.first->abstractType()->toString() == "__kdevpythondocumentation_builtin_int");
+            QVERIFY(item.first->abstractType()->toString() == "int");
             found = true;
         }
     }
@@ -841,11 +853,11 @@ void PyDUChainTest::testContainerTypes()
         VariableLengthContainer* type = dynamic_cast<VariableLengthContainer*>(decls.first()->abstractType().unsafeData());
         QVERIFY(type);
         QVERIFY(type->contentType());
-        QVERIFY(type->contentType().abstractType()->toString().replace("__kdevpythondocumentation_builtin_", "") == contenttype);
+        QVERIFY(type->contentType().abstractType()->toString() == contenttype);
     }
     else {
         QVERIFY(decls.first()->abstractType());
-        QVERIFY(decls.first()->abstractType()->toString().replace("__kdevpythondocumentation_builtin_", "") == contenttype);
+        QVERIFY(decls.first()->abstractType()->toString() == contenttype);
     }
 }
 
@@ -866,9 +878,9 @@ void PyDUChainTest::testContainerTypes_data()
     QTest::newRow("dict_of_int_call") << "checkme = dict({a:1, b:2, c:3})" << "int" << false;
     QTest::newRow("dict_generator") << "checkme = {\"Foo\":i for i in [1, 2, 3]}" << "int" << false;
     QTest::newRow("dict_access") << "list = {a:1, b:2, c:3}\ncheckme = list[0]" << "int" << true;
-    QTest::newRow("generator_attribute") << "checkme = [item.capitalize() for item in ['foobar']]" << "string" << false;
-    QTest::newRow("cannot_change_type") << "checkme = [\"Foo\", \"Bar\"]" << "string" << false;
-    QTest::newRow("cannot_change_type") << "[1, 2, 3].append(5)\ncheckme = [\"Foo\", \"Bar\"]" << "string" << false;
+    QTest::newRow("generator_attribute") << "checkme = [item.capitalize() for item in ['foobar']]" << "str" << false;
+    QTest::newRow("cannot_change_type") << "checkme = [\"Foo\", \"Bar\"]" << "str" << false;
+    QTest::newRow("cannot_change_type2") << "[1, 2, 3].append(5)\ncheckme = [\"Foo\", \"Bar\"]" << "str" << false;
     
     QTest::newRow("list_append") << "d = []\nd.append(3)\ncheckme = d[0]" << "int" << true;
 }

@@ -1692,7 +1692,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             if ( node->kwarg ) {
                 DUChainReadLocker lock;
                 AbstractType::Ptr stringType = ExpressionVisitor::typeObjectForIntegralType
-                                                                <AbstractType>("string", currentContext());
+                                                                <AbstractType>("str", currentContext());
                 VariableLengthContainer::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType
                                                                 <VariableLengthContainer>("dict", currentContext());
                 lock.unlock();

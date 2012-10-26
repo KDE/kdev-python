@@ -76,6 +76,7 @@ class PyDUChainTest : public QObject
         void testClassContextRanges();
         void testVarKWArgs();
         void testMultiFromImport();
+        void testCannotOverwriteBuiltins();
     
 //         void testFunctionStuff();
 //         void testFunctionStuff_data();

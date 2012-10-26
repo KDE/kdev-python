@@ -1,8 +1,8 @@
-# This file denotes the built-in python API. It is imported into every file which is parsed.
+# This file denotes the built-in python library. It is imported into every file which is parsed.
 class Exception(object):
-	pass
+    pass
 
-class __kdevpythondocumentation_builtin_object():
+class object():
     def __init__(self): pass
     def __new__(self): pass
     def __del__(self): pass
@@ -91,10 +91,8 @@ class __kdevpythondocumentation_builtin_object():
     def __index__(self): pass
     def __coerce__(self, other): pass
 
-object = __kdevpythondocumentation_builtin_object
-
 @TypeContainer
-class __kdevpythondocumentation_builtin_list():
+class list():
     @returnContentEqualsContentOf(0)
     def __init__(self, items):
         return []
@@ -119,7 +117,7 @@ class __kdevpythondocumentation_builtin_list():
     def reverse(self,): return []
     def remove(self, x): pass
 
-class __kdevpythondocumentation_builtin_fileObject():
+class _io_TextIOWrapper():
     def close(self,): return None
     def flush(self,): return None
     def fileno(self,): return None
@@ -143,7 +141,7 @@ class __kdevpythondocumentation_builtin_fileObject():
     
 @TypeContainer
 @hasTypedKeys
-class __kdevpythondocumentation_builtin_dict():
+class dict():
     @returnContentEqualsContentOf(0)
     def __init__(self, items):
         return {}
@@ -183,7 +181,7 @@ class __kdevpythondocumentation_builtin_dict():
     def viewvalues(self,): return None
     
 
-class __kdevpythondocumentation_builtin_string():
+class str():
     def __init__(self, obj):
         pass
     def replace(self,before, after): return ""
@@ -224,18 +222,18 @@ class __kdevpythondocumentation_builtin_string():
     def translate(self,table, deletechars = ""): return ""
     def upper(self,): return ""
     def zfill(self,width): return ""
-    
-class __kdevpythondocumentation_builtin_float():
+
+class float():
     def bit_length(self,): return 0
     def as_integer_ration(self,): return (self,0, 0)
     def is_integer(self,): return True
     def hex(self,): return 0x0
     def fromhex(self,s): return 0
 
-class __kdevpythondocumentation_builtin_int():
+class int():
     pass
 
-class __kdevpythondocumentation_builtin_complex():
+class complex():
     real = 3
     imag = 5
 
@@ -330,11 +328,11 @@ class UnicodeWarning(Warning):
     pass
 
 @IndexedTypeContainer
-class __kdevpythondocumentation_builtin_tuple():
+class tuple():
     pass
 
 @TypeContainer
-class __kdevpythondocumentation_builtin_set():
+class set():
     @returnContentEqualsContentOf(0)
     def __init__(self, objects):
         pass
@@ -342,11 +340,11 @@ class __kdevpythondocumentation_builtin_set():
     def isdisjoint(self, other): return True
     def issubset(self, other): return True
     def issuperset(self, other): return True
-    def union(self, other, *others): return __kdevpythondocumentation_builtin_set()
-    def intersetion(self, other, *others): return __kdevpythondocumentation_builtin_set()
-    def difference(self, other, *others): return __kdevpythondocumentation_builtin_set()
-    def symmetric_difference(self, other): return __kdevpythondocumentation_builtin_set()
-    def copy(self): return __kdevpythondocumentation_builtin_set()
+    def union(self, other, *others): return set()
+    def intersetion(self, other, *others): return set()
+    def difference(self, other, *others): return set()
+    def symmetric_difference(self, other): return set()
+    def copy(self): return set()
     def update(self, other): pass
     def intersection_update(self, other, *others): pass
     def difference_update(self, other, *others): pass
@@ -369,7 +367,6 @@ def chr(i): return ""
 def classmethod(function): return None
 def cmp(x, y): return 0
 def compile(source, filename, mode, flags = None, dont_inherit = None): return None
-def complex(real = 0, imag = 0): return __kdevpythondocumentation_builtin_complex()
 def delattr(obj, name): return None
 def dir(obj = None): return {"string" : None}
 def divmod(a, b): return 0
@@ -380,7 +377,7 @@ def file(filename, mode = None, bufsize = None): return None
 def filter(function, iterable): return []
 def float(x = 0): return 0.0
 def format(value, format_spec = None): return ""
-def frozenset(iterable = None): return __kdevpythondocumentation_builtin_set()
+def frozenset(iterable = None): return set()
 def getattr(obj, name, default = None): return None
 def globals(): return {}
 def hasattr(obj, name): return bool
@@ -390,7 +387,8 @@ def id(obj): return 0
 def input(prompt = None): return None
 def isinstance(obj, cls): return True
 def issubclass(cls, info): return True
-def iter(o, s = None): return __kdevpythondocumentation_builtin_iterator()
+@returnContentEqualsContentOf(0)
+def iter(o, s = None): return []
 def len(s): return 0
 def locals(): return {}
 def long(x = None, base = None): return 0
@@ -400,7 +398,7 @@ def memoryview(obj): return None
 def min(lst, default = None): return 0
 def next(iterator, default = None): return iterator[0]
 def oct(x): return 0o0
-def open(filename, mode = None, bufsize = None): return __kdevpythondocumentation_builtin_fileObject()
+def open(filename, mode = None, bufsize = None): return _io_TextIOWrapper()
 def ord(c): return 0
 def pow(x, y, z = 0): return 0.0
 def property(fget = 0, fset = 0, fdel = 0, doc = 0): return 0
@@ -413,23 +411,19 @@ def repr(object): return ""
 def reversed(seq): return None
 def round(x, n=0): return 0.0
 def setattr(obj, name, value): return None
-def slice(start = 0, stop = 0, step = 0): return __kdevpythondocumentation_builtin_sliceObject()
+def slice(start = 0, stop = 0, step = 0): return slice()
 def sorted(iterable, cmpre = None, key = None, reverse = False): return []
 def staticmethod(function): return function
 def sum(iterable): return 0.0
 def super(_type, obj = None): return None
 def tuple(iterable = None): return ()
-def type(object): return  __kdevpythondocumentation_builtin_typeObject()
+def type(object): return object
 def unichr(i): return ""
 def unicode(obj = None, encoding = None, errors = None): return ""
 def vars(obj): return None
 def xrange(start = 0, stop = 0, step = 0): return [0]
 def zip(iterable = None): return []
 def __import__(name, globa = None, loca = None, fromlist = None, level = 0): return None
-dict = __kdevpythondocumentation_builtin_dict
-set = __kdevpythondocumentation_builtin_set
-str = __kdevpythondocumentation_builtin_string
-list = __kdevpythondocumentation_builtin_list
 def exit(status): return None
 __name__ = "none"
 __file__ = "none"

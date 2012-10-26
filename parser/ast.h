@@ -191,6 +191,10 @@ public:
         startLine = other->startLine;
         endLine = other->endLine;
     }
+    
+    bool appearsBefore(const Ast* other) {
+        return startLine < other->startLine || ( startLine == other->startLine && startCol < other->startCol );
+    };
 
     qint64 startCol;
     qint64 startLine;

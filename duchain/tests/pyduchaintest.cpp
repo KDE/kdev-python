@@ -608,6 +608,10 @@ void PyDUChainTest::testTypes_data()
                                                  "a = getstr()\n"
                                                  "b = f1()\n"
                                                  "checkme = f2()\n" << "string";
+    QTest::newRow("vararg_before_other_args") << "def myfun(a, b, *z, x): return z[0]\n"
+                                                 "checkme = myfun(False, False, 1, x = False)" << "int";
+    QTest::newRow("vararg_before_other_args2") << "def myfun(a, b, *z, x): return z[3]\n"
+                                                  "checkme = myfun(False, False, 1, 2, 3, \"str\", x = False)" << "string";
 }
 
 typedef QPair<Declaration*, int> pair;

@@ -638,11 +638,11 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("functionCall_functionArg_part1") << "def getstr(): return \"foo\"\n"
                                                  "def identity(f): return f\n"
                                                  "f1 = getstr\n"
-                                                 "checkme = f1()" << "string";
+                                                 "checkme = f1()" << "str";
     QTest::newRow("functionCall_functionArg_part2") << "def getstr(): return \"foo\"\n"
                                                  "def identity(f): return f\n"
                                                  "f1 = identity(getstr)\n"
-                                                 "checkme = f1()\n" << "string";
+                                                 "checkme = f1()\n" << "str";
     QTest::newRow("functionCall_functionArg_full") << "def getstr(): return \"foo\"\n"
                                                  "def identity(f): return f\n"
                                                  "f1 = getstr\n"

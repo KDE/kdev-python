@@ -64,7 +64,6 @@ namespace Python
 ParseJob::ParseJob(const IndexedString &url, ILanguageSupport* languageSupport)
         : KDevelop::ParseJob(url, languageSupport)
         , m_ast(0)
-        , m_readFromDisk(false)
         , m_duContext(0)
 {
 }
@@ -77,11 +76,6 @@ CodeAst *ParseJob::ast() const
 {
     Q_ASSERT( isFinished() && m_ast );
     return m_ast;
-}
-
-bool ParseJob::wasReadFromDisk() const
-{
-    return m_readFromDisk;
 }
 
 void ParseJob::run()

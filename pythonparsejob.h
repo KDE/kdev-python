@@ -64,8 +64,6 @@ public:
 
     const KTextEditor::Range& textRangeToParse() const;
 
-    bool wasReadFromDisk() const;
-
 protected:
     virtual void run();
 

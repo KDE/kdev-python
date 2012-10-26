@@ -160,7 +160,6 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     wchar_t* homedir = (wchar_t*) malloc((AstBuilder::pyHomeDir.size() + 1) * sizeof(wchar_t));
     AstBuilder::pyHomeDir.toWCharArray(homedir);
     homedir[AstBuilder::pyHomeDir.size()] = 0x0;
-    kWarning() << AstBuilder::pyHomeDir;
     Py_SetPythonHome(homedir);
     kDebug() << "Not initialized, calling init func.";
     Py_Initialize();

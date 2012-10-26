@@ -49,17 +49,18 @@ RULE_FOR _expr;KIND Call_kind;ACTIONS create|CallAst set|function->ExpressionAst
 RULE_FOR _expr;KIND Num_kind;ACTIONS create|NumberAst;CODE v->isInt = PyLong_Check(node->v.Num.n); v->value = PyLong_AsLong(node->v.Num.n);;
 RULE_FOR _expr;KIND Str_kind;ACTIONS create|StringAst set|value$>s;;
 RULE_FOR _expr;KIND Bytes_kind;ACTIONS create|BytesAst set|value$>s;;
-RULE_FOR _slice;KIND Ellipsis_kind;ACTIONS create|EllipsisAst;;
 RULE_FOR _expr;KIND Attribute_kind;ACTIONS create|AttributeAst set|attribute~>attr set|value->ExpressionAst,value set|context*>Context,ctx;;
 RULE_FOR _expr;KIND Subscript_kind;ACTIONS create|SubscriptAst set|value->ExpressionAst,value set|slice->SliceAst,slice set|context*>Context,ctx;;
 RULE_FOR _expr;KIND Starred_kind;ACTIONS create|StarredAst;;
 RULE_FOR _expr;KIND Name_kind;ACTIONS create|NameAst set|identifier~>id set|context*>Context,ctx;;
 RULE_FOR _expr;KIND List_kind;ACTIONS create|ListAst set|elements=>ExpressionAst,elts set|context*>Context,ctx;;
 RULE_FOR _expr;KIND Tuple_kind;ACTIONS create|TupleAst set|elements=>ExpressionAst,elts set|context*>Context,ctx;;
+RULE_FOR _expr;KIND Ellipsis_kind;ACTIONS create|EllipsisAst;;
 
 RULE_FOR _slice;KIND Slice_kind;ACTIONS create|SliceAst set|lower->ExpressionAst,lower set|upper->ExpressionAst,upper set|step->ExpressionAst,step;;
 RULE_FOR _slice;KIND ExtSlice_kind;ACTIONS create|ExtendedSliceAst set|dims=>SliceAst,dims;;
 RULE_FOR _slice;KIND Index_kind;ACTIONS create|IndexAst set|value->ExpressionAst,value;;
+
 
 RULE_FOR _comprehension;KIND any;ACTIONS create|ComprehensionAst set|target->ExpressionAst,target set|iterator->ExpressionAst,iter set|conditions=>ExpressionAst,ifs;;
 RULE_FOR _excepthandler;KIND ExceptHandler_kind;ACTIONS create|ExceptionHandlerAst set|type->ExpressionAst,type set|name~>name set|body=>Ast,body;;

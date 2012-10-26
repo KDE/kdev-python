@@ -234,6 +234,11 @@ private:
                 result = v;
                 break;
             }
+        case Ellipsis_kind: {
+                EllipsisAst* v = new (m_pool->allocate(sizeof(EllipsisAst))) EllipsisAst(parent());
+                result = v;
+                break;
+            }
         default:
             kWarning() << "Unsupported statement AST type: " << node->kind;
             Q_ASSERT(false);
@@ -616,11 +621,6 @@ private:
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
         Ast* result = 0;
         switch ( node->kind ) {
-        case Ellipsis_kind: {
-                EllipsisAst* v = new (m_pool->allocate(sizeof(EllipsisAst))) EllipsisAst(parent());
-                result = v;
-                break;
-            }
         case Slice_kind: {
                 SliceAst* v = new (m_pool->allocate(sizeof(SliceAst))) SliceAst(parent());
                 nodeStack.push(v); v->lower = static_cast<ExpressionAst*>(visitNode(node->v.Slice.lower)); nodeStack.pop();

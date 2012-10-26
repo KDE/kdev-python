@@ -64,7 +64,7 @@ ContextBuilder::ContextBuilder() : m_indentInformationCache(0)
 {
 
 }
-    
+
 ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node, ReferencedTopDUContext updateContext)
 {
     if (!updateContext) {

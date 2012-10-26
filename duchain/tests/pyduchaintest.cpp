@@ -128,7 +128,7 @@ void PyDUChainTest::testCrashes() {
 void PyDUChainTest::testCrashes_data() {
     QTest::addColumn<QString>("code");
     
-    QTest::newRow("unicode escape char") << "print(u\"\\xe9\")";
+    QTest::newRow("unicode escape char") << "print(\"\\xe9\")";
     QTest::newRow("negative slice index") << "t = (1, 2, 3)\nd = t[-1]";
     QTest::newRow("fancy generator context range") << "c1_list = sorted(letter for (letter, meanings) \\\n"
                "in ambiguous_nucleotide_values.iteritems() \\\n"
@@ -612,6 +612,9 @@ void PyDUChainTest::testTypes_data()
                                                  "checkme = myfun(False, False, 1, x = False)" << "int";
     QTest::newRow("vararg_before_other_args2") << "def myfun(a, b, *z, x): return z[3]\n"
                                                   "checkme = myfun(False, False, 1, 2, 3, \"str\", x = False)" << "string";
+    QTest::newRow("vararg_constructor") << "class myclass():\n"
+                                           "  def __init__(self, *arg): self.prop = arg[0]\n"
+                                           "obj = myclass(3, 5); checkme = obj.prop" << "int";
 }
 
 typedef QPair<Declaration*, int> pair;

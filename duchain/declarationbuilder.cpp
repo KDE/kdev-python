@@ -1004,6 +1004,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
     kDebug() << "--";
     kDebug() << "Trying to update function argument types based on call";
     
+    
     DUChainReadLocker lock;
     QPair<FunctionDeclaration::Ptr, bool> lastFunctionDeclarationP = Helper::functionDeclarationForCalledDeclaration(functionVisitor.lastDeclaration());
     FunctionDeclaration::Ptr lastFunctionDeclaration = lastFunctionDeclarationP.first;
@@ -1020,83 +1021,90 @@ void DeclarationBuilder::visitCall(CallAst* node)
             QVector<Declaration*> parameters = args->localDeclarations();
             const int specialParamsCount = (lastFunctionDeclaration->vararg() > 0) + (lastFunctionDeclaration->kwarg() > 0);
             
-            // Remove the "self" from the argument list, the type of that should not be updated.
-            if ( ( lastFunctionDeclaration->context()->type() == DUContext::Class || isConstructor ) 
+            // Look for the "self" in the argument list, the type of that should not be updated.
+            bool hasSelfArgument = false;
+            if ( ( lastFunctionDeclaration->context()->type() == DUContext::Class || isConstructor )
                  && ! parameters.isEmpty() && ! lastFunctionDeclaration->isStatic() )
             {
                 // ... unless for some reason the function only has *vararg, **kwarg as arguments
                 // (this could happen for example if the method is static but kdev-python does not know,
                 // or if the user just made a mistake in his code)
                 if ( specialParamsCount < parameters.size() ) {
-                    parameters.remove(0);
+                    hasSelfArgument = true;
                 }
             }
             
-            int atParam = 0;
+            int currentParamIndex = hasSelfArgument;
+            int currentArgumentIndex = 0;
+            int indexInVararg = -1;
+            int paramsAvailable = qMin(functiontype->arguments().length() + hasSelfArgument, parameters.size());
+            int argsAvailable = node->arguments.size();
             bool atVararg = false;
-            // Check that there's enough known parameters which can be updated
-            uint typeParametersSize = functiontype->arguments().length();
-            foreach ( ExpressionAst* arg, node->arguments ) {
-                // Iterate over all the arguments, trying to guess the type of the object being
-                // passed as an argument, and update the parameter accordingly.
-                
-                // If more params are passed than the function has args, maybe it's a vararg
-                if ( atParam >= lastFunctionDeclaration->vararg() && lastFunctionDeclaration->vararg() != -1 ) {
+            
+            lock.unlock();
+            
+            kDebug() << currentParamIndex << paramsAvailable << currentArgumentIndex << argsAvailable;
+            kDebug() << functiontype->arguments().length() << parameters.size();
+            
+            // Iterate over all the arguments, trying to guess the type of the object being
+            // passed as an argument, and update the parameter accordingly.
+            // Stop if more parameters supplied than possible, and we're not at the vararg.
+            for ( ; ( atVararg || currentParamIndex < paramsAvailable ) && currentArgumentIndex < argsAvailable;
+                    currentParamIndex++, currentArgumentIndex++ )
+            {
+                if ( ! atVararg && currentArgumentIndex == lastFunctionDeclaration->vararg() ) {
                     atVararg = true;
                 }
-                else if ( typeParametersSize <= atParam || parameters.size() <= atParam ) {
-                    break;
-                }
                 
-                // Get the type of the argument
-                ExpressionVisitor argumentVisitor(currentContext(), editor());
+                kDebug() << currentParamIndex << currentArgumentIndex << atVararg << lastFunctionDeclaration->vararg();
+                
+                ExpressionAst* arg = node->arguments.at(currentArgumentIndex);
+                
+                ExpressionVisitor argumentVisitor(currentContext());
                 argumentVisitor.visitNode(arg);
-                lock.unlock();
+                AbstractType::Ptr argumentType = argumentVisitor.lastType();
+                
+                // Update the parameter type: change both the type of the function argument,
+                // and the type of the declaration which belongs to that argument
+                HintedType::Ptr addType = HintedType::Ptr(new HintedType());
+                openType(addType);
+                addType->setType(argumentVisitor.lastType());
+                addType->setCreatedBy(topContext(), m_futureModificationRevision);
+                closeType();
+                
+                // Update the parameter type: change both the type of the function argument,
+                // and the type of the declaration which belongs to that argument
                 DUChainWriteLocker wlock;
-                if ( argumentVisitor.lastType() ) {
-                    // Update the parameter type: change both the type of the function argument,
-                    // and the type of the declaration which belongs to that argument
-                    HintedType::Ptr addType = HintedType::Ptr(new HintedType());
-                    openType(addType);
-                    addType->setType(argumentVisitor.lastType());
-                    addType->setCreatedBy(topContext(), m_futureModificationRevision);
-                    closeType();
-                    
-                    if ( atVararg ) {
-                        const short offset = lastFunctionDeclaration->vararg();
-                        Q_ASSERT(offset > -1);
-                        if ( parameters.size() <= offset || typeParametersSize <= offset ) {
-                            kWarning() << "warning, something went wrong creating the vararg declaration";
-                            continue;
-                        }
-                        AbstractType::Ptr varargType = parameters.at(offset)->abstractType();
-                        IndexedContainer::Ptr indexedVarargType = varargType.cast<IndexedContainer>();
-                        if ( indexedVarargType ) {
-                            int indexInVararg = atParam - offset;
-                            if ( indexInVararg > 0 && indexedVarargType->typesCount() > indexInVararg ) {
-                                AbstractType::Ptr oldType = indexedVarargType->typeAt(indexInVararg).abstractType();
-                                AbstractType::Ptr newType = Helper::mergeTypes(oldType, addType.cast<AbstractType>());
-                                indexedVarargType->replaceType(indexInVararg, newType);
-                            }
-                            else {
-                                indexedVarargType->addEntry(addType.cast<AbstractType>());
-                            }
-                            parameters.at(offset)->setAbstractType(indexedVarargType.cast<AbstractType>());
-                        }
+                if ( atVararg ) {
+                    indexInVararg++;
+                    IndexedContainer::Ptr varargContainer = parameters.at(lastFunctionDeclaration->vararg()+hasSelfArgument)->abstractType()
+                                                            .cast<IndexedContainer>();
+                    kDebug() << "vararg container:" << varargContainer;
+                    kDebug() << "adding" << addType->toString() << "at position" << indexInVararg;
+                    if ( ! varargContainer ) continue;
+                    if ( varargContainer->typesCount() > indexInVararg ) {
+                        AbstractType::Ptr oldType = varargContainer->typeAt(indexInVararg).abstractType();
+                        AbstractType::Ptr newType = Helper::mergeTypes(oldType, addType.cast<AbstractType>());
+                        varargContainer->replaceType(indexInVararg, newType);
                     }
                     else {
-                        AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(atParam)->abstractType(),
-                                                                        addType.cast<AbstractType>(), topContext());
-                        // TODO this does not correctly update the types in quickopen! Investigate why.
-                        functiontype->removeArgument(atParam);
-                        functiontype->addArgument(newType, atParam);
-                        lastFunctionDeclaration->setAbstractType(functiontype.cast<AbstractType>());
-                        parameters.at(atParam)->setType(newType);
+                        varargContainer->addEntry(addType.cast<AbstractType>());
                     }
+                    parameters.at(lastFunctionDeclaration->vararg()+hasSelfArgument)->setAbstractType(varargContainer.cast<AbstractType>());
                 }
-                wlock.unlock();
-                atParam++;
+                else {
+                    kDebug() << "adding" << argumentType << "at position" << currentArgumentIndex << "/" << currentParamIndex;
+                    if ( ! argumentType ) continue;
+                    AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(currentParamIndex)->abstractType(),
+                                                                   addType.cast<AbstractType>(), topContext());
+                    // TODO this does not correctly update the types in quickopen! Investigate why.
+                    functiontype->removeArgument(currentArgumentIndex);
+                    functiontype->addArgument(newType, currentArgumentIndex);
+                    lastFunctionDeclaration->setAbstractType(functiontype.cast<AbstractType>());
+                    parameters.at(currentParamIndex)->setType(newType);
+                }
             }
+            
             lock.unlock();
             DUChainWriteLocker wlock;
             if ( lastFunctionDeclaration->kwarg() >= 0 ) {
@@ -1489,6 +1497,12 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     {
         DUChainWriteLocker lock(DUChain::lock());
         currentType<FunctionType>()->removeArgument(0);
+        if ( dec->vararg() != -1 ) {
+            dec->setVararg(dec->vararg() - 1);
+        }
+        if ( dec->kwarg() != -1 ) {
+            dec->setKwarg(dec->kwarg() - 1);
+        }
         m_firstAttributeDeclaration->setAbstractType(eventualParentDeclaration->abstractType());
     }
     

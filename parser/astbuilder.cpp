@@ -68,9 +68,15 @@ public:
 QMutex AstBuilder::pyInitLock;
 QString AstBuilder::pyHomeDir = KStandardDirs::locate("data", "");
 
+
 QString PyUnicodeObjectToQString(PyObject* obj) {
+#ifdef Q_OS_WIN32
+    return QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(obj)));
+#else
+
     ushort* data = (ushort*) PyUnicode_AS_DATA(PyObject_Str(obj));
     return QString::fromUtf16(data);
+#endif
 }
 
 QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)

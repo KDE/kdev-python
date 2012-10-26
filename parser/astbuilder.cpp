@@ -71,6 +71,7 @@ QString AstBuilder::pyHomeDir = KStandardDirs::locate("data", "");
 
 QString PyUnicodeObjectToQString(PyObject* obj) {
 #ifdef Q_OS_WIN32
+    // TODO: does this work?
     return QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(obj)));
 #else
 

@@ -17,6 +17,7 @@ if ( NOT WIN32 )
     install(FILES libpython${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}-kdevelop.so DESTINATION ${LIB_INSTALL_DIR})
     install(FILES libpython${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}-kdevelop.so.1.0 DESTINATION ${LIB_INSTALL_DIR})
 else ( NOT WIN32 )
+    # TODO: Fix windows stuff.
     include_directories(Python Modules/zlib Include PC)
     add_executable(make_versioninfo PC/make_versioninfo.c)
     add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/pythonnt_rc.h COMMAND ${CMAKE_CURRENT_BINARY_DIR}/make_versioninfo.exe > ${CMAKE_CURRENT_BINARY_DIR}/pythonnt_rc.h)

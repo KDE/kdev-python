@@ -1018,7 +1018,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
         if ( args && functiontype ) {
             // The declaration which was found is a function declaration, and has a valid arguments list assigned.
             QVector<Declaration*> parameters = args->localDeclarations();
-            const int specialParamsCount = lastFunctionDeclaration->hasVararg() + lastFunctionDeclaration->hasKwarg();
+            const int specialParamsCount = (lastFunctionDeclaration->vararg() > 0) + (lastFunctionDeclaration->kwarg() > 0);
             
             // Remove the "self" from the argument list, the type of that should not be updated.
             if ( ( lastFunctionDeclaration->context()->type() == DUContext::Class || isConstructor ) 
@@ -1042,13 +1042,8 @@ void DeclarationBuilder::visitCall(CallAst* node)
                     // passed as an argument, and update the parameter accordingly.
                     
                     // If more params are passed than the function has args, maybe it's a vararg
-                    if ( atParam >= functiontype->arguments().size() - specialParamsCount && atParam >= parameters.size() - specialParamsCount ) {
-                        if ( lastFunctionDeclaration->hasVararg() ) {
-                            atVararg = true;
-                        }
-                        else {
-                            break;
-                        }
+                    if ( atParam >= lastFunctionDeclaration->vararg() && lastFunctionDeclaration->vararg() != -1 ) {
+                        atVararg = true;
                     }
                     
                     // Get the type of the argument
@@ -1066,15 +1061,16 @@ void DeclarationBuilder::visitCall(CallAst* node)
                         closeType();
                         
                         if ( atVararg ) {
-                            const int offset = lastFunctionDeclaration->hasKwarg() ? parameters.size() - 2 : parameters.size() - 1;
+                            const int offset = lastFunctionDeclaration->vararg();
+                            Q_ASSERT(offset > -1);
                             AbstractType::Ptr param = parameters.at(offset)->abstractType();
                             IndexedContainer::Ptr indexed = param.cast<IndexedContainer>();
                             if ( indexed ) {
-                                int number = atParam - (parameters.size() - specialParamsCount);
-                                if ( number > 0 && indexed->typesCount() > number ) {
-                                    AbstractType::Ptr oldType = indexed->typeAt(number).abstractType();
+                                int varargIndex = atParam - offset;
+                                if ( varargIndex > 0 && indexed->typesCount() > varargIndex ) {
+                                    AbstractType::Ptr oldType = indexed->typeAt(varargIndex).abstractType();
                                     AbstractType::Ptr newType = Helper::mergeTypes(oldType, addType.cast<AbstractType>());
-                                    indexed->replaceType(number, newType);
+                                    indexed->replaceType(varargIndex, newType);
                                 }
                                 else {
                                     indexed->addEntry(addType.cast<AbstractType>());
@@ -1097,7 +1093,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
                 }
                 lock.unlock();
                 DUChainWriteLocker wlock;
-                if ( lastFunctionDeclaration->hasKwarg() ) {
+                if ( lastFunctionDeclaration->kwarg() >= 0 ) {
                     foreach ( KeywordAst* keyword, node->keywords ) {
                         AbstractType::Ptr param = parameters.last()->abstractType();
                         VariableLengthContainer::Ptr variable = param.cast<VariableLengthContainer>();
@@ -1608,7 +1604,6 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             int parametersCount = node->arguments.length();
             int firstDefaultParameterOffset = parametersCount - defaultParametersCount;
             int currentIndex = 0;
-            kDebug() << "variable argument ranges: " << node->arg_lineno << node->arg_col_offset << node->vararg_lineno << node->vararg_col_offset;
             foreach ( ArgAst* arg, node->arguments ) {
                 // Iterate over all the function's arguments, create declarations, and add the arguments
                 // to the functions FunctionType.
@@ -1623,7 +1618,6 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 
                 if ( type && paramDeclaration && currentIndex > firstDefaultParameterOffset ) {
                     // Handle arguments with default values, like def foo(bar = 3): pass
-                    kDebug() << "Adding default argument: " << arg->argumentName->value << paramDeclaration->abstractType();
                     // Find type of given default value, and assign it to the declaration
                     // TODO does this actually work?
                     ExpressionVisitor v(currentContext());
@@ -1638,10 +1632,8 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                     }
                     // TODO add the real expression from the document here as default value
                     workingOnDeclaration->addDefaultParameter(IndexedString("..."));
-                    kDebug() << "Arguments count: " << type->arguments().length();
                 }
                 else {
-                    kDebug() << "Not a default argument: " << arg->argumentName->value;
                     // For now, we cannot know the type, thus we write "mixed".
                     // As soon as a call to the function is encountered, this type might be updated.
                     DUChainWriteLocker lock;
@@ -1654,33 +1646,45 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                     isFirst = false;
                 }
             }
-            // Handle *args, **kwargs, and assign them a list / dictionary type.
-            kDebug() << "var/kwarg:" <<  node->vararg << node->kwarg;
+            
             if ( node->vararg ) {
+                // inject the vararg at the correct place
+                int atIndex = 0;
+                int useIndex = -1;
+                foreach ( ArgAst* arg, node->arguments ) {
+                    if ( node->vararg && workingOnDeclaration->vararg() == -1 && node->vararg->appearsBefore(arg) ) {
+                        useIndex = atIndex;
+                    }
+                    atIndex += 1;
+                }
+                if ( useIndex == -1 ) {
+                    // if the vararg does not appear in the middle of the params, place it at the end.
+                    // this is new in python3, you can do like def fun(a, b, *c, z): pass
+                    useIndex = type->arguments().size();
+                }
                 DUChainReadLocker lock;
                 IndexedContainer::Ptr tupleType = ExpressionVisitor::typeObjectForIntegralType
-                                                                     <IndexedContainer>("tuple", currentContext());
+                                                                    <IndexedContainer>("tuple", currentContext());
                 lock.unlock();
-                node->vararg->startCol = node->vararg_col_offset; node->vararg->endCol = node->vararg_col_offset + node->vararg->value.length() - 1;
-                node->vararg->startLine = node->vararg_lineno; node->vararg->endLine = node->vararg_lineno;
-                visitVariableDeclaration<Declaration>(node->vararg, 0, tupleType.cast<AbstractType>());
-                workingOnDeclaration->setHasVararg(true);
-                type->addArgument(tupleType.cast<AbstractType>());
+                if ( tupleType ) {
+                    visitVariableDeclaration<Declaration>(node->vararg, 0, tupleType.cast<AbstractType>());
+                    workingOnDeclaration->setVararg(atIndex);
+                    type->addArgument(tupleType.cast<AbstractType>(), useIndex);
+                }
             }
+            
             if ( node->kwarg ) {
                 DUChainReadLocker lock;
                 AbstractType::Ptr stringType = ExpressionVisitor::typeObjectForIntegralType
-                                                                  <AbstractType>("string", currentContext());
+                                                                <AbstractType>("string", currentContext());
                 VariableLengthContainer::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType
-                                                                  <VariableLengthContainer>("dict", currentContext());
+                                                                <VariableLengthContainer>("dict", currentContext());
                 lock.unlock();
                 if ( dictType ) {
                     dictType->addKeyType(stringType);
-                    node->kwarg->startCol = node->arg_col_offset; node->kwarg->endCol = node->arg_col_offset + node->kwarg->value.length() - 1;
-                    node->kwarg->startLine = node->arg_lineno; node->kwarg->endLine = node->arg_lineno;
                     visitVariableDeclaration<Declaration>(node->kwarg, 0, dictType.cast<AbstractType>());
-                    workingOnDeclaration->setHasKwarg(true);
                     type->addArgument(dictType.cast<AbstractType>());
+                    workingOnDeclaration->setKwarg(type->arguments().size() - 1);
                 }
             }
         }

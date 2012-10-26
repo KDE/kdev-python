@@ -156,13 +156,13 @@ private:
                 nodeStack.push(v); v->keywords = visitNodeList<_keyword, KeywordAst>(node->v.Call.keywords); nodeStack.pop();
                 nodeStack.push(v); v->keywordArguments = static_cast<ExpressionAst*>(visitNode(node->v.Call.kwargs)); nodeStack.pop();
                 nodeStack.push(v); v->starArguments = static_cast<ExpressionAst*>(visitNode(node->v.Call.starargs)); nodeStack.pop();
-v->function->belongsToCall = v;
+ v->function->belongsToCall = v;
                 result = v;
                 break;
             }
         case Num_kind: {
                 NumberAst* v = new (m_pool->allocate(sizeof(NumberAst))) NumberAst(parent());
-v->isInt = PyLong_Check(node->v.Num.n); v->value = PyLong_AsLong(node->v.Num.n);
+ v->isInt = PyLong_Check(node->v.Num.n); v->value = PyLong_AsLong(node->v.Num.n);
                 result = v;
                 break;
             }
@@ -685,6 +685,7 @@ v->isInt = PyLong_Check(node->v.Num.n); v->value = PyLong_AsLong(node->v.Num.n);
               v->arg_col_offset = node->arg_col_offset;
               v->vararg_lineno = tline(node->vararg_lineno - 1);
               v->vararg_col_offset = node->vararg_col_offset;
+ if ( v->vararg ) { v->vararg->startCol = v->vararg_col_offset; v->vararg->endCol = v->vararg_col_offset + v->vararg->value.length() - 1;v->vararg->startLine = v->vararg_lineno; v->vararg->endLine = v->vararg_lineno; }if ( v->kwarg ) { v->kwarg->startCol = v->arg_col_offset; v->kwarg->endCol = v->arg_col_offset + v->kwarg->value.length() - 1;v->kwarg->startLine = v->arg_lineno; v->kwarg->endLine = v->arg_lineno; };
         return v;
     }
 

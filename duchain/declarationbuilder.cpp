@@ -1061,8 +1061,9 @@ void DeclarationBuilder::visitCall(CallAst* node)
                     if ( atParam >= lastFunctionDeclaration->vararg() && lastFunctionDeclaration->vararg() != -1 ) {
                         atVararg = true;
                     }
-                    else if ( atParam > typeParametersSize ) {
+                    else if ( typeParametersSize <= atParam || parameters.size() <= atParam ) {
                         break;
+                    }
 
                 // Get the type of the argument
                 ExpressionVisitor argumentVisitor(currentContext(), editor());
@@ -1081,19 +1082,23 @@ void DeclarationBuilder::visitCall(CallAst* node)
                     if ( atVararg ) {
                         const short offset = lastFunctionDeclaration->vararg();
                         Q_ASSERT(offset > -1);
-                        AbstractType::Ptr param = parameters.at(offset)->abstractType();
-                        IndexedContainer::Ptr indexed = param.cast<IndexedContainer>();
-                        if ( indexed ) {
-                            int varargIndex = atParam - offset;
-                            if ( varargIndex > 0 && indexed->typesCount() > varargIndex ) {
-                                AbstractType::Ptr oldType = indexed->typeAt(varargIndex).abstractType();
+                        if ( parameters.size() <= offset || typeParametersSize <= offset ) {
+                            kWarning() << "warning, something went wrong creating the vararg declaration";
+                            continue;
+                        }
+                        AbstractType::Ptr varargType = parameters.at(offset)->abstractType();
+                        IndexedContainer::Ptr indexedVarargType = varargType.cast<IndexedContainer>();
+                        if ( indexedVarargType ) {
+                            int indexInVararg = atParam - offset;
+                            if ( indexInVararg > 0 && indexedVarargType->typesCount() > indexInVararg ) {
+                                AbstractType::Ptr oldType = indexedVarargType->typeAt(indexInVararg).abstractType();
                                 AbstractType::Ptr newType = Helper::mergeTypes(oldType, addType.cast<AbstractType>());
-                                indexed->replaceType(varargIndex, newType);
+                                indexedVarargType->replaceType(indexInVararg, newType);
                             }
                             else {
-                                indexed->addEntry(addType.cast<AbstractType>());
+                                indexedVarargType->addEntry(addType.cast<AbstractType>());
                             }
-                            parameters.at(offset)->setAbstractType(indexed.cast<AbstractType>());
+                            parameters.at(offset)->setAbstractType(indexedVarargType.cast<AbstractType>());
                         }
                     }
                     else {

@@ -1408,12 +1408,12 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     lock.lock();
     // every python class inherits from "object".
     // We use this to add all the __str__, __get__, ... methods.
-    if ( dec->baseClassesSize() == 0 and node->name->value != "__kdevpythondocumentation_builtin_object" ) {
+    if ( dec->baseClassesSize() == 0 and node->name->value != "object" ) {
         DUChainWriteLocker wlock;
         ReferencedTopDUContext docContext = Helper::getDocumentationFileContext();
         if ( docContext ) {
             QList<Declaration*> object = docContext->findDeclarations(
-                QualifiedIdentifier("__kdevpythondocumentation_builtin_object")
+                QualifiedIdentifier("object")
             );
             if ( ! object.isEmpty() && object.first()->abstractType() ) {
                 Declaration* objDecl = object.first();

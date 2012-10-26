@@ -358,7 +358,7 @@ void PyCompletionTest::testIntegralExpressionsDifferentContexts_data()
     QTest::newRow("list") << "[1, 2, 3, 4, 5, []%INVOKE]" << ".%CURSOR" << "append";
     QTest::newRow("list_with_fancy_string") << "[\"FooFObar\\\", 3)\", []%INVOKE]" << ".%CURSOR" << "append";
     QTest::newRow("empty_dict") << "{[]%INVOKE}" << ".%CURSOR" << "append";
-    QTest::newRow("print_stmt") << "print []%INVOKE" << ".%CURSOR" << "append";
+    QTest::newRow("print_stmt") << "%INVOKE" << "print([].%CURSOR" << "append";
 }
 
 void PyCompletionTest::testIgnoreCommentSignsInStringLiterals()

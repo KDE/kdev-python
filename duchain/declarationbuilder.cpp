@@ -1061,77 +1061,74 @@ void DeclarationBuilder::visitCall(CallAst* node)
                     if ( atParam >= lastFunctionDeclaration->vararg() && lastFunctionDeclaration->vararg() != -1 ) {
                         atVararg = true;
                     }
+                    else if ( atParam > typeParametersSize ) {
+                        break;
 
-                    // Get the type of the argument
-                    ExpressionVisitor argumentVisitor(currentContext(), editor());
-                    argumentVisitor.visitNode(arg);
-
-                    lock.unlock();
-                    DUChainWriteLocker wlock;
-                    if ( argumentVisitor.lastType() ) {
-                        // Update the parameter type: change both the type of the function argument,
-                        // and the type of the declaration which belongs to that argument
-                        HintedType::Ptr addType = HintedType::Ptr(new HintedType());
-                        openType(addType);
-                        addType->setType(argumentVisitor.lastType());
-                        addType->setCreatedBy(topContext(), m_futureModificationRevision);
-                        closeType();
-                        
-                        if ( atVararg ) {
-                            const int offset = lastFunctionDeclaration->vararg();
-                            Q_ASSERT(offset > -1);
-                            AbstractType::Ptr param = parameters.at(offset)->abstractType();
-                            IndexedContainer::Ptr indexed = param.cast<IndexedContainer>();
-                            if ( indexed ) {
-                                int varargIndex = atParam - offset;
-                                if ( varargIndex > 0 && indexed->typesCount() > varargIndex ) {
-                                    AbstractType::Ptr oldType = indexed->typeAt(varargIndex).abstractType();
-                                    AbstractType::Ptr newType = Helper::mergeTypes(oldType, addType.cast<AbstractType>());
-                                    indexed->replaceType(varargIndex, newType);
-                                }
-                                else {
-                                    indexed->addEntry(addType.cast<AbstractType>());
-                                }
-                                parameters.at(offset)->setAbstractType(indexed.cast<AbstractType>());
-                            }
-                        }
-                        else {
-                            AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(atParam)->abstractType(),
-                                                                            addType.cast<AbstractType>(), topContext());
-                            // TODO this does not correctly update the types in quickopen! Investigate why.
-                            functiontype->removeArgument(atParam);
-                            functiontype->addArgument(newType, atParam);
-                            lastFunctionDeclaration->setAbstractType(functiontype.cast<AbstractType>());
-                            parameters.at(atParam)->setType(newType);
-                        }
-                    }
-                    wlock.unlock();
-                    atParam++;
-                }
+                // Get the type of the argument
+                ExpressionVisitor argumentVisitor(currentContext(), editor());
+                argumentVisitor.visitNode(arg);
                 lock.unlock();
                 DUChainWriteLocker wlock;
-                if ( lastFunctionDeclaration->kwarg() >= 0 ) {
-                    foreach ( KeywordAst* keyword, node->keywords ) {
-                        AbstractType::Ptr param = parameters.last()->abstractType();
-                        VariableLengthContainer::Ptr variable = param.cast<VariableLengthContainer>();
-                        if ( variable ) {
-                            ExpressionVisitor argumentVisitor(currentContext(), editor());
-                            argumentVisitor.visitNode(keyword->value);
-                            if ( argumentVisitor.lastType() ) {
-                                HintedType::Ptr addType = HintedType::Ptr(new HintedType());
-                                openType(addType);
-                                addType->setType(argumentVisitor.lastType());
-                                addType->setCreatedBy(topContext(), m_futureModificationRevision);
-                                closeType();
-                                variable->addContentType(addType.cast<AbstractType>());
-                                parameters.last()->setAbstractType(variable.cast<AbstractType>());
+                if ( argumentVisitor.lastType() ) {
+                    // Update the parameter type: change both the type of the function argument,
+                    // and the type of the declaration which belongs to that argument
+                    HintedType::Ptr addType = HintedType::Ptr(new HintedType());
+                    openType(addType);
+                    addType->setType(argumentVisitor.lastType());
+                    addType->setCreatedBy(topContext(), m_futureModificationRevision);
+                    closeType();
+                    
+                    if ( atVararg ) {
+                        const short offset = lastFunctionDeclaration->vararg();
+                        Q_ASSERT(offset > -1);
+                        AbstractType::Ptr param = parameters.at(offset)->abstractType();
+                        IndexedContainer::Ptr indexed = param.cast<IndexedContainer>();
+                        if ( indexed ) {
+                            int varargIndex = atParam - offset;
+                            if ( varargIndex > 0 && indexed->typesCount() > varargIndex ) {
+                                AbstractType::Ptr oldType = indexed->typeAt(varargIndex).abstractType();
+                                AbstractType::Ptr newType = Helper::mergeTypes(oldType, addType.cast<AbstractType>());
+                                indexed->replaceType(varargIndex, newType);
                             }
+                            else {
+                                indexed->addEntry(addType.cast<AbstractType>());
+                            }
+                            parameters.at(offset)->setAbstractType(indexed.cast<AbstractType>());
+                        }
+                    }
+                    else {
+                        AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(atParam)->abstractType(),
+                                                                        addType.cast<AbstractType>(), topContext());
+                        // TODO this does not correctly update the types in quickopen! Investigate why.
+                        functiontype->removeArgument(atParam);
+                        functiontype->addArgument(newType, atParam);
+                        lastFunctionDeclaration->setAbstractType(functiontype.cast<AbstractType>());
+                        parameters.at(atParam)->setType(newType);
+                    }
+                }
+                wlock.unlock();
+                atParam++;
+            }
+            lock.unlock();
+            DUChainWriteLocker wlock;
+            if ( lastFunctionDeclaration->kwarg() >= 0 ) {
+                foreach ( KeywordAst* keyword, node->keywords ) {
+                    AbstractType::Ptr param = parameters.last()->abstractType();
+                    VariableLengthContainer::Ptr variable = param.cast<VariableLengthContainer>();
+                    if ( variable ) {
+                        ExpressionVisitor argumentVisitor(currentContext(), editor());
+                        argumentVisitor.visitNode(keyword->value);
+                        if ( argumentVisitor.lastType() ) {
+                            HintedType::Ptr addType = HintedType::Ptr(new HintedType());
+                            openType(addType);
+                            addType->setType(argumentVisitor.lastType());
+                            addType->setCreatedBy(topContext(), m_futureModificationRevision);
+                            closeType();
+                            variable->addContentType(addType.cast<AbstractType>());
+                            parameters.last()->setAbstractType(variable.cast<AbstractType>());
                         }
                     }
                 }
-            }
-            else {
-                kDebug() << "Arguments size mismatch, not updating type" << parameters << node->arguments;
             }
         }
     }

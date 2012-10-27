@@ -23,6 +23,7 @@
 
 #include <interfaces/idebugcontroller.h>
 #include <interfaces/icore.h>
+#include <interfaces/iplugincontroller.h>
 
 #include <sublime/view.h>
 #include <util/processlinemaker.h>
@@ -39,8 +40,10 @@ void DebugJob::start()
     
     setStandardToolView(KDevelop::IOutputView::DebugView);
     setBehaviours(KDevelop::IOutputView::Behaviours(KDevelop::IOutputView::AllowUserClose) | KDevelop::IOutputView::AutoScroll);
+    OutputModel* pyOutputModel = new KDevelop::OutputModel();
+    pyOutputModel->setFilteringStrategy(OutputModel::ScriptErrorFilter);
+    setModel(pyOutputModel);
     setTitle(m_interpreter + m_scriptUrl.path());
-    
     startOutput();
     
     kDebug() << "connecting standardOutputReceived";

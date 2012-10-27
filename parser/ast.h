@@ -30,6 +30,8 @@
 #include <QStringList>
 #include <QPair>
 
+#include <language/editor/simplerange.h>
+
 #include "parserexport.h"
 
 namespace KDevelop
@@ -194,6 +196,10 @@ public:
     
     bool appearsBefore(const Ast* other) {
         return startLine < other->startLine || ( startLine == other->startLine && startCol < other->startCol );
+    };
+    
+    const KDevelop::SimpleRange range() const {
+        return KDevelop::SimpleRange(startLine, startCol, endLine, endCol);
     };
 
     qint64 startCol;

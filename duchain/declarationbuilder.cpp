@@ -1564,6 +1564,20 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         dec->setStatic(true);
     }
     
+    // check for (python3) function annotations
+    if ( node->returns ) {
+        ExpressionVisitor v(currentContext());
+        v.visitNode(node->returns);
+        if ( v.lastType() && v.m_isAlias ) {
+            type->setReturnType(Helper::mergeTypes(type->returnType(), v.lastType()));
+            kDebug() << "updated function return type to " << type->toString();
+            dec->setType(type);
+        }
+        else if ( ! v.m_isAlias ) {
+            kDebug() << "not updating function return type because expression is not a type object";
+        }
+    }
+    
     dec->setInSymbolTable(true);
 }
 

@@ -7,7 +7,7 @@ COMMENT;the CODE statement can be used to add custom code.;;
 
 RULE_FOR _stmt;KIND Expr_kind;ACTIONS create|ExpressionAst set|value->ExpressionAst,value;;
 RULE_FOR _stmt;KIND FunctionDef_kind;ACTIONS create|FunctionDefinitionAst set|name~>name set|arguments->ArgumentsAst,args
-    set|body=>Ast,body set|decorators=>ExpressionAst,decorator_list;;
+    set|body=>Ast,body set|decorators=>ExpressionAst,decorator_list set|returns->ExpressionAst,returns;;
 RULE_FOR _stmt;KIND ClassDef_kind;ACTIONS create|ClassDefinitionAst set|name~>name set|baseClasses=>ExpressionAst,bases set|body=>Ast,body
     set|decorators=>ExpressionAst,decorator_list;;
 RULE_FOR _stmt;KIND Return_kind;ACTIONS create|ReturnAst set|value->ExpressionAst,value;;

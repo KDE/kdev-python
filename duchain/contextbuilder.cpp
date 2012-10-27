@@ -318,7 +318,7 @@ void ContextBuilder::visitCode(CodeAst* node) {
         
         if ( ! internal ) {
             // If the built-in functions file is not yet parsed, schedule it with a high priority and abort.
-            m_unresolvedImports.append(doc_url);
+            m_unresolvedImports.append(doc);
             KDevelop::ICore::self()->languageController()->backgroundParser()
                                    ->addDocument(doc, KDevelop::TopDUContext::ForceUpdate,
                                                  BackgroundParser::BestPriority, 0, ParseJob::FullSequentialProcessing);

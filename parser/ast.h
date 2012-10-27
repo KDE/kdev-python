@@ -255,6 +255,7 @@ public:
     ArgumentsAst* arguments;
     QList<ExpressionAst*> decorators;
     QList<Ast*> body;
+    ExpressionAst* returns;
 };
 
 class KDEVPYTHONPARSER_EXPORT ClassDefinitionAst : public StatementAst {

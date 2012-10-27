@@ -777,6 +777,30 @@ void PyDUChainTest::testAutocompletionFlickering()
     lock.unlock();
 }
 
+void PyDUChainTest::testFunctionHints()
+{
+    QFETCH(QString, code);
+    QFETCH(QString, expectedType);
+    ReferencedTopDUContext ctx = parse(code);
+    QVERIFY(ctx);
+    DUChainWriteLocker lock;
+    QList< Declaration* > decls = ctx->findDeclarations(KDevelop::Identifier("checkme"));
+    QVERIFY(! decls.isEmpty());
+    Declaration* d = decls.first();
+    QVERIFY(d->abstractType());
+    QCOMPARE(d->abstractType()->toString(), expectedType);
+}
+
+void PyDUChainTest::testFunctionHints_data()
+{
+    QTest::addColumn<QString>("code");
+    QTest::addColumn<QString>("expectedType");
+    
+    QTest::newRow("func_return_type") << "def myfun(arg) -> int: pass\ncheckme = myfun(\"3\")" << "unsure (void, int)";
+    QTest::newRow("argument_type") << "def myfun(arg : int): return arg\ncheckme = myfun(foobar)" << "int";
+    QTest::newRow("argument_type_only_if_typeof") << "def myfun(arg : 3): return arg\ncheckme = myfun(foobar)" << "mixed";
+}
+
 void PyDUChainTest::testDecorators()
 {
     QFETCH(QString, code);

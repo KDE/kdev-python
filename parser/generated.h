@@ -232,6 +232,7 @@ private:
                 nodeStack.push(v); v->arguments = static_cast<ArgumentsAst*>(visitNode(node->v.FunctionDef.args)); nodeStack.pop();
                 nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.FunctionDef.body); nodeStack.pop();
                 nodeStack.push(v); v->decorators = visitNodeList<_expr, ExpressionAst>(node->v.FunctionDef.decorator_list); nodeStack.pop();
+                nodeStack.push(v); v->returns = static_cast<ExpressionAst*>(visitNode(node->v.FunctionDef.returns)); nodeStack.pop();
                 result = v;
                 break;
             }

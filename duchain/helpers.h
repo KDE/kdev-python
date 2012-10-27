@@ -91,14 +91,14 @@ public:
     static bool docstringContainsHint(Declaration* declaration, const QString& hintName, QStringList* args = 0) {
         // TODO cache types! this is horribly inefficient
         const QString& comment = declaration->comment();
-        kDebug() << "COMMENT:" << comment << hintName;
-        int index = comment.indexOf("! " + hintName);
+        const QString search = "! " + hintName + " !";
+        int index = comment.indexOf(search);
         if ( index >= 0 ) {
             if ( args ) {
                 int eol = comment.indexOf('\n', index);
-                QString decl = comment.mid(index, eol);
+                int start = index+search.size()+1;
+                QString decl = comment.mid(start, eol-start);
                 *args = decl.split(' ');
-                kDebug() << *args;
             }
             return true;
         }

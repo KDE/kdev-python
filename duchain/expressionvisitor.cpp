@@ -332,129 +332,128 @@ void ExpressionVisitor::visitCall(CallAst* node)
                 encounterDeclaration(funcDecl);
             }
             
-            bool decoratorFound = false;
+            bool specialHintFound = false;
             bool typeFound = false;
-            if ( funcDecl->decoratorsSize() > 0 ) {
-                kDebug() << "Got function declaration with decorators, checking for list content type...";
-                if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsType") ) {
-                    decoratorFound = true;
-                    kDebug() << "Found decorator";
-                    if ( node->function->astType == Ast::AttributeAstType ) {
-                        lock.unlock();
-                        ExpressionVisitor baseTypeVisitor(this);
-                        // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
-                        baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
-                        lock.lock();
-                        if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
-                            kDebug() << "Found container, using type";
-                            AbstractType::Ptr newType = t->contentType().abstractType();
-                            return encounter(newType);
-                        }
+            kDebug() << "Got function declaration with decorators, checking for list content type...";
+            if ( Helper::docstringContainsHint(funcDecl, "getsType") ) {
+                specialHintFound = true;
+                kDebug() << "Found decorator";
+                if ( node->function->astType == Ast::AttributeAstType ) {
+                    lock.unlock();
+                    ExpressionVisitor baseTypeVisitor(this);
+                    // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
+                    baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
+                    lock.lock();
+                    if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
+                        kDebug() << "Found container, using type";
+                        AbstractType::Ptr newType = t->contentType().abstractType();
+                        return encounter(newType);
                     }
                 }
-                if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsList")
-                    or Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsListOfKeys")
-                ) {
-                    decoratorFound = true;
-                    kDebug() << "Got getsList decorator, checking container";
-                    if ( node->function->astType == Ast::AttributeAstType ) {
-                        lock.unlock();
-                        ExpressionVisitor baseTypeVisitor(this);
-                        // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
-                        baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
-                        lock.lock();
-                        if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
-                            kDebug() << "Got container:" << t->toString();
-                            VariableLengthContainer::Ptr newType = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
-                            if ( newType ) {
-                                AbstractType::Ptr contentType;
-                                if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsList") ) {
-                                    contentType = t->contentType().abstractType();
-                                }
-                                else {
-                                    contentType = t->keyType().abstractType();
-                                }
-                                newType->addContentType(contentType);
-                                AbstractType::Ptr resultingType = newType.cast<AbstractType>();
-                                return encounter(resultingType);
-                            }
-                            else return unknownTypeEncountered();
-                        }
-                    }
-                }
-                if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsListOfBoth") ) {
-                    decoratorFound = true;
-                    kDebug() << "Got getsListOfBoth decorator, checking container";
-                    if ( node->function->astType == Ast::AttributeAstType ) {
-                        lock.unlock();
-                        ExpressionVisitor baseTypeVisitor(this);
-                        // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
-                        baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
-                        lock.lock();
-                        if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
-                            kDebug() << "Got container:" << t->toString();
-                            VariableLengthContainer::Ptr newType = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
-                            IndexedContainer::Ptr newContents = typeObjectForIntegralType<IndexedContainer>("tuple", m_ctx);
-                            if ( newType && newContents ) {
-                                AbstractType::Ptr contentType, keyType;
+            }
+            // TODO this is very slow!
+            if ( Helper::docstringContainsHint(funcDecl, "getsList")
+                or Helper::docstringContainsHint(funcDecl, "getsListOfKeys")
+            ) {
+                specialHintFound = true;
+                kDebug() << "Got getsList decorator, checking container";
+                if ( node->function->astType == Ast::AttributeAstType ) {
+                    lock.unlock();
+                    ExpressionVisitor baseTypeVisitor(this);
+                    // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
+                    baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
+                    lock.lock();
+                    if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
+                        kDebug() << "Got container:" << t->toString();
+                        VariableLengthContainer::Ptr newType = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
+                        if ( newType ) {
+                            AbstractType::Ptr contentType;
+                            if ( Helper::docstringContainsHint(funcDecl, "getsList") ) {
                                 contentType = t->contentType().abstractType();
-                                if ( ! contentType ) {
-                                    contentType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
-                                }
-                                keyType = t->keyType().abstractType();
-                                if ( ! keyType ) {
-                                    keyType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
-                                }
-                                newContents->addEntry(keyType);
-                                newContents->addEntry(contentType);
-                                newType->addContentType(newContents.cast<AbstractType>());
-                                AbstractType::Ptr resultingType = newType.cast<AbstractType>();
-                                return encounter(resultingType);
                             }
-                            else return unknownTypeEncountered();
+                            else {
+                                contentType = t->keyType().abstractType();
+                            }
+                            newType->addContentType(contentType);
+                            AbstractType::Ptr resultingType = newType.cast<AbstractType>();
+                            return encounter(resultingType);
+                        }
+                        else return unknownTypeEncountered();
+                    }
+                }
+            }
+            if ( Helper::docstringContainsHint(funcDecl, "getsListOfBoth") ) {
+                specialHintFound = true;
+                kDebug() << "Got getsListOfBoth decorator, checking container";
+                if ( node->function->astType == Ast::AttributeAstType ) {
+                    lock.unlock();
+                    ExpressionVisitor baseTypeVisitor(this);
+                    // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
+                    baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
+                    lock.lock();
+                    if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
+                        kDebug() << "Got container:" << t->toString();
+                        VariableLengthContainer::Ptr newType = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
+                        IndexedContainer::Ptr newContents = typeObjectForIntegralType<IndexedContainer>("tuple", m_ctx);
+                        if ( newType && newContents ) {
+                            AbstractType::Ptr contentType, keyType;
+                            contentType = t->contentType().abstractType();
+                            if ( ! contentType ) {
+                                contentType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
+                            }
+                            keyType = t->keyType().abstractType();
+                            if ( ! keyType ) {
+                                keyType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
+                            }
+                            newContents->addEntry(keyType);
+                            newContents->addEntry(contentType);
+                            newType->addContentType(newContents.cast<AbstractType>());
+                            AbstractType::Ptr resultingType = newType.cast<AbstractType>();
+                            return encounter(resultingType);
+                        }
+                        else return unknownTypeEncountered();
+                    }
+                }
+            }
+            QStringList l;
+            if ( Helper::docstringContainsHint(funcDecl, "returnContentEqualsContentOf", &l) )
+            {
+                kDebug() << "Found argument dependent decorator, checking argument type";
+                specialHintFound = true;
+                int argNum = ! l.isEmpty() ? l.at(0).toInt() : 0;
+                if ( node->arguments.length() > argNum ) {
+                    ExpressionAst* relevantArgument = node->arguments.at(argNum);
+                    lock.unlock();
+                    ExpressionVisitor v(this);
+                    v.visitNode(relevantArgument);
+                    lock.lock();
+                    if ( v.lastType() ) {
+                        VariableLengthContainer* realTarget = 0;
+                        if ( VariableLengthContainer* target = dynamic_cast<VariableLengthContainer*>(type.unsafeData()) ) {
+                            realTarget = target;
+                        }
+                        if ( VariableLengthContainer* source = dynamic_cast<VariableLengthContainer*>(v.lastType().unsafeData()) ) {
+                            if ( ! realTarget ) {
+                                // if the function does not force a return type, just copy the source (like for reversed())
+                                realTarget = source;
+                            }
+                            VariableLengthContainer* newType = static_cast<VariableLengthContainer*>(realTarget->clone());
+                            Q_ASSERT(newType);
+                            newType->addContentType(source->contentType().abstractType());
+                            typeFound = true;
+                            return encounter(AbstractType::Ptr(newType));
+                        }
+                        else if ( type ) {
+                            return encounter(type);
                         }
                     }
                 }
-                if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(
-                                              funcDecl, "returnContentEqualsContentOf") )
-                {
-                    kDebug() << "Found argument dependent decorator, checking argument type";
-                    decoratorFound = true;
-                    int argNum = d->additionalInformation().str().toInt();
-                    if ( node->arguments.length() > argNum ) {
-                        ExpressionAst* relevantArgument = node->arguments.at(argNum);
-                        lock.unlock();
-                        ExpressionVisitor v(this);
-                        v.visitNode(relevantArgument);
-                        lock.lock();
-                        if ( v.lastType() ) {
-                            VariableLengthContainer* realTarget = 0;
-                            if ( VariableLengthContainer* target = dynamic_cast<VariableLengthContainer*>(type.unsafeData()) ) {
-                                realTarget = target;
-                            }
-                            if ( VariableLengthContainer* source = dynamic_cast<VariableLengthContainer*>(v.lastType().unsafeData()) ) {
-                                if ( ! realTarget ) {
-                                    // if the function does not force a return type, just copy the source (like for reversed())
-                                    realTarget = source;
-                                }
-                                VariableLengthContainer* newType = static_cast<VariableLengthContainer*>(realTarget->clone());
-                                Q_ASSERT(newType);
-                                newType->addContentType(source->contentType().abstractType());
-                                typeFound = true;
-                                return encounter(AbstractType::Ptr(newType));
-                            }
-                            else if ( type ) {
-                                return encounter(type);
-                            }
-                        }
-                    }
-                    else if ( type ) {
-                        return encounter(type);
-                    }
+                else if ( type ) {
+                    return encounter(type);
                 }
-                if ( decoratorFound and not typeFound ) {
-                    return unknownTypeEncountered();
-                }
+            }
+            if ( specialHintFound and not typeFound ) {
+                return unknownTypeEncountered();
             }
             
             // if none of the above decorator-finding methods worked, just use the ordinary return type.

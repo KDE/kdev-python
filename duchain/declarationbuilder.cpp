@@ -1603,7 +1603,7 @@ void DeclarationBuilder::visitReturn(ReturnAst* node)
         if ( ! hasCurrentType() ) {
             DUChainWriteLocker lock(DUChain::lock());
             KDevelop::Problem *p = new KDevelop::Problem();
-            p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(node->startLine, node->startCol, node->endLine, node->endCol))); // only mark first line
+            p->setFinalLocation(DocumentRange(currentlyParsedDocument(), node->range())); // only mark first line
             p->setSource(KDevelop::ProblemData::SemanticAnalysis);
             p->setDescription(i18n("Return statement not within function declaration"));
             ProblemPointer ptr(p);

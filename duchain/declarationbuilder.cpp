@@ -1660,9 +1660,17 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 if ( ! arg->argumentName ) {
                     continue;
                 }
-
+                
                 // Create a variable declaration for the parameter, to be used in the function body.
                 Declaration* paramDeclaration = visitVariableDeclaration<Declaration>(arg->argumentName);
+                
+                if ( type && paramDeclaration && arg->annotation ) {
+                    ExpressionVisitor v(currentContext());
+                    v.visitNode(arg->annotation);
+                    if ( v.lastType() && v.m_isAlias ) {
+                        paramDeclaration->setAbstractType(Helper::mergeTypes(paramDeclaration->abstractType(), v.lastType()));
+                    }
+                }
                 
                 if ( type && paramDeclaration && currentIndex > firstDefaultParameterOffset ) {
                     // Handle arguments with default values, like def foo(bar = 3): pass
@@ -1737,8 +1745,6 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             }
         }
     }
-    
-    DeclarationBuilderBase::visitArguments(node);
 }
 
 }

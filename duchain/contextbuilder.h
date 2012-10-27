@@ -74,7 +74,7 @@ public:
     // maybe we can remove this hack later. TODO maybe change something in kdevplatform, or maybe we're doing something wrong here?
     IndexedString currentlyParsedDocument() const;
     IndexedString m_currentlyParsedDocument;
-    QList<KUrl> m_unresolvedImports;
+    QList<IndexedString> m_unresolvedImports;
     static RangeInRevision rangeForNode(Ast* node, bool moveRight);
     static RangeInRevision rangeForNode(Identifier* node, bool moveRight);
     static SimpleRange simpleRangeForNode(Python::Ast* node, bool moveRight);

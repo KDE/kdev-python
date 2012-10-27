@@ -157,9 +157,8 @@ void ParseJob::run()
         if ( needsReparse ) {
             // check whether one of the imports is queued for parsing, this is to avoid deadlocks
             bool dependencyInQueue = false;
-            ///TODO: m_unresolvedImports should hold IndexedStrings
-            foreach ( const KUrl& url, builder.m_unresolvedImports ) {
-                dependencyInQueue = KDevelop::ICore::self()->languageController()->backgroundParser()->isQueued(IndexedString(url));
+            foreach ( const IndexedString& url, builder.m_unresolvedImports ) {
+                dependencyInQueue = KDevelop::ICore::self()->languageController()->backgroundParser()->isQueued(url);
                 if ( dependencyInQueue ) {
                     break;
                 }
@@ -169,7 +168,7 @@ void ParseJob::run()
             // the document was already rescheduled, but there's many cases where this might still happen)
             if ( ! ( minimumFeatures() & Rescheduled ) && dependencyInQueue ) {
                 DUChainWriteLocker lock(DUChain::lock());
-                KDevelop::ICore::self()->languageController()->backgroundParser()->addDocument(document(), 
+                KDevelop::ICore::self()->languageController()->backgroundParser()->addDocument(document(),
                                      static_cast<TopDUContext::Features>(TopDUContext::ForceUpdate | Rescheduled), parsePriority(),
                                      0, ParseJob::FullSequentialProcessing);
             }

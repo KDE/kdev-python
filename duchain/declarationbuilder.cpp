@@ -956,8 +956,9 @@ void DeclarationBuilder::visitCall(CallAst* node)
                 if ( functionVisitor.lastDeclaration()->isFunctionDeclaration() ) {
                     FunctionDeclaration* f = static_cast<FunctionDeclaration*>(functionVisitor.lastDeclaration().data());
                     // Check for the different types of modifiers such a function can have
-                    if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(f, "addsTypeOfArg") ) {
-                        const int offset = d->additionalInformation().str().toInt();
+                    QStringList args;
+                    if ( Helper::docstringContainsHint(f, "addsTypeOfArg", &args) ) {
+                        const int offset = ! args.isEmpty() ? args.at(0).toInt() : 0;
                         if ( node->arguments.length() > offset ) {
                             // Check which type should be added to the list
                             ExpressionVisitor argVisitor(currentContext(), editor());
@@ -971,8 +972,8 @@ void DeclarationBuilder::visitCall(CallAst* node)
                             }
                         }
                     }
-                    if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(f, "addsTypeOfArgContent") ) {
-                        const int offset = d->additionalInformation().str().toInt();
+                    if ( Helper::docstringContainsHint(f, "addsTypeOfArgContent", &args) ) {
+                        const int offset = ! args.isEmpty() ? args.at(0).toInt() : 0;
                         if ( node->arguments.length() > offset ) {
                             ExpressionVisitor argVisitor(currentContext(), editor());
                             argVisitor.visitNode(node->arguments.at(offset));
@@ -1379,15 +1380,14 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     dec->setClassType(ClassDeclarationData::Class);
     
     // check whether this is a type container (list, dict, ...) or just a "normal" class
-    const Decorator* d = Helper::findDecoratorByName<ClassDeclaration>(dec, "TypeContainer");
-    if ( d ) {
+    if ( Helper::docstringContainsHint(dec, "TypeContainer") ) {
         VariableLengthContainer* container = new VariableLengthContainer();
-        if ( Helper::findDecoratorByName<ClassDeclaration>(dec, "hasTypedKeys") ) {
+        if ( Helper::docstringContainsHint(dec, "hasTypedKeys") ) {
             container->setHasKeyType(true);
         }
         type = StructureType::Ptr(container);
     }
-    if ( Helper::findDecoratorByName<ClassDeclaration>(dec, "IndexedTypeContainer") ) {
+    if ( Helper::docstringContainsHint(dec, "IndexedTypeContainer") ) {
         IndexedContainer* container = new IndexedContainer();
         type = StructureType::Ptr(container);
     }
@@ -1493,6 +1493,9 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     
     Q_ASSERT(dec->isFunctionDeclaration());
     
+    // check for documentation
+    dec->setComment(getDocstring(node->body));
+    
     openType(type);
     dec->setInSymbolTable(false);
     dec->setType(type);
@@ -1576,8 +1579,6 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         dec->setStatic(true);
     }
     
-    // check for documentation
-    dec->setComment(getDocstring(node->body));
     dec->setInSymbolTable(true);
 }
 

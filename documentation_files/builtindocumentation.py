@@ -91,29 +91,34 @@ class object():
     def __index__(self): pass
     def __coerce__(self, other): pass
 
-@TypeContainer
 class list():
-    @returnContentEqualsContentOf(0)
+    """! TypeContainer"""
     def __init__(self, items):
+        """! returnContentEqualsContentOf 0"""
         return []
-    @addsTypeOfArg(1)
-    def __setitem__(self, key, value): pass
-    @getsType
-    def __getitem__(self, key): pass
-    @addsTypeOfArg(0)
-    def append(self,obj): pass
-    @addsTypeOfArgContent(0)
-    def extend(self,obj): return None
-    @addsTypeOfArg(0)
-    def insert(self,i, x): return None
-    @getsType
-    def pop(self,i): return None
-    @getsType
+    def __setitem__(self, key, value):
+        """! addsTypeOfArg 1
+           ! getsType"""
+    def __getitem__(self, key):
+        """! addsTypeOfArg 0"""
+    def append(self,obj):
+        """! addsTypeOfArgContent 0"""
+    def extend(self,obj):
+        """! addsTypeOfArg 0"""
+        return None
+    def insert(self,i, x):
+        """! getsType"""
+        return None
+    def pop(self,i):
+        """! getsType"""
+        return None
     def index(self,x): return 0
-    def count(self,x): return 0
-    @getsList
-    def sort(self,): return []
-    @getsList
+    def count(self,x):
+        """! getsList"""
+        return 0
+    def sort(self,):
+        """! getsList"""
+        return []
     def reverse(self,): return []
     def remove(self, x): pass
 
@@ -138,44 +143,54 @@ class _io_TextIOWrapper():
     name = ""
     newlines = ""
     softspace = True
-    
-@TypeContainer
-@hasTypedKeys
+
 class dict():
-    @returnContentEqualsContentOf(0)
+    """! TypeContainer
+       ! hasTypedKeys"""
     def __init__(self, items):
+        """! returnContentEqualsContentOf 0"""
         return {}
-    @addsTypeOfArg(1)
-    @addsKeyTypeOfArg(0)
-    def __setitem__(self, key, value): pass
-    @getsType
-    def __getitem__(self, key): pass
+    def __setitem__(self, key, value):
+        """! addsTypeOfArg 1
+           ! addsKeyTypeOfArg 0"""
+    def __getitem__(self, key):
+        """! getsType"""
     def clear(self,): return None
     def copy(self,): return {}
-    @addsKeyTypeOfArgContent(0)
-    @addsTypeOfArg(1)
-    def fromkeys(self,seq, value = None): return {}
-    @getsType
-    def get(self,key, default = ""): return None
+    def fromkeys(self,seq, value = None):
+        """! addsKeyTypeOfArgContent 0
+           ! addsTypeOfArg 1"""
+        return {}
+    def get(self,key, default = ""):
+        """! getsType"""
+        return None
     def has_key(self,key): return True
-    @getsListOfBoth
-    def items(self,): return {}
-    @getsListOfBoth
-    def iteritems(self,): return []
-    @getsListOfKeys
-    def iterkeys(self,): return []
-    @getsList
-    def itervalues(self,): return []
-    @getsListOfKeys
-    def keys(self,): return []
-    @getsType
-    def pop(self,key, default = ""): return None
-    @getsBoth
-    def popitem(self,): return None
+    def items(self,):
+        """! getsListOfBoth"""
+        return {}
+    def iteritems(self,):
+        """! getsListOfBoth"""
+        return []
+    def iterkeys(self,):
+        """! getsListOfKeys"""
+        return []
+    def itervalues(self,):
+        """! getsList"""
+        return []
+    def keys(self,):
+        """! getsListOfKeys"""
+        return []
+    def pop(self,key, default = ""):
+        """! getsType"""
+        return None
+    def popitem(self,):
+        """! getsBoth"""
+        return None
     def setdefault(self,key, default = ""): return None
     def update(self,other = None): return None
-    @getsList
-    def values(self,): return []
+    def values(self,):
+        """! getsList"""
+        return []
     def viewitems(self,): return None
     def viewkeys(self,): return None
     def viewvalues(self,): return None
@@ -327,14 +342,14 @@ class ImportWarning(Warning):
 class UnicodeWarning(Warning):
     pass
 
-@IndexedTypeContainer
 class tuple():
+    """! IndexedTypeContainer"""
     pass
 
-@TypeContainer
 class set():
-    @returnContentEqualsContentOf(0)
+    """! TypeContainer"""
     def __init__(self, objects):
+        """! returnContentEqualsContentOf 0"""
         pass
     def len(self): return 0
     def isdisjoint(self, other): return True
@@ -387,8 +402,9 @@ def id(obj): return 0
 def input(prompt = None): return None
 def isinstance(obj, cls): return True
 def issubclass(cls, info): return True
-@returnContentEqualsContentOf(0)
-def iter(o, s = None): return []
+def iter(o, s = None):
+    """! returnContentEqualsContentOf 0"""
+    return []
 def len(s): return 0
 def locals(): return {}
 def long(x = None, base = None): return 0
@@ -407,8 +423,9 @@ def raw_input(prompt = ""): return ""
 def reduce(function, iterable, init = None): return None
 def reload(module) : return None
 def repr(object): return ""
-@returnContentEqualsContentOf(0)
-def reversed(seq): return None
+def reversed(seq):
+    """! returnContentEqualsContentOf 0"""
+    return None
 def round(x, n=0): return 0.0
 def setattr(obj, name, value): return None
 def slice(start = 0, stop = 0, step = 0): return slice()

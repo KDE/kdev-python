@@ -92,34 +92,36 @@ class object():
     def __coerce__(self, other): pass
 
 class list():
-    """! TypeContainer"""
+    """! TypeContainer !"""
     def __init__(self, items):
-        """! returnContentEqualsContentOf 0"""
+        """! returnContentEqualsContentOf ! 0"""
         return []
     def __setitem__(self, key, value):
-        """! addsTypeOfArg 1
-           ! getsType"""
+        """! addsTypeOfArg ! 1
+           ! getsType !"""
     def __getitem__(self, key):
-        """! addsTypeOfArg 0"""
+        """! addsTypeOfArg ! 0"""
     def append(self,obj):
-        """! addsTypeOfArgContent 0"""
+        """! addsTypeOfArg ! 0"""
     def extend(self,obj):
-        """! addsTypeOfArg 0"""
+        """! addsTypeOfArgContent ! 0"""
         return None
     def insert(self,i, x):
-        """! getsType"""
+        """! getsType !"""
         return None
     def pop(self,i):
-        """! getsType"""
+        """! getsType !"""
         return None
     def index(self,x): return 0
     def count(self,x):
-        """! getsList"""
+        """! getsList !"""
         return 0
     def sort(self,):
-        """! getsList"""
+        """! getsList !"""
         return []
-    def reverse(self,): return []
+    def reverse(self,):
+        """! getsList !"""
+        return []
     def remove(self, x): pass
 
 class _io_TextIOWrapper():
@@ -145,51 +147,51 @@ class _io_TextIOWrapper():
     softspace = True
 
 class dict():
-    """! TypeContainer
-       ! hasTypedKeys"""
+    """! TypeContainer !
+       ! hasTypedKeys !"""
     def __init__(self, items):
-        """! returnContentEqualsContentOf 0"""
+        """! returnContentEqualsContentOf ! 0"""
         return {}
     def __setitem__(self, key, value):
-        """! addsTypeOfArg 1
-           ! addsKeyTypeOfArg 0"""
+        """! addsTypeOfArg ! 1
+           ! addsKeyTypeOfArg ! 0"""
     def __getitem__(self, key):
-        """! getsType"""
+        """! getsType !"""
     def clear(self,): return None
     def copy(self,): return {}
     def fromkeys(self,seq, value = None):
-        """! addsKeyTypeOfArgContent 0
-           ! addsTypeOfArg 1"""
+        """! addsKeyTypeOfArgContent ! 0
+           ! addsTypeOfArg ! 1"""
         return {}
     def get(self,key, default = ""):
-        """! getsType"""
+        """! getsType !"""
         return None
     def has_key(self,key): return True
     def items(self,):
-        """! getsListOfBoth"""
+        """! getsListOfBoth !"""
         return {}
     def iteritems(self,):
-        """! getsListOfBoth"""
+        """! getsListOfBoth !"""
         return []
     def iterkeys(self,):
-        """! getsListOfKeys"""
+        """! getsListOfKeys !"""
         return []
     def itervalues(self,):
-        """! getsList"""
+        """! getsList !"""
         return []
     def keys(self,):
-        """! getsListOfKeys"""
+        """! getsListOfKeys !"""
         return []
     def pop(self,key, default = ""):
-        """! getsType"""
+        """! getsType !"""
         return None
     def popitem(self,):
-        """! getsBoth"""
+        """! getsBoth !"""
         return None
     def setdefault(self,key, default = ""): return None
     def update(self,other = None): return None
     def values(self,):
-        """! getsList"""
+        """! getsList !"""
         return []
     def viewitems(self,): return None
     def viewkeys(self,): return None
@@ -343,13 +345,13 @@ class UnicodeWarning(Warning):
     pass
 
 class tuple():
-    """! IndexedTypeContainer"""
+    """! IndexedTypeContainer !"""
     pass
 
 class set():
-    """! TypeContainer"""
+    """! TypeContainer !"""
     def __init__(self, objects):
-        """! returnContentEqualsContentOf 0"""
+        """! returnContentEqualsContentOf ! 0"""
         pass
     def len(self): return 0
     def isdisjoint(self, other): return True
@@ -403,7 +405,7 @@ def input(prompt = None): return None
 def isinstance(obj, cls): return True
 def issubclass(cls, info): return True
 def iter(o, s = None):
-    """! returnContentEqualsContentOf 0"""
+    """! returnContentEqualsContentOf ! 0"""
     return []
 def len(s): return 0
 def locals(): return {}
@@ -424,12 +426,14 @@ def reduce(function, iterable, init = None): return None
 def reload(module) : return None
 def repr(object): return ""
 def reversed(seq):
-    """! returnContentEqualsContentOf 0"""
+    """! returnContentEqualsContentOf ! 0"""
     return None
 def round(x, n=0): return 0.0
 def setattr(obj, name, value): return None
 def slice(start = 0, stop = 0, step = 0): return slice()
-def sorted(iterable, cmpre = None, key = None, reverse = False): return []
+def sorted(iterable, cmpre = None, key = None, reverse = False):
+    """! returnContentEqualsContentOf ! 0"""
+    return None
 def staticmethod(function): return function
 def sum(iterable): return 0.0
 def super(_type, obj = None): return None

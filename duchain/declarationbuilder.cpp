@@ -815,13 +815,27 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
     if ( ! moduleContext ) {
         // schedule the include file for parsing, and schedule the current one for reparsing after that is done
         kDebug() << "No module context, recompiling";
-        m_unresolvedImports.append(moduleInfo.first);
-        if ( KDevelop::ICore::self()->languageController()->backgroundParser()->isQueued(modulePath) ) {
-            KDevelop::ICore::self()->languageController()->backgroundParser()->removeDocument(modulePath);
+        m_unresolvedImports.append(IndexedString(moduleInfo.first));
+        BackgroundParser* bgparser = KDevelop::ICore::self()->languageController()->backgroundParser();
+        bool needsReschedule = true;
+        if ( bgparser->isQueued(modulePath) ) {
+            const ParseJob* job = bgparser->parseJobForDocument(modulePath);
+            int previousPriority = BackgroundParser::WorstPriority;
+            if ( job ) {
+                previousPriority = job->parsePriority();
+            }
+            // if it's less important, reschedule it
+            if ( job && previousPriority > m_ownPriority - 1 ) {
+                bgparser->removeDocument(modulePath);
+            }
+            else {
+                needsReschedule = false;
+            }
         }
-        KDevelop::ICore::self()->languageController()->backgroundParser()
-                                   ->addDocument(modulePath, TopDUContext::ForceUpdate, m_ownPriority - 1,
-                                                 0, ParseJob::FullSequentialProcessing);
+        if ( needsReschedule ) {
+            bgparser->addDocument(modulePath, TopDUContext::ForceUpdate, m_ownPriority - 1,
+                                  0, ParseJob::FullSequentialProcessing);
+        }
         // parseDocuments() must *not* be called from a background thread!
         // KDevelop::ICore::self()->languageController()->backgroundParser()->parseDocuments();
         return 0;

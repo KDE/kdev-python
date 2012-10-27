@@ -4,9 +4,9 @@
 import sys
 import subprocess
 
-import StringIO
+import io
 
-from PyQt4.QtCore import QProcess
+from PyQt4.QtCore import QProcess, QByteArray
 
 import re
 
@@ -56,7 +56,7 @@ class TestRunner():
         self.failed_tests = []
     
     def writeStdout(self):
-        data = self.process.readAllStandardOutput()
+        data = self.process.readAllStandardOutput().data().decode("utf-8").replace(r'\n', '\n')
         if "debug" in sys.argv:
             sys.stdout.write(data)
         else:
@@ -67,7 +67,7 @@ class TestRunner():
         self.data += data
     
     def writeStderr(self):
-        data = self.process.readAllStandardError()
+        data = self.process.readAllStandardError().data().decode("utf-8").replace(r'\n', '\n')
         if "debug" in sys.argv:
             sys.stdout.write(data)
         self.data += data
@@ -75,7 +75,7 @@ class TestRunner():
     def doTestrun(self):
         data = self.fetchOutputForJob()
         last_failed = False
-        for line in data.splitlines():
+        for line in data.split('\n'):
             success = re.match(r"PASS\s*:\s*(.*)", line)
             if success:
                 function = success.groups()[0]
@@ -111,21 +111,21 @@ class TestRunner():
             
             fatal_fail = re.match(r"(QFATAL|ASSERT)\s*", line)
             if fatal_fail:
-                print self.data
-                print red("Fatal error occured, aborting")
+                print(self.data)
+                print(red("Fatal error occured, aborting"))
                 return
         
         passed, failed = len(self.passed_tests), len(self.failed_tests)
         try:
             percent = round((float(passed) / (failed+passed)) * 100)
         except ZeroDivisionError:
-            percent = "?"
+            percent = 0
         percent = green(percent) if percent == 100 else yellow(percent) if percent > 80 else red(percent)
         total = white(passed+failed)
         passed, failed = green(passed), red(failed)
-        print "\n Done. Summary: %s tests reported total, %s passed, %s failed (%s%% passed)." % (total, passed, failed, percent)
-        print " Detailed information:\n"
-        print white("  ==="), green("Passed tests:"), white("===")
+        print("\n Done. Summary: %s tests reported total, %s passed, %s failed (%s%% passed)." % (total, passed, failed, percent))
+        print(" Detailed information:\n")
+        print(white("  ==="), green("Passed tests:"), white("==="))
         namespaceFunctionArgs = r"(.*)::(.*)\((.*)\)"
         
         if len(self.passed_tests):
@@ -133,26 +133,26 @@ class TestRunner():
                 test = re.match(namespaceFunctionArgs, test)
                 test = test.groups()
                 test = "[%s] " % test[0] + green(test[1]) + "(" + white(test[2]) + ")"
-                print  indent(green("✔ ") + test)
+                print(indent(green("✔ ") + test))
         
         if len(self.failed_tests):
-            print "\n" + white("  ==="), red("Failed tests:"), white("===")
+            print("\n" + white("  ==="), red("Failed tests:"), white("==="))
             for test in self.failed_tests:
                 namespace, function, args = re.match(namespaceFunctionArgs, test.name).groups()
                 filename = test.filename.split('/')[-1]
                 path = '/'.join(test.filename.split('/')[:-1]) + "/"
-                print indent((yellow("✘ ") if test.failExpected else red("✘ ")) + white(filename) + ":" + blue(test.lineno) +
-                      " "*(5-len(str(lineno))) + red(function) + "(" + yellow(args) + ")")
+                print(indent((yellow("✘ ") if test.failExpected else red("✘ ")) + white(filename) + ":" + blue(test.lineno) +
+                      " "*(5-len(str(lineno))) + red(function) + "(" + yellow(args) + ")"))
                 if 'noreason' not in sys.argv:
-                    print indent("Reason of failure:" + blue(" ❮") + white(test.reason) + blue("❯ ") 
-                                 + ( "(Failure expected)" if test.failExpected else "" ), 2)
+                    print(indent("Reason of failure:" + blue(" ❮") + white(test.reason) + blue("❯ ") 
+                                 + ( "(Failure expected)" if test.failExpected else "" ), 2))
                 #print "[in %s]" % namespace
     
     def fetchOutputForJob(self):
         self.process = QProcess()
         self.process.readyReadStandardOutput.connect(self.writeStdout)
         self.process.readyReadStandardError.connect(self.writeStderr)
-        print " Please wait, running tests",
+        print(" Please wait, running tests", end=' ')
         sys.stdout.flush()
         self.process.start(self.testfile, ["-maxwarnings", "0"])
         self.process.waitForFinished(-1)

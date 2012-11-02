@@ -195,9 +195,11 @@ void ParseJob::run()
         kDebug() << "Document needs update because of unresolved identifiers: " << needsReparse;
         if ( needsReparse ) {
             // check whether one of the imports is queued for parsing, this is to avoid deadlocks
+            // it's also ok if the duchain is now available (and thus has been parsed before already)
             bool dependencyInQueue = false;
             foreach ( const KUrl& url, builder.m_unresolvedImports ) {
                 dependencyInQueue = KDevelop::ICore::self()->languageController()->backgroundParser()->isQueued(url);
+                dependencyInQueue = dependencyInQueue || DUChain::self()->chainForDocument(url);
                 if ( dependencyInQueue ) {
                     break;
                 }

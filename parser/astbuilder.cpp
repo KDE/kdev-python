@@ -169,7 +169,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     PyArena* arena = PyArena_New();
     Q_ASSERT(arena); // out of memory
     PyCompilerFlags* flags = new PyCompilerFlags();
-    flags->cf_flags = 0;
+    flags->cf_flags = PyCF_IGNORE_COOKIE;
     
     PyObject *exception, *value, *backtrace;
     PyErr_Fetch(&exception, &value, &backtrace);

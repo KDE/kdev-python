@@ -98,25 +98,9 @@ void ParseJob::run()
     
     readContents();
     
-    if ( !(minimumFeatures() & TopDUContext::ForceUpdate || minimumFeatures() & Rescheduled) ) {
-        DUChainReadLocker lock(DUChain::lock());
-        static const IndexedString langString("python");
-        foreach(const ParsingEnvironmentFilePointer &file, DUChain::self()->allEnvironmentFiles(document())) {
-            if ( file->language() != langString ) {
-                continue;
-            }
-            if ( ! file->needsUpdate() && file->featuresSatisfied(minimumFeatures()) ) {
-                qDebug() << " ====> NOOP    ====> Already up to date:" << document().str();
-                setDuChain(file->topContext());
-                if ( ICore::self()->languageController()->backgroundParser()->trackerForUrl(document()) ) {
-                    lock.unlock();
-                    highlightDUChain();
-                }
-                delete currentSession;
-                return;
-            }
-            break;
-        }
+    if ( ! isUpdateRequired(IndexedString("python")) ) {
+        qDebug() << " ====> NOOP    ====> Already up to date:" << document().str();
+        return;
     }
     
     TopDUContext* toUpdate = 0;

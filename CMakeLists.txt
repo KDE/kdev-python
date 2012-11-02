@@ -18,9 +18,9 @@ cmake_minimum_required(VERSION 2.8)
 
 enable_testing()
 
-if (NOT WIN32)
+if ( NOT WIN32 )
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wfatal-errors -Wall")
-endif (NOT WIN32)
+endif ( NOT WIN32 )
 
 # then, build the plugin
 include_directories(

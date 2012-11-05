@@ -1088,7 +1088,6 @@ class Qt():
     MiddleButton = 0
     XButton1 = 0
     XButton2 = 0
-    MouseButtonMask = 0
 
     # Enum Qt.Modifier
     META = 0
@@ -2574,10 +2573,10 @@ class QAbstractItemModel(QObject):
     def beginMoveRows(self, sourceParent, sourceFirst, sourceLast, destinationParent, destinationRow):
         '''bool QAbstractItemModel.beginMoveRows(QModelIndex sourceParent, int sourceFirst, int sourceLast, QModelIndex destinationParent, int destinationRow)'''
         return bool()
-    columnsMoved = pyqtSignal() # void columnsMoved(const QModelIndex&,int,int,const QModelIndex&,int) - signal
-    columnsAboutToBeMoved = pyqtSignal() # void columnsAboutToBeMoved(const QModelIndex&,int,int,const QModelIndex&,int) - signal
-    rowsMoved = pyqtSignal() # void rowsMoved(const QModelIndex&,int,int,const QModelIndex&,int) - signal
-    rowsAboutToBeMoved = pyqtSignal() # void rowsAboutToBeMoved(const QModelIndex&,int,int,const QModelIndex&,int) - signal
+    columnsMoved = pyqtSignal() # void columnsMoved(const QModelIndexamp;,int,int,const QModelIndexamp;,int) - signal
+    columnsAboutToBeMoved = pyqtSignal() # void columnsAboutToBeMoved(const QModelIndexamp;,int,int,const QModelIndexamp;,int) - signal
+    rowsMoved = pyqtSignal() # void rowsMoved(const QModelIndexamp;,int,int,const QModelIndexamp;,int) - signal
+    rowsAboutToBeMoved = pyqtSignal() # void rowsAboutToBeMoved(const QModelIndexamp;,int,int,const QModelIndexamp;,int) - signal
     def createIndex(self, row, column, object = 0):
         '''QModelIndex QAbstractItemModel.createIndex(int row, int column, object object = 0)'''
         return QModelIndex()
@@ -2641,18 +2640,18 @@ class QAbstractItemModel(QObject):
         return bool()
     modelReset = pyqtSignal() # void modelReset() - signal
     modelAboutToBeReset = pyqtSignal() # void modelAboutToBeReset() - signal
-    columnsRemoved = pyqtSignal() # void columnsRemoved(const QModelIndex&,int,int) - signal
-    columnsAboutToBeRemoved = pyqtSignal() # void columnsAboutToBeRemoved(const QModelIndex&,int,int) - signal
-    columnsInserted = pyqtSignal() # void columnsInserted(const QModelIndex&,int,int) - signal
-    columnsAboutToBeInserted = pyqtSignal() # void columnsAboutToBeInserted(const QModelIndex&,int,int) - signal
-    rowsRemoved = pyqtSignal() # void rowsRemoved(const QModelIndex&,int,int) - signal
-    rowsAboutToBeRemoved = pyqtSignal() # void rowsAboutToBeRemoved(const QModelIndex&,int,int) - signal
-    rowsInserted = pyqtSignal() # void rowsInserted(const QModelIndex&,int,int) - signal
-    rowsAboutToBeInserted = pyqtSignal() # void rowsAboutToBeInserted(const QModelIndex&,int,int) - signal
+    columnsRemoved = pyqtSignal() # void columnsRemoved(const QModelIndexamp;,int,int) - signal
+    columnsAboutToBeRemoved = pyqtSignal() # void columnsAboutToBeRemoved(const QModelIndexamp;,int,int) - signal
+    columnsInserted = pyqtSignal() # void columnsInserted(const QModelIndexamp;,int,int) - signal
+    columnsAboutToBeInserted = pyqtSignal() # void columnsAboutToBeInserted(const QModelIndexamp;,int,int) - signal
+    rowsRemoved = pyqtSignal() # void rowsRemoved(const QModelIndexamp;,int,int) - signal
+    rowsAboutToBeRemoved = pyqtSignal() # void rowsAboutToBeRemoved(const QModelIndexamp;,int,int) - signal
+    rowsInserted = pyqtSignal() # void rowsInserted(const QModelIndexamp;,int,int) - signal
+    rowsAboutToBeInserted = pyqtSignal() # void rowsAboutToBeInserted(const QModelIndexamp;,int,int) - signal
     layoutChanged = pyqtSignal() # void layoutChanged() - signal
     layoutAboutToBeChanged = pyqtSignal() # void layoutAboutToBeChanged() - signal
     headerDataChanged = pyqtSignal() # void headerDataChanged(Qt::Orientation,int,int) - signal
-    dataChanged = pyqtSignal() # void dataChanged(const QModelIndex&,const QModelIndex&) - signal
+    dataChanged = pyqtSignal() # void dataChanged(const QModelIndexamp;,const QModelIndexamp;) - signal
     def span(self, index):
         '''QSize QAbstractItemModel.span(QModelIndex index)'''
         return QSize()
@@ -4965,8 +4964,8 @@ class QDir():
         return QDir()
     def __init__(self, path = QString()):
         '''void QDir.__init__(QString path = QString())'''
-    def __init__(self, path, nameFilter, sort = QDir.Name|QDir.IgnoreCase, filters = QDir.TypeMask):
-        '''void QDir.__init__(QString path, QString nameFilter, QDir.SortFlags sort = QDir.Name|QDir.IgnoreCase, QDir.Filters filters = QDir.TypeMask)'''
+    def __init__(self, path, nameFilter, sort = QDir.Name|QDir.IgnoreCase, filters = QDir.AllEntries):
+        '''void QDir.__init__(QString path, QString nameFilter, QDir.SortFlags sort = QDir.Name|QDir.IgnoreCase, QDir.Filters filters = QDir.AllEntries)'''
     def searchPaths(self, prefix):
         '''static QStringList QDir.searchPaths(QString prefix)'''
         return QStringList()
@@ -5899,8 +5898,6 @@ class QFileInfo():
     def caching(self):
         '''bool QFileInfo.caching()'''
         return bool()
-    def detach(self):
-        '''void QFileInfo.detach()'''
     def lastRead(self):
         '''QDateTime QFileInfo.lastRead()'''
         return QDateTime()
@@ -6031,8 +6028,8 @@ class QFileSystemWatcher(QObject):
         '''void QFileSystemWatcher.__init__(QObject parent = None)'''
     def __init__(self, paths, parent = None):
         '''void QFileSystemWatcher.__init__(QStringList paths, QObject parent = None)'''
-    fileChanged = pyqtSignal() # void fileChanged(const QString&) - signal
-    directoryChanged = pyqtSignal() # void directoryChanged(const QString&) - signal
+    fileChanged = pyqtSignal() # void fileChanged(const QStringamp;) - signal
+    directoryChanged = pyqtSignal() # void directoryChanged(const QStringamp;) - signal
     def removePaths(self, files):
         '''void QFileSystemWatcher.removePaths(QStringList files)'''
     def removePath(self, file):
@@ -6204,6 +6201,113 @@ class QHistoryState(QAbstractState):
     def defaultState(self):
         '''QAbstractState QHistoryState.defaultState()'''
         return QAbstractState()
+
+
+class QLibrary(QObject):
+    """"""
+    # Enum QLibrary.LoadHint
+    ResolveAllSymbolsHint = 0
+    ExportExternalSymbolsHint = 0
+    LoadArchiveMemberHint = 0
+
+    def __init__(self, parent = None):
+        '''void QLibrary.__init__(QObject parent = None)'''
+    def __init__(self, fileName, parent = None):
+        '''void QLibrary.__init__(QString fileName, QObject parent = None)'''
+    def __init__(self, fileName, verNum, parent = None):
+        '''void QLibrary.__init__(QString fileName, int verNum, QObject parent = None)'''
+    def __init__(self, fileName, version, parent = None):
+        '''void QLibrary.__init__(QString fileName, QString version, QObject parent = None)'''
+    def setLoadHints(self, hints):
+        '''void QLibrary.setLoadHints(QLibrary.LoadHints hints)'''
+    def setFileNameAndVersion(self, fileName, verNum):
+        '''void QLibrary.setFileNameAndVersion(QString fileName, int verNum)'''
+    def setFileNameAndVersion(self, fileName, version):
+        '''void QLibrary.setFileNameAndVersion(QString fileName, QString version)'''
+    def setFileName(self, fileName):
+        '''void QLibrary.setFileName(QString fileName)'''
+    def isLibrary(self, fileName):
+        '''static bool QLibrary.isLibrary(QString fileName)'''
+        return bool()
+    def unload(self):
+        '''bool QLibrary.unload()'''
+        return bool()
+    def resolve(self, symbol):
+        '''sip.voidptr QLibrary.resolve(str symbol)'''
+        return sip.voidptr()
+    def resolve(self, fileName, symbol):
+        '''static sip.voidptr QLibrary.resolve(QString fileName, str symbol)'''
+        return sip.voidptr()
+    def resolve(self, fileName, verNum, symbol):
+        '''static sip.voidptr QLibrary.resolve(QString fileName, int verNum, str symbol)'''
+        return sip.voidptr()
+    def resolve(self, fileName, version, symbol):
+        '''static sip.voidptr QLibrary.resolve(QString fileName, QString version, str symbol)'''
+        return sip.voidptr()
+    def loadHints(self):
+        '''QLibrary.LoadHints QLibrary.loadHints()'''
+        return QLibrary.LoadHints()
+    def load(self):
+        '''bool QLibrary.load()'''
+        return bool()
+    def isLoaded(self):
+        '''bool QLibrary.isLoaded()'''
+        return bool()
+    def fileName(self):
+        '''QString QLibrary.fileName()'''
+        return QString()
+    def errorString(self):
+        '''QString QLibrary.errorString()'''
+        return QString()
+    class LoadHints():
+        """"""
+        def __init__(self):
+            '''QLibrary.LoadHints QLibrary.LoadHints.__init__()'''
+            return QLibrary.LoadHints()
+        def __init__(self):
+            '''int QLibrary.LoadHints.__init__()'''
+            return int()
+        def __init__(self):
+            '''void QLibrary.LoadHints.__init__()'''
+        def __bool__(self):
+            '''int QLibrary.LoadHints.__bool__()'''
+            return int()
+        def __ne__(self, f):
+            '''bool QLibrary.LoadHints.__ne__(QLibrary.LoadHints f)'''
+            return bool()
+        def __eq__(self, f):
+            '''bool QLibrary.LoadHints.__eq__(QLibrary.LoadHints f)'''
+            return bool()
+        def __invert__(self):
+            '''QLibrary.LoadHints QLibrary.LoadHints.__invert__()'''
+            return QLibrary.LoadHints()
+        def __and__(self, mask):
+            '''QLibrary.LoadHints QLibrary.LoadHints.__and__(int mask)'''
+            return QLibrary.LoadHints()
+        def __xor__(self, f):
+            '''QLibrary.LoadHints QLibrary.LoadHints.__xor__(QLibrary.LoadHints f)'''
+            return QLibrary.LoadHints()
+        def __xor__(self, f):
+            '''QLibrary.LoadHints QLibrary.LoadHints.__xor__(int f)'''
+            return QLibrary.LoadHints()
+        def __or__(self, f):
+            '''QLibrary.LoadHints QLibrary.LoadHints.__or__(QLibrary.LoadHints f)'''
+            return QLibrary.LoadHints()
+        def __or__(self, f):
+            '''QLibrary.LoadHints QLibrary.LoadHints.__or__(int f)'''
+            return QLibrary.LoadHints()
+        def __int__(self):
+            '''int QLibrary.LoadHints.__int__()'''
+            return int()
+        def __ixor__(self, f):
+            '''QLibrary.LoadHints QLibrary.LoadHints.__ixor__(QLibrary.LoadHints f)'''
+            return QLibrary.LoadHints()
+        def __ior__(self, f):
+            '''QLibrary.LoadHints QLibrary.LoadHints.__ior__(QLibrary.LoadHints f)'''
+            return QLibrary.LoadHints()
+        def __iand__(self, mask):
+            '''QLibrary.LoadHints QLibrary.LoadHints.__iand__(int mask)'''
+            return QLibrary.LoadHints()
 
 
 class QLibraryInfo():
@@ -6421,113 +6525,6 @@ class QLineF():
     def isNull(self):
         '''bool QLineF.isNull()'''
         return bool()
-
-
-class QLibrary(QObject):
-    """"""
-    # Enum QLibrary.LoadHint
-    ResolveAllSymbolsHint = 0
-    ExportExternalSymbolsHint = 0
-    LoadArchiveMemberHint = 0
-
-    def __init__(self, parent = None):
-        '''void QLibrary.__init__(QObject parent = None)'''
-    def __init__(self, fileName, parent = None):
-        '''void QLibrary.__init__(QString fileName, QObject parent = None)'''
-    def __init__(self, fileName, verNum, parent = None):
-        '''void QLibrary.__init__(QString fileName, int verNum, QObject parent = None)'''
-    def __init__(self, fileName, version, parent = None):
-        '''void QLibrary.__init__(QString fileName, QString version, QObject parent = None)'''
-    def setLoadHints(self, hints):
-        '''void QLibrary.setLoadHints(QLibrary.LoadHints hints)'''
-    def setFileNameAndVersion(self, fileName, verNum):
-        '''void QLibrary.setFileNameAndVersion(QString fileName, int verNum)'''
-    def setFileNameAndVersion(self, fileName, version):
-        '''void QLibrary.setFileNameAndVersion(QString fileName, QString version)'''
-    def setFileName(self, fileName):
-        '''void QLibrary.setFileName(QString fileName)'''
-    def isLibrary(self, fileName):
-        '''static bool QLibrary.isLibrary(QString fileName)'''
-        return bool()
-    def unload(self):
-        '''bool QLibrary.unload()'''
-        return bool()
-    def resolve(self, symbol):
-        '''sip.voidptr QLibrary.resolve(str symbol)'''
-        return sip.voidptr()
-    def resolve(self, fileName, symbol):
-        '''static sip.voidptr QLibrary.resolve(QString fileName, str symbol)'''
-        return sip.voidptr()
-    def resolve(self, fileName, verNum, symbol):
-        '''static sip.voidptr QLibrary.resolve(QString fileName, int verNum, str symbol)'''
-        return sip.voidptr()
-    def resolve(self, fileName, version, symbol):
-        '''static sip.voidptr QLibrary.resolve(QString fileName, QString version, str symbol)'''
-        return sip.voidptr()
-    def loadHints(self):
-        '''QLibrary.LoadHints QLibrary.loadHints()'''
-        return QLibrary.LoadHints()
-    def load(self):
-        '''bool QLibrary.load()'''
-        return bool()
-    def isLoaded(self):
-        '''bool QLibrary.isLoaded()'''
-        return bool()
-    def fileName(self):
-        '''QString QLibrary.fileName()'''
-        return QString()
-    def errorString(self):
-        '''QString QLibrary.errorString()'''
-        return QString()
-    class LoadHints():
-        """"""
-        def __init__(self):
-            '''QLibrary.LoadHints QLibrary.LoadHints.__init__()'''
-            return QLibrary.LoadHints()
-        def __init__(self):
-            '''int QLibrary.LoadHints.__init__()'''
-            return int()
-        def __init__(self):
-            '''void QLibrary.LoadHints.__init__()'''
-        def __bool__(self):
-            '''int QLibrary.LoadHints.__bool__()'''
-            return int()
-        def __ne__(self, f):
-            '''bool QLibrary.LoadHints.__ne__(QLibrary.LoadHints f)'''
-            return bool()
-        def __eq__(self, f):
-            '''bool QLibrary.LoadHints.__eq__(QLibrary.LoadHints f)'''
-            return bool()
-        def __invert__(self):
-            '''QLibrary.LoadHints QLibrary.LoadHints.__invert__()'''
-            return QLibrary.LoadHints()
-        def __and__(self, mask):
-            '''QLibrary.LoadHints QLibrary.LoadHints.__and__(int mask)'''
-            return QLibrary.LoadHints()
-        def __xor__(self, f):
-            '''QLibrary.LoadHints QLibrary.LoadHints.__xor__(QLibrary.LoadHints f)'''
-            return QLibrary.LoadHints()
-        def __xor__(self, f):
-            '''QLibrary.LoadHints QLibrary.LoadHints.__xor__(int f)'''
-            return QLibrary.LoadHints()
-        def __or__(self, f):
-            '''QLibrary.LoadHints QLibrary.LoadHints.__or__(QLibrary.LoadHints f)'''
-            return QLibrary.LoadHints()
-        def __or__(self, f):
-            '''QLibrary.LoadHints QLibrary.LoadHints.__or__(int f)'''
-            return QLibrary.LoadHints()
-        def __int__(self):
-            '''int QLibrary.LoadHints.__int__()'''
-            return int()
-        def __ixor__(self, f):
-            '''QLibrary.LoadHints QLibrary.LoadHints.__ixor__(QLibrary.LoadHints f)'''
-            return QLibrary.LoadHints()
-        def __ior__(self, f):
-            '''QLibrary.LoadHints QLibrary.LoadHints.__ior__(QLibrary.LoadHints f)'''
-            return QLibrary.LoadHints()
-        def __iand__(self, mask):
-            '''QLibrary.LoadHints QLibrary.LoadHints.__iand__(int mask)'''
-            return QLibrary.LoadHints()
 
 
 class QLocale():
@@ -7985,7 +7982,7 @@ class QVariantAnimation(QAbstractAnimation):
     def event(self, event):
         '''bool QVariantAnimation.event(QEvent event)'''
         return bool()
-    valueChanged = pyqtSignal() # void valueChanged(const QVariant&) - signal
+    valueChanged = pyqtSignal() # void valueChanged(const QVariantamp;) - signal
     def setEasingCurve(self, easing):
         '''void QVariantAnimation.setEasingCurve(QEasingCurve easing)'''
     def easingCurve(self):
@@ -9306,7 +9303,7 @@ class QSignalMapper(QObject):
     def map(self, sender):
         '''void QSignalMapper.map(QObject sender)'''
     mapped = pyqtSignal() # void mapped(int) - signal
-    mapped = pyqtSignal() # void mapped(const QString&) - signal
+    mapped = pyqtSignal() # void mapped(const QStringamp;) - signal
     mapped = pyqtSignal() # void mapped(QWidget *) - signal
     mapped = pyqtSignal() # void mapped(QObject *) - signal
     def mapping(self, id):
@@ -11504,10 +11501,6 @@ class QTranslator(QObject):
 
 class QUrl():
     """"""
-    # Enum QUrl.ParsingMode
-    TolerantMode = 0
-    StrictMode = 0
-
     # Enum QUrl.FormattingOption
     __kdevpythondocumentation_builtin_None = 0
     RemoveScheme = 0
@@ -11520,14 +11513,18 @@ class QUrl():
     RemoveFragment = 0
     StripTrailingSlash = 0
 
+    # Enum QUrl.ParsingMode
+    TolerantMode = 0
+    StrictMode = 0
+
     def __init__(self):
         '''void QUrl.__init__()'''
     def __init__(self, url):
         '''void QUrl.__init__(QString url)'''
-    def __init__(self, copy):
-        '''void QUrl.__init__(QUrl copy)'''
     def __init__(self, url, mode):
         '''void QUrl.__init__(QString url, QUrl.ParsingMode mode)'''
+    def __init__(self, copy):
+        '''void QUrl.__init__(QUrl copy)'''
     def __ge__(self, url):
         '''bool QUrl.__ge__(QUrl url)'''
         return bool()
@@ -11758,12 +11755,12 @@ class QUrl():
         '''void QUrl.setUrl(QString url)'''
     def setUrl(self, url, mode):
         '''void QUrl.setUrl(QString url, QUrl.ParsingMode mode)'''
-    def __hash__(self):
-        '''int QUrl.__hash__()'''
-        return int()
     def __repr__(self):
         '''str QUrl.__repr__()'''
         return str()
+    def __hash__(self):
+        '''int QUrl.__hash__()'''
+        return int()
     class FormattingOptions():
         """"""
         def __init__(self):
@@ -12641,6 +12638,9 @@ class QPyNullVariant():
     """"""
     def __init__(self, type):
         '''void QPyNullVariant.__init__(object type)'''
+    def __bool__(self):
+        '''int QPyNullVariant.__bool__()'''
+        return int()
     def isNull(self):
         '''bool QPyNullVariant.isNull()'''
         return bool()

@@ -341,7 +341,7 @@ class QWidget(QObject, QPaintDevice):
     def event(self):
         '''QEvent QWidget.event()'''
         return QEvent()
-    customContextMenuRequested = pyqtSignal() # void customContextMenuRequested(const QPoint&) - signal
+    customContextMenuRequested = pyqtSignal() # void customContextMenuRequested(const QPointamp;) - signal
     def isAncestorOf(self, child):
         '''bool QWidget.isAncestorOf(QWidget child)'''
         return bool()
@@ -992,7 +992,7 @@ class QAbstractItemDelegate(QObject):
 
     def __init__(self, parent = None):
         '''void QAbstractItemDelegate.__init__(QObject parent = None)'''
-    sizeHintChanged = pyqtSignal() # void sizeHintChanged(const QModelIndex&) - signal
+    sizeHintChanged = pyqtSignal() # void sizeHintChanged(const QModelIndexamp;) - signal
     closeEditor = pyqtSignal() # void closeEditor(QWidget *,QAbstractItemDelegate::EndEditHint = QAbstractItemDelegate.NoHint) - signal
     commitData = pyqtSignal() # void commitData(QWidget *) - signal
     def helpEvent(self, event, view, option, index):
@@ -1410,11 +1410,11 @@ class QAbstractItemView(QAbstractScrollArea):
     def setHorizontalStepsPerItem(self, steps):
         '''void QAbstractItemView.setHorizontalStepsPerItem(int steps)'''
     viewportEntered = pyqtSignal() # void viewportEntered() - signal
-    entered = pyqtSignal() # void entered(const QModelIndex&) - signal
-    activated = pyqtSignal() # void activated(const QModelIndex&) - signal
-    doubleClicked = pyqtSignal() # void doubleClicked(const QModelIndex&) - signal
-    clicked = pyqtSignal() # void clicked(const QModelIndex&) - signal
-    pressed = pyqtSignal() # void pressed(const QModelIndex&) - signal
+    entered = pyqtSignal() # void entered(const QModelIndexamp;) - signal
+    activated = pyqtSignal() # void activated(const QModelIndexamp;) - signal
+    doubleClicked = pyqtSignal() # void doubleClicked(const QModelIndexamp;) - signal
+    clicked = pyqtSignal() # void clicked(const QModelIndexamp;) - signal
+    pressed = pyqtSignal() # void pressed(const QModelIndexamp;) - signal
     def editorDestroyed(self, editor):
         '''void QAbstractItemView.editorDestroyed(QObject editor)'''
     def commitData(self, editor):
@@ -1464,8 +1464,6 @@ class QAbstractItemView(QAbstractScrollArea):
         return bool()
     def selectAll(self):
         '''void QAbstractItemView.selectAll()'''
-    def doItemsLayout(self):
-        '''void QAbstractItemView.doItemsLayout()'''
     def setRootIndex(self, index):
         '''void QAbstractItemView.setRootIndex(QModelIndex index)'''
     def reset(self):
@@ -1884,6 +1882,122 @@ class QAbstractProxyModel(QAbstractItemModel):
         '''void QAbstractProxyModel.setSourceModel(QAbstractItemModel sourceModel)'''
 
 
+class QAbstractSlider(QWidget):
+    """"""
+    # Enum QAbstractSlider.SliderChange
+    SliderRangeChange = 0
+    SliderOrientationChange = 0
+    SliderStepsChange = 0
+    SliderValueChange = 0
+
+    # Enum QAbstractSlider.SliderAction
+    SliderNoAction = 0
+    SliderSingleStepAdd = 0
+    SliderSingleStepSub = 0
+    SliderPageStepAdd = 0
+    SliderPageStepSub = 0
+    SliderToMinimum = 0
+    SliderToMaximum = 0
+    SliderMove = 0
+
+    def __init__(self, parent = None):
+        '''void QAbstractSlider.__init__(QWidget parent = None)'''
+    def changeEvent(self, e):
+        '''void QAbstractSlider.changeEvent(QEvent e)'''
+    def wheelEvent(self, e):
+        '''void QAbstractSlider.wheelEvent(QWheelEvent e)'''
+    def timerEvent(self):
+        '''QTimerEvent QAbstractSlider.timerEvent()'''
+        return QTimerEvent()
+    def keyPressEvent(self, ev):
+        '''void QAbstractSlider.keyPressEvent(QKeyEvent ev)'''
+    def event(self, e):
+        '''bool QAbstractSlider.event(QEvent e)'''
+        return bool()
+    def sliderChange(self, change):
+        '''void QAbstractSlider.sliderChange(QAbstractSlider.SliderChange change)'''
+    def repeatAction(self):
+        '''QAbstractSlider.SliderAction QAbstractSlider.repeatAction()'''
+        return QAbstractSlider.SliderAction()
+    def setRepeatAction(self, action, thresholdTime = 500, repeatTime = 50):
+        '''void QAbstractSlider.setRepeatAction(QAbstractSlider.SliderAction action, int thresholdTime = 500, int repeatTime = 50)'''
+    actionTriggered = pyqtSignal() # void actionTriggered(int) - signal
+    rangeChanged = pyqtSignal() # void rangeChanged(int,int) - signal
+    sliderReleased = pyqtSignal() # void sliderReleased() - signal
+    sliderMoved = pyqtSignal() # void sliderMoved(int) - signal
+    sliderPressed = pyqtSignal() # void sliderPressed() - signal
+    valueChanged = pyqtSignal() # void valueChanged(int) - signal
+    def setOrientation(self):
+        '''Qt.Orientation QAbstractSlider.setOrientation()'''
+        return Qt.Orientation()
+    def setValue(self):
+        '''int QAbstractSlider.setValue()'''
+        return int()
+    def triggerAction(self, action):
+        '''void QAbstractSlider.triggerAction(QAbstractSlider.SliderAction action)'''
+    def value(self):
+        '''int QAbstractSlider.value()'''
+        return int()
+    def invertedControls(self):
+        '''bool QAbstractSlider.invertedControls()'''
+        return bool()
+    def setInvertedControls(self):
+        '''bool QAbstractSlider.setInvertedControls()'''
+        return bool()
+    def invertedAppearance(self):
+        '''bool QAbstractSlider.invertedAppearance()'''
+        return bool()
+    def setInvertedAppearance(self):
+        '''bool QAbstractSlider.setInvertedAppearance()'''
+        return bool()
+    def sliderPosition(self):
+        '''int QAbstractSlider.sliderPosition()'''
+        return int()
+    def setSliderPosition(self):
+        '''int QAbstractSlider.setSliderPosition()'''
+        return int()
+    def isSliderDown(self):
+        '''bool QAbstractSlider.isSliderDown()'''
+        return bool()
+    def setSliderDown(self):
+        '''bool QAbstractSlider.setSliderDown()'''
+        return bool()
+    def hasTracking(self):
+        '''bool QAbstractSlider.hasTracking()'''
+        return bool()
+    def setTracking(self, enable):
+        '''void QAbstractSlider.setTracking(bool enable)'''
+    def pageStep(self):
+        '''int QAbstractSlider.pageStep()'''
+        return int()
+    def setPageStep(self):
+        '''int QAbstractSlider.setPageStep()'''
+        return int()
+    def singleStep(self):
+        '''int QAbstractSlider.singleStep()'''
+        return int()
+    def setSingleStep(self):
+        '''int QAbstractSlider.setSingleStep()'''
+        return int()
+    def setRange(self, min, max):
+        '''void QAbstractSlider.setRange(int min, int max)'''
+    def maximum(self):
+        '''int QAbstractSlider.maximum()'''
+        return int()
+    def setMaximum(self):
+        '''int QAbstractSlider.setMaximum()'''
+        return int()
+    def minimum(self):
+        '''int QAbstractSlider.minimum()'''
+        return int()
+    def setMinimum(self):
+        '''int QAbstractSlider.setMinimum()'''
+        return int()
+    def orientation(self):
+        '''Qt.Orientation QAbstractSlider.orientation()'''
+        return Qt.Orientation()
+
+
 class QAbstractSpinBox(QWidget):
     """"""
     # Enum QAbstractSpinBox.CorrectionMode
@@ -2082,122 +2196,6 @@ class QAbstractSpinBox(QWidget):
             return QAbstractSpinBox.StepEnabled()
 
 
-class QAbstractSlider(QWidget):
-    """"""
-    # Enum QAbstractSlider.SliderChange
-    SliderRangeChange = 0
-    SliderOrientationChange = 0
-    SliderStepsChange = 0
-    SliderValueChange = 0
-
-    # Enum QAbstractSlider.SliderAction
-    SliderNoAction = 0
-    SliderSingleStepAdd = 0
-    SliderSingleStepSub = 0
-    SliderPageStepAdd = 0
-    SliderPageStepSub = 0
-    SliderToMinimum = 0
-    SliderToMaximum = 0
-    SliderMove = 0
-
-    def __init__(self, parent = None):
-        '''void QAbstractSlider.__init__(QWidget parent = None)'''
-    def changeEvent(self, e):
-        '''void QAbstractSlider.changeEvent(QEvent e)'''
-    def wheelEvent(self, e):
-        '''void QAbstractSlider.wheelEvent(QWheelEvent e)'''
-    def timerEvent(self):
-        '''QTimerEvent QAbstractSlider.timerEvent()'''
-        return QTimerEvent()
-    def keyPressEvent(self, ev):
-        '''void QAbstractSlider.keyPressEvent(QKeyEvent ev)'''
-    def event(self, e):
-        '''bool QAbstractSlider.event(QEvent e)'''
-        return bool()
-    def sliderChange(self, change):
-        '''void QAbstractSlider.sliderChange(QAbstractSlider.SliderChange change)'''
-    def repeatAction(self):
-        '''QAbstractSlider.SliderAction QAbstractSlider.repeatAction()'''
-        return QAbstractSlider.SliderAction()
-    def setRepeatAction(self, action, thresholdTime = 500, repeatTime = 50):
-        '''void QAbstractSlider.setRepeatAction(QAbstractSlider.SliderAction action, int thresholdTime = 500, int repeatTime = 50)'''
-    actionTriggered = pyqtSignal() # void actionTriggered(int) - signal
-    rangeChanged = pyqtSignal() # void rangeChanged(int,int) - signal
-    sliderReleased = pyqtSignal() # void sliderReleased() - signal
-    sliderMoved = pyqtSignal() # void sliderMoved(int) - signal
-    sliderPressed = pyqtSignal() # void sliderPressed() - signal
-    valueChanged = pyqtSignal() # void valueChanged(int) - signal
-    def setOrientation(self):
-        '''Qt.Orientation QAbstractSlider.setOrientation()'''
-        return Qt.Orientation()
-    def setValue(self):
-        '''int QAbstractSlider.setValue()'''
-        return int()
-    def triggerAction(self, action):
-        '''void QAbstractSlider.triggerAction(QAbstractSlider.SliderAction action)'''
-    def value(self):
-        '''int QAbstractSlider.value()'''
-        return int()
-    def invertedControls(self):
-        '''bool QAbstractSlider.invertedControls()'''
-        return bool()
-    def setInvertedControls(self):
-        '''bool QAbstractSlider.setInvertedControls()'''
-        return bool()
-    def invertedAppearance(self):
-        '''bool QAbstractSlider.invertedAppearance()'''
-        return bool()
-    def setInvertedAppearance(self):
-        '''bool QAbstractSlider.setInvertedAppearance()'''
-        return bool()
-    def sliderPosition(self):
-        '''int QAbstractSlider.sliderPosition()'''
-        return int()
-    def setSliderPosition(self):
-        '''int QAbstractSlider.setSliderPosition()'''
-        return int()
-    def isSliderDown(self):
-        '''bool QAbstractSlider.isSliderDown()'''
-        return bool()
-    def setSliderDown(self):
-        '''bool QAbstractSlider.setSliderDown()'''
-        return bool()
-    def hasTracking(self):
-        '''bool QAbstractSlider.hasTracking()'''
-        return bool()
-    def setTracking(self, enable):
-        '''void QAbstractSlider.setTracking(bool enable)'''
-    def pageStep(self):
-        '''int QAbstractSlider.pageStep()'''
-        return int()
-    def setPageStep(self):
-        '''int QAbstractSlider.setPageStep()'''
-        return int()
-    def singleStep(self):
-        '''int QAbstractSlider.singleStep()'''
-        return int()
-    def setSingleStep(self):
-        '''int QAbstractSlider.setSingleStep()'''
-        return int()
-    def setRange(self, min, max):
-        '''void QAbstractSlider.setRange(int min, int max)'''
-    def maximum(self):
-        '''int QAbstractSlider.maximum()'''
-        return int()
-    def setMaximum(self):
-        '''int QAbstractSlider.setMaximum()'''
-        return int()
-    def minimum(self):
-        '''int QAbstractSlider.minimum()'''
-        return int()
-    def setMinimum(self):
-        '''int QAbstractSlider.setMinimum()'''
-        return int()
-    def orientation(self):
-        '''Qt.Orientation QAbstractSlider.orientation()'''
-        return Qt.Orientation()
-
-
 class QAbstractTextDocumentLayout(QObject):
     """"""
     def __init__(self, doc):
@@ -2213,10 +2211,10 @@ class QAbstractTextDocumentLayout(QObject):
         '''void QAbstractTextDocumentLayout.resizeInlineObject(QTextInlineObject item, int posInDocument, QTextFormat format)'''
     def documentChanged(self, from_, charsRemoved, charsAdded):
         '''abstract void QAbstractTextDocumentLayout.documentChanged(int from, int charsRemoved, int charsAdded)'''
-    updateBlock = pyqtSignal() # void updateBlock(const QTextBlock&) - signal
+    updateBlock = pyqtSignal() # void updateBlock(const QTextBlockamp;) - signal
     pageCountChanged = pyqtSignal() # void pageCountChanged(int) - signal
-    documentSizeChanged = pyqtSignal() # void documentSizeChanged(const QSizeF&) - signal
-    update = pyqtSignal() # void update(const QRectF& = QRectF(0,0,1e+09,1e+09)) - signal
+    documentSizeChanged = pyqtSignal() # void documentSizeChanged(const QSizeFamp;) - signal
+    update = pyqtSignal() # void update(const QRectFamp; = QRectF(0,0,1e+09,1e+09)) - signal
     def handlerForObject(self, objectType):
         '''QTextObjectInterface QAbstractTextDocumentLayout.handlerForObject(int objectType)'''
         return QTextObjectInterface()
@@ -2582,10 +2580,10 @@ class QApplication(QCoreApplication):
     def aboutQt(self):
         '''static void QApplication.aboutQt()'''
     fontDatabaseChanged = pyqtSignal() # void fontDatabaseChanged() - signal
-    saveStateRequest = pyqtSignal() # void saveStateRequest(QSessionManager&) - signal
+    saveStateRequest = pyqtSignal() # void saveStateRequest(QSessionManageramp;) - signal
     lastWindowClosed = pyqtSignal() # void lastWindowClosed() - signal
     focusChanged = pyqtSignal() # void focusChanged(QWidget *,QWidget *) - signal
-    commitDataRequest = pyqtSignal() # void commitDataRequest(QSessionManager&) - signal
+    commitDataRequest = pyqtSignal() # void commitDataRequest(QSessionManageramp;) - signal
     def quitOnLastWindowClosed(self):
         '''static bool QApplication.quitOnLastWindowClosed()'''
         return bool()
@@ -3984,8 +3982,8 @@ class QCalendarWidget(QWidget):
         return bool()
     selectionChanged = pyqtSignal() # void selectionChanged() - signal
     currentPageChanged = pyqtSignal() # void currentPageChanged(int,int) - signal
-    clicked = pyqtSignal() # void clicked(const QDate&) - signal
-    activated = pyqtSignal() # void activated(const QDate&) - signal
+    clicked = pyqtSignal() # void clicked(const QDateamp;) - signal
+    activated = pyqtSignal() # void activated(const QDateamp;) - signal
     def showToday(self):
         '''void QCalendarWidget.showToday()'''
     def showSelectedDate(self):
@@ -4239,7 +4237,7 @@ class QColumnView(QAbstractItemView):
     def createColumn(self, rootIndex):
         '''QAbstractItemView QColumnView.createColumn(QModelIndex rootIndex)'''
         return QAbstractItemView()
-    updatePreviewWidget = pyqtSignal() # void updatePreviewWidget(const QModelIndex&) - signal
+    updatePreviewWidget = pyqtSignal() # void updatePreviewWidget(const QModelIndexamp;) - signal
     def selectAll(self):
         '''void QColumnView.selectAll()'''
     def setRootIndex(self, index):
@@ -4317,8 +4315,8 @@ class QColorDialog(QDialog):
         '''void QColorDialog.done(int result)'''
     def changeEvent(self, e):
         '''void QColorDialog.changeEvent(QEvent e)'''
-    currentColorChanged = pyqtSignal() # void currentColorChanged(const QColor&) - signal
-    colorSelected = pyqtSignal() # void colorSelected(const QColor&) - signal
+    currentColorChanged = pyqtSignal() # void currentColorChanged(const QColoramp;) - signal
+    colorSelected = pyqtSignal() # void colorSelected(const QColoramp;) - signal
     def setStandardColor(self):
         '''static int QColorDialog.setStandardColor()'''
         return int()
@@ -4445,12 +4443,12 @@ class QComboBox(QWidget):
     def initStyleOption(self, option):
         '''void QComboBox.initStyleOption(QStyleOptionComboBox option)'''
     highlighted = pyqtSignal() # void highlighted(int) - signal
-    highlighted = pyqtSignal() # void highlighted(const QString&) - signal
+    highlighted = pyqtSignal() # void highlighted(const QStringamp;) - signal
     currentIndexChanged = pyqtSignal() # void currentIndexChanged(int) - signal
-    currentIndexChanged = pyqtSignal() # void currentIndexChanged(const QString&) - signal
+    currentIndexChanged = pyqtSignal() # void currentIndexChanged(const QStringamp;) - signal
     activated = pyqtSignal() # void activated(int) - signal
-    activated = pyqtSignal() # void activated(const QString&) - signal
-    editTextChanged = pyqtSignal() # void editTextChanged(const QString&) - signal
+    activated = pyqtSignal() # void activated(const QStringamp;) - signal
+    editTextChanged = pyqtSignal() # void editTextChanged(const QStringamp;) - signal
     def setEditText(self, text):
         '''void QComboBox.setEditText(QString text)'''
     def clearEditText(self):
@@ -5462,10 +5460,10 @@ class QCompleter(QObject):
     def maxVisibleItems(self):
         '''int QCompleter.maxVisibleItems()'''
         return int()
-    highlighted = pyqtSignal() # void highlighted(const QString&) - signal
-    highlighted = pyqtSignal() # void highlighted(const QModelIndex&) - signal
-    activated = pyqtSignal() # void activated(const QString&) - signal
-    activated = pyqtSignal() # void activated(const QModelIndex&) - signal
+    highlighted = pyqtSignal() # void highlighted(const QStringamp;) - signal
+    highlighted = pyqtSignal() # void highlighted(const QModelIndexamp;) - signal
+    activated = pyqtSignal() # void activated(const QStringamp;) - signal
+    activated = pyqtSignal() # void activated(const QModelIndexamp;) - signal
     def event(self):
         '''QEvent QCompleter.event()'''
         return QEvent()
@@ -5752,9 +5750,9 @@ class QDateTimeEdit(QAbstractSpinBox):
         '''void QDateTimeEdit.setDate(QDate date)'''
     def setDateTime(self, dateTime):
         '''void QDateTimeEdit.setDateTime(QDateTime dateTime)'''
-    dateChanged = pyqtSignal() # void dateChanged(const QDate&) - signal
-    timeChanged = pyqtSignal() # void timeChanged(const QTime&) - signal
-    dateTimeChanged = pyqtSignal() # void dateTimeChanged(const QDateTime&) - signal
+    dateChanged = pyqtSignal() # void dateChanged(const QDateamp;) - signal
+    timeChanged = pyqtSignal() # void timeChanged(const QTimeamp;) - signal
+    dateTimeChanged = pyqtSignal() # void dateTimeChanged(const QDateTimeamp;) - signal
     def sectionCount(self):
         '''int QDateTimeEdit.sectionCount()'''
         return int()
@@ -7100,8 +7098,8 @@ class QTouchEvent(QInputEvent):
     TouchScreen = 0
     TouchPad = 0
 
-    def __init__(self, eventType, deviceType = QTouchEvent.TouchScreen, modifiers = Qt.NoModifier, touchPointStates = 0, touchPoints = QList<QTouchEvent.TouchPoint>()):
-        '''void QTouchEvent.__init__(QEvent.Type eventType, QTouchEvent.DeviceType deviceType = QTouchEvent.TouchScreen, Qt.KeyboardModifiers modifiers = Qt.NoModifier, Qt.TouchPointStates touchPointStates = 0, list-of-QTouchEvent.TouchPoint touchPoints = QList<QTouchEvent.TouchPoint>())'''
+    def __init__(self, eventType, deviceType = QTouchEvent.TouchScreen, modifiers = Qt.NoModifier, touchPointStates = 0, touchPoints = QListlt;QTouchEvent.TouchPointgt;()):
+        '''void QTouchEvent.__init__(QEvent.Type eventType, QTouchEvent.DeviceType deviceType = QTouchEvent.TouchScreen, Qt.KeyboardModifiers modifiers = Qt.NoModifier, Qt.TouchPointStates touchPointStates = 0, list-of-QTouchEvent.TouchPoint touchPoints = QListlt;QTouchEvent.TouchPointgt;())'''
     def __init__(self):
         '''QTouchEvent QTouchEvent.__init__()'''
         return QTouchEvent()
@@ -7365,11 +7363,11 @@ class QFileDialog(QDialog):
     def getExistingDirectory(self, parent = None, caption = QString(), directory = QString(), options = QFileDialog.ShowDirsOnly):
         '''static QString QFileDialog.getExistingDirectory(QWidget parent = None, QString caption = QString(), QString directory = QString(), QFileDialog.Options options = QFileDialog.ShowDirsOnly)'''
         return QString()
-    fileSelected = pyqtSignal() # void fileSelected(const QString&) - signal
-    filterSelected = pyqtSignal() # void filterSelected(const QString&) - signal
-    filesSelected = pyqtSignal() # void filesSelected(const QStringList&) - signal
-    directoryEntered = pyqtSignal() # void directoryEntered(const QString&) - signal
-    currentChanged = pyqtSignal() # void currentChanged(const QString&) - signal
+    fileSelected = pyqtSignal() # void fileSelected(const QStringamp;) - signal
+    filterSelected = pyqtSignal() # void filterSelected(const QStringamp;) - signal
+    filesSelected = pyqtSignal() # void filesSelected(const QStringListamp;) - signal
+    directoryEntered = pyqtSignal() # void directoryEntered(const QStringamp;) - signal
+    currentChanged = pyqtSignal() # void currentChanged(const QStringamp;) - signal
     def labelText(self, label):
         '''QString QFileDialog.labelText(QFileDialog.DialogLabel label)'''
         return QString()
@@ -7541,9 +7539,9 @@ class QFileSystemModel(QAbstractItemModel):
     def event(self, event):
         '''bool QFileSystemModel.event(QEvent event)'''
         return bool()
-    directoryLoaded = pyqtSignal() # void directoryLoaded(const QString&) - signal
-    rootPathChanged = pyqtSignal() # void rootPathChanged(const QString&) - signal
-    fileRenamed = pyqtSignal() # void fileRenamed(const QString&,const QString&,const QString&) - signal
+    directoryLoaded = pyqtSignal() # void directoryLoaded(const QStringamp;) - signal
+    rootPathChanged = pyqtSignal() # void rootPathChanged(const QStringamp;) - signal
+    fileRenamed = pyqtSignal() # void fileRenamed(const QStringamp;,const QStringamp;,const QStringamp;) - signal
     def remove(self, aindex):
         '''bool QFileSystemModel.remove(QModelIndex aindex)'''
         return bool()
@@ -7992,7 +7990,7 @@ class QFontComboBox(QComboBox):
     def event(self, e):
         '''bool QFontComboBox.event(QEvent e)'''
         return bool()
-    currentFontChanged = pyqtSignal() # void currentFontChanged(const QFont&) - signal
+    currentFontChanged = pyqtSignal() # void currentFontChanged(const QFontamp;) - signal
     def setCurrentFont(self, f):
         '''void QFontComboBox.setCurrentFont(QFont f)'''
     def sizeHint(self):
@@ -8194,8 +8192,8 @@ class QFontDialog(QDialog):
         '''void QFontDialog.__init__(QWidget parent = None)'''
     def __init__(self, initial, parent = None):
         '''void QFontDialog.__init__(QFont initial, QWidget parent = None)'''
-    fontSelected = pyqtSignal() # void fontSelected(const QFont&) - signal
-    currentFontChanged = pyqtSignal() # void currentFontChanged(const QFont&) - signal
+    fontSelected = pyqtSignal() # void fontSelected(const QFontamp;) - signal
+    currentFontChanged = pyqtSignal() # void currentFontChanged(const QFontamp;) - signal
     def setVisible(self, visible):
         '''void QFontDialog.setVisible(bool visible)'''
     def open(self):
@@ -9755,7 +9753,7 @@ class QGraphicsColorizeEffect(QGraphicsEffect):
     def draw(self, painter):
         '''void QGraphicsColorizeEffect.draw(QPainter painter)'''
     strengthChanged = pyqtSignal() # void strengthChanged(qreal) - signal
-    colorChanged = pyqtSignal() # void colorChanged(const QColor&) - signal
+    colorChanged = pyqtSignal() # void colorChanged(const QColoramp;) - signal
     def setStrength(self, strength):
         '''void QGraphicsColorizeEffect.setStrength(float strength)'''
     def setColor(self, c):
@@ -9851,9 +9849,9 @@ class QGraphicsDropShadowEffect(QGraphicsEffect):
         '''void QGraphicsDropShadowEffect.__init__(QObject parent = None)'''
     def draw(self, painter):
         '''void QGraphicsDropShadowEffect.draw(QPainter painter)'''
-    colorChanged = pyqtSignal() # void colorChanged(const QColor&) - signal
+    colorChanged = pyqtSignal() # void colorChanged(const QColoramp;) - signal
     blurRadiusChanged = pyqtSignal() # void blurRadiusChanged(qreal) - signal
-    offsetChanged = pyqtSignal() # void offsetChanged(const QPointF&) - signal
+    offsetChanged = pyqtSignal() # void offsetChanged(const QPointFamp;) - signal
     def setColor(self, color):
         '''void QGraphicsDropShadowEffect.setColor(QColor color)'''
     def setBlurRadius(self, blurRadius):
@@ -9894,7 +9892,7 @@ class QGraphicsOpacityEffect(QGraphicsEffect):
         '''void QGraphicsOpacityEffect.__init__(QObject parent = None)'''
     def draw(self, painter):
         '''void QGraphicsOpacityEffect.draw(QPainter painter)'''
-    opacityMaskChanged = pyqtSignal() # void opacityMaskChanged(const QBrush&) - signal
+    opacityMaskChanged = pyqtSignal() # void opacityMaskChanged(const QBrushamp;) - signal
     opacityChanged = pyqtSignal() # void opacityChanged(qreal) - signal
     def setOpacityMask(self, mask):
         '''void QGraphicsOpacityEffect.setOpacityMask(QBrush mask)'''
@@ -11101,8 +11099,8 @@ class QGraphicsTextItem(QGraphicsObject):
     def sceneEvent(self, event):
         '''bool QGraphicsTextItem.sceneEvent(QEvent event)'''
         return bool()
-    linkHovered = pyqtSignal() # void linkHovered(const QString&) - signal
-    linkActivated = pyqtSignal() # void linkActivated(const QString&) - signal
+    linkHovered = pyqtSignal() # void linkHovered(const QStringamp;) - signal
+    linkActivated = pyqtSignal() # void linkActivated(const QStringamp;) - signal
     def textCursor(self):
         '''QTextCursor QGraphicsTextItem.textCursor()'''
         return QTextCursor()
@@ -11712,8 +11710,8 @@ class QGraphicsScene(QObject):
         '''bool QGraphicsScene.event(QEvent event)'''
         return bool()
     selectionChanged = pyqtSignal() # void selectionChanged() - signal
-    sceneRectChanged = pyqtSignal() # void sceneRectChanged(const QRectF&) - signal
-    changed = pyqtSignal() # void changed(const QList<QRectF>&) - signal
+    sceneRectChanged = pyqtSignal() # void sceneRectChanged(const QRectFamp;) - signal
+    changed = pyqtSignal() # void changed(const QListlt;QRectFgt;amp;) - signal
     def clear(self):
         '''void QGraphicsScene.clear()'''
     def invalidate(self, rect = QRectF(), layers = QGraphicsScene.AllLayers):
@@ -12929,8 +12927,6 @@ class QHeaderView(QAbstractItemView):
     def sectionsMoved(self):
         '''bool QHeaderView.sectionsMoved()'''
         return bool()
-    def doItemsLayout(self):
-        '''void QHeaderView.doItemsLayout()'''
     def setStretchLastSection(self, stretch):
         '''void QHeaderView.setStretchLastSection(bool stretch)'''
     def stretchLastSection(self):
@@ -13874,8 +13870,8 @@ class QInputDialog(QDialog):
     doubleValueChanged = pyqtSignal() # void doubleValueChanged(double) - signal
     intValueSelected = pyqtSignal() # void intValueSelected(int) - signal
     intValueChanged = pyqtSignal() # void intValueChanged(int) - signal
-    textValueSelected = pyqtSignal() # void textValueSelected(const QString&) - signal
-    textValueChanged = pyqtSignal() # void textValueChanged(const QString&) - signal
+    textValueSelected = pyqtSignal() # void textValueSelected(const QStringamp;) - signal
+    textValueChanged = pyqtSignal() # void textValueChanged(const QStringamp;) - signal
     def done(self, result):
         '''void QInputDialog.done(int result)'''
     def setVisible(self, visible):
@@ -14252,10 +14248,10 @@ class QItemSelectionModel(QObject):
         return bool()
     def emitSelectionChanged(self, newSelection, oldSelection):
         '''void QItemSelectionModel.emitSelectionChanged(QItemSelection newSelection, QItemSelection oldSelection)'''
-    currentColumnChanged = pyqtSignal() # void currentColumnChanged(const QModelIndex&,const QModelIndex&) - signal
-    currentRowChanged = pyqtSignal() # void currentRowChanged(const QModelIndex&,const QModelIndex&) - signal
-    currentChanged = pyqtSignal() # void currentChanged(const QModelIndex&,const QModelIndex&) - signal
-    selectionChanged = pyqtSignal() # void selectionChanged(const QItemSelection&,const QItemSelection&) - signal
+    currentColumnChanged = pyqtSignal() # void currentColumnChanged(const QModelIndexamp;,const QModelIndexamp;) - signal
+    currentRowChanged = pyqtSignal() # void currentRowChanged(const QModelIndexamp;,const QModelIndexamp;) - signal
+    currentChanged = pyqtSignal() # void currentChanged(const QModelIndexamp;,const QModelIndexamp;) - signal
+    selectionChanged = pyqtSignal() # void selectionChanged(const QItemSelectionamp;,const QItemSelectionamp;) - signal
     def setCurrentIndex(self, index, command):
         '''void QItemSelectionModel.setCurrentIndex(QModelIndex index, QItemSelectionModel.SelectionFlags command)'''
     def select(self, index, command):
@@ -14661,8 +14657,8 @@ class QLabel(QFrame):
     def event(self, e):
         '''bool QLabel.event(QEvent e)'''
         return bool()
-    linkHovered = pyqtSignal() # void linkHovered(const QString&) - signal
-    linkActivated = pyqtSignal() # void linkActivated(const QString&) - signal
+    linkHovered = pyqtSignal() # void linkHovered(const QStringamp;) - signal
+    linkActivated = pyqtSignal() # void linkActivated(const QStringamp;) - signal
     def setText(self):
         '''QString QLabel.setText()'''
         return QString()
@@ -15005,8 +15001,8 @@ class QLineEdit(QWidget):
     editingFinished = pyqtSignal() # void editingFinished() - signal
     returnPressed = pyqtSignal() # void returnPressed() - signal
     cursorPositionChanged = pyqtSignal() # void cursorPositionChanged(int,int) - signal
-    textEdited = pyqtSignal() # void textEdited(const QString&) - signal
-    textChanged = pyqtSignal() # void textChanged(const QString&) - signal
+    textEdited = pyqtSignal() # void textEdited(const QStringamp;) - signal
+    textChanged = pyqtSignal() # void textChanged(const QStringamp;) - signal
     def createStandardContextMenu(self):
         '''QMenu QLineEdit.createStandardContextMenu()'''
         return QMenu()
@@ -15246,13 +15242,11 @@ class QListView(QAbstractItemView):
         '''void QListView.dataChanged(QModelIndex topLeft, QModelIndex bottomRight)'''
     def scrollContentsBy(self, dx, dy):
         '''void QListView.scrollContentsBy(int dx, int dy)'''
-    indexesMoved = pyqtSignal() # void indexesMoved(const QModelIndexList&) - signal
+    indexesMoved = pyqtSignal() # void indexesMoved(const QModelIndexListamp;) - signal
     def setRootIndex(self, index):
         '''void QListView.setRootIndex(QModelIndex index)'''
     def reset(self):
         '''void QListView.reset()'''
-    def doItemsLayout(self):
-        '''void QListView.doItemsLayout()'''
     def indexAt(self, p):
         '''QModelIndex QListView.indexAt(QPoint p)'''
         return QModelIndex()
@@ -15479,7 +15473,7 @@ class QListWidget(QListView):
         return QStringList()
     itemSelectionChanged = pyqtSignal() # void itemSelectionChanged() - signal
     currentRowChanged = pyqtSignal() # void currentRowChanged(int) - signal
-    currentTextChanged = pyqtSignal() # void currentTextChanged(const QString&) - signal
+    currentTextChanged = pyqtSignal() # void currentTextChanged(const QStringamp;) - signal
     currentItemChanged = pyqtSignal() # void currentItemChanged(QListWidgetItem *,QListWidgetItem *) - signal
     itemChanged = pyqtSignal() # void itemChanged(QListWidgetItem *) - signal
     itemEntered = pyqtSignal() # void itemEntered(QListWidgetItem *) - signal
@@ -15641,7 +15635,7 @@ class QMainWindow(QWidget):
     def contextMenuEvent(self, event):
         '''void QMainWindow.contextMenuEvent(QContextMenuEvent event)'''
     toolButtonStyleChanged = pyqtSignal() # void toolButtonStyleChanged(Qt::ToolButtonStyle) - signal
-    iconSizeChanged = pyqtSignal() # void iconSizeChanged(const QSize&) - signal
+    iconSizeChanged = pyqtSignal() # void iconSizeChanged(const QSizeamp;) - signal
     def setDockNestingEnabled(self, enabled):
         '''void QMainWindow.setDockNestingEnabled(bool enabled)'''
     def setAnimated(self, enabled):
@@ -16980,8 +16974,8 @@ class QMovie(QObject):
     finished = pyqtSignal() # void finished() - signal
     error = pyqtSignal() # void error(QImageReader::ImageReaderError) - signal
     stateChanged = pyqtSignal() # void stateChanged(QMovie::MovieState) - signal
-    updated = pyqtSignal() # void updated(const QRect&) - signal
-    resized = pyqtSignal() # void resized(const QSize&) - signal
+    updated = pyqtSignal() # void updated(const QRectamp;) - signal
+    resized = pyqtSignal() # void resized(const QSizeamp;) - signal
     started = pyqtSignal() # void started() - signal
     def setCacheMode(self, mode):
         '''void QMovie.setCacheMode(QMovie.CacheMode mode)'''
@@ -17056,7 +17050,6 @@ class QMovie(QObject):
 class QPageSetupDialog(QDialog):
     """"""
     # Enum QPageSetupDialog.PageSetupDialogOption
-    __kdevpythondocumentation_builtin_None = 0
     DontUseSheet = 0
 
     def __init__(self, parent = None):
@@ -17652,6 +17645,11 @@ class QPainter():
     def device(self):
         '''QPaintDevice QPainter.device()'''
         return QPaintDevice()
+    def __exit__(self, type, value, traceback):
+        '''void QPainter.__exit__(object type, object value, object traceback)'''
+    def __enter__(self):
+        '''object QPainter.__enter__()'''
+        return object()
     class PixmapFragment():
         """"""
         height = None # float - member
@@ -18390,9 +18388,6 @@ class QPainterPathStroker():
     """"""
     def __init__(self):
         '''void QPainterPathStroker.__init__()'''
-    def dashPattern(self):
-        '''list-of-float QPainterPathStroker.dashPattern()'''
-        return [float()]
     def dashOffset(self):
         '''float QPainterPathStroker.dashOffset()'''
         return float()
@@ -18401,6 +18396,9 @@ class QPainterPathStroker():
     def createStroke(self, path):
         '''QPainterPath QPainterPathStroker.createStroke(QPainterPath path)'''
         return QPainterPath()
+    def dashPattern(self):
+        '''list-of-float QPainterPathStroker.dashPattern()'''
+        return [float()]
     def setDashPattern(self):
         '''Qt.PenStyle QPainterPathStroker.setDashPattern()'''
         return Qt.PenStyle()
@@ -18987,7 +18985,7 @@ class QPlainTextEdit(QAbstractScrollArea):
         return bool()
     modificationChanged = pyqtSignal() # void modificationChanged(bool) - signal
     blockCountChanged = pyqtSignal() # void blockCountChanged(int) - signal
-    updateRequest = pyqtSignal() # void updateRequest(const QRect&,int) - signal
+    updateRequest = pyqtSignal() # void updateRequest(const QRectamp;,int) - signal
     cursorPositionChanged = pyqtSignal() # void cursorPositionChanged() - signal
     selectionChanged = pyqtSignal() # void selectionChanged() - signal
     copyAvailable = pyqtSignal() # void copyAvailable(bool) - signal
@@ -19780,9 +19778,6 @@ class QPrinter(QPaintDevice):
     def setPrinterName(self):
         '''QString QPrinter.setPrinterName()'''
         return QString()
-    def devType(self):
-        '''int QPrinter.devType()'''
-        return int()
 
 
 class QPrintDialog(QAbstractPrintDialog):
@@ -21291,7 +21286,7 @@ class QSpinBox(QAbstractSpinBox):
     def __init__(self, parent = None):
         '''void QSpinBox.__init__(QWidget parent = None)'''
     valueChanged = pyqtSignal() # void valueChanged(int) - signal
-    valueChanged = pyqtSignal() # void valueChanged(const QString&) - signal
+    valueChanged = pyqtSignal() # void valueChanged(const QStringamp;) - signal
     def setValue(self, val):
         '''void QSpinBox.setValue(int val)'''
     def event(self, e):
@@ -21353,7 +21348,7 @@ class QDoubleSpinBox(QAbstractSpinBox):
     def __init__(self, parent = None):
         '''void QDoubleSpinBox.__init__(QWidget parent = None)'''
     valueChanged = pyqtSignal() # void valueChanged(double) - signal
-    valueChanged = pyqtSignal() # void valueChanged(const QString&) - signal
+    valueChanged = pyqtSignal() # void valueChanged(const QStringamp;) - signal
     def setValue(self, val):
         '''void QDoubleSpinBox.setValue(float val)'''
     def fixup(self, str):
@@ -21426,7 +21421,7 @@ class QSplashScreen(QWidget):
         return bool()
     def drawContents(self, painter):
         '''void QSplashScreen.drawContents(QPainter painter)'''
-    messageChanged = pyqtSignal() # void messageChanged(const QString&) - signal
+    messageChanged = pyqtSignal() # void messageChanged(const QStringamp;) - signal
     def clearMessage(self):
         '''void QSplashScreen.clearMessage()'''
     def showMessage(self, message, alignment = Qt.AlignLeft, color = Qt.black):
@@ -22137,7 +22132,7 @@ class QStatusBar(QWidget):
     def paintEvent(self):
         '''QPaintEvent QStatusBar.paintEvent()'''
         return QPaintEvent()
-    messageChanged = pyqtSignal() # void messageChanged(const QString&) - signal
+    messageChanged = pyqtSignal() # void messageChanged(const QStringamp;) - signal
     def clearMessage(self):
         '''void QStatusBar.clearMessage()'''
     def showMessage(self, message, msecs = 0):
@@ -24492,7 +24487,7 @@ class QTextEdit(QAbstractScrollArea):
     cursorPositionChanged = pyqtSignal() # void cursorPositionChanged() - signal
     selectionChanged = pyqtSignal() # void selectionChanged() - signal
     copyAvailable = pyqtSignal() # void copyAvailable(bool) - signal
-    currentCharFormatChanged = pyqtSignal() # void currentCharFormatChanged(const QTextCharFormat&) - signal
+    currentCharFormatChanged = pyqtSignal() # void currentCharFormatChanged(const QTextCharFormatamp;) - signal
     redoAvailable = pyqtSignal() # void redoAvailable(bool) - signal
     undoAvailable = pyqtSignal() # void undoAvailable(bool) - signal
     textChanged = pyqtSignal() # void textChanged() - signal
@@ -24807,10 +24802,10 @@ class QTextBrowser(QTextEdit):
     def event(self, e):
         '''bool QTextBrowser.event(QEvent e)'''
         return bool()
-    anchorClicked = pyqtSignal() # void anchorClicked(const QUrl&) - signal
-    highlighted = pyqtSignal() # void highlighted(const QUrl&) - signal
-    highlighted = pyqtSignal() # void highlighted(const QString&) - signal
-    sourceChanged = pyqtSignal() # void sourceChanged(const QUrl&) - signal
+    anchorClicked = pyqtSignal() # void anchorClicked(const QUrlamp;) - signal
+    highlighted = pyqtSignal() # void highlighted(const QUrlamp;) - signal
+    highlighted = pyqtSignal() # void highlighted(const QStringamp;) - signal
+    sourceChanged = pyqtSignal() # void sourceChanged(const QUrlamp;) - signal
     forwardAvailable = pyqtSignal() # void forwardAvailable(bool) - signal
     backwardAvailable = pyqtSignal() # void backwardAvailable(bool) - signal
     def reload(self):
@@ -25223,7 +25218,7 @@ class QTextDocument(QObject):
     undoAvailable = pyqtSignal() # void undoAvailable(bool) - signal
     redoAvailable = pyqtSignal() # void redoAvailable(bool) - signal
     modificationChanged = pyqtSignal() # void modificationChanged(bool) - signal
-    cursorPositionChanged = pyqtSignal() # void cursorPositionChanged(const QTextCursor&) - signal
+    cursorPositionChanged = pyqtSignal() # void cursorPositionChanged(const QTextCursoramp;) - signal
     contentsChanged = pyqtSignal() # void contentsChanged() - signal
     contentsChange = pyqtSignal() # void contentsChange(int,int,int) - signal
     blockCountChanged = pyqtSignal() # void blockCountChanged(int) - signal
@@ -27106,7 +27101,7 @@ class QToolBar(QWidget):
     visibilityChanged = pyqtSignal() # void visibilityChanged(bool) - signal
     topLevelChanged = pyqtSignal() # void topLevelChanged(bool) - signal
     toolButtonStyleChanged = pyqtSignal() # void toolButtonStyleChanged(Qt::ToolButtonStyle) - signal
-    iconSizeChanged = pyqtSignal() # void iconSizeChanged(const QSize&) - signal
+    iconSizeChanged = pyqtSignal() # void iconSizeChanged(const QSizeamp;) - signal
     orientationChanged = pyqtSignal() # void orientationChanged(Qt::Orientation) - signal
     allowedAreasChanged = pyqtSignal() # void allowedAreasChanged(Qt::ToolBarAreas) - signal
     movableChanged = pyqtSignal() # void movableChanged(bool) - signal
@@ -27731,12 +27726,10 @@ class QTreeView(QAbstractItemView):
         '''void QTreeView.hideColumn(int column)'''
     def dataChanged(self, topLeft, bottomRight):
         '''void QTreeView.dataChanged(QModelIndex topLeft, QModelIndex bottomRight)'''
-    collapsed = pyqtSignal() # void collapsed(const QModelIndex&) - signal
-    expanded = pyqtSignal() # void expanded(const QModelIndex&) - signal
+    collapsed = pyqtSignal() # void collapsed(const QModelIndexamp;) - signal
+    expanded = pyqtSignal() # void expanded(const QModelIndexamp;) - signal
     def reset(self):
         '''void QTreeView.reset()'''
-    def doItemsLayout(self):
-        '''void QTreeView.doItemsLayout()'''
     def indexBelow(self, index):
         '''QModelIndex QTreeView.indexBelow(QModelIndex index)'''
         return QModelIndex()
@@ -28259,8 +28252,8 @@ class QUndoGroup(QObject):
     """"""
     def __init__(self, parent = None):
         '''void QUndoGroup.__init__(QObject parent = None)'''
-    undoTextChanged = pyqtSignal() # void undoTextChanged(const QString&) - signal
-    redoTextChanged = pyqtSignal() # void redoTextChanged(const QString&) - signal
+    undoTextChanged = pyqtSignal() # void undoTextChanged(const QStringamp;) - signal
+    redoTextChanged = pyqtSignal() # void redoTextChanged(const QStringamp;) - signal
     indexChanged = pyqtSignal() # void indexChanged(int) - signal
     cleanChanged = pyqtSignal() # void cleanChanged(bool) - signal
     canUndoChanged = pyqtSignal() # void canUndoChanged(bool) - signal
@@ -28349,8 +28342,8 @@ class QUndoStack(QObject):
         return int()
     def setUndoLimit(self, limit):
         '''void QUndoStack.setUndoLimit(int limit)'''
-    undoTextChanged = pyqtSignal() # void undoTextChanged(const QString&) - signal
-    redoTextChanged = pyqtSignal() # void redoTextChanged(const QString&) - signal
+    undoTextChanged = pyqtSignal() # void undoTextChanged(const QStringamp;) - signal
+    redoTextChanged = pyqtSignal() # void redoTextChanged(const QStringamp;) - signal
     indexChanged = pyqtSignal() # void indexChanged(int) - signal
     cleanChanged = pyqtSignal() # void cleanChanged(bool) - signal
     canUndoChanged = pyqtSignal() # void canUndoChanged(bool) - signal

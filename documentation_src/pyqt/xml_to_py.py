@@ -79,7 +79,7 @@ def parseFunction(functionNode):
 
     # function parameters in function defintion
     paramsStr = ['self'] if functionNode.parentNode.nodeName == 'Class' else [] # add `self` first parameter for methods
-    namesUsed = set(['self', 'exec', 'print', 'from', 'in', 'def', 'if', 'for', 'while', 'return']) # reserved words which cannot be used as argument names
+    namesUsed = set(['self', 'exec', 'print', 'from', 'in', 'def', 'if', 'for', 'while', 'return', 'raise']) # reserved words which cannot be used as argument names
     hadDefault = False # there has been a default argument previously
     for _, argName, defaultValue in params:
         while argName in namesUsed: # some function arguments have same names...
@@ -89,7 +89,7 @@ def parseFunction(functionNode):
         if defaultValue is NoDefaultValue and not hadDefault:
             paramsStr.append(argName)
         else:
-            if defaultValue is NoDefaultValue:
+            if defaultValue is NoDefaultValue or not defaultValue.replace('(','').replace(')','').isalnum():
                 defaultValue = "None"
             paramsStr.append('{} = {}'.format(argName, defaultValue))
             hadDefault = True

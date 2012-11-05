@@ -11,18 +11,31 @@ from PyQt4 import pyqtconfig
 config = pyqtconfig.Configuration() # Get the PyQt configuration information.
 
 def convertSipToXML(inFilePath, outFilePath):
-    command = [config.sip_bin, '-m', outFilePath, '-I', config.pyqt_sip_dir]
-    command.extend(config.pyqt_sip_flags.split())
-    command.append(inFilePath)
+    if not os.path.exists(outFilePath):
+        command = [config.sip_bin, '-m', outFilePath, '-I', config.pyqt_sip_dir, '-I', config.pyqt_sip_dir+'/python2-PyKDE4']
+        command.extend(config.pyqt_sip_flags.split())
+        command.append(inFilePath)
 
-    print '\nConverting sip to xml:\n%s' % ' '.join(command)
-    try:
-        print subprocess.check_output(command, stderr = subprocess.STDOUT)
-    except subprocess.CalledProcessError as e:
-        print 'There was an error when running the command:'
-        print e.output
+        print '\nConverting sip to xml:\n%s' % ' '.join(command)
+        try:
+            print subprocess.check_output(command, stderr = subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            print 'There was an error when running the command:'
+            print e.output
 
-    print 'Opening and parsing XML document...'
+        print 'Opening and parsing XML document...'
+        # replace the invalid "&"s which are used by pykde to indicate shortcuts
+        # they would need to be escaped, but oh well
+        f = open(outFilePath, 'r')
+        data = f.read()
+        f.close()
+        data = data.replace('&', '')
+        data = data.replace('("', '')
+        data = data.replace('")', '')
+        data = data.replace('""', '"')
+        f = open(outFilePath, 'w')
+        f.write(data)
+        f.close()
     xmlDoc = minidom.parse(outFilePath)
 
     module = xmlDoc.firstChild
@@ -54,7 +67,8 @@ def convertSipToXML(inFilePath, outFilePath):
                     if dotsCount == 1:
                         childClasses[name] = node
                     else:
-                        raise Exception('More than 2 dots in name of a class: %s' % name)
+                        print Exception('More than 2 dots in name of a class: %s' % name)
+                        continue
 
     print 'Reparenting classes...'
     for name, node in childClasses.iteritems():
@@ -76,9 +90,9 @@ if not os.path.isdir(sipDir):
 modules = sys.argv[1:] # ['QtGui.xml', 'QtCore.xml'] # files to convert
 
 for moduleName in modules:
-    sipFilePath = os.path.join(sipDir, moduleName, moduleName + 'mod.sip')
+    sipFilePath = os.path.join(sipDir, moduleName, moduleName.split('/')[-1] + 'mod.sip')
     xmlFilePath = moduleName + '.xml'
-    if os.path.isfile(sipFilePath):
-        convertSipToXML(sipFilePath, xmlFilePath)
+    if os.path.isfile(sipFilePath) or os.path.exists(xmlFilePath.split('/')[-1]):
+        convertSipToXML(sipFilePath, xmlFilePath.split('/')[-1])
     else:
         print 'Input sip file does not exist: %s' % sipFilePath

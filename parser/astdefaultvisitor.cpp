@@ -44,7 +44,11 @@ void AstDefaultVisitor::visitNumber(NumberAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitString(StringAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitBytes(BytesAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitStarred(StarredAst* node) { Q_UNUSED(node); }
-void AstDefaultVisitor::visitArg(ArgAst* node) { Q_UNUSED(node); }
+
+void AstDefaultVisitor::visitArg(ArgAst* node) {
+    visitNode(node->annotation);
+    visitNode(node->argumentName);
+}
 
 void AstDefaultVisitor::visitCode(CodeAst* node)
 {
@@ -358,6 +362,7 @@ void AstDefaultVisitor::visitFunctionDefinition(FunctionDefinitionAst* node)
         visitNode(decorator);
     }
     visitNode(node->arguments);
+    visitNode(node->returns);
     foreach (Ast* stmt, node->body) {
         visitNode(stmt);
     }

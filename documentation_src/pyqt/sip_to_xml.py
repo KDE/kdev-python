@@ -12,18 +12,18 @@ config = pyqtconfig.Configuration() # Get the PyQt configuration information.
 
 def convertSipToXML(inFilePath, outFilePath):
     if not os.path.exists(outFilePath):
-        command = [config.sip_bin, '-m', outFilePath, '-I', config.pyqt_sip_dir, '-I', config.pyqt_sip_dir+'/python2-PyKDE4']
+        command = [config.sip_bin, '-m', outFilePath, '-I', config.pyqt_sip_dir, '-I', config.pyqt_sip_dir+'/python3-PyKDE4']
         command.extend(config.pyqt_sip_flags.split())
         command.append(inFilePath)
 
-        print '\nConverting sip to xml:\n%s' % ' '.join(command)
+        print('\nConverting sip to xml:\n%s' % ' '.join(command))
         try:
             print subprocess.check_output(command, stderr = subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
-            print 'There was an error when running the command:'
-            print e.output
+            print('There was an error when running the command:')
+            print(e.output)
 
-        print 'Opening and parsing XML document...'
+        print('Opening and parsing XML document...')
         # replace the invalid "&"s which are used by pykde to indicate shortcuts
         # they would need to be escaped, but oh well
         f = open(outFilePath, 'r')
@@ -41,7 +41,7 @@ def convertSipToXML(inFilePath, outFilePath):
     module = xmlDoc.firstChild
     assert module.nodeName == 'Module'
     moduleName = module.attributes['name'].value
-    print 'Module name: %s' % moduleName
+    print('Module name: %s' % moduleName)
 
     def setIds(node):
         '''Set `name` attribute as id to be able to do node.getElementById('element_id')'''
@@ -53,10 +53,10 @@ def convertSipToXML(inFilePath, outFilePath):
                     pass
                 setIds(node)
 
-    print 'Setting IDs...'
+    print('Setting IDs...')
     setIds(module) # recursively set IDs
 
-    print 'Looking for child classes...'
+    print('Looking for child classes...')
     childClasses = {}
     for node in module.childNodes:
         # skip non element nodes
@@ -65,7 +65,7 @@ def convertSipToXML(inFilePath, outFilePath):
             if name.count('.') >= 1:
                 childClasses[name] = node
 
-    print 'Reparenting classes...'
+    print('Reparenting classes...')
     for name, node in childClasses.iteritems():
         parentClassNode = xmlDoc
         parentClassNode = xmlDoc.getElementById(name.split('.')[0])
@@ -79,15 +79,15 @@ def convertSipToXML(inFilePath, outFilePath):
         node.setAttribute("name", name.split('.')[-1])
         parentClassNode.appendChild(node)
 
-    print 'Saving changes...'
+    print('Saving changes...')
     with open(outFilePath, 'w') as f:
         xmlDoc.writexml(f)
 
 
 sipDir = config.pyqt_sip_dir
 if not os.path.isdir(sipDir):
-    print 'Could not find sip direcotry: %s' % sipDir
-    print 'Looks like package "python-qt-dev" is not installed.'
+    print('Could not find sip direcotry: %s' % sipDir)
+    print('Looks like package "python-qt-dev" is not installed.')
     sys.exit()
 
 modules = sys.argv[1:] # ['QtGui.xml', 'QtCore.xml'] # files to convert
@@ -98,4 +98,4 @@ for moduleName in modules:
     if os.path.isfile(sipFilePath) or os.path.exists(xmlFilePath.split('/')[-1]):
         convertSipToXML(sipFilePath, xmlFilePath.split('/')[-1])
     else:
-        print 'Input sip file does not exist: %s' % sipFilePath
+        print('Input sip file does not exist: %s' % sipFilePath)

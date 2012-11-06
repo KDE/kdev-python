@@ -60,6 +60,8 @@ def parseFunction(functionNode):
     funcName, funcFullName = getNodeNames(functionNode)
     for node in functionNode.childNodes:
         if node.nodeType == node.ELEMENT_NODE:
+            if not node.hasAttribute('typename'):
+                node.attributes['typename'] = 'unknown'
             if node.nodeName == 'Argument':
                 argType = node.attributes['typename'].value
                 try:
@@ -78,6 +80,11 @@ def parseFunction(functionNode):
     descr = 'abstract ' if 'abstract' in functionNode.attributes.keys() else ''
     descr += 'static ' if 'static' in functionNode.attributes.keys() else ''
 
+    namesUsed = set(['self', 'exec', 'print', 'from', 'in', 'def', 'if', 'for',
+                     'while', 'return', 'raise', 'pass', 'global', 'del']) # reserved words which cannot be used as argument names
+    if funcFullName in namesUsed:
+        funcFullName += '_'
+    
     # function parameters in description
     paramsStr = []
     for p in params:
@@ -86,7 +93,6 @@ def parseFunction(functionNode):
 
     # function parameters in function defintion
     paramsStr = ['self'] if functionNode.parentNode.nodeName == 'Class' else [] # add `self` first parameter for methods
-    namesUsed = set(['self', 'exec', 'print', 'from', 'in', 'def', 'if', 'for', 'while', 'return', 'raise']) # reserved words which cannot be used as argument names
     hadDefault = False # there has been a default argument previously
     for _, argName, defaultValue in params:
         while argName in namesUsed: # some function arguments have same names...

@@ -14,3 +14,6 @@ for index in $(seq $element_count); do
     python2.7 xml_to_py.py ${pykde[$index]}.xml
     cp ${pykde[$index]}.py ../../documentation_files/PyKDE4/
 done
+
+# sed -i 's/typename=" dir="out"/dir="out" typename="None"/g' *.xml
+# sed -i 's/SLOT()SLOT()/SLOT()/g' *.xml

@@ -2036,10 +2036,10 @@ class QObject():
     def findChild(self, types, name = QString()):
         '''QObject QObject.findChild(tuple types, QString name = QString())'''
         return QObject()
-    def trUtf8(self, sourceText, disambiguation = None, n = -1):
+    def trUtf8(self, sourceText, disambiguation = None, n = None):
         '''QString QObject.trUtf8(str sourceText, str disambiguation = None, int n = -1)'''
         return QString()
-    def tr(self, sourceText, disambiguation = None, n = -1):
+    def tr(self, sourceText, disambiguation = None, n = None):
         '''QString QObject.tr(str sourceText, str disambiguation = None, int n = -1)'''
         return QString()
     def eventFilter(self):
@@ -2096,7 +2096,7 @@ class QAbstractAnimation(QObject):
         '''void QAbstractAnimation.resume()'''
     def pause(self):
         '''void QAbstractAnimation.pause()'''
-    def start(self, policy = QAbstractAnimation.KeepWhenStopped):
+    def start(self, policy = None):
         '''void QAbstractAnimation.start(QAbstractAnimation.DeletionPolicy policy = QAbstractAnimation.KeepWhenStopped)'''
     directionChanged = pyqtSignal() # void directionChanged(QAbstractAnimation::Direction) - signal
     currentLoopChanged = pyqtSignal() # void currentLoopChanged(int) - signal
@@ -2280,13 +2280,13 @@ class QAbstractFileEngine():
     def ownerId(self):
         '''QAbstractFileEngine.FileOwner QAbstractFileEngine.ownerId()'''
         return QAbstractFileEngine.FileOwner()
-    def fileName(self, file = QAbstractFileEngine.DefaultName):
+    def fileName(self, file = None):
         '''QString QAbstractFileEngine.fileName(QAbstractFileEngine.FileName file = QAbstractFileEngine.DefaultName)'''
         return QString()
     def setPermissions(self, perms):
         '''bool QAbstractFileEngine.setPermissions(int perms)'''
         return bool()
-    def fileFlags(self, type = QAbstractFileEngine.FileInfoAll):
+    def fileFlags(self, type = None):
         '''QAbstractFileEngine.FileFlags QAbstractFileEngine.fileFlags(QAbstractFileEngine.FileFlags type = QAbstractFileEngine.FileInfoAll)'''
         return QAbstractFileEngine.FileFlags()
     def entryList(self, filters, filterNames):
@@ -2481,7 +2481,7 @@ class QModelIndex():
     def flags(self):
         '''Qt.ItemFlags QModelIndex.flags()'''
         return Qt.ItemFlags()
-    def data(self, role = Qt.DisplayRole):
+    def data(self, role = None):
         '''QVariant QModelIndex.data(int role = Qt.DisplayRole)'''
         return QVariant()
     def column(self):
@@ -2542,7 +2542,7 @@ class QPersistentModelIndex():
     def flags(self):
         '''Qt.ItemFlags QPersistentModelIndex.flags()'''
         return Qt.ItemFlags()
-    def data(self, role = Qt.DisplayRole):
+    def data(self, role = None):
         '''QVariant QPersistentModelIndex.data(int role = Qt.DisplayRole)'''
         return QVariant()
     def column(self):
@@ -2655,13 +2655,13 @@ class QAbstractItemModel(QObject):
     def span(self, index):
         '''QSize QAbstractItemModel.span(QModelIndex index)'''
         return QSize()
-    def match(self, start, role, value, hits = 1, flags = Qt.MatchStartsWith|Qt.MatchWrap):
+    def match(self, start, role, value, hits = 1, flags = None):
         '''list-of-QModelIndex QAbstractItemModel.match(QModelIndex start, int role, QVariant value, int hits = 1, Qt.MatchFlags flags = Qt.MatchStartsWith|Qt.MatchWrap)'''
         return [QModelIndex()]
     def buddy(self, index):
         '''QModelIndex QAbstractItemModel.buddy(QModelIndex index)'''
         return QModelIndex()
-    def sort(self, column, order = Qt.AscendingOrder):
+    def sort(self, column, order = None):
         '''void QAbstractItemModel.sort(int column, Qt.SortOrder order = Qt.AscendingOrder)'''
     def flags(self, index):
         '''Qt.ItemFlags QAbstractItemModel.flags(QModelIndex index)'''
@@ -2701,16 +2701,16 @@ class QAbstractItemModel(QObject):
     def itemData(self, index):
         '''dict-of-int-QVariant QAbstractItemModel.itemData(QModelIndex index)'''
         return dict-of-int-QVariant()
-    def setHeaderData(self, section, orientation, value, role = Qt.EditRole):
+    def setHeaderData(self, section, orientation, value, role = None):
         '''bool QAbstractItemModel.setHeaderData(int section, Qt.Orientation orientation, QVariant value, int role = Qt.EditRole)'''
         return bool()
-    def headerData(self, section, orientation, role = Qt.DisplayRole):
+    def headerData(self, section, orientation, role = None):
         '''QVariant QAbstractItemModel.headerData(int section, Qt.Orientation orientation, int role = Qt.DisplayRole)'''
         return QVariant()
-    def setData(self, index, value, role = Qt.EditRole):
+    def setData(self, index, value, role = None):
         '''bool QAbstractItemModel.setData(QModelIndex index, QVariant value, int role = Qt.EditRole)'''
         return bool()
-    def data(self, index, role = Qt.DisplayRole):
+    def data(self, index, role = None):
         '''abstract QVariant QAbstractItemModel.data(QModelIndex index, int role = Qt.DisplayRole)'''
         return QVariant()
     def hasChildren(self, parent = QModelIndex()):
@@ -2914,7 +2914,7 @@ class QBitArray():
         '''void QBitArray.truncate(int pos)'''
     def fill(self, val, first, last):
         '''void QBitArray.fill(bool val, int first, int last)'''
-    def fill(self, value, size = -1):
+    def fill(self, value, size = None):
         '''bool QBitArray.fill(bool value, int size = -1)'''
         return bool()
     def __ne__(self, a):
@@ -2951,8 +2951,8 @@ class QBitArray():
         '''bool QBitArray.isEmpty()'''
         return bool()
     def __len__(self):
-        ''' QBitArray.__len__()'''
-        return ()
+        '''None QBitArray.__len__()'''
+        return None()
     def count(self):
         '''int QBitArray.count()'''
         return int()
@@ -3200,10 +3200,10 @@ class QByteArray():
     def repeated(self, times):
         '''QByteArray QByteArray.repeated(int times)'''
         return QByteArray()
-    def fromPercentEncoding(self, input, percent = '%'):
+    def fromPercentEncoding(self, input, percent = None):
         '''static QByteArray QByteArray.fromPercentEncoding(QByteArray input, str percent = '%')'''
         return QByteArray()
-    def toPercentEncoding(self, exclude = QByteArray(), include = QByteArray(), percent = '%'):
+    def toPercentEncoding(self, exclude = QByteArray(), include = QByteArray(), percent = None):
         '''QByteArray QByteArray.toPercentEncoding(QByteArray exclude = QByteArray(), QByteArray include = QByteArray(), str percent = '%')'''
         return QByteArray()
     def toHex(self):
@@ -3266,8 +3266,8 @@ class QByteArray():
         '''int QByteArray.length()'''
         return int()
     def __len__(self):
-        ''' QByteArray.__len__()'''
-        return ()
+        '''None QByteArray.__len__()'''
+        return None()
     def fromHex(self, hexEncoded):
         '''static QByteArray QByteArray.fromHex(QByteArray hexEncoded)'''
         return QByteArray()
@@ -3280,7 +3280,7 @@ class QByteArray():
     def number(self, n, base = 10):
         '''static QByteArray QByteArray.number(int n, int base = 10)'''
         return QByteArray()
-    def number(self, n, format = 'g', precision = 6):
+    def number(self, n, format = None, precision = 6):
         '''static QByteArray QByteArray.number(float n, str format = 'g', int precision = 6)'''
         return QByteArray()
     def number(self, n, base = 10):
@@ -3292,7 +3292,7 @@ class QByteArray():
     def setNum(self, n, base = 10):
         '''QByteArray QByteArray.setNum(int n, int base = 10)'''
         return QByteArray()
-    def setNum(self, n, format = 'g', precision = 6):
+    def setNum(self, n, format = None, precision = 6):
         '''QByteArray QByteArray.setNum(float n, str format = 'g', int precision = 6)'''
         return QByteArray()
     def setNum(self, n, base = 10):
@@ -3406,10 +3406,10 @@ class QByteArray():
     def prepend(self, a):
         '''QByteArray QByteArray.prepend(QByteArray a)'''
         return QByteArray()
-    def rightJustified(self, width, fill = ' ', truncate = False):
+    def rightJustified(self, width, fill = None, truncate = False):
         '''QByteArray QByteArray.rightJustified(int width, str fill = ' ', bool truncate = False)'''
         return QByteArray()
-    def leftJustified(self, width, fill = ' ', truncate = False):
+    def leftJustified(self, width, fill = None, truncate = False):
         '''QByteArray QByteArray.leftJustified(int width, str fill = ' ', bool truncate = False)'''
         return QByteArray()
     def simplified(self):
@@ -3434,7 +3434,7 @@ class QByteArray():
     def startsWith(self, a):
         '''bool QByteArray.startsWith(QByteArray a)'''
         return bool()
-    def mid(self, pos, length = -1):
+    def mid(self, pos, length = None):
         '''QByteArray QByteArray.mid(int pos, int length = -1)'''
         return QByteArray()
     def right(self, len):
@@ -3449,10 +3449,10 @@ class QByteArray():
     def count(self):
         '''int QByteArray.count()'''
         return int()
-    def lastIndexOf(self, ba, from_ = -1):
+    def lastIndexOf(self, ba, from_ = None):
         '''int QByteArray.lastIndexOf(QByteArray ba, int from = -1)'''
         return int()
-    def lastIndexOf(self, str, from_ = -1):
+    def lastIndexOf(self, str, from_ = None):
         '''int QByteArray.lastIndexOf(QString str, int from = -1)'''
         return int()
     def indexOf(self, ba, from_ = 0):
@@ -3463,7 +3463,7 @@ class QByteArray():
         return int()
     def clear(self):
         '''void QByteArray.clear()'''
-    def fill(self, ch, size = -1):
+    def fill(self, ch, size = None):
         '''QByteArray QByteArray.fill(str ch, int size = -1)'''
         return QByteArray()
     def resize(self, size):
@@ -3881,7 +3881,7 @@ class QCoreApplication(QObject):
         '''static void QCoreApplication.setAttribute(Qt.ApplicationAttribute attribute, bool on = True)'''
     def flush(self):
         '''static void QCoreApplication.flush()'''
-    def translate(self, context, sourceText, disambiguation = None, encoding = QCoreApplication.CodecForTr):
+    def translate(self, context, sourceText, disambiguation = None, encoding = None):
         '''static QString QCoreApplication.translate(str context, str sourceText, str disambiguation = None, QCoreApplication.Encoding encoding = QCoreApplication.CodecForTr)'''
         return QString()
     def translate(self, context, sourceText, disambiguation, encoding, n):
@@ -3940,7 +3940,7 @@ class QCoreApplication(QObject):
         return bool()
     def exit(self, returnCode = 0):
         '''static void QCoreApplication.exit(int returnCode = 0)'''
-    def processEvents(self, flags = QEventLoop.AllEvents):
+    def processEvents(self, flags = None):
         '''static void QCoreApplication.processEvents(QEventLoop.ProcessEventsFlags flags = QEventLoop.AllEvents)'''
     def processEvents(self, flags, maxtime):
         '''static void QCoreApplication.processEvents(QEventLoop.ProcessEventsFlags flags, int maxtime)'''
@@ -4118,7 +4118,7 @@ class QEvent():
     def __init__(self):
         '''QEvent QEvent.__init__()'''
         return QEvent()
-    def registerEventType(self, hint = -1):
+    def registerEventType(self, hint = None):
         '''static int QEvent.registerEventType(int hint = -1)'''
         return int()
     def ignore(self):
@@ -4566,7 +4566,7 @@ class QDate():
     def isLeapYear(self, year):
         '''static bool QDate.isLeapYear(int year)'''
         return bool()
-    def fromString(self, string, format = Qt.TextDate):
+    def fromString(self, string, format = None):
         '''static QDate QDate.fromString(QString string, Qt.DateFormat format = Qt.TextDate)'''
         return QDate()
     def fromString(self, s, format):
@@ -4608,7 +4608,7 @@ class QDate():
     def setYMD(self, y, m, d):
         '''bool QDate.setYMD(int y, int m, int d)'''
         return bool()
-    def toString(self, format = Qt.TextDate):
+    def toString(self, format = None):
         '''QString QDate.toString(Qt.DateFormat format = Qt.TextDate)'''
         return QString()
     def toString(self, format):
@@ -4702,7 +4702,7 @@ class QTime():
         return int()
     def start(self):
         '''void QTime.start()'''
-    def fromString(self, string, format = Qt.TextDate):
+    def fromString(self, string, format = None):
         '''static QTime QTime.fromString(QString string, Qt.DateFormat format = Qt.TextDate)'''
         return QTime()
     def fromString(self, s, format):
@@ -4744,7 +4744,7 @@ class QTime():
     def setHMS(self, h, m, s, msec = 0):
         '''bool QTime.setHMS(int h, int m, int s, int msec = 0)'''
         return bool()
-    def toString(self, format = Qt.TextDate):
+    def toString(self, format = None):
         '''QString QTime.toString(Qt.DateFormat format = Qt.TextDate)'''
         return QString()
     def toString(self, format):
@@ -4794,7 +4794,7 @@ class QDateTime():
     def __init__(self):
         '''QDate QDateTime.__init__()'''
         return QDate()
-    def __init__(self, date, time, timeSpec = Qt.LocalTime):
+    def __init__(self, date, time, timeSpec = None):
         '''void QDateTime.__init__(QDate date, QTime time, Qt.TimeSpec timeSpec = Qt.LocalTime)'''
     def __init__(self, y, m, d, h, m_, s = 0, msec = 0, timeSpec = 0):
         '''void QDateTime.__init__(int y, int m, int d, int h, int m, int s = 0, int msec = 0, int timeSpec = 0)'''
@@ -4818,7 +4818,7 @@ class QDateTime():
     def fromTime_t(self, secsSince1Jan1970UTC):
         '''static QDateTime QDateTime.fromTime_t(int secsSince1Jan1970UTC)'''
         return QDateTime()
-    def fromString(self, string, format = Qt.TextDate):
+    def fromString(self, string, format = None):
         '''static QDateTime QDateTime.fromString(QString string, Qt.DateFormat format = Qt.TextDate)'''
         return QDateTime()
     def fromString(self, s, format):
@@ -4875,7 +4875,7 @@ class QDateTime():
     def addDays(self, days):
         '''QDateTime QDateTime.addDays(int days)'''
         return QDateTime()
-    def toString(self, format = Qt.TextDate):
+    def toString(self, format = None):
         '''QString QDateTime.toString(Qt.DateFormat format = Qt.TextDate)'''
         return QString()
     def toString(self, format):
@@ -4964,7 +4964,7 @@ class QDir():
         return QDir()
     def __init__(self, path = QString()):
         '''void QDir.__init__(QString path = QString())'''
-    def __init__(self, path, nameFilter, sort = QDir.Name|QDir.IgnoreCase, filters = QDir.AllEntries):
+    def __init__(self, path, nameFilter, sort = None, filters = None):
         '''void QDir.__init__(QString path, QString nameFilter, QDir.SortFlags sort = QDir.Name|QDir.IgnoreCase, QDir.Filters filters = QDir.AllEntries)'''
     def searchPaths(self, prefix):
         '''static QStringList QDir.searchPaths(QString prefix)'''
@@ -5074,16 +5074,16 @@ class QDir():
     def mkdir(self, dirName):
         '''bool QDir.mkdir(QString dirName)'''
         return bool()
-    def entryInfoList(self, filters = QDir.NoFilter, sort = QDir.NoSort):
+    def entryInfoList(self, filters = None, sort = None):
         '''list-of-QFileInfo QDir.entryInfoList(QDir.Filters filters = QDir.NoFilter, QDir.SortFlags sort = QDir.NoSort)'''
         return [QFileInfo()]
-    def entryInfoList(self, nameFilters, filters = QDir.NoFilter, sort = QDir.NoSort):
+    def entryInfoList(self, nameFilters, filters = None, sort = None):
         '''list-of-QFileInfo QDir.entryInfoList(QStringList nameFilters, QDir.Filters filters = QDir.NoFilter, QDir.SortFlags sort = QDir.NoSort)'''
         return [QFileInfo()]
-    def entryList(self, filters = QDir.NoFilter, sort = QDir.NoSort):
+    def entryList(self, filters = None, sort = None):
         '''QStringList QDir.entryList(QDir.Filters filters = QDir.NoFilter, QDir.SortFlags sort = QDir.NoSort)'''
         return QStringList()
-    def entryList(self, nameFilters, filters = QDir.NoFilter, sort = QDir.NoSort):
+    def entryList(self, nameFilters, filters = None, sort = None):
         '''QStringList QDir.entryList(QStringList nameFilters, QDir.Filters filters = QDir.NoFilter, QDir.SortFlags sort = QDir.NoSort)'''
         return QStringList()
     def nameFiltersFromString(self, nameFilter):
@@ -5099,8 +5099,8 @@ class QDir():
         '''slice QDir.__getitem__()'''
         return slice()
     def __len__(self):
-        ''' QDir.__len__()'''
-        return ()
+        '''None QDir.__len__()'''
+        return None()
     def count(self):
         '''int QDir.count()'''
         return int()
@@ -5260,13 +5260,13 @@ class QDirIterator():
     FollowSymlinks = 0
     Subdirectories = 0
 
-    def __init__(self, dir, flags = QDirIterator.NoIteratorFlags):
+    def __init__(self, dir, flags = None):
         '''void QDirIterator.__init__(QDir dir, QDirIterator.IteratorFlags flags = QDirIterator.NoIteratorFlags)'''
-    def __init__(self, path, flags = QDirIterator.NoIteratorFlags):
+    def __init__(self, path, flags = None):
         '''void QDirIterator.__init__(QString path, QDirIterator.IteratorFlags flags = QDirIterator.NoIteratorFlags)'''
-    def __init__(self, path, filters, flags = QDirIterator.NoIteratorFlags):
+    def __init__(self, path, filters, flags = None):
         '''void QDirIterator.__init__(QString path, QDir.Filters filters, QDirIterator.IteratorFlags flags = QDirIterator.NoIteratorFlags)'''
-    def __init__(self, path, nameFilters, filters = QDir.NoFilter, flags = QDirIterator.NoIteratorFlags):
+    def __init__(self, path, nameFilters, filters = None, flags = None):
         '''void QDirIterator.__init__(QString path, QStringList nameFilters, QDir.Filters filters = QDir.NoFilter, QDirIterator.IteratorFlags flags = QDirIterator.NoIteratorFlags)'''
     def path(self):
         '''QString QDirIterator.path()'''
@@ -5387,7 +5387,7 @@ class QEasingCurve():
     CosineCurve = 0
     Custom = 0
 
-    def __init__(self, type = QEasingCurve.Linear):
+    def __init__(self, type = None):
         '''void QEasingCurve.__init__(QEasingCurve.Type type = QEasingCurve.Linear)'''
     def __init__(self, other):
         '''void QEasingCurve.__init__(QEasingCurve other)'''
@@ -5510,10 +5510,10 @@ class QEventLoop(QObject):
         return bool()
     def exit(self, returnCode = 0):
         '''void QEventLoop.exit(int returnCode = 0)'''
-    def exec_(self, flags = QEventLoop.AllEvents):
+    def exec_(self, flags = None):
         '''int QEventLoop.exec_(QEventLoop.ProcessEventsFlags flags = QEventLoop.AllEvents)'''
         return int()
-    def processEvents(self, flags = QEventLoop.AllEvents):
+    def processEvents(self, flags = None):
         '''bool QEventLoop.processEvents(QEventLoop.ProcessEventsFlags flags = QEventLoop.AllEvents)'''
         return bool()
     def processEvents(self, flags, maximumTime):
@@ -5655,7 +5655,7 @@ class QFile(QIODevice):
     def unmap(self, address):
         '''bool QFile.unmap(sip.voidptr address)'''
         return bool()
-    def map(self, offset, size, flags = QFile.NoOptions):
+    def map(self, offset, size, flags = None):
         '''sip.voidptr QFile.map(int offset, int size, QFile.MemoryMapFlags flags = QFile.NoOptions)'''
         return sip.voidptr()
     def symLinkTarget(self):
@@ -7039,7 +7039,7 @@ class QLocale():
         '''void QLocale.__init__()'''
     def __init__(self, name):
         '''void QLocale.__init__(QString name)'''
-    def __init__(self, language, country = QLocale.AnyCountry):
+    def __init__(self, language, country = None):
         '''void QLocale.__init__(QLocale.Language language, QLocale.Country country = QLocale.AnyCountry)'''
     def __init__(self, other):
         '''void QLocale.__init__(QLocale other)'''
@@ -7048,7 +7048,7 @@ class QLocale():
     def createSeparatedList(self, list):
         '''QString QLocale.createSeparatedList(QStringList list)'''
         return QString()
-    def quoteString(self, str, style = QLocale.StandardQuotation):
+    def quoteString(self, str, style = None):
         '''QString QLocale.quoteString(QString str, QLocale.QuotationStyle style = QLocale.StandardQuotation)'''
         return QString()
     def matchingLocales(self, language, script, country):
@@ -7072,7 +7072,7 @@ class QLocale():
     def toCurrencyString(self, value, symbol = QString()):
         '''QString QLocale.toCurrencyString(int value, QString symbol = QString())'''
         return QString()
-    def currencySymbol(self, format = QLocale.CurrencySymbol):
+    def currencySymbol(self, format = None):
         '''QString QLocale.currencySymbol(QLocale.CurrencySymbolFormat format = QLocale.CurrencySymbol)'''
         return QString()
     def toLower(self, str):
@@ -7108,10 +7108,10 @@ class QLocale():
     def amText(self):
         '''QString QLocale.amText()'''
         return QString()
-    def standaloneDayName(self, format = QLocale.LongFormat):
+    def standaloneDayName(self, format = None):
         '''int QLocale.standaloneDayName(QLocale.FormatType format = QLocale.LongFormat)'''
         return int()
-    def standaloneMonthName(self, format = QLocale.LongFormat):
+    def standaloneMonthName(self, format = None):
         '''int QLocale.standaloneMonthName(QLocale.FormatType format = QLocale.LongFormat)'''
         return int()
     def positiveSign(self):
@@ -7128,10 +7128,10 @@ class QLocale():
         return QLocale.NumberOptions()
     def setNumberOptions(self, options):
         '''void QLocale.setNumberOptions(QLocale.NumberOptions options)'''
-    def dayName(self, format = QLocale.LongFormat):
+    def dayName(self, format = None):
         '''int QLocale.dayName(QLocale.FormatType format = QLocale.LongFormat)'''
         return int()
-    def monthName(self, format = QLocale.LongFormat):
+    def monthName(self, format = None):
         '''int QLocale.monthName(QLocale.FormatType format = QLocale.LongFormat)'''
         return int()
     def exponential(self):
@@ -7152,31 +7152,31 @@ class QLocale():
     def decimalPoint(self):
         '''QChar QLocale.decimalPoint()'''
         return QChar()
-    def toDateTime(self, string, format = QLocale.LongFormat):
+    def toDateTime(self, string, format = None):
         '''QDateTime QLocale.toDateTime(QString string, QLocale.FormatType format = QLocale.LongFormat)'''
         return QDateTime()
     def toDateTime(self, string, format):
         '''QDateTime QLocale.toDateTime(QString string, QString format)'''
         return QDateTime()
-    def toTime(self, string, format = QLocale.LongFormat):
+    def toTime(self, string, format = None):
         '''QTime QLocale.toTime(QString string, QLocale.FormatType format = QLocale.LongFormat)'''
         return QTime()
     def toTime(self, string, format):
         '''QTime QLocale.toTime(QString string, QString format)'''
         return QTime()
-    def toDate(self, string, format = QLocale.LongFormat):
+    def toDate(self, string, format = None):
         '''QDate QLocale.toDate(QString string, QLocale.FormatType format = QLocale.LongFormat)'''
         return QDate()
     def toDate(self, string, format):
         '''QDate QLocale.toDate(QString string, QString format)'''
         return QDate()
-    def dateTimeFormat(self, format = QLocale.LongFormat):
+    def dateTimeFormat(self, format = None):
         '''QString QLocale.dateTimeFormat(QLocale.FormatType format = QLocale.LongFormat)'''
         return QString()
-    def timeFormat(self, format = QLocale.LongFormat):
+    def timeFormat(self, format = None):
         '''QString QLocale.timeFormat(QLocale.FormatType format = QLocale.LongFormat)'''
         return QString()
-    def dateFormat(self, format = QLocale.LongFormat):
+    def dateFormat(self, format = None):
         '''QString QLocale.dateFormat(QLocale.FormatType format = QLocale.LongFormat)'''
         return QString()
     def system(self):
@@ -7202,7 +7202,7 @@ class QLocale():
     def toString(self, i):
         '''QString QLocale.toString(int i)'''
         return QString()
-    def toString(self, i, format = 'g', precision = 6):
+    def toString(self, i, format = None, precision = 6):
         '''QString QLocale.toString(float i, str format = 'g', int precision = 6)'''
         return QString()
     def toString(self, i):
@@ -7214,19 +7214,19 @@ class QLocale():
     def toString(self, dateTime, format):
         '''QString QLocale.toString(QDateTime dateTime, QString format)'''
         return QString()
-    def toString(self, dateTime, format = QLocale.LongFormat):
+    def toString(self, dateTime, format = None):
         '''QString QLocale.toString(QDateTime dateTime, QLocale.FormatType format = QLocale.LongFormat)'''
         return QString()
     def toString(self, date, formatStr):
         '''QString QLocale.toString(QDate date, QString formatStr)'''
         return QString()
-    def toString(self, date, format = QLocale.LongFormat):
+    def toString(self, date, format = None):
         '''QString QLocale.toString(QDate date, QLocale.FormatType format = QLocale.LongFormat)'''
         return QString()
     def toString(self, time, formatStr):
         '''QString QLocale.toString(QTime time, QString formatStr)'''
         return QString()
-    def toString(self, time, format = QLocale.LongFormat):
+    def toString(self, time, format = None):
         '''QString QLocale.toString(QTime time, QLocale.FormatType format = QLocale.LongFormat)'''
         return QString()
     def toDouble(self, s, ok):
@@ -7429,16 +7429,16 @@ class QMetaMethod():
     def methodIndex(self):
         '''int QMetaMethod.methodIndex()'''
         return int()
-    def invoke(self, object, connectionType, returnValue, value0 = QGenericArgument(0,0), value1 = QGenericArgument(0,0), value2 = QGenericArgument(0,0), value3 = QGenericArgument(0,0), value4 = QGenericArgument(0,0), value5 = QGenericArgument(0,0), value6 = QGenericArgument(0,0), value7 = QGenericArgument(0,0), value8 = QGenericArgument(0,0), value9 = QGenericArgument(0,0)):
+    def invoke(self, object, connectionType, returnValue, value0 = None, value1 = None, value2 = None, value3 = None, value4 = None, value5 = None, value6 = None, value7 = None, value8 = None, value9 = None):
         '''object QMetaMethod.invoke(QObject object, Qt.ConnectionType connectionType, QGenericReturnArgument returnValue, QGenericArgument value0 = QGenericArgument(0,0), QGenericArgument value1 = QGenericArgument(0,0), QGenericArgument value2 = QGenericArgument(0,0), QGenericArgument value3 = QGenericArgument(0,0), QGenericArgument value4 = QGenericArgument(0,0), QGenericArgument value5 = QGenericArgument(0,0), QGenericArgument value6 = QGenericArgument(0,0), QGenericArgument value7 = QGenericArgument(0,0), QGenericArgument value8 = QGenericArgument(0,0), QGenericArgument value9 = QGenericArgument(0,0))'''
         return object()
-    def invoke(self, object, returnValue, value0 = QGenericArgument(0,0), value1 = QGenericArgument(0,0), value2 = QGenericArgument(0,0), value3 = QGenericArgument(0,0), value4 = QGenericArgument(0,0), value5 = QGenericArgument(0,0), value6 = QGenericArgument(0,0), value7 = QGenericArgument(0,0), value8 = QGenericArgument(0,0), value9 = QGenericArgument(0,0)):
+    def invoke(self, object, returnValue, value0 = None, value1 = None, value2 = None, value3 = None, value4 = None, value5 = None, value6 = None, value7 = None, value8 = None, value9 = None):
         '''object QMetaMethod.invoke(QObject object, QGenericReturnArgument returnValue, QGenericArgument value0 = QGenericArgument(0,0), QGenericArgument value1 = QGenericArgument(0,0), QGenericArgument value2 = QGenericArgument(0,0), QGenericArgument value3 = QGenericArgument(0,0), QGenericArgument value4 = QGenericArgument(0,0), QGenericArgument value5 = QGenericArgument(0,0), QGenericArgument value6 = QGenericArgument(0,0), QGenericArgument value7 = QGenericArgument(0,0), QGenericArgument value8 = QGenericArgument(0,0), QGenericArgument value9 = QGenericArgument(0,0))'''
         return object()
-    def invoke(self, object, connectionType, value0 = QGenericArgument(0,0), value1 = QGenericArgument(0,0), value2 = QGenericArgument(0,0), value3 = QGenericArgument(0,0), value4 = QGenericArgument(0,0), value5 = QGenericArgument(0,0), value6 = QGenericArgument(0,0), value7 = QGenericArgument(0,0), value8 = QGenericArgument(0,0), value9 = QGenericArgument(0,0)):
+    def invoke(self, object, connectionType, value0 = None, value1 = None, value2 = None, value3 = None, value4 = None, value5 = None, value6 = None, value7 = None, value8 = None, value9 = None):
         '''object QMetaMethod.invoke(QObject object, Qt.ConnectionType connectionType, QGenericArgument value0 = QGenericArgument(0,0), QGenericArgument value1 = QGenericArgument(0,0), QGenericArgument value2 = QGenericArgument(0,0), QGenericArgument value3 = QGenericArgument(0,0), QGenericArgument value4 = QGenericArgument(0,0), QGenericArgument value5 = QGenericArgument(0,0), QGenericArgument value6 = QGenericArgument(0,0), QGenericArgument value7 = QGenericArgument(0,0), QGenericArgument value8 = QGenericArgument(0,0), QGenericArgument value9 = QGenericArgument(0,0))'''
         return object()
-    def invoke(self, object, value0 = QGenericArgument(0,0), value1 = QGenericArgument(0,0), value2 = QGenericArgument(0,0), value3 = QGenericArgument(0,0), value4 = QGenericArgument(0,0), value5 = QGenericArgument(0,0), value6 = QGenericArgument(0,0), value7 = QGenericArgument(0,0), value8 = QGenericArgument(0,0), value9 = QGenericArgument(0,0)):
+    def invoke(self, object, value0 = None, value1 = None, value2 = None, value3 = None, value4 = None, value5 = None, value6 = None, value7 = None, value8 = None, value9 = None):
         '''object QMetaMethod.invoke(QObject object, QGenericArgument value0 = QGenericArgument(0,0), QGenericArgument value1 = QGenericArgument(0,0), QGenericArgument value2 = QGenericArgument(0,0), QGenericArgument value3 = QGenericArgument(0,0), QGenericArgument value4 = QGenericArgument(0,0), QGenericArgument value5 = QGenericArgument(0,0), QGenericArgument value6 = QGenericArgument(0,0), QGenericArgument value7 = QGenericArgument(0,0), QGenericArgument value8 = QGenericArgument(0,0), QGenericArgument value9 = QGenericArgument(0,0))'''
         return object()
     def methodType(self):
@@ -7765,7 +7765,7 @@ class QMutex():
     NonRecursive = 0
     Recursive = 0
 
-    def __init__(self, mode = QMutex.NonRecursive):
+    def __init__(self, mode = None):
         '''void QMutex.__init__(QMutex.RecursionMode mode = QMutex.NonRecursive)'''
     def unlock(self):
         '''void QMutex.unlock()'''
@@ -7820,7 +7820,7 @@ class QMetaObject():
     def __init__(self):
         '''QMetaObject QMetaObject.__init__()'''
         return QMetaObject()
-    def newInstance(self, value0 = QGenericArgument(0,0), value1 = QGenericArgument(0,0), value2 = QGenericArgument(0,0), value3 = QGenericArgument(0,0), value4 = QGenericArgument(0,0), value5 = QGenericArgument(0,0), value6 = QGenericArgument(0,0), value7 = QGenericArgument(0,0), value8 = QGenericArgument(0,0), value9 = QGenericArgument(0,0)):
+    def newInstance(self, value0 = None, value1 = None, value2 = None, value3 = None, value4 = None, value5 = None, value6 = None, value7 = None, value8 = None, value9 = None):
         '''QObject QMetaObject.newInstance(QGenericArgument value0 = QGenericArgument(0,0), QGenericArgument value1 = QGenericArgument(0,0), QGenericArgument value2 = QGenericArgument(0,0), QGenericArgument value3 = QGenericArgument(0,0), QGenericArgument value4 = QGenericArgument(0,0), QGenericArgument value5 = QGenericArgument(0,0), QGenericArgument value6 = QGenericArgument(0,0), QGenericArgument value7 = QGenericArgument(0,0), QGenericArgument value8 = QGenericArgument(0,0), QGenericArgument value9 = QGenericArgument(0,0))'''
         return QObject()
     def constructor(self, index):
@@ -7832,16 +7832,16 @@ class QMetaObject():
     def constructorCount(self):
         '''int QMetaObject.constructorCount()'''
         return int()
-    def invokeMethod(self, obj, member, type, ret, value0 = QGenericArgument(0,0), value1 = QGenericArgument(0,0), value2 = QGenericArgument(0,0), value3 = QGenericArgument(0,0), value4 = QGenericArgument(0,0), value5 = QGenericArgument(0,0), value6 = QGenericArgument(0,0), value7 = QGenericArgument(0,0), value8 = QGenericArgument(0,0), value9 = QGenericArgument(0,0)):
+    def invokeMethod(self, obj, member, type, ret, value0 = None, value1 = None, value2 = None, value3 = None, value4 = None, value5 = None, value6 = None, value7 = None, value8 = None, value9 = None):
         '''static object QMetaObject.invokeMethod(QObject obj, str member, Qt.ConnectionType type, QGenericReturnArgument ret, QGenericArgument value0 = QGenericArgument(0,0), QGenericArgument value1 = QGenericArgument(0,0), QGenericArgument value2 = QGenericArgument(0,0), QGenericArgument value3 = QGenericArgument(0,0), QGenericArgument value4 = QGenericArgument(0,0), QGenericArgument value5 = QGenericArgument(0,0), QGenericArgument value6 = QGenericArgument(0,0), QGenericArgument value7 = QGenericArgument(0,0), QGenericArgument value8 = QGenericArgument(0,0), QGenericArgument value9 = QGenericArgument(0,0))'''
         return object()
-    def invokeMethod(self, obj, member, ret, value0 = QGenericArgument(0,0), value1 = QGenericArgument(0,0), value2 = QGenericArgument(0,0), value3 = QGenericArgument(0,0), value4 = QGenericArgument(0,0), value5 = QGenericArgument(0,0), value6 = QGenericArgument(0,0), value7 = QGenericArgument(0,0), value8 = QGenericArgument(0,0), value9 = QGenericArgument(0,0)):
+    def invokeMethod(self, obj, member, ret, value0 = None, value1 = None, value2 = None, value3 = None, value4 = None, value5 = None, value6 = None, value7 = None, value8 = None, value9 = None):
         '''static object QMetaObject.invokeMethod(QObject obj, str member, QGenericReturnArgument ret, QGenericArgument value0 = QGenericArgument(0,0), QGenericArgument value1 = QGenericArgument(0,0), QGenericArgument value2 = QGenericArgument(0,0), QGenericArgument value3 = QGenericArgument(0,0), QGenericArgument value4 = QGenericArgument(0,0), QGenericArgument value5 = QGenericArgument(0,0), QGenericArgument value6 = QGenericArgument(0,0), QGenericArgument value7 = QGenericArgument(0,0), QGenericArgument value8 = QGenericArgument(0,0), QGenericArgument value9 = QGenericArgument(0,0))'''
         return object()
-    def invokeMethod(self, obj, member, type, value0 = QGenericArgument(0,0), value1 = QGenericArgument(0,0), value2 = QGenericArgument(0,0), value3 = QGenericArgument(0,0), value4 = QGenericArgument(0,0), value5 = QGenericArgument(0,0), value6 = QGenericArgument(0,0), value7 = QGenericArgument(0,0), value8 = QGenericArgument(0,0), value9 = QGenericArgument(0,0)):
+    def invokeMethod(self, obj, member, type, value0 = None, value1 = None, value2 = None, value3 = None, value4 = None, value5 = None, value6 = None, value7 = None, value8 = None, value9 = None):
         '''static object QMetaObject.invokeMethod(QObject obj, str member, Qt.ConnectionType type, QGenericArgument value0 = QGenericArgument(0,0), QGenericArgument value1 = QGenericArgument(0,0), QGenericArgument value2 = QGenericArgument(0,0), QGenericArgument value3 = QGenericArgument(0,0), QGenericArgument value4 = QGenericArgument(0,0), QGenericArgument value5 = QGenericArgument(0,0), QGenericArgument value6 = QGenericArgument(0,0), QGenericArgument value7 = QGenericArgument(0,0), QGenericArgument value8 = QGenericArgument(0,0), QGenericArgument value9 = QGenericArgument(0,0))'''
         return object()
-    def invokeMethod(self, obj, member, value0 = QGenericArgument(0,0), value1 = QGenericArgument(0,0), value2 = QGenericArgument(0,0), value3 = QGenericArgument(0,0), value4 = QGenericArgument(0,0), value5 = QGenericArgument(0,0), value6 = QGenericArgument(0,0), value7 = QGenericArgument(0,0), value8 = QGenericArgument(0,0), value9 = QGenericArgument(0,0)):
+    def invokeMethod(self, obj, member, value0 = None, value1 = None, value2 = None, value3 = None, value4 = None, value5 = None, value6 = None, value7 = None, value8 = None, value9 = None):
         '''static object QMetaObject.invokeMethod(QObject obj, str member, QGenericArgument value0 = QGenericArgument(0,0), QGenericArgument value1 = QGenericArgument(0,0), QGenericArgument value2 = QGenericArgument(0,0), QGenericArgument value3 = QGenericArgument(0,0), QGenericArgument value4 = QGenericArgument(0,0), QGenericArgument value5 = QGenericArgument(0,0), QGenericArgument value6 = QGenericArgument(0,0), QGenericArgument value7 = QGenericArgument(0,0), QGenericArgument value8 = QGenericArgument(0,0), QGenericArgument value9 = QGenericArgument(0,0))'''
         return object()
     def normalizedType(self, type):
@@ -8285,9 +8285,9 @@ class QProcess(QIODevice):
         '''void QProcess.terminate()'''
     def setStandardOutputProcess(self, destination):
         '''void QProcess.setStandardOutputProcess(QProcess destination)'''
-    def setStandardErrorFile(self, fileName, mode = QIODevice.Truncate):
+    def setStandardErrorFile(self, fileName, mode = None):
         '''void QProcess.setStandardErrorFile(QString fileName, QIODevice.OpenMode mode = QIODevice.Truncate)'''
-    def setStandardOutputFile(self, fileName, mode = QIODevice.Truncate):
+    def setStandardOutputFile(self, fileName, mode = None):
         '''void QProcess.setStandardOutputFile(QString fileName, QIODevice.OpenMode mode = QIODevice.Truncate)'''
     def setStandardInputFile(self, fileName):
         '''void QProcess.setStandardInputFile(QString fileName)'''
@@ -8389,9 +8389,9 @@ class QProcess(QIODevice):
     def readChannelMode(self):
         '''QProcess.ProcessChannelMode QProcess.readChannelMode()'''
         return QProcess.ProcessChannelMode()
-    def start(self, program, arguments, mode = QIODevice.ReadWrite):
+    def start(self, program, arguments, mode = None):
         '''void QProcess.start(QString program, QStringList arguments, QIODevice.OpenMode mode = QIODevice.ReadWrite)'''
-    def start(self, program, mode = QIODevice.ReadWrite):
+    def start(self, program, mode = None):
         '''void QProcess.start(QString program, QIODevice.OpenMode mode = QIODevice.ReadWrite)'''
 
 
@@ -8917,7 +8917,7 @@ class QRegExp():
 
     def __init__(self):
         '''void QRegExp.__init__()'''
-    def __init__(self, pattern, cs = Qt.CaseSensitive, syntax = QRegExp.RegExp):
+    def __init__(self, pattern, cs = None, syntax = None):
         '''void QRegExp.__init__(QString pattern, Qt.CaseSensitivity cs = Qt.CaseSensitive, QRegExp.PatternSyntax syntax = QRegExp.RegExp)'''
     def __init__(self, rx):
         '''void QRegExp.__init__(QRegExp rx)'''
@@ -8947,10 +8947,10 @@ class QRegExp():
     def matchedLength(self):
         '''int QRegExp.matchedLength()'''
         return int()
-    def lastIndexIn(self, str, offset = -1, caretMode = QRegExp.CaretAtZero):
+    def lastIndexIn(self, str, offset = None, caretMode = None):
         '''int QRegExp.lastIndexIn(QString str, int offset = -1, QRegExp.CaretMode caretMode = QRegExp.CaretAtZero)'''
         return int()
-    def indexIn(self, str, offset = 0, caretMode = QRegExp.CaretAtZero):
+    def indexIn(self, str, offset = 0, caretMode = None):
         '''int QRegExp.indexIn(QString str, int offset = 0, QRegExp.CaretMode caretMode = QRegExp.CaretAtZero)'''
         return int()
     def exactMatch(self, str):
@@ -9207,7 +9207,7 @@ class QSettings(QObject):
         '''void QSettings.setArrayIndex(int i)'''
     def endArray(self):
         '''void QSettings.endArray()'''
-    def beginWriteArray(self, prefix, size = -1):
+    def beginWriteArray(self, prefix, size = None):
         '''void QSettings.beginWriteArray(QString prefix, int size = -1)'''
     def beginReadArray(self, prefix):
         '''int QSettings.beginReadArray(QString prefix)'''
@@ -9278,13 +9278,13 @@ class QSharedMemory(QObject):
     def isAttached(self):
         '''bool QSharedMemory.isAttached()'''
         return bool()
-    def attach(self, mode = QSharedMemory.ReadWrite):
+    def attach(self, mode = None):
         '''bool QSharedMemory.attach(QSharedMemory.AccessMode mode = QSharedMemory.ReadWrite)'''
         return bool()
     def size(self):
         '''int QSharedMemory.size()'''
         return int()
-    def create(self, size, mode = QSharedMemory.ReadWrite):
+    def create(self, size, mode = None):
         '''bool QSharedMemory.create(int size, QSharedMemory.AccessMode mode = QSharedMemory.ReadWrite)'''
         return bool()
     def key(self):
@@ -9649,7 +9649,7 @@ class QStateMachine(QState):
     def postDelayedEvent(self, event, delay):
         '''int QStateMachine.postDelayedEvent(QEvent event, int delay)'''
         return int()
-    def postEvent(self, event, priority = QStateMachine.NormalPriority):
+    def postEvent(self, event, priority = None):
         '''void QStateMachine.postEvent(QEvent event, QStateMachine.EventPriority priority = QStateMachine.NormalPriority)'''
     def setGlobalRestorePolicy(self, restorePolicy):
         '''void QStateMachine.setGlobalRestorePolicy(QStateMachine.RestorePolicy restorePolicy)'''
@@ -9864,7 +9864,7 @@ class QString():
     def number(self, n, base = 10):
         '''static QString QString.number(int n, int base = 10)'''
         return QString()
-    def number(self, n, format = 'g', precision = 6):
+    def number(self, n, format = None, precision = 6):
         '''static QString QString.number(float n, str format = 'g', int precision = 6)'''
         return QString()
     def number(self, n, base = 10):
@@ -9876,7 +9876,7 @@ class QString():
     def setNum(self, n, base = 10):
         '''QString QString.setNum(int n, int base = 10)'''
         return QString()
-    def setNum(self, n, format = 'g', precision = 6):
+    def setNum(self, n, format = None, precision = 6):
         '''QString QString.setNum(float n, str format = 'g', int precision = 6)'''
         return QString()
     def setNum(self, n, base = 10):
@@ -9933,10 +9933,10 @@ class QString():
     def compare(self, s, cs):
         '''int QString.compare(QString s, Qt.CaseSensitivity cs)'''
         return int()
-    def compare(self, other, cs = Qt.CaseSensitive):
+    def compare(self, other, cs = None):
         '''int QString.compare(QLatin1String other, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def compare(self, ref, cs = Qt.CaseSensitive):
+    def compare(self, ref, cs = None):
         '''int QString.compare(QStringRef ref, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
     def compare(self, s1, s2):
@@ -9945,25 +9945,25 @@ class QString():
     def compare(self, s1, s2, cs):
         '''static int QString.compare(QString s1, QString s2, Qt.CaseSensitivity cs)'''
         return int()
-    def compare(self, s1, s2, cs = Qt.CaseSensitive):
+    def compare(self, s1, s2, cs = None):
         '''static int QString.compare(QString s1, QLatin1String s2, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def compare(self, s1, s2, cs = Qt.CaseSensitive):
+    def compare(self, s1, s2, cs = None):
         '''static int QString.compare(QLatin1String s1, QString s2, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def compare(self, s1, s2, cs = Qt.CaseSensitive):
+    def compare(self, s1, s2, cs = None):
         '''static int QString.compare(QString s1, QStringRef s2, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def fromLocal8Bit(self, str, size = -1):
+    def fromLocal8Bit(self, str, size = None):
         '''static QString QString.fromLocal8Bit(str str, int size = -1)'''
         return QString()
-    def fromUtf8(self, str, size = -1):
+    def fromUtf8(self, str, size = None):
         '''static QString QString.fromUtf8(str str, int size = -1)'''
         return QString()
-    def fromLatin1(self, str, size = -1):
+    def fromLatin1(self, str, size = None):
         '''static QString QString.fromLatin1(str str, int size = -1)'''
         return QString()
-    def fromAscii(self, str, size = -1):
+    def fromAscii(self, str, size = None):
         '''static QString QString.fromAscii(str str, int size = -1)'''
         return QString()
     def toLocal8Bit(self):
@@ -9984,34 +9984,34 @@ class QString():
     def normalized(self, mode, version):
         '''QString QString.normalized(QString.NormalizationForm mode, QChar.UnicodeVersion version)'''
         return QString()
-    def split(self, sep, behavior = QString.KeepEmptyParts, cs = Qt.CaseSensitive):
+    def split(self, sep, behavior = None, cs = None):
         '''QStringList QString.split(QString sep, QString.SplitBehavior behavior = QString.KeepEmptyParts, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return QStringList()
-    def split(self, sep, behavior = QString.KeepEmptyParts):
+    def split(self, sep, behavior = None):
         '''QStringList QString.split(QRegExp sep, QString.SplitBehavior behavior = QString.KeepEmptyParts)'''
         return QStringList()
     def replace(self, i, len, after):
         '''QString QString.replace(int i, int len, QString after)'''
         return QString()
-    def replace(self, before, after, cs = Qt.CaseSensitive):
+    def replace(self, before, after, cs = None):
         '''QString QString.replace(QString before, QString after, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return QString()
     def replace(self, rx, after):
         '''QString QString.replace(QRegExp rx, QString after)'''
         return QString()
-    def replace(self, before, after, cs = Qt.CaseSensitive):
+    def replace(self, before, after, cs = None):
         '''QString QString.replace(QLatin1String before, QLatin1String after, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return QString()
-    def replace(self, before, after, cs = Qt.CaseSensitive):
+    def replace(self, before, after, cs = None):
         '''QString QString.replace(QLatin1String before, QString after, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return QString()
-    def replace(self, before, after, cs = Qt.CaseSensitive):
+    def replace(self, before, after, cs = None):
         '''QString QString.replace(QString before, QLatin1String after, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return QString()
     def remove(self, i, len):
         '''QString QString.remove(int i, int len)'''
         return QString()
-    def remove(self, str, cs = Qt.CaseSensitive):
+    def remove(self, str, cs = None):
         '''QString QString.remove(QString str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return QString()
     def remove(self, rx):
@@ -10065,31 +10065,31 @@ class QString():
     def toLower(self):
         '''QString QString.toLower()'''
         return QString()
-    def rightJustified(self, width, fillChar = QLatin1Char(' '), truncate = False):
+    def rightJustified(self, width, fillChar = None, truncate = False):
         '''QString QString.rightJustified(int width, QChar fillChar = QLatin1Char(' '), bool truncate = False)'''
         return QString()
-    def leftJustified(self, width, fillChar = QLatin1Char(' '), truncate = False):
+    def leftJustified(self, width, fillChar = None, truncate = False):
         '''QString QString.leftJustified(int width, QChar fillChar = QLatin1Char(' '), bool truncate = False)'''
         return QString()
-    def endsWith(self, s, cs = Qt.CaseSensitive):
+    def endsWith(self, s, cs = None):
         '''bool QString.endsWith(QString s, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
-    def endsWith(self, s, cs = Qt.CaseSensitive):
+    def endsWith(self, s, cs = None):
         '''bool QString.endsWith(QStringRef s, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
-    def endsWith(self, s, cs = Qt.CaseSensitive):
+    def endsWith(self, s, cs = None):
         '''bool QString.endsWith(QLatin1String s, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
-    def startsWith(self, s, cs = Qt.CaseSensitive):
+    def startsWith(self, s, cs = None):
         '''bool QString.startsWith(QString s, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
-    def startsWith(self, s, cs = Qt.CaseSensitive):
+    def startsWith(self, s, cs = None):
         '''bool QString.startsWith(QStringRef s, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
-    def startsWith(self, s, cs = Qt.CaseSensitive):
+    def startsWith(self, s, cs = None):
         '''bool QString.startsWith(QLatin1String s, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
-    def mid(self, position, n = -1):
+    def mid(self, position, n = None):
         '''QString QString.mid(int position, int n = -1)'''
         return QString()
     def right(self, len):
@@ -10098,58 +10098,58 @@ class QString():
     def left(self, len):
         '''QString QString.left(int len)'''
         return QString()
-    def section(self, sep, start, end = -1, flags = QString.SectionDefault):
+    def section(self, sep, start, end = None, flags = None):
         '''QString QString.section(QString sep, int start, int end = -1, QString.SectionFlags flags = QString.SectionDefault)'''
         return QString()
-    def section(self, reg, start, end = -1, flags = QString.SectionDefault):
+    def section(self, reg, start, end = None, flags = None):
         '''QString QString.section(QRegExp reg, int start, int end = -1, QString.SectionFlags flags = QString.SectionDefault)'''
         return QString()
-    def contains(self, str, cs = Qt.CaseSensitive):
+    def contains(self, str, cs = None):
         '''bool QString.contains(QString str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
-    def contains(self, s, cs = Qt.CaseSensitive):
+    def contains(self, s, cs = None):
         '''bool QString.contains(QStringRef s, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
     def contains(self, rx):
         '''bool QString.contains(QRegExp rx)'''
         return bool()
-    def lastIndexOf(self, str, from_ = -1, cs = Qt.CaseSensitive):
+    def lastIndexOf(self, str, from_ = None, cs = None):
         '''int QString.lastIndexOf(QString str, int from = -1, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def lastIndexOf(self, str, from_ = -1, cs = Qt.CaseSensitive):
+    def lastIndexOf(self, str, from_ = None, cs = None):
         '''int QString.lastIndexOf(QStringRef str, int from = -1, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def lastIndexOf(self, str, from_ = -1, cs = Qt.CaseSensitive):
+    def lastIndexOf(self, str, from_ = None, cs = None):
         '''int QString.lastIndexOf(QLatin1String str, int from = -1, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def lastIndexOf(self, rx, from_ = -1):
+    def lastIndexOf(self, rx, from_ = None):
         '''int QString.lastIndexOf(QRegExp rx, int from = -1)'''
         return int()
-    def indexOf(self, str, from_ = 0, cs = Qt.CaseSensitive):
+    def indexOf(self, str, from_ = 0, cs = None):
         '''int QString.indexOf(QString str, int from = 0, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def indexOf(self, str, from_ = 0, cs = Qt.CaseSensitive):
+    def indexOf(self, str, from_ = 0, cs = None):
         '''int QString.indexOf(QStringRef str, int from = 0, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def indexOf(self, str, from_ = 0, cs = Qt.CaseSensitive):
+    def indexOf(self, str, from_ = 0, cs = None):
         '''int QString.indexOf(QLatin1String str, int from = 0, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
     def indexOf(self, rx, from_ = 0):
         '''int QString.indexOf(QRegExp rx, int from = 0)'''
         return int()
-    def arg(self, a, fieldWidth = 0, base = 10, fillChar = QLatin1Char(' ')):
+    def arg(self, a, fieldWidth = 0, base = 10, fillChar = None):
         '''QString QString.arg(int a, int fieldWidth = 0, int base = 10, QChar fillChar = QLatin1Char(' '))'''
         return QString()
-    def arg(self, a, fieldWidth = 0, format = 'g', precision = -1, fillChar = QLatin1Char(' ')):
+    def arg(self, a, fieldWidth = 0, format = None, precision = None, fillChar = None):
         '''QString QString.arg(float a, int fieldWidth = 0, str format = 'g', int precision = -1, QChar fillChar = QLatin1Char(' '))'''
         return QString()
-    def arg(self, a, fieldWidth = 0, base = 10, fillChar = QLatin1Char(' ')):
+    def arg(self, a, fieldWidth = 0, base = 10, fillChar = None):
         '''QString QString.arg(int a, int fieldWidth = 0, int base = 10, QChar fillChar = QLatin1Char(' '))'''
         return QString()
-    def arg(self, a, fieldWidth = 0, base = 10, fillChar = QLatin1Char(' ')):
+    def arg(self, a, fieldWidth = 0, base = 10, fillChar = None):
         '''QString QString.arg(int a, int fieldWidth = 0, int base = 10, QChar fillChar = QLatin1Char(' '))'''
         return QString()
-    def arg(self, a, fieldWidth = 0, fillChar = QLatin1Char(' ')):
+    def arg(self, a, fieldWidth = 0, fillChar = None):
         '''QString QString.arg(QString a, int fieldWidth = 0, QChar fillChar = QLatin1Char(' '))'''
         return QString()
     def arg(self, a1, a2):
@@ -10182,21 +10182,21 @@ class QString():
         '''void QString.chop(int n)'''
     def truncate(self, pos):
         '''void QString.truncate(int pos)'''
-    def fill(self, ch, size = -1):
+    def fill(self, ch, size = None):
         '''QString QString.fill(QChar ch, int size = -1)'''
         return QString()
     def resize(self, size):
         '''void QString.resize(int size)'''
     def __len__(self):
-        ''' QString.__len__()'''
-        return ()
+        '''None QString.__len__()'''
+        return None()
     def count(self):
         '''int QString.count()'''
         return int()
-    def count(self, str, cs = Qt.CaseSensitive):
+    def count(self, str, cs = None):
         '''int QString.count(QString str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def count(self, str, cs = Qt.CaseSensitive):
+    def count(self, str, cs = None):
         '''int QString.count(QStringRef str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
     def count(self):
@@ -10356,13 +10356,13 @@ class QStringRef():
     def __ge__(self, s2):
         '''bool QStringRef.__ge__(QStringRef s2)'''
         return bool()
-    def contains(self, str, cs = Qt.CaseSensitive):
+    def contains(self, str, cs = None):
         '''bool QStringRef.contains(QString str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
-    def contains(self, str, cs = Qt.CaseSensitive):
+    def contains(self, str, cs = None):
         '''bool QStringRef.contains(QLatin1String str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
-    def contains(self, str, cs = Qt.CaseSensitive):
+    def contains(self, str, cs = None):
         '''bool QStringRef.contains(QStringRef str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
     def toUcs4(self):
@@ -10380,40 +10380,40 @@ class QStringRef():
     def toAscii(self):
         '''QByteArray QStringRef.toAscii()'''
         return QByteArray()
-    def endsWith(self, str, cs = Qt.CaseSensitive):
+    def endsWith(self, str, cs = None):
         '''bool QStringRef.endsWith(QString str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
-    def endsWith(self, str, cs = Qt.CaseSensitive):
+    def endsWith(self, str, cs = None):
         '''bool QStringRef.endsWith(QLatin1String str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
-    def endsWith(self, str, cs = Qt.CaseSensitive):
+    def endsWith(self, str, cs = None):
         '''bool QStringRef.endsWith(QStringRef str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
-    def startsWith(self, str, cs = Qt.CaseSensitive):
+    def startsWith(self, str, cs = None):
         '''bool QStringRef.startsWith(QString str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
-    def startsWith(self, str, cs = Qt.CaseSensitive):
+    def startsWith(self, str, cs = None):
         '''bool QStringRef.startsWith(QLatin1String str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
-    def startsWith(self, str, cs = Qt.CaseSensitive):
+    def startsWith(self, str, cs = None):
         '''bool QStringRef.startsWith(QStringRef str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
-    def lastIndexOf(self, str, from_ = -1, cs = Qt.CaseSensitive):
+    def lastIndexOf(self, str, from_ = None, cs = None):
         '''int QStringRef.lastIndexOf(QString str, int from = -1, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def lastIndexOf(self, str, from_ = -1, cs = Qt.CaseSensitive):
+    def lastIndexOf(self, str, from_ = None, cs = None):
         '''int QStringRef.lastIndexOf(QLatin1String str, int from = -1, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def lastIndexOf(self, str, from_ = -1, cs = Qt.CaseSensitive):
+    def lastIndexOf(self, str, from_ = None, cs = None):
         '''int QStringRef.lastIndexOf(QStringRef str, int from = -1, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def indexOf(self, str, from_ = 0, cs = Qt.CaseSensitive):
+    def indexOf(self, str, from_ = 0, cs = None):
         '''int QStringRef.indexOf(QString str, int from = 0, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def indexOf(self, str, from_ = 0, cs = Qt.CaseSensitive):
+    def indexOf(self, str, from_ = 0, cs = None):
         '''int QStringRef.indexOf(QLatin1String str, int from = 0, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def indexOf(self, str, from_ = 0, cs = Qt.CaseSensitive):
+    def indexOf(self, str, from_ = 0, cs = None):
         '''int QStringRef.indexOf(QStringRef str, int from = 0, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
     def __str__(self):
@@ -10434,22 +10434,22 @@ class QStringRef():
     def localeAwareCompare(self, s1, s2):
         '''static int QStringRef.localeAwareCompare(QStringRef s1, QStringRef s2)'''
         return int()
-    def compare(self, other, cs = Qt.CaseSensitive):
+    def compare(self, other, cs = None):
         '''int QStringRef.compare(QString other, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def compare(self, other, cs = Qt.CaseSensitive):
+    def compare(self, other, cs = None):
         '''int QStringRef.compare(QStringRef other, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def compare(self, other, cs = Qt.CaseSensitive):
+    def compare(self, other, cs = None):
         '''int QStringRef.compare(QLatin1String other, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def compare(self, s1, s2, cs = Qt.CaseSensitive):
+    def compare(self, s1, s2, cs = None):
         '''static int QStringRef.compare(QStringRef s1, QString s2, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def compare(self, s1, s2, cs = Qt.CaseSensitive):
+    def compare(self, s1, s2, cs = None):
         '''static int QStringRef.compare(QStringRef s1, QStringRef s2, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def compare(self, s1, s2, cs = Qt.CaseSensitive):
+    def compare(self, s1, s2, cs = None):
         '''static int QStringRef.compare(QStringRef s1, QLatin1String s2, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
     def at(self, i):
@@ -10482,15 +10482,15 @@ class QStringRef():
         '''int QStringRef.length()'''
         return int()
     def __len__(self):
-        ''' QStringRef.__len__()'''
-        return ()
+        '''None QStringRef.__len__()'''
+        return None()
     def count(self):
         '''int QStringRef.count()'''
         return int()
-    def count(self, str, cs = Qt.CaseSensitive):
+    def count(self, str, cs = None):
         '''int QStringRef.count(QString str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
-    def count(self, str, cs = Qt.CaseSensitive):
+    def count(self, str, cs = None):
         '''int QStringRef.count(QStringRef str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return int()
     def size(self):
@@ -10518,7 +10518,7 @@ class QStringList():
     def __iadd__(self, value):
         '''QStringList QStringList.__iadd__(QString value)'''
         return QStringList()
-    def mid(self, pos, length = -1):
+    def mid(self, pos, length = None):
         '''QStringList QStringList.mid(int pos, int length = -1)'''
         return QStringList()
     def last(self):
@@ -10528,8 +10528,8 @@ class QStringList():
         '''QString QStringList.first()'''
         return QString()
     def __len__(self):
-        ''' QStringList.__len__()'''
-        return ()
+        '''None QStringList.__len__()'''
+        return None()
     def count(self, str):
         '''int QStringList.count(QString str)'''
         return int()
@@ -10602,10 +10602,10 @@ class QStringList():
     def removeDuplicates(self):
         '''int QStringList.removeDuplicates()'''
         return int()
-    def lastIndexOf(self, value, from_ = -1):
+    def lastIndexOf(self, value, from_ = None):
         '''int QStringList.lastIndexOf(QString value, int from = -1)'''
         return int()
-    def lastIndexOf(self, rx, from_ = -1):
+    def lastIndexOf(self, rx, from_ = None):
         '''int QStringList.lastIndexOf(QRegExp rx, int from = -1)'''
         return int()
     def indexOf(self, value, from_ = 0):
@@ -10614,16 +10614,16 @@ class QStringList():
     def indexOf(self, rx, from_ = 0):
         '''int QStringList.indexOf(QRegExp rx, int from = 0)'''
         return int()
-    def replaceInStrings(self, before, after, cs = Qt.CaseSensitive):
+    def replaceInStrings(self, before, after, cs = None):
         '''QStringList QStringList.replaceInStrings(QString before, QString after, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return QStringList()
     def replaceInStrings(self, rx, after):
         '''QStringList QStringList.replaceInStrings(QRegExp rx, QString after)'''
         return QStringList()
-    def contains(self, str, cs = Qt.CaseSensitive):
+    def contains(self, str, cs = None):
         '''bool QStringList.contains(QString str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return bool()
-    def filter(self, str, cs = Qt.CaseSensitive):
+    def filter(self, str, cs = None):
         '''QStringList QStringList.filter(QString str, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
         return QStringList()
     def filter(self, rx):
@@ -10646,7 +10646,7 @@ class QStringMatcher():
     """"""
     def __init__(self):
         '''void QStringMatcher.__init__()'''
-    def __init__(self, pattern, cs = Qt.CaseSensitive):
+    def __init__(self, pattern, cs = None):
         '''void QStringMatcher.__init__(QString pattern, Qt.CaseSensitivity cs = Qt.CaseSensitive)'''
     def __init__(self, other):
         '''void QStringMatcher.__init__(QStringMatcher other)'''
@@ -10680,7 +10680,7 @@ class QSystemSemaphore():
     Open = 0
     Create = 0
 
-    def __init__(self, key, initialValue = 0, mode = QSystemSemaphore.Open):
+    def __init__(self, key, initialValue = 0, mode = None):
         '''void QSystemSemaphore.__init__(QString key, int initialValue = 0, QSystemSemaphore.AccessMode mode = QSystemSemaphore.Open)'''
     def errorString(self):
         '''QString QSystemSemaphore.errorString()'''
@@ -10697,7 +10697,7 @@ class QSystemSemaphore():
     def key(self):
         '''QString QSystemSemaphore.key()'''
         return QString()
-    def setKey(self, key, initialValue = 0, mode = QSystemSemaphore.Open):
+    def setKey(self, key, initialValue = 0, mode = None):
         '''void QSystemSemaphore.setKey(QString key, int initialValue = 0, QSystemSemaphore.AccessMode mode = QSystemSemaphore.Open)'''
 
 
@@ -10982,7 +10982,7 @@ class QTextCodec():
             return QTextCodec.ConversionFlags()
     class ConverterState():
         """"""
-        def __init__(self, flags = QTextCodec.DefaultConversion):
+        def __init__(self, flags = None):
             '''void QTextCodec.ConverterState.__init__(QTextCodec.ConversionFlags flags = QTextCodec.DefaultConversion)'''
 
 
@@ -11043,9 +11043,9 @@ class QTextStream():
         '''void QTextStream.__init__()'''
     def __init__(self, device):
         '''void QTextStream.__init__(QIODevice device)'''
-    def __init__(self, string, mode = QIODevice.ReadWrite):
+    def __init__(self, string, mode = None):
         '''void QTextStream.__init__(QString string, QIODevice.OpenMode mode = QIODevice.ReadWrite)'''
-    def __init__(self, array, mode = QIODevice.ReadWrite):
+    def __init__(self, array, mode = None):
         '''void QTextStream.__init__(QByteArray array, QIODevice.OpenMode mode = QIODevice.ReadWrite)'''
     def locale(self):
         '''QLocale QTextStream.locale()'''
@@ -11154,7 +11154,7 @@ class QTextStream():
     def string(self):
         '''QString QTextStream.string()'''
         return QString()
-    def setString(self, string, mode = QIODevice.ReadWrite):
+    def setString(self, string, mode = None):
         '''void QTextStream.setString(QString string, QIODevice.OpenMode mode = QIODevice.ReadWrite)'''
     def device(self):
         '''QIODevice QTextStream.device()'''
@@ -11262,14 +11262,14 @@ class QThread(QObject):
     terminated = pyqtSignal() # void terminated() - signal
     finished = pyqtSignal() # void finished() - signal
     started = pyqtSignal() # void started() - signal
-    def wait(self, msecs = ULONG_MAX):
+    def wait(self, msecs = None):
         '''bool QThread.wait(int msecs = ULONG_MAX)'''
         return bool()
     def quit(self):
         '''void QThread.quit()'''
     def terminate(self):
         '''void QThread.terminate()'''
-    def start(self, priority = QThread.InheritPriority):
+    def start(self, priority = None):
         '''void QThread.start(QThread.Priority priority = QThread.InheritPriority)'''
     def exit(self, returnCode = 0):
         '''void QThread.exit(int returnCode = 0)'''
@@ -11454,7 +11454,7 @@ class QTimer(QObject):
     def start(self):
         '''void QTimer.start()'''
     def singleShot(self, msec, receiver, member):
-        '''static void QTimer.singleShot(int msec, QObject receiver, SLOT()SLOT() member)'''
+        '''static void QTimer.singleShot(int msec, QObject receiver, SLOT() member)'''
     def singleShot(self, msec, receiver):
         '''static void QTimer.singleShot(int msec, callable receiver)'''
     def setSingleShot(self, asingleShot):
@@ -11637,10 +11637,10 @@ class QUrl():
     def fromEncoded(self, url, mode):
         '''static QUrl QUrl.fromEncoded(QByteArray url, QUrl.ParsingMode mode)'''
         return QUrl()
-    def toEncoded(self, options = QUrl.None):
+    def toEncoded(self, options = None):
         '''QByteArray QUrl.toEncoded(QUrl.FormattingOptions options = QUrl.None)'''
         return QByteArray()
-    def toString(self, options = QUrl.None):
+    def toString(self, options = None):
         '''QString QUrl.toString(QUrl.FormattingOptions options = QUrl.None)'''
         return QString()
     def toLocalFile(self):
@@ -12118,10 +12118,10 @@ class QWaitCondition():
         '''void QWaitCondition.wakeAll()'''
     def wakeOne(self):
         '''void QWaitCondition.wakeOne()'''
-    def wait(self, mutex, msecs = ULONG_MAX):
+    def wait(self, mutex, msecs = None):
         '''bool QWaitCondition.wait(QMutex mutex, int msecs = ULONG_MAX)'''
         return bool()
-    def wait(self, readWriteLock, msecs = ULONG_MAX):
+    def wait(self, readWriteLock, msecs = None):
         '''bool QWaitCondition.wait(QReadWriteLock readWriteLock, int msecs = ULONG_MAX)'''
         return bool()
 
@@ -12210,7 +12210,7 @@ class QXmlStreamAttributes():
         '''void QXmlStreamAttributes.remove(int i, int count)'''
     def prepend(self, value):
         '''void QXmlStreamAttributes.prepend(QXmlStreamAttribute value)'''
-    def lastIndexOf(self, value, from_ = -1):
+    def lastIndexOf(self, value, from_ = None):
         '''int QXmlStreamAttributes.lastIndexOf(QXmlStreamAttribute value, int from = -1)'''
         return int()
     def last(self):
@@ -12227,14 +12227,14 @@ class QXmlStreamAttributes():
     def first(self):
         '''QXmlStreamAttribute QXmlStreamAttributes.first()'''
         return QXmlStreamAttribute()
-    def fill(self, value, size = -1):
+    def fill(self, value, size = None):
         '''void QXmlStreamAttributes.fill(QXmlStreamAttribute value, int size = -1)'''
     def data(self):
         '''sip.voidptr QXmlStreamAttributes.data()'''
         return sip.voidptr()
     def __len__(self):
-        ''' QXmlStreamAttributes.__len__()'''
-        return ()
+        '''None QXmlStreamAttributes.__len__()'''
+        return None()
     def count(self, value):
         '''int QXmlStreamAttributes.count(QXmlStreamAttribute value)'''
         return int()
@@ -12885,16 +12885,16 @@ def QT_TR_NOOP():
     return str()
 
 def Q_FLAGS(*args):
-    '''static  Q_FLAGS(... *args)'''
-    return ()
+    '''static None Q_FLAGS(... *args)'''
+    return None()
 
 def Q_ENUMS(*args):
-    '''static  Q_ENUMS(... *args)'''
-    return ()
+    '''static None Q_ENUMS(... *args)'''
+    return None()
 
 def Q_CLASSINFO(name, value):
-    '''static  Q_CLASSINFO(str name, str value)'''
-    return ()
+    '''static None Q_CLASSINFO(str name, str value)'''
+    return None()
 
 def qQNaN():
     '''static float qQNaN()'''
@@ -12940,7 +12940,7 @@ def qUncompress(data):
     '''static QByteArray qUncompress(QByteArray data)'''
     return QByteArray()
 
-def qCompress(data, compressionLevel = -1):
+def qCompress(data, compressionLevel = None):
     '''static QByteArray qCompress(QByteArray data, int compressionLevel = -1)'''
     return QByteArray()
 

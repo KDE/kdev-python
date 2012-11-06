@@ -20,9 +20,16 @@ def getNodeNames(node):
     parentNode = node.parentNode
     if parentNode.nodeName == 'Enum': # for unem members name prefix is not enum's name, but its parent's
        parentNode = parentNode.parentNode
-    parentName = parentNode.attributes['name'].value
-    if name.startswith(parentName + '.'):
-        return name[len(parentName) + 1:], name
+    
+    parentName = []
+    while parentNode.nodeName == 'Class':
+        parentName.append(parentNode.attributes['name'].value)
+        parentNode = parentNode.parentNode
+    parentName = list(reversed(parentName))
+    parentName = '.'.join(parentName) + '.'
+    
+    if name.startswith(parentName):
+        return name[len(parentName):], name
     return name, name
 
 

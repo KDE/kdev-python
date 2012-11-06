@@ -59,21 +59,24 @@ def convertSipToXML(inFilePath, outFilePath):
     print 'Looking for child classes...'
     childClasses = {}
     for node in module.childNodes:
-        if node.nodeType == node.ELEMENT_NODE: # skip non element nodes
-            if node.nodeName == 'Class':
-                name = node.attributes['name'].value
-                dotsCount = name.count('.')
-                if dotsCount:
-                    if dotsCount == 1:
-                        childClasses[name] = node
-                    else:
-                        print Exception('More than 2 dots in name of a class: %s' % name)
-                        continue
+        # skip non element nodes
+        if node.nodeType == node.ELEMENT_NODE and node.nodeName == 'Class':
+            name = node.attributes['name'].value
+            if name.count('.') >= 1:
+                childClasses[name] = node
 
     print 'Reparenting classes...'
     for name, node in childClasses.iteritems():
-        parentClassName = name.split('.')[0]
-        parentClassNode = xmlDoc.getElementById(parentClassName)
+        parentClassNode = xmlDoc
+        parentClassNode = xmlDoc.getElementById(name.split('.')[0])
+        for component in name.split('.')[1:-1]:
+            previous = parentClassNode
+            parentClassNode = xmlDoc.createElement("Class")
+            parentClassNode.setAttribute("name", component)
+            parentClassNode.setAttribute("convert", "1")
+            previous.appendChild(parentClassNode)
+            print "new class:", component
+        node.setAttribute("name", name.split('.')[-1])
         parentClassNode.appendChild(node)
 
     print 'Saving changes...'

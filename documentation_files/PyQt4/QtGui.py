@@ -85,7 +85,7 @@ class QWidget(QObject, QPaintDevice):
         return QMargins()
     def ungrabGesture(self, type):
         '''void QWidget.ungrabGesture(Qt.GestureType type)'''
-    def grabGesture(self, type, flags = Qt.GestureFlags(0)):
+    def grabGesture(self, type, flags = None):
         '''void QWidget.grabGesture(Qt.GestureType type, Qt.GestureFlags flags = Qt.GestureFlags(0))'''
     def setGraphicsEffect(self, effect):
         '''void QWidget.setGraphicsEffect(QGraphicsEffect effect)'''
@@ -113,9 +113,9 @@ class QWidget(QObject, QPaintDevice):
         return QLocale()
     def setLocale(self, locale):
         '''void QWidget.setLocale(QLocale locale)'''
-    def render(self, target, targetOffset = QPoint(), sourceRegion = QRegion(), flags = QWidget.DrawWindowBackground|QWidget.DrawChildren):
+    def render(self, target, targetOffset = QPoint(), sourceRegion = QRegion(), flags = None):
         '''void QWidget.render(QPaintDevice target, QPoint targetOffset = QPoint(), QRegion sourceRegion = QRegion(), QWidget.RenderFlags flags = QWidget.DrawWindowBackground|QWidget.DrawChildren)'''
-    def render(self, painter, targetOffset = QPoint(), sourceRegion = QRegion(), flags = QWidget.DrawWindowBackground|QWidget.DrawChildren):
+    def render(self, painter, targetOffset = QPoint(), sourceRegion = QRegion(), flags = None):
         '''void QWidget.render(QPainter painter, QPoint targetOffset = QPoint(), QRegion sourceRegion = QRegion(), QWidget.RenderFlags flags = QWidget.DrawWindowBackground|QWidget.DrawChildren)'''
     def restoreGeometry(self, geometry):
         '''bool QWidget.restoreGeometry(QByteArray geometry)'''
@@ -546,7 +546,7 @@ class QWidget(QObject, QPaintDevice):
         '''void QWidget.setShortcutEnabled(int id, bool enabled = True)'''
     def releaseShortcut(self, id):
         '''void QWidget.releaseShortcut(int id)'''
-    def grabShortcut(self, key, context = Qt.WindowShortcut):
+    def grabShortcut(self, key, context = None):
         '''int QWidget.grabShortcut(QKeySequence key, Qt.ShortcutContext context = Qt.WindowShortcut)'''
         return int()
     def releaseKeyboard(self):
@@ -1489,7 +1489,7 @@ class QAbstractItemView(QAbstractScrollArea):
     def indexAt(self, p):
         '''abstract QModelIndex QAbstractItemView.indexAt(QPoint p)'''
         return QModelIndex()
-    def scrollTo(self, index, hint = QAbstractItemView.EnsureVisible):
+    def scrollTo(self, index, hint = None):
         '''abstract void QAbstractItemView.scrollTo(QModelIndex index, QAbstractItemView.ScrollHint hint = QAbstractItemView.EnsureVisible)'''
     def visualRect(self, index):
         '''abstract QRect QAbstractItemView.visualRect(QModelIndex index)'''
@@ -1827,7 +1827,7 @@ class QAbstractProxyModel(QAbstractItemModel):
     def span(self, index):
         '''QSize QAbstractProxyModel.span(QModelIndex index)'''
         return QSize()
-    def sort(self, column, order = Qt.AscendingOrder):
+    def sort(self, column, order = None):
         '''void QAbstractProxyModel.sort(int column, Qt.SortOrder order = Qt.AscendingOrder)'''
     def fetchMore(self, parent):
         '''void QAbstractProxyModel.fetchMore(QModelIndex parent)'''
@@ -1846,16 +1846,16 @@ class QAbstractProxyModel(QAbstractItemModel):
     def itemData(self, index):
         '''dict-of-int-QVariant QAbstractProxyModel.itemData(QModelIndex index)'''
         return dict-of-int-QVariant()
-    def setHeaderData(self, section, orientation, value, role = Qt.EditRole):
+    def setHeaderData(self, section, orientation, value, role = None):
         '''bool QAbstractProxyModel.setHeaderData(int section, Qt.Orientation orientation, QVariant value, int role = Qt.EditRole)'''
         return bool()
     def headerData(self, section, orientation, role):
         '''QVariant QAbstractProxyModel.headerData(int section, Qt.Orientation orientation, int role)'''
         return QVariant()
-    def setData(self, index, value, role = Qt.EditRole):
+    def setData(self, index, value, role = None):
         '''bool QAbstractProxyModel.setData(QModelIndex index, QVariant value, int role = Qt.EditRole)'''
         return bool()
-    def data(self, proxyIndex, role = Qt.DisplayRole):
+    def data(self, proxyIndex, role = None):
         '''QVariant QAbstractProxyModel.data(QModelIndex proxyIndex, int role = Qt.DisplayRole)'''
         return QVariant()
     def revert(self):
@@ -2795,7 +2795,7 @@ class QPixmap(QPaintDevice):
     def __init__(self):
         '''QSize QPixmap.__init__()'''
         return QSize()
-    def __init__(self, fileName, format = None, flags = Qt.AutoColor):
+    def __init__(self, fileName, format = None, flags = None):
         '''void QPixmap.__init__(QString fileName, str format = None, Qt.ImageConversionFlags flags = Qt.AutoColor)'''
     def __init__(self, xpm):
         '''void QPixmap.__init__(list-of-str xpm)'''
@@ -2810,7 +2810,7 @@ class QPixmap(QPaintDevice):
         '''void QPixmap.scroll(int dx, int dy, QRect rect, QRegion exposed)'''
     def scroll(self, dx, dy, x, y, width, height, exposed):
         '''void QPixmap.scroll(int dx, int dy, int x, int y, int width, int height, QRegion exposed)'''
-    def fromX11Pixmap(self, pixmap, mode = QPixmap.ImplicitlyShared):
+    def fromX11Pixmap(self, pixmap, mode = None):
         '''static QPixmap QPixmap.fromX11Pixmap(int pixmap, QPixmap.ShareMode mode = QPixmap.ImplicitlyShared)'''
         return QPixmap()
     def cacheKey(self):
@@ -2845,28 +2845,28 @@ class QPixmap(QPaintDevice):
     def copy(self, ax, ay, awidth, aheight):
         '''QPixmap QPixmap.copy(int ax, int ay, int awidth, int aheight)'''
         return QPixmap()
-    def save(self, fileName, format = None, quality = -1):
+    def save(self, fileName, format = None, quality = None):
         '''bool QPixmap.save(QString fileName, str format = None, int quality = -1)'''
         return bool()
-    def save(self, device, format = None, quality = -1):
+    def save(self, device, format = None, quality = None):
         '''bool QPixmap.save(QIODevice device, str format = None, int quality = -1)'''
         return bool()
-    def loadFromData(self, buf, format = None, flags = Qt.AutoColor):
+    def loadFromData(self, buf, format = None, flags = None):
         '''bool QPixmap.loadFromData(str buf, str format = None, Qt.ImageConversionFlags flags = Qt.AutoColor)'''
         return bool()
-    def loadFromData(self, buf, format = None, flags = Qt.AutoColor):
+    def loadFromData(self, buf, format = None, flags = None):
         '''bool QPixmap.loadFromData(QByteArray buf, str format = None, Qt.ImageConversionFlags flags = Qt.AutoColor)'''
         return bool()
-    def load(self, fileName, format = None, flags = Qt.AutoColor):
+    def load(self, fileName, format = None, flags = None):
         '''bool QPixmap.load(QString fileName, str format = None, Qt.ImageConversionFlags flags = Qt.AutoColor)'''
         return bool()
-    def convertFromImage(self, img, flags = Qt.AutoColor):
+    def convertFromImage(self, img, flags = None):
         '''bool QPixmap.convertFromImage(QImage img, Qt.ImageConversionFlags flags = Qt.AutoColor)'''
         return bool()
-    def fromImageReader(self, imageReader, flags = Qt.AutoColor):
+    def fromImageReader(self, imageReader, flags = None):
         '''static QPixmap QPixmap.fromImageReader(QImageReader imageReader, Qt.ImageConversionFlags flags = Qt.AutoColor)'''
         return QPixmap()
-    def fromImage(self, image, flags = Qt.AutoColor):
+    def fromImage(self, image, flags = None):
         '''static QPixmap QPixmap.fromImage(QImage image, Qt.ImageConversionFlags flags = Qt.AutoColor)'''
         return QPixmap()
     def toImage(self):
@@ -2878,31 +2878,31 @@ class QPixmap(QPaintDevice):
     def trueMatrix(self, m, w, h):
         '''static QTransform QPixmap.trueMatrix(QTransform m, int w, int h)'''
         return QTransform()
-    def transformed(self, matrix, mode = Qt.FastTransformation):
+    def transformed(self, matrix, mode = None):
         '''QPixmap QPixmap.transformed(QMatrix matrix, Qt.TransformationMode mode = Qt.FastTransformation)'''
         return QPixmap()
-    def transformed(self, transform, mode = Qt.FastTransformation):
+    def transformed(self, transform, mode = None):
         '''QPixmap QPixmap.transformed(QTransform transform, Qt.TransformationMode mode = Qt.FastTransformation)'''
         return QPixmap()
-    def scaledToHeight(self, height, mode = Qt.FastTransformation):
+    def scaledToHeight(self, height, mode = None):
         '''QPixmap QPixmap.scaledToHeight(int height, Qt.TransformationMode mode = Qt.FastTransformation)'''
         return QPixmap()
-    def scaledToWidth(self, width, mode = Qt.FastTransformation):
+    def scaledToWidth(self, width, mode = None):
         '''QPixmap QPixmap.scaledToWidth(int width, Qt.TransformationMode mode = Qt.FastTransformation)'''
         return QPixmap()
-    def scaled(self, width, height, aspectRatioMode = Qt.IgnoreAspectRatio, transformMode = Qt.FastTransformation):
+    def scaled(self, width, height, aspectRatioMode = None, transformMode = None):
         '''QPixmap QPixmap.scaled(int width, int height, Qt.AspectRatioMode aspectRatioMode = Qt.IgnoreAspectRatio, Qt.TransformationMode transformMode = Qt.FastTransformation)'''
         return QPixmap()
-    def scaled(self, size, aspectRatioMode = Qt.IgnoreAspectRatio, transformMode = Qt.FastTransformation):
+    def scaled(self, size, aspectRatioMode = None, transformMode = None):
         '''QPixmap QPixmap.scaled(QSize size, Qt.AspectRatioMode aspectRatioMode = Qt.IgnoreAspectRatio, Qt.TransformationMode transformMode = Qt.FastTransformation)'''
         return QPixmap()
     def grabWidget(self, widget, rect):
         '''static QPixmap QPixmap.grabWidget(QWidget widget, QRect rect)'''
         return QPixmap()
-    def grabWidget(self, widget, x = 0, y = 0, width = -1, height = -1):
+    def grabWidget(self, widget, x = 0, y = 0, width = None, height = None):
         '''static QPixmap QPixmap.grabWidget(QWidget widget, int x = 0, int y = 0, int width = -1, int height = -1)'''
         return QPixmap()
-    def grabWindow(self, window, x = 0, y = 0, width = -1, height = -1):
+    def grabWindow(self, window, x = 0, y = 0, width = None, height = None):
         '''static QPixmap QPixmap.grabWindow(int window, int x = 0, int y = 0, int width = -1, int height = -1)'''
         return QPixmap()
     def createMaskFromColor(self, maskColor, mode):
@@ -2932,7 +2932,7 @@ class QPixmap(QPaintDevice):
     def mask(self):
         '''QBitmap QPixmap.mask()'''
         return QBitmap()
-    def fill(self, color = Qt.white):
+    def fill(self, color = None):
         '''void QPixmap.fill(QColor color = Qt.white)'''
     def fill(self, widget, ofs):
         '''void QPixmap.fill(QWidget widget, QPoint ofs)'''
@@ -2991,10 +2991,10 @@ class QBitmap(QPixmap):
     def transformed(self, matrix):
         '''QBitmap QBitmap.transformed(QTransform matrix)'''
         return QBitmap()
-    def fromData(self, size, bits, format = QImage.Format_MonoLSB):
+    def fromData(self, size, bits, format = None):
         '''static QBitmap QBitmap.fromData(QSize size, str bits, QImage.Format format = QImage.Format_MonoLSB)'''
         return QBitmap()
-    def fromImage(self, image, flags = Qt.AutoColor):
+    def fromImage(self, image, flags = None):
         '''static QBitmap QBitmap.fromImage(QImage image, Qt.ImageConversionFlags flags = Qt.AutoColor)'''
         return QBitmap()
     def clear(self):
@@ -3125,8 +3125,8 @@ class QLayout(QObject, QLayoutItem):
         '''bool QLayout.isEmpty()'''
         return bool()
     def __len__(self):
-        ''' QLayout.__len__()'''
-        return ()
+        '''None QLayout.__len__()'''
+        return None()
     def count(self):
         '''abstract int QLayout.count()'''
         return int()
@@ -3682,9 +3682,9 @@ class QBrush():
         '''void QBrush.__init__()'''
     def __init__(self, bs):
         '''void QBrush.__init__(Qt.BrushStyle bs)'''
-    def __init__(self, color, style = Qt.SolidPattern):
+    def __init__(self, color, style = None):
         '''void QBrush.__init__(QColor color, Qt.BrushStyle style = Qt.SolidPattern)'''
-    def __init__(self, color, style = Qt.SolidPattern):
+    def __init__(self, color, style = None):
         '''void QBrush.__init__(Qt.GlobalColor color, Qt.BrushStyle style = Qt.SolidPattern)'''
     def __init__(self, color, pixmap):
         '''void QBrush.__init__(QColor color, QPixmap pixmap)'''
@@ -4155,33 +4155,33 @@ class QClipboard(QObject):
     findBufferChanged = pyqtSignal() # void findBufferChanged() - signal
     dataChanged = pyqtSignal() # void dataChanged() - signal
     changed = pyqtSignal() # void changed(QClipboard::Mode) - signal
-    def setPixmap(self, mode = QClipboard.Clipboard):
+    def setPixmap(self, mode = None):
         '''QPixmap QClipboard.setPixmap(QClipboard.Mode mode = QClipboard.Clipboard)'''
         return QPixmap()
-    def setImage(self, mode = QClipboard.Clipboard):
+    def setImage(self, mode = None):
         '''QImage QClipboard.setImage(QClipboard.Mode mode = QClipboard.Clipboard)'''
         return QImage()
-    def pixmap(self, mode = QClipboard.Clipboard):
+    def pixmap(self, mode = None):
         '''QPixmap QClipboard.pixmap(QClipboard.Mode mode = QClipboard.Clipboard)'''
         return QPixmap()
-    def image(self, mode = QClipboard.Clipboard):
+    def image(self, mode = None):
         '''QImage QClipboard.image(QClipboard.Mode mode = QClipboard.Clipboard)'''
         return QImage()
-    def setMimeData(self, data, mode = QClipboard.Clipboard):
+    def setMimeData(self, data, mode = None):
         '''void QClipboard.setMimeData(QMimeData data, QClipboard.Mode mode = QClipboard.Clipboard)'''
-    def mimeData(self, mode = QClipboard.Clipboard):
+    def mimeData(self, mode = None):
         '''QMimeData QClipboard.mimeData(QClipboard.Mode mode = QClipboard.Clipboard)'''
         return QMimeData()
-    def setText(self, mode = QClipboard.Clipboard):
+    def setText(self, mode = None):
         '''QString QClipboard.setText(QClipboard.Mode mode = QClipboard.Clipboard)'''
         return QString()
-    def text(self, mode = QClipboard.Clipboard):
+    def text(self, mode = None):
         '''QString QClipboard.text(QClipboard.Mode mode = QClipboard.Clipboard)'''
         return QString()
-    def text(self, subtype, mode = QClipboard.Clipboard):
+    def text(self, subtype, mode = None):
         '''(QString, QString) QClipboard.text(QString subtype, QClipboard.Mode mode = QClipboard.Clipboard)'''
         return (QString, QString)()
-    def text(self, subtype, mode = QClipboard.Clipboard):
+    def text(self, subtype, mode = None):
         '''QString QClipboard.text(QString subtype, QClipboard.Mode mode = QClipboard.Clipboard)'''
         return QString()
     def ownsSelection(self):
@@ -4199,7 +4199,7 @@ class QClipboard(QObject):
     def supportsFindBuffer(self):
         '''bool QClipboard.supportsFindBuffer()'''
         return bool()
-    def clear(self, mode = QClipboard.Clipboard):
+    def clear(self, mode = None):
         '''void QClipboard.clear(QClipboard.Mode mode = QClipboard.Clipboard)'''
 
 
@@ -4252,7 +4252,7 @@ class QColumnView(QAbstractItemView):
     def sizeHint(self):
         '''QSize QColumnView.sizeHint()'''
         return QSize()
-    def scrollTo(self, index, hint = QAbstractItemView.EnsureVisible):
+    def scrollTo(self, index, hint = None):
         '''void QColumnView.scrollTo(QModelIndex index, QAbstractItemView.ScrollHint hint = QAbstractItemView.EnsureVisible)'''
     def indexAt(self, point):
         '''QModelIndex QColumnView.indexAt(QPoint point)'''
@@ -4290,7 +4290,7 @@ class QColorDialog(QDialog):
     def open(self):
         '''void QColorDialog.open()'''
     def open(self, receiver, member):
-        '''void QColorDialog.open(QObject receiver, SLOT()SLOT() member)'''
+        '''void QColorDialog.open(QObject receiver, SLOT() member)'''
     def open(self, receiver):
         '''void QColorDialog.open(callable receiver)'''
     def options(self):
@@ -4332,7 +4332,7 @@ class QColorDialog(QDialog):
     def getRgba(self, initial = 4294967295, ok = None, parent = None):
         '''static int QColorDialog.getRgba(int initial = 4294967295, bool ok, QWidget parent = None)'''
         return int()
-    def getColor(self, initial = Qt.white, parent = None):
+    def getColor(self, initial = None, parent = None):
         '''static QColor QColorDialog.getColor(QColor initial = Qt.white, QWidget parent = None)'''
         return QColor()
     def getColor(self, initial, parent, title, options = 0):
@@ -4480,7 +4480,7 @@ class QComboBox(QWidget):
     def view(self):
         '''QAbstractItemView QComboBox.view()'''
         return QAbstractItemView()
-    def setItemData(self, index, value, role = Qt.UserRole):
+    def setItemData(self, index, value, role = None):
         '''void QComboBox.setItemData(int index, QVariant value, int role = Qt.UserRole)'''
     def setItemIcon(self, index, icon):
         '''void QComboBox.setItemIcon(int index, QIcon icon)'''
@@ -4500,7 +4500,7 @@ class QComboBox(QWidget):
         '''void QComboBox.addItem(QIcon icon, QString text, QVariant userData = QVariant())'''
     def addItems(self, texts):
         '''void QComboBox.addItems(QStringList texts)'''
-    def itemData(self, index, role = Qt.UserRole):
+    def itemData(self, index, role = None):
         '''QVariant QComboBox.itemData(int index, int role = Qt.UserRole)'''
         return QVariant()
     def itemIcon(self, index):
@@ -4572,10 +4572,10 @@ class QComboBox(QWidget):
     def insertPolicy(self):
         '''QComboBox.InsertPolicy QComboBox.insertPolicy()'''
         return QComboBox.InsertPolicy()
-    def findData(self, data, role = Qt.UserRole, flags = Qt.MatchExactly|Qt.MatchCaseSensitive):
+    def findData(self, data, role = None, flags = None):
         '''int QComboBox.findData(QVariant data, int role = Qt.UserRole, Qt.MatchFlags flags = Qt.MatchExactly|Qt.MatchCaseSensitive)'''
         return int()
-    def findText(self, text, flags = Qt.MatchExactly|Qt.MatchCaseSensitive):
+    def findText(self, text, flags = None):
         '''int QComboBox.findText(QString text, Qt.MatchFlags flags = Qt.MatchExactly|Qt.MatchCaseSensitive)'''
         return int()
     def hasFrame(self):
@@ -4605,8 +4605,8 @@ class QComboBox(QWidget):
     def setMaxCount(self, max):
         '''void QComboBox.setMaxCount(int max)'''
     def __len__(self):
-        ''' QComboBox.__len__()'''
-        return ()
+        '''None QComboBox.__len__()'''
+        return None()
     def count(self):
         '''int QComboBox.count()'''
         return int()
@@ -5264,7 +5264,7 @@ class QStyle(QObject):
         return QPalette()
     def drawItemPixmap(self, painter, rect, alignment, pixmap):
         '''void QStyle.drawItemPixmap(QPainter painter, QRect rect, int alignment, QPixmap pixmap)'''
-    def drawItemText(self, painter, rectangle, alignment, palette, enabled, text, textRole = QPalette.NoRole):
+    def drawItemText(self, painter, rectangle, alignment, palette, enabled, text, textRole = None):
         '''void QStyle.drawItemText(QPainter painter, QRect rectangle, int alignment, QPalette palette, bool enabled, QString text, QPalette.ColorRole textRole = QPalette.NoRole)'''
     def itemPixmapRect(self, r, flags, pixmap):
         '''QRect QStyle.itemPixmapRect(QRect r, int flags, QPixmap pixmap)'''
@@ -5554,9 +5554,9 @@ class QCursor():
         '''void QCursor.__init__()'''
     def __init__(self, shape):
         '''void QCursor.__init__(Qt.CursorShape shape)'''
-    def __init__(self, bitmap, mask, hotX = -1, hotY = -1):
+    def __init__(self, bitmap, mask, hotX = None, hotY = None):
         '''void QCursor.__init__(QBitmap bitmap, QBitmap mask, int hotX = -1, int hotY = -1)'''
-    def __init__(self, pixmap, hotX = -1, hotY = -1):
+    def __init__(self, pixmap, hotX = None, hotY = None):
         '''void QCursor.__init__(QPixmap pixmap, int hotX = -1, int hotY = -1)'''
     def __init__(self, cursor):
         '''void QCursor.__init__(QCursor cursor)'''
@@ -5951,7 +5951,7 @@ class QDesktopWidget(QWidget):
     screenCountChanged = pyqtSignal() # void screenCountChanged(int) - signal
     workAreaResized = pyqtSignal() # void workAreaResized(int) - signal
     resized = pyqtSignal() # void resized(int) - signal
-    def availableGeometry(self, screen = -1):
+    def availableGeometry(self, screen = None):
         '''QRect QDesktopWidget.availableGeometry(int screen = -1)'''
         return QRect()
     def availableGeometry(self, widget):
@@ -5960,7 +5960,7 @@ class QDesktopWidget(QWidget):
     def availableGeometry(self, point):
         '''QRect QDesktopWidget.availableGeometry(QPoint point)'''
         return QRect()
-    def screenGeometry(self, screen = -1):
+    def screenGeometry(self, screen = None):
         '''QRect QDesktopWidget.screenGeometry(int screen = -1)'''
         return QRect()
     def screenGeometry(self, widget):
@@ -5972,7 +5972,7 @@ class QDesktopWidget(QWidget):
     def screenCount(self):
         '''int QDesktopWidget.screenCount()'''
         return int()
-    def screen(self, screen = -1):
+    def screen(self, screen = None):
         '''QWidget QDesktopWidget.screen(int screen = -1)'''
         return QWidget()
     def screenNumber(self, widget = None):
@@ -6084,7 +6084,7 @@ class QDialogButtonBox(QWidget):
         '''void QDialogButtonBox.__init__(QWidget parent = None)'''
     def __init__(self, orientation, parent = None):
         '''void QDialogButtonBox.__init__(Qt.Orientation orientation, QWidget parent = None)'''
-    def __init__(self, buttons, orientation = Qt.Horizontal, parent = None):
+    def __init__(self, buttons, orientation = None, parent = None):
         '''void QDialogButtonBox.__init__(QDialogButtonBox.StandardButtons buttons, Qt.Orientation orientation = Qt.Horizontal, QWidget parent = None)'''
     def event(self, event):
         '''bool QDialogButtonBox.event(QEvent event)'''
@@ -6269,7 +6269,7 @@ class QDirModel(QAbstractItemModel):
     def mimeTypes(self):
         '''QStringList QDirModel.mimeTypes()'''
         return QStringList()
-    def sort(self, column, order = Qt.AscendingOrder):
+    def sort(self, column, order = None):
         '''void QDirModel.sort(int column, Qt.SortOrder order = Qt.AscendingOrder)'''
     def flags(self, index):
         '''Qt.ItemFlags QDirModel.flags(QModelIndex index)'''
@@ -6277,13 +6277,13 @@ class QDirModel(QAbstractItemModel):
     def hasChildren(self, parent = QModelIndex()):
         '''bool QDirModel.hasChildren(QModelIndex parent = QModelIndex())'''
         return bool()
-    def headerData(self, section, orientation, role = Qt.DisplayRole):
+    def headerData(self, section, orientation, role = None):
         '''QVariant QDirModel.headerData(int section, Qt.Orientation orientation, int role = Qt.DisplayRole)'''
         return QVariant()
-    def setData(self, index, value, role = Qt.EditRole):
+    def setData(self, index, value, role = None):
         '''bool QDirModel.setData(QModelIndex index, QVariant value, int role = Qt.EditRole)'''
         return bool()
-    def data(self, index, role = Qt.DisplayRole):
+    def data(self, index, role = None):
         '''QVariant QDirModel.data(QModelIndex index, int role = Qt.DisplayRole)'''
         return QVariant()
     def columnCount(self, parent = QModelIndex()):
@@ -6426,7 +6426,7 @@ class QDrag(QObject):
     actionChanged = pyqtSignal() # void actionChanged(Qt::DropAction) - signal
     def setDragCursor(self, cursor, action):
         '''void QDrag.setDragCursor(QPixmap cursor, Qt.DropAction action)'''
-    def start(self, supportedActions = Qt.CopyAction):
+    def start(self, supportedActions = None):
         '''Qt.DropAction QDrag.start(Qt.DropActions supportedActions = Qt.CopyAction)'''
         return Qt.DropAction()
     def target(self):
@@ -6451,7 +6451,7 @@ class QDrag(QObject):
         return QMimeData()
     def setMimeData(self, data):
         '''void QDrag.setMimeData(QMimeData data)'''
-    def exec_(self, supportedActions = Qt.MoveAction):
+    def exec_(self, supportedActions = None):
         '''Qt.DropAction QDrag.exec_(Qt.DropActions supportedActions = Qt.MoveAction)'''
         return Qt.DropAction()
     def exec_(self, supportedActions, defaultDropAction):
@@ -6542,9 +6542,9 @@ class QHoverEvent(QEvent):
 
 class QWheelEvent(QInputEvent):
     """"""
-    def __init__(self, pos, delta, buttons, modifiers, orientation = Qt.Vertical):
+    def __init__(self, pos, delta, buttons, modifiers, orientation = None):
         '''void QWheelEvent.__init__(QPoint pos, int delta, Qt.MouseButtons buttons, Qt.KeyboardModifiers modifiers, Qt.Orientation orientation = Qt.Vertical)'''
-    def __init__(self, pos, globalPos, delta, buttons, modifiers, orientation = Qt.Vertical):
+    def __init__(self, pos, globalPos, delta, buttons, modifiers, orientation = None):
         '''void QWheelEvent.__init__(QPoint pos, QPoint globalPos, int delta, Qt.MouseButtons buttons, Qt.KeyboardModifiers modifiers, Qt.Orientation orientation = Qt.Vertical)'''
     def __init__(self):
         '''QWheelEvent QWheelEvent.__init__()'''
@@ -6682,8 +6682,8 @@ class QKeyEvent(QInputEvent):
         '''bool QKeyEvent.matches(QKeySequence.StandardKey key)'''
         return bool()
     def __len__(self):
-        ''' QKeyEvent.__len__()'''
-        return ()
+        '''None QKeyEvent.__len__()'''
+        return None()
     def count(self):
         '''int QKeyEvent.count()'''
         return int()
@@ -6703,7 +6703,7 @@ class QKeyEvent(QInputEvent):
 
 class QFocusEvent(QEvent):
     """"""
-    def __init__(self, type, reason = Qt.OtherFocusReason):
+    def __init__(self, type, reason = None):
         '''void QFocusEvent.__init__(QEvent.Type type, Qt.FocusReason reason = Qt.OtherFocusReason)'''
     def __init__(self):
         '''QFocusEvent QFocusEvent.__init__()'''
@@ -6906,7 +6906,7 @@ class QMimeSource():
 
 class QDropEvent(QEvent, QMimeSource):
     """"""
-    def __init__(self, pos, actions, data, buttons, modifiers, type = QEvent.Drop):
+    def __init__(self, pos, actions, data, buttons, modifiers, type = None):
         '''void QDropEvent.__init__(QPoint pos, Qt.DropActions actions, QMimeData data, Qt.MouseButtons buttons, Qt.KeyboardModifiers modifiers, QEvent.Type type = QEvent.Drop)'''
     def __init__(self):
         '''QDropEvent QDropEvent.__init__()'''
@@ -6952,7 +6952,7 @@ class QDropEvent(QEvent, QMimeSource):
 
 class QDragMoveEvent(QDropEvent):
     """"""
-    def __init__(self, pos, actions, data, buttons, modifiers, type = QEvent.DragMove):
+    def __init__(self, pos, actions, data, buttons, modifiers, type = None):
         '''void QDragMoveEvent.__init__(QPoint pos, Qt.DropActions actions, QMimeData data, Qt.MouseButtons buttons, Qt.KeyboardModifiers modifiers, QEvent.Type type = QEvent.DragMove)'''
     def __init__(self):
         '''QDragMoveEvent QDragMoveEvent.__init__()'''
@@ -7098,7 +7098,7 @@ class QTouchEvent(QInputEvent):
     TouchScreen = 0
     TouchPad = 0
 
-    def __init__(self, eventType, deviceType = QTouchEvent.TouchScreen, modifiers = Qt.NoModifier, touchPointStates = 0, touchPoints = QListlt;QTouchEvent.TouchPointgt;()):
+    def __init__(self, eventType, deviceType = None, modifiers = None, touchPointStates = 0, touchPoints = None):
         '''void QTouchEvent.__init__(QEvent.Type eventType, QTouchEvent.DeviceType deviceType = QTouchEvent.TouchScreen, Qt.KeyboardModifiers modifiers = Qt.NoModifier, Qt.TouchPointStates touchPointStates = 0, list-of-QTouchEvent.TouchPoint touchPoints = QListlt;QTouchEvent.TouchPointgt;())'''
     def __init__(self):
         '''QTouchEvent QTouchEvent.__init__()'''
@@ -7278,7 +7278,7 @@ class QFileDialog(QDialog):
     def open(self):
         '''void QFileDialog.open()'''
     def open(self, receiver, member):
-        '''void QFileDialog.open(QObject receiver, SLOT()SLOT() member)'''
+        '''void QFileDialog.open(QObject receiver, SLOT() member)'''
     def open(self, receiver):
         '''void QFileDialog.open(callable receiver)'''
     def options(self):
@@ -7360,7 +7360,7 @@ class QFileDialog(QDialog):
     def getOpenFileName(self, parent = None, caption = QString(), directory = QString(), filter = QString(), selectedFilter = None, options = 0):
         '''static QString QFileDialog.getOpenFileName(QWidget parent = None, QString caption = QString(), QString directory = QString(), QString filter = QString(), QString selectedFilter = None, QFileDialog.Options options = 0)'''
         return QString()
-    def getExistingDirectory(self, parent = None, caption = QString(), directory = QString(), options = QFileDialog.ShowDirsOnly):
+    def getExistingDirectory(self, parent = None, caption = QString(), directory = QString(), options = None):
         '''static QString QFileDialog.getExistingDirectory(QWidget parent = None, QString caption = QString(), QString directory = QString(), QFileDialog.Options options = QFileDialog.ShowDirsOnly)'''
         return QString()
     fileSelected = pyqtSignal() # void fileSelected(const QStringamp;) - signal
@@ -7629,21 +7629,21 @@ class QFileSystemModel(QAbstractItemModel):
     def mimeTypes(self):
         '''QStringList QFileSystemModel.mimeTypes()'''
         return QStringList()
-    def sort(self, column, order = Qt.AscendingOrder):
+    def sort(self, column, order = None):
         '''void QFileSystemModel.sort(int column, Qt.SortOrder order = Qt.AscendingOrder)'''
     def flags(self, index):
         '''Qt.ItemFlags QFileSystemModel.flags(QModelIndex index)'''
         return Qt.ItemFlags()
-    def headerData(self, section, orientation, role = Qt.DisplayRole):
+    def headerData(self, section, orientation, role = None):
         '''QVariant QFileSystemModel.headerData(int section, Qt.Orientation orientation, int role = Qt.DisplayRole)'''
         return QVariant()
-    def setData(self, idx, value, role = Qt.EditRole):
+    def setData(self, idx, value, role = None):
         '''bool QFileSystemModel.setData(QModelIndex idx, QVariant value, int role = Qt.EditRole)'''
         return bool()
-    def data(self, index, role = Qt.DisplayRole):
+    def data(self, index, role = None):
         '''QVariant QFileSystemModel.data(QModelIndex index, int role = Qt.DisplayRole)'''
         return QVariant()
-    def myComputer(self, role = Qt.DisplayRole):
+    def myComputer(self, role = None):
         '''QVariant QFileSystemModel.myComputer(int role = Qt.DisplayRole)'''
         return QVariant()
     def columnCount(self, parent = QModelIndex()):
@@ -7766,7 +7766,7 @@ class QFont():
 
     def __init__(self):
         '''void QFont.__init__()'''
-    def __init__(self, family, pointSize = -1, weight = -1, italic = False):
+    def __init__(self, family, pointSize = None, weight = None, italic = False):
         '''void QFont.__init__(QString family, int pointSize = -1, int weight = -1, bool italic = False)'''
     def __init__(self, pd):
         '''QFont QFont.__init__(QPaintDevice pd)'''
@@ -7901,7 +7901,7 @@ class QFont():
         return int()
     def setStyleStrategy(self, s):
         '''void QFont.setStyleStrategy(QFont.StyleStrategy s)'''
-    def setStyleHint(self, hint, strategy = QFont.PreferDefault):
+    def setStyleHint(self, hint, strategy = None):
         '''void QFont.setStyleHint(QFont.StyleHint hint, QFont.StyleStrategy strategy = QFont.PreferDefault)'''
     def styleStrategy(self):
         '''QFont.StyleStrategy QFont.styleStrategy()'''
@@ -8168,7 +8168,7 @@ class QFontDatabase():
     def styles(self, family):
         '''QStringList QFontDatabase.styles(QString family)'''
         return QStringList()
-    def families(self, writingSystem = QFontDatabase.Any):
+    def families(self, writingSystem = None):
         '''QStringList QFontDatabase.families(QFontDatabase.WritingSystem writingSystem = QFontDatabase.Any)'''
         return QStringList()
     def writingSystems(self):
@@ -8199,7 +8199,7 @@ class QFontDialog(QDialog):
     def open(self):
         '''void QFontDialog.open()'''
     def open(self, receiver, member):
-        '''void QFontDialog.open(QObject receiver, SLOT()SLOT() member)'''
+        '''void QFontDialog.open(QObject receiver, SLOT() member)'''
     def open(self, receiver):
         '''void QFontDialog.open(callable receiver)'''
     def options(self):
@@ -8401,7 +8401,7 @@ class QFontMetrics():
     def width(self):
         '''QChar QFontMetrics.width()'''
         return QChar()
-    def width(self, text, length = -1):
+    def width(self, text, length = None):
         '''int QFontMetrics.width(QString text, int length = -1)'''
         return int()
     def widthChar(self):
@@ -9568,7 +9568,7 @@ class QGraphicsLayoutItem():
         return QSizePolicy()
     def setSizePolicy(self, policy):
         '''void QGraphicsLayoutItem.setSizePolicy(QSizePolicy policy)'''
-    def setSizePolicy(self, hPolicy, vPolicy, controlType = QSizePolicy.DefaultType):
+    def setSizePolicy(self, hPolicy, vPolicy, controlType = None):
         '''void QGraphicsLayoutItem.setSizePolicy(QSizePolicy.Policy hPolicy, QSizePolicy.Policy vPolicy, QSizePolicy.ControlType controlType = QSizePolicy.DefaultType)'''
 
 
@@ -9586,8 +9586,8 @@ class QGraphicsLayout(QGraphicsLayoutItem):
         '''abstract QGraphicsLayoutItem QGraphicsLayout.itemAt(int i)'''
         return QGraphicsLayoutItem()
     def __len__(self):
-        ''' QGraphicsLayout.__len__()'''
-        return ()
+        '''None QGraphicsLayout.__len__()'''
+        return None()
     def count(self):
         '''abstract int QGraphicsLayout.count()'''
         return int()
@@ -9637,7 +9637,7 @@ class QGraphicsAnchorLayout(QGraphicsLayout):
         '''void QGraphicsAnchorLayout.setVerticalSpacing(float spacing)'''
     def setHorizontalSpacing(self, spacing):
         '''void QGraphicsAnchorLayout.setHorizontalSpacing(float spacing)'''
-    def addAnchors(self, firstItem, secondItem, orientations = Qt.Horizontal|Qt.Vertical):
+    def addAnchors(self, firstItem, secondItem, orientations = None):
         '''void QGraphicsAnchorLayout.addAnchors(QGraphicsLayoutItem firstItem, QGraphicsLayoutItem secondItem, Qt.Orientations orientations = Qt.Horizontal|Qt.Vertical)'''
     def addCornerAnchors(self, firstItem, firstCorner, secondItem, secondCorner):
         '''void QGraphicsAnchorLayout.addCornerAnchors(QGraphicsLayoutItem firstItem, Qt.Corner firstCorner, QGraphicsLayoutItem secondItem, Qt.Corner secondCorner)'''
@@ -9664,12 +9664,12 @@ class QGraphicsEffect(QObject):
 
     def __init__(self, parent = None):
         '''void QGraphicsEffect.__init__(QObject parent = None)'''
-    def sourcePixmap(self, system = Qt.LogicalCoordinates, offset = None, mode = QGraphicsEffect.PadToEffectiveBoundingRect):
+    def sourcePixmap(self, system = None, offset = None, mode = None):
         '''QPixmap QGraphicsEffect.sourcePixmap(Qt.CoordinateSystem system = Qt.LogicalCoordinates, QPoint offset, QGraphicsEffect.PixmapPadMode mode = QGraphicsEffect.PadToEffectiveBoundingRect)'''
         return QPixmap()
     def drawSource(self, painter):
         '''void QGraphicsEffect.drawSource(QPainter painter)'''
-    def sourceBoundingRect(self, system = Qt.LogicalCoordinates):
+    def sourceBoundingRect(self, system = None):
         '''QRectF QGraphicsEffect.sourceBoundingRect(Qt.CoordinateSystem system = Qt.LogicalCoordinates)'''
         return QRectF()
     def sourceIsPixmap(self):
@@ -10487,13 +10487,13 @@ class QGraphicsItem():
     def isObscured(self, ax, ay, w, h):
         '''bool QGraphicsItem.isObscured(float ax, float ay, float w, float h)'''
         return bool()
-    def collidingItems(self, mode = Qt.IntersectsItemShape):
+    def collidingItems(self, mode = None):
         '''list-of-QGraphicsItem QGraphicsItem.collidingItems(Qt.ItemSelectionMode mode = Qt.IntersectsItemShape)'''
         return [QGraphicsItem()]
-    def collidesWithPath(self, path, mode = Qt.IntersectsItemShape):
+    def collidesWithPath(self, path, mode = None):
         '''bool QGraphicsItem.collidesWithPath(QPainterPath path, Qt.ItemSelectionMode mode = Qt.IntersectsItemShape)'''
         return bool()
-    def collidesWithItem(self, other, mode = Qt.IntersectsItemShape):
+    def collidesWithItem(self, other, mode = None):
         '''bool QGraphicsItem.collidesWithItem(QGraphicsItem other, Qt.ItemSelectionMode mode = Qt.IntersectsItemShape)'''
         return bool()
     def contains(self, point):
@@ -10563,7 +10563,7 @@ class QGraphicsItem():
         return QPointF()
     def clearFocus(self):
         '''void QGraphicsItem.clearFocus()'''
-    def setFocus(self, focusReason = Qt.OtherFocusReason):
+    def setFocus(self, focusReason = None):
         '''void QGraphicsItem.setFocus(Qt.FocusReason focusReason = Qt.OtherFocusReason)'''
     def hasFocus(self):
         '''bool QGraphicsItem.hasFocus()'''
@@ -11049,7 +11049,7 @@ class QGraphicsObject(QObject, QGraphicsItem):
     parentChanged = pyqtSignal() # void parentChanged() - signal
     def ungrabGesture(self, type):
         '''void QGraphicsObject.ungrabGesture(Qt.GestureType type)'''
-    def grabGesture(self, type, flags = Qt.GestureFlags(0)):
+    def grabGesture(self, type, flags = None):
         '''void QGraphicsObject.grabGesture(Qt.GestureType type, Qt.GestureFlags flags = Qt.GestureFlags(0))'''
 
 
@@ -11416,7 +11416,7 @@ class QGraphicsWidget(QGraphicsObject, QGraphicsLayoutItem):
         '''void QGraphicsWidget.setShortcutEnabled(int id, bool enabled = True)'''
     def releaseShortcut(self, id):
         '''void QGraphicsWidget.releaseShortcut(int id)'''
-    def grabShortcut(self, sequence, context = Qt.WindowShortcut):
+    def grabShortcut(self, sequence, context = None):
         '''int QGraphicsWidget.grabShortcut(QKeySequence sequence, Qt.ShortcutContext context = Qt.WindowShortcut)'''
         return int()
     def focusWidget(self):
@@ -11714,9 +11714,9 @@ class QGraphicsScene(QObject):
     changed = pyqtSignal() # void changed(const QListlt;QRectFgt;amp;) - signal
     def clear(self):
         '''void QGraphicsScene.clear()'''
-    def invalidate(self, rect = QRectF(), layers = QGraphicsScene.AllLayers):
+    def invalidate(self, rect = QRectF(), layers = None):
         '''void QGraphicsScene.invalidate(QRectF rect = QRectF(), QGraphicsScene.SceneLayers layers = QGraphicsScene.AllLayers)'''
-    def invalidate(self, x, y, w, h, layers = QGraphicsScene.AllLayers):
+    def invalidate(self, x, y, w, h, layers = None):
         '''void QGraphicsScene.invalidate(float x, float y, float w, float h, QGraphicsScene.SceneLayers layers = QGraphicsScene.AllLayers)'''
     def update(self, rect = QRectF()):
         '''void QGraphicsScene.update(QRectF rect = QRectF())'''
@@ -11745,12 +11745,12 @@ class QGraphicsScene(QObject):
         return QGraphicsItem()
     def clearFocus(self):
         '''void QGraphicsScene.clearFocus()'''
-    def setFocus(self, focusReason = Qt.OtherFocusReason):
+    def setFocus(self, focusReason = None):
         '''void QGraphicsScene.setFocus(Qt.FocusReason focusReason = Qt.OtherFocusReason)'''
     def hasFocus(self):
         '''bool QGraphicsScene.hasFocus()'''
         return bool()
-    def setFocusItem(self, item, focusReason = Qt.OtherFocusReason):
+    def setFocusItem(self, item, focusReason = None):
         '''void QGraphicsScene.setFocusItem(QGraphicsItem item, Qt.FocusReason focusReason = Qt.OtherFocusReason)'''
     def focusItem(self):
         '''QGraphicsItem QGraphicsScene.focusItem()'''
@@ -11823,7 +11823,7 @@ class QGraphicsScene(QObject):
     def itemAt(self, x, y, deviceTransform):
         '''QGraphicsItem QGraphicsScene.itemAt(float x, float y, QTransform deviceTransform)'''
         return QGraphicsItem()
-    def collidingItems(self, item, mode = Qt.IntersectsItemShape):
+    def collidingItems(self, item, mode = None):
         '''list-of-QGraphicsItem QGraphicsScene.collidingItems(QGraphicsItem item, Qt.ItemSelectionMode mode = Qt.IntersectsItemShape)'''
         return [QGraphicsItem()]
     def items(self):
@@ -11832,16 +11832,16 @@ class QGraphicsScene(QObject):
     def items(self, pos):
         '''list-of-QGraphicsItem QGraphicsScene.items(QPointF pos)'''
         return [QGraphicsItem()]
-    def items(self, rectangle, mode = Qt.IntersectsItemShape):
+    def items(self, rectangle, mode = None):
         '''list-of-QGraphicsItem QGraphicsScene.items(QRectF rectangle, Qt.ItemSelectionMode mode = Qt.IntersectsItemShape)'''
         return [QGraphicsItem()]
-    def items(self, polygon, mode = Qt.IntersectsItemShape):
+    def items(self, polygon, mode = None):
         '''list-of-QGraphicsItem QGraphicsScene.items(QPolygonF polygon, Qt.ItemSelectionMode mode = Qt.IntersectsItemShape)'''
         return [QGraphicsItem()]
-    def items(self, path, mode = Qt.IntersectsItemShape):
+    def items(self, path, mode = None):
         '''list-of-QGraphicsItem QGraphicsScene.items(QPainterPath path, Qt.ItemSelectionMode mode = Qt.IntersectsItemShape)'''
         return [QGraphicsItem()]
-    def items(self, x, y, w, h, mode = Qt.IntersectsItemShape):
+    def items(self, x, y, w, h, mode = None):
         '''list-of-QGraphicsItem QGraphicsScene.items(float x, float y, float w, float h, Qt.ItemSelectionMode mode = Qt.IntersectsItemShape)'''
         return [QGraphicsItem()]
     def items(self, order):
@@ -11870,7 +11870,7 @@ class QGraphicsScene(QObject):
     def itemIndexMethod(self):
         '''QGraphicsScene.ItemIndexMethod QGraphicsScene.itemIndexMethod()'''
         return QGraphicsScene.ItemIndexMethod()
-    def render(self, painter, target = QRectF(), source = QRectF(), mode = Qt.KeepAspectRatio):
+    def render(self, painter, target = QRectF(), source = QRectF(), mode = None):
         '''void QGraphicsScene.render(QPainter painter, QRectF target = QRectF(), QRectF source = QRectF(), Qt.AspectRatioMode mode = Qt.KeepAspectRatio)'''
     def setSceneRect(self, rect):
         '''void QGraphicsScene.setSceneRect(QRectF rect)'''
@@ -12327,7 +12327,7 @@ class QGraphicsView(QAbstractScrollArea):
         '''void QGraphicsView.updateSceneRect(QRectF rect)'''
     def updateScene(self, rects):
         '''void QGraphicsView.updateScene(list-of-QRectF rects)'''
-    def invalidateScene(self, rect = QRectF(), layers = QGraphicsScene.AllLayers):
+    def invalidateScene(self, rect = QRectF(), layers = None):
         '''void QGraphicsView.invalidateScene(QRectF rect = QRectF(), QGraphicsScene.SceneLayers layers = QGraphicsScene.AllLayers)'''
     def setForegroundBrush(self, brush):
         '''void QGraphicsView.setForegroundBrush(QBrush brush)'''
@@ -12393,25 +12393,25 @@ class QGraphicsView(QAbstractScrollArea):
     def items(self, ax, ay):
         '''list-of-QGraphicsItem QGraphicsView.items(int ax, int ay)'''
         return [QGraphicsItem()]
-    def items(self, x, y, w, h, mode = Qt.IntersectsItemShape):
+    def items(self, x, y, w, h, mode = None):
         '''list-of-QGraphicsItem QGraphicsView.items(int x, int y, int w, int h, Qt.ItemSelectionMode mode = Qt.IntersectsItemShape)'''
         return [QGraphicsItem()]
-    def items(self, rect, mode = Qt.IntersectsItemShape):
+    def items(self, rect, mode = None):
         '''list-of-QGraphicsItem QGraphicsView.items(QRect rect, Qt.ItemSelectionMode mode = Qt.IntersectsItemShape)'''
         return [QGraphicsItem()]
-    def items(self, polygon, mode = Qt.IntersectsItemShape):
+    def items(self, polygon, mode = None):
         '''list-of-QGraphicsItem QGraphicsView.items(QPolygon polygon, Qt.ItemSelectionMode mode = Qt.IntersectsItemShape)'''
         return [QGraphicsItem()]
-    def items(self, path, mode = Qt.IntersectsItemShape):
+    def items(self, path, mode = None):
         '''list-of-QGraphicsItem QGraphicsView.items(QPainterPath path, Qt.ItemSelectionMode mode = Qt.IntersectsItemShape)'''
         return [QGraphicsItem()]
-    def render(self, painter, target = QRectF(), source = QRect(), mode = Qt.KeepAspectRatio):
+    def render(self, painter, target = QRectF(), source = QRect(), mode = None):
         '''void QGraphicsView.render(QPainter painter, QRectF target = QRectF(), QRect source = QRect(), Qt.AspectRatioMode mode = Qt.KeepAspectRatio)'''
-    def fitInView(self, rect, mode = Qt.IgnoreAspectRatio):
+    def fitInView(self, rect, mode = None):
         '''void QGraphicsView.fitInView(QRectF rect, Qt.AspectRatioMode mode = Qt.IgnoreAspectRatio)'''
-    def fitInView(self, item, mode = Qt.IgnoreAspectRatio):
+    def fitInView(self, item, mode = None):
         '''void QGraphicsView.fitInView(QGraphicsItem item, Qt.AspectRatioMode mode = Qt.IgnoreAspectRatio)'''
-    def fitInView(self, x, y, w, h, mode = Qt.IgnoreAspectRatio):
+    def fitInView(self, x, y, w, h, mode = None):
         '''void QGraphicsView.fitInView(float x, float y, float w, float h, Qt.AspectRatioMode mode = Qt.IgnoreAspectRatio)'''
     def ensureVisible(self, rect, xMargin = 50, yMargin = 50):
         '''void QGraphicsView.ensureVisible(QRectF rect, int xMargin = 50, int yMargin = 50)'''
@@ -12977,8 +12977,8 @@ class QHeaderView(QAbstractItemView):
         '''int QHeaderView.visualIndex(int logicalIndex)'''
         return int()
     def __len__(self):
-        ''' QHeaderView.__len__()'''
-        return ()
+        '''None QHeaderView.__len__()'''
+        return None()
     def count(self):
         '''int QHeaderView.count()'''
         return int()
@@ -13081,9 +13081,9 @@ class QIcon():
     def cacheKey(self):
         '''int QIcon.cacheKey()'''
         return int()
-    def addFile(self, fileName, size = QSize(), mode = QIcon.Normal, state = QIcon.Off):
+    def addFile(self, fileName, size = QSize(), mode = None, state = None):
         '''void QIcon.addFile(QString fileName, QSize size = QSize(), QIcon.Mode mode = QIcon.Normal, QIcon.State state = QIcon.Off)'''
-    def addPixmap(self, pixmap, mode = QIcon.Normal, state = QIcon.Off):
+    def addPixmap(self, pixmap, mode = None, state = None):
         '''void QIcon.addPixmap(QPixmap pixmap, QIcon.Mode mode = QIcon.Normal, QIcon.State state = QIcon.Off)'''
     def serialNumber(self):
         '''int QIcon.serialNumber()'''
@@ -13094,23 +13094,23 @@ class QIcon():
     def isNull(self):
         '''bool QIcon.isNull()'''
         return bool()
-    def paint(self, painter, rect, alignment = Qt.AlignCenter, mode = QIcon.Normal, state = QIcon.Off):
+    def paint(self, painter, rect, alignment = None, mode = None, state = None):
         '''void QIcon.paint(QPainter painter, QRect rect, Qt.Alignment alignment = Qt.AlignCenter, QIcon.Mode mode = QIcon.Normal, QIcon.State state = QIcon.Off)'''
-    def paint(self, painter, x, y, w, h, alignment = Qt.AlignCenter, mode = QIcon.Normal, state = QIcon.Off):
+    def paint(self, painter, x, y, w, h, alignment = None, mode = None, state = None):
         '''void QIcon.paint(QPainter painter, int x, int y, int w, int h, Qt.Alignment alignment = Qt.AlignCenter, QIcon.Mode mode = QIcon.Normal, QIcon.State state = QIcon.Off)'''
-    def availableSizes(self, mode = QIcon.Normal, state = QIcon.Off):
+    def availableSizes(self, mode = None, state = None):
         '''list-of-QSize QIcon.availableSizes(QIcon.Mode mode = QIcon.Normal, QIcon.State state = QIcon.Off)'''
         return [QSize()]
-    def actualSize(self, size, mode = QIcon.Normal, state = QIcon.Off):
+    def actualSize(self, size, mode = None, state = None):
         '''QSize QIcon.actualSize(QSize size, QIcon.Mode mode = QIcon.Normal, QIcon.State state = QIcon.Off)'''
         return QSize()
-    def pixmap(self, size, mode = QIcon.Normal, state = QIcon.Off):
+    def pixmap(self, size, mode = None, state = None):
         '''QPixmap QIcon.pixmap(QSize size, QIcon.Mode mode = QIcon.Normal, QIcon.State state = QIcon.Off)'''
         return QPixmap()
-    def pixmap(self, w, h, mode = QIcon.Normal, state = QIcon.Off):
+    def pixmap(self, w, h, mode = None, state = None):
         '''QPixmap QIcon.pixmap(int w, int h, QIcon.Mode mode = QIcon.Normal, QIcon.State state = QIcon.Off)'''
         return QPixmap()
-    def pixmap(self, extent, mode = QIcon.Normal, state = QIcon.Off):
+    def pixmap(self, extent, mode = None, state = None):
         '''QPixmap QIcon.pixmap(int extent, QIcon.Mode mode = QIcon.Normal, QIcon.State state = QIcon.Off)'''
         return QPixmap()
 
@@ -13150,7 +13150,7 @@ class QIconEngineV2(QIconEngine):
     def iconName(self):
         '''QString QIconEngineV2.iconName()'''
         return QString()
-    def availableSizes(self, mode = QIcon.Normal, state = QIcon.Off):
+    def availableSizes(self, mode = None, state = None):
         '''list-of-QSize QIconEngineV2.availableSizes(QIcon.Mode mode = QIcon.Normal, QIcon.State state = QIcon.Off)'''
         return [QSize()]
     def write(self, out):
@@ -13195,7 +13195,7 @@ class QIdentityProxyModel(QAbstractProxyModel):
         return bool()
     def setSourceModel(self, sourceModel):
         '''void QIdentityProxyModel.setSourceModel(QAbstractItemModel sourceModel)'''
-    def match(self, start, role, value, hits = 1, flags = Qt.MatchStartsWith|Qt.MatchWrap):
+    def match(self, start, role, value, hits = 1, flags = None):
         '''list-of-QModelIndex QIdentityProxyModel.match(QModelIndex start, int role, QVariant value, int hits = 1, Qt.MatchFlags flags = Qt.MatchStartsWith|Qt.MatchWrap)'''
         return [QModelIndex()]
     def mapSelectionToSource(self, selection):
@@ -13291,7 +13291,7 @@ class QImage(QPaintDevice):
     def cacheKey(self):
         '''int QImage.cacheKey()'''
         return int()
-    def createMaskFromColor(self, color, mode = Qt.MaskInColor):
+    def createMaskFromColor(self, color, mode = None):
         '''QImage QImage.createMaskFromColor(int color, Qt.MaskMode mode = Qt.MaskInColor)'''
         return QImage()
     def metric(self, metric):
@@ -13335,10 +13335,10 @@ class QImage(QPaintDevice):
     def fromData(self, data, format = None):
         '''static QImage QImage.fromData(QByteArray data, str format = None)'''
         return QImage()
-    def save(self, fileName, format = None, quality = -1):
+    def save(self, fileName, format = None, quality = None):
         '''bool QImage.save(QString fileName, str format = None, int quality = -1)'''
         return bool()
-    def save(self, device, format = None, quality = -1):
+    def save(self, device, format = None, quality = None):
         '''bool QImage.save(QIODevice device, str format = None, int quality = -1)'''
         return bool()
     def loadFromData(self, data, format = None):
@@ -13353,7 +13353,7 @@ class QImage(QPaintDevice):
     def load(self, fileName, format = None):
         '''bool QImage.load(QString fileName, str format = None)'''
         return bool()
-    def invertPixels(self, mode = QImage.InvertRgb):
+    def invertPixels(self, mode = None):
         '''void QImage.invertPixels(QImage.InvertMode mode = QImage.InvertRgb)'''
     def rgbSwapped(self):
         '''QImage QImage.rgbSwapped()'''
@@ -13367,28 +13367,28 @@ class QImage(QPaintDevice):
     def trueMatrix(self, w, h):
         '''static QTransform QImage.trueMatrix(int w, int h)'''
         return QTransform()
-    def transformed(self, matrix, mode = Qt.FastTransformation):
+    def transformed(self, matrix, mode = None):
         '''QImage QImage.transformed(QMatrix matrix, Qt.TransformationMode mode = Qt.FastTransformation)'''
         return QImage()
-    def transformed(self, matrix, mode = Qt.FastTransformation):
+    def transformed(self, matrix, mode = None):
         '''QImage QImage.transformed(QTransform matrix, Qt.TransformationMode mode = Qt.FastTransformation)'''
         return QImage()
-    def scaledToHeight(self, height, mode = Qt.FastTransformation):
+    def scaledToHeight(self, height, mode = None):
         '''QImage QImage.scaledToHeight(int height, Qt.TransformationMode mode = Qt.FastTransformation)'''
         return QImage()
-    def scaledToWidth(self, width, mode = Qt.FastTransformation):
+    def scaledToWidth(self, width, mode = None):
         '''QImage QImage.scaledToWidth(int width, Qt.TransformationMode mode = Qt.FastTransformation)'''
         return QImage()
-    def scaled(self, width, height, aspectRatioMode = Qt.IgnoreAspectRatio, transformMode = Qt.FastTransformation):
+    def scaled(self, width, height, aspectRatioMode = None, transformMode = None):
         '''QImage QImage.scaled(int width, int height, Qt.AspectRatioMode aspectRatioMode = Qt.IgnoreAspectRatio, Qt.TransformationMode transformMode = Qt.FastTransformation)'''
         return QImage()
-    def scaled(self, size, aspectRatioMode = Qt.IgnoreAspectRatio, transformMode = Qt.FastTransformation):
+    def scaled(self, size, aspectRatioMode = None, transformMode = None):
         '''QImage QImage.scaled(QSize size, Qt.AspectRatioMode aspectRatioMode = Qt.IgnoreAspectRatio, Qt.TransformationMode transformMode = Qt.FastTransformation)'''
         return QImage()
     def createHeuristicMask(self, clipTight = True):
         '''QImage QImage.createHeuristicMask(bool clipTight = True)'''
         return QImage()
-    def createAlphaMask(self, flags = Qt.AutoColor):
+    def createAlphaMask(self, flags = None):
         '''QImage QImage.createAlphaMask(Qt.ImageConversionFlags flags = Qt.AutoColor)'''
         return QImage()
     def alphaChannel(self):
@@ -13476,10 +13476,10 @@ class QImage(QPaintDevice):
     def width(self):
         '''int QImage.width()'''
         return int()
-    def convertToFormat(self, format, flags = Qt.AutoColor):
+    def convertToFormat(self, format, flags = None):
         '''QImage QImage.convertToFormat(QImage.Format format, Qt.ImageConversionFlags flags = Qt.AutoColor)'''
         return QImage()
-    def convertToFormat(self, format, colorTable, flags = Qt.AutoColor):
+    def convertToFormat(self, format, colorTable, flags = None):
         '''QImage QImage.convertToFormat(QImage.Format format, list-of-int colorTable, Qt.ImageConversionFlags flags = Qt.AutoColor)'''
         return QImage()
     def format(self):
@@ -13885,7 +13885,7 @@ class QInputDialog(QDialog):
     def open(self):
         '''void QInputDialog.open()'''
     def open(self, receiver, member):
-        '''void QInputDialog.open(QObject receiver, SLOT()SLOT() member)'''
+        '''void QInputDialog.open(QObject receiver, SLOT() member)'''
     def open(self, receiver):
         '''void QInputDialog.open(callable receiver)'''
     def cancelButtonText(self):
@@ -13988,16 +13988,16 @@ class QInputDialog(QDialog):
     def getItem(self, parent, title, label, list, current, editable, ok, flags, inputMethodHints):
         '''static QString QInputDialog.getItem(QWidget parent, QString title, QString label, QStringList list, int current, bool editable, bool ok, Qt.WindowFlags flags, Qt.InputMethodHints inputMethodHints)'''
         return QString()
-    def getDouble(self, parent, title, label, value = 0, min = -2147483647, max = 2147483647, decimals = 1, ok = None, flags = 0):
+    def getDouble(self, parent, title, label, value = 0, min = None, max = 2147483647, decimals = 1, ok = None, flags = 0):
         '''static float QInputDialog.getDouble(QWidget parent, QString title, QString label, float value = 0, float min = -2147483647, float max = 2147483647, int decimals = 1, bool ok, Qt.WindowFlags flags = 0)'''
         return float()
-    def getInteger(self, parent, title, label, value = 0, min = -2147483647, max = 2147483647, step = 1, ok = None, flags = 0):
+    def getInteger(self, parent, title, label, value = 0, min = None, max = 2147483647, step = 1, ok = None, flags = 0):
         '''static int QInputDialog.getInteger(QWidget parent, QString title, QString label, int value = 0, int min = -2147483647, int max = 2147483647, int step = 1, bool ok, Qt.WindowFlags flags = 0)'''
         return int()
-    def getInt(self, parent, title, label, value = 0, min = -2147483647, max = 2147483647, step = 1, ok = None, flags = 0):
+    def getInt(self, parent, title, label, value = 0, min = None, max = 2147483647, step = 1, ok = None, flags = 0):
         '''static int QInputDialog.getInt(QWidget parent, QString title, QString label, int value = 0, int min = -2147483647, int max = 2147483647, int step = 1, bool ok, Qt.WindowFlags flags = 0)'''
         return int()
-    def getText(self, parent, title, label, mode = QLineEdit.Normal, text = QString(), ok = None, flags = 0):
+    def getText(self, parent, title, label, mode = None, text = QString(), ok = None, flags = 0):
         '''static QString QInputDialog.getText(QWidget parent, QString title, QString label, QLineEdit.EchoMode mode = QLineEdit.Normal, QString text = QString(), bool ok, Qt.WindowFlags flags = 0)'''
         return QString()
     def getText(self, parent, title, label, mode, text, ok, flags, inputMethodHints):
@@ -14357,7 +14357,7 @@ class QItemSelection():
     def __iadd__(self, value):
         '''QItemSelection QItemSelection.__iadd__(QItemSelectionRange value)'''
         return QItemSelection()
-    def lastIndexOf(self, value, from_ = -1):
+    def lastIndexOf(self, value, from_ = None):
         '''int QItemSelection.lastIndexOf(QItemSelectionRange value, int from = -1)'''
         return int()
     def indexOf(self, value, from_ = 0):
@@ -14370,8 +14370,8 @@ class QItemSelection():
         '''QItemSelectionRange QItemSelection.first()'''
         return QItemSelectionRange()
     def __len__(self):
-        ''' QItemSelection.__len__()'''
-        return ()
+        '''None QItemSelection.__len__()'''
+        return None()
     def count(self, range):
         '''int QItemSelection.count(QItemSelectionRange range)'''
         return int()
@@ -14563,10 +14563,10 @@ class QKeySequence():
     def keyBindings(self, key):
         '''static list-of-QKeySequence QKeySequence.keyBindings(QKeySequence.StandardKey key)'''
         return [QKeySequence()]
-    def fromString(self, str, format = QKeySequence.PortableText):
+    def fromString(self, str, format = None):
         '''static QKeySequence QKeySequence.fromString(QString str, QKeySequence.SequenceFormat format = QKeySequence.PortableText)'''
         return QKeySequence()
-    def toString(self, format = QKeySequence.PortableText):
+    def toString(self, format = None):
         '''QString QKeySequence.toString(QKeySequence.SequenceFormat format = QKeySequence.PortableText)'''
         return QString()
     def isDetached(self):
@@ -14606,8 +14606,8 @@ class QKeySequence():
         '''bool QKeySequence.isEmpty()'''
         return bool()
     def __len__(self):
-        ''' QKeySequence.__len__()'''
-        return ()
+        '''None QKeySequence.__len__()'''
+        return None()
     def count(self):
         '''int QKeySequence.count()'''
         return int()
@@ -14754,7 +14754,7 @@ class QLabel(QFrame):
 
 class QSpacerItem(QLayoutItem):
     """"""
-    def __init__(self, w, h, hPolicy = QSizePolicy.Minimum, vPolicy = QSizePolicy.Minimum):
+    def __init__(self, w, h, hPolicy = None, vPolicy = None):
         '''void QSpacerItem.__init__(int w, int h, QSizePolicy.Policy hPolicy = QSizePolicy.Minimum, QSizePolicy.Policy vPolicy = QSizePolicy.Minimum)'''
     def __init__(self):
         '''QSpacerItem QSpacerItem.__init__()'''
@@ -14783,7 +14783,7 @@ class QSpacerItem(QLayoutItem):
     def sizeHint(self):
         '''QSize QSpacerItem.sizeHint()'''
         return QSize()
-    def changeSize(self, w, h, hPolicy = QSizePolicy.Minimum, vPolicy = QSizePolicy.Minimum):
+    def changeSize(self, w, h, hPolicy = None, vPolicy = None):
         '''void QSpacerItem.changeSize(int w, int h, QSizePolicy.Policy hPolicy = QSizePolicy.Minimum, QSizePolicy.Policy vPolicy = QSizePolicy.Minimum)'''
 
 
@@ -15250,7 +15250,7 @@ class QListView(QAbstractItemView):
     def indexAt(self, p):
         '''QModelIndex QListView.indexAt(QPoint p)'''
         return QModelIndex()
-    def scrollTo(self, index, hint = QAbstractItemView.EnsureVisible):
+    def scrollTo(self, index, hint = None):
         '''void QListView.scrollTo(QModelIndex index, QAbstractItemView.ScrollHint hint = QAbstractItemView.EnsureVisible)'''
     def visualRect(self, index):
         '''QRect QListView.visualRect(QModelIndex index)'''
@@ -15320,11 +15320,11 @@ class QListWidgetItem():
     Type = 0
     UserType = 0
 
-    def __init__(self, parent = None, type = QListWidgetItem.Type):
+    def __init__(self, parent = None, type = None):
         '''void QListWidgetItem.__init__(QListWidget parent = None, int type = QListWidgetItem.Type)'''
-    def __init__(self, text, parent = None, type = QListWidgetItem.Type):
+    def __init__(self, text, parent = None, type = None):
         '''void QListWidgetItem.__init__(QString text, QListWidget parent = None, int type = QListWidgetItem.Type)'''
-    def __init__(self, icon, text, parent = None, type = QListWidgetItem.Type):
+    def __init__(self, icon, text, parent = None, type = None):
         '''void QListWidgetItem.__init__(QIcon icon, QString text, QListWidget parent = None, int type = QListWidgetItem.Type)'''
     def __init__(self, other):
         '''void QListWidgetItem.__init__(QListWidgetItem other)'''
@@ -15481,7 +15481,7 @@ class QListWidget(QListView):
     itemDoubleClicked = pyqtSignal() # void itemDoubleClicked(QListWidgetItem *) - signal
     itemClicked = pyqtSignal() # void itemClicked(QListWidgetItem *) - signal
     itemPressed = pyqtSignal() # void itemPressed(QListWidgetItem *) - signal
-    def scrollToItem(self, item, hint = QAbstractItemView.EnsureVisible):
+    def scrollToItem(self, item, hint = None):
         '''void QListWidget.scrollToItem(QListWidgetItem item, QAbstractItemView.ScrollHint hint = QAbstractItemView.EnsureVisible)'''
     def clear(self):
         '''void QListWidget.clear()'''
@@ -15507,7 +15507,7 @@ class QListWidget(QListView):
         '''void QListWidget.openPersistentEditor(QListWidgetItem item)'''
     def editItem(self, item):
         '''void QListWidget.editItem(QListWidgetItem item)'''
-    def sortItems(self, order = Qt.AscendingOrder):
+    def sortItems(self, order = None):
         '''void QListWidget.sortItems(Qt.SortOrder order = Qt.AscendingOrder)'''
     def visualItemRect(self, item):
         '''QRect QListWidget.visualItemRect(QListWidgetItem item)'''
@@ -15538,8 +15538,8 @@ class QListWidget(QListView):
         '''QListWidgetItem QListWidget.currentItem()'''
         return QListWidgetItem()
     def __len__(self):
-        ''' QListWidget.__len__()'''
-        return ()
+        '''None QListWidget.__len__()'''
+        return None()
     def count(self):
         '''int QListWidget.count()'''
         return int()
@@ -15676,7 +15676,7 @@ class QMainWindow(QWidget):
         return QToolBar()
     def insertToolBarBreak(self, before):
         '''void QMainWindow.insertToolBarBreak(QToolBar before)'''
-    def addToolBarBreak(self, area = Qt.TopToolBarArea):
+    def addToolBarBreak(self, area = None):
         '''void QMainWindow.addToolBarBreak(Qt.ToolBarArea area = Qt.TopToolBarArea)'''
     def corner(self, corner):
         '''Qt.DockWidgetArea QMainWindow.corner(Qt.Corner corner)'''
@@ -16152,7 +16152,7 @@ class QMdiArea(QAbstractScrollArea):
     def currentSubWindow(self):
         '''QMdiSubWindow QMdiArea.currentSubWindow()'''
         return QMdiSubWindow()
-    def subWindowList(self, order = QMdiArea.CreationOrder):
+    def subWindowList(self, order = None):
         '''list-of-QMdiSubWindow QMdiArea.subWindowList(QMdiArea.WindowOrder order = QMdiArea.CreationOrder)'''
         return [QMdiSubWindow()]
     def addSubWindow(self, widget, flags = 0):
@@ -16516,13 +16516,13 @@ class QMenu(QWidget):
         '''QAction QMenu.addAction(QIcon icon, QString text)'''
         return QAction()
     def addAction(self, text, receiver, member, shortcut = 0):
-        '''QAction QMenu.addAction(QString text, QObject receiver, SLOT()SLOT() member, QKeySequence shortcut = 0)'''
+        '''QAction QMenu.addAction(QString text, QObject receiver, SLOT() member, QKeySequence shortcut = 0)'''
         return QAction()
     def addAction(self, text, receiver, shortcut = 0):
         '''QAction QMenu.addAction(QString text, callable receiver, QKeySequence shortcut = 0)'''
         return QAction()
     def addAction(self, icon, text, receiver, member, shortcut = 0):
-        '''QAction QMenu.addAction(QIcon icon, QString text, QObject receiver, SLOT()SLOT() member, QKeySequence shortcut = 0)'''
+        '''QAction QMenu.addAction(QIcon icon, QString text, QObject receiver, SLOT() member, QKeySequence shortcut = 0)'''
         return QAction()
     def addAction(self, icon, text, receiver, shortcut = 0):
         '''QAction QMenu.addAction(QIcon icon, QString text, callable receiver, QKeySequence shortcut = 0)'''
@@ -16586,10 +16586,10 @@ class QMenuBar(QWidget):
     triggered = pyqtSignal() # void triggered(QAction *) - signal
     def setVisible(self, visible):
         '''void QMenuBar.setVisible(bool visible)'''
-    def cornerWidget(self, corner = Qt.TopRightCorner):
+    def cornerWidget(self, corner = None):
         '''QWidget QMenuBar.cornerWidget(Qt.Corner corner = Qt.TopRightCorner)'''
         return QWidget()
-    def setCornerWidget(self, widget, corner = Qt.TopRightCorner):
+    def setCornerWidget(self, widget, corner = None):
         '''void QMenuBar.setCornerWidget(QWidget widget, Qt.Corner corner = Qt.TopRightCorner)'''
     def actionAt(self):
         '''QPoint QMenuBar.actionAt()'''
@@ -16643,7 +16643,7 @@ class QMenuBar(QWidget):
         '''QAction QMenuBar.addAction(QString text)'''
         return QAction()
     def addAction(self, text, receiver, member):
-        '''QAction QMenuBar.addAction(QString text, QObject receiver, SLOT()SLOT() member)'''
+        '''QAction QMenuBar.addAction(QString text, QObject receiver, SLOT() member)'''
         return QAction()
     def addAction(self, text, receiver):
         '''QAction QMenuBar.addAction(QString text, callable receiver)'''
@@ -16702,9 +16702,9 @@ class QMessageBox(QDialog):
 
     def __init__(self, parent = None):
         '''void QMessageBox.__init__(QWidget parent = None)'''
-    def __init__(self, icon, title, text, buttons = QMessageBox.NoButton, parent = None, flags = Qt.Dialog|Qt.MSWindowsFixedSizeDialogHint):
+    def __init__(self, icon, title, text, buttons = None, parent = None, flags = None):
         '''void QMessageBox.__init__(QMessageBox.Icon icon, QString title, QString text, QMessageBox.StandardButtons buttons = QMessageBox.NoButton, QWidget parent = None, Qt.WindowFlags flags = Qt.Dialog|Qt.MSWindowsFixedSizeDialogHint)'''
-    def __init__(self, title, text, icon, button0, button1, button2, parent = None, flags = Qt.Dialog|Qt.MSWindowsFixedSizeDialogHint):
+    def __init__(self, title, text, icon, button0, button1, button2, parent = None, flags = None):
         '''void QMessageBox.__init__(QString title, QString text, QMessageBox.Icon icon, int button0, int button1, int button2, QWidget parent = None, Qt.WindowFlags flags = Qt.Dialog|Qt.MSWindowsFixedSizeDialogHint)'''
     buttonClicked = pyqtSignal() # void buttonClicked(QAbstractButton *) - signal
     def buttonRole(self, button):
@@ -16716,7 +16716,7 @@ class QMessageBox(QDialog):
     def open(self):
         '''void QMessageBox.open()'''
     def open(self, receiver, member):
-        '''void QMessageBox.open(QObject receiver, SLOT()SLOT() member)'''
+        '''void QMessageBox.open(QObject receiver, SLOT() member)'''
     def open(self, receiver):
         '''void QMessageBox.open(callable receiver)'''
     def setWindowModality(self, windowModality):
@@ -16799,40 +16799,40 @@ class QMessageBox(QDialog):
         '''static void QMessageBox.aboutQt(QWidget parent, QString title = QString())'''
     def about(self, parent, caption, text):
         '''static void QMessageBox.about(QWidget parent, QString caption, QString text)'''
-    def critical(self, parent, title, text, buttons = QMessageBox.Ok, defaultButton = QMessageBox.NoButton):
+    def critical(self, parent, title, text, buttons = None, defaultButton = None):
         '''static QMessageBox.StandardButton QMessageBox.critical(QWidget parent, QString title, QString text, QMessageBox.StandardButtons buttons = QMessageBox.Ok, QMessageBox.StandardButton defaultButton = QMessageBox.NoButton)'''
         return QMessageBox.StandardButton()
     def critical(self, parent, title, text, button0, button1, button2 = 0):
         '''static int QMessageBox.critical(QWidget parent, QString title, QString text, int button0, int button1, int button2 = 0)'''
         return int()
-    def critical(self, parent, title, text, button0Text, button1Text = QString(), button2Text = QString(), defaultButtonNumber = 0, escapeButtonNumber = -1):
+    def critical(self, parent, title, text, button0Text, button1Text = QString(), button2Text = QString(), defaultButtonNumber = 0, escapeButtonNumber = None):
         '''static int QMessageBox.critical(QWidget parent, QString title, QString text, QString button0Text, QString button1Text = QString(), QString button2Text = QString(), int defaultButtonNumber = 0, int escapeButtonNumber = -1)'''
         return int()
-    def warning(self, parent, title, text, buttons = QMessageBox.Ok, defaultButton = QMessageBox.NoButton):
+    def warning(self, parent, title, text, buttons = None, defaultButton = None):
         '''static QMessageBox.StandardButton QMessageBox.warning(QWidget parent, QString title, QString text, QMessageBox.StandardButtons buttons = QMessageBox.Ok, QMessageBox.StandardButton defaultButton = QMessageBox.NoButton)'''
         return QMessageBox.StandardButton()
     def warning(self, parent, title, text, button0, button1, button2 = 0):
         '''static int QMessageBox.warning(QWidget parent, QString title, QString text, int button0, int button1, int button2 = 0)'''
         return int()
-    def warning(self, parent, title, text, button0Text, button1Text = QString(), button2Text = QString(), defaultButtonNumber = 0, escapeButtonNumber = -1):
+    def warning(self, parent, title, text, button0Text, button1Text = QString(), button2Text = QString(), defaultButtonNumber = 0, escapeButtonNumber = None):
         '''static int QMessageBox.warning(QWidget parent, QString title, QString text, QString button0Text, QString button1Text = QString(), QString button2Text = QString(), int defaultButtonNumber = 0, int escapeButtonNumber = -1)'''
         return int()
-    def question(self, parent, title, text, buttons = QMessageBox.Ok, defaultButton = QMessageBox.NoButton):
+    def question(self, parent, title, text, buttons = None, defaultButton = None):
         '''static QMessageBox.StandardButton QMessageBox.question(QWidget parent, QString title, QString text, QMessageBox.StandardButtons buttons = QMessageBox.Ok, QMessageBox.StandardButton defaultButton = QMessageBox.NoButton)'''
         return QMessageBox.StandardButton()
     def question(self, parent, title, text, button0, button1 = 0, button2 = 0):
         '''static int QMessageBox.question(QWidget parent, QString title, QString text, int button0, int button1 = 0, int button2 = 0)'''
         return int()
-    def question(self, parent, title, text, button0Text, button1Text = QString(), button2Text = QString(), defaultButtonNumber = 0, escapeButtonNumber = -1):
+    def question(self, parent, title, text, button0Text, button1Text = QString(), button2Text = QString(), defaultButtonNumber = 0, escapeButtonNumber = None):
         '''static int QMessageBox.question(QWidget parent, QString title, QString text, QString button0Text, QString button1Text = QString(), QString button2Text = QString(), int defaultButtonNumber = 0, int escapeButtonNumber = -1)'''
         return int()
-    def information(self, parent, title, text, buttons = QMessageBox.Ok, defaultButton = QMessageBox.NoButton):
+    def information(self, parent, title, text, buttons = None, defaultButton = None):
         '''static QMessageBox.StandardButton QMessageBox.information(QWidget parent, QString title, QString text, QMessageBox.StandardButtons buttons = QMessageBox.Ok, QMessageBox.StandardButton defaultButton = QMessageBox.NoButton)'''
         return QMessageBox.StandardButton()
     def information(self, parent, title, text, button0, button1 = 0, button2 = 0):
         '''static int QMessageBox.information(QWidget parent, QString title, QString text, int button0, int button1 = 0, int button2 = 0)'''
         return int()
-    def information(self, parent, title, text, button0Text, button1Text = QString(), button2Text = QString(), defaultButtonNumber = 0, escapeButtonNumber = -1):
+    def information(self, parent, title, text, button0Text, button1Text = QString(), button2Text = QString(), defaultButtonNumber = 0, escapeButtonNumber = None):
         '''static int QMessageBox.information(QWidget parent, QString title, QString text, QString button0Text, QString button1Text = QString(), QString button2Text = QString(), int defaultButtonNumber = 0, int escapeButtonNumber = -1)'''
         return int()
     def setTextFormat(self):
@@ -17059,7 +17059,7 @@ class QPageSetupDialog(QDialog):
     def open(self):
         '''void QPageSetupDialog.open()'''
     def open(self, receiver, member):
-        '''void QPageSetupDialog.open(QObject receiver, SLOT()SLOT() member)'''
+        '''void QPageSetupDialog.open(QObject receiver, SLOT() member)'''
     def open(self, receiver):
         '''void QPageSetupDialog.open(callable receiver)'''
     def options(self):
@@ -17210,11 +17210,11 @@ class QPainter():
         '''void QPainter.endNativePainting()'''
     def beginNativePainting(self):
         '''void QPainter.beginNativePainting()'''
-    def drawRoundedRect(self, rect, xRadius, yRadius, mode = Qt.AbsoluteSize):
+    def drawRoundedRect(self, rect, xRadius, yRadius, mode = None):
         '''void QPainter.drawRoundedRect(QRectF rect, float xRadius, float yRadius, Qt.SizeMode mode = Qt.AbsoluteSize)'''
-    def drawRoundedRect(self, x, y, w, h, xRadius, yRadius, mode = Qt.AbsoluteSize):
+    def drawRoundedRect(self, x, y, w, h, xRadius, yRadius, mode = None):
         '''void QPainter.drawRoundedRect(int x, int y, int w, int h, float xRadius, float yRadius, Qt.SizeMode mode = Qt.AbsoluteSize)'''
-    def drawRoundedRect(self, rect, xRadius, yRadius, mode = Qt.AbsoluteSize):
+    def drawRoundedRect(self, rect, xRadius, yRadius, mode = None):
         '''void QPainter.drawRoundedRect(QRect rect, float xRadius, float yRadius, Qt.SizeMode mode = Qt.AbsoluteSize)'''
     def testRenderHint(self, hint):
         '''bool QPainter.testRenderHint(QPainter.RenderHint hint)'''
@@ -17255,13 +17255,13 @@ class QPainter():
     def combinedMatrix(self):
         '''QMatrix QPainter.combinedMatrix()'''
         return QMatrix()
-    def drawImage(self, targetRect, image, sourceRect, flags = Qt.AutoColor):
+    def drawImage(self, targetRect, image, sourceRect, flags = None):
         '''void QPainter.drawImage(QRectF targetRect, QImage image, QRectF sourceRect, Qt.ImageConversionFlags flags = Qt.AutoColor)'''
-    def drawImage(self, targetRect, image, sourceRect, flags = Qt.AutoColor):
+    def drawImage(self, targetRect, image, sourceRect, flags = None):
         '''void QPainter.drawImage(QRect targetRect, QImage image, QRect sourceRect, Qt.ImageConversionFlags flags = Qt.AutoColor)'''
-    def drawImage(self, p, image, sr, flags = Qt.AutoColor):
+    def drawImage(self, p, image, sr, flags = None):
         '''void QPainter.drawImage(QPointF p, QImage image, QRectF sr, Qt.ImageConversionFlags flags = Qt.AutoColor)'''
-    def drawImage(self, p, image, sr, flags = Qt.AutoColor):
+    def drawImage(self, p, image, sr, flags = None):
         '''void QPainter.drawImage(QPoint p, QImage image, QRect sr, Qt.ImageConversionFlags flags = Qt.AutoColor)'''
     def drawImage(self, r, image):
         '''void QPainter.drawImage(QRectF r, QImage image)'''
@@ -17271,7 +17271,7 @@ class QPainter():
         '''void QPainter.drawImage(QPointF p, QImage image)'''
     def drawImage(self, p, image):
         '''void QPainter.drawImage(QPoint p, QImage image)'''
-    def drawImage(self, x, y, image, sx = 0, sy = 0, sw = -1, sh = -1, flags = Qt.AutoColor):
+    def drawImage(self, x, y, image, sx = 0, sy = 0, sw = None, sh = None, flags = None):
         '''void QPainter.drawImage(int x, int y, QImage image, int sx = 0, int sy = 0, int sw = -1, int sh = -1, Qt.ImageConversionFlags flags = Qt.AutoColor)'''
     def drawPoint(self, p):
         '''void QPainter.drawPoint(QPointF p)'''
@@ -17446,11 +17446,11 @@ class QPainter():
         '''void QPainter.drawConvexPolygon(QPolygon poly)'''
     def drawPolygon(self, point, *args):
         '''void QPainter.drawPolygon(QPointF point, ... *args)'''
-    def drawPolygon(self, points, fillRule = Qt.OddEvenFill):
+    def drawPolygon(self, points, fillRule = None):
         '''void QPainter.drawPolygon(QPolygonF points, Qt.FillRule fillRule = Qt.OddEvenFill)'''
     def drawPolygon(self, point, *args):
         '''void QPainter.drawPolygon(QPoint point, ... *args)'''
-    def drawPolygon(self, points, fillRule = Qt.OddEvenFill):
+    def drawPolygon(self, points, fillRule = None):
         '''void QPainter.drawPolygon(QPolygon points, Qt.FillRule fillRule = Qt.OddEvenFill)'''
     def drawPolyline(self, point, *args):
         '''void QPainter.drawPolyline(QPointF point, ... *args)'''
@@ -17563,15 +17563,15 @@ class QPainter():
         return bool()
     def setClipping(self, enable):
         '''void QPainter.setClipping(bool enable)'''
-    def setClipPath(self, path, operation = Qt.ReplaceClip):
+    def setClipPath(self, path, operation = None):
         '''void QPainter.setClipPath(QPainterPath path, Qt.ClipOperation operation = Qt.ReplaceClip)'''
-    def setClipRegion(self, region, operation = Qt.ReplaceClip):
+    def setClipRegion(self, region, operation = None):
         '''void QPainter.setClipRegion(QRegion region, Qt.ClipOperation operation = Qt.ReplaceClip)'''
-    def setClipRect(self, rectangle, operation = Qt.ReplaceClip):
+    def setClipRect(self, rectangle, operation = None):
         '''void QPainter.setClipRect(QRectF rectangle, Qt.ClipOperation operation = Qt.ReplaceClip)'''
-    def setClipRect(self, x, y, width, height, operation = Qt.ReplaceClip):
+    def setClipRect(self, x, y, width, height, operation = None):
         '''void QPainter.setClipRect(int x, int y, int width, int height, Qt.ClipOperation operation = Qt.ReplaceClip)'''
-    def setClipRect(self, rectangle, operation = Qt.ReplaceClip):
+    def setClipRect(self, rectangle, operation = None):
         '''void QPainter.setClipRect(QRect rectangle, Qt.ClipOperation operation = Qt.ReplaceClip)'''
     def clipPath(self):
         '''QPainterPath QPainter.clipPath()'''
@@ -17935,7 +17935,7 @@ class QPaintEngine():
         return QPaintDevice()
     def setPaintDevice(self, device):
         '''void QPaintEngine.setPaintDevice(QPaintDevice device)'''
-    def drawImage(self, r, pm, sr, flags = Qt.AutoColor):
+    def drawImage(self, r, pm, sr, flags = None):
         '''void QPaintEngine.drawImage(QRectF r, QImage pm, QRectF sr, Qt.ImageConversionFlags flags = Qt.AutoColor)'''
     def drawTiledPixmap(self, r, pixmap, s):
         '''void QPaintEngine.drawTiledPixmap(QRectF r, QPixmap pixmap, QPointF s)'''
@@ -18203,9 +18203,9 @@ class QPainterPath():
     def simplified(self):
         '''QPainterPath QPainterPath.simplified()'''
         return QPainterPath()
-    def addRoundedRect(self, rect, xRadius, yRadius, mode = Qt.AbsoluteSize):
+    def addRoundedRect(self, rect, xRadius, yRadius, mode = None):
         '''void QPainterPath.addRoundedRect(QRectF rect, float xRadius, float yRadius, Qt.SizeMode mode = Qt.AbsoluteSize)'''
-    def addRoundedRect(self, x, y, w, h, xRadius, yRadius, mode = Qt.AbsoluteSize):
+    def addRoundedRect(self, x, y, w, h, xRadius, yRadius, mode = None):
         '''void QPainterPath.addRoundedRect(float x, float y, float w, float h, float xRadius, float yRadius, Qt.SizeMode mode = Qt.AbsoluteSize)'''
     def subtractedInverted(self, r):
         '''QPainterPath QPainterPath.subtractedInverted(QPainterPath r)'''
@@ -18613,7 +18613,7 @@ class QPen():
         return Qt.PenStyle()
     def __init__(self, color):
         '''void QPen.__init__(QColor color)'''
-    def __init__(self, brush, width, style = Qt.SolidLine, cap = Qt.SquareCap, join = Qt.BevelJoin):
+    def __init__(self, brush, width, style = None, cap = None, join = None):
         '''void QPen.__init__(QBrush brush, float width, Qt.PenStyle style = Qt.SolidLine, Qt.PenCapStyle cap = Qt.SquareCap, Qt.PenJoinStyle join = Qt.BevelJoin)'''
     def __init__(self, pen):
         '''void QPen.__init__(QPen pen)'''
@@ -18690,7 +18690,7 @@ class QPen():
 
 class QPicture(QPaintDevice):
     """"""
-    def __init__(self, formatVersion = -1):
+    def __init__(self, formatVersion = None):
         '''void QPicture.__init__(int formatVersion = -1)'''
     def __init__(self):
         '''QPicture QPicture.__init__()'''
@@ -19024,7 +19024,7 @@ class QPlainTextEdit(QAbstractScrollArea):
     def canPaste(self):
         '''bool QPlainTextEdit.canPaste()'''
         return bool()
-    def moveCursor(self, operation, mode = QTextCursor.MoveAnchor):
+    def moveCursor(self, operation, mode = None):
         '''void QPlainTextEdit.moveCursor(QTextCursor.MoveOperation operation, QTextCursor.MoveMode mode = QTextCursor.MoveAnchor)'''
     def extraSelections(self):
         '''list-of-QTextEdit.ExtraSelection QPlainTextEdit.extraSelections()'''
@@ -19250,10 +19250,10 @@ class QPolygon():
         '''void QPolygon.remove(int i, int count)'''
     def prepend(self, value):
         '''void QPolygon.prepend(QPoint value)'''
-    def mid(self, pos, length = -1):
+    def mid(self, pos, length = None):
         '''QPolygon QPolygon.mid(int pos, int length = -1)'''
         return QPolygon()
-    def lastIndexOf(self, value, from_ = -1):
+    def lastIndexOf(self, value, from_ = None):
         '''int QPolygon.lastIndexOf(QPoint value, int from = -1)'''
         return int()
     def last(self):
@@ -19270,14 +19270,14 @@ class QPolygon():
     def first(self):
         '''QPoint QPolygon.first()'''
         return QPoint()
-    def fill(self, value, size = -1):
+    def fill(self, value, size = None):
         '''void QPolygon.fill(QPoint value, int size = -1)'''
     def data(self):
         '''sip.voidptr QPolygon.data()'''
         return sip.voidptr()
     def __len__(self):
-        ''' QPolygon.__len__()'''
-        return ()
+        '''None QPolygon.__len__()'''
+        return None()
     def count(self, value):
         '''int QPolygon.count(QPoint value)'''
         return int()
@@ -19410,10 +19410,10 @@ class QPolygonF():
         '''void QPolygonF.remove(int i, int count)'''
     def prepend(self, value):
         '''void QPolygonF.prepend(QPointF value)'''
-    def mid(self, pos, length = -1):
+    def mid(self, pos, length = None):
         '''QPolygonF QPolygonF.mid(int pos, int length = -1)'''
         return QPolygonF()
-    def lastIndexOf(self, value, from_ = -1):
+    def lastIndexOf(self, value, from_ = None):
         '''int QPolygonF.lastIndexOf(QPointF value, int from = -1)'''
         return int()
     def last(self):
@@ -19430,14 +19430,14 @@ class QPolygonF():
     def first(self):
         '''QPointF QPolygonF.first()'''
         return QPointF()
-    def fill(self, value, size = -1):
+    def fill(self, value, size = None):
         '''void QPolygonF.fill(QPointF value, int size = -1)'''
     def data(self):
         '''sip.voidptr QPolygonF.data()'''
         return sip.voidptr()
     def __len__(self):
-        ''' QPolygonF.__len__()'''
-        return ()
+        '''None QPolygonF.__len__()'''
+        return None()
     def count(self, value):
         '''int QPolygonF.count(QPointF value)'''
         return int()
@@ -19587,9 +19587,9 @@ class QPrinter(QPaintDevice):
     PrinterResolution = 0
     HighResolution = 0
 
-    def __init__(self, mode = QPrinter.ScreenResolution):
+    def __init__(self, mode = None):
         '''void QPrinter.__init__(QPrinter.PrinterMode mode = QPrinter.ScreenResolution)'''
-    def __init__(self, printer, mode = QPrinter.ScreenResolution):
+    def __init__(self, printer, mode = None):
         '''void QPrinter.__init__(QPrinterInfo printer, QPrinter.PrinterMode mode = QPrinter.ScreenResolution)'''
     def supportsMultipleCopies(self):
         '''bool QPrinter.supportsMultipleCopies()'''
@@ -19792,7 +19792,7 @@ class QPrintDialog(QAbstractPrintDialog):
     def open(self):
         '''void QPrintDialog.open()'''
     def open(self, receiver, member):
-        '''void QPrintDialog.open(QObject receiver, SLOT()SLOT() member)'''
+        '''void QPrintDialog.open(QObject receiver, SLOT() member)'''
     def open(self, receiver):
         '''void QPrintDialog.open(callable receiver)'''
     def setVisible(self, visible):
@@ -19916,7 +19916,7 @@ class QPrintPreviewDialog(QDialog):
     def open(self):
         '''void QPrintPreviewDialog.open()'''
     def open(self, receiver, member):
-        '''void QPrintPreviewDialog.open(QObject receiver, SLOT()SLOT() member)'''
+        '''void QPrintPreviewDialog.open(QObject receiver, SLOT() member)'''
     def open(self, receiver):
         '''void QPrintPreviewDialog.open(callable receiver)'''
     def setVisible(self, visible):
@@ -19970,9 +19970,9 @@ class QPrintPreviewWidget(QWidget):
         '''void QPrintPreviewWidget.setOrientation(QPrinter.Orientation orientation)'''
     def setZoomFactor(self, zoomFactor):
         '''void QPrintPreviewWidget.setZoomFactor(float zoomFactor)'''
-    def zoomOut(self, factor = 1.1):
+    def zoomOut(self, factor = None):
         '''void QPrintPreviewWidget.zoomOut(float factor = 1.1)'''
-    def zoomIn(self, factor = 1.1):
+    def zoomIn(self, factor = None):
         '''void QPrintPreviewWidget.zoomIn(float factor = 1.1)'''
     def print_(self):
         '''void QPrintPreviewWidget.print_()'''
@@ -20085,7 +20085,7 @@ class QProgressDialog(QDialog):
     def open(self):
         '''void QProgressDialog.open()'''
     def open(self, receiver, member):
-        '''void QProgressDialog.open(QObject receiver, SLOT()SLOT() member)'''
+        '''void QProgressDialog.open(QObject receiver, SLOT() member)'''
     def open(self, receiver):
         '''void QProgressDialog.open(callable receiver)'''
     def forceShow(self):
@@ -20173,10 +20173,10 @@ class QProxyModel(QAbstractItemModel):
     def span(self, index):
         '''QSize QProxyModel.span(QModelIndex index)'''
         return QSize()
-    def match(self, start, role, value, hits = 1, flags = Qt.MatchFlags(Qt.MatchStartsWith|Qt.MatchWrap)):
+    def match(self, start, role, value, hits = 1, flags = None):
         '''list-of-QModelIndex QProxyModel.match(QModelIndex start, int role, QVariant value, int hits = 1, Qt.MatchFlags flags = Qt.MatchFlags(Qt.MatchStartsWith|Qt.MatchWrap))'''
         return [QModelIndex()]
-    def sort(self, column, order = Qt.AscendingOrder):
+    def sort(self, column, order = None):
         '''void QProxyModel.sort(int column, Qt.SortOrder order = Qt.AscendingOrder)'''
     def flags(self, index):
         '''Qt.ItemFlags QProxyModel.flags(QModelIndex index)'''
@@ -20201,16 +20201,16 @@ class QProxyModel(QAbstractItemModel):
     def mimeTypes(self):
         '''QStringList QProxyModel.mimeTypes()'''
         return QStringList()
-    def setHeaderData(self, section, orientation, value, role = Qt.EditRole):
+    def setHeaderData(self, section, orientation, value, role = None):
         '''bool QProxyModel.setHeaderData(int section, Qt.Orientation orientation, QVariant value, int role = Qt.EditRole)'''
         return bool()
-    def headerData(self, section, orientation, role = Qt.DisplayRole):
+    def headerData(self, section, orientation, role = None):
         '''QVariant QProxyModel.headerData(int section, Qt.Orientation orientation, int role = Qt.DisplayRole)'''
         return QVariant()
-    def setData(self, index, value, role = Qt.EditRole):
+    def setData(self, index, value, role = None):
         '''bool QProxyModel.setData(QModelIndex index, QVariant value, int role = Qt.EditRole)'''
         return bool()
-    def data(self, index, role = Qt.DisplayRole):
+    def data(self, index, role = None):
         '''QVariant QProxyModel.data(QModelIndex index, int role = Qt.DisplayRole)'''
         return QVariant()
     def hasChildren(self, parent = QModelIndex()):
@@ -20399,13 +20399,13 @@ class QRawFont():
 
     def __init__(self):
         '''void QRawFont.__init__()'''
-    def __init__(self, fileName, pixelSize, hintingPreference = QFont.PreferDefaultHinting):
+    def __init__(self, fileName, pixelSize, hintingPreference = None):
         '''void QRawFont.__init__(QString fileName, float pixelSize, QFont.HintingPreference hintingPreference = QFont.PreferDefaultHinting)'''
-    def __init__(self, fontData, pixelSize, hintingPreference = QFont.PreferDefaultHinting):
+    def __init__(self, fontData, pixelSize, hintingPreference = None):
         '''void QRawFont.__init__(QByteArray fontData, float pixelSize, QFont.HintingPreference hintingPreference = QFont.PreferDefaultHinting)'''
     def __init__(self, other):
         '''void QRawFont.__init__(QRawFont other)'''
-    def fromFont(self, font, writingSystem = QFontDatabase.Any):
+    def fromFont(self, font, writingSystem = None):
         '''static QRawFont QRawFont.fromFont(QFont font, QFontDatabase.WritingSystem writingSystem = QFontDatabase.Any)'''
         return QRawFont()
     def fontTable(self, tagName):
@@ -20456,7 +20456,7 @@ class QRawFont():
     def pathForGlyph(self, glyphIndex):
         '''QPainterPath QRawFont.pathForGlyph(int glyphIndex)'''
         return QPainterPath()
-    def alphaMapForGlyph(self, glyphIndex, antialiasingType = QRawFont.SubPixelAntialiasing, transform = QTransform()):
+    def alphaMapForGlyph(self, glyphIndex, antialiasingType = None, transform = QTransform()):
         '''QImage QRawFont.alphaMapForGlyph(int glyphIndex, QRawFont.AntialiasingType antialiasingType = QRawFont.SubPixelAntialiasing, QTransform transform = QTransform())'''
         return QImage()
     def advancesForGlyphIndexes(self, glyphIndexes):
@@ -20496,11 +20496,11 @@ class QRegion():
 
     def __init__(self):
         '''void QRegion.__init__()'''
-    def __init__(self, x, y, w, h, type = QRegion.Rectangle):
+    def __init__(self, x, y, w, h, type = None):
         '''void QRegion.__init__(int x, int y, int w, int h, QRegion.RegionType type = QRegion.Rectangle)'''
-    def __init__(self, r, type = QRegion.Rectangle):
+    def __init__(self, r, type = None):
         '''void QRegion.__init__(QRect r, QRegion.RegionType type = QRegion.Rectangle)'''
-    def __init__(self, a, fillRule = Qt.OddEvenFill):
+    def __init__(self, a, fillRule = None):
         '''void QRegion.__init__(QPolygon a, Qt.FillRule fillRule = Qt.OddEvenFill)'''
     def __init__(self, bitmap):
         '''void QRegion.__init__(QBitmap bitmap)'''
@@ -20827,7 +20827,7 @@ class QShortcut(QObject):
     """"""
     def __init__(self, parent):
         '''void QShortcut.__init__(QWidget parent)'''
-    def __init__(self, key, parent, member = 0, ambiguousMember = 0, context = Qt.WindowShortcut):
+    def __init__(self, key, parent, member = 0, ambiguousMember = 0, context = None):
         '''void QShortcut.__init__(QKeySequence key, QWidget parent, SLOT() member = 0, SLOT() ambiguousMember = 0, Qt.ShortcutContext context = Qt.WindowShortcut)'''
     def event(self, e):
         '''bool QShortcut.event(QEvent e)'''
@@ -21097,7 +21097,7 @@ class QSortFilterProxyModel(QAbstractProxyModel):
         '''void QSortFilterProxyModel.invalidateFilter()'''
     def invalidate(self):
         '''void QSortFilterProxyModel.invalidate()'''
-    def data(self, index, role = Qt.DisplayRole):
+    def data(self, index, role = None):
         '''QVariant QSortFilterProxyModel.data(QModelIndex index, int role = Qt.DisplayRole)'''
         return QVariant()
     def setSortLocaleAware(self, on):
@@ -21137,9 +21137,9 @@ class QSortFilterProxyModel(QAbstractProxyModel):
     def sortCaseSensitivity(self):
         '''Qt.CaseSensitivity QSortFilterProxyModel.sortCaseSensitivity()'''
         return Qt.CaseSensitivity()
-    def sort(self, column, order = Qt.AscendingOrder):
+    def sort(self, column, order = None):
         '''void QSortFilterProxyModel.sort(int column, Qt.SortOrder order = Qt.AscendingOrder)'''
-    def match(self, start, role, value, hits = 1, flags = Qt.MatchStartsWith|Qt.MatchWrap):
+    def match(self, start, role, value, hits = 1, flags = None):
         '''list-of-QModelIndex QSortFilterProxyModel.match(QModelIndex start, int role, QVariant value, int hits = 1, Qt.MatchFlags flags = Qt.MatchStartsWith|Qt.MatchWrap)'''
         return [QModelIndex()]
     def span(self, index):
@@ -21174,13 +21174,13 @@ class QSortFilterProxyModel(QAbstractProxyModel):
     def mimeData(self, indexes):
         '''QMimeData QSortFilterProxyModel.mimeData(list-of-QModelIndex indexes)'''
         return QMimeData()
-    def setHeaderData(self, section, orientation, value, role = Qt.EditRole):
+    def setHeaderData(self, section, orientation, value, role = None):
         '''bool QSortFilterProxyModel.setHeaderData(int section, Qt.Orientation orientation, QVariant value, int role = Qt.EditRole)'''
         return bool()
-    def headerData(self, section, orientation, role = Qt.EditRole):
+    def headerData(self, section, orientation, role = None):
         '''QVariant QSortFilterProxyModel.headerData(int section, Qt.Orientation orientation, int role = Qt.EditRole)'''
         return QVariant()
-    def setData(self, index, value, role = Qt.EditRole):
+    def setData(self, index, value, role = None):
         '''bool QSortFilterProxyModel.setData(QModelIndex index, QVariant value, int role = Qt.EditRole)'''
         return bool()
     def hasChildren(self, parent = QModelIndex()):
@@ -21424,7 +21424,7 @@ class QSplashScreen(QWidget):
     messageChanged = pyqtSignal() # void messageChanged(const QStringamp;) - signal
     def clearMessage(self):
         '''void QSplashScreen.clearMessage()'''
-    def showMessage(self, message, alignment = Qt.AlignLeft, color = Qt.black):
+    def showMessage(self, message, alignment = None, color = None):
         '''void QSplashScreen.showMessage(QString message, int alignment = Qt.AlignLeft, QColor color = Qt.black)'''
     def repaint(self):
         '''void QSplashScreen.repaint()'''
@@ -21475,8 +21475,8 @@ class QSplitter(QFrame):
         '''int QSplitter.getRange(int index)'''
         return int()
     def __len__(self):
-        ''' QSplitter.__len__()'''
-        return ()
+        '''None QSplitter.__len__()'''
+        return None()
     def count(self):
         '''int QSplitter.count()'''
         return int()
@@ -21659,8 +21659,8 @@ class QStackedWidget(QFrame):
     def setCurrentIndex(self, index):
         '''void QStackedWidget.setCurrentIndex(int index)'''
     def __len__(self):
-        ''' QStackedWidget.__len__()'''
-        return ()
+        '''None QStackedWidget.__len__()'''
+        return None()
     def count(self):
         '''int QStackedWidget.count()'''
         return int()
@@ -21707,7 +21707,7 @@ class QStandardItemModel(QAbstractItemModel):
     def sortRole(self):
         '''int QStandardItemModel.sortRole()'''
         return int()
-    def findItems(self, text, flags = Qt.MatchExactly, column = 0):
+    def findItems(self, text, flags = None, column = 0):
         '''list-of-QStandardItem QStandardItemModel.findItems(QString text, Qt.MatchFlags flags = Qt.MatchExactly, int column = 0)'''
         return [QStandardItem()]
     def setItemPrototype(self, item):
@@ -21782,7 +21782,7 @@ class QStandardItemModel(QAbstractItemModel):
     def itemFromIndex(self, index):
         '''QStandardItem QStandardItemModel.itemFromIndex(QModelIndex index)'''
         return QStandardItem()
-    def sort(self, column, order = Qt.AscendingOrder):
+    def sort(self, column, order = None):
         '''void QStandardItemModel.sort(int column, Qt.SortOrder order = Qt.AscendingOrder)'''
     def setItemData(self, index, roles):
         '''bool QStandardItemModel.setItemData(QModelIndex index, dict-of-int-QVariant roles)'''
@@ -21810,16 +21810,16 @@ class QStandardItemModel(QAbstractItemModel):
     def insertRows(self, row, count, parent = QModelIndex()):
         '''bool QStandardItemModel.insertRows(int row, int count, QModelIndex parent = QModelIndex())'''
         return bool()
-    def setHeaderData(self, section, orientation, value, role = Qt.EditRole):
+    def setHeaderData(self, section, orientation, value, role = None):
         '''bool QStandardItemModel.setHeaderData(int section, Qt.Orientation orientation, QVariant value, int role = Qt.EditRole)'''
         return bool()
-    def headerData(self, section, orientation, role = Qt.DisplayRole):
+    def headerData(self, section, orientation, role = None):
         '''QVariant QStandardItemModel.headerData(int section, Qt.Orientation orientation, int role = Qt.DisplayRole)'''
         return QVariant()
-    def setData(self, index, value, role = Qt.EditRole):
+    def setData(self, index, value, role = None):
         '''bool QStandardItemModel.setData(QModelIndex index, QVariant value, int role = Qt.EditRole)'''
         return bool()
-    def data(self, index, role = Qt.DisplayRole):
+    def data(self, index, role = None):
         '''QVariant QStandardItemModel.data(QModelIndex index, int role = Qt.DisplayRole)'''
         return QVariant()
     def hasChildren(self, parent = QModelIndex()):
@@ -21910,7 +21910,7 @@ class QStandardItem():
     def clone(self):
         '''QStandardItem QStandardItem.clone()'''
         return QStandardItem()
-    def sortChildren(self, column, order = Qt.AscendingOrder):
+    def sortChildren(self, column, order = None):
         '''void QStandardItem.sortChildren(int column, Qt.SortOrder order = Qt.AscendingOrder)'''
     def takeColumn(self, column):
         '''list-of-QStandardItem QStandardItem.takeColumn(int column)'''
@@ -22055,9 +22055,9 @@ class QStandardItem():
     def text(self):
         '''QString QStandardItem.text()'''
         return QString()
-    def setData(self, value, role = Qt.UserRole+1):
+    def setData(self, value, role = None):
         '''void QStandardItem.setData(QVariant value, int role = Qt.UserRole+1)'''
-    def data(self, role = Qt.UserRole+1):
+    def data(self, role = None):
         '''QVariant QStandardItem.data(int role = Qt.UserRole+1)'''
         return QVariant()
 
@@ -22169,7 +22169,7 @@ class QStringListModel(QAbstractListModel):
     def supportedDropActions(self):
         '''Qt.DropActions QStringListModel.supportedDropActions()'''
         return Qt.DropActions()
-    def sort(self, column, order = Qt.AscendingOrder):
+    def sort(self, column, order = None):
         '''void QStringListModel.sort(int column, Qt.SortOrder order = Qt.AscendingOrder)'''
     def setStringList(self, strings):
         '''void QStringListModel.setStringList(QStringList strings)'''
@@ -22185,7 +22185,7 @@ class QStringListModel(QAbstractListModel):
     def flags(self, index):
         '''Qt.ItemFlags QStringListModel.flags(QModelIndex index)'''
         return Qt.ItemFlags()
-    def setData(self, index, value, role = Qt.EditRole):
+    def setData(self, index, value, role = None):
         '''bool QStringListModel.setData(QModelIndex index, QVariant value, int role = Qt.EditRole)'''
         return bool()
     def data(self, index, role):
@@ -22293,7 +22293,7 @@ class QStyleOption():
     state = None # QStyle.State - member
     type = None # int - member
     version = None # int - member
-    def __init__(self, version = QStyleOption.Version, type = QStyleOption.SO_Default):
+    def __init__(self, version = None, type = None):
         '''void QStyleOption.__init__(int version = QStyleOption.Version, int type = QStyleOption.SO_Default)'''
     def __init__(self, other):
         '''void QStyleOption.__init__(QStyleOption other)'''
@@ -22818,7 +22818,7 @@ class QStyleOptionComplex(QStyleOption):
 
     activeSubControls = None # QStyle.SubControls - member
     subControls = None # QStyle.SubControls - member
-    def __init__(self, version = QStyleOptionComplex.Version, type = QStyleOption.SO_Complex):
+    def __init__(self, version = None, type = None):
         '''void QStyleOptionComplex.__init__(int version = QStyleOptionComplex.Version, int type = QStyleOption.SO_Complex)'''
     def __init__(self, other):
         '''void QStyleOptionComplex.__init__(QStyleOptionComplex other)'''
@@ -22999,7 +22999,7 @@ class QStyleHintReturn():
 
     type = None # int - member
     version = None # int - member
-    def __init__(self, version = QStyleOption.Version, type = QStyleHintReturn.SH_Default):
+    def __init__(self, version = None, type = None):
         '''void QStyleHintReturn.__init__(int version = QStyleOption.Version, int type = QStyleHintReturn.SH_Default)'''
     def __init__(self):
         '''QStyleHintReturn QStyleHintReturn.__init__()'''
@@ -23396,7 +23396,7 @@ class QStylePainter(QPainter):
         '''void QStylePainter.__init__(QPaintDevice pd, QWidget w)'''
     def drawItemPixmap(self, r, flags, pixmap):
         '''void QStylePainter.drawItemPixmap(QRect r, int flags, QPixmap pixmap)'''
-    def drawItemText(self, rect, flags, pal, enabled, text, textRole = QPalette.NoRole):
+    def drawItemText(self, rect, flags, pal, enabled, text, textRole = None):
         '''void QStylePainter.drawItemText(QRect rect, int flags, QPalette pal, bool enabled, QString text, QPalette.ColorRole textRole = QPalette.NoRole)'''
     def drawComplexControl(self, cc, opt):
         '''void QStylePainter.drawComplexControl(QStyle.ComplexControl cc, QStyleOptionComplex opt)'''
@@ -23494,7 +23494,7 @@ class QSystemTrayIcon(QObject):
     def isVisible(self):
         '''bool QSystemTrayIcon.isVisible()'''
         return bool()
-    def showMessage(self, title, msg, icon = QSystemTrayIcon.Information, msecs = 10000):
+    def showMessage(self, title, msg, icon = None, msecs = 10000):
         '''void QSystemTrayIcon.showMessage(QString title, QString msg, QSystemTrayIcon.MessageIcon icon = QSystemTrayIcon.Information, int msecs = 10000)'''
     def supportsMessages(self):
         '''static bool QSystemTrayIcon.supportsMessages()'''
@@ -23653,8 +23653,8 @@ class QTabBar(QWidget):
         '''QSize QTabBar.sizeHint()'''
         return QSize()
     def __len__(self):
-        ''' QTabBar.__len__()'''
-        return ()
+        '''None QTabBar.__len__()'''
+        return None()
     def count(self):
         '''int QTabBar.count()'''
         return int()
@@ -23837,7 +23837,7 @@ class QTableView(QAbstractItemView):
     def indexAt(self, p):
         '''QModelIndex QTableView.indexAt(QPoint p)'''
         return QModelIndex()
-    def scrollTo(self, index, hint = QAbstractItemView.EnsureVisible):
+    def scrollTo(self, index, hint = None):
         '''void QTableView.scrollTo(QModelIndex index, QAbstractItemView.ScrollHint hint = QAbstractItemView.EnsureVisible)'''
     def visualRect(self, index):
         '''QRect QTableView.visualRect(QModelIndex index)'''
@@ -23936,11 +23936,11 @@ class QTableWidgetItem():
     Type = 0
     UserType = 0
 
-    def __init__(self, type = QTableWidgetItem.Type):
+    def __init__(self, type = None):
         '''void QTableWidgetItem.__init__(int type = QTableWidgetItem.Type)'''
-    def __init__(self, text, type = QTableWidgetItem.Type):
+    def __init__(self, text, type = None):
         '''void QTableWidgetItem.__init__(QString text, int type = QTableWidgetItem.Type)'''
-    def __init__(self, icon, text, type = QTableWidgetItem.Type):
+    def __init__(self, icon, text, type = None):
         '''void QTableWidgetItem.__init__(QIcon icon, QString text, int type = QTableWidgetItem.Type)'''
     def __init__(self, other):
         '''void QTableWidgetItem.__init__(QTableWidgetItem other)'''
@@ -24110,7 +24110,7 @@ class QTableWidget(QTableView):
         '''void QTableWidget.insertColumn(int column)'''
     def insertRow(self, row):
         '''void QTableWidget.insertRow(int row)'''
-    def scrollToItem(self, item, hint = QAbstractItemView.EnsureVisible):
+    def scrollToItem(self, item, hint = None):
         '''void QTableWidget.scrollToItem(QTableWidgetItem item, QAbstractItemView.ScrollHint hint = QAbstractItemView.EnsureVisible)'''
     def setItemPrototype(self, item):
         '''void QTableWidget.setItemPrototype(QTableWidgetItem item)'''
@@ -24166,7 +24166,7 @@ class QTableWidget(QTableView):
         return bool()
     def setSortingEnabled(self, enable):
         '''void QTableWidget.setSortingEnabled(bool enable)'''
-    def sortItems(self, column, order = Qt.AscendingOrder):
+    def sortItems(self, column, order = None):
         '''void QTableWidget.sortItems(int column, Qt.SortOrder order = Qt.AscendingOrder)'''
     def setCurrentCell(self, row, column):
         '''void QTableWidget.setCurrentCell(int row, int column)'''
@@ -24315,10 +24315,10 @@ class QTabWidget(QWidget):
         '''void QTabWidget.setCurrentWidget(QWidget widget)'''
     def setCurrentIndex(self, index):
         '''void QTabWidget.setCurrentIndex(int index)'''
-    def cornerWidget(self, corner = Qt.TopRightCorner):
+    def cornerWidget(self, corner = None):
         '''QWidget QTabWidget.cornerWidget(Qt.Corner corner = Qt.TopRightCorner)'''
         return QWidget()
-    def setCornerWidget(self, widget, corner = Qt.TopRightCorner):
+    def setCornerWidget(self, widget, corner = None):
         '''void QTabWidget.setCornerWidget(QWidget widget, Qt.Corner corner = Qt.TopRightCorner)'''
     def minimumSizeHint(self):
         '''QSize QTabWidget.minimumSizeHint()'''
@@ -24338,8 +24338,8 @@ class QTabWidget(QWidget):
         '''QTabWidget.TabPosition QTabWidget.tabPosition()'''
         return QTabWidget.TabPosition()
     def __len__(self):
-        ''' QTabWidget.__len__()'''
-        return ()
+        '''None QTabWidget.__len__()'''
+        return None()
     def count(self):
         '''int QTabWidget.count()'''
         return int()
@@ -24539,7 +24539,7 @@ class QTextEdit(QAbstractScrollArea):
         '''void QTextEdit.setFontPointSize(float s)'''
     def print_(self, printer):
         '''void QTextEdit.print_(QPrinter printer)'''
-    def moveCursor(self, operation, mode = QTextCursor.MoveAnchor):
+    def moveCursor(self, operation, mode = None):
         '''void QTextEdit.moveCursor(QTextCursor.MoveOperation operation, QTextCursor.MoveMode mode = QTextCursor.MoveAnchor)'''
     def canPaste(self):
         '''bool QTextEdit.canPaste()'''
@@ -25048,7 +25048,7 @@ class QTextCursor():
         '''void QTextCursor.deletePreviousChar()'''
     def deleteChar(self):
         '''void QTextCursor.deleteChar()'''
-    def movePosition(self, op, mode = QTextCursor.MoveAnchor, n = 1):
+    def movePosition(self, op, mode = None, n = 1):
         '''bool QTextCursor.movePosition(QTextCursor.MoveOperation op, QTextCursor.MoveMode mode = QTextCursor.MoveAnchor, int n = 1)'''
         return bool()
     def insertText(self, text):
@@ -25061,7 +25061,7 @@ class QTextCursor():
     def position(self):
         '''int QTextCursor.position()'''
         return int()
-    def setPosition(self, pos, mode = QTextCursor.MoveAnchor):
+    def setPosition(self, pos, mode = None):
         '''void QTextCursor.setPosition(int pos, QTextCursor.MoveMode mode = QTextCursor.MoveAnchor)'''
     def isNull(self):
         '''bool QTextCursor.isNull()'''
@@ -25080,7 +25080,7 @@ class Qt():
     ExactHit = 0
     FuzzyHit = 0
 
-    def convertFromPlainText(self, plain, mode = Qt.WhiteSpacePre):
+    def convertFromPlainText(self, plain, mode = None):
         '''static QString Qt.convertFromPlainText(QString plain, Qt.WhiteSpaceMode mode = Qt.WhiteSpacePre)'''
         return QString()
     def escape(self, plain):
@@ -25122,7 +25122,7 @@ class QTextDocument(QObject):
     def defaultCursorMoveStyle(self):
         '''Qt.CursorMoveStyle QTextDocument.defaultCursorMoveStyle()'''
         return Qt.CursorMoveStyle()
-    def clearUndoRedoStacks(self, stacks = QTextDocument.UndoAndRedoStacks):
+    def clearUndoRedoStacks(self, stacks = None):
         '''void QTextDocument.clearUndoRedoStacks(QTextDocument.Stacks stacks = QTextDocument.UndoAndRedoStacks)'''
     def availableRedoSteps(self):
         '''int QTextDocument.availableRedoSteps()'''
@@ -25819,7 +25819,7 @@ class QTextCharFormat(QTextFormat):
         return QFont.StyleHint()
     def setFontStyleStrategy(self, strategy):
         '''void QTextCharFormat.setFontStyleStrategy(QFont.StyleStrategy strategy)'''
-    def setFontStyleHint(self, hint, strategy = QFont.PreferDefault):
+    def setFontStyleHint(self, hint, strategy = None):
         '''void QTextCharFormat.setFontStyleHint(QFont.StyleHint hint, QFont.StyleStrategy strategy = QFont.PreferDefault)'''
     def fontWordSpacing(self):
         '''float QTextCharFormat.fontWordSpacing()'''
@@ -26360,12 +26360,12 @@ class QTextLayout():
         '''void QTextLayout.drawCursor(QPainter p, QPointF pos, int cursorPosition)'''
     def drawCursor(self, p, pos, cursorPosition, width):
         '''void QTextLayout.drawCursor(QPainter p, QPointF pos, int cursorPosition, int width)'''
-    def draw(self, p, pos, selections = list-of-QTextLayout.FormatRange, clip = QRectF()):
+    def draw(self, p, pos, selections = None, clip = QRectF()):
         '''void QTextLayout.draw(QPainter p, QPointF pos, list-of-QTextLayout.FormatRange selections = list-of-QTextLayout.FormatRange, QRectF clip = QRectF())'''
-    def previousCursorPosition(self, oldPos, mode = QTextLayout.SkipCharacters):
+    def previousCursorPosition(self, oldPos, mode = None):
         '''int QTextLayout.previousCursorPosition(int oldPos, QTextLayout.CursorMode mode = QTextLayout.SkipCharacters)'''
         return int()
-    def nextCursorPosition(self, oldPos, mode = QTextLayout.SkipCharacters):
+    def nextCursorPosition(self, oldPos, mode = None):
         '''int QTextLayout.nextCursorPosition(int oldPos, QTextLayout.CursorMode mode = QTextLayout.SkipCharacters)'''
         return int()
     def isValidCursorPosition(self, pos):
@@ -26482,10 +26482,10 @@ class QTextLine():
         '''void QTextLine.setNumColumns(int columns, float alignmentWidth)'''
     def setLineWidth(self, width):
         '''void QTextLine.setLineWidth(float width)'''
-    def xToCursor(self, x, edge = QTextLine.CursorBetweenCharacters):
+    def xToCursor(self, x, edge = None):
         '''int QTextLine.xToCursor(float x, QTextLine.CursorPosition edge = QTextLine.CursorBetweenCharacters)'''
         return int()
-    def cursorToX(self, cursorPos, edge = QTextLine.Leading):
+    def cursorToX(self, cursorPos, edge = None):
         '''float QTextLine.cursorToX(int cursorPos, QTextLine.Edge edge = QTextLine.Leading)'''
         return float()
     def naturalTextRect(self):
@@ -26584,8 +26584,8 @@ class QTextList(QTextBlockGroup):
         '''bool QTextList.isEmpty()'''
         return bool()
     def __len__(self):
-        ''' QTextList.__len__()'''
-        return ()
+        '''None QTextList.__len__()'''
+        return None()
     def count(self):
         '''int QTextList.count()'''
         return int()
@@ -27152,13 +27152,13 @@ class QToolBar(QWidget):
         '''QAction QToolBar.addAction(QIcon icon, QString text)'''
         return QAction()
     def addAction(self, text, receiver, member):
-        '''QAction QToolBar.addAction(QString text, QObject receiver, SLOT()SLOT() member)'''
+        '''QAction QToolBar.addAction(QString text, QObject receiver, SLOT() member)'''
         return QAction()
     def addAction(self, text, receiver):
         '''QAction QToolBar.addAction(QString text, callable receiver)'''
         return QAction()
     def addAction(self, icon, text, receiver, member):
-        '''QAction QToolBar.addAction(QIcon icon, QString text, QObject receiver, SLOT()SLOT() member)'''
+        '''QAction QToolBar.addAction(QIcon icon, QString text, QObject receiver, SLOT() member)'''
         return QAction()
     def addAction(self, icon, text, receiver):
         '''QAction QToolBar.addAction(QIcon icon, QString text, callable receiver)'''
@@ -27207,8 +27207,8 @@ class QToolBox(QFrame):
     def setCurrentIndex(self, index):
         '''void QToolBox.setCurrentIndex(int index)'''
     def __len__(self):
-        ''' QToolBox.__len__()'''
-        return ()
+        '''None QToolBox.__len__()'''
+        return None()
     def count(self):
         '''int QToolBox.count()'''
         return int()
@@ -27547,10 +27547,10 @@ class QTransform():
     def squareToQuad(self, square, result):
         '''static bool QTransform.squareToQuad(QPolygonF square, QTransform result)'''
         return bool()
-    def rotateRadians(self, angle, axis = Qt.ZAxis):
+    def rotateRadians(self, angle, axis = None):
         '''QTransform QTransform.rotateRadians(float angle, Qt.Axis axis = Qt.ZAxis)'''
         return QTransform()
-    def rotate(self, angle, axis = Qt.ZAxis):
+    def rotate(self, angle, axis = None):
         '''QTransform QTransform.rotate(float angle, Qt.Axis axis = Qt.ZAxis)'''
         return QTransform()
     def shear(self, sh, sv):
@@ -27739,7 +27739,7 @@ class QTreeView(QAbstractItemView):
     def indexAt(self, p):
         '''QModelIndex QTreeView.indexAt(QPoint p)'''
         return QModelIndex()
-    def scrollTo(self, index, hint = QAbstractItemView.EnsureVisible):
+    def scrollTo(self, index, hint = None):
         '''void QTreeView.scrollTo(QModelIndex index, QAbstractItemView.ScrollHint hint = QAbstractItemView.EnsureVisible)'''
     def visualRect(self, index):
         '''QRect QTreeView.visualRect(QModelIndex index)'''
@@ -27814,21 +27814,21 @@ class QTreeWidgetItem():
     Type = 0
     UserType = 0
 
-    def __init__(self, type = QTreeWidgetItem.Type):
+    def __init__(self, type = None):
         '''void QTreeWidgetItem.__init__(int type = QTreeWidgetItem.Type)'''
-    def __init__(self, strings, type = QTreeWidgetItem.Type):
+    def __init__(self, strings, type = None):
         '''void QTreeWidgetItem.__init__(QStringList strings, int type = QTreeWidgetItem.Type)'''
-    def __init__(self, parent, type = QTreeWidgetItem.Type):
+    def __init__(self, parent, type = None):
         '''void QTreeWidgetItem.__init__(QTreeWidget parent, int type = QTreeWidgetItem.Type)'''
-    def __init__(self, parent, strings, type = QTreeWidgetItem.Type):
+    def __init__(self, parent, strings, type = None):
         '''void QTreeWidgetItem.__init__(QTreeWidget parent, QStringList strings, int type = QTreeWidgetItem.Type)'''
-    def __init__(self, parent, preceding, type = QTreeWidgetItem.Type):
+    def __init__(self, parent, preceding, type = None):
         '''void QTreeWidgetItem.__init__(QTreeWidget parent, QTreeWidgetItem preceding, int type = QTreeWidgetItem.Type)'''
-    def __init__(self, parent, type = QTreeWidgetItem.Type):
+    def __init__(self, parent, type = None):
         '''void QTreeWidgetItem.__init__(QTreeWidgetItem parent, int type = QTreeWidgetItem.Type)'''
-    def __init__(self, parent, strings, type = QTreeWidgetItem.Type):
+    def __init__(self, parent, strings, type = None):
         '''void QTreeWidgetItem.__init__(QTreeWidgetItem parent, QStringList strings, int type = QTreeWidgetItem.Type)'''
-    def __init__(self, parent, preceding, type = QTreeWidgetItem.Type):
+    def __init__(self, parent, preceding, type = None):
         '''void QTreeWidgetItem.__init__(QTreeWidgetItem parent, QTreeWidgetItem preceding, int type = QTreeWidgetItem.Type)'''
     def __init__(self, other):
         '''void QTreeWidgetItem.__init__(QTreeWidgetItem other)'''
@@ -28059,7 +28059,7 @@ class QTreeWidget(QTreeView):
         '''void QTreeWidget.collapseItem(QTreeWidgetItem item)'''
     def expandItem(self, item):
         '''void QTreeWidget.expandItem(QTreeWidgetItem item)'''
-    def scrollToItem(self, item, hint = QAbstractItemView.EnsureVisible):
+    def scrollToItem(self, item, hint = None):
         '''void QTreeWidget.scrollToItem(QTreeWidgetItem item, QAbstractItemView.ScrollHint hint = QAbstractItemView.EnsureVisible)'''
     def setItemExpanded(self, item, expand):
         '''void QTreeWidget.setItemExpanded(QTreeWidgetItem item, bool expand)'''
@@ -28184,9 +28184,9 @@ class QTreeWidgetItemIterator():
 
     def __init__(self, it):
         '''void QTreeWidgetItemIterator.__init__(QTreeWidgetItemIterator it)'''
-    def __init__(self, widget, flags = QTreeWidgetItemIterator.All):
+    def __init__(self, widget, flags = None):
         '''void QTreeWidgetItemIterator.__init__(QTreeWidget widget, QTreeWidgetItemIterator.IteratorFlags flags = QTreeWidgetItemIterator.All)'''
-    def __init__(self, item, flags = QTreeWidgetItemIterator.All):
+    def __init__(self, item, flags = None):
         '''void QTreeWidgetItemIterator.__init__(QTreeWidgetItem item, QTreeWidgetItemIterator.IteratorFlags flags = QTreeWidgetItemIterator.All)'''
     def __isub__(self, n):
         '''QTreeWidgetItemIterator QTreeWidgetItemIterator.__isub__(int n)'''
@@ -28384,8 +28384,8 @@ class QUndoStack(QObject):
         '''int QUndoStack.index()'''
         return int()
     def __len__(self):
-        ''' QUndoStack.__len__()'''
-        return ()
+        '''None QUndoStack.__len__()'''
+        return None()
     def count(self):
         '''int QUndoStack.count()'''
         return int()
@@ -29312,7 +29312,7 @@ class QWorkspace(QWidget):
     def addWindow(self, w, flags = 0):
         '''QWidget QWorkspace.addWindow(QWidget w, Qt.WindowFlags flags = 0)'''
         return QWidget()
-    def windowList(self, order = QWorkspace.CreationOrder):
+    def windowList(self, order = None):
         '''list-of-QWidget QWorkspace.windowList(QWorkspace.WindowOrder order = QWorkspace.CreationOrder)'''
         return [QWidget()]
     def activeWindow(self):
@@ -29418,31 +29418,31 @@ class QX11Info():
         '''static void QX11Info.setAppDpiY(int screen, int dpi)'''
     def setAppDpiX(self, screen, dpi):
         '''static void QX11Info.setAppDpiX(int screen, int dpi)'''
-    def appDpiY(self, screen = -1):
+    def appDpiY(self, screen = None):
         '''static int QX11Info.appDpiY(int screen = -1)'''
         return int()
-    def appDpiX(self, screen = -1):
+    def appDpiX(self, screen = None):
         '''static int QX11Info.appDpiX(int screen = -1)'''
         return int()
-    def appDefaultVisual(self, screen = -1):
+    def appDefaultVisual(self, screen = None):
         '''static bool QX11Info.appDefaultVisual(int screen = -1)'''
         return bool()
-    def appDefaultColormap(self, screen = -1):
+    def appDefaultColormap(self, screen = None):
         '''static bool QX11Info.appDefaultColormap(int screen = -1)'''
         return bool()
-    def appRootWindow(self, screen = -1):
+    def appRootWindow(self, screen = None):
         '''static int QX11Info.appRootWindow(int screen = -1)'''
         return int()
-    def appVisual(self, screen = -1):
+    def appVisual(self, screen = None):
         '''static sip.voidptr QX11Info.appVisual(int screen = -1)'''
         return sip.voidptr()
-    def appColormap(self, screen = -1):
+    def appColormap(self, screen = None):
         '''static int QX11Info.appColormap(int screen = -1)'''
         return int()
-    def appCells(self, screen = -1):
+    def appCells(self, screen = None):
         '''static int QX11Info.appCells(int screen = -1)'''
         return int()
-    def appDepth(self, screen = -1):
+    def appDepth(self, screen = None):
         '''static int QX11Info.appDepth(int screen = -1)'''
         return int()
     def appScreen(self):

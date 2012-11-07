@@ -314,7 +314,7 @@ void ContextBuilder::visitCode(CodeAst* node) {
         }
         
         if ( ! internal ) {
-            // If the built-in functions file is not yet parsed, schedule it with a high priority and abort.
+            // If the built-in functions file is not yet parsed, schedule it with a high priority.
             m_unresolvedImports.append(doc);
             KDevelop::ICore::self()->languageController()->backgroundParser()
                                    ->addDocument(doc, KDevelop::TopDUContext::ForceUpdate,
@@ -322,7 +322,6 @@ void ContextBuilder::visitCode(CodeAst* node) {
             // This must NOT be called from parse threads! It's only meant to be used from the foreground thread, and will
             // cause thread starvation if called from here.
             // KDevelop::ICore::self()->languageController()->backgroundParser()->parseDocuments();
-            return;
         }
         else {
             DUChainWriteLocker wlock(DUChain::lock());

@@ -815,7 +815,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
     if ( ! moduleContext ) {
         // schedule the include file for parsing, and schedule the current one for reparsing after that is done
         kDebug() << "No module context, recompiling";
-        m_unresolvedImports.append(IndexedString(moduleInfo.first));
+        m_unresolvedImports.append(modulePath);
         BackgroundParser* bgparser = KDevelop::ICore::self()->languageController()->backgroundParser();
         bool needsReschedule = true;
         if ( bgparser->isQueued(modulePath) ) {
@@ -828,7 +828,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
             if ( job && previousPriority > m_ownPriority - 1 ) {
                 bgparser->removeDocument(modulePath);
             }
-            else {
+            else if ( job ) {
                 needsReschedule = false;
             }
         }

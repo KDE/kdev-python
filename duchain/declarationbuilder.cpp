@@ -60,6 +60,7 @@ namespace Python
 
 DeclarationBuilder::DeclarationBuilder(PythonEditorIntegrator* editor)
         : DeclarationBuilderBase( )
+        , m_ownPriority(0)
 {
     setEditor(editor);
     kDebug() << "Building Declarations";
@@ -88,6 +89,7 @@ ReferencedTopDUContext DeclarationBuilder::build(const IndexedString& url, Ast* 
     if ( ! m_prebuilding ) {
         kDebug() << "building, but running pre-builder first";
         DeclarationBuilder* prebuilder = new DeclarationBuilder(editor());
+        prebuilder->m_ownPriority = m_ownPriority;
         prebuilder->m_currentlyParsedDocument = currentlyParsedDocument();
         prebuilder->setPrebuilding(true);
         prebuilder->m_futureModificationRevision = m_futureModificationRevision;

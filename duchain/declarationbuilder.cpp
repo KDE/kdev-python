@@ -814,6 +814,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
         return 0;
     }
     if ( ! moduleContext ) {
+        KUrl modulePath = moduleInfo.first;
         // schedule the include file for parsing, and schedule the current one for reparsing after that is done
         kDebug() << "No module context, recompiling";
         m_unresolvedImports.append(modulePath);

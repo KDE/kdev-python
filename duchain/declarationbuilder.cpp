@@ -1695,13 +1695,15 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                                                                   <AbstractType>("string", currentContext());
                 VariableLengthContainer::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType
                                                                   <VariableLengthContainer>("dict", currentContext());
-                lock.unlock();
-                dictType->addKeyType(stringType);
-                node->kwarg->startCol = node->arg_col_offset; node->kwarg->endCol = node->arg_col_offset + node->kwarg->value.length() - 1;
-                node->kwarg->startLine = node->arg_lineno; node->kwarg->endLine = node->arg_lineno;
-                visitVariableDeclaration<Declaration>(node->kwarg, 0, dictType.cast<AbstractType>());
-                workingOnDeclaration->setHasKwarg(true);
-                type->addArgument(dictType.cast<AbstractType>());
+                if ( dictType && stringType ) {
+                    lock.unlock();
+                    dictType->addKeyType(stringType);
+                    node->kwarg->startCol = node->arg_col_offset; node->kwarg->endCol = node->arg_col_offset + node->kwarg->value.length() - 1;
+                    node->kwarg->startLine = node->arg_lineno; node->kwarg->endLine = node->arg_lineno;
+                    visitVariableDeclaration<Declaration>(node->kwarg, 0, dictType.cast<AbstractType>());
+                    workingOnDeclaration->setHasKwarg(true);
+                    type->addArgument(dictType.cast<AbstractType>());
+                }
             }
         }
     }

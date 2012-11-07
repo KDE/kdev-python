@@ -322,7 +322,6 @@ void ContextBuilder::visitCode(CodeAst* node) {
             // This must NOT be called from parse threads! It's only meant to be used from the foreground thread, and will
             // cause thread starvation if called from here.
             // KDevelop::ICore::self()->languageController()->backgroundParser()->parseDocuments();
-            return;
         }
         else {
             DUChainWriteLocker wlock(DUChain::lock());

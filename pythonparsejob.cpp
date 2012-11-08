@@ -132,7 +132,7 @@ void ParseJob::run()
                 if ( ICore::self()->languageController()->backgroundParser()->trackerForUrl(document()) ) {
                     lock.unlock();
                     KDevelop::ICodeHighlighting* hl = m_parent->codeHighlighting();
-                    hl->highlightDUChain(m_duContext);
+                    hl->highlightDUChain(duChain());
                 }
                 delete currentSession;
                 return;

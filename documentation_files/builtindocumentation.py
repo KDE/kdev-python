@@ -233,11 +233,12 @@ class __kdevpythondocumentation_builtin_float():
     def fromhex(self,s): return 0
 
 class __kdevpythondocumentation_builtin_int():
-    pass
+    def bit_length(self): return 0
 
 class __kdevpythondocumentation_builtin_complex():
     real = 3
     imag = 5
+    def conjugate(self): return __kdevpythondocumentation_builtin_complex()
 
 class BaseException():
     args = ()

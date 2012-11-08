@@ -111,7 +111,7 @@ void ParseJob::run()
             if ( file->language() != langString ) {
                 continue;
             }
-            if ( ! file->needsUpdate() && file->featuresSatisfied(minimumFeatures()) ) {
+            if ( ! file->needsUpdate() && file->featuresSatisfied(minimumFeatures()) && file->topContext() ) {
                 qDebug() << " ====> NOOP    ====> Already up to date:" << document().str();
                 setDuChain(file->topContext());
                 if ( ICore::self()->languageController()->backgroundParser()->trackerForUrl(document()) ) {
@@ -125,7 +125,7 @@ void ParseJob::run()
         }
     }
     
-    TopDUContext* toUpdate = 0;
+    ReferencedTopDUContext toUpdate = 0;
     {
         DUChainReadLocker lock;
         toUpdate = DUChainUtils::standardContextForUrl(document().toUrl());
@@ -160,7 +160,7 @@ void ParseJob::run()
         builder.m_futureModificationRevision = contents().modification;
         
         // Run the declaration builder. If necessary, it will run itself again.
-        m_duContext = builder.build(document(), m_ast, toUpdate);
+        m_duContext = builder.build(document(), m_ast, toUpdate.data());
         if ( abortRequested() ) {
             delete currentSession;
             return abortJob();
@@ -221,7 +221,7 @@ void ParseJob::run()
         // No syntax tree was received from the parser, the expected reason for this is a syntax error in the document.
         kWarning() << "---- Parsing FAILED ----";
         DUChainWriteLocker lock;
-        m_duContext = toUpdate;
+        m_duContext = toUpdate.data();
         // if there's already a chain for the document, do some cleanup.
         if ( m_duContext ) {
 //             m_duContext->parsingEnvironmentFile()->clearModificationRevisions(); // TODO why?

@@ -336,7 +336,6 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             return QList<CompletionTreeItemPointer>();
         }
         QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
-        qDebug() << "1";
         foreach ( DeclarationDepthPair d, declarations ) {
             if ( d.first and d.first->context()->type() == DUContext::Class ) {
                 declarations.removeAll(d);
@@ -345,7 +344,6 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
                 declarations.removeAll(d);
             }
         }
-        qDebug() << "2";
         resultingItems.append(declarationListToItemList(declarations));
     }
     

@@ -51,10 +51,24 @@ UseBuilder::UseBuilder (PythonEditorIntegrator* editor) : UseBuilderBase(), m_er
     setEditor(editor);
 }
 
+DUContext* UseBuilder::contextAtOrCurrent(const CursorInRevision& pos)
+{
+    DUContext* context = 0;
+    {
+        DUChainReadLocker lock;
+        context = topContext()->findContextAt(pos, true);
+    }
+    if ( ! context ) {
+        context = currentContext();
+    }
+    return context;
+}
+
 void UseBuilder::visitName(NameAst* node)
 {
+    DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node));
     Declaration* declaration = Helper::declarationForName(node, identifierForNode(node->identifier),
-                                                          editorFindRange(node, node), DUContextPointer(currentContext()));
+                                                          editorFindRange(node, node), DUContextPointer(context));
     
     QStringList keywords;
     keywords << "None" << "True" << "False" << "print";
@@ -99,7 +113,8 @@ void UseBuilder::visitName(NameAst* node)
 
 void UseBuilder::visitAttribute(AttributeAst* node)
 {
-    ExpressionVisitor v(currentContext(), editor());
+    DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node));
+    ExpressionVisitor v(context);
     kDebug() << "VisitAttribute start";
     UseBuilderBase::visitAttribute(node);
     kDebug() << "Visit Attribute base end";

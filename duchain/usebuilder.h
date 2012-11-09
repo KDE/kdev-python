@@ -61,6 +61,7 @@ private:
     inline void enableErrorReporting() {
         m_errorReportingEnabled = true;
     };
+    DUContext* contextAtOrCurrent(const CursorInRevision& pos);
 };
 
 }

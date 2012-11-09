@@ -81,6 +81,7 @@ void PyDUChainTest::initShell()
     QFile f("/tmp/i.py");
     f.open(QIODevice::WriteOnly);
     f.write("def checkme(): pass\nlocalvar1 = 3\nlocalvar2 = 5\n");
+    f.write("class testclass():\n attr = 3\n");
     f.close();
     
     DUChain::self()->updateContextForUrl(IndexedString("/tmp/i.py"), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
@@ -796,6 +797,7 @@ void PyDUChainTest::testInheritance_data()
     QTest::addColumn<QString>("code");
     
     QTest::newRow("simple") << "class A():\n\tattr = 3\n\nclass B(A):\n\tpass\n\ninst=B()\ncheckme = inst.attr";
+    QTest::newRow("context_import") << "import i\n\nclass B(i.testclass):\n\ti = 4\n\ninst=B()\ncheckme = inst.attr";
 }
 
 void PyDUChainTest::testClassContextRanges()

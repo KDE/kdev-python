@@ -180,7 +180,7 @@ void ParseJob::run()
             // check whether one of the imports is queued for parsing, this is to avoid deadlocks
             // it's also ok if the duchain is now available (and thus has been parsed before already)
             bool dependencyInQueue = false;
-            DUChainReadLocker lock;
+            DUChainWriteLocker lock(DUChain::lock());
             foreach ( const IndexedString& url, builder.m_unresolvedImports ) {
                 dependencyInQueue = KDevelop::ICore::self()->languageController()->backgroundParser()->isQueued(url);
                 dependencyInQueue = dependencyInQueue || DUChain::self()->chainForDocument(url);
@@ -188,12 +188,10 @@ void ParseJob::run()
                     break;
                 }
             }
-            lock.unlock();
             // we check whether this document already has been re-scheduled once and abort if that is the case
             // this prevents infinite loops in case something goes wrong (optimally, shouldn't reach here if
             // the document was already rescheduled, but there's many cases where this might still happen)
             if ( ! ( minimumFeatures() & Rescheduled ) && dependencyInQueue ) {
-                DUChainWriteLocker lock(DUChain::lock());
                 KDevelop::ICore::self()->languageController()->backgroundParser()->addDocument(document(),
                                      static_cast<TopDUContext::Features>(TopDUContext::ForceUpdate | Rescheduled), parsePriority(),
                                      0, ParseJob::FullSequentialProcessing);

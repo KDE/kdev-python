@@ -122,13 +122,15 @@ void ParseJob::run()
     if ( !(minimumFeatures() & TopDUContext::ForceUpdate || minimumFeatures() & Rescheduled) ) {
         DUChainReadLocker lock(DUChain::lock());
         static const IndexedString langString("python");
-        foreach(const ParsingEnvironmentFilePointer &file, DUChain::self()->allEnvironmentFiles(document())) {
+        foreach(ParsingEnvironmentFilePointer file, DUChain::self()->allEnvironmentFiles(document())) {
             if ( file->language() != langString ) {
                 continue;
             }
             if ( ! file->needsUpdate() && file->featuresSatisfied(minimumFeatures()) && file->topContext() ) {
                 qDebug() << " ====> NOOP    ====> Already up to date:" << document().str();
                 setDuChain(file->topContext());
+                file->setModificationRevision(contents().modification);
+                DUChain::self()->updateContextEnvironment(duChain(), file.data());
                 if ( ICore::self()->languageController()->backgroundParser()->trackerForUrl(document()) ) {
                     lock.unlock();
                     KDevelop::ICodeHighlighting* hl = m_parent->codeHighlighting();

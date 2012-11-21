@@ -2,8 +2,8 @@ PROJECT(kdevpython)
 
 # write the plugin version to a file
 set(KDEVPYTHON_VERSION_MAJOR 1)
-set(KDEVPYTHON_VERSION_MINOR 3)
-set(KDEVPYTHON_VERSION_PATCH 80)
+set(KDEVPYTHON_VERSION_MINOR 4)
+set(KDEVPYTHON_VERSION_PATCH 0)
 
 cmake_minimum_required(VERSION 2.8)
 

@@ -129,7 +129,7 @@ void ParseJob::run()
             if ( ! file->needsUpdate() && file->featuresSatisfied(minimumFeatures()) && file->topContext() ) {
                 qDebug() << " ====> NOOP    ====> Already up to date:" << document().str();
                 setDuChain(file->topContext());
-                DUChain::self()->updateContextEnvironment(duChain(), file.data());
+                duChain()->updateImportsCache();
                 if ( ICore::self()->languageController()->backgroundParser()->trackerForUrl(document()) ) {
                     lock.unlock();
                     KDevelop::ICodeHighlighting* hl = m_parent->codeHighlighting();

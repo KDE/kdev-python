@@ -95,6 +95,15 @@ bool ParseJob::wasReadFromDisk() const
     return m_readFromDisk;
 }
 
+void loadImportsFromDisk(TopDUContext* context) {
+    QVector< DUContext::Import > imports = context->importedParentContexts();
+    foreach ( const KDevelop::DUContext::Import& i, imports ) {
+        if ( TopDUContextPointer p = TopDUContextPointer(dynamic_cast<TopDUContext*>(i.context(context))) ) {
+            loadImportsFromDisk(p.data());
+        }
+    }
+}
+
 void ParseJob::run()
 {
     ParseSession* currentSession = new ParseSession();
@@ -129,7 +138,7 @@ void ParseJob::run()
             if ( ! file->needsUpdate() && file->featuresSatisfied(minimumFeatures()) && file->topContext() ) {
                 qDebug() << " ====> NOOP    ====> Already up to date:" << document().str();
                 setDuChain(file->topContext());
-                duChain()->updateImportsCache();
+                loadImportsFromDisk(duChain());
                 if ( ICore::self()->languageController()->backgroundParser()->trackerForUrl(document()) ) {
                     lock.unlock();
                     KDevelop::ICodeHighlighting* hl = m_parent->codeHighlighting();

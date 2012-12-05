@@ -38,7 +38,6 @@ void DebugJob::start()
     
     setStandardToolView(KDevelop::IOutputView::DebugView);
     setBehaviours(KDevelop::IOutputView::Behaviours(KDevelop::IOutputView::AllowUserClose) | KDevelop::IOutputView::AutoScroll);
-    setModel(new KDevelop::OutputModel());
     setTitle(m_interpreter + m_scriptUrl.path());
     
     startOutput();

@@ -1,3 +1,9 @@
+THIS IS A FORK OF PYTHON 2.7.1
+==============================
+This is a fork of python 2.7.1 which is part of kdev-python, the KDevelop static
+analyzer for python code. Several changes were required to make the parser more
+usable for static code analysis.
+
 This is Python version 2.7.1
 ============================
 

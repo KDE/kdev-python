@@ -183,7 +183,7 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
         *status = EventualCallFound;
         return QString();
     }
-    foreach ( keyword kw, controlChars ) {
+    foreach ( const keyword& kw, controlChars ) {
         if ( operatingOn.endsWith(kw.first) ) {
             m_cursorPositionInString -= kw.first.length();
             *status = kw.second;
@@ -191,21 +191,21 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
         }
     }
     if ( lastCharIsSpace ) {
-        foreach ( keyword kw, supportedKeywords ) {
+        foreach ( const keyword& kw, supportedKeywords ) {
             if ( endsWithSeperatedKeyword(operatingOn, kw.first) ) {
                 m_cursorPositionInString -= kw.first.length();
                 *status = kw.second;
                 return QString();
             }
         }
-        foreach ( QString kw, miscKeywords ) {
+        foreach ( const QString& kw, miscKeywords ) {
             if ( endsWithSeperatedKeyword(operatingOn, kw) ) {
                 m_cursorPositionInString -= kw.length();
                 *status = MeaninglessKeywordFound;
                 return QString();
             }
         }
-        foreach ( QString kw, noCompletionKeywords ) {
+        foreach ( const QString& kw, noCompletionKeywords ) {
             if ( endsWithSeperatedKeyword(operatingOn, kw) ) {
                 m_cursorPositionInString -= kw.length();
                 *status = NoCompletionKeywordFound;

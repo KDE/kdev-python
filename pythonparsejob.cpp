@@ -23,41 +23,38 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
 #include "pythonparsejob.h"
-#include <QFile>
-#include <QThread>
-#include <QReadLocker>
-
-#include <ktexteditor/document.h>
-#include <ktexteditor/smartinterface.h>
-
-#include <kdebug.h>
-#include <klocale.h>
-
-#include <language/duchain/duchainlock.h>
-#include <language/duchain/duchain.h>
-#include <language/duchain/topducontext.h>
-#include <language/duchain/dumpdotgraph.h>
-#include <interfaces/ilanguage.h>
-#include <language/backgroundparser/urlparselock.h>
 
 #include "pythonhighlighting.h"
 #include "pythoneditorintegrator.h"
 #include "dumpchain.h"
 #include "parsesession.h"
 #include "pythonlanguagesupport.h"
-// #include "contextbuilder.h"
 #include "declarationbuilder.h"
 #include "usebuilder.h"
-#include <interfaces/foregroundlock.h>
-// #include "astprinter.h"
-// #include "usebuilder.h"
-#include <language/highlighting/codehighlighting.h>
-#include <interfaces/icore.h>
-#include <interfaces/ilanguagecontroller.h>
+
+#include <language/duchain/duchainlock.h>
+#include <language/duchain/duchain.h>
+#include <language/duchain/topducontext.h>
+#include <language/duchain/dumpdotgraph.h>
 #include <language/duchain/indexedstring.h>
 #include <language/duchain/duchainutils.h>
+#include <language/backgroundparser/urlparselock.h>
 #include <language/backgroundparser/backgroundparser.h>
+#include <language/highlighting/codehighlighting.h>
 #include <language/interfaces/iastcontainer.h>
+#include <interfaces/ilanguage.h>
+#include <interfaces/foregroundlock.h>
+#include <interfaces/icore.h>
+#include <interfaces/ilanguagecontroller.h>
+
+#include <ktexteditor/document.h>
+#include <ktexteditor/smartinterface.h>
+
+#include <QReadLocker>
+#include <QFile>
+#include <QThread>
+#include <kdebug.h>
+#include <klocale.h>
 
 using namespace KDevelop;
 
@@ -207,7 +204,7 @@ void ParseJob::run()
             DUChain::self()->updateContextEnvironment(m_duContext, parsingEnvironmentFile.data());
         }
         
-        kDebug() << "---- Parsing Succeded ----";
+        kDebug() << "---- Parsing Succeeded ----";
         
         if ( abortRequested() ) {
             delete currentSession;
@@ -251,7 +248,7 @@ void ParseJob::run()
     
     // The parser might have given us some syntax errors, which are now added to the document.
     DUChainWriteLocker lock(DUChain::lock());
-    foreach ( ProblemPointer p, currentSession->m_problems ) {
+    foreach ( const ProblemPointer& p, currentSession->m_problems ) {
         m_duContext->addProblem(p);
     }
     

@@ -19,12 +19,11 @@
 
 #include "pdblauncher.h"
 #include "debugjob.h"
-#include <util/executecompositejob.h>
 
+#include <util/executecompositejob.h>
 #include <executescript/iexecutescriptplugin.h>
 #include <interfaces/launchconfigurationpage.h>
 #include <interfaces/ilaunchconfiguration.h>
-#include <interfaces/icore.h>
 #include <interfaces/iplugincontroller.h>
 #include <interfaces/icore.h>
 #include <interfaces/iuicontroller.h>

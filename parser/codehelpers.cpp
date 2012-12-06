@@ -237,7 +237,7 @@ QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher,
         else {
             text.prepend(line.mid(0, end));
         }
-        line = "";
+        line.clear();
         while ( line.isEmpty() && cursor.line() >= linesFetched ) {
             line = lineFetcher.fetchLine(cursor.line() - linesFetched);
             linesFetched++;

@@ -613,7 +613,7 @@ void PyDUChainTest::testImportDeclarations() {
     QVERIFY(m_ast);
     
     DUChainReadLocker lock(DUChain::lock());
-    foreach ( QString expected, expectedDecls ) {
+    foreach ( const QString& expected, expectedDecls ) {
         bool found = false;
         QString name;
         QStringList split = expected.split(",");
@@ -623,10 +623,10 @@ void PyDUChainTest::testImportDeclarations() {
 //         end = split[2].toInt();
         QList<pair> decls = ctx->allDeclarations(CursorInRevision::invalid(), ctx->topContext(), false);
         kDebug() << "FOUND DECLARATIONS:";
-        foreach ( pair current, decls ) {
+        foreach ( const pair& current, decls ) {
             kDebug() << current.first->toString() << current.first->identifier().identifier().byteArray() << name;
         }
-        foreach ( pair current, decls ) {
+        foreach ( const pair& current, decls ) {
             if ( ! ( current.first->identifier().identifier().byteArray() == name ) ) continue;
             kDebug() << "Found: " << current.first->toString() << " for " << name;
             AliasDeclaration* isAliased = dynamic_cast<AliasDeclaration*>(current.first);

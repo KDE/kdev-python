@@ -324,8 +324,8 @@ void DebugSession::runToCursor()
         KTextEditor::Cursor cursor = doc->cursorPosition();
         if ( cursor.isValid() ) {
             // TODO disable all other breakpoints
-            QString temporaryBreakpointLocation = doc->url().path() + QString(":") + QString::number(cursor.line() + 1);
-            InternalPdbCommand* temporaryBreakpointCmd = new InternalPdbCommand(0, 0, "tbreak " + temporaryBreakpointLocation + "\n");
+            QString temporaryBreakpointLocation = doc->url().path() + ':' + QString::number(cursor.line() + 1);
+            InternalPdbCommand* temporaryBreakpointCmd = new InternalPdbCommand(0, 0, "tbreak " + temporaryBreakpointLocation + '\n');
             addCommand(temporaryBreakpointCmd);
             addSimpleInternalCommand("continue");
             updateLocation();
@@ -376,7 +376,7 @@ void DebugSession::clearObjectTable()
 void DebugSession::addSimpleUserCommand(const QString& cmd)
 {
     clearObjectTable();
-    UserPdbCommand* cmdObject = new UserPdbCommand(0, 0, cmd + "\n");
+    UserPdbCommand* cmdObject = new UserPdbCommand(0, 0, cmd + '\n');
     Q_ASSERT(cmdObject->type() == PdbCommand::UserType);
     addCommand(cmdObject);
 }
@@ -384,7 +384,7 @@ void DebugSession::addSimpleUserCommand(const QString& cmd)
 void DebugSession::addSimpleInternalCommand(const QString& cmd)
 {
     Q_ASSERT( ! cmd.endsWith('\n') );
-    InternalPdbCommand* cmdObject = new InternalPdbCommand(0, 0, cmd + "\n");
+    InternalPdbCommand* cmdObject = new InternalPdbCommand(0, 0, cmd + '\n');
     addCommand(cmdObject);
 }
 
@@ -409,20 +409,20 @@ void DebugSession::addBreakpoint(Breakpoint* bp)
 {
     QString location = bp->url().path() + ":" + QString::number(bp->line() + 1);
     kDebug() << "adding breakpoint" << location;
-    runImmediately("break " + location + "\n");
+    runImmediately("break " + location + '\n');
 }
 
 void DebugSession::removeBreakpoint(Breakpoint* bp)
 {
     QString location = bp->url().path() + ":" + QString::number(bp->line() + 1);
     kDebug() << "deleting breakpoint" << location;
-    runImmediately("clear " + location + "\n");
+    runImmediately("clear " + location + '\n');
 }
 
 void DebugSession::createVariable(Python::Variable* variable, QObject* callback, const char* callbackMethod)
 {
     kDebug() << "asked to create variable";
-    InternalPdbCommand* cmd = new InternalPdbCommand(variable, "dataFetched", ("print " + variable->expression() + "\n").toAscii());
+    InternalPdbCommand* cmd = new InternalPdbCommand(variable, "dataFetched", ("print " + variable->expression() + '\n').toAscii());
     variable->m_notifyCreated = callback;
     variable->m_notifyCreatedMethod = callbackMethod;
     addCommand(cmd);

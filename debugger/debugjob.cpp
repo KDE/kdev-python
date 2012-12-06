@@ -16,13 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "debugjob.h"
+
 #include <KDebug>
 #include <KStandardDirs>
 
 #include <interfaces/idebugcontroller.h>
 #include <interfaces/icore.h>
 
-#include "debugjob.h"
 #include <sublime/view.h>
 #include <util/processlinemaker.h>
 

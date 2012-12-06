@@ -46,7 +46,7 @@ void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, co
     // TODO this code is duplicate of variablelengthcontainer::toString, resolve that somehow
     if ( VariableLengthContainer::Ptr t = VariableLengthContainer::Ptr::dynamicCast(type) ) {
         makeLink(t->containerToString(), DeclarationPointer(idType->declaration(m_topContext.data())), NavigationAction::NavigateDeclaration );
-        modifyHtml() += i18n(" of ");
+        modifyHtml() += i18nc("as in \"list of string\", \"set of integer\"", " of ");
         if ( t->hasKeyType() ) {
             if ( AbstractType::Ptr key = t->keyType().abstractType() ) {
                 IdentifiedType* identifiedKey = dynamic_cast<IdentifiedType*>(key.unsafeData());
@@ -75,7 +75,7 @@ void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, co
             }
         }
         else {
-            modifyHtml() += i18n("unknown");
+            modifyHtml() += i18nc("refers to an unknown type in programming", "unknown");
         }
     }
     else {
@@ -85,12 +85,7 @@ void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, co
 
 QString DeclarationNavigationContext::html(bool shorten)
 {
-    QString h = KDevelop::AbstractDeclarationNavigationContext::html(shorten);
-//     if ( dynamic_cast<AliasDeclaration*>(declaration().data()) ) {
-//         prefix = "Alias for ";
-//     }
-//     h = prefix + h;
-    return h.replace("__kdevpythondocumentation_builtin_", "");
+    return KDevelop::AbstractDeclarationNavigationContext::html(shorten);
 }
 
 }

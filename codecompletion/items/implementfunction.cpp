@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************
  */
+#include "implementfunction.h"
+
 #include <language/codecompletion/codecompletionmodel.h>
 #include <language/duchain/duchainutils.h>
 #include <interfaces/icore.h>
@@ -23,8 +25,6 @@
 #include <KTextEditor/View>
 #include <KTextEditor/Document>
 #include <KTextEditor/Editor>
-
-#include "implementfunction.h"
 
 using namespace KDevelop;
 using namespace KTextEditor;

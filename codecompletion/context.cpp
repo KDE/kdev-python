@@ -5,21 +5,33 @@
  * modify it under the terms of the GNU General Public License as            *
  * published by the Free Software Foundation; either version 2 of            *
  * the License, or (at your option) any later version.                       *
- *                                                                           *           
+ *                                                                           *
  * This program is distributed in the hope that it will be useful,           *
  * but WITHOUT ANY WARRANTY; without even the implied warranty of            *
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             *
  * GNU General Public License for more details.                              *
- *                                                                           *   
+ *                                                                           *
  * You should have received a copy of the GNU General Public License         *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************
  */
 
-#include <QProcess>
-#include <QRegExp>
-#include <KStandardDirs>
-#include <KTextEditor/View>
+#include "context.h"
+
+#include "items/keyword.h"
+#include "items/importfile.h"
+#include "items/functiondeclaration.h"
+#include "items/implementfunction.h"
+
+#include "worker.h"
+#include "helpers.h"
+#include "duchain/pythoneditorintegrator.h"
+#include "duchain/expressionvisitor.h"
+#include "duchain/declarationbuilder.h"
+#include "duchain/helpers.h"
+#include "duchain/types/unsuretype.h"
+#include "duchain/navigation/navigationwidget.h"
+#include "parser/astbuilder.h"
 
 #include <language/duchain/functiondeclaration.h>
 #include <language/duchain/classdeclaration.h>
@@ -35,21 +47,10 @@
 #include <interfaces/idocumentcontroller.h>
 #include <project/projectmodel.h>
 
-#include "parser/astbuilder.h"
-#include "duchain/pythoneditorintegrator.h"
-#include "duchain/expressionvisitor.h"
-#include "duchain/declarationbuilder.h"
-#include "duchain/helpers.h"
-#include "duchain/types/unsuretype.h"
-#include "duchain/navigation/navigationwidget.h"
-
-#include "worker.h"
-#include "context.h"
-#include "items/keyword.h"
-#include "items/importfile.h"
-#include "items/functiondeclaration.h"
-#include "items/implementfunction.h"
-#include "helpers.h"
+#include <QProcess>
+#include <QRegExp>
+#include <KStandardDirs>
+#include <KTextEditor/View>
 
 using namespace KTextEditor;
 using namespace KDevelop;
@@ -73,7 +74,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     if ( m_operation != FunctionCallCompletion ) {
         KeywordItem::Flags f = (KeywordItem::Flags) ( KeywordItem::ForceLineBeginning | KeywordItem::ImportantItem );
         // TODO group those correctly so they appear at the top
-        if ( m_position.line == 0 && ( m_text.startsWith("#") || m_text.isEmpty() ) ) {
+        if ( m_position.line == 0 && ( m_text.startsWith('#') || m_text.isEmpty() ) ) {
             QString i18ndescr = i18n("insert Shebang line");
             resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
                                                         "#!/usr/bin/env python\n", i18ndescr, f));
@@ -83,7 +84,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
                                                         "#!/usr/bin/env python3\n", i18ndescr, f));
         }
         // TODO fixme
-        else if ( m_position.line <= 1 && m_text.endsWith("#") ) {
+        else if ( m_position.line <= 1 && m_text.endsWith('#') ) {
             resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
                                                         "# -*- Coding:utf-8 -*-\n\n", i18n("specify document encoding"), f));
         }
@@ -221,7 +222,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
                 QList<DeclarationDepthPair> declarations = c->allDeclarations(
                     CursorInRevision::invalid(), m_duContext->topContext(), false
                 );
-                foreach ( DeclarationDepthPair d, declarations ) {
+                foreach ( const DeclarationDepthPair& d, declarations ) {
                     if ( FunctionDeclaration* funcDecl = dynamic_cast<FunctionDeclaration*>(d.first) ) {
                         // python does not have overloads or similar, so comparing the function names is enough.
                         const IndexedString identifier = funcDecl->identifier().identifier();
@@ -260,7 +261,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             QList<DeclarationDepthPair> validDeclarations;
             ClassDeclaration* current = 0;
             StructureType::Ptr type;
-            foreach ( DeclarationDepthPair d, m_duContext->topContext()->allDeclarations(CursorInRevision::invalid(), m_duContext->topContext()) ) {
+            foreach ( const DeclarationDepthPair d, m_duContext->topContext()->allDeclarations(CursorInRevision::invalid(), m_duContext->topContext()) ) {
                 if ( ( current = dynamic_cast<ClassDeclaration*>(d.first) ) ) {
                     if ( current->baseClassesSize() ) {
                         FOREACH_FUNCTION( const BaseClassInstance& base, current->baseClasses ) {
@@ -287,7 +288,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         kDebug() << "InheritanceCompletion";
         QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
         QList<DeclarationDepthPair> remainingDeclarations;
-        foreach ( DeclarationDepthPair d, declarations ) {
+        foreach ( const DeclarationDepthPair& d, declarations ) {
             Declaration* r = Helper::resolveAliasDeclaration(d.first);
             if ( r and r->identifier().identifier().str().contains("__kdevpythondocumentation_builtin") ) {
                 continue;
@@ -336,7 +337,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             return QList<CompletionTreeItemPointer>();
         }
         QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
-        foreach ( DeclarationDepthPair d, declarations ) {
+        foreach ( const DeclarationDepthPair& d, declarations ) {
             if ( d.first and d.first->context()->type() == DUContext::Class ) {
                 declarations.removeAll(d);
             }
@@ -443,7 +444,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
             // also, discard all magic functions from autocompletion
             // TODO rework this, it's maybe not the most elegant solution possible
             // TODO rework the magic functions thing, I want them sorted at the end of the list but KTE doesn't seem to allow that
-            foreach ( DeclarationDepthPair current, declarations ) {
+            foreach ( const DeclarationDepthPair& current, declarations ) {
                 if ( current.first->context() != builtinTopContext && ! current.first->identifier().identifier().str().startsWith("__") ) {
                     keepDeclarations.append(current);
                 }
@@ -510,7 +511,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
         // append all python files in the directory
         foreach ( QFileInfo file, contents ) {
             // TODO windows
-            if ( file.fileName().startsWith(".") ) {
+            if ( file.fileName().startsWith('.') ) {
                 continue;
             }
             kDebug() << " > CONTENT:" << file.absolutePath() << file.fileName();
@@ -592,10 +593,10 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::includeItemsForSub
     // Thus, we first generate a list of possible paths, then match them against those which actually exist
     // and then gather all the items in those paths.
     
-    foreach (KUrl currentPath, searchPaths) {
+    foreach ( KUrl currentPath, searchPaths ) {
         kDebug() << "Searching: " << currentPath << subdirs;
         int identifiersUsed = 0;
-        foreach ( QString subdir, subdirs ) {
+        foreach ( const QString& subdir, subdirs ) {
             currentPath.cd(subdir);
             QFileInfo d(currentPath.path());
             kDebug() << currentPath << d.exists() << d.isDir();

@@ -1,7 +1,7 @@
 /*****************************************************************************
  * Copyright (c) 2007 Piyush verma <piyush.verma@gmail.com>                  *
  * Copyright 2007 Andreas Pakulat <apaku@gmx.de>                           *
- * Copyright 2010-2011 Sven Brauch <svenbrauch@googlemail.com>               *
+ * Copyright 2010-2012 Sven Brauch <svenbrauch@googlemail.com>               *
  *                                                                           *
  * Permission is hereby granted, free of charge, to any person obtaining     *
  * a copy of this software and associated documentation files (the           *
@@ -22,6 +22,19 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION     *
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
+
+#include "pythonlanguagesupport.h"
+#include "pythoneditorintegrator.h"
+#include "dumpchain.h"
+#include "usebuilder.h"
+#include "contextbuilder.h"
+#include "pythonducontext.h"
+#include "pythonparsejob.h"
+#include "declarationbuilder.h"
+#include "helpers.h"
+
+#include <KStandardDirs>
+
 #include <ktexteditor/smartrange.h>
 #include <ktexteditor/smartinterface.h>
 #include <ktexteditor/document.h>
@@ -37,18 +50,6 @@
 #include <interfaces/iprojectcontroller.h>
 #include <interfaces/iproject.h>
 #include <project/projectmodel.h>
-
-#include <KStandardDirs>
-
-#include "pythonlanguagesupport.h"
-#include "pythoneditorintegrator.h"
-#include "dumpchain.h"
-#include "usebuilder.h"
-#include "contextbuilder.h"
-#include "pythonducontext.h"
-#include "pythonparsejob.h"
-#include "declarationbuilder.h"
-#include "helpers.h"
 
 using namespace KDevelop;
 

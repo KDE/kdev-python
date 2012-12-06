@@ -1,22 +1,22 @@
-/*
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) 2012 Sven Brauch <svenbrauch@googlemail.com>
-    Much of the code is actually copied from cpp/codegen
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+/***************************************************************************
+ *   This file is part of KDevelop                                         *
+ *   Copyright 2012 Sven Brauch <svenbrauch@googlemail.com>                *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU Library General Public License as       *
+ *   published by the Free Software Foundation; either version 2 of the    *
+ *   License, or (at your option) any later version.                       *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU Library General Public     *
+ *   License along with this program; if not, write to the                 *
+ *   Free Software Foundation, Inc.,                                       *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
+ ***************************************************************************/
 
 #include "simplerefactoring.h"
 #include <helpers.h>
@@ -27,7 +27,6 @@
 #include <interfaces/idocumentcontroller.h>
 #include <interfaces/iuicontroller.h>
 
-#include <language/duchain/duchainlock.h>
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/duchainutils.h>
 #include <language/duchain/functiondefinition.h>
@@ -207,7 +206,7 @@ void SimpleRefactoring::startInteractiveRename(KDevelop::IndexedDeclaration decl
     // Since we don't yet know what the text should be replaced with, we just collect the top-contexts to process
     SimpleRefactoringCollector* collector = new SimpleRefactoringCollector(decl);
 
-    QDialog dialog;
+    QPointer<QDialog> dialog = new QDialog();
 
     QTabWidget tabWidget;
 
@@ -222,8 +221,8 @@ void SimpleRefactoring::startInteractiveRename(KDevelop::IndexedDeclaration decl
 
     QVBoxLayout verticalLayout;
     QHBoxLayout actionsLayout;
-    dialog.setLayout(&verticalLayout);
-    dialog.setWindowTitle(i18n("Rename %1", declaration->toString()));
+    dialog->setLayout(&verticalLayout);
+    dialog->setWindowTitle(i18n("Rename %1", declaration->toString()));
 
     QLabel newNameLabel(i18n("New name:"));
     actionsLayout.addWidget(&newNameLabel);
@@ -238,7 +237,7 @@ void SimpleRefactoring::startInteractiveRename(KDevelop::IndexedDeclaration decl
     QPushButton goButton(i18n("Rename"));
     goButton.setToolTip(i18n("Note: All overloaded functions, overloads, forward-declarations, etc. will be renamed too"));
     actionsLayout.addWidget(&goButton);
-    connect(&goButton, SIGNAL(clicked(bool)), &dialog, SLOT(accept()));
+    connect(&goButton, SIGNAL(clicked(bool)), dialog, SLOT(accept()));
 
     QPushButton cancelButton(i18n("Cancel"));
     actionsLayout.addWidget(&cancelButton);
@@ -251,12 +250,12 @@ void SimpleRefactoring::startInteractiveRename(KDevelop::IndexedDeclaration decl
 
     verticalLayout.addWidget(&tabWidget);
 
-    connect(&cancelButton, SIGNAL(clicked(bool)), &dialog, SLOT(reject()));
+    connect(&cancelButton, SIGNAL(clicked(bool)), dialog, SLOT(reject()));
 
     lock.unlock();
-    dialog.resize(750, 550);
+    dialog->resize(750, 550);
 
-    if ( dialog.exec() != QDialog::Accepted ) {
+    if ( dialog->exec() != QDialog::Accepted ) {
         kDebug() << "stopped";
         return;
     }

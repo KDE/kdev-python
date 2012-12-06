@@ -16,18 +16,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include <language/duchain/types/typeregister.h>
-
 #include "variablelengthcontainer.h"
 #include "helpers.h"
+
+#include <language/duchain/types/typeregister.h>
 #include <language/duchain/duchain.h>
 #include <language/duchain/duchainlock.h>
+
 #include <KLocalizedString>
 
 using namespace KDevelop;
 
 namespace Python {
-    
+
 REGISTER_TYPE(VariableLengthContainer);
 
 VariableLengthContainer::VariableLengthContainer() : KDevelop::StructureType(createData<VariableLengthContainer>())

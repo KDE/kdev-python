@@ -34,7 +34,7 @@ void Variable::dataFetched(QByteArray rawData)
     QList<QByteArray> data = rawData.split('\n');
     data.removeLast();
     QByteArray value;
-    foreach ( const QByteArray item, data ) {
+    foreach ( const QByteArray& item, data ) {
         value.append(item);
     }
     setValue(value);
@@ -85,7 +85,7 @@ void Variable::moreChildrenFetched(QByteArray rawData)
             i++;
             continue;
         }
-        QString childName = expression() + "_" + QString::number(i);
+        QString childName = expression() + '_' + QString::number(i);
         QString realValue;
         QString prettyName;
         unsigned long int pythonId = 0;

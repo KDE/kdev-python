@@ -66,7 +66,7 @@ void PdbFrameStackModel::framesFetched(QByteArray framelist)
             location.setPatternSyntax(QRegExp::RegExp2);
             if ( location.exactMatch(line) ) {
                 kDebug() << location.capturedTexts();
-                if ( location.capturedTexts().at(1) != "" ) {
+                if ( ! location.capturedTexts().at(1).isEmpty() ) {
                     m_debuggerAtFrame = framesCount;
                 }
                 currentFrame->file = location.capturedTexts().at(2);

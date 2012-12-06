@@ -16,13 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include <language/duchain/types/typeregister.h>
 
 #include "indexedcontainer.h"
-#include "helpers.h"
 #include "types/unsuretype.h"
+#include "helpers.h"
+
+#include <language/duchain/types/typeregister.h>
 #include <language/duchain/duchain.h>
 #include <language/duchain/duchainlock.h>
+
 #include <KLocalizedString>
 
 using namespace KDevelop;

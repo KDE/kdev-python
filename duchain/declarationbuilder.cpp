@@ -22,9 +22,19 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION     *
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
-#include <QByteArray>
-#include <QtGlobal>
-#include <KUrl>
+
+#include "declarationbuilder.h"
+#include "duchain/declarations/decorator.h"
+#include "duchain/declarations/functiondeclaration.h"
+#include "duchain/declarations/classdeclaration.h"
+#include "types/variablelengthcontainer.h"
+#include "types/hintedtype.h"
+#include "types/unsuretype.h"
+#include "types/indexedcontainer.h"
+#include "contextbuilder.h"
+#include "expressionvisitor.h"
+#include "pythoneditorintegrator.h"
+#include "helpers.h"
 
 #include <language/duchain/functiondeclaration.h>
 #include <language/duchain/declaration.h>
@@ -39,18 +49,9 @@
 #include <language/backgroundparser/parsejob.h>
 #include <interfaces/ilanguagecontroller.h>
 
-#include "duchain/declarations/decorator.h"
-#include "contextbuilder.h"
-#include "declarationbuilder.h"
-#include "pythoneditorintegrator.h"
-#include "expressionvisitor.h"
-#include "helpers.h"
-#include "types/variablelengthcontainer.h"
-#include "types/hintedtype.h"
-#include "types/unsuretype.h"
-#include "types/indexedcontainer.h"
-#include "duchain/declarations/functiondeclaration.h"
-#include "duchain/declarations/classdeclaration.h"
+#include <QByteArray>
+#include <QtGlobal>
+#include <KUrl>
 
 using namespace KTextEditor;
 using namespace KDevelop;
@@ -484,7 +485,7 @@ Declaration* DeclarationBuilder::findDeclarationInContext(QStringList dottedName
     Declaration* lastAccessedDeclaration = 0;
     int i = 0;
     int identifierCount = dottedNameIdentifier.length();
-    foreach ( QString currentIdentifier, dottedNameIdentifier ) {
+    foreach ( const QString& currentIdentifier, dottedNameIdentifier ) {
         Q_ASSERT(currentContext);
         i++;
         QList<Declaration*> declarations = currentContext->findDeclarations(QualifiedIdentifier(currentIdentifier).first(),
@@ -511,13 +512,13 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
     foreach ( AliasAst* name, node->names ) {
         // iterate over all the names that are imported, like "from foo import bar as baz, bang as asdf"
         if ( node->module ) {
-            moduleName = node->module->value + "." + name->name->value;
+            moduleName = node->module->value + '.' + name->name->value;
         }
         else {
-            moduleName = "." + name->name->value;
+            moduleName = '.' + name->name->value;
         }
         Identifier* declarationIdentifier = 0;
-        declarationName = "";
+        declarationName.clear();
         if ( name->asName ) {
             // use either the alias ("as foo"), or the object name itself if no "as" is given
             declarationIdentifier = name->asName;

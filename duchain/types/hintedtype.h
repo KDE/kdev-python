@@ -20,16 +20,15 @@
 #ifndef HINTEDTYPE_H
 #define HINTEDTYPE_H
 
-#include <language/duchain/types/structuretype.h>
-#include <language/duchain/types/typesystemdata.h>
-#include <language/duchain/use.h>
-
 #include "pythonduchainexport.h"
-#include <language/editor/modificationrevision.h>
-#include <language/duchain/topducontext.h>
+
+#include <language/duchain/types/structuretype.h>
 #include <language/duchain/types/typesystem.h>
 #include <language/duchain/types/typesystemdata.h>
 #include <language/duchain/types/typealiastype.h>
+#include <language/duchain/use.h>
+#include <language/duchain/topducontext.h>
+#include <language/editor/modificationrevision.h>
 
 using namespace KDevelop;
 

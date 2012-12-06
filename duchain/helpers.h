@@ -25,9 +25,10 @@
 #ifndef GLOBALHELPERS_H
 #define GLOBALHELPERS_H
 
-#include <QList>
-#include <KUrl>
-#include <KDebug>
+#include "declarations/classdeclaration.h"
+#include "pythonduchainexport.h"
+#include "types/unsuretype.h"
+#include "ast.h"
 
 #include <interfaces/iproject.h>
 #include <language/duchain/declaration.h>
@@ -37,11 +38,10 @@
 #include <language/duchain/types/structuretype.h>
 #include <language/duchain/functiondeclaration.h>
 #include <duchain/declarations/decorator.h>
-#include "declarations/classdeclaration.h"
 
-#include "pythonduchainexport.h"
-#include "types/unsuretype.h"
-#include "ast.h"
+#include <QList>
+#include <KUrl>
+#include <KDebug>
 
 using namespace KDevelop;
 

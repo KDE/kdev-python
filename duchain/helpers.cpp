@@ -51,8 +51,8 @@ using namespace KDevelop;
 namespace Python {
 
 QList<KUrl> Helper::cachedSearchPaths;
-QString Helper::dataDir = QString::null;
-QString Helper::documentationFile = QString::null;
+QString Helper::dataDir;
+QString Helper::documentationFile;
 DUChainPointer<TopDUContext> Helper::documentationFileContext = DUChainPointer<TopDUContext>(0);
 
 AbstractType::Ptr Helper::resolveType(AbstractType::Ptr type)
@@ -318,7 +318,7 @@ QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
             kWarning() << "Could not get search paths! Defaulting to stupid stuff.";
             searchPaths.append(KUrl("/usr/lib/python2.7"));
             searchPaths.append(KUrl("/usr/lib/python2.7/site-packages"));
-            QString path = getenv("PYTHONPATH");
+            QString path = qgetenv("PYTHONPATH");
             QStringList paths = path.split(':');
             foreach ( const QString& path, paths ) {
                 cachedSearchPaths.append(path);

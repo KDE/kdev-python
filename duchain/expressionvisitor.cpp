@@ -23,29 +23,27 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
 
-#include <KLocalizedString>
+#include "expressionvisitor.h"
+#include "types/indexedcontainer.h"
+#include "types/variablelengthcontainer.h"
+#include "declarations/functiondeclaration.h"
+#include "pythonduchainexport.h"
+#include "pythoneditorintegrator.h"
+#include "helpers.h"
 
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/types/integraltype.h>
-#include <language/duchain/ducontext.h>
-#include <language/duchain/declaration.h>
-#include <language/interfaces/iproblem.h>
 #include <language/duchain/types/typeregister.h>
-#include <language/duchain/types/integraltype.h>
 #include <language/duchain/types/typesystemdata.h>
-#include <language/duchain/types/unsuretype.h>
-#include <language/duchain/functiondeclaration.h>
 #include <language/duchain/types/functiontype.h>
+#include <language/duchain/declaration.h>
+#include <language/duchain/functiondeclaration.h>
 #include <language/duchain/classdeclaration.h>
 #include <language/duchain/aliasdeclaration.h>
+#include <language/duchain/ducontext.h>
+#include <language/interfaces/iproblem.h>
 
-#include "pythonduchainexport.h"
-#include "expressionvisitor.h"
-#include "pythoneditorintegrator.h"
-#include "types/variablelengthcontainer.h"
-#include "types/indexedcontainer.h"
-#include "helpers.h"
-#include "declarations/functiondeclaration.h"
+#include <KLocalizedString>
 
 using namespace KDevelop;
 using namespace Python;

@@ -53,7 +53,7 @@ void DumpChain::dump( DUContext * context, bool imported )
             for( QMap<IndexedString, QList<RangeInRevision> >::const_iterator it = dec->uses().constBegin(); it != dec->uses().constEnd(); ++it )
             {
                 kDebug() << QString((indent+1)*2, ' ') << "File:" << it.key().str();
-                foreach(RangeInRevision r, it.value())
+                foreach(const RangeInRevision& r, it.value())
                 {
                     kDebug() << QString((indent+2)*2, ' ') << "Use:" << context->transformFromLocalRevision(r).textRange();
                 }
@@ -63,7 +63,7 @@ void DumpChain::dump( DUContext * context, bool imported )
     ++indent;
     if (!imported)
     {
-        foreach (const DUContext::Import parent, context->importedParentContexts())
+        foreach (const DUContext::Import& parent, context->importedParentContexts())
         {
             dump(parent.context(dynamic_cast<TopDUContext*>(context)), true);
         }

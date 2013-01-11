@@ -1,19 +1,20 @@
 PROJECT(kdevpython)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${kdevpython_SOURCE_DIR}/cmake/)
+
+find_package(KDE4 REQUIRED)
+find_package(KDevPlatform 1.4.60 REQUIRED)
+find_package(KDevelop-PG-Qt REQUIRED)
+
 # write the plugin version to a file
 set(KDEVPYTHON_VERSION_MAJOR 1)
-set(KDEVPYTHON_VERSION_MINOR 3)
-set(KDEVPYTHON_VERSION_PATCH 80)
+set(KDEVPYTHON_VERSION_MINOR 4)
+set(KDEVPYTHON_VERSION_PATCH 60)
+configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpython_BINARY_DIR}/kdevpythonversion.h" @ONLY )
 
 cmake_minimum_required(VERSION 2.8)
 
 enable_testing()
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${kdevpython_SOURCE_DIR}/cmake/)
-
-find_package(KDE4 REQUIRED)
-find_package(KDevPlatform 1.3.60 REQUIRED)
-find_package(KDevelop-PG-Qt REQUIRED)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wfatal-errors -Wall")
 
@@ -31,7 +32,6 @@ include_directories(
     ${KDEVPGQT_INCLUDE_DIR}
 )
 
-configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpython_BINARY_DIR}/kdevpythonversion.h" @ONLY )
 
 add_definitions( -DKDE_DEFAULT_DEBUG_AREA=9011 )
 

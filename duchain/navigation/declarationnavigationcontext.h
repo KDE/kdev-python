@@ -20,7 +20,11 @@
 #define DECLARATIONNAVIGATIONCONTEXT_H
 
 #include <language/duchain/navigation/abstractdeclarationnavigationcontext.h>
+#include <language/duchain/navigation/navigationaction.h>
 #include <language/duchain/types/abstracttype.h>
+#include <language/duchain/duchainpointer.h>
+
+using namespace KDevelop;
 
 namespace Python
 {
@@ -35,6 +39,7 @@ public:
 protected:
     QString html(bool shorten = false);
     virtual void htmlIdentifiedType(KDevelop::AbstractType::Ptr type, const KDevelop::IdentifiedType* idType);
+    QString getLink(const QString& name, DeclarationPointer declaration, NavigationAction::Type actionType);
 };
 
 }

@@ -41,42 +41,49 @@ DeclarationNavigationContext::DeclarationNavigationContext(DeclarationPointer de
 {
 }
 
+QString DeclarationNavigationContext::getLink(const QString& name, DeclarationPointer declaration, NavigationAction::Type actionType) {
+    NavigationAction action( declaration, actionType );
+    QString targetId = QString::number((quint64)declaration.data() * actionType);
+    return createLink(name, targetId, action);
+};
+
 void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, const IdentifiedType* idType)
 {
     // TODO this code is duplicate of variablelengthcontainer::toString, resolve that somehow
     if ( VariableLengthContainer::Ptr t = VariableLengthContainer::Ptr::dynamicCast(type) ) {
-        makeLink(t->containerToString(), DeclarationPointer(idType->declaration(m_topContext.data())), NavigationAction::NavigateDeclaration );
-        modifyHtml() += i18nc("as in \"list of string\", \"set of integer\"", " of ");
+        const QString containerType = getLink(t->containerToString(), DeclarationPointer(idType->declaration(m_topContext.data())), NavigationAction::NavigateDeclaration );
+        QString contentType;
         if ( t->hasKeyType() ) {
             if ( AbstractType::Ptr key = t->keyType().abstractType() ) {
                 IdentifiedType* identifiedKey = dynamic_cast<IdentifiedType*>(key.unsafeData());
                 if ( identifiedKey ) {
-                    makeLink(key->toString(), DeclarationPointer(
+                    contentType.append(getLink(key->toString(), DeclarationPointer(
                         identifiedKey->declaration(m_topContext.data())),
                         NavigationAction::NavigateDeclaration
-                    );
+                    ));
                 }
                 else {
-                    modifyHtml() += key->toString();
+                    contentType.append(key->toString());
                 }
-                modifyHtml() += " : ";
+                contentType.append(" : ");
             }
         }
         if ( AbstractType::Ptr contents = t->contentType().abstractType() ) {
             IdentifiedType* identifiedContent = dynamic_cast<IdentifiedType*>(contents.unsafeData());
             if ( identifiedContent ) {
-                makeLink(contents->toString(), DeclarationPointer(
+                contentType.append(getLink(contents->toString(), DeclarationPointer(
                     identifiedContent->declaration(m_topContext.data())),
                     NavigationAction::NavigateDeclaration
-                );
+                ));
             }
             else {
-                modifyHtml() += contents->toString();
+                contentType.append(contents->toString());
             }
         }
         else {
             modifyHtml() += i18nc("refers to an unknown type in programming", "unknown");
         }
+        modifyHtml() += i18nc("as in list of int, set of string", "%1 of %2", containerType, contentType);
     }
     else {
         KDevelop::AbstractDeclarationNavigationContext::htmlIdentifiedType(type, idType);

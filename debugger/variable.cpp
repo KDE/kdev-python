@@ -98,7 +98,10 @@ void Variable::moreChildrenFetched(QByteArray rawData)
             prettyName = formatExtract.capturedTexts().at(3);
             realValue = formatExtract.capturedTexts().at(4);
         }
-        else continue;
+        else {
+            i++;
+            continue;
+        }
         Variable* v = new Variable(model_, this, childName, prettyName);
         appendChild(v);
         kDebug() << "adding child:" << expression() << i << d;

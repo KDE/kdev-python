@@ -43,9 +43,9 @@ VariableController::VariableController(IDebugSession* parent) : IVariableControl
 
 }
 
-void VariableController::addWatch(KDevelop::Variable* /*variable*/)
+void VariableController::addWatch(KDevelop::Variable* variable)
 {
-    kWarning() << "addWatch requested (not implemented)";
+    variableCollection()->watches()->add(variable->expression());
 }
 
 void VariableController::addWatchpoint(KDevelop::Variable* /*variable*/)

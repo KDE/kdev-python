@@ -51,7 +51,7 @@ using namespace KDevelop;
 namespace Python {
 
 QList<KUrl> Helper::cachedSearchPaths;
-QString Helper::dataDir;
+QStringList Helper::dataDirs;
 QString Helper::documentationFile;
 DUChainPointer<TopDUContext> Helper::documentationFileContext = DUChainPointer<TopDUContext>(0);
 
@@ -257,12 +257,12 @@ Declaration* Helper::resolveAliasDeclaration(Declaration* decl)
         return decl;
 }
 
-QString Helper::getDataDir() {
-    if ( Helper::dataDir.isNull() ) {
+QStringList Helper::getDataDirs() {
+    if ( Helper::dataDirs.isEmpty() ) {
         KStandardDirs d;
-        Helper::dataDir = d.findDirs("data", "kdevpythonsupport/documentation_files").first();
+        Helper::dataDirs = d.findDirs("data", "kdevpythonsupport/documentation_files");
     }
-    return Helper::dataDir;
+    return Helper::dataDirs;
 }
 
 QString Helper::getDocumentationFile() {
@@ -294,7 +294,9 @@ QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
         searchPaths.append(KUrl(project->folder().url()));
     }
     
-    searchPaths.append(KUrl(getDataDir()));
+    foreach ( const QString& path, getDataDirs() ) {
+        searchPaths.append(KUrl(path));
+    }
     
     if ( cachedSearchPaths.isEmpty() ) {
         KStandardDirs d;

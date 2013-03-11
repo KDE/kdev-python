@@ -51,11 +51,11 @@ class KDEVPYTHONDUCHAIN_EXPORT Helper {
 public:
     /** get search paths for python files **/
     static QList<KUrl> getSearchPaths(KUrl workingOnDocument);
-    static QString dataDir;
+    static QStringList dataDirs;
     static QString documentationFile;
     static DUChainPointer<TopDUContext> documentationFileContext;
     
-    static QString getDataDir();
+    static QStringList getDataDirs();
     static QString getDocumentationFile();
     static ReferencedTopDUContext getDocumentationFileContext();
     

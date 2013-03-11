@@ -22,6 +22,7 @@
 import os
 import sys
 import types
+import inspect
 
 def indent(code, depth=4):
     code = code.split('\n')
@@ -32,6 +33,110 @@ def clearIndent(code):
     code = code.split('\n')
     code = [line.strip() for line in code]
     return '\n'.join(code)
+
+def syntaxValid(code):
+    try:
+        compile(code, "<no file>", 'exec')
+    except SyntaxError:
+        return False
+    return True
+
+def sanitize(expr):
+    replace = {
+        '*':'', '[':'', ']':'',
+        'from':'_from', 'class':'_class', '-':'_', 'lambda':'_lambda',
+        '\\':'ESC', ' ':'', "<":'"', ">":'"', "self,":"", "self":"",
+        ",,":",", '...':'more_args'
+    }
+    result = expr
+    for before, after in replace.iteritems():
+        result = result.replace(before, after)
+    result = result.replace("=,", "=[],").replace("=)", "=[])")
+    return result
+
+def strict_sanitize(expr):
+    expr = sanitize(expr)
+    expr = expr.replace("=()", "")
+    expr = expr.replace('(', '').replace(')', '')
+    return expr
+
+def isSpace(char):
+    return char == ' ' or char == '\t'
+
+def removeAtCorner(string, char, direction):
+    i = 0
+    assert direction in ['<', '>']
+    if direction == '>':
+        iterator = range(0, len(string))
+        def r(s, a): return s[a-1:]
+    if direction == '<':
+        iterator = [len(string)-x-1 for x in range(0, len(string))]
+        def r(s, a): return s[:a+1]
+
+    atBeginning = True
+    for i in iterator:
+        if isSpace(string[i]) and atBeginning:
+            continue
+        elif string[i] == char:
+            atBeginning = False
+        else:
+            return r(string, i)
+    return ""
+
+likely_substitutions = {
+    "integer": "int",
+    "string": "str",
+    "long": "int"
+}
+
+def parse_synopsis(funcdef):
+    """Parse a function description in the following format:
+    module.func(param1, param2, [optional_param1 = default1, [optional_param2 = default2]]) -> return_type
+    This tries to be as error-prone as possible in order to convert everything into a valid parameter list."""
+    # first, take the parts before and after the arrow:
+    s = funcdef.split(' -> ')
+    definition = s[0]
+    returnType = s[1] if len(s) > 1 else "None"
+    # Sometimes, people do fancy stuff in the return type, like "... -> ndarray or None if arg is False"
+    # Thus, we only use the first word... well.
+    returnType = strict_sanitize(returnType.split(' ')[0])
+    if returnType in likely_substitutions:
+        returnType = likely_substitutions[returnType]
+    if returnType != 'None':
+        returnType += "()"
+    # Okay, now the fun part: parse the parameter list
+    paramList = ')'.join('('.join(definition.split('(')[1:]).split(')')[:-1])
+    paramList = paramList.split(',')
+    resultingParamList = []
+    atDefault = False
+    for param in paramList:
+        defaultValue = None
+        # extract the name of the param
+        param = param.replace(' ', '').replace('\t', '')
+        # check for default values
+        if removeAtCorner(param, '[', '>') != removeAtCorner(param, ' ', '>') or param.find('=') != -1:
+            # default parameter list starts  or continues with this parameter
+            atDefault = True
+        if atDefault:
+            if param.find('=') != -1:
+                # default value was provided; clean trailing "[" and "]" chars
+                defaultValue = removeAtCorner(removeAtCorner(param.split('=')[1], ']', '<'), '[', '<')
+                param = param.split('=')[0]
+            else:
+                # just write anything, otherwise it's syntactically invalid
+                defaultValue = "None"
+        if removeAtCorner(param, '[', '<') != removeAtCorner(param, ' ', '<'):
+            # default parameter list starts or continues after this parameter
+            atDefault = True
+        param = strict_sanitize(param)
+        if param == '':
+            continue
+        if defaultValue:
+            resultingParamList.append("{0}={1}".format(param, defaultValue))
+        else:
+            resultingParamList.append(param)
+    return ', '.join(resultingParamList), returnType
+
 
 class ModuleDumper:
     def __init__(self, module):
@@ -51,8 +156,8 @@ class ModuleDumper:
         print(indent(code, self.indentDepth))
 
     def dump(self):
-        for member in dir(self.module):
-            dumper = dumperForObject(getattr(self.module, member), member, self)
+        for member, value in inspect.getmembers(self.module):
+            dumper = dumperForObject(value, member, self)
             dumper.dump()
 
 class ScalarDumper:
@@ -71,10 +176,36 @@ class FunctionDumper:
         self.root = root
 
     def dump(self):
-        self.root.emit("def {0}():".format(self.function.__name__))
+        try:
+            arguments = inspect.getargspec(self.function)
+            arglist = list()
+            for index, argument in enumerate(arguments.args):
+                if len(arguments.args) - index - 1 > len(arguments.defaults):
+                    # no default value -> normal argument
+                    arglist.append(argument)
+                else:
+                    # there's a default value
+                    defaultIndex = index + (len(arguments.args) - len(arguments.defaults))
+                    arglist.append("{0}={1}".format(argument, arguments.defaults[defaultIndex]))
+            arglist = ', '.join(arglist)
+        except TypeError:
+            # not a python function, can't inspect it. try guessing argspec from docstring
+            arglist = None
+        try:
+            docstring = self.function.__doc__.split('\n')[0]
+            synArglist, returnValue = parse_synopsis(docstring)
+        except:
+            synArglist = ""
+            returnValue = "None"
+        if arglist is None:
+            arglist = synArglist
+        funcname = self.function.__name__
+        if funcname[0].isdigit():
+            funcname = '_' + funcname
+        self.root.emit("def {0}({1}):".format(funcname, arglist))
         self.root.increaseIndent()
-        self.root.emit('"""' + self.function.__doc__ + '"""')
-        self.root.emit("return None")
+        self.root.emit('"""{0}"""'.format(self.function.__doc__))
+        self.root.emit("return {0}".format(returnValue))
         self.root.decreaseIndent()
 
 class ClassDumper:
@@ -85,8 +216,10 @@ class ClassDumper:
     def dump(self):
         self.root.emit("class {0}:".format(self.klass.__name__))
         self.root.increaseIndent()
-        for member in dir(self.klass):
-            dumper = dumperForObject(getattr(self.klass, member), member, self.root)
+        for member, value in inspect.getmembers(self.klass):
+            if type(value) == type:
+                continue
+            dumper = dumperForObject(value, member, self.root)
             dumper.dump()
         self.root.decreaseIndent()
 

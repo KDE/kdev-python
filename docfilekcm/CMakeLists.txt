@@ -11,6 +11,7 @@ target_link_libraries(kcm_docfiles
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${KDEVPLATFORM_PROJECT_LIBRARIES}
     ${KDEVPLATFORM_UTIL_LIBRARIES}
+    ${KDE4_KNEWSTUFF3_LIBS}
 )
 
 install(TARGETS kcm_docfiles
@@ -18,3 +19,6 @@ install(TARGETS kcm_docfiles
 
 install(FILES kcm_kdevpythondocfiles.desktop
         DESTINATION ${SERVICES_INSTALL_DIR})
+
+install(FILES kdev_python_docfiles.knsrc
+        DESTINATION ${CONFIG_INSTALL_DIR})

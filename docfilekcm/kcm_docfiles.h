@@ -20,6 +20,10 @@
 #ifndef KCM_CUSTOMBUILDSYSTEM_H
 #define KCM_CUSTOMBUILDSYSTEM_H
 #include <KCModule>
+#include <QItemSelectionModel>
+#include <QUrl>
+
+class DocfileManagerWidget;
 
 class DocfilesKCModule : public KCModule
 {
@@ -27,6 +31,15 @@ Q_OBJECT
 public:
     DocfilesKCModule( QWidget* parent, const QVariantList& args = QVariantList() );
     virtual ~DocfilesKCModule();
+
+public slots:
+    void showGHNSDialog();
+    void uploadSelected();
+    void runWizard();
+
+private:
+    DocfileManagerWidget* managerWidget;
+    QString knsrc;
 };
 
 #endif

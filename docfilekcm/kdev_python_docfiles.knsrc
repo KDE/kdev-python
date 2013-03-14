@@ -1,0 +1,5 @@
+[KNewStuff3]
+Categories=Python2 Docfile
+TargetDir=kdevpythonsupport/documentation_files
+Uncompress=archive
+ProvidersUrl=/home/sven/Projekte/kde/ghns-test/providers.xml

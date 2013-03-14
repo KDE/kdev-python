@@ -24,12 +24,19 @@
 #define DOCFILEMANAGERWIDGET_H
 
 #include <QWidget>
+#include <QTreeView>
+#include <QUrl>
+
+class DocfilesKCModule;
 
 class DocfileManagerWidget : public QWidget
 {
 public:
-    DocfileManagerWidget(QWidget* parent);
+    DocfileManagerWidget(QWidget* parent, DocfilesKCModule* kcmodule);
+    const QList<QUrl> selectedItems() const;
 
+private:
+    QTreeView* filesTreeView;
 };
 
 #endif // DOCFILEMANAGERWIDGET_H

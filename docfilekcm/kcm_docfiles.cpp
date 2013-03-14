@@ -19,10 +19,15 @@
 
 #include "kcm_docfiles.h"
 
-#include <KPluginFactory>
 #include <QLabel>
 #include <QLayout>
 #include <QBoxLayout>
+#include <QDebug>
+
+#include <KPluginFactory>
+#include <KNS3/DownloadDialog>
+#include <KStandardDirs>
+#include <knewstuff3/uploaddialog.h>
 
 #include "docfilemanagerwidget.h"
 
@@ -32,13 +37,32 @@ K_EXPORT_PLUGIN(DocfilesKCModuleFactory("kcm_docfiles", "kdevpythonsupport"))
 DocfilesKCModule::DocfilesKCModule(QWidget* parent, const QVariantList& args)
     : KCModule(DocfilesKCModuleFactory::componentData(), parent, args)
 {
-   DocfileManagerWidget* w = new DocfileManagerWidget(parent);
-   parent->layout()->addWidget(w);
+   managerWidget = new DocfileManagerWidget(parent, this);
+   parent->layout()->addWidget(managerWidget);
+   KStandardDirs d;
+   knsrc = d.findResource("config", "kdev_python_docfiles.knsrc");
 }
 
 DocfilesKCModule::~DocfilesKCModule()
 {
 
+}
+
+void DocfilesKCModule::runWizard()
+{
+
+}
+
+void DocfilesKCModule::showGHNSDialog()
+{
+    KNS3::DownloadDialog dialog(knsrc, managerWidget);
+    dialog.exec();
+}
+
+void DocfilesKCModule::uploadSelected()
+{
+    KNS3::UploadDialog dialog(knsrc, managerWidget);
+    dialog.exec();
 }
 
 

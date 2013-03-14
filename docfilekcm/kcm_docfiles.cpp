@@ -1,5 +1,5 @@
 /************************************************************************
- * KDevelop4 Custom Buildsystem Support                                 *
+ * KDevelop4 Python Language Support                                    *
  *                                                                      *
  * Copyright 2013 Sven Brauch <svenbrauch@gmail.com>                    *
  *                                                                      *
@@ -21,6 +21,10 @@
 
 #include <KPluginFactory>
 #include <QLabel>
+#include <QLayout>
+#include <QBoxLayout>
+
+#include "docfilemanagerwidget.h"
 
 K_PLUGIN_FACTORY(DocfilesKCModuleFactory, registerPlugin<DocfilesKCModule>(); )
 K_EXPORT_PLUGIN(DocfilesKCModuleFactory("kcm_docfiles", "kdevpythonsupport"))
@@ -28,8 +32,8 @@ K_EXPORT_PLUGIN(DocfilesKCModuleFactory("kcm_docfiles", "kdevpythonsupport"))
 DocfilesKCModule::DocfilesKCModule(QWidget* parent, const QVariantList& args)
     : KCModule(DocfilesKCModuleFactory::componentData(), parent, args)
 {
-    QLabel l("Foo");
-    l.show();
+   DocfileManagerWidget* w = new DocfileManagerWidget(parent);
+   parent->layout()->addWidget(w);
 }
 
 DocfilesKCModule::~DocfilesKCModule()

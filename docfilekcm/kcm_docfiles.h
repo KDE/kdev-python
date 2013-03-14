@@ -1,5 +1,5 @@
 /************************************************************************
- * KDevelop4 Custom Buildsystem Support                                 *
+ * KDevelop4 Python Language Support                                    *
  *                                                                      *
  * Copyright 2013 Sven Brauch <svenbrauch@gmail.com>                    *
  *                                                                      *

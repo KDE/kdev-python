@@ -1,4 +1,5 @@
 set(kcm_docfiles_SRCS
+    docfilemanagerwidget.cpp
     kcm_docfiles.cpp
 )
 

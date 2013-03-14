@@ -1,7 +1,7 @@
 /************************************************************************
  * KDevelop4 Python Language Support                                    *
- *                                                                      *
  * Copyright 2013 Sven Brauch <svenbrauch@gmail.com>                    *
+ *                                                                      *
  *                                                                      *
  * This program is free software; you can redistribute it and/or modify *
  * it under the terms of the GNU General Public License as published by *
@@ -30,6 +30,7 @@
 #include <knewstuff3/uploaddialog.h>
 
 #include "docfilemanagerwidget.h"
+#include "docfilewizard.h"
 
 K_PLUGIN_FACTORY(DocfilesKCModuleFactory, registerPlugin<DocfilesKCModule>(); )
 K_EXPORT_PLUGIN(DocfilesKCModuleFactory("kcm_docfiles", "kdevpythonsupport"))
@@ -50,7 +51,9 @@ DocfilesKCModule::~DocfilesKCModule()
 
 void DocfilesKCModule::runWizard()
 {
-
+    DocfileWizard wizard(this);
+    wizard.resize(640, 480);
+    wizard.exec();
 }
 
 void DocfilesKCModule::showGHNSDialog()

@@ -24,6 +24,10 @@ import sys
 import types
 import inspect
 
+def debugmsg(message):
+    sys.stderr.write(message + "\n")
+    sys.stderr.flush()
+
 def indent(code, depth=4):
     code = code.split('\n')
     code = [" "*depth + line for line in code]
@@ -156,6 +160,7 @@ class ModuleDumper:
         print(indent(code, self.indentDepth))
 
     def dump(self):
+        debugmsg("Processing module {0}".format(self.module.__name__))
         for member, value in inspect.getmembers(self.module):
             dumper = dumperForObject(value, member, self)
             dumper.dump()
@@ -214,6 +219,7 @@ class ClassDumper:
         self.root = root
 
     def dump(self):
+        debugmsg("Generating documentation for class {0}".format(self.klasse.__name__))
         self.root.emit("class {0}:".format(self.klass.__name__))
         self.root.increaseIndent()
         for member, value in inspect.getmembers(self.klass):
@@ -244,6 +250,7 @@ if __name__ == '__main__':
     try:
         dumper = ModuleDumper(__import__(sys.argv[1]))
     except IndexError:
-        print("Usage: introspect.py <python_module_name>")
+        debugmsg("Usage: introspect.py <python_module_name>")
         exit(1)
     dumper.dump()
+    debugmsg("All done -- looks good so far.")

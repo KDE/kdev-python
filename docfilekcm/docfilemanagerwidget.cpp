@@ -221,11 +221,17 @@ void DocfileManagerWidget::uploadSelected()
     QString knsrc = d.findResource("config", "kdev_python_docfiles.knsrc");
     KNS3::UploadDialog dialog(knsrc, this);
     QList<QUrl> selected = selectedItems();
-    // TODO don't if there's only one file
+    // always make a tar archive out of the selected files, even if it's only one
+    // this makes it easy to put the file(s) into the correct subdirectory when installing
     QTemporaryFile* uploadFile = makeArchive(selected);
-    qDebug() << "setting upload file name:" << uploadFile->fileName();
-    dialog.setUploadFile(uploadFile->fileName());
+    QString uploadFilename = uploadFile->fileName();
+    if ( ! selected.isEmpty() ) {
+        qDebug() << "setting upload file name:" << uploadFilename;
+        dialog.setUploadFile(uploadFilename);
+    }
     dialog.exec();
-    // frees memory and deletes the file, too
-    delete uploadFile;
+    if ( uploadFile ) {
+        // frees memory and deletes the file, too
+        delete uploadFile;
+    }
 }

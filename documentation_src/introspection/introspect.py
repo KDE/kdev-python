@@ -190,7 +190,8 @@ class FunctionDumper:
                     arglist.append(argument)
                 else:
                     # there's a default value
-                    defaultIndex = index + (len(arguments.args) - len(arguments.defaults))
+                    defaultIndex = index - (len(arguments.args) - len(arguments.defaults))
+                    print(index, defaultIndex, arguments.args, arguments.defaults)
                     arglist.append("{0}={1}".format(argument, arguments.defaults[defaultIndex]))
             arglist = ', '.join(arglist)
         except TypeError:
@@ -219,7 +220,7 @@ class ClassDumper:
         self.root = root
 
     def dump(self):
-        debugmsg("Generating documentation for class {0}".format(self.klasse.__name__))
+        debugmsg("Generating documentation for class {0}".format(self.klass.__name__))
         self.root.emit("class {0}:".format(self.klass.__name__))
         self.root.increaseIndent()
         for member, value in inspect.getmembers(self.klass):

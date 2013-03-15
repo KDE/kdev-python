@@ -197,7 +197,7 @@ QTemporaryFile* DocfileManagerWidget::makeArchive(const QList< QUrl >& urls) con
 {
     // we need this path to remove it from the path the file should have in the tar archive
     QString base = docfilePath();
-    QTemporaryFile* tempfile = new QTemporaryFile("kdevpython_upload_XXXXXX.tar");
+    QTemporaryFile* tempfile = new QTemporaryFile("kdevpython_upload_XXXXXX.tar.gz");
     tempfile->open();
     KTar t(tempfile);
     t.open(QIODevice::WriteOnly);

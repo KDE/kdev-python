@@ -21,6 +21,7 @@
  */
 
 #include "docfilewizard.h"
+#include "docfilemanagerwidget.h"
 
 #include <QGroupBox>
 #include <QFormLayout>
@@ -29,6 +30,7 @@
 #include <QBoxLayout>
 #include <QPushButton>
 #include <QTabWidget>
+#include <QScrollBar>
 #include <QDebug>
 
 #include <KLocalizedString>
@@ -71,10 +73,16 @@ DocfileWizard::DocfileWizard(QWidget* parent)
     statusField->setText(i18n("The process has not been run yet."));
     statusField->setFontFamily("monospace");
     statusField->resize(width(), 200);
+    statusField->setLineWrapMode(QTextEdit::NoWrap);
+    statusField->setReadOnly(true);
+    statusField->setAcceptRichText(false);
     resultField = new QTextEdit();
     resultField->setText(i18n("The process has not been run yet."));
     resultField->setFontFamily("monospace");
     resultField->resize(width(), 200);
+    resultField->setLineWrapMode(QTextEdit::NoWrap);
+    resultField->setReadOnly(true);
+    statusField->setAcceptRichText(false);
     status->setLayout(new QHBoxLayout);
     tabs->addTab(statusField, i18n("Script output"));
     tabs->addTab(resultField, i18n("Results"));
@@ -85,14 +93,19 @@ DocfileWizard::DocfileWizard(QWidget* parent)
     buttonsLayout->setDirection(QBoxLayout::RightToLeft);
     QPushButton* closeButton = new QPushButton(i18n("Close"));
     closeButton->setIcon(KIcon("dialog-close"));
+    QPushButton* saveButton = new QPushButton(i18n("Save and close"));
+    saveButton->setIcon(KIcon("dialog-ok-apply"));
     QPushButton* runButton = new QPushButton(i18n("Generate"));
+    runButton->setDefault(true);
     runButton->setIcon(KIcon("tools-wizard"));
     buttonsLayout->addWidget(closeButton);
     buttonsLayout->addWidget(runButton);
+    buttonsLayout->addWidget(saveButton);
     buttonsLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
 
     // connections
     QObject::connect(closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
+    QObject::connect(saveButton, SIGNAL(clicked(bool)), this, SLOT(saveAndClose()));
     QObject::connect(moduleField, SIGNAL(textChanged(QString)), this, SLOT(updateOutputFilename(QString)));
     QObject::connect(runButton, SIGNAL(clicked(bool)), this, SLOT(run()));
 
@@ -114,6 +127,7 @@ QString DocfileWizard::fileNameForModule(QString moduleName) const
 
 bool DocfileWizard::run()
 {
+    // validate input data, setup and program state
     if ( worker ) {
         // process already running
         return 0;
@@ -124,23 +138,60 @@ bool DocfileWizard::run()
         KMessageBox::error(this, i18n("Couldn't find the introspect.py script; check your installation!"));
         return false;
     }
+    QString docfilePath = DocfileManagerWidget::docfilePath();
+    if ( docfilePath.isEmpty() ) {
+        KMessageBox::error(this, i18n("Couldn't find a valid kdev-python data directory; check your installation!"));
+        return false;
+    }
+    QString outputFilename = outputFilenameField->text();
+    if ( outputFilename.contains("..") ) {
+        // protect the user from writing outside the data directory accidentally
+        KMessageBox::error(this, i18n("Invalid output filename"));
+        return false;
+    }
+
+    // clean output from previous script runs; since the fields are set to readonly,
+    // no user data will be lost
     statusField->clear();
     resultField->clear();
+
+    // set up the process and connect relevant slots
     QString interpreter = interpreterField->text();
     QString module = moduleField->text();
     worker = new QProcess(this);
-    QObject::connect(worker, SIGNAL(readyReadStandardError()), this, SLOT(displayScriptOutput()));
-    QObject::connect(worker, SIGNAL(readyReadStandardOutput()), this, SLOT(displayScriptOutput()));
+    QObject::connect(worker, SIGNAL(readyReadStandardError()), this, SLOT(processScriptOutput()));
+    QObject::connect(worker, SIGNAL(readyReadStandardOutput()), this, SLOT(processScriptOutput()));
     QObject::connect(worker, SIGNAL(finished(int)), this, SLOT(processFinished(int)));
+
+    // can never have too many slashes
+    outputFile.setFileName(docfilePath + "/" + outputFilename);
+
     worker->start(interpreter, QStringList() << scriptUrl << module);
     return true;
 }
 
-void DocfileWizard::displayScriptOutput()
+void DocfileWizard::saveAndClose()
 {
-    qDebug() << "received script output";
+    bool mayWrite = true;
+    if ( outputFile.exists() ) {
+        mayWrite = KMessageBox::questionYesNo(this, i18n("The output file <br/>%1<br/> already exists, "
+                                                         "do you want to overwrite it?",
+                                                          outputFile.fileName())) == KMessageBox::Yes;
+    }
+    if ( mayWrite ) {
+        outputFile.open(QIODevice::WriteOnly);
+        outputFile.write(resultField->toPlainText().toUtf8());
+        outputFile.close();
+    }
+    close();
+}
+
+void DocfileWizard::processScriptOutput()
+{
     statusField->append(worker->readAllStandardError());
     resultField->append(worker->readAllStandardOutput());
+    QScrollBar* scrollbar = statusField->verticalScrollBar();
+    scrollbar->setValue(scrollbar->maximum());
 }
 
 void DocfileWizard::processFinished(int)

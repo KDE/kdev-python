@@ -34,6 +34,7 @@ class DocfileManagerWidget : public QWidget
 public:
     DocfileManagerWidget(QWidget* parent, DocfilesKCModule* kcmodule);
     const QList<QUrl> selectedItems() const;
+    static QString docfilePath();
 
 private:
     QTreeView* filesTreeView;

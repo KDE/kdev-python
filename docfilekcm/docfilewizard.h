@@ -27,6 +27,7 @@
 #include <QDialog>
 #include <QLineEdit>
 #include <QTextEdit>
+#include <QFile>
 #include <KProcess>
 
 class DocfileWizard : public QDialog
@@ -45,13 +46,15 @@ private:
     // used for deciding whether to auto-update the output filename text field
     QString previousModuleName;
     QProcess* worker;
+    QFile outputFile;
 
 public slots:
     // Calls python to actually generate the docfile
     bool run();
     void updateOutputFilename(const QString& newModuleName);
-    void displayScriptOutput();
+    void processScriptOutput();
     void processFinished(int);
+    void saveAndClose();
 };
 
 #endif // DOCFILEWIZARD_H

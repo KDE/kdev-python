@@ -40,21 +40,19 @@
 DocfileManagerWidget::DocfileManagerWidget(QWidget* parent, DocfilesKCModule* kcmodule)
     : QWidget(parent)
 {
-    // The directories will be found most-local-first, so using the first one is good.
-    KStandardDirs d;
-    QStringList dirs = d.findDirs("data", "kdevpythonsupport/documentation_files");
-    if ( dirs.isEmpty() ) {
+    QString dir = docfilePath();
+    if ( dir.isEmpty() ) {
         KMessageBox::error(this, i18n("Failed to find a valid data directory for kdevpythonsupport."));
         return;
     }
 
     // construct the tree view which displays the currently installed files
     QFileSystemModel *model = new QFileSystemModel;
-    model->setRootPath(dirs.first());
+    model->setRootPath(dir);
     filesTreeView = new QTreeView;
     filesTreeView->setSelectionMode(QAbstractItemView::MultiSelection);
     filesTreeView->setModel(model);
-    filesTreeView->setRootIndex(model->index(dirs.first()));
+    filesTreeView->setRootIndex(model->index(dir));
 
     // construct the buttons for up/download
     QVBoxLayout* buttonsLayout = new QVBoxLayout;
@@ -83,6 +81,17 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent, DocfilesKCModule* kc
 
     setLayout(new QHBoxLayout);
     layout()->addWidget(splitter);
+}
+
+QString DocfileManagerWidget::docfilePath()
+{
+    // The directories will be found most-local-first, so using the first one is good.
+    KStandardDirs d;
+    QStringList paths = d.findDirs("data", "kdevpythonsupport/documentation_files");
+    if ( paths.isEmpty() ) {
+        return QString::null;
+    }
+    return paths.first();
 }
 
 const QList<QUrl> DocfileManagerWidget::selectedItems() const

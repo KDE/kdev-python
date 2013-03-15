@@ -31,10 +31,15 @@ class DocfilesKCModule;
 
 class DocfileManagerWidget : public QWidget
 {
+Q_OBJECT
 public:
     DocfileManagerWidget(QWidget* parent, DocfilesKCModule* kcmodule);
     const QList<QUrl> selectedItems() const;
     static QString docfilePath();
+
+public slots:
+    void openDocfilePath();
+    void openSelectedInTextEditor();
 
 private:
     QTreeView* filesTreeView;

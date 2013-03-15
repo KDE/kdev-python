@@ -13,6 +13,7 @@ target_link_libraries(kcm_docfiles
     ${KDEVPLATFORM_PROJECT_LIBRARIES}
     ${KDEVPLATFORM_UTIL_LIBRARIES}
     ${KDE4_KNEWSTUFF3_LIBS}
+    ${KDEVPLATFORM_INTERFACES_LIBRARIES}
 )
 
 install(TARGETS kcm_docfiles

@@ -22,6 +22,8 @@
 
 #include "docfilemanagerwidget.h"
 #include "kcm_docfiles.h"
+#include <interfaces/idocumentcontroller.h>
+#include <interfaces/icore.h>
 
 #include <QBoxLayout>
 #include <QFileSystemModel>
@@ -36,6 +38,8 @@
 #include <KStandardDirs>
 #include <KMessageBox>
 #include <KLocalizedString>
+#include <KMimeType>
+#include <krun.h>
 
 DocfileManagerWidget::DocfileManagerWidget(QWidget* parent, DocfilesKCModule* kcmodule)
     : QWidget(parent)
@@ -65,10 +69,24 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent, DocfilesKCModule* kc
     buttonsLayout->addWidget(ghnsButton);
     buttonsLayout->addWidget(generateButton);
     buttonsLayout->addWidget(uploadButton);
-    buttonsLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
     QObject::connect(ghnsButton, SIGNAL(clicked(bool)), kcmodule, SLOT(showGHNSDialog()));
     QObject::connect(generateButton, SIGNAL(clicked(bool)), kcmodule, SLOT(runWizard()));
     QObject::connect(uploadButton, SIGNAL(clicked(bool)), kcmodule, SLOT(uploadSelected()));
+
+    // construct the buttons for the remaining actions
+    QFrame* separator = new QFrame();
+    separator->setFrameShape(QFrame::HLine);
+    QPushButton* openFileManagerButton = new QPushButton(i18n("Open file manager"));
+    openFileManagerButton->setIcon(KIcon("system-file-manager"));
+    QPushButton* openTextEditorButton = new QPushButton(i18nc("Edit selected files", "Edit selected"));
+    openTextEditorButton->setIcon(KIcon("kate"));
+    buttonsLayout->addWidget(separator);
+    buttonsLayout->addWidget(openFileManagerButton);
+    buttonsLayout->addWidget(openTextEditorButton);
+    QObject::connect(openFileManagerButton, SIGNAL(clicked(bool)), this, SLOT(openDocfilePath()));
+    QObject::connect(openTextEditorButton, SIGNAL(clicked(bool)), this, SLOT(openSelectedInTextEditor()));
+
+    buttonsLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
 
     // arrange the results nicely around a splitter
     QSplitter* splitter = new QSplitter;
@@ -81,6 +99,22 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent, DocfilesKCModule* kc
 
     setLayout(new QHBoxLayout);
     layout()->addWidget(splitter);
+}
+
+void DocfileManagerWidget::openDocfilePath()
+{
+    KUrl docfileDirectory(docfilePath());
+    KRun::runUrl(docfileDirectory, KMimeType::findByUrl(docfileDirectory)->name(), this);
+}
+
+void DocfileManagerWidget::openSelectedInTextEditor()
+{
+    const QList<QUrl> selected = selectedItems();
+    foreach ( const QUrl& item, selected ) {
+        KUrl fullUrl(item);
+        fullUrl.setProtocol("file"); // TODO isn't there a more elegant solution for this?
+        KDevelop::ICore::self()->documentController()->openDocument(fullUrl);
+    }
 }
 
 QString DocfileManagerWidget::docfilePath()

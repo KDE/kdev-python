@@ -41,8 +41,9 @@ public slots:
     void openSelectedInTextEditor();
     void showGHNSDialog();
     void uploadSelected();
-    QTemporaryFile* makeArchive(const QList< QUrl >& urls) const;
     void runWizard();
+    void copyEditorContents();
+
     QTemporaryFile* makeArchive(const QList< QUrl >& urls) const;
 
 private:

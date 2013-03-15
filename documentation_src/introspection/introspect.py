@@ -90,7 +90,8 @@ def removeAtCorner(string, char, direction):
 likely_substitutions = {
     "integer": "int",
     "string": "str",
-    "long": "int"
+    "long": "int",
+    "dictionary": "dict"
 }
 
 def parse_synopsis(funcdef):

@@ -46,6 +46,7 @@
 #include <KStandardDirs>
 #include <knewstuff3/uploaddialog.h>
 #include <KTar>
+#include <KTextEditor/Document>
 
 DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
     : QWidget(parent)
@@ -72,12 +73,18 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
     generateButton->setIcon(KIcon("tools-wizard"));
     QPushButton* uploadButton = new QPushButton(i18n("Share selected"));
     uploadButton->setIcon(KIcon("applications-internet")); // TODO better icon semantically
+    QPushButton* importButton = new QPushButton(i18n("Import from editor"));
+    importButton->setToolTip(i18n("Copy the contents of the active editor window "
+                                  "to a new file in the documentation directory"));
+    importButton->setIcon(KIcon("edit-copy"));
     buttonsLayout->addWidget(ghnsButton);
-    buttonsLayout->addWidget(generateButton);
     buttonsLayout->addWidget(uploadButton);
+    buttonsLayout->addWidget(generateButton);
+    buttonsLayout->addWidget(importButton);
     QObject::connect(ghnsButton, SIGNAL(clicked(bool)), this, SLOT(showGHNSDialog()));
     QObject::connect(generateButton, SIGNAL(clicked(bool)), this, SLOT(runWizard()));
     QObject::connect(uploadButton, SIGNAL(clicked(bool)), this, SLOT(uploadSelected()));
+    QObject::connect(importButton, SIGNAL(clicked(bool)), this, SLOT(copyEditorContents()));
 
     // construct the buttons for the remaining actions
     QFrame* separator = new QFrame();
@@ -111,6 +118,32 @@ void DocfileManagerWidget::openDocfilePath()
 {
     KUrl docfileDirectory(docfilePath());
     KRun::runUrl(docfileDirectory, KMimeType::findByUrl(docfileDirectory)->name(), this);
+}
+
+void DocfileManagerWidget::copyEditorContents()
+{
+    KDevelop::IDocumentController* documentController = KDevelop::ICore::self()->documentController();
+    if ( documentController->activeDocument() ) {
+        if ( KTextEditor::Document* doc = documentController->activeDocument()->textDocument() ) {
+            KDialog* dialog = new KDialog(this);
+            dialog->setButtons(KDialog::Ok | KDialog::Cancel);
+            QWidget* contents = new QWidget;
+            contents->setLayout(new QVBoxLayout);
+            contents->layout()->addWidget(new QLabel(i18n("Enter a relative target path to copy %1 to:", doc->url().path())));
+            QLineEdit* lineEdit = new QLineEdit;
+            lineEdit->setText(doc->documentName());
+            contents->layout()->addWidget(lineEdit);
+            contents->layout()->addWidget(new QLabel(i18n("This path must match what you use in Python to import "
+                                                          "this module. For example, enter \"numpy/fft.py\" for numpy.fft")));
+            contents->layout()->addWidget(new QLabel(i18n("After copying, you will be editing the new document.")));
+            dialog->setMainWidget(contents);
+            if ( dialog->exec() == KDialog::Accepted ) {
+                KUrl target = KUrl(docfilePath() + "/" + lineEdit->text());
+                target.cleanPath(KUrl::SimplifyDirSeparators);
+                doc->saveAs(target);
+            }
+        }
+    }
 }
 
 void DocfileManagerWidget::openSelectedInTextEditor()
@@ -193,6 +226,6 @@ void DocfileManagerWidget::uploadSelected()
     qDebug() << "setting upload file name:" << uploadFile->fileName();
     dialog.setUploadFile(uploadFile->fileName());
     dialog.exec();
-//     frees memory and deletes the file, too
+    // frees memory and deletes the file, too
     delete uploadFile;
 }

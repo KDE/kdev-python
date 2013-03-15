@@ -35,6 +35,7 @@
 #include <QTextEdit>
 #include <QUrl>
 #include <QDebug>
+#include <QTemporaryFile>
 
 #include <KStandardDirs>
 #include <KMessageBox>
@@ -44,6 +45,7 @@
 #include <KNS3/DownloadDialog>
 #include <KStandardDirs>
 #include <knewstuff3/uploaddialog.h>
+#include <KTar>
 
 DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
     : QWidget(parent)
@@ -156,6 +158,28 @@ void DocfileManagerWidget::showGHNSDialog()
     QString knsrc = d.findResource("config", "kdev_python_docfiles.knsrc");
     KNS3::DownloadDialog dialog(knsrc, this);
     dialog.exec();
+}
+
+QTemporaryFile* DocfileManagerWidget::makeArchive(const QList< QUrl >& urls) const
+{
+    // we need this path to remove it from the path the file should have in the tar archive
+    QString base = docfilePath();
+    QTemporaryFile* tempfile = new QTemporaryFile("kdevpython_upload_XXXXXX.tar");
+    tempfile->open();
+    KTar t(tempfile);
+    t.open(QIODevice::WriteOnly);
+    foreach ( const QUrl& url, urls ) {
+        QFileInfo info(url.path());
+        const QString pathInArchive = "./" + url.path().remove(0, base.length());
+        if ( info.isDir() ) {
+            t.addLocalDirectory(url.path(), pathInArchive);
+        }
+        else {
+            t.addLocalFile(url.path(), pathInArchive);
+        }
+    }
+    t.close();
+    return tempfile;
 }
 
 void DocfileManagerWidget::uploadSelected()

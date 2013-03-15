@@ -26,6 +26,7 @@
 #include <QWidget>
 #include <QTreeView>
 #include <QUrl>
+#include <QTemporaryFile>
 
 class DocfileManagerWidget : public QWidget
 {
@@ -40,6 +41,7 @@ public slots:
     void openSelectedInTextEditor();
     void showGHNSDialog();
     void uploadSelected();
+    QTemporaryFile* makeArchive(const QList< QUrl >& urls) const;
     void runWizard();
 
 private:

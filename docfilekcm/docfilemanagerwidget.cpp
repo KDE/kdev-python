@@ -22,6 +22,7 @@
 
 #include "docfilemanagerwidget.h"
 #include "kcm_docfiles.h"
+#include "docfilewizard.h"
 #include <interfaces/idocumentcontroller.h>
 #include <interfaces/icore.h>
 
@@ -39,9 +40,12 @@
 #include <KMessageBox>
 #include <KLocalizedString>
 #include <KMimeType>
-#include <krun.h>
+#include <KRun>
+#include <KNS3/DownloadDialog>
+#include <KStandardDirs>
+#include <knewstuff3/uploaddialog.h>
 
-DocfileManagerWidget::DocfileManagerWidget(QWidget* parent, DocfilesKCModule* kcmodule)
+DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
     : QWidget(parent)
 {
     QString dir = docfilePath();
@@ -69,9 +73,9 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent, DocfilesKCModule* kc
     buttonsLayout->addWidget(ghnsButton);
     buttonsLayout->addWidget(generateButton);
     buttonsLayout->addWidget(uploadButton);
-    QObject::connect(ghnsButton, SIGNAL(clicked(bool)), kcmodule, SLOT(showGHNSDialog()));
-    QObject::connect(generateButton, SIGNAL(clicked(bool)), kcmodule, SLOT(runWizard()));
-    QObject::connect(uploadButton, SIGNAL(clicked(bool)), kcmodule, SLOT(uploadSelected()));
+    QObject::connect(ghnsButton, SIGNAL(clicked(bool)), this, SLOT(showGHNSDialog()));
+    QObject::connect(generateButton, SIGNAL(clicked(bool)), this, SLOT(runWizard()));
+    QObject::connect(uploadButton, SIGNAL(clicked(bool)), this, SLOT(uploadSelected()));
 
     // construct the buttons for the remaining actions
     QFrame* separator = new QFrame();
@@ -137,4 +141,34 @@ const QList<QUrl> DocfileManagerWidget::selectedItems() const
         urls << QUrl(fsmodel->filePath(index));
     }
     return urls;
+}
+
+void DocfileManagerWidget::runWizard()
+{
+    DocfileWizard wizard(this);
+    wizard.resize(640, 480);
+    wizard.exec();
+}
+
+void DocfileManagerWidget::showGHNSDialog()
+{
+    KStandardDirs d;
+    QString knsrc = d.findResource("config", "kdev_python_docfiles.knsrc");
+    KNS3::DownloadDialog dialog(knsrc, this);
+    dialog.exec();
+}
+
+void DocfileManagerWidget::uploadSelected()
+{
+    KStandardDirs d;
+    QString knsrc = d.findResource("config", "kdev_python_docfiles.knsrc");
+    KNS3::UploadDialog dialog(knsrc, this);
+    QList<QUrl> selected = selectedItems();
+    // TODO don't if there's only one file
+    QTemporaryFile* uploadFile = makeArchive(selected);
+    qDebug() << "setting upload file name:" << uploadFile->fileName();
+    dialog.setUploadFile(uploadFile->fileName());
+    dialog.exec();
+//     frees memory and deletes the file, too
+    delete uploadFile;
 }

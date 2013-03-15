@@ -27,19 +27,20 @@
 #include <QTreeView>
 #include <QUrl>
 
-class DocfilesKCModule;
-
 class DocfileManagerWidget : public QWidget
 {
 Q_OBJECT
 public:
-    DocfileManagerWidget(QWidget* parent, DocfilesKCModule* kcmodule);
+    DocfileManagerWidget(QWidget* parent);
     const QList<QUrl> selectedItems() const;
     static QString docfilePath();
 
 public slots:
     void openDocfilePath();
     void openSelectedInTextEditor();
+    void showGHNSDialog();
+    void uploadSelected();
+    void runWizard();
 
 private:
     QTreeView* filesTreeView;

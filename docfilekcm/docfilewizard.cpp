@@ -188,8 +188,8 @@ void DocfileWizard::saveAndClose()
 
 void DocfileWizard::processScriptOutput()
 {
-    statusField->append(worker->readAllStandardError());
-    resultField->append(worker->readAllStandardOutput());
+    statusField->insertPlainText(worker->readAllStandardError());
+    resultField->insertPlainText(worker->readAllStandardOutput());
     QScrollBar* scrollbar = statusField->verticalScrollBar();
     scrollbar->setValue(scrollbar->maximum());
 }

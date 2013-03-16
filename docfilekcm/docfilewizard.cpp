@@ -32,6 +32,7 @@
 #include <QTabWidget>
 #include <QScrollBar>
 #include <QDebug>
+#include <QDir>
 
 #include <KLocalizedString>
 #include <KIcon>
@@ -72,14 +73,12 @@ DocfileWizard::DocfileWizard(QWidget* parent)
     statusField = new QTextEdit();
     statusField->setText(i18n("The process has not been run yet."));
     statusField->setFontFamily("monospace");
-    statusField->resize(width(), 200);
     statusField->setLineWrapMode(QTextEdit::NoWrap);
     statusField->setReadOnly(true);
     statusField->setAcceptRichText(false);
     resultField = new QTextEdit();
     resultField->setText(i18n("The process has not been run yet."));
     resultField->setFontFamily("monospace");
-    resultField->resize(width(), 200);
     resultField->setLineWrapMode(QTextEdit::NoWrap);
     resultField->setReadOnly(true);
     statusField->setAcceptRichText(false);
@@ -179,6 +178,10 @@ void DocfileWizard::saveAndClose()
                                                           outputFile.fileName())) == KMessageBox::Yes;
     }
     if ( mayWrite ) {
+        QString basePath = KUrl(outputFile.fileName()).directory();
+        if ( ! QDir(basePath).exists() ) {
+            QDir(basePath).mkpath(basePath);
+        }
         outputFile.open(QIODevice::WriteOnly);
         outputFile.write(resultField->toPlainText().toUtf8());
         outputFile.close();

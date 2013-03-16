@@ -140,6 +140,10 @@ void DocfileManagerWidget::copyEditorContents()
             if ( dialog->exec() == KDialog::Accepted ) {
                 KUrl target = KUrl(docfilePath() + "/" + lineEdit->text());
                 target.cleanPath(KUrl::SimplifyDirSeparators);
+                QDir d(target.directory());
+                if ( ! d.exists() ) {
+                    d.mkpath(target.directory());
+                }
                 doc->saveAs(target);
             }
         }

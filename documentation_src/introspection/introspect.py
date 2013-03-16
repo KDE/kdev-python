@@ -85,7 +85,7 @@ def removeAtCorner(string, char, direction):
             atBeginning = False
         else:
             return r(string, i)
-    return ""
+    return str()
 
 likely_substitutions = {
     "integer": "int",

@@ -91,7 +91,8 @@ likely_substitutions = {
     "integer": "int",
     "string": "str",
     "long": "int",
-    "dictionary": "dict"
+    "dictionary": "dict",
+    "double": "float",
 }
 
 def parse_synopsis(funcdef):

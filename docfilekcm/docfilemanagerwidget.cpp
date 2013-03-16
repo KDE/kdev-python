@@ -153,6 +153,9 @@ void DocfileManagerWidget::copyEditorContents()
 void DocfileManagerWidget::openSelectedInTextEditor()
 {
     const QList<QUrl> selected = selectedItems();
+    if ( selected.isEmpty() ) {
+        KMessageBox::information(this, i18n("Please select at least one file from the list for editing."));
+    }
     foreach ( const QUrl& item, selected ) {
         KUrl fullUrl(item);
         fullUrl.setProtocol("file"); // TODO isn't there a more elegant solution for this?

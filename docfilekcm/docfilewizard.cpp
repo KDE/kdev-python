@@ -81,7 +81,7 @@ DocfileWizard::DocfileWizard(QWidget* parent)
     resultField->setFontFamily("monospace");
     resultField->setLineWrapMode(QTextEdit::NoWrap);
     resultField->setReadOnly(true);
-    statusField->setAcceptRichText(false);
+    resultField->setAcceptRichText(false);
     status->setLayout(new QHBoxLayout);
     tabs->addTab(statusField, i18n("Script output"));
     tabs->addTab(resultField, i18n("Results"));
@@ -92,9 +92,10 @@ DocfileWizard::DocfileWizard(QWidget* parent)
     buttonsLayout->setDirection(QBoxLayout::RightToLeft);
     QPushButton* closeButton = new QPushButton(i18n("Close"));
     closeButton->setIcon(KIcon("dialog-close"));
-    QPushButton* saveButton = new QPushButton(i18n("Save and close"));
+    saveButton = new QPushButton(i18n("Save and close"));
+    saveButton->setEnabled(false);
     saveButton->setIcon(KIcon("dialog-ok-apply"));
-    QPushButton* runButton = new QPushButton(i18n("Generate"));
+    runButton = new QPushButton(i18n("Generate"));
     runButton->setDefault(true);
     runButton->setIcon(KIcon("tools-wizard"));
     buttonsLayout->addWidget(closeButton);
@@ -149,6 +150,8 @@ bool DocfileWizard::run()
         return false;
     }
 
+    runButton->setEnabled(false);
+
     // clean output from previous script runs; since the fields are set to readonly,
     // no user data will be lost
     statusField->clear();
@@ -200,6 +203,8 @@ void DocfileWizard::processScriptOutput()
 void DocfileWizard::processFinished(int)
 {
     worker = 0;
+    runButton->setEnabled(true);
+    saveButton->setEnabled(true);
 }
 
 void DocfileWizard::updateOutputFilename(const QString& newModuleName)

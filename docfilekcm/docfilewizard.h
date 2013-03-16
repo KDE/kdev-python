@@ -48,6 +48,9 @@ private:
     QProcess* worker;
     QFile outputFile;
 
+    QPushButton* runButton;
+    QPushButton* saveButton;
+
 public slots:
     // Calls python to actually generate the docfile
     bool run();

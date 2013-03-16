@@ -1,5 +1,5 @@
 [Desktop Entry]
-Icon=kdevelop
+Icon=text-x-python
 Type=Service
 ServiceTypes=KCModule
 
@@ -9,5 +9,5 @@ X-KDE-ParentApp=kdevplatform
 X-KDE-ParentComponents=kdevplatform
 X-KDE-CfgDlgHierarchy=GENERAL
 
-Name=Python Docfiles
+Name=Python documentation data
 Comment=Manage documentation files used by the Python plugin

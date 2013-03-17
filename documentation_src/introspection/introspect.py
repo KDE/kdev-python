@@ -28,6 +28,17 @@ def debugmsg(message):
     sys.stderr.write(message + "\n")
     sys.stderr.flush()
 
+def structseq_to_py(seq, name="INSERT_NAME"):
+    """Turns a "structseq" object to a python pseudoclass."""
+    sseq = str(seq)
+    sseq = '('.join(sseq.split('(')[1:])
+    sseq = ')'.join(sseq.split(')')[:1])
+    print("class {0}:".format(name))
+    for item in sseq.split(','):
+        item = item.strip()
+        key, value = item.split('=')
+        print(indent("{0} = {1}".format(key, value)))
+
 def indent(code, depth=4):
     code = code.split('\n')
     code = [" "*depth + line for line in code]

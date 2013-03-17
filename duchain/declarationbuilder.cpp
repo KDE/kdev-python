@@ -934,7 +934,6 @@ void DeclarationBuilder::visitLambda(LambdaAst* node)
 void DeclarationBuilder::visitCall(CallAst* node)
 {
     Python::AstDefaultVisitor::visitCall(node);
-    
     // Find the function being called; this code also handles cases where non-names
     // are called, for example:
     //     class myclass():
@@ -944,14 +943,14 @@ void DeclarationBuilder::visitCall(CallAst* node)
     // In the above example, this call will be evaluated to "myclass.myfun" in the following block.
     ExpressionVisitor functionVisitor(currentContext(), editor());
     functionVisitor.visitNode(node);
-    
+
     if ( node->function && node->function->astType == Ast::AttributeAstType && functionVisitor.lastDeclaration() ) {
         // Some special functions, like "append", update the content of the object they operate on.
         kDebug() << "Checking for list content updates...";
         // Find the object the function is called on, like for d = [1, 2, 3]; d.append(5), this will give "d"
         ExpressionVisitor v(currentContext(), editor());
         v.visitNode(static_cast<AttributeAst*>(node->function)->value);
-        
+
         // Don't do anything if the object the function is being called on is not a container.
         if ( VariableLengthContainer::Ptr container = v.lastType().cast<VariableLengthContainer>() ) {
             // Don't to updates to pre-defined functions.
@@ -1050,7 +1049,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
                     parameters.remove(0);
                 }
             }
-            
+
             int atParam = 0;
             bool atVararg = false;
             // Check that there's enough known parameters which can be updated
@@ -1069,10 +1068,11 @@ void DeclarationBuilder::visitCall(CallAst* node)
                             break;
                         }
                     }
-                    
+
                     // Get the type of the argument
                     ExpressionVisitor argumentVisitor(currentContext(), editor());
                     argumentVisitor.visitNode(arg);
+
                     lock.unlock();
                     DUChainWriteLocker wlock;
                     if ( argumentVisitor.lastType() ) {

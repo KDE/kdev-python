@@ -230,7 +230,6 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
             }
             DUChainReadLocker lock;
             QList<DUContext*> searchContexts = Helper::internalContextsForClass(currentStructure, m_ctx->topContext());
-            kDebug() << "Searching declarations in contexts: " << searchContexts;
             foreach ( DUContext* currentInternalContext, searchContexts ) {
                 if ( currentInternalContext ) {
                     foundDecls.append(currentInternalContext->findDeclarations(QualifiedIdentifier(node->attribute->value),
@@ -258,24 +257,17 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
         }
         bool isAlias =     dynamic_cast<AliasDeclaration*>(d) || d->isFunctionDeclaration()
                         || dynamic_cast<ClassDeclaration*>(d);
-        kDebug() << dynamic_cast<AliasDeclaration*>(d) <<  d->isFunctionDeclaration() << dynamic_cast<ClassDeclaration*>(d);
         encounterDeclarations(toSharedPtrList(foundDecls), isAlias);
         encounter(foundDecls.last()->abstractType());
     }
     else {
-        kDebug() << "No declaration found for attribute";
         return unknownTypeEncountered();
     }
     DUChainReadLocker lock;
-    kDebug() << "Last encountered type: " << ( lastType().unsafeData() ? lastType()->toString() : "<none>" );
-    kDebug() << "VisitAttribute end";
 }
 
 void ExpressionVisitor::visitCall(CallAst* node)
 {
-    KDEBUG_BLOCK
-    kDebug();
-    
     foreach ( ExpressionAst* c, node->arguments ) {
         AstDefaultVisitor::visitNode(c);
     }
@@ -284,15 +276,11 @@ void ExpressionVisitor::visitCall(CallAst* node)
     
     ExpressionVisitor v(this);
     v.visitNode(node->function);
-    kDebug() << "function being called: " << v.lastDeclaration();
     Declaration* actualDeclaration = 0;
     FunctionType::Ptr unidentifiedFunctionType;
     if ( ! v.m_isAlias ) {
-        kDebug() << "non-identified-function / structure type is being called";
         if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeFunction ) {
             unidentifiedFunctionType = v.lastType().cast<FunctionType>();
-            DUChainReadLocker lock;
-            kDebug() << "got unidentified type:" << unidentifiedFunctionType->toString();
         }
     }
     else {
@@ -331,10 +319,8 @@ void ExpressionVisitor::visitCall(CallAst* node)
             bool decoratorFound = false;
             bool typeFound = false;
             if ( funcDecl->decoratorsSize() > 0 ) {
-                kDebug() << "Got function declaration with decorators, checking for list content type...";
                 if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsType") ) {
                     decoratorFound = true;
-                    kDebug() << "Found decorator";
                     if ( node->function->astType == Ast::AttributeAstType ) {
                         lock.unlock();
                         ExpressionVisitor baseTypeVisitor(this);
@@ -342,7 +328,6 @@ void ExpressionVisitor::visitCall(CallAst* node)
                         baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
                         lock.lock();
                         if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
-                            kDebug() << "Found container, using type";
                             AbstractType::Ptr newType = t->contentType().abstractType();
                             return encounter(newType);
                         }
@@ -352,7 +337,6 @@ void ExpressionVisitor::visitCall(CallAst* node)
                     or Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsListOfKeys")
                 ) {
                     decoratorFound = true;
-                    kDebug() << "Got getsList decorator, checking container";
                     if ( node->function->astType == Ast::AttributeAstType ) {
                         lock.unlock();
                         ExpressionVisitor baseTypeVisitor(this);
@@ -360,7 +344,6 @@ void ExpressionVisitor::visitCall(CallAst* node)
                         baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
                         lock.lock();
                         if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
-                            kDebug() << "Got container:" << t->toString();
                             VariableLengthContainer::Ptr newType = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
                             if ( newType ) {
                                 AbstractType::Ptr contentType;
@@ -380,7 +363,6 @@ void ExpressionVisitor::visitCall(CallAst* node)
                 }
                 if ( Helper::findDecoratorByName<FunctionDeclaration>(funcDecl, "getsListOfBoth") ) {
                     decoratorFound = true;
-                    kDebug() << "Got getsListOfBoth decorator, checking container";
                     if ( node->function->astType == Ast::AttributeAstType ) {
                         lock.unlock();
                         ExpressionVisitor baseTypeVisitor(this);
@@ -388,7 +370,6 @@ void ExpressionVisitor::visitCall(CallAst* node)
                         baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
                         lock.lock();
                         if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
-                            kDebug() << "Got container:" << t->toString();
                             VariableLengthContainer::Ptr newType = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
                             IndexedContainer::Ptr newContents = typeObjectForIntegralType<IndexedContainer>("tuple", m_ctx);
                             if ( newType && newContents ) {
@@ -414,7 +395,6 @@ void ExpressionVisitor::visitCall(CallAst* node)
                 if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(
                                               funcDecl, "returnContentEqualsContentOf") )
                 {
-                    kDebug() << "Found argument dependent decorator, checking argument type";
                     decoratorFound = true;
                     int argNum = d->additionalInformation().str().toInt();
                     if ( node->arguments.length() > argNum ) {
@@ -467,7 +447,6 @@ void ExpressionVisitor::visitCall(CallAst* node)
             return unknownTypeEncountered();
         }
     }
-    kDebug() << "Done";
 }
 
 void ExpressionVisitor::visitSubscript(SubscriptAst* node)
@@ -475,15 +454,11 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
     AstDefaultVisitor::visitNode(node->value);
     if ( node->slice && node->slice->astType != Ast::IndexAstType ) {
         DUChainReadLocker lock; // only for debug output
-        kDebug() << "Found slice, will use ListType for assignment";
-        kDebug() << "LAST DECLARATION:" << lastDeclaration();
         encounterDeclaration(0);
         encounter(lastType());
     }
     else if ( node->slice ) {
         DUChainReadLocker lock;
-        kDebug() << "LAST TYPE for slice access:" << lastType() << ( lastType() ? lastType()->toString() : "<null>" );
-        
         if ( IndexedContainer::Ptr indexed = lastType().cast<IndexedContainer>() ) {
             encounterDeclaration(0);
             if ( IndexAst* sliceIndexAst = static_cast<IndexAst*>(node->slice) ) {
@@ -543,7 +518,6 @@ void ExpressionVisitor::visitList(ListAst* node)
 void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst* node)
 {
     AstDefaultVisitor::visitDictionaryComprehension(node);
-    kDebug() << "visiting dictionary comprehension";
     DUChainReadLocker lock;
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("dict", m_ctx);
     if ( type ) {
@@ -571,7 +545,6 @@ void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst*
 
 void ExpressionVisitor::visitSetComprehension(SetComprehensionAst* node)
 {
-    kDebug() << "visiting set comprehension";
     Python::AstDefaultVisitor::visitSetComprehension(node);
     DUChainReadLocker lock;
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("set", m_ctx);
@@ -590,7 +563,6 @@ void ExpressionVisitor::visitSetComprehension(SetComprehensionAst* node)
 
 void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
 {
-    kDebug() << "visiting list comprehension";
     AstDefaultVisitor::visitListComprehension(node);
     DUChainReadLocker lock;
     TypePtr<VariableLengthContainer> type = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
@@ -600,8 +572,6 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
         ExpressionVisitor v(this);
         v.m_ctx = comprehensionContext;
         Q_ASSERT(comprehensionContext);
-        kDebug() << "Searching iterator variable in context: " << comprehensionContext->range() 
-                 << "found at" << node->startLine << node->startCol;
         v.visitNode(node->element);
         if ( v.lastType() ) {
             type->addContentType(v.lastType());
@@ -609,10 +579,6 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
     }
     else {
         return unknownTypeEncountered();
-    }
-    {
-        DUChainReadLocker lock; // debug
-        kDebug() << "Got type for List Comprehension:" << type->toString();
     }
     encounter<VariableLengthContainer>(type, AutomaticallyDetermineDeclaration);
 }
@@ -738,7 +704,6 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
         return encounter(*defId);
     }
     
-    kDebug() << "Finding declaration for" << node->identifier->value;
     RangeInRevision range;
     if ( m_scanUntilCursor.isValid() ) {
         range = RangeInRevision(CursorInRevision(0, 0), m_scanUntilCursor);
@@ -754,16 +719,11 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
                                                 range, DUContextPointer(m_ctx));
     
     if ( d ) {
-        /** DEBUG **/
-        kDebug() << "Found declaration: " << d->toString() << d
-                 << d->abstractType() << dynamic_cast<VariableLengthContainer*>(d->abstractType().unsafeData());
-        /** / DEBUG **/
         bool isAlias = dynamic_cast<AliasDeclaration*>(d) || d->isFunctionDeclaration() || dynamic_cast<ClassDeclaration*>(d);
         encounterDeclaration(d, isAlias);
         return encounter(d->abstractType());
     }
     else {
-        kDebug() << "VistName type not found";
         if ( m_reportUnknownNames ) {
             addUnknownName(node->identifier->value);
         }

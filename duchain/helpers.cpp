@@ -183,7 +183,6 @@ Declaration* Helper::declarationForName(NameAst* /*ast*/, const QualifiedIdentif
     QList<Declaration*> declarations;
     QList<Declaration*> localDeclarations;
     QList<Declaration*> importedLocalDeclarations;
-    kDebug() << "Finding declaration for name" << identifier.toString() << " before " << nodeRange.end << ", in context" << context->range();
     {
         DUChainReadLocker lock(DUChain::lock());
         if ( context.data() == context->topContext() and nodeRange.isValid() ) {
@@ -199,7 +198,6 @@ Declaration* Helper::declarationForName(NameAst* /*ast*/, const QualifiedIdentif
     Declaration* declaration;
     if ( localDeclarations.length() ) {
         declaration = localDeclarations.last();
-        kDebug() << "Using local declaration";
     }
     else if ( importedLocalDeclarations.length() ) {
         // don't use declarations from class decls, they must be referenced through "self.<foo>"
@@ -213,11 +211,9 @@ Declaration* Helper::declarationForName(NameAst* /*ast*/, const QualifiedIdentif
                 break;
             }
         } while ( not importedLocalDeclarations.isEmpty() );
-        kDebug() << "Using imported local declaration (i.e., argument)";
     }
     else if ( declarations.length() ) {
         declaration = declarations.last();
-        kDebug() << "Using global declaration";
     }
     else declaration = 0;
     return declaration;

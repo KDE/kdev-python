@@ -75,8 +75,9 @@ public:
     
     template<typename T> static const Decorator* findDecoratorByName(T* inDeclaration, const QString& name) {
         register int count = inDeclaration->decoratorsSize();
+        const IndexedString indexedName = IndexedString(name);
         for ( int i = 0; i < count; i++ ) {
-            if ( inDeclaration->decorators()[i].name() == name )
+            if ( inDeclaration->decorators()[i].fastName() == indexedName )
                 return &(inDeclaration->decorators()[i]);
         }
         return 0;

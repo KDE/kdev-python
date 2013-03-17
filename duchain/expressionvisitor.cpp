@@ -193,8 +193,6 @@ QList< TypePtr< StructureType > > ExpressionVisitor::typeListForDeclarationList(
 
 void ExpressionVisitor::visitAttribute(AttributeAst* node)
 {
-    Python::AstDefaultVisitor::visitAttribute(node);
-    
     ExpressionAst* accessingAttributeOf = node->value;
 
     ExpressionVisitor v(this);
@@ -279,7 +277,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
     kDebug();
     
     foreach ( ExpressionAst* c, node->arguments ) {
-        Python::AstDefaultVisitor::visitNode(c);
+        AstDefaultVisitor::visitNode(c);
     }
     AstDefaultVisitor::visitNode(node->keywordArguments);
     AstDefaultVisitor::visitNode(node->starArguments);

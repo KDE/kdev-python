@@ -90,10 +90,6 @@ protected:
     TYPE_DECLARE_DATA(IntegralTypeExtended);
 };
 
-/**
- * @brief The DUChain must be read-locked in order to run the visitor.
- **/
-
 class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
 {
     public:

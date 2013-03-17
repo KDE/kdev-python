@@ -24,6 +24,21 @@ import sys
 import types
 import inspect
 
+def debugmsg(message):
+    sys.stderr.write(message + "\n")
+    sys.stderr.flush()
+
+def structseq_to_py(seq, name="INSERT_NAME"):
+    """Turns a "structseq" object to a python pseudoclass."""
+    sseq = str(seq)
+    sseq = '('.join(sseq.split('(')[1:])
+    sseq = ')'.join(sseq.split(')')[:1])
+    print("class {0}:".format(name))
+    for item in sseq.split(','):
+        item = item.strip()
+        key, value = item.split('=')
+        print(indent("{0} = {1}".format(key, value)))
+
 def indent(code, depth=4):
     code = code.split('\n')
     code = [" "*depth + line for line in code]
@@ -81,12 +96,14 @@ def removeAtCorner(string, char, direction):
             atBeginning = False
         else:
             return r(string, i)
-    return ""
+    return str()
 
 likely_substitutions = {
     "integer": "int",
     "string": "str",
-    "long": "int"
+    "long": "int",
+    "dictionary": "dict",
+    "double": "float",
 }
 
 def parse_synopsis(funcdef):
@@ -156,6 +173,7 @@ class ModuleDumper:
         print(indent(code, self.indentDepth))
 
     def dump(self):
+        debugmsg("Processing module {0}".format(self.module.__name__))
         for member, value in inspect.getmembers(self.module):
             dumper = dumperForObject(value, member, self)
             dumper.dump()
@@ -185,7 +203,8 @@ class FunctionDumper:
                     arglist.append(argument)
                 else:
                     # there's a default value
-                    defaultIndex = index + (len(arguments.args) - len(arguments.defaults))
+                    defaultIndex = index - (len(arguments.args) - len(arguments.defaults))
+                    print(index, defaultIndex, arguments.args, arguments.defaults)
                     arglist.append("{0}={1}".format(argument, arguments.defaults[defaultIndex]))
             arglist = ', '.join(arglist)
         except TypeError:
@@ -214,6 +233,7 @@ class ClassDumper:
         self.root = root
 
     def dump(self):
+        debugmsg("Generating documentation for class {0}".format(self.klass.__name__))
         self.root.emit("class {0}:".format(self.klass.__name__))
         self.root.increaseIndent()
         for member, value in inspect.getmembers(self.klass):
@@ -244,6 +264,7 @@ if __name__ == '__main__':
     try:
         dumper = ModuleDumper(__import__(sys.argv[1]))
     except IndexError:
-        print("Usage: introspect.py <python_module_name>")
+        debugmsg("Usage: introspect.py <python_module_name>")
         exit(1)
     dumper.dump()
+    debugmsg("All done -- looks good so far.")

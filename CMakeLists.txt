@@ -46,6 +46,7 @@ add_subdirectory(duchain)
 add_subdirectory(codecompletion)
 add_subdirectory(debugger)
 add_subdirectory(codegen)
+add_subdirectory(docfilekcm)
 
 set(kdevpythonlanguagesupport_PART_SRCS
     codegen/simplerefactoring.cpp
@@ -73,4 +74,3 @@ install(FILES kdevpythonsupport.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
 install(DIRECTORY documentation_files DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)
 install(DIRECTORY python-src/Lib/encodings DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport/encodings)
-

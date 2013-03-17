@@ -1,0 +1,13 @@
+[Desktop Entry]
+Icon=text-x-python
+Type=Service
+ServiceTypes=KCModule
+
+X-KDE-ModuleType=Library
+X-KDE-Library=kcm_docfiles
+X-KDE-ParentApp=kdevplatform
+X-KDE-ParentComponents=kdevplatform
+X-KDE-CfgDlgHierarchy=GENERAL
+
+Name=Python documentation data
+Comment=Manage documentation files used by the Python plugin

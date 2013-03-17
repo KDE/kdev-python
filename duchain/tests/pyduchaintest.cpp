@@ -638,15 +638,15 @@ void PyDUChainTest::testTypes_data()
                                                  "f2 = identity(getstr)\n"
                                                  "a = getstr()\n"
                                                  "b = f1()\n"
-                                                 "checkme = f2()\n" << "string";
                                                  "checkme = f2()\n" << "str";
-    QTest::newRow("vararg_before_other_args") << "def myfun(a, b, *z, x): return z[0]\n"
-                                                 "checkme = myfun(False, False, 1, x = False)" << "int";
-    QTest::newRow("vararg_before_other_args2") << "def myfun(a, b, *z, x): return z[3]\n"
-                                                  "checkme = myfun(False, False, 1, 2, 3, \"str\", x = False)" << "str";
-    QTest::newRow("vararg_constructor") << "class myclass():\n"
-                                           "  def __init__(self, *arg): self.prop = arg[0]\n"
-                                           "obj = myclass(3, 5); checkme = obj.prop" << "int";
+    // TODO PYTHON3 those got in through a failed commit... re-enable for python 3 support!
+//     QTest::newRow("vararg_before_other_args") << "def myfun(a, b, *z, x): return z[0]\n"
+//                                                  "checkme = myfun(False, False, 1, x = False)" << "int";
+//     QTest::newRow("vararg_before_other_args2") << "def myfun(a, b, *z, x): return z[3]\n"
+//                                                   "checkme = myfun(False, False, 1, 2, 3, \"str\", x = False)" << "str";
+//     QTest::newRow("vararg_constructor") << "class myclass():\n"
+//                                            "  def __init__(self, *arg): self.prop = arg[0]\n"
+//                                            "obj = myclass(3, 5); checkme = obj.prop" << "int";
 }
 
 typedef QPair<Declaration*, int> pair;

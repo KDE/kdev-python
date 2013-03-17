@@ -373,7 +373,7 @@ def divmod(a, b): return 0
 def enumerate(sequence, start = 0): return [(0, 0)]
 def eval(expression, glob = None, loc = None): return None
 def execfile(filename, glob = None, loc = None): return None
-def file(filename, mode = None, bufsize = None): return None
+def file(filename, mode = None, bufsize = None): return _io_TextIOWrapper()
 def filter(function, iterable): return []
 def float(x = 0): return 0.0
 def format(value, format_spec = None): return ""

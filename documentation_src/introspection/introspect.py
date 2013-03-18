@@ -23,6 +23,7 @@ import os
 import sys
 import types
 import inspect
+import importlib
 
 def debugmsg(message):
     sys.stderr.write(message + "\n")
@@ -262,7 +263,7 @@ def dumperForObject(object, memberName, root):
 
 if __name__ == '__main__':
     try:
-        dumper = ModuleDumper(__import__(sys.argv[1]))
+        dumper = ModuleDumper(importlib.import_module(sys.argv[1]))
     except IndexError:
         debugmsg("Usage: introspect.py <python_module_name>")
         exit(1)

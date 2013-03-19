@@ -70,12 +70,18 @@ QMutex AstBuilder::pyInitLock;
 
 QString PyUnicodeObjectToQString(PyObject* obj) {
 #ifdef Q_OS_WIN32
+    // If you want to make this work on windows, take care to check Py_UNICODE_WIDE (see below)
+    // not sure if this always works
+    // not sure either why the "linux" version below wouldn't work on windows
     return QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(obj)));
 #else
     uint* data = (uint*) PyUnicode_AS_DATA(PyObject_Str(obj));
-    // TODO: python can be compiled in ucs2 and ucs4 mode, support that?
+#ifdef Py_UNICODE_WIDE
     return QString::fromUcs4(data);
-#endif
+#else
+    return QString::fromUcs2(data);
+#endif // Py_UNICODE_WIDE
+#endif // windows
 }
 
 QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
@@ -164,7 +170,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     PyArena* arena = PyArena_New();
     Q_ASSERT(arena); // out of memory
     PyCompilerFlags* flags = new PyCompilerFlags();
-    flags->cf_flags = PyCF_IGNORE_COOKIE;
+//     flags->cf_flags = PyCF_IGNORE_COOKIE;
     
     PyObject *exception, *value, *backtrace;
     PyErr_Fetch(&exception, &value, &backtrace);
@@ -172,7 +178,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     mod_ty syntaxtree = PyParser_ASTFromString(contents.toAscii().data(), "<kdev-editor-contents>", file_input, flags, arena);
 
     if ( ! syntaxtree ) {
-        kWarning() << "DID NOT RECEIVE A SYNTAX TREE -- probably parse error.";
+        qDebug() << " ====< parse error, trying to fix";
         
         PyErr_Fetch(&exception, &value, &backtrace);
         kDebug() << "Error objects: " << exception << value << backtrace;

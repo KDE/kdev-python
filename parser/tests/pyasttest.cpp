@@ -46,7 +46,7 @@ using namespace Python;
 
 QTEST_MAIN(PyAstTest)
 
-PyAstTest::PyAstTest(QObject* parent): QObject(parent)
+PyAstTest::PyAstTest(QObject* parent): QObject(parent), m_pool(0)
 {
     initShell();
 }
@@ -62,8 +62,8 @@ void PyAstTest::initShell()
 
 CodeAst* PyAstTest::getAst(QString code)
 {
-    KDevPG::MemoryPool pool;
-    AstBuilder* builder = new AstBuilder(&pool);
+    Q_ASSERT(m_pool);
+    AstBuilder* builder = new AstBuilder(m_pool);
     CodeAst* result = builder->parse(KUrl("<empty>"), code);
     return result;
 }
@@ -89,9 +89,12 @@ public:
 
 void PyAstTest::testCode(QString code)
 {
+    m_pool = new KDevPG::MemoryPool;
     CodeAst* ast = getAst(code);
     VerifyVisitor v;
     v.visitCode(ast);
+    delete m_pool;
+    m_pool = 0;
 }
 
 void PyAstTest::testStatements()
@@ -190,6 +193,9 @@ void PyAstTest::testExpressions_data()
     QTest::newRow("starred") << "*[1, 2, 3 ,4]";
     QTest::newRow("list") << "[]";
     QTest::newRow("tuple") << "()";
+    QTest::newRow("None") << "None";
+    QTest::newRow("False") << "False";
+    QTest::newRow("True") << "True";
 }
 
 void PyAstTest::testNewPython3()

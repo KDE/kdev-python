@@ -21,6 +21,7 @@
 #define PYASTTEST_H
 
 #include <QtCore/QObject>
+#include <kdev-pg-memory-pool.h>
 #include <ast.h>
 
 namespace KDevelop {
@@ -32,24 +33,26 @@ namespace Python {
 
 class PyAstTest : public QObject
 {
-    Q_OBJECT
-    public:
-        explicit PyAstTest(QObject* parent = 0);
-        void initShell();
-        CodeAst* getAst(QString code);
-        void testCode(QString code);
-    private slots:
-        void testClass();
-        void testStatements();
-        void testStatements_data();
-        void testExpressions();
-        void testExpressions_data();
-        void testSlices();
-        void testSlices_data();
-        void testOther();
-        void testOther_data();
-        void testNewPython3();
-        void testNewPython3_data();
+Q_OBJECT
+public:
+    explicit PyAstTest(QObject* parent = 0);
+    void initShell();
+    CodeAst* getAst(QString code);
+    void testCode(QString code);
+private slots:
+    void testClass();
+    void testStatements();
+    void testStatements_data();
+    void testExpressions();
+    void testExpressions_data();
+    void testSlices();
+    void testSlices_data();
+    void testOther();
+    void testOther_data();
+    void testNewPython3();
+    void testNewPython3_data();
+private:
+    KDevPG::MemoryPool* m_pool;
 };
 
 }

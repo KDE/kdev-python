@@ -12,12 +12,20 @@ set(parser_STAT_SRCS
     astbuilder.cpp
 )
 
+set(Python_ADDITIONAL_VERSIONS 3.4)
+message(WARNING "Note to self: fix finding python before a release, this is not going to work")
+set(PYTHON_INCLUDE_DIR /usr/include/python3.4m)
+set(PYTHON_LIBRARY /usr/lib)
+find_package(PythonLibs 3.4 EXACT REQUIRED)
+
+include_directories(kdev4pythonparser ${PYTHON_INCLUDE_DIRS})
+
 kde4_add_library( kdev4pythonparser SHARED ${parser_SRCS} ${parser_STAT_SRCS} )
 target_link_libraries(kdev4pythonparser
     ${KDE4_KDECORE_LIBS}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${QT_QTCORE_LIBRARY}
-    ${kdevpython_SOURCE_DIR}/python-src/libpython2.7-kdevelop.so
+    ${PYTHON_LIBRARIES}
 )
 
 add_dependencies(kdev4pythonparser parser)

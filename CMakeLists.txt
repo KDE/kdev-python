@@ -44,7 +44,6 @@ include_directories(
 )
 
 add_subdirectory(app_templates)
-add_subdirectory(python-src)
 add_subdirectory(parser)
 add_subdirectory(duchain)
 add_subdirectory(codecompletion)

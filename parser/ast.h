@@ -104,8 +104,6 @@ public:
         CodeAstType,
         StatementAstType,
         ExpressionAstType,
-        IdentifierAstType,
-        
         BooleanOperationAstType,
         BinaryOperationAstType,
         UnaryOperationAstType,

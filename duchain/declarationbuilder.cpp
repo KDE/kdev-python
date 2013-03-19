@@ -1,7 +1,7 @@
 /*****************************************************************************
  * Copyright (c) 2007 Piyush verma <piyush.verma@gmail.com>                  *
  * Copyright 2007 Andreas Pakulat <apaku@gmx.de>                             *
- * Copyright 2010 Sven Brauch <svenbrauch@googlemail.com>                    *
+ * Copyright 2010-2013 Sven Brauch <svenbrauch@googlemail.com>               *
  *                                                                           *
  * Permission is hereby granted, free of charge, to any person obtaining     *
  * a copy of this software and associated documentation files (the           *
@@ -1724,7 +1724,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                                                                     <IndexedContainer>("tuple", currentContext());
                 lock.unlock();
                 if ( tupleType ) {
-                    visitVariableDeclaration<Declaration>(node->vararg, 0, tupleType.cast<AbstractType>());
+                    visitVariableDeclaration<Declaration>(node->vararg->argumentName, 0, tupleType.cast<AbstractType>());
                     workingOnDeclaration->setVararg(atIndex);
                     type->addArgument(tupleType.cast<AbstractType>(), useIndex);
                 }
@@ -1739,7 +1739,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 if ( dictType && stringType ) {
                     lock.unlock();
                     dictType->addKeyType(stringType);
-                    visitVariableDeclaration<Declaration>(node->kwarg, 0, dictType.cast<AbstractType>());
+                    visitVariableDeclaration<Declaration>(node->kwarg->argumentName, 0, dictType.cast<AbstractType>());
                     type->addArgument(dictType.cast<AbstractType>());
                     workingOnDeclaration->setKwarg(type->arguments().size() - 1);
                 }

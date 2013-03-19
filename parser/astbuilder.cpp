@@ -66,7 +66,6 @@ public:
 #include "generated.h"
 
 QMutex AstBuilder::pyInitLock;
-QString AstBuilder::pyHomeDir = KStandardDirs::locate("data", "");
 
 
 QString PyUnicodeObjectToQString(PyObject* obj) {
@@ -158,10 +157,6 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     
     AstBuilder::pyInitLock.lock();
     
-    wchar_t* homedir = (wchar_t*) malloc((AstBuilder::pyHomeDir.size() + 1) * sizeof(wchar_t));
-    AstBuilder::pyHomeDir.toWCharArray(homedir);
-    homedir[AstBuilder::pyHomeDir.size()] = 0x0;
-    Py_SetPythonHome(homedir);
     kDebug() << "Not initialized, calling init func.";
     Py_Initialize();
     Q_ASSERT(Py_IsInitialized());
@@ -346,7 +341,6 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     
     RangeUpdateVisitor v;
     v.visitNode(t.ast);
-    free(homedir);
 
     return t.ast;
 }

@@ -183,7 +183,7 @@ void AstDefaultVisitor::visitSubscript(SubscriptAst* node)
     visitNode(node->slice);
 }
 
-void AstDefaultVisitor::visitTryExcept(TryExceptAst* node)
+void AstDefaultVisitor::visitTry(TryAst* node)
 {
     foreach (Ast* statement, node->body) {
         visitNode(statement);
@@ -194,14 +194,7 @@ void AstDefaultVisitor::visitTryExcept(TryExceptAst* node)
     foreach (Ast* statement, node->orelse) {
         visitNode(statement);
     }
-}
-
-void AstDefaultVisitor::visitTryFinally(TryFinallyAst* node)
-{
-    foreach (Ast* statement, node->body) {
-        visitNode(statement);
-    }
-    foreach (Ast* statement, node->finalbody) {
+    foreach (Ast* statement, node->finally) {
         visitNode(statement);
     }
 }
@@ -231,8 +224,6 @@ void AstDefaultVisitor::visitWhile(WhileAst* node)
 
 void AstDefaultVisitor::visitWith(WithAst* node)
 {
-    visitNode(node->contextExpression);
-    visitNode(node->optionalVars);
     foreach (Ast* statement, node->body) {
         visitNode(statement);
     }

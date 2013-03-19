@@ -50,8 +50,7 @@ void AstVisitor::visitNode(Ast* node)
         case Ast::IfAstType:                                    this->visitIf(dynamic_cast<IfAst*>(node)); break;
         case Ast::WithAstType:                                  this->visitWith(dynamic_cast<WithAst*>(node)); break;
         case Ast::RaiseAstType:                                 this->visitRaise(dynamic_cast<RaiseAst*>(node)); break;
-        case Ast::TryExceptAstType:                             this->visitTryExcept(dynamic_cast<TryExceptAst*>(node)); break;
-        case Ast::TryFinallyAstType:                            this->visitTryFinally(dynamic_cast<TryFinallyAst*>(node)); break;
+        case Ast::TryAstType:                                   this->visitTry(dynamic_cast<TryAst*>(node)); break;
         case Ast::AssertionAstType:                             this->visitAssertion(dynamic_cast<AssertionAst*>(node)); break;
         case Ast::ImportAstType:                                this->visitImport(dynamic_cast<ImportAst*>(node)); break;
         case Ast::ImportFromAstType:                            this->visitImportFrom(dynamic_cast<ImportFromAst*>(node)); break;

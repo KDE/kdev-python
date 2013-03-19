@@ -35,7 +35,7 @@ Ast::Ast( Ast* parent, Ast::AstType type ) : parent(parent), astType( type ), st
 Ast::Ast() :  parent(0), startCol(0), startLine(-5), endCol(0), endLine(0), hasUsefulRangeInformation(false), context(0) { }
 Ast::~Ast() { }
 
-ArgumentsAst::ArgumentsAst(Ast* parent): Ast(parent, Ast::ArgumentsAstType), arg_lineno(0), arg_col_offset(0), vararg_lineno(0), vararg_col_offset(0)
+ArgumentsAst::ArgumentsAst(Ast* parent): Ast(parent, Ast::ArgumentsAstType)
 {
     
 }
@@ -290,16 +290,6 @@ StarredAst::StarredAst(Ast* parent): ExpressionAst(parent, Ast::StarredAstType)
     
 }
 
-TryExceptAst::TryExceptAst(Ast* parent): StatementAst(parent, Ast::TryExceptAstType)
-{
-    
-}
-
-TryFinallyAst::TryFinallyAst(Ast* parent): StatementAst(parent, Ast::TryFinallyAstType)
-{
-    
-}
-
 TupleAst::TupleAst(Ast* parent): ExpressionAst(parent, Ast::TupleAstType)
 {
     
@@ -310,12 +300,17 @@ UnaryOperationAst::UnaryOperationAst(Ast* parent): ExpressionAst(parent, Ast::Un
     
 }
 
+TryAst::TryAst(Ast* parent): StatementAst(parent, Ast::TryAstType)
+{
+
+}
+
 WhileAst::WhileAst(Ast* parent): StatementAst(parent, Ast::WhileAstType), condition(0)
 {
     
 }
 
-WithAst::WithAst(Ast* parent): StatementAst(parent, Ast::WithAstType), contextExpression(0)
+WithAst::WithAst(Ast* parent): StatementAst(parent, Ast::WithAstType)
 {
     
 }

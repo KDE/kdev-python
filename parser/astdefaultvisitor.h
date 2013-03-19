@@ -52,8 +52,7 @@ public:
     virtual void visitIf(IfAst* node);
     virtual void visitWith(WithAst* node);
     virtual void visitRaise(RaiseAst* node);
-    virtual void visitTryExcept(TryExceptAst* node);
-    virtual void visitTryFinally(TryFinallyAst* node);
+    virtual void visitTry(TryAst* node);
     virtual void visitAssertion(AssertionAst* node);
     virtual void visitImport(ImportAst* node);
     virtual void visitImportFrom(ImportFromAst* node);

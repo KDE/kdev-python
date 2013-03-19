@@ -57,8 +57,7 @@ public:
     virtual void visitIf(IfAst* node) { Q_UNUSED(node); };
     virtual void visitWith(WithAst* node) { Q_UNUSED(node); };
     virtual void visitRaise(RaiseAst* node) { Q_UNUSED(node); };
-    virtual void visitTryExcept(TryExceptAst* node) { Q_UNUSED(node); };
-    virtual void visitTryFinally(TryFinallyAst* node) { Q_UNUSED(node); };
+    virtual void visitTry(TryAst* node) { Q_UNUSED(node); };
     virtual void visitAssertion(AssertionAst* node) { Q_UNUSED(node); };
     virtual void visitImport(ImportAst* node) { Q_UNUSED(node); };
     virtual void visitImportFrom(ImportFromAst* node) { Q_UNUSED(node); };

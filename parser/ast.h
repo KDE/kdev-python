@@ -90,8 +90,7 @@ public:
         IfAstType,
         WithAstType,
         RaiseAstType,
-        TryExceptAstType,
-        TryFinallyAstType,
+        TryAstType,
         ImportAstType,
         ImportFromAstType,
         GlobalAstType,
@@ -326,8 +325,6 @@ public:
 class KDEVPYTHONPARSER_EXPORT WithAst : public StatementAst {
 public:
     WithAst(Ast* parent);
-    ExpressionAst* contextExpression;
-    ExpressionAst* optionalVars;
     QList<Ast*> body;
 };
 
@@ -338,19 +335,13 @@ public:
     // TODO check what the other things in the grammar actually are and add them
 };
 
-class KDEVPYTHONPARSER_EXPORT TryExceptAst : public StatementAst {
+class KDEVPYTHONPARSER_EXPORT TryAst : public StatementAst {
 public:
-    TryExceptAst(Ast* parent);
+    TryAst(Ast* parent);
     QList<Ast*> body;
     QList<ExceptionHandlerAst*> handlers;
     QList<Ast*> orelse;
-};
-
-class KDEVPYTHONPARSER_EXPORT TryFinallyAst : public StatementAst {
-public:
-    TryFinallyAst(Ast* parent);
-    QList<Ast*> body;
-    QList<Ast*> finalbody;
+    QList<Ast*> finally;
 };
 
 class KDEVPYTHONPARSER_EXPORT AssertionAst : public StatementAst {
@@ -635,10 +626,8 @@ public:
     ArgumentsAst(Ast* parent);
     QList<ArgAst*> arguments;
     QList<ExpressionAst*> defaultValues;
-    Identifier* vararg;
-    Identifier* kwarg;
-    int arg_lineno, arg_col_offset;
-    int vararg_lineno, vararg_col_offset;
+    ArgAst* vararg;
+    ArgAst* kwarg;
 };
 
 class KDEVPYTHONPARSER_EXPORT KeywordAst : public Ast {

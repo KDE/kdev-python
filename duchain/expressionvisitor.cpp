@@ -53,7 +53,7 @@ namespace Python {
 
 REGISTER_TYPE(IntegralTypeExtended);
 
-QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> ExpressionVisitor::s_defaultTypes;
+QHash<NameConstantAst::NameConstantTypes, KDevelop::AbstractType::Ptr> ExpressionVisitor::m_defaultTypes;
 
 AbstractType::Ptr ExpressionVisitor::encounterPreprocess(AbstractType::Ptr type, bool merge)
 {
@@ -120,10 +120,10 @@ ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegrator* edi
     , m_parentVisitor(0)
     , m_depth(0)
 {
-    if ( s_defaultTypes.isEmpty() ) {
-        s_defaultTypes.insert(KDevelop::Identifier("True"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
-        s_defaultTypes.insert(KDevelop::Identifier("False"), AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
-        s_defaultTypes.insert(KDevelop::Identifier("None"), AbstractType::Ptr(new IntegralType(IntegralType::TypeVoid)));
+    if ( m_defaultTypes.isEmpty() ) {
+        m_defaultTypes.insert(NameConstantAst::True, AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
+        m_defaultTypes.insert(NameConstantAst::False, AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
+        m_defaultTypes.insert(NameConstantAst::None, AbstractType::Ptr(new IntegralType(IntegralType::TypeVoid)));
     }
     Q_ASSERT(m_ctx);
     Q_ASSERT(m_ctx->topContext());
@@ -703,15 +703,17 @@ void ExpressionVisitor::addUnknownName(const QString& name)
     }
 }
 
-void ExpressionVisitor::visitName(Python::NameAst* node)
+void ExpressionVisitor::visitNameConstant(NameConstantAst* node)
 {
-    // "True", "False", "None" etc.
-    KDevelop::Identifier id(node->identifier->value);
-    QHash < KDevelop::Identifier, AbstractType::Ptr >::const_iterator defId = s_defaultTypes.constFind(id);
-    if ( defId != s_defaultTypes.constEnd() ) {
+    // handles "True", "False", "None"
+    QHash < NameConstantAst::NameConstantTypes, AbstractType::Ptr >::const_iterator defId = m_defaultTypes.constFind(node->value);
+    if ( defId != m_defaultTypes.constEnd() ) {
         return encounter(*defId);
     }
-    
+}
+
+void ExpressionVisitor::visitName(Python::NameAst* node)
+{
     RangeInRevision range;
     if ( m_scanUntilCursor.isValid() ) {
         range = RangeInRevision(CursorInRevision(0, 0), m_scanUntilCursor);

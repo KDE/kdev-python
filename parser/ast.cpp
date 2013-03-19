@@ -225,7 +225,7 @@ NameAst::NameAst(Ast* parent): ExpressionAst(parent, Ast::NameAstType), identifi
     
 }
 
-NameConstantAst::NameConstantAst(Ast* parent, Ast::AstType type): ExpressionAst(parent, type), value(Invalid)
+NameConstantAst::NameConstantAst(Ast* parent): ExpressionAst(parent, Ast::NameConstantAstType), value(Invalid)
 {
 
 }

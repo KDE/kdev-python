@@ -114,6 +114,7 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         virtual void visitDictionaryComprehension(DictionaryComprehensionAst* node);
         virtual void visitSetComprehension(SetComprehensionAst* node);
         virtual void visitIfExpression(IfExpressionAst* node);
+        virtual void visitNameConstant(NameConstantAst* node);
         
         void addUnknownName(const QString& name);
         
@@ -161,8 +162,8 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         bool m_isAlias;
     
     private:
-        static QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> s_defaultTypes;
-        
+        static QHash<NameConstantAst::NameConstantTypes, KDevelop::AbstractType::Ptr> m_defaultTypes;
+
         KDevelop::DUContext* m_ctx;
         PythonEditorIntegrator* m_editor;
         

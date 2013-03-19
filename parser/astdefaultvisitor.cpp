@@ -33,6 +33,7 @@ AstDefaultVisitor::~AstDefaultVisitor() { }
 // The Ast "ends" here, those dont have child nodes
 // note that Identifier is not a node in this Ast
 void AstDefaultVisitor::visitName(NameAst* node) { Q_UNUSED(node); }
+void AstDefaultVisitor::visitNameConstant(NameConstantAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitPass(PassAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitNonlocal(NonlocalAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitAlias(AliasAst* node) { Q_UNUSED(node); }

@@ -84,6 +84,7 @@ public:
     virtual void visitBytes(BytesAst* node) { Q_UNUSED(node); };
     virtual void visitYield(YieldAst* node) { Q_UNUSED(node); };
     virtual void visitName(NameAst* node) { Q_UNUSED(node); };
+    virtual void visitNameConstant(NameConstantAst* node) { Q_UNUSED(node); };
     virtual void visitCall(CallAst* node) { Q_UNUSED(node); };
     virtual void visitAttribute(AttributeAst* node) { Q_UNUSED(node); };
     virtual void visitSubscript(SubscriptAst* node) { Q_UNUSED(node); };

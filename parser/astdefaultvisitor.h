@@ -78,6 +78,7 @@ public:
     virtual void visitBytes(BytesAst* node);
     virtual void visitYield(YieldAst* node);
     virtual void visitName(NameAst* node);
+    virtual void visitNameConstant(NameConstantAst* node);
     virtual void visitCall(CallAst* node);
     virtual void visitAttribute(AttributeAst* node);
     virtual void visitSubscript(SubscriptAst* node);

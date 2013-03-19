@@ -76,6 +76,7 @@ void AstVisitor::visitNode(Ast* node)
         case Ast::BytesAstType:                                 this->visitBytes(dynamic_cast<BytesAst*>(node)); break;
         case Ast::YieldAstType:                                 this->visitYield(dynamic_cast<YieldAst*>(node)); break;
         case Ast::NameAstType:                                  this->visitName(dynamic_cast<NameAst*>(node)); break;
+        case Ast::NameConstantAstType:                          this->visitNameConstant(dynamic_cast<NameConstantAst*>(node)); break;
         case Ast::CallAstType:                                  this->visitCall(dynamic_cast<CallAst*>(node)); break;
         case Ast::AttributeAstType:                             this->visitAttribute(dynamic_cast<AttributeAst*>(node)); break;
         case Ast::SubscriptAstType:                             this->visitSubscript(dynamic_cast<SubscriptAst*>(node)); break;

@@ -539,7 +539,7 @@ public:
 
 class KDEVPYTHONPARSER_EXPORT NameConstantAst : public ExpressionAst {
 public:
-    NameConstantAst(Ast* parent, AstType type = Ast::ExpressionAstType);
+    NameConstantAst(Ast* parent);
     enum NameConstantTypes {
         False,
         True,

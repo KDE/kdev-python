@@ -17,6 +17,9 @@ message(WARNING "Note to self: fix finding python before a release, this is not 
 set(PYTHON_INCLUDE_DIR /usr/include/python3.4m)
 set(PYTHON_LIBRARY /usr/lib)
 find_package(PythonLibs 3.4 EXACT REQUIRED)
+if ( NOT ${PYTHONLIBS_FOUND} )
+    message(FATAL_ERROR "python libs not found")
+endif()
 
 include_directories(kdev4pythonparser ${PYTHON_INCLUDE_DIRS})
 
@@ -25,7 +28,7 @@ target_link_libraries(kdev4pythonparser
     ${KDE4_KDECORE_LIBS}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${QT_QTCORE_LIBRARY}
-    ${PYTHON_LIBRARIES}
+    ${PYTHON_LIBRARIES}/libpython3.so
 )
 
 add_dependencies(kdev4pythonparser parser)

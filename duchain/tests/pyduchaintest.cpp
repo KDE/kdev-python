@@ -454,17 +454,17 @@ public:
             return;
         }
         if ( node->arguments->vararg ) {
-            SimpleRange r(0, node->arguments->vararg_col_offset, 0, node->arguments->vararg_col_offset+node->arguments->vararg->value.length());
-            qDebug() << "Found vararg: " << node->arguments->vararg->value << r;
-            if ( r == searchingForRange && node->arguments->vararg->value == searchingForIdentifier ) {
+            SimpleRange r(0, node->arguments->vararg->startCol, 0, node->arguments->vararg->startCol+node->arguments->vararg->argumentName->value.length());
+            qDebug() << "Found vararg: " << node->arguments->vararg->argumentName->value << r;
+            if ( r == searchingForRange && node->arguments->vararg->argumentName->value == searchingForIdentifier ) {
                 found = true;
                 return;
             }
         }
         if ( node->arguments->kwarg ) {
-            SimpleRange r(0, node->arguments->arg_col_offset, 0, node->arguments->arg_col_offset+node->arguments->kwarg->value.length());
-            qDebug() << "Found kwarg: " << node->arguments->kwarg->value << r;
-            if ( r == searchingForRange && node->arguments->kwarg->value == searchingForIdentifier ) {
+            SimpleRange r(0, node->arguments->kwarg->startCol, 0, node->arguments->kwarg->startCol+node->arguments->kwarg->argumentName->value.length());
+            qDebug() << "Found kwarg: " << node->arguments->kwarg->argumentName->value << r;
+            if ( r == searchingForRange && node->arguments->kwarg->argumentName->value == searchingForIdentifier ) {
                 found = true;
                 return;
             }

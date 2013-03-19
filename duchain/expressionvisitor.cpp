@@ -207,19 +207,6 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
             accessingAttributeOfType << unsure->types()[i].abstractType();
         }
     }
-    else if ( accessingAttributeOf->astType == Ast::NameAstType ) {
-        availableDeclarations = lastDeclarations();
-    }
-    else if ( accessingAttributeOf->astType == Ast::CallAstType ) {
-        availableDeclarations.clear();
-        accessingAttributeOfType.append(possibleStructureTypes(lastType()));
-    }
-    else if ( accessingAttributeOf->astType == Ast::SliceAstType ) {
-        availableDeclarations = lastDeclarations();
-    }
-    else if ( not lastType().isNull() && lastType().cast<StructureType>() ) {
-        accessingAttributeOfType.append(lastType().cast<StructureType>());
-    }
     else {
         accessingAttributeOfType << accessedType;
     }

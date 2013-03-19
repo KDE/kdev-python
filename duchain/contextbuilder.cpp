@@ -418,15 +418,15 @@ RangeInRevision ContextBuilder::rangeForArgumentsContext(FunctionDefinitionAst* 
         start = CursorInRevision(first->startLine, first->startCol);
     }
     else if ( node->arguments->vararg )
-        start = CursorInRevision(node->arguments->vararg_lineno, node->arguments->vararg_col_offset);
+        start = CursorInRevision(node->arguments->vararg->startLine, node->arguments->vararg->startCol);
     else if ( node->arguments->kwarg )
-        start = CursorInRevision(node->arguments->arg_lineno, node->arguments->arg_col_offset);
+        start = CursorInRevision(node->arguments->kwarg->startLine, node->arguments->kwarg->startCol);
     
     if ( node->arguments->kwarg )
-        end = CursorInRevision(node->arguments->arg_lineno, node->arguments->arg_col_offset + node->arguments->kwarg->value.length() + 1);
+        end = CursorInRevision(node->arguments->kwarg->startLine, node->arguments->kwarg->startCol + node->arguments->kwarg->argumentName->value.length() + 1);
     else if ( node->arguments->vararg and ( node->arguments->arguments.isEmpty() 
               || node->arguments->arguments.last()->appearsBefore(node->arguments->vararg) ) )
-        end = CursorInRevision(node->arguments->vararg_lineno, node->arguments->vararg_col_offset + node->arguments->vararg->value.length() + 1);
+        end = CursorInRevision(node->arguments->vararg->startLine, node->arguments->vararg->startCol + node->arguments->vararg->argumentName->value.length() + 1);
     else if ( node->arguments->arguments.count() ) {
         Ast* last = node->arguments->arguments.last();
         end = CursorInRevision(last->endLine, last->endCol + 1);

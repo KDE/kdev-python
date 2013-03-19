@@ -22,6 +22,9 @@
 #undef _POSIX_C_SOURCE
 #undef _XOPEN_SOURCE
 
+// remove interfering qt macro
+#undef slots
+
 #include <language/duchain/duchainlock.h>
 
 #include "pyport.h"

@@ -77,6 +77,7 @@ public:
         PassAstType,
         NonlocalAstType,
         NameAstType,
+        NameConstantAstType,
         CallAstType,
         AttributeAstType,
         ArgumentsAstType,
@@ -534,6 +535,18 @@ public:
     NameAst(Ast* parent);
     Identifier* identifier;
     ExpressionAst::Context context;
+};
+
+class KDEVPYTHONPARSER_EXPORT NameConstantAst : public ExpressionAst {
+public:
+    NameConstantAst(Ast* parent, AstType type = Ast::ExpressionAstType);
+    enum NameConstantTypes {
+        False,
+        True,
+        None,
+        Invalid // should not happen
+    };
+    NameConstantTypes value;
 };
 
 class KDEVPYTHONPARSER_EXPORT CallAst : public ExpressionAst {

@@ -2,6 +2,7 @@ COMMENT;This file specifies rules for a conversion of a python (C) to a plugin-i
 COMMENT;All lines are terminated by a double semicolon token, newlines are ignored.;;
 COMMENT;-> stands for "convert AST", => for "convert AST list", ~> for "make an identifier", :> is an assignment w/o conversion, and *> is an enum cast.;;
 COMMENT;$> is a string assignment, +> is a "mindless assignment, like, it just does v->arg = node->arg.
+COMMENT;_> is a Singleton Assignment (converts Py_True, Py_False, Py_None to enum)
 COMMENT;the CODE statement can be used to add custom code.;;
 
 
@@ -55,6 +56,7 @@ RULE_FOR _expr;KIND Name_kind;ACTIONS create|NameAst set|identifier~>id set|cont
 RULE_FOR _expr;KIND List_kind;ACTIONS create|ListAst set|elements=>ExpressionAst,elts set|context*>Context,ctx;;
 RULE_FOR _expr;KIND Tuple_kind;ACTIONS create|TupleAst set|elements=>ExpressionAst,elts set|context*>Context,ctx;;
 RULE_FOR _expr;KIND Ellipsis_kind;ACTIONS create|EllipsisAst;;
+RULE_FOR _expr;KIND NameConstant_kind;ACTIONS create|NameConstantAst set|value_>value;;
 
 RULE_FOR _slice;KIND Slice_kind;ACTIONS create|SliceAst set|lower->ExpressionAst,lower set|upper->ExpressionAst,upper set|step->ExpressionAst,step;;
 RULE_FOR _slice;KIND ExtSlice_kind;ACTIONS create|ExtendedSliceAst set|dims=>SliceAst,dims;;

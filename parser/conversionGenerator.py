@@ -59,6 +59,7 @@ cast_operator_line = '''                v->%{TARGET} = (ExpressionAst::%{AST_TYP
 resolve_string = '''                v->%{TARGET} = PyUnicodeObjectToQString(node->v.%{KIND_W/O_SUFFIX}.%{VALUE});'''
 assign_mindless = '''              v->%{TARGET} = node->%{VALUE};'''
 assign_linetransform = '''              v->%{TARGET} = tline(node->%{VALUE} - 1);'''
+singleton_convert_line = '''                v->%{TARGET} = node->v.NameConstant.value == Py_None ? NameConstantAst::None : node->v.NameConstant.value == Py_False ? NameConstantAst::False : NameConstantAst::True;'''
 resolve_oplist_block = '''
                 for ( int _i = 0; _i < node->v.%{KIND_W/O_SUFFIX}.%{VALUE}->size; _i++ ) {
                     v->%{TARGET}.append((ExpressionAst::%{AST_TYPE}) node->v.%{KIND_W/O_SUFFIX}.%{VALUE}->elements[_i]);
@@ -81,6 +82,7 @@ copy_ident_ranges = '''
                     v->%{TARGET}->endLine = tline(node->lineno - 1);  v->endLine = v->%{TARGET}->endLine;
                     ranges_copied = true;
                 }'''
+
 
 results = dict()
 does_match_any = dict()
@@ -141,7 +143,9 @@ for rule in contents:
             
             
             # commands with one argument
-            if commandType in ['~', ':', '$', '+', 'l']:
+            if commandType in ['~', ':', '$', '+', 'l', '_']:
+                if commandType == '_':
+                    raw = singleton_convert_line
                 if commandType == ':':
                     raw = direct_assignment_line if not any else direct_assignment_line_any
                 if commandType == '~':

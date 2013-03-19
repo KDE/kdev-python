@@ -70,11 +70,11 @@ QMutex AstBuilder::pyInitLock;
 
 QString PyUnicodeObjectToQString(PyObject* obj) {
 #ifdef Q_OS_WIN32
-    // TODO: does this work?
     return QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(obj)));
 #else
-    ushort* data = (ushort*) PyUnicode_AS_DATA(PyObject_Str(obj));
-    return QString::fromUtf16(data);
+    uint* data = (uint*) PyUnicode_AS_DATA(PyObject_Str(obj));
+    // TODO: python can be compiled in ucs2 and ucs4 mode, support that?
+    return QString::fromUcs4(data);
 #endif
 }
 

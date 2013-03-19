@@ -116,6 +116,7 @@ void PyDUChainTest::testMultiFromImport()
     QVERIFY(! a.isEmpty());
     QVERIFY(! b.isEmpty());
     kDebug() << a.first()->abstractType()->toString();
+    kDebug() << b.first()->abstractType()->toString();
     QVERIFY(b.first()->abstractType()->toString().endsWith("int"));
     QVERIFY(a.first()->abstractType()->toString().endsWith("int"));
 }
@@ -497,6 +498,7 @@ void PyDUChainTest::testRanges()
         int scol = column_ranges.at(i).split(",")[0].toInt();
         int ecol = column_ranges.at(i).split(",")[1].toInt();
         QString identifier = column_ranges.at(i).split(",")[2];
+        QVERIFY(identifier.length() - 1 == ecol - scol); // incorrect test setup
         SimpleRange r(0, scol, 0, ecol);
         
         AttributeRangeTestVisitor* visitor = new AttributeRangeTestVisitor();
@@ -527,7 +529,10 @@ void PyDUChainTest::testRanges_data()
     QTest::newRow("classdef_range") << "class cls(): pass" << 1 << ( QStringList() << "6,8,cls" );
     QTest::newRow("classdef_range_inheritance") << "class cls(parent1, parent2): pass" << 1 << ( QStringList() << "6,8,cls" );
     QTest::newRow("classdef_range_inheritance_spaces") << "class       cls(  parent1,    parent2     ):pass" << 1 << ( QStringList() << "12,14,cls" );
-    QTest::newRow("vararg_kwarg") << "def func(*vararg, **kwargs): pass" << 2 << ( QStringList() << "10,16,vararg" << "20,26,kwargs" );
+    QTest::newRow("vararg_kwarg") << "def func(*vararg, **kwargs): pass" << 2 << ( QStringList() << "10,15,vararg" << "20,25,kwargs" );
+
+    QTest::newRow("import") << "import sys" << 1 << ( QStringList() << "7,9,sys" );
+    QTest::newRow("import2") << "import i.localvar1" << 1 << ( QStringList() << "9,17,localvar1" );
 }
 
 class TypeTestVisitor : public AstDefaultVisitor {

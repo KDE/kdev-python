@@ -63,10 +63,79 @@ public:
     };
 };
 
+// This class is used to fix some of the remaining issues
+// with the ranges of objects obtained from the python parser.
+// Issues addressed are:
+//  1) decorators and "def" / "class" statements for classes / functions
+//  2) ranges of imports
+// Both issues are easy to correct since the possible syntax is very restricted
+// (no bracket matching, no strings, no nesting, ...)
+class RangeFixVisitor : public AstDefaultVisitor {
+public:
+    RangeFixVisitor(const QString& contents)
+        : lines(contents.split('\n')) { }; // TODO can this be \r\n?
+    virtual void visitFunctionDefinition(FunctionDefinitionAst* node) {
+        cutDefinitionPreamble(node->name, "def");
+        AstDefaultVisitor::visitFunctionDefinition(node);
+    };
+    virtual void visitClassDefinition(ClassDefinitionAst* node) {
+        cutDefinitionPreamble(node->name, "class");
+        AstDefaultVisitor::visitClassDefinition(node);
+    };
+    virtual void visitImport(ImportAst* node) {
+        AstDefaultVisitor::visitImport(node);
+    };
+    virtual void visitImportFrom(ImportFromAst* node) {
+        AstDefaultVisitor::visitImportFrom(node);
+    };
+private:
+    const QStringList lines;
+    // skip the decorators and the "def" at the beginning
+    // of a class or function declaration and modify @arg node
+    void cutDefinitionPreamble(Ast* fixNode, const QString& defKeyword) {
+        if ( ! fixNode ) {
+            return;
+        }
+        int currentLine = fixNode->startLine;
+        // cut away decorators
+        while ( currentLine < lines.size() ) {
+            if ( ! lines.at(currentLine).trimmed().startsWith('@') ) {
+                // it's not a decorator, so stop skipping lines.
+                break;
+            }
+            currentLine += 1;
+        }
+        fixNode->startLine = currentLine;
+        // cut away the "def" / "class"
+        int currentColumn = -1;
+        const QString& lineData = lines.at(currentLine);
+        bool keywordFound = false;
+        while ( currentColumn < lineData.size() ) {
+            currentColumn += 1;
+            qDebug() <<lineData.mid(currentColumn, defKeyword.size());
+            if ( lineData.at(currentColumn).isSpace() ) {
+                // skip space at the beginning of the line
+                continue;
+            }
+            else if ( keywordFound ) {
+                // if the "def" / "class" was already found, and the current char is
+                // non space, then this is indeed the start of the identifier we're looking for.
+                break;
+            }
+            if ( lineData.mid(currentColumn, defKeyword.size()) == defKeyword ) {
+               keywordFound = true;
+               currentColumn += defKeyword.size();
+            }
+        }
+        const int previousLength = fixNode->endCol - fixNode->startCol;
+        fixNode->startCol = currentColumn;
+        fixNode->endCol = currentColumn + previousLength;
+    };
+};
+
 #include "generated.h"
 
 QMutex AstBuilder::pyInitLock;
-
 
 QString PyUnicodeObjectToQString(PyObject* obj) {
 #ifdef Q_OS_WIN32
@@ -344,9 +413,12 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     Py_Finalize();
     
     AstBuilder::pyInitLock.unlock();
+
+    RangeFixVisitor fixVisitor(contents);
+    fixVisitor.visitNode(t.ast);
     
-    RangeUpdateVisitor v;
-    v.visitNode(t.ast);
+    RangeUpdateVisitor updateVisitor;
+    updateVisitor.visitNode(t.ast);
 
     return t.ast;
 }

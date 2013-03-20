@@ -237,15 +237,16 @@ private:
                         bool atStart = true;
                         int textStart = i+3;
                         for ( int j = i+3; j < line.size(); j++ ) {
+                            qDebug() << atStart << i << j << line.at(j);
                             if ( atStart && ! line.at(j).isSpace() ) {
                                 atStart = false;
                                 textStart = j;
                             }
-                            if ( ! atStart && line.at(j).isSpace() ) {
+                            if ( ! atStart && ( line.at(j).isSpace() || j == line.size() - 1 ) ) {
                                 // found it
                                 asname->startLine = lineno;
                                 asname->endLine = lineno;
-                                asname->startCol = textStart;
+                                asname->startCol = textStart - 1;
                                 asname->endCol = j;
                             }
                         }

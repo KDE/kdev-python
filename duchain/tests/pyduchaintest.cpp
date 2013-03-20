@@ -490,6 +490,13 @@ public:
                 found = true;
                 return;
             }
+            if ( name->asName ) {
+                qDebug() << "found import" << name->asName->value << name->asName->range();
+            }
+            if ( name->asName && name->asName->value == searchingForIdentifier && name->asName->range() == searchingForRange ) {
+                found = true;
+                return;
+            }
         }
     }
 };
@@ -543,6 +550,7 @@ void PyDUChainTest::testRanges_data()
 
     QTest::newRow("import") << "import sys" << 1 << ( QStringList() << "7,10,sys" );
     QTest::newRow("import2") << "import i.localvar1" << 1 << ( QStringList() << "7,18,i.localvar1" );
+    QTest::newRow("import3") << "import sys as a" << 1 << ( QStringList() << "13,14,a" );
 }
 
 class TypeTestVisitor : public AstDefaultVisitor {

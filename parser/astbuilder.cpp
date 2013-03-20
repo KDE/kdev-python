@@ -67,9 +67,12 @@ public:
 // with the ranges of objects obtained from the python parser.
 // Issues addressed are:
 //  1) decorators and "def" / "class" statements for classes / functions
-//  2) ranges of imports
+//  2) ranges of aliases
 // Both issues are easy to correct since the possible syntax is very restricted
 // (no bracket matching, no strings, no nesting, ...)
+// For the aliases, fortunately only imports and excepthandlers are affected;
+// the "with" statement, which has more complicated syntax, provides
+// the necessary information already.
 class RangeFixVisitor : public AstDefaultVisitor {
 public:
     RangeFixVisitor(const QString& contents)
@@ -82,21 +85,49 @@ public:
         cutDefinitionPreamble(node->name, "class");
         AstDefaultVisitor::visitClassDefinition(node);
     };
+    // alias for imports (import foo as bar, baz as bang)
+    // no strings, brackets, or whatever are allowed here, so the "parser"
+    // can be very straightforward.
     virtual void visitImport(ImportAst* node) {
         AstDefaultVisitor::visitImport(node);
+        int aliasIndex = 0;
+        foreach ( AliasAst* alias, node->names ) {
+            fixAlias(alias->name, alias->asName, node->startLine, aliasIndex);
+            aliasIndex += 1;
+        }
     };
-    virtual void visitImportFrom(ImportFromAst* node) {
-        AstDefaultVisitor::visitImportFrom(node);
-    };
+    // alias for exceptions (except FooBarException as somethingterriblehappened: ...)
+    virtual void visitExceptionHandler(ExceptionHandlerAst* node) {
+        AstDefaultVisitor::visitExceptionHandler(node);
+        if ( ! node->name ) {
+            return;
+        }
+        const QString& line = lines.at(node->startLine);
+        const int end = line.count() - 1;
+        int back = backtrackDottedName(line, end);
+        node->name->startCol = end - back;
+        node->name->endCol = end;
+    }
 private:
     const QStringList lines;
+
+
     // skip the decorators and the "def" at the beginning
     // of a class or function declaration and modify @arg node
+    // example:
+    //  @decorate(foo)
+    //  @decorate(bar)
+    //  class myclass(parent): pass
+    // before: start of class->name is [0, 0]
+    // after: start of class->name is [2, 5]
+    // line continuation characters are not supported,
+    // because code needing those in this case is not worth being supported.
     void cutDefinitionPreamble(Ast* fixNode, const QString& defKeyword) {
         if ( ! fixNode ) {
             return;
         }
         int currentLine = fixNode->startLine;
+
         // cut away decorators
         while ( currentLine < lines.size() ) {
             if ( ! lines.at(currentLine).trimmed().startsWith('@') ) {
@@ -106,13 +137,13 @@ private:
             currentLine += 1;
         }
         fixNode->startLine = currentLine;
+
         // cut away the "def" / "class"
         int currentColumn = -1;
         const QString& lineData = lines.at(currentLine);
         bool keywordFound = false;
         while ( currentColumn < lineData.size() ) {
             currentColumn += 1;
-            qDebug() <<lineData.mid(currentColumn, defKeyword.size());
             if ( lineData.at(currentColumn).isSpace() ) {
                 // skip space at the beginning of the line
                 continue;
@@ -130,6 +161,115 @@ private:
         const int previousLength = fixNode->endCol - fixNode->startCol;
         fixNode->startCol = currentColumn;
         fixNode->endCol = currentColumn + previousLength;
+    };
+
+    int backtrackDottedName(const QString& data, const int start) {
+        bool haveDot = true;
+        bool previousWasSpace = true;
+        for ( int i = start - 1; i >= 0; i-- ) {
+            qDebug() << i << data.at(i) << haveDot << previousWasSpace;
+            if ( data.at(i).isSpace() ) {
+                previousWasSpace = true;
+                continue;
+            }
+            if ( data.at(i) == ':' ) {
+                // excepthandler
+                continue;
+            }
+            if ( data.at(i) == '.' ) {
+                haveDot = true;
+            }
+            else if ( haveDot ) {
+                haveDot = false;
+                previousWasSpace = false;
+                continue;
+            }
+            if ( previousWasSpace && ! haveDot ) {
+                return start-i-2;
+            }
+            previousWasSpace = false;
+        }
+        return 0;
+    }
+
+    void fixAlias(Ast* dotted, Ast* asname, const int startLine, int aliasIndex) {
+        if ( ! asname && ! dotted ) {
+            return;
+        }
+        QString line = lines.at(startLine);
+        int lineno = startLine;
+        for ( int i = 0; i < line.size(); i++ ) {
+            const QChar& current = line.at(i);
+            if ( current == '\\' ) {
+                // line continuation character
+                // splitting like "import foo as \ \n bar" is not supported.
+                lineno += 1;
+                line = lines.at(lineno);
+                i = 0;
+                continue;
+            }
+            if ( current == ',' ) {
+                if ( aliasIndex == 0 ) {
+                    // nothing found, continue below
+                    line = line.left(i);
+                    break;
+                }
+                // next alias expression
+                aliasIndex -= 1;
+            }
+            if ( i > line.length() - 3 ) {
+                continue;
+            }
+            if ( current.isSpace() && line.mid(i+1).startsWith("as") && ( line.at(i+3).isSpace() || line.at(i+3) == '\\' ) ) {
+                // there's an "as"
+                if ( aliasIndex == 0 ) {
+                    // it's the one we're looking for
+                    // find the expression
+                    if ( dotted ) {
+                        int dottedNameLength = backtrackDottedName(line, i);
+                        dotted->startLine = lineno;
+                        dotted->endLine = lineno;
+                        dotted->startCol = i-dottedNameLength;
+                        dotted->endCol = i;
+                    }
+                    // find the asname
+                    if ( asname ) {
+                        bool atStart = true;
+                        int textStart = i+3;
+                        for ( int j = i+3; j < line.size(); j++ ) {
+                            if ( atStart && ! line.at(j).isSpace() ) {
+                                atStart = false;
+                                textStart = j;
+                            }
+                            if ( ! atStart && line.at(j).isSpace() ) {
+                                // found it
+                                asname->startLine = lineno;
+                                asname->endLine = lineno;
+                                asname->startCol = textStart;
+                                asname->endCol = j;
+                            }
+                        }
+                    }
+                    return;
+                }
+            }
+        }
+        // no "as" found, use last dotted name in line
+        const int end = line.count() - whitespaceAtEnd(line);
+        int back = backtrackDottedName(line, end);
+        dotted->startLine = lineno;
+        dotted->endLine = lineno;
+        dotted->startCol = end - back;
+        dotted->endCol = end;
+    };
+
+    int whitespaceAtEnd(const QString& line) {
+        for ( int i = 0; i <= line.size(); i++ ) {
+            if ( ! line.at(line.size() - i - 1).isSpace() ) {
+                return i;
+            }
+        }
+        return 0;
     };
 };
 

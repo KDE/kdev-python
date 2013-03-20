@@ -19,7 +19,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
 
-// The Python 3.2 Language Reference was used as basis for this AST
+// The Python 3.4 Language Reference was used as basis for this AST
 
 #ifndef PYTHON_AST_H
 #define PYTHON_AST_H

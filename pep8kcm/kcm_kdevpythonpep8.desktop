@@ -1,0 +1,12 @@
+[Desktop Entry]
+Icon=text-x-python
+Type=Service
+ServiceTypes=KCModule
+
+X-KDE-ModuleType=Library
+X-KDE-Library=kcm_pep8
+X-KDE-ParentApp=kdevplatform
+X-KDE-ParentComponents=kdevplatform
+X-KDE-CfgDlgHierarchy=GENERAL
+
+Name=Python style checking

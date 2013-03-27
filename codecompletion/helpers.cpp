@@ -54,8 +54,8 @@ QString camelCaseToUnderscore(const QString& camelCase)
 
 int identifierMatchQuality(const QString& identifier1_, const QString& identifier2_)
 {
-    QString identifier1 = identifier1_.toLower().replace('.', '_');
-    QString identifier2 = identifier2_.toLower().replace('.', '_');
+    QString identifier1 = camelCaseToUnderscore(identifier1_).toLower().replace('.', '_');
+    QString identifier2 = camelCaseToUnderscore(identifier2_).toLower().replace('.', '_');
 
     if ( identifier1 == identifier2 ) {
         return 3;
@@ -63,8 +63,8 @@ int identifierMatchQuality(const QString& identifier1_, const QString& identifie
     if ( identifier1.contains(identifier2) || identifier2.contains(identifier1) ) {
         return 2;
     }
-    QStringList parts1 = camelCaseToUnderscore(identifier1).split('_');
-    QStringList parts2 = camelCaseToUnderscore(identifier2).split('_');
+    QStringList parts1 = identifier1.split('_');
+    QStringList parts2 = identifier2.split('_');
     parts1.removeAll("");
     parts2.removeAll("");
     parts1.removeDuplicates();
@@ -234,6 +234,7 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
         }
     }
     if ( operatingOn.isEmpty() || lineIsEmpty ) {
+        m_cursorPositionInString = 0;
         *status = NothingFound;
         return QString();
     }

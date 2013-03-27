@@ -53,8 +53,10 @@
 #include <QReadLocker>
 #include <QFile>
 #include <QThread>
+#include <QProcess>
 #include <kdebug.h>
 #include <klocale.h>
+#include <KConfigGroup>
 
 using namespace KDevelop;
 
@@ -250,6 +252,66 @@ void ParseJob::run()
     DUChainWriteLocker lock(DUChain::lock());
     foreach ( const ProblemPointer& p, currentSession->m_problems ) {
         m_duContext->addProblem(p);
+    }
+
+    // If enabled, do PEP8 checking.
+    KConfig config("kdevpythonsupportrc");
+    KConfigGroup configGroup = config.group("pep8");
+    if ( configGroup.readEntry<bool>("pep8enabled", false) ) {
+        kDebug() << "doing pep8 checking";
+        QString url = configGroup.readEntry("pep8url", "/usr/bin/pep8-python2");
+        QFileInfo f(url);
+        bool error = false;
+        if ( ! f.isExecutable() ) {
+            error = true;
+        }
+        QProcess process;
+        process.setProcessChannelMode(QProcess::MergedChannels);
+        process.start(url, QStringList() << document().str());
+        process.waitForFinished(1000);
+        if ( process.state() != QProcess::NotRunning || ( process.exitCode() != 0 && process.exitCode() != 1 )  ) {
+            process.kill();
+            error = true;
+        }
+        else {
+            QByteArray data = process.readAll();
+            QList<QByteArray> errors = data.split('\n');
+            QRegExp errorFormat("(.*):(\\d*):(\\d*): (.*)", Qt::CaseInsensitive, QRegExp::RegExp2);
+            foreach ( const QByteArray& error, errors ) {
+                if ( errorFormat.exactMatch(error.data()) ) {
+                    const QStringList texts = errorFormat.capturedTexts();
+                    bool lineno_ok = false;
+                    bool colno_ok = false;
+                    int lineno = texts.at(2).toInt(&lineno_ok);
+                    int colno = texts.at(3).toInt(&colno_ok);
+                    if ( ! lineno_ok || ! colno_ok ) {
+                        kDebug() << "invalid line / col number:" << texts;
+                        continue;
+                    }
+                    QString error = texts.at(4);
+                    KDevelop::Problem *p = new KDevelop::Problem();
+                    p->setFinalLocation(DocumentRange(document(), SimpleRange(lineno - 1, qMax(colno - 4, 0),
+                                                                              lineno - 1, colno + 4)));
+                    p->setSource(KDevelop::ProblemData::Preprocessor);
+                    p->setSeverity(KDevelop::ProblemData::Warning);
+                    p->setDescription(i18n("PEP8 checker error: %1", error));
+                    ProblemPointer ptr(p);
+                    m_duContext->addProblem(ptr);
+                }
+                else {
+                    kDebug() << "invalid pep8 error line:" << error;
+                }
+            }
+        }
+        if ( error ) {
+            KDevelop::Problem *p = new KDevelop::Problem();
+            p->setFinalLocation(DocumentRange(document(), SimpleRange(0, 0, 0, 0)));
+            p->setSource(KDevelop::ProblemData::Preprocessor);
+            p->setSeverity(KDevelop::ProblemData::Warning);
+            p->setDescription(i18n("The selected PEP8 syntax checker \"%1\" does not seem to work correctly.", url));
+            ProblemPointer ptr(p);
+            m_duContext->addProblem(ptr);
+        }
     }
     
     if ( minimumFeatures() & TopDUContext::AST ) {

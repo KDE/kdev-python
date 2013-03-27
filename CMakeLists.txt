@@ -46,6 +46,7 @@ add_subdirectory(duchain)
 add_subdirectory(codecompletion)
 add_subdirectory(debugger)
 add_subdirectory(codegen)
+add_subdirectory(pep8kcm)
 
 set(kdevpythonlanguagesupport_PART_SRCS
     codegen/simplerefactoring.cpp

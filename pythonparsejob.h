@@ -60,11 +60,7 @@ public:
     ParseJob(const IndexedString& url, ILanguageSupport* languageSupport );
     virtual ~ParseJob();
 
-    void setAST( CodeAst* ast );
     virtual CodeAst *ast() const;
-
-    const KTextEditor::Range& textRangeToParse() const;
-
     bool wasReadFromDisk() const;
     static void eventuallyDoPEP8Checking(const IndexedString document, TopDUContext* topContext);
 

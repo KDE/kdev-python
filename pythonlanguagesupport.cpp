@@ -139,19 +139,6 @@ ILanguageSupport::WhitespaceSensitivity LanguageSupport::whitespaceSensititivy()
     return ILanguageSupport::IndentOnly;
 }
 
-// QWidget* LanguageSupport::specialLanguageObjectNavigationWidget(const KUrl& url, const KDevelop::SimpleCursor& position)
-// {
-//     kDebug() << "Navigation widget requested *** ";
-//     QFrame* frame = new QFrame();
-//     QLabel* label = new QLabel();
-//     QHBoxLayout *layout = new QHBoxLayout();
-//     label->setText("Foo");
-//     frame->setLayout(layout);
-//     layout->addWidget(label);
-//     return frame;
-// }
-
-
 }
 
 #include "pythonlanguagesupport.moc"

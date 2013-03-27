@@ -33,7 +33,11 @@ using namespace KDevelop;
 
 namespace Python {
 
-void createArgumentList(Declaration* dec, QString& ret, QList<QVariant>* highlighting, int atArg = 0, bool includeTypes = true);
+void createArgumentList(Declaration* dec, QString& ret, QList<QVariant>* highlighting,
+                        int atArg = 0, bool includeTypes = true);
+
+int identifierMatchQuality(const QString& identifier1_, const QString& identifier2_);
+QString camelCaseToUnderscore(const QString& camelCase);
 
 class TokenList;
 

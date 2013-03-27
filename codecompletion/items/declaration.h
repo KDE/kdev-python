@@ -33,8 +33,10 @@ public:
                                     int inheritanceDepth = 0);
     virtual QVariant data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const;
     void setTypeHint(PythonCodeCompletionContext::ItemTypeHint type);
+    void addMatchQuality(int add);
 protected:
     PythonCodeCompletionContext::ItemTypeHint m_typeHint;
+    int m_addMatchQuality;
 };
 
 } // namespace Python

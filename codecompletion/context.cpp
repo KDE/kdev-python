@@ -394,7 +394,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
     QList<CompletionTreeItemPointer> items;
     
     DeclarationPointer currentDeclaration;
-    DUChainPointer<Declaration> checkDeclaration;
+    Declaration* checkDeclaration = 0;
     int count = declarations.length();
     for ( int i = 0; i < count; i++ ) {
         if ( maxDepth && maxDepth > declarations.at(i).second ) {
@@ -404,13 +404,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
         currentDeclaration = DeclarationPointer(declarations.at(i).first);
         
         PythonDeclarationCompletionItem* item = 0;
-        AliasDeclaration* alias = dynamic_cast<AliasDeclaration*>(currentDeclaration.data());
-        if ( alias ) {
-            checkDeclaration = DUChainPointer<Declaration>(alias->aliasedDeclaration().declaration());
-        }
-        else {
-            checkDeclaration = currentDeclaration;
-        }
+        checkDeclaration = Helper::resolveAliasDeclaration(currentDeclaration.data());
         if ( checkDeclaration ) {
             AbstractType::Ptr type = checkDeclaration->abstractType();
             if ( type && ( type->whichType() == AbstractType::TypeFunction || type->whichType() == AbstractType::TypeStructure ) ) {
@@ -418,6 +412,9 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
             }
             else {
                 item = new PythonDeclarationCompletionItem(currentDeclaration, KDevelop::CodeCompletionContext::Ptr(this));
+            }
+            if ( ! m_matchAgainst.isEmpty() ) {
+                item->addMatchQuality(identifierMatchQuality(m_matchAgainst, checkDeclaration->identifier().toString()));
             }
             items << CompletionTreeItemPointer(item);
         }
@@ -968,6 +965,11 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
             m_operation = NoCompletion;
         }
         return;
+    }
+
+    if ( firstStatus == ExpressionParser::EqualsFound && allExpressions.length() >= 2 ) {
+        m_operation = DefaultCompletion;
+        m_matchAgainst = allExpressions.at(allExpressions.length() - 2).expression;
     }
 }
 

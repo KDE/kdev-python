@@ -108,6 +108,23 @@ void PyCompletionTest::initShell()
                                                       "\n def method3(): pass");
 }
 
+void PyCompletionTest::testIdentifierMatching()
+{
+    QCOMPARE(camelCaseToUnderscore("FooBarBaz").toAscii().data(), "foo_bar_baz");
+    QCOMPARE(camelCaseToUnderscore("fooBarbaz").toAscii().data(),  "foo_barbaz");
+
+    QCOMPARE(identifierMatchQuality("foobar", "foobar"),  3);
+    QCOMPARE(identifierMatchQuality("foobar", "bar"),  2);
+    QCOMPARE(identifierMatchQuality("bar", "foobar"),  2);
+    QCOMPARE(identifierMatchQuality("foobarbaz", "bar"),  2);
+    QCOMPARE(identifierMatchQuality("bar", "foobarbaz"),  2);
+    QCOMPARE(identifierMatchQuality("FoobarBaz", "FoobarBang"), 1);
+    QCOMPARE(identifierMatchQuality("Foobar_Baz", "Foobar_Bang"), 1);
+    QCOMPARE(identifierMatchQuality("xydsf", "qkigfb"), 0);
+    QCOMPARE(identifierMatchQuality("ac_ac", "ac_ae"), 0);
+    QCOMPARE(identifierMatchQuality("AcAb", "AbDe"), 0);
+}
+
 void PyCompletionTest::testExpressionParserMisc()
 {
     // in completion, strings are filtered out and never contain " or ' chars.

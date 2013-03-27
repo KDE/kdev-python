@@ -728,7 +728,6 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     ExpressionParser parser(textWithoutStrings);
     TokenList allExpressions = parser.popAll();
     allExpressions.reset(1);
-    allExpressions.length();
     ExpressionParser::Status firstStatus = allExpressions.last().status;
     
     // TODO reuse already calculated information

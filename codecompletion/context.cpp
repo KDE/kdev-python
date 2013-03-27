@@ -333,6 +333,41 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
                 resultingItems << CompletionTreeItemPointer(k);
             }
         }
+        if ( m_operation == PythonCodeCompletionContext::NewStatementCompletion ) {
+            // Eventually suggest initializing class members from constructor arguments
+            if ( Declaration* decl = duContext()->owner() ) {
+                if ( DUContext* args = DUChainUtils::getArgumentContext(duContext()->owner()) ) {
+                    if ( decl->isFunctionDeclaration() && decl->identifier() == KDevelop::Identifier("__init__") ) {
+                        // the current context actually belongs to a constructor
+                        foreach ( const Declaration* argument, args->localDeclarations() ) {
+                            const QString argName = argument->identifier().toString();
+                            // Do not suggest "self.self = self"
+                            if ( argName == "self" ) {
+                                continue;
+                            }
+                            bool usedAlready = false;
+                            // Do not suggest arguments which already have a use in the context
+                            // This is uesful because you can then do { Ctrl+Space Enter Enter } while ( 1 )
+                            // to initialize all available class variables, without using arrow keys.
+                            for ( int i = 0; i < duContext()->usesCount(); i++ ) {
+                                if ( duContext()->uses()[i].usedDeclaration(duContext()->topContext()) == argument ) {
+                                    usedAlready = true;
+                                    break;
+                                }
+                            }
+                            if ( usedAlready ) {
+                                continue;
+                            }
+                            const QString value = "self." + argName + " = " + argName;
+                            KeywordItem* item = new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                value, i18n("Initialize property"),
+                                                                KeywordItem::ImportantItem);
+                            resultingItems.append(CompletionTreeItemPointer(item));
+                        }
+                    }
+                }
+            }
+        }
         if ( abort ) {
             return QList<CompletionTreeItemPointer>();
         }
@@ -359,7 +394,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
     QList<CompletionTreeItemPointer> items;
     
     DeclarationPointer currentDeclaration;
-    DUChainPointer<Declaration> checkDeclaration;
+    Declaration* checkDeclaration = 0;
     int count = declarations.length();
     for ( int i = 0; i < count; i++ ) {
         if ( maxDepth && maxDepth > declarations.at(i).second ) {
@@ -369,13 +404,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
         currentDeclaration = DeclarationPointer(declarations.at(i).first);
         
         PythonDeclarationCompletionItem* item = 0;
-        AliasDeclaration* alias = dynamic_cast<AliasDeclaration*>(currentDeclaration.data());
-        if ( alias ) {
-            checkDeclaration = DUChainPointer<Declaration>(alias->aliasedDeclaration().declaration());
-        }
-        else {
-            checkDeclaration = currentDeclaration;
-        }
+        checkDeclaration = Helper::resolveAliasDeclaration(currentDeclaration.data());
         if ( checkDeclaration ) {
             AbstractType::Ptr type = checkDeclaration->abstractType();
             if ( type && ( type->whichType() == AbstractType::TypeFunction || type->whichType() == AbstractType::TypeStructure ) ) {
@@ -383,6 +412,9 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
             }
             else {
                 item = new PythonDeclarationCompletionItem(currentDeclaration, KDevelop::CodeCompletionContext::Ptr(this));
+            }
+            if ( ! m_matchAgainst.isEmpty() ) {
+                item->addMatchQuality(identifierMatchQuality(m_matchAgainst, checkDeclaration->identifier().toString()));
             }
             items << CompletionTreeItemPointer(item);
         }
@@ -933,6 +965,11 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
             m_operation = NoCompletion;
         }
         return;
+    }
+
+    if ( firstStatus == ExpressionParser::EqualsFound && allExpressions.length() >= 2 ) {
+        m_operation = DefaultCompletion;
+        m_matchAgainst = allExpressions.at(allExpressions.length() - 2).expression;
     }
 }
 

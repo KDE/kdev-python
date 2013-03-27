@@ -147,6 +147,8 @@ private:
     
     QString m_calledFunction;
     int m_alreadyGivenParametersCount;
+
+    QString m_matchAgainst;
 };
 
 }

@@ -171,7 +171,17 @@ bool endsWithSeperatedKeyword(const QString& str, const QString& shouldEndWith) 
 QString ExpressionParser::popExpression(ExpressionParser::Status* status)
 {
     QString operatingOn = getRemainingCode().trimmed().replace('\t', ' ');
-    if ( operatingOn.isEmpty() || getRemainingCode().endsWith('\n') ) {
+    bool lineIsEmpty = false;
+    for ( QString::const_iterator it = getRemainingCode().constEnd()-1; it != getRemainingCode().constEnd(); it-- ) {
+        if ( ! it->isSpace() ) {
+            break;
+        }
+        if ( *it == '\n' ) {
+            lineIsEmpty = true;
+            break;
+        }
+    }
+    if ( operatingOn.isEmpty() || lineIsEmpty ) {
         *status = NothingFound;
         return QString();
     }

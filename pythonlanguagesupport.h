@@ -70,6 +70,9 @@ public:
     
 //     virtual QWidget* specialLanguageObjectNavigationWidget(const KUrl& url, const KDevelop::SimpleCursor& position);
 
+public slots:
+    void documentOpened(KDevelop::IDocument*);
+
 private:
     Highlighting* m_highlighting;
     static LanguageSupport* m_self;

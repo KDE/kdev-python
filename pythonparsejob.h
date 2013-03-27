@@ -54,7 +54,8 @@ class ParseJob : public KDevelop::ParseJob
 
 public:
     enum {
-        Rescheduled = KDevelop::TopDUContext::LastFeature
+        Rescheduled = (KDevelop::TopDUContext::LastFeature << 1),
+        PEP8Checking = (KDevelop::TopDUContext::LastFeature << 2)
     };
     ParseJob(const IndexedString& url, ILanguageSupport* languageSupport );
     virtual ~ParseJob();
@@ -65,6 +66,7 @@ public:
     const KTextEditor::Range& textRangeToParse() const;
 
     bool wasReadFromDisk() const;
+    static void eventuallyDoPEP8Checking(const IndexedString document, TopDUContext* topContext);
 
 protected:
     virtual void run();

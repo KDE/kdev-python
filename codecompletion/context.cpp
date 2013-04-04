@@ -62,6 +62,27 @@ PythonCodeCompletionContext::ItemTypeHint PythonCodeCompletionContext::itemTypeH
     return m_itemTypeHint;
 }
 
+ExpressionVisitor* visitorForString(QString str, DUContext* context, CursorInRevision scanUntil = CursorInRevision::invalid()) {
+    KDevPG::MemoryPool pool;
+    AstBuilder* builder = new AstBuilder(&pool);
+    CodeAst* tmpAst = builder->parse(KUrl(), str);
+    if ( tmpAst ) {
+        ExpressionVisitor* v = new ExpressionVisitor(context);
+        v->m_forceGlobalSearching = true;
+        if ( scanUntil.isValid() ) {
+            v->m_scanUntilCursor = scanUntil;
+            v->m_reportUnknownNames = true;
+        }
+        v->visitCode(tmpAst);
+        return v;
+    }
+    else {
+        kWarning() << "Completion requested for syntactically invalid expression, not offering anything";
+        return 0;
+    }
+    delete builder;
+}
+
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bool& abort, bool fullCompletion)
 {
     QList<CompletionTreeItemPointer> resultingItems;
@@ -99,30 +120,23 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         kDebug() << "no code completion";
     }
     else if ( m_operation == PythonCodeCompletionContext::GeneratorVariableCompletion ) {
-        QList<KeywordItem*> completionItems;
-        KDevPG::MemoryPool pool;
-        AstBuilder* builder = new AstBuilder(&pool);
-        CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
-        if ( tmpAst ) {
-            lock.unlock();
-            ExpressionVisitor* v = new ExpressionVisitor(m_duContext.data());
-            v->m_forceGlobalSearching = true;
-            v->m_scanUntilCursor = m_position;
-            v->m_reportUnknownNames = true;
-            v->visitCode(tmpAst);
-            lock.lock();
-            if ( not v->m_unknownNames.isEmpty() ) {
+        QList<KeywordItem*> items;
+        lock.unlock();
+        ExpressionVisitor* v = visitorForString(m_guessTypeOfExpression, m_duContext.data(), m_position);
+        lock.lock();
+        if ( v ) {
+            if ( ! v->m_unknownNames.isEmpty() ) {
                 if ( v->m_unknownNames.size() >= 2 ) {
                     // we only take the first two, and only two. It gets too much items otherwise.
                     QStringList combinations;
                     combinations << v->m_unknownNames.at(0) + ", " + v->m_unknownNames.at(1);
                     combinations << v->m_unknownNames.at(1) + ", " + v->m_unknownNames.at(0);
                     foreach ( const QString& c, combinations ) {
-                        completionItems << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + c + " in ", "");
+                        items << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + c + " in ", "");
                     }
                 }
                 foreach ( const QString& n, v->m_unknownNames ) {
-                    completionItems << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + n + " in ", "");
+                    items << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + n + " in ", "");
                 }
             }
             else {
@@ -130,9 +144,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             }
             delete v;
         }
-        delete builder;
         
-        foreach ( KeywordItem* item, completionItems ) {
+        foreach ( KeywordItem* item, items ) {
             resultingItems << CompletionTreeItemPointer(item);
         }
         
@@ -286,7 +299,23 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     }
     else if ( m_operation == PythonCodeCompletionContext::InheritanceCompletion ) {
         kDebug() << "InheritanceCompletion";
-        QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
+        QList<DeclarationDepthPair> declarations;
+        if ( ! m_guessTypeOfExpression.isEmpty() ) {
+            // The class completion is a member access
+            ExpressionVisitor* v = visitorForString(m_guessTypeOfExpression, m_duContext.data());
+            if ( v ) {
+                TypePtr<StructureType> cls = StructureType::Ptr::dynamicCast(v->lastType());
+                if ( cls && cls->declaration(m_duContext->topContext()) ) {
+                    if ( DUContext* internal = cls->declaration(m_duContext->topContext())->internalContext() ) {
+                        declarations = internal->allDeclarations(m_position, m_duContext->topContext(), false);
+                    }
+                }
+                delete v;
+            }
+        }
+        else {
+            declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
+        }
         QList<DeclarationDepthPair> remainingDeclarations;
         foreach ( const DeclarationDepthPair& d, declarations ) {
             Declaration* r = Helper::resolveAliasDeclaration(d.first);
@@ -300,15 +329,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         resultingItems.append(declarationListToItemList(remainingDeclarations));
     }
     else if ( m_operation == PythonCodeCompletionContext::MemberAccessCompletion ) {
-        KDevPG::MemoryPool pool;
-        AstBuilder* builder = new AstBuilder(&pool);
-        CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
-        if ( tmpAst ) {
-            lock.unlock();
-            ExpressionVisitor* v = new ExpressionVisitor(m_duContext.data());
-            v->m_forceGlobalSearching = true;
-            v->visitCode(tmpAst);
-            lock.lock();
+        ExpressionVisitor* v = visitorForString(m_guessTypeOfExpression, m_duContext.data());
+        if ( v ) {
             if ( v->lastType() ) {
                 kDebug() << v->lastType()->toString();
                 resultingItems << getCompletionItemsForType(v->lastType());
@@ -321,7 +343,6 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         else {
             kWarning() << "Completion requested for syntactically invalid expression, not offering anything";
         }
-        delete builder;
     }
     else {
         // it's stupid to display a 3-letter completion item on manually invoked code completion and makes everything look crowded
@@ -792,6 +813,9 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
             // TODO: optimally, filter out classes we already inherit from. That's a bonus, tough.
             if ( allExpressions.at(1).status == ExpressionParser::ClassFound ) {
                 // show only items of type "class" for completion
+                if ( allExpressions.at(allExpressions.length()-1).status == ExpressionParser::MemberAccessFound ) {
+                    m_guessTypeOfExpression = allExpressions.at(allExpressions.length()-2).expression;
+                }
                 m_operation = InheritanceCompletion;
                 return;
             }

@@ -64,7 +64,7 @@ PythonCodeCompletionContext::ItemTypeHint PythonCodeCompletionContext::itemTypeH
 
 ExpressionVisitor* visitorForString(QString str, DUContext* context, CursorInRevision scanUntil = CursorInRevision::invalid()) {
     KDevPG::MemoryPool pool;
-    AstBuilder* builder = new AstBuilder(&pool);
+    QSharedPointer<AstBuilder> builder(new AstBuilder(&pool));
     CodeAst* tmpAst = builder->parse(KUrl(), str);
     if ( tmpAst ) {
         ExpressionVisitor* v = new ExpressionVisitor(context);
@@ -76,11 +76,8 @@ ExpressionVisitor* visitorForString(QString str, DUContext* context, CursorInRev
         v->visitCode(tmpAst);
         return v;
     }
-    else {
-        kWarning() << "Completion requested for syntactically invalid expression, not offering anything";
-        return 0;
-    }
-    delete builder;
+    kDebug() << "Completion requested for syntactically invalid expression";
+    return 0;
 }
 
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bool& abort, bool fullCompletion)

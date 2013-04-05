@@ -1,7 +1,7 @@
 /*****************************************************************************
  * Copyright (c) 2007 Piyush verma <piyush.verma@gmail.com>                  *
  * Copyright 2007 Andreas Pakulat <apaku@gmx.de>                             *
- * Copyright 2010 Sven Brauch <svenbrauch@googlemail.com>                    *
+ * Copyright 2010-2013 Sven Brauch <svenbrauch@googlemail.com>               *
  *                                                                           *
  * Permission is hereby granted, free of charge, to any person obtaining     *
  * a copy of this software and associated documentation files (the           *

@@ -11,8 +11,10 @@ X-KDE-CfgDlgHierarchy=GENERAL
 
 Name=Python style checking
 Name[de]=Python-Stilüberprüfung
+Name[el]=Έλεγχος στιλ Python
 Name[es]=Comprobación del estilo de Python
 Name[hu]=Python stílus ellenőrzés
+Name[mr]=पायथोन शैली तपासणी
 Name[nl]=Controleren in de stijl van Python
 Name[pt]=Verificação do estilo de Python
 Name[pt_BR]=Verificação do estilo de Python

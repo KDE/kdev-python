@@ -62,6 +62,7 @@ QVariant PythonDeclarationCompletionItem::data(const QModelIndex& index, int rol
     switch ( role ) {
         case KDevelop::CodeCompletionModel::MatchQuality: {
             if ( ! declaration() ) return 0;
+            if ( ! model->completionContext()->duContext() ) return 0;
             if ( declaration()->identifier().identifier().str().startsWith('_') ) {
                 return 0;
             }

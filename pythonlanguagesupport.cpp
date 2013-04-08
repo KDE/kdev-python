@@ -46,6 +46,7 @@
 #include <interfaces/context.h>
 #include <interfaces/contextmenuextension.h>
 #include <language/duchain/duchain.h>
+#include <language/duchain/duchainlock.h>
 #include <language/codecompletion/codecompletion.h>
 #include <language/codecompletion/codecompletionmodel.h>
 
@@ -82,12 +83,23 @@ LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ 
         KDevelop::ILanguageSupport()
 {
     KDEV_USE_EXTENSION_INTERFACE( KDevelop::ILanguageSupport )
-    
+
     m_self = this;
 
     m_highlighting = new Highlighting( this );
     PythonCodeCompletionModel* codeCompletion = new PythonCodeCompletionModel(this);
     new KDevelop::CodeCompletion(this, codeCompletion, "Python");
+
+    QObject::connect(ICore::self()->documentController(), SIGNAL(documentOpened(KDevelop::IDocument*)),
+                     this, SLOT(documentOpened(KDevelop::IDocument*)));
+}
+
+void LanguageSupport::documentOpened(IDocument* doc)
+{
+    DUChainReadLocker lock;
+    TopDUContextPointer topContext = TopDUContextPointer(DUChain::self()->chainForDocument(doc->url()));
+    lock.unlock();
+    ParseJob::eventuallyDoPEP8Checking(IndexedString(doc->url()), topContext.data());
 }
 
 LanguageSupport::~LanguageSupport()
@@ -126,19 +138,6 @@ ILanguageSupport::WhitespaceSensitivity LanguageSupport::whitespaceSensititivy()
 {
     return ILanguageSupport::IndentOnly;
 }
-
-// QWidget* LanguageSupport::specialLanguageObjectNavigationWidget(const KUrl& url, const KDevelop::SimpleCursor& position)
-// {
-//     kDebug() << "Navigation widget requested *** ";
-//     QFrame* frame = new QFrame();
-//     QLabel* label = new QLabel();
-//     QHBoxLayout *layout = new QHBoxLayout();
-//     label->setText("Foo");
-//     frame->setLayout(layout);
-//     layout->addWidget(label);
-//     return frame;
-// }
-
 
 }
 

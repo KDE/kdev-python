@@ -46,6 +46,7 @@
 #include <interfaces/foregroundlock.h>
 #include <interfaces/icore.h>
 #include <interfaces/ilanguagecontroller.h>
+#include <interfaces/idocumentcontroller.h>
 
 #include <ktexteditor/document.h>
 #include <ktexteditor/smartinterface.h>
@@ -53,8 +54,11 @@
 #include <QReadLocker>
 #include <QFile>
 #include <QThread>
+#include <QProcess>
+#include <QTemporaryFile>
 #include <kdebug.h>
 #include <klocale.h>
+#include <KConfigGroup>
 
 using namespace KDevelop;
 
@@ -149,7 +153,7 @@ void ParseJob::run()
         builder.m_ownPriority = parsePriority();
         builder.m_currentlyParsedDocument = document();
         builder.m_futureModificationRevision = contents().modification;
-        
+
         // Run the declaration builder. If necessary, it will run itself again.
         m_duContext = builder.build(document(), m_ast, toUpdate.data());
         if ( abortRequested() ) {
@@ -245,6 +249,9 @@ void ParseJob::run()
     foreach ( const ProblemPointer& p, currentSession->m_problems ) {
         m_duContext->addProblem(p);
     }
+
+    // If enabled, and if the document is open, do PEP8 checking.
+    eventuallyDoPEP8Checking(document(), m_duContext);
     
     if ( minimumFeatures() & TopDUContext::AST ) {
         DUChainWriteLocker lock;
@@ -256,6 +263,85 @@ void ParseJob::run()
     }
     
     setDuChain(m_duContext);
+}
+
+void ParseJob::eventuallyDoPEP8Checking(const IndexedString document, TopDUContext* topContext)
+{
+    IDocument* idoc = ICore::self()->documentController()->documentForUrl(document.toUrl());
+    if ( ! idoc || ! topContext || topContext->features() & PEP8Checking ) {
+        return;
+    }
+
+    KConfig config("kdevpythonsupportrc");
+    KConfigGroup configGroup = config.group("pep8");
+    if ( ! configGroup.readEntry<bool>("pep8enabled", false) ) {
+        return;
+    }
+    {
+        DUChainWriteLocker lock;
+        topContext->setFeatures((TopDUContext::Features) ( topContext->features() | PEP8Checking ));
+    }
+    kDebug() << "doing pep8 checking";
+    // TODO that's not very elegant, better would be making pep8 read from stdin -- but it doesn't support that atm
+    QTemporaryFile tempfile;
+    tempfile.open();
+    tempfile.write(idoc->textDocument()->text().toUtf8());
+    tempfile.close();
+    QString url = configGroup.readEntry("pep8url", "/usr/bin/pep8-python2");
+    QFileInfo f(url);
+    bool error = false;
+    if ( ! f.isExecutable() ) {
+        error = true;
+    }
+    QProcess process;
+    process.setProcessChannelMode(QProcess::MergedChannels);
+    process.start(url, QStringList() << tempfile.fileName());
+    process.waitForFinished(1000);
+    if ( process.state() != QProcess::NotRunning || ( process.exitCode() != 0 && process.exitCode() != 1 )  ) {
+        process.kill();
+        error = true;
+    }
+    else {
+        QByteArray data = process.readAll();
+        QList<QByteArray> errors = data.split('\n');
+        QRegExp errorFormat("(.*):(\\d*):(\\d*): (.*)", Qt::CaseInsensitive, QRegExp::RegExp2);
+        DUChainWriteLocker lock;
+        foreach ( const QByteArray& error, errors ) {
+            if ( errorFormat.exactMatch(error.data()) ) {
+                const QStringList texts = errorFormat.capturedTexts();
+                bool lineno_ok = false;
+                bool colno_ok = false;
+                int lineno = texts.at(2).toInt(&lineno_ok);
+                int colno = texts.at(3).toInt(&colno_ok);
+                if ( ! lineno_ok || ! colno_ok ) {
+                    kDebug() << "invalid line / col number:" << texts;
+                    continue;
+                }
+                QString error = texts.at(4);
+                KDevelop::Problem *p = new KDevelop::Problem();
+                p->setFinalLocation(DocumentRange(document, SimpleRange(lineno - 1, qMax(colno - 4, 0),
+                                                                        lineno - 1, colno + 4)));
+                p->setSource(KDevelop::ProblemData::Preprocessor);
+                p->setSeverity(KDevelop::ProblemData::Warning);
+                p->setDescription(i18n("PEP8 checker error: %1", error));
+                ProblemPointer ptr(p);
+                topContext->addProblem(ptr);
+            }
+            else {
+                kDebug() << "invalid pep8 error line:" << error;
+            }
+        }
+    }
+    if ( error ) {
+        DUChainWriteLocker lock;
+        KDevelop::Problem *p = new KDevelop::Problem();
+        p->setFinalLocation(DocumentRange(document, SimpleRange(0, 0, 0, 0)));
+        p->setSource(KDevelop::ProblemData::Preprocessor);
+        p->setSeverity(KDevelop::ProblemData::Warning);
+        p->setDescription(i18n("The selected PEP8 syntax checker \"%1\" does not seem to work correctly.", url));
+        ProblemPointer ptr(p);
+        topContext->addProblem(ptr);
+    }
 }
 
 }

@@ -37,11 +37,17 @@ namespace Python {
 PythonDeclarationCompletionItem::PythonDeclarationCompletionItem(DeclarationPointer decl, KSharedPtr< CodeCompletionContext > context, int inheritanceDepth)
                                : NormalDeclarationCompletionItem(decl, context, inheritanceDepth)
                                , m_typeHint(PythonCodeCompletionContext::NoHint)
+                               , m_addMatchQuality(0)
 {
     Q_ASSERT(decl->alwaysForceDirect());
     if ( context ) {
         setTypeHint(static_cast<PythonCodeCompletionContext*>(context.data())->itemTypeHint());
     }
+}
+
+void PythonDeclarationCompletionItem::addMatchQuality(int add)
+{
+    m_addMatchQuality += add;
 }
 
 void PythonDeclarationCompletionItem::setTypeHint(PythonCodeCompletionContext::ItemTypeHint type)
@@ -56,6 +62,7 @@ QVariant PythonDeclarationCompletionItem::data(const QModelIndex& index, int rol
     switch ( role ) {
         case KDevelop::CodeCompletionModel::MatchQuality: {
             if ( ! declaration() ) return 0;
+            if ( ! model->completionContext()->duContext() ) return 0;
             if ( declaration()->identifier().identifier().str().startsWith('_') ) {
                 return 0;
             }
@@ -68,12 +75,12 @@ QVariant PythonDeclarationCompletionItem::data(const QModelIndex& index, int rol
                 return 10;
             }
             if ( model->completionContext()->duContext() == declaration()->context() ) {
-                return 5;
+                return 5 + m_addMatchQuality;
             }
             if ( model->completionContext()->duContext()->topContext() == declaration()->context()->topContext() ) {
-                return 3;
+                return 3 + m_addMatchQuality;
             }
-            return 0;
+            return m_addMatchQuality;
         }
         case KDevelop::CodeCompletionModel::BestMatchesCount: {
             return 5;

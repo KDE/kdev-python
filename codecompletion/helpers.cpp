@@ -39,8 +39,60 @@ using namespace KDevelop;
 
 namespace Python {
 
+QString camelCaseToUnderscore(const QString& camelCase)
+{
+    QString underscore;
+    for ( int i = 0; i < camelCase.size(); i++ ) {
+        const QChar& c = camelCase.at(i);
+        if ( c.isUpper() && i != 0 ) {
+            underscore.append('_');
+        }
+        underscore.append(c.toLower());
+    }
+    return underscore;
+}
+
+int identifierMatchQuality(const QString& identifier1_, const QString& identifier2_)
+{
+    QString identifier1 = camelCaseToUnderscore(identifier1_).toLower().replace('.', '_');
+    QString identifier2 = camelCaseToUnderscore(identifier2_).toLower().replace('.', '_');
+
+    if ( identifier1 == identifier2 ) {
+        return 3;
+    }
+    if ( identifier1.contains(identifier2) || identifier2.contains(identifier1) ) {
+        return 2;
+    }
+    QStringList parts1 = identifier1.split('_');
+    QStringList parts2 = identifier2.split('_');
+    parts1.removeAll("");
+    parts2.removeAll("");
+    parts1.removeDuplicates();
+    parts2.removeDuplicates();
+    if ( parts1.length() > 5 || parts2.length() > 5 ) {
+        // don't waste time comparing huge identifiers,
+        // the matching is probably pointless anyways for people using
+        // more than 5 words for their variable names
+        return 0;
+    }
+    foreach ( const QString& part1, parts1 ) {
+        foreach ( const QString& part2, parts2 ) {
+            // Don't take very short name parts into account,
+            // those are not very descriptive eventually
+            if ( part1.size() < 3 || part2.size() < 3 ) {
+                continue;
+            }
+            if ( part1 == part2 ) {
+                // partial match
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
 typedef QPair<QString, ExpressionParser::Status> keyword;
-    
+
 static QList<keyword> supportedKeywords;
 static QList<keyword> controlChars;
 static QList<QString> miscKeywords;
@@ -171,7 +223,18 @@ bool endsWithSeperatedKeyword(const QString& str, const QString& shouldEndWith) 
 QString ExpressionParser::popExpression(ExpressionParser::Status* status)
 {
     QString operatingOn = getRemainingCode().trimmed().replace('\t', ' ');
-    if ( operatingOn.isEmpty() || getRemainingCode().endsWith('\n') ) {
+    bool lineIsEmpty = false;
+    for ( QString::const_iterator it = getRemainingCode().constEnd()-1; it != getRemainingCode().constEnd(); it-- ) {
+        if ( ! it->isSpace() ) {
+            break;
+        }
+        if ( *it == '\n' ) {
+            lineIsEmpty = true;
+            break;
+        }
+    }
+    if ( operatingOn.isEmpty() || lineIsEmpty ) {
+        m_cursorPositionInString = 0;
         *status = NothingFound;
         return QString();
     }

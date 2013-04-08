@@ -95,6 +95,7 @@ void PyDUChainTest::initShell()
 ReferencedTopDUContext PyDUChainTest::parse(const QString& code)
 {
     TestFile* testfile = new TestFile(code + "\n", "py", 0, "/tmp/");
+    createdFiles << testfile;
     testfile->parse((TopDUContext::Features) (TopDUContext::ForceUpdate | TopDUContext::AST) );
     testfile->waitForParsed(500);
     
@@ -104,6 +105,13 @@ ReferencedTopDUContext PyDUChainTest::parse(const QString& code)
     }
     else Q_ASSERT(false && "Timed out waiting for parser results, aborting all tests");
     return 0;
+}
+
+PyDUChainTest::~PyDUChainTest()
+{
+    foreach ( TestFile* f, createdFiles ) {
+        delete f;
+    }
 }
 
 void PyDUChainTest::testMultiFromImport()

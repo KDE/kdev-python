@@ -62,6 +62,24 @@ PythonCodeCompletionContext::ItemTypeHint PythonCodeCompletionContext::itemTypeH
     return m_itemTypeHint;
 }
 
+ExpressionVisitor* visitorForString(QString str, DUContext* context, CursorInRevision scanUntil = CursorInRevision::invalid()) {
+    KDevPG::MemoryPool pool;
+    QSharedPointer<AstBuilder> builder(new AstBuilder(&pool));
+    CodeAst* tmpAst = builder->parse(KUrl(), str);
+    if ( tmpAst ) {
+        ExpressionVisitor* v = new ExpressionVisitor(context);
+        v->m_forceGlobalSearching = true;
+        if ( scanUntil.isValid() ) {
+            v->m_scanUntilCursor = scanUntil;
+            v->m_reportUnknownNames = true;
+        }
+        v->visitCode(tmpAst);
+        return v;
+    }
+    kDebug() << "Completion requested for syntactically invalid expression";
+    return 0;
+}
+
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bool& abort, bool fullCompletion)
 {
     QList<CompletionTreeItemPointer> resultingItems;
@@ -99,30 +117,23 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         kDebug() << "no code completion";
     }
     else if ( m_operation == PythonCodeCompletionContext::GeneratorVariableCompletion ) {
-        QList<KeywordItem*> completionItems;
-        KDevPG::MemoryPool pool;
-        AstBuilder* builder = new AstBuilder(&pool);
-        CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
-        if ( tmpAst ) {
-            lock.unlock();
-            ExpressionVisitor* v = new ExpressionVisitor(m_duContext.data());
-            v->m_forceGlobalSearching = true;
-            v->m_scanUntilCursor = m_position;
-            v->m_reportUnknownNames = true;
-            v->visitCode(tmpAst);
-            lock.lock();
-            if ( not v->m_unknownNames.isEmpty() ) {
+        QList<KeywordItem*> items;
+        lock.unlock();
+        ExpressionVisitor* v = visitorForString(m_guessTypeOfExpression, m_duContext.data(), m_position);
+        lock.lock();
+        if ( v ) {
+            if ( ! v->m_unknownNames.isEmpty() ) {
                 if ( v->m_unknownNames.size() >= 2 ) {
                     // we only take the first two, and only two. It gets too much items otherwise.
                     QStringList combinations;
                     combinations << v->m_unknownNames.at(0) + ", " + v->m_unknownNames.at(1);
                     combinations << v->m_unknownNames.at(1) + ", " + v->m_unknownNames.at(0);
                     foreach ( const QString& c, combinations ) {
-                        completionItems << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + c + " in ", "");
+                        items << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + c + " in ", "");
                     }
                 }
                 foreach ( const QString& n, v->m_unknownNames ) {
-                    completionItems << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + n + " in ", "");
+                    items << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + n + " in ", "");
                 }
             }
             else {
@@ -130,9 +141,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             }
             delete v;
         }
-        delete builder;
         
-        foreach ( KeywordItem* item, completionItems ) {
+        foreach ( KeywordItem* item, items ) {
             resultingItems << CompletionTreeItemPointer(item);
         }
         
@@ -286,7 +296,23 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     }
     else if ( m_operation == PythonCodeCompletionContext::InheritanceCompletion ) {
         kDebug() << "InheritanceCompletion";
-        QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
+        QList<DeclarationDepthPair> declarations;
+        if ( ! m_guessTypeOfExpression.isEmpty() ) {
+            // The class completion is a member access
+            ExpressionVisitor* v = visitorForString(m_guessTypeOfExpression, m_duContext.data());
+            if ( v ) {
+                TypePtr<StructureType> cls = StructureType::Ptr::dynamicCast(v->lastType());
+                if ( cls && cls->declaration(m_duContext->topContext()) ) {
+                    if ( DUContext* internal = cls->declaration(m_duContext->topContext())->internalContext() ) {
+                        declarations = internal->allDeclarations(m_position, m_duContext->topContext(), false);
+                    }
+                }
+                delete v;
+            }
+        }
+        else {
+            declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
+        }
         QList<DeclarationDepthPair> remainingDeclarations;
         foreach ( const DeclarationDepthPair& d, declarations ) {
             Declaration* r = Helper::resolveAliasDeclaration(d.first);
@@ -300,15 +326,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         resultingItems.append(declarationListToItemList(remainingDeclarations));
     }
     else if ( m_operation == PythonCodeCompletionContext::MemberAccessCompletion ) {
-        KDevPG::MemoryPool pool;
-        AstBuilder* builder = new AstBuilder(&pool);
-        CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
-        if ( tmpAst ) {
-            lock.unlock();
-            ExpressionVisitor* v = new ExpressionVisitor(m_duContext.data());
-            v->m_forceGlobalSearching = true;
-            v->visitCode(tmpAst);
-            lock.lock();
+        ExpressionVisitor* v = visitorForString(m_guessTypeOfExpression, m_duContext.data());
+        if ( v ) {
             if ( v->lastType() ) {
                 kDebug() << v->lastType()->toString();
                 resultingItems << getCompletionItemsForType(v->lastType());
@@ -321,7 +340,6 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         else {
             kWarning() << "Completion requested for syntactically invalid expression, not offering anything";
         }
-        delete builder;
     }
     else {
         // it's stupid to display a 3-letter completion item on manually invoked code completion and makes everything look crowded
@@ -331,6 +349,41 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             foreach ( const QString& current, keywordItems ) {
                 KeywordItem* k = new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), current + " ", "");
                 resultingItems << CompletionTreeItemPointer(k);
+            }
+        }
+        if ( m_operation == PythonCodeCompletionContext::NewStatementCompletion ) {
+            // Eventually suggest initializing class members from constructor arguments
+            if ( Declaration* decl = duContext()->owner() ) {
+                if ( DUContext* args = DUChainUtils::getArgumentContext(duContext()->owner()) ) {
+                    if ( decl->isFunctionDeclaration() && decl->identifier() == KDevelop::Identifier("__init__") ) {
+                        // the current context actually belongs to a constructor
+                        foreach ( const Declaration* argument, args->localDeclarations() ) {
+                            const QString argName = argument->identifier().toString();
+                            // Do not suggest "self.self = self"
+                            if ( argName == "self" ) {
+                                continue;
+                            }
+                            bool usedAlready = false;
+                            // Do not suggest arguments which already have a use in the context
+                            // This is uesful because you can then do { Ctrl+Space Enter Enter } while ( 1 )
+                            // to initialize all available class variables, without using arrow keys.
+                            for ( int i = 0; i < duContext()->usesCount(); i++ ) {
+                                if ( duContext()->uses()[i].usedDeclaration(duContext()->topContext()) == argument ) {
+                                    usedAlready = true;
+                                    break;
+                                }
+                            }
+                            if ( usedAlready ) {
+                                continue;
+                            }
+                            const QString value = "self." + argName + " = " + argName;
+                            KeywordItem* item = new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                value, i18n("Initialize property"),
+                                                                KeywordItem::ImportantItem);
+                            resultingItems.append(CompletionTreeItemPointer(item));
+                        }
+                    }
+                }
             }
         }
         if ( abort ) {
@@ -359,7 +412,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
     QList<CompletionTreeItemPointer> items;
     
     DeclarationPointer currentDeclaration;
-    DUChainPointer<Declaration> checkDeclaration;
+    Declaration* checkDeclaration = 0;
     int count = declarations.length();
     for ( int i = 0; i < count; i++ ) {
         if ( maxDepth && maxDepth > declarations.at(i).second ) {
@@ -369,13 +422,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
         currentDeclaration = DeclarationPointer(declarations.at(i).first);
         
         PythonDeclarationCompletionItem* item = 0;
-        AliasDeclaration* alias = dynamic_cast<AliasDeclaration*>(currentDeclaration.data());
-        if ( alias ) {
-            checkDeclaration = DUChainPointer<Declaration>(alias->aliasedDeclaration().declaration());
-        }
-        else {
-            checkDeclaration = currentDeclaration;
-        }
+        checkDeclaration = Helper::resolveAliasDeclaration(currentDeclaration.data());
         if ( checkDeclaration ) {
             AbstractType::Ptr type = checkDeclaration->abstractType();
             if ( type && ( type->whichType() == AbstractType::TypeFunction || type->whichType() == AbstractType::TypeStructure ) ) {
@@ -383,6 +430,9 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
             }
             else {
                 item = new PythonDeclarationCompletionItem(currentDeclaration, KDevelop::CodeCompletionContext::Ptr(this));
+            }
+            if ( ! m_matchAgainst.isEmpty() ) {
+                item->addMatchQuality(identifierMatchQuality(m_matchAgainst, checkDeclaration->identifier().toString()));
             }
             items << CompletionTreeItemPointer(item);
         }
@@ -696,7 +746,6 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     ExpressionParser parser(textWithoutStrings);
     TokenList allExpressions = parser.popAll();
     allExpressions.reset(1);
-    allExpressions.length();
     ExpressionParser::Status firstStatus = allExpressions.last().status;
     
     // TODO reuse already calculated information
@@ -761,6 +810,9 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
             // TODO: optimally, filter out classes we already inherit from. That's a bonus, tough.
             if ( allExpressions.at(1).status == ExpressionParser::ClassFound ) {
                 // show only items of type "class" for completion
+                if ( allExpressions.at(allExpressions.length()-1).status == ExpressionParser::MemberAccessFound ) {
+                    m_guessTypeOfExpression = allExpressions.at(allExpressions.length()-2).expression;
+                }
                 m_operation = InheritanceCompletion;
                 return;
             }
@@ -933,6 +985,11 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
             m_operation = NoCompletion;
         }
         return;
+    }
+
+    if ( firstStatus == ExpressionParser::EqualsFound && allExpressions.length() >= 2 ) {
+        m_operation = DefaultCompletion;
+        m_matchAgainst = allExpressions.at(allExpressions.length() - 2).expression;
     }
 }
 

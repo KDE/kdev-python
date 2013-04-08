@@ -469,6 +469,9 @@ void ContextBuilder::visitFunctionBody(FunctionDefinitionAst* node)
 {
     // The function should end at the next DEDENT token, not at the body's last statement
     int endLine = node->endLine;
+    if ( ! node->body.isEmpty() ) {
+        endLine = node->body.last()->startLine;
+    }
     if ( node->endLine != node->startLine ) {
         endLine = editor()->indent()->nextChange(endLine, FileIndentInformation::Dedent);
     }

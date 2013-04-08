@@ -45,7 +45,8 @@ class PyDUChainTest : public QObject
     public:
         explicit PyDUChainTest(QObject* parent = 0);
         void initShell();
-        
+        virtual ~PyDUChainTest();
+
         KDevelop::ReferencedTopDUContext parse(const QString& code);
         
         Python::CodeAst* m_ast;
@@ -79,6 +80,9 @@ class PyDUChainTest : public QObject
         void testCannotOverwriteBuiltins();
         void testFunctionHints();
         void testFunctionHints_data();
+
+    private:
+        QList<KDevelop::TestFile*> createdFiles;
 };
 
 #endif // PYDUCHAINTEST_H

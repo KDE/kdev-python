@@ -2,7 +2,7 @@ To install, do this:
 mkdir -p build
 cd build
 cmake ..
-make parser
+make parser (not necessary in recent versions)
 make install
 
 IMPORTANT: If you're using Arch Linux: Arch breaks the standard of having "python" point to a python2 implementation. This breaks stuff.

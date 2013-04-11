@@ -471,6 +471,9 @@ void ContextBuilder::visitFunctionBody(FunctionDefinitionAst* node)
     if ( node->endLine != node->startLine ) {
         endLine = editor()->indent()->nextChange(endLine, FileIndentInformation::Dedent);
     }
+    if ( ! node->body.isEmpty() ) {
+        endLine = qMax<int>(endLine, node->body.last()->endLine);
+    }
     CursorInRevision end = CursorInRevision(endLine, node->startLine == node->endLine ? INT_MAX : 0);
     CursorInRevision start = rangeForArgumentsContext(node).end;
     if ( start.line < node->body.first()->startLine ) {

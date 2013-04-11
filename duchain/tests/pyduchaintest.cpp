@@ -309,6 +309,7 @@ void PyDUChainTest::testCrashes_data() {
             "replace(u'г', 'g').\\\n"
             "replace(u'д', 'd').\\\n"
             "replace(u'ё', 'yo')\n";
+    QTest::newRow("function context range crash") << "def myfunc(arg):\nfoo = 3 + \\\n[x for x in range(20)]";
 }
 
 void PyDUChainTest::testClassVariables()

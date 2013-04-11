@@ -272,6 +272,7 @@ void PyDUChainTest::testCrashes_data() {
                "(6, ''))))),"
            "(4, ''),"
            "(0, ''))))";
+    QTest::newRow("function context range crash") << "def myfunc(arg):\nfoo = 3 + \\\n[x for x in range(20)]";
 }
 
 void PyDUChainTest::testClassVariables()

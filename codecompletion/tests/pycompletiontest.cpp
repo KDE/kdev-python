@@ -450,7 +450,7 @@ void PyCompletionTest::testInheritanceCompletion()
     QVERIFY(containsItemForDeclarationNamed(items, "parentClass"));
     items = invokeCompletionOn("class parentClass: pass\nclass childClass(%INVOKE): pass", "%CURSOR");
     QVERIFY(containsItemForDeclarationNamed(items, "parentClass"));
-    items = invokeCompletionOn("class parentClass:\n class blubb: pass\nclass childClass(parentClass.%INVOKE): pass", "%CURSOR");
+    items = invokeCompletionOn("class parentClass:\n class blubb: pass\nclass childClass(%INVOKE): pass", "parentClass.%CURSOR");
     QVERIFY(! containsItemForDeclarationNamed(items, "parentClass"));
     QVERIFY(containsItemForDeclarationNamed(items, "blubb"));
 }

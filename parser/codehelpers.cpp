@@ -129,17 +129,18 @@ bool CodeHelpers::endsInsideComment(const QString& code)
             continue;
         }
         foreach ( const QString& check, stringDelimiters ) {
-            if ( t == check || QString(c) == check ) {
-                if ( stringStack.isEmpty() ) {
-                    stringStack.push(check);
-                    break;
-                }
-                else {
-                    if ( stringStack.top() == check ) {
-                        stringStack.pop();
-                        break;
-                    }
-                }
+            if ( t != check && QString(c) != check ) {
+                continue;
+            }
+            if ( stringStack.isEmpty() ) {
+                stringStack.push(check);
+                atChar += check.length() - 1;
+                break;
+            }
+            else if ( stringStack.top() == check ) {
+                stringStack.pop();
+                atChar += check.length() - 1;
+                break;
             }
         }
         if ( c == '\\' ) {

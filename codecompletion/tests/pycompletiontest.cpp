@@ -381,6 +381,8 @@ void PyCompletionTest::testIntegralExpressionsDifferentContexts_data()
 void PyCompletionTest::testIgnoreCommentSignsInStringLiterals()
 {
     QVERIFY( ! completionListIsEmpty("'#'%INVOKE", ".%CURSOR") );
+    QVERIFY( ! completionListIsEmpty("def addEntry(self,array):\n"
+                                     "  \"\"\"\"some comment\"\"\"\n  %INVOKE", "%CURSOR") );
 }
 
 void PyCompletionTest::testNoCompletionInCommentsOrStrings()

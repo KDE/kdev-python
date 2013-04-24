@@ -85,7 +85,7 @@ void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, co
 
 QString DeclarationNavigationContext::html(bool shorten)
 {
-    return KDevelop::AbstractDeclarationNavigationContext::html(shorten);
+    return KDevelop::AbstractDeclarationNavigationContext::html(shorten).replace("__kdevpythondocumentation_builtin_", "");
 }
 
 }

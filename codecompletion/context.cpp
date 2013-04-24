@@ -549,7 +549,15 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
         DUContext* c = internalContextForDeclaration(top, item.remainingIdentifiers);
         kDebug() << "  GOT:" << c;
         if ( c ) {
+            int begin = items.size();
             items << declarationListToItemList(c->localDeclarations().toList());
+            // tell function declaration items not to add brackets
+            // TODO this is a hack. :(
+            for ( int i = begin; i < items.size(); i++ ) {
+                if ( FunctionDeclarationCompletionItem* item = dynamic_cast<FunctionDeclarationCompletionItem*>(items[i].data()) ) {
+                    item->setIsImportItem(true);
+                }
+            }
         }
         else {
             // do better next time

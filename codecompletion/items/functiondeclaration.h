@@ -37,6 +37,7 @@ public:
     virtual int atArgument() const;
     void setAtArgument(int d);
     void setDepth(int d);
+    void setIsImportItem(bool isImportItem);
     
     virtual QVariant data(const QModelIndex& index, int role, const CodeCompletionModel* model) const;
     
@@ -44,6 +45,7 @@ public:
 private:
     int m_atArgument;
     int m_depth;
+    bool m_isImportItem;
 };
 
 }

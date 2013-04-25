@@ -58,7 +58,7 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
     }
 
     // construct the tree view which displays the currently installed files
-    QFileSystemModel *model = new QFileSystemModel;
+    QFileSystemModel* model = new QFileSystemModel(this);
     model->setRootPath(dir);
     filesTreeView = new QTreeView;
     filesTreeView->setSelectionMode(QAbstractItemView::MultiSelection);

@@ -165,13 +165,11 @@ void DocfileManagerWidget::openSelectedInTextEditor()
 
 QString DocfileManagerWidget::docfilePath()
 {
-    // The directories will be found most-local-first, so using the first one is good.
     KStandardDirs d;
-    QStringList paths = d.findDirs("data", "kdevpythonsupport/documentation_files");
-    if ( paths.isEmpty() ) {
-        return QString::null;
-    }
-    return paths.first();
+    // finds a local directory which is contained in the dirs searched by the parser, code
+    // and creates it if it doesn't exist
+    QString path = d.locateLocal("data", "kdevpythonsupport/documentation_files/", true);
+    return path;
 }
 
 const QList<QUrl> DocfileManagerWidget::selectedItems() const

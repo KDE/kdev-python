@@ -130,7 +130,7 @@ bool DocfileWizard::run()
     // validate input data, setup and program state
     if ( worker ) {
         // process already running
-        return 0;
+        return false;
     }
     KStandardDirs d;
     QString scriptUrl = d.findResource("data", "kdevpythonsupport/scripts/introspect.py");
@@ -188,8 +188,8 @@ void DocfileWizard::saveAndClose()
         outputFile.open(QIODevice::WriteOnly);
         outputFile.write(resultField->toPlainText().toUtf8());
         outputFile.close();
+        close();
     }
-    close();
 }
 
 void DocfileWizard::processScriptOutput()

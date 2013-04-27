@@ -185,8 +185,7 @@ const QList<QUrl> DocfileManagerWidget::selectedItems() const
 
 void DocfileManagerWidget::runWizard()
 {
-    DocfileWizard wizard(this);
-    wizard.resize(640, 480);
+    DocfileWizard wizard(docfilePath(), this);
     wizard.exec();
 }
 

@@ -41,9 +41,10 @@
 #include <KMessageBox>
 #include <KProcess>
 
-DocfileWizard::DocfileWizard(QWidget* parent)
+DocfileWizard::DocfileWizard(const QString& workingDirectory, QWidget* parent)
     : QDialog(parent)
     , worker(0)
+    , workingDirectory(workingDirectory)
 {
     setLayout(new QVBoxLayout);
 
@@ -115,6 +116,13 @@ DocfileWizard::DocfileWizard(QWidget* parent)
     layout()->addWidget(status);
     layout()->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
     qobject_cast<QVBoxLayout*>(layout())->addLayout(buttonsLayout); // TODO ugh
+
+    resize(640, 480);
+}
+
+const QString DocfileWizard::wasSavedAs() const
+{
+    return savedAs;
 }
 
 QString DocfileWizard::fileNameForModule(QString moduleName) const
@@ -123,6 +131,11 @@ QString DocfileWizard::fileNameForModule(QString moduleName) const
         return moduleName;
     }
     return moduleName.replace('.', '/') + ".py";
+}
+
+void DocfileWizard::setModuleName(const QString& moduleName)
+{
+    moduleField->setText(moduleName);
 }
 
 bool DocfileWizard::run()
@@ -138,8 +151,7 @@ bool DocfileWizard::run()
         KMessageBox::error(this, i18n("Couldn't find the introspect.py script; check your installation!"));
         return false;
     }
-    QString docfilePath = DocfileManagerWidget::docfilePath();
-    if ( docfilePath.isEmpty() ) {
+    if ( workingDirectory.isEmpty() ) {
         KMessageBox::error(this, i18n("Couldn't find a valid kdev-python data directory; check your installation!"));
         return false;
     }
@@ -166,7 +178,7 @@ bool DocfileWizard::run()
     QObject::connect(worker, SIGNAL(finished(int)), this, SLOT(processFinished(int)));
 
     // can never have too many slashes
-    outputFile.setFileName(docfilePath + "/" + outputFilename);
+    outputFile.setFileName(workingDirectory + "/" + outputFilename);
 
     worker->start(interpreter, QStringList() << scriptUrl << module);
     return true;
@@ -188,6 +200,7 @@ void DocfileWizard::saveAndClose()
         outputFile.open(QIODevice::WriteOnly);
         outputFile.write(resultField->toPlainText().toUtf8());
         outputFile.close();
+        savedAs = outputFile.fileName();
         close();
     }
 }

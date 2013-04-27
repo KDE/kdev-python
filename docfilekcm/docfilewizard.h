@@ -34,8 +34,12 @@ class DocfileWizard : public QDialog
 {
 Q_OBJECT
 public:
-    DocfileWizard(QWidget* parent);
+    DocfileWizard(const QString& workingDirectory, QWidget* parent = 0);
     QString fileNameForModule(QString moduleName) const;
+    void setModuleName(const QString& moduleName);
+    // Returns the path the file was saved as when exiting the dialog,
+    // or an empty string if the file was not saved.
+    const QString wasSavedAs() const;
 
 private:
     QLineEdit* interpreterField;
@@ -47,6 +51,8 @@ private:
     QString previousModuleName;
     QProcess* worker;
     QFile outputFile;
+    QString savedAs;
+    const QString workingDirectory;
 
     QPushButton* runButton;
     QPushButton* saveButton;

@@ -198,7 +198,19 @@ void DocfileWizard::saveAndClose()
             QDir(basePath).mkpath(basePath);
         }
         outputFile.open(QIODevice::WriteOnly);
-        outputFile.write(resultField->toPlainText().toUtf8());
+        QString header = "\"\"\"" + i18n("This file contains auto-generated documentation extracted\n"
+                                         "from python run-time information. It is analyzed by KDevelop\n"
+                                         "to offer features such as code-completion and syntax highlighting.\n"
+                                         "If you discover errors in KDevelop's support for this module,\n"
+                                         "you can edit this file to correct the errors, e.g. you can add\n"
+                                         "additional return statements to functions to control the return\n"
+                                         "type to be used for that function by the analyzer.\n"
+                                         "Make sure to keep a copy of your changes so you don't accidentally\n"
+                                         "overwrite them by re-generating the file.\n"
+                                         "If you do significant improvements, consider sharing the file\n"
+                                         "with others through the Settings -> Configure KDevelop -> Python Documentation data\n"
+                                         "module!") + "\"\"\"\n\n";
+        outputFile.write(header.toUtf8() + resultField->toPlainText().toUtf8());
         outputFile.close();
         savedAs = outputFile.fileName();
         close();

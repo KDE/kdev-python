@@ -35,6 +35,7 @@
 #include "expressionvisitor.h"
 #include "pythoneditorintegrator.h"
 #include "helpers.h"
+#include "assistants/missingincludeassistant.h"
 
 #include <language/duchain/functiondeclaration.h>
 #include <language/duchain/declaration.h>
@@ -807,8 +808,9 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
             p->setSource(KDevelop::ProblemData::SemanticAnalysis);
             p->setSeverity(KDevelop::ProblemData::Warning);
             p->setDescription(i18n("Module \"%1\" not found", moduleName));
+            p->setSolutionAssistant(KSharedPtr<IAssistant>(new MissingIncludeAssistant(moduleName, currentlyParsedDocument())));
             {
-                DUChainWriteLocker wlock(DUChain::lock());
+                DUChainWriteLocker wlock;
                 ProblemPointer ptr(p);
                 topContext()->addProblem(ptr);
             }
@@ -872,6 +874,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
                 p->setSource(KDevelop::ProblemData::SemanticAnalysis);
                 p->setSeverity(KDevelop::ProblemData::Warning);
                 p->setDescription(i18n("Declaration for \"%1\" not found in specified module", moduleInfo.second.join(".")));
+                p->setSolutionAssistant(KSharedPtr<IAssistant>(new MissingIncludeAssistant(moduleName, currentlyParsedDocument())));
                 ProblemPointer ptr(p);
                 topContext()->addProblem(ptr);
             }

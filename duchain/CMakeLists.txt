@@ -6,23 +6,26 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
 set(duchain_SRCS
     declarations/functiondeclaration.cpp
     declarations/classdeclaration.cpp
-    
+
     types/variablelengthcontainer.cpp
     types/hintedtype.cpp
     types/unsuretype.cpp
     types/indexedcontainer.cpp
-    
-    expressionvisitor.cpp 
+
+    expressionvisitor.cpp
     helpers.cpp
-    pythonducontext.cpp 
+    pythonducontext.cpp
     contextbuilder.cpp
     pythoneditorintegrator.cpp
     declarationbuilder.cpp
     usebuilder.cpp
     dumpchain.cpp
-    
-    navigation/navigationwidget.cpp 
+
+    navigation/navigationwidget.cpp
     navigation/declarationnavigationcontext.cpp
+
+    assistants/missingincludeassistant.cpp
+    ../docfilekcm/docfilewizard.cpp # for the docfile generation assistant widget, to be used in the problem resolver
 )
 
 
@@ -46,3 +49,5 @@ add_subdirectory(tests)
 
 add_subdirectory(types)
 add_subdirectory(declarations)
+
+add_subdirectory(assistants)

@@ -74,6 +74,10 @@ def strict_sanitize(expr):
     expr = sanitize(expr)
     expr = expr.replace("=()", "")
     expr = expr.replace('(', '').replace(')', '')
+    expr = expr.replace('"', '')
+    expr = expr.replace("'", '')
+    expr = expr.replace(" ", "")
+    expr = expr.replace(",", "")
     return expr
 
 def isSpace(char):
@@ -112,6 +116,7 @@ def parse_synopsis(funcdef):
     module.func(param1, param2, [optional_param1 = default1, [optional_param2 = default2]]) -> return_type
     This tries to be as error-prone as possible in order to convert everything into a valid parameter list."""
     # first, take the parts before and after the arrow:
+    funcdef = funcdef.replace("<==>", " -> ")
     s = funcdef.split(' -> ')
     definition = s[0]
     returnType = s[1] if len(s) > 1 else "None"
@@ -123,7 +128,20 @@ def parse_synopsis(funcdef):
     if returnType != 'None':
         returnType += "()"
     # Okay, now the fun part: parse the parameter list
-    paramList = ')'.join('('.join(definition.split('(')[1:]).split(')')[:-1])
+    inParamList = False
+    brackets = 0
+    paramList = ""
+    for char in definition:
+        if char == '(' and not inParamList:
+            inParamList = True
+        elif char == '(':
+            brackets += 1
+        if char == ')' and brackets > 0:
+            brackets -= 1
+        elif char == ')' and inParamList:
+            break
+        if inParamList and char not in '()':
+            paramList += char
     paramList = paramList.split(',')
     resultingParamList = []
     atDefault = False
@@ -259,6 +277,8 @@ def dumperForObject(object, memberName, root):
     try:
         return dumpers[type(object)](object, root)
     except:
+        if hasattr(object, "__call__"):
+            return FunctionDumper(object, root);
         return ScalarDumper(memberName, object, root)
 
 if __name__ == '__main__':

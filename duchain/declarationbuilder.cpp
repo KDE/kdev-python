@@ -532,10 +532,17 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
         // This is a bit hackish, it tries to find the specified object twice twice -- once it tries to
         // import the name from a module's __init__.py file, and once from a "real" python file
         // TODO improve this code-wise
-        Declaration* success = createModuleImportDeclaration(moduleName, declarationName, declarationIdentifier, 0, DontCreateProblems);
-        if ( not success and node->module ) {
+        ProblemPointer problem(0);
+        Declaration* success = createModuleImportDeclaration(moduleName, declarationName, declarationIdentifier, problem);
+        if ( ! success && node->module ) {
+            ProblemPointer problem_init(0);
             QString modifiedModuleName = node->module->value + ".__init__." + name->name->value;
-            createModuleImportDeclaration(modifiedModuleName, declarationName, declarationIdentifier);
+            success = createModuleImportDeclaration(modifiedModuleName, declarationName, declarationIdentifier, problem_init);
+        }
+        qDebug() << success << problem.data();
+        if ( ! success && problem ) {
+            DUChainWriteLocker lock;
+            topContext()->addProblem(problem);
         }
     }
 }
@@ -594,7 +601,12 @@ void DeclarationBuilder::visitImport(ImportAst* node)
         QString moduleName = name->name->value;
         // use alias if available, name otherwise
         Identifier* declarationIdentifier = name->asName ? name->asName : name->name;
-        createModuleImportDeclaration(moduleName, declarationIdentifier->value, declarationIdentifier);
+        ProblemPointer problem(0);
+        createModuleImportDeclaration(moduleName, declarationIdentifier->value, declarationIdentifier, problem);
+        if ( problem ) {
+            DUChainWriteLocker lock;
+            topContext()->addProblem(problem);
+        }
     }
 }
 
@@ -776,7 +788,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
 
 Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleName, QString declarationName,
                                                                Identifier* declarationIdentifier,
-                                                               Ast* rangeNode, ProblemPolicy createProblem)
+                                                               ProblemPointer& problemEncountered, Ast* rangeNode)
 {
     // Search the disk for a python file which contains the requested declaration
     QPair<KUrl, QStringList> moduleInfo = findModulePath(moduleName);
@@ -802,19 +814,13 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
         // a missing module, or a C module (.so) which is unreadable for kdevelop
         // TODO imrpove error handling in case the module exists as a shared object or .pyc file only
         kDebug() << "invalid or non-existent URL:" << moduleInfo;
-        if ( createProblem != DontCreateProblems ) {
-            KDevelop::Problem *p = new KDevelop::Problem();
-            p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange())); // TODO ok?
-            p->setSource(KDevelop::ProblemData::SemanticAnalysis);
-            p->setSeverity(KDevelop::ProblemData::Warning);
-            p->setDescription(i18n("Module \"%1\" not found", moduleName));
-            p->setSolutionAssistant(KSharedPtr<IAssistant>(new MissingIncludeAssistant(moduleName, currentlyParsedDocument())));
-            {
-                DUChainWriteLocker wlock;
-                ProblemPointer ptr(p);
-                topContext()->addProblem(ptr);
-            }
-        }
+        KDevelop::Problem *p = new KDevelop::Problem();
+        p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange())); // TODO ok?
+        p->setSource(KDevelop::ProblemData::SemanticAnalysis);
+        p->setSeverity(KDevelop::ProblemData::Warning);
+        p->setDescription(i18n("Module \"%1\" not found", moduleName));
+        p->setSolutionAssistant(KSharedPtr<IAssistant>(new MissingIncludeAssistant(moduleName, currentlyParsedDocument())));
+        problemEncountered.attach(p);
         return 0;
     }
     if ( ! moduleContext ) {
@@ -868,15 +874,14 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
                                                              ReferencedTopDUContext(0), originalDeclaration,
                                                              editorFindRange(declarationIdentifier, declarationIdentifier));
             }
-            else if ( createProblem != DontCreateProblems ) {
+            else {
                 KDevelop::Problem *p = new KDevelop::Problem();
                 p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange())); // TODO ok?
                 p->setSource(KDevelop::ProblemData::SemanticAnalysis);
                 p->setSeverity(KDevelop::ProblemData::Warning);
                 p->setDescription(i18n("Declaration for \"%1\" not found in specified module", moduleInfo.second.join(".")));
                 p->setSolutionAssistant(KSharedPtr<IAssistant>(new MissingIncludeAssistant(moduleName, currentlyParsedDocument())));
-                ProblemPointer ptr(p);
-                topContext()->addProblem(ptr);
+                problemEncountered.attach(p);
             }
         }
     }

@@ -89,10 +89,6 @@ protected:
     template<typename T> T* visitVariableDeclaration(Identifier* node, Ast* originalAst = 0, Declaration* previous = 0, AbstractType::Ptr type = AbstractType::Ptr(0));
     template<typename T> T* visitVariableDeclaration(Identifier* node, RangeInRevision range, AbstractType::Ptr type = AbstractType::Ptr(0));
     
-    enum ProblemPolicy {
-        CreateProblems,
-        DontCreateProblems
-    };
     enum FitDeclarationType {
         NoTypeRequired,
         InstanceDeclarationType,
@@ -124,7 +120,7 @@ protected:
      * @return :Declaration* the declaration created, or 0 if none was found.
      **/
     Declaration* createModuleImportDeclaration(QString dottedName, QString declarationName, Python::Identifier* declarationIdentifier,
-                                               Python::Ast* rangeNode = 0, ProblemPolicy createProblem = CreateProblems);
+                                               ProblemPointer& problemEncountered, Python::Ast* rangeNode = 0);
     /**
      * @brief Create a tree of declarations for the specified list.
      * Give the list ["foo","bar","baz"], and you'll get a declaration "foo" containing "bar" in its internal context,

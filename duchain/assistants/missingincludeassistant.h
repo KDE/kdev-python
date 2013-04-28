@@ -51,7 +51,10 @@ class MissingIncludeAssistant : public KDevelop::IAssistant
 Q_OBJECT
 public:
     MissingIncludeAssistant(const QString& module, const KDevelop::IndexedString& document);
+    virtual void createActions();
 private:
+    const QString module;
+    const KDevelop::IndexedString document;
 };
 
 }

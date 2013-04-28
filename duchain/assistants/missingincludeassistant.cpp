@@ -68,11 +68,17 @@ void DocumentationGeneratorAction::execute()
     emit executed(this);
 }
 
-MissingIncludeAssistant::MissingIncludeAssistant(const QString& module, const IndexedString& document)
-    : IAssistant()
+void MissingIncludeAssistant::createActions()
 {
     KSharedPtr<IAssistantAction> action(new DocumentationGeneratorAction(module, document));
     addAction(action);
+}
+
+MissingIncludeAssistant::MissingIncludeAssistant(const QString& module, const IndexedString& document)
+    : IAssistant()
+    , module(module)
+    , document(document)
+{
 }
 
 }

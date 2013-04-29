@@ -272,6 +272,12 @@ void PyDUChainTest::testCrashes_data() {
                "(6, ''))))),"
            "(4, ''),"
            "(0, ''))))";
+    QTest::newRow("function context range crash") << "def myfunc(arg):\nfoo = 3 + \\\n[x for x in range(20)]";
+    QTest::newRow("decorator comprehension crash") << "@implementer_only(interfaces.ISSLTransport,\n"
+                 "                   *[i for i in implementedBy(tcp.Client)\n"
+                 "                     if i != interfaces.ITLSTransport])\n"
+                 "class Client(tcp.Client):\n"
+                 "  pass\n";
 }
 
 void PyDUChainTest::testClassVariables()
@@ -525,7 +531,7 @@ void PyDUChainTest::testTypes()
     visitor->searchingForType = expectedType;
     visitor->visitCode(m_ast);
     
-    QEXPECT_FAIL("args_type", "The feature itself is supposed to work but the output is broken", Continue);
+//     QEXPECT_FAIL("args_type", "The feature itself is supposed to work but the output is broken", Continue);
     QCOMPARE(visitor->found, true);
 }
 

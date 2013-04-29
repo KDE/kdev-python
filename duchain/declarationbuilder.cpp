@@ -1435,12 +1435,11 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     // needs to be done here, so the assignment of the internal context happens before visiting the body
     openContextForClassDefinition(node);
     dec->setInternalContext(currentContext());
+
+    foreach ( Ast* node, node->body ) {
+        AstDefaultVisitor::visitNode(node);
+    }
     
-    // yes, we do not call the context builder here, because contexts are already open
-    lock.unlock();
-    AstDefaultVisitor::visitClassDefinition( node );
-    
-    lock.lock();
     closeContext();
     closeType();
     closeDeclaration();

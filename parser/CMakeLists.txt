@@ -12,12 +12,20 @@ set(parser_STAT_SRCS
     astbuilder.cpp
 )
 
+set(kdev4pythonparser_LIBRARIES
+    ${KDE4_KDECORE_LIBS}
+    ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
+    ${QT_QTCORE_LIBRARY}
+    ${kdevpython_BINARY_DIR}/python-src/libpython2.7-kdevelop.so
+    PARENT_SCOPE
+)
+
 kde4_add_library( kdev4pythonparser SHARED ${parser_SRCS} ${parser_STAT_SRCS} )
 target_link_libraries(kdev4pythonparser
     ${KDE4_KDECORE_LIBS}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${QT_QTCORE_LIBRARY}
-    ${kdevpython_SOURCE_DIR}/python-src/libpython2.7-kdevelop.so
+    ${kdevpython_BINARY_DIR}/python-src/libpython2.7-kdevelop.so
 )
 
 add_dependencies(kdev4pythonparser parser)

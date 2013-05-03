@@ -1,0 +1,29 @@
+This information is intended for package mantainers.
+
+First of all, thanks for packaging this software! If you encounter
+any issues which you think should be fixed upstream, please report
+a bug or send a patch, I'll be happy to accept it if it makes sense.
+
+Notes
+=====
+This is a collection of notes about what might be of interest,
+related to packaging.
+
+Python fork
+-----------
+kdev-python currently contains a fork of Python 2.7.2 with some custom
+adjustments. The fork is contained in the python-src/ subdirectory.
+Only the parser of that fork is being built, and the language plugin
+links against the resulting library. You can currently NOT replace
+that library by the vanilla libpython.so library.
+I'm aware that this situation is very undesirable, and measures have
+been taken to get rid of the fork: With the release of Python 3.4,
+the fork can be removed.
+
+documentation_data directory
+----------------------------
+This directory does NOT contain user documentation for the plugin.
+It MUST be packaged together with the program, as it contains runtime
+data which is necessary for the program to work correctly (such as
+representations of python's built-in data types, which are then read
+by the parser etc.).

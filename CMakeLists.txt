@@ -8,8 +8,8 @@ find_package(KDevelop-PG-Qt REQUIRED)
 
 # write the plugin version to a file
 set(KDEVPYTHON_VERSION_MAJOR 1)
-set(KDEVPYTHON_VERSION_MINOR 4)
-set(KDEVPYTHON_VERSION_PATCH 60)
+set(KDEVPYTHON_VERSION_MINOR 5)
+set(KDEVPYTHON_VERSION_PATCH 0)
 configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpython_BINARY_DIR}/kdevpythonversion.h" @ONLY )
 
 cmake_minimum_required(VERSION 2.8)

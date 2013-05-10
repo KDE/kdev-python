@@ -96,6 +96,11 @@ LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ 
 
 void LanguageSupport::documentOpened(IDocument* doc)
 {
+    if ( ICore::self()->languageController()->languagesForUrl(doc->url()).contains(language()) ) {
+        // not a python file
+        return;
+    }
+
     DUChainReadLocker lock;
     TopDUContextPointer topContext = TopDUContextPointer(DUChain::self()->chainForDocument(doc->url()));
     lock.unlock();

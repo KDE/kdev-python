@@ -274,7 +274,7 @@ void ParseJob::run()
 void ParseJob::eventuallyDoPEP8Checking(const IndexedString document, TopDUContext* topContext)
 {
     IDocument* idoc = ICore::self()->documentController()->documentForUrl(document.toUrl());
-    if ( ! idoc || ! topContext || topContext->features() & PEP8Checking ) {
+    if ( ! idoc || ! topContext || ! idoc->textDocument() || topContext->features() & PEP8Checking ) {
         return;
     }
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright 2010 (c) Miquel Canes Gonzalez <miquelcanes@gmail.com>          *
+ * Copyright 2010 Miquel Canes Gonzalez <miquelcanes@gmail.com>              *
  * Copyright 2011-2013 Sven Brauch <svenbrauch@googlemail.com>               *
  *                                                                           *
  * This program is free software; you can redistribute it and/or             *

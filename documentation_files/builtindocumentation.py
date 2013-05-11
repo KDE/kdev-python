@@ -433,3 +433,5 @@ list = __kdevpythondocumentation_builtin_list
 def exit(status): return None
 __name__ = "none"
 __file__ = "none"
+__package__ = "none"
+

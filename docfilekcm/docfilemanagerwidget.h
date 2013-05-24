@@ -43,6 +43,7 @@ public slots:
     void uploadSelected();
     void runWizard();
     void copyEditorContents();
+    void showSearchPaths();
 
     QTemporaryFile* makeArchive(const QList< QUrl >& urls) const;
 

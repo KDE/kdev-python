@@ -104,7 +104,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         // TODO fixme
         else if ( m_position.line <= 1 && m_text.endsWith('#') ) {
             resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
-                                                        "# -*- Coding:utf-8 -*-\n\n", i18n("specify document encoding"), f));
+                                                        "# -*- coding:utf-8 -*-\n\n", i18n("specify document encoding"), f));
         }
     }
     

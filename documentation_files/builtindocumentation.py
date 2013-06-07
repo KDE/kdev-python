@@ -91,6 +91,20 @@ class object():
     def __index__(self): pass
     def __coerce__(self, other): pass
 
+
+@TypeContainer
+class set():
+    def len(s): return 0
+    def isdisjoint(self, other): return True
+    def issubset(self, other): return True
+    def copy(self): return set()
+    def add(self, elem): return
+    def remove(self, elem): return
+    def discard(self, elem): return
+    @getsType
+    def pop(self): pass
+    def clear(self): pass
+
 @TypeContainer
 class list():
     @returnContentEqualsContentOf(0)

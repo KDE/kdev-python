@@ -91,6 +91,9 @@ class object():
     def __index__(self): pass
     def __coerce__(self, other): pass
 
+class basestring():
+    pass
+
 @TypeContainer
 class list():
     @returnContentEqualsContentOf(0)

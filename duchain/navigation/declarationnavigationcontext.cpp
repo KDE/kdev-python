@@ -81,7 +81,7 @@ void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, co
             }
         }
         else {
-            modifyHtml() += i18nc("refers to an unknown type in programming", "unknown");
+            contentType.append(i18nc("refers to an unknown type in programming", "unknown"));
         }
         modifyHtml() += i18nc("as in list of int, set of string", "%1 of %2", containerType, contentType);
     }

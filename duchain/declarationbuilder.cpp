@@ -3,25 +3,20 @@
  * Copyright 2007 Andreas Pakulat <apaku@gmx.de>                             *
  * Copyright 2010-2013 Sven Brauch <svenbrauch@googlemail.com>               *
  *                                                                           *
- * Permission is hereby granted, free of charge, to any person obtaining     *
- * a copy of this software and associated documentation files (the           *
- * "Software"), to deal in the Software without restriction, including       *
- * without limitation the rights to use, copy, modify, merge, publish,       *
- * distribute, sublicense, and/or sell copies of the Software, and to        *
- * permit persons to whom the Software is furnished to do so, subject to     *
- * the following conditions:                                                 *
+ * This program is free software; you can redistribute it and/or             *
+ * modify it under the terms of the GNU General Public License as            *
+ * published by the Free Software Foundation; either version 2 of            *
+ * the License, or (at your option) any later version.                       *
  *                                                                           *
- * The above copyright notice and this permission notice shall be            *
- * included in all copies or substantial portions of the Software.           *
+ * This program is distributed in the hope that it will be useful,           *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of            *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             *
+ * GNU General Public License for more details.                              *
  *                                                                           *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,           *
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF        *
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND                     *
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE    *
- * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION    *
- * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION     *
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
- *****************************************************************************/
+ * You should have received a copy of the GNU General Public License         *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
+ *****************************************************************************
+ */
 
 #include "declarationbuilder.h"
 #include "duchain/declarations/decorator.h"
@@ -35,6 +30,7 @@
 #include "expressionvisitor.h"
 #include "pythoneditorintegrator.h"
 #include "helpers.h"
+#include "assistants/missingincludeassistant.h"
 
 #include <language/duchain/functiondeclaration.h>
 #include <language/duchain/declaration.h>
@@ -533,10 +529,17 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
         // This is a bit hackish, it tries to find the specified object twice twice -- once it tries to
         // import the name from a module's __init__.py file, and once from a "real" python file
         // TODO improve this code-wise
-        Declaration* success = createModuleImportDeclaration(moduleName, declarationName, declarationIdentifier, 0, DontCreateProblems);
-        if ( not success and node->module ) {
+        ProblemPointer problem(0);
+        Declaration* success = createModuleImportDeclaration(moduleName, declarationName, declarationIdentifier, problem);
+        if ( ! success && node->module ) {
+            ProblemPointer problem_init(0);
             QString modifiedModuleName = node->module->value + ".__init__." + name->name->value;
-            createModuleImportDeclaration(modifiedModuleName, declarationName, declarationIdentifier);
+            success = createModuleImportDeclaration(modifiedModuleName, declarationName, declarationIdentifier, problem_init);
+        }
+        qDebug() << success << problem.data();
+        if ( ! success && problem ) {
+            DUChainWriteLocker lock;
+            topContext()->addProblem(problem);
         }
     }
 }
@@ -595,7 +598,12 @@ void DeclarationBuilder::visitImport(ImportAst* node)
         QString moduleName = name->name->value;
         // use alias if available, name otherwise
         Identifier* declarationIdentifier = name->asName ? name->asName : name->name;
-        createModuleImportDeclaration(moduleName, declarationIdentifier->value, declarationIdentifier);
+        ProblemPointer problem(0);
+        createModuleImportDeclaration(moduleName, declarationIdentifier->value, declarationIdentifier, problem);
+        if ( problem ) {
+            DUChainWriteLocker lock;
+            topContext()->addProblem(problem);
+        }
     }
 }
 
@@ -777,7 +785,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
 
 Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleName, QString declarationName,
                                                                Identifier* declarationIdentifier,
-                                                               Ast* rangeNode, ProblemPolicy createProblem)
+                                                               ProblemPointer& problemEncountered, Ast* rangeNode)
 {
     // Search the disk for a python file which contains the requested declaration
     QPair<KUrl, QStringList> moduleInfo = findModulePath(moduleName);
@@ -803,18 +811,13 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
         // a missing module, or a C module (.so) which is unreadable for kdevelop
         // TODO imrpove error handling in case the module exists as a shared object or .pyc file only
         kDebug() << "invalid or non-existent URL:" << moduleInfo;
-        if ( createProblem != DontCreateProblems ) {
-            KDevelop::Problem *p = new KDevelop::Problem();
-            p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange())); // TODO ok?
-            p->setSource(KDevelop::ProblemData::SemanticAnalysis);
-            p->setSeverity(KDevelop::ProblemData::Warning);
-            p->setDescription(i18n("Module \"%1\" not found", moduleName));
-            {
-                DUChainWriteLocker wlock(DUChain::lock());
-                ProblemPointer ptr(p);
-                topContext()->addProblem(ptr);
-            }
-        }
+        KDevelop::Problem *p = new KDevelop::Problem();
+        p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange())); // TODO ok?
+        p->setSource(KDevelop::ProblemData::SemanticAnalysis);
+        p->setSeverity(KDevelop::ProblemData::Warning);
+        p->setDescription(i18n("Module \"%1\" not found", moduleName));
+        p->setSolutionAssistant(KSharedPtr<IAssistant>(new MissingIncludeAssistant(moduleName, currentlyParsedDocument())));
+        problemEncountered.attach(p);
         return 0;
     }
     if ( ! moduleContext ) {
@@ -868,14 +871,14 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
                                                              ReferencedTopDUContext(0), originalDeclaration,
                                                              editorFindRange(declarationIdentifier, declarationIdentifier));
             }
-            else if ( createProblem != DontCreateProblems ) {
+            else {
                 KDevelop::Problem *p = new KDevelop::Problem();
                 p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange())); // TODO ok?
                 p->setSource(KDevelop::ProblemData::SemanticAnalysis);
                 p->setSeverity(KDevelop::ProblemData::Warning);
                 p->setDescription(i18n("Declaration for \"%1\" not found in specified module", moduleInfo.second.join(".")));
-                ProblemPointer ptr(p);
-                topContext()->addProblem(ptr);
+                p->setSolutionAssistant(KSharedPtr<IAssistant>(new MissingIncludeAssistant(moduleName, currentlyParsedDocument())));
+                problemEncountered.attach(p);
             }
         }
     }
@@ -1438,12 +1441,11 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     // needs to be done here, so the assignment of the internal context happens before visiting the body
     openContextForClassDefinition(node);
     dec->setInternalContext(currentContext());
+
+    foreach ( Ast* node, node->body ) {
+        AstDefaultVisitor::visitNode(node);
+    }
     
-    // yes, we do not call the context builder here, because contexts are already open
-    lock.unlock();
-    AstDefaultVisitor::visitClassDefinition( node );
-    
-    lock.lock();
     closeContext();
     closeType();
     closeDeclaration();

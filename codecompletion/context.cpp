@@ -104,7 +104,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         // TODO fixme
         else if ( m_position.line <= 1 && m_text.endsWith('#') ) {
             resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
-                                                        "# -*- Coding:utf-8 -*-\n\n", i18n("specify document encoding"), f));
+                                                        "# -*- coding:utf-8 -*-\n\n", i18n("specify document encoding"), f));
         }
     }
     
@@ -549,7 +549,15 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
         DUContext* c = internalContextForDeclaration(top, item.remainingIdentifiers);
         kDebug() << "  GOT:" << c;
         if ( c ) {
+            int begin = items.size();
             items << declarationListToItemList(c->localDeclarations().toList());
+            // tell function declaration items not to add brackets
+            // TODO this is a hack. :(
+            for ( int i = begin; i < items.size(); i++ ) {
+                if ( FunctionDeclarationCompletionItem* item = dynamic_cast<FunctionDeclarationCompletionItem*>(items[i].data()) ) {
+                    item->setIsImportItem(true);
+                }
+            }
         }
         else {
             // do better next time

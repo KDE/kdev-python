@@ -142,7 +142,7 @@ private:
         int currentColumn = -1;
         const QString& lineData = lines.at(currentLine);
         bool keywordFound = false;
-        while ( currentColumn < lineData.size() ) {
+        while ( currentColumn < lineData.size() - 1 ) {
             currentColumn += 1;
             if ( lineData.at(currentColumn).isSpace() ) {
                 // skip space at the beginning of the line

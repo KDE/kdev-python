@@ -58,7 +58,7 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
     }
 
     // construct the tree view which displays the currently installed files
-    QFileSystemModel *model = new QFileSystemModel;
+    QFileSystemModel* model = new QFileSystemModel(this);
     model->setRootPath(dir);
     filesTreeView = new QTreeView;
     filesTreeView->setSelectionMode(QAbstractItemView::MultiSelection);
@@ -89,15 +89,22 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
     // construct the buttons for the remaining actions
     QFrame* separator = new QFrame();
     separator->setFrameShape(QFrame::HLine);
+    QFrame* separator2 = new QFrame();
+    separator2->setFrameShape(QFrame::HLine);
     QPushButton* openFileManagerButton = new QPushButton(i18n("Open file manager"));
     openFileManagerButton->setIcon(KIcon("system-file-manager"));
     QPushButton* openTextEditorButton = new QPushButton(i18nc("Edit selected files", "Edit selected"));
     openTextEditorButton->setIcon(KIcon("kate"));
+    QPushButton* searchPathsButton = new QPushButton(i18n("Search paths..."));
+    searchPathsButton->setIcon(KIcon("folder"));
     buttonsLayout->addWidget(separator);
     buttonsLayout->addWidget(openFileManagerButton);
     buttonsLayout->addWidget(openTextEditorButton);
+    buttonsLayout->addWidget(separator2);
+    buttonsLayout->addWidget(searchPathsButton);
     QObject::connect(openFileManagerButton, SIGNAL(clicked(bool)), this, SLOT(openDocfilePath()));
     QObject::connect(openTextEditorButton, SIGNAL(clicked(bool)), this, SLOT(openSelectedInTextEditor()));
+    QObject::connect(searchPathsButton, SIGNAL(clicked(bool)), this, SLOT(showSearchPaths()));
 
     buttonsLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
 
@@ -110,8 +117,34 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
     splitter->addWidget(w);
     splitter->setSizes(QList<int>() << 800 << 100);
 
-    setLayout(new QHBoxLayout);
+    setLayout(new QVBoxLayout);
     layout()->addWidget(splitter);
+}
+
+void DocfileManagerWidget::showSearchPaths()
+{
+    KStandardDirs d;
+    QStringList dirs = d.findDirs("data", "kdevpythonsupport/documentation_files");
+    QLabel* dirsMessageLabel = new QLabel(i18nc("displays a list of search paths below",
+                                                "Paths searched for documentation by kdev-python (in this order):"));
+    QTextEdit* paths = new QTextEdit;
+    paths->setPlainText(dirs.join("\n"));
+    paths->setReadOnly(true);
+
+    QDialog* message = new QDialog(this);
+    message->setLayout(new QVBoxLayout);
+    message->layout()->addWidget(dirsMessageLabel);
+    message->layout()->addWidget(paths);
+    QWidget* closeWidget = new QWidget;
+    QPushButton* closeButton = new QPushButton("Close");
+    closeWidget->setLayout(new QHBoxLayout);
+    closeWidget->layout()->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding));
+    closeWidget->layout()->addWidget(closeButton);
+    message->layout()->addWidget(closeWidget);
+
+    QObject::connect(closeButton, SIGNAL(clicked(bool)), message, SLOT(close()));
+    message->resize(600, 200);
+    message->exec();
 }
 
 void DocfileManagerWidget::openDocfilePath()
@@ -165,13 +198,11 @@ void DocfileManagerWidget::openSelectedInTextEditor()
 
 QString DocfileManagerWidget::docfilePath()
 {
-    // The directories will be found most-local-first, so using the first one is good.
     KStandardDirs d;
-    QStringList paths = d.findDirs("data", "kdevpythonsupport/documentation_files");
-    if ( paths.isEmpty() ) {
-        return QString::null;
-    }
-    return paths.first();
+    // finds a local directory which is contained in the dirs searched by the parser, code
+    // and creates it if it doesn't exist
+    QString path = d.locateLocal("data", "kdevpythonsupport/documentation_files/", true);
+    return path;
 }
 
 const QList<QUrl> DocfileManagerWidget::selectedItems() const
@@ -187,8 +218,7 @@ const QList<QUrl> DocfileManagerWidget::selectedItems() const
 
 void DocfileManagerWidget::runWizard()
 {
-    DocfileWizard wizard(this);
-    wizard.resize(640, 480);
+    DocfileWizard wizard(docfilePath(), this);
     wizard.exec();
 }
 

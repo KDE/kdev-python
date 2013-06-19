@@ -91,6 +91,10 @@ class object():
     def __index__(self): pass
     def __coerce__(self, other): pass
 
+class basestring():
+    pass
+
+@TypeContainer
 class list():
     """! TypeContainer !"""
     def __init__(self, items):
@@ -448,3 +452,5 @@ def __import__(name, globa = None, loca = None, fromlist = None, level = 0): ret
 def exit(status): return None
 __name__ = "none"
 __file__ = "none"
+__package__ = "none"
+

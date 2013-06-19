@@ -17,7 +17,7 @@ target_link_libraries(kcm_docfiles
 )
 
 install(TARGETS kcm_docfiles
-         DESTINATION ${PLUGIN_INSTALL_DIR})
+        DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES kcm_kdevpythondocfiles.desktop
         DESTINATION ${SERVICES_INSTALL_DIR})

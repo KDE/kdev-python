@@ -20,35 +20,43 @@
  *
  */
 
-#ifndef DOCFILEMANAGERWIDGET_H
-#define DOCFILEMANAGERWIDGET_H
+#ifndef PYTHON_MISSINGINCLUDEASSISTANT_H
+#define PYTHON_MISSINGINCLUDEASSISTANT_H
 
-#include <QWidget>
-#include <QTreeView>
-#include <QUrl>
-#include <QTemporaryFile>
+#include <interfaces/iassistant.h>
+#include <language/duchain/indexedstring.h>
 
-class DocfileManagerWidget : public QWidget
+#include <QObject>
+#include <QDebug>
+
+namespace Python {
+
+class DocumentationGeneratorAction : public KDevelop::IAssistantAction
 {
 Q_OBJECT
 public:
-    DocfileManagerWidget(QWidget* parent);
-    const QList<QUrl> selectedItems() const;
-    static QString docfilePath();
+    DocumentationGeneratorAction(const QString& module, const KDevelop::IndexedString& document);
+    virtual QString description() const;
 
 public slots:
-    void openDocfilePath();
-    void openSelectedInTextEditor();
-    void showGHNSDialog();
-    void uploadSelected();
-    void runWizard();
-    void copyEditorContents();
-    void showSearchPaths();
-
-    QTemporaryFile* makeArchive(const QList< QUrl >& urls) const;
+    virtual void execute();
 
 private:
-    QTreeView* filesTreeView;
+    const QString module;
+    const KDevelop::IndexedString document;
 };
 
-#endif // DOCFILEMANAGERWIDGET_H
+class MissingIncludeAssistant : public KDevelop::IAssistant
+{
+Q_OBJECT
+public:
+    MissingIncludeAssistant(const QString& module, const KDevelop::IndexedString& document);
+    virtual void createActions();
+private:
+    const QString module;
+    const KDevelop::IndexedString document;
+};
+
+}
+
+#endif // PYTHON_MISSINGINCLUDEASSISTANT_H

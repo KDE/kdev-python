@@ -4,7 +4,7 @@
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
+    the Free Software Foundation, either version 2 of the License, or
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
@@ -129,17 +129,18 @@ bool CodeHelpers::endsInsideComment(const QString& code)
             continue;
         }
         foreach ( const QString& check, stringDelimiters ) {
-            if ( t == check || QString(c) == check ) {
-                if ( stringStack.isEmpty() ) {
-                    stringStack.push(check);
-                    break;
-                }
-                else {
-                    if ( stringStack.top() == check ) {
-                        stringStack.pop();
-                        break;
-                    }
-                }
+            if ( t != check && QString(c) != check ) {
+                continue;
+            }
+            if ( stringStack.isEmpty() ) {
+                stringStack.push(check);
+                atChar += check.length() - 1;
+                break;
+            }
+            else if ( stringStack.top() == check ) {
+                stringStack.pop();
+                atChar += check.length() - 1;
+                break;
             }
         }
         if ( c == '\\' ) {

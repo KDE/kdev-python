@@ -3,7 +3,7 @@
  *                                                                           *
  *   This program is free software: you can redistribute it and/or modify    *
  *   it under the terms of the GNU General Public License as published by    *
- *   the Free Software Foundation, either version 3 of the License, or       *
+ *   the Free Software Foundation, either version 2 of the License, or       *
  *   (at your option) any later version.                                     *
  *                                                                           *
  *   This program is distributed in the hope that it will be useful,         *
@@ -381,6 +381,8 @@ void PyCompletionTest::testIntegralExpressionsDifferentContexts_data()
 void PyCompletionTest::testIgnoreCommentSignsInStringLiterals()
 {
     QVERIFY( ! completionListIsEmpty("'#'%INVOKE", ".%CURSOR") );
+    QVERIFY( ! completionListIsEmpty("def addEntry(self,array):\n"
+                                     "  \"\"\"\"some comment\"\"\"\n  %INVOKE", "%CURSOR") );
 }
 
 void PyCompletionTest::testNoCompletionInCommentsOrStrings()
@@ -450,7 +452,7 @@ void PyCompletionTest::testInheritanceCompletion()
     QVERIFY(containsItemForDeclarationNamed(items, "parentClass"));
     items = invokeCompletionOn("class parentClass: pass\nclass childClass(%INVOKE): pass", "%CURSOR");
     QVERIFY(containsItemForDeclarationNamed(items, "parentClass"));
-    items = invokeCompletionOn("class parentClass:\n class blubb: pass\nclass childClass(parentClass.%INVOKE): pass", "%CURSOR");
+    items = invokeCompletionOn("class parentClass:\n class blubb: pass\nclass childClass(%INVOKE): pass", "parentClass.%CURSOR");
     QVERIFY(! containsItemForDeclarationNamed(items, "parentClass"));
     QVERIFY(containsItemForDeclarationNamed(items, "blubb"));
 }

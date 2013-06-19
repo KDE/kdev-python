@@ -6,7 +6,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${kdevpython_SOURCE_DIR}/cmake/)
 # finding even KDE # TODO what?
 find_package(KDE4 REQUIRED)
 find_package(KDevPlatform 1.5.60 REQUIRED)
-find_package(KDevelop-PG-Qt REQUIRED)
 
 # write the plugin version to a file
 set(KDEVPYTHON_VERSION_MAJOR 1)
@@ -31,7 +30,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/duchain
     ${CMAKE_CURRENT_SOURCE_DIR}/parser
-    ${CMAKE_CURRENT_SOURCE_DIR}/python-src
+    ${CMAKE_CURRENT_BINARY_DIR}/parser
     ${KDEVPGQT_INCLUDE_DIR}
 )
 

@@ -40,9 +40,12 @@ using namespace KTextEditor;
 namespace Python {
 
 FunctionDeclarationCompletionItem::FunctionDeclarationCompletionItem(DeclarationPointer decl, CodeCompletionContext::Ptr context) 
-    : PythonDeclarationCompletionItem(decl, context), m_atArgument(-1), m_depth(0)
+    : PythonDeclarationCompletionItem(decl, context)
+    , m_atArgument(-1)
+    , m_depth(0)
+    , m_isImportItem(false)
 {
-    
+
 }
 
 int FunctionDeclarationCompletionItem::atArgument() const
@@ -120,6 +123,11 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
     return Python::PythonDeclarationCompletionItem::data(index, role, model);
 }
 
+void FunctionDeclarationCompletionItem::setIsImportItem(bool isImportItem)
+{
+    m_isImportItem = isImportItem;
+}
+
 void FunctionDeclarationCompletionItem::executed(KTextEditor::Document* document, const KTextEditor::Range& word)
 {
     kDebug() << "FunctionDeclarationCompletionItem executed";
@@ -140,12 +148,16 @@ void FunctionDeclarationCompletionItem::executed(KTextEditor::Document* document
     kDebug() << "declaration data: " << fdecl.data();
     QString suffix = "()";
     KTextEditor::Range checkSuffix(word.end().line(), word.end().column(), word.end().line(), word.end().column() + 2);
-    if ( document->text(checkSuffix) == "()" ) {
-        suffix = ""; // don't insert brackets if they're already there
+    if ( m_isImportItem || document->text(checkSuffix) == "()" ) {
+        // don't insert brackets if they're already there,
+        // or if the item is an import item.
+        suffix = "";
     }
-    int skip = 2; // place cursor behind bracktes
+    // place cursor behind bracktes by default
+    int skip = 2;
     if ( fdecl.data()->type<FunctionType>()->arguments().length() != 0 ) {
-        skip = 1; // place cursor in brackets if there's parameters
+        // place cursor in brackets if there's parameters
+        skip = 1;
     }
     document->replaceText(word, decl.data()->identifier().toString() + suffix);
     if ( View* view = document->activeView() ) {

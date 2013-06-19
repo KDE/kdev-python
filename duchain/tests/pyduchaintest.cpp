@@ -313,6 +313,12 @@ void PyDUChainTest::testCrashes_data() {
             "replace(u'г', 'g').\\\n"
             "replace(u'д', 'd').\\\n"
             "replace(u'ё', 'yo')\n";
+    QTest::newRow("function context range crash") << "def myfunc(arg):\nfoo = 3 + \\\n[x for x in range(20)]";
+    QTest::newRow("decorator comprehension crash") << "@implementer_only(interfaces.ISSLTransport,\n"
+                 "                   *[i for i in implementedBy(tcp.Client)\n"
+                 "                     if i != interfaces.ITLSTransport])\n"
+                 "class Client(tcp.Client):\n"
+                 "  pass\n";
 }
 
 void PyDUChainTest::testClassVariables()

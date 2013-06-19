@@ -28,7 +28,7 @@ target_link_libraries(kdev4pythonparser
     ${KDE4_KDECORE_LIBS}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${QT_QTCORE_LIBRARY}
-    ${PYTHON_LIBRARIES}/libpython3.so
+    ${PYTHON_LIBRARIES}/libpython3.4m.so.1.0
 )
 
 add_dependencies(kdev4pythonparser parser)

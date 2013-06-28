@@ -19,7 +19,6 @@
 #include "functiondeclaration.h"
 
 #include <language/codecompletion/normaldeclarationcompletionitem.h>
-#include <language/duchain/functiondeclaration.h>
 #include <language/codecompletion/codecompletionmodel.h>
 #include <language/duchain/types/functiontype.h>
 #include <language/duchain/aliasdeclaration.h>
@@ -29,9 +28,11 @@
 #include <KLocalizedString>
 
 #include "duchain/navigation/navigationwidget.h"
-#include <types/variablelengthcontainer.h>
+#include "types/variablelengthcontainer.h"
 #include "codecompletion/helpers.h"
 #include "declaration.h"
+#include "declarations/functiondeclaration.h"
+#include "duchain/helpers.h"
 
 
 using namespace KDevelop;
@@ -145,10 +146,11 @@ void FunctionDeclarationCompletionItem::executed(KTextEditor::Document* document
         kError() << "ERROR: could not get declaration data, not executing completion item!";
         return;
     }
-    kDebug() << "declaration data: " << fdecl.data();
     QString suffix = "()";
     KTextEditor::Range checkSuffix(word.end().line(), word.end().column(), word.end().line(), word.end().column() + 2);
-    if ( m_isImportItem || document->text(checkSuffix) == "()" ) {
+    if ( m_isImportItem || document->text(checkSuffix) == "()"
+         || Helper::findDecoratorByName(fdecl.data(), QLatin1String("property")) )
+    {
         // don't insert brackets if they're already there,
         // or if the item is an import item.
         suffix = "";

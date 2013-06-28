@@ -30,6 +30,8 @@
 #include <QtTest/QTest>
 #include <KUrl>
 #include <KStandardDirs>
+#include <KTextEditor/Editor>
+#include <KService>
 
 #include "codecompletion/context.h"
 #include "codecompletion/helpers.h"
@@ -427,6 +429,29 @@ void PyCompletionTest::testImplementMethodCompletion_data()
     QTest::newRow("contextskip") << "class myclass():\n def some_method(param):\n  pass\n \n \n \n %INVOKE" << "def %CURSOR";
     QTest::newRow("contextskip2") << "class myclass():\n def some_method(param): pass\n"
                                      " def some_method2(param):\n  pass\n  pass\n %INVOKE" << "\n \n \n def %CURSOR";
+}
+
+void PyCompletionTest::testAutoBrackets()
+{
+    QList< CompletionTreeItem* > items = invokeCompletionOn("class Foo:\n @property\n def myprop(self): pass\n"
+                                                            "a=Foo()\n%INVOKE", "a.%CURSOR");
+    QVERIFY(containsItemForDeclarationNamed(items, "myprop"));
+    CompletionTreeItem* item = 0;
+    foreach ( CompletionTreeItem* ptr, items ) {
+        if ( ptr->declaration() ) {
+            if ( ptr->declaration()->identifier().toString() == "myprop" ) {
+                item = ptr;
+                break;
+            }
+        }
+    }
+    QVERIFY(item);
+    KService::Ptr documentService = KService::serviceByDesktopPath("katepart.desktop");
+    QVERIFY(documentService);
+    KTextEditor::Document* document = documentService->createInstance<KTextEditor::Document>(this);
+    QVERIFY(document);
+    item->execute(document, KTextEditor::Range(0, 0, 0, 0));
+    QCOMPARE(document->text(), QLatin1String("myprop"));
 }
 
 void PyCompletionTest::testExceptionCompletion()

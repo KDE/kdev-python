@@ -393,6 +393,9 @@ void AstDefaultVisitor::visitArguments(ArgumentsAst* node)
     foreach (ExpressionAst* expression, node->arguments) {
         visitNode(expression);
     }
+    foreach (ExpressionAst* expression, node->defaultValues ) {
+        visitNode(expression);
+    }
 }
 
 }

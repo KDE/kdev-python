@@ -69,6 +69,7 @@ class PyCompletionTest : public QObject
         void testCompletionAfterQuotes_data();
         void testIgnoreCommentSignsInStringLiterals();
         void testIdentifierMatching();
+        void testAutoBrackets();
     private:
         QList<CompletionTreeItemPointer> m_ptrs;
 };

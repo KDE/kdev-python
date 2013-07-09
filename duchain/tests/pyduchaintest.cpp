@@ -319,6 +319,7 @@ void PyDUChainTest::testCrashes_data() {
                  "                     if i != interfaces.ITLSTransport])\n"
                  "class Client(tcp.Client):\n"
                  "  pass\n";
+    QTest::newRow("comprehension_as_default_crash") << "def foo(bar = [item for (_, item) in items()]):\n return";
 }
 
 void PyDUChainTest::testClassVariables()

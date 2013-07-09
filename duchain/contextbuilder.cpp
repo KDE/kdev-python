@@ -406,6 +406,7 @@ RangeInRevision ContextBuilder::rangeForArgumentsContext(FunctionDefinitionAst* 
     // We need to know where the function arguments context ends (the location of the closing ")" paren would
     // be optimal), so this does some pretty ugly checks whether the * or ** arguments are present,
     // and adjusts the range as needed.
+    // TODO: Can we remove this function since we have the RangeUpdateVisitor now, which is much simpler?
     RangeInRevision range;
     CursorInRevision start, end;
     if ( node->arguments->arguments.count() ) {
@@ -431,7 +432,13 @@ RangeInRevision ContextBuilder::rangeForArgumentsContext(FunctionDefinitionAst* 
         start = CursorInRevision(node->startLine, node->startCol + node->name->value.length());
         end = start;
     }
-    
+
+    foreach ( const ExpressionAst* expr, node->arguments->defaultValues ) {
+        if ( expr->endLine > end.line || (expr->endLine == end.line && expr->endCol > end.column ) ) {
+            end = CursorInRevision(expr->endLine, expr->endCol);
+        }
+    }
+
     range = RangeInRevision(start, end);
     Q_ASSERT(range.isValid());
     return range;

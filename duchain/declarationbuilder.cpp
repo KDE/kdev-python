@@ -1714,6 +1714,32 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
     DeclarationBuilderBase::visitArguments(node);
 }
 
+void DeclarationBuilder::visitGlobal(GlobalAst* node)
+{
+    TopDUContext* top = topContext();
+    foreach ( Identifier *id, node->names ) {
+        QualifiedIdentifier qid = identifierForNode(id);
+        DUChainWriteLocker lock(DUChain::lock());
+        QList< Declaration* > existing = top->findLocalDeclarations(qid.first());
+        if ( ! existing.empty() ) {
+            AliasDeclaration* ndec = openDeclaration<AliasDeclaration>(id, node);
+            ndec->setAliasedDeclaration(existing.first());
+            closeDeclaration();
+        }
+        else {
+            injectContext(top);
+            Declaration* dec = visitVariableDeclaration<Declaration>(id);
+            closeDeclaration();
+            dec->setRange(editorFindRange(id, id));
+            dec->setAutoDeclaration(true);
+            closeInjectedContext();
+            AliasDeclaration* ndec = openDeclaration<AliasDeclaration>(id, node);
+            ndec->setAliasedDeclaration(dec);
+            closeDeclaration();
+        }
+    }
+}
+
 }
 
 

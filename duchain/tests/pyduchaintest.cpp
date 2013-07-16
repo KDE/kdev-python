@@ -654,6 +654,21 @@ void PyDUChainTest::testTypes_data()
                                                  "a = getstr()\n"
                                                  "b = f1()\n"
                                                  "checkme = f2()\n" << "str";
+    QTest::newRow("global_variable") << "a = 3\n"
+                                        "def f1():\n"
+                                        "  global a\n"
+                                        "  return a\n"
+                                        "checkme = f1()\n" << "int";
+    QTest::newRow("global_variable2") << "a = 3\n"
+                                        "def f1():\n"
+                                        "  global a\n"
+                                        "  a = \"str\"\n"
+                                        "  return a\n"
+                                        "checkme = f1()\n" << "str";
+    QTest::newRow("global_scope_variable") << "a = 3\n"
+                                        "def f1():\n"
+                                        "  return a\n"
+                                        "checkme = f1()\n" << "int";
     // TODO PYTHON3 those got in through a failed commit... re-enable for python 3 support!
 //     QTest::newRow("vararg_before_other_args") << "def myfun(a, b, *z, x): return z[0]\n"
 //                                                  "checkme = myfun(False, False, 1, x = False)" << "int";

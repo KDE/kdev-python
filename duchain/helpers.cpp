@@ -190,7 +190,7 @@ Declaration* Helper::declarationForName(NameAst* /*ast*/, const QualifiedIdentif
                                                            AbstractType::Ptr(0), DUContext::DontResolveAliases);
         importedLocalDeclarations = context->findDeclarations(identifier.last(), nodeRange.end);
     }
-    Declaration* declaration;
+    Declaration* declaration = 0;
     if ( localDeclarations.length() ) {
         declaration = localDeclarations.last();
     }
@@ -207,10 +207,10 @@ Declaration* Helper::declarationForName(NameAst* /*ast*/, const QualifiedIdentif
             }
         } while ( not importedLocalDeclarations.isEmpty() );
     }
-    else if ( declarations.length() ) {
+
+    if ( !declaration && declarations.length() ) {
         declaration = declarations.last();
     }
-    else declaration = 0;
     return declaration;
 }
 

@@ -669,6 +669,13 @@ void PyDUChainTest::testTypes_data()
                                         "def f1():\n"
                                         "  return a\n"
                                         "checkme = f1()\n" << "int";
+
+    QTest::newRow("top_level_vs_class_member") << "var = 3\n"
+                                                  "class myclass:\n"
+                                                  "  def __init__(self): self.var = \"str\"\n"
+                                                  "  def f1(): return var\n"
+                                                  "checkme = myclass.f1()" << "int";
+
     // TODO PYTHON3 those got in through a failed commit... re-enable for python 3 support!
 //     QTest::newRow("vararg_before_other_args") << "def myfun(a, b, *z, x): return z[0]\n"
 //                                                  "checkme = myfun(False, False, 1, x = False)" << "int";

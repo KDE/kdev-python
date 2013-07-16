@@ -1719,7 +1719,7 @@ void DeclarationBuilder::visitGlobal(GlobalAst* node)
     TopDUContext* top = topContext();
     foreach ( Identifier *id, node->names ) {
         QualifiedIdentifier qid = identifierForNode(id);
-        DUChainWriteLocker lock(DUChain::lock());
+        DUChainWriteLocker lock;
         QList< Declaration* > existing = top->findLocalDeclarations(qid.first());
         if ( ! existing.empty() ) {
             AliasDeclaration* ndec = openDeclaration<AliasDeclaration>(id, node);
@@ -1729,10 +1729,9 @@ void DeclarationBuilder::visitGlobal(GlobalAst* node)
         else {
             injectContext(top);
             Declaration* dec = visitVariableDeclaration<Declaration>(id);
-            closeDeclaration();
             dec->setRange(editorFindRange(id, id));
             dec->setAutoDeclaration(true);
-            closeInjectedContext();
+            closeContext();
             AliasDeclaration* ndec = openDeclaration<AliasDeclaration>(id, node);
             ndec->setAliasedDeclaration(dec);
             closeDeclaration();

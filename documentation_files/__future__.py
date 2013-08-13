@@ -85,4 +85,10 @@ language using this mechanism:
 
 """
 
+def nested_scopes(): pass
+def generators(): pass
 def print_function(): pass
+def division(): pass
+def absolute_import(): pass
+def with_statement(): pass
+def unicode_literals(): pass

@@ -333,13 +333,24 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
     QStringList nameComponents = name.split(".");
     QList<KUrl> searchPaths;
     if ( name.startsWith('.') ) {
-        // This is used for "from .foo import" or similar (relative imports)
+        /* To take care for imports like "from ....xxxx.yyy import zzz"
+         * we need to take current doc path and run "cd .." enough times
+         */
         nameComponents.removeFirst();
-        searchPaths << currentlyParsedDocument().toUrl().directory();
+        QString tname = name.mid(1); // remove first dot
+        QDir curPathDir = QDir(currentlyParsedDocument().toUrl().directory());
+        foreach(QString c, tname) {
+            if (c != ".")
+                break;
+            curPathDir.cdUp();
+            nameComponents.removeFirst();
+        }
+        searchPaths << curPathDir.path();
     }
     else {
         // If this is not a relative import, use the project directory,
         // the current directory, and all system include paths.
+        // FIXME: If absolute imports enabled, don't add curently parsed doc path
         searchPaths = Helper::getSearchPaths(currentlyParsedDocument().toUrl());
     }
     // Loop over all the name components, and find matching folders or files.

@@ -511,8 +511,11 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
             moduleName = node->module->value + '.' + name->name->value;
         }
         else {
-            moduleName = '.' + name->name->value;
+            moduleName = name->name->value;
         }
+        // To handle relative import correct, add node level in the beginning of the path
+        // This will allow findModulePath to deduce module search direcotry properly
+        moduleName.prepend(QString(node->level, '.'));
         Identifier* declarationIdentifier = 0;
         declarationName.clear();
         if ( name->asName ) {

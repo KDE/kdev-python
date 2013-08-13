@@ -10,5 +10,5 @@ add_custom_target(
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/libpython2.7-kdevelop.so
 )
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libpython2.7-kdevelop.so DESTINATION ${LIB_INSTALL_DIR})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libpython2.7-kdevelop.so.1.0 DESTINATION ${LIB_INSTALL_DIR})
 

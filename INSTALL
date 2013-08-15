@@ -15,3 +15,9 @@ with
 Another notice for arch users: The plugin queries your default python interpreter for module search paths. So, if you want to use django for example and it's installed
 in some python2 module directory, and python3 is your default interpreter, you won't get autocompletion (or anything) for it. You can easily solve that by adding
 the directory in question to the $PYTHONPATH environment variable (':' is the seperator, if you want more than one path) and restarting kdevelop.
+
+
+Running test suite:
+To enable test building, run
+  cmake .. -DKDE4_BUILD_TESTS=true
+Instead of just cmake

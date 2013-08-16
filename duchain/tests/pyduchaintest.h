@@ -53,6 +53,7 @@ class PyDUChainTest : public QObject
         KDevPG::MemoryPool m_pool;
         
     private slots:
+        void init();
         void testSimple();
         void testSimple_data();
         void testRanges();
@@ -77,10 +78,16 @@ class PyDUChainTest : public QObject
         void testClassContextRanges();
         void testVarKWArgs();
         void testMultiFromImport();
+        void testMultiFromImport_data();
         void testCannotOverwriteBuiltins();
 
     private:
         QList<KDevelop::TestFile*> createdFiles;
+        QDir testDir;
+        QDir assetsDir;
+        QString lastTest;
+        
+        QList<QString> FindPyFiles(QDir& root);
 };
 
 #endif // PYDUCHAINTEST_H

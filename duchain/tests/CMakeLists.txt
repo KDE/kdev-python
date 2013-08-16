@@ -1,6 +1,8 @@
 automoc4(pyduchaintest waitforupdate.cpp)
 kde4_add_unit_test(pyduchaintest pyduchaintest.cpp)
 
+add_definitions(-DDUCHAIN_PY_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
+
 target_link_libraries(pyduchaintest
     kdev4pythonduchain
     kdev4pythonparser

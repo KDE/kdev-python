@@ -153,6 +153,7 @@ protected:
     DeclarationPointer m_firstAttributeDeclaration;
 private:
     QList<DUChainBase*> m_scheduledForDeletion;
+    QString buildModuleNameFromNode(ImportFromAst* node, AliasAst* alias, const QString& intermediate);
 };
 
 }

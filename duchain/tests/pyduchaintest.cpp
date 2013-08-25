@@ -192,6 +192,31 @@ void PyDUChainTest::testMultiFromImport_data() {
                                     "b = testMultiFromImport.i.localvar2\n";
 }
 
+void PyDUChainTest::testRelativeImport()
+{
+    QFETCH(QString, code);
+    QFETCH(QString, token);
+    QFETCH(QString, type);
+    ReferencedTopDUContext ctx = parse(code);
+    QVERIFY(ctx);
+    DUChainReadLocker lock;
+    QList<Declaration*> t = ctx->findDeclarations(QualifiedIdentifier(token));
+    QVERIFY(! t.isEmpty());
+    QVERIFY(t.first()->abstractType()->toString().endsWith(type));
+}
+
+void PyDUChainTest::testRelativeImport_data() {
+    QTest::addColumn<QString>("code");
+    QTest::addColumn<QString>("token");
+    QTest::addColumn<QString>("type");
+    QTest::newRow(".local") << "from testRelativeImport.m.sm1.go import i1" << "i1" << "int";
+    QTest::newRow(".init") << "from testRelativeImport.m.sm1.go import i2" << "i2" << "int";
+    QTest::newRow("..local") << "from testRelativeImport.m.sm1.go import i3" << "i3" << "int";
+    QTest::newRow("..init") << "from testRelativeImport.m.sm1.go import i4" << "i4" << "int";
+    QTest::newRow("..sub.local") << "from testRelativeImport.m.sm1.go import i5" << "i5" << "int";
+    QTest::newRow("..sub.init") << "from testRelativeImport.m.sm1.go import i6" << "i6" << "int";
+}
+
 void PyDUChainTest::testCrashes() {
     QFETCH(QString, code);
     ReferencedTopDUContext ctx = parse(code);

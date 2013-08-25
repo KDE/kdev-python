@@ -79,6 +79,8 @@ class PyDUChainTest : public QObject
         void testVarKWArgs();
         void testMultiFromImport();
         void testMultiFromImport_data();
+        void testRelativeImport();
+        void testRelativeImport_data();
         void testCannotOverwriteBuiltins();
 
     private:

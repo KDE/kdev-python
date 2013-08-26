@@ -502,6 +502,20 @@ Declaration* DeclarationBuilder::findDeclarationInContext(QStringList dottedName
     return lastAccessedDeclaration;
 }
 
+QString DeclarationBuilder::buildModuleNameFromNode(ImportFromAst* node, AliasAst* alias, const QString& intermediate) {
+    QString moduleName = alias->name->value;
+    if ( ! intermediate.isEmpty() ) {
+        moduleName.prepend('.').prepend(intermediate);
+    }
+    if ( node->module ) {
+        moduleName.prepend('.').prepend(node->module->value);
+    }
+    // To handle relative import correct, add node level in the beginning of the path
+    // This will allow findModulePath to deduce module search direcotry properly
+    moduleName.prepend(QString(node->level, '.'));
+    return moduleName;
+}
+
 void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
 {
     Python::AstDefaultVisitor::visitImportFrom(node);
@@ -509,12 +523,6 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
     QString declarationName;
     foreach ( AliasAst* name, node->names ) {
         // iterate over all the names that are imported, like "from foo import bar as baz, bang as asdf"
-        if ( node->module ) {
-            moduleName = node->module->value + '.' + name->name->value;
-        }
-        else {
-            moduleName = '.' + name->name->value;
-        }
         Identifier* declarationIdentifier = 0;
         declarationName.clear();
         if ( name->asName ) {
@@ -530,13 +538,15 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
         // import the name from a module's __init__.py file, and once from a "real" python file
         // TODO improve this code-wise
         ProblemPointer problem(0);
+        QString intermediate;
+        moduleName = buildModuleNameFromNode(node, name, intermediate);
         Declaration* success = createModuleImportDeclaration(moduleName, declarationName, declarationIdentifier, problem);
-        if ( ! success && node->module ) {
+        if ( ! success && (node->module || node->level) ) {
             ProblemPointer problem_init(0);
-            QString modifiedModuleName = node->module->value + ".__init__." + name->name->value;
-            success = createModuleImportDeclaration(modifiedModuleName, declarationName, declarationIdentifier, problem_init);
+            intermediate = QString("__init__");
+            moduleName = buildModuleNameFromNode(node, name, intermediate);
+            success = createModuleImportDeclaration(moduleName, declarationName, declarationIdentifier, problem_init);
         }
-        qDebug() << success << problem.data();
         if ( ! success && problem ) {
             DUChainWriteLocker lock;
             topContext()->addProblem(problem);
@@ -1746,6 +1756,31 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                     workingOnDeclaration->setKwarg(type->arguments().size() - 1);
                 }
             }
+        }
+    }
+}
+
+void DeclarationBuilder::visitGlobal(GlobalAst* node)
+{
+    TopDUContext* top = topContext();
+    foreach ( Identifier *id, node->names ) {
+        QualifiedIdentifier qid = identifierForNode(id);
+        DUChainWriteLocker lock;
+        QList< Declaration* > existing = top->findLocalDeclarations(qid.first());
+        if ( ! existing.empty() ) {
+            AliasDeclaration* ndec = openDeclaration<AliasDeclaration>(id, node);
+            ndec->setAliasedDeclaration(existing.first());
+            closeDeclaration();
+        }
+        else {
+            injectContext(top);
+            Declaration* dec = visitVariableDeclaration<Declaration>(id);
+            dec->setRange(editorFindRange(id, id));
+            dec->setAutoDeclaration(true);
+            closeContext();
+            AliasDeclaration* ndec = openDeclaration<AliasDeclaration>(id, node);
+            ndec->setAliasedDeclaration(dec);
+            closeDeclaration();
         }
     }
 }

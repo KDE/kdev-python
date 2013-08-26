@@ -24,6 +24,8 @@
 
 #include "pyduchaintest.h"
 
+#include <stdlib.h>
+
 #include <language/duchain/topducontext.h>
 #include <language/duchain/dumpchain.h>
 #include <language/codegen/coderepresentation.h>
@@ -60,8 +62,71 @@ using namespace Python;
 
 PyDUChainTest::PyDUChainTest(QObject* parent): QObject(parent), m_pool()
 {
+    assetsDir = QDir(DUCHAIN_PY_DATA_DIR);
+    if (!assetsDir.cd("data")) {
+        qFatal("Failed find data directory for test files. Aborting");
+    }
+
+    char tempdirname[] = "/tmp/kdev-python-test.XXXXXX";
+    if (!mkdtemp(tempdirname)) {
+        qFatal("Failed to create temp directory, Aboring");
+    }
+    testDir = QDir(QString(tempdirname));
+    kDebug() << "tempdirname" << tempdirname;
+
+    QByteArray pythonpath = qgetenv("PYTHONPATH");
+    pythonpath.prepend(":").prepend(assetsDir.absolutePath().toAscii());
+    qputenv("PYTHONPATH", pythonpath);
+
     initShell();
 }
+
+QList<QString> PyDUChainTest::FindPyFiles(QDir& rootDir)
+{
+    QList<QString> foundfiles;
+    rootDir.setFilter(QDir::Files | QDir::Dirs | QDir::NoDot | QDir::NoDotDot);
+    rootDir.setNameFilters(QStringList() << "*.py"); // We only want .py files
+    
+    QDirIterator it(rootDir, QDirIterator::Subdirectories);
+    while(it.hasNext()) {
+        foundfiles.append(it.next());
+    }
+    return foundfiles;
+}
+
+void PyDUChainTest::init()
+{
+    QString currentTest = QString(QTest::currentTestFunction());
+    if (lastTest == currentTest) {
+        kDebug() << "Already prepared assets for " << currentTest << ", skipping";
+        return;
+    } else {
+        lastTest = currentTest;
+    }
+    kDebug() << "Preparing assets for test " << currentTest;
+    
+    QDir assetModuleDir = QDir(assetsDir.absolutePath());
+    
+    if (!assetModuleDir.cd(currentTest)) {
+        kDebug() << "Asset directory " << currentTest
+                 <<  " does not exist under " << assetModuleDir.absolutePath() << ". Skipping it.";
+        return;
+    }
+    
+    kDebug() << "Searching for python files in " << assetModuleDir.absolutePath();
+    
+    QList<QString> foundfiles = FindPyFiles(assetModuleDir);
+    
+    foreach(const QString filename, foundfiles) {
+        kDebug() << "Parsing asset: " << filename;
+        DUChain::self()->updateContextForUrl(IndexedString(filename), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
+        ICore::self()->languageController()->backgroundParser()->parseDocuments();
+    }
+    foreach(const QString filename, foundfiles) {
+        DUChain::self()->waitForUpdate(IndexedString(filename), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
+    }
+}
+    
 
 void PyDUChainTest::initShell()
 {
@@ -78,23 +143,13 @@ void PyDUChainTest::initShell()
     ICore::self()->languageController()->backgroundParser()->parseDocuments();
     DUChain::self()->waitForUpdate(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
     
-    QFile f("/tmp/i.py");
-    f.open(QIODevice::WriteOnly);
-    f.write("def checkme(): pass\nlocalvar1 = 3\nlocalvar2 = 5\n");
-    f.write("class testclass():\n attr = 3\n");
-    f.close();
-    
-    DUChain::self()->updateContextForUrl(IndexedString("/tmp/i.py"), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
-    ICore::self()->languageController()->backgroundParser()->parseDocuments();
-    DUChain::self()->waitForUpdate(IndexedString("/tmp/i.py"), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
-    
     DUChain::self()->disablePersistentStorage();
     KDevelop::CodeRepresentation::setDiskChangesForbidden(true);
 }
 
 ReferencedTopDUContext PyDUChainTest::parse(const QString& code)
 {
-    TestFile* testfile = new TestFile(code + "\n", "py", 0, "/tmp/");
+    TestFile* testfile = new TestFile(code + "\n", "py", 0, testDir.absolutePath().append("/"));
     createdFiles << testfile;
     testfile->parse((TopDUContext::Features) (TopDUContext::ForceUpdate | TopDUContext::AST) );
     testfile->waitForParsed(500);
@@ -112,21 +167,54 @@ PyDUChainTest::~PyDUChainTest()
     foreach ( TestFile* f, createdFiles ) {
         delete f;
     }
+    testDir.rmdir(testDir.absolutePath());
 }
 
 void PyDUChainTest::testMultiFromImport()
 {
-    ReferencedTopDUContext ctx = parse("import i.localvar1\nimport i.localvar2\na=i.localvar1\nb=i.localvar2\n");
+    QFETCH(QString, code);
+    ReferencedTopDUContext ctx = parse(code);
     QVERIFY(ctx);
     DUChainReadLocker lock;
     QList<Declaration*> a = ctx->findDeclarations(QualifiedIdentifier("a"));
     QList<Declaration*> b = ctx->findDeclarations(QualifiedIdentifier("b"));
     QVERIFY(! a.isEmpty());
     QVERIFY(! b.isEmpty());
-    kDebug() << a.first()->abstractType()->toString();
-    kDebug() << b.first()->abstractType()->toString();
-    QVERIFY(b.first()->abstractType()->toString().endsWith("int"));
     QVERIFY(a.first()->abstractType()->toString().endsWith("int"));
+    QVERIFY(b.first()->abstractType()->toString().endsWith("int"));
+}
+
+void PyDUChainTest::testMultiFromImport_data() {
+    QTest::addColumn<QString>("code");
+    QTest::newRow("multiimport") << "import testMultiFromImport.i.localvar1\n"
+                                    "import testMultiFromImport.i.localvar2\n"
+                                    "a = testMultiFromImport.i.localvar1\n"
+                                    "b = testMultiFromImport.i.localvar2\n";
+}
+
+void PyDUChainTest::testRelativeImport()
+{
+    QFETCH(QString, code);
+    QFETCH(QString, token);
+    QFETCH(QString, type);
+    ReferencedTopDUContext ctx = parse(code);
+    QVERIFY(ctx);
+    DUChainReadLocker lock;
+    QList<Declaration*> t = ctx->findDeclarations(QualifiedIdentifier(token));
+    QVERIFY(! t.isEmpty());
+    QVERIFY(t.first()->abstractType()->toString().endsWith(type));
+}
+
+void PyDUChainTest::testRelativeImport_data() {
+    QTest::addColumn<QString>("code");
+    QTest::addColumn<QString>("token");
+    QTest::addColumn<QString>("type");
+    QTest::newRow(".local") << "from testRelativeImport.m.sm1.go import i1" << "i1" << "int";
+    QTest::newRow(".init") << "from testRelativeImport.m.sm1.go import i2" << "i2" << "int";
+    QTest::newRow("..local") << "from testRelativeImport.m.sm1.go import i3" << "i3" << "int";
+    QTest::newRow("..init") << "from testRelativeImport.m.sm1.go import i4" << "i4" << "int";
+    QTest::newRow("..sub.local") << "from testRelativeImport.m.sm1.go import i5" << "i5" << "int";
+    QTest::newRow("..sub.init") << "from testRelativeImport.m.sm1.go import i6" << "i6" << "int";
 }
 
 void PyDUChainTest::testCrashes() {
@@ -313,7 +401,7 @@ void PyDUChainTest::testCrashes_data() {
             "replace(u'г', 'g').\\\n"
             "replace(u'д', 'd').\\\n"
             "replace(u'ё', 'yo')\n";
-    QTest::newRow("function context range crash") << "def myfunc(arg):\nfoo = 3 + \\\n[x for x in range(20)]";
+    QTest::newRow("function context range crash") << "def myfunc(arg):\n foo = 3 + \\\n[x for x in range(20)]";
     QTest::newRow("decorator comprehension crash") << "@implementer_only(interfaces.ISSLTransport,\n"
                  "                   *[i for i in implementedBy(tcp.Client)\n"
                  "                     if i != interfaces.ITLSTransport])\n"
@@ -698,6 +786,27 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("vararg_constructor") << "class myclass():\n"
                                            "  def __init__(self, *arg): self.prop = arg[0]\n"
                                            "obj = myclass(3, 5); checkme = obj.prop" << "int";
+    QTest::newRow("global_variable") << "a = 3\n"
+                                        "def f1():\n"
+                                        "  global a\n"
+                                        "  return a\n"
+                                        "checkme = f1()\n" << "int";
+    QTest::newRow("global_variable2") << "a = 3\n"
+                                        "def f1():\n"
+                                        "  global a\n"
+                                        "  a = \"str\"\n"
+                                        "  return a\n"
+                                        "checkme = f1()\n" << "str";
+    QTest::newRow("global_scope_variable") << "a = 3\n"
+                                        "def f1():\n"
+                                        "  return a\n"
+                                        "checkme = f1()\n" << "int";
+
+    QTest::newRow("top_level_vs_class_member") << "var = 3\n"
+                                                  "class myclass:\n"
+                                                  "  def __init__(self): self.var = \"str\"\n"
+                                                  "  def f1(): return var\n"
+                                                  "checkme = myclass.f1()" << "int";
 }
 
 typedef QPair<Declaration*, int> pair;
@@ -714,12 +823,7 @@ void PyDUChainTest::testImportDeclarations() {
     DUChainReadLocker lock(DUChain::lock());
     foreach ( const QString& expected, expectedDecls ) {
         bool found = false;
-        QString name;
-        QStringList split = expected.split(",");
-        name = split[0];
-//         int start, end;
-//         start = split[1].toInt();
-//         end = split[2].toInt();
+        QString name = expected;
         QList<pair> decls = ctx->allDeclarations(CursorInRevision::invalid(), ctx->topContext(), false);
         kDebug() << "FOUND DECLARATIONS:";
         foreach ( const pair& current, decls ) {
@@ -732,7 +836,7 @@ void PyDUChainTest::testImportDeclarations() {
             if ( isAliased && shouldBeAliased ) {
                 found = true; // TODO fixme
             }
-            else if ( ! shouldBeAliased && ! isAliased ) {
+            else if ( ! isAliased  && ! shouldBeAliased ) {
                 found = true;
             }
         }
@@ -745,10 +849,10 @@ void PyDUChainTest::testImportDeclarations_data() {
     QTest::addColumn<QStringList>("expectedDecls");
     QTest::addColumn<bool>("shouldBeAliased");
     
-    QTest::newRow("from_import") << "from i import checkme" << ( QStringList() << "checkme,16,23" ) << true;
-    QTest::newRow("import") << "import i" << ( QStringList() << "i,7,14" ) << false;
-    QTest::newRow("import_as") << "import i as checkme" << ( QStringList() << "checkme,14,21" ) << false;
-    QTest::newRow("from_import_as") << "from i import checkme as checkme" << ( QStringList() << "checkme,23,30" ) << true;
+    QTest::newRow("from_import") << "from testImportDeclarations.i import checkme" << ( QStringList() << "checkme" ) << true;
+    QTest::newRow("import") << "import testImportDeclarations.i" << ( QStringList() << "testImportDeclarations" ) << false;
+    QTest::newRow("import_as") << "import testImportDeclarations.i as checkme" << ( QStringList() << "checkme" ) << false;
+    QTest::newRow("from_import_as") << "from testImportDeclarations.i import checkme as checkme" << ( QStringList() << "checkme" ) << true;
 }
 
 typedef QPair<Declaration*, int> p;
@@ -919,7 +1023,7 @@ void PyDUChainTest::testInheritance_data()
     QTest::addColumn<QString>("code");
     
     QTest::newRow("simple") << "class A():\n\tattr = 3\n\nclass B(A):\n\tpass\n\ninst=B()\ncheckme = inst.attr";
-    QTest::newRow("context_import") << "import i\n\nclass B(i.testclass):\n\ti = 4\n\ninst=B()\ncheckme = inst.attr";
+    QTest::newRow("context_import") << "import testInheritance.i\n\nclass B(testInheritance.i.testclass):\n\ti = 4\n\ninst=B()\ncheckme = inst.attr";
 }
 
 void PyDUChainTest::testClassContextRanges()

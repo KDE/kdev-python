@@ -452,5 +452,6 @@ def __import__(name, globa = None, loca = None, fromlist = None, level = 0): ret
 def exit(status): return None
 __name__ = "none"
 __file__ = "none"
+__doc__ = "none"
 __package__ = "none"
 

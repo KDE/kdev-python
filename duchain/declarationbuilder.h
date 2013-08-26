@@ -75,6 +75,7 @@ protected:
     virtual void visitYield(YieldAst* node);
     virtual void visitLambda(LambdaAst* node);
     virtual void visitComprehension(ComprehensionAst* node);
+    virtual void visitGlobal(GlobalAst* node);
     
     template<typename T> void visitDecorators(QList<ExpressionAst*> decorators, T* addTo);
     
@@ -152,6 +153,7 @@ protected:
     DeclarationPointer m_firstAttributeDeclaration;
 private:
     QList<DUChainBase*> m_scheduledForDeletion;
+    QString buildModuleNameFromNode(ImportFromAst* node, AliasAst* alias, const QString& intermediate);
 };
 
 }

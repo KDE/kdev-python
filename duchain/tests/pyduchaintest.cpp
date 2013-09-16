@@ -709,6 +709,15 @@ void PyDUChainTest::testTypes_data()
     
     QTest::newRow("class_method_import") << "class c:\n attr = \"foo\"\n def m():\n  return attr;\n  return 3;\ni=c()\ncheckme=i.m()" << "int";
     QTest::newRow("getsListDecorator") << "foo = [1, 2, 3]\ncheckme = foo.reverse()" << "list of int";
+
+    QTest::newRow("fromAssertIsinstance") << "class c(): pass\ncheckme = mixed()\nassert isinstance(checkme, c)\n" << "c";
+    QTest::newRow("fromAssertIsinstanceInvalid") << "class c(): pass\ncheckme = mixed()\nassert isinstance(c, checkme)\n" << "mixed";
+    QTest::newRow("fromAssertIsinstanceInvalid2") << "class c(): pass\ncheckme = mixed()\nassert isinstance(D, c)\n" << "mixed";
+    QTest::newRow("fromAssertIsinstanceInvalid3") << "checkme = int()\nassert isinstance(checkme, X)\n" << "int";
+    QTest::newRow("fromAssertIsinstanceInvalid4") << "checkme = int()\nassert isinstance(checkme)\n" << "int";
+    QTest::newRow("fromAssertType") << "class c(): pass\ncheckme = mixed()\nassert type(checkme) == c\n" << "c";
+    QTest::newRow("fromIfType") << "class c(): pass\ncheckme = mixed()\nif type(checkme) == c: pass\n" << "c";
+    QTest::newRow("fromIfIsinstance") << "class c(): pass\ncheckme = mixed()\nif isinstance(checkme, c): pass\n" << "c";
     
     QTest::newRow("diff_local_classattr") << "class c(): attr = 1\ninst=c()\ncheckme = c.attr" << "int";
     QTest::newRow("diff_local_classattr2") << "local=3\nclass c(): attr = 1\ninst=c()\ncheckme = c.local" << "mixed";

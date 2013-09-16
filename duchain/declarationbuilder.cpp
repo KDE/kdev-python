@@ -1597,6 +1597,88 @@ QString DeclarationBuilder::getDocstring(QList< Ast* > body)
     return QString();
 }
 
+void DeclarationBuilder::visitAssertion(AssertionAst* node)
+{
+    adjustForTypecheck(node->condition);
+    Python::AstDefaultVisitor::visitAssertion(node);
+}
+
+void DeclarationBuilder::visitIf(IfAst* node)
+{
+    adjustForTypecheck(node->condition);
+    Python::AstDefaultVisitor::visitIf(node);
+}
+
+void DeclarationBuilder::adjustForTypecheck(ExpressionAst* check)
+{
+    if ( ! check ) return;
+    if ( check->astType == Ast::CallAstType ) {
+        // Is this a call of the form "isinstance(foo, bar)"?
+        CallAst* call = static_cast<CallAst*>(check);
+        if ( ! call->function ) {
+            return;
+        }
+        if ( call->function->astType != Ast::NameAstType ) {
+            return;
+        }
+        const QString functionName = static_cast<Python::NameAst*>(call->function)->identifier->value;
+        if ( functionName != QLatin1String("isinstance") ) {
+            return;
+        }
+        if ( call->arguments.length() != 2 ) {
+            return;
+        }
+        adjustExpressionsForTypecheck(call->arguments.at(0), call->arguments.at(1));
+    }
+    else if ( check->astType == Ast::CompareAstType ) {
+        // Is this a call of the form "type(ainstnace) == a"?
+        CompareAst* compare = static_cast<CompareAst*>(check);
+        kDebug() << compare->operators.first();
+        if ( compare->operators.size() != 1 || compare->comparands.size() != 1 ) {
+            return;
+        }
+        if ( compare->operators.first() != Ast::ComparisonOperatorEquals ) {
+            return;
+        }
+        ExpressionAst* c1 = compare->comparands.first();
+        ExpressionAst* c2 = compare->leftmostElement;
+        if ( ! ( (c1->astType == Ast::CallAstType) ^ (c2->astType == Ast::CallAstType) ) ) {
+            // Exactly one of the two must be a call. TODO: support adjusting function return types
+            return;
+        }
+        CallAst* typecall = static_cast<CallAst*>(c1->astType == Ast::CallAstType ? c1 : c2);
+        if ( ! typecall->function || typecall->function->astType != Ast::NameAstType || typecall->arguments.length() != 1 ) {
+            return;
+        }
+        const QString functionName = static_cast<Python::NameAst*>(typecall->function)->identifier->value;
+        if ( functionName != QLatin1String("type") ) {
+            return;
+        }
+        adjustExpressionsForTypecheck(typecall->arguments.at(0), c1->astType == Ast::CallAstType ? c2 : c1);
+    }
+}
+
+void DeclarationBuilder::adjustExpressionsForTypecheck(ExpressionAst* adjustExpr, ExpressionAst* from)
+{
+    // Find types of the two arguments
+    ExpressionVisitor first(currentContext());
+    ExpressionVisitor second(currentContext());
+    first.visitNode(adjustExpr);
+    second.visitNode(from);
+    AbstractType::Ptr hint;
+    DeclarationPointer adjust;
+    if ( second.m_isAlias && second.lastType() ) {
+        hint = second.lastType();
+        adjust = first.lastDeclaration();
+    }
+    if ( ! adjust ) {
+        // no declaration for the thing to verify, can't adjust it.
+        return;
+    }
+    DUChainWriteLocker lock;
+    adjust->setAbstractType(Helper::mergeTypes(adjust->abstractType(), hint));
+}
+
 void DeclarationBuilder::visitReturn(ReturnAst* node)
 {
     // Find the type of the object being "return"ed

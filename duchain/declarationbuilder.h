@@ -101,7 +101,6 @@ protected:
     /// Does nothing if the given expression isn't of any of the forms
     ///    a) isinstance(fooinstance, Foo)
     ///    b) type(fooinstance) == Foo
-    ///    c) fooinstance.__class__ == Foo
     void adjustForTypecheck(ExpressionAst* check);
     /// Helper for the above
     void adjustExpressionsForTypecheck(ExpressionAst* adjust, ExpressionAst* from);

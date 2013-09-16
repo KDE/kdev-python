@@ -76,6 +76,8 @@ protected:
     virtual void visitLambda(LambdaAst* node);
     virtual void visitComprehension(ComprehensionAst* node);
     virtual void visitGlobal(GlobalAst* node);
+    virtual void visitAssertion(AssertionAst* node);
+    virtual void visitIf(IfAst* node);
     
     template<typename T> void visitDecorators(QList<ExpressionAst*> decorators, T* addTo);
     
@@ -94,6 +96,14 @@ protected:
     
     template<typename T> QList<Declaration*> reopenFittingDeclaration(QList< Declaration* > declarations, FitDeclarationType mustFitType, RangeInRevision updateRangeTo, Declaration** ok);
     QList<Declaration*> existingDeclarationsForNode(Identifier* node);
+
+    /// Adjust the type of foo in an expression like assert isinstance(fooinstance, Foo)
+    /// Does nothing if the given expression isn't of any of the forms
+    ///    a) isinstance(fooinstance, Foo)
+    ///    b) type(fooinstance) == Foo
+    void adjustForTypecheck(ExpressionAst* check);
+    /// Helper for the above
+    void adjustExpressionsForTypecheck(ExpressionAst* adjust, ExpressionAst* from);
     
     FitDeclarationType kindForType(AbstractType::Ptr type, bool isAlias = false);
     

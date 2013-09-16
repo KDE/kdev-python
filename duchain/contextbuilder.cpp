@@ -378,7 +378,6 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
             QFile sourcefile(testFilename + ".py");
             QFileInfo sourcedir(testFilename);
             tmp.cd(component);
-            kDebug() << testFilename << "exists: [file/dir]" << sourcefile.exists() << sourcedir.exists();
             if ( ! sourcedir.exists() || ! sourcedir.isDir() || leftNameComponents.isEmpty() ) {
                 // If the search cannot continue further down into a hierarchy of directories,
                 // the file matching the next name component will be returned,
@@ -462,7 +461,6 @@ void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
     // The DUChain expects the context containing a function's arguments to be of type Function.
     // The function body will have DUContext::Other as type, as it contains only code.
     DUContext* funcctx = openContext(node->arguments, range, DUContext::Function, node->name);
-    kDebug() << funcctx;
     visitNode(node->arguments);
     closeContext();
     // the parameters should be visible in the function body, so import that context there

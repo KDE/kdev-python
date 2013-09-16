@@ -611,6 +611,9 @@ DUContext* PythonCodeCompletionContext::internalContextForDeclaration(TopDUConte
 {
     Declaration* d = 0;
     DUContext* c = topContext;
+    if ( ! topContext ) {
+        return 0;
+    }
     if ( remainingIdentifiers.isEmpty() ) {
         return topContext;
     }

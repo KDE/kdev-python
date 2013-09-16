@@ -56,8 +56,8 @@ namespace Python
 {
 
 DeclarationBuilder::DeclarationBuilder(PythonEditorIntegrator* editor)
-        : DeclarationBuilderBase( )
-        , m_ownPriority(0)
+        : m_ownPriority(0)
+        , DeclarationBuilderBase( )
 {
     setEditor(editor);
     kDebug() << "Building Declarations";
@@ -216,7 +216,6 @@ template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclar
         }
         if ( fitting && ! reallyEncountered && ! invalidType ) {
             if ( d->topContext() == currentContext()->topContext() ) {
-                kDebug() << "Opening previously existing declaration for " << d->toString();
                 openDeclarationInternal(d);
                 d->setRange(updateRangeTo);
                 *ok = d;
@@ -245,8 +244,6 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     if ( ! type ) {
         type = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
     }
-    
-    kDebug() << "Parsing variable declaration: " << node->value;
     
     QList<Declaration*> existingDeclarations;
     if ( previous ) {
@@ -557,7 +554,6 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
 void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
 {
     Python::AstDefaultVisitor::visitComprehension(node);
-    kDebug() << "visiting comprehension" << currentContext()->range();
     // make the declaration zero chars long; it must appear at the beginning of the context,
     // because it is actually used *before* its real declaration: [foo for foo in bar]
     // The DUChain doesn't like this, so for now, the declaration is at the opening bracket,
@@ -860,7 +856,6 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
     }
     if ( moduleInfo.second.isEmpty() ) {
         // import the whole module
-        kDebug() << "Got module, importing it" << declarationIdentifier->value;
         resultingDeclaration = createDeclarationTree(declarationName.split("."),
                                                      declarationIdentifier, moduleContext, 0, range);
     }
@@ -874,7 +869,6 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
         else {
             kDebug() << "Got module, importing declaration: " << moduleInfo.second;
             Declaration* originalDeclaration = findDeclarationInContext(moduleInfo.second, moduleContext);
-            kDebug() << "Result: " << originalDeclaration;
             if ( originalDeclaration ) {
                 DUChainWriteLocker lock(DUChain::lock());
                 resultingDeclaration = createDeclarationTree(declarationName.split("."), declarationIdentifier,
@@ -958,7 +952,6 @@ void DeclarationBuilder::visitCall(CallAst* node)
 
     if ( node->function && node->function->astType == Ast::AttributeAstType && functionVisitor.lastDeclaration() ) {
         // Some special functions, like "append", update the content of the object they operate on.
-        kDebug() << "Checking for list content updates...";
         // Find the object the function is called on, like for d = [1, 2, 3]; d.append(5), this will give "d"
         ExpressionVisitor v(currentContext(), editor());
         v.visitNode(static_cast<AttributeAst*>(node->function)->value);
@@ -1032,8 +1025,6 @@ void DeclarationBuilder::visitCall(CallAst* node)
     //     def foo(arg): print arg
     //     foo(3)
     // the following will change the type of "arg" to be "int" when it processes the second line.
-    kDebug() << "--";
-    kDebug() << "Trying to update function argument types based on call";
     
     
     DUChainReadLocker lock;
@@ -1163,7 +1154,6 @@ void DeclarationBuilder::visitCall(CallAst* node)
 
 void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 {
-    KDEBUG_BLOCK
     AstDefaultVisitor::visitAssignment(node);
     // Because of tuple unpacking, it is required to gather the left- and right hand side
     // expressions / types first, then match them together in a second step.
@@ -1200,7 +1190,6 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         rhsDeclarations << v.lastDeclaration();
         rhsEntryIsAliasDeclaration << v.m_isAlias;
         DUChainReadLocker lock;
-        kDebug() << ( v.lastType() ? v.lastType()->toString() : "< no last type >" ) << ( v.lastDeclaration() ? v.lastDeclaration()->toString() : "< no last declaration >" );
     }
     
     // Now all the information about left- and right hand side entries is ready,
@@ -1501,7 +1490,6 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     FunctionType::Ptr type(new FunctionType());
     
     DUChainWriteLocker lock(DUChain::lock());
-    kDebug() << identifierForNode(node->name).toString();
     FunctionDeclaration* dec = eventuallyReopenDeclaration<FunctionDeclaration>(node->name, node->name, FunctionDeclarationType);
     
     Q_ASSERT(dec->isFunctionDeclaration());
@@ -1621,6 +1609,87 @@ QString DeclarationBuilder::getDocstring(QList< Ast* > body)
     return QString();
 }
 
+void DeclarationBuilder::visitAssertion(AssertionAst* node)
+{
+    adjustForTypecheck(node->condition);
+    Python::AstDefaultVisitor::visitAssertion(node);
+}
+
+void DeclarationBuilder::visitIf(IfAst* node)
+{
+    adjustForTypecheck(node->condition);
+    Python::AstDefaultVisitor::visitIf(node);
+}
+
+void DeclarationBuilder::adjustForTypecheck(ExpressionAst* check)
+{
+    if ( ! check ) return;
+    if ( check->astType == Ast::CallAstType ) {
+        // Is this a call of the form "isinstance(foo, bar)"?
+        CallAst* call = static_cast<CallAst*>(check);
+        if ( ! call->function ) {
+            return;
+        }
+        if ( call->function->astType != Ast::NameAstType ) {
+            return;
+        }
+        const QString functionName = static_cast<Python::NameAst*>(call->function)->identifier->value;
+        if ( functionName != QLatin1String("isinstance") ) {
+            return;
+        }
+        if ( call->arguments.length() != 2 ) {
+            return;
+        }
+        adjustExpressionsForTypecheck(call->arguments.at(0), call->arguments.at(1));
+    }
+    else if ( check->astType == Ast::CompareAstType ) {
+        // Is this a call of the form "type(ainstance) == a"?
+        CompareAst* compare = static_cast<CompareAst*>(check);
+        if ( compare->operators.size() != 1 || compare->comparands.size() != 1 ) {
+            return;
+        }
+        if ( compare->operators.first() != Ast::ComparisonOperatorEquals ) {
+            return;
+        }
+        ExpressionAst* c1 = compare->comparands.first();
+        ExpressionAst* c2 = compare->leftmostElement;
+        if ( ! ( (c1->astType == Ast::CallAstType) ^ (c2->astType == Ast::CallAstType) ) ) {
+            // Exactly one of the two must be a call. TODO: support adjusting function return types
+            return;
+        }
+        CallAst* typecall = static_cast<CallAst*>(c1->astType == Ast::CallAstType ? c1 : c2);
+        if ( ! typecall->function || typecall->function->astType != Ast::NameAstType || typecall->arguments.length() != 1 ) {
+            return;
+        }
+        const QString functionName = static_cast<Python::NameAst*>(typecall->function)->identifier->value;
+        if ( functionName != QLatin1String("type") ) {
+            return;
+        }
+        adjustExpressionsForTypecheck(typecall->arguments.at(0), c1->astType == Ast::CallAstType ? c2 : c1);
+    }
+}
+
+void DeclarationBuilder::adjustExpressionsForTypecheck(ExpressionAst* adjustExpr, ExpressionAst* from)
+{
+    // Find types of the two arguments
+    ExpressionVisitor first(currentContext());
+    ExpressionVisitor second(currentContext());
+    first.visitNode(adjustExpr);
+    second.visitNode(from);
+    AbstractType::Ptr hint;
+    DeclarationPointer adjust;
+    if ( second.m_isAlias && second.lastType() ) {
+        hint = second.lastType();
+        adjust = first.lastDeclaration();
+    }
+    if ( ! adjust ) {
+        // no declaration for the thing to verify, can't adjust it.
+        return;
+    }
+    DUChainWriteLocker lock;
+    adjust->setAbstractType(Helper::mergeTypes(adjust->abstractType(), hint));
+}
+
 void DeclarationBuilder::visitReturn(ReturnAst* node)
 {
     // Find the type of the object being "return"ed
@@ -1651,7 +1720,6 @@ void DeclarationBuilder::visitReturn(ReturnAst* node)
 void DeclarationBuilder::visitArguments( ArgumentsAst* node )
 {
     DUChainWriteLocker lock(DUChain::lock());
-    kDebug() << "Current context for parameters: " << currentContext() << currentContext()->scopeIdentifier().toString();
     
     if ( currentDeclaration() and currentDeclaration()->isFunctionDeclaration() ) {
         FunctionDeclaration* workingOnDeclaration = static_cast<FunctionDeclaration*>(Helper::resolveAliasDeclaration(currentDeclaration()));
@@ -1715,7 +1783,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                     isFirst = false;
                 }
             }
-            
+            // Handle *args, **kwargs, and assign them a list / dictionary type.
             if ( node->vararg ) {
                 // inject the vararg at the correct place
                 int atIndex = 0;

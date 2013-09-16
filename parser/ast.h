@@ -133,13 +133,13 @@ public:
     };
     
     enum BooleanOperationTypes {
-        BooleanAnd,
+        BooleanAnd = 1,
         BooleanOr,
         BooleanInvalidOperation
     };
     
     enum OperatorTypes {
-        OperatorAdd,
+        OperatorAdd = 1,
         OperatorSub,
         OperatorMult,
         OperatorDiv,
@@ -155,7 +155,7 @@ public:
     };
     
     enum UnaryOperatorTypes {
-        UnaryOperatorInvert,
+        UnaryOperatorInvert = 1,
         UnaryOperatorNot,
         UnaryOperatorAdd,
         UnaryOperatorSub,
@@ -163,7 +163,7 @@ public:
     };
     
     enum ComparisonOperatorTypes {
-        ComparisonOperatorEquals,
+        ComparisonOperatorEquals = 1,
         ComparisonOperatorNotEquals,
         ComparisonOperatorLessThan,
         ComparisonOperatorLessThanEqual,

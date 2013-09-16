@@ -91,6 +91,8 @@ class object():
     def __index__(self): pass
     def __coerce__(self, other): pass
 
+    __class__ = str()
+
 class basestring():
     pass
 

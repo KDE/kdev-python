@@ -947,13 +947,13 @@ void DeclarationBuilder::visitCall(CallAst* node)
     //     l = [myclass()]
     //     x = l[0].myfun() # the called object is actually l[0].myfun
     // In the above example, this call will be evaluated to "myclass.myfun" in the following block.
-    ExpressionVisitor functionVisitor(currentContext(), editor());
+    ExpressionVisitor functionVisitor(currentContext());
     functionVisitor.visitNode(node);
 
     if ( node->function && node->function->astType == Ast::AttributeAstType && functionVisitor.lastDeclaration() ) {
         // Some special functions, like "append", update the content of the object they operate on.
         // Find the object the function is called on, like for d = [1, 2, 3]; d.append(5), this will give "d"
-        ExpressionVisitor v(currentContext(), editor());
+        ExpressionVisitor v(currentContext());
         v.visitNode(static_cast<AttributeAst*>(node->function)->value);
 
         // Don't do anything if the object the function is being called on is not a container.
@@ -1098,8 +1098,8 @@ void DeclarationBuilder::visitCall(CallAst* node)
                 DUChainWriteLocker wlock;
                 if ( atVararg ) {
                     indexInVararg++;
-                    IndexedContainer::Ptr varargContainer = parameters.at(lastFunctionDeclaration->vararg()+hasSelfArgument)->abstractType()
-                                                            .cast<IndexedContainer>();
+                    Declaration* parameter = parameters.at(lastFunctionDeclaration->vararg()+hasSelfArgument);
+                    IndexedContainer::Ptr varargContainer = parameter->type<IndexedContainer>();
                     kDebug() << "vararg container:" << varargContainer;
                     kDebug() << "adding" << addType->toString() << "at position" << indexInVararg;
                     if ( ! varargContainer ) continue;
@@ -1111,7 +1111,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
                     else {
                         varargContainer->addEntry(addType.cast<AbstractType>());
                     }
-                    parameters.at(lastFunctionDeclaration->vararg()+hasSelfArgument)->setAbstractType(varargContainer.cast<AbstractType>());
+                    parameter->setAbstractType(varargContainer.cast<AbstractType>());
                 }
                 else {
                     kDebug() << "adding" << argumentType << "at position" << currentArgumentIndex << "/" << currentParamIndex;
@@ -1731,11 +1731,10 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             int parametersCount = node->arguments.length();
             int firstDefaultParameterOffset = parametersCount - defaultParametersCount;
             int currentIndex = 0;
+            kDebug() << "arguments:" << node->arguments.size();
             foreach ( ArgAst* arg, node->arguments ) {
                 // Iterate over all the function's arguments, create declarations, and add the arguments
                 // to the functions FunctionType.
-                ExpressionAst* expression = 0; //arg->argumentName;
-#warning this cannot work
                 currentIndex += 1;
                 
                 if ( ! arg->argumentName ) {
@@ -1816,8 +1815,8 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                                                                 <AbstractType>("str", currentContext());
                 VariableLengthContainer::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType
                                                                 <VariableLengthContainer>("dict", currentContext());
+                lock.unlock();
                 if ( dictType && stringType ) {
-                    lock.unlock();
                     dictType->addKeyType(stringType);
                     visitVariableDeclaration<Declaration>(node->kwarg->argumentName, 0, dictType.cast<AbstractType>());
                     type->addArgument(dictType.cast<AbstractType>());

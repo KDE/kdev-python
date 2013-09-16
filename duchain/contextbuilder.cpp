@@ -415,7 +415,28 @@ void ContextBuilder::visitLambda(LambdaAst* node)
 
 RangeInRevision ContextBuilder::rangeForArgumentsContext(FunctionDefinitionAst* node)
 {
-    RangeInRevision range = editorFindRange(node->arguments, node->arguments);
+    SimpleCursor start = node->name->range().end;
+    SimpleCursor end = start;
+    if ( node->arguments->kwarg ) {
+        end = node->arguments->kwarg->range().end;
+    }
+    else if ( node->arguments->vararg ) {
+        end = node->arguments->vararg->range().end;
+    }
+    if ( ! node->arguments->arguments.isEmpty() && node->arguments->vararg ) {
+        if ( node->arguments->vararg->appearsBefore(node->arguments->arguments.last()) ) {
+            end = node->arguments->arguments.last()->range().end;
+        }
+    }
+    else if ( ! node->arguments->arguments.isEmpty() ) {
+        end = node->arguments->arguments.last()->range().end;
+    }
+
+    if ( ! node->arguments->defaultValues.isEmpty() ) {
+        end = qMax<SimpleCursor>(node->arguments->defaultValues.last()->range().end, end);
+    }
+
+    RangeInRevision range(start.line, start.column, end.line, end.column);
     // make the range contain the closing and opening parentheses
     range.start.column -= 1;
     range.end.column += 1;
@@ -430,6 +451,7 @@ void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
     // The function body will have DUContext::Other as type, as it contains only code.
     DUContext* funcctx = openContext(node->arguments, range, DUContext::Function, node->name);
     AstDefaultVisitor::visitArguments(node->arguments);
+    visitArguments(node->arguments);
     closeContext();
     // the parameters should be visible in the function body, so import that context there
     m_importedParentContexts.append(funcctx);

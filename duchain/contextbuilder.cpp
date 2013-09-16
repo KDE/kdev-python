@@ -244,9 +244,9 @@ void ContextBuilder::visitComprehensionCommon(Ast* node)
     RangeInRevision range = comprehensionRange(node);
     Q_ASSERT(range.isValid());
     if ( range.isValid() ) {
-        range.start.column -= 1;
         DUChainWriteLocker lock(DUChain::lock());
-        openContext(node, RangeInRevision(range.start, range.end), KDevelop::DUContext::Other);
+        openContext(node, range, KDevelop::DUContext::Other);
+        Q_ASSERT(currentContext());
 //         currentContext()->setLocalScopeIdentifier(QualifiedIdentifier("<generator>"));
         lock.unlock();
         if ( node->astType == Ast::DictionaryComprehensionAstType )
@@ -412,45 +412,10 @@ void ContextBuilder::visitLambda(LambdaAst* node)
 
 RangeInRevision ContextBuilder::rangeForArgumentsContext(FunctionDefinitionAst* node)
 {
-    // The python parser has extra syntax features for *args and **kwargs. 
-    // We need to know where the function arguments context ends (the location of the closing ")" paren would
-    // be optimal), so this does some pretty ugly checks whether the * or ** arguments are present,
-    // and adjusts the range as needed.
-    // TODO: Can we remove this function since we have the RangeUpdateVisitor now, which is much simpler?
-    RangeInRevision range;
-    CursorInRevision start, end;
-    if ( node->arguments->arguments.count() ) {
-        Ast* first = node->arguments->arguments.first();
-        start = CursorInRevision(first->startLine, first->startCol);
-    }
-    else if ( node->arguments->vararg )
-        start = CursorInRevision(node->arguments->vararg->startLine, node->arguments->vararg->startCol);
-    else if ( node->arguments->kwarg )
-        start = CursorInRevision(node->arguments->kwarg->startLine, node->arguments->kwarg->startCol);
-    
-    if ( node->arguments->kwarg )
-        end = CursorInRevision(node->arguments->kwarg->startLine, node->arguments->kwarg->startCol + node->arguments->kwarg->argumentName->value.length() + 1);
-    else if ( node->arguments->vararg and ( node->arguments->arguments.isEmpty() 
-              || node->arguments->arguments.last()->appearsBefore(node->arguments->vararg) ) )
-        end = CursorInRevision(node->arguments->vararg->startLine, node->arguments->vararg->startCol + node->arguments->vararg->argumentName->value.length() + 1);
-    else if ( node->arguments->arguments.count() ) {
-        Ast* last = node->arguments->arguments.last();
-        end = CursorInRevision(last->endLine, last->endCol + 1);
-    }
-    
-    if ( node->arguments->arguments.isEmpty() && ! node->arguments->kwarg && ! node->arguments->vararg ) {
-        start = CursorInRevision(node->startLine, node->startCol + node->name->value.length());
-        end = start;
-    }
-
-    foreach ( const ExpressionAst* expr, node->arguments->defaultValues ) {
-        if ( expr->endLine > end.line || (expr->endLine == end.line && expr->endCol > end.column ) ) {
-            end = CursorInRevision(expr->endLine, expr->endCol);
-        }
-    }
-
-    range = RangeInRevision(start, end);
-    Q_ASSERT(range.isValid());
+    RangeInRevision range = editorFindRange(node->arguments, node->arguments);
+    // make the range contain the closing and opening parentheses
+    range.start.column -= 1;
+    range.end.column += 1;
     return range;
 }
 

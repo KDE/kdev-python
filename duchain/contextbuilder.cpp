@@ -53,7 +53,9 @@ using namespace KTextEditor;
 namespace Python
 {
 
-ContextBuilder::ContextBuilder() : m_indentInformationCache(0)
+ContextBuilder::ContextBuilder()
+    : m_indentInformationCache(0)
+    , m_prebuilding(false)
 {
 
 }

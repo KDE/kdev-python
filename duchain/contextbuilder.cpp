@@ -426,7 +426,7 @@ void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
     // The DUChain expects the context containing a function's arguments to be of type Function.
     // The function body will have DUContext::Other as type, as it contains only code.
     DUContext* funcctx = openContext(node->arguments, range, DUContext::Function, node->name);
-    visitNode(node->arguments);
+    AstDefaultVisitor::visitArguments(node->arguments);
     closeContext();
     // the parameters should be visible in the function body, so import that context there
     m_importedParentContexts.append(funcctx);

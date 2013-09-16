@@ -236,7 +236,10 @@ void ContextBuilder::visitGeneratorExpression(GeneratorExpressionAst* node)
 
 RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
 {
-    return editorFindRange(node, node);
+    RangeInRevision range = editorFindRange(node, node);
+    range.start.column -= 1;
+    range.end.column += 1;
+    return range;
 }
 
 void ContextBuilder::visitComprehensionCommon(Ast* node)

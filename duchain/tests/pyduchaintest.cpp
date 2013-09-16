@@ -1062,11 +1062,11 @@ void PyDUChainTest::testContainerTypes()
         VariableLengthContainer* type = dynamic_cast<VariableLengthContainer*>(decls.first()->abstractType().unsafeData());
         QVERIFY(type);
         QVERIFY(type->contentType());
-        QVERIFY(type->contentType().abstractType()->toString() == contenttype);
+        QCOMPARE(type->contentType().abstractType()->toString(), contenttype);
     }
     else {
         QVERIFY(decls.first()->abstractType());
-        QVERIFY(decls.first()->abstractType()->toString() == contenttype);
+        QCOMPARE(decls.first()->abstractType()->toString(), contenttype);
     }
 }
 

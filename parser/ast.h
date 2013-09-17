@@ -178,7 +178,6 @@ public:
 
     Ast(Ast* parent, AstType type);
     Ast();
-    virtual ~Ast();
     Ast* parent;
     AstType astType;
     
@@ -189,10 +188,10 @@ public:
         endLine = other->endLine;
     }
 
-    qint64 startCol;
-    qint64 startLine;
-    qint64 endCol;
-    qint64 endLine;
+    int startCol;
+    int startLine;
+    int endCol;
+    int endLine;
     
     bool hasUsefulRangeInformation;
     

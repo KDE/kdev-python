@@ -1712,7 +1712,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 // Iterate over all the function's arguments, create declarations, and add the arguments
                 // to the functions FunctionType.
                 currentIndex += 1;
-                realParam = dynamic_cast<NameAst*>(expression);
+                realParam = (expression && expression->astType == Ast::NameAstType) ? static_cast<NameAst*>(expression) : 0;
                 
                 if ( ! realParam || realParam->context != ExpressionAst::Parameter ) {
                     // def myfun(x, y, (z, a, b), d): pass

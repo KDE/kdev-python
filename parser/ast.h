@@ -431,6 +431,33 @@ public:
     Ast::OperatorTypes type;
     ExpressionAst* lhs;
     ExpressionAst* rhs;
+    inline QString methodName() const {
+        switch ( type ) {
+            case Python::Ast::OperatorAdd: return QLatin1String("__add__");
+            case Python::Ast::OperatorBitwiseAnd: return QLatin1String("__and__");
+            case Python::Ast::OperatorBitwiseOr: return QLatin1String("__or__");
+            case Python::Ast::OperatorBitwiseXor: return QLatin1String("__xor__");
+            case Python::Ast::OperatorDiv: return QLatin1String("__div__");
+            case Python::Ast::OperatorFloorDivision: return QLatin1String("__floordiv__");
+            case Python::Ast::OperatorLeftShift: return QLatin1String("__lshift__");
+            case Python::Ast::OperatorMod: return QLatin1String("__mod__");
+            case Python::Ast::OperatorMult: return QLatin1String("__mul__");
+            case Python::Ast::OperatorPow: return QLatin1String("__pow__");
+            case Python::Ast::OperatorRightShift: return QLatin1String("__rshift__");
+            case Python::Ast::OperatorSub: return QLatin1String("__sub__");
+            case Python::Ast::OperatorInvalid: // fallthrough
+            default: return QString();
+        }
+    };
+    // incremental methods, for e.g. a += 3
+    inline QString incMethodName() const {
+        QString name = methodName();
+        if ( name.size() < 3 ) {
+            return name;
+        }
+        name.insert(2, QLatin1Char('i'));
+        return name;
+    }
 };
 
 class KDEVPYTHONPARSER_EXPORT UnaryOperationAst : public ExpressionAst {

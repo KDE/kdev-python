@@ -926,6 +926,41 @@ void PyDUChainTest::testDecorators_data()
     QTest::newRow("two_decorators") << "@foo\n@bar(17)\ndef func(): pass" << 2 << ( QStringList() << "foo" << "bar" );
 }
 
+void PyDUChainTest::testOperators()
+{
+    QFETCH(QString, code);
+    QFETCH(QString, expectedType);
+    code.prepend("from testOperators.example import *\n\n");
+    ReferencedTopDUContext ctx = parse(code);
+    QVERIFY(ctx);
+
+    DUChainReadLocker lock(DUChain::lock());
+    TypeTestVisitor* visitor = new TypeTestVisitor();
+    visitor->ctx = TopDUContextPointer(ctx.data());
+    visitor->searchingForType = expectedType;
+    visitor->visitCode(m_ast);
+
+    QVERIFY(visitor->found);
+}
+
+void PyDUChainTest::testOperators_data()
+{
+    QTest::addColumn<QString>("code");
+    QTest::addColumn<QString>("expectedType");
+
+    QTest::newRow("add") << "checkme = Example() + Example()" << "Add";
+    QTest::newRow("sub") << "checkme = Example() - Example()" << "Sub";
+    QTest::newRow("mul") << "checkme = Example() * Example()" << "Mul";
+    QTest::newRow("floordiv") << "checkme = Example() // Example()" << "Floordiv";
+    QTest::newRow("mod") << "checkme = Example() % Example()" << "Mod";
+    QTest::newRow("pow") << "checkme = Example() ** Example()" << "Pow";
+    QTest::newRow("lshift") << "checkme = Example() << Example()" << "Lshift";
+    QTest::newRow("rshift") << "checkme = Example() >> Example()" << "Rshift";
+    QTest::newRow("and") << "checkme = Example() & Example()" << "And";
+    QTest::newRow("xor") << "checkme = Example() ^ Example()" << "Xor";
+    QTest::newRow("or") << "checkme = Example() | Example()" << "Or";
+}
+
 void PyDUChainTest::testFunctionArgs()
 {
     ReferencedTopDUContext ctx = parse("def ASDF(arg1, arg2):\n"

@@ -749,27 +749,32 @@ void ExpressionVisitor::visitCompare(CompareAst* node)
 
 void ExpressionVisitor::visitBinaryOperation(Python::BinaryOperationAst* node)
 {
-    QList<Ast::BooleanOperationTypes> booleanOperators;
+    Python::AstDefaultVisitor::visitBinaryOperation(node);
     
-    visitNode(node->lhs);
-    KDevelop::AbstractType::Ptr leftType = lastType();
-    
-    visitNode(node->rhs);
-    KDevelop::AbstractType::Ptr rightType = lastType();
-    
-    if ( leftType->indexed() != rightType->indexed() ) {
+    ExpressionVisitor v(this);
+    v.visitNode(node->lhs);
+
+    if ( ! v.lastDeclaration() ) {
         return unknownTypeEncountered();
     }
+
+    DUChainReadLocker lock;
+    Declaration* found = Helper::accessAttribute(v.lastDeclaration().data(), node->methodName(), m_ctx);
     
-    encounterDeclaration(0);
-    encounter(leftType); // TODO this is wrong.
+    if ( found && found->isFunctionDeclaration() ) {
+        if ( FunctionType::Ptr functionType = found->type<FunctionType>() ) {
+            encounterDeclaration(found);
+            return encounter(functionType->returnType());
+        }
+    }
+    return unknownTypeEncountered();
 }
 
 void ExpressionVisitor::visitUnaryOperation(Python::UnaryOperationAst* node)
 {
-    visitNode(node->operand);
-    
-    //FIXME: m_lastValue = m_lastValue;
+    // Only visit the value, and use that as the result. Unary operators usually
+    // don't change the type of the object (i.e. -a has the same type as a)
+    Python::AstDefaultVisitor::visitNode(node->value);
 }
 
 void ExpressionVisitor::visitBooleanOperation(Python::BooleanOperationAst* node)

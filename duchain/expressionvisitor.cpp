@@ -760,8 +760,6 @@ void ExpressionVisitor::visitCompare(CompareAst* node)
 
 void ExpressionVisitor::visitBinaryOperation(Python::BinaryOperationAst* node)
 {
-    Python::AstDefaultVisitor::visitBinaryOperation(node);
-    
     ExpressionVisitor v(this);
     v.visitNode(node->lhs);
 

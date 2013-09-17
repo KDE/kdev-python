@@ -46,8 +46,6 @@ using namespace KTextEditor;
 
 namespace Python {
 
-REGISTER_TYPE(IntegralTypeExtended);
-
 QHash<KDevelop::Identifier, KDevelop::AbstractType::Ptr> ExpressionVisitor::s_defaultTypes;
 
 AbstractType::Ptr ExpressionVisitor::encounterPreprocess(AbstractType::Ptr type, bool merge)

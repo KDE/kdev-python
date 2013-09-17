@@ -6,7 +6,7 @@
 
 import sys
 
-contents = open('python32.sdef').read().replace("\n", "").split(';;')
+contents = open('python34.sdef').read().replace("\n", "").split(';;')
 
 func_structure = '''
     Ast* visitNode(%{RULE_FOR}* node) {
@@ -20,8 +20,8 @@ func_structure = '''
             Q_ASSERT(false);
         }
 %{APPENDIX}
-        NameAst* r = dynamic_cast<NameAst*>(result);
-        if ( r ) {
+        if ( result && result->astType == Ast::NameAstType ) {
+            NameAst* r = static_cast<NameAst*>(result);
             r->startCol = r->identifier->startCol;
             r->endCol = r->identifier->endCol;
             r->startLine = r->identifier->startLine;

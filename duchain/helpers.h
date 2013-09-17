@@ -24,6 +24,7 @@
 #include "pythonduchainexport.h"
 #include "types/unsuretype.h"
 #include "ast.h"
+#include "expressionvisitor.h"
 
 #include <interfaces/iproject.h>
 #include <language/duchain/declaration.h>
@@ -64,6 +65,8 @@ public:
     static AbstractType::Ptr extractTypeHints(AbstractType::Ptr type, TopDUContext* current);
     
     static AbstractType::Ptr resolveType(AbstractType::Ptr type);
+
+    static Declaration* accessAttribute(Declaration* accessed, const QString& attribute, DUContext* current);
     
     /**
      * @brief Finds whether the specified called declaration is a function declaration, and, if not, checks for a class declaration; then returns the constructor

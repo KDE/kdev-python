@@ -46,8 +46,6 @@ using namespace KTextEditor;
 
 namespace Python {
 
-REGISTER_TYPE(IntegralTypeExtended);
-
 QHash<NameConstantAst::NameConstantTypes, KDevelop::AbstractType::Ptr> ExpressionVisitor::m_defaultTypes;
 
 AbstractType::Ptr ExpressionVisitor::encounterPreprocess(AbstractType::Ptr type, bool merge)
@@ -456,12 +454,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
 void ExpressionVisitor::visitSubscript(SubscriptAst* node)
 {
     AstDefaultVisitor::visitNode(node->value);
-    if ( node->slice && node->slice->astType != Ast::IndexAstType ) {
-        DUChainReadLocker lock; // only for debug output
-        encounterDeclaration(0);
-        encounter(lastType());
-    }
-    else if ( node->slice ) {
+    if ( node->slice && node->slice->astType == Ast::IndexAstType ) {
         DUChainReadLocker lock;
         if ( IndexedContainer::Ptr indexed = lastType().cast<IndexedContainer>() ) {
             encounterDeclaration(0);
@@ -478,16 +471,37 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
                 }
             }
             // the exact index is unknown, use unsure
-            encounter(indexed->asUnsureType().cast<AbstractType>());
+            return encounter(indexed->asUnsureType().cast<AbstractType>());
         }
         else if ( VariableLengthContainer::Ptr variableLength = lastType().cast<VariableLengthContainer>() ) {
             encounterDeclaration(0);
-            encounter(variableLength->contentType().abstractType());
+            return encounter(variableLength->contentType().abstractType());
         }
     }
-    else {
-        return unknownTypeEncountered();
+
+    // If that does not work and we have a slice like [3:5], guess it will remain the same type.
+    // That is an approximation we have to make now, should optimally be corrected later.
+    // The reason is that we'd need to parse decorators from the __getitem__ method to support
+    // list/dict/etc properly otherwise, which requires a bit of refactoring first. TODO do this
+    if ( node->slice && node->slice->astType != Ast::IndexAstType ) {
+        encounterDeclaration(0);
+        return encounter(lastType());
     }
+
+    // Otherwise, try to use __getitem__.
+    ExpressionVisitor v(m_ctx);
+    v.visitNode(node->value);
+    DUChainReadLocker lock;
+    Declaration* function = Helper::accessAttribute(v.lastDeclaration().data(), "__getitem__", m_ctx);
+    if ( function && function->isFunctionDeclaration() ) {
+        if ( FunctionType::Ptr functionType = function->type<FunctionType>() ) {
+            encounterDeclaration(0);
+            return encounter(functionType->returnType());
+        }
+    }
+
+    // Otherwise, give up
+    return unknownTypeEncountered();
 }
 
 template<typename T> TypePtr<T> ExpressionVisitor::typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx)
@@ -746,27 +760,32 @@ void ExpressionVisitor::visitCompare(CompareAst* node)
 
 void ExpressionVisitor::visitBinaryOperation(Python::BinaryOperationAst* node)
 {
-    QList<Ast::BooleanOperationTypes> booleanOperators;
+    Python::AstDefaultVisitor::visitBinaryOperation(node);
     
-    visitNode(node->lhs);
-    KDevelop::AbstractType::Ptr leftType = lastType();
-    
-    visitNode(node->rhs);
-    KDevelop::AbstractType::Ptr rightType = lastType();
-    
-    if ( leftType->indexed() != rightType->indexed() ) {
+    ExpressionVisitor v(this);
+    v.visitNode(node->lhs);
+
+    if ( ! v.lastDeclaration() ) {
         return unknownTypeEncountered();
     }
+
+    DUChainReadLocker lock;
+    Declaration* found = Helper::accessAttribute(v.lastDeclaration().data(), node->methodName(), m_ctx);
     
-    encounterDeclaration(0);
-    encounter(leftType); // TODO this is wrong.
+    if ( found && found->isFunctionDeclaration() ) {
+        if ( FunctionType::Ptr functionType = found->type<FunctionType>() ) {
+            encounterDeclaration(found);
+            return encounter(functionType->returnType());
+        }
+    }
+    return unknownTypeEncountered();
 }
 
 void ExpressionVisitor::visitUnaryOperation(Python::UnaryOperationAst* node)
 {
-    visitNode(node->operand);
-    
-    //FIXME: m_lastValue = m_lastValue;
+    // Only visit the value, and use that as the result. Unary operators usually
+    // don't change the type of the object (i.e. -a has the same type as a)
+    Python::AstDefaultVisitor::visitNode(node->value);
 }
 
 void ExpressionVisitor::visitBooleanOperation(Python::BooleanOperationAst* node)

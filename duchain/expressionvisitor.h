@@ -48,40 +48,8 @@ using namespace KDevelop;
 
 namespace Python
 {
-    
-typedef KDevelop::IntegralTypeData IntegralTypeExtendedData;
-class KDEVPYTHONDUCHAIN_EXPORT IntegralTypeExtended : public KDevelop::IntegralType {
-public:
-    typedef TypePtr<IntegralTypeExtended> Ptr;
-    enum PythonIntegralTypes {
-        TypeList = KDevelop::IntegralType::TypeLanguageSpecific,
-        TypeDict = KDevelop::IntegralType::TypeLanguageSpecific + 1
-    };
-    IntegralTypeExtended(uint type = TypeNone) : IntegralType(createData<IntegralTypeExtended>()) {
-        setDataType(type);
-        setModifiers(ConstModifier);
-    };
-    IntegralTypeExtended(IntegralTypeExtendedData& data) : IntegralType(data) { }
-    
-    virtual QString toString() const {
-        switch ( d_func()->m_dataType ) {
-            case TypeList: return i18n("list");
-            case TypeDict: return i18n("dictionary");
-            default: break;
-        }
-        
-        return KDevelop::IntegralType::toString();
-    };
-    
-    enum {
-        Identity = 60 // TODO ok?
-    };
-    
-    typedef KDevelop::IntegralTypeData Data;
-    typedef KDevelop::IntegralType BaseType;
-protected:
-    TYPE_DECLARE_DATA(IntegralTypeExtended);
-};
+
+typedef DUChainPointer<FunctionDeclaration> FunctionDeclarationPointer;
 
 class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
 {

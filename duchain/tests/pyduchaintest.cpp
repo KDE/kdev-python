@@ -767,6 +767,8 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("kwarg_type") << "def myfun(**args): return args[0]\ncheckme = myfun(a=3)" << "int";
     
     QTest::newRow("tuple_listof") << "l = [(1, 2), (3, 4)]\ncheckme = l[1][0]" << "int";
+
+    QTest::newRow("getitem") << "class c:\n def __getitem__(self, slice): return 3.14\na = c()\ncheckme = a[2]" << "float";
     
     QTest::newRow("constructor_type_deduction") << "class myclass:\n"
                                                    "\tdef __init__(self, param): self.foo=param\n"
@@ -980,6 +982,41 @@ void PyDUChainTest::testDecorators_data()
     QTest::newRow("one_decorator") << "@foo\ndef func(): pass" << 1 << ( QStringList() << "foo" );
     QTest::newRow("decorator_with_args") << "@foo(2, \"bar\")\ndef func(): pass" << 1 << ( QStringList() << "foo");
     QTest::newRow("two_decorators") << "@foo\n@bar(17)\ndef func(): pass" << 2 << ( QStringList() << "foo" << "bar" );
+}
+
+void PyDUChainTest::testOperators()
+{
+    QFETCH(QString, code);
+    QFETCH(QString, expectedType);
+    code.prepend("from testOperators.example import *\n\n");
+    ReferencedTopDUContext ctx = parse(code);
+    QVERIFY(ctx);
+
+    DUChainReadLocker lock(DUChain::lock());
+    TypeTestVisitor* visitor = new TypeTestVisitor();
+    visitor->ctx = TopDUContextPointer(ctx.data());
+    visitor->searchingForType = expectedType;
+    visitor->visitCode(m_ast);
+
+    QVERIFY(visitor->found);
+}
+
+void PyDUChainTest::testOperators_data()
+{
+    QTest::addColumn<QString>("code");
+    QTest::addColumn<QString>("expectedType");
+
+    QTest::newRow("add") << "checkme = Example() + Example()" << "Add";
+    QTest::newRow("sub") << "checkme = Example() - Example()" << "Sub";
+    QTest::newRow("mul") << "checkme = Example() * Example()" << "Mul";
+    QTest::newRow("floordiv") << "checkme = Example() // Example()" << "Floordiv";
+    QTest::newRow("mod") << "checkme = Example() % Example()" << "Mod";
+    QTest::newRow("pow") << "checkme = Example() ** Example()" << "Pow";
+    QTest::newRow("lshift") << "checkme = Example() << Example()" << "Lshift";
+    QTest::newRow("rshift") << "checkme = Example() >> Example()" << "Rshift";
+    QTest::newRow("and") << "checkme = Example() & Example()" << "And";
+    QTest::newRow("xor") << "checkme = Example() ^ Example()" << "Xor";
+    QTest::newRow("or") << "checkme = Example() | Example()" << "Or";
 }
 
 void PyDUChainTest::testFunctionArgs()

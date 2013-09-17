@@ -278,8 +278,8 @@ private:
             }
         }
     
-        NameAst* r = dynamic_cast<NameAst*>(result);
-        if ( r ) {
+        if ( result && result->astType == Ast::NameAstType ) {
+            NameAst* r = static_cast<NameAst*>(result);
             r->startCol = r->identifier->startCol;
             r->endCol = r->identifier->endCol;
             r->startLine = r->identifier->startLine;
@@ -330,8 +330,8 @@ private:
             }
         }
     
-        NameAst* r = dynamic_cast<NameAst*>(result);
-        if ( r ) {
+        if ( result && result->astType == Ast::NameAstType ) {
+            NameAst* r = static_cast<NameAst*>(result);
             r->startCol = r->identifier->startCol;
             r->endCol = r->identifier->endCol;
             r->startLine = r->identifier->startLine;
@@ -590,8 +590,8 @@ private:
             }
         }
     
-        NameAst* r = dynamic_cast<NameAst*>(result);
-        if ( r ) {
+        if ( result && result->astType == Ast::NameAstType ) {
+            NameAst* r = static_cast<NameAst*>(result);
             r->startCol = r->identifier->startCol;
             r->endCol = r->identifier->endCol;
             r->startLine = r->identifier->startLine;
@@ -647,8 +647,8 @@ private:
             }
         }
     
-        NameAst* r = dynamic_cast<NameAst*>(result);
-        if ( r ) {
+        if ( result && result->astType == Ast::NameAstType ) {
+            NameAst* r = static_cast<NameAst*>(result);
             r->startCol = r->identifier->startCol;
             r->endCol = r->identifier->endCol;
             r->startLine = r->identifier->startLine;

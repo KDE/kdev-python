@@ -445,12 +445,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
 void ExpressionVisitor::visitSubscript(SubscriptAst* node)
 {
     AstDefaultVisitor::visitNode(node->value);
-    if ( node->slice && node->slice->astType != Ast::IndexAstType ) {
-        DUChainReadLocker lock; // only for debug output
-        encounterDeclaration(0);
-        encounter(lastType());
-    }
-    else if ( node->slice ) {
+    if ( node->slice && node->slice->astType == Ast::IndexAstType ) {
         DUChainReadLocker lock;
         if ( IndexedContainer::Ptr indexed = lastType().cast<IndexedContainer>() ) {
             encounterDeclaration(0);
@@ -467,16 +462,37 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
                 }
             }
             // the exact index is unknown, use unsure
-            encounter(indexed->asUnsureType().cast<AbstractType>());
+            return encounter(indexed->asUnsureType().cast<AbstractType>());
         }
         else if ( VariableLengthContainer::Ptr variableLength = lastType().cast<VariableLengthContainer>() ) {
             encounterDeclaration(0);
-            encounter(variableLength->contentType().abstractType());
+            return encounter(variableLength->contentType().abstractType());
         }
     }
-    else {
-        return unknownTypeEncountered();
+
+    // If that does not work and we have a slice like [3:5], guess it will remain the same type.
+    // That is an approximation we have to make now, should optimally be corrected later.
+    // The reason is that we'd need to parse decorators from the __getitem__ method to support
+    // list/dict/etc properly otherwise, which requires a bit of refactoring first. TODO do this
+    if ( node->slice && node->slice->astType != Ast::IndexAstType ) {
+        encounterDeclaration(0);
+        return encounter(lastType());
     }
+
+    // Otherwise, try to use __getitem__.
+    ExpressionVisitor v(m_ctx);
+    v.visitNode(node->value);
+    DUChainReadLocker lock;
+    Declaration* function = Helper::accessAttribute(v.lastDeclaration().data(), "__getitem__", m_ctx);
+    if ( function && function->isFunctionDeclaration() ) {
+        if ( FunctionType::Ptr functionType = function->type<FunctionType>() ) {
+            encounterDeclaration(0);
+            return encounter(functionType->returnType());
+        }
+    }
+
+    // Otherwise, give up
+    return unknownTypeEncountered();
 }
 
 template<typename T> TypePtr<T> ExpressionVisitor::typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx)

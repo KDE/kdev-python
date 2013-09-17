@@ -59,6 +59,22 @@ AbstractType::Ptr Helper::resolveType(AbstractType::Ptr type)
         return type;
 }
 
+Declaration* Helper::accessAttribute(Declaration* accessed, const QString& attribute, DUContext* current)
+{
+    if ( ! accessed || ! accessed->type<StructureType>() ) {
+        return 0;
+    }
+    StructureType::Ptr type = accessed->type<StructureType>();
+    QList<DUContext*> searchContexts = Helper::internalContextsForClass(type, current->topContext());
+    foreach ( DUContext* c, searchContexts ) {
+        QList< Declaration* > found = c->findLocalDeclarations(KDevelop::Identifier(attribute));
+        if ( ! found.isEmpty() ) {
+            return found.first();
+        }
+    }
+    return 0;
+}
+
 AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* current)
 {
     if ( type ) {

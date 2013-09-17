@@ -741,6 +741,8 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("kwarg_type") << "def myfun(**args): return args[0]\ncheckme = myfun(a=3)" << "int";
     
     QTest::newRow("tuple_listof") << "l = [(1, 2), (3, 4)]\ncheckme = l[1][0]" << "int";
+
+    QTest::newRow("getitem") << "class c:\n def __getitem__(self, slice): return 3.14\na = c()\ncheckme = a[2]" << "float";
     
     QTest::newRow("constructor_type_deduction") << "class myclass:\n"
                                                    "\tdef __init__(self, param): self.foo=param\n"

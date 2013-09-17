@@ -809,13 +809,11 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     
     if ( allExpressions.nextIndexOfStatus(ExpressionParser::EventualCallFound).first != -1 ) {
         // 3 is always the case for "def foo(" or class foo(": one names the function, the other is the keyword
-        if ( allExpressions.length() == 4 ) {
-            if ( allExpressions.at(1).status == ExpressionParser::DefFound ) {
-                // The next thing the user probably wants to type are parameters for his function.
-                // We cannot offer completion for this.
-                m_operation = NoCompletion;
-                return;
-            }
+        if ( allExpressions.length() >= 4 && allExpressions.at(1).status == ExpressionParser::DefFound ) {
+            // The next thing the user probably wants to type are parameters for his function.
+            // We cannot offer completion for this.
+            m_operation = NoCompletion;
+            return;
         }
         if ( allExpressions.length() >= 4 ) {
             // TODO: optimally, filter out classes we already inherit from. That's a bonus, tough.

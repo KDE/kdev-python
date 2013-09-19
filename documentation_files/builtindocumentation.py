@@ -189,6 +189,8 @@ class dict():
 class str():
     def __init__(self, obj):
         pass
+    def __mod__(self, modulo):
+        return str()
     def replace(self,before, after): return ""
     def capitalize(self,): return ""
     def center(self,width, fillchar = None): return ""

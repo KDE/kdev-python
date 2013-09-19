@@ -18,8 +18,6 @@
  */
 #include "pythoneditorintegrator.h"
 #include <ktexteditor/document.h>
-#include <ktexteditor/smartrange.h>
-#include <ktexteditor/smartinterface.h>
 
 #include <language/editor/documentrange.h>
 

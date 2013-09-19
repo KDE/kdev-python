@@ -30,8 +30,6 @@
 
 #include <KStandardDirs>
 
-#include <ktexteditor/smartrange.h>
-#include <ktexteditor/smartinterface.h>
 #include <ktexteditor/document.h>
 
 #include <language/duchain/topducontext.h>

@@ -44,7 +44,6 @@
 #include <interfaces/idocumentcontroller.h>
 
 #include <ktexteditor/document.h>
-#include <ktexteditor/smartinterface.h>
 
 #include <QReadLocker>
 #include <QFile>

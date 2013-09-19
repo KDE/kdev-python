@@ -1662,6 +1662,10 @@ void DeclarationBuilder::adjustExpressionsForTypecheck(ExpressionAst* adjustExpr
         // no declaration for the thing to verify, can't adjust it.
         return;
     }
+    else if ( adjust->topContext() == Helper::getDocumentationFileContext() ) {
+        // do not motify types in the doc context
+        return;
+    }
     DUChainWriteLocker lock;
     adjust->setAbstractType(Helper::mergeTypes(adjust->abstractType(), hint));
 }

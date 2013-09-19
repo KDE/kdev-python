@@ -82,6 +82,7 @@ class PyDUChainTest : public QObject
         void testRelativeImport();
         void testRelativeImport_data();
         void testCannotOverwriteBuiltins();
+        void testCannotOverwriteBuiltins_data();
         void testOperators();
         void testOperators_data();
 

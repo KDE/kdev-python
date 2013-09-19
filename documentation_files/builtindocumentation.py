@@ -245,6 +245,8 @@ class complex():
 class BaseException():
     args = ()
 
+class NameError(BaseException):
+    pass
 class AttributeError(BaseException):
     pass
 class IndexError(BaseException):

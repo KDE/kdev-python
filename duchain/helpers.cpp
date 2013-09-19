@@ -258,6 +258,7 @@ Declaration* Helper::resolveAliasDeclaration(Declaration* decl)
 {
     AliasDeclaration* alias = dynamic_cast<AliasDeclaration*>(decl);
     if ( alias ) {
+        DUChainReadLocker lock;
         return alias->aliasedDeclaration().data();
     }
     else

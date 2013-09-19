@@ -161,13 +161,13 @@ v->isInt = PyInt_Check(node->v.Num.n); v->value = PyInt_AsLong(node->v.Num.n);
             }
         case Str_kind: {
                 StringAst* v = new (m_pool->allocate(sizeof(StringAst))) StringAst(parent());
-                v->value = PyString_AsString(PyObject_Str(node->v.Str.s));
+                v->value = QString::fromUtf8(PyString_AsString(PyObject_Str(node->v.Str.s)));
                 result = v;
                 break;
             }
         case Attribute_kind: {
                 AttributeAst* v = new (m_pool->allocate(sizeof(AttributeAst))) AttributeAst(parent());
-                v->attribute = node->v.Attribute.attr ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyString_AsString(PyObject_Str(node->v.Attribute.attr))) : 0;
+                v->attribute = node->v.Attribute.attr ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromUtf8(PyString_AsString(PyObject_Str(node->v.Attribute.attr)))) : 0;
                 if ( v->attribute ) {
                     v->attribute->startCol = node->col_offset; v->startCol = v->attribute->startCol;
                     v->attribute->startLine = tline(node->lineno - 1);  v->startLine = v->attribute->startLine;
@@ -190,7 +190,7 @@ v->isInt = PyInt_Check(node->v.Num.n); v->value = PyInt_AsLong(node->v.Num.n);
             }
         case Name_kind: {
                 NameAst* v = new (m_pool->allocate(sizeof(NameAst))) NameAst(parent());
-                v->identifier = node->v.Name.id ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyString_AsString(PyObject_Str(node->v.Name.id))) : 0;
+                v->identifier = node->v.Name.id ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromUtf8(PyString_AsString(PyObject_Str(node->v.Name.id)))) : 0;
                 if ( v->identifier ) {
                     v->identifier->startCol = node->col_offset; v->startCol = v->identifier->startCol;
                     v->identifier->startLine = tline(node->lineno - 1);  v->startLine = v->identifier->startLine;
@@ -333,7 +333,7 @@ v->isInt = PyInt_Check(node->v.Num.n); v->value = PyInt_AsLong(node->v.Num.n);
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
         if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
                 AliasAst* v = new (m_pool->allocate(sizeof(AliasAst))) AliasAst(parent());
-            v->name = node->name ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyString_AsString(PyObject_Str(node->name))) : 0;
+            v->name = node->name ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromUtf8(PyString_AsString(PyObject_Str(node->name)))) : 0;
                 if ( v->name ) {
                     v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
                     v->name->startLine = tline(node->lineno - 1);  v->startLine = v->name->startLine;
@@ -341,7 +341,7 @@ v->isInt = PyInt_Check(node->v.Num.n); v->value = PyInt_AsLong(node->v.Num.n);
                     v->name->endLine = tline(node->lineno - 1);  v->endLine = v->name->endLine;
                     ranges_copied = true;
                 }
-            v->asName = node->asname ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyString_AsString(PyObject_Str(node->asname))) : 0;
+            v->asName = node->asname ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromUtf8(PyString_AsString(PyObject_Str(node->asname)))) : 0;
                 if ( v->asName ) {
                     v->asName->startCol = node->col_offset; v->startCol = v->asName->startCol;
                     v->asName->startLine = tline(node->lineno - 1);  v->startLine = v->asName->startLine;
@@ -366,7 +366,7 @@ v->isInt = PyInt_Check(node->v.Num.n); v->value = PyInt_AsLong(node->v.Num.n);
             }
         case FunctionDef_kind: {
                 FunctionDefinitionAst* v = new (m_pool->allocate(sizeof(FunctionDefinitionAst))) FunctionDefinitionAst(parent());
-                v->name = node->v.FunctionDef.name ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyString_AsString(PyObject_Str(node->v.FunctionDef.name))) : 0;
+                v->name = node->v.FunctionDef.name ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromUtf8(PyString_AsString(PyObject_Str(node->v.FunctionDef.name)))) : 0;
                 if ( v->name ) {
                     v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
                     v->name->startLine = tline(node->lineno - 1);  v->startLine = v->name->startLine;
@@ -382,7 +382,7 @@ v->isInt = PyInt_Check(node->v.Num.n); v->value = PyInt_AsLong(node->v.Num.n);
             }
         case ClassDef_kind: {
                 ClassDefinitionAst* v = new (m_pool->allocate(sizeof(ClassDefinitionAst))) ClassDefinitionAst(parent());
-                v->name = node->v.ClassDef.name ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyString_AsString(PyObject_Str(node->v.ClassDef.name))) : 0;
+                v->name = node->v.ClassDef.name ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromUtf8(PyString_AsString(PyObject_Str(node->v.ClassDef.name)))) : 0;
                 if ( v->name ) {
                     v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
                     v->name->startLine = tline(node->lineno - 1);  v->startLine = v->name->startLine;
@@ -500,7 +500,7 @@ v->isInt = PyInt_Check(node->v.Num.n); v->value = PyInt_AsLong(node->v.Num.n);
             }
         case ImportFrom_kind: {
                 ImportFromAst* v = new (m_pool->allocate(sizeof(ImportFromAst))) ImportFromAst(parent());
-                v->module = node->v.ImportFrom.module ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyString_AsString(PyObject_Str(node->v.ImportFrom.module))) : 0;
+                v->module = node->v.ImportFrom.module ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromUtf8(PyString_AsString(PyObject_Str(node->v.ImportFrom.module)))) : 0;
                 if ( v->module ) {
                     v->module->startCol = node->col_offset; v->startCol = v->module->startCol;
                     v->module->startLine = tline(node->lineno - 1);  v->startLine = v->module->startLine;
@@ -525,9 +525,9 @@ v->isInt = PyInt_Check(node->v.Num.n); v->value = PyInt_AsLong(node->v.Num.n);
                 GlobalAst* v = new (m_pool->allocate(sizeof(GlobalAst))) GlobalAst(parent());
 
                 for ( int _i = 0; _i < node->v.Global.names->size; _i++ ) {
-                    Python::Identifier* id = new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyString_AsString(PyObject_Str(
+                    Python::Identifier* id = new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromUtf8(PyString_AsString(PyObject_Str(
                                     static_cast<PyObject*>(node->v.Global.names->elements[_i])
-                            )));
+                            ))));
                     v->names.append(id);
                 }
 
@@ -659,8 +659,8 @@ v->isInt = PyInt_Check(node->v.Num.n); v->value = PyInt_AsLong(node->v.Num.n);
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
         if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
                 ArgumentsAst* v = new (m_pool->allocate(sizeof(ArgumentsAst))) ArgumentsAst(parent());
-            v->vararg = node->vararg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyString_AsString(PyObject_Str(node->vararg))) : 0;
-            v->kwarg = node->kwarg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyString_AsString(PyObject_Str(node->kwarg))) : 0;
+            v->vararg = node->vararg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromUtf8(PyString_AsString(PyObject_Str(node->vararg)))) : 0;
+            v->kwarg = node->kwarg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromUtf8(PyString_AsString(PyObject_Str(node->kwarg)))) : 0;
             nodeStack.push(v); v->arguments = visitNodeList<_expr, ExpressionAst>(node->args); nodeStack.pop();
             nodeStack.push(v); v->defaultValues = visitNodeList<_expr, ExpressionAst>(node->defaults); nodeStack.pop();
               v->arg_lineno = tline(node->arg_lineno - 1);
@@ -675,7 +675,7 @@ v->isInt = PyInt_Check(node->v.Num.n); v->value = PyInt_AsLong(node->v.Num.n);
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
         if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
                 KeywordAst* v = new (m_pool->allocate(sizeof(KeywordAst))) KeywordAst(parent());
-            v->argumentName = node->arg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyString_AsString(PyObject_Str(node->arg))) : 0;
+            v->argumentName = node->arg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(QString::fromUtf8(PyString_AsString(PyObject_Str(node->arg)))) : 0;
             nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->value)); nodeStack.pop();
         return v;
     }

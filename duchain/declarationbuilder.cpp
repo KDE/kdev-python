@@ -1587,17 +1587,17 @@ QString DeclarationBuilder::getDocstring(QList< Ast* > body)
 
 void DeclarationBuilder::visitAssertion(AssertionAst* node)
 {
-    adjustForTypecheck(node->condition);
+    adjustForTypecheck(node->condition, false);
     Python::AstDefaultVisitor::visitAssertion(node);
 }
 
 void DeclarationBuilder::visitIf(IfAst* node)
 {
-    adjustForTypecheck(node->condition);
+    adjustForTypecheck(node->condition, true);
     Python::AstDefaultVisitor::visitIf(node);
 }
 
-void DeclarationBuilder::adjustForTypecheck(ExpressionAst* check)
+void DeclarationBuilder::adjustForTypecheck(Python::ExpressionAst* check, bool useUnsure)
 {
     if ( ! check ) return;
     if ( check->astType == Ast::CallAstType ) {
@@ -1616,7 +1616,7 @@ void DeclarationBuilder::adjustForTypecheck(ExpressionAst* check)
         if ( call->arguments.length() != 2 ) {
             return;
         }
-        adjustExpressionsForTypecheck(call->arguments.at(0), call->arguments.at(1));
+        adjustExpressionsForTypecheck(call->arguments.at(0), call->arguments.at(1), useUnsure);
     }
     else if ( check->astType == Ast::CompareAstType ) {
         // Is this a call of the form "type(ainstance) == a"?
@@ -1641,11 +1641,11 @@ void DeclarationBuilder::adjustForTypecheck(ExpressionAst* check)
         if ( functionName != QLatin1String("type") ) {
             return;
         }
-        adjustExpressionsForTypecheck(typecall->arguments.at(0), c1->astType == Ast::CallAstType ? c2 : c1);
+        adjustExpressionsForTypecheck(typecall->arguments.at(0), c1->astType == Ast::CallAstType ? c2 : c1, useUnsure);
     }
 }
 
-void DeclarationBuilder::adjustExpressionsForTypecheck(ExpressionAst* adjustExpr, ExpressionAst* from)
+void DeclarationBuilder::adjustExpressionsForTypecheck(Python::ExpressionAst* adjustExpr, Python::ExpressionAst* from, bool useUnsure)
 {
     // Find types of the two arguments
     ExpressionVisitor first(currentContext());
@@ -1658,7 +1658,7 @@ void DeclarationBuilder::adjustExpressionsForTypecheck(ExpressionAst* adjustExpr
         hint = second.lastType();
         adjust = first.lastDeclaration();
     }
-    if ( ! adjust ) {
+    if ( ! adjust || adjust->isFunctionDeclaration() ) {
         // no declaration for the thing to verify, can't adjust it.
         return;
     }
@@ -1667,7 +1667,12 @@ void DeclarationBuilder::adjustExpressionsForTypecheck(ExpressionAst* adjustExpr
         return;
     }
     DUChainWriteLocker lock;
-    adjust->setAbstractType(Helper::mergeTypes(adjust->abstractType(), hint));
+    if ( useUnsure ) {
+        adjust->setAbstractType(Helper::mergeTypes(adjust->abstractType(), hint));
+    }
+    else {
+        adjust->setAbstractType(hint);
+    }
 }
 
 void DeclarationBuilder::visitReturn(ReturnAst* node)

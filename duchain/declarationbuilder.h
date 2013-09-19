@@ -101,9 +101,9 @@ protected:
     /// Does nothing if the given expression isn't of any of the forms
     ///    a) isinstance(fooinstance, Foo)
     ///    b) type(fooinstance) == Foo
-    void adjustForTypecheck(ExpressionAst* check);
+    void adjustForTypecheck(ExpressionAst* check, bool useUnsure);
     /// Helper for the above
-    void adjustExpressionsForTypecheck(ExpressionAst* adjust, ExpressionAst* from);
+    void adjustExpressionsForTypecheck(ExpressionAst* adjust, ExpressionAst* from, bool useUnsure);
     
     FitDeclarationType kindForType(AbstractType::Ptr type, bool isAlias = false);
     

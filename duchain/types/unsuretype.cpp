@@ -90,8 +90,8 @@ QString UnsureType::toString() const
     if ( count == 1 )
         return typeList;
     if ( count > 5 )  {
-        typeList.truncate(80);
-        typeList += "...";
+        typeList = '<' + i18nc("refers to types of variables in programming, as in \"various possible types\"",
+                               "various types") + '>';
     }
     return i18nc("refers to a type (in program code) which can have multiple values", "unsure (%1)", typeList);
 }

@@ -723,6 +723,9 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("tuple_type") << "checkme = 1, 2" << "tuple";
     
     QTest::newRow("dict_iteritems") << "d = {1:2, 3:4}\nfor checkme, k in d.iteritems(): pass" << "int";
+
+    QTest::newRow("dict_assign_twice") << "d = dict(); d[''] = 0; d = dict(); d[''] = 0; checkme = d"
+                                       << "unsure (dict of str : int, dict)";
     
     QTest::newRow("class_method_import") << "class c:\n attr = \"foo\"\n def m():\n  return attr;\n  return 3;\ni=c()\ncheckme=i.m()" << "int";
     QTest::newRow("getsListDecorator") << "foo = [1, 2, 3]\ncheckme = foo.reverse()" << "list of int";

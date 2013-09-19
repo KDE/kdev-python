@@ -1185,7 +1185,6 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         rhsTypes << v.lastType();
         rhsDeclarations << v.lastDeclaration();
         rhsEntryIsAliasDeclaration << v.m_isAlias;
-        DUChainReadLocker lock;
     }
     
     // Now all the information about left- and right hand side entries is ready,
@@ -1266,7 +1265,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             if ( tupleElementType ) {
                 ExpressionVisitor targetVisitor(currentContext());
                 targetVisitor.visitNode(v);
-                DUChainReadLocker lock(DUChain::lock());
+                DUChainWriteLocker lock;
                 VariableLengthContainer::Ptr cont = VariableLengthContainer::Ptr::dynamicCast(targetVisitor.lastType());
                 if ( cont ) {
                     cont->addContentType(tupleElementType);
@@ -1283,9 +1282,8 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                         }
                     }
                 }
-                lock.unlock();
-                if ( DeclarationPointer lastDecl = targetVisitor.lastDeclaration() ) {
-                    DUChainWriteLocker wlock(DUChain::lock());
+                DeclarationPointer lastDecl = targetVisitor.lastDeclaration();
+                if ( cont && lastDecl ) {
                     lastDecl->setAbstractType(cont.cast<AbstractType>());
                 }
             }

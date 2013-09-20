@@ -149,6 +149,8 @@ private:
     int m_alreadyGivenParametersCount;
 
     QString m_matchAgainst;
+
+    bool m_fullCompletion;
 };
 
 }

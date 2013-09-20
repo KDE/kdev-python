@@ -82,6 +82,7 @@ ExpressionVisitor* visitorForString(QString str, DUContext* context, CursorInRev
 
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bool& abort, bool fullCompletion)
 {
+    m_fullCompletion = fullCompletion;
     QList<CompletionTreeItemPointer> resultingItems;
     DUChainReadLocker lock;
     
@@ -316,7 +317,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         QList<DeclarationDepthPair> remainingDeclarations;
         foreach ( const DeclarationDepthPair& d, declarations ) {
             Declaration* r = Helper::resolveAliasDeclaration(d.first);
-            if ( r and r->identifier().identifier().str().contains("__kdevpythondocumentation_builtin") ) {
+            if ( r && r->topContext() == Helper::getDocumentationFileContext() ) {
                 continue;
             }
             if ( r && dynamic_cast<ClassDeclaration*>(r) ) {
@@ -459,6 +460,35 @@ QList< CompletionTreeItemPointer > PythonCodeCompletionContext::getCompletionIte
         kDebug() << "Getting completion items for " << count << "types of unsure type " << unsure;
         for ( int i = 0; i < count; i++ ) {
             result.append(getCompletionItemsForOneType(unsure->types()[i].abstractType()));
+        }
+        // Do some weighting: the more often an entry appears, the better the entry.
+        // That way, entries which are in all of the types this object could have will
+        // be sorted higher up.
+        QStringList itemTitles;
+        QList<CompletionTreeItemPointer> remove;
+        for ( int i = 0; i < result.size(); i++ ) {
+            DeclarationPointer decl = result.at(i)->declaration();
+            if ( ! decl ) {
+                itemTitles.append(QString());
+                continue;
+            }
+            const QString& title = decl->identifier().toString();
+            if ( itemTitles.contains(title) ) {
+                // there's already an item with that title, increase match quality
+                int item = itemTitles.indexOf(title);
+                PythonDeclarationCompletionItem* declItem = dynamic_cast<PythonDeclarationCompletionItem*>(result[item].data());
+                if ( ! m_fullCompletion ) {
+                    remove.append(result.at(i));
+                }
+                if ( declItem ) {
+                    // Add 1 to the match quality of the first item in the list.
+                    declItem->addMatchQuality(1);
+                }
+            }
+            itemTitles.append(title);
+        }
+        foreach ( const CompletionTreeItemPointer& ptr, remove ) {
+            result.removeOne(ptr);
         }
     }
     else {
@@ -684,6 +714,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     , m_child(child)
     , m_guessTypeOfExpression(calledFunction)
     , m_alreadyGivenParametersCount(alreadyGivenParameters)
+    , m_fullCompletion(false)
 {
     ExpressionParser p(remainingText);
     summonParentForEventualCall(p.popAll(), remainingText);

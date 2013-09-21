@@ -61,7 +61,7 @@ public:
     void closeAlreadyOpenedContext(DUContextPointer context);
     QList<DUContextPointer> m_temporarilyClosedContexts;
 
-    QPair<KUrl, QStringList> findModulePath(const QString& name);
+    static QPair<KUrl, QStringList> findModulePath(const QString& name, const KUrl& currentDocument);
     
     // ugly because this collides with currentDocument(), but we have to use it;
     // for some reason the UseBuilder does not have m_url set, and it's private (not even protected) to AbstractContextBuilder.

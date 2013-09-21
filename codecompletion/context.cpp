@@ -22,6 +22,7 @@
 #include "items/importfile.h"
 #include "items/functiondeclaration.h"
 #include "items/implementfunction.h"
+#include "items/missingincludeitem.h"
 
 #include "worker.h"
 #include "helpers.h"
@@ -341,6 +342,21 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         else {
             kWarning() << "Completion requested for syntactically invalid expression, not offering anything";
         }
+
+        // append eventually stripped postfix, for e.g. os.chdir|
+        bool needDot = true;
+        foreach ( const QChar& c, m_followingText ) {
+            if ( needDot ) {
+                m_guessTypeOfExpression.append('.');
+                needDot = false;
+            }
+            if ( c.isLetterOrNumber() || c == '_' ) {
+                m_guessTypeOfExpression.append(c);
+            }
+        }
+        if ( resultingItems.isEmpty() && fullCompletion ) {
+            resultingItems << getMissingIncludeItems(m_guessTypeOfExpression);
+        }
     }
     else {
         // it's stupid to display a 3-letter completion item on manually invoked code completion and makes everything look crowded
@@ -406,6 +422,48 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     m_searchImportItemsInModule.clear();
     
     return resultingItems;
+}
+
+QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getMissingIncludeItems(QString forString)
+{
+    QList<CompletionTreeItemPointer> items;
+
+    // Find all the non-empty name components (mainly, remove the last empty one for "sys." or similar)
+    QStringList components = forString.split('.');
+    components.removeAll(QString());
+
+    // Check all components are alphanumeric
+    QRegExp alnum("\\w*");
+    foreach ( const QString& component, components ) {
+        if ( ! alnum.exactMatch(component) ) return items;
+    }
+
+    if ( components.isEmpty() ) {
+        return items;
+    }
+
+    // See if there's a module called like that.
+    QPair<KUrl, QStringList> found = ContextBuilder::findModulePath(components.join("."), m_workingOnDocument);
+
+    // Check if anything was found
+    if ( found.first.isValid() ) {
+        // Add items for the "from" and the plain import
+        if ( components.size() > 1 && found.second.isEmpty() ) {
+            // There's something left for X in "from foo import X",
+            // and it's not a declaration inside the module so offer that
+            const QString module = QStringList(components.mid(0, components.size() - 1)).join(".");
+            const QString text = QString("from %1 import %2").arg(module, components.last());
+            MissingIncludeItem* item = new MissingIncludeItem(text, components.last(), forString);
+            items << CompletionTreeItemPointer(item);
+        }
+
+        const QString module = QStringList(components.mid(0, components.size() - found.second.size())).join(".");
+        const QString text = QString("import %1").arg(module);
+        MissingIncludeItem* item = new MissingIncludeItem(text, components.last());
+        items << CompletionTreeItemPointer(item);
+    }
+
+    return items;
 }
 
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToItemList(QList<DeclarationDepthPair> declarations, int maxDepth)
@@ -705,8 +763,9 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::includeItemsForSub
     return findIncludeItems(foundPaths);
 }
 
-PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& remainingText, 
-                                                         QString calledFunction, int depth, int alreadyGivenParameters,
+PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& remainingText,
+                                                         QString calledFunction,
+                                                         int depth, int alreadyGivenParameters,
                                                          CodeCompletionContext* child)
     : CodeCompletionContext(context, remainingText, CursorInRevision::invalid(), depth)
     , m_operation(FunctionCallCompletion)
@@ -764,13 +823,14 @@ void PythonCodeCompletionContext::summonParentForEventualCall(TokenList allExpre
 
 // decide what kind of completion will be offered based on the code before the current cursor position
 PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& text,
-                                                         const KDevelop::CursorInRevision& position, 
+                                                         const QString& followingText,
+                                                         const KDevelop::CursorInRevision& position,
                                                          int depth, const PythonCodeCompletionWorker* parent)
     : CodeCompletionContext(context, text, position, depth)
     , m_operation(PythonCodeCompletionContext::DefaultCompletion)
     , m_itemTypeHint(NoHint)
-    , worker(parent)
     , m_child(0)
+    , m_followingText(followingText)
     , m_position(position)
 {
     m_workingOnDocument = context->topContext()->url().toUrl();

@@ -328,7 +328,7 @@ void ContextBuilder::visitCode(CodeAst* node) {
     AstDefaultVisitor::visitCode(node);
 }
 
-QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
+QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name, const KUrl& currentDocument)
 {
     QStringList nameComponents = name.split(".");
     QList<KUrl> searchPaths;
@@ -338,7 +338,7 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
          */
         nameComponents.removeFirst();
         QString tname = name.mid(1); // remove first dot
-        QDir curPathDir = QDir(currentlyParsedDocument().toUrl().directory());
+        QDir curPathDir = QDir(currentDocument.directory());
         foreach(QString c, tname) {
             if (c != ".")
                 break;
@@ -351,7 +351,7 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name)
         // If this is not a relative import, use the project directory,
         // the current directory, and all system include paths.
         // FIXME: If absolute imports enabled, don't add curently parsed doc path
-        searchPaths = Helper::getSearchPaths(currentlyParsedDocument().toUrl());
+        searchPaths = Helper::getSearchPaths(currentDocument);
     }
     // Loop over all the name components, and find matching folders or files.
     KUrl tmp;

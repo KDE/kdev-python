@@ -81,7 +81,8 @@ public:
         IterableRequested
     };
     
-    PythonCodeCompletionContext(DUContextPointer context, const QString& text, const KDevelop::CursorInRevision& position,
+    PythonCodeCompletionContext(DUContextPointer context, const QString& text, const QString& followingText,
+                                const KDevelop::CursorInRevision& position,
                                 int depth, const PythonCodeCompletionWorker* parent);
     ItemTypeHint itemTypeHint();
     /**
@@ -129,18 +130,22 @@ private:
     PythonCodeCompletionContext(DUContextPointer context, const QString& remainingText,
                                 QString calledFunction, int depth, int alreadyGivenParameters, CodeCompletionContext* child);
     void summonParentForEventualCall(TokenList tokens, const QString& text);
+    /// Get possible "add import..." items for an expression.
+    QList< CompletionTreeItemPointer > getMissingIncludeItems(QString forString);
+
+private:
     CompletionContextType m_operation;
     ItemTypeHint m_itemTypeHint;
     QStack<ProjectFolderItem*> m_folderStack;
     int m_maxFolderScanDepth;
     QStringList m_searchingForModule;
     QString m_searchImportItemsInModule;
-    const PythonCodeCompletionWorker* worker;
     KUrl m_workingOnDocument;
     
     CodeCompletionContext* m_child;
     
     QString m_guessTypeOfExpression;
+    QString m_followingText;
     
     QString m_indent;
     KDevelop::CursorInRevision m_position;

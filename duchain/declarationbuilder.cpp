@@ -792,7 +792,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
                                                                ProblemPointer& problemEncountered, Ast* rangeNode)
 {
     // Search the disk for a python file which contains the requested declaration
-    QPair<KUrl, QStringList> moduleInfo = findModulePath(moduleName);
+    QPair<KUrl, QStringList> moduleInfo = findModulePath(moduleName, currentlyParsedDocument().toUrl());
     kDebug() << moduleName;
     RangeInRevision range(RangeInRevision::invalid());
     if ( rangeNode ) {

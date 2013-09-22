@@ -17,13 +17,16 @@
 # Any submodules of the imported object (anything with type "module")
 # will be ignored by this script, if you want to dump those,
 # you will have to manually (or with a script) generate a directory
+import re
 # structure and re-run this script.
+import traceback
 
 import os
 import sys
 import types
 import inspect
 import importlib
+import __builtin__
 
 def debugmsg(message):
     sys.stderr.write(message + "\n")
@@ -46,6 +49,7 @@ def indent(code, depth=4):
     return '\n'.join(code)
 
 def clearIndent(code):
+    assert isinstance(code, str)
     code = code.split('\n')
     code = [line.strip() for line in code]
     return '\n'.join(code)
@@ -58,26 +62,32 @@ def syntaxValid(code):
     return True
 
 def sanitize(expr):
+    assert isinstance(expr, str)
     replace = {
         '*':'', '[':'', ']':'',
-        'from':'_from', 'class':'_class', '-':'_', 'lambda':'_lambda',
+        'from':'_from', 'class':'_class', '-':'_', 'lambda':'_lambda', "raise":"_raise",
         '\\':'ESC', ' ':'', "<":'"', ">":'"', "self,":"", "self":"",
-        ",,":",", '...':'more_args'
+        ",,":",", '...':'more_args', '+':"plus"
     }
     result = expr
     for before, after in replace.iteritems():
         result = result.replace(before, after)
+    result = re.sub(r"\.\d", "_", result)
     result = result.replace("=,", "=[],").replace("=)", "=[])")
     return result
 
 def strict_sanitize(expr):
+    assert isinstance(expr, str)
     expr = sanitize(expr)
-    expr = expr.replace("=()", "")
-    expr = expr.replace('(', '').replace(')', '')
-    expr = expr.replace('"', '')
-    expr = expr.replace("'", '')
-    expr = expr.replace(" ", "")
-    expr = expr.replace(",", "")
+    forbidden = ["=()", '(', ')', '"', "'", " ", ",", "|", "%", '#']
+    for char in forbidden:
+        expr = expr.replace(char, "")
+    if expr == ".":
+        return "None"
+    if len(expr) > 0 and expr[0].isdigit():
+        expr = "_" + expr
+    if len(expr) == 0:
+        expr = "_"
     return expr
 
 def isSpace(char):
@@ -111,11 +121,52 @@ likely_substitutions = {
     "double": "float",
 }
 
-def parse_synopsis(funcdef):
+def guess_return_type_from_synopsis(synopsis, root):
+    container = ""
+    for item in re.finditer("return", synopsis, re.I):
+        scan = synopsis[item.start():item.end()+60]
+        def apply_container(value):
+            if len(container) > 0:
+                return "{0}([{1}])".format(container, value)
+            else:
+                return value
+        for word in scan.split():
+            if word.find('.') != -1 and word != '...':
+                break # end of sentence -- stop
+            word = word.replace(',', '')
+            if word in ["True", "False", "true", "false", "bool", "boolean"]:
+                return apply_container("bool()")
+            if word in ["dict", "dictionary"]:
+                return "dict()"
+            if word in ["string", "str", "represenation"]:
+                return "str()"
+            if word in ["list", "iterable"]:
+                container = "list"
+                continue
+            if word in ["set"]:
+                container = "set"
+                continue
+            if word in ["number", "int", "integer"]:
+                return apply_container("int()")
+            if word in ["float", "ratio", "fraction"]:
+                return apply_container("float()")
+            if hasattr(root.module, word) and type(getattr(root.module, word) == type(object)):
+                return apply_container(word + "()")
+            if word[-1] == "s" and hasattr(root.module, word[:-1]) and type(getattr(root.module, word[:-1]) == type(object)):
+                # plural form, "list of ints"
+                return apply_container(word[:-1] + "()")
+            if hasattr(__builtin__, word) and type(getattr(__builtin__, word)) == type(object):
+                return apply_container(word + "()")
+    if len(container) > 0:
+        return container + "()"
+    return "None"
+
+def parse_synopsis(funcdef, original, root, needSelfArg=False):
     """Parse a function description in the following format:
     module.func(param1, param2, [optional_param1 = default1, [optional_param2 = default2]]) -> return_type
     This tries to be as error-prone as possible in order to convert everything into a valid parameter list."""
     # first, take the parts before and after the arrow:
+    assert isinstance(funcdef, str)
     funcdef = funcdef.replace("<==>", " -> ")
     s = funcdef.split(' -> ')
     definition = s[0]
@@ -127,6 +178,8 @@ def parse_synopsis(funcdef):
         returnType = likely_substitutions[returnType]
     if returnType != 'None':
         returnType += "()"
+    if returnType == 'None' or returnType == '_()':
+        returnType = guess_return_type_from_synopsis(original, root)
     # Okay, now the fun part: parse the parameter list
     inParamList = False
     brackets = 0
@@ -154,11 +207,12 @@ def parse_synopsis(funcdef):
             # default parameter list starts  or continues with this parameter
             atDefault = True
         if atDefault:
+            defaultValue = "None"
             if param.find('=') != -1:
                 # default value was provided; clean trailing "[" and "]" chars
                 defaultValue = removeAtCorner(removeAtCorner(param.split('=')[1], ']', '<'), '[', '<')
                 param = param.split('=')[0]
-            else:
+            if len(str(defaultValue)) == 0 or str(defaultValue).isspace():
                 # just write anything, otherwise it's syntactically invalid
                 defaultValue = "None"
         if removeAtCorner(param, '[', '<') != removeAtCorner(param, ' ', '<'):
@@ -168,9 +222,13 @@ def parse_synopsis(funcdef):
         if param == '':
             continue
         if defaultValue:
-            resultingParamList.append("{0}={1}".format(param, defaultValue))
+            resultingParamList.append("{0}={1}".format(param, sanitize(defaultValue)))
         else:
             resultingParamList.append(param)
+    if needSelfArg:
+        # we're in a class, make sure there's a "self"
+        if len(resultingParamList) == 0 or ( [resultingParamList[0].find(x) for x in ["self", "cls"]] == [-1, -1] ):
+            resultingParamList.insert(0, "self")
     return ', '.join(resultingParamList), returnType
 
 
@@ -211,6 +269,7 @@ class FunctionDumper:
     def __init__(self, function, root):
         self.function = function
         self.root = root
+        assert isinstance(self.root, ModuleDumper)
 
     def dump(self):
         try:
@@ -223,16 +282,29 @@ class FunctionDumper:
                 else:
                     # there's a default value
                     defaultIndex = index - (len(arguments.args) - len(arguments.defaults))
-                    print(index, defaultIndex, arguments.args, arguments.defaults)
-                    arglist.append("{0}={1}".format(argument, arguments.defaults[defaultIndex]))
+                    rawDefaultValue = arguments.defaults[defaultIndex]
+                    if type(rawDefaultValue) == type(object):
+                        defaultValue = strict_sanitize(str(rawDefaultValue)) + "()"
+                    else:
+                        defaultValue = '"{0}"'.format(str(rawDefaultValue).replace("\n", " "))
+                    if len(defaultValue) == 0 or defaultValue.isspace():
+                        defaultValue = "None"
+                    arglist.append("{0}={1}".format(argument, defaultValue))
+            if self.root.indentDepth > 0:
+                # we're in a class, make sure there's a "self"
+                if len(arglist) == 0 or ( arglist[0].find("self") == -1 and arglist[0].find("cls") == -1 ):
+                    arglist.insert(0, "self")
             arglist = ', '.join(arglist)
         except TypeError:
             # not a python function, can't inspect it. try guessing argspec from docstring
             arglist = None
         try:
-            docstring = self.function.__doc__.split('\n')[0]
-            synArglist, returnValue = parse_synopsis(docstring)
-        except:
+            docstring = self.function.__doc__.split('\n')[0] if self.function.__doc__ else str()
+            synArglist, returnValue = parse_synopsis(docstring, str(self.function.__doc__), self.root, self.root.indentDepth > 0)
+        except Exception as e:
+            debugmsg("  Warning: Function argument extraction failed: {0}".format(e))
+            debugmsg("   * Traceback follows, but the error was ignored since it is not fatal.")
+            traceback.print_exc(file=sys.stderr)
             synArglist = ""
             returnValue = "None"
         if arglist is None:
@@ -240,9 +312,9 @@ class FunctionDumper:
         funcname = self.function.__name__
         if funcname[0].isdigit():
             funcname = '_' + funcname
-        self.root.emit("def {0}({1}):".format(funcname, arglist))
+        self.root.emit("def {0}({1}):".format(strict_sanitize(funcname), arglist))
         self.root.increaseIndent()
-        self.root.emit('"""{0}"""'.format(self.function.__doc__))
+        self.root.emit('"""{0}"""'.format(str(self.function.__doc__).replace('"""', '___')))
         self.root.emit("return {0}".format(returnValue))
         self.root.decreaseIndent()
 
@@ -250,6 +322,7 @@ class ClassDumper:
     def __init__(self, klass, root):
         self.klass = klass
         self.root = root
+        assert isinstance(self.root, ModuleDumper)
 
     def dump(self):
         debugmsg("Generating documentation for class {0}".format(self.klass.__name__))

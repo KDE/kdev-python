@@ -87,7 +87,7 @@ LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ 
 
 void LanguageSupport::documentOpened(IDocument* doc)
 {
-    if ( ICore::self()->languageController()->languagesForUrl(doc->url()).contains(language()) ) {
+    if ( ! ICore::self()->languageController()->languagesForUrl(doc->url()).contains(language()) ) {
         // not a python file
         return;
     }

@@ -36,7 +36,7 @@ namespace Python {
 
 K_PLUGIN_FACTORY(PdbDebuggerPluginFactory, registerPlugin<PdbDebuggerPlugin>(); )
 K_EXPORT_PLUGIN(PdbDebuggerPluginFactory(
-    KAboutData("kdevpdbsupport", "kdevpdb", ki18n("Python Debugger (pdb) Support"),
+    KAboutData("kdevpdbsupport", "kdevpython", ki18n("Python Debugger (pdb) Support"),
                KDEVPYTHON_VERSION_STR, ki18n("Support for the Python Debugger"), KAboutData::License_GPL)
     .addAuthor(ki18n("Sven Brauch"), ki18n("Author"), "svenbrauch@googlemail.com", "")
 ))

@@ -3,11 +3,11 @@ PROJECT(kdevpython)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${kdevpython_SOURCE_DIR}/cmake/)
 
 find_package(KDE4 REQUIRED)
-find_package(KDevPlatform 1.5.60 REQUIRED)
+find_package(KDevPlatform 1.6.60 REQUIRED)
 
 # write the plugin version to a file
 set(KDEVPYTHON_VERSION_MAJOR 1)
-set(KDEVPYTHON_VERSION_MINOR 5)
+set(KDEVPYTHON_VERSION_MINOR 6)
 set(KDEVPYTHON_VERSION_PATCH 60)
 configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpython_BINARY_DIR}/kdevpythonversion.h" @ONLY )
 

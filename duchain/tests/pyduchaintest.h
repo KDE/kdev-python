@@ -84,6 +84,7 @@ class PyDUChainTest : public QObject
         void testCannotOverwriteBuiltins();
         void testFunctionHints();
         void testFunctionHints_data();
+        void testCannotOverwriteBuiltins_data();
         void testOperators();
         void testOperators_data();
 

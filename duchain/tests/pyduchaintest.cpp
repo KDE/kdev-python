@@ -474,14 +474,31 @@ void PyDUChainTest::testFlickering_data()
 
 void PyDUChainTest::testCannotOverwriteBuiltins()
 {
-    ReferencedTopDUContext ctx = parse("class list(): pass\nmylist = []\nmylist.append(3)");
+    QFETCH(QString, code);
+    QFETCH(QString, expectedType);
+
+    ReferencedTopDUContext ctx = parse(code);
     DUChainWriteLocker lock;
-    QList<Declaration*> ds = ctx->findDeclarations(QualifiedIdentifier("mylist"));
+    QList<Declaration*> ds = ctx->findDeclarations(QualifiedIdentifier("checkme"));
     QVERIFY(!ds.isEmpty());
     Declaration* d = ds.first();
     QVERIFY(d);
     QVERIFY(d->abstractType());
-    QVERIFY(d->abstractType()->toString() == "list of int");
+    QCOMPARE(d->abstractType()->toString(), expectedType);
+}
+
+void PyDUChainTest::testCannotOverwriteBuiltins_data()
+{
+    QTest::addColumn<QString>("code");
+    QTest::addColumn<QString>("expectedType");
+
+    QTest::newRow("list_assign") << "class list(): pass\ncheckme = []\ncheckme.append(3)" << "list of int";
+    QTest::newRow("str_assign") << "str = 5; checkme = 'Foo'" << "str";
+    QTest::newRow("str_assign2") << "class Foo: pass\nstr = Foo; checkme = 'Foo'" << "str";
+    QTest::newRow("str_assign3") << "from testCannotOverwriteBuiltins.i import Foo as str\ncheckme = 'Foo'" << "str";
+    QTest::newRow("for") << "for str in [1, 2, 3]: pass\ncheckme = 'Foo'" << "str";
+    QTest::newRow("assert") << "assert isinstance(str, int)\ncheckme = 'Foo'" << "str";
+    QTest::newRow("assert2") << "assert isinstance(str, int)\ncheckme = 3" << "int";
 }
 
 void PyDUChainTest::testVarKWArgs()
@@ -731,6 +748,9 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("tuple_type") << "checkme = 1, 2" << "tuple";
     
     QTest::newRow("dict_iteritems") << "d = {1:2, 3:4}\nfor checkme, k in d.iteritems(): pass" << "int";
+
+    QTest::newRow("dict_assign_twice") << "d = dict(); d[''] = 0; d = dict(); d[''] = 0; checkme = d"
+                                       << "unsure (dict of str : int, dict)";
     
     QTest::newRow("class_method_import") << "class c:\n attr = \"foo\"\n def m():\n  return attr;\n  return 3;\ni=c()\ncheckme=i.m()" << "int";
     QTest::newRow("getsListDecorator") << "foo = [1, 2, 3]\ncheckme = foo.reverse()" << "list of int";

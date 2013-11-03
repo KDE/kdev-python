@@ -18,9 +18,6 @@
  */
 #include "usebuilder.h"
 
-#include <ktexteditor/smartrange.h>
-#include <ktexteditor/smartinterface.h>
-
 #include <KUrl>
 
 #include <language/duchain/declaration.h>

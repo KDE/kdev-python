@@ -22,6 +22,7 @@
 #include "items/importfile.h"
 #include "items/functiondeclaration.h"
 #include "items/implementfunction.h"
+#include "items/missingincludeitem.h"
 
 #include "worker.h"
 #include "helpers.h"
@@ -82,6 +83,7 @@ ExpressionVisitor* visitorForString(QString str, DUContext* context, CursorInRev
 
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bool& abort, bool fullCompletion)
 {
+    m_fullCompletion = fullCompletion;
     QList<CompletionTreeItemPointer> resultingItems;
     DUChainReadLocker lock;
     
@@ -316,7 +318,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         QList<DeclarationDepthPair> remainingDeclarations;
         foreach ( const DeclarationDepthPair& d, declarations ) {
             Declaration* r = Helper::resolveAliasDeclaration(d.first);
-            if ( r and r->identifier().identifier().str().contains("__kdevpythondocumentation_builtin") ) {
+            if ( r && r->topContext() == Helper::getDocumentationFileContext() ) {
                 continue;
             }
             if ( r && dynamic_cast<ClassDeclaration*>(r) ) {
@@ -339,6 +341,21 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         }
         else {
             kWarning() << "Completion requested for syntactically invalid expression, not offering anything";
+        }
+
+        // append eventually stripped postfix, for e.g. os.chdir|
+        bool needDot = true;
+        foreach ( const QChar& c, m_followingText ) {
+            if ( needDot ) {
+                m_guessTypeOfExpression.append('.');
+                needDot = false;
+            }
+            if ( c.isLetterOrNumber() || c == '_' ) {
+                m_guessTypeOfExpression.append(c);
+            }
+        }
+        if ( resultingItems.isEmpty() && fullCompletion ) {
+            resultingItems << getMissingIncludeItems(m_guessTypeOfExpression);
         }
     }
     else {
@@ -407,6 +424,48 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     return resultingItems;
 }
 
+QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getMissingIncludeItems(QString forString)
+{
+    QList<CompletionTreeItemPointer> items;
+
+    // Find all the non-empty name components (mainly, remove the last empty one for "sys." or similar)
+    QStringList components = forString.split('.');
+    components.removeAll(QString());
+
+    // Check all components are alphanumeric
+    QRegExp alnum("\\w*");
+    foreach ( const QString& component, components ) {
+        if ( ! alnum.exactMatch(component) ) return items;
+    }
+
+    if ( components.isEmpty() ) {
+        return items;
+    }
+
+    // See if there's a module called like that.
+    QPair<KUrl, QStringList> found = ContextBuilder::findModulePath(components.join("."), m_workingOnDocument);
+
+    // Check if anything was found
+    if ( found.first.isValid() ) {
+        // Add items for the "from" and the plain import
+        if ( components.size() > 1 && found.second.isEmpty() ) {
+            // There's something left for X in "from foo import X",
+            // and it's not a declaration inside the module so offer that
+            const QString module = QStringList(components.mid(0, components.size() - 1)).join(".");
+            const QString text = QString("from %1 import %2").arg(module, components.last());
+            MissingIncludeItem* item = new MissingIncludeItem(text, components.last(), forString);
+            items << CompletionTreeItemPointer(item);
+        }
+
+        const QString module = QStringList(components.mid(0, components.size() - found.second.size())).join(".");
+        const QString text = QString("import %1").arg(module);
+        MissingIncludeItem* item = new MissingIncludeItem(text, components.last());
+        items << CompletionTreeItemPointer(item);
+    }
+
+    return items;
+}
+
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToItemList(QList<DeclarationDepthPair> declarations, int maxDepth)
 {
     QList<CompletionTreeItemPointer> items;
@@ -459,6 +518,35 @@ QList< CompletionTreeItemPointer > PythonCodeCompletionContext::getCompletionIte
         kDebug() << "Getting completion items for " << count << "types of unsure type " << unsure;
         for ( int i = 0; i < count; i++ ) {
             result.append(getCompletionItemsForOneType(unsure->types()[i].abstractType()));
+        }
+        // Do some weighting: the more often an entry appears, the better the entry.
+        // That way, entries which are in all of the types this object could have will
+        // be sorted higher up.
+        QStringList itemTitles;
+        QList<CompletionTreeItemPointer> remove;
+        for ( int i = 0; i < result.size(); i++ ) {
+            DeclarationPointer decl = result.at(i)->declaration();
+            if ( ! decl ) {
+                itemTitles.append(QString());
+                continue;
+            }
+            const QString& title = decl->identifier().toString();
+            if ( itemTitles.contains(title) ) {
+                // there's already an item with that title, increase match quality
+                int item = itemTitles.indexOf(title);
+                PythonDeclarationCompletionItem* declItem = dynamic_cast<PythonDeclarationCompletionItem*>(result[item].data());
+                if ( ! m_fullCompletion ) {
+                    remove.append(result.at(i));
+                }
+                if ( declItem ) {
+                    // Add 1 to the match quality of the first item in the list.
+                    declItem->addMatchQuality(1);
+                }
+            }
+            itemTitles.append(title);
+        }
+        foreach ( const CompletionTreeItemPointer& ptr, remove ) {
+            result.removeOne(ptr);
         }
     }
     else {
@@ -675,8 +763,9 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::includeItemsForSub
     return findIncludeItems(foundPaths);
 }
 
-PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& remainingText, 
-                                                         QString calledFunction, int depth, int alreadyGivenParameters,
+PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& remainingText,
+                                                         QString calledFunction,
+                                                         int depth, int alreadyGivenParameters,
                                                          CodeCompletionContext* child)
     : CodeCompletionContext(context, remainingText, CursorInRevision::invalid(), depth)
     , m_operation(FunctionCallCompletion)
@@ -684,6 +773,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     , m_child(child)
     , m_guessTypeOfExpression(calledFunction)
     , m_alreadyGivenParametersCount(alreadyGivenParameters)
+    , m_fullCompletion(false)
 {
     ExpressionParser p(remainingText);
     summonParentForEventualCall(p.popAll(), remainingText);
@@ -733,13 +823,14 @@ void PythonCodeCompletionContext::summonParentForEventualCall(TokenList allExpre
 
 // decide what kind of completion will be offered based on the code before the current cursor position
 PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& text,
-                                                         const KDevelop::CursorInRevision& position, 
+                                                         const QString& followingText,
+                                                         const KDevelop::CursorInRevision& position,
                                                          int depth, const PythonCodeCompletionWorker* parent)
     : CodeCompletionContext(context, text, position, depth)
     , m_operation(PythonCodeCompletionContext::DefaultCompletion)
     , m_itemTypeHint(NoHint)
-    , worker(parent)
     , m_child(0)
+    , m_followingText(followingText)
     , m_position(position)
 {
     m_workingOnDocument = context->topContext()->url().toUrl();
@@ -809,13 +900,11 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     
     if ( allExpressions.nextIndexOfStatus(ExpressionParser::EventualCallFound).first != -1 ) {
         // 3 is always the case for "def foo(" or class foo(": one names the function, the other is the keyword
-        if ( allExpressions.length() == 4 ) {
-            if ( allExpressions.at(1).status == ExpressionParser::DefFound ) {
-                // The next thing the user probably wants to type are parameters for his function.
-                // We cannot offer completion for this.
-                m_operation = NoCompletion;
-                return;
-            }
+        if ( allExpressions.length() >= 4 && allExpressions.at(1).status == ExpressionParser::DefFound ) {
+            // The next thing the user probably wants to type are parameters for his function.
+            // We cannot offer completion for this.
+            m_operation = NoCompletion;
+            return;
         }
         if ( allExpressions.length() >= 4 ) {
             // TODO: optimally, filter out classes we already inherit from. That's a bonus, tough.

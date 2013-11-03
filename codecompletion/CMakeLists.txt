@@ -9,6 +9,7 @@ set(completion_SRCS
     worker.cpp
     helpers.cpp
     
+    items/missingincludeitem.cpp
     items/declaration.cpp
     items/functiondeclaration.cpp
     items/implementfunction.cpp

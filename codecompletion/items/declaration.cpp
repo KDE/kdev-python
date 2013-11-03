@@ -54,11 +54,9 @@ void PythonDeclarationCompletionItem::setTypeHint(PythonCodeCompletionContext::I
 {
     m_typeHint = type;
 }
-    
+
 QVariant PythonDeclarationCompletionItem::data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const
 {
-    QVariant data = KDevelop::NormalDeclarationCompletionItem::data(index, role, model);
-    
     switch ( role ) {
         case KDevelop::CodeCompletionModel::MatchQuality: {
             if ( ! declaration() ) return 0;
@@ -86,17 +84,16 @@ QVariant PythonDeclarationCompletionItem::data(const QModelIndex& index, int rol
             return 5;
         }
     }
-    
-    // this looks a bit hackish; still, this is the sort of stuff I think it's not worth doing clean, as the clean way
-    // does not really provide objective advantages (except for being clean) and is definitely way more difficult to implement
+
+    QVariant data = KDevelop::NormalDeclarationCompletionItem::data(index, role, model);
     if ( data.canConvert<QString>() ) {
         QString s = data.toString();
-        s.replace("__kdevpythondocumentation_builtin_", "").replace("<unknown>", "?");
+        s.replace("<unknown>", "?");
         return QVariant(s);
     }
     else if ( data.canConvert<QStringList>() ) {
         QStringList s = data.toStringList();
-        s.replaceInStrings("__kdevpythondocumentation_builtin_", "").replaceInStrings("<unknown>", "?");
+        s.replaceInStrings("<unknown>", "?");
         return QVariant(s);
     }
     else return data;

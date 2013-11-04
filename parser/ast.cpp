@@ -154,6 +154,11 @@ ExpressionAst::ExpressionAst(Ast* parent, AstType type): Ast(parent, type), valu
     
 }
 
+YieldFromAst::YieldFromAst(Ast* parent) : ExpressionAst(parent, Ast::YieldFromAstType)
+{
+
+}
+
 ExtendedSliceAst::ExtendedSliceAst(Ast* parent): SliceAstBase(parent, Ast::ExtendedSliceAstType)
 {
     

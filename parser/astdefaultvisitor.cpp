@@ -63,6 +63,11 @@ void AstDefaultVisitor::visitExpression(ExpressionAst* node)
     visitNode(node->value);
 }
 
+void AstDefaultVisitor::visitYieldFrom(YieldFromAst* node)
+{
+    visitNode(node->value);
+}
+
 void AstDefaultVisitor::visitAssertion(AssertionAst* node)
 {
     visitNode(node->condition);

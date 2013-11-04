@@ -67,6 +67,7 @@ public:
     virtual void visitPass(PassAst* node) { Q_UNUSED(node); };
     virtual void visitNonlocal(NonlocalAst* node) { Q_UNUSED(node); };
     virtual void visitExpression(ExpressionAst* node) { Q_UNUSED(node); };
+    virtual void visitYieldFrom(YieldFromAst* node) { Q_UNUSED(node); };
     virtual void visitBooleanOperation(BooleanOperationAst* node) { Q_UNUSED(node); };
     virtual void visitBinaryOperation(BinaryOperationAst* node) { Q_UNUSED(node); };
     virtual void visitUnaryOperation(UnaryOperationAst* node) { Q_UNUSED(node); };

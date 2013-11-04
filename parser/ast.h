@@ -123,6 +123,7 @@ public:
         StarredAstType,
         ListAstType,
         TupleAstType,
+        YieldFromAstType,
         
         SliceAstType,
         EllipsisAstType,
@@ -408,6 +409,12 @@ public:
     };
     ExpressionAst* value; // WARNING this is not set in most cases!
     CallAst* belongsToCall;
+};
+
+class KDEVPYTHONPARSER_EXPORT YieldFromAst : public ExpressionAst {
+public:
+    YieldFromAst(Ast* parent);
+    ExpressionAst* value;
 };
 
 class KDEVPYTHONPARSER_EXPORT BooleanOperationAst : public ExpressionAst {

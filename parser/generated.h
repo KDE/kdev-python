@@ -47,108 +47,6 @@ private:
 
 
 
-    Ast* visitNode(_excepthandler* node) {
-        if ( ! node ) return 0;
-        bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        Ast* result = 0;
-        switch ( node->kind ) {
-        case ExceptHandler_kind: {
-                ExceptionHandlerAst* v = new (m_pool->allocate(sizeof(ExceptionHandlerAst))) ExceptionHandlerAst(parent());
-                nodeStack.push(v); v->type = static_cast<ExpressionAst*>(visitNode(node->v.ExceptHandler.type)); nodeStack.pop();
-                v->name = node->v.ExceptHandler.name ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->v.ExceptHandler.name)) : 0;
-                if ( v->name ) {
-                    v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
-                    v->name->startLine = tline(node->lineno - 1);  v->startLine = v->name->startLine;
-                    v->name->endCol = node->col_offset + v->name->value.length() - 1;  v->endCol = v->name->endCol;
-                    v->name->endLine = tline(node->lineno - 1);  v->endLine = v->name->endLine;
-                    ranges_copied = true;
-                }
-                nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.ExceptHandler.body); nodeStack.pop();
-                result = v;
-                break;
-            }
-        default:
-            kWarning() << "Unsupported statement AST type: " << node->kind;
-            Q_ASSERT(false);
-        }
-
-        // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
-        if ( result->hasUsefulRangeInformation ) {
-            Ast* parent = result->parent;
-            while ( parent ) {
-                if ( parent->endLine < result->endLine ) {
-                    parent->endLine = result->endLine;
-                    parent->endCol = result->endCol;
-                }
-                if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
-                    parent->startLine = result->startLine;
-                    parent->startCol = result->startCol;
-                }
-                parent = parent->parent;
-            }
-        }
-    
-        if ( result && result->astType == Ast::NameAstType ) {
-            NameAst* r = static_cast<NameAst*>(result);
-            r->startCol = r->identifier->startCol;
-            r->endCol = r->identifier->endCol;
-            r->startLine = r->identifier->startLine;
-            r->endLine = r->identifier->endLine;
-        }
-        return result;
-    }
-
-
-    Ast* visitNode(_comprehension* node) {
-        bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0;
-                ComprehensionAst* v = new (m_pool->allocate(sizeof(ComprehensionAst))) ComprehensionAst(parent());
-            nodeStack.push(v); v->target = static_cast<ExpressionAst*>(visitNode(node->target)); nodeStack.pop();
-            nodeStack.push(v); v->iterator = static_cast<ExpressionAst*>(visitNode(node->iter)); nodeStack.pop();
-            nodeStack.push(v); v->conditions = visitNodeList<_expr, ExpressionAst>(node->ifs); nodeStack.pop();
-        return v;
-    }
-
-
-    Ast* visitNode(_keyword* node) {
-        bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0;
-                KeywordAst* v = new (m_pool->allocate(sizeof(KeywordAst))) KeywordAst(parent());
-            v->argumentName = node->arg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->arg)) : 0;
-            nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->value)); nodeStack.pop();
-        return v;
-    }
-
-
-    Ast* visitNode(_arg* node) {
-        bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0;
-                ArgAst* v = new (m_pool->allocate(sizeof(ArgAst))) ArgAst(parent());
-            v->argumentName = node->arg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->arg)) : 0;
-                if ( v->argumentName ) {
-                    v->argumentName->startCol = node->col_offset; v->startCol = v->argumentName->startCol;
-                    v->argumentName->startLine = tline(node->lineno - 1);  v->startLine = v->argumentName->startLine;
-                    v->argumentName->endCol = node->col_offset + v->argumentName->value.length() - 1;  v->endCol = v->argumentName->endCol;
-                    v->argumentName->endLine = tline(node->lineno - 1);  v->endLine = v->argumentName->endLine;
-                    ranges_copied = true;
-                }
-            nodeStack.push(v); v->annotation = static_cast<ExpressionAst*>(visitNode(node->annotation)); nodeStack.pop();
-        return v;
-    }
-
-
-    Ast* visitNode(_arguments* node) {
-        bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0;
-                ArgumentsAst* v = new (m_pool->allocate(sizeof(ArgumentsAst))) ArgumentsAst(parent());
-            nodeStack.push(v); v->vararg = static_cast<ArgAst*>(visitNode(node->vararg)); nodeStack.pop();
-            nodeStack.push(v); v->kwarg = static_cast<ArgAst*>(visitNode(node->kwarg)); nodeStack.pop();
-            nodeStack.push(v); v->arguments = visitNodeList<_arg, ArgAst>(node->args); nodeStack.pop();
-            nodeStack.push(v); v->defaultValues = visitNodeList<_expr, ExpressionAst>(node->defaults); nodeStack.pop();
-        return v;
-    }
-
-
     Ast* visitNode(_stmt* node) {
         if ( ! node ) return 0;
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
@@ -371,6 +269,96 @@ private:
     }
 
 
+    Ast* visitNode(_keyword* node) {
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
+        if ( ! node ) return 0;
+                KeywordAst* v = new (m_pool->allocate(sizeof(KeywordAst))) KeywordAst(parent());
+            v->argumentName = node->arg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->arg)) : 0;
+            nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->value)); nodeStack.pop();
+        return v;
+    }
+
+
+    Ast* visitNode(_excepthandler* node) {
+        if ( ! node ) return 0;
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
+        Ast* result = 0;
+        switch ( node->kind ) {
+        case ExceptHandler_kind: {
+                ExceptionHandlerAst* v = new (m_pool->allocate(sizeof(ExceptionHandlerAst))) ExceptionHandlerAst(parent());
+                nodeStack.push(v); v->type = static_cast<ExpressionAst*>(visitNode(node->v.ExceptHandler.type)); nodeStack.pop();
+                v->name = node->v.ExceptHandler.name ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->v.ExceptHandler.name)) : 0;
+                if ( v->name ) {
+                    v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
+                    v->name->startLine = tline(node->lineno - 1);  v->startLine = v->name->startLine;
+                    v->name->endCol = node->col_offset + v->name->value.length() - 1;  v->endCol = v->name->endCol;
+                    v->name->endLine = tline(node->lineno - 1);  v->endLine = v->name->endLine;
+                    ranges_copied = true;
+                }
+                nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.ExceptHandler.body); nodeStack.pop();
+                result = v;
+                break;
+            }
+        default:
+            kWarning() << "Unsupported statement AST type: " << node->kind;
+            Q_ASSERT(false);
+        }
+
+        // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
+        if ( result->hasUsefulRangeInformation ) {
+            Ast* parent = result->parent;
+            while ( parent ) {
+                if ( parent->endLine < result->endLine ) {
+                    parent->endLine = result->endLine;
+                    parent->endCol = result->endCol;
+                }
+                if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
+                    parent->startLine = result->startLine;
+                    parent->startCol = result->startCol;
+                }
+                parent = parent->parent;
+            }
+        }
+    
+        if ( result && result->astType == Ast::NameAstType ) {
+            NameAst* r = static_cast<NameAst*>(result);
+            r->startCol = r->identifier->startCol;
+            r->endCol = r->identifier->endCol;
+            r->startLine = r->identifier->startLine;
+            r->endLine = r->identifier->endLine;
+        }
+        return result;
+    }
+
+
+    Ast* visitNode(_comprehension* node) {
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
+        if ( ! node ) return 0;
+                ComprehensionAst* v = new (m_pool->allocate(sizeof(ComprehensionAst))) ComprehensionAst(parent());
+            nodeStack.push(v); v->target = static_cast<ExpressionAst*>(visitNode(node->target)); nodeStack.pop();
+            nodeStack.push(v); v->iterator = static_cast<ExpressionAst*>(visitNode(node->iter)); nodeStack.pop();
+            nodeStack.push(v); v->conditions = visitNodeList<_expr, ExpressionAst>(node->ifs); nodeStack.pop();
+        return v;
+    }
+
+
+    Ast* visitNode(_arg* node) {
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
+        if ( ! node ) return 0;
+                ArgAst* v = new (m_pool->allocate(sizeof(ArgAst))) ArgAst(parent());
+            v->argumentName = node->arg ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->arg)) : 0;
+                if ( v->argumentName ) {
+                    v->argumentName->startCol = node->col_offset; v->startCol = v->argumentName->startCol;
+                    v->argumentName->startLine = tline(node->lineno - 1);  v->startLine = v->argumentName->startLine;
+                    v->argumentName->endCol = node->col_offset + v->argumentName->value.length() - 1;  v->endCol = v->argumentName->endCol;
+                    v->argumentName->endLine = tline(node->lineno - 1);  v->endLine = v->argumentName->endLine;
+                    ranges_copied = true;
+                }
+            nodeStack.push(v); v->annotation = static_cast<ExpressionAst*>(visitNode(node->annotation)); nodeStack.pop();
+        return v;
+    }
+
+
     Ast* visitNode(_alias* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
         if ( ! node ) return 0;
@@ -378,6 +366,75 @@ private:
             v->name = node->name ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->name)) : 0;
             v->asName = node->asname ? new (m_pool->allocate(sizeof(Python::Identifier))) Python::Identifier(PyUnicodeObjectToQString(node->asname)) : 0;
         return v;
+    }
+
+
+    Ast* visitNode(_arguments* node) {
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
+        if ( ! node ) return 0;
+                ArgumentsAst* v = new (m_pool->allocate(sizeof(ArgumentsAst))) ArgumentsAst(parent());
+            nodeStack.push(v); v->vararg = static_cast<ArgAst*>(visitNode(node->vararg)); nodeStack.pop();
+            nodeStack.push(v); v->kwarg = static_cast<ArgAst*>(visitNode(node->kwarg)); nodeStack.pop();
+            nodeStack.push(v); v->arguments = visitNodeList<_arg, ArgAst>(node->args); nodeStack.pop();
+            nodeStack.push(v); v->defaultValues = visitNodeList<_expr, ExpressionAst>(node->defaults); nodeStack.pop();
+        return v;
+    }
+
+
+    Ast* visitNode(_slice* node) {
+        if ( ! node ) return 0;
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
+        Ast* result = 0;
+        switch ( node->kind ) {
+        case Slice_kind: {
+                SliceAst* v = new (m_pool->allocate(sizeof(SliceAst))) SliceAst(parent());
+                nodeStack.push(v); v->lower = static_cast<ExpressionAst*>(visitNode(node->v.Slice.lower)); nodeStack.pop();
+                nodeStack.push(v); v->upper = static_cast<ExpressionAst*>(visitNode(node->v.Slice.upper)); nodeStack.pop();
+                nodeStack.push(v); v->step = static_cast<ExpressionAst*>(visitNode(node->v.Slice.step)); nodeStack.pop();
+                result = v;
+                break;
+            }
+        case ExtSlice_kind: {
+                ExtendedSliceAst* v = new (m_pool->allocate(sizeof(ExtendedSliceAst))) ExtendedSliceAst(parent());
+                nodeStack.push(v); v->dims = visitNodeList<_slice, SliceAst>(node->v.ExtSlice.dims); nodeStack.pop();
+                result = v;
+                break;
+            }
+        case Index_kind: {
+                IndexAst* v = new (m_pool->allocate(sizeof(IndexAst))) IndexAst(parent());
+                nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.Index.value)); nodeStack.pop();
+                result = v;
+                break;
+            }
+        default:
+            kWarning() << "Unsupported statement AST type: " << node->kind;
+            Q_ASSERT(false);
+        }
+
+        // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
+        if ( result->hasUsefulRangeInformation ) {
+            Ast* parent = result->parent;
+            while ( parent ) {
+                if ( parent->endLine < result->endLine ) {
+                    parent->endLine = result->endLine;
+                    parent->endCol = result->endCol;
+                }
+                if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
+                    parent->startLine = result->startLine;
+                    parent->startCol = result->startCol;
+                }
+                parent = parent->parent;
+            }
+        }
+    
+        if ( result && result->astType == Ast::NameAstType ) {
+            NameAst* r = static_cast<NameAst*>(result);
+            r->startCol = r->identifier->startCol;
+            r->endCol = r->identifier->endCol;
+            r->startLine = r->identifier->startLine;
+            r->endLine = r->identifier->endLine;
+        }
+        return result;
     }
 
 
@@ -579,6 +636,12 @@ private:
                 result = v;
                 break;
             }
+        case YieldFrom_kind: {
+                YieldFromAst* v = new (m_pool->allocate(sizeof(YieldFromAst))) YieldFromAst(parent());
+                nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.YieldFrom.value)); nodeStack.pop();
+                result = v;
+                break;
+            }
         default:
             kWarning() << "Unsupported statement AST type: " << node->kind;
             Q_ASSERT(false);
@@ -596,63 +659,6 @@ private:
             result->hasUsefulRangeInformation = true;
         }
         
-        // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
-        if ( result->hasUsefulRangeInformation ) {
-            Ast* parent = result->parent;
-            while ( parent ) {
-                if ( parent->endLine < result->endLine ) {
-                    parent->endLine = result->endLine;
-                    parent->endCol = result->endCol;
-                }
-                if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
-                    parent->startLine = result->startLine;
-                    parent->startCol = result->startCol;
-                }
-                parent = parent->parent;
-            }
-        }
-    
-        if ( result && result->astType == Ast::NameAstType ) {
-            NameAst* r = static_cast<NameAst*>(result);
-            r->startCol = r->identifier->startCol;
-            r->endCol = r->identifier->endCol;
-            r->startLine = r->identifier->startLine;
-            r->endLine = r->identifier->endLine;
-        }
-        return result;
-    }
-
-
-    Ast* visitNode(_slice* node) {
-        if ( ! node ) return 0;
-        bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        Ast* result = 0;
-        switch ( node->kind ) {
-        case Slice_kind: {
-                SliceAst* v = new (m_pool->allocate(sizeof(SliceAst))) SliceAst(parent());
-                nodeStack.push(v); v->lower = static_cast<ExpressionAst*>(visitNode(node->v.Slice.lower)); nodeStack.pop();
-                nodeStack.push(v); v->upper = static_cast<ExpressionAst*>(visitNode(node->v.Slice.upper)); nodeStack.pop();
-                nodeStack.push(v); v->step = static_cast<ExpressionAst*>(visitNode(node->v.Slice.step)); nodeStack.pop();
-                result = v;
-                break;
-            }
-        case ExtSlice_kind: {
-                ExtendedSliceAst* v = new (m_pool->allocate(sizeof(ExtendedSliceAst))) ExtendedSliceAst(parent());
-                nodeStack.push(v); v->dims = visitNodeList<_slice, SliceAst>(node->v.ExtSlice.dims); nodeStack.pop();
-                result = v;
-                break;
-            }
-        case Index_kind: {
-                IndexAst* v = new (m_pool->allocate(sizeof(IndexAst))) IndexAst(parent());
-                nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.Index.value)); nodeStack.pop();
-                result = v;
-                break;
-            }
-        default:
-            kWarning() << "Unsupported statement AST type: " << node->kind;
-            Q_ASSERT(false);
-        }
-
         // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
         if ( result->hasUsefulRangeInformation ) {
             Ast* parent = result->parent;

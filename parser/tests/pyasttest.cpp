@@ -215,6 +215,7 @@ void PyAstTest::testNewPython3_data()
     QTest::newRow("listunpack") << "(a, *rest, b) = range(5)";
     QTest::newRow("metaclass") << "class C(metaclass=M): pass";
     QTest::newRow("exception_chain") << "raise SecondaryException() from primary_exception";
+    QTest::newRow("yield_from") << "def foo(): yield from [1, 2, 3]";
 }
 
 void PyAstTest::testClass()

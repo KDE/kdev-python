@@ -57,6 +57,7 @@ RULE_FOR _expr;KIND List_kind;ACTIONS create|ListAst set|elements=>ExpressionAst
 RULE_FOR _expr;KIND Tuple_kind;ACTIONS create|TupleAst set|elements=>ExpressionAst,elts set|context*>Context,ctx;;
 RULE_FOR _expr;KIND Ellipsis_kind;ACTIONS create|EllipsisAst;;
 RULE_FOR _expr;KIND NameConstant_kind;ACTIONS create|NameConstantAst set|value_>value;;
+RULE_FOR _expr;KIND YieldFrom_kind;ACTIONS create|YieldFromAst set|value->ExpressionAst,value;;
 
 RULE_FOR _slice;KIND Slice_kind;ACTIONS create|SliceAst set|lower->ExpressionAst,lower set|upper->ExpressionAst,upper set|step->ExpressionAst,step;;
 RULE_FOR _slice;KIND ExtSlice_kind;ACTIONS create|ExtendedSliceAst set|dims=>SliceAst,dims;;

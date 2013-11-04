@@ -12,13 +12,9 @@ set(parser_STAT_SRCS
     astbuilder.cpp
 )
 
-set(Python_ADDITIONAL_VERSIONS 3.4)
-message(WARNING "Note to self: fix finding python before a release, this is not going to work")
-set(PYTHON_INCLUDE_DIR /usr/include/python3.4m)
-set(PYTHON_LIBRARY /usr/lib)
 find_package(PythonLibs 3.4 EXACT REQUIRED)
 if ( NOT ${PYTHONLIBS_FOUND} )
-    message(FATAL_ERROR "python libs not found")
+    message(FATAL_ERROR "Python 3.4 with --enable-shared is required to build kdev-python")
 endif()
 
 include_directories(kdev4pythonparser ${PYTHON_INCLUDE_DIRS})
@@ -28,7 +24,7 @@ target_link_libraries(kdev4pythonparser
     ${KDE4_KDECORE_LIBS}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${QT_QTCORE_LIBRARY}
-    ${PYTHON_LIBRARIES}/libpython3.4m.so.1.0
+    ${PYTHON_LIBRARY}
 )
 
 add_dependencies(kdev4pythonparser parser)

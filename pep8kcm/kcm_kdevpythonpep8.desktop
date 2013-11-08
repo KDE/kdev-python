@@ -10,3 +10,12 @@ X-KDE-ParentComponents=kdevplatform
 X-KDE-CfgDlgHierarchy=GENERAL
 
 Name=Python style checking
+Name[de]=Python-Stilüberprüfung
+Name[es]=Comprobación del estilo de Python
+Name[fr]=Contrôle de styles de Python
+Name[nl]=Controleren in de stijl van Python
+Name[pt_BR]=Verificação do estilo de Python
+Name[sv]=Python-stilkontroll
+Name[uk]=Перевірка стилю програмування Python
+Name[x-test]=xxPython style checkingxx
+Name[zh_TW]=Python 樣式檢查

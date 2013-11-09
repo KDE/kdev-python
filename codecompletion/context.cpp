@@ -154,8 +154,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             QList<Declaration*> calltips;
             KDevPG::MemoryPool pool;
             FunctionDeclaration* functionCalled = 0;
-            AstBuilder* builder = new AstBuilder(&pool);
-            CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
+            AstBuilder builder(&pool);
+            CodeAst* tmpAst = builder.parse(KUrl(), m_guessTypeOfExpression);
             if ( tmpAst ) {
                 lock.unlock();
                 ExpressionVisitor* v = new ExpressionVisitor(m_duContext.data());

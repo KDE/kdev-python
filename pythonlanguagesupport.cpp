@@ -150,7 +150,7 @@ bool LanguageSupport::enabledForFile(const KUrl& url)
     if ( project ) {
         KConfigGroup group(project->projectConfiguration()->group("python"));
         const QString& version = group.readEntry("languageVersion", "Python 3");
-        if ( version == "Python 3" && name == "Python3" || version == "Python 2" && name == "Python" ) {
+        if ( ( version == "Python 3" && name == "Python3" ) || ( version == "Python 2" && name == "Python" ) ) {
             // this plugin is the right one, the other one will disable itself
             return true;
         }

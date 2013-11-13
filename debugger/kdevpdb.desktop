@@ -39,6 +39,7 @@ Name[uk]=kdevpdb
 Name[x-test]=xxkdevpdbxx
 Name[zh_TW]=kdevpdb
 GenericName=Python Debugger Frontend
+GenericName[bs]=Prikazni program za Python debager
 GenericName[ca]=Frontal del depurador de Python
 GenericName[de]=Oberfläche für Python-Debugger
 GenericName[es]=Interfaz de depurador para Python

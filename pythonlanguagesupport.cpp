@@ -133,7 +133,7 @@ bool LanguageSupport::enabledForFile(const KUrl& url)
     QList< ILanguage* > enabledLanguages = ICore::self()->languageController()->languagesForUrl(url);
     const QString& name = LanguageSupport::self()->name();
     static const QString otherName = ( name == "Python3" ? "Python" : "Python3" );
-    bool haveBoth;
+    bool haveBoth = false;
     foreach ( const ILanguage* lang, enabledLanguages ) {
         if ( lang->name() == otherName ) {
             // both py2 and py3 plugins are installed

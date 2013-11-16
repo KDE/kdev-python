@@ -119,7 +119,7 @@ public:
         **/
     static Declaration* resolveAliasDeclaration(Declaration* decl);
     
-    static Declaration* declarationForName(NameAst* ast, const QualifiedIdentifier& identifier,
+    static Declaration* declarationForName(const QualifiedIdentifier& identifier,
                                            const RangeInRevision& nodeRange, DUContextPointer context);
 };
 

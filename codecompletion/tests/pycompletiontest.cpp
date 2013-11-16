@@ -273,7 +273,7 @@ void PyCompletionTest::testImportCompletion()
     QFETCH(QString, invokeCode);
     QFETCH(QString, completionCode);
     QFETCH(QString, expectedItem);
-    
+
     if ( expectedItem == "EMPTY" ) {
         QVERIFY(completionListIsEmpty(invokeCode, completionCode));
     }
@@ -481,6 +481,25 @@ void PyCompletionTest::testInheritanceCompletion()
     items = invokeCompletionOn("class parentClass:\n class blubb: pass\nclass childClass(%INVOKE): pass", "parentClass.%CURSOR");
     QVERIFY(! containsItemForDeclarationNamed(items, "parentClass"));
     QVERIFY(containsItemForDeclarationNamed(items, "blubb"));
+}
+
+void PyCompletionTest::testAddImportCompletion()
+{
+    QFETCH(QString, completionCode);
+    QFETCH(QString, invokeCode);
+    QFETCH(int, expectedItems);
+
+    QCOMPARE(invokeCompletionOn(completionCode, invokeCode).size(), expectedItems);
+}
+
+void PyCompletionTest::testAddImportCompletion_data()
+{
+    QTest::addColumn<QString>("completionCode");
+    QTest::addColumn<QString>("invokeCode");
+    QTest::addColumn<int>("expectedItems");
+
+    QTest::newRow("has_entry_when_necessary") << "toplevelmodule%INVOKE" << ".%CURSOR" << 1;
+    QTest::newRow("has_no_when_not_necessary") << "toplevelmodule = 3;\ntoplevelmodule%INVOKE" << ".%CURSOR" << 0;
 }
 
 }

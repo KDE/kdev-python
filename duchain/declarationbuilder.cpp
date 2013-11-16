@@ -1598,6 +1598,12 @@ void DeclarationBuilder::visitIf(IfAst* node)
 void DeclarationBuilder::adjustForTypecheck(Python::ExpressionAst* check, bool useUnsure)
 {
     if ( ! check ) return;
+    if ( check->astType == Ast::UnaryOperationAstType
+         && static_cast<UnaryOperationAst*>(check)->type == Ast::UnaryOperatorNot )
+    {
+        // It could be something like " if not isinstance(foo, Bar): return None ".
+        check = check->value;
+    }
     if ( check->astType == Ast::CallAstType ) {
         // Is this a call of the form "isinstance(foo, bar)"?
         CallAst* call = static_cast<CallAst*>(check);

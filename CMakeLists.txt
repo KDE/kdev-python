@@ -9,6 +9,10 @@ find_package(KDevPlatform 1.6.60 REQUIRED)
 set(KDEVPYTHON_VERSION_MAJOR 1)
 set(KDEVPYTHON_VERSION_MINOR 6)
 set(KDEVPYTHON_VERSION_PATCH 60)
+
+# find the system python 2 interpreter, only used for determining search paths.
+find_package(PythonInterp 2.7 REQUIRED)
+
 configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpython_BINARY_DIR}/kdevpythonversion.h" @ONLY )
 
 cmake_minimum_required(VERSION 2.8)

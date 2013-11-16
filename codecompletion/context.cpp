@@ -442,6 +442,13 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getMissingIncludeI
         return items;
     }
 
+    Declaration* existing = Helper::declarationForName(QualifiedIdentifier(components.first()),
+                                                       RangeInRevision(m_position, m_position), m_duContext);
+    if ( existing ) {
+        // There's already a declaration for the first component; no need to suggest it
+        return items;
+    }
+
     // See if there's a module called like that.
     QPair<KUrl, QStringList> found = ContextBuilder::findModulePath(components.join("."), m_workingOnDocument);
 
@@ -825,7 +832,7 @@ void PythonCodeCompletionContext::summonParentForEventualCall(TokenList allExpre
 PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& text,
                                                          const QString& followingText,
                                                          const KDevelop::CursorInRevision& position,
-                                                         int depth, const PythonCodeCompletionWorker* parent)
+                                                         int depth, const PythonCodeCompletionWorker* /*parent*/)
     : CodeCompletionContext(context, text, position, depth)
     , m_operation(PythonCodeCompletionContext::DefaultCompletion)
     , m_itemTypeHint(NoHint)

@@ -190,7 +190,7 @@ QPair<FunctionDeclarationPointer, bool> Helper::functionDeclarationForCalledDecl
     return QPair<FunctionDeclarationPointer, bool>(lastFunctionDeclaration, isConstructor);
 }
 
-Declaration* Helper::declarationForName(NameAst* /*ast*/, const QualifiedIdentifier& identifier, const RangeInRevision& nodeRange, DUContextPointer context)
+Declaration* Helper::declarationForName(const QualifiedIdentifier& identifier, const RangeInRevision& nodeRange, DUContextPointer context)
 {
     QList<Declaration*> declarations;
     QList<Declaration*> localDeclarations;

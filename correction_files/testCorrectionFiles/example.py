@@ -3,3 +3,13 @@
 
 def function_global_func():
     returns = int()
+
+class class_some_class():
+    def function___init__(self):
+        l_bar = float()
+
+    def function_member_func1(self):
+        l_baz = [3]
+
+    def function_member_func2(self):
+        returns = [float()]

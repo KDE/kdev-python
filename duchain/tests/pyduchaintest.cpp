@@ -115,17 +115,12 @@ void PyDUChainTest::init()
     
     kDebug() << "Searching for python files in " << assetModuleDir.absolutePath();
     
-    // sorry, but this is the easiest way to do it ;)
-    QList<KUrl> oldPaths = Helper::cachedSearchPaths;
-    Helper::cachedSearchPaths = QList<KUrl>() << KUrl(assetsDir.absolutePath());
-
     QList<QString> foundfiles = FindPyFiles(assetModuleDir);
 
     QString correctionFileDir = KStandardDirs::locate("data", "kdevpythonsupport/correction_files/");
     KUrl correctionFileUrl = KUrl(correctionFileDir + "testCorrectionFiles/example.py");
     correctionFileUrl.cleanPath();
     foundfiles.prepend(correctionFileUrl.path());
-    Helper::cachedSearchPaths = oldPaths;
 
     foreach(const QString filename, foundfiles) {
         kDebug() << "Parsing asset: " << filename;
@@ -1125,5 +1120,11 @@ void PyDUChainTest::testCorrectionFiles_data()
 
     QTest::newRow("global_scope_return_type") << "from testCorrectionFiles.example import global_func\n"
                                                  "checkme = global_func()" << "int";
+    QTest::newRow("class_scope_assign_local") << "from testCorrectionFiles.example import some_class\n"
+                                                 "a = some_class(); checkme = a.foo" << "float";
+    QTest::newRow("class_scope_return_local") << "from testCorrectionFiles.example import some_class\n"
+                                                 "a = some_class(); checkme = a.member_func1()" << "list of int";
+    QTest::newRow("class_scope_return")       << "from testCorrectionFiles.example import some_class\n"
+                                                 "a = some_class(); checkme = a.member_func2()" << "list of float";
 }
 

@@ -81,6 +81,8 @@ void DeclarationBuilder::setPrebuilding(bool prebuilding)
 
 ReferencedTopDUContext DeclarationBuilder::build(const IndexedString& url, Ast* node, ReferencedTopDUContext updateContext)
 {
+    m_correctionHelper.reset(new CorrectionHelper(url));
+
     // The declaration builder needs to run twice, so it can resolve uses of e.g. functions
     // which are called before they are defined (which is easily possible, due to python's dynamic nature).
     if ( ! m_prebuilding ) {
@@ -240,6 +242,11 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     Ast* rangeNode = originalAst ? originalAst : node;
     RangeInRevision range = editorFindRange(rangeNode, rangeNode);
     
+    // ask the correction file library if there's a user-specified type for this object
+    if ( AbstractType::Ptr hint = m_correctionHelper->hintForLocal(node->value) ) {
+        type = hint;
+    }
+
     // If no type is known, display "mixed".
     if ( ! type ) {
         type = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
@@ -1365,6 +1372,8 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 
 void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
+    const CorrectionHelper::Recursion r(m_correctionHelper->enterClass(node->name->value));
+
     StructureType::Ptr type(new StructureType());
     
     DUChainWriteLocker lock(DUChain::lock());
@@ -1479,6 +1488,8 @@ template<typename T> void DeclarationBuilder::visitDecorators(QList< Python::Exp
 
 void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
+    const CorrectionHelper::Recursion r(m_correctionHelper->enterFunction(node->name->value));
+
     // Search for an eventual containing class declaration;
     // if that exists, then this function is a member function
     DeclarationPointer eventualParentDeclaration(currentDeclaration());
@@ -1564,6 +1575,11 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     else {
         m_firstAttributeDeclaration = DeclarationPointer(0);
         dec->setStatic(true);
+    }
+
+    if ( AbstractType::Ptr hint = m_correctionHelper->returnTypeHint() ) {
+        type->setReturnType(hint);
+        dec->setType<FunctionType>(type);
     }
     
     // check for documentation

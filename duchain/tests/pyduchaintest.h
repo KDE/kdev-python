@@ -85,6 +85,8 @@ class PyDUChainTest : public QObject
         void testCannotOverwriteBuiltins_data();
         void testOperators();
         void testOperators_data();
+        void testCorrectionFiles();
+        void testCorrectionFiles_data();
 
     private:
         QList<KDevelop::TestFile*> createdFiles;

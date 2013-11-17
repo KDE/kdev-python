@@ -24,6 +24,8 @@ set(duchain_SRCS
     navigation/navigationwidget.cpp
     navigation/declarationnavigationcontext.cpp
 
+    correctionhelper.cpp
+
     assistants/missingincludeassistant.cpp
     ../docfilekcm/docfilewizard.cpp # for the docfile generation assistant widget, to be used in the problem resolver
 )

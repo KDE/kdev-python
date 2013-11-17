@@ -1602,7 +1602,7 @@ void DeclarationBuilder::adjustForTypecheck(Python::ExpressionAst* check, bool u
          && static_cast<UnaryOperationAst*>(check)->type == Ast::UnaryOperatorNot )
     {
         // It could be something like " if not isinstance(foo, Bar): return None ".
-        check = check->value;
+        check = static_cast<UnaryOperationAst*>(check)->operand;
     }
     if ( check->astType == Ast::CallAstType ) {
         // Is this a call of the form "isinstance(foo, bar)"?

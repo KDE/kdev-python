@@ -82,6 +82,8 @@ protected:
 
     /// Helper function which applies the docstring hints, such as "addsType".
     void applyDocstringHints(CallAst* node, Python::FunctionDeclaration::Ptr function);
+    /// Helper function which creates argument type hints.
+    void addArgumentTypeHints(CallAst* node, DeclarationPointer function);
     
     template<typename T> void visitDecorators(QList<ExpressionAst*> decorators, T* addTo);
     

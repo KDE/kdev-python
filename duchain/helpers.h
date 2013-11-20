@@ -62,6 +62,8 @@ public:
     static AbstractType::Ptr resolveType(AbstractType::Ptr type);
 
     static Declaration* accessAttribute(Declaration* accessed, const QString& attribute, DUContext* current);
+
+    static void scheduleDependency(const IndexedString& dependency, int betterThanPriority);
     
     /**
      * @brief Finds whether the specified called declaration is a function declaration, and, if not, checks for a class declaration; then returns the constructor

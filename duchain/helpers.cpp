@@ -31,9 +31,11 @@
 #include <language/duchain/duchain.h>
 #include <language/duchain/classdeclaration.h>
 #include <language/duchain/aliasdeclaration.h>
+#include <language/backgroundparser/backgroundparser.h>
 #include <interfaces/iproject.h>
 #include <interfaces/icore.h>
 #include <interfaces/iprojectcontroller.h>
+#include <interfaces/ilanguagecontroller.h>
 
 #include "ast.h"
 #include "types/hintedtype.h"
@@ -58,6 +60,30 @@ AbstractType::Ptr Helper::resolveType(AbstractType::Ptr type)
     }
     else
         return type;
+}
+
+void Helper::scheduleDependency(const IndexedString& dependency, int betterThanPriority)
+{
+    BackgroundParser* bgparser = KDevelop::ICore::self()->languageController()->backgroundParser();
+    bool needsReschedule = true;
+    if ( bgparser->isQueued(dependency) ) {
+        const ParseJob* job = bgparser->parseJobForDocument(dependency);
+        int previousPriority = BackgroundParser::WorstPriority;
+        if ( job ) {
+            previousPriority = job->parsePriority();
+        }
+        // if it's less important, reschedule it
+        if ( job && previousPriority > betterThanPriority - 1 ) {
+            bgparser->removeDocument(dependency);
+        }
+        else if ( job ) {
+            needsReschedule = false;
+        }
+    }
+    if ( needsReschedule ) {
+        bgparser->addDocument(dependency, TopDUContext::ForceUpdate, betterThanPriority - 1,
+                              0, ParseJob::FullSequentialProcessing);
+    }
 }
 
 Declaration* Helper::accessAttribute(Declaration* accessed, const QString& attribute, DUContext* current)

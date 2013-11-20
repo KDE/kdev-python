@@ -33,10 +33,12 @@ using namespace KDevelop;
 
 namespace Python {
 
+class DeclarationBuilder;
+
 class CorrectionHelper
 {
 public:
-    CorrectionHelper(const IndexedString& url);
+    CorrectionHelper(const IndexedString& url, DeclarationBuilder* builder);
     virtual ~CorrectionHelper();
 
     /// Keep this object alive as long as you are parsing a class or function.
@@ -62,6 +64,7 @@ private:
 
     ReferencedTopDUContext m_hintTopContext;
     QStack<DUContext*> m_contextStack;
+    DeclarationBuilder* m_builder;
 };
 
 } // namespace Python

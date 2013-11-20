@@ -81,7 +81,7 @@ void DeclarationBuilder::setPrebuilding(bool prebuilding)
 
 ReferencedTopDUContext DeclarationBuilder::build(const IndexedString& url, Ast* node, ReferencedTopDUContext updateContext)
 {
-    m_correctionHelper.reset(new CorrectionHelper(url));
+    m_correctionHelper.reset(new CorrectionHelper(url, this));
 
     // The declaration builder needs to run twice, so it can resolve uses of e.g. functions
     // which are called before they are defined (which is easily possible, due to python's dynamic nature).
@@ -835,26 +835,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
         // schedule the include file for parsing, and schedule the current one for reparsing after that is done
         kDebug() << "No module context, recompiling";
         m_unresolvedImports.append(modulePath);
-        BackgroundParser* bgparser = KDevelop::ICore::self()->languageController()->backgroundParser();
-        bool needsReschedule = true;
-        if ( bgparser->isQueued(modulePath) ) {
-            const ParseJob* job = bgparser->parseJobForDocument(modulePath);
-            int previousPriority = BackgroundParser::WorstPriority;
-            if ( job ) {
-                previousPriority = job->parsePriority();
-            }
-            // if it's less important, reschedule it
-            if ( job && previousPriority > m_ownPriority - 1 ) {
-                bgparser->removeDocument(modulePath);
-            }
-            else if ( job ) {
-                needsReschedule = false;
-            }
-        }
-        if ( needsReschedule ) {
-            bgparser->addDocument(modulePath, TopDUContext::ForceUpdate, m_ownPriority - 1,
-                                  0, ParseJob::FullSequentialProcessing);
-        }
+        Helper::scheduleDependency(modulePath, m_ownPriority);
         // parseDocuments() must *not* be called from a background thread!
         // KDevelop::ICore::self()->languageController()->backgroundParser()->parseDocuments();
         return 0;

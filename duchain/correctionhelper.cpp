@@ -22,6 +22,7 @@
 
 #include "correctionhelper.h"
 #include "helpers.h"
+#include "declarationbuilder.h"
 
 #include <language/duchain/duchain.h>
 #include <language/duchain/duchainlock.h>
@@ -32,38 +33,44 @@
 
 namespace Python {
 
-CorrectionHelper::CorrectionHelper(const IndexedString& _url)
+CorrectionHelper::CorrectionHelper(const IndexedString& _url, DeclarationBuilder* builder)
+    : m_builder(builder)
 {
     m_contextStack.push(0);
     KUrl url(_url.toUrl());
     QString path;
-    foreach ( const KUrl& basePath, Helper::getSearchPaths(KUrl()) ) {
-        if ( basePath.isParentOf(url) ) {
-            path = KUrl::relativePath(basePath.path(), url.path());
-            break;
-        }
-    }
-    if ( path.isEmpty() ) {
-        return;
-    }
-
     static QString baseDirectory;
     if ( baseDirectory.isEmpty() ) {
         baseDirectory = KStandardDirs::locate("data", "kdevpythonsupport/correction_files/");
     }
-    KUrl absolutePath = KUrl(baseDirectory + path);
-    absolutePath.cleanPath();
-    if ( ! QFile::exists(absolutePath.path()) ) {
+    KUrl absolutePath;
+    bool found = false;
+    foreach ( const KUrl& basePath, Helper::getSearchPaths(KUrl()) ) {
+        if ( ! basePath.isParentOf(url) ) {
+            continue;
+        }
+        path = KUrl::relativePath(basePath.path(), url.path());
+        absolutePath = KUrl(baseDirectory + path);
+        absolutePath.cleanPath();
+        if ( ! QFile::exists(absolutePath.path()) ) {
+            continue;
+        }
+        found = true;
+        break;
+    }
+    if ( ! found ) {
         return;
     }
 
+    const IndexedString indexedPath(absolutePath);
     DUChainReadLocker lock;
-    m_hintTopContext = DUChain::self()->chainForDocument(IndexedString(absolutePath));
+    m_hintTopContext = DUChain::self()->chainForDocument(indexedPath);
     kDebug() << "got top context for" << url << path << absolutePath << m_hintTopContext;
     m_contextStack.top() = m_hintTopContext.data();
     if ( ! m_hintTopContext ) {
         // The file exists, but was not parsed yet. Schedule it, and re-schedule the current one too.
-        // TODO
+        Helper::scheduleDependency(_url, builder->m_ownPriority);
+        builder->m_unresolvedImports.append(indexedPath);
     }
 }
 
@@ -102,10 +109,7 @@ AbstractType::Ptr CorrectionHelper::hintForLocal(const QString &local) const
 
 AbstractType::Ptr CorrectionHelper::returnTypeHint() const
 {
-    AbstractType::Ptr result = hintFor(KDevelop::Identifier(QLatin1String("returns")));
-    DUChainReadLocker lock;
-    kDebug() << "return type hint requested, result:" << ( result ? result->toString() : "none" );
-    return result;
+    return hintFor(KDevelop::Identifier(QLatin1String("returns")));
 }
 
 AbstractType::Ptr CorrectionHelper::hintFor(const KDevelop::Identifier &identifier) const

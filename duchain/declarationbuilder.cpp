@@ -56,8 +56,8 @@ namespace Python
 {
 
 DeclarationBuilder::DeclarationBuilder(PythonEditorIntegrator* editor)
-        : m_ownPriority(0)
-        , DeclarationBuilderBase( )
+        : DeclarationBuilderBase()
+        , m_ownPriority(0)
 {
     setEditor(editor);
     kDebug() << "Building Declarations";

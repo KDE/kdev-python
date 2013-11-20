@@ -49,6 +49,8 @@
 #include <QtGlobal>
 #include <KUrl>
 
+#include <functional>
+
 using namespace KTextEditor;
 using namespace KDevelop;
 
@@ -915,6 +917,72 @@ void DeclarationBuilder::visitLambda(LambdaAst* node)
     closeContext();
 }
 
+void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration::Ptr function)
+{
+    ExpressionVisitor v(currentContext());
+    v.visitNode(static_cast<AttributeAst*>(node->function)->value);
+
+    // Don't do anything if the object the function is being called on is not a container.
+    VariableLengthContainer::Ptr container = v.lastType().cast<VariableLengthContainer>();
+    if ( ! container || ! function ) {
+        return;
+    }
+    // Don't to updates to pre-defined functions.
+    if ( ! v.lastDeclaration() || v.lastDeclaration()->topContext()->url() == IndexedString(Helper::getDocumentationFile()) ) {
+        return;
+    }
+    // Check for the different types of modifiers such a function can have
+    QHash< QString, std::function<void()> > items;
+    QStringList args;
+    items["addsTypeOfArg"] = [&]() {
+        const int offset = ! args.isEmpty() ? args.at(0).toInt() : 0;
+        if ( ! node->arguments.length() > offset ) {
+            return;
+        }
+        // Check which type should be added to the list
+        ExpressionVisitor argVisitor(currentContext());
+        argVisitor.visitNode(node->arguments.at(offset));
+        // Actually add that type
+        if ( ! argVisitor.lastType() ) {
+            return;
+        }
+        DUChainWriteLocker wlock;
+        kDebug() << "Adding content type: " << argVisitor.lastType()->toString();
+        container->addContentType(argVisitor.lastType());
+        v.lastDeclaration()->setType(container);
+    };
+    items["addsTypeOfArgContent"] = [&]() {
+        const int offset = ! args.isEmpty() ? args.at(0).toInt() : 0;
+        if ( ! node->arguments.length() > offset ) {
+            return;
+        }
+        ExpressionVisitor argVisitor(currentContext());
+        argVisitor.visitNode(node->arguments.at(offset));
+        DUChainWriteLocker wlock;
+        if ( ! argVisitor.lastType() ) {
+            return;
+        }
+        QList<VariableLengthContainer::Ptr> sources = Helper::filterType<VariableLengthContainer>(
+            argVisitor.lastType(), [](AbstractType::Ptr type) {
+                return type.cast<VariableLengthContainer>();
+            }
+        );
+        foreach ( VariableLengthContainer::Ptr sourceContainer, sources ) {
+            if ( ! sourceContainer->contentType() ) {
+                continue;
+            }
+            container->addContentType(sourceContainer->contentType().abstractType());
+            v.lastDeclaration()->setType(container);
+        }
+    };
+
+    foreach ( const QString& key, items.keys() ) {
+        if ( Helper::docstringContainsHint(function.data(), key, &args) ) {
+            items[key]();
+        }
+    }
+}
+
 void DeclarationBuilder::visitCall(CallAst* node)
 {
     Python::AstDefaultVisitor::visitCall(node);
@@ -924,74 +992,15 @@ void DeclarationBuilder::visitCall(CallAst* node)
     //         def myfun(self): return 3
     //     l = [myclass()]
     //     x = l[0].myfun() # the called object is actually l[0].myfun
-    // In the above example, this call will be evaluated to "myclass.myfun" in the following block.
+    // In the above example, this call will be evaluated to "myclass.myfun" in the following statement.
     ExpressionVisitor functionVisitor(currentContext());
     functionVisitor.visitNode(node);
 
     if ( node->function && node->function->astType == Ast::AttributeAstType && functionVisitor.lastDeclaration() ) {
         // Some special functions, like "append", update the content of the object they operate on.
         // Find the object the function is called on, like for d = [1, 2, 3]; d.append(5), this will give "d"
-        ExpressionVisitor v(currentContext());
-        v.visitNode(static_cast<AttributeAst*>(node->function)->value);
-
-        // Don't do anything if the object the function is being called on is not a container.
-        if ( VariableLengthContainer::Ptr container = v.lastType().cast<VariableLengthContainer>() ) {
-            // Don't to updates to pre-defined functions.
-            if ( v.lastDeclaration() && v.lastDeclaration()->topContext()->url() != IndexedString(Helper::getDocumentationFile()) ) {
-                if ( functionVisitor.lastDeclaration()->isFunctionDeclaration() ) {
-                    FunctionDeclaration* f = static_cast<FunctionDeclaration*>(functionVisitor.lastDeclaration().data());
-                    // Check for the different types of modifiers such a function can have
-                    QStringList args;
-                    if ( Helper::docstringContainsHint(f, "addsTypeOfArg", &args) ) {
-                        const int offset = ! args.isEmpty() ? args.at(0).toInt() : 0;
-                        if ( node->arguments.length() > offset ) {
-                            // Check which type should be added to the list
-                            ExpressionVisitor argVisitor(currentContext(), editor());
-                            argVisitor.visitNode(node->arguments.at(offset));
-                            // Actually add that type
-                            if ( argVisitor.lastType() ) {
-                                DUChainWriteLocker wlock(DUChain::lock());
-                                kDebug() << "Adding content type: " << argVisitor.lastType()->toString();
-                                container->addContentType(argVisitor.lastType());
-                                v.lastDeclaration()->setType(container);
-                            }
-                        }
-                    }
-                    if ( Helper::docstringContainsHint(f, "addsTypeOfArgContent", &args) ) {
-                        const int offset = ! args.isEmpty() ? args.at(0).toInt() : 0;
-                        if ( node->arguments.length() > offset ) {
-                            ExpressionVisitor argVisitor(currentContext(), editor());
-                            argVisitor.visitNode(node->arguments.at(offset));
-                            DUChainWriteLocker wlock(DUChain::lock());
-                            if ( argVisitor.lastType() ) {
-                                if ( VariableLengthContainer::Ptr sourceContainer = argVisitor.lastType().cast<VariableLengthContainer>() ) {
-                                    if ( AbstractType::Ptr contentType = sourceContainer->contentType().abstractType() ) {
-                                        kDebug() << "Adding content type: " << contentType->toString();
-                                        container->addContentType(contentType);
-                                        v.lastDeclaration()->setType(container);
-                                    }
-                                }
-                                else if ( argVisitor.lastType()->whichType() == AbstractType::TypeUnsure ) {
-                                    UnsureType::Ptr sourceUnsure = argVisitor.lastType().cast<UnsureType>();
-                                    FOREACH_FUNCTION ( const IndexedType& type, sourceUnsure->types ) {
-                                        if ( AbstractType::Ptr p = type.abstractType() ) {
-                                            if ( VariableLengthContainer::Ptr sourceContainer = p.cast<VariableLengthContainer>() ) {
-                                                if ( AbstractType::Ptr contentType = sourceContainer->contentType().abstractType() ) {
-                                                    kDebug() << "Adding content type: " << contentType->toString();
-                                                    container->addContentType(contentType);
-                                                    v.lastDeclaration()->setType(container);
-                                                }
-                                            }
-                                        }
-                                    }
-                                    v.lastDeclaration()->setType(container);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        FunctionDeclaration::Ptr function = functionVisitor.lastDeclaration().dynamicCast<FunctionDeclaration>();
+        applyDocstringHints(node, function);
     }
     if ( ! m_prebuilding ) {
         return;

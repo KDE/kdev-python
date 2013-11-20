@@ -29,6 +29,7 @@
 
 #include "contextbuilder.h"
 #include "typebuilder.h"
+#include "declarations/functiondeclaration.h"
 #include <language/duchain/types/unsuretype.h>
 
 namespace Python
@@ -78,6 +79,9 @@ protected:
     virtual void visitGlobal(GlobalAst* node);
     virtual void visitAssertion(AssertionAst* node);
     virtual void visitIf(IfAst* node);
+
+    /// Helper function which applies the docstring hints, such as "addsType".
+    void applyDocstringHints(CallAst* node, Python::FunctionDeclaration::Ptr function);
     
     template<typename T> void visitDecorators(QList<ExpressionAst*> decorators, T* addTo);
     

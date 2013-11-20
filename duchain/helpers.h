@@ -39,6 +39,8 @@
 #include <KUrl>
 #include <KDebug>
 
+#include <functional>
+
 #include "pythonduchainexport.h"
 #include "types/unsuretype.h"
 #include "declarations/functiondeclaration.h"
@@ -67,7 +69,36 @@ public:
     static AbstractType::Ptr resolveType(AbstractType::Ptr type);
 
     static Declaration* accessAttribute(Declaration* accessed, const QString& attribute, DUContext* current);
-    
+
+    /**
+     * @brief Get a list of types inside the passed type which match the specified filter.
+     * The filter will be matched against the type only if it is not an unsure type,
+     * or else against all types inside that unsure type.
+     * @param type The type to search
+     * @param accept Filter function, return true if you want the type.
+     * @return QList< KDevelop::AbstractType::Ptr > list of types accepted by the filter.
+     */
+    template <typename T>
+    static QList<typename T::Ptr> filterType(AbstractType::Ptr type, std::function<bool(AbstractType::Ptr)> accept) {
+        QList<typename T::Ptr> types;
+        if ( ! type ) {
+            return types;
+        }
+        if ( type->whichType() == KDevelop::AbstractType::TypeUnsure ) {
+            UnsureType::Ptr unsure(type.cast<UnsureType>());
+            for ( int i = 0; i < unsure->typesSize(); i++ ) {
+                AbstractType::Ptr t = unsure->types()[i].abstractType();
+                if ( accept(t) ) {
+                    types << t.cast<T>();
+                }
+            }
+        }
+        else if ( accept(type) ) {
+            types << type.cast<T>();
+        }
+        return types;
+    }
+
     /**
      * @brief Finds whether the specified called declaration is a function declaration, and, if not, checks for a class declaration; then returns the constructor
      *

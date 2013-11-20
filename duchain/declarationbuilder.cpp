@@ -377,33 +377,24 @@ void DeclarationBuilder::visitFor(ForAst* node)
 {
     ExpressionVisitor v(currentContext(), editor());
     v.visitNode(node->iterator);
-    VariableLengthContainer::Ptr iteratorList = v.lastType().cast<VariableLengthContainer>();
+    QList<VariableLengthContainer::Ptr> possibleIterators = Helper::filterType<VariableLengthContainer>(v.lastType(),
+        [](AbstractType::Ptr type) {
+            return type.cast<VariableLengthContainer>();
+        }
+    );
+    /// iterators = filtertypes(..., list)
     if ( node->target->astType == Ast::NameAstType ) {
         // In case the iterator variable is a Name ("for x in range(3)"), just create a declaration for it.
         // The following code tries to figure out the type of "x" from the object that is being iterated over.
-        AbstractType::Ptr iteratorType;
-        if ( iteratorList && iteratorList->contentType() ) {
-            // If the object being iterated over is a simple list or similar, use its content type.
-            iteratorType = iteratorList->contentType().abstractType();
-        }
-        else if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeUnsure ) {
-            // If the object being iterated over *might* be a list, consider all possibilities.
-            UnsureType::Ptr u = v.lastType().cast<UnsureType>();
-            for ( uint i = 0; i < u->typesSize(); i++ ) {
-                if ( VariableLengthContainer::Ptr typeInUnsure = u->types()[i].abstractType().cast<VariableLengthContainer>() ) {
-                    if ( ! iteratorType ) {
-                        iteratorType = typeInUnsure->contentType().abstractType();
-                    }
-                    else {
-                        iteratorType = Helper::mergeTypes(iteratorType, typeInUnsure->contentType().abstractType());
-                    }
-                }
+        AbstractType::Ptr iteratorType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
+        foreach ( VariableLengthContainer::Ptr container, possibleIterators ) {
+            if ( ! container->contentType() ) {
+                continue;
             }
+            iteratorType = Helper::mergeTypes(iteratorType, container->contentType().abstractType());
         }
-        else {
-            // No list type whatsoever was available for the iterator list, so just display "mixed".
-            iteratorType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
-        }
+        // otherwise, no list type whatsoever was available for the iterator list, so just display "mixed".
+
         // Create the variable declaration for the iterator variable with the type that has been determined.
         visitVariableDeclaration<Declaration>(node->target, 0, iteratorType);
     }
@@ -412,46 +403,33 @@ void DeclarationBuilder::visitFor(ForAst* node)
         // For now, types of those variables will only be determined if the iterator is a list of tuples.
         QList<ExpressionAst*> targetElements = static_cast<TupleAst*>(node->target)->elements;
         int targetElementsCount = targetElements.count();
-        QList<AbstractType::Ptr> targetTypes;
-        if ( iteratorList ) {
-            QList<IndexedContainer::Ptr> gatherFromTuples;
-            AbstractType::Ptr contentType = iteratorList->contentType().abstractType();
-            if ( contentType && contentType->whichType() == AbstractType::TypeUnsure ) {
-                // The list content type is unsure, iterate over it and find all fitting tuple types.
-                UnsureType::Ptr unsureContentType = contentType.cast<UnsureType>();
-                for ( unsigned int i = 0; i < unsureContentType->typesSize(); i++ ) {
-                    AbstractType::Ptr t = unsureContentType->types()[i].abstractType();
-                    if ( IndexedContainer::Ptr tuple = IndexedContainer::Ptr::dynamicCast(t) ) {
-                        if ( tuple->typesCount() == targetElementsCount ) {
-                            // The length of the unpacked tuple and the amount of loop variables matches,
-                            // so unpacking can be performed.
-                            gatherFromTuples << tuple;
-                        }
-                    }
+        QList<IndexedContainer::Ptr> gatherFromTuples;
+        foreach ( VariableLengthContainer::Ptr container, possibleIterators ) {
+            AbstractType::Ptr contentType = container->contentType().abstractType();
+            gatherFromTuples = Helper::filterType<IndexedContainer>(contentType,
+                // find all IndexedContainer entries which have the right number of entries
+                [targetElementsCount](AbstractType::Ptr type) {
+                    IndexedContainer::Ptr indexed = type.cast<IndexedContainer>();
+                    return indexed && indexed->typesCount() == targetElementsCount;
                 }
-            }
-            else {
-                // The list has one defined type, only try to expand that as a tuple.
-                if ( IndexedContainer::Ptr tuple = IndexedContainer::Ptr::dynamicCast(contentType) ) {
-                    if ( tuple->typesCount() == targetElementsCount ) {
-                        gatherFromTuples << tuple;
-                    }
-                }
-            }
-            // Now, iterate over all possible tuples, and extract their types
-            int i = 0;
-            foreach ( IndexedContainer::Ptr tuple, gatherFromTuples ) {
-                for ( int j = 0; j < tuple->typesCount(); j++ ) {
-                    if ( i == 0 ) {
-                        targetTypes.append(tuple->typeAt(j).abstractType());
-                    }
-                    else {
-                        targetTypes[j] = Helper::mergeTypes(targetTypes[j], tuple->typeAt(j).abstractType());
-                    }
-                }
-                i++;
-            }
+            );
         }
+
+        // Now, iterate over all possible tuples, and extract their types
+        int i = 0;
+        QList<AbstractType::Ptr> targetTypes;
+        foreach ( IndexedContainer::Ptr tuple, gatherFromTuples ) {
+            for ( int j = 0; j < tuple->typesCount(); j++ ) {
+                if ( i == 0 ) {
+                    targetTypes.append(tuple->typeAt(j).abstractType());
+                }
+                else {
+                    targetTypes[j] = Helper::mergeTypes(targetTypes[j], tuple->typeAt(j).abstractType());
+                }
+            }
+            i++;
+        }
+
         short atElement = 0;
         bool haveTypeInformation = ! targetTypes.isEmpty();
         Q_ASSERT( ! haveTypeInformation || targetTypes.length() == targetElementsCount );

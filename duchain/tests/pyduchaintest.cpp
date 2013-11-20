@@ -1149,5 +1149,12 @@ void PyDUChainTest::testContainerTypes_data()
     QTest::newRow("cannot_change_type2") << "[1, 2, 3].append(5)\ncheckme = [\"Foo\", \"Bar\"]" << "str" << false;
     
     QTest::newRow("list_append") << "d = []\nd.append(3)\ncheckme = d[0]" << "int" << true;
+
+    QTest::newRow("for_loop") << "d = [3]\nfor item in d:\n checkme = item" << "int" << true;
+    QTest::newRow("for_loop_unsure") << "d = [3, \"foo\"]\nfor item in d:\n checkme = item" << "unsure (int, str)" << true;
+    QTest::newRow("for_loop_tuple_1") << "d = [(3, 3.5)]\nfor a, b in d:\n checkme = a" << "int" << true;
+    QTest::newRow("for_loop_tuple_2") << "d = [(3, 3.5)]\nfor a, b in d:\n checkme = b" << "float" << true;
+    QTest::newRow("for_loop_tuple_unsure") << "d = [(3, 3.5), (3.5, 3)]\nfor a, b in d:\n checkme = b"
+                                           << "unsure (float, int)" << true;
 }
 

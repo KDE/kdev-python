@@ -54,6 +54,7 @@ add_subdirectory(docfilekcm)
 add_subdirectory(pep8kcm)
 
 set(kdevpythonlanguagesupport_PART_SRCS
+    codegen/correctionfilegenerator.cpp
     codegen/simplerefactoring.cpp
     pythonlanguagesupport.cpp
     pythonparsejob.cpp

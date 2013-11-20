@@ -60,6 +60,8 @@ set(kdevpythonlanguagesupport_PART_SRCS
     pythonhighlighting.cpp
 )
 
+kde4_add_ui_files(kdevpythonlanguagesupport_PART_SRCS codegen/correctionwidget.ui)
+
 kde4_add_plugin(kdevpythonlanguagesupport ${kdevpythonlanguagesupport_PART_SRCS})
 
 target_link_libraries(kdevpythonlanguagesupport

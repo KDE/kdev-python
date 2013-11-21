@@ -1144,16 +1144,21 @@ void DeclarationBuilder::visitCall(CallAst* node)
     addArgumentTypeHints(node, functionVisitor.lastDeclaration());
 }
 
+/// Represents a single source type in a tuple assignment.
+struct SourceType {
+    AbstractType::Ptr type;
+    DeclarationPointer declaration;
+    bool isAlias;
+};
+
 void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 {
     AstDefaultVisitor::visitAssignment(node);
     // Because of tuple unpacking, it is required to gather the left- and right hand side
     // expressions / types first, then match them together in a second step.
     QList<ExpressionAst*> lhsExpressions;
-    QList<AbstractType::Ptr> rhsTypes;
-    QList<DeclarationPointer> rhsDeclarations;
-    QList<bool> rhsEntryIsAliasDeclaration;
-    
+    QList<SourceType> sources;
+
     foreach ( ExpressionAst* target, node->targets ) {
         if ( target->astType == Ast::TupleAstType ) {
             TupleAst* tuple = static_cast<TupleAst*>(target);
@@ -1165,90 +1170,93 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             lhsExpressions << target;
         }
     }
-    
+
+    QList<ExpressionAst*> values;
     if ( node->value && node->value->astType == Ast::TupleAstType ) {
-        foreach ( ExpressionAst* value, static_cast<TupleAst*>(node->value)->elements ) {
-            ExpressionVisitor v(currentContext(), editor());
-            v.visitNode(value);
-            rhsTypes << v.lastType();
-            rhsDeclarations << v.lastDeclaration();
-            rhsEntryIsAliasDeclaration << v.m_isAlias;
-        }
+        values = static_cast<TupleAst*>(node->value)->elements;
     }
     else {
-        ExpressionVisitor v(currentContext(), editor());
-        v.visitNode(node->value);
-        rhsTypes << v.lastType();
-        rhsDeclarations << v.lastDeclaration();
-        rhsEntryIsAliasDeclaration << v.m_isAlias;
+        values << node->value;
     }
-    
+    foreach ( ExpressionAst* value, values ) {
+        ExpressionVisitor v(currentContext());
+        v.visitNode(value);
+        sources << SourceType{
+            v.lastType(),
+            DeclarationPointer(Helper::resolveAliasDeclaration(v.lastDeclaration().data())),
+            v.m_isAlias
+        };
+    }
+
     // Now all the information about left- and right hand side entries is ready,
     // and creation / updating of variables can start.
-    bool canUnpack = lhsExpressions.length() == rhsTypes.length();
+    bool canUnpack = lhsExpressions.length() == sources.length();
     int i = 0;
     foreach ( ExpressionAst* target, lhsExpressions ) {
-        AbstractType::Ptr tupleElementType;
-        DeclarationPointer tupleElementDeclaration;
-        bool currentIsAlias = false;
+        SourceType element;
         // If the length of the right and the left side matches, exact unpacking can be done.
         // example code: a, b, c = 3, 4, 5
-        if ( canUnpack ) {
-            tupleElementType = rhsTypes.at(i);
-            tupleElementDeclaration = DeclarationPointer(Helper::resolveAliasDeclaration(rhsDeclarations.at(i).data()));
-            currentIsAlias = rhsEntryIsAliasDeclaration.at(i);
-        }
         // If the left side only contains one entry, unpacking never happens, and the left side
         // is instead assigned a container type if applicable
         // example code: a = 3, 4, 5
+        if ( canUnpack ) {
+             element = sources.at(i);
+        }
         else if ( lhsExpressions.length() == 1 ) {
             ExpressionVisitor v(currentContext());
             v.visitNode(node->value);
-            tupleElementType = v.lastType();
-            tupleElementDeclaration = DeclarationPointer(Helper::resolveAliasDeclaration(v.lastDeclaration().data()));
-            currentIsAlias = v.m_isAlias;
+            element = SourceType{
+                v.lastType(),
+                DeclarationPointer(Helper::resolveAliasDeclaration(v.lastDeclaration().data())),
+                v.m_isAlias
+            };
         }
-        else {
-            if ( ! rhsTypes.isEmpty() && lhsExpressions.length() == 1 ) {
-                // the assignment is of the form "foo = ..."
-                DUChainReadLocker lock;
-                IndexedContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType<IndexedContainer>("tuple", currentContext());
-                foreach ( AbstractType::Ptr ptr, rhsTypes ) {
-                    container->addEntry(ptr);
+        else if ( ! sources.isEmpty() && lhsExpressions.length() == 1 ) {
+            // the assignment is of the form "foo = ..."
+            DUChainReadLocker lock;
+            IndexedContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType<IndexedContainer>(
+                "tuple", currentContext()
+            );
+            if ( container ) {
+                foreach ( const SourceType& rhs, sources ) {
+                    container->addEntry(rhs.type);
                 }
-                tupleElementType = container.cast<AbstractType>();
+                element.type = container.cast<AbstractType>();
             }
-            else if ( ! rhsTypes.isEmpty() ) {
-                // the assignment is of the form "foo, bar, ... = ..." (tuple unpacking)
-                // this one is for the case that the tuple unpacking is not written down explicitly, for example
-                // a = (1, 2, 3); b, c, d = a
-                // the other case (b, c, d = 1, 2, 3) is handled above.
-                if ( const IndexedContainer* container = dynamic_cast<const IndexedContainer*>(rhsTypes.at(0).unsafeData()) ) {
-                    if ( container->typesCount() == lhsExpressions.length() ) {
-                        tupleElementType = container->typeAt(i).abstractType();
-                    }
+        }
+        else if ( ! sources.isEmpty() ) {
+            // the assignment is of the form "foo, bar, ... = ..." (tuple unpacking)
+            // this one is for the case that the tuple unpacking is not written down explicitly, for example
+            // a = (1, 2, 3); b, c, d = a
+            // the other case (b, c, d = 1, 2, 3) is handled above.
+            if ( const IndexedContainer::Ptr container = sources.first().type.cast<IndexedContainer>() ) {
+                if ( container->typesCount() == lhsExpressions.length() ) {
+                    element.type = container->typeAt(i).abstractType();
+                    element.isAlias = false;
                 }
             }
-            if ( ! tupleElementType ) {
-                // use mixed if none of the previous ways of determining the type worked.
-                tupleElementType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
-                tupleElementDeclaration = 0;
-            }
+        }
+        if ( ! element.type ) {
+            // use mixed if none of the previous ways of determining the type worked.
+            element.type = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
+            element.declaration = 0;
         }
         // Handling the tuple unpacking stuff is done now, and we can proceed as if there was no tuple unpacking involved.
         // Assignments of the form "a = 3"
         if ( target->astType == Ast::NameAstType ) {
-            if ( currentIsAlias ) {
+            { DUChainReadLocker lock; qDebug() << (element.type ? element.type->toString() : "no type") << element.isAlias; }
+            if ( element.isAlias ) {
                 DUChainWriteLocker lock(DUChain::lock());
-                AliasDeclaration* decl = eventuallyReopenDeclaration<AliasDeclaration>(static_cast<NameAst*>(target)->identifier, target, AliasDeclarationType);
-                decl->setAliasedDeclaration(tupleElementDeclaration.data());
+                Python::Identifier* identifier = static_cast<NameAst*>(target)->identifier;
+                AliasDeclaration* decl = eventuallyReopenDeclaration<AliasDeclaration>(identifier, target, AliasDeclarationType);
+                decl->setAliasedDeclaration(element.declaration.data());
                 closeDeclaration();
             }
             else {
                 DUChainWriteLocker lock(DUChain::lock());
-                Declaration* dec = visitVariableDeclaration<Declaration>(target, 0, tupleElementType);
+                Declaration* dec = visitVariableDeclaration<Declaration>(target, 0, element.type);
                 /** DEBUG **/
-                if ( tupleElementType && dec ) {
+                if ( element.type && dec ) {
                     Q_ASSERT(dec->abstractType());
                 }
                 /** END DEBUG **/
@@ -1258,13 +1266,13 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         else if ( target->astType == Ast::SubscriptAstType ) {
             SubscriptAst* subscript = static_cast<SubscriptAst*>(target);
             ExpressionAst* v = subscript->value;
-            if ( tupleElementType ) {
+            if ( element.type ) {
                 ExpressionVisitor targetVisitor(currentContext());
                 targetVisitor.visitNode(v);
                 DUChainWriteLocker lock;
                 VariableLengthContainer::Ptr cont = VariableLengthContainer::Ptr::dynamicCast(targetVisitor.lastType());
                 if ( cont ) {
-                    cont->addContentType(tupleElementType);
+                    cont->addContentType(element.type);
                 }
                 if ( cont && cont->hasKeyType() ) {
                     if ( subscript->slice and subscript->slice->astType == Ast::IndexAstType ) {
@@ -1336,13 +1344,17 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             bool isAlreadyOpen = contextAlreayOpen(internal);
             if ( isAlreadyOpen ) {
                 activateAlreadyOpenedContext(internal);
-                visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target, haveDeclaration, tupleElementType);
+                visitVariableDeclaration<ClassMemberDeclaration>(
+                    attrib->attribute, target, haveDeclaration, element.type
+                );
                 closeAlreadyOpenedContext(internal);
             }
             else {
                 injectContext(internal.data());
                 
-                Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target, haveDeclaration, tupleElementType);
+                Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(
+                    attrib->attribute, target, haveDeclaration, element.type
+                );
                 if ( dec ) {
                     dec->setRange(RangeInRevision(internal->range().start, internal->range().start));
                     dec->setAutoDeclaration(true);

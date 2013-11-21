@@ -1144,22 +1144,10 @@ void DeclarationBuilder::visitCall(CallAst* node)
     addArgumentTypeHints(node, functionVisitor.lastDeclaration());
 }
 
-/// Represents a single source type in a tuple assignment.
-struct SourceType {
-    AbstractType::Ptr type;
-    DeclarationPointer declaration;
-    bool isAlias;
-};
-
-void DeclarationBuilder::visitAssignment(AssignmentAst* node)
+QList< ExpressionAst* > DeclarationBuilder::targetsOfAssignment(QList< ExpressionAst* > targets)
 {
-    AstDefaultVisitor::visitAssignment(node);
-    // Because of tuple unpacking, it is required to gather the left- and right hand side
-    // expressions / types first, then match them together in a second step.
     QList<ExpressionAst*> lhsExpressions;
-    QList<SourceType> sources;
-
-    foreach ( ExpressionAst* target, node->targets ) {
+    foreach ( ExpressionAst* target, targets ) {
         if ( target->astType == Ast::TupleAstType ) {
             TupleAst* tuple = static_cast<TupleAst*>(target);
             foreach ( ExpressionAst* ast, tuple->elements ) {
@@ -1170,13 +1158,18 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             lhsExpressions << target;
         }
     }
+    return lhsExpressions;
+}
 
+QList< DeclarationBuilder::SourceType > DeclarationBuilder::sourcesOfAssignment(ExpressionAst* items)
+{
+    QList<SourceType> sources;
     QList<ExpressionAst*> values;
-    if ( node->value && node->value->astType == Ast::TupleAstType ) {
-        values = static_cast<TupleAst*>(node->value)->elements;
+    if ( items && items->astType == Ast::TupleAstType ) {
+        values = static_cast<TupleAst*>(items)->elements;
     }
     else {
-        values << node->value;
+        values << items;
     }
     foreach ( ExpressionAst* value, values ) {
         ExpressionVisitor v(currentContext());
@@ -1187,12 +1180,22 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             v.m_isAlias
         };
     }
+    return sources;
+}
+
+void DeclarationBuilder::visitAssignment(AssignmentAst* node)
+{
+    AstDefaultVisitor::visitAssignment(node);
+    // Because of tuple unpacking, it is required to gather the left- and right hand side
+    // expressions / types first, then match them together in a second step.
+    const QList<ExpressionAst*>& targets = targetsOfAssignment(node->targets);
+    const QList<SourceType>& sources = sourcesOfAssignment(node->value);
 
     // Now all the information about left- and right hand side entries is ready,
     // and creation / updating of variables can start.
-    bool canUnpack = lhsExpressions.length() == sources.length();
+    bool canUnpack = targets.length() == sources.length();
     int i = 0;
-    foreach ( ExpressionAst* target, lhsExpressions ) {
+    foreach ( ExpressionAst* target, targets ) {
         SourceType element;
         // If the length of the right and the left side matches, exact unpacking can be done.
         // example code: a, b, c = 3, 4, 5
@@ -1202,7 +1205,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         if ( canUnpack ) {
              element = sources.at(i);
         }
-        else if ( lhsExpressions.length() == 1 ) {
+        else if ( targets.length() == 1 ) {
             ExpressionVisitor v(currentContext());
             v.visitNode(node->value);
             element = SourceType{
@@ -1211,7 +1214,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
                 v.m_isAlias
             };
         }
-        else if ( ! sources.isEmpty() && lhsExpressions.length() == 1 ) {
+        else if ( ! sources.isEmpty() && targets.length() == 1 ) {
             // the assignment is of the form "foo = ..."
             DUChainReadLocker lock;
             IndexedContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType<IndexedContainer>(
@@ -1230,7 +1233,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
             // a = (1, 2, 3); b, c, d = a
             // the other case (b, c, d = 1, 2, 3) is handled above.
             if ( const IndexedContainer::Ptr container = sources.first().type.cast<IndexedContainer>() ) {
-                if ( container->typesCount() == lhsExpressions.length() ) {
+                if ( container->typesCount() == targets.length() ) {
                     element.type = container->typeAt(i).abstractType();
                     element.isAlias = false;
                 }
@@ -1244,7 +1247,6 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         // Handling the tuple unpacking stuff is done now, and we can proceed as if there was no tuple unpacking involved.
         // Assignments of the form "a = 3"
         if ( target->astType == Ast::NameAstType ) {
-            { DUChainReadLocker lock; qDebug() << (element.type ? element.type->toString() : "no type") << element.isAlias; }
             if ( element.isAlias ) {
                 DUChainWriteLocker lock(DUChain::lock());
                 Python::Identifier* identifier = static_cast<NameAst*>(target)->identifier;

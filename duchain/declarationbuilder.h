@@ -84,6 +84,16 @@ protected:
     void applyDocstringHints(CallAst* node, Python::FunctionDeclaration::Ptr function);
     /// Helper function which creates argument type hints.
     void addArgumentTypeHints(CallAst* node, DeclarationPointer function);
+
+    /// Represents a single source type in a tuple assignment.
+    struct SourceType {
+        AbstractType::Ptr type;
+        DeclarationPointer declaration;
+        bool isAlias;
+    };
+    /// Helper functions to retrieve lists of the left- and right hand side of assignments
+    QList<ExpressionAst*> targetsOfAssignment(QList<ExpressionAst*> targets);
+    QList<SourceType> sourcesOfAssignment(Python::ExpressionAst* items);
     
     template<typename T> void visitDecorators(QList<ExpressionAst*> decorators, T* addTo);
     

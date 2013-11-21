@@ -279,7 +279,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
     }
     else {
         if ( actualDeclaration ) {
-            kDebug() << "Declaraton " << actualDeclaration->toString() << " is not a class or function declaration";
+            kDebug() << "Declaraton is not a class or function declaration";
         }
         unknownTypeEncountered();
         return;
@@ -403,7 +403,6 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
                 // if the function does not force a return type, just copy the source (like for reversed())
                 realTarget = source;
             }
-            DUChainWriteLocker lock;
             VariableLengthContainer* newType = static_cast<VariableLengthContainer*>(realTarget->clone());
             Q_ASSERT(newType);
             newType->addContentType(source->contentType().abstractType());

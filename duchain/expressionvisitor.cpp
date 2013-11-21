@@ -174,7 +174,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     ExpressionVisitor v(this);
     v.visitNode(accessingAttributeOf);
     AbstractType::Ptr accessedType = v.lastType();
-    QList<StructureType::Ptr> accessingAttributeOfType = Helper::filterType<AbstractType>(accessedType,
+    QList<StructureType::Ptr> accessingAttributeOfType = Helper::filterType<StructureType>(accessedType,
         [](AbstractType::Ptr type) {
             return type && type->whichType() == AbstractType::TypeStructure;
         }
@@ -189,7 +189,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     bool success = false;
     bool haveOneUsefulType = false;
     foreach ( StructureType::Ptr current, accessingAttributeOfType ) {
-        if ( Helper::isUsefulType(current) ) {
+        if ( Helper::isUsefulType(current.cast<AbstractType>()) ) {
             haveOneUsefulType = true;
         }
         DUChainReadLocker lock;

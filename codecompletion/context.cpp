@@ -825,7 +825,7 @@ void PythonCodeCompletionContext::summonParentForEventualCall(TokenList allExpre
 PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& text,
                                                          const QString& followingText,
                                                          const KDevelop::CursorInRevision& position,
-                                                         int depth, const PythonCodeCompletionWorker* parent)
+                                                         int depth, const PythonCodeCompletionWorker* /*parent*/)
     : CodeCompletionContext(context, text, position, depth)
     , m_operation(PythonCodeCompletionContext::DefaultCompletion)
     , m_itemTypeHint(NoHint)

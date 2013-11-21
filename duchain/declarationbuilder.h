@@ -94,6 +94,8 @@ protected:
     /// Helper functions to retrieve lists of the left- and right hand side of assignments
     QList<ExpressionAst*> targetsOfAssignment(QList<ExpressionAst*> targets);
     QList<SourceType> sourcesOfAssignment(Python::ExpressionAst* items);
+    SourceType selectSource(const QList<ExpressionAst*>& targets, const QList<SourceType>& sources,
+                                   int index, ExpressionAst* value);
     
     template<typename T> void visitDecorators(QList<ExpressionAst*> decorators, T* addTo);
     

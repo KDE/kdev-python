@@ -1183,6 +1183,62 @@ QList< DeclarationBuilder::SourceType > DeclarationBuilder::sourcesOfAssignment(
     return sources;
 }
 
+DeclarationBuilder::SourceType DeclarationBuilder::selectSource(const QList< ExpressionAst* >& targets,
+                                                          const QList< DeclarationBuilder::SourceType >& sources,
+                                                          int index, ExpressionAst* value)
+{
+    bool canUnpack = targets.length() == sources.length();
+    SourceType element;
+    // If the length of the right and the left side matches, exact unpacking can be done.
+    // example code: a, b, c = 3, 4, 5
+    // If the left side only contains one entry, unpacking never happens, and the left side
+    // is instead assigned a container type if applicable
+    // example code: a = 3, 4, 5
+    if ( canUnpack ) {
+        element = sources.at(index);
+    }
+    else if ( targets.length() == 1 ) {
+        ExpressionVisitor v(currentContext());
+        v.visitNode(value);
+        element = SourceType{
+            v.lastType(),
+            DeclarationPointer(Helper::resolveAliasDeclaration(v.lastDeclaration().data())),
+            v.m_isAlias
+        };
+    }
+    else if ( ! sources.isEmpty() && targets.length() == 1 ) {
+        // the assignment is of the form "foo = ..."
+        DUChainReadLocker lock;
+        IndexedContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType<IndexedContainer>(
+            "tuple", currentContext()
+        );
+        if ( container ) {
+            foreach ( const SourceType& rhs, sources ) {
+                container->addEntry(rhs.type);
+            }
+            element.type = container.cast<AbstractType>();
+        }
+    }
+    else if ( ! sources.isEmpty() ) {
+        // the assignment is of the form "foo, bar, ... = ..." (tuple unpacking)
+        // this one is for the case that the tuple unpacking is not written down explicitly, for example
+        // a = (1, 2, 3); b, c, d = a
+        // the other case (b, c, d = 1, 2, 3) is handled above.
+        if ( const IndexedContainer::Ptr container = sources.first().type.cast<IndexedContainer>() ) {
+            if ( container->typesCount() == targets.length() ) {
+                element.type = container->typeAt(index).abstractType();
+                element.isAlias = false;
+            }
+        }
+    }
+    if ( ! element.type ) {
+        // use mixed if none of the previous ways of determining the type worked.
+        element.type = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
+        element.declaration = 0;
+    }
+    return element;
+}
+
 void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 {
     AstDefaultVisitor::visitAssignment(node);
@@ -1193,57 +1249,10 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 
     // Now all the information about left- and right hand side entries is ready,
     // and creation / updating of variables can start.
-    bool canUnpack = targets.length() == sources.length();
     int i = 0;
     foreach ( ExpressionAst* target, targets ) {
-        SourceType element;
-        // If the length of the right and the left side matches, exact unpacking can be done.
-        // example code: a, b, c = 3, 4, 5
-        // If the left side only contains one entry, unpacking never happens, and the left side
-        // is instead assigned a container type if applicable
-        // example code: a = 3, 4, 5
-        if ( canUnpack ) {
-             element = sources.at(i);
-        }
-        else if ( targets.length() == 1 ) {
-            ExpressionVisitor v(currentContext());
-            v.visitNode(node->value);
-            element = SourceType{
-                v.lastType(),
-                DeclarationPointer(Helper::resolveAliasDeclaration(v.lastDeclaration().data())),
-                v.m_isAlias
-            };
-        }
-        else if ( ! sources.isEmpty() && targets.length() == 1 ) {
-            // the assignment is of the form "foo = ..."
-            DUChainReadLocker lock;
-            IndexedContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType<IndexedContainer>(
-                "tuple", currentContext()
-            );
-            if ( container ) {
-                foreach ( const SourceType& rhs, sources ) {
-                    container->addEntry(rhs.type);
-                }
-                element.type = container.cast<AbstractType>();
-            }
-        }
-        else if ( ! sources.isEmpty() ) {
-            // the assignment is of the form "foo, bar, ... = ..." (tuple unpacking)
-            // this one is for the case that the tuple unpacking is not written down explicitly, for example
-            // a = (1, 2, 3); b, c, d = a
-            // the other case (b, c, d = 1, 2, 3) is handled above.
-            if ( const IndexedContainer::Ptr container = sources.first().type.cast<IndexedContainer>() ) {
-                if ( container->typesCount() == targets.length() ) {
-                    element.type = container->typeAt(i).abstractType();
-                    element.isAlias = false;
-                }
-            }
-        }
-        if ( ! element.type ) {
-            // use mixed if none of the previous ways of determining the type worked.
-            element.type = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
-            element.declaration = 0;
-        }
+        SourceType element = std::move(selectSource(targets, sources, i, node->value));
+
         // Handling the tuple unpacking stuff is done now, and we can proceed as if there was no tuple unpacking involved.
         // Assignments of the form "a = 3"
         if ( target->astType == Ast::NameAstType ) {

@@ -65,10 +65,6 @@ AbstractType::Ptr ExpressionVisitor::encounterPreprocess(AbstractType::Ptr type,
 
 void ExpressionVisitor::encounter(AbstractType::Ptr type, EncounterFlags flags)
 {
-//     if ( type )
-//         kDebug() << "type encountered: " << type->toString();
-//     else
-//         kDebug() << "unknown type encountered";
     if ( flags & AutomaticallyDetermineDeclaration ) {
         StructureType::Ptr t = type.cast<StructureType>();
         if ( t ) {
@@ -178,9 +174,9 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     ExpressionVisitor v(this);
     v.visitNode(accessingAttributeOf);
     AbstractType::Ptr accessedType = v.lastType();
-    QList<AbstractType::Ptr> accessingAttributeOfType = Helper::filterType<AbstractType>(accessedType,
-        [](AbstractType::Ptr) {
-            return true;
+    QList<StructureType::Ptr> accessingAttributeOfType = Helper::filterType<AbstractType>(accessedType,
+        [](AbstractType::Ptr type) {
+            return type && type->whichType() == AbstractType::TypeStructure;
         }
     );
 
@@ -192,25 +188,20 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     // maybe our attribute isn't a class at all, then that's an error by definition for now
     bool success = false;
     bool haveOneUsefulType = false;
-    if ( ! accessingAttributeOfType.isEmpty() ) {
-        foreach ( AbstractType::Ptr current, accessingAttributeOfType ) {
-            if ( current && current->whichType() != AbstractType::TypeStructure ) {
+    foreach ( StructureType::Ptr current, accessingAttributeOfType ) {
+        if ( Helper::isUsefulType(current) ) {
+            haveOneUsefulType = true;
+        }
+        DUChainReadLocker lock;
+        QList<DUContext*> searchContexts = Helper::internalContextsForClass(current, m_ctx->topContext());
+        foreach ( DUContext* currentInternalContext, searchContexts ) {
+            if ( ! currentInternalContext ) {
                 continue;
             }
-            StructureType::Ptr currentStructure = current.cast<StructureType>();
-            if ( Helper::isUsefulType(current) ) {
-                haveOneUsefulType = true;
-            }
-            DUChainReadLocker lock;
-            QList<DUContext*> searchContexts = Helper::internalContextsForClass(currentStructure, m_ctx->topContext());
-            foreach ( DUContext* currentInternalContext, searchContexts ) {
-                if ( currentInternalContext ) {
-                    foundDecls.append(currentInternalContext->findDeclarations(QualifiedIdentifier(node->attribute->value),
-                                                                               CursorInRevision::invalid(), AbstractType::Ptr(),
-                                                                               0, DUContext::DontSearchInParent));
-                    success = true;
-                }
-            }
+            foundDecls.append(currentInternalContext->findDeclarations(QualifiedIdentifier(node->attribute->value),
+                                                                       CursorInRevision::invalid(), AbstractType::Ptr(),
+                                                                       0, DUContext::DontSearchInParent));
+            success = true;
         }
     }
     if ( ! success ) {
@@ -683,7 +674,6 @@ void ExpressionVisitor::visitString(Python::StringAst* )
 
 RangeInRevision nodeRange(Python::Ast* node)
 {
-    kDebug() << node->endLine;
     return RangeInRevision(node->startLine, node->startCol, node->endLine,node->endCol);
 }
 
@@ -692,17 +682,15 @@ void ExpressionVisitor::addUnknownName(const QString& name)
     if ( m_parentVisitor ) {
         m_parentVisitor->addUnknownName(name);
     }
-    else {
-        if ( ! m_unknownNames.contains(name) ) {
-            m_unknownNames.append(name);
-        }
+    else if ( ! m_unknownNames.contains(name) ) {
+        m_unknownNames.append(name);
     }
 }
 
 void ExpressionVisitor::visitNameConstant(NameConstantAst* node)
 {
     // handles "True", "False", "None"
-    QHash < NameConstantAst::NameConstantTypes, AbstractType::Ptr >::const_iterator defId = m_defaultTypes.constFind(node->value);
+    auto defId = m_defaultTypes.constFind(node->value);
     if ( defId != m_defaultTypes.constEnd() ) {
         return encounter(*defId);
     }

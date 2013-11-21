@@ -35,6 +35,7 @@ public:
 private:
     KConfigGroup configGroup;
     QLineEdit* pep8url;
+    QLineEdit* pep8arguments;
     QCheckBox* enableChecking;
 };
 

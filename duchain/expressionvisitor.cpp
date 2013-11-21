@@ -40,6 +40,8 @@
 
 #include <KLocalizedString>
 
+#include <functional>
+
 using namespace KDevelop;
 using namespace Python;
 using namespace KTextEditor;
@@ -149,29 +151,14 @@ void ExpressionVisitor::unknownTypeEncountered() {
 
 QList< TypePtr< StructureType > > ExpressionVisitor::possibleStructureTypes(AbstractType::Ptr type)
 {
-    QList< TypePtr< StructureType > > result;
-    type = Helper::resolveType(type);
-    if ( ! type ) {
-        return result;
-    }
-    if ( type->whichType() == KDevelop::AbstractType::TypeUnsure ) {
-        AbstractType::Ptr current;
-        UnsureType::Ptr possible = type.cast<UnsureType>();
-        int amount = possible->typesSize();
-        for ( int i = 0; i < amount; i++ ) {
-            StructureType::Ptr current = Helper::resolveType(possible->types()[i].abstractType()).cast<StructureType>();
-            if ( current ) {
-                result << current;
-            }
+    return Helper::filterType<StructureType>(type,
+        [](AbstractType::Ptr type) {
+            return type.cast<StructureType>();
+        },
+        [](StructureType::Ptr type) {
+            return Helper::resolveType(type.cast<AbstractType>()).cast<StructureType>();
         }
-    }
-    else {
-        StructureType::Ptr c = type.cast<StructureType>();
-        if ( c ) {
-            result << c;
-        }
-    }
-    return result;
+    );
 }
 
 QList< TypePtr< StructureType > > ExpressionVisitor::typeListForDeclarationList(QList< DeclarationPointer > decls)
@@ -191,19 +178,12 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     ExpressionVisitor v(this);
     v.visitNode(accessingAttributeOf);
     AbstractType::Ptr accessedType = v.lastType();
-    QList<AbstractType::Ptr> accessingAttributeOfType;
-    if ( accessedType && accessedType->whichType() == AbstractType::TypeUnsure ) {
-        UnsureType::Ptr unsure = accessedType.cast<UnsureType>();
-        int size = unsure->typesSize();
-        DUChainReadLocker lock;
-        for ( int i = 0; i < size; i++ ) {
-            accessingAttributeOfType << unsure->types()[i].abstractType();
+    QList<AbstractType::Ptr> accessingAttributeOfType = Helper::filterType<AbstractType>(accessedType,
+        [](AbstractType::Ptr) {
+            return true;
         }
-    }
-    else {
-        accessingAttributeOfType << accessedType;
-    }
-    
+    );
+
     QList<Declaration*> foundDecls;
     
     // Step 1: Find all matching declarations which are made inside the type of which the accessed object is.

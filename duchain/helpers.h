@@ -79,7 +79,10 @@ public:
      * @return QList< KDevelop::AbstractType::Ptr > list of types accepted by the filter.
      */
     template <typename T>
-    static QList<typename T::Ptr> filterType(AbstractType::Ptr type, std::function<bool(AbstractType::Ptr)> accept) {
+    static QList<typename T::Ptr> filterType(AbstractType::Ptr type, std::function<bool(AbstractType::Ptr)> accept,
+                                             std::function<typename T::Ptr(typename T::Ptr)> map =
+                                             std::function<typename T::Ptr(typename T::Ptr)>())
+    {
         QList<typename T::Ptr> types;
         if ( ! type ) {
             return types;
@@ -89,12 +92,14 @@ public:
             for ( int i = 0; i < unsure->typesSize(); i++ ) {
                 AbstractType::Ptr t = unsure->types()[i].abstractType();
                 if ( accept(t) ) {
-                    types << t.cast<T>();
+                    typename T::Ptr result = t.cast<T>();
+                    types << ( map ? map(result) : result );
                 }
             }
         }
         else if ( accept(type) ) {
-            types << type.cast<T>();
+            typename T::Ptr result = type.cast<T>();
+            types << ( map ? map(result) : result );
         }
         return types;
     }

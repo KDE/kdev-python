@@ -96,6 +96,9 @@ protected:
     QList<SourceType> sourcesOfAssignment(Python::ExpressionAst* items);
     SourceType selectSource(const QList<ExpressionAst*>& targets, const QList<SourceType>& sources,
                                    int index, ExpressionAst* value);
+    void assignToName(NameAst* name, const SourceType& element);
+    void assignToSubscript(SubscriptAst* subscript, const SourceType& element);
+    void assignToAttribute(AttributeAst* attribute, const SourceType& element);
     
     template<typename T> void visitDecorators(QList<ExpressionAst*> decorators, T* addTo);
     

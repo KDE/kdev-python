@@ -268,6 +268,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     bool haveFittingDeclaration = false;
     if ( ! existingDeclarations.isEmpty() and existingDeclarations.last() ) {
         Declaration* d = Helper::resolveAliasDeclaration(existingDeclarations.last());
+        DUChainReadLocker lock;
         if ( d and d->topContext() != topContext() ) {
             inSameTopContext = false;
         }
@@ -1239,6 +1240,132 @@ DeclarationBuilder::SourceType DeclarationBuilder::selectSource(const QList< Exp
     return element;
 }
 
+void DeclarationBuilder::assignToName(NameAst* target, const DeclarationBuilder::SourceType& element)
+{
+    if ( element.isAlias ) {
+        DUChainWriteLocker lock;
+        Python::Identifier* identifier = target->identifier;
+        AliasDeclaration* decl = eventuallyReopenDeclaration<AliasDeclaration>(identifier, target, AliasDeclarationType);
+        decl->setAliasedDeclaration(element.declaration.data());
+        closeDeclaration();
+    }
+    else {
+        DUChainWriteLocker lock;
+        Declaration* dec = visitVariableDeclaration<Declaration>(target, 0, element.type);
+        /** DEBUG **/
+        if ( element.type && dec ) {
+            Q_ASSERT(dec->abstractType());
+        }
+        /** END DEBUG **/
+    }
+}
+
+void DeclarationBuilder::assignToSubscript(SubscriptAst* subscript, const DeclarationBuilder::SourceType& element)
+{
+    ExpressionAst* v = subscript->value;
+    if ( ! element.type ) {
+        return;
+    }
+    ExpressionVisitor targetVisitor(currentContext());
+    targetVisitor.visitNode(v);
+    VariableLengthContainer::Ptr cont = VariableLengthContainer::Ptr::dynamicCast(targetVisitor.lastType());
+    if ( cont ) {
+        cont->addContentType(element.type);
+    }
+    if ( cont && cont->hasKeyType() ) {
+        if ( subscript->slice && subscript->slice->astType == Ast::IndexAstType ) {
+            ExpressionVisitor keyVisitor(currentContext());
+            keyVisitor.visitNode(static_cast<IndexAst*>(subscript->slice)->value);
+            AbstractType::Ptr key = keyVisitor.lastType();
+            if ( key ) {
+                DUChainWriteLocker lock;
+                cont->addKeyType(key);
+            }
+        }
+    }
+    DeclarationPointer lastDecl = targetVisitor.lastDeclaration();
+    if ( cont && lastDecl ) {
+        DUChainWriteLocker lock;
+        lastDecl->setAbstractType(cont.cast<AbstractType>());
+    }
+}
+
+void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const DeclarationBuilder::SourceType& element)
+{
+    // check whether the current attribute is undeclared, but the previos ones known
+    // like in X.Y.Z = 3 where X and Y are defined, but Z isn't; then declare Z.
+    ExpressionVisitor checkForUnknownAttribute(currentContext(), editor());
+    checkForUnknownAttribute.visitNode(attrib);
+    DUChainReadLocker lock(DUChain::lock());
+    DeclarationPointer unknown = checkForUnknownAttribute.lastDeclaration();
+
+    // declare the attribute.
+    // however, if there's an earlier declaration which does not match the current position
+    // (so it's really a different declaration) we skip this.
+    Declaration* haveDeclaration = 0;
+    if ( unknown ) {
+        haveDeclaration = unknown.data();
+    }
+
+    lock.unlock();
+    ExpressionVisitor checkPreviousAttributes(currentContext(), editor());
+    checkPreviousAttributes.visitNode(attrib->value); // go "down one level", so only visit "X.Y"
+
+    DUContextPointer internal(0);
+    DeclarationPointer parentObjectDeclaration = checkPreviousAttributes.lastDeclaration();
+
+    if ( ! parentObjectDeclaration ) {
+        kDebug() << "No declaration for attribute base, aborting creation of attribute";
+        return;
+    }
+    // if foo is a class, this is like foo.bar = 3
+    if ( parentObjectDeclaration->internalContext() ) {
+        internal = parentObjectDeclaration->internalContext();
+    }
+    // while this is like A = foo(); A.bar = 3
+    else {
+        AbstractType::Ptr type = parentObjectDeclaration->abstractType();
+        StructureType::Ptr structure(dynamic_cast<StructureType*>(type.unsafeData()));
+        if ( ! structure || ! structure->declaration(topContext()) ) {
+            return;
+        }
+        parentObjectDeclaration = structure->declaration(topContext());
+        internal = parentObjectDeclaration->internalContext();
+    }
+    if ( ! internal ) {
+        kDebug() << "No internal context for structure type, aborting creation of attribute declaration";
+        return;
+    }
+
+    DUContext* previousContext = currentContext();
+
+    bool isAlreadyOpen = contextAlreayOpen(internal);
+    if ( isAlreadyOpen ) {
+        activateAlreadyOpenedContext(internal);
+        visitVariableDeclaration<ClassMemberDeclaration>(
+            attrib->attribute, attrib, haveDeclaration, element.type
+        );
+        closeAlreadyOpenedContext(internal);
+    }
+    else {
+        injectContext(internal.data());
+
+        Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(
+            attrib->attribute, attrib, haveDeclaration, element.type
+        );
+        if ( dec ) {
+            dec->setRange(RangeInRevision(internal->range().start, internal->range().start));
+            dec->setAutoDeclaration(true);
+            DUChainWriteLocker lock(DUChain::lock());
+            previousContext->createUse(dec->ownIndex(), editorFindRange(attrib, attrib));
+            lock.unlock();
+        }
+        else kWarning() << "No declaration created for " << attrib->attribute << "as parent is not a class";
+
+        closeInjectedContext();
+    }
+}
+
 void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 {
     AstDefaultVisitor::visitAssignment(node);
@@ -1254,129 +1381,17 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         SourceType element = std::move(selectSource(targets, sources, i, node->value));
 
         // Handling the tuple unpacking stuff is done now, and we can proceed as if there was no tuple unpacking involved.
-        // Assignments of the form "a = 3"
         if ( target->astType == Ast::NameAstType ) {
-            if ( element.isAlias ) {
-                DUChainWriteLocker lock(DUChain::lock());
-                Python::Identifier* identifier = static_cast<NameAst*>(target)->identifier;
-                AliasDeclaration* decl = eventuallyReopenDeclaration<AliasDeclaration>(identifier, target, AliasDeclarationType);
-                decl->setAliasedDeclaration(element.declaration.data());
-                closeDeclaration();
-            }
-            else {
-                DUChainWriteLocker lock(DUChain::lock());
-                Declaration* dec = visitVariableDeclaration<Declaration>(target, 0, element.type);
-                /** DEBUG **/
-                if ( element.type && dec ) {
-                    Q_ASSERT(dec->abstractType());
-                }
-                /** END DEBUG **/
-            }
+            // Assignments of the form "a = 3"
+            assignToName(static_cast<NameAst*>(target), element);
         }
-        // Assignments of the form "a[0] = 3"
         else if ( target->astType == Ast::SubscriptAstType ) {
-            SubscriptAst* subscript = static_cast<SubscriptAst*>(target);
-            ExpressionAst* v = subscript->value;
-            if ( element.type ) {
-                ExpressionVisitor targetVisitor(currentContext());
-                targetVisitor.visitNode(v);
-                DUChainWriteLocker lock;
-                VariableLengthContainer::Ptr cont = VariableLengthContainer::Ptr::dynamicCast(targetVisitor.lastType());
-                if ( cont ) {
-                    cont->addContentType(element.type);
-                }
-                if ( cont && cont->hasKeyType() ) {
-                    if ( subscript->slice and subscript->slice->astType == Ast::IndexAstType ) {
-                        lock.unlock();
-                        ExpressionVisitor keyVisitor(currentContext());
-                        keyVisitor.visitNode(static_cast<IndexAst*>(subscript->slice)->value);
-                        lock.lock();
-                        AbstractType::Ptr key = keyVisitor.lastType();
-                        if ( key ) {
-                            cont->addKeyType(key);
-                        }
-                    }
-                }
-                DeclarationPointer lastDecl = targetVisitor.lastDeclaration();
-                if ( cont && lastDecl ) {
-                    lastDecl->setAbstractType(cont.cast<AbstractType>());
-                }
-            }
+            // Assignments of the form "a[0] = 3"
+            assignToSubscript(static_cast<SubscriptAst*>(target), element);
         }
-        // Assignments of the form "a.b = 3"
         else if ( target->astType == Ast::AttributeAstType ) {
-            AttributeAst* attrib = static_cast<AttributeAst*>(target);
-            // check whether the current attribute is undeclared, but the previos ones known
-            // like in X.Y.Z = 3 where X and Y are defined, but Z isn't; then declare Z.
-            ExpressionVisitor checkForUnknownAttribute(currentContext(), editor());
-            checkForUnknownAttribute.visitNode(attrib);
-            DUChainReadLocker lock(DUChain::lock());
-            DeclarationPointer unknown = checkForUnknownAttribute.lastDeclaration();
-            
-            // declare the attribute.
-            // however, if there's an earlier declaration which does not match the current position
-            // (so it's really a different declaration) we skip this.
-            Declaration* haveDeclaration = 0;
-            if ( unknown ) {
-                haveDeclaration = unknown.data();
-            }
-            
-            lock.unlock();
-            ExpressionVisitor checkPreviousAttributes(currentContext(), editor());
-            checkPreviousAttributes.visitNode(attrib->value); // go "down one level", so only visit "X.Y"
-            
-            DUContextPointer internal(0);
-            DeclarationPointer parentObjectDeclaration = checkPreviousAttributes.lastDeclaration();
-            
-            if ( ! parentObjectDeclaration ) {
-                kDebug() << "No declaration for attribute base, aborting creation of attribute";
-                continue;
-            }
-            // if foo is a class, this is like foo.bar = 3
-            if ( parentObjectDeclaration->internalContext() ) {
-                internal = parentObjectDeclaration->internalContext();
-            }
-            // while this is like A = foo(); A.bar = 3
-            else {
-                AbstractType::Ptr type = parentObjectDeclaration->abstractType();
-                StructureType::Ptr structure(dynamic_cast<StructureType*>(type.unsafeData()));
-                if ( ! structure || ! structure->declaration(topContext()) )
-                    continue;
-                parentObjectDeclaration = structure->declaration(topContext());
-                internal = parentObjectDeclaration->internalContext();
-            }
-            if ( ! internal ) {
-                kDebug() << "No internal context for structure type, aborting creation of attribute declaration";
-                continue;
-            }
-            
-            DUContext* previousContext = currentContext();
-            
-            bool isAlreadyOpen = contextAlreayOpen(internal);
-            if ( isAlreadyOpen ) {
-                activateAlreadyOpenedContext(internal);
-                visitVariableDeclaration<ClassMemberDeclaration>(
-                    attrib->attribute, target, haveDeclaration, element.type
-                );
-                closeAlreadyOpenedContext(internal);
-            }
-            else {
-                injectContext(internal.data());
-                
-                Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(
-                    attrib->attribute, target, haveDeclaration, element.type
-                );
-                if ( dec ) {
-                    dec->setRange(RangeInRevision(internal->range().start, internal->range().start));
-                    dec->setAutoDeclaration(true);
-                    DUChainWriteLocker lock(DUChain::lock());
-                    previousContext->createUse(dec->ownIndex(), editorFindRange(attrib, attrib));
-                    lock.unlock();
-                }
-                else kWarning() << "No declaration created for " << attrib->attribute << "as parent is not a class";
-                
-                closeInjectedContext();
-            }
+            // Assignments of the form "a.b = 3"
+            assignToAttribute(static_cast<AttributeAst*>(target), element);
         }
         i += 1;
     }

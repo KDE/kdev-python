@@ -155,25 +155,27 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, 
     }
 }
 
-template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, RangeInRevision range, AbstractType::Ptr type)
+template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, RangeInRevision range,
+                                                                     AbstractType::Ptr type)
 {
-    Ast* pseudo = new Ast();
-    pseudo->startLine = range.start.line; pseudo->startCol = range.start.column;
-    pseudo->endLine = range.end.line; pseudo->endCol = range.end.column;
-    T* result = visitVariableDeclaration<T>(node, pseudo, 0, type);
-    delete pseudo;
+    Ast pseudo;
+    pseudo.startLine = range.start.line; pseudo.startCol = range.start.column;
+    pseudo.endLine = range.end.line; pseudo.endCol = range.end.column;
+    T* result = visitVariableDeclaration<T>(node, &pseudo, 0, type);
     return result;
 }
 
 QList< Declaration* > DeclarationBuilder::existingDeclarationsForNode(Identifier* node)
 {
-    QList<Declaration*> existingDeclarations = currentContext()->findDeclarations(identifierForNode(node).last(),
-                                                                CursorInRevision::invalid(), 0,
-                                                                (DUContext::SearchFlag) ( DUContext::DontSearchInParent | DUContext::DontResolveAliases) );
+    QList<Declaration*> existingDeclarations = currentContext()->findDeclarations(
+        identifierForNode(node).last(), CursorInRevision::invalid(), 0,
+        (DUContext::SearchFlag) ( DUContext::DontSearchInParent | DUContext::DontResolveAliases)
+    );
     // append arguments context
     if ( m_mostRecentArgumentsContext ) {
-        QList<Declaration*> args = m_mostRecentArgumentsContext->findDeclarations(identifierForNode(node).last(),
-                                                                                  CursorInRevision::invalid(), 0, DUContext::DontSearchInParent);
+        QList<Declaration*> args = m_mostRecentArgumentsContext->findDeclarations(
+            identifierForNode(node).last(), CursorInRevision::invalid(), 0, DUContext::DontSearchInParent
+        );
         existingDeclarations.append(args);
     }
     return existingDeclarations;
@@ -192,8 +194,9 @@ DeclarationBuilder::FitDeclarationType DeclarationBuilder::kindForType(AbstractT
     return InstanceDeclarationType;
 }
 
-template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclaration(QList<Declaration*> declarations, FitDeclarationType mustFitType,
-                                                                                      RangeInRevision updateRangeTo, Declaration** ok)
+template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclaration(
+    QList<Declaration*> declarations, FitDeclarationType mustFitType,
+    RangeInRevision updateRangeTo, Declaration** ok )
 {
     // Search for a declaration from a previous parse pass which should be re-used
     QList<Declaration*> remainingDeclarations;

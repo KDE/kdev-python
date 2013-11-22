@@ -42,9 +42,9 @@ PEP8KCModule::PEP8KCModule(QWidget* parent, const QVariantList& args)
     configWidget->setLayout(formlayout);
     parent->layout()->addWidget(configWidget);
 
-    QLabel* urllabel = new QLabel(i18n("Full path to the pep8 checker to use:"));
-    QLabel* argumentlabel = new QLabel(i18n("pep8 checker arguments:"));
-    QLabel* enablelabel = new QLabel(i18n("Enable pep8 checking:"));
+    QLabel* urllabel = new QLabel(i18n("Full path to the PEP8 checker to use:"));
+    QLabel* argumentlabel = new QLabel(i18n("PEP8 checker arguments:"));
+    QLabel* enablelabel = new QLabel(i18n("Enable PEP8 checking:"));
     pep8url = new QLineEdit(configGroup.readEntry("pep8url", "/usr/bin/pep8-python2"));
     pep8arguments = new QLineEdit(configGroup.readEntry("pap8arguments", ""));
     enableChecking = new QCheckBox;

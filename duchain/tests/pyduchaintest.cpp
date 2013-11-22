@@ -230,7 +230,15 @@ void PyDUChainTest::testCrashes_data() {
     
     QTest::newRow("unicode_char") << "a = \"í\"";
     QTest::newRow("unicode escape char") << "print(\"\\xe9\")";
+    QTest::newRow("augassign") << "a = 3\na += 5";
+    QTest::newRow("delete") << "a = 3\ndelete a";
+    QTest::newRow("ellipsis") << "a[...]";
     QTest::newRow("negative slice index") << "t = (1, 2, 3)\nd = t[-1]";
+    QTest::newRow("decorator_with_args") << "@foo('bar', 'baz')\ndef myfunc(): pass";
+    QTest::newRow("non_name_decorator") << "@foo.crazy_decorators\ndef myfunc(): pass";
+    QTest::newRow("static_method") << "class c:\n @staticmethod\n def method(): pass";
+    QTest::newRow("vararg_in_middle") << "def func(a, *b, c): pass\nfunc(1, 2, 3, 4, 5)";
+    QTest::newRow("return_outside_function") << "return 3";
     QTest::newRow("fancy generator context range") << "c1_list = sorted(letter for (letter, meanings) \\\n"
                "in ambiguous_nucleotide_values.iteritems() \\\n"
                "if set([codon[0] for codon in codons]).issuperset(set(meanings)))";
@@ -265,62 +273,6 @@ void PyDUChainTest::testCrashes_data() {
             "(272,"
               "(275,"
                "(1, 'return')))))))";
-    QTest::newRow("larger_tuple_hang") << "tree = (257,"
-         "(264,"
-          "(285,"
-           "(259,"
-             "(264,"
-              "(265,"
-               "(266,"
-                "(272,"
-                 "(275,"
-                  "(1, 'return'))))))))))";
-    QTest::newRow("quite_large_tuple_hang") << "tree = (257,\n"
-         "(264,\n"
-          "(285,\n"
-           "(259,\n"
-            "(1, 'def'),\n"
-            "(1, 'f'),\n"
-            "(260, (7, '('), (8, ')')),\n"
-            "(11, ':'),\n"
-            "(291,\n"
-             "(4, ''),\n"
-             "(5, ''),\n"
-             "(264,\n"
-              "(265,\n"
-               "(266,\n"
-                "(272,\n"
-                 "(275,\n"
-                  "(1, 'return')))))))))))";
-    QTest::newRow("large_tuple_hang") << "tree = "
-        "(257,"
-         "(264,"
-          "(285,"
-           "(259,"
-            "(1, 'def'),"
-            "(1, 'f'),"
-            "(260, (7, '('), (8, ')')),"
-            "(11, ':'),"
-            "(291,"
-             "(4, ''),"
-             "(5, ''),"
-             "(264,"
-              "(265,"
-               "(266,"
-                "(272,"
-                 "(275,"
-                  "(1, 'return'),"
-                  "(313,"
-                   "(292,"
-                    "(293,"
-                     "(294,"
-                      "(295,"
-                       "(297,"
-                        "(298,"
-                         "(299,"
-                          "(300,"
-                           "(301,"
-                            "(302, (303, (304, (305, (2, '1')))))))))))))))))))))))))";
     QTest::newRow("very_large_tuple_hang") << "tree = "
         "(257,"
          "(264,"
@@ -408,6 +360,16 @@ void PyDUChainTest::testCrashes_data() {
                  "class Client(tcp.Client):\n"
                  "  pass\n";
     QTest::newRow("comprehension_as_default_crash") << "def foo(bar = [item for (_, item) in items()]):\n return";
+    QTest::newRow("try_except") << "try: pass\nexcept: pass";
+    QTest::newRow("try_except_type") << "try: pass\nexcept FooException: pass";
+    QTest::newRow("try_except_type_as") << "try: pass\nexcept FooException as bar: pass";
+    QTest::newRow("import_missing") << "from this_does_not_exist import nor_does_this";
+
+    QTest::newRow("list_append_missing") << "foo = []\nfoo.append(missing)";
+    QTest::newRow("list_append_missing_arg") << "foo = []\nfoo.append()";
+
+    QTest::newRow("list_extend_missing") << "foo = []\nfoo.extend(missing)";
+    QTest::newRow("list_extend_missing_arg") << "foo = []\nfoo.extend()";
 }
 
 void PyDUChainTest::testClassVariables()
@@ -711,7 +673,11 @@ void PyDUChainTest::testTypes()
     visitor->ctx = TopDUContextPointer(ctx.data());
     visitor->searchingForType = expectedType;
     visitor->visitCode(m_ast);
-    
+
+    QEXPECT_FAIL("with", "needs with ast nodes for py3!", Continue);
+    QEXPECT_FAIL("lambda", "not implemented: aliasing lambdas", Continue);
+    QEXPECT_FAIL("function_arg_tuple", "broken, somehow loses declaration", Continue);
+    QEXPECT_FAIL("function_arg_tuple2", "broken, somehow loses declaration", Continue);
     QCOMPARE(visitor->found, true);
 }
 
@@ -731,7 +697,9 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("bool") << "checkme = True" << "bool";
     QTest::newRow("float") << "checkme = 3.7" << "float";
     QTest::newRow("int") << "checkme = 3" << "int";
-    
+
+    QTest::newRow("with") << "with open('foo') as f: checkme = f.readAll()" << "str";
+
     QTest::newRow("list_access_right_open_slice") << "some_list = []; checkme = some_list[2:]" << "list";
     QTest::newRow("list_access_left_open_slice") << "some_list = []; checkme = some_list[:2]" << "list";
     QTest::newRow("list_access_closed_slice") << "some_list = []; checkme = some_list[2:17]" << "list";
@@ -778,10 +746,21 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("tuple_funcret2") << "def myfun():\n t = 3, 5\n return t\ncheckme, a = myfun()" << "int";
     
     QTest::newRow("yield") << "def myfun():\n yield 3\ncheckme = myfun()" << "list of int";
-    
+    QTest::newRow("yield_twice") << "def myfun():\n yield 3\n yield 'foo'\ncheckme = myfun()" << "list of unsure (int, str)";
+    // this is mostly a check that it doesn't crash
+    QTest::newRow("yield_return") << "def myfun():\n return 3\n yield 'foo'\ncheckme = myfun()" << "unsure (int, list of str)";
+
+    QTest::newRow("lambda") << "x = lambda t: 3\ncheckme = x()" << "int";
+    QTest::newRow("lambda_failure") << "x = lambda t: 3\ncheckme = t" << "mixed";
+
+    QTest::newRow("function_arg_tuple") << "global checkme\ndef func(*arg):\n foo, bar = arg\n checkme = foo\nfunc(3, 5)" << "int";
+    QTest::newRow("function_arg_tuple2") << "global checkme\ndef func(*arg):\n foo, bar = arg\n checkme = foo\nfunc(3); func(3, 5);" << "int";
+
     QTest::newRow("tuple_indexaccess") << "t = 3, 5.5\ncheckme = t[0]" << "int";
     QTest::newRow("tuple_indexaccess2") << "t = 3, 5.5\ncheckme = t[1]" << "float";
     QTest::newRow("tuple_indexaccess3") << "t = 3, 4\ncheckme = t[1]" << "int";
+
+    QTest::newRow("class_create_var") << "class c: pass\nd = c()\nd.foo = 3\ncheckme = d.foo" << "int";
     
     QTest::newRow("tuple_loop") << "t = [(1, \"str\")]\nfor checkme, a in t: pass" << "int";
     
@@ -833,6 +812,10 @@ void PyDUChainTest::testTypes_data()
                                         "checkme = f1()\n" << "str";
     QTest::newRow("global_scope_variable") << "a = 3\n"
                                         "def f1():\n"
+                                        "  return a\n"
+                                        "checkme = f1()\n" << "int";
+    QTest::newRow("global_no_toplevel_dec") << "def f1():\n"
+                                        "  global a\n  a = 3\n"
                                         "  return a\n"
                                         "checkme = f1()\n" << "int";
 

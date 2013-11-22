@@ -893,6 +893,7 @@ void DeclarationBuilder::visitYield(YieldAst* node)
             }
             else {
                 // Otherwise, create a new container type, and set it as the function's return type.
+                DUChainWriteLocker lock;
                 VariableLengthContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType<VariableLengthContainer>("list", currentContext());
                 if ( container ) {
                     openType<VariableLengthContainer>(container);
@@ -1098,11 +1099,13 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
         if ( ! variable ) {
             continue;
         }
+        wlock.unlock();
         ExpressionVisitor argumentVisitor(currentContext(), editor());
         argumentVisitor.visitNode(keyword->value);
         if ( ! argumentVisitor.lastType() ) {
             continue;
         }
+        wlock.lock();
         HintedType::Ptr addType = HintedType::Ptr(new HintedType());
         openType(addType);
         addType->setType(argumentVisitor.lastType());
@@ -1294,22 +1297,20 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
 {
     // check whether the current attribute is undeclared, but the previos ones known
     // like in X.Y.Z = 3 where X and Y are defined, but Z isn't; then declare Z.
-    ExpressionVisitor checkForUnknownAttribute(currentContext(), editor());
+    ExpressionVisitor checkForUnknownAttribute(currentContext());
     checkForUnknownAttribute.visitNode(attrib);
-    DUChainReadLocker lock(DUChain::lock());
-    DeclarationPointer unknown = checkForUnknownAttribute.lastDeclaration();
+    Declaration* haveDeclaration = 0;
+    {
+        DUChainReadLocker lock;
+        haveDeclaration = checkForUnknownAttribute.lastDeclaration().data();
+    }
 
     // declare the attribute.
     // however, if there's an earlier declaration which does not match the current position
     // (so it's really a different declaration) we skip this.
-    Declaration* haveDeclaration = 0;
-    if ( unknown ) {
-        haveDeclaration = unknown.data();
-    }
-
-    lock.unlock();
-    ExpressionVisitor checkPreviousAttributes(currentContext(), editor());
-    checkPreviousAttributes.visitNode(attrib->value); // go "down one level", so only visit "X.Y"
+    ExpressionVisitor checkPreviousAttributes(currentContext());
+    // go "down one level", so only visit "X.Y"
+    checkPreviousAttributes.visitNode(attrib->value);
 
     DUContextPointer internal(0);
     DeclarationPointer parentObjectDeclaration = checkPreviousAttributes.lastDeclaration();
@@ -1324,8 +1325,7 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
     }
     // while this is like A = foo(); A.bar = 3
     else {
-        AbstractType::Ptr type = parentObjectDeclaration->abstractType();
-        StructureType::Ptr structure(dynamic_cast<StructureType*>(type.unsafeData()));
+        StructureType::Ptr structure(parentObjectDeclaration->abstractType().cast<StructureType>());
         if ( ! structure || ! structure->declaration(topContext()) ) {
             return;
         }
@@ -1338,7 +1338,6 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
     }
 
     DUContext* previousContext = currentContext();
-
     bool isAlreadyOpen = contextAlreayOpen(internal);
     if ( isAlreadyOpen ) {
         activateAlreadyOpenedContext(internal);
@@ -1356,9 +1355,8 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
         if ( dec ) {
             dec->setRange(RangeInRevision(internal->range().start, internal->range().start));
             dec->setAutoDeclaration(true);
-            DUChainWriteLocker lock(DUChain::lock());
+            DUChainWriteLocker lock;
             previousContext->createUse(dec->ownIndex(), editorFindRange(attrib, attrib));
-            lock.unlock();
         }
         else kWarning() << "No declaration created for " << attrib->attribute << "as parent is not a class";
 
@@ -1401,9 +1399,11 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
     StructureType::Ptr type(new StructureType());
     
-    DUChainWriteLocker lock(DUChain::lock());
+    DUChainWriteLocker lock;
     ClassDeclaration* dec = eventuallyReopenDeclaration<ClassDeclaration>(node->name, node->name, NoTypeRequired);
+    lock.unlock();
     visitDecorators<ClassDeclaration>(node->decorators, dec);
+    lock.lock();
     eventuallyAssignInternalContext();
     
     dec->setKind(KDevelop::Declaration::Type);
@@ -1469,9 +1469,11 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     openContextForClassDefinition(node);
     dec->setInternalContext(currentContext());
 
+    lock.unlock();
     foreach ( Ast* node, node->body ) {
         AstDefaultVisitor::visitNode(node);
     }
+    lock.lock();
     
     closeContext();
     closeType();
@@ -1529,9 +1531,11 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     dec->setInSymbolTable(false);
     dec->setType(type);
     
+    lock.unlock();
     visitDecorators<FunctionDeclaration>(node->decorators, dec);
     visitFunctionArguments(node);
     
+    lock.lock();
     const bool isStatic = Helper::findDecoratorByName<FunctionDeclaration>(dec, "staticmethod");
     const bool isClassMethod = Helper::findDecoratorByName<FunctionDeclaration>(dec, "classmethod");
     
@@ -1542,7 +1546,6 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
             && m_firstAttributeDeclaration.data() && currentContext()->type() == DUContext::Class
             && ! isStatic )
     {
-        DUChainWriteLocker lock(DUChain::lock());
         currentType<FunctionType>()->removeArgument(0);
         if ( dec->vararg() != -1 ) {
             dec->setVararg(dec->vararg() - 1);
@@ -1552,8 +1555,10 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         }
         m_firstAttributeDeclaration->setAbstractType(eventualParentDeclaration->abstractType());
     }
-    
+
+    lock.unlock();
     visitFunctionBody(node);
+    lock.lock();
     
     closeDeclaration();
     eventuallyAssignInternalContext();
@@ -1565,13 +1570,10 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         dec->internalContext()->removeImportedParentContext(eventualParentDeclaration->internalContext());
     }
     
-    {
-        DUChainWriteLocker lock(DUChain::lock());
-        if ( ! type->returnType() ) {
-            type->setReturnType(AbstractType::Ptr(new IntegralType(IntegralType::TypeVoid)));
-        }
-        dec->setType(type);
+    if ( ! type->returnType() ) {
+        type->setReturnType(AbstractType::Ptr(new IntegralType(IntegralType::TypeVoid)));
     }
+    dec->setType(type);
     
     if ( ! isStatic ) {
         DUContext* args = DUChainUtils::getArgumentContext(dec);
@@ -1756,8 +1758,6 @@ void DeclarationBuilder::visitReturn(ReturnAst* node)
 
 void DeclarationBuilder::visitArguments( ArgumentsAst* node )
 {
-    DUChainWriteLocker lock(DUChain::lock());
-    
     if ( currentDeclaration() and currentDeclaration()->isFunctionDeclaration() ) {
         FunctionDeclaration* workingOnDeclaration = static_cast<FunctionDeclaration*>(Helper::resolveAliasDeclaration(currentDeclaration()));
         workingOnDeclaration->clearDefaultParameters();
@@ -1785,6 +1785,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                     ExpressionVisitor v(currentContext());
                     v.visitNode(arg->annotation);
                     if ( v.lastType() && v.m_isAlias ) {
+                        DUChainWriteLocker lock;
                         paramDeclaration->setAbstractType(Helper::mergeTypes(paramDeclaration->abstractType(), v.lastType()));
                     }
                 }

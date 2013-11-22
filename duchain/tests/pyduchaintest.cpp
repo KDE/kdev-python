@@ -777,6 +777,8 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("tuple_funcret") << "def myfun(): return 3, 5\ncheckme, a = myfun()" << "int";
     QTest::newRow("tuple_funcret2") << "def myfun():\n t = 3, 5\n return t\ncheckme, a = myfun()" << "int";
     
+    QTest::newRow("yield") << "def myfun():\n yield 3\ncheckme = myfun()" << "list of int";
+    
     QTest::newRow("tuple_indexaccess") << "t = 3, 5.5\ncheckme = t[0]" << "int";
     QTest::newRow("tuple_indexaccess2") << "t = 3, 5.5\ncheckme = t[1]" << "float";
     QTest::newRow("tuple_indexaccess3") << "t = 3, 4\ncheckme = t[1]" << "int";

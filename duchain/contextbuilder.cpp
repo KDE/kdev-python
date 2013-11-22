@@ -460,7 +460,6 @@ void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
 
 void ContextBuilder::visitFunctionDefinition(FunctionDefinitionAst* node)
 {
-    DUChainWriteLocker lock(DUChain::lock());
     visitNodeList(node->decorators);
     visitFunctionArguments(node);
     visitFunctionBody(node);
@@ -489,7 +488,10 @@ void ContextBuilder::visitFunctionBody(FunctionDefinitionAst* node)
     // Open the context for the function body (the list of statements)
     // It's of type Other, as it contains only code
     openContext(node, range, DUContext::Other, identifierForNode(node->name));
-    currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));
+    {
+        DUChainWriteLocker lock;
+        currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));
+    }
     // import the parameters into the function body
     addImportedContexts();
     

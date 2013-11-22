@@ -131,7 +131,7 @@ ExpressionVisitor::ExpressionVisitor(ExpressionVisitor* parent)
     , m_parentVisitor(parent)
     , m_depth(parent->m_depth + 1)
 {
-
+    ENSURE_CHAIN_NOT_LOCKED
 }
 
 AbstractType::Ptr ExpressionVisitor::unknownType()
@@ -581,6 +581,7 @@ void ExpressionVisitor::visitTuple(TupleAst* node) {
     DUChainReadLocker lock;
     IndexedContainer::Ptr type = typeObjectForIntegralType<IndexedContainer>("tuple", m_ctx);
     if ( type ) {
+        lock.unlock();
         foreach ( ExpressionAst* expr, node->elements ) {
             ExpressionVisitor v(this);
             v.visitNode(expr);

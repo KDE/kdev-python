@@ -1213,19 +1213,6 @@ DeclarationBuilder::SourceType DeclarationBuilder::selectSource(const QList< Exp
             v.m_isAlias
         };
     }
-    else if ( ! sources.isEmpty() && targets.length() == 1 ) {
-        // the assignment is of the form "foo = ..."
-        DUChainReadLocker lock;
-        IndexedContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType<IndexedContainer>(
-            "tuple", currentContext()
-        );
-        if ( container ) {
-            foreach ( const SourceType& rhs, sources ) {
-                container->addEntry(rhs.type);
-            }
-            element.type = container.cast<AbstractType>();
-        }
-    }
     else if ( ! sources.isEmpty() ) {
         // the assignment is of the form "foo, bar, ... = ..." (tuple unpacking)
         // this one is for the case that the tuple unpacking is not written down explicitly, for example

@@ -1735,6 +1735,7 @@ void DeclarationBuilder::visitReturn(ReturnAst* node)
         }
         TypePtr<FunctionType> t = currentType<FunctionType>();
         AbstractType::Ptr encountered = v.lastType();
+        DUChainWriteLocker lock;
         if ( t ) {
             // Update the containing function's return type
             t->setReturnType(Helper::mergeTypes(t->returnType(), encountered));

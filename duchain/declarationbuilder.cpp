@@ -358,9 +358,9 @@ void DeclarationBuilder::visitCode(CodeAst* node)
 
 void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
 {
-    if ( node->name && node->name->astType == Ast::NameAstType ) {
+    if ( node->name ) {
         // Python allows to assign the caught exception to a variable; create that variable if required.
-        ExpressionVisitor v(currentContext(), editor());
+        ExpressionVisitor v(currentContext());
         v.visitNode(node->type);
         visitVariableDeclaration<Declaration>(node->name, 0, v.lastType());
     }

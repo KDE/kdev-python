@@ -407,16 +407,27 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
         DUChainReadLocker lock;
         if ( IndexedContainer::Ptr indexed = lastType().cast<IndexedContainer>() ) {
             encounterDeclaration(0);
-            if ( IndexAst* sliceIndexAst = static_cast<IndexAst*>(node->slice) ) {
-                if ( sliceIndexAst->value && sliceIndexAst->value->astType == Ast::NumberAstType ) {
-                    NumberAst* number = static_cast<NumberAst*>(sliceIndexAst->value);
-                    int sliceIndex = number->value;
-                    if ( sliceIndex < 0 && sliceIndex + indexed->typesCount() > 0 ) {
-                        sliceIndex += indexed->typesCount();
-                    }
-                    if ( sliceIndex < indexed->typesCount() && sliceIndex >= 0 ) {
-                        return encounter(indexed->typeAt(sliceIndex).abstractType());
-                    }
+            IndexAst* sliceIndexAst = static_cast<IndexAst*>(node->slice);
+            NumberAst* number = nullptr;
+            bool invert = false;
+            if ( sliceIndexAst->value && sliceIndexAst->value->astType == Ast::UnaryOperationAstType ) {
+                // might be -3
+                UnaryOperationAst* unary = static_cast<UnaryOperationAst*>(sliceIndexAst->value);
+                if ( unary->type == Ast::UnaryOperatorSub && unary->operand->astType == Ast::NumberAstType ) {
+                    number = static_cast<NumberAst*>(unary->operand);
+                    invert = true;
+                }
+            }
+            else if ( sliceIndexAst->value->astType == Ast::NumberAstType ) {
+                number = static_cast<NumberAst*>(sliceIndexAst->value);
+            }
+            if ( number ) {
+                int sliceIndex = number->value * ( invert ? -1 : 1 );
+                if ( sliceIndex < 0 && sliceIndex + indexed->typesCount() > 0 ) {
+                    sliceIndex += indexed->typesCount();
+                }
+                if ( sliceIndex < indexed->typesCount() && sliceIndex >= 0 ) {
+                    return encounter(indexed->typeAt(sliceIndex).abstractType());
                 }
             }
             // the exact index is unknown, use unsure

@@ -730,7 +730,7 @@ void ExpressionVisitor::visitUnaryOperation(Python::UnaryOperationAst* node)
 {
     // Only visit the value, and use that as the result. Unary operators usually
     // don't change the type of the object (i.e. -a has the same type as a)
-    Python::AstDefaultVisitor::visitNode(node->value);
+    visitNode(node->operand);
 }
 
 void ExpressionVisitor::visitBooleanOperation(Python::BooleanOperationAst* node)

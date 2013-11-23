@@ -117,13 +117,21 @@ void PyDUChainTest::init()
     
     QList<QString> foundfiles = FindPyFiles(assetModuleDir);
     
-    foreach(const QString filename, foundfiles) {
-        kDebug() << "Parsing asset: " << filename;
-        DUChain::self()->updateContextForUrl(IndexedString(filename), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
-        ICore::self()->languageController()->backgroundParser()->parseDocuments();
-    }
-    foreach(const QString filename, foundfiles) {
-        DUChain::self()->waitForUpdate(IndexedString(filename), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
+    for ( int i = 0; i < 2; i++ ) {
+        // Parse each file twice, to ensure no parsing-order related bugs appear.
+        // Such bugs will need separate unit tests and should not influence these.
+        foreach(const QString filename, foundfiles) {
+            kDebug() << "Parsing asset: " << filename;
+            DUChain::self()->updateContextForUrl(IndexedString(filename), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
+            ICore::self()->languageController()->backgroundParser()->parseDocuments();
+        }
+        foreach(const QString filename, foundfiles) {
+            DUChain::self()->waitForUpdate(IndexedString(filename), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
+        }
+        while ( ICore::self()->languageController()->backgroundParser()->queuedCount() > 0 ) {
+            // make sure to wait for all parsejobs to finish
+            QTest::qWait(10);
+        }
     }
 }
     

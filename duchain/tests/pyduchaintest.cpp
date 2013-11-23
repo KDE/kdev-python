@@ -125,6 +125,10 @@ void PyDUChainTest::init()
     foreach(const QString filename, foundfiles) {
         DUChain::self()->waitForUpdate(IndexedString(filename), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
     }
+    while ( ICore::self()->languageController()->backgroundParser()->queuedCount() > 0 ) {
+        // make sure to wait for all parsejobs to finish
+        QTest::qWait(10);
+    }
 }
     
 

@@ -51,6 +51,8 @@ private slots:
     void testOther_data();
     void testNewPython3();
     void testNewPython3_data();
+    void testExceptionHandlers();
+
 private:
     KDevPG::MemoryPool* m_pool;
 };

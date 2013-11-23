@@ -73,7 +73,7 @@ public:
     VerifyVisitor() : AstDefaultVisitor(), m_nodecount(0) { };
     virtual void visitNode(Ast* node) {
         m_nodecount += 1;
-        QVERIFY(! node || node->astType <= Ast::LastAstType);
+        QVERIFY(! node || node->astType < Ast::LastAstType);
         AstDefaultVisitor::visitNode(node);
     };
     virtual void visitName(NameAst* node) {
@@ -93,6 +93,28 @@ void PyAstTest::testCode(QString code)
     CodeAst* ast = getAst(code);
     VerifyVisitor v;
     v.visitCode(ast);
+    delete m_pool;
+    m_pool = 0;
+}
+
+void PyAstTest::testExceptionHandlers()
+{
+    m_pool = new KDevPG::MemoryPool;
+    QString code = "try: pass\n"
+                   "except FooBar as baz: pass\n"
+                   "except Cat as baz: pass\n"
+                   "except Dawg as asdf: pass\n";
+    CodeAst* ast = getAst(code);
+    VerifyVisitor v;
+    v.visitCode(ast);
+    QCOMPARE(ast->body.size(), 1);
+    QVERIFY(ast->body.first()->astType == Ast::TryAstType);
+    TryAst* try_ = static_cast<TryAst*>(ast->body.first());
+    QCOMPARE(try_->handlers.size(), 3);
+    foreach ( ExceptionHandlerAst* handler, try_->handlers ) {
+        QVERIFY(handler->name);
+        QCOMPARE(handler->name->astType, Ast::IdentifierAstType);
+    }
     delete m_pool;
     m_pool = 0;
 }

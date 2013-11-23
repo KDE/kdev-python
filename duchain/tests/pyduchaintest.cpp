@@ -231,8 +231,12 @@ void PyDUChainTest::testCrashes_data() {
     QTest::newRow("unicode_char") << "a = \"í\"";
     QTest::newRow("unicode escape char") << "print(\"\\xe9\")";
     QTest::newRow("augassign") << "a = 3\na += 5";
-    QTest::newRow("delete") << "a = 3\ndelete a";
+    QTest::newRow("delete") << "a = 3\ndel a";
+    QTest::newRow("for_else") << "for i in range(3): pass\nelse: pass";
+    QTest::newRow("for_while") << "while i < 4: pass\nelse: pass";
     QTest::newRow("ellipsis") << "a[...]";
+    QTest::newRow("tuple_assign_unknown") << "foo = (unknown, unknown, unknown)";
+    QTest::newRow("for_assign_unknown") << "for foo, bar, baz in unknown: pass";
     QTest::newRow("negative slice index") << "t = (1, 2, 3)\nd = t[-1]";
     QTest::newRow("decorator_with_args") << "@foo('bar', 'baz')\ndef myfunc(): pass";
     QTest::newRow("non_name_decorator") << "@foo.crazy_decorators\ndef myfunc(): pass";
@@ -382,7 +386,6 @@ void PyDUChainTest::testClassVariables()
     QVERIFY(c);
     int useIndex = c->findUseAt(relevantPosition);
     if ( useIndex != -1 ) {
-//         QVERIFY(useIndex != -1);
         QVERIFY(useIndex < c->usesCount());
         const Use* u = &(c->uses()[useIndex]);
         QVERIFY(not u->usedDeclaration(c->topContext()));
@@ -713,6 +716,7 @@ void PyDUChainTest::testTypes_data()
     
     QTest::newRow("tuple1") << "checkme, foo = 3, \"str\"" << "int";
     QTest::newRow("tuple2") << "foo, checkme = 3, \"str\"" << "str";
+    QTest::newRow("tuple2_negative_index") << "foo = (1, 2, 'foo')\ncheckme = foo[-1]" << "str";
     QTest::newRow("tuple_type") << "checkme = 1, 2" << "tuple";
     
     QTest::newRow("dict_iteritems") << "d = {1:2, 3:4}\nfor checkme, k in d.iteritems(): pass" << "int";
@@ -741,6 +745,10 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("tuple_simple") << "mytuple = 3, 5.5\ncheckme, foobar = mytuple" << "int";
     QTest::newRow("tuple_simple2") << "mytuple = 3, 5.5\nfoobar, checkme = mytuple" << "float";
     QTest::newRow("tuple_simple3") << "mytuple = 3, 5.5, \"str\", 3, \"str\"\na, b, c, d, checkme = mytuple" << "str";
+
+    QTest::newRow("if_expr_sure") << "checkme = 3 if 7 > 9 else 5" << "int";
+
+    QTest::newRow("unary_op") << "checkme = -42" << "int";
     
     QTest::newRow("tuple_funcret") << "def myfun(): return 3, 5\ncheckme, a = myfun()" << "int";
     QTest::newRow("tuple_funcret2") << "def myfun():\n t = 3, 5\n return t\ncheckme, a = myfun()" << "int";
@@ -870,6 +878,7 @@ void PyDUChainTest::testImportDeclarations_data() {
     QTest::newRow("import") << "import testImportDeclarations.i" << ( QStringList() << "testImportDeclarations" ) << false;
     QTest::newRow("import_as") << "import testImportDeclarations.i as checkme" << ( QStringList() << "checkme" ) << false;
     QTest::newRow("from_import_as") << "from testImportDeclarations.i import checkme as checkme" << ( QStringList() << "checkme" ) << true;
+    QTest::newRow("from_import_missing") << "from testImportDeclarations.i import missing as checkme" << ( QStringList() ) << true;
 }
 
 typedef QPair<Declaration*, int> p;

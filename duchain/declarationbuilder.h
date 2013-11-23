@@ -181,9 +181,9 @@ protected:
     Declaration* findDeclarationInContext(QStringList dottedNameIdentifier, TopDUContext* ctx) const;
     
     QStack<TopDUContextPointer> m_importContextsForImportStatement;
-    DeclarationPointer m_firstAttributeDeclaration;
 private:
     QList<DUChainBase*> m_scheduledForDeletion;
+    StructureType::Ptr m_currentClassType;
     QString buildModuleNameFromNode(ImportFromAst* node, AliasAst* alias, const QString& intermediate);
 };
 

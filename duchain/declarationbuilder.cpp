@@ -1454,7 +1454,8 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     dec->setType(type);
     
     openType(type);
-    
+    m_currentClassType = type;
+
     // needs to be done here, so the assignment of the internal context happens before visiting the body
     openContextForClassDefinition(node);
     dec->setInternalContext(currentContext());
@@ -1533,8 +1534,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     // an instance of the class.
     // this must be done here, because the type of self must be known when parsing the body
     if ( eventualParentDeclaration && currentType<FunctionType>()->arguments().length()
-            && m_firstAttributeDeclaration.data() && currentContext()->type() == DUContext::Class
-            && ! isStatic )
+            && currentContext()->type() == DUContext::Class && ! isStatic )
     {
         currentType<FunctionType>()->removeArgument(0);
         if ( dec->vararg() != -1 ) {
@@ -1543,7 +1543,6 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         if ( dec->kwarg() != -1 ) {
             dec->setKwarg(dec->kwarg() - 1);
         }
-        m_firstAttributeDeclaration->setAbstractType(eventualParentDeclaration->abstractType());
     }
 
     lock.unlock();
@@ -1581,7 +1580,6 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
                     ProblemPointer ptr(p);
                     topContext()->addProblem(ptr);
                 }
-                m_firstAttributeDeclaration = DeclarationPointer(0);
             }
             else if ( currentContext()->type() == DUContext::Class && parameters.isEmpty() ) {
                 DUChainWriteLocker lock(DUChain::lock());
@@ -1596,7 +1594,6 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         }
     }
     else {
-        m_firstAttributeDeclaration = DeclarationPointer(0);
         dec->setStatic(true);
     }
     
@@ -1748,109 +1745,115 @@ void DeclarationBuilder::visitReturn(ReturnAst* node)
 
 void DeclarationBuilder::visitArguments( ArgumentsAst* node )
 {
-    if ( currentDeclaration() and currentDeclaration()->isFunctionDeclaration() ) {
-        FunctionDeclaration* workingOnDeclaration = static_cast<FunctionDeclaration*>(Helper::resolveAliasDeclaration(currentDeclaration()));
-        workingOnDeclaration->clearDefaultParameters();
-        if ( hasCurrentType() and currentType<FunctionType>() ) {
-            FunctionType::Ptr type = currentType<FunctionType>();
-            bool isFirst = true;
-            int defaultParametersCount = node->defaultValues.length();
-            int parametersCount = node->arguments.length();
-            int firstDefaultParameterOffset = parametersCount - defaultParametersCount;
-            int currentIndex = 0;
-            kDebug() << "arguments:" << node->arguments.size();
-            foreach ( ArgAst* arg, node->arguments ) {
-                // Iterate over all the function's arguments, create declarations, and add the arguments
-                // to the functions FunctionType.
-                currentIndex += 1;
-                
-                if ( ! arg->argumentName ) {
-                    continue;
-                }
-                
-                // Create a variable declaration for the parameter, to be used in the function body.
-                Declaration* paramDeclaration = visitVariableDeclaration<Declaration>(arg->argumentName);
-                
-                if ( type && paramDeclaration && arg->annotation ) {
-                    ExpressionVisitor v(currentContext());
-                    v.visitNode(arg->annotation);
-                    if ( v.lastType() && v.m_isAlias ) {
-                        DUChainWriteLocker lock;
-                        paramDeclaration->setAbstractType(Helper::mergeTypes(paramDeclaration->abstractType(), v.lastType()));
-                    }
-                }
-                
-                if ( type && paramDeclaration && currentIndex > firstDefaultParameterOffset ) {
-                    // Handle arguments with default values, like def foo(bar = 3): pass
-                    // Find type of given default value, and assign it to the declaration
-                    // TODO does this actually work?
-                    ExpressionVisitor v(currentContext());
-                    v.visitNode(node->defaultValues.at(currentIndex - firstDefaultParameterOffset - 1));
-                    DUChainWriteLocker lock;
-                    paramDeclaration->setAbstractType(v.lastType());
-                    if ( v.lastType() ) {
-                        type->addArgument(v.lastType());
-                    }
-                    else {
-                        type->addArgument(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
-                    }
-                    // TODO add the real expression from the document here as default value
-                    workingOnDeclaration->addDefaultParameter(IndexedString("..."));
-                }
-                else {
-                    // For now, we cannot know the type, thus we write "mixed".
-                    // As soon as a call to the function is encountered, this type might be updated.
-                    DUChainWriteLocker lock;
-                    type->addArgument(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
-                }
-                if ( isFirst ) {
-                    // Store the first parameter for easy access; if this is a class member declaration,
-                    // its type will then be set to be an instance of the containing class.
-                    m_firstAttributeDeclaration = DeclarationPointer(paramDeclaration);
-                    isFirst = false;
-                }
+    if ( ! currentDeclaration() || ! currentDeclaration()->isFunctionDeclaration() ) {
+        return;
+    }
+    FunctionDeclaration* workingOnDeclaration = static_cast<FunctionDeclaration*>(Helper::resolveAliasDeclaration(currentDeclaration()));
+    workingOnDeclaration->clearDefaultParameters();
+    if ( ! hasCurrentType() || ! currentType<FunctionType>() ) {
+        return;
+    }
+    FunctionType::Ptr type = currentType<FunctionType>();
+    bool isFirst = true;
+    int defaultParametersCount = node->defaultValues.length();
+    int parametersCount = node->arguments.length();
+    int firstDefaultParameterOffset = parametersCount - defaultParametersCount;
+    int currentIndex = 0;
+    kDebug() << "arguments:" << node->arguments.size();
+    foreach ( ArgAst* arg, node->arguments ) {
+        // Iterate over all the function's arguments, create declarations, and add the arguments
+        // to the functions FunctionType.
+        currentIndex += 1;
+
+        if ( ! arg->argumentName ) {
+            continue;
+        }
+
+        kDebug() << "visiting argument:" << arg->argumentName->value;
+
+        // Create a variable declaration for the parameter, to be used in the function body.
+        Declaration* paramDeclaration = visitVariableDeclaration<Declaration>(arg->argumentName);
+        if ( ! paramDeclaration ) {
+            kDebug() << "could not create parameter declaration!";
+            continue;
+        }
+
+        AbstractType::Ptr argumentType(new IntegralType(IntegralType::TypeMixed));
+        if ( arg->annotation ) {
+            ExpressionVisitor v(currentContext());
+            v.visitNode(arg->annotation);
+            if ( v.lastType() && v.m_isAlias ) {
+                DUChainWriteLocker lock;
+                argumentType = Helper::mergeTypes(paramDeclaration->abstractType(), v.lastType());
             }
-            // Handle *args, **kwargs, and assign them a list / dictionary type.
-            if ( node->vararg ) {
-                // inject the vararg at the correct place
-                int atIndex = 0;
-                int useIndex = -1;
-                foreach ( ArgAst* arg, node->arguments ) {
-                    if ( node->vararg && workingOnDeclaration->vararg() == -1 && node->vararg->appearsBefore(arg) ) {
-                        useIndex = atIndex;
-                    }
-                    atIndex += 1;
-                }
-                if ( useIndex == -1 ) {
-                    // if the vararg does not appear in the middle of the params, place it at the end.
-                    // this is new in python3, you can do like def fun(a, b, *c, z): pass
-                    useIndex = type->arguments().size();
-                }
-                DUChainReadLocker lock;
-                IndexedContainer::Ptr tupleType = ExpressionVisitor::typeObjectForIntegralType
-                                                                    <IndexedContainer>("tuple", currentContext());
-                lock.unlock();
-                if ( tupleType ) {
-                    visitVariableDeclaration<Declaration>(node->vararg->argumentName, 0, tupleType.cast<AbstractType>());
-                    workingOnDeclaration->setVararg(atIndex);
-                    type->addArgument(tupleType.cast<AbstractType>(), useIndex);
-                }
+        }
+        else if ( currentIndex > firstDefaultParameterOffset ) {
+            // Handle arguments with default values, like def foo(bar = 3): pass
+            // Find type of given default value, and assign it to the declaration
+            // TODO does this actually work?
+            ExpressionVisitor v(currentContext());
+            v.visitNode(node->defaultValues.at(currentIndex - firstDefaultParameterOffset - 1));
+            if ( v.lastType() ) {
+                argumentType = v.lastType();
             }
-            
-            if ( node->kwarg ) {
-                DUChainReadLocker lock;
-                AbstractType::Ptr stringType = ExpressionVisitor::typeObjectForIntegralType
-                                                                <AbstractType>("str", currentContext());
-                VariableLengthContainer::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType
-                                                                <VariableLengthContainer>("dict", currentContext());
-                lock.unlock();
-                if ( dictType && stringType ) {
-                    dictType->addKeyType(stringType);
-                    visitVariableDeclaration<Declaration>(node->kwarg->argumentName, 0, dictType.cast<AbstractType>());
-                    type->addArgument(dictType.cast<AbstractType>());
-                    workingOnDeclaration->setKwarg(type->arguments().size() - 1);
-                }
+            // TODO add the real expression from the document here as default value
+            workingOnDeclaration->addDefaultParameter(IndexedString("..."));
+        }
+
+        kDebug() << "is first:" << isFirst << hasCurrentDeclaration() << currentDeclaration();
+        if ( isFirst && hasCurrentDeclaration() && currentContext() && currentContext()->parentContext() ) {
+            if ( currentContext()->parentContext()->type() == DUContext::Class ) {
+                argumentType = m_currentClassType.cast<AbstractType>();
+                isFirst = false;
             }
+        }
+
+        DUChainWriteLocker lock;
+        paramDeclaration->setAbstractType(Helper::mergeTypes(paramDeclaration->abstractType(), argumentType));
+        type->addArgument(argumentType);
+        if ( argumentType ) {
+            kDebug() << "creating argument with type" << argumentType->toString();
+        }
+    }
+    // Handle *args, **kwargs, and assign them a list / dictionary type.
+    if ( node->vararg ) {
+        // inject the vararg at the correct place
+        int atIndex = 0;
+        int useIndex = -1;
+        foreach ( ArgAst* arg, node->arguments ) {
+            if ( node->vararg && workingOnDeclaration->vararg() == -1 && node->vararg->appearsBefore(arg) ) {
+                useIndex = atIndex;
+            }
+            atIndex += 1;
+        }
+        if ( useIndex == -1 ) {
+            // if the vararg does not appear in the middle of the params, place it at the end.
+            // this is new in python3, you can do like def fun(a, b, *c, z): pass
+            useIndex = type->arguments().size();
+        }
+        DUChainReadLocker lock;
+        IndexedContainer::Ptr tupleType = ExpressionVisitor::typeObjectForIntegralType
+                                                            <IndexedContainer>("tuple", currentContext());
+        lock.unlock();
+        if ( tupleType ) {
+            visitVariableDeclaration<Declaration>(node->vararg->argumentName, 0, tupleType.cast<AbstractType>());
+            workingOnDeclaration->setVararg(atIndex);
+            type->addArgument(tupleType.cast<AbstractType>(), useIndex);
+        }
+    }
+
+    if ( node->kwarg ) {
+        DUChainReadLocker lock;
+        AbstractType::Ptr stringType = ExpressionVisitor::typeObjectForIntegralType
+                                                        <AbstractType>("str", currentContext());
+        VariableLengthContainer::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType
+                                                        <VariableLengthContainer>("dict", currentContext());
+        lock.unlock();
+        if ( dictType && stringType ) {
+            dictType->addKeyType(stringType);
+            visitVariableDeclaration<Declaration>(node->kwarg->argumentName, 0, dictType.cast<AbstractType>());
+            type->addArgument(dictType.cast<AbstractType>());
+            workingOnDeclaration->setKwarg(type->arguments().size() - 1);
         }
     }
 }

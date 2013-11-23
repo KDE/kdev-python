@@ -886,25 +886,29 @@ void DeclarationBuilder::visitYield(YieldAst* node)
     
     // In some obscure (or wrong) cases, "yield" might appear outside of a function body,
     // so check for that here.
-    if ( node->value && hasCurrentType() ) {
-        if ( TypePtr<FunctionType> t = currentType<FunctionType>() ) {
-            if ( VariableLengthContainer::Ptr previous = t->returnType().cast<VariableLengthContainer>() ) {
-                // If the return type of the function already is set to a list, *add* the encountered type
-                // to its possible content types.
-                previous->addContentType(encountered);
-                t->setReturnType(previous.cast<AbstractType>());
-            }
-            else {
-                // Otherwise, create a new container type, and set it as the function's return type.
-                DUChainWriteLocker lock;
-                VariableLengthContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType<VariableLengthContainer>("list", currentContext());
-                if ( container ) {
-                    openType<VariableLengthContainer>(container);
-                    container->addContentType(encountered);
-                    t->setReturnType(Helper::mergeTypes(t->returnType(), container.cast<AbstractType>()));
-                    closeType();
-                }
-            }
+    if ( ! node->value || ! hasCurrentType() ) {
+        return;
+    }
+
+    TypePtr<FunctionType> t = currentType<FunctionType>()
+    if ( ! t ) {
+        return;
+    }
+    if ( VariableLengthContainer::Ptr previous = t->returnType().cast<VariableLengthContainer>() ) {
+        // If the return type of the function already is set to a list, *add* the encountered type
+        // to its possible content types.
+        previous->addContentType(encountered);
+        t->setReturnType(previous.cast<AbstractType>());
+    }
+    else {
+        // Otherwise, create a new container type, and set it as the function's return type.
+        DUChainWriteLocker lock;
+        VariableLengthContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType<VariableLengthContainer>("list", currentContext());
+        if ( container ) {
+            openType<VariableLengthContainer>(container);
+            container->addContentType(encountered);
+            t->setReturnType(Helper::mergeTypes(t->returnType(), container.cast<AbstractType>()));
+            closeType();
         }
     }
 }

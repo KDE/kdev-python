@@ -154,8 +154,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             QList<Declaration*> calltips;
             KDevPG::MemoryPool pool;
             FunctionDeclaration* functionCalled = 0;
-            AstBuilder* builder = new AstBuilder(&pool);
-            CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
+            AstBuilder builder(&pool);
+            CodeAst* tmpAst = builder.parse(KUrl(), m_guessTypeOfExpression);
             if ( tmpAst ) {
                 lock.unlock();
                 ExpressionVisitor* v = new ExpressionVisitor(m_duContext.data());
@@ -358,6 +358,30 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             resultingItems << getMissingIncludeItems(m_guessTypeOfExpression);
         }
     }
+    else if ( m_operation == PythonCodeCompletionContext::StringFormattingCompletion ) {
+        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                    "{0}", i18n("Insert positional replacement variable")));
+        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                    "{argumentName}", i18n("Insert named replacement variable")));
+        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                    "{0:<character_count}", i18n("Insert left-aligned replacement variable")));
+        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                    "{0:>character_count}", i18n("Insert right-aligned replacement variable")));
+        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                    "{0:.precision}", i18n("Insert variable with specified precision")));
+        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                    "{0:%}", i18n("Insert percentage")));
+        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                    "{0:b}", i18n("Format as binary number")));
+        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                    "{0:o}", i18n("Format as octal number")));
+        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                    "{0:x}", i18n("Format as hexadecimal number")));
+        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                    "{0!s}", i18n("Format using str()")));
+        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                    "{0!r}", i18n("Format using repr()")));
+    }
     else {
         // it's stupid to display a 3-letter completion item on manually invoked code completion and makes everything look crowded
         if ( m_operation == PythonCodeCompletionContext::NewStatementCompletion && ! fullCompletion ) {
@@ -439,6 +463,13 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getMissingIncludeI
     }
 
     if ( components.isEmpty() ) {
+        return items;
+    }
+
+    Declaration* existing = Helper::declarationForName(QualifiedIdentifier(components.first()),
+                                                       RangeInRevision(m_position, m_position), m_duContext);
+    if ( existing ) {
+        // There's already a declaration for the first component; no need to suggest it
         return items;
     }
 
@@ -825,7 +856,7 @@ void PythonCodeCompletionContext::summonParentForEventualCall(TokenList allExpre
 PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer context, const QString& text,
                                                          const QString& followingText,
                                                          const KDevelop::CursorInRevision& position,
-                                                         int depth, const PythonCodeCompletionWorker* parent)
+                                                         int depth, const PythonCodeCompletionWorker* /*parent*/)
     : CodeCompletionContext(context, text, position, depth)
     , m_operation(PythonCodeCompletionContext::DefaultCompletion)
     , m_itemTypeHint(NoHint)
@@ -838,9 +869,13 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     
     kDebug() << text << position << context->localScopeIdentifier().toString() << context->range();
     
-    // check if the current position is inside a multi-line comment / string -> no completion if this is the case
-    if ( CodeHelpers::endsInsideComment(text) ) {
+    // check if the current position is inside a multi-line comment -> no completion if this is the case
+    if ( CodeHelpers::endsInside(text, CodeHelpers::Comment) ) {
         m_operation = PythonCodeCompletionContext::NoCompletion;
+        return;
+    }
+    else if ( CodeHelpers::endsInside(text, CodeHelpers::String) ) {
+        m_operation = PythonCodeCompletionContext::StringFormattingCompletion;
         return;
     }
     

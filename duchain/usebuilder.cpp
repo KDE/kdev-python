@@ -59,7 +59,7 @@ DUContext* UseBuilder::contextAtOrCurrent(const CursorInRevision& pos)
 void UseBuilder::visitName(NameAst* node)
 {
     DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node));
-    Declaration* declaration = Helper::declarationForName(node, identifierForNode(node->identifier),
+    Declaration* declaration = Helper::declarationForName(identifierForNode(node->identifier),
                                                           editorFindRange(node, node), DUContextPointer(context));
     
     QStringList keywords;

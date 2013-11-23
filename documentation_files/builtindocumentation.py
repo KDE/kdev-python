@@ -254,13 +254,26 @@ class float():
     def is_integer(self,): return True
     def hex(self,): return 0x0
     def fromhex(self,s): return 0
+    def __add__(self, other): return float()
+    def __sub__(self, other): return float()
+    def __mul__(self, other): return float()
+    def __div__(self, other): return float()
+
 
 class int():
-    pass
+    def __add__(self, other): return int()
+    def __sub__(self, other): return int()
+    def __mul__(self, other): return int()
+    def __div__(self, other): return float()
 
 class complex():
     real = 3
     imag = 5
+    def __add__(self, other): return complex()
+    def __sub__(self, other): return complex()
+    def __mul__(self, other): return complex()
+    def __div__(self, other): return complex()
+    def __mod__(self, other): return complex()
 
 class BaseException():
     args = ()
@@ -356,7 +369,9 @@ class UnicodeWarning(Warning):
 
 class tuple():
     """! IndexedTypeContainer !"""
-    pass
+    def __mul__(self, other):
+        return tuple()
+
 
 class set():
     """! TypeContainer !"""
@@ -382,79 +397,208 @@ class set():
     def pop(self): pass
     def clear(self): pass
 
-def abs(x): return 0
+def abs(x):
+    """ Return the absolute value of a number. The argument may be a plain or long integer or a floating point number. If the argument is a complex number, its magnitude is returned."""
+    return 0
 def int(x): return 0
 def all(iterable): return True
-def any(iterable): return True
-def bin(x): return ""
-def bool(x = False): return True
-def bytearray(source = None, encoding = None, errors = None): return []
-def callable(object): return True
-def chr(i): return ""
-def classmethod(function): return None
-def cmp(x, y): return 0
-def compile(source, filename, mode, flags = None, dont_inherit = None): return None
-def delattr(obj, name): return None
-def dir(obj = None): return {"string" : None}
-def divmod(a, b): return 0
-def enumerate(sequence, start = 0): return [(0, 0)]
-def eval(expression, glob = None, loc = None): return None
-def execfile(filename, glob = None, loc = None): return None
-def file(filename, mode = None, bufsize = None): return _io_TextIOWrapper()
-def filter(function, iterable): return []
-def float(x = 0): return 0.0
-def format(value, format_spec = None): return ""
-def frozenset(iterable = None): return set()
-def getattr(obj, name, default = None): return None
-def globals(): return {}
-def hasattr(obj, name): return bool
-def hash(obj): return 0
-def hex(x): return 0x0
-def id(obj): return 0
-def input(prompt = None): return None
-def isinstance(obj, cls): return True
-def issubclass(cls, info): return True
-def iter(o, s = None):
-    """! returnContentEqualsContentOf ! 0"""
+
+def any(iterable):
+    """Return True if any element of the iterable is true. If the iterable is empty, return False."""
+    return True
+def bin(x):
+    """Convert an integer number to a binary string. The result is a valid Python expression. If x is not a Python int object, it has to define an __index__() method that returns an integer."""
+    return ""
+def bool(x = False):
+    """Convert a value to a Boolean, using the standard truth testing procedure. If x is false or omitted, this returns False; otherwise it returns True. bool is also a class, which is a subclass of int. Class bool cannot be subclassed further. Its only instances are False and True."""
+    return True
+def bytearray(source = None, encoding = None, errors = None):
+    """Return a new array of bytes. The bytearray type is a mutable sequence of integers in the range 0 <= x < 256."""
     return []
-def len(s): return 0
-def locals(): return {}
-def long(x = None, base = None): return 0
-def map(func, iterab): return []
-def max(lst, args = None, key = None): return 0
-def memoryview(obj): return None
-def min(lst, default = None): return 0
-def next(iterator, default = None): return iterator[0]
-def oct(x): return 0o0
-def open(filename, mode = None, bufsize = None): return _io_TextIOWrapper()
-def ord(c): return 0
-def pow(x, y, z = 0): return 0.0
-def property(fget = 0, fset = 0, fdel = 0, doc = 0): return 0
-def range(start = 0, stop = 0, step = 0): return [0]
-def raw_input(prompt = ""): return ""
-def reduce(function, iterable, init = None): return None
-def reload(module) : return None
-def repr(object): return ""
+def callable(object):
+    """Return True if the object argument appears callable, False if not. If this returns true, it is still possible that a call fails, but if it is false, calling object will never succeed. Note that classes are callable (calling a class returns a new instance); class instances are callable if they have a __call__() method."""
+    return True
+def chr(i):
+    """Return a string of one character whose ASCII code is the integer i. For example, chr(97) returns the string 'a'. This is the inverse of ord(). The argument must be in the range [0..255], inclusive; ValueError will be raised if i is outside that range. See also unichr()."""
+    return ""
+def classmethod(function):
+    """Return a class method for function."""
+    return None
+def cmp(x, y):
+    """Compare the two objects x and y and return an integer according to the outcome. The return value is negative if x < y, zero if x == y and strictly positive if x > y."""
+    return 0
+def compile(source, filename, mode, flags = None, dont_inherit = None):
+    """Compile the source into a code or AST object. Code objects can be executed by an exec statement or evaluated by a call to eval(). source can either be a Unicode string, a Latin-1 encoded string or an AST object. Refer to the ast module documentation for information on how to work with AST objects."""
+    return None
+def delattr(obj, name):
+    """This is a relative of setattr(). The arguments are an object and a string. The string must be the name of one of the object’s attributes. The function deletes the named attribute, provided the object allows it. For example, delattr(x, 'foobar') is equivalent to del x.foobar."""
+    return None
+def dir(obj = None):
+    """Without arguments, return the list of names in the current local scope. With an argument, attempt to return a list of valid attributes for that object."""
+    return {"string" : None}
+def divmod(a, b):
+    """Take two (non complex) numbers as arguments and return a pair of numbers consisting of their quotient and remainder when using long division."""
+    return 0
+def enumerate(sequence, start = 0):
+    """Return an enumerate object. sequence must be a sequence, an iterator, or some other object which supports iteration."""
+    return [(0, 0)]
+def eval(expression, glob = None, loc = None):
+    """The expression argument is parsed and evaluated as a Python expression (technically speaking, a condition list) using the globals and locals dictionaries as global and local namespace."""
+    return None
+def execfile(filename, glob = None, loc = None):
+    """This function is similar to the exec statement, but parses a file instead of a string. It is different from the import statement in that it does not use the module administration — it reads the file unconditionally and does not create a new module. """
+    return None
+def file(filename, mode = None, bufsize = None):
+    """Constructor function for the file type, described further in section File Objects."""
+    return _io_TextIOWrapper()
+def filter(function, iterable):
+    """Construct a list from those elements of iterable for which function returns true. iterable may be either a sequence, a container which supports iteration, or an iterator. If iterable is a string or a tuple, the result also has that type; otherwise it is always a list. If function is None, the identity function is assumed, that is, all elements of iterable that are false are removed."""
+    return []
+def float(x = 0):
+    """Convert a string or a number to floating point."""
+    return 0.0
+def format(value, format_spec = None):
+    """Convert a value to a “formatted” representation, as controlled by format_spec."""
+    return ""
+def frozenset(iterable = None):
+    """Return a new frozenset object, optionally with elements taken from iterable."""
+    return set()
+def getattr(obj, name, default = None):
+    """Return the value of the named attribute of object. name must be a string."""
+    return None
+def globals():
+    """Return a dictionary representing the current global symbol table."""
+    return {}
+def hasattr(obj, name):
+    """The arguments are an object and a string. The result is True if the string is the name of one of the object’s attributes, False if not. (This is implemented by calling getattr(object, name) and seeing whether it raises an exception or not.)"""
+    return bool
+def hash(obj):
+    """Return the hash value of the object (if it has one)."""
+    return 0
+def hex(x):
+    """Convert an integer number (of any size) to a hexadecimal string."""
+    return 0x0
+def id(obj):
+    """Return the “identity” of an object. This is an integer (or long integer) which is guaranteed to be unique and constant for this object during its lifetime. Two objects with non-overlapping lifetimes may have the same id() value."""
+    return 0
+def input(prompt = None):
+    """Equivalent to eval(raw_input(prompt))."""
+    return None
+def isinstance(obj, cls):
+    """Return true if the object argument is an instance of the classinfo argument, or of a (direct, indirect or virtual) subclass thereof."""
+    return True
+def issubclass(cls, info):
+    """Return true if class is a subclass (direct, indirect or virtual) of classinfo."""
+    return True
+def iter(o, s = None):
+    """Return an iterator object.
+    ! returnContentEqualsContentOf ! 0 """
+    return []
+def len(s):
+    """Return the length (the number of items) of an object. The argument may be a sequence (string, tuple or list) or a mapping (dictionary)."""
+    return 0
+def locals():
+    """Update and return a dictionary representing the current local symbol table.""" 
+    return {}
+def long(x = None, base = None):
+    """Convert a string or number to a long integer."""
+    return 0
+def map(func, iterab):
+    """Apply function to every item of iterable and return a list of the results."""
+    return []
+def max(lst, args = None, key = None):
+    """Return the largest item in an iterable or the largest of two or more arguments."""
+    return 0
+def memoryview(obj):
+    """Return a “memory view” object created from the given argument."""
+    return None
+def min(lst, default = None):
+    """Return the smallest item in an iterable or the smallest of two or more arguments."""
+    return 0
+def next(iterator, default = None):
+    """Retrieve the next item from the iterator by calling its next() method."""
+    return iterator[0]
+def oct(x):
+    """Convert an integer number (of any size) to an octal string."""
+    return 0o0
+def open(filename, mode = None, bufsize = None):
+    """Open a file, returning an object of the file type described in section File Objects."""
+    return _io_TextIOWrapper()
+def ord(c):
+    """Given a string of length one, return an integer representing the Unicode code point of the character when the argument is a unicode object, or the value of the byte when the argument is an 8-bit string."""
+    return 0
+def pow(x, y, z = 0):
+    """Return x to the power y; if z is present, return x to the power y, modulo z."""
+    return 0.0
+def property(fget = 0, fset = 0, fdel = 0, doc = 0):
+    """Return a property attribute for new-style classes (classes that derive from object)."""
+    return 0
+def range(start = 0, stop = 0, step = 0):
+    """This is a versatile function to create lists containing arithmetic progressions. It is most often used in for loops. The arguments must be plain integers."""
+    return [0]
+def raw_input(prompt = ""):
+    """ The function then reads a line from input, converts it to a string (stripping a trailing newline), and returns that."""
+    return ""
+def reduce(function, iterable, init = None):
+    """Apply function of two arguments cumulatively to the items of iterable, from left to right, so as to reduce the iterable to a single value."""
+    return None
+def reload(module):
+    """Reload a previously imported module."""
+    return None
+def repr(object):
+    """Return a string containing a printable representation of an object."""
+    return ""
 def reversed(seq):
-    """! returnContentEqualsContentOf ! 0"""
+    """Return a reverse iterator.
+    ! returnContentEqualsContentOf ! 0"""
     return None
-def round(x, n=0): return 0.0
-def setattr(obj, name, value): return None
-def slice(start = 0, stop = 0, step = 0): return slice()
+def round(x, n=0):
+    """Return the floating point value number rounded to ndigits digits after the decimal point."""
+    return 0.0
+def setattr(obj, name, value):
+    """This is the counterpart of getattr(). The arguments are an object, a string and an arbitrary value. The string may name an existing attribute or a new attribute. The function assigns the value to the attribute, provided the object allows it."""
+    return None
+def slice(start = 0, stop = 0, step = 0):
+    """Return a slice object representing the set of indices specified by range(start, stop, step)."""
+    return slice()
 def sorted(iterable, cmpre = None, key = None, reverse = False):
-    """! returnContentEqualsContentOf ! 0"""
+    """Return a new sorted list from the items in iterable.
+    ! returnContentEqualsContentOf ! 0"""
+    return []
+def staticmethod(function):
+    """Return a static method for function."""
+    return function
+def sum(iterable):
+    """Sums start and the items of an iterable from left to right and returns the total."""
+    return 0.0
+def super(_type, obj = None):
+    """Return a proxy object that delegates method calls to a parent or sibling class of type."""
     return None
-def staticmethod(function): return function
-def sum(iterable): return 0.0
-def super(_type, obj = None): return None
-def tuple(iterable = None): return ()
-def type(object): return object
-def unichr(i): return ""
-def unicode(obj = None, encoding = None, errors = None): return ""
-def vars(obj): return None
-def xrange(start = 0, stop = 0, step = 0): return [0]
-def zip(iterable = None): return []
-def __import__(name, globa = None, loca = None, fromlist = None, level = 0): return None
+def tuple(iterable = None):
+    """Return a tuple whose items are the same and in the same order as iterable‘s items."""
+    return ()
+def type(object):
+    """With one argument, return the type of an object."""
+    return object
+def unichr(i):
+    """Return the Unicode string of one character whose Unicode code is the integer i."""
+    return ""
+def unicode(obj = None, encoding = None, errors = None):
+    """Return the Unicode string version of object."""
+    return ""
+def vars(obj):
+    """Return the __dict__ attribute for a module, class, instance, or any other object with a __dict__ attribute."""
+    return None
+def xrange(start = 0, stop = 0, step = 0):
+    """This function is very similar to range(), but returns an xrange object instead of a list."""
+    return [0]
+def zip(iterable = None):
+    """This function returns a list of tuples, where the i-th tuple contains the i-th element from each of the argument sequences or iterables."""
+    return []
+def __import__(name, globa = None, loca = None, fromlist = None, level = 0):
+    """This function is invoked by the import statement. It can be replaced (by importing the __builtin__ module and assigning to __builtin__.__import__) in order to change semantics of the import statement, but nowadays it is usually simpler to use import hooks (see PEP 302)."""
+    return None
+
 def exit(status): return None
 __name__ = "none"
 __file__ = "none"

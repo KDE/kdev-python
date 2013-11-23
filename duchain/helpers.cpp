@@ -40,6 +40,7 @@
 #include "types/unsuretype.h"
 #include "types/variablelengthcontainer.h"
 #include "types/indexedcontainer.h"
+#include "kdevpythonversion.h"
 
 using namespace KDevelop;
 
@@ -189,7 +190,7 @@ QPair<Python::FunctionDeclarationPointer, bool> Helper::functionDeclarationForCa
     return QPair<FunctionDeclarationPointer, bool>(lastFunctionDeclaration, isConstructor);
 }
 
-Declaration* Helper::declarationForName(NameAst* /*ast*/, const QualifiedIdentifier& identifier, const RangeInRevision& nodeRange, DUContextPointer context)
+Declaration* Helper::declarationForName(const QualifiedIdentifier& identifier, const RangeInRevision& nodeRange, DUContextPointer context)
 {
     QList<Declaration*> declarations;
     QList<Declaration*> localDeclarations;
@@ -310,10 +311,10 @@ QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
         KStandardDirs d;
         kDebug() << "*** Gathering search paths...";
         QStringList getpath;
-        getpath << "python" << "-c" << "import sys; sys.stdout.write(':'.join(sys.path))";
+        getpath << "-c" << "import sys; sys.stdout.write(':'.join(sys.path))";
         
         QProcess python;
-        python.start("/usr/bin/env", getpath);
+        python.start(QLatin1String(PYTHON_EXECUTABLE), getpath);
         python.waitForFinished(1000);
         QByteArray pythonpath = python.readAllStandardOutput();
         QList<QByteArray> paths = pythonpath.split(':');

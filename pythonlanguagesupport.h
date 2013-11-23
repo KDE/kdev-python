@@ -65,6 +65,9 @@ public:
     
 //     virtual QWidget* specialLanguageObjectNavigationWidget(const KUrl& url, const KDevelop::SimpleCursor& position);
 
+    /// Tells whether this plugin is enabled for the given file.
+    static bool enabledForFile(const KUrl& url);
+
 public slots:
     void documentOpened(KDevelop::IDocument*);
 

@@ -734,7 +734,7 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
         range = RangeInRevision(0, 0, node->endLine, node->endCol);
     }
     DUChainReadLocker lock;
-    Declaration* d = Helper::declarationForName(node, QualifiedIdentifier(node->identifier->value),
+    Declaration* d = Helper::declarationForName(QualifiedIdentifier(node->identifier->value),
                                                 range, DUContextPointer(m_ctx));
     
     if ( d ) {

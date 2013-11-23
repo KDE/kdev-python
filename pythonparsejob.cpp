@@ -26,6 +26,7 @@
 #include "pythonlanguagesupport.h"
 #include "declarationbuilder.h"
 #include "usebuilder.h"
+#include "kshell.h"
 
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/duchain.h>
@@ -282,14 +283,18 @@ void ParseJob::eventuallyDoPEP8Checking(const IndexedString document, TopDUConte
     tempfile.write(idoc->textDocument()->text().toUtf8());
     tempfile.close();
     QString url = configGroup.readEntry("pep8url", "/usr/bin/pep8-python2");
+    QString arguments = configGroup.readEntry("pap8arguments", "");
     QFileInfo f(url);
     bool error = false;
     if ( ! f.isExecutable() ) {
         error = true;
     }
+    // create a string that contains the command to call pep8 with the given arguments
+    QStringList commandArgs = (QStringList() << tempfile.fileName() << KShell::splitArgs(arguments));
     QProcess process;
     process.setProcessChannelMode(QProcess::MergedChannels);
-    process.start(url, QStringList() << tempfile.fileName());
+    // call the pep8 command
+    process.start(url, commandArgs);
     process.waitForFinished(1000);
     if ( process.state() != QProcess::NotRunning || ( process.exitCode() != 0 && process.exitCode() != 1 )  ) {
         process.kill();

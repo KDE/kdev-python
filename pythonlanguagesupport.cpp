@@ -36,6 +36,9 @@
 #include <interfaces/idocumentcontroller.h>
 #include <interfaces/context.h>
 #include <interfaces/contextmenuextension.h>
+#include <interfaces/iprojectcontroller.h>
+#include <interfaces/iproject.h>
+#include <interfaces/isession.h>
 #include <language/duchain/duchain.h>
 #include <language/duchain/duchainlock.h>
 #include <language/codecompletion/codecompletion.h>
@@ -106,7 +109,12 @@ LanguageSupport::~LanguageSupport()
 
 KDevelop::ParseJob *LanguageSupport::createParseJob( const IndexedString& url )
 {
-    return new ParseJob(url, this);
+    if ( enabledForFile(url.toUrl()) ) {
+        return new ParseJob(url, this);
+    }
+    else {
+        return 0;
+    }
 }
 
 QString LanguageSupport::name() const
@@ -117,6 +125,42 @@ QString LanguageSupport::name() const
 LanguageSupport* LanguageSupport::self()
 {
     return m_self;
+}
+
+bool LanguageSupport::enabledForFile(const KUrl& url)
+{
+    // This is a bit more general than it would need to be,
+    // but that way we can have the same code for both branches.
+    QList< ILanguage* > enabledLanguages = ICore::self()->languageController()->languagesForUrl(url);
+    const QString& name = LanguageSupport::self()->name();
+    static const QString otherName = ( name == "Python3" ? "Python" : "Python3" );
+    bool haveBoth = false;
+    foreach ( const ILanguage* lang, enabledLanguages ) {
+        if ( lang->name() == otherName ) {
+            // both py2 and py3 plugins are installed
+            haveBoth = true;
+        }
+    }
+    if ( ! haveBoth ) {
+        // If only one of the plugins is installed, use that.
+        return true;
+    }
+
+    // Otherwise, both plugins are installed, so check if there's a choice for this session.
+    KDevelop::ISession* activeSession = KDevelop::ICore::self()->activeSession();
+    if ( activeSession ) {
+        KConfigGroup group(activeSession->config()->group("python"));
+        const QString& version = group.readEntry("languageVersion", "Python 3");
+        if ( ( version == "Python 3" && name == "Python3" ) || ( version == "Python 2" && name == "Python" ) ) {
+            // this plugin is the right one, the other one will disable itself
+            return true;
+        }
+    }
+    else {
+        // no session, treat this as a py3 file
+        return name == "Python3";
+    }
+    return false;
 }
 
 KDevelop::ILanguage *LanguageSupport::language()

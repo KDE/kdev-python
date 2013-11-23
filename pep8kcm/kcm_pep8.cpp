@@ -42,22 +42,27 @@ PEP8KCModule::PEP8KCModule(QWidget* parent, const QVariantList& args)
     configWidget->setLayout(formlayout);
     parent->layout()->addWidget(configWidget);
 
-    QLabel* urllabel = new QLabel(i18n("Full path to the pep8 checker to use:"));
-    QLabel* enablelabel = new QLabel(i18n("Enable pep8 checking:"));
+    QLabel* urllabel = new QLabel(i18n("Full path to the PEP8 checker to use:"));
+    QLabel* argumentlabel = new QLabel(i18n("PEP8 checker arguments:"));
+    QLabel* enablelabel = new QLabel(i18n("Enable PEP8 checking:"));
     pep8url = new QLineEdit(configGroup.readEntry("pep8url", "/usr/bin/pep8-python2"));
+    pep8arguments = new QLineEdit(configGroup.readEntry("pap8arguments", ""));
     enableChecking = new QCheckBox;
     enableChecking->setChecked(configGroup.readEntry<bool>("pep8enabled", false));
     formlayout->addRow(urllabel, pep8url);
+    formlayout->addRow(argumentlabel, pep8arguments);
     formlayout->addRow(enablelabel, enableChecking);
     formlayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
 
     connect(pep8url, SIGNAL(textChanged(QString)), this, SLOT(changed()));
+    connect(pep8arguments, SIGNAL(textChanged(QString)), this, SLOT(changed()));
     connect(enableChecking, SIGNAL(clicked(bool)), this, SLOT(changed()));
 }
 
 void PEP8KCModule::save()
 {
     configGroup.writeEntry("pep8url", pep8url->text());
+    configGroup.writeEntry("pap8arguments", pep8arguments->text());
     configGroup.writeEntry("pep8enabled", enableChecking->isChecked());
     KCModule::save();
 }

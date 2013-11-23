@@ -82,12 +82,6 @@ template<typename T> void ExpressionVisitor::encounter(TypePtr< T > type, Encoun
     encounter(AbstractType::Ptr::staticCast(type), flags);
 }
 
-void ExpressionVisitor::encounterDeclaration(DeclarationPointer ptr, bool isAlias)
-{
-    m_isAlias = isAlias;
-    m_lastDeclaration.push(QList<DeclarationPointer>() << ptr);
-}
-
 void ExpressionVisitor::encounterDeclarations(QList< DeclarationPointer > ptrs, bool isAlias)
 {
     m_isAlias = isAlias;
@@ -143,28 +137,6 @@ void ExpressionVisitor::unknownTypeEncountered() {
     m_isAlias = false;
     encounterDeclaration(0);
     encounter(unknownType());
-}
-
-QList< TypePtr< StructureType > > ExpressionVisitor::possibleStructureTypes(AbstractType::Ptr type)
-{
-    return Helper::filterType<StructureType>(type,
-        [](AbstractType::Ptr type) {
-            return type.cast<StructureType>();
-        },
-        [](StructureType::Ptr type) {
-            return Helper::resolveType(type.cast<AbstractType>()).cast<StructureType>();
-        }
-    );
-}
-
-QList< TypePtr< StructureType > > ExpressionVisitor::typeListForDeclarationList(QList< DeclarationPointer > decls)
-{
-    QList<StructureType::Ptr> result;
-    DUChainReadLocker lock;
-    foreach ( const DeclarationPointer& ptr, decls ) {
-        result.append(possibleStructureTypes(ptr->abstractType()));
-    }
-    return result;
 }
 
 void ExpressionVisitor::visitAttribute(AttributeAst* node)

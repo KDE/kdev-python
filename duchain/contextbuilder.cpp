@@ -104,11 +104,6 @@ RangeInRevision ContextBuilder::rangeForNode(Identifier* node, bool moveRight)
     return rangeForNode(static_cast<Ast*>(node), moveRight);
 }
 
-SimpleRange ContextBuilder::simpleRangeForNode(Ast* node, bool moveRight)
-{
-    return SimpleRange(node->startLine, node->startCol, node->endLine, node->endCol + (int) moveRight);
-}
-
 TopDUContext* ContextBuilder::newTopContext(const RangeInRevision& range, ParsingEnvironmentFile* file) 
 {
     IndexedString currentDocumentUrl = currentlyParsedDocument();
@@ -261,20 +256,6 @@ void ContextBuilder::visitComprehensionCommon(Ast* node)
         if ( node->astType == Ast::SetComprehensionAstType )
             Python::AstDefaultVisitor::visitSetComprehension(static_cast<SetComprehensionAst*>(node));
         lock.lock();
-        closeContext();
-    }
-}
-
-void ContextBuilder::openContextForStatementList( const QList<Ast*>& l, DUContext::ContextType /*type*/)
-{
-    if ( l.count() > 0 ) {
-        Ast* first = l.first();
-        Ast* last = l.last();
-        Q_ASSERT(first->hasUsefulRangeInformation); // TODO remove this
-        RangeInRevision range(RangeInRevision(first->startLine - 1, first->startCol, last->endLine + 1, 10000));
-        openContext(first, range, DUContext::Other );
-        addImportedContexts();
-        visitNodeList( l );
         closeContext();
     }
 }

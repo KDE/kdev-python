@@ -143,7 +143,6 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         void encounter(AbstractType::Ptr type, EncounterFlags flags = (EncounterFlags) 0);
         AbstractType::Ptr encounterPreprocess(AbstractType::Ptr type, bool merge = false);
         template<typename T> void encounter(TypePtr<T> type, EncounterFlags flags = (EncounterFlags) 0);
-        void encounterDeclaration(DeclarationPointer ptr, bool isAlias = false);
         void encounterDeclaration(Declaration* ptr, bool isAlias = false);
         void encounterDeclarations(QList<DeclarationPointer> ptrs, bool isAlias = false);
         

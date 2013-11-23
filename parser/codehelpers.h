@@ -82,6 +82,11 @@ private:
 class KDEVPYTHONPARSER_EXPORT CodeHelpers
 {
     public:
+        enum EndLocation {
+            String,
+            Comment
+        };
+
         CodeHelpers();
         /**
          * @brief Get the python expression at the specified cursor.
@@ -104,9 +109,9 @@ class KDEVPYTHONPARSER_EXPORT CodeHelpers
         static QString killStrings(QString stringWithStrings);
         
         /**
-         * @brief Check whether the given code ends inside a comment or string literal.
+         * @brief Check whether the given code ends inside a comment.
          **/
-        static bool endsInsideComment(const QString& code);
+        static bool endsInside(const QString& code, EndLocation location);
     };
 }
 

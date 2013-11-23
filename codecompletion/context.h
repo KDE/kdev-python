@@ -73,7 +73,8 @@ public:
         FunctionCallCompletion,
         InheritanceCompletion,
         RaiseExceptionCompletion,
-        GeneratorVariableCompletion
+        GeneratorVariableCompletion,
+        StringFormattingCompletion
     };
     
     enum ItemTypeHint {

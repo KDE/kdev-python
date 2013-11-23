@@ -102,14 +102,14 @@ CodeHelpers::CodeHelpers()
     
 }
 
-bool CodeHelpers::endsInsideComment(const QString& code)
+bool CodeHelpers::endsInside(const QString &code, CodeHelpers::EndLocation location)
 {
     bool insideSingleLineComment = false;
     QStringList stringDelimiters;
     stringDelimiters << "\"\"\"" << "\'\'\'" << "'" << "\"";
     QStack<QString> stringStack;
     const int max_len = code.length();
-    kDebug() << "Checking for comment line or string literal:" << code;
+    kDebug() << "Checking for comment line:" << code;
     for ( int atChar = 0; atChar < max_len; atChar++ ) {
         const QChar& c = code.at(atChar);
         QString t;
@@ -148,7 +148,13 @@ bool CodeHelpers::endsInsideComment(const QString& code)
             continue;
         }
     }
-    return ! stringStack.isEmpty() || insideSingleLineComment;
+
+    if (location == String) {
+        return ! stringStack.isEmpty();
+    }
+    else {
+        return insideSingleLineComment;
+    }
 }
 
 QString CodeHelpers::killStrings(QString stringWithStrings)

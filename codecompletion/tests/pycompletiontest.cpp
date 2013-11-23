@@ -502,6 +502,26 @@ void PyCompletionTest::testAddImportCompletion_data()
     QTest::newRow("has_no_when_not_necessary") << "toplevelmodule = 3;\ntoplevelmodule%INVOKE" << ".%CURSOR" << 0;
 }
 
+void PyCompletionTest::testStringFormattingCompletion()
+{
+    QFETCH(QString, completionCode);
+    QFETCH(QString, invokeCode);
+
+    QVERIFY(itemInCompletionList(completionCode, invokeCode, "{0}"));
+}
+
+void PyCompletionTest::testStringFormattingCompletion_data()
+{
+    QTest::addColumn<QString>("completionCode");
+    QTest::addColumn<QString>("invokeCode");
+
+    QTest::newRow("sq_string") << "\"foo %INVOKE\"" << "%CURSOR";
+    QTest::newRow("dq_string") << "'foo %INVOKE bar'" << "%CURSOR";
+
+}
+
+
+
 }
 
 

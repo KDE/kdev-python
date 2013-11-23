@@ -358,6 +358,30 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             resultingItems << getMissingIncludeItems(m_guessTypeOfExpression);
         }
     }
+    else if ( m_operation == PythonCodeCompletionContext::StringFormattingCompletion ) {
+        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                    "{0}", i18n("Insert positional replacement variable")));
+        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                    "{argumentName}", i18n("Insert named replacement variable")));
+        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                    "{0:<character_count}", i18n("Insert left-aligned replacement variable")));
+        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                    "{0:>character_count}", i18n("Insert right-aligned replacement variable")));
+        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                    "{0:.precision}", i18n("Insert variable with specified precision")));
+        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                    "{0:%}", i18n("Insert percentage")));
+        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                    "{0:b}", i18n("Format as binary number")));
+        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                    "{0:o}", i18n("Format as octal number")));
+        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                    "{0:x}", i18n("Format as hexadecimal number")));
+        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                    "{0!s}", i18n("Format using str()")));
+        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                                    "{0!r}", i18n("Format using repr()")));
+    }
     else {
         // it's stupid to display a 3-letter completion item on manually invoked code completion and makes everything look crowded
         if ( m_operation == PythonCodeCompletionContext::NewStatementCompletion && ! fullCompletion ) {
@@ -845,9 +869,13 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     
     kDebug() << text << position << context->localScopeIdentifier().toString() << context->range();
     
-    // check if the current position is inside a multi-line comment / string -> no completion if this is the case
-    if ( CodeHelpers::endsInsideComment(text) ) {
+    // check if the current position is inside a multi-line comment -> no completion if this is the case
+    if ( CodeHelpers::endsInside(text, CodeHelpers::Comment) ) {
         m_operation = PythonCodeCompletionContext::NoCompletion;
+        return;
+    }
+    else if ( CodeHelpers::endsInside(text, CodeHelpers::String) ) {
+        m_operation = PythonCodeCompletionContext::StringFormattingCompletion;
         return;
     }
     

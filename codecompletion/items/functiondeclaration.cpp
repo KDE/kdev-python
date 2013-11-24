@@ -132,17 +132,8 @@ void FunctionDeclarationCompletionItem::setIsImportItem(bool isImportItem)
 void FunctionDeclarationCompletionItem::executed(KTextEditor::Document* document, const KTextEditor::Range& word)
 {
     kDebug() << "FunctionDeclarationCompletionItem executed";
-    DeclarationPointer decl(declaration());
-    DUChainPointer<FunctionDeclaration> fdecl;
-    AliasDeclaration* alias = dynamic_cast<AliasDeclaration*>(decl.data());
-    if ( alias ) {
-        DUChainReadLocker lock(DUChain::lock());
-        fdecl = dynamic_cast<FunctionDeclaration*>(alias->aliasedDeclaration().declaration());
-    }
-    else {
-        fdecl = decl.dynamicCast<FunctionDeclaration>();
-    }
-    if ( ! fdecl.data() || ! fdecl.dynamicCast<FunctionDeclaration>() ) {
+    FunctionDeclaration::Ptr fdecl(dynamic_cast<FunctionDeclaration*>(Helper::resolveAliasDeclaration(declaration().data())));
+    if ( ! fdecl ) {
         kError() << "ERROR: could not get declaration data, not executing completion item!";
         return;
     }
@@ -157,11 +148,11 @@ void FunctionDeclarationCompletionItem::executed(KTextEditor::Document* document
     }
     // place cursor behind bracktes by default
     int skip = 2;
-    if ( fdecl.data()->type<FunctionType>()->arguments().length() != 0 ) {
+    if ( fdecl->type<FunctionType>()->arguments().length() != 0 ) {
         // place cursor in brackets if there's parameters
         skip = 1;
     }
-    document->replaceText(word, decl.data()->identifier().toString() + suffix);
+    document->replaceText(word, declaration()->identifier().toString() + suffix);
     if ( View* view = document->activeView() ) {
         view->setCursorPosition( Cursor(word.end().line(), word.end().column() + skip) );
     }

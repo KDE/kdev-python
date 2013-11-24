@@ -111,10 +111,9 @@ bool CodeHelpers::endsInside(const QString &code, CodeHelpers::EndLocation locat
     const int max_len = code.length();
     kDebug() << "Checking for comment line:" << code;
     for ( int atChar = 0; atChar < max_len; atChar++ ) {
-        const QChar& c = code.at(atChar);
-        QStringRef t;
-        if ( max_len - atChar > 2 ) {
-            t = code.midRef(atChar, 3);
+        const QChar c = code.at(atChar);
+        if ( c == ' ' || c.isLetterOrNumber() ) {
+            continue;
         }
         if ( stringStack.isEmpty() && c == '#' ) {
             insideSingleLineComment = true;
@@ -127,6 +126,13 @@ bool CodeHelpers::endsInside(const QString &code, CodeHelpers::EndLocation locat
         if ( insideSingleLineComment ) {
             // don't count string delimiters in a comment line
             continue;
+        }
+        if ( c != '"' && c != '\'' && c != '\\' ) {
+            continue;
+        }
+        QStringRef t;
+        if ( max_len - atChar > 2 ) {
+            t = code.midRef(atChar, 3);
         }
         foreach ( const QString& check, stringDelimiters ) {
             if ( t != check && ! ( check.size() == 1 && c == check.at(0) ) ) {

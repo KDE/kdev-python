@@ -129,7 +129,7 @@ bool CodeHelpers::endsInside(const QString &code, CodeHelpers::EndLocation locat
             continue;
         }
         foreach ( const QString& check, stringDelimiters ) {
-            if ( t != check && c != check.at(0) ) {
+            if ( t != check && ! ( check.size() == 1 && c == check.at(0) ) ) {
                 continue;
             }
             if ( stringStack.isEmpty() ) {

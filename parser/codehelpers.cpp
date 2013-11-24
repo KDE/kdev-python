@@ -112,9 +112,9 @@ bool CodeHelpers::endsInside(const QString &code, CodeHelpers::EndLocation locat
     kDebug() << "Checking for comment line:" << code;
     for ( int atChar = 0; atChar < max_len; atChar++ ) {
         const QChar& c = code.at(atChar);
-        QString t;
+        QStringRef t;
         if ( max_len - atChar > 2 ) {
-            t = code.mid(atChar, 3);
+            t = code.midRef(atChar, 3);
         }
         if ( stringStack.isEmpty() && c == '#' ) {
             insideSingleLineComment = true;
@@ -129,7 +129,7 @@ bool CodeHelpers::endsInside(const QString &code, CodeHelpers::EndLocation locat
             continue;
         }
         foreach ( const QString& check, stringDelimiters ) {
-            if ( t != check && QString(c) != check ) {
+            if ( t != check && c != check.at(0) ) {
                 continue;
             }
             if ( stringStack.isEmpty() ) {

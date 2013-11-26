@@ -21,6 +21,7 @@
 
 #include <language/duchain/declaration.h>
 #include <language/duchain/types/abstracttype.h>
+#include <language/duchain/declaration.h>
 
 using namespace KDevelop;
 
@@ -39,13 +40,34 @@ void CodeHighlightingInstance::highlightUse(KDevelop::DUContext* context, int in
 }
 
 CodeHighlightingInstance::CodeHighlightingInstance(const Highlighting* highlighting)
-    : KDevelop::CodeHighlightingInstance(highlighting)
+    : KDevelop::CodeHighlightingInstance(highlighting),
+      checked_blocks(false),
+      has_blocks(false)
 {
 }
 
 bool CodeHighlightingInstance::useRainbowColor(KDevelop::Declaration* dec) const
 {
+    if ( ! checked_blocks ) {
+        checkHasBlocks(dec->topContext());
+    }
+    // no functions/classes in file and it's a normal variable and in the top level
+    if ( ! has_blocks && ! dec->internalContext() && dec->context() == dec->topContext() ) {
+        return true;
+    }
     return KDevelop::CodeHighlightingInstance::useRainbowColor(dec);
+}
+
+void CodeHighlightingInstance::checkHasBlocks(TopDUContext* top) const
+{
+    QVector<Declaration*> declarations = top->localDeclarations();
+    for ( int i = 0; i < declarations.size(); i++ ) {
+        if ( declarations.at(i)->internalContext() ) {
+           has_blocks = true;
+           break;
+        }
+    }
+    checked_blocks = true;
 }
 
 CodeHighlightingInstance* Highlighting::createInstance() const

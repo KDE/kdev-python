@@ -37,6 +37,10 @@ public:
     CodeHighlightingInstance(const Highlighting* highlighting);
     virtual void highlightUse(KDevelop::DUContext* context, int index, const QColor& color);
     virtual bool useRainbowColor(KDevelop::Declaration* dec) const;
+private:
+    void checkHasBlocks(KDevelop::TopDUContext* top) const;
+    mutable bool checked_blocks;
+    mutable bool has_blocks;
 };
 
     

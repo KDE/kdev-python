@@ -432,6 +432,27 @@ void PyDUChainTest::testClassVariables()
     }
 }
 
+void PyDUChainTest::testWarnNewNotCls()
+{
+    QFETCH(QString, code);
+    QFETCH(int, probs);
+
+    ReferencedTopDUContext ctx = parse(code);
+    QCOMPARE(ctx->problems().count(), probs);
+}
+
+void PyDUChainTest::testWarnNewNotCls_data()
+{
+    QTest::addColumn<QString>("code");
+    QTest::addColumn<int>("probs");
+
+    QTest::newRow("check_for_new_first_arg_cls") << "class c():\n def __new__(clf, other):\n  pass" << 1;
+    QTest::newRow("check_for_new_first_arg_cls_0") << "class c():\n def __new__(cls, other):\n  pass" << 0;
+    QTest::newRow("check_first_arg_class_self") << "class c():\n def test(seff, masik):\n  pass" << 1;
+    QTest::newRow("check_first_arg_class_self_0") << "class c():\n def test(self, masik):\n  pass" << 0;
+}
+
+
 void PyDUChainTest::testFlickering()
 {
     QFETCH(QStringList, code);

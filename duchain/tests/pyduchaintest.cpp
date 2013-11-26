@@ -438,6 +438,7 @@ void PyDUChainTest::testWarnNewNotCls()
     QFETCH(int, probs);
 
     ReferencedTopDUContext ctx = parse(code);
+    DUChainReadLocker lock;
     QCOMPARE(ctx->problems().count(), probs);
 }
 

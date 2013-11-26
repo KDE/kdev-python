@@ -1543,12 +1543,12 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
                 if ( dec->identifier().identifier() == newMethodName
                      && parameters[0]->identifier().identifier() != clsArgumentName )
                 {
-                        description = i18n("First argument of __new__ method is not called cls, this is deprecated");
+                    description = i18n("First argument of __new__ method is not called cls, this is deprecated");
                 }
                 else if ( dec->identifier().identifier() != newMethodName
                           && parameters[0]->identifier().identifier() != selfArgumentName )
                 {
-                        description = i18n("First argument of class method is not called self, this is deprecated");
+                    description = i18n("First argument of class method is not called self, this is deprecated");
                 }
                 if ( ! description.isEmpty() ) {
                     KDevelop::Problem *p = new KDevelop::Problem();

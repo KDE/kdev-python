@@ -890,7 +890,7 @@ void DeclarationBuilder::visitYield(YieldAst* node)
         return;
     }
 
-    TypePtr<FunctionType> t = currentType<FunctionType>()
+    TypePtr<FunctionType> t = currentType<FunctionType>();
     if ( ! t ) {
         return;
     }

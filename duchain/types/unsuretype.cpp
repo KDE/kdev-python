@@ -67,6 +67,10 @@ QString UnsureType::toString() const
     QString typeList;
     int count = 0;
     QList<IndexedType> encountered;
+    if ( typesRecursive().size() > 5 )  {
+        return '<' + i18nc("refers to types of variables in programming, as in \"various possible types\"",
+                           "various types") + '>';
+    }
     foreach ( AbstractType::Ptr type, typesRecursive() ) {
         if ( ! type ) {
             kWarning() << "Invalid type: " << type.unsafeData();
@@ -89,10 +93,6 @@ QString UnsureType::toString() const
         return i18nc("refers to a type (in program code) which is not known", "mixed");
     if ( count == 1 )
         return typeList;
-    if ( count > 5 )  {
-        typeList = '<' + i18nc("refers to types of variables in programming, as in \"various possible types\"",
-                               "various types") + '>';
-    }
     return i18nc("refers to a type (in program code) which can have multiple values", "unsure (%1)", typeList);
 }
 

@@ -64,6 +64,7 @@ PythonCodeCompletionContext::ItemTypeHint PythonCodeCompletionContext::itemTypeH
 }
 
 ExpressionVisitor* visitorForString(QString str, DUContext* context, CursorInRevision scanUntil = CursorInRevision::invalid()) {
+    ENSURE_CHAIN_NOT_LOCKED
     KDevPG::MemoryPool pool;
     QSharedPointer<AstBuilder> builder(new AstBuilder(&pool));
     CodeAst* tmpAst = builder->parse(KUrl(), str);
@@ -85,7 +86,6 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
 {
     m_fullCompletion = fullCompletion;
     QList<CompletionTreeItemPointer> resultingItems;
-    DUChainReadLocker lock;
     
     kDebug() << "Line: " << m_position.line;
     
@@ -120,9 +120,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     }
     else if ( m_operation == PythonCodeCompletionContext::GeneratorVariableCompletion ) {
         QList<KeywordItem*> items;
-        lock.unlock();
         ExpressionVisitor* v = visitorForString(m_guessTypeOfExpression, m_duContext.data(), m_position);
-        lock.lock();
         if ( v ) {
             if ( ! v->m_unknownNames.isEmpty() ) {
                 if ( v->m_unknownNames.size() >= 2 ) {
@@ -157,11 +155,9 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             AstBuilder builder(&pool);
             CodeAst* tmpAst = builder.parse(KUrl(), m_guessTypeOfExpression);
             if ( tmpAst ) {
-                lock.unlock();
                 ExpressionVisitor* v = new ExpressionVisitor(m_duContext.data());
                 v->m_forceGlobalSearching = true;
                 v->visitCode(tmpAst);
-                lock.lock();
                 if ( v->lastDeclaration() ) {
                     calltips << v->lastDeclaration().data();
                     functionCalled = dynamic_cast<FunctionDeclaration*>(v->lastDeclaration().data());
@@ -197,6 +193,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             // but only if all non-default arguments (the mandatory ones) already have been provided.
             // TODO fancy feature: Filter out already provided default-parameters
             if ( depth() == 1 && functionCalled ) {
+                DUChainReadLocker lock;
                 if ( DUContext* args = DUChainUtils::getArgumentContext(functionCalled) ) {
                     int normalParameters = args->localDeclarations().count() - functionCalled->defaultParametersSize();
                     if ( normalParameters <= m_alreadyGivenParametersCount )
@@ -215,6 +212,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         }
     else if ( m_operation == PythonCodeCompletionContext::DefineCompletion ) {
         // Find all base classes of the current class context
+        DUChainReadLocker lock;
         if ( m_duContext->type() != DUContext::Class ) {
             kWarning() << "current context is not a class context, not offering define completion";
         }
@@ -263,6 +261,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     else if ( m_operation == PythonCodeCompletionContext::RaiseExceptionCompletion ) {
         kDebug() << "Finding items for raise statement";
         ReferencedTopDUContext ctx = Helper::getDocumentationFileContext();
+        DUChainReadLocker lock;
         QList< Declaration* > declarations = ctx->findDeclarations(QualifiedIdentifier("BaseException"));
         if ( declarations.isEmpty() || ! declarations.first()->abstractType() ) {
             kDebug() << "No valid exception classes found, aborting";
@@ -306,6 +305,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
                 TypePtr<StructureType> cls = StructureType::Ptr::dynamicCast(v->lastType());
                 if ( cls && cls->declaration(m_duContext->topContext()) ) {
                     if ( DUContext* internal = cls->declaration(m_duContext->topContext())->internalContext() ) {
+                        DUChainReadLocker lock;
                         declarations = internal->allDeclarations(m_position, m_duContext->topContext(), false);
                     }
                 }
@@ -313,6 +313,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             }
         }
         else {
+            DUChainReadLocker lock;
             declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
         }
         QList<DeclarationDepthPair> remainingDeclarations;
@@ -331,7 +332,6 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         ExpressionVisitor* v = visitorForString(m_guessTypeOfExpression, m_duContext.data());
         if ( v ) {
             if ( v->lastType() ) {
-                kDebug() << v->lastType()->toString();
                 resultingItems << getCompletionItemsForType(v->lastType());
             }
             else {
@@ -394,6 +394,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         }
         if ( m_operation == PythonCodeCompletionContext::NewStatementCompletion ) {
             // Eventually suggest initializing class members from constructor arguments
+            DUChainReadLocker lock;
             if ( Declaration* decl = duContext()->owner() ) {
                 if ( DUContext* args = DUChainUtils::getArgumentContext(duContext()->owner()) ) {
                     if ( decl->isFunctionDeclaration() && decl->identifier() == KDevelop::Identifier("__init__") ) {
@@ -430,6 +431,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         if ( abort ) {
             return QList<CompletionTreeItemPointer>();
         }
+        DUChainReadLocker lock;
         QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
         foreach ( const DeclarationDepthPair& d, declarations ) {
             if ( d.first and d.first->context()->type() == DUContext::Class ) {
@@ -603,6 +605,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
         QList<DUContext*> searchContexts = Helper::internalContextsForClass(cls, m_duContext->topContext(), Helper::PublicOnly);
         QList<DeclarationDepthPair> keepDeclarations;
         foreach ( const DUContext* currentlySearchedContext, searchContexts ) {
+            DUChainReadLocker lock;
             kDebug() << "searching context " << currentlySearchedContext->scopeIdentifier() << "for autocompletion items";
             QList<DeclarationDepthPair> declarations = currentlySearchedContext->allDeclarations(CursorInRevision::invalid(),
                                                                                                  m_duContext->topContext(),
@@ -663,6 +666,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
     
     if ( ! sourceFile.isEmpty() ) {
         IndexedString filename(sourceFile);
+        DUChainReadLocker lock;
         TopDUContext* top = DUChain::self()->chainForDocument(filename);
         kDebug() << top;
         DUContext* c = internalContextForDeclaration(top, item.remainingIdentifiers);

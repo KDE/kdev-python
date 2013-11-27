@@ -220,6 +220,7 @@ const QList<CompletionTreeItem*> PyCompletionTest::invokeCompletionOn(const QStr
     PythonCodeCompletionContext* context = new PythonCodeCompletionContext(contextAtCursor, snip, remaining, cursorAt, 0, 0);
     bool abort = false;
     QList<CompletionTreeItem*> items;
+    lock.unlock();
     foreach ( CompletionTreeItemPointer ptr, context->completionItems(abort, true) ) {
         items << ptr.data();
         // those are leaked, but it's only a few kb while the tests are running. who cares.

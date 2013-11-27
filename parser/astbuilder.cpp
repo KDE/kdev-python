@@ -137,6 +137,7 @@ private:
             currentLine += 1;
         }
         fixNode->startLine = currentLine;
+        fixNode->endLine = currentLine;
 
         // cut away the "def" / "class"
         int currentColumn = -1;
@@ -153,7 +154,7 @@ private:
                 // non space, then this is indeed the start of the identifier we're looking for.
                 break;
             }
-            if ( lineData.mid(currentColumn, defKeyword.size()) == defKeyword ) {
+            if ( lineData.midRef(currentColumn, defKeyword.size()) == defKeyword ) {
                keywordFound = true;
                currentColumn += defKeyword.size();
             }
@@ -167,7 +168,6 @@ private:
         bool haveDot = true;
         bool previousWasSpace = true;
         for ( int i = start - 1; i >= 0; i-- ) {
-            qDebug() << i << data.at(i) << haveDot << previousWasSpace;
             if ( data.at(i).isSpace() ) {
                 previousWasSpace = true;
                 continue;
@@ -237,7 +237,6 @@ private:
                         bool atStart = true;
                         int textStart = i+3;
                         for ( int j = i+3; j < line.size(); j++ ) {
-                            qDebug() << atStart << i << j << line.at(j);
                             if ( atStart && ! line.at(j).isSpace() ) {
                                 atStart = false;
                                 textStart = j;

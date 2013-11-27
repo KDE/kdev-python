@@ -40,6 +40,8 @@
 
 #include <KLocalizedString>
 
+#include <functional>
+
 using namespace KDevelop;
 using namespace Python;
 using namespace KTextEditor;
@@ -63,10 +65,6 @@ AbstractType::Ptr ExpressionVisitor::encounterPreprocess(AbstractType::Ptr type,
 
 void ExpressionVisitor::encounter(AbstractType::Ptr type, EncounterFlags flags)
 {
-//     if ( type )
-//         kDebug() << "type encountered: " << type->toString();
-//     else
-//         kDebug() << "unknown type encountered";
     if ( flags & AutomaticallyDetermineDeclaration ) {
         StructureType::Ptr t = type.cast<StructureType>();
         if ( t ) {
@@ -82,12 +80,6 @@ void ExpressionVisitor::encounter(AbstractType::Ptr type, EncounterFlags flags)
 template<typename T> void ExpressionVisitor::encounter(TypePtr< T > type, EncounterFlags flags)
 {
     encounter(AbstractType::Ptr::staticCast(type), flags);
-}
-
-void ExpressionVisitor::encounterDeclaration(DeclarationPointer ptr, bool isAlias)
-{
-    m_isAlias = isAlias;
-    m_lastDeclaration.push(QList<DeclarationPointer>() << ptr);
 }
 
 void ExpressionVisitor::encounterDeclarations(QList< DeclarationPointer > ptrs, bool isAlias)
@@ -133,7 +125,7 @@ ExpressionVisitor::ExpressionVisitor(ExpressionVisitor* parent)
     , m_parentVisitor(parent)
     , m_depth(parent->m_depth + 1)
 {
-
+    ENSURE_CHAIN_NOT_LOCKED
 }
 
 AbstractType::Ptr ExpressionVisitor::unknownType()
@@ -147,43 +139,6 @@ void ExpressionVisitor::unknownTypeEncountered() {
     encounter(unknownType());
 }
 
-QList< TypePtr< StructureType > > ExpressionVisitor::possibleStructureTypes(AbstractType::Ptr type)
-{
-    QList< TypePtr< StructureType > > result;
-    type = Helper::resolveType(type);
-    if ( ! type ) {
-        return result;
-    }
-    if ( type->whichType() == KDevelop::AbstractType::TypeUnsure ) {
-        AbstractType::Ptr current;
-        UnsureType::Ptr possible = type.cast<UnsureType>();
-        int amount = possible->typesSize();
-        for ( int i = 0; i < amount; i++ ) {
-            StructureType::Ptr current = Helper::resolveType(possible->types()[i].abstractType()).cast<StructureType>();
-            if ( current ) {
-                result << current;
-            }
-        }
-    }
-    else {
-        StructureType::Ptr c = type.cast<StructureType>();
-        if ( c ) {
-            result << c;
-        }
-    }
-    return result;
-}
-
-QList< TypePtr< StructureType > > ExpressionVisitor::typeListForDeclarationList(QList< DeclarationPointer > decls)
-{
-    QList<StructureType::Ptr> result;
-    DUChainReadLocker lock;
-    foreach ( const DeclarationPointer& ptr, decls ) {
-        result.append(possibleStructureTypes(ptr->abstractType()));
-    }
-    return result;
-}
-
 void ExpressionVisitor::visitAttribute(AttributeAst* node)
 {
     ExpressionAst* accessingAttributeOf = node->value;
@@ -191,19 +146,12 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     ExpressionVisitor v(this);
     v.visitNode(accessingAttributeOf);
     AbstractType::Ptr accessedType = v.lastType();
-    QList<AbstractType::Ptr> accessingAttributeOfType;
-    if ( accessedType && accessedType->whichType() == AbstractType::TypeUnsure ) {
-        UnsureType::Ptr unsure = accessedType.cast<UnsureType>();
-        int size = unsure->typesSize();
-        DUChainReadLocker lock;
-        for ( int i = 0; i < size; i++ ) {
-            accessingAttributeOfType << unsure->types()[i].abstractType();
+    QList<StructureType::Ptr> accessingAttributeOfType = Helper::filterType<StructureType>(accessedType,
+        [](AbstractType::Ptr type) {
+            return type && type->whichType() == AbstractType::TypeStructure;
         }
-    }
-    else {
-        accessingAttributeOfType << accessedType;
-    }
-    
+    );
+
     QList<Declaration*> foundDecls;
     
     // Step 1: Find all matching declarations which are made inside the type of which the accessed object is.
@@ -212,25 +160,20 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     // maybe our attribute isn't a class at all, then that's an error by definition for now
     bool success = false;
     bool haveOneUsefulType = false;
-    if ( ! accessingAttributeOfType.isEmpty() ) {
-        foreach ( AbstractType::Ptr current, accessingAttributeOfType ) {
-            if ( current && current->whichType() != AbstractType::TypeStructure ) {
+    foreach ( StructureType::Ptr current, accessingAttributeOfType ) {
+        if ( Helper::isUsefulType(current.cast<AbstractType>()) ) {
+            haveOneUsefulType = true;
+        }
+        DUChainReadLocker lock;
+        QList<DUContext*> searchContexts = Helper::internalContextsForClass(current, m_ctx->topContext());
+        foreach ( DUContext* currentInternalContext, searchContexts ) {
+            if ( ! currentInternalContext ) {
                 continue;
             }
-            StructureType::Ptr currentStructure = current.cast<StructureType>();
-            if ( Helper::isUsefulType(current) ) {
-                haveOneUsefulType = true;
-            }
-            DUChainReadLocker lock;
-            QList<DUContext*> searchContexts = Helper::internalContextsForClass(currentStructure, m_ctx->topContext());
-            foreach ( DUContext* currentInternalContext, searchContexts ) {
-                if ( currentInternalContext ) {
-                    foundDecls.append(currentInternalContext->findDeclarations(QualifiedIdentifier(node->attribute->value),
-                                                                               CursorInRevision::invalid(), AbstractType::Ptr(),
-                                                                               0, DUContext::DontSearchInParent));
-                    success = true;
-                }
-            }
+            foundDecls.append(currentInternalContext->findDeclarations(QualifiedIdentifier(node->attribute->value),
+                                                                       CursorInRevision::invalid(), AbstractType::Ptr(),
+                                                                       0, DUContext::DontSearchInParent));
+            success = true;
         }
     }
     if ( ! success ) {
@@ -271,10 +214,8 @@ void ExpressionVisitor::visitCall(CallAst* node)
     v.visitNode(node->function);
     Declaration* actualDeclaration = 0;
     FunctionType::Ptr unidentifiedFunctionType;
-    if ( ! v.m_isAlias ) {
-        if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeFunction ) {
-            unidentifiedFunctionType = v.lastType().cast<FunctionType>();
-        }
+    if ( ! v.m_isAlias && v.lastType() && v.lastType()->whichType() == AbstractType::TypeFunction ) {
+        unidentifiedFunctionType = v.lastType().cast<FunctionType>();
     }
     else {
         actualDeclaration = v.lastDeclaration().data();
@@ -286,169 +227,177 @@ void ExpressionVisitor::visitCall(CallAst* node)
         return;
     }
     else if ( !actualDeclaration ) {
-//         kDebug() << "No declaration for " << functionName;
         m_shouldBeKnown = false;
         return unknownTypeEncountered();
     }
+
+    DUChainReadLocker lock;
+    actualDeclaration = Helper::resolveAliasDeclaration(actualDeclaration);
+    ClassDeclaration* classDecl = dynamic_cast<ClassDeclaration*>(actualDeclaration);
+    QPair<FunctionDeclarationPointer, bool> d = Helper::functionDeclarationForCalledDeclaration(
+                                                DeclarationPointer(actualDeclaration));
+    FunctionDeclaration* funcDecl = d.first.data();
+    bool isConstructor = d.second;
+    lock.unlock();
+
+    if ( funcDecl && funcDecl->type<FunctionType>() ) {
+        // try to deduce type from a decorator
+        checkForDecorators(node, funcDecl, classDecl, isConstructor);
+    }
+    else if ( classDecl ) {
+        encounter(classDecl->abstractType());
+        encounterDeclaration(classDecl);
+        return;
+    }
     else {
-        DUChainReadLocker lock;
-        actualDeclaration = Helper::resolveAliasDeclaration(actualDeclaration);
-        ClassDeclaration* classDecl = dynamic_cast<ClassDeclaration*>(actualDeclaration);
-        QPair<FunctionDeclarationPointer, bool> d = Helper::functionDeclarationForCalledDeclaration(
-                                                    DeclarationPointer(actualDeclaration));
-        FunctionDeclaration* funcDecl = d.first.data();
-        bool isConstructor = d.second;
-        
-        if ( funcDecl && funcDecl->type<FunctionType>() ) {
-            AbstractType::Ptr type;
-            if ( isConstructor and classDecl ) {
-                type = classDecl->abstractType();
-                encounterDeclaration(classDecl);
+        if ( actualDeclaration ) {
+            kDebug() << "Declaraton is not a class or function declaration";
+        }
+        unknownTypeEncountered();
+        return;
+    }
+}
+
+void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* funcDecl, ClassDeclaration* classDecl, bool isConstructor)
+{
+    AbstractType::Ptr type;
+    if ( isConstructor and classDecl ) {
+        type = classDecl->abstractType();
+        encounterDeclaration(classDecl);
+    }
+    else {
+        type = funcDecl->type<FunctionType>()->returnType();
+        encounterDeclaration(funcDecl);
+    }
+
+    QHash< QString, std::function<bool(QStringList, QString)> > knownDecoratorHints;
+
+    kDebug() << "Got function declaration with decorators, checking for list content type...";
+    knownDecoratorHints["getsType"] = [&](QStringList /*arguments*/, QString /*currentHint*/) {
+        if ( node->function->astType != Ast::AttributeAstType ) {
+            return false;
+        }
+        ExpressionVisitor baseTypeVisitor(this);
+        // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
+        baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
+        if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
+            kDebug() << "Found container, using type";
+            AbstractType::Ptr newType = t->contentType().abstractType();
+            encounter(newType);
+            return true;
+        }
+        return false;
+    };
+
+    knownDecoratorHints["getsList"] = [&](QStringList /*arguments*/, QString currentHint) {
+        if ( node->function->astType != Ast::AttributeAstType ) {
+            return false;
+        }
+        ExpressionVisitor baseTypeVisitor(this);
+        // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
+        baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
+        DUChainWriteLocker lock;
+        if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
+            kDebug() << "Got container:" << t->toString();
+            VariableLengthContainer::Ptr newType = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
+            if ( ! newType ) {
+                return false;
+            }
+            AbstractType::Ptr contentType;
+            if ( currentHint == "getsList" ) {
+                contentType = t->contentType().abstractType();
             }
             else {
-                type = funcDecl->type<FunctionType>()->returnType();
-                encounterDeclaration(funcDecl);
+                contentType = t->keyType().abstractType();
             }
-            
-            bool specialHintFound = false;
-            bool typeFound = false;
-            kDebug() << "Got function declaration with decorators, checking for list content type...";
-            if ( Helper::docstringContainsHint(funcDecl, "getsType") ) {
-                specialHintFound = true;
-                kDebug() << "Found decorator";
-                if ( node->function->astType == Ast::AttributeAstType ) {
-                    lock.unlock();
-                    ExpressionVisitor baseTypeVisitor(this);
-                    // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
-                    baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
-                    lock.lock();
-                    if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
-                        kDebug() << "Found container, using type";
-                        AbstractType::Ptr newType = t->contentType().abstractType();
-                        return encounter(newType);
-                    }
-                }
-            }
-            // TODO this is very slow!
-            if ( Helper::docstringContainsHint(funcDecl, "getsList")
-                or Helper::docstringContainsHint(funcDecl, "getsListOfKeys")
-            ) {
-                specialHintFound = true;
-                kDebug() << "Got getsList decorator, checking container";
-                if ( node->function->astType == Ast::AttributeAstType ) {
-                    lock.unlock();
-                    ExpressionVisitor baseTypeVisitor(this);
-                    // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
-                    baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
-                    lock.lock();
-                    if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
-                        kDebug() << "Got container:" << t->toString();
-                        VariableLengthContainer::Ptr newType = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
-                        if ( newType ) {
-                            AbstractType::Ptr contentType;
-                            if ( Helper::docstringContainsHint(funcDecl, "getsList") ) {
-                                contentType = t->contentType().abstractType();
-                            }
-                            else {
-                                contentType = t->keyType().abstractType();
-                            }
-                            newType->addContentType(contentType);
-                            AbstractType::Ptr resultingType = newType.cast<AbstractType>();
-                            return encounter(resultingType);
-                        }
-                        else return unknownTypeEncountered();
-                    }
-                }
-            }
-            if ( Helper::docstringContainsHint(funcDecl, "getsListOfBoth") ) {
-                specialHintFound = true;
-                kDebug() << "Got getsListOfBoth decorator, checking container";
-                if ( node->function->astType == Ast::AttributeAstType ) {
-                    lock.unlock();
-                    ExpressionVisitor baseTypeVisitor(this);
-                    // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
-                    baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
-                    lock.lock();
-                    if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
-                        kDebug() << "Got container:" << t->toString();
-                        VariableLengthContainer::Ptr newType = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
-                        IndexedContainer::Ptr newContents = typeObjectForIntegralType<IndexedContainer>("tuple", m_ctx);
-                        if ( newType && newContents ) {
-                            AbstractType::Ptr contentType, keyType;
-                            contentType = t->contentType().abstractType();
-                            if ( ! contentType ) {
-                                contentType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
-                            }
-                            keyType = t->keyType().abstractType();
-                            if ( ! keyType ) {
-                                keyType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
-                            }
-                            newContents->addEntry(keyType);
-                            newContents->addEntry(contentType);
-                            newType->addContentType(newContents.cast<AbstractType>());
-                            AbstractType::Ptr resultingType = newType.cast<AbstractType>();
-                            return encounter(resultingType);
-                        }
-                        else return unknownTypeEncountered();
-                    }
-                }
-            }
-            
-            QStringList l;
-            if ( Helper::docstringContainsHint(funcDecl, "returnContentEqualsContentOf", &l) )
-            {
-                kDebug() << "Found argument dependent decorator, checking argument type";
-                specialHintFound = true;
-                int argNum = ! l.isEmpty() ? l.at(0).toInt() : 0;
-                if ( node->arguments.length() > argNum ) {
-                    ExpressionAst* relevantArgument = node->arguments.at(argNum);
-                    lock.unlock();
-                    ExpressionVisitor v(this);
-                    v.visitNode(relevantArgument);
-                    lock.lock();
-                    if ( v.lastType() ) {
-                        VariableLengthContainer* realTarget = 0;
-                        if ( VariableLengthContainer* target = dynamic_cast<VariableLengthContainer*>(type.unsafeData()) ) {
-                            realTarget = target;
-                        }
-                        if ( VariableLengthContainer* source = dynamic_cast<VariableLengthContainer*>(v.lastType().unsafeData()) ) {
-                            if ( ! realTarget ) {
-                                // if the function does not force a return type, just copy the source (like for reversed())
-                                realTarget = source;
-                            }
-                            VariableLengthContainer* newType = static_cast<VariableLengthContainer*>(realTarget->clone());
-                            Q_ASSERT(newType);
-                            newType->addContentType(source->contentType().abstractType());
-                            typeFound = true;
-                            return encounter(AbstractType::Ptr(newType));
-                        }
-                        else if ( type ) {
-                            return encounter(type);
-                        }
-                    }
-                }
-                else if ( type ) {
-                    return encounter(type);
-                }
-            }
-            if ( specialHintFound and not typeFound ) {
-                return unknownTypeEncountered();
-            }
-            
-            // if none of the above decorator-finding methods worked, just use the ordinary return type.
-            return encounter(type);
+            newType->addContentType(contentType);
+            AbstractType::Ptr resultingType = newType.cast<AbstractType>();
+            encounter(resultingType);
+            return true;
         }
-        else if ( classDecl ) {
-            encounter(classDecl->abstractType());
-            encounterDeclaration(classDecl);
+        return false;
+    };
+    knownDecoratorHints["getListOfKeys"] = knownDecoratorHints["getsList"];
+
+    knownDecoratorHints["getsListOfBoth"] = [&](QStringList /*arguments*/, QString /*currentHint*/) {
+        kDebug() << "Got getsListOfBoth decorator, checking container";
+        if ( node->function->astType != Ast::AttributeAstType ) {
+            return false;
         }
-        else {
-            if ( actualDeclaration ) {
-                kDebug() << "Declaraton " << actualDeclaration->toString() << " is not a class or function declaration";
+        ExpressionVisitor baseTypeVisitor(this);
+        // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
+        baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
+        DUChainWriteLocker lock;
+        if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
+            kDebug() << "Got container:" << t->toString();
+            VariableLengthContainer::Ptr newType = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
+            IndexedContainer::Ptr newContents = typeObjectForIntegralType<IndexedContainer>("tuple", m_ctx);
+            if ( ! newType || ! newContents ) {
+                return false;
             }
-            return unknownTypeEncountered();
+            AbstractType::Ptr contentType, keyType;
+            contentType = t->contentType().abstractType();
+            if ( ! contentType ) {
+                contentType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
+            }
+            keyType = t->keyType().abstractType();
+            if ( ! keyType ) {
+                keyType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
+            }
+            newContents->addEntry(keyType);
+            newContents->addEntry(contentType);
+            newType->addContentType(newContents.cast<AbstractType>());
+            AbstractType::Ptr resultingType = newType.cast<AbstractType>();
+            encounter(resultingType);
+            return true;
+        }
+        return false;
+    };
+
+    knownDecoratorHints["returnContentEqualsContentOf"] = [&](QStringList arguments, QString /*currentHint*/) {
+        int argNum = ! arguments.isEmpty() ? arguments.at(0).toInt() : 0;
+        kDebug() << "Found argument dependent decorator, checking argument type" << argNum;
+        if ( argNum >= node->arguments.length() ) {
+            return false;
+        }
+        ExpressionAst* relevantArgument = node->arguments.at(argNum);
+        ExpressionVisitor v(this);
+        v.visitNode(relevantArgument);
+        if ( ! v.lastType() ) {
+            return false;
+        }
+        VariableLengthContainer* realTarget = 0;
+        if ( VariableLengthContainer* target = dynamic_cast<VariableLengthContainer*>(type.unsafeData()) ) {
+            realTarget = target;
+        }
+        if ( VariableLengthContainer* source = dynamic_cast<VariableLengthContainer*>(v.lastType().unsafeData()) ) {
+            if ( ! realTarget ) {
+                // if the function does not force a return type, just copy the source (like for reversed())
+                realTarget = source;
+            }
+            VariableLengthContainer* newType = static_cast<VariableLengthContainer*>(realTarget->clone());
+            Q_ASSERT(newType);
+            newType->addContentType(source->contentType().abstractType());
+            encounter(AbstractType::Ptr(newType));
+            return true;
+        }
+        return false;
+    };
+
+    foreach ( const QString& currentHint, knownDecoratorHints.keys() ) {
+        QStringList arguments;
+        if ( ! Helper::docstringContainsHint(funcDecl, currentHint, &arguments) ) {
+            continue;
+        }
+        // If the hint word appears in the docstring, run the evaluation function.
+        if ( knownDecoratorHints[currentHint](arguments, currentHint) ) {
+            // We indeed found something, so we're done.
+            return;
         }
     }
+
+    // if none of the above decorator-finding methods worked, just use the ordinary return type.
+    return encounter(type);
 }
 
 void ExpressionVisitor::visitSubscript(SubscriptAst* node)
@@ -458,16 +407,27 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
         DUChainReadLocker lock;
         if ( IndexedContainer::Ptr indexed = lastType().cast<IndexedContainer>() ) {
             encounterDeclaration(0);
-            if ( IndexAst* sliceIndexAst = static_cast<IndexAst*>(node->slice) ) {
-                if ( sliceIndexAst->value && sliceIndexAst->value->astType == Ast::NumberAstType ) {
-                    NumberAst* number = static_cast<NumberAst*>(sliceIndexAst->value);
-                    int sliceIndex = number->value;
-                    if ( sliceIndex < 0 && sliceIndex + indexed->typesCount() > 0 ) {
-                        sliceIndex += indexed->typesCount();
-                    }
-                    if ( sliceIndex < indexed->typesCount() && sliceIndex >= 0 ) {
-                        return encounter(indexed->typeAt(sliceIndex).abstractType());
-                    }
+            IndexAst* sliceIndexAst = static_cast<IndexAst*>(node->slice);
+            NumberAst* number = nullptr;
+            bool invert = false;
+            if ( sliceIndexAst->value && sliceIndexAst->value->astType == Ast::UnaryOperationAstType ) {
+                // might be -3
+                UnaryOperationAst* unary = static_cast<UnaryOperationAst*>(sliceIndexAst->value);
+                if ( unary->type == Ast::UnaryOperatorSub && unary->operand->astType == Ast::NumberAstType ) {
+                    number = static_cast<NumberAst*>(unary->operand);
+                    invert = true;
+                }
+            }
+            else if ( sliceIndexAst->value->astType == Ast::NumberAstType ) {
+                number = static_cast<NumberAst*>(sliceIndexAst->value);
+            }
+            if ( number ) {
+                int sliceIndex = number->value * ( invert ? -1 : 1 );
+                if ( sliceIndex < 0 && sliceIndex + indexed->typesCount() > 0 ) {
+                    sliceIndex += indexed->typesCount();
+                }
+                if ( sliceIndex < indexed->typesCount() && sliceIndex >= 0 ) {
+                    return encounter(indexed->typeAt(sliceIndex).abstractType());
                 }
             }
             // the exact index is unknown, use unsure
@@ -604,6 +564,7 @@ void ExpressionVisitor::visitTuple(TupleAst* node) {
     DUChainReadLocker lock;
     IndexedContainer::Ptr type = typeObjectForIntegralType<IndexedContainer>("tuple", m_ctx);
     if ( type ) {
+        lock.unlock();
         foreach ( ExpressionAst* expr, node->elements ) {
             ExpressionVisitor v(this);
             v.visitNode(expr);
@@ -696,7 +657,6 @@ void ExpressionVisitor::visitString(Python::StringAst* )
 
 RangeInRevision nodeRange(Python::Ast* node)
 {
-    kDebug() << node->endLine;
     return RangeInRevision(node->startLine, node->startCol, node->endLine,node->endCol);
 }
 
@@ -705,17 +665,15 @@ void ExpressionVisitor::addUnknownName(const QString& name)
     if ( m_parentVisitor ) {
         m_parentVisitor->addUnknownName(name);
     }
-    else {
-        if ( ! m_unknownNames.contains(name) ) {
-            m_unknownNames.append(name);
-        }
+    else if ( ! m_unknownNames.contains(name) ) {
+        m_unknownNames.append(name);
     }
 }
 
 void ExpressionVisitor::visitNameConstant(NameConstantAst* node)
 {
     // handles "True", "False", "None"
-    QHash < NameConstantAst::NameConstantTypes, AbstractType::Ptr >::const_iterator defId = m_defaultTypes.constFind(node->value);
+    auto defId = m_defaultTypes.constFind(node->value);
     if ( defId != m_defaultTypes.constEnd() ) {
         return encounter(*defId);
     }
@@ -783,7 +741,7 @@ void ExpressionVisitor::visitUnaryOperation(Python::UnaryOperationAst* node)
 {
     // Only visit the value, and use that as the result. Unary operators usually
     // don't change the type of the object (i.e. -a has the same type as a)
-    Python::AstDefaultVisitor::visitNode(node->value);
+    visitNode(node->operand);
 }
 
 void ExpressionVisitor::visitBooleanOperation(Python::BooleanOperationAst* node)

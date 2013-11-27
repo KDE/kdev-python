@@ -80,6 +80,11 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         virtual void visitNameConstant(NameConstantAst* node);
         
         void addUnknownName(const QString& name);
+
+        /// Checks the decorators of the given function declaration. Returns true
+        /// if one determining the type of the expression was found.
+        void checkForDecorators(CallAst* node, Python::FunctionDeclaration* funcDecl,
+                                Python::ClassDeclaration* classDecl, bool isConstructor);
         
         // whether type of expression should be known or not, i.e. if at the point where the chain breaks the previous type
         // was already unknown, then this is an IDE error, otherwise probably the user's code is wrong; used for error reporting
@@ -138,7 +143,6 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         void encounter(AbstractType::Ptr type, EncounterFlags flags = (EncounterFlags) 0);
         AbstractType::Ptr encounterPreprocess(AbstractType::Ptr type, bool merge = false);
         template<typename T> void encounter(TypePtr<T> type, EncounterFlags flags = (EncounterFlags) 0);
-        void encounterDeclaration(DeclarationPointer ptr, bool isAlias = false);
         void encounterDeclaration(Declaration* ptr, bool isAlias = false);
         void encounterDeclarations(QList<DeclarationPointer> ptrs, bool isAlias = false);
         

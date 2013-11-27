@@ -72,7 +72,6 @@ public:
     QList<IndexedString> m_unresolvedImports;
     static RangeInRevision rangeForNode(Ast* node, bool moveRight);
     static RangeInRevision rangeForNode(Identifier* node, bool moveRight);
-    static SimpleRange simpleRangeForNode(Python::Ast* node, bool moveRight);
     ModificationRevision m_futureModificationRevision;
     bool m_prebuilding;
 
@@ -92,7 +91,6 @@ protected:
     virtual void visitFunctionDefinition( FunctionDefinitionAst* );
     virtual void visitClassDefinition( ClassDefinitionAst* );
     virtual void visitCode(CodeAst* node);
-    virtual void visitLambda(LambdaAst* node);
     virtual void visitListComprehension(ListComprehensionAst* node);
     virtual void visitDictionaryComprehension(DictionaryComprehensionAst* node);
     virtual void visitGeneratorExpression(GeneratorExpressionAst* node);
@@ -130,7 +128,6 @@ protected:
     RangeInRevision m_lastGeneratorRange;
 
 private:
-    void openContextForStatementList( const QList<Ast*>&, DUContext::ContextType type = DUContext::Other);
     bool m_isScheduledForReparsing;
     RangeInRevision comprehensionRange(Ast* node);
 

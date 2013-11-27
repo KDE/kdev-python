@@ -29,6 +29,7 @@
 
 #include "contextbuilder.h"
 #include "typebuilder.h"
+#include "declarations/functiondeclaration.h"
 #include <language/duchain/types/unsuretype.h>
 
 namespace Python
@@ -78,6 +79,26 @@ protected:
     virtual void visitGlobal(GlobalAst* node);
     virtual void visitAssertion(AssertionAst* node);
     virtual void visitIf(IfAst* node);
+
+    /// Helper function which applies the docstring hints, such as "addsType".
+    void applyDocstringHints(CallAst* node, Python::FunctionDeclaration::Ptr function);
+    /// Helper function which creates argument type hints.
+    void addArgumentTypeHints(CallAst* node, DeclarationPointer function);
+
+    /// Represents a single source type in a tuple assignment.
+    struct SourceType {
+        AbstractType::Ptr type;
+        DeclarationPointer declaration;
+        bool isAlias;
+    };
+    /// Helper functions to retrieve lists of the left- and right hand side of assignments
+    QList<ExpressionAst*> targetsOfAssignment(QList<ExpressionAst*> targets);
+    QList<SourceType> sourcesOfAssignment(Python::ExpressionAst* items);
+    SourceType selectSource(const QList<ExpressionAst*>& targets, const QList<SourceType>& sources,
+                                   int index, ExpressionAst* value);
+    void assignToName(NameAst* name, const SourceType& element);
+    void assignToSubscript(SubscriptAst* subscript, const SourceType& element);
+    void assignToAttribute(AttributeAst* attribute, const SourceType& element);
     
     template<typename T> void visitDecorators(QList<ExpressionAst*> decorators, T* addTo);
     
@@ -160,9 +181,9 @@ protected:
     Declaration* findDeclarationInContext(QStringList dottedNameIdentifier, TopDUContext* ctx) const;
     
     QStack<TopDUContextPointer> m_importContextsForImportStatement;
-    DeclarationPointer m_firstAttributeDeclaration;
 private:
     QList<DUChainBase*> m_scheduledForDeletion;
+    StructureType::Ptr m_currentClassType;
     QString buildModuleNameFromNode(ImportFromAst* node, AliasAst* alias, const QString& intermediate);
 };
 

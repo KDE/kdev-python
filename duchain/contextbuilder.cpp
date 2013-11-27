@@ -104,11 +104,6 @@ RangeInRevision ContextBuilder::rangeForNode(Identifier* node, bool moveRight)
     return rangeForNode(static_cast<Ast*>(node), moveRight);
 }
 
-SimpleRange ContextBuilder::simpleRangeForNode(Ast* node, bool moveRight)
-{
-    return SimpleRange(node->startLine, node->startCol, node->endLine, node->endCol + (int) moveRight);
-}
-
 TopDUContext* ContextBuilder::newTopContext(const RangeInRevision& range, ParsingEnvironmentFile* file) 
 {
     IndexedString currentDocumentUrl = currentlyParsedDocument();
@@ -265,20 +260,6 @@ void ContextBuilder::visitComprehensionCommon(Ast* node)
     }
 }
 
-void ContextBuilder::openContextForStatementList( const QList<Ast*>& l, DUContext::ContextType /*type*/)
-{
-    if ( l.count() > 0 ) {
-        Ast* first = l.first();
-        Ast* last = l.last();
-        Q_ASSERT(first->hasUsefulRangeInformation); // TODO remove this
-        RangeInRevision range(RangeInRevision(first->startLine - 1, first->startCol, last->endLine + 1, 10000));
-        openContext(first, range, DUContext::Other );
-        addImportedContexts();
-        visitNodeList( l );
-        closeContext();
-    }
-}
-
 void ContextBuilder::openContextForClassDefinition(ClassDefinitionAst* node)
 {
     // make sure the contexts ends at the next DEDENT token, not at the last statement.
@@ -402,17 +383,6 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
     return QPair<KUrl, QStringList>(KUrl(), QStringList());
 }
 
-void ContextBuilder::visitLambda(LambdaAst* node)
-{
-    // Lambda functions need their own context for parameters
-    DUChainWriteLocker lock(DUChain::lock());
-    openContext(node, editorFindRange(node, node->body), DUContext::Other);
-    lock.unlock();
-    Python::AstDefaultVisitor::visitLambda(node);
-    lock.lock();
-    closeContext();
-}
-
 RangeInRevision ContextBuilder::rangeForArgumentsContext(FunctionDefinitionAst* node)
 {
     SimpleCursor start = node->name->range().end;
@@ -460,7 +430,6 @@ void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
 
 void ContextBuilder::visitFunctionDefinition(FunctionDefinitionAst* node)
 {
-    DUChainWriteLocker lock(DUChain::lock());
     visitNodeList(node->decorators);
     visitFunctionArguments(node);
     visitFunctionBody(node);
@@ -489,7 +458,10 @@ void ContextBuilder::visitFunctionBody(FunctionDefinitionAst* node)
     // Open the context for the function body (the list of statements)
     // It's of type Other, as it contains only code
     openContext(node, range, DUContext::Other, identifierForNode(node->name));
-    currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));
+    {
+        DUChainWriteLocker lock;
+        currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));
+    }
     // import the parameters into the function body
     addImportedContexts();
     

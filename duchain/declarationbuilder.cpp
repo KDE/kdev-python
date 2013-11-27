@@ -945,7 +945,7 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
     QStringList args;
     items["addsTypeOfArg"] = [&]() {
         const int offset = ! args.isEmpty() ? args.at(0).toInt() : 0;
-        if ( ! node->arguments.length() > offset ) {
+        if ( node->arguments.length() <= offset ) {
             return;
         }
         // Check which type should be added to the list
@@ -962,7 +962,7 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
     };
     items["addsTypeOfArgContent"] = [&]() {
         const int offset = ! args.isEmpty() ? args.at(0).toInt() : 0;
-        if ( ! node->arguments.length() > offset ) {
+        if ( node->arguments.length() <= offset ) {
             return;
         }
         ExpressionVisitor argVisitor(currentContext());

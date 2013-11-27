@@ -137,6 +137,7 @@ private:
             currentLine += 1;
         }
         fixNode->startLine = currentLine;
+        fixNode->endLine = currentLine;
 
         // cut away the "def" / "class"
         int currentColumn = -1;
@@ -153,7 +154,7 @@ private:
                 // non space, then this is indeed the start of the identifier we're looking for.
                 break;
             }
-            if ( lineData.mid(currentColumn, defKeyword.size()) == defKeyword ) {
+            if ( lineData.midRef(currentColumn, defKeyword.size()) == defKeyword ) {
                keywordFound = true;
                currentColumn += defKeyword.size();
             }

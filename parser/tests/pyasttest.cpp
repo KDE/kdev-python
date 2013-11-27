@@ -220,6 +220,41 @@ void PyAstTest::testExpressions_data()
     QTest::newRow("True") << "True";
 }
 
+Q_DECLARE_METATYPE(SimpleRange);
+
+void PyAstTest::testCorrectedFuncRanges()
+{
+    QFETCH(QString, code);
+    QFETCH(SimpleRange, range);
+
+    m_pool = new KDevPG::MemoryPool;
+
+    CodeAst* ast = getAst(code);
+    QVERIFY(ast);
+    foreach ( Ast* node, ast->body ) {
+        if ( node->astType != Ast::FunctionDefinitionAstType ) {
+            continue;
+        }
+        FunctionDefinitionAst* func = static_cast<FunctionDefinitionAst*>(node);
+        QVERIFY(func->name);
+        kDebug() << func->name->range() << range;
+        QCOMPARE(func->name->range(), range);
+    }
+
+    delete m_pool;
+}
+
+void PyAstTest::testCorrectedFuncRanges_data()
+{
+    QTest::addColumn<QString>("code");
+    QTest::addColumn<SimpleRange>("range");
+
+    QTest::newRow("decorator") << "@decorate\ndef func(arg): pass" << SimpleRange(1, 4, 1, 7);
+    QTest::newRow("decorator_arg") << "@decorate(yomama=3)\ndef func(arg): pass" << SimpleRange(1, 4, 1, 7);
+    QTest::newRow("two_decorators") << "@decorate2\n@decorate\ndef func(arg): pass" << SimpleRange(2, 4, 2, 7);
+    QTest::newRow("decorate_class") << "class foo:\n @decorate2\n @decorate\n def func(arg): pass" << SimpleRange(3, 5, 3, 8);
+}
+
 void PyAstTest::testNewPython3()
 {
     QFETCH(QString, code);

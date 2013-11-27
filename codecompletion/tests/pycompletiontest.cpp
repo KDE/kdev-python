@@ -203,7 +203,8 @@ const QList<CompletionTreeItem*> PyCompletionTest::invokeCompletionOn(const QStr
     QStringList lines = allCode.split('\n');
     CursorInRevision cursorAt = CursorInRevision::invalid();
     for ( int i = 0; i < lines.length(); i++ ) {
-        if ( int j = lines.at(i).indexOf("%CURSOR") != -1 ) {
+        int j = lines.at(i).indexOf("%CURSOR");
+        if ( j != -1 ) {
             cursorAt = CursorInRevision(i, j);
             break;
         }

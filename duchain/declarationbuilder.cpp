@@ -1603,8 +1603,10 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     
     // check for (python3) function annotations
     if ( node->returns ) {
+        lock.unlock();
         ExpressionVisitor v(currentContext());
         v.visitNode(node->returns);
+        lock.lock();
         if ( v.lastType() && v.m_isAlias ) {
             type->setReturnType(Helper::mergeTypes(type->returnType(), v.lastType()));
             kDebug() << "updated function return type to " << type->toString();
@@ -1615,6 +1617,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         }
     }
     
+    lock.lock();
     dec->setInSymbolTable(true);
 }
 

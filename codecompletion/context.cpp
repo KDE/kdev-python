@@ -193,6 +193,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             // but only if all non-default arguments (the mandatory ones) already have been provided.
             // TODO fancy feature: Filter out already provided default-parameters
             if ( depth() == 1 && functionCalled ) {
+                DUChainReadLocker lock;
                 if ( DUContext* args = DUChainUtils::getArgumentContext(functionCalled) ) {
                     int normalParameters = args->localDeclarations().count() - functionCalled->defaultParametersSize();
                     if ( normalParameters <= m_alreadyGivenParametersCount )

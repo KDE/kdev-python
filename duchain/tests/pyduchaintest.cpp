@@ -243,6 +243,7 @@ void PyDUChainTest::testCrashes_data() {
     QTest::newRow("static_method") << "class c:\n @staticmethod\n def method(): pass";
     QTest::newRow("vararg_in_middle") << "def func(a, *b, c): pass\nfunc(1, 2, 3, 4, 5)";
     QTest::newRow("return_outside_function") << "return 3";
+    QTest::newRow("stacked_lambdas") << "l4 = lambda x = lambda y = lambda z=1 : z : y() : x()";
     QTest::newRow("fancy generator context range") << "c1_list = sorted(letter for (letter, meanings) \\\n"
                "in ambiguous_nucleotide_values.iteritems() \\\n"
                "if set([codon[0] for codon in codons]).issuperset(set(meanings)))";

@@ -91,7 +91,6 @@ protected:
     virtual void visitFunctionDefinition( FunctionDefinitionAst* );
     virtual void visitClassDefinition( ClassDefinitionAst* );
     virtual void visitCode(CodeAst* node);
-    virtual void visitLambda(LambdaAst* node);
     virtual void visitListComprehension(ListComprehensionAst* node);
     virtual void visitDictionaryComprehension(DictionaryComprehensionAst* node);
     virtual void visitGeneratorExpression(GeneratorExpressionAst* node);

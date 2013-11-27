@@ -383,17 +383,6 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
     return QPair<KUrl, QStringList>(KUrl(), QStringList());
 }
 
-void ContextBuilder::visitLambda(LambdaAst* node)
-{
-    // Lambda functions need their own context for parameters
-    DUChainWriteLocker lock(DUChain::lock());
-    openContext(node, editorFindRange(node, node->body), DUContext::Other);
-    lock.unlock();
-    Python::AstDefaultVisitor::visitLambda(node);
-    lock.lock();
-    closeContext();
-}
-
 RangeInRevision ContextBuilder::rangeForArgumentsContext(FunctionDefinitionAst* node)
 {
     SimpleCursor start = node->name->range().end;

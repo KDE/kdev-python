@@ -168,7 +168,6 @@ private:
         bool haveDot = true;
         bool previousWasSpace = true;
         for ( int i = start - 1; i >= 0; i-- ) {
-            qDebug() << i << data.at(i) << haveDot << previousWasSpace;
             if ( data.at(i).isSpace() ) {
                 previousWasSpace = true;
                 continue;
@@ -238,7 +237,6 @@ private:
                         bool atStart = true;
                         int textStart = i+3;
                         for ( int j = i+3; j < line.size(); j++ ) {
-                            qDebug() << atStart << i << j << line.at(j);
                             if ( atStart && ! line.at(j).isSpace() ) {
                                 atStart = false;
                                 textStart = j;

@@ -85,7 +85,11 @@ public:
     PythonCodeCompletionContext(DUContextPointer context, const QString& text, const QString& followingText,
                                 const KDevelop::CursorInRevision& position,
                                 int depth, const PythonCodeCompletionWorker* parent);
+
+    CompletionContextType completionContextType();
+
     ItemTypeHint itemTypeHint();
+
     /**
      * @brief The "interface method" which returns all the completion items to kdevelop.
      **/

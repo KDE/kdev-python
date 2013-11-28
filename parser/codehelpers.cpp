@@ -102,7 +102,7 @@ CodeHelpers::CodeHelpers()
     
 }
 
-bool CodeHelpers::endsInside(const QString &code, CodeHelpers::EndLocation location)
+CodeHelpers::EndLocation CodeHelpers::endsInside(const QString &code)
 {
     bool insideSingleLineComment = false;
     QStringList stringDelimiters;
@@ -155,12 +155,14 @@ bool CodeHelpers::endsInside(const QString &code, CodeHelpers::EndLocation locat
         }
     }
 
-    if (location == String) {
-        return ! stringStack.isEmpty();
+    if ( ! stringStack.isEmpty() ) {
+        return String;
     }
-    else {
-        return insideSingleLineComment;
+    else if ( insideSingleLineComment ) {
+        return Comment;
     }
+
+    return Code;
 }
 
 QString CodeHelpers::killStrings(QString stringWithStrings)
@@ -271,6 +273,102 @@ QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher,
     expression = expression.trimmed();
     kDebug() << "expression found:" << expression;
     return expression;
+}
+
+QString CodeHelpers::extractStringUnderCursor(const QString &code, KTextEditor::Range range, KTextEditor::Cursor cursor, int *cursorPositionInString = 0)
+{
+    QPair<QString, QString> beforeAndAfter = splitCodeByCursor(code, range, cursor);
+
+    // TODO is this even necessary?
+    if ( endsInside(beforeAndAfter.first) != String ) {
+        return QString();
+    }
+
+    QStringList quoteCharacters = QStringList() << "\"" << "'";
+
+    // using a stack is probably overkill for this...
+    QStack<QString> quotes;
+    QString string;
+
+    int start = beforeAndAfter.first.size() - 1;
+
+
+    while ( start >= 0 ) {
+        QChar c = beforeAndAfter.first.at(start);
+        int quote = quoteCharacters.indexOf(c);
+//        kDebug() << quote << c;
+
+        // if we've found a quote character and we're either at the beginning of the code or the previous char is not a backslash
+        if ( quote != -1 && (start == 0 || (start != 0 && beforeAndAfter.first.at(start - 1) != '\\')) ) {
+            if ( endsInside(beforeAndAfter.first.left(start)) != String ) {
+                quotes.push(quoteCharacters.at(quote));
+                break;
+            }
+        }
+
+        start--;
+    }
+
+    int end = start + 1;
+
+    while ( ! quotes.isEmpty() && end < beforeAndAfter.first.size() + beforeAndAfter.second.size() ) {
+        QChar c;
+        if (end < beforeAndAfter.first.size()) {
+            c = beforeAndAfter.first.at(end);
+        }
+        else {
+            c = beforeAndAfter.second.at(end - beforeAndAfter.first.size());
+        }
+
+        if (c == '\\') {
+            end += 2;
+        }
+
+        if ( quotes.top() == c ) {
+            quotes.pop();
+        }
+
+        end++;
+    }
+
+    string = code.mid(start, end - start);
+
+    if ( cursorPositionInString ) {
+        *cursorPositionInString = beforeAndAfter.first.size() - start;
+    }
+
+    kDebug() << "string found:" << string;
+    return string;
+}
+
+QPair<QString, QString> CodeHelpers::splitCodeByCursor(const QString &code, KTextEditor::Range range, KTextEditor::Cursor cursor)
+{
+    QStringList lines = code.split('\n');
+
+    int position = 0;
+    bool firstRow = true;
+    int startColumn = range.start().column();
+    int endColumn;
+    for ( int row = range.start().line(), i = 0; row <= cursor.line(); row++, i++ ) {
+        if ( row != cursor.line() ) {
+            endColumn = lines.at(i).size();
+        }
+        else {
+            endColumn = cursor.column();
+        }
+
+        position += endColumn - startColumn + 1;
+
+        if ( firstRow ) {
+            startColumn = 0;
+            firstRow = false;
+        }
+    }
+
+    QString before(code.mid(0, position - 1));
+    QString after(code.mid(position - 1, code.size() - position + 1));
+
+    return QPair<QString, QString>(before, after);
 }
 
 }

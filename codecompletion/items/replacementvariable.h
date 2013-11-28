@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2011 Sven Brauch <svenbrauch@googlemail.com>                *
+ * Copyright (c) 2013 Atanas Gospodinov <atanas.r.gospodinov@gmail.com>      *
  *                                                                           *
  * This program is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU General Public License as            *
@@ -16,33 +16,31 @@
  *****************************************************************************
  */
 
-#ifndef PYTHONCODECOMPLETIONMODEL_H
-#define PYTHONCODECOMPLETIONMODEL_H
-#include "pythoncompletionexport.h"
+#ifndef REPLACEMENTVARIABLE_H
+#define REPLACEMENTVARIABLE_H
 
-#include <language/codecompletion/codecompletionmodel.h>
-#include <language/duchain/duchainpointer.h>
-#include <KUrl>
+#include <language/codecompletion/normaldeclarationcompletionitem.h>
 
+#include "codecompletion/helpers.h"
+
+using namespace KDevelop;
 
 namespace Python {
 
-class KDEVPYTHONCOMPLETION_EXPORT PythonCodeCompletionModel : public KDevelop::CodeCompletionModel
+class ReplacementVariableItem : public CompletionTreeItem
 {
-
 public:
-    PythonCodeCompletionModel(QObject* parent);
-    virtual ~PythonCodeCompletionModel();
-    
-    virtual KDevelop::CodeCompletionWorker* createCompletionWorker();
-    KTextEditor::Range completionRange(KTextEditor::View* view, const KTextEditor::Cursor &position);
-    bool shouldStartCompletion(KTextEditor::View* view, const QString& inserted,
-                                                     bool userInsertion, const KTextEditor::Cursor& position);
-    QString filterString(KTextEditor::View *view, const KTextEditor::Range &range, const KTextEditor::Cursor &position);
+    ReplacementVariableItem(const ReplacementVariable &variable, const QString &description, bool hasEditableFields, KTextEditor::Range position = KTextEditor::Range::invalid());
+    virtual void execute(KTextEditor::Document* document, const KTextEditor::Range& word);
+    virtual QVariant data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const;
 
-    KUrl m_currentDocument;
+private:
+    ReplacementVariable m_variable;
+    QString m_description;
+    bool m_hasEditableFields;
+    KTextEditor::Range m_position;
 };
 
 }
 
-#endif // PYTHONCODECOMPLETIONMODEL_H
+#endif // REPLACEMENTVARIABLE_H

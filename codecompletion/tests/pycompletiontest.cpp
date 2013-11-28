@@ -40,6 +40,8 @@ using namespace KDevelop;
 
 QTEST_MAIN(Python::PyCompletionTest)
 
+Q_DECLARE_METATYPE(QList<Python::RangeInString>)
+
 static int testId = 0;
 static QString basepath = "/tmp/__kdevpythoncompletiontest.dir/";
 static QFSFileEngine fileEngine;
@@ -212,7 +214,7 @@ const QList<CompletionTreeItem*> PyCompletionTest::invokeCompletionOn(const QStr
     Q_ASSERT(cursorAt.isValid());
     // codeCompletionContext only gets passed the text until the place where completion is invoked
     QString snip = allCode.mid(0, allCode.indexOf("%CURSOR"));
-    QString remaining = allCode.mid(allCode.indexOf("%CURSOR"));
+    QString remaining = allCode.mid(allCode.indexOf("%CURSOR") + 7);
     
     DUChainReadLocker lock;
     DUContextPointer contextAtCursor = DUContextPointer(topContext->findContextAt(cursorAt, true));
@@ -507,22 +509,76 @@ void PyCompletionTest::testStringFormattingCompletion()
 {
     QFETCH(QString, completionCode);
     QFETCH(QString, invokeCode);
+    QFETCH(QString, expectedItem);
+    QFETCH(bool, expectedPresent);
 
-    QVERIFY(itemInCompletionList(completionCode, invokeCode, "{0}"));
+    QCOMPARE(itemInCompletionList(completionCode, invokeCode, expectedItem), expectedPresent);
 }
 
 void PyCompletionTest::testStringFormattingCompletion_data()
 {
     QTest::addColumn<QString>("completionCode");
     QTest::addColumn<QString>("invokeCode");
+    QTest::addColumn<QString>("expectedItem");
+    QTest::addColumn<bool>("expectedPresent");
 
-    QTest::newRow("sq_string") << "\"foo %INVOKE\"" << "%CURSOR";
-    QTest::newRow("dq_string") << "'foo %INVOKE bar'" << "%CURSOR";
+    QTest::newRow("sq_string") << "'foo %INVOKE'" << "%CURSOR" << "{0}" << true;
+    QTest::newRow("dq_string") << "\"foo %INVOKE bar\"" << "%CURSOR" << "{0}" << true;
+    QTest::newRow("sq_ml_string") << "'''foo\n\n%INVOKE\nbar'''" << "%CURSOR" << "{0}" << true;
+    QTest::newRow("dq_ml_string") << "\"\"\"foo\nbar %INVOKE baz\"\"\"" << "%CURSOR" << "{0}" << true;
+    QTest::newRow("auto_id") << "\"foo {0} bar {1} baz %INVOKE\"" << "%CURSOR" << "{2}" << true;
+
+    QTest::newRow("format_suggestions_conversion") << "\"foo {0} bar %INVOKE\"" << "{1}%CURSOR" << "{1!r}" << true;
+    QTest::newRow("format_suggestions_spec") << "\"foo {0} bar {1}%INVOKE baz\"" << "{2}%CURSOR" << "{2:%}" << true;
+
+    QTest::newRow("incompatible_suggestions_conversion") << "\"foo %INVOKE bar\"" << "{0:%}%CURSOR" << "{0!s:%}" << false;
+    QTest::newRow("incompatible_suggestions_spec") << "\"foo %INVOKE bar\"" << "{0!s}%CURSOR" << "{0!s:%}" << false;
+
+    QTest::newRow("alignment_for_strings") << "\"foo %INVOKE bar\"" << "{0!s}%CURSOR" << "{0!s:^${width}}" << true;
+    QTest::newRow("conversion_for_aliged_strings") << "\"foo %INVOKE bar\"" << "{0!s}%CURSOR" << "{0!s:^${width}}" << true;
 
 }
 
+void PyCompletionTest::testStringFormatter()
+{
+    QFETCH(QString, string);
+    QFETCH(int, expectedId);
+    QFETCH(QList<RangeInString>, expectedVariablePositions);
 
+    StringFormatter f(string);
 
+    int id = f.nextIdentifierId();
+    QCOMPARE(id, expectedId);
+
+    for (int i = 0; i < string.size(); i++) {
+        bool expectedInsideVariable = false;
+        foreach (RangeInString range, expectedVariablePositions) {
+            if (i >= range.beginIndex && i <= range.endIndex) {
+                expectedInsideVariable = true;
+                break;
+            }
+        }
+        QCOMPARE(f.isInsideReplacementVariable(i), expectedInsideVariable);
+    }
 }
 
+void PyCompletionTest::testStringFormatter_data()
+{
+    QTest::addColumn<QString>("string");
+    QTest::addColumn<int>("expectedId");
+    QTest::addColumn<QList<RangeInString> >("expectedVariablePositions");
 
+    QTest::newRow("sl_string") << "\"foo {0} bar {1}\"" << 2
+                               << (QList<RangeInString>() << RangeInString(5, 8) << RangeInString(13, 16));
+
+    QTest::newRow("ml_string") << "\"\"\"foo {0} \n\nbar {1} \n{foo} {2}\nbaz\"\"\"" << 3
+                               << (QList<RangeInString>() << RangeInString(7, 10) << RangeInString(17, 20)
+                                   << RangeInString(22, 27) << RangeInString(28, 31));
+
+    QTest::newRow("containing_quotes") << "'''foo {0}\nbar\n{1}{0} \\' \\\" \\\" {2} {foo} \n\\'\n {3}baz'''" << 4
+                                       << (QList<RangeInString>() << RangeInString(7, 10) << RangeInString(15, 18)
+                                           << RangeInString(18, 21) << RangeInString(31, 34) << RangeInString(35, 40)
+                                           << RangeInString(46, 49));
+}
+
+}

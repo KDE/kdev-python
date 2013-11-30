@@ -791,8 +791,8 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("lambda") << "x = lambda t: 3\ncheckme = x()" << "int";
     QTest::newRow("lambda_failure") << "x = lambda t: 3\ncheckme = t" << "mixed";
 
-    QTest::newRow("function_arg_tuple") << "global checkme\ndef func(*arg):\n foo, bar = arg\n checkme = foo\nfunc(3, 5)" << "int";
-    QTest::newRow("function_arg_tuple2") << "global checkme\ndef func(*arg):\n foo, bar = arg\n checkme = foo\nfunc(3); func(3, 5);" << "int";
+    QTest::newRow("function_arg_tuple") << "def func(*arg):\n foo, bar = arg\n return bar\ncheckme = func(3, 5)" << "int";
+    QTest::newRow("function_arg_tuple2") << "def func(*arg):\n return arg[-1]\ncheckme = func(3, \"Foo\")" << "str";
 
     QTest::newRow("tuple_indexaccess") << "t = 3, 5.5\ncheckme = t[0]" << "int";
     QTest::newRow("tuple_indexaccess2") << "t = 3, 5.5\ncheckme = t[1]" << "float";

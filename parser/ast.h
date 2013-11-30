@@ -90,6 +90,7 @@ public:
         WhileAstType,
         IfAstType,
         WithAstType,
+        WithItemAstType,
         RaiseAstType,
         TryAstType,
         ImportAstType,
@@ -323,10 +324,18 @@ public:
     QList<Ast*> orelse;
 };
 
+class KDEVPYTHONPARSER_EXPORT WithItemAst : public Ast {
+public:
+    WithItemAst(Ast* parent);
+    ExpressionAst* contextExpression;
+    NameAst* optionalVars;
+};
+
 class KDEVPYTHONPARSER_EXPORT WithAst : public StatementAst {
 public:
     WithAst(Ast* parent);
     QList<Ast*> body;
+    QList<WithItemAst*> items;
 };
 
 class KDEVPYTHONPARSER_EXPORT RaiseAst : public StatementAst {

@@ -102,6 +102,7 @@ public:
     virtual void visitComprehension(ComprehensionAst* node) { Q_UNUSED(node); };
     virtual void visitExceptionHandler(ExceptionHandlerAst* node) { Q_UNUSED(node); };
     virtual void visitAlias(AliasAst* node) { Q_UNUSED(node); };
+    virtual void visitWithItem(WithItemAst* node) { Q_UNUSED(node); };
 
 };
 }

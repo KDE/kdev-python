@@ -18,7 +18,8 @@ RULE_FOR _stmt;KIND AugAssign_kind;ACTIONS create|AugmentedAssignmentAst set|tar
 RULE_FOR _stmt;KIND For_kind;ACTIONS create|ForAst set|target->ExpressionAst,target set|iterator->ExpressionAst,iter set|body=>Ast,body set|orelse=>Ast,orelse;;
 RULE_FOR _stmt;KIND While_kind;ACTIONS create|WhileAst set|condition->ExpressionAst,test set|body=>Ast,body set|orelse=>Ast,orelse;;
 RULE_FOR _stmt;KIND If_kind;ACTIONS create|IfAst set|condition->ExpressionAst,test set|body=>Ast,body set|orelse=>Ast,orelse;;
-RULE_FOR _stmt;KIND With_kind;ACTIONS create|WithAst set|body=>Ast,body;;
+RULE_FOR _stmt;KIND With_kind;ACTIONS create|WithAst set|body=>Ast,body set|items=>WithItemAst,items;;
+
 COMMENT;FIXME: the struct Raise has changed, so the following line is likely wrong;;
 RULE_FOR _stmt;KIND Raise_kind;ACTIONS create|RaiseAst set|type->ExpressionAst,exc;;
 RULE_FOR _stmt;KIND Try_kind;ACTIONS create|TryAst set|body=>Ast,body set|handlers=>ExceptionHandlerAst,handlers set|orelse=>Ast,orelse set|finally=>Ast,finalbody;;
@@ -70,3 +71,4 @@ RULE_FOR _arguments;KIND any;ACTIONS create|ArgumentsAst set|vararg->ArgAst,vara
 RULE_FOR _arg;KIND any;ACTIONS create|ArgAst set|argumentName~>arg set|annotation->ExpressionAst,annotation;;
 RULE_FOR _keyword;KIND any;ACTIONS create|KeywordAst set|argumentName~>arg set|value->ExpressionAst,value;;
 RULE_FOR _alias;KIND any;ACTIONS create|AliasAst set|name~>name set|asName~>asname;;
+RULE_FOR _withitem;KIND any; ACTIONS create|WithItemAst set|contextExpression->ExpressionAst,context_expr set|optionalVars->NameAst,optional_vars;;

@@ -95,6 +95,7 @@ void AstVisitor::visitNode(Ast* node)
         case Ast::AliasAstType:                                 this->visitAlias(static_cast<AliasAst*>(node)); break;
         case Ast::ExpressionAstType:                            this->visitExpression(static_cast<ExpressionAst*>(node)); break;
         case Ast::YieldFromAstType:                             this->visitYieldFrom(static_cast<YieldFromAst*>(node)); break;
+        case Ast::WithItemAstType:                              this->visitWithItem(static_cast<WithItemAst*>(node)); break;
         case Ast::IdentifierAstType:                            break;
         case Ast::StatementAstType:                             break;
         case Ast::LastAstType:                                  break; // avoid warning

@@ -708,7 +708,6 @@ void PyDUChainTest::testTypes()
     visitor->searchingForType = expectedType;
     visitor->visitCode(m_ast);
 
-    QEXPECT_FAIL("with", "needs with ast nodes for py3!", Continue);
     QEXPECT_FAIL("lambda", "not implemented: aliasing lambdas", Continue);
     QEXPECT_FAIL("function_arg_tuple", "broken, somehow loses declaration", Continue);
     QEXPECT_FAIL("function_arg_tuple2", "broken, somehow loses declaration", Continue);
@@ -732,7 +731,7 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("float") << "checkme = 3.7" << "float";
     QTest::newRow("int") << "checkme = 3" << "int";
 
-    QTest::newRow("with") << "with open('foo') as f: checkme = f.readAll()" << "str";
+    QTest::newRow("with") << "with open('foo') as f: checkme = f.read()" << "str";
 
     QTest::newRow("list_access_right_open_slice") << "some_list = []; checkme = some_list[2:]" << "list";
     QTest::newRow("list_access_left_open_slice") << "some_list = []; checkme = some_list[:2]" << "list";

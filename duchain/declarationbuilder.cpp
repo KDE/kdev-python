@@ -367,16 +367,15 @@ void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
     DeclarationBuilderBase::visitExceptionHandler(node);
 }
 
-void DeclarationBuilder::visitWith(WithAst* node)
+void DeclarationBuilder::visitWithItem(WithItemAst* node)
 {
-#warning missing: withAst items (needs new ast node)
-//     if ( node->optionalVars ) {
-//         // For statements like "with open(f) as x", a new variable must be created; do this here.
-//         ExpressionVisitor v(currentContext(), editor());
-//         v.visitNode(node->contextExpression);
-//         visitVariableDeclaration<Declaration>(node->optionalVars, 0, v.lastType());
-//     }
-    Python::ContextBuilder::visitWith(node);
+    if ( node->optionalVars ) {
+        // For statements like "with open(f) as x", a new variable must be created; do this here.
+        ExpressionVisitor v(currentContext(), editor());
+        v.visitNode(node->contextExpression);
+        visitVariableDeclaration<Declaration>(node->optionalVars, 0, v.lastType());
+    }
+    Python::AstDefaultVisitor::visitWithItem(node);
 }
 
 void DeclarationBuilder::visitFor(ForAst* node)

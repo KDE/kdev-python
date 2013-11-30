@@ -233,6 +233,15 @@ void AstDefaultVisitor::visitWith(WithAst* node)
     foreach (Ast* statement, node->body) {
         visitNode(statement);
     }
+    foreach (Ast* item, node->items) {
+        visitNode(item);
+    }
+}
+
+void AstDefaultVisitor::visitWithItem(WithItemAst* node)
+{
+    visitNode(node->contextExpression);
+    visitNode(node->optionalVars);
 }
 
 void AstDefaultVisitor::visitYield(YieldAst* node)

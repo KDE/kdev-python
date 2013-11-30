@@ -100,6 +100,7 @@ def pluginAstToPythonAstType(plugintypestr):
     if plugintypestr == 'Ast': return '_stmt' # not sure about this
     if plugintypestr == 'GeneratorExpressionAst': return '_expr'
     if plugintypestr == 'ArgAst': return '_arg'
+    if plugintypestr == 'WithItemAst': return '_withitem'
     else:
         sys.stderr.write("W: Could not decode name %s\n" % plugintypestr)
         return '<ERROR>'

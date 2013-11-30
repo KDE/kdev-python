@@ -324,6 +324,11 @@ WithAst::WithAst(Ast* parent): StatementAst(parent, Ast::WithAstType)
     
 }
 
+WithItemAst::WithItemAst(Ast* parent): Ast(parent, Ast::WithItemAstType)
+{
+
+}
+
 YieldAst::YieldAst(Ast* parent): ExpressionAst(parent, Ast::YieldAstType), value(0)
 {
     

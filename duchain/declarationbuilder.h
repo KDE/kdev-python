@@ -72,8 +72,8 @@ protected:
     virtual void visitReturn(ReturnAst* node);
     virtual void visitCode(CodeAst* node);
     virtual void visitCall(CallAst* node);
-    virtual void visitWith(WithAst* node);
     virtual void visitYield(YieldAst* node);
+    virtual void visitWithItem(WithItemAst* node);
     virtual void visitLambda(LambdaAst* node);
     virtual void visitComprehension(ComprehensionAst* node);
     virtual void visitGlobal(GlobalAst* node);

@@ -82,6 +82,12 @@ private:
 class KDEVPYTHONPARSER_EXPORT CodeHelpers
 {
     public:
+        enum EndLocation {
+            Code,
+            String,
+            Comment
+        };
+
         CodeHelpers();
         /**
          * @brief Get the python expression at the specified cursor.
@@ -104,10 +110,34 @@ class KDEVPYTHONPARSER_EXPORT CodeHelpers
         static QString killStrings(QString stringWithStrings);
         
         /**
-         * @brief Check whether the given code ends inside a comment or string literal.
+         * @brief Check whether the given code ends inside a comment.
          **/
-        static bool endsInsideComment(const QString& code);
-    };
+        static EndLocation endsInside(const QString &code);
+
+        /**
+         * @brief Extracts the string which is under the cursor, if one is present
+         *
+         * @param code the code, which to scan
+         * @param range the range in the document, which contains this code
+         * @param cursor the location of the cursor in the document
+         * @param cursorPositionInString optional return value, which is set to
+         *        the relative position of the cursor inside the string
+         * @return The string under the cursor, or an empty string if none is available.
+         */
+        static QString extractStringUnderCursor(const QString &code, KTextEditor::Range range, KTextEditor::Cursor cursor, int *cursorPositionInString);
+
+        /**
+         * @brief Splits the given code, which is assumed to be contained in
+         *        the range provided range, in two pieces: before and after the
+         *        cursor.
+         * @param code some code to split
+         * @param range the range in the document, which contains this code
+         * @param cursor the location of the cursor in the document
+         * @return A pair of strings, containing the code and the code after
+         *         the cursor
+         */
+        static QPair<QString, QString> splitCodeByCursor(const QString &code, KTextEditor::Range range, KTextEditor::Cursor cursor);
+};
 }
 
 #endif // CODEHELPERS_H

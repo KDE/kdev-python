@@ -1,7 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2007 Piyush verma <piyush.verma@gmail.com>                  *
- * Copyright (c) 2007 Andreas Pakulat <apaku@gmx.de>                         *
- * Copyright (c) 2011 Sven Brauch <svenbrauch@gmail.com>                     *
+ * Copyright (c) 2013 Atanas Gospodinov <atanas.r.gospodinov@gmail.com>      *
  *                                                                           *
  * This program is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU General Public License as            *
@@ -17,39 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************
  */
-#ifndef KDEVPYTHONHIGHLIGHTING_H
-#define KDEVPYTHONHIGHLIGHTING_H
 
-#include <QObject>
-#include <QHash>
-#include <QModelIndex>
+#ifndef REPLACEMENTVARIABLE_H
+#define REPLACEMENTVARIABLE_H
 
-#include <language/highlighting/codehighlighting.h>
-#include <language/duchain/topducontext.h>
+#include <language/codecompletion/normaldeclarationcompletionitem.h>
 
-namespace Python
+#include "codecompletion/helpers.h"
+
+using namespace KDevelop;
+
+namespace Python {
+
+class ReplacementVariableItem : public CompletionTreeItem
 {
-    
-class Highlighting;
-
-class CodeHighlightingInstance : public KDevelop::CodeHighlightingInstance {
 public:
-    CodeHighlightingInstance(const Highlighting* highlighting);
-    virtual void highlightUse(KDevelop::DUContext* context, int index, const QColor& color);
-    virtual bool useRainbowColor(KDevelop::Declaration* dec) const;
+    ReplacementVariableItem(const ReplacementVariable &variable, const QString &description, bool hasEditableFields, KTextEditor::Range position = KTextEditor::Range::invalid());
+    virtual void execute(KTextEditor::Document* document, const KTextEditor::Range& word);
+    virtual QVariant data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const;
+
 private:
-    void checkHasBlocks(KDevelop::TopDUContext* top) const;
-    mutable bool checked_blocks;
-    mutable bool has_blocks;
+    ReplacementVariable m_variable;
+    QString m_description;
+    bool m_hasEditableFields;
+    KTextEditor::Range m_position;
 };
 
-    
-class Highlighting : public KDevelop::CodeHighlighting
-{
-Q_OBJECT
-public:
-    Highlighting( QObject* parent );
-    virtual CodeHighlightingInstance* createInstance() const;
-};
 }
-#endif
+
+#endif // REPLACEMENTVARIABLE_H

@@ -38,6 +38,7 @@
 #include <interfaces/contextmenuextension.h>
 #include <interfaces/iprojectcontroller.h>
 #include <interfaces/iproject.h>
+#include <interfaces/isession.h>
 #include <language/duchain/duchain.h>
 #include <language/duchain/duchainlock.h>
 #include <language/codecompletion/codecompletion.h>
@@ -145,10 +146,10 @@ bool LanguageSupport::enabledForFile(const KUrl& url)
         return true;
     }
 
-    // Otherwise, both plugins are installed, so check if there's a choice for this project.
-    IProject* project = ICore::self()->projectController()->findProjectForUrl(url);
-    if ( project ) {
-        KConfigGroup group(project->projectConfiguration()->group("python"));
+    // Otherwise, both plugins are installed, so check if there's a choice for this session.
+    KDevelop::ISession* activeSession = KDevelop::ICore::self()->activeSession();
+    if ( activeSession ) {
+        KConfigGroup group(activeSession->config()->group("python"));
         const QString& version = group.readEntry("languageVersion", "Python 3");
         if ( ( version == "Python 3" && name == "Python3" ) || ( version == "Python 2" && name == "Python" ) ) {
             // this plugin is the right one, the other one will disable itself
@@ -156,7 +157,7 @@ bool LanguageSupport::enabledForFile(const KUrl& url)
         }
     }
     else {
-        // no project, treat this as a py3 file
+        // no session, treat this as a py3 file
         return name == "Python3";
     }
     return false;

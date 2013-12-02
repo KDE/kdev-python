@@ -122,13 +122,21 @@ void PyDUChainTest::init()
     correctionFileUrl.cleanPath();
     foundfiles.prepend(correctionFileUrl.path());
 
-    foreach(const QString filename, foundfiles) {
-        kDebug() << "Parsing asset: " << filename;
-        DUChain::self()->updateContextForUrl(IndexedString(filename), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
-        ICore::self()->languageController()->backgroundParser()->parseDocuments();
-    }
-    foreach(const QString filename, foundfiles) {
-        DUChain::self()->waitForUpdate(IndexedString(filename), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
+    for ( int i = 0; i < 2; i++ ) {
+        // Parse each file twice, to ensure no parsing-order related bugs appear.
+        // Such bugs will need separate unit tests and should not influence these.
+        foreach(const QString filename, foundfiles) {
+            kDebug() << "Parsing asset: " << filename;
+            DUChain::self()->updateContextForUrl(IndexedString(filename), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
+            ICore::self()->languageController()->backgroundParser()->parseDocuments();
+        }
+        foreach(const QString filename, foundfiles) {
+            DUChain::self()->waitForUpdate(IndexedString(filename), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
+        }
+        while ( ICore::self()->languageController()->backgroundParser()->queuedCount() > 0 ) {
+            // make sure to wait for all parsejobs to finish
+            QTest::qWait(10);
+        }
     }
 }
     
@@ -428,6 +436,28 @@ void PyDUChainTest::testClassVariables()
         QVERIFY(not u->usedDeclaration(c->topContext()));
     }
 }
+
+void PyDUChainTest::testWarnNewNotCls()
+{
+    QFETCH(QString, code);
+    QFETCH(int, probs);
+
+    ReferencedTopDUContext ctx = parse(code);
+    DUChainReadLocker lock;
+    QCOMPARE(ctx->problems().count(), probs);
+}
+
+void PyDUChainTest::testWarnNewNotCls_data()
+{
+    QTest::addColumn<QString>("code");
+    QTest::addColumn<int>("probs");
+
+    QTest::newRow("check_for_new_first_arg_cls") << "class c():\n def __new__(clf, other):\n  pass" << 1;
+    QTest::newRow("check_for_new_first_arg_cls_0") << "class c():\n def __new__(cls, other):\n  pass" << 0;
+    QTest::newRow("check_first_arg_class_self") << "class c():\n def test(seff, masik):\n  pass" << 1;
+    QTest::newRow("check_first_arg_class_self_0") << "class c():\n def test(self, masik):\n  pass" << 0;
+}
+
 
 void PyDUChainTest::testFlickering()
 {

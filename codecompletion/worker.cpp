@@ -21,7 +21,8 @@
 #include "context.h"
 #include <language/duchain/declaration.h>
 #include <KLocalizedString>
-
+#include "codehelpers.h"
+#include <KTextEditor/View>
 
 namespace Python {
 
@@ -30,6 +31,8 @@ PythonCodeCompletionWorker::PythonCodeCompletionWorker(PythonCodeCompletionModel
 {
 
 }
+
+
 
 KDevelop::CodeCompletionContext* PythonCodeCompletionWorker::createCompletionContext(KDevelop::DUContextPointer context,
                                                                                      const QString& contextText,
@@ -40,6 +43,14 @@ KDevelop::CodeCompletionContext* PythonCodeCompletionWorker::createCompletionCon
         context, contextText, followingText, position, 0, this
     );
     return completionContext;
+}
+
+void PythonCodeCompletionWorker::updateContextRange(KTextEditor::Range &contextRange, KTextEditor::View *view, KDevelop::DUContextPointer context) const
+{
+    if ( CodeHelpers::endsInside(view->document()->text(contextRange)) == CodeHelpers::String ) {
+        kDebug() << "we're dealing with string completion. extend the range";
+        contextRange = context->rangeInCurrentRevision().textRange();
+    }
 }
 
 

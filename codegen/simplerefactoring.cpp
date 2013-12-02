@@ -41,6 +41,7 @@
 #include <interfaces/icore.h>
 #include <QAction>
 #include <QTabWidget>
+#include <QLabel>
 #include <QBoxLayout>
 #include <QLineEdit>
 #include <QPushButton>

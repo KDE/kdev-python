@@ -1522,20 +1522,32 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         }
         dec->setType(type);
     }
-    
+
     if ( ! isStatic ) {
         DUContext* args = DUChainUtils::getArgumentContext(dec);
         if ( args )  {
             QVector<Declaration*> parameters = args->localDeclarations();
-            
+            static IndexedString newMethodName("__new__");
+            static IndexedString selfArgumentName("self");
+            static IndexedString clsArgumentName("cls");
             if ( currentContext()->type() == DUContext::Class && ! parameters.isEmpty() && ! isClassMethod ) {
-                if ( parameters[0]->identifier().identifier() != IndexedString("self") ) {
-                    kDebug() << "argument is not called self, but instead:" << parameters[0]->identifier().identifier().str();
+                QString description;
+                if ( dec->identifier().identifier() == newMethodName
+                     && parameters[0]->identifier().identifier() != clsArgumentName )
+                {
+                    description = i18n("First argument of __new__ method is not called cls, this is deprecated");
+                }
+                else if ( dec->identifier().identifier() != newMethodName
+                          && parameters[0]->identifier().identifier() != selfArgumentName )
+                {
+                    description = i18n("First argument of class method is not called self, this is deprecated");
+                }
+                if ( ! description.isEmpty() ) {
                     KDevelop::Problem *p = new KDevelop::Problem();
+                    p->setDescription(description);
                     p->setFinalLocation(DocumentRange(currentlyParsedDocument(), parameters[0]->range().castToSimpleRange()));
                     p->setSource(KDevelop::ProblemData::SemanticAnalysis);
                     p->setSeverity(KDevelop::ProblemData::Warning);
-                    p->setDescription(i18n("First argument of class method is not called self, this is deprecated"));
                     ProblemPointer ptr(p);
                     topContext()->addProblem(ptr);
                 }
@@ -1544,7 +1556,8 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
             else if ( currentContext()->type() == DUContext::Class && parameters.isEmpty() ) {
                 DUChainWriteLocker lock(DUChain::lock());
                 KDevelop::Problem *p = new KDevelop::Problem();
-                p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(node->startLine, node->startCol, node->startLine, 10000))); // only mark first line
+                 // only mark first line
+                p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(node->startLine, node->startCol, node->startLine, 10000)));
                 p->setSource(KDevelop::ProblemData::SemanticAnalysis);
                 p->setSeverity(KDevelop::ProblemData::Warning);
                 p->setDescription(i18n("Non-static class method without arguments, must have at least one (self)"));

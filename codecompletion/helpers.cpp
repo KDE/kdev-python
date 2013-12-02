@@ -414,4 +414,73 @@ void createArgumentList(Declaration* dec, QString& ret, QList< QVariant >* highl
     }
 }
 
+StringFormatter::StringFormatter(const QString &string)
+    : m_string(string)
+{
+    kDebug() << "String being parsed: " << string;
+    QRegExp regex("\\{(\\w+)(?:!([rs]))?(?:\\:(.*))?\\}");
+    regex.setMinimal(true);
+    int pos = 0;
+    while ( (pos = regex.indexIn(string, pos)) != -1 ) {
+        QString identifier = regex.cap(1);
+        QString conversionStr = regex.cap(2);
+        QChar conversion = (conversionStr.isNull() || conversionStr.isEmpty()) ? QChar() : conversionStr.at(0);
+        QString formatSpec = regex.cap(3);
+
+        kDebug() << "variable: " << regex.cap(0);
+
+        // The regex guarantees that conversion is only a single character
+        ReplacementVariable variable(identifier, conversion, formatSpec);
+        m_replacementVariables.append(variable);
+
+        RangeInString variablePosition(pos, pos + regex.matchedLength());
+        m_variablePositions.append(variablePosition);
+
+        pos += regex.matchedLength();
+    }
+}
+
+bool StringFormatter::isInsideReplacementVariable(int cursorPosition) const
+{
+    return getReplacementVariable(cursorPosition) != NULL;
+}
+
+const ReplacementVariable *StringFormatter::getReplacementVariable(int cursorPosition) const
+{
+    int index = 0;
+    foreach ( const RangeInString &variablePosition, m_variablePositions ) {
+        if ( cursorPosition >= variablePosition.beginIndex && cursorPosition <= variablePosition.endIndex ) {
+            return &m_replacementVariables.at(index);
+        }
+        index++;
+    }
+
+    return 0;
+}
+
+RangeInString StringFormatter::getVariablePosition(int cursorPosition) const
+{
+    int index = 0;
+    foreach ( const RangeInString &variablePosition, m_variablePositions ) {
+        if ( cursorPosition >= variablePosition.beginIndex && cursorPosition <= variablePosition.endIndex ) {
+            return m_variablePositions.at(index);
+        }
+        index++;
+    }
+    return RangeInString();
+}
+
+int StringFormatter::nextIdentifierId() const
+{
+    int highestIdFound = -1;
+    foreach ( const ReplacementVariable &variable, m_replacementVariables ) {
+        bool isNumeric;
+        int identifier = variable.identifier().toInt(&isNumeric);
+        if ( isNumeric && identifier > highestIdFound ) {
+            highestIdFound = identifier;
+        }
+    }
+    return highestIdFound + 1;
+}
+
 }

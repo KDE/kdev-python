@@ -38,6 +38,8 @@ public:
     KTextEditor::Range completionRange(KTextEditor::View* view, const KTextEditor::Cursor &position);
     bool shouldStartCompletion(KTextEditor::View* view, const QString& inserted,
                                                      bool userInsertion, const KTextEditor::Cursor& position);
+    QString filterString(KTextEditor::View *view, const KTextEditor::Range &range, const KTextEditor::Cursor &position);
+
     KUrl m_currentDocument;
 };
 

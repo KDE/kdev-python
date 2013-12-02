@@ -72,6 +72,10 @@ class PyCompletionTest : public QObject
         void testAutoBrackets();
         void testAddImportCompletion();
         void testAddImportCompletion_data();
+        void testStringFormattingCompletion();
+        void testStringFormattingCompletion_data();
+        void testStringFormatter();
+        void testStringFormatter_data();
     private:
         QList<CompletionTreeItemPointer> m_ptrs;
 };

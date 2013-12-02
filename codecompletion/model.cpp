@@ -21,6 +21,7 @@
 #include <KTextEditor/View>
 #include <KTextEditor/Document>
 
+#include "context.h"
 #include "worker.h"
 
 namespace Python {
@@ -50,7 +51,26 @@ bool PythonCodeCompletionModel::shouldStartCompletion(KTextEditor::View* view, c
     {
         return true;
     }
+
+    // we're probably dealing with string formatting completion
+    // is there any other case where this condition is true?
+    if ( ! userInsertion && inserted.startsWith('{') ) {
+        return true;
+    }
+
     return KDevelop::CodeCompletionModel::shouldStartCompletion(view, inserted, userInsertion, position);
+}
+
+QString PythonCodeCompletionModel::filterString(KTextEditor::View *view, const KTextEditor::Range &range, const KTextEditor::Cursor &position)
+{
+    // TODO The completion context may be null, so we need to check it first. This might a bug.
+    if ( completionContext() ) {
+        KSharedPtr<PythonCodeCompletionContext> context = KSharedPtr<PythonCodeCompletionContext>::dynamicCast(completionContext());
+        if (context->completionContextType() == PythonCodeCompletionContext::StringFormattingCompletion) {
+            return QString();
+        }
+    }
+    return CodeCompletionModel::filterString(view, range, position);
 }
 
 KTextEditor::Range PythonCodeCompletionModel::completionRange(KTextEditor::View* view, const KTextEditor::Cursor& position)

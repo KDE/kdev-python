@@ -61,11 +61,29 @@ bool PythonCodeCompletionModel::shouldStartCompletion(KTextEditor::View* view, c
     return KDevelop::CodeCompletionModel::shouldStartCompletion(view, inserted, userInsertion, position);
 }
 
+bool PythonCodeCompletionModel::shouldAbortCompletion(KTextEditor::View* view, const KTextEditor::Range& range, const QString& currentCompletion)
+{
+    const QString text = view->document()->text(range);
+    if ( completionContext() ) {
+        KSharedPtr<PythonCodeCompletionContext> context = KSharedPtr<PythonCodeCompletionContext>::staticCast(
+            completionContext()
+        );
+        if ( context->completionContextType() == PythonCodeCompletionContext::StringFormattingCompletion ) {
+            if ( text.endsWith('"') || text.endsWith("'") || text.endsWith(' ') ) {
+                return true;
+            }
+        }
+    }
+    return KTextEditor::CodeCompletionModelControllerInterface3::shouldAbortCompletion(view, range, currentCompletion);
+}
+
 QString PythonCodeCompletionModel::filterString(KTextEditor::View *view, const KTextEditor::Range &range, const KTextEditor::Cursor &position)
 {
     // TODO The completion context may be null, so we need to check it first. This might a bug.
     if ( completionContext() ) {
-        KSharedPtr<PythonCodeCompletionContext> context = KSharedPtr<PythonCodeCompletionContext>::dynamicCast(completionContext());
+        KSharedPtr<PythonCodeCompletionContext> context = KSharedPtr<PythonCodeCompletionContext>::staticCast(
+            completionContext()
+        );
         if (context->completionContextType() == PythonCodeCompletionContext::StringFormattingCompletion) {
             return QString();
         }

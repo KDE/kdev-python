@@ -3,12 +3,12 @@ PROJECT(kdevpython)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${kdevpython_SOURCE_DIR}/cmake/)
 
 find_package(KDE4 REQUIRED)
-find_package(KDevPlatform 1.5.60 REQUIRED)
+find_package(KDevPlatform 1.6.0 REQUIRED)
 
 # write the plugin version to a file
 set(KDEVPYTHON_VERSION_MAJOR 1)
-set(KDEVPYTHON_VERSION_MINOR 5)
-set(KDEVPYTHON_VERSION_PATCH 80)
+set(KDEVPYTHON_VERSION_MINOR 6)
+set(KDEVPYTHON_VERSION_PATCH 0)
 
 # find the system python 2 interpreter, only used for determining search paths.
 find_package(PythonInterp 2.7 REQUIRED)

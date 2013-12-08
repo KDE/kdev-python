@@ -151,6 +151,149 @@ private:
     int m_internalPtr;
 };
 
+class ReplacementVariable;
+
+struct RangeInString {
+    RangeInString() : beginIndex(-1), endIndex(-1) {}
+    RangeInString(int beginIndex_, int endIndex_)
+        : beginIndex(beginIndex_)
+        , endIndex(endIndex_) {}
+
+    bool isValid()
+    {
+        return beginIndex != -1 && endIndex != -1 && beginIndex < endIndex;
+    }
+
+    int beginIndex, endIndex;
+};
+
+class KDEVPYTHONCOMPLETION_EXPORT StringFormatter {
+public:
+    StringFormatter(const QString &string);
+
+    bool isInsideReplacementVariable(int cursorPosition) const;
+    const ReplacementVariable *getReplacementVariable(int cursorPosition) const;
+    RangeInString getVariablePosition(int cursorPosition) const;
+
+    int nextIdentifierId() const;
+
+private:
+    QString m_string;
+    QList<ReplacementVariable> m_replacementVariables;
+    QList<RangeInString> m_variablePositions;
+};
+
+class ReplacementVariable {
+
+public:
+    ReplacementVariable(QString identifier, QChar conversion = QChar(), QString formatSpec = QString())
+        : m_identifier(identifier),
+          m_conversion(conversion),
+          m_formatSpec(formatSpec)
+    {
+    }
+
+    const QString &identifier() const
+    {
+        return m_identifier;
+    }
+
+    bool isIdentifierNumeric() const
+    {
+        bool isNumeric;
+        m_identifier.toInt(&isNumeric);
+        return isNumeric;
+    }
+
+    const QChar &conversion() const
+    {
+        return m_conversion;
+    }
+
+    bool hasConversion() const
+    {
+        return ! m_conversion.isNull();
+    }
+
+    const QString &formatSpec() const
+    {
+        return m_formatSpec;
+    }
+
+    bool hasFormatSpec() const
+    {
+        return ! ( m_formatSpec.isNull() || m_formatSpec.isEmpty() );
+    }
+
+    // Convenience functions for extracting some of the parts of the format spec
+
+    QChar fillCharacter() const
+    {
+        return hasFillCharacter() ? m_formatSpec.at(0) : QChar();
+    }
+
+    bool hasFillCharacter() const
+    {
+        QStringList alignChars = QStringList() << "<" << ">" << "^" << "=";
+        return hasAlign() && alignChars.indexOf(m_formatSpec.at(1)) != -1;
+    }
+
+    QChar align() const
+    {
+        if ( hasAlign() ) {
+            return hasFillCharacter() ? m_formatSpec.at(1) : m_formatSpec.at(0);
+        }
+        return QChar();
+    }
+
+    bool hasAlign() const
+    {
+        QRegExp regex("^.?[<>\\^=]");
+        return m_formatSpec.contains(regex);
+    }
+
+    bool hasPrecision() const
+    {
+        if (fillCharacter() == '.') {
+            return m_formatSpec.count('.') == 2;
+        }
+        return m_formatSpec.contains('.');
+    }
+
+    QChar type() const
+    {
+        return hasType() ? m_formatSpec.at(m_formatSpec.size() - 1) : QChar();
+    }
+
+    bool hasType() const
+    {
+        QStringList possibleTypes = QStringList() << "b" << "c" << "d" << "e" << "E"
+                                                  << "f" << "F" << "g" << "G" << "n"
+                                                  << "o" << "s" << "x" << "X" << "%";
+
+        return (hasFormatSpec() && possibleTypes.indexOf(m_formatSpec.at(m_formatSpec.size() - 1)) != -1);
+    }
+
+    QString toString() const
+    {
+        QString variable = "{" + m_identifier;
+        if (hasConversion()) {
+            variable += '!' + m_conversion;
+        }
+        if (hasFormatSpec()) {
+            variable += ':' + m_formatSpec;
+        }
+        variable += "}";
+
+        return variable;
+    }
+
+private:
+    QString m_identifier;
+    QChar m_conversion;
+    QString m_formatSpec;
+};
+
 }
 
 #endif

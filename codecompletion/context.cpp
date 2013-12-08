@@ -23,6 +23,7 @@
 #include "items/functiondeclaration.h"
 #include "items/implementfunction.h"
 #include "items/missingincludeitem.h"
+#include "items/replacementvariable.h"
 
 #include "worker.h"
 #include "helpers.h"
@@ -61,6 +62,11 @@ namespace Python {
 PythonCodeCompletionContext::ItemTypeHint PythonCodeCompletionContext::itemTypeHint()
 {
     return m_itemTypeHint;
+}
+
+PythonCodeCompletionContext::CompletionContextType PythonCodeCompletionContext::completionContextType()
+{
+    return m_operation;
 }
 
 ExpressionVisitor* visitorForString(QString str, DUContext* context, CursorInRevision scanUntil = CursorInRevision::invalid()) {
@@ -359,28 +365,85 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         }
     }
     else if ( m_operation == PythonCodeCompletionContext::StringFormattingCompletion ) {
-        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
-                                                                    "{0}", i18n("Insert positional replacement variable")));
-        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
-                                                                    "{argumentName}", i18n("Insert named replacement variable")));
-        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
-                                                                    "{0:<character_count}", i18n("Insert left-aligned replacement variable")));
-        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
-                                                                    "{0:>character_count}", i18n("Insert right-aligned replacement variable")));
-        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
-                                                                    "{0:.precision}", i18n("Insert variable with specified precision")));
-        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
-                                                                    "{0:%}", i18n("Insert percentage")));
-        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
-                                                                    "{0:b}", i18n("Format as binary number")));
-        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
-                                                                    "{0:o}", i18n("Format as octal number")));
-        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
-                                                                    "{0:x}", i18n("Format as hexadecimal number")));
-        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
-                                                                    "{0!s}", i18n("Format using str()")));
-        resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
-                                                                    "{0!r}", i18n("Format using repr()")));
+        int cursorPosition;
+        StringFormatter stringFormatter(CodeHelpers::extractStringUnderCursor(m_text,
+                                                                              m_duContext->range().castToSimpleRange().textRange(),
+                                                                              m_position.castToSimpleCursor().textCursor(),
+                                                                              &cursorPosition));
+
+        kDebug() << "Next identifier id: " << stringFormatter.nextIdentifierId();
+        kDebug() << "Cursor position in string: " << cursorPosition;
+
+        bool insideReplacementVariable = stringFormatter.isInsideReplacementVariable(cursorPosition);
+        RangeInString variablePosition = stringFormatter.getVariablePosition(cursorPosition);
+
+        bool onVariableBoundary = (cursorPosition == variablePosition.beginIndex || cursorPosition == variablePosition.endIndex);
+        if ( ! insideReplacementVariable || onVariableBoundary ) {
+            resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(QString::number(stringFormatter.nextIdentifierId())),
+                                                                                    i18n("Insert next positional variable"), false));
+
+            resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable("${argument}"),
+                                                                                    i18n("Insert named variable"), true));
+
+        }
+
+        if ( insideReplacementVariable ) {
+            const ReplacementVariable *variable = stringFormatter.getReplacementVariable(cursorPosition);
+
+            // Convert the range relative to the beginning of the string to the absolute position
+            // in the document. We can safely assume that the replacement variable is on one line,
+            // because the regex does not allow newlines inside replacement variables.
+            KTextEditor::Range range;
+            range.setBothLines(m_position.line);
+            range.start().setColumn(m_position.column - (cursorPosition - variablePosition.beginIndex));
+            range.end().setColumn(m_position.column + (variablePosition.endIndex - cursorPosition));
+
+            kDebug() << "Variable under cursor: " << variable->toString();
+
+            bool hasNumericOnlyOption = variable->hasPrecision()
+                    || (variable->hasType() && variable->type() != 's')
+                    || variable->align() == '=';
+
+            if ( ! variable->hasConversion() && ! hasNumericOnlyOption ) {
+                resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), 's', variable->formatSpec()),
+                                                                            i18n("Format using str()"), false, range));
+                resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), 'r', variable->formatSpec()),
+                                                                            i18n("Format using repr()"), false, range));
+            }
+
+            if ( ! variable->hasFormatSpec() ) {
+                resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "<${width}"),
+                                                                            i18n("Format as left-aligned"), true, range));
+                resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), ">${width}"),
+                                                                            i18n("Format as right-aligned"), true, range));
+                resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "^${width}"),
+                                                                            i18n("Format as centered"), true, range));
+
+                // These options don't make sense if we've set conversion using str() or repr()
+                if ( ! variable->hasConversion() ) {
+                    resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), ".${precision}"),
+                                                                                i18n("Specify precision"), true, range));
+
+                    resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "%"),
+                                                                                i18n("Format as percentage"), false, range));
+                    resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "c"),
+                                                                                i18n("Format as character"), false, range));
+                    resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "b"),
+                                                                                i18n("Format as binary number"), false, range));
+                    resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "o"),
+                                                                                i18n("Format as octal number"), false, range));
+                    resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "x"),
+                                                                                i18n("Format as hexadecimal number"), false, range));
+
+                    resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "e"),
+                                                                                i18n("Format in scientific (exponent) notation"), false, range));
+                    resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "f"),
+                                                                                i18n("Format as fixed point number"), false, range));
+                }
+            }
+        }
+
+        kDebug() << "Resulting items size: " << resultingItems.size();
     }
     else {
         // it's stupid to display a 3-letter completion item on manually invoked code completion and makes everything look crowded
@@ -873,12 +936,17 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     
     kDebug() << text << position << context->localScopeIdentifier().toString() << context->range();
     
+    QPair<QString, QString> beforeAndAfterCursor = CodeHelpers::splitCodeByCursor(text,
+                                                                                  context->range().castToSimpleRange().textRange(),
+                                                                                  position.castToSimpleCursor().textCursor());
+
     // check if the current position is inside a multi-line comment -> no completion if this is the case
-    if ( CodeHelpers::endsInside(text, CodeHelpers::Comment) ) {
+    CodeHelpers::EndLocation location = CodeHelpers::endsInside(beforeAndAfterCursor.first);
+    if ( location == CodeHelpers::Comment ) {
         m_operation = PythonCodeCompletionContext::NoCompletion;
         return;
     }
-    else if ( CodeHelpers::endsInside(text, CodeHelpers::String) ) {
+    else if ( location == CodeHelpers::String ) {
         m_operation = PythonCodeCompletionContext::StringFormattingCompletion;
         return;
     }

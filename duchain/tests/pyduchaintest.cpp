@@ -709,8 +709,6 @@ void PyDUChainTest::testTypes()
     visitor->visitCode(m_ast);
 
     QEXPECT_FAIL("lambda", "not implemented: aliasing lambdas", Continue);
-    QEXPECT_FAIL("function_arg_tuple", "broken, somehow loses declaration", Continue);
-    QEXPECT_FAIL("function_arg_tuple2", "broken, somehow loses declaration", Continue);
     QCOMPARE(visitor->found, true);
 }
 

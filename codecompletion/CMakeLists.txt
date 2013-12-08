@@ -15,6 +15,7 @@ set(completion_SRCS
     items/implementfunction.cpp
     items/importfile.cpp
     items/keyword.cpp
+    items/replacementvariable.cpp
 )
 
 kde4_add_library(kdev4pythoncompletion SHARED ${completion_SRCS})

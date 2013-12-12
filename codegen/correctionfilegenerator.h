@@ -21,17 +21,40 @@
 #ifndef CORRECTIONFILEGENERATOR_H
 #define CORRECTIONFILEGENERATOR_H
 
+#include <QCache>
 #include <QStringList>
 #include <KDialog>
 
+#include <interfaces/context.h>
+#include <interfaces/contextmenuextension.h>
 #include <language/duchain/types/abstracttype.h>
+#include <language/duchain/declaration.h>
 #include <language/duchain/duchain.h>
+
+#include "parser/codehelpers.h"
 
 #include "ui_correctionwidget.h"
 
-class Declaration;
-
 namespace Python {
+
+class CorrectionFileGenerator;
+
+class TypeCorrection : public QObject
+{
+    Q_OBJECT
+public:
+    static TypeCorrection& self();
+    void doContextMenu(KDevelop::ContextMenuExtension& extension, KDevelop::Context* context);
+
+public slots:
+    void executeSpecifyTypeAction();
+    void accepted();
+
+private:
+    TypeCorrection();
+
+    QScopedPointer<Ui::CorrectionWidget> m_ui;
+};
 
 class CorrectionFileGenerator
 {
@@ -45,11 +68,11 @@ public:
 
     enum StructureType {
         ClassType,
-        FunctionType
+        FunctionType,
+        MemberFunctionType
     };
 
-    void addHint(const QString& identifier, const QString& typeCode, const QString& addImportCode,
-                 Declaration* forDeclaration, HintType hintType);
+    void addHint(const QString& typeCode, const QStringList &modules, KDevelop::Declaration* forDeclaration, HintType hintType);
 
 private:
     /// Find the given structure as far as it exists, and return the line number
@@ -57,40 +80,38 @@ private:
     /// You can pass an empty string for class or function, or both.
     int findStructureFor(const QString& klass, const QString& function);
 
-    /// Create an empty structure part at the given line number, such as
+    /// Create an empty structure part, such as
     /// class class_identifierSuffix:\n    pass
-    /// Returns the line number where more stuff can be added.
-    int createStructurePart(const QString& identifierSuffix, StructureType type, int lineno);
+    QString createStructurePart(const QString& identifierSuffix, StructureType type);
 
     /// Checks if the syntax of the created file is still valid.
     bool checkForValidSyntax();
 
-    /// Write the new contents (from m_code) to disk.
-    void snyc();
-
 private:
-    /// Absolute path to the file which is being modified by this object
-    const QString m_filePath;
+    /// The file which is being modified by this object
+    QFile m_file;
     /// The last known-valid contents of the document
-    QString m_oldContents;
+    QStringList m_oldContents;
     /// The current contents of the document to be written to disk later
-    QString m_code;
+    QStringList m_code;
+
+    QScopedPointer<FileIndentInformation> m_fileIndents;
+
+    static const int DEFAULT_INDENT_LEVEL = 4;
 };
 
-class CorrectionAssistant : public KDialog {
-Q_OBJECT
+class CorrectionAssistant : public KDialog
+{
+    Q_OBJECT
 public:
-    CorrectionAssistant(QWidget* parent = 0);
+    CorrectionAssistant(KDevelop::IndexedDeclaration declaration, CorrectionFileGenerator::HintType hintType, QWidget *parent = 0);
 
-public slots:
-    void accepted();
-
-private:
-    /// Generate the "import" statement needed for the given type instantiation
-    QString findImportCode(const QString& typedCode) const;
+    KDevelop::IndexedDeclaration declaration() const;
+    CorrectionFileGenerator::HintType hintType() const;
 
 private:
-    QScopedPointer<CorrectionFileGenerator> m_generator;
+    KDevelop::IndexedDeclaration m_declaration;
+    CorrectionFileGenerator::HintType m_hintType;
 };
 
 } // namespace python

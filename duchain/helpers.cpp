@@ -27,6 +27,7 @@
 
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/types/integraltype.h>
+#include <language/duchain/duchainutils.h>
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/duchain.h>
 #include <language/duchain/classdeclaration.h>
@@ -36,6 +37,9 @@
 #include <interfaces/icore.h>
 #include <interfaces/iprojectcontroller.h>
 #include <interfaces/ilanguagecontroller.h>
+#include <interfaces/idocumentcontroller.h>
+
+#include <KTextEditor/View>
 
 #include "ast.h"
 #include "types/hintedtype.h"
@@ -52,6 +56,8 @@ QList<KUrl> Helper::cachedSearchPaths;
 QStringList Helper::dataDirs;
 QString Helper::documentationFile;
 DUChainPointer<TopDUContext> Helper::documentationFileContext = DUChainPointer<TopDUContext>(0);
+QStringList Helper::correctionFileDirs;
+QString Helper::localCorrectionFileDir;
 
 AbstractType::Ptr Helper::resolveType(AbstractType::Ptr type)
 {
@@ -84,6 +90,22 @@ void Helper::scheduleDependency(const IndexedString& dependency, int betterThanP
         bgparser->addDocument(dependency, TopDUContext::ForceUpdate, betterThanPriority - 1,
                               0, ParseJob::FullSequentialProcessing);
     }
+}
+
+IndexedDeclaration Helper::declarationUnderCursor(bool allowUse)
+{
+    KDevelop::IDocument* doc = ICore::self()->documentController()->activeDocument();
+    if ( doc && doc->textDocument() && doc->textDocument()->activeView() ) {
+        DUChainReadLocker lock;
+        if ( allowUse ) {
+            return DUChainUtils::itemUnderCursor(doc->url(), SimpleCursor(doc->textDocument()->activeView()->cursorPosition()));
+        }
+        else {
+            return DUChainUtils::declarationInLine(SimpleCursor(doc->textDocument()->activeView()->cursorPosition()), DUChainUtils::standardContextForUrl(doc->url()));
+        }
+    }
+
+    return KDevelop::IndexedDeclaration();
 }
 
 Declaration* Helper::accessAttribute(Declaration* accessed, const QString& attribute, DUContext* current)
@@ -319,6 +341,50 @@ ReferencedTopDUContext Helper::getDocumentationFileContext()
         return ctx;
     }
     return ReferencedTopDUContext(0); // c++...
+}
+
+KUrl Helper::getCorrectionFile(KUrl document)
+{
+    if ( Helper::correctionFileDirs.isEmpty() ) {
+        KStandardDirs d;
+        Helper::correctionFileDirs = d.findDirs("data", "kdevpythonsupport/correction_files/");
+    }
+
+    foreach (QString correctionFileDir, correctionFileDirs) {
+        foreach ( const KUrl& basePath, Helper::getSearchPaths(KUrl()) ) {
+            if ( ! basePath.isParentOf(document) ) {
+                continue;
+            }
+            QString path = KUrl::relativePath(basePath.path(), document.path());
+            KUrl absolutePath(correctionFileDir + path);
+            absolutePath.cleanPath();
+
+            if ( QFile::exists(absolutePath.path()) ) {
+                return absolutePath;
+            }
+        }
+    }
+    return KUrl();
+}
+
+KUrl Helper::getLocalCorrectionFile(KUrl document)
+{
+    if ( Helper::localCorrectionFileDir.isNull() ) {
+        Helper::localCorrectionFileDir = KStandardDirs::locateLocal("data", "kdevpythonsupport/correction_files/");
+    }
+
+    KUrl absolutePath;
+    foreach ( const KUrl& basePath, Helper::getSearchPaths(KUrl()) ) {
+        if ( ! basePath.isParentOf(document) ) {
+            continue;
+        }
+        QString path = KUrl::relativePath(basePath.path(), document.path());
+        absolutePath = KUrl(Helper::localCorrectionFileDir + path);
+        absolutePath.cleanPath();
+
+        break;
+    }
+    return absolutePath;
 }
     
 QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)

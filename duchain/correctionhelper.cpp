@@ -31,45 +31,29 @@
 #include <KStandardDirs>
 #include <QFile>
 
+using namespace KDevelop;
+
 namespace Python {
 
 CorrectionHelper::CorrectionHelper(const IndexedString& _url, DeclarationBuilder* builder)
     : m_builder(builder)
 {
     m_contextStack.push(0);
-    KUrl url(_url.toUrl());
-    QString path;
-    static QString baseDirectory;
-    if ( baseDirectory.isEmpty() ) {
-        baseDirectory = KStandardDirs::locate("data", "kdevpythonsupport/correction_files/");
-    }
-    KUrl absolutePath;
-    bool found = false;
-    foreach ( const KUrl& basePath, Helper::getSearchPaths(KUrl()) ) {
-        if ( ! basePath.isParentOf(url) ) {
-            continue;
-        }
-        path = KUrl::relativePath(basePath.path(), url.path());
-        absolutePath = KUrl(baseDirectory + path);
-        absolutePath.cleanPath();
-        if ( ! QFile::exists(absolutePath.path()) ) {
-            continue;
-        }
-        found = true;
-        break;
-    }
-    if ( ! found ) {
+    KUrl absolutePath = Helper::getCorrectionFile(_url.toUrl());
+
+    if ( !absolutePath.isValid() || absolutePath.isEmpty() || ! QFile::exists(absolutePath.path()) ) {
         return;
     }
+    kDebug() << "Found correction file for " << _url.str() << ": " << absolutePath.path();
 
     const IndexedString indexedPath(absolutePath);
     DUChainReadLocker lock;
     m_hintTopContext = DUChain::self()->chainForDocument(indexedPath);
-    kDebug() << "got top context for" << url << path << absolutePath << m_hintTopContext;
+    kDebug() << "got top context for" << absolutePath << m_hintTopContext;
     m_contextStack.top() = m_hintTopContext.data();
     if ( ! m_hintTopContext ) {
         // The file exists, but was not parsed yet. Schedule it, and re-schedule the current one too.
-        Helper::scheduleDependency(_url, builder->m_ownPriority);
+        Helper::scheduleDependency(indexedPath, builder->m_ownPriority);
         builder->m_unresolvedImports.append(indexedPath);
     }
 }
@@ -96,6 +80,8 @@ void CorrectionHelper::enter(const KDevelop::Identifier& identifier)
         m_contextStack.push(0);
         return;
     }
+
+    kDebug() << "Looking in " << identifier.toString();
     // there's a hint declaration for this object, put it on the stack
     DUContext* internal = decls.first()->internalContext();
     m_contextStack.push(internal);
@@ -123,6 +109,8 @@ AbstractType::Ptr CorrectionHelper::hintFor(const KDevelop::Identifier &identifi
     if ( decls.isEmpty() ) {
         return hint;
     }
+
+    kDebug() << "Found specified correct type for " << identifier.toString() << decls.first()->abstractType()->toString();
     return decls.first()->abstractType();
 }
 

@@ -351,6 +351,10 @@ QPair<QString, QString> CodeHelpers::splitCodeByCursor(const QString &code, KTex
     int endColumn;
     for ( int row = range.start().line(), i = 0; row <= cursor.line(); row++, i++ ) {
         if ( row != cursor.line() ) {
+            if ( i >= lines.size() ) {
+                // something went wrong with the context ranges
+                break;
+            }
             endColumn = lines.at(i).size();
         }
         else {

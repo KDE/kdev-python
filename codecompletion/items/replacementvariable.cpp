@@ -44,15 +44,34 @@ void ReplacementVariableItem::execute(Document *document, const Range &word)
         m_position = word;
     }
 
+    Cursor removeUntil = m_position.start();
+    Range removeRange(m_position.start(), removeUntil);
+    if ( document->text(m_position).lastIndexOf('{') != -1 ) {
+        // remove the whole existing expression
+        removeRange.end().setColumn(m_position.end().column());
+    }
+    else {
+        // remove nothing unless there is an opening { already, in that case remove that
+        removeRange.start() = m_position.end();
+        removeRange.end() = m_position.end();
+
+        Range previousCharacter(word.start(), word.start());
+        previousCharacter.start().setColumn(word.start().column() - 1);
+        if ( document->text(previousCharacter) == "{" ) {
+            removeRange.start().setColumn(removeRange.start().column() - 1);
+        }
+    }
+
     if ( m_hasEditableFields ) {
         TemplateInterface2 *templateInterface = qobject_cast<TemplateInterface2 *>(document->activeView());
         if ( templateInterface ) {
-            document->removeText(m_position);
-            templateInterface->insertTemplateText(m_position.start(), m_variable.toString(), QMap<QString, QString>(), NULL);
+            document->removeText(removeRange);
+            templateInterface->insertTemplateText(removeRange.start(), m_variable.toString(), QMap<QString, QString>(), NULL);
         }
     }
     else {
-        document->replaceText(m_position, m_variable.toString());
+        document->removeText(removeRange);
+        document->insertText(removeRange.start(), m_variable.toString());
     }
 }
 

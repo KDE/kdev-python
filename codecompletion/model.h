@@ -37,7 +37,8 @@ public:
     virtual KDevelop::CodeCompletionWorker* createCompletionWorker();
     KTextEditor::Range completionRange(KTextEditor::View* view, const KTextEditor::Cursor &position);
     bool shouldStartCompletion(KTextEditor::View* view, const QString& inserted,
-                                                     bool userInsertion, const KTextEditor::Cursor& position);
+                               bool userInsertion, const KTextEditor::Cursor& position);
+    virtual bool shouldAbortCompletion(KTextEditor::View* view, const KTextEditor::Range& range, const QString& currentCompletion);
     QString filterString(KTextEditor::View *view, const KTextEditor::Range &range, const KTextEditor::Cursor &position);
 
     KUrl m_currentDocument;

@@ -25,7 +25,7 @@ add_dependencies(kdev4pythoncompletion
     kdev4pythonduchain
 )
 
-target_link_libraries(kdev4pythoncompletion
+target_link_libraries(kdev4pythoncompletion LINK_PRIVATE
     ${KDE4_KDECORE_LIBS}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${KDEVPLATFORM_INTERFACES_LIBRARIES}

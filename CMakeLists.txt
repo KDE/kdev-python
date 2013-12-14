@@ -1,21 +1,25 @@
 PROJECT(kdevpython)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${kdevpython_SOURCE_DIR}/cmake/)
-
-find_package(KDE4 REQUIRED)
-find_package(KDevPlatform 1.6.60 REQUIRED)
-
 # write the plugin version to a file
 set(KDEVPYTHON_VERSION_MAJOR 1)
 set(KDEVPYTHON_VERSION_MINOR 6)
 set(KDEVPYTHON_VERSION_PATCH 60)
+# KDevplatform dependency version
+set( KDEVPLATFORM_VERSION "${KDEVPYTHON_VERSION_MAJOR}.${KDEVPYTHON_VERSION_MINOR}.${KDEVPYTHON_VERSION_PATCH}" )
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${kdevpython_SOURCE_DIR}/cmake/)
+
+cmake_minimum_required(VERSION 2.8)
+
+find_package(KDE4 REQUIRED)
+find_package(KDevPlatform ${KDEVPLATFORM_VERSION} REQUIRED)
+
 
 # find the system python 2 interpreter, only used for determining search paths.
 find_package(PythonInterp 2.7 REQUIRED)
 
 configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpython_BINARY_DIR}/kdevpythonversion.h" @ONLY )
 
-cmake_minimum_required(VERSION 2.8)
 
 enable_testing()
 

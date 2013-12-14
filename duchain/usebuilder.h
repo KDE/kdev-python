@@ -43,7 +43,6 @@ protected:
     virtual void visitAttribute(AttributeAst* node);
 private:
     ParseSession* m_session;
-    PythonEditorIntegrator* m_editor;
     inline int& nextUseIndex()
     {
         return m_nextUseStack.top();

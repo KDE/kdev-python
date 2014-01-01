@@ -1131,7 +1131,7 @@ void PyDUChainTest::testContainerTypes()
     QFETCH(QString, code);
     QFETCH(QString, contenttype);
     QFETCH(bool, use_type);
-    ReferencedTopDUContext ctx = parse(code.toAscii());
+    ReferencedTopDUContext ctx = parse(code);
     QVERIFY(ctx);
     
     DUChainReadLocker lock(DUChain::lock());
@@ -1181,5 +1181,50 @@ void PyDUChainTest::testContainerTypes_data()
     QTest::newRow("for_loop_tuple_2") << "d = [(3, 3.5)]\nfor a, b in d:\n checkme = b" << "float" << true;
     QTest::newRow("for_loop_tuple_unsure") << "d = [(3, 3.5), (3.5, 3)]\nfor a, b in d:\n checkme = b"
                                            << "unsure (float, int)" << true;
+}
+
+void PyDUChainTest::testVariableCreation()
+{
+    QFETCH(QString, code);
+    QFETCH(QStringList, expected_local_declarations);
+    QFETCH(QStringList, expected_types);
+
+    ReferencedTopDUContext top = parse(code);
+    QVERIFY(top);
+
+    DUChainReadLocker lock;
+    auto localDecls = top->localDeclarations();
+    QVector<QString> localDeclNames;
+    for ( const Declaration* d: localDecls ) {
+        localDeclNames.append(d->identifier().toString());
+    }
+    Q_ASSERT(expected_types.size() == expected_local_declarations.size());
+    int offset = 0;
+    for ( const QString& expected : expected_local_declarations ) {
+        int index = localDeclNames.indexOf(expected);
+        QVERIFY(index != -1);
+        QVERIFY(localDecls[index]->abstractType());
+        QCOMPARE(localDecls[index]->abstractType()->toString(), expected_types[offset]);
+        offset++;
+    }
+}
+
+void PyDUChainTest::testVariableCreation_data()
+{
+    QTest::addColumn<QString>("code");
+    QTest::addColumn<QStringList>("expected_local_declarations");
+    QTest::addColumn<QStringList>("expected_types");
+
+    QTest::newRow("simple") << "a = 3" << QStringList{"a"} << QStringList{"int"};
+    QTest::newRow("tuple_wrong") << "a, b = 3" << QStringList{"a", "b"} << QStringList{"mixed", "mixed"};
+    QTest::newRow("tuple_unpack_inplace") << "a, b = 3, 5.5" << QStringList{"a", "b"} << QStringList{"int", "float"};
+    QTest::newRow("tuple_unpack_indirect") << "c = 3, 3.5\na, b = c" << QStringList{"a", "b"} << QStringList{"int", "float"};
+    QTest::newRow("tuple_unpack_stacked_inplace") << "a, (b, c) = 1, 2, 3.5" << QStringList{"a", "b", "c"}
+                                                                             << QStringList{"int", "int", "float"};
+    QTest::newRow("tuple_unpack_stacked_indirect") << "d = 3.5, 3, 1\na, (b, c) = d"
+                                                   << QStringList{"a", "b", "c"} << QStringList{"float", "int", "int"};
+    QTest::newRow("unpack_from_list_inplace") << "a, b = [1, 2, 3]" << QStringList{"a", "b"} << QStringList{"int", "int"};
+    QTest::newRow("unpack_from_list_indirect") << "c = [1, 2, 3]\na, b = c" << QStringList{"a", "b"}
+                                                                            << QStringList{"int", "int"};
 }
 

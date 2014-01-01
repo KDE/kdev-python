@@ -1160,7 +1160,14 @@ QList< ExpressionAst* > DeclarationBuilder::targetsOfAssignment(QList< Expressio
         if ( target->astType == Ast::TupleAstType ) {
             TupleAst* tuple = static_cast<TupleAst*>(target);
             foreach ( ExpressionAst* ast, tuple->elements ) {
-                lhsExpressions << ast;
+                // eventually recursive call, to handle e.g. a, (b, c) = 1, 2, 3 correctly
+                if ( ast->astType == Ast::TupleAstType ) {
+                    lhsExpressions << targetsOfAssignment(QList<ExpressionAst*>{ast});
+                }
+                else {
+                    // shortcut
+                    lhsExpressions << ast;
+                }
             }
         }
         else {
@@ -1170,19 +1177,39 @@ QList< ExpressionAst* > DeclarationBuilder::targetsOfAssignment(QList< Expressio
     return lhsExpressions;
 }
 
-QList< DeclarationBuilder::SourceType > DeclarationBuilder::sourcesOfAssignment(ExpressionAst* items)
+QList< DeclarationBuilder::SourceType > DeclarationBuilder::sourcesOfAssignment(ExpressionAst* items, int fillWhenLengthMissing)
 {
     QList<SourceType> sources;
     QList<ExpressionAst*> values;
+
     if ( items && items->astType == Ast::TupleAstType ) {
         values = static_cast<TupleAst*>(items)->elements;
     }
     else {
+        // This handles the a, b, c = [1, 2, 3] case. Since the assignment can also be like
+        // d = [1, 2, 3]; a, b, c = d we can't don't generally know the amount of elements
+        // in the right operand; so all elements are treated to have the same type.
+        if ( fillWhenLengthMissing > 0 ) {
+            ExpressionVisitor v(currentContext());
+            v.visitNode(items);
+            auto container = VariableLengthContainer::Ptr::dynamicCast(v.lastType());
+            if ( container ) {
+                AbstractType::Ptr content = container->contentType().abstractType();
+                for ( ; fillWhenLengthMissing != 0; fillWhenLengthMissing-- ) {
+                    sources << SourceType{ content, KDevelop::DeclarationPointer(), false };
+                }
+                return sources;
+            }
+        }
+
+        // Otherwise, proceed normally.
         values << items;
     }
+
     foreach ( ExpressionAst* value, values ) {
         ExpressionVisitor v(currentContext());
         v.visitNode(value);
+
         sources << SourceType{
             v.lastType(),
             DeclarationPointer(Helper::resolveAliasDeclaration(v.lastDeclaration().data())),
@@ -1231,6 +1258,7 @@ DeclarationBuilder::SourceType DeclarationBuilder::selectSource(const QList< Exp
         // use mixed if none of the previous ways of determining the type worked.
         element.type = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
         element.declaration = 0;
+        element.isAlias = false;
     }
     return element;
 }
@@ -1247,6 +1275,7 @@ void DeclarationBuilder::assignToName(NameAst* target, const DeclarationBuilder:
     else {
         DUChainWriteLocker lock;
         Declaration* dec = visitVariableDeclaration<Declaration>(target, 0, element.type);
+        qDebug() << "created decl type:" << dec->abstractType()->toString() << element.type->toString();
         /** DEBUG **/
         if ( element.type && dec ) {
             Q_ASSERT(dec->abstractType());
@@ -1362,7 +1391,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
     // Because of tuple unpacking, it is required to gather the left- and right hand side
     // expressions / types first, then match them together in a second step.
     const QList<ExpressionAst*>& targets = targetsOfAssignment(node->targets);
-    const QList<SourceType>& sources = sourcesOfAssignment(node->value);
+    const QList<SourceType>& sources = sourcesOfAssignment(node->value, targets.size() > 1 ? targets.size() : -1);
 
     // Now all the information about left- and right hand side entries is ready,
     // and creation / updating of variables can start.

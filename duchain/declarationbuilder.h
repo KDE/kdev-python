@@ -93,7 +93,7 @@ protected:
     };
     /// Helper functions to retrieve lists of the left- and right hand side of assignments
     QList<ExpressionAst*> targetsOfAssignment(QList<ExpressionAst*> targets);
-    QList<SourceType> sourcesOfAssignment(Python::ExpressionAst* items);
+    QList<SourceType> sourcesOfAssignment(Python::ExpressionAst* items, int fillWhenLengthMissing=-1);
     SourceType selectSource(const QList<ExpressionAst*>& targets, const QList<SourceType>& sources,
                                    int index, ExpressionAst* value);
     void assignToName(NameAst* name, const SourceType& element);

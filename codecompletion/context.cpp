@@ -1075,6 +1075,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     
     if ( firstStatus == ExpressionParser::ForFound ) {
         int offset = allExpressions.length() - 2; // one for the "for", and one for the general off-by-one thing
+
         QPair<int, int> nextInitializer = allExpressions.nextIndexOfStatus(ExpressionParser::InitializerFound);
         if ( nextInitializer.first == -1 ) {
             // no opening bracket, so no generator completion.
@@ -1083,12 +1084,12 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         }
         // check that all statements in between are part of a generator initializer list
         bool ok = true;
-        QString text;
+        QStringList exprs;
         int currentOffset = 0;
         while ( ok && offset > currentOffset ) {
             ok = allExpressions.at(offset).status == ExpressionParser::ExpressionFound;
             if ( ! ok ) break;
-            text.prepend(allExpressions.at(offset).expression);
+            exprs.prepend(allExpressions.at(offset).expression);
             offset -= 1;
             ok = allExpressions.at(offset).status == ExpressionParser::CommaFound;
             // the last expression must *not* have a comma
@@ -1099,7 +1100,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
             offset -= 1;
         }
         if ( ok ) {
-            m_guessTypeOfExpression = text;
+            m_guessTypeOfExpression = exprs.join(",");
             m_operation = GeneratorVariableCompletion;
             return;
         }

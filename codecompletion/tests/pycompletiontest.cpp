@@ -473,6 +473,8 @@ void PyCompletionTest::testExceptionCompletion()
 void PyCompletionTest::testGeneratorCompletion()
 {
     QVERIFY(itemInCompletionList("%INVOKE", "foobar = [item for %CURSOR", "item in"));
+    QVERIFY(itemInCompletionList("%INVOKE", "foobar = [key, value for %CURSOR", "key, value in"));
+    QVERIFY(itemInCompletionList("%INVOKE", "foobar = [str(key + value) for %CURSOR", "key, value in"));
     QVERIFY(itemInCompletionList("%INVOKE\ndec_l8r=3", "foobar = [dec_l8r for %CURSOR", "dec_l8r in"));
 }
 

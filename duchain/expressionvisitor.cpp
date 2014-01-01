@@ -720,6 +720,8 @@ void ExpressionVisitor::visitBinaryOperation(Python::BinaryOperationAst* node)
 {
     ExpressionVisitor v(this);
     v.visitNode(node->lhs);
+    // we only need the left side type, but should visit the right side too.
+    visitNode(node->rhs);
 
     if ( ! v.lastDeclaration() ) {
         return unknownTypeEncountered();

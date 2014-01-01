@@ -120,7 +120,7 @@ public:
         return at(m_internalPtr);
     };
     // First returned value is the *expression count* index, the second one is the *character count*.
-    // Oh yeah, the expressions count from the right, the characters count from the left. Convenient, huh?
+    // The expressions count from the right, the characters count from the left.
     // (see PythonCodeCompletionContext::summonParentForEventualCall for an example why that makes sense)
     QPair<int, int> nextIndexOfStatus(ExpressionParser::Status status, int offsetFromEnd = 0) const {
         int currentIndex = length() - 1 - offsetFromEnd;

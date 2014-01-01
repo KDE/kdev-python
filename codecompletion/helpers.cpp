@@ -197,12 +197,8 @@ TokenList ExpressionParser::popAll()
         QString result = popExpression(&currentStatus);
         items << TokenListEntry(currentStatus, result, m_cursorPositionInString);
     }
-    // reverse the list
-    TokenList reversedItems;
-    for ( int i = items.length() - 1; i >= 0; i-- ) {
-        reversedItems.append(items.at(i));
-    }
-    return reversedItems;
+    std::reverse(items.begin(), items.end());
+    return items;
 }
 
 bool endsWithSeperatedKeyword(const QString& str, const QString& shouldEndWith) {

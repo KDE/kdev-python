@@ -384,20 +384,18 @@ void DeclarationBuilder::visitFor(ForAst* node)
     v.visitNode(node->iterator);
     QList<VariableLengthContainer::Ptr> possibleIterators = Helper::filterType<VariableLengthContainer>(v.lastType(),
         [](AbstractType::Ptr type) {
-            return type.cast<VariableLengthContainer>();
+            auto container = type.cast<VariableLengthContainer>();
+            return container && container->contentType();
         }
     );
-    /// iterators = filtertypes(..., list)
     if ( node->target->astType == Ast::NameAstType ) {
         // In case the iterator variable is a Name ("for x in range(3)"), just create a declaration for it.
         // The following code tries to figure out the type of "x" from the object that is being iterated over.
-        AbstractType::Ptr iteratorType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
-        foreach ( VariableLengthContainer::Ptr container, possibleIterators ) {
-            if ( ! container->contentType() ) {
-                continue;
+        auto iteratorType = Helper::foldTypes<VariableLengthContainer::Ptr>(possibleIterators,
+            [](const VariableLengthContainer::Ptr& p) {
+                return p->contentType().abstractType();
             }
-            iteratorType = Helper::mergeTypes(iteratorType, container->contentType().abstractType());
-        }
+        );
         // otherwise, no list type whatsoever was available for the iterator list, so just display "mixed".
 
         // Create the variable declaration for the iterator variable with the type that has been determined.
@@ -1275,7 +1273,6 @@ void DeclarationBuilder::assignToName(NameAst* target, const DeclarationBuilder:
     else {
         DUChainWriteLocker lock;
         Declaration* dec = visitVariableDeclaration<Declaration>(target, 0, element.type);
-        qDebug() << "created decl type:" << dec->abstractType()->toString() << element.type->toString();
         /** DEBUG **/
         if ( element.type && dec ) {
             Q_ASSERT(dec->abstractType());

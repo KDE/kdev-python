@@ -89,7 +89,7 @@ public:
         }
         if ( type->whichType() == KDevelop::AbstractType::TypeUnsure ) {
             UnsureType::Ptr unsure(type.cast<UnsureType>());
-            for ( int i = 0; i < unsure->typesSize(); i++ ) {
+            for ( unsigned int i = 0; i < unsure->typesSize(); i++ ) {
                 AbstractType::Ptr t = unsure->types()[i].abstractType();
                 if ( accept(t) ) {
                     typename T::Ptr result = t.cast<T>();
@@ -150,6 +150,22 @@ public:
      * So if you do something like a = mergeTypes(a, b) make sure you pass "a" as first argument.
      **/
     static AbstractType::Ptr mergeTypes(AbstractType::Ptr type, AbstractType::Ptr newType, TopDUContext* ctx = 0);
+
+    /**
+     * @brief Like mergeTypes(), but merges a list of types into a newly allocated type.
+     * Returns mixed if the list is empty.
+     * @return KDevelop::AbstractType::Ptr an unsure type consisting of all types in the list.
+     */
+    template <typename T>
+    static AbstractType::Ptr foldTypes(QList<T> types, std::function<AbstractType::Ptr(const T&)> transform
+                                                     = std::function<AbstractType::Ptr(const T&)>())
+    {
+        AbstractType::Ptr result(new IntegralType(IntegralType::TypeMixed));
+        for ( T type : types ) {
+            result = Helper::mergeTypes(result, transform ? transform(type) : AbstractType::Ptr::staticCast(type));
+        }
+        return result;
+    };
     
     /** check whether the argument is a null, mixed, or none integral type **/
     static bool isUsefulType(AbstractType::Ptr type);

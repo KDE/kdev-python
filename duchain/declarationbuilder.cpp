@@ -668,12 +668,12 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
     for ( int i = 0; i < remainingNameComponents.length(); i++ ) {
         // Iterate over all the names, and create a declaration + sub-context for each of them
         const QString& component = remainingNameComponents.at(i);
-        Identifier* temporaryIdentifier = new Identifier(component);
+        Identifier temporaryIdentifier(component);
         Declaration* d = 0;
-        temporaryIdentifier->copyRange(declarationIdentifier);
-        temporaryIdentifier->endCol = temporaryIdentifier->startCol;
-        temporaryIdentifier->startCol += 1;
-        displayRange = editorFindRange(temporaryIdentifier, temporaryIdentifier); // TODO fixme
+        temporaryIdentifier.copyRange(declarationIdentifier);
+        temporaryIdentifier.endCol = temporaryIdentifier.startCol;
+        temporaryIdentifier.startCol += 1;
+        displayRange = editorFindRange(&temporaryIdentifier, &temporaryIdentifier); // TODO fixme
         
         bool done = false;
         if ( aliasDeclaration && i == remainingNameComponents.length() - 1 ) {
@@ -683,7 +683,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
                  || dynamic_cast<AliasDeclaration*>(aliasDeclaration) 
                ) {
                 aliasDeclaration = Helper::resolveAliasDeclaration(aliasDeclaration);
-                AliasDeclaration* adecl = eventuallyReopenDeclaration<AliasDeclaration>(temporaryIdentifier, temporaryIdentifier, AliasDeclarationType);
+                AliasDeclaration* adecl = eventuallyReopenDeclaration<AliasDeclaration>(&temporaryIdentifier, &temporaryIdentifier, AliasDeclarationType);
                 if ( adecl ) {
                     adecl->setAliasedDeclaration(aliasDeclaration);
                 }
@@ -691,7 +691,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
                 closeDeclaration();
             }
             else {
-                d = visitVariableDeclaration<Declaration>(temporaryIdentifier);
+                d = visitVariableDeclaration<Declaration>(&temporaryIdentifier);
                 d->setAbstractType(aliasDeclaration->abstractType());
             }
             openedDeclarations.append(d);
@@ -700,7 +700,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
         
         if ( ! done ) {
             // create the next level of the tree hierarchy if not done yet.
-            d = visitVariableDeclaration<Declaration>(temporaryIdentifier);
+            d = visitVariableDeclaration<Declaration>(&temporaryIdentifier);
         }
         if ( d ) {
             if ( topContext() != currentContext() ) {
@@ -745,7 +745,6 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
                 kDebug() << "setting alias declaration on inner declaration";
             }
         }
-        delete temporaryIdentifier;
     }
     for ( int i = openedContexts.length() - 1; i >= 0; i-- ) {
         // Close all the declarations and contexts opened previosly, and assign the types.

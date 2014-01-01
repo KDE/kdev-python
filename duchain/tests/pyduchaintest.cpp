@@ -1226,5 +1226,10 @@ void PyDUChainTest::testVariableCreation_data()
     QTest::newRow("unpack_from_list_inplace") << "a, b = [1, 2, 3]" << QStringList{"a", "b"} << QStringList{"int", "int"};
     QTest::newRow("unpack_from_list_indirect") << "c = [1, 2, 3]\na, b = c" << QStringList{"a", "b"}
                                                                             << QStringList{"int", "int"};
+    QTest::newRow("for_loop_simple") << "for i in range(3): pass" << QStringList{"i"} << QStringList{"int"};
+    QTest::newRow("for_loop_unpack") << "for a, b in [(3, 5.1)]: pass" << QStringList{"a", "b"}
+                                                                       << QStringList{"int", "float"};
+    QTest::newRow("for_loop_stacked") << "for a, (b, c) in [(1, 2, 3.5)]: pass" << QStringList{"a", "b", "c"}
+                                                                                << QStringList{"int", "int", "float"};
 }
 

@@ -404,7 +404,7 @@ void DeclarationBuilder::visitFor(ForAst* node)
     else if ( node->target->astType == Ast::TupleAstType ) {
         // If the target is a tuple ("for x, y, z in ..."), multiple variables must be declared.
         // For now, types of those variables will only be determined if the iterator is a list of tuples.
-        QList<ExpressionAst*> targetElements = static_cast<TupleAst*>(node->target)->elements;
+        QList<ExpressionAst*> targetElements = targetsOfAssignment(QList<ExpressionAst*>{node->target});
         int targetElementsCount = targetElements.count();
         QList<IndexedContainer::Ptr> gatherFromTuples;
         foreach ( VariableLengthContainer::Ptr container, possibleIterators ) {
@@ -1160,7 +1160,7 @@ QList< ExpressionAst* > DeclarationBuilder::targetsOfAssignment(QList< Expressio
             foreach ( ExpressionAst* ast, tuple->elements ) {
                 // eventually recursive call, to handle e.g. a, (b, c) = 1, 2, 3 correctly
                 if ( ast->astType == Ast::TupleAstType ) {
-                    lhsExpressions << targetsOfAssignment(QList<ExpressionAst*>{ast});
+                    lhsExpressions << targetsOfAssignment(QList<ExpressionAst*>() << ast);
                 }
                 else {
                     // shortcut

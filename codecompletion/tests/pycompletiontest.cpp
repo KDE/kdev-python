@@ -185,6 +185,14 @@ void PyCompletionTest::testExpressionParser_data()
 
 const QList<CompletionTreeItem*> PyCompletionTest::invokeCompletionOn(const QString& initCode, const QString& invokeCode)
 {
+    CompletionParameters data = prepareCompletion(initCode, invokeCode);
+    return runCompletion(data);
+}
+
+const CompletionParameters PyCompletionTest::prepareCompletion(const QString& initCode, const QString& invokeCode)
+{
+    CompletionParameters completion_data;
+
     QString filename = nextFilename();
     QFile fileptr(filename);
     fileptr.open(QIODevice::WriteOnly);
@@ -203,24 +211,29 @@ const QList<CompletionTreeItem*> PyCompletionTest::invokeCompletionOn(const QStr
     QString allCode = copy.replace("%INVOKE", invokeCode);
     
     QStringList lines = allCode.split('\n');
-    CursorInRevision cursorAt = CursorInRevision::invalid();
+    completion_data.cursorAt = CursorInRevision::invalid();
     for ( int i = 0; i < lines.length(); i++ ) {
         int j = lines.at(i).indexOf("%CURSOR");
         if ( j != -1 ) {
-            cursorAt = CursorInRevision(i, j);
+            completion_data.cursorAt = CursorInRevision(i, j);
             break;
         }
     }
-    Q_ASSERT(cursorAt.isValid());
+    Q_ASSERT(completion_data.cursorAt.isValid());
     // codeCompletionContext only gets passed the text until the place where completion is invoked
-    QString snip = allCode.mid(0, allCode.indexOf("%CURSOR"));
-    QString remaining = allCode.mid(allCode.indexOf("%CURSOR") + 7);
+    completion_data.snip = allCode.mid(0, allCode.indexOf("%CURSOR"));
+    completion_data.remaining = allCode.mid(allCode.indexOf("%CURSOR") + 7);
     
     DUChainReadLocker lock;
-    DUContextPointer contextAtCursor = DUContextPointer(topContext->findContextAt(cursorAt, true));
-    Q_ASSERT(contextAtCursor);
+    completion_data.contextAtCursor = DUContextPointer(topContext->findContextAt(completion_data.cursorAt, true));
+    Q_ASSERT(completion_data.contextAtCursor);
     
-    PythonCodeCompletionContext* context = new PythonCodeCompletionContext(contextAtCursor, snip, remaining, cursorAt, 0, 0);
+    return completion_data;
+}
+
+const QList<CompletionTreeItem*> PyCompletionTest::runCompletion(const CompletionParameters parameters)
+{
+    PythonCodeCompletionContext* context = new PythonCodeCompletionContext(parameters.contextAtCursor, parameters.snip, parameters.remaining, parameters.cursorAt, 0, 0);
     bool abort = false;
     QList<CompletionTreeItem*> items;
     foreach ( CompletionTreeItemPointer ptr, context->completionItems(abort, true) ) {
@@ -579,6 +592,44 @@ void PyCompletionTest::testStringFormatter_data()
                                        << (QList<RangeInString>() << RangeInString(7, 10) << RangeInString(15, 18)
                                            << RangeInString(18, 21) << RangeInString(31, 34) << RangeInString(35, 40)
                                            << RangeInString(46, 49));
+}
+
+QString repeat_distinct(const QString& code, int count) {
+    QString result;
+    QString line;
+    for ( int i = 0; i < count; i++ ) {
+        line = code;
+        result.append(line.replace(QString("%X"), QString::number(i)));
+    }
+    return result;
+}
+
+void PyCompletionTest::completionBenchTest()
+{
+    QFETCH(QString, completionCode);
+    QFETCH(QString, invokeCode);
+
+    CompletionParameters data = prepareCompletion(completionCode, invokeCode);
+    QBENCHMARK {
+        runCompletion(data);
+    }
+}
+
+void PyCompletionTest::completionBenchTest_data()
+{
+    QTest::addColumn<QString>("completionCode");
+    QTest::addColumn<QString>("invokeCode");
+
+    QTest::newRow("variable_completion") << "a0 = 2\n%INVOKE" << "b = a%CURSOR";
+    QTest::newRow("no_items") << "%INVOKE" << "def func(%CURSOR";
+    QTest::newRow("function") << "%INVOKE" << "foo(%CURSOR";
+    QTest::newRow("deep_function") << "foo(bar(baz(bang([]%INVOKE))))" << ".%CURSOR";
+    QTest::newRow("class_completion") << "class my(): pass\nd = my()\n%INVOKE" << "d.%CURSOR";
+
+    QString many_globals = repeat_distinct("a%X=%X\n", 1000);
+
+    QTest::newRow("function_many_globals") << many_globals + "%INVOKE" << "foo(%CURSOR";
+    QTest::newRow("variable_completion_many_globals") << many_globals + "%INVOKE" << "b = a%CURSOR";
 }
 
 }

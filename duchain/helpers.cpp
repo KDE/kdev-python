@@ -66,6 +66,7 @@ Declaration* Helper::accessAttribute(Declaration* accessed, const QString& attri
         return 0;
     }
     StructureType::Ptr type = accessed->type<StructureType>();
+    DUChainReadLocker lock(DUChain::lock());
     QList<DUContext*> searchContexts = Helper::internalContextsForClass(type, current->topContext());
     foreach ( DUContext* c, searchContexts ) {
         QList< Declaration* > found = c->findLocalDeclarations(KDevelop::Identifier(attribute));

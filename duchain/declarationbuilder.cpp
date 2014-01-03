@@ -1120,7 +1120,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
                 }
                 lock.unlock();
                 DUChainWriteLocker wlock;
-                if ( lastFunctionDeclaration->hasKwarg() ) {
+                if ( lastFunctionDeclaration->hasKwarg() && ! parameters.isEmpty() ) {
                     foreach ( KeywordAst* keyword, node->keywords ) {
                         AbstractType::Ptr param = parameters.last()->abstractType();
                         VariableLengthContainer::Ptr variable = param.cast<VariableLengthContainer>();

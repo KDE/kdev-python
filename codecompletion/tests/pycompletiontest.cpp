@@ -41,6 +41,7 @@ using namespace KDevelop;
 QTEST_MAIN(Python::PyCompletionTest)
 
 Q_DECLARE_METATYPE(QList<Python::RangeInString>)
+Q_DECLARE_METATYPE(KTextEditor::Range)
 
 static int testId = 0;
 static QString basepath = "/tmp/__kdevpythoncompletiontest.dir/";
@@ -516,6 +517,57 @@ void PyCompletionTest::testAddImportCompletion_data()
 
     QTest::newRow("has_entry_when_necessary") << "toplevelmodule%INVOKE" << ".%CURSOR" << 1;
     QTest::newRow("has_no_when_not_necessary") << "toplevelmodule = 3;\ntoplevelmodule%INVOKE" << ".%CURSOR" << 0;
+}
+
+void PyCompletionTest::testFunctionDeclarationCompletion()
+{
+    QFETCH(QString, completionCode);
+    QFETCH(QString, invokeCode);
+    QFETCH(KTextEditor::Range, executeRange);
+    QFETCH(QString, expectedReplacement);
+
+    QString documentCode = completionCode;
+    documentCode.replace("%INVOKE", invokeCode).replace("%CURSOR", "");
+
+    QString expectedCode = completionCode;
+    expectedCode.replace("%INVOKE", expectedReplacement);
+
+    const QList<CompletionTreeItem *> completionItems = invokeCompletionOn(completionCode, invokeCode);
+
+    QVERIFY( ! completionItems.isEmpty() );
+
+    KService::Ptr documentService = KService::serviceByDesktopPath("katepart.desktop");
+    QVERIFY(documentService);
+    KTextEditor::Document* document = documentService->createInstance<KTextEditor::Document>(this);
+    QVERIFY(document);
+    document->setText(documentCode);
+
+    completionItems.first()->execute(document, executeRange);
+    QCOMPARE(document->text(), expectedCode);
+}
+
+void PyCompletionTest::testFunctionDeclarationCompletion_data()
+{
+    QTest::addColumn<QString>("completionCode");
+    QTest::addColumn<QString>("invokeCode");
+    QTest::addColumn<KTextEditor::Range>("executeRange");
+    QTest::addColumn<QString>("expectedReplacement");
+
+    QTest::newRow("func_decl_no_parens") << "def foo():\n  pass\n%INVOKE" << "foo%CURSOR" << KTextEditor::Range(2, 0, 2, 3)
+                                         << "foo()";
+
+    QTest::newRow("func_decl_existing_parens") << "def foo():\n  return 0\nbar = %INVOKE" << "foo%CURSOR()" << KTextEditor::Range(2, 6, 2, 9)
+                                           << "foo()";
+
+    QTest::newRow("decorator_no_parens") << "def mydecorator():\n  pass\nclass Foo:\n  %INVOKE\n  def bar():\n    pass" << "@mydecorator%CURSOR" << KTextEditor::Range(3, 3, 3, 15)
+                                         << "@mydecorator";
+
+    QTest::newRow("class_name_no_constructor_parens") << "class Foo:\n  pass\nbar = %INVOKE" << "Foo%CURSOR" << KTextEditor::Range(2, 6, 2, 9)
+                                                      << "Foo()";
+
+    QTest::newRow("class_name_explicit_constructor_parens") << "class Foo:\n  def __init__(self):\n    pass\nbar = %INVOKE" << "Foo%CURSOR"
+                                                        << KTextEditor::Range(3, 6, 3, 9)
+                                                        << "Foo()";
 }
 
 void PyCompletionTest::testStringFormattingCompletion()

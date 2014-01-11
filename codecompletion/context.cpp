@@ -577,8 +577,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
         PythonDeclarationCompletionItem* item = 0;
         checkDeclaration = Helper::resolveAliasDeclaration(currentDeclaration.data());
         if ( checkDeclaration ) {
-            AbstractType::Ptr type = checkDeclaration->abstractType();
-            if ( type && ( type->whichType() == AbstractType::TypeFunction || type->whichType() == AbstractType::TypeStructure ) ) {
+            if ( checkDeclaration->isFunctionDeclaration()
+                 || (checkDeclaration->internalContext() && checkDeclaration->internalContext()->type() == DUContext::Class) ) {
                 item = new FunctionDeclarationCompletionItem(currentDeclaration, KDevelop::CodeCompletionContext::Ptr(this));
             }
             else {

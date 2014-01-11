@@ -82,6 +82,8 @@ class PyCompletionTest : public QObject
         void testAutoBrackets();
         void testAddImportCompletion();
         void testAddImportCompletion_data();
+        void testFunctionDeclarationCompletion();
+        void testFunctionDeclarationCompletion_data();
         void testStringFormattingCompletion();
         void testStringFormattingCompletion_data();
         void testStringFormatter();

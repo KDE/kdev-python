@@ -72,7 +72,6 @@ int FunctionDeclarationCompletionItem::argumentHintDepth() const
 QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const
 {
     FunctionDeclaration* dec = dynamic_cast<FunctionDeclaration*>(m_declaration.data());
-    DUChainReadLocker lock;
     switch ( role ) {
         case Qt::DisplayRole: {
             if ( ! dec ) {
@@ -81,12 +80,14 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
             if ( index.column() == KDevelop::CodeCompletionModel::Arguments ) {
                 if (FunctionType::Ptr functionType = dec->type<FunctionType>()) {
                     QString ret;
-                    createArgumentList(dec, ret, 0, 0, ( m_depth > 0 ) );
+                    DUChainReadLocker lock;
+                    createArgumentList(dec, ret, 0, 0, false);
                     return ret.replace("__kdevpythondocumentation_builtin_", "");
                 }
             }
             if ( index.column() == KDevelop::CodeCompletionModel::Prefix ) {
                 if ( FunctionType::Ptr type = dec->type<FunctionType>() ) {
+                    DUChainReadLocker lock;
                     return i18n("function") + " -> " + type->returnType()->toString().replace("__kdevpythondocumentation_builtin_", "");
                 }
             }
@@ -102,11 +103,12 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
                 if ( ! dec ) return QVariant();
                 QString ret;
                 QList<QVariant> highlight;
+                DUChainReadLocker lock;
                 if ( atArgument() ) {
-                    createArgumentList(dec, ret, &highlight, atArgument());
+                    createArgumentList(dec, ret, &highlight, atArgument(), false);
                 }
                 else {
-                    createArgumentList(dec, ret, 0);
+                    createArgumentList(dec, ret, 0, 0, false);
                 }
                 return QVariant(highlight);
             }

@@ -238,7 +238,9 @@ QList< DUContext* > Helper::internalContextsForClass(StructureType::Ptr klassTyp
     if ( ! klassType ) {
         return searchContexts;
     }
-    searchContexts << klassType->internalContext(context);
+    if ( klassType->internalContext(context) {
+        searchContexts << klassType->internalContext(context);
+    }
     Declaration* decl = Helper::resolveAliasDeclaration(klassType->declaration(context));
     ClassDeclaration* klass = dynamic_cast<ClassDeclaration*>(decl);
     if ( klass ) {

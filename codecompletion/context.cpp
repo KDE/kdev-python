@@ -157,39 +157,35 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     }
     else if ( m_operation == PythonCodeCompletionContext::FunctionCallCompletion ) {
             // gather additional items to show above the real ones (for parameters, and stuff)
-            QList<Declaration*> calltips;
             KDevPG::MemoryPool pool;
             FunctionDeclaration* functionCalled = 0;
             AstBuilder builder(&pool);
             CodeAst* tmpAst = builder.parse(KUrl(), m_guessTypeOfExpression);
             if ( tmpAst ) {
                 lock.unlock();
-                ExpressionVisitor* v = new ExpressionVisitor(m_duContext.data());
-                v->m_forceGlobalSearching = true;
-                v->visitCode(tmpAst);
+                ExpressionVisitor v(m_duContext.data());
+                v.m_forceGlobalSearching = true;
+                v.visitCode(tmpAst);
                 lock.lock();
-                if ( v->lastDeclaration() ) {
-                    calltips << v->lastDeclaration().data();
-                    functionCalled = dynamic_cast<FunctionDeclaration*>(v->lastDeclaration().data());
+                if ( v.lastDeclaration() ) {
+                    functionCalled = Helper::functionDeclarationForCalledDeclaration(v.lastDeclaration()).first.data();
                 }
                 else {
                     kWarning() << "Did not receive a function declaration from expression visitor! Not offering call tips.";
                     kWarning() << "Tried: " << m_guessTypeOfExpression;
                 }
-                delete v;
             }
             
-            QList<Declaration*> realCalltips;
-            foreach ( Declaration* current, calltips ) {
-                current = Helper::resolveAliasDeclaration(current);
-                if ( ! current->isFunctionDeclaration() ) {
-                    kDebug() << "Not a function declaration: " << current->toString();
-                    continue;
-                }
-                realCalltips.append(current);
+            auto current = Helper::resolveAliasDeclaration(functionCalled);
+            QList<Declaration*> calltips;
+            if ( ! current->isFunctionDeclaration() ) {
+                kDebug() << "Not a function declaration: " << current->toString();
+            }
+            else {
+                calltips << current;
             }
             
-            QList<CompletionTreeItemPointer> calltipItems = declarationListToItemList(realCalltips);
+            auto calltipItems = declarationListToItemList(calltips);
             foreach ( CompletionTreeItemPointer current, calltipItems ) {
                 kDebug() << "Adding calltip item, at argument:" << m_alreadyGivenParametersCount+1; 
                 FunctionDeclarationCompletionItem* item = static_cast<FunctionDeclarationCompletionItem*>(current.data());

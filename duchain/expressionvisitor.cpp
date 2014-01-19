@@ -747,32 +747,27 @@ void ExpressionVisitor::visitCompare(CompareAst* node)
     encounter(AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
 }
 
-AbstractType::Ptr ExpressionVisitor::fromBinaryOperator(AbstractType::Ptr lhs, AbstractType::Ptr rhs, QString op) {
+AbstractType::Ptr ExpressionVisitor::fromBinaryOperator(AbstractType::Ptr lhs, AbstractType::Ptr rhs, const QString& op) {
+    auto operatorReturnType = [&op, this](const AbstractType::Ptr& p) {
+        StructureType::Ptr type = p.cast<StructureType>();
+        if ( ! type ) {
+            return AbstractType::Ptr();
+        }
+        Declaration* func = Helper::accessAttribute(type->declaration(m_ctx->topContext()), op, m_ctx);
+        if ( ! func ) {
+            return AbstractType::Ptr();
+        }
+        auto operatorFunctionType = func->type<FunctionType>();
+        DUChainReadLocker lock;
+        auto object_decl = Helper::getDocumentationFileContext()->findDeclarations(QualifiedIdentifier("object"));
+        if ( ! object_decl.isEmpty() && object_decl.first()->internalContext() == func->context() ) {
+            // if the operator is only declared in object(), do not include its type (which is void).
+            return AbstractType::Ptr();
+        }
+        return operatorFunctionType ? operatorFunctionType->returnType() : AbstractType::Ptr();
+    };
 
-    StructureType::Ptr lhsStructType = lhs.cast<StructureType>();
-    if ( ! lhsStructType ) {
-        return lhs;
-    }
-
-    StructureType::Ptr rhsStructType = rhs.cast<StructureType>();
-    if ( ! rhsStructType ) {
-        return lhs;
-    }
-
-    Declaration* lhsDecl = Helper::accessAttribute(lhsStructType->declaration(m_ctx->topContext()), op, m_ctx);
-    Declaration* rhsDecl = Helper::accessAttribute(rhsStructType->declaration(m_ctx->topContext()), op, m_ctx);
-
-    if ( ! lhsDecl || ! rhsDecl ) {
-        return lhs;
-    }
-    if ( ! lhsDecl->isFunctionDeclaration() || ! rhsDecl->isFunctionDeclaration() ) {
-        return lhs;
-    }
-
-    FunctionType::Ptr lhsFunctionType = lhsDecl->type<FunctionType>();
-    FunctionType::Ptr rhsFunctionType = rhsDecl->type<FunctionType>();
-
-    return Helper::mergeTypes(lhsFunctionType->returnType(), rhsFunctionType->returnType());
+    return Helper::mergeTypes(operatorReturnType(lhs), operatorReturnType(rhs));
 }
 
 void ExpressionVisitor::visitBinaryOperation(Python::BinaryOperationAst* node)
@@ -788,7 +783,8 @@ void ExpressionVisitor::visitBinaryOperation(Python::BinaryOperationAst* node)
         KDevelop::UnsureType::Ptr unsure = lhsVisitor.lastType().cast<KDevelop::UnsureType>();
         const IndexedType* types = unsure->types();
         for( int i = 0; i < unsure->typesSize(); i++ ) {
-            result = Helper::mergeTypes(result, fromBinaryOperator(types[i].abstractType(), rhsVisitor.lastType(), node->methodName()));
+            result = Helper::mergeTypes(result, fromBinaryOperator(types[i].abstractType(),
+                                                                   rhsVisitor.lastType(), node->methodName()));
         }
     } else {
         result = fromBinaryOperator(lhsVisitor.lastType(), rhsVisitor.lastType(), node->methodName());

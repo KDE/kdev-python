@@ -77,6 +77,8 @@ class PyDUChainTest : public QObject
         void testClassVariables();
         void testWarnNewNotCls();
         void testWarnNewNotCls_data();
+        void testBinaryOperatorsUnsure();
+        void testBinaryOperatorsUnsure_data();
         void testClassContextRanges();
         void testVarKWArgs();
         void testMultiFromImport();

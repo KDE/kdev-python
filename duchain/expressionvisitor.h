@@ -141,6 +141,7 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         };
         
         void encounter(AbstractType::Ptr type, EncounterFlags flags = (EncounterFlags) 0);
+        AbstractType::Ptr fromBinaryOperator(AbstractType::Ptr lhs, AbstractType::Ptr rhs, QString op);
         AbstractType::Ptr encounterPreprocess(AbstractType::Ptr type, bool merge = false);
         template<typename T> void encounter(TypePtr<T> type, EncounterFlags flags = (EncounterFlags) 0);
         void encounterDeclaration(Declaration* ptr, bool isAlias = false);

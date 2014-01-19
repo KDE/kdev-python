@@ -155,37 +155,33 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     }
     else if ( m_operation == PythonCodeCompletionContext::FunctionCallCompletion ) {
             // gather additional items to show above the real ones (for parameters, and stuff)
-            QList<Declaration*> calltips;
             KDevPG::MemoryPool pool;
             FunctionDeclaration* functionCalled = 0;
             AstBuilder builder(&pool);
             CodeAst* tmpAst = builder.parse(KUrl(), m_guessTypeOfExpression);
             if ( tmpAst ) {
-                ExpressionVisitor* v = new ExpressionVisitor(m_duContext.data());
-                v->m_forceGlobalSearching = true;
-                v->visitCode(tmpAst);
-                if ( v->lastDeclaration() ) {
-                    calltips << v->lastDeclaration().data();
-                    functionCalled = dynamic_cast<FunctionDeclaration*>(v->lastDeclaration().data());
+                ExpressionVisitor v(m_duContext.data());
+                v.m_forceGlobalSearching = true;
+                v.visitCode(tmpAst);
+                if ( v.lastDeclaration() ) {
+                    functionCalled = Helper::functionDeclarationForCalledDeclaration(v.lastDeclaration()).first.data();
                 }
                 else {
                     kWarning() << "Did not receive a function declaration from expression visitor! Not offering call tips.";
                     kWarning() << "Tried: " << m_guessTypeOfExpression;
                 }
-                delete v;
             }
             
-            QList<Declaration*> realCalltips;
-            foreach ( Declaration* current, calltips ) {
-                current = Helper::resolveAliasDeclaration(current);
-                if ( ! current->isFunctionDeclaration() ) {
-                    kDebug() << "Not a function declaration: " << current->toString();
-                    continue;
-                }
-                realCalltips.append(current);
+            auto current = Helper::resolveAliasDeclaration(functionCalled);
+            QList<Declaration*> calltips;
+            if ( ! current || ! current->isFunctionDeclaration() ) {
+                kDebug() << "Not a function declaration: " << current->toString();
+            }
+            else {
+                calltips << current;
             }
             
-            QList<CompletionTreeItemPointer> calltipItems = declarationListToItemList(realCalltips);
+            auto calltipItems = declarationListToItemList(calltips);
             foreach ( CompletionTreeItemPointer current, calltipItems ) {
                 kDebug() << "Adding calltip item, at argument:" << m_alreadyGivenParametersCount+1; 
                 FunctionDeclarationCompletionItem* item = static_cast<FunctionDeclarationCompletionItem*>(current.data());
@@ -579,8 +575,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
         PythonDeclarationCompletionItem* item = 0;
         checkDeclaration = Helper::resolveAliasDeclaration(currentDeclaration.data());
         if ( checkDeclaration ) {
-            AbstractType::Ptr type = checkDeclaration->abstractType();
-            if ( type && ( type->whichType() == AbstractType::TypeFunction || type->whichType() == AbstractType::TypeStructure ) ) {
+            if ( checkDeclaration->isFunctionDeclaration()
+                 || (checkDeclaration->internalContext() && checkDeclaration->internalContext()->type() == DUContext::Class) ) {
                 item = new FunctionDeclarationCompletionItem(currentDeclaration, KDevelop::CodeCompletionContext::Ptr(this));
             }
             else {

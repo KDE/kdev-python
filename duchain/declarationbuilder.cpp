@@ -1092,7 +1092,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
 
     lock.unlock();
     DUChainWriteLocker wlock;
-    if ( lastFunctionDeclaration->kwarg() < 0 ) {
+    if ( lastFunctionDeclaration->kwarg() < 0 || parameters.isEmpty() ) {
         // no kwarg, stop here.
         return;
     }
@@ -1587,10 +1587,19 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         dec->internalContext()->removeImportedParentContext(eventualParentDeclaration->internalContext());
     }
     
-    if ( ! type->returnType() ) {
-        type->setReturnType(AbstractType::Ptr(new IntegralType(IntegralType::TypeVoid)));
+    {
+        static IndexedString constructorName("__init__");
+        DUChainWriteLocker lock(DUChain::lock());
+        if ( dec->identifier().identifier() == constructorName ) {
+            // the constructor returns an instance of the object,
+            // nice to display it in tooltips etc.
+            type->setReturnType(currentType<AbstractType>());
+        }
+        if ( ! type->returnType() ) {
+            type->setReturnType(AbstractType::Ptr(new IntegralType(IntegralType::TypeVoid)));
+        }
+        dec->setType(type);
     }
-    dec->setType(type);
 
     if ( ! isStatic ) {
         DUContext* args = DUChainUtils::getArgumentContext(dec);

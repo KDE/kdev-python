@@ -32,7 +32,7 @@ using namespace KDevelop;
 
 namespace Python {
 
-class PdbCommand;
+struct PdbCommand;
     
 class DebugSession : public KDevelop::IDebugSession
 {

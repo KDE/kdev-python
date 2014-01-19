@@ -1524,7 +1524,13 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     }
     
     {
+        static IndexedString constructorName("__init__");
         DUChainWriteLocker lock(DUChain::lock());
+        if ( dec->identifier().identifier() == constructorName ) {
+            // the constructor returns an instance of the object,
+            // nice to display it in tooltips etc.
+            type->setReturnType(currentType<AbstractType>());
+        }
         if ( ! type->returnType() ) {
             type->setReturnType(AbstractType::Ptr(new IntegralType(IntegralType::TypeVoid)));
         }

@@ -442,10 +442,10 @@ void PyDUChainTest::testBinaryOperatorsUnsure_data()
     QTest::addColumn<QString>("code");
     QTest::addColumn<QString>("type");
 
-    QTest::newRow("check_unsure_type_0") << "class c():\n def __mul__(self, other):\n  return int();\nx = c();\nx = 3.5;\ny = 3;\ncheckme = x * y;" << "unsure (int, float)";
+    QTest::newRow("check_unsure_type_0") << "class c():\n def __mul__(self, other):\n  return int();\nx = c();\nx = 3.5;\ny = 3;\ncheckme = x * y;" << "unsure (float, int)";
     QTest::newRow("check_unsure_type_1") << "class c():\n def __mul__(self, other):\n  return int();\nx = c();\nx = 3;\ny = 3;\ncheckme = x * y;" << "int";
     QTest::newRow("check_unsure_type_2") << "class c():\n pass;\nx = c();\nx = 3;\ny = 3;\ncheckme = x * y;" << "int";
-    QTest::newRow("check_unsure_type_3") << "class c():\n pass;\nclass d():\n pass;\nx = c();\nx = d();\ny = 3;\ncheckme = x * y;" << "unsure (void, int)";
+    QTest::newRow("check_unsure_type_3") << "class c():\n pass;\nclass d():\n pass;\nx = c();\nx = d();\ny = 3;\ncheckme = x * y;" << "int";
 }
 
 

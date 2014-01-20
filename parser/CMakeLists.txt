@@ -21,7 +21,7 @@ set(kdev4pythonparser_LIBRARIES
 )
 
 kde4_add_library( kdev4pythonparser SHARED ${parser_SRCS} ${parser_STAT_SRCS} )
-target_link_libraries(kdev4pythonparser
+target_link_libraries(kdev4pythonparser LINK_PRIVATE
     ${KDE4_KDECORE_LIBS}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${QT_QTCORE_LIBRARY}

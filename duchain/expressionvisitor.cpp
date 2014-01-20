@@ -747,25 +747,52 @@ void ExpressionVisitor::visitCompare(CompareAst* node)
     encounter(AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
 }
 
+AbstractType::Ptr ExpressionVisitor::fromBinaryOperator(AbstractType::Ptr lhs, AbstractType::Ptr rhs, const QString& op) {
+    auto operatorReturnType = [&op, this](const AbstractType::Ptr& p) {
+        StructureType::Ptr type = p.cast<StructureType>();
+        if ( ! type ) {
+            return AbstractType::Ptr();
+        }
+        Declaration* func = Helper::accessAttribute(type->declaration(m_ctx->topContext()), op, m_ctx);
+        if ( ! func ) {
+            return AbstractType::Ptr();
+        }
+        auto operatorFunctionType = func->type<FunctionType>();
+        DUChainReadLocker lock;
+        auto object_decl = Helper::getDocumentationFileContext()->findDeclarations(QualifiedIdentifier("object"));
+        if ( ! object_decl.isEmpty() && object_decl.first()->internalContext() == func->context() ) {
+            // if the operator is only declared in object(), do not include its type (which is void).
+            return AbstractType::Ptr();
+        }
+        return operatorFunctionType ? operatorFunctionType->returnType() : AbstractType::Ptr();
+    };
+
+    return Helper::mergeTypes(operatorReturnType(lhs), operatorReturnType(rhs));
+}
+
 void ExpressionVisitor::visitBinaryOperation(Python::BinaryOperationAst* node)
 {
-    ExpressionVisitor v(this);
-    v.visitNode(node->lhs);
+    ExpressionVisitor lhsVisitor(this);
+    ExpressionVisitor rhsVisitor(this);
+    AbstractType::Ptr result;
 
-    if ( ! v.lastDeclaration() ) {
-        return unknownTypeEncountered();
-    }
+    lhsVisitor.visitNode(node->lhs);
+    rhsVisitor.visitNode(node->rhs);
 
-    DUChainReadLocker lock;
-    Declaration* found = Helper::accessAttribute(v.lastDeclaration().data(), node->methodName(), m_ctx);
-    
-    if ( found && found->isFunctionDeclaration() ) {
-        if ( FunctionType::Ptr functionType = found->type<FunctionType>() ) {
-            encounterDeclaration(found);
-            return encounter(functionType->returnType());
+    if ( lhsVisitor.lastType() && lhsVisitor.lastType()->whichType() == AbstractType::TypeUnsure ) {
+        KDevelop::UnsureType::Ptr unsure = lhsVisitor.lastType().cast<KDevelop::UnsureType>();
+        const IndexedType* types = unsure->types();
+        for( int i = 0; i < unsure->typesSize(); i++ ) {
+            result = Helper::mergeTypes(result, fromBinaryOperator(types[i].abstractType(),
+                                                                   rhsVisitor.lastType(), node->methodName()));
         }
+    } else {
+        result = fromBinaryOperator(lhsVisitor.lastType(), rhsVisitor.lastType(), node->methodName());
     }
-    return unknownTypeEncountered();
+    if ( ! Helper::isUsefulType(result) ) {
+        result = Helper::mergeTypes(lhsVisitor.lastType(), rhsVisitor.lastType());
+    }
+    return encounter(result);
 }
 
 void ExpressionVisitor::visitUnaryOperation(Python::UnaryOperationAst* node)

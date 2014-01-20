@@ -1108,7 +1108,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
                 }
                 lock.unlock();
                 DUChainWriteLocker wlock;
-                if ( lastFunctionDeclaration->hasKwarg() ) {
+                if ( lastFunctionDeclaration->hasKwarg() && ! parameters.isEmpty() ) {
                     foreach ( KeywordAst* keyword, node->keywords ) {
                         AbstractType::Ptr param = parameters.last()->abstractType();
                         VariableLengthContainer::Ptr variable = param.cast<VariableLengthContainer>();
@@ -1516,7 +1516,13 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     }
     
     {
+        static IndexedString constructorName("__init__");
         DUChainWriteLocker lock(DUChain::lock());
+        if ( dec->identifier().identifier() == constructorName ) {
+            // the constructor returns an instance of the object,
+            // nice to display it in tooltips etc.
+            type->setReturnType(currentType<AbstractType>());
+        }
         if ( ! type->returnType() ) {
             type->setReturnType(AbstractType::Ptr(new IntegralType(IntegralType::TypeVoid)));
         }

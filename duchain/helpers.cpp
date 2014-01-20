@@ -114,6 +114,7 @@ Declaration* Helper::accessAttribute(Declaration* accessed, const QString& attri
         return 0;
     }
     StructureType::Ptr type = accessed->type<StructureType>();
+    DUChainReadLocker lock(DUChain::lock());
     QList<DUContext*> searchContexts = Helper::internalContextsForClass(type, current->topContext());
     foreach ( DUContext* c, searchContexts ) {
         QList< Declaration* > found = c->findLocalDeclarations(KDevelop::Identifier(attribute));
@@ -285,7 +286,9 @@ QList< DUContext* > Helper::internalContextsForClass(StructureType::Ptr klassTyp
     if ( ! klassType ) {
         return searchContexts;
     }
-    searchContexts << klassType->internalContext(context);
+    if ( auto c = klassType->internalContext(context) ) {
+        searchContexts << c;
+    }
     Declaration* decl = Helper::resolveAliasDeclaration(klassType->declaration(context));
     ClassDeclaration* klass = dynamic_cast<ClassDeclaration*>(decl);
     if ( klass ) {

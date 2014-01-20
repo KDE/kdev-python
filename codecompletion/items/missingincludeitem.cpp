@@ -30,7 +30,7 @@ MissingIncludeItem::MissingIncludeItem(const QString& insertText, const QString&
 
 }
 
-QVariant MissingIncludeItem::data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const
+QVariant MissingIncludeItem::data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* /*model*/) const
 {
     switch ( role ) {
         case Qt::DisplayRole:

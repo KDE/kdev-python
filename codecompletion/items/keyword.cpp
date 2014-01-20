@@ -31,8 +31,8 @@ namespace Python {
 
 KeywordItem::KeywordItem(KDevelop::CodeCompletionContext::Ptr context, QString keyword, QString descr, Flags flags)
     : NormalDeclarationCompletionItem (DeclarationPointer(), context, 0)
-    , m_flags(flags)
     , m_description(descr)
+    , m_flags(flags)
 {
     m_keyword = keyword;
 }

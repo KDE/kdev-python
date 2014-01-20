@@ -72,7 +72,6 @@ int FunctionDeclarationCompletionItem::argumentHintDepth() const
 QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const
 {
     FunctionDeclaration* dec = dynamic_cast<FunctionDeclaration*>(m_declaration.data());
-    DUChainReadLocker lock;
     switch ( role ) {
         case Qt::DisplayRole: {
             if ( ! dec ) {
@@ -81,12 +80,14 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
             if ( index.column() == KDevelop::CodeCompletionModel::Arguments ) {
                 if (FunctionType::Ptr functionType = dec->type<FunctionType>()) {
                     QString ret;
-                    createArgumentList(dec, ret, 0, 0, ( m_depth > 0 ) );
+                    DUChainReadLocker lock;
+                    createArgumentList(dec, ret, 0, 0, false);
                     return ret.replace("__kdevpythondocumentation_builtin_", "");
                 }
             }
             if ( index.column() == KDevelop::CodeCompletionModel::Prefix ) {
                 if ( FunctionType::Ptr type = dec->type<FunctionType>() ) {
+                    DUChainReadLocker lock;
                     return i18n("function") + " -> " + type->returnType()->toString().replace("__kdevpythondocumentation_builtin_", "");
                 }
             }
@@ -102,11 +103,12 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
                 if ( ! dec ) return QVariant();
                 QString ret;
                 QList<QVariant> highlight;
+                DUChainReadLocker lock;
                 if ( atArgument() ) {
-                    createArgumentList(dec, ret, &highlight, atArgument());
+                    createArgumentList(dec, ret, &highlight, atArgument(), false);
                 }
                 else {
-                    createArgumentList(dec, ret, 0);
+                    createArgumentList(dec, ret, 0, 0, false);
                 }
                 return QVariant(highlight);
             }
@@ -132,23 +134,29 @@ void FunctionDeclarationCompletionItem::setIsImportItem(bool isImportItem)
 void FunctionDeclarationCompletionItem::executed(KTextEditor::Document* document, const KTextEditor::Range& word)
 {
     kDebug() << "FunctionDeclarationCompletionItem executed";
-    FunctionDeclaration::Ptr fdecl(dynamic_cast<FunctionDeclaration*>(Helper::resolveAliasDeclaration(declaration().data())));
-    if ( ! fdecl ) {
+    DeclarationPointer resolvedDecl(Helper::resolveAliasDeclaration(declaration().data()));
+    DUChainReadLocker lock;
+    QPair<FunctionDeclarationPointer, bool> fdecl = Helper::functionDeclarationForCalledDeclaration(resolvedDecl);
+    lock.unlock();
+    if ( ! fdecl.first && (! resolvedDecl || ! resolvedDecl->abstractType()
+                           || resolvedDecl->abstractType()->whichType() != AbstractType::TypeStructure) ) {
         kError() << "ERROR: could not get declaration data, not executing completion item!";
         return;
     }
     QString suffix = "()";
-    KTextEditor::Range checkSuffix(word.end().line(), word.end().column(), word.end().line(), word.end().column() + 2);
-    if ( m_isImportItem || document->text(checkSuffix) == "()"
-         || Helper::findDecoratorByName(fdecl.data(), QLatin1String("property")) )
+    KTextEditor::Range checkPrefix(word.start().line(), 0, word.start().line(), word.start().column());
+    KTextEditor::Range checkSuffix(word.end().line(), word.end().column(), word.end().line(), document->lineLength(word.end().line()));
+    if ( m_isImportItem || document->text(checkSuffix).trimmed().startsWith('(')
+         || document->text(checkPrefix).trimmed().endsWith('@')
+         || (fdecl.first && Helper::findDecoratorByName(fdecl.first.data(), QLatin1String("property"))) )
     {
         // don't insert brackets if they're already there,
-        // or if the item is an import item.
+        // the item is a decorator, or if it's an import item.
         suffix = "";
     }
     // place cursor behind bracktes by default
     int skip = 2;
-    if ( fdecl->type<FunctionType>()->arguments().length() != 0 ) {
+    if ( fdecl.first && fdecl.first->type<FunctionType>()->arguments().length() != 0 ) {
         // place cursor in brackets if there's parameters
         skip = 1;
     }

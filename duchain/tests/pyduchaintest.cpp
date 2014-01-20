@@ -458,6 +458,32 @@ void PyDUChainTest::testWarnNewNotCls_data()
     QTest::newRow("check_first_arg_class_self_0") << "class c():\n def test(self, masik):\n  pass" << 0;
 }
 
+void PyDUChainTest::testBinaryOperatorsUnsure()
+{
+    QFETCH(QString, code);
+    QFETCH(QString, type);
+
+    ReferencedTopDUContext ctx = parse(code);
+    DUChainWriteLocker lock;
+    QList<Declaration*> ds = ctx->findDeclarations(QualifiedIdentifier("checkme"));
+    QVERIFY(!ds.isEmpty());
+    Declaration* d = ds.first();
+    QVERIFY(d);
+    QVERIFY(d->abstractType());
+    QCOMPARE(d->abstractType()->toString(), type);
+}
+
+void PyDUChainTest::testBinaryOperatorsUnsure_data()
+{
+    QTest::addColumn<QString>("code");
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("check_unsure_type_0") << "class c():\n def __mul__(self, other):\n  return int();\nx = c();\nx = 3.5;\ny = 3;\ncheckme = x * y;" << "unsure (float, int)";
+    QTest::newRow("check_unsure_type_1") << "class c():\n def __mul__(self, other):\n  return int();\nx = c();\nx = 3;\ny = 3;\ncheckme = x * y;" << "int";
+    QTest::newRow("check_unsure_type_2") << "class c():\n pass;\nx = c();\nx = 3;\ny = 3;\ncheckme = x * y;" << "int";
+    QTest::newRow("check_unsure_type_3") << "class c():\n pass;\nclass d():\n pass;\nx = c();\nx = d();\ny = 3;\ncheckme = x * y;" << "int";
+}
+
 
 void PyDUChainTest::testFlickering()
 {

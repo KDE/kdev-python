@@ -32,7 +32,7 @@ set(duchain_SRCS
 
 
 kde4_add_library( kdev4pythonduchain SHARED ${duchain_SRCS} )
-target_link_libraries( kdev4pythonduchain
+target_link_libraries( kdev4pythonduchain LINK_PRIVATE
     ${KDE4_KDECORE_LIBS}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${KDEVPLATFORM_PROJECT_LIBRARIES}

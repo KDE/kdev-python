@@ -29,6 +29,13 @@ using namespace KDevelop;
 
 namespace Python {
 
+struct CompletionParameters {
+    DUContextPointer contextAtCursor;
+    QString snip;
+    QString remaining;
+    CursorInRevision cursorAt;
+};
+
 class PyCompletionTest : public QObject
 {
     Q_OBJECT
@@ -37,6 +44,9 @@ class PyCompletionTest : public QObject
         void initShell();
         
         const QList<CompletionTreeItem*> invokeCompletionOn(const QString& initCode, const QString& invokeCode);
+        const CompletionParameters prepareCompletion(const QString& initCode, const QString& invokeCode);
+        const QList<CompletionTreeItem*> runCompletion(const CompletionParameters data);
+
         bool containsItemForDeclarationNamed(const QList< CompletionTreeItem* > items, QString itemName);
         // convenience function
         bool declarationInCompletionList(const QString& initCode, const QString& invokeCode, QString itemName);
@@ -72,12 +82,18 @@ class PyCompletionTest : public QObject
         void testAutoBrackets();
         void testAddImportCompletion();
         void testAddImportCompletion_data();
+        void testFunctionDeclarationCompletion();
+        void testFunctionDeclarationCompletion_data();
         void testStringFormattingCompletion();
         void testStringFormattingCompletion_data();
         void testStringFormatter();
         void testStringFormatter_data();
+        // benchmarks
+        void completionBenchTest();
+        void completionBenchTest_data();
     private:
         QList<CompletionTreeItemPointer> m_ptrs;
+
 };
 
 }

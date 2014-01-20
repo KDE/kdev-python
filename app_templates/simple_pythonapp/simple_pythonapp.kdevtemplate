@@ -50,4 +50,4 @@ Comment[uk]=Створення початкової файлової струк�
 Comment[x-test]=xxGenerate filestructure to start a Python applicationxx
 Comment[zh_CN]=生成文件结构以开发 Python 应用程序
 Comment[zh_TW]=開始寫一個 Python 應用程式的一般檔案結構
-ShowFilesAfterGeneration=%{dest}/%{APPNAMELC}.php
+ShowFilesAfterGeneration=%{dest}/%{APPNAMELC}.py

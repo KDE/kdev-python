@@ -127,26 +127,15 @@ Declaration* Helper::accessAttribute(Declaration* accessed, const QString& attri
 
 AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* current)
 {
-    if ( type ) {
-        kDebug() << type->toString();
-    }
-    else {
-        kDebug();
-    }
     UnsureType::Ptr result(new UnsureType());
     unsigned short maxHints = 7;
     if ( HintedType::Ptr hinted = type.cast<HintedType>() ) {
         if ( hinted->isValid(current) && isUsefulType(hinted.cast<AbstractType>()) ) {
-            kDebug() << "Adding type hint: " << hinted->toString();
             result->addType(type->indexed());
-        }
-        else {
-            kDebug() << "Discarding type hint: " << hinted->toString();
         }
     }
     else if ( UnsureType::Ptr unsure = type.cast<UnsureType>() ) {
         int len = unsure->typesSize();
-        kDebug() << "Extracting hints from " << len << "types";
         for ( int i = 0; i < len and i < maxHints; i++ ) {
             if ( HintedType::Ptr hinted = unsure->types()[i].abstractType().cast<HintedType>() ) {
                 if ( hinted->isValid(current) ) {
@@ -217,17 +206,12 @@ QPair<FunctionDeclarationPointer, bool> Helper::functionDeclarationForCalledDecl
     DeclarationPointer lastCalledDeclaration = ptr;
     if ( lastCalledDeclaration and not lastCalledDeclaration->isFunctionDeclaration() )
     {
-        kDebug() << "No function declaration, looking for class constructor";
-        kDebug() << "Class declaration: " << lastCalledDeclaration;
         if ( lastCalledDeclaration && lastCalledDeclaration->internalContext() ) {
-            kDebug() << "ok, looking for constructor";
             QList<Declaration*> constructors = lastCalledDeclaration->internalContext()
                                                ->findDeclarations(KDevelop::Identifier("__init__"));
-            kDebug() << "Found constructors: " << constructors;
             if ( ! constructors.isEmpty() ) {
                 lastCalledDeclaration = dynamic_cast<FunctionDeclaration*>(constructors.first());
                 isConstructor = true;
-                kDebug() << "new function declaration: " << lastCalledDeclaration;
             }
         }
     }

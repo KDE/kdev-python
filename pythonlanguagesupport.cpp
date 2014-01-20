@@ -39,6 +39,7 @@
 #include <interfaces/iprojectcontroller.h>
 #include <interfaces/iproject.h>
 #include <interfaces/isession.h>
+#include <language/interfaces/editorcontext.h>
 #include <language/duchain/duchain.h>
 #include <language/duchain/duchainlock.h>
 #include <language/codecompletion/codecompletion.h>
@@ -68,7 +69,12 @@ LanguageSupport* LanguageSupport::m_self = 0;
 KDevelop::ContextMenuExtension LanguageSupport::contextMenuExtension(KDevelop::Context* context)
 {
     ContextMenuExtension cm;
-    SimpleRefactoring::self().doContextMenu(cm, context);
+    EditorContext *ec = dynamic_cast<KDevelop::EditorContext *>(context);
+
+    if (ec && ICore::self()->languageController()->languagesForUrl(ec->url()).contains(language())) {
+        // It's a Python file, let's add our context menu.
+        SimpleRefactoring::self().doContextMenu(cm, context);
+    }
     return cm;
 }
 

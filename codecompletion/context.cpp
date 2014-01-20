@@ -174,10 +174,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             
             auto current = Helper::resolveAliasDeclaration(functionCalled);
             QList<Declaration*> calltips;
-            if ( ! current || ! current->isFunctionDeclaration() ) {
-                kDebug() << "Not a function declaration: " << current->toString();
-            }
-            else {
+            if ( current && current->isFunctionDeclaration() ) {
                 calltips << current;
             }
             

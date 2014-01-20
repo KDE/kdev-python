@@ -438,11 +438,12 @@ QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
     
     searchPaths.append(cachedSearchPaths);
     
-    // search in the current packages
-    searchPaths.append(KUrl(workingOnDocument.directory()));
+    const QString& currentDir = workingOnDocument.directory(KUrl::IgnoreTrailingSlash);
+    if ( ! currentDir.isEmpty() ) {
+        // search in the current packages
+        searchPaths.append(KUrl(currentDir));
+    }
     
-    kDebug() << "Search paths: " << searchPaths;
-    kDebug() << workingOnDocument;
     return searchPaths;
 }
 

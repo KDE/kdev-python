@@ -30,6 +30,7 @@
 #include <interfaces/icore.h>
 #include <interfaces/idocumentcontroller.h>
 #include <interfaces/ilanguagecontroller.h>
+#include <interfaces/iprojectcontroller.h>
 #include <parser/parsesession.h>
 
 #include <KTextEditor/Document>
@@ -151,6 +152,10 @@ void TypeCorrection::accepted()
     }
 
     KUrl correctionFile = Helper::getLocalCorrectionFile(decl.data()->topContext()->url().toUrl());
+    if ( correctionFile.isEmpty() ) {
+        KMessageBox::error(0, i18n("Sorry, cannot create hints for files which are not part of a project."));
+        return;
+    }
     CorrectionFileGenerator generator(correctionFile.path());
 
     CorrectionFileGenerator::HintType hintType = dialog->hintType();
@@ -158,13 +163,16 @@ void TypeCorrection::accepted()
     generator.addHint(m_ui->typeText->text(), m_ui->importsText->text().split(',', QString::SkipEmptyParts), decl.data(), hintType);
 
     kDebug() << "Forcing a reparse on " << decl.data()->topContext()->url();
-    ICore::self()->languageController()->backgroundParser()->addDocument(IndexedString(decl.data()->topContext()->url()), TopDUContext::ForceUpdate);
-    ICore::self()->languageController()->backgroundParser()->addDocument(IndexedString(correctionFile), TopDUContext::ForceUpdate);
+    ICore::self()->languageController()->backgroundParser()->addDocument(IndexedString(decl.data()->topContext()->url()),
+                                                                         TopDUContext::ForceUpdate);
+    ICore::self()->languageController()->backgroundParser()->addDocument(IndexedString(correctionFile),
+                                                                         TopDUContext::ForceUpdate);
 }
 
 CorrectionFileGenerator::CorrectionFileGenerator(const QString &filePath)
     : m_file(filePath)
 {
+    Q_ASSERT(! filePath.isEmpty());
     kDebug() << "Correction file path: " << filePath;
 
     QFileInfo info(m_file);
@@ -180,49 +188,51 @@ CorrectionFileGenerator::CorrectionFileGenerator(const QString &filePath)
     m_fileIndents.reset(new FileIndentInformation(m_code));
 }
 
-void CorrectionFileGenerator::addHint(const QString &typeCode, const QStringList &modules, Declaration *forDeclaration, CorrectionFileGenerator::HintType hintType)
+void CorrectionFileGenerator::addHint(const QString &typeCode, const QStringList &modules, Declaration *forDeclaration,
+                                      CorrectionFileGenerator::HintType hintType)
 {
     if ( ! forDeclaration || ! forDeclaration->context() ) {
         kWarning() << "Declaration does not have context!" << (forDeclaration ? forDeclaration->toString() : "");
         return;
     }
 
-    // TODO the function context has no owner on the first parse, so just skip this case until it's fixed...
-    if ( forDeclaration->context()->type() == DUContext::Function
-         && ! forDeclaration->context()->owner() ) {
-        return;
+    DUContext* context = forDeclaration->context();
+    if ( context->type() == DUContext::Function ) {
+        auto otherImporters = context->importers();
+        if ( otherImporters.isEmpty() ) {
+            return;
+        }
+        context = otherImporters.first();
     }
 
     // We're in a class if the context of the declaration is a Class or if its
     // parent context is a class. This is because a function body has a context
     // of type Other.
-    bool inClass = forDeclaration->context()->type() == DUContext::Class
-            || (forDeclaration->context()->parentContext()
-                && forDeclaration->context()->parentContext()->type() == DUContext::Class);
+    bool inClass = context->type() == DUContext::Class
+            || (context->parentContext() && context->parentContext()->type() == DUContext::Class);
 
     // If the declaration is part of the function's arguments or it's parent
     // context is one of a function.
-    bool inFunction = forDeclaration->context()->type() == DUContext::Function
-            || (forDeclaration->context()->owner()
-                && forDeclaration->context()->owner()->abstractType()->whichType() == AbstractType::TypeFunction);
+    bool inFunction = context->type() == DUContext::Function
+            || (context->owner() && context->owner()->abstractType()->whichType() == AbstractType::TypeFunction);
 
     kDebug() << "Are we in a class: " << inClass;
     kDebug() << "Are we in a function: " << inFunction;
 
     QString enclosingClassIdentifier, enclosingFunctionIdentifier;
 
-    if ( forDeclaration->context()->owner() ) {
+    if ( context->owner() ) {
         if ( inClass && inFunction ) {
-            Declaration *functionDeclaration = forDeclaration->context()->owner();
+            Declaration *functionDeclaration = context->owner();
 
             enclosingClassIdentifier = functionDeclaration->context()->owner()->identifier().identifier().str();
             enclosingFunctionIdentifier = functionDeclaration->identifier().identifier().str();
         }
         else if ( inClass ) {
-            enclosingClassIdentifier = forDeclaration->context()->owner()->identifier().identifier().str();
+            enclosingClassIdentifier = context->owner()->identifier().identifier().str();
         }
         else if ( inFunction ) {
-            enclosingFunctionIdentifier = forDeclaration->context()->owner()->identifier().identifier().str();
+            enclosingFunctionIdentifier = context->owner()->identifier().identifier().str();
         }
     }
 
@@ -230,8 +240,6 @@ void CorrectionFileGenerator::addHint(const QString &typeCode, const QStringList
     kDebug() << "Enclosing function: " << enclosingFunctionIdentifier;
 
     QString declarationIdentifier = forDeclaration->identifier().identifier().str();
-
-    QStringList newCode;
 
     bool foundClassDeclaration = false;
     bool foundFunctionDeclaration = false;
@@ -267,10 +275,11 @@ void CorrectionFileGenerator::addHint(const QString &typeCode, const QStringList
 
     int indentsForNextStatement = m_fileIndents->indentForLine(line);
 
-    if ( foundClassDeclaration || foundFunctionDeclaration ) {
+    if ( foundClassDeclaration ) {
         indentsForNextStatement += DEFAULT_INDENT_LEVEL;
     }
 
+    QStringList newCode;
     if ( inClass ) {
         if ( ! foundClassDeclaration ) {
             QString classDeclaration = createStructurePart(enclosingClassIdentifier, ClassType);
@@ -303,6 +312,9 @@ void CorrectionFileGenerator::addHint(const QString &typeCode, const QStringList
         }
     }
 
+    if ( foundFunctionDeclaration && ! foundClassDeclaration ) {
+        indentsForNextStatement += DEFAULT_INDENT_LEVEL;
+    }
     QString hintCode;
     if ( hintType == FunctionReturnHint ) {
         hintCode = "returns = " + typeCode;
@@ -466,7 +478,8 @@ bool CorrectionFileGenerator::checkForValidSyntax()
     return parsed.second && parseSession.m_problems.isEmpty();
 }
 
-CorrectionAssistant::CorrectionAssistant(IndexedDeclaration declaration, CorrectionFileGenerator::HintType hintType, QWidget *parent)
+CorrectionAssistant::CorrectionAssistant(IndexedDeclaration declaration, CorrectionFileGenerator::HintType hintType,
+                                         QWidget *parent)
     : KDialog(parent),
       m_declaration(declaration),
       m_hintType(hintType)

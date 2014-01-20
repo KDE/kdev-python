@@ -56,12 +56,17 @@ public:
     static QList<KUrl> getSearchPaths(KUrl workingOnDocument);
     static QStringList dataDirs;
     static QString documentationFile;
+    static QStringList correctionFileDirs;
+    static QString localCorrectionFileDir;
     static DUChainPointer<TopDUContext> documentationFileContext;
     
     static QStringList getDataDirs();
     static QString getDocumentationFile();
     static ReferencedTopDUContext getDocumentationFileContext();
-    
+
+    static KUrl getCorrectionFile(KUrl document);
+    static KUrl getLocalCorrectionFile(KUrl document);
+
     static QList<KUrl> cachedSearchPaths;
     
     static AbstractType::Ptr extractTypeHints(AbstractType::Ptr type, TopDUContext* current);
@@ -103,6 +108,10 @@ public:
         }
         return types;
     }
+
+    static void scheduleDependency(const IndexedString& dependency, int betterThanPriority);
+
+    static KDevelop::IndexedDeclaration declarationUnderCursor(bool allowUse = true);
 
     /**
      * @brief Finds whether the specified called declaration is a function declaration, and, if not, checks for a class declaration; then returns the constructor

@@ -27,13 +27,19 @@
 
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/types/integraltype.h>
+#include <language/duchain/duchainutils.h>
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/duchain.h>
 #include <language/duchain/classdeclaration.h>
 #include <language/duchain/aliasdeclaration.h>
+#include <language/backgroundparser/backgroundparser.h>
 #include <interfaces/iproject.h>
 #include <interfaces/icore.h>
 #include <interfaces/iprojectcontroller.h>
+#include <interfaces/ilanguagecontroller.h>
+#include <interfaces/idocumentcontroller.h>
+
+#include <KTextEditor/View>
 
 #include "ast.h"
 #include "types/hintedtype.h"
@@ -50,6 +56,8 @@ QList<KUrl> Helper::cachedSearchPaths;
 QStringList Helper::dataDirs;
 QString Helper::documentationFile;
 DUChainPointer<TopDUContext> Helper::documentationFileContext = DUChainPointer<TopDUContext>(0);
+QStringList Helper::correctionFileDirs;
+QString Helper::localCorrectionFileDir;
 
 AbstractType::Ptr Helper::resolveType(AbstractType::Ptr type)
 {
@@ -58,6 +66,46 @@ AbstractType::Ptr Helper::resolveType(AbstractType::Ptr type)
     }
     else
         return type;
+}
+
+void Helper::scheduleDependency(const IndexedString& dependency, int betterThanPriority)
+{
+    BackgroundParser* bgparser = KDevelop::ICore::self()->languageController()->backgroundParser();
+    bool needsReschedule = true;
+    if ( bgparser->isQueued(dependency) ) {
+        const ParseJob* job = bgparser->parseJobForDocument(dependency);
+        int previousPriority = BackgroundParser::WorstPriority;
+        if ( job ) {
+            previousPriority = job->parsePriority();
+        }
+        // if it's less important, reschedule it
+        if ( job && previousPriority > betterThanPriority - 1 ) {
+            bgparser->removeDocument(dependency);
+        }
+        else if ( job ) {
+            needsReschedule = false;
+        }
+    }
+    if ( needsReschedule ) {
+        bgparser->addDocument(dependency, TopDUContext::ForceUpdate, betterThanPriority - 1,
+                              0, ParseJob::FullSequentialProcessing);
+    }
+}
+
+IndexedDeclaration Helper::declarationUnderCursor(bool allowUse)
+{
+    KDevelop::IDocument* doc = ICore::self()->documentController()->activeDocument();
+    if ( doc && doc->textDocument() && doc->textDocument()->activeView() ) {
+        DUChainReadLocker lock;
+        if ( allowUse ) {
+            return DUChainUtils::itemUnderCursor(doc->url(), SimpleCursor(doc->textDocument()->activeView()->cursorPosition()));
+        }
+        else {
+            return DUChainUtils::declarationInLine(SimpleCursor(doc->textDocument()->activeView()->cursorPosition()), DUChainUtils::standardContextForUrl(doc->url()));
+        }
+    }
+
+    return KDevelop::IndexedDeclaration();
 }
 
 Declaration* Helper::accessAttribute(Declaration* accessed, const QString& attribute, DUContext* current)
@@ -79,26 +127,15 @@ Declaration* Helper::accessAttribute(Declaration* accessed, const QString& attri
 
 AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* current)
 {
-    if ( type ) {
-        kDebug() << type->toString();
-    }
-    else {
-        kDebug();
-    }
     UnsureType::Ptr result(new UnsureType());
     unsigned short maxHints = 7;
     if ( HintedType::Ptr hinted = type.cast<HintedType>() ) {
         if ( hinted->isValid(current) && isUsefulType(hinted.cast<AbstractType>()) ) {
-            kDebug() << "Adding type hint: " << hinted->toString();
             result->addType(type->indexed());
-        }
-        else {
-            kDebug() << "Discarding type hint: " << hinted->toString();
         }
     }
     else if ( UnsureType::Ptr unsure = type.cast<UnsureType>() ) {
         int len = unsure->typesSize();
-        kDebug() << "Extracting hints from " << len << "types";
         for ( int i = 0; i < len and i < maxHints; i++ ) {
             if ( HintedType::Ptr hinted = unsure->types()[i].abstractType().cast<HintedType>() ) {
                 if ( hinted->isValid(current) ) {
@@ -169,17 +206,12 @@ QPair<Python::FunctionDeclarationPointer, bool> Helper::functionDeclarationForCa
     DeclarationPointer lastCalledDeclaration = ptr;
     if ( lastCalledDeclaration and not lastCalledDeclaration->isFunctionDeclaration() )
     {
-        kDebug() << "No function declaration, looking for class constructor";
-        kDebug() << "Class declaration: " << lastCalledDeclaration;
         if ( lastCalledDeclaration && lastCalledDeclaration->internalContext() ) {
-            kDebug() << "ok, looking for constructor";
             QList<Declaration*> constructors = lastCalledDeclaration->internalContext()
                                                ->findDeclarations(KDevelop::Identifier("__init__"));
-            kDebug() << "Found constructors: " << constructors;
             if ( ! constructors.isEmpty() ) {
                 lastCalledDeclaration = dynamic_cast<FunctionDeclaration*>(constructors.first());
                 isConstructor = true;
-                kDebug() << "new function declaration: " << lastCalledDeclaration;
             }
         }
     }
@@ -297,6 +329,50 @@ ReferencedTopDUContext Helper::getDocumentationFileContext()
     }
     return ReferencedTopDUContext(0); // c++...
 }
+
+KUrl Helper::getCorrectionFile(KUrl document)
+{
+    if ( Helper::correctionFileDirs.isEmpty() ) {
+        KStandardDirs d;
+        Helper::correctionFileDirs = d.findDirs("data", "kdevpythonsupport/correction_files/");
+    }
+
+    foreach (QString correctionFileDir, correctionFileDirs) {
+        foreach ( const KUrl& basePath, Helper::getSearchPaths(KUrl()) ) {
+            if ( ! basePath.isParentOf(document) ) {
+                continue;
+            }
+            QString path = KUrl::relativePath(basePath.path(), document.path());
+            KUrl absolutePath(correctionFileDir + path);
+            absolutePath.cleanPath();
+
+            if ( QFile::exists(absolutePath.path()) ) {
+                return absolutePath;
+            }
+        }
+    }
+    return KUrl();
+}
+
+KUrl Helper::getLocalCorrectionFile(KUrl document)
+{
+    if ( Helper::localCorrectionFileDir.isNull() ) {
+        Helper::localCorrectionFileDir = KStandardDirs::locateLocal("data", "kdevpythonsupport/correction_files/");
+    }
+
+    KUrl absolutePath;
+    foreach ( const KUrl& basePath, Helper::getSearchPaths(KUrl()) ) {
+        if ( ! basePath.isParentOf(document) ) {
+            continue;
+        }
+        QString path = KUrl::relativePath(basePath.path(), document.path());
+        absolutePath = KUrl(Helper::localCorrectionFileDir + path);
+        absolutePath.cleanPath();
+
+        break;
+    }
+    return absolutePath;
+}
     
 QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
 {
@@ -346,11 +422,12 @@ QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
     
     searchPaths.append(cachedSearchPaths);
     
-    // search in the current packages
-    searchPaths.append(KUrl(workingOnDocument.directory()));
+    const QString& currentDir = workingOnDocument.directory(KUrl::IgnoreTrailingSlash);
+    if ( ! currentDir.isEmpty() ) {
+        // search in the current packages
+        searchPaths.append(KUrl(currentDir));
+    }
     
-    kDebug() << "Search paths: " << searchPaths;
-    kDebug() << workingOnDocument;
     return searchPaths;
 }
 

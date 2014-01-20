@@ -30,6 +30,7 @@
 #include "contextbuilder.h"
 #include "typebuilder.h"
 #include "declarations/functiondeclaration.h"
+#include "correctionhelper.h"
 #include <language/duchain/types/unsuretype.h>
 
 namespace Python
@@ -184,6 +185,7 @@ protected:
 private:
     QList<DUChainBase*> m_scheduledForDeletion;
     StructureType::Ptr m_currentClassType;
+    QScopedPointer<CorrectionHelper> m_correctionHelper;
     QString buildModuleNameFromNode(ImportFromAst* node, AliasAst* alias, const QString& intermediate);
 };
 

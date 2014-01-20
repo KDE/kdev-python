@@ -83,6 +83,8 @@ void DeclarationBuilder::setPrebuilding(bool prebuilding)
 
 ReferencedTopDUContext DeclarationBuilder::build(const IndexedString& url, Ast* node, ReferencedTopDUContext updateContext)
 {
+    m_correctionHelper.reset(new CorrectionHelper(url, this));
+
     // The declaration builder needs to run twice, so it can resolve uses of e.g. functions
     // which are called before they are defined (which is easily possible, due to python's dynamic nature).
     if ( ! m_prebuilding ) {
@@ -245,6 +247,11 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     Ast* rangeNode = originalAst ? originalAst : node;
     RangeInRevision range = editorFindRange(rangeNode, rangeNode);
     
+    // ask the correction file library if there's a user-specified type for this object
+    if ( AbstractType::Ptr hint = m_correctionHelper->hintForLocal(node->value) ) {
+        type = hint;
+    }
+
     // If no type is known, display "mixed".
     if ( ! type ) {
         type = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
@@ -810,26 +817,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
         // schedule the include file for parsing, and schedule the current one for reparsing after that is done
         kDebug() << "No module context, recompiling";
         m_unresolvedImports.append(modulePath);
-        BackgroundParser* bgparser = KDevelop::ICore::self()->languageController()->backgroundParser();
-        bool needsReschedule = true;
-        if ( bgparser->isQueued(modulePath) ) {
-            const ParseJob* job = bgparser->parseJobForDocument(modulePath);
-            int previousPriority = BackgroundParser::WorstPriority;
-            if ( job ) {
-                previousPriority = job->parsePriority();
-            }
-            // if it's less important, reschedule it
-            if ( job && previousPriority > m_ownPriority - 1 ) {
-                bgparser->removeDocument(modulePath);
-            }
-            else if ( job ) {
-                needsReschedule = false;
-            }
-        }
-        if ( needsReschedule ) {
-            bgparser->addDocument(modulePath, TopDUContext::ForceUpdate, m_ownPriority - 1,
-                                  0, ParseJob::FullSequentialProcessing);
-        }
+        Helper::scheduleDependency(modulePath, m_ownPriority);
         // parseDocuments() must *not* be called from a background thread!
         // KDevelop::ICore::self()->languageController()->backgroundParser()->parseDocuments();
         return 0;
@@ -1415,6 +1403,8 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 
 void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
+    const CorrectionHelper::Recursion r(m_correctionHelper->enterClass(node->name->value));
+
     StructureType::Ptr type(new StructureType());
     
     DUChainWriteLocker lock;
@@ -1533,6 +1523,8 @@ template<typename T> void DeclarationBuilder::visitDecorators(QList< Python::Exp
 
 void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 {
+    const CorrectionHelper::Recursion r(m_correctionHelper->enterFunction(node->name->value));
+
     // Search for an eventual containing class declaration;
     // if that exists, then this function is a member function
     DeclarationPointer eventualParentDeclaration(currentDeclaration());
@@ -1645,6 +1637,11 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     }
     else {
         dec->setStatic(true);
+    }
+
+    if ( AbstractType::Ptr hint = m_correctionHelper->returnTypeHint() ) {
+        type->setReturnType(hint);
+        dec->setType<FunctionType>(type);
     }
     
     // check for (python3) function annotations

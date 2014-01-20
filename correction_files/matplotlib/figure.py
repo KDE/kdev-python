@@ -1,12 +1,7 @@
-from matplotlib import axes
-
-class class_AxesStack:
-    def function_add(self):
-        l_a = axes.Axes()
-
+import matplotlib.backend_bases
+import matplotlib.axes
 class class_Figure:
-    def function_add_axes(self):
-        l_a = axes.Axes()
-
-    def function_gca(self):
-        returns = axes.Axes()
+    def function_set_canvas(self):
+        l_canvas = matplotlib.backend_bases.FigureCanvasBase()
+    def function_add_subplot(self):
+        returns = matplotlib.axes.Axes()

@@ -1,5 +1,7 @@
-from matplotlib import axes
-from matplotlib.backend_bases import FigureManagerBase
-
+from matplotlib.figure import *
+from matplotlib.axes import *
+def function_figure():
+    returns = Figure()
 def function_subplots():
-    l_axarr = [axes.Axes()]
+    l_ret = (Figure(), Axes())
+    l_axarr = [Axes()]

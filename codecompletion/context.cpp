@@ -702,10 +702,14 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
             init.basePath = item.directory;
             init.isDirectory = true;
             init.name = "";
-            ImportFileItem* importfile = new ImportFileItem(init);
-            importfile->moduleName = item.directory.fileName();
-            items << CompletionTreeItemPointer(importfile);
-            sourceFile = initFile.filePath();
+            if ( ! item.directory.fileName().contains('-') ) {
+                // Do not include items which contain "-", those are not valid
+                // modules but instead often e.g. .egg directories
+                ImportFileItem* importfile = new ImportFileItem(init);
+                importfile->moduleName = item.directory.fileName();
+                items << CompletionTreeItemPointer(importfile);
+                sourceFile = initFile.filePath();
+            }
         }
     }
     else {
@@ -759,7 +763,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
                     items << CompletionTreeItemPointer(import);
                 }
             }
-            else {
+            else if ( ! file.fileName().contains('-') ) {
                 IncludeItem dirInclude;
                 dirInclude.basePath = item.directory;
                 dirInclude.isDirectory = true;

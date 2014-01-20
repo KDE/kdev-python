@@ -49,6 +49,9 @@
 #include <KIcon>
 #include <KTextEditor/Document>
 #include <KMessageBox>
+#include <QLabel>
+
+#include "duchain/helpers.h"
 
 using namespace KDevelop;
 
@@ -89,7 +92,7 @@ void SimpleRefactoring::doContextMenu(KDevelop::ContextMenuExtension& extension,
                 return;
             }
             if (finfo.isWritable()) {
-                QAction* action = new QAction(i18n("Rename \"%1\"...", declaration->qualifiedIdentifier().toString()), this);
+                QAction* action = new QAction(i18n("Rename \"%1\"...", declaration->qualifiedIdentifier().toString()), 0);
                 action->setData(QVariant::fromValue(IndexedDeclaration(declaration)));
                 action->setIcon(KIcon("edit-rename"));
                 connect(action, SIGNAL(triggered(bool)), this, SLOT(executeRenameAction()));
@@ -106,28 +109,13 @@ void SimpleRefactoring::executeRenameAction()
     if ( action ) {
         IndexedDeclaration decl = action->data().value<IndexedDeclaration>();
         if ( ! decl.isValid() ) {
-            decl = declarationUnderCursor();
+            decl = Helper::declarationUnderCursor();
         }
         startInteractiveRename(decl);
     }
     else {
         kWarning() << "strange problem";
     }    
-}
-
-KDevelop::IndexedDeclaration SimpleRefactoring::declarationUnderCursor(bool allowUse) {
-    KDevelop::IDocument* doc = ICore::self()->documentController()->activeDocument();
-    if ( doc && doc->textDocument() && doc->textDocument()->activeView() ) {
-        DUChainReadLocker lock;
-        if ( allowUse ) {
-            return DUChainUtils::itemUnderCursor(doc->url(), SimpleCursor(doc->textDocument()->activeView()->cursorPosition()));
-        }
-        else {
-            return DUChainUtils::declarationInLine(SimpleCursor(doc->textDocument()->activeView()->cursorPosition()), DUChainUtils::standardContextForUrl(doc->url()));
-        }
-    }
-
-    return KDevelop::IndexedDeclaration();
 }
 
 SimpleRefactoring& SimpleRefactoring::self()

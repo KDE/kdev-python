@@ -61,11 +61,14 @@ add_subdirectory(docfilekcm)
 add_subdirectory(pep8kcm)
 
 set(kdevpythonlanguagesupport_PART_SRCS
+    codegen/correctionfilegenerator.cpp
     codegen/simplerefactoring.cpp
     pythonlanguagesupport.cpp
     pythonparsejob.cpp
     pythonhighlighting.cpp
 )
+
+kde4_add_ui_files(kdevpythonlanguagesupport_PART_SRCS codegen/correctionwidget.ui)
 
 kde4_add_plugin(kdevpythonlanguagesupport ${kdevpythonlanguagesupport_PART_SRCS})
 
@@ -85,4 +88,5 @@ install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES kdevpythonsupport.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
 install(DIRECTORY documentation_files DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)
+install(DIRECTORY correction_files DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)
 install(DIRECTORY python-src/Lib/encodings DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport/encodings)

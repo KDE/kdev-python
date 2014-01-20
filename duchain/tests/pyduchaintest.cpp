@@ -116,7 +116,12 @@ void PyDUChainTest::init()
     kDebug() << "Searching for python files in " << assetModuleDir.absolutePath();
     
     QList<QString> foundfiles = FindPyFiles(assetModuleDir);
-    
+
+    QString correctionFileDir = KStandardDirs::locate("data", "kdevpythonsupport/correction_files/");
+    KUrl correctionFileUrl = KUrl(correctionFileDir + "testCorrectionFiles/example.py");
+    correctionFileUrl.cleanPath();
+    foundfiles.prepend(correctionFileUrl.path());
+
     for ( int i = 0; i < 2; i++ ) {
         // Parse each file twice, to ensure no parsing-order related bugs appear.
         // Such bugs will need separate unit tests and should not influence these.
@@ -1147,5 +1152,36 @@ void PyDUChainTest::testContainerTypes_data()
     QTest::newRow("cannot_change_type2") << "[1, 2, 3].append(5)\ncheckme = [\"Foo\", \"Bar\"]" << "str" << false;
     
     QTest::newRow("list_append") << "d = []\nd.append(3)\ncheckme = d[0]" << "int" << true;
+}
+
+void PyDUChainTest::testCorrectionFiles()
+{
+    QFETCH(QString, code);
+    QFETCH(QString, expectedType);
+
+    ReferencedTopDUContext ctx = parse(code.toAscii());
+    QVERIFY(ctx);
+
+    DUChainReadLocker lock;
+    QList<Declaration*> decls = ctx->findDeclarations(QualifiedIdentifier("checkme"));
+    QVERIFY(decls.length() > 0);
+    QVERIFY(decls.first()->abstractType());
+    QEXPECT_FAIL("", "Tests are broken, the directory for the correction file can't be properly determined", Abort);
+    QCOMPARE(decls.first()->abstractType()->toString(), expectedType);
+}
+
+void PyDUChainTest::testCorrectionFiles_data()
+{
+    QTest::addColumn<QString>("code");
+    QTest::addColumn<QString>("expectedType");
+
+    QTest::newRow("global_scope_return_type") << "from testCorrectionFiles.example import global_func\n"
+                                                 "checkme = global_func()" << "int";
+    QTest::newRow("class_scope_assign_local") << "from testCorrectionFiles.example import some_class\n"
+                                                 "a = some_class(); checkme = a.foo" << "float";
+    QTest::newRow("class_scope_return_local") << "from testCorrectionFiles.example import some_class\n"
+                                                 "a = some_class(); checkme = a.member_func1()" << "list of int";
+    QTest::newRow("class_scope_return")       << "from testCorrectionFiles.example import some_class\n"
+                                                 "a = some_class(); checkme = a.member_func2()" << "list of float";
 }
 

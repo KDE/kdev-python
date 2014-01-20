@@ -50,6 +50,7 @@
 #include "duchain/pythoneditorintegrator.h"
 #include "codecompletion/model.h"
 #include "codegen/simplerefactoring.h"
+#include "codegen/correctionfilegenerator.h"
 #include "kdevpythonversion.h"
 
 using namespace KDevelop;
@@ -74,6 +75,7 @@ KDevelop::ContextMenuExtension LanguageSupport::contextMenuExtension(KDevelop::C
     if (ec && ICore::self()->languageController()->languagesForUrl(ec->url()).contains(language())) {
         // It's a Python file, let's add our context menu.
         SimpleRefactoring::self().doContextMenu(cm, context);
+        TypeCorrection::self().doContextMenu(cm, context);
     }
     return cm;
 }

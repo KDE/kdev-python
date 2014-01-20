@@ -35,7 +35,6 @@ public:
     static SimpleRefactoring& self();
     void doContextMenu(KDevelop::ContextMenuExtension& extension, KDevelop::Context* context);
     void startInteractiveRename(KDevelop::IndexedDeclaration decl);
-    KDevelop::IndexedDeclaration declarationUnderCursor(bool allowUse = true);
 public slots:
     void executeRenameAction();
 };

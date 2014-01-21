@@ -782,7 +782,7 @@ void ExpressionVisitor::visitBinaryOperation(Python::BinaryOperationAst* node)
     if ( lhsVisitor.lastType() && lhsVisitor.lastType()->whichType() == AbstractType::TypeUnsure ) {
         KDevelop::UnsureType::Ptr unsure = lhsVisitor.lastType().cast<KDevelop::UnsureType>();
         const IndexedType* types = unsure->types();
-        for( int i = 0; i < unsure->typesSize(); i++ ) {
+        for( uint i = 0; i < unsure->typesSize(); i++ ) {
             result = Helper::mergeTypes(result, fromBinaryOperator(types[i].abstractType(),
                                                                    rhsVisitor.lastType(), node->methodName()));
         }

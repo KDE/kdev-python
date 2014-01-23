@@ -41,6 +41,8 @@ void DebugJob::start()
     setBehaviours(KDevelop::IOutputView::Behaviours(KDevelop::IOutputView::AllowUserClose) | KDevelop::IOutputView::AutoScroll);
     setTitle(m_interpreter + m_scriptUrl.path());
     
+    setModel(new KDevelop::OutputModel(0));
+
     startOutput();
     
     kDebug() << "connecting standardOutputReceived";

@@ -45,6 +45,7 @@ public:
     KUrl m_scriptUrl;
     QString m_interpreter;
     QStringList m_args;
+    KUrl m_workingDirectory;
 
 private slots:
     void standardOutputReceived(QStringList lines);

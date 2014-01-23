@@ -47,23 +47,15 @@ KDevelop::IFrameStackModel* DebugSession::createFrameStackModel()
     return new PdbFrameStackModel(this);
 }
 
-DebugSession::DebugSession() :
-      m_nextNotifyMethod(0)
-    , m_inDebuggerData(-1)
-{
-    m_variableController = new Python::VariableController(this);
-    m_breakpointController = new Python::BreakpointController(this);
-}
-
-DebugSession::DebugSession(QStringList program) :
+DebugSession::DebugSession(QStringList program, const KUrl &workingDirectory) :
     IDebugSession()
+    , m_workingDirectory(workingDirectory)
     , m_nextNotifyMethod(0)
-    , m_inDebuggerData(-1)
+    , m_inDebuggerData(0)
 {
     kDebug() << "creating debug session";
     m_variableController = new Python::VariableController(this);
     m_breakpointController = new Python::BreakpointController(this);
-    m_program = program;
     m_program = program;
     m_variableController = new VariableController(this);
 }
@@ -80,6 +72,7 @@ void DebugSession::start()
     m_debuggerProcess->setProgram(m_program);
     m_debuggerProcess->setOutputChannelMode(KProcess::SeparateChannels);
     m_debuggerProcess->blockSignals(true);
+    m_debuggerProcess->setWorkingDirectory(m_workingDirectory.path());
     connect(m_debuggerProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(dataAvailable()));
     connect(m_debuggerProcess, SIGNAL(finished(int)), this, SLOT(debuggerQuit(int)));
     connect(this, SIGNAL(debuggerReady()), SLOT(checkCommandQueue()));
@@ -136,13 +129,12 @@ void DebugSession::dataAvailable()
         int nextChangeAt = data.indexOf(m_inDebuggerData ? debuggerOutputEnd : debuggerOutputBegin, i);
         bool atLastChange = nextChangeAt == -1;
         nextChangeAt = atLastChange ? len : qMin(nextChangeAt, len);
+
         
         kDebug() << data;
+        Q_ASSERT(m_inDebuggerData == 0 || m_inDebuggerData == 1);
         
         if ( m_inDebuggerData == 1 ) {
-            if ( i == 0 ) {
-                i = delimiterSkip;
-            }
             QString newDebuggerData = data.mid(i, nextChangeAt - i);
             m_buffer.append(newDebuggerData);
             if ( data.indexOf("Uncaught exception. Entering post mortem debugging") != -1 ) {

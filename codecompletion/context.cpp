@@ -87,33 +87,453 @@ ExpressionVisitor* visitorForString(QString str, DUContext* context, CursorInRev
     return 0;
 }
 
+void PythonCodeCompletionContext::eventuallyAddGroup(QString name, int priority,
+                                                     QList<CompletionTreeItemPointer> items)
+{
+    if ( items.isEmpty() ) {
+        return;
+    }
+    KDevelop::CompletionCustomGroupNode* node = new KDevelop::CompletionCustomGroupNode(name, priority);
+    node->appendChildren(items);
+    m_storedGroups << CompletionTreeElementPointer(node);
+}
+
+QList< CompletionTreeElementPointer > PythonCodeCompletionContext::ungroupedElements()
+{
+    return m_storedGroups;
+}
+
+PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::shebangItems()
+{
+    KeywordItem::Flags f = (KeywordItem::Flags) ( KeywordItem::ForceLineBeginning | KeywordItem::ImportantItem );
+    QList<CompletionTreeItemPointer> shebangGroup;
+    if ( m_position.line == 0 && ( m_text.startsWith('#') || m_text.isEmpty() ) ) {
+        QString i18ndescr = i18n("insert Shebang line");
+        shebangGroup << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                    "#!/usr/bin/env python\n", i18ndescr, f));
+        shebangGroup << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                    "#!/usr/bin/env python2.7\n", i18ndescr, f));
+        shebangGroup << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                    "#!/usr/bin/env python3\n", i18ndescr, f));
+    }
+    else if ( m_position.line <= 1 && m_text.endsWith('#') ) {
+        shebangGroup << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                    "# -*- coding:utf-8 -*-\n\n", i18n("specify document encoding"), f));
+    }
+    eventuallyAddGroup(i18n("Add file header"), 1000, shebangGroup);
+    return ItemList();
+}
+
+PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::functionCallItems()
+{
+    DUChainReadLocker lock;
+    ItemList resultingItems;
+
+    // gather additional items to show above the real ones (for parameters, and stuff)
+    KDevPG::MemoryPool pool;
+    FunctionDeclaration* functionCalled = 0;
+    AstBuilder builder(&pool);
+    CodeAst* tmpAst = builder.parse(KUrl(), m_guessTypeOfExpression);
+    if ( tmpAst ) {
+        ExpressionVisitor v(m_duContext.data());
+        v.m_forceGlobalSearching = true;
+        lock.unlock();
+        v.visitCode(tmpAst);
+        lock.lock();
+        if ( v.lastDeclaration() ) {
+            functionCalled = Helper::functionDeclarationForCalledDeclaration(v.lastDeclaration()).first.data();
+        }
+        else {
+            kWarning() << "Did not receive a function declaration from expression visitor! Not offering call tips.";
+            kWarning() << "Tried: " << m_guessTypeOfExpression;
+        }
+    }
+
+    auto current = Helper::resolveAliasDeclaration(functionCalled);
+    QList<Declaration*> calltips;
+    if ( current && current->isFunctionDeclaration() ) {
+        calltips << current;
+    }
+
+    auto calltipItems = declarationListToItemList(calltips);
+    foreach ( CompletionTreeItemPointer current, calltipItems ) {
+        kDebug() << "Adding calltip item, at argument:" << m_alreadyGivenParametersCount+1;
+        FunctionDeclarationCompletionItem* item = static_cast<FunctionDeclarationCompletionItem*>(current.data());
+        item->setAtArgument(m_alreadyGivenParametersCount + 1);
+        item->setDepth(depth());
+    }
+
+    resultingItems.append(calltipItems);
+
+    // If this is the top-level calltip, add additional items for the default-parameters of the function,
+    // but only if all non-default arguments (the mandatory ones) already have been provided.
+    // TODO fancy feature: Filter out already provided default-parameters
+    if ( depth() == 1 && functionCalled ) {
+        if ( DUContext* args = DUChainUtils::getArgumentContext(functionCalled) ) {
+            int normalParameters = args->localDeclarations().count() - functionCalled->defaultParametersSize();
+            if ( normalParameters <= m_alreadyGivenParametersCount )
+            {
+                for ( unsigned int i = 0; i < functionCalled->defaultParametersSize(); i++ ) {
+                    QString paramName = args->localDeclarations().at(normalParameters + i)->identifier().toString();
+                    resultingItems << CompletionTreeItemPointer(new KeywordItem(CodeCompletionContext::Ptr(m_child),
+                                                                paramName + "=", i18n("specify default parameter"),
+                                                                KeywordItem::ImportantItem));
+                }
+                kDebug() << "adding " << functionCalled->defaultParametersSize() << "default args";
+            }
+            else kDebug() << "Not at default arguments yet";
+        }
+    }
+
+    return resultingItems;
+}
+
+PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::defineItems()
+{
+    DUChainReadLocker lock;
+    ItemList resultingItems;
+    // Find all base classes of the current class context
+    if ( m_duContext->type() != DUContext::Class ) {
+        kWarning() << "current context is not a class context, not offering define completion";
+    }
+    else if ( ClassDeclaration* klass = dynamic_cast<ClassDeclaration*>(m_duContext->owner()) ) {
+        QList<DUContext*> baseClassContexts = Helper::internalContextsForClass(
+            klass->type<StructureType>(), m_duContext->topContext()
+        );
+        // This class' context is put first in the list, so all functions existing here
+        // can be skipped.
+        baseClassContexts.removeAll(m_duContext.data());
+        baseClassContexts.prepend(m_duContext.data());
+        Q_ASSERT(baseClassContexts.size() >= 1);
+        QList<IndexedString> existingIdentifiers;
+
+        bool isOwnContext = true;
+        foreach ( DUContext* c, baseClassContexts ) {
+            QList<DeclarationDepthPair> declarations = c->allDeclarations(
+                CursorInRevision::invalid(), m_duContext->topContext(), false
+            );
+            foreach ( const DeclarationDepthPair& d, declarations ) {
+                if ( FunctionDeclaration* funcDecl = dynamic_cast<FunctionDeclaration*>(d.first) ) {
+                    // python does not have overloads or similar, so comparing the function names is enough.
+                    const IndexedString identifier = funcDecl->identifier().identifier();
+                    if ( isOwnContext ) {
+                        existingIdentifiers << identifier;
+                    }
+
+                    if ( existingIdentifiers.contains(identifier) ) {
+                        continue;
+                    }
+                    existingIdentifiers << identifier;
+                    QStringList argumentNames;
+                    DUContext* argumentsContext = DUChainUtils::getArgumentContext(funcDecl);
+                    foreach ( Declaration* argument, argumentsContext->localDeclarations() ) {
+                        argumentNames << argument->identifier().toString();
+                    }
+                    resultingItems << CompletionTreeItemPointer(new ImplementFunctionCompletionItem(
+                        funcDecl->identifier().toString(), argumentNames, m_indent)
+                    );
+                }
+            }
+            isOwnContext = false;
+        }
+    }
+    return resultingItems;
+}
+
+PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::raiseItems()
+{
+    kDebug() << "Finding items for raise statement";
+    DUChainReadLocker lock;
+    ItemList resultingItems;
+    ReferencedTopDUContext ctx = Helper::getDocumentationFileContext();
+    QList< Declaration* > declarations = ctx->findDeclarations(QualifiedIdentifier("BaseException"));
+    if ( declarations.isEmpty() || ! declarations.first()->abstractType() ) {
+        kDebug() << "No valid exception classes found, aborting";
+    }
+    else {
+        Declaration* base = declarations.first();
+        IndexedType baseType = base->abstractType()->indexed();
+        QList<DeclarationDepthPair> validDeclarations;
+        ClassDeclaration* current = 0;
+        StructureType::Ptr type;
+        foreach ( const DeclarationDepthPair d, m_duContext->topContext()->allDeclarations(CursorInRevision::invalid(), m_duContext->topContext()) ) {
+            if ( ( current = dynamic_cast<ClassDeclaration*>(d.first) ) ) {
+                if ( current->baseClassesSize() ) {
+                    FOREACH_FUNCTION( const BaseClassInstance& base, current->baseClasses ) {
+                        if ( base.baseClass == baseType ) {
+                            validDeclarations << d;
+                        }
+                    }
+                }
+            }
+        }
+        resultingItems.append(declarationListToItemList(validDeclarations));
+    }
+    return resultingItems;
+}
+
+PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::importFileItems()
+{
+    DUChainReadLocker lock;
+    ItemList resultingItems;
+    kDebug() << "Preparing to do autocompletion for import...";
+    m_maxFolderScanDepth = 1;
+    resultingItems << includeItemsForSubmodule("");
+    return resultingItems;
+}
+
+PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::inheritanceItems()
+{
+    DUChainReadLocker lock;
+    ItemList resultingItems;
+    kDebug() << "InheritanceCompletion";
+    QList<DeclarationDepthPair> declarations;
+    if ( ! m_guessTypeOfExpression.isEmpty() ) {
+        // The class completion is a member access
+        ExpressionVisitor* v = visitorForString(m_guessTypeOfExpression, m_duContext.data());
+        if ( v ) {
+            TypePtr<StructureType> cls = StructureType::Ptr::dynamicCast(v->lastType());
+            if ( cls && cls->declaration(m_duContext->topContext()) ) {
+                if ( DUContext* internal = cls->declaration(m_duContext->topContext())->internalContext() ) {
+                    declarations = internal->allDeclarations(m_position, m_duContext->topContext(), false);
+                }
+            }
+            delete v;
+        }
+    }
+    else {
+        declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
+    }
+    QList<DeclarationDepthPair> remainingDeclarations;
+    foreach ( const DeclarationDepthPair& d, declarations ) {
+        Declaration* r = Helper::resolveAliasDeclaration(d.first);
+        if ( r && r->topContext() == Helper::getDocumentationFileContext() ) {
+            continue;
+        }
+        if ( r && dynamic_cast<ClassDeclaration*>(r) ) {
+            remainingDeclarations << d;
+        }
+    }
+    resultingItems.append(declarationListToItemList(remainingDeclarations));
+    return resultingItems;
+}
+
+PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::memberAccessItems()
+{
+    DUChainReadLocker lock;
+    ItemList resultingItems;
+    ExpressionVisitor* v = visitorForString(m_guessTypeOfExpression, m_duContext.data());
+    if ( v ) {
+        if ( v->lastType() ) {
+            kDebug() << v->lastType()->toString();
+            resultingItems << getCompletionItemsForType(v->lastType());
+        }
+        else {
+            kWarning() << "Did not receive a type from expression visitor! Not offering autocompletion.";
+        }
+        delete v;
+    }
+    else {
+        kWarning() << "Completion requested for syntactically invalid expression, not offering anything";
+    }
+
+    // append eventually stripped postfix, for e.g. os.chdir|
+    bool needDot = true;
+    foreach ( const QChar& c, m_followingText ) {
+        if ( needDot ) {
+            m_guessTypeOfExpression.append('.');
+            needDot = false;
+        }
+        if ( c.isLetterOrNumber() || c == '_' ) {
+            m_guessTypeOfExpression.append(c);
+        }
+    }
+    if ( resultingItems.isEmpty() && m_fullCompletion ) {
+        resultingItems << getMissingIncludeItems(m_guessTypeOfExpression);
+    }
+    return resultingItems;
+}
+
+PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::stringFormattingItems()
+{
+    DUChainReadLocker lock;
+    ItemList resultingItems;
+    int cursorPosition;
+    StringFormatter stringFormatter(CodeHelpers::extractStringUnderCursor(m_text,
+                                                                            m_duContext->range().castToSimpleRange().textRange(),
+                                                                            m_position.castToSimpleCursor().textCursor(),
+                                                                            &cursorPosition));
+
+    kDebug() << "Next identifier id: " << stringFormatter.nextIdentifierId();
+    kDebug() << "Cursor position in string: " << cursorPosition;
+
+    bool insideReplacementVariable = stringFormatter.isInsideReplacementVariable(cursorPosition);
+    RangeInString variablePosition = stringFormatter.getVariablePosition(cursorPosition);
+
+    bool onVariableBoundary = (cursorPosition == variablePosition.beginIndex || cursorPosition == variablePosition.endIndex);
+    if ( ! insideReplacementVariable || onVariableBoundary ) {
+        resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(QString::number(stringFormatter.nextIdentifierId())),
+                                                                                i18n("Insert next positional variable"), false));
+
+        resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable("${argument}"),
+                                                                                i18n("Insert named variable"), true));
+
+    }
+
+    if ( insideReplacementVariable ) {
+        const ReplacementVariable *variable = stringFormatter.getReplacementVariable(cursorPosition);
+
+        // Convert the range relative to the beginning of the string to the absolute position
+        // in the document. We can safely assume that the replacement variable is on one line,
+        // because the regex does not allow newlines inside replacement variables.
+        KTextEditor::Range range;
+        range.setBothLines(m_position.line);
+        range.start().setColumn(m_position.column - (cursorPosition - variablePosition.beginIndex));
+        range.end().setColumn(m_position.column + (variablePosition.endIndex - cursorPosition));
+
+        kDebug() << "Variable under cursor: " << variable->toString();
+
+        bool hasNumericOnlyOption = variable->hasPrecision()
+                || (variable->hasType() && variable->type() != 's')
+                || variable->align() == '=';
+
+        if ( ! variable->hasConversion() && ! hasNumericOnlyOption ) {
+            resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), 's', variable->formatSpec()),
+                                                                        i18n("Format using str()"), false, range));
+            resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), 'r', variable->formatSpec()),
+                                                                        i18n("Format using repr()"), false, range));
+        }
+
+        if ( ! variable->hasFormatSpec() ) {
+            resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "<${width}"),
+                                                                        i18n("Format as left-aligned"), true, range));
+            resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), ">${width}"),
+                                                                        i18n("Format as right-aligned"), true, range));
+            resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "^${width}"),
+                                                                        i18n("Format as centered"), true, range));
+
+            // These options don't make sense if we've set conversion using str() or repr()
+            if ( ! variable->hasConversion() ) {
+                resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), ".${precision}"),
+                                                                            i18n("Specify precision"), true, range));
+
+                resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "%"),
+                                                                            i18n("Format as percentage"), false, range));
+                resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "c"),
+                                                                            i18n("Format as character"), false, range));
+                resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "b"),
+                                                                            i18n("Format as binary number"), false, range));
+                resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "o"),
+                                                                            i18n("Format as octal number"), false, range));
+                resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "x"),
+                                                                            i18n("Format as hexadecimal number"), false, range));
+
+                resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "e"),
+                                                                            i18n("Format in scientific (exponent) notation"), false, range));
+                resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "f"),
+                                                                            i18n("Format as fixed point number"), false, range));
+            }
+        }
+    }
+
+    kDebug() << "Resulting items size: " << resultingItems.size();
+    return resultingItems;
+}
+
+PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::keywordItems()
+{
+    ItemList resultingItems;
+    QStringList keywordItems;
+    keywordItems << "def" << "class" << "lambda" << "global" << "print" << "import" << "from" << "while" << "for" << "yield" << "return";
+    foreach ( const QString& current, keywordItems ) {
+        KeywordItem* k = new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), current + " ", "");
+        resultingItems << CompletionTreeItemPointer(k);
+    }
+    return resultingItems;
+}
+
+PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::classMemberInitItems()
+{
+    DUChainReadLocker lock;
+    ItemList resultingItems;
+    if ( Declaration* decl = duContext()->owner() ) {
+        if ( DUContext* args = DUChainUtils::getArgumentContext(duContext()->owner()) ) {
+            if ( decl->isFunctionDeclaration() && decl->identifier() == KDevelop::Identifier("__init__") ) {
+                // the current context actually belongs to a constructor
+                foreach ( const Declaration* argument, args->localDeclarations() ) {
+                    const QString argName = argument->identifier().toString();
+                    // Do not suggest "self.self = self"
+                    if ( argName == "self" ) {
+                        continue;
+                    }
+                    bool usedAlready = false;
+                    // Do not suggest arguments which already have a use in the context
+                    // This is uesful because you can then do { Ctrl+Space Enter Enter } while ( 1 )
+                    // to initialize all available class variables, without using arrow keys.
+                    for ( int i = 0; i < duContext()->usesCount(); i++ ) {
+                        if ( duContext()->uses()[i].usedDeclaration(duContext()->topContext()) == argument ) {
+                            usedAlready = true;
+                            break;
+                        }
+                    }
+                    if ( usedAlready ) {
+                        continue;
+                    }
+                    const QString value = "self." + argName + " = " + argName;
+                    KeywordItem* item = new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
+                                                        value, i18n("Initialize property"),
+                                                        KeywordItem::ImportantItem);
+                    resultingItems.append(CompletionTreeItemPointer(item));
+                }
+            }
+        }
+    }
+    return resultingItems;
+}
+
+PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::generatorItems()
+{
+    DUChainReadLocker lock;
+    ItemList resultingItems;
+    QList<KeywordItem*> items;
+    ExpressionVisitor* v = visitorForString(m_guessTypeOfExpression, m_duContext.data(), m_position);
+    if ( v ) {
+        if ( ! v->m_unknownNames.isEmpty() ) {
+            if ( v->m_unknownNames.size() >= 2 ) {
+                // we only take the first two, and only two. It gets too much items otherwise.
+                QStringList combinations;
+                combinations << v->m_unknownNames.at(0) + ", " + v->m_unknownNames.at(1);
+                combinations << v->m_unknownNames.at(1) + ", " + v->m_unknownNames.at(0);
+                foreach ( const QString& c, combinations ) {
+                    items << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + c + " in ", "");
+                }
+            }
+            foreach ( const QString& n, v->m_unknownNames ) {
+                items << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + n + " in ", "");
+            }
+        }
+        else {
+            kWarning() << "No unknown names in generator completion; nothing to do.";
+        }
+        delete v;
+    }
+
+    foreach ( KeywordItem* item, items ) {
+        resultingItems << CompletionTreeItemPointer(item);
+    }
+    return resultingItems;
+}
+
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bool& abort, bool fullCompletion)
 {
     m_fullCompletion = fullCompletion;
-    QList<CompletionTreeItemPointer> resultingItems;
-    DUChainReadLocker lock;
+    ItemList resultingItems;
     
     kDebug() << "Line: " << m_position.line;
-    
     kDebug() << "Completion type:" << m_operation;
     
     if ( m_operation != FunctionCallCompletion ) {
-        KeywordItem::Flags f = (KeywordItem::Flags) ( KeywordItem::ForceLineBeginning | KeywordItem::ImportantItem );
-        // TODO group those correctly so they appear at the top
-        if ( m_position.line == 0 && ( m_text.startsWith('#') || m_text.isEmpty() ) ) {
-            QString i18ndescr = i18n("insert Shebang line");
-            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
-                                                        "#!/usr/bin/env python\n", i18ndescr, f));
-            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
-                                                        "#!/usr/bin/env python2.7\n", i18ndescr, f));
-            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
-                                                        "#!/usr/bin/env python3\n", i18ndescr, f));
-        }
-        // TODO fixme
-        else if ( m_position.line <= 1 && m_text.endsWith('#') ) {
-            resultingItems << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
-                                                        "# -*- coding:utf-8 -*-\n\n", i18n("specify document encoding"), f));
-        }
+        resultingItems.append(shebangItems());
     }
     
     // Find all calltips recursively
@@ -125,367 +545,46 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         kDebug() << "no code completion";
     }
     else if ( m_operation == PythonCodeCompletionContext::GeneratorVariableCompletion ) {
-        QList<KeywordItem*> items;
-        lock.unlock();
-        ExpressionVisitor* v = visitorForString(m_guessTypeOfExpression, m_duContext.data(), m_position);
-        lock.lock();
-        if ( v ) {
-            if ( ! v->m_unknownNames.isEmpty() ) {
-                if ( v->m_unknownNames.size() >= 2 ) {
-                    // we only take the first two, and only two. It gets too much items otherwise.
-                    QStringList combinations;
-                    combinations << v->m_unknownNames.at(0) + ", " + v->m_unknownNames.at(1);
-                    combinations << v->m_unknownNames.at(1) + ", " + v->m_unknownNames.at(0);
-                    foreach ( const QString& c, combinations ) {
-                        items << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + c + " in ", "");
-                    }
-                }
-                foreach ( const QString& n, v->m_unknownNames ) {
-                    items << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + n + " in ", "");
-                }
-            }
-            else {
-                kWarning() << "No unknown names in generator completion; nothing to do.";
-            }
-            delete v;
-        }
-        
-        foreach ( KeywordItem* item, items ) {
-            resultingItems << CompletionTreeItemPointer(item);
-        }
-        
+        resultingItems.append(generatorItems());
     }
     else if ( m_operation == PythonCodeCompletionContext::FunctionCallCompletion ) {
-            // gather additional items to show above the real ones (for parameters, and stuff)
-            KDevPG::MemoryPool pool;
-            FunctionDeclaration* functionCalled = 0;
-            AstBuilder builder(&pool);
-            CodeAst* tmpAst = builder.parse(KUrl(), m_guessTypeOfExpression);
-            if ( tmpAst ) {
-                lock.unlock();
-                ExpressionVisitor v(m_duContext.data());
-                v.m_forceGlobalSearching = true;
-                v.visitCode(tmpAst);
-                lock.lock();
-                if ( v.lastDeclaration() ) {
-                    functionCalled = Helper::functionDeclarationForCalledDeclaration(v.lastDeclaration()).first.data();
-                }
-                else {
-                    kWarning() << "Did not receive a function declaration from expression visitor! Not offering call tips.";
-                    kWarning() << "Tried: " << m_guessTypeOfExpression;
-                }
-            }
-            
-            auto current = Helper::resolveAliasDeclaration(functionCalled);
-            QList<Declaration*> calltips;
-            if ( current && current->isFunctionDeclaration() ) {
-                calltips << current;
-            }
-            
-            auto calltipItems = declarationListToItemList(calltips);
-            foreach ( CompletionTreeItemPointer current, calltipItems ) {
-                kDebug() << "Adding calltip item, at argument:" << m_alreadyGivenParametersCount+1; 
-                FunctionDeclarationCompletionItem* item = static_cast<FunctionDeclarationCompletionItem*>(current.data());
-                item->setAtArgument(m_alreadyGivenParametersCount + 1);
-                item->setDepth(depth());
-            }
-            
-            resultingItems.append(calltipItems);
-            
-            // If this is the top-level calltip, add additional items for the default-parameters of the function,
-            // but only if all non-default arguments (the mandatory ones) already have been provided.
-            // TODO fancy feature: Filter out already provided default-parameters
-            if ( depth() == 1 && functionCalled ) {
-                if ( DUContext* args = DUChainUtils::getArgumentContext(functionCalled) ) {
-                    int normalParameters = args->localDeclarations().count() - functionCalled->defaultParametersSize();
-                    if ( normalParameters <= m_alreadyGivenParametersCount )
-                    {
-                        for ( unsigned int i = 0; i < functionCalled->defaultParametersSize(); i++ ) {
-                            QString paramName = args->localDeclarations().at(normalParameters + i)->identifier().toString();
-                            resultingItems << CompletionTreeItemPointer(new KeywordItem(CodeCompletionContext::Ptr(m_child),
-                                                                        paramName + "=", i18n("specify default parameter"),
-                                                                        KeywordItem::ImportantItem));
-                        }
-                        kDebug() << "adding " << functionCalled->defaultParametersSize() << "default args";
-                    }
-                    else kDebug() << "Not at default arguments yet";
-                }
-            }
-        }
+        resultingItems.append(functionCallItems());
+    }
     else if ( m_operation == PythonCodeCompletionContext::DefineCompletion ) {
-        // Find all base classes of the current class context
-        if ( m_duContext->type() != DUContext::Class ) {
-            kWarning() << "current context is not a class context, not offering define completion";
-        }
-        else if ( ClassDeclaration* klass = dynamic_cast<ClassDeclaration*>(m_duContext->owner()) ) {
-            QList<DUContext*> baseClassContexts = Helper::internalContextsForClass(
-                klass->type<StructureType>(), m_duContext->topContext()
-            );
-            // This class' context is put first in the list, so all functions existing here
-            // can be skipped.
-            baseClassContexts.removeAll(m_duContext.data());
-            baseClassContexts.prepend(m_duContext.data());
-            Q_ASSERT(baseClassContexts.size() >= 1);
-            QList<IndexedString> existingIdentifiers;
-            
-            bool isOwnContext = true;
-            foreach ( DUContext* c, baseClassContexts ) {
-                QList<DeclarationDepthPair> declarations = c->allDeclarations(
-                    CursorInRevision::invalid(), m_duContext->topContext(), false
-                );
-                foreach ( const DeclarationDepthPair& d, declarations ) {
-                    if ( FunctionDeclaration* funcDecl = dynamic_cast<FunctionDeclaration*>(d.first) ) {
-                        // python does not have overloads or similar, so comparing the function names is enough.
-                        const IndexedString identifier = funcDecl->identifier().identifier();
-                        if ( isOwnContext ) {
-                            existingIdentifiers << identifier;
-                        }
-                            
-                        if ( existingIdentifiers.contains(identifier) ) {
-                            continue;
-                        }
-                        existingIdentifiers << identifier;
-                        QStringList argumentNames;
-                        DUContext* argumentsContext = DUChainUtils::getArgumentContext(funcDecl);
-                        foreach ( Declaration* argument, argumentsContext->localDeclarations() ) {
-                            argumentNames << argument->identifier().toString();
-                        }
-                        resultingItems << CompletionTreeItemPointer(new ImplementFunctionCompletionItem(
-                            funcDecl->identifier().toString(), argumentNames, m_indent)
-                        );
-                    }
-                }
-                isOwnContext = false;
-            }
-        }
+        resultingItems.append(defineItems());
     }
     else if ( m_operation == PythonCodeCompletionContext::RaiseExceptionCompletion ) {
-        kDebug() << "Finding items for raise statement";
-        ReferencedTopDUContext ctx = Helper::getDocumentationFileContext();
-        QList< Declaration* > declarations = ctx->findDeclarations(QualifiedIdentifier("BaseException"));
-        if ( declarations.isEmpty() || ! declarations.first()->abstractType() ) {
-            kDebug() << "No valid exception classes found, aborting";
-        }
-        else {
-            Declaration* base = declarations.first();
-            IndexedType baseType = base->abstractType()->indexed();
-            QList<DeclarationDepthPair> validDeclarations;
-            ClassDeclaration* current = 0;
-            StructureType::Ptr type;
-            foreach ( const DeclarationDepthPair d, m_duContext->topContext()->allDeclarations(CursorInRevision::invalid(), m_duContext->topContext()) ) {
-                if ( ( current = dynamic_cast<ClassDeclaration*>(d.first) ) ) {
-                    if ( current->baseClassesSize() ) {
-                        FOREACH_FUNCTION( const BaseClassInstance& base, current->baseClasses ) {
-                            if ( base.baseClass == baseType ) {
-                                validDeclarations << d;
-                            }
-                        }
-                    }
-                }
-            }
-            resultingItems.append(declarationListToItemList(validDeclarations));
-        }
+        resultingItems.append(raiseItems());
     }
     else if ( m_operation == PythonCodeCompletionContext::ImportFileCompletion ) {
-        kDebug() << "Preparing to do autocompletion for import...";
-        m_maxFolderScanDepth = 1;
-        resultingItems << includeItemsForSubmodule("");
+        resultingItems.append(importFileItems());
     }
     else if ( m_operation == PythonCodeCompletionContext::ImportSubCompletion ) {
-        kDebug() << "Finding items for submodule: " << m_searchImportItemsInModule;
-        resultingItems << includeItemsForSubmodule(m_searchImportItemsInModule);
+        DUChainReadLocker lock;
+        resultingItems.append(includeItemsForSubmodule(m_searchImportItemsInModule));
     }
     else if ( m_operation == PythonCodeCompletionContext::InheritanceCompletion ) {
-        kDebug() << "InheritanceCompletion";
-        QList<DeclarationDepthPair> declarations;
-        if ( ! m_guessTypeOfExpression.isEmpty() ) {
-            // The class completion is a member access
-            ExpressionVisitor* v = visitorForString(m_guessTypeOfExpression, m_duContext.data());
-            if ( v ) {
-                TypePtr<StructureType> cls = StructureType::Ptr::dynamicCast(v->lastType());
-                if ( cls && cls->declaration(m_duContext->topContext()) ) {
-                    if ( DUContext* internal = cls->declaration(m_duContext->topContext())->internalContext() ) {
-                        declarations = internal->allDeclarations(m_position, m_duContext->topContext(), false);
-                    }
-                }
-                delete v;
-            }
-        }
-        else {
-            declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
-        }
-        QList<DeclarationDepthPair> remainingDeclarations;
-        foreach ( const DeclarationDepthPair& d, declarations ) {
-            Declaration* r = Helper::resolveAliasDeclaration(d.first);
-            if ( r && r->topContext() == Helper::getDocumentationFileContext() ) {
-                continue;
-            }
-            if ( r && dynamic_cast<ClassDeclaration*>(r) ) {
-                remainingDeclarations << d;
-            }
-        }
-        resultingItems.append(declarationListToItemList(remainingDeclarations));
+        resultingItems.append(inheritanceItems());
     }
     else if ( m_operation == PythonCodeCompletionContext::MemberAccessCompletion ) {
-        ExpressionVisitor* v = visitorForString(m_guessTypeOfExpression, m_duContext.data());
-        if ( v ) {
-            if ( v->lastType() ) {
-                kDebug() << v->lastType()->toString();
-                resultingItems << getCompletionItemsForType(v->lastType());
-            }
-            else {
-                kWarning() << "Did not receive a type from expression visitor! Not offering autocompletion.";
-            }
-            delete v;
-        }
-        else {
-            kWarning() << "Completion requested for syntactically invalid expression, not offering anything";
-        }
-
-        // append eventually stripped postfix, for e.g. os.chdir|
-        bool needDot = true;
-        foreach ( const QChar& c, m_followingText ) {
-            if ( needDot ) {
-                m_guessTypeOfExpression.append('.');
-                needDot = false;
-            }
-            if ( c.isLetterOrNumber() || c == '_' ) {
-                m_guessTypeOfExpression.append(c);
-            }
-        }
-        if ( resultingItems.isEmpty() && fullCompletion ) {
-            resultingItems << getMissingIncludeItems(m_guessTypeOfExpression);
-        }
+        resultingItems.append(memberAccessItems());
     }
     else if ( m_operation == PythonCodeCompletionContext::StringFormattingCompletion ) {
-        int cursorPosition;
-        StringFormatter stringFormatter(CodeHelpers::extractStringUnderCursor(m_text,
-                                                                              m_duContext->range().castToSimpleRange().textRange(),
-                                                                              m_position.castToSimpleCursor().textCursor(),
-                                                                              &cursorPosition));
-
-        kDebug() << "Next identifier id: " << stringFormatter.nextIdentifierId();
-        kDebug() << "Cursor position in string: " << cursorPosition;
-
-        bool insideReplacementVariable = stringFormatter.isInsideReplacementVariable(cursorPosition);
-        RangeInString variablePosition = stringFormatter.getVariablePosition(cursorPosition);
-
-        bool onVariableBoundary = (cursorPosition == variablePosition.beginIndex || cursorPosition == variablePosition.endIndex);
-        if ( ! insideReplacementVariable || onVariableBoundary ) {
-            resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(QString::number(stringFormatter.nextIdentifierId())),
-                                                                                    i18n("Insert next positional variable"), false));
-
-            resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable("${argument}"),
-                                                                                    i18n("Insert named variable"), true));
-
-        }
-
-        if ( insideReplacementVariable ) {
-            const ReplacementVariable *variable = stringFormatter.getReplacementVariable(cursorPosition);
-
-            // Convert the range relative to the beginning of the string to the absolute position
-            // in the document. We can safely assume that the replacement variable is on one line,
-            // because the regex does not allow newlines inside replacement variables.
-            KTextEditor::Range range;
-            range.setBothLines(m_position.line);
-            range.start().setColumn(m_position.column - (cursorPosition - variablePosition.beginIndex));
-            range.end().setColumn(m_position.column + (variablePosition.endIndex - cursorPosition));
-
-            kDebug() << "Variable under cursor: " << variable->toString();
-
-            bool hasNumericOnlyOption = variable->hasPrecision()
-                    || (variable->hasType() && variable->type() != 's')
-                    || variable->align() == '=';
-
-            if ( ! variable->hasConversion() && ! hasNumericOnlyOption ) {
-                resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), 's', variable->formatSpec()),
-                                                                            i18n("Format using str()"), false, range));
-                resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), 'r', variable->formatSpec()),
-                                                                            i18n("Format using repr()"), false, range));
-            }
-
-            if ( ! variable->hasFormatSpec() ) {
-                resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "<${width}"),
-                                                                            i18n("Format as left-aligned"), true, range));
-                resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), ">${width}"),
-                                                                            i18n("Format as right-aligned"), true, range));
-                resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "^${width}"),
-                                                                            i18n("Format as centered"), true, range));
-
-                // These options don't make sense if we've set conversion using str() or repr()
-                if ( ! variable->hasConversion() ) {
-                    resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), ".${precision}"),
-                                                                                i18n("Specify precision"), true, range));
-
-                    resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "%"),
-                                                                                i18n("Format as percentage"), false, range));
-                    resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "c"),
-                                                                                i18n("Format as character"), false, range));
-                    resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "b"),
-                                                                                i18n("Format as binary number"), false, range));
-                    resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "o"),
-                                                                                i18n("Format as octal number"), false, range));
-                    resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "x"),
-                                                                                i18n("Format as hexadecimal number"), false, range));
-
-                    resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "e"),
-                                                                                i18n("Format in scientific (exponent) notation"), false, range));
-                    resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(ReplacementVariable(variable->identifier(), variable->conversion(), "f"),
-                                                                                i18n("Format as fixed point number"), false, range));
-                }
-            }
-        }
-
-        kDebug() << "Resulting items size: " << resultingItems.size();
+        resultingItems.append(stringFormattingItems());
     }
     else {
         // it's stupid to display a 3-letter completion item on manually invoked code completion and makes everything look crowded
         if ( m_operation == PythonCodeCompletionContext::NewStatementCompletion && ! fullCompletion ) {
-            QStringList keywordItems;
-            keywordItems << "def" << "class" << "lambda" << "global" << "print" << "import" << "from" << "while" << "for" << "yield" << "return";
-            foreach ( const QString& current, keywordItems ) {
-                KeywordItem* k = new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), current + " ", "");
-                resultingItems << CompletionTreeItemPointer(k);
-            }
+            resultingItems.append(keywordItems());
         }
         if ( m_operation == PythonCodeCompletionContext::NewStatementCompletion ) {
             // Eventually suggest initializing class members from constructor arguments
-            if ( Declaration* decl = duContext()->owner() ) {
-                if ( DUContext* args = DUChainUtils::getArgumentContext(duContext()->owner()) ) {
-                    if ( decl->isFunctionDeclaration() && decl->identifier() == KDevelop::Identifier("__init__") ) {
-                        // the current context actually belongs to a constructor
-                        foreach ( const Declaration* argument, args->localDeclarations() ) {
-                            const QString argName = argument->identifier().toString();
-                            // Do not suggest "self.self = self"
-                            if ( argName == "self" ) {
-                                continue;
-                            }
-                            bool usedAlready = false;
-                            // Do not suggest arguments which already have a use in the context
-                            // This is uesful because you can then do { Ctrl+Space Enter Enter } while ( 1 )
-                            // to initialize all available class variables, without using arrow keys.
-                            for ( int i = 0; i < duContext()->usesCount(); i++ ) {
-                                if ( duContext()->uses()[i].usedDeclaration(duContext()->topContext()) == argument ) {
-                                    usedAlready = true;
-                                    break;
-                                }
-                            }
-                            if ( usedAlready ) {
-                                continue;
-                            }
-                            const QString value = "self." + argName + " = " + argName;
-                            KeywordItem* item = new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
-                                                                value, i18n("Initialize property"),
-                                                                KeywordItem::ImportantItem);
-                            resultingItems.append(CompletionTreeItemPointer(item));
-                        }
-                    }
-                }
-            }
+            resultingItems.append(classMemberInitItems());
         }
         if ( abort ) {
-            return QList<CompletionTreeItemPointer>();
+            return ItemList();
         }
+        DUChainReadLocker lock;
         QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
         foreach ( const DeclarationDepthPair& d, declarations ) {
             if ( d.first and d.first->context()->type() == DUContext::Class ) {
@@ -872,6 +971,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
 
 void PythonCodeCompletionContext::summonParentForEventualCall(TokenList allExpressions, const QString& text)
 {
+    DUChainReadLocker lock;
     int offset = 0;
     while ( true ) {
         QPair<int, int> nextCall = allExpressions.nextIndexOfStatus(ExpressionParser::EventualCallFound, offset);

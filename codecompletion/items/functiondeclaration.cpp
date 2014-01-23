@@ -71,24 +71,27 @@ int FunctionDeclarationCompletionItem::argumentHintDepth() const
 
 QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const
 {
-    auto dec = [this]() { return dynamic_cast<FunctionDeclaration*>(m_declaration.data()); };
     switch ( role ) {
         case Qt::DisplayRole: {
             if ( index.column() == KDevelop::CodeCompletionModel::Arguments ) {
                 DUChainReadLocker lock;
-                if ( ! dec() ) return QVariant();
-                if (FunctionType::Ptr functionType = dec()->type<FunctionType>()) {
-                    QString ret;
-                    createArgumentList(dec(), ret, 0, 0, false);
-                    return ret.replace("__kdevpythondocumentation_builtin_", "");
+                if ( Declaration* dec = dynamic_cast<FunctionDeclaration*>(m_declaration.data()) ) {
+                    if (FunctionType::Ptr functionType = dec->type<FunctionType>()) {
+                        QString ret;
+                        createArgumentList(dec, ret, 0, 0, false);
+                        return ret.replace("__kdevpythondocumentation_builtin_", "");
+                    }
                 }
+                 return QVariant();
             }
             if ( index.column() == KDevelop::CodeCompletionModel::Prefix ) {
                 DUChainReadLocker lock;
-                if ( ! dec() ) return QVariant();
-                if ( FunctionType::Ptr type = dec()->type<FunctionType>() ) {
-                    return i18n("function") + " -> " + type->returnType()->toString().replace("__kdevpythondocumentation_builtin_", "");
+                if ( Declaration* dec = dynamic_cast<FunctionDeclaration*>(m_declaration.data()) ) {
+                    if ( FunctionType::Ptr type = dec->type<FunctionType>() ) {
+                        return i18n("function") + " -> " + type->returnType()->toString().replace("__kdevpythondocumentation_builtin_", "");
+                    }
                 }
+                return QVariant();
             }
             break;
         }
@@ -102,22 +105,26 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
                 QList<QVariant> highlight;
                 QString ret;
                 DUChainReadLocker lock;
-                if ( ! dec() ) return QVariant();
-                if ( atArgument() ) {
-                    createArgumentList(dec(), ret, &highlight, atArgument(), false);
-                }
-                else {
-                    createArgumentList(dec(), ret, 0, 0, false);
+                if ( Declaration* dec = dynamic_cast<FunctionDeclaration*>(m_declaration.data()) ) {
+                    if ( atArgument() ) {
+                        createArgumentList(dec, ret, &highlight, atArgument(), false);
+                    }
+                    else {
+                        createArgumentList(dec, ret, 0, 0, false);
+                    }
                 }
                 return QVariant(highlight);
             }
         }
         case KDevelop::CodeCompletionModel::MatchQuality: {
-            if (    m_typeHint == PythonCodeCompletionContext::IterableRequested
-                 && dec() && dec()->type<FunctionType>()
-                 && dynamic_cast<VariableLengthContainer*>(dec()->type<FunctionType>()->returnType().unsafeData()) )
-            {
-                return 2 + PythonDeclarationCompletionItem::data(index, role, model).toInt();
+            DUChainReadLocker lock;
+            if ( Declaration* dec = dynamic_cast<FunctionDeclaration*>(m_declaration.data()) ) {
+                if ( m_typeHint == PythonCodeCompletionContext::IterableRequested
+                     && dec->type<FunctionType>()
+                     && dynamic_cast<VariableLengthContainer*>(dec->type<FunctionType>()->returnType().unsafeData()) )
+                {
+                    return 2 + PythonDeclarationCompletionItem::data(index, role, model).toInt();
+                }
             }
             return PythonDeclarationCompletionItem::data(index, role, model);
         }

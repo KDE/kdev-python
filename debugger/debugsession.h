@@ -41,8 +41,7 @@ protected:
     virtual KDevelop::IFrameStackModel* createFrameStackModel();
 
 public:
-    DebugSession(QStringList program);
-    DebugSession();
+    DebugSession(QStringList program, const KUrl& workingDirectory);
     virtual ~DebugSession();
     /**
      * @brief Start the debugger.
@@ -213,6 +212,7 @@ private:
     QByteArray m_buffer;
     QStringList m_program;
     QList<PdbCommand*> m_commandQueue;
+    const KUrl& m_workingDirectory;
 private:
     /// objects to notify next
     QWeakPointer<QObject> m_nextNotifyObject;

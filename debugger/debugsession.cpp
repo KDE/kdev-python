@@ -49,7 +49,7 @@ KDevelop::IFrameStackModel* DebugSession::createFrameStackModel()
 
 DebugSession::DebugSession() :
       m_nextNotifyMethod(0)
-    , m_inDebuggerData(-1)
+    , m_inDebuggerData(0)
 {
     m_variableController = new Python::VariableController(this);
     m_breakpointController = new Python::BreakpointController(this);
@@ -58,7 +58,7 @@ DebugSession::DebugSession() :
 DebugSession::DebugSession(QStringList program) :
     IDebugSession()
     , m_nextNotifyMethod(0)
-    , m_inDebuggerData(-1)
+    , m_inDebuggerData(0)
 {
     kDebug() << "creating debug session";
     m_variableController = new Python::VariableController(this);
@@ -136,13 +136,12 @@ void DebugSession::dataAvailable()
         int nextChangeAt = data.indexOf(m_inDebuggerData ? debuggerOutputEnd : debuggerOutputBegin, i);
         bool atLastChange = nextChangeAt == -1;
         nextChangeAt = atLastChange ? len : qMin(nextChangeAt, len);
+
         
         kDebug() << data;
+        Q_ASSERT(m_inDebuggerData == 0 || m_inDebuggerData == 1);
         
         if ( m_inDebuggerData == 1 ) {
-            if ( i == 0 ) {
-                i = delimiterSkip;
-            }
             QString newDebuggerData = data.mid(i, nextChangeAt - i);
             m_buffer.append(newDebuggerData);
             if ( data.indexOf("Uncaught exception. Entering post mortem debugging") != -1 ) {

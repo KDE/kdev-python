@@ -94,6 +94,8 @@ public:
      * @brief The "interface method" which returns all the completion items to kdevelop.
      **/
     virtual QList< KDevelop::CompletionTreeItemPointer > completionItems(bool& abort, bool fullCompletion = true);
+
+    virtual QList< CompletionTreeElementPointer > ungroupedElements();
     
     /**
      * @brief Get all possible items matching the specified dot-seperated search string.
@@ -137,6 +139,22 @@ private:
     void summonParentForEventualCall(TokenList tokens, const QString& text);
     /// Get possible "add import..." items for an expression.
     QList< CompletionTreeItemPointer > getMissingIncludeItems(QString forString);
+    void eventuallyAddGroup(QString name, int priority, QList<CompletionTreeItemPointer> items);
+
+private:
+    /// Item generating functions
+    using ItemList = QList<CompletionTreeItemPointer>;
+    ItemList shebangItems();
+    ItemList generatorItems();
+    ItemList functionCallItems();
+    ItemList defineItems();
+    ItemList raiseItems();
+    ItemList importFileItems();
+    ItemList inheritanceItems();
+    ItemList memberAccessItems();
+    ItemList stringFormattingItems();
+    ItemList keywordItems();
+    ItemList classMemberInitItems();
 
 private:
     CompletionContextType m_operation;
@@ -161,6 +179,8 @@ private:
     QString m_matchAgainst;
 
     bool m_fullCompletion;
+
+    QList<CompletionTreeElementPointer> m_storedGroups;
 };
 
 }

@@ -164,6 +164,7 @@ ReferencedTopDUContext PyDUChainTest::parse(const QString& code)
 {
     TestFile* testfile = new TestFile(code + "\n", "py", 0, testDir.absolutePath().append("/"));
     createdFiles << testfile;
+
     testfile->parse((TopDUContext::Features) (TopDUContext::ForceUpdate | TopDUContext::AST) );
     testfile->waitForParsed(500);
     
@@ -1262,36 +1263,5 @@ void PyDUChainTest::testVariableCreation_data()
                                                                        << QStringList{"int", "float"};
     QTest::newRow("for_loop_stacked") << "for a, (b, c) in [(1, 2, 3.5)]: pass" << QStringList{"a", "b", "c"}
                                                                                 << QStringList{"int", "int", "float"};
-}
-
-void PyDUChainTest::testCorrectionFiles()
-{
-    QFETCH(QString, code);
-    QFETCH(QString, expectedType);
-
-    ReferencedTopDUContext ctx = parse(code.toAscii());
-    QVERIFY(ctx);
-
-    DUChainReadLocker lock;
-    QList<Declaration*> decls = ctx->findDeclarations(QualifiedIdentifier("checkme"));
-    QVERIFY(decls.length() > 0);
-    QVERIFY(decls.first()->abstractType());
-    QEXPECT_FAIL("", "Tests are broken, the directory for the correction file can't be properly determined", Abort);
-    QCOMPARE(decls.first()->abstractType()->toString(), expectedType);
-}
-
-void PyDUChainTest::testCorrectionFiles_data()
-{
-    QTest::addColumn<QString>("code");
-    QTest::addColumn<QString>("expectedType");
-
-    QTest::newRow("global_scope_return_type") << "from testCorrectionFiles.example import global_func\n"
-                                                 "checkme = global_func()" << "int";
-    QTest::newRow("class_scope_assign_local") << "from testCorrectionFiles.example import some_class\n"
-                                                 "a = some_class(); checkme = a.foo" << "float";
-    QTest::newRow("class_scope_return_local") << "from testCorrectionFiles.example import some_class\n"
-                                                 "a = some_class(); checkme = a.member_func1()" << "list of int";
-    QTest::newRow("class_scope_return")       << "from testCorrectionFiles.example import some_class\n"
-                                                 "a = some_class(); checkme = a.member_func2()" << "list of float";
 }
 

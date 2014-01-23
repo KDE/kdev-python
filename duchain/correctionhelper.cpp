@@ -36,7 +36,6 @@ using namespace KDevelop;
 namespace Python {
 
 CorrectionHelper::CorrectionHelper(const IndexedString& _url, DeclarationBuilder* builder)
-    : m_builder(builder)
 {
     m_contextStack.push(0);
     KUrl absolutePath = Helper::getCorrectionFile(_url.toUrl());

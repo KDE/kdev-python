@@ -49,7 +49,7 @@
 #include "pythonhighlighting.h"
 #include "duchain/pythoneditorintegrator.h"
 #include "codecompletion/model.h"
-#include "codegen/simplerefactoring.h"
+#include "codegen/refactoring.h"
 #include "codegen/correctionfilegenerator.h"
 #include "kdevpythonversion.h"
 
@@ -74,7 +74,7 @@ KDevelop::ContextMenuExtension LanguageSupport::contextMenuExtension(KDevelop::C
 
     if (ec && ICore::self()->languageController()->languagesForUrl(ec->url()).contains(language())) {
         // It's a Python file, let's add our context menu.
-        SimpleRefactoring::self().doContextMenu(cm, context);
+        m_refactoring->fillContextMenu(cm, context);
         TypeCorrection::self().doContextMenu(cm, context);
     }
     return cm;
@@ -89,6 +89,7 @@ LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ 
     m_self = this;
 
     m_highlighting = new Highlighting( this );
+    m_refactoring = new Refactoring(this);
     PythonCodeCompletionModel* codeCompletion = new PythonCodeCompletionModel(this);
     new KDevelop::CodeCompletion(this, codeCompletion, "Python");
 

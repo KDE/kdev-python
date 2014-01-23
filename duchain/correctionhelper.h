@@ -64,7 +64,6 @@ private:
 
     ReferencedTopDUContext m_hintTopContext;
     QStack<DUContext*> m_contextStack;
-    DeclarationBuilder* m_builder;
 };
 
 } // namespace Python

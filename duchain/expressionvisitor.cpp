@@ -405,7 +405,12 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
     AstDefaultVisitor::visitNode(node->value);
     if ( node->slice && node->slice->astType == Ast::IndexAstType ) {
         DUChainReadLocker lock;
-        if ( IndexedContainer::Ptr indexed = lastType().cast<IndexedContainer>() ) {
+        auto indexedTypes = Helper::filterType<IndexedContainer>(lastType(), [](AbstractType::Ptr toFilter) {
+            return toFilter.cast<IndexedContainer>();
+        });
+        for ( IndexedContainer::Ptr indexed: indexedTypes ) {
+            // TODO This loop currently only uses the first result, it could construct
+            // an unsure from all the matches.
             encounterDeclaration(0);
             IndexAst* sliceIndexAst = static_cast<IndexAst*>(node->slice);
             NumberAst* number = nullptr;
@@ -433,9 +438,16 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
             // the exact index is unknown, use unsure
             return encounter(indexed->asUnsureType().cast<AbstractType>());
         }
-        else if ( VariableLengthContainer::Ptr variableLength = lastType().cast<VariableLengthContainer>() ) {
-            encounterDeclaration(0);
-            return encounter(variableLength->contentType().abstractType());
+        auto variableTypes = Helper::filterType<VariableLengthContainer>(lastType(), [](AbstractType::Ptr toFilter) {
+            return toFilter.cast<VariableLengthContainer>();
+        });
+        if ( ! variableTypes.isEmpty() ) {
+            AbstractType::Ptr result(new IntegralType(IntegralType::TypeMixed));
+            for ( auto variable: variableTypes ) {
+                encounterDeclaration(0);
+                result = Helper::mergeTypes(result, variable->contentType().abstractType());
+            }
+            return encounter(result);
         }
     }
 

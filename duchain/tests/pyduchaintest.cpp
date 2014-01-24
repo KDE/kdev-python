@@ -828,6 +828,8 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("tuple_indexaccess2") << "t = 3, 5.5\ncheckme = t[1]" << "float";
     QTest::newRow("tuple_indexaccess3") << "t = 3, 4\ncheckme = t[1]" << "int";
 
+    QTest::newRow("dict_unsure") << "t = dict(); t = {3: str()}\ncheckme = t[1].capitalize()" << "str";
+
     QTest::newRow("class_create_var") << "class c: pass\nd = c()\nd.foo = 3\ncheckme = d.foo" << "int";
     
     QTest::newRow("tuple_loop") << "t = [(1, \"str\")]\nfor checkme, a in t: pass" << "int";

@@ -93,6 +93,9 @@ class PyDUChainTest : public QObject
         void testOperators_data();
         void testVariableCreation();
         void testVariableCreation_data();
+        void testProblemCount();
+        void testProblemCount_data();
+
 
     private:
         QList<KDevelop::TestFile*> createdFiles;

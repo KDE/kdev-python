@@ -289,7 +289,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     if ( currentContext() && currentContext()->type() == DUContext::Class && ! haveFittingDeclaration ) {
         // If the current context is a class, then this is a class member variable.
         if ( ! dec ) {
-            dec = openDeclaration<ClassMemberDeclaration>(node, originalAst ? originalAst : node);
+            dec = openDeclaration<ClassMemberDeclaration>(identifierForNode(node), range);
             Q_ASSERT(! declarationOpened);
             declarationOpened = true;
         }
@@ -300,15 +300,11 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         dec->setKind(KDevelop::Declaration::Instance);
     } else if ( ! haveFittingDeclaration ) {
         // This name did not previously appear in the user code, so a new variable is declared
-        RangeInRevision range = editorFindRange(rangeNode, rangeNode);
         // check whether a declaration from a previous parser pass must be updated
         if ( ! dec ) {
-            dec = openDeclaration<T>(node, rangeNode);
+            dec = openDeclaration<T>(identifierForNode(node), range);
             Q_ASSERT(! declarationOpened);
             declarationOpened = true;
-        }
-        else {
-            dec->setRange(range);
         }
         if ( declarationOpened ) {
             DeclarationBuilderBase::closeDeclaration();
@@ -350,7 +346,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
             }
         }
     }
-    
+
     T* result = dynamic_cast<T*>(dec);
     if ( ! result ) kWarning() << "variable declaration does not have the expected type";
     return result;

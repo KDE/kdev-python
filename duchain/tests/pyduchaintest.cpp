@@ -932,6 +932,35 @@ void PyDUChainTest::testImportDeclarations() {
     }
 }
 
+void PyDUChainTest::testProblemCount()
+{
+    QFETCH(QString, code);
+    QFETCH(int, problemsCount);
+
+    ReferencedTopDUContext ctx = parse(code);
+    QVERIFY(ctx);
+
+    DUChainReadLocker lock;
+    QCOMPARE(ctx->problems().size(), problemsCount);
+}
+
+void PyDUChainTest::testProblemCount_data()
+{
+    QTest::addColumn<QString>("code");
+    QTest::addColumn<int>("problemsCount");
+
+    QTest::newRow("list_comp") << "[foo for foo in range(3)]" << 0;
+    QTest::newRow("list_comp_wrong") << "[bar for foo in range(3)]" << 1;
+    QTest::newRow("list_comp_staticmethod") << "class A:\n @staticmethod\n def func(cls):\n"
+                                        "  [a for a in [1, 2, 3]]" << 0;
+    QTest::newRow("list_comp_other_decorator") << "def decorate(): pass\nclass A:\n @decorate\n def func(self):\n"
+                                        "  [a for a in [1, 2, 3]]" << 0;
+    QTest::newRow("list_comp_other_wrong") << "def decorate(): pass\nclass A:\n @decorate\n def func(self):\n"
+                                        "  [x for a in [1, 2, 3]]" << 1;
+    QTest::newRow("list_comp_staticmethod_wrong") << "class A:\n @staticmethod\n def func(cls):\n"
+                                        "  [x for a in [1, 2, 3]]" << 1;
+}
+
 void PyDUChainTest::testImportDeclarations_data() {
     QTest::addColumn<QString>("code");
     QTest::addColumn<QStringList>("expectedDecls");

@@ -152,12 +152,9 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
         }
     );
 
-    QList<Declaration*> foundDecls;
-    
     // Step 1: Find all matching declarations which are made inside the type of which the accessed object is.
     // Like, for A.B.C where B is an instance of foo, when processing C, find all properties of foo which are called C.
-    
-    // maybe our attribute isn't a class at all, then that's an error by definition for now
+    QList<Declaration*> foundDecls;
     bool success = false;
     bool haveOneUsefulType = false;
     foreach ( StructureType::Ptr current, accessingAttributeOfType ) {
@@ -182,12 +179,11 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     if ( ! haveOneUsefulType ) {
         m_shouldBeKnown = false;
     }
-    
+
     // Step 2: Construct the type of the declaration which was found.
-    Declaration* d;
     if ( foundDecls.length() > 0 ) {
         DUChainReadLocker lock;
-        d = DeclarationPointer(Helper::resolveAliasDeclaration(foundDecls.last())).data();
+        auto d = Helper::resolveAliasDeclaration(foundDecls.last());
         if ( ! d ) {
             return unknownTypeEncountered();
         }
@@ -199,7 +195,6 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     else {
         return unknownTypeEncountered();
     }
-    DUChainReadLocker lock;
 }
 
 void ExpressionVisitor::visitCall(CallAst* node)

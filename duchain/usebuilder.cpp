@@ -113,14 +113,18 @@ void UseBuilder::visitAttribute(AttributeAst* node)
     
     v.visitNode(node);
     
-    RangeInRevision useRange(node->attribute->startLine, node->attribute->startCol, node->attribute->endLine, node->attribute->endCol + 1);
+    RangeInRevision useRange(node->attribute->startLine, node->attribute->startCol,
+                             node->attribute->endLine, node->attribute->endCol + 1);
     
     DeclarationPointer declaration = v.lastDeclaration();
-    DUChainWriteLocker wlock(DUChain::lock());
-    if ( declaration && declaration->range() == useRange ) return;
+    DUChainWriteLocker wlock;
+    if ( declaration && declaration->range() == useRange ) {
+        // this is the declaration, don't build a use for it
+        return;
+    }
     if ( ! declaration && v.shouldBeKnown() && ( ! v.lastType() or Helper::isUsefulType(v.lastType()) ) ) {
         KDevelop::Problem *p = new KDevelop::Problem();
-        p->setFinalLocation(DocumentRange(currentlyParsedDocument(), useRange.castToSimpleRange())); // TODO ok?
+        p->setFinalLocation(DocumentRange(currentlyParsedDocument(), useRange.castToSimpleRange()));
         p->setSource(KDevelop::ProblemData::SemanticAnalysis);
         p->setSeverity(KDevelop::ProblemData::Hint);
         p->setDescription(i18n("Attribute \"%1\" not found on accessed object", node->attribute->value));

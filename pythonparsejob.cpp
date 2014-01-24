@@ -79,10 +79,7 @@ CodeAst *ParseJob::ast() const
 
 void ParseJob::run()
 {
-    ParseSession* currentSession = new ParseSession();
-    
     if ( abortRequested() || ICore::self()->shuttingDown() ) {
-        delete currentSession;
         return abortJob();
     }
     
@@ -108,7 +105,6 @@ void ParseJob::run()
                     lock.unlock();
                     highlightDUChain();
                 }
-                delete currentSession;
                 return;
             }
             break;
@@ -125,17 +121,13 @@ void ParseJob::run()
         toUpdate->setRange(RangeInRevision(0, 0, INT_MAX, INT_MAX));
     }
     
+    ParseSession* currentSession = new ParseSession();
     currentSession->setContents(QString::fromUtf8(contents().contents));
     currentSession->setCurrentDocument(document());
     
     // call the python API and the AST transformer to populate the syntax tree
     QPair<CodeAst*, bool> parserResults = currentSession->parse(m_ast);
     m_ast = parserResults.first;
-    
-    if ( abortRequested() ) {
-        delete currentSession;
-        return abortJob();
-    }
     
     QSharedPointer<PythonEditorIntegrator> editor = QSharedPointer<PythonEditorIntegrator>(
         new PythonEditorIntegrator(currentSession)
@@ -152,7 +144,6 @@ void ParseJob::run()
         // Run the declaration builder. If necessary, it will run itself again.
         m_duContext = builder.build(document(), m_ast, toUpdate.data());
         if ( abortRequested() ) {
-            delete currentSession;
             return abortJob();
         }
         
@@ -200,7 +191,6 @@ void ParseJob::run()
         kDebug() << "---- Parsing Succeeded ----";
         
         if ( abortRequested() ) {
-            delete currentSession;
             return abortJob();
         }
         
@@ -235,7 +225,6 @@ void ParseJob::run()
     }
     
     if ( abortRequested() ) {
-        delete currentSession;
         return abortJob();
     }
     
@@ -252,9 +241,6 @@ void ParseJob::run()
         DUChainWriteLocker lock;
         currentSession->ast = m_ast;
         m_duContext->setAst(KSharedPtr<IAstContainer>(currentSession));
-    }
-    else {
-        delete currentSession;
     }
     
     setDuChain(m_duContext);

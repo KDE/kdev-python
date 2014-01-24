@@ -36,7 +36,7 @@ void DebugJob::start()
     QStringList program;
     QString debuggerUrl = KStandardDirs::locate("data", "kdevpythonsupport/debugger/") + "/kdevpdb.py";
     program << m_interpreter << "-u" << debuggerUrl << m_scriptUrl.path(KUrl::RemoveTrailingSlash) << m_args;
-    m_session = new DebugSession(program);
+    m_session = new DebugSession(program, m_workingDirectory);
     
     setStandardToolView(KDevelop::IOutputView::DebugView);
     setBehaviours(KDevelop::IOutputView::Behaviours(KDevelop::IOutputView::AllowUserClose) | KDevelop::IOutputView::AutoScroll);
@@ -44,6 +44,9 @@ void DebugJob::start()
     pyOutputModel->setFilteringStrategy(OutputModel::ScriptErrorFilter);
     setModel(pyOutputModel);
     setTitle(m_interpreter + m_scriptUrl.path());
+
+    setModel(new KDevelop::OutputModel(0));
+
     startOutput();
     
     kDebug() << "connecting standardOutputReceived";

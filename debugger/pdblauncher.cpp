@@ -90,6 +90,7 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
         job->m_scriptUrl = iface->script(cfg, err);
         job->m_interpreter = interpreter;
         job->m_args = iface->arguments(cfg, err);
+        job->m_workingDirectory = iface->workingDirectory(cfg);
         QList<KJob*> l;
         l << job;
         return new KDevelop::ExecuteCompositeJob( KDevelop::ICore::self()->runController(), l );

@@ -110,19 +110,26 @@ IndexedDeclaration Helper::declarationUnderCursor(bool allowUse)
 
 Declaration* Helper::accessAttribute(Declaration* accessed, const QString& attribute, DUContext* current)
 {
-    if ( ! accessed || ! accessed->type<StructureType>() ) {
+    if ( ! accessed || ! accessed->abstractType() ) {
         return 0;
     }
-    StructureType::Ptr type = accessed->type<StructureType>();
-    DUChainReadLocker lock(DUChain::lock());
-    QList<DUContext*> searchContexts = Helper::internalContextsForClass(type, current->topContext());
-    foreach ( DUContext* c, searchContexts ) {
-        QList< Declaration* > found = c->findLocalDeclarations(KDevelop::Identifier(attribute));
-        if ( ! found.isEmpty() ) {
-            return found.first();
+    // if the type is unsure, search all the possibilities
+    auto structureTypes = Helper::filterType<StructureType>(accessed->abstractType(),
+        [](AbstractType::Ptr toFilter) {
+            return toFilter && toFilter->whichType() == AbstractType::TypeStructure;
+        }
+    );
+    DUChainReadLocker lock;
+    for ( auto type: structureTypes ) {
+        QList<DUContext*> searchContexts = Helper::internalContextsForClass(type, current->topContext());
+        for ( DUContext* c: searchContexts ) {
+            QList< Declaration* > found = c->findLocalDeclarations(KDevelop::Identifier(attribute));
+            if ( ! found.isEmpty() ) {
+                return found.first();
+            }
         }
     }
-    return 0;
+    return nullptr;
 }
 
 AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* current)

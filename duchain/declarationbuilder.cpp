@@ -243,7 +243,7 @@ template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclar
 typedef QPair<Declaration*, int> p;
 template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast* originalAst, Declaration* previous, AbstractType::Ptr type)
 {
-    DUChainWriteLocker lock(DUChain::lock());
+    DUChainWriteLocker lock;
     Ast* rangeNode = originalAst ? originalAst : node;
     RangeInRevision range = editorFindRange(rangeNode, rangeNode);
     

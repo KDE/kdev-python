@@ -22,13 +22,13 @@
 #include "parserexport.h"
 #include <language/duchain/indexedstring.h>
 #include <language/duchain/duchainpointer.h>
+#include <language/duchain/problem.h>
 #include <language/editor/simplecursor.h>
 #include <language/editor/documentrange.h>
 #include "ast.h"
 #include "kurl.h"
 #include <kdev-pg-memory-pool.h>
 
-#include <language/interfaces/iproblem.h>
 #include <language/interfaces/iastcontainer.h>
 #include <language/editor/rangeinrevision.h>
 #include <language/editor/modificationrevision.h>

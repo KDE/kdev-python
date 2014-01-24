@@ -350,6 +350,9 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::memberAccessI
 
 PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::stringFormattingItems()
 {
+    if ( ! m_fullCompletion ) {
+        return ItemList();
+    }
     DUChainReadLocker lock;
     ItemList resultingItems;
     int cursorPosition;

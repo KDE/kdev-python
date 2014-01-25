@@ -822,12 +822,11 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
         // a missing module, or a C module (.so) which is unreadable for kdevelop
         // TODO imrpove error handling in case the module exists as a shared object or .pyc file only
         kDebug() << "invalid or non-existent URL:" << moduleInfo;
-        KDevelop::Problem *p = new KDevelop::Problem();
-        p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange())); // TODO ok?
+        KDevelop::Problem *p = new Python::MissingIncludeProblem(moduleName, currentlyParsedDocument());
+        p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange()));
         p->setSource(KDevelop::ProblemData::SemanticAnalysis);
         p->setSeverity(KDevelop::ProblemData::Warning);
         p->setDescription(i18n("Module \"%1\" not found", moduleName));
-        p->setSolutionAssistant(KSharedPtr<IAssistant>(new MissingIncludeAssistant(moduleName, currentlyParsedDocument())));
         problemEncountered.attach(p);
         return 0;
     }
@@ -862,12 +861,11 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
                                                              editorFindRange(declarationIdentifier, declarationIdentifier));
             }
             else {
-                KDevelop::Problem *p = new KDevelop::Problem();
+                KDevelop::Problem *p = new Python::MissingIncludeProblem(moduleName, currentlyParsedDocument());
                 p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange())); // TODO ok?
                 p->setSource(KDevelop::ProblemData::SemanticAnalysis);
                 p->setSeverity(KDevelop::ProblemData::Warning);
                 p->setDescription(i18n("Declaration for \"%1\" not found in specified module", moduleInfo.second.join(".")));
-                p->setSolutionAssistant(KSharedPtr<IAssistant>(new MissingIncludeAssistant(moduleName, currentlyParsedDocument())));
                 problemEncountered.attach(p);
             }
         }

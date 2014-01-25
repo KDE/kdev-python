@@ -31,7 +31,7 @@
 #include <QTimer>
 #include <malloc.h>
 #include <language/duchain/topducontext.h>
-#include <language/interfaces/iproblem.h>
+#include <language/duchain/problem.h>
 #include <language/duchain/duchain.h>
 
 #include "python_header.h"

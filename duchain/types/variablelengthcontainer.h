@@ -34,7 +34,7 @@ class KDEVPYTHONDUCHAIN_EXPORT VariableLengthContainerData : public KDevelop::St
 public:
     /// Constructor
     VariableLengthContainerData()
-        : KDevelop::StructureTypeData(), m_keyType(0), m_contentType(0), m_hasKeyType(false)
+        : KDevelop::StructureTypeData(), m_keyType(), m_contentType(), m_hasKeyType(false)
     {
     }
     /// Copy constructor. \param rhs data to copy
@@ -44,7 +44,7 @@ public:
     }
     
     VariableLengthContainerData(const StructureTypeData& rhs)
-        : KDevelop::StructureTypeData(rhs), m_keyType(0), m_contentType(0), m_hasKeyType(false)
+        : KDevelop::StructureTypeData(rhs), m_keyType(), m_contentType(), m_hasKeyType(false)
     {
     };
     

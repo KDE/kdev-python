@@ -36,7 +36,6 @@
 #include <language/duchain/classdeclaration.h>
 #include <language/duchain/aliasdeclaration.h>
 #include <language/duchain/ducontext.h>
-#include <language/interfaces/iproblem.h>
 
 #include <KLocalizedString>
 

@@ -724,6 +724,7 @@ void ExpressionVisitor::visitCompare(CompareAst* node)
 }
 
 AbstractType::Ptr ExpressionVisitor::fromBinaryOperator(AbstractType::Ptr lhs, AbstractType::Ptr rhs, const QString& op) {
+    DUChainReadLocker lock;
     auto operatorReturnType = [&op, this](const AbstractType::Ptr& p) {
         StructureType::Ptr type = p.cast<StructureType>();
         if ( ! type ) {

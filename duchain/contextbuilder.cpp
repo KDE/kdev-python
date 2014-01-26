@@ -52,7 +52,8 @@ namespace Python
 {
 
 ContextBuilder::ContextBuilder()
-    : m_prebuilding(false)
+    : m_mapAst(true)
+    , m_prebuilding(false)
     , m_indentInformationCache(0)
 {
 

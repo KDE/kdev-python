@@ -154,7 +154,8 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     int lineOffset = hacked.second;
     
     AstBuilder::pyInitLock.lock();
-    Py_SetPythonHome(AstBuilder::pyHomeDir.toUtf8().data());
+    QByteArray homeDir = AstBuilder::pyHomeDir.toUtf8();
+    Py_SetPythonHome(homeDir.data());
     kDebug() << "Not initialized, calling init func.";
     Py_Initialize();
     Q_ASSERT(Py_IsInitialized());

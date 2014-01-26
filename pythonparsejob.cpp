@@ -127,7 +127,7 @@ void ParseJob::run()
         toUpdate->setRange(RangeInRevision(0, 0, INT_MAX, INT_MAX));
     }
     
-    ParseSession* currentSession = new ParseSession();
+    KSharedPtr<ParseSession> currentSession(new ParseSession());
     currentSession->setContents(QString::fromUtf8(contents().contents));
     currentSession->setCurrentDocument(document());
     
@@ -136,7 +136,7 @@ void ParseJob::run()
     m_ast = parserResults.first;
     
     QSharedPointer<PythonEditorIntegrator> editor = QSharedPointer<PythonEditorIntegrator>(
-        new PythonEditorIntegrator(currentSession)
+        new PythonEditorIntegrator(currentSession.data())
     );
     // if parsing succeeded, continue and do semantic analysis
     if ( parserResults.second )
@@ -246,7 +246,7 @@ void ParseJob::run()
     if ( minimumFeatures() & TopDUContext::AST ) {
         DUChainWriteLocker lock;
         currentSession->ast = m_ast;
-        m_duContext->setAst(KSharedPtr<IAstContainer>(currentSession));
+        m_duContext->setAst(KSharedPtr<IAstContainer>::staticCast(currentSession));
     }
     
     setDuChain(m_duContext);

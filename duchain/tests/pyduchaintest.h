@@ -49,7 +49,7 @@ class PyDUChainTest : public QObject
 
         KDevelop::ReferencedTopDUContext parse(const QString& code);
         
-        Python::CodeAst* m_ast;
+        Python::CodeAst::Ptr m_ast;
         KDevPG::MemoryPool m_pool;
         
     private slots:

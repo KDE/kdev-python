@@ -141,7 +141,7 @@ AstBuilder::AstBuilder(KDevPG::MemoryPool* pool)
 
 }
 
-CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
+CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
 {
     qDebug() << " ====> AST     ====>     building abstract syntax tree for " << filename.path();
     
@@ -185,7 +185,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
         if ( ! errorDetails_tuple ) {
             kWarning() << "Error retrieving error message, not displaying, and not doing anything";
             pyInitLock.unlock();
-            return 0;
+            return CodeAst::Ptr();
         }
         PyObject* linenoobj = PyTuple_GetItem(errorDetails_tuple, 1);
         errorMessage_str = PyTuple_GetItem(value, 0);
@@ -325,7 +325,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
             PyArena_Free(arena);
             Py_Finalize();
             pyInitLock.unlock();
-            return 0; // everything fails, so we abort.
+            return CodeAst::Ptr(); // everything fails, so we abort.
         }
     }
     kDebug() << "Got syntax tree from python parser:" << syntaxtree->kind << Module_kind;
@@ -341,7 +341,7 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     RangeUpdateVisitor v;
     v.visitNode(t.ast);
 
-    return t.ast;
+    return CodeAst::Ptr(t.ast);
 }
 
 }

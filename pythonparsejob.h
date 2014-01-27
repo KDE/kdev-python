@@ -27,6 +27,7 @@
 #include <ksharedptr.h>
 #include <ktexteditor/range.h>
 #include <kdev-pg-memory-pool.h>
+#include <astdefaultvisitor.h>
 
 #include <language/backgroundparser/parsejob.h>
 #include <language/duchain/duchainpointer.h>
@@ -40,7 +41,6 @@ namespace Python
 {
 
 class LanguageSupport;
-
 class ParseSession;
 
 class ParseJob : public KDevelop::ParseJob
@@ -55,7 +55,7 @@ public:
     ParseJob(const IndexedString& url, ILanguageSupport* languageSupport );
     virtual ~ParseJob();
 
-    virtual CodeAst *ast() const;
+    virtual CodeAst* ast() const;
     bool wasReadFromDisk() const;
     static void eventuallyDoPEP8Checking(const IndexedString document, TopDUContext* topContext);
 
@@ -63,7 +63,7 @@ protected:
     virtual void run();
 
 private:
-    CodeAst *m_ast;
+    CodeAst::Ptr m_ast;
     bool m_readFromDisk;
     KDevelop::ReferencedTopDUContext m_duContext;
     KTextEditor::Range m_textRangeToParse;

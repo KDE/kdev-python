@@ -47,7 +47,7 @@ public:
 
     KDevelop::ReferencedTopDUContext parse(const QString& code);
 
-    Python::CodeAst* m_ast;
+    Python::CodeAst::Ptr m_ast;
 
 private slots:
     void benchSimpleStatements();

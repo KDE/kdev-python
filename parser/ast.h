@@ -28,6 +28,7 @@
 #include <QString>
 #include <QStringList>
 #include <QPair>
+#include <QSharedPointer>
 
 #include "parserexport.h"
 
@@ -230,6 +231,8 @@ public:
 class KDEVPYTHONPARSER_EXPORT CodeAst : public Ast {
 public:
     CodeAst();
+    ~CodeAst();
+    typedef QSharedPointer<CodeAst> Ptr;
     QList<Ast*> body;
     Identifier* name; // module name
 };

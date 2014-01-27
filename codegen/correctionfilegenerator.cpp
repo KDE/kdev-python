@@ -438,13 +438,13 @@ int CorrectionFileGenerator::findStructureFor(const QString &klass, const QStrin
     ParseSession parseSession;
     parseSession.setContents(m_code.join("\n"));
 
-    QPair<class CodeAst *, bool> parsed = parseSession.parse(0);
+    QPair<CodeAst::Ptr, bool> parsed = parseSession.parse();
 
     QString classIdentifier = ( ! klass.isNull() ) ? "class_" + klass : QString();
     QString functionIdentifier = ( ! function.isNull() ) ? "function_" + function : QString();
 
     StructureFindVisitor visitor(classIdentifier, functionIdentifier);
-    visitor.visitCode(parsed.first);
+    visitor.visitCode(parsed.first.data());
 
     return visitor.line();
 }
@@ -473,7 +473,7 @@ bool CorrectionFileGenerator::checkForValidSyntax()
     ParseSession parseSession;
     parseSession.setContents(m_code.join("\n"));
 
-    QPair<class CodeAst *, bool> parsed = parseSession.parse(0);
+    QPair<CodeAst::Ptr, bool> parsed = parseSession.parse();
 
     return parsed.second && parseSession.m_problems.isEmpty();
 }

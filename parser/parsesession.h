@@ -28,6 +28,7 @@
 #include "ast.h"
 #include "kurl.h"
 #include <kdev-pg-memory-pool.h>
+#include "astdefaultvisitor.h"
 
 #include <language/interfaces/iastcontainer.h>
 #include <language/editor/rangeinrevision.h>
@@ -39,8 +40,8 @@ typedef QPair<KDevelop::DUContextPointer, KDevelop::RangeInRevision> SimpleUse;
 
 namespace Python
 {
-    class CodeAst;
-    class Ast;
+class CodeAst;
+class Ast;
 
 class KDEVPYTHONPARSER_EXPORT ParseSession : public IAstContainer
 {
@@ -56,7 +57,7 @@ public:
     void setCurrentDocument(const IndexedString& url);
     IndexedString currentDocument();
 
-    QPair<CodeAst*, bool> parse( Python::CodeAst* ast );
+    QPair<CodeAst::Ptr, bool> parse();
     
     QList<KDevelop::ProblemPointer> m_problems;
     
@@ -69,7 +70,7 @@ public:
         Q_UNUSED(use);
     }
     
-    CodeAst* ast;
+    CodeAst::Ptr ast;
     
 private:
     QString m_contents;

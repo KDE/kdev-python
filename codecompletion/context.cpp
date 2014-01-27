@@ -75,7 +75,7 @@ std::unique_ptr<ExpressionVisitor> visitorForString(QString str, DUContext* cont
 {
     KDevPG::MemoryPool pool;
     QSharedPointer<AstBuilder> builder(new AstBuilder(&pool));
-    CodeAst* tmpAst = builder->parse(KUrl(), str);
+    CodeAst::Ptr tmpAst = builder->parse(KUrl(), str);
     if ( ! tmpAst ) {
         return std::unique_ptr<ExpressionVisitor>(nullptr);
     }
@@ -85,7 +85,7 @@ std::unique_ptr<ExpressionVisitor> visitorForString(QString str, DUContext* cont
         v->m_scanUntilCursor = scanUntil;
         v->m_reportUnknownNames = true;
     }
-    v->visitCode(tmpAst);
+    v->visitCode(tmpAst.data());
     return std::unique_ptr<ExpressionVisitor>(v);
 }
 

@@ -38,7 +38,8 @@ ParseSession::ParseSession()
 }
 ParseSession::~ParseSession()
 {
-    delete m_pool;
+    ast.clear();
+//     delete m_pool;
 }
 
 void ParseSession::setCurrentDocument(const IndexedString& url)
@@ -71,10 +72,10 @@ void ParseSession::setContents( const QString& contents )
     m_contents = contents;
 }
 
-QPair<CodeAst*, bool> ParseSession::parse(Python::CodeAst* /*ast*/)
+QPair<CodeAst::Ptr, bool> ParseSession::parse()
 {
     AstBuilder pythonparser(m_pool);
-    QPair<CodeAst*, bool> matched;
+    QPair<CodeAst::Ptr, bool> matched;
     matched.first = pythonparser.parse(m_currentDocument.toUrl(), m_contents);
     matched.second = matched.first ? true : false; // check whether an AST was returned and react accordingly
     
@@ -85,7 +86,7 @@ QPair<CodeAst*, bool> ParseSession::parse(Python::CodeAst* /*ast*/)
         kDebug() << "Sucessfully parsed";
     }else
     {
-        matched.first = 0;
+        matched.first.clear();
         kDebug() << "Couldn't parse content";
     }
     return matched;

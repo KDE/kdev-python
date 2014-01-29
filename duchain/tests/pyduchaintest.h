@@ -26,7 +26,6 @@
 #define PYDUCHAINTEST_H
 
 #include <QObject>
-#include <kdev-pg-memory-pool.h>
 #include "ast.h"
 #include <language/duchain/indexedstring.h>
 #include <language/duchain/topducontext.h>
@@ -50,7 +49,6 @@ class PyDUChainTest : public QObject
         KDevelop::ReferencedTopDUContext parse(const QString& code);
         
         Python::CodeAst::Ptr m_ast;
-        KDevPG::MemoryPool m_pool;
         
     private slots:
         void init();

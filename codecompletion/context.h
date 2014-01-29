@@ -21,7 +21,6 @@
 
 #include <language/codecompletion/codecompletioncontext.h>
 #include <language/duchain/duchainpointer.h>
-#include <kdev-pg-memory-pool.h>
 #include <QStack>
 
 #include <QObject>

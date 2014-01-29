@@ -27,7 +27,6 @@
 
 #include <KDebug>
 #include <KUrl>
-#include <kdev-pg-memory-pool.h>
 #include "astdefaultvisitor.h"
 
 #include <language/duchain/topducontext.h>
@@ -50,10 +49,8 @@ QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename);
 class KDEVPYTHONPARSER_EXPORT AstBuilder
 {
 public:
-    AstBuilder(KDevPG::MemoryPool* pool);
     CodeAst::Ptr parse(KUrl filename, QString &contents);
     QList<KDevelop::ProblemPointer> m_problems;
-    KDevPG::MemoryPool* m_pool;
 private:
     static QMutex pyInitLock;
     static QString pyHomeDir;

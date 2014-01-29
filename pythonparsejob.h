@@ -26,7 +26,6 @@
 
 #include <ksharedptr.h>
 #include <ktexteditor/range.h>
-#include <kdev-pg-memory-pool.h>
 #include <astdefaultvisitor.h>
 
 #include <language/backgroundparser/parsejob.h>

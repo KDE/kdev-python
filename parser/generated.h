@@ -6,8 +6,7 @@
 class PythonAstTransformer {
 public:
     CodeAst* ast;
-    KDevPG::MemoryPool* m_pool;
-    PythonAstTransformer(int lineOffset, KDevPG::MemoryPool* pool) :  m_pool(pool), m_lineOffset(lineOffset) {};
+    PythonAstTransformer(int lineOffset) : m_lineOffset(lineOffset) {};
     void run(mod_ty syntaxtree, QString moduleName) {
         ast = new CodeAst();
         ast->name = new Identifier(moduleName);

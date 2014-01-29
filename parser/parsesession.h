@@ -27,7 +27,6 @@
 #include <language/editor/documentrange.h>
 #include "ast.h"
 #include "kurl.h"
-#include <kdev-pg-memory-pool.h>
 #include "astdefaultvisitor.h"
 
 #include <language/interfaces/iastcontainer.h>
@@ -51,8 +50,6 @@ public:
 
     void setContents( const QString& contents );
     QString contents() const;
-    
-    KDevPG::MemoryPool* m_pool;
     
     void setCurrentDocument(const IndexedString& url);
     IndexedString currentDocument();

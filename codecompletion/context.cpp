@@ -73,8 +73,7 @@ PythonCodeCompletionContext::CompletionContextType PythonCodeCompletionContext::
 std::unique_ptr<ExpressionVisitor> visitorForString(QString str, DUContext* context,
                                                     CursorInRevision scanUntil = CursorInRevision::invalid())
 {
-    KDevPG::MemoryPool pool;
-    QSharedPointer<AstBuilder> builder(new AstBuilder(&pool));
+    QSharedPointer<AstBuilder> builder(new AstBuilder);
     CodeAst::Ptr tmpAst = builder->parse(KUrl(), str);
     if ( ! tmpAst ) {
         return std::unique_ptr<ExpressionVisitor>(nullptr);

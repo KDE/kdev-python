@@ -46,7 +46,7 @@ using namespace Python;
 
 QTEST_MAIN(PyAstTest)
 
-PyAstTest::PyAstTest(QObject* parent): QObject(parent), m_pool(0)
+PyAstTest::PyAstTest(QObject* parent): QObject(parent)
 {
     initShell();
 }
@@ -60,11 +60,10 @@ void PyAstTest::initShell()
     KDevelop::CodeRepresentation::setDiskChangesForbidden(true);
 }
 
-CodeAst* PyAstTest::getAst(QString code)
+CodeAst::Ptr PyAstTest::getAst(QString code)
 {
-    Q_ASSERT(m_pool);
-    AstBuilder* builder = new AstBuilder(m_pool);
-    CodeAst* result = builder->parse(KUrl("<empty>"), code);
+    QSharedPointer<AstBuilder> builder(new AstBuilder);
+    CodeAst::Ptr result = builder->parse(KUrl("<empty>"), code);
     return result;
 }
 
@@ -89,24 +88,20 @@ public:
 
 void PyAstTest::testCode(QString code)
 {
-    m_pool = new KDevPG::MemoryPool;
-    CodeAst* ast = getAst(code);
+    CodeAst::Ptr ast = getAst(code);
     VerifyVisitor v;
-    v.visitCode(ast);
-    delete m_pool;
-    m_pool = 0;
+    v.visitCode(ast.data());
 }
 
 void PyAstTest::testExceptionHandlers()
 {
-    m_pool = new KDevPG::MemoryPool;
     QString code = "try: pass\n"
                    "except FooBar as baz: pass\n"
                    "except Cat as baz: pass\n"
                    "except Dawg as asdf: pass\n";
-    CodeAst* ast = getAst(code);
+    CodeAst::Ptr ast = getAst(code);
     VerifyVisitor v;
-    v.visitCode(ast);
+    v.visitCode(ast.data());
     QCOMPARE(ast->body.size(), 1);
     QVERIFY(ast->body.first()->astType == Ast::TryAstType);
     TryAst* try_ = static_cast<TryAst*>(ast->body.first());
@@ -115,8 +110,6 @@ void PyAstTest::testExceptionHandlers()
         QVERIFY(handler->name);
         QCOMPARE(handler->name->astType, Ast::IdentifierAstType);
     }
-    delete m_pool;
-    m_pool = 0;
 }
 
 void PyAstTest::testStatements()
@@ -227,9 +220,7 @@ void PyAstTest::testCorrectedFuncRanges()
     QFETCH(QString, code);
     QFETCH(SimpleRange, range);
 
-    m_pool = new KDevPG::MemoryPool;
-
-    CodeAst* ast = getAst(code);
+    CodeAst::Ptr ast = getAst(code);
     QVERIFY(ast);
     foreach ( Ast* node, ast->body ) {
         if ( node->astType != Ast::FunctionDefinitionAstType ) {
@@ -240,8 +231,6 @@ void PyAstTest::testCorrectedFuncRanges()
         kDebug() << func->name->range() << range;
         QCOMPARE(func->name->range(), range);
     }
-
-    delete m_pool;
 }
 
 void PyAstTest::testCorrectedFuncRanges_data()

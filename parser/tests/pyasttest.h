@@ -21,7 +21,6 @@
 #define PYASTTEST_H
 
 #include <QtCore/QObject>
-#include <kdev-pg-memory-pool.h>
 #include <ast.h>
 
 namespace KDevelop {
@@ -37,7 +36,7 @@ Q_OBJECT
 public:
     explicit PyAstTest(QObject* parent = 0);
     void initShell();
-    CodeAst* getAst(QString code);
+    CodeAst::Ptr getAst(QString code);
     void testCode(QString code);
 private slots:
     void testClass();
@@ -54,9 +53,6 @@ private slots:
     void testExceptionHandlers();
     void testCorrectedFuncRanges();
     void testCorrectedFuncRanges_data();
-
-private:
-    KDevPG::MemoryPool* m_pool;
 };
 
 }

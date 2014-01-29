@@ -74,7 +74,7 @@ ParseJob::~ParseJob()
 CodeAst *ParseJob::ast() const
 {
     Q_ASSERT( isFinished() && m_ast );
-    return m_ast;
+    return m_ast.data();
 }
 
 void ParseJob::run()
@@ -121,16 +121,16 @@ void ParseJob::run()
         toUpdate->setRange(RangeInRevision(0, 0, INT_MAX, INT_MAX));
     }
     
-    ParseSession* currentSession = new ParseSession();
+    KSharedPtr<ParseSession> currentSession(new ParseSession());
     currentSession->setContents(QString::fromUtf8(contents().contents));
     currentSession->setCurrentDocument(document());
     
     // call the python API and the AST transformer to populate the syntax tree
-    QPair<CodeAst*, bool> parserResults = currentSession->parse(m_ast);
+    QPair<CodeAst::Ptr, bool> parserResults = currentSession->parse();
     m_ast = parserResults.first;
     
     QSharedPointer<PythonEditorIntegrator> editor = QSharedPointer<PythonEditorIntegrator>(
-        new PythonEditorIntegrator(currentSession)
+        new PythonEditorIntegrator(currentSession.data())
     );
     // if parsing succeeded, continue and do semantic analysis
     if ( parserResults.second )
@@ -142,7 +142,7 @@ void ParseJob::run()
         builder.m_futureModificationRevision = contents().modification;
 
         // Run the declaration builder. If necessary, it will run itself again.
-        m_duContext = builder.build(document(), m_ast, toUpdate.data());
+        m_duContext = builder.build(document(), m_ast.data(), toUpdate.data());
         if ( abortRequested() ) {
             return abortJob();
         }
@@ -152,7 +152,7 @@ void ParseJob::run()
         // gather uses of variables and functions on the document
         UseBuilder usebuilder(editor.data());
         usebuilder.m_currentlyParsedDocument = document();
-        usebuilder.buildUses(m_ast);
+        usebuilder.buildUses(m_ast.data());
         
         // check whether any unresolved imports were encountered
         bool needsReparse = ! builder.m_unresolvedImports.isEmpty();
@@ -229,7 +229,7 @@ void ParseJob::run()
     }
     
     // The parser might have given us some syntax errors, which are now added to the document.
-    DUChainWriteLocker lock(DUChain::lock());
+    DUChainWriteLocker lock;
     foreach ( const ProblemPointer& p, currentSession->m_problems ) {
         m_duContext->addProblem(p);
     }
@@ -240,7 +240,7 @@ void ParseJob::run()
     if ( minimumFeatures() & TopDUContext::AST ) {
         DUChainWriteLocker lock;
         currentSession->ast = m_ast;
-        m_duContext->setAst(KSharedPtr<IAstContainer>(currentSession));
+        m_duContext->setAst(KSharedPtr<IAstContainer>::staticCast(currentSession));
     }
     
     setDuChain(m_duContext);

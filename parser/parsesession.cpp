@@ -1,7 +1,7 @@
 /*****************************************************************************
  * Copyright (c) 2007 Andreas Pakulat <apaku@gmx.de>                         *
  * Copyright (c) 2007 Piyush verma <piyush.verma@gmail.com>                  *
- * Copyright 2010-2012 Sven Brauch <svenbrauch@googlemail.com>               *
+ * Copyright 2010-2014 Sven Brauch <svenbrauch@googlemail.com>               *
  *                                                                           *
  * This program is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU General Public License as            *
@@ -30,15 +30,14 @@ namespace Python
 {
 
 ParseSession::ParseSession()
-    : m_pool(new KDevPG::MemoryPool())
-    , ast(0)
+    : ast(0)
     , m_currentDocument(KDevelop::IndexedString("<invalid>"))
     , m_futureModificationRevision()
 {
 }
 ParseSession::~ParseSession()
 {
-    delete m_pool;
+    ast.clear();
 }
 
 void ParseSession::setCurrentDocument(const IndexedString& url)
@@ -71,10 +70,10 @@ void ParseSession::setContents( const QString& contents )
     m_contents = contents;
 }
 
-QPair<CodeAst*, bool> ParseSession::parse(Python::CodeAst* /*ast*/)
+QPair<CodeAst::Ptr, bool> ParseSession::parse()
 {
-    AstBuilder pythonparser(m_pool);
-    QPair<CodeAst*, bool> matched;
+    AstBuilder pythonparser;
+    QPair<CodeAst::Ptr, bool> matched;
     matched.first = pythonparser.parse(m_currentDocument.toUrl(), m_contents);
     matched.second = matched.first ? true : false; // check whether an AST was returned and react accordingly
     
@@ -85,7 +84,7 @@ QPair<CodeAst*, bool> ParseSession::parse(Python::CodeAst* /*ast*/)
         kDebug() << "Sucessfully parsed";
     }else
     {
-        matched.first = 0;
+        matched.first.clear();
         kDebug() << "Couldn't parse content";
     }
     return matched;

@@ -94,6 +94,11 @@ CodeAst::CodeAst() : name(0)
     astType = Ast::CodeAstType;
 }
 
+CodeAst::~CodeAst()
+{
+    free_ast_recursive(this);
+}
+
 CompareAst::CompareAst(Ast* parent): ExpressionAst(parent, Ast::CompareAstType), leftmostElement(0)
 {
     

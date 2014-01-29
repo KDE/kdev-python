@@ -27,7 +27,7 @@
 
 #include <KDebug>
 #include <KUrl>
-#include <kdev-pg-memory-pool.h>
+#include "astdefaultvisitor.h"
 
 #include <language/duchain/topducontext.h>
 
@@ -41,8 +41,8 @@ namespace PythonParser
 
 namespace Python
 {
-    class Ast;
-    class CodeAst;
+class Ast;
+class CodeAst;
 
 typedef QMap<QString, QString> stringDictionary;
 
@@ -53,10 +53,8 @@ QString PyUnicodeObjectToQString(PyObject* obj);
 class KDEVPYTHONPARSER_EXPORT AstBuilder
 {
 public:
-    AstBuilder(KDevPG::MemoryPool* pool);
-    CodeAst* parse(KUrl filename, QString& contents);
+    CodeAst::Ptr parse(KUrl filename, QString &contents);
     QList<KDevelop::ProblemPointer> m_problems;
-    KDevPG::MemoryPool* m_pool;
 private:
     static QMutex pyInitLock;
 };

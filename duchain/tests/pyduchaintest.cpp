@@ -60,7 +60,7 @@ using namespace KDevelop;
 using namespace Python;
 
 
-PyDUChainTest::PyDUChainTest(QObject* parent): QObject(parent), m_pool()
+PyDUChainTest::PyDUChainTest(QObject* parent): QObject(parent)
 {
     assetsDir = QDir(DUCHAIN_PY_DATA_DIR);
     if (!assetsDir.cd("data")) {
@@ -669,8 +669,7 @@ void PyDUChainTest::testRanges()
         AttributeRangeTestVisitor* visitor = new AttributeRangeTestVisitor();
         visitor->searchingForRange = r;
         visitor->searchingForIdentifier = identifier;
-        visitor->visitCode(m_ast);
-
+        visitor->visitCode(m_ast.data());
         QCOMPARE(visitor->found, true);
         delete visitor;
     }
@@ -738,8 +737,7 @@ void PyDUChainTest::testTypes()
     TypeTestVisitor* visitor = new TypeTestVisitor();
     visitor->ctx = TopDUContextPointer(ctx.data());
     visitor->searchingForType = expectedType;
-    visitor->visitCode(m_ast);
-
+    visitor->visitCode(m_ast.data());
     QEXPECT_FAIL("lambda", "not implemented: aliasing lambdas", Continue);
     QCOMPARE(visitor->found, true);
 }
@@ -1103,7 +1101,7 @@ void PyDUChainTest::testOperators()
     TypeTestVisitor* visitor = new TypeTestVisitor();
     visitor->ctx = TopDUContextPointer(ctx.data());
     visitor->searchingForType = expectedType;
-    visitor->visitCode(m_ast);
+    visitor->visitCode(m_ast.data());
 
     QVERIFY(visitor->found);
 }

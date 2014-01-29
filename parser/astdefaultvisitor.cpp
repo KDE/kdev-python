@@ -27,20 +27,23 @@
 namespace Python
 {
 
+void free_ast_recursive(CodeAst *node)
+{
+    AstFreeVisitor v;
+    v.visitCode(node);
+}
+
 AstDefaultVisitor::AstDefaultVisitor() { }
 AstDefaultVisitor::~AstDefaultVisitor() { }
 
 // The Ast "ends" here, those dont have child nodes
 // note that Identifier is not a node in this Ast
-void AstDefaultVisitor::visitName(NameAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitNameConstant(NameConstantAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitPass(PassAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitNonlocal(NonlocalAst* node) { Q_UNUSED(node); }
-void AstDefaultVisitor::visitAlias(AliasAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitBreak(BreakAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitContinue(ContinueAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitEllipsis(EllipsisAst* node) { Q_UNUSED(node); }
-void AstDefaultVisitor::visitGlobal(GlobalAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitNumber(NumberAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitString(StringAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitBytes(BytesAst* node) { Q_UNUSED(node); }
@@ -49,6 +52,24 @@ void AstDefaultVisitor::visitStarred(StarredAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitArg(ArgAst* node) {
     visitNode(node->annotation);
     visitNode(node->argumentName);
+    visitIdentifier(node->argumentName);
+}
+
+void AstDefaultVisitor::visitIdentifier(Identifier* node) { Q_UNUSED(node); }
+
+void AstDefaultVisitor::visitAlias(AliasAst* node) {
+    visitIdentifier(node->name);
+    visitIdentifier(node->asName);
+}
+
+void AstDefaultVisitor::visitName(NameAst* node) {
+    visitIdentifier(node->identifier);
+}
+
+void AstDefaultVisitor::visitGlobal(GlobalAst* node) {
+    foreach (Identifier* identifier, node->names) {
+        visitIdentifier(identifier);
+    }
 }
 
 void AstDefaultVisitor::visitCode(CodeAst* node)
@@ -56,6 +77,7 @@ void AstDefaultVisitor::visitCode(CodeAst* node)
     foreach (Ast* statement, node->body) {
         visitNode(statement);
     }
+    visitIdentifier(node->name);
 }
 
 void AstDefaultVisitor::visitExpression(ExpressionAst* node)
@@ -138,6 +160,7 @@ void AstDefaultVisitor::visitImportFrom(ImportFromAst* node)
     foreach (AliasAst* alias, node->names) {
         visitNode(alias);
     }
+    visitIdentifier(node->module);
 }
 
 void AstDefaultVisitor::visitIndex(IndexAst* node)
@@ -322,6 +345,7 @@ void AstDefaultVisitor::visitClassDefinition(ClassDefinitionAst* node)
     foreach (ExpressionAst* expression, node->decorators) {
         visitNode(expression);
     }
+    visitIdentifier(node->name);
 }
 
 void AstDefaultVisitor::visitCompare(CompareAst* node)
@@ -372,16 +396,19 @@ void AstDefaultVisitor::visitFunctionDefinition(FunctionDefinitionAst* node)
     foreach (Ast* stmt, node->body) {
         visitNode(stmt);
     }
+    visitIdentifier(node->name);
 }
 
 void AstDefaultVisitor::visitAttribute(AttributeAst* node)
 {
     visitNode(node->value);
+    visitIdentifier(node->attribute);
 }
 
 void AstDefaultVisitor::visitKeyword(KeywordAst* node)
 {
     visitNode(node->value);
+    visitIdentifier(node->argumentName);
 }
 
 void AstDefaultVisitor::visitArguments(ArgumentsAst* node)

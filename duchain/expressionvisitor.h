@@ -86,20 +86,13 @@ class KDEVPYTHONDUCHAIN_EXPORT ExpressionVisitor : public AstDefaultVisitor
         void checkForDecorators(CallAst* node, Python::FunctionDeclaration* funcDecl,
                                 Python::ClassDeclaration* classDecl, bool isConstructor);
         
-        // whether type of expression should be known or not, i.e. if at the point where the chain breaks the previous type
-        // was already unknown, then this is an IDE error, otherwise probably the user's code is wrong; used for error reporting
+        /// whether type of expression should be known or not, i.e. if at the
+        /// point where the chain breaks the previous type
+        /// was already unknown, then this is an IDE error, otherwise probably
+        /// the user's code is wrong; used for error reporting
         inline bool shouldBeKnown() const {
             return m_shouldBeKnown;
         };
-        
-        /**
-         * @brief Resolve the given declaration if it is an alias declaration.
-         *
-         * @param decl the declaration to resolve
-         * @return :Declaration* decl if not an alias declaration, decl->aliasedDeclaration().data otherwise
-         * DUChain must be read locked
-         **/
-        Declaration* resolveAliasDeclaration(Declaration* decl);
         
         inline KDevelop::AbstractType::Ptr lastType() const {
             return ( m_lastType.isEmpty() ? AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)) : m_lastType.last());

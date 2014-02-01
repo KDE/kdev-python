@@ -10,7 +10,7 @@ X-KDE-ParentComponents=kdevplatform
 X-KDE-CfgDlgHierarchy=GENERAL
 
 Name=Python documentation data
-Name[bs]=Dokumentacijski podaci za Python
+Name[bs]=Python dokumentacijski podaci
 Name[ca]=Dades de la documentació de Python
 Name[ca@valencia]=Dades de la documentació de Python
 Name[da]=Python dokumentationsdata
@@ -37,7 +37,7 @@ Name[uk]=Дані документації Python
 Name[x-test]=xxPython documentation dataxx
 Name[zh_TW]=Python 文件資料
 Comment=Manage documentation files used by the Python plugin
-Comment[bs]=Upravljanje dokumentacijskim datotekama koristeći Python dodatak
+Comment[bs]=Upravljajte dokumentacijskim datotekama koje koristi Python dodatak
 Comment[ca]=Gestiona els fitxers de documentació usats pel connector de Python
 Comment[ca@valencia]=Gestiona els fitxers de documentació usats pel connector de Python
 Comment[da]=Håndtér dokumentationsfiler som bruges af Python-pluginet

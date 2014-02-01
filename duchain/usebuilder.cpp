@@ -62,8 +62,10 @@ void UseBuilder::visitName(NameAst* node)
     Declaration* declaration = Helper::declarationForName(identifierForNode(node->identifier),
                                                           editorFindRange(node, node), DUContextPointer(context));
     
-    QStringList keywords;
-    keywords << "None" << "True" << "False" << "print";
+    static QStringList keywords;
+    if ( keywords.isEmpty() ) {
+        keywords << "None" << "True" << "False" << "print";
+    }
     
     Q_ASSERT(node->identifier);
     RangeInRevision useRange = rangeForNode(node->identifier, true);
@@ -105,14 +107,13 @@ void UseBuilder::visitName(NameAst* node)
 
 void UseBuilder::visitAttribute(AttributeAst* node)
 {
-    DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node));
-    ExpressionVisitor v(context);
     kDebug() << "VisitAttribute start";
     UseBuilderBase::visitAttribute(node);
     kDebug() << "Visit Attribute base end";
-    
+
+    DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node));
+    ExpressionVisitor v(context);
     v.visitNode(node);
-    
     RangeInRevision useRange(node->attribute->startLine, node->attribute->startCol,
                              node->attribute->endLine, node->attribute->endCol + 1);
     

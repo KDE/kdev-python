@@ -147,49 +147,43 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     AbstractType::Ptr accessedType = v.lastType();
     QList<StructureType::Ptr> accessingAttributeOfType = Helper::filterType<StructureType>(accessedType,
         [](AbstractType::Ptr type) {
-            return type && type->whichType() == AbstractType::TypeStructure;
+            auto resolved = Helper::resolveAliasType(type);
+            return resolved && resolved->whichType() == AbstractType::TypeStructure;
+        },
+        [](AbstractType::Ptr type) {
+            return Helper::resolveAliasType(type).cast<StructureType>();
         }
     );
 
     // Step 1: Find all matching declarations which are made inside the type of which the accessed object is.
     // Like, for A.B.C where B is an instance of foo, when processing C, find all properties of foo which are called C.
-    QList<Declaration*> foundDecls;
-    bool success = false;
     bool haveOneUsefulType = false;
+    Declaration* foundDeclaration = nullptr;
+    DUChainReadLocker lock;
     foreach ( StructureType::Ptr current, accessingAttributeOfType ) {
         if ( Helper::isUsefulType(current.cast<AbstractType>()) ) {
             haveOneUsefulType = true;
         }
-        DUChainReadLocker lock;
-        QList<DUContext*> searchContexts = Helper::internalContextsForClass(current, m_ctx->topContext());
-        foreach ( DUContext* currentInternalContext, searchContexts ) {
-            if ( ! currentInternalContext ) {
-                continue;
-            }
-            foundDecls.append(currentInternalContext->findDeclarations(QualifiedIdentifier(node->attribute->value),
-                                                                       CursorInRevision::invalid(), AbstractType::Ptr(),
-                                                                       0, DUContext::DontSearchInParent));
-            success = true;
+        foundDeclaration = Helper::accessAttribute(current->declaration(m_ctx->topContext()),
+                                                   node->attribute->value, m_ctx);
+        if ( foundDeclaration ) {
+            break;
         }
-    }
-    if ( ! success ) {
-        foundDecls.clear();
     }
     if ( ! haveOneUsefulType ) {
         m_shouldBeKnown = false;
     }
 
     // Step 2: Construct the type of the declaration which was found.
-    if ( foundDecls.length() > 0 ) {
-        DUChainReadLocker lock;
-        auto d = Helper::resolveAliasDeclaration(foundDecls.last());
+    if ( foundDeclaration ) {
+        auto d = Helper::resolveAliasDeclaration(foundDeclaration);
         if ( ! d ) {
             return unknownTypeEncountered();
         }
-        bool isAlias =     dynamic_cast<AliasDeclaration*>(d) || d->isFunctionDeclaration()
+        bool isAlias =     dynamic_cast<AliasDeclaration*>(foundDeclaration) || d->isFunctionDeclaration()
                         || dynamic_cast<ClassDeclaration*>(d);
-        encounterDeclarations(toSharedPtrList(foundDecls), isAlias);
-        encounter(foundDecls.last()->abstractType());
+        encounterDeclaration(foundDeclaration, isAlias);
+        encounter(foundDeclaration->abstractType());
     }
     else {
         return unknownTypeEncountered();

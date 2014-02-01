@@ -75,6 +75,8 @@ public:
 
     static Declaration* accessAttribute(Declaration* accessed, const QString& attribute, DUContext* current);
 
+    static AbstractType::Ptr resolveAliasType(const AbstractType::Ptr eventualAlias);
+
     /**
      * @brief Get a list of types inside the passed type which match the specified filter.
      * The filter will be matched against the type only if it is not an unsure type,
@@ -85,8 +87,8 @@ public:
      */
     template <typename T>
     static QList<typename T::Ptr> filterType(AbstractType::Ptr type, std::function<bool(AbstractType::Ptr)> accept,
-                                             std::function<typename T::Ptr(typename T::Ptr)> map =
-                                             std::function<typename T::Ptr(typename T::Ptr)>())
+                                             std::function<typename T::Ptr(AbstractType::Ptr)> map =
+                                             std::function<typename T::Ptr(AbstractType::Ptr)>())
     {
         QList<typename T::Ptr> types;
         if ( ! type ) {
@@ -97,14 +99,12 @@ public:
             for ( unsigned int i = 0; i < unsure->typesSize(); i++ ) {
                 AbstractType::Ptr t = unsure->types()[i].abstractType();
                 if ( accept(t) ) {
-                    typename T::Ptr result = t.cast<T>();
-                    types << ( map ? map(result) : result );
+                    types << ( map ? map(t) : t.cast<T>() );
                 }
             }
         }
         else if ( accept(type) ) {
-            typename T::Ptr result = type.cast<T>();
-            types << ( map ? map(result) : result );
+            types << ( map ? map(type) : type.cast<T>() );
         }
         return types;
     }

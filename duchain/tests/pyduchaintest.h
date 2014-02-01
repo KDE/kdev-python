@@ -93,6 +93,8 @@ class PyDUChainTest : public QObject
         void testVariableCreation_data();
         void testProblemCount();
         void testProblemCount_data();
+        void testHintedTypes();
+        void testHintedTypes_data();
 
 
     private:

@@ -116,20 +116,30 @@ Declaration* Helper::accessAttribute(Declaration* accessed, const QString& attri
     // if the type is unsure, search all the possibilities
     auto structureTypes = Helper::filterType<StructureType>(accessed->abstractType(),
         [](AbstractType::Ptr toFilter) {
-            return toFilter && toFilter->whichType() == AbstractType::TypeStructure;
+            auto type = Helper::resolveAliasType(toFilter);
+            return type && type->whichType() == AbstractType::TypeStructure;
         }
     );
-    DUChainReadLocker lock;
     for ( auto type: structureTypes ) {
         QList<DUContext*> searchContexts = Helper::internalContextsForClass(type, current->topContext());
         for ( DUContext* c: searchContexts ) {
-            QList< Declaration* > found = c->findLocalDeclarations(KDevelop::Identifier(attribute));
+            QList< Declaration* > found = c->findDeclarations(KDevelop::Identifier(attribute),
+                                                              CursorInRevision::invalid(),
+                                                              current->topContext(), DUContext::DontSearchInParent);
             if ( ! found.isEmpty() ) {
                 return found.first();
             }
         }
     }
     return nullptr;
+}
+
+AbstractType::Ptr Helper::resolveAliasType(const AbstractType::Ptr eventualAlias)
+{
+    if ( eventualAlias->whichType() == KDevelop::AbstractType::TypeAlias ) {
+        return eventualAlias.cast<TypeAliasType>()->type();
+    }
+    return eventualAlias;
 }
 
 AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* current)

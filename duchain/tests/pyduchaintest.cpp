@@ -827,6 +827,7 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("tuple_indexaccess3") << "t = 3, 4\ncheckme = t[1]" << "int";
 
     QTest::newRow("dict_unsure") << "t = dict(); t = {3: str()}\ncheckme = t[1].capitalize()" << "str";
+    QTest::newRow("unsure_attr_access") << "d = str(); d = 3; checkme = d.capitalize()" << "str";
 
     QTest::newRow("class_create_var") << "class c: pass\nd = c()\nd.foo = 3\ncheckme = d.foo" << "int";
     
@@ -1062,6 +1063,30 @@ void PyDUChainTest::testFunctionHints_data()
     QTest::newRow("argument_type_only_if_typeof") << "def myfun(arg : 3): return arg\ncheckme = myfun(foobar)" << "mixed";
 }
 
+void PyDUChainTest::testHintedTypes()
+{
+    QFETCH(QString, code);
+    QFETCH(QString, expectedType);
+    ReferencedTopDUContext ctx = parse(code);
+    QVERIFY(ctx);
+    DUChainWriteLocker lock;
+    QList< Declaration* > decls = ctx->findDeclarations(KDevelop::Identifier("checkme"));
+    QVERIFY(! decls.isEmpty());
+    Declaration* d = decls.first();
+    QVERIFY(d->abstractType());
+    QCOMPARE(d->abstractType()->toString(), expectedType);
+}
+
+void PyDUChainTest::testHintedTypes_data()
+{
+    QTest::addColumn<QString>("code");
+    QTest::addColumn<QString>("expectedType");
+
+    QTest::newRow("simple_hint") << "def myfunc(x): return x\ncheckme = myfunc(3)" << "int";
+    QTest::newRow("hint_unsure") << "def myfunc(x): return x\nmyfunc(3.5)\ncheckme = myfunc(3)" << "unsure (float, int)";
+    QTest::newRow("unsure_attribute") << "def myfunc(x): return x.capitalize()\nmyfunc(3.5)\ncheckme = myfunc(str())" << "str";
+}
+
 void PyDUChainTest::testDecorators()
 {
     QFETCH(QString, code);
@@ -1154,27 +1179,39 @@ void PyDUChainTest::testFunctionArgs()
 void PyDUChainTest::testInheritance()
 {
     QFETCH(QString, code);
+    QFETCH(int, expectedBaseClasses);
     ReferencedTopDUContext ctx = parse(code);
     QVERIFY(ctx);
     DUChainReadLocker lock(DUChain::lock());
     QList<p> decls = ctx->allDeclarations(CursorInRevision::invalid(), ctx->topContext(), false);
     bool found = false;
+    bool classDeclFound = false;
     foreach ( const p& item, decls ) {
-        kDebug() << "Checking declaration: " << item.first->identifier() << item.first->abstractType()->toString();
+        if ( item.first->identifier().toString() == "B" ) {
+            auto klass = dynamic_cast<Python::ClassDeclaration*>(item.first);
+            QVERIFY(klass);
+            QCOMPARE(klass->baseClassesSize(), static_cast<unsigned int>(expectedBaseClasses));
+            classDeclFound = true;
+        }
         if ( item.first->identifier().toString() == "checkme" ) {
-            QVERIFY(item.first->abstractType()->toString() == "int");
+            QCOMPARE(item.first->abstractType()->toString(), QString("int"));
             found = true;
         }
     }
     QVERIFY(found);
+    QVERIFY(classDeclFound);
 }
 
 void PyDUChainTest::testInheritance_data()
 {
     QTest::addColumn<QString>("code");
+    QTest::addColumn<int>("expectedBaseClasses");
     
-    QTest::newRow("simple") << "class A():\n\tattr = 3\n\nclass B(A):\n\tpass\n\ninst=B()\ncheckme = inst.attr";
-    QTest::newRow("context_import") << "import testInheritance.i\n\nclass B(testInheritance.i.testclass):\n\ti = 4\n\ninst=B()\ncheckme = inst.attr";
+    QTest::newRow("simple") << "class A():\n\tattr = 3\n\nclass B(A):\n\tpass\n\ninst=B()\ncheckme = inst.attr" << 1;
+    QTest::newRow("context_import_prereq") << "import testInheritance.i\ninst=testInheritance.i.testclass()\n"
+                                              "checkme = inst.attr\nclass B(): pass" << 1; // 1 because object
+    QTest::newRow("context_import") << "import testInheritance.i\n\nclass B(testInheritance.i.testclass):\n"
+                                       "\ti = 4\n\ninst=B()\ncheckme = inst.attr" << 1;
 }
 
 void PyDUChainTest::testClassContextRanges()

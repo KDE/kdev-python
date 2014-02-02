@@ -114,12 +114,15 @@ public:
     static KDevelop::IndexedDeclaration declarationUnderCursor(bool allowUse = true);
 
     /**
-     * @brief Finds whether the specified called declaration is a function declaration, and, if not, checks for a class declaration; then returns the constructor
+     * @brief Finds whether the specified called declaration is a function declaration, and if not,
+     *        checks for a class declaration; then returns the constructor
      *
      * @param ptr the declaration to check
-     * @return the function pointer which was found, or an invalid pointer
+     * @return the function pointer which was found, or an invalid pointer, and a bool
+     *         which is true when it is a constructor
      **/
-    static QPair<FunctionDeclarationPointer, bool> functionDeclarationForCalledDeclaration(DeclarationPointer ptr);
+    using FuncInfo = QPair<Python::FunctionDeclarationPointer, bool>;
+    static FuncInfo functionDeclarationForCalledDeclaration(DeclarationPointer ptr);
     
     template<typename T> static const Decorator* findDecoratorByName(T* inDeclaration, const QString& name) {
         const int count = inDeclaration->decoratorsSize();

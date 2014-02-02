@@ -217,26 +217,36 @@ AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext*
     return result.cast<AbstractType>();
 }
 
-QPair<Python::FunctionDeclarationPointer, bool> Helper::functionDeclarationForCalledDeclaration(DeclarationPointer ptr)
+Helper::FuncInfo Helper::functionDeclarationForCalledDeclaration(DeclarationPointer ptr)
 {
+    if ( ! ptr ) {
+        return FuncInfo();
+    }
     bool isConstructor = false;
-    DeclarationPointer lastCalledDeclaration = ptr;
-    if ( lastCalledDeclaration and not lastCalledDeclaration->isFunctionDeclaration() )
-    {
-        if ( lastCalledDeclaration && lastCalledDeclaration->internalContext() ) {
-            QList<Declaration*> constructors = lastCalledDeclaration->internalContext()
-                                               ->findDeclarations(KDevelop::Identifier("__init__"));
+    DeclarationPointer calledDeclaration = ptr;
+    if ( ! calledDeclaration->isFunctionDeclaration() ) {
+        // not a function -- try looking for a constructor
+        StructureType::Ptr classType = calledDeclaration->type<StructureType>();
+        auto contexts = Helper::internalContextsForClass(classType, ptr->topContext());
+        for ( DUContext* context: contexts ) {
+            static KDevelop::Identifier initIdentifier("__init__");
+            QList<Declaration*> constructors = context->findDeclarations(initIdentifier);
             if ( ! constructors.isEmpty() ) {
-                lastCalledDeclaration = dynamic_cast<FunctionDeclaration*>(constructors.first());
+                calledDeclaration = dynamic_cast<FunctionDeclaration*>(constructors.first());
                 isConstructor = true;
+                break;
             }
         }
     }
     FunctionDeclarationPointer lastFunctionDeclaration;
-    if ( lastCalledDeclaration ) {
-        lastFunctionDeclaration = FunctionDeclarationPointer(dynamic_cast<FunctionDeclaration*>(lastCalledDeclaration.data()));
+    if ( calledDeclaration ) {
+        // It was a class -- use the constructor
+        lastFunctionDeclaration = calledDeclaration.dynamicCast<FunctionDeclaration>();
     }
-    else lastFunctionDeclaration = FunctionDeclarationPointer(dynamic_cast<FunctionDeclaration*>(ptr.data()));
+    else {
+        // Use the original declaration
+        lastFunctionDeclaration = ptr.dynamicCast<FunctionDeclaration>();
+    }
     return QPair<FunctionDeclarationPointer, bool>(lastFunctionDeclaration, isConstructor);
 }
 

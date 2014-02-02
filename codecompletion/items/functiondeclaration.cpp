@@ -44,7 +44,7 @@ FunctionDeclarationCompletionItem::FunctionDeclarationCompletionItem(Declaration
     : PythonDeclarationCompletionItem(decl, context)
     , m_atArgument(-1)
     , m_depth(0)
-    , m_isImportItem(false)
+    , m_doNotCall(false)
 {
 
 }
@@ -132,9 +132,9 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
     return Python::PythonDeclarationCompletionItem::data(index, role, model);
 }
 
-void FunctionDeclarationCompletionItem::setIsImportItem(bool isImportItem)
+void FunctionDeclarationCompletionItem::setDoNotCall(bool doNotCall)
 {
-    m_isImportItem = isImportItem;
+    m_doNotCall = doNotCall;
 }
 
 void FunctionDeclarationCompletionItem::executed(KTextEditor::Document* document, const KTextEditor::Range& word)
@@ -152,7 +152,7 @@ void FunctionDeclarationCompletionItem::executed(KTextEditor::Document* document
     QString suffix = "()";
     KTextEditor::Range checkPrefix(word.start().line(), 0, word.start().line(), word.start().column());
     KTextEditor::Range checkSuffix(word.end().line(), word.end().column(), word.end().line(), document->lineLength(word.end().line()));
-    if ( m_isImportItem || document->text(checkSuffix).trimmed().startsWith('(')
+    if ( m_doNotCall || document->text(checkSuffix).trimmed().startsWith('(')
          || document->text(checkPrefix).trimmed().endsWith('@')
          || (fdecl.first && Helper::findDecoratorByName(fdecl.first.data(), QLatin1String("property"))) )
     {

@@ -108,7 +108,7 @@ QList< CompletionTreeElementPointer > PythonCodeCompletionContext::ungroupedElem
 static QList<CompletionTreeItemPointer> setOmitParentheses(QList<CompletionTreeItemPointer> items) {
     for ( auto current: items ) {
         if ( auto func = KSharedPtr<FunctionDeclarationCompletionItem>::dynamicCast(current) ) {
-            func->setIsImportItem(true);
+            func->setDoNotCall(true);
         }
     }
     return items;

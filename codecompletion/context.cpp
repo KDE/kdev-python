@@ -105,6 +105,15 @@ QList< CompletionTreeElementPointer > PythonCodeCompletionContext::ungroupedElem
     return m_storedGroups;
 }
 
+static QList<CompletionTreeItemPointer> setOmitParentheses(QList<CompletionTreeItemPointer> items) {
+    for ( auto current: items ) {
+        if ( auto func = KSharedPtr<FunctionDeclarationCompletionItem>::dynamicCast(current) ) {
+            func->setIsImportItem(true);
+        }
+    }
+    return items;
+};
+
 PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::shebangItems()
 {
     KeywordItem::Flags f = (KeywordItem::Flags) ( KeywordItem::ForceLineBeginning | KeywordItem::ImportantItem );
@@ -311,7 +320,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::inheritanceIt
             remainingDeclarations << d;
         }
     }
-    resultingItems.append(declarationListToItemList(remainingDeclarations));
+    resultingItems.append(setOmitParentheses(declarationListToItemList(remainingDeclarations)));
     return resultingItems;
 }
 
@@ -832,15 +841,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
         DUContext* c = internalContextForDeclaration(top, item.remainingIdentifiers);
         kDebug() << "  GOT:" << c;
         if ( c ) {
-            int begin = items.size();
-            items << declarationListToItemList(c->localDeclarations().toList());
             // tell function declaration items not to add brackets
-            // TODO this is a hack. :(
-            for ( int i = begin; i < items.size(); i++ ) {
-                if ( FunctionDeclarationCompletionItem* item = dynamic_cast<FunctionDeclarationCompletionItem*>(items[i].data()) ) {
-                    item->setIsImportItem(true);
-                }
-            }
+            items << setOmitParentheses(declarationListToItemList(c->localDeclarations().toList()));
         }
         else {
             // do better next time

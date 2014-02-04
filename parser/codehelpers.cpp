@@ -198,7 +198,7 @@ QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher,
     QStringList openingBrackets = QStringList() << "(" << "[" << "{" << "\"" << "'";
     QStringList closingBrackets = QStringList() << ")" << "]" << "}" << "\"" << "'";
     QStringList sliceChars = QStringList() << "." << "(" << "["; // chars which are allowed to be preceded by a space
-    QStringList seperatorChars = QStringList() << "," << "=" << ":";
+    QStringList seperatorChars = QStringList() << "," << "=" << ":" << "*" << "-" << "+" << "/" << "%" << "^" << "~";
     QStack<QString> brackets;
     bool lastWasSlice = false;
     int linesFetched = 1;

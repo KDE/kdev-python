@@ -22,6 +22,7 @@
 
 #include <language/codecompletion/codecompletionmodel.h>
 #include <language/codecompletion/codecompletioncontext.h>
+#include <language/duchain/duchainlock.h>
 #include <language/duchain/duchain.h>
 #include <language/duchain/classfunctiondeclaration.h>
 #include <language/duchain/types/functiontype.h>

@@ -70,22 +70,23 @@ int FunctionDeclarationCompletionItem::argumentHintDepth() const
 
 QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const
 {
-    auto dec = [this]() { return dynamic_cast<FunctionDeclaration*>(m_declaration.data()); };
+    FunctionDeclaration* dec = dynamic_cast<FunctionDeclaration*>(m_declaration.data());
     switch ( role ) {
         case Qt::DisplayRole: {
+            if ( ! dec ) {
+                break; // use the default
+            }
             if ( index.column() == KDevelop::CodeCompletionModel::Arguments ) {
-                DUChainReadLocker lock;
-                if ( ! dec() ) return QVariant();
-                if (FunctionType::Ptr functionType = dec()->type<FunctionType>()) {
+                if (FunctionType::Ptr functionType = dec->type<FunctionType>()) {
                     QString ret;
-                    createArgumentList(dec(), ret, 0, 0, false);
+                    DUChainReadLocker lock;
+                    createArgumentList(dec, ret, 0, 0, false);
                     return ret.replace("__kdevpythondocumentation_builtin_", "");
                 }
             }
             if ( index.column() == KDevelop::CodeCompletionModel::Prefix ) {
-                DUChainReadLocker lock;
-                if ( ! dec() ) return QVariant();
-                if ( FunctionType::Ptr type = dec()->type<FunctionType>() ) {
+                if ( FunctionType::Ptr type = dec->type<FunctionType>() ) {
+                    DUChainReadLocker lock;
                     return i18n("function") + " -> " + type->returnType()->toString().replace("__kdevpythondocumentation_builtin_", "");
                 }
             }
@@ -98,23 +99,23 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
         }
         case KDevelop::CodeCompletionModel::CustomHighlight: {
             if ( index.column() == KDevelop::CodeCompletionModel::Arguments ) {
-                QList<QVariant> highlight;
+                if ( ! dec ) return QVariant();
                 QString ret;
+                QList<QVariant> highlight;
                 DUChainReadLocker lock;
-                if ( ! dec() ) return QVariant();
                 if ( atArgument() ) {
-                    createArgumentList(dec(), ret, &highlight, atArgument(), false);
+                    createArgumentList(dec, ret, &highlight, atArgument(), false);
                 }
                 else {
-                    createArgumentList(dec(), ret, 0, 0, false);
+                    createArgumentList(dec, ret, 0, 0, false);
                 }
                 return QVariant(highlight);
             }
         }
         case KDevelop::CodeCompletionModel::MatchQuality: {
             if (    m_typeHint == PythonCodeCompletionContext::IterableRequested
-                 && dec() && dec()->type<FunctionType>()
-                 && dynamic_cast<VariableLengthContainer*>(dec()->type<FunctionType>()->returnType().unsafeData()) )
+                 && dec && dec->type<FunctionType>()
+                 && dynamic_cast<VariableLengthContainer*>(dec->type<FunctionType>()->returnType().unsafeData()) )
             {
                 return 2 + PythonDeclarationCompletionItem::data(index, role, model).toInt();
             }

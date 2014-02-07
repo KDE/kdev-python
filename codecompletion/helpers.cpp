@@ -33,6 +33,7 @@
 #include <QStringList>
 #include <QTextFormat>
 
+#include "duchain/declarations/functiondeclaration.h"
 #include "parser/codehelpers.h"
 
 using namespace KDevelop;
@@ -289,8 +290,12 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
 
 
 // This is stolen from PHP. For credits, see helpers.cpp in PHP.
-void createArgumentList(Declaration* dec, QString& ret, QList< QVariant >* highlighting, int atArg, bool includeTypes)
+void createArgumentList(Declaration* dec_, QString& ret, QList< QVariant >* highlighting, int atArg, bool includeTypes)
 {
+    auto dec = dynamic_cast<Python::FunctionDeclaration*>(dec_);
+    if ( ! dec ) {
+        return;
+    }
     int textFormatStart = 0;
     QTextFormat normalFormat(QTextFormat::CharFormat);
     QTextFormat highlightFormat(QTextFormat::CharFormat);
@@ -315,7 +320,7 @@ void createArgumentList(Declaration* dec, QString& ret, QList< QVariant >* highl
         int num = 0;
         
         bool skipFirst = false;
-        if ( parameters.count() > functionType->arguments().count() ) {
+        if ( dec->context() && dec->context()->type() == DUContext::Class && ! dec->isStatic() ) {
             // the function is a class method, and its first argument is "self". Don't display that.
             skipFirst = true;
         }
@@ -377,17 +382,8 @@ void createArgumentList(Declaration* dec, QString& ret, QList< QVariant >* highl
 
             if (doHighlight) {
                 if (highlighting && ret.length() != textFormatStart) {
-                    *highlighting << QVariant(textFormatStart);
-                    *highlighting << QVariant(ret.length() - textFormatStart);
-                    *highlighting << doFormat;
-                    textFormatStart = ret.length();
-                }
-            }
-            
-            if (doHighlight) {
-                if (highlighting && ret.length() != textFormatStart) {
-                    *highlighting << QVariant(textFormatStart);
-                    *highlighting << QVariant(ret.length() - textFormatStart);
+                    *highlighting << QVariant(textFormatStart + 1);
+                    *highlighting << QVariant(ret.length() - textFormatStart - 1);
                     *highlighting << doFormat;
                     textFormatStart = ret.length();
                 }

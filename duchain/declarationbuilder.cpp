@@ -1550,7 +1550,6 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     if ( eventualParentDeclaration && currentType<FunctionType>()->arguments().length()
             && currentContext()->type() == DUContext::Class && ! isStatic )
     {
-        currentType<FunctionType>()->removeArgument(0);
         if ( dec->vararg() != -1 ) {
             dec->setVararg(dec->vararg() - 1);
         }

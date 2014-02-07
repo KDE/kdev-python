@@ -1606,6 +1606,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
                     description = i18n("First argument of class method is not called self, this is deprecated");
                 }
                 if ( ! description.isEmpty() ) {
+                    DUChainWriteLocker lock;
                     KDevelop::Problem *p = new KDevelop::Problem();
                     p->setDescription(description);
                     p->setFinalLocation(DocumentRange(currentlyParsedDocument(), parameters[0]->range().castToSimpleRange()));
@@ -1616,7 +1617,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
                 }
             }
             else if ( currentContext()->type() == DUContext::Class && parameters.isEmpty() ) {
-                DUChainWriteLocker lock(DUChain::lock());
+                DUChainWriteLocker lock;
                 KDevelop::Problem *p = new KDevelop::Problem();
                  // only mark first line
                 p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(node->startLine, node->startCol, node->startLine, 10000)));

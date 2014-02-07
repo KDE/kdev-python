@@ -90,9 +90,9 @@ void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, co
     }
 }
 
-QString DeclarationNavigationContext::html(bool shorten)
+void DeclarationNavigationContext::eventuallyMakeTypeLinks(AbstractType::Ptr type)
 {
-    return KDevelop::AbstractDeclarationNavigationContext::html(shorten).replace("__kdevpythondocumentation_builtin_", "");
+    KDevelop::AbstractDeclarationNavigationContext::eventuallyMakeTypeLinks(Helper::resolveAliasType(type));
 }
 
 }

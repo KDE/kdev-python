@@ -309,7 +309,10 @@ class FunctionDumper:
             returnValue = "None"
         if arglist is None:
             arglist = synArglist
-        funcname = self.function.__name__
+        try:
+            funcname = self.function.__name__
+        except:
+            return
         if funcname[0].isdigit():
             funcname = '_' + funcname
         self.root.emit("def {0}({1}):".format(strict_sanitize(funcname), arglist))

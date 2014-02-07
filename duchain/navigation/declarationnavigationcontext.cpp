@@ -19,8 +19,6 @@
 
 #include "declarationnavigationcontext.h"
 
-#include <QtGui/QTextDocument>
-
 #include <klocale.h>
 #include <klocalizedstring.h>
 
@@ -28,9 +26,12 @@
 #include <language/duchain/namespacealiasdeclaration.h>
 #include <language/duchain/forwarddeclaration.h>
 #include <language/duchain/duchainutils.h>
-#include <types/variablelengthcontainer.h>
 #include <language/duchain/types/typepointer.h>
 #include <language/duchain/aliasdeclaration.h>
+
+#include "types/variablelengthcontainer.h"
+
+#include "helpers.h"
 
 namespace Python
 {

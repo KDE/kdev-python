@@ -1841,7 +1841,6 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         else if ( currentIndex > firstDefaultParameterOffset ) {
             // Handle arguments with default values, like def foo(bar = 3): pass
             // Find type of given default value, and assign it to the declaration
-            // TODO does this actually work?
             ExpressionVisitor v(currentContext());
             v.visitNode(node->defaultValues.at(currentIndex - firstDefaultParameterOffset - 1));
             if ( v.lastType() ) {

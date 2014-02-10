@@ -177,7 +177,7 @@ SourceFormatterItemList LanguageSupport::sourceFormatterItems()
 {
     SourceFormatterStyle autopep8("pep8ify");
     autopep8.setCaption("pep8ify");
-    autopep8.setDescription(i18n("Format souce with the pep8ify formatter."));
+    autopep8.setDescription(i18n("Format source with the pep8ify formatter."));
     autopep8.setOverrideSample("class klass:\n def method(arg1,arg2):\n  a=3+5\n"
                                "def function(arg,*vararg,**kwargs): return arg+kwarg[0]\nfunction(3, 5, 7)");
     using P = SourceFormatterStyle::MimeHighlightPair;

@@ -512,6 +512,8 @@ void PyDUChainTest::testCannotOverwriteBuiltins()
     Declaration* d = ds.first();
     QVERIFY(d);
     QVERIFY(d->abstractType());
+    QEXPECT_FAIL("can_have_custom", "not implemented", Continue);
+    QEXPECT_FAIL("can_have_custom3", "not implemented", Continue);
     QCOMPARE(d->abstractType()->toString(), expectedType);
 }
 
@@ -527,6 +529,9 @@ void PyDUChainTest::testCannotOverwriteBuiltins_data()
     QTest::newRow("for") << "for str in [1, 2, 3]: pass\ncheckme = 'Foo'" << "str";
     QTest::newRow("assert") << "assert isinstance(str, int)\ncheckme = 'Foo'" << "str";
     QTest::newRow("assert2") << "assert isinstance(str, int)\ncheckme = 3" << "int";
+    QTest::newRow("can_have_custom") << "from testCannotOverwriteBuiltins import mod\ncheckme = mod.open()" << "int";
+    QTest::newRow("can_have_custom2") << "from testCannotOverwriteBuiltins import mod\ncheckme = open().read()" << "str";
+    QTest::newRow("can_have_custom3") << "from testCannotOverwriteBuiltins import mod\ncheckme = mod.open().read()" << "mixed";
 }
 
 void PyDUChainTest::testVarKWArgs()

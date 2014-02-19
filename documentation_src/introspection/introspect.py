@@ -17,8 +17,8 @@
 # Any submodules of the imported object (anything with type "module")
 # will be ignored by this script, if you want to dump those,
 # you will have to manually (or with a script) generate a directory
-import re
 # structure and re-run this script.
+import re
 import traceback
 
 import os
@@ -79,15 +79,17 @@ def sanitize(expr):
 def strict_sanitize(expr):
     assert isinstance(expr, str)
     expr = sanitize(expr)
-    forbidden = ["=()", '(', ')', '"', "'", " ", ",", "|", "%", '#']
+    forbidden = ["=()", '(', ')', '"', "'", " ", ",", "|", "%", '#', '{', '}']
     for char in forbidden:
         expr = expr.replace(char, "")
+    if len(expr) == 0:
+        expr = "_"
+    if expr[-1] == '.':
+        expr = expr[:-1]
     if expr == ".":
         return "None"
     if len(expr) > 0 and expr[0].isdigit():
         expr = "_" + expr
-    if len(expr) == 0:
-        expr = "_"
     return expr
 
 def isSpace(char):
@@ -119,7 +121,38 @@ likely_substitutions = {
     "long": "int",
     "dictionary": "dict",
     "double": "float",
+    "scalar": "float",
+    "array_like": "ndarray"
 }
+
+def do_type_subst(t):
+    if t in likely_substitutions:
+        return likely_substitutions[t]
+    return t
+
+def get_indent(string):
+    string = string.split("\n")[0]
+    indent = 0
+    for char in string:
+        if char in [' ', '\t']:
+            indent += 1
+        else:
+            return indent
+    return 0
+
+def remove_indent(string):
+    if type(string) == types.StringType:
+        string = string.split("\n")
+        max_remove_indent = get_indent(string[0])
+        result = ""
+        for line in string:
+            for offset in xrange(0, len(line)):
+                if line[offset] not in [' ', '\t'] or offset > max_remove_indent:
+                    result += line[offset:] + "\n"
+                    break
+        return result
+    else:
+        return string
 
 def guess_return_type_from_synopsis(synopsis, root):
     container = ""
@@ -130,10 +163,15 @@ def guess_return_type_from_synopsis(synopsis, root):
                 return "{0}([{1}])".format(container, value)
             else:
                 return value
+        if "ndarray" in scan.split() or 'array_like' in scan.split() or 'array_type' in scan.split():
+            # hack to make "complex ndarray" work properly
+            return "ndarray()"
         for word in scan.split():
             if word.find('.') != -1 and word != '...':
                 break # end of sentence -- stop
             word = word.replace(',', '')
+            if word in ["none", "None"]:
+                return "None"
             if word in ["True", "False", "true", "false", "bool", "boolean"]:
                 return apply_container("bool()")
             if word in ["dict", "dictionary"]:
@@ -160,6 +198,84 @@ def guess_return_type_from_synopsis(synopsis, root):
     if len(container) > 0:
         return container + "()"
     return "None"
+
+def parse_numpy_like_docstring(docstring, funcname, root, needSelfArg=False):
+    selflist = ["self"] if needSelfArg else []
+    if type(docstring) == types.StringType:
+        indent = 0
+        atLineBeginning = True
+        paramListBegin = paramListEnd = False
+        returnTypeBegin = returnTypeEnd = False
+        atPartBeginning = 2
+        returnType = "None"
+        for offset in xrange(0, len(docstring)):
+            if docstring[offset] == "\n":
+                indent = 0
+            if docstring[offset] in [' ', '\t'] and atLineBeginning:
+                indent += 1
+            else:
+                atLineBeginning = False
+
+            if paramListEnd is False:
+                if docstring[offset:].startswith("Parameters"):
+                    paramListBegin = offset
+                if paramListBegin is not False and docstring[offset] == "\n" and atPartBeginning != 0:
+                    atPartBeginning -= 1
+                if docstring[offset:].startswith("---") and atPartBeginning == 0:
+                    paramListEnd = offset
+                    break
+            if returnTypeEnd == False:
+                if docstring[offset:].startswith("Returns"):
+                    returnTypeBegin = offset
+        relevantPart = docstring[paramListBegin:paramListEnd].split("\n")[2:]
+        if returnTypeBegin is not False:
+            try:
+                line = docstring[returnTypeBegin:].split('\n')[2]
+                ret = line.split(' : ')[1]
+                if ret.find(' or ') != -1:
+                    # unsure return type
+                    returnTypes = map(strict_sanitize, [item.split(' ')[0] for item in ret.split(' or ')])
+                    returnType = ''.join(["{0}() if False else ".format(do_type_subst(t)) for t in returnTypes[:-1]]) \
+                                 + do_type_subst(str(returnTypes[-1])) + "()"
+                else:
+                    returnTypeLine = ret.split(' ')[0].split(',')[0]
+                    returnType = do_type_subst(strict_sanitize(returnTypeLine)) + "()"
+            except IndexError:
+                returnType = guess_return_type_from_synopsis(docstring[returnTypeBegin:], root)
+        if len(relevantPart):
+            firstIndent = get_indent(relevantPart[0])
+            parameter_name_list = []
+            for line_index in xrange(0, len(relevantPart)):
+                if get_indent(relevantPart[line_index]) == firstIndent:
+                    s = relevantPart[line_index].split(' : ')
+                    if len(s) == 2:
+                        name = s[0]
+                        type_string = s[1]
+                        doc_for_param = None # TODO extract this, and display it in some way... or not
+                        parameter_name = strict_sanitize(name)
+                        if parameter_name.find('...') != -1:
+                            parameter_name = 'more'
+                        parameter_name = parameter_name.replace('`', '')
+                        parameter_name_list.append(parameter_name)
+            return ', '.join(selflist + parameter_name_list), do_type_subst(returnType)
+        else:
+            try:
+                firstType = docstring.split("\n")[0].split('.')[-1]
+                if firstType.find(funcname) == -1:
+                    raise IndexError()
+                firstType = firstType.split('->')[0]
+                firstType = firstType.split('(')[1:]
+                firstType = ')'.join('('.join(firstType).split(')')[:-1])
+                paramList = firstType.split(',')
+                cleanedParamList = []
+                for item in paramList:
+                    if item.find('...') == -1:
+                        cleanedParamList.append(item)
+                return ', '.join(selflist + [strict_sanitize(x) for x in cleanedParamList]), "None"
+            except IndexError:
+                return "self" if needSelfArg else "", "None"
+    else:
+        return "self" if needSelfArg else "", "None"
 
 def parse_synopsis(funcdef, original, root, needSelfArg=False):
     """Parse a function description in the following format:
@@ -233,10 +349,11 @@ def parse_synopsis(funcdef, original, root, needSelfArg=False):
 
 
 class ModuleDumper:
-    def __init__(self, module):
+    def __init__(self, module, startIndent=0, special_hints=dict()):
         self.module = module
         self.code = str()
-        self.indentDepth = 0
+        self.indentDepth = startIndent
+        self.special_hints = special_hints
 
     def increaseIndent(self):
         self.indentDepth += 4
@@ -263,7 +380,24 @@ class ScalarDumper:
 
     def dump(self):
         value = type(self.value).__name__ + "()" if self.value is not None else "None"
+        if value == 'module()':
+            # numpy fix
+            return
         self.root.emit("{0} = {1}".format(self.name, value))
+
+def pick_better_return_value(v1, v2):
+    if v1 == "None":
+        return v1
+    return v2
+
+def pick_better_arglist(s1, s2):
+    # return the one with more arguments
+    if s1.count(',') > s2.count(','):
+        return s1
+    return s2
+
+goodValues = [True, False, None]
+goodTypes = map(type, [int(), float()])
 
 class FunctionDumper:
     def __init__(self, function, root):
@@ -285,6 +419,8 @@ class FunctionDumper:
                     rawDefaultValue = arguments.defaults[defaultIndex]
                     if type(rawDefaultValue) == type(object):
                         defaultValue = strict_sanitize(str(rawDefaultValue)) + "()"
+                    elif rawDefaultValue in goodValues or type(rawDefaultValue) in goodTypes:
+                        defaultValue = str(rawDefaultValue)
                     else:
                         defaultValue = '"{0}"'.format(str(rawDefaultValue).replace("\n", " "))
                     if len(defaultValue) == 0 or defaultValue.isspace():
@@ -300,18 +436,39 @@ class FunctionDumper:
             arglist = None
         try:
             docstring = self.function.__doc__.split('\n')[0] if self.function.__doc__ else str()
-            synArglist, returnValue = parse_synopsis(docstring, str(self.function.__doc__), self.root, self.root.indentDepth > 0)
+            try:
+                synArglist, returnValue = parse_synopsis(docstring, str(self.function.__doc__), self.root,
+                                                         self.root.indentDepth > 0)
+            except Exception as e:
+                debugmsg(format(e))
+            try:
+                synArglist2, returnValue2 = parse_numpy_like_docstring(str(self.function.__doc__),
+                                                                       self.function.__name__, self.root,
+                                                                       self.root.indentDepth > 0)
+            except Exception as e:
+                debugmsg(format(e))
+            synArglist = pick_better_arglist(synArglist, synArglist2)
+            returnValue = pick_better_return_value(returnValue, returnValue2)
         except Exception as e:
             debugmsg("  Warning: Function argument extraction failed: {0}".format(e))
             debugmsg("   * Traceback follows, but the error was ignored since it is not fatal.")
             traceback.print_exc(file=sys.stderr)
             synArglist = ""
             returnValue = "None"
+        if docstring.find("Not implemented (virtual attribute)") != -1:
+            # numpy hack
+            return
         if arglist is None:
             arglist = synArglist
         funcname = self.function.__name__
+        if funcname in self.root.special_hints:
+            hints = self.root.special_hints[funcname]
+            if "returns" in hints:
+                returnValue = hints["returns"]
         if funcname[0].isdigit():
             funcname = '_' + funcname
+        if funcname.startswith('__'):
+            return
         self.root.emit("def {0}({1}):".format(strict_sanitize(funcname), arglist))
         self.root.increaseIndent()
         self.root.emit('"""{0}"""'.format(str(self.function.__doc__).replace('"""', '___')))

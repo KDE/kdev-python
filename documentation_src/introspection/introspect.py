@@ -21,12 +21,11 @@ import re
 # structure and re-run this script.
 import traceback
 
-import os
 import sys
 import types
 import inspect
 import importlib
-import __builtin__
+import builtins
 
 def debugmsg(message):
     sys.stderr.write(message + "\n")
@@ -70,7 +69,7 @@ def sanitize(expr):
         ",,":",", '...':'more_args', '+':"plus"
     }
     result = expr
-    for before, after in replace.iteritems():
+    for before, after in replace.items():
         result = result.replace(before, after)
     result = re.sub(r"\.\d", "_", result)
     result = result.replace("=,", "=[],").replace("=)", "=[])")
@@ -155,7 +154,7 @@ def guess_return_type_from_synopsis(synopsis, root):
             if word[-1] == "s" and hasattr(root.module, word[:-1]) and type(getattr(root.module, word[:-1]) == type(object)):
                 # plural form, "list of ints"
                 return apply_container(word[:-1] + "()")
-            if hasattr(__builtin__, word) and type(getattr(__builtin__, word)) == type(object):
+            if hasattr(builtins, word) and type(getattr(builtins, word)) == type(object):
                 return apply_container(word + "()")
     if len(container) > 0:
         return container + "()"

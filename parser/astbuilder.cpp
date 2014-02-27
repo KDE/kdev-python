@@ -29,6 +29,7 @@
 #include <KLocale>
 #include <QDir>
 #include <QTimer>
+#include <QMutexLocker>
 #include <language/duchain/topducontext.h>
 #include <language/interfaces/iproblem.h>
 #include <language/duchain/duchain.h>
@@ -135,6 +136,29 @@ QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
     }
 }
 
+namespace {
+struct PythonInitializer : private QMutexLocker {
+    PythonInitializer(QMutex& pyInitLock, const QString& pyHomeDir):
+        QMutexLocker(&pyInitLock), arena(0)
+    {
+            Py_SetPythonHome(pyHomeDir.toUtf8().data());
+            Py_InitializeEx(0);
+            Q_ASSERT(Py_IsInitialized());
+
+            arena = PyArena_New();
+            Q_ASSERT(arena); // out of memory
+    }
+    ~PythonInitializer()
+    {
+        if (arena)
+            PyArena_Free(arena);
+        if (Py_IsInitialized())
+            Py_Finalize();
+    }
+    PyArena* arena;
+};
+}
+
 AstBuilder::AstBuilder(KDevPG::MemoryPool* pool)
     : m_pool(pool)
 {
@@ -152,15 +176,10 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
     QPair<QString, int> hacked = fileHeaderHack(contents, filename);
     contents = hacked.first;
     int lineOffset = hacked.second;
-    
-    AstBuilder::pyInitLock.lock();
-    Py_SetPythonHome(AstBuilder::pyHomeDir.toUtf8().data());
-    kDebug() << "Not initialized, calling init func.";
-    Py_Initialize();
-    Q_ASSERT(Py_IsInitialized());
-    
-    PyArena* arena = PyArena_New();
-    Q_ASSERT(arena); // out of memory
+
+
+    PythonInitializer pyIniter(pyInitLock, pyHomeDir);
+    PyArena* arena = pyIniter.arena;
 
     PyCompilerFlags flags = {PyCF_SOURCE_IS_UTF8};
 
@@ -183,7 +202,6 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
        
         if ( ! errorDetails_tuple ) {
             kWarning() << "Error retrieving error message, not displaying, and not doing anything";
-            pyInitLock.unlock();
             return 0;
         }
         PyObject* linenoobj = PyTuple_GetItem(errorDetails_tuple, 1);
@@ -321,9 +339,6 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
             syntaxtree = PyParser_ASTFromString(contents.toUtf8(), "<kdev-editor-contents>", file_input, &flags, arena);
         }
         if ( ! syntaxtree ) {
-            PyArena_Free(arena);
-            Py_Finalize();
-            pyInitLock.unlock();
             return 0; // everything fails, so we abort.
         }
     }
@@ -331,11 +346,6 @@ CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
 
     PythonAstTransformer t(lineOffset, m_pool);
     t.run(syntaxtree, filename.fileName().replace(".py", ""));
-    
-    PyArena_Free(arena);
-    Py_Finalize();
-    
-    AstBuilder::pyInitLock.unlock();
     
     RangeUpdateVisitor v;
     v.visitNode(t.ast);

@@ -65,8 +65,8 @@ PythonCodeCompletionContext::ItemTypeHint PythonCodeCompletionContext::itemTypeH
 
 ExpressionVisitor* visitorForString(QString str, DUContext* context, CursorInRevision scanUntil = CursorInRevision::invalid()) {
     KDevPG::MemoryPool pool;
-    QSharedPointer<AstBuilder> builder(new AstBuilder(&pool));
-    CodeAst* tmpAst = builder->parse(KUrl(), str);
+    AstBuilder builder(&pool);
+    CodeAst* tmpAst = builder.parse(KUrl(), str);
     if ( tmpAst ) {
         ExpressionVisitor* v = new ExpressionVisitor(context);
         v->m_forceGlobalSearching = true;
@@ -143,19 +143,19 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             }
             delete v;
         }
-        
+
         foreach ( KeywordItem* item, items ) {
             resultingItems << CompletionTreeItemPointer(item);
         }
-        
+
     }
     else if ( m_operation == PythonCodeCompletionContext::FunctionCallCompletion ) {
             // gather additional items to show above the real ones (for parameters, and stuff)
             QList<Declaration*> calltips;
             KDevPG::MemoryPool pool;
             FunctionDeclaration* functionCalled = 0;
-            AstBuilder* builder = new AstBuilder(&pool);
-            CodeAst* tmpAst = builder->parse(KUrl(), m_guessTypeOfExpression);
+            AstBuilder builder(&pool);
+            CodeAst* tmpAst = builder.parse(KUrl(), m_guessTypeOfExpression);
             if ( tmpAst ) {
                 lock.unlock();
                 ExpressionVisitor* v = new ExpressionVisitor(m_duContext.data());

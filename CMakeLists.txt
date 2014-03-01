@@ -15,8 +15,8 @@ find_package(KDE4 REQUIRED)
 find_package(KDevPlatform ${KDEVPLATFORM_VERSION} REQUIRED)
 
 
-# find the system python 2 interpreter, only used for determining search paths.
-find_package(PythonInterp 2.7 REQUIRED)
+# find the system python 3 interpreter, only used for determining search paths.
+find_package(PythonInterp 3.0 REQUIRED)
 configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpython_BINARY_DIR}/kdevpythonversion.h" @ONLY )
 
 

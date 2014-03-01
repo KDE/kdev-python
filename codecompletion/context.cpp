@@ -74,8 +74,8 @@ std::unique_ptr<ExpressionVisitor> visitorForString(QString str, DUContext* cont
                                                     CursorInRevision scanUntil = CursorInRevision::invalid())
 {
     ENSURE_CHAIN_NOT_LOCKED
-    QSharedPointer<AstBuilder> builder(new AstBuilder);
-    CodeAst::Ptr tmpAst = builder->parse(KUrl(), str);
+    AstBuilder builder;
+    CodeAst::Ptr tmpAst = builder.parse(KUrl(), str);
     if ( ! tmpAst ) {
         return std::unique_ptr<ExpressionVisitor>(nullptr);
     }

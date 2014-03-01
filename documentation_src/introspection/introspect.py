@@ -459,7 +459,10 @@ class FunctionDumper:
             return
         if arglist is None:
             arglist = synArglist
-        funcname = self.function.__name__
+        try:
+            funcname = self.function.__name__
+        except:
+            return
         if funcname in self.root.special_hints:
             hints = self.root.special_hints[funcname]
             if "returns" in hints:

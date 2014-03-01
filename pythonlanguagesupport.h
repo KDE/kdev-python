@@ -64,7 +64,7 @@ public:
     
     virtual WhitespaceSensitivity whitespaceSensititivy() const;
     
-//     virtual QWidget* specialLanguageObjectNavigationWidget(const KUrl& url, const KDevelop::SimpleCursor& position);
+    virtual KDevelop::SourceFormatterItemList sourceFormatterItems();
 
     /// Tells whether this plugin is enabled for the given file.
     static bool enabledForFile(const KUrl& url);

@@ -71,27 +71,24 @@ int FunctionDeclarationCompletionItem::argumentHintDepth() const
 
 QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const
 {
+    FunctionDeclaration* dec = dynamic_cast<FunctionDeclaration*>(m_declaration.data());
+    DUChainReadLocker lock;
     switch ( role ) {
         case Qt::DisplayRole: {
+            if ( ! dec ) {
+                break; // use the default
+            }
             if ( index.column() == KDevelop::CodeCompletionModel::Arguments ) {
-                DUChainReadLocker lock;
-                if ( Declaration* dec = dynamic_cast<FunctionDeclaration*>(m_declaration.data()) ) {
-                    if (FunctionType::Ptr functionType = dec->type<FunctionType>()) {
-                        QString ret;
-                        createArgumentList(dec, ret, 0, 0, false);
-                        return ret;
-                    }
+                if (FunctionType::Ptr functionType = dec->type<FunctionType>()) {
+                    QString ret;
+                    createArgumentList(dec, ret, 0, 0, false);
+                    return ret;
                 }
-                 return QVariant();
             }
             if ( index.column() == KDevelop::CodeCompletionModel::Prefix ) {
-                DUChainReadLocker lock;
-                if ( Declaration* dec = dynamic_cast<FunctionDeclaration*>(m_declaration.data()) ) {
-                    if ( FunctionType::Ptr type = dec->type<FunctionType>() ) {
-                        return i18n("function") + " -> " + type->returnType()->toString();
-                    }
+                if ( FunctionType::Ptr type = dec->type<FunctionType>() ) {
+                    return i18n("function") + " -> " + type->returnType()->toString();
                 }
-                return QVariant();
             }
             break;
         }
@@ -102,29 +99,24 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
         }
         case KDevelop::CodeCompletionModel::CustomHighlight: {
             if ( index.column() == KDevelop::CodeCompletionModel::Arguments ) {
-                QList<QVariant> highlight;
+                if ( ! dec ) return QVariant();
                 QString ret;
-                DUChainReadLocker lock;
-                if ( Declaration* dec = dynamic_cast<FunctionDeclaration*>(m_declaration.data()) ) {
-                    if ( atArgument() ) {
-                        createArgumentList(dec, ret, &highlight, atArgument(), false);
-                    }
-                    else {
-                        createArgumentList(dec, ret, 0, 0, false);
-                    }
+                QList<QVariant> highlight;
+                if ( atArgument() ) {
+                    createArgumentList(dec, ret, &highlight, atArgument());
+                }
+                else {
+                    createArgumentList(dec, ret, 0);
                 }
                 return QVariant(highlight);
             }
         }
         case KDevelop::CodeCompletionModel::MatchQuality: {
-            DUChainReadLocker lock;
-            if ( Declaration* dec = dynamic_cast<FunctionDeclaration*>(m_declaration.data()) ) {
-                if ( m_typeHint == PythonCodeCompletionContext::IterableRequested
-                     && dec->type<FunctionType>()
-                     && dynamic_cast<VariableLengthContainer*>(dec->type<FunctionType>()->returnType().unsafeData()) )
-                {
-                    return 2 + PythonDeclarationCompletionItem::data(index, role, model).toInt();
-                }
+            if (    m_typeHint == PythonCodeCompletionContext::IterableRequested
+                 && dec && dec->type<FunctionType>()
+                 && dynamic_cast<VariableLengthContainer*>(dec->type<FunctionType>()->returnType().unsafeData()) )
+            {
+                return 2 + PythonDeclarationCompletionItem::data(index, role, model).toInt();
             }
             return PythonDeclarationCompletionItem::data(index, role, model);
         }

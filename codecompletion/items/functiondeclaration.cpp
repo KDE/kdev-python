@@ -79,7 +79,7 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
                     if (FunctionType::Ptr functionType = dec->type<FunctionType>()) {
                         QString ret;
                         createArgumentList(dec, ret, 0, 0, false);
-                        return ret.replace("__kdevpythondocumentation_builtin_", "");
+                        return ret;
                     }
                 }
                  return QVariant();
@@ -88,7 +88,7 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
                 DUChainReadLocker lock;
                 if ( Declaration* dec = dynamic_cast<FunctionDeclaration*>(m_declaration.data()) ) {
                     if ( FunctionType::Ptr type = dec->type<FunctionType>() ) {
-                        return i18n("function") + " -> " + type->returnType()->toString().replace("__kdevpythondocumentation_builtin_", "");
+                        return i18n("function") + " -> " + type->returnType()->toString();
                     }
                 }
                 return QVariant();

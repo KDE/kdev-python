@@ -78,7 +78,8 @@ public:
     
     enum ItemTypeHint {
         NoHint,
-        IterableRequested
+        IterableRequested, // < the requested item should be iterable, e.g. a list
+        ClassTypeRequested // < the requested item should be a class type
     };
     
     PythonCodeCompletionContext(DUContextPointer context, const QString& text, const QString& followingText,

@@ -273,7 +273,12 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::raiseItems()
             }
         }
     }
-    resultingItems.append(declarationListToItemList(validDeclarations));
+    auto items = declarationListToItemList(validDeclarations);
+    if ( m_itemTypeHint == ClassTypeRequested ) {
+        // used for except <cursor>, we don't want the parentheses there
+        items = setOmitParentheses(items);
+    }
+    resultingItems.append(items);
     return resultingItems;
 }
 
@@ -1148,6 +1153,9 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     
     if ( firstStatus == ExpressionParser::RaiseFound || firstStatus == ExpressionParser::ExceptFound ) {
         m_operation = RaiseExceptionCompletion;
+        if ( firstStatus == ExpressionParser::ExceptFound ) {
+            m_itemTypeHint = ClassTypeRequested;
+        }
         return;
     }
 

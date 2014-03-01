@@ -162,9 +162,22 @@ void FunctionDeclarationCompletionItem::executed(KTextEditor::Document* document
     }
     // place cursor behind bracktes by default
     int skip = 2;
-    if ( fdecl.first && fdecl.first->type<FunctionType>()->arguments().length() != 0 ) {
-        // place cursor in brackets if there's parameters
-        skip = 1;
+    if ( fdecl.first ) {
+        bool needsArguments = false;
+        int argumentCount = fdecl.first->type<FunctionType>()->arguments().length();
+        if ( fdecl.first->context()->type() == KDevelop::DUContext::Class ) {
+            // it's a member function, so it has the implicit self
+            // TODO static methods
+            needsArguments = argumentCount > 1;
+        }
+        else {
+            // it's a free function
+            needsArguments = argumentCount > 0;
+        }
+        if ( needsArguments ) {
+            // place cursor in brackets if there's parameters
+            skip = 1;
+        }
     }
     document->replaceText(word, declaration()->identifier().toString() + suffix);
     if ( View* view = document->activeView() ) {

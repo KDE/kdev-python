@@ -611,9 +611,6 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             if ( d.first and d.first->context()->type() == DUContext::Class ) {
                 declarations.removeAll(d);
             }
-            if ( d.first and d.first->identifier().identifier().str().contains("__kdevpythondocumentation_builtin") ) {
-                declarations.removeAll(d);
-            }
         }
         resultingItems.append(declarationListToItemList(declarations));
     }

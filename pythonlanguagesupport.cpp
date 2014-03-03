@@ -33,6 +33,7 @@
 #include <interfaces/iplugincontroller.h>
 #include <interfaces/ilanguage.h>
 #include <interfaces/idocument.h>
+#include <interfaces/isourceformatter.h>
 #include <interfaces/idocumentcontroller.h>
 #include <interfaces/context.h>
 #include <interfaces/contextmenuextension.h>
@@ -49,7 +50,7 @@
 #include "pythonhighlighting.h"
 #include "duchain/pythoneditorintegrator.h"
 #include "codecompletion/model.h"
-#include "codegen/simplerefactoring.h"
+#include "codegen/refactoring.h"
 #include "codegen/correctionfilegenerator.h"
 #include "kdevpythonversion.h"
 
@@ -74,7 +75,7 @@ KDevelop::ContextMenuExtension LanguageSupport::contextMenuExtension(KDevelop::C
 
     if (ec && ICore::self()->languageController()->languagesForUrl(ec->url()).contains(language())) {
         // It's a Python file, let's add our context menu.
-        SimpleRefactoring::self().doContextMenu(cm, context);
+        m_refactoring->fillContextMenu(cm, context);
         TypeCorrection::self().doContextMenu(cm, context);
     }
     return cm;
@@ -89,6 +90,7 @@ LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ 
     m_self = this;
 
     m_highlighting = new Highlighting( this );
+    m_refactoring = new Refactoring(this);
     PythonCodeCompletionModel* codeCompletion = new PythonCodeCompletionModel(this);
     new KDevelop::CodeCompletion(this, codeCompletion, "Python");
 
@@ -169,6 +171,20 @@ bool LanguageSupport::enabledForFile(const KUrl& url)
         return name == "Python3";
     }
     return false;
+}
+
+SourceFormatterItemList LanguageSupport::sourceFormatterItems()
+{
+    SourceFormatterStyle autopep8("pep8ify");
+    autopep8.setCaption("pep8ify");
+    autopep8.setDescription(i18n("Format source with the pep8ify formatter."));
+    autopep8.setOverrideSample("class klass:\n def method(arg1,arg2):\n  a=3+5\n"
+                               "def function(arg,*vararg,**kwargs): return arg+kwarg[0]\nfunction(3, 5, 7)");
+    using P = SourceFormatterStyle::MimeHighlightPair;
+    autopep8.setMimeTypes(SourceFormatterStyle::MimeList{ P{"text/x-python", "Python"} });
+    autopep8.setContent("/usr/bin/pep8ify -w $TMPFILE");
+
+    return SourceFormatterItemList{SourceFormatterStyleItem{"customscript", autopep8}};
 }
 
 KDevelop::ILanguage *LanguageSupport::language()

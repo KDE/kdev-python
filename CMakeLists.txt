@@ -3,7 +3,7 @@ PROJECT(kdevpython)
 # write the plugin version to a file
 set(KDEVPYTHON_VERSION_MAJOR 1)
 set(KDEVPYTHON_VERSION_MINOR 6)
-set(KDEVPYTHON_VERSION_PATCH 0)
+set(KDEVPYTHON_VERSION_PATCH 60)
 # KDevplatform dependency version
 set( KDEVPLATFORM_VERSION "${KDEVPYTHON_VERSION_MAJOR}.${KDEVPYTHON_VERSION_MINOR}.${KDEVPYTHON_VERSION_PATCH}" )
 
@@ -55,14 +55,13 @@ add_subdirectory(parser)
 add_subdirectory(duchain)
 add_subdirectory(codecompletion)
 add_subdirectory(debugger)
-add_subdirectory(codegen)
 add_subdirectory(docfilekcm)
 add_subdirectory(pep8kcm)
 add_subdirectory(projectkcm)
 
 set(kdevpythonlanguagesupport_PART_SRCS
     codegen/correctionfilegenerator.cpp
-    codegen/simplerefactoring.cpp
+    codegen/refactoring.cpp
     pythonlanguagesupport.cpp
     pythonparsejob.cpp
     pythonhighlighting.cpp

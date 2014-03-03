@@ -39,6 +39,7 @@ namespace Python
 {
 
 class Highlighting;
+class Refactoring;
 
 class LanguageSupport : public KDevelop::IPlugin, public KDevelop::ILanguageSupport
 {
@@ -63,7 +64,7 @@ public:
     
     virtual WhitespaceSensitivity whitespaceSensititivy() const;
     
-//     virtual QWidget* specialLanguageObjectNavigationWidget(const KUrl& url, const KDevelop::SimpleCursor& position);
+    virtual KDevelop::SourceFormatterItemList sourceFormatterItems();
 
     /// Tells whether this plugin is enabled for the given file.
     static bool enabledForFile(const KUrl& url);
@@ -73,6 +74,7 @@ public slots:
 
 private:
     Highlighting* m_highlighting;
+    Refactoring *m_refactoring;
     static LanguageSupport* m_self;
 };
 

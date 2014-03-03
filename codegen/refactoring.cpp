@@ -1,6 +1,7 @@
 /***************************************************************************
  *   This file is part of KDevelop                                         *
  *   Copyright 2012 Sven Brauch <svenbrauch@googlemail.com>                *
+ *   Copyright 2014 Miquel Sabaté <mikisabate@gmail.com>                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Library General Public License as       *
@@ -18,27 +19,38 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
 
-#ifndef SIMPLEREFACTORING_H
-#define SIMPLEREFACTORING_H
 
-#include <QtCore/QObject>
-#include <interfaces/contextmenuextension.h>
-#include <interfaces/context.h>
-#include <language/duchain/indexeddeclaration.h>
+#include "refactoring.h"
+#include "duchain/helpers.h"
+
 
 namespace Python {
 
-class SimpleRefactoring : public QObject
+RefactoringCollector::RefactoringCollector(const IndexedDeclaration &decl)
+    : BasicRefactoringCollector(decl)
 {
-Q_OBJECT
-public:
-    static SimpleRefactoring& self();
-    void doContextMenu(KDevelop::ContextMenuExtension& extension, KDevelop::Context* context);
-    void startInteractiveRename(KDevelop::IndexedDeclaration decl);
-public slots:
-    void executeRenameAction();
-};
-
+    /* There's nothing to do in here.*/
 }
 
-#endif // SIMPLEREFACTORING_H
+void RefactoringCollector::processUses(KDevelop::ReferencedTopDUContext topContext)
+{
+    if (topContext != Helper::getDocumentationFileContext())
+        RefactoringCollector::processUses(topContext);
+}
+
+Refactoring::Refactoring(QObject *parent)
+    : BasicRefactoring(parent)
+{
+    /* There's nothing to do in here.*/
+}
+
+bool Refactoring::acceptForContextMenu(const KDevelop::Declaration* decl)
+{
+    if (decl->topContext() == Helper::getDocumentationFileContext()) {
+        kDebug() << "in doc file, not offering rename action";
+        return false;
+    }
+    return true;
+}
+
+}

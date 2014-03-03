@@ -39,7 +39,6 @@ namespace Python
 {
 
 class Highlighting;
-class Refactoring;
 
 class LanguageSupport : public KDevelop::IPlugin, public KDevelop::ILanguageSupport
 {
@@ -74,7 +73,6 @@ public slots:
 
 private:
     Highlighting* m_highlighting;
-    Refactoring *m_refactoring;
     static LanguageSupport* m_self;
 };
 

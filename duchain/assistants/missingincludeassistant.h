@@ -25,23 +25,11 @@
 
 #include <interfaces/iassistant.h>
 #include <language/duchain/indexedstring.h>
-#include <language/duchain/problem.h>
 
 #include <QObject>
 #include <QDebug>
 
 namespace Python {
-
-// TODO: add data class with own identity so it gets restored correctly
-class MissingIncludeProblem : public KDevelop::Problem {
-public:
-    MissingIncludeProblem(const QString& moduleName, KDevelop::IndexedString currentDocument);
-    virtual KSharedPtr< KDevelop::IAssistant > solutionAssistant() const;
-
-private:
-    QString m_moduleName;
-    KDevelop::IndexedString m_currentDocument;
-};
 
 class DocumentationGeneratorAction : public KDevelop::IAssistantAction
 {

@@ -38,19 +38,6 @@ using namespace KDevelop;
 
 namespace Python {
 
-MissingIncludeProblem::MissingIncludeProblem(const QString &moduleName, IndexedString currentDocument)
-    : Problem()
-    , m_moduleName(moduleName)
-    , m_currentDocument(currentDocument)
-{
-
-}
-
-KSharedPtr<IAssistant> MissingIncludeProblem::solutionAssistant() const
-{
-    return KSharedPtr<IAssistant>(new MissingIncludeAssistant(m_moduleName, m_currentDocument));
-}
-
 DocumentationGeneratorAction::DocumentationGeneratorAction(const QString& module, const IndexedString& document)
     : IAssistantAction()
     , module(module)

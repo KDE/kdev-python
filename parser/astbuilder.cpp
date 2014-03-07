@@ -66,7 +66,7 @@ public:
 #include "generated.h"
 
 QMutex AstBuilder::pyInitLock;
-QString AstBuilder::pyHomeDir = KStandardDirs::locate("data", "");
+const QString AstBuilder::pyHomeDir = KStandardDirs::locate("data", "kdevpythonsupport/encodings/");
 
 QString PyUnicodeObjectToQString(PyObject* obj) {
 #ifdef Q_OS_WIN32
@@ -137,11 +137,12 @@ QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
 }
 
 namespace {
-struct PythonInitializer : private QMutexLocker {
+struct PythonInitializer : private QMutexLocker, QByteArray {
     PythonInitializer(QMutex& pyInitLock, const QString& pyHomeDir):
-        QMutexLocker(&pyInitLock), arena(0)
+        QMutexLocker(&pyInitLock), QByteArray(pyHomeDir.toUtf8()), arena(0)
     {
-            Py_SetPythonHome(pyHomeDir.toUtf8().data());
+            Py_NoSiteFlag = 1;
+            Py_SetPythonHome(data());
             Py_InitializeEx(0);
             Q_ASSERT(Py_IsInitialized());
 
@@ -154,6 +155,7 @@ struct PythonInitializer : private QMutexLocker {
             PyArena_Free(arena);
         if (Py_IsInitialized())
             Py_Finalize();
+        Py_SetPythonHome(0);
     }
     PyArena* arena;
 };
@@ -168,9 +170,7 @@ AstBuilder::AstBuilder(KDevPG::MemoryPool* pool)
 CodeAst* AstBuilder::parse(KUrl filename, QString& contents)
 {
     qDebug() << " ====> AST     ====>     building abstract syntax tree for " << filename.path();
-    
-    Py_NoSiteFlag = 1;
-    
+
     contents.append('\n');
     
     QPair<QString, int> hacked = fileHeaderHack(contents, filename);

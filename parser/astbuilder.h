@@ -55,7 +55,7 @@ public:
     KDevPG::MemoryPool* m_pool;
 private:
     static QMutex pyInitLock;
-    static QString pyHomeDir;
+    static const QString pyHomeDir;
 };
 
 }

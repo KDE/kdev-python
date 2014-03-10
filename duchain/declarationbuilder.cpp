@@ -1065,8 +1065,8 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
             AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(currentParamIndex)->abstractType(),
                                                             addType.cast<AbstractType>(), topContext());
             // TODO this does not correctly update the types in quickopen! Investigate why.
-            functiontype->removeArgument(currentArgumentIndex);
-            functiontype->addArgument(newType, currentArgumentIndex);
+            functiontype->removeArgument(currentArgumentIndex + hasSelfArgument);
+            functiontype->addArgument(newType, currentArgumentIndex + hasSelfArgument);
             lastFunctionDeclaration->setAbstractType(functiontype.cast<AbstractType>());
             parameters.at(currentParamIndex)->setType(newType);
         }

@@ -604,4 +604,4 @@ __name__ = "none"
 __file__ = "none"
 __doc__ = "none"
 __package__ = "none"
-
+NotImplemented = None

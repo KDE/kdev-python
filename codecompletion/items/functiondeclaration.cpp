@@ -103,10 +103,10 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
                 QString ret;
                 QList<QVariant> highlight;
                 if ( atArgument() ) {
-                    createArgumentList(dec, ret, &highlight, atArgument());
+                    createArgumentList(dec, ret, &highlight, atArgument(), false);
                 }
                 else {
-                    createArgumentList(dec, ret, 0);
+                    createArgumentList(dec, ret, 0, false);
                 }
                 return QVariant(highlight);
             }

@@ -140,12 +140,12 @@ def get_indent(string):
     return 0
 
 def remove_indent(string):
-    if type(string) == types.StringType:
+    if type(string) == str:
         string = string.split("\n")
         max_remove_indent = get_indent(string[0])
         result = ""
         for line in string:
-            for offset in xrange(0, len(line)):
+            for offset in range(0, len(line)):
                 if line[offset] not in [' ', '\t'] or offset > max_remove_indent:
                     result += line[offset:] + "\n"
                     break
@@ -200,14 +200,14 @@ def guess_return_type_from_synopsis(synopsis, root):
 
 def parse_numpy_like_docstring(docstring, funcname, root, needSelfArg=False):
     selflist = ["self"] if needSelfArg else []
-    if type(docstring) == types.StringType:
+    if type(docstring) == str:
         indent = 0
         atLineBeginning = True
         paramListBegin = paramListEnd = False
         returnTypeBegin = returnTypeEnd = False
         atPartBeginning = 2
         returnType = "None"
-        for offset in xrange(0, len(docstring)):
+        for offset in range(0, len(docstring)):
             if docstring[offset] == "\n":
                 indent = 0
             if docstring[offset] in [' ', '\t'] and atLineBeginning:
@@ -237,14 +237,17 @@ def parse_numpy_like_docstring(docstring, funcname, root, needSelfArg=False):
                     returnType = ''.join(["{0}() if False else ".format(do_type_subst(t)) for t in returnTypes[:-1]]) \
                                  + do_type_subst(str(returnTypes[-1])) + "()"
                 else:
-                    returnTypeLine = ret.split(' ')[0].split(',')[0]
-                    returnType = do_type_subst(strict_sanitize(returnTypeLine)) + "()"
+                    if 'ndarray' in ret.split() or 'array_like' in ret.split() or 'array_type' in ret.split():
+                        returnType = "ndarray()"
+                    else:
+                        returnTypeLine = ret.split(' ')[0].split(',')[0]
+                        returnType = do_type_subst(strict_sanitize(returnTypeLine)) + "()"
             except IndexError:
                 returnType = guess_return_type_from_synopsis(docstring[returnTypeBegin:], root)
         if len(relevantPart):
             firstIndent = get_indent(relevantPart[0])
             parameter_name_list = []
-            for line_index in xrange(0, len(relevantPart)):
+            for line_index in range(0, len(relevantPart)):
                 if get_indent(relevantPart[line_index]) == firstIndent:
                     s = relevantPart[line_index].split(' : ')
                     if len(s) == 2:

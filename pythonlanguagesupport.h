@@ -64,7 +64,7 @@ public:
     
     virtual WhitespaceSensitivity whitespaceSensititivy() const;
     
-    virtual KDevelop::SourceFormatterItemList sourceFormatterItems();
+    virtual KDevelop::SourceFormatterItemList sourceFormatterItems() const;
 
     /// Tells whether this plugin is enabled for the given file.
     static bool enabledForFile(const KUrl& url);

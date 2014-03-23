@@ -33,7 +33,7 @@
 #include <QTimer>
 #include <QMutexLocker>
 #include <language/duchain/topducontext.h>
-#include <language/duchain/problem.h>
+#include <language/interfaces/iproblem.h>
 #include <language/duchain/duchain.h>
 
 #include "python_header.h"

@@ -605,3 +605,6 @@ __file__ = "none"
 __doc__ = "none"
 __package__ = "none"
 NotImplemented = None
+
+def print(obj, sep='', end='\n', file=open()):
+    pass

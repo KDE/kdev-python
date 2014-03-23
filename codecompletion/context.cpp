@@ -463,7 +463,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::keywordItems(
 {
     ItemList resultingItems;
     QStringList keywordItems;
-    keywordItems << "def" << "class" << "lambda" << "global" << "print" << "import"
+    keywordItems << "def" << "class" << "lambda" << "global" << "import"
                  << "from" << "while" << "for" << "yield" << "return";
     foreach ( const QString& current, keywordItems ) {
         KeywordItem* k = new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), current + " ", "");

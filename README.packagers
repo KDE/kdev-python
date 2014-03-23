@@ -9,6 +9,13 @@ Notes
 This is a collection of notes about what might be of interest,
 related to packaging.
 
+Conflict with other versions (IMPORTANT)
+----------------------------------------
+The python3 version of kdev-python can NOT be installed alongside other versions.
+Please ensure that a package containing the e.g. 1.6 release conflicts with
+a package containing 1.6-py3.
+I am working on eventually lifting this annoyance in the future.
+
 Python fork
 -----------
 This branch, which contains the python3 version of kdev-python, does no longer

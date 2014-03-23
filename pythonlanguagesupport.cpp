@@ -173,7 +173,7 @@ bool LanguageSupport::enabledForFile(const KUrl& url)
     return false;
 }
 
-SourceFormatterItemList LanguageSupport::sourceFormatterItems()
+SourceFormatterItemList LanguageSupport::sourceFormatterItems() const
 {
     SourceFormatterStyle autopep8("pep8ify");
     autopep8.setCaption("pep8ify");

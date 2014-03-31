@@ -71,8 +71,8 @@ int FunctionDeclarationCompletionItem::argumentHintDepth() const
 
 QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const
 {
-    FunctionDeclaration* dec = dynamic_cast<FunctionDeclaration*>(m_declaration.data());
     DUChainReadLocker lock;
+    FunctionDeclaration* dec = dynamic_cast<FunctionDeclaration*>(m_declaration.data());
     switch ( role ) {
         case Qt::DisplayRole: {
             if ( ! dec ) {
@@ -86,7 +86,8 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
                 }
             }
             if ( index.column() == KDevelop::CodeCompletionModel::Prefix ) {
-                if ( FunctionType::Ptr type = dec->type<FunctionType>() ) {
+                FunctionType::Ptr type = dec->type<FunctionType>();
+                if ( type && type->returnType() ) {
                     return i18n("function") + " -> " + type->returnType()->toString();
                 }
             }

@@ -783,6 +783,9 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("tuple_type") << "checkme = 1, 2" << "tuple";
     
     QTest::newRow("dict_iteritems") << "d = {1:2, 3:4}\nfor checkme, k in d.iteritems(): pass" << "int";
+    QTest::newRow("enumerate_key") << "d = [str(), str()]\nfor checkme, value in enumerate(d): pass" << "int";
+    QTest::newRow("enumerate_value") << "d = [str(), str()]\nfor key, checkme in enumerate(d): pass" << "str";
+    QTest::newRow("dict_enumerate") << "d = {1:2, 3:4}\nfor key, checkme in enumerate(d.values()): pass" << "int";
 
     QTest::newRow("dict_assign_twice") << "d = dict(); d[''] = 0; d = dict(); d[''] = 0; checkme = d"
                                        << "unsure (dict of str : int, dict)";

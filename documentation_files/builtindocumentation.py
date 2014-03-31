@@ -440,7 +440,8 @@ def divmod(a, b):
     """Take two (non complex) numbers as arguments and return a pair of numbers consisting of their quotient and remainder when using long division."""
     return 0
 def enumerate(sequence, start = 0):
-    """Return an enumerate object. sequence must be a sequence, an iterator, or some other object which supports iteration."""
+    """Return an enumerate object. sequence must be a sequence, an iterator, or some other object which supports iteration.
+    ! enumerate ! 0 """
     return [(0, 0)]
 def eval(expression, glob = None, loc = None):
     """The expression argument is parsed and evaluated as a Python expression (technically speaking, a condition list) using the globals and locals dictionaries as global and local namespace."""

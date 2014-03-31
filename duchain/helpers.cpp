@@ -475,6 +475,33 @@ bool Helper::isUsefulType(AbstractType::Ptr type)
     return false;
 }
 
+AbstractType::Ptr Helper::contentOfIterable(const AbstractType::Ptr iterable)
+{
+    auto items = filterType<AbstractType>(iterable,
+        [](AbstractType::Ptr t) {
+            return VariableLengthContainer::Ptr::dynamicCast(t) || IndexedContainer::Ptr::dynamicCast(t);
+        },
+        [](AbstractType::Ptr t) {
+            if ( auto variable = VariableLengthContainer::Ptr::dynamicCast(t) ) {
+                return AbstractType::Ptr(variable->contentType().abstractType());
+            }
+            else {
+                auto indexed = t.cast<IndexedContainer>();
+                return indexed->asUnsureType();
+            }
+        }
+    );
+
+    if ( items.size() == 1 ) {
+        return items.first();
+    }
+    auto unsure = AbstractType::Ptr(new UnsureType);
+    for ( auto type: items ) {
+        Helper::mergeTypes(unsure, type);
+    }
+    return unsure;
+}
+
 AbstractType::Ptr Helper::mergeTypes(AbstractType::Ptr type, AbstractType::Ptr newType, TopDUContext* ctx)
 {
     UnsureType::Ptr unsure = UnsureType::Ptr::dynamicCast(type);

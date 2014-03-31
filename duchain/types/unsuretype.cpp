@@ -42,7 +42,8 @@ UnsureType::UnsureType(const UnsureType& rhs)
 
 }
 
-UnsureType::UnsureType(KDevelop::UnsureTypeData& data): KDevelop::UnsureType(data)
+UnsureType::UnsureType(KDevelop::UnsureTypeData& data)
+    : KDevelop::UnsureType(data)
 {
 
 }

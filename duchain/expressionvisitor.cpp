@@ -258,6 +258,25 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
         encounterDeclaration(funcDecl);
     }
 
+    auto listOfTuples = [&](AbstractType::Ptr key, AbstractType::Ptr value) {
+        VariableLengthContainer::Ptr newType = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
+        IndexedContainer::Ptr newContents = typeObjectForIntegralType<IndexedContainer>("tuple", m_ctx);
+        if ( ! newType || ! newContents ) {
+            return AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
+        }
+        if ( ! key ) {
+            key = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
+        }
+        if ( ! value ) {
+            value = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
+        }
+        newContents->addEntry(key);
+        newContents->addEntry(value);
+        newType->addContentType(AbstractType::Ptr::staticCast(newContents));
+        AbstractType::Ptr resultingType = AbstractType::Ptr::staticCast(newType);
+        return resultingType;
+    };
+
     QHash< QString, std::function<bool(QStringList, QString)> > knownDecoratorHints;
 
     kDebug() << "Got function declaration with decorators, checking for list content type...";
@@ -307,6 +326,21 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
     };
     knownDecoratorHints["getListOfKeys"] = knownDecoratorHints["getsList"];
 
+    knownDecoratorHints["enumerate"] = [&](QStringList /*arguments*/, QString /*currentHint*/) {
+        if ( node->function->astType != Ast::NameAstType || node->arguments.size() < 1 ) {
+            return false;
+        }
+        ExpressionVisitor enumeratedTypeVisitor(this);
+        enumeratedTypeVisitor.visitNode(node->arguments.first());
+
+        DUChainWriteLocker lock;
+        auto intType = typeObjectForIntegralType<AbstractType>("int", m_ctx);
+        auto enumerated = enumeratedTypeVisitor.lastType();
+        auto result = listOfTuples(intType, Helper::contentOfIterable(enumerated));
+        encounter(result);
+        return true;
+    };
+
     knownDecoratorHints["getsListOfBoth"] = [&](QStringList /*arguments*/, QString /*currentHint*/) {
         kDebug() << "Got getsListOfBoth decorator, checking container";
         if ( node->function->astType != Ast::AttributeAstType ) {
@@ -318,24 +352,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
         DUChainWriteLocker lock;
         if ( VariableLengthContainer::Ptr t = baseTypeVisitor.lastType().cast<VariableLengthContainer>() ) {
             kDebug() << "Got container:" << t->toString();
-            VariableLengthContainer::Ptr newType = typeObjectForIntegralType<VariableLengthContainer>("list", m_ctx);
-            IndexedContainer::Ptr newContents = typeObjectForIntegralType<IndexedContainer>("tuple", m_ctx);
-            if ( ! newType || ! newContents ) {
-                return false;
-            }
-            AbstractType::Ptr contentType, keyType;
-            contentType = t->contentType().abstractType();
-            if ( ! contentType ) {
-                contentType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
-            }
-            keyType = t->keyType().abstractType();
-            if ( ! keyType ) {
-                keyType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
-            }
-            newContents->addEntry(keyType);
-            newContents->addEntry(contentType);
-            newType->addContentType(newContents.cast<AbstractType>());
-            AbstractType::Ptr resultingType = newType.cast<AbstractType>();
+            auto resultingType = listOfTuples(t->keyType().abstractType(), t->contentType().abstractType());
             encounter(resultingType);
             return true;
         }

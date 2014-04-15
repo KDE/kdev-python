@@ -36,7 +36,6 @@
 #include "contextbuilder.h"
 #include "astbuilder.h"
 
-#include "types/variablelengthcontainer.h"
 #include "duchain/helpers.h"
 
 #include "pyasttest.h"

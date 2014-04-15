@@ -20,12 +20,12 @@
 
 #include "expressionvisitor.h"
 #include "types/indexedcontainer.h"
-#include "types/variablelengthcontainer.h"
 #include "declarations/functiondeclaration.h"
 #include "pythonduchainexport.h"
 #include "pythoneditorintegrator.h"
 #include "helpers.h"
 
+#include <language/duchain/types/containertypes.h>
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/types/integraltype.h>
 #include <language/duchain/types/typeregister.h>

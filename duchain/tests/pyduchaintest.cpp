@@ -36,6 +36,7 @@
 #include <KStandardDirs>
 #include <QtGui/QApplication>
 #include <language/duchain/types/functiontype.h>
+#include <language/duchain/types/containertypes.h>
 #include <language/duchain/aliasdeclaration.h>
 #include <language/backgroundparser/backgroundparser.h>
 #include <language/interfaces/iastcontainer.h>
@@ -51,7 +52,6 @@
 #include "contextbuilder.h"
 #include "astbuilder.h"
 
-#include "types/variablelengthcontainer.h"
 #include "duchain/helpers.h"
 
 QTEST_MAIN(PyDUChainTest)

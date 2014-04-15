@@ -22,13 +22,13 @@
 #include <language/codecompletion/codecompletionmodel.h>
 #include <language/duchain/types/functiontype.h>
 #include <language/duchain/aliasdeclaration.h>
+#include <language/duchain/types/containertypes.h>
 
 #include <KTextEditor/View>
 #include <KTextEditor/Document>
 #include <KLocalizedString>
 
 #include "duchain/navigation/navigationwidget.h"
-#include "types/variablelengthcontainer.h"
 #include "codecompletion/helpers.h"
 #include "declaration.h"
 #include "declarations/functiondeclaration.h"

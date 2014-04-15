@@ -29,7 +29,7 @@
 #include <language/duchain/types/typepointer.h>
 #include <language/duchain/aliasdeclaration.h>
 
-#include "types/variablelengthcontainer.h"
+#include <language/duchain/types/containertypes.h>
 
 #include "helpers.h"
 

@@ -5,7 +5,7 @@
  * modify it under the terms of the GNU General Public License as            *
  * published by the Free Software Foundation; either version 2 of            *
  * the License, or (at your option) any later version.                       *
- *                                                                           *           
+ *                                                                           *
  * This program is distributed in the hope that it will be useful,           *
  * but WITHOUT ANY WARRANTY; without even the implied warranty of            *
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             *
@@ -18,10 +18,10 @@
 
 #include "declaration.h"
 #include "duchain/helpers.h"
-#include <types/variablelengthcontainer.h>
 
 #include <language/codecompletion/codecompletionmodel.h>
 #include <language/codecompletion/codecompletioncontext.h>
+#include <language/duchain/types/containertypes.h>
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/duchain.h>
 #include <language/duchain/classfunctiondeclaration.h>

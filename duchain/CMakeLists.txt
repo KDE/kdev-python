@@ -7,7 +7,6 @@ set(duchain_SRCS
     declarations/functiondeclaration.cpp
     declarations/classdeclaration.cpp
 
-    types/variablelengthcontainer.cpp
     types/hintedtype.cpp
     types/unsuretype.cpp
     types/indexedcontainer.cpp

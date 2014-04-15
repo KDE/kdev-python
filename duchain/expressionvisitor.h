@@ -27,6 +27,7 @@
 #include <language/duchain/types/integraltype.h>
 #include <language/duchain/types/typesystemdata.h>
 #include <language/duchain/types/typeregister.h>
+#include <language/duchain/types/containertypes.h>
 #include <language/duchain/duchainpointer.h>
 #include <language/duchain/declaration.h>
 #include <language/duchain/types/structuretype.h>
@@ -38,7 +39,6 @@
 
 #include "duchain/declarations/classdeclaration.h"
 #include "duchain/declarations/functiondeclaration.h"
-#include "types/variablelengthcontainer.h"
 
 namespace KDevelop {
     class Identifier;

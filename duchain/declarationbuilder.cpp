@@ -22,7 +22,7 @@
 #include "duchain/declarations/decorator.h"
 #include "duchain/declarations/functiondeclaration.h"
 #include "duchain/declarations/classdeclaration.h"
-#include "types/variablelengthcontainer.h"
+
 #include "types/hintedtype.h"
 #include "types/unsuretype.h"
 #include "types/indexedcontainer.h"

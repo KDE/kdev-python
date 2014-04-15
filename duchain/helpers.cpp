@@ -27,6 +27,7 @@
 
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/types/integraltype.h>
+#include <language/duchain/types/containertypes.h>
 #include <language/duchain/duchainutils.h>
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/duchain.h>
@@ -44,7 +45,6 @@
 #include "ast.h"
 #include "types/hintedtype.h"
 #include "types/unsuretype.h"
-#include "types/variablelengthcontainer.h"
 #include "types/indexedcontainer.h"
 #include "kdevpythonversion.h"
 #include <language/duchain/types/typeutils.h>

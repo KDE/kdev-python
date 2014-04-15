@@ -715,7 +715,7 @@ QList< CompletionTreeItemPointer > PythonCodeCompletionContext::declarationListT
 
 QList< CompletionTreeItemPointer > PythonCodeCompletionContext::getCompletionItemsForType(AbstractType::Ptr type)
 {
-    type = Helper::resolveType(type);
+    type = Helper::resolveAliasType(type);
     if ( type->whichType() != AbstractType::TypeUnsure ) {
         return getCompletionItemsForOneType(type);
     }
@@ -761,7 +761,7 @@ QList< CompletionTreeItemPointer > PythonCodeCompletionContext::getCompletionIte
 
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItemsForOneType(AbstractType::Ptr type)
 {
-    type = Helper::resolveType(type);
+    type = Helper::resolveAliasType(type);
     ReferencedTopDUContext builtinTopContext = Helper::getDocumentationFileContext();
     if ( type->whichType() != AbstractType::TypeStructure ) {
         return ItemList();

@@ -47,6 +47,7 @@
 #include "types/variablelengthcontainer.h"
 #include "types/indexedcontainer.h"
 #include "kdevpythonversion.h"
+#include <language/duchain/types/typeutils.h>
 
 using namespace KDevelop;
 
@@ -58,15 +59,6 @@ QString Helper::documentationFile;
 DUChainPointer<TopDUContext> Helper::documentationFileContext = DUChainPointer<TopDUContext>(0);
 QStringList Helper::correctionFileDirs;
 QString Helper::localCorrectionFileDir;
-
-AbstractType::Ptr Helper::resolveType(AbstractType::Ptr type)
-{
-    if ( type && type->whichType() == AbstractType::TypeAlias ) {
-        return type.cast<TypeAliasType>()->type();
-    }
-    else
-        return type;
-}
 
 void Helper::scheduleDependency(const IndexedString& dependency, int betterThanPriority)
 {
@@ -136,10 +128,7 @@ Declaration* Helper::accessAttribute(Declaration* accessed, const QString& attri
 
 AbstractType::Ptr Helper::resolveAliasType(const AbstractType::Ptr eventualAlias)
 {
-    if ( eventualAlias->whichType() == KDevelop::AbstractType::TypeAlias ) {
-        return eventualAlias.cast<TypeAliasType>()->type();
-    }
-    return eventualAlias;
+    return TypeUtils::resolveAliasType(eventualAlias);
 }
 
 AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* current)
@@ -460,19 +449,7 @@ QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
 
 bool Helper::isUsefulType(AbstractType::Ptr type)
 {
-    type = resolveType(type);
-    if ( ! type ) {
-        return false;
-    }
-    QList<uint> skipTypes;
-    skipTypes << IntegralType::TypeMixed << IntegralType::TypeNone << IntegralType::TypeNull;
-    if ( type->whichType() != AbstractType::TypeIntegral ) {
-        return true;
-    }
-    if ( ! skipTypes.contains(type.cast<IntegralType>()->dataType()) ) {
-        return true;
-    }
-    return false;
+    return TypeUtils::isUsefulType(type);
 }
 
 AbstractType::Ptr Helper::contentOfIterable(const AbstractType::Ptr iterable)
@@ -502,53 +479,9 @@ AbstractType::Ptr Helper::contentOfIterable(const AbstractType::Ptr iterable)
     return unsure;
 }
 
-AbstractType::Ptr Helper::mergeTypes(AbstractType::Ptr type, AbstractType::Ptr newType, TopDUContext* ctx)
+AbstractType::Ptr Helper::mergeTypes(AbstractType::Ptr type, const AbstractType::Ptr newType)
 {
-    UnsureType::Ptr unsure = UnsureType::Ptr::dynamicCast(type);
-    UnsureType::Ptr newUnsure = UnsureType::Ptr::dynamicCast(newType);
-    UnsureType::Ptr ret;
-
-    // both types are unsure, so join the list of possible types.
-    if ( unsure && newUnsure ) {
-        int len = newUnsure->typesSize();
-        for ( int i = 0; i < len; i++ ) {
-            unsure->addType(newUnsure->types()[i]);
-        }
-        ret = unsure;
-    }
-    // one of them is unsure, use that and add the other one
-    else if ( unsure ) {
-        if ( isUsefulType(newType) ) {
-            unsure->addType(newType->indexed());
-        }
-        ret = unsure;
-    }
-    else if ( newUnsure ) {
-        UnsureType::Ptr createdUnsureType = UnsureType::Ptr(static_cast<UnsureType*>(newUnsure->clone()));
-        if ( isUsefulType(type) ) {
-            createdUnsureType->addType(type->indexed());
-        }
-        ret = createdUnsureType;
-    }
-    else {
-        unsure = UnsureType::Ptr(new UnsureType());
-        if ( isUsefulType(type) ) {
-            unsure->addType(type->indexed());
-        }
-        if ( isUsefulType(newType) ) {
-            unsure->addType(newType->indexed());
-        }
-        if ( ! unsure.count() ) {
-            return AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
-        }
-        ret = unsure;
-    }
-    if ( ret->typesSize() == 1 ) {
-        return ret->types()[0].abstractType();
-    }
-    else {
-        return AbstractType::Ptr::staticCast(ret);
-    }
+    return TypeUtils::mergeTypes<Python::UnsureType>(type, newType);
 }
 
 }

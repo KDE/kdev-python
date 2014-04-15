@@ -59,7 +59,7 @@ public:
     static QStringList correctionFileDirs;
     static QString localCorrectionFileDir;
     static DUChainPointer<TopDUContext> documentationFileContext;
-    
+
     static QStringList getDataDirs();
     static QString getDocumentationFile();
     static ReferencedTopDUContext getDocumentationFileContext();
@@ -68,10 +68,8 @@ public:
     static KUrl getLocalCorrectionFile(KUrl document);
 
     static QList<KUrl> cachedSearchPaths;
-    
+
     static AbstractType::Ptr extractTypeHints(AbstractType::Ptr type, TopDUContext* current);
-    
-    static AbstractType::Ptr resolveType(AbstractType::Ptr type);
 
     static Declaration* accessAttribute(Declaration* accessed, const QString& attribute, DUContext* current);
 
@@ -131,7 +129,7 @@ public:
      **/
     using FuncInfo = QPair<Python::FunctionDeclarationPointer, bool>;
     static FuncInfo functionDeclarationForCalledDeclaration(DeclarationPointer ptr);
-    
+
     template<typename T> static const Decorator* findDecoratorByName(T* inDeclaration, const QString& name) {
         const int count = inDeclaration->decoratorsSize();
         const IndexedString indexedName = IndexedString(name);
@@ -141,7 +139,7 @@ public:
         }
         return 0;
     };
-    
+
     static bool docstringContainsHint(Declaration* declaration, const QString& hintName, QStringList* args = 0) {
         // TODO cache types! this is horribly inefficient
         const QString& comment = declaration->comment();
@@ -158,18 +156,11 @@ public:
         }
         return false;
     }
-    
+
     /**
-     * @brief merge two types into one unsure type
-     *
-     * @param type old type
-     * @param newType new type
-     * @return :AbstractType::Ptr the merged type, always valid
-     * 
-     * @warning Although this looks symmetrical, it is NOT: the first argument might be modified, the second one won't be.
-     * So if you do something like a = mergeTypes(a, b) make sure you pass "a" as first argument.
-     **/
-    static AbstractType::Ptr mergeTypes(AbstractType::Ptr type, AbstractType::Ptr newType, TopDUContext* ctx = 0);
+     * @copydoc TypeUtils::mergeTypes
+     */
+    static AbstractType::Ptr mergeTypes(AbstractType::Ptr type, const AbstractType::Ptr newType);
 
     /**
      * @brief Like mergeTypes(), but merges a list of types into a newly allocated type.
@@ -186,15 +177,15 @@ public:
         }
         return result;
     };
-    
+
     /** check whether the argument is a null, mixed, or none integral type **/
     static bool isUsefulType(AbstractType::Ptr type);
-    
+
     enum ContextSearchFlags {
         NoFlags,
         PublicOnly
     };
-    
+
     /**
     * @brief Find all internal contexts for this class and its base classes recursively
     *
@@ -212,7 +203,7 @@ public:
         * DUChain must be read locked
         **/
     static Declaration* resolveAliasDeclaration(Declaration* decl);
-    
+
     static Declaration* declarationForName(const QualifiedIdentifier& identifier,
                                            const RangeInRevision& nodeRange, DUContextPointer context);
 };
@@ -220,3 +211,4 @@ public:
 }
 
 #endif
+

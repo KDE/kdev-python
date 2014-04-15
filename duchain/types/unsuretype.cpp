@@ -53,7 +53,7 @@ const QList<AbstractType::Ptr> UnsureType::typesRecursive() const
     QList<AbstractType::Ptr> results;
     FOREACH_FUNCTION ( const IndexedType& type, d_func()->m_types ) {
         AbstractType::Ptr current = type.abstractType();
-        AbstractType::Ptr resolved = Helper::resolveType(current);
+        AbstractType::Ptr resolved = Helper::resolveAliasType(current);
         if ( resolved->whichType() == AbstractType::TypeUnsure ) {
             results.append(resolved.cast<UnsureType>()->typesRecursive());
         }
@@ -74,7 +74,7 @@ QString UnsureType::toString() const
             continue;
         }
         
-        IndexedType indexed = Helper::resolveType(type)->indexed();
+        IndexedType indexed = Helper::resolveAliasType(type)->indexed();
         if ( encountered.contains(indexed) )
             continue;
         encountered << indexed;

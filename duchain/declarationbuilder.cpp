@@ -320,7 +320,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
                 newType = hints;
             }
             else {
-                newType = Helper::mergeTypes(hints, type, topContext());
+                newType = Helper::mergeTypes(hints, type);
             }
         }
         else {
@@ -338,7 +338,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         if ( newType ) {
             if ( currentType && currentType->indexed() != newType->indexed() ) {
                 // If the previous and new type are different, use an unsure type
-                dec->setType(Helper::mergeTypes(currentType, newType, topContext()));
+                dec->setType(Helper::mergeTypes(currentType, newType));
             }
             else {
                 // If no type was set previously, use only the new one.
@@ -1063,7 +1063,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
             kDebug() << "adding" << argumentType << "at position" << currentArgumentIndex << "/" << currentParamIndex;
             if ( ! argumentType ) continue;
             AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(currentParamIndex)->abstractType(),
-                                                            addType.cast<AbstractType>(), topContext());
+                                                            addType.cast<AbstractType>());
             // TODO this does not correctly update the types in quickopen! Investigate why.
             functiontype->removeArgument(currentArgumentIndex + hasSelfArgument);
             functiontype->addArgument(newType, currentArgumentIndex + hasSelfArgument);

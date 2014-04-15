@@ -51,7 +51,7 @@ QHash<NameConstantAst::NameConstantTypes, KDevelop::AbstractType::Ptr> Expressio
 
 AbstractType::Ptr ExpressionVisitor::encounterPreprocess(AbstractType::Ptr type, bool merge)
 {
-    type = Helper::resolveType(type);
+    type = Helper::resolveAliasType(type);
     AbstractType::Ptr res;
     if ( merge and not m_lastType.isEmpty() ) {
         res = Helper::mergeTypes(m_lastType.pop(), type);

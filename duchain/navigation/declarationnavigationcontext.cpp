@@ -51,11 +51,12 @@ QString DeclarationNavigationContext::getLink(const QString& name, DeclarationPo
 void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, const IdentifiedType* idType)
 {
     // TODO this code is duplicate of variablelengthcontainer::toString, resolve that somehow
-    if ( VariableLengthContainer::Ptr t = VariableLengthContainer::Ptr::dynamicCast(type) ) {
+    if ( auto t = ListType::Ptr::dynamicCast(type) ) {
+        auto map = MapType::Ptr::dynamicCast(t);
         const QString containerType = getLink(t->containerToString(), DeclarationPointer(idType->declaration(m_topContext.data())), NavigationAction::NavigateDeclaration );
         QString contentType;
-        if ( t->hasKeyType() ) {
-            if ( AbstractType::Ptr key = t->keyType().abstractType() ) {
+        if ( map ) {
+            if ( auto key = map->keyType().abstractType() ) {
                 IdentifiedType* identifiedKey = dynamic_cast<IdentifiedType*>(key.unsafeData());
                 if ( identifiedKey ) {
                     contentType.append(getLink(key->toString(), DeclarationPointer(

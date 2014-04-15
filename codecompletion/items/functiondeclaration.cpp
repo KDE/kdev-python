@@ -115,7 +115,7 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
         case KDevelop::CodeCompletionModel::MatchQuality: {
             if (    m_typeHint == PythonCodeCompletionContext::IterableRequested
                  && dec && dec->type<FunctionType>()
-                 && dynamic_cast<VariableLengthContainer*>(dec->type<FunctionType>()->returnType().unsafeData()) )
+                 && dynamic_cast<ListType*>(dec->type<FunctionType>()->returnType().unsafeData()) )
             {
                 return 2 + PythonDeclarationCompletionItem::data(index, role, model).toInt();
             }

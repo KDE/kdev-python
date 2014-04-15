@@ -172,8 +172,8 @@ AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext*
         }
         return edit.cast<AbstractType>();
     }
-    else if ( VariableLengthContainer::Ptr variable = type.cast<VariableLengthContainer>() ) {
-        VariableLengthContainer::Ptr edit = VariableLengthContainer::Ptr(static_cast<VariableLengthContainer*>(variable->clone()));
+    else if ( auto variable = type.cast<ListType>() ) {
+        auto edit = ListType::Ptr(static_cast<ListType*>(variable->clone()));
         UnsureType::Ptr newContentType(new UnsureType());
         AbstractType::Ptr oldContentType = edit->contentType().abstractType();
         bool isHint = false;
@@ -199,7 +199,7 @@ AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext*
                 return result.cast<AbstractType>();
             }
             edit->replaceContentType(newContentType.cast<AbstractType>());
-            edit->replaceKeyType(variable->keyType().abstractType());
+//             edit->replaceKeyType(variable->keyType().abstractType()); // TODO re-enable?
         }
         return edit.cast<AbstractType>();
     }
@@ -456,10 +456,10 @@ AbstractType::Ptr Helper::contentOfIterable(const AbstractType::Ptr iterable)
 {
     auto items = filterType<AbstractType>(iterable,
         [](AbstractType::Ptr t) {
-            return VariableLengthContainer::Ptr::dynamicCast(t) || IndexedContainer::Ptr::dynamicCast(t);
+            return ListType::Ptr::dynamicCast(t) || IndexedContainer::Ptr::dynamicCast(t);
         },
         [](AbstractType::Ptr t) {
-            if ( auto variable = VariableLengthContainer::Ptr::dynamicCast(t) ) {
+            if ( auto variable = ListType::Ptr::dynamicCast(t) ) {
                 return AbstractType::Ptr(variable->contentType().abstractType());
             }
             else {
@@ -481,6 +481,8 @@ AbstractType::Ptr Helper::contentOfIterable(const AbstractType::Ptr iterable)
 
 AbstractType::Ptr Helper::mergeTypes(AbstractType::Ptr type, const AbstractType::Ptr newType)
 {
+    UnsureType::Ptr ret;
+    ret.count();
     return TypeUtils::mergeTypes<Python::UnsureType>(type, newType);
 }
 

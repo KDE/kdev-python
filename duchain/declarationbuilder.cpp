@@ -315,7 +315,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
             // check for argument type hints (those are created when calling functions)
             AbstractType::Ptr hints = Helper::extractTypeHints(dec->abstractType(), topContext());
             kDebug() << hints->toString();
-            if ( hints.cast<IndexedContainer>() || hints.cast<VariableLengthContainer>() ) {
+            if ( hints.cast<IndexedContainer>() || hints.cast<ListType>() ) {
                 // This only happens when the type hint is a tuple, which means the vararg/kwarg of a function is being processed.
                 newType = hints;
             }
@@ -385,17 +385,17 @@ void DeclarationBuilder::visitFor(ForAst* node)
 {
     ExpressionVisitor v(currentContext(), editor());
     v.visitNode(node->iterator);
-    QList<VariableLengthContainer::Ptr> possibleIterators = Helper::filterType<VariableLengthContainer>(v.lastType(),
+    auto possibleIterators = Helper::filterType<ListType>(v.lastType(),
         [](AbstractType::Ptr type) {
-            auto container = type.cast<VariableLengthContainer>();
+            auto container = type.cast<ListType>();
             return container && container->contentType();
         }
     );
     if ( node->target->astType == Ast::NameAstType ) {
         // In case the iterator variable is a Name ("for x in range(3)"), just create a declaration for it.
         // The following code tries to figure out the type of "x" from the object that is being iterated over.
-        auto iteratorType = Helper::foldTypes<VariableLengthContainer::Ptr>(possibleIterators,
-            [](const VariableLengthContainer::Ptr& p) {
+        auto iteratorType = Helper::foldTypes<ListType::Ptr>(possibleIterators,
+            [](const ListType::Ptr& p) {
                 return p->contentType().abstractType();
             }
         );
@@ -407,10 +407,10 @@ void DeclarationBuilder::visitFor(ForAst* node)
     else if ( node->target->astType == Ast::TupleAstType ) {
         // If the target is a tuple ("for x, y, z in ..."), multiple variables must be declared.
         // For now, types of those variables will only be determined if the iterator is a list of tuples.
-        QList<ExpressionAst*> targetElements = targetsOfAssignment(QList<ExpressionAst*>{node->target});
+        QList<ExpressionAst*> targetElements = targetsOfAssignment(QList<ExpressionAst*>() << node->target);
         int targetElementsCount = targetElements.count();
         QList<IndexedContainer::Ptr> gatherFromTuples;
-        foreach ( VariableLengthContainer::Ptr container, possibleIterators ) {
+        for ( auto container : possibleIterators ) {
             AbstractType::Ptr contentType = container->contentType().abstractType();
             gatherFromTuples = Helper::filterType<IndexedContainer>(contentType,
                 // find all IndexedContainer entries which have the right number of entries
@@ -552,7 +552,7 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
         // type of the iterator variable
         ExpressionVisitor v(currentContext());
         v.visitNode(node->iterator);
-        if ( VariableLengthContainer* container = dynamic_cast<VariableLengthContainer*>(v.lastType().unsafeData()) ) {
+        if ( auto container = ListType::Ptr::dynamicCast(v.lastType()) ) {
             targetType = container->contentType().abstractType();
         }
     }
@@ -872,19 +872,19 @@ void DeclarationBuilder::visitYield(YieldAst* node)
     if ( ! t ) {
         return;
     }
-    if ( VariableLengthContainer::Ptr previous = t->returnType().cast<VariableLengthContainer>() ) {
+    if ( auto previous = t->returnType().cast<ListType>() ) {
         // If the return type of the function already is set to a list, *add* the encountered type
         // to its possible content types.
-        previous->addContentType(encountered);
+        previous->addContentType<Python::UnsureType>(encountered);
         t->setReturnType(previous.cast<AbstractType>());
     }
     else {
         // Otherwise, create a new container type, and set it as the function's return type.
         DUChainWriteLocker lock;
-        VariableLengthContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType<VariableLengthContainer>("list", currentContext());
+        auto container = ExpressionVisitor::typeObjectForIntegralType<ListType>("list", currentContext());
         if ( container ) {
-            openType<VariableLengthContainer>(container);
-            container->addContentType(encountered);
+            openType<ListType>(container);
+            container->addContentType<Python::UnsureType>(encountered);
             t->setReturnType(Helper::mergeTypes(t->returnType(), container.cast<AbstractType>()));
             closeType();
         }
@@ -910,7 +910,7 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
     v.visitNode(static_cast<AttributeAst*>(node->function)->value);
 
     // Don't do anything if the object the function is being called on is not a container.
-    VariableLengthContainer::Ptr container = v.lastType().cast<VariableLengthContainer>();
+    auto container = v.lastType().cast<ListType>();
     if ( ! container || ! function ) {
         return;
     }
@@ -935,7 +935,7 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
         }
         DUChainWriteLocker wlock;
         kDebug() << "Adding content type: " << argVisitor.lastType()->toString();
-        container->addContentType(argVisitor.lastType());
+        container->addContentType<Python::UnsureType>(argVisitor.lastType());
         v.lastDeclaration()->setType(container);
     };
     items["addsTypeOfArgContent"] = [&]() {
@@ -949,16 +949,16 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
         if ( ! argVisitor.lastType() ) {
             return;
         }
-        QList<VariableLengthContainer::Ptr> sources = Helper::filterType<VariableLengthContainer>(
+        auto sources = Helper::filterType<ListType>(
             argVisitor.lastType(), [](AbstractType::Ptr type) {
-                return type.cast<VariableLengthContainer>();
+                return type.cast<ListType>();
             }
         );
-        foreach ( VariableLengthContainer::Ptr sourceContainer, sources ) {
+        for ( auto sourceContainer : sources ) {
             if ( ! sourceContainer->contentType() ) {
                 continue;
             }
-            container->addContentType(sourceContainer->contentType().abstractType());
+            container->addContentType<Python::UnsureType>(sourceContainer->contentType().abstractType());
             v.lastDeclaration()->setType(container);
         }
     };
@@ -1080,8 +1080,8 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
     }
     foreach ( KeywordAst* keyword, node->keywords ) {
         AbstractType::Ptr param = parameters.last()->abstractType();
-        VariableLengthContainer::Ptr variable = param.cast<VariableLengthContainer>();
-        if ( ! variable ) {
+        auto list = param.cast<ListType>();
+        if ( ! list ) {
             continue;
         }
         wlock.unlock();
@@ -1096,8 +1096,8 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
         addType->setType(argumentVisitor.lastType());
         addType->setCreatedBy(topContext(), m_futureModificationRevision);
         closeType();
-        variable->addContentType(addType.cast<AbstractType>());
-        parameters.last()->setAbstractType(variable.cast<AbstractType>());
+        list->addContentType<Python::UnsureType>(addType.cast<AbstractType>());
+        parameters.last()->setAbstractType(list.cast<AbstractType>());
     }
 }
 
@@ -1172,7 +1172,7 @@ QList< DeclarationBuilder::SourceType > DeclarationBuilder::sourcesOfAssignment(
         if ( fillWhenLengthMissing > 0 ) {
             ExpressionVisitor v(currentContext());
             v.visitNode(items);
-            auto container = VariableLengthContainer::Ptr::dynamicCast(v.lastType());
+            auto container = ListType::Ptr::dynamicCast(v.lastType());
             if ( container ) {
                 AbstractType::Ptr content = container->contentType().abstractType();
                 for ( ; fillWhenLengthMissing != 0; fillWhenLengthMissing-- ) {
@@ -1271,25 +1271,25 @@ void DeclarationBuilder::assignToSubscript(SubscriptAst* subscript, const Declar
     }
     ExpressionVisitor targetVisitor(currentContext());
     targetVisitor.visitNode(v);
-    VariableLengthContainer::Ptr cont = VariableLengthContainer::Ptr::dynamicCast(targetVisitor.lastType());
-    if ( cont ) {
-        cont->addContentType(element.type);
+    auto list = ListType::Ptr::dynamicCast(targetVisitor.lastType());
+    if ( list ) {
+        list->addContentType<Python::UnsureType>(element.type);
     }
-    if ( cont && cont->hasKeyType() ) {
+    auto map = MapType::Ptr::dynamicCast(list);
+    if ( map ) {
         if ( subscript->slice && subscript->slice->astType == Ast::IndexAstType ) {
             ExpressionVisitor keyVisitor(currentContext());
             keyVisitor.visitNode(static_cast<IndexAst*>(subscript->slice)->value);
             AbstractType::Ptr key = keyVisitor.lastType();
             if ( key ) {
-                DUChainWriteLocker lock;
-                cont->addKeyType(key);
+                map->addKeyType<Python::UnsureType>(key);
             }
         }
     }
     DeclarationPointer lastDecl = targetVisitor.lastDeclaration();
-    if ( cont && lastDecl ) {
+    if ( list && lastDecl ) {
         DUChainWriteLocker lock;
-        lastDecl->setAbstractType(cont.cast<AbstractType>());
+        lastDecl->setAbstractType(list.cast<AbstractType>());
     }
 }
 
@@ -1414,9 +1414,12 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     
     // check whether this is a type container (list, dict, ...) or just a "normal" class
     if ( Helper::docstringContainsHint(dec, "TypeContainer") ) {
-        VariableLengthContainer* container = new VariableLengthContainer();
+        ListType* container = nullptr;
         if ( Helper::docstringContainsHint(dec, "hasTypedKeys") ) {
-            container->setHasKeyType(true);
+            container = new MapType();
+        }
+        else {
+            container = new ListType();
         }
         type = StructureType::Ptr(container);
     }
@@ -1896,11 +1899,11 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         DUChainReadLocker lock;
         AbstractType::Ptr stringType = ExpressionVisitor::typeObjectForIntegralType
                                                         <AbstractType>("str", currentContext());
-        VariableLengthContainer::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType
-                                                        <VariableLengthContainer>("dict", currentContext());
+        auto dictType = ExpressionVisitor::typeObjectForIntegralType
+                                                        <MapType>("dict", currentContext());
         lock.unlock();
         if ( dictType && stringType ) {
-            dictType->addKeyType(stringType);
+            dictType->addKeyType<Python::UnsureType>(stringType);
             visitVariableDeclaration<Declaration>(node->kwarg->argumentName, 0, dictType.cast<AbstractType>());
             type->addArgument(dictType.cast<AbstractType>());
             workingOnDeclaration->setKwarg(type->arguments().size() - 1);

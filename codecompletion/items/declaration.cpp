@@ -68,7 +68,7 @@ QVariant PythonDeclarationCompletionItem::data(const QModelIndex& index, int rol
                 return 0;
             }
             if (   m_typeHint == PythonCodeCompletionContext::IterableRequested 
-                && dynamic_cast<VariableLengthContainer*>(declaration()->abstractType().unsafeData()) )
+                && dynamic_cast<ListType*>(declaration()->abstractType().unsafeData()) )
             {
                 return 10;
             }

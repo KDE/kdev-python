@@ -545,7 +545,8 @@ void PyDUChainTest::testVarKWArgs()
     QVERIFY(! func->findDeclarations(QualifiedIdentifier("vararg")).isEmpty());
     QVERIFY(! func->findDeclarations(QualifiedIdentifier("kwarg")).isEmpty());
     QVERIFY(func->findDeclarations(QualifiedIdentifier("vararg")).first()->abstractType()->toString().startsWith("tuple"));
-    QVERIFY(func->findDeclarations(QualifiedIdentifier("kwarg")).first()->abstractType()->toString() == "dict");
+    QCOMPARE(func->findDeclarations(QualifiedIdentifier("kwarg")).first()->abstractType()->toString(),
+             QString("dict of str : unknown"));
 }
 
 void PyDUChainTest::testSimple()
@@ -1246,7 +1247,7 @@ void PyDUChainTest::testContainerTypes()
     QVERIFY(decls.first()->abstractType());
     kDebug() << "TEST type is: " << decls.first()->abstractType().unsafeData()->toString();
     if ( ! use_type ) {
-        VariableLengthContainer* type = dynamic_cast<VariableLengthContainer*>(decls.first()->abstractType().unsafeData());
+        auto type = ListType::Ptr::dynamicCast(decls.first()->abstractType());
         QVERIFY(type);
         QVERIFY(type->contentType());
         QCOMPARE(type->contentType().abstractType()->toString(), contenttype);

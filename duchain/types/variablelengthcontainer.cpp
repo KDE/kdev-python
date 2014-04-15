@@ -18,6 +18,8 @@
 
 #include "variablelengthcontainer.h"
 #include "helpers.h"
+#include <language/duchain/types/typeutils.h>
+#include <language/duchain/duchainutils.h>
 
 #include <language/duchain/types/typeregister.h>
 #include <language/duchain/duchain.h>
@@ -29,103 +31,86 @@ using namespace KDevelop;
 
 namespace Python {
 
-REGISTER_TYPE(VariableLengthContainer);
+REGISTER_TYPE(ListType);
+REGISTER_TYPE(MapType);
 
-VariableLengthContainer::VariableLengthContainer() : KDevelop::StructureType(createData<VariableLengthContainer>())
-{
+ListType::ListType()
+    : KDevelop::StructureType(createData<ListType>()) { }
 
-}
+ListType::ListType(StructureTypeData& data)
+    : KDevelop::StructureType(data) { }
 
-VariableLengthContainer::VariableLengthContainer(const VariableLengthContainer& rhs)
-    : StructureType(copyData<VariableLengthContainer>(*rhs.d_func()))
-{
+ListType::ListType(const ListType& rhs)
+    : KDevelop::StructureType(copyData<ListType>(*rhs.d_func())) { }
 
-}
+MapType::MapType()
+    : ListType(createData<MapType>()) { };
 
-VariableLengthContainer::VariableLengthContainer(StructureTypeData& data): StructureType(data)
-{
+MapType::MapType(ListTypeData& data)
+    : ListType(data) { };
 
-}
+MapType::MapType(const MapType& rhs)
+    : ListType(copyData<MapType>(*rhs.d_func())) { }
 
-void Python::VariableLengthContainer::addContentType(AbstractType::Ptr typeToAdd)
-{
-    AbstractType::Ptr newContentType = Helper::mergeTypes(contentType().abstractType(), typeToAdd);
-    DUChainReadLocker lock;
-    d_func_dynamic()->m_contentType = newContentType->indexed();
-    kDebug() << "CONTAINER :: new content type: " << contentType().abstractType()->toString();
-}
-
-void VariableLengthContainer::replaceContentType(AbstractType::Ptr newType)
+void ListType::replaceContentType(AbstractType::Ptr newType)
 {
     d_func_dynamic()->m_contentType = newType->indexed();
 }
 
-void VariableLengthContainer::replaceKeyType(AbstractType::Ptr newType)
+void MapType::replaceKeyType(AbstractType::Ptr newType)
 {
     d_func_dynamic()->m_keyType = newType->indexed();
 }
 
-const IndexedType& Python::VariableLengthContainer::contentType() const
+IndexedType ListType::contentType() const
 {
     return d_func()->m_contentType;
 }
 
-void Python::VariableLengthContainer::addKeyType(AbstractType::Ptr typeToAdd)
-{
-    d_func_dynamic()->m_keyType = Helper::mergeTypes(keyType().abstractType(), typeToAdd)->indexed();
-    DUChainReadLocker lock(DUChain::lock());
-    kDebug() << "CONTAINER :: new key type: " << keyType().abstractType()->toString();
-    if ( ! hasKeyType() ) {
-        kWarning() << "warning: you're adding key types to an object which should not have typed keys";
-    }
-}
-
-VariableLengthContainer::~VariableLengthContainer()
-{
-}
-
-const IndexedType& Python::VariableLengthContainer::keyType() const
+IndexedType MapType::keyType() const
 {
     return d_func()->m_keyType;
 }
 
-KDevelop::AbstractType* VariableLengthContainer::clone() const
+AbstractType* ListType::clone() const
 {
-    VariableLengthContainer* n = new VariableLengthContainer(*this);
-    return n;
+    return new ListType(*this);
 }
 
-void VariableLengthContainer::setHasKeyType(bool hasKeyType)
+AbstractType* MapType::clone() const
 {
-    d_func_dynamic()->m_hasKeyType = hasKeyType;
+    return new MapType(*this);
 }
 
-bool VariableLengthContainer::hasKeyType() const
-{
-    return d_func()->m_hasKeyType;
-}
-
-QString VariableLengthContainer::toString() const
+QString ListType::toString() const
 {
     QString prefix = KDevelop::StructureType::toString();
-    AbstractType::Ptr content = contentType().abstractType();
-    AbstractType::Ptr key = keyType().abstractType();
-    if ( hasKeyType() and content and key ) {
-        return i18n("%1 of %2 : %3", prefix, key->toString(), content->toString());
-    }
+    auto content = contentType().abstractType();
     if ( content ) {
         return i18n("%1 of %2", prefix, content->toString());
     }
-    else
-        return prefix;
+    return prefix;
 }
 
-QString VariableLengthContainer::containerToString() const
+QString MapType::toString() const
+{
+    QString prefix = KDevelop::StructureType::toString();
+    auto content = contentType().abstractType();
+    auto key = keyType().abstractType();
+    auto key_str = ( key ? key->toString() : i18n("unknown") );
+    auto content_str = ( content ? content->toString() : i18n("unknown") );
+    if ( key || content ) {
+        return i18n("%1 of %2 : %3", prefix, key_str, content_str);
+    }
+    return prefix;
+}
+
+QString ListType::containerToString() const
 {
     return KDevelop::StructureType::toString();
 }
 
-bool VariableLengthContainer::equals(const AbstractType* rhs) const
+bool ListType::equals(const AbstractType* rhs) const
 {
     if ( this == rhs ) {
         return true;
@@ -133,24 +118,36 @@ bool VariableLengthContainer::equals(const AbstractType* rhs) const
     if ( ! KDevelop::StructureType::equals(rhs) ) {
         return false;
     }
-    const VariableLengthContainer* c = dynamic_cast<const VariableLengthContainer*>(rhs);
+    auto c = dynamic_cast<const ListType*>(rhs);
     if ( ! c ) {
         return false;
     }
     if ( c->contentType() != d_func()->m_contentType ) {
         return false;
     }
+    return true;
+}
+
+bool MapType::equals(const AbstractType* rhs) const
+{
+    if ( ! Python::ListType::equals(rhs) ) {
+        return false;
+    }
+    auto c = dynamic_cast<const MapType*>(rhs);
     if ( c->keyType() != d_func()->m_keyType ) {
         return false;
     }
     return true;
 }
 
-uint VariableLengthContainer::hash() const
+uint ListType::hash() const
 {
-    return StructureType::hash() + 
-        ( contentType().abstractType() ? contentType().abstractType()->hash() : 0 ) + 
-        ( keyType().abstractType() ? keyType().abstractType()->hash() : 0 );
+    return StructureType::hash() + ( contentType().abstractType() ? contentType().abstractType()->hash() : 1 );
+}
+
+uint MapType::hash() const
+{
+    return ListType::hash() + ( keyType().abstractType() ? keyType().abstractType()->hash() : 1 );
 }
 
 }

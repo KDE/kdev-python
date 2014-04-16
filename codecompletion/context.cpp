@@ -80,10 +80,10 @@ std::unique_ptr<ExpressionVisitor> visitorForString(QString str, DUContext* cont
         return std::unique_ptr<ExpressionVisitor>(nullptr);
     }
     ExpressionVisitor* v = new ExpressionVisitor(context);
-    v->m_forceGlobalSearching = true;
+    v->enableGlobalSearching();
     if ( scanUntil.isValid() ) {
-        v->m_scanUntilCursor = scanUntil;
-        v->m_reportUnknownNames = true;
+        v->scanUntil(scanUntil);
+        v->enableUnknownNameReporting();
     }
     v->visitCode(tmpAst.data());
     return std::unique_ptr<ExpressionVisitor>(v);
@@ -523,19 +523,20 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::generatorItem
 
     auto v = visitorForString(m_guessTypeOfExpression, m_duContext.data(), m_position);
     DUChainReadLocker lock;
-    if ( ! v || v->m_unknownNames.isEmpty() ) {
+    if ( ! v || v->unknownNames().isEmpty() ) {
         return resultingItems;
     }
-    if ( v->m_unknownNames.size() >= 2 ) {
+    if ( v->unknownNames().size() >= 2 ) {
         // we only take the first two, and only two. It gets too much items otherwise.
         QStringList combinations;
-        combinations << v->m_unknownNames.at(0) + ", " + v->m_unknownNames.at(1);
-        combinations << v->m_unknownNames.at(1) + ", " + v->m_unknownNames.at(0);
+        auto names = v->unknownNames().toList();
+        combinations << names.at(0) + ", " + names.at(1);
+        combinations << names.at(1) + ", " + names.at(0);
         foreach ( const QString& c, combinations ) {
             items << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + c + " in ", "");
         }
     }
-    foreach ( const QString& n, v->m_unknownNames ) {
+    foreach ( const QString& n, v->unknownNames() ) {
         items << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + n + " in ", "");
     }
 
@@ -640,7 +641,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getMissingIncludeI
     }
 
     Declaration* existing = Helper::declarationForName(QualifiedIdentifier(components.first()),
-                                                       RangeInRevision(m_position, m_position), m_duContext);
+                                                       RangeInRevision(m_position, m_position),
+                                                       DUChainPointer<const DUContext>(m_duContext.data()));
     if ( existing ) {
         // There's already a declaration for the first component; no need to suggest it
         return items;

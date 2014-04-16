@@ -71,7 +71,7 @@ public:
 
     static AbstractType::Ptr extractTypeHints(AbstractType::Ptr type, TopDUContext* current);
 
-    static Declaration* accessAttribute(Declaration* accessed, const QString& attribute, DUContext* current);
+    static Declaration* accessAttribute(Declaration* accessed, const QString& attribute, const DUContext* current);
 
     static AbstractType::Ptr resolveAliasType(const AbstractType::Ptr eventualAlias);
 
@@ -196,16 +196,16 @@ public:
     static QList<DUContext*> internalContextsForClass(KDevelop::StructureType::Ptr klassType,
                                                       TopDUContext* context, ContextSearchFlags flags = NoFlags, int depth = 0);
     /**
-        * @brief Resolve the given declaration if it is an alias declaration.
-        *
-        * @param decl the declaration to resolve
-        * @return :Declaration* decl if not an alias declaration, decl->aliasedDeclaration().data otherwise
-        * DUChain must be read locked
-        **/
+      * @brief Resolve the given declaration if it is an alias declaration.
+      *
+      * @param decl the declaration to resolve
+      * @return :Declaration* decl if not an alias declaration, decl->aliasedDeclaration().data otherwise
+      * DUChain must be read locked
+      **/
     static Declaration* resolveAliasDeclaration(Declaration* decl);
 
-    static Declaration* declarationForName(const QualifiedIdentifier& identifier,
-                                           const RangeInRevision& nodeRange, DUContextPointer context);
+    static Declaration* declarationForName(const QualifiedIdentifier& identifier, const RangeInRevision& nodeRange,
+                                           DUChainPointer<const DUContext> context);
 };
 
 }

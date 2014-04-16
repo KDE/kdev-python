@@ -374,7 +374,7 @@ void DeclarationBuilder::visitWithItem(WithItemAst* node)
 {
     if ( node->optionalVars ) {
         // For statements like "with open(f) as x", a new variable must be created; do this here.
-        ExpressionVisitor v(currentContext(), editor());
+        ExpressionVisitor v(currentContext());
         v.visitNode(node->contextExpression);
         visitVariableDeclaration<Declaration>(node->optionalVars, 0, v.lastType());
     }
@@ -383,7 +383,7 @@ void DeclarationBuilder::visitWithItem(WithItemAst* node)
 
 void DeclarationBuilder::visitFor(ForAst* node)
 {
-    ExpressionVisitor v(currentContext(), editor());
+    ExpressionVisitor v(currentContext());
     v.visitNode(node->iterator);
     auto possibleIterators = Helper::filterType<ListType>(v.lastType(),
         [](AbstractType::Ptr type) {
@@ -566,15 +566,6 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
             if ( tupleElt->astType == Ast::NameAstType ) {
                 NameAst* n = static_cast<NameAst*>(tupleElt);
                 visitVariableDeclaration<Declaration>(n->identifier, declarationRange);
-                // TODO: Fix this as soon as tuple type support is implemented.
-//                 DUChainWriteLocker lock(DUChain::lock());
-//                 d->setAbstractType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
-//                 if ( d and targetType ) {
-//                     d->setAbstractType(targetType);
-//                 }
-//                 else {
-//                     d->setAbstractType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
-//                 }
             }
         }
     }
@@ -583,7 +574,7 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
 void DeclarationBuilder::visitImport(ImportAst* node)
 {
     Python::ContextBuilder::visitImport(node);
-    DUChainWriteLocker lock(DUChain::lock());
+    DUChainWriteLocker lock;
     foreach ( AliasAst* name, node->names ) {
         QString moduleName = name->name->value;
         // use alias if available, name otherwise
@@ -665,7 +656,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
     
     RangeInRevision displayRange = RangeInRevision::invalid();
     
-    DUChainWriteLocker lock(DUChain::lock());
+    DUChainWriteLocker lock;
     for ( int i = 0; i < remainingNameComponents.length(); i++ ) {
         // Iterate over all the names, and create a declaration + sub-context for each of them
         const QString& component = remainingNameComponents.at(i);
@@ -778,7 +769,6 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
 {
     // Search the disk for a python file which contains the requested declaration
     QPair<KUrl, QStringList> moduleInfo = findModulePath(moduleName, currentlyParsedDocument().toUrl());
-    kDebug() << moduleName;
     RangeInRevision range(RangeInRevision::invalid());
     if ( rangeNode ) {
         range = rangeForNode(rangeNode, false);
@@ -858,7 +848,7 @@ void DeclarationBuilder::visitYield(YieldAst* node)
     AstDefaultVisitor::visitYield(node);
     
     // Determine the type of the argument to "yield", like "int" in "yield 3"
-    ExpressionVisitor v(currentContext(), editor());
+    ExpressionVisitor v(currentContext());
     v.visitNode(node->value);
     AbstractType::Ptr encountered = v.lastType();
     
@@ -894,7 +884,7 @@ void DeclarationBuilder::visitYield(YieldAst* node)
 void DeclarationBuilder::visitLambda(LambdaAst* node)
 {
     Python::AstDefaultVisitor::visitLambda(node);
-    DUChainWriteLocker lock(DUChain::lock());
+    DUChainWriteLocker lock;
     // A context must be opened, because the lamdba's arguments are local to the lambda:
     // d = lambda x: x*2; print x # <- gives an error
     openContext(node, editorFindRange(node, node->body), DUContext::Other);
@@ -919,8 +909,8 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
         return;
     }
     // Check for the different types of modifiers such a function can have
-    QHash< QString, std::function<void()> > items;
     QStringList args;
+    QHash< QString, std::function<void()> > items;
     items["addsTypeOfArg"] = [&]() {
         const int offset = ! args.isEmpty() ? args.at(0).toInt() : 0;
         if ( node->arguments.length() <= offset ) {
@@ -1085,7 +1075,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
             continue;
         }
         wlock.unlock();
-        ExpressionVisitor argumentVisitor(currentContext(), editor());
+        ExpressionVisitor argumentVisitor(currentContext());
         argumentVisitor.visitNode(keyword->value);
         if ( ! argumentVisitor.lastType() ) {
             continue;
@@ -1157,7 +1147,8 @@ QList< ExpressionAst* > DeclarationBuilder::targetsOfAssignment(QList< Expressio
     return lhsExpressions;
 }
 
-QList< DeclarationBuilder::SourceType > DeclarationBuilder::sourcesOfAssignment(ExpressionAst* items, int fillWhenLengthMissing)
+QList< DeclarationBuilder::SourceType > DeclarationBuilder::sourcesOfAssignment(ExpressionAst* items,
+                                                                                int fillWhenLengthMissing)
 {
     QList<SourceType> sources;
     QList<ExpressionAst*> values;
@@ -1193,7 +1184,7 @@ QList< DeclarationBuilder::SourceType > DeclarationBuilder::sourcesOfAssignment(
         sources << SourceType{
             v.lastType(),
             DeclarationPointer(Helper::resolveAliasDeclaration(v.lastDeclaration().data())),
-            v.m_isAlias
+            v.isAlias()
         };
     }
     return sources;
@@ -1219,7 +1210,7 @@ DeclarationBuilder::SourceType DeclarationBuilder::selectSource(const QList< Exp
         element = SourceType{
             v.lastType(),
             DeclarationPointer(Helper::resolveAliasDeclaration(v.lastDeclaration().data())),
-            v.m_isAlias
+            v.isAlias()
         };
     }
     else if ( ! sources.isEmpty() ) {
@@ -1237,7 +1228,7 @@ DeclarationBuilder::SourceType DeclarationBuilder::selectSource(const QList< Exp
     if ( ! element.type ) {
         // use mixed if none of the previous ways of determining the type worked.
         element.type = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
-        element.declaration = 0;
+        element.declaration = nullptr;
         element.isAlias = false;
     }
     return element;
@@ -1526,10 +1517,11 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     // if that exists, then this function is a member function
     DeclarationPointer eventualParentDeclaration(currentDeclaration());
     FunctionType::Ptr type(new FunctionType());
-    
-    DUChainWriteLocker lock(DUChain::lock());
-    FunctionDeclaration* dec = eventuallyReopenDeclaration<FunctionDeclaration>(node->name, node->name, FunctionDeclarationType);
-    
+
+    DUChainWriteLocker lock;
+    FunctionDeclaration* dec = eventuallyReopenDeclaration<FunctionDeclaration>(node->name, node->name,
+                                                                                FunctionDeclarationType);
+
     Q_ASSERT(dec->isFunctionDeclaration());
     
     // check for documentation
@@ -1647,12 +1639,12 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         ExpressionVisitor v(currentContext());
         v.visitNode(node->returns);
         lock.lock();
-        if ( v.lastType() && v.m_isAlias ) {
+        if ( v.lastType() && v.isAlias() ) {
             type->setReturnType(Helper::mergeTypes(type->returnType(), v.lastType()));
             kDebug() << "updated function return type to " << type->toString();
             dec->setType(type);
         }
-        else if ( ! v.m_isAlias ) {
+        else if ( ! v.isAlias()) {
             kDebug() << "not updating function return type because expression is not a type object";
         }
     }
@@ -1748,7 +1740,7 @@ void DeclarationBuilder::adjustExpressionsForTypecheck(Python::ExpressionAst* ad
     second.visitNode(from);
     AbstractType::Ptr hint;
     DeclarationPointer adjust;
-    if ( second.m_isAlias && second.lastType() ) {
+    if ( second.isAlias() && second.lastType() ) {
         hint = second.lastType();
         adjust = first.lastDeclaration();
     }
@@ -1772,7 +1764,7 @@ void DeclarationBuilder::adjustExpressionsForTypecheck(Python::ExpressionAst* ad
 void DeclarationBuilder::visitReturn(ReturnAst* node)
 {
     // Find the type of the object being "return"ed
-    ExpressionVisitor v(currentContext(), editor());
+    ExpressionVisitor v(currentContext());
     v.visitNode(node->value);
     
     if ( node->value ) {
@@ -1836,7 +1828,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         if ( arg->annotation ) {
             ExpressionVisitor v(currentContext());
             v.visitNode(arg->annotation);
-            if ( v.lastType() && v.m_isAlias ) {
+            if ( v.lastType() && v.isAlias() ) {
                 DUChainWriteLocker lock;
                 argumentType = Helper::mergeTypes(paramDeclaration->abstractType(), v.lastType());
             }

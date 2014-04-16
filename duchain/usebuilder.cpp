@@ -60,7 +60,8 @@ void UseBuilder::visitName(NameAst* node)
 {
     DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node));
     Declaration* declaration = Helper::declarationForName(identifierForNode(node->identifier),
-                                                          editorFindRange(node, node), DUContextPointer(context));
+                                                          editorFindRange(node, node),
+                                                          DUChainPointer<const DUContext>(context));
     
     static QStringList keywords;
     if ( keywords.isEmpty() ) {
@@ -123,7 +124,7 @@ void UseBuilder::visitAttribute(AttributeAst* node)
         // this is the declaration, don't build a use for it
         return;
     }
-    if ( ! declaration && v.shouldBeKnown() && ( ! v.lastType() or Helper::isUsefulType(v.lastType()) ) ) {
+    if ( ! declaration && v.isConfident() && ( ! v.lastType() or Helper::isUsefulType(v.lastType()) ) ) {
         KDevelop::Problem *p = new KDevelop::Problem();
         p->setFinalLocation(DocumentRange(currentlyParsedDocument(), useRange.castToSimpleRange()));
         p->setSource(KDevelop::ProblemData::SemanticAnalysis);

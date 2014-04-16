@@ -49,93 +49,41 @@ namespace Python {
 
 QHash<NameConstantAst::NameConstantTypes, KDevelop::AbstractType::Ptr> ExpressionVisitor::m_defaultTypes;
 
-AbstractType::Ptr ExpressionVisitor::encounterPreprocess(AbstractType::Ptr type, bool merge)
+AbstractType::Ptr ExpressionVisitor::encounterPreprocess(AbstractType::Ptr type)
 {
-    type = Helper::resolveAliasType(type);
-    AbstractType::Ptr res;
-    if ( merge and not m_lastType.isEmpty() ) {
-        res = Helper::mergeTypes(m_lastType.pop(), type);
-    }
-    else {
-        res = type;
-    }
-    return res;
+    return Helper::resolveAliasType(type);
 }
 
-void ExpressionVisitor::encounter(AbstractType::Ptr type, EncounterFlags flags)
+ExpressionVisitor::ExpressionVisitor(const DUContext* ctx)
+    : DynamicLanguageExpressionVisitor(ctx)
 {
-    if ( flags & AutomaticallyDetermineDeclaration ) {
-        StructureType::Ptr t = type.cast<StructureType>();
-        if ( t ) {
-            encounterDeclaration(t->declaration(m_ctx->topContext()));
-        }
-        else {
-            encounterDeclaration(0);
-        }
-    }
-    m_lastType.push(encounterPreprocess(type, flags & MergeTypes));
-}
-
-template<typename T> void ExpressionVisitor::encounter(TypePtr< T > type, EncounterFlags flags)
-{
-    encounter(AbstractType::Ptr::staticCast(type), flags);
-}
-
-void ExpressionVisitor::encounterDeclarations(QList< DeclarationPointer > ptrs, bool isAlias)
-{
-    m_isAlias = isAlias;
-    m_lastDeclaration.push(ptrs);
-}
-
-void ExpressionVisitor::encounterDeclaration(Declaration* ptr, bool isAlias)
-{
-    m_isAlias = isAlias;
-    m_lastDeclaration.push(QList<DeclarationPointer>() << DeclarationPointer(ptr));
-}
-
-ExpressionVisitor::ExpressionVisitor(DUContext* ctx, PythonEditorIntegrator* editor)
-    : m_forceGlobalSearching(false)
-    , m_reportUnknownNames(false)
-    , m_scanUntilCursor(CursorInRevision::invalid())
-    , m_isAlias(false)
-    , m_ctx(ctx)
-    , m_editor(editor)
-    , m_shouldBeKnown(true)
-    , m_parentVisitor(0)
-    , m_depth(0)
-{
+    ENSURE_CHAIN_NOT_LOCKED
     if ( m_defaultTypes.isEmpty() ) {
         m_defaultTypes.insert(NameConstantAst::True, AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
         m_defaultTypes.insert(NameConstantAst::False, AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
         m_defaultTypes.insert(NameConstantAst::None, AbstractType::Ptr(new IntegralType(IntegralType::TypeVoid)));
     }
-    Q_ASSERT(m_ctx);
-    Q_ASSERT(m_ctx->topContext());
+    Q_ASSERT(context());
+    Q_ASSERT(context()->topContext());
 }
 
-ExpressionVisitor::ExpressionVisitor(ExpressionVisitor* parent)
-    : m_forceGlobalSearching(parent->m_forceGlobalSearching)
+ExpressionVisitor::ExpressionVisitor(ExpressionVisitor* parent, const DUContext* overrideContext)
+    : DynamicLanguageExpressionVisitor(parent)
+    , m_forceGlobalSearching(parent->m_forceGlobalSearching)
     , m_reportUnknownNames(parent->m_reportUnknownNames)
     , m_scanUntilCursor(parent->m_scanUntilCursor)
-    , m_isAlias(false)
-    , m_ctx(parent->m_ctx)
-    , m_editor(parent->m_editor)
-    , m_shouldBeKnown(true)
-    , m_parentVisitor(parent)
-    , m_depth(parent->m_depth + 1)
 {
     ENSURE_CHAIN_NOT_LOCKED
+    if ( overrideContext ) {
+        m_context = overrideContext;
+    }
+    Q_ASSERT(context());
 }
 
-AbstractType::Ptr ExpressionVisitor::unknownType()
+void ExpressionVisitor::encounter(AbstractType::Ptr type, DeclarationPointer declaration, bool alias)
 {
-    return AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
-}
-
-void ExpressionVisitor::unknownTypeEncountered() {
-    m_isAlias = false;
-    encounterDeclaration(0);
-    encounter(unknownType());
+    setLastIsAlias(alias);
+    DynamicLanguageExpressionVisitor::encounter(type, declaration);
 }
 
 void ExpressionVisitor::visitAttribute(AttributeAst* node)
@@ -164,29 +112,29 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
         if ( Helper::isUsefulType(current.cast<AbstractType>()) ) {
             haveOneUsefulType = true;
         }
-        foundDeclaration = Helper::accessAttribute(current->declaration(m_ctx->topContext()),
-                                                   node->attribute->value, m_ctx);
+        foundDeclaration = Helper::accessAttribute(current->declaration(context()->topContext()),
+                                                   node->attribute->value, context());
         if ( foundDeclaration ) {
             break;
         }
     }
     if ( ! haveOneUsefulType ) {
-        m_shouldBeKnown = false;
+        setConfident(false);
     }
 
     // Step 2: Construct the type of the declaration which was found.
     if ( foundDeclaration ) {
         auto d = Helper::resolveAliasDeclaration(foundDeclaration);
         if ( ! d ) {
-            return unknownTypeEncountered();
+            return encounterUnknown();
         }
         bool isAlias =     dynamic_cast<AliasDeclaration*>(foundDeclaration) || d->isFunctionDeclaration()
                         || dynamic_cast<ClassDeclaration*>(d);
-        encounterDeclaration(foundDeclaration, isAlias);
-        encounter(foundDeclaration->abstractType());
+        encounter(foundDeclaration->abstractType(), DeclarationPointer(foundDeclaration));
+        setLastIsAlias(isAlias);
     }
     else {
-        return unknownTypeEncountered();
+        return encounterUnknown();
     }
 }
 
@@ -211,12 +159,11 @@ void ExpressionVisitor::visitCall(CallAst* node)
     
     if ( unidentifiedFunctionType ) {
         encounter(unidentifiedFunctionType->returnType());
-        encounterDeclaration(0);
         return;
     }
     else if ( !actualDeclaration ) {
-        m_shouldBeKnown = false;
-        return unknownTypeEncountered();
+        setConfident(false);
+        return encounterUnknown();
     }
 
     DUChainReadLocker lock;
@@ -233,34 +180,32 @@ void ExpressionVisitor::visitCall(CallAst* node)
         checkForDecorators(node, funcDecl, classDecl, isConstructor);
     }
     else if ( classDecl ) {
-        encounter(classDecl->abstractType());
-        encounterDeclaration(classDecl);
-        return;
+        return encounter(classDecl->abstractType(), DeclarationPointer(classDecl));
     }
     else {
         if ( actualDeclaration ) {
             kDebug() << "Declaraton is not a class or function declaration";
         }
-        unknownTypeEncountered();
-        return;
+        return encounterUnknown();
     }
 }
 
 void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* funcDecl, ClassDeclaration* classDecl, bool isConstructor)
 {
     AbstractType::Ptr type;
+    Declaration* useDeclaration = nullptr;
     if ( isConstructor and classDecl ) {
         type = classDecl->abstractType();
-        encounterDeclaration(classDecl);
+        useDeclaration = classDecl;
     }
     else {
         type = funcDecl->type<FunctionType>()->returnType();
-        encounterDeclaration(funcDecl);
+        useDeclaration = funcDecl;
     }
 
     auto listOfTuples = [&](AbstractType::Ptr key, AbstractType::Ptr value) {
-        auto newType = typeObjectForIntegralType<ListType>("list", m_ctx);
-        IndexedContainer::Ptr newContents = typeObjectForIntegralType<IndexedContainer>("tuple", m_ctx);
+        auto newType = typeObjectForIntegralType<ListType>("list", context());
+        IndexedContainer::Ptr newContents = typeObjectForIntegralType<IndexedContainer>("tuple", context());
         if ( ! newType || ! newContents ) {
             return AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
         }
@@ -278,7 +223,6 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
     };
 
     QHash< QString, std::function<bool(QStringList, QString)> > knownDecoratorHints;
-
     kDebug() << "Got function declaration with decorators, checking for list content type...";
     knownDecoratorHints["getsType"] = [&](QStringList /*arguments*/, QString /*currentHint*/) {
         if ( node->function->astType != Ast::AttributeAstType ) {
@@ -290,7 +234,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
         if ( auto t = baseTypeVisitor.lastType().cast<ListType>() ) {
             kDebug() << "Found container, using type";
             AbstractType::Ptr newType = t->contentType().abstractType();
-            encounter(newType);
+            encounter(newType, DeclarationPointer(useDeclaration));
             return true;
         }
         return false;
@@ -306,7 +250,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
         DUChainWriteLocker lock;
         if ( auto t = baseTypeVisitor.lastType().cast<ListType>() ) {
             kDebug() << "Got container:" << t->toString();
-            auto newType = typeObjectForIntegralType<ListType>("list", m_ctx);
+            auto newType = typeObjectForIntegralType<ListType>("list", context());
             if ( ! newType ) {
                 return false;
             }
@@ -319,7 +263,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
             }
             newType->addContentType<Python::UnsureType>(contentType);
             AbstractType::Ptr resultingType = newType.cast<AbstractType>();
-            encounter(resultingType);
+            encounter(resultingType, DeclarationPointer(useDeclaration));
             return true;
         }
         return false;
@@ -334,10 +278,10 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
         enumeratedTypeVisitor.visitNode(node->arguments.first());
 
         DUChainWriteLocker lock;
-        auto intType = typeObjectForIntegralType<AbstractType>("int", m_ctx);
+        auto intType = typeObjectForIntegralType<AbstractType>("int", context());
         auto enumerated = enumeratedTypeVisitor.lastType();
         auto result = listOfTuples(intType, Helper::contentOfIterable(enumerated));
-        encounter(result);
+        encounter(result, DeclarationPointer(useDeclaration));
         return true;
     };
 
@@ -353,7 +297,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
         if ( auto t = baseTypeVisitor.lastType().cast<MapType>() ) {
             kDebug() << "Got container:" << t->toString();
             auto resultingType = listOfTuples(t->keyType().abstractType(), t->contentType().abstractType());
-            encounter(resultingType);
+            encounter(resultingType, DeclarationPointer(useDeclaration));
             return true;
         }
         return false;
@@ -383,7 +327,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
             auto newType = ListType::Ptr::staticCast(AbstractType::Ptr(realTarget->clone()));
             Q_ASSERT(newType);
             newType->addContentType<Python::UnsureType>(source->contentType().abstractType());
-            encounter(newType);
+            encounter(AbstractType::Ptr::staticCast(newType), DeclarationPointer(useDeclaration));
             return true;
         }
         return false;
@@ -402,7 +346,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
     }
 
     // if none of the above decorator-finding methods worked, just use the ordinary return type.
-    return encounter(type);
+    return encounter(type, DeclarationPointer(useDeclaration));
 }
 
 void ExpressionVisitor::visitSubscript(SubscriptAst* node)
@@ -416,7 +360,6 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
         for ( IndexedContainer::Ptr indexed: indexedTypes ) {
             // TODO This loop currently only uses the first result, it could construct
             // an unsure from all the matches.
-            encounterDeclaration(0);
             IndexAst* sliceIndexAst = static_cast<IndexAst*>(node->slice);
             NumberAst* number = nullptr;
             bool invert = false;
@@ -449,7 +392,6 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
         if ( ! variableTypes.isEmpty() ) {
             AbstractType::Ptr result(new IntegralType(IntegralType::TypeMixed));
             for ( auto variable: variableTypes ) {
-                encounterDeclaration(0);
                 result = Helper::mergeTypes(result, variable->contentType().abstractType());
             }
             return encounter(result);
@@ -461,39 +403,29 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
     // The reason is that we'd need to parse decorators from the __getitem__ method to support
     // list/dict/etc properly otherwise, which requires a bit of refactoring first. TODO do this
     if ( node->slice && node->slice->astType != Ast::IndexAstType ) {
-        encounterDeclaration(0);
-        return encounter(lastType());
+        return;
     }
 
     // Otherwise, try to use __getitem__.
-    ExpressionVisitor v(m_ctx);
+    ExpressionVisitor v(context());
     v.visitNode(node->value);
     DUChainReadLocker lock;
-    Declaration* function = Helper::accessAttribute(v.lastDeclaration().data(), "__getitem__", m_ctx);
+    Declaration* function = Helper::accessAttribute(v.lastDeclaration().data(), "__getitem__", context());
     if ( function && function->isFunctionDeclaration() ) {
         if ( FunctionType::Ptr functionType = function->type<FunctionType>() ) {
-            encounterDeclaration(0);
             return encounter(functionType->returnType());
         }
     }
 
     // Otherwise, give up
-    return unknownTypeEncountered();
-}
-
-template<typename T> TypePtr<T> ExpressionVisitor::typeObjectForIntegralType(QString typeDescriptor, DUContext* ctx)
-{
-    QList<Declaration*> decls = ctx->topContext()->findDeclarations(QualifiedIdentifier(typeDescriptor));
-    Declaration* decl = decls.isEmpty() ? 0 : dynamic_cast<Declaration*>(decls.first());
-    AbstractType::Ptr type = decl ? decl->abstractType() : AbstractType::Ptr(0);
-    return type.cast<T>();
+    return encounterUnknown();
 }
 
 void ExpressionVisitor::visitList(ListAst* node)
 {
     AstDefaultVisitor::visitList(node);
     DUChainReadLocker lock;
-    auto type = typeObjectForIntegralType<ListType>("list", m_ctx);
+    auto type = typeObjectForIntegralType<ListType>("list", context());
     lock.unlock();
     ExpressionVisitor contentVisitor(this);
     if ( type ) {
@@ -503,68 +435,66 @@ void ExpressionVisitor::visitList(ListAst* node)
         }
     }
     else {
-        unknownTypeEncountered();
+        encounterUnknown();
         kWarning() << " [ !!! ] did not get a typetrack container object when expecting one! Fix code / setup.";
     }
-    encounter<ListType>(type, AutomaticallyDetermineDeclaration);
+    encounter(AbstractType::Ptr::staticCast(type));
 }
 
 void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst* node)
 {
     AstDefaultVisitor::visitDictionaryComprehension(node);
     DUChainReadLocker lock;
-    auto type = typeObjectForIntegralType<MapType>("dict", m_ctx);
+    auto type = typeObjectForIntegralType<MapType>("dict", context());
     if ( type ) {
-        DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol + 1));
+        DUContext* comprehensionContext = context()->findContextAt(CursorInRevision(node->startLine, node->startCol + 1));
         lock.unlock();
         Q_ASSERT(comprehensionContext);
-        ExpressionVisitor v(this);
-        v.m_ctx = m_forceGlobalSearching ? m_ctx->topContext() : comprehensionContext;
+        DUContext* ctx = m_forceGlobalSearching ? context()->topContext() : comprehensionContext;
+        ExpressionVisitor v(this, ctx);
         v.visitNode(node->value);
         if ( v.lastType() ) {
             type->addContentType<Python::UnsureType>(v.lastType());
         }
-        ExpressionVisitor k(this);
-        v.m_ctx = m_forceGlobalSearching ? m_ctx->topContext() : comprehensionContext;
+        ExpressionVisitor k(this, ctx);
         k.visitNode(node->key);
         if ( k.lastType() ) {
             type->addKeyType<Python::UnsureType>(k.lastType());
         }
     }
     else {
-        return unknownTypeEncountered();
+        return encounterUnknown();
     }
-    encounter<MapType>(type, AutomaticallyDetermineDeclaration);
+    encounter(AbstractType::Ptr::staticCast(type));
 }
 
 void ExpressionVisitor::visitSetComprehension(SetComprehensionAst* node)
 {
     Python::AstDefaultVisitor::visitSetComprehension(node);
     DUChainReadLocker lock;
-    auto type = typeObjectForIntegralType<ListType>("set", m_ctx);
+    auto type = typeObjectForIntegralType<ListType>("set", context());
     if ( type ) {
-        DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol+1), true);
+        DUContext* comprehensionContext = context()->findContextAt(CursorInRevision(node->startLine, node->startCol+1), true);
         lock.unlock();
-        ExpressionVisitor v(this);
-        v.m_ctx = m_forceGlobalSearching ? m_ctx->topContext() : comprehensionContext;
+        auto ctx = m_forceGlobalSearching ? context()->topContext() : comprehensionContext;
+        ExpressionVisitor v(this, ctx);
         v.visitNode(node->element);
         if ( v.lastType() ) {
             type->addContentType<Python::UnsureType>(v.lastType());
         }
     }
-    encounter<ListType>(type, AutomaticallyDetermineDeclaration);
+    encounter(AbstractType::Ptr::staticCast(type));
 }
 
 void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
 {
     AstDefaultVisitor::visitListComprehension(node);
     DUChainReadLocker lock;
-    auto type = typeObjectForIntegralType<ListType>("list", m_ctx);
+    auto type = typeObjectForIntegralType<ListType>("list", context());
     if ( type && ! m_forceGlobalSearching ) { // TODO fixme
-        DUContext* comprehensionContext = m_ctx->findContextAt(CursorInRevision(node->startLine, node->startCol + 1), true);
+        DUContext* comprehensionContext = context()->findContextAt(CursorInRevision(node->startLine, node->startCol + 1), true);
         lock.unlock();
-        ExpressionVisitor v(this);
-        v.m_ctx = comprehensionContext;
+        ExpressionVisitor v(this, comprehensionContext);
         Q_ASSERT(comprehensionContext);
         v.visitNode(node->element);
         if ( v.lastType() ) {
@@ -572,14 +502,14 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
         }
     }
     else {
-        return unknownTypeEncountered();
+        return encounterUnknown();
     }
-    encounter<ListType>(type, AutomaticallyDetermineDeclaration);
+    encounter(AbstractType::Ptr::staticCast(type));
 }
 
 void ExpressionVisitor::visitTuple(TupleAst* node) {
     DUChainReadLocker lock;
-    IndexedContainer::Ptr type = typeObjectForIntegralType<IndexedContainer>("tuple", m_ctx);
+    IndexedContainer::Ptr type = typeObjectForIntegralType<IndexedContainer>("tuple", context());
     if ( type ) {
         lock.unlock();
         foreach ( ExpressionAst* expr, node->elements ) {
@@ -592,11 +522,11 @@ void ExpressionVisitor::visitTuple(TupleAst* node) {
                 type->addEntry(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
             }
         }
-        encounter(type.cast<AbstractType>(), AutomaticallyDetermineDeclaration);
+        encounter(AbstractType::Ptr::staticCast(type));
     }
     else {
         kWarning() << "tuple type object is not available";
-        return unknownTypeEncountered();
+        return encounterUnknown();
     }
 }
 
@@ -607,11 +537,8 @@ void ExpressionVisitor::visitIfExpression(IfExpressionAst* node)
         ExpressionVisitor v(this);
         v.visitNode(node->body);
         AbstractType::Ptr first = v.lastType();
-        DeclarationPointer firstDecl = v.lastDeclaration();
         v.visitNode(node->orelse);
         AbstractType::Ptr second = v.lastType();
-        DeclarationPointer secondDecl = v.lastDeclaration();
-        encounterDeclarations(QList<DeclarationPointer>() << firstDecl << secondDecl);
         encounter(Helper::mergeTypes(first, second));
     }
 }
@@ -619,7 +546,7 @@ void ExpressionVisitor::visitIfExpression(IfExpressionAst* node)
 void ExpressionVisitor::visitSet(SetAst* node)
 {
     DUChainReadLocker lock;
-    auto type = typeObjectForIntegralType<ListType>("set", m_ctx);
+    auto type = typeObjectForIntegralType<ListType>("set", context());
     lock.unlock();
     ExpressionVisitor contentVisitor(this);
     if ( type ) {
@@ -628,13 +555,13 @@ void ExpressionVisitor::visitSet(SetAst* node)
             type->addContentType<Python::UnsureType>(contentVisitor.lastType());
         }
     }
-    encounter<ListType>(type, AutomaticallyDetermineDeclaration);
+    encounter(AbstractType::Ptr::staticCast(type));
 }
 
 void ExpressionVisitor::visitDict(DictAst* node)
 {
     DUChainReadLocker lock;
-    auto type = typeObjectForIntegralType<MapType>("dict", m_ctx);
+    auto type = typeObjectForIntegralType<MapType>("dict", context());
     lock.unlock();
     ExpressionVisitor contentVisitor(this);
     ExpressionVisitor keyVisitor(this);
@@ -648,7 +575,7 @@ void ExpressionVisitor::visitDict(DictAst* node)
             type->addKeyType<Python::UnsureType>(keyVisitor.lastType());
         }
     }
-    encounter<MapType>(type, AutomaticallyDetermineDeclaration);
+    encounter(AbstractType::Ptr::staticCast(type));
 }
 
 void ExpressionVisitor::visitNumber(Python::NumberAst* number)
@@ -656,19 +583,19 @@ void ExpressionVisitor::visitNumber(Python::NumberAst* number)
     AbstractType::Ptr type;
     DUChainReadLocker lock;
     if ( number->isInt ) {
-        type = typeObjectForIntegralType<AbstractType>("int", m_ctx);
+        type = typeObjectForIntegralType<AbstractType>("int", context());
     }
     else {
-        type = typeObjectForIntegralType<AbstractType>("float", m_ctx);
+        type = typeObjectForIntegralType<AbstractType>("float", context());
     }
-    encounter(type, AutomaticallyDetermineDeclaration);
+    encounter(type);
 }
 
 void ExpressionVisitor::visitString(Python::StringAst* )
 {
     DUChainReadLocker lock;
-    StructureType::Ptr type = typeObjectForIntegralType<StructureType>("str", m_ctx);
-    encounter(type, AutomaticallyDetermineDeclaration);
+    StructureType::Ptr type = typeObjectForIntegralType<StructureType>("str", context());
+    encounter(AbstractType::Ptr::staticCast(type));
 }
 
 RangeInRevision nodeRange(Python::Ast* node)
@@ -679,10 +606,10 @@ RangeInRevision nodeRange(Python::Ast* node)
 void ExpressionVisitor::addUnknownName(const QString& name)
 {
     if ( m_parentVisitor ) {
-        m_parentVisitor->addUnknownName(name);
+        static_cast<ExpressionVisitor*>(m_parentVisitor)->addUnknownName(name);
     }
     else if ( ! m_unknownNames.contains(name) ) {
-        m_unknownNames.append(name);
+        m_unknownNames.insert(name);
     }
 }
 
@@ -709,26 +636,23 @@ void ExpressionVisitor::visitName(Python::NameAst* node)
     }
     DUChainReadLocker lock;
     Declaration* d = Helper::declarationForName(QualifiedIdentifier(node->identifier->value),
-                                                range, DUContextPointer(m_ctx));
-    
+                                                range, DUChainPointer<const DUContext>(context()));
+
     if ( d ) {
         bool isAlias = dynamic_cast<AliasDeclaration*>(d) || d->isFunctionDeclaration() || dynamic_cast<ClassDeclaration*>(d);
-        encounterDeclaration(d, isAlias);
-        return encounter(d->abstractType());
+        return encounter(d->abstractType(), DeclarationPointer(d), isAlias);
     }
     else {
         if ( m_reportUnknownNames ) {
             addUnknownName(node->identifier->value);
         }
-        return unknownTypeEncountered();
+        return encounterUnknown();
     }
 }
 
 void ExpressionVisitor::visitCompare(CompareAst* node)
 {
     Python::AstDefaultVisitor::visitCompare(node);
-    
-    encounterDeclaration(0);
     encounter(AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
 }
 
@@ -739,7 +663,7 @@ AbstractType::Ptr ExpressionVisitor::fromBinaryOperator(AbstractType::Ptr lhs, A
         if ( ! type ) {
             return AbstractType::Ptr();
         }
-        Declaration* func = Helper::accessAttribute(type->declaration(m_ctx->topContext()), op, m_ctx);
+        Declaration* func = Helper::accessAttribute(type->declaration(context()->topContext()), op, context());
         if ( ! func ) {
             return AbstractType::Ptr();
         }
@@ -793,8 +717,7 @@ void ExpressionVisitor::visitBooleanOperation(Python::BooleanOperationAst* node)
     foreach (ExpressionAst* expression, node->values) {
         visitNode(expression);
     }
-    
-    encounterDeclaration(0);
+
     encounter(AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
 }
 

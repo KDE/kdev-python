@@ -100,7 +100,7 @@ IndexedDeclaration Helper::declarationUnderCursor(bool allowUse)
     return KDevelop::IndexedDeclaration();
 }
 
-Declaration* Helper::accessAttribute(Declaration* accessed, const QString& attribute, DUContext* current)
+Declaration* Helper::accessAttribute(Declaration* accessed, const QString& attribute, const DUContext* current)
 {
     if ( ! accessed || ! accessed->abstractType() ) {
         return 0;
@@ -239,7 +239,8 @@ Helper::FuncInfo Helper::functionDeclarationForCalledDeclaration(DeclarationPoin
     return QPair<FunctionDeclarationPointer, bool>(lastFunctionDeclaration, isConstructor);
 }
 
-Declaration* Helper::declarationForName(const QualifiedIdentifier& identifier, const RangeInRevision& nodeRange, DUContextPointer context)
+Declaration* Helper::declarationForName(const QualifiedIdentifier& identifier, const RangeInRevision& nodeRange,
+                                        KDevelop::DUChainPointer<const DUContext> context)
 {
     QList<Declaration*> declarations;
     QList<Declaration*> localDeclarations;

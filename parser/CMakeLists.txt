@@ -10,6 +10,7 @@ set(parser_STAT_SRCS
     astdefaultvisitor.cpp
     astvisitor.cpp
     astbuilder.cpp
+    cythonsyntaxremover.cpp
 )
 
 find_package(PythonLibs 3.4 EXACT REQUIRED)

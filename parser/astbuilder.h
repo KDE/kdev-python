@@ -44,6 +44,7 @@ namespace Python
 class Ast;
 class CodeAst;
 
+
 typedef QMap<QString, QString> stringDictionary;
 
 QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename);

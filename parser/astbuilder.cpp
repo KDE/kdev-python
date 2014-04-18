@@ -38,6 +38,7 @@
 
 #include "python_header.h"
 #include "astdefaultvisitor.h"
+#include "cythonsyntaxremover.h"
 
 #include <interfaces/icore.h>
 #include <interfaces/iprojectcontroller.h>
@@ -396,6 +397,13 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
     PyObject *exception, *value, *backtrace;
     PyErr_Fetch(&exception, &value, &backtrace);
 
+    CythonSyntaxRemover cythonSyntaxRemover;
+
+    if (filename.fileName().endsWith(".pyx", Qt::CaseInsensitive)) {
+        kDebug() << filename.fileName() << "is probably Cython file.";
+        contents = cythonSyntaxRemover.stripCythonSyntax(contents);
+    }
+
     mod_ty syntaxtree = PyParser_ASTFromString(contents.toUtf8().data(), "<kdev-editor-contents>", file_input, &flags, arena);
 
     if ( ! syntaxtree ) {
@@ -562,6 +570,8 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
     
     RangeUpdateVisitor updateVisitor;
     updateVisitor.visitNode(t.ast);
+
+    cythonSyntaxRemover.fixAstRanges(t.ast);
 
     return CodeAst::Ptr(t.ast);
 }

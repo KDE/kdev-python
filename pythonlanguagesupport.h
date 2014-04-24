@@ -21,6 +21,8 @@
 #define KDEVPYTHONLANGUAGESUPPORT_H
 
 #include <interfaces/iplugin.h>
+#include <interfaces/ilanguagecheck.h>
+#include <interfaces/ilanguagecheckprovider.h>
 #include <language/interfaces/ilanguagesupport.h>
 #include <QtCore/QVariant>
 
@@ -41,10 +43,14 @@ namespace Python
 class Highlighting;
 class Refactoring;
 
-class LanguageSupport : public KDevelop::IPlugin, public KDevelop::ILanguageSupport
+class LanguageSupport
+    : public KDevelop::IPlugin
+    , public KDevelop::ILanguageSupport
+    , public KDevelop::ILanguageCheckProvider
 {
     Q_OBJECT
     Q_INTERFACES( KDevelop::ILanguageSupport )
+    Q_INTERFACES( KDevelop::ILanguageCheckProvider )
 
 public:
     LanguageSupport( QObject *parent, const QVariantList& args = QVariantList() );
@@ -68,6 +74,8 @@ public:
 
     /// Tells whether this plugin is enabled for the given file.
     static bool enabledForFile(const KUrl& url);
+
+    virtual QList<KDevelop::ILanguageCheck*> providedChecks();
 
 public slots:
     void documentOpened(KDevelop::IDocument*);

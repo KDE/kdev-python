@@ -58,6 +58,7 @@ add_subdirectory(debugger)
 add_subdirectory(docfilekcm)
 add_subdirectory(pep8kcm)
 add_subdirectory(projectkcm)
+add_subdirectory(checks)
 
 set(kdevpythonlanguagesupport_PART_SRCS
     codegen/correctionfilegenerator.cpp
@@ -65,6 +66,10 @@ set(kdevpythonlanguagesupport_PART_SRCS
     pythonlanguagesupport.cpp
     pythonparsejob.cpp
     pythonhighlighting.cpp
+
+    checks/basiccheck.cpp
+    checks/controlflowgraphbuilder.cpp
+    checks/dataaccessvisitor.cpp
 )
 
 kde4_add_ui_files(kdevpythonlanguagesupport_PART_SRCS codegen/correctionwidget.ui)

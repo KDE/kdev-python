@@ -77,10 +77,6 @@ public:
         AssignmentAstType,
         PassAstType,
         NonlocalAstType,
-        NameAstType,
-        NameConstantAstType,
-        CallAstType,
-        AttributeAstType,
         ArgumentsAstType,
         ArgAstType,
         KeywordAstType,
@@ -101,11 +97,15 @@ public:
         ContinueAstType,
         AssertionAstType,
         AugmentedAssignmentAstType,
-        DictionaryComprehensionAstType,
-        ExtendedSliceAstType,
         CodeAstType,
         StatementAstType,
-        ExpressionAstType,
+        ExpressionAstType, // everything below is an expression
+        NameAstType,
+        NameConstantAstType,
+        CallAstType,
+        AttributeAstType,
+        ExtendedSliceAstType,
+        DictionaryComprehensionAstType,
         BooleanOperationAstType,
         BinaryOperationAstType,
         UnaryOperationAstType,
@@ -126,12 +126,13 @@ public:
         ListAstType,
         TupleAstType,
         YieldFromAstType,
-        
+        ComprehensionAstType,
+
         SliceAstType,
         EllipsisAstType,
         IndexAstType,
-        
-        ComprehensionAstType,
+        LastExpressionType, // keep this at the end of the expr ast list
+
         ExceptionHandlerAstType,
         AliasAstType, // for imports
         IdentifierAstType,
@@ -186,7 +187,11 @@ public:
     Ast();
     Ast* parent;
     AstType astType;
-    
+
+    bool isExpression() const {
+        return astType >= ExpressionAstType && astType <= LastExpressionType;
+    }
+
     void copyRange(const Ast* other) {
         startCol = other->startCol;
         endCol = other->endCol;

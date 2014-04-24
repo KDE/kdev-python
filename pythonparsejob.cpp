@@ -26,6 +26,8 @@
 #include "pythonlanguagesupport.h"
 #include "declarationbuilder.h"
 #include "usebuilder.h"
+#include "checks/controlflowgraphbuilder.h"
+#include "checks/dataaccessvisitor.h"
 #include "kshell.h"
 
 #include <language/duchain/duchainlock.h>
@@ -38,6 +40,8 @@
 #include <language/backgroundparser/backgroundparser.h>
 #include <language/highlighting/codehighlighting.h>
 #include <language/interfaces/iastcontainer.h>
+#include <language/checks/controlflowgraph.h>
+#include <language/checks/dataaccessrepository.h>
 #include <interfaces/ilanguage.h>
 #include <interfaces/foregroundlock.h>
 #include <interfaces/icore.h>
@@ -121,16 +125,16 @@ void ParseJob::run()
         toUpdate->setRange(RangeInRevision(0, 0, INT_MAX, INT_MAX));
     }
     
-    KSharedPtr<ParseSession> currentSession(new ParseSession());
-    currentSession->setContents(QString::fromUtf8(contents().contents));
-    currentSession->setCurrentDocument(document());
+    m_currentSession = new ParseSession();
+    m_currentSession->setContents(QString::fromUtf8(contents().contents));
+    m_currentSession->setCurrentDocument(document());
     
     // call the python API and the AST transformer to populate the syntax tree
-    QPair<CodeAst::Ptr, bool> parserResults = currentSession->parse();
+    QPair<CodeAst::Ptr, bool> parserResults = m_currentSession->parse();
     m_ast = parserResults.first;
     
     QSharedPointer<PythonEditorIntegrator> editor = QSharedPointer<PythonEditorIntegrator>(
-        new PythonEditorIntegrator(currentSession.data())
+        new PythonEditorIntegrator(m_currentSession.data())
     );
     // if parsing succeeded, continue and do semantic analysis
     if ( parserResults.second )
@@ -230,7 +234,7 @@ void ParseJob::run()
     
     // The parser might have given us some syntax errors, which are now added to the document.
     DUChainWriteLocker lock;
-    foreach ( const ProblemPointer& p, currentSession->m_problems ) {
+    foreach ( const ProblemPointer& p, m_currentSession->m_problems ) {
         m_duContext->addProblem(p);
     }
 
@@ -239,11 +243,33 @@ void ParseJob::run()
     
     if ( minimumFeatures() & TopDUContext::AST ) {
         DUChainWriteLocker lock;
-        currentSession->ast = m_ast;
-        m_duContext->setAst(KSharedPtr<IAstContainer>::staticCast(currentSession));
+        m_currentSession->ast = m_ast;
+        m_duContext->setAst(KSharedPtr<IAstContainer>::staticCast(m_currentSession));
     }
     
     setDuChain(m_duContext);
+}
+
+ControlFlowGraph* ParseJob::controlFlowGraph()
+{
+    if ( ! m_currentSession ) {
+        return nullptr;
+    }
+    auto graph = new ControlFlowGraph();
+    ControlFlowGraphBuilder builder(m_duContext, graph, m_currentSession);
+    builder.visitNode(m_ast.data());
+    return graph;
+}
+
+DataAccessRepository* ParseJob::dataAccessInformation()
+{
+    if ( ! m_currentSession ) {
+        return nullptr;
+    }
+    auto repo = new DataAccessRepository();
+    DataAccessVisitor builder(m_duContext, repo, m_currentSession);
+    builder.visitNode(m_ast.data());
+    return repo;
 }
 
 void ParseJob::eventuallyDoPEP8Checking(const IndexedString document, TopDUContext* topContext)

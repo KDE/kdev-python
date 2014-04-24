@@ -32,15 +32,13 @@
 #include <language/duchain/duchainpointer.h>
 #include <language/duchain/topducontext.h>
 
-
-
 using namespace KDevelop;
 
 namespace Python
 {
 
-class LanguageSupport;
 class ParseSession;
+class LanguageSupport;
 
 class ParseJob : public KDevelop::ParseJob
 {
@@ -58,6 +56,9 @@ public:
     bool wasReadFromDisk() const;
     static void eventuallyDoPEP8Checking(const IndexedString document, TopDUContext* topContext);
 
+    virtual ControlFlowGraph* controlFlowGraph();
+    virtual DataAccessRepository* dataAccessInformation();
+
 protected:
     virtual void run();
 
@@ -66,6 +67,7 @@ private:
     bool m_readFromDisk;
     KDevelop::ReferencedTopDUContext m_duContext;
     KTextEditor::Range m_textRangeToParse;
+    KSharedPtr<ParseSession> m_currentSession;
 };
 
 }

@@ -53,6 +53,7 @@
 #include "codegen/refactoring.h"
 #include "codegen/correctionfilegenerator.h"
 #include "kdevpythonversion.h"
+#include "checks/basiccheck.h"
 
 using namespace KDevelop;
 
@@ -86,6 +87,7 @@ LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ 
         KDevelop::ILanguageSupport()
 {
     KDEV_USE_EXTENSION_INTERFACE( KDevelop::ILanguageSupport )
+    KDEV_USE_EXTENSION_INTERFACE( KDevelop::ILanguageCheckProvider )
 
     m_self = this;
 
@@ -201,6 +203,12 @@ KDevelop::ICodeHighlighting* LanguageSupport::codeHighlighting() const
 ILanguageSupport::WhitespaceSensitivity LanguageSupport::whitespaceSensititivy() const
 {
     return ILanguageSupport::IndentOnly;
+}
+
+QList<ILanguageCheck*> LanguageSupport::providedChecks()
+{
+    qDebug() << "checks requested";
+    return {new BasicCheck()};
 }
 
 }

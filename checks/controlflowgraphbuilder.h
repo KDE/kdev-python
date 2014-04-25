@@ -62,6 +62,8 @@ public:
     Node* createNodeForCompound(const Compound& nodelist) const;
 
     void finishWithNode(const Ast* node);
+    void setCurrentNode(Node* node, const Compound& body);
+    Node* resume(const Compound& interrupted_body, Ast* continue_after);
 
 private:
     KDevelop::ControlFlowGraph* m_graph;
@@ -70,6 +72,7 @@ private:
     std::unique_ptr<Python::PythonEditorIntegrator> m_editorIntegrator;
 
     KDevelop::ControlFlowNode* m_currentNode;
+    Compound m_currentCompound;
 };
 
 }

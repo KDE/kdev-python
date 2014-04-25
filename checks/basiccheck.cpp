@@ -58,7 +58,6 @@ public:
         auto decls = context->localDeclarations();
         auto errors = QVector<Error>();
         while ( node && node->next() ) {
-            qDebug() << "next node:" << node->nodeRange();
             auto alternative = node->alternative();
             node = node->next();
 

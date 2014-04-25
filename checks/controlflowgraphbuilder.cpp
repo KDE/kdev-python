@@ -78,10 +78,30 @@ void ControlFlowGraphBuilder::setRangeOnNode(const RangeInRevision& range, Contr
 
 void ControlFlowGraphBuilder::finishWithNode(const Ast* node)
 {
+    if ( ! node ) {
+        return;
+    }
     m_currentNode->setEndCursor(range(node).start);
 }
 
-void ControlFlowGraphBuilder::visitFunctionOrClass(Identifier* name, const ControlFlowGraphBuilder::Compound& compound)
+void ControlFlowGraphBuilder::setCurrentNode(ControlFlowGraphBuilder::Node* node, const Compound& body)
+{
+    m_currentCompound = body;
+    m_currentNode = node;
+}
+
+ControlFlowGraphBuilder::Node* ControlFlowGraphBuilder::resume(const Compound& interrupted_body,
+                                                               Ast* continue_after)
+{
+    auto start = range(continue_after).end;
+    auto end = range(interrupted_body).end;
+    auto node = new Node();
+    node->setStartCursor(start);
+    node->setEndCursor(end);
+    return node;
+}
+
+void ControlFlowGraphBuilder::visitFunctionOrClass(Identifier* name, const Compound& compound)
 {
     DUChainReadLocker lock;
     auto pos = range(name).start + CursorInRevision(0, 1);
@@ -92,8 +112,11 @@ void ControlFlowGraphBuilder::visitFunctionOrClass(Identifier* name, const Contr
     func->setEndCursor(range(compound.last()).end);
     auto body = createNodeForCompound(compound);
     func->setNext(body);
+    if ( ! d ) {
+        return;
+    }
     m_graph->addEntry(d, func);
-    m_currentNode = body;
+    setCurrentNode(body, compound);
 }
 
 void ControlFlowGraphBuilder::visitFunctionDefinition(Python::FunctionDefinitionAst* node)
@@ -118,7 +141,9 @@ void ControlFlowGraphBuilder::visitReturn(ReturnAst* node)
 
 void ControlFlowGraphBuilder::visitIf(IfAst* node)
 {
-    finishWithNode(node);
+    finishWithNode(node->body.first());
+    auto interrupted = m_currentCompound;
+
     auto ifexpr = new Node();
     m_currentNode->setNext(ifexpr);
     auto if_ = createNodeForCompound(node->body);
@@ -126,26 +151,37 @@ void ControlFlowGraphBuilder::visitIf(IfAst* node)
     ifexpr->setNext(if_);
     ifexpr->setAlternative(else_);
 
-    m_currentNode = if_;
+    setCurrentNode(if_, node->body);
     for ( auto n: node->body ) {
         visitNode(n);
     }
-    m_currentNode = else_;
+    setCurrentNode(else_, node->orelse);
     for ( auto n: node->orelse ) {
         visitNode(n);
     }
+
+    auto resumed = resume(interrupted, node);
+    if_->setNext(resumed);
+    else_->setNext(resumed);
+    setCurrentNode(resumed, interrupted);
 }
 
 void ControlFlowGraphBuilder::visitWhile(WhileAst* node)
 {
-    finishWithNode(node);
+    finishWithNode(node->body.first());
+    auto interrupted = m_currentCompound;
+
     auto while_ = new Node();
     m_currentNode->setNext(while_);
     auto body = createNodeForCompound(node->body);
     while_->setNext(body);
 
-    m_currentNode = body;
+    setCurrentNode(body, node->body);
     Python::AstDefaultVisitor::visitWhile(node);
+
+    auto resumed = resume(interrupted, node);
+    body->setNext(resumed);
+    setCurrentNode(resumed, interrupted);
 }
 
 void ControlFlowGraphBuilder::visitBreak(BreakAst* node)
@@ -159,14 +195,20 @@ void ControlFlowGraphBuilder::visitBreak(BreakAst* node)
 
 void ControlFlowGraphBuilder::visitFor(ForAst* node)
 {
-    finishWithNode(node);
+    finishWithNode(node->body.first());
+    auto interrupted = m_currentCompound;
+
     auto for_ = new Node();
     m_currentNode->setNext(for_);
     auto body = createNodeForCompound(node->body);
     for_->setNext(body);
 
-    m_currentNode = for_;
+    setCurrentNode(for_, node->body);
     Python::AstDefaultVisitor::visitFor(node);
+
+    auto resumed = resume(interrupted, node);
+    body->setNext(resumed);
+    setCurrentNode(resumed, interrupted);
 }
 
 void ControlFlowGraphBuilder::visitContinue(ContinueAst* node)

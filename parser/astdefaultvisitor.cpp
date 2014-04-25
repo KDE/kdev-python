@@ -253,11 +253,11 @@ void AstDefaultVisitor::visitWhile(WhileAst* node)
 
 void AstDefaultVisitor::visitWith(WithAst* node)
 {
-    foreach (Ast* statement, node->body) {
-        visitNode(statement);
-    }
     foreach (Ast* item, node->items) {
         visitNode(item);
+    }
+    foreach (Ast* statement, node->body) {
+        visitNode(statement);
     }
 }
 

@@ -32,7 +32,6 @@
 namespace Python {
 
 class CodeAst;
-class FileIndentInformation;
 
 // Parse code in a pyx file and remove Cython specific syntax.
 // The results can be to used to build the Python AST.
@@ -66,10 +65,8 @@ private:
     bool fixFunctionDefinitions(QString& line);
     bool fixExtensionClasses(QString& line);
     bool fixVariableTypes(QString& line);
-    bool fixCdefBlocks(QString& line);
     bool fixCimports(QString& line);
     bool fixCtypedefs(QString& line);
-    bool fixCompileTimeStatements(QString& line);
 
     QVector<KDevelop::SimpleRange> getArgumentListTypes();
     QVector<Token> getArgumentListTokens();
@@ -78,7 +75,6 @@ private:
     QString m_strippedCode;
     KDevelop::SimpleCursor m_offset;
     QVector<DeletedCode> m_deletions;
-    QScopedPointer<FileIndentInformation> m_indents;
 };
 
 }

@@ -85,7 +85,6 @@ QString CythonSyntaxRemover::stripCythonSyntax(const QString& code)
         return m_strippedCode;
     }
     m_code = code.split("\n");
-    m_indents.reset(new FileIndentInformation(m_code));
 
     // Search through code line by line and try to detect
     // Cython specific syntax. Delete these syntax elements and
@@ -236,11 +235,6 @@ bool CythonSyntaxRemover::fixVariableTypes(QString& line)
         line += QString("pass");
         return false;
     }
-    return false;
-}
-
-bool CythonSyntaxRemover::fixExtensionClassProperties(QString& line)
-{
     return false;
 }
 
@@ -395,23 +389,6 @@ void CythonSyntaxRemover::fixAstRanges(CodeAst* ast)
         CythonDeletionFixVisitor visit(m_deletions);
         visit.visitNode(ast);
     }
-}
-
-bool CythonSyntaxRemover::fixCdefBlocks(QString& line)
-{
-
-}
-
-bool CythonSyntaxRemover::fixCompileTimeStatements(QString& line)
-{
-    QRegExp regexp_compileStmt("^\\s*(DEF|IF|ELIF|ELSE)");
-    if (regexp_compileStmt.indexIn(line) != -1){
-        SimpleRange delrange(m_offset.line, 0, m_offset.line, line.length());
-        m_deletions.append(DeletedCode{line, delrange});
-        line = QString();
-        return true;
-    }
-    return false;
 }
 
 

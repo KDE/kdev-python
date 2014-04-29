@@ -122,7 +122,6 @@ void PyCythonTest::testCythonReplacement_data()
     QTest::newRow("cdefvar1") << "def foo():\n    cdef int bar\n    bar = 3" << "def foo():\n    pass\n    bar = 3";
     QTest::newRow("cdefvar2") << "def foo():\n    cdef float* bar, ham, spam\n" << "def foo():\n    pass\n";
     QTest::newRow("cdefvar3") << "def foo():\n    cdef np.ndarray[dtype=float32, ndim=2] bar, ham, spam\n" << "def foo():\n    pass\n";
-    QTest::newRow("compile_time_stmts") << "DEF FavouriteFood = \"Spam\"\nIF UNAME_SYSNAME == \"Windows\"\n    sys.exit(-1)\nELSE\n    work.do()" << "";
 }
 
 void PyCythonTest::testCythonRanges() {

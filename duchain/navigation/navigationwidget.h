@@ -1,6 +1,6 @@
 /***************************************************************************
  *   This file is part of KDevelop                                         *
- *   Copyright 2012 Sven Brauch <svenbrauch@googlemail.com>                *
+ *   Copyright 2012-2014 Sven Brauch <svenbrauch@googlemail.com>           *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Library General Public License as       *
@@ -24,27 +24,18 @@
 #include <language/duchain/navigation/abstractnavigationwidget.h>
 #include <language/util/includeitem.h>
 #include "pythonduchainexport.h"
-#include <QWebView>
 
 namespace Python {
 
 class KDEVPYTHONDUCHAIN_EXPORT NavigationWidget : public KDevelop::AbstractNavigationWidget
 {
-Q_OBJECT
-
-public slots:
-    void addDocumentationData(bool finished);
-
 public:
-    NavigationWidget(KDevelop::DeclarationPointer declaration, KDevelop::TopDUContextPointer topContext, const QString& htmlPrefix = QString(), const QString& htmlSuffix = QString());
-    NavigationWidget(const KDevelop::IncludeItem& includeItem, KDevelop::TopDUContextPointer topContext, const QString& htmlPrefix = QString(), const QString& htmlSuffix = QString());
-    
-    static QString shortDescription(KDevelop::Declaration* /*declaration*/) { return "<b>Test</b>"; };
-    static QString shortDescription(const KDevelop::IncludeItem& /*includeItem*/) { return "<b>Test</b>"; };
-    
-    QWebView* m_documentationWebView;
-    QString m_originalHtml;
-    QString m_fullyQualifiedModuleIdentifier;
+    NavigationWidget(KDevelop::DeclarationPointer declaration, KDevelop::TopDUContextPointer topContext,
+                     const QString& htmlPrefix = QString(), const QString& htmlSuffix = QString());
+    NavigationWidget(const KDevelop::IncludeItem& includeItem, KDevelop::TopDUContextPointer topContext,
+                     const QString& htmlPrefix = QString(), const QString& htmlSuffix = QString());
+
+    static QString shortDescription(const KDevelop::IncludeItem&) { return QString(); };
 };
 
 }

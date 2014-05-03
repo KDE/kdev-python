@@ -18,8 +18,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
 
-#ifndef NAVIGATIONWIDGET_H
-#define NAVIGATIONWIDGET_H
+#ifndef PYTHON_NAVIGATIONWIDGET_H
+#define PYTHON_NAVIGATIONWIDGET_H
 
 #include <language/duchain/navigation/abstractnavigationwidget.h>
 #include <language/util/includeitem.h>

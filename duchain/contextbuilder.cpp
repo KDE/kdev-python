@@ -54,14 +54,6 @@ using namespace KTextEditor;
 namespace Python
 {
 
-ContextBuilder::ContextBuilder()
-    : m_mapAst(true)
-    , m_prebuilding(false)
-    , m_indentInformationCache(0)
-{
-
-}
-
 ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node, ReferencedTopDUContext updateContext)
 {
     if (!updateContext) {
@@ -81,7 +73,6 @@ ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node
     } else {
         qDebug() << " ====> DUCHAIN ====>     building duchain for" << url.str();
     }
-    m_isScheduledForReparsing = false;
     return ContextBuilderBase::build(url, node, updateContext);
 }
 
@@ -93,6 +84,16 @@ PythonEditorIntegrator* ContextBuilder::editor() const
 IndexedString ContextBuilder::currentlyParsedDocument() const
 {
     return m_currentlyParsedDocument;
+}
+
+void ContextBuilder::setCurrentlyParsedDocument(const IndexedString &document)
+{
+    m_currentlyParsedDocument = document;
+}
+
+void ContextBuilder::setFutureModificationRevision(const ModificationRevision &rev)
+{
+    m_futureModificationRevision = rev;
 }
 
 RangeInRevision ContextBuilder::rangeForNode(Ast* node, bool moveRight)
@@ -121,6 +122,16 @@ TopDUContext* ContextBuilder::newTopContext(const RangeInRevision& range, Parsin
 DUContext* ContextBuilder::newContext(const RangeInRevision& range)
 {
     return new PythonNormalDUContext(range, currentContext());
+}
+
+void ContextBuilder::addUnresolvedImport(const IndexedString &module)
+{
+    m_unresolvedImports.append(module);
+}
+
+QList<IndexedString> ContextBuilder::unresolvedImports() const
+{
+    return m_unresolvedImports;
 }
 
 void ContextBuilder::setEditor(PythonEditorIntegrator* editor)
@@ -291,12 +302,7 @@ void ContextBuilder::visitCode(CodeAst* node) {
     Q_ASSERT(currentlyParsedDocument().toUrl().isValid());
     if ( currentlyParsedDocument() != doc ) {
         // Search for the python built-in functions file, and dump its contents into the current file.
-        TopDUContext* internal = 0;
-        {
-            DUChainReadLocker lock(DUChain::lock());
-            internal = DUChain::self()->chainForDocument(doc); // TODO add startup-check and error message, this must exist
-        }
-        
+        auto internal = Helper::getDocumentationFileContext();
         if ( ! internal ) {
             // If the built-in functions file is not yet parsed, schedule it with a high priority.
             m_unresolvedImports.append(doc);
@@ -308,9 +314,8 @@ void ContextBuilder::visitCode(CodeAst* node) {
             // KDevelop::ICore::self()->languageController()->backgroundParser()->parseDocuments();
         }
         else {
-            DUChainWriteLocker wlock(DUChain::lock());
+            DUChainWriteLocker wlock;
             currentContext()->addImportedParentContext(internal);
-            m_builtinFunctionsContext = TopDUContextPointer(internal);
         }
     }
     AstDefaultVisitor::visitCode(node);
@@ -369,19 +374,19 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
                 // toegether with a list of names which must be resolved inside that file.
                 if ( sourcefile.exists() ) {
                     sourceUrl.cleanPath();
-                    return QPair<KUrl, QStringList>(sourceUrl, leftNameComponents);
+                    return qMakePair(sourceUrl, leftNameComponents);
                 }
                 else if ( sourcedir.exists() && sourcedir.isDir() ) {
                     KUrl path(testFilename + "/__init__.py");
                     path.cleanPath();
-                    return QPair<KUrl, QStringList>(path, leftNameComponents);
+                    return qMakePair(path, leftNameComponents);
                 }
                 kDebug() << "RESULT:" << "No module path found.";
                 break;
             }
         }
     }
-    return QPair<KUrl, QStringList>(KUrl(), QStringList());
+    return {};
 }
 
 RangeInRevision ContextBuilder::rangeForArgumentsContext(FunctionDefinitionAst* node)

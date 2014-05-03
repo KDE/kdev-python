@@ -132,18 +132,16 @@ void ParseJob::run()
     // call the python API and the AST transformer to populate the syntax tree
     QPair<CodeAst::Ptr, bool> parserResults = m_currentSession->parse();
     m_ast = parserResults.first;
-    
-    QSharedPointer<PythonEditorIntegrator> editor = QSharedPointer<PythonEditorIntegrator>(
-        new PythonEditorIntegrator(m_currentSession.data())
-    );
+
+    auto editor = QSharedPointer<PythonEditorIntegrator>(new PythonEditorIntegrator(m_currentSession.data()));
     // if parsing succeeded, continue and do semantic analysis
     if ( parserResults.second )
     {
         // set up the declaration builder, it gets the parsePriority so it can re-schedule imported files with a better priority
         DeclarationBuilder builder(editor.data());
         builder.m_ownPriority = parsePriority();
-        builder.m_currentlyParsedDocument = document();
-        builder.m_futureModificationRevision = contents().modification;
+        builder.setCurrentlyParsedDocument(document());
+        builder.setFutureModificationRevision(contents().modification);
 
         // Run the declaration builder. If necessary, it will run itself again.
         m_duContext = builder.build(document(), m_ast.data(), toUpdate.data());
@@ -155,18 +153,18 @@ void ParseJob::run()
         
         // gather uses of variables and functions on the document
         UseBuilder usebuilder(editor.data());
-        usebuilder.m_currentlyParsedDocument = document();
+        usebuilder.setCurrentlyParsedDocument(document());
         usebuilder.buildUses(m_ast.data());
         
         // check whether any unresolved imports were encountered
-        bool needsReparse = ! builder.m_unresolvedImports.isEmpty();
+        bool needsReparse = ! builder.unresolvedImports().isEmpty();
         kDebug() << "Document needs update because of unresolved identifiers: " << needsReparse;
         if ( needsReparse ) {
             // check whether one of the imports is queued for parsing, this is to avoid deadlocks
             // it's also ok if the duchain is now available (and thus has been parsed before already)
             bool dependencyInQueue = false;
-            DUChainWriteLocker lock(DUChain::lock());
-            foreach ( const IndexedString& url, builder.m_unresolvedImports ) {
+            DUChainWriteLocker lock;
+            foreach ( const IndexedString& url, builder.unresolvedImports() ) {
                 dependencyInQueue = KDevelop::ICore::self()->languageController()->backgroundParser()->isQueued(url);
                 dependencyInQueue = dependencyInQueue || DUChain::self()->chainForDocument(url);
                 if ( dependencyInQueue ) {

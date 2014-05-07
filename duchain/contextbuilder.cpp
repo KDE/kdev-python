@@ -362,27 +362,29 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
                 leftNameComponents.removeFirst();
             }
             QString testFilename = tmp.path(KUrl::AddTrailingSlash) + component;
-            KUrl sourceUrl = testFilename + ".py";
+            tmp.cd(component);
+            QFileInfo sourcedir(testFilename);
+
             // we can only parse those, so we don't care about anything else for now.
             // Any C modules (.so, .dll) will be ignored, and highlighted as "not found". TODO fix this
-            QFile sourcefile(testFilename + ".py");
-            QFileInfo sourcedir(testFilename);
-            tmp.cd(component);
-            if ( ! sourcedir.exists() || ! sourcedir.isDir() || leftNameComponents.isEmpty() ) {
-                // If the search cannot continue further down into a hierarchy of directories,
-                // the file matching the next name component will be returned,
-                // toegether with a list of names which must be resolved inside that file.
-                if ( sourcefile.exists() ) {
-                    sourceUrl.cleanPath();
-                    return qMakePair(sourceUrl, leftNameComponents);
+            static QStringList valid_extensions{".py", ".pyx"};
+            for(auto extension: valid_extensions) {
+                QFile sourcefile(testFilename + extension);
+                if ( ! sourcedir.exists() || ! sourcedir.isDir() || leftNameComponents.isEmpty() ) {
+                    // If the search cannot continue further down into a hierarchy of directories,
+                    // the file matching the next name component will be returned,
+                    // toegether with a list of names which must be resolved inside that file.
+                    if ( sourcefile.exists() ) {
+                        KUrl sourceUrl = testFilename + extension;
+                        sourceUrl.cleanPath();
+                        return qMakePair(sourceUrl, leftNameComponents);
+                    }
+                    else if ( sourcedir.exists() && sourcedir.isDir() ) {
+                        KUrl path(testFilename + "/__init__.py");
+                        path.cleanPath();
+                        return qMakePair(path, leftNameComponents);
+                    }
                 }
-                else if ( sourcedir.exists() && sourcedir.isDir() ) {
-                    KUrl path(testFilename + "/__init__.py");
-                    path.cleanPath();
-                    return qMakePair(path, leftNameComponents);
-                }
-                kDebug() << "RESULT:" << "No module path found.";
-                break;
             }
         }
     }

@@ -85,43 +85,49 @@ void PyCythonTest::testCythonReplacement()
 {
     QFETCH(QString, input);
     QFETCH(QString, output);
+    QFETCH(bool, do_python_test);
     CythonSyntaxRemover stripper;
     QCOMPARE(stripper.stripCythonSyntax(input), output);
-    CodeAst::Ptr ast = getAst(input, KUrl("test.pyx"));
-    VerifyVisitor v;
-    v.visitCode(ast.data());
-    QVERIFY(m_builder->m_problems.isEmpty());
+    if(do_python_test) {
+        CodeAst::Ptr ast = getAst(input, KUrl("test.pyx"));
+        VerifyVisitor v;
+        v.visitCode(ast.data());
+        QVERIFY(m_builder->m_problems.isEmpty());
+    }
 }
 
 void PyCythonTest::testCythonReplacement_data()
 {
     QTest::addColumn<QString>("input");
     QTest::addColumn<QString>("output");
-    QTest::newRow("cfunction") << "cdef foo(a, b): pass" << "def foo(a, b): pass";
-    QTest::newRow("cfunction_staticreturn1") << "cdef int foo(): pass" << "def foo(): pass";
-    QTest::newRow("cfunction_staticreturn2") << "cdef _SomeExtendedClass foo(): pass" << "def foo(): pass";
-    QTest::newRow("cfunction_staticreturn2") << "cdef float* foo(): pass" << "def foo(): pass";
-    QTest::newRow("cfunction_staticargs1") << "cdef foo(int a, b): pass" << "def foo(    a, b): pass";
-    QTest::newRow("cfunction_staticargs2") << "cdef foo(int* a, float b): pass" << "def foo(     a,       b): pass";
-    QTest::newRow("cfunction_staticargs3") << "cpdef addSubnodes(self, _Node node): pass" << "def addSubnodes(self,       node): pass";
-    QTest::newRow("cfunction_staticargsandreturn") << "cdef double* foo(int a, b): pass" << "def foo(    a, b): pass";
-    QTest::newRow("cfunction_exception1") << "cdef double* foo(int a, b) except *: pass" << "def foo(    a, b): pass";
-    QTest::newRow("cfunction_exception2") << "cdef double* foo(int a, b) except FoobarException: pass" << "def foo(    a, b): pass";
-    QTest::newRow("cdefclass1") << "cdef class Test:\n    cdef int a\n    cdef float* b" << "class Test:\n    pass\n    pass";
+    QTest::addColumn<bool>("do_python_test");
+    QTest::newRow("cfunction") << "cdef foo(a, b): pass" << "def foo(a, b): pass" << true;
+    QTest::newRow("cfunction_staticreturn1") << "cdef int foo(): pass" << "def foo(): pass" << true;
+    QTest::newRow("cfunction_staticreturn2") << "cdef _SomeExtendedClass foo(): pass" << "def foo(): pass" << true;
+    QTest::newRow("cfunction_staticreturn2") << "cdef float* foo(): pass" << "def foo(): pass" << true;
+    QTest::newRow("cfunction_staticargs1") << "cdef foo(int a, b): pass" << "def foo(    a, b): pass" << true;
+    QTest::newRow("cfunction_staticargs2") << "cdef foo(int* a, float b): pass" << "def foo(     a,       b): pass" << true;
+    QTest::newRow("cfunction_staticargs3") << "cpdef addSubnodes(self, _Node node): pass" << "def addSubnodes(self,       node): pass" << true;
+    QTest::newRow("cfunction_staticargsandreturn") << "cdef double* foo(int a, b): pass" << "def foo(    a, b): pass" << true;
+    QTest::newRow("cfunction_exception1") << "cdef double* foo(int a, b) except *: pass" << "def foo(    a, b): pass" << true;
+    QTest::newRow("cfunction_exception2") << "cdef double* foo(int a, b) except FoobarException: pass" << "def foo(    a, b): pass" << true;
+    QTest::newRow("cdefclass1") << "cdef class Test:\n    cdef int a\n    cdef float* b" << "class Test:\n    pass\n    pass" << true;
+    QTest::newRow("cdefclass2_pointer") << "cdef class SpatialList:\n    cdef spatial.SpatialList *thisptr\n" << "class SpatialList:\n    pass\n" << true;
+    QTest::newRow("cdefclass_crash") << "cdef class Test:\n    def foo()" << "class Test:\n    def foo()" << false;
 //     QTest::newRow("cdefclassproperty") << "cdef class Foo:\n    property Bar:\n        def __get__(self): pass";
-    QTest::newRow("statictype") << "def foo():\n    cdef int bar\n    bar = 4\n" << "def foo():\n    pass\n    bar = 4\n";
-    QTest::newRow("cimport1") << "cimport foo" << "";
-    QTest::newRow("cimport2") << "cimport foo as bar" << "";
-    QTest::newRow("cimport3") << "from bar cimport foo" << "";
-    QTest::newRow("cimport4") << "from bar cimport foo as spam" << "";
-    QTest::newRow("longcode") <<  "from bar import foo\n\ncpdef helloWorld(int b) except (5 + \n3):\n    cdef int i\n    i = 5\n\n" << "from bar import foo\n\ndef helloWorld(    b):\n\n    pass\n    i = 5\n\n";
-    QTest::newRow("buffertypes") << "cpdef _OctreeNode findNode(self, np.ndarray[np.float64_t, ndim=1] coord): pass" << "def findNode(self,                                  coord): pass";
-    QTest::newRow("funcmultiline") << "cdef foobar(int foo,\n           float* bar,\n           np.ndarray[ndim = 1] spam):\n    pass" << "def foobar(    foo,\n                  bar,\n                                spam):\n    pass";
-    QTest::newRow("defaultargs_aka_crap") << "cdef foobar(int foo, float* bar=None,\n           ham=unicode(\"Spam)\\\")\"), _Node bloat=None):\n    pass" << "def foobar(    foo,        bar=None,\n           ham=unicode(\"Spam)\\\")\"),       bloat=None):\n    pass";
-    QTest::newRow("ctypedef") << "ctypedef np.float64_t DTYPE_t  # Hallo Welt" << "# Hallo Welt";
-    QTest::newRow("cdefvar1") << "def foo():\n    cdef int bar\n    bar = 3" << "def foo():\n    pass\n    bar = 3";
-    QTest::newRow("cdefvar2") << "def foo():\n    cdef float* bar, ham, spam\n" << "def foo():\n    pass\n";
-    QTest::newRow("cdefvar3") << "def foo():\n    cdef np.ndarray[dtype=float32, ndim=2] bar, ham, spam\n" << "def foo():\n    pass\n";
+    QTest::newRow("statictype") << "def foo():\n    cdef int bar\n    bar = 4\n" << "def foo():\n    pass\n    bar = 4\n" << true;
+    QTest::newRow("cimport1") << "cimport foo" << "" << true;
+    QTest::newRow("cimport2") << "cimport foo as bar" << "" << true;
+    QTest::newRow("cimport3") << "from bar cimport foo" << "" << true;
+    QTest::newRow("cimport4") << "from bar cimport foo as spam" << "" << true;
+    QTest::newRow("longcode") <<  "from bar import foo\n\ncpdef helloWorld(int b) except (5 + \n3):\n    cdef int i\n    i = 5\n\n" << "from bar import foo\n\ndef helloWorld(    b):\n\n    pass\n    i = 5\n\n" << true;
+    QTest::newRow("buffertypes") << "cpdef _OctreeNode findNode(self, np.ndarray[np.float64_t, ndim=1] coord): pass" << "def findNode(self,                                  coord): pass" << true;
+    QTest::newRow("funcmultiline") << "cdef foobar(int foo,\n           float* bar,\n           np.ndarray[ndim = 1] spam):\n    pass" << "def foobar(    foo,\n                  bar,\n                                spam):\n    pass" << true;
+    QTest::newRow("defaultargs_aka_crap") << "cdef foobar(int foo, float* bar=None,\n           ham=unicode(\"Spam)\\\")\"), _Node bloat=None):\n    pass" << "def foobar(    foo,        bar=None,\n           ham=unicode(\"Spam)\\\")\"),       bloat=None):\n    pass" << true;
+    QTest::newRow("ctypedef") << "ctypedef np.float64_t DTYPE_t  # Hallo Welt" << "# Hallo Welt" << true;
+    QTest::newRow("cdefvar1") << "def foo():\n    cdef int bar\n    bar = 3" << "def foo():\n    pass\n    bar = 3" << true;
+    QTest::newRow("cdefvar2") << "def foo():\n    cdef float* bar, ham, spam\n" << "def foo():\n    pass\n" << true;
+    QTest::newRow("cdefvar3") << "def foo():\n    cdef np.ndarray[dtype=float32, ndim=2] bar, ham, spam\n" << "def foo():\n    pass\n" << true;
 }
 
 void PyCythonTest::testCythonRanges() {

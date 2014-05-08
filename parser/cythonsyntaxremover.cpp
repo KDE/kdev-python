@@ -146,34 +146,59 @@ bool CythonSyntaxRemover::fixFunctionDefinitions(QString& line)
             if (m_offset.column >= m_code[m_offset.line].length()) {
                 m_offset.line++;
                 m_offset.column = 0;
+                if(m_offset.line >= m_code.length()) {
+                    m_offset.line = m_code.length() - 1;
+                    m_offset.column = m_code[m_offset.line].length() - 1;
+                    break;
+                }
             }
         }
         // replace the exception definition
         if (start.line == m_offset.line && start.column < m_offset.column) {
             auto exceptionDefLen = m_offset.column-start.column;
             auto exceptionDef = m_code[m_offset.line].mid(start.column, exceptionDefLen);
-            m_deletions.append(DeletedCode{exceptionDef, SimpleRange(start, m_offset)});
-            m_code[start.line].remove(start.column, exceptionDefLen);
+            if(exceptionDef.indexOf(QString("except")) != -1) {
+                m_deletions.append(DeletedCode{exceptionDef, SimpleRange(start, m_offset)});
+                m_code[start.line].remove(start.column, exceptionDefLen);
+            }
+            else {
+                // probably the closing ":" was not typed yet, recover m_offset
+                m_offset = start;
+            }
         }
         // replace multiline expression...
         else if (start.line < m_offset.line) {
             auto pos = start;
             QString exceptionDef;
-            for (; pos.line < m_offset.line; pos.line++, pos.column = 0) {
+            bool foundExceptKeyword = false;
+            for (; pos.line < m_offset.line && pos.line < m_code.length(); pos.line++, pos.column = 0) {
                 QString& curLine = m_code[pos.line];
                 exceptionDef.append(curLine.mid(pos.column, curLine.length()-pos.column));
                 // replace with ":" if there is an offset to start of line. This is the
                 // case for the first line
-                curLine.replace(pos.column, curLine.length()-pos.column,
-                                 pos.column ? QString(":") : QString());
+                kDebug() << "foundExceptKeyword?" << foundExceptKeyword << "curLine.indexOf(\"except\")" << curLine.indexOf("except");
+                if(foundExceptKeyword || curLine.indexOf("except") != -1) {
+                    foundExceptKeyword = true;
+                    curLine.replace(pos.column, curLine.length()-pos.column,
+                                    pos.column ? QString(":") : QString());
+                }
+                else {
+                    // first line of "exception def" did not contain except
+                    // keyword, probably the closing : was not typed.
+                    // Recover m_offset
+                    m_offset = start;
+                    break;
+                }
             }
-            QString& curLine = m_code[m_offset.line];
-            // remove one more char than offset points to, we don't want to keep
-            // the : in the multiline case
-            m_offset.column++;
-            exceptionDef.append(curLine.mid(0, m_offset.column));
-            curLine.remove(0,  m_offset.column);
-            m_deletions.append(DeletedCode{exceptionDef, SimpleRange(start, m_offset)});
+            if(foundExceptKeyword) {
+                QString& curLine = m_code[m_offset.line];
+                // remove one more char than offset points to, we don't want to keep
+                // the : in the multiline case
+                m_offset.column++;
+                exceptionDef.append(curLine.mid(0, m_offset.column));
+                curLine.remove(0,  m_offset.column);
+                m_deletions.append(DeletedCode{exceptionDef, SimpleRange(start, m_offset)});
+            }
         }
         // if a return type was specified, delete it from code
         if (returnTypePos != -1) {
@@ -225,7 +250,7 @@ bool CythonSyntaxRemover::fixVariableTypes(QString& line)
     //   cdef TYPE Var1, Var2, [...]
     // TODO: Handle cases such as
     //   cdef TYPE Var1=0, Var2=4
-    static QRegExp regexp_cdef_variable("^(\\s*)cdef\\s+[\\.a-zA-Z0-9_]+\\**\\s*(\\[[^\\]]+\\])?\\s+[a-zA-Z0-9_]+\\s*(,\\s*[a-zA-Z0-9_]+\\s*)*");
+    static QRegExp regexp_cdef_variable("^(\\s*)cdef\\s+[\\.a-zA-Z0-9_]+(\\[[^\\]]+\\])?\\s*\\**\\s*[a-zA-Z0-9_]+\\s*(,\\s*[a-zA-Z0-9_]+\\s*)*");
     if (regexp_cdef_variable.indexIn(line) != -1) {
         kDebug() << "Variable cdef -> pass";
         SimpleRange delrange(m_offset.line, 0,

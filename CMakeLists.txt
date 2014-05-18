@@ -57,7 +57,6 @@ add_subdirectory(codecompletion)
 add_subdirectory(debugger)
 add_subdirectory(docfilekcm)
 add_subdirectory(pep8kcm)
-add_subdirectory(projectkcm)
 add_subdirectory(checks)
 
 set(kdevpythonlanguagesupport_PART_SRCS

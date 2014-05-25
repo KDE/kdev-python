@@ -13,8 +13,8 @@ set(parser_STAT_SRCS
     cythonsyntaxremover.cpp
 )
 
-find_package(PythonLibs 3.4 EXACT REQUIRED)
-if ( NOT ${PYTHONLIBS_FOUND} )
+find_package(PythonLibs 3.4 REQUIRED)
+if ( NOT ${PYTHONLIBS_FOUND} OR ${PYTHON_VERSION_MINOR} GREATER 4 )
     message(FATAL_ERROR "Python 3.4 with --enable-shared is required to build kdev-python")
 endif()
 

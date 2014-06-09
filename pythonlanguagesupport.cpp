@@ -84,10 +84,10 @@ KDevelop::ContextMenuExtension LanguageSupport::contextMenuExtension(KDevelop::C
 }
 
 LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ )
-        : KDevelop::IPlugin( KDevPythonSupportFactory::componentData(), parent )
-        , KDevelop::ILanguageSupport()
-        , m_highlighting( new Highlighting( this ) )
-        , m_refactoring( new Refactoring( this ) )
+    : KDevelop::IPlugin( KDevPythonSupportFactory::componentData(), parent )
+    , KDevelop::ILanguageSupport()
+    , m_highlighting( new Highlighting( this ) )
+    , m_refactoring( new Refactoring( this ) )
 {
     KDEV_USE_EXTENSION_INTERFACE( KDevelop::ILanguageSupport )
 

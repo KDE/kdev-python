@@ -57,6 +57,7 @@ public:
     KDevelop::ILanguage *language();
     /*the code highlighter*/
     KDevelop::ICodeHighlighting* codeHighlighting() const;
+    virtual KDevelop::BasicRefactoring* refactoring() const override;
     
     KDevelop::ContextMenuExtension contextMenuExtension(KDevelop::Context* context);
     

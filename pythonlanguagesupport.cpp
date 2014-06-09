@@ -40,6 +40,8 @@
 #include <interfaces/iprojectcontroller.h>
 #include <interfaces/iproject.h>
 #include <interfaces/isession.h>
+#include <language/assistant/renameassistant.h>
+#include <language/assistant/staticassistantsmanager.h>
 #include <language/interfaces/editorcontext.h>
 #include <language/duchain/duchain.h>
 #include <language/duchain/duchainlock.h>
@@ -82,17 +84,20 @@ KDevelop::ContextMenuExtension LanguageSupport::contextMenuExtension(KDevelop::C
 }
 
 LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ )
-        : KDevelop::IPlugin( KDevPythonSupportFactory::componentData(), parent ),
-        KDevelop::ILanguageSupport()
+        : KDevelop::IPlugin( KDevPythonSupportFactory::componentData(), parent )
+        , KDevelop::ILanguageSupport()
+        , m_highlighting( new Highlighting( this ) )
+        , m_refactoring( new Refactoring( this ) )
 {
     KDEV_USE_EXTENSION_INTERFACE( KDevelop::ILanguageSupport )
 
     m_self = this;
 
-    m_highlighting = new Highlighting( this );
-    m_refactoring = new Refactoring(this);
     PythonCodeCompletionModel* codeCompletion = new PythonCodeCompletionModel(this);
     new KDevelop::CodeCompletion(this, codeCompletion, "Python");
+
+    auto assistantsManager = core()->languageController()->staticAssistantsManager();
+    assistantsManager->registerAssistant(StaticAssistant::Ptr(new RenameAssistant(this)));
 
     QObject::connect(ICore::self()->documentController(), SIGNAL(documentOpened(KDevelop::IDocument*)),
                      this, SLOT(documentOpened(KDevelop::IDocument*)));
@@ -196,6 +201,11 @@ KDevelop::ILanguage *LanguageSupport::language()
 KDevelop::ICodeHighlighting* LanguageSupport::codeHighlighting() const
 {
     return m_highlighting;
+}
+
+BasicRefactoring* LanguageSupport::refactoring() const
+{
+    return m_refactoring;
 }
 
 ILanguageSupport::WhitespaceSensitivity LanguageSupport::whitespaceSensititivy() const

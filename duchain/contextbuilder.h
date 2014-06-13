@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************
  */
-#ifndef CONTEXTBUILDER_H
-#define CONTEXTBUILDER_H
+#ifndef PYTHON_CONTEXTBUILDER_H
+#define PYTHON_CONTEXTBUILDER_H
 
 #include "astdefaultvisitor.h"
 

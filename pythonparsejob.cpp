@@ -138,8 +138,7 @@ void ParseJob::run()
     if ( parserResults.second )
     {
         // set up the declaration builder, it gets the parsePriority so it can re-schedule imported files with a better priority
-        DeclarationBuilder builder(editor.data());
-        builder.m_ownPriority = parsePriority();
+        DeclarationBuilder builder(editor.data(), parsePriority());
         builder.setCurrentlyParsedDocument(document());
         builder.setFutureModificationRevision(contents().modification);
 

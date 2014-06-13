@@ -52,7 +52,7 @@ CorrectionHelper::CorrectionHelper(const IndexedString& _url, DeclarationBuilder
     m_contextStack.top() = m_hintTopContext.data();
     if ( ! m_hintTopContext ) {
         // The file exists, but was not parsed yet. Schedule it, and re-schedule the current one too.
-        Helper::scheduleDependency(indexedPath, builder->m_ownPriority);
+        Helper::scheduleDependency(indexedPath, builder->jobPriority());
         builder->addUnresolvedImport(indexedPath);
     }
 }

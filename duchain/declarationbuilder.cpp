@@ -31,6 +31,7 @@
 #include "pythoneditorintegrator.h"
 #include "helpers.h"
 #include "assistants/missingincludeassistant.h"
+#include "correctionhelper.h"
 
 #include <language/duchain/functiondeclaration.h>
 #include <language/duchain/declaration.h>
@@ -57,9 +58,9 @@ using namespace KDevelop;
 namespace Python
 {
 
-DeclarationBuilder::DeclarationBuilder(PythonEditorIntegrator* editor)
-        : DeclarationBuilderBase()
-        , m_ownPriority(0)
+DeclarationBuilder::DeclarationBuilder(Python::PythonEditorIntegrator* editor, int ownPriority)
+    : DeclarationBuilderBase()
+    , m_ownPriority(ownPriority)
 {
     setEditor(editor);
     kDebug() << "Building Declarations";
@@ -102,6 +103,11 @@ ReferencedTopDUContext DeclarationBuilder::build(const IndexedString& url, Ast* 
         kDebug() << "prebuilding";
     }
     return DeclarationBuilderBase::build(url, node, updateContext);
+}
+
+int DeclarationBuilder::jobPriority() const
+{
+    return m_ownPriority;
 }
 
 void DeclarationBuilder::closeDeclaration()
@@ -483,7 +489,8 @@ Declaration* DeclarationBuilder::findDeclarationInContext(QStringList dottedName
     return lastAccessedDeclaration;
 }
 
-QString DeclarationBuilder::buildModuleNameFromNode(ImportFromAst* node, AliasAst* alias, const QString& intermediate) {
+QString DeclarationBuilder::buildModuleNameFromNode(ImportFromAst* node, AliasAst* alias, const QString& intermediate) const
+{
     QString moduleName = alias->name->value;
     if ( ! intermediate.isEmpty() ) {
         moduleName.prepend('.').prepend(intermediate);
@@ -491,7 +498,7 @@ QString DeclarationBuilder::buildModuleNameFromNode(ImportFromAst* node, AliasAs
     if ( node->module ) {
         moduleName.prepend('.').prepend(node->module->value);
     }
-    // To handle relative import correct, add node level in the beginning of the path
+    // To handle relative imports correctly, add node level in the beginning of the path
     // This will allow findModulePath to deduce module search direcotry properly
     moduleName.prepend(QString(node->level, '.'));
     return moduleName;
@@ -1123,7 +1130,7 @@ void DeclarationBuilder::visitCall(CallAst* node)
     addArgumentTypeHints(node, functionVisitor.lastDeclaration());
 }
 
-QList< ExpressionAst* > DeclarationBuilder::targetsOfAssignment(QList< ExpressionAst* > targets)
+QList<ExpressionAst*> DeclarationBuilder::targetsOfAssignment(QList<ExpressionAst*> targets) const
 {
     QList<ExpressionAst*> lhsExpressions;
     foreach ( ExpressionAst* target, targets ) {
@@ -1147,8 +1154,8 @@ QList< ExpressionAst* > DeclarationBuilder::targetsOfAssignment(QList< Expressio
     return lhsExpressions;
 }
 
-QList< DeclarationBuilder::SourceType > DeclarationBuilder::sourcesOfAssignment(ExpressionAst* items,
-                                                                                int fillWhenLengthMissing)
+QList<DeclarationBuilder::SourceType> DeclarationBuilder::sourcesOfAssignment(ExpressionAst* items,
+                                                                              int fillWhenLengthMissing) const
 {
     QList<SourceType> sources;
     QList<ExpressionAst*> values;
@@ -1190,9 +1197,9 @@ QList< DeclarationBuilder::SourceType > DeclarationBuilder::sourcesOfAssignment(
     return sources;
 }
 
-DeclarationBuilder::SourceType DeclarationBuilder::selectSource(const QList< ExpressionAst* >& targets,
-                                                          const QList< DeclarationBuilder::SourceType >& sources,
-                                                          int index, ExpressionAst* value)
+DeclarationBuilder::SourceType DeclarationBuilder::selectSource(const QList<ExpressionAst*>& targets,
+                                                                const QList<DeclarationBuilder::SourceType>& sources,
+                                                                int index, ExpressionAst* rhs) const
 {
     bool canUnpack = targets.length() == sources.length();
     SourceType element;
@@ -1206,7 +1213,7 @@ DeclarationBuilder::SourceType DeclarationBuilder::selectSource(const QList< Exp
     }
     else if ( targets.length() == 1 ) {
         ExpressionVisitor v(currentContext());
-        v.visitNode(value);
+        v.visitNode(rhs);
         element = SourceType{
             v.lastType(),
             DeclarationPointer(Helper::resolveAliasDeclaration(v.lastDeclaration().data())),
@@ -1458,7 +1465,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     
     type->setDeclaration(dec);
     dec->setType(type);
-    
+
     openType(type);
     m_currentClassType = type;
 
@@ -1653,7 +1660,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     dec->setInSymbolTable(true);
 }
 
-QString DeclarationBuilder::getDocstring(QList< Ast* > body)
+QString DeclarationBuilder::getDocstring(QList< Python::Ast* > body) const
 {
     if ( ! body.isEmpty() && body.first()->astType == Ast::ExpressionAstType 
             && static_cast<ExpressionAst*>(body.first())->value->astType == Ast::StringAstType )
@@ -1847,6 +1854,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
 
         kDebug() << "is first:" << isFirst << hasCurrentDeclaration() << currentDeclaration();
         if ( isFirst && hasCurrentDeclaration() && currentContext() && currentContext()->parentContext() ) {
+            DUChainReadLocker lock;
             if ( currentContext()->parentContext()->type() == DUContext::Class ) {
                 argumentType = m_currentClassType.cast<AbstractType>();
                 isFirst = false;

@@ -74,9 +74,10 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
         
         // check the interpreter
         QProcess p;
+        p.setReadChannelMode(QProcess::MergedChannels);
         p.start(interpreter, QStringList() << "--version");
         p.waitForFinished(500);
-        QByteArray version = p.readAllStandardError();
+        QByteArray version = p.readAll();
         kDebug() << "interpreter version:" << version;
         if ( ! version.startsWith("Python 3.") ) {
             KMessageBox::error(ICore::self()->uiController()->activeMainWindow(),

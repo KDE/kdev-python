@@ -177,7 +177,7 @@ QList< Declaration* > DeclarationBuilder::existingDeclarationsForNode(Identifier
 {
     QList<Declaration*> existingDeclarations = currentContext()->findDeclarations(
         identifierForNode(node).last(), CursorInRevision::invalid(), 0,
-        (DUContext::SearchFlag) ( DUContext::DontSearchInParent | DUContext::DontResolveAliases)
+        (DUContext::SearchFlag) (DUContext::DontSearchInParent | DUContext::DontResolveAliases)
     );
     // append arguments context
     if ( m_mostRecentArgumentsContext ) {
@@ -239,7 +239,7 @@ template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclar
                 kDebug() << "Not opening previously existing declaration because it's in another top context";
             }
         }
-        else if ( fitting && ! invalidType ) {
+        else if ( ! invalidType ) {
             remainingDeclarations << d;
         }
     }
@@ -682,7 +682,9 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
                  || dynamic_cast<AliasDeclaration*>(aliasDeclaration) 
                ) {
                 aliasDeclaration = Helper::resolveAliasDeclaration(aliasDeclaration);
-                AliasDeclaration* adecl = eventuallyReopenDeclaration<AliasDeclaration>(&temporaryIdentifier, &temporaryIdentifier, AliasDeclarationType);
+                AliasDeclaration* adecl = eventuallyReopenDeclaration<AliasDeclaration>(&temporaryIdentifier,
+                                                                                        &temporaryIdentifier,
+                                                                                        AliasDeclarationType);
                 if ( adecl ) {
                     adecl->setAliasedDeclaration(aliasDeclaration);
                 }

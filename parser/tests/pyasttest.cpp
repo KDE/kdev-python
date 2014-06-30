@@ -17,7 +17,6 @@
 */
 
 #include <language/duchain/topducontext.h>
-#include <language/duchain/dumpchain.h>
 #include <language/codegen/coderepresentation.h>
 #include <tests/autotestshell.h>
 #include <tests/testcore.h>

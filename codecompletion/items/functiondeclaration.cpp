@@ -154,7 +154,7 @@ void FunctionDeclarationCompletionItem::executed(KTextEditor::Document* document
     }
     // place cursor behind bracktes by default
     int skip = 2;
-    if ( fdecl.first && fdecl.first->type<FunctionType>()->arguments().length() != 0 ) {
+    if ( fdecl.first && fdecl.first->type<FunctionType>() && fdecl.first->type<FunctionType>()->arguments().length() != 0 ) {
         // place cursor in brackets if there's parameters
         skip = 1;
     }

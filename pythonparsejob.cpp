@@ -39,7 +39,6 @@
 #include <language/highlighting/codehighlighting.h>
 #include <language/interfaces/iastcontainer.h>
 #include <interfaces/ilanguage.h>
-#include <interfaces/foregroundlock.h>
 #include <interfaces/icore.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <interfaces/idocumentcontroller.h>

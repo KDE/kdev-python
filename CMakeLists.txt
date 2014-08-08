@@ -84,7 +84,8 @@ target_link_libraries(kdevpythonlanguagesupport
 
 install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})
 
-install(FILES kdevpythonsupport.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+configure_file(kdevpythonsupport.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/kdevpythonsupport.desktop)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/kdevpythonsupport.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
 install(DIRECTORY documentation_files DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)
 install(DIRECTORY correction_files DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)

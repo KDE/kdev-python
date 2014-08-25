@@ -43,10 +43,10 @@
 #include <language/checks/controlflowgraph.h>
 #include <language/checks/dataaccessrepository.h>
 #include <interfaces/ilanguage.h>
-#include <interfaces/foregroundlock.h>
 #include <interfaces/icore.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <interfaces/idocumentcontroller.h>
+#include <util/foregroundlock.h>
 
 #include <ktexteditor/document.h>
 

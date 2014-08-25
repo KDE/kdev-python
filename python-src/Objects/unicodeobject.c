@@ -1295,7 +1295,7 @@ PyObject *PyUnicode_AsEncodedString(PyObject *unicode,
 
     if (encoding == NULL)
         encoding = PyUnicode_GetDefaultEncoding();
-
+    
     /* Shortcuts for common default encodings */
     if (errors == NULL) {
         if (strcmp(encoding, "utf-8") == 0)
@@ -1308,6 +1308,17 @@ PyObject *PyUnicode_AsEncodedString(PyObject *unicode,
 #endif
         else if (strcmp(encoding, "ascii") == 0)
             return PyUnicode_AsASCIIString(unicode);
+        else if (strcmp(encoding, "utf-32-be") == 0)
+        {
+            const char *errors = NULL;
+            const char* pbuf = PyString_AsString(unicode);
+            size_t size = PyString_Size(unicode);
+            int byteorder = 1;
+            size_t consumed;
+            int final = 0;
+            return PyUnicode_DecodeUTF32Stateful(pbuf, size, errors,
+                                        &byteorder, final ? NULL : &consumed);
+        }
     }
 
     /* Encode via the codec registry */

@@ -3386,57 +3386,57 @@ decode_unicode(struct compiling *c, const char *s, size_t len, int rawmode, cons
         char *buf;
         char *p;
         const char *end;
-        if (encoding != NULL && strcmp(encoding, "iso-8859-1")) {
-                /* check for integer overflow */
-                if (len > PY_SIZE_MAX / 6)
-                        return NULL;
-		/* "<C3><A4>" (2 bytes) may become "\U000000E4" (10 bytes), or 1:5
-		   "\ä" (3 bytes) may become "\u005c\U000000E4" (16 bytes), or ~1:6 */
-                u = PyString_FromStringAndSize((char *)NULL, len * 6);
-                if (u == NULL)
-                        return NULL;
-                p = buf = PyString_AsString(u);
-                end = s + len;
-                while (s < end) {
-                        if (*s == '\\') {
-                                *p++ = *s++;
-                                if (*s & 0x80) {
-                                        strcpy(p, "u005c");
-                                        p += 5;
-                                }
-                        }
-                        if (*s & 0x80) { /* XXX inefficient */
-                                PyObject *w;
-                                char *r;
-                                Py_ssize_t rn, i;
-                                w = decode_utf8(c, &s, end, "utf-32-be");
-                                if (w == NULL) {
-                                        Py_DECREF(u);
-                                        return NULL;
-                                }
-                                r = PyString_AsString(w);
-                                rn = PyString_Size(w);
-                                assert(rn % 4 == 0);
-                                for (i = 0; i < rn; i += 4) {
-                                        sprintf(p, "\\U%02x%02x%02x%02x",
-                                                r[i + 0] & 0xFF,
-                                                r[i + 1] & 0xFF,
-						r[i + 2] & 0xFF,
-						r[i + 3] & 0xFF);
-                                        p += 10;
-                                }
-                                Py_DECREF(w);
-                        } else {
-                                *p++ = *s++;
-                        }
-                }
-                len = p - buf;
-                s = buf;
-        }
-        if (rawmode)
+//         if (encoding != NULL && strcmp(encoding, "iso-8859-1")) {
+//                 /* check for integer overflow */
+//                 if (len > PY_SIZE_MAX / 6)
+//                         return NULL;
+// 		/* "<C3><A4>" (2 bytes) may become "\U000000E4" (10 bytes), or 1:5
+// 		   "\ä" (3 bytes) may become "\u005c\U000000E4" (16 bytes), or ~1:6 */
+//                 u = PyString_FromStringAndSize((char *)NULL, len * 6);
+//                 if (u == NULL)
+//                         return NULL;
+//                 p = buf = PyString_AsString(u);
+//                 end = s + len;
+//                 while (s < end) {
+//                         if (*s == '\\') {
+//                                 *p++ = *s++;
+//                                 if (*s & 0x80) {
+//                                         strcpy(p, "u005c");
+//                                         p += 5;
+//                                 }
+//                         }
+//                         if (*s & 0x80) { /* XXX inefficient */
+//                                 PyObject *w;
+//                                 char *r;
+//                                 Py_ssize_t rn, i;
+//                                 w = decode_utf8(c, &s, end, "utf-32-be");
+//                                 if (w == NULL) {
+//                                         Py_DECREF(u);
+//                                         return NULL;
+//                                 }
+//                                 r = PyString_AsString(w);
+//                                 rn = PyString_Size(w);
+//                                 assert(rn % 4 == 0);
+//                                 for (i = 0; i < rn; i += 4) {
+//                                         sprintf(p, "\\U%02x%02x%02x%02x",
+//                                                 r[i + 0] & 0xFF,
+//                                                 r[i + 1] & 0xFF,
+// 						r[i + 2] & 0xFF,
+// 						r[i + 3] & 0xFF);
+//                                         p += 10;
+//                                 }
+//                                 Py_DECREF(w);
+//                         } else {
+//                                 *p++ = *s++;
+//                         }
+//                 }
+//                 len = p - buf;
+//                 s = buf;
+//         }
+//         if (rawmode)
                 v = PyUnicode_DecodeRawUnicodeEscape(s, len, NULL);
-        else
-                v = PyUnicode_DecodeUnicodeEscape(s, len, NULL);
+//         else
+//                 v = PyUnicode_DecodeUnicodeEscape(s, len, NULL);
         Py_XDECREF(u);
         return v;
 }

@@ -588,12 +588,12 @@ buf_setreadl(struct tok_state *tok, const char* enc) {
 #ifdef Py_USING_UNICODE
 static PyObject *
 translate_into_utf8(const char* str, const char* enc) {
-    PyObject *utf8;
-    PyObject* buf = PyUnicode_Decode(str, strlen(str), enc, NULL);
-    if (buf == NULL)
-        return NULL;
-    utf8 = PyUnicode_AsUTF8String(buf);
-    Py_DECREF(buf);
+    PyObject *utf8 = PyString_InternFromString(str);
+//     PyObject* buf = PyUnicode_Decode(str, strlen(str), enc, NULL);
+//     if (buf == NULL)
+//         return NULL;
+//     utf8 = PyUnicode_AsUTF8String(buf);
+//     Py_DECREF(buf);
     return utf8;
 }
 #endif
@@ -639,68 +639,10 @@ translate_newlines(const char *s, int exec_input, struct tok_state *tok) {
     return buf;
 }
 
-/* Decode a byte string STR for use as the buffer of TOK.
-   Look for encoding declarations inside STR, and record them
-   inside TOK.  */
-
-static const char *
-decode_str(const char *input, int single, struct tok_state *tok)
+static char *
+decode_str(const char *str, int exec_input, struct tok_state *tok)
 {
-    PyObject* utf8 = NULL;
-    const char *str;
-    const char *s;
-    const char *newl[2] = {NULL, NULL};
-    int lineno = 0;
-    tok->input = str = translate_newlines(input, single, tok);
-    if (str == NULL)
-        return NULL;
-    tok->enc = NULL;
-    tok->str = str;
-    if (!check_bom(buf_getc, buf_ungetc, buf_setreadl, tok))
-        return error_ret(tok);
-    str = tok->str;             /* string after BOM if any */
-    assert(str);
-#ifdef Py_USING_UNICODE
-    if (tok->enc != NULL) {
-        utf8 = translate_into_utf8(str, tok->enc);
-        if (utf8 == NULL)
-            return error_ret(tok);
-        str = PyString_AsString(utf8);
-    }
-#endif
-//     for (s = str;; s++) {
-//         if (*s == '\0') break;
-//         else if (*s == '\n') {
-//             assert(lineno < 2);
-//             newl[lineno] = s;
-//             lineno++;
-//             if (lineno == 2) break;
-//         }
-//     }
-//     tok->enc = NULL;
-//     /* need to check line 1 and 2 separately since check_coding_spec
-//        assumes a single line as input */
-//     if (newl[0]) {
-//         if (!check_coding_spec(str, newl[0] - str, tok, buf_setreadl))
-//             return error_ret(tok);
-//         if (tok->enc == NULL && newl[1]) {
-//             if (!check_coding_spec(newl[0]+1, newl[1] - newl[0],
-//                                    tok, buf_setreadl))
-//                 return error_ret(tok);
-//         }
-//     }
-#ifdef Py_USING_UNICODE
-    if (tok->enc != NULL) {
-        assert(utf8 == NULL);
-        utf8 = translate_into_utf8(str, tok->enc);
-        if (utf8 == NULL)
-            return error_ret(tok);
-        str = PyString_AsString(utf8);
-    }
-#endif
-    assert(tok->decoding_buffer == NULL);
-    tok->decoding_buffer = utf8; /* CAUTION */
-    return str;
+    return new_string(str, strlen(str));
 }
 
 #endif /* PGEN */

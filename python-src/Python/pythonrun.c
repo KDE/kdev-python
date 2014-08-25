@@ -279,21 +279,21 @@ Py_InitializeEx(int install_sigs)
         saved_locale = strdup(setlocale(LC_CTYPE, NULL));
         setlocale(LC_CTYPE, "");
         loc_codeset = nl_langinfo(CODESET);
-        if (loc_codeset && *loc_codeset) {
-            PyObject *enc = PyCodec_Encoder(loc_codeset);
-            if (enc) {
-                loc_codeset = strdup(loc_codeset);
-                Py_DECREF(enc);
-            } else {
-                if (PyErr_ExceptionMatches(PyExc_LookupError)) {
-                    PyErr_Clear();
-                    loc_codeset = NULL;
-                } else {
-                    PyErr_Print();
-                    exit(1);
-                }
-            }
-        } else
+//         if (loc_codeset && *loc_codeset) {
+//             PyObject *enc = PyCodec_Encoder(loc_codeset);
+//             if (enc) {
+//                 loc_codeset = strdup(loc_codeset);
+//                 Py_DECREF(enc);
+//             } else {
+//                 if (PyErr_ExceptionMatches(PyExc_LookupError)) {
+//                     PyErr_Clear();
+//                     loc_codeset = NULL;
+//                 } else {
+//                     PyErr_Print();
+//                     exit(1);
+//                 }
+//             }
+//         } else
             loc_codeset = NULL;
         setlocale(LC_CTYPE, saved_locale);
         free(saved_locale);

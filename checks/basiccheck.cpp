@@ -26,8 +26,6 @@
 #include <language/checks/controlflownode.h>
 #include <language/checks/dataaccessrepository.h>
 
-#include <QDebug>
-
 using namespace KDevelop;
 
 QString BasicCheck::name() const

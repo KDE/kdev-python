@@ -55,7 +55,7 @@
 #include <QThread>
 #include <QProcess>
 #include <QTemporaryFile>
-#include <kdebug.h>
+#include <QDebug>
 #include <klocale.h>
 #include <KConfigGroup>
 
@@ -157,7 +157,7 @@ void ParseJob::run()
         
         // check whether any unresolved imports were encountered
         bool needsReparse = ! builder.unresolvedImports().isEmpty();
-        kDebug() << "Document needs update because of unresolved identifiers: " << needsReparse;
+        qDebug() << "Document needs update because of unresolved identifiers: " << needsReparse;
         if ( needsReparse ) {
             // check whether one of the imports is queued for parsing, this is to avoid deadlocks
             // it's also ok if the duchain is now available (and thus has been parsed before already)
@@ -189,7 +189,7 @@ void ParseJob::run()
             DUChain::self()->updateContextEnvironment(m_duContext, parsingEnvironmentFile.data());
         }
         
-        kDebug() << "---- Parsing Succeeded ----";
+        qDebug() << "---- Parsing Succeeded ----";
         
         if ( abortRequested() ) {
             return abortJob();
@@ -200,7 +200,7 @@ void ParseJob::run()
     }
     else {
         // No syntax tree was received from the parser, the expected reason for this is a syntax error in the document.
-        kWarning() << "---- Parsing FAILED ----";
+        qWarning() << "---- Parsing FAILED ----";
         DUChainWriteLocker lock;
         m_duContext = toUpdate.data();
         // if there's already a chain for the document, do some cleanup.
@@ -285,7 +285,7 @@ void ParseJob::eventuallyDoPEP8Checking(const IndexedString document, TopDUConte
         DUChainWriteLocker lock;
         topContext->setFeatures((TopDUContext::Features) ( topContext->features() | PEP8Checking ));
     }
-    kDebug() << "doing pep8 checking";
+    qDebug() << "doing pep8 checking";
     // TODO that's not very elegant, better would be making pep8 read from stdin -- but it doesn't support that atm
     QTemporaryFile tempfile;
     tempfile.open();
@@ -322,7 +322,7 @@ void ParseJob::eventuallyDoPEP8Checking(const IndexedString document, TopDUConte
                 int lineno = texts.at(2).toInt(&lineno_ok);
                 int colno = texts.at(3).toInt(&colno_ok);
                 if ( ! lineno_ok || ! colno_ok ) {
-                    kDebug() << "invalid line / col number:" << texts;
+                    qDebug() << "invalid line / col number:" << texts;
                     continue;
                 }
                 QString error = texts.at(4);
@@ -336,7 +336,7 @@ void ParseJob::eventuallyDoPEP8Checking(const IndexedString document, TopDUConte
                 topContext->addProblem(ptr);
             }
             else {
-                kDebug() << "invalid pep8 error line:" << error;
+                qDebug() << "invalid pep8 error line:" << error;
             }
         }
     }

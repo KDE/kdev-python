@@ -28,7 +28,6 @@
 #include <language/duchain/problem.h>
 
 #include <QObject>
-#include <QDebug>
 
 namespace Python {
 

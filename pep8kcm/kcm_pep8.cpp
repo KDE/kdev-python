@@ -24,7 +24,6 @@
 #include <QBoxLayout>
 #include <QLineEdit>
 #include <QFormLayout>
-#include <QDebug>
 
 #include <KPluginFactory>
 #include <KLocalizedString>

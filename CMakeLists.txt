@@ -2,16 +2,31 @@ PROJECT(kdevpython)
 
 # write the plugin version to a file
 set(KDEVPYTHON_VERSION_MAJOR 1)
-set(KDEVPYTHON_VERSION_MINOR 7)
-set(KDEVPYTHON_VERSION_PATCH 60)
+set(KDEVPYTHON_VERSION_MINOR 90)
+set(KDEVPYTHON_VERSION_PATCH 90)
 # KDevplatform dependency version
 set( KDEVPLATFORM_VERSION "${KDEVPYTHON_VERSION_MAJOR}.${KDEVPYTHON_VERSION_MINOR}.${KDEVPYTHON_VERSION_PATCH}" )
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${kdevpython_SOURCE_DIR}/cmake/)
+find_package(ECM 0.0.9 REQUIRED NO_MODULE)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${kdevpython_SOURCE_DIR}/cmake/modules ${ECM_MODULE_PATH})
+#set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
 
-cmake_minimum_required(VERSION 2.8.9)
+set(REQUIRED QT_VERSION 5.2.0)
 
-find_package(KDE4 REQUIRED)
+cmake_minimum_required(VERSION 2.8.12)
+
+include(CMakePackageConfigHelpers)
+
+include(ECMAddTests)
+include(ECMOptionalAddSubdirectory)
+include(ECMSetupVersion)
+
+include(KDEInstallDirs)
+include(KDECMakeSettings)
+include(KDECompilerSettings)
+
+find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Widgets Test WebKitWidgets)
+find_package(KF5 REQUIRED I18n NewStuff ItemModels ThreadWeaver KDELibs4Support TextEditor)
 find_package(KDevPlatform ${KDEVPLATFORM_VERSION} REQUIRED)
 
 
@@ -29,14 +44,14 @@ endif ( NOT WIN32 )
 # then, build the plugin
 include_directories(
     ${KDEVPLATFORM_INCLUDE_DIR}
-    ${KDE4_INCLUDES}
-    ${KDE4_INCLUDE_DIR}/threadweaver
+    
+#    ${KDE4_INCLUDE_DIR}/threadweaver
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/duchain
     ${CMAKE_CURRENT_SOURCE_DIR}/parser
     ${CMAKE_CURRENT_BINARY_DIR}/parser
-    ${KDEVPGQT_INCLUDE_DIR}
+    ${KDEVELOP_INCLUDE_DIR}
 )
 
 
@@ -71,16 +86,16 @@ set(kdevpythonlanguagesupport_PART_SRCS
     checks/dataaccessvisitor.cpp
 )
 
-kde4_add_ui_files(kdevpythonlanguagesupport_PART_SRCS codegen/correctionwidget.ui)
+ki18n_wrap_ui(kdevpythonlanguagesupport_PART_SRCS codegen/correctionwidget.ui)
 
-kde4_add_plugin(kdevpythonlanguagesupport ${kdevpythonlanguagesupport_PART_SRCS})
+add_library(kdevpythonlanguagesupport MODULE ${kdevpythonlanguagesupport_PART_SRCS})
 
 target_link_libraries(kdevpythonlanguagesupport
-    ${KDE4_KDEUI_LIBS}
+    
     ${KDEVPLATFORM_INTERFACES_LIBRARIES}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
-    ${KDE4_THREADWEAVER_LIBRARIES}
-    ${KDE4_KTEXTEDITOR_LIBS}
+    KF5::ThreadWeaver
+    KF5::TextEditor
     kdev4pythoncompletion
     kdev4pythonparser
     kdev4pythonduchain

@@ -2,15 +2,15 @@ set(kcm_pep8_SRCS
     kcm_pep8.cpp
 )
 
-kde4_add_plugin(kcm_pep8 ${kcm_pep8_SRCS})
+add_library(kcm_pep8 MODULE ${kcm_pep8_SRCS})
 
 target_link_libraries(kcm_pep8
-    ${KDE4_KIO_LIBS}
+    KF5::KIOCore
     ${KDEVPLATFORM_INTERFACES_LIBRARIES}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${KDEVPLATFORM_PROJECT_LIBRARIES}
     ${KDEVPLATFORM_UTIL_LIBRARIES}
-    ${KDE4_KNEWSTUFF3_LIBS}
+    KF5::NewStuff
     ${KDEVPLATFORM_INTERFACES_LIBRARIES}
 )
 

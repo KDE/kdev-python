@@ -20,15 +20,15 @@ endif()
 
 include_directories(kdev4pythonparser ${PYTHON_INCLUDE_DIRS})
 
-kde4_add_library( kdev4pythonparser SHARED ${parser_SRCS} ${parser_STAT_SRCS} )
+add_library( kdev4pythonparser SHARED ${parser_SRCS} ${parser_STAT_SRCS} )
 target_link_libraries(kdev4pythonparser LINK_PRIVATE
-    ${KDE4_KDECORE_LIBS}
+    KF5::KDELibs4Support
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
-    ${QT_QTCORE_LIBRARY}
+    Qt5::Core
     ${PYTHON_LIBRARY}
 )
 
-add_dependencies(kdev4pythonparser parser)
+#add_dependencies(kdev4pythonparser parser)
 install(TARGETS kdev4pythonparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 add_subdirectory(tests)

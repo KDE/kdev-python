@@ -30,14 +30,14 @@ set(duchain_SRCS
 )
 
 
-kde4_add_library( kdev4pythonduchain SHARED ${duchain_SRCS} )
+add_library( kdev4pythonduchain SHARED ${duchain_SRCS} )
 target_link_libraries( kdev4pythonduchain LINK_PRIVATE
-    ${KDE4_KDECORE_LIBS}
+    KF5::KDELibs4Support
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${KDEVPLATFORM_PROJECT_LIBRARIES}
-    ${KDE4_KTEXTEDITOR_LIBS}
+    KF5::TextEditor
     ${KDEVPLATFORM_INTERFACES_LIBRARIES}
-    ${QT_QTWEBKIT_LIBRARY}
+    Qt5::WebKitWidgets
     kdev4pythonparser
  )
 

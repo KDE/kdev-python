@@ -18,7 +18,7 @@ set(completion_SRCS
     items/replacementvariable.cpp
 )
 
-kde4_add_library(kdev4pythoncompletion SHARED ${completion_SRCS})
+add_library(kdev4pythoncompletion SHARED ${completion_SRCS})
 
 add_dependencies(kdev4pythoncompletion
     kdev4pythonparser 
@@ -26,7 +26,7 @@ add_dependencies(kdev4pythoncompletion
 )
 
 target_link_libraries(kdev4pythoncompletion LINK_PRIVATE
-    ${KDE4_KDECORE_LIBS}
+    KF5::KDELibs4Support
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${KDEVPLATFORM_INTERFACES_LIBRARIES}
     ${KDEVPLATFORM_PROJECT_LIBRARIES}

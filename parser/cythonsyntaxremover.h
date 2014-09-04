@@ -26,7 +26,6 @@
 #include "parserexport.h"
 #include <QString>
 #include <QStringList>
-#include <language/editor/simplerange.h>
 
 
 namespace Python {

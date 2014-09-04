@@ -23,7 +23,6 @@
 #include <tests/testcore.h>
 #include <language/duchain/duchain.h>
 #include <QtTest/QtTest>
-#include <KStandardDirs>
 #include <language/duchain/types/functiontype.h>
 
 #include "pythoneditorintegrator.h"

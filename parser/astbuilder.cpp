@@ -26,11 +26,7 @@
 
 #include <QStringList>
 #include <KDebug>
-#include <KStandardDirs>
 #include <KUrl>
-#include <KLocale>
-#include <QDir>
-#include <QTimer>
 #include <QMutexLocker>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/problem.h>

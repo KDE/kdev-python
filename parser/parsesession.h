@@ -20,10 +20,8 @@
 #define PYTHON_PARSESESSION_H
 #include <QtCore/QString>
 #include "parserexport.h"
-#include <language/duchain/indexedstring.h>
 #include <language/duchain/duchainpointer.h>
 #include <language/duchain/problem.h>
-#include <language/editor/simplecursor.h>
 #include <language/editor/documentrange.h>
 #include "ast.h"
 #include "kurl.h"

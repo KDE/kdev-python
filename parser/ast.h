@@ -25,13 +25,8 @@
 #define PYTHON_AST_H
 
 #include <QList>
-#include <QMap>
 #include <QString>
-#include <QStringList>
-#include <QPair>
 #include <QSharedPointer>
-
-#include <language/editor/simplerange.h>
 
 #include "parserexport.h"
 

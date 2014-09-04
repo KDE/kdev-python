@@ -20,7 +20,6 @@
 #include "parsesession.h"
 
 #include <KDebug>
-#include <language/duchain/indexedstring.h>
 
 #include "astbuilder.h"
 

@@ -26,7 +26,7 @@
 #include "parserexport.h"
 #include <QString>
 #include <QStringList>
-
+#include <KTextEditor/Range>
 
 namespace Python {
 
@@ -49,12 +49,12 @@ public:
 
     struct Token {
         TOKEN_TYPE type;
-        KDevelop::SimpleRange range;
+        KTextEditor::Range range;
     };
 
     struct DeletedCode {
         QString code;
-        KDevelop::SimpleRange range;
+        KTextEditor::Range range;
     };
 
     QString stripCythonSyntax(const QString& code);
@@ -67,12 +67,12 @@ private:
     bool fixCimports(QString& line);
     bool fixCtypedefs(QString& line);
 
-    QVector<KDevelop::SimpleRange> getArgumentListTypes();
+    QVector<KTextEditor::Range> getArgumentListTypes();
     QVector<Token> getArgumentListTokens();
 
     QStringList m_code;
     QString m_strippedCode;
-    KDevelop::SimpleCursor m_offset;
+    KTextEditor::Cursor m_offset;
     QVector<DeletedCode> m_deletions;
 };
 

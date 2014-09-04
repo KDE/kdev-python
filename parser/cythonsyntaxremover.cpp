@@ -35,6 +35,7 @@ class CythonDeletionFixVisitor : public AstDefaultVisitor {
 public:
     CythonDeletionFixVisitor(const QVector<CythonSyntaxRemover::DeletedCode>& deletedRanges)
       : m_deletedRanges() {
+
         for (const auto& del: deletedRanges) {
             // TODO: Multi-line deletes, handle them, possible?
             if (del.range.start.line == del.range.end.line) {
@@ -75,7 +76,7 @@ public:
 
 private:
     // Key is the line number of the ranges to delete.
-    QMap<int, QVector<SimpleRange>> m_deletedRanges;
+    QMap<int, QVector<KTextEditor::Range>> m_deletedRanges;
 };
 
 

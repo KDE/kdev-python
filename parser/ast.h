@@ -27,7 +27,7 @@
 #include <QList>
 #include <QString>
 #include <QSharedPointer>
-
+#include <KTextEditor/Range>
 #include "parserexport.h"
 
 namespace KDevelop
@@ -198,8 +198,8 @@ public:
         return startLine < other->startLine || ( startLine == other->startLine && startCol < other->startCol );
     };
     
-    const KDevelop::SimpleRange range() const {
-        return KDevelop::SimpleRange(startLine, startCol, endLine, endCol);
+    const KTextEditor::Range range() const {
+        return KTextEditor::Range(startLine, startCol, endLine, endCol);
     };
 
     int startCol;

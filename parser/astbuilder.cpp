@@ -428,9 +428,9 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
         int colno = PyLong_AsLong(colnoobj);
         
         ProblemPointer p(new Problem());
-        SimpleCursor start(lineno + lineOffset, (colno-4 > 0 ? colno-4 : 0));
-        SimpleCursor end(lineno + lineOffset, (colno+4 > 4 ? colno+4 : 4));
-        SimpleRange range(start, end);
+        KTextEditor::Cursor start(lineno + lineOffset, (colno-4 > 0 ? colno-4 : 0));
+        KTextEditor::Cursor end(lineno + lineOffset, (colno+4 > 4 ? colno+4 : 4));
+        KTextEditor::Range range(start, end);
         kDebug() << "Problem range: " << range;
         DocumentRange location(IndexedString(filename.path()), range);
         p->setFinalLocation(location);

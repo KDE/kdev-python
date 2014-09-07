@@ -25,6 +25,8 @@
 #include <QRegExp>
 #include <KDebug>
 
+#include <KTextEditor/Range>
+
 using namespace KDevelop;
 
 namespace Python {
@@ -38,8 +40,8 @@ public:
 
         for (const auto& del: deletedRanges) {
             // TODO: Multi-line deletes, handle them, possible?
-            if (del.range.start.line == del.range.end.line) {
-                m_deletedRanges[del.range.start.line].append(del.range);
+            if (del.range.start().line() == del.range.end().line()) {
+                m_deletedRanges[del.range.start().line()].append(del.range);
             }
         }
         // sort by column for faster access
@@ -61,10 +63,10 @@ public:
             return;
         }
         for (auto range: m_deletedRanges[name->startLine]) {
-            if (name->startCol >= range.start.column) {
-                name->startCol += range.end.column-range.start.column;
+            if (name->startCol >= range.start().column()) {
+                name->startCol += range.end().column() - range.start().column();
                 if (name->startLine == name->endLine) {
-                    name->endCol += range.end.column-range.start.column;
+                    name->endCol += range.end().column() - range.start().column();
                 }
             }
             else {
@@ -93,10 +95,10 @@ QString CythonSyntaxRemover::stripCythonSyntax(const QString& code)
     // Check every line quickly for hints that Cython syntax
     // is used and then find the correct replacement via
     // regular expressions.
-    for (m_offset.column = m_offset.line = 0;
-         m_offset.line < m_code.length();
-         m_offset.line++, m_offset.column = 0) {
-        QString& line = m_code[m_offset.line];
+    for (m_offset.setPosition(0, 0);
+         m_offset.line() < m_code.length();
+         m_offset.setLine(m_offset.line()+1), m_offset.setColumn(0)) {
+        QString& line = m_code[m_offset.line()];
         if (fixFunctionDefinitions(line)) continue;
         if (fixExtensionClasses(line)) continue;
         if (fixVariableTypes(line)) continue;
@@ -130,37 +132,37 @@ bool CythonSyntaxRemover::fixFunctionDefinitions(QString& line)
             << "and remove return type: " << returnType;
         // from the beginning of the argument list (open paren),
         // replace type specifiers (if available).
-        m_offset.column = wholeMatch.length();
+        m_offset.setColumn(wholeMatch.length());
         kDebug() << "Regex ended at offset" << m_offset;
         auto types = getArgumentListTypes();
         for (int i = types.size()-1; i >= 0; i--) {
             auto range = types[i];
-            kDebug() << "Replace" << range.start.line << ":" << range.start.column << " to " << range.end.line << ":" << range.end.column << m_code[range.start.line].mid(range.start.column, range.end.column - range.start.column);
-            QString white = QString(" ").repeated(range.end.column - range.start.column);
-            m_code[range.start.line].replace(range.start.column, white.length(), white);
+            kDebug() << "Replace" << range.start().line() << ":" << range.start().column() << " to " << range.end().line() << ":" << range.end().column() << m_code[range.start().line()].mid(range.start().column(), range.end().column() - range.start().column());
+            QString white = QString(" ").repeated(range.end().column() - range.start().column());
+            m_code[range.start().line()].replace(range.start().column(), white.length(), white);
         }
         // Find range of syntax for return values in case an exception occurs
         // Syntax: "cdef foo(bar) except (EXPRESSION,*):"
-        SimpleCursor start = m_offset;
-        while (m_code[m_offset.line][m_offset.column] != ':') {
-            m_offset.column++;
-            if (m_offset.column >= m_code[m_offset.line].length()) {
-                m_offset.line++;
-                m_offset.column = 0;
-                if(m_offset.line >= m_code.length()) {
-                    m_offset.line = m_code.length() - 1;
-                    m_offset.column = m_code[m_offset.line].length() - 1;
+        auto start = m_offset;
+        while (m_code[m_offset.line()][m_offset.column()] != ':') {
+            m_offset.setColumn(m_offset.column() + 1);
+            if (m_offset.column() >= m_code.at(m_offset.line()).length()) {
+                m_offset.setLine(m_offset.line()+1);
+                m_offset.setColumn(0);
+                if(m_offset.line() >= m_code.length()) {
+                    m_offset.setLine(m_code.length() - 1);
+                    m_offset.setColumn(m_code[m_offset.line()].length() - 1);
                     break;
                 }
             }
         }
         // replace the exception definition
-        if (start.line == m_offset.line && start.column < m_offset.column) {
-            auto exceptionDefLen = m_offset.column-start.column;
-            auto exceptionDef = m_code[m_offset.line].mid(start.column, exceptionDefLen);
+        if (start.line() == m_offset.line() && start.column() < m_offset.column()) {
+            auto exceptionDefLen = m_offset.column() - start.column();
+            auto exceptionDef = m_code.at(m_offset.line()).mid(start.column(), exceptionDefLen);
             if(exceptionDef.indexOf(QString("except")) != -1) {
-                m_deletions.append(DeletedCode{exceptionDef, SimpleRange(start, m_offset)});
-                m_code[start.line].remove(start.column, exceptionDefLen);
+                m_deletions.append(DeletedCode{exceptionDef, {start, m_offset}});
+                m_code[start.line()].remove(start.column(), exceptionDefLen);
             }
             else {
                 // probably the closing ":" was not typed yet, recover m_offset
@@ -168,20 +170,20 @@ bool CythonSyntaxRemover::fixFunctionDefinitions(QString& line)
             }
         }
         // replace multiline expression...
-        else if (start.line < m_offset.line) {
+        else if (start.line() < m_offset.line()) {
             auto pos = start;
             QString exceptionDef;
             bool foundExceptKeyword = false;
-            for (; pos.line < m_offset.line && pos.line < m_code.length(); pos.line++, pos.column = 0) {
-                QString& curLine = m_code[pos.line];
-                exceptionDef.append(curLine.mid(pos.column, curLine.length()-pos.column));
+            for (; pos.line() < m_offset.line() && pos.line() < m_code.length(); pos.setLine(pos.line()+1), pos.setColumn(0)) {
+                QString& curLine = m_code[pos.line()];
+                exceptionDef.append(curLine.mid(pos.column(), curLine.length() - pos.column()));
                 // replace with ":" if there is an offset to start of line. This is the
                 // case for the first line
                 kDebug() << "foundExceptKeyword?" << foundExceptKeyword << "curLine.indexOf(\"except\")" << curLine.indexOf("except");
                 if(foundExceptKeyword || curLine.indexOf("except") != -1) {
                     foundExceptKeyword = true;
-                    curLine.replace(pos.column, curLine.length()-pos.column,
-                                    pos.column ? QString(":") : QString());
+                    curLine.replace(pos.column(), curLine.length() - pos.column(),
+                                    pos.column() ? QStringLiteral(":") : QString());
                 }
                 else {
                     // first line of "exception def" did not contain except
@@ -192,27 +194,27 @@ bool CythonSyntaxRemover::fixFunctionDefinitions(QString& line)
                 }
             }
             if(foundExceptKeyword) {
-                QString& curLine = m_code[m_offset.line];
+                QString& curLine = m_code[m_offset.line()];
                 // remove one more char than offset points to, we don't want to keep
                 // the : in the multiline case
-                m_offset.column++;
-                exceptionDef.append(curLine.mid(0, m_offset.column));
-                curLine.remove(0,  m_offset.column);
-                m_deletions.append(DeletedCode{exceptionDef, SimpleRange(start, m_offset)});
+                m_offset.setColumn(m_offset.column() + 1);
+                exceptionDef.append(curLine.mid(0, m_offset.column()));
+                curLine.remove(0,  m_offset.column());
+                m_deletions.append(DeletedCode{exceptionDef, {start, m_offset}});
             }
         }
         // if a return type was specified, delete it from code
         if (returnTypePos != -1) {
-            SimpleRange delrange(start.line, returnTypePos,
-                                 start.line, returnTypePos + returnType.length());
+            auto delrange = KTextEditor::Range(start.line(), returnTypePos,
+                                               start.line(), returnTypePos + returnType.length());
             m_deletions.append(DeletedCode{returnType, delrange});
             line.remove(returnTypePos,
                         returnType.length());
         }
         // if the keyword is not def (but cdef, cpdef ...),  replace it
         if (definition != QString("def")) {
-            SimpleRange delrange(start.line, definitionPos,
-                                 start.line, definitionPos + definition.length()-3);
+            auto delrange = KTextEditor::Range(start.line(), definitionPos,
+                                               start.line(), definitionPos + definition.length()-3);
             m_deletions.append(DeletedCode{definition, delrange});
             line.replace(definitionPos,
                         definition.length(),
@@ -233,8 +235,8 @@ bool CythonSyntaxRemover::fixExtensionClasses(QString& line)
         auto definition = regexp_cdef_class.cap(1);
         auto definition_pos = regexp_cdef_class.pos(1);
         kDebug() << "Extension class, remove " << definition;
-        SimpleRange delrange(m_offset.line, definition_pos,
-                             m_offset.line, definition_pos+definition.length());
+        auto delrange = KTextEditor::Range(m_offset.line(), definition_pos,
+                                           m_offset.line(), definition_pos+definition.length());
         m_deletions.append(DeletedCode{regexp_cdef_class.cap(1), delrange});
         line.remove(definition_pos,
                     definition.length());
@@ -254,8 +256,8 @@ bool CythonSyntaxRemover::fixVariableTypes(QString& line)
     static QRegExp regexp_cdef_variable("^(\\s*)cdef\\s+[\\.a-zA-Z0-9_]+(\\[[^\\]]+\\])?\\s*\\**\\s*[a-zA-Z0-9_]+\\s*(,\\s*[a-zA-Z0-9_]+\\s*)*");
     if (regexp_cdef_variable.indexIn(line) != -1) {
         kDebug() << "Variable cdef -> pass";
-        SimpleRange delrange(m_offset.line, 0,
-                             m_offset.line, line.length()-regexp_cdef_variable.cap(1).length()-4);
+        auto delrange = KTextEditor::Range(m_offset.line(), 0,
+                                           m_offset.line(), line.length()-regexp_cdef_variable.cap(1).length()-4);
         m_deletions.append(DeletedCode{line, delrange});
         line = regexp_cdef_variable.cap(1);
         line += QString("pass");
@@ -273,9 +275,9 @@ bool CythonSyntaxRemover::fixCimports(QString& line)
     regexp_cimport_a.setMinimal(true);
     if (regexp_cimport_a.indexIn(line) != -1 ||
         regexp_cimport_b.indexIn(line) != -1) {
-        SimpleRange delrange(m_offset.line, 0, m_offset.line, line.length());
+        auto delrange = KTextEditor::Range(m_offset.line(), 0, m_offset.line(), line.length());
         m_deletions.append(DeletedCode{line, delrange});
-        line = QString();
+        line.clear();
         return true;
     }
     return false;
@@ -293,17 +295,17 @@ bool CythonSyntaxRemover::fixCtypedefs(QString& line)
                     regexp_ctypedef.cap(1).length());
         auto typeDef = regexp_ctypedef.cap(1);
         auto typeDefPos = regexp_ctypedef.pos(1);
-        SimpleRange delrange(m_offset.line, typeDefPos,
-        m_offset.line, regexp_ctypedef.pos(1) + typeDef.length());
+        auto delrange = KTextEditor::Range(m_offset.line(), typeDefPos,
+        m_offset.line(), regexp_ctypedef.pos(1) + typeDef.length());
         m_deletions.append(DeletedCode{typeDef, delrange});
         return true;
     }
     return false;
 }
 
-QVector<SimpleRange> CythonSyntaxRemover::getArgumentListTypes()
+QVector<KTextEditor::Range> CythonSyntaxRemover::getArgumentListTypes()
 {
-    QVector<SimpleRange> type_specifiers;
+    QVector<KTextEditor::Range> type_specifiers;
     auto token_list(getArgumentListTokens());
     // if there are consecutive IDs, the first ID is the type specifier
     for (int i = 0; i < token_list.size()-1; i++) {
@@ -315,51 +317,54 @@ QVector<SimpleRange> CythonSyntaxRemover::getArgumentListTypes()
     return type_specifiers;
 }
 
-QVector< CythonSyntaxRemover::Token > CythonSyntaxRemover::getArgumentListTokens()
+QVector<CythonSyntaxRemover::Token> CythonSyntaxRemover::getArgumentListTokens()
 {
-    SimpleRange range(m_offset, m_offset);
+    auto range = KTextEditor::Range(m_offset, m_offset);
     QVector<CythonSyntaxRemover::Token> token_list;
     bool stop_tokenizer = false;
     while (!stop_tokenizer) {
         // did we reach end of line?
         // continue to next line until we hit non-empty line
-        while (m_offset.column >= m_code[m_offset.line].length()) {
-            if (m_offset.line >= m_code.length()-1)
+        while (m_offset.column() >= m_code[m_offset.line()].length()) {
+            if (m_offset.line() >= m_code.length()-1) {
                 break;
-            m_offset.column = 0;
-            m_offset.line++;
-            range.start = m_offset;
-            range.end = m_offset;
+            }
+            m_offset.setColumn(0);
+            m_offset.setLine(m_offset.line() + 1);
+            range.setStart(m_offset);
+            range.setEnd(m_offset);
         }
-        QChar c = m_code[m_offset.line][m_offset.column++];
+        QChar c = m_code.at(m_offset.line()).at(m_offset.column());
+        m_offset.setColumn(m_offset.column() + 1);
         if (c.isSpace()) {
-            range.start = m_offset;
-            range.end = m_offset;
+            range.setStart(m_offset);
+            range.setEnd(m_offset);
         }
         else if (c == '=') {
-            range.end.column++;
+            range.end().setColumn(range.end().column() + 1);
             int open_paren_count = 0;
             bool in_string = false;
             // while there are open parenthesis or if we are in
             // string mode and the current character does not terminate
             // the token, consume!
-            c = m_code[m_offset.line][m_offset.column++];
+            c = m_code.at(m_offset.line()).at(m_offset.column());
+            m_offset.setColumn(m_offset.column() + 1);
             while (open_paren_count > 0 || in_string ||
                    !(c == ',' || c == ')')) {
-                if (m_offset.column >= m_code[m_offset.line].length()) {
-                    if (m_offset.line >= m_code.length()) {
-                        m_offset.column--;
+                if (m_offset.column() >= m_code.at(m_offset.line()).length()) {
+                    if (m_offset.line() >= m_code.length()) {
+                        m_offset.setColumn(m_offset.column() - 1);
                         break;
                     }
-                    m_offset.line++;
-                    m_offset.column = 0;
+                    m_offset.setLine(m_offset.line() + 1);
+                    m_offset.setColumn(0);
                 }
-                range.end = m_offset;
+                range.setEnd(m_offset);
                 // TODO: Support for """ """ multiline strings.
                 // Maybe implicitly contained?
                 if (c == '"') {
-                    if (in_string && m_offset.column >= 2)
-                        in_string = (m_code[m_offset.line][m_offset.column-2] == '\\');
+                    if (in_string && m_offset.column() >= 2)
+                        in_string = (m_code.at(m_offset.line()).at(m_offset.column()-2) == '\\');
                     else
                         in_string = !in_string;
                 }
@@ -367,43 +372,48 @@ QVector< CythonSyntaxRemover::Token > CythonSyntaxRemover::getArgumentListTokens
                     open_paren_count++;
                 else if (!in_string && c == ')')
                     open_paren_count--;
-                c = m_code[m_offset.line][m_offset.column++];
+                c = m_code.at(m_offset.line()).at(m_offset.column());
+                m_offset.setColumn(m_offset.column() + 1);
             }
-            m_offset.column--;
-            range.end = m_offset;
+            m_offset.setColumn(m_offset.column() - 1);
+            range.setEnd(m_offset);
             token_list.append({TOKEN_DEFAULT_ARGUMENT, range});
-            range.start = range.end;
+            range.setStart(range.end());
         }
         else if (c == ',') {
-            range.end = m_offset;
+            range.setEnd(m_offset);
             token_list.append({TOKEN_COMMA, range});
-            range.start = range.end;
+            range.setStart(range.end());
         }
         else if (c == ')') {
             stop_tokenizer = true;
-            range.end = m_offset;
+            range.setEnd(m_offset);
             token_list.append({TOKEN_END, range});
-            range.start = range.end;
+            range.setStart(range.end());
         }
         else {
             int open_bracket_count = 0;
-            c = m_code[m_offset.line][m_offset.column++];
+            c = m_code.at(m_offset.line()).at(m_offset.column());
+            m_offset.setColumn(m_offset.column());
             // stop consuming the input if there are no closing
             // square brackets left and the current character is
             // whitespace, =,  ,, ) or the end of line.
             while ((!c.isSpace()
-                    && m_offset.column < m_code[m_offset.line].length()
+                    && m_offset.column() < m_code.at(m_offset.line()).length()
                     && c != ')' && c != ',' && c != '=') || open_bracket_count > 0) {
-                if (c == '[')
+                if (c == '[') {
                     open_bracket_count++;
-                else if (c == ']')
+                }
+                else if (c == ']') {
                     open_bracket_count--;
-                c = m_code[m_offset.line][m_offset.column++];
+                }
+                c = m_code.at(m_offset.line()).at(m_offset.column());
+                m_offset.setColumn(m_offset.column() + 1);
             }
-            m_offset.column--;
-            range.end = m_offset;
+            m_offset.setColumn(m_offset.column() - 1);
+            range.setEnd(m_offset);
             token_list.append({TOKEN_ID, range});
-            range.start = range.end;
+            range.setStart(range.end());
         }
     }
     return token_list;

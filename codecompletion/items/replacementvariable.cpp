@@ -38,8 +38,9 @@ ReplacementVariableItem::ReplacementVariableItem(const ReplacementVariable &vari
 {
 }
 
-void ReplacementVariableItem::execute(Document *document, const Range &word)
+void ReplacementVariableItem::execute(View* view, const Range &word)
 {
+    auto document = view->document();
     if ( ! m_position.isValid() ) {
         m_position = word;
     }

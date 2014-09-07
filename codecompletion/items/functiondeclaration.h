@@ -41,7 +41,7 @@ public:
     
     virtual QVariant data(const QModelIndex& index, int role, const CodeCompletionModel* model) const;
     
-    virtual void executed(KTextEditor::Document* document, const KTextEditor::Range& word);
+    virtual void executed(KTextEditor::View* view, const KTextEditor::Range& word) override;
 private:
     int m_atArgument;
     int m_depth;

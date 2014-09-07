@@ -9,7 +9,6 @@ set( KDEVPLATFORM_VERSION "${KDEVPYTHON_VERSION_MAJOR}.${KDEVPYTHON_VERSION_MINO
 
 find_package(ECM 0.0.9 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${kdevpython_SOURCE_DIR}/cmake/modules ${ECM_MODULE_PATH})
-#set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
 
@@ -57,8 +56,6 @@ include_directories(
 )
 
 
-add_definitions( -DKDE_DEFAULT_DEBUG_AREA=9011 )
-
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
@@ -93,7 +90,6 @@ ki18n_wrap_ui(kdevpythonlanguagesupport_PART_SRCS codegen/correctionwidget.ui)
 add_library(kdevpythonlanguagesupport MODULE ${kdevpythonlanguagesupport_PART_SRCS})
 
 target_link_libraries(kdevpythonlanguagesupport
-    
     ${KDEVPLATFORM_INTERFACES_LIBRARIES}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     KF5::ThreadWeaver

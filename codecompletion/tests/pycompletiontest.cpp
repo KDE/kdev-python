@@ -570,7 +570,7 @@ void PyCompletionTest::testFunctionDeclarationCompletion_data()
     QTest::newRow("class_name_no_constructor_parens") << "class Foo:\n  pass\nbar = %INVOKE" << "Foo%CURSOR" << KTextEditor::Range(2, 6, 2, 9)
                                                       << "Foo()";
 
-    QTest::newRow("class_name_explicit_constructor_parens") << "class Foo:\n  def __init__(self):\n    pass\nbar = %INVOKE" << "Foo%CURSOR"
+    QTest::newRow("class_name_explicit_constructor_parens") << "class Foo:\n  def __init__(self):\n    pass\nbar = %INVOKE" << "Fo%CURSOR"
                                                         << KTextEditor::Range(3, 6, 3, 9)
                                                         << "Foo()";
 }

@@ -394,7 +394,7 @@ QVector<CythonSyntaxRemover::Token> CythonSyntaxRemover::getArgumentListTokens()
         else {
             int open_bracket_count = 0;
             c = m_code.at(m_offset.line()).at(m_offset.column());
-            m_offset.setColumn(m_offset.column());
+            m_offset.setColumn(m_offset.column()+1);
             // stop consuming the input if there are no closing
             // square brackets left and the current character is
             // whitespace, =,  ,, ) or the end of line.

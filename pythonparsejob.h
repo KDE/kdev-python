@@ -60,7 +60,7 @@ public:
     virtual DataAccessRepository* dataAccessInformation();
 
 protected:
-    virtual void run();
+    virtual void run(ThreadWeaver::JobPointer self, ThreadWeaver::Thread* thread) override;
 
 private:
     CodeAst::Ptr m_ast;

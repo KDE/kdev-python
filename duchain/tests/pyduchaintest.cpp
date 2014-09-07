@@ -170,6 +170,7 @@ ReferencedTopDUContext PyDUChainTest::parse(const QString& code)
     testfile->waitForParsed(500);
     
     if ( testfile->isReady() ) {
+        Q_ASSERT(testfile->topContext());
         m_ast = static_cast<Python::ParseSession*>(testfile->topContext()->ast().data())->ast;
         return testfile->topContext();
     }

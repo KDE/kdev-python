@@ -131,9 +131,10 @@ void FunctionDeclarationCompletionItem::setDoNotCall(bool doNotCall)
     m_doNotCall = doNotCall;
 }
 
-void FunctionDeclarationCompletionItem::executed(KTextEditor::Document* document, const KTextEditor::Range& word)
+void FunctionDeclarationCompletionItem::executed(KTextEditor::View* view, const KTextEditor::Range& word)
 {
     kDebug() << "FunctionDeclarationCompletionItem executed";
+    KTextEditor::Document* document = view->document();
     DeclarationPointer resolvedDecl(Helper::resolveAliasDeclaration(declaration().data()));
     DUChainReadLocker lock;
     QPair<FunctionDeclarationPointer, bool> fdecl = Helper::functionDeclarationForCalledDeclaration(resolvedDecl);
@@ -152,7 +153,7 @@ void FunctionDeclarationCompletionItem::executed(KTextEditor::Document* document
     {
         // don't insert brackets if they're already there,
         // the item is a decorator, or if it's an import item.
-        suffix = "";
+        suffix.clear();
     }
     // place cursor behind bracktes by default
     int skip = 2;
@@ -174,9 +175,7 @@ void FunctionDeclarationCompletionItem::executed(KTextEditor::Document* document
         }
     }
     document->replaceText(word, declaration()->identifier().toString() + suffix);
-    if ( auto view = static_cast<KDevelop::PartController*>(ICore::self()->partController())->activeView() ) {
-        view->setCursorPosition( Cursor(word.end().line(), word.end().column() + skip) );
-    }
+    view->setCursorPosition( Cursor(word.end().line(), word.end().column() + skip) );
 }
 
 FunctionDeclarationCompletionItem::~FunctionDeclarationCompletionItem() { }

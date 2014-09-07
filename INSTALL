@@ -6,13 +6,6 @@ make install
 
 If you run into crashes, please rebuild with the -DCMAKE_BUILD_TYPE=debug flag passed to cmake and report a bug with the backtrace attached.
 
-IMPORTANT: If you're using Arch Linux: Arch breaks the standard of having "python" point to a python2 implementation. This breaks stuff.
-So if you're using arch, either make "python" call some python2 interpreter instead of python3 while compiling (only while compiling, doesn't matter afterwards)
-or edit the file python-src/Parser/asdl_c.py and change the first line to point to your python2 implementation, so usually replace
-#! /usr/bin/env python
-with
-#! /usr/bin/env python2
-
 Running test suite:
 To enable test building, run
   cmake .. -DKDE4_BUILD_TESTS=true

@@ -22,7 +22,6 @@ set(kdevpdb_PART_SRCS
 
 add_library(kdevpdb MODULE ${kdevpdb_PART_SRCS})
 target_link_libraries(kdevpdb
-    sublime
     kdev4pythonparser
     ${KDEVPLATFORM_INTERFACES_LIBRARIES}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}

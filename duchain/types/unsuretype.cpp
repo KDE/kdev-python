@@ -70,7 +70,7 @@ QString UnsureType::toString() const
     QList<IndexedType> encountered;
     foreach ( AbstractType::Ptr type, typesRecursive() ) {
         if ( ! type ) {
-            kWarning() << "Invalid type: " << type.unsafeData();
+            kWarning() << "Invalid type: " << type.data();
             continue;
         }
         

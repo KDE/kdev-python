@@ -22,6 +22,7 @@
 
 #include <KProcess>
 #include <QMutexLocker>
+#include <KDebug>
 
 #include <debugger/interfaces/idebugsession.h>
 #include <debugger/interfaces/ivariablecontroller.h>

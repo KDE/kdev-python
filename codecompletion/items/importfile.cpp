@@ -19,6 +19,7 @@
 #include "importfile.h"
 
 #include <KTextEditor/Document>
+#include <KTextEditor/View>
 #include <language/codecompletion/abstractincludefilecompletionitem.h>
 
 #include "duchain/navigation/navigationwidget.h"
@@ -37,10 +38,10 @@ ImportFileItem::~ImportFileItem()
 
 }
 
-void ImportFileItem::execute(KTextEditor::Document* document, const KTextEditor::Range& word)
+void ImportFileItem::execute(KTextEditor::View* view, const KTextEditor::Range& word)
 {
     kDebug() << "ImportFileItem executed";
-    document->replaceText(word, moduleName);
+    view->document()->replaceText(word, moduleName);
 }
 
 

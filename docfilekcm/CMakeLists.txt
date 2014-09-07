@@ -8,6 +8,8 @@ add_library(kcm_docfiles MODULE ${kcm_docfiles_SRCS})
 
 target_link_libraries(kcm_docfiles
     KF5::KIOCore
+    KF5::Archive
+    KF5::KCMUtils
     ${KDEVPLATFORM_INTERFACES_LIBRARIES}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${KDEVPLATFORM_PROJECT_LIBRARIES}

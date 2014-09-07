@@ -18,7 +18,6 @@
 
 #include <language/duchain/topducontext.h>
 #include <language/codegen/coderepresentation.h>
-#include <language/editor/simplerange.h>
 #include <tests/autotestshell.h>
 #include <tests/testcore.h>
 #include <language/duchain/duchain.h>
@@ -36,7 +35,7 @@
 using namespace Python;
 
 QTEST_MAIN(PyCythonTest)
-Q_DECLARE_METATYPE(KDevelop::SimpleRange);
+Q_DECLARE_METATYPE(KTextEditor::Range);
 
 PyCythonTest::PyCythonTest(QObject* parent): QObject(parent)
 {
@@ -131,7 +130,7 @@ void PyCythonTest::testCythonReplacement_data()
 
 void PyCythonTest::testCythonRanges() {
     QFETCH(QString, code);
-    QFETCH(SimpleRange, range);
+    QFETCH(KTextEditor::Range, range);
 
     CodeAst::Ptr ast = getAst(code, KUrl("test.pyx"));
     QVERIFY(ast);
@@ -149,11 +148,11 @@ void PyCythonTest::testCythonRanges() {
 void PyCythonTest::testCythonRanges_data()
 {
     QTest::addColumn<QString>("code");
-    QTest::addColumn<SimpleRange>("range");
+    QTest::addColumn<KTextEditor::Range>("range");
 
-    QTest::newRow("cdef") << "cdef foobar(arg): pass" << SimpleRange(0, 5, 0, 10);
-    QTest::newRow("cdef_return") << "cdef float* foobar(arg): pass" << SimpleRange(0, 12, 0, 17);
-    QTest::newRow("normal_def") << "def foobar(arg): pass" << SimpleRange(0, 4, 0, 9);
+    QTest::newRow("cdef") << "cdef foobar(arg): pass" << KTextEditor::Range(0, 5, 0, 10);
+    QTest::newRow("cdef_return") << "cdef float* foobar(arg): pass" << KTextEditor::Range(0, 12, 0, 17);
+    QTest::newRow("normal_def") << "def foobar(arg): pass" << KTextEditor::Range(0, 4, 0, 9);
 }
 
 

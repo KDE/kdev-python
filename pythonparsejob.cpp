@@ -34,7 +34,7 @@
 #include <language/duchain/duchain.h>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/dumpdotgraph.h>
-#include <language/duchain/indexedstring.h>
+#include <serialization/indexedstring.h>
 #include <language/duchain/duchainutils.h>
 #include <language/backgroundparser/urlparselock.h>
 #include <language/backgroundparser/backgroundparser.h>
@@ -241,7 +241,7 @@ void ParseJob::run()
     if ( minimumFeatures() & TopDUContext::AST ) {
         DUChainWriteLocker lock;
         m_currentSession->ast = m_ast;
-        m_duContext->setAst(KSharedPtr<IAstContainer>::staticCast(m_currentSession));
+        m_duContext->setAst(QExplicitlySharedDataPointer<IAstContainer>(m_currentSession.data()));
     }
     
     setDuChain(m_duContext);
@@ -327,7 +327,7 @@ void ParseJob::eventuallyDoPEP8Checking(const IndexedString document, TopDUConte
                 }
                 QString error = texts.at(4);
                 KDevelop::Problem *p = new KDevelop::Problem();
-                p->setFinalLocation(DocumentRange(document, SimpleRange(lineno - 1, qMax(colno - 4, 0),
+                p->setFinalLocation(DocumentRange(document, KTextEditor::Range(lineno - 1, qMax(colno - 4, 0),
                                                                         lineno - 1, colno + 4)));
                 p->setSource(KDevelop::ProblemData::Preprocessor);
                 p->setSeverity(KDevelop::ProblemData::Warning);
@@ -343,7 +343,7 @@ void ParseJob::eventuallyDoPEP8Checking(const IndexedString document, TopDUConte
     if ( error ) {
         DUChainWriteLocker lock;
         KDevelop::Problem *p = new KDevelop::Problem();
-        p->setFinalLocation(DocumentRange(document, SimpleRange(0, 0, 0, 0)));
+        p->setFinalLocation(DocumentRange(document, KTextEditor::Range(0, 0, 0, 0)));
         p->setSource(KDevelop::ProblemData::Preprocessor);
         p->setSeverity(KDevelop::ProblemData::Warning);
         p->setDescription(i18n("The selected PEP8 syntax checker \"%1\" does not seem to work correctly.", url));

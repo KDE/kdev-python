@@ -21,7 +21,7 @@
 #define PYTHONFUNCTIONDECLARATION_H
 
 #include <language/duchain/functiondeclaration.h>
-#include <language/duchain/indexedstring.h>
+#include <serialization/indexedstring.h>
 
 #include "pythonduchainexport.h"
 #include "decorator.h"

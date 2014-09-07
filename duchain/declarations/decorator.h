@@ -22,7 +22,7 @@
 #define DECORATOR_H
 
 #include <QStringList>
-#include <language/duchain/indexedstring.h>
+#include <serialization/indexedstring.h>
 
 using namespace KDevelop;
 

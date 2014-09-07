@@ -16,9 +16,14 @@
  *****************************************************************************/
 
 #include "missingincludeitem.h"
+
 #include <language/codecompletion/codecompletionmodel.h>
+
 #include <KTextEditor/Document>
+#include <KTextEditor/View>
+
 #include <KLocalizedString>
+#include <KDebug>
 
 namespace Python {
 
@@ -48,14 +53,14 @@ QVariant MissingIncludeItem::data(const QModelIndex& index, int role, const KDev
     return QVariant();
 }
 
-void MissingIncludeItem::execute(KTextEditor::Document* document, const KTextEditor::Range& word)
+void MissingIncludeItem::execute(KTextEditor::View* view, const KTextEditor::Range& word)
 {
     kDebug() << "executed with text" << m_text;
     // First, add the import statement to the top of the file
     // FIXME: deal with multi-line comments
     int insertAt = 0;
-    for ( int i = 0; i < document->lines(); i++ ) {
-        const QString& line = document->line(i);
+    for ( int i = 0; i < view->document()->lines(); i++ ) {
+        const QString& line = view->document()->line(i);
         if ( line.trimmed().startsWith('#') || line.trimmed().isEmpty() ) {
             continue;
         }
@@ -79,11 +84,11 @@ void MissingIncludeItem::execute(KTextEditor::Document* document, const KTextEdi
     if ( ! m_removeComponents.isEmpty() ) {
         const KTextEditor::Cursor end = word.end();
         const KTextEditor::Cursor start = end - KTextEditor::Cursor(0, m_removeComponents.length());
-        document->replaceText(KTextEditor::Range(start, end), m_matchText);
+        view->document()->replaceText(KTextEditor::Range(start, end), m_matchText);
     }
 
     // Do this only later, otherwise ranges change
-    document->insertLine(qMax(0, insertAt - 1), m_text);
+    view->document()->insertLine(qMax(0, insertAt - 1), m_text);
 }
 
 }

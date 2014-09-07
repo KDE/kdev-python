@@ -27,7 +27,7 @@
 
 #include <QObject>
 #include "ast.h"
-#include <language/duchain/indexedstring.h>
+#include <serialization/indexedstring.h>
 #include <language/duchain/topducontext.h>
 #include <tests/testfile.h>
 

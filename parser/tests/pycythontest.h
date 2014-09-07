@@ -24,6 +24,8 @@
 #include <QtCore/QObject>
 #include "ast.h"
 
+#include <KUrl>
+
 namespace KDevelop {
     class TopDUContext;
     class ReferencedTopDUContext;

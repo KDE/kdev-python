@@ -11,6 +11,8 @@ find_package(ECM 0.0.9 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${kdevpython_SOURCE_DIR}/cmake/modules ${ECM_MODULE_PATH})
 #set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+
 set(REQUIRED QT_VERSION 5.2.0)
 
 cmake_minimum_required(VERSION 2.8.12)
@@ -26,7 +28,7 @@ include(KDECMakeSettings)
 include(KDECompilerSettings)
 
 find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Widgets Test WebKitWidgets)
-find_package(KF5 REQUIRED I18n NewStuff ItemModels ThreadWeaver KDELibs4Support TextEditor)
+find_package(KF5 REQUIRED I18n NewStuff ItemModels ThreadWeaver KDELibs4Support TextEditor KCMUtils)
 find_package(KDevPlatform ${KDEVPLATFORM_VERSION} REQUIRED)
 
 

@@ -35,8 +35,8 @@ public:
         ImportantItem = 0x2
     };
     KeywordItem(CodeCompletionContext::Ptr context, QString keyword, QString descr, Python::KeywordItem::Flags flags = NoFlags);
-    virtual void execute(KTextEditor::Document* document, const KTextEditor::Range& word);
-    virtual QVariant data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const;
+    virtual void execute(KTextEditor::View* view, const KTextEditor::Range& word) override;
+    virtual QVariant data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const override;
 private:
     QString m_keyword;
     QString m_description;

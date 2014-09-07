@@ -45,7 +45,6 @@ Q_DECLARE_METATYPE(KTextEditor::Range)
 
 static int testId = 0;
 static QString basepath = "/tmp/__kdevpythoncompletiontest.dir/";
-static QFSFileEngine fileEngine;
 
 namespace Python {
 
@@ -90,7 +89,8 @@ void PyCompletionTest::initShell()
     AutoTestShell::init();
     TestCore* core = new TestCore();
     core->initialize(KDevelop::Core::NoUi);
-    fileEngine.mkdir(basepath, false);
+    QDir d;
+    d.mkpath(basepath);
     
     KUrl doc_url = KUrl(KStandardDirs::locate("data", "kdevpythonsupport/documentation_files/builtindocumentation.py"));
     doc_url.cleanPath(KUrl::SimplifyDirSeparators);
@@ -103,8 +103,8 @@ void PyCompletionTest::initShell()
     KDevelop::CodeRepresentation::setDiskChangesForbidden(true);
     
     // now, create a nice little completion hierarchy
-    fileEngine.mkdir(basepath + "submoduledir", false);
-    fileEngine.mkdir(basepath + "submoduledir/anothersubdir", false);
+    d.mkpath(basepath + "submoduledir");
+    d.mkpath(basepath + "submoduledir/anothersubdir");
     makefile("toplevelmodule.py", "some_var = 3\ndef some_function(): pass\nclass some_class():\n def method(): pass");
     makefile("submoduledir/__init__.py", "var_in_sub_init = 5");
     makefile("submoduledir/subfile.py", "var_in_subfile = 5\nclass some_subfile_class():\n def method2(): pass");
@@ -467,8 +467,9 @@ void PyCompletionTest::testAutoBrackets()
     KService::Ptr documentService = KService::serviceByDesktopPath("katepart.desktop");
     QVERIFY(documentService);
     KTextEditor::Document* document = documentService->createInstance<KTextEditor::Document>(this);
+    auto view = document->createView(nullptr);
     QVERIFY(document);
-    item->execute(document, KTextEditor::Range(0, 0, 0, 0));
+    item->execute(view, KTextEditor::Range(0, 0, 0, 0));
     QCOMPARE(document->text(), QLatin1String("myprop"));
 }
 
@@ -543,8 +544,10 @@ void PyCompletionTest::testFunctionDeclarationCompletion()
     KTextEditor::Document* document = documentService->createInstance<KTextEditor::Document>(this);
     QVERIFY(document);
     document->setText(documentCode);
+    
+    auto view = document->createView(nullptr);
 
-    completionItems.first()->execute(document, executeRange);
+    completionItems.first()->execute(view, executeRange);
     QCOMPARE(document->text(), expectedCode);
 }
 

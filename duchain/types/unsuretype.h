@@ -32,13 +32,14 @@
 #include <language/duchain/types/typealiastype.h>
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/types/indexedtype.h>
+#include <language/duchain/types/typepointer.h>
 
 namespace Python {
 
 class KDEVPYTHONDUCHAIN_EXPORT UnsureType : public KDevelop::UnsureType
 {
 public:
-    typedef TypePtr<UnsureType> Ptr;
+    typedef KDevelop::TypePtr<UnsureType> Ptr;
     
     UnsureType();
     UnsureType(const UnsureType& rhs);

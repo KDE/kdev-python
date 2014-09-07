@@ -35,11 +35,11 @@
 #include <QDir>
 
 #include <KLocalizedString>
-#include <KIcon>
 #include <KStandardDirs>
 #include <KDialog>
 #include <KMessageBox>
 #include <KProcess>
+#include <KUrl>
 
 DocfileWizard::DocfileWizard(const QString& workingDirectory, QWidget* parent)
     : QDialog(parent)
@@ -92,13 +92,13 @@ DocfileWizard::DocfileWizard(const QString& workingDirectory, QWidget* parent)
     QHBoxLayout* buttonsLayout = new QHBoxLayout;
     buttonsLayout->setDirection(QBoxLayout::RightToLeft);
     QPushButton* closeButton = new QPushButton(i18n("Close"));
-    closeButton->setIcon(KIcon("dialog-close"));
+    closeButton->setIcon(QIcon::fromTheme("dialog-close"));
     saveButton = new QPushButton(i18n("Save and close"));
     saveButton->setEnabled(false);
-    saveButton->setIcon(KIcon("dialog-ok-apply"));
+    saveButton->setIcon(QIcon::fromTheme("dialog-ok-apply"));
     runButton = new QPushButton(i18n("Generate"));
     runButton->setDefault(true);
-    runButton->setIcon(KIcon("tools-wizard"));
+    runButton->setIcon(QIcon::fromTheme("tools-wizard"));
     buttonsLayout->addWidget(closeButton);
     buttonsLayout->addWidget(runButton);
     buttonsLayout->addWidget(saveButton);

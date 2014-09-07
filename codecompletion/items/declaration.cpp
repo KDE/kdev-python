@@ -34,7 +34,9 @@ using namespace KDevelop;
 
 namespace Python {
 
-PythonDeclarationCompletionItem::PythonDeclarationCompletionItem(DeclarationPointer decl, KSharedPtr< CodeCompletionContext > context, int inheritanceDepth)
+PythonDeclarationCompletionItem::PythonDeclarationCompletionItem(DeclarationPointer decl, 
+                                                                 QExplicitlySharedDataPointer<CodeCompletionContext> context,
+                                                                 int inheritanceDepth)
                                : NormalDeclarationCompletionItem(decl, context, inheritanceDepth)
                                , m_typeHint(PythonCodeCompletionContext::NoHint)
                                , m_addMatchQuality(0)
@@ -68,7 +70,7 @@ QVariant PythonDeclarationCompletionItem::data(const QModelIndex& index, int rol
                 return 0;
             }
             if (   m_typeHint == PythonCodeCompletionContext::IterableRequested 
-                && dynamic_cast<ListType*>(declaration()->abstractType().unsafeData()) )
+                && dynamic_cast<ListType*>(declaration()->abstractType().data()) )
             {
                 return 10;
             }

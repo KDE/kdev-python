@@ -46,9 +46,9 @@ MissingIncludeProblem::MissingIncludeProblem(const QString &moduleName, IndexedS
 
 }
 
-KSharedPtr<IAssistant> MissingIncludeProblem::solutionAssistant() const
+QExplicitlySharedDataPointer<IAssistant> MissingIncludeProblem::solutionAssistant() const
 {
-    return KSharedPtr<IAssistant>(new MissingIncludeAssistant(m_moduleName, m_currentDocument));
+    return QExplicitlySharedDataPointer<IAssistant>(new MissingIncludeAssistant(m_moduleName, m_currentDocument));
 }
 
 DocumentationGeneratorAction::DocumentationGeneratorAction(const QString& module, const IndexedString& document)
@@ -83,7 +83,7 @@ void DocumentationGeneratorAction::execute()
 
 void MissingIncludeAssistant::createActions()
 {
-    KSharedPtr<IAssistantAction> action(new DocumentationGeneratorAction(module, document));
+    QExplicitlySharedDataPointer<IAssistantAction> action(new DocumentationGeneratorAction(module, document));
     addAction(action);
 }
 

@@ -393,28 +393,28 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
 
 RangeInRevision ContextBuilder::rangeForArgumentsContext(FunctionDefinitionAst* node)
 {
-    SimpleCursor start = node->name->range().end;
-    SimpleCursor end = start;
+    auto start = node->name->range().end();
+    auto end = start;
     if ( node->arguments->kwarg ) {
-        end = node->arguments->kwarg->range().end;
+        end = node->arguments->kwarg->range().end();
     }
     else if ( node->arguments->vararg ) {
-        end = node->arguments->vararg->range().end;
+        end = node->arguments->vararg->range().end();
     }
     if ( ! node->arguments->arguments.isEmpty() && node->arguments->vararg ) {
         if ( node->arguments->vararg->appearsBefore(node->arguments->arguments.last()) ) {
-            end = node->arguments->arguments.last()->range().end;
+            end = node->arguments->arguments.last()->range().end();
         }
     }
     else if ( ! node->arguments->arguments.isEmpty() ) {
-        end = node->arguments->arguments.last()->range().end;
+        end = node->arguments->arguments.last()->range().end();
     }
 
     if ( ! node->arguments->defaultValues.isEmpty() ) {
-        end = qMax<SimpleCursor>(node->arguments->defaultValues.last()->range().end, end);
+        end = qMax<KTextEditor::Cursor>(node->arguments->defaultValues.last()->range().end(), end);
     }
 
-    RangeInRevision range(start.line, start.column, end.line, end.column);
+    RangeInRevision range(start.line(), start.column(), end.line(), end.column());
     // make the range contain the closing and opening parentheses
     range.start.column -= 1;
     range.end.column += 1;

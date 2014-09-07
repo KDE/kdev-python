@@ -29,7 +29,7 @@ namespace Python {
 class PythonDeclarationCompletionItem : public KDevelop::NormalDeclarationCompletionItem {
 public:
     PythonDeclarationCompletionItem(KDevelop::DeclarationPointer decl = KDevelop::DeclarationPointer(), 
-                                    KSharedPtr<KDevelop::CodeCompletionContext> context = KSharedPtr<KDevelop::CodeCompletionContext>(), 
+                                    QExplicitlySharedDataPointer<KDevelop::CodeCompletionContext> context = QExplicitlySharedDataPointer<KDevelop::CodeCompletionContext>(), 
                                     int inheritanceDepth = 0);
     virtual QVariant data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const;
     void setTypeHint(PythonCodeCompletionContext::ItemTypeHint type);

@@ -39,6 +39,9 @@
 #include <interfaces/iprojectcontroller.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <interfaces/idocumentcontroller.h>
+#include <interfaces/ipartcontroller.h>
+
+#include <shell/partcontroller.h>
 
 #include <KTextEditor/View>
 
@@ -87,13 +90,15 @@ void Helper::scheduleDependency(const IndexedString& dependency, int betterThanP
 IndexedDeclaration Helper::declarationUnderCursor(bool allowUse)
 {
     KDevelop::IDocument* doc = ICore::self()->documentController()->activeDocument();
-    if ( doc && doc->textDocument() && doc->textDocument()->activeView() ) {
+    const auto view = static_cast<KDevelop::PartController*>(ICore::self()->partController())->activeView();
+    if ( doc && doc->textDocument() && view ) {
         DUChainReadLocker lock;
+        const auto cursor = view->cursorPosition();
         if ( allowUse ) {
-            return DUChainUtils::itemUnderCursor(doc->url(), SimpleCursor(doc->textDocument()->activeView()->cursorPosition()));
+            return DUChainUtils::itemUnderCursor(doc->url(), cursor);
         }
         else {
-            return DUChainUtils::declarationInLine(SimpleCursor(doc->textDocument()->activeView()->cursorPosition()), DUChainUtils::standardContextForUrl(doc->url()));
+            return DUChainUtils::declarationInLine(cursor, DUChainUtils::standardContextForUrl(doc->url()));
         }
     }
 
@@ -483,7 +488,6 @@ AbstractType::Ptr Helper::contentOfIterable(const AbstractType::Ptr iterable)
 AbstractType::Ptr Helper::mergeTypes(AbstractType::Ptr type, const AbstractType::Ptr newType)
 {
     UnsureType::Ptr ret;
-    ret.count();
     return TypeUtils::mergeTypes<Python::UnsureType>(type, newType);
 }
 

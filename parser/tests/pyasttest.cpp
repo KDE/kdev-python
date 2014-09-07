@@ -210,12 +210,12 @@ void PyAstTest::testExpressions_data()
     QTest::newRow("True") << "True";
 }
 
-Q_DECLARE_METATYPE(SimpleRange);
+Q_DECLARE_METATYPE(KTextEditor::Range);
 
 void PyAstTest::testCorrectedFuncRanges()
 {
     QFETCH(QString, code);
-    QFETCH(SimpleRange, range);
+    QFETCH(KTextEditor::Range, range);
 
     CodeAst::Ptr ast = getAst(code);
     QVERIFY(ast);
@@ -233,12 +233,12 @@ void PyAstTest::testCorrectedFuncRanges()
 void PyAstTest::testCorrectedFuncRanges_data()
 {
     QTest::addColumn<QString>("code");
-    QTest::addColumn<SimpleRange>("range");
+    QTest::addColumn<KTextEditor::Range>("range");
 
-    QTest::newRow("decorator") << "@decorate\ndef func(arg): pass" << SimpleRange(1, 4, 1, 7);
-    QTest::newRow("decorator_arg") << "@decorate(yomama=3)\ndef func(arg): pass" << SimpleRange(1, 4, 1, 7);
-    QTest::newRow("two_decorators") << "@decorate2\n@decorate\ndef func(arg): pass" << SimpleRange(2, 4, 2, 7);
-    QTest::newRow("decorate_class") << "class foo:\n @decorate2\n @decorate\n def func(arg): pass" << SimpleRange(3, 5, 3, 8);
+    QTest::newRow("decorator") << "@decorate\ndef func(arg): pass" << KTextEditor::Range(1, 4, 1, 7);
+    QTest::newRow("decorator_arg") << "@decorate(yomama=3)\ndef func(arg): pass" << KTextEditor::Range(1, 4, 1, 7);
+    QTest::newRow("two_decorators") << "@decorate2\n@decorate\ndef func(arg): pass" << KTextEditor::Range(2, 4, 2, 7);
+    QTest::newRow("decorate_class") << "class foo:\n @decorate2\n @decorate\n def func(arg): pass" << KTextEditor::Range(3, 5, 3, 8);
 }
 
 void PyAstTest::testNewPython3()

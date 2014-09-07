@@ -19,7 +19,7 @@
 #include <kexportplugin.h>
 #include <kpluginfactory.h>
 #include <KLocalizedString>
-#include <KAboutData>
+#include <K4AboutData>
 
 #include "pdbdebuggerplugin.h"
 #include "pdblauncher.h"
@@ -37,12 +37,12 @@ namespace Python {
 K_PLUGIN_FACTORY(PdbDebuggerPluginFactory, registerPlugin<PdbDebuggerPlugin>(); )
 K_EXPORT_PLUGIN(PdbDebuggerPluginFactory(
     KAboutData("kdevpdbsupport", "kdevpython", ki18n("Python Debugger (pdb) Support"),
-               KDEVPYTHON_VERSION_STR, ki18n("Support for the Python Debugger"), KAboutData::License_GPL)
+               KDEVPYTHON_VERSION_STR, ki18n("Support for the Python Debugger"), K4AboutData::License_GPL)
     .addAuthor(ki18n("Sven Brauch"), ki18n("Author"), "svenbrauch@googlemail.com", "")
 ))
 
 PdbDebuggerPlugin::PdbDebuggerPlugin(QObject* parent, const QVariantList&) 
-    : IPlugin(PdbDebuggerPluginFactory::componentData(), parent)
+    : IPlugin("kdevpdbsupport", parent)
 {
     IExecuteScriptPlugin* iface = KDevelop::ICore::self()->pluginController()
                             ->pluginForExtension("org.kdevelop.IExecuteScriptPlugin")->extension<IExecuteScriptPlugin>();

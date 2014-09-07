@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2010-2011 Sven Brauch <svenbrauch@googlemail.com>           *
+ * Copyright (c) 2010-2014 Sven Brauch <svenbrauch@googlemail.com>           *
  *                                                                           *
  * This program is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU General Public License as            *
@@ -20,6 +20,7 @@
 
 #include <KTextEditor/View>
 #include <KTextEditor/Document>
+#include <KTextEditor/CodeCompletionModelControllerInterface>
 
 #include "context.h"
 #include "worker.h"
@@ -65,25 +66,21 @@ bool PythonCodeCompletionModel::shouldAbortCompletion(KTextEditor::View* view, c
 {
     const QString text = view->document()->text(range);
     if ( completionContext() ) {
-        KSharedPtr<PythonCodeCompletionContext> context = KSharedPtr<PythonCodeCompletionContext>::staticCast(
-            completionContext()
-        );
+        auto context = static_cast<PythonCodeCompletionContext*>(completionContext().data());
         if ( context->completionContextType() == PythonCodeCompletionContext::StringFormattingCompletion ) {
             if ( text.endsWith('"') || text.endsWith("'") || text.endsWith(' ') ) {
                 return true;
             }
         }
     }
-    return KTextEditor::CodeCompletionModelControllerInterface3::shouldAbortCompletion(view, range, currentCompletion);
+    return KTextEditor::CodeCompletionModelControllerInterface::shouldAbortCompletion(view, range, currentCompletion);
 }
 
 QString PythonCodeCompletionModel::filterString(KTextEditor::View *view, const KTextEditor::Range &range, const KTextEditor::Cursor &position)
 {
     // TODO The completion context may be null, so we need to check it first. This might a bug.
     if ( completionContext() ) {
-        KSharedPtr<PythonCodeCompletionContext> context = KSharedPtr<PythonCodeCompletionContext>::staticCast(
-            completionContext()
-        );
+        auto context = QExplicitlySharedDataPointer<PythonCodeCompletionContext>(completionContext());
         if (context->completionContextType() == PythonCodeCompletionContext::StringFormattingCompletion) {
             return QString();
         }
@@ -95,7 +92,7 @@ KTextEditor::Range PythonCodeCompletionModel::completionRange(KTextEditor::View*
 {
     m_currentDocument = view->document()->url();
     kWarning() << "Current document: " << m_currentDocument;
-    return KTextEditor::CodeCompletionModelControllerInterface3::completionRange(view, position);
+    return KTextEditor::CodeCompletionModelControllerInterface::completionRange(view, position);
 }
 
 KDevelop::CodeCompletionWorker* PythonCodeCompletionModel::createCompletionWorker()

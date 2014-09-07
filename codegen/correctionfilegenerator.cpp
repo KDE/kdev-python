@@ -21,7 +21,6 @@
 #include "correctionfilegenerator.h"
 
 #include <QTemporaryFile>
-#include <QAbstractFileEngine>
 
 #include <language/backgroundparser/backgroundparser.h>
 #include <language/duchain/duchainlock.h>
@@ -67,7 +66,7 @@ void TypeCorrection::doContextMenu(ContextMenuExtension &extension, Context *con
                                  && declaration->abstractType()->whichType() == AbstractType::TypeFunction)) ) {
             QAction* action = new QAction(i18n("Specify type for \"%1\"...", declaration->qualifiedIdentifier().toString()), 0);
             action->setData(QVariant::fromValue(IndexedDeclaration(declaration)));
-            action->setIcon(KIcon("code-class"));
+            action->setIcon(QIcon::fromTheme("code-class"));
             connect(action, SIGNAL(triggered(bool)), this, SLOT(executeSpecifyTypeAction()));
 
             extension.addAction(ContextMenuExtension::ExtensionGroup, action);

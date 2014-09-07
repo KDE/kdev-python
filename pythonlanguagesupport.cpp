@@ -83,7 +83,7 @@ KDevelop::ContextMenuExtension LanguageSupport::contextMenuExtension(KDevelop::C
 }
 
 LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ )
-        : KDevelop::IPlugin( KDevPythonSupportFactory::componentData(), parent ),
+        : KDevelop::IPlugin("pythonlanguagesupport", parent ),
         KDevelop::ILanguageSupport()
 {
     KDEV_USE_EXTENSION_INTERFACE( KDevelop::ILanguageSupport )

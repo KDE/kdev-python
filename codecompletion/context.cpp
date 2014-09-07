@@ -107,7 +107,7 @@ QList< CompletionTreeElementPointer > PythonCodeCompletionContext::ungroupedElem
 
 static QList<CompletionTreeItemPointer> setOmitParentheses(QList<CompletionTreeItemPointer> items) {
     for ( auto current: items ) {
-        if ( auto func = KSharedPtr<FunctionDeclarationCompletionItem>::dynamicCast(current) ) {
+        if ( auto func = dynamic_cast<FunctionDeclarationCompletionItem*>(current.data()) ) {
             func->setDoNotCall(true);
         }
     }
@@ -373,8 +373,8 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::stringFormatt
     ItemList resultingItems;
     int cursorPosition;
     StringFormatter stringFormatter(CodeHelpers::extractStringUnderCursor(m_text,
-                                                                          m_duContext->range().castToSimpleRange().textRange(),
-                                                                          m_position.castToSimpleCursor().textCursor(),
+                                                                          m_duContext->range().castToSimpleRange(),
+                                                                          m_position.castToSimpleCursor(),
                                                                           &cursorPosition));
 
     kDebug() << "Next identifier id: " << stringFormatter.nextIdentifierId();
@@ -725,7 +725,6 @@ QList< CompletionTreeItemPointer > PythonCodeCompletionContext::getCompletionIte
     QList<CompletionTreeItemPointer> result;
     UnsureType::Ptr unsure = type.cast<UnsureType>();
     int count = unsure->typesSize();
-    kDebug() << "Getting completion items for " << count << "types of unsure type " << unsure;
     for ( int i = 0; i < count; i++ ) {
         result.append(getCompletionItemsForOneType(unsure->types()[i].abstractType()));
     }
@@ -1042,8 +1041,8 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     kDebug() << text << position << context->localScopeIdentifier().toString() << context->range();
     
     QPair<QString, QString> beforeAndAfterCursor = CodeHelpers::splitCodeByCursor(text,
-                                                                                  context->range().castToSimpleRange().textRange(),
-                                                                                  position.castToSimpleCursor().textCursor());
+                                                                                  context->range().castToSimpleRange(),
+                                                                                  position.castToSimpleCursor());
 
     // check if the current position is inside a multi-line comment -> no completion if this is the case
     CodeHelpers::EndLocation location = CodeHelpers::endsInside(beforeAndAfterCursor.first);

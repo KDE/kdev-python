@@ -23,6 +23,7 @@
 #include <language/duchain/types/functiontype.h>
 #include <language/duchain/aliasdeclaration.h>
 #include <language/duchain/types/containertypes.h>
+#include <shell/partcontroller.h>
 
 #include <KTextEditor/View>
 #include <KTextEditor/Document>
@@ -115,7 +116,7 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
         case KDevelop::CodeCompletionModel::MatchQuality: {
             if (    m_typeHint == PythonCodeCompletionContext::IterableRequested
                  && dec && dec->type<FunctionType>()
-                 && dynamic_cast<ListType*>(dec->type<FunctionType>()->returnType().unsafeData()) )
+                 && dynamic_cast<ListType*>(dec->type<FunctionType>()->returnType().data()) )
             {
                 return 2 + PythonDeclarationCompletionItem::data(index, role, model).toInt();
             }
@@ -173,7 +174,7 @@ void FunctionDeclarationCompletionItem::executed(KTextEditor::Document* document
         }
     }
     document->replaceText(word, declaration()->identifier().toString() + suffix);
-    if ( View* view = document->activeView() ) {
+    if ( auto view = static_cast<KDevelop::PartController*>(ICore::self()->partController())->activeView() ) {
         view->setCursorPosition( Cursor(word.end().line(), word.end().column() + skip) );
     }
 }

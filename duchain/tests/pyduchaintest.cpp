@@ -33,7 +33,7 @@
 #include <language/duchain/duchain.h>
 #include <QtTest/QtTest>
 #include <KStandardDirs>
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 #include <language/duchain/types/functiontype.h>
 #include <language/duchain/types/containertypes.h>
 #include <language/duchain/aliasdeclaration.h>
@@ -41,6 +41,8 @@
 #include <language/interfaces/iastcontainer.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <tests/testfile.h>
+
+#include <KTextEditor/Range>
 
 #include "parsesession.h"
 #include "pythoneditorintegrator.h"
@@ -566,7 +568,7 @@ void PyDUChainTest::testSimple()
     foreach(Declaration* d, declarations) {
         usesCount += d->uses().size();
         
-        QVERIFY(!d->abstractType().isNull());
+        QVERIFY(d->abstractType());
     }
     
     QCOMPARE(usesCount, uses);
@@ -588,10 +590,10 @@ void PyDUChainTest::testSimple_data()
 class AttributeRangeTestVisitor : public AstDefaultVisitor {
 public:
     bool found;
-    SimpleRange searchingForRange;
+    KTextEditor::Range searchingForRange;
     QString searchingForIdentifier;
     virtual void visitAttribute(AttributeAst* node) {
-        SimpleRange r(0, node->startCol, 0, node->endCol);
+        auto r = KTextEditor::Range(0, node->startCol, 0, node->endCol);
         qDebug() << "Found attr: " << r << node->attribute->value << ", looking for: " << searchingForRange << searchingForIdentifier;
         if ( r == searchingForRange && node->attribute->value == searchingForIdentifier ) {
             found = true;
@@ -600,7 +602,7 @@ public:
         AstDefaultVisitor::visitAttribute(node);
     }
     virtual void visitFunctionDefinition(FunctionDefinitionAst* node) {
-        SimpleRange r(0, node->name->startCol, 0, node->name->endCol);
+        auto r = KTextEditor::Range(0, node->name->startCol, 0, node->name->endCol);
         qDebug() << "Found func: " << r << node->name->value << ", looking for: " << searchingForRange << searchingForIdentifier;
         qDebug() << node->arguments->vararg << node->arguments->kwarg;
         if ( r == searchingForRange && node->name->value == searchingForIdentifier ) {
@@ -608,7 +610,7 @@ public:
             return;
         }
         if ( node->arguments->vararg ) {
-            SimpleRange r(0, node->arguments->vararg->startCol, 0, node->arguments->vararg->startCol+node->arguments->vararg->argumentName->value.length());
+            auto r = KTextEditor::Range(0, node->arguments->vararg->startCol, 0, node->arguments->vararg->startCol+node->arguments->vararg->argumentName->value.length());
             qDebug() << "Found vararg: " << node->arguments->vararg->argumentName->value << r;
             if ( r == searchingForRange && node->arguments->vararg->argumentName->value == searchingForIdentifier ) {
                 found = true;
@@ -616,7 +618,7 @@ public:
             }
         }
         if ( node->arguments->kwarg ) {
-            SimpleRange r(0, node->arguments->kwarg->startCol, 0, node->arguments->kwarg->startCol+node->arguments->kwarg->argumentName->value.length());
+            auto r = KTextEditor::Range(0, node->arguments->kwarg->startCol, 0, node->arguments->kwarg->startCol+node->arguments->kwarg->argumentName->value.length());
             qDebug() << "Found kwarg: " << node->arguments->kwarg->argumentName->value << r;
             if ( r == searchingForRange && node->arguments->kwarg->argumentName->value == searchingForIdentifier ) {
                 found = true;
@@ -626,7 +628,7 @@ public:
         AstDefaultVisitor::visitFunctionDefinition(node);
     }
     virtual void visitClassDefinition(ClassDefinitionAst* node) {
-        SimpleRange r(0, node->name->startCol, 0, node->name->endCol);
+        auto r = KTextEditor::Range(0, node->name->startCol, 0, node->name->endCol);
         qDebug() << "Found cls: " << r << node->name->value << ", looking for: " << searchingForRange << searchingForIdentifier;
         if ( r == searchingForRange && node->name->value == searchingForIdentifier ) {
             found = true;
@@ -669,7 +671,7 @@ void PyDUChainTest::testRanges()
         int scol = column_ranges.at(i).split(",")[0].toInt();
         int ecol = column_ranges.at(i).split(",")[1].toInt();
         QString identifier = column_ranges.at(i).split(",")[2];
-        SimpleRange r(0, scol, 0, ecol);
+        auto r = KTextEditor::Range(0, scol, 0, ecol);
         
         AttributeRangeTestVisitor* visitor = new AttributeRangeTestVisitor();
         visitor->searchingForRange = r;
@@ -718,7 +720,6 @@ public:
             return;
         }
         Declaration* d = decls.last();
-        kDebug() << "Declaration: " << node->identifier->value << d->type<StructureType>();
         QVERIFY(d->abstractType());
         kDebug() << "found: " << node->identifier->value << "is" << d->abstractType()->toString() << "should be" << searchingForType;
         if ( d->abstractType()->toString().replace("__kdevpythondocumentation_builtin_", "").startsWith(searchingForType) ) {
@@ -1244,7 +1245,6 @@ void PyDUChainTest::testContainerTypes()
     QList<Declaration*> decls = ctx->findDeclarations(QualifiedIdentifier("checkme"));
     QVERIFY(decls.length() > 0);
     QVERIFY(decls.first()->abstractType());
-    kDebug() << "TEST type is: " << decls.first()->abstractType().unsafeData()->toString();
     if ( ! use_type ) {
         auto type = ListType::Ptr::dynamicCast(decls.first()->abstractType());
         QVERIFY(type);

@@ -24,10 +24,11 @@
 #define PYTHON_MISSINGINCLUDEASSISTANT_H
 
 #include <interfaces/iassistant.h>
-#include <language/duchain/indexedstring.h>
+#include <serialization/indexedstring.h>
 #include <language/duchain/problem.h>
 
 #include <QObject>
+#include <QExplicitlySharedDataPointer>
 
 namespace Python {
 
@@ -35,7 +36,7 @@ namespace Python {
 class MissingIncludeProblem : public KDevelop::Problem {
 public:
     MissingIncludeProblem(const QString& moduleName, KDevelop::IndexedString currentDocument);
-    virtual KSharedPtr< KDevelop::IAssistant > solutionAssistant() const;
+    virtual QExplicitlySharedDataPointer<KDevelop::IAssistant> solutionAssistant() const override;
 
 private:
     QString m_moduleName;

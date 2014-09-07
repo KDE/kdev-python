@@ -49,7 +49,7 @@ void PythonCodeCompletionWorker::updateContextRange(KTextEditor::Range &contextR
 {
     if ( CodeHelpers::endsInside(view->document()->text(contextRange)) == CodeHelpers::String ) {
         kDebug() << "we're dealing with string completion. extend the range";
-        contextRange = context->rangeInCurrentRevision().textRange();
+        contextRange = context->rangeInCurrentRevision();
     }
 }
 

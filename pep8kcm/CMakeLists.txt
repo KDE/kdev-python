@@ -11,6 +11,7 @@ target_link_libraries(kcm_pep8
     ${KDEVPLATFORM_PROJECT_LIBRARIES}
     ${KDEVPLATFORM_UTIL_LIBRARIES}
     KF5::NewStuff
+    KF5::KCMUtils
     ${KDEVPLATFORM_INTERFACES_LIBRARIES}
 )
 

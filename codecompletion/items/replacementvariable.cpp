@@ -21,7 +21,7 @@
 #include <KTextEditor/View>
 #include <KTextEditor/Document>
 #include <KTextEditor/CodeCompletionModel>
-#include <KTextEditor/TemplateInterface2>
+// #include <KTextEditor/TemplateInterface> not currently supported
 #include <language/duchain/ducontext.h>
 #include <language/codecompletion/codecompletionmodel.h>
 
@@ -63,11 +63,15 @@ void ReplacementVariableItem::execute(Document *document, const Range &word)
     }
 
     if ( m_hasEditableFields ) {
-        TemplateInterface2 *templateInterface = qobject_cast<TemplateInterface2 *>(document->activeView());
-        if ( templateInterface ) {
+        qWarning() << "template interface not supported by editor";
+#if 0
+        TODO: re-enable once the template interface exists again
+        auto iface = qobject_cast<TemplateInterface2*>(ICore::self()->partController()->activeView());
+        if ( iface ) {
             document->removeText(removeRange);
-            templateInterface->insertTemplateText(removeRange.start(), m_variable.toString(), QMap<QString, QString>(), NULL);
+            iface->insertTemplateText(removeRange.start(), m_variable.toString(), QMap<QString, QString>(), NULL);
         }
+#endif
     }
     else {
         document->removeText(removeRange);

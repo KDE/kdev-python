@@ -57,7 +57,7 @@ void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, co
         QString contentType;
         if ( map ) {
             if ( auto key = map->keyType().abstractType() ) {
-                IdentifiedType* identifiedKey = dynamic_cast<IdentifiedType*>(key.unsafeData());
+                IdentifiedType* identifiedKey = dynamic_cast<IdentifiedType*>(key.data());
                 if ( identifiedKey ) {
                     contentType.append(getLink(key->toString(), DeclarationPointer(
                         identifiedKey->declaration(m_topContext.data())),
@@ -71,7 +71,7 @@ void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, co
             }
         }
         if ( AbstractType::Ptr contents = t->contentType().abstractType() ) {
-            IdentifiedType* identifiedContent = dynamic_cast<IdentifiedType*>(contents.unsafeData());
+            IdentifiedType* identifiedContent = dynamic_cast<IdentifiedType*>(contents.data());
             if ( identifiedContent ) {
                 contentType.append(getLink(contents->toString(), DeclarationPointer(
                     identifiedContent->declaration(m_topContext.data())),

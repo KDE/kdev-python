@@ -44,18 +44,18 @@ void DumpChain::dump( DUContext * context, bool imported )
 {
     if( !context )
         return;
-    kDebug() << QString( indent*2, ' ' ) << (imported ? "==import==> Context " : "New Context ") << context->scopeIdentifier(true) << context->transformFromLocalRevision(context->range()).textRange() << " " << context << " " << (dynamic_cast<TopDUContext*>(context) ? "top-context" : "");
+    kDebug() << QString( indent*2, ' ' ) << (imported ? "==import==> Context " : "New Context ") << context->scopeIdentifier(true) << context->transformFromLocalRevision(context->range()) << " " << context << " " << (dynamic_cast<TopDUContext*>(context) ? "top-context" : "");
     if (!imported)
     {
         foreach (Declaration* dec, context->localDeclarations())
         {
-            kDebug() << QString( (indent+1)*2, ' ' ) << "Declaration: " << dec->toString() << " [" << dec->qualifiedIdentifier() << "]  "<< dec << "(internal ctx" << dec->internalContext() << ")" << context->transformFromLocalRevision(dec->range()).textRange() << ", "<< ( dec->isDefinition() ? "definition, " : "declaration, " ) << dec->uses().count() << "use(s)";
+            kDebug() << QString( (indent+1)*2, ' ' ) << "Declaration: " << dec->toString() << " [" << dec->qualifiedIdentifier() << "]  "<< dec << "(internal ctx" << dec->internalContext() << ")" << context->transformFromLocalRevision(dec->range()) << ", "<< ( dec->isDefinition() ? "definition, " : "declaration, " ) << dec->uses().count() << "use(s)";
             for( QMap<IndexedString, QList<RangeInRevision> >::const_iterator it = dec->uses().constBegin(); it != dec->uses().constEnd(); ++it )
             {
                 kDebug() << QString((indent+1)*2, ' ') << "File:" << it.key().str();
                 foreach(const RangeInRevision& r, it.value())
                 {
-                    kDebug() << QString((indent+2)*2, ' ') << "Use:" << context->transformFromLocalRevision(r).textRange();
+                    kDebug() << QString((indent+2)*2, ' ') << "Use:" << context->transformFromLocalRevision(r);
                 }
             }
         }

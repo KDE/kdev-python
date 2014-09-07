@@ -36,6 +36,7 @@
 #include <QUrl>
 #include <QDebug>
 #include <QTemporaryFile>
+#include <QIcon>
 
 #include <KStandardDirs>
 #include <KMessageBox>
@@ -47,6 +48,7 @@
 #include <knewstuff3/uploaddialog.h>
 #include <KTar>
 #include <KTextEditor/Document>
+#include <KDialog>
 
 DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
     : QWidget(parent)
@@ -68,15 +70,15 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
     // construct the buttons for up/download
     QVBoxLayout* buttonsLayout = new QVBoxLayout;
     QPushButton* ghnsButton = new QPushButton(i18n("Download new"));
-    ghnsButton->setIcon(KIcon("get-hot-new-stuff"));
+    ghnsButton->setIcon(QIcon::fromTheme("get-hot-new-stuff"));
     QPushButton* generateButton = new QPushButton(i18n("Generate..."));
-    generateButton->setIcon(KIcon("tools-wizard"));
+    generateButton->setIcon(QIcon::fromTheme("tools-wizard"));
     QPushButton* uploadButton = new QPushButton(i18n("Share selected"));
-    uploadButton->setIcon(KIcon("applications-internet")); // TODO better icon semantically
+    uploadButton->setIcon(QIcon::fromTheme("applications-internet")); // TODO better icon semantically
     QPushButton* importButton = new QPushButton(i18n("Import from editor"));
     importButton->setToolTip(i18n("Copy the contents of the active editor window "
                                   "to a new file in the documentation directory"));
-    importButton->setIcon(KIcon("edit-copy"));
+    importButton->setIcon(QIcon::fromTheme("edit-copy"));
     buttonsLayout->addWidget(ghnsButton);
     buttonsLayout->addWidget(uploadButton);
     buttonsLayout->addWidget(generateButton);
@@ -92,11 +94,11 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
     QFrame* separator2 = new QFrame();
     separator2->setFrameShape(QFrame::HLine);
     QPushButton* openFileManagerButton = new QPushButton(i18n("Open file manager"));
-    openFileManagerButton->setIcon(KIcon("system-file-manager"));
+    openFileManagerButton->setIcon(QIcon::fromTheme("system-file-manager"));
     QPushButton* openTextEditorButton = new QPushButton(i18nc("Edit selected files", "Edit selected"));
-    openTextEditorButton->setIcon(KIcon("kate"));
+    openTextEditorButton->setIcon(QIcon::fromTheme("kate"));
     QPushButton* searchPathsButton = new QPushButton(i18n("Search paths..."));
-    searchPathsButton->setIcon(KIcon("folder"));
+    searchPathsButton->setIcon(QIcon::fromTheme("folder"));
     buttonsLayout->addWidget(separator);
     buttonsLayout->addWidget(openFileManagerButton);
     buttonsLayout->addWidget(openTextEditorButton);
@@ -158,7 +160,7 @@ void DocfileManagerWidget::copyEditorContents()
     KDevelop::IDocumentController* documentController = KDevelop::ICore::self()->documentController();
     if ( documentController->activeDocument() ) {
         if ( KTextEditor::Document* doc = documentController->activeDocument()->textDocument() ) {
-            KDialog* dialog = new KDialog(this);
+            auto dialog = new KDialog(this);
             dialog->setButtons(KDialog::Ok | KDialog::Cancel);
             QWidget* contents = new QWidget;
             contents->setLayout(new QVBoxLayout);

@@ -804,7 +804,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
         p->setSource(KDevelop::ProblemData::SemanticAnalysis);
         p->setSeverity(KDevelop::ProblemData::Warning);
         p->setDescription(i18n("Module \"%1\" not found", moduleName));
-        problemEncountered.attach(p);
+        problemEncountered = p;
         return 0;
     }
     if ( ! moduleContext ) {
@@ -843,7 +843,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
                 p->setSource(KDevelop::ProblemData::SemanticAnalysis);
                 p->setSeverity(KDevelop::ProblemData::Warning);
                 p->setDescription(i18n("Declaration for \"%1\" not found in specified module", moduleInfo.second.join(".")));
-                problemEncountered.attach(p);
+                problemEncountered = p;
             }
         }
     }
@@ -1045,7 +1045,6 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
             indexInVararg++;
             Declaration* parameter = parameters.at(lastFunctionDeclaration->vararg()+hasSelfArgument);
             IndexedContainer::Ptr varargContainer = parameter->type<IndexedContainer>();
-            kDebug() << "vararg container:" << varargContainer;
             kDebug() << "adding" << addType->toString() << "at position" << indexInVararg;
             if ( ! varargContainer ) continue;
             if ( varargContainer->typesCount() > indexInVararg ) {
@@ -1059,7 +1058,6 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
             parameter->setAbstractType(varargContainer.cast<AbstractType>());
         }
         else {
-            kDebug() << "adding" << argumentType << "at position" << currentArgumentIndex << "/" << currentParamIndex;
             if ( ! argumentType ) continue;
             AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(currentParamIndex)->abstractType(),
                                                             addType.cast<AbstractType>());
@@ -1624,7 +1622,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
                 DUChainWriteLocker lock;
                 KDevelop::Problem *p = new KDevelop::Problem();
                  // only mark first line
-                p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(node->startLine, node->startCol, node->startLine, 10000)));
+                p->setFinalLocation(DocumentRange(currentlyParsedDocument(), KTextEditor::Range(node->startLine, node->startCol, node->startLine, 10000)));
                 p->setSource(KDevelop::ProblemData::SemanticAnalysis);
                 p->setSeverity(KDevelop::ProblemData::Warning);
                 p->setDescription(i18n("Non-static class method without arguments, must have at least one (self)"));

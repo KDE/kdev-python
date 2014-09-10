@@ -21,6 +21,9 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
 
+#include <QDebug>
+#include "duchaindebug.h"
+
 #include "duchainbench.h"
 
 #include <language/duchain/topducontext.h>
@@ -48,7 +51,7 @@ DUChainBench::DUChainBench(QObject* parent): QObject(parent)
         qFatal("Failed to create temp directory, Aboring");
     }
     testDir = QDir(QString(tempdirname));
-    kDebug() << "tempdirname" << tempdirname;
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "tempdirname" << tempdirname;
 
     initShell();
 }
@@ -63,7 +66,7 @@ void DUChainBench::initShell()
     KUrl doc_url = KUrl(KStandardDirs::locate("data", "kdevpythonsupport/documentation_files/builtindocumentation.py"));
     doc_url.cleanPath(KUrl::SimplifyDirSeparators);
 
-    kDebug() << doc_url;
+    qCDebug(KDEV_PYTHON_DUCHAIN) << doc_url;
 
     DUChain::self()->updateContextForUrl(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
     ICore::self()->languageController()->backgroundParser()->parseDocuments();

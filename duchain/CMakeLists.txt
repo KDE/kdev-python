@@ -19,6 +19,7 @@ set(duchain_SRCS
     declarationbuilder.cpp
     usebuilder.cpp
     dumpchain.cpp
+    duchaindebug.cpp
 
     navigation/navigationwidget.cpp
     navigation/declarationnavigationcontext.cpp

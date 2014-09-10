@@ -29,7 +29,9 @@
 
 #include <iostream>
 
-#include <KDebug>
+#include <QDebug>
+#include "../duchaindebug.h"
+
 #include <KStandardDirs>
 #include <KAction>
 #include <KLocalizedString>

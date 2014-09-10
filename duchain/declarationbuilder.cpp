@@ -48,6 +48,10 @@
 
 #include <QByteArray>
 #include <QtGlobal>
+
+#include <QDebug>
+#include "duchaindebug.h"
+
 #include <KUrl>
 
 #include <functional>
@@ -63,7 +67,7 @@ DeclarationBuilder::DeclarationBuilder(Python::PythonEditorIntegrator* editor, i
     , m_ownPriority(ownPriority)
 {
     setEditor(editor);
-    kDebug() << "Building Declarations";
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "Building Declarations";
 }
 
 DeclarationBuilder:: ~DeclarationBuilder()
@@ -89,18 +93,18 @@ ReferencedTopDUContext DeclarationBuilder::build(const IndexedString& url, Ast* 
     // The declaration builder needs to run twice, so it can resolve uses of e.g. functions
     // which are called before they are defined (which is easily possible, due to python's dynamic nature).
     if ( ! m_prebuilding ) {
-        kDebug() << "building, but running pre-builder first";
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "building, but running pre-builder first";
         DeclarationBuilder* prebuilder = new DeclarationBuilder(editor());
         prebuilder->m_ownPriority = m_ownPriority;
         prebuilder->m_currentlyParsedDocument = currentlyParsedDocument();
         prebuilder->setPrebuilding(true);
         prebuilder->m_futureModificationRevision = m_futureModificationRevision;
         updateContext = prebuilder->build(url, node, updateContext);
-        kDebug() << "pre-builder finished";
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "pre-builder finished";
         delete prebuilder;
     }
     else {
-        kDebug() << "prebuilding";
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "prebuilding";
     }
     return DeclarationBuilderBase::build(url, node, updateContext);
 }
@@ -213,7 +217,7 @@ template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclar
         Declaration* fitting = dynamic_cast<T*>(d);
         if ( ! fitting ) {
             // Only use a declaration if the type matches
-            kDebug() << "skipping" << d->toString() << "which could not be cast to the requested type";
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "skipping" << d->toString() << "which could not be cast to the requested type";
             continue;
         }
         // Do not use declarations which have been encountered previously;
@@ -236,7 +240,7 @@ template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclar
                 break;
             }
             else {
-                kDebug() << "Not opening previously existing declaration because it's in another top context";
+                qCDebug(KDEV_PYTHON_DUCHAIN) << "Not opening previously existing declaration because it's in another top context";
             }
         }
         else if ( ! invalidType ) {
@@ -320,7 +324,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         if ( currentContext()->type() == DUContext::Function ) {
             // check for argument type hints (those are created when calling functions)
             AbstractType::Ptr hints = Helper::extractTypeHints(dec->abstractType(), topContext());
-            kDebug() << hints->toString();
+            qCDebug(KDEV_PYTHON_DUCHAIN) << hints->toString();
             if ( hints.cast<IndexedContainer>() || hints.cast<ListType>() ) {
                 // This only happens when the type hint is a tuple, which means the vararg/kwarg of a function is being processed.
                 newType = hints;
@@ -478,7 +482,7 @@ Declaration* DeclarationBuilder::findDeclarationInContext(QStringList dottedName
         // break if the list of identifiers is not yet totally worked through and no
         // declaration with an internal context was found
         if ( declarations.isEmpty() or ( not declarations.last()->internalContext() and identifierCount != i ) ) {
-            kDebug() << "Declaration not found: " << dottedNameIdentifier << "in top context" << ctx->url().toUrl().path();
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "Declaration not found: " << dottedNameIdentifier << "in top context" << ctx->url().toUrl().path();
             return 0;
         }
         else {
@@ -620,7 +624,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
     Q_ASSERT( ( innerCtx.data() || aliasDeclaration ) && "exactly one of innerCtx or aliasDeclaration must be provided");
     Q_ASSERT( ( !innerCtx.data() || !aliasDeclaration ) && "exactly one of innerCtx or aliasDeclaration must be provided");
     
-    kDebug() << "creating declaration tree for" << nameComponents;
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "creating declaration tree for" << nameComponents;
     
     Declaration* lastDeclaration = 0;
     int depth = 0;
@@ -642,14 +646,14 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
     QStringList remainingNameComponents;
     bool injectingContext = false;
     if ( lastDeclaration and lastDeclaration->internalContext() ) {
-        kDebug() << "Found existing import statement while creating declaration for " << declarationIdentifier->value;
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "Found existing import statement while creating declaration for " << declarationIdentifier->value;
         for ( int i = depth; i < nameComponents.length(); i++ ) {
             remainingNameComponents.append(nameComponents.at(i));
         }
         extendingPreviousImportCtx = lastDeclaration->internalContext();
         injectContext(extendingPreviousImportCtx);
         injectingContext = true;
-        kDebug() << "remaining identifiers:" << remainingNameComponents;
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "remaining identifiers:" << remainingNameComponents;
     }
     else {
         remainingNameComponents = nameComponents;
@@ -712,14 +716,14 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
             }
             d->setAutoDeclaration(true);
             currentContext()->createUse(d->ownIndex(), displayRange);
-            kDebug() << "really encountered:" << d << "; scheduled:" << m_scheduledForDeletion;
-            kDebug() << d->toString();
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "really encountered:" << d << "; scheduled:" << m_scheduledForDeletion;
+            qCDebug(KDEV_PYTHON_DUCHAIN) << d->toString();
             scheduleForDeletion(d, false);
-            kDebug() << "scheduled:" << m_scheduledForDeletion;
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "scheduled:" << m_scheduledForDeletion;
         }
         if ( done ) break;
         
-        kDebug() << "creating context for " << component;
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "creating context for " << component;
         // otherwise, create a new "level" entry (a pseudo type + context + declaration which contains all imported items)
         StructureType::Ptr moduleType = StructureType::Ptr(new StructureType());
         openType(moduleType);
@@ -739,17 +743,17 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
         openedTypes.append(moduleType);
         if ( i == remainingNameComponents.length() - 1 ) {
             if ( innerCtx ) {
-                kDebug() << "adding imported context to inner declaration";
+                qCDebug(KDEV_PYTHON_DUCHAIN) << "adding imported context to inner declaration";
                 currentContext()->addImportedParentContext(innerCtx);
             }
             else if ( aliasDeclaration ) {
-                kDebug() << "setting alias declaration on inner declaration";
+                qCDebug(KDEV_PYTHON_DUCHAIN) << "setting alias declaration on inner declaration";
             }
         }
     }
     for ( int i = openedContexts.length() - 1; i >= 0; i-- ) {
         // Close all the declarations and contexts opened previosly, and assign the types.
-        kDebug() << "closing context";
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "closing context";
         closeType();
         closeContext();
         Declaration* d = openedDeclarations.at(i);
@@ -787,8 +791,8 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
     }
     Q_ASSERT(range.isValid());
     
-    kDebug() << "Found module path [path/path in file]: " << moduleInfo;
-    kDebug() << "Declaration identifier:" << declarationIdentifier->value;
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "Found module path [path/path in file]: " << moduleInfo;
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "Declaration identifier:" << declarationIdentifier->value;
     DUChainWriteLocker lock;
     const IndexedString modulePath = IndexedString(moduleInfo.first);
     ReferencedTopDUContext moduleContext = DUChain::self()->chainForDocument(modulePath);
@@ -798,7 +802,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
         // The file was not found -- this is either an error in the user's code,
         // a missing module, or a C module (.so) which is unreadable for kdevelop
         // TODO imrpove error handling in case the module exists as a shared object or .pyc file only
-        kDebug() << "invalid or non-existent URL:" << moduleInfo;
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "invalid or non-existent URL:" << moduleInfo;
         KDevelop::Problem *p = new Python::MissingIncludeProblem(moduleName, currentlyParsedDocument());
         p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange()));
         p->setSource(KDevelop::ProblemData::SemanticAnalysis);
@@ -809,7 +813,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
     }
     if ( ! moduleContext ) {
         // schedule the include file for parsing, and schedule the current one for reparsing after that is done
-        kDebug() << "No module context, recompiling";
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "No module context, recompiling";
         m_unresolvedImports.append(modulePath);
         Helper::scheduleDependency(modulePath, m_ownPriority);
         // parseDocuments() must *not* be called from a background thread!
@@ -825,11 +829,11 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
         // import a specific declaration from the given file
         lock.lock();
         if ( declarationIdentifier->value == "*" ) {
-            kDebug() << "Importing * from module";
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "Importing * from module";
             currentContext()->addImportedParentContext(moduleContext);
         }
         else {
-            kDebug() << "Got module, importing declaration: " << moduleInfo.second;
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "Got module, importing declaration: " << moduleInfo.second;
             Declaration* originalDeclaration = findDeclarationInContext(moduleInfo.second, moduleContext);
             if ( originalDeclaration ) {
                 DUChainWriteLocker lock(DUChain::lock());
@@ -933,7 +937,7 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
             return;
         }
         DUChainWriteLocker wlock;
-        kDebug() << "Adding content type: " << argVisitor.lastType()->toString();
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "Adding content type: " << argVisitor.lastType()->toString();
         container->addContentType<Python::UnsureType>(argVisitor.lastType());
         v.lastDeclaration()->setType(container);
     };
@@ -1022,7 +1026,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
             atVararg = true;
         }
 
-        kDebug() << currentParamIndex << currentArgumentIndex << atVararg << lastFunctionDeclaration->vararg();
+        qCDebug(KDEV_PYTHON_DUCHAIN) << currentParamIndex << currentArgumentIndex << atVararg << lastFunctionDeclaration->vararg();
 
         ExpressionAst* arg = node->arguments.at(currentArgumentIndex);
 
@@ -1045,7 +1049,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
             indexInVararg++;
             Declaration* parameter = parameters.at(lastFunctionDeclaration->vararg()+hasSelfArgument);
             IndexedContainer::Ptr varargContainer = parameter->type<IndexedContainer>();
-            kDebug() << "adding" << addType->toString() << "at position" << indexInVararg;
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "adding" << addType->toString() << "at position" << indexInVararg;
             if ( ! varargContainer ) continue;
             if ( varargContainer->typesCount() > indexInVararg ) {
                 AbstractType::Ptr oldType = varargContainer->typeAt(indexInVararg).abstractType();
@@ -1314,7 +1318,7 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
     DeclarationPointer parentObjectDeclaration = checkPreviousAttributes.lastDeclaration();
 
     if ( ! parentObjectDeclaration ) {
-        kDebug() << "No declaration for attribute base, aborting creation of attribute";
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "No declaration for attribute base, aborting creation of attribute";
         return;
     }
     // if foo is a class, this is like foo.bar = 3
@@ -1331,7 +1335,7 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
         internal = parentObjectDeclaration->internalContext();
     }
     if ( ! internal ) {
-        kDebug() << "No internal context for structure type, aborting creation of attribute declaration";
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "No internal context for structure type, aborting creation of attribute declaration";
         return;
     }
 
@@ -1648,11 +1652,11 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         lock.lock();
         if ( v.lastType() && v.isAlias() ) {
             type->setReturnType(Helper::mergeTypes(type->returnType(), v.lastType()));
-            kDebug() << "updated function return type to " << type->toString();
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "updated function return type to " << type->toString();
             dec->setType(type);
         }
         else if ( ! v.isAlias()) {
-            kDebug() << "not updating function return type because expression is not a type object";
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "not updating function return type because expression is not a type object";
         }
     }
     
@@ -1812,7 +1816,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
     int parametersCount = node->arguments.length();
     int firstDefaultParameterOffset = parametersCount - defaultParametersCount;
     int currentIndex = 0;
-    kDebug() << "arguments:" << node->arguments.size();
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "arguments:" << node->arguments.size();
     foreach ( ArgAst* arg, node->arguments ) {
         // Iterate over all the function's arguments, create declarations, and add the arguments
         // to the functions FunctionType.
@@ -1822,12 +1826,12 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             continue;
         }
 
-        kDebug() << "visiting argument:" << arg->argumentName->value;
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "visiting argument:" << arg->argumentName->value;
 
         // Create a variable declaration for the parameter, to be used in the function body.
         Declaration* paramDeclaration = visitVariableDeclaration<Declaration>(arg->argumentName);
         if ( ! paramDeclaration ) {
-            kDebug() << "could not create parameter declaration!";
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "could not create parameter declaration!";
             continue;
         }
 
@@ -1852,7 +1856,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             workingOnDeclaration->addDefaultParameter(IndexedString("..."));
         }
 
-        kDebug() << "is first:" << isFirst << hasCurrentDeclaration() << currentDeclaration();
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "is first:" << isFirst << hasCurrentDeclaration() << currentDeclaration();
         if ( isFirst && hasCurrentDeclaration() && currentContext() && currentContext()->parentContext() ) {
             DUChainReadLocker lock;
             if ( currentContext()->parentContext()->type() == DUContext::Class ) {
@@ -1865,7 +1869,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         paramDeclaration->setAbstractType(Helper::mergeTypes(paramDeclaration->abstractType(), argumentType));
         type->addArgument(argumentType);
         if ( argumentType ) {
-            kDebug() << "creating argument with type" << argumentType->toString();
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "creating argument with type" << argumentType->toString();
         }
     }
     // Handle *args, **kwargs, and assign them a list / dictionary type.

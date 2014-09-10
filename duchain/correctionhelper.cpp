@@ -28,6 +28,9 @@
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/declaration.h>
 
+#include <QDebug>
+#include "duchaindebug.h"
+
 #include <KStandardDirs>
 #include <QFile>
 
@@ -43,12 +46,12 @@ CorrectionHelper::CorrectionHelper(const IndexedString& _url, DeclarationBuilder
     if ( !absolutePath.isValid() || absolutePath.isEmpty() || ! QFile::exists(absolutePath.path()) ) {
         return;
     }
-    kDebug() << "Found correction file for " << _url.str() << ": " << absolutePath.path();
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "Found correction file for " << _url.str() << ": " << absolutePath.path();
 
     const IndexedString indexedPath(absolutePath);
     DUChainReadLocker lock;
     m_hintTopContext = DUChain::self()->chainForDocument(indexedPath);
-    kDebug() << "got top context for" << absolutePath << m_hintTopContext;
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "got top context for" << absolutePath << m_hintTopContext;
     m_contextStack.top() = m_hintTopContext.data();
     if ( ! m_hintTopContext ) {
         // The file exists, but was not parsed yet. Schedule it, and re-schedule the current one too.
@@ -80,7 +83,7 @@ void CorrectionHelper::enter(const KDevelop::Identifier& identifier)
         return;
     }
 
-    kDebug() << "Looking in " << identifier.toString();
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "Looking in " << identifier.toString();
     // there's a hint declaration for this object, put it on the stack
     DUContext* internal = decls.first()->internalContext();
     m_contextStack.push(internal);
@@ -109,7 +112,7 @@ AbstractType::Ptr CorrectionHelper::hintFor(const KDevelop::Identifier &identifi
         return hint;
     }
 
-    kDebug() << "Found specified correct type for " << identifier.toString() << decls.first()->abstractType()->toString();
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "Found specified correct type for " << identifier.toString() << decls.first()->abstractType()->toString();
     return decls.first()->abstractType();
 }
 

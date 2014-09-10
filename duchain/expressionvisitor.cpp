@@ -37,6 +37,9 @@
 #include <language/duchain/aliasdeclaration.h>
 #include <language/duchain/ducontext.h>
 
+#include <QDebug>
+#include "duchaindebug.h"
+
 #include <KLocalizedString>
 
 #include <functional>
@@ -184,7 +187,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
     }
     else {
         if ( actualDeclaration ) {
-            kDebug() << "Declaraton is not a class or function declaration";
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "Declaraton is not a class or function declaration";
         }
         return encounterUnknown();
     }
@@ -223,7 +226,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
     };
 
     QHash< QString, std::function<bool(QStringList, QString)> > knownDecoratorHints;
-    kDebug() << "Got function declaration with decorators, checking for list content type...";
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "Got function declaration with decorators, checking for list content type...";
     knownDecoratorHints["getsType"] = [&](QStringList /*arguments*/, QString /*currentHint*/) {
         if ( node->function->astType != Ast::AttributeAstType ) {
             return false;
@@ -232,7 +235,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
         // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
         baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
         if ( auto t = baseTypeVisitor.lastType().cast<ListType>() ) {
-            kDebug() << "Found container, using type";
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "Found container, using type";
             AbstractType::Ptr newType = t->contentType().abstractType();
             encounter(newType, DeclarationPointer(useDeclaration));
             return true;
@@ -249,7 +252,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
         baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
         DUChainWriteLocker lock;
         if ( auto t = baseTypeVisitor.lastType().cast<ListType>() ) {
-            kDebug() << "Got container:" << t->toString();
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "Got container:" << t->toString();
             auto newType = typeObjectForIntegralType<ListType>("list", context());
             if ( ! newType ) {
                 return false;
@@ -286,7 +289,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
     };
 
     knownDecoratorHints["getsListOfBoth"] = [&](QStringList /*arguments*/, QString /*currentHint*/) {
-        kDebug() << "Got getsListOfBoth decorator, checking container";
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "Got getsListOfBoth decorator, checking container";
         if ( node->function->astType != Ast::AttributeAstType ) {
             return false;
         }
@@ -295,7 +298,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
         baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
         DUChainWriteLocker lock;
         if ( auto t = baseTypeVisitor.lastType().cast<MapType>() ) {
-            kDebug() << "Got container:" << t->toString();
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "Got container:" << t->toString();
             auto resultingType = listOfTuples(t->keyType().abstractType(), t->contentType().abstractType());
             encounter(resultingType, DeclarationPointer(useDeclaration));
             return true;
@@ -305,7 +308,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
 
     knownDecoratorHints["returnContentEqualsContentOf"] = [&](QStringList arguments, QString /*currentHint*/) {
         int argNum = ! arguments.isEmpty() ? arguments.at(0).toInt() : 0;
-        kDebug() << "Found argument dependent decorator, checking argument type" << argNum;
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "Found argument dependent decorator, checking argument type" << argNum;
         if ( argNum >= node->arguments.length() ) {
             return false;
         }

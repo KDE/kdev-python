@@ -26,6 +26,9 @@
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/parsingenvironment.h>
 
+#include <QDebug>
+#include "../duchaindebug.h"
+
 #include <KLocalizedString>
 
 using namespace KDevelop;
@@ -58,15 +61,15 @@ bool HintedType::isValid(TopDUContext* /*current*/)
     }
     KDEBUG_BLOCK
     ModificationRevision rev(creator->parsingEnvironmentFile()->modificationRevision());
-    kDebug() << "current: " << rev.revision << "; created:" << d_func()->m_modificationRevision.revision;
-    kDebug() << "current: " << rev.modificationTime << "; created:" << d_func()->m_modificationRevision.modificationTime;
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "current: " << rev.revision << "; created:" << d_func()->m_modificationRevision.revision;
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "current: " << rev.modificationTime << "; created:" << d_func()->m_modificationRevision.modificationTime;
     if ( d_func()->m_modificationRevision < rev ) {
-        kDebug() << "modification revision mismatch, invalidating";
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "modification revision mismatch, invalidating";
         return false;
     }
     /// This should not be needed any more since 193f52027fb7
 //     if ( creator == current && d_func()->m_modificationRevision == rev && rev.revision != 0 ) {
-//         kDebug() << "modification revision exact match, but same context, invalidating";
+//         qCDebug(KDEV_PYTHON_DUCHAIN) << "modification revision exact match, but same context, invalidating";
 //         return false;
 //     }
     return true;
@@ -76,7 +79,7 @@ void HintedType::setCreatedBy(TopDUContext* context, const ModificationRevision&
 {
     d_func_dynamic()->m_createdByContext = context->indexed();
     d_func_dynamic()->m_modificationRevision = revision;
-    kDebug() << "new HintedType with modification time: " << d_func()->m_modificationRevision.modificationTime 
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "new HintedType with modification time: " << d_func()->m_modificationRevision.modificationTime 
              << "; " << d_func()->m_modificationRevision.revision;
 }
 

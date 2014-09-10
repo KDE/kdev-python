@@ -21,9 +21,11 @@
 
 #include <QList>
 #include <KUrl>
-#include <KDebug>
 #include <KStandardDirs>
 #include <QProcess>
+
+#include <QDebug>
+#include "duchaindebug.h"
 
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/types/integraltype.h>
@@ -150,11 +152,11 @@ AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext*
         for ( int i = 0; i < len and i < maxHints; i++ ) {
             if ( HintedType::Ptr hinted = unsure->types()[i].abstractType().cast<HintedType>() ) {
                 if ( hinted->isValid(current) ) {
-                    kDebug() << "Adding type hint (multi): " << hinted->toString();
+                    qCDebug(KDEV_PYTHON_DUCHAIN) << "Adding type hint (multi): " << hinted->toString();
                     result->addType(hinted->indexed());
                 }
                 else {
-                    kDebug() << "Discarding type hint (multi): " << hinted->toString();
+                    qCDebug(KDEV_PYTHON_DUCHAIN) << "Discarding type hint (multi): " << hinted->toString();
                     maxHints += 1;
                 }
             }
@@ -410,7 +412,7 @@ QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
     
     if ( cachedSearchPaths.isEmpty() ) {
         KStandardDirs d;
-        kDebug() << "*** Gathering search paths...";
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "*** Gathering search paths...";
         QStringList getpath;
         getpath << "-c" << "import sys; sys.stdout.write(':'.join(sys.path))";
         
@@ -436,10 +438,10 @@ QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
                 cachedSearchPaths.append(path);
             }
         }
-        kDebug() << " *** Done. Got search paths: " << cachedSearchPaths;
+        qCDebug(KDEV_PYTHON_DUCHAIN) << " *** Done. Got search paths: " << cachedSearchPaths;
     }
     else {
-        kDebug() << " --- Search paths from cache: " << cachedSearchPaths;
+        qCDebug(KDEV_PYTHON_DUCHAIN) << " --- Search paths from cache: " << cachedSearchPaths;
     }
     
     searchPaths.append(cachedSearchPaths);

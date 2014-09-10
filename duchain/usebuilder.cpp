@@ -18,6 +18,9 @@
  */
 #include "usebuilder.h"
 
+#include <QDebug>
+#include "duchaindebug.h"
+
 #include <KUrl>
 
 #include <language/duchain/declaration.h>
@@ -108,9 +111,9 @@ void UseBuilder::visitName(NameAst* node)
 
 void UseBuilder::visitAttribute(AttributeAst* node)
 {
-    kDebug() << "VisitAttribute start";
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "VisitAttribute start";
     UseBuilderBase::visitAttribute(node);
-    kDebug() << "Visit Attribute base end";
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "Visit Attribute base end";
 
     DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node));
     ExpressionVisitor v(context);

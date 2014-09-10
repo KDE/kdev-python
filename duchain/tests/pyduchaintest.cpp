@@ -22,6 +22,9 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
 
+#include <QDebug>
+#include "duchaindebug.h"
+
 #include "pyduchaintest.h"
 
 #include <stdlib.h>
@@ -73,7 +76,7 @@ PyDUChainTest::PyDUChainTest(QObject* parent): QObject(parent)
         qFatal("Failed to create temp directory, Aboring");
     }
     testDir = QDir(QString(tempdirname));
-    kDebug() << "tempdirname" << tempdirname;
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "tempdirname" << tempdirname;
 
     QByteArray pythonpath = qgetenv("PYTHONPATH");
     pythonpath.prepend(":").prepend(assetsDir.absolutePath().toAscii());
@@ -99,22 +102,22 @@ void PyDUChainTest::init()
 {
     QString currentTest = QString(QTest::currentTestFunction());
     if (lastTest == currentTest) {
-        kDebug() << "Already prepared assets for " << currentTest << ", skipping";
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "Already prepared assets for " << currentTest << ", skipping";
         return;
     } else {
         lastTest = currentTest;
     }
-    kDebug() << "Preparing assets for test " << currentTest;
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "Preparing assets for test " << currentTest;
     
     QDir assetModuleDir = QDir(assetsDir.absolutePath());
     
     if (!assetModuleDir.cd(currentTest)) {
-        kDebug() << "Asset directory " << currentTest
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "Asset directory " << currentTest
                  <<  " does not exist under " << assetModuleDir.absolutePath() << ". Skipping it.";
         return;
     }
     
-    kDebug() << "Searching for python files in " << assetModuleDir.absolutePath();
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "Searching for python files in " << assetModuleDir.absolutePath();
     
     QList<QString> foundfiles = FindPyFiles(assetModuleDir);
 
@@ -127,7 +130,7 @@ void PyDUChainTest::init()
         // Parse each file twice, to ensure no parsing-order related bugs appear.
         // Such bugs will need separate unit tests and should not influence these.
         foreach(const QString filename, foundfiles) {
-            kDebug() << "Parsing asset: " << filename;
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "Parsing asset: " << filename;
             DUChain::self()->updateContextForUrl(IndexedString(filename), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
             ICore::self()->languageController()->backgroundParser()->parseDocuments();
         }
@@ -151,7 +154,7 @@ void PyDUChainTest::initShell()
     KUrl doc_url = KUrl(KStandardDirs::locate("data", "kdevpythonsupport/documentation_files/builtindocumentation.py"));
     doc_url.cleanPath(KUrl::SimplifyDirSeparators);
     
-    kDebug() << doc_url;
+    qCDebug(KDEV_PYTHON_DUCHAIN) << doc_url;
 
     DUChain::self()->updateContextForUrl(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
     ICore::self()->languageController()->backgroundParser()->parseDocuments();
@@ -717,12 +720,12 @@ public:
         if ( node->identifier->value != "checkme" ) return;
         QList<Declaration*> decls = ctx->findDeclarations(QualifiedIdentifier(node->identifier->value));
         if ( ! decls.length() ) {
-            kDebug() << "No declaration found for " << node->identifier->value;
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "No declaration found for " << node->identifier->value;
             return;
         }
         Declaration* d = decls.last();
         QVERIFY(d->abstractType());
-        kDebug() << "found: " << node->identifier->value << "is" << d->abstractType()->toString() << "should be" << searchingForType;
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "found: " << node->identifier->value << "is" << d->abstractType()->toString() << "should be" << searchingForType;
         if ( d->abstractType()->toString().replace("__kdevpythondocumentation_builtin_", "").startsWith(searchingForType) ) {
             found = true;
             return;
@@ -922,13 +925,13 @@ void PyDUChainTest::testImportDeclarations() {
         bool found = false;
         QString name = expected;
         QList<pair> decls = ctx->allDeclarations(CursorInRevision::invalid(), ctx->topContext(), false);
-        kDebug() << "FOUND DECLARATIONS:";
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "FOUND DECLARATIONS:";
         foreach ( const pair& current, decls ) {
-            kDebug() << current.first->toString() << current.first->identifier().identifier().byteArray() << name;
+            qCDebug(KDEV_PYTHON_DUCHAIN) << current.first->toString() << current.first->identifier().identifier().byteArray() << name;
         }
         foreach ( const pair& current, decls ) {
             if ( ! ( current.first->identifier().identifier().byteArray() == name ) ) continue;
-            kDebug() << "Found: " << current.first->toString() << " for " << name;
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "Found: " << current.first->toString() << " for " << name;
             AliasDeclaration* isAliased = dynamic_cast<AliasDeclaration*>(current.first);
             if ( isAliased && shouldBeAliased ) {
                 found = true; // TODO fixme
@@ -1009,7 +1012,7 @@ void PyDUChainTest::testAutocompletionFlickering()
     lock.lock();
     QList<p> decls2 = ctx2->allDeclarations(CursorInRevision::invalid(), ctx2->topContext());
     foreach ( p d2, decls2 ) {
-        kDebug() << "@1: " << d2.first->toString() << "::" << d2.first->id().hash() << "<>" << declIds.first().hash();
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "@1: " << d2.first->toString() << "::" << d2.first->id().hash() << "<>" << declIds.first().hash();
         QVERIFY(d2.first->id() == declIds.first());
         declIds.removeFirst();
     }
@@ -1042,7 +1045,7 @@ void PyDUChainTest::testAutocompletionFlickering()
     decls2 = ctx2->allDeclarations(CursorInRevision::invalid(), ctx2->topContext(), false).first().first->internalContext()
                  ->allDeclarations(CursorInRevision::invalid(), ctx2->topContext());
     foreach ( p d2, decls2 ) {
-        kDebug() << "@2: " << d2.first->toString() << "::" << d2.first->id().hash() << "<>" << declIds.first().hash();
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "@2: " << d2.first->toString() << "::" << d2.first->id().hash() << "<>" << declIds.first().hash();
         QVERIFY(d2.first->id() == declIds.first());
         declIds.removeFirst();
     }

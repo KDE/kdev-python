@@ -1,13 +1,16 @@
-#automoc4(pyduchaintest waitforupdate.cpp)
-#add_executable(pyduchaintest pyduchaintest.cpp)
-#add_test(pyduchaintest pyduchaintest)
-#ecm_mark_as_test(pyduchaintest)
-ecm_add_test(pyduchaintest.cpp)
+set(pyduchaintest_SRCS
+    pyduchaintest.cpp
+    ../duchaindebug.cpp)
 
-#add_executable(duchainbench duchainbench.cpp)
-#add_test(duchainbench duchainbench)
-#ecm_mark_as_test(duchainbench)
-ecm_add_test(duchainbench.cpp)
+ecm_add_test(${pyduchaintest_SRCS}
+    TEST_NAME pyduchaintest)
+
+set(duchainbench_SRCS
+    duchainbench.cpp
+    ../duchaindebug.cpp)
+
+ecm_add_test(${duchainbench_SRCS}
+    TEST_NAME duchainbench)
 
 add_definitions(-DDUCHAIN_PY_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 

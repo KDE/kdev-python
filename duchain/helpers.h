@@ -36,7 +36,6 @@
 
 #include <QList>
 #include <KUrl>
-#include <KDebug>
 
 #include <functional>
 

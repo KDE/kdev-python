@@ -36,6 +36,9 @@
 #include "codecompletion/context.h"
 #include "codecompletion/helpers.h"
 
+#include <QDebug>
+#include "codecompletiondebug.h"
+
 using namespace KDevelop;
 
 QTEST_MAIN(Python::PyCompletionTest)
@@ -77,7 +80,7 @@ void makefile(QString filename, QString contents) {
     fileptr.close();
     KUrl url = KUrl(basepath + filename);
     url.cleanPath();
-    kDebug() <<  "updating duchain for " << url.url() << basepath;
+    qCDebug(KDEV_PYTHON_CODECOMPLETION) <<  "updating duchain for " << url.url() << basepath;
     const IndexedString urlstring(url);
     DUChain::self()->updateContextForUrl(urlstring, KDevelop::TopDUContext::ForceUpdate);
     ICore::self()->languageController()->backgroundParser()->parseDocuments();

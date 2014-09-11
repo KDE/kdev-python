@@ -24,6 +24,9 @@
 #include "codehelpers.h"
 #include <KTextEditor/View>
 
+#include <QDebug>
+#include "codecompletiondebug.h"
+
 namespace Python {
 
 PythonCodeCompletionWorker::PythonCodeCompletionWorker(PythonCodeCompletionModel *parent, KUrl /*document*/)
@@ -48,7 +51,7 @@ KDevelop::CodeCompletionContext* PythonCodeCompletionWorker::createCompletionCon
 void PythonCodeCompletionWorker::updateContextRange(KTextEditor::Range &contextRange, KTextEditor::View *view, KDevelop::DUContextPointer context) const
 {
     if ( CodeHelpers::endsInside(view->document()->text(contextRange)) == CodeHelpers::String ) {
-        kDebug() << "we're dealing with string completion. extend the range";
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << "we're dealing with string completion. extend the range";
         contextRange = context->rangeInCurrentRevision();
     }
 }

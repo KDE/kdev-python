@@ -33,6 +33,9 @@
 #include <QStringList>
 #include <QTextFormat>
 
+#include <QDebug>
+#include "codecompletiondebug.h"
+
 #include "duchain/declarations/functiondeclaration.h"
 #include "parser/codehelpers.h"
 
@@ -177,7 +180,7 @@ QString ExpressionParser::skipUntilStatus(ExpressionParser::Status requestedStat
     Status currentStatus = InvalidStatus;
     while ( currentStatus != requestedStatus ) {
         lastExpression = popExpression(&currentStatus);
-        kDebug() << lastExpression << currentStatus;
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << lastExpression << currentStatus;
         if ( currentStatus == NothingFound ) {
             *ok = ( requestedStatus == NothingFound ); // ok exactly if the caller requested NothingFound as end status
             return QString();
@@ -238,7 +241,7 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
     bool lastCharIsSpace = getRemainingCode().right(1).at(0).isSpace();
     m_cursorPositionInString -= trailingWhitespace();
     if ( operatingOn.endsWith('(') ) {
-        kDebug() << "eventual call found";
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << "eventual call found";
         m_cursorPositionInString -= 1;
         *status = EventualCallFound;
         return QString();
@@ -409,7 +412,7 @@ void createArgumentList(Declaration* dec_, QString& ret, QList< QVariant >* high
 StringFormatter::StringFormatter(const QString &string)
     : m_string(string)
 {
-    kDebug() << "String being parsed: " << string;
+    qCDebug(KDEV_PYTHON_CODECOMPLETION) << "String being parsed: " << string;
     QRegExp regex("\\{(\\w+)(?:!([rs]))?(?:\\:(.*))?\\}");
     regex.setMinimal(true);
     int pos = 0;
@@ -419,7 +422,7 @@ StringFormatter::StringFormatter(const QString &string)
         QChar conversion = (conversionStr.isNull() || conversionStr.isEmpty()) ? QChar() : conversionStr.at(0);
         QString formatSpec = regex.cap(3);
 
-        kDebug() << "variable: " << regex.cap(0);
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << "variable: " << regex.cap(0);
 
         // The regex guarantees that conversion is only a single character
         ReplacementVariable variable(identifier, conversion, formatSpec);

@@ -24,6 +24,9 @@
 
 #include "duchain/navigation/navigationwidget.h"
 
+#include <QDebug>
+#include "codecompletiondebug.h"
+
 using namespace KDevelop;
 
 namespace Python {
@@ -40,7 +43,7 @@ ImportFileItem::~ImportFileItem()
 
 void ImportFileItem::execute(KTextEditor::View* view, const KTextEditor::Range& word)
 {
-    kDebug() << "ImportFileItem executed";
+    qCDebug(KDEV_PYTHON_CODECOMPLETION) << "ImportFileItem executed";
     view->document()->replaceText(word, moduleName);
 }
 

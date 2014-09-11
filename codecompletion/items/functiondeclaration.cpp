@@ -35,6 +35,8 @@
 #include "declarations/functiondeclaration.h"
 #include "duchain/helpers.h"
 
+#include <QDebug>
+#include "../codecompletiondebug.h"
 
 using namespace KDevelop;
 using namespace KTextEditor;
@@ -133,7 +135,7 @@ void FunctionDeclarationCompletionItem::setDoNotCall(bool doNotCall)
 
 void FunctionDeclarationCompletionItem::executed(KTextEditor::View* view, const KTextEditor::Range& word)
 {
-    kDebug() << "FunctionDeclarationCompletionItem executed";
+    qCDebug(KDEV_PYTHON_CODECOMPLETION) << "FunctionDeclarationCompletionItem executed";
     KTextEditor::Document* document = view->document();
     DeclarationPointer resolvedDecl(Helper::resolveAliasDeclaration(declaration().data()));
     DUChainReadLocker lock;

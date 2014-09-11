@@ -8,6 +8,7 @@ set(completion_SRCS
     model.cpp
     worker.cpp
     helpers.cpp
+    codecompletiondebug.cpp
     
     items/missingincludeitem.cpp
     items/declaration.cpp

@@ -23,7 +23,8 @@
 #include <KTextEditor/View>
 
 #include <KLocalizedString>
-#include <KDebug>
+#include <QDebug>
+#include "codecompletiondebug.h"
 
 namespace Python {
 
@@ -55,7 +56,7 @@ QVariant MissingIncludeItem::data(const QModelIndex& index, int role, const KDev
 
 void MissingIncludeItem::execute(KTextEditor::View* view, const KTextEditor::Range& word)
 {
-    kDebug() << "executed with text" << m_text;
+    qCDebug(KDEV_PYTHON_CODECOMPLETION) << "executed with text" << m_text;
     // First, add the import statement to the top of the file
     // FIXME: deal with multi-line comments
     int insertAt = 0;

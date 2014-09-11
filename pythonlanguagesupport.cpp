@@ -22,7 +22,6 @@
 
 #include <QMutexLocker>
 
-#include <KDebug>
 #include <KComponentData>
 #include <KStandardDirs>
 #include <KPluginFactory>
@@ -54,6 +53,9 @@
 #include "codegen/correctionfilegenerator.h"
 #include "kdevpythonversion.h"
 #include "checks/basiccheck.h"
+
+#include <QDebug>
+#include "pythondebug.h"
 
 using namespace KDevelop;
 
@@ -191,7 +193,7 @@ SourceFormatterItemList LanguageSupport::sourceFormatterItems() const
 
 KDevelop::ILanguage *LanguageSupport::language()
 {
-    kDebug() << core()->languageController()->language( name() );
+    qCDebug(KDEV_PYTHON) << core()->languageController()->language( name() );
     return core()->languageController()->language( name() );
 }
 

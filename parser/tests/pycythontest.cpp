@@ -32,6 +32,9 @@
 #include "../cythonsyntaxremover.h"
 #include "../astbuilder.h"
 
+#include <QDebug>
+#include "../parserdebug.h"
+
 using namespace Python;
 
 QTEST_MAIN(PyCythonTest)
@@ -140,7 +143,7 @@ void PyCythonTest::testCythonRanges() {
         }
         FunctionDefinitionAst* func = static_cast<FunctionDefinitionAst*>(node);
         QVERIFY(func->name);
-        kDebug() << func->name->range() << range;
+        qCDebug(KDEV_PYTHON_PARSER) << func->name->range() << range;
         QCOMPARE(func->name->range(), range);
     }
 }

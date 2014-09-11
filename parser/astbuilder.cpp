@@ -25,7 +25,6 @@
 #include <malloc.h>
 
 #include <QStringList>
-#include <KDebug>
 #include <KUrl>
 #include <QMutexLocker>
 #include <language/duchain/topducontext.h>
@@ -39,6 +38,9 @@
 #include <interfaces/icore.h>
 #include <interfaces/iprojectcontroller.h>
 #include <interfaces/iproject.h>
+
+#include <QDebug>
+#include "parserdebug.h"
 
 using namespace KDevelop;
 extern grammar _PyParser_Grammar;
@@ -306,7 +308,7 @@ QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
         headerFile.open(QIODevice::ReadOnly);
         headerFileContents = headerFile.readAll();
         headerFile.close();
-        kDebug() << "Found header file, applying hack";
+        qCDebug(KDEV_PYTHON_PARSER) << "Found header file, applying hack";
         int insertAt = 0;
         bool endOfCommentsReached = false;
         bool commentSignEncountered = false;
@@ -316,7 +318,7 @@ QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
         int l = contents.length();
         do {
             if ( insertAt >= l ) {
-                kDebug() << "File consist only of comments, not applying hack";
+                qCDebug(KDEV_PYTHON_PARSER) << "File consist only of comments, not applying hack";
                 return QPair<QString, int>(contents, 0);
             }
             if ( contents.at(insertAt) == '#' ) {
@@ -339,11 +341,11 @@ QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
             }
             insertAt += 1;
         } while ( not endOfCommentsReached );
-        kDebug() << "Inserting contents at char" << lastLineBeginning << "of file";
+        qCDebug(KDEV_PYTHON_PARSER) << "Inserting contents at char" << lastLineBeginning << "of file";
         contents = contents.left(lastLineBeginning) 
                    + "\n" + headerFileContents + "\n#\n" 
                    + contents.right(contents.length() - lastLineBeginning);
-        kDebug() << contents;
+        qCDebug(KDEV_PYTHON_PARSER) << contents;
         return QPair<QString, int>(contents, - ( headerFileContents.count('\n') + 3 ));
     }
     else {
@@ -396,7 +398,7 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
     CythonSyntaxRemover cythonSyntaxRemover;
 
     if (filename.fileName().endsWith(".pyx", Qt::CaseInsensitive)) {
-        kDebug() << filename.fileName() << "is probably Cython file.";
+        qCDebug(KDEV_PYTHON_PARSER) << filename.fileName() << "is probably Cython file.";
         contents = cythonSyntaxRemover.stripCythonSyntax(contents);
     }
 
@@ -406,7 +408,7 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
         qDebug() << " ====< parse error, trying to fix";
         
         PyErr_Fetch(&exception, &value, &backtrace);
-        kDebug() << "Error objects: " << exception << value << backtrace;
+        qCDebug(KDEV_PYTHON_PARSER) << "Error objects: " << exception << value << backtrace;
         PyObject_Print(value, stderr, Py_PRINT_RAW);
         
         PyObject* errorMessage_str = PyTuple_GetItem(value, 0);
@@ -431,7 +433,7 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
         KTextEditor::Cursor start(lineno + lineOffset, (colno-4 > 0 ? colno-4 : 0));
         KTextEditor::Cursor end(lineno + lineOffset, (colno+4 > 4 ? colno+4 : 4));
         KTextEditor::Range range(start, end);
-        kDebug() << "Problem range: " << range;
+        qCDebug(KDEV_PYTHON_PARSER) << "Problem range: " << range;
         DocumentRange location(IndexedString(filename.path()), range);
         p->setFinalLocation(location);
         p->setDescription(PyUnicodeObjectToQString(errorMessage_str));
@@ -490,9 +492,9 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
                 // we can easily fix that by adding in a "pass" statement. However, we want to add that in the next line, if possible
                 // so context ranges for autocompletion stay intact.
                 if ( contents[emptySince] == QChar(':') ) {
-                    kDebug() << indents.length() << emptySinceLine + 1 << indents;
+                    qCDebug(KDEV_PYTHON_PARSER) << indents.length() << emptySinceLine + 1 << indents;
                     if ( indents.length() > emptySinceLine + 1 && indents.at(emptySinceLine) < indents.at(emptySinceLine + 1) ) {
-                        kDebug() << indents.at(emptySinceLine) << indents.at(emptySinceLine + 1);
+                        qCDebug(KDEV_PYTHON_PARSER) << indents.at(emptySinceLine) << indents.at(emptySinceLine + 1);
                         contents.insert(emptyLinesSince + 1 + indents.at(emptyLinesSinceLine), "\tpass#");
                     }
                     else {
@@ -500,7 +502,7 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
                     }
                 }
                 else if ( indents.length() >= currentLine && currentLine > 0 ) {
-                    kDebug() << indents << currentLine;
+                    qCDebug(KDEV_PYTHON_PARSER) << indents << currentLine;
                     contents[i+1+indents.at(currentLine - 1)] = QChar('#');
                     contents.insert(i+1+indents.at(currentLine - 1), "pass");
                 }
@@ -514,7 +516,7 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
         errline = qMax(0, qMin(indents.length()-1, errline));
         if ( ! syntaxtree ) {
             kWarning() << "Discarding parts of the code to be parsed because of previous errors";
-            kDebug() << indents;
+            qCDebug(KDEV_PYTHON_PARSER) << indents;
             int indentAtError = indents.at(errline);
             QChar c;
             bool atLineBeginning = true;
@@ -523,13 +525,13 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
             int currentLineContentBeginning = currentLineBeginning;
             for ( int i = currentLineBeginning; i < len; i++ ) {
                 c = contents.at(i);
-                kDebug() << c;
+                qCDebug(KDEV_PYTHON_PARSER) << c;
                 if ( c == '\n' ) {
                     if ( currentIndent <= indentAtError && currentIndent != -1 ) {
-                        kDebug() << "Start of error code: " << currentLineBeginning;
-                        kDebug() << "End of error block (current position): " << currentLineBeginning_end;
-                        kDebug() << "Length: " << currentLineBeginning_end - currentLineBeginning;
-                        kDebug() << "indent at error <> current indent:" << indentAtError << "<>" << currentIndent;
+                        qCDebug(KDEV_PYTHON_PARSER) << "Start of error code: " << currentLineBeginning;
+                        qCDebug(KDEV_PYTHON_PARSER) << "End of error block (current position): " << currentLineBeginning_end;
+                        qCDebug(KDEV_PYTHON_PARSER) << "Length: " << currentLineBeginning_end - currentLineBeginning;
+                        qCDebug(KDEV_PYTHON_PARSER) << "indent at error <> current indent:" << indentAtError << "<>" << currentIndent;
 //                         contents.remove(currentLineBeginning, currentLineBeginning_end-currentLineBeginning);
                         break;
                     }
@@ -549,14 +551,14 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
                 }
                 if ( c.isSpace() && atLineBeginning ) currentIndent += 1;
             }
-            kDebug() << "This is what is left: " << contents;
+            qCDebug(KDEV_PYTHON_PARSER) << "This is what is left: " << contents;
             syntaxtree = PyParser_ASTFromString(contents.toUtf8(), "<kdev-editor-contents>", file_input, &flags, arena);
         }
         if ( ! syntaxtree ) {
             return CodeAst::Ptr(); // everything fails, so we abort.
         }
     }
-    kDebug() << "Got syntax tree from python parser:" << syntaxtree->kind << Module_kind;
+    qCDebug(KDEV_PYTHON_PARSER) << "Got syntax tree from python parser:" << syntaxtree->kind << Module_kind;
 
     PythonAstTransformer t(lineOffset);
     t.run(syntaxtree, filename.fileName().replace(".py", ""));

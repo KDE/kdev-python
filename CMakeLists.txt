@@ -74,6 +74,7 @@ add_subdirectory(checks)
 set(kdevpythonlanguagesupport_PART_SRCS
     codegen/correctionfilegenerator.cpp
     codegen/refactoring.cpp
+    codegen/codegendebug.cpp
     pythonlanguagesupport.cpp
     pythonparsejob.cpp
     pythonhighlighting.cpp

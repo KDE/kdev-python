@@ -78,6 +78,7 @@ set(kdevpythonlanguagesupport_PART_SRCS
     pythonlanguagesupport.cpp
     pythonparsejob.cpp
     pythonhighlighting.cpp
+    pythondebug.cpp
 
     checks/basiccheck.cpp
     checks/controlflowgraphbuilder.cpp

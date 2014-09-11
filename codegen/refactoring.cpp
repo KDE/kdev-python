@@ -23,6 +23,8 @@
 #include "refactoring.h"
 #include "duchain/helpers.h"
 
+#include <QDebug>
+#include "codegendebug.h"
 
 namespace Python {
 
@@ -47,7 +49,7 @@ Refactoring::Refactoring(QObject *parent)
 bool Refactoring::acceptForContextMenu(const KDevelop::Declaration* decl)
 {
     if (decl->topContext() == Helper::getDocumentationFileContext()) {
-        kDebug() << "in doc file, not offering rename action";
+        qCDebug(KDEV_PYTHON_CODEGEN) << "in doc file, not offering rename action";
         return false;
     }
     return true;

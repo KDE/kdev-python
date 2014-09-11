@@ -19,8 +19,10 @@
 
 #include "pdbframestackmodel.h"
 #include "debugsession.h"
-#include <KDebug>
 #include <QRegExp>
+
+#include <QDebug>
+#include "debuggerdebug.h"
 
 using namespace KDevelop;
 
@@ -44,7 +46,7 @@ void PdbFrameStackModel::setDebuggerAtFrame(int newFrame)
 
 void PdbFrameStackModel::framesFetched(QByteArray framelist)
 {
-    kDebug() << "frames fetched:" << framelist;
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "frames fetched:" << framelist;
     QList<QByteArray> lines = framelist.split('\n');
     QList<FrameItem> frames;
     bool parsingLocation = false;
@@ -65,7 +67,7 @@ void PdbFrameStackModel::framesFetched(QByteArray framelist)
             // version 1 has some *really* weird "greedy" ruleset which makes no sense at all for me
             location.setPatternSyntax(QRegExp::RegExp2);
             if ( location.exactMatch(line) ) {
-                kDebug() << location.capturedTexts();
+                qCDebug(KDEV_PYTHON_DEBUGGER) << location.capturedTexts();
                 if ( ! location.capturedTexts().at(1).isEmpty() ) {
                     m_debuggerAtFrame = framesCount;
                 }
@@ -74,12 +76,12 @@ void PdbFrameStackModel::framesFetched(QByteArray framelist)
                 currentFrame->name = location.capturedTexts().at(4);
             }
             else {
-                kDebug() << "regular expression mismatches" << line;
+                qCDebug(KDEV_PYTHON_DEBUGGER) << "regular expression mismatches" << line;
             }
         }
     }
     m_debuggerAtFrame = framesCount - m_debuggerAtFrame - 1;
-    kDebug() << "at frame:" << m_debuggerAtFrame;
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "at frame:" << m_debuggerAtFrame;
     QList<FrameItem> framesReversed;
     for ( int i = frames.length() - 1; i >= 0; i-- ) {
         framesReversed.append(frames.at(i));
@@ -90,8 +92,8 @@ void PdbFrameStackModel::framesFetched(QByteArray framelist)
 
 void PdbFrameStackModel::threadsFetched(QByteArray threadsData)
 {
-    kDebug() << "threads fetched" << threadsData;
-    kDebug() << "Implement me: Thread debugging is not supported by pdb.";
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "threads fetched" << threadsData;
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "Implement me: Thread debugging is not supported by pdb.";
     QList<ThreadItem> threads;
     ThreadItem mainThread;
     mainThread.nr = 0;
@@ -103,14 +105,14 @@ void PdbFrameStackModel::threadsFetched(QByteArray threadsData)
 
 void PdbFrameStackModel::fetchFrames(int /*threadNumber*/, int /*from*/, int /*to*/)
 {
-    kDebug() << "frames requested";
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "frames requested";
     InternalPdbCommand* cmd = new InternalPdbCommand(this, "framesFetched", "where\n");
     static_cast<DebugSession*>(session())->addCommand(cmd);
 }
 
 void PdbFrameStackModel::fetchThreads()
 {
-    kDebug() << "threads requested";
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "threads requested";
     // pdb doesn't support threads.
     InternalPdbCommand* cmd = new InternalPdbCommand(this, "threadsFetched", "pass\n");
     static_cast<DebugSession*>(session())->addCommand(cmd);

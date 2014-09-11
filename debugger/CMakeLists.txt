@@ -18,6 +18,7 @@ set(kdevpdb_PART_SRCS
     debugjob.cpp
     debugsession.cpp
     pdbdebuggerplugin.cpp
+    debuggerdebug.cpp
 )
 
 add_library(kdevpdb MODULE ${kdevpdb_PART_SRCS})

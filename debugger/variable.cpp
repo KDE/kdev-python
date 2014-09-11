@@ -21,6 +21,9 @@
 #include "debugsession.h"
 #include <interfaces/icore.h>
 
+#include <QDebug>
+#include "debuggerdebug.h"
+
 namespace Python {
 
 Variable::Variable(KDevelop::TreeModel* model, KDevelop::TreeItem* parent, const QString& expression, const QString& display):
@@ -39,7 +42,7 @@ void Variable::dataFetched(QByteArray rawData)
     }
     setValue(value);
     setHasMore(true);
-    kDebug() << "value set to" << value << ", calling update method";
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "value set to" << value << ", calling update method";
     QMetaObject::invokeMethod(m_notifyCreated, m_notifyCreatedMethod, Qt::QueuedConnection, Q_ARG(bool, true));
 }
 
@@ -104,7 +107,7 @@ void Variable::moreChildrenFetched(QByteArray rawData)
         }
         Variable* v = new Variable(model_, this, childName, prettyName);
         appendChild(v);
-        kDebug() << "adding child:" << expression() << i << d;
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "adding child:" << expression() << i << d;
         v->setValue(realValue);
         v->setId(pythonId);
         v->setHasMoreInitial(true);

@@ -23,9 +23,11 @@
 #include "astdefaultvisitor.h"
 #include "codehelpers.h"
 #include <QRegExp>
-#include <KDebug>
 
 #include <KTextEditor/Range>
+
+#include <QDebug>
+#include "parserdebug.h"
 
 using namespace KDevelop;
 
@@ -128,16 +130,16 @@ bool CythonSyntaxRemover::fixFunctionDefinitions(QString& line)
             // a class definition for a derived class.
             return false;
         }
-        kDebug() << "Function, replace" << definition
+        qCDebug(KDEV_PYTHON_PARSER) << "Function, replace" << definition
             << "and remove return type: " << returnType;
         // from the beginning of the argument list (open paren),
         // replace type specifiers (if available).
         m_offset.setColumn(wholeMatch.length());
-        kDebug() << "Regex ended at offset" << m_offset;
+        qCDebug(KDEV_PYTHON_PARSER) << "Regex ended at offset" << m_offset;
         auto types = getArgumentListTypes();
         for (int i = types.size()-1; i >= 0; i--) {
             auto range = types[i];
-            kDebug() << "Replace" << range.start().line() << ":" << range.start().column() << " to " << range.end().line() << ":" << range.end().column() << m_code[range.start().line()].mid(range.start().column(), range.end().column() - range.start().column());
+            qCDebug(KDEV_PYTHON_PARSER) << "Replace" << range.start().line() << ":" << range.start().column() << " to " << range.end().line() << ":" << range.end().column() << m_code[range.start().line()].mid(range.start().column(), range.end().column() - range.start().column());
             QString white = QString(" ").repeated(range.end().column() - range.start().column());
             m_code[range.start().line()].replace(range.start().column(), white.length(), white);
         }
@@ -179,7 +181,7 @@ bool CythonSyntaxRemover::fixFunctionDefinitions(QString& line)
                 exceptionDef.append(curLine.mid(pos.column(), curLine.length() - pos.column()));
                 // replace with ":" if there is an offset to start of line. This is the
                 // case for the first line
-                kDebug() << "foundExceptKeyword?" << foundExceptKeyword << "curLine.indexOf(\"except\")" << curLine.indexOf("except");
+                qCDebug(KDEV_PYTHON_PARSER) << "foundExceptKeyword?" << foundExceptKeyword << "curLine.indexOf(\"except\")" << curLine.indexOf("except");
                 if(foundExceptKeyword || curLine.indexOf("except") != -1) {
                     foundExceptKeyword = true;
                     curLine.replace(pos.column(), curLine.length() - pos.column(),
@@ -234,7 +236,7 @@ bool CythonSyntaxRemover::fixExtensionClasses(QString& line)
     if (regexp_cdef_class.indexIn(line) != -1) {
         auto definition = regexp_cdef_class.cap(1);
         auto definition_pos = regexp_cdef_class.pos(1);
-        kDebug() << "Extension class, remove " << definition;
+        qCDebug(KDEV_PYTHON_PARSER) << "Extension class, remove " << definition;
         auto delrange = KTextEditor::Range(m_offset.line(), definition_pos,
                                            m_offset.line(), definition_pos+definition.length());
         m_deletions.append(DeletedCode{regexp_cdef_class.cap(1), delrange});
@@ -255,7 +257,7 @@ bool CythonSyntaxRemover::fixVariableTypes(QString& line)
     //   cdef TYPE Var1=0, Var2=4
     static QRegExp regexp_cdef_variable("^(\\s*)cdef\\s+[\\.a-zA-Z0-9_]+(\\[[^\\]]+\\])?\\s*\\**\\s*[a-zA-Z0-9_]+\\s*(,\\s*[a-zA-Z0-9_]+\\s*)*");
     if (regexp_cdef_variable.indexIn(line) != -1) {
-        kDebug() << "Variable cdef -> pass";
+        qCDebug(KDEV_PYTHON_PARSER) << "Variable cdef -> pass";
         auto delrange = KTextEditor::Range(m_offset.line(), 0,
                                            m_offset.line(), line.length()-regexp_cdef_variable.cap(1).length()-4);
         m_deletions.append(DeletedCode{line, delrange});

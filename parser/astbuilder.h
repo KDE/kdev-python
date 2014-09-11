@@ -25,7 +25,6 @@
 #include "ast.h"
 #include "parserexport.h"
 
-#include <KDebug>
 #include <KUrl>
 #include "astdefaultvisitor.h"
 

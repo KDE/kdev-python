@@ -11,6 +11,7 @@ set(parser_STAT_SRCS
     astvisitor.cpp
     astbuilder.cpp
     cythonsyntaxremover.cpp
+    parserdebug.cpp
 )
 
 find_package(PythonLibs 3.4 REQUIRED)

@@ -22,7 +22,6 @@
 
 #include "astdefaultvisitor.h"
 #include "ast.h"
-#include <kdebug.h>
 
 namespace Python
 {

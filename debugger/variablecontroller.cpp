@@ -34,6 +34,9 @@
 #include <KMessageBox>
 #include <KLocalizedString>
 
+#include <QDebug>
+#include "debuggerdebug.h"
+
 using namespace KDevelop;
 
 namespace Python {
@@ -61,9 +64,9 @@ void VariableController::handleEvent(IDebugSession::event_t event)
         int delta = model->currentFrame() - model->debuggerAtFrame();
         model->setDebuggerAtFrame(model->currentFrame());
         bool positive = delta > 0;
-        kDebug() << "changing frame by" << delta;
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "changing frame by" << delta;
         for ( int i = delta; i != 0; i += ( positive ? -1 : 1 ) ) {
-            kDebug() << ( positive ? "up" : "down" ) << model->currentFrame() << model->debuggerAtFrame();
+            qCDebug(KDEV_PYTHON_DEBUGGER) << ( positive ? "up" : "down" ) << model->currentFrame() << model->debuggerAtFrame();
             s->addSimpleInternalCommand(positive ? "up" : "down");
         }
     }
@@ -90,7 +93,7 @@ QString VariableController::expressionUnderCursor(KTextEditor::Document* doc, co
         }
     }
     else {
-        kDebug() << "duchain unavailable for document" << doc->url() << "or document out of date";
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "duchain unavailable for document" << doc->url() << "or document out of date";
     }
     
     TextDocumentLazyLineFetcher linefetcher(doc);
@@ -101,7 +104,7 @@ void VariableController::localsUpdateReady(QByteArray rawData)
 {
     QRegExp formatExtract("([a-zA-Z0-9_]+) \\=\\> (.*)");
     QList<QByteArray> data = rawData.split('\n');
-    kDebug() << "locals update:" << data;
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "locals update:" << data;
     
     int i = 0;
     QStringList vars;
@@ -127,7 +130,7 @@ void VariableController::localsUpdateReady(QByteArray rawData)
 
 void VariableController::update()
 {
-    kDebug() << "update requested";
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "update requested";
     DebugSession* d = static_cast<DebugSession*>(parent());
     if (autoUpdate() & UpdateWatches) {
         variableCollection()->watches()->reinstall();

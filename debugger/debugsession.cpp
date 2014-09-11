@@ -19,7 +19,6 @@
 
 #include <QTimer>
 #include <QApplication>
-#include <KDebug>
 #include <KStandardDirs>
 #include <KLocalizedString>
 #include <signal.h>
@@ -33,6 +32,9 @@
 #include "variablecontroller.h"
 #include "variable.h"
 #include "breakpointcontroller.h"
+
+#include <QDebug>
+#include "debuggerdebug.h"
 
 using namespace KDevelop;
 
@@ -53,7 +55,7 @@ DebugSession::DebugSession(QStringList program, const KUrl &workingDirectory) :
     , m_nextNotifyMethod(0)
     , m_inDebuggerData(0)
 {
-    kDebug() << "creating debug session";
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "creating debug session";
     m_variableController = new Python::VariableController(this);
     m_breakpointController = new Python::BreakpointController(this);
     m_program = program;
@@ -107,7 +109,7 @@ QStringList byteArrayToStringList(const QByteArray& r) {
 void DebugSession::dataAvailable()
 {
     QByteArray data = m_debuggerProcess->readAllStandardOutput();
-    kDebug() << data.length() << "bytes of data available";
+    qCDebug(KDEV_PYTHON_DEBUGGER) << data.length() << "bytes of data available";
     
     // remove pointless state changes
     data.replace(debuggerOutputBegin+debuggerOutputEnd, "");
@@ -131,7 +133,7 @@ void DebugSession::dataAvailable()
         nextChangeAt = atLastChange ? len : qMin(nextChangeAt, len);
 
         
-        kDebug() << data;
+        qCDebug(KDEV_PYTHON_DEBUGGER) << data;
         Q_ASSERT(m_inDebuggerData == 0 || m_inDebuggerData == 1);
         
         if ( m_inDebuggerData == 1 ) {
@@ -181,7 +183,7 @@ void DebugSession::dataAvailable()
         else {
             notifyNext();
             if ( m_commandQueue.isEmpty() ) {
-                kDebug() << "Changing state to PausedState";
+                qCDebug(KDEV_PYTHON_DEBUGGER) << "Changing state to PausedState";
                 setState(PausedState);
             }
         }
@@ -197,7 +199,7 @@ void DebugSession::dataAvailable()
 
 void DebugSession::setNotifyNext(QWeakPointer<QObject> object, const char* method)
 {
-    kDebug() << "set notify next:" << object << method;
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "set notify next:" << object << method;
     m_nextNotifyObject = object;
     m_nextNotifyMethod = method;
 }
@@ -205,12 +207,12 @@ void DebugSession::setNotifyNext(QWeakPointer<QObject> object, const char* metho
 void DebugSession::notifyNext()
 {
     QSharedPointer<QObject> lock = m_nextNotifyObject.toStrongRef();
-    kDebug() << "notify next:" << m_nextNotifyObject << m_nextNotifyObject.data() << this;
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "notify next:" << m_nextNotifyObject << m_nextNotifyObject.data() << this;
     if ( m_nextNotifyMethod and m_nextNotifyObject ) {
         QMetaObject::invokeMethod(m_nextNotifyObject.data(), m_nextNotifyMethod, Qt::DirectConnection, Q_ARG(QByteArray, m_buffer));
     }
     else {
-        kDebug() << "notify called, but nothing to notify!";
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "notify called, but nothing to notify!";
     }
     m_buffer.clear();
     m_nextNotifyMethod = 0;
@@ -219,9 +221,9 @@ void DebugSession::notifyNext()
 
 void DebugSession::processNextCommand()
 {
-    kDebug() << "processing next debugger command in queue";
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "processing next debugger command in queue";
     if ( m_processBusy or m_state == EndedState ) {
-        kDebug() << "process is busy or ended, aborting";
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "process is busy or ended, aborting";
         return;
     }
     m_processBusy = true;
@@ -233,7 +235,7 @@ void DebugSession::processNextCommand()
     m_commandQueue.removeFirst();
     setNotifyNext(cmd->notifyObject(), cmd->notifyMethod());
     cmd->run(this);
-    kDebug() << "command executed, deleting it.";
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "command executed, deleting it.";
     delete cmd;
     if ( ! m_commandQueue.isEmpty() ) {
         processNextCommand();
@@ -242,7 +244,7 @@ void DebugSession::processNextCommand()
 
 void DebugSession::setState(DebuggerState state)
 {
-    kDebug() << "Setting state to" << state;
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "Setting state to" << state;
     
     if ( state == m_state ) {
         return;
@@ -262,14 +264,14 @@ void DebugSession::setState(DebuggerState state)
         }
     }
     
-    kDebug() << "debugger state changed to" << m_state;
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "debugger state changed to" << m_state;
     raiseEvent(program_state_changed);
     emit stateChanged(m_state);
 }
 
 void DebugSession::write(const QByteArray& cmd)
 {
-    kDebug() << " >>> WRITE:" << cmd;
+    qCDebug(KDEV_PYTHON_DEBUGGER) << " >>> WRITE:" << cmd;
     m_debuggerProcess->write(cmd);
 }
 
@@ -342,7 +344,7 @@ void DebugSession::addCommand(PdbCommand* cmd)
     if ( m_state == EndedState || m_state == StoppingState ) {
         return;
     }
-    kDebug() << " +++  adding command to queue:" << cmd;
+    qCDebug(KDEV_PYTHON_DEBUGGER) << " +++  adding command to queue:" << cmd;
     m_commandQueue.append(cmd);
     if ( cmd->type() == PdbCommand::UserType ) {
         // this is queued and will run after the command is executed.
@@ -353,7 +355,7 @@ void DebugSession::addCommand(PdbCommand* cmd)
 
 void DebugSession::checkCommandQueue()
 {
-    kDebug() << "items in queue:" << m_commandQueue.length();
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "items in queue:" << m_commandQueue.length();
     if ( m_commandQueue.isEmpty() ) {
         return;
     }
@@ -386,7 +388,7 @@ void DebugSession::runImmediately(const QString& cmd)
     if ( state() == ActiveState ) {
         m_nextNotifyMethod = 0;
         m_nextNotifyObject.clear(); // TODO is this correct?
-        kDebug() << "interrupting debugger";
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "interrupting debugger";
         kill(m_debuggerProcess->pid(), SIGINT);
         write(cmd.toAscii());
         write("continue\n");
@@ -400,20 +402,20 @@ void DebugSession::runImmediately(const QString& cmd)
 void DebugSession::addBreakpoint(Breakpoint* bp)
 {
     QString location = bp->url().path() + ":" + QString::number(bp->line() + 1);
-    kDebug() << "adding breakpoint" << location;
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "adding breakpoint" << location;
     runImmediately("break " + location + '\n');
 }
 
 void DebugSession::removeBreakpoint(Breakpoint* bp)
 {
     QString location = bp->url().path() + ":" + QString::number(bp->line() + 1);
-    kDebug() << "deleting breakpoint" << location;
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "deleting breakpoint" << location;
     runImmediately("clear " + location + '\n');
 }
 
 void DebugSession::createVariable(Python::Variable* variable, QObject* callback, const char* callbackMethod)
 {
-    kDebug() << "asked to create variable";
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "asked to create variable";
     InternalPdbCommand* cmd = new InternalPdbCommand(variable, "dataFetched",
                                                      ("print(" + variable->expression() + ")\n").toAscii());
     variable->m_notifyCreated = callback;
@@ -428,13 +430,13 @@ void DebugSession::clearOutputBuffer()
 
 void DebugSession::updateLocation()
 {
-    kDebug() << "updating location";
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "updating location";
     InternalPdbCommand* cmd = new InternalPdbCommand(this, "locationUpdateReady", "where\n");
     addCommand(cmd);
 }
 
 void DebugSession::locationUpdateReady(QByteArray data) {
-    kDebug() << "Got where information: " << data;
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "Got where information: " << data;
     QList<QByteArray> lines = data.split('\n');
     if ( lines.length() >= 3 ) {
         lines.removeLast(); // prompt
@@ -445,7 +447,7 @@ void DebugSession::locationUpdateReady(QByteArray data) {
         m.setMinimal(true);
         m.exactMatch(where);
         setCurrentPosition(KUrl(m.capturedTexts().at(1)), m.capturedTexts().at(2).toInt() - 1 , "<unknown>");
-        kDebug() << "New position: " << m.capturedTexts().at(1) << m.capturedTexts().at(2).toInt() - 1 << m.capturedTexts() << where;
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "New position: " << m.capturedTexts().at(1) << m.capturedTexts().at(2).toInt() - 1 << m.capturedTexts() << where;
     }
 }
 
@@ -461,7 +463,7 @@ void DebugSession::stopDebugger()
     m_commandQueue.clear();
     m_nextNotifyMethod = 0;
     m_nextNotifyObject.clear();
-    kDebug() << "killed debugger";
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "killed debugger";
     setState(IDebugSession::EndedState);
 }
 

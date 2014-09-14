@@ -1,6 +1,6 @@
 /*
- * <one line to give the library's name and an idea of what it does.>
- * Copyright 2013  <copyright holder> <email>
+ * This file is part of kdev-python, the Python language support plugin for KDevelop
+ * Copyright 2013 Sven Brauch <svenbrauch@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as

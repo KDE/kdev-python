@@ -208,7 +208,7 @@ void DebugSession::notifyNext()
 {
     QSharedPointer<QObject> lock = m_nextNotifyObject.toStrongRef();
     qCDebug(KDEV_PYTHON_DEBUGGER) << "notify next:" << m_nextNotifyObject << m_nextNotifyObject.data() << this;
-    if ( m_nextNotifyMethod and m_nextNotifyObject ) {
+    if ( m_nextNotifyMethod && m_nextNotifyObject ) {
         QMetaObject::invokeMethod(m_nextNotifyObject.data(), m_nextNotifyMethod, Qt::DirectConnection, Q_ARG(QByteArray, m_buffer));
     }
     else {
@@ -222,7 +222,7 @@ void DebugSession::notifyNext()
 void DebugSession::processNextCommand()
 {
     qCDebug(KDEV_PYTHON_DEBUGGER) << "processing next debugger command in queue";
-    if ( m_processBusy or m_state == EndedState ) {
+    if ( m_processBusy || m_state == EndedState ) {
         qCDebug(KDEV_PYTHON_DEBUGGER) << "process is busy or ended, aborting";
         return;
     }

@@ -149,7 +149,7 @@ AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext*
     }
     else if ( UnsureType::Ptr unsure = type.cast<UnsureType>() ) {
         int len = unsure->typesSize();
-        for ( int i = 0; i < len and i < maxHints; i++ ) {
+        for ( int i = 0; i < len && i < maxHints; i++ ) {
             if ( HintedType::Ptr hinted = unsure->types()[i].abstractType().cast<HintedType>() ) {
                 if ( hinted->isValid(current) ) {
                     qCDebug(KDEV_PYTHON_DUCHAIN) << "Adding type hint (multi): " << hinted->toString();
@@ -254,7 +254,7 @@ Declaration* Helper::declarationForName(const QualifiedIdentifier& identifier, c
     QList<Declaration*> importedLocalDeclarations;
     {
         DUChainReadLocker lock(DUChain::lock());
-        if ( context.data() == context->topContext() and nodeRange.isValid() ) {
+        if ( context.data() == context->topContext() && nodeRange.isValid() ) {
             declarations = context->topContext()->findDeclarations(identifier, nodeRange.end);
         }
         else {
@@ -273,7 +273,7 @@ Declaration* Helper::declarationForName(const QualifiedIdentifier& identifier, c
         do {
             declaration = importedLocalDeclarations.last();
             importedLocalDeclarations.pop_back();
-            if ( not declaration or declaration->context()->type() == DUContext::Class ) {
+            if ( !declaration || declaration->context()->type() == DUContext::Class ) {
                 declaration = 0;
             }
             if ( importedLocalDeclarations.isEmpty() ) {
@@ -301,7 +301,7 @@ QList< DUContext* > Helper::internalContextsForClass(StructureType::Ptr klassTyp
     ClassDeclaration* klass = dynamic_cast<ClassDeclaration*>(decl);
     if ( klass ) {
         FOREACH_FUNCTION ( const BaseClassInstance& base, klass->baseClasses ) {
-            if ( flags == PublicOnly and base.access == KDevelop::Declaration::Private ) {
+            if ( flags == PublicOnly && base.access == KDevelop::Declaration::Private ) {
                 continue;
             }
             StructureType::Ptr baseClassType = base.baseClass.type<StructureType>();

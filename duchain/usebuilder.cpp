@@ -127,7 +127,7 @@ void UseBuilder::visitAttribute(AttributeAst* node)
         // this is the declaration, don't build a use for it
         return;
     }
-    if ( ! declaration && v.isConfident() && ( ! v.lastType() or Helper::isUsefulType(v.lastType()) ) ) {
+    if ( ! declaration && v.isConfident() && ( ! v.lastType() || Helper::isUsefulType(v.lastType()) ) ) {
         KDevelop::Problem *p = new KDevelop::Problem();
         p->setFinalLocation(DocumentRange(currentlyParsedDocument(), useRange.castToSimpleRange()));
         p->setSource(KDevelop::ProblemData::SemanticAnalysis);

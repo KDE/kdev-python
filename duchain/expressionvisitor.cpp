@@ -197,7 +197,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
 {
     AbstractType::Ptr type;
     Declaration* useDeclaration = nullptr;
-    if ( isConstructor and classDecl ) {
+    if ( isConstructor && classDecl ) {
         type = classDecl->abstractType();
         useDeclaration = classDecl;
     }

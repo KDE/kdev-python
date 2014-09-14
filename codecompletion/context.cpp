@@ -612,7 +612,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         DUChainReadLocker lock;
         QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
         foreach ( const DeclarationDepthPair& d, declarations ) {
-            if ( d.first and d.first->context()->type() == DUContext::Class ) {
+            if ( d.first && d.first->context()->type() == DUContext::Class ) {
                 declarations.removeAll(d);
             }
         }

@@ -408,7 +408,7 @@ void PyDUChainTest::testClassVariables()
     if ( useIndex != -1 ) {
         QVERIFY(useIndex < c->usesCount());
         const Use* u = &(c->uses()[useIndex]);
-        QVERIFY(not u->usedDeclaration(c->topContext()));
+        QVERIFY(!u->usedDeclaration(c->topContext()));
     }
 }
 

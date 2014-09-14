@@ -32,6 +32,11 @@ set(duchain_SRCS
 
 
 add_library( kdev4pythonduchain SHARED ${duchain_SRCS} )
+
+generate_export_header( kdev4pythonduchain EXPORT_MACRO_NAME KDEVPYTHONDUCHAIN_EXPORT
+                                           EXPORT_FILE_NAME pythonduchainexport.h
+)
+
 target_link_libraries( kdev4pythonduchain LINK_PRIVATE
     KF5::KDELibs4Support
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}

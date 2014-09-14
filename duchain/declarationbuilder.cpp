@@ -1478,8 +1478,8 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     dec->setInternalContext(currentContext());
 
     lock.unlock();
-    foreach ( Ast* node, node->body ) {
-        AstDefaultVisitor::visitNode(node);
+    foreach ( Ast* _node, node->body ) {
+        AstDefaultVisitor::visitNode(_node);
     }
     lock.lock();
     

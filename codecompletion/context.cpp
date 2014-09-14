@@ -437,7 +437,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::stringFormatt
     }
 
     if ( ! variable->hasFormatSpec() ) {
-        auto addFormatSpec = [&](const QString& format, const QString& title, bool useTemplateEngine=false)
+        auto addFormatSpec = [&](const QString& format, const QString& title, bool useTemplateEngine)
         {
             resultingItems.append(makeFormattingItem(variable->conversion(), format, title, useTemplateEngine));
         };
@@ -448,13 +448,13 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::stringFormatt
         // These options don't make sense if we've set conversion using str() or repr()
         if ( ! variable->hasConversion() ) {
             addFormatSpec(".${precision}", i18n("Specify precision"), true);
-            addFormatSpec("%", i18n("Format as percentage"));
-            addFormatSpec("c", i18n("Format as character"));
-            addFormatSpec("b", i18n("Format as binary number"));
-            addFormatSpec("o", i18n("Format as octal number"));
-            addFormatSpec("x", i18n("Format as hexadecimal number"));
-            addFormatSpec("e", i18n("Format in scientific (exponent) notation"));
-            addFormatSpec("f", i18n("Format as fixed point number"));
+            addFormatSpec("%", i18n("Format as percentage"), false);
+            addFormatSpec("c", i18n("Format as character"), false);
+            addFormatSpec("b", i18n("Format as binary number"), false);
+            addFormatSpec("o", i18n("Format as octal number"), false);
+            addFormatSpec("x", i18n("Format as hexadecimal number"), false);
+            addFormatSpec("e", i18n("Format in scientific (exponent) notation"), false);
+            addFormatSpec("f", i18n("Format as fixed point number"), false);
         }
     }
 

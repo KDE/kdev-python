@@ -1,3 +1,6 @@
+# Copyright 2014 Sven Brauch <svenbrauch@gmail.com>
+# License: GPL v2+
+
 from pdb import *
 
 import sys

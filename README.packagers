@@ -29,3 +29,12 @@ It MUST be packaged together with the program, as it contains runtime
 data which is necessary for the program to work correctly (such as
 representations of python's built-in data types, which are then read
 by the parser etc.).
+
+Licensing notes
+---------------
+The following files are not copyrighted:
+Everything in duchain/tests/data/
+Everything in documentation_files/
+Everything in correction_files/
+Everything in app_templates/
+example_ast.py

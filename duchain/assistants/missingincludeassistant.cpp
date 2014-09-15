@@ -75,7 +75,7 @@ void DocumentationGeneratorAction::execute()
     wizard.setModuleName(module);
     wizard.exec();
     if ( ! wizard.wasSavedAs().isNull() ) {
-        ICore::self()->documentController()->openDocument(KUrl(wizard.wasSavedAs()));
+        ICore::self()->documentController()->openDocument(QUrl::fromLocalFile(wizard.wasSavedAs()));
         // force a recursive update of the context, so that all the imports are reparsed too
         // (since they potentially have changed through this action)
         ICore::self()->languageController()->backgroundParser()->addDocument(document, TopDUContext::ForceUpdateRecursive);

@@ -58,7 +58,7 @@ using namespace KDevelop;
 
 namespace Python {
 
-QList<KUrl> Helper::cachedSearchPaths;
+QList<QUrl> Helper::cachedSearchPaths;
 QStringList Helper::dataDirs;
 QString Helper::documentationFile;
 DUChainPointer<TopDUContext> Helper::documentationFileContext = DUChainPointer<TopDUContext>(0);
@@ -362,13 +362,13 @@ KUrl Helper::getCorrectionFile(KUrl document)
     }
 
     foreach (QString correctionFileDir, correctionFileDirs) {
-        foreach ( const KUrl& basePath, Helper::getSearchPaths(KUrl()) ) {
+        foreach ( const QUrl& basePath, Helper::getSearchPaths(QUrl()) ) {
             if ( ! basePath.isParentOf(document) ) {
                 continue;
             }
-            QString path = KUrl::relativePath(basePath.path(), document.path());
-            KUrl absolutePath(correctionFileDir + path);
-            absolutePath.cleanPath();
+            QString path = basePath.resolved(document).path();
+            auto absolutePath = QUrl::fromLocalFile(correctionFileDir + path);
+            // TODO QUrl: cleanPath?
 
             if ( QFile::exists(absolutePath.path()) ) {
                 return absolutePath;
@@ -398,16 +398,16 @@ KUrl Helper::getLocalCorrectionFile(KUrl document)
     return absolutePath;
 }
     
-QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
+QList<QUrl> Helper::getSearchPaths(QUrl workingOnDocument)
 {
-    QList<KUrl> searchPaths;
+    QList<QUrl> searchPaths;
     // search in the projects, as they're packages and likely to be installed or added to PYTHONPATH later
     foreach  (IProject* project, ICore::self()->projectController()->projects() ) {
-        searchPaths.append(KUrl(project->folder().url()));
+        searchPaths.append(project->folder());
     }
     
     foreach ( const QString& path, getDataDirs() ) {
-        searchPaths.append(KUrl(path));
+        searchPaths.append(QUrl::fromLocalFile(path));
     }
     
     if ( cachedSearchPaths.isEmpty() ) {
@@ -430,8 +430,8 @@ QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
         }
         else {
             kWarning() << "Could not get search paths! Defaulting to stupid stuff.";
-            searchPaths.append(KUrl("/usr/lib/python2.7"));
-            searchPaths.append(KUrl("/usr/lib/python2.7/site-packages"));
+            searchPaths.append(QUrl::fromLocalFile("/usr/lib/python2.7"));
+            searchPaths.append(QUrl::fromLocalFile("/usr/lib/python2.7/site-packages"));
             QString path = qgetenv("PYTHONPATH");
             QStringList paths = path.split(':');
             foreach ( const QString& path, paths ) {
@@ -446,10 +446,10 @@ QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
     
     searchPaths.append(cachedSearchPaths);
     
-    const QString& currentDir = workingOnDocument.directory(KUrl::IgnoreTrailingSlash);
-    if ( ! currentDir.isEmpty() ) {
+    auto currentDir = QDir(workingOnDocument.path());
+    if ( ! currentDir.path().isEmpty() ) {
         // search in the current packages
-        searchPaths.append(KUrl(currentDir));
+        searchPaths.append(QUrl::fromLocalFile(currentDir.path()));
     }
     
     return searchPaths;

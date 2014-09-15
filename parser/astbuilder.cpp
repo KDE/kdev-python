@@ -301,7 +301,7 @@ QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
     if ( ! proj ) {
         return QPair<QString, int>(contents, 0);
     }
-    const KUrl headerFileUrl = proj->folder().path(KUrl::AddTrailingSlash) + ".kdev_python_header";
+    const QUrl headerFileUrl = proj->folder().path() + "/.kdev_python_header";
     QFile headerFile(headerFileUrl.path());
     QString headerFileContents;
     if ( headerFile.exists() ) {

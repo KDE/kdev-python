@@ -49,7 +49,7 @@ KDevelop::IFrameStackModel* DebugSession::createFrameStackModel()
     return new PdbFrameStackModel(this);
 }
 
-DebugSession::DebugSession(QStringList program, const KUrl &workingDirectory) :
+DebugSession::DebugSession(QStringList program, const QUrl &workingDirectory) :
     IDebugSession()
     , m_workingDirectory(workingDirectory)
     , m_nextNotifyMethod(0)
@@ -446,7 +446,7 @@ void DebugSession::locationUpdateReady(QByteArray data) {
         QRegExp m("^> (/.*\\.py)\\((\\d*)\\).*$");
         m.setMinimal(true);
         m.exactMatch(where);
-        setCurrentPosition(KUrl(m.capturedTexts().at(1)), m.capturedTexts().at(2).toInt() - 1 , "<unknown>");
+        setCurrentPosition(QUrl::fromLocalFile(m.capturedTexts().at(1)), m.capturedTexts().at(2).toInt() - 1 , "<unknown>");
         qCDebug(KDEV_PYTHON_DEBUGGER) << "New position: " << m.capturedTexts().at(1) << m.capturedTexts().at(2).toInt() - 1 << m.capturedTexts() << where;
     }
 }

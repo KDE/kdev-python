@@ -928,7 +928,7 @@ DUContext* PythonCodeCompletionContext::internalContextForDeclaration(TopDUConte
 
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::includeItemsForSubmodule(QString submodule)
 {
-    QList<KUrl> searchPaths = Helper::getSearchPaths(m_workingOnDocument);
+    QList<QUrl> searchPaths = Helper::getSearchPaths(m_workingOnDocument);
     
     QStringList subdirs;
     if ( ! submodule.isEmpty() ) {
@@ -945,18 +945,15 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::includeItemsForSub
     // Thus, we first generate a list of possible paths, then match them against those which actually exist
     // and then gather all the items in those paths.
     
-    foreach ( KUrl currentPath, searchPaths ) {
+    foreach ( QUrl currentPath, searchPaths ) {
+        auto d = QDir(currentPath.path());
         qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Searching: " << currentPath << subdirs;
         int identifiersUsed = 0;
         foreach ( const QString& subdir, subdirs ) {
-            currentPath.cd(subdir);
-            QFileInfo d(currentPath.path());
-            qCDebug(KDEV_PYTHON_CODECOMPLETION) << currentPath << d.exists() << d.isDir();
-            if ( ! d.exists() || ! d.isDir() ) {
-                currentPath.cd("..");
-                currentPath.cleanPath();
+            if ( ! d.cd(subdir) ) {
                 break;
             }
+            qCDebug(KDEV_PYTHON_CODECOMPLETION) << currentPath << d.exists();
             identifiersUsed++;
         }
         QStringList remainingIdentifiers = subdirs.mid(identifiersUsed, -1);

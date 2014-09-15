@@ -51,7 +51,7 @@ namespace Python {
 class KDEVPYTHONDUCHAIN_EXPORT Helper {
 public:
     /** get search paths for python files **/
-    static QList<KUrl> getSearchPaths(KUrl workingOnDocument);
+    static QList<QUrl> getSearchPaths(QUrl workingOnDocument);
     static QStringList dataDirs;
     static QString documentationFile;
     static QStringList correctionFileDirs;
@@ -65,7 +65,7 @@ public:
     static KUrl getCorrectionFile(KUrl document);
     static KUrl getLocalCorrectionFile(KUrl document);
 
-    static QList<KUrl> cachedSearchPaths;
+    static QList<QUrl> cachedSearchPaths;
 
     static AbstractType::Ptr extractTypeHints(AbstractType::Ptr type, TopDUContext* current);
 

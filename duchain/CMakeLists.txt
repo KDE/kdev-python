@@ -38,12 +38,12 @@ generate_export_header( kdev4pythonduchain EXPORT_MACRO_NAME KDEVPYTHONDUCHAIN_E
 )
 
 target_link_libraries( kdev4pythonduchain LINK_PRIVATE
-    KF5::KDELibs4Support
-    ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
-    ${KDEVPLATFORM_PROJECT_LIBRARIES}
-    KF5::TextEditor
-    ${KDEVPLATFORM_INTERFACES_LIBRARIES}
     Qt5::WebKitWidgets
+    KF5::KDELibs4Support
+    KF5::TextEditor
+    KDev::Interfaces
+    KDev::Language
+    KDev::Project
     kdev4pythonparser
  )
 

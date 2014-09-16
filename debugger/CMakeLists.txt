@@ -24,13 +24,12 @@ set(kdevpdb_PART_SRCS
 add_library(kdevpdb MODULE ${kdevpdb_PART_SRCS})
 target_link_libraries(kdevpdb
     kdev4pythonparser
-    ${KDEVPLATFORM_INTERFACES_LIBRARIES}
-    ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
-    ${KDEVPLATFORM_DEBUGGER_LIBRARIES}
-    ${KDEVPLATFORM_OUTPUTVIEW_LIBRARIES}
-    ${KDEVPLATFORM_PROJECT_LIBRARIES}
-    
-    ${KDEVPLATFORM_UTIL_LIBRARIES}
+    KDev::Interfaces
+    KDev::Language
+    KDev::Debugger
+    KDev::OutputView
+    KDev::Project    
+    KDev::Util
     KF5::TextEditor
     ${KDE4WORKSPACE_PROCESSUI_LIBS}
 )

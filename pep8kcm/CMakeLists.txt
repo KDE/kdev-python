@@ -6,13 +6,12 @@ add_library(kcm_pep8 MODULE ${kcm_pep8_SRCS})
 
 target_link_libraries(kcm_pep8
     KF5::KIOCore
-    ${KDEVPLATFORM_INTERFACES_LIBRARIES}
-    ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
-    ${KDEVPLATFORM_PROJECT_LIBRARIES}
-    ${KDEVPLATFORM_UTIL_LIBRARIES}
+    KDev::Interfaces
+    KDev::Language
+    KDev::Project
+    KDev::Util
     KF5::NewStuff
     KF5::KCMUtils
-    ${KDEVPLATFORM_INTERFACES_LIBRARIES}
 )
 
 install(TARGETS kcm_pep8

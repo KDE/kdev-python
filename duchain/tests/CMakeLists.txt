@@ -19,7 +19,7 @@ target_link_libraries(pyduchaintest
     kdev4pythonparser
     ${kdev4pythonparser_LIBRARIES}
     Qt5::Test
-    ${KDEVPLATFORM_TESTS_LIBRARIES}
+    KDev::Tests
 )
 
 target_link_libraries(duchainbench
@@ -27,5 +27,5 @@ target_link_libraries(duchainbench
     kdev4pythonparser
     ${kdev4pythonparser_LIBRARIES}
     Qt5::Test
-    ${KDEVPLATFORM_TESTS_LIBRARIES}
+    KDev::Tests
 )

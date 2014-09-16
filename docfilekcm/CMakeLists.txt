@@ -10,12 +10,12 @@ target_link_libraries(kcm_docfiles
     KF5::KIOCore
     KF5::Archive
     KF5::KCMUtils
-    ${KDEVPLATFORM_INTERFACES_LIBRARIES}
-    ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
-    ${KDEVPLATFORM_PROJECT_LIBRARIES}
-    ${KDEVPLATFORM_UTIL_LIBRARIES}
     KF5::NewStuff
-    ${KDEVPLATFORM_INTERFACES_LIBRARIES}
+    KDev::Interfaces
+    KDev::Language
+    KDev::Project
+    KDev::Util
+    KDev::Interfaces
 )
 
 install(TARGETS kcm_docfiles

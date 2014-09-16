@@ -32,9 +32,9 @@ add_dependencies(kdev4pythoncompletion
 
 target_link_libraries(kdev4pythoncompletion LINK_PRIVATE
     KF5::KDELibs4Support
-    ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
-    ${KDEVPLATFORM_INTERFACES_LIBRARIES}
-    ${KDEVPLATFORM_PROJECT_LIBRARIES}
+    KDev::Language
+    KDev::Interfaces
+    KDev::Project
     kdev4pythonduchain
     kdev4pythonparser
 )

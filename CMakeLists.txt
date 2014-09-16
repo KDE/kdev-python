@@ -90,8 +90,8 @@ ki18n_wrap_ui(kdevpythonlanguagesupport_PART_SRCS codegen/correctionwidget.ui)
 add_library(kdevpythonlanguagesupport MODULE ${kdevpythonlanguagesupport_PART_SRCS})
 
 target_link_libraries(kdevpythonlanguagesupport
-    ${KDEVPLATFORM_INTERFACES_LIBRARIES}
-    ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
+    KDev::Interfaces
+    KDev::Language
     KF5::ThreadWeaver
     KF5::TextEditor
     kdev4pythoncompletion

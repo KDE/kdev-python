@@ -2,7 +2,7 @@
 # -*- Coding:utf-8 -*-
 
 # Copyright 2013 by Sven Brauch <svenbrauch@googlemail.com>
-# License: GNU GPL v3 or later
+# License: GNU GPL v2 or later
 # The script output is not copyrighted, use it for whatever you want.
 
 # WARNING: This script does things which can cause bad stuff to happen

@@ -437,7 +437,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::stringFormatt
     }
 
     if ( ! variable->hasFormatSpec() ) {
-        auto addFormatSpec = [&](const QString& format, const QString& title, bool useTemplateEngine=false)
+        auto addFormatSpec = [&](const QString& format, const QString& title, bool useTemplateEngine)
         {
             resultingItems.append(makeFormattingItem(variable->conversion(), format, title, useTemplateEngine));
         };
@@ -448,13 +448,13 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::stringFormatt
         // These options don't make sense if we've set conversion using str() or repr()
         if ( ! variable->hasConversion() ) {
             addFormatSpec(".${precision}", i18n("Specify precision"), true);
-            addFormatSpec("%", i18n("Format as percentage"));
-            addFormatSpec("c", i18n("Format as character"));
-            addFormatSpec("b", i18n("Format as binary number"));
-            addFormatSpec("o", i18n("Format as octal number"));
-            addFormatSpec("x", i18n("Format as hexadecimal number"));
-            addFormatSpec("e", i18n("Format in scientific (exponent) notation"));
-            addFormatSpec("f", i18n("Format as fixed point number"));
+            addFormatSpec("%", i18n("Format as percentage"), false);
+            addFormatSpec("c", i18n("Format as character"), false);
+            addFormatSpec("b", i18n("Format as binary number"), false);
+            addFormatSpec("o", i18n("Format as octal number"), false);
+            addFormatSpec("x", i18n("Format as hexadecimal number"), false);
+            addFormatSpec("e", i18n("Format in scientific (exponent) notation"), false);
+            addFormatSpec("f", i18n("Format as fixed point number"), false);
         }
     }
 
@@ -612,7 +612,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         DUChainReadLocker lock;
         QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
         foreach ( const DeclarationDepthPair& d, declarations ) {
-            if ( d.first and d.first->context()->type() == DUContext::Class ) {
+            if ( d.first && d.first->context()->type() == DUContext::Class ) {
                 declarations.removeAll(d);
             }
         }
@@ -928,7 +928,7 @@ DUContext* PythonCodeCompletionContext::internalContextForDeclaration(TopDUConte
 
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::includeItemsForSubmodule(QString submodule)
 {
-    QList<KUrl> searchPaths = Helper::getSearchPaths(m_workingOnDocument);
+    QList<QUrl> searchPaths = Helper::getSearchPaths(m_workingOnDocument);
     
     QStringList subdirs;
     if ( ! submodule.isEmpty() ) {
@@ -945,18 +945,15 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::includeItemsForSub
     // Thus, we first generate a list of possible paths, then match them against those which actually exist
     // and then gather all the items in those paths.
     
-    foreach ( KUrl currentPath, searchPaths ) {
+    foreach ( QUrl currentPath, searchPaths ) {
+        auto d = QDir(currentPath.path());
         qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Searching: " << currentPath << subdirs;
         int identifiersUsed = 0;
         foreach ( const QString& subdir, subdirs ) {
-            currentPath.cd(subdir);
-            QFileInfo d(currentPath.path());
-            qCDebug(KDEV_PYTHON_CODECOMPLETION) << currentPath << d.exists() << d.isDir();
-            if ( ! d.exists() || ! d.isDir() ) {
-                currentPath.cd("..");
-                currentPath.cleanPath();
+            if ( ! d.cd(subdir) ) {
                 break;
             }
+            qCDebug(KDEV_PYTHON_CODECOMPLETION) << currentPath << d.exists();
             identifiersUsed++;
         }
         QStringList remainingIdentifiers = subdirs.mid(identifiersUsed, -1);

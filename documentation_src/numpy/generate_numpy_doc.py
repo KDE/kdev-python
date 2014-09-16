@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# Copyright 2014 Sven Brauch <svenbrauch@gmail.com>
+# License: GPL v2+
+
 import importlib
 
 modules = ["numpy", "numpy.ctypeslib",

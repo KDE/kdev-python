@@ -37,6 +37,7 @@
 #include <QDebug>
 #include <QTemporaryFile>
 #include <QIcon>
+#include <QUrl>
 
 #include <KStandardDirs>
 #include <KMessageBox>
@@ -151,7 +152,7 @@ void DocfileManagerWidget::showSearchPaths()
 
 void DocfileManagerWidget::openDocfilePath()
 {
-    KUrl docfileDirectory(docfilePath());
+    auto docfileDirectory = QUrl::fromLocalFile(docfilePath());
     KRun::runUrl(docfileDirectory, KMimeType::findByUrl(docfileDirectory)->name(), this);
 }
 
@@ -173,11 +174,11 @@ void DocfileManagerWidget::copyEditorContents()
             contents->layout()->addWidget(new QLabel(i18n("After copying, you will be editing the new document.")));
             dialog->setMainWidget(contents);
             if ( dialog->exec() == KDialog::Accepted ) {
-                KUrl target = KUrl(docfilePath() + "/" + lineEdit->text());
-                target.cleanPath(KUrl::SimplifyDirSeparators);
-                QDir d(target.directory());
+                auto target = QUrl::fromLocalFile(docfilePath() + "/" + lineEdit->text());
+                // TODO QUrl: cleanPath?
+                QDir d(target.url());
                 if ( ! d.exists() ) {
-                    d.mkpath(target.directory());
+                    d.mkpath(d.absolutePath());
                 }
                 doc->saveAs(target);
             }
@@ -192,9 +193,7 @@ void DocfileManagerWidget::openSelectedInTextEditor()
         KMessageBox::information(this, i18n("Please select at least one file from the list for editing."));
     }
     foreach ( const QUrl& item, selected ) {
-        KUrl fullUrl(item);
-        fullUrl.setProtocol("file"); // TODO isn't there a more elegant solution for this?
-        KDevelop::ICore::self()->documentController()->openDocument(fullUrl);
+        KDevelop::ICore::self()->documentController()->openDocument(item);
     }
 }
 

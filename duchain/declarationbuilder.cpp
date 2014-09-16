@@ -286,10 +286,10 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     // tells whether there's fitting declarations to update (update is not the same as re-open! one is for
     // code which uses the same variable twice, the other is for multiple passes of the parser)
     bool haveFittingDeclaration = false;
-    if ( ! existingDeclarations.isEmpty() and existingDeclarations.last() ) {
+    if ( ! existingDeclarations.isEmpty() && existingDeclarations.last() ) {
         Declaration* d = Helper::resolveAliasDeclaration(existingDeclarations.last());
         DUChainReadLocker lock;
-        if ( d and d->topContext() != topContext() ) {
+        if ( d && d->topContext() != topContext() ) {
             inSameTopContext = false;
         }
         if ( dynamic_cast<T*>(existingDeclarations.last()) ) {
@@ -481,7 +481,7 @@ Declaration* DeclarationBuilder::findDeclarationInContext(QStringList dottedName
                                                                             CursorInRevision::invalid(), 0, DUContext::NoFiltering);
         // break if the list of identifiers is not yet totally worked through and no
         // declaration with an internal context was found
-        if ( declarations.isEmpty() or ( not declarations.last()->internalContext() and identifierCount != i ) ) {
+        if ( declarations.isEmpty() || ( !declarations.last()->internalContext() && identifierCount != i ) ) {
             qCDebug(KDEV_PYTHON_DUCHAIN) << "Declaration not found: " << dottedNameIdentifier << "in top context" << ctx->url().toUrl().path();
             return 0;
         }
@@ -636,7 +636,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
             currentName.append(nameComponents.at(j));
         }
         lastDeclaration = findDeclarationInContext(currentName, topContext());
-        if ( lastDeclaration and lastDeclaration->range() < range ) {
+        if ( lastDeclaration && lastDeclaration->range() < range ) {
             depth = i;
             break;
         }
@@ -645,7 +645,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
     DUContext* extendingPreviousImportCtx = 0;
     QStringList remainingNameComponents;
     bool injectingContext = false;
-    if ( lastDeclaration and lastDeclaration->internalContext() ) {
+    if ( lastDeclaration && lastDeclaration->internalContext() ) {
         qCDebug(KDEV_PYTHON_DUCHAIN) << "Found existing import statement while creating declaration for " << declarationIdentifier->value;
         for ( int i = depth; i < nameComponents.length(); i++ ) {
             remainingNameComponents.append(nameComponents.at(i));
@@ -1448,7 +1448,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     lock.lock();
     // every python class inherits from "object".
     // We use this to add all the __str__, __get__, ... methods.
-    if ( dec->baseClassesSize() == 0 and node->name->value != "object" ) {
+    if ( dec->baseClassesSize() == 0 && node->name->value != "object" ) {
         DUChainWriteLocker wlock;
         ReferencedTopDUContext docContext = Helper::getDocumentationFileContext();
         if ( docContext ) {
@@ -1478,8 +1478,8 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     dec->setInternalContext(currentContext());
 
     lock.unlock();
-    foreach ( Ast* node, node->body ) {
-        AstDefaultVisitor::visitNode(node);
+    foreach ( Ast* _node, node->body ) {
+        AstDefaultVisitor::visitNode(_node);
     }
     lock.lock();
     

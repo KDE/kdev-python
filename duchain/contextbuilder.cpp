@@ -160,7 +160,7 @@ RangeInRevision ContextBuilder::editorFindRange(Ast* fromNode, Ast* toNode)
 }
 
 CursorInRevision ContextBuilder::editorFindPositionSafe(Ast* node) {
-    if ( not node ) {
+    if ( !node ) {
         return CursorInRevision::invalid();
     }
     return editor()->findPosition(node);
@@ -321,17 +321,17 @@ void ContextBuilder::visitCode(CodeAst* node) {
     AstDefaultVisitor::visitCode(node);
 }
 
-QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name, const KUrl& currentDocument)
+QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, const QUrl& currentDocument)
 {
     QStringList nameComponents = name.split(".");
-    QList<KUrl> searchPaths;
+    QList<QUrl> searchPaths;
     if ( name.startsWith('.') ) {
         /* To take care for imports like "from ....xxxx.yyy import zzz"
          * we need to take current doc path and run "cd .." enough times
          */
         nameComponents.removeFirst();
         QString tname = name.mid(1); // remove first dot
-        QDir curPathDir = QDir(currentDocument.directory());
+        QDir curPathDir = QDir(currentDocument.url());
         foreach(QString c, tname) {
             if (c != ".")
                 break;
@@ -347,10 +347,10 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
         searchPaths = Helper::getSearchPaths(currentDocument);
     }
     // Loop over all the name components, and find matching folders or files.
-    KUrl tmp;
+    QDir tmp;
     QStringList leftNameComponents;
-    foreach ( KUrl currentPath, searchPaths ) {
-        tmp = currentPath;
+    foreach ( QUrl currentPath, searchPaths ) {
+        tmp.setPath(currentPath.path());
         leftNameComponents = nameComponents;
         foreach ( QString component, nameComponents ) {
             if ( component == "*" ) {
@@ -361,7 +361,7 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
                 // only empty the list if not importing *, this is convenient later on
                 leftNameComponents.removeFirst();
             }
-            QString testFilename = tmp.path(KUrl::AddTrailingSlash) + component;
+            QString testFilename = tmp.path() + "/" + component;
             tmp.cd(component);
             QFileInfo sourcedir(testFilename);
 
@@ -375,13 +375,13 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
                     // the file matching the next name component will be returned,
                     // toegether with a list of names which must be resolved inside that file.
                     if ( sourcefile.exists() ) {
-                        KUrl sourceUrl = testFilename + extension;
-                        sourceUrl.cleanPath();
+                        auto sourceUrl = QUrl::fromLocalFile(testFilename + extension);
+                        // TODO QUrl: cleanPath?
                         return qMakePair(sourceUrl, leftNameComponents);
                     }
                     else if ( sourcedir.exists() && sourcedir.isDir() ) {
-                        KUrl path(testFilename + "/__init__.py");
-                        path.cleanPath();
+                        auto path = QUrl::fromLocalFile(testFilename + "/__init__.py");
+                        // TODO QUrl: cleanPath?
                         return qMakePair(path, leftNameComponents);
                     }
                 }

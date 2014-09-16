@@ -83,7 +83,7 @@ void Variable::moreChildrenFetched(QByteArray rawData)
     while ( i < data.length() ) {
         QByteArray d = data.at(i);
         // sort magic functions at the end of the list, they're not too interesting usually
-        if ( d.startsWith('_') and i < initialLength ) {
+        if ( d.startsWith('_') && i < initialLength ) {
             data.append(d);
             i++;
             continue;

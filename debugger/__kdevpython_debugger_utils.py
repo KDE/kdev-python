@@ -1,5 +1,8 @@
 # This file is imported from within the debugger
 
+# Copyright 2014 Sven Brauch
+# License: GPL v2+
+
 from kdevpdb import kdevOutputFormatter
 
 __kdevpython_builtin_locals = locals

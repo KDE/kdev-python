@@ -37,7 +37,7 @@ DataAccessVisitor::Access DataAccessVisitor::transformFlag(ExpressionAst::Contex
     if ( context == ExpressionAst::AugStore || context == ExpressionAst::Store ) {
         return DataAccess::Write;
     }
-    if ( context == ExpressionAst::ExpressionAst::Parameter ) {
+    if ( context == ExpressionAst::Parameter ) {
         // TODO
         return DataAccess::Read;
     }

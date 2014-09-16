@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# Copyright 2014 by Sven Brauch
+# License: GPL v2+
+
 import sys
 import subprocess
 

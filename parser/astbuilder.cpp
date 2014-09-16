@@ -301,7 +301,7 @@ QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
     if ( ! proj ) {
         return QPair<QString, int>(contents, 0);
     }
-    const KUrl headerFileUrl = proj->folder().path(KUrl::AddTrailingSlash) + ".kdev_python_header";
+    const QUrl headerFileUrl = proj->folder().path() + "/.kdev_python_header";
     QFile headerFile(headerFileUrl.path());
     QString headerFileContents;
     if ( headerFile.exists() ) {
@@ -324,9 +324,9 @@ QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
             if ( contents.at(insertAt) == '#' ) {
                 commentSignEncountered = true;
             }
-            if ( not contents.at(insertAt).isSpace() ) {
+            if ( !contents.at(insertAt).isSpace() ) {
 //                 atLineBeginning = false;
-                if ( not commentSignEncountered ) {
+                if ( !commentSignEncountered ) {
                     endOfCommentsReached = true;
                 }
             }
@@ -340,7 +340,7 @@ QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
                 endOfCommentsReached = true;
             }
             insertAt += 1;
-        } while ( not endOfCommentsReached );
+        } while ( !endOfCommentsReached );
         qCDebug(KDEV_PYTHON_PARSER) << "Inserting contents at char" << lastLineBeginning << "of file";
         contents = contents.left(lastLineBeginning) 
                    + "\n" + headerFileContents + "\n#\n" 

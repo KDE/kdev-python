@@ -141,7 +141,7 @@ LanguageSupport* LanguageSupport::self()
     return m_self;
 }
 
-bool LanguageSupport::enabledForFile(const KUrl& url)
+bool LanguageSupport::enabledForFile(const QUrl& url)
 {
     // This is a bit more general than it would need to be,
     // but that way we can have the same code for both branches.

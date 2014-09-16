@@ -73,7 +73,7 @@ public:
     virtual KDevelop::SourceFormatterItemList sourceFormatterItems() const;
 
     /// Tells whether this plugin is enabled for the given file.
-    static bool enabledForFile(const KUrl& url);
+    static bool enabledForFile(const QUrl& url);
 
     virtual QList<KDevelop::ILanguageCheck*> providedChecks();
 

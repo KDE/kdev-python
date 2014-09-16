@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# Copyright 2014 by Sven Brauch
+# License: GPL v2+
+
 # Transforms a conversion definition file (.sdef) into C++ code. To be copied over manually. :)
 # sdef example line:
 # RULE_FOR _stmt;KIND Expr_kind;ACTIONS create|ExpressionAst set|value->ExpressionAst,value;CODE;;

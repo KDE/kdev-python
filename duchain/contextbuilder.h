@@ -75,10 +75,10 @@ public:
      *
      * @param name a dotted name, such as PyQt4.QtCore.QWidget
      * @param currentDocument the current document, for resolving relative imports
-     * @return QPair< KUrl, QStringList > the URL if found, and a list of components from
+     * @return QPair< QUrl, QStringList > the URL if found, and a list of components from
      *  the end of the name which were not yet consumed
      */
-    static QPair<KUrl, QStringList> findModulePath(const QString& name, const KUrl& currentDocument);
+    static QPair<QUrl, QStringList> findModulePath(const QString& name, const QUrl& currentDocument);
 
     /**
      * @brief Get the range which encompasses the given @p node.

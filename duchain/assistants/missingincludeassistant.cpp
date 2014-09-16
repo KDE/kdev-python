@@ -1,6 +1,6 @@
 /*
- * <one line to give the library's name and an idea of what it does.>
- * Copyright 2013  <copyright holder> <email>
+ * This file is part of kdev-python, the Python language support plugin for KDevelop
+ * Copyright 2013 Sven Brauch <svenbrauch@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -75,7 +75,7 @@ void DocumentationGeneratorAction::execute()
     wizard.setModuleName(module);
     wizard.exec();
     if ( ! wizard.wasSavedAs().isNull() ) {
-        ICore::self()->documentController()->openDocument(KUrl(wizard.wasSavedAs()));
+        ICore::self()->documentController()->openDocument(QUrl::fromLocalFile(wizard.wasSavedAs()));
         // force a recursive update of the context, so that all the imports are reparsed too
         // (since they potentially have changed through this action)
         ICore::self()->languageController()->backgroundParser()->addDocument(document, TopDUContext::ForceUpdateRecursive);

@@ -85,8 +85,8 @@ QString VariableController::expressionUnderCursor(KTextEditor::Document* doc, co
     if ( ! doc->isModified() ) {
         if ( TopDUContext* context = DUChain::self()->chainForDocument(doc->url()) ) {
             DUContext* contextAtCursor = context->findContextAt(CursorInRevision(cursor.line(), cursor.column()));
-            if ( contextAtCursor and contextAtCursor->type() == DUContext::Class ) {
-                if ( contextAtCursor->owner() and ! contextAtCursor->owner()->identifier().isEmpty() ) {
+            if ( contextAtCursor && contextAtCursor->type() == DUContext::Class ) {
+                if ( contextAtCursor->owner() && ! contextAtCursor->owner()->identifier().isEmpty() ) {
                     prefix = contextAtCursor->owner()->identifier().toString() + ".";
                 }
             }

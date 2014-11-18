@@ -59,7 +59,7 @@ bool HintedType::isValid(TopDUContext* /*current*/)
     if ( ! creator ) {
         return false;
     }
-    KDEBUG_BLOCK
+//    KDEBUG_BLOCK
     ModificationRevision rev(creator->parsingEnvironmentFile()->modificationRevision());
     qCDebug(KDEV_PYTHON_DUCHAIN) << "current: " << rev.revision << "; created:" << d_func()->m_modificationRevision.revision;
     qCDebug(KDEV_PYTHON_DUCHAIN) << "current: " << rev.modificationTime << "; created:" << d_func()->m_modificationRevision.modificationTime;

@@ -53,7 +53,7 @@ void VariableController::addWatch(KDevelop::Variable* variable)
 
 void VariableController::addWatchpoint(KDevelop::Variable* /*variable*/)
 {
-    kWarning() << "addWatchpoint requested (not implemented)";
+    qCWarning(KDEV_PYTHON_DEBUGGER) << "addWatchpoint requested (not implemented)";
 }
 
 void VariableController::handleEvent(IDebugSession::event_t event)
@@ -116,7 +116,7 @@ void VariableController::localsUpdateReady(QByteArray rawData)
             vars << key;
             values[key] = formatExtract.capturedTexts().at(2);
         }
-        else kWarning() << "mismatch:" << d;
+        else qCWarning(KDEV_PYTHON_DEBUGGER) << "mismatch:" << d;
         i++;
     }
     QList<KDevelop::Variable*> variableObjects = KDevelop::ICore::self()->debugController()->variableCollection()

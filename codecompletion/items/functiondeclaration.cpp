@@ -143,7 +143,7 @@ void FunctionDeclarationCompletionItem::executed(KTextEditor::View* view, const 
     lock.unlock();
     if ( ! fdecl.first && (! resolvedDecl || ! resolvedDecl->abstractType()
                            || resolvedDecl->abstractType()->whichType() != AbstractType::TypeStructure) ) {
-        kError() << "ERROR: could not get declaration data, not executing completion item!";
+        qCritical(KDEV_PYTHON_CODECOMPLETION) << "ERROR: could not get declaration data, not executing completion item!";
         return;
     }
     QString suffix = "()";

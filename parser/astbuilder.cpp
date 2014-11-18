@@ -417,7 +417,7 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
         PyObject_Print(errorMessage_str, stderr, Py_PRINT_RAW);
        
         if ( ! errorDetails_tuple ) {
-            kWarning() << "Error retrieving error message, not displaying, and not doing anything";
+            qCWarning(KDEV_PYTHON_PARSER) << "Error retrieving error message, not displaying, and not doing anything";
             return CodeAst::Ptr();
         }
         PyObject* linenoobj = PyTuple_GetItem(errorDetails_tuple, 1);
@@ -515,7 +515,7 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
         currentLineBeginning = qMin(contents.length() - 1, currentLineBeginning);
         errline = qMax(0, qMin(indents.length()-1, errline));
         if ( ! syntaxtree ) {
-            kWarning() << "Discarding parts of the code to be parsed because of previous errors";
+            qCWarning(KDEV_PYTHON_PARSER) << "Discarding parts of the code to be parsed because of previous errors";
             qCDebug(KDEV_PYTHON_PARSER) << indents;
             int indentAtError = indents.at(errline);
             QChar c;

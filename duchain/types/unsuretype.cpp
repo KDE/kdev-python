@@ -27,6 +27,8 @@
 #include <language/duchain/types/typesystem.h>
 #include <language/duchain/types/typealiastype.h>
 #include <language/duchain/types/unsuretype.h>
+#include <QDebug>
+#include "../duchaindebug.h"
 
 namespace Python {
     
@@ -70,7 +72,7 @@ QString UnsureType::toString() const
     QList<IndexedType> encountered;
     foreach ( AbstractType::Ptr type, typesRecursive() ) {
         if ( ! type ) {
-            kWarning() << "Invalid type: " << type.data();
+            qCWarning(KDEV_PYTHON_DUCHAIN) << "Invalid type: " << type.data();
             continue;
         }
         

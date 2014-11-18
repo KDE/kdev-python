@@ -439,7 +439,7 @@ void ExpressionVisitor::visitList(ListAst* node)
     }
     else {
         encounterUnknown();
-        kWarning() << " [ !!! ] did not get a typetrack container object when expecting one! Fix code / setup.";
+        qCWarning(KDEV_PYTHON_DUCHAIN) << " [ !!! ] did not get a typetrack container object when expecting one! Fix code / setup.";
     }
     encounter(AbstractType::Ptr::staticCast(type));
 }
@@ -528,7 +528,7 @@ void ExpressionVisitor::visitTuple(TupleAst* node) {
         encounter(AbstractType::Ptr::staticCast(type));
     }
     else {
-        kWarning() << "tuple type object is not available";
+        qCWarning(KDEV_PYTHON_DUCHAIN) << "tuple type object is not available";
         return encounterUnknown();
     }
 }

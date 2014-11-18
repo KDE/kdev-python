@@ -81,7 +81,7 @@ void TypeCorrection::executeSpecifyTypeAction()
 {
     QAction* action = qobject_cast<QAction*>(sender());
     if ( ! action ) {
-        kWarning() << "slot not invoked by triggering a QAction, should not happen"; // :)
+        qCWarning(KDEV_PYTHON_CODEGEN) << "slot not invoked by triggering a QAction, should not happen"; // :)
         return;
     }
 
@@ -92,7 +92,7 @@ void TypeCorrection::executeSpecifyTypeAction()
     }
 
     if ( ! decl.isValid() ) {
-        kWarning() << "No declaration found!";
+        qCWarning(KDEV_PYTHON_CODEGEN) << "No declaration found!";
         return;
     }
 
@@ -104,7 +104,7 @@ void TypeCorrection::executeSpecifyTypeAction()
         hintType = CorrectionFileGenerator::LocalVariableHint;
     }
     else {
-        kWarning() << "Correction requested for something that's not a local variable or function.";
+        qCWarning(KDEV_PYTHON_CODEGEN) << "Correction requested for something that's not a local variable or function.";
         return;
     }
 
@@ -135,7 +135,7 @@ void TypeCorrection::accepted()
     CorrectionAssistant *dialog = qobject_cast<CorrectionAssistant*>(sender());
     Q_ASSERT(dialog);
     if ( ! dialog ) {
-        kWarning() << "accepted() called without a sender";
+        qCWarning(KDEV_PYTHON_CODEGEN) << "accepted() called without a sender";
         return;
     }
 
@@ -149,7 +149,7 @@ void TypeCorrection::accepted()
     }
 
     if ( ! decl.isValid() ) {
-        kWarning() << "No declaration found!";
+        qCWarning(KDEV_PYTHON_CODEGEN) << "No declaration found!";
         return;
     }
 
@@ -194,7 +194,7 @@ void CorrectionFileGenerator::addHint(const QString &typeCode, const QStringList
                                       CorrectionFileGenerator::HintType hintType)
 {
     if ( ! forDeclaration || ! forDeclaration->context() ) {
-        kWarning() << "Declaration does not have context!" << (forDeclaration ? forDeclaration->toString() : "");
+        qCWarning(KDEV_PYTHON_CODEGEN) << "Declaration does not have context!" << (forDeclaration ? forDeclaration->toString() : "");
         return;
     }
 

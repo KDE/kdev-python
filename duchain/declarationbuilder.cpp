@@ -162,7 +162,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, 
         return visitVariableDeclaration<T>(static_cast<Identifier*>(node), 0, previous, type);
     }
     else {
-        kWarning() << "cannot create variable declaration for non-(name|identifier) AST, this is a programming error";
+        qCWarning(KDEV_PYTHON_DUCHAIN) << "cannot create variable declaration for non-(name|identifier) AST, this is a programming error";
         return static_cast<T*>(0);
     }
 }
@@ -358,7 +358,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     }
 
     T* result = dynamic_cast<T*>(dec);
-    if ( ! result ) kWarning() << "variable declaration does not have the expected type";
+    if ( ! result ) qCWarning(KDEV_PYTHON_DUCHAIN) << "variable declaration does not have the expected type";
     return result;
 }
 
@@ -1360,7 +1360,7 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
             DUChainWriteLocker lock;
             previousContext->createUse(dec->ownIndex(), editorFindRange(attrib, attrib));
         }
-        else kWarning() << "No declaration created for " << attrib->attribute << "as parent is not a class";
+        else qCWarning(KDEV_PYTHON_DUCHAIN) << "No declaration created for " << attrib->attribute << "as parent is not a class";
 
         closeInjectedContext();
     }

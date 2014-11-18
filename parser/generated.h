@@ -251,7 +251,7 @@ private:
                 break;
             }
         default:
-            kWarning() << "Unsupported statement AST type: " << node->kind;
+            qCWarning(KDEV_PYTHON_PARSER) << "Unsupported statement AST type: " << node->kind;
             Q_ASSERT(false);
         }
 
@@ -315,7 +315,7 @@ private:
                 break;
             }
         default:
-            kWarning() << "Unsupported statement AST type: " << node->kind;
+            qCWarning(KDEV_PYTHON_PARSER) << "Unsupported statement AST type: " << node->kind;
             Q_ASSERT(false);
         }
 
@@ -574,7 +574,7 @@ private:
                 break;
             }
         default:
-            kWarning() << "Unsupported statement AST type: " << node->kind;
+            qCWarning(KDEV_PYTHON_PARSER) << "Unsupported statement AST type: " << node->kind;
             Q_ASSERT(false);
         }
 
@@ -643,7 +643,7 @@ private:
                 break;
             }
         default:
-            kWarning() << "Unsupported statement AST type: " << node->kind;
+            qCWarning(KDEV_PYTHON_PARSER) << "Unsupported statement AST type: " << node->kind;
             Q_ASSERT(false);
         }
 

@@ -147,8 +147,8 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::functionCallI
     auto v = visitorForString(m_guessTypeOfExpression, m_duContext.data());
     DUChainReadLocker lock;
     if ( ! v || ! v->lastDeclaration() ) {
-        kWarning() << "Did not receive a function declaration from expression visitor! Not offering call tips.";
-        kWarning() << "Tried: " << m_guessTypeOfExpression;
+        qCWarning(KDEV_PYTHON_CODECOMPLETION) << "Did not receive a function declaration from expression visitor! Not offering call tips.";
+        qCWarning(KDEV_PYTHON_CODECOMPLETION) << "Tried: " << m_guessTypeOfExpression;
         return resultingItems;
     }
     functionCalled = Helper::functionDeclarationForCalledDeclaration(v->lastDeclaration()).first.data();
@@ -199,7 +199,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::defineItems()
     ItemList resultingItems;
     // Find all base classes of the current class context
     if ( m_duContext->type() != DUContext::Class ) {
-        kWarning() << "current context is not a class context, not offering define completion";
+        qCWarning(KDEV_PYTHON_CODECOMPLETION) << "current context is not a class context, not offering define completion";
         return resultingItems;
     }
     ClassDeclaration* klass = dynamic_cast<ClassDeclaration*>(m_duContext->owner());
@@ -343,11 +343,11 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::memberAccessI
             resultingItems << getCompletionItemsForType(v->lastType());
         }
         else {
-            kWarning() << "Did not receive a type from expression visitor! Not offering autocompletion.";
+            qCWarning(KDEV_PYTHON_CODECOMPLETION) << "Did not receive a type from expression visitor! Not offering autocompletion.";
         }
     }
     else {
-        kWarning() << "Completion requested for syntactically invalid expression, not offering anything";
+        qCWarning(KDEV_PYTHON_CODECOMPLETION) << "Completion requested for syntactically invalid expression, not offering anything";
     }
 
     // append eventually stripped postfix, for e.g. os.chdir|
@@ -774,7 +774,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
     TypePtr<StructureType> cls = StructureType::Ptr::dynamicCast(type);
     qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Finding completion items for class type";
     if ( ! cls || ! cls->internalContext(m_duContext->topContext()) ) {
-        kWarning() << "No class type available, no completion offered";
+        qCWarning(KDEV_PYTHON_CODECOMPLETION) << "No class type available, no completion offered";
         return QList<CompletionTreeItemPointer>();
     }
     // the PublicOnly will filter out non-explictly defined __get__ etc. functions inherited from object

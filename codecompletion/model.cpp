@@ -22,6 +22,9 @@
 #include <KTextEditor/Document>
 #include <KTextEditor/CodeCompletionModelControllerInterface>
 
+#include <QDebug>
+#include "codecompletiondebug.h"
+
 #include "context.h"
 #include "worker.h"
 
@@ -82,7 +85,7 @@ QString PythonCodeCompletionModel::filterString(KTextEditor::View *view, const K
     if ( completionContext() ) {
         auto context = QExplicitlySharedDataPointer<PythonCodeCompletionContext>(completionContext());
         if (context->completionContextType() == PythonCodeCompletionContext::StringFormattingCompletion) {
-            return QString();
+           return QString();
         }
     }
     return CodeCompletionModel::filterString(view, range, position);
@@ -91,7 +94,7 @@ QString PythonCodeCompletionModel::filterString(KTextEditor::View *view, const K
 KTextEditor::Range PythonCodeCompletionModel::completionRange(KTextEditor::View* view, const KTextEditor::Cursor& position)
 {
     m_currentDocument = view->document()->url();
-    kWarning() << "Current document: " << m_currentDocument;
+    qCWarning(KDEV_PYTHON_CODECOMPLETION) << "Current document: " << m_currentDocument;
     return KTextEditor::CodeCompletionModelControllerInterface::completionRange(view, position);
 }
 

@@ -429,7 +429,7 @@ QList<QUrl> Helper::getSearchPaths(QUrl workingOnDocument)
             }
         }
         else {
-            kWarning() << "Could not get search paths! Defaulting to stupid stuff.";
+            qCWarning(KDEV_PYTHON_DUCHAIN) << "Could not get search paths! Defaulting to stupid stuff.";
             searchPaths.append(QUrl::fromLocalFile("/usr/lib/python2.7"));
             searchPaths.append(QUrl::fromLocalFile("/usr/lib/python2.7/site-packages"));
             QString path = qgetenv("PYTHONPATH");

@@ -28,6 +28,7 @@
 #include <language/duchain/topducontext.h>
 
 #include <memory>
+#include <KSharedPtr>
 
 namespace Python {
 

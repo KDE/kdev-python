@@ -24,6 +24,7 @@
 #include <language/checks/dataaccessrepository.h>
 #include <pythoneditorintegrator.h>
 
+#include <KSharedPtr>
 #include <memory>
 
 namespace Python {

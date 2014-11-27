@@ -331,7 +331,7 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
          */
         nameComponents.removeFirst();
         QString tname = name.mid(1); // remove first dot
-        QDir curPathDir = QDir(currentDocument.url());
+        QDir curPathDir = QDir(currentDocument.adjusted(QUrl::RemoveFilename).toLocalFile());
         foreach(QString c, tname) {
             if (c != ".")
                 break;

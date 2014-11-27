@@ -31,6 +31,7 @@ target_link_libraries(kdevpdb
     KDev::Project    
     KDev::Util
     KF5::TextEditor
+    KF5::KDELibs4Support
     ${KDE4WORKSPACE_PROCESSUI_LIBS}
 )
 

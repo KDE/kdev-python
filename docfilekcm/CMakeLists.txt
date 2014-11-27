@@ -11,6 +11,7 @@ target_link_libraries(kcm_docfiles
     KF5::Archive
     KF5::KCMUtils
     KF5::NewStuff
+    KF5::KDELibs4Support
     KDev::Interfaces
     KDev::Language
     KDev::Project

@@ -20,6 +20,7 @@ target_link_libraries(pyduchaintest
     ${kdev4pythonparser_LIBRARIES}
     Qt5::Test
     KDev::Tests
+    KF5::KDELibs4Support
 )
 
 target_link_libraries(duchainbench
@@ -28,4 +29,5 @@ target_link_libraries(duchainbench
     ${kdev4pythonparser_LIBRARIES}
     Qt5::Test
     KDev::Tests
+    KF5::KDELibs4Support
 )

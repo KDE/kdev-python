@@ -83,7 +83,7 @@ QString PythonCodeCompletionModel::filterString(KTextEditor::View *view, const K
 {
     // TODO The completion context may be null, so we need to check it first. This might a bug.
     if ( completionContext() ) {
-        auto context = QExplicitlySharedDataPointer<PythonCodeCompletionContext>(completionContext());
+        auto context = static_cast<PythonCodeCompletionContext*>(completionContext().data());
         if (context->completionContextType() == PythonCodeCompletionContext::StringFormattingCompletion) {
            return QString();
         }

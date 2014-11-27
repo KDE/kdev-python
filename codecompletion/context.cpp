@@ -410,9 +410,8 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::stringFormatt
     // in the document. We can safely assume that the replacement variable is on one line,
     // because the regex does not allow newlines inside replacement variables.
     KTextEditor::Range range;
-    range.setBothLines(m_position.line);
-    range.start().setColumn(m_position.column - (cursorPosition - variablePosition.beginIndex));
-    range.end().setColumn(m_position.column + (variablePosition.endIndex - cursorPosition));
+    range.setStart({m_position.line, m_position.column - (cursorPosition - variablePosition.beginIndex)});
+    range.setEnd({m_position.line, m_position.column + (variablePosition.endIndex - cursorPosition)});
 
     qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Variable under cursor: " << variable->toString();
     bool hasNumericOnlyOption =     variable->hasPrecision()

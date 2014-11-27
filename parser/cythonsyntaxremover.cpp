@@ -343,7 +343,7 @@ QVector<CythonSyntaxRemover::Token> CythonSyntaxRemover::getArgumentListTokens()
             range.setEnd(m_offset);
         }
         else if (c == '=') {
-            range.end().setColumn(range.end().column() + 1);
+            range.setEnd(range.end() + KTextEditor::Cursor(0, 1));
             int open_paren_count = 0;
             bool in_string = false;
             // while there are open parenthesis or if we are in

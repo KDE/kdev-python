@@ -49,17 +49,15 @@ void ReplacementVariableItem::execute(View* view, const Range &word)
     Range removeRange(m_position.start(), removeUntil);
     if ( document->text(m_position).lastIndexOf('{') != -1 ) {
         // remove the whole existing expression
-        removeRange.end().setColumn(m_position.end().column());
+        removeRange.setEnd({removeRange.end().line(), m_position.end().column()});
     }
     else {
         // remove nothing unless there is an opening { already, in that case remove that
-        removeRange.start() = m_position.end();
-        removeRange.end() = m_position.end();
+        removeRange= {m_position.end(), m_position.end()};
 
-        Range previousCharacter(word.start(), word.start());
-        previousCharacter.start().setColumn(word.start().column() - 1);
+        Range previousCharacter(word.start() - Cursor(0, 1), word.start());
         if ( document->text(previousCharacter) == "{" ) {
-            removeRange.start().setColumn(removeRange.start().column() - 1);
+            removeRange.setStart(removeRange.start() - Cursor(0, 1));
         }
     }
 

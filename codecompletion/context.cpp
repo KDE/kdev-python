@@ -235,12 +235,14 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::defineItems()
                 existingIdentifiers << identifier;
                 QStringList argumentNames;
                 DUContext* argumentsContext = DUChainUtils::getArgumentContext(funcDecl);
-                foreach ( Declaration* argument, argumentsContext->localDeclarations() ) {
-                    argumentNames << argument->identifier().toString();
+                if ( argumentsContext ) {
+                    foreach ( Declaration* argument, argumentsContext->localDeclarations() ) {
+                        argumentNames << argument->identifier().toString();
+                    }
+                    resultingItems << CompletionTreeItemPointer(new ImplementFunctionCompletionItem(
+                        funcDecl->identifier().toString(), argumentNames, m_indent)
+                    );
                 }
-                resultingItems << CompletionTreeItemPointer(new ImplementFunctionCompletionItem(
-                    funcDecl->identifier().toString(), argumentNames, m_indent)
-                );
             }
         }
         isOwnContext = false;

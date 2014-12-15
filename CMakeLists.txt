@@ -28,7 +28,7 @@ include(KDECompilerSettings)
 find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Widgets Test WebKitWidgets)
 find_package(KF5 REQUIRED I18n NewStuff ItemModels ThreadWeaver KDELibs4Support TextEditor KCMUtils)
 find_package(KDevPlatform ${KDEVPLATFORM_VERSION} REQUIRED)
-
+find_package(KDevelop REQUIRED)
 
 # find the system python 3 interpreter, only used for determining search paths.
 find_package(PythonInterp 3.0 REQUIRED)

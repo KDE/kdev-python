@@ -44,27 +44,35 @@ static QByteArray debuggerOutputEnd = "<<<__KDEVPYTHON_END___DEBUGGER_OUTPUT";
 
 namespace Python {
 
-KDevelop::IFrameStackModel* DebugSession::createFrameStackModel()
-{
-    return new PdbFrameStackModel(this);
-}
-
 DebugSession::DebugSession(QStringList program, const QUrl &workingDirectory) :
     IDebugSession()
+    , m_breakpointController(nullptr)
+    , m_variableController(nullptr)
+    , m_frameStackModel(nullptr)
     , m_workingDirectory(workingDirectory)
     , m_nextNotifyMethod(0)
     , m_inDebuggerData(0)
 {
     qCDebug(KDEV_PYTHON_DEBUGGER) << "creating debug session";
-    m_variableController = new Python::VariableController(this);
-    m_breakpointController = new Python::BreakpointController(this);
     m_program = program;
+    m_breakpointController = new Python::BreakpointController(this);
     m_variableController = new VariableController(this);
+    m_frameStackModel = new PdbFrameStackModel(this);
 }
 
-IVariableController* DebugSession::variableController()
+IBreakpointController* DebugSession::breakpointController() const
+{
+    return m_breakpointController;
+}
+
+IVariableController* DebugSession::variableController() const
 {
     return m_variableController;
+}
+
+IFrameStackModel* DebugSession::frameStackModel() const
+{
+    return m_frameStackModel;
 }
 
 void DebugSession::start()

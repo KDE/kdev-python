@@ -63,10 +63,8 @@ void DUChainBench::initShell()
     TestCore* core = new TestCore();
     core->initialize(KDevelop::Core::NoUi);
 
-    KUrl doc_url = KUrl(QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/documentation_files/builtindocumentation.py"));
-    doc_url.cleanPath(KUrl::SimplifyDirSeparators);
-
-    qCDebug(KDEV_PYTHON_DUCHAIN) << doc_url;
+    auto doc_url = QDir::cleanPath(QStandardPaths::locate(QStandardPaths::GenericDataLocation,
+                                                          "kdevpythonsupport/documentation_files/builtindocumentation.py"));
 
     DUChain::self()->updateContextForUrl(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
     ICore::self()->languageController()->backgroundParser()->parseDocuments();

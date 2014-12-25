@@ -46,6 +46,8 @@
 
 #include <KTextEditor/Range>
 
+#include <KUrl>
+
 #include "parsesession.h"
 #include "pythoneditorintegrator.h"
 #include "declarationbuilder.h"

@@ -28,7 +28,7 @@
 #include "declarationbuilder.h"
 #include "helpers.h"
 
-
+#include <KUrl>
 
 #include <ktexteditor/document.h>
 

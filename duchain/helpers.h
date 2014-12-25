@@ -35,7 +35,6 @@
 #include <duchain/declarations/decorator.h>
 
 #include <QList>
-#include <KUrl>
 
 #include <functional>
 
@@ -51,7 +50,7 @@ namespace Python {
 class KDEVPYTHONDUCHAIN_EXPORT Helper {
 public:
     /** get search paths for python files **/
-    static QList<QUrl> getSearchPaths(QUrl workingOnDocument);
+    static QList<QUrl> getSearchPaths(const QUrl& workingOnDocument);
     static QStringList dataDirs;
     static QString documentationFile;
     static QStringList correctionFileDirs;
@@ -62,8 +61,8 @@ public:
     static QString getDocumentationFile();
     static ReferencedTopDUContext getDocumentationFileContext();
 
-    static KUrl getCorrectionFile(KUrl document);
-    static KUrl getLocalCorrectionFile(KUrl document);
+    static QUrl getCorrectionFile(const QUrl& document);
+    static QUrl getLocalCorrectionFile(const QUrl& document);
 
     static QList<QUrl> cachedSearchPaths;
 

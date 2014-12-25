@@ -28,7 +28,6 @@
 #include <tests/autotestshell.h>
 
 #include <QtTest/QTest>
-#include <KUrl>
 #include <KTextEditor/Editor>
 #include <KService>
 
@@ -78,8 +77,7 @@ void makefile(QString filename, QString contents) {
     fileptr.open(QIODevice::WriteOnly);
     fileptr.write(contents.toAscii());
     fileptr.close();
-    KUrl url = KUrl(basepath + filename);
-    url.cleanPath();
+    auto url = QUrl::fromLocalFile(QDir::cleanPath(basepath + filename));
     qCDebug(KDEV_PYTHON_CODECOMPLETION) <<  "updating duchain for " << url.url() << basepath;
     const IndexedString urlstring(url);
     DUChain::self()->updateContextForUrl(urlstring, KDevelop::TopDUContext::ForceUpdate);
@@ -95,9 +93,9 @@ void PyCompletionTest::initShell()
     QDir d;
     d.mkpath(basepath);
     
-    KUrl doc_url = KUrl(QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/documentation_files/builtindocumentation.py"));
-    doc_url.cleanPath(KUrl::SimplifyDirSeparators);
-    
+    auto doc_url = QDir::cleanPath(QStandardPaths::locate(QStandardPaths::GenericDataLocation,
+                                                          "kdevpythonsupport/documentation_files/builtindocumentation.py"));
+
     DUChain::self()->updateContextForUrl(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
     ICore::self()->languageController()->backgroundParser()->parseDocuments();
     DUChain::self()->waitForUpdate(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);

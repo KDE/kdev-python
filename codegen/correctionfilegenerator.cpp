@@ -33,6 +33,7 @@
 #include <parser/parsesession.h>
 
 #include <KTextEditor/Document>
+#include <KUrl>
 
 #include "duchain/helpers.h"
 #include "parser/codehelpers.h"

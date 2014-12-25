@@ -20,7 +20,6 @@
 #include "helpers.h"
 
 #include <QList>
-#include <KUrl>
 #include <QProcess>
 #include <QStandardPaths>
 
@@ -355,7 +354,7 @@ ReferencedTopDUContext Helper::getDocumentationFileContext()
     return ReferencedTopDUContext(0); // c++...
 }
 
-KUrl Helper::getCorrectionFile(KUrl document)
+QUrl Helper::getCorrectionFile(const QUrl& document)
 {
     if ( Helper::correctionFileDirs.isEmpty() ) {
         Helper::correctionFileDirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, "kdevpythonsupport/correction_files/", QStandardPaths::LocateDirectory);
@@ -375,30 +374,28 @@ KUrl Helper::getCorrectionFile(KUrl document)
             }
         }
     }
-    return KUrl();
+    return {};
 }
 
-KUrl Helper::getLocalCorrectionFile(KUrl document)
+QUrl Helper::getLocalCorrectionFile(const QUrl& document)
 {
     if ( Helper::localCorrectionFileDir.isNull() ) {
         Helper::localCorrectionFileDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + "kdevpythonsupport/correction_files/";
     }
 
-    KUrl absolutePath;
-    foreach ( const KUrl& basePath, Helper::getSearchPaths(KUrl()) ) {
+    auto absolutePath = QUrl();
+    foreach ( const auto& basePath, Helper::getSearchPaths({}) ) {
         if ( ! basePath.isParentOf(document) ) {
             continue;
         }
-        QString path = KUrl::relativePath(basePath.path(), document.path());
-        absolutePath = KUrl(Helper::localCorrectionFileDir + path);
-        absolutePath.cleanPath();
-
+        auto path = QDir(basePath.path()).relativeFilePath(document.path());
+        absolutePath = Helper::localCorrectionFileDir + path;
         break;
     }
     return absolutePath;
 }
     
-QList<QUrl> Helper::getSearchPaths(QUrl workingOnDocument)
+QList<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
 {
     QList<QUrl> searchPaths;
     // search in the projects, as they're packages and likely to be installed or added to PYTHONPATH later

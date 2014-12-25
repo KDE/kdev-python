@@ -36,10 +36,10 @@
 #include <QUrl>
 #include <QDebug>
 #include <QTemporaryFile>
+#include <QStandardPaths>
 #include <QIcon>
 #include <QUrl>
 
-#include <KStandardDirs>
 #include <KMessageBox>
 #include <KLocalizedString>
 #include <KMimeType>
@@ -126,8 +126,7 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
 
 void DocfileManagerWidget::showSearchPaths()
 {
-    KStandardDirs d;
-    QStringList dirs = d.findDirs("data", "kdevpythonsupport/documentation_files");
+    QStringList dirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, "kdevpythonsupport/documentation_files", QStandardPaths::LocateDirectory);
     QLabel* dirsMessageLabel = new QLabel(i18nc("displays a list of search paths below",
                                                 "Paths searched for documentation by kdev-python (in this order):"));
     QTextEdit* paths = new QTextEdit;
@@ -199,10 +198,11 @@ void DocfileManagerWidget::openSelectedInTextEditor()
 
 QString DocfileManagerWidget::docfilePath()
 {
-    KStandardDirs d;
     // finds a local directory which is contained in the dirs searched by the parser, code
     // and creates it if it doesn't exist
-    QString path = d.locateLocal("data", "kdevpythonsupport/documentation_files/", true);
+    QDir dir(QStandardPaths::GenericDataLocation + "kdevpython/documentation_files/");
+    dir.mkpath(QStandardPaths::GenericDataLocation + "kdevpython/documentation_files/");
+    QString path = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/" + "kdevpythonsupport/documentation_files/";
     return path;
 }
 
@@ -225,8 +225,7 @@ void DocfileManagerWidget::runWizard()
 
 void DocfileManagerWidget::showGHNSDialog()
 {
-    KStandardDirs d;
-    QString knsrc = d.findResource("config", "kdev_python_docfiles.knsrc");
+    QString knsrc = QStandardPaths::locate(QStandardPaths::GenericConfigLocation, "kdev_python_docfiles.knsrc");
     KNS3::DownloadDialog dialog(knsrc, this);
     dialog.exec();
 }
@@ -255,8 +254,7 @@ QTemporaryFile* DocfileManagerWidget::makeArchive(const QList< QUrl >& urls) con
 
 void DocfileManagerWidget::uploadSelected()
 {
-    KStandardDirs d;
-    QString knsrc = d.findResource("config", "kdev_python_docfiles.knsrc");
+    QString knsrc = QStandardPaths::locate(QStandardPaths::GenericConfigLocation, "kdev_python_docfiles.knsrc");
     KNS3::UploadDialog dialog(knsrc, this);
     QList<QUrl> selected = selectedItems();
     // always make a tar archive out of the selected files, even if it's only one

@@ -19,7 +19,7 @@
 
 #include <QTimer>
 #include <QApplication>
-#include <KStandardDirs>
+
 #include <KLocalizedString>
 #include <signal.h>
 
@@ -34,6 +34,7 @@
 #include "breakpointcontroller.h"
 
 #include <QDebug>
+#include <QStandardPaths>
 #include "debuggerdebug.h"
 
 using namespace KDevelop;
@@ -90,7 +91,7 @@ void DebugSession::start()
     m_debuggerProcess->start();
     m_debuggerProcess->waitForStarted();
     InternalPdbCommand* path = new InternalPdbCommand(0, 0,
-        "import sys; sys.path.append('"+KStandardDirs::locate("data", "kdevpythonsupport/debugger/")+"')\n");
+        "import sys; sys.path.append('"+QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/debugger/")+"')\n");
     InternalPdbCommand* cmd = new InternalPdbCommand(0, 0, "import __kdevpython_debugger_utils\n");
     addCommand(path);
     addCommand(cmd);

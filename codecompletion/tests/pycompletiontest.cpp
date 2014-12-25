@@ -29,7 +29,6 @@
 
 #include <QtTest/QTest>
 #include <KUrl>
-#include <KStandardDirs>
 #include <KTextEditor/Editor>
 #include <KService>
 
@@ -37,6 +36,7 @@
 #include "codecompletion/helpers.h"
 
 #include <QDebug>
+#include <QStandardPaths>
 #include "codecompletiondebug.h"
 
 using namespace KDevelop;
@@ -95,7 +95,7 @@ void PyCompletionTest::initShell()
     QDir d;
     d.mkpath(basepath);
     
-    KUrl doc_url = KUrl(KStandardDirs::locate("data", "kdevpythonsupport/documentation_files/builtindocumentation.py"));
+    KUrl doc_url = KUrl(QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/documentation_files/builtindocumentation.py"));
     doc_url.cleanPath(KUrl::SimplifyDirSeparators);
     
     DUChain::self()->updateContextForUrl(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);

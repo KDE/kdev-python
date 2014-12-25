@@ -33,9 +33,9 @@
 #include <QScrollBar>
 #include <QDebug>
 #include <QDir>
+#include <QStandardPaths>
 
 #include <KLocalizedString>
-#include <KStandardDirs>
 #include <KDialog>
 #include <KMessageBox>
 #include <KProcess>
@@ -145,8 +145,7 @@ bool DocfileWizard::run()
         // process already running
         return false;
     }
-    KStandardDirs d;
-    QString scriptUrl = d.findResource("data", "kdevpythonsupport/scripts/introspect.py");
+    QString scriptUrl = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/scripts/introspect.py");
     if ( scriptUrl.isEmpty() ) {
         KMessageBox::error(this, i18n("Couldn't find the introspect.py script; check your installation!"));
         return false;

@@ -51,7 +51,6 @@
 
 #include <QProcess>
 #include <QRegExp>
-#include <KStandardDirs>
 #include <KTextEditor/View>
 #include <memory>
 

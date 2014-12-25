@@ -30,9 +30,10 @@
 #include <iostream>
 
 #include <QDebug>
+#include <QStandardPaths>
 #include "../duchaindebug.h"
 
-#include <KStandardDirs>
+
 #include <KAction>
 #include <KLocalizedString>
 
@@ -69,8 +70,9 @@ QString DocumentationGeneratorAction::description() const
 void DocumentationGeneratorAction::execute()
 {
     // yes, it's duplicate from the doc file widget, but it's too painful to share it
-    KStandardDirs d;
-    QString path = d.locateLocal("data", "kdevpythonsupport/documentation_files/", true);
+    QDir dir(QStandardPaths::GenericDataLocation + "kdevpythonsupport/documentation_files/");
+    dir.mkpath(QStandardPaths::GenericDataLocation + "kdevpythonsupport/documentation_files/");
+    QString path = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/" + "kdevpythonsupport/documentation_files/";
     DocfileWizard wizard(path);
     wizard.setModuleName(module);
     wizard.exec();

@@ -23,7 +23,7 @@
 #include <QMutexLocker>
 
 #include <KComponentData>
-#include <KStandardDirs>
+
 #include <KPluginFactory>
 #include <KPluginLoader>
 

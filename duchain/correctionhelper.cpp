@@ -31,7 +31,7 @@
 #include <QDebug>
 #include "duchaindebug.h"
 
-#include <KStandardDirs>
+
 #include <QFile>
 
 using namespace KDevelop;

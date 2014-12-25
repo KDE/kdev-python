@@ -18,7 +18,7 @@
 
 #include "debugjob.h"
 
-#include <KStandardDirs>
+
 
 #include <interfaces/idebugcontroller.h>
 #include <interfaces/icore.h>
@@ -28,6 +28,7 @@
 #include <util/processlinemaker.h>
 
 #include <QDebug>
+#include <QStandardPaths>
 #include "debuggerdebug.h"
 
 namespace Python {
@@ -36,7 +37,7 @@ namespace Python {
 void DebugJob::start()
 {
     QStringList program;
-    QString debuggerUrl = KStandardDirs::locate("data", "kdevpythonsupport/debugger/") + "/kdevpdb.py";
+    QString debuggerUrl = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/debugger", QStandardPaths::LocateDirectory) + "/kdevpdb.py";
     program << m_interpreter << "-u" << debuggerUrl << m_scriptUrl.path(KUrl::RemoveTrailingSlash) << m_args;
     m_session = new DebugSession(program, m_workingDirectory);
     

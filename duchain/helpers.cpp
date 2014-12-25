@@ -21,8 +21,8 @@
 
 #include <QList>
 #include <KUrl>
-#include <KStandardDirs>
 #include <QProcess>
+#include <QStandardPaths>
 
 #include <QDebug>
 #include "duchaindebug.h"
@@ -327,15 +327,14 @@ Declaration* Helper::resolveAliasDeclaration(Declaration* decl)
 
 QStringList Helper::getDataDirs() {
     if ( Helper::dataDirs.isEmpty() ) {
-        KStandardDirs d;
-        Helper::dataDirs = d.findDirs("data", "kdevpythonsupport/documentation_files");
+        Helper::dataDirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, "kdevpythonsupport/documentation_files",QStandardPaths::LocateDirectory);
     }
     return Helper::dataDirs;
 }
 
 QString Helper::getDocumentationFile() {
     if ( Helper::documentationFile.isNull() ) {
-        Helper::documentationFile = KStandardDirs::locate("data", "kdevpythonsupport/documentation_files/builtindocumentation.py");
+        Helper::documentationFile = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/documentation_files/builtindocumentation.py");
     }
     return Helper::documentationFile;
 }
@@ -347,7 +346,9 @@ ReferencedTopDUContext Helper::getDocumentationFileContext()
     }
     else {
         DUChainReadLocker lock;
-        ReferencedTopDUContext ctx = ReferencedTopDUContext(DUChain::self()->chainForDocument(Helper::getDocumentationFile()));
+        qDebug() << "URL:" << Helper::getDocumentationFile();
+        auto file = IndexedString(Helper::getDocumentationFile());
+        ReferencedTopDUContext ctx = ReferencedTopDUContext(DUChain::self()->chainForDocument(file));
         Helper::documentationFileContext = DUChainPointer<TopDUContext>(ctx.data());
         return ctx;
     }
@@ -357,8 +358,7 @@ ReferencedTopDUContext Helper::getDocumentationFileContext()
 KUrl Helper::getCorrectionFile(KUrl document)
 {
     if ( Helper::correctionFileDirs.isEmpty() ) {
-        KStandardDirs d;
-        Helper::correctionFileDirs = d.findDirs("data", "kdevpythonsupport/correction_files/");
+        Helper::correctionFileDirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, "kdevpythonsupport/correction_files/", QStandardPaths::LocateDirectory);
     }
 
     foreach (QString correctionFileDir, correctionFileDirs) {
@@ -381,7 +381,7 @@ KUrl Helper::getCorrectionFile(KUrl document)
 KUrl Helper::getLocalCorrectionFile(KUrl document)
 {
     if ( Helper::localCorrectionFileDir.isNull() ) {
-        Helper::localCorrectionFileDir = KStandardDirs::locateLocal("data", "kdevpythonsupport/correction_files/");
+        Helper::localCorrectionFileDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + "kdevpythonsupport/correction_files/";
     }
 
     KUrl absolutePath;
@@ -411,7 +411,6 @@ QList<QUrl> Helper::getSearchPaths(QUrl workingOnDocument)
     }
     
     if ( cachedSearchPaths.isEmpty() ) {
-        KStandardDirs d;
         qCDebug(KDEV_PYTHON_DUCHAIN) << "*** Gathering search paths...";
         QStringList getpath;
         getpath << "-c" << "import sys; sys.stdout.write(':'.join(sys.path))";

@@ -35,7 +35,6 @@
 #include <tests/testcore.h>
 #include <language/duchain/duchain.h>
 #include <QtTest/QtTest>
-#include <KStandardDirs>
 #include <QtWidgets/QApplication>
 #include <language/duchain/types/functiontype.h>
 #include <language/duchain/types/containertypes.h>
@@ -121,7 +120,7 @@ void PyDUChainTest::init()
     
     QList<QString> foundfiles = FindPyFiles(assetModuleDir);
 
-    QString correctionFileDir = KStandardDirs::locate("data", "kdevpythonsupport/correction_files/");
+    QString correctionFileDir = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/correction_files", QStandardPaths::LocateDirectory);
     KUrl correctionFileUrl = KUrl(correctionFileDir + "testCorrectionFiles/example.py");
     correctionFileUrl.cleanPath();
     foundfiles.prepend(correctionFileUrl.path());
@@ -151,7 +150,7 @@ void PyDUChainTest::initShell()
     TestCore* core = new TestCore();
     core->initialize(KDevelop::Core::NoUi);
     
-    KUrl doc_url = KUrl(KStandardDirs::locate("data", "kdevpythonsupport/documentation_files/builtindocumentation.py"));
+    KUrl doc_url = KUrl(QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/documentation_files/builtindocumentation.py"));
     doc_url.cleanPath(KUrl::SimplifyDirSeparators);
     
     qCDebug(KDEV_PYTHON_DUCHAIN) << doc_url;
@@ -170,7 +169,7 @@ ReferencedTopDUContext PyDUChainTest::parse(const QString& code)
     createdFiles << testfile;
 
     testfile->parse((TopDUContext::Features) (TopDUContext::ForceUpdate | TopDUContext::AST) );
-    testfile->waitForParsed(500);
+    testfile->waitForParsed(2000);
     
     if ( testfile->isReady() ) {
         Q_ASSERT(testfile->topContext());

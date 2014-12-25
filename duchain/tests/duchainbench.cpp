@@ -32,9 +32,9 @@
 #include <tests/testcore.h>
 #include <language/duchain/duchain.h>
 #include <QtTest/QtTest>
-#include <KStandardDirs>
 #include <language/backgroundparser/backgroundparser.h>
 #include <interfaces/ilanguagecontroller.h>
+#include <QStandardPaths>
 
 #include "parsesession.h"
 
@@ -63,7 +63,7 @@ void DUChainBench::initShell()
     TestCore* core = new TestCore();
     core->initialize(KDevelop::Core::NoUi);
 
-    KUrl doc_url = KUrl(KStandardDirs::locate("data", "kdevpythonsupport/documentation_files/builtindocumentation.py"));
+    KUrl doc_url = KUrl(QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/documentation_files/builtindocumentation.py"));
     doc_url.cleanPath(KUrl::SimplifyDirSeparators);
 
     qCDebug(KDEV_PYTHON_DUCHAIN) << doc_url;

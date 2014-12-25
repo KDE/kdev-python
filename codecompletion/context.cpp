@@ -950,15 +950,16 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::includeItemsForSub
         qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Searching: " << currentPath << subdirs;
         int identifiersUsed = 0;
         foreach ( const QString& subdir, subdirs ) {
+            qDebug() << "changing into subdir" << subdir;
             if ( ! d.cd(subdir) ) {
                 break;
             }
-            qCDebug(KDEV_PYTHON_CODECOMPLETION) << currentPath << d.exists();
+            qCDebug(KDEV_PYTHON_CODECOMPLETION) << d.absolutePath() << d.exists();
             identifiersUsed++;
         }
         QStringList remainingIdentifiers = subdirs.mid(identifiersUsed, -1);
-        foundPaths.append(IncludeSearchTarget(currentPath, remainingIdentifiers));
-        qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Found path:" << currentPath << remainingIdentifiers << subdirs;
+        foundPaths.append(IncludeSearchTarget(d.absolutePath(), remainingIdentifiers));
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Found path:" << d.absolutePath() << remainingIdentifiers << subdirs;
     }
     return findIncludeItems(foundPaths);
 }

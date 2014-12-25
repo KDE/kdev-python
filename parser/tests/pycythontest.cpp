@@ -54,7 +54,7 @@ void PyCythonTest::initShell()
     KDevelop::CodeRepresentation::setDiskChangesForbidden(true);
 }
 
-CodeAst::Ptr PyCythonTest::getAst(QString code, KUrl filename)
+CodeAst::Ptr PyCythonTest::getAst(QString code, const QUrl& filename)
 {
     QSharedPointer<AstBuilder> builder(new AstBuilder);
     m_builder = builder;
@@ -90,7 +90,7 @@ void PyCythonTest::testCythonReplacement()
     CythonSyntaxRemover stripper;
     QCOMPARE(stripper.stripCythonSyntax(input), output);
     if(do_python_test) {
-        CodeAst::Ptr ast = getAst(input, KUrl("test.pyx"));
+        CodeAst::Ptr ast = getAst(input, QUrl("test.pyx"));
         VerifyVisitor v;
         v.visitCode(ast.data());
         QVERIFY(m_builder->m_problems.isEmpty());
@@ -135,7 +135,7 @@ void PyCythonTest::testCythonRanges() {
     QFETCH(QString, code);
     QFETCH(KTextEditor::Range, range);
 
-    CodeAst::Ptr ast = getAst(code, KUrl("test.pyx"));
+    CodeAst::Ptr ast = getAst(code, QUrl("test.pyx"));
     QVERIFY(ast);
     foreach ( Ast* node, ast->body ) {
         if ( node->astType != Ast::FunctionDefinitionAstType ) {

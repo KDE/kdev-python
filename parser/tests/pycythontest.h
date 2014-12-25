@@ -24,8 +24,6 @@
 #include <QtCore/QObject>
 #include "ast.h"
 
-#include <KUrl>
-
 namespace KDevelop {
     class TopDUContext;
     class ReferencedTopDUContext;
@@ -41,7 +39,7 @@ Q_OBJECT
 public:
     explicit PyCythonTest(QObject* parent = 0);
     void initShell();
-    CodeAst::Ptr getAst(QString code, KUrl filename);
+    CodeAst::Ptr getAst(QString code, const QUrl& filename);
 
 private:
     QSharedPointer<AstBuilder> m_builder;

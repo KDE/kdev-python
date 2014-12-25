@@ -50,10 +50,10 @@ typedef QPair<Declaration*, int> DeclarationDepthPair;
  **/
 class IncludeSearchTarget {
 public:
-    IncludeSearchTarget(KUrl d_, QStringList r_) : directory(d_), remainingIdentifiers(r_) {
-        directory.cleanPath();
+    IncludeSearchTarget(QUrl d_, QStringList r_) : directory(d_), remainingIdentifiers(r_) {
+        directory.setPath(QDir::cleanPath(directory.path()));
     };
-    KUrl directory;
+    QUrl directory;
     QStringList remainingIdentifiers;
 };
 
@@ -163,7 +163,7 @@ private:
     int m_maxFolderScanDepth;
     QStringList m_searchingForModule;
     QString m_searchImportItemsInModule;
-    KUrl m_workingOnDocument;
+    QUrl m_workingOnDocument;
     
     CodeCompletionContext* m_child;
     

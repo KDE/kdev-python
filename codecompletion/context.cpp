@@ -77,7 +77,7 @@ std::unique_ptr<ExpressionVisitor> visitorForString(QString str, DUContext* cont
 {
     ENSURE_CHAIN_NOT_LOCKED
     AstBuilder builder;
-    CodeAst::Ptr tmpAst = builder.parse(KUrl(), str);
+    CodeAst::Ptr tmpAst = builder.parse({}, str);
     if ( ! tmpAst ) {
         return std::unique_ptr<ExpressionVisitor>(nullptr);
     }
@@ -652,7 +652,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getMissingIncludeI
     }
 
     // See if there's a module called like that.
-    QPair<KUrl, QStringList> found = ContextBuilder::findModulePath(components.join("."), m_workingOnDocument);
+    auto found = ContextBuilder::findModulePath(components.join("."), m_workingOnDocument);
 
     // Check if anything was found
     if ( found.first.isValid() ) {
@@ -805,7 +805,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
 
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(IncludeSearchTarget item)
 {
-    qCDebug(KDEV_PYTHON_CODECOMPLETION) << "TARGET:" << item.directory.pathOrUrl() << item.remainingIdentifiers << item.directory.path();
+    qCDebug(KDEV_PYTHON_CODECOMPLETION) << "TARGET:" << item.directory.path() << item.remainingIdentifiers;
     QDir currentDirectory(item.directory.path());
     QFileInfoList contents = currentDirectory.entryInfoList(QStringList(), QDir::Files | QDir::Dirs);
     bool atBottom = item.remainingIdentifiers.isEmpty();

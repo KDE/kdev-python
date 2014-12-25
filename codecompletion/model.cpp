@@ -94,7 +94,6 @@ QString PythonCodeCompletionModel::filterString(KTextEditor::View *view, const K
 KTextEditor::Range PythonCodeCompletionModel::completionRange(KTextEditor::View* view, const KTextEditor::Cursor& position)
 {
     m_currentDocument = view->document()->url();
-    qCWarning(KDEV_PYTHON_CODECOMPLETION) << "Current document: " << m_currentDocument;
     return KTextEditor::CodeCompletionModelControllerInterface::completionRange(view, position);
 }
 

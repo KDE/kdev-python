@@ -29,7 +29,7 @@
 
 namespace Python {
 
-PythonCodeCompletionWorker::PythonCodeCompletionWorker(PythonCodeCompletionModel *parent, KUrl /*document*/)
+PythonCodeCompletionWorker::PythonCodeCompletionWorker(PythonCodeCompletionModel *parent, const QUrl& /*document*/)
     : KDevelop::CodeCompletionWorker(parent), parent(parent)
 {
 

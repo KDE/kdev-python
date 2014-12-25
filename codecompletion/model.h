@@ -22,7 +22,6 @@
 
 #include <language/codecompletion/codecompletionmodel.h>
 #include <language/duchain/duchainpointer.h>
-#include <KUrl>
 
 
 namespace Python {
@@ -41,7 +40,7 @@ public:
     virtual bool shouldAbortCompletion(KTextEditor::View* view, const KTextEditor::Range& range, const QString& currentCompletion);
     QString filterString(KTextEditor::View *view, const KTextEditor::Range &range, const KTextEditor::Cursor &position);
 
-    KUrl m_currentDocument;
+    QUrl m_currentDocument;
 };
 
 }

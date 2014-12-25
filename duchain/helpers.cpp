@@ -445,10 +445,10 @@ QList<QUrl> Helper::getSearchPaths(QUrl workingOnDocument)
     
     searchPaths.append(cachedSearchPaths);
     
-    auto currentDir = QDir(workingOnDocument.path());
-    if ( ! currentDir.path().isEmpty() ) {
+    auto dir = workingOnDocument.adjusted(QUrl::RemoveFilename);
+    if ( ! dir.isEmpty() ) {
         // search in the current packages
-        searchPaths.append(QUrl::fromLocalFile(currentDir.path()));
+        searchPaths.append(dir);
     }
     
     return searchPaths;

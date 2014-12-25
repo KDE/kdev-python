@@ -52,8 +52,6 @@
 #include <QDebug>
 #include "duchaindebug.h"
 
-#include <KUrl>
-
 #include <functional>
 
 using namespace KTextEditor;
@@ -781,7 +779,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
                                                                ProblemPointer& problemEncountered, Ast* rangeNode)
 {
     // Search the disk for a python file which contains the requested declaration
-    QPair<KUrl, QStringList> moduleInfo = findModulePath(moduleName, currentlyParsedDocument().toUrl());
+    auto moduleInfo = findModulePath(moduleName, currentlyParsedDocument().toUrl());
     RangeInRevision range(RangeInRevision::invalid());
     if ( rangeNode ) {
         range = rangeForNode(rangeNode, false);

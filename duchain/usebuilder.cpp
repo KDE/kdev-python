@@ -21,8 +21,6 @@
 #include <QDebug>
 #include "duchaindebug.h"
 
-#include <KUrl>
-
 #include <language/duchain/declaration.h>
 #include <language/duchain/use.h>
 #include <language/duchain/topducontext.h>

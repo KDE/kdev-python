@@ -46,8 +46,6 @@
 
 #include <KTextEditor/Range>
 
-#include <KUrl>
-
 #include "parsesession.h"
 #include "pythoneditorintegrator.h"
 #include "declarationbuilder.h"
@@ -123,8 +121,7 @@ void PyDUChainTest::init()
     QList<QString> foundfiles = FindPyFiles(assetModuleDir);
 
     QString correctionFileDir = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/correction_files", QStandardPaths::LocateDirectory);
-    KUrl correctionFileUrl = KUrl(correctionFileDir + "testCorrectionFiles/example.py");
-    correctionFileUrl.cleanPath();
+    auto correctionFileUrl = QUrl(QDir::cleanPath(correctionFileDir + "/testCorrectionFiles/example.py"));
     foundfiles.prepend(correctionFileUrl.path());
 
     for ( int i = 0; i < 2; i++ ) {
@@ -152,8 +149,8 @@ void PyDUChainTest::initShell()
     TestCore* core = new TestCore();
     core->initialize(KDevelop::Core::NoUi);
     
-    KUrl doc_url = KUrl(QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/documentation_files/builtindocumentation.py"));
-    doc_url.cleanPath(KUrl::SimplifyDirSeparators);
+    auto doc_url = QStandardPaths::locate(QStandardPaths::GenericDataLocation,
+                                          "kdevpythonsupport/documentation_files/builtindocumentation.py");
     
     qCDebug(KDEV_PYTHON_DUCHAIN) << doc_url;
 

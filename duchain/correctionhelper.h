@@ -27,8 +27,6 @@
 #include <language/duchain/ducontext.h>
 #include <language/duchain/topducontext.h>
 
-#include <KUrl>
-
 using namespace KDevelop;
 
 namespace Python {

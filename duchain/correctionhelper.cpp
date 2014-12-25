@@ -41,7 +41,7 @@ namespace Python {
 CorrectionHelper::CorrectionHelper(const IndexedString& _url, DeclarationBuilder* builder)
 {
     m_contextStack.push(0);
-    KUrl absolutePath = Helper::getCorrectionFile(_url.toUrl());
+    auto absolutePath = Helper::getCorrectionFile(_url.toUrl());
 
     if ( !absolutePath.isValid() || absolutePath.isEmpty() || ! QFile::exists(absolutePath.path()) ) {
         return;

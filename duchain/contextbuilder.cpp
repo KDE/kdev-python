@@ -28,8 +28,6 @@
 #include "declarationbuilder.h"
 #include "helpers.h"
 
-#include <KUrl>
-
 #include <ktexteditor/document.h>
 
 #include <language/duchain/ducontext.h>
@@ -297,8 +295,8 @@ void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
 }
 
 void ContextBuilder::visitCode(CodeAst* node) {
-    KUrl doc_url = KUrl(Helper::getDocumentationFile());
-    IndexedString doc = IndexedString(doc_url.path());
+    auto doc_url = Helper::getDocumentationFile();
+    IndexedString doc = IndexedString(doc_url);
     Q_ASSERT(currentlyParsedDocument().toUrl().isValid());
     if ( currentlyParsedDocument() != doc ) {
         // Search for the python built-in functions file, and dump its contents into the current file.

@@ -39,7 +39,6 @@
 #include <KDialog>
 #include <KMessageBox>
 #include <KProcess>
-#include <KUrl>
 
 DocfileWizard::DocfileWizard(const QString& workingDirectory, QWidget* parent)
     : QDialog(parent)
@@ -192,7 +191,7 @@ void DocfileWizard::saveAndClose()
                                                           outputFile.fileName())) == KMessageBox::Yes;
     }
     if ( mayWrite ) {
-        QString basePath = KUrl(outputFile.fileName()).directory();
+        auto basePath = QUrl::fromLocalFile(outputFile.fileName()).url(QUrl::RemoveFilename);
         if ( ! QDir(basePath).exists() ) {
             QDir(basePath).mkpath(basePath);
         }

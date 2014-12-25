@@ -25,7 +25,6 @@
 #include <malloc.h>
 
 #include <QStringList>
-#include <KUrl>
 #include <QMutexLocker>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/problem.h>
@@ -294,7 +293,7 @@ QString PyUnicodeObjectToQString(PyObject* obj) {
 #endif // windows
 }
 
-QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
+QPair<QString, int> fileHeaderHack(QString& contents, const QUrl& filename)
 {
     IProject* proj = ICore::self()->projectController()->findProjectForUrl(filename);
     // the file is not in a project, don't apply hack
@@ -375,7 +374,7 @@ struct PythonInitializer : private QMutexLocker {
 };
 }
 
-CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
+CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
 {
     qDebug() << " ====> AST     ====>     building abstract syntax tree for " << filename.path();
     

@@ -33,7 +33,6 @@
 #include <parser/parsesession.h>
 
 #include <KTextEditor/Document>
-#include <KUrl>
 
 #include "duchain/helpers.h"
 #include "parser/codehelpers.h"
@@ -154,7 +153,7 @@ void TypeCorrection::accepted()
         return;
     }
 
-    KUrl correctionFile = Helper::getLocalCorrectionFile(decl.data()->topContext()->url().toUrl());
+    auto correctionFile = Helper::getLocalCorrectionFile(decl.data()->topContext()->url().toUrl());
     if ( correctionFile.isEmpty() ) {
         KMessageBox::error(0, i18n("Sorry, cannot create hints for files which are not part of a project."));
         return;

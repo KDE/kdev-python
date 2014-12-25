@@ -38,7 +38,7 @@ void DebugJob::start()
 {
     QStringList program;
     QString debuggerUrl = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/debugger", QStandardPaths::LocateDirectory) + "/kdevpdb.py";
-    program << m_interpreter << "-u" << debuggerUrl << m_scriptUrl.path(KUrl::RemoveTrailingSlash) << m_args;
+    program << m_interpreter << "-u" << debuggerUrl << m_scriptUrl.url(QUrl::StripTrailingSlash) << m_args;
     m_session = new DebugSession(program, m_workingDirectory);
     
     setStandardToolView(KDevelop::IOutputView::DebugView);

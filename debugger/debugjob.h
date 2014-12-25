@@ -23,7 +23,6 @@
 #include <outputview/outputjob.h>
 #include <outputview/outputmodel.h>
 #include "debugsession.h"
-#include <KUrl>
 
 namespace Python {
 
@@ -42,10 +41,10 @@ public:
     virtual void start();
     virtual bool doKill();
     
-    KUrl m_scriptUrl;
+    QUrl m_scriptUrl;
     QString m_interpreter;
     QStringList m_args;
-    KUrl m_workingDirectory;
+    QUrl m_workingDirectory;
 
 private slots:
     void standardOutputReceived(QStringList lines);

@@ -41,6 +41,7 @@
 #include <interfaces/ilanguagecontroller.h>
 #include <interfaces/idocumentcontroller.h>
 #include <interfaces/ipartcontroller.h>
+#include <util/path.h>
 
 #include <shell/partcontroller.h>
 
@@ -400,7 +401,7 @@ QList<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
     QList<QUrl> searchPaths;
     // search in the projects, as they're packages and likely to be installed or added to PYTHONPATH later
     foreach  (IProject* project, ICore::self()->projectController()->projects() ) {
-        searchPaths.append(project->folder());
+        searchPaths.append(project->path().path());
     }
     
     foreach ( const QString& path, getDataDirs() ) {

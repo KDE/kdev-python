@@ -22,8 +22,6 @@
 #include "astbuilder.h"
 #include "ast.h"
 
-#include <malloc.h>
-
 #include <QStringList>
 #include <QMutexLocker>
 #include <language/duchain/topducontext.h>
@@ -37,6 +35,7 @@
 #include <interfaces/icore.h>
 #include <interfaces/iprojectcontroller.h>
 #include <interfaces/iproject.h>
+#include <util/path.h>
 
 #include <QDebug>
 #include "parserdebug.h"
@@ -300,7 +299,7 @@ QPair<QString, int> fileHeaderHack(QString& contents, const QUrl& filename)
     if ( ! proj ) {
         return QPair<QString, int>(contents, 0);
     }
-    const QUrl headerFileUrl = proj->folder().path() + "/.kdev_python_header";
+    const QUrl headerFileUrl = proj->path().path() + "/.kdev_python_header";
     QFile headerFile(headerFileUrl.path());
     QString headerFileContents;
     if ( headerFile.exists() ) {

@@ -18,20 +18,20 @@ set(kdevpdb_PART_SRCS
     debugjob.cpp
     debugsession.cpp
     pdbdebuggerplugin.cpp
+    debuggerdebug.cpp
 )
 
-kde4_add_plugin(kdevpdb ${kdevpdb_PART_SRCS})
+add_library(kdevpdb MODULE ${kdevpdb_PART_SRCS})
 target_link_libraries(kdevpdb
-    sublime
     kdev4pythonparser
-    ${KDEVPLATFORM_INTERFACES_LIBRARIES}
-    ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
-    ${KDEVPLATFORM_DEBUGGER_LIBRARIES}
-    ${KDEVPLATFORM_OUTPUTVIEW_LIBRARIES}
-    ${KDEVPLATFORM_PROJECT_LIBRARIES}
-    ${KDE4_KDEUI_LIBS}
-    ${KDEVPLATFORM_UTIL_LIBRARIES}
-    ${KDE4_KTEXTEDITOR_LIBS}
+    KDev::Interfaces
+    KDev::Language
+    KDev::Debugger
+    KDev::OutputView
+    KDev::Project    
+    KDev::Util
+    KF5::TextEditor
+    KF5::KDELibs4Support
     ${KDE4WORKSPACE_PROCESSUI_LIBS}
 )
 

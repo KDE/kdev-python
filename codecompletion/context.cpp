@@ -51,9 +51,11 @@
 
 #include <QProcess>
 #include <QRegExp>
-#include <KStandardDirs>
 #include <KTextEditor/View>
 #include <memory>
+
+#include <QDebug>
+#include "codecompletiondebug.h"
 
 using namespace KTextEditor;
 using namespace KDevelop;
@@ -73,16 +75,17 @@ PythonCodeCompletionContext::CompletionContextType PythonCodeCompletionContext::
 std::unique_ptr<ExpressionVisitor> visitorForString(QString str, DUContext* context,
                                                     CursorInRevision scanUntil = CursorInRevision::invalid())
 {
+    ENSURE_CHAIN_NOT_LOCKED
     AstBuilder builder;
-    CodeAst::Ptr tmpAst = builder.parse(KUrl(), str);
+    CodeAst::Ptr tmpAst = builder.parse({}, str);
     if ( ! tmpAst ) {
         return std::unique_ptr<ExpressionVisitor>(nullptr);
     }
     ExpressionVisitor* v = new ExpressionVisitor(context);
-    v->m_forceGlobalSearching = true;
+    v->enableGlobalSearching();
     if ( scanUntil.isValid() ) {
-        v->m_scanUntilCursor = scanUntil;
-        v->m_reportUnknownNames = true;
+        v->scanUntil(scanUntil);
+        v->enableUnknownNameReporting();
     }
     v->visitCode(tmpAst.data());
     return std::unique_ptr<ExpressionVisitor>(v);
@@ -103,6 +106,15 @@ QList< CompletionTreeElementPointer > PythonCodeCompletionContext::ungroupedElem
 {
     return m_storedGroups;
 }
+
+static QList<CompletionTreeItemPointer> setOmitParentheses(QList<CompletionTreeItemPointer> items) {
+    for ( auto current: items ) {
+        if ( auto func = dynamic_cast<FunctionDeclarationCompletionItem*>(current.data()) ) {
+            func->setDoNotCall(true);
+        }
+    }
+    return items;
+};
 
 PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::shebangItems()
 {
@@ -127,15 +139,15 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::shebangItems(
 
 PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::functionCallItems()
 {
-    DUChainReadLocker lock;
     ItemList resultingItems;
 
     // gather additional items to show above the real ones (for parameters, and stuff)
     FunctionDeclaration* functionCalled = 0;
     auto v = visitorForString(m_guessTypeOfExpression, m_duContext.data());
+    DUChainReadLocker lock;
     if ( ! v || ! v->lastDeclaration() ) {
-        kWarning() << "Did not receive a function declaration from expression visitor! Not offering call tips.";
-        kWarning() << "Tried: " << m_guessTypeOfExpression;
+        qCWarning(KDEV_PYTHON_CODECOMPLETION) << "Did not receive a function declaration from expression visitor! Not offering call tips.";
+        qCWarning(KDEV_PYTHON_CODECOMPLETION) << "Tried: " << m_guessTypeOfExpression;
         return resultingItems;
     }
     functionCalled = Helper::functionDeclarationForCalledDeclaration(v->lastDeclaration()).first.data();
@@ -148,7 +160,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::functionCallI
 
     auto calltipItems = declarationListToItemList(calltips);
     foreach ( CompletionTreeItemPointer current, calltipItems ) {
-        kDebug() << "Adding calltip item, at argument:" << m_alreadyGivenParametersCount+1;
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Adding calltip item, at argument:" << m_alreadyGivenParametersCount+1;
         FunctionDeclarationCompletionItem* item = static_cast<FunctionDeclarationCompletionItem*>(current.data());
         item->setAtArgument(m_alreadyGivenParametersCount + 1);
         item->setDepth(depth());
@@ -165,7 +177,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::functionCallI
     if ( DUContext* args = DUChainUtils::getArgumentContext(functionCalled) ) {
         int normalParameters = args->localDeclarations().count() - functionCalled->defaultParametersSize();
         if ( normalParameters > m_alreadyGivenParametersCount ) {
-            kDebug() << "Not at default arguments yet";
+            qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Not at default arguments yet";
             return resultingItems;
         }
         for ( unsigned int i = 0; i < functionCalled->defaultParametersSize(); i++ ) {
@@ -174,7 +186,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::functionCallI
                                                         paramName + "=", i18n("specify default parameter"),
                                                         KeywordItem::ImportantItem));
         }
-        kDebug() << "adding " << functionCalled->defaultParametersSize() << "default args";
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << "adding " << functionCalled->defaultParametersSize() << "default args";
     }
 
     return resultingItems;
@@ -186,7 +198,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::defineItems()
     ItemList resultingItems;
     // Find all base classes of the current class context
     if ( m_duContext->type() != DUContext::Class ) {
-        kWarning() << "current context is not a class context, not offering define completion";
+        qCWarning(KDEV_PYTHON_CODECOMPLETION) << "current context is not a class context, not offering define completion";
         return resultingItems;
     }
     ClassDeclaration* klass = dynamic_cast<ClassDeclaration*>(m_duContext->owner());
@@ -222,12 +234,14 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::defineItems()
                 existingIdentifiers << identifier;
                 QStringList argumentNames;
                 DUContext* argumentsContext = DUChainUtils::getArgumentContext(funcDecl);
-                foreach ( Declaration* argument, argumentsContext->localDeclarations() ) {
-                    argumentNames << argument->identifier().toString();
+                if ( argumentsContext ) {
+                    foreach ( Declaration* argument, argumentsContext->localDeclarations() ) {
+                        argumentNames << argument->identifier().toString();
+                    }
+                    resultingItems << CompletionTreeItemPointer(new ImplementFunctionCompletionItem(
+                        funcDecl->identifier().toString(), argumentNames, m_indent)
+                    );
                 }
-                resultingItems << CompletionTreeItemPointer(new ImplementFunctionCompletionItem(
-                    funcDecl->identifier().toString(), argumentNames, m_indent)
-                );
             }
         }
         isOwnContext = false;
@@ -237,13 +251,13 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::defineItems()
 
 PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::raiseItems()
 {
-    kDebug() << "Finding items for raise statement";
+    qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Finding items for raise statement";
     DUChainReadLocker lock;
     ItemList resultingItems;
     ReferencedTopDUContext ctx = Helper::getDocumentationFileContext();
     QList< Declaration* > declarations = ctx->findDeclarations(QualifiedIdentifier("BaseException"));
     if ( declarations.isEmpty() || ! declarations.first()->abstractType() ) {
-        kDebug() << "No valid exception classes found, aborting";
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << "No valid exception classes found, aborting";
         return resultingItems;
     }
     Declaration* base = declarations.first();
@@ -263,7 +277,12 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::raiseItems()
             }
         }
     }
-    resultingItems.append(declarationListToItemList(validDeclarations));
+    auto items = declarationListToItemList(validDeclarations);
+    if ( m_itemTypeHint == ClassTypeRequested ) {
+        // used for except <cursor>, we don't want the parentheses there
+        items = setOmitParentheses(items);
+    }
+    resultingItems.append(items);
     return resultingItems;
 }
 
@@ -271,7 +290,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::importFileIte
 {
     DUChainReadLocker lock;
     ItemList resultingItems;
-    kDebug() << "Preparing to do autocompletion for import...";
+    qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Preparing to do autocompletion for import...";
     m_maxFolderScanDepth = 1;
     resultingItems << includeItemsForSubmodule("");
     return resultingItems;
@@ -279,13 +298,15 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::importFileIte
 
 PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::inheritanceItems()
 {
-    DUChainReadLocker lock;
     ItemList resultingItems;
-    kDebug() << "InheritanceCompletion";
+    DUChainReadLocker lock;
+    qCDebug(KDEV_PYTHON_CODECOMPLETION) << "InheritanceCompletion";
     QList<DeclarationDepthPair> declarations;
     if ( ! m_guessTypeOfExpression.isEmpty() ) {
         // The class completion is a member access
+        lock.unlock();
         auto v = visitorForString(m_guessTypeOfExpression, m_duContext.data());
+        lock.lock();
         if ( v ) {
             TypePtr<StructureType> cls = StructureType::Ptr::dynamicCast(v->lastType());
             if ( cls && cls->declaration(m_duContext->topContext()) ) {
@@ -308,26 +329,26 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::inheritanceIt
             remainingDeclarations << d;
         }
     }
-    resultingItems.append(declarationListToItemList(remainingDeclarations));
+    resultingItems.append(setOmitParentheses(declarationListToItemList(remainingDeclarations)));
     return resultingItems;
 }
 
 PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::memberAccessItems()
 {
-    DUChainReadLocker lock;
     ItemList resultingItems;
     auto v = visitorForString(m_guessTypeOfExpression, m_duContext.data());
+    DUChainReadLocker lock;
     if ( v ) {
         if ( v->lastType() ) {
-            kDebug() << v->lastType()->toString();
+            qCDebug(KDEV_PYTHON_CODECOMPLETION) << v->lastType()->toString();
             resultingItems << getCompletionItemsForType(v->lastType());
         }
         else {
-            kWarning() << "Did not receive a type from expression visitor! Not offering autocompletion.";
+            qCWarning(KDEV_PYTHON_CODECOMPLETION) << "Did not receive a type from expression visitor! Not offering autocompletion.";
         }
     }
     else {
-        kWarning() << "Completion requested for syntactically invalid expression, not offering anything";
+        qCWarning(KDEV_PYTHON_CODECOMPLETION) << "Completion requested for syntactically invalid expression, not offering anything";
     }
 
     // append eventually stripped postfix, for e.g. os.chdir|
@@ -356,12 +377,12 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::stringFormatt
     ItemList resultingItems;
     int cursorPosition;
     StringFormatter stringFormatter(CodeHelpers::extractStringUnderCursor(m_text,
-                                                                          m_duContext->range().castToSimpleRange().textRange(),
-                                                                          m_position.castToSimpleCursor().textCursor(),
+                                                                          m_duContext->range().castToSimpleRange(),
+                                                                          m_position.castToSimpleCursor(),
                                                                           &cursorPosition));
 
-    kDebug() << "Next identifier id: " << stringFormatter.nextIdentifierId();
-    kDebug() << "Cursor position in string: " << cursorPosition;
+    qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Next identifier id: " << stringFormatter.nextIdentifierId();
+    qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Cursor position in string: " << cursorPosition;
 
     bool insideReplacementVariable = stringFormatter.isInsideReplacementVariable(cursorPosition);
     RangeInString variablePosition = stringFormatter.getVariablePosition(cursorPosition);
@@ -390,11 +411,10 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::stringFormatt
     // in the document. We can safely assume that the replacement variable is on one line,
     // because the regex does not allow newlines inside replacement variables.
     KTextEditor::Range range;
-    range.setBothLines(m_position.line);
-    range.start().setColumn(m_position.column - (cursorPosition - variablePosition.beginIndex));
-    range.end().setColumn(m_position.column + (variablePosition.endIndex - cursorPosition));
+    range.setStart({m_position.line, m_position.column - (cursorPosition - variablePosition.beginIndex)});
+    range.setEnd({m_position.line, m_position.column + (variablePosition.endIndex - cursorPosition)});
 
-    kDebug() << "Variable under cursor: " << variable->toString();
+    qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Variable under cursor: " << variable->toString();
     bool hasNumericOnlyOption =     variable->hasPrecision()
                                 || (variable->hasType() && variable->type() != 's')
                                 ||  variable->align() == '=';
@@ -417,7 +437,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::stringFormatt
     }
 
     if ( ! variable->hasFormatSpec() ) {
-        auto addFormatSpec = [&](const QString& format, const QString& title, bool useTemplateEngine=false)
+        auto addFormatSpec = [&](const QString& format, const QString& title, bool useTemplateEngine)
         {
             resultingItems.append(makeFormattingItem(variable->conversion(), format, title, useTemplateEngine));
         };
@@ -428,17 +448,17 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::stringFormatt
         // These options don't make sense if we've set conversion using str() or repr()
         if ( ! variable->hasConversion() ) {
             addFormatSpec(".${precision}", i18n("Specify precision"), true);
-            addFormatSpec("%", i18n("Format as percentage"));
-            addFormatSpec("c", i18n("Format as character"));
-            addFormatSpec("b", i18n("Format as binary number"));
-            addFormatSpec("o", i18n("Format as octal number"));
-            addFormatSpec("x", i18n("Format as hexadecimal number"));
-            addFormatSpec("e", i18n("Format in scientific (exponent) notation"));
-            addFormatSpec("f", i18n("Format as fixed point number"));
+            addFormatSpec("%", i18n("Format as percentage"), false);
+            addFormatSpec("c", i18n("Format as character"), false);
+            addFormatSpec("b", i18n("Format as binary number"), false);
+            addFormatSpec("o", i18n("Format as octal number"), false);
+            addFormatSpec("x", i18n("Format as hexadecimal number"), false);
+            addFormatSpec("e", i18n("Format in scientific (exponent) notation"), false);
+            addFormatSpec("f", i18n("Format as fixed point number"), false);
         }
     }
 
-    kDebug() << "Resulting items size: " << resultingItems.size();
+    qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Resulting items size: " << resultingItems.size();
     return resultingItems;
 }
 
@@ -446,7 +466,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::keywordItems(
 {
     ItemList resultingItems;
     QStringList keywordItems;
-    keywordItems << "def" << "class" << "lambda" << "global" << "print" << "import"
+    keywordItems << "def" << "class" << "lambda" << "global" << "import"
                  << "from" << "while" << "for" << "yield" << "return";
     foreach ( const QString& current, keywordItems ) {
         KeywordItem* k = new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), current + " ", "");
@@ -501,23 +521,25 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::classMemberIn
 
 PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::generatorItems()
 {
-    DUChainReadLocker lock;
     ItemList resultingItems;
     QList<KeywordItem*> items;
+
     auto v = visitorForString(m_guessTypeOfExpression, m_duContext.data(), m_position);
-    if ( ! v || v->m_unknownNames.isEmpty() ) {
+    DUChainReadLocker lock;
+    if ( ! v || v->unknownNames().isEmpty() ) {
         return resultingItems;
     }
-    if ( v->m_unknownNames.size() >= 2 ) {
+    if ( v->unknownNames().size() >= 2 ) {
         // we only take the first two, and only two. It gets too much items otherwise.
         QStringList combinations;
-        combinations << v->m_unknownNames.at(0) + ", " + v->m_unknownNames.at(1);
-        combinations << v->m_unknownNames.at(1) + ", " + v->m_unknownNames.at(0);
+        auto names = v->unknownNames().toList();
+        combinations << names.at(0) + ", " + names.at(1);
+        combinations << names.at(1) + ", " + names.at(0);
         foreach ( const QString& c, combinations ) {
             items << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + c + " in ", "");
         }
     }
-    foreach ( const QString& n, v->m_unknownNames ) {
+    foreach ( const QString& n, v->unknownNames() ) {
         items << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + n + " in ", "");
     }
 
@@ -532,8 +554,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     m_fullCompletion = fullCompletion;
     ItemList resultingItems;
     
-    kDebug() << "Line: " << m_position.line;
-    kDebug() << "Completion type:" << m_operation;
+    qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Line: " << m_position.line;
+    qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Completion type:" << m_operation;
     
     if ( m_operation != FunctionCallCompletion ) {
         resultingItems.append(shebangItems());
@@ -545,7 +567,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
     }
     
     if ( m_operation == PythonCodeCompletionContext::NoCompletion ) {
-        kDebug() << "no code completion";
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << "no code completion";
     }
     else if ( m_operation == PythonCodeCompletionContext::GeneratorVariableCompletion ) {
         resultingItems.append(generatorItems());
@@ -590,10 +612,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         DUChainReadLocker lock;
         QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
         foreach ( const DeclarationDepthPair& d, declarations ) {
-            if ( d.first and d.first->context()->type() == DUContext::Class ) {
-                declarations.removeAll(d);
-            }
-            if ( d.first and d.first->identifier().identifier().str().contains("__kdevpythondocumentation_builtin") ) {
+            if ( d.first && d.first->context()->type() == DUContext::Class ) {
                 declarations.removeAll(d);
             }
         }
@@ -625,14 +644,15 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getMissingIncludeI
     }
 
     Declaration* existing = Helper::declarationForName(QualifiedIdentifier(components.first()),
-                                                       RangeInRevision(m_position, m_position), m_duContext);
+                                                       RangeInRevision(m_position, m_position),
+                                                       DUChainPointer<const DUContext>(m_duContext.data()));
     if ( existing ) {
         // There's already a declaration for the first component; no need to suggest it
         return items;
     }
 
     // See if there's a module called like that.
-    QPair<KUrl, QStringList> found = ContextBuilder::findModulePath(components.join("."), m_workingOnDocument);
+    auto found = ContextBuilder::findModulePath(components.join("."), m_workingOnDocument);
 
     // Check if anything was found
     if ( found.first.isValid() ) {
@@ -664,7 +684,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
     int count = declarations.length();
     for ( int i = 0; i < count; i++ ) {
         if ( maxDepth && maxDepth > declarations.at(i).second ) {
-            kDebug() << "Skipped completion item because of its depth";
+            qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Skipped completion item because of its depth";
             continue;
         }
         currentDeclaration = DeclarationPointer(declarations.at(i).first);
@@ -700,7 +720,7 @@ QList< CompletionTreeItemPointer > PythonCodeCompletionContext::declarationListT
 
 QList< CompletionTreeItemPointer > PythonCodeCompletionContext::getCompletionItemsForType(AbstractType::Ptr type)
 {
-    type = Helper::resolveType(type);
+    type = Helper::resolveAliasType(type);
     if ( type->whichType() != AbstractType::TypeUnsure ) {
         return getCompletionItemsForOneType(type);
     }
@@ -708,7 +728,6 @@ QList< CompletionTreeItemPointer > PythonCodeCompletionContext::getCompletionIte
     QList<CompletionTreeItemPointer> result;
     UnsureType::Ptr unsure = type.cast<UnsureType>();
     int count = unsure->typesSize();
-    kDebug() << "Getting completion items for " << count << "types of unsure type " << unsure;
     for ( int i = 0; i < count; i++ ) {
         result.append(getCompletionItemsForOneType(unsure->types()[i].abstractType()));
     }
@@ -746,27 +765,27 @@ QList< CompletionTreeItemPointer > PythonCodeCompletionContext::getCompletionIte
 
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItemsForOneType(AbstractType::Ptr type)
 {
-    type = Helper::resolveType(type);
+    type = Helper::resolveAliasType(type);
     ReferencedTopDUContext builtinTopContext = Helper::getDocumentationFileContext();
     if ( type->whichType() != AbstractType::TypeStructure ) {
         return ItemList();
     }
     // find properties of class declaration
     TypePtr<StructureType> cls = StructureType::Ptr::dynamicCast(type);
-    kDebug() << "Finding completion items for class type";
+    qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Finding completion items for class type";
     if ( ! cls || ! cls->internalContext(m_duContext->topContext()) ) {
-        kWarning() << "No class type available, no completion offered";
+        qCWarning(KDEV_PYTHON_CODECOMPLETION) << "No class type available, no completion offered";
         return QList<CompletionTreeItemPointer>();
     }
     // the PublicOnly will filter out non-explictly defined __get__ etc. functions inherited from object
     QList<DUContext*> searchContexts = Helper::internalContextsForClass(cls, m_duContext->topContext(), Helper::PublicOnly);
     QList<DeclarationDepthPair> keepDeclarations;
     foreach ( const DUContext* currentlySearchedContext, searchContexts ) {
-        kDebug() << "searching context " << currentlySearchedContext->scopeIdentifier() << "for autocompletion items";
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << "searching context " << currentlySearchedContext->scopeIdentifier() << "for autocompletion items";
         QList<DeclarationDepthPair> declarations = currentlySearchedContext->allDeclarations(CursorInRevision::invalid(),
                                                                                                 m_duContext->topContext(),
                                                                                                 false);
-        kDebug() << "found" << declarations.length() << "declarations";
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << "found" << declarations.length() << "declarations";
 
         // filter out those which are builtin functions, and those which were imported; we don't want those here
         // also, discard all magic functions from autocompletion
@@ -777,7 +796,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
                 keepDeclarations.append(current);
             }
             else {
-                kDebug() << "Discarding declaration " << current.first->toString();
+                qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Discarding declaration " << current.first->toString();
             }
         }
     }
@@ -786,7 +805,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
 
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(IncludeSearchTarget item)
 {
-    kDebug() << "TARGET:" << item.directory.pathOrUrl() << item.remainingIdentifiers << item.directory.path();
+    qCDebug(KDEV_PYTHON_CODECOMPLETION) << "TARGET:" << item.directory.path() << item.remainingIdentifiers;
     QDir currentDirectory(item.directory.path());
     QFileInfoList contents = currentDirectory.entryInfoList(QStringList(), QDir::Files | QDir::Dirs);
     bool atBottom = item.remainingIdentifiers.isEmpty();
@@ -815,7 +834,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
     else {
         QFileInfo file(item.directory.path(), item.remainingIdentifiers.first() + ".py");
         item.remainingIdentifiers.removeFirst();
-        kDebug() << " CHECK:" << file.absoluteFilePath();
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << " CHECK:" << file.absoluteFilePath();
         if ( file.exists() ) {
             sourceFile = file.absoluteFilePath();
         }
@@ -824,19 +843,12 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
     if ( ! sourceFile.isEmpty() ) {
         IndexedString filename(sourceFile);
         TopDUContext* top = DUChain::self()->chainForDocument(filename);
-        kDebug() << top;
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << top;
         DUContext* c = internalContextForDeclaration(top, item.remainingIdentifiers);
-        kDebug() << "  GOT:" << c;
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << "  GOT:" << c;
         if ( c ) {
-            int begin = items.size();
-            items << declarationListToItemList(c->localDeclarations().toList());
             // tell function declaration items not to add brackets
-            // TODO this is a hack. :(
-            for ( int i = begin; i < items.size(); i++ ) {
-                if ( FunctionDeclarationCompletionItem* item = dynamic_cast<FunctionDeclarationCompletionItem*>(items[i].data()) ) {
-                    item->setIsImportItem(true);
-                }
-            }
+            items << setOmitParentheses(declarationListToItemList(c->localDeclarations().toList()));
         }
         else {
             // do better next time
@@ -851,7 +863,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
             if ( file.fileName().startsWith('.') ) {
                 continue;
             }
-            kDebug() << " > CONTENT:" << file.absolutePath() << file.fileName();
+            qCDebug(KDEV_PYTHON_CODECOMPLETION) << " > CONTENT:" << file.absolutePath() << file.fileName();
             if ( file.isFile() ) {
                 if ( file.fileName().endsWith(".py") || file.fileName().endsWith(".so") ) {
                     IncludeItem fileInclude;
@@ -916,7 +928,7 @@ DUContext* PythonCodeCompletionContext::internalContextForDeclaration(TopDUConte
 
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::includeItemsForSubmodule(QString submodule)
 {
-    QList<KUrl> searchPaths = Helper::getSearchPaths(m_workingOnDocument);
+    QList<QUrl> searchPaths = Helper::getSearchPaths(m_workingOnDocument);
     
     QStringList subdirs;
     if ( ! submodule.isEmpty() ) {
@@ -933,23 +945,21 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::includeItemsForSub
     // Thus, we first generate a list of possible paths, then match them against those which actually exist
     // and then gather all the items in those paths.
     
-    foreach ( KUrl currentPath, searchPaths ) {
-        kDebug() << "Searching: " << currentPath << subdirs;
+    foreach ( QUrl currentPath, searchPaths ) {
+        auto d = QDir(currentPath.path());
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Searching: " << currentPath << subdirs;
         int identifiersUsed = 0;
         foreach ( const QString& subdir, subdirs ) {
-            currentPath.cd(subdir);
-            QFileInfo d(currentPath.path());
-            kDebug() << currentPath << d.exists() << d.isDir();
-            if ( ! d.exists() || ! d.isDir() ) {
-                currentPath.cd("..");
-                currentPath.cleanPath();
+            qDebug() << "changing into subdir" << subdir;
+            if ( ! d.cd(subdir) ) {
                 break;
             }
+            qCDebug(KDEV_PYTHON_CODECOMPLETION) << d.absolutePath() << d.exists();
             identifiersUsed++;
         }
         QStringList remainingIdentifiers = subdirs.mid(identifiersUsed, -1);
-        foundPaths.append(IncludeSearchTarget(currentPath, remainingIdentifiers));
-        kDebug() << "Found path:" << currentPath << remainingIdentifiers << subdirs;
+        foundPaths.append(IncludeSearchTarget(d.absolutePath(), remainingIdentifiers));
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Found path:" << d.absolutePath() << remainingIdentifiers << subdirs;
     }
     return findIncludeItems(foundPaths);
 }
@@ -976,8 +986,8 @@ void PythonCodeCompletionContext::summonParentForEventualCall(TokenList allExpre
     int offset = 0;
     while ( true ) {
         QPair<int, int> nextCall = allExpressions.nextIndexOfStatus(ExpressionParser::EventualCallFound, offset);
-        kDebug() << "next call:" << nextCall;
-        kDebug() << allExpressions.toString();
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << "next call:" << nextCall;
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << allExpressions.toString();
         if ( nextCall.first == -1 ) {
             // no more eventual calls
             break;
@@ -985,12 +995,12 @@ void PythonCodeCompletionContext::summonParentForEventualCall(TokenList allExpre
         offset = nextCall.first;
         allExpressions.reset(offset);
         TokenListEntry eventualFunction = allExpressions.weakPop();
-        kDebug() << eventualFunction.expression << eventualFunction.status;
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << eventualFunction.expression << eventualFunction.status;
         // it's only a call if a "(" bracket is followed (<- direction) by an expression.
         if ( eventualFunction.status != ExpressionParser::ExpressionFound ) {
             continue; // not a call, try the next opening "(" bracket
         }
-        kDebug() << "Call found! Creating parent-context.";
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Call found! Creating parent-context.";
         // determine the amount of "free" commas in between
         allExpressions.reset();
         int atParameter = 0;
@@ -1029,11 +1039,11 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     m_workingOnDocument = context->topContext()->url().toUrl();
     QString textWithoutStrings = CodeHelpers::killStrings(text);
     
-    kDebug() << text << position << context->localScopeIdentifier().toString() << context->range();
+    qCDebug(KDEV_PYTHON_CODECOMPLETION) << text << position << context->localScopeIdentifier().toString() << context->range();
     
     QPair<QString, QString> beforeAndAfterCursor = CodeHelpers::splitCodeByCursor(text,
-                                                                                  context->range().castToSimpleRange().textRange(),
-                                                                                  position.castToSimpleCursor().textCursor());
+                                                                                  context->range().castToSimpleRange(),
+                                                                                  position.castToSimpleCursor());
 
     // check if the current position is inside a multi-line comment -> no completion if this is the case
     CodeHelpers::EndLocation location = CodeHelpers::endsInside(beforeAndAfterCursor.first);
@@ -1076,7 +1086,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
             currentlyCheckedLine -= 1;
         }
         while ( currentlyChecked && context->parentContextOf(currentlyChecked) ) {
-            kDebug() << "checking:" << currentlyChecked->range() << currentlyChecked->type();
+            qCDebug(KDEV_PYTHON_CODECOMPLETION) << "checking:" << currentlyChecked->range() << currentlyChecked->type();
             // FIXME: "<=" is not really good, it must be exactly one indent-level less
             int offset = position.line-currentlyChecked->range().start.line;
             // If the check leaves the current context, abort.
@@ -1086,7 +1096,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
             if (    indents.indentForLine(indents.linesCount()-1-offset)
                  <= indents.indentForLine(indents.linesCount()-1) )
             {
-                kDebug() << "changing context to" << currentlyChecked->range() 
+                qCDebug(KDEV_PYTHON_CODECOMPLETION) << "changing context to" << currentlyChecked->range() 
                         << ( currentlyChecked->type() == DUContext::Class );
                 context = currentlyChecked;
                 break;
@@ -1142,6 +1152,9 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     
     if ( firstStatus == ExpressionParser::RaiseFound || firstStatus == ExpressionParser::ExceptFound ) {
         m_operation = RaiseExceptionCompletion;
+        if ( firstStatus == ExpressionParser::ExceptFound ) {
+            m_itemTypeHint = ClassTypeRequested;
+        }
         return;
     }
 
@@ -1156,7 +1169,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
             m_operation = DefineCompletion;
         }
         else {
-            kDebug() << "def outside class context";
+            qCDebug(KDEV_PYTHON_CODECOMPLETION) << "def outside class context";
             m_operation = NoCompletion;
         }
         return;
@@ -1178,12 +1191,12 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         }
         // check that all statements in between are part of a generator initializer list
         bool ok = true;
-        QString text;
+        QStringList exprs;
         int currentOffset = 0;
         while ( ok && offset > currentOffset ) {
             ok = allExpressions.at(offset).status == ExpressionParser::ExpressionFound;
             if ( ! ok ) break;
-            text.prepend(allExpressions.at(offset).expression);
+            exprs.prepend(allExpressions.at(offset).expression);
             offset -= 1;
             ok = allExpressions.at(offset).status == ExpressionParser::CommaFound;
             // the last expression must *not* have a comma
@@ -1194,7 +1207,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
             offset -= 1;
         }
         if ( ok ) {
-            m_guessTypeOfExpression = text;
+            m_guessTypeOfExpression = exprs.join(",");
             m_operation = GeneratorVariableCompletion;
             return;
         }
@@ -1249,8 +1262,8 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
         else {
             m_searchImportItemsInModule = firstPiece + "." + secondPiece;
         }
-        kDebug() << firstPiece << secondPiece;
-        kDebug() << "Got submodule to search:" << m_searchImportItemsInModule << "from text" << textWithoutStrings;
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << firstPiece << secondPiece;
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Got submodule to search:" << m_searchImportItemsInModule << "from text" << textWithoutStrings;
         m_operation = ImportSubCompletion;
         return;
     }

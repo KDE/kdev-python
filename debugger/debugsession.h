@@ -23,6 +23,9 @@
 #include <KProcess>
 #include <QMutexLocker>
 
+#include <QDebug>
+#include "debuggerdebug.h"
+
 #include <debugger/interfaces/idebugsession.h>
 #include <debugger/interfaces/ivariablecontroller.h>
 #include <debugger/interfaces/ibreakpointcontroller.h>
@@ -36,13 +39,14 @@ struct PdbCommand;
     
 class DebugSession : public KDevelop::IDebugSession
 {
-Q_OBJECT
-protected:
-    virtual KDevelop::IFrameStackModel* createFrameStackModel();
-
+    Q_OBJECT
 public:
-    DebugSession(QStringList program, const KUrl& workingDirectory);
+    DebugSession(QStringList program, const QUrl& workingDirectory);
     virtual ~DebugSession();
+
+    virtual IBreakpointController* breakpointController() const;
+    virtual IFrameStackModel* frameStackModel() const;
+
     /**
      * @brief Start the debugger.
      **/
@@ -101,7 +105,7 @@ public:
     /**
      * @brief Access this session's variable controller
      **/
-    virtual IVariableController* variableController();
+    virtual IVariableController* variableController() const;
     
     /// Those functions just execute the basic debugger commands. They're used when the user
     /// clicks the appropriate button.
@@ -207,12 +211,15 @@ signals:
     void stderrReceived(QStringList);
 
 private:
+    IBreakpointController* m_breakpointController;
+    IVariableController* m_variableController;
+    IFrameStackModel* m_frameStackModel;
     KProcess* m_debuggerProcess;
     IDebugSession::DebuggerState m_state;
     QByteArray m_buffer;
     QStringList m_program;
     QList<PdbCommand*> m_commandQueue;
-    const KUrl& m_workingDirectory;
+    const QUrl& m_workingDirectory;
 private:
     /// objects to notify next
     QWeakPointer<QObject> m_nextNotifyObject;
@@ -307,7 +314,7 @@ public:
     };
     void run(DebugSession* session) {
         Q_ASSERT(m_command.endsWith('\n') && "command must end with a newline");
-        kDebug() << "running command:" << m_command.toAscii() << m_notifyMethod;
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "running command:" << m_command.toAscii() << m_notifyMethod;
         session->write(m_command.toAscii());
     }
 private:

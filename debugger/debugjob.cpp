@@ -18,14 +18,18 @@
 
 #include "debugjob.h"
 
-#include <KDebug>
-#include <KStandardDirs>
+
 
 #include <interfaces/idebugcontroller.h>
 #include <interfaces/icore.h>
+#include <interfaces/iplugincontroller.h>
 
 #include <sublime/view.h>
 #include <util/processlinemaker.h>
+
+#include <QDebug>
+#include <QStandardPaths>
+#include "debuggerdebug.h"
 
 namespace Python {
 
@@ -33,25 +37,28 @@ namespace Python {
 void DebugJob::start()
 {
     QStringList program;
-    QString debuggerUrl = KStandardDirs::locate("data", "kdevpythonsupport/debugger/") + "/kdevpdb.py";
-    program << m_interpreter << "-u" << debuggerUrl << m_scriptUrl.path(KUrl::RemoveTrailingSlash) << m_args;
+    QString debuggerUrl = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/debugger", QStandardPaths::LocateDirectory) + "/kdevpdb.py";
+    program << m_interpreter << "-u" << debuggerUrl << m_scriptUrl.url(QUrl::StripTrailingSlash) << m_args;
     m_session = new DebugSession(program, m_workingDirectory);
     
     setStandardToolView(KDevelop::IOutputView::DebugView);
     setBehaviours(KDevelop::IOutputView::Behaviours(KDevelop::IOutputView::AllowUserClose) | KDevelop::IOutputView::AutoScroll);
+    OutputModel* pyOutputModel = new KDevelop::OutputModel();
+    pyOutputModel->setFilteringStrategy(OutputModel::ScriptErrorFilter);
+    setModel(pyOutputModel);
     setTitle(m_interpreter + m_scriptUrl.path());
-    
+
     setModel(new KDevelop::OutputModel(0));
 
     startOutput();
     
-    kDebug() << "connecting standardOutputReceived";
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "connecting standardOutputReceived";
     connect(m_session, SIGNAL(realDataReceived(QStringList)), this, SLOT(standardOutputReceived(QStringList)));
     connect(m_session, SIGNAL(stderrReceived(QStringList)), this, SLOT(standardErrorReceived(QStringList)));
     connect(m_session, SIGNAL(finished()), this, SLOT(sessionFinished()));
     KDevelop::ICore::self()->debugController()->addSession(m_session);
     m_session->start();
-    kDebug() << "starting program:" << program;
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "starting program:" << program;
 }
 
 void DebugJob::sessionFinished()
@@ -68,7 +75,7 @@ void DebugJob::standardErrorReceived(QStringList lines)
 
 void DebugJob::standardOutputReceived(QStringList lines)
 {
-    kDebug() << "standard output received:" << lines << outputModel();
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "standard output received:" << lines << outputModel();
     if ( OutputModel* m = outputModel() ) {
         m->appendLines(lines);
     }
@@ -81,7 +88,7 @@ OutputModel* DebugJob::outputModel()
 
 bool DebugJob::doKill()
 {
-    kDebug() << "kill signal received";
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "kill signal received";
     m_session->stopDebugger();
     return true;
 }

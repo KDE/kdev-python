@@ -24,16 +24,14 @@
 #include <QBoxLayout>
 #include <QLineEdit>
 #include <QFormLayout>
-#include <QDebug>
 
-#include <KPluginFactory>
 #include <KLocalizedString>
+#include <KConfig>
 
-K_PLUGIN_FACTORY(PEP8KCModuleFactory, registerPlugin<PEP8KCModule>(); )
-K_EXPORT_PLUGIN(PEP8KCModuleFactory("kcm_pep8", "kdevpythonsupport"))
+K_PLUGIN_FACTORY(PEP8KCModuleFactory, registerPlugin<PEP8KCModule>();)
 
 PEP8KCModule::PEP8KCModule(QWidget* parent, const QVariantList& args)
-    : KCModule(PEP8KCModuleFactory::componentData(), parent, args)
+    : KCModule(parent, args)
 {
     KConfig* config = new KConfig("kdevpythonsupportrc");
     configGroup = config->group("pep8");
@@ -46,7 +44,7 @@ PEP8KCModule::PEP8KCModule(QWidget* parent, const QVariantList& args)
     QLabel* argumentlabel = new QLabel(i18n("PEP8 checker arguments:"));
     QLabel* enablelabel = new QLabel(i18n("Enable PEP8 checking:"));
     pep8url = new QLineEdit(configGroup.readEntry("pep8url", "/usr/bin/pep8-python2"));
-    pep8arguments = new QLineEdit(configGroup.readEntry("pap8arguments", ""));
+    pep8arguments = new QLineEdit(configGroup.readEntry("pep8arguments", ""));
     enableChecking = new QCheckBox;
     enableChecking->setChecked(configGroup.readEntry<bool>("pep8enabled", false));
     formlayout->addRow(urllabel, pep8url);
@@ -62,7 +60,7 @@ PEP8KCModule::PEP8KCModule(QWidget* parent, const QVariantList& args)
 void PEP8KCModule::save()
 {
     configGroup.writeEntry("pep8url", pep8url->text());
-    configGroup.writeEntry("pap8arguments", pep8arguments->text());
+    configGroup.writeEntry("pep8arguments", pep8arguments->text());
     configGroup.writeEntry("pep8enabled", enableChecking->isChecked());
     KCModule::save();
 }
@@ -72,3 +70,4 @@ PEP8KCModule::~PEP8KCModule()
     delete configGroup.config();
 }
 
+#include "kcm_pep8.moc"

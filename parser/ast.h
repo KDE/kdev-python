@@ -1,6 +1,7 @@
 /***************************************************************************
  *   This file is part of KDevelop                                         *
  *   Copyright 2007 Andreas Pakulat <apaku@gmx.de>                         *
+ *   Copyright 2012 Patrick Spendrin <ps_ml@gmx.de>                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Library General Public License as       *
@@ -18,18 +19,15 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
 
-// The Python 2.7 Language Reference was used as basis for this AST
+// The Python 3.4 Language Reference was used as basis for this AST
 
 #ifndef PYTHON_AST_H
 #define PYTHON_AST_H
 
 #include <QList>
-#include <QMap>
 #include <QString>
-#include <QStringList>
-#include <QPair>
 #include <QSharedPointer>
-
+#include <KTextEditor/Range>
 #include "parserexport.h"
 
 namespace KDevelop
@@ -41,8 +39,8 @@ namespace Python {
     class StatementAst;
     class FunctionDefinitionAst;
     class AssignmentAst;
-    class PrintAst;
     class PassAst;
+    class NonlocalAst;
     class ExpressionAst;
     class NameAst;
     class CallAst;
@@ -72,12 +70,10 @@ public:
     {
         FunctionDefinitionAstType,
         AssignmentAstType,
-        PrintAstType,
         PassAstType,
-        NameAstType,
-        CallAstType,
-        AttributeAstType,
+        NonlocalAstType,
         ArgumentsAstType,
+        ArgAstType,
         KeywordAstType,
         ClassDefinitionAstType,
         ReturnAstType,
@@ -86,23 +82,25 @@ public:
         WhileAstType,
         IfAstType,
         WithAstType,
+        WithItemAstType,
         RaiseAstType,
-        TryExceptAstType,
-        TryFinallyAstType,
+        TryAstType,
         ImportAstType,
         ImportFromAstType,
-        ExecAstType,
         GlobalAstType,
         BreakAstType,
         ContinueAstType,
         AssertionAstType,
         AugmentedAssignmentAstType,
-        DictionaryComprehensionAstType,
-        ExtendedSliceAstType,
         CodeAstType,
         StatementAstType,
-        ExpressionAstType,
-        
+        ExpressionAstType, // everything below is an expression
+        NameAstType,
+        NameConstantAstType,
+        CallAstType,
+        AttributeAstType,
+        ExtendedSliceAstType,
+        DictionaryComprehensionAstType,
         BooleanOperationAstType,
         BinaryOperationAstType,
         UnaryOperationAstType,
@@ -115,22 +113,25 @@ public:
         GeneratorExpressionAstType,
         YieldAstType,
         CompareAstType,
-        ReprAstType,
         NumberAstType,
         StringAstType,
+        BytesAstType,
         SubscriptAstType,
+        StarredAstType,
         ListAstType,
         TupleAstType,
-        
+        YieldFromAstType,
+        ComprehensionAstType,
+
         SliceAstType,
         EllipsisAstType,
         IndexAstType,
-        
-        ComprehensionAstType,
+        LastExpressionType, // keep this at the end of the expr ast list
+
         ExceptionHandlerAstType,
         AliasAstType, // for imports
-        
-        IdentifierAstType
+        IdentifierAstType,
+        LastAstType // the largest one, not valid!
     };
     
     enum BooleanOperationTypes {
@@ -181,13 +182,25 @@ public:
     Ast();
     Ast* parent;
     AstType astType;
-    
+
+    bool isExpression() const {
+        return astType >= ExpressionAstType && astType <= LastExpressionType;
+    }
+
     void copyRange(const Ast* other) {
         startCol = other->startCol;
         endCol = other->endCol;
         startLine = other->startLine;
         endLine = other->endLine;
     }
+    
+    bool appearsBefore(const Ast* other) {
+        return startLine < other->startLine || ( startLine == other->startLine && startCol < other->startCol );
+    };
+    
+    const KTextEditor::Range range() const {
+        return KTextEditor::Range(startLine, startCol, endLine, endCol);
+    };
 
     int startCol;
     int startLine;
@@ -250,6 +263,7 @@ public:
     ArgumentsAst* arguments;
     QList<ExpressionAst*> decorators;
     QList<Ast*> body;
+    ExpressionAst* returns;
 };
 
 class KDEVPYTHONPARSER_EXPORT ClassDefinitionAst : public StatementAst {
@@ -313,12 +327,18 @@ public:
     QList<Ast*> orelse;
 };
 
+class KDEVPYTHONPARSER_EXPORT WithItemAst : public Ast {
+public:
+    WithItemAst(Ast* parent);
+    ExpressionAst* contextExpression;
+    NameAst* optionalVars;
+};
+
 class KDEVPYTHONPARSER_EXPORT WithAst : public StatementAst {
 public:
     WithAst(Ast* parent);
-    ExpressionAst* contextExpression;
-    ExpressionAst* optionalVars;
     QList<Ast*> body;
+    QList<WithItemAst*> items;
 };
 
 class KDEVPYTHONPARSER_EXPORT RaiseAst : public StatementAst {
@@ -328,19 +348,13 @@ public:
     // TODO check what the other things in the grammar actually are and add them
 };
 
-class KDEVPYTHONPARSER_EXPORT TryExceptAst : public StatementAst {
+class KDEVPYTHONPARSER_EXPORT TryAst : public StatementAst {
 public:
-    TryExceptAst(Ast* parent);
+    TryAst(Ast* parent);
     QList<Ast*> body;
     QList<ExceptionHandlerAst*> handlers;
     QList<Ast*> orelse;
-};
-
-class KDEVPYTHONPARSER_EXPORT TryFinallyAst : public StatementAst {
-public:
-    TryFinallyAst(Ast* parent);
-    QList<Ast*> body;
-    QList<Ast*> finalbody;
+    QList<Ast*> finally;
 };
 
 class KDEVPYTHONPARSER_EXPORT AssertionAst : public StatementAst {
@@ -364,14 +378,6 @@ public:
     int level;
 };
 
-class KDEVPYTHONPARSER_EXPORT ExecAst : public StatementAst {
-public:
-    ExecAst(Ast* parent);
-    ExpressionAst* body;
-    ExpressionAst* globals;
-    ExpressionAst* locals;
-};
-
 class KDEVPYTHONPARSER_EXPORT GlobalAst : public StatementAst {
 public:
     GlobalAst(Ast* parent);
@@ -390,17 +396,14 @@ public:
     ContinueAst(Ast* parent);
 };
 
-class KDEVPYTHONPARSER_EXPORT PrintAst : public StatementAst {
-public:
-    PrintAst(Ast* parent);
-    ExpressionAst* destination;
-    QList<ExpressionAst*> values;
-    bool newline;
-};
-
 class KDEVPYTHONPARSER_EXPORT PassAst : public StatementAst {
 public:
     PassAst(Ast* parent);
+};
+
+class KDEVPYTHONPARSER_EXPORT NonlocalAst : public StatementAst {
+public:
+    NonlocalAst(Ast* parent);
 };
 
 
@@ -418,6 +421,12 @@ public:
     };
     ExpressionAst* value; // WARNING this is not set in most cases!
     CallAst* belongsToCall;
+};
+
+class KDEVPYTHONPARSER_EXPORT YieldFromAst : public ExpressionAst {
+public:
+    YieldFromAst(Ast* parent);
+    ExpressionAst* value;
 };
 
 class KDEVPYTHONPARSER_EXPORT BooleanOperationAst : public ExpressionAst {
@@ -554,6 +563,12 @@ public:
     QString value;
 };
 
+class KDEVPYTHONPARSER_EXPORT BytesAst : public ExpressionAst {
+public:
+    BytesAst(Ast* parent);
+    QString value;
+};
+
 class KDEVPYTHONPARSER_EXPORT YieldAst : public ExpressionAst {
 public:
     YieldAst(Ast* parent);
@@ -565,6 +580,18 @@ public:
     NameAst(Ast* parent);
     Identifier* identifier;
     ExpressionAst::Context context;
+};
+
+class KDEVPYTHONPARSER_EXPORT NameConstantAst : public ExpressionAst {
+public:
+    NameConstantAst(Ast* parent);
+    enum NameConstantTypes {
+        False,
+        True,
+        None,
+        Invalid // should not happen
+    };
+    NameConstantTypes value;
 };
 
 class KDEVPYTHONPARSER_EXPORT CallAst : public ExpressionAst {
@@ -591,6 +618,11 @@ public:
     ExpressionAst* value;
     SliceAstBase* slice;
     ExpressionAst::Context context;
+};
+
+class KDEVPYTHONPARSER_EXPORT StarredAst : public ExpressionAst {
+public:
+    StarredAst(Ast* parent);
 };
 
 class KDEVPYTHONPARSER_EXPORT ListAst : public ExpressionAst {
@@ -639,15 +671,21 @@ public:
 };
 
 /** Independent classes **/
+
+class KDEVPYTHONPARSER_EXPORT ArgAst : public Ast {
+public:
+    ArgAst(Ast* parent);
+    Identifier* argumentName;
+    ExpressionAst* annotation;
+};
+
 class KDEVPYTHONPARSER_EXPORT ArgumentsAst : public Ast {
 public:
     ArgumentsAst(Ast* parent);
-    QList<ExpressionAst*> arguments;
+    QList<ArgAst*> arguments;
     QList<ExpressionAst*> defaultValues;
-    Identifier* vararg;
-    Identifier* kwarg;
-    int arg_lineno, arg_col_offset;
-    int vararg_lineno, vararg_col_offset;
+    ArgAst* vararg;
+    ArgAst* kwarg;
 };
 
 class KDEVPYTHONPARSER_EXPORT KeywordAst : public Ast {
@@ -669,7 +707,7 @@ class KDEVPYTHONPARSER_EXPORT ExceptionHandlerAst : public Ast {
 public:
     ExceptionHandlerAst(Ast* parent);
     ExpressionAst* type;
-    ExpressionAst* name;
+    Identifier* name;
     QList<Ast*> body;
 };
 

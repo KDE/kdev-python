@@ -19,9 +19,13 @@
 #include "importfile.h"
 
 #include <KTextEditor/Document>
+#include <KTextEditor/View>
 #include <language/codecompletion/abstractincludefilecompletionitem.h>
 
 #include "duchain/navigation/navigationwidget.h"
+
+#include <QDebug>
+#include "codecompletiondebug.h"
 
 using namespace KDevelop;
 
@@ -37,10 +41,10 @@ ImportFileItem::~ImportFileItem()
 
 }
 
-void ImportFileItem::execute(KTextEditor::Document* document, const KTextEditor::Range& word)
+void ImportFileItem::execute(KTextEditor::View* view, const KTextEditor::Range& word)
 {
-    kDebug() << "ImportFileItem executed";
-    document->replaceText(word, moduleName);
+    qCDebug(KDEV_PYTHON_CODECOMPLETION) << "ImportFileItem executed";
+    view->document()->replaceText(word, moduleName);
 }
 
 

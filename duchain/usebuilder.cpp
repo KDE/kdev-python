@@ -18,7 +18,8 @@
  */
 #include "usebuilder.h"
 
-#include <KUrl>
+#include <QDebug>
+#include "duchaindebug.h"
 
 #include <language/duchain/declaration.h>
 #include <language/duchain/use.h>
@@ -60,10 +61,13 @@ void UseBuilder::visitName(NameAst* node)
 {
     DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node));
     Declaration* declaration = Helper::declarationForName(identifierForNode(node->identifier),
-                                                          editorFindRange(node, node), DUContextPointer(context));
+                                                          editorFindRange(node, node),
+                                                          DUChainPointer<const DUContext>(context));
     
-    QStringList keywords;
-    keywords << "None" << "True" << "False" << "print";
+    static QStringList keywords;
+    if ( keywords.isEmpty() ) {
+        keywords << "None" << "True" << "False" << "print";
+    }
     
     Q_ASSERT(node->identifier);
     RangeInRevision useRange = rangeForNode(node->identifier, true);
@@ -105,22 +109,25 @@ void UseBuilder::visitName(NameAst* node)
 
 void UseBuilder::visitAttribute(AttributeAst* node)
 {
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "VisitAttribute start";
+    UseBuilderBase::visitAttribute(node);
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "Visit Attribute base end";
+
     DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node));
     ExpressionVisitor v(context);
-    kDebug() << "VisitAttribute start";
-    UseBuilderBase::visitAttribute(node);
-    kDebug() << "Visit Attribute base end";
-    
     v.visitNode(node);
-    
-    RangeInRevision useRange(node->attribute->startLine, node->attribute->startCol, node->attribute->endLine, node->attribute->endCol + 1);
+    RangeInRevision useRange(node->attribute->startLine, node->attribute->startCol,
+                             node->attribute->endLine, node->attribute->endCol + 1);
     
     DeclarationPointer declaration = v.lastDeclaration();
-    DUChainWriteLocker wlock(DUChain::lock());
-    if ( declaration && declaration->range() == useRange ) return;
-    if ( ! declaration && v.shouldBeKnown() && ( ! v.lastType() or Helper::isUsefulType(v.lastType()) ) ) {
+    DUChainWriteLocker wlock;
+    if ( declaration && declaration->range() == useRange ) {
+        // this is the declaration, don't build a use for it
+        return;
+    }
+    if ( ! declaration && v.isConfident() && ( ! v.lastType() || Helper::isUsefulType(v.lastType()) ) ) {
         KDevelop::Problem *p = new KDevelop::Problem();
-        p->setFinalLocation(DocumentRange(currentlyParsedDocument(), useRange.castToSimpleRange())); // TODO ok?
+        p->setFinalLocation(DocumentRange(currentlyParsedDocument(), useRange.castToSimpleRange()));
         p->setSource(KDevelop::ProblemData::SemanticAnalysis);
         p->setSeverity(KDevelop::ProblemData::Hint);
         p->setDescription(i18n("Attribute \"%1\" not found on accessed object", node->attribute->value));

@@ -20,11 +20,14 @@
 #include "breakpointcontroller.h"
 #include <debugger/breakpoint/breakpointmodel.h>
 
+#include <QDebug>
+#include "debuggerdebug.h"
+
 namespace Python {
     
 BreakpointController::BreakpointController(IDebugSession* parent): IBreakpointController(parent)
 {
-    kDebug() << "constructing breakpoint controller";
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "constructing breakpoint controller";
     connect(debugSession(), SIGNAL(event(IDebugSession::event_t)), this, SLOT(slotEvent(IDebugSession::event_t)));
 }
 
@@ -35,7 +38,7 @@ DebugSession* BreakpointController::session()
 
 void BreakpointController::slotEvent(IDebugSession::event_t evt)
 {
-    kDebug() << evt;
+    qCDebug(KDEV_PYTHON_DEBUGGER) << evt;
     if ( evt == IDebugSession::connected_to_program ) {
         foreach ( Breakpoint* bp, breakpointModel()->breakpoints() ) {
             if ( bp->deleted() ) {
@@ -48,7 +51,7 @@ void BreakpointController::slotEvent(IDebugSession::event_t evt)
 
 void BreakpointController::sendMaybe(KDevelop::Breakpoint* breakpoint)
 {
-    kDebug() << "sending breakpoint: " << breakpoint << "( deleted:" << breakpoint->deleted() << ")";
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "sending breakpoint: " << breakpoint << "( deleted:" << breakpoint->deleted() << ")";
     if ( breakpoint->deleted() ) {
         session()->removeBreakpoint(breakpoint);
     }

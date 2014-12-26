@@ -98,28 +98,36 @@ class basestring():
 
 @TypeContainer
 class list():
-    @returnContentEqualsContentOf(0)
+    """! TypeContainer !"""
     def __init__(self, items):
+        """! returnContentEqualsContentOf ! 0"""
         return []
-    @addsTypeOfArg(1)
-    def __setitem__(self, key, value): pass
-    @getsType
-    def __getitem__(self, key): pass
-    @addsTypeOfArg(0)
-    def append(self,obj): pass
-    @addsTypeOfArgContent(0)
-    def extend(self,obj): return None
-    @addsTypeOfArg(0)
-    def insert(self,i, x): return None
-    @getsType
-    def pop(self,i): return None
-    @getsType
+    def __setitem__(self, key, value):
+        """! addsTypeOfArg ! 1
+           ! getsType !"""
+    def __getitem__(self, key):
+        """! addsTypeOfArg ! 0"""
+    def append(self,obj):
+        """! addsTypeOfArg ! 0"""
+    def extend(self,obj):
+        """! addsTypeOfArgContent ! 0"""
+        return None
+    def insert(self,i, x):
+        """! getsType !"""
+        return None
+    def pop(self,i):
+        """! getsType !"""
+        return None
     def index(self,x): return 0
-    def count(self,x): return 0
-    @getsList
-    def sort(self,): return []
-    @getsList
-    def reverse(self,): return []
+    def count(self,x):
+        """! getsList !"""
+        return 0
+    def sort(self,):
+        """! getsList !"""
+        return []
+    def reverse(self,):
+        """! getsList !"""
+        return []
     def remove(self, x): pass
 
 class _io_TextIOWrapper():
@@ -143,44 +151,54 @@ class _io_TextIOWrapper():
     name = ""
     newlines = ""
     softspace = True
-    
-@TypeContainer
-@hasTypedKeys
+
 class dict():
-    @returnContentEqualsContentOf(0)
+    """! TypeContainer !
+       ! hasTypedKeys !"""
     def __init__(self, items):
+        """! returnContentEqualsContentOf ! 0"""
         return {}
-    @addsTypeOfArg(1)
-    @addsKeyTypeOfArg(0)
-    def __setitem__(self, key, value): pass
-    @getsType
-    def __getitem__(self, key): pass
+    def __setitem__(self, key, value):
+        """! addsTypeOfArg ! 1
+           ! addsKeyTypeOfArg ! 0"""
+    def __getitem__(self, key):
+        """! getsType !"""
     def clear(self,): return None
     def copy(self,): return {}
-    @addsKeyTypeOfArgContent(0)
-    @addsTypeOfArg(1)
-    def fromkeys(self,seq, value = None): return {}
-    @getsType
-    def get(self,key, default = ""): return None
+    def fromkeys(self,seq, value = None):
+        """! addsKeyTypeOfArgContent ! 0
+           ! addsTypeOfArg ! 1"""
+        return {}
+    def get(self,key, default = ""):
+        """! getsType !"""
+        return None
     def has_key(self,key): return True
-    @getsListOfBoth
-    def items(self,): return {}
-    @getsListOfBoth
-    def iteritems(self,): return []
-    @getsListOfKeys
-    def iterkeys(self,): return []
-    @getsList
-    def itervalues(self,): return []
-    @getsListOfKeys
-    def keys(self,): return []
-    @getsType
-    def pop(self,key, default = ""): return None
-    @getsBoth
-    def popitem(self,): return None
+    def items(self,):
+        """! getsListOfBoth !"""
+        return {}
+    def iteritems(self,):
+        """! getsListOfBoth !"""
+        return []
+    def iterkeys(self,):
+        """! getsListOfKeys !"""
+        return []
+    def itervalues(self,):
+        """! getsList !"""
+        return []
+    def keys(self,):
+        """! getsListOfKeys !"""
+        return []
+    def pop(self,key, default = ""):
+        """! getsType !"""
+        return None
+    def popitem(self,):
+        """! getsBoth !"""
+        return None
     def setdefault(self,key, default = ""): return None
     def update(self,other = None): return None
-    @getsList
-    def values(self,): return []
+    def values(self,):
+        """! getsList !"""
+        return []
     def viewitems(self,): return None
     def viewkeys(self,): return None
     def viewvalues(self,): return None
@@ -349,15 +367,16 @@ class ImportWarning(Warning):
 class UnicodeWarning(Warning):
     pass
 
-@IndexedTypeContainer
 class tuple():
-    def __mul__(self, other): return tuple()
-    pass
+    """! IndexedTypeContainer !"""
+    def __mul__(self, other):
+        return tuple()
 
-@TypeContainer
+
 class set():
-    @returnContentEqualsContentOf(0)
+    """! TypeContainer !"""
     def __init__(self, objects):
+        """! returnContentEqualsContentOf ! 0"""
         pass
     def len(self): return 0
     def isdisjoint(self, other): return True
@@ -383,6 +402,7 @@ def abs(x):
     return 0
 def int(x): return 0
 def all(iterable): return True
+
 def any(iterable):
     """Return True if any element of the iterable is true. If the iterable is empty, return False."""
     return True
@@ -420,7 +440,8 @@ def divmod(a, b):
     """Take two (non complex) numbers as arguments and return a pair of numbers consisting of their quotient and remainder when using long division."""
     return 0
 def enumerate(sequence, start = 0):
-    """Return an enumerate object. sequence must be a sequence, an iterator, or some other object which supports iteration."""
+    """Return an enumerate object. sequence must be a sequence, an iterator, or some other object which supports iteration.
+    ! enumerate ! 0 """
     return [(0, 0)]
 def eval(expression, glob = None, loc = None):
     """The expression argument is parsed and evaluated as a Python expression (technically speaking, a condition list) using the globals and locals dictionaries as global and local namespace."""
@@ -470,9 +491,9 @@ def isinstance(obj, cls):
 def issubclass(cls, info):
     """Return true if class is a subclass (direct, indirect or virtual) of classinfo."""
     return True
-@returnContentEqualsContentOf(0)
 def iter(o, s = None):
-    """Return an iterator object."""
+    """Return an iterator object.
+    ! returnContentEqualsContentOf ! 0 """
     return []
 def len(s):
     """Return the length (the number of items) of an object. The argument may be a sequence (string, tuple or list) or a mapping (dictionary)."""
@@ -482,7 +503,7 @@ def locals():
     return {}
 def long(x = None, base = None):
     """Convert a string or number to a long integer."""
-    return 0L
+    return 0
 def map(func, iterab):
     """Apply function to every item of iterable and return a list of the results."""
     return []
@@ -528,9 +549,9 @@ def reload(module):
 def repr(object):
     """Return a string containing a printable representation of an object."""
     return ""
-@returnContentEqualsContentOf(0)
 def reversed(seq):
-    """Return a reverse iterator."""
+    """Return a reverse iterator.
+    ! returnContentEqualsContentOf ! 0"""
     return None
 def round(x, n=0):
     """Return the floating point value number rounded to ndigits digits after the decimal point."""
@@ -542,7 +563,8 @@ def slice(start = 0, stop = 0, step = 0):
     """Return a slice object representing the set of indices specified by range(start, stop, step)."""
     return slice()
 def sorted(iterable, cmpre = None, key = None, reverse = False):
-    """Return a new sorted list from the items in iterable."""
+    """Return a new sorted list from the items in iterable.
+    ! returnContentEqualsContentOf ! 0"""
     return []
 def staticmethod(function):
     """Return a static method for function."""
@@ -577,9 +599,13 @@ def zip(iterable = None):
 def __import__(name, globa = None, loca = None, fromlist = None, level = 0):
     """This function is invoked by the import statement. It can be replaced (by importing the __builtin__ module and assigning to __builtin__.__import__) in order to change semantics of the import statement, but nowadays it is usually simpler to use import hooks (see PEP 302)."""
     return None
+
 def exit(status): return None
 __name__ = "none"
 __file__ = "none"
 __doc__ = "none"
 __package__ = "none"
+NotImplemented = None
 
+def print(obj, sep='', end='\n', file=open()):
+    pass

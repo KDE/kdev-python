@@ -1,16 +1,16 @@
 /*****************************************************************************
- * Copyright (c) 2011 Sven Brauch <svenbrauch@googlemail.com>                *
+ * Copyright (c) 2011-2014 Sven Brauch <svenbrauch@googlemail.com>           *
  *                                                                           *
  * This program is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU General Public License as            *
  * published by the Free Software Foundation; either version 2 of            *
  * the License, or (at your option) any later version.                       *
- *                                                                           *           
+ *                                                                           *
  * This program is distributed in the hope that it will be useful,           *
  * but WITHOUT ANY WARRANTY; without even the implied warranty of            *
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             *
  * GNU General Public License for more details.                              *
- *                                                                           *   
+ *                                                                           *
  * You should have received a copy of the GNU General Public License         *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.     *
  *****************************************************************************
@@ -21,6 +21,7 @@
 #include <KTextEditor/View>
 #include <KTextEditor/Document>
 #include <KTextEditor/CodeCompletionModel>
+
 #include <language/duchain/ducontext.h>
 #include <language/codecompletion/codecompletionmodel.h>
 
@@ -37,14 +38,14 @@ KeywordItem::KeywordItem(KDevelop::CodeCompletionContext::Ptr context, QString k
     m_keyword = keyword;
 }
 
-void KeywordItem::execute(Document* document, const Range& word)
+void KeywordItem::execute(View* view, const Range& word)
 {
     if ( m_flags & ForceLineBeginning ) {
         Range newRange(Cursor(word.start().line(), 0), word.end());
-        document->replaceText(newRange, m_keyword);
+        view->document()->replaceText(newRange, m_keyword);
     }
     else {
-        document->replaceText(word, m_keyword);
+        view->document()->replaceText(word, m_keyword);
     }
 }
 

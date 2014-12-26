@@ -23,13 +23,13 @@
 #include <duchain.h>
 
 using namespace KDevelop;
-TypeBuilder::TypeBuilder(ParseSession* session, const KUrl &url)
+TypeBuilder::TypeBuilder(ParseSession* session, const QUrl& url)
   : TypeBuilderBase(session, url)
 {
 }
 
-TypeBuilder::TypeBuilder(PythonEditorIntegrator * editor, const KUrl &url)
-  : TypeBuilderBase(editor,url)
+TypeBuilder::TypeBuilder(PythonEditorIntegrator * editor, const QUrl& url)
+  : TypeBuilderBase(editor, url)
 {
 }
 

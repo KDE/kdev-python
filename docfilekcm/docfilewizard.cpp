@@ -33,10 +33,9 @@
 #include <QScrollBar>
 #include <QDebug>
 #include <QDir>
+#include <QStandardPaths>
 
 #include <KLocalizedString>
-#include <KIcon>
-#include <KStandardDirs>
 #include <KDialog>
 #include <KMessageBox>
 #include <KProcess>
@@ -92,13 +91,13 @@ DocfileWizard::DocfileWizard(const QString& workingDirectory, QWidget* parent)
     QHBoxLayout* buttonsLayout = new QHBoxLayout;
     buttonsLayout->setDirection(QBoxLayout::RightToLeft);
     QPushButton* closeButton = new QPushButton(i18n("Close"));
-    closeButton->setIcon(KIcon("dialog-close"));
+    closeButton->setIcon(QIcon::fromTheme("dialog-close"));
     saveButton = new QPushButton(i18n("Save and close"));
     saveButton->setEnabled(false);
-    saveButton->setIcon(KIcon("dialog-ok-apply"));
+    saveButton->setIcon(QIcon::fromTheme("dialog-ok-apply"));
     runButton = new QPushButton(i18n("Generate"));
     runButton->setDefault(true);
-    runButton->setIcon(KIcon("tools-wizard"));
+    runButton->setIcon(QIcon::fromTheme("tools-wizard"));
     buttonsLayout->addWidget(closeButton);
     buttonsLayout->addWidget(runButton);
     buttonsLayout->addWidget(saveButton);
@@ -145,8 +144,7 @@ bool DocfileWizard::run()
         // process already running
         return false;
     }
-    KStandardDirs d;
-    QString scriptUrl = d.findResource("data", "kdevpythonsupport/scripts/introspect.py");
+    QString scriptUrl = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/scripts/introspect.py");
     if ( scriptUrl.isEmpty() ) {
         KMessageBox::error(this, i18n("Couldn't find the introspect.py script; check your installation!"));
         return false;
@@ -193,7 +191,7 @@ void DocfileWizard::saveAndClose()
                                                           outputFile.fileName())) == KMessageBox::Yes;
     }
     if ( mayWrite ) {
-        QString basePath = KUrl(outputFile.fileName()).directory();
+        auto basePath = QUrl::fromLocalFile(outputFile.fileName()).url(QUrl::RemoveFilename);
         if ( ! QDir(basePath).exists() ) {
             QDir(basePath).mkpath(basePath);
         }

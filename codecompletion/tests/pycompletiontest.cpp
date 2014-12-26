@@ -28,13 +28,15 @@
 #include <tests/autotestshell.h>
 
 #include <QtTest/QTest>
-#include <KUrl>
-#include <KStandardDirs>
 #include <KTextEditor/Editor>
 #include <KService>
 
 #include "codecompletion/context.h"
 #include "codecompletion/helpers.h"
+
+#include <QDebug>
+#include <QStandardPaths>
+#include "codecompletiondebug.h"
 
 using namespace KDevelop;
 
@@ -45,7 +47,6 @@ Q_DECLARE_METATYPE(KTextEditor::Range)
 
 static int testId = 0;
 static QString basepath = "/tmp/__kdevpythoncompletiontest.dir/";
-static QFSFileEngine fileEngine;
 
 namespace Python {
 
@@ -76,9 +77,8 @@ void makefile(QString filename, QString contents) {
     fileptr.open(QIODevice::WriteOnly);
     fileptr.write(contents.toAscii());
     fileptr.close();
-    KUrl url = KUrl(basepath + filename);
-    url.cleanPath();
-    kDebug() <<  "updating duchain for " << url.url() << basepath;
+    auto url = QUrl::fromLocalFile(QDir::cleanPath(basepath + filename));
+    qCDebug(KDEV_PYTHON_CODECOMPLETION) <<  "updating duchain for " << url.url() << basepath;
     const IndexedString urlstring(url);
     DUChain::self()->updateContextForUrl(urlstring, KDevelop::TopDUContext::ForceUpdate);
     ICore::self()->languageController()->backgroundParser()->parseDocuments();
@@ -90,11 +90,12 @@ void PyCompletionTest::initShell()
     AutoTestShell::init();
     TestCore* core = new TestCore();
     core->initialize(KDevelop::Core::NoUi);
-    fileEngine.mkdir(basepath, false);
+    QDir d;
+    d.mkpath(basepath);
     
-    KUrl doc_url = KUrl(KStandardDirs::locate("data", "kdevpythonsupport/documentation_files/builtindocumentation.py"));
-    doc_url.cleanPath(KUrl::SimplifyDirSeparators);
-    
+    auto doc_url = QDir::cleanPath(QStandardPaths::locate(QStandardPaths::GenericDataLocation,
+                                                          "kdevpythonsupport/documentation_files/builtindocumentation.py"));
+
     DUChain::self()->updateContextForUrl(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
     ICore::self()->languageController()->backgroundParser()->parseDocuments();
     DUChain::self()->waitForUpdate(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
@@ -103,8 +104,8 @@ void PyCompletionTest::initShell()
     KDevelop::CodeRepresentation::setDiskChangesForbidden(true);
     
     // now, create a nice little completion hierarchy
-    fileEngine.mkdir(basepath + "submoduledir", false);
-    fileEngine.mkdir(basepath + "submoduledir/anothersubdir", false);
+    d.mkpath(basepath + "submoduledir");
+    d.mkpath(basepath + "submoduledir/anothersubdir");
     makefile("toplevelmodule.py", "some_var = 3\ndef some_function(): pass\nclass some_class():\n def method(): pass");
     makefile("submoduledir/__init__.py", "var_in_sub_init = 5");
     makefile("submoduledir/subfile.py", "var_in_subfile = 5\nclass some_subfile_class():\n def method2(): pass");
@@ -395,7 +396,7 @@ void PyCompletionTest::testIntegralExpressionsDifferentContexts_data()
     QTest::newRow("list") << "[1, 2, 3, 4, 5, []%INVOKE]" << ".%CURSOR" << "append";
     QTest::newRow("list_with_fancy_string") << "[\"FooFObar\\\", 3)\", []%INVOKE]" << ".%CURSOR" << "append";
     QTest::newRow("empty_dict") << "{[]%INVOKE}" << ".%CURSOR" << "append";
-    QTest::newRow("print_stmt") << "print []%INVOKE" << ".%CURSOR" << "append";
+    QTest::newRow("print_stmt") << "%INVOKE" << "print([].%CURSOR" << "append";
 }
 
 void PyCompletionTest::testIgnoreCommentSignsInStringLiterals()
@@ -467,8 +468,9 @@ void PyCompletionTest::testAutoBrackets()
     KService::Ptr documentService = KService::serviceByDesktopPath("katepart.desktop");
     QVERIFY(documentService);
     KTextEditor::Document* document = documentService->createInstance<KTextEditor::Document>(this);
+    auto view = document->createView(nullptr);
     QVERIFY(document);
-    item->execute(document, KTextEditor::Range(0, 0, 0, 0));
+    item->execute(view, KTextEditor::Range(0, 0, 0, 0));
     QCOMPARE(document->text(), QLatin1String("myprop"));
 }
 
@@ -486,6 +488,8 @@ void PyCompletionTest::testExceptionCompletion()
 void PyCompletionTest::testGeneratorCompletion()
 {
     QVERIFY(itemInCompletionList("%INVOKE", "foobar = [item for %CURSOR", "item in"));
+    QVERIFY(itemInCompletionList("%INVOKE", "foobar = [key, value for %CURSOR", "key, value in"));
+    QVERIFY(itemInCompletionList("%INVOKE", "foobar = [str(key + value) for %CURSOR", "key, value in"));
     QVERIFY(itemInCompletionList("%INVOKE\ndec_l8r=3", "foobar = [dec_l8r for %CURSOR", "dec_l8r in"));
 }
 
@@ -541,8 +545,10 @@ void PyCompletionTest::testFunctionDeclarationCompletion()
     KTextEditor::Document* document = documentService->createInstance<KTextEditor::Document>(this);
     QVERIFY(document);
     document->setText(documentCode);
+    
+    auto view = document->createView(nullptr);
 
-    completionItems.first()->execute(document, executeRange);
+    completionItems.first()->execute(view, executeRange);
     QCOMPARE(document->text(), expectedCode);
 }
 
@@ -565,7 +571,7 @@ void PyCompletionTest::testFunctionDeclarationCompletion_data()
     QTest::newRow("class_name_no_constructor_parens") << "class Foo:\n  pass\nbar = %INVOKE" << "Foo%CURSOR" << KTextEditor::Range(2, 6, 2, 9)
                                                       << "Foo()";
 
-    QTest::newRow("class_name_explicit_constructor_parens") << "class Foo:\n  def __init__(self):\n    pass\nbar = %INVOKE" << "Foo%CURSOR"
+    QTest::newRow("class_name_explicit_constructor_parens") << "class Foo:\n  def __init__(self):\n    pass\nbar = %INVOKE" << "Fo%CURSOR"
                                                         << KTextEditor::Range(3, 6, 3, 9)
                                                         << "Foo()";
 }

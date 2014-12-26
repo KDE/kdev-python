@@ -20,6 +20,7 @@
 #ifndef CODEHELPERS_H
 #define CODEHELPERS_H
 #include <QString>
+#include <QStringList>
 #include <KTextEditor/Document>
 #include "parserexport.h"
 

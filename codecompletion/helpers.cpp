@@ -33,6 +33,10 @@
 #include <QStringList>
 #include <QTextFormat>
 
+#include <QDebug>
+#include "codecompletiondebug.h"
+
+#include "duchain/declarations/functiondeclaration.h"
 #include "parser/codehelpers.h"
 
 using namespace KDevelop;
@@ -176,7 +180,7 @@ QString ExpressionParser::skipUntilStatus(ExpressionParser::Status requestedStat
     Status currentStatus = InvalidStatus;
     while ( currentStatus != requestedStatus ) {
         lastExpression = popExpression(&currentStatus);
-        kDebug() << lastExpression << currentStatus;
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << lastExpression << currentStatus;
         if ( currentStatus == NothingFound ) {
             *ok = ( requestedStatus == NothingFound ); // ok exactly if the caller requested NothingFound as end status
             return QString();
@@ -197,12 +201,8 @@ TokenList ExpressionParser::popAll()
         QString result = popExpression(&currentStatus);
         items << TokenListEntry(currentStatus, result, m_cursorPositionInString);
     }
-    // reverse the list
-    TokenList reversedItems;
-    for ( int i = items.length() - 1; i >= 0; i-- ) {
-        reversedItems.append(items.at(i));
-    }
-    return reversedItems;
+    std::reverse(items.begin(), items.end());
+    return items;
 }
 
 bool endsWithSeperatedKeyword(const QString& str, const QString& shouldEndWith) {
@@ -241,7 +241,7 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
     bool lastCharIsSpace = getRemainingCode().right(1).at(0).isSpace();
     m_cursorPositionInString -= trailingWhitespace();
     if ( operatingOn.endsWith('(') ) {
-        kDebug() << "eventual call found";
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << "eventual call found";
         m_cursorPositionInString -= 1;
         *status = EventualCallFound;
         return QString();
@@ -293,8 +293,12 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
 
 
 // This is stolen from PHP. For credits, see helpers.cpp in PHP.
-void createArgumentList(Declaration* dec, QString& ret, QList< QVariant >* highlighting, int atArg, bool includeTypes)
+void createArgumentList(Declaration* dec_, QString& ret, QList< QVariant >* highlighting, int atArg, bool includeTypes)
 {
+    auto dec = dynamic_cast<Python::FunctionDeclaration*>(dec_);
+    if ( ! dec ) {
+        return;
+    }
     int textFormatStart = 0;
     QTextFormat normalFormat(QTextFormat::CharFormat);
     QTextFormat highlightFormat(QTextFormat::CharFormat);
@@ -319,7 +323,7 @@ void createArgumentList(Declaration* dec, QString& ret, QList< QVariant >* highl
         int num = 0;
         
         bool skipFirst = false;
-        if ( parameters.count() > functionType->arguments().count() ) {
+        if ( dec->context() && dec->context()->type() == DUContext::Class && ! dec->isStatic() ) {
             // the function is a class method, and its first argument is "self". Don't display that.
             skipFirst = true;
         }
@@ -381,17 +385,8 @@ void createArgumentList(Declaration* dec, QString& ret, QList< QVariant >* highl
 
             if (doHighlight) {
                 if (highlighting && ret.length() != textFormatStart) {
-                    *highlighting << QVariant(textFormatStart);
-                    *highlighting << QVariant(ret.length() - textFormatStart);
-                    *highlighting << doFormat;
-                    textFormatStart = ret.length();
-                }
-            }
-            
-            if (doHighlight) {
-                if (highlighting && ret.length() != textFormatStart) {
-                    *highlighting << QVariant(textFormatStart);
-                    *highlighting << QVariant(ret.length() - textFormatStart);
+                    *highlighting << QVariant(textFormatStart + 1);
+                    *highlighting << QVariant(ret.length() - textFormatStart - 1);
                     *highlighting << doFormat;
                     textFormatStart = ret.length();
                 }
@@ -417,7 +412,7 @@ void createArgumentList(Declaration* dec, QString& ret, QList< QVariant >* highl
 StringFormatter::StringFormatter(const QString &string)
     : m_string(string)
 {
-    kDebug() << "String being parsed: " << string;
+    qCDebug(KDEV_PYTHON_CODECOMPLETION) << "String being parsed: " << string;
     QRegExp regex("\\{(\\w+)(?:!([rs]))?(?:\\:(.*))?\\}");
     regex.setMinimal(true);
     int pos = 0;
@@ -427,7 +422,7 @@ StringFormatter::StringFormatter(const QString &string)
         QChar conversion = (conversionStr.isNull() || conversionStr.isEmpty()) ? QChar() : conversionStr.at(0);
         QString formatSpec = regex.cap(3);
 
-        kDebug() << "variable: " << regex.cap(0);
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << "variable: " << regex.cap(0);
 
         // The regex guarantees that conversion is only a single character
         ReplacementVariable variable(identifier, conversion, formatSpec);

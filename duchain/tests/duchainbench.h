@@ -21,12 +21,12 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.           *
  *****************************************************************************/
 
-#ifndef DUCHAINBENCH_H
-#define DUCHAINBENCH_H
+#ifndef PY_DUCHAINBENCH_H
+#define PY_DUCHAINBENCH_H
 
 #include <QObject>
 #include "ast.h"
-#include <language/duchain/indexedstring.h>
+#include <serialization/indexedstring.h>
 #include <language/duchain/topducontext.h>
 #include <tests/testfile.h>
 

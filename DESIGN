@@ -20,23 +20,7 @@ It should be obvious from the large amount of examples what those rules look lik
 This class returns a CodeAst, which is then passed back to the parse job, which then calls
 the DUChain classes to analyze the tree. If an error occurs, parsing is aborted and the error is
 reported to the user.
-As the standard python AST library obfuscates some ranges (like, in foo.bar.baz, all of foo, bar and baz are
-said to start at column 0, while we need to know bar starts at 4 and baz at 8), we had no choice than to fork
-the python parser and make those changes ourselves. The python source code can be found in the python-src
-directory. The patches which were applied to the parser are in the patches/ subdirectory in git patch format; 
-those can be used if we want to switch the python version one day (from python 2.7 to 3.x, for example).
 
 The DUChain Library
 -------------------
-This library builds a Definition-Use-Chain from the AST, which is then used to
-support code completion, syntax highlighting and other language features in
-KDevelop. The design of the DUChain is described at:
-http://api.kde.org/4.x-api/kdevplatform-apidocs/language/html/duchain-design.html
-
-The following language elements create a new Context:
-- a class definition
-- a function definition
-- a compound statement, that includes for, while, if, with statements <- this has been removed,
-as those do not really create a new context in the python language (i.e. variable declarations
-inside such "contexts" still exist outside, unlike C++)
-
+See http://api.kde.org/4.x-api/kdevplatform-apidocs/language/html/duchain-design.html

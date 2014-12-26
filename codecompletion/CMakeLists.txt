@@ -8,6 +8,7 @@ set(completion_SRCS
     model.cpp
     worker.cpp
     helpers.cpp
+    codecompletiondebug.cpp
     
     items/missingincludeitem.cpp
     items/declaration.cpp
@@ -18,7 +19,11 @@ set(completion_SRCS
     items/replacementvariable.cpp
 )
 
-kde4_add_library(kdev4pythoncompletion SHARED ${completion_SRCS})
+add_library(kdev4pythoncompletion SHARED ${completion_SRCS})
+
+generate_export_header(kdev4pythoncompletion EXPORT_MACRO_NAME KDEVPYTHONCOMPLETION_EXPORT
+                                             EXPORT_FILE_NAME pythoncompletionexport.h
+)
 
 add_dependencies(kdev4pythoncompletion
     kdev4pythonparser 
@@ -26,10 +31,10 @@ add_dependencies(kdev4pythoncompletion
 )
 
 target_link_libraries(kdev4pythoncompletion LINK_PRIVATE
-    ${KDE4_KDECORE_LIBS}
-    ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
-    ${KDEVPLATFORM_INTERFACES_LIBRARIES}
-    ${KDEVPLATFORM_PROJECT_LIBRARIES}
+    KF5::KDELibs4Support
+    KDev::Language
+    KDev::Interfaces
+    KDev::Project
     kdev4pythonduchain
     kdev4pythonparser
 )

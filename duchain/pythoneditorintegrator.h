@@ -48,10 +48,10 @@ public:
         OuterEdge
     };
 
-    CursorInRevision findPosition( Python::Ast* node, Python::PythonEditorIntegrator::Edge edge = BackEdge ) const;
+    CursorInRevision findPosition( const Python::Ast* node, Python::PythonEditorIntegrator::Edge edge = BackEdge ) const;
 
-    RangeInRevision findRange( Python::Ast* node, Python::PythonEditorIntegrator::RangeEdge edge = OuterEdge) const;
-    RangeInRevision findRange( Python::Ast* from, Python::Ast* to) const;
+    RangeInRevision findRange(const Python::Ast* node, Python::PythonEditorIntegrator::RangeEdge edge = OuterEdge) const;
+    RangeInRevision findRange(const Python::Ast* from, const Python::Ast* to) const;
     inline FileIndentInformation* indent() const {
         return m_indentInformationCache;
     }

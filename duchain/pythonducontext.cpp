@@ -26,6 +26,9 @@
 
 #include "navigation/navigationwidget.h"
 
+#include <QDebug>
+#include "duchaindebug.h"
+
 using namespace KDevelop;
 
 namespace Python {
@@ -37,7 +40,7 @@ REGISTER_DUCHAIN_ITEM_WITH_DATA(PythonNormalDUContext, DUContextData);
 template<>
 QWidget* PythonTopDUContext::createNavigationWidget(Declaration* decl, TopDUContext* topContext, const QString& htmlPrefix, const QString& htmlSuffix) const {
     if ( ! decl ) {
-        kDebug() << "no declaration, not returning navigationwidget";
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "no declaration, not returning navigationwidget";
         return 0;
     }
     return new NavigationWidget(DeclarationPointer(decl), TopDUContextPointer(topContext), htmlPrefix, htmlSuffix);
@@ -46,7 +49,7 @@ QWidget* PythonTopDUContext::createNavigationWidget(Declaration* decl, TopDUCont
 template<>
 QWidget* PythonNormalDUContext::createNavigationWidget(Declaration* decl, TopDUContext* topContext, const QString& htmlPrefix, const QString& htmlSuffix) const {
     if ( ! decl ) {
-        kDebug() << "no declaration, not returning navigationwidget";
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "no declaration, not returning navigationwidget";
         return 0;
     }
     return new NavigationWidget(DeclarationPointer(decl), TopDUContextPointer(topContext), htmlPrefix, htmlSuffix);

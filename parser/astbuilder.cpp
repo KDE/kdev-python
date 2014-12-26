@@ -23,12 +23,6 @@
 #include "ast.h"
 
 #include <QStringList>
-#include <KDebug>
-#include <KStandardDirs>
-#include <KUrl>
-#include <KLocale>
-#include <QDir>
-#include <QTimer>
 #include <QMutexLocker>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/problem.h>
@@ -36,10 +30,15 @@
 
 #include "python_header.h"
 #include "astdefaultvisitor.h"
+#include "cythonsyntaxremover.h"
 
 #include <interfaces/icore.h>
 #include <interfaces/iprojectcontroller.h>
 #include <interfaces/iproject.h>
+#include <util/path.h>
+
+#include <QDebug>
+#include "parserdebug.h"
 
 using namespace KDevelop;
 extern grammar _PyParser_Grammar;
@@ -63,35 +62,251 @@ public:
     };
 };
 
+// This class is used to fix some of the remaining issues
+// with the ranges of objects obtained from the python parser.
+// Issues addressed are:
+//  1) decorators and "def" / "class" statements for classes / functions
+//  2) ranges of aliases
+// Both issues are easy to correct since the possible syntax is very restricted
+// (no bracket matching, no strings, no nesting, ...)
+// For the aliases, fortunately only imports and excepthandlers are affected;
+// the "with" statement, which has more complicated syntax, provides
+// the necessary information already.
+class RangeFixVisitor : public AstDefaultVisitor {
+public:
+    RangeFixVisitor(const QString& contents)
+        : lines(contents.split('\n')) { }; // TODO can this be \r\n?
+    virtual void visitFunctionDefinition(FunctionDefinitionAst* node) {
+        cutDefinitionPreamble(node->name, "def");
+        AstDefaultVisitor::visitFunctionDefinition(node);
+    };
+    virtual void visitClassDefinition(ClassDefinitionAst* node) {
+        cutDefinitionPreamble(node->name, "class");
+        AstDefaultVisitor::visitClassDefinition(node);
+    };
+    // alias for imports (import foo as bar, baz as bang)
+    // no strings, brackets, or whatever are allowed here, so the "parser"
+    // can be very straightforward.
+    virtual void visitImport(ImportAst* node) {
+        AstDefaultVisitor::visitImport(node);
+        int aliasIndex = 0;
+        foreach ( AliasAst* alias, node->names ) {
+            fixAlias(alias->name, alias->asName, node->startLine, aliasIndex);
+            aliasIndex += 1;
+        }
+    };
+    // alias for exceptions (except FooBarException as somethingterriblehappened: ...)
+    virtual void visitExceptionHandler(ExceptionHandlerAst* node) {
+        AstDefaultVisitor::visitExceptionHandler(node);
+        if ( ! node->name ) {
+            return;
+        }
+        const QString& line = lines.at(node->startLine);
+        const int end = line.count() - 1;
+        int back = backtrackDottedName(line, end);
+        node->name->startCol = end - back;
+        node->name->endCol = end;
+    }
+private:
+    const QStringList lines;
+
+
+    // skip the decorators and the "def" at the beginning
+    // of a class or function declaration and modify @arg node
+    // example:
+    //  @decorate(foo)
+    //  @decorate(bar)
+    //  class myclass(parent): pass
+    // before: start of class->name is [0, 0]
+    // after: start of class->name is [2, 5]
+    // line continuation characters are not supported,
+    // because code needing those in this case is not worth being supported.
+    void cutDefinitionPreamble(Ast* fixNode, const QString& defKeyword) {
+        if ( ! fixNode ) {
+            return;
+        }
+        int currentLine = fixNode->startLine;
+
+        // cut away decorators
+        while ( currentLine < lines.size() ) {
+            if ( ! lines.at(currentLine).trimmed().startsWith('@') ) {
+                // it's not a decorator, so stop skipping lines.
+                break;
+            }
+            currentLine += 1;
+        }
+        fixNode->startLine = currentLine;
+        fixNode->endLine = currentLine;
+
+        // cut away the "def" / "class"
+        int currentColumn = -1;
+        const QString& lineData = lines.at(currentLine);
+        bool keywordFound = false;
+        while ( currentColumn < lineData.size() - 1 ) {
+            currentColumn += 1;
+            if ( lineData.at(currentColumn).isSpace() ) {
+                // skip space at the beginning of the line
+                continue;
+            }
+            else if ( keywordFound ) {
+                // if the "def" / "class" was already found, and the current char is
+                // non space, then this is indeed the start of the identifier we're looking for.
+                break;
+            }
+            if ( lineData.midRef(currentColumn, defKeyword.size()) == defKeyword ) {
+               keywordFound = true;
+               currentColumn += defKeyword.size();
+            }
+        }
+        const int previousLength = fixNode->endCol - fixNode->startCol;
+        fixNode->startCol = currentColumn;
+        fixNode->endCol = currentColumn + previousLength;
+    };
+
+    int backtrackDottedName(const QString& data, const int start) {
+        bool haveDot = true;
+        bool previousWasSpace = true;
+        for ( int i = start - 1; i >= 0; i-- ) {
+            if ( data.at(i).isSpace() ) {
+                previousWasSpace = true;
+                continue;
+            }
+            if ( data.at(i) == ':' ) {
+                // excepthandler
+                continue;
+            }
+            if ( data.at(i) == '.' ) {
+                haveDot = true;
+            }
+            else if ( haveDot ) {
+                haveDot = false;
+                previousWasSpace = false;
+                continue;
+            }
+            if ( previousWasSpace && ! haveDot ) {
+                return start-i-2;
+            }
+            previousWasSpace = false;
+        }
+        return 0;
+    }
+
+    void fixAlias(Ast* dotted, Ast* asname, const int startLine, int aliasIndex) {
+        if ( ! asname && ! dotted ) {
+            return;
+        }
+        QString line = lines.at(startLine);
+        int lineno = startLine;
+        for ( int i = 0; i < line.size(); i++ ) {
+            const QChar& current = line.at(i);
+            if ( current == '\\' ) {
+                // line continuation character
+                // splitting like "import foo as \ \n bar" is not supported.
+                lineno += 1;
+                line = lines.at(lineno);
+                i = 0;
+                continue;
+            }
+            if ( current == ',' ) {
+                if ( aliasIndex == 0 ) {
+                    // nothing found, continue below
+                    line = line.left(i);
+                    break;
+                }
+                // next alias expression
+                aliasIndex -= 1;
+            }
+            if ( i > line.length() - 3 ) {
+                continue;
+            }
+            if ( current.isSpace() && line.mid(i+1).startsWith("as") && ( line.at(i+3).isSpace() || line.at(i+3) == '\\' ) ) {
+                // there's an "as"
+                if ( aliasIndex == 0 ) {
+                    // it's the one we're looking for
+                    // find the expression
+                    if ( dotted ) {
+                        int dottedNameLength = backtrackDottedName(line, i);
+                        dotted->startLine = lineno;
+                        dotted->endLine = lineno;
+                        dotted->startCol = i-dottedNameLength;
+                        dotted->endCol = i;
+                    }
+                    // find the asname
+                    if ( asname ) {
+                        bool atStart = true;
+                        int textStart = i+3;
+                        for ( int j = i+3; j < line.size(); j++ ) {
+                            if ( atStart && ! line.at(j).isSpace() ) {
+                                atStart = false;
+                                textStart = j;
+                            }
+                            if ( ! atStart && ( line.at(j).isSpace() || j == line.size() - 1 ) ) {
+                                // found it
+                                asname->startLine = lineno;
+                                asname->endLine = lineno;
+                                asname->startCol = textStart - 1;
+                                asname->endCol = j;
+                            }
+                        }
+                    }
+                    return;
+                }
+            }
+        }
+        // no "as" found, use last dotted name in line
+        const int end = line.count() - whitespaceAtEnd(line);
+        int back = backtrackDottedName(line, end);
+        dotted->startLine = lineno;
+        dotted->endLine = lineno;
+        dotted->startCol = end - back;
+        dotted->endCol = end;
+    };
+
+    int whitespaceAtEnd(const QString& line) {
+        for ( int i = 0; i <= line.size(); i++ ) {
+            if ( ! line.at(line.size() - i - 1).isSpace() ) {
+                return i;
+            }
+        }
+        return 0;
+    };
+};
+
 #include "generated.h"
 
 QMutex AstBuilder::pyInitLock;
-QString AstBuilder::pyHomeDir = KStandardDirs::locate("data", "");
 
 QString PyUnicodeObjectToQString(PyObject* obj) {
 #ifdef Q_OS_WIN32
-    // TODO: does this work?
+    // If you want to make this work on windows, take care to check Py_UNICODE_WIDE (see below)
+    // not sure if this always works
+    // not sure either why the "linux" version below wouldn't work on windows
     return QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(obj)));
 #else
-    ushort* data = (ushort*) PyUnicode_AS_DATA(PyObject_Str(obj));
-    return QString::fromUtf16(data);
-#endif
+    uint* data = (uint*) PyUnicode_AS_DATA(PyObject_Str(obj));
+#ifdef Py_UNICODE_WIDE
+    return QString::fromUcs4(data);
+#else
+    return QString::fromUcs2(data);
+#endif // Py_UNICODE_WIDE
+#endif // windows
 }
-QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
+
+QPair<QString, int> fileHeaderHack(QString& contents, const QUrl& filename)
 {
     IProject* proj = ICore::self()->projectController()->findProjectForUrl(filename);
     // the file is not in a project, don't apply hack
     if ( ! proj ) {
         return QPair<QString, int>(contents, 0);
     }
-    const KUrl headerFileUrl = proj->folder().path(KUrl::AddTrailingSlash) + ".kdev_python_header";
+    const QUrl headerFileUrl = proj->path().path() + "/.kdev_python_header";
     QFile headerFile(headerFileUrl.path());
     QString headerFileContents;
     if ( headerFile.exists() ) {
         headerFile.open(QIODevice::ReadOnly);
         headerFileContents = headerFile.readAll();
         headerFile.close();
-        kDebug() << "Found header file, applying hack";
+        qCDebug(KDEV_PYTHON_PARSER) << "Found header file, applying hack";
         int insertAt = 0;
         bool endOfCommentsReached = false;
         bool commentSignEncountered = false;
@@ -101,15 +316,15 @@ QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
         int l = contents.length();
         do {
             if ( insertAt >= l ) {
-                kDebug() << "File consist only of comments, not applying hack";
+                qCDebug(KDEV_PYTHON_PARSER) << "File consist only of comments, not applying hack";
                 return QPair<QString, int>(contents, 0);
             }
             if ( contents.at(insertAt) == '#' ) {
                 commentSignEncountered = true;
             }
-            if ( not contents.at(insertAt).isSpace() ) {
+            if ( !contents.at(insertAt).isSpace() ) {
 //                 atLineBeginning = false;
-                if ( not commentSignEncountered ) {
+                if ( !commentSignEncountered ) {
                     endOfCommentsReached = true;
                 }
             }
@@ -123,12 +338,12 @@ QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
                 endOfCommentsReached = true;
             }
             insertAt += 1;
-        } while ( not endOfCommentsReached );
-        kDebug() << "Inserting contents at char" << lastLineBeginning << "of file";
+        } while ( !endOfCommentsReached );
+        qCDebug(KDEV_PYTHON_PARSER) << "Inserting contents at char" << lastLineBeginning << "of file";
         contents = contents.left(lastLineBeginning) 
                    + "\n" + headerFileContents + "\n#\n" 
                    + contents.right(contents.length() - lastLineBeginning);
-        kDebug() << contents;
+        qCDebug(KDEV_PYTHON_PARSER) << contents;
         return QPair<QString, int>(contents, - ( headerFileContents.count('\n') + 3 ));
     }
     else {
@@ -138,10 +353,9 @@ QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename)
 
 namespace {
 struct PythonInitializer : private QMutexLocker {
-    PythonInitializer(QMutex& pyInitLock, const QString& pyHomeDir):
+    PythonInitializer(QMutex& pyInitLock):
         QMutexLocker(&pyInitLock), arena(0)
     {
-            Py_SetPythonHome(pyHomeDir.toUtf8().data());
             Py_InitializeEx(0);
             Q_ASSERT(Py_IsInitialized());
 
@@ -159,7 +373,7 @@ struct PythonInitializer : private QMutexLocker {
 };
 }
 
-CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
+CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
 {
     qDebug() << " ====> AST     ====>     building abstract syntax tree for " << filename.path();
     
@@ -171,21 +385,28 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
     contents = hacked.first;
     int lineOffset = hacked.second;
 
-    PythonInitializer pyIniter(pyInitLock, pyHomeDir);
+    PythonInitializer pyIniter(pyInitLock);
     PyArena* arena = pyIniter.arena;
 
-    PyCompilerFlags flags = {PyCF_SOURCE_IS_UTF8};
+    PyCompilerFlags flags = {PyCF_SOURCE_IS_UTF8 | PyCF_IGNORE_COOKIE};
 
     PyObject *exception, *value, *backtrace;
     PyErr_Fetch(&exception, &value, &backtrace);
 
+    CythonSyntaxRemover cythonSyntaxRemover;
+
+    if (filename.fileName().endsWith(".pyx", Qt::CaseInsensitive)) {
+        qCDebug(KDEV_PYTHON_PARSER) << filename.fileName() << "is probably Cython file.";
+        contents = cythonSyntaxRemover.stripCythonSyntax(contents);
+    }
+
     mod_ty syntaxtree = PyParser_ASTFromString(contents.toUtf8().data(), "<kdev-editor-contents>", file_input, &flags, arena);
 
     if ( ! syntaxtree ) {
-        kWarning() << "DID NOT RECEIVE A SYNTAX TREE -- probably parse error.";
+        qDebug() << " ====< parse error, trying to fix";
         
         PyErr_Fetch(&exception, &value, &backtrace);
-        kDebug() << "Error objects: " << exception << value << backtrace;
+        qCDebug(KDEV_PYTHON_PARSER) << "Error objects: " << exception << value << backtrace;
         PyObject_Print(value, stderr, Py_PRINT_RAW);
         
         PyObject* errorMessage_str = PyTuple_GetItem(value, 0);
@@ -194,7 +415,7 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
         PyObject_Print(errorMessage_str, stderr, Py_PRINT_RAW);
        
         if ( ! errorDetails_tuple ) {
-            kWarning() << "Error retrieving error message, not displaying, and not doing anything";
+            qCWarning(KDEV_PYTHON_PARSER) << "Error retrieving error message, not displaying, and not doing anything";
             return CodeAst::Ptr();
         }
         PyObject* linenoobj = PyTuple_GetItem(errorDetails_tuple, 1);
@@ -203,17 +424,17 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
         PyObject_Print(errorMessage_str, stderr, Py_PRINT_RAW);
         
         PyObject* colnoobj = PyTuple_GetItem(errorDetails_tuple, 2);
-        int lineno = PyInt_AsLong(linenoobj) - 1;
-        int colno = PyInt_AsLong(colnoobj);
+        int lineno = PyLong_AsLong(linenoobj) - 1;
+        int colno = PyLong_AsLong(colnoobj);
         
         ProblemPointer p(new Problem());
-        SimpleCursor start(lineno + lineOffset, (colno-4 > 0 ? colno-4 : 0));
-        SimpleCursor end(lineno + lineOffset, (colno+4 > 4 ? colno+4 : 4));
-        SimpleRange range(start, end);
-        kDebug() << "Problem range: " << range;
+        KTextEditor::Cursor start(lineno + lineOffset, (colno-4 > 0 ? colno-4 : 0));
+        KTextEditor::Cursor end(lineno + lineOffset, (colno+4 > 4 ? colno+4 : 4));
+        KTextEditor::Range range(start, end);
+        qCDebug(KDEV_PYTHON_PARSER) << "Problem range: " << range;
         DocumentRange location(IndexedString(filename.path()), range);
         p->setFinalLocation(location);
-        p->setDescription(PyString_AsString(PyObject_Str(errorMessage_str)));
+        p->setDescription(PyUnicodeObjectToQString(errorMessage_str));
         p->setSource(ProblemData::Parser);
         m_problems.append(p);
         
@@ -269,9 +490,9 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
                 // we can easily fix that by adding in a "pass" statement. However, we want to add that in the next line, if possible
                 // so context ranges for autocompletion stay intact.
                 if ( contents[emptySince] == QChar(':') ) {
-                    kDebug() << indents.length() << emptySinceLine + 1 << indents;
+                    qCDebug(KDEV_PYTHON_PARSER) << indents.length() << emptySinceLine + 1 << indents;
                     if ( indents.length() > emptySinceLine + 1 && indents.at(emptySinceLine) < indents.at(emptySinceLine + 1) ) {
-                        kDebug() << indents.at(emptySinceLine) << indents.at(emptySinceLine + 1);
+                        qCDebug(KDEV_PYTHON_PARSER) << indents.at(emptySinceLine) << indents.at(emptySinceLine + 1);
                         contents.insert(emptyLinesSince + 1 + indents.at(emptyLinesSinceLine), "\tpass#");
                     }
                     else {
@@ -279,7 +500,7 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
                     }
                 }
                 else if ( indents.length() >= currentLine && currentLine > 0 ) {
-                    kDebug() << indents << currentLine;
+                    qCDebug(KDEV_PYTHON_PARSER) << indents << currentLine;
                     contents[i+1+indents.at(currentLine - 1)] = QChar('#');
                     contents.insert(i+1+indents.at(currentLine - 1), "pass");
                 }
@@ -292,8 +513,8 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
         currentLineBeginning = qMin(contents.length() - 1, currentLineBeginning);
         errline = qMax(0, qMin(indents.length()-1, errline));
         if ( ! syntaxtree ) {
-            kWarning() << "Discarding parts of the code to be parsed because of previous errors";
-            kDebug() << indents;
+            qCWarning(KDEV_PYTHON_PARSER) << "Discarding parts of the code to be parsed because of previous errors";
+            qCDebug(KDEV_PYTHON_PARSER) << indents;
             int indentAtError = indents.at(errline);
             QChar c;
             bool atLineBeginning = true;
@@ -302,13 +523,13 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
             int currentLineContentBeginning = currentLineBeginning;
             for ( int i = currentLineBeginning; i < len; i++ ) {
                 c = contents.at(i);
-                kDebug() << c;
+                qCDebug(KDEV_PYTHON_PARSER) << c;
                 if ( c == '\n' ) {
                     if ( currentIndent <= indentAtError && currentIndent != -1 ) {
-                        kDebug() << "Start of error code: " << currentLineBeginning;
-                        kDebug() << "End of error block (current position): " << currentLineBeginning_end;
-                        kDebug() << "Length: " << currentLineBeginning_end - currentLineBeginning;
-                        kDebug() << "indent at error <> current indent:" << indentAtError << "<>" << currentIndent;
+                        qCDebug(KDEV_PYTHON_PARSER) << "Start of error code: " << currentLineBeginning;
+                        qCDebug(KDEV_PYTHON_PARSER) << "End of error block (current position): " << currentLineBeginning_end;
+                        qCDebug(KDEV_PYTHON_PARSER) << "Length: " << currentLineBeginning_end - currentLineBeginning;
+                        qCDebug(KDEV_PYTHON_PARSER) << "indent at error <> current indent:" << indentAtError << "<>" << currentIndent;
 //                         contents.remove(currentLineBeginning, currentLineBeginning_end-currentLineBeginning);
                         break;
                     }
@@ -328,20 +549,25 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
                 }
                 if ( c.isSpace() && atLineBeginning ) currentIndent += 1;
             }
-            kDebug() << "This is what is left: " << contents;
+            qCDebug(KDEV_PYTHON_PARSER) << "This is what is left: " << contents;
             syntaxtree = PyParser_ASTFromString(contents.toUtf8(), "<kdev-editor-contents>", file_input, &flags, arena);
         }
         if ( ! syntaxtree ) {
             return CodeAst::Ptr(); // everything fails, so we abort.
         }
     }
-    kDebug() << "Got syntax tree from python parser:" << syntaxtree->kind << Module_kind;
+    qCDebug(KDEV_PYTHON_PARSER) << "Got syntax tree from python parser:" << syntaxtree->kind << Module_kind;
 
     PythonAstTransformer t(lineOffset);
     t.run(syntaxtree, filename.fileName().replace(".py", ""));
     
-    RangeUpdateVisitor v;
-    v.visitNode(t.ast);
+    RangeFixVisitor fixVisitor(contents);
+    fixVisitor.visitNode(t.ast);
+    
+    RangeUpdateVisitor updateVisitor;
+    updateVisitor.visitNode(t.ast);
+
+    cythonSyntaxRemover.fixAstRanges(t.ast);
 
     return CodeAst::Ptr(t.ast);
 }

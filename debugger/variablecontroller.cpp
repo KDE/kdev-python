@@ -13,7 +13,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 
@@ -34,6 +34,9 @@
 #include <KMessageBox>
 #include <KLocalizedString>
 
+#include <QDebug>
+#include "debuggerdebug.h"
+
 using namespace KDevelop;
 
 namespace Python {
@@ -50,7 +53,7 @@ void VariableController::addWatch(KDevelop::Variable* variable)
 
 void VariableController::addWatchpoint(KDevelop::Variable* /*variable*/)
 {
-    kWarning() << "addWatchpoint requested (not implemented)";
+    qCWarning(KDEV_PYTHON_DEBUGGER) << "addWatchpoint requested (not implemented)";
 }
 
 void VariableController::handleEvent(IDebugSession::event_t event)
@@ -61,9 +64,9 @@ void VariableController::handleEvent(IDebugSession::event_t event)
         int delta = model->currentFrame() - model->debuggerAtFrame();
         model->setDebuggerAtFrame(model->currentFrame());
         bool positive = delta > 0;
-        kDebug() << "changing frame by" << delta;
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "changing frame by" << delta;
         for ( int i = delta; i != 0; i += ( positive ? -1 : 1 ) ) {
-            kDebug() << ( positive ? "up" : "down" ) << model->currentFrame() << model->debuggerAtFrame();
+            qCDebug(KDEV_PYTHON_DEBUGGER) << ( positive ? "up" : "down" ) << model->currentFrame() << model->debuggerAtFrame();
             s->addSimpleInternalCommand(positive ? "up" : "down");
         }
     }
@@ -82,15 +85,15 @@ QString VariableController::expressionUnderCursor(KTextEditor::Document* doc, co
     if ( ! doc->isModified() ) {
         if ( TopDUContext* context = DUChain::self()->chainForDocument(doc->url()) ) {
             DUContext* contextAtCursor = context->findContextAt(CursorInRevision(cursor.line(), cursor.column()));
-            if ( contextAtCursor and contextAtCursor->type() == DUContext::Class ) {
-                if ( contextAtCursor->owner() and ! contextAtCursor->owner()->identifier().isEmpty() ) {
+            if ( contextAtCursor && contextAtCursor->type() == DUContext::Class ) {
+                if ( contextAtCursor->owner() && ! contextAtCursor->owner()->identifier().isEmpty() ) {
                     prefix = contextAtCursor->owner()->identifier().toString() + ".";
                 }
             }
         }
     }
     else {
-        kDebug() << "duchain unavailable for document" << doc->url() << "or document out of date";
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "duchain unavailable for document" << doc->url() << "or document out of date";
     }
     
     TextDocumentLazyLineFetcher linefetcher(doc);
@@ -101,7 +104,7 @@ void VariableController::localsUpdateReady(QByteArray rawData)
 {
     QRegExp formatExtract("([a-zA-Z0-9_]+) \\=\\> (.*)");
     QList<QByteArray> data = rawData.split('\n');
-    kDebug() << "locals update:" << data;
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "locals update:" << data;
     
     int i = 0;
     QStringList vars;
@@ -113,7 +116,7 @@ void VariableController::localsUpdateReady(QByteArray rawData)
             vars << key;
             values[key] = formatExtract.capturedTexts().at(2);
         }
-        else kWarning() << "mismatch:" << d;
+        else qCWarning(KDEV_PYTHON_DEBUGGER) << "mismatch:" << d;
         i++;
     }
     QList<KDevelop::Variable*> variableObjects = KDevelop::ICore::self()->debugController()->variableCollection()
@@ -127,7 +130,7 @@ void VariableController::localsUpdateReady(QByteArray rawData)
 
 void VariableController::update()
 {
-    kDebug() << "update requested";
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "update requested";
     DebugSession* d = static_cast<DebugSession*>(parent());
     if (autoUpdate() & UpdateWatches) {
         variableCollection()->watches()->reinstall();

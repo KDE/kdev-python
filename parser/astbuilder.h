@@ -25,11 +25,12 @@
 #include "ast.h"
 #include "parserexport.h"
 
-#include <KDebug>
-#include <KUrl>
+#include <QUrl>
 #include "astdefaultvisitor.h"
 
 #include <language/duchain/topducontext.h>
+
+typedef struct _object PyObject;
 
 namespace PythonParser
 {
@@ -42,18 +43,20 @@ namespace Python
 class Ast;
 class CodeAst;
 
+
 typedef QMap<QString, QString> stringDictionary;
 
-QPair<QString, int> fileHeaderHack(QString& contents, const KUrl& filename);
+QPair<QString, int> fileHeaderHack(QString& contents, const QUrl& filename);
+
+QString PyUnicodeObjectToQString(PyObject* obj);
 
 class KDEVPYTHONPARSER_EXPORT AstBuilder
 {
 public:
-    CodeAst::Ptr parse(KUrl filename, QString &contents);
+    CodeAst::Ptr parse(const QUrl& filename, QString &contents);
     QList<KDevelop::ProblemPointer> m_problems;
 private:
     static QMutex pyInitLock;
-    static QString pyHomeDir;
 };
 
 }

@@ -29,7 +29,7 @@ class ImplementFunctionCompletionItem : public CompletionTreeItem
 {
 public:
     ImplementFunctionCompletionItem(const QString& name, const QStringList& arguments, const QString& previousIndent);
-    virtual void execute(KTextEditor::Document* document, const KTextEditor::Range& word);
+    virtual void execute(KTextEditor::View* view, const KTextEditor::Range& word) override;
     virtual QVariant data(const QModelIndex& index, int role, const CodeCompletionModel* model) const;
 
 private:

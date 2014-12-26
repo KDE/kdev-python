@@ -21,7 +21,7 @@
 #define PYTHONFUNCTIONDECLARATION_H
 
 #include <language/duchain/functiondeclaration.h>
-#include <language/duchain/indexedstring.h>
+#include <serialization/indexedstring.h>
 
 #include "pythonduchainexport.h"
 #include "decorator.h"
@@ -34,13 +34,19 @@ class KDEVPYTHONDUCHAIN_EXPORT FunctionDeclarationData : public KDevelop::Functi
 {
 public:
     FunctionDeclarationData()
-        : KDevelop::FunctionDeclarationData(), m_isStatic(false), m_hasVararg(false), m_hasKwarg(false)
+        : KDevelop::FunctionDeclarationData()
+        , m_isStatic(false)
+        , m_vararg(-1)
+        , m_kwarg(-1)
     {
         initializeAppendedLists();
     }
 
     FunctionDeclarationData(const FunctionDeclarationData& rhs)
-        : KDevelop::FunctionDeclarationData(rhs), m_isStatic(rhs.m_isStatic), m_hasVararg(rhs.m_hasVararg), m_hasKwarg(rhs.m_hasKwarg)
+        : KDevelop::FunctionDeclarationData(rhs)
+        , m_isStatic(rhs.m_isStatic)
+        , m_vararg(rhs.m_vararg)
+        , m_kwarg(rhs.m_kwarg)
     {
         initializeAppendedLists();
         copyListsFrom(rhs);
@@ -51,8 +57,8 @@ public:
     }
     
     bool m_isStatic: 1;
-    bool m_hasVararg: 1;
-    bool m_hasKwarg: 1;
+    short m_vararg;
+    short m_kwarg;
 
     START_APPENDED_LISTS_BASE(FunctionDeclarationData, KDevelop::FunctionDeclarationData);
     APPENDED_LIST_FIRST(FunctionDeclarationData, Decorator, m_decorators);
@@ -72,20 +78,20 @@ public:
         Identity = 126
     };
     
-    inline void setHasVararg(bool hasVararg) {
-        d_func_dynamic()->m_hasVararg = hasVararg;
+    inline void setVararg(short vararg) {
+        d_func_dynamic()->m_vararg = vararg;
     }
     
-    inline bool hasVararg() const {
-        return d_func()->m_hasVararg;
+    inline short vararg() const {
+        return d_func()->m_vararg;
     }
     
-    inline void setHasKwarg(bool hasKwarg) {
-        d_func_dynamic()->m_hasKwarg = hasKwarg;
+    inline void setKwarg(short kwarg) {
+        d_func_dynamic()->m_kwarg = kwarg;
     }
     
-    inline bool hasKwarg() const {
-        return d_func()->m_hasKwarg;
+    inline short kwarg() const {
+        return d_func()->m_kwarg;
     }
     
     inline bool isStatic() const {
@@ -114,6 +120,7 @@ private:
     DUCHAIN_DECLARE_DATA(FunctionDeclaration);
 };
 
+typedef DUChainPointer<FunctionDeclaration> FunctionDeclarationPointer;
 } // namespace Python
 
 #endif // PYTHONFUNCTIONDECLARATION_H

@@ -2,6 +2,7 @@
  *   This file is part of KDevelop                                         *
  *   Copyright 2007 Andreas Pakulat <apaku@gmx.de>                         *
  *   Copyright 2010-2012 Sven Brauch <svenbrauch@googlemail.com>           *
+ *   Copyright 2012 Patrick Spendrin <ps_ml@gmx.de>                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Library General Public License as       *
@@ -21,6 +22,7 @@
 
 #include "ast.h"
 #include "astbuilder.h"
+#include <language/duchain/problem.h>
 
 namespace Python
 {
@@ -32,9 +34,14 @@ namespace Python
 Ast::Ast( Ast* parent, Ast::AstType type ) : parent(parent), astType( type ), startCol(0), startLine(-99999), endCol(0), endLine(0), hasUsefulRangeInformation(false), context(0) { }
 Ast::Ast() :  parent(0), startCol(0), startLine(-5), endCol(0), endLine(0), hasUsefulRangeInformation(false), context(0) { }
 
-ArgumentsAst::ArgumentsAst(Ast* parent): Ast(parent, Ast::ArgumentsAstType), arg_lineno(0), arg_col_offset(0), vararg_lineno(0), vararg_col_offset(0)
+ArgumentsAst::ArgumentsAst(Ast* parent): Ast(parent, Ast::ArgumentsAstType)
 {
     
+}
+
+ArgAst::ArgAst(Ast* parent): Ast(parent, Ast::ArgAstType), argumentName(0), annotation(0)
+{
+
 }
 
 AssertionAst::AssertionAst(Ast* parent): StatementAst(parent, Ast::AssertionAstType) 
@@ -142,11 +149,6 @@ ExceptionHandlerAst::ExceptionHandlerAst(Ast* parent): Ast(parent, Ast::Exceptio
     
 }
 
-ExecAst::ExecAst(Ast* parent): StatementAst(parent, Ast::ExecAstType), body(0), globals(0), locals(0)
-{
-    
-}
-
 ListComprehensionAst::ListComprehensionAst(Ast* parent): ExpressionAst(parent, Ast::ListComprehensionAstType), element(0)
 {
 
@@ -155,6 +157,11 @@ ListComprehensionAst::ListComprehensionAst(Ast* parent): ExpressionAst(parent, A
 ExpressionAst::ExpressionAst(Ast* parent, AstType type): Ast(parent, type), value(0), belongsToCall(0)
 {
     
+}
+
+YieldFromAst::YieldFromAst(Ast* parent) : ExpressionAst(parent, Ast::YieldFromAstType)
+{
+
 }
 
 ExtendedSliceAst::ExtendedSliceAst(Ast* parent): SliceAstBase(parent, Ast::ExtendedSliceAstType)
@@ -182,7 +189,7 @@ GlobalAst::GlobalAst(Ast* parent): StatementAst(parent, Ast::GlobalAstType)
     
 }
 
-Identifier::Identifier(QString value) :  Ast(0, Ast::IdentifierAstType), value(value)
+Identifier::Identifier(QString value) : Ast(0, Ast::IdentifierAstType), value(value)
 {
     
 }
@@ -227,6 +234,11 @@ NameAst::NameAst(Ast* parent): ExpressionAst(parent, Ast::NameAstType), identifi
     
 }
 
+NameConstantAst::NameConstantAst(Ast* parent): ExpressionAst(parent, Ast::NameConstantAstType), value(Invalid)
+{
+
+}
+
 NumberAst::NumberAst(Ast* parent): ExpressionAst(parent, Ast::NumberAstType), value(0)
 {
     
@@ -237,17 +249,12 @@ PassAst::PassAst(Ast* parent): StatementAst(parent, Ast::PassAstType)
     
 }
 
-PrintAst::PrintAst(Ast* parent): StatementAst(parent, Ast::PrintAstType), destination(0), newline(0)
+NonlocalAst::NonlocalAst(Ast* parent): StatementAst(parent, Ast::NonlocalAstType)
 {
     
 }
 
 RaiseAst::RaiseAst(Ast* parent): StatementAst(parent, Ast::RaiseAstType), type(0)
-{
-    
-}
-
-ReprAst::ReprAst(Ast* parent): ExpressionAst(parent, Ast::ReprAstType), value(0)
 {
     
 }
@@ -282,17 +289,17 @@ StringAst::StringAst(Ast* parent): ExpressionAst(parent, Ast::StringAstType), va
     
 }
 
+BytesAst::BytesAst(Ast* parent): ExpressionAst(parent, Ast::BytesAstType), value("")
+{
+    
+}
+
 SubscriptAst::SubscriptAst(Ast* parent): ExpressionAst(parent, Ast::SubscriptAstType), value(0), slice(0)
 {
     
 }
 
-TryExceptAst::TryExceptAst(Ast* parent): StatementAst(parent, Ast::TryExceptAstType)
-{
-    
-}
-
-TryFinallyAst::TryFinallyAst(Ast* parent): StatementAst(parent, Ast::TryFinallyAstType)
+StarredAst::StarredAst(Ast* parent): ExpressionAst(parent, Ast::StarredAstType)
 {
     
 }
@@ -307,14 +314,24 @@ UnaryOperationAst::UnaryOperationAst(Ast* parent): ExpressionAst(parent, Ast::Un
     
 }
 
+TryAst::TryAst(Ast* parent): StatementAst(parent, Ast::TryAstType)
+{
+
+}
+
 WhileAst::WhileAst(Ast* parent): StatementAst(parent, Ast::WhileAstType), condition(0)
 {
     
 }
 
-WithAst::WithAst(Ast* parent): StatementAst(parent, Ast::WithAstType), contextExpression(0)
+WithAst::WithAst(Ast* parent): StatementAst(parent, Ast::WithAstType)
 {
     
+}
+
+WithItemAst::WithItemAst(Ast* parent): Ast(parent, Ast::WithItemAstType)
+{
+
 }
 
 YieldAst::YieldAst(Ast* parent): ExpressionAst(parent, Ast::YieldAstType), value(0)

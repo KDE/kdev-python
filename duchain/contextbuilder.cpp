@@ -28,10 +28,11 @@
 #include "declarationbuilder.h"
 #include "helpers.h"
 
-#include <KStandardDirs>
-
 #include <ktexteditor/document.h>
 
+#include <language/duchain/ducontext.h>
+#include <language/duchain/declaration.h>
+#include <language/duchain/duchainlock.h>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/parsingenvironment.h>
 #include <language/backgroundparser/backgroundparser.h>
@@ -51,14 +52,6 @@ using namespace KTextEditor;
 namespace Python
 {
 
-ContextBuilder::ContextBuilder()
-    : m_prebuilding(false)
-    , m_mapAst(true)
-    , m_indentInformationCache(0)
-{
-
-}
-    
 ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node, ReferencedTopDUContext updateContext)
 {
     if (!updateContext) {
@@ -78,7 +71,6 @@ ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node
     } else {
         qDebug() << " ====> DUCHAIN ====>     building duchain for" << url.str();
     }
-    m_isScheduledForReparsing = false;
     return ContextBuilderBase::build(url, node, updateContext);
 }
 
@@ -92,6 +84,16 @@ IndexedString ContextBuilder::currentlyParsedDocument() const
     return m_currentlyParsedDocument;
 }
 
+void ContextBuilder::setCurrentlyParsedDocument(const IndexedString &document)
+{
+    m_currentlyParsedDocument = document;
+}
+
+void ContextBuilder::setFutureModificationRevision(const ModificationRevision &rev)
+{
+    m_futureModificationRevision = rev;
+}
+
 RangeInRevision ContextBuilder::rangeForNode(Ast* node, bool moveRight)
 {
     return RangeInRevision(node->startLine, node->startCol, node->endLine, node->endCol + (int) moveRight);
@@ -100,11 +102,6 @@ RangeInRevision ContextBuilder::rangeForNode(Ast* node, bool moveRight)
 RangeInRevision ContextBuilder::rangeForNode(Identifier* node, bool moveRight)
 {
     return rangeForNode(static_cast<Ast*>(node), moveRight);
-}
-
-SimpleRange ContextBuilder::simpleRangeForNode(Ast* node, bool moveRight)
-{
-    return SimpleRange(node->startLine, node->startCol, node->endLine, node->endCol + (int) moveRight);
 }
 
 TopDUContext* ContextBuilder::newTopContext(const RangeInRevision& range, ParsingEnvironmentFile* file) 
@@ -123,6 +120,16 @@ TopDUContext* ContextBuilder::newTopContext(const RangeInRevision& range, Parsin
 DUContext* ContextBuilder::newContext(const RangeInRevision& range)
 {
     return new PythonNormalDUContext(range, currentContext());
+}
+
+void ContextBuilder::addUnresolvedImport(const IndexedString &module)
+{
+    m_unresolvedImports.append(module);
+}
+
+QList<IndexedString> ContextBuilder::unresolvedImports() const
+{
+    return m_unresolvedImports;
 }
 
 void ContextBuilder::setEditor(PythonEditorIntegrator* editor)
@@ -151,7 +158,7 @@ RangeInRevision ContextBuilder::editorFindRange(Ast* fromNode, Ast* toNode)
 }
 
 CursorInRevision ContextBuilder::editorFindPositionSafe(Ast* node) {
-    if ( not node ) {
+    if ( !node ) {
         return CursorInRevision::invalid();
     }
     return editor()->findPosition(node);
@@ -234,7 +241,10 @@ void ContextBuilder::visitGeneratorExpression(GeneratorExpressionAst* node)
 
 RangeInRevision ContextBuilder::comprehensionRange(Ast* node)
 {
-    return editorFindRange(node, node);
+    RangeInRevision range = editorFindRange(node, node);
+    range.start.column -= 1;
+    range.end.column += 1;
+    return range;
 }
 
 void ContextBuilder::visitComprehensionCommon(Ast* node)
@@ -242,9 +252,9 @@ void ContextBuilder::visitComprehensionCommon(Ast* node)
     RangeInRevision range = comprehensionRange(node);
     Q_ASSERT(range.isValid());
     if ( range.isValid() ) {
-        range.start.column -= 1;
         DUChainWriteLocker lock(DUChain::lock());
-        openContext(node, RangeInRevision(range.start, range.end), KDevelop::DUContext::Other);
+        openContext(node, range, KDevelop::DUContext::Other);
+        Q_ASSERT(currentContext());
 //         currentContext()->setLocalScopeIdentifier(QualifiedIdentifier("<generator>"));
         lock.unlock();
         if ( node->astType == Ast::DictionaryComprehensionAstType )
@@ -256,20 +266,6 @@ void ContextBuilder::visitComprehensionCommon(Ast* node)
         if ( node->astType == Ast::SetComprehensionAstType )
             Python::AstDefaultVisitor::visitSetComprehension(static_cast<SetComprehensionAst*>(node));
         lock.lock();
-        closeContext();
-    }
-}
-
-void ContextBuilder::openContextForStatementList( const QList<Ast*>& l, DUContext::ContextType /*type*/)
-{
-    if ( l.count() > 0 ) {
-        Ast* first = l.first();
-        Ast* last = l.last();
-        Q_ASSERT(first->hasUsefulRangeInformation); // TODO remove this
-        RangeInRevision range(RangeInRevision(first->startLine - 1, first->startCol, last->endLine + 1, 10000));
-        openContext(first, range, DUContext::Other );
-        addImportedContexts();
-        visitNodeList( l );
         closeContext();
     }
 }
@@ -299,17 +295,12 @@ void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
 }
 
 void ContextBuilder::visitCode(CodeAst* node) {
-    KUrl doc_url = KUrl(Helper::getDocumentationFile());
-    IndexedString doc = IndexedString(doc_url.path());
+    auto doc_url = Helper::getDocumentationFile();
+    IndexedString doc = IndexedString(doc_url);
     Q_ASSERT(currentlyParsedDocument().toUrl().isValid());
     if ( currentlyParsedDocument() != doc ) {
         // Search for the python built-in functions file, and dump its contents into the current file.
-        TopDUContext* internal = 0;
-        {
-            DUChainReadLocker lock(DUChain::lock());
-            internal = DUChain::self()->chainForDocument(doc); // TODO add startup-check and error message, this must exist
-        }
-        
+        auto internal = Helper::getDocumentationFileContext();
         if ( ! internal ) {
             // If the built-in functions file is not yet parsed, schedule it with a high priority.
             m_unresolvedImports.append(doc);
@@ -321,25 +312,24 @@ void ContextBuilder::visitCode(CodeAst* node) {
             // KDevelop::ICore::self()->languageController()->backgroundParser()->parseDocuments();
         }
         else {
-            DUChainWriteLocker wlock(DUChain::lock());
+            DUChainWriteLocker wlock;
             currentContext()->addImportedParentContext(internal);
-            m_builtinFunctionsContext = TopDUContextPointer(internal);
         }
     }
     AstDefaultVisitor::visitCode(node);
 }
 
-QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name, const KUrl& currentDocument)
+QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, const QUrl& currentDocument)
 {
     QStringList nameComponents = name.split(".");
-    QList<KUrl> searchPaths;
+    QList<QUrl> searchPaths;
     if ( name.startsWith('.') ) {
         /* To take care for imports like "from ....xxxx.yyy import zzz"
          * we need to take current doc path and run "cd .." enough times
          */
         nameComponents.removeFirst();
         QString tname = name.mid(1); // remove first dot
-        QDir curPathDir = QDir(currentDocument.directory());
+        QDir curPathDir = QDir(currentDocument.adjusted(QUrl::RemoveFilename).toLocalFile());
         foreach(QString c, tname) {
             if (c != ".")
                 break;
@@ -355,10 +345,10 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
         searchPaths = Helper::getSearchPaths(currentDocument);
     }
     // Loop over all the name components, and find matching folders or files.
-    KUrl tmp;
+    QDir tmp;
     QStringList leftNameComponents;
-    foreach ( KUrl currentPath, searchPaths ) {
-        tmp = currentPath;
+    foreach ( QUrl currentPath, searchPaths ) {
+        tmp.setPath(currentPath.path());
         leftNameComponents = nameComponents;
         foreach ( QString component, nameComponents ) {
             if ( component == "*" ) {
@@ -369,85 +359,63 @@ QPair<KUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
                 // only empty the list if not importing *, this is convenient later on
                 leftNameComponents.removeFirst();
             }
-            QString testFilename = tmp.path(KUrl::AddTrailingSlash) + component;
-            KUrl sourceUrl = testFilename + ".py";
+            QString testFilename = tmp.path() + "/" + component;
+            tmp.cd(component);
+            QFileInfo sourcedir(testFilename);
+
             // we can only parse those, so we don't care about anything else for now.
             // Any C modules (.so, .dll) will be ignored, and highlighted as "not found". TODO fix this
-            QFile sourcefile(testFilename + ".py");
-            QFileInfo sourcedir(testFilename);
-            tmp.cd(component);
-            if ( ! sourcedir.exists() || ! sourcedir.isDir() || leftNameComponents.isEmpty() ) {
-                // If the search cannot continue further down into a hierarchy of directories,
-                // the file matching the next name component will be returned,
-                // toegether with a list of names which must be resolved inside that file.
-                if ( sourcefile.exists() ) {
-                    sourceUrl.cleanPath();
-                    return QPair<KUrl, QStringList>(sourceUrl, leftNameComponents);
+            static QStringList valid_extensions{".py", ".pyx"};
+            for(auto extension: valid_extensions) {
+                QFile sourcefile(testFilename + extension);
+                if ( ! sourcedir.exists() || ! sourcedir.isDir() || leftNameComponents.isEmpty() ) {
+                    // If the search cannot continue further down into a hierarchy of directories,
+                    // the file matching the next name component will be returned,
+                    // toegether with a list of names which must be resolved inside that file.
+                    if ( sourcefile.exists() ) {
+                        auto sourceUrl = QUrl::fromLocalFile(testFilename + extension);
+                        // TODO QUrl: cleanPath?
+                        return qMakePair(sourceUrl, leftNameComponents);
+                    }
+                    else if ( sourcedir.exists() && sourcedir.isDir() ) {
+                        auto path = QUrl::fromLocalFile(testFilename + "/__init__.py");
+                        // TODO QUrl: cleanPath?
+                        return qMakePair(path, leftNameComponents);
+                    }
                 }
-                else if ( sourcedir.exists() && sourcedir.isDir() ) {
-                    KUrl path(testFilename + "/__init__.py");
-                    path.cleanPath();
-                    return QPair<KUrl, QStringList>(path, leftNameComponents);
-                }
-                kDebug() << "RESULT:" << "No module path found.";
-                break;
             }
         }
     }
-    return QPair<KUrl, QStringList>(KUrl(), QStringList());
-}
-
-void ContextBuilder::visitLambda(LambdaAst* node)
-{
-    // Lambda functions need their own context for parameters
-    DUChainWriteLocker lock(DUChain::lock());
-    openContext(node, editorFindRange(node, node->body), DUContext::Other);
-    lock.unlock();
-    Python::AstDefaultVisitor::visitLambda(node);
-    lock.lock();
-    closeContext();
+    return {};
 }
 
 RangeInRevision ContextBuilder::rangeForArgumentsContext(FunctionDefinitionAst* node)
 {
-    // The python parser has extra syntax features for *args and **kwargs. 
-    // We need to know where the function arguments context ends (the location of the closing ")" paren would
-    // be optimal), so this does some pretty ugly checks whether the * or ** arguments are present,
-    // and adjusts the range as needed.
-    // TODO: Can we remove this function since we have the RangeUpdateVisitor now, which is much simpler?
-    RangeInRevision range;
-    CursorInRevision start, end;
-    if ( node->arguments->arguments.count() ) {
-        Ast* first = node->arguments->arguments.first();
-        start = CursorInRevision(first->startLine, first->startCol);
+    auto start = node->name->range().end();
+    auto end = start;
+    if ( node->arguments->kwarg ) {
+        end = node->arguments->kwarg->range().end();
     }
-    else if ( node->arguments->vararg )
-        start = CursorInRevision(node->arguments->vararg_lineno, node->arguments->vararg_col_offset);
-    else if ( node->arguments->kwarg ) 
-        start = CursorInRevision(node->arguments->arg_lineno, node->arguments->arg_col_offset);
-    
-    if ( node->arguments->kwarg )
-        end = CursorInRevision(node->arguments->arg_lineno, node->arguments->arg_col_offset + node->arguments->kwarg->value.length() + 1);
-    else if ( node->arguments->vararg )
-        end = CursorInRevision(node->arguments->vararg_lineno, node->arguments->vararg_col_offset + node->arguments->vararg->value.length() + 1);
-    else if ( node->arguments->arguments.count() ) {
-        Ast* last = node->arguments->arguments.last();
-        end = CursorInRevision(last->endLine, last->endCol + 1);
+    else if ( node->arguments->vararg ) {
+        end = node->arguments->vararg->range().end();
     }
-    
-    if ( node->arguments->arguments.isEmpty() && ! node->arguments->kwarg && ! node->arguments->vararg ) {
-        start = CursorInRevision(node->startLine, node->startCol + node->name->value.length());
-        end = start;
-    }
-
-    foreach ( const ExpressionAst* expr, node->arguments->defaultValues ) {
-        if ( expr->endLine > end.line || (expr->endLine == end.line && expr->endCol > end.column ) ) {
-            end = CursorInRevision(expr->endLine, expr->endCol);
+    if ( ! node->arguments->arguments.isEmpty() && node->arguments->vararg ) {
+        if ( node->arguments->vararg->appearsBefore(node->arguments->arguments.last()) ) {
+            end = node->arguments->arguments.last()->range().end();
         }
     }
+    else if ( ! node->arguments->arguments.isEmpty() ) {
+        end = node->arguments->arguments.last()->range().end();
+    }
 
-    range = RangeInRevision(start, end);
-    Q_ASSERT(range.isValid());
+    if ( ! node->arguments->defaultValues.isEmpty() ) {
+        end = qMax<KTextEditor::Cursor>(node->arguments->defaultValues.last()->range().end(), end);
+    }
+
+    RangeInRevision range(start.line(), start.column(), end.line(), end.column());
+    // make the range contain the closing and opening parentheses
+    range.start.column -= 1;
+    range.end.column += 1;
     return range;
 }
 
@@ -458,7 +426,8 @@ void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
     // The DUChain expects the context containing a function's arguments to be of type Function.
     // The function body will have DUContext::Other as type, as it contains only code.
     DUContext* funcctx = openContext(node->arguments, range, DUContext::Function, node->name);
-    visitNode(node->arguments);
+    AstDefaultVisitor::visitArguments(node->arguments);
+    visitArguments(node->arguments);
     closeContext();
     // the parameters should be visible in the function body, so import that context there
     m_importedParentContexts.append(funcctx);
@@ -467,7 +436,6 @@ void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
 
 void ContextBuilder::visitFunctionDefinition(FunctionDefinitionAst* node)
 {
-    DUChainWriteLocker lock(DUChain::lock());
     visitNodeList(node->decorators);
     visitFunctionArguments(node);
     visitFunctionBody(node);
@@ -496,7 +464,10 @@ void ContextBuilder::visitFunctionBody(FunctionDefinitionAst* node)
     // Open the context for the function body (the list of statements)
     // It's of type Other, as it contains only code
     openContext(node, range, DUContext::Other, identifierForNode(node->name));
-    currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));
+    {
+        DUChainWriteLocker lock;
+        currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));
+    }
     // import the parameters into the function body
     addImportedContexts();
     

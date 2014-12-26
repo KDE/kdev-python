@@ -31,8 +31,10 @@
 #include <KLocalizedString>
 #include <KMessageBox>
 #include <KParts/MainWindow>
-#include <KDebug>
 #include <KConfigGroup>
+
+#include <QDebug>
+#include "debuggerdebug.h"
 
 
 namespace Python {
@@ -64,7 +66,7 @@ QString PdbLauncher::name() const
 
 KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfiguration* cfg)
 {
-    kDebug() << "start of debugger process requested";
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "start of debugger process requested";
     if ( launchMode == "debug" ) {
         IExecuteScriptPlugin* iface = KDevelop::ICore::self()->pluginController()
                                       ->pluginForExtension("org.kdevelop.IExecuteScriptPlugin")->extension<IExecuteScriptPlugin>();
@@ -74,13 +76,14 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
         
         // check the interpreter
         QProcess p;
+        p.setReadChannelMode(QProcess::MergedChannels);
         p.start(interpreter, QStringList() << "--version");
         p.waitForFinished(500);
-        QByteArray version = p.readAllStandardError();
-        kDebug() << "interpreter version:" << version;
-        if ( ! version.startsWith("Python 2.") ) {
+        QByteArray version = p.readAll();
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "interpreter version:" << version;
+        if ( ! version.startsWith("Python 3.") ) {
             KMessageBox::error(ICore::self()->uiController()->activeMainWindow(),
-                            i18n("Sorry, debugging is only supported for Python 2.x applications."),
+                            i18n("Sorry, debugging is only supported for Python 3.x applications."),
                             i18n("Unsupported interpreter"));
             return 0;
         }
@@ -95,7 +98,7 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
         l << job;
         return new KDevelop::ExecuteCompositeJob( KDevelop::ICore::self()->runController(), l );
     }
-    kDebug() << "unknown launch mode";
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "unknown launch mode";
     return 0;
 }
 

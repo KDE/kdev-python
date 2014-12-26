@@ -4,7 +4,7 @@
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
+    the Free Software Foundation, either version 2 of the License, or
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
@@ -27,6 +27,8 @@
 #include <language/duchain/types/typesystem.h>
 #include <language/duchain/types/typealiastype.h>
 #include <language/duchain/types/unsuretype.h>
+#include <QDebug>
+#include "../duchaindebug.h"
 
 namespace Python {
     
@@ -42,7 +44,8 @@ UnsureType::UnsureType(const UnsureType& rhs)
 
 }
 
-UnsureType::UnsureType(KDevelop::UnsureTypeData& data): KDevelop::UnsureType(data)
+UnsureType::UnsureType(KDevelop::UnsureTypeData& data)
+    : KDevelop::UnsureType(data)
 {
 
 }
@@ -52,7 +55,7 @@ const QList<AbstractType::Ptr> UnsureType::typesRecursive() const
     QList<AbstractType::Ptr> results;
     FOREACH_FUNCTION ( const IndexedType& type, d_func()->m_types ) {
         AbstractType::Ptr current = type.abstractType();
-        AbstractType::Ptr resolved = Helper::resolveType(current);
+        AbstractType::Ptr resolved = Helper::resolveAliasType(current);
         if ( resolved->whichType() == AbstractType::TypeUnsure ) {
             results.append(resolved.cast<UnsureType>()->typesRecursive());
         }
@@ -69,11 +72,11 @@ QString UnsureType::toString() const
     QList<IndexedType> encountered;
     foreach ( AbstractType::Ptr type, typesRecursive() ) {
         if ( ! type ) {
-            kWarning() << "Invalid type: " << type.unsafeData();
+            qCWarning(KDEV_PYTHON_DUCHAIN) << "Invalid type: " << type.data();
             continue;
         }
         
-        IndexedType indexed = Helper::resolveType(type)->indexed();
+        IndexedType indexed = Helper::resolveAliasType(type)->indexed();
         if ( encountered.contains(indexed) )
             continue;
         encountered << indexed;
@@ -89,10 +92,6 @@ QString UnsureType::toString() const
         return i18nc("refers to a type (in program code) which is not known", "mixed");
     if ( count == 1 )
         return typeList;
-    if ( count > 5 )  {
-        typeList = '<' + i18nc("refers to types of variables in programming, as in \"various possible types\"",
-                               "various types") + '>';
-    }
     return i18nc("refers to a type (in program code) which can have multiple values", "unsure (%1)", typeList);
 }
 

@@ -27,8 +27,8 @@ namespace Python {
 class MissingIncludeItem : public KDevelop::CompletionTreeItem {
 public:
     MissingIncludeItem(const QString& insertText, const QString& matchText, const QString& removeComponents=QString());
-    virtual void execute(KTextEditor::Document* document, const KTextEditor::Range& word);
-    virtual QVariant data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const;
+    virtual void execute(KTextEditor::View* view, const KTextEditor::Range& word) override;
+    virtual QVariant data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const override;
 
 private:
     const QString m_text;

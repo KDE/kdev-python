@@ -2,6 +2,7 @@
  *   This file is part of KDevelop                                         *
  *   Copyright 2007 Andreas Pakulat <apaku@gmx.de>                         *
  * Copyright 2010 Sven Brauch <svenbrauch@googlemail.com>                  *
+ *   Copyright 2012 Patrick Spendrin <ps_ml@gmx.de>                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Library General Public License as       *
@@ -21,7 +22,6 @@
 
 #include "astdefaultvisitor.h"
 #include "ast.h"
-#include <kdebug.h>
 
 namespace Python
 {
@@ -37,12 +37,23 @@ AstDefaultVisitor::~AstDefaultVisitor() { }
 
 // The Ast "ends" here, those dont have child nodes
 // note that Identifier is not a node in this Ast
+void AstDefaultVisitor::visitNameConstant(NameConstantAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitPass(PassAst* node) { Q_UNUSED(node); }
+void AstDefaultVisitor::visitNonlocal(NonlocalAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitBreak(BreakAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitContinue(ContinueAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitEllipsis(EllipsisAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitNumber(NumberAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitString(StringAst* node) { Q_UNUSED(node); }
+void AstDefaultVisitor::visitBytes(BytesAst* node) { Q_UNUSED(node); }
+void AstDefaultVisitor::visitStarred(StarredAst* node) { Q_UNUSED(node); }
+
+void AstDefaultVisitor::visitArg(ArgAst* node) {
+    visitNode(node->annotation);
+    visitNode(node->argumentName);
+    visitIdentifier(node->argumentName);
+}
+
 void AstDefaultVisitor::visitIdentifier(Identifier* node) { Q_UNUSED(node); }
 
 void AstDefaultVisitor::visitAlias(AliasAst* node) {
@@ -73,6 +84,11 @@ void AstDefaultVisitor::visitExpression(ExpressionAst* node)
     visitNode(node->value);
 }
 
+void AstDefaultVisitor::visitYieldFrom(YieldFromAst* node)
+{
+    visitNode(node->value);
+}
+
 void AstDefaultVisitor::visitAssertion(AssertionAst* node)
 {
     visitNode(node->condition);
@@ -84,13 +100,6 @@ void AstDefaultVisitor::visitDelete(DeleteAst* node)
     foreach (ExpressionAst* expression, node->targets) {
         visitNode(expression);
     }
-}
-
-void AstDefaultVisitor::visitExec(ExecAst* node)
-{
-    visitNode(node->body);
-    visitNode(node->globals);
-    visitNode(node->locals);
 }
 
 void AstDefaultVisitor::visitExtendedSlice(ExtendedSliceAst* node)
@@ -169,11 +178,6 @@ void AstDefaultVisitor::visitRaise(RaiseAst* node)
     visitNode(node->type);
 }
 
-void AstDefaultVisitor::visitRepr(ReprAst* node)
-{
-    visitNode(node->value);
-}
-
 void AstDefaultVisitor::visitReturn(ReturnAst* node)
 {
     visitNode(node->value);
@@ -207,7 +211,7 @@ void AstDefaultVisitor::visitSubscript(SubscriptAst* node)
     visitNode(node->slice);
 }
 
-void AstDefaultVisitor::visitTryExcept(TryExceptAst* node)
+void AstDefaultVisitor::visitTry(TryAst* node)
 {
     foreach (Ast* statement, node->body) {
         visitNode(statement);
@@ -218,14 +222,7 @@ void AstDefaultVisitor::visitTryExcept(TryExceptAst* node)
     foreach (Ast* statement, node->orelse) {
         visitNode(statement);
     }
-}
-
-void AstDefaultVisitor::visitTryFinally(TryFinallyAst* node)
-{
-    foreach (Ast* statement, node->body) {
-        visitNode(statement);
-    }
-    foreach (Ast* statement, node->finalbody) {
+    foreach (Ast* statement, node->finally) {
         visitNode(statement);
     }
 }
@@ -255,11 +252,18 @@ void AstDefaultVisitor::visitWhile(WhileAst* node)
 
 void AstDefaultVisitor::visitWith(WithAst* node)
 {
-    visitNode(node->contextExpression);
-    visitNode(node->optionalVars);
+    foreach (Ast* item, node->items) {
+        visitNode(item);
+    }
     foreach (Ast* statement, node->body) {
         visitNode(statement);
     }
+}
+
+void AstDefaultVisitor::visitWithItem(WithItemAst* node)
+{
+    visitNode(node->contextExpression);
+    visitNode(node->optionalVars);
 }
 
 void AstDefaultVisitor::visitYield(YieldAst* node)
@@ -368,14 +372,6 @@ void AstDefaultVisitor::visitAssignment(AssignmentAst* node)
     visitNode(node->value);
 }
 
-void AstDefaultVisitor::visitPrint(PrintAst* node)
-{
-    visitNode(node->destination);
-    foreach (ExpressionAst* expression, node->values) {
-        visitNode(expression);
-    }
-}
-
 void AstDefaultVisitor::visitCall(CallAst* node)
 {
     visitNode(node->function);
@@ -395,6 +391,7 @@ void AstDefaultVisitor::visitFunctionDefinition(FunctionDefinitionAst* node)
         visitNode(decorator);
     }
     visitNode(node->arguments);
+    visitNode(node->returns);
     foreach (Ast* stmt, node->body) {
         visitNode(stmt);
     }
@@ -415,14 +412,12 @@ void AstDefaultVisitor::visitKeyword(KeywordAst* node)
 
 void AstDefaultVisitor::visitArguments(ArgumentsAst* node)
 {
-    foreach (ExpressionAst* expression, node->arguments) {
+    foreach (ArgAst* expression, node->arguments) {
         visitNode(expression);
     }
     foreach (ExpressionAst* expression, node->defaultValues ) {
         visitNode(expression);
     }
-    visitIdentifier(node->vararg);
-    visitIdentifier(node->kwarg);
 }
 
 }

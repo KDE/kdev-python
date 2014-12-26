@@ -7,7 +7,6 @@ set(duchain_SRCS
     declarations/functiondeclaration.cpp
     declarations/classdeclaration.cpp
 
-    types/variablelengthcontainer.cpp
     types/hintedtype.cpp
     types/unsuretype.cpp
     types/indexedcontainer.cpp
@@ -20,6 +19,7 @@ set(duchain_SRCS
     declarationbuilder.cpp
     usebuilder.cpp
     dumpchain.cpp
+    duchaindebug.cpp
 
     navigation/navigationwidget.cpp
     navigation/declarationnavigationcontext.cpp
@@ -31,14 +31,19 @@ set(duchain_SRCS
 )
 
 
-kde4_add_library( kdev4pythonduchain SHARED ${duchain_SRCS} )
+add_library( kdev4pythonduchain SHARED ${duchain_SRCS} )
+
+generate_export_header( kdev4pythonduchain EXPORT_MACRO_NAME KDEVPYTHONDUCHAIN_EXPORT
+                                           EXPORT_FILE_NAME pythonduchainexport.h
+)
+
 target_link_libraries( kdev4pythonduchain LINK_PRIVATE
-    ${KDE4_KDECORE_LIBS}
-    ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
-    ${KDEVPLATFORM_PROJECT_LIBRARIES}
-    ${KDE4_KTEXTEDITOR_LIBS}
-    ${KDEVPLATFORM_INTERFACES_LIBRARIES}
-    ${QT_QTWEBKIT_LIBRARY}
+    Qt5::WebKitWidgets
+    KF5::KDELibs4Support
+    KF5::TextEditor
+    KDev::Interfaces
+    KDev::Language
+    KDev::Project
     kdev4pythonparser
  )
 

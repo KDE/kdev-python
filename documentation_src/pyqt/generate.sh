@@ -1,3 +1,6 @@
+# Copyright 2014 Sven Brauch <svenbrauch@gmail.com>
+# License: GPL v2+
+
 pyqt=($(ls /usr/share/sip/PyQt4))
 element_count=${#pyqt[@]}
 for index in $(seq $element_count); do

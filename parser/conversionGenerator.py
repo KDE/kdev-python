@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 
+# Copyright 2014 by Sven Brauch
+# License: GPL v2+
+
 # Transforms a conversion definition file (.sdef) into C++ code. To be copied over manually. :)
 # sdef example line:
 # RULE_FOR _stmt;KIND Expr_kind;ACTIONS create|ExpressionAst set|value->ExpressionAst,value;CODE;;
 
 import sys
 
-contents = open('python27.sdef').read().replace("\n", "").split(';;')
+contents = open('python34.sdef').read().replace("\n", "").split(';;')
 
 func_structure = '''
     Ast* visitNode(%{RULE_FOR}* node) {
@@ -34,7 +37,7 @@ func_structure = '''
 simple_func_structure = '''
     Ast* visitNode(%{RULE_FOR}* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0; // return a nullpointer if no node is set, that's fine, everyone else will check for that.
+        if ( ! node ) return 0;
 %{SWITCH_LINES}
         return v;
     }
@@ -46,19 +49,20 @@ switch_line = '''        case %{KIND}: {
                 break;
             }'''
 
-create_ast_line = '''                %{AST_TYPE}* v = new %{AST_TYPE}(parent());'''
-create_identifier_line = '''                v->%{TARGET} = node->v.%{KIND_W/O_SUFFIX}.%{VALUE} ? new Python::Identifier(QString::fromUtf8(PyString_AsString(PyObject_Str(node->v.%{KIND_W/O_SUFFIX}.%{VALUE})))) : 0;'''
+create_ast_line = '''                %{AST_TYPE}* v = new  %{AST_TYPE}(parent());'''
+create_identifier_line = '''                v->%{TARGET} = node->v.%{KIND_W/O_SUFFIX}.%{VALUE} ? new Python::Identifier(PyUnicodeObjectToQString(node->v.%{KIND_W/O_SUFFIX}.%{VALUE})) : 0;'''
 set_attribute_line = '''                nodeStack.push(v); v->%{TARGET} = static_cast<%{AST_TYPE}*>(visitNode(node->v.%{KIND_W/O_SUFFIX}.%{VALUE})); nodeStack.pop();'''
 resolve_list_line = '''                nodeStack.push(v); v->%{TARGET} = visitNodeList<%{PYTHON_AST_TYPE}, %{AST_TYPE}>(node->v.%{KIND_W/O_SUFFIX}.%{VALUE}); nodeStack.pop();'''
-create_identifier_line_any = '''            v->%{TARGET} = node->%{VALUE} ? new Python::Identifier(QString::fromUtf8(PyString_AsString(PyObject_Str(node->%{VALUE})))) : 0;'''
+create_identifier_line_any = '''            v->%{TARGET} = node->%{VALUE} ? new Python::Identifier(PyUnicodeObjectToQString(node->%{VALUE})) : 0;'''
 set_attribute_line_any = '''            nodeStack.push(v); v->%{TARGET} = static_cast<%{AST_TYPE}*>(visitNode(node->%{VALUE})); nodeStack.pop();'''
 resolve_list_line_any = '''            nodeStack.push(v); v->%{TARGET} = visitNodeList<%{PYTHON_AST_TYPE}, %{AST_TYPE}>(node->%{VALUE}); nodeStack.pop();'''
 direct_assignment_line = '''                v->%{TARGET} = node->v.%{KIND_W/O_SUFFIX}.%{VALUE};'''
 direct_assignment_line_any = '''                v->%{TARGET} = node->v.%{VALUE};'''
 cast_operator_line = '''                v->%{TARGET} = (ExpressionAst::%{AST_TYPE}) node->v.%{KIND_W/O_SUFFIX}.%{VALUE};'''
-resolve_string = '''                v->%{TARGET} = QString::fromUtf8(PyString_AsString(PyObject_Str(node->v.%{KIND_W/O_SUFFIX}.%{VALUE})));'''
+resolve_string = '''                v->%{TARGET} = PyUnicodeObjectToQString(node->v.%{KIND_W/O_SUFFIX}.%{VALUE});'''
 assign_mindless = '''              v->%{TARGET} = node->%{VALUE};'''
 assign_linetransform = '''              v->%{TARGET} = tline(node->%{VALUE} - 1);'''
+singleton_convert_line = '''                v->%{TARGET} = node->v.NameConstant.value == Py_None ? NameConstantAst::None : node->v.NameConstant.value == Py_False ? NameConstantAst::False : NameConstantAst::True;'''
 resolve_oplist_block = '''
                 for ( int _i = 0; _i < node->v.%{KIND_W/O_SUFFIX}.%{VALUE}->size; _i++ ) {
                     v->%{TARGET}.append((ExpressionAst::%{AST_TYPE}) node->v.%{KIND_W/O_SUFFIX}.%{VALUE}->elements[_i]);
@@ -66,9 +70,9 @@ resolve_oplist_block = '''
 '''
 resolve_identifier_block = '''
                 for ( int _i = 0; _i < node->v.%{KIND_W/O_SUFFIX}.%{VALUE}->size; _i++ ) {
-                    Python::Identifier* id = new Python::Identifier(QString::fromUtf8(PyString_AsString(PyObject_Str(
+                    Python::Identifier* id = new Python::Identifier(PyUnicodeObjectToQString(
                                     static_cast<PyObject*>(node->v.%{KIND_W/O_SUFFIX}.%{VALUE}->elements[_i])
-                            ))));
+                            ));
                     v->%{TARGET}.append(id);
                 }
 '''
@@ -81,6 +85,7 @@ copy_ident_ranges = '''
                     v->%{TARGET}->endLine = tline(node->lineno - 1);  v->endLine = v->%{TARGET}->endLine;
                     ranges_copied = true;
                 }'''
+
 
 results = dict()
 does_match_any = dict()
@@ -97,6 +102,8 @@ def pluginAstToPythonAstType(plugintypestr):
     if plugintypestr == 'SliceAst': return '_slice'
     if plugintypestr == 'Ast': return '_stmt' # not sure about this
     if plugintypestr == 'GeneratorExpressionAst': return '_expr'
+    if plugintypestr == 'ArgAst': return '_arg'
+    if plugintypestr == 'WithItemAst': return '_withitem'
     else:
         sys.stderr.write("W: Could not decode name %s\n" % plugintypestr)
         return '<ERROR>'
@@ -115,9 +122,9 @@ for rule in contents:
     actions = outline[2].split(' ')[1:]
     code = False
     if len(outline) > 3:
-        code = ' '.join(';'.join(outline[3:]).split(' ')[1:]) + ";"
+        code = ' '.join(';'.join(outline[3:]).split('CODE')[1:]) + ";"
     
-    if not results.has_key(rule_for):
+    if rule_for not in results:
         results[rule_for] = list()
     
     current_actions = list()
@@ -140,12 +147,14 @@ for rule in contents:
             
             
             # commands with one argument
-            if commandType in ['~', ':', '$', '+', 'l']:
+            if commandType in ['~', ':', '$', '+', 'l', '_']:
+                if commandType == '_':
+                    raw = singleton_convert_line
                 if commandType == ':':
                     raw = direct_assignment_line if not any else direct_assignment_line_any
                 if commandType == '~':
                     raw = create_identifier_line if not any else create_identifier_line_any
-                    if rule_for in ['_expr', '_stmt', '_excepthandler', '_alias']:
+                    if rule_for in ['_expr', '_stmt', '_excepthandler', '_arg']:
                         raw += copy_ident_ranges
                 if commandType == '$':
                     raw = resolve_string
@@ -196,11 +205,11 @@ for rule in contents:
     results[rule_for].append(current_stmt)
     does_match_any[rule_for] = any
 
-print '''/* This code is generated by conversiongenerator.py.
+print('''/* This code is generated by conversiongenerator.py.
  * I do not recommend editing it.
  * To update, run: python2 conversionGenerator.py > generated.h
  */
-    
+
 class PythonAstTransformer {
 public:
     CodeAst* ast;
@@ -242,9 +251,9 @@ private:
         return nodelist;
     }
 
-'''
+''')
 
-for index, lines in results.iteritems():
+for index, lines in results.items():
     current_switch_lines = "\n".join(lines)
     appendix = ''
     if index == '_expr' or index == '_stmt':
@@ -282,11 +291,11 @@ for index, lines in results.iteritems():
         func = func_structure.replace('%{RULE_FOR}', index).replace('%{SWITCH_LINES}', current_switch_lines).replace('%{APPENDIX}', appendix)
     else:
         func = simple_func_structure.replace('%{RULE_FOR}', index).replace('%{SWITCH_LINES}', current_switch_lines)
-    print func
+    print(func)
 
-print '''};
+print('''};
 
 /*
  * End generated code
  */
-'''
+''')

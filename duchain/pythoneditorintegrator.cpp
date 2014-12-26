@@ -46,7 +46,7 @@ ParseSession* PythonEditorIntegrator::parseSession() const
     return m_session;
 }
 
-CursorInRevision PythonEditorIntegrator::findPosition( Ast* node , Edge edge ) const
+CursorInRevision PythonEditorIntegrator::findPosition(const Ast* node , Edge edge) const
 {
     Q_ASSERT(node);
     if ( edge == BackEdge )
@@ -60,13 +60,13 @@ CursorInRevision PythonEditorIntegrator::findPosition( Ast* node , Edge edge ) c
     }
 }
 
-RangeInRevision PythonEditorIntegrator::findRange( Ast * node, RangeEdge edge ) const
+RangeInRevision PythonEditorIntegrator::findRange(const Ast * node, RangeEdge edge) const
 {
     Q_UNUSED( edge );
     return RangeInRevision( findPosition( node, FrontEdge ), findPosition( node, BackEdge ) );
 }
 
-RangeInRevision PythonEditorIntegrator::findRange( Ast* from, Ast* to ) const
+RangeInRevision PythonEditorIntegrator::findRange(const Python::Ast* from, const Python::Ast* to) const
 {
     return RangeInRevision( findPosition( from, FrontEdge ), findPosition( to, BackEdge ) );
 }

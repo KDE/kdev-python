@@ -109,7 +109,7 @@ CodeHelpers::EndLocation CodeHelpers::endsInside(const QString &code)
     stringDelimiters << "\"\"\"" << "\'\'\'" << "'" << "\"";
     QStack<QString> stringStack;
     const int max_len = code.length();
-    kDebug() << "Checking for comment line:" << code;
+    qDebug() << "Checking for comment line:" << code;
     for ( int atChar = 0; atChar < max_len; atChar++ ) {
         const QChar c = code.at(atChar);
         if ( c == ' ' || c.isLetterOrNumber() ) {
@@ -198,7 +198,7 @@ QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher,
     QStringList openingBrackets = QStringList() << "(" << "[" << "{" << "\"" << "'";
     QStringList closingBrackets = QStringList() << ")" << "]" << "}" << "\"" << "'";
     QStringList sliceChars = QStringList() << "." << "(" << "["; // chars which are allowed to be preceded by a space
-    QStringList seperatorChars = QStringList() << "," << "=" << ":";
+    QStringList seperatorChars = QStringList() << "," << "=" << ":" << "*" << "-" << "+" << "/" << "%" << "^" << "~";
     QStack<QString> brackets;
     bool lastWasSlice = false;
     int linesFetched = 1;
@@ -208,7 +208,7 @@ QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher,
         while ( start >= 0 ) {
             QChar c = line[start];
             int bracket = closingBrackets.indexOf(c);
-            kDebug() << bracket << c;
+            qDebug() << bracket << c;
             if ( ! brackets.isEmpty() && brackets.top() == c ) {
                 brackets.pop();
             }
@@ -265,13 +265,13 @@ QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher,
         linePart = QString();
     }
     else {
-        kDebug() << line << start << end << end-start << line.length();
+        qDebug() << line << start << end << end-start << line.length();
         linePart = line.mid(start, end-start + 1);
     }
 
     QString expression(linePart + text);
     expression = expression.trimmed();
-    kDebug() << "expression found:" << expression;
+    qDebug() << "expression found:" << expression;
     return expression;
 }
 
@@ -296,7 +296,7 @@ QString CodeHelpers::extractStringUnderCursor(const QString &code, KTextEditor::
     while ( start >= 0 ) {
         QChar c = beforeAndAfter.first.at(start);
         int quote = quoteCharacters.indexOf(c);
-//        kDebug() << quote << c;
+//        qDebug() << quote << c;
 
         // if we've found a quote character and we're either at the beginning of the code or the previous char is not a backslash
         if ( quote != -1 && (start == 0 || (start != 0 && beforeAndAfter.first.at(start - 1) != '\\')) ) {
@@ -337,7 +337,7 @@ QString CodeHelpers::extractStringUnderCursor(const QString &code, KTextEditor::
         *cursorPositionInString = beforeAndAfter.first.size() - start;
     }
 
-    kDebug() << "string found:" << string;
+    qDebug() << "string found:" << string;
     return string;
 }
 

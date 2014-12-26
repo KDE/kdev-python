@@ -21,7 +21,6 @@
 #include "correctionfilegenerator.h"
 
 #include <QTemporaryFile>
-#include <QAbstractFileEngine>
 
 #include <language/backgroundparser/backgroundparser.h>
 #include <language/duchain/duchainlock.h>
@@ -37,6 +36,9 @@
 
 #include "duchain/helpers.h"
 #include "parser/codehelpers.h"
+
+#include <QDebug>
+#include "codegendebug.h"
 
 using namespace KDevelop;
 
@@ -67,7 +69,7 @@ void TypeCorrection::doContextMenu(ContextMenuExtension &extension, Context *con
                                  && declaration->abstractType()->whichType() == AbstractType::TypeFunction)) ) {
             QAction* action = new QAction(i18n("Specify type for \"%1\"...", declaration->qualifiedIdentifier().toString()), 0);
             action->setData(QVariant::fromValue(IndexedDeclaration(declaration)));
-            action->setIcon(KIcon("code-class"));
+            action->setIcon(QIcon::fromTheme("code-class"));
             connect(action, SIGNAL(triggered(bool)), this, SLOT(executeSpecifyTypeAction()));
 
             extension.addAction(ContextMenuExtension::ExtensionGroup, action);
@@ -79,7 +81,7 @@ void TypeCorrection::executeSpecifyTypeAction()
 {
     QAction* action = qobject_cast<QAction*>(sender());
     if ( ! action ) {
-        kWarning() << "slot not invoked by triggering a QAction, should not happen"; // :)
+        qCWarning(KDEV_PYTHON_CODEGEN) << "slot not invoked by triggering a QAction, should not happen"; // :)
         return;
     }
 
@@ -90,7 +92,7 @@ void TypeCorrection::executeSpecifyTypeAction()
     }
 
     if ( ! decl.isValid() ) {
-        kWarning() << "No declaration found!";
+        qCWarning(KDEV_PYTHON_CODEGEN) << "No declaration found!";
         return;
     }
 
@@ -102,7 +104,7 @@ void TypeCorrection::executeSpecifyTypeAction()
         hintType = CorrectionFileGenerator::LocalVariableHint;
     }
     else {
-        kWarning() << "Correction requested for something that's not a local variable or function.";
+        qCWarning(KDEV_PYTHON_CODEGEN) << "Correction requested for something that's not a local variable or function.";
         return;
     }
 
@@ -133,7 +135,7 @@ void TypeCorrection::accepted()
     CorrectionAssistant *dialog = qobject_cast<CorrectionAssistant*>(sender());
     Q_ASSERT(dialog);
     if ( ! dialog ) {
-        kWarning() << "accepted() called without a sender";
+        qCWarning(KDEV_PYTHON_CODEGEN) << "accepted() called without a sender";
         return;
     }
 
@@ -147,11 +149,11 @@ void TypeCorrection::accepted()
     }
 
     if ( ! decl.isValid() ) {
-        kWarning() << "No declaration found!";
+        qCWarning(KDEV_PYTHON_CODEGEN) << "No declaration found!";
         return;
     }
 
-    KUrl correctionFile = Helper::getLocalCorrectionFile(decl.data()->topContext()->url().toUrl());
+    auto correctionFile = Helper::getLocalCorrectionFile(decl.data()->topContext()->url().toUrl());
     if ( correctionFile.isEmpty() ) {
         KMessageBox::error(0, i18n("Sorry, cannot create hints for files which are not part of a project."));
         return;
@@ -162,7 +164,7 @@ void TypeCorrection::accepted()
 
     generator.addHint(m_ui->typeText->text(), m_ui->importsText->text().split(',', QString::SkipEmptyParts), decl.data(), hintType);
 
-    kDebug() << "Forcing a reparse on " << decl.data()->topContext()->url();
+    qCDebug(KDEV_PYTHON_CODEGEN) << "Forcing a reparse on " << decl.data()->topContext()->url();
     ICore::self()->languageController()->backgroundParser()->addDocument(IndexedString(decl.data()->topContext()->url()),
                                                                          TopDUContext::ForceUpdate);
     ICore::self()->languageController()->backgroundParser()->addDocument(IndexedString(correctionFile),
@@ -173,11 +175,11 @@ CorrectionFileGenerator::CorrectionFileGenerator(const QString &filePath)
     : m_file(filePath)
 {
     Q_ASSERT(! filePath.isEmpty());
-    kDebug() << "Correction file path: " << filePath;
+    qCDebug(KDEV_PYTHON_CODEGEN) << "Correction file path: " << filePath;
 
     QFileInfo info(m_file);
     if ( ! info.absoluteDir().exists() ) {
-        kDebug() << "Directory does not exist. Creating...";
+        qCDebug(KDEV_PYTHON_CODEGEN) << "Directory does not exist. Creating...";
         info.absoluteDir().mkpath(info.absolutePath());
     }
 
@@ -192,7 +194,7 @@ void CorrectionFileGenerator::addHint(const QString &typeCode, const QStringList
                                       CorrectionFileGenerator::HintType hintType)
 {
     if ( ! forDeclaration || ! forDeclaration->context() ) {
-        kWarning() << "Declaration does not have context!" << (forDeclaration ? forDeclaration->toString() : "");
+        qCWarning(KDEV_PYTHON_CODEGEN) << "Declaration does not have context!" << (forDeclaration ? forDeclaration->toString() : "");
         return;
     }
 
@@ -216,8 +218,8 @@ void CorrectionFileGenerator::addHint(const QString &typeCode, const QStringList
     bool inFunction = context->type() == DUContext::Function
             || (context->owner() && context->owner()->abstractType()->whichType() == AbstractType::TypeFunction);
 
-    kDebug() << "Are we in a class: " << inClass;
-    kDebug() << "Are we in a function: " << inFunction;
+    qCDebug(KDEV_PYTHON_CODEGEN) << "Are we in a class: " << inClass;
+    qCDebug(KDEV_PYTHON_CODEGEN) << "Are we in a function: " << inFunction;
 
     QString enclosingClassIdentifier, enclosingFunctionIdentifier;
 
@@ -236,8 +238,8 @@ void CorrectionFileGenerator::addHint(const QString &typeCode, const QStringList
         }
     }
 
-    kDebug() << "Enclosing class: " << enclosingClassIdentifier;
-    kDebug() << "Enclosing function: " << enclosingFunctionIdentifier;
+    qCDebug(KDEV_PYTHON_CODEGEN) << "Enclosing class: " << enclosingClassIdentifier;
+    qCDebug(KDEV_PYTHON_CODEGEN) << "Enclosing function: " << enclosingFunctionIdentifier;
 
     QString declarationIdentifier = forDeclaration->identifier().identifier().str();
 
@@ -269,9 +271,9 @@ void CorrectionFileGenerator::addHint(const QString &typeCode, const QStringList
         foundClassDeclaration = true;
     }
 
-    kDebug() << "Found class declaration: " << foundClassDeclaration << enclosingClassIdentifier;
-    kDebug() << "Found function declaration: " << foundFunctionDeclaration << functionIdentifier;
-    kDebug() << "Line: " << line;
+    qCDebug(KDEV_PYTHON_CODEGEN) << "Found class declaration: " << foundClassDeclaration << enclosingClassIdentifier;
+    qCDebug(KDEV_PYTHON_CODEGEN) << "Found function declaration: " << foundFunctionDeclaration << functionIdentifier;
+    qCDebug(KDEV_PYTHON_CODEGEN) << "Line: " << line;
 
     int indentsForNextStatement = m_fileIndents->indentForLine(line);
 
@@ -322,7 +324,7 @@ void CorrectionFileGenerator::addHint(const QString &typeCode, const QStringList
     else if ( hintType == LocalVariableHint ) {
         hintCode = "l_" + declarationIdentifier + " = " + typeCode;
     }
-    kDebug() << "Hint code: " << hintCode;
+    qCDebug(KDEV_PYTHON_CODEGEN) << "Hint code: " << hintCode;
     hintCode.prepend(QString(indentsForNextStatement, ' '));
     newCode.append(hintCode);
 
@@ -351,8 +353,8 @@ void CorrectionFileGenerator::addHint(const QString &typeCode, const QStringList
 
     QTemporaryFile temp;
     if ( checkForValidSyntax() && temp.open() ) {
-        kDebug() << "File path: " << m_file.fileName();
-        kDebug() << "Temporary file path: " << temp.fileName();
+        qCDebug(KDEV_PYTHON_CODEGEN) << "File path: " << m_file.fileName();
+        qCDebug(KDEV_PYTHON_CODEGEN) << "Temporary file path: " << temp.fileName();
         QTextStream stream(&temp);
         stream << m_code.join("\n");
         m_fileIndents.reset(new FileIndentInformation(m_code));
@@ -362,7 +364,7 @@ void CorrectionFileGenerator::addHint(const QString &typeCode, const QStringList
         success = success ? QFile::rename(temp.fileName(), m_file.fileName()) : false;
 
         if ( success && m_file.open(QFile::ReadWrite) ) {
-            kDebug() << "Successfully saved correction file.";
+            qCDebug(KDEV_PYTHON_CODEGEN) << "Successfully saved correction file.";
 
             m_oldContents = m_code;
         }
@@ -371,7 +373,7 @@ void CorrectionFileGenerator::addHint(const QString &typeCode, const QStringList
         }
     }
     else {
-        kDebug() << "Something went wrong, reverting changes to correction file";
+        qCDebug(KDEV_PYTHON_CODEGEN) << "Something went wrong, reverting changes to correction file";
         m_code = m_oldContents;
     }
 }

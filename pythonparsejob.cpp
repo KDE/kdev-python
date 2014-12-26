@@ -26,22 +26,27 @@
 #include "pythonlanguagesupport.h"
 #include "declarationbuilder.h"
 #include "usebuilder.h"
+#include "checks/controlflowgraphbuilder.h"
+#include "checks/dataaccessvisitor.h"
 #include "kshell.h"
 
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/duchain.h>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/dumpdotgraph.h>
-#include <language/duchain/indexedstring.h>
+#include <serialization/indexedstring.h>
 #include <language/duchain/duchainutils.h>
 #include <language/backgroundparser/urlparselock.h>
 #include <language/backgroundparser/backgroundparser.h>
 #include <language/highlighting/codehighlighting.h>
 #include <language/interfaces/iastcontainer.h>
+#include <language/checks/controlflowgraph.h>
+#include <language/checks/dataaccessrepository.h>
 #include <interfaces/ilanguage.h>
 #include <interfaces/icore.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <interfaces/idocumentcontroller.h>
+#include <util/foregroundlock.h>
 
 #include <ktexteditor/document.h>
 
@@ -50,7 +55,7 @@
 #include <QThread>
 #include <QProcess>
 #include <QTemporaryFile>
-#include <kdebug.h>
+#include <QDebug>
 #include <klocale.h>
 #include <KConfigGroup>
 
@@ -62,7 +67,6 @@ namespace Python
 ParseJob::ParseJob(const IndexedString &url, ILanguageSupport* languageSupport)
         : KDevelop::ParseJob(url, languageSupport)
         , m_ast(0)
-        , m_readFromDisk(false)
         , m_duContext(0)
 {
 }
@@ -77,12 +81,8 @@ CodeAst *ParseJob::ast() const
     return m_ast.data();
 }
 
-bool ParseJob::wasReadFromDisk() const
-{
-    return m_readFromDisk;
-}
 
-void ParseJob::run()
+void ParseJob::run(ThreadWeaver::JobPointer self, ThreadWeaver::Thread* thread)
 {
     if ( abortRequested() || ICore::self()->shuttingDown() ) {
         return abortJob();
@@ -126,25 +126,22 @@ void ParseJob::run()
         toUpdate->setRange(RangeInRevision(0, 0, INT_MAX, INT_MAX));
     }
     
-    KSharedPtr<ParseSession> currentSession(new ParseSession());
-    currentSession->setContents(QString::fromUtf8(contents().contents));
-    currentSession->setCurrentDocument(document());
+    m_currentSession = new ParseSession();
+    m_currentSession->setContents(QString::fromUtf8(contents().contents));
+    m_currentSession->setCurrentDocument(document());
     
     // call the python API and the AST transformer to populate the syntax tree
-    QPair<CodeAst::Ptr, bool> parserResults = currentSession->parse();
+    QPair<CodeAst::Ptr, bool> parserResults = m_currentSession->parse();
     m_ast = parserResults.first;
-    
-    QSharedPointer<PythonEditorIntegrator> editor = QSharedPointer<PythonEditorIntegrator>(
-        new PythonEditorIntegrator(currentSession.data())
-    );
+
+    auto editor = QSharedPointer<PythonEditorIntegrator>(new PythonEditorIntegrator(m_currentSession.data()));
     // if parsing succeeded, continue and do semantic analysis
     if ( parserResults.second )
     {
         // set up the declaration builder, it gets the parsePriority so it can re-schedule imported files with a better priority
-        DeclarationBuilder builder(editor.data());
-        builder.m_ownPriority = parsePriority();
-        builder.m_currentlyParsedDocument = document();
-        builder.m_futureModificationRevision = contents().modification;
+        DeclarationBuilder builder(editor.data(), parsePriority());
+        builder.setCurrentlyParsedDocument(document());
+        builder.setFutureModificationRevision(contents().modification);
 
         // Run the declaration builder. If necessary, it will run itself again.
         m_duContext = builder.build(document(), m_ast.data(), toUpdate.data());
@@ -156,18 +153,18 @@ void ParseJob::run()
         
         // gather uses of variables and functions on the document
         UseBuilder usebuilder(editor.data());
-        usebuilder.m_currentlyParsedDocument = document();
+        usebuilder.setCurrentlyParsedDocument(document());
         usebuilder.buildUses(m_ast.data());
         
         // check whether any unresolved imports were encountered
-        bool needsReparse = ! builder.m_unresolvedImports.isEmpty();
-        kDebug() << "Document needs update because of unresolved identifiers: " << needsReparse;
+        bool needsReparse = ! builder.unresolvedImports().isEmpty();
+        qDebug() << "Document needs update because of unresolved identifiers: " << needsReparse;
         if ( needsReparse ) {
             // check whether one of the imports is queued for parsing, this is to avoid deadlocks
             // it's also ok if the duchain is now available (and thus has been parsed before already)
             bool dependencyInQueue = false;
-            DUChainWriteLocker lock(DUChain::lock());
-            foreach ( const IndexedString& url, builder.m_unresolvedImports ) {
+            DUChainWriteLocker lock;
+            foreach ( const IndexedString& url, builder.unresolvedImports() ) {
                 dependencyInQueue = KDevelop::ICore::self()->languageController()->backgroundParser()->isQueued(url);
                 dependencyInQueue = dependencyInQueue || DUChain::self()->chainForDocument(url);
                 if ( dependencyInQueue ) {
@@ -193,7 +190,7 @@ void ParseJob::run()
             DUChain::self()->updateContextEnvironment(m_duContext, parsingEnvironmentFile.data());
         }
         
-        kDebug() << "---- Parsing Succeeded ----";
+        qDebug() << "---- Parsing Succeeded ----";
         
         if ( abortRequested() ) {
             return abortJob();
@@ -204,7 +201,7 @@ void ParseJob::run()
     }
     else {
         // No syntax tree was received from the parser, the expected reason for this is a syntax error in the document.
-        kWarning() << "---- Parsing FAILED ----";
+        qWarning() << "---- Parsing FAILED ----";
         DUChainWriteLocker lock;
         m_duContext = toUpdate.data();
         // if there's already a chain for the document, do some cleanup.
@@ -235,7 +232,7 @@ void ParseJob::run()
     
     // The parser might have given us some syntax errors, which are now added to the document.
     DUChainWriteLocker lock;
-    foreach ( const ProblemPointer& p, currentSession->m_problems ) {
+    foreach ( const ProblemPointer& p, m_currentSession->m_problems ) {
         m_duContext->addProblem(p);
     }
 
@@ -244,11 +241,33 @@ void ParseJob::run()
     
     if ( minimumFeatures() & TopDUContext::AST ) {
         DUChainWriteLocker lock;
-        currentSession->ast = m_ast;
-        m_duContext->setAst(KSharedPtr<IAstContainer>::staticCast(currentSession));
+        m_currentSession->ast = m_ast;
+        m_duContext->setAst(QExplicitlySharedDataPointer<IAstContainer>(m_currentSession.data()));
     }
     
     setDuChain(m_duContext);
+}
+
+ControlFlowGraph* ParseJob::controlFlowGraph()
+{
+    if ( ! m_currentSession ) {
+        return nullptr;
+    }
+    auto graph = new ControlFlowGraph();
+    ControlFlowGraphBuilder builder(m_duContext, graph, m_currentSession);
+    builder.visitNode(m_ast.data());
+    return graph;
+}
+
+DataAccessRepository* ParseJob::dataAccessInformation()
+{
+    if ( ! m_currentSession ) {
+        return nullptr;
+    }
+    auto repo = new DataAccessRepository();
+    DataAccessVisitor builder(m_duContext, repo, m_currentSession);
+    builder.visitNode(m_ast.data());
+    return repo;
 }
 
 void ParseJob::eventuallyDoPEP8Checking(const IndexedString document, TopDUContext* topContext)
@@ -267,7 +286,7 @@ void ParseJob::eventuallyDoPEP8Checking(const IndexedString document, TopDUConte
         DUChainWriteLocker lock;
         topContext->setFeatures((TopDUContext::Features) ( topContext->features() | PEP8Checking ));
     }
-    kDebug() << "doing pep8 checking";
+    qDebug() << "doing pep8 checking";
     // TODO that's not very elegant, better would be making pep8 read from stdin -- but it doesn't support that atm
     QTemporaryFile tempfile;
     tempfile.open();
@@ -304,12 +323,12 @@ void ParseJob::eventuallyDoPEP8Checking(const IndexedString document, TopDUConte
                 int lineno = texts.at(2).toInt(&lineno_ok);
                 int colno = texts.at(3).toInt(&colno_ok);
                 if ( ! lineno_ok || ! colno_ok ) {
-                    kDebug() << "invalid line / col number:" << texts;
+                    qDebug() << "invalid line / col number:" << texts;
                     continue;
                 }
                 QString error = texts.at(4);
                 KDevelop::Problem *p = new KDevelop::Problem();
-                p->setFinalLocation(DocumentRange(document, SimpleRange(lineno - 1, qMax(colno - 4, 0),
+                p->setFinalLocation(DocumentRange(document, KTextEditor::Range(lineno - 1, qMax(colno - 4, 0),
                                                                         lineno - 1, colno + 4)));
                 p->setSource(KDevelop::ProblemData::Preprocessor);
                 p->setSeverity(KDevelop::ProblemData::Warning);
@@ -318,14 +337,14 @@ void ParseJob::eventuallyDoPEP8Checking(const IndexedString document, TopDUConte
                 topContext->addProblem(ptr);
             }
             else {
-                kDebug() << "invalid pep8 error line:" << error;
+                qDebug() << "invalid pep8 error line:" << error;
             }
         }
     }
     if ( error ) {
         DUChainWriteLocker lock;
         KDevelop::Problem *p = new KDevelop::Problem();
-        p->setFinalLocation(DocumentRange(document, SimpleRange(0, 0, 0, 0)));
+        p->setFinalLocation(DocumentRange(document, KTextEditor::Range(0, 0, 0, 0)));
         p->setSource(KDevelop::ProblemData::Preprocessor);
         p->setSeverity(KDevelop::ProblemData::Warning);
         p->setDescription(i18n("The selected PEP8 syntax checker \"%1\" does not seem to work correctly.", url));

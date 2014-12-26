@@ -4,7 +4,7 @@
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
+    the Free Software Foundation, either version 2 of the License, or
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
@@ -32,13 +32,14 @@
 #include <language/duchain/types/typealiastype.h>
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/types/indexedtype.h>
+#include <language/duchain/types/typepointer.h>
 
 namespace Python {
 
 class KDEVPYTHONDUCHAIN_EXPORT UnsureType : public KDevelop::UnsureType
 {
 public:
-    typedef TypePtr<UnsureType> Ptr;
+    typedef KDevelop::TypePtr<UnsureType> Ptr;
     
     UnsureType();
     UnsureType(const UnsureType& rhs);

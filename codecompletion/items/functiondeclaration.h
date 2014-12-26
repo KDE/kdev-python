@@ -37,15 +37,17 @@ public:
     virtual int atArgument() const;
     void setAtArgument(int d);
     void setDepth(int d);
-    void setIsImportItem(bool isImportItem);
+    void setDoNotCall(bool doNotCall);
     
     virtual QVariant data(const QModelIndex& index, int role, const CodeCompletionModel* model) const;
     
-    virtual void executed(KTextEditor::Document* document, const KTextEditor::Range& word);
+    virtual void executed(KTextEditor::View* view, const KTextEditor::Range& word) override;
 private:
     int m_atArgument;
     int m_depth;
-    bool m_isImportItem;
+    // indicates that no parentheses should be added when executing this item,
+    // e.g. for import completion or inheritance
+    bool m_doNotCall;
 };
 
 }

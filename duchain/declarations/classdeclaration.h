@@ -21,7 +21,7 @@
 #define PYTHONCLASSDECLARATION_H
 
 #include <language/duchain/classdeclaration.h>
-#include <language/duchain/indexedstring.h>
+#include <serialization/indexedstring.h>
 
 #include "pythonduchainexport.h"
 #include "decorator.h"

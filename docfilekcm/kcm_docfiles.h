@@ -17,15 +17,18 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>. *
  ************************************************************************/
 
-#ifndef KCM_CUSTOMBUILDSYSTEM_H
-#define KCM_CUSTOMBUILDSYSTEM_H
+#ifndef KCM_PY_DOCFILES_H
+#define KCM_PY_DOCFILES_H
 #include <KCModule>
 #include <QUrl>
+
+#include <KPluginFactory>
 
 class DocfileManagerWidget;
 
 class DocfilesKCModule : public KCModule
 {
+Q_OBJECT
 public:
     DocfilesKCModule( QWidget* parent, const QVariantList& args = QVariantList() );
     virtual ~DocfilesKCModule();

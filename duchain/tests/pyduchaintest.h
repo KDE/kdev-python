@@ -27,7 +27,7 @@
 
 #include <QObject>
 #include "ast.h"
-#include <language/duchain/indexedstring.h>
+#include <serialization/indexedstring.h>
 #include <language/duchain/topducontext.h>
 #include <tests/testfile.h>
 
@@ -84,9 +84,18 @@ class PyDUChainTest : public QObject
         void testRelativeImport();
         void testRelativeImport_data();
         void testCannotOverwriteBuiltins();
+        void testFunctionHints();
+        void testFunctionHints_data();
         void testCannotOverwriteBuiltins_data();
         void testOperators();
         void testOperators_data();
+        void testVariableCreation();
+        void testVariableCreation_data();
+        void testProblemCount();
+        void testProblemCount_data();
+        void testHintedTypes();
+        void testHintedTypes_data();
+
 
     private:
         QList<KDevelop::TestFile*> createdFiles;

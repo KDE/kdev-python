@@ -18,11 +18,10 @@
  *****************************************************************************
  */
 #include "parsesession.h"
-
-#include <KDebug>
-#include <language/duchain/indexedstring.h>
-
 #include "astbuilder.h"
+
+#include <QDebug>
+#include "parserdebug.h"
 
 using namespace KDevelop;
 
@@ -81,11 +80,11 @@ QPair<CodeAst::Ptr, bool> ParseSession::parse()
     
     if( matched.second )
     {
-        kDebug() << "Sucessfully parsed";
+        qCDebug(KDEV_PYTHON_PARSER) << "Sucessfully parsed";
     }else
     {
         matched.first.clear();
-        kDebug() << "Couldn't parse content";
+        qCDebug(KDEV_PYTHON_PARSER) << "Couldn't parse content";
     }
     return matched;
 }

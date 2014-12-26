@@ -19,8 +19,6 @@
 
 #include "declarationnavigationcontext.h"
 
-#include <QtGui/QTextDocument>
-
 #include <klocale.h>
 #include <klocalizedstring.h>
 
@@ -28,9 +26,12 @@
 #include <language/duchain/namespacealiasdeclaration.h>
 #include <language/duchain/forwarddeclaration.h>
 #include <language/duchain/duchainutils.h>
-#include <types/variablelengthcontainer.h>
 #include <language/duchain/types/typepointer.h>
 #include <language/duchain/aliasdeclaration.h>
+
+#include <language/duchain/types/containertypes.h>
+
+#include "helpers.h"
 
 namespace Python
 {
@@ -50,12 +51,13 @@ QString DeclarationNavigationContext::getLink(const QString& name, DeclarationPo
 void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, const IdentifiedType* idType)
 {
     // TODO this code is duplicate of variablelengthcontainer::toString, resolve that somehow
-    if ( VariableLengthContainer::Ptr t = VariableLengthContainer::Ptr::dynamicCast(type) ) {
+    if ( auto t = ListType::Ptr::dynamicCast(type) ) {
+        auto map = MapType::Ptr::dynamicCast(t);
         const QString containerType = getLink(t->containerToString(), DeclarationPointer(idType->declaration(m_topContext.data())), NavigationAction::NavigateDeclaration );
         QString contentType;
-        if ( t->hasKeyType() ) {
-            if ( AbstractType::Ptr key = t->keyType().abstractType() ) {
-                IdentifiedType* identifiedKey = dynamic_cast<IdentifiedType*>(key.unsafeData());
+        if ( map ) {
+            if ( auto key = map->keyType().abstractType() ) {
+                IdentifiedType* identifiedKey = dynamic_cast<IdentifiedType*>(key.data());
                 if ( identifiedKey ) {
                     contentType.append(getLink(key->toString(), DeclarationPointer(
                         identifiedKey->declaration(m_topContext.data())),
@@ -69,7 +71,7 @@ void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, co
             }
         }
         if ( AbstractType::Ptr contents = t->contentType().abstractType() ) {
-            IdentifiedType* identifiedContent = dynamic_cast<IdentifiedType*>(contents.unsafeData());
+            IdentifiedType* identifiedContent = dynamic_cast<IdentifiedType*>(contents.data());
             if ( identifiedContent ) {
                 contentType.append(getLink(contents->toString(), DeclarationPointer(
                     identifiedContent->declaration(m_topContext.data())),
@@ -90,9 +92,9 @@ void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, co
     }
 }
 
-QString DeclarationNavigationContext::html(bool shorten)
+void DeclarationNavigationContext::eventuallyMakeTypeLinks(AbstractType::Ptr type)
 {
-    return KDevelop::AbstractDeclarationNavigationContext::html(shorten).replace("__kdevpythondocumentation_builtin_", "");
+    KDevelop::AbstractDeclarationNavigationContext::eventuallyMakeTypeLinks(Helper::resolveAliasType(type));
 }
 
 }

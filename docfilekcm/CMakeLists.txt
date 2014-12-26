@@ -4,16 +4,19 @@ set(kcm_docfiles_SRCS
     kcm_docfiles.cpp
 )
 
-kde4_add_plugin(kcm_docfiles ${kcm_docfiles_SRCS})
+add_library(kcm_docfiles MODULE ${kcm_docfiles_SRCS})
 
 target_link_libraries(kcm_docfiles
-    ${KDE4_KIO_LIBS}
-    ${KDEVPLATFORM_INTERFACES_LIBRARIES}
-    ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
-    ${KDEVPLATFORM_PROJECT_LIBRARIES}
-    ${KDEVPLATFORM_UTIL_LIBRARIES}
-    ${KDE4_KNEWSTUFF3_LIBS}
-    ${KDEVPLATFORM_INTERFACES_LIBRARIES}
+    KF5::KIOCore
+    KF5::Archive
+    KF5::KCMUtils
+    KF5::NewStuff
+    KF5::KDELibs4Support
+    KDev::Interfaces
+    KDev::Language
+    KDev::Project
+    KDev::Util
+    KDev::Interfaces
 )
 
 install(TARGETS kcm_docfiles

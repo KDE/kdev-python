@@ -9,16 +9,18 @@ Notes
 This is a collection of notes about what might be of interest,
 related to packaging.
 
+Conflict with other versions (IMPORTANT)
+----------------------------------------
+The python3 version of kdev-python can NOT be installed alongside other versions.
+Please ensure that a package containing the e.g. 1.6 release conflicts with
+a package containing 1.6-py3.
+I am working on eventually lifting this annoyance in the future.
+
 Python fork
 -----------
-kdev-python currently contains a fork of Python 2.7.2 with some custom
-adjustments. The fork is contained in the python-src/ subdirectory.
-Only the parser of that fork is being built, and the language plugin
-links against the resulting library. You can currently NOT replace
-that library by the vanilla libpython.so library.
-I'm aware that this situation is very undesirable, and measures have
-been taken to get rid of the fork: With the release of Python 3.4,
-the fork can be removed.
+This branch, which contains the python3 version of kdev-python, does no longer
+contain a fork of python. Instead, it links against your system's python.
+Python is both a build- and a runtime dependency of this program.
 
 documentation_data directory
 ----------------------------
@@ -27,3 +29,12 @@ It MUST be packaged together with the program, as it contains runtime
 data which is necessary for the program to work correctly (such as
 representations of python's built-in data types, which are then read
 by the parser etc.).
+
+Licensing notes
+---------------
+The following files are not copyrighted:
+Everything in duchain/tests/data/
+Everything in documentation_files/
+Everything in correction_files/
+Everything in app_templates/
+example_ast.py

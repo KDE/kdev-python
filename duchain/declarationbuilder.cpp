@@ -22,7 +22,7 @@
 #include "duchain/declarations/decorator.h"
 #include "duchain/declarations/functiondeclaration.h"
 #include "duchain/declarations/classdeclaration.h"
-#include "types/variablelengthcontainer.h"
+
 #include "types/hintedtype.h"
 #include "types/unsuretype.h"
 #include "types/indexedcontainer.h"
@@ -31,6 +31,7 @@
 #include "pythoneditorintegrator.h"
 #include "helpers.h"
 #include "assistants/missingincludeassistant.h"
+#include "correctionhelper.h"
 
 #include <language/duchain/functiondeclaration.h>
 #include <language/duchain/declaration.h>
@@ -47,7 +48,11 @@
 
 #include <QByteArray>
 #include <QtGlobal>
-#include <KUrl>
+
+#include <QDebug>
+#include "duchaindebug.h"
+
+#include <functional>
 
 using namespace KTextEditor;
 using namespace KDevelop;
@@ -55,12 +60,12 @@ using namespace KDevelop;
 namespace Python
 {
 
-DeclarationBuilder::DeclarationBuilder(PythonEditorIntegrator* editor)
-        : DeclarationBuilderBase( )
-        , m_ownPriority(0)
+DeclarationBuilder::DeclarationBuilder(Python::PythonEditorIntegrator* editor, int ownPriority)
+    : DeclarationBuilderBase()
+    , m_ownPriority(ownPriority)
 {
     setEditor(editor);
-    kDebug() << "Building Declarations";
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "Building Declarations";
 }
 
 DeclarationBuilder:: ~DeclarationBuilder()
@@ -86,20 +91,25 @@ ReferencedTopDUContext DeclarationBuilder::build(const IndexedString& url, Ast* 
     // The declaration builder needs to run twice, so it can resolve uses of e.g. functions
     // which are called before they are defined (which is easily possible, due to python's dynamic nature).
     if ( ! m_prebuilding ) {
-        kDebug() << "building, but running pre-builder first";
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "building, but running pre-builder first";
         DeclarationBuilder* prebuilder = new DeclarationBuilder(editor());
         prebuilder->m_ownPriority = m_ownPriority;
         prebuilder->m_currentlyParsedDocument = currentlyParsedDocument();
         prebuilder->setPrebuilding(true);
         prebuilder->m_futureModificationRevision = m_futureModificationRevision;
         updateContext = prebuilder->build(url, node, updateContext);
-        kDebug() << "pre-builder finished";
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "pre-builder finished";
         delete prebuilder;
     }
     else {
-        kDebug() << "prebuilding";
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "prebuilding";
     }
     return DeclarationBuilderBase::build(url, node, updateContext);
+}
+
+int DeclarationBuilder::jobPriority() const
+{
+    return m_ownPriority;
 }
 
 void DeclarationBuilder::closeDeclaration()
@@ -150,30 +160,32 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, 
         return visitVariableDeclaration<T>(static_cast<Identifier*>(node), 0, previous, type);
     }
     else {
-        kWarning() << "cannot create variable declaration for non-(name|identifier) AST, this is a programming error";
+        qCWarning(KDEV_PYTHON_DUCHAIN) << "cannot create variable declaration for non-(name|identifier) AST, this is a programming error";
         return static_cast<T*>(0);
     }
 }
 
-template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, RangeInRevision range, AbstractType::Ptr type)
+template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, RangeInRevision range,
+                                                                     AbstractType::Ptr type)
 {
-    Ast* pseudo = new Ast();
-    pseudo->startLine = range.start.line; pseudo->startCol = range.start.column;
-    pseudo->endLine = range.end.line; pseudo->endCol = range.end.column;
-    T* result = visitVariableDeclaration<T>(node, pseudo, 0, type);
-    delete pseudo;
+    Ast pseudo;
+    pseudo.startLine = range.start.line; pseudo.startCol = range.start.column;
+    pseudo.endLine = range.end.line; pseudo.endCol = range.end.column;
+    T* result = visitVariableDeclaration<T>(node, &pseudo, 0, type);
     return result;
 }
 
 QList< Declaration* > DeclarationBuilder::existingDeclarationsForNode(Identifier* node)
 {
-    QList<Declaration*> existingDeclarations = currentContext()->findDeclarations(identifierForNode(node).last(),  // <- WARNING first / last?
-                                                                CursorInRevision::invalid(), 0,
-                                                                (DUContext::SearchFlag) ( DUContext::DontSearchInParent | DUContext::DontResolveAliases) );
+    QList<Declaration*> existingDeclarations = currentContext()->findDeclarations(
+        identifierForNode(node).last(), CursorInRevision::invalid(), 0,
+        (DUContext::SearchFlag) (DUContext::DontSearchInParent | DUContext::DontResolveAliases)
+    );
     // append arguments context
     if ( m_mostRecentArgumentsContext ) {
-        QList<Declaration*> args = m_mostRecentArgumentsContext->findDeclarations(identifierForNode(node).last(),
-                                                                                  CursorInRevision::invalid(), 0, DUContext::DontSearchInParent);
+        QList<Declaration*> args = m_mostRecentArgumentsContext->findDeclarations(
+            identifierForNode(node).last(), CursorInRevision::invalid(), 0, DUContext::DontSearchInParent
+        );
         existingDeclarations.append(args);
     }
     return existingDeclarations;
@@ -192,8 +204,9 @@ DeclarationBuilder::FitDeclarationType DeclarationBuilder::kindForType(AbstractT
     return InstanceDeclarationType;
 }
 
-template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclaration(QList<Declaration*> declarations, FitDeclarationType mustFitType,
-                                                                                      RangeInRevision updateRangeTo, Declaration** ok)
+template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclaration(
+    QList<Declaration*> declarations, FitDeclarationType mustFitType,
+    RangeInRevision updateRangeTo, Declaration** ok )
 {
     // Search for a declaration from a previous parse pass which should be re-used
     QList<Declaration*> remainingDeclarations;
@@ -202,7 +215,7 @@ template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclar
         Declaration* fitting = dynamic_cast<T*>(d);
         if ( ! fitting ) {
             // Only use a declaration if the type matches
-            kDebug() << "skipping" << d->toString() << "which could not be cast to the requested type";
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "skipping" << d->toString() << "which could not be cast to the requested type";
             continue;
         }
         // Do not use declarations which have been encountered previously;
@@ -225,10 +238,10 @@ template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclar
                 break;
             }
             else {
-                kDebug() << "Not opening previously existing declaration because it's in another top context";
+                qCDebug(KDEV_PYTHON_DUCHAIN) << "Not opening previously existing declaration because it's in another top context";
             }
         }
-        else if ( fitting && ! invalidType ) {
+        else if ( ! invalidType ) {
             remainingDeclarations << d;
         }
     }
@@ -238,7 +251,7 @@ template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclar
 typedef QPair<Declaration*, int> p;
 template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast* originalAst, Declaration* previous, AbstractType::Ptr type)
 {
-    DUChainWriteLocker lock(DUChain::lock());
+    DUChainWriteLocker lock;
     Ast* rangeNode = originalAst ? originalAst : node;
     RangeInRevision range = editorFindRange(rangeNode, rangeNode);
     
@@ -271,9 +284,10 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     // tells whether there's fitting declarations to update (update is not the same as re-open! one is for
     // code which uses the same variable twice, the other is for multiple passes of the parser)
     bool haveFittingDeclaration = false;
-    if ( ! existingDeclarations.isEmpty() and existingDeclarations.last() ) {
+    if ( ! existingDeclarations.isEmpty() && existingDeclarations.last() ) {
         Declaration* d = Helper::resolveAliasDeclaration(existingDeclarations.last());
-        if ( d and d->topContext() != topContext() ) {
+        DUChainReadLocker lock;
+        if ( d && d->topContext() != topContext() ) {
             inSameTopContext = false;
         }
         if ( dynamic_cast<T*>(existingDeclarations.last()) ) {
@@ -283,7 +297,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     if ( currentContext() && currentContext()->type() == DUContext::Class && ! haveFittingDeclaration ) {
         // If the current context is a class, then this is a class member variable.
         if ( ! dec ) {
-            dec = openDeclaration<ClassMemberDeclaration>(node, originalAst ? originalAst : node);
+            dec = openDeclaration<ClassMemberDeclaration>(identifierForNode(node), range);
             Q_ASSERT(! declarationOpened);
             declarationOpened = true;
         }
@@ -294,15 +308,11 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         dec->setKind(KDevelop::Declaration::Instance);
     } else if ( ! haveFittingDeclaration ) {
         // This name did not previously appear in the user code, so a new variable is declared
-        RangeInRevision range = editorFindRange(rangeNode, rangeNode);
         // check whether a declaration from a previous parser pass must be updated
         if ( ! dec ) {
-            dec = openDeclaration<T>(node, rangeNode);
+            dec = openDeclaration<T>(identifierForNode(node), range);
             Q_ASSERT(! declarationOpened);
             declarationOpened = true;
-        }
-        else {
-            dec->setRange(range);
         }
         if ( declarationOpened ) {
             DeclarationBuilderBase::closeDeclaration();
@@ -312,12 +322,13 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         if ( currentContext()->type() == DUContext::Function ) {
             // check for argument type hints (those are created when calling functions)
             AbstractType::Ptr hints = Helper::extractTypeHints(dec->abstractType(), topContext());
-            if ( hints.cast<IndexedContainer>() || hints.cast<VariableLengthContainer>() ) {
+            qCDebug(KDEV_PYTHON_DUCHAIN) << hints->toString();
+            if ( hints.cast<IndexedContainer>() || hints.cast<ListType>() ) {
                 // This only happens when the type hint is a tuple, which means the vararg/kwarg of a function is being processed.
                 newType = hints;
             }
             else {
-                newType = Helper::mergeTypes(hints, type, topContext());
+                newType = Helper::mergeTypes(hints, type);
             }
         }
         else {
@@ -335,7 +346,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         if ( newType ) {
             if ( currentType && currentType->indexed() != newType->indexed() ) {
                 // If the previous and new type are different, use an unsure type
-                dec->setType(Helper::mergeTypes(currentType, newType, topContext()));
+                dec->setType(Helper::mergeTypes(currentType, newType));
             }
             else {
                 // If no type was set previously, use only the new one.
@@ -343,9 +354,9 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
             }
         }
     }
-    
+
     T* result = dynamic_cast<T*>(dec);
-    if ( ! result ) kWarning() << "variable declaration does not have the expected type";
+    if ( ! result ) qCWarning(KDEV_PYTHON_DUCHAIN) << "variable declaration does not have the expected type";
     return result;
 }
 
@@ -358,105 +369,81 @@ void DeclarationBuilder::visitCode(CodeAst* node)
 
 void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
 {
-    if ( node->name && node->name->astType == Ast::NameAstType ) {
+    if ( node->name ) {
         // Python allows to assign the caught exception to a variable; create that variable if required.
-        ExpressionVisitor v(currentContext(), editor());
+        ExpressionVisitor v(currentContext());
         v.visitNode(node->type);
         visitVariableDeclaration<Declaration>(node->name, 0, v.lastType());
     }
     DeclarationBuilderBase::visitExceptionHandler(node);
 }
 
-void DeclarationBuilder::visitWith(WithAst* node)
+void DeclarationBuilder::visitWithItem(WithItemAst* node)
 {
     if ( node->optionalVars ) {
         // For statements like "with open(f) as x", a new variable must be created; do this here.
-        ExpressionVisitor v(currentContext(), editor());
+        ExpressionVisitor v(currentContext());
         v.visitNode(node->contextExpression);
         visitVariableDeclaration<Declaration>(node->optionalVars, 0, v.lastType());
     }
-    Python::ContextBuilder::visitWith(node);
+    Python::AstDefaultVisitor::visitWithItem(node);
 }
 
 void DeclarationBuilder::visitFor(ForAst* node)
 {
-    ExpressionVisitor v(currentContext(), editor());
+    ExpressionVisitor v(currentContext());
     v.visitNode(node->iterator);
-    VariableLengthContainer::Ptr iteratorList = v.lastType().cast<VariableLengthContainer>();
+    auto possibleIterators = Helper::filterType<ListType>(v.lastType(),
+        [](AbstractType::Ptr type) {
+            auto container = type.cast<ListType>();
+            return container && container->contentType();
+        }
+    );
     if ( node->target->astType == Ast::NameAstType ) {
         // In case the iterator variable is a Name ("for x in range(3)"), just create a declaration for it.
         // The following code tries to figure out the type of "x" from the object that is being iterated over.
-        AbstractType::Ptr iteratorType;
-        if ( iteratorList && iteratorList->contentType() ) {
-            // If the object being iterated over is a simple list or similar, use its content type.
-            iteratorType = iteratorList->contentType().abstractType();
-        }
-        else if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeUnsure ) {
-            // If the object being iterated over *might* be a list, consider all possibilities.
-            UnsureType::Ptr u = v.lastType().cast<UnsureType>();
-            for ( uint i = 0; i < u->typesSize(); i++ ) {
-                if ( VariableLengthContainer::Ptr typeInUnsure = u->types()[i].abstractType().cast<VariableLengthContainer>() ) {
-                    if ( ! iteratorType ) {
-                        iteratorType = typeInUnsure->contentType().abstractType();
-                    }
-                    else {
-                        iteratorType = Helper::mergeTypes(iteratorType, typeInUnsure->contentType().abstractType());
-                    }
-                }
+        auto iteratorType = Helper::foldTypes<ListType::Ptr>(possibleIterators,
+            [](const ListType::Ptr& p) {
+                return p->contentType().abstractType();
             }
-        }
-        else {
-            // No list type whatsoever was available for the iterator list, so just display "mixed".
-            iteratorType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
-        }
+        );
+        // otherwise, no list type whatsoever was available for the iterator list, so just display "mixed".
+
         // Create the variable declaration for the iterator variable with the type that has been determined.
         visitVariableDeclaration<Declaration>(node->target, 0, iteratorType);
     }
     else if ( node->target->astType == Ast::TupleAstType ) {
         // If the target is a tuple ("for x, y, z in ..."), multiple variables must be declared.
         // For now, types of those variables will only be determined if the iterator is a list of tuples.
-        QList<ExpressionAst*> targetElements = static_cast<TupleAst*>(node->target)->elements;
+        QList<ExpressionAst*> targetElements = targetsOfAssignment(QList<ExpressionAst*>() << node->target);
         int targetElementsCount = targetElements.count();
-        QList<AbstractType::Ptr> targetTypes;
-        if ( iteratorList ) {
-            QList<IndexedContainer::Ptr> gatherFromTuples;
-            AbstractType::Ptr contentType = iteratorList->contentType().abstractType();
-            if ( contentType && contentType->whichType() == AbstractType::TypeUnsure ) {
-                // The list content type is unsure, iterate over it and find all fitting tuple types.
-                UnsureType::Ptr unsureContentType = contentType.cast<UnsureType>();
-                for ( unsigned int i = 0; i < unsureContentType->typesSize(); i++ ) {
-                    AbstractType::Ptr t = unsureContentType->types()[i].abstractType();
-                    if ( IndexedContainer::Ptr tuple = IndexedContainer::Ptr::dynamicCast(t) ) {
-                        if ( tuple->typesCount() == targetElementsCount ) {
-                            // The length of the unpacked tuple and the amount of loop variables matches,
-                            // so unpacking can be performed.
-                            gatherFromTuples << tuple;
-                        }
-                    }
+        QList<IndexedContainer::Ptr> gatherFromTuples;
+        for ( auto container : possibleIterators ) {
+            AbstractType::Ptr contentType = container->contentType().abstractType();
+            gatherFromTuples = Helper::filterType<IndexedContainer>(contentType,
+                // find all IndexedContainer entries which have the right number of entries
+                [targetElementsCount](AbstractType::Ptr type) {
+                    IndexedContainer::Ptr indexed = type.cast<IndexedContainer>();
+                    return indexed && indexed->typesCount() == targetElementsCount;
                 }
-            }
-            else {
-                // The list has one defined type, only try to expand that as a tuple.
-                if ( IndexedContainer::Ptr tuple = IndexedContainer::Ptr::dynamicCast(contentType) ) {
-                    if ( tuple->typesCount() == targetElementsCount ) {
-                        gatherFromTuples << tuple;
-                    }
-                }
-            }
-            // Now, iterate over all possible tuples, and extract their types
-            int i = 0;
-            foreach ( IndexedContainer::Ptr tuple, gatherFromTuples ) {
-                for ( int j = 0; j < tuple->typesCount(); j++ ) {
-                    if ( i == 0 ) {
-                        targetTypes.append(tuple->typeAt(j).abstractType());
-                    }
-                    else {
-                        targetTypes[j] = Helper::mergeTypes(targetTypes[j], tuple->typeAt(j).abstractType());
-                    }
-                }
-                i++;
-            }
+            );
         }
+
+        // Now, iterate over all possible tuples, and extract their types
+        int i = 0;
+        QList<AbstractType::Ptr> targetTypes;
+        foreach ( IndexedContainer::Ptr tuple, gatherFromTuples ) {
+            for ( int j = 0; j < tuple->typesCount(); j++ ) {
+                if ( i == 0 ) {
+                    targetTypes.append(tuple->typeAt(j).abstractType());
+                }
+                else {
+                    targetTypes[j] = Helper::mergeTypes(targetTypes[j], tuple->typeAt(j).abstractType());
+                }
+            }
+            i++;
+        }
+
         short atElement = 0;
         bool haveTypeInformation = ! targetTypes.isEmpty();
         Q_ASSERT( ! haveTypeInformation || targetTypes.length() == targetElementsCount );
@@ -492,8 +479,8 @@ Declaration* DeclarationBuilder::findDeclarationInContext(QStringList dottedName
                                                                             CursorInRevision::invalid(), 0, DUContext::NoFiltering);
         // break if the list of identifiers is not yet totally worked through and no
         // declaration with an internal context was found
-        if ( declarations.isEmpty() or ( not declarations.last()->internalContext() and identifierCount != i ) ) {
-            kDebug() << "Declaration not found: " << dottedNameIdentifier << "in top context" << ctx->url().toUrl().path();
+        if ( declarations.isEmpty() || ( !declarations.last()->internalContext() && identifierCount != i ) ) {
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "Declaration not found: " << dottedNameIdentifier << "in top context" << ctx->url().toUrl().path();
             return 0;
         }
         else {
@@ -504,7 +491,8 @@ Declaration* DeclarationBuilder::findDeclarationInContext(QStringList dottedName
     return lastAccessedDeclaration;
 }
 
-QString DeclarationBuilder::buildModuleNameFromNode(ImportFromAst* node, AliasAst* alias, const QString& intermediate) {
+QString DeclarationBuilder::buildModuleNameFromNode(ImportFromAst* node, AliasAst* alias, const QString& intermediate) const
+{
     QString moduleName = alias->name->value;
     if ( ! intermediate.isEmpty() ) {
         moduleName.prepend('.').prepend(intermediate);
@@ -512,7 +500,7 @@ QString DeclarationBuilder::buildModuleNameFromNode(ImportFromAst* node, AliasAs
     if ( node->module ) {
         moduleName.prepend('.').prepend(node->module->value);
     }
-    // To handle relative import correct, add node level in the beginning of the path
+    // To handle relative imports correctly, add node level in the beginning of the path
     // This will allow findModulePath to deduce module search direcotry properly
     moduleName.prepend(QString(node->level, '.'));
     return moduleName;
@@ -573,7 +561,7 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
         // type of the iterator variable
         ExpressionVisitor v(currentContext());
         v.visitNode(node->iterator);
-        if ( VariableLengthContainer* container = dynamic_cast<VariableLengthContainer*>(v.lastType().unsafeData()) ) {
+        if ( auto container = ListType::Ptr::dynamicCast(v.lastType()) ) {
             targetType = container->contentType().abstractType();
         }
     }
@@ -587,15 +575,6 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
             if ( tupleElt->astType == Ast::NameAstType ) {
                 NameAst* n = static_cast<NameAst*>(tupleElt);
                 visitVariableDeclaration<Declaration>(n->identifier, declarationRange);
-                // TODO: Fix this as soon as tuple type support is implemented.
-//                 DUChainWriteLocker lock(DUChain::lock());
-//                 d->setAbstractType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
-//                 if ( d and targetType ) {
-//                     d->setAbstractType(targetType);
-//                 }
-//                 else {
-//                     d->setAbstractType(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
-//                 }
             }
         }
     }
@@ -604,7 +583,7 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
 void DeclarationBuilder::visitImport(ImportAst* node)
 {
     Python::ContextBuilder::visitImport(node);
-    DUChainWriteLocker lock(DUChain::lock());
+    DUChainWriteLocker lock;
     foreach ( AliasAst* name, node->names ) {
         QString moduleName = name->name->value;
         // use alias if available, name otherwise
@@ -640,10 +619,10 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
     // NOTE: The former case can't actually happen in python, it's not allowed. However,
     // it is still handled here, because it's very useful for documentation files (pyQt for example
     // makes heavy use of that feature).
-    Q_ASSERT( ( innerCtx.data() or aliasDeclaration ) && "exactly one of innerCtx or aliasDeclaration must be provided");
-    Q_ASSERT( ( not innerCtx.data() or not aliasDeclaration ) && "exactly one of innerCtx or aliasDeclaration must be provided");
+    Q_ASSERT( ( innerCtx.data() || aliasDeclaration ) && "exactly one of innerCtx or aliasDeclaration must be provided");
+    Q_ASSERT( ( !innerCtx.data() || !aliasDeclaration ) && "exactly one of innerCtx or aliasDeclaration must be provided");
     
-    kDebug() << "creating declaration tree for" << nameComponents;
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "creating declaration tree for" << nameComponents;
     
     Declaration* lastDeclaration = 0;
     int depth = 0;
@@ -655,7 +634,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
             currentName.append(nameComponents.at(j));
         }
         lastDeclaration = findDeclarationInContext(currentName, topContext());
-        if ( lastDeclaration and lastDeclaration->range() < range ) {
+        if ( lastDeclaration && lastDeclaration->range() < range ) {
             depth = i;
             break;
         }
@@ -664,15 +643,15 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
     DUContext* extendingPreviousImportCtx = 0;
     QStringList remainingNameComponents;
     bool injectingContext = false;
-    if ( lastDeclaration and lastDeclaration->internalContext() ) {
-        kDebug() << "Found existing import statement while creating declaration for " << declarationIdentifier->value;
+    if ( lastDeclaration && lastDeclaration->internalContext() ) {
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "Found existing import statement while creating declaration for " << declarationIdentifier->value;
         for ( int i = depth; i < nameComponents.length(); i++ ) {
             remainingNameComponents.append(nameComponents.at(i));
         }
         extendingPreviousImportCtx = lastDeclaration->internalContext();
         injectContext(extendingPreviousImportCtx);
         injectingContext = true;
-        kDebug() << "remaining identifiers:" << remainingNameComponents;
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "remaining identifiers:" << remainingNameComponents;
     }
     else {
         remainingNameComponents = nameComponents;
@@ -686,16 +665,16 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
     
     RangeInRevision displayRange = RangeInRevision::invalid();
     
-    DUChainWriteLocker lock(DUChain::lock());
+    DUChainWriteLocker lock;
     for ( int i = 0; i < remainingNameComponents.length(); i++ ) {
         // Iterate over all the names, and create a declaration + sub-context for each of them
         const QString& component = remainingNameComponents.at(i);
-        Identifier* temporaryIdentifier = new Identifier(component);
+        Identifier temporaryIdentifier(component);
         Declaration* d = 0;
-        temporaryIdentifier->copyRange(declarationIdentifier);
-        temporaryIdentifier->endCol = temporaryIdentifier->startCol;
-        temporaryIdentifier->startCol += 1;
-        displayRange = editorFindRange(temporaryIdentifier, temporaryIdentifier); // TODO fixme
+        temporaryIdentifier.copyRange(declarationIdentifier);
+        temporaryIdentifier.endCol = temporaryIdentifier.startCol;
+        temporaryIdentifier.startCol += 1;
+        displayRange = editorFindRange(&temporaryIdentifier, &temporaryIdentifier); // TODO fixme
         
         bool done = false;
         if ( aliasDeclaration && i == remainingNameComponents.length() - 1 ) {
@@ -705,7 +684,9 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
                  || dynamic_cast<AliasDeclaration*>(aliasDeclaration) 
                ) {
                 aliasDeclaration = Helper::resolveAliasDeclaration(aliasDeclaration);
-                AliasDeclaration* adecl = eventuallyReopenDeclaration<AliasDeclaration>(temporaryIdentifier, temporaryIdentifier, AliasDeclarationType);
+                AliasDeclaration* adecl = eventuallyReopenDeclaration<AliasDeclaration>(&temporaryIdentifier,
+                                                                                        &temporaryIdentifier,
+                                                                                        AliasDeclarationType);
                 if ( adecl ) {
                     adecl->setAliasedDeclaration(aliasDeclaration);
                 }
@@ -713,7 +694,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
                 closeDeclaration();
             }
             else {
-                d = visitVariableDeclaration<Declaration>(temporaryIdentifier);
+                d = visitVariableDeclaration<Declaration>(&temporaryIdentifier);
                 d->setAbstractType(aliasDeclaration->abstractType());
             }
             openedDeclarations.append(d);
@@ -722,7 +703,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
         
         if ( ! done ) {
             // create the next level of the tree hierarchy if not done yet.
-            d = visitVariableDeclaration<Declaration>(temporaryIdentifier);
+            d = visitVariableDeclaration<Declaration>(&temporaryIdentifier);
         }
         if ( d ) {
             if ( topContext() != currentContext() ) {
@@ -733,14 +714,14 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
             }
             d->setAutoDeclaration(true);
             currentContext()->createUse(d->ownIndex(), displayRange);
-            kDebug() << "really encountered:" << d << "; scheduled:" << m_scheduledForDeletion;
-            kDebug() << d->toString();
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "really encountered:" << d << "; scheduled:" << m_scheduledForDeletion;
+            qCDebug(KDEV_PYTHON_DUCHAIN) << d->toString();
             scheduleForDeletion(d, false);
-            kDebug() << "scheduled:" << m_scheduledForDeletion;
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "scheduled:" << m_scheduledForDeletion;
         }
         if ( done ) break;
         
-        kDebug() << "creating context for " << component;
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "creating context for " << component;
         // otherwise, create a new "level" entry (a pseudo type + context + declaration which contains all imported items)
         StructureType::Ptr moduleType = StructureType::Ptr(new StructureType());
         openType(moduleType);
@@ -760,18 +741,17 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
         openedTypes.append(moduleType);
         if ( i == remainingNameComponents.length() - 1 ) {
             if ( innerCtx ) {
-                kDebug() << "adding imported context to inner declaration";
+                qCDebug(KDEV_PYTHON_DUCHAIN) << "adding imported context to inner declaration";
                 currentContext()->addImportedParentContext(innerCtx);
             }
             else if ( aliasDeclaration ) {
-                kDebug() << "setting alias declaration on inner declaration";
+                qCDebug(KDEV_PYTHON_DUCHAIN) << "setting alias declaration on inner declaration";
             }
         }
-        delete temporaryIdentifier;
     }
     for ( int i = openedContexts.length() - 1; i >= 0; i-- ) {
         // Close all the declarations and contexts opened previosly, and assign the types.
-        kDebug() << "closing context";
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "closing context";
         closeType();
         closeContext();
         Declaration* d = openedDeclarations.at(i);
@@ -799,8 +779,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
                                                                ProblemPointer& problemEncountered, Ast* rangeNode)
 {
     // Search the disk for a python file which contains the requested declaration
-    QPair<KUrl, QStringList> moduleInfo = findModulePath(moduleName, currentlyParsedDocument().toUrl());
-    kDebug() << moduleName;
+    auto moduleInfo = findModulePath(moduleName, currentlyParsedDocument().toUrl());
     RangeInRevision range(RangeInRevision::invalid());
     if ( rangeNode ) {
         range = rangeForNode(rangeNode, false);
@@ -810,8 +789,8 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
     }
     Q_ASSERT(range.isValid());
     
-    kDebug() << "Found module path [path/path in file]: " << moduleInfo;
-    kDebug() << "Declaration identifier:" << declarationIdentifier->value;
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "Found module path [path/path in file]: " << moduleInfo;
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "Declaration identifier:" << declarationIdentifier->value;
     DUChainWriteLocker lock;
     const IndexedString modulePath = IndexedString(moduleInfo.first);
     ReferencedTopDUContext moduleContext = DUChain::self()->chainForDocument(modulePath);
@@ -821,18 +800,18 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
         // The file was not found -- this is either an error in the user's code,
         // a missing module, or a C module (.so) which is unreadable for kdevelop
         // TODO imrpove error handling in case the module exists as a shared object or .pyc file only
-        kDebug() << "invalid or non-existent URL:" << moduleInfo;
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "invalid or non-existent URL:" << moduleInfo;
         KDevelop::Problem *p = new Python::MissingIncludeProblem(moduleName, currentlyParsedDocument());
         p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange()));
         p->setSource(KDevelop::ProblemData::SemanticAnalysis);
         p->setSeverity(KDevelop::ProblemData::Warning);
         p->setDescription(i18n("Module \"%1\" not found", moduleName));
-        problemEncountered.attach(p);
+        problemEncountered = p;
         return 0;
     }
     if ( ! moduleContext ) {
         // schedule the include file for parsing, and schedule the current one for reparsing after that is done
-        kDebug() << "No module context, recompiling";
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "No module context, recompiling";
         m_unresolvedImports.append(modulePath);
         Helper::scheduleDependency(modulePath, m_ownPriority);
         // parseDocuments() must *not* be called from a background thread!
@@ -848,11 +827,11 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
         // import a specific declaration from the given file
         lock.lock();
         if ( declarationIdentifier->value == "*" ) {
-            kDebug() << "Importing * from module";
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "Importing * from module";
             currentContext()->addImportedParentContext(moduleContext);
         }
         else {
-            kDebug() << "Got module, importing declaration: " << moduleInfo.second;
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "Got module, importing declaration: " << moduleInfo.second;
             Declaration* originalDeclaration = findDeclarationInContext(moduleInfo.second, moduleContext);
             if ( originalDeclaration ) {
                 DUChainWriteLocker lock(DUChain::lock());
@@ -866,7 +845,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
                 p->setSource(KDevelop::ProblemData::SemanticAnalysis);
                 p->setSeverity(KDevelop::ProblemData::Warning);
                 p->setDescription(i18n("Declaration for \"%1\" not found in specified module", moduleInfo.second.join(".")));
-                problemEncountered.attach(p);
+                problemEncountered = p;
             }
         }
     }
@@ -880,30 +859,35 @@ void DeclarationBuilder::visitYield(YieldAst* node)
     AstDefaultVisitor::visitYield(node);
     
     // Determine the type of the argument to "yield", like "int" in "yield 3"
-    ExpressionVisitor v(currentContext(), editor());
+    ExpressionVisitor v(currentContext());
     v.visitNode(node->value);
     AbstractType::Ptr encountered = v.lastType();
     
     // In some obscure (or wrong) cases, "yield" might appear outside of a function body,
     // so check for that here.
-    if ( node->value && hasCurrentType() ) {
-        if ( TypePtr<FunctionType> t = currentType<FunctionType>() ) {
-            if ( VariableLengthContainer::Ptr previous = t->returnType().cast<VariableLengthContainer>() ) {
-                // If the return type of the function already is set to a list, *add* the encountered type
-                // to its possible content types.
-                previous->addContentType(encountered);
-                t->setReturnType(previous.cast<AbstractType>());
-            }
-            else {
-                // Otherwise, create a new container type, and set it as the function's return type.
-                VariableLengthContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType<VariableLengthContainer>("list", currentContext());
-                if ( container ) {
-                    openType<VariableLengthContainer>(container);
-                    container->addContentType(encountered);
-                    t->setReturnType(Helper::mergeTypes(t->returnType(), container.cast<AbstractType>()));
-                    closeType();
-                }
-            }
+    if ( ! node->value || ! hasCurrentType() ) {
+        return;
+    }
+
+    TypePtr<FunctionType> t = currentType<FunctionType>();
+    if ( ! t ) {
+        return;
+    }
+    if ( auto previous = t->returnType().cast<ListType>() ) {
+        // If the return type of the function already is set to a list, *add* the encountered type
+        // to its possible content types.
+        previous->addContentType<Python::UnsureType>(encountered);
+        t->setReturnType(previous.cast<AbstractType>());
+    }
+    else {
+        // Otherwise, create a new container type, and set it as the function's return type.
+        DUChainWriteLocker lock;
+        auto container = ExpressionVisitor::typeObjectForIntegralType<ListType>("list", currentContext());
+        if ( container ) {
+            openType<ListType>(container);
+            container->addContentType<Python::UnsureType>(encountered);
+            t->setReturnType(Helper::mergeTypes(t->returnType(), container.cast<AbstractType>()));
+            closeType();
         }
     }
 }
@@ -911,17 +895,209 @@ void DeclarationBuilder::visitYield(YieldAst* node)
 void DeclarationBuilder::visitLambda(LambdaAst* node)
 {
     Python::AstDefaultVisitor::visitLambda(node);
-    DUChainWriteLocker lock(DUChain::lock());
+    DUChainWriteLocker lock;
     // A context must be opened, because the lamdba's arguments are local to the lambda:
     // d = lambda x: x*2; print x # <- gives an error
     openContext(node, editorFindRange(node, node->body), DUContext::Other);
-    foreach ( ExpressionAst* argument, node->arguments->arguments ) {
-        // Create variable declarations for the lambda's arguments, so they aren't displayed as errors
-        if ( argument->astType == Ast::NameAstType ) {
-            visitVariableDeclaration<Declaration>(static_cast<NameAst*>(argument));
-        }
+    foreach ( ArgAst* argument, node->arguments->arguments ) {
+        visitVariableDeclaration<Declaration>(argument->argumentName);
     }
     closeContext();
+}
+
+void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration::Ptr function)
+{
+    ExpressionVisitor v(currentContext());
+    v.visitNode(static_cast<AttributeAst*>(node->function)->value);
+
+    // Don't do anything if the object the function is being called on is not a container.
+    auto container = v.lastType().cast<ListType>();
+    if ( ! container || ! function ) {
+        return;
+    }
+    // Don't to updates to pre-defined functions.
+    if ( ! v.lastDeclaration() || v.lastDeclaration()->topContext()->url() == IndexedString(Helper::getDocumentationFile()) ) {
+        return;
+    }
+    // Check for the different types of modifiers such a function can have
+    QStringList args;
+    QHash< QString, std::function<void()> > items;
+    items["addsTypeOfArg"] = [&]() {
+        const int offset = ! args.isEmpty() ? args.at(0).toInt() : 0;
+        if ( node->arguments.length() <= offset ) {
+            return;
+        }
+        // Check which type should be added to the list
+        ExpressionVisitor argVisitor(currentContext());
+        argVisitor.visitNode(node->arguments.at(offset));
+        // Actually add that type
+        if ( ! argVisitor.lastType() ) {
+            return;
+        }
+        DUChainWriteLocker wlock;
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "Adding content type: " << argVisitor.lastType()->toString();
+        container->addContentType<Python::UnsureType>(argVisitor.lastType());
+        v.lastDeclaration()->setType(container);
+    };
+    items["addsTypeOfArgContent"] = [&]() {
+        const int offset = ! args.isEmpty() ? args.at(0).toInt() : 0;
+        if ( node->arguments.length() <= offset ) {
+            return;
+        }
+        ExpressionVisitor argVisitor(currentContext());
+        argVisitor.visitNode(node->arguments.at(offset));
+        DUChainWriteLocker wlock;
+        if ( ! argVisitor.lastType() ) {
+            return;
+        }
+        auto sources = Helper::filterType<ListType>(
+            argVisitor.lastType(), [](AbstractType::Ptr type) {
+                return type.cast<ListType>();
+            }
+        );
+        for ( auto sourceContainer : sources ) {
+            if ( ! sourceContainer->contentType() ) {
+                continue;
+            }
+            container->addContentType<Python::UnsureType>(sourceContainer->contentType().abstractType());
+            v.lastDeclaration()->setType(container);
+        }
+    };
+
+    foreach ( const QString& key, items.keys() ) {
+        if ( Helper::docstringContainsHint(function.data(), key, &args) ) {
+            items[key]();
+        }
+    }
+}
+
+void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer function)
+{
+    DUChainReadLocker lock;
+    QPair<FunctionDeclaration::Ptr, bool> called = Helper::functionDeclarationForCalledDeclaration(function);
+    FunctionDeclaration::Ptr lastFunctionDeclaration = called.first;
+    bool isConstructor = called.second;
+
+    if ( ! lastFunctionDeclaration ) {
+        return;
+    }
+    if ( lastFunctionDeclaration->topContext()->url() == IndexedString(Helper::getDocumentationFile()) ) {
+        return;
+    }
+    DUContext* args = DUChainUtils::getArgumentContext(lastFunctionDeclaration.data());
+    FunctionType::Ptr functiontype = lastFunctionDeclaration->type<FunctionType>();
+    if ( ! args || ! functiontype ) {
+        return;
+    }
+    // The declaration which was found is a function declaration, and has a valid arguments list assigned.
+    QVector<Declaration*> parameters = args->localDeclarations();
+    const int specialParamsCount = (lastFunctionDeclaration->vararg() > 0) + (lastFunctionDeclaration->kwarg() > 0);
+
+    // Look for the "self" in the argument list, the type of that should not be updated.
+    bool hasSelfArgument = false;
+    if ( ( lastFunctionDeclaration->context()->type() == DUContext::Class || isConstructor )
+            && ! parameters.isEmpty() && ! lastFunctionDeclaration->isStatic() )
+    {
+        // ... unless for some reason the function only has *vararg, **kwarg as arguments
+        // (this could happen for example if the method is static but kdev-python does not know,
+        // or if the user just made a mistake in his code)
+        if ( specialParamsCount < parameters.size() ) {
+            hasSelfArgument = true;
+        }
+    }
+    int currentParamIndex = hasSelfArgument;
+    int currentArgumentIndex = 0;
+    int indexInVararg = -1;
+    int paramsAvailable = qMin(functiontype->arguments().length() + hasSelfArgument, parameters.size());
+    int argsAvailable = node->arguments.size();
+    bool atVararg = false;
+
+    lock.unlock();
+
+    // Iterate over all the arguments, trying to guess the type of the object being
+    // passed as an argument, and update the parameter accordingly.
+    // Stop if more parameters supplied than possible, and we're not at the vararg.
+    for ( ; ( atVararg || currentParamIndex < paramsAvailable ) && currentArgumentIndex < argsAvailable;
+            currentParamIndex++, currentArgumentIndex++ )
+    {
+        if ( ! atVararg && currentArgumentIndex == lastFunctionDeclaration->vararg() ) {
+            atVararg = true;
+        }
+
+        qCDebug(KDEV_PYTHON_DUCHAIN) << currentParamIndex << currentArgumentIndex << atVararg << lastFunctionDeclaration->vararg();
+
+        ExpressionAst* arg = node->arguments.at(currentArgumentIndex);
+
+        ExpressionVisitor argumentVisitor(currentContext());
+        argumentVisitor.visitNode(arg);
+        AbstractType::Ptr argumentType = argumentVisitor.lastType();
+
+        // Update the parameter type: change both the type of the function argument,
+        // and the type of the declaration which belongs to that argument
+        HintedType::Ptr addType = HintedType::Ptr(new HintedType());
+        openType(addType);
+        addType->setType(argumentVisitor.lastType());
+        addType->setCreatedBy(topContext(), m_futureModificationRevision);
+        closeType();
+
+        // Update the parameter type: change both the type of the function argument,
+        // and the type of the declaration which belongs to that argument
+        DUChainWriteLocker wlock;
+        if ( atVararg ) {
+            indexInVararg++;
+            Declaration* parameter = parameters.at(lastFunctionDeclaration->vararg()+hasSelfArgument);
+            IndexedContainer::Ptr varargContainer = parameter->type<IndexedContainer>();
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "adding" << addType->toString() << "at position" << indexInVararg;
+            if ( ! varargContainer ) continue;
+            if ( varargContainer->typesCount() > indexInVararg ) {
+                AbstractType::Ptr oldType = varargContainer->typeAt(indexInVararg).abstractType();
+                AbstractType::Ptr newType = Helper::mergeTypes(oldType, addType.cast<AbstractType>());
+                varargContainer->replaceType(indexInVararg, newType);
+            }
+            else {
+                varargContainer->addEntry(addType.cast<AbstractType>());
+            }
+            parameter->setAbstractType(varargContainer.cast<AbstractType>());
+        }
+        else {
+            if ( ! argumentType ) continue;
+            AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(currentParamIndex)->abstractType(),
+                                                            addType.cast<AbstractType>());
+            // TODO this does not correctly update the types in quickopen! Investigate why.
+            functiontype->removeArgument(currentArgumentIndex + hasSelfArgument);
+            functiontype->addArgument(newType, currentArgumentIndex + hasSelfArgument);
+            lastFunctionDeclaration->setAbstractType(functiontype.cast<AbstractType>());
+            parameters.at(currentParamIndex)->setType(newType);
+        }
+    }
+
+    lock.unlock();
+    DUChainWriteLocker wlock;
+    if ( lastFunctionDeclaration->kwarg() < 0 || parameters.isEmpty() ) {
+        // no kwarg, stop here.
+        return;
+    }
+    foreach ( KeywordAst* keyword, node->keywords ) {
+        AbstractType::Ptr param = parameters.last()->abstractType();
+        auto list = param.cast<ListType>();
+        if ( ! list ) {
+            continue;
+        }
+        wlock.unlock();
+        ExpressionVisitor argumentVisitor(currentContext());
+        argumentVisitor.visitNode(keyword->value);
+        if ( ! argumentVisitor.lastType() ) {
+            continue;
+        }
+        wlock.lock();
+        HintedType::Ptr addType = HintedType::Ptr(new HintedType());
+        openType(addType);
+        addType->setType(argumentVisitor.lastType());
+        addType->setCreatedBy(topContext(), m_futureModificationRevision);
+        closeType();
+        list->addContentType<Python::UnsureType>(addType.cast<AbstractType>());
+        parameters.last()->setAbstractType(list.cast<AbstractType>());
+    }
 }
 
 void DeclarationBuilder::visitCall(CallAst* node)
@@ -933,205 +1109,259 @@ void DeclarationBuilder::visitCall(CallAst* node)
     //         def myfun(self): return 3
     //     l = [myclass()]
     //     x = l[0].myfun() # the called object is actually l[0].myfun
-    // In the above example, this call will be evaluated to "myclass.myfun" in the following block.
-    ExpressionVisitor functionVisitor(currentContext(), editor());
+    // In the above example, this call will be evaluated to "myclass.myfun" in the following statement.
+    ExpressionVisitor functionVisitor(currentContext());
     functionVisitor.visitNode(node);
 
     if ( node->function && node->function->astType == Ast::AttributeAstType && functionVisitor.lastDeclaration() ) {
         // Some special functions, like "append", update the content of the object they operate on.
         // Find the object the function is called on, like for d = [1, 2, 3]; d.append(5), this will give "d"
-        ExpressionVisitor v(currentContext(), editor());
-        v.visitNode(static_cast<AttributeAst*>(node->function)->value);
-
-        // Don't do anything if the object the function is being called on is not a container.
-        if ( VariableLengthContainer::Ptr container = v.lastType().cast<VariableLengthContainer>() ) {
-            // Don't to updates to pre-defined functions.
-            if ( v.lastDeclaration() && v.lastDeclaration()->topContext()->url() != IndexedString(Helper::getDocumentationFile()) ) {
-                if ( functionVisitor.lastDeclaration()->isFunctionDeclaration() ) {
-                    FunctionDeclaration* f = static_cast<FunctionDeclaration*>(functionVisitor.lastDeclaration().data());
-                    // Check for the different types of modifiers such a function can have
-                    if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(f, "addsTypeOfArg") ) {
-                        const int offset = d->additionalInformation().str().toInt();
-                        if ( node->arguments.length() > offset ) {
-                            // Check which type should be added to the list
-                            ExpressionVisitor argVisitor(currentContext(), editor());
-                            argVisitor.visitNode(node->arguments.at(offset));
-                            // Actually add that type
-                            if ( argVisitor.lastType() ) {
-                                DUChainWriteLocker wlock(DUChain::lock());
-                                kDebug() << "Adding content type: " << argVisitor.lastType()->toString();
-                                container->addContentType(argVisitor.lastType());
-                                v.lastDeclaration()->setType(container);
-                            }
-                        }
-                    }
-                    if ( const Decorator* d = Helper::findDecoratorByName<FunctionDeclaration>(f, "addsTypeOfArgContent") ) {
-                        const int offset = d->additionalInformation().str().toInt();
-                        if ( node->arguments.length() > offset ) {
-                            ExpressionVisitor argVisitor(currentContext(), editor());
-                            argVisitor.visitNode(node->arguments.at(offset));
-                            DUChainWriteLocker wlock(DUChain::lock());
-                            if ( argVisitor.lastType() ) {
-                                if ( VariableLengthContainer::Ptr sourceContainer = argVisitor.lastType().cast<VariableLengthContainer>() ) {
-                                    if ( AbstractType::Ptr contentType = sourceContainer->contentType().abstractType() ) {
-                                        kDebug() << "Adding content type: " << contentType->toString();
-                                        container->addContentType(contentType);
-                                        v.lastDeclaration()->setType(container);
-                                    }
-                                }
-                                else if ( argVisitor.lastType()->whichType() == AbstractType::TypeUnsure ) {
-                                    UnsureType::Ptr sourceUnsure = argVisitor.lastType().cast<UnsureType>();
-                                    FOREACH_FUNCTION ( const IndexedType& type, sourceUnsure->types ) {
-                                        if ( AbstractType::Ptr p = type.abstractType() ) {
-                                            if ( VariableLengthContainer::Ptr sourceContainer = p.cast<VariableLengthContainer>() ) {
-                                                if ( AbstractType::Ptr contentType = sourceContainer->contentType().abstractType() ) {
-                                                    kDebug() << "Adding content type: " << contentType->toString();
-                                                    container->addContentType(contentType);
-                                                    v.lastDeclaration()->setType(container);
-                                                }
-                                            }
-                                        }
-                                    }
-                                    v.lastDeclaration()->setType(container);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        FunctionDeclaration::Ptr function = functionVisitor.lastDeclaration().dynamicCast<FunctionDeclaration>();
+        applyDocstringHints(node, function);
     }
     if ( ! m_prebuilding ) {
         return;
     }
-    
+
     // The following code will try to update types of function parameters based on what is passed
     // for those when the function is used.
     // In case of this code:
     //     def foo(arg): print arg
     //     foo(3)
     // the following will change the type of "arg" to be "int" when it processes the second line.
-    
-    DUChainReadLocker lock;
-    QPair<FunctionDeclaration::Ptr, bool> lastFunctionDeclarationP = Helper::functionDeclarationForCalledDeclaration(functionVisitor.lastDeclaration());
-    FunctionDeclaration::Ptr lastFunctionDeclaration = lastFunctionDeclarationP.first;
-    bool isConstructor = lastFunctionDeclarationP.second;
-    
-    if ( lastFunctionDeclaration ) {
-        if ( lastFunctionDeclaration->topContext()->url() == IndexedString(Helper::getDocumentationFile()) ) {
-            return;
+    addArgumentTypeHints(node, functionVisitor.lastDeclaration());
+}
+
+QList<ExpressionAst*> DeclarationBuilder::targetsOfAssignment(QList<ExpressionAst*> targets) const
+{
+    QList<ExpressionAst*> lhsExpressions;
+    foreach ( ExpressionAst* target, targets ) {
+        if ( target->astType == Ast::TupleAstType ) {
+            TupleAst* tuple = static_cast<TupleAst*>(target);
+            foreach ( ExpressionAst* ast, tuple->elements ) {
+                // eventually recursive call, to handle e.g. a, (b, c) = 1, 2, 3 correctly
+                if ( ast->astType == Ast::TupleAstType ) {
+                    lhsExpressions << targetsOfAssignment(QList<ExpressionAst*>() << ast);
+                }
+                else {
+                    // shortcut
+                    lhsExpressions << ast;
+                }
+            }
         }
-        DUContext* args = DUChainUtils::getArgumentContext(lastFunctionDeclaration.data());
-        FunctionType::Ptr functiontype = lastFunctionDeclaration->type<FunctionType>();
-        if ( args && functiontype ) {
-            // The declaration which was found is a function declaration, and has a valid arguments list assigned.
-            QVector<Declaration*> parameters = args->localDeclarations();
-            const int specialParamsCount = lastFunctionDeclaration->hasVararg() + lastFunctionDeclaration->hasKwarg();
-            
-            // Remove the "self" from the argument list, the type of that should not be updated.
-            if ( ( lastFunctionDeclaration->context()->type() == DUContext::Class || isConstructor ) 
-                 && ! parameters.isEmpty() && ! lastFunctionDeclaration->isStatic() )
-            {
-                // ... unless for some reason the function only has *vararg, **kwarg as arguments
-                // (this could happen for example if the method is static but kdev-python does not know,
-                // or if the user just made a mistake in his code)
-                if ( specialParamsCount < parameters.size() ) {
-                    parameters.remove(0);
+        else {
+            lhsExpressions << target;
+        }
+    }
+    return lhsExpressions;
+}
+
+QList<DeclarationBuilder::SourceType> DeclarationBuilder::sourcesOfAssignment(ExpressionAst* items,
+                                                                              int fillWhenLengthMissing) const
+{
+    QList<SourceType> sources;
+    QList<ExpressionAst*> values;
+
+    if ( items && items->astType == Ast::TupleAstType ) {
+        values = static_cast<TupleAst*>(items)->elements;
+    }
+    else {
+        // This handles the a, b, c = [1, 2, 3] case. Since the assignment can also be like
+        // d = [1, 2, 3]; a, b, c = d we can't don't generally know the amount of elements
+        // in the right operand; so all elements are treated to have the same type.
+        if ( fillWhenLengthMissing > 0 ) {
+            ExpressionVisitor v(currentContext());
+            v.visitNode(items);
+            auto container = ListType::Ptr::dynamicCast(v.lastType());
+            if ( container ) {
+                AbstractType::Ptr content = container->contentType().abstractType();
+                for ( ; fillWhenLengthMissing != 0; fillWhenLengthMissing-- ) {
+                    sources << SourceType{ content, KDevelop::DeclarationPointer(), false };
                 }
+                return sources;
             }
+        }
 
-            int atParam = 0;
-            bool atVararg = false;
-            // Check that there's enough known parameters which can be updated
-            uint typeParametersSize = functiontype->arguments().length();
-            if ( parameters.size() >= node->arguments.size() && typeParametersSize >= (uint) node->arguments.size() ) {
-                foreach ( ExpressionAst* arg, node->arguments ) {
-                    // Iterate over all the arguments, trying to guess the type of the object being
-                    // passed as an argument, and update the parameter accordingly.
-                    
-                    // If more params are passed than the function has args, maybe it's a vararg
-                    if ( atParam >= functiontype->arguments().size() - specialParamsCount && atParam >= parameters.size() - specialParamsCount ) {
-                        if ( lastFunctionDeclaration->hasVararg() ) {
-                            atVararg = true;
-                        }
-                        else {
-                            break;
-                        }
-                    }
+        // Otherwise, proceed normally.
+        values << items;
+    }
 
-                    // Get the type of the argument
-                    ExpressionVisitor argumentVisitor(currentContext(), editor());
-                    argumentVisitor.visitNode(arg);
+    foreach ( ExpressionAst* value, values ) {
+        ExpressionVisitor v(currentContext());
+        v.visitNode(value);
 
-                    lock.unlock();
-                    DUChainWriteLocker wlock;
-                    if ( argumentVisitor.lastType() ) {
-                        // Update the parameter type: change both the type of the function argument,
-                        // and the type of the declaration which belongs to that argument
-                        HintedType::Ptr addType = HintedType::Ptr(new HintedType());
-                        openType(addType);
-                        addType->setType(argumentVisitor.lastType());
-                        addType->setCreatedBy(topContext(), m_futureModificationRevision);
-                        closeType();
-                        
-                        if ( atVararg ) {
-                            const int offset = lastFunctionDeclaration->hasKwarg() ? parameters.size() - 2 : parameters.size() - 1;
-                            AbstractType::Ptr param = parameters.at(offset)->abstractType();
-                            IndexedContainer::Ptr indexed = param.cast<IndexedContainer>();
-                            if ( indexed ) {
-                                int number = atParam - (parameters.size() - specialParamsCount);
-                                if ( number > 0 && indexed->typesCount() > number ) {
-                                    AbstractType::Ptr oldType = indexed->typeAt(number).abstractType();
-                                    AbstractType::Ptr newType = Helper::mergeTypes(oldType, addType.cast<AbstractType>());
-                                    indexed->replaceType(number, newType);
-                                }
-                                else {
-                                    indexed->addEntry(addType.cast<AbstractType>());
-                                }
-                                parameters.at(offset)->setAbstractType(indexed.cast<AbstractType>());
-                            }
-                        }
-                        else {
-                            AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(atParam)->abstractType(),
-                                                                            addType.cast<AbstractType>(), topContext());
-                            // TODO this does not correctly update the types in quickopen! Investigate why.
-                            functiontype->removeArgument(atParam);
-                            functiontype->addArgument(newType, atParam);
-                            lastFunctionDeclaration->setAbstractType(functiontype.cast<AbstractType>());
-                            parameters.at(atParam)->setType(newType);
-                        }
-                    }
-                    wlock.unlock();
-                    atParam++;
-                }
-                lock.unlock();
-                DUChainWriteLocker wlock;
-                if ( lastFunctionDeclaration->hasKwarg() && ! parameters.isEmpty() ) {
-                    foreach ( KeywordAst* keyword, node->keywords ) {
-                        AbstractType::Ptr param = parameters.last()->abstractType();
-                        VariableLengthContainer::Ptr variable = param.cast<VariableLengthContainer>();
-                        if ( variable ) {
-                            ExpressionVisitor argumentVisitor(currentContext(), editor());
-                            argumentVisitor.visitNode(keyword->value);
-                            if ( argumentVisitor.lastType() ) {
-                                HintedType::Ptr addType = HintedType::Ptr(new HintedType());
-                                openType(addType);
-                                addType->setType(argumentVisitor.lastType());
-                                addType->setCreatedBy(topContext(), m_futureModificationRevision);
-                                closeType();
-                                variable->addContentType(addType.cast<AbstractType>());
-                                parameters.last()->setAbstractType(variable.cast<AbstractType>());
-                            }
-                        }
-                    }
-                }
-            }
-            else {
-                kDebug() << "Arguments size mismatch, not updating type" << parameters << node->arguments;
+        sources << SourceType{
+            v.lastType(),
+            DeclarationPointer(Helper::resolveAliasDeclaration(v.lastDeclaration().data())),
+            v.isAlias()
+        };
+    }
+    return sources;
+}
+
+DeclarationBuilder::SourceType DeclarationBuilder::selectSource(const QList<ExpressionAst*>& targets,
+                                                                const QList<DeclarationBuilder::SourceType>& sources,
+                                                                int index, ExpressionAst* rhs) const
+{
+    bool canUnpack = targets.length() == sources.length();
+    SourceType element;
+    // If the length of the right and the left side matches, exact unpacking can be done.
+    // example code: a, b, c = 3, 4, 5
+    // If the left side only contains one entry, unpacking never happens, and the left side
+    // is instead assigned a container type if applicable
+    // example code: a = 3, 4, 5
+    if ( canUnpack ) {
+        element = sources.at(index);
+    }
+    else if ( targets.length() == 1 ) {
+        ExpressionVisitor v(currentContext());
+        v.visitNode(rhs);
+        element = SourceType{
+            v.lastType(),
+            DeclarationPointer(Helper::resolveAliasDeclaration(v.lastDeclaration().data())),
+            v.isAlias()
+        };
+    }
+    else if ( ! sources.isEmpty() ) {
+        // the assignment is of the form "foo, bar, ... = ..." (tuple unpacking)
+        // this one is for the case that the tuple unpacking is not written down explicitly, for example
+        // a = (1, 2, 3); b, c, d = a
+        // the other case (b, c, d = 1, 2, 3) is handled above.
+        if ( const IndexedContainer::Ptr container = sources.first().type.cast<IndexedContainer>() ) {
+            if ( container->typesCount() == targets.length() ) {
+                element.type = container->typeAt(index).abstractType();
+                element.isAlias = false;
             }
         }
     }
-    else kDebug() << "No declaration for function, not setting arg types";
+    if ( ! element.type ) {
+        // use mixed if none of the previous ways of determining the type worked.
+        element.type = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
+        element.declaration = nullptr;
+        element.isAlias = false;
+    }
+    return element;
+}
+
+void DeclarationBuilder::assignToName(NameAst* target, const DeclarationBuilder::SourceType& element)
+{
+    if ( element.isAlias ) {
+        DUChainWriteLocker lock;
+        Python::Identifier* identifier = target->identifier;
+        AliasDeclaration* decl = eventuallyReopenDeclaration<AliasDeclaration>(identifier, target, AliasDeclarationType);
+        decl->setAliasedDeclaration(element.declaration.data());
+        closeDeclaration();
+    }
+    else {
+        DUChainWriteLocker lock;
+        Declaration* dec = visitVariableDeclaration<Declaration>(target, 0, element.type);
+        /** DEBUG **/
+        if ( element.type && dec ) {
+            Q_ASSERT(dec->abstractType());
+        }
+        /** END DEBUG **/
+    }
+}
+
+void DeclarationBuilder::assignToSubscript(SubscriptAst* subscript, const DeclarationBuilder::SourceType& element)
+{
+    ExpressionAst* v = subscript->value;
+    if ( ! element.type ) {
+        return;
+    }
+    ExpressionVisitor targetVisitor(currentContext());
+    targetVisitor.visitNode(v);
+    auto list = ListType::Ptr::dynamicCast(targetVisitor.lastType());
+    if ( list ) {
+        list->addContentType<Python::UnsureType>(element.type);
+    }
+    auto map = MapType::Ptr::dynamicCast(list);
+    if ( map ) {
+        if ( subscript->slice && subscript->slice->astType == Ast::IndexAstType ) {
+            ExpressionVisitor keyVisitor(currentContext());
+            keyVisitor.visitNode(static_cast<IndexAst*>(subscript->slice)->value);
+            AbstractType::Ptr key = keyVisitor.lastType();
+            if ( key ) {
+                map->addKeyType<Python::UnsureType>(key);
+            }
+        }
+    }
+    DeclarationPointer lastDecl = targetVisitor.lastDeclaration();
+    if ( list && lastDecl ) {
+        DUChainWriteLocker lock;
+        lastDecl->setAbstractType(list.cast<AbstractType>());
+    }
+}
+
+void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const DeclarationBuilder::SourceType& element)
+{
+    // check whether the current attribute is undeclared, but the previos ones known
+    // like in X.Y.Z = 3 where X and Y are defined, but Z isn't; then declare Z.
+    ExpressionVisitor checkForUnknownAttribute(currentContext());
+    checkForUnknownAttribute.visitNode(attrib);
+    Declaration* haveDeclaration = 0;
+    {
+        DUChainReadLocker lock;
+        haveDeclaration = checkForUnknownAttribute.lastDeclaration().data();
+    }
+
+    // declare the attribute.
+    // however, if there's an earlier declaration which does not match the current position
+    // (so it's really a different declaration) we skip this.
+    ExpressionVisitor checkPreviousAttributes(currentContext());
+    // go "down one level", so only visit "X.Y"
+    checkPreviousAttributes.visitNode(attrib->value);
+
+    DUContextPointer internal(0);
+    DeclarationPointer parentObjectDeclaration = checkPreviousAttributes.lastDeclaration();
+
+    if ( ! parentObjectDeclaration ) {
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "No declaration for attribute base, aborting creation of attribute";
+        return;
+    }
+    // if foo is a class, this is like foo.bar = 3
+    if ( parentObjectDeclaration->internalContext() ) {
+        internal = parentObjectDeclaration->internalContext();
+    }
+    // while this is like A = foo(); A.bar = 3
+    else {
+        StructureType::Ptr structure(parentObjectDeclaration->abstractType().cast<StructureType>());
+        if ( ! structure || ! structure->declaration(topContext()) ) {
+            return;
+        }
+        parentObjectDeclaration = structure->declaration(topContext());
+        internal = parentObjectDeclaration->internalContext();
+    }
+    if ( ! internal ) {
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "No internal context for structure type, aborting creation of attribute declaration";
+        return;
+    }
+
+    DUContext* previousContext = currentContext();
+    bool isAlreadyOpen = contextAlreayOpen(internal);
+    if ( isAlreadyOpen ) {
+        activateAlreadyOpenedContext(internal);
+        visitVariableDeclaration<ClassMemberDeclaration>(
+            attrib->attribute, attrib, haveDeclaration, element.type
+        );
+        closeAlreadyOpenedContext(internal);
+    }
+    else {
+        injectContext(internal.data());
+
+        Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(
+            attrib->attribute, attrib, haveDeclaration, element.type
+        );
+        if ( dec ) {
+            dec->setRange(RangeInRevision(internal->range().start, internal->range().start));
+            dec->setAutoDeclaration(true);
+            DUChainWriteLocker lock;
+            previousContext->createUse(dec->ownIndex(), editorFindRange(attrib, attrib));
+        }
+        else qCWarning(KDEV_PYTHON_DUCHAIN) << "No declaration created for " << attrib->attribute << "as parent is not a class";
+
+        closeInjectedContext();
+    }
 }
 
 void DeclarationBuilder::visitAssignment(AssignmentAst* node)
@@ -1139,211 +1369,27 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
     AstDefaultVisitor::visitAssignment(node);
     // Because of tuple unpacking, it is required to gather the left- and right hand side
     // expressions / types first, then match them together in a second step.
-    QList<ExpressionAst*> lhsExpressions;
-    QList<AbstractType::Ptr> rhsTypes;
-    QList<DeclarationPointer> rhsDeclarations;
-    QList<bool> rhsEntryIsAliasDeclaration;
-    
-    foreach ( ExpressionAst* target, node->targets ) {
-        if ( target->astType == Ast::TupleAstType ) {
-            TupleAst* tuple = static_cast<TupleAst*>(target);
-            foreach ( ExpressionAst* ast, tuple->elements ) {
-                lhsExpressions << ast;
-            }
-        }
-        else {
-            lhsExpressions << target;
-        }
-    }
-    
-    if ( node->value && node->value->astType == Ast::TupleAstType ) {
-        foreach ( ExpressionAst* value, static_cast<TupleAst*>(node->value)->elements ) {
-            ExpressionVisitor v(currentContext(), editor());
-            v.visitNode(value);
-            rhsTypes << v.lastType();
-            rhsDeclarations << v.lastDeclaration();
-            rhsEntryIsAliasDeclaration << v.m_isAlias;
-        }
-    }
-    else {
-        ExpressionVisitor v(currentContext(), editor());
-        v.visitNode(node->value);
-        rhsTypes << v.lastType();
-        rhsDeclarations << v.lastDeclaration();
-        rhsEntryIsAliasDeclaration << v.m_isAlias;
-    }
-    
+    const QList<ExpressionAst*>& targets = targetsOfAssignment(node->targets);
+    const QList<SourceType>& sources = sourcesOfAssignment(node->value, targets.size() > 1 ? targets.size() : -1);
+
     // Now all the information about left- and right hand side entries is ready,
     // and creation / updating of variables can start.
-    bool canUnpack = lhsExpressions.length() == rhsTypes.length();
     int i = 0;
-    foreach ( ExpressionAst* target, lhsExpressions ) {
-        AbstractType::Ptr tupleElementType;
-        DeclarationPointer tupleElementDeclaration;
-        bool currentIsAlias = false;
-        // If the length of the right and the left side matches, exact unpacking can be done.
-        // example code: a, b, c = 3, 4, 5
-        if ( canUnpack ) {
-            tupleElementType = rhsTypes.at(i);
-            tupleElementDeclaration = DeclarationPointer(Helper::resolveAliasDeclaration(rhsDeclarations.at(i).data()));
-            currentIsAlias = rhsEntryIsAliasDeclaration.at(i);
-        }
-        // If the left side only contains one entry, unpacking never happens, and the left side
-        // is instead assigned a container type if applicable
-        // example code: a = 3, 4, 5
-        else if ( lhsExpressions.length() == 1 ) {
-            ExpressionVisitor v(currentContext());
-            v.visitNode(node->value);
-            tupleElementType = v.lastType();
-            tupleElementDeclaration = DeclarationPointer(Helper::resolveAliasDeclaration(v.lastDeclaration().data()));
-            currentIsAlias = v.m_isAlias;
-        }
-        else {
-            if ( ! rhsTypes.isEmpty() && lhsExpressions.length() == 1 ) {
-                // the assignment is of the form "foo = ..."
-                DUChainReadLocker lock;
-                IndexedContainer::Ptr container = ExpressionVisitor::typeObjectForIntegralType<IndexedContainer>("tuple", currentContext());
-                foreach ( AbstractType::Ptr ptr, rhsTypes ) {
-                    container->addEntry(ptr);
-                }
-                tupleElementType = container.cast<AbstractType>();
-            }
-            else if ( ! rhsTypes.isEmpty() ) {
-                // the assignment is of the form "foo, bar, ... = ..." (tuple unpacking)
-                // this one is for the case that the tuple unpacking is not written down explicitly, for example
-                // a = (1, 2, 3); b, c, d = a
-                // the other case (b, c, d = 1, 2, 3) is handled above.
-                if ( const IndexedContainer* container = dynamic_cast<const IndexedContainer*>(rhsTypes.at(0).unsafeData()) ) {
-                    if ( container->typesCount() == lhsExpressions.length() ) {
-                        tupleElementType = container->typeAt(i).abstractType();
-                    }
-                }
-            }
-            if ( ! tupleElementType ) {
-                // use mixed if none of the previous ways of determining the type worked.
-                tupleElementType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
-                tupleElementDeclaration = 0;
-            }
-        }
+    foreach ( ExpressionAst* target, targets ) {
+        SourceType element = std::move(selectSource(targets, sources, i, node->value));
+
         // Handling the tuple unpacking stuff is done now, and we can proceed as if there was no tuple unpacking involved.
-        // Assignments of the form "a = 3"
         if ( target->astType == Ast::NameAstType ) {
-            if ( currentIsAlias ) {
-                DUChainWriteLocker lock(DUChain::lock());
-                AliasDeclaration* decl = eventuallyReopenDeclaration<AliasDeclaration>(static_cast<NameAst*>(target)->identifier, target, AliasDeclarationType);
-                decl->setAliasedDeclaration(tupleElementDeclaration.data());
-                closeDeclaration();
-            }
-            else {
-                DUChainWriteLocker lock(DUChain::lock());
-                Declaration* dec = visitVariableDeclaration<Declaration>(target, 0, tupleElementType);
-                /** DEBUG **/
-                if ( tupleElementType && dec ) {
-                    Q_ASSERT(dec->abstractType());
-                }
-                /** END DEBUG **/
-            }
+            // Assignments of the form "a = 3"
+            assignToName(static_cast<NameAst*>(target), element);
         }
-        // Assignments of the form "a[0] = 3"
         else if ( target->astType == Ast::SubscriptAstType ) {
-            SubscriptAst* subscript = static_cast<SubscriptAst*>(target);
-            ExpressionAst* v = subscript->value;
-            if ( tupleElementType ) {
-                ExpressionVisitor targetVisitor(currentContext());
-                targetVisitor.visitNode(v);
-                DUChainWriteLocker lock;
-                VariableLengthContainer::Ptr cont = VariableLengthContainer::Ptr::dynamicCast(targetVisitor.lastType());
-                if ( cont ) {
-                    cont->addContentType(tupleElementType);
-                }
-                if ( cont and cont->hasKeyType() ) {
-                    if ( subscript->slice and subscript->slice->astType == Ast::IndexAstType ) {
-                        lock.unlock();
-                        ExpressionVisitor keyVisitor(currentContext());
-                        keyVisitor.visitNode(static_cast<IndexAst*>(subscript->slice)->value);
-                        lock.lock();
-                        AbstractType::Ptr key = keyVisitor.lastType();
-                        if ( key ) {
-                            cont->addKeyType(key);
-                        }
-                    }
-                }
-                DeclarationPointer lastDecl = targetVisitor.lastDeclaration();
-                if ( cont && lastDecl ) {
-                    lastDecl->setAbstractType(cont.cast<AbstractType>());
-                }
-            }
+            // Assignments of the form "a[0] = 3"
+            assignToSubscript(static_cast<SubscriptAst*>(target), element);
         }
-        // Assignments of the form "a.b = 3"
         else if ( target->astType == Ast::AttributeAstType ) {
-            AttributeAst* attrib = static_cast<AttributeAst*>(target);
-            // check whether the current attribute is undeclared, but the previos ones known
-            // like in X.Y.Z = 3 where X and Y are defined, but Z isn't; then declare Z.
-            ExpressionVisitor checkForUnknownAttribute(currentContext(), editor());
-            checkForUnknownAttribute.visitNode(attrib);
-            DUChainReadLocker lock(DUChain::lock());
-            DeclarationPointer unknown = checkForUnknownAttribute.lastDeclaration();
-            
-            // declare the attribute.
-            // however, if there's an earlier declaration which does not match the current position
-            // (so it's really a different declaration) we skip this.
-            Declaration* haveDeclaration = 0;
-            if ( unknown ) {
-                haveDeclaration = unknown.data();
-            }
-            
-            lock.unlock();
-            ExpressionVisitor checkPreviousAttributes(currentContext(), editor());
-            checkPreviousAttributes.visitNode(attrib->value); // go "down one level", so only visit "X.Y"
-            
-            DUContextPointer internal(0);
-            DeclarationPointer parentObjectDeclaration = checkPreviousAttributes.lastDeclaration();
-            
-            if ( ! parentObjectDeclaration ) {
-                kDebug() << "No declaration for attribute base, aborting creation of attribute";
-                continue;
-            }
-            // if foo is a class, this is like foo.bar = 3
-            if ( parentObjectDeclaration->internalContext() ) {
-                internal = parentObjectDeclaration->internalContext();
-            }
-            // while this is like A = foo(); A.bar = 3
-            else {
-                AbstractType::Ptr type = parentObjectDeclaration->abstractType();
-                StructureType::Ptr structure(dynamic_cast<StructureType*>(type.unsafeData()));
-                if ( ! structure || ! structure->declaration(topContext()) )
-                    continue;
-                parentObjectDeclaration = structure->declaration(topContext());
-                internal = parentObjectDeclaration->internalContext();
-            }
-            if ( ! internal ) {
-                kDebug() << "No internal context for structure type, aborting creation of attribute declaration";
-                continue;
-            }
-            
-            DUContext* previousContext = currentContext();
-            
-            bool isAlreadyOpen = contextAlreayOpen(internal);
-            if ( isAlreadyOpen ) {
-                activateAlreadyOpenedContext(internal);
-                visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target, haveDeclaration, tupleElementType);
-                closeAlreadyOpenedContext(internal);
-            }
-            else {
-                injectContext(internal.data());
-                
-                Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(attrib->attribute, target, haveDeclaration, tupleElementType);
-                if ( dec ) {
-                    dec->setRange(RangeInRevision(internal->range().start, internal->range().start));
-                    dec->setAutoDeclaration(true);
-                    DUChainWriteLocker lock(DUChain::lock());
-                    previousContext->createUse(dec->ownIndex(), editorFindRange(attrib, attrib));
-                    lock.unlock();
-                }
-                else kWarning() << "No declaration created for " << attrib->attribute << "as parent is not a class";
-                
-                closeInjectedContext();
-            }
+            // Assignments of the form "a.b = 3"
+            assignToAttribute(static_cast<AttributeAst*>(target), element);
         }
         i += 1;
     }
@@ -1355,9 +1401,11 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 
     StructureType::Ptr type(new StructureType());
     
-    DUChainWriteLocker lock(DUChain::lock());
+    DUChainWriteLocker lock;
     ClassDeclaration* dec = eventuallyReopenDeclaration<ClassDeclaration>(node->name, node->name, NoTypeRequired);
+    lock.unlock();
     visitDecorators<ClassDeclaration>(node->decorators, dec);
+    lock.lock();
     eventuallyAssignInternalContext();
     
     dec->setKind(KDevelop::Declaration::Type);
@@ -1365,15 +1413,17 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     dec->setClassType(ClassDeclarationData::Class);
     
     // check whether this is a type container (list, dict, ...) or just a "normal" class
-    const Decorator* d = Helper::findDecoratorByName<ClassDeclaration>(dec, "TypeContainer");
-    if ( d ) {
-        VariableLengthContainer* container = new VariableLengthContainer();
-        if ( Helper::findDecoratorByName<ClassDeclaration>(dec, "hasTypedKeys") ) {
-            container->setHasKeyType(true);
+    if ( Helper::docstringContainsHint(dec, "TypeContainer") ) {
+        ListType* container = nullptr;
+        if ( Helper::docstringContainsHint(dec, "hasTypedKeys") ) {
+            container = new MapType();
+        }
+        else {
+            container = new ListType();
         }
         type = StructureType::Ptr(container);
     }
-    if ( Helper::findDecoratorByName<ClassDeclaration>(dec, "IndexedTypeContainer") ) {
+    if ( Helper::docstringContainsHint(dec, "IndexedTypeContainer") ) {
         IndexedContainer* container = new IndexedContainer();
         type = StructureType::Ptr(container);
     }
@@ -1396,7 +1446,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     lock.lock();
     // every python class inherits from "object".
     // We use this to add all the __str__, __get__, ... methods.
-    if ( dec->baseClassesSize() == 0 and node->name->value != "object" ) {
+    if ( dec->baseClassesSize() == 0 && node->name->value != "object" ) {
         DUChainWriteLocker wlock;
         ReferencedTopDUContext docContext = Helper::getDocumentationFileContext();
         if ( docContext ) {
@@ -1417,16 +1467,19 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     
     type->setDeclaration(dec);
     dec->setType(type);
-    
+
     openType(type);
-    
+    m_currentClassType = type;
+
     // needs to be done here, so the assignment of the internal context happens before visiting the body
     openContextForClassDefinition(node);
     dec->setInternalContext(currentContext());
 
-    foreach ( Ast* node, node->body ) {
-        AstDefaultVisitor::visitNode(node);
+    lock.unlock();
+    foreach ( Ast* _node, node->body ) {
+        AstDefaultVisitor::visitNode(_node);
     }
+    lock.lock();
     
     closeContext();
     closeType();
@@ -1473,19 +1526,25 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     // if that exists, then this function is a member function
     DeclarationPointer eventualParentDeclaration(currentDeclaration());
     FunctionType::Ptr type(new FunctionType());
-    
-    DUChainWriteLocker lock(DUChain::lock());
-    FunctionDeclaration* dec = eventuallyReopenDeclaration<FunctionDeclaration>(node->name, node->name, FunctionDeclarationType);
-    
+
+    DUChainWriteLocker lock;
+    FunctionDeclaration* dec = eventuallyReopenDeclaration<FunctionDeclaration>(node->name, node->name,
+                                                                                FunctionDeclarationType);
+
     Q_ASSERT(dec->isFunctionDeclaration());
+    
+    // check for documentation
+    dec->setComment(getDocstring(node->body));
     
     openType(type);
     dec->setInSymbolTable(false);
     dec->setType(type);
     
+    lock.unlock();
     visitDecorators<FunctionDeclaration>(node->decorators, dec);
     visitFunctionArguments(node);
     
+    lock.lock();
     const bool isStatic = Helper::findDecoratorByName<FunctionDeclaration>(dec, "staticmethod");
     const bool isClassMethod = Helper::findDecoratorByName<FunctionDeclaration>(dec, "classmethod");
     
@@ -1493,15 +1552,19 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     // an instance of the class.
     // this must be done here, because the type of self must be known when parsing the body
     if ( eventualParentDeclaration && currentType<FunctionType>()->arguments().length()
-            && m_firstAttributeDeclaration.data() && currentContext()->type() == DUContext::Class
-            && ! isStatic )
+            && currentContext()->type() == DUContext::Class && ! isStatic )
     {
-        DUChainWriteLocker lock(DUChain::lock());
-        currentType<FunctionType>()->removeArgument(0);
-        m_firstAttributeDeclaration->setAbstractType(eventualParentDeclaration->abstractType());
+        if ( dec->vararg() != -1 ) {
+            dec->setVararg(dec->vararg() - 1);
+        }
+        if ( dec->kwarg() != -1 ) {
+            dec->setKwarg(dec->kwarg() - 1);
+        }
     }
-    
+
+    lock.unlock();
     visitFunctionBody(node);
+    lock.lock();
     
     closeDeclaration();
     eventuallyAssignInternalContext();
@@ -1547,6 +1610,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
                     description = i18n("First argument of class method is not called self, this is deprecated");
                 }
                 if ( ! description.isEmpty() ) {
+                    DUChainWriteLocker lock;
                     KDevelop::Problem *p = new KDevelop::Problem();
                     p->setDescription(description);
                     p->setFinalLocation(DocumentRange(currentlyParsedDocument(), parameters[0]->range().castToSimpleRange()));
@@ -1555,13 +1619,12 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
                     ProblemPointer ptr(p);
                     topContext()->addProblem(ptr);
                 }
-                m_firstAttributeDeclaration = DeclarationPointer(0);
             }
             else if ( currentContext()->type() == DUContext::Class && parameters.isEmpty() ) {
-                DUChainWriteLocker lock(DUChain::lock());
+                DUChainWriteLocker lock;
                 KDevelop::Problem *p = new KDevelop::Problem();
                  // only mark first line
-                p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(node->startLine, node->startCol, node->startLine, 10000)));
+                p->setFinalLocation(DocumentRange(currentlyParsedDocument(), KTextEditor::Range(node->startLine, node->startCol, node->startLine, 10000)));
                 p->setSource(KDevelop::ProblemData::SemanticAnalysis);
                 p->setSeverity(KDevelop::ProblemData::Warning);
                 p->setDescription(i18n("Non-static class method without arguments, must have at least one (self)"));
@@ -1571,7 +1634,6 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         }
     }
     else {
-        m_firstAttributeDeclaration = DeclarationPointer(0);
         dec->setStatic(true);
     }
 
@@ -1580,12 +1642,27 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         dec->setType<FunctionType>(type);
     }
     
-    // check for documentation
-    dec->setComment(getDocstring(node->body));
+    // check for (python3) function annotations
+    if ( node->returns ) {
+        lock.unlock();
+        ExpressionVisitor v(currentContext());
+        v.visitNode(node->returns);
+        lock.lock();
+        if ( v.lastType() && v.isAlias() ) {
+            type->setReturnType(Helper::mergeTypes(type->returnType(), v.lastType()));
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "updated function return type to " << type->toString();
+            dec->setType(type);
+        }
+        else if ( ! v.isAlias()) {
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "not updating function return type because expression is not a type object";
+        }
+    }
+    
+    lock.lock();
     dec->setInSymbolTable(true);
 }
 
-QString DeclarationBuilder::getDocstring(QList< Ast* > body)
+QString DeclarationBuilder::getDocstring(QList< Python::Ast* > body) const
 {
     if ( ! body.isEmpty() && body.first()->astType == Ast::ExpressionAstType 
             && static_cast<ExpressionAst*>(body.first())->value->astType == Ast::StringAstType )
@@ -1672,7 +1749,7 @@ void DeclarationBuilder::adjustExpressionsForTypecheck(Python::ExpressionAst* ad
     second.visitNode(from);
     AbstractType::Ptr hint;
     DeclarationPointer adjust;
-    if ( second.m_isAlias && second.lastType() ) {
+    if ( second.isAlias() && second.lastType() ) {
         hint = second.lastType();
         adjust = first.lastDeclaration();
     }
@@ -1696,14 +1773,14 @@ void DeclarationBuilder::adjustExpressionsForTypecheck(Python::ExpressionAst* ad
 void DeclarationBuilder::visitReturn(ReturnAst* node)
 {
     // Find the type of the object being "return"ed
-    ExpressionVisitor v(currentContext(), editor());
+    ExpressionVisitor v(currentContext());
     v.visitNode(node->value);
     
     if ( node->value ) {
         if ( ! hasCurrentType() ) {
             DUChainWriteLocker lock(DUChain::lock());
             KDevelop::Problem *p = new KDevelop::Problem();
-            p->setFinalLocation(DocumentRange(currentlyParsedDocument(), SimpleRange(node->startLine, node->startCol, node->endLine, node->endCol))); // only mark first line
+            p->setFinalLocation(DocumentRange(currentlyParsedDocument(), node->range())); // only mark first line
             p->setSource(KDevelop::ProblemData::SemanticAnalysis);
             p->setDescription(i18n("Return statement not within function declaration"));
             ProblemPointer ptr(p);
@@ -1712,6 +1789,7 @@ void DeclarationBuilder::visitReturn(ReturnAst* node)
         }
         TypePtr<FunctionType> t = currentType<FunctionType>();
         AbstractType::Ptr encountered = v.lastType();
+        DUChainWriteLocker lock;
         if ( t ) {
             // Update the containing function's return type
             t->setReturnType(Helper::mergeTypes(t->returnType(), encountered));
@@ -1722,96 +1800,117 @@ void DeclarationBuilder::visitReturn(ReturnAst* node)
 
 void DeclarationBuilder::visitArguments( ArgumentsAst* node )
 {
-    DUChainWriteLocker lock(DUChain::lock());
-    
-    if ( currentDeclaration() and currentDeclaration()->isFunctionDeclaration() ) {
-        FunctionDeclaration* workingOnDeclaration = static_cast<FunctionDeclaration*>(Helper::resolveAliasDeclaration(currentDeclaration()));
-        workingOnDeclaration->clearDefaultParameters();
-        if ( hasCurrentType() and currentType<FunctionType>() ) {
-            FunctionType::Ptr type = currentType<FunctionType>();
-            NameAst* realParam = 0;
-            bool isFirst = true;
-            int defaultParametersCount = node->defaultValues.length();
-            int parametersCount = node->arguments.length();
-            int firstDefaultParameterOffset = parametersCount - defaultParametersCount;
-            int currentIndex = 0;
-            foreach ( ExpressionAst* expression, node->arguments ) {
-                // Iterate over all the function's arguments, create declarations, and add the arguments
-                // to the functions FunctionType.
-                currentIndex += 1;
-                realParam = (expression && expression->astType == Ast::NameAstType) ? static_cast<NameAst*>(expression) : 0;
-                
-                if ( ! realParam || realParam->context != ExpressionAst::Parameter ) {
-                    // def myfun(x, y, (z, a, b), d): pass
-                    // this case is not handled currently, but it could be implemented.
-                    continue;
-                }
-                
-                // Create a variable declaration for the parameter, to be used in the function body.
-                Declaration* paramDeclaration = visitVariableDeclaration<Declaration>(realParam);
-                
-                if ( type && paramDeclaration && currentIndex > firstDefaultParameterOffset ) {
-                    // Handle arguments with default values, like def foo(bar = 3): pass
-                    // Find type of given default value, and assign it to the declaration
-                    // TODO does this actually work?
-                    ExpressionVisitor v(currentContext());
-                    v.visitNode(node->defaultValues.at(currentIndex - firstDefaultParameterOffset - 1));
-                    DUChainWriteLocker lock;
-                    paramDeclaration->setAbstractType(v.lastType());
-                    if ( v.lastType() ) {
-                        type->addArgument(v.lastType());
-                    }
-                    else {
-                        type->addArgument(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
-                    }
-                    // TODO add the real expression from the document here as default value
-                    workingOnDeclaration->addDefaultParameter(IndexedString("..."));
-                }
-                else {
-                    // For now, we cannot know the type, thus we write "mixed".
-                    // As soon as a call to the function is encountered, this type might be updated.
-                    DUChainWriteLocker lock;
-                    type->addArgument(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
-                }
-                if ( isFirst ) {
-                    // Store the first parameter for easy access; if this is a class member declaration,
-                    // its type will then be set to be an instance of the containing class.
-                    m_firstAttributeDeclaration = DeclarationPointer(paramDeclaration);
-                    isFirst = false;
-                }
-            }
-            // Handle *args, **kwargs, and assign them a list / dictionary type.
-            if ( node->vararg ) {
-                DUChainReadLocker lock;
-                IndexedContainer::Ptr tupleType = ExpressionVisitor::typeObjectForIntegralType
-                                                                     <IndexedContainer>("tuple", currentContext());
-                lock.unlock();
-                node->vararg->startCol = node->vararg_col_offset; node->vararg->endCol = node->vararg_col_offset + node->vararg->value.length() - 1;
-                node->vararg->startLine = node->vararg_lineno; node->vararg->endLine = node->vararg_lineno;
-                visitVariableDeclaration<Declaration>(node->vararg, 0, tupleType.cast<AbstractType>());
-                workingOnDeclaration->setHasVararg(true);
-                type->addArgument(tupleType.cast<AbstractType>());
-            }
-            if ( node->kwarg ) {
-                DUChainReadLocker lock;
-                AbstractType::Ptr stringType = ExpressionVisitor::typeObjectForIntegralType
-                                                                <AbstractType>("str", currentContext());
-                VariableLengthContainer::Ptr dictType = ExpressionVisitor::typeObjectForIntegralType
-                                                                  <VariableLengthContainer>("dict", currentContext());
-                if ( dictType && stringType ) {
-                    lock.unlock();
-                    dictType->addKeyType(stringType);
-                    node->kwarg->startCol = node->arg_col_offset; node->kwarg->endCol = node->arg_col_offset + node->kwarg->value.length() - 1;
-                    node->kwarg->startLine = node->arg_lineno; node->kwarg->endLine = node->arg_lineno;
-                    visitVariableDeclaration<Declaration>(node->kwarg, 0, dictType.cast<AbstractType>());
-                    workingOnDeclaration->setHasKwarg(true);
-                    type->addArgument(dictType.cast<AbstractType>());
-                }
+    if ( ! currentDeclaration() || ! currentDeclaration()->isFunctionDeclaration() ) {
+        return;
+    }
+    FunctionDeclaration* workingOnDeclaration = static_cast<FunctionDeclaration*>(Helper::resolveAliasDeclaration(currentDeclaration()));
+    workingOnDeclaration->clearDefaultParameters();
+    if ( ! hasCurrentType() || ! currentType<FunctionType>() ) {
+        return;
+    }
+    FunctionType::Ptr type = currentType<FunctionType>();
+    bool isFirst = true;
+    int defaultParametersCount = node->defaultValues.length();
+    int parametersCount = node->arguments.length();
+    int firstDefaultParameterOffset = parametersCount - defaultParametersCount;
+    int currentIndex = 0;
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "arguments:" << node->arguments.size();
+    foreach ( ArgAst* arg, node->arguments ) {
+        // Iterate over all the function's arguments, create declarations, and add the arguments
+        // to the functions FunctionType.
+        currentIndex += 1;
+
+        if ( ! arg->argumentName ) {
+            continue;
+        }
+
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "visiting argument:" << arg->argumentName->value;
+
+        // Create a variable declaration for the parameter, to be used in the function body.
+        Declaration* paramDeclaration = visitVariableDeclaration<Declaration>(arg->argumentName);
+        if ( ! paramDeclaration ) {
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "could not create parameter declaration!";
+            continue;
+        }
+
+        AbstractType::Ptr argumentType(new IntegralType(IntegralType::TypeMixed));
+        if ( arg->annotation ) {
+            ExpressionVisitor v(currentContext());
+            v.visitNode(arg->annotation);
+            if ( v.lastType() && v.isAlias() ) {
+                DUChainWriteLocker lock;
+                argumentType = Helper::mergeTypes(paramDeclaration->abstractType(), v.lastType());
             }
         }
+        else if ( currentIndex > firstDefaultParameterOffset ) {
+            // Handle arguments with default values, like def foo(bar = 3): pass
+            // Find type of given default value, and assign it to the declaration
+            ExpressionVisitor v(currentContext());
+            v.visitNode(node->defaultValues.at(currentIndex - firstDefaultParameterOffset - 1));
+            if ( v.lastType() ) {
+                argumentType = v.lastType();
+            }
+            // TODO add the real expression from the document here as default value
+            workingOnDeclaration->addDefaultParameter(IndexedString("..."));
+        }
+
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "is first:" << isFirst << hasCurrentDeclaration() << currentDeclaration();
+        if ( isFirst && hasCurrentDeclaration() && currentContext() && currentContext()->parentContext() ) {
+            DUChainReadLocker lock;
+            if ( currentContext()->parentContext()->type() == DUContext::Class ) {
+                argumentType = m_currentClassType.cast<AbstractType>();
+                isFirst = false;
+            }
+        }
+
+        DUChainWriteLocker lock;
+        paramDeclaration->setAbstractType(Helper::mergeTypes(paramDeclaration->abstractType(), argumentType));
+        type->addArgument(argumentType);
+        if ( argumentType ) {
+            qCDebug(KDEV_PYTHON_DUCHAIN) << "creating argument with type" << argumentType->toString();
+        }
     }
-    
-    DeclarationBuilderBase::visitArguments(node);
+    // Handle *args, **kwargs, and assign them a list / dictionary type.
+    if ( node->vararg ) {
+        // inject the vararg at the correct place
+        int atIndex = 0;
+        int useIndex = -1;
+        foreach ( ArgAst* arg, node->arguments ) {
+            if ( node->vararg && workingOnDeclaration->vararg() == -1 && node->vararg->appearsBefore(arg) ) {
+                useIndex = atIndex;
+            }
+            atIndex += 1;
+        }
+        if ( useIndex == -1 ) {
+            // if the vararg does not appear in the middle of the params, place it at the end.
+            // this is new in python3, you can do like def fun(a, b, *c, z): pass
+            useIndex = type->arguments().size();
+        }
+        DUChainReadLocker lock;
+        IndexedContainer::Ptr tupleType = ExpressionVisitor::typeObjectForIntegralType
+                                                            <IndexedContainer>("tuple", currentContext());
+        lock.unlock();
+        if ( tupleType ) {
+            visitVariableDeclaration<Declaration>(node->vararg->argumentName, 0, tupleType.cast<AbstractType>());
+            workingOnDeclaration->setVararg(atIndex);
+            type->addArgument(tupleType.cast<AbstractType>(), useIndex);
+        }
+    }
+
+    if ( node->kwarg ) {
+        DUChainReadLocker lock;
+        AbstractType::Ptr stringType = ExpressionVisitor::typeObjectForIntegralType
+                                                        <AbstractType>("str", currentContext());
+        auto dictType = ExpressionVisitor::typeObjectForIntegralType
+                                                        <MapType>("dict", currentContext());
+        lock.unlock();
+        if ( dictType && stringType ) {
+            dictType->addKeyType<Python::UnsureType>(stringType);
+            visitVariableDeclaration<Declaration>(node->kwarg->argumentName, 0, dictType.cast<AbstractType>());
+            type->addArgument(dictType.cast<AbstractType>());
+            workingOnDeclaration->setKwarg(type->arguments().size() - 1);
+        }
+    }
 }
 
 void DeclarationBuilder::visitGlobal(GlobalAst* node)

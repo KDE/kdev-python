@@ -22,9 +22,13 @@
 #include <interfaces/icore.h>
 #include <interfaces/isession.h>
 
+#include <shell/partcontroller.h>
+
 #include <KTextEditor/View>
 #include <KTextEditor/Document>
 #include <KTextEditor/Editor>
+
+#include <QIcon>
 
 using namespace KDevelop;
 using namespace KTextEditor;
@@ -37,14 +41,15 @@ ImplementFunctionCompletionItem::ImplementFunctionCompletionItem(const QString& 
     
 }
 
-void ImplementFunctionCompletionItem::execute(KTextEditor::Document* document, const KTextEditor::Range& word)
+void ImplementFunctionCompletionItem::execute(KTextEditor::View* view, const KTextEditor::Range& word)
 {
+    auto document = view->document();
     const QString finalText = m_name + "(" + m_arguments.join(", ") + "):";
     document->replaceText(word, finalText);
     // 4 spaces is indentation for python. everyone does it like this. you must, too.
     // TODO use kate settings
     document->insertLine(word.start().line() + 1, m_previousIndent + "    ");
-    if ( View* view = document->activeView() ) {
+    if ( View* view = static_cast<KDevelop::PartController*>(ICore::self()->partController())->activeView() ) {
         view->setCursorPosition(Cursor(word.end().line() + 1, m_previousIndent.length() + 4));
     }
 }

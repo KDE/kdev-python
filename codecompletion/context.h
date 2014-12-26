@@ -50,10 +50,10 @@ typedef QPair<Declaration*, int> DeclarationDepthPair;
  **/
 class IncludeSearchTarget {
 public:
-    IncludeSearchTarget(KUrl d_, QStringList r_) : directory(d_), remainingIdentifiers(r_) {
-        directory.cleanPath();
+    IncludeSearchTarget(QUrl d_, QStringList r_) : directory(d_), remainingIdentifiers(r_) {
+        directory.setPath(QDir::cleanPath(directory.path()));
     };
-    KUrl directory;
+    QUrl directory;
     QStringList remainingIdentifiers;
 };
 
@@ -78,7 +78,8 @@ public:
     
     enum ItemTypeHint {
         NoHint,
-        IterableRequested
+        IterableRequested, // < the requested item should be iterable, e.g. a list
+        ClassTypeRequested // < the requested item should be a class type
     };
     
     PythonCodeCompletionContext(DUContextPointer context, const QString& text, const QString& followingText,
@@ -162,7 +163,7 @@ private:
     int m_maxFolderScanDepth;
     QStringList m_searchingForModule;
     QString m_searchImportItemsInModule;
-    KUrl m_workingOnDocument;
+    QUrl m_workingOnDocument;
     
     CodeCompletionContext* m_child;
     

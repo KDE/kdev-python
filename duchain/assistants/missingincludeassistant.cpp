@@ -1,6 +1,6 @@
 /*
- * <one line to give the library's name and an idea of what it does.>
- * Copyright 2013  <copyright holder> <email>
+ * This file is part of kdev-python, the Python language support plugin for KDevelop
+ * Copyright 2013 Sven Brauch <svenbrauch@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -29,8 +29,11 @@
 
 #include <iostream>
 
-#include <KDebug>
-#include <KStandardDirs>
+#include <QDebug>
+#include <QStandardPaths>
+#include "../duchaindebug.h"
+
+
 #include <KAction>
 #include <KLocalizedString>
 
@@ -46,9 +49,9 @@ MissingIncludeProblem::MissingIncludeProblem(const QString &moduleName, IndexedS
 
 }
 
-KSharedPtr<IAssistant> MissingIncludeProblem::solutionAssistant() const
+QExplicitlySharedDataPointer<IAssistant> MissingIncludeProblem::solutionAssistant() const
 {
-    return KSharedPtr<IAssistant>(new MissingIncludeAssistant(m_moduleName, m_currentDocument));
+    return QExplicitlySharedDataPointer<IAssistant>(new MissingIncludeAssistant(m_moduleName, m_currentDocument));
 }
 
 DocumentationGeneratorAction::DocumentationGeneratorAction(const QString& module, const IndexedString& document)
@@ -67,13 +70,14 @@ QString DocumentationGeneratorAction::description() const
 void DocumentationGeneratorAction::execute()
 {
     // yes, it's duplicate from the doc file widget, but it's too painful to share it
-    KStandardDirs d;
-    QString path = d.locateLocal("data", "kdevpythonsupport/documentation_files/", true);
+    QDir dir(QStandardPaths::GenericDataLocation + "kdevpythonsupport/documentation_files/");
+    dir.mkpath(QStandardPaths::GenericDataLocation + "kdevpythonsupport/documentation_files/");
+    QString path = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/" + "kdevpythonsupport/documentation_files/";
     DocfileWizard wizard(path);
     wizard.setModuleName(module);
     wizard.exec();
     if ( ! wizard.wasSavedAs().isNull() ) {
-        ICore::self()->documentController()->openDocument(KUrl(wizard.wasSavedAs()));
+        ICore::self()->documentController()->openDocument(QUrl::fromLocalFile(wizard.wasSavedAs()));
         // force a recursive update of the context, so that all the imports are reparsed too
         // (since they potentially have changed through this action)
         ICore::self()->languageController()->backgroundParser()->addDocument(document, TopDUContext::ForceUpdateRecursive);
@@ -83,7 +87,7 @@ void DocumentationGeneratorAction::execute()
 
 void MissingIncludeAssistant::createActions()
 {
-    KSharedPtr<IAssistantAction> action(new DocumentationGeneratorAction(module, document));
+    QExplicitlySharedDataPointer<IAssistantAction> action(new DocumentationGeneratorAction(module, document));
     addAction(action);
 }
 

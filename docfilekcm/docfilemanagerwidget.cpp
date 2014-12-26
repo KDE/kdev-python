@@ -36,8 +36,10 @@
 #include <QUrl>
 #include <QDebug>
 #include <QTemporaryFile>
+#include <QStandardPaths>
+#include <QIcon>
+#include <QUrl>
 
-#include <KStandardDirs>
 #include <KMessageBox>
 #include <KLocalizedString>
 #include <KMimeType>
@@ -47,6 +49,7 @@
 #include <knewstuff3/uploaddialog.h>
 #include <KTar>
 #include <KTextEditor/Document>
+#include <KDialog>
 
 DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
     : QWidget(parent)
@@ -68,15 +71,15 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
     // construct the buttons for up/download
     QVBoxLayout* buttonsLayout = new QVBoxLayout;
     QPushButton* ghnsButton = new QPushButton(i18n("Download new"));
-    ghnsButton->setIcon(KIcon("get-hot-new-stuff"));
+    ghnsButton->setIcon(QIcon::fromTheme("get-hot-new-stuff"));
     QPushButton* generateButton = new QPushButton(i18n("Generate..."));
-    generateButton->setIcon(KIcon("tools-wizard"));
+    generateButton->setIcon(QIcon::fromTheme("tools-wizard"));
     QPushButton* uploadButton = new QPushButton(i18n("Share selected"));
-    uploadButton->setIcon(KIcon("applications-internet")); // TODO better icon semantically
+    uploadButton->setIcon(QIcon::fromTheme("applications-internet")); // TODO better icon semantically
     QPushButton* importButton = new QPushButton(i18n("Import from editor"));
     importButton->setToolTip(i18n("Copy the contents of the active editor window "
                                   "to a new file in the documentation directory"));
-    importButton->setIcon(KIcon("edit-copy"));
+    importButton->setIcon(QIcon::fromTheme("edit-copy"));
     buttonsLayout->addWidget(ghnsButton);
     buttonsLayout->addWidget(uploadButton);
     buttonsLayout->addWidget(generateButton);
@@ -92,11 +95,11 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
     QFrame* separator2 = new QFrame();
     separator2->setFrameShape(QFrame::HLine);
     QPushButton* openFileManagerButton = new QPushButton(i18n("Open file manager"));
-    openFileManagerButton->setIcon(KIcon("system-file-manager"));
+    openFileManagerButton->setIcon(QIcon::fromTheme("system-file-manager"));
     QPushButton* openTextEditorButton = new QPushButton(i18nc("Edit selected files", "Edit selected"));
-    openTextEditorButton->setIcon(KIcon("kate"));
+    openTextEditorButton->setIcon(QIcon::fromTheme("kate"));
     QPushButton* searchPathsButton = new QPushButton(i18n("Search paths..."));
-    searchPathsButton->setIcon(KIcon("folder"));
+    searchPathsButton->setIcon(QIcon::fromTheme("folder"));
     buttonsLayout->addWidget(separator);
     buttonsLayout->addWidget(openFileManagerButton);
     buttonsLayout->addWidget(openTextEditorButton);
@@ -123,8 +126,7 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
 
 void DocfileManagerWidget::showSearchPaths()
 {
-    KStandardDirs d;
-    QStringList dirs = d.findDirs("data", "kdevpythonsupport/documentation_files");
+    QStringList dirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, "kdevpythonsupport/documentation_files", QStandardPaths::LocateDirectory);
     QLabel* dirsMessageLabel = new QLabel(i18nc("displays a list of search paths below",
                                                 "Paths searched for documentation by kdev-python (in this order):"));
     QTextEdit* paths = new QTextEdit;
@@ -149,7 +151,7 @@ void DocfileManagerWidget::showSearchPaths()
 
 void DocfileManagerWidget::openDocfilePath()
 {
-    KUrl docfileDirectory(docfilePath());
+    auto docfileDirectory = QUrl::fromLocalFile(docfilePath());
     KRun::runUrl(docfileDirectory, KMimeType::findByUrl(docfileDirectory)->name(), this);
 }
 
@@ -158,7 +160,7 @@ void DocfileManagerWidget::copyEditorContents()
     KDevelop::IDocumentController* documentController = KDevelop::ICore::self()->documentController();
     if ( documentController->activeDocument() ) {
         if ( KTextEditor::Document* doc = documentController->activeDocument()->textDocument() ) {
-            KDialog* dialog = new KDialog(this);
+            auto dialog = new KDialog(this);
             dialog->setButtons(KDialog::Ok | KDialog::Cancel);
             QWidget* contents = new QWidget;
             contents->setLayout(new QVBoxLayout);
@@ -171,11 +173,11 @@ void DocfileManagerWidget::copyEditorContents()
             contents->layout()->addWidget(new QLabel(i18n("After copying, you will be editing the new document.")));
             dialog->setMainWidget(contents);
             if ( dialog->exec() == KDialog::Accepted ) {
-                KUrl target = KUrl(docfilePath() + "/" + lineEdit->text());
-                target.cleanPath(KUrl::SimplifyDirSeparators);
-                QDir d(target.directory());
+                auto target = QUrl::fromLocalFile(docfilePath() + "/" + lineEdit->text());
+                // TODO QUrl: cleanPath?
+                QDir d(target.url());
                 if ( ! d.exists() ) {
-                    d.mkpath(target.directory());
+                    d.mkpath(d.absolutePath());
                 }
                 doc->saveAs(target);
             }
@@ -190,18 +192,17 @@ void DocfileManagerWidget::openSelectedInTextEditor()
         KMessageBox::information(this, i18n("Please select at least one file from the list for editing."));
     }
     foreach ( const QUrl& item, selected ) {
-        KUrl fullUrl(item);
-        fullUrl.setProtocol("file"); // TODO isn't there a more elegant solution for this?
-        KDevelop::ICore::self()->documentController()->openDocument(fullUrl);
+        KDevelop::ICore::self()->documentController()->openDocument(item);
     }
 }
 
 QString DocfileManagerWidget::docfilePath()
 {
-    KStandardDirs d;
     // finds a local directory which is contained in the dirs searched by the parser, code
     // and creates it if it doesn't exist
-    QString path = d.locateLocal("data", "kdevpythonsupport/documentation_files/", true);
+    QDir dir(QStandardPaths::GenericDataLocation + "kdevpython/documentation_files/");
+    dir.mkpath(QStandardPaths::GenericDataLocation + "kdevpython/documentation_files/");
+    QString path = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/" + "kdevpythonsupport/documentation_files/";
     return path;
 }
 
@@ -224,8 +225,7 @@ void DocfileManagerWidget::runWizard()
 
 void DocfileManagerWidget::showGHNSDialog()
 {
-    KStandardDirs d;
-    QString knsrc = d.findResource("config", "kdev_python_docfiles.knsrc");
+    QString knsrc = QStandardPaths::locate(QStandardPaths::GenericConfigLocation, "kdev_python_docfiles.knsrc");
     KNS3::DownloadDialog dialog(knsrc, this);
     dialog.exec();
 }
@@ -254,8 +254,7 @@ QTemporaryFile* DocfileManagerWidget::makeArchive(const QList< QUrl >& urls) con
 
 void DocfileManagerWidget::uploadSelected()
 {
-    KStandardDirs d;
-    QString knsrc = d.findResource("config", "kdev_python_docfiles.knsrc");
+    QString knsrc = QStandardPaths::locate(QStandardPaths::GenericConfigLocation, "kdev_python_docfiles.knsrc");
     KNS3::UploadDialog dialog(knsrc, this);
     QList<QUrl> selected = selectedItems();
     // always make a tar archive out of the selected files, even if it's only one

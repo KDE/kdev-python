@@ -37,8 +37,8 @@ public:
     QString m_fullyQualifiedModuleIdentifier;
     
 protected:
-    QString html(bool shorten = false);
     virtual void htmlIdentifiedType(KDevelop::AbstractType::Ptr type, const KDevelop::IdentifiedType* idType);
+    virtual void eventuallyMakeTypeLinks(AbstractType::Ptr type);
     QString getLink(const QString& name, DeclarationPointer declaration, NavigationAction::Type actionType);
 };
 

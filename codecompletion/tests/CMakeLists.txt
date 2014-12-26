@@ -1,10 +1,15 @@
-kde4_add_unit_test(pycompletiontest pycompletiontest.cpp)
+set(pycompletiontest_SRCS 
+    pycompletiontest.cpp
+    ../codecompletiondebug.cpp)
 
-target_link_libraries(pycompletiontest
-    kdev4pythonduchain
-    kdev4pythoncompletion
-    kdev4pythonparser
-    ${kdev4pythonparser_LIBRARIES}
-    ${QT_QTTEST_LIBRARY}
-    ${KDEVPLATFORM_TESTS_LIBRARIES}
+ecm_add_test(${pycompletiontest_SRCS}
+    TEST_NAME pycompletiontest
+    LINK_LIBRARIES
+        kdev4pythonduchain
+        kdev4pythoncompletion
+        kdev4pythonparser
+        ${kdev4pythonparser_LIBRARIES}
+        Qt5::Test
+        KDev::Tests
+        KF5::KDELibs4Support
 )

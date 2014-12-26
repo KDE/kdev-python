@@ -22,9 +22,8 @@
 
 #include <QMutexLocker>
 
-#include <KDebug>
 #include <KComponentData>
-#include <KStandardDirs>
+
 #include <KPluginFactory>
 #include <KPluginLoader>
 
@@ -55,6 +54,10 @@
 #include "codegen/refactoring.h"
 #include "codegen/correctionfilegenerator.h"
 #include "kdevpythonversion.h"
+#include "checks/basiccheck.h"
+
+#include <QDebug>
+#include "pythondebug.h"
 
 using namespace KDevelop;
 
@@ -84,12 +87,13 @@ KDevelop::ContextMenuExtension LanguageSupport::contextMenuExtension(KDevelop::C
 }
 
 LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ )
-    : KDevelop::IPlugin( KDevPythonSupportFactory::componentData(), parent )
+    : KDevelop::IPlugin("pythonlanguagesupport", parent )
     , KDevelop::ILanguageSupport()
     , m_highlighting( new Highlighting( this ) )
     , m_refactoring( new Refactoring( this ) )
 {
     KDEV_USE_EXTENSION_INTERFACE( KDevelop::ILanguageSupport )
+    KDEV_USE_EXTENSION_INTERFACE( KDevelop::ILanguageCheckProvider )
 
     m_self = this;
 
@@ -142,7 +146,7 @@ LanguageSupport* LanguageSupport::self()
     return m_self;
 }
 
-bool LanguageSupport::enabledForFile(const KUrl& url)
+bool LanguageSupport::enabledForFile(const QUrl& url)
 {
     // This is a bit more general than it would need to be,
     // but that way we can have the same code for both branches.
@@ -194,7 +198,7 @@ SourceFormatterItemList LanguageSupport::sourceFormatterItems() const
 
 KDevelop::ILanguage *LanguageSupport::language()
 {
-    kDebug() << core()->languageController()->language( name() );
+    qCDebug(KDEV_PYTHON) << core()->languageController()->language( name() );
     return core()->languageController()->language( name() );
 }
 
@@ -211,6 +215,12 @@ BasicRefactoring* LanguageSupport::refactoring() const
 ILanguageSupport::WhitespaceSensitivity LanguageSupport::whitespaceSensititivy() const
 {
     return ILanguageSupport::IndentOnly;
+}
+
+QList<ILanguageCheck*> LanguageSupport::providedChecks()
+{
+    qDebug() << "checks requested";
+    return {new BasicCheck()};
 }
 
 }

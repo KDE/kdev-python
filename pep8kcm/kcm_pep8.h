@@ -25,8 +25,11 @@
 #include <QLineEdit>
 #include <QCheckBox>
 
+#include <KPluginFactory>
+
 class PEP8KCModule : public KCModule
 {
+Q_OBJECT
 public:
     PEP8KCModule( QWidget* parent, const QVariantList& args = QVariantList() );
     virtual void save();

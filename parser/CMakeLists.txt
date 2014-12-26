@@ -10,24 +10,30 @@ set(parser_STAT_SRCS
     astdefaultvisitor.cpp
     astvisitor.cpp
     astbuilder.cpp
+    cythonsyntaxremover.cpp
+    parserdebug.cpp
 )
 
-set(kdev4pythonparser_LIBRARIES
-    ${KDE4_KDECORE_LIBS}
-    ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
-    ${QT_QTCORE_LIBRARY}
-    ${kdevpython_BINARY_DIR}/python-src/libpython2.7-kdevelop.so
-    PARENT_SCOPE
-)
+find_package(PythonLibs 3.4 REQUIRED)
+if ( NOT ${PYTHONLIBS_FOUND} OR ${PYTHON_VERSION_MINOR} GREATER 4 )
+    message(FATAL_ERROR "Python 3.4 with --enable-shared is required to build kdev-python")
+endif()
 
-kde4_add_library( kdev4pythonparser SHARED ${parser_SRCS} ${parser_STAT_SRCS} )
+include_directories(kdev4pythonparser ${PYTHON_INCLUDE_DIRS})
+
+add_library( kdev4pythonparser SHARED ${parser_STAT_SRCS} )
+
+generate_export_header(kdev4pythonparser EXPORT_MACRO_NAME KDEVPYTHONPARSER_EXPORT
+                                         EXPORT_FILE_NAME parserexport.h)
+
 target_link_libraries(kdev4pythonparser LINK_PRIVATE
-    ${KDE4_KDECORE_LIBS}
-    ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
-    ${QT_QTCORE_LIBRARY}
-    ${kdevpython_BINARY_DIR}/python-src/libpython2.7-kdevelop.so
+    KF5::KDELibs4Support
+    KDev::Language
+    KDev::Util
+    Qt5::Core
+    ${PYTHON_LIBRARY}
 )
 
-add_dependencies(kdev4pythonparser parser)
 install(TARGETS kdev4pythonparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
 
+add_subdirectory(tests)

@@ -24,15 +24,12 @@
 #include <QBoxLayout>
 #include <QDebug>
 
-#include <KPluginFactory>
-
 #include "docfilemanagerwidget.h"
 
-K_PLUGIN_FACTORY(DocfilesKCModuleFactory, registerPlugin<DocfilesKCModule>(); )
-K_EXPORT_PLUGIN(DocfilesKCModuleFactory("kcm_docfiles", "kdevpythonsupport"))
+K_PLUGIN_FACTORY(DocfilesKCModuleFactory, registerPlugin<DocfilesKCModule>();)
 
 DocfilesKCModule::DocfilesKCModule(QWidget* parent, const QVariantList& args)
-    : KCModule(DocfilesKCModuleFactory::componentData(), parent, args)
+    : KCModule(parent, args)
 {
    managerWidget = new DocfileManagerWidget(parent);
    parent->layout()->addWidget(managerWidget);
@@ -43,3 +40,4 @@ DocfilesKCModule::~DocfilesKCModule()
 
 }
 
+#include "kcm_docfiles.moc"

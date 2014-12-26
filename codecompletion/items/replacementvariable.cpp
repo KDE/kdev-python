@@ -21,7 +21,7 @@
 #include <KTextEditor/View>
 #include <KTextEditor/Document>
 #include <KTextEditor/CodeCompletionModel>
-#include <KTextEditor/TemplateInterface2>
+// #include <KTextEditor/TemplateInterface> not currently supported
 #include <language/duchain/ducontext.h>
 #include <language/codecompletion/codecompletionmodel.h>
 
@@ -38,8 +38,9 @@ ReplacementVariableItem::ReplacementVariableItem(const ReplacementVariable &vari
 {
 }
 
-void ReplacementVariableItem::execute(Document *document, const Range &word)
+void ReplacementVariableItem::execute(View* view, const Range &word)
 {
+    auto document = view->document();
     if ( ! m_position.isValid() ) {
         m_position = word;
     }
@@ -48,26 +49,28 @@ void ReplacementVariableItem::execute(Document *document, const Range &word)
     Range removeRange(m_position.start(), removeUntil);
     if ( document->text(m_position).lastIndexOf('{') != -1 ) {
         // remove the whole existing expression
-        removeRange.end().setColumn(m_position.end().column());
+        removeRange.setEnd({removeRange.end().line(), m_position.end().column()});
     }
     else {
         // remove nothing unless there is an opening { already, in that case remove that
-        removeRange.start() = m_position.end();
-        removeRange.end() = m_position.end();
+        removeRange= {m_position.end(), m_position.end()};
 
-        Range previousCharacter(word.start(), word.start());
-        previousCharacter.start().setColumn(word.start().column() - 1);
+        Range previousCharacter(word.start() - Cursor(0, 1), word.start());
         if ( document->text(previousCharacter) == "{" ) {
-            removeRange.start().setColumn(removeRange.start().column() - 1);
+            removeRange.setStart(removeRange.start() - Cursor(0, 1));
         }
     }
 
     if ( m_hasEditableFields ) {
-        TemplateInterface2 *templateInterface = qobject_cast<TemplateInterface2 *>(document->activeView());
-        if ( templateInterface ) {
+        qWarning() << "template interface not supported by editor";
+#if 0
+        TODO: re-enable once the template interface exists again
+        auto iface = qobject_cast<TemplateInterface2*>(ICore::self()->partController()->activeView());
+        if ( iface ) {
             document->removeText(removeRange);
-            templateInterface->insertTemplateText(removeRange.start(), m_variable.toString(), QMap<QString, QString>(), NULL);
+            iface->insertTemplateText(removeRange.start(), m_variable.toString(), QMap<QString, QString>(), NULL);
         }
+#endif
     }
     else {
         document->removeText(removeRange);

@@ -20,13 +20,15 @@
 #include "helpers.h"
 
 #include <QList>
-#include <KUrl>
-#include <KDebug>
-#include <KStandardDirs>
 #include <QProcess>
+#include <QStandardPaths>
+
+#include <QDebug>
+#include "duchaindebug.h"
 
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/types/integraltype.h>
+#include <language/duchain/types/containertypes.h>
 #include <language/duchain/duchainutils.h>
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/duchain.h>
@@ -38,35 +40,30 @@
 #include <interfaces/iprojectcontroller.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <interfaces/idocumentcontroller.h>
+#include <interfaces/ipartcontroller.h>
+#include <util/path.h>
+
+#include <shell/partcontroller.h>
 
 #include <KTextEditor/View>
 
 #include "ast.h"
 #include "types/hintedtype.h"
 #include "types/unsuretype.h"
-#include "types/variablelengthcontainer.h"
 #include "types/indexedcontainer.h"
 #include "kdevpythonversion.h"
+#include <language/duchain/types/typeutils.h>
 
 using namespace KDevelop;
 
 namespace Python {
 
-QList<KUrl> Helper::cachedSearchPaths;
+QList<QUrl> Helper::cachedSearchPaths;
 QStringList Helper::dataDirs;
 QString Helper::documentationFile;
 DUChainPointer<TopDUContext> Helper::documentationFileContext = DUChainPointer<TopDUContext>(0);
 QStringList Helper::correctionFileDirs;
 QString Helper::localCorrectionFileDir;
-
-AbstractType::Ptr Helper::resolveType(AbstractType::Ptr type)
-{
-    if ( type && type->whichType() == AbstractType::TypeAlias ) {
-        return type.cast<TypeAliasType>()->type();
-    }
-    else
-        return type;
-}
 
 void Helper::scheduleDependency(const IndexedString& dependency, int betterThanPriority)
 {
@@ -95,34 +92,50 @@ void Helper::scheduleDependency(const IndexedString& dependency, int betterThanP
 IndexedDeclaration Helper::declarationUnderCursor(bool allowUse)
 {
     KDevelop::IDocument* doc = ICore::self()->documentController()->activeDocument();
-    if ( doc && doc->textDocument() && doc->textDocument()->activeView() ) {
+    const auto view = static_cast<KDevelop::PartController*>(ICore::self()->partController())->activeView();
+    if ( doc && doc->textDocument() && view ) {
         DUChainReadLocker lock;
+        const auto cursor = view->cursorPosition();
         if ( allowUse ) {
-            return DUChainUtils::itemUnderCursor(doc->url(), SimpleCursor(doc->textDocument()->activeView()->cursorPosition()));
+            return DUChainUtils::itemUnderCursor(doc->url(), cursor);
         }
         else {
-            return DUChainUtils::declarationInLine(SimpleCursor(doc->textDocument()->activeView()->cursorPosition()), DUChainUtils::standardContextForUrl(doc->url()));
+            return DUChainUtils::declarationInLine(cursor, DUChainUtils::standardContextForUrl(doc->url()));
         }
     }
 
     return KDevelop::IndexedDeclaration();
 }
 
-Declaration* Helper::accessAttribute(Declaration* accessed, const QString& attribute, DUContext* current)
+Declaration* Helper::accessAttribute(Declaration* accessed, const QString& attribute, const DUContext* current)
 {
-    if ( ! accessed || ! accessed->type<StructureType>() ) {
+    if ( ! accessed || ! accessed->abstractType() ) {
         return 0;
     }
-    StructureType::Ptr type = accessed->type<StructureType>();
-    DUChainReadLocker lock(DUChain::lock());
-    QList<DUContext*> searchContexts = Helper::internalContextsForClass(type, current->topContext());
-    foreach ( DUContext* c, searchContexts ) {
-        QList< Declaration* > found = c->findLocalDeclarations(KDevelop::Identifier(attribute));
-        if ( ! found.isEmpty() ) {
-            return found.first();
+    // if the type is unsure, search all the possibilities
+    auto structureTypes = Helper::filterType<StructureType>(accessed->abstractType(),
+        [](AbstractType::Ptr toFilter) {
+            auto type = Helper::resolveAliasType(toFilter);
+            return type && type->whichType() == AbstractType::TypeStructure;
+        }
+    );
+    for ( auto type: structureTypes ) {
+        QList<DUContext*> searchContexts = Helper::internalContextsForClass(type, current->topContext());
+        for ( DUContext* c: searchContexts ) {
+            QList< Declaration* > found = c->findDeclarations(KDevelop::Identifier(attribute),
+                                                              CursorInRevision::invalid(),
+                                                              current->topContext(), DUContext::DontSearchInParent);
+            if ( ! found.isEmpty() ) {
+                return found.first();
+            }
         }
     }
-    return 0;
+    return nullptr;
+}
+
+AbstractType::Ptr Helper::resolveAliasType(const AbstractType::Ptr eventualAlias)
+{
+    return TypeUtils::resolveAliasType(eventualAlias);
 }
 
 AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* current)
@@ -136,14 +149,14 @@ AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext*
     }
     else if ( UnsureType::Ptr unsure = type.cast<UnsureType>() ) {
         int len = unsure->typesSize();
-        for ( int i = 0; i < len and i < maxHints; i++ ) {
+        for ( int i = 0; i < len && i < maxHints; i++ ) {
             if ( HintedType::Ptr hinted = unsure->types()[i].abstractType().cast<HintedType>() ) {
                 if ( hinted->isValid(current) ) {
-                    kDebug() << "Adding type hint (multi): " << hinted->toString();
+                    qCDebug(KDEV_PYTHON_DUCHAIN) << "Adding type hint (multi): " << hinted->toString();
                     result->addType(hinted->indexed());
                 }
                 else {
-                    kDebug() << "Discarding type hint (multi): " << hinted->toString();
+                    qCDebug(KDEV_PYTHON_DUCHAIN) << "Discarding type hint (multi): " << hinted->toString();
                     maxHints += 1;
                 }
             }
@@ -166,8 +179,8 @@ AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext*
         }
         return edit.cast<AbstractType>();
     }
-    else if ( VariableLengthContainer::Ptr variable = type.cast<VariableLengthContainer>() ) {
-        VariableLengthContainer::Ptr edit = VariableLengthContainer::Ptr(static_cast<VariableLengthContainer*>(variable->clone()));
+    else if ( auto variable = type.cast<ListType>() ) {
+        auto edit = ListType::Ptr(static_cast<ListType*>(variable->clone()));
         UnsureType::Ptr newContentType(new UnsureType());
         AbstractType::Ptr oldContentType = edit->contentType().abstractType();
         bool isHint = false;
@@ -193,44 +206,55 @@ AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext*
                 return result.cast<AbstractType>();
             }
             edit->replaceContentType(newContentType.cast<AbstractType>());
-            edit->replaceKeyType(variable->keyType().abstractType());
+//             edit->replaceKeyType(variable->keyType().abstractType()); // TODO re-enable?
         }
         return edit.cast<AbstractType>();
     }
     return result.cast<AbstractType>();
 }
 
-QPair<FunctionDeclarationPointer, bool> Helper::functionDeclarationForCalledDeclaration(DeclarationPointer ptr)
+Helper::FuncInfo Helper::functionDeclarationForCalledDeclaration(DeclarationPointer ptr)
 {
+    if ( ! ptr ) {
+        return FuncInfo();
+    }
     bool isConstructor = false;
-    DeclarationPointer lastCalledDeclaration = ptr;
-    if ( lastCalledDeclaration and not lastCalledDeclaration->isFunctionDeclaration() )
-    {
-        if ( lastCalledDeclaration && lastCalledDeclaration->internalContext() ) {
-            QList<Declaration*> constructors = lastCalledDeclaration->internalContext()
-                                               ->findDeclarations(KDevelop::Identifier("__init__"));
+    DeclarationPointer calledDeclaration = ptr;
+    if ( ! calledDeclaration->isFunctionDeclaration() ) {
+        // not a function -- try looking for a constructor
+        StructureType::Ptr classType = calledDeclaration->type<StructureType>();
+        auto contexts = Helper::internalContextsForClass(classType, ptr->topContext());
+        for ( DUContext* context: contexts ) {
+            static KDevelop::Identifier initIdentifier("__init__");
+            QList<Declaration*> constructors = context->findDeclarations(initIdentifier);
             if ( ! constructors.isEmpty() ) {
-                lastCalledDeclaration = dynamic_cast<FunctionDeclaration*>(constructors.first());
+                calledDeclaration = dynamic_cast<FunctionDeclaration*>(constructors.first());
                 isConstructor = true;
+                break;
             }
         }
     }
     FunctionDeclarationPointer lastFunctionDeclaration;
-    if ( lastCalledDeclaration ) {
-        lastFunctionDeclaration = FunctionDeclarationPointer(dynamic_cast<FunctionDeclaration*>(lastCalledDeclaration.data()));
+    if ( calledDeclaration ) {
+        // It was a class -- use the constructor
+        lastFunctionDeclaration = calledDeclaration.dynamicCast<FunctionDeclaration>();
     }
-    else lastFunctionDeclaration = FunctionDeclarationPointer(dynamic_cast<FunctionDeclaration*>(ptr.data()));
+    else {
+        // Use the original declaration
+        lastFunctionDeclaration = ptr.dynamicCast<FunctionDeclaration>();
+    }
     return QPair<FunctionDeclarationPointer, bool>(lastFunctionDeclaration, isConstructor);
 }
 
-Declaration* Helper::declarationForName(const QualifiedIdentifier& identifier, const RangeInRevision& nodeRange, DUContextPointer context)
+Declaration* Helper::declarationForName(const QualifiedIdentifier& identifier, const RangeInRevision& nodeRange,
+                                        KDevelop::DUChainPointer<const DUContext> context)
 {
     QList<Declaration*> declarations;
     QList<Declaration*> localDeclarations;
     QList<Declaration*> importedLocalDeclarations;
     {
         DUChainReadLocker lock(DUChain::lock());
-        if ( context.data() == context->topContext() and nodeRange.isValid() ) {
+        if ( context.data() == context->topContext() && nodeRange.isValid() ) {
             declarations = context->topContext()->findDeclarations(identifier, nodeRange.end);
         }
         else {
@@ -249,13 +273,13 @@ Declaration* Helper::declarationForName(const QualifiedIdentifier& identifier, c
         do {
             declaration = importedLocalDeclarations.last();
             importedLocalDeclarations.pop_back();
-            if ( not declaration or declaration->context()->type() == DUContext::Class ) {
+            if ( !declaration || declaration->context()->type() == DUContext::Class ) {
                 declaration = 0;
             }
             if ( importedLocalDeclarations.isEmpty() ) {
                 break;
             }
-        } while ( not importedLocalDeclarations.isEmpty() );
+        } while ( ! importedLocalDeclarations.isEmpty() );
     }
 
     if ( !declaration && declarations.length() ) {
@@ -277,7 +301,7 @@ QList< DUContext* > Helper::internalContextsForClass(StructureType::Ptr klassTyp
     ClassDeclaration* klass = dynamic_cast<ClassDeclaration*>(decl);
     if ( klass ) {
         FOREACH_FUNCTION ( const BaseClassInstance& base, klass->baseClasses ) {
-            if ( flags == PublicOnly and base.access == KDevelop::Declaration::Private ) {
+            if ( flags == PublicOnly && base.access == KDevelop::Declaration::Private ) {
                 continue;
             }
             StructureType::Ptr baseClassType = base.baseClass.type<StructureType>();
@@ -303,15 +327,14 @@ Declaration* Helper::resolveAliasDeclaration(Declaration* decl)
 
 QStringList Helper::getDataDirs() {
     if ( Helper::dataDirs.isEmpty() ) {
-        KStandardDirs d;
-        Helper::dataDirs = d.findDirs("data", "kdevpythonsupport/documentation_files");
+        Helper::dataDirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, "kdevpythonsupport/documentation_files",QStandardPaths::LocateDirectory);
     }
     return Helper::dataDirs;
 }
 
 QString Helper::getDocumentationFile() {
     if ( Helper::documentationFile.isNull() ) {
-        Helper::documentationFile = KStandardDirs::locate("data", "kdevpythonsupport/documentation_files/builtindocumentation.py");
+        Helper::documentationFile = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/documentation_files/builtindocumentation.py");
     }
     return Helper::documentationFile;
 }
@@ -323,72 +346,70 @@ ReferencedTopDUContext Helper::getDocumentationFileContext()
     }
     else {
         DUChainReadLocker lock;
-        ReferencedTopDUContext ctx = ReferencedTopDUContext(DUChain::self()->chainForDocument(Helper::getDocumentationFile()));
+        qDebug() << "URL:" << Helper::getDocumentationFile();
+        auto file = IndexedString(Helper::getDocumentationFile());
+        ReferencedTopDUContext ctx = ReferencedTopDUContext(DUChain::self()->chainForDocument(file));
         Helper::documentationFileContext = DUChainPointer<TopDUContext>(ctx.data());
         return ctx;
     }
     return ReferencedTopDUContext(0); // c++...
 }
 
-KUrl Helper::getCorrectionFile(KUrl document)
+QUrl Helper::getCorrectionFile(const QUrl& document)
 {
     if ( Helper::correctionFileDirs.isEmpty() ) {
-        KStandardDirs d;
-        Helper::correctionFileDirs = d.findDirs("data", "kdevpythonsupport/correction_files/");
+        Helper::correctionFileDirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, "kdevpythonsupport/correction_files/", QStandardPaths::LocateDirectory);
     }
 
     foreach (QString correctionFileDir, correctionFileDirs) {
-        foreach ( const KUrl& basePath, Helper::getSearchPaths(KUrl()) ) {
+        foreach ( const QUrl& basePath, Helper::getSearchPaths(QUrl()) ) {
             if ( ! basePath.isParentOf(document) ) {
                 continue;
             }
-            QString path = KUrl::relativePath(basePath.path(), document.path());
-            KUrl absolutePath(correctionFileDir + path);
-            absolutePath.cleanPath();
+            QString path = basePath.resolved(document).path();
+            auto absolutePath = QUrl::fromLocalFile(correctionFileDir + path);
+            // TODO QUrl: cleanPath?
 
             if ( QFile::exists(absolutePath.path()) ) {
                 return absolutePath;
             }
         }
     }
-    return KUrl();
+    return {};
 }
 
-KUrl Helper::getLocalCorrectionFile(KUrl document)
+QUrl Helper::getLocalCorrectionFile(const QUrl& document)
 {
     if ( Helper::localCorrectionFileDir.isNull() ) {
-        Helper::localCorrectionFileDir = KStandardDirs::locateLocal("data", "kdevpythonsupport/correction_files/");
+        Helper::localCorrectionFileDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + "kdevpythonsupport/correction_files/";
     }
 
-    KUrl absolutePath;
-    foreach ( const KUrl& basePath, Helper::getSearchPaths(KUrl()) ) {
+    auto absolutePath = QUrl();
+    foreach ( const auto& basePath, Helper::getSearchPaths({}) ) {
         if ( ! basePath.isParentOf(document) ) {
             continue;
         }
-        QString path = KUrl::relativePath(basePath.path(), document.path());
-        absolutePath = KUrl(Helper::localCorrectionFileDir + path);
-        absolutePath.cleanPath();
-
+        auto path = QDir(basePath.path()).relativeFilePath(document.path());
+        absolutePath = Helper::localCorrectionFileDir + path;
         break;
     }
     return absolutePath;
 }
     
-QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
+QList<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
 {
-    QList<KUrl> searchPaths;
+    QList<QUrl> searchPaths;
     // search in the projects, as they're packages and likely to be installed or added to PYTHONPATH later
     foreach  (IProject* project, ICore::self()->projectController()->projects() ) {
-        searchPaths.append(KUrl(project->folder().url()));
+        searchPaths.append(project->path().path());
     }
     
     foreach ( const QString& path, getDataDirs() ) {
-        searchPaths.append(KUrl(path));
+        searchPaths.append(QUrl::fromLocalFile(path));
     }
     
     if ( cachedSearchPaths.isEmpty() ) {
-        KStandardDirs d;
-        kDebug() << "*** Gathering search paths...";
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "*** Gathering search paths...";
         QStringList getpath;
         getpath << "-c" << "import sys; sys.stdout.write(':'.join(sys.path))";
         
@@ -405,27 +426,27 @@ QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
             }
         }
         else {
-            kWarning() << "Could not get search paths! Defaulting to stupid stuff.";
-            searchPaths.append(KUrl("/usr/lib/python2.7"));
-            searchPaths.append(KUrl("/usr/lib/python2.7/site-packages"));
+            qCWarning(KDEV_PYTHON_DUCHAIN) << "Could not get search paths! Defaulting to stupid stuff.";
+            searchPaths.append(QUrl::fromLocalFile("/usr/lib/python2.7"));
+            searchPaths.append(QUrl::fromLocalFile("/usr/lib/python2.7/site-packages"));
             QString path = qgetenv("PYTHONPATH");
             QStringList paths = path.split(':');
             foreach ( const QString& path, paths ) {
                 cachedSearchPaths.append(path);
             }
         }
-        kDebug() << " *** Done. Got search paths: " << cachedSearchPaths;
+        qCDebug(KDEV_PYTHON_DUCHAIN) << " *** Done. Got search paths: " << cachedSearchPaths;
     }
     else {
-        kDebug() << " --- Search paths from cache: " << cachedSearchPaths;
+        qCDebug(KDEV_PYTHON_DUCHAIN) << " --- Search paths from cache: " << cachedSearchPaths;
     }
     
     searchPaths.append(cachedSearchPaths);
     
-    const QString& currentDir = workingOnDocument.directory(KUrl::IgnoreTrailingSlash);
-    if ( ! currentDir.isEmpty() ) {
+    auto dir = workingOnDocument.adjusted(QUrl::RemoveFilename);
+    if ( ! dir.isEmpty() ) {
         // search in the current packages
-        searchPaths.append(KUrl(currentDir));
+        searchPaths.append(dir);
     }
     
     return searchPaths;
@@ -433,78 +454,40 @@ QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
 
 bool Helper::isUsefulType(AbstractType::Ptr type)
 {
-    type = resolveType(type);
-    if ( ! type ) {
-        return false;
-    }
-    QList<uint> skipTypes;
-    skipTypes << IntegralType::TypeMixed << IntegralType::TypeNone << IntegralType::TypeNull;
-    if ( type->whichType() != AbstractType::TypeIntegral ) {
-        return true;
-    }
-    if ( ! skipTypes.contains(type.cast<IntegralType>()->dataType()) ) {
-        return true;
-    }
-    return false;
+    return TypeUtils::isUsefulType(type);
 }
 
-AbstractType::Ptr Helper::mergeTypes(AbstractType::Ptr type, AbstractType::Ptr newType, TopDUContext* ctx)
+AbstractType::Ptr Helper::contentOfIterable(const AbstractType::Ptr iterable)
 {
-    UnsureType::Ptr unsure = UnsureType::Ptr::dynamicCast(type);
-    UnsureType::Ptr newUnsure = UnsureType::Ptr::dynamicCast(newType);
-    UnsureType::Ptr ret;
-    
-    if ( unsure ) {
-        int len = unsure->typesSize();
-        for ( int i = len; i > 0; i-- ) {
-            HintedType::Ptr hinted = unsure.cast<HintedType>();
-            if ( hinted and ! hinted->isValid(ctx) ) {
-                unsure->removeType(hinted->indexed());
+    auto items = filterType<AbstractType>(iterable,
+        [](AbstractType::Ptr t) {
+            return ListType::Ptr::dynamicCast(t) || IndexedContainer::Ptr::dynamicCast(t);
+        },
+        [](AbstractType::Ptr t) {
+            if ( auto variable = ListType::Ptr::dynamicCast(t) ) {
+                return AbstractType::Ptr(variable->contentType().abstractType());
+            }
+            else {
+                auto indexed = t.cast<IndexedContainer>();
+                return indexed->asUnsureType();
             }
         }
+    );
+
+    if ( items.size() == 1 ) {
+        return items.first();
     }
-    
-    // both types are unsure, so join the list of possible types.
-    if ( unsure && newUnsure ) {
-        int len = newUnsure->typesSize();
-        for ( int i = 0; i < len; i++ ) {
-            unsure->addType(newUnsure->types()[i]);
-        }
-        ret = unsure;
+    auto unsure = AbstractType::Ptr(new UnsureType);
+    for ( auto type: items ) {
+        Helper::mergeTypes(unsure, type);
     }
-    // one of them is unsure, use that and add the other one
-    else if ( unsure ) {
-        if ( isUsefulType(newType) ) {
-            unsure->addType(newType->indexed());
-        }
-        ret = unsure;
-    }
-    else if ( newUnsure ) {
-        UnsureType::Ptr createdUnsureType = UnsureType::Ptr(static_cast<UnsureType*>(newUnsure->clone()));
-        if ( isUsefulType(type) ) {
-            createdUnsureType->addType(type->indexed());
-        }
-        ret = createdUnsureType;
-    }
-    else {
-        unsure = UnsureType::Ptr(new UnsureType());
-        if ( isUsefulType(type) ) {
-            unsure->addType(type->indexed());
-        }
-        if ( isUsefulType(newType) ) {
-            unsure->addType(newType->indexed());
-        }
-        if ( ! unsure.count() ) {
-            return AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
-        }
-        ret = unsure;
-    }
-    if ( ret->typesSize() == 1 ) {
-        return ret->types()[0].abstractType();
-    }
-    else {
-        return AbstractType::Ptr::staticCast(ret);
-    }
+    return unsure;
+}
+
+AbstractType::Ptr Helper::mergeTypes(AbstractType::Ptr type, const AbstractType::Ptr newType)
+{
+    UnsureType::Ptr ret;
+    return TypeUtils::mergeTypes<Python::UnsureType>(type, newType);
 }
 
 }

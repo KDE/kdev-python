@@ -1,6 +1,7 @@
 /***************************************************************************
  *   This file is part of KDevelop                                         *
  *   Copyright 2007 Andreas Pakulat <apaku@gmx.de>                         *
+ *   Copyright 2012 Patrick Spendrin <ps_ml@gmx.de>                        *
  *   Copyright 2010-2014 Sven Brauch <svenbrauch@googlemail.com>           *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -51,17 +52,15 @@ public:
     virtual void visitIf(IfAst* node);
     virtual void visitWith(WithAst* node);
     virtual void visitRaise(RaiseAst* node);
-    virtual void visitTryExcept(TryExceptAst* node);
-    virtual void visitTryFinally(TryFinallyAst* node);
+    virtual void visitTry(TryAst* node);
     virtual void visitAssertion(AssertionAst* node);
     virtual void visitImport(ImportAst* node);
     virtual void visitImportFrom(ImportFromAst* node);
-    virtual void visitExec(ExecAst* node);
     virtual void visitGlobal(GlobalAst* node);
     virtual void visitBreak(BreakAst* node);
     virtual void visitContinue(ContinueAst* node);
-    virtual void visitPrint(PrintAst* node);
     virtual void visitPass(PassAst* node);
+    virtual void visitNonlocal(NonlocalAst* node);
     virtual void visitBooleanOperation(BooleanOperationAst* node);
     virtual void visitBinaryOperation(BinaryOperationAst* node);
     virtual void visitUnaryOperation(UnaryOperationAst* node);
@@ -74,14 +73,17 @@ public:
     virtual void visitDictionaryComprehension(DictionaryComprehensionAst* node);
     virtual void visitGeneratorExpression(GeneratorExpressionAst* node);
     virtual void visitCompare(CompareAst* node);
-    virtual void visitRepr(ReprAst* node);
     virtual void visitNumber(NumberAst* node);
     virtual void visitString(StringAst* node);
+    virtual void visitBytes(BytesAst* node);
     virtual void visitYield(YieldAst* node);
+    virtual void visitYieldFrom(YieldFromAst* node);
     virtual void visitName(NameAst* node);
+    virtual void visitNameConstant(NameConstantAst* node);
     virtual void visitCall(CallAst* node);
     virtual void visitAttribute(AttributeAst* node);
     virtual void visitSubscript(SubscriptAst* node);
+    virtual void visitStarred(StarredAst* node);
     virtual void visitList(ListAst* node);
     virtual void visitTuple(TupleAst* node);
     virtual void visitEllipsis(EllipsisAst* node);
@@ -89,17 +91,25 @@ public:
     virtual void visitExtendedSlice(ExtendedSliceAst* node);
     virtual void visitIndex(IndexAst* node);
     virtual void visitArguments(ArgumentsAst* node);
+    virtual void visitArg(ArgAst* node);
     virtual void visitKeyword(KeywordAst* node);
     virtual void visitComprehension(ComprehensionAst* node);
     virtual void visitExceptionHandler(ExceptionHandlerAst* node);
     virtual void visitAlias(AliasAst* node);
     virtual void visitExpression(ExpressionAst* node);
+    virtual void visitWithItem(WithItemAst* node);
     virtual void visitIdentifier(Identifier* node);
 };
 
 class KDEVPYTHONPARSER_EXPORT AstFreeVisitor : public AstDefaultVisitor {
 public:
-    // The CodeAst does not free itself, as this is supposed to be called from ~CodeAst.
+    /*
+     * lines = open('test.dat', 'r').readlines()
+     * for line in lines: print line.replace(';\n', ' { AstDefaultVisitor::visit'+ line.split('visit')[1] \
+     * .split('(')[0] +'(node); delete node; }')
+     */
+
+    // The CodeAst should not free itself, as this is supposed to be called from ~CodeAst.
     virtual void visitCode(CodeAst* node) { AstDefaultVisitor::visitCode(node); }
     virtual void visitFunctionDefinition(FunctionDefinitionAst* node) { AstDefaultVisitor::visitFunctionDefinition(node); delete node; }
     virtual void visitClassDefinition(ClassDefinitionAst* node) { AstDefaultVisitor::visitClassDefinition(node); delete node; }
@@ -112,17 +122,15 @@ public:
     virtual void visitIf(IfAst* node) { AstDefaultVisitor::visitIf(node); delete node; }
     virtual void visitWith(WithAst* node) { AstDefaultVisitor::visitWith(node); delete node; }
     virtual void visitRaise(RaiseAst* node) { AstDefaultVisitor::visitRaise(node); delete node; }
-    virtual void visitTryExcept(TryExceptAst* node) { AstDefaultVisitor::visitTryExcept(node); delete node; }
-    virtual void visitTryFinally(TryFinallyAst* node) { AstDefaultVisitor::visitTryFinally(node); delete node; }
+    virtual void visitTry(TryAst* node) { AstDefaultVisitor::visitTry(node); delete node; }
     virtual void visitAssertion(AssertionAst* node) { AstDefaultVisitor::visitAssertion(node); delete node; }
     virtual void visitImport(ImportAst* node) { AstDefaultVisitor::visitImport(node); delete node; }
     virtual void visitImportFrom(ImportFromAst* node) { AstDefaultVisitor::visitImportFrom(node); delete node; }
-    virtual void visitExec(ExecAst* node) { AstDefaultVisitor::visitExec(node); delete node; }
     virtual void visitGlobal(GlobalAst* node) { AstDefaultVisitor::visitGlobal(node); delete node; }
     virtual void visitBreak(BreakAst* node) { AstDefaultVisitor::visitBreak(node); delete node; }
     virtual void visitContinue(ContinueAst* node) { AstDefaultVisitor::visitContinue(node); delete node; }
-    virtual void visitPrint(PrintAst* node) { AstDefaultVisitor::visitPrint(node); delete node; }
     virtual void visitPass(PassAst* node) { AstDefaultVisitor::visitPass(node); delete node; }
+    virtual void visitNonlocal(NonlocalAst* node) { AstDefaultVisitor::visitNonlocal(node); delete node; }
     virtual void visitBooleanOperation(BooleanOperationAst* node) { AstDefaultVisitor::visitBooleanOperation(node); delete node; }
     virtual void visitBinaryOperation(BinaryOperationAst* node) { AstDefaultVisitor::visitBinaryOperation(node); delete node; }
     virtual void visitUnaryOperation(UnaryOperationAst* node) { AstDefaultVisitor::visitUnaryOperation(node); delete node; }
@@ -135,14 +143,17 @@ public:
     virtual void visitDictionaryComprehension(DictionaryComprehensionAst* node) { AstDefaultVisitor::visitDictionaryComprehension(node); delete node; }
     virtual void visitGeneratorExpression(GeneratorExpressionAst* node) { AstDefaultVisitor::visitGeneratorExpression(node); delete node; }
     virtual void visitCompare(CompareAst* node) { AstDefaultVisitor::visitCompare(node); delete node; }
-    virtual void visitRepr(ReprAst* node) { AstDefaultVisitor::visitRepr(node); delete node; }
     virtual void visitNumber(NumberAst* node) { AstDefaultVisitor::visitNumber(node); delete node; }
     virtual void visitString(StringAst* node) { AstDefaultVisitor::visitString(node); delete node; }
+    virtual void visitBytes(BytesAst* node) { AstDefaultVisitor::visitBytes(node); delete node; }
     virtual void visitYield(YieldAst* node) { AstDefaultVisitor::visitYield(node); delete node; }
+    virtual void visitYieldFrom(YieldFromAst* node) { AstDefaultVisitor::visitYieldFrom(node); delete node; }
     virtual void visitName(NameAst* node) { AstDefaultVisitor::visitName(node); delete node; }
+    virtual void visitNameConstant(NameConstantAst* node) { AstDefaultVisitor::visitNameConstant(node); delete node; }
     virtual void visitCall(CallAst* node) { AstDefaultVisitor::visitCall(node); delete node; }
     virtual void visitAttribute(AttributeAst* node) { AstDefaultVisitor::visitAttribute(node); delete node; }
     virtual void visitSubscript(SubscriptAst* node) { AstDefaultVisitor::visitSubscript(node); delete node; }
+    virtual void visitStarred(StarredAst* node) { AstDefaultVisitor::visitStarred(node); delete node; }
     virtual void visitList(ListAst* node) { AstDefaultVisitor::visitList(node); delete node; }
     virtual void visitTuple(TupleAst* node) { AstDefaultVisitor::visitTuple(node); delete node; }
     virtual void visitEllipsis(EllipsisAst* node) { AstDefaultVisitor::visitEllipsis(node); delete node; }
@@ -150,12 +161,14 @@ public:
     virtual void visitExtendedSlice(ExtendedSliceAst* node) { AstDefaultVisitor::visitExtendedSlice(node); delete node; }
     virtual void visitIndex(IndexAst* node) { AstDefaultVisitor::visitIndex(node); delete node; }
     virtual void visitArguments(ArgumentsAst* node) { AstDefaultVisitor::visitArguments(node); delete node; }
+    virtual void visitArg(ArgAst* node) { AstDefaultVisitor::visitArg(node); delete node; }
     virtual void visitKeyword(KeywordAst* node) { AstDefaultVisitor::visitKeyword(node); delete node; }
     virtual void visitComprehension(ComprehensionAst* node) { AstDefaultVisitor::visitComprehension(node); delete node; }
     virtual void visitExceptionHandler(ExceptionHandlerAst* node) { AstDefaultVisitor::visitExceptionHandler(node); delete node; }
     virtual void visitAlias(AliasAst* node) { AstDefaultVisitor::visitAlias(node); delete node; }
     virtual void visitExpression(ExpressionAst* node) { AstDefaultVisitor::visitExpression(node); delete node; }
-    virtual void visitIdentifier(Identifier* node) { delete node; }
+    virtual void visitWithItem(WithItemAst* node) { AstDefaultVisitor::visitWithItem(node); delete node; }
+    virtual void visitIdentifier(Identifier* node) { AstDefaultVisitor::visitIdentifier(node); delete node; }
 };
 
 KDEVPYTHONPARSER_EXPORT void free_ast_recursive(CodeAst* node);

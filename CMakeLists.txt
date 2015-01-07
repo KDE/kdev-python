@@ -25,14 +25,15 @@ include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings)
 
+# find the system python 3 interpreter, only used for determining search paths.
+# must be called before find_package(KF5) because it searchs for python too, but finds python2
+find_package(PythonInterp 3.0 REQUIRED)
+configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpython_BINARY_DIR}/kdevpythonversion.h" @ONLY )
+
 find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Widgets Test WebKitWidgets)
 find_package(KF5 REQUIRED I18n NewStuff ItemModels ThreadWeaver KDELibs4Support TextEditor KCMUtils)
 find_package(KDevPlatform ${KDEVPLATFORM_VERSION} REQUIRED)
 find_package(KDevelop REQUIRED)
-
-# find the system python 3 interpreter, only used for determining search paths.
-find_package(PythonInterp 3.0 REQUIRED)
-configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpython_BINARY_DIR}/kdevpythonversion.h" @ONLY )
 
 
 enable_testing()

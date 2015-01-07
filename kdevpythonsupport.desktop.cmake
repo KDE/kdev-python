@@ -8,6 +8,7 @@ Comment[de]=Sprachunterstützung für Python
 Comment[es]=Implementación del lenguaje Python
 Comment[fi]=Python-kielituki
 Comment[fr]=Prise en charge du langage Python
+Comment[it]=Supporto per il linguaggio Python
 Comment[nb]=Støtte for Python-språket
 Comment[nl]=Ondersteuning voor de taal Python
 Comment[pl]=Obsługa języka Python

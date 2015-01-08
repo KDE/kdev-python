@@ -32,23 +32,23 @@ set(duchain_SRCS
 )
 
 
-add_library( kdev4pythonduchain SHARED ${duchain_SRCS} )
+add_library( kdevpythonduchain SHARED ${duchain_SRCS} )
 
-generate_export_header( kdev4pythonduchain EXPORT_MACRO_NAME KDEVPYTHONDUCHAIN_EXPORT
+generate_export_header( kdevpythonduchain EXPORT_MACRO_NAME KDEVPYTHONDUCHAIN_EXPORT
                                            EXPORT_FILE_NAME pythonduchainexport.h
 )
 
-target_link_libraries( kdev4pythonduchain LINK_PRIVATE
+target_link_libraries( kdevpythonduchain LINK_PRIVATE
     Qt5::WebKitWidgets
     KF5::KDELibs4Support
     KF5::TextEditor
     KDev::Interfaces
     KDev::Language
     KDev::Project
-    kdev4pythonparser
+    kdevpythonparser
  )
 
-install(TARGETS kdev4pythonduchain DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS kdevpythonduchain DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 
 add_subdirectory(navigation)

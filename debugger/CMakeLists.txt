@@ -23,7 +23,7 @@ set(kdevpdb_PART_SRCS
 
 add_library(kdevpdb MODULE ${kdevpdb_PART_SRCS})
 target_link_libraries(kdevpdb
-    kdev4pythonparser
+    kdevpythonparser
     KDev::Interfaces
     KDev::Language
     KDev::Debugger

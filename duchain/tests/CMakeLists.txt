@@ -15,18 +15,18 @@ ecm_add_test(${duchainbench_SRCS}
 add_definitions(-DDUCHAIN_PY_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 
 target_link_libraries(pyduchaintest
-    kdev4pythonduchain
-    kdev4pythonparser
-    ${kdev4pythonparser_LIBRARIES}
+    kdevpythonduchain
+    kdevpythonparser
+    ${kdevpythonparser_LIBRARIES}
     Qt5::Test
     KDev::Tests
     KF5::KDELibs4Support
 )
 
 target_link_libraries(duchainbench
-    kdev4pythonduchain
-    kdev4pythonparser
-    ${kdev4pythonparser_LIBRARIES}
+    kdevpythonduchain
+    kdevpythonparser
+    ${kdevpythonparser_LIBRARIES}
     Qt5::Test
     KDev::Tests
     KF5::KDELibs4Support

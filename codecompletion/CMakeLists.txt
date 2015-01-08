@@ -19,26 +19,26 @@ set(completion_SRCS
     items/replacementvariable.cpp
 )
 
-add_library(kdev4pythoncompletion SHARED ${completion_SRCS})
+add_library(kdevpythoncompletion SHARED ${completion_SRCS})
 
-generate_export_header(kdev4pythoncompletion EXPORT_MACRO_NAME KDEVPYTHONCOMPLETION_EXPORT
+generate_export_header(kdevpythoncompletion EXPORT_MACRO_NAME KDEVPYTHONCOMPLETION_EXPORT
                                              EXPORT_FILE_NAME pythoncompletionexport.h
 )
 
-add_dependencies(kdev4pythoncompletion
-    kdev4pythonparser 
-    kdev4pythonduchain
+add_dependencies(kdevpythoncompletion
+    kdevpythonparser 
+    kdevpythonduchain
 )
 
-target_link_libraries(kdev4pythoncompletion LINK_PRIVATE
+target_link_libraries(kdevpythoncompletion LINK_PRIVATE
     KF5::KDELibs4Support
     KDev::Language
     KDev::Interfaces
     KDev::Project
-    kdev4pythonduchain
-    kdev4pythonparser
+    kdevpythonduchain
+    kdevpythonparser
 )
 
-install(TARGETS kdev4pythoncompletion DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS kdevpythoncompletion DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 add_subdirectory(tests)

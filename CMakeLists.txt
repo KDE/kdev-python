@@ -92,9 +92,9 @@ target_link_libraries(kdevpythonlanguagesupport
     KF5::ThreadWeaver
     KF5::TextEditor
     KF5::KDELibs4Support
-    kdev4pythoncompletion
-    kdev4pythonparser
-    kdev4pythonduchain
+    kdevpythoncompletion
+    kdevpythonparser
+    kdevpythonduchain
 )
 
 install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})

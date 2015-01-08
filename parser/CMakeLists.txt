@@ -19,14 +19,14 @@ if ( NOT ${PYTHONLIBS_FOUND} OR ${PYTHON_VERSION_MINOR} GREATER 4 )
     message(FATAL_ERROR "Python 3.4 with --enable-shared is required to build kdev-python")
 endif()
 
-include_directories(kdev4pythonparser ${PYTHON_INCLUDE_DIRS})
+include_directories(kdevpythonparser ${PYTHON_INCLUDE_DIRS})
 
-add_library( kdev4pythonparser SHARED ${parser_STAT_SRCS} )
+add_library( kdevpythonparser SHARED ${parser_STAT_SRCS} )
 
-generate_export_header(kdev4pythonparser EXPORT_MACRO_NAME KDEVPYTHONPARSER_EXPORT
+generate_export_header(kdevpythonparser EXPORT_MACRO_NAME KDEVPYTHONPARSER_EXPORT
                                          EXPORT_FILE_NAME parserexport.h)
 
-target_link_libraries(kdev4pythonparser LINK_PRIVATE
+target_link_libraries(kdevpythonparser LINK_PRIVATE
     KF5::KDELibs4Support
     KDev::Language
     KDev::Util
@@ -34,6 +34,6 @@ target_link_libraries(kdev4pythonparser LINK_PRIVATE
     ${PYTHON_LIBRARY}
 )
 
-install(TARGETS kdev4pythonparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS kdevpythonparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 add_subdirectory(tests)

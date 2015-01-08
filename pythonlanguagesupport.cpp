@@ -30,7 +30,6 @@
 #include <interfaces/icore.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <interfaces/iplugincontroller.h>
-#include <interfaces/ilanguage.h>
 #include <interfaces/idocument.h>
 #include <interfaces/isourceformatter.h>
 #include <interfaces/idocumentcontroller.h>

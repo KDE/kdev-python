@@ -42,7 +42,6 @@
 #include <language/interfaces/iastcontainer.h>
 #include <language/checks/controlflowgraph.h>
 #include <language/checks/dataaccessrepository.h>
-#include <interfaces/ilanguage.h>
 #include <interfaces/icore.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <interfaces/idocumentcontroller.h>

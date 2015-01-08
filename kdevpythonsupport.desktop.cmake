@@ -5,6 +5,7 @@ Exec=blubb
 Comment=Python Language Support
 Comment[ca]=Implementació del llenguatge Python
 Comment[de]=Sprachunterstützung für Python
+Comment[en_GB]=Python Language Support
 Comment[es]=Implementación del lenguaje Python
 Comment[fi]=Python-kielituki
 Comment[fr]=Prise en charge du langage Python

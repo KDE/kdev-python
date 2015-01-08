@@ -91,7 +91,7 @@ void ParseJob::run(ThreadWeaver::JobPointer self, ThreadWeaver::Thread* thread)
     qDebug() << " ====> PARSING ====> parsing file " << document().toUrl() << "; has priority" << parsePriority();
     
     // lock the URL so no other parse job can run on this document
-    QReadLocker parselock(languageSupport()->language()->parseLock());
+    QReadLocker parselock(languageSupport()->parseLock());
     UrlParseLock urlLock(document());
     
     readContents();

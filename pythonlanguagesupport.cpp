@@ -78,7 +78,7 @@ KDevelop::ContextMenuExtension LanguageSupport::contextMenuExtension(KDevelop::C
     ContextMenuExtension cm;
     EditorContext *ec = dynamic_cast<KDevelop::EditorContext *>(context);
 
-    if (ec && ICore::self()->languageController()->languagesForUrl(ec->url()).contains(language())) {
+    if (ec && ICore::self()->languageController()->languagesForUrl(ec->url()).contains(this)) {
         // It's a Python file, let's add our context menu.
         m_refactoring->fillContextMenu(cm, context);
         TypeCorrection::self().doContextMenu(cm, context);
@@ -109,7 +109,7 @@ LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ 
 
 void LanguageSupport::documentOpened(IDocument* doc)
 {
-    if ( ! ICore::self()->languageController()->languagesForUrl(doc->url()).contains(language()) ) {
+    if ( ! ICore::self()->languageController()->languagesForUrl(doc->url()).contains(this) ) {
         // not a python file
         return;
     }
@@ -150,11 +150,11 @@ bool LanguageSupport::enabledForFile(const QUrl& url)
 {
     // This is a bit more general than it would need to be,
     // but that way we can have the same code for both branches.
-    QList< ILanguage* > enabledLanguages = ICore::self()->languageController()->languagesForUrl(url);
+    const auto enabledLanguages = ICore::self()->languageController()->languagesForUrl(url);
     const QString& name = LanguageSupport::self()->name();
     static const QString otherName = ( name == "Python3" ? "Python" : "Python3" );
     bool haveBoth = false;
-    foreach ( const ILanguage* lang, enabledLanguages ) {
+    foreach ( const auto lang, enabledLanguages ) {
         if ( lang->name() == otherName ) {
             // both py2 and py3 plugins are installed
             haveBoth = true;
@@ -194,12 +194,6 @@ SourceFormatterItemList LanguageSupport::sourceFormatterItems() const
     autopep8.setContent("/usr/bin/pep8ify -w $TMPFILE");
 
     return SourceFormatterItemList{SourceFormatterStyleItem{"customscript", autopep8}};
-}
-
-KDevelop::ILanguage *LanguageSupport::language()
-{
-    qCDebug(KDEV_PYTHON) << core()->languageController()->language( name() );
-    return core()->languageController()->language( name() );
 }
 
 KDevelop::ICodeHighlighting* LanguageSupport::codeHighlighting() const

@@ -59,8 +59,6 @@ public:
     QString name() const;
     /*Parsejob used by background parser to parse given Url*/
     KDevelop::ParseJob *createParseJob( const KDevelop::IndexedString &url );
-    /*the actual language object*/
-    KDevelop::ILanguage *language();
     /*the code highlighter*/
     KDevelop::ICodeHighlighting* codeHighlighting() const;
     virtual KDevelop::BasicRefactoring* refactoring() const override;

@@ -42,7 +42,6 @@
 #include <interfaces/idocumentcontroller.h>
 #include <interfaces/ipartcontroller.h>
 #include <util/path.h>
-#include <project/projectmodel.h>
 
 #include <shell/partcontroller.h>
 
@@ -55,18 +54,18 @@
 #include "kdevpythonversion.h"
 #include <language/duchain/types/typeutils.h>
 
-#include <custom-definesandincludes/idefinesandincludesmanager.h>
-
 using namespace KDevelop;
 
 namespace Python {
 
 QList<QUrl> Helper::cachedSearchPaths;
+QList<QUrl> Helper::cachedCustomIncludes;
 QStringList Helper::dataDirs;
 QString Helper::documentationFile;
 DUChainPointer<TopDUContext> Helper::documentationFileContext = DUChainPointer<TopDUContext>(0);
 QStringList Helper::correctionFileDirs;
 QString Helper::localCorrectionFileDir;
+QMutex Helper::cacheMutex;
 
 void Helper::scheduleDependency(const IndexedString& dependency, int betterThanPriority)
 {
@@ -401,16 +400,14 @@ QUrl Helper::getLocalCorrectionFile(const QUrl& document)
     
 QList<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
 {
+    QMutexLocker lock(&Helper::cacheMutex);
     QList<QUrl> searchPaths;
     // search in the projects, as they're packages and likely to be installed or added to PYTHONPATH later
     // and also add custom include paths that are defined in the projects
-    IDefinesAndIncludesManager* iface = IDefinesAndIncludesManager::manager();
     foreach  (IProject* project, ICore::self()->projectController()->projects() ) {
         searchPaths.append(project->path().path());
-        foreach (Path path, iface->includes(project->projectItem())) {
-            searchPaths.append(path.toUrl());
-        }
     }
+    searchPaths.append(cachedCustomIncludes);
     
     foreach ( const QString& path, getDataDirs() ) {
         searchPaths.append(QUrl::fromLocalFile(path));

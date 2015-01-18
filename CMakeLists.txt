@@ -89,6 +89,7 @@ add_library(kdevpythonlanguagesupport MODULE ${kdevpythonlanguagesupport_PART_SR
 target_link_libraries(kdevpythonlanguagesupport
     KDev::Interfaces
     KDev::Language
+    KDev::Util
     KF5::ThreadWeaver
     KF5::TextEditor
     KF5::KDELibs4Support

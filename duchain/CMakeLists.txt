@@ -1,7 +1,6 @@
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${KDEVELOP_INCLUDE_DIR}
     )
 
 set(duchain_SRCS

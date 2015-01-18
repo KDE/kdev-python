@@ -64,7 +64,9 @@ public:
     static QUrl getCorrectionFile(const QUrl& document);
     static QUrl getLocalCorrectionFile(const QUrl& document);
 
+    static QMutex cacheMutex;
     static QList<QUrl> cachedSearchPaths;
+    static QList<QUrl> cachedCustomIncludes;
 
     static AbstractType::Ptr extractTypeHints(AbstractType::Ptr type, TopDUContext* current);
 

@@ -29,6 +29,7 @@
 #include "checks/controlflowgraphbuilder.h"
 #include "checks/dataaccessvisitor.h"
 #include "kshell.h"
+#include "duchain/helpers.h"
 
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/duchain.h>
@@ -45,7 +46,10 @@
 #include <interfaces/icore.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <interfaces/idocumentcontroller.h>
+#include <interfaces/iprojectcontroller.h>
 #include <util/foregroundlock.h>
+#include <project/projectmodel.h>
+#include <util/path.h>
 
 #include <ktexteditor/document.h>
 
@@ -58,6 +62,8 @@
 #include <klocale.h>
 #include <KConfigGroup>
 
+#include <custom-definesandincludes/idefinesandincludesmanager.h>
+
 using namespace KDevelop;
 
 namespace Python
@@ -68,6 +74,12 @@ ParseJob::ParseJob(const IndexedString &url, ILanguageSupport* languageSupport)
         , m_ast(0)
         , m_duContext(0)
 {
+    IDefinesAndIncludesManager* iface = IDefinesAndIncludesManager::manager();
+    foreach  (IProject* project, ICore::self()->projectController()->projects() ) {
+        foreach (Path path, iface->includes(project->projectItem(), IDefinesAndIncludesManager::UserDefined)) {
+            m_cachedCustomIncludes.append(path.toUrl());
+        }
+    }
 }
 
 ParseJob::~ParseJob()
@@ -92,7 +104,12 @@ void ParseJob::run(ThreadWeaver::JobPointer self, ThreadWeaver::Thread* thread)
     // lock the URL so no other parse job can run on this document
     QReadLocker parselock(languageSupport()->parseLock());
     UrlParseLock urlLock(document());
-    
+
+    {
+        QMutexLocker lock(&Helper::cacheMutex);
+        Helper::cachedCustomIncludes = m_cachedCustomIncludes;
+    }
+
     readContents();
     
     if ( !(minimumFeatures() & TopDUContext::ForceUpdate || minimumFeatures() & Rescheduled) ) {

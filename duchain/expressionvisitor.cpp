@@ -672,10 +672,13 @@ AbstractType::Ptr ExpressionVisitor::fromBinaryOperator(AbstractType::Ptr lhs, A
         }
         auto operatorFunctionType = func->type<FunctionType>();
         DUChainReadLocker lock;
-        auto object_decl = Helper::getDocumentationFileContext()->findDeclarations(QualifiedIdentifier("object"));
-        if ( ! object_decl.isEmpty() && object_decl.first()->internalContext() == func->context() ) {
-            // if the operator is only declared in object(), do not include its type (which is void).
-            return AbstractType::Ptr();
+        auto context = Helper::getDocumentationFileContext();
+        if ( context ) {
+            auto object_decl = context->findDeclarations(QualifiedIdentifier("object"));
+            if ( ! object_decl.isEmpty() && object_decl.first()->internalContext() == func->context() ) {
+                // if the operator is only declared in object(), do not include its type (which is void).
+                return AbstractType::Ptr();
+            }
         }
         return operatorFunctionType ? operatorFunctionType->returnType() : AbstractType::Ptr();
     };

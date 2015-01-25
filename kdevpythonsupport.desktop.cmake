@@ -22,6 +22,7 @@ Comment[sv]=Stöd för språket Python
 Comment[tr]=Python Dil Desteği
 Comment[uk]=Підтримка мови Python
 Comment[x-test]=xxPython Language Supportxx
+Comment[zh_CN]=Python 语言支持
 Name=Python Support
 Name[ar]=دعم بايثون
 Name[bg]=Поддръжка на Python

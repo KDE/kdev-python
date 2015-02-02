@@ -24,7 +24,7 @@ namespace Python {
 
 ControlFlowGraphBuilder::ControlFlowGraphBuilder(const KDevelop::ReferencedTopDUContext& top,
                                                  KDevelop::ControlFlowGraph* graph,
-                                                 KSharedPtr<Python::ParseSession> session)
+                                                 QExplicitlySharedDataPointer<Python::ParseSession> session)
     : m_graph(graph)
     , m_currentNode(nullptr)
     , m_session(session)

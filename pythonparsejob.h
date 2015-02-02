@@ -24,7 +24,7 @@
 
 #include <QStringList>
 
-#include <ksharedptr.h>
+#include <QExplicitlySharedDataPointer>
 #include <ktexteditor/range.h>
 #include <astdefaultvisitor.h>
 
@@ -68,7 +68,7 @@ private:
     bool m_readFromDisk;
     KDevelop::ReferencedTopDUContext m_duContext;
     KTextEditor::Range m_textRangeToParse;
-    KSharedPtr<ParseSession> m_currentSession;
+    QExplicitlySharedDataPointer<ParseSession> m_currentSession;
 };
 
 }

@@ -24,7 +24,7 @@
 #include <language/checks/dataaccessrepository.h>
 #include <pythoneditorintegrator.h>
 
-#include <KSharedPtr>
+#include <QExplicitlySharedDataPointer>
 #include <memory>
 
 namespace Python {
@@ -36,7 +36,7 @@ public:
 
     DataAccessVisitor(const KDevelop::ReferencedTopDUContext& top,
                       KDevelop::DataAccessRepository* repo,
-                      KSharedPtr<Python::ParseSession> session);
+                      QExplicitlySharedDataPointer<Python::ParseSession> session);
 
     virtual void visitNode(Ast* node);
 

@@ -28,7 +28,7 @@
 #include <language/duchain/topducontext.h>
 
 #include <memory>
-#include <KSharedPtr>
+#include <QExplicitlySharedDataPointer>
 
 namespace Python {
 
@@ -39,7 +39,7 @@ public:
     using Compound = QList<Ast*>;
 
     ControlFlowGraphBuilder(const KDevelop::ReferencedTopDUContext& top, KDevelop::ControlFlowGraph* graph,
-                            KSharedPtr<Python::ParseSession> session);
+                            QExplicitlySharedDataPointer<Python::ParseSession> session);
 
     virtual void visitFunctionDefinition(Python::FunctionDefinitionAst* node);
     virtual void visitReturn(ReturnAst* node);
@@ -69,7 +69,7 @@ public:
 private:
     KDevelop::ControlFlowGraph* m_graph;
     const KDevelop::ReferencedTopDUContext m_top;
-    const KSharedPtr<Python::ParseSession> m_session;
+    const QExplicitlySharedDataPointer<Python::ParseSession> m_session;
     std::unique_ptr<Python::PythonEditorIntegrator> m_editorIntegrator;
 
     KDevelop::ControlFlowNode* m_currentNode;

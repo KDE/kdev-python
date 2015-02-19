@@ -105,3 +105,5 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/kdevpythonsupport.desktop DESTINATION 
 
 install(DIRECTORY documentation_files DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)
 install(DIRECTORY correction_files DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)
+
+feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

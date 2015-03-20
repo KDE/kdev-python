@@ -44,8 +44,9 @@ target_link_libraries( kdevpythonduchain LINK_PRIVATE
     KDev::Interfaces
     KDev::Language
     KDev::Project
+    KDev::Util
     kdevpythonparser
- )
+)
 
 install(TARGETS kdevpythonduchain DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
 

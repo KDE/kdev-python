@@ -518,7 +518,10 @@ def dumperForObject(object, memberName, root):
 
 if __name__ == '__main__':
     try:
-        dumper = ModuleDumper(importlib.import_module(sys.argv[1]))
+        argscount = len(sys.argv)
+        for arg in range(1, argscount-2):
+            sys.path.insert(1, sys.argv[arg])
+        dumper = ModuleDumper(importlib.import_module(sys.argv[-1]))
     except IndexError:
         debugmsg("Usage: introspect.py <python_module_name>")
         exit(1)

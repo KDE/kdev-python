@@ -38,6 +38,7 @@ target_link_libraries( kdev4pythonduchain LINK_PRIVATE
     ${KDE4_KTEXTEDITOR_LIBS}
     ${KDEVPLATFORM_INTERFACES_LIBRARIES}
     ${QT_QTWEBKIT_LIBRARY}
+    ${KDEVPLATFORM_UTIL_LIBRARIES}
     kdev4pythonparser
  )
 

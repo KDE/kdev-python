@@ -40,6 +40,11 @@
 #include <KDialog>
 #include <KMessageBox>
 #include <KProcess>
+#include <interfaces/icore.h>
+#include <interfaces/iproject.h>
+#include <interfaces/iprojectcontroller.h>
+#include <project/projectmodel.h>
+#include <util/path.h>
 
 DocfileWizard::DocfileWizard(const QString& workingDirectory, QWidget* parent)
     : QDialog(parent)
@@ -179,8 +184,17 @@ bool DocfileWizard::run()
 
     // can never have too many slashes
     outputFile.setFileName(workingDirectory + "/" + outputFilename);
-
-    worker->start(interpreter, QStringList() << scriptUrl << module);
+    
+    QList<KDevelop::IProject*> projs = KDevelop::ICore::self()->projectController()->projects();
+    QStringList args;
+    args << scriptUrl;
+    foreach(const KDevelop::IProject* proj, projs)
+    {
+        if ( proj )
+            args << proj->path().toLocalFile();
+    }
+    args << module;
+    worker->start(interpreter, args);
     return true;
 }
 

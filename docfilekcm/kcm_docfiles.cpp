@@ -19,25 +19,51 @@
 
 #include "kcm_docfiles.h"
 
-#include <QLabel>
-#include <QLayout>
-#include <QBoxLayout>
-#include <QDebug>
+#include <QVBoxLayout>
 
 #include "docfilemanagerwidget.h"
 
-K_PLUGIN_FACTORY(DocfilesKCModuleFactory, registerPlugin<DocfilesKCModule>();)
-
-DocfilesKCModule::DocfilesKCModule(QWidget* parent, const QVariantList& args)
-    : KCModule(parent, args)
+DocfilesKCModule::DocfilesKCModule(KDevelop::IPlugin* plugin, QWidget* parent)
+    : KDevelop::ConfigPage(plugin, nullptr, parent)
 {
-   managerWidget = new DocfileManagerWidget(parent);
-   parent->layout()->addWidget(managerWidget);
+    managerWidget = new DocfileManagerWidget(this);
+
+    QVBoxLayout* layout = new QVBoxLayout;
+    layout->addWidget(managerWidget);
+    setLayout(layout);
 }
 
 DocfilesKCModule::~DocfilesKCModule()
 {
-
 }
+
+void DocfilesKCModule::apply()
+{
+    // nothing to do, but must override since we do not use KCoreConfigSkeleton
+}
+void DocfilesKCModule::reset()
+{
+    // nothing to do, but must override since we do not use KCoreConfigSkeleton
+}
+void DocfilesKCModule::defaults()
+{
+    // nothing to do, but must override since we do not use KCoreConfigSkeleton
+}
+
+QString DocfilesKCModule::fullName() const
+{
+    return i18n("Manage documentation files used by the Python plugin");
+}
+
+QIcon DocfilesKCModule::icon() const
+{
+    return QIcon::fromTheme(QStringLiteral("text-x-python"));
+}
+
+QString DocfilesKCModule::name() const
+{
+    return i18n("Python documentation");
+}
+
 
 #include "kcm_docfiles.moc"

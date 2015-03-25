@@ -55,6 +55,7 @@
 #include "kdevpythonversion.h"
 #include "checks/basiccheck.h"
 #include "pep8kcm/kcm_pep8.h"
+#include "docfilekcm/kcm_docfiles.h"
 
 #include <QDebug>
 #include "pythondebug.h"
@@ -213,13 +214,15 @@ QList<ILanguageCheck*> LanguageSupport::providedChecks()
 
 int LanguageSupport::configPages() const
 {
-    return 1; // TODO: 2 once the other one has been ported
+    return 2;
 }
 
 KDevelop::ConfigPage* LanguageSupport::configPage(int number, QWidget* parent)
 {
     if (number == 0) {
         return new PEP8KCModule(this, parent);
+    } else if (number == 1) {
+        return new DocfilesKCModule(this, parent);
     }
     return nullptr;
 }

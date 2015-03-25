@@ -19,19 +19,25 @@
 
 #ifndef KCM_PY_DOCFILES_H
 #define KCM_PY_DOCFILES_H
-#include <KCModule>
-#include <QUrl>
 
-#include <KPluginFactory>
+#include <interfaces/configpage.h>
 
 class DocfileManagerWidget;
 
-class DocfilesKCModule : public KCModule
+class DocfilesKCModule : public KDevelop::ConfigPage
 {
 Q_OBJECT
 public:
-    DocfilesKCModule( QWidget* parent, const QVariantList& args = QVariantList() );
+    DocfilesKCModule(KDevelop::IPlugin* plugin, QWidget* parent);
     virtual ~DocfilesKCModule();
+
+    virtual QString name() const override;
+    virtual QString fullName() const override;
+    virtual QIcon icon() const override;
+
+    virtual void apply() override;
+    virtual void reset() override;
+    virtual void defaults() override;
 
 private:
     DocfileManagerWidget* managerWidget;

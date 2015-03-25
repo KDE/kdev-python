@@ -1,29 +1,3 @@
-set(kcm_docfiles_SRCS
-    docfilewizard.cpp
-    docfilemanagerwidget.cpp
-    kcm_docfiles.cpp
-)
-
-add_library(kcm_docfiles MODULE ${kcm_docfiles_SRCS})
-
-target_link_libraries(kcm_docfiles
-    KF5::KIOCore
-    KF5::Archive
-    KF5::KCMUtils
-    KF5::NewStuff
-    KF5::KDELibs4Support
-    KDev::Interfaces
-    KDev::Language
-    KDev::Project
-    KDev::Util
-    KDev::Interfaces
-)
-
-install(TARGETS kcm_docfiles
-        DESTINATION ${PLUGIN_INSTALL_DIR})
-
-install(FILES kcm_kdevpythondocfiles.desktop
-        DESTINATION ${SERVICES_INSTALL_DIR})
 
 install(FILES kdev_python_docfiles.knsrc
         DESTINATION ${CONFIG_INSTALL_DIR})

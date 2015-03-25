@@ -71,7 +71,6 @@ set(kdevpythonlanguagesupport_PART_SRCS
     codegen/correctionfilegenerator.cpp
     codegen/refactoring.cpp
     codegen/codegendebug.cpp
-    pep8kcm/kcm_pep8.cpp
     pythonlanguagesupport.cpp
     pythonparsejob.cpp
     pythonhighlighting.cpp
@@ -80,6 +79,12 @@ set(kdevpythonlanguagesupport_PART_SRCS
     checks/basiccheck.cpp
     checks/controlflowgraphbuilder.cpp
     checks/dataaccessvisitor.cpp
+
+    # config pages:
+    docfilekcm/docfilewizard.cpp
+    docfilekcm/docfilemanagerwidget.cpp
+    docfilekcm/kcm_docfiles.cpp
+    pep8kcm/kcm_pep8.cpp
 )
 
 ki18n_wrap_ui(kdevpythonlanguagesupport_PART_SRCS codegen/correctionwidget.ui)
@@ -90,8 +95,10 @@ target_link_libraries(kdevpythonlanguagesupport
     KDev::Interfaces
     KDev::Language
     KDev::Util
+    KF5::Archive
     KF5::ThreadWeaver
     KF5::TextEditor
+    KF5::NewStuff
     KF5::KDELibs4Support
     kdevpythoncompletion
     kdevpythonparser

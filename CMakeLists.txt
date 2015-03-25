@@ -65,13 +65,13 @@ add_subdirectory(duchain)
 add_subdirectory(codecompletion)
 add_subdirectory(debugger)
 add_subdirectory(docfilekcm)
-add_subdirectory(pep8kcm)
 add_subdirectory(checks)
 
 set(kdevpythonlanguagesupport_PART_SRCS
     codegen/correctionfilegenerator.cpp
     codegen/refactoring.cpp
     codegen/codegendebug.cpp
+    pep8kcm/kcm_pep8.cpp
     pythonlanguagesupport.cpp
     pythonparsejob.cpp
     pythonhighlighting.cpp

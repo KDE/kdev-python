@@ -76,6 +76,9 @@ public:
 
     virtual QList<KDevelop::ILanguageCheck*> providedChecks();
 
+    virtual int configPages() const override;
+    virtual KDevelop::ConfigPage* configPage(int number, QWidget* parent) override;
+
 public slots:
     void documentOpened(KDevelop::IDocument*);
 

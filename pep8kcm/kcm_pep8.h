@@ -27,14 +27,23 @@
 
 #include <KPluginFactory>
 
-class PEP8KCModule : public KCModule
+#include <interfaces/configpage.h>
+
+class PEP8KCModule : public KDevelop::ConfigPage
 {
 Q_OBJECT
 public:
-    PEP8KCModule( QWidget* parent, const QVariantList& args = QVariantList() );
-    virtual void save();
-    virtual ~PEP8KCModule();
+    PEP8KCModule(KDevelop::IPlugin* plugin, QWidget* parent = nullptr);
+    ~PEP8KCModule();
 
+    virtual QString name() const override;
+    virtual QString fullName() const override;
+    virtual QIcon icon() const override;
+
+
+    virtual void apply() override;
+    virtual void reset() override;
+    virtual void defaults() override;
 private:
     KConfigGroup configGroup;
     QLineEdit* pep8url;

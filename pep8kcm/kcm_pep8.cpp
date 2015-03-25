@@ -28,41 +28,66 @@
 #include <KLocalizedString>
 #include <KConfig>
 
-K_PLUGIN_FACTORY(PEP8KCModuleFactory, registerPlugin<PEP8KCModule>();)
-
-PEP8KCModule::PEP8KCModule(QWidget* parent, const QVariantList& args)
-    : KCModule(parent, args)
+PEP8KCModule::PEP8KCModule(KDevelop::IPlugin* plugin, QWidget* parent)
+    : KDevelop::ConfigPage(plugin, nullptr, parent)
 {
     KConfig* config = new KConfig("kdevpythonsupportrc");
     configGroup = config->group("pep8");
-    QWidget* configWidget = new QWidget;
     QFormLayout* formlayout = new QFormLayout;
-    configWidget->setLayout(formlayout);
-    parent->layout()->addWidget(configWidget);
+    setLayout(formlayout);
 
     QLabel* urllabel = new QLabel(i18n("Full path to the PEP8 checker to use:"));
     QLabel* argumentlabel = new QLabel(i18n("PEP8 checker arguments:"));
     QLabel* enablelabel = new QLabel(i18n("Enable PEP8 checking:"));
-    pep8url = new QLineEdit(configGroup.readEntry("pep8url", "/usr/bin/pep8-python2"));
-    pep8arguments = new QLineEdit(configGroup.readEntry("pep8arguments", ""));
+    pep8url = new QLineEdit;
+    pep8arguments = new QLineEdit;
     enableChecking = new QCheckBox;
-    enableChecking->setChecked(configGroup.readEntry<bool>("pep8enabled", false));
+    reset(); // load the initial values
     formlayout->addRow(urllabel, pep8url);
     formlayout->addRow(argumentlabel, pep8arguments);
     formlayout->addRow(enablelabel, enableChecking);
     formlayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
 
-    connect(pep8url, SIGNAL(textChanged(QString)), this, SLOT(changed()));
-    connect(pep8arguments, SIGNAL(textChanged(QString)), this, SLOT(changed()));
-    connect(enableChecking, SIGNAL(clicked(bool)), this, SLOT(changed()));
+    connect(pep8url, &QLineEdit::textChanged, this, &PEP8KCModule::changed);
+    connect(pep8arguments, &QLineEdit::textChanged, this, &PEP8KCModule::changed);
+    connect(enableChecking, &QCheckBox::clicked, this, &PEP8KCModule::changed);
 }
 
-void PEP8KCModule::save()
+void PEP8KCModule::apply()
 {
     configGroup.writeEntry("pep8url", pep8url->text());
     configGroup.writeEntry("pep8arguments", pep8arguments->text());
     configGroup.writeEntry("pep8enabled", enableChecking->isChecked());
-    KCModule::save();
+    configGroup.sync();
+}
+
+void PEP8KCModule::reset()
+{
+    pep8url->setText(configGroup.readEntry("pep8url", "/usr/bin/pep8-python2"));
+    pep8arguments->setText(configGroup.readEntry("pep8arguments", QString()));
+    enableChecking->setChecked(configGroup.readEntry<bool>("pep8enabled", false));
+}
+
+void PEP8KCModule::defaults()
+{
+    pep8url->setText("/usr/bin/pep8-python2");
+    pep8arguments->setText(QString());
+    enableChecking->setChecked(false);
+}
+
+QString PEP8KCModule::fullName() const
+{
+    return i18n("Configure Python style checking");
+}
+
+QIcon PEP8KCModule::icon() const
+{
+    return QIcon::fromTheme(QStringLiteral("text-x-python"));
+}
+
+QString PEP8KCModule::name() const
+{
+    return i18n("Python style checking");
 }
 
 PEP8KCModule::~PEP8KCModule()

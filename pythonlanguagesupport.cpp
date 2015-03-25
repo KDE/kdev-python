@@ -54,6 +54,7 @@
 #include "codegen/correctionfilegenerator.h"
 #include "kdevpythonversion.h"
 #include "checks/basiccheck.h"
+#include "pep8kcm/kcm_pep8.h"
 
 #include <QDebug>
 #include "pythondebug.h"
@@ -209,6 +210,20 @@ QList<ILanguageCheck*> LanguageSupport::providedChecks()
     qDebug() << "checks requested";
     return {new BasicCheck()};
 }
+
+int LanguageSupport::configPages() const
+{
+    return 1; // TODO: 2 once the other one has been ported
+}
+
+KDevelop::ConfigPage* LanguageSupport::configPage(int number, QWidget* parent)
+{
+    if (number == 0) {
+        return new PEP8KCModule(this, parent);
+    }
+    return nullptr;
+}
+
 
 }
 

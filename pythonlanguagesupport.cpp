@@ -186,7 +186,13 @@ SourceFormatterItemList LanguageSupport::sourceFormatterItems() const
                                "def function(arg,*vararg,**kwargs): return arg+kwarg[0]\nfunction(3, 5, 7)");
     using P = SourceFormatterStyle::MimeHighlightPair;
     autopep8.setMimeTypes(SourceFormatterStyle::MimeList{ P{"text/x-python", "Python"} });
-    autopep8.setContent("/usr/bin/pep8ify -w $TMPFILE");
+    QString pep8ifyPath = QStandardPaths::findExecutable("pep8ify");
+    if (pep8ifyPath.isEmpty()) {
+        // TODO: proper error handling/user notification
+        qWarning() << "Could not find the pep8ify executable";
+        pep8ifyPath = "/usr/bin/pep8ify";
+    }
+    autopep8.setContent(pep8ifyPath + " -w $TMPFILE");
 
     return SourceFormatterItemList{SourceFormatterStyleItem{"customscript", autopep8}};
 }

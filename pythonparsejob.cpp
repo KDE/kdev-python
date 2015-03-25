@@ -30,6 +30,7 @@
 #include "checks/dataaccessvisitor.h"
 #include "kshell.h"
 #include "duchain/helpers.h"
+#include "pep8kcm/kcm_pep8.h"
 
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/duchain.h>
@@ -301,7 +302,7 @@ void ParseJob::eventuallyDoPEP8Checking(const IndexedString document, TopDUConte
 
     KConfig config("kdevpythonsupportrc");
     KConfigGroup configGroup = config.group("pep8");
-    if ( ! configGroup.readEntry<bool>("pep8enabled", false) ) {
+    if ( ! PEP8KCModule::isPep8Enabled(configGroup) ) {
         return;
     }
     {
@@ -314,8 +315,8 @@ void ParseJob::eventuallyDoPEP8Checking(const IndexedString document, TopDUConte
     tempfile.open();
     tempfile.write(idoc->textDocument()->text().toUtf8());
     tempfile.close();
-    QString url = configGroup.readEntry("pep8url", "/usr/bin/pep8-python2");
-    QString arguments = configGroup.readEntry("pap8arguments", "");
+    QString url = PEP8KCModule::pep8Path(configGroup);
+    QString arguments = PEP8KCModule::pep8Arguments(configGroup);
     QFileInfo f(url);
     bool error = false;
     if ( ! f.isExecutable() ) {

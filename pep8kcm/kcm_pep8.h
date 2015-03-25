@@ -41,6 +41,11 @@ public:
     virtual QIcon icon() const override;
 
 
+    // TODO: use KConfigXT instead (this will additionally allow removing apply/reset/defaults)
+    static QString pep8Path(const KConfigGroup& group);
+    static bool isPep8Enabled(const KConfigGroup& group);
+    static QString pep8Arguments(const KConfigGroup& group);
+
     virtual void apply() override;
     virtual void reset() override;
     virtual void defaults() override;

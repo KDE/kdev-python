@@ -61,16 +61,40 @@ void PEP8KCModule::apply()
     configGroup.sync();
 }
 
+static QString defaultPep8Path() {
+    QString result = QStandardPaths::findExecutable("pep8-python3");
+    if (result.isEmpty()) {
+        result = QStandardPaths::findExecutable("pep8");
+    }
+    return result;
+}
+
+bool PEP8KCModule::isPep8Enabled(const KConfigGroup& group)
+{
+    return group.readEntry<bool>("pep8enabled", false);
+}
+
+QString PEP8KCModule::pep8Path(const KConfigGroup& group)
+{
+    static const QString pep8Default = defaultPep8Path();
+    return group.readEntry("pep8url", pep8Default);
+}
+
+QString PEP8KCModule::pep8Arguments(const KConfigGroup& group)
+{
+    return group.readEntry("pep8arguments", QString());
+}
+
 void PEP8KCModule::reset()
 {
-    pep8url->setText(configGroup.readEntry("pep8url", "/usr/bin/pep8-python2"));
-    pep8arguments->setText(configGroup.readEntry("pep8arguments", QString()));
-    enableChecking->setChecked(configGroup.readEntry<bool>("pep8enabled", false));
+    pep8url->setText(pep8Path(configGroup));
+    pep8arguments->setText(pep8Arguments(configGroup));
+    enableChecking->setChecked(isPep8Enabled(configGroup));
 }
 
 void PEP8KCModule::defaults()
 {
-    pep8url->setText("/usr/bin/pep8-python2");
+    pep8url->setText(defaultPep8Path());
     pep8arguments->setText(QString());
     enableChecking->setChecked(false);
 }

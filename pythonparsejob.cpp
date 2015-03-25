@@ -319,8 +319,9 @@ void ParseJob::eventuallyDoPEP8Checking(const IndexedString document, TopDUConte
     QString arguments = PEP8KCModule::pep8Arguments(configGroup);
     QFileInfo f(url);
     bool error = false;
-    if ( ! f.isExecutable() ) {
+    if ( url.isEmpty() || ! f.isExecutable() ) {
         error = true;
+        return; // don't bother executing an invalid executable
     }
     // create a string that contains the command to call pep8 with the given arguments
     QStringList commandArgs = (QStringList() << tempfile.fileName() << KShell::splitArgs(arguments));

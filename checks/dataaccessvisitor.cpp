@@ -23,8 +23,8 @@ namespace Python {
 DataAccessVisitor::DataAccessVisitor(const KDevelop::ReferencedTopDUContext& top,
                                      KDevelop::DataAccessRepository* repo,
                                      QExplicitlySharedDataPointer<Python::ParseSession> session)
-    : m_top(top)
-    , m_repo(repo)
+    : m_repo(repo)
+    , m_top(top)
     , m_editorIntegrator(new Python::PythonEditorIntegrator(session.data()))
 {
 }

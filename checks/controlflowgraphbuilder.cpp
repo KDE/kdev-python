@@ -26,10 +26,10 @@ ControlFlowGraphBuilder::ControlFlowGraphBuilder(const KDevelop::ReferencedTopDU
                                                  KDevelop::ControlFlowGraph* graph,
                                                  QExplicitlySharedDataPointer<Python::ParseSession> session)
     : m_graph(graph)
-    , m_currentNode(nullptr)
-    , m_session(session)
     , m_top(top)
+    , m_session(session)
     , m_editorIntegrator(new PythonEditorIntegrator(session.data()))
+    , m_currentNode(nullptr)
 {
 }
 

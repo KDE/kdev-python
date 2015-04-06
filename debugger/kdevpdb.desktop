@@ -39,7 +39,6 @@ Comment[x-test]=xxThis plugin provides a frontend for PDBxx
 Comment[zh_CN]=插件提供了 PDB 前端
 Comment[zh_TW]=提供 Python 除錯器前端介面的外掛程式
 Name=kdevpdb
-Name[ast]=kdevpdb
 Name[bs]=kdevpdb
 Name[ca]=kdevpdb
 Name[ca@valencia]=kdevpdb

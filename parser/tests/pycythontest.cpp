@@ -38,7 +38,6 @@
 using namespace Python;
 
 QTEST_MAIN(PyCythonTest)
-Q_DECLARE_METATYPE(KTextEditor::Range);
 
 PyCythonTest::PyCythonTest(QObject* parent): QObject(parent)
 {

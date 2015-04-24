@@ -43,7 +43,6 @@ using namespace KDevelop;
 QTEST_MAIN(Python::PyCompletionTest)
 
 Q_DECLARE_METATYPE(QList<Python::RangeInString>)
-Q_DECLARE_METATYPE(KTextEditor::Range)
 
 static int testId = 0;
 static QString basepath = "/tmp/__kdevpythoncompletiontest.dir/";
@@ -92,17 +91,17 @@ void PyCompletionTest::initShell()
     core->initialize(KDevelop::Core::NoUi);
     QDir d;
     d.mkpath(basepath);
-    
+
     auto doc_url = QDir::cleanPath(QStandardPaths::locate(QStandardPaths::GenericDataLocation,
                                                           "kdevpythonsupport/documentation_files/builtindocumentation.py"));
 
     DUChain::self()->updateContextForUrl(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
     ICore::self()->languageController()->backgroundParser()->parseDocuments();
     DUChain::self()->waitForUpdate(IndexedString(doc_url), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
-    
+
     DUChain::self()->disablePersistentStorage();
     KDevelop::CodeRepresentation::setDiskChangesForbidden(true);
-    
+
     // now, create a nice little completion hierarchy
     d.mkpath(basepath + "submoduledir");
     d.mkpath(basepath + "submoduledir/anothersubdir");
@@ -145,7 +144,7 @@ void PyCompletionTest::testExpressionParserMisc()
     QString calledFunction = p.popExpression(&s);
     QVERIFY(s == ExpressionParser::ExpressionFound);
     QCOMPARE(calledFunction, QString("foobar"));
-    
+
     ExpressionParser q("hello(world, foo.bar[3].foobar(3, \"some_string\", func(), funcfunc(3, 5), \t");
     q.skipUntilStatus(ExpressionParser::EventualCallFound, &ok, &expressionsSkipped);
     QVERIFY(ok);
@@ -161,7 +160,7 @@ void PyCompletionTest::testExpressionParser()
     QFETCH(QString, data);
     QFETCH(int, expectedStatus);
     QFETCH(QString, expectedExpression);
-    
+
     ExpressionParser p(data);
     ExpressionParser::Status status;
     QString result = p.popExpression(&status);
@@ -174,7 +173,7 @@ void PyCompletionTest::testExpressionParser_data()
     QTest::addColumn<QString>("data");
     QTest::addColumn<int>("expectedStatus");
     QTest::addColumn<QString>("expectedExpression");
-    
+
     QTest::newRow("attrExpression") << "foo.bar.baz" << (int) ExpressionParser::ExpressionFound << "foo.bar.baz";
     QTest::newRow("attrExpressionAccess") << "foo.bar.baz." << (int) ExpressionParser::MemberAccessFound << "";
     QTest::newRow("attrExpressionCall") << "foo.bar(3, 5, 7, hell0(3)).baz" << (int) ExpressionParser::ExpressionFound << "foo.bar(3, 5, 7, hell0(3)).baz";
@@ -200,18 +199,18 @@ const CompletionParameters PyCompletionTest::prepareCompletion(const QString& in
     fileptr.open(QIODevice::WriteOnly);
     fileptr.write(initCode.toAscii().replace("%INVOKE", ""));
     fileptr.close();
-    
+
     DUChain::self()->updateContextForUrl(IndexedString(filename), KDevelop::TopDUContext::ForceUpdate);
     ICore::self()->languageController()->backgroundParser()->parseDocuments();
     ReferencedTopDUContext topContext = DUChain::self()->waitForUpdate(IndexedString(filename),
                                                                        KDevelop::TopDUContext::AllDeclarationsAndContexts);
-    
+
     Q_ASSERT(topContext);
-    
+
     Q_ASSERT(initCode.indexOf("%INVOKE") != -1);
     QString copy = initCode;
     QString allCode = copy.replace("%INVOKE", invokeCode);
-    
+
     QStringList lines = allCode.split('\n');
     completion_data.cursorAt = CursorInRevision::invalid();
     for ( int i = 0; i < lines.length(); i++ ) {
@@ -225,11 +224,11 @@ const CompletionParameters PyCompletionTest::prepareCompletion(const QString& in
     // codeCompletionContext only gets passed the text until the place where completion is invoked
     completion_data.snip = allCode.mid(0, allCode.indexOf("%CURSOR"));
     completion_data.remaining = allCode.mid(allCode.indexOf("%CURSOR") + 7);
-    
+
     DUChainReadLocker lock;
     completion_data.contextAtCursor = DUContextPointer(topContext->findContextAt(completion_data.cursorAt, true));
     Q_ASSERT(completion_data.contextAtCursor);
-    
+
     return completion_data;
 }
 
@@ -305,7 +304,7 @@ void PyCompletionTest::testImportCompletion_data()
     QTest::addColumn<QString>("invokeCode");
     QTest::addColumn<QString>("completionCode");
     QTest::addColumn<QString>("expectedItem");
-    
+
     QTest::newRow("same_directory") << "%INVOKE" << "import %CURSOR" << "toplevelmodule";
 //     QTest::newRow("same_directory_beginText") << "%INVOKE" << "import toplevelmo%CURSOR" << "toplevelmodule";
     QTest::newRow("nocompletion") << "%INVOKE" << "from toplevelmodule %CURSOR" << "EMPTY";
@@ -335,7 +334,7 @@ void PyCompletionTest::testCompletionAfterQuotes_data()
 {
     QTest::addColumn<QString>("invokeCode");
     QTest::addColumn<QString>("completionCode");
-    
+
     QTest::newRow("nothing") << "\n%INVOKE" << "%CURSOR";
     QTest::newRow("sq_in_string") << "\"foo'bar\"\n%INVOKE" << "%CURSOR";
     QTest::newRow("sq_in_sl_comment") << "#foo'bar\n%INVOKE" << "%CURSOR";
@@ -357,7 +356,7 @@ void PyCompletionTest::testIntegralTypesImmediate()
     QFETCH(QString, invokeCode);
     QFETCH(QString, completionCode);
     QFETCH(QString, expectedDeclaration);
-    
+
     QVERIFY(declarationInCompletionList(invokeCode, completionCode, expectedDeclaration));
 }
 
@@ -366,7 +365,7 @@ void PyCompletionTest::testIntegralTypesImmediate_data()
     QTest::addColumn<QString>("invokeCode");
     QTest::addColumn<QString>("completionCode");
     QTest::addColumn<QString>("expectedDeclaration");
-    
+
     QTest::newRow("list_syntax") << "[]%INVOKE" << ".%CURSOR" << "append";
     QTest::newRow("dict_syntax") << "{}%INVOKE" << ".%CURSOR" << "items";
     QTest::newRow("string_syntax") << "\"\"%INVOKE" << ".%CURSOR" << "capitalize";
@@ -380,7 +379,7 @@ void PyCompletionTest::testIntegralExpressionsDifferentContexts()
     QFETCH(QString, invokeCode);
     QFETCH(QString, completionCode);
     QFETCH(QString, expectedDeclaration);
-    
+
     QVERIFY(declarationInCompletionList(invokeCode, completionCode, expectedDeclaration));
 }
 
@@ -389,7 +388,7 @@ void PyCompletionTest::testIntegralExpressionsDifferentContexts_data()
     QTest::addColumn<QString>("invokeCode");
     QTest::addColumn<QString>("completionCode");
     QTest::addColumn<QString>("expectedDeclaration");
-    
+
     QTest::newRow("function_call") << "foo([]%INVOKE)" << ".%CURSOR" << "append";
     QTest::newRow("function_call_multi") << "foo(bar(baz(bang([]%INVOKE))))" << ".%CURSOR" << "append";
     QTest::newRow("empty_list") << "[[]%INVOKE]" << ".%CURSOR" << "append";
@@ -410,7 +409,7 @@ void PyCompletionTest::testNoCompletionInCommentsOrStrings()
 {
     QFETCH(QString, invokeCode);
     QFETCH(QString, completionCode);
-    
+
     QVERIFY(! declarationInCompletionList(invokeCode, completionCode, "append"));
 }
 
@@ -418,7 +417,7 @@ void PyCompletionTest::testNoCompletionInCommentsOrStrings_data()
 {
     QTest::addColumn<QString>("invokeCode");
     QTest::addColumn<QString>("completionCode");
-    
+
     QTest::newRow("single_comment") << "# []%INVOKE" << ".%CURSOR";
     QTest::newRow("single_comment_local") << "local=3\n# %INVOKE" << "%CURSOR";
     QTest::newRow("stringDQ") << "\"[]%INVOKE\"" << ".%CURSOR";
@@ -440,7 +439,7 @@ void PyCompletionTest::testImplementMethodCompletion_data()
 {
     QTest::addColumn<QString>("invokeCode");
     QTest::addColumn<QString>("completionCode");
-    
+
     QTest::newRow("simple_begin") << "class myclass():\n %INVOKE\n pass" << "def %CURSOR";
     QTest::newRow("another_method_before") << "class myclass():\n def some_method(param):pass\n %INVOKE" << "def %CURSOR";
     QTest::newRow("another_method_before_multiline") << "class myclass():\n def some_method(param):\n  pass\n  pass \n  pass"
@@ -479,7 +478,7 @@ void PyCompletionTest::testExceptionCompletion()
     QList< CompletionTreeItem* > items = invokeCompletionOn("localvar = 3\nraise %INVOKE", "%CURSOR");
     QVERIFY(containsItemForDeclarationNamed(items, "Exception"));
     QVERIFY(! containsItemForDeclarationNamed(items, "localvar"));
-    
+
     items = invokeCompletionOn("localvar = 3\n%INVOKE", "try: pass\nexcept %CURSOR");
     QVERIFY(containsItemForDeclarationNamed(items, "Exception"));
     QVERIFY(! containsItemForDeclarationNamed(items, "localvar"));
@@ -545,7 +544,7 @@ void PyCompletionTest::testFunctionDeclarationCompletion()
     KTextEditor::Document* document = documentService->createInstance<KTextEditor::Document>(this);
     QVERIFY(document);
     document->setText(documentCode);
-    
+
     auto view = document->createView(nullptr);
 
     completionItems.first()->execute(view, executeRange);

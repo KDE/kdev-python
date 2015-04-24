@@ -185,7 +185,7 @@ void PyAstTest::testExpressions()
 void PyAstTest::testExpressions_data()
 {
     QTest::addColumn<QString>("code");
-    
+
     QTest::newRow("boolop") << "b or c";
     QTest::newRow("binop") << "b ^ c";
     QTest::newRow("unop") << "not a";
@@ -212,8 +212,6 @@ void PyAstTest::testExpressions_data()
     QTest::newRow("False") << "False";
     QTest::newRow("True") << "True";
 }
-
-Q_DECLARE_METATYPE(KTextEditor::Range);
 
 void PyAstTest::testCorrectedFuncRanges()
 {

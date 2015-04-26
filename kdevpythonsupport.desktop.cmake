@@ -13,6 +13,7 @@ Comment[fi]=Python-kielituki
 Comment[fr]=Prise en charge du langage Python
 Comment[gl]=Compatibilidade coa linguaxe Python.
 Comment[it]=Supporto per il linguaggio Python
+Comment[ko]=파이썬 언어 지원
 Comment[nb]=Støtte for Python-språket
 Comment[nl]=Ondersteuning voor de taal Python
 Comment[pl]=Obsługa języka Python

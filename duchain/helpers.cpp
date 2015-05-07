@@ -36,7 +36,6 @@
 #include <language/backgroundparser/backgroundparser.h>
 #include <interfaces/iproject.h>
 #include <interfaces/icore.h>
-#include <interfaces/iprojectcontroller.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <interfaces/idocumentcontroller.h>
 
@@ -54,6 +53,7 @@ using namespace KDevelop;
 namespace Python {
 
 QList<KUrl> Helper::cachedSearchPaths;
+QList<KUrl> Helper::projectSearchPaths;
 QStringList Helper::dataDirs;
 QString Helper::documentationFile;
 DUChainPointer<TopDUContext> Helper::documentationFileContext = DUChainPointer<TopDUContext>(0);
@@ -395,14 +395,12 @@ QList<KUrl> Helper::getSearchPaths(KUrl workingOnDocument)
 {
     QList<KUrl> searchPaths;
     // search in the projects, as they're packages and likely to be installed or added to PYTHONPATH later
-    foreach  (IProject* project, ICore::self()->projectController()->projects() ) {
-        searchPaths.append(KUrl(project->folder().url()));
-    }
+    searchPaths << Helper::projectSearchPaths;
     
     foreach ( const QString& path, getDataDirs() ) {
         searchPaths.append(KUrl(path));
     }
-    
+
     if ( cachedSearchPaths.isEmpty() ) {
         KStandardDirs d;
         kDebug() << "*** Gathering search paths...";

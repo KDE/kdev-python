@@ -29,6 +29,7 @@
 #include "checks/controlflowgraphbuilder.h"
 #include "checks/dataaccessvisitor.h"
 #include "kshell.h"
+#include "duchain/helpers.h"
 
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/duchain.h>
@@ -45,6 +46,7 @@
 #include <interfaces/ilanguage.h>
 #include <interfaces/foregroundlock.h>
 #include <interfaces/icore.h>
+#include <interfaces/iprojectcontroller.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <interfaces/idocumentcontroller.h>
 
@@ -88,6 +90,11 @@ void ParseJob::run()
     }
     
     qDebug() << " ====> PARSING ====> parsing file " << document().toUrl() << "; has priority" << parsePriority();
+
+    Helper::projectSearchPaths.clear();
+    foreach  (IProject* project, ICore::self()->projectController()->projects() ) {
+        Helper::projectSearchPaths.append(KUrl(project->folder().url()));
+    }
     
     // lock the URL so no other parse job can run on this document
     QReadLocker parselock(languageSupport()->language()->parseLock());

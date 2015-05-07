@@ -73,6 +73,7 @@ class KDEVPYTHONPARSER_EXPORT Ast
 public:
     enum AstType
     {
+        StatementAstType,
         FunctionDefinitionAstType,
         AssignmentAstType,
         PassAstType,
@@ -97,8 +98,7 @@ public:
         ContinueAstType,
         AssertionAstType,
         AugmentedAssignmentAstType,
-        CodeAstType,
-        StatementAstType,
+        LastStatementType,
         ExpressionAstType, // everything below is an expression
         NameAstType,
         NameConstantAstType,
@@ -133,6 +133,7 @@ public:
         IndexAstType,
         LastExpressionType, // keep this at the end of the expr ast list
 
+        CodeAstType,
         ExceptionHandlerAstType,
         AliasAstType, // for imports
         IdentifierAstType,
@@ -185,7 +186,7 @@ public:
 
     Ast(Ast* parent, AstType type);
     Ast();
-    Ast* parent;
+    Ast* parent = nullptr;
     AstType astType;
 
     bool isExpression() const {
@@ -201,11 +202,19 @@ public:
     
     bool appearsBefore(const Ast* other) {
         return startLine < other->startLine || ( startLine == other->startLine && startCol < other->startCol );
-    };
+    }
     
     const KDevelop::SimpleRange range() const {
         return KDevelop::SimpleRange(startLine, startCol, endLine, endCol);
     };
+    
+    const KTextEditor::Cursor start() const {
+        return {startLine, startCol};
+    }
+    
+    const KTextEditor::Cursor end() const {
+        return {endLine, endCol};
+    }
 
     int startCol;
     int startLine;

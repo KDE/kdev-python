@@ -202,6 +202,7 @@ void PyAstTest::testExpressions_data()
     QTest::newRow("name") << "foo";
     QTest::newRow("call") << "foo()";
     QTest::newRow("attribute") << "foo.bar";
+    QTest::newRow("attribute_nontoplevel") << "while True: foo.bar";
     QTest::newRow("subscript") << "foo[3]";
     QTest::newRow("starred") << "*[1, 2, 3 ,4]";
     QTest::newRow("list") << "[]";

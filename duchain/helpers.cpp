@@ -58,8 +58,8 @@ using namespace KDevelop;
 namespace Python {
 
 QList<QUrl> Helper::cachedCustomIncludes;
-QList<KUrl> Helper::cachedSearchPaths;
-QList<KUrl> Helper::projectSearchPaths;
+QList<QUrl> Helper::cachedSearchPaths;
+QList<QUrl> Helper::projectSearchPaths;
 QStringList Helper::dataDirs;
 QString Helper::documentationFile;
 DUChainPointer<TopDUContext> Helper::documentationFileContext = DUChainPointer<TopDUContext>(0);

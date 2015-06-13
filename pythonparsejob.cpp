@@ -104,7 +104,7 @@ void ParseJob::run(ThreadWeaver::JobPointer self, ThreadWeaver::Thread* thread)
 
     Helper::projectSearchPaths.clear();
     foreach  (IProject* project, ICore::self()->projectController()->projects() ) {
-        Helper::projectSearchPaths.append(KUrl(project->folder().url()));
+        Helper::projectSearchPaths.append(QUrl(project->path().path()));
     }
     
     // lock the URL so no other parse job can run on this document

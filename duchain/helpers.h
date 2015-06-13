@@ -66,8 +66,8 @@ public:
 
     static QMutex cacheMutex;
     static QList<QUrl> cachedCustomIncludes;
-    static QList<KUrl> cachedSearchPaths;
-    static QList<KUrl> projectSearchPaths;
+    static QList<QUrl> cachedSearchPaths;
+    static QList<QUrl> projectSearchPaths;
 
     static AbstractType::Ptr extractTypeHints(AbstractType::Ptr type, TopDUContext* current);
 

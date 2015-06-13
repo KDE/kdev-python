@@ -84,6 +84,109 @@ public:
         cutDefinitionPreamble(node->name, "class");
         AstDefaultVisitor::visitClassDefinition(node);
     };
+    virtual void visitAttribute(AttributeAst* node) {
+        /**
+         * Work around the weird way to count columns in Python's AST module.
+         * This takes an expression and finds the dots (attribute access tokens),
+         * then associates the right ranges obtained by their positions with the
+         * corresponding AST nodes (through recursive calls of this function).
+         */
+        // an attribute access was already found in a previous call, associate it with this node?
+        if ( ! dots.isEmpty() && node->start() == attributeStart ) {
+            node->startLine = dots.last().line();
+            node->startCol = dots.last().column();
+            node->endLine = node->startLine;
+            node->endCol = node->startCol + node->attribute->value.length() - 1;
+            node->attribute->copyRange(node);
+            dots.pop_back();
+            visitNode(node->value);
+            return;
+        }
+
+        // find where the statement starts
+        Ast* parent = node;
+        while ( parent->astType != Ast::CodeAstType && parent->parent->astType > Ast::LastStatementType ) {
+            parent = parent->parent;
+        }
+        Ast* statement = parent->parent ? parent->parent : parent; 
+
+        const QVector<QChar> opening = {'(', '[', '{', '"', '\''};
+        const QVector<QChar> closing = {')', ']', '}', '"', '\''};
+        QStack<QChar> blocks;
+
+        auto lineno = statement->startLine;
+        auto line = lines.at(lineno);
+        int offset = qMax(0, statement->startCol);
+        bool atDot = false;
+        bool atContinuationCharacter = false;
+        int inRightBlock = (lineno < node->startLine || (lineno == node->startLine && offset <= node->startCol)) ? -1 : 0;
+        // while the statement lasts, step through it char by char to find attribute access tokens
+        while ( offset < line.size() ) {
+            // for an expression like [foo.bar, a.b].c(xy.z), are we in the right block?
+            if ( lineno == node->startLine && offset == node->startCol ) {
+                inRightBlock = blocks.size();
+            }
+
+            const auto& c = line.at(offset);
+            // continue to next line if applicable
+            // TODO escaping
+            if ( c == '\\' ) {
+                atContinuationCharacter = true;
+            }
+            else if ( ! c.isSpace() ) {
+                atContinuationCharacter = false;
+            }
+
+            // does this token appear after the node's start position? if not, ignore it
+            bool later = (lineno > node->startLine) || (lineno == node->startLine && offset >= node->startCol);
+            if ( atDot && ! c.isSpace() && later ) {
+                dots.append({lineno, offset});
+                atDot = false;
+            }
+            // handle parentheses
+            if ( opening.contains(c) ) {
+                blocks.push(closing.at(opening.indexOf(c)));
+            }
+            if ( blocks.isEmpty() && closing.contains(c) && ! dots.isEmpty() ) {
+                break;
+            }
+            if ( ! blocks.isEmpty() && blocks.top() == c ) {
+                blocks.pop();
+            }
+            // if this is a dot and we're in the right block, save it
+            // saving is deferred until the next non-space character to obtain the correct
+            // start offset
+            if ( c == '.' && blocks.size() == inRightBlock ) {
+                atDot = true;
+            }
+            offset++;
+            // if
+            //  * we're in a block (parentheses, etc)
+            //  * we're not yet at the end of the statement
+            //  * there's a continuation character
+            // and the rest of the line is only spaces, continue to the next non-empty line
+            if ( line.mid(offset).trimmed().isEmpty() && (atContinuationCharacter || ! blocks.isEmpty() || lineno < statement->endLine ) ) {
+                do {
+                    lineno++;
+                    if ( lines.size() <= lineno ) {
+                        qDebug() << "huh?";
+                        // probably not even possible to reach here
+                        return;
+                    }
+                    line = lines.at(lineno);
+                } while ( line.isEmpty() );
+                offset = 0;
+                atContinuationCharacter = false;
+            }
+            if ( blocks.size() < inRightBlock ) {
+                // once out of the right block, can't get back in
+                inRightBlock = -1;
+            }
+        }
+        attributeStart = node->start();
+        visitNode(node);
+        visitNode(node->attribute);
+    };
     // alias for imports (import foo as bar, baz as bang)
     // no strings, brackets, or whatever are allowed here, so the "parser"
     // can be very straightforward.
@@ -109,6 +212,8 @@ public:
     }
 private:
     const QStringList lines;
+    QVector<KTextEditor::Cursor> dots;
+    KTextEditor::Cursor attributeStart;
 
 
     // skip the decorators and the "def" at the beginning
@@ -129,14 +234,16 @@ private:
 
         // cut away decorators
         while ( currentLine < lines.size() ) {
-            if ( ! lines.at(currentLine).trimmed().startsWith('@') ) {
+            if ( lines.at(currentLine).trimmed().startsWith(defKeyword) ) {
                 // it's not a decorator, so stop skipping lines.
                 break;
             }
             currentLine += 1;
         }
+        qDebug() << "FIX:" << fixNode->range();
         fixNode->startLine = currentLine;
         fixNode->endLine = currentLine;
+        qDebug() << "FIXED:" << fixNode->range() << fixNode->astType;
 
         // cut away the "def" / "class"
         int currentColumn = -1;

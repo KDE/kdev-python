@@ -260,7 +260,15 @@ void PyDUChainTest::testCrashes_data() {
     QTest::newRow("static_method") << "class c:\n @staticmethod\n def method(): pass";
     QTest::newRow("vararg_in_middle") << "def func(a, *b, c): pass\nfunc(1, 2, 3, 4, 5)";
     QTest::newRow("return_outside_function") << "return 3";
+    QTest::newRow("attrib") << "(sep or ' ').join(x.capitalize() for x in s.split(sep))";
+    QTest::newRow("attrib2") << "known_threads = {line.strip() for line  in [\"foo\"] if line.strip()}";
     QTest::newRow("stacked_lambdas") << "l4 = lambda x = lambda y = lambda z=1 : z : y() : x()";
+    QTest::newRow("newline_attrib2") << "raise TypeError(\"argument should be a bound method, not {}\"\n"
+                                        ".format(type(meth))) from None";
+    QTest::newRow("newline_attrib") << "some_instance \\\n"
+                ".   attr1 \\\n"
+                ".funcfunc(argarg, arg2arg) \\\n"
+                ".foo";
     QTest::newRow("fancy generator context range") << "c1_list = sorted(letter for (letter, meanings) \\\n"
                "in ambiguous_nucleotide_values.iteritems() \\\n"
                "if set([codon[0] for codon in codons]).issuperset(set(meanings)))";
@@ -696,6 +704,8 @@ void PyDUChainTest::testRanges_data()
     QTest::newRow("attr_stringSubscript") << "base.attr[\"a.b.c..de\"].subattr" << 3 << ( QStringList() << "5,8,attr" << "23,29,subattr" );
     QTest::newRow("attr_functionCallWithArguments") << "base.attr(arg1, arg2).subattr" << 5 << ( QStringList() << "5,8,attr" << "22,28,subattr" );
     QTest::newRow("attr_functionCallWithArgument_withInner") << "base.attr(arg1.parg2).subattr" << 5 << ( QStringList() << "5,8,attr" << "22,28,subattr" << "15,19,parg2" );
+    QTest::newRow("attr_complicated") << "base.attr(arg1.arg2(arg4.arg5, [func(a.b)]).arg3(arg6.arg7)).subattr" << 5 << ( QStringList() << "5,8,attr" << "15,18,arg2" <<
+                                                            "25,28,arg5" << "39,39,b" << "44,47,arg3" << "54,57,arg7" << "61,67,subattr");
     
     QTest::newRow("funcrange_def") << "def func(): pass" << 1 << ( QStringList() << "4,7,func" );
     QTest::newRow("funcrange_spaces_def") << "def    func(): pass" << 1 << ( QStringList() << "7,10,func" );

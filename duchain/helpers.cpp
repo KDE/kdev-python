@@ -37,7 +37,6 @@
 #include <language/backgroundparser/backgroundparser.h>
 #include <interfaces/iproject.h>
 #include <interfaces/icore.h>
-#include <interfaces/iprojectcontroller.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <interfaces/idocumentcontroller.h>
 #include <interfaces/ipartcontroller.h>
@@ -58,8 +57,9 @@ using namespace KDevelop;
 
 namespace Python {
 
-QList<QUrl> Helper::cachedSearchPaths;
 QList<QUrl> Helper::cachedCustomIncludes;
+QList<KUrl> Helper::cachedSearchPaths;
+QList<KUrl> Helper::projectSearchPaths;
 QStringList Helper::dataDirs;
 QString Helper::documentationFile;
 DUChainPointer<TopDUContext> Helper::documentationFileContext = DUChainPointer<TopDUContext>(0);
@@ -404,15 +404,12 @@ QList<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
     QList<QUrl> searchPaths;
     // search in the projects, as they're packages and likely to be installed or added to PYTHONPATH later
     // and also add custom include paths that are defined in the projects
-    foreach  (IProject* project, ICore::self()->projectController()->projects() ) {
-        searchPaths.append(project->path().path());
-    }
-    searchPaths.append(cachedCustomIncludes);
+    searchPaths << Helper::projectSearchPaths;
     
     foreach ( const QString& path, getDataDirs() ) {
         searchPaths.append(QUrl::fromLocalFile(path));
     }
-    
+
     if ( cachedSearchPaths.isEmpty() ) {
         qCDebug(KDEV_PYTHON_DUCHAIN) << "*** Gathering search paths...";
         QStringList getpath;

@@ -89,7 +89,7 @@ void ParseJob::run()
         return abortJob();
     }
     
-    qDebug() << " ====> PARSING ====> parsing file " << document().toUrl() << "; has priority" << parsePriority();
+    kDebug() << " ====> PARSING ====> parsing file " << document().toUrl() << "; has priority" << parsePriority();
 
     Helper::projectSearchPaths.clear();
     foreach  (IProject* project, ICore::self()->projectController()->projects() ) {
@@ -110,7 +110,7 @@ void ParseJob::run()
                 continue;
             }
             if ( ! file->needsUpdate() && file->featuresSatisfied(minimumFeatures()) && file->topContext() ) {
-                qDebug() << " ====> NOOP    ====> Already up to date:" << document().str();
+                kDebug() << " ====> NOOP    ====> Already up to date:" << document().str();
                 setDuChain(file->topContext());
                 if ( ICore::self()->languageController()->backgroundParser()->trackerForUrl(document()) ) {
                     lock.unlock();

@@ -486,7 +486,7 @@ struct PythonInitializer : private QMutexLocker {
 
 CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
 {
-    qDebug() << " ====> AST     ====>     building abstract syntax tree for " << filename.path();
+    kDebug() << " ====> AST     ====>     building abstract syntax tree for " << filename.path();
     
     Py_NoSiteFlag = 1;
     
@@ -514,7 +514,7 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
     mod_ty syntaxtree = PyParser_ASTFromString(contents.toUtf8().data(), "<kdev-editor-contents>", file_input, &flags, arena);
 
     if ( ! syntaxtree ) {
-        qDebug() << " ====< parse error, trying to fix";
+        kDebug() << " ====< parse error, trying to fix";
         
         PyErr_Fetch(&exception, &value, &backtrace);
         kDebug() << "Error objects: " << exception << value << backtrace;
@@ -522,7 +522,7 @@ CodeAst::Ptr AstBuilder::parse(KUrl filename, QString &contents)
         
         PyObject* errorMessage_str = PyTuple_GetItem(value, 0);
         PyObject* errorDetails_tuple = PyTuple_GetItem(value, 1);
-        qDebug() << "Eventual errors while extracting tuple: ";
+        kDebug() << "Eventual errors while extracting tuple: ";
         PyObject_Print(errorMessage_str, stderr, Py_PRINT_RAW);
        
         if ( ! errorDetails_tuple ) {

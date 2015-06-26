@@ -7,7 +7,8 @@ set(KDEVPYTHON_VERSION_PATCH 1)
 # KDevplatform dependency version
 set( KDEVPLATFORM_VERSION "${KDEVPYTHON_VERSION_MAJOR}.${KDEVPYTHON_VERSION_MINOR}.${KDEVPYTHON_VERSION_PATCH}" )
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${kdevpython_SOURCE_DIR}/cmake/)
+#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${kdevpython_SOURCE_DIR}/cmake/)
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules )
 
 cmake_minimum_required(VERSION 2.8.9)
 
@@ -15,8 +16,8 @@ find_package(KDE4 REQUIRED)
 find_package(KDevPlatform ${KDEVPLATFORM_VERSION} REQUIRED)
 
 
-# find the system python 3 interpreter, only used for determining search paths.
-find_package(PythonInterp 3.0 REQUIRED)
+# find the system python 3.4 interpreter, only used for determining search paths.
+find_package(Python 3.4)
 configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpython_BINARY_DIR}/kdevpythonversion.h" @ONLY )
 
 

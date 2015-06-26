@@ -13,8 +13,9 @@ set(parser_STAT_SRCS
     cythonsyntaxremover.cpp
 )
 
-find_package(PythonLibs 3.4.3 REQUIRED)
-if ( NOT ${PYTHONLIBS_FOUND} OR ${PYTHON_VERSION_MINOR} GREATER 4 )
+# no more need to hunt for Python things here; already done in the toplevel CMake file
+# TODO: test for the exact Python version required; PYTHON_VERSION_MICRO is available if needed.
+if ( (NOT PYTHON_FOUND) OR (${PYTHON_VERSION_MINOR} GREATER 4) )
     message(FATAL_ERROR "Python 3.4.3 with --enable-shared is required to build kdev-python")
 endif()
 
@@ -25,7 +26,7 @@ target_link_libraries(kdev4pythonparser LINK_PRIVATE
     ${KDE4_KDECORE_LIBS}
     ${KDEVPLATFORM_LANGUAGE_LIBRARIES}
     ${QT_QTCORE_LIBRARY}
-    ${PYTHON_LIBRARY}
+    ${PYTHON_LIBRARIES}
 )
 
 add_dependencies(kdev4pythonparser parser)

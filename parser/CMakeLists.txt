@@ -15,7 +15,7 @@ set(parser_STAT_SRCS
 )
 
 find_package(PythonLibs 3.5.0 REQUIRED)
-if ( NOT ${PYTHONLIBS_FOUND} OR ${PYTHON_VERSION_MINOR} GREATER 5 )
+if ( (NOT PYTHONLIBS_FOUND) OR ${PYTHON_VERSION_MINOR} GREATER 5 )
     message(FATAL_ERROR "Python >= 3.5.0 with --enable-shared is required to build kdev-python")
 endif()
 
@@ -30,7 +30,7 @@ target_link_libraries(kdevpythonparser LINK_PRIVATE
     KDev::Language
     KDev::Util
     Qt5::Core
-    ${PYTHON_LIBRARY}
+    ${PYTHON_LIBRARIES}
 )
 
 install(TARGETS kdevpythonparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})

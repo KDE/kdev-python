@@ -18,6 +18,7 @@
 
 #include <kexportplugin.h>
 #include <kpluginfactory.h>
+#include <KAboutData>
 #include <KLocalizedString>
 #include <K4AboutData>
 
@@ -34,12 +35,7 @@
 
 namespace Python {
 
-K_PLUGIN_FACTORY(PdbDebuggerPluginFactory, registerPlugin<PdbDebuggerPlugin>(); )
-K_EXPORT_PLUGIN(PdbDebuggerPluginFactory(
-    KAboutData("kdevpdbsupport", "kdevpython", ki18n("Python Debugger (pdb) Support"),
-               KDEVPYTHON_VERSION_STR, ki18n("Support for the Python Debugger"), K4AboutData::License_GPL)
-    .addAuthor(ki18n("Sven Brauch"), ki18n("Author"), "svenbrauch@googlemail.com", "")
-))
+K_PLUGIN_FACTORY_WITH_JSON(PdbDebuggerPluginFactory, "kdevpdb.json", registerPlugin<PdbDebuggerPlugin>(); )
 
 PdbDebuggerPlugin::PdbDebuggerPlugin(QObject* parent, const QVariantList&) 
     : IPlugin("kdevpdbsupport", parent)

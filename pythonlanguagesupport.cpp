@@ -60,13 +60,7 @@
 
 using namespace KDevelop;
 
-K_PLUGIN_FACTORY( KDevPythonSupportFactory, registerPlugin<Python::LanguageSupport>(); )
-
-K_EXPORT_PLUGIN(KDevPythonSupportFactory(
-    KAboutData("kdevpythonsupport", "kdevpython", ki18n("Python Support"),
-               KDEVPYTHON_VERSION_STR, ki18n("Support for the Python Scripting Language"), KAboutData::License_GPL)
-    .addAuthor(ki18n("Sven Brauch"), ki18n("Author"), "svenbrauch@googlemail.com", "")
-))
+K_PLUGIN_FACTORY_WITH_JSON( KDevPythonSupportFactory, "kdevpythonsupport.json", registerPlugin<Python::LanguageSupport>(); )
 
 namespace Python
 {

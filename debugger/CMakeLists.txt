@@ -21,7 +21,8 @@ set(kdevpdb_PART_SRCS
     debuggerdebug.cpp
 )
 
-add_library(kdevpdb MODULE ${kdevpdb_PART_SRCS})
+kdevplatform_add_plugin(kdevpdb JSON kdevpdb.json SOURCES ${kdevpdb_PART_SRCS})
+
 target_link_libraries(kdevpdb
     kdevpythonparser
     KDev::Interfaces
@@ -34,10 +35,6 @@ target_link_libraries(kdevpdb
     KF5::KDELibs4Support
     ${KDE4WORKSPACE_PROCESSUI_LIBS}
 )
-
-install(TARGETS kdevpdb DESTINATION ${PLUGIN_INSTALL_DIR})
-
-install(FILES kdevpdb.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
 install(FILES __kdevpython_debugger_utils.py DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport/debugger)
 install(FILES kdevpdb.py DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport/debugger)

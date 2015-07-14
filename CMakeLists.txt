@@ -84,7 +84,7 @@ set(kdevpythonlanguagesupport_PART_SRCS
 
 ki18n_wrap_ui(kdevpythonlanguagesupport_PART_SRCS codegen/correctionwidget.ui)
 
-add_library(kdevpythonlanguagesupport MODULE ${kdevpythonlanguagesupport_PART_SRCS})
+kdevplatform_add_plugin(kdevpythonlanguagesupport JSON kdevpythonsupport.json SOURCES ${kdevpythonlanguagesupport_PART_SRCS})
 
 target_link_libraries(kdevpythonlanguagesupport
     KDev::Interfaces
@@ -97,11 +97,6 @@ target_link_libraries(kdevpythonlanguagesupport
     kdevpythonparser
     kdevpythonduchain
 )
-
-install(TARGETS kdevpythonlanguagesupport DESTINATION ${PLUGIN_INSTALL_DIR})
-
-configure_file(kdevpythonsupport.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/kdevpythonsupport.desktop)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/kdevpythonsupport.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
 install(DIRECTORY documentation_files DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)
 install(DIRECTORY correction_files DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)

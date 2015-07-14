@@ -77,8 +77,8 @@ void UseBuilder::visitName(NameAst* node)
     if ( ! declaration && ! keywords.contains(node->identifier->value) && m_errorReportingEnabled ) {
         KDevelop::Problem *p = new KDevelop::Problem();
         p->setFinalLocation(DocumentRange(currentlyParsedDocument(), useRange.castToSimpleRange())); // TODO ok?
-        p->setSource(KDevelop::ProblemData::SemanticAnalysis);
-        p->setSeverity(KDevelop::ProblemData::Hint);
+        p->setSource(KDevelop::IProblem::SemanticAnalysis);
+        p->setSeverity(KDevelop::IProblem::Hint);
         p->setDescription(i18n("Undefined variable: %1", node->identifier->value));
         {
             DUChainWriteLocker wlock(DUChain::lock());
@@ -128,8 +128,8 @@ void UseBuilder::visitAttribute(AttributeAst* node)
     if ( ! declaration && v.isConfident() && ( ! v.lastType() || Helper::isUsefulType(v.lastType()) ) ) {
         KDevelop::Problem *p = new KDevelop::Problem();
         p->setFinalLocation(DocumentRange(currentlyParsedDocument(), useRange.castToSimpleRange()));
-        p->setSource(KDevelop::ProblemData::SemanticAnalysis);
-        p->setSeverity(KDevelop::ProblemData::Hint);
+        p->setSource(KDevelop::IProblem::SemanticAnalysis);
+        p->setSeverity(KDevelop::IProblem::Hint);
         p->setDescription(i18n("Attribute \"%1\" not found on accessed object", node->attribute->value));
         ProblemPointer ptr(p);
         topContext()->addProblem(ptr);

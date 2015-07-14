@@ -352,8 +352,8 @@ void ParseJob::eventuallyDoPEP8Checking(const IndexedString document, TopDUConte
                 KDevelop::Problem *p = new KDevelop::Problem();
                 p->setFinalLocation(DocumentRange(document, KTextEditor::Range(lineno - 1, qMax(colno - 4, 0),
                                                                         lineno - 1, colno + 4)));
-                p->setSource(KDevelop::ProblemData::Preprocessor);
-                p->setSeverity(KDevelop::ProblemData::Warning);
+                p->setSource(KDevelop::IProblem::Preprocessor);
+                p->setSeverity(KDevelop::IProblem::Warning);
                 p->setDescription(i18n("PEP8 checker error: %1", error));
                 ProblemPointer ptr(p);
                 topContext->addProblem(ptr);
@@ -367,8 +367,8 @@ void ParseJob::eventuallyDoPEP8Checking(const IndexedString document, TopDUConte
         DUChainWriteLocker lock;
         KDevelop::Problem *p = new KDevelop::Problem();
         p->setFinalLocation(DocumentRange(document, KTextEditor::Range(0, 0, 0, 0)));
-        p->setSource(KDevelop::ProblemData::Preprocessor);
-        p->setSeverity(KDevelop::ProblemData::Warning);
+        p->setSource(KDevelop::IProblem::Preprocessor);
+        p->setSeverity(KDevelop::IProblem::Warning);
         p->setDescription(i18n("The selected PEP8 syntax checker \"%1\" does not seem to work correctly.", url));
         ProblemPointer ptr(p);
         topContext->addProblem(ptr);

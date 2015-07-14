@@ -542,7 +542,7 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
         DocumentRange location(IndexedString(filename.path()), range);
         p->setFinalLocation(location);
         p->setDescription(PyUnicodeObjectToQString(errorMessage_str));
-        p->setSource(ProblemData::Parser);
+        p->setSource(IProblem::Parser);
         m_problems.append(p);
         
         // try to recover.

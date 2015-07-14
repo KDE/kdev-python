@@ -142,8 +142,8 @@ void BasicCheck::runCheck(const KDevelop::CheckData& data)
         for ( const auto& error: errors ) {
             KDevelop::Problem *p = new KDevelop::Problem();
             p->setFinalLocation(DocumentRange(IndexedString(data.url), error.range.castToSimpleRange()));
-            p->setSource(KDevelop::ProblemData::SemanticAnalysis);
-            p->setSeverity(KDevelop::ProblemData::Hint);
+            p->setSource(KDevelop::IProblem::SemanticAnalysis);
+            p->setSeverity(KDevelop::IProblem::Hint);
             p->setDescription(i18n("Unused computation result"));
             ProblemPointer ptr(p);
             data.top->addProblem(ptr);

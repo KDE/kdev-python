@@ -803,8 +803,8 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
         qCDebug(KDEV_PYTHON_DUCHAIN) << "invalid or non-existent URL:" << moduleInfo;
         KDevelop::Problem *p = new Python::MissingIncludeProblem(moduleName, currentlyParsedDocument());
         p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange()));
-        p->setSource(KDevelop::ProblemData::SemanticAnalysis);
-        p->setSeverity(KDevelop::ProblemData::Warning);
+        p->setSource(KDevelop::IProblem::SemanticAnalysis);
+        p->setSeverity(KDevelop::IProblem::Warning);
         p->setDescription(i18n("Module \"%1\" not found", moduleName));
         problemEncountered = p;
         return 0;
@@ -842,8 +842,8 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
             else {
                 KDevelop::Problem *p = new Python::MissingIncludeProblem(moduleName, currentlyParsedDocument());
                 p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange())); // TODO ok?
-                p->setSource(KDevelop::ProblemData::SemanticAnalysis);
-                p->setSeverity(KDevelop::ProblemData::Warning);
+                p->setSource(KDevelop::IProblem::SemanticAnalysis);
+                p->setSeverity(KDevelop::IProblem::Warning);
                 p->setDescription(i18n("Declaration for \"%1\" not found in specified module", moduleInfo.second.join(".")));
                 problemEncountered = p;
             }
@@ -1614,8 +1614,8 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
                     KDevelop::Problem *p = new KDevelop::Problem();
                     p->setDescription(description);
                     p->setFinalLocation(DocumentRange(currentlyParsedDocument(), parameters[0]->range().castToSimpleRange()));
-                    p->setSource(KDevelop::ProblemData::SemanticAnalysis);
-                    p->setSeverity(KDevelop::ProblemData::Warning);
+                    p->setSource(KDevelop::IProblem::SemanticAnalysis);
+                    p->setSeverity(KDevelop::IProblem::Warning);
                     ProblemPointer ptr(p);
                     topContext()->addProblem(ptr);
                 }
@@ -1625,8 +1625,8 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
                 KDevelop::Problem *p = new KDevelop::Problem();
                  // only mark first line
                 p->setFinalLocation(DocumentRange(currentlyParsedDocument(), KTextEditor::Range(node->startLine, node->startCol, node->startLine, 10000)));
-                p->setSource(KDevelop::ProblemData::SemanticAnalysis);
-                p->setSeverity(KDevelop::ProblemData::Warning);
+                p->setSource(KDevelop::IProblem::SemanticAnalysis);
+                p->setSeverity(KDevelop::IProblem::Warning);
                 p->setDescription(i18n("Non-static class method without arguments, must have at least one (self)"));
                 ProblemPointer ptr(p);
                 topContext()->addProblem(ptr);
@@ -1781,7 +1781,7 @@ void DeclarationBuilder::visitReturn(ReturnAst* node)
             DUChainWriteLocker lock(DUChain::lock());
             KDevelop::Problem *p = new KDevelop::Problem();
             p->setFinalLocation(DocumentRange(currentlyParsedDocument(), node->range())); // only mark first line
-            p->setSource(KDevelop::ProblemData::SemanticAnalysis);
+            p->setSource(KDevelop::IProblem::SemanticAnalysis);
             p->setDescription(i18n("Return statement not within function declaration"));
             ProblemPointer ptr(p);
             topContext()->addProblem(ptr);

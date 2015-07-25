@@ -21,7 +21,6 @@
 #include <tests/autotestshell.h>
 #include <tests/testcore.h>
 #include <language/duchain/duchain.h>
-#include <QtTest/QtTest>
 #include <language/duchain/types/functiontype.h>
 #include <language/duchain/aliasdeclaration.h>
 
@@ -38,11 +37,18 @@
 
 #include "pyasttest.h"
 #include "../astbuilder.h"
-
-#include <QDebug>
 #include "../parserdebug.h"
 
+#include <ktexteditor_version.h>
+
+#include <QDebug>
+#include <QtTest/QtTest>
+
 using namespace Python;
+
+#if KTEXTEDITOR_VERSION < QT_VERSION_CHECK(5, 10, 0)
+Q_DECLARE_METATYPE(KTextEditor::Range)
+#endif
 
 QTEST_MAIN(PyAstTest)
 

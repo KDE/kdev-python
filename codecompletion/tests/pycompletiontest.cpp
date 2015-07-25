@@ -27,22 +27,26 @@
 #include <tests/testcore.h>
 #include <tests/autotestshell.h>
 
-#include <QtTest/QTest>
+#include <ktexteditor_version.h>
 #include <KTextEditor/Editor>
 #include <KService>
 
 #include "codecompletion/context.h"
 #include "codecompletion/helpers.h"
+#include "codecompletiondebug.h"
 
 #include <QDebug>
 #include <QStandardPaths>
-#include "codecompletiondebug.h"
+#include <QtTest/QTest>
 
 using namespace KDevelop;
 
 QTEST_MAIN(Python::PyCompletionTest)
 
 Q_DECLARE_METATYPE(QList<Python::RangeInString>)
+#if KTEXTEDITOR_VERSION < QT_VERSION_CHECK(5, 10, 0)
+Q_DECLARE_METATYPE(KTextEditor::Range)
+#endif
 
 static int testId = 0;
 static QString basepath = "/tmp/__kdevpythoncompletiontest.dir/";

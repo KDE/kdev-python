@@ -77,4 +77,3 @@ CodeHighlightingInstance* Highlighting::createInstance() const
 
 }
 
-#include "pythonhighlighting.moc"

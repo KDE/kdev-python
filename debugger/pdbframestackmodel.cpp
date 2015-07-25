@@ -120,4 +120,3 @@ void PdbFrameStackModel::fetchThreads()
 
 }
 
-#include "pdbframestackmodel.moc"

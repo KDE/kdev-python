@@ -148,4 +148,3 @@ void VariableController::update()
 
 }
 
-#include "variablecontroller.moc"

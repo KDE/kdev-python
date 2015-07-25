@@ -119,4 +119,3 @@ PEP8KCModule::~PEP8KCModule()
     delete configGroup.config();
 }
 
-#include "kcm_pep8.moc"

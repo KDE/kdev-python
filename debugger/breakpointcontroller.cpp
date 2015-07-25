@@ -62,4 +62,3 @@ void BreakpointController::sendMaybe(KDevelop::Breakpoint* breakpoint)
 
 }
 
-#include "breakpointcontroller.moc"

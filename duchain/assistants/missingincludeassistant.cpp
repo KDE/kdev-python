@@ -100,4 +100,3 @@ MissingIncludeAssistant::MissingIncludeAssistant(const QString& module, const In
 
 }
 
-#include "missingincludeassistant.moc"

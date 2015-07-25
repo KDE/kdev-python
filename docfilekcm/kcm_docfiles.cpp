@@ -66,4 +66,3 @@ QString DocfilesKCModule::name() const
 }
 
 
-#include "kcm_docfiles.moc"

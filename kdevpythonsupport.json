@@ -24,6 +24,7 @@
         "Description[sv]": "Stöd för språket Python", 
         "Description[uk]": "Підтримка мови програмування Python", 
         "Description[x-test]": "xxPython Language Supportxx", 
+        "Description[zh_CN]": "Python 语言支持", 
         "Icon": "text-x-python", 
         "Id": "kdevpythonsupport", 
         "Name": "Python Support", 
@@ -43,6 +44,7 @@
         "Name[sv]": "Python-stöd", 
         "Name[uk]": "Підтримка Python", 
         "Name[x-test]": "xxPython Supportxx", 
+        "Name[zh_CN]": "Python 支持", 
         "ServiceTypes": [
             "KDevelop/Plugin"
         ]

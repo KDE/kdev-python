@@ -153,12 +153,9 @@ public:
         QChar previous = ' ';
         QChar c = ' ';
 
-        auto last = line.left(offset).trimmed();
-        auto lastChar = last.isEmpty() ? QChar() : last.at(last.size()-1);
-        if ( start->astType != Ast::NameAstType && opening.contains(lastChar) ) {
-            // when not a name, the start is not inside the block, so we skip the first closing parenthesis
-            blocks.push(closing.at(opening.indexOf(lastChar)));
-        }
+        auto inString = [&blocks]() {
+            return ! blocks.isEmpty() && (blocks.top() == '"' || blocks.top() == '\"');
+        };
 
         // while the expression lasts, step through it char by char to find attribute access tokens
         while ( offset < line.size() ) {
@@ -166,7 +163,7 @@ public:
                 previous = c;
             }
             c = line.at(offset);
-            qDebug() << c << blocks;
+//             qDebug() << c << blocks;
 //             qDebug() << c << atDot << dots << inRightBlock << blocks.size() << node->startCol << offset;
             // continue to next line if applicable
             // TODO escaping
@@ -187,7 +184,7 @@ public:
             if ( ! blocks.isEmpty() && blocks.top() == c ) {
                 blocks.pop();
             }
-            else if ( opening.contains(c) ) {
+            else if ( ! inString() && opening.contains(c) ) {
                 blocks.push(closing.at(opening.indexOf(c)));
             }
             else if ( blocks.isEmpty() && closing.contains(c) && ! dots.isEmpty() ) {

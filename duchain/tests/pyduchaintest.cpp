@@ -716,6 +716,8 @@ void PyDUChainTest::testRanges_data()
                                                             "25,28,arg5" << "39,39,b" << "44,47,arg3" << "54,57,arg7" << "61,67,subattr");
     QTest::newRow("attr_two_in_call") << "func(inst.aaa, inst.bbbb)" << 2 << ( QStringList() << "10,12,aaa" << "20,23,bbbb" );
     QTest::newRow("attr_of_string_slash") << "'/'.join(a)" << 1 << ( QStringList() << "4,7,join" );
+    QTest::newRow("attr_of_string_in_list") << "[\"*{0}*\".format(foo)]" << 1 << ( QStringList() << "9,14,format" );
+    QTest::newRow("attr_of_call_in_list") << "[foo().format(foo)]" << 1 << ( QStringList() << "7,12,format" );
 
     QTest::newRow("funcrange_def") << "def func(): pass" << 1 << ( QStringList() << "4,7,func" );
     QTest::newRow("funcrange_spaces_def") << "def    func(): pass" << 1 << ( QStringList() << "7,10,func" );

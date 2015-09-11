@@ -255,9 +255,17 @@ void PyDUChainTest::testCrashes_data() {
     QTest::newRow("non_name_decorator") << "@foo.crazy_decorators\ndef myfunc(): pass";
     QTest::newRow("static_method") << "class c:\n @staticmethod\n def method(): pass";
     QTest::newRow("vararg_in_middle") << "def func(a, *b, c): pass\nfunc(1, 2, 3, 4, 5)";
+    QTest::newRow("whatever") << "for attr in updated:\n    "
+                                 "    getattr.update";
     QTest::newRow("return_outside_function") << "return 3";
-    QTest::newRow("attrib") << "(sep or ' ').join(x.capitalize() for x in s.split(sep))";
-    QTest::newRow("attrib2") << "known_threads = {line.strip() for line  in [\"foo\"] if line.strip()}";
+    QTest::newRow("paren_attrib_access") << "a = (xxx or yyy).zzz";
+    QTest::newRow("func_call") << "a = xxx.func(yyy.zzz)";
+    QTest::newRow("comprehension_attrib") << "a = [foo for foo in bar].baz";
+    QTest::newRow("comprehension_attrib2") << "a = [foo.bar for foo in bar]";
+    QTest::newRow("attrib") << "(sep or ' ').join(xxxx.capitalize() for xxxx in ssss.split(sep))";
+    QTest::newRow("attrib2") << "(sep or ' ').join(x.capitalize() for x in s.split(sep))";
+    QTest::newRow("attrib3") << "known_threads = {line.strip()}";
+    QTest::newRow("attrib4") << "known_threads = {line.strip() for line  in [\"foo\"] if line.strip()}";
     QTest::newRow("stacked_lambdas") << "l4 = lambda x = lambda y = lambda z=1 : z : y() : x()";
     QTest::newRow("newline_attrib2") << "raise TypeError(\"argument should be a bound method, not {}\"\n"
                                         ".format(type(meth))) from None";
@@ -702,7 +710,9 @@ void PyDUChainTest::testRanges_data()
     QTest::newRow("attr_functionCallWithArgument_withInner") << "base.attr(arg1.parg2).subattr" << 5 << ( QStringList() << "5,8,attr" << "22,28,subattr" << "15,19,parg2" );
     QTest::newRow("attr_complicated") << "base.attr(arg1.arg2(arg4.arg5, [func(a.b)]).arg3(arg6.arg7)).subattr" << 5 << ( QStringList() << "5,8,attr" << "15,18,arg2" <<
                                                             "25,28,arg5" << "39,39,b" << "44,47,arg3" << "54,57,arg7" << "61,67,subattr");
-    
+    QTest::newRow("attr_two_in_call") << "func(inst.aaa, inst.bbbb)" << 2 << ( QStringList() << "10,12,aaa" << "20,23,bbbb" );
+    QTest::newRow("attr_of_string_slash") << "'/'.join(a)" << 1 << ( QStringList() << "4,7,join" );
+
     QTest::newRow("funcrange_def") << "def func(): pass" << 1 << ( QStringList() << "4,7,func" );
     QTest::newRow("funcrange_spaces_def") << "def    func(): pass" << 1 << ( QStringList() << "7,10,func" );
     QTest::newRow("classdef_range") << "class cls(): pass" << 1 << ( QStringList() << "6,8,cls" );

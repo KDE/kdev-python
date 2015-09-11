@@ -66,6 +66,26 @@ public:
     };
 };
 
+class AttributeFindVisitor : public AstDefaultVisitor {
+public:
+    Ast* findStart(Python::Ast* node) {
+        visitNode(node);
+        return m_start;
+    };
+    virtual void visitNode(Python::Ast* node) override {
+        if ( ! node ) {
+            return;
+        }
+        AstDefaultVisitor::visitNode(node);
+        if ( ! m_start && node->astType == Ast::AttributeAstType ) {
+            m_start = static_cast<AttributeAst*>(node)->value;
+        }
+    }
+
+private:
+    Ast* m_start = nullptr;
+};
+
 // This class is used to fix some of the remaining issues
 // with the ranges of objects obtained from the python parser.
 // Issues addressed are:
@@ -95,6 +115,7 @@ public:
          * then associates the right ranges obtained by their positions with the
          * corresponding AST nodes (through recursive calls of this function).
          */
+
         // an attribute access was already found in a previous call, associate it with this node?
         if ( ! dots.isEmpty() && node->start() == attributeStart ) {
             node->startLine = dots.last().line();
@@ -107,31 +128,50 @@ public:
             return;
         }
 
-        // find where the statement starts
-        Ast* parent = node;
-        while ( parent->astType != Ast::CodeAstType && parent->parent->astType > Ast::LastStatementType ) {
-            parent = parent->parent;
-        }
-        Ast* statement = parent->parent ? parent->parent : parent; 
-
         const QVector<QChar> opening = {'(', '[', '{', '"', '\''};
         const QVector<QChar> closing = {')', ']', '}', '"', '\''};
+        const QVector<QString> ending = {
+            QStringLiteral(","), QStringLiteral("+"),
+            QStringLiteral("*"), QStringLiteral("/"),
+            QStringLiteral("-"), QStringLiteral("and"),
+            QStringLiteral("or"), QStringLiteral("not"),
+            QStringLiteral("xor"), QStringLiteral("^"),
+            QStringLiteral("~"), QStringLiteral("="),
+            QStringLiteral("|"), QStringLiteral("&")
+        };
         QStack<QChar> blocks;
 
-        auto lineno = statement->startLine;
+        // find where the statement starts
+        AttributeFindVisitor f;
+        auto start = f.findStart(node);
+        if ( ! start ) {
+            qDebug() << "huh? start not found";
+            return;
+        }
+
+        auto lineno = start->startLine;
         auto line = lines.at(lineno);
-        int offset = qMax(0, statement->startCol);
+        int offset = qMax(0, start->startCol);
         bool atDot = false;
         bool atContinuationCharacter = false;
-        int inRightBlock = (lineno < node->startLine || (lineno == node->startLine && offset <= node->startCol)) ? -1 : 0;
-        // while the statement lasts, step through it char by char to find attribute access tokens
-        while ( offset < line.size() ) {
-            // for an expression like [foo.bar, a.b].c(xy.z), are we in the right block?
-            if ( lineno == node->startLine && offset == node->startCol ) {
-                inRightBlock = blocks.size();
-            }
+        QChar previous = ' ';
+        QChar c = ' ';
 
-            const auto& c = line.at(offset);
+        auto last = line.left(offset).trimmed();
+        auto lastChar = last.isEmpty() ? QChar() : last.at(last.size()-1);
+        if ( start->astType != Ast::NameAstType && opening.contains(lastChar) ) {
+            // when not a name, the start is not inside the block, so we skip the first closing parenthesis
+            blocks.push(closing.at(opening.indexOf(lastChar)));
+        }
+
+        // while the expression lasts, step through it char by char to find attribute access tokens
+        while ( offset < line.size() ) {
+            if ( ! c.isSpace() ) {
+                previous = c;
+            }
+            c = line.at(offset);
+            qDebug() << c << blocks;
+//             qDebug() << c << atDot << dots << inRightBlock << blocks.size() << node->startCol << offset;
             // continue to next line if applicable
             // TODO escaping
             if ( c == '\\' ) {
@@ -147,20 +187,23 @@ public:
                 dots.append({lineno, offset});
                 atDot = false;
             }
-            // handle parentheses
-            if ( opening.contains(c) ) {
-                blocks.push(closing.at(opening.indexOf(c)));
-            }
-            if ( blocks.isEmpty() && closing.contains(c) && ! dots.isEmpty() ) {
-                break;
-            }
+            // handle parentheses and strings
             if ( ! blocks.isEmpty() && blocks.top() == c ) {
                 blocks.pop();
+            }
+            else if ( opening.contains(c) ) {
+                blocks.push(closing.at(opening.indexOf(c)));
+            }
+            else if ( blocks.isEmpty() && closing.contains(c) && ! dots.isEmpty() ) {
+                break;
+            }
+            if ( blocks.isEmpty() && ending.contains(c) ) {
+                break;
             }
             // if this is a dot and we're in the right block, save it
             // saving is deferred until the next non-space character to obtain the correct
             // start offset
-            if ( c == '.' && blocks.size() == inRightBlock ) {
+            if ( c == '.' && blocks.isEmpty() ) {
                 atDot = true;
             }
             offset++;
@@ -169,11 +212,11 @@ public:
             //  * we're not yet at the end of the statement
             //  * there's a continuation character
             // and the rest of the line is only spaces, continue to the next non-empty line
-            if ( line.mid(offset).trimmed().isEmpty() && (atContinuationCharacter || ! blocks.isEmpty() || lineno < statement->endLine ) ) {
+            if ( line.mid(offset).trimmed().isEmpty() && (atContinuationCharacter || ! blocks.isEmpty() || lineno < start->endLine) ) {
                 do {
                     lineno++;
                     if ( lines.size() <= lineno ) {
-                        qDebug() << "huh?";
+                        qDebug() << "huh? fell off the end of the document";
                         // probably not even possible to reach here
                         return;
                     }
@@ -182,13 +225,15 @@ public:
                 offset = 0;
                 atContinuationCharacter = false;
             }
-            if ( blocks.size() < inRightBlock ) {
-                // once out of the right block, can't get back in
-                inRightBlock = -1;
-            }
         }
         attributeStart = node->start();
-        visitNode(node);
+        if ( ! dots.isEmpty() ) {
+            visitNode(node);
+        }
+        else {
+            // this is a bug, but don't crash
+            qWarning() << "failed to fix ranges near" << line;
+        }
         visitNode(node->attribute);
     };
     // alias for imports (import foo as bar, baz as bang)
@@ -244,10 +289,10 @@ private:
             }
             currentLine += 1;
         }
-        qDebug() << "FIX:" << fixNode->range();
+//         qDebug() << "FIX:" << fixNode->range();
         fixNode->startLine = currentLine;
         fixNode->endLine = currentLine;
-        qDebug() << "FIXED:" << fixNode->range() << fixNode->astType;
+//         qDebug() << "FIXED:" << fixNode->range() << fixNode->astType;
 
         // cut away the "def" / "class"
         int currentColumn = -1;

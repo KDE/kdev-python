@@ -675,22 +675,24 @@ void PyDUChainTest::testRanges()
     QFETCH(QString, code);
     QFETCH(int, expected_amount_of_variables); Q_UNUSED(expected_amount_of_variables);
     QFETCH(QStringList, column_ranges);
-    
+
+
     ReferencedTopDUContext ctx = parse(code);
     QVERIFY(ctx);
-    
+
     QVERIFY(m_ast);
-    
+
     for ( int i = 0; i < column_ranges.length(); i++ ) {
         int scol = column_ranges.at(i).split(",")[0].toInt();
         int ecol = column_ranges.at(i).split(",")[1].toInt();
         QString identifier = column_ranges.at(i).split(",")[2];
         SimpleRange r(0, scol, 0, ecol);
-        
+
         AttributeRangeTestVisitor* visitor = new AttributeRangeTestVisitor();
         visitor->searchingForRange = r;
         visitor->searchingForIdentifier = identifier;
         visitor->visitCode(m_ast.data());
+
         QCOMPARE(visitor->found, true);
         delete visitor;
     }
@@ -701,7 +703,7 @@ void PyDUChainTest::testRanges_data()
     QTest::addColumn<QString>("code");
     QTest::addColumn<int>("expected_amount_of_variables");
     QTest::addColumn<QStringList>("column_ranges");
-    
+
     QTest::newRow("attr_two_attributes") << "base.attr" << 2 << ( QStringList() << "5,8,attr" );
     QTest::newRow("attr_three_attributes") << "base.attr.subattr" << 3 << ( QStringList() << "5,8,attr" << "10,16,subattr" );
     QTest::newRow("attr_functionCall") << "base.attr().subattr" << 3 << ( QStringList() << "5,8,attr" << "12,18,subattr" );
@@ -714,6 +716,12 @@ void PyDUChainTest::testRanges_data()
     QTest::newRow("attr_of_string_slash") << "'/'.join(a)" << 1 << ( QStringList() << "4,7,join" );
     QTest::newRow("attr_of_string_in_list") << "[\"*{0}*\".format(foo)]" << 1 << ( QStringList() << "9,14,format" );
     QTest::newRow("attr_of_call_in_list") << "[foo().format(foo)]" << 1 << ( QStringList() << "7,12,format" );
+    QTest::newRow("attr_parentheses") << "(\"foo\" + \"foo\").capitalize()" << 1 << ( QStringList() << "16,25,capitalize" );
+    QTest::newRow("string_parentheses") << "(\"asdf\".join())" << 1 << ( QStringList() << "8,11,join" );
+    QTest::newRow("string_parentheses2") << "(\"asdf\").join()" << 1 << ( QStringList() << "9,12,join" );
+    QTest::newRow("string_parentheses3") << "(\"asdf\".join()).join()" << 2 << ( QStringList() << "8,11,join" << "16,19,join" );
+    QTest::newRow("string_parentheses4") << "(\"asdf\".join()+2).join()" << 2 << ( QStringList() << "8,11,join" << "18,21,join" );
+    QTest::newRow("string_parentheses_call") << "f(\"asdf\".join())" << 1 << ( QStringList() << "9,12,join" );
 
     QTest::newRow("funcrange_def") << "def func(): pass" << 1 << ( QStringList() << "4,7,func" );
     QTest::newRow("funcrange_spaces_def") << "def    func(): pass" << 1 << ( QStringList() << "7,10,func" );

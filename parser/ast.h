@@ -624,6 +624,7 @@ public:
     ExpressionAst* value;
     Identifier* attribute;
     ExpressionAst::Context context;
+    int depth;
 };
 
 class KDEVPYTHONPARSER_EXPORT SubscriptAst : public ExpressionAst {

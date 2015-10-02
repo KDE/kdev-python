@@ -55,7 +55,7 @@ class RangeUpdateVisitor : public AstDefaultVisitor {
 public:
     virtual void visitNode(Ast* node) {
         AstDefaultVisitor::visitNode(node);
-        if ( node && node->parent ) {
+        if ( node && node->parent && node->parent->astType != Ast::AttributeAstType ) {
             if ( ( node->parent->endLine <= node->endLine && node->parent->endCol <= node->endCol )
                  || node->parent->endLine < node->endLine )
             {
@@ -99,16 +99,30 @@ private:
 class RangeFixVisitor : public AstDefaultVisitor {
 public:
     RangeFixVisitor(const QString& contents)
-        : lines(contents.split('\n')) { }; // TODO can this be \r\n?
-    virtual void visitFunctionDefinition(FunctionDefinitionAst* node) {
+        : lines(contents.split('\n')) { };
+    virtual void visitFunctionDefinition(FunctionDefinitionAst* node) override {
         cutDefinitionPreamble(node->name, "def");
         AstDefaultVisitor::visitFunctionDefinition(node);
     };
-    virtual void visitClassDefinition(ClassDefinitionAst* node) {
+    virtual void visitClassDefinition(ClassDefinitionAst* node) override {
         cutDefinitionPreamble(node->name, "class");
         AstDefaultVisitor::visitClassDefinition(node);
     };
-    virtual void visitAttribute(AttributeAst* node) {
+
+    int findAttributeDepth(ExpressionAst* node) {
+        Ast* p = node;
+        auto level = 0;
+        while ( p->parent && p->parent->isExpression() ) {
+            p = p->parent;
+            qDebug() << "check:" << p->astType << Ast::AttributeAstType;
+            if ( p->astType == Ast::AttributeAstType ) {
+                level++;
+            }
+        }
+        return level;
+    };
+
+    virtual void visitAttribute(AttributeAst* node) override {
         /**
          * Work around the weird way to count columns in Python's AST module.
          * This takes an expression and finds the dots (attribute access tokens),
@@ -123,6 +137,7 @@ public:
             node->endLine = node->startLine;
             node->endCol = node->startCol + node->attribute->value.length() - 1;
             node->attribute->copyRange(node);
+            qDebug() << "updated:" << node->range() << node->attribute->value;
             dots.pop_back();
             visitNode(node->value);
             return;
@@ -148,7 +163,6 @@ public:
             qDebug() << "huh? start not found";
             return;
         }
-
         auto lineno = start->startLine;
         auto line = lines.at(lineno);
         int offset = qMax(0, start->startCol);
@@ -157,8 +171,40 @@ public:
         QChar previous = ' ';
         QChar c = ' ';
 
+        auto last = line.left(offset).trimmed();
+        auto lastChar = last.isEmpty() ? QChar() : last.at(last.size()-1);
+
+        Ast* surrounding = node;
+        bool surrounding_present = false;
+        while ( surrounding->parent ) {
+            surrounding = surrounding->parent;
+            if ( surrounding->appearsBefore(node) ) {
+                surrounding_present = true;
+                break;
+            }
+        }
+        if ( surrounding_present ) {
+            qDebug() << "surrounding:" << surrounding->range();
+            auto depth = findAttributeDepth(node);
+            qDebug() << "attr depth:" << depth;
+            bool is_expr = surrounding->isExpression();
+//             qDebug() << "sourrounding is expr:" << is_expr;
+            if ( is_expr ) {
+                bool is_call = static_cast<ExpressionAst*>(surrounding)->astType == Ast::CallAstType;
+//                 qDebug() << "parent is call:" << is_call;
+                // TODO multiple parentheses, urgh
+                if ( lastChar == '(' && ! is_call && depth == 0 ) {
+                    // the start is not inside the block, so we skip the first closing parenthesis
+                    blocks.push(')');
+                }
+            }
+            else if ( lastChar == '(' ) {
+                blocks.push(')');
+            }
+        }
+
         auto inString = [&blocks]() {
-            return ! blocks.isEmpty() && (blocks.top() == '"' || blocks.top() == '\"');
+            return ! blocks.isEmpty() && (blocks.top() == '"' || blocks.top() == '\'');
         };
 
         // while the expression lasts, step through it char by char to find attribute access tokens
@@ -167,7 +213,7 @@ public:
                 previous = c;
             }
             c = line.at(offset);
-//             qDebug() << c << blocks;
+            qDebug() << c << blocks;
 //             qDebug() << c << atDot << dots << inRightBlock << blocks.size() << node->startCol << offset;
             // continue to next line if applicable
             // TODO escaping
@@ -191,7 +237,7 @@ public:
             else if ( ! inString() && opening.contains(c) ) {
                 blocks.push(closing.at(opening.indexOf(c)));
             }
-            else if ( blocks.isEmpty() && closing.contains(c) && ! dots.isEmpty() ) {
+            else if ( blocks.isEmpty() && closing.contains(c) ) {
                 break;
             }
             if ( blocks.isEmpty() && ending.contains(c) ) {
@@ -214,6 +260,7 @@ public:
                     lineno++;
                     if ( lines.size() <= lineno ) {
                         qDebug() << "huh? fell off the end of the document";
+                        qDebug() << "started at" << lines.at(start->startLine);
                         // probably not even possible to reach here
                         return;
                     }

@@ -15,8 +15,8 @@ set(parser_STAT_SRCS
 
 # no more need to hunt for Python things here; already done in the toplevel CMake file
 # TODO: test for the exact Python version required; PYTHON_VERSION_MICRO is available if needed.
-if ( (NOT PYTHON_FOUND) OR (${PYTHON_VERSION_MINOR} GREATER 4) )
-    message(FATAL_ERROR "Python 3.4.3 with --enable-shared is required to build kdev-python")
+if ( (NOT PYTHON_FOUND) OR (${PYTHON_VERSION_MINOR} GREATER 4) OR (${PYTHON_VERSION_MICRO} LESS 3) )
+    message(FATAL_ERROR "Python >= 3.4.3 and < 3.5 with --enable-shared is required to build this version of kdev-python")
 endif()
 
 include_directories(kdev4pythonparser ${PYTHON_INCLUDE_DIRS})

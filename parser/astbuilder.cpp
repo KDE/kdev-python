@@ -75,6 +75,13 @@ public:
             parent = parent->parent;
         }
         visitNode(parent);
+
+        while ( ! m_next.isValid() && parent->parent ) {
+            // no next expression found in that statement, advance to the next statement
+            parent = parent->parent;
+            visitNode(parent);
+        }
+
         return m_next;
     };
     virtual void visitNode(Python::Ast* node) override {
@@ -120,22 +127,30 @@ public:
 
         NextAstFindVisitor v;
         auto next_start = v.findNext(node);
-
-        QString line = lines.at(node->startLine);
-        if ( next_start > node->start() ) {
-            // sub-expression
-            auto lineno = next_start.line();
-            auto colno = next_start.column();
-            do {
-                line = lines.at(lineno);
-                if ( colno != -1 ) {
-                    line = line.left(colno);
-                }
-                colno = -1;
-                lineno -= 1;
-            } while ( ! line.contains(node->attribute->value) && lineno >= 0 );
+        if ( ! next_start.isValid() ) {
+            // use end of document as reference
+            next_start = {lines.size() - 1, lines.last().size() - 1};
         }
 
+        QString line = lines.at(node->startLine);
+        auto lineno = next_start.line();
+        auto colno = next_start.column();
+        if ( ! (next_start > node->start()) ) {
+            colno = -1;
+            lineno = node->startLine;
+        }
+        // sub-expression
+        do {
+            line = lines.at(lineno);
+            if ( colno != -1 ) {
+                line = line.left(colno);
+            }
+            colno = -1;
+            lineno -= 1;
+        } while ( ! line.contains(node->attribute->value) && lineno >= 0 );
+
+        node->startLine = lineno + 1;
+        node->endLine = node->startLine;
         node->startCol = line.lastIndexOf(node->attribute->value);
         node->endCol = node->startCol + node->attribute->value.length() - 1;
         node->attribute->copyRange(node);
